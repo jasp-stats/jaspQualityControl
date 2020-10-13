@@ -1,0 +1,10 @@
+Package: jaspProcessControl
+Type: Package
+Title: Process Control Module for JASP
+Version: 0.1.0
+Date: 2020-10-13
+Author: JASP team
+Website: https://github.com/jasp-stats
+Maintainer: JASP <info@jasp-stats.org>
+Description: Module for process control
+License: GPL (>= 2)
