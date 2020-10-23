@@ -35,8 +35,8 @@ Form
 		AssignedVariablesList
 		{
 			id:									variable1
-			name:								"variable1"
-			title:								qsTr("Variable 1")
+			name:								"operators"
+			title:								qsTr("Operators")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
@@ -44,9 +44,115 @@ Form
 		AssignedVariablesList
 		{
 			id:									variables
-			name:								"variables"
-			title:								qsTr("Variables")
+			name:								"measurements"
+			title:								qsTr("Measurements")
 			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
+	}
+	
+		Section
+	{
+		title: qsTr("Gauge r&R")
+		
+		CheckBox
+			{
+                name: "gaugeANOVA";		label: qsTr("ANOVA")
+			}
+		CheckBox
+			{
+                name: "gaugeTtest";		label: qsTr("One Sample T-Test")
+				DoubleField { name: "gaugeTtestValue";	label: qsTr("Test value:");		defaultValue: 0;	negativeValues: true	}
+			}
+		CheckBox
+			{
+                name: "gaugeComponentsGraph";		label: qsTr("Graph Variation Components")
+			}
+		CheckBox
+			{
+                name: "gaugeRchart";		label: qsTr("R Chart")
+			}
+		CheckBox
+			{
+                name: "gaugeXbarChart";		label: qsTr("X-bar Chart")
+			}
+		CheckBox
+			{
+                name: "gaugeByPart";		label: qsTr("Measurement by Part Graph")
+			}
+		CheckBox
+			{
+                name: "gaugeByOperator";		label: qsTr("Measurement by Operator Graph")
+			}
+		CheckBox
+			{
+                name: "gaugeByInteraction";		label: qsTr("Measurement Interaction Graph")
+			}
+		CheckBox
+			{
+                name: "gaugeHistogram";		label: qsTr("Histogram")
+			}
+	}
+	
+			Section
+	{
+		title: qsTr("Range Method")
+		
+		CheckBox
+			{
+                name: "rangeRr";		label: qsTr("r&R Values")
+			}
+		
+		
+		CheckBox
+			{
+                name: "rangeScatterPlotOperatorParts";		label: qsTr("Scatter Plot Operators vs. Measurements")
+			}
+		
+		
+		CheckBox
+			{
+                name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
+				
+				CheckBox
+				{
+                name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
+				}
+			}
+			
+		CheckBox
+			{
+                name: "rangeRchart";		label: qsTr("R Chart")
+			}
+		
+		CheckBox
+			{
+                name: "rangeIsoPlot";		label: qsTr("Iso Plot")
+			}
+	
+	
+	
+	}
+	
+			Section
+	{
+		title: qsTr("Attribute Agreement Analysis")
+		
+		CheckBox
+		{
+            name: "AAAkappa";		label: qsTr("Fleiss Kappa")
+		}
+		CheckBox
+		{
+            name: "AAAchiSquare";		label: qsTr("Chi Square")
+		}
+		CheckBox
+		{
+            name: "AAAkendallTau";		label: qsTr("Kendall's Tau")
+		}
+		CheckBox
+		{
+            name: "AAAgraphs";		label: qsTr("Graphs")
+		}
+	
 	}
 }
