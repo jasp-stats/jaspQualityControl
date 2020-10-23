@@ -77,22 +77,26 @@ Form
 		CheckBox { name: "followupProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
 		CheckBox { name: "followupCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
 	}
-}
+
+IntegerField { name: "lowerSpecification"; label: qsTr("Lower Specification Limit")}
+IntegerField { name: "upperSpecification"; label: qsTr("Upper Specification Limit")}
+IntegerField { name: "targetValue"; label: qsTr("Enter the target value for the process mean")}
 
     Section
      {
          title: qsTr("Initial Process Capability Study")
-         CheckBox {	name: "controlchart";		label: qsTr("X-bar Chart")                      }
-         CheckBox {	name: "histogram";          label: qsTr("Histogram")                        }
-         CheckBox {	name: "probabilityPlot";	label: qsTr("Normal Probability Plot")			}
-         CheckBox {	name: "capabilityAnalysis";	label: qsTr("Process Capability of Diameter")   }
+         CheckBox {	name: "initialControlchart";		label: qsTr("X-bar Chart")                      }
+         CheckBox {	name: "initialHistogram";          label: qsTr("Histogram")                         }
+         CheckBox {	name: "initialProbabilityPlot";	label: qsTr("Normal Probability Plot")              }
+         CheckBox {	name: "initialCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")   }
      }
 
      Section
      {
          title: qsTr("Follow-up Process Capability Study")
-         CheckBox {	name: "controlchart";		label: qsTr("X-bar & Range Control Chart")      }
-         CheckBox {	name: "histogram";          label: qsTr("Histogram")                        }
-         CheckBox {	name: "probabilityPlot";	label: qsTr("Normal Probability Plot")			}
-         CheckBox {	name: "capabilityAnalysis";	label: qsTr("Process Capability of Diameter")   }
+         CheckBox {	name: "followupControlchart";		label: qsTr("X-bar & Range Control Chart")      }
+         CheckBox {	name: "followupHistogram";          label: qsTr("Histogram")                        }
+         CheckBox {	name: "followupProbabilityPlot";	label: qsTr("Normal Probability Plot")			}
+         CheckBox {	name: "followupCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")   }
      }
+}
