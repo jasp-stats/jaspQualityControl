@@ -78,3 +78,21 @@ Form
 		CheckBox { name: "followupCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
 	}
 }
+
+    Section
+     {
+         title: qsTr("Initial Process Capability Study")
+         CheckBox {	name: "controlchart";		label: qsTr("X-bar Chart")                      }
+         CheckBox {	name: "histogram";          label: qsTr("Histogram")                        }
+         CheckBox {	name: "probabilityPlot";	label: qsTr("Normal Probability Plot")			}
+         CheckBox {	name: "capabilityAnalysis";	label: qsTr("Process Capability of Diameter")   }
+     }
+
+     Section
+     {
+         title: qsTr("Follow-up Process Capability Study")
+         CheckBox {	name: "controlchart";		label: qsTr("X-bar & Range Control Chart")      }
+         CheckBox {	name: "histogram";          label: qsTr("Histogram")                        }
+         CheckBox {	name: "probabilityPlot";	label: qsTr("Normal Probability Plot")			}
+         CheckBox {	name: "capabilityAnalysis";	label: qsTr("Process Capability of Diameter")   }
+     }
