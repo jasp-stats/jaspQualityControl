@@ -55,7 +55,7 @@ Form
     {
         IntegerField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit")                    }
         IntegerField { name: "upperSpecification";  label: qsTr("Upper Specification Limit")                    }
-        IntegerField { name: "targetValue";         label: qsTr("Target value")  }
+        IntegerField { name: "targetValue";         label: qsTr("Target value")                                 }
     }
 
     Section
