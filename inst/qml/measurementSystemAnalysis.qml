@@ -40,12 +40,22 @@ Form
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
+		
+		AssignedVariablesList
+		{
+			id:									variable2
+			name:								"parts"
+			title:								qsTr("Parts")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+		}
 
 		AssignedVariablesList
 		{
-			id:									variables
+			id:									variable3
 			name:								"measurements"
 			title:								qsTr("Measurements")
+			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 	}
