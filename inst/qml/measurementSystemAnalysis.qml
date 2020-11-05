@@ -108,24 +108,27 @@ Form
 		title: qsTr("Range Method")
 		
 		CheckBox
-		{
-			name: "rangeRr";		label: qsTr("r&R Values")
-		}
-		
-		
-		CheckBox
-		{
-			name: "rangeScatterPlotOperatorParts";		label: qsTr("Scatter Plot Operators vs. Measurements")
-		}
-		
-		
-		CheckBox
-		{
-			name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
-
-			CheckBox
 			{
-				name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
+                name: "rangeRr";		label: qsTr("r&R Table")
+			}
+		
+		
+		CheckBox
+			{
+                name: "rangeScatterPlotOperatorParts";		label: qsTr("Scatter Plot Operators vs. Parts")
+			}
+
+                name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
+				
+				CheckBox
+				{
+                name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
+				}
+				
+				CheckBox
+				{
+                name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+				}
 			}
 		}
 
@@ -134,14 +137,10 @@ Form
 			name: "rangeRchart";		label: qsTr("R Chart")
 		}
 		
-		CheckBox
-		{
-			name: "rangeIsoPlot";		label: qsTr("Iso Plot")
-		}
-
-
-
 	}
+		
+
+
 	
 	Section
 	{
@@ -164,5 +163,20 @@ Form
 			name: "AAAgraphs";		label: qsTr("Graphs")
 		}
 
+	}
+	
+	Section
+	{
+		title: qsTr("Iso Plot")
+		
+		CheckBox
+			{
+                name: "IsoPlot";		label: qsTr("Iso Plot")
+			}
+			
+			CheckBox
+			{
+                name: "IsoPlotTable";		label: qsTr("Iso Plot Table")
+			}
 	}
 }
