@@ -5,32 +5,52 @@ Description
 {
 	name				: "jaspProcessControl"
 	title				: qsTr("Process Control")
-	description			: qsTr("Module for process control")
-	version				: "0.1"
-	author				: "JASP team"
+	description			: qsTr("A JASP module for quality control analysis.")
+	version				: "0.0.1"
+	author				: "JASP Team"
 	maintainer			: "JASP <info@jasp-stats.org>"
-	website				: "https://github.com/jasp-stats"
+	website				: "https://github.com/jasp-stats/jaspProcessControl"
 	license				: "GPL (>= 2)"
-	icon				: "analysis-descriptives.svg"
+	icon				: "processControl-module.svg"
 
+	GroupTitle
+	{
+		title:			qsTr("Capability")
+		icon:			"processControl-capability.svg"
+	}
 	Analysis
 	{
 		title:			qsTr("Process capability")
 		func:			"processCapability"
 	}
 
-	Analysis
+	GroupTitle
 	{
-		title:			qsTr("Process control")
-		func:			"processControl"
+		title:			qsTr("Measurements")
+		icon:			"processControl-measurement.svg"
 	}
-
 	Analysis
 	{
 		title:			qsTr("Measurement system analysis")
 		func:			"measurementSystemAnalysis"
 	}
 
+	GroupTitle
+	{
+		title:			qsTr("Control")
+		icon:			"processControl-control.svg"
+	}
+	Analysis
+	{
+		title:			qsTr("Process control")
+		func:			"processControl"
+	}
+
+	GroupTitle
+	{
+		title:			qsTr("Design")
+		icon:			"processControl-design.svg"
+	}
 	Analysis
 	{
 		title:			qsTr("Design of experiments")
