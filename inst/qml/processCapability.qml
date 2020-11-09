@@ -1,4 +1,3 @@
-
 // Copyright (C) 2013-2018 University of Amsterdam
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -18,63 +17,62 @@ import QtQuick.Layouts 							1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
-Form 
+Form
 {
-	usesJaspResults:							true
-	columns:									1
+  usesJaspResults:							true
+  columns:									1
 
-	VariablesForm
-	{
-		id:										variablesForm
+  VariablesForm
+  {
+    id:										variablesForm
 
-		AvailableVariablesList
-		{
-			name:								"variablesForm"
-		}
+    AvailableVariablesList
+    {
+      name:								"variablesForm"
+    }
 
-		AssignedVariablesList
-		{
-			id:									variable1
-			name:								"diameter"
-			title:								qsTr("Diameter")
-			singleVariable:						true
-			allowedColumns:						["ordinal", "scale"]
-		}
+    AssignedVariablesList
+    {
+      id:									variable1
+      name:								"diameter"
+      title:								qsTr("Diameter")
+      allowedColumns:						["scale"]
+    }
 
-		AssignedVariablesList
-		{
-			id:									variable2
-			name:								"subgroups"
-			title:								qsTr("Subgroups")
-			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText"]
-		}
-	}
+    AssignedVariablesList
+    {
+      id:									variable2
+      name:								"subgroups"
+      title:								qsTr("Subgroups")
+      singleVariable:						true
+      allowedColumns:						["nominal", "nominalText"]
+    }
+  }
 
-	Group
-	{
-		IntegerField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit")                    }
-		IntegerField { name: "upperSpecification";  label: qsTr("Upper Specification Limit")                    }
-		IntegerField { name: "targetValue";         label: qsTr("Target value")                                 }
-	}
+  Group
+  {
+    IntegerField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit")                    }
+    IntegerField { name: "upperSpecification";  label: qsTr("Upper Specification Limit")                    }
+    IntegerField { name: "targetValue";         label: qsTr("Target value")                                 }
+  }
 
-	Section
-	{
-		title: qsTr("Initial Process Capability Study")
+  Section
+  {
+    title: qsTr("Initial Process Capability Study")
 
-		CheckBox { name: "initialControlchart";			label: qsTr("X-bar Chart")						}
-		CheckBox { name: "initialHistogram";			label: qsTr("Histogram")						}
-		CheckBox { name: "initialProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
-		CheckBox { name: "initialCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
-	}
+    CheckBox { name: "initialXbarchart";			label: qsTr("X-bar Chart")						}
+    CheckBox { name: "initialHistogram";			label: qsTr("Histogram")						}
+    CheckBox { name: "initialProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
+    CheckBox { name: "initialCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
+  }
 
-	Section
-	{
-		title: qsTr("Follow-up Process Capability Study")
+  Section
+  {
+    title: qsTr("Follow-up Process Capability Study")
 
-		CheckBox { name: "followupControlchart";		label: qsTr("X-bar & Range Control Chart")		}
-		CheckBox { name: "followupHistogram";			label: qsTr("Histogram")						}
-		CheckBox { name: "followupProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
-		CheckBox { name: "followupCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
-	}
+    CheckBox { name: "followupControlchart";		label: qsTr("X-bar & Range Control Chart")		}
+    CheckBox { name: "followupHistogram";			label: qsTr("Histogram")						}
+    CheckBox { name: "followupProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
+    CheckBox { name: "followupCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
+  }
 }
