@@ -216,5 +216,4 @@ processControl <- function(jaspResults, dataset, options){
   RPlot<- jaspResults[["RPlot"]]
   RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
   }
-
-
+}
