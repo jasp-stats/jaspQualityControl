@@ -62,7 +62,43 @@ Form
 
     CheckBox { name: "initialXbarchart";			label: qsTr("X-bar Chart")						}
     CheckBox { name: "initialHistogram";			label: qsTr("Histogram")						}
-    CheckBox { name: "initialProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
+    CheckBox { name: "initialProbabilityPlot";		label: qsTr("Normal Probability Plot")
+        DropDown{
+            name: "Nulldis"
+            label: qsTr("Null distribution (normality test)")
+            indexDefaultValue: 0
+            values:
+            [
+                { label: qsTr("Normal"),	                           	value: "normal"		},
+                { label: qsTr("Lognormal"),	                            value: "lognormal"	},
+                { label: qsTr("3-parameter lognormal"),		          	value: "3parLog"		},
+                { label: qsTr("Gamma"),			                        value: "gamma"		},
+                { label: qsTr("3-parameter gamma"),		          		value: "3parGam"			},
+                { label: qsTr("Exponential"),			              	value: "expo"			},
+                { label: qsTr("2-parameter exponential"),				value: "2parExpo"			},
+                { label: qsTr("Smallest extreme value"),				value: "small"			},
+                { label: qsTr("Weibull"),				                value: "weibull"			},
+                { label: qsTr("3-parameter Weibull"),				    value: "3parWeibull"			},
+                { label: qsTr("Largest extreme value"),			     	value: "large"		             	},
+                { label: qsTr("Logistic"),				                value: "logistic"		         	},
+                { label: qsTr("Loglogistic"),				            value: "logLogistic"	    		},
+                { label: qsTr("3-parameter loglogistic	"),				value: "3parlogLogistic"			}
+
+            ]
+
+        }
+        RadioButtonGroup
+                           {
+                               name:	"formula";
+                               title:	qsTr("Formula for rank calculation")
+                               RadioButton { value: "median";		label: qsTr("Median Rank (Benard)");		               checked: true}
+                               RadioButton { value: "mean";	        label: qsTr("Mean Rank (Herd-Johnson)")					                }
+                               RadioButton { value: "KM";		    label: qsTr("Kaplan-Meier")							                    }
+                               RadioButton { value: "KMmodif";		label: qsTr("Modified Kaplan-Meier (Hazen)")							}
+                           }
+
+
+    }
     CheckBox { name: "initialCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
   }
 
