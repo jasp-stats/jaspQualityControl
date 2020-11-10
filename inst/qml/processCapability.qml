@@ -84,7 +84,6 @@ Form
                 { label: qsTr("Normal"),                              value: "Normal"                   },
                 { label: qsTr("Lognormal"),                             value: "Lognormal"                  },
                 { label: qsTr("Weibull"),                       value: "Weibull"              }
-
             ]
 
         }
