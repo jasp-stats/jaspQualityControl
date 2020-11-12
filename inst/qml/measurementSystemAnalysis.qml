@@ -60,7 +60,13 @@ Form
 		}
 	}
 	
-	Section
+		Group
+	{
+		DoubleField { name: "processSD";	label: qsTr("Process Standard Deviation");		defaultValue: 0;	negativeValues: true	}
+	}
+	
+	
+		Section
 	{
 		title: qsTr("Gauge r&R")
 		
@@ -85,11 +91,18 @@ Form
 		{
 			name: "gaugeXbarChart";		label: qsTr("X-bar Chart")
 		}
+		
+		
 		CheckBox
 		{
-			name: "gaugeByPart";		label: qsTr("Measurement by Part Graph")
+            name: "gaugeByPart";		label: qsTr("Measurement by Part Graph")
+				
+				CheckBox
+			{
+					name: "gaugeByPartAll";		label: qsTr("Display all Measurements")
+			}
 		}
-		CheckBox
+
 		{
 			name: "gaugeByOperator";		label: qsTr("Measurement by Operator Graph")
 		}
