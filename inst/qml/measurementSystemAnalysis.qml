@@ -102,7 +102,8 @@ Form
 					name: "gaugeByPartAll";		label: qsTr("Display all Measurements")
 			}
 		}
-
+		
+		CheckBox
 		{
 			name: "gaugeByOperator";		label: qsTr("Measurement by Operator Graph")
 		}
@@ -121,29 +122,33 @@ Form
 		title: qsTr("Range Method")
 		
 		CheckBox
-			{
+		{
                 name: "rangeRr";		label: qsTr("r&R Table")
-			}
+		}
 		
 		
 		CheckBox
-			{
+		{
                 name: "rangeScatterPlotOperatorParts";		label: qsTr("Scatter Plot Operators vs. Parts")
-			}
-
-                name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
-				
-				CheckBox
-				{
-                name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
-				}
-				
-				CheckBox
-				{
-                name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
-				}
-			}
 		}
+			
+		CheckBox
+		{
+                name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
+		}		
+
+				
+		CheckBox
+		{
+                name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
+		}
+				
+		CheckBox
+		{
+                name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+		}
+		
+
 
 		CheckBox
 		{
