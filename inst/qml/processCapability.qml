@@ -76,6 +76,20 @@ Form
 
         }
         DropDown{
+          name: "rank"
+          label: qsTr("Rank method")
+          indexDefaultValue: 0
+          values:
+            [
+              { value: "median",		label: qsTr("Median Rank (Benard)")		                                 },
+              { value: "mean",	        label: qsTr("Mean Rank (Herd-Johnson)")					                 },
+              { value: "KM",		    label: qsTr("Kaplan-Meier")							                     },
+              { value: "KMmodif",		label: qsTr("Modified Kaplan-Meier (Hazen)")							 }
+
+            ]
+
+        }
+        DropDown{
             name: "Nulldis"
             label: qsTr("Null distribution")
             indexDefaultValue: 0
