@@ -64,40 +64,32 @@ Form
     CheckBox { name: "initialHistogram";			label: qsTr("Histogram")						}
     CheckBox { name: "initialProbabilityPlot";		label: qsTr("Normal Probability Plot")
         DropDown{
-            name: "Nulldis"
-            label: qsTr("Null distribution (normality test)")
-            indexDefaultValue: 0
-            values:
+          name: "rank"
+          label: qsTr("Rank method")
+          indexDefaultValue: 0
+          values:
             [
-                { label: qsTr("Normal"),	                           	value: "normal"		                },
-                { label: qsTr("Lognormal"),	                            value: "lognormal"                 	},
-                { label: qsTr("3-parameter lognormal"),		          	value: "3parLog"	            	},
-                { label: qsTr("Gamma"),			                        value: "gamma"	                 	},
-                { label: qsTr("3-parameter gamma"),		          		value: "3parGam"           			},
-                { label: qsTr("Exponential"),			              	value: "expo"		             	},
-                { label: qsTr("2-parameter exponential"),				value: "2parExpo"			        },
-                { label: qsTr("Smallest extreme value"),				value: "small"		                },
-                { label: qsTr("Weibull"),				                value: "weibull"			        },
-                { label: qsTr("3-parameter Weibull"),				    value: "3parWeibull"			    },
-                { label: qsTr("Largest extreme value"),			     	value: "large"		             	},
-                { label: qsTr("Logistic"),				                value: "logistic"		         	},
-                { label: qsTr("Loglogistic"),				            value: "logLogistic"	    		},
-                { label: qsTr("3-parameter loglogistic	"),				value: "3parlogLogistic"			}
+              { value: "median",		label: qsTr("Median Rank (Benard)")		                                 },
+              { value: "mean",	        label: qsTr("Mean Rank (Herd-Johnson)")					                 },
+              { value: "KM",		    label: qsTr("Kaplan-Meier")							                     },
+              { value: "KMmodif",		label: qsTr("Modified Kaplan-Meier (Hazen)")							 }
 
             ]
 
         }
-        RadioButtonGroup
-                           {
-                               name:	"formula";
-                               title:	qsTr("Formula for rank calculation")
-                               RadioButton { value: "median";		label: qsTr("Median Rank (Benard)");		               checked: true}
-                               RadioButton { value: "mean";	        label: qsTr("Mean Rank (Herd-Johnson)")					                }
-                               RadioButton { value: "KM";		    label: qsTr("Kaplan-Meier")							                    }
-                               RadioButton { value: "KMmodif";		label: qsTr("Modified Kaplan-Meier (Hazen)")							}
-                           }
+        DropDown{
+            name: "Nulldis"
+            label: qsTr("Null distribution")
+            indexDefaultValue: 0
+            values:
+            [
+                { label: qsTr("Normal"),	                           	value: "Normal"		                },
+                { label: qsTr("Lognormal"),	                            value: "Lognormal"                 	},
+                { label: qsTr("Weibull"),				                value: "Weibull"			        }
 
+            ]
 
+        }
     }
     CheckBox { name: "initialCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
   }
