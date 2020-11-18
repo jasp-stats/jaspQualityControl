@@ -13,8 +13,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-import QtQuick 									2.8
-import QtQuick.Layouts 							1.3
+import QtQuick 									  2.8
+import QtQuick.Layouts 						1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
@@ -35,63 +35,63 @@ Form
 		AssignedVariablesList
 		{
 			id:									variable1
-            name:								"ProcessID"
-            title:								qsTr("Process ID")
+			name:								"ProcessID"
+			title:								qsTr("Process ID")
 			singleVariable:						true
-            allowedColumns:						["nominal"]
+			allowedColumns:						["nominal"]
 		}
 
 		AssignedVariablesList
 		{
 			id:									variables
-            name:								"variables"
-            title:								qsTr("Measurements")
-            allowedColumns:						["scale"]
+			name:								"variables"
+			title:								qsTr("Measurements")
+			allowedColumns:						["scale"]
 		}
 	}
 
-    Section
-    {
-        title: qsTr("Control charts for variables")
-        CheckBox {	name: "XbarRchart";		label: qsTr("X bar & R chart")	        }
-        CheckBox {	name: "Xbarschart";		label: qsTr("X bar s chart")		    }
-        CheckBox {	name: "ImRchart";		label: qsTr("I-mR chart")				}
-    }
+	Section
+	{
+		title: qsTr("Control charts for variables")
+		CheckBox {	name: "XbarRchart";		label: qsTr("X bar & R chart")			}
+		CheckBox {	name: "Xbarschart";		label: qsTr("X bar & s chart")			}
+		CheckBox {	name: "ImRchart";		label: qsTr("I-mR chart")				}
+	}
 
-    Section
-    {
-        title: qsTr("Control charts for attributes")
-        CheckBox {	name: "Defectivescharts";		label: qsTr("Defectives charts")
-            RadioButtonGroup
-            {
-                name:	"TypeDefectives";
-                title:	qsTr("Type")
-                RadioButton { value: "npchart";		         label: qsTr("np chart");		checked: true	                }
-                RadioButton { value: "pchart";	            label: qsTr("p chart")					                        }
-                RadioButton { value: "Laneyprimechart";		label: qsTr("Laney p’ (p-prime) chart")							}
-            }
+	Section
+	{
+		title: qsTr("Control charts for attributes")
+		CheckBox {	name: "Defectivescharts";		label: qsTr("Defectives charts")
+			RadioButtonGroup
+			{
+				name:	"TypeDefectives";
+				title:	qsTr("Type")
+				RadioButton { value: "npchart";				label: qsTr("np chart");		checked: true					}
+				RadioButton { value: "pchart";				label: qsTr("p chart")											}
+				RadioButton { value: "Laneyprimechart";		label: qsTr("Laney p’ (p-prime) chart")							}
+			}
 
-        }
-        CheckBox {	name: "Defectscharts";		label: qsTr("Defects charts")
-            RadioButtonGroup
-            {
-                name:	"TypeDefects";
-                title:	qsTr("Type")
-                RadioButton { value: "cchart";		    label: qsTr("c chart");		                    checked: true	}
-                RadioButton { value: "uchart";	        label: qsTr("u chart")					                        }
-                RadioButton { value: "Laneychart";		label: qsTr("Laney u’ (u-prime) chart")							}
-            }
-        }
-                 CheckBox {	name: "ImRchart2";		label: qsTr("I-mR chart")				                            }
+		}
+		CheckBox {	name: "Defectscharts";		label: qsTr("Defects charts")
+			RadioButtonGroup
+			{
+				name:	"TypeDefects";
+				title:	qsTr("Type")
+				RadioButton { value: "cchart";			label: qsTr("c chart");						checked: true	}
+				RadioButton { value: "uchart";			label: qsTr("u chart")										}
+				RadioButton { value: "Laneychart";		label: qsTr("Laney u’ (u-prime) chart")						}
+			}
+		}
+		CheckBox {	name: "ImRchart2";		label: qsTr("I-mR chart")												}
 
-    }
-    Section
-    {
-        title: qsTr("Special control charts")
-        CheckBox {	name: "Cumulativechart";		        label: qsTr("Cumulative sum chart")                                 }
-        CheckBox {	name: "Exponentialchart";		        label: qsTr("Exponentially weighted moving average chart")		    }
-        CheckBox {	name: "gchart";		                    label: qsTr("g chart")				                                }
-        CheckBox {	name: "tchart";		                    label: qsTr("t chart")				                                }
+	}
+	Section
+	{
+		title: qsTr("Special control charts")
+		CheckBox {	name: "Cumulativechart";				label: qsTr("Cumulative sum chart")									}
+		CheckBox {	name: "Exponentialchart";				label: qsTr("Exponentially weighted moving average chart")			}
+		CheckBox {	name: "gchart";							label: qsTr("g chart")												}
+		CheckBox {	name: "tchart";							label: qsTr("t chart")												}
 
-    }
+	}
 }

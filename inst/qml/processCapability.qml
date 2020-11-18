@@ -35,18 +35,46 @@ Form
 		AssignedVariablesList
 		{
 			id:									variable1
-			name:								"variable1"
-			title:								qsTr("Variable 1")
+			name:								"diameter"
+			title:								qsTr("Diameter")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["ordinal", "scale"]
 		}
 
 		AssignedVariablesList
 		{
-			id:									variables
-			name:								"variables"
-			title:								qsTr("Variables")
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			id:									variable2
+			name:								"subgroups"
+			title:								qsTr("Subgroups")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText"]
 		}
+	}
+
+	Group
+	{
+		IntegerField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit")                    }
+		IntegerField { name: "upperSpecification";  label: qsTr("Upper Specification Limit")                    }
+		IntegerField { name: "targetValue";         label: qsTr("Target value")                                 }
+	}
+
+	Section
+	{
+		title: qsTr("Initial Process Capability Study")
+
+		CheckBox { name: "initialControlchart";			label: qsTr("X-bar Chart")						}
+		CheckBox { name: "initialHistogram";			label: qsTr("Histogram")						}
+		CheckBox { name: "initialProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
+		CheckBox { name: "initialCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
+	}
+
+	Section
+	{
+		title: qsTr("Follow-up Process Capability Study")
+
+		CheckBox { name: "followupControlchart";		label: qsTr("X-bar & Range Control Chart")		}
+		CheckBox { name: "followupHistogram";			label: qsTr("Histogram")						}
+		CheckBox { name: "followupProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
+		CheckBox { name: "followupCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
 	}
 }

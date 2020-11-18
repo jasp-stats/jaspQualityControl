@@ -35,18 +35,166 @@ Form
 		AssignedVariablesList
 		{
 			id:									variable1
-			name:								"variable1"
-			title:								qsTr("Variable 1")
+			name:								"operators"
+			title:								qsTr("Operators")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+		}
+		
+		AssignedVariablesList
+		{
+			id:									variable2
+			name:								"parts"
+			title:								qsTr("Parts")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 
 		AssignedVariablesList
 		{
-			id:									variables
-			name:								"variables"
-			title:								qsTr("Variables")
+			id:									variable3
+			name:								"measurements"
+			title:								qsTr("Measurements")
+			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
+	}
+	
+		Group
+	{
+		DoubleField { name: "processSD";	label: qsTr("Process Standard Deviation");		defaultValue: 0;	negativeValues: true	}
+	}
+	
+	
+		Section
+	{
+		title: qsTr("Gauge r&R")
+		
+		CheckBox
+		{
+			name: "gaugeANOVA";		label: qsTr("ANOVA")
+		}
+		CheckBox
+		{
+			name: "gaugeTtest";		label: qsTr("One Sample T-Test")
+			DoubleField { name: "gaugeTtestValue";	label: qsTr("Test value:");		defaultValue: 0;	negativeValues: true	}
+		}
+		CheckBox
+		{
+			name: "gaugeComponentsGraph";		label: qsTr("Graph Variation Components")
+		}
+		CheckBox
+		{
+			name: "gaugeRchart";		label: qsTr("R Chart")
+		}
+		CheckBox
+		{
+			name: "gaugeXbarChart";		label: qsTr("X-bar Chart")
+		}
+		
+		
+		CheckBox
+		{
+            name: "gaugeByPart";		label: qsTr("Measurement by Part Graph")
+				
+				CheckBox
+			{
+					name: "gaugeByPartAll";		label: qsTr("Display all Measurements")
+			}
+		}
+		
+		CheckBox
+		{
+			name: "gaugeByOperator";		label: qsTr("Measurement by Operator Graph")
+		}
+		CheckBox
+		{
+			name: "gaugeByInteraction";		label: qsTr("Measurement Interaction Graph")
+		}
+		CheckBox
+		{
+			name: "gaugeHistogram";		label: qsTr("Histogram")
+		}
+	}
+	
+	Section
+	{
+		title: qsTr("Range Method")
+		
+		CheckBox
+		{
+                name: "rangeRr";		label: qsTr("r&R Table")
+		}
+		
+		
+		CheckBox
+		{
+                name: "rangeScatterPlotOperatorParts";		label: qsTr("Scatter Plot Operators vs. Parts")
+		}
+			
+		CheckBox
+		{
+                name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
+		}		
+
+				
+		CheckBox
+		{
+                name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
+		}
+				
+		CheckBox
+		{
+                name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+		}
+		
+
+
+		CheckBox
+		{
+			name: "rangeRchart";		label: qsTr("R Chart")
+		}
+		
+	}
+		
+
+
+	
+	Section
+	{
+		title: qsTr("Attribute Agreement Analysis")
+		
+		CheckBox
+		{
+			name: "AAAkappa";		label: qsTr("Fleiss Kappa")
+		}
+		CheckBox
+		{
+			name: "AAAchiSquare";		label: qsTr("Chi Square")
+		}
+		CheckBox
+		{
+			name: "AAAkendallTau";		label: qsTr("Kendall's Tau")
+		}
+		CheckBox
+		{
+			name: "AAAgraphs";		label: qsTr("Graphs")
+		}
+
+	}
+	
+	Section
+	{
+		title: qsTr("Iso Plot")
+		
+		CheckBox
+			{
+                name: "IsoPlot";		label: qsTr("Iso Plot")
+			}
+			
+			CheckBox
+			{
+                name: "IsoPlotTable";		label: qsTr("Iso Plot Table")
+			}
 	}
 }

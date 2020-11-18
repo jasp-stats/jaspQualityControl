@@ -1,46 +1,4 @@
-#
-# Copyright (C) 2013-2018 University of Amsterdam
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-
-processControl <- function(jaspResults, dataset, options){
-
-  # Make the Process ID and clean the dataset
-  variables <- unlist(options$variables)
-  ID <- options$ProcessID
-  makeID <- ID != ""
-  numberMissing <- 0
-
-  if (is.null(dataset)) {
-    if (makeID) {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = ID)
-      dataset.factors <- .readDataSetToEnd(columns = variables, columns.as.factor=ID)
-    } else {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = variables)
-      dataset.factors <- .readDataSetToEnd(columns = variables)
-    }
-  }
-  # Remove missing values
-  if (makeID & length(variables) > 0) {
-    processID <- dataset[[.v(ID)]]
-    dataset <- dataset[!is.na(processID), ]
-    dataset.factors <- dataset.factors[!is.na(processID), ]
-    processID <- na.omit(processID)
-    dataset <- na.omit(dataset)
-  } else {dataset <- na.omit(dataset)}
-
+# Common R file 
 .XbarchartNoId <- function(dataset, options) {
 
     ready <- (length(options$variables) > 1)
@@ -125,19 +83,75 @@ processControl <- function(jaspResults, dataset, options){
     return(p)
   }
 
-  #X bar R Chart
-  if(options$XbarRchart && is.null(jaspResults[["XbarRchart"]])){
+.ProbabilityPlotNoId <- function(dataset, options, variable){
+  title <- variable
+  ppPlot <- createJaspPlot(width=600, aspectRatio=1, title=title)
+  ppPlot$dependOn(optionContainsValue=list(variables=variable))
+  
+  #Arrange data
+  x = dataset[[.v(variable)]]
+  x <- x[order(x)]
+  n <- length(x)
+  i <- rank(x)
+  p <- (i - 0.3) / (n + 0.4) # Median method
+  y <- qnorm(p = p) # Normal distribution
+  
+  #Find out variance and covariance of mle's of mu and sigma
+  lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
+  matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("mu", "sigma"), mle = c(mean(x), sd(x)))
+  varMu <- matrix$varcov[1, 1]
+  varSigma <- matrix$varcov[2,2]
+  covarMuSigma <- matrix$varcov[1, 2]
+  
+  # Quantities
+  pSeq <- seq(0.001, 0.999, 0.001)
+  zp <- qnorm(p = pSeq)
+  zalpha <- qnorm(0.975)
+  percentileEstimate <- mean(x) + zp * sd(x)
+  varPercentile <- varMu + zp^2 * varSigma + 2*zp * covarMuSigma
+  percentileLower <- percentileEstimate - zalpha * sqrt(varPercentile)
+  percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
+  data1= data.frame(x = x, y = y)
+  
+  #Graphics
+  ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
+  xBreaks <- JASPgraphs::getPrettyAxisBreaks(c(min(x) - 2 , max(x) + 2))
+  xlimits <- range(xBreaks)
+  
+  p <- ggplot2::ggplot() +
+    ggplot2::geom_line(ggplot2::aes(y = qnorm(pSeq), x= percentileEstimate)) +
+    ggplot2::geom_line(ggplot2::aes(y = qnorm(pSeq), x= percentileLower)) +
+    ggplot2::geom_line(ggplot2::aes(y = qnorm(pSeq), x= percentileUpper)) +
+    ggplot2::geom_point(ggplot2::aes(x= data1$x, y= data1$y), size = 2) +
+    ggplot2::scale_x_continuous('candle_width',limits = xlimits, breaks = xBreaks) +
+    ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = qnorm(ticks / 100)) +
+    JASPgraphs::themeJaspRaw() +
+    JASPgraphs::geom_rangeframe()
+  
+  ppPlot$plotObject <-  p
+  return(ppPlot)
+}
 
-    jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 1100, height = 400)
-    jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
-    jaspResults[["XbarPlot"]]$position <- 11
-    XbarPlot <- jaspResults[["XbarPlot"]]
-    XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
-
-    jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 1100, height= 400)
-    jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
-    jaspResults[["RPlot"]]$position <- 11
-    RPlot<- jaspResults[["RPlot"]]
-    RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
-  }
+.PPtable <- function( dataset, options, variable){
+  
+  pptable <- createJaspTable(title = gettextf("Descriptives and normality for %s", variable ))
+  pptable$dependOn(optionContainsValue=list(variables=variable))
+  dat = dataset[[.v(variable)]]
+  
+  pptable$addColumnInfo(name = "mean",   title = "Mean",         type = "integer", combine = FALSE)
+  pptable$addColumnInfo(name = "sd",     title = "StDev",        type = "integer")
+  pptable$addColumnInfo(name = "N",      title = "N",            type = "integer")
+  pptable$addColumnInfo(name = "AD",     title = "AD",           type = "integer")
+  pptable$addColumnInfo(name = "P_value",title = "P-value",      type = "integer")
+  
+  pptable$addRows(list(
+    mean = round(mean(dat),3),
+    sd         = round(sd(dat),3),
+    N          = length(dat),
+    AD         = round(nortest::ad.test(x = dat)$statistic,3),
+    P_value    = round(nortest::ad.test(x = dat)$p.value,3)
+  ))
+  
+  
+  return(pptable)  
 }
