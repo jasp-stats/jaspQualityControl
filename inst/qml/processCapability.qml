@@ -62,7 +62,7 @@ Form
 
     CheckBox { name: "initialXbarchart";			label: qsTr("X-bar Chart")						}
     CheckBox { name: "initialHistogram";			label: qsTr("Histogram")						}
-    CheckBox { name: "initialProbabilityPlot";		label: qsTr("Normal Probability Plot")
+    CheckBox { name: "initialProbabilityPlot";		label: qsTr("Probability Plot")
         DropDown{
           name: "rank"
           label: qsTr("Rank method")
@@ -100,7 +100,7 @@ Form
 
     CheckBox { name: "followupControlchart";		label: qsTr("X-bar & Range Control Chart")		}
     CheckBox { name: "followupHistogram";			label: qsTr("Histogram")						}
-    CheckBox { name: "followupProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
+    CheckBox { name: "followupProbabilityPlot";		label: qsTr("Probability Plot")			        }
     CheckBox { name: "followupCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
   }
 }
