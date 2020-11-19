@@ -97,7 +97,6 @@ Form
   Section
   {
     title: qsTr("Follow-up Process Capability Study")
-
     CheckBox { name: "followupControlchart";    label: qsTr("X-bar & Range Control Chart")    }
     CheckBox { name: "followupHistogram";     label: qsTr("Histogram")            }
     CheckBox { name: "followupProbabilityPlot";   label: qsTr("Probability Plot")             }
