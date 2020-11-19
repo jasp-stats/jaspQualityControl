@@ -13,10 +13,10 @@ Imports:
   ggplot2,
   jaspBase,
   jaspGraphs,
-  qcc
-  nortest
-  mle.tools
-  fitdistrplus
+  qcc,
+  nortest,
+  mle.tools,
+  fitdistrplus,
   goftest
 Remotes:
   jasp-stats/jaspBase,
