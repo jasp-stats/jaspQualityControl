@@ -61,18 +61,18 @@ Form
     title: qsTr("Initial Process Capability Study")
 
     CheckBox { name: "initialXbarchart";			label: qsTr("X-bar Chart")						}
-    CheckBox { name: "initialHistogram";			label: qsTr("Histogram")						}
-    CheckBox { name: "initialProbabilityPlot";		label: qsTr("Normal Probability Plot")
+    CheckBox { name: "initialHistogram";			label: qsTr("Histogram")						  }
+    CheckBox { name: "initialProbabilityPlot";		label: qsTr("Probability Plot")
         DropDown{
           name: "rank"
           label: qsTr("Rank method")
           indexDefaultValue: 0
           values:
             [
-              { value: "median",		label: qsTr("Median Rank (Benard)")		                                 },
-              { value: "mean",	        label: qsTr("Mean Rank (Herd-Johnson)")					                 },
+              { value: "median",		label: qsTr("Median Rank (Benard)")		                       },
+              { value: "mean",	        label: qsTr("Mean Rank (Herd-Johnson)")					         },
               { value: "KM",		    label: qsTr("Kaplan-Meier")							                     },
-              { value: "KMmodif",		label: qsTr("Modified Kaplan-Meier (Hazen)")							 }
+              { value: "KMmodif",		label: qsTr("Modified Kaplan-Meier (Hazen)")							   }
 
             ]
 
@@ -83,9 +83,9 @@ Form
             indexDefaultValue: 0
             values:
             [
-                { label: qsTr("Normal"),	                           	value: "Normal"		                },
-                { label: qsTr("Lognormal"),	                            value: "Lognormal"                 	},
-                { label: qsTr("Weibull"),				                value: "Weibull"			        }
+                { label: qsTr("Normal"),	                     	value: "Normal"		                          },
+                { label: qsTr("Lognormal"),	                    value: "Lognormal"                 	        },
+                { label: qsTr("Weibull"),				                value: "Weibull"			                      }
 
             ]
 
@@ -98,9 +98,9 @@ Form
   {
     title: qsTr("Follow-up Process Capability Study")
 
-    CheckBox { name: "followupControlchart";		label: qsTr("X-bar & Range Control Chart")		}
-    CheckBox { name: "followupHistogram";			label: qsTr("Histogram")						}
-    CheckBox { name: "followupProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
+    CheckBox { name: "followupControlchart";		label: qsTr("X-bar & Range Control Chart")		    }
+    CheckBox { name: "followupHistogram";			label: qsTr("Histogram")					             	    }
+    CheckBox { name: "followupProbabilityPlot";		label: qsTr("Probability Plot")			            }
     CheckBox { name: "followupCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
   }
 }
