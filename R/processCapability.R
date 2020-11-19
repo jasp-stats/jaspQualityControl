@@ -16,18 +16,18 @@
 #
 
 processCapability <- function(jaspResults, dataset, options){
-  
-  variables <- unlist(options$diameter)
+
+  diameter <- unlist(options$diameter)
   subgroupsName <- options$subgroups
   makeSubgroups <- subgroupsName != ""
   
   if (is.null(dataset)) {
     if (makeSubgroups) {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = subgroupsName)
-      dataset.factors <- .readDataSetToEnd(columns = variables, columns.as.factor = subgroupsName)
+      dataset         <- .readDataSetToEnd(columns.as.numeric = diameter, columns.as.factor = subgroupsName)
+      dataset.factors <- .readDataSetToEnd(columns = diameter, columns.as.factor = subgroupsName)
     } else {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = variables)
-      dataset.factors <- .readDataSetToEnd(columns = variables)
+      dataset         <- .readDataSetToEnd(columns.as.numeric = diameter)
+      dataset.factors <- .readDataSetToEnd(columns = diameter)
     }
   }
 
@@ -54,7 +54,8 @@ processCapability <- function(jaspResults, dataset, options){
     }
     
     initialCapabilityAnalysis <- jaspResults[["initialCapabilityAnalysis"]]
-    initialCapabilityAnalysis[["processDataTable"]] <- .processDataTable(options, dataset)
+    initialCapabilityAnalysis[["processDataTable"]] <- .processDataTable(options, dataset, diameter, subgroupsName)
+    initialCapabilityAnalysis[["capabilityTable"]] <- .capabilityTable(options, dataset)
     
     
   }
@@ -82,38 +83,50 @@ processCapability <- function(jaspResults, dataset, options){
     }
     
     followupCapabilityAnalysis <- jaspResults[["followupCapabilityAnalysis"]]
-    followupCapabilityAnalysis[["processDataTable"]] <- .processDataTable(options, dataset)
+    followupCapabilityAnalysis[["processDataTable"]] <- .processDataTable(options, dataset, diameter, subgroupsName)
+    followupCapabilityAnalysis[["capabilityTable"]] <- .capabilityTable(options, dataset)
   }
   
   return()
 }
   
-.processDataTable <- function(options, dataset){
+.processDataTable <- function(options, dataset, diameter, subgroupsName){
   
   processDataTable <- createJaspTable(title = gettext("Process Data"))
   processDataTable$dependOn(c("upperSpecification","lowerSpecification","targetValue","diameter","subgroups"))
 
   
-  processDataTable$addColumnInfo(name = "lowerSpecificationLimit", type = "number", title = gettext("LSL"), format = "dp:")
-  processDataTable$addColumnInfo(name = "targetValue", type = "number", title = gettext("Target"), format = "dp:0")
-  processDataTable$addColumnInfo(name = "upperSpecificationLimit", type = "number", title = gettext("USL"), format = "dp:0")
-  processDataTable$addColumnInfo(name = "sampleMean", type = "number", title = gettext("Sample Mean"), format = "dp:4")
+  processDataTable$addColumnInfo(name = "lowerSpecificationLimit", type = "integer", title = gettext("LSL"), format = "dp:")
+  processDataTable$addColumnInfo(name = "targetValue", type = "integer", title = gettext("Target"), format = "dp:0")
+  processDataTable$addColumnInfo(name = "upperSpecificationLimit", type = "integer", title = gettext("USL"), format = "dp:0")
+  processDataTable$addColumnInfo(name = "sampleMean", type = "integer", title = gettext("Sample Mean"), format = "dp:4")
   processDataTable$addColumnInfo(name = "sampleN", type = "number", title = gettext("Sample N"), format = "dp:0")
-  processDataTable$addColumnInfo(name = "stDevWithin", type = "number", title = gettext("StDev (Within)"), format = "dp:4")
-  processDataTable$addColumnInfo(name = "stDevOverall", type = "number", title = gettext("StDev (Overall)"), format = "dp:4")
+  processDataTable$addColumnInfo(name = "stDevWithin", type = "integer", title = gettext("StDev (Within)"), format = "dp:4")
+  processDataTable$addColumnInfo(name = "stDevOverall", type = "integer", title = gettext("StDev (Overall)"), format = "dp:4")
   
-  upperSpecificationLimit <- options$upperSpecification
-  lowerSpecificationLimit <- options$lowerSpecification
+  USL <- options$upperSpecification
+  LSL <- options$lowerSpecification
   targetValue <- options$targetValue
-  sampleMean <- numeric()
-  sampleN <- numeric()
+  sampleMean <- mean(dataset[[diameter]])
+  sampleN <- length(dataset[[diameter]])
   
-  stDevWithin <- numeric()
-  stDevOverall <- sd(options$diameter)
+  subgroupRanges <- aggregate(dataset[[diameter]], list(dataset[[subgroupsName]]),range) 
+  names(subgroupRanges)[1] <- "subgroup"
+  names(subgroupRanges)[2] <- "range"
   
-  processDataTable$addRows(list("lowerSpecificationLimit" = lowerSpecificationLimit,
+  rBar <- sum(subgroupRanges$range) / length(subgroupRanges$subgroup)
+  d2 <- 2 #based on subgroup size
+  
+  stDevWithin <- rBar/d2
+  
+  subgroupDev <- aggregate(dataset[[diameter]], list(dataset[[subgroupsName]]),sd) 
+  names(subgroupDev)[1] <- "subgroup"
+  names(subgroupDev)[2] <- "standardDeviation"
+  stDevOverall <- sqrt((1/sampleN) * (subgroupDev$standardDeviation)^2)
+  
+  processDataTable$addRows(list("lowerSpecificationLimit" = LSL,
                                 "targetValue" = targetValue,
-                                "upperSpecificationLimit" = upperSpecificationLimit,
+                                "upperSpecificationLimit" = USL,
                                 "sampleMean" = sampleMean,
                                 "sampleN" = sampleN,
                                 "stDevWithin" = stDevWithin,
@@ -124,6 +137,84 @@ processCapability <- function(jaspResults, dataset, options){
 }
 
 
+.observedPerformanceTable <- function(options, dataset){
+  observedPerformanceTable <- createJaspTable(title = gettext("Observed Performance"))
   
+}
+
+.expWithinPerformanceTable <- function(options, dataset){
+  expWithinPerformanceTable <- createJaspTable(title = gettext("Exp. Within Performance"))
+  
+}
+
+.expOverallPerformanceTable <- function(options, dataset){
+  expOverallPerformanceTable <- createJaspTable(title = gettext("Exp. Overall Performance"))
+  
+}
+
+.capabilityTable <- function(options, dataset){
+  
+  potentialCapabilityTable <- createJaspTable(title = gettext("Potential (Within) Capability"))
+  
+  USL <- options$upperSpecification
+  LSL <- options$lowerSpecification
+  targetValue <- options$targetValue
+  sampleN <- length(dataset[[diameter]])
+  
+  subgroupRanges <- aggregate(dataset[[diameter]], list(dataset[[subgroupsName]]),range) 
+  names(subgroupRanges)[1] <- "subgroup"
+  names(subgroupRanges)[2] <- "range"
+  
+  rBar <- sum(subgroupRanges$range) / length(subgroupRanges$subgroup)
+  d2 <- 2 #based on subgroup size
+  
+  stDevWithin <- rBar/d2
+  
+  subgroupDev <- aggregate(dataset[[diameter]], list(dataset[[subgroupsName]]),sd) 
+  names(subgroupDev)[1] <- "subgroup"
+  names(subgroupDev)[2] <- "standardDeviation"
+  stDevOverall <- sqrt((1/sampleN) * (subgroupDev$standardDeviation)^2)
+  
+  targetValue <- options$targetValue
+  
+  subgroupAverage <- aggregate(dataset[[diameter]], list(dataset[[subgroupsName]]),mean) 
+  names(subgroupDev)[1] <- "subgroup"
+  names(subgroupDev)[2] <- "average"
+  grandAverage <- mean(subgroupAverage$average)
+  
+  processSigma <- numeric()    
+  
+  potentialCapabilityTable$addColumnInfo(name = "CP", type = "integer", title = gettext("CP")
+  potentialCapabilityTable$addColumnInfo(name = "CPL", type = "integer", title = gettext("CPL")                                            
+  potentialCapabilityTable$addColumnInfo(name = "CPU", type = "integer", title = gettext("CPU")
+  potentialCapabilityTable$addColumnInfo(name = "CPK", type = "integer", title = gettext("CPK")  
+
+#Capability Indices
+  CP <- (USL - LSL) / (6*stDevWithin)
+  CPL <- (grandAverage - LSL) / (3*stDevWithin)
+  CPU <- (USL - grandAverage) / (3*stDevWithin)
+  CPK <- min(CPU, CPL)
+                                                                                                                                                      potentialCapabilityTable$addRows("CP" = CP,
+                                   "CPL" = CPL,
+                                   "CPU" = CPU,
+                                   "CPK" = CPK)
+                                                                                                                                                      overallCapabilityTable <- createJaspTable(title = gettext("Overall Capability"))
+                                                                                                                                                      overallCapabilityTable$addColumnInfo(name = "PP", type = "integer", title = gettext("CP")
+  overallCapabilityTable$addColumnInfo(name = "PPL", type = "integer", title = gettext("CPL")                                            
+  overallCapabilityTable$addColumnInfo(name = "PPU", type = "integer", title = gettext("CPU")
+  overallCapabilityTable$addColumnInfo(name = "PPK", type = "integer", title = gettext("CPK") 
+  overallCapabilityTable$addColumnInfo(name = "CPM", type = "integer", title = gettext("CPM") 
+                                                                                                                                                    ´#Performance Indices
+  PP <- (USL - LSL) / (6*stDevOverall)
+  PPL <- (grandAverage - LSL) / (3*stDevOverall)
+  PPU <- (USL - grandAverage) / (3*stDevOverall)
+  PPK <- min(PPU, PPL)
+  CPM <- CP / sqrt(1 + (grandAverage - targetValue)^2 / processSigma^2)
+                                                                                                                                                      overallCapabilityTable$addRows("PP" = PP,                                                                                                                                         "PPL" = PPL,
+                                "PPU" = PPU,
+                                "PPK" = PPK,
+                                "CPM" = CPM)
+                                                                                                                                                      return()                                          
+}  
 
   
