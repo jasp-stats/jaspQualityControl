@@ -16,7 +16,7 @@
 #
 
 processCapability <- function(jaspResults, dataset, options){
-
+  
   diameter <- unlist(options$diameter)
   subgroupsName <- options$subgroups
   makeSubgroups <- subgroupsName != ""
@@ -30,22 +30,22 @@ processCapability <- function(jaspResults, dataset, options){
       dataset.factors <- .readDataSetToEnd(columns = diameter)
     }
   }
-
-# Initial Process Capability Study
+  
+  # Initial Process Capability Study
   
   # X-bar chart (by Tom)
   if (options$initialControlchart) {
-      
+    
   }
   # Histogram (by Jonas)
   if (options$initialHistogram) {
-     
+    
   }
   # Normal Probability Plot
   if (options$initialProbabilityPlot) {
     
   }
-    # Process Capability of Diameter (by Milena)
+  # Process Capability of Diameter (by Milena)
   if (options$initialCapabilityAnalysis && is.null(jaspResults[["initialCapabilityAnalysis"]])){
     if(is.null(jaspResults[["initialCapabilityAnalysis"]])) {
       jaspResults[["initialCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Diameter (Initial Capability Study)"))
@@ -60,7 +60,7 @@ processCapability <- function(jaspResults, dataset, options){
     
   }
   
-# Follow-up Process Capability Study
+  # Follow-up Process Capability Study
   
   # X-bar & Range Control Chart (by Tom)
   if (options$followupControlchart) {
@@ -89,12 +89,12 @@ processCapability <- function(jaspResults, dataset, options){
   
   return()
 }
-  
+
 .processDataTable <- function(options, dataset, diameter, subgroupsName){
   
   processDataTable <- createJaspTable(title = gettext("Process Data"))
   processDataTable$dependOn(c("upperSpecification","lowerSpecification","targetValue","diameter","subgroups"))
-
+  
   
   processDataTable$addColumnInfo(name = "lowerSpecificationLimit", type = "integer", title = gettext("LSL"), format = "dp:")
   processDataTable$addColumnInfo(name = "targetValue", type = "integer", title = gettext("Target"), format = "dp:0")
@@ -184,37 +184,40 @@ processCapability <- function(jaspResults, dataset, options){
   
   processSigma <- numeric()    
   
-  potentialCapabilityTable$addColumnInfo(name = "CP", type = "integer", title = gettext("CP")
-  potentialCapabilityTable$addColumnInfo(name = "CPL", type = "integer", title = gettext("CPL")                                            
-  potentialCapabilityTable$addColumnInfo(name = "CPU", type = "integer", title = gettext("CPU")
-  potentialCapabilityTable$addColumnInfo(name = "CPK", type = "integer", title = gettext("CPK")  
-
-#Capability Indices
+  potentialCapabilityTable$addColumnInfo(name = "CP", type = "integer", title = gettext("CP"))
+  potentialCapabilityTable$addColumnInfo(name = "CPL", type = "integer", title = gettext("CPL"))                                            
+  potentialCapabilityTable$addColumnInfo(name = "CPU", type = "integer", title = gettext("CPU"))
+  potentialCapabilityTable$addColumnInfo(name = "CPK", type = "integer", title = gettext("CPK"))  
+  
+  #Capability Indices
   CP <- (USL - LSL) / (6*stDevWithin)
   CPL <- (grandAverage - LSL) / (3*stDevWithin)
   CPU <- (USL - grandAverage) / (3*stDevWithin)
   CPK <- min(CPU, CPL)
-                                                                                                                                                      potentialCapabilityTable$addRows("CP" = CP,
+  potentialCapabilityTable$addRows("CP" = CP,
                                    "CPL" = CPL,
                                    "CPU" = CPU,
                                    "CPK" = CPK)
-                                                                                                                                                      overallCapabilityTable <- createJaspTable(title = gettext("Overall Capability"))
-                                                                                                                                                      overallCapabilityTable$addColumnInfo(name = "PP", type = "integer", title = gettext("CP")
-  overallCapabilityTable$addColumnInfo(name = "PPL", type = "integer", title = gettext("CPL")                                            
-  overallCapabilityTable$addColumnInfo(name = "PPU", type = "integer", title = gettext("CPU")
-  overallCapabilityTable$addColumnInfo(name = "PPK", type = "integer", title = gettext("CPK") 
-  overallCapabilityTable$addColumnInfo(name = "CPM", type = "integer", title = gettext("CPM") 
-                                                                                                                                                    ´#Performance Indices
+  
+  overallCapabilityTable <- createJaspTable(title = gettext("Overall Capability"))
+  overallCapabilityTable$addColumnInfo(name = "PP", type = "integer", title = gettext("CP"))
+  overallCapabilityTable$addColumnInfo(name = "PPL", type = "integer", title = gettext("CPL"))                                            
+  overallCapabilityTable$addColumnInfo(name = "PPU", type = "integer", title = gettext("CPU"))
+  overallCapabilityTable$addColumnInfo(name = "PPK", type = "integer", title = gettext("CPK")) 
+  overallCapabilityTable$addColumnInfo(name = "CPM", type = "integer", title = gettext("CPM"))
+  
+  ´#Performance Indices
   PP <- (USL - LSL) / (6*stDevOverall)
   PPL <- (grandAverage - LSL) / (3*stDevOverall)
   PPU <- (USL - grandAverage) / (3*stDevOverall)
   PPK <- min(PPU, PPL)
   CPM <- CP / sqrt(1 + (grandAverage - targetValue)^2 / processSigma^2)
-                                                                                                                                                      overallCapabilityTable$addRows("PP" = PP,                                                                                                                                         "PPL" = PPL,
-                                "PPU" = PPU,
-                                "PPK" = PPK,
-                                "CPM" = CPM)
-                                                                                                                                                      return()                                          
+  overallCapabilityTable$addRows("PP" = PP,                                                                                                                                         
+                                 "PPL" = PPL,
+                                 "PPU" = PPU,
+                                 "PPK" = PPK,
+                                 "CPM" = CPM)
+  return()                                          
 }  
 
-  
+
