@@ -17,6 +17,12 @@
 
 measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
+  #installedPkgs <- installed.packages()
+  #if (!("remotes" %in% installedPkgs[, 1L]))
+  #  install.packages("remotes")
+  #if (!("jaspGraphs" %in% installedPkgs[, 1L]) || package_version(installedPkgs["jaspGraphs", "Version"]) < "0.5.1")
+  #  remotes::install_github("jasp-stats/jaspGraphs", upgrade = "never")
+
   measurements <- unlist(options$measurements)
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
@@ -104,7 +110,7 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
     jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
   }
 
-  # Measurement by Operator Interaction Plot
+  # Parts by Operator Interaction Plot
   if (options[["gaugeByInteraction"]]) {
     if(is.null(jaspResults[["gaugeByInteraction"]])) {
       jaspResults[["gaugeByInteraction"]] <- createJaspContainer(gettext("Parts by Operator Interaction Graph"))
@@ -351,15 +357,10 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
   colors <- rainbow(length(meansPerOperator))
 
   for(i in 1:length(meansPerOperator)){
-    p <- p + ggplot2::geom_point(data = meansPerOperator[[i]], ggplot2::aes(x = .data[[parts]], y = .data[[measurements]]
-                                                                            ), col = colors[i])
+    p <- p + ggplot2::geom_point(data = meansPerOperator[[i]], ggplot2::aes_string(x = parts, y = measurements),
+                                 col = colors[i])
   }
 
-
-  #p <- p + ggplot2::scale_color_manual(name = "Operators",
-  #                                     breaks = c("c1", "c2", "c3"),
-  #                                     values = c("c1" = "black", "c2" = "red", "c3" = "blue"),
-  #                                     labels = c("Operator A", "Operator B", "Operator C"))
 
   p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = "right")
 
