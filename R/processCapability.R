@@ -205,8 +205,8 @@ processCapability <- function(jaspResults, dataset, options){
   overallCapabilityTable$addColumnInfo(name = "PPU", type = "integer", title = gettext("CPU"))
   overallCapabilityTable$addColumnInfo(name = "PPK", type = "integer", title = gettext("CPK")) 
   overallCapabilityTable$addColumnInfo(name = "CPM", type = "integer", title = gettext("CPM"))
-  
-  ´#Performance Indices
+
+  #Performance Indices
   PP <- (USL - LSL) / (6*stDevOverall)
   PPL <- (grandAverage - LSL) / (3*stDevOverall)
   PPU <- (USL - grandAverage) / (3*stDevOverall)
