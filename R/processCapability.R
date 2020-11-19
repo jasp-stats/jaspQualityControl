@@ -26,14 +26,8 @@ processCapability <- function(jaspResults, dataset, options){
       dataset         <- .readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = subgroupsName)
       dataset.factors <- .readDataSetToEnd(columns = variables, columns.as.factor = subgroupsName)
     } else {
-<<<<<<< HEAD
       dataset         <- .readDataSetToEnd(columns.as.numeric = variables)
       dataset.factors <- .readDataSetToEnd(columns = variables)
-    }
-  }
-=======
-      dataset         <- .readDataSetToEnd(columns.as.numeric = diameter)
-      dataset.factors <- .readDataSetToEnd(columns = diameter)
     }
   }
   
@@ -96,7 +90,6 @@ processCapability <- function(jaspResults, dataset, options){
   }
   
   return()
-}
 
 .processDataTable <- function(options, dataset, diameter, subgroupsName){
   
@@ -121,6 +114,12 @@ processCapability <- function(jaspResults, dataset, options){
   getInfo <- function(x) {  
     c("diff" = diff(range(x)), "sd2" = (sd(x))^2)
   }
+  
+  subgroupInfo <- by(dataset[[diameter]], list(dataset[[subgroupsName]]), getInfo)
+  subgroupInfoMatrix <- matrix(unlist(subgroupInfo), ncol = length(subgroupInfo[[1]]), byrow = TRUE)
+  colnames(subgroupInfoMatrix) <- names(subgroupInfo[[1]])
+  rownames(subgroupInfoMatrix) <- names(subgroupInfo)
+  
   
   subgroupInfo <- by(dataset[[diameter]], list(dataset[[subgroupsName]]), getInfo)
   subgroupInfoMatrix <- matrix(unlist(subgroupInfo), ncol = length(subgroupInfo[[1]]), byrow = TRUE)
@@ -173,7 +172,6 @@ processCapability <- function(jaspResults, dataset, options){
      XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
      XbarPlot$dependOn(optionContainsValue= list(variables=variables))
   }
-
 #Xbar & R cahrts
 .capabilityTable <- function(options, dataset, diameter, subgroupsName){
   
@@ -187,6 +185,15 @@ processCapability <- function(jaspResults, dataset, options){
   getInfo <- function(x) {  
     c("diff" = diff(range(x)), "mean" = mean(x), "sd2" = (sd(x))^2)
   }
+  
+  subgroupInfo <- by(dataset[[diameter]], list(dataset[[subgroupsName]]), getInfo)
+  subgroupInfoMatrix <- matrix(unlist(subgroupInfo), ncol = length(subgroupInfo[[1]]), byrow = TRUE)
+  colnames(subgroupInfoMatrix) <- names(subgroupInfo[[1]])
+  rownames(subgroupInfoMatrix) <- names(subgroupInfo)
+  
+  rBar <- sum(subgroupInfoMatrix[, "diff"]) / length(dataset[[subgroupsName]])
+  d2 <- 2 #based on subgroup size (needs to be updated)
+  
   
   subgroupInfo <- by(dataset[[diameter]], list(dataset[[subgroupsName]]), getInfo)
   subgroupInfoMatrix <- matrix(unlist(subgroupInfo), ncol = length(subgroupInfo[[1]]), byrow = TRUE)
@@ -224,7 +231,6 @@ processCapability <- function(jaspResults, dataset, options){
   overallCapabilityTable$addColumnInfo(name = "PPU", type = "integer", title = gettext("PPU"))
   overallCapabilityTable$addColumnInfo(name = "PPK", type = "integer", title = gettext("PPK")) 
   overallCapabilityTable$addColumnInfo(name = "CPM", type = "integer", title = gettext("CPM"))
-
   #Performance Indices
   PP <- (USL - LSL) / (6*stDevOverall)
   PPL <- (grandAverage - LSL) / (3*stDevOverall)
