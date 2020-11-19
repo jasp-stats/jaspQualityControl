@@ -33,7 +33,6 @@ processCapability <- function(jaspResults, dataset, options){
       dataset.factors <- .readDataSetToEnd(columns = diameter)
     }
   }
-
   # Initial Process Capability Study
 
   # Histogram (by Jonas)
