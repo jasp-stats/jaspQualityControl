@@ -27,9 +27,9 @@ Form
 	{
 		id:										variablesForm
 
-		AvailableVariablesList
+        AvailableVariablesList
 		{
-			name:								"variablesForm"
+            name:								"variablesForm"
 		}
 
 		AssignedVariablesList
@@ -77,4 +77,31 @@ Form
 		CheckBox { name: "followupProbabilityPlot";		label: qsTr("Normal Probability Plot")			}
 		CheckBox { name: "followupCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")	}
 	}
+
+    Group
+    {
+        IntegerField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit")                    }
+        IntegerField { name: "upperSpecification";  label: qsTr("Upper Specification Limit")                    }
+        IntegerField { name: "targetValue";         label: qsTr("Target value")                                 }
+    }
+
+    Section
+     {
+        title: qsTr("Initial Process Capability Study")
+
+        CheckBox { name: "initialControlchart";         label: qsTr("X-bar Chart")                      }
+        CheckBox { name: "initialHistogram";            label: qsTr("Histogram")                        }
+        CheckBox { name: "initialProbabilityPlot";      label: qsTr("Normal Probability Plot")          }
+        CheckBox { name: "initialCapabilityAnalysis";   label: qsTr("Process Capability of Diameter")   }
+     }
+
+    Section
+     {
+        title: qsTr("Follow-up Process Capability Study")
+
+        CheckBox { name: "followupControlchart";		label: qsTr("X-bar & Range Control Chart")      }
+        CheckBox { name: "followupHistogram";           label: qsTr("Histogram")                        }
+        CheckBox { name: "followupProbabilityPlot";     label: qsTr("Normal Probability Plot")			}
+        CheckBox { name: "followupCapabilityAnalysis";	label: qsTr("Process Capability of Diameter")   }
+     }
 }
