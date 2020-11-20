@@ -34,7 +34,7 @@ Form
     AssignedVariablesList
     {
       id:                 variable1
-      name:               "diameter"
+      name:               "variables"
       title:                qsTr("Diameter")
       allowedColumns:           ["scale"]
     }
