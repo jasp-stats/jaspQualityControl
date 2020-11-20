@@ -17,17 +17,17 @@
 
 processCapability <- function(jaspResults, dataset, options){
 
-  variables <- unlist(options$diameter)
+  variables <- unlist(options$variables)
   subgroupsName <- options$subgroups
   makeSubgroups <- subgroupsName != ""
 
   if (is.null(dataset)) {
     if (makeSubgroups) {
-      dataset         <- na.omit(.readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = subgroupsName))
-      dataset.factors <- na.omit(.readDataSetToEnd(columns = variables, columns.as.factor = subgroupsName))
+      dataset         <- .readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = subgroupsName)
+      dataset.factors <- .readDataSetToEnd(columns = variables, columns.as.factor = subgroupsName)
     } else {
-      dataset         <- na.omit(.readDataSetToEnd(columns.as.numeric = variables))
-      dataset.factors <- na.omit(.readDataSetToEnd(columns = variables))
+      dataset         <- .readDataSetToEnd(columns.as.numeric = variables)
+      dataset.factors <- .readDataSetToEnd(columns = variables)
     }
   }
 
@@ -43,7 +43,6 @@ processCapability <- function(jaspResults, dataset, options){
       jaspResults[["PPtables"]]$position <- 11
     }
 
-
     PPplots <- jaspResults[["initialProbabilityPlot"]]
     PPtables <- jaspResults[["PPtables"]]
 
@@ -55,29 +54,29 @@ processCapability <- function(jaspResults, dataset, options){
 
 #Xbar chart intial
   if(options$initialXbarchart & is.null(jaspResults[["initialXbarchart"]])) {
-      jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 1100, height = 400)
-      jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
-      jaspResults[["XbarPlot"]]$position <- 11
-      XbarPlot <- jaspResults[["XbarPlot"]]
-      XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
-      XbarPlot$dependOn(optionContainsValue= list(variables=variables))
+     jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 1100, height = 400)
+     jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
+     jaspResults[["XbarPlot"]]$position <- 11
+     XbarPlot <- jaspResults[["XbarPlot"]]
+     XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
+     XbarPlot$dependOn(optionContainsValue= list(variables=variables))
   }
 
 #Xbar & R cahrts
 
   if(options$followupControlchart & is.null(jaspResults[["followupControlchart"]])) {
-      jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 1100, height = 400)
-      jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
-      jaspResults[["XbarPlot"]]$position <- 11
-      XbarPlot <- jaspResults[["XbarPlot"]]
-      XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
-      XbarPlot$dependOn(optionContainsValue= list(variables=variables))
+    jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 1100, height = 400)
+    jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
+    jaspResults[["XbarPlot"]]$position <- 11
+    XbarPlot <- jaspResults[["XbarPlot"]]
+    XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
+    XbarPlot$dependOn(optionContainsValue= list(variables=variables))
 
-      jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 1100, height= 400)
-      jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
-      jaspResults[["RPlot"]]$position <- 11
-      RPlot<- jaspResults[["RPlot"]]
-      RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
-      RPlot$dependOn(optionContainsValue= list(variables=variables))
+    jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 1100, height= 400)
+    jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
+    jaspResults[["RPlot"]]$position <- 11
+    RPlot<- jaspResults[["RPlot"]]
+    RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
+    RPlot$dependOn(optionContainsValue= list(variables=variables))
   }
 }
