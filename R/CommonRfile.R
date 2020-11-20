@@ -1,9 +1,9 @@
-# Common R file 
+# Common R file
 .XbarchartNoId <- function(dataset, options) {
 
-    ready <- (length(options$variables) > 1)
-    if (!ready)
-      return()
+    #ready <- (length(options$variables) > 1)
+    #if (!ready)
+    #  return()
 
     data1 <- dataset
     means <- rowMeans(data1)
@@ -43,9 +43,9 @@
 
   .RchartNoId <- function(dataset, options) {
 
-    ready <- (length(options$variables) > 1)
-    if (!ready)
-      return()
+    #ready <- (length(options$variables) > 1)
+    #if (!ready)
+    #  return()
 
     #Arrange data and compute
     data1 <- dataset
@@ -87,7 +87,7 @@
   title <- variable
   ppPlot <- createJaspPlot(width=600, aspectRatio=1, title=title)
   ppPlot$dependOn(optionContainsValue=list(variables=variable))
-  
+
   #Arrange data
   x = dataset[[.v(variable)]]
   x <- x[order(x)]
@@ -95,14 +95,14 @@
   i <- rank(x)
   p <- (i - 0.3) / (n + 0.4) # Median method
   y <- qnorm(p = p) # Normal distribution
-  
+
   #Find out variance and covariance of mle's of mu and sigma
   lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
   matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("mu", "sigma"), mle = c(mean(x), sd(x)))
   varMu <- matrix$varcov[1, 1]
   varSigma <- matrix$varcov[2,2]
   covarMuSigma <- matrix$varcov[1, 2]
-  
+
   # Quantities
   pSeq <- seq(0.001, 0.999, 0.001)
   zp <- qnorm(p = pSeq)
@@ -112,12 +112,12 @@
   percentileLower <- percentileEstimate - zalpha * sqrt(varPercentile)
   percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
   data1= data.frame(x = x, y = y)
-  
+
   #Graphics
   ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
   xBreaks <- JASPgraphs::getPrettyAxisBreaks(c(min(x) - 2 , max(x) + 2))
   xlimits <- range(xBreaks)
-  
+
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(ggplot2::aes(y = qnorm(pSeq), x= percentileEstimate)) +
     ggplot2::geom_line(ggplot2::aes(y = qnorm(pSeq), x= percentileLower)) +
@@ -127,23 +127,23 @@
     ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = qnorm(ticks / 100)) +
     JASPgraphs::themeJaspRaw() +
     JASPgraphs::geom_rangeframe()
-  
+
   ppPlot$plotObject <-  p
   return(ppPlot)
 }
 
 .PPtable <- function( dataset, options, variable){
-  
+
   pptable <- createJaspTable(title = gettextf("Descriptives and normality for %s", variable ))
   pptable$dependOn(optionContainsValue=list(variables=variable))
   dat = dataset[[.v(variable)]]
-  
+
   pptable$addColumnInfo(name = "mean",   title = "Mean",         type = "integer", combine = FALSE)
   pptable$addColumnInfo(name = "sd",     title = "StDev",        type = "integer")
   pptable$addColumnInfo(name = "N",      title = "N",            type = "integer")
   pptable$addColumnInfo(name = "AD",     title = "AD",           type = "integer")
   pptable$addColumnInfo(name = "P_value",title = "P-value",      type = "integer")
-  
+
   pptable$addRows(list(
     mean = round(mean(dat),3),
     sd         = round(sd(dat),3),
@@ -151,7 +151,7 @@
     AD         = round(nortest::ad.test(x = dat)$statistic,3),
     P_value    = round(nortest::ad.test(x = dat)$p.value,3)
   ))
-  
-  
-  return(pptable)  
+
+
+  return(pptable)
 }

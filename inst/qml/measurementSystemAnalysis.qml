@@ -55,7 +55,7 @@ Form
 			id:									variable3
 			name:								"measurements"
 			title:								qsTr("Measurements")
-			singleVariable:						true
+			singleVariable:						false
 			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 	}
@@ -85,11 +85,11 @@ Form
 		}
 		CheckBox
 		{
-			name: "gaugeRchart";		label: qsTr("R Chart")
+			name: "gaugeRchart";		label: qsTr("R Chart by Operator")
 		}
 		CheckBox
 		{
-			name: "gaugeXbarChart";		label: qsTr("X-bar Chart")
+			name: "gaugeXbarChart";		label: qsTr("X-bar Chart by Operator")
 		}
 		
 		
@@ -135,20 +135,20 @@ Form
 		CheckBox
 		{
                 name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
-		}		
+				
 
 				
-		CheckBox
-		{
+			CheckBox
+			{
                 name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
-		}
+			}
 				
-		CheckBox
-		{
+			CheckBox
+			{
                 name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
-		}
+			}
 		
-
+		}
 
 		CheckBox
 		{
