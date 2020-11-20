@@ -55,3 +55,6 @@ Rproj.user
 
 # Autosave files
 *.autosave
+
+# Icloud files
+*.icloud
