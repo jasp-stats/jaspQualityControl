@@ -1,7 +1,6 @@
 # Common R file
 .XbarchartNoId <- function(dataset, options) {
 
-
   if(!is.null(options$variables)){
     ready <- (length(options$variables) > 1)
     if (!ready)
@@ -26,25 +25,26 @@
         gettextf("LCL = %g",   round(LCL, 3))
       )
     )
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
-    yLimits <- range(yBreaks)
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
+  )
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL-10, UCL+10))
+  yLimits <- range(yBreaks)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
 
-    p <- ggplot2::ggplot(data2, ggplot2::aes(x = subgroups, y = means)) +
-      ggplot2::geom_line() +
-      ggplot2::geom_point(size = 2, col = ifelse(data2$means > UCL | data2$means < LCL, 2, 1)) +
-      ggplot2::geom_hline(yintercept =  center, color = 'black') +
-      ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
-      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-      ggplot2::scale_y_continuous(name = "Subgroup Mean" ,limits = yLimits, breaks = yBreaks) +
-      ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = c(1, length(subgroups) + 1.5)) +
-      jaspGraphs::geom_rangeframe() +
-      jaspGraphs::themeJaspRaw()
+  p <- ggplot2::ggplot(data2, ggplot2::aes(x = subgroups, y = means)) +
+    ggplot2::geom_line() +
+    ggplot2::geom_point(size = 2, col = ifelse(data2$means > UCL | data2$means < LCL, 2, 1)) +
+    ggplot2::geom_hline(yintercept =  center, color = 'black') +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
+    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
+    ggplot2::scale_y_continuous(name = "Subgroup Mean" ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = c(1, length(subgroups) + 1.5)) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
 
-    return(p)
-  }
+  return(p)
+}
 
-  .RchartNoId <- function(dataset, options) {
+.RchartNoId <- function(dataset, options) {
 
     if(!is.null(options$variables)){
     ready <- (length(options$variables) > 1)
@@ -69,24 +69,26 @@
         gettextf("UCL = %g",   round(UCL, 3)),
         gettextf("LCL = %g",   round(LCL, 3))
       )
+
     )
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
-    yLimits <- range(yBreaks)
+  )
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL-10, UCL+10))
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
+  yLimits <- range(yBreaks)
 
-    p <- ggplot2::ggplot(data2, ggplot2::aes(x = subgroups, y = range)) +
-      ggplot2::geom_line() +
-      ggplot2::geom_point(size = 2, col = ifelse(data2$range > UCL | data2$range < LCL, 2, 1)) +
-      ggplot2::geom_hline(yintercept =  center, color = 'black') +
-      ggplot2::geom_hline(yintercept = c(UCL,LCL), color = "red") +
-      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-      ggplot2::scale_y_continuous(name = "Subgroup Range" ,limits = yLimits, breaks = yBreaks) +
-      ggplot2::scale_x_continuous(name= "Subgroup" ,breaks = xBreaks, limits = c(1,length(subgroups) + 1.5)) +
-      jaspGraphs::geom_rangeframe() +
-      jaspGraphs::themeJaspRaw()
+  p <- ggplot2::ggplot(data2, ggplot2::aes(x = subgroups, y = range)) +
+    ggplot2::geom_line() +
+    ggplot2::geom_point(size = 2, col = ifelse(data2$range > UCL | data2$range < LCL, 2, 1)) +
+    ggplot2::geom_hline(yintercept =  center, color = 'black') +
+    ggplot2::geom_hline(yintercept = c(UCL,LCL), color = "red") +
+    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
+    ggplot2::scale_y_continuous(name = "Subgroup Range" ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name= "Subgroup" ,breaks = xBreaks, limits = c(1,length(subgroups) + 1.5)) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
 
-    return(p)
-  }
+  return(p)
+}
 
 .ProbabilityPlotNoId <- function(dataset, options, variable, dis){
   title <- variable
@@ -265,6 +267,7 @@
       P_value    = round(goftest::ad.test(x = x, "plnorm", meanlog= as.numeric(fit$estimate[1]), sdlog=as.numeric(fit$estimate[2]) )$p.value,3),
       Normality  = ifelse(round(goftest::ad.test(x = x, "plnorm", meanlog= as.numeric(fit$estimate[1]), sdlog=as.numeric(fit$estimate[2]))$p.value,3) >= 0.05, 'No', 'Yes')
       ))
+
   }
   else if (dis == 'Weibull') {
     fit= fitdistrplus::fitdist(x, 'weibull')
@@ -283,7 +286,6 @@
       P_value    = round(goftest::ad.test(x = x, "pweibull", shape = as.numeric(fit$estimate[1]), scale= as.numeric(fit$estimate[2]))$p.value,3),
       Normality  = ifelse(round(goftest::ad.test(x = x, "pweibull", shape = as.numeric(fit$estimate[1]), scale= as.numeric(fit$estimate[2]))$p.value,3) >= 0.05, 'No', 'Yes')
       ))
-
   }
   return(pptable)
 }
