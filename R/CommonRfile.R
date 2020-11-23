@@ -1,9 +1,12 @@
-# Common R file 
+# Common R file
 .XbarchartNoId <- function(dataset, options) {
 
+
+  if(!is.null(options$variables)){
     ready <- (length(options$variables) > 1)
     if (!ready)
       return()
+  }
 
     data1 <- dataset
     means <- rowMeans(data1)
@@ -43,9 +46,11 @@
 
   .RchartNoId <- function(dataset, options) {
 
+    if(!is.null(options$variables)){
     ready <- (length(options$variables) > 1)
-    if (!ready)
-      return()
+      if (!ready)
+        return()
+    }
 
     #Arrange data and compute
     data1 <- dataset

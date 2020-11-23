@@ -20,13 +20,15 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
   measurements <- unlist(options$measurements)
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
-  #  splitParts<- parts != ""
+
+  numeric.vars <- measurements
+
+  factor.vars <- c(parts, operators)
+
 
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(all.columns = T)
-    #dataset.factors <- .readDataSetToEnd(columns = measurements, columns.as.factor = parts)
+    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
   }
-
 
   # r and R table
   if (options[["rangeRr"]]) {
@@ -104,7 +106,7 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
     jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
   }
 
-  # Measurement by Operator Interaction Plot
+  # Parts by Operator Interaction Plot
   if (options[["gaugeByInteraction"]]) {
     if(is.null(jaspResults[["gaugeByInteraction"]])) {
       jaspResults[["gaugeByInteraction"]] <- createJaspContainer(gettext("Parts by Operator Interaction Graph"))
@@ -112,6 +114,44 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
     }
 
     jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+  }
+
+  # Xbar chart by operator
+  if (options[["gaugeXbarChart"]]) {
+    if(is.null(jaspResults[["gaugeXbarChart"]])) {
+      jaspResults[["gaugeXbarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
+      jaspResults[["gaugeXbarChart"]]$position <- 9
+    }
+
+    XbarCharts <- jaspResults[["gaugeXbarChart"]]
+
+    operatorData <- dataset[[operators]]
+    operatorLevels <- levels(operatorData)
+
+
+    for(operator in operatorLevels){
+      operatorSplit <- subset(dataset, dataset[operators] == operator)
+      XbarCharts[[as.character(operator)]] <- .XbarChart(dataset = operatorSplit, measurements = measurements, parts = parts, operators = operators, options =  options, title = operator)
+    }
+  }
+
+  # R chart by operator
+  if (options[["gaugeRchart"]]) {
+    if(is.null(jaspResults[["gaugeRchart"]])) {
+      jaspResults[["gaugeRchart"]] <- createJaspContainer(gettext("Range Chart by Operator"))
+      jaspResults[["gaugeRchart"]]$position <- 10
+    }
+
+    rangeCharts <- jaspResults[["gaugeRchart"]]
+
+    operatorData <- dataset[[operators]]
+    operatorLevels <- levels(operatorData)
+
+
+    for(operator in operatorLevels){
+      operatorSplit <- subset(dataset, dataset[operators] == operator)
+      rangeCharts[[as.character(operator)]] <- .RangeChart(dataset = operatorSplit, measurements = measurements, parts = parts, operators = operators, options =  options, title = operator)
+    }
   }
   return()
 }
@@ -351,15 +391,10 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
   colors <- rainbow(length(meansPerOperator))
 
   for(i in 1:length(meansPerOperator)){
-    p <- p + ggplot2::geom_point(data = meansPerOperator[[i]], ggplot2::aes(x = .data[[parts]], y = .data[[measurements]]
-                                                                            ), col = colors[i])
+    p <- p + ggplot2::geom_point(data = meansPerOperator[[i]], ggplot2::aes_string(x = parts, y = measurements),
+                                 col = colors[i])
   }
 
-
-  #p <- p + ggplot2::scale_color_manual(name = "Operators",
-  #                                     breaks = c("c1", "c2", "c3"),
-  #                                     values = c("c1" = "black", "c2" = "red", "c3" = "blue"),
-  #                                     labels = c("Operator A", "Operator B", "Operator C"))
 
   p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = "right")
 
@@ -368,6 +403,33 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
   return(plot)
 }
 
+.XbarChart <- function(dataset, measurements, parts, operators, options, title){
+
+  plot <- createJaspPlot(title = paste("Operator", title))
+
+  p <- .XbarchartNoId(dataset = dataset[measurements], options = options)
+
+  plot$dependOn(c("gaugeXbarChart"))
+
+  plot$plotObject <- p
+
+  return(plot)
+
+}
+
+.RangeChart <- function(dataset, measurements, parts, operators, options, title){
+
+  plot <- createJaspPlot(title = paste("Operator", title))
+
+  p <- .RchartNoId(dataset = dataset[measurements], options = options)
+
+  plot$dependOn(c("gaugeRchart"))
+
+  plot$plotObject <- p
+
+  return(plot)
+
+}
 
 #.circleFun <- function(center=c(0,0), diameter=1, npoints=100, start=0, end=2)
 #{
