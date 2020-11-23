@@ -51,9 +51,9 @@ Form
 
   Group
   {
-    IntegerField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit")                    }
-    IntegerField { name: "upperSpecification";  label: qsTr("Upper Specification Limit")                    }
-    IntegerField { name: "targetValue";         label: qsTr("Target value")                                 }
+	  TextField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit")                    }
+	  TextField { name: "upperSpecification";  label: qsTr("Upper Specification Limit")                    }
+	  TextField { name: "targetValue";         label: qsTr("Target value")                                 }
   }
 
   Section
@@ -72,7 +72,6 @@ Form
               { value: "mean",          label: qsTr("Mean Rank (Herd-Johnson)")                          },
               { value: "KM",        label: qsTr("Kaplan-Meier")                                  },
               { value: "KMmodif",   label: qsTr("Modified Kaplan-Meier (Hazen)")               }
-
             ]
 
         }
