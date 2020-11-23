@@ -45,7 +45,7 @@ Form
       name:               "subgroups"
       title:                qsTr("Subgroups")
       singleVariable:           true
-      allowedColumns:           ["nominal", "nominalText"]
+	  allowedColumns:           ["nominal", "nominalText", "ordinal", "scale"]
     }
   }
 
@@ -59,7 +59,6 @@ Form
   Section
   {
     title: qsTr("Initial Process Capability Study")
-
     CheckBox { name: "initialXbarchart";      label: qsTr("X-bar Chart")            }
     CheckBox { name: "initialHistogram";      label: qsTr("Histogram")            }
     CheckBox { name: "initialProbabilityPlot";    label: qsTr("Probability Plot")
