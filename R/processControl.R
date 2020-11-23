@@ -60,7 +60,7 @@ processControl <- function(jaspResults, dataset, options){
       x = length(subgroups) + 1.2,
       y = c(center, UCL, LCL),
       l = c(
-        gettextf("SD = %g", round(center, 3)),
+        gettextf("Mean = %g", round(center, 3)),
         gettextf("UCL = %g",   round(UCL, 3)),
         gettextf("LCL = %g",   round(LCL, 3))
       )
