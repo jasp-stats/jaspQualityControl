@@ -17,17 +17,12 @@
 
 measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
-  #installedPkgs <- installed.packages()
-  #if (!("remotes" %in% installedPkgs[, 1L]))
-  #  install.packages("remotes")
-  #if (!("jaspGraphs" %in% installedPkgs[, 1L]) || package_version(installedPkgs["jaspGraphs", "Version"]) < "0.5.1")
-  #  remotes::install_github("jasp-stats/jaspGraphs", upgrade = "never")
-
   measurements <- unlist(options$measurements)
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
 
   numeric.vars <- measurements
+
   factor.vars <- c(parts, operators)
 
 
