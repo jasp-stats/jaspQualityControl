@@ -23,6 +23,9 @@ processControl <- function(jaspResults, dataset, options){
   makeID <- ID != ""
   numberMissing <- 0
 
+  if(length(variables) == 0)
+	return()
+
   if (is.null(dataset)) {
     if (makeID) {
       dataset         <- .readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = ID)
