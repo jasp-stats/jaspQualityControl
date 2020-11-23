@@ -25,6 +25,8 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
   factor.vars <- c(parts, operators)
 
+  if(length(measurements) == 0)
+    return()
 
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)

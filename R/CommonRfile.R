@@ -6,7 +6,7 @@
     if (!ready)
       return()
   }
-  data1 <- dataset
+  data1 <- dataset[sapply(dataset, is.numeric)]
   means <- rowMeans(data1)
   subgroups <- 1:length(means)
   data2 <- data.frame(subgroups = subgroups, means = means)
@@ -50,7 +50,7 @@
         return()
     }
   #Arrange data and compute
-  data1 <- dataset
+  data1 <- dataset[sapply(dataset, is.numeric)]
   range <- apply(data1, 1, function(x) max(x) - min(x))
   subgroups <- 1:length(range)
   data2 <- data.frame(subgroups = subgroups, range = range)

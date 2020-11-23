@@ -17,26 +17,25 @@
 
 processCapability <- function(jaspResults, dataset, options){
 
-  variables <- unlist(options$variables)
+  diameter <- unlist(options$diameter)
   subgroupsName <- options$subgroups
   makeSubgroups <- subgroupsName != ""
 
+  if(length(diameter) == 0)
+	return()
+
   if (is.null(dataset)) {
     if (makeSubgroups) {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = subgroupsName)
-      dataset.factors <- .readDataSetToEnd(columns = variables, columns.as.factor = subgroupsName)
+      dataset         <- .readDataSetToEnd(columns.as.numeric = diameter, columns.as.factor = subgroupsName)
+      dataset.factors <- .readDataSetToEnd(columns = diameter, columns.as.factor = subgroupsName)
     } else {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = variables)
-      dataset.factors <- .readDataSetToEnd(columns = variables)
+      dataset         <- .readDataSetToEnd(columns.as.numeric = diameter)
+      dataset.factors <- .readDataSetToEnd(columns = diameter)
     }
   }
 
   # Initial Process Capability Study
 
-  # X-bar chart (by Tom)
-  if (options$initialControlchart) {
-
-  }
   # Histogram (by Jonas)
   if (options$initialHistogram) {
 
@@ -49,7 +48,7 @@ processCapability <- function(jaspResults, dataset, options){
   if (options$initialCapabilityAnalysis && is.null(jaspResults[["initialCapabilityAnalysis"]])){
     if(is.null(jaspResults[["initialCapabilityAnalysis"]])) {
       jaspResults[["initialCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Diameter (Initial Capability Study)"))
-      jaspResults[["initialCapabilityAnalysis"]]$dependOn(c("initialCapabilityAnalysis","diameter","subgroups"))
+      jaspResults[["initialCapabilityAnalysis"]]$dependOn(c("initialCapabilityAnalysis","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
       jaspResults[["initialCapabilityAnalysis"]]$position <- 4
     }
 
@@ -75,7 +74,7 @@ processCapability <- function(jaspResults, dataset, options){
   if (options$followupCapabilityAnalysis && is.null(jaspResults[["followupCapabilityAnalysis"]])){
     if(is.null(jaspResults[["followupCapabilityAnalysis"]])) {
       jaspResults[["followupCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Diameter (Follow-up Capability Study)"))
-      jaspResults[["followupCapabilityAnalysis"]]$dependOn(c("followupCapabilityAnalysis","diameter","subgroups"))
+      jaspResults[["followupCapabilityAnalysis"]]$dependOn(c("followupCapabilityAnalysis","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
       jaspResults[["followupCapabilityAnalysis"]]$position <- 8
     }
 
@@ -97,14 +96,14 @@ processCapability <- function(jaspResults, dataset, options){
     jaspResults[["XbarPlot"]]$position <- 11
     XbarPlot <- jaspResults[["XbarPlot"]]
     XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
-    XbarPlot$dependOn(optionContainsValue= list(variables=variables))
+    XbarPlot$dependOn(optionContainsValue= list(diameter=diameter))
 
     jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 1100, height= 400)
     jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
     jaspResults[["RPlot"]]$position <- 11
     RPlot<- jaspResults[["RPlot"]]
     RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
-    RPlot$dependOn(optionContainsValue= list(variables=variables))
+    RPlot$dependOn(optionContainsValue= list(diameter=diameter))
   }
 
   #Probability Plot
@@ -121,7 +120,7 @@ processCapability <- function(jaspResults, dataset, options){
     PPplots <- jaspResults[["initialProbabilityPlot"]]
     PPtables <- jaspResults[["PPtables"]]
 
-    for (var in variables){
+    for (var in diameter){
       PPplots[[var]] <- .ProbabilityPlotNoId(dataset = dataset, options = options, variable = var, dis = options$Nulldis)
       PPtables[[var]] <- .PPtable(dataset = dataset, options = options, variable = var, dis = options$Nulldis)
     }
@@ -134,7 +133,7 @@ processCapability <- function(jaspResults, dataset, options){
      jaspResults[["XbarPlot"]]$position <- 11
      XbarPlot <- jaspResults[["XbarPlot"]]
      XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
-     XbarPlot$dependOn(optionContainsValue= list(variables=variables))
+     XbarPlot$dependOn(optionContainsValue= list(diameter=diameter))
   }
   #Xbar & R cahrts
 
@@ -178,7 +177,7 @@ processCapability <- function(jaspResults, dataset, options){
   rownames(subgroupInfoMatrix) <- names(subgroupInfo)
 
   rBar <- sum(subgroupInfoMatrix[, "diff"]) / length(dataset[[subgroupsName]])
-  d2 <- 2 #based on subgroup size (needs to be updated)
+  d2 <- 2.337 #based on subgroup size (needs to be updated)
 
   stDevWithin <- rBar/d2
   stDevOverall <- sd(dataset[[diameter]])
@@ -213,7 +212,7 @@ processCapability <- function(jaspResults, dataset, options){
   rownames(subgroupInfoMatrix) <- names(subgroupInfo)
 
   rBar <- sum(subgroupInfoMatrix[, "diff"]) / length(dataset[[subgroupsName]])
-  d2 <- 2 #based on subgroup size (needs to be updated)
+  d2 <- 2.337 #based on subgroup size (needs to be updated)
 
 
   subgroupInfo <- by(dataset[[diameter]], list(dataset[[subgroupsName]]), getInfo)
@@ -222,7 +221,6 @@ processCapability <- function(jaspResults, dataset, options){
   rownames(subgroupInfoMatrix) <- names(subgroupInfo)
 
   rBar <- sum(subgroupInfoMatrix[, "diff"]) / length(dataset[[subgroupsName]])
-  d2 <- 2 #based on subgroup size (needs to be updated)
 
   stDevWithin <- rBar/d2
   stDevOverall <- sd(dataset[[diameter]])
