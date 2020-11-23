@@ -76,11 +76,6 @@ Form
 		}
 		CheckBox
 		{
-			name: "gaugeTtest";		label: qsTr("One Sample T-Test")
-			DoubleField { name: "gaugeTtestValue";	label: qsTr("Test value:");		defaultValue: 0;	negativeValues: true	}
-		}
-		CheckBox
-		{
 			name: "gaugeComponentsGraph";		label: qsTr("Graph Variation Components")
 		}
 		CheckBox
@@ -110,10 +105,6 @@ Form
 		CheckBox
 		{
 			name: "gaugeByInteraction";		label: qsTr("Measurement Interaction Graph")
-		}
-		CheckBox
-		{
-			name: "gaugeHistogram";		label: qsTr("Histogram")
 		}
 	}
 	
@@ -196,5 +187,20 @@ Form
 			{
                 name: "IsoPlotTable";		label: qsTr("Iso Plot Table")
 			}
+	}
+	
+		Section
+	{
+		title: qsTr("Determine Bias")
+		
+		CheckBox
+		{
+			name: "biasTtest";		label: qsTr("One Sample T-Test")
+			DoubleField { name: "biasTtestValue";	label: qsTr("Test value:");		defaultValue: 0;	negativeValues: true	}
+		}
+		CheckBox
+		{
+			name: "biasHistogram";		label: qsTr("Histogram")
+		}
 	}
 }
