@@ -1,4 +1,4 @@
-
+# Common R file
 .XbarchartNoId <- function(dataset, options) {
 
   if(!is.null(options$variables)){
