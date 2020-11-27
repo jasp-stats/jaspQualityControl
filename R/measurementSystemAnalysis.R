@@ -183,7 +183,7 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
       jaspResults[["biasHistogram"]]$position <- 13
     }
 
-    jaspResults[["biasTtest"]] <- .biasHistogram(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+    jaspResults[["biasHistogram"]] <- .biasHistogram(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
   }
 
   return()
@@ -508,8 +508,8 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
   table$addColumnInfo(name = "referenceValue",  title = gettext("Reference Value"), type = "number")
   table$addColumnInfo(name = "sd",              title = gettext("SD"), type = "number")
   table$addColumnInfo(name = "se",              title = gettext("SE"), type = "number")
-  table$addColumnInfo(name = "lci",             title = gettext("95% CI LB"), type = "number")
-  table$addColumnInfo(name = "uci",             title = gettext("95% CI UB"), type = "number")
+  table$addColumnInfo(name = "lci",             title = gettext("LB"), type = "number", overtitle = gettext("95% CI"))
+  table$addColumnInfo(name = "uci",             title = gettext("UB"), type = "number", overtitle = gettext("95% CI"))
   table$addColumnInfo(name = "t",               title = gettext("t"), type = "number")
   table$addColumnInfo(name = "p",               title = gettext("p"), type = "pvalue")
 
