@@ -27,7 +27,7 @@ processControl <- function(jaspResults, dataset, options){
   
   dataset <- na.omit(dataset)
   
-  .SchartNoId <- function(dataset, options) {
+.SchartNoId <- function(dataset, options) {
     
     ready <- (length(options$variables) > 1)
     if (!ready)
