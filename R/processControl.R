@@ -22,25 +22,10 @@ processControl <- function(jaspResults, dataset, options){
   ID <- options$ProcessID
   makeID <- ID != ""
   numberMissing <- 0
+  dataset         <- .readDataSetToEnd(columns.as.numeric = variables)
+  dataset.factors <- .readDataSetToEnd(columns = variables)
   
-  if (is.null(dataset)) {
-    if (makeID) {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = ID)
-      dataset.factors <- .readDataSetToEnd(columns = variables, columns.as.factor=ID)
-    } else {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = variables)
-      dataset.factors <- .readDataSetToEnd(columns = variables)
-    }
-  }
-  # Remove missing values
-  if (makeID & length(variables) > 0) {
-    processID <- dataset[[.v(ID)]]
-    dataset <- dataset[!is.na(processID), ]
-    dataset.factors <- dataset.factors[!is.na(processID), ]
-    processID <- na.omit(processID)
-    dataset <- na.omit(dataset)
-  } else {dataset <- na.omit(dataset)
-  }
+  dataset <- na.omit(dataset)
   
   .SchartNoId <- function(dataset, options) {
     

@@ -34,15 +34,6 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable1
-			name:								"ProcessID"
-			title:								qsTr("Process ID")
-			singleVariable:						true
-			allowedColumns:						["nominal"]
-		}
-
-		AssignedVariablesList
-		{
 			id:									variables
 			name:								"variables"
 			title:								qsTr("Measurements")
