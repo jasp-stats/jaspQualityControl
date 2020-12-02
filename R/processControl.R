@@ -24,10 +24,9 @@ processControl <- function(jaspResults, dataset, options){
   numberMissing <- 0
   dataset         <- .readDataSetToEnd(columns.as.numeric = variables)
   dataset.factors <- .readDataSetToEnd(columns = variables)
-  
   dataset <- na.omit(dataset)
   
-  .SchartNoId <- function(dataset, options) {
+.SchartNoId <- function(dataset, options) {
     
     ready <- (length(options$variables) > 1)
     if (!ready)

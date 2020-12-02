@@ -25,6 +25,8 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
   factor.vars <- c(parts, operators)
 
+  if(length(measurements) == 0)
+    return()
 
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
@@ -153,6 +155,37 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
       rangeCharts[[as.character(operator)]] <- .RangeChart(dataset = operatorSplit, measurements = measurements, parts = parts, operators = operators, options =  options, title = operator)
     }
   }
+
+  # Determine Bias Table
+  if (options[["biasTable"]]) {
+    if(is.null(jaspResults[["biasTable"]])) {
+      jaspResults[["biasTable"]] <- createJaspContainer(gettext("Bias Table"))
+      jaspResults[["biasTable"]]$position <- 11
+    }
+
+    jaspResults[["biasTable"]] <- .biasTable(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+  }
+
+  # Determine Bias t-Test
+  if (options[["biasTtest"]]) {
+    if(is.null(jaspResults[["biasTtest"]])) {
+      jaspResults[["biasTtest"]] <- createJaspContainer(gettext("t-Test Bias"))
+      jaspResults[["biasTtest"]]$position <- 12
+    }
+
+    jaspResults[["biasTtest"]] <- .biasTtest(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+  }
+
+  # Determine Bias Histogram
+  if (options[["biasHistogram"]]) {
+    if(is.null(jaspResults[["biasHistogram"]])) {
+      jaspResults[["biasHistogram"]] <- createJaspContainer(gettext("Histogram Bias"))
+      jaspResults[["biasHistogram"]]$position <- 13
+    }
+
+    jaspResults[["biasHistogram"]] <- .biasHistogram(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+  }
+
   return()
 }
 
@@ -430,6 +463,91 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
   return(plot)
 
 }
+
+.biasTable <- function(dataset, measurements, parts, operators, options){
+
+  dataForPart <- subset.data.frame(dataset[measurements], dataset[parts] == options$biasPartName)
+
+  table <- createJaspTable(title = gettext(paste("Bias Table for Part", options$biasPartName)))
+
+  table$dependOn(c("biasPartName", "biasReferenceValue", "biasTable", "biasTolerance"))
+
+  table$addColumnInfo(name = "referenceValue",  title = gettext("Reference Value"), type = "number")
+  table$addColumnInfo(name = "observedAverage", title = gettext("Observed Average"), type = "number")
+  table$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
+  table$addColumnInfo(name = "tolerance",       title = gettext("Tolerance"), type = "number")
+  table$addColumnInfo(name = "biasPercent",     title = gettext("Bias Percent"), type = "number")
+
+  observedAverage <- mean(unlist(dataForPart))
+  bias <- options$biasReferenceValue - observedAverage
+  biasPercent <- abs(bias) / options$biasTolerance * 100
+
+
+  table$addRows(list(      "referenceValue"       = options$biasReferenceValue,
+                           "observedAverage"      = observedAverage,
+                           "bias"                 = bias,
+                           "tolerance"            = options$biasTolerance,
+                           "biasPercent"          = biasPercent))
+
+
+
+  return(table)
+}
+
+.biasTtest <- function(dataset, measurements, parts, operators, options){
+
+  dataForPart <- subset.data.frame(dataset[measurements], dataset[parts] == options$biasPartName)
+
+  table <- createJaspTable(title = gettext(paste("t-Test of Observed Value agaist Reference Value for Part", options$biasPartName)))
+
+  table$dependOn(c("biasPartName", "biasReferenceValue", "biasTtest", "biasTolerance"))
+
+  table$addColumnInfo(name = "part",            title = gettext("Part"), type = "string")
+  table$addColumnInfo(name = "df",              title = gettext("df"), type = "integer")
+  table$addColumnInfo(name = "mean",            title = gettext("Mean"), type = "number")
+  table$addColumnInfo(name = "referenceValue",  title = gettext("Reference Value"), type = "number")
+  table$addColumnInfo(name = "sd",              title = gettext("SD"), type = "number")
+  table$addColumnInfo(name = "se",              title = gettext("SE"), type = "number")
+  table$addColumnInfo(name = "lci",             title = gettext("LB"), type = "number", overtitle = gettext("95% CI"))
+  table$addColumnInfo(name = "uci",             title = gettext("UB"), type = "number", overtitle = gettext("95% CI"))
+  table$addColumnInfo(name = "t",               title = gettext("t"), type = "number")
+  table$addColumnInfo(name = "p",               title = gettext("p"), type = "pvalue")
+
+  tTest <- t.test(unlist(dataForPart), mu = options$biasReferenceValue)
+
+  table$addRows(list(      "part"                 = paste("Part", options$biasPartName),
+                           "df"                   = tTest$parameter,
+                           "mean"                 = tTest$estimate,
+                           "referenceValue"       = options$biasReferenceValue,
+                           "sd"                   = sd(unlist(dataForPart)),
+                           "se"                   = tTest$stderr,
+                           "lci"                  = tTest$conf.int[1],
+                           "uci"                  = tTest$conf.int[2],
+                           "t"                    = tTest$statistic,
+                           "p"                    = tTest$p.value))
+
+
+
+  return(table)
+}
+
+
+.biasHistogram <- function(dataset, measurements, parts, operators, options, title){
+
+  dataForPart <- subset.data.frame(dataset[measurements], dataset[parts] == options$biasPartName)
+
+  plot <- createJaspPlot(title = paste("Part", options$biasPartName))
+
+  p <- jaspDescriptives:::.plotMarginal(column = unlist(dataForPart), variableName = "Measurement")
+
+  plot$dependOn(c("biasHistogram", "biasPartName"))
+
+  plot$plotObject <- p
+
+  return(plot)
+
+}
+
 
 #.circleFun <- function(center=c(0,0), diameter=1, npoints=100, start=0, end=2)
 #{

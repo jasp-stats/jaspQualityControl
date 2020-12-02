@@ -34,7 +34,7 @@ Form
     AssignedVariablesList
     {
       id:                 variable1
-      name:               "variables"
+      name:               "diameter"
       title:                qsTr("Diameter")
       allowedColumns:           ["scale"]
     }
@@ -45,21 +45,20 @@ Form
       name:               "subgroups"
       title:                qsTr("Subgroups")
       singleVariable:           true
-      allowedColumns:           ["nominal", "nominalText"]
+	  allowedColumns:           ["nominal", "nominalText", "ordinal", "scale"]
     }
   }
 
   Group
   {
-    IntegerField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit")                    }
-    IntegerField { name: "upperSpecification";  label: qsTr("Upper Specification Limit")                    }
-    IntegerField { name: "targetValue";         label: qsTr("Target value")                                 }
+	  TextField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit")                    }
+	  TextField { name: "upperSpecification";  label: qsTr("Upper Specification Limit")                    }
+	  TextField { name: "targetValue";         label: qsTr("Target value")                                 }
   }
 
   Section
   {
     title: qsTr("Initial Process Capability Study")
-
     CheckBox { name: "initialXbarchart";      label: qsTr("X-bar Chart")            }
     CheckBox { name: "initialHistogram";      label: qsTr("Histogram")            }
     CheckBox { name: "initialProbabilityPlot";    label: qsTr("Probability Plot")
@@ -73,7 +72,6 @@ Form
               { value: "mean",          label: qsTr("Mean Rank (Herd-Johnson)")                          },
               { value: "KM",        label: qsTr("Kaplan-Meier")                                  },
               { value: "KMmodif",   label: qsTr("Modified Kaplan-Meier (Hazen)")               }
-
             ]
 
         }
@@ -97,7 +95,6 @@ Form
   Section
   {
     title: qsTr("Follow-up Process Capability Study")
-
     CheckBox { name: "followupControlchart";    label: qsTr("X-bar & Range Control Chart")    }
     CheckBox { name: "followupHistogram";     label: qsTr("Histogram")            }
     CheckBox { name: "followupProbabilityPlot";   label: qsTr("Probability Plot")             }

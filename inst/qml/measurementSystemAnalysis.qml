@@ -193,10 +193,25 @@ Form
 	{
 		title: qsTr("Determine Bias")
 		
+		TextField
+		{
+		inputType:	"doubleArray"
+		name:		"biasPartName"
+		label:		"Part Name:"
+		fieldWidth: 60
+		}
+		
+					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference Value:");		defaultValue: 0;	negativeValues: true	}
+					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance Value:");		defaultValue: 0;	negativeValues: true	}
+		CheckBox
+		{
+			name: "biasTable";		label: qsTr("Bias Table")
+		}
+			
 		CheckBox
 		{
 			name: "biasTtest";		label: qsTr("One Sample T-Test")
-			DoubleField { name: "biasTtestValue";	label: qsTr("Test value:");		defaultValue: 0;	negativeValues: true	}
+
 		}
 		CheckBox
 		{
