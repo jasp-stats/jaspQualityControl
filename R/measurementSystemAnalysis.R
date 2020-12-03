@@ -19,7 +19,7 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
   measurements <- unlist(options$measurements)
   parts <- unlist(options$parts)
-  operators <- unlist(options$operators)
+  operators <- NA   #unlist(options$operators)
 
   numeric.vars <- measurements
 
@@ -186,8 +186,20 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
     jaspResults[["biasHistogram"]] <- .biasHistogram(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
   }
 
+  # Rchart Range method
+  if (options[["rangeRchart"]]) {
+    if(is.null(jaspResults[["rangeRchart"]])) {
+      jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
+      jaspResults[["rangeRchart"]]$position <- 14
+    }
+
+    jaspResults[["rangeRchart"]] <- .RangeChart(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, title = "vs. Operator")
+  }
+
   return()
 }
+
+
 
 .IsoPlot <- function(dataset, measurements, parts, options){
 
