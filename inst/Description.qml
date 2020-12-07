@@ -55,5 +55,6 @@ Description
 	{
 		title:			qsTr("Design of Experiments")
 		func:			"designOfExperiments"
+		requiresData:	false
 	}
 }
