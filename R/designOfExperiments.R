@@ -43,21 +43,10 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
 
     if(options[["design"]] == "factorial"){
 
-      table$addColumnInfo(name = 'run', 		title = gettext("Runs"), 	type = 'integer')
-      table$addColumnInfo(name = 'factor2', 	title = "2", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor3', 	title = "3", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor4', 	title = "4", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor5', 	title = "5", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor6', 	title = "6", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor7', 	title = "7", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor8', 	title = "8", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor9', 	title = "9", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor10', 	title = "10", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor11', 	title = "11", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor12', 	title = "12", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor13', 	title = "13", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor14', 	title = "14", 				type = 'string', overtitle = "Factors")
-      table$addColumnInfo(name = 'factor15', 	title = "15", 				type = 'string', overtitle = "Factors")
+      table$addColumnInfo(name = 'run', title = gettext("Runs"), type = 'integer')
+	  for (i in 2:15){
+        table$addColumnInfo(name = paste0("factor", i), title = as.character(i), type = "string", overtitle = "Factors")
+	  }
 
       rows <- data.frame(run = c(4, 8, 16, 32, 64, 128),
                          factor2 = c("Full", "", "", "", "", ""),
@@ -111,25 +100,25 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
                                "designBy",
                                "factorialResolution"))
 
-    table$addColumnInfo(name = 'type', 			title = gettext("Design"), 			type = 'string')
-    table$addColumnInfo(name = 'factors', 		title = gettext("Factors"), 		type = 'integer')
-    table$addColumnInfo(name = 'runs', 			title = gettext("Runs"), 			type = 'integer')
-    table$addColumnInfo(name = 'resolution', 	title = gettext("Resolution"), 		type = 'string')
-    table$addColumnInfo(name = 'measure', 		title = gettext("2^(k-p)"), 		type = 'number')
-    table$addColumnInfo(name = 'centers', 		title = gettext("Center points"), 	type = 'integer')
-    table$addColumnInfo(name = 'replicates', 	title = gettext("Replicates"), 		type = 'integer')
-    table$addColumnInfo(name = 'blocks', 		title = gettext("Blocks"), 			type = 'integer')
+    table$addColumnInfo(name = 'type', title = gettext("Design"), type = 'string')
+    table$addColumnInfo(name = 'factors', title = gettext("Factors"), type = 'integer')
+    table$addColumnInfo(name = 'runs', title = gettext("Runs"), type = 'integer')
+    table$addColumnInfo(name = 'resolution', title = gettext("Resolution"), type = 'string')
+    table$addColumnInfo(name = 'measure', title = gettext("2^(k-p)"), type = 'number')
+    table$addColumnInfo(name = 'centers', title = gettext("Center points"), type = 'integer')
+    table$addColumnInfo(name = 'replicates', title = gettext("Replicates"), type = 'integer')
+    table$addColumnInfo(name = 'blocks', title = gettext("Blocks"), type = 'integer')
 
     designs <- jaspResults[["state"]]$object
 
     if(options[["designBy"]] == "designByRuns"){
-      rowIndex 		<- which(designs[, 1] == as.numeric(options[["factorialRuns"]]))
-      resolution 	<- designs[rowIndex, length(options[["factors"]])]
-      runs 			<- as.numeric(options[["factorialRuns"]])
+      rowIndex 	    <- which(designs[, 1] == as.numeric(options[["factorialRuns"]]))
+      resolution    <- designs[rowIndex, length(options[["factors"]])]
+      runs          <- as.numeric(options[["factorialRuns"]])
     } else {
-      resolution 	<- options[["factorialResolution"]]
-      rowIndex 		<- which(designs[, as.numeric(length(options[["factors"]]))] == resolution)[1]
-      runs 			<- designs[rowIndex, 1]
+      resolution    <- options[["factorialResolution"]]
+      rowIndex      <- which(designs[, as.numeric(length(options[["factors"]]))] == resolution)[1]
+      runs          <- designs[rowIndex, 1]
     }
     if(resolution == "")
       resolution <- "None"
@@ -137,14 +126,14 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
     design <- base::switch(options[["factorialType"]],
                            "factorialTypeDefault" = gettext("2-level factorial"))
 
-    rows <- data.frame(type 		= "Factorial",
-                       factors 		= length(options[["factors"]]),
-                       runs 		= runs,
-                       resolution 	= resolution,
-                       measure 		= 2^(as.numeric(options[["factorialRuns"]]) - length(options[["factors"]])),
-                       centers 		= options[["factorialCenterPoints"]],
-                       replicates 	= options[["factorialCornerReplicates"]],
-                       blocks 		= options[["factorialBlocks"]])
+    rows <- data.frame(type = "Factorial",
+                       factors = length(options[["factors"]]),
+                       runs = runs,
+                       resolution = resolution,
+                       measure = 2^(as.numeric(options[["factorialRuns"]]) - length(options[["factors"]])),
+                       centers = options[["factorialCenterPoints"]],
+                       replicates = options[["factorialCornerReplicates"]],
+                       blocks = options[["factorialBlocks"]])
 
     table$setData(rows)
     jaspResults[["selectedDesign"]] <- table
@@ -179,10 +168,10 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
     factorVectors <- list()
 
     for(i in 1:length(results)){
-      factorNames[i] 		<- results[[i]]$name
-      factorLows[i] 		<- results[[i]]$low
-      factorHighs[i] 		<- results[[i]]$high
-      factorVectors[[i]] 	<- c(factorLows[i], factorHighs[i])
+      factorNames[i]      <- results[[i]]$name
+      factorLows[i]       <- results[[i]]$low
+      factorHighs[i]      <- results[[i]]$high
+      factorVectors[[i]]  <- c(factorLows[i], factorHighs[i])
       table$addColumnInfo(name = factorNames[i], title = factorNames[i], type = 'string')
     }
 
@@ -191,9 +180,9 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
     jaspResults[["displayDesign"]] <- table
 
     # This is really bare-bones (only works for 2 factors)
-    runOrder 	<- 1:8
-    factor1 	<- factor(c(rep(factorVectors[[1]][1], each = as.numeric(options[["factorialRuns"]])), rep(factorVectors[[1]][2], each = as.numeric(options[["factorialRuns"]]))), levels = factorVectors[[1]])
-    factor2 	<- factor(c(rep(factorVectors[[2]][1], times = as.numeric(options[["factorialRuns"]])), rep(factorVectors[[2]][2], times = as.numeric(options[["factorialRuns"]]))), levels = factorVectors[[2]])
+    runOrder <- 1:8
+    factor1  <- factor(c(rep(factorVectors[[1]][1], each = as.numeric(options[["factorialRuns"]])), rep(factorVectors[[1]][2], each = as.numeric(options[["factorialRuns"]]))), levels = factorVectors[[1]])
+    factor2  <- factor(c(rep(factorVectors[[2]][1], times = as.numeric(options[["factorialRuns"]])), rep(factorVectors[[2]][2], times = as.numeric(options[["factorialRuns"]]))), levels = factorVectors[[2]])
 
     rows <- data.frame(runOrder = runOrder,
                        factor1 = factor1,
