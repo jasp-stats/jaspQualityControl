@@ -4,7 +4,7 @@ import JASP.Module 		1.0
 Description
 {
 	name				: "jaspProcessControl"
-	title				: qsTr("Process Control")
+	title				: qsTr("Quality Control")
 	description			: qsTr("A JASP module for quality control analysis.")
 	version				: "0.0.1"
 	author				: "JASP Team"
@@ -13,47 +13,48 @@ Description
 	license				: "GPL (>= 2)"
 	icon				: "processControl-module.svg"
 
-	GroupTitle
-	{
-		title:			qsTr("Capability")
-		icon:			"processControl-capability.svg"
-	}
+	// GroupTitle
+	// {
+	// 	title:			qsTr("Measurements")
+	// 	icon:			"processControl-measurement.svg"
+	// }
 	Analysis
 	{
-		title:			qsTr("Process capability")
-		func:			"processCapability"
-	}
-
-	GroupTitle
-	{
-		title:			qsTr("Measurements")
-		icon:			"processControl-measurement.svg"
-	}
-	Analysis
-	{
-		title:			qsTr("Measurement system analysis")
+		title:			qsTr("Measurement Systems Analysis")
 		func:			"measurementSystemAnalysis"
 	}
 
-	GroupTitle
-	{
-		title:			qsTr("Control")
-		icon:			"processControl-control.svg"
-	}
+	// GroupTitle
+	// {
+	// 	title:			qsTr("Control")
+	// 	icon:			"processControl-control.svg"
+	// }
 	Analysis
 	{
-		title:			qsTr("Process control")
+		title:			qsTr("Control Charts")
 		func:			"processControl"
+	}	
+
+	// GroupTitle
+	// {
+	// 	title:			qsTr("Capability")
+	// 	icon:			"processControl-capability.svg"
+	// }
+	Analysis
+	{
+		title:			qsTr("Process Capability Studies")
+		func:			"processCapability"
 	}
 
-	GroupTitle
-	{
-		title:			qsTr("Design")
-		icon:			"processControl-design.svg"
-	}
+	// GroupTitle
+	// {
+	// 	title:			qsTr("Design")
+	// 	icon:			"processControl-design.svg"
+	// }
 	Analysis
 	{
-		title:			qsTr("Design of experiments")
+		title:			qsTr("Design of Experiments")
 		func:			"designOfExperiments"
+		requiresData:	false
 	}
 }
