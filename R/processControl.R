@@ -39,7 +39,7 @@ processControl <- function(jaspResults, dataset, options){
     center <- sixsigma$center
     UCL <- max(sixsigma$limits)
     LCL <- min(sixsigma$limits)
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL-5, UCL+5, data_plot$Stdv))
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$Stdv, UCL + 1))
     yLimits <- range(yBreaks)
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
     xLimits <- range(xBreaks)
@@ -77,7 +77,7 @@ processControl <- function(jaspResults, dataset, options){
     center <- sixsigma$center
     UCL <- max(sixsigma$limits)
     LCL <- min(sixsigma$limits)
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL-5, UCL+5))
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1))
     yLimits <- range(yBreaks)
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
     xLimits <- range(xBreaks + 1)
@@ -99,7 +99,7 @@ processControl <- function(jaspResults, dataset, options){
       ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
       ggplot2::scale_y_continuous(name = "Subgroup Standard Deviation" ,limits = yLimits, breaks = yBreaks) +
-      ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = xLimits) +
+      ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = xLimits + 1) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
     
