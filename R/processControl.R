@@ -30,9 +30,7 @@ processControl <- function(jaspResults, dataset, options){
              all.target = options$variables,
              observations.amount = c(' < 1'), exitAnalysisIfErrors = TRUE,
              custom = function() { if (length(options$variables) < 2 && length(options$variables) != 0) return("Please use two measurements or more")})
-    if (length(options$variables) == 0) {
-      return ()
-    }
+    if (length(options$variables) == 0) {return ()}
 #Functions 
   .SchartNoId <- function(dataset, options) {
     data1 <- dataset
