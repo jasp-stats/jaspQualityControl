@@ -29,7 +29,7 @@ processControl <- function(jaspResults, dataset, options){
   .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
              all.target = options$variables,
              observations.amount = c(' < 1'), exitAnalysisIfErrors = TRUE,
-             custom = function() { if (length(options$variables) < 2 && length(options$variables) != 0) return("Please use two measurmetns or more")})
+             custom = function() { if (length(options$variables) < 2 && length(options$variables) != 0) return("Please use two measurements or more")})
 #Functions 
   .SchartNoId <- function(dataset, options) {
     data1 <- dataset
