@@ -25,15 +25,16 @@ processControl <- function(jaspResults, dataset, options){
   dataset         <- .readDataSetToEnd(columns.as.numeric = variables)
   dataset.factors <- .readDataSetToEnd(columns = variables)
   dataset <- na.omit(dataset)
+# Cheking for errors in the dataset
+  .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
+             all.target = options$variables,
+             observations.amount = c(' < 1'), exitAnalysisIfErrors = TRUE,
+             custom = function() { if (length(options$variables) < 2 && length(options$variables) != 0) return("Please use two measurmetns or more")})
 #Functions 
   .SchartNoId <- function(dataset, options) {
-    ready <- (length(options$variables) > 1)
-    if (!ready)
-      return()
-    
     data1 <- dataset
     Stdv <- apply(data1, 1, function(x) sd(x))
-    subgroups <- 1:length(Stdv)
+    subgroups <- c(1:length(Stdv))
     data_plot <- data.frame(subgroups = subgroups, Stdv = Stdv)
     sixsigma <- qcc::qcc(data1, type ='S', plot=FALSE)
     center <- sixsigma$center
