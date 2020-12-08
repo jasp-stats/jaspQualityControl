@@ -17,7 +17,7 @@
 
 processControl <- function(jaspResults, dataset, options){
   
-  # Make the Process ID and clean the dataset
+# Make the Process ID and clean the dataset
   variables <- unlist(options$variables)
   ID <- options$ProcessID
   makeID <- ID != ""
@@ -25,9 +25,8 @@ processControl <- function(jaspResults, dataset, options){
   dataset         <- .readDataSetToEnd(columns.as.numeric = variables)
   dataset.factors <- .readDataSetToEnd(columns = variables)
   dataset <- na.omit(dataset)
-  
-.SchartNoId <- function(dataset, options) {
-    
+#Functions 
+  .SchartNoId <- function(dataset, options) {
     ready <- (length(options$variables) > 1)
     if (!ready)
       return()
@@ -53,8 +52,6 @@ processControl <- function(jaspResults, dataset, options){
         gettextf("LCL = %g",   round(LCL, 3))
       )
     )
-    
-    
     p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
       jaspGraphs::geom_line() +
       jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$Stdv > UCL | data_plot$Stdv < LCL, 'red', 'gray')) +
@@ -68,8 +65,50 @@ processControl <- function(jaspResults, dataset, options){
     
     return(p)
   }
+  .ImRchart <- function(dataset, options, variable){
+    title <- gettextf("Process %s", variable )
+    ppPlot <- createJaspPlot(width = 600, aspectRatio = 1, title = title)
+    ppPlot$dependOn(optionContainsValue = list(variables = variable))
+    
+    #data
+    data <- data.frame(process = dataset[[.v(variable)]])
+    subgroups <- c(1:length(data$process))
+    sixsigma <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
+    center <- sixsigma$center
+    UCL <- max(sixsigma$limits)
+    LCL <- min(sixsigma$limits)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL-5, UCL+5))
+    yLimits <- range(yBreaks)
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
+    xLimits <- range(xBreaks + 1)
+    dfLabel <- data.frame(
+      x = max(subgroups) + 1,
+      y = c(center, UCL, LCL),
+      l = c(
+        gettextf("Mean = %g", round(center, 3)),
+        gettextf("UCL = %g",   round(UCL, 3)),
+        gettextf("LCL = %g",   round(LCL, 3))
+      )
+    )
+    
+    #plot
+    p <- ggplot2::ggplot(data, ggplot2::aes(x = subgroups, y = process)) +
+      jaspGraphs::geom_line() +
+      jaspGraphs::geom_point(size = 4, fill = ifelse(data$process > UCL | data$process < LCL, 'red', 'gray')) +
+      ggplot2::geom_hline(yintercept =  center, color = 'black') +
+      ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
+      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
+      ggplot2::scale_y_continuous(name = "Subgroup Standard Deviation" ,limits = yLimits, breaks = yBreaks) +
+      ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = xLimits) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
+    
+    ppPlot$plotObject <-  p
+    return(ppPlot)
+  }
   
-  #X bar R Chart
+
+#X bar R Chart
   if(options$XbarRchart && is.null(jaspResults[["XbarRchart"]])){
     
     jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 1100, height = 400)
@@ -85,7 +124,7 @@ processControl <- function(jaspResults, dataset, options){
     RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
   }
   
-  #X bar S Chart
+#X bar S Chart
   if(options$Xbarschart && is.null(jaspResults[["Xbarschart"]])){
     
     jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 1100, height = 400)
@@ -99,5 +138,19 @@ processControl <- function(jaspResults, dataset, options){
     jaspResults[["SPlot"]]$position <- 11
     SPlot<- jaspResults[["SPlot"]]
     SPlot$plotObject <- .SchartNoId(dataset = dataset, options = options)
+  }
+#ImR chart 
+  if(options$ImRchart) {
+    if (is.null(jaspResults[["ImRchart"]])){
+      jaspResults[["ImRchart"]] <- createJaspContainer(gettext("ImR chart"))
+      jaspResults[["ImRchart"]]$dependOn(c("ImRchart"))
+      jaspResults[["ImRchart"]]$position <- 11
+    }
+  
+    ImRplot <- jaspResults[["ImRchart"]]
+  
+    for (var in variables){
+      ImRplot[[var]] <- .ImRchart(dataset = dataset, options = options, variable = var)
+    }
   }
 }
