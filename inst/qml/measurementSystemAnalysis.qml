@@ -60,16 +60,39 @@ Form
 		}
 	}
 	
-		Group
-	{
-		DoubleField { name: "processSD";	label: qsTr("Process Standard Deviation");		defaultValue: 0;	negativeValues: true	}
-	}
-	
+		Group{
+						DropDown {
+                name: "variationReference"
+                label: qsTr("Variation Reference")
+                indexDefaultValue: 0
+                values:
+                [	
+					{label: qsTr("Known Process Variation"),				value: "processVariation"},
+                    {label: qsTr("Study Variation"),					value: "studyVariation"},
+                    {label: qsTr("Tolerance"),					value: "tolerance"},
+                ]
+				id: variationReference
+				}
+				DoubleField
+				{
+					name:			"processVariationOrTolerance"
+					label:			qsTr("Value:")
+					defaultValue:	0
+					enabled:		variationReference.currentValue === ("tolerance", "processVariation")
+				}
+			}
 	
 		Section
 	{
 		title: qsTr("Gauge r&R")
-		
+				CheckBox
+		{
+			name: "gaugeRun";		label: qsTr("Run Chart")
+		}
+		CheckBox
+				{
+			name: "gaugeRrTable";		label: qsTr("r&R Table")
+		}
 		CheckBox
 		{
 			name: "gaugeANOVA";		label: qsTr("ANOVA")
@@ -157,11 +180,11 @@ Form
 		
 		CheckBox
 		{
-			name: "AAAkappa";		label: qsTr("Fleiss Kappa")
+			name: "AAAfleissKappa";		label: qsTr("Fleiss Kappa")
 		}
 		CheckBox
 		{
-			name: "AAAchiSquare";		label: qsTr("Chi Square")
+			name: "AAAcohensKappa";		label: qsTr("Cohen's Kappa")
 		}
 		CheckBox
 		{
@@ -169,7 +192,11 @@ Form
 		}
 		CheckBox
 		{
-			name: "AAAgraphs";		label: qsTr("Graphs")
+			name: "AAAtable";		label: qsTr("Attribute Agreement Analysis Table")
+		}
+		CheckBox
+		{
+			name: "AAAgraphs";		label: qsTr("Attribute Agreement Analysis Graphs")
 		}
 
 	}
