@@ -98,14 +98,14 @@ processCapability <- function(jaspResults, dataset, options){
     jaspResults[["XbarPlot"]]$position <- 11
     XbarPlot <- jaspResults[["XbarPlot"]]
     XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
-    XbarPlot$dependOn(optionContainsValue= list(variables=variables))
+    XbarPlot$dependOn(optionContainsValue= list(diameter=diameter))
     
     jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 1100, height= 400)
     jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
     jaspResults[["RPlot"]]$position <- 11
     RPlot<- jaspResults[["RPlot"]]
     RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
-    RPlot$dependOn(optionContainsValue= list(variables=variables))
+    RPlot$dependOn(optionContainsValue= list(diameter=diameter))
   }
   
   # Histogram (by Jonas)
@@ -137,56 +137,7 @@ processCapability <- function(jaspResults, dataset, options){
     followupCapabilityAnalysis[["overallCapabilityTable"]] <- followupCapabilityTables[[2]]
   }
 
-  # X-bar & Range Control Chart (by Tom)
-  if(options$followupControlchart & is.null(jaspResults[["followupControlchart"]])) {
-    jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 1100, height = 400)
-    jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
-    jaspResults[["XbarPlot"]]$position <- 11
-    XbarPlot <- jaspResults[["XbarPlot"]]
-    XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
-    XbarPlot$dependOn(optionContainsValue= list(diameter=diameter))
-
-    jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 1100, height= 400)
-    jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
-    jaspResults[["RPlot"]]$position <- 11
-    RPlot<- jaspResults[["RPlot"]]
-    RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
-    RPlot$dependOn(optionContainsValue= list(diameter=diameter))
-  }
-
-  #Probability Plot
-  if(options$initialProbabilityPlot | options$followupProbabilityPlot) {
-    if (is.null(jaspResults[["initialProbabilityPlot"]])){
-      jaspResults[["initialProbabilityPlot"]] <- createJaspContainer(gettext("Probability Plots"))
-      jaspResults[["initialProbabilityPlot"]]$dependOn(c("initialProbabilityPlot"))
-      jaspResults[["initialProbabilityPlot"]]$position <- 11
-      jaspResults[["PPtables"]] <- createJaspContainer(gettext("Probability Plots Tables"))
-      jaspResults[["PPtables"]]$dependOn(c("initialProbabilityPlot"))
-      jaspResults[["PPtables"]]$position <- 11
-    }
-
-    PPplots <- jaspResults[["initialProbabilityPlot"]]
-    PPtables <- jaspResults[["PPtables"]]
-
-    for (var in diameter){
-      PPplots[[var]] <- .ProbabilityPlotNoId(dataset = dataset, options = options, variable = var, dis = options$Nulldis)
-      PPtables[[var]] <- .PPtable(dataset = dataset, options = options, variable = var, dis = options$Nulldis)
-    }
-  }
-
-  #Xbar chart intial
-  if(options$initialXbarchart & is.null(jaspResults[["initialXbarchart"]])) {
-     jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 1100, height = 400)
-     jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
-     jaspResults[["XbarPlot"]]$position <- 11
-     XbarPlot <- jaspResults[["XbarPlot"]]
-     XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
-     XbarPlot$dependOn(optionContainsValue= list(diameter=diameter))
-  }
-  #Xbar & R charts
-
   return()
-
 }
 
 .processDataTable <- function(options, dataset, diameter, subgroupsName){
@@ -342,4 +293,3 @@ processCapability <- function(jaspResults, dataset, options){
   expOverallPerformanceTable <- createJaspTable(title = gettext("Exp. Overall Performance"))
   return(expOverallPerformanceTable)
 }
-
