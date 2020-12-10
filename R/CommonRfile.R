@@ -15,8 +15,8 @@
   sd1 <- sixsigma$std.dev
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL-5, UCL+5, data_plot$means))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1, data_plot$means))
+
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
   xLimits <- range(xBreaks)
@@ -60,7 +60,7 @@
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL-5, UCL+5, data_plot$range))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(UCL, data_plot$range, UCL + 1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
   xLimits <- range(xBreaks)
@@ -74,7 +74,7 @@
     )
   )
   
-  
+
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
     jaspGraphs::geom_line() +
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, 'red', 'gray')) +
