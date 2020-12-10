@@ -73,7 +73,6 @@ Form
 			{ value: "KMmodif",   label: qsTr("Modified Kaplan-Meier (Hazen)")               }
 		  ]
 	  }
-
 	  DropDown
 	  {
 		  name: "Nulldis"
@@ -93,7 +92,6 @@ Form
 		title:	qsTr("Process Capability Study")
 		RadioButton { name: "initialCapabilityAnalysis";	label: qsTr("Initial Capability Analysis")	}
 		RadioButton { name: "followupCapabilityAnalysis";  label: qsTr("Follow-up Capability Analysis")	}
-
 		Group
 		{
 			DoubleField { name: "upperSpecification";  label: qsTr("Upper Specification Limit") ; negativeValues: true   }
