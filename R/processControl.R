@@ -114,14 +114,14 @@ processControl <- function(jaspResults, dataset, options){
   if(options$Xbarchart && is.null(jaspResults[["Xbarchart"]])){
     
     jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 950, height= 400)
-    jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
+    jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart"))
     jaspResults[["XbarPlot"]]$position <- 11
     XbarPlot <- jaspResults[["XbarPlot"]]
     XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
   }
   if(options$Rchart && is.null(jaspResults[["Rchart"]])){
     jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 950, height= 400)
-    jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
+    jaspResults[["RPlot"]]$dependOn(c("Rchart"))
     jaspResults[["RPlot"]]$position <- 11
     RPlot<- jaspResults[["RPlot"]]
     RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
@@ -130,7 +130,7 @@ processControl <- function(jaspResults, dataset, options){
 #X bar S Chart
   if(options$Schart && is.null(jaspResults[["Schart"]])){
     jaspResults[["SPlot"]] <- createJaspPlot(title = "S chart", width = 950, height= 400)
-    jaspResults[["SPlot"]]$dependOn(c("Xbarschart"))
+    jaspResults[["SPlot"]]$dependOn(c("Schart"))
     jaspResults[["SPlot"]]$position <- 11
     SPlot<- jaspResults[["SPlot"]]
     SPlot$plotObject <- .SchartNoId(dataset = dataset, options = options)
