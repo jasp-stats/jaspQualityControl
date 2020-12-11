@@ -37,7 +37,7 @@
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
     ggplot2::scale_y_continuous(name = "Subgroup Mean" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = xLimits + 1) +
+    ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
@@ -82,7 +82,7 @@
     ggplot2::geom_hline(yintercept = c(UCL,LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
     ggplot2::scale_y_continuous(name = "Subgroup Range" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name= "Subgroup" ,breaks = xBreaks, limits = xLimits + 1) +
+    ggplot2::scale_x_continuous(name= "Subgroup" ,breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
