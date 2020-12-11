@@ -28,7 +28,7 @@ processControl <- function(jaspResults, dataset, options){
 # Cheking for errors in the dataset
   .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
              all.target = options$variables,
-             observations.amount = c(' < 1'), exitAnalysisIfErrors = TRUE,
+             observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE,
              custom = function() { if (length(options$variables) < 2 && length(options$variables) != 0) return("Please use two measurements or more")})
     if (length(options$variables) == 0) {return ()}
 #Functions 
@@ -61,14 +61,14 @@ processControl <- function(jaspResults, dataset, options){
       ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
       ggplot2::scale_y_continuous(name = "Subgroup Standard Deviation" ,limits = yLimits, breaks = yBreaks) +
-      ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = xLimits + 1) +
+      ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
     
     return(p)
   }
   .ImRchart <- function(dataset, options, variable){
-    title <- gettextf("Process %s", variable )
+    title <- gettextf("Measurement %s", variable )
     ppPlot <- createJaspPlot(width = 600, aspectRatio = 1, title = title)
     ppPlot$dependOn(optionContainsValue = list(variables = variable))
     
@@ -100,8 +100,8 @@ processControl <- function(jaspResults, dataset, options){
       ggplot2::geom_hline(yintercept =  center, color = 'black') +
       ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-      ggplot2::scale_y_continuous(name = "Subgroup Standard Deviation" ,limits = yLimits, breaks = yBreaks) +
-      ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = xLimits + 1) +
+      ggplot2::scale_y_continuous(name = "Value" ,limits = yLimits, breaks = yBreaks) +
+      ggplot2::scale_x_continuous(name = 'Observations', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
     
@@ -144,7 +144,7 @@ processControl <- function(jaspResults, dataset, options){
 #ImR chart 
   if(options$ImRchart) {
     if (is.null(jaspResults[["ImRchart"]])){
-      jaspResults[["ImRchart"]] <- createJaspContainer(gettext("ImR chart"))
+      jaspResults[["ImRchart"]] <- createJaspContainer(gettext("ImR charts"))
       jaspResults[["ImRchart"]]$dependOn(c("ImRchart"))
       jaspResults[["ImRchart"]]$position <- 11
     }
