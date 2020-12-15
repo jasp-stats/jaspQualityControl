@@ -1,3 +1,4 @@
+import(jaspBase)
 export(processCapability)
 export(processControl)
 export(measurementSystemAnalysis)
