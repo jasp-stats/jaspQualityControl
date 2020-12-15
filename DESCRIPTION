@@ -10,14 +10,16 @@ Description: Module for process control
 License: GPL (>= 2)
 Encoding: UTF-8
 Imports:
-  ggplot2,
-  jaspBase,
-  jaspGraphs,
-  qcc,
-  nortest,
-  mle.tools,
+  afex,
   fitdistrplus,
-  goftest
+  ggplot2,
+  goftest,
+  jaspBase,
+  jaspDescriptives,
+  jaspGraphs,
+  mle.tools,
+  qcc
 Remotes:
   jasp-stats/jaspBase,
+  jasp-stats/jaspDescriptives,
   jasp-stats/jaspGraphs
