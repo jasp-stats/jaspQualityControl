@@ -19,85 +19,89 @@ import JASP.Widgets               1.0
 
 Form
 {
-  usesJaspResults:              true
-  columns:                  1
+	usesJaspResults:              true
+	columns:						1
 
-  VariablesForm
-  {
-    id:                   variablesForm
+	VariablesForm
+	{
+		id:                   variablesForm
 
-    AvailableVariablesList
-    {
-      name:               "variablesForm"
-    }
+		AvailableVariablesList
+		{
+			name:               "variablesForm"
+		}
 
-    AssignedVariablesList
-    {
-      id:                 variable1
-      name:               "diameter"
-      title:                qsTr("Diameter")
-      allowedColumns:           ["scale"]
-    }
+		AssignedVariablesList
+		{
+			id:                 variable1
+			name:               "diameter"
+			title:              qsTr("Measurements")
+			allowedColumns:     ["scale"]
+		}
 
-    AssignedVariablesList
-    {
-      id:                 variable2
-      name:               "subgroups"
-      title:                qsTr("Subgroups")
-      singleVariable:           true
-	  allowedColumns:           ["nominal", "nominalText", "ordinal", "scale"]
-    }
-  }
+		AssignedVariablesList
+		{
+			id:                 variable2
+			name:               "subgroups"
+			title:              qsTr("Subgroups")
+			singleVariable:     true
+			allowedColumns:     ["nominal", "nominalText", "ordinal", "scale"]
+		}
+	}
 
-  Group
-  {
-	  TextField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit")                    }
-	  TextField { name: "upperSpecification";  label: qsTr("Upper Specification Limit")                    }
-	  TextField { name: "targetValue";         label: qsTr("Target value")                                 }
-  }
+	Group
+	{
+		title: qsTr("Stability of the Process")
+		CheckBox { name: "controlCharts";			label: qsTr("X-bar & Range Control Chart"); checked: true				}
+	}
 
-  Section
-  {
-    title: qsTr("Initial Process Capability Study")
-    CheckBox { name: "initialXbarchart";      label: qsTr("X-bar Chart")            }
-    CheckBox { name: "initialHistogram";      label: qsTr("Histogram")            }
-    CheckBox { name: "initialProbabilityPlot";    label: qsTr("Probability Plot")
-        DropDown{
-          name: "rank"
-          label: qsTr("Rank method")
-          indexDefaultValue: 0
-          values:
-            [
-              { value: "median",    label: qsTr("Median Rank (Benard)")                                    },
-              { value: "mean",          label: qsTr("Mean Rank (Herd-Johnson)")                          },
-              { value: "KM",        label: qsTr("Kaplan-Meier")                                  },
-              { value: "KMmodif",   label: qsTr("Modified Kaplan-Meier (Hazen)")               }
-            ]
+	Group
+	{
+		title: qsTr("Distribution of the Process")
+		CheckBox { name: "histogram";			label: qsTr("Histogram"); checked: true			}
+		CheckBox { name: "probabilityPlot";    label: qsTr("Probability Plot"); checked: true
+			DropDown
+			{
+				name: "rank"
+				label: qsTr("Rank method")
+				indexDefaultValue: 0
+				values:
+					[
+					{ value: "median",    label: qsTr("Median Rank (Benard)")                        },
+					{ value: "mean",      label: qsTr("Mean Rank (Herd-Johnson)")                    },
+					{ value: "KM",        label: qsTr("Kaplan-Meier")                                },
+					{ value: "KMmodif",   label: qsTr("Modified Kaplan-Meier (Hazen)")               }
+				]
+			}
+			DropDown
+			{
+				name: "Nulldis"
+				label: qsTr("Null distribution")
+				indexDefaultValue: 0
+				values:
+					[
+					{ label: qsTr("Normal"),		value: "Normal"			},
+					{ label: qsTr("Lognormal"),	value: "Lognormal"      },
+					{ label: qsTr("Weibull"),		value: "Weibull"        }
+				]
+			}
+		}
+	}
 
-        }
-        DropDown{
-            name: "Nulldis"
-            label: qsTr("Null distribution")
-            indexDefaultValue: 0
-            values:
-            [
-                { label: qsTr("Normal"),                              value: "Normal"                   },
-                { label: qsTr("Lognormal"),                             value: "Lognormal"                  },
-                { label: qsTr("Weibull"),                       value: "Weibull"              }
-
-            ]
-
-        }
-    }
-    CheckBox { name: "initialCapabilityAnalysis"; label: qsTr("Process Capability of Diameter") }
-  }
-
-  Section
-  {
-    title: qsTr("Follow-up Process Capability Study")
-    CheckBox { name: "followupControlchart";    label: qsTr("X-bar & Range Control Chart")    }
-    CheckBox { name: "followupHistogram";     label: qsTr("Histogram")            }
-    CheckBox { name: "followupProbabilityPlot";   label: qsTr("Probability Plot")             }
-    CheckBox { name: "followupCapabilityAnalysis";  label: qsTr("Process Capability of Diameter") }
-  }
+	Section
+	{
+		title:	qsTr("Process Capability Study")
+		RadioButtonGroup
+		{
+			name: "capabilityStudy"
+			RadioButton { name: "initialCapabilityAnalysis";	label: qsTr("Initial Capability Analysis"); checked: true	}
+			RadioButton { name: "followupCapabilityAnalysis";  label: qsTr("Follow-up Capability Analysis")	}
+		}
+		Group
+		{
+			DoubleField { name: "upperSpecification";  label: qsTr("Upper Specification Limit") ; negativeValues: true   }
+			DoubleField { name: "targetValue";         label: qsTr("Target value") ; negativeValues: true                }
+			DoubleField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit") ; negativeValues: true   }
+		}
+	}
 }
