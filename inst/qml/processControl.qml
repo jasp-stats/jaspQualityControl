@@ -44,8 +44,9 @@ Form
 	Section
 	{
 		title: qsTr("Control charts for variables")
-		CheckBox {	name: "XbarRchart";		label: qsTr("X bar & R chart")			}
-		CheckBox {	name: "Xbarschart";		label: qsTr("X bar & s chart")			}
+        CheckBox {	name: "Xbarchart";		label: qsTr("X bar chart")              }
+        CheckBox {	name: "Rchart";		label: qsTr("R chart")                      }
+        CheckBox {	name: "Schart";		label: qsTr("S chart")                      }
 		CheckBox {	name: "ImRchart";		label: qsTr("I-mR chart")				}
 	}
 
