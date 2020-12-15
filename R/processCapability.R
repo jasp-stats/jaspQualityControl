@@ -76,9 +76,9 @@ processCapability <- function(jaspResults, dataset, options){
 
   # Initial Capability Analysis 
   
-  if (options$initialCapabilityAnalysis){
+  if (options[["capabilityStudy"]] == "initialCapabilityAnalysis"){
     if(is.null(jaspResults[["initialCapabilityAnalysis"]])) {
-      jaspResults[["initialCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Diameter (Initial Capability Study)"))
+      jaspResults[["initialCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Initial Capability Study)"))
       jaspResults[["initialCapabilityAnalysis"]]$dependOn(c("initialCapabilityAnalysis","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
       jaspResults[["initialCapabilityAnalysis"]]$position <- 4
     }
@@ -95,9 +95,9 @@ processCapability <- function(jaspResults, dataset, options){
   }
   
   # Follow-up Capability Analysis 
-  if (options$followupCapabilityAnalysis){
+  if (options[["capabilityStudy"]] == "followupCapabilityAnalysis"){
     if(is.null(jaspResults[["followupCapabilityAnalysis"]])) {
-      jaspResults[["followupCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Diameter (Follow-up Capability Study)"))
+      jaspResults[["followupCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Follow-up Capability Study)"))
       jaspResults[["followupCapabilityAnalysis"]]$dependOn(c("followupCapabilityAnalysis","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
       jaspResults[["followupCapabilityAnalysis"]]$position <- 8
     }
