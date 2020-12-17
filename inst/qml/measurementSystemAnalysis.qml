@@ -85,10 +85,6 @@ Form
 		Section
 	{
 		title: qsTr("Gauge r&R")
-				CheckBox
-		{
-			name: "gaugeRun";		label: qsTr("Run Chart")
-		}
 		CheckBox
 				{
 			name: "gaugeRrTable";		label: qsTr("r&R Table")
@@ -110,6 +106,21 @@ Form
 			name: "gaugeXbarChart";		label: qsTr("X-bar Chart by Operator")
 		}
 		
+		CheckBox
+		{
+			name: "gaugeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
+
+			CheckBox
+			{
+				name: "gaugeScatterPlotFitLine";		label: qsTr("Fit Line")
+			}
+				
+			CheckBox
+			{
+				name: "gaugeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+			}
+		
+		}
 		
 		CheckBox
 		{
@@ -200,34 +211,9 @@ Form
 		}
 
 	}
-	
-	Section
-	{
-		title: qsTr("Iso Plot")
-		
-		CheckBox
-			{
-                name: "IsoPlot";		label: qsTr("Iso Plot")
-			}
-			
-			CheckBox
-			{
-                name: "IsoPlotTable";		label: qsTr("Iso Plot Table")
-			}
-	}
-	
 		Section
 	{
 		title: qsTr("Determine Bias")
-		
-		TextField
-		{
-		inputType:	"doubleArray"
-		name:		"biasPartName"
-		label:		"Part Name:"
-		fieldWidth: 60
-		}
-		
 					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference Value:");		defaultValue: 0;	negativeValues: true	}
 					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance Value:");		defaultValue: 0;	negativeValues: true	}
 		CheckBox
@@ -243,6 +229,10 @@ Form
 		CheckBox
 		{
 			name: "biasHistogram";		label: qsTr("Histogram")
+		}
+						CheckBox
+		{
+			name: "biasRun";		label: qsTr("Run Chart")
 		}
 	}
 }
