@@ -78,7 +78,7 @@ Form
 					name:			"processVariationOrTolerance"
 					label:			qsTr("Value:")
 					defaultValue:	0
-					enabled:		variationReference.currentValue === ("tolerance", "processVariation")
+					enabled:		variationReference.currentValue != "studyVariation"
 				}
 			}
 	
