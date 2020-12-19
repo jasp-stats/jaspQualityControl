@@ -18,7 +18,8 @@ Imports:
   jaspDescriptives,
   jaspGraphs,
   mle.tools,
-  qcc
+  qcc,
+  irr
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,

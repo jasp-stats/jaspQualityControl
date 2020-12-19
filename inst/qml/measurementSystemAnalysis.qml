@@ -58,6 +58,17 @@ Form
 			singleVariable:						false
 			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
+		
+		AssignedVariablesList
+		{
+			id:									variable4
+			name:								"standard"
+			title:								qsTr("Standard")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+		}
+		
+
 	}
 	
 		Group{
@@ -87,7 +98,8 @@ Form
 		title: qsTr("Gauge r&R")
 		CheckBox
 				{
-			name: "gaugeRrTable";		label: qsTr("r&R Table")
+			name: "gaugeRrTable";		label: qsTr("r&R Table");		checked: true
+			
 		}
 		CheckBox
 		{
