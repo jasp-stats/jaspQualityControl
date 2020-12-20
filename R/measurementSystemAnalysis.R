@@ -261,6 +261,17 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
   }
 
+  # Kendall Tau
+  if (options[["AAAkendallTau"]]) {
+    if(is.null(jaspResults[["KendallTau"]])) {
+      jaspResults[["KendallTau"]] <- createJaspContainer(gettext("Attribute Agreement Analysis"))
+      jaspResults[["KendallTau"]]$position <- 20
+    }
+
+    jaspResults[["KendallTau"]] <- .kendallTau(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
+
+  }
+
 
 
 
@@ -868,7 +879,7 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
     AAA[["PlotVs"]] <- plotVs
   }
 
-    return(AAA)
+  return(AAA)
 }
 
 .countRowMatches <- function(data){
@@ -879,6 +890,49 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
       count <- count + 1
   }
   return(count)
+}
+
+
+.kendallTau <- function(dataset, measurements, parts, operators, standards, options){
+
+  operatorVector <- as.character(unique(dataset[[operators]]))
+
+  table <- createJaspTable(title = gettext("Kendall's Tau"))
+
+  table$dependOn(c("AAAkendallTau"))
+
+  table$addColumnInfo(name = "Operator",  title = gettext("Operator"), type = "string")
+
+  for(operator in operatorVector){
+    table$addColumnInfo(name = operator, title = gettext(operator), type = "number")
+  }
+
+  table$addColumnInfo(name = standards, title = gettext(standards), type = "number")
+
+  standCorrVector <- vector(mode = "numeric")
+  tableColumns <- list()
+  for(i in 1:length(operatorVector)){
+    corrVector <- vector(mode = "numeric")
+    operator1 <- subset(dataset, dataset[operators] == operatorVector[i])
+    for(j in 1:length(operatorVector)){
+      if(j == i){
+        corrVector <- c(corrVector, 1)
+      }else{
+        operator2 <- subset(dataset, dataset[operators] == operatorVector[j])
+        kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = operator2[[measurements]])
+        corrVector <- c(corrVector, kt$r)
+      }
+    }
+    kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(operator1[[standards]]))
+    standCorrVector <- c(standCorrVector, kt$r)
+    tableColumns[[operatorVector[i]]] <- corrVector
+  }
+
+  tableColumns[["Operator"]] <- operatorVector
+  tableColumns[[standards]] <- standCorrVector
+  table$setData(tableColumns)
+
+  return(table)
 }
 
 .msaCheckErrors <- function(dataset, options) {
