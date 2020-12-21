@@ -221,7 +221,7 @@
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower)) +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper)) +
     jaspGraphs::geom_point(ggplot2::aes(x= data1$x, y= data1$y)) +
-    ggplot2::scale_x_continuous('candle_width',limits = xlimits, breaks = xBreaks) +
+    ggplot2::scale_x_continuous(variable, limits = xlimits, breaks = xBreaks) +
     ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = breaksY)
   p <- jaspGraphs::themeJasp(p)
   ppPlot$plotObject <-  p
