@@ -33,7 +33,7 @@ processControl <- function(jaspResults, dataset, options){
     if (length(options$variables) == 0) {return ()}
 #Functions 
   .SchartNoId <- function(dataset, options) {
-    data1 <- dataset
+    data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
     Stdv <- apply(data1, 1, function(x) sd(x))
     subgroups <- c(1:length(Stdv))
     data_plot <- data.frame(subgroups = subgroups, Stdv = Stdv)

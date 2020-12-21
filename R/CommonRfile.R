@@ -6,7 +6,7 @@
     if (!ready)
       return()
   }
-  data1 <- dataset
+  data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   means <- rowMeans(data1)
   subgroups <- 1:length(means)
   data_plot <- data.frame(subgroups = subgroups, means = means)
@@ -52,7 +52,7 @@
       return()
   }
   #Arrange data and compute
-  data1 <- dataset
+  data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   range <- apply(data1, 1, function(x) max(x) - min(x))
   subgroups <- 1:length(range)
   data_plot <- data.frame(subgroups = subgroups, range = range)
