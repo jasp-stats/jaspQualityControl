@@ -30,7 +30,7 @@ processCapability <- function(jaspResults, dataset, options){
       dataset.factors <- .readDataSetToEnd(columns = diameter)
     }
   }
-  
+
   # X-bar & Range Control Chart (by Tom)
   if(options$controlCharts & is.null(jaspResults[["controlCharts"]])) {
     jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 600, height = 300)
@@ -39,7 +39,7 @@ processCapability <- function(jaspResults, dataset, options){
     XbarPlot <- jaspResults[["XbarPlot"]]
     XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
     XbarPlot$dependOn(optionContainsValue= list(diameter=diameter))
-    
+
     jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 600, height= 300)
     jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
     jaspResults[["RPlot"]]$position <- 3
@@ -47,8 +47,8 @@ processCapability <- function(jaspResults, dataset, options){
     RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
     RPlot$dependOn(optionContainsValue= list(diameter=diameter))
   }
-  
-  # Histogram 
+
+  # Histogram
   if (options$histogram) {
     if(is.null(jaspResults[["histogram"]])) {
       jaspResults[["histogram"]] <- .histogram(options, dataset, diameter, subgroupsName)
@@ -66,7 +66,7 @@ processCapability <- function(jaspResults, dataset, options){
       jaspResults[["PPtables"]]$dependOn(c("probabilityPlot"))
       jaspResults[["PPtables"]]$position <- 6
     }
-    
+
     PPplots <- jaspResults[["probabilityPlot"]]
     PPtables <- jaspResults[["PPtables"]]
     for (var in diameter){
@@ -75,7 +75,7 @@ processCapability <- function(jaspResults, dataset, options){
     }
   }
 
-  # Initial Capability Analysis 
+  # Initial Capability Analysis
   if (options[["capabilityStudy"]] == "initialCapabilityAnalysis"){
     if(is.null(jaspResults[["initialCapabilityAnalysis"]])) {
       jaspResults[["initialCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Initial Capability Study)"))
@@ -88,8 +88,8 @@ processCapability <- function(jaspResults, dataset, options){
     initialCapabilityAnalysis[["capabilityPlot"]] <- .capabilityPlot(options, dataset, diameter, subgroupsName)
     .capabilityTable(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis)
   }
-  
-  # Follow-up Capability Analysis 
+
+  # Follow-up Capability Analysis
   if (options[["capabilityStudy"]] == "followupCapabilityAnalysis"){
     if(is.null(jaspResults[["followupCapabilityAnalysis"]])) {
       jaspResults[["followupCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Follow-up Capability Study)"))
@@ -107,82 +107,70 @@ processCapability <- function(jaspResults, dataset, options){
 .histogram <- function(options, dataset, diameter, subgroupsName){
 
   if(!options[["histogram"]] || is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
-	return()
-  
+    return()
+
   diameter <- encodeColNames(diameter)
   subgroupsName <- encodeColNames(subgroupsName)
   thePlot <- createJaspPlot(title = gettext("Histogram"), width = 600, height = 300)
   thePlot$dependOn(options = "histogram")
   plotDat <- data.frame(measurements = as.numeric(unlist(dataset[, diameter])))
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotDat[["measurements"]], min.n = 4)
-  
-  p <- ggplot2::ggplot(plotDat, ggplot2::aes(x = measurements)) + 
-		ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks) +
-        ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7) +
-    	ggplot2::stat_function(fun = dnorm, color = "blue",
-								args = list(mean = mean(plotDat[["measurements"]]), sd = sd(plotDat[["measurements"]])))
+
+  p <- ggplot2::ggplot(plotDat, ggplot2::aes(x = measurements)) +
+    ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks) +
+    ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7) +
+    ggplot2::stat_function(fun = dnorm, color = "blue",
+                           args = list(mean = mean(plotDat[["measurements"]]), sd = sd(plotDat[["measurements"]])))
   p <- jaspGraphs::themeJasp(p)
-  
+
   thePlot$plotObject <- p
   return(thePlot)
 }
 
 .capabilityPlot <- function(options, dataset, diameter, subgroupsName){
-  
-  diameter <- encodeColNames(diameter)
-  subgroupsName <- encodeColNames(subgroupsName)
+
   thePlot <- createJaspPlot(title = gettext("Capability of the Process"), width = 600, height = 300)
 
   if(is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
-	return()
+    return()
 
   plotDat <- data.frame(measurements = as.numeric(unlist(dataset[, diameter])))
-  
-  diameter <- encodeColNames(diameter)
-  subgroupsName <- encodeColNames(subgroupsName)
-  
-  data <- dataset[,diameter]
-  subgroups <- dataset[,subgroupsName]
-  subgroupLevels <- levels(subgroups)
-  dataDiameter <- data.frame() 
-  for(level in subgroupLevels){
-    subdata <- subset(dataset[,diameter], subgroups == level)
-    dataDiameter <- rbind(data, as.numeric(unlist(subdata)))
-  }
+  dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
+
   USL <- as.numeric(options$upperSpecification)
   LSL <- as.numeric(options$lowerSpecification)
   targetValue <- as.numeric(options$targetValue)
   sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
   sampleN <- ncol(dataDiameter)
-  
+
   q <- qcc::qcc(dataDiameter, type ='S', plot=FALSE)
   stDevWithin <- q$std.dev   #stDevWithin <- rBar/d2
   stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
 
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(unlist(dataDiameter), targetValue, LSL, USL), min.n = 4)
-  
-  p <- ggplot2::ggplot(plotDat, ggplot2::aes(x = measurements)) + 
-		ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks, limits = range(xBreaks)) +
-    ggplot2::geom_histogram(ggplot2::aes(y =..density..), 
+
+  p <- ggplot2::ggplot(plotDat, ggplot2::aes(x = measurements)) +
+    ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks, limits = range(xBreaks)) +
+    ggplot2::geom_histogram(ggplot2::aes(y =..density..),
                             fill = "grey",
                             col = "black",
-                            size = .7) + 
-    ggplot2::stat_function(fun = dnorm, 
-                           args = list(mean = sampleMean, 
-                           sd = stDevOverall),
+                            size = .7) +
+    ggplot2::stat_function(fun = dnorm,
+                           args = list(mean = sampleMean,
+                                       sd = stDevOverall),
                            color = "black") +
-    ggplot2::stat_function(fun = dnorm, 
-                           args = list(mean = sampleMean, 
-                           sd = stDevWithin),
+    ggplot2::stat_function(fun = dnorm,
+                           args = list(mean = sampleMean,
+                                       sd = stDevWithin),
                            color = "red") +
-    ggplot2::geom_vline(xintercept = c(LSL,USL), 
+    ggplot2::geom_vline(xintercept = c(LSL,USL),
                         linetype = "dotted",
                         color = "red") +
-    ggplot2::geom_vline(xintercept = targetValue, 
+    ggplot2::geom_vline(xintercept = targetValue,
                         linetype = "dotted",
                         color = "green")
-	p <- jaspGraphs::themeJasp(p)
-  
+  p <- jaspGraphs::themeJasp(p)
+
   thePlot$plotObject <- p
   return(thePlot)
 }
@@ -199,32 +187,23 @@ processCapability <- function(jaspResults, dataset, options){
   processDataTable$addColumnInfo(name = "sampleN", type = "number", title = gettext("Sample N"))
   processDataTable$addColumnInfo(name = "stDevWithin", type = "number", title = gettext("StDev (Within)"))
   processDataTable$addColumnInfo(name = "stDevOverall", type = "number", title = gettext("StDev (Overall)"))
-  
+
   initialCapabilityAnalysis[["processDataTable"]] <- processDataTable
   if(is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
-	return()
+    return()
 
-  diameter <- encodeColNames(diameter)
-  subgroupsName <- encodeColNames(subgroupsName)
+  dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
 
-  data <- dataset[,diameter]
-  subgroups <- dataset[,subgroupsName]
-  subgroupLevels <- levels(subgroups)
-  dataDiameter <- data.frame() 
-  for(level in subgroupLevels){
-    subdata <- subset(dataset[,diameter], subgroups == level)
-    dataDiameter <- rbind(data, as.numeric(unlist(subdata)))
-  }
   USL <- as.numeric(options$upperSpecification)
   LSL <- as.numeric(options$lowerSpecification)
   targetValue <- as.numeric(options$targetValue)
   sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
   sampleN <- ncol(dataDiameter)
-  
+
   q <- qcc::qcc(dataDiameter, type ='S', plot=FALSE)
   stDevWithin <- q$std.dev   #stDevWithin <- rBar/d2
   stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
-  
+
   processDataTable$addRows(list("lowerSpecificationLimit" = LSL,
                                 "targetValue" = targetValue,
                                 "upperSpecificationLimit" = USL,
@@ -235,7 +214,7 @@ processCapability <- function(jaspResults, dataset, options){
 }
 
 .capabilityTable <- function(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis){
-  
+
   potentialCapabilityTable <- createJaspTable(title = gettext("Potential (Within) Capability"))
   potentialCapabilityTable$addColumnInfo(name = "CP", type = "number", title = gettext("CP"))
   potentialCapabilityTable$addColumnInfo(name = "CPL", type = "number", title = gettext("CPL"))
@@ -253,29 +232,20 @@ processCapability <- function(jaspResults, dataset, options){
   initialCapabilityAnalysis[["overallCapabilityTable"]] <- overallCapabilityTable
 
   if(is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
-	return()
+    return()
 
-  diameter <- encodeColNames(diameter)
-  subgroupsName <- encodeColNames(subgroupsName)
-  
-  data <- dataset[,diameter]
-  subgroups <- dataset[,subgroupsName]
-  subgroupLevels <- levels(subgroups)
-  dataDiameter <- data.frame() 
-  for(level in subgroupLevels){
-    subdata <- subset(dataset[,diameter], subgroups == level)
-    dataDiameter <- rbind(data, as.numeric(unlist(subdata)))
-  }
+  dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
+
   USL <- as.numeric(options$upperSpecification)
   LSL <- as.numeric(options$lowerSpecification)
   targetValue <- as.numeric(options$targetValue)
   sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
   sampleN <- ncol(dataDiameter)
-  
+
   q <- qcc::qcc(dataDiameter, type ='S', plot=FALSE)
   stDevWithin <- q$std.dev   #stDevWithin <- rBar/d2
   stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
-  
+
   #Capability Indices (short term)
   CP <- (USL - LSL) / (6*stDevWithin)
   CPL <- (sampleMean - LSL) / (3*stDevWithin)
@@ -287,7 +257,7 @@ processCapability <- function(jaspResults, dataset, options){
                                         "CPU" = CPU,
                                         "CPK" = CPK,
                                         "Z" = Z))
-  
+
   #Performance Indices (long term)
   PP <- (USL - LSL) / (6*stDevOverall)
   PPL <- (sampleMean - LSL) / (3*stDevOverall)
@@ -296,8 +266,8 @@ processCapability <- function(jaspResults, dataset, options){
   CPM <- CP / sqrt(1 + ((sampleMean - targetValue) / stDevWithin)^2)
 
   overallCapabilityTable$addRows(list("PP" = PP,
-                                 "PPL" = PPL,
-                                 "PPU" = PPU,
-                                 "PPK" = PPK,
-                                 "CPM" = CPM))
+                                      "PPL" = PPL,
+                                      "PPU" = PPU,
+                                      "PPK" = PPK,
+                                      "CPM" = CPM))
 }

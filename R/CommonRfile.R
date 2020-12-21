@@ -1,6 +1,6 @@
-#Common R file
+# Function to create X-bar chart
 .XbarchartNoId <- function(dataset, options) {
-  
+
   if(!is.null(options$variables)){
     ready <- (length(options$variables) > 1)
     if (!ready)
@@ -29,7 +29,7 @@
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
-  
+
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
     jaspGraphs::geom_line() +
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "gray")) +
@@ -40,12 +40,13 @@
     ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-  
+
   return(p)
 }
 
+# Function to create R chart
 .RchartNoId <- function(dataset, options) {
-  
+
   if(!is.null(options$variables)){
     ready <- (length(options$variables) > 1)
     if (!ready)
@@ -73,7 +74,7 @@
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
-  
+
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
     jaspGraphs::geom_line() +
@@ -85,21 +86,22 @@
     ggplot2::scale_x_continuous(name= "Subgroup" ,breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-  
+
   return(p)
 }
 
+# Function to create probability plot
 .ProbabilityPlotNoId <- function(dataset, options, variable, dis){
   title <- variable
   ppPlot <- createJaspPlot(width = 400, aspectRatio = 1, title = title)
   ppPlot$dependOn(optionContainsValue = list(variables = variable))
-  
+
   #Arrange data
   x <- dataset[[.v(variable)]]
   x <- x[order(x)]
   n <- length(x)
   i <- rank(x)
-  
+
   #Method for rank
   Rank_funs <- matrix(
     list(
@@ -137,7 +139,7 @@
   )
   rankByUser <- options$rank
   p <- Rank_funs[[rankByUser, 'p']](x)
-  
+
   #Functions for computing y
   y_funs <- matrix(
     list(
@@ -155,13 +157,13 @@
   DisByUser <- options$Nulldis
   y <- y_funs[[DisByUser, 'y']](p)
   data1 <- data.frame(x = x, y = y)
-  
+
   #Quantities
   pSeq <- seq(0.001, 0.999, 0.001)
   ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(min(x), max(x)))
   xlimits <- range(xBreaks)
-  
+
   #Computing according to the distribution
   if (dis == 'Normal'){
     lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
@@ -211,9 +213,9 @@
     percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
     breaksY <- log(-1*log(1-(ticks / 100)))
   }
-  
-  
-  
+
+
+
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower)) +
@@ -230,7 +232,7 @@
   pptable <- createJaspTable(title = gettextf("Descriptives for %s", variable ))
   pptable$dependOn(optionContainsValue=list(variables=variable))
   x = dataset[[.v(variable)]]
-  
+
   if (dis == 'Normal') {
     pptable$addColumnInfo(name = "mean",   title = "Mean",         type = "integer", combine = FALSE)
     pptable$addColumnInfo(name = "sd",     title = "StDev",        type = "integer")
@@ -238,7 +240,7 @@
     pptable$addColumnInfo(name = "AD",     title = "AD",           type = "integer")
     pptable$addColumnInfo(name = "P_value",title = "P-value",      type = "integer")
     pptable$addColumnInfo(name = "Normality",title = "Reject the null-distribution?",      type = "string")
-    
+
     pptable$addRows(list(
       mean = round(mean(x),3),
       sd         = round(sd(x),3),
@@ -256,7 +258,7 @@
     pptable$addColumnInfo(name = "AD",     title = "AD",           type = "integer")
     pptable$addColumnInfo(name = "P_value",title = "P-value",      type = "integer")
     pptable$addColumnInfo(name = "Normality",title = "Reject the null-distribution?",      type = "string")
-    
+
     pptable$addRows(list(
       Location   = round(as.numeric(fit$estimate[1]), 3),
       Scale      = round(as.numeric(fit$estimate[2]), 3),
@@ -274,7 +276,7 @@
     pptable$addColumnInfo(name = "AD",     title = "AD",           type = "integer")
     pptable$addColumnInfo(name = "P_value",title = "P-value",      type = "integer")
     pptable$addColumnInfo(name = "Normality",title = "Reject the null-distribution?",      type = "string")
-    
+
     pptable$addRows(list(
       Shape      = round(as.numeric(fit$estimate[1]),3),
       Scale      = round(as.numeric(fit$estimate[2]),3),
@@ -283,7 +285,19 @@
       P_value    = round(goftest::ad.test(x = x, "pweibull", shape = as.numeric(fit$estimate[1]), scale= as.numeric(fit$estimate[2]))$p.value,3),
       Normality  = ifelse(round(goftest::ad.test(x = x, "pweibull", shape = as.numeric(fit$estimate[1]), scale= as.numeric(fit$estimate[2]))$p.value,3) >= 0.05, 'No', 'Yes')
     ))
-    
+
   }
   return(pptable)
+}
+
+.convertDatasetToQccReady <- function(dataset, diameter, subgroupsName){
+  data <- dataset[, encodeColNames(diameter)]
+  subgroups <- dataset[, encodeColNames(subgroupsName)]
+  subgroupLevels <- levels(subgroups)
+  dataDiameter <- data.frame()
+  for(level in subgroupLevels){
+    subdata <- subset(dataset[,diameter], subgroups == level)
+    dataDiameter <- rbind(data, as.numeric(unlist(subdata)))
+  }
+  return(dataDiameter)
 }
