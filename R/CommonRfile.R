@@ -91,7 +91,7 @@
 
 .ProbabilityPlotNoId <- function(dataset, options, variable, dis){
   title <- variable
-  ppPlot <- createJaspPlot(width = 600, aspectRatio = 1, title = title)
+  ppPlot <- createJaspPlot(width = 400, aspectRatio = 1, title = title)
   ppPlot$dependOn(optionContainsValue = list(variables = variable))
   
   #Arrange data
@@ -218,12 +218,10 @@
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower)) +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper)) +
-    ggplot2::geom_point(ggplot2::aes(x= data1$x, y= data1$y), size = 2) +
+    jaspGraphs::geom_point(ggplot2::aes(x= data1$x, y= data1$y)) +
     ggplot2::scale_x_continuous('candle_width',limits = xlimits, breaks = xBreaks) +
-    ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = breaksY) +
-    jaspGraphs::themeJaspRaw() +
-    jaspGraphs::geom_rangeframe()
-  
+    ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = breaksY)
+  p <- jaspGraphs::themeJasp(p)
   ppPlot$plotObject <-  p
   return(ppPlot)
 }

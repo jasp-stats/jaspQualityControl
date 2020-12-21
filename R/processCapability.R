@@ -21,9 +21,6 @@ processCapability <- function(jaspResults, dataset, options){
   subgroupsName <- options$subgroups
   makeSubgroups <- subgroupsName != ""
 
-  if(length(diameter) == 0)
-	return()
-
   if (is.null(dataset)) {
     if (makeSubgroups) {
       dataset         <- .readDataSetToEnd(columns.as.numeric = diameter, columns.as.factor = subgroupsName)
@@ -36,16 +33,16 @@ processCapability <- function(jaspResults, dataset, options){
   
   # X-bar & Range Control Chart (by Tom)
   if(options$controlCharts & is.null(jaspResults[["controlCharts"]])) {
-    jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 1100, height = 400)
+    jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 600, height = 300)
     jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
-    jaspResults[["XbarPlot"]]$position <- 1
+    jaspResults[["XbarPlot"]]$position <- 2
     XbarPlot <- jaspResults[["XbarPlot"]]
     XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
     XbarPlot$dependOn(optionContainsValue= list(diameter=diameter))
     
-    jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 1100, height= 400)
+    jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 600, height= 300)
     jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
-    jaspResults[["RPlot"]]$position <- 2
+    jaspResults[["RPlot"]]$position <- 3
     RPlot<- jaspResults[["RPlot"]]
     RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
     RPlot$dependOn(optionContainsValue= list(diameter=diameter))
@@ -54,22 +51,20 @@ processCapability <- function(jaspResults, dataset, options){
   # Histogram 
   if (options$histogram) {
     if(is.null(jaspResults[["histogram"]])) {
-      jaspResults[["histogram"]] <- createJaspContainer(gettext("Histogram"))
-      jaspResults[["histogram"]]$dependOn("histogram")
       jaspResults[["histogram"]] <- .histogram(options, dataset, diameter, subgroupsName)
-      jaspResults[["histogram"]]$position <- 3
+      jaspResults[["histogram"]]$position <- 4
     }
   }
 
   #Probability Plot
-  if(options$probabilityPlot | options$probabilityPlot) {
+  if(options$probabilityPlot) {
     if (is.null(jaspResults[["probabilityPlot"]])){
       jaspResults[["probabilityPlot"]] <- createJaspContainer(gettext("Probability Plots"))
       jaspResults[["probabilityPlot"]]$dependOn(c("probabilityPlot"))
-      jaspResults[["probabilityPlot"]]$position <- 4
+      jaspResults[["probabilityPlot"]]$position <- 5
       jaspResults[["PPtables"]] <- createJaspContainer(gettext("Probability Plots Tables"))
       jaspResults[["PPtables"]]$dependOn(c("probabilityPlot"))
-      jaspResults[["PPtables"]]$position <- 5
+      jaspResults[["PPtables"]]$position <- 6
     }
     
     PPplots <- jaspResults[["probabilityPlot"]]
@@ -84,55 +79,49 @@ processCapability <- function(jaspResults, dataset, options){
   if (options[["capabilityStudy"]] == "initialCapabilityAnalysis"){
     if(is.null(jaspResults[["initialCapabilityAnalysis"]])) {
       jaspResults[["initialCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Initial Capability Study)"))
-      jaspResults[["initialCapabilityAnalysis"]]$dependOn(c("initialCapabilityAnalysis","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
-      jaspResults[["initialCapabilityAnalysis"]]$position <- 6
+      jaspResults[["initialCapabilityAnalysis"]]$dependOn(c("capabilityStudy","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
+      jaspResults[["initialCapabilityAnalysis"]]$position <- 1
     }
 
     initialCapabilityAnalysis <- jaspResults[["initialCapabilityAnalysis"]]
-    initialCapabilityAnalysis[["processDataTable"]] <- .processDataTable(options, dataset, diameter, subgroupsName)
+    .processDataTable(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis)
     initialCapabilityAnalysis[["capabilityPlot"]] <- .capabilityPlot(options, dataset, diameter, subgroupsName)
-    initialCapabilityTables <- .capabilityTable(options, dataset, diameter, subgroupsName)
-    initialCapabilityAnalysis[["potentialCapabilityTable"]] <- initialCapabilityTables[[1]]
-    initialCapabilityAnalysis[["overallCapabilityTable"]] <- initialCapabilityTables[[2]]
+    .capabilityTable(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis)
   }
   
   # Follow-up Capability Analysis 
   if (options[["capabilityStudy"]] == "followupCapabilityAnalysis"){
     if(is.null(jaspResults[["followupCapabilityAnalysis"]])) {
       jaspResults[["followupCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Follow-up Capability Study)"))
-      jaspResults[["followupCapabilityAnalysis"]]$dependOn(c("followupCapabilityAnalysis","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
-      jaspResults[["followupCapabilityAnalysis"]]$position <- 6
+      jaspResults[["followupCapabilityAnalysis"]]$dependOn(c("capabilityStudy","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
+      jaspResults[["followupCapabilityAnalysis"]]$position <- 1
     }
 
     followupCapabilityAnalysis <- jaspResults[["followupCapabilityAnalysis"]]
-    followupCapabilityAnalysis[["processDataTable"]] <- .processDataTable(options, dataset, diameter, subgroupsName)
+    .processDataTable(options, dataset, diameter, subgroupsName, followupCapabilityAnalysis)
     followupCapabilityAnalysis[["capabilityPlot"]] <- .capabilityPlot(options, dataset, diameter, subgroupsName)
-    followupCapabilityTables <- .capabilityTable(options, dataset, diameter, subgroupsName)
-    followupCapabilityAnalysis[["potentialCapabilityTable"]] <- followupCapabilityTables[[1]]
-    followupCapabilityAnalysis[["overallCapabilityTable"]] <- followupCapabilityTables[[2]]
+    .capabilityTable(options, dataset, diameter, subgroupsName, followupCapabilityAnalysis)
   }
-
-  return()
 }
 
 .histogram <- function(options, dataset, diameter, subgroupsName){
+
+  if(!options[["histogram"]] || is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
+	return()
   
   diameter <- encodeColNames(diameter)
   subgroupsName <- encodeColNames(subgroupsName)
-  thePlot <- createJaspPlot(title = gettext("Histogram"))
+  thePlot <- createJaspPlot(title = gettext("Histogram"), width = 600, height = 300)
+  thePlot$dependOn(options = "histogram")
   plotDat <- data.frame(measurements = as.numeric(unlist(dataset[, diameter])))
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotDat[["measurements"]], min.n = 4)
   
   p <- ggplot2::ggplot(plotDat, ggplot2::aes(x = measurements)) + 
-    ggplot2::geom_histogram(ggplot2::aes(y =..density..), 
-                            fill = "grey",
-                            col = "black",
-                            size = .7) +
-    ggplot2::stat_function(fun = dnorm, 
-                           args = list(mean = mean(plotDat[["measurements"]]), 
-                           sd = sd(plotDat[["measurements"]])),
-                           color = "blue") +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
+		ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks) +
+        ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7) +
+    	ggplot2::stat_function(fun = dnorm, color = "blue",
+								args = list(mean = mean(plotDat[["measurements"]]), sd = sd(plotDat[["measurements"]])))
+  p <- jaspGraphs::themeJasp(p)
   
   thePlot$plotObject <- p
   return(thePlot)
@@ -142,7 +131,11 @@ processCapability <- function(jaspResults, dataset, options){
   
   diameter <- encodeColNames(diameter)
   subgroupsName <- encodeColNames(subgroupsName)
-  thePlot <- createJaspPlot(title = gettext("Capability of the Process"))
+  thePlot <- createJaspPlot(title = gettext("Capability of the Process"), width = 600, height = 300)
+
+  if(is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
+	return()
+
   plotDat <- data.frame(measurements = as.numeric(unlist(dataset[, diameter])))
   
   diameter <- encodeColNames(diameter)
@@ -165,8 +158,11 @@ processCapability <- function(jaspResults, dataset, options){
   q <- qcc::qcc(dataDiameter, type ='S', plot=FALSE)
   stDevWithin <- q$std.dev   #stDevWithin <- rBar/d2
   stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
+
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(unlist(dataDiameter), targetValue, LSL, USL), min.n = 4)
   
   p <- ggplot2::ggplot(plotDat, ggplot2::aes(x = measurements)) + 
+		ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks, limits = range(xBreaks)) +
     ggplot2::geom_histogram(ggplot2::aes(y =..density..), 
                             fill = "grey",
                             col = "black",
@@ -184,15 +180,14 @@ processCapability <- function(jaspResults, dataset, options){
                         color = "red") +
     ggplot2::geom_vline(xintercept = targetValue, 
                         linetype = "dotted",
-                        color = "green") +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
+                        color = "green")
+	p <- jaspGraphs::themeJasp(p)
   
   thePlot$plotObject <- p
   return(thePlot)
 }
 
-.processDataTable <- function(options, dataset, diameter, subgroupsName){
+.processDataTable <- function(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis){
 
   processDataTable <- createJaspTable(title = gettext("Process Data"))
   processDataTable$dependOn(c("upperSpecification","lowerSpecification","targetValue","diameter","subgroups"))
@@ -205,6 +200,10 @@ processCapability <- function(jaspResults, dataset, options){
   processDataTable$addColumnInfo(name = "stDevWithin", type = "number", title = gettext("StDev (Within)"))
   processDataTable$addColumnInfo(name = "stDevOverall", type = "number", title = gettext("StDev (Overall)"))
   
+  initialCapabilityAnalysis[["processDataTable"]] <- processDataTable
+  if(is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
+	return()
+
   diameter <- encodeColNames(diameter)
   subgroupsName <- encodeColNames(subgroupsName)
 
@@ -233,12 +232,28 @@ processCapability <- function(jaspResults, dataset, options){
                                 "sampleN" = sampleN,
                                 "stDevWithin" = stDevWithin,
                                 "stDevOverall" = stDevOverall))
-
-  return(processDataTable)
 }
 
-.capabilityTable <- function(options, dataset, diameter, subgroupsName){
+.capabilityTable <- function(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis){
+  
   potentialCapabilityTable <- createJaspTable(title = gettext("Potential (Within) Capability"))
+  potentialCapabilityTable$addColumnInfo(name = "CP", type = "number", title = gettext("CP"))
+  potentialCapabilityTable$addColumnInfo(name = "CPL", type = "number", title = gettext("CPL"))
+  potentialCapabilityTable$addColumnInfo(name = "CPU", type = "number", title = gettext("CPU"))
+  potentialCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("CPK"))
+  potentialCapabilityTable$addColumnInfo(name = "Z", type = "number", title = gettext("Z (Sigma Score)"))
+  initialCapabilityAnalysis[["potentialCapabilityTable"]] <- potentialCapabilityTable
+
+  overallCapabilityTable <- createJaspTable(title = gettext("Overall Capability"))
+  overallCapabilityTable$addColumnInfo(name = "PP", type = "number", title = gettext("PP"))
+  overallCapabilityTable$addColumnInfo(name = "PPL", type = "number", title = gettext("PPL"))
+  overallCapabilityTable$addColumnInfo(name = "PPU", type = "number", title = gettext("PPU"))
+  overallCapabilityTable$addColumnInfo(name = "PPK", type = "number", title = gettext("PPK"))
+  overallCapabilityTable$addColumnInfo(name = "CPM", type = "number", title = gettext("CPM"))
+  initialCapabilityAnalysis[["overallCapabilityTable"]] <- overallCapabilityTable
+
+  if(is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
+	return()
 
   diameter <- encodeColNames(diameter)
   subgroupsName <- encodeColNames(subgroupsName)
@@ -260,12 +275,6 @@ processCapability <- function(jaspResults, dataset, options){
   q <- qcc::qcc(dataDiameter, type ='S', plot=FALSE)
   stDevWithin <- q$std.dev   #stDevWithin <- rBar/d2
   stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
-
-  potentialCapabilityTable$addColumnInfo(name = "CP", type = "number", title = gettext("CP"))
-  potentialCapabilityTable$addColumnInfo(name = "CPL", type = "number", title = gettext("CPL"))
-  potentialCapabilityTable$addColumnInfo(name = "CPU", type = "number", title = gettext("CPU"))
-  potentialCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("CPK"))
-  potentialCapabilityTable$addColumnInfo(name = "Z", type = "number", title = gettext("Z (Sigma Score)"))
   
   #Capability Indices (short term)
   CP <- (USL - LSL) / (6*stDevWithin)
@@ -278,13 +287,6 @@ processCapability <- function(jaspResults, dataset, options){
                                         "CPU" = CPU,
                                         "CPK" = CPK,
                                         "Z" = Z))
-
-  overallCapabilityTable <- createJaspTable(title = gettext("Overall Capability"))
-  overallCapabilityTable$addColumnInfo(name = "PP", type = "number", title = gettext("PP"))
-  overallCapabilityTable$addColumnInfo(name = "PPL", type = "number", title = gettext("PPL"))
-  overallCapabilityTable$addColumnInfo(name = "PPU", type = "number", title = gettext("PPU"))
-  overallCapabilityTable$addColumnInfo(name = "PPK", type = "number", title = gettext("PPK"))
-  overallCapabilityTable$addColumnInfo(name = "CPM", type = "number", title = gettext("CPM"))
   
   #Performance Indices (long term)
   PP <- (USL - LSL) / (6*stDevOverall)
@@ -298,8 +300,4 @@ processCapability <- function(jaspResults, dataset, options){
                                  "PPU" = PPU,
                                  "PPK" = PPK,
                                  "CPM" = CPM))
-
-  capabilityTables <- list(potentialCapabilityTable, overallCapabilityTable)
-
-  return(capabilityTables)
 }

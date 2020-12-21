@@ -52,14 +52,14 @@ Form
 	Group
 	{
 		title: qsTr("Stability of the Process")
-		CheckBox { name: "controlCharts";			label: qsTr("X-bar & Range Control Chart"); checked: true				}
+		CheckBox { name: "controlCharts";			label: qsTr("X-bar & Range Control Chart") }
 	}
 
 	Group
 	{
 		title: qsTr("Distribution of the Process")
-		CheckBox { name: "histogram";			label: qsTr("Histogram"); checked: true			}
-		CheckBox { name: "probabilityPlot";    label: qsTr("Probability Plot"); checked: true
+		CheckBox { name: "histogram";			label: qsTr("Histogram")}
+		CheckBox { name: "probabilityPlot";    label: qsTr("Probability Plot")
 			DropDown
 			{
 				name: "rank"
