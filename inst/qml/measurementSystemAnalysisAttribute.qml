@@ -69,10 +69,9 @@ Form
 		}
 	}
 
-
-	Section
+	Group
 	{
-		title: qsTr("Attribute Agreement Analysis")
+		title: qsTr("Tables")
 		
 		CheckBox
 		{

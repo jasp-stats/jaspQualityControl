@@ -25,7 +25,7 @@ Description
 	}
 		Analysis
 	{
-		title:			qsTr("Attributes")
+		title:			qsTr("Attributes Agreement Analysis")
 		func:			"measurementSystemAnalysisAttribute"
 	}
 

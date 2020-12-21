@@ -30,7 +30,13 @@ processControl <- function(jaspResults, dataset, options){
              all.target = options$variables,
              observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE,
              custom = function() { if (length(options$variables) < 2 && length(options$variables) != 0) return("Please use two measurements or more")})
-  if (length(options$variables) == 0) {return ()}
+  
+  jaspResults[["intro"]] <- createJaspHtml("Select one of the control charts to from the interface.\n\nX bar chart: \nS chart: \nR chart: \nI-mR chart:", "p")
+  jaspResults[["intro"]]$position <- 0
+  
+  # Return when no variables are present
+  if (length(options$variables) == 0)
+  	return ()
 
   #X bar R Chart
   if(options$Xbarchart && is.null(jaspResults[["Xbarchart"]])){

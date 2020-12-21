@@ -36,28 +36,12 @@ measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...)
 
   .msaCheckErrors(dataset, options)
 
-
-  if(is.null(jaspResults[["rAndR1"]])) {
-    jaspResults[["rAndR1"]] <- createJaspContainer(gettext("r & R Table"))
-    jaspResults[["rAndR1"]]$position <- 1
-  }
-
-  jaspResults[["rAndR1"]] <- .rAndRtableGauge(ready = ready, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-
+  .rAndRtableGauge(ready = ready, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults)
 
   # Range Method r and R table
   if (options[["rangeRr"]]) {
-    if(is.null(jaspResults[["rAndR"]])) {
-      jaspResults[["rAndR2"]] <- createJaspContainer(gettext("r & R Table"))
-      jaspResults[["rAndR2"]]$position <- 2
-    }
-
-    jaspResults[["rAndR2"]] <- .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-
+    .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults)
   }
-
-
-
 
   # Scatter Plot Operators
   if (options[["rangeScatterPlotOperators"]]) {
@@ -274,9 +258,13 @@ measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...)
   return(plot)
 }
 
-.rAndRtableRange <- function(dataset, measurements, parts, operators, options){
+.rAndRtableRange <- function(dataset, measurements, parts, operators, options, jaspResults){
+
+  if(!is.null(jaspResults[["rAndR2"]]))
+    return()
 
   table <- createJaspTable(title = gettext("r & R Table"))
+  table$position <- 2
 
   table$dependOn(c("rangeRr"))
 
@@ -285,6 +273,8 @@ measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...)
   table$addColumnInfo(name = "PSD", title = gettext("Process SD"), type = "number")
   table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
   table$addColumnInfo(name = "GRRpercent", title = gettext("%GRR"), type = "number")
+
+  jaspResults[["rAndR2"]] <- table
 
   Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / length(dataset[[measurements[1]]]))
   d2 <- 1.19105
@@ -298,21 +288,22 @@ measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...)
                            "PSD"        = SD,
                            "GRR"        = GRR,
                            "GRRpercent" = GRRpercent))
-
-
-
-  return(table)
 }
 
-.rAndRtableGauge <- function(ready, dataset, measurements, parts, operators, options){
+.rAndRtableGauge <- function(ready, dataset, measurements, parts, operators, options, jaspResults){
+
+	if(!is.null(jaspResults[["rAndR1"]]))
+		return()
 
   table <- createJaspTable(title = gettext("r & R Table"))
+  table$position <- 1
 
   table$dependOn(c("operators", "parts", "measurements"))
 
   table$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
   table$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
 
+  jaspResults[["rAndR1"]] <- table
 
   if(ready){
 
@@ -340,9 +331,10 @@ measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...)
     table$setData(list(      "Source"       = c("r & R", "Repeatability", "Reproducibility", "Interaction", "Part Variation", "Total Variation"),
                              "Variation"    = c(rR, repeatability, reproducibility, interaction, partvar, totalvar)))
 
+  } else {
+    table$setData(list(      "Source"       = c("r & R", "Repeatability", "Reproducibility", "Interaction", "Part Variation", "Total Variation"),
+                             "Variation"    = rep(".", 6)))
   }
-
-  return(table)
 }
 
 .gaugeANOVA <- function(dataset, measurements, parts, operators, options){
@@ -352,6 +344,7 @@ measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...)
   data <- tidyr::gather(data, repetition, measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
   anovaTable <- createJaspTable(title = gettext("ANOVA Table"))
+  anovaTable$position <- 5
 
   anovaTable$dependOn(c("gaugeANOVA"))
 
@@ -441,7 +434,7 @@ measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...)
   colnames(meansPerOperator)[-1] <- names(byOperator)
 
 
-  plot <- createJaspPlot(title = "Parts by Operator Interaction", width = 500, height = 320)
+  plot <- createJaspPlot(title = "Parts by Operator Interaction", width = 600, height = 300)
 
   plot$dependOn(c("gaugeByInteraction"))
 
@@ -469,7 +462,7 @@ measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...)
 
 .XbarChart <- function(dataset, measurements, parts, operators, options, title){
 
-  plot <- createJaspPlot(title = paste("Operator", title), width = 700, height = 300)
+  plot <- createJaspPlot(title = paste("Operator", title), width = 600, height = 300)
 
   p <- .XbarchartNoId(dataset = dataset[measurements], options = options)
 
@@ -483,7 +476,7 @@ measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...)
 
 .RangeChart <- function(dataset, measurements, parts, operators, options, title){
 
-  plot <- createJaspPlot(title = paste("Operator", title), width = 700, height = 300)
+  plot <- createJaspPlot(title = paste("Operator", title), width = 600, height = 300)
 
   p <- .RchartNoId(dataset = dataset[measurements], options = options)
 
@@ -581,7 +574,7 @@ measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...)
 
   dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
-  plot <- createJaspPlot(title = "Run Chart", width = 500, height = 320)
+  plot <- createJaspPlot(title = "Run Chart", width = 600, height = 300)
 
   index <- 1:length(dataset[["Measurement"]])
 
