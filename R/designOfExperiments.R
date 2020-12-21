@@ -44,9 +44,9 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
     if(options[["design"]] == "factorial"){
 
       table$addColumnInfo(name = 'run', title = gettext("Runs"), type = 'integer')
-	  for (i in 2:15){
+      for (i in 2:15){
         table$addColumnInfo(name = paste0("factor", i), title = as.character(i), type = "string", overtitle = "Factors")
-	  }
+      }
 
       rows <- data.frame(run = c(4, 8, 16, 32, 64, 128),
                          factor2 = c("Full", "", "", "", "", ""),
