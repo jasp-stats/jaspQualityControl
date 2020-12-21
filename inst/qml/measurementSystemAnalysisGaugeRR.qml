@@ -38,7 +38,7 @@ Form
 			name:								"operators"
 			title:								qsTr("Operators")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["nominal", "nominalText"]
 		}
 		
 		AssignedVariablesList
@@ -56,18 +56,8 @@ Form
 			name:								"measurements"
 			title:								qsTr("Measurements")
 			singleVariable:						false
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["scale"]
 		}
-		
-		AssignedVariablesList
-		{
-			id:									variable4
-			name:								"standard"
-			title:								qsTr("Standard")
-			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
-		}
-		
 
 	}
 	
@@ -96,18 +86,10 @@ Form
 		Section
 	{
 		title: qsTr("Gauge r&R")
-		CheckBox
-				{
-			name: "gaugeRrTable";		label: qsTr("r&R Table");		checked: true
-			
-		}
+
 		CheckBox
 		{
 			name: "gaugeANOVA";		label: qsTr("ANOVA")
-		}
-		CheckBox
-		{
-			name: "gaugeComponentsGraph";		label: qsTr("Graph Variation Components")
 		}
 		CheckBox
 		{
@@ -193,36 +175,7 @@ Form
 		}
 		
 	}
-		
-
-
 	
-	Section
-	{
-		title: qsTr("Attribute Agreement Analysis")
-		
-		CheckBox
-		{
-			name: "AAAfleissKappa";		label: qsTr("Fleiss Kappa")
-		}
-		CheckBox
-		{
-			name: "AAAcohensKappa";		label: qsTr("Cohen's Kappa")
-		}
-		CheckBox
-		{
-			name: "AAAkendallTau";		label: qsTr("Kendall's Tau")
-		}
-		CheckBox
-		{
-			name: "AAAtable";		label: qsTr("Attribute Agreement Analysis Table")
-		}
-		CheckBox
-		{
-			name: "AAAgraphs";		label: qsTr("Attribute Agreement Analysis Graphs")
-		}
-
-	}
 		Section
 	{
 		title: qsTr("Determine Bias")

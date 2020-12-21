@@ -13,44 +13,49 @@ Description
 	license				: "GPL (>= 2)"
 	icon				: "processControl-module.svg"
 
-	// GroupTitle
-	// {
-	// 	title:			qsTr("Measurements")
-	// 	icon:			"processControl-measurement.svg"
-	// }
+	 GroupTitle
+	 {
+	 	title:			qsTr("Measurement Systems Analysis")
+	 	icon:			"processControl-measurement.svg"
+	 }
 	Analysis
 	{
-		title:			qsTr("Measurement Systems Analysis")
-		func:			"measurementSystemAnalysis"
+		title:			qsTr("Gauge r&R")
+		func:			"measurementSystemAnalysisGaugeRR"
+	}
+		Analysis
+	{
+		title:			qsTr("Attributes")
+		func:			"measurementSystemAnalysisAttribute"
 	}
 
-	// GroupTitle
-	// {
-	// 	title:			qsTr("Control")
-	// 	icon:			"processControl-control.svg"
-	// }
+	 GroupTitle
+	 {
+	 	title:			qsTr("Control")
+	 	icon:			"processControl-control.svg"
+	 }
 	Analysis
 	{
 		title:			qsTr("Control Charts")
 		func:			"processControl"
 	}	
 
-	// GroupTitle
-	// {
-	// 	title:			qsTr("Capability")
-	// 	icon:			"processControl-capability.svg"
-	// }
+	 GroupTitle
+	 {
+	 	title:			qsTr("Capability")
+	 	icon:			"processControl-capability.svg"
+	 }
 	Analysis
 	{
 		title:			qsTr("Process Capability Studies")
 		func:			"processCapability"
 	}
 
-	// GroupTitle
-	// {
-	// 	title:			qsTr("Design")
-	// 	icon:			"processControl-design.svg"
-	// }
+	 GroupTitle
+	 {
+	 	title:			qsTr("Design")
+	 	icon:			"processControl-design.svg"
+	 }
 	Analysis
 	{
 		title:			qsTr("Design of Experiments")

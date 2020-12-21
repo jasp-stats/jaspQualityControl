@@ -15,20 +15,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
+measurementSystemAnalysisGaugeRR <- function(jaspResults, dataset, options, ...){
 
   measurements <- unlist(options$measurements)
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
-  standards <- unlist(options$standard)
 
   numeric.vars <- measurements
 
-  factor.vars <- c(parts, operators, standards)
+  factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-  if(length(measurements) == 0)
-    return()
+
+  ready <- (length(measurements) != 0 & operators != "" & parts != "")
+
 
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
@@ -37,16 +37,13 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
   .msaCheckErrors(dataset, options)
 
 
-  # Gauge r and R table
-  if (options[["gaugeRrTable"]]) {
-    if(is.null(jaspResults[["rAndR1"]])) {
-      jaspResults[["rAndR1"]] <- createJaspContainer(gettext("r & R Table"))
-      jaspResults[["rAndR1"]]$position <- 1
-    }
-
-    jaspResults[["rAndR1"]] <- .rAndRtableGauge(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-
+  if(is.null(jaspResults[["rAndR1"]])) {
+    jaspResults[["rAndR1"]] <- createJaspContainer(gettext("r & R Table"))
+    jaspResults[["rAndR1"]]$position <- 1
   }
+
+  jaspResults[["rAndR1"]] <- .rAndRtableGauge(ready = ready, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+
 
   # Range Method r and R table
   if (options[["rangeRr"]]) {
@@ -206,7 +203,7 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
     jaspResults[["rangeRchart"]]$dependOn("rangeRchart")
   }
 
-  # Gauge Run Chart
+  # Bias Run Chart
   if (options[["biasRun"]]) {
     if(is.null(jaspResults[["biasRun"]])) {
       jaspResults[["biasRun"]] <- createJaspContainer(gettext("Run Chart"))
@@ -227,54 +224,6 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
   }
 
-  # Cohen's Kappa Operator vs Standard
-  if (options[["AAAcohensKappa"]]) {
-    if(is.null(jaspResults[["cohensKappa"]])) {
-      jaspResults[["cohensKappa"]] <- createJaspContainer(gettext("Cohen's Kappa"))
-      jaspResults[["cohensKappa"]]$position <- 17
-    }
-
-    jaspResults[["cohensKappa"]] <- .cohensKappa(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
-
-  }
-
-
-  # Fleiss' Kappa
-  if (options[["AAAfleissKappa"]]) {
-    if(is.null(jaspResults[["fleissKappa"]])) {
-      jaspResults[["fleissKappa"]] <- createJaspContainer(gettext("Cohen's Kappa"))
-      jaspResults[["fleissKappa"]]$position <- 18
-    }
-
-    jaspResults[["fleissKappa"]] <- .fleissKappa(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
-
-  }
-
-  # Attribute Agreement Analysis Table & Graph
-  if (options[["AAAtable"]] | options[["AAAgraphs"]]) {
-    if(is.null(jaspResults[["AAAtableGraphs"]])) {
-      jaspResults[["AAAtableGraphs"]] <- createJaspContainer(gettext("Attribute Agreement Analysis"))
-      jaspResults[["AAAtableGraphs"]]$position <- 19
-    }
-
-    jaspResults[["AAAtableGraphs"]] <- .aaaTableGraphs(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
-
-  }
-
-  # Kendall Tau
-  if (options[["AAAkendallTau"]]) {
-    if(is.null(jaspResults[["KendallTau"]])) {
-      jaspResults[["KendallTau"]] <- createJaspContainer(gettext("Attribute Agreement Analysis"))
-      jaspResults[["KendallTau"]]$position <- 20
-    }
-
-    jaspResults[["KendallTau"]] <- .kendallTau(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
-
-  }
-
-
-
-
   return()
 }
 
@@ -286,7 +235,7 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
   plot$dependOn(c("rangeScatterPlotOperators", "rangeScatterPlotFitLine", "rangeScatterPlotOriginLine"))
 
   p <- ggplot2::ggplot(data = dataset, ggplot2::aes_string(x = measurements[1], y = measurements[2])) +
-    ggplot2::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
+    jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
     ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
 
   if (options[["rangeScatterPlotFitLine"]])
@@ -339,7 +288,7 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
   Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / length(dataset[[measurements[1]]]))
   d2 <- 1.19105
-  SD <- options$processSD
+  SD <- options$processVariationOrTolerance
   GRR <- Rbar/d2
   GRRpercent <- GRR/SD*100
 
@@ -355,39 +304,43 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
   return(table)
 }
 
-.rAndRtableGauge <- function(dataset, measurements, parts, operators, options){
-
-  interval <- 5.15
-
-  data <- dataset
-
-  data <- tidyr::gather(data, repetition, measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-
-  formula <- as.formula(paste("measurement ~",operators,"*",parts))
-
-  anova <- summary(aov(formula = formula, data = data))
+.rAndRtableGauge <- function(ready, dataset, measurements, parts, operators, options){
 
   table <- createJaspTable(title = gettext("r & R Table"))
 
-  table$dependOn(c("gaugeRrTable"))
+  table$dependOn(c("operators", "parts", "measurements"))
 
   table$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
   table$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
 
 
+  if(ready){
 
-  repeatability <- interval*sqrt(anova[[1]]$`Mean Sq`[4])
-  reproducibility <- interval*sqrt((anova[[1]]$`Mean Sq`[1]-anova[[1]]$`Mean Sq`[3])/(length(measurements)*length(unique(data[[parts]]))))
-  interaction <- ifelse(anova[[1]]$`Mean Sq`[3] - anova[[1]]$`Mean Sq`[4] < 0, 0,
-                        interval*sqrt((anova[[1]]$`Mean Sq`[3] - anova[[1]]$`Mean Sq`[4])/(length(measurements))))
-  rR <- sqrt((repeatability^2)+(reproducibility^2)+(interaction^2))
-  partvar <- interval*sqrt((anova[[1]]$`Mean Sq`[2] - anova[[1]]$`Mean Sq`[3])/(length(measurements)*length(unique(data[[operators]]))))
-  totalvar <- sqrt((rR^2) + (partvar^2))
+    interval <- 5.15
 
-  table$setData(list(      "Source"       = c("r & R", "Repeatability", "Reproducibility", "Interaction", "Part Variation", "Total Variation"),
-                           "Variation"    = c(rR, repeatability, reproducibility, interaction, partvar, totalvar)))
+    data <- dataset
+
+    data <- tidyr::gather(data, repetition, measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
+
+    formula <- as.formula(paste("measurement ~",operators,"*",parts))
+
+    anova <- summary(aov(formula = formula, data = data))
 
 
+
+
+    repeatability <- interval*sqrt(anova[[1]]$`Mean Sq`[4])
+    reproducibility <- interval*sqrt((anova[[1]]$`Mean Sq`[1]-anova[[1]]$`Mean Sq`[3])/(length(measurements)*length(unique(data[[parts]]))))
+    interaction <- ifelse(anova[[1]]$`Mean Sq`[3] - anova[[1]]$`Mean Sq`[4] < 0, 0,
+                          interval*sqrt((anova[[1]]$`Mean Sq`[3] - anova[[1]]$`Mean Sq`[4])/(length(measurements))))
+    rR <- sqrt((repeatability^2)+(reproducibility^2)+(interaction^2))
+    partvar <- interval*sqrt((anova[[1]]$`Mean Sq`[2] - anova[[1]]$`Mean Sq`[3])/(length(measurements)*length(unique(data[[operators]]))))
+    totalvar <- sqrt((rR^2) + (partvar^2))
+
+    table$setData(list(      "Source"       = c("r & R", "Repeatability", "Reproducibility", "Interaction", "Part Variation", "Total Variation"),
+                             "Variation"    = c(rR, repeatability, reproducibility, interaction, partvar, totalvar)))
+
+  }
 
   return(table)
 }
@@ -516,7 +469,7 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
 .XbarChart <- function(dataset, measurements, parts, operators, options, title){
 
-  plot <- createJaspPlot(title = paste("Operator", title))
+  plot <- createJaspPlot(title = paste("Operator", title), width = 700, height = 300)
 
   p <- .XbarchartNoId(dataset = dataset[measurements], options = options)
 
@@ -530,7 +483,7 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
 .RangeChart <- function(dataset, measurements, parts, operators, options, title){
 
-  plot <- createJaspPlot(title = paste("Operator", title))
+  plot <- createJaspPlot(title = paste("Operator", title), width = 700, height = 300)
 
   p <- .RchartNoId(dataset = dataset[measurements], options = options)
 
@@ -651,294 +604,41 @@ measurementSystemAnalysis <- function(jaspResults, dataset, options, ...){
 
 .gaugeScatterPlotOperators <- function(dataset, measurements, parts, operators, options){
 
-  operatorSplit <- split.data.frame(dataset, dataset[operators])
-
-  data <- data.frame(OperatorA = rowMeans(operatorSplit[[1]][measurements]), OperatorB = rowMeans(operatorSplit[[2]][measurements]))
-
   plot <- createJaspPlot(title = "Scatterplot of Operator A vs Operator B")
-
   plot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine"))
 
-  p <- ggplot2::ggplot(data = data, ggplot2::aes_string(x = "OperatorA", y = "OperatorB")) +
-    ggplot2::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
-    ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
+  if(length(unique(dataset[[operators]])) > 2){
+    plot$setError(gettextf("Plotting not possible: More than 2 Operators"))
+  }else{
 
-  if (options[["gaugeScatterPlotFitLine"]])
-    p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
+    operatorSplit <- split.data.frame(dataset, dataset[operators])
 
-  if (options[["gaugeScatterPlotOriginLine"]])
-    p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
+    data <- data.frame(OperatorA = rowMeans(operatorSplit[[1]][measurements]), OperatorB = rowMeans(operatorSplit[[2]][measurements]))
 
-  p <- jaspGraphs::themeJasp(p)
+    p <- ggplot2::ggplot(data = data, ggplot2::aes_string(x = "OperatorA", y = "OperatorB")) +
+      jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
+      ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
 
-  plot$plotObject <- p
+    if (options[["gaugeScatterPlotFitLine"]])
+      p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
+
+    if (options[["gaugeScatterPlotOriginLine"]])
+      p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
+
+    p <- jaspGraphs::themeJasp(p)
+
+    plot$plotObject <- p
+  }
 
   return(plot)
 }
 
-.cohensKappa <- function(dataset, measurements, parts, operators, standards, options){
-
-  dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-
-  table <- createJaspTable(title = gettext("Cohen's Kappa for Appraiser vs Standard"))
-
-  table$dependOn(c("AAAcohensKappa"))
-
-  table$addColumnInfo(name = "Appraiser",  title = gettext("Appraiser"), type = "string")
-  table$addColumnInfo(name = "CK", title = gettext("Cohen's Kappa"), type = "number")
-
-  appraiserVector <- vector(mode = "character")
-  kappaVector <- vector(mode = "numeric")
-  for(i in 1:length(unique(dataset[[operators]]))){
-    appraiser <- as.character(unique(dataset[[operators]])[i])
-    appraiserVector[i] <- appraiser
-    onlyAppraiser <- subset(dataset, dataset[operators] == appraiser)
-    kappaFrame <- data.frame(standard = onlyAppraiser[[standards]], measurement = onlyAppraiser[["Measurement"]])
-    kappa <- psych::cohen.kappa(kappaFrame)
-    kappaVector[i] <- kappa$kappa
-  }
-
-  allKappa <- psych::cohen.kappa(data.frame(standard = dataset[[standards]], measurement = dataset[["Measurement"]]))
-  appraiserVector <- c(appraiserVector, "All")
-  kappaVector <- c(kappaVector, allKappa$kappa)
-
-  table$setData(list(      "Appraiser"       = appraiserVector,
-                           "CK"              = kappaVector))
-
-  return(table)
-}
-
-.fleissKappa <- function(dataset, measurements, parts, operators, standards, options){
-
-  table <- createJaspTable(title = gettext("Fleiss' Kappa"))
-
-  table$dependOn(c("AAAfleissKappa"))
-
-  table$addColumnInfo(name = "appraiser",  title = gettext("Appraiser"), type = "string")
-  table$addColumnInfo(name = "within", title = gettext("Within Appraisers"), type = "number")
-  table$addColumnInfo(name = "vsStandard", title = gettext("Appraiser vs Standard"), type = "number")
-  table$addColumnInfo(name = "between", title = gettext("Between Appraisers"), type = "number")
-
-  appraiserVector <- vector(mode = "character")
-  kappaWithinVector <- vector(mode = "numeric")
-  kappaBetweenVector <- vector(mode = "numeric")
-  kappaStandardVector <- vector(mode = "numeric")
-
-  for(i in 1:length(unique(dataset[[operators]]))){
-    appraiser <- as.character(unique(dataset[[operators]])[i])
-    appraiserVector[i] <- appraiser
-    onlyAppraiser <- subset(dataset, dataset[operators] == appraiser)
-    fkappa <- irr::kappam.fleiss(onlyAppraiser[measurements])
-    kappaWithinVector[i] <- fkappa$value
-    kappaBetweenVector[i] <- NA
-  }
-
-  datasetLong <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-
-  for(i in 1:length(unique(datasetLong[[operators]]))){
-    appraiser <- as.character(unique(datasetLong[[operators]])[i])
-    onlyAppraiser <- subset(datasetLong, datasetLong[[operators]] == appraiser)
-    kappaFrame <- data.frame(standard = onlyAppraiser[[standards]], measurement = onlyAppraiser[["Measurement"]])
-    fkappa <- irr::kappam.fleiss(kappaFrame)
-    kappaStandardVector[i] <- fkappa$value
-  }
-
-  reshapeData <- data.frame(rep(NA,nrow(subset(datasetLong, datasetLong[[operators]] == unique(datasetLong[[operators]])[1]))))
-  for(i in 1:length(unique(datasetLong[[operators]]))){
-    appraiser <- as.character(unique(datasetLong[[operators]])[i])
-    reshapeData[,i] <- subset(datasetLong, datasetLong[operators] == appraiser)['Measurement']
-  }
-  betweenKappa <- irr::kappam.fleiss(reshapeData)
-  kappaBetweenVector <- c(kappaBetweenVector, betweenKappa$value)
-  allKappa <- irr::kappam.fleiss(data.frame(standard = datasetLong[standards], measurement = datasetLong["Measurement"]))
-  kappaStandardVector <- c(kappaStandardVector, allKappa$value)
-  appraiserVector <- c(appraiserVector, 'All')
-
-  table$setData(list(      "appraiser"       = appraiserVector,
-                           "within"          = kappaWithinVector,
-                           "vsStandard"      = kappaStandardVector,
-                           "between"         = kappaBetweenVector))
-
-  return(table)
-}
-
-
-.aaaTableGraphs <- function(dataset, measurements, parts, operators, standards, options){
-
-  tableWithin <- createJaspTable(title = gettext("Within Appraisers"))
-  tableEachVsStandard <- createJaspTable(title = gettext("Each Appraiser vs Standard"))
-  tableBetween <- createJaspTable(title = gettext("Between Appraisers"))
-  tableAllVsStandard <- createJaspTable(title = gettext("All Appraisers vs Standard"))
-
-  allTables <- list(tableWithin, tableEachVsStandard, tableBetween, tableAllVsStandard)
-
-  for(table in allTables[1:2]){
-    table$addColumnInfo(name = "Appraiser",  title = gettext("Appraiser"), type = "string")
-  }
-
-  for(table in allTables){
-    table$addColumnInfo(name = "Inspected", title = gettext("Inspected"), type = "integer")
-    table$addColumnInfo(name = "Matched", title = gettext("Matched"), type = "integer")
-    table$addColumnInfo(name = "Percent", title = gettext("Percent"), type = "number")
-
-  }
-
-  appraiserVector <- as.character(unique(dataset[[operators]]))
-  numberInspected <- length(unique(dataset[[parts]]))
-
-  matchesWithin <- vector(mode = "numeric")
-
-  for(i in 1:length(appraiserVector)){
-    onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
-    matchesWithin[i] <- .countRowMatches(onlyAppraiser[measurements])
-  }
-
-  percentWithin <- matchesWithin / numberInspected* 100
-
-  matchesEachVsStandard <- vector(mode = "numeric")
-
-  for(i in 1:length(appraiserVector)){
-    onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
-    matchesEachVsStandard[i] <- .countRowMatches(onlyAppraiser[c(measurements, standards)])
-  }
-
-  percentEachVsStandard <- matchesEachVsStandard / numberInspected* 100
-
-  reshapeData <- data.frame(subset(dataset, dataset[[operators]] == unique(dataset[[operators]])[1])[standards])
-  for(i in 1:length(appraiserVector)){
-    appraiser <- as.character(unique(dataset[[operators]])[i])
-    reshapeData <- cbind(reshapeData, subset(dataset, dataset[operators] == appraiser)[measurements])
-  }
-
-  matchesBetween <- .countRowMatches(reshapeData[2:ncol(reshapeData)])
-  percentBetween <- matchesBetween / numberInspected* 100
-
-  matchesAllVsStandard <- .countRowMatches(reshapeData)
-  percentAllVsStandard <- matchesAllVsStandard / numberInspected* 100
-
-
-
-  tableWithin$setData(list(      "Appraiser"       = appraiserVector,
-                                 "Inspected"       = rep(numberInspected, length(appraiserVector)),
-                                 "Matched"         = matchesWithin,
-                                 "Percent"         = percentWithin))
-
-  tableEachVsStandard$setData(list("Appraiser"     = appraiserVector,
-                                   "Inspected"       = rep(numberInspected, length(appraiserVector)),
-                                   "Matched"         = matchesEachVsStandard,
-                                   "Percent"         = percentEachVsStandard))
-
-  tableBetween$setData(list(     "Inspected"       = numberInspected,
-                                 "Matched"         = matchesBetween,
-                                 "Percent"         = percentBetween))
-
-  tableAllVsStandard$setData(list("Inspected"      = numberInspected,
-                                  "Matched"         = matchesAllVsStandard,
-                                  "Percent"         = percentAllVsStandard))
-
-  AAA <- createJaspContainer(gettext("Attribute Agreement Analysis"))
-
-  AAA$dependOn(c("AAAtable", "AAAgraphs"))
-  if(options[["AAAtable"]]){
-    AAA[["Within"]] <- tableWithin
-    AAA[["EachVsStandard"]] <- tableEachVsStandard
-    AAA[["Between"]] <- tableBetween
-    AAA[["AllVsStandard"]] <-tableAllVsStandard
-  }
-
-
-  if(options[["AAAgraphs"]]){
-    plotWithin <- createJaspPlot(title = "Within Appraisers", width = 300, height = 400)
-
-    withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
-
-    pw <- ggplot2::ggplot(withinDataframe, ggplot2::aes(x = x, y = y)) + jaspGraphs::geom_point()
-
-    pw <- jaspGraphs::themeJasp(pw) +
-      ggplot2::ylab("Percent") +
-      ggplot2::xlab("Appraiser") +
-      ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10))
-
-    plotWithin$plotObject <- pw
-
-    plotVs <- createJaspPlot(title = "Each Appraiser vs Standard", width = 300, height = 400)
-
-    vsDataframe <- data.frame(x = appraiserVector, y = percentEachVsStandard)
-
-    pvs <- ggplot2::ggplot(vsDataframe, ggplot2::aes(x = x, y = y)) + jaspGraphs::geom_point()
-
-    pvs <- jaspGraphs::themeJasp(pvs) +
-      ggplot2::ylab("Percent") +
-      ggplot2::xlab("Appraiser") +
-      ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10))
-
-    plotVs$plotObject <- pvs
-
-
-    AAA[["PlotWithin"]] <- plotWithin
-    AAA[["PlotVs"]] <- plotVs
-  }
-
-  return(AAA)
-}
-
-.countRowMatches <- function(data){
-  count <- 0
-  for(i in 1:nrow(data)){
-    matches <- unlist(data[i,]) == data[i,1]
-    if(all(matches))
-      count <- count + 1
-  }
-  return(count)
-}
-
-
-.kendallTau <- function(dataset, measurements, parts, operators, standards, options){
-
-  operatorVector <- as.character(unique(dataset[[operators]]))
-
-  table <- createJaspTable(title = gettext("Kendall's Tau"))
-
-  table$dependOn(c("AAAkendallTau"))
-
-  table$addColumnInfo(name = "Operator",  title = gettext("Operator"), type = "string")
-
-  for(operator in operatorVector){
-    table$addColumnInfo(name = operator, title = gettext(operator), type = "number")
-  }
-
-  table$addColumnInfo(name = standards, title = gettext(standards), type = "number")
-
-  standCorrVector <- vector(mode = "numeric")
-  tableColumns <- list()
-  for(i in 1:length(operatorVector)){
-    corrVector <- vector(mode = "numeric")
-    operator1 <- subset(dataset, dataset[operators] == operatorVector[i])
-    for(j in 1:length(operatorVector)){
-      if(j == i){
-        corrVector <- c(corrVector, 1)
-      }else{
-        operator2 <- subset(dataset, dataset[operators] == operatorVector[j])
-        kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = operator2[[measurements]])
-        corrVector <- c(corrVector, kt$r)
-      }
-    }
-    kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(operator1[[standards]]))
-    standCorrVector <- c(standCorrVector, kt$r)
-    tableColumns[[operatorVector[i]]] <- corrVector
-  }
-
-  tableColumns[["Operator"]] <- operatorVector
-  tableColumns[[standards]] <- standCorrVector
-  table$setData(tableColumns)
-
-  return(table)
-}
-
 .msaCheckErrors <- function(dataset, options) {
 
-  #.hasErrors(dataset = dataset, type = "factorLevels",
-  #          factorLevels.target  = options$parts, factorLevels.amount  = "< 2",
-  #         exitAnalysisIfErrors = TRUE)
+  #if (options[["gaugeScatterPlotOperators"]]){
+  #  .hasErrors(dataset = dataset, type = "factorLevels",
+  #             factorLevels.target  = options$operators, factorLevels.amount  = "> 2",
+  #             exitAnalysisIfErrors = TRUE)
+  #}
 
 }
