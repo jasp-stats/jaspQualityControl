@@ -35,14 +35,14 @@ processCapability <- function(jaspResults, dataset, options){
   if(options$controlCharts & is.null(jaspResults[["controlCharts"]])) {
     jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 600, height = 300)
     jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
-    jaspResults[["XbarPlot"]]$position <- 2
+    jaspResults[["XbarPlot"]]$position <- 1
     XbarPlot <- jaspResults[["XbarPlot"]]
     XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
     XbarPlot$dependOn(optionContainsValue= list(diameter=diameter))
 
     jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 600, height= 300)
     jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
-    jaspResults[["RPlot"]]$position <- 3
+    jaspResults[["RPlot"]]$position <- 2
     RPlot<- jaspResults[["RPlot"]]
     RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
     RPlot$dependOn(optionContainsValue= list(diameter=diameter))
@@ -80,7 +80,7 @@ processCapability <- function(jaspResults, dataset, options){
     if(is.null(jaspResults[["initialCapabilityAnalysis"]])) {
       jaspResults[["initialCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Initial Capability Study)"))
       jaspResults[["initialCapabilityAnalysis"]]$dependOn(c("capabilityStudy","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
-      jaspResults[["initialCapabilityAnalysis"]]$position <- 1
+      jaspResults[["initialCapabilityAnalysis"]]$position <- 3
     }
 
     initialCapabilityAnalysis <- jaspResults[["initialCapabilityAnalysis"]]
@@ -94,7 +94,7 @@ processCapability <- function(jaspResults, dataset, options){
     if(is.null(jaspResults[["followupCapabilityAnalysis"]])) {
       jaspResults[["followupCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Follow-up Capability Study)"))
       jaspResults[["followupCapabilityAnalysis"]]$dependOn(c("capabilityStudy","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
-      jaspResults[["followupCapabilityAnalysis"]]$position <- 1
+      jaspResults[["followupCapabilityAnalysis"]]$position <- 3
     }
 
     followupCapabilityAnalysis <- jaspResults[["followupCapabilityAnalysis"]]
