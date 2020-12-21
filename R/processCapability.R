@@ -117,8 +117,10 @@ processCapability <- function(jaspResults, dataset, options){
 
 .histogram <- function(options, dataset, diameter, subgroupsName){
   
+  diameter <- encodeColNames(diameter)
+  subgroupsName <- encodeColNames(subgroupsName)
   thePlot <- createJaspPlot(title = gettext("Histogram"))
-  plotDat <- data.frame(subgroup = dataset[[subgroupsName]], measurements = dataset[[diameter]])
+  plotDat <- data.frame(measurements = as.numeric(unlist(dataset[, diameter])))
   
   p <- ggplot2::ggplot(plotDat, ggplot2::aes(x = measurements)) + 
     ggplot2::geom_histogram(ggplot2::aes(y =..density..), 
@@ -126,8 +128,8 @@ processCapability <- function(jaspResults, dataset, options){
                             col = "black",
                             size = .7) +
     ggplot2::stat_function(fun = dnorm, 
-                           args = list(mean = mean(dataset[[diameter]])), 
-                           sd = sd(dataset[[diameter]]),
+                           args = list(mean = mean(plotDat[["measurements"]]), 
+                           sd = sd(plotDat[["measurements"]])),
                            color = "blue") +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
@@ -137,18 +139,32 @@ processCapability <- function(jaspResults, dataset, options){
 }
 
 .capabilityPlot <- function(options, dataset, diameter, subgroupsName){
+  
+  diameter <- encodeColNames(diameter)
+  subgroupsName <- encodeColNames(subgroupsName)
   thePlot <- createJaspPlot(title = gettext("Capability of the Process"))
-  plotDat <- data.frame(subgroup = dataset[[subgroupsName]], measurements = dataset[[diameter]])
-  data <- dataset[[diameter]]
+  plotDat <- data.frame(measurements = as.numeric(unlist(dataset[, diameter])))
+  
+  diameter <- encodeColNames(diameter)
+  subgroupsName <- encodeColNames(subgroupsName)
+  
+  data <- dataset[,diameter]
+  subgroups <- dataset[,subgroupsName]
+  subgroupLevels <- levels(subgroups)
+  dataDiameter <- data.frame() 
+  for(level in subgroupLevels){
+    subdata <- subset(dataset[,diameter], subgroups == level)
+    dataDiameter <- rbind(data, as.numeric(unlist(subdata)))
+  }
   USL <- as.numeric(options$upperSpecification)
   LSL <- as.numeric(options$lowerSpecification)
   targetValue <- as.numeric(options$targetValue)
-  sampleMean <- mean(data)
-  sampleN <- length(data)
-  diameter <- qcc::qcc.groups(data,dataset[[subgroupsName]])
-  q <- qcc::qcc(diameter, type ='S', plot=FALSE)
+  sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
+  sampleN <- ncol(dataDiameter)
+  
+  q <- qcc::qcc(dataDiameter, type ='S', plot=FALSE)
   stDevWithin <- q$std.dev   #stDevWithin <- rBar/d2
-  stDevOverall <- sd(data)
+  stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
   
   p <- ggplot2::ggplot(plotDat, ggplot2::aes(x = measurements)) + 
     ggplot2::geom_histogram(ggplot2::aes(y =..density..), 
@@ -188,17 +204,27 @@ processCapability <- function(jaspResults, dataset, options){
   processDataTable$addColumnInfo(name = "sampleN", type = "number", title = gettext("Sample N"))
   processDataTable$addColumnInfo(name = "stDevWithin", type = "number", title = gettext("StDev (Within)"))
   processDataTable$addColumnInfo(name = "stDevOverall", type = "number", title = gettext("StDev (Overall)"))
+  
+  diameter <- encodeColNames(diameter)
+  subgroupsName <- encodeColNames(subgroupsName)
 
-  data <- dataset[[diameter]]
+  data <- dataset[,diameter]
+  subgroups <- dataset[,subgroupsName]
+  subgroupLevels <- levels(subgroups)
+  dataDiameter <- data.frame() 
+  for(level in subgroupLevels){
+    subdata <- subset(dataset[,diameter], subgroups == level)
+    dataDiameter <- rbind(data, as.numeric(unlist(subdata)))
+  }
   USL <- as.numeric(options$upperSpecification)
   LSL <- as.numeric(options$lowerSpecification)
   targetValue <- as.numeric(options$targetValue)
-  sampleMean <- mean(data)
-  sampleN <- length(data)
-  diameter <- qcc::qcc.groups(data,dataset[[subgroupsName]])
-  q <- qcc::qcc(diameter, type ='S', plot=FALSE)
+  sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
+  sampleN <- ncol(dataDiameter)
+  
+  q <- qcc::qcc(dataDiameter, type ='S', plot=FALSE)
   stDevWithin <- q$std.dev   #stDevWithin <- rBar/d2
-  stDevOverall <- sd(data)
+  stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
   
   processDataTable$addRows(list("lowerSpecificationLimit" = LSL,
                                 "targetValue" = targetValue,
@@ -212,21 +238,28 @@ processCapability <- function(jaspResults, dataset, options){
 }
 
 .capabilityTable <- function(options, dataset, diameter, subgroupsName){
-
-  data <- dataset[[diameter]]
   potentialCapabilityTable <- createJaspTable(title = gettext("Potential (Within) Capability"))
 
+  diameter <- encodeColNames(diameter)
+  subgroupsName <- encodeColNames(subgroupsName)
+  
+  data <- dataset[,diameter]
+  subgroups <- dataset[,subgroupsName]
+  subgroupLevels <- levels(subgroups)
+  dataDiameter <- data.frame() 
+  for(level in subgroupLevels){
+    subdata <- subset(dataset[,diameter], subgroups == level)
+    dataDiameter <- rbind(data, as.numeric(unlist(subdata)))
+  }
   USL <- as.numeric(options$upperSpecification)
   LSL <- as.numeric(options$lowerSpecification)
   targetValue <- as.numeric(options$targetValue)
-  sampleN <- length(data)
-
-  diameter <- qcc::qcc.groups(data,dataset[[subgroupsName]])
-  q <- qcc::qcc(diameter, type ='S', plot=FALSE)
+  sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
+  sampleN <- ncol(dataDiameter)
   
+  q <- qcc::qcc(dataDiameter, type ='S', plot=FALSE)
   stDevWithin <- q$std.dev   #stDevWithin <- rBar/d2
-  stDevOverall <- sd(data)
-  grandAverage <- mean(data)
+  stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
 
   potentialCapabilityTable$addColumnInfo(name = "CP", type = "number", title = gettext("CP"))
   potentialCapabilityTable$addColumnInfo(name = "CPL", type = "number", title = gettext("CPL"))
@@ -234,11 +267,10 @@ processCapability <- function(jaspResults, dataset, options){
   potentialCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("CPK"))
   potentialCapabilityTable$addColumnInfo(name = "Z", type = "number", title = gettext("Z (Sigma Score)"))
   
-  #Capability Indices 
-
+  #Capability Indices (short term)
   CP <- (USL - LSL) / (6*stDevWithin)
-  CPL <- (grandAverage - LSL) / (3*stDevWithin)
-  CPU <- (USL - grandAverage) / (3*stDevWithin)
+  CPL <- (sampleMean - LSL) / (3*stDevWithin)
+  CPU <- (USL - sampleMean) / (3*stDevWithin)
   CPK <- min(CPU, CPL)
   Z <- CPK * 3
   potentialCapabilityTable$addRows(list("CP" = CP,
@@ -255,12 +287,11 @@ processCapability <- function(jaspResults, dataset, options){
   overallCapabilityTable$addColumnInfo(name = "CPM", type = "number", title = gettext("CPM"))
   
   #Performance Indices (long term)
-  
   PP <- (USL - LSL) / (6*stDevOverall)
-  PPL <- (grandAverage - LSL) / (3*stDevOverall)
-  PPU <- (USL - grandAverage) / (3*stDevOverall)
+  PPL <- (sampleMean - LSL) / (3*stDevOverall)
+  PPU <- (USL - sampleMean) / (3*stDevOverall)
   PPK <- min(PPU, PPL)
-  CPM <- CP / sqrt(1 + ((grandAverage - targetValue) / stDevWithin)^2)
+  CPM <- CP / sqrt(1 + ((sampleMean - targetValue) / stDevWithin)^2)
 
   overallCapabilityTable$addRows(list("PP" = PP,
                                  "PPL" = PPL,
