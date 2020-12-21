@@ -1,5 +1,6 @@
 import(jaspBase)
 export(processCapability)
 export(processControl)
-export(measurementSystemAnalysis)
+export(measurementSystemAnalysisGaugeRR)
+export(measurementSystemAnalysisAttribute)
 export(designOfExperiments)

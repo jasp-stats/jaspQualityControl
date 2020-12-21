@@ -38,7 +38,7 @@ Form
 			name:								"operators"
 			title:								qsTr("Operators")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["nominal", "nominalText"]
 		}
 		
 		AssignedVariablesList
@@ -56,27 +56,40 @@ Form
 			name:								"measurements"
 			title:								qsTr("Measurements")
 			singleVariable:						false
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["scale"]
 		}
+
 	}
 	
-		Group
-	{
-		DoubleField { name: "processSD";	label: qsTr("Process Standard Deviation");		defaultValue: 0;	negativeValues: true	}
-	}
-	
+		Group{
+						DropDown {
+                name: "variationReference"
+                label: qsTr("Variation Reference")
+                indexDefaultValue: 0
+                values:
+                [	
+					{label: qsTr("Known Process Variation"),				value: "processVariation"},
+                    {label: qsTr("Study Variation"),					value: "studyVariation"},
+                    {label: qsTr("Tolerance"),					value: "tolerance"},
+                ]
+				id: variationReference
+				}
+				DoubleField
+				{
+					name:			"processVariationOrTolerance"
+					label:			qsTr("Value:")
+					defaultValue:	0
+					enabled:		variationReference.currentValue != "studyVariation"
+				}
+			}
 	
 		Section
 	{
 		title: qsTr("Gauge r&R")
-		
+
 		CheckBox
 		{
 			name: "gaugeANOVA";		label: qsTr("ANOVA")
-		}
-		CheckBox
-		{
-			name: "gaugeComponentsGraph";		label: qsTr("Graph Variation Components")
 		}
 		CheckBox
 		{
@@ -87,6 +100,21 @@ Form
 			name: "gaugeXbarChart";		label: qsTr("X-bar Chart by Operator")
 		}
 		
+		CheckBox
+		{
+			name: "gaugeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
+
+			CheckBox
+			{
+				name: "gaugeScatterPlotFitLine";		label: qsTr("Fit Line")
+			}
+				
+			CheckBox
+			{
+				name: "gaugeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+			}
+		
+		}
 		
 		CheckBox
 		{
@@ -147,60 +175,10 @@ Form
 		}
 		
 	}
-		
-
-
-	
-	Section
-	{
-		title: qsTr("Attribute Agreement Analysis")
-		
-		CheckBox
-		{
-			name: "AAAkappa";		label: qsTr("Fleiss Kappa")
-		}
-		CheckBox
-		{
-			name: "AAAchiSquare";		label: qsTr("Chi Square")
-		}
-		CheckBox
-		{
-			name: "AAAkendallTau";		label: qsTr("Kendall's Tau")
-		}
-		CheckBox
-		{
-			name: "AAAgraphs";		label: qsTr("Graphs")
-		}
-
-	}
-	
-	Section
-	{
-		title: qsTr("Iso Plot")
-		
-		CheckBox
-			{
-                name: "IsoPlot";		label: qsTr("Iso Plot")
-			}
-			
-			CheckBox
-			{
-                name: "IsoPlotTable";		label: qsTr("Iso Plot Table")
-			}
-	}
 	
 		Section
 	{
 		title: qsTr("Determine Bias")
-		
-		TextField
-		{
-		inputType:	"doubleArray"
-		name:		"biasPartName"
-		label:		"Part Name:"
-		fieldWidth: 60
-		}
-		
 					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference Value:");		defaultValue: 0;	negativeValues: true	}
 					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance Value:");		defaultValue: 0;	negativeValues: true	}
 		CheckBox
@@ -216,6 +194,10 @@ Form
 		CheckBox
 		{
 			name: "biasHistogram";		label: qsTr("Histogram")
+		}
+						CheckBox
+		{
+			name: "biasRun";		label: qsTr("Run Chart")
 		}
 	}
 }
