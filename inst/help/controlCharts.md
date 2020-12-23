@@ -1,2 +1,2 @@
-Process control
+Control Charts
 ==========================

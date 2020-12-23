@@ -5,7 +5,7 @@ Description
 {
 	name				: "jaspProcessControl"
 	title				: qsTr("Quality Control")
-	description			: qsTr("A JASP module for quality control analysis.")
+	description			: qsTr("A JASP module for quality control analyses.")
 	version				: "0.0.1"
 	author				: "JASP Team"
 	maintainer			: "JASP <info@jasp-stats.org>"
@@ -21,34 +21,34 @@ Description
 	Analysis
 	{
 		title:			qsTr("Gauge r&R")
-		func:			"measurementSystemAnalysisGaugeRR"
+		func:			"msaGaugeRR"
 	}
 		Analysis
 	{
 		title:			qsTr("Attributes Agreement Analysis")
-		func:			"measurementSystemAnalysisAttribute"
+		func:			"msaAttribute"
 	}
 
 	 GroupTitle
 	 {
-	 	title:			qsTr("Control")
+	 	title:			qsTr("Control Charts")
 	 	icon:			"processControl-control.svg"
 	 }
 	Analysis
 	{
 		title:			qsTr("Control Charts")
-		func:			"processControl"
+		func:			"controlCharts"
 	}	
 
 	 GroupTitle
 	 {
-	 	title:			qsTr("Capability")
+	 	title:			qsTr("Capability Studies")
 	 	icon:			"processControl-capability.svg"
 	 }
 	Analysis
 	{
 		title:			qsTr("Process Capability Studies")
-		func:			"processCapability"
+		func:			"processCapabilityStudies"
 	}
 
 	 GroupTitle

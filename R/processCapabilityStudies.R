@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-processCapability <- function(jaspResults, dataset, options){
+processCapabilityStudies <- function(jaspResults, dataset, options){
 
   diameter <- unlist(options$diameter)
   subgroupsName <- options$subgroups

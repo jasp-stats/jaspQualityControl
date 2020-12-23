@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-measurementSystemAnalysisAttribute <- function(jaspResults, dataset, options, ...){
+msaAttribute <- function(jaspResults, dataset, options, ...){
 
   measurements <- unlist(options$measurements)
   parts <- unlist(options$parts)
