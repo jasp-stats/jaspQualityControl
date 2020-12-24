@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-processControl <- function(jaspResults, dataset, options){
+controlCharts <- function(jaspResults, dataset, options){
 
   # Make the Process ID and clean the dataset
   variables <- unlist(options$variables)
