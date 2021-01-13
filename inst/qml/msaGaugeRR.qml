@@ -63,25 +63,36 @@ Form
 	
 		Group{
 						DropDown {
-                name: "variationReference"
-                label: qsTr("Variation Reference")
+                name: "standardDeviationReference"
+                label: qsTr("Standard Deviation Reference")
                 indexDefaultValue: 0
                 values:
                 [	
-					{label: qsTr("Known Process Variation"),				value: "processVariation"},
-                    {label: qsTr("Study Variation"),					value: "studyVariation"},
-                    {label: qsTr("Tolerance"),					value: "tolerance"},
-                ]
+					{label: qsTr("Study Standard Deviation"),					value: "studyStandardDeviation"},
+					{label: qsTr("Historical Process Standard Deviation"),				value: "historicalStandardDeviation"},
+				]
+				
 				id: variationReference
 				}
 				DoubleField
 				{
-					name:			"processVariationOrTolerance"
+					name:			"historicalStandardDeviationValue"
 					label:			qsTr("Value:")
 					defaultValue:	0
-					enabled:		variationReference.currentValue != "studyVariation"
+					enabled:		variationReference.currentValue == "historicalStandardDeviation"
 				}
 			}
+			
+			
+
+				DoubleField
+				{
+					name:			"tolerance"
+					label:			qsTr("Tolerance:")
+					defaultValue:	10
+					enabled:		TRUE
+				}
+			
 	
 		Section
 	{
@@ -89,8 +100,33 @@ Form
 
 		CheckBox
 		{
-			name: "gaugeANOVA";		label: qsTr("ANOVA")
+			name: "gaugeANOVA";		label: qsTr("R&R Table ANOVA Method")
+			
+					DoubleField { name: "alphaForANOVA";		label: qsTr("Alpha Interaction Removal");	fieldWidth: 60; defaultValue: 0.05; max: 1; decimals: 3 }
+					
+				
+				DropDown {
+                name: "studyVarMultiplierType"
+                label: qsTr("Study Variation Multiplier")
+                indexDefaultValue: 0
+                values:
+                [	
+					{label: qsTr("Standard Deviation"),		value: "svmSD"},
+					{label: qsTr("Percent"),				value: "svmPercent"},
+				]
+				
+				id: studyVarMultiplierType
+				}
+										DoubleField
+					{ name: "studyVarMultiplier"
+						label: qsTr("Value")
+						fieldWidth: 60 
+						defaultValue: 6  
+						decimals: 3
+					}
+				
 		}
+
 		CheckBox
 		{
 			name: "gaugeRchart";		label: qsTr("R Chart by Operator")
