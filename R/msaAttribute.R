@@ -70,7 +70,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
       jaspResults[["AAAtableGraphs"]]$position <- 19
     }
     jaspResults[["AAAtableGraphs"]] <- .aaaTableGraphs(ready = ready, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
-  }else if(!is.numeric(unlist(dataset[measurements]))){
+  }else{
     if(is.null(jaspResults[["AAAtableGraphs"]])) {
       jaspResults[["AAAtableGraphs"]] <- createJaspContainer(gettext("Attribute Agreement Analysis"))
       jaspResults[["AAAtableGraphs"]]$position <- 19
@@ -79,16 +79,15 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   }
 
   # Kendall Tau
-  if(ready){
-    if (is.numeric(unlist(dataset[measurements]))) {
-      if(is.null(jaspResults[["KendallTau"]])) {
-        jaspResults[["KendallTau"]] <- createJaspContainer(gettext("Attribute Agreement Analysis"))
-        jaspResults[["KendallTau"]]$position <- 20
-      }
-
-      jaspResults[["KendallTau"]] <- .kendallTau(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
-
+  if(options[["AAAkendallTau"]]){
+    if(is.null(jaspResults[["KendallTau"]])) {
+      jaspResults[["KendallTau"]] <- createJaspContainer(gettext("Kendall's Tau"))
+      jaspResults[["KendallTau"]]$position <- 20
     }
+
+    jaspResults[["KendallTau"]] <- .kendallTau(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
+
+
   }
   return()
 }
@@ -179,7 +178,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   return(table)
 }
 
-
 .aaaTableGraphs <- function(ready, dataset, measurements, parts, operators, standards, options){
 
   tableWithin <- createJaspTable(title = gettext("Within Appraisers"))
@@ -204,6 +202,11 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
     appraiserVector <- as.character(unique(dataset[[operators]]))
     numberInspected <- length(unique(dataset[[parts]]))
 
+    if(is.numeric(dataset[[measurements]])){
+      dataset[measurements] <- as.character(dataset[[measurements]])
+      dataset[standards] <- as.character(dataset[[standards]])
+    }
+
     matchesWithin <- vector(mode = "numeric")
 
     for(i in 1:length(appraiserVector)){
@@ -219,6 +222,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
       onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
       matchesEachVsStandard[i] <- .countRowMatches(onlyAppraiser[c(measurements, standards)])
     }
+
 
     percentEachVsStandard <- matchesEachVsStandard / numberInspected* 100
 
@@ -315,7 +319,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
   table <- createJaspTable(title = gettext("Kendall's Tau"))
 
-  table$dependOn(c("measurements", "parts", "operators", "standard"))
+  table$dependOn(c("AAAkendallTau", "measurements", "parts", "operators", "standard"))
 
   table$addColumnInfo(name = "Operator",  title = gettext("Operator"), type = "string")
 

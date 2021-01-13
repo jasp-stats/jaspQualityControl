@@ -212,6 +212,54 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 }
 
 
+.rAndRtableGauge <- function(ready, dataset, measurements, parts, operators, options, jaspResults){
+
+  if(!is.null(jaspResults[["rAndR1"]]))
+    return()
+
+  table <- createJaspTable(title = gettext("r & R Table"))
+  table$position <- 1
+
+  table$dependOn(c("operators", "parts", "measurements"))
+
+  table$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
+  table$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
+
+  jaspResults[["rAndR1"]] <- table
+
+  if(ready){
+
+    interval <- 5.15
+
+    data <- dataset
+
+    data <- tidyr::gather(data, repetition, measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
+
+    formula <- as.formula(paste("measurement ~",operators,"*",parts))
+
+    anova <- summary(aov(formula = formula, data = data))
+
+
+
+
+    repeatability <- interval*sqrt(anova[[1]]$`Mean Sq`[4])
+    reproducibility <- ifelse(anova[[1]]$`Mean Sq`[1] - anova[[1]]$`Mean Sq`[3] < 0, 0,
+      interval*sqrt((anova[[1]]$`Mean Sq`[1]-anova[[1]]$`Mean Sq`[3])/(length(measurements)*length(unique(data[[parts]])))))
+    interaction <- ifelse(anova[[1]]$`Mean Sq`[3] - anova[[1]]$`Mean Sq`[4] < 0, 0,
+                          interval*sqrt((anova[[1]]$`Mean Sq`[3] - anova[[1]]$`Mean Sq`[4])/(length(measurements))))
+    rR <- sqrt((repeatability^2)+(reproducibility^2)+(interaction^2))
+    partvar <- interval*sqrt((anova[[1]]$`Mean Sq`[2] - anova[[1]]$`Mean Sq`[3])/(length(measurements)*length(unique(data[[operators]]))))
+    totalvar <- sqrt((rR^2) + (partvar^2))
+
+    table$setData(list(      "Source"       = c("r & R", "Repeatability", "Reproducibility", "Interaction", "Part Variation", "Total Variation"),
+                             "Variation"    = c(rR, repeatability, reproducibility, interaction, partvar, totalvar)))
+
+  } else {
+    table$setData(list(      "Source"       = c("r & R", "Repeatability", "Reproducibility", "Interaction", "Part Variation", "Total Variation"),
+                             "Variation"    = rep(".", 6)))
+  }
+}
+
 .ScatterPlotOperators <- function(dataset, measurements, parts, operators, options){
 
   plot <- createJaspPlot(title = "Scatterplot of Operator A vs Operator B")
@@ -290,52 +338,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
                            "GRRpercent" = GRRpercent))
 }
 
-.rAndRtableGauge <- function(ready, dataset, measurements, parts, operators, options, jaspResults){
-
-	if(!is.null(jaspResults[["rAndR1"]]))
-		return()
-
-  table <- createJaspTable(title = gettext("r & R Table"))
-  table$position <- 1
-
-  table$dependOn(c("operators", "parts", "measurements"))
-
-  table$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
-  table$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
-
-  jaspResults[["rAndR1"]] <- table
-
-  if(ready){
-
-    interval <- 5.15
-
-    data <- dataset
-
-    data <- tidyr::gather(data, repetition, measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-
-    formula <- as.formula(paste("measurement ~",operators,"*",parts))
-
-    anova <- summary(aov(formula = formula, data = data))
-
-
-
-
-    repeatability <- interval*sqrt(anova[[1]]$`Mean Sq`[4])
-    reproducibility <- interval*sqrt((anova[[1]]$`Mean Sq`[1]-anova[[1]]$`Mean Sq`[3])/(length(measurements)*length(unique(data[[parts]]))))
-    interaction <- ifelse(anova[[1]]$`Mean Sq`[3] - anova[[1]]$`Mean Sq`[4] < 0, 0,
-                          interval*sqrt((anova[[1]]$`Mean Sq`[3] - anova[[1]]$`Mean Sq`[4])/(length(measurements))))
-    rR <- sqrt((repeatability^2)+(reproducibility^2)+(interaction^2))
-    partvar <- interval*sqrt((anova[[1]]$`Mean Sq`[2] - anova[[1]]$`Mean Sq`[3])/(length(measurements)*length(unique(data[[operators]]))))
-    totalvar <- sqrt((rR^2) + (partvar^2))
-
-    table$setData(list(      "Source"       = c("r & R", "Repeatability", "Reproducibility", "Interaction", "Part Variation", "Total Variation"),
-                             "Variation"    = c(rR, repeatability, reproducibility, interaction, partvar, totalvar)))
-
-  } else {
-    table$setData(list(      "Source"       = c("r & R", "Repeatability", "Reproducibility", "Interaction", "Part Variation", "Total Variation"),
-                             "Variation"    = rep(".", 6)))
-  }
-}
 
 .gaugeANOVA <- function(dataset, measurements, parts, operators, options){
 
@@ -453,6 +455,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   p <- jaspGraphs::themeJasp(p) +
     ggplot2::ylab("Measurement") +
     ggplot2::scale_y_continuous(limits = c(min(meansPerOperator[names(byOperator)]) * 0.9, max(meansPerOperator[names(byOperator)]) * 1.1))
+
 
 
   plot$plotObject <- p
