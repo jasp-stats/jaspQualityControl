@@ -202,9 +202,11 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
     appraiserVector <- as.character(unique(dataset[[operators]]))
     numberInspected <- length(unique(dataset[[parts]]))
 
-    if(is.numeric(dataset[[measurements]])){
-      dataset[measurements] <- as.character(dataset[[measurements]])
-      dataset[standards] <- as.character(dataset[[standards]])
+    for(measurement in measurements){
+      if(is.numeric(dataset[[measurement]])){
+        dataset[measurement] <- as.character(dataset[[measurement]])
+        dataset[standards] <- as.character(dataset[[standards]])
+      }
     }
 
     matchesWithin <- vector(mode = "numeric")
@@ -238,12 +240,14 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
     matchesAllVsStandard <- .countRowMatches(reshapeData)
     percentAllVsStandard <- matchesAllVsStandard / numberInspected* 100
 
-
-
-    tableWithin$setData(list(      "Appraiser"       = appraiserVector,
-                                   "Inspected"       = rep(numberInspected, length(appraiserVector)),
-                                   "Matched"         = matchesWithin,
-                                   "Percent"         = percentWithin))
+    if(length(measurements) == 1){
+      tableWithin$setError(gettextf("More than 1 Measurement per Operator required"))
+    }else{
+      tableWithin$setData(list(      "Appraiser"       = appraiserVector,
+                                     "Inspected"       = rep(numberInspected, length(appraiserVector)),
+                                     "Matched"         = matchesWithin,
+                                     "Percent"         = percentWithin))
+    }
 
     tableEachVsStandard$setData(list("Appraiser"     = appraiserVector,
                                      "Inspected"       = rep(numberInspected, length(appraiserVector)),

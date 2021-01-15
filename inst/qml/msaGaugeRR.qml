@@ -100,7 +100,7 @@ Form
 
 		CheckBox
 		{
-			name: "gaugeANOVA";		label: qsTr("R&R Table ANOVA Method")
+			name: "gaugeANOVA";		label: qsTr("R&R Table ANOVA Method"); checked: true
 			
 					DoubleField { name: "alphaForANOVA";		label: qsTr("Alpha Interaction Removal");	fieldWidth: 60; defaultValue: 0.05; max: 1; decimals: 3 }
 					
@@ -124,8 +124,15 @@ Form
 						defaultValue: 6  
 						decimals: 3
 					}
+					
+									CheckBox
+		{
+			name: "gaugeVarCompGraph";		label: qsTr("Graph Variation Components"); checked: true
+		}
 				
 		}
+		
+
 
 		CheckBox
 		{
