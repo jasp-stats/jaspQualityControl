@@ -67,6 +67,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   if (options[["gaugeANOVA"]]) {
     if(is.null(jaspResults[["gaugeANOVA"]])) {
       jaspResults[["gaugeANOVA"]] <- createJaspContainer(gettext("Gauge r&R ANOVA Table"))
+      jaspResults[["gaugeANOVA"]]$dependOn(c("historicalStandardDeviation", "studyStandardDeviation"))
       jaspResults[["gaugeANOVA"]]$position <- 5
     }
 
@@ -345,7 +346,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 
       repeatability <- anova1[[1]]$`Mean Sq`[4]
-      operator <- (anova1[[1]]$`Mean Sq`[2] - anova1[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements))
+      operator <- ifelse(anova1[[1]]$`Mean Sq`[2] < anova1[[1]]$`Mean Sq`[3],0,(anova1[[1]]$`Mean Sq`[2] - anova1[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements)))
       operatorXpart <- ifelse(anova1[[1]]$`Mean Sq`[3] < anova1[[1]]$`Mean Sq`[4], 0, (anova1[[1]]$`Mean Sq`[3] - anova1[[1]]$`Mean Sq`[4]) / length(measurements))
       partToPart <- (anova1[[1]]$`Mean Sq`[1] - anova1[[1]]$`Mean Sq`[3]) / (length(measurements) * length(unique(data[[operators]])))
       reproducibility <- operator + operatorXpart
@@ -433,7 +434,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 
       repeatability <- anova2[[1]]$`Mean Sq`[3]
-      operator <- (anova2[[1]]$`Mean Sq`[2] - anova2[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements))
+      operator <- ifelse(anova2[[1]]$`Mean Sq`[2] < anova2[[1]]$`Mean Sq`[3], 0, (anova2[[1]]$`Mean Sq`[2] - anova2[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements)))
       partToPart <- (anova2[[1]]$`Mean Sq`[1] - anova2[[1]]$`Mean Sq`[3]) / (length(measurements) * length(unique(data[[operators]])))
       reproducibility <- operator
       totalRR <- repeatability + reproducibility
