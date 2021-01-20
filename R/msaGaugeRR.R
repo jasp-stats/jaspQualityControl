@@ -304,7 +304,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     }else{
       percent <- options$studyVarMultiplier/100
       q <- (1 - percent)/2
-      studyVarMultiplier <- 2*qnorm(q)
+      studyVarMultiplier <- abs(2*qnorm(q))
     }
     anovaTable1 <- createJaspTable(title = gettext("Two-Way ANOVA Table with Interaction"))
     anovaTable1$position <- 5
@@ -599,24 +599,18 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   }
   colnames(meansPerOperator)[-1] <- names(byOperator)
 
+  tidydata <- tidyr::gather(meansPerOperator, key = "Operator", value = "Measurements", -Part )
 
-  plot <- createJaspPlot(title = "Parts by Operator Interaction", width = 600, height = 300)
+
+  plot <- createJaspPlot(title = "Parts by Operator Interaction", width = 700, height = 400)
 
   plot$dependOn(c("gaugeByInteraction"))
 
-  p <- ggplot2::ggplot()
-
-  colors <- rainbow(length(names(byOperator)))
-
-  for(i in 1:length(names(byOperator))){
-    p <- p + jaspGraphs::geom_line(data = meansPerOperator, ggplot2::aes_string(x = "Part", y = names(byOperator)[i],
-                                                                                group = i), col = colors[i]) +
-      jaspGraphs::geom_point(data = meansPerOperator, ggplot2::aes_string(x = "Part", y = names(byOperator)[i],
-                                                                          group = i))
-  }
+  p <- ggplot2::ggplot(tidydata, ggplot2::aes(x = Part, y = Measurements, col = Operator, group = Operator)) +
+    jaspGraphs::geom_line() + jaspGraphs::geom_point()
 
 
-  p <- jaspGraphs::themeJasp(p) +
+  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right')
     ggplot2::ylab("Measurement") +
     ggplot2::scale_y_continuous(limits = c(min(meansPerOperator[names(byOperator)]) * 0.9, max(meansPerOperator[names(byOperator)]) * 1.1))
 
