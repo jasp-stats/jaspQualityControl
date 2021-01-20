@@ -16,7 +16,6 @@
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1, data_plot$means))
-
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
   xLimits <- range(xBreaks)
@@ -24,17 +23,20 @@
     x = max(xLimits) + 1,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("Mean = %g", round(center, 3)),
+      gettextf("CL = %g", round(center, 3)),
       gettextf("UCL = %g",   round(UCL, 3)),
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
-
+  warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1), 
+                   qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
+  
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
     jaspGraphs::geom_line() +
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "gray")) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
+    ggplot2::geom_hline(yintercept = warn.limits, color = "red", linetype = "dashed") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
     ggplot2::scale_y_continuous(name = "Subgroup Mean" ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
@@ -69,18 +71,20 @@
     x = max(xLimits) + 1,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("Range = %g", round(center, 3)),
+      gettextf("CL = %g", round(center, 3)),
       gettextf("UCL = %g",   round(UCL, 3)),
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
-
+  warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1), 
+                   qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
     jaspGraphs::geom_line() +
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, 'red', 'gray')) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL,LCL), color = "red") +
+    ggplot2::geom_hline(yintercept = warn.limits, color = "red", linetype = "dashed") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
     ggplot2::scale_y_continuous(name = "Subgroup Range" ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name= "Subgroup" ,breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
