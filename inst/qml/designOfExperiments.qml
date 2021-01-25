@@ -34,15 +34,43 @@ Form
 			{ value: "factorial", label: qsTr("Factorial") 			},
 			{ value: "screening", label: qsTr("Screening") 			},
 			{ value: "response",  label: qsTr("Response surface") 	},
-			{ value: "mixture",   label: qsTr("Mixture") 			},
-			{ value: "taguchi",   label: qsTr("Taguchi")			}
+			{ value: "mixture",   label: qsTr("Mixture") 			}
 		]
 	}
 
 	CheckBox
 	{
 		name: 									"displayDesign"
-		label:									qsTr("Preview design")
+		label:									"Preview design"
+	}
+
+	GroupBox
+	{
+		title: 									qsTr("Factor Info")
+		name:									"factorInfo"
+
+		IntegerField
+		{
+			id:									numberOfFactors
+			name:								"numberOfFactors"
+			label:								qsTr("Number of factors")
+			defaultValue:						2
+			min:								2
+			max:								256
+		}
+
+		DropDown
+		{	
+		id:										numberOfLevels
+		name: 									"numberOfLevels"
+		label: 									qsTr("Number of factor levels")
+		indexDefaultValue: 						0
+		values:
+		[
+			{ value: "2", label: qsTr("2")},
+			{ value: "3", label: qsTr("3")}
+		]
+		}
 	}
 
 	ColumnLayout
@@ -54,17 +82,20 @@ Form
 		RowLayout
 		{
 			Label { text: qsTr("Factor");		Layout.leftMargin: 5 * preferencesModel.uiScale; Layout.preferredWidth: 42 * preferencesModel.uiScale}
-			Label { text: qsTr("Name");			Layout.preferredWidth: 200 * preferencesModel.uiScale	}
+			Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
 			Label { text: qsTr("Level 1");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
 			Label { text: qsTr("Level 2");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
+			Label { visible: 					[1].includes(numberOfLevels.currentIndex);
+					text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
 		}
 
 		ComponentsList
 		{
 			name:								"factors"
-			defaultValues: 			[
-				{ name: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high: qsTr("Factor 1 Level 2") },
-				{ name: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high: qsTr("Factor 2 Level 2") }
+			defaultValues:
+			[
+				{ startValue: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high1: qsTr("Factor 1 Level 2") },
+				{ startValue: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high1: qsTr("Factor 2 Level 2") } //row 2 has to be fixed
 			]
 			rowComponent: 						RowLayout
 			{
@@ -77,21 +108,22 @@ Form
 						text: 					rowIndex + 1 
 					}
 				}
-				Row
+				Row //Factor
 				{
 					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		200 * preferencesModel.uiScale
+					Layout.preferredWidth:		150 * preferencesModel.uiScale
 					TextField
 					{
+						id:						factorName
 						label: 					""
-						name: 					"name"
+						name: 					"factorName"
 						startValue:				qsTr("Factor ") + (rowIndex + 1)
-						fieldWidth:				200 * preferencesModel.uiScale
+						fieldWidth:				150 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true
 					}
 				}
-				Row
+				Row //Level1
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		100 * preferencesModel.uiScale
@@ -105,15 +137,30 @@ Form
 						showBorder:				true
 					}
 				}
-				Row
+				Row //Level2
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		100 * preferencesModel.uiScale
 					TextField
 					{
 						label: 					""
-						name: 					"high"
+						name: 					"high1"
 						startValue:				qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 2")
+						fieldWidth:				100 * preferencesModel.uiScale
+						useExternalBorder:		false
+						showBorder:				true
+					}
+				}
+				Row //Level3
+				{
+					visible:					[1].includes(numberOfLevels.currentIndex)
+					spacing:					5 * preferencesModel.uiScale
+					Layout.preferredWidth:		100 * preferencesModel.uiScale
+					TextField
+					{
+						label: 					""
+						name: 					"high2"
+						startValue:				qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
 						fieldWidth:				100 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true
@@ -151,12 +198,6 @@ Form
 			{
 				name:							"factorialTypeSplit"
 				label:							qsTr("2-level split-plot (hard-to-change factors)")
-			}
-
-			RadioButton
-			{
-				name:							"factorialTypePlackettBurman"
-				label:							qsTr("Plackett-Burman design")
 			}
 
 			RadioButton
@@ -223,9 +264,7 @@ Form
 							]
 						}
 					}
-
 				}
-
 			}	
 
 			GroupBox
@@ -259,7 +298,6 @@ Form
 					max:						50
 				}
 			}
-
 		}
 	}
 
@@ -267,28 +305,60 @@ Form
 	{
 		visible: 								[1].includes(design.currentIndex)
 		title: 									qsTr("Screening Design Options")
+		columns:								1
 
+		RadioButtonGroup
+		{
+			name: 								"screeningType"
+			title:								qsTr("Type of Screening Design")
+
+			RadioButton
+			{
+				name:							"screeningTypePlackettBurman"
+				label:							qsTr("Plackett-Burman design")
+			}
+
+			RadioButton
+			{
+				name:							"screeningTypeTaguchi"
+				label:							qsTr("Taguchi design")
+			}
+		}
 	}
-
 
 	Section
 	{
 		visible: 								[2].includes(design.currentIndex)
 		title: 									qsTr("Response Surface Design Options")
 		
+		GroupBox
+		{
+			title: 							qsTr("Additional options")
+
+			IntegerField
+			{
+				name:						"responseSurfaceCenterPoints"
+				label:						qsTr("Number of center points per block")
+				defaultValue:				1
+				min:						1
+				max:						50
+			}
+
+			IntegerField
+			{
+				name:						"responseSurfaceCornerReplicates"
+				label:						qsTr("Number of replicates for corner points")
+				defaultValue:				3
+				min:						1
+				max:						50
+			}
+		}
 	}
 
 	Section
 	{
 		visible: 								[3].includes(design.currentIndex)
 		title: 									qsTr("Mixture Design Options")
-		
-	}
-
-	Section
-	{
-		visible: 								[4].includes(design.currentIndex)
-		title: 									qsTr("Taguchi Design Options")
 		
 	}
 
