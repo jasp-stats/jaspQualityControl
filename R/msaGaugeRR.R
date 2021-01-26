@@ -603,7 +603,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   tidydata <- tidyr::gather(meansPerOperator, key = "Operator", value = "Measurements", -Part )
 
 
-  plot <- createJaspPlot(title = "Parts by Operator Interaction", width = 700, height = 400)
+  plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
 
   plot$dependOn(c("gaugeByInteraction"))
 
