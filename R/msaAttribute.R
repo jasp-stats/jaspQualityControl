@@ -241,7 +241,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
     percentAllVsStandard <- matchesAllVsStandard / numberInspected* 100
 
     if(length(measurements) == 1){
-      tableWithin$setError(gettextf("More than 1 Measurement per Operator required"))
+      tableWithin$setError(gettext("More than 1 Measurement per Operator required"))
     }else{
       tableWithin$setData(list(      "Appraiser"       = appraiserVector,
                                      "Inspected"       = rep(numberInspected, length(appraiserVector)),
