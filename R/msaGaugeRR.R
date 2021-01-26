@@ -525,7 +525,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     anovaTables[['RRtable3']] <- RRtable3
 
     if(ready){
-      RRtable3$setError(gettextf(paste("Number of observations is < 2 in ", measurements, "after grouping on ", parts,",",operators)))
+      RRtable3$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
       }
 
 
