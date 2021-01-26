@@ -81,7 +81,7 @@ Form
 		{
 			name: "AAAcohensKappa";		label: qsTr("Cohen's Kappa")
 		}
-				CheckBox
+		CheckBox
 		{
 			name: "AAAkendallTau";		label: qsTr("Kendall's Tau")
 		}

@@ -67,7 +67,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   if (options[["gaugeANOVA"]]) {
     if(is.null(jaspResults[["gaugeANOVA"]])) {
       jaspResults[["gaugeANOVA"]] <- createJaspContainer(gettext("Gauge r&R ANOVA Table"))
-      jaspResults[["gaugeANOVA"]]$dependOn(c("historicalStandardDeviation", "studyStandardDeviation"))
+      jaspResults[["gaugeANOVA"]]$dependOn(c("historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue"))
       jaspResults[["gaugeANOVA"]]$position <- 5
     }
 
@@ -346,8 +346,19 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 
       repeatability <- anova1[[1]]$`Mean Sq`[4]
-      operator <- ifelse(anova1[[1]]$`Mean Sq`[2] < anova1[[1]]$`Mean Sq`[3],0,(anova1[[1]]$`Mean Sq`[2] - anova1[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements)))
-      operatorXpart <- ifelse(anova1[[1]]$`Mean Sq`[3] < anova1[[1]]$`Mean Sq`[4], 0, (anova1[[1]]$`Mean Sq`[3] - anova1[[1]]$`Mean Sq`[4]) / length(measurements))
+
+      if(anova1[[1]]$`Mean Sq`[2] < anova1[[1]]$`Mean Sq`[3]){
+        operator <- 0
+      }else{
+        operator <- (anova1[[1]]$`Mean Sq`[2] - anova1[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements))
+      }
+
+      if(anova1[[1]]$`Mean Sq`[3] < anova1[[1]]$`Mean Sq`[4]){
+        operatorXpart <- 0
+      }else{
+        operatorXpart <- (anova1[[1]]$`Mean Sq`[3] - anova1[[1]]$`Mean Sq`[4]) / length(measurements)
+      }
+
       partToPart <- (anova1[[1]]$`Mean Sq`[1] - anova1[[1]]$`Mean Sq`[3]) / (length(measurements) * length(unique(data[[operators]])))
       reproducibility <- operator + operatorXpart
       totalRR <- repeatability + reproducibility
@@ -375,7 +386,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
       histSD <- options$historicalStandardDeviationValue
 
-      if(options$historicalStandardDeviation && histSD >= sqrt(totalRR)){
+      if(options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)){
         SD <- c(sqrt(c(totalRR, repeatability, reproducibility, operator)),
                 sqrt(histSD^2 - totalRR),
                 sqrt(operatorXpart), histSD)
@@ -434,7 +445,13 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 
       repeatability <- anova2[[1]]$`Mean Sq`[3]
-      operator <- ifelse(anova2[[1]]$`Mean Sq`[2] < anova2[[1]]$`Mean Sq`[3], 0, (anova2[[1]]$`Mean Sq`[2] - anova2[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements)))
+
+      if(anova2[[1]]$`Mean Sq`[2] < anova2[[1]]$`Mean Sq`[3]){
+        operator <- 0
+      }else{
+        operator <- (anova2[[1]]$`Mean Sq`[2] - anova2[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements))
+      }
+
       partToPart <- (anova2[[1]]$`Mean Sq`[1] - anova2[[1]]$`Mean Sq`[3]) / (length(measurements) * length(unique(data[[operators]])))
       reproducibility <- operator
       totalRR <- repeatability + reproducibility
@@ -463,7 +480,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
       histSD <- options$historicalStandardDeviationValue
 
-      if(options$historicalStandardDeviation && histSD >= sqrt(totalRR)){
+      if(options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)){
         SD <- c(sqrt(c(totalRR, repeatability, reproducibility, operator)),
                 sqrt(histSD^2 - totalRR), histSD)
       }else{
@@ -526,7 +543,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
     if(ready){
       RRtable3$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
-      }
+    }
 
 
 
@@ -612,7 +629,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 
   p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right')
-    ggplot2::ylab("Measurement") +
+  ggplot2::ylab("Measurement") +
     ggplot2::scale_y_continuous(limits = c(min(meansPerOperator[names(byOperator)]) * 0.9, max(meansPerOperator[names(byOperator)]) * 1.1))
 
 

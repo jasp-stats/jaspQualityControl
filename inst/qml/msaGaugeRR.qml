@@ -105,30 +105,29 @@ Form
 					DoubleField { name: "alphaForANOVA";		label: qsTr("Alpha Interaction Removal");	fieldWidth: 60; defaultValue: 0.05; max: 1; decimals: 3 }
 					
 				
-				DropDown {
-                name: "studyVarMultiplierType"
-                label: qsTr("Study Variation Multiplier")
-                indexDefaultValue: 0
-                values:
-                [	
-					{label: qsTr("Standard Deviation"),		value: "svmSD"},
-					{label: qsTr("Percent"),				value: "svmPercent"},
-				]
-				
-				id: studyVarMultiplierType
-				}
-										DoubleField
-					{ name: "studyVarMultiplier"
-						label: qsTr("Value")
-						fieldWidth: 60 
-						defaultValue: 6  
-						decimals: 3
+			DropDown{
+					name: "studyVarMultiplierType"
+					label: qsTr("Study Variation Multiplier")
+					indexDefaultValue: 0
+					values:
+						[
+						{label: qsTr("Standard Deviation"),		value: "svmSD"},
+						{label: qsTr("Percent"),				value: "svmPercent"},
+						]
+					id: studyVarMultiplierType
 					}
+										
+			DoubleField { 
+					name: "studyVarMultiplier"
+					label: qsTr("Value")
+					fieldWidth: 60 
+					defaultValue: 6  
+					decimals: 3
+						}
 					
-									CheckBox
-		{
-			name: "gaugeVarCompGraph";		label: qsTr("Graph Variation Components"); checked: true
-		}
+			CheckBox{
+					name: "gaugeVarCompGraph";		label: qsTr("Graph Variation Components"); checked: true
+					}
 				
 		}
 		
