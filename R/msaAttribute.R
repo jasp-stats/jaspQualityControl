@@ -241,7 +241,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
     percentAllVsStandard <- matchesAllVsStandard / numberInspected* 100
 
     if(length(measurements) == 1){
-      tableWithin$setError(gettext("More than 1 Measurement per Operator required"))
+      tableWithin$setError(gettext("More than 1 Measurement per Operator required."))
     }else{
       tableWithin$setData(list(      "Appraiser"       = appraiserVector,
                                      "Inspected"       = rep(numberInspected, length(appraiserVector)),
@@ -273,18 +273,23 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   AAA[["AllVsStandard"]] <-tableAllVsStandard
 
   if(ready){
-    plotWithin <- createJaspPlot(title = "Within Appraisers", width = 300, height = 400)
 
-    withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
+    if(length(measurements) > 1){
+      plotWithin <- createJaspPlot(title = "Within Appraisers", width = 300, height = 400)
 
-    pw <- ggplot2::ggplot(withinDataframe, ggplot2::aes(x = x, y = y)) + jaspGraphs::geom_point()
+      withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
 
-    pw <- jaspGraphs::themeJasp(pw) +
-      ggplot2::ylab("Percent") +
-      ggplot2::xlab("Appraiser") +
-      ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10))
+      pw <- ggplot2::ggplot(withinDataframe, ggplot2::aes(x = x, y = y)) + jaspGraphs::geom_point()
 
-    plotWithin$plotObject <- pw
+      pw <- jaspGraphs::themeJasp(pw) +
+        ggplot2::ylab("Percent") +
+        ggplot2::xlab("Appraiser") +
+        ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10))
+
+      plotWithin$plotObject <- pw
+
+      AAA[["PlotWithin"]] <- plotWithin
+    }
 
     plotVs <- createJaspPlot(title = "Each Appraiser vs Standard", width = 300, height = 400)
 
@@ -299,8 +304,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
     plotVs$plotObject <- pvs
 
-
-    AAA[["PlotWithin"]] <- plotWithin
     AAA[["PlotVs"]] <- plotVs
   }
   return(AAA)
@@ -325,36 +328,40 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
   table$dependOn(c("AAAkendallTau", "measurements", "parts", "operators", "standard"))
 
-  table$addColumnInfo(name = "Operator",  title = gettext("Operator"), type = "string")
+  if(!is.numeric(dataset[[measurements[1]]])){
+    table$setError(gettext("Kendall's Tau is only available for numeric measurements."))
+  }else{
+    table$addColumnInfo(name = "Operator",  title = gettext("Operator"), type = "string")
 
-  for(operator in operatorVector){
-    table$addColumnInfo(name = operator, title = gettext(operator), type = "number")
-  }
-
-  table$addColumnInfo(name = standards, title = gettext(standards), type = "number")
-
-  standCorrVector <- vector(mode = "numeric")
-  tableColumns <- list()
-  for(i in 1:length(operatorVector)){
-    corrVector <- vector(mode = "numeric")
-    operator1 <- subset(dataset, dataset[operators] == operatorVector[i])
-    for(j in 1:length(operatorVector)){
-      if(j == i){
-        corrVector <- c(corrVector, 1)
-      }else{
-        operator2 <- subset(dataset, dataset[operators] == operatorVector[j])
-        kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = operator2[[measurements]])
-        corrVector <- c(corrVector, kt$r)
-      }
+    for(operator in operatorVector){
+      table$addColumnInfo(name = operator, title = gettext(operator), type = "number")
     }
-    kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(operator1[[standards]]))
-    standCorrVector <- c(standCorrVector, kt$r)
-    tableColumns[[operatorVector[i]]] <- corrVector
-  }
 
-  tableColumns[["Operator"]] <- operatorVector
-  tableColumns[[standards]] <- standCorrVector
-  table$setData(tableColumns)
+    table$addColumnInfo(name = standards, title = gettext(standards), type = "number")
+
+    standCorrVector <- vector(mode = "numeric")
+    tableColumns <- list()
+    for(i in 1:length(operatorVector)){
+      corrVector <- vector(mode = "numeric")
+      operator1 <- subset(dataset, dataset[operators] == operatorVector[i])
+      for(j in 1:length(operatorVector)){
+        if(j == i){
+          corrVector <- c(corrVector, 1)
+        }else{
+          operator2 <- subset(dataset, dataset[operators] == operatorVector[j])
+          kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = operator2[[measurements]])
+          corrVector <- c(corrVector, kt$r)
+        }
+      }
+      kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(operator1[[standards]]))
+      standCorrVector <- c(standCorrVector, kt$r)
+      tableColumns[[operatorVector[i]]] <- corrVector
+    }
+
+    tableColumns[["Operator"]] <- operatorVector
+    tableColumns[[standards]] <- standCorrVector
+    table$setData(tableColumns)
+  }
 
   return(table)
 }
