@@ -213,7 +213,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 .ScatterPlotOperators <- function(dataset, measurements, parts, operators, options){
 
-  plot <- createJaspPlot(title = "Scatterplot of Operator A vs Operator B")
+  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
 
   plot$dependOn(c("rangeScatterPlotOperators", "rangeScatterPlotFitLine", "rangeScatterPlotOriginLine"))
 
@@ -242,7 +242,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   dataset <- cbind(dataset, Parts = factor(partIndex, partIndex))
 
 
-  plot <- createJaspPlot(title = "Scatterplot of Operator A, Operator B vs Part", width = 500, height = 320)
+  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A, Operator B vs Part"), width = 500, height = 320)
 
   plot$dependOn(c("rangeScatterPlotOperatorParts"))
 
@@ -366,7 +366,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 
 
-      RRtable1$setData(list(      "Source"       = c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation"),
+      RRtable1$setData(list(      "Source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation")),
                                   "Variation"    = c(totalRR, repeatability, reproducibility, operator, partToPart, operatorXpart, totalVar),
                                   "Percent"      = c(totalRR, repeatability, reproducibility, operator, partToPart, operatorXpart, totalVar) / totalVar * 100))
 
@@ -380,7 +380,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
       RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
       RRtable2$addColumnInfo(name = "SD", title = gettext("SD"), type = "number")
-      RRtable2$addColumnInfo(name = "studyVar", title = gettext(paste("Study Variation (SD *", studyVarMultiplier, ")")), type = "number")
+      RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation (SD * %.2f)", studyVarMultiplier), type = "number")
       RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("Percent Study Variation"), type = "number")
       RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("Percent Tolerance"), type = "number")
 
@@ -397,7 +397,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       studyVar <- SD * studyVarMultiplier
 
 
-      RRtable2$setData(list(      "source"       = c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation"),
+      RRtable2$setData(list(      "source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation")),
                                   "SD"           = SD,
                                   "studyVar"    = studyVar,
                                   "percentStudyVar"    = studyVar/max(studyVar) * 100,
@@ -459,7 +459,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 
 
-      RRtable1$setData(list(      "Source"       = c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Total Variation"),
+      RRtable1$setData(list(      "Source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Total Variation")),
                                   "Variation"    = c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar),
                                   "Percent"      = c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar) / totalVar * 100))
 
@@ -473,7 +473,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
       RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
       RRtable2$addColumnInfo(name = "SD", title = gettext("SD"), type = "number")
-      RRtable2$addColumnInfo(name = "studyVar", title = gettext(paste("Study Variation (SD *", studyVarMultiplier, ")")), type = "number")
+      RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation (SD * %.2f)", studyVarMultiplier), type = "number")
       RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("Percent Study Variation"), type = "number")
       RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("Percent Tolerance"), type = "number")
 
@@ -490,7 +490,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       studyVar <- SD * studyVarMultiplier
 
 
-      RRtable2$setData(list(      "source"       = c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Total Variation"),
+      RRtable2$setData(list(      "source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Total Variation")),
                                   "SD"           = SD,
                                   "studyVar"    = studyVar,
                                   "percentStudyVar"    = studyVar/max(studyVar) * 100,
@@ -502,7 +502,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
     if (options[["gaugeVarCompGraph"]]) {
 
-      plot <- createJaspPlot(title = "Variation Components Graph", width = 850, height = 500)
+      plot <- createJaspPlot(title = gettext("Variation Components Graph"), width = 850, height = 500)
 
       plot$dependOn(c("gaugeVarCompGraph"))
 
@@ -512,8 +512,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       studyVariationValues <- studyvars/max(studyVar) * 100
       percentToleranceValues <- studyvars / options$tolerance * 100
 
-      plotframe <- data.frame(source = rep(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part'), 3),
-                              reference = rep(c('Percent Contribution', 'Percent Study Variation', 'Percent Tolerance'), each = 4),
+      plotframe <- data.frame(source = rep(gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part')), 3),
+                              reference = rep(gettext(c('Percent Contribution', 'Percent Study Variation', 'Percent Tolerance')), each = 4),
                               value = c(percentContributionValues, studyVariationValues, percentToleranceValues))
 
       p <- ggplot2::ggplot() + ggplot2::geom_bar(data = plotframe,
@@ -537,7 +537,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     RRtable3$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
     RRtable3$addColumnInfo(name = "Percent", title = gettext("Percent Contribution to Total"), type = "number")
 
-    RRtable3$setData(list(      "Source"       = c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation")))
+    RRtable3$setData(list(      "Source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation"))))
 
     anovaTables[['RRtable3']] <- RRtable3
 
@@ -563,7 +563,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   means <- aggregate(dataset["Measurement"], dataset[parts], mean)
 
 
-  plot <- createJaspPlot(title = "Measurements by Part")
+  plot <- createJaspPlot(title = gettext("Measurements by Part"))
 
   plot$dependOn(c("gaugeByPart", "gaugeByPartAll"))
 
@@ -588,7 +588,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
   dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
-  plot <- createJaspPlot(title = "Measurements by Operator")
+  plot <- createJaspPlot(title = gettext("Measurements by Operator"))
 
   plot$dependOn(c("gaugeByOperator"))
 
@@ -641,7 +641,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 .XbarChart <- function(dataset, measurements, parts, operators, options, title){
 
-  plot <- createJaspPlot(title = paste("Operator", title), width = 600, height = 300)
+  plot <- createJaspPlot(title = gettextf("Operator %s", title), width = 600, height = 300)
 
   p <- .XbarchartNoId(dataset = dataset[measurements], options = options)
 
@@ -655,7 +655,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 .RangeChart <- function(dataset, measurements, parts, operators, options, title){
 
-  plot <- createJaspPlot(title = paste("Operator", title), width = 600, height = 300)
+  plot <- createJaspPlot(title = gettextf("Operator %s", title), width = 600, height = 300)
 
   p <- .RchartNoId(dataset = dataset[measurements], options = options)
 
@@ -735,7 +735,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
   dataForPart <- dataset[[measurements]]
 
-  plot <- createJaspPlot(title = "Bias Histogram")
+  plot <- createJaspPlot(title = gettext("Bias Histogram"))
 
   p <- jaspDescriptives:::.plotMarginal(column = dataForPart, variableName = "Measurement")
 
@@ -776,11 +776,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 .gaugeScatterPlotOperators <- function(dataset, measurements, parts, operators, options){
 
-  plot <- createJaspPlot(title = "Scatterplot of Operator A vs Operator B")
+  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
   plot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine"))
 
   if(length(unique(dataset[[operators]])) > 2){
-    plot$setError(gettextf("Plotting not possible: More than 2 Operators"))
+    plot$setError(gettext("Plotting not possible: More than 2 Operators"))
   }else{
 
     operatorSplit <- split.data.frame(dataset, dataset[operators])
