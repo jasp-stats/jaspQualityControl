@@ -97,84 +97,94 @@ Form
 		Section
 	{
 		title: qsTr("Gauge r&R")
-
-		CheckBox
+		
+		Group
 		{
-			name: "gaugeANOVA";		label: qsTr("R&R Table ANOVA Method"); checked: true
+			title: qsTr("ANOVA Method")
 			
-					DoubleField { name: "alphaForANOVA";		label: qsTr("Alpha Interaction Removal");	fieldWidth: 60; defaultValue: 0.05; max: 1; decimals: 3 }
+			CheckBox
+			{
+				name: "gaugeANOVA";		label: qsTr("R&R Table ANOVA Method"); checked: true
+			
+						DoubleField { name: "alphaForANOVA";		label: qsTr("Alpha Interaction Removal");	fieldWidth: 60; defaultValue: 0.05; max: 1; decimals: 3 }
 					
 				
-			DropDown{
-					name: "studyVarMultiplierType"
-					label: qsTr("Study Variation Multiplier")
-					indexDefaultValue: 0
-					values:
-						[
-						{label: qsTr("Standard Deviation"),		value: "svmSD"},
-						{label: qsTr("Percent"),				value: "svmPercent"},
-						]
-					id: studyVarMultiplierType
-					}
+				DropDown{
+						name: "studyVarMultiplierType"
+						label: qsTr("Study Variation Multiplier")
+						indexDefaultValue: 0
+						values:
+							[
+							{label: qsTr("Standard Deviation"),		value: "svmSD"},
+							{label: qsTr("Percent"),				value: "svmPercent"},
+							]
+						id: studyVarMultiplierType
+						}
 										
-			DoubleField { 
-					name: "studyVarMultiplier"
-					label: qsTr("Value")
-					fieldWidth: 60 
-					defaultValue: 6  
-					decimals: 3
+				DoubleField { 
+						name: "studyVarMultiplier"
+						label: qsTr("Value")
+						fieldWidth: 60 
+						defaultValue: 6  
+						decimals: 3
 						}
 					
-			CheckBox{
-					name: "gaugeVarCompGraph";		label: qsTr("Graph Variation Components"); checked: true
-					}
+				CheckBox{
+						name: "gaugeVarCompGraph";		label: qsTr("Graph Variation Components"); checked: true
+						}
 				
-		}
-		
-
-
-		CheckBox
-		{
-			name: "gaugeRchart";		label: qsTr("R Chart by Operator")
-		}
-		CheckBox
-		{
-			name: "gaugeXbarChart";		label: qsTr("X-bar Chart by Operator")
-		}
-		
-		CheckBox
-		{
-			name: "gaugeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
-
-			CheckBox
-			{
-				name: "gaugeScatterPlotFitLine";		label: qsTr("Fit Line")
-			}
-				
-			CheckBox
-			{
-				name: "gaugeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
 			}
 		
 		}
 		
-		CheckBox
+		Group
 		{
-            name: "gaugeByPart";		label: qsTr("Measurement by Part Graph")
+			title: qsTr("Graphs")
+
+			CheckBox
+			{
+				name: "gaugeRchart";		label: qsTr("R Chart by Operator")
+			}
+
+			CheckBox
+			{
+				name: "gaugeXbarChart";		label: qsTr("X-bar Chart by Operator")
+			}
+		
+			CheckBox
+			{
+				name: "gaugeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
 				
 				CheckBox
-			{
-					name: "gaugeByPartAll";		label: qsTr("Display all Measurements")
+				{
+					name: "gaugeScatterPlotFitLine";		label: qsTr("Fit Line")
+				}
+
+				CheckBox
+				{
+					name: "gaugeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+				}
 			}
-		}
-		
-		CheckBox
-		{
+
+			CheckBox
+			{
+			name: "gaugeByPart";		label: qsTr("Measurement by Part Graph")
+			
+				CheckBox
+				{
+					name: "gaugeByPartAll";		label: qsTr("Display all Measurements")
+				}
+			}	
+
+			CheckBox
+			{
 			name: "gaugeByOperator";		label: qsTr("Measurement by Operator Graph")
-		}
-		CheckBox
-		{
+			}
+		
+			CheckBox
+			{
 			name: "gaugeByInteraction";		label: qsTr("Measurement Interaction Graph")
+			}
 		}
 	}
 	
@@ -182,40 +192,45 @@ Form
 	{
 		title: qsTr("Range Method")
 		
-		CheckBox
-		{
-                name: "rangeRr";		label: qsTr("r&R Table")
-		}
+			Group
+			{
+				title: qsTr("Gauge r & R")
+				
+				CheckBox
+				{
+					name: "rangeRr";		label: qsTr("r&R Table")
+				}
+			}
 		
-		
-		CheckBox
-		{
-                name: "rangeScatterPlotOperatorParts";		label: qsTr("Scatter Plot Operators vs. Parts")
-		}
+			Group
+			{
+				title: qsTr("Graphs")
+				
+				CheckBox
+				{
+					name: "rangeScatterPlotOperatorParts";		label: qsTr("Scatter Plot Operators vs. Parts")
+				}
 			
-		CheckBox
-		{
-                name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
+				CheckBox
+				{
+					name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
 				
-
+					CheckBox
+					{
+						name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
+					}
 				
-			CheckBox
-			{
-                name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
-			}
-				
-			CheckBox
-			{
-                name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
-			}
+					CheckBox
+					{
+						name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+					}
 		
-		}
-
-		CheckBox
-		{
-			name: "rangeRchart";		label: qsTr("R Chart")
-		}
-		
+				}
+				CheckBox
+				{
+					name: "rangeRchart";		label: qsTr("R Chart")
+				}
+			}
 	}
 	
 		Section
