@@ -94,8 +94,8 @@ Form
 			name:								"factors"
 			defaultValues:
 			[
-				{ startValue: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high1: qsTr("Factor 1 Level 2") },
-				{ startValue: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high1: qsTr("Factor 2 Level 2") } //row 2 has to be fixed
+				{ factorName: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high1: qsTr("Factor 1 Level 2") },
+				{ factorName: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high1: qsTr("Factor 2 Level 2") } //row 2 has to be fixed
 			]
 			rowComponent: 						RowLayout
 			{
@@ -117,7 +117,7 @@ Form
 						id:						factorName
 						label: 					""
 						name: 					"factorName"
-						startValue:				qsTr("Factor ") + (rowIndex + 1)
+						placeholderText:		qsTr("Factor ") + (rowIndex + 1)
 						fieldWidth:				150 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true
@@ -131,7 +131,7 @@ Form
 					{
 						label: 					""
 						name: 					"low"
-						startValue:				qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 1")
+						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 1")
 						fieldWidth:				100 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true
@@ -145,7 +145,7 @@ Form
 					{
 						label: 					""
 						name: 					"high1"
-						startValue:				qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 2")
+						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 2")
 						fieldWidth:				100 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true
@@ -160,7 +160,7 @@ Form
 					{
 						label: 					""
 						name: 					"high2"
-						startValue:				qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
+						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
 						fieldWidth:				100 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true

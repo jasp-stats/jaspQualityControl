@@ -110,12 +110,12 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
     designs <- jaspResults[["state"]]$object
 
     if(options[["designBy"]] == "designByRuns"){
-      rowIndex 	    <- which(designs[, 1] == as.numeric(options[["factorialRuns"]]))
-      resolution    <- designs[rowIndex, as.numeric(options[["numberOfFactors"]])]
-      runs          <- as.numeric(options[["factorialRuns"]])
+      rowIndex 	    <- which(designs[, 1] == options[["factorialRuns"]])
+      resolution    <- designs[rowIndex, options[["numberOfFactors"]]]
+      runs          <- options[["factorialRuns"]]
     } else {
       resolution    <- options[["factorialResolution"]]
-      rowIndex      <- which(designs[, as.numeric(options[["numberOfFactors"]])] == resolution)[1]
+      rowIndex      <- which(designs[,options[["numberOfFactors"]]] == resolution)[1]
       runs          <- designs[rowIndex, 1]
     }
     if(resolution == "")
@@ -128,7 +128,7 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
                        factors = options[["numberOfFactors"]],
                        runs = runs,
                        resolution = resolution,
-                       # measure = 2^(as.numeric(options[["numberOfFactors"]]) - ),
+                       measure = as.numeric(runs),
                        centers = options[["factorialCenterPoints"]],
                        replicates = options[["factorialCornerReplicates"]],
                        blocks = options[["factorialBlocks"]])
@@ -172,24 +172,24 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
     }
 
     table$addColumnInfo(name = 'runOrder', title = gettext("RunOrder"), type = 'string')
-    runOrder <- 1:2^as.numeric(options[["numberOfFactors"]])
+    runOrder <- 1:2^options[["numberOfFactors"]]
 
     rows <- data.frame(runOrder = runOrder)
     rows <- cbind.data.frame(rows,
                              matrix(0,
-                                    ncol = as.numeric(options[["numberOfFactors"]]),
+                                    ncol = options[["numberOfFactors"]],
                                     nrow = nrow(rows),
                                     dimnames = NULL))
 
     for(i in 1:as.numeric(options[["numberOfFactors"]])){
-      rows[,i+1] <- rep(c(rep(1, 2^(as.numeric(options[["numberOfFactors"]])-i)), rep(-1, 2^(as.numeric(options[["numberOfFactors"]])-i))), 2^(i-1))
-      colnames(rows)[i+1] <- paste("Factor", as.character(i), sep = " ")
-      #table$addColumnInfo(name = factorNames[i], title = factorNames[i], type = 'number') #uncomment when 'factors' (i.e., the row 2 issue) is fixed in the QML file
+      rows[,i+1] <- rep(c(rep(1, 2^(options[["numberOfFactors"]]-i)), rep(-1, 2^(options[["numberOfFactors"]]-i))), 2^(i-1))
+      colnames(rows)[i+1] <- factorNames[i]
+      table$addColumnInfo(name = factorNames[i], title = factorNames[i], type = 'string')
     }
 
-    colnames(rows) <- as.character(colnames(rows)) #when 'the row 2 issue' is fixed, this line should instead be "colnames(rows) <- c("runOrder", factorNames)
+    jaspResults[["displayDesign"]] <- table
+    colnames(rows) <- c("runOrder", factorNames)
     table$setData(rows)
 
-    jaspResults[["displayDesign"]] <- table
   }
 }
