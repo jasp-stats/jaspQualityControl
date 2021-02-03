@@ -17,10 +17,10 @@
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1, data_plot$means))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
-  xLimits <- range(xBreaks)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
+  xLimits <- range(xBreaks + 3)
   dfLabel <- data.frame(
-    x = max(xLimits) + 1,
+    x = max(xLimits),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -65,10 +65,10 @@
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(UCL, data_plot$range, UCL + 1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(subgroups))
-  xLimits <- range(xBreaks)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
+  xLimits <- range(xBreaks + 3)
   dfLabel <- data.frame(
-    x = max(xLimits) + 1,
+    x = max(xLimits),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
