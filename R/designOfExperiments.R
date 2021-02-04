@@ -102,7 +102,6 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
     table$addColumnInfo(name = 'factors', title = gettext("Factors"), type = 'integer')
     table$addColumnInfo(name = 'runs', title = gettext("Runs"), type = 'integer')
     table$addColumnInfo(name = 'resolution', title = gettext("Resolution"), type = 'string')
-    table$addColumnInfo(name = 'measure', title = gettext("2^(k-p)"), type = 'number')
     table$addColumnInfo(name = 'centers', title = gettext("Center points"), type = 'integer')
     table$addColumnInfo(name = 'replicates', title = gettext("Replicates"), type = 'integer')
     table$addColumnInfo(name = 'blocks', title = gettext("Blocks"), type = 'integer')
@@ -128,7 +127,6 @@ designOfExperiments <- function(jaspResults, dataset, options, ...){
                        factors = options[["numberOfFactors"]],
                        runs = runs,
                        resolution = resolution,
-                       measure = as.numeric(runs),
                        centers = options[["factorialCenterPoints"]],
                        replicates = options[["factorialCornerReplicates"]],
                        blocks = options[["factorialBlocks"]])
