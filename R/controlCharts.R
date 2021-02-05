@@ -91,6 +91,34 @@ if(options$Defectivescharts){
       PPlot$plotObject <- .Uchart(dataset = dataset, options = options)
     }
   }
+  #Laney U chart 
+  if(options$Defectscharts){
+    if(options$TypeDefects == "Laneychart" && is.null(jaspResults[["LaneyUchart"]])){
+      jaspResults[["LaneyUPlot"]] <- createJaspPlot(title = "Laney U' chart", width = 700, height = 350)
+      jaspResults[["LaneyUPlot"]]$dependOn(c("D", "total","Defectscharts", "TypeDefects"))
+      jaspResults[["LaneyUPlot"]]$position <- 11
+      PPlot <- jaspResults[["LaneyUPlot"]]
+      PPlot$plotObject <- .LanyU(dataset = dataset, options = options)
+    }
+  }
+  #Laney P chart 
+  if(options$Defectivescharts){
+    if(options$TypeDefectives == "Laneyprimechart" && is.null(jaspResults[["LaneyPchart"]])){
+      jaspResults[["LaneyPPlot"]] <- createJaspPlot(title =  gettext("Laney P' chart"), width = 700, height = 350)
+      jaspResults[["LaneyPPlot"]]$dependOn(c("total", "D", "Defectivescharts", "TypeDefectives"))
+      jaspResults[["LaneyPPlot"]]$position <- 11
+      PPlot <- jaspResults[["LaneyPPlot"]]
+      PPlot$plotObject <- .LanyP(dataset = dataset, options = options)
+    }
+  }
+  #ImRchart for attributes
+  if(options$ImRchart2 && is.null(jaspResults[["ImRchart2"]])){
+    jaspResults[["IMRPlot"]] <- createJaspPlot(title = "ImR chart", width = 900, height = 400)
+    jaspResults[["IMRPlot"]]$dependOn(c("D", "total","ImRchart2"))
+    jaspResults[["IMRPlot"]]$position <- 11
+    PPlot <- jaspResults[["IMRPlot"]]
+    PPlot$plotObject <- .ImRchart_attributes(dataset = dataset, options = options)
+  }
 }
 
 #Functions for control charts 
@@ -335,3 +363,146 @@ if(options$Defectivescharts){
   
   return(p)
 }
+
+##Imr for attributes 
+.ImRchart_attributes <- function(dataset, options){
+  ready <- options$D != "" && options$total != ""
+  if (!ready)
+    return()
+  
+  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
+  data1$P <- data1$D/data1$sample
+  subgroups <- 1:nrow(data1)
+  data_plot <- data.frame(subgroups = subgroups, P = data1$P)
+  
+  sixsigma <- qcc::qcc(data_plot$P, type ='xbar.one', plot=FALSE)
+  center <- sixsigma$center
+  UCL <- max(sixsigma$limits)
+  LCL <- min(sixsigma$limits)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 0.1, UCL + 0.1))
+  yLimits <- range(yBreaks)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
+  xLimits <- range(xBreaks + 3)
+  dfLabel <- data.frame(
+    x = max(xLimits),
+    y = c(center, UCL, LCL),
+    l = c(
+      gettextf("CL = %g", round(center, 3)),
+      gettextf("UCL = %g",   round(UCL, 3)),
+      gettextf("LCL = %g",   round(LCL, 3))
+    )
+  )
+  
+  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
+    jaspGraphs::geom_line() +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'gray')) +
+    ggplot2::geom_hline(yintercept =  center, color = 'black') +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
+    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
+    ggplot2::scale_y_continuous(name = "Subgroups' Proportions" ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name = 'Subgroups', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+  
+  return(p)
+}
+
+### Lanys charts 
+.LanyU <- function(dataset, options){
+  ready <- options$D != "" && options$total != ""
+  if (!ready)
+    return()
+  
+  data1 <- data.frame(D = dataset[,options$D], sample = dataset[,options$total])
+  data1$P <- data1$D/data1$sample
+  subgroups <- c(1:nrow(data1))
+  data_plot <- data.frame(subgroups = subgroups, P = data1$P)
+  
+  #Sixsigma
+  center = sum(data1$D)/sum(data1$sample)
+  z_scores <- (data1$P - center)/sqrt(center/data1$sample[1])
+  R <- vector()
+  for (i in c(1:length(z_scores) - 1))
+    R[i] <- abs(z_scores[i+1] - z_scores[i])
+  
+  MR_mean <- sum(R)/ (length(data1$P) - 1)
+  sigma <- MR_mean/1.128
+  LCL <- ifelse(center - 3*sqrt(center/data1$sample[1]) * sigma < 0, 0, center - 3*sqrt(center/data1$sample[1]) * sigma)
+  UCL <- center + 3*sqrt(center/data1$sample[1]) * sigma
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 0.1, UCL + 0.1))
+  yLimits <- range(yBreaks)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(data_plot$subgroups)
+  xLimits <- range(xBreaks + 3)
+  dfLabel <- data.frame(
+    x = max(xLimits),
+    y = c(center, UCL, LCL),
+    l = c(
+      gettextf("CL = %g", round(center, 3)),
+      gettextf("UCL = %g",   round(UCL, 3)),
+      gettextf("LCL = %g",   round(LCL, 3))
+    )
+  )
+  
+  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
+    jaspGraphs::geom_line() +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'gray')) +
+    ggplot2::geom_hline(yintercept =  center, color = 'black') +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
+    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
+    ggplot2::scale_y_continuous(name = "Sample count per unit" ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name = 'Subgroups', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+  
+  return(p)
+}
+
+.LanyP <- function(dataset, options){
+  ready <- options$D != "" && options$total != ""
+  if (!ready)
+    return()
+  
+  data1 <- data.frame(D = dataset[,options$D], sample = dataset[,options$total])
+  data1$P <- data1$D/data1$sample
+  subgroups <- c(1:nrow(data1))
+  data_plot <- data.frame(subgroups = subgroups, P = data1$P)
+  
+  #Sixsigma
+  center = sum(data1$D)/sum(data1$sample)
+  z_scores <- (data1$P - center)/sqrt(center*(1 - center)/data1$sample[1])
+  R <- vector()
+  for (i in c(1:length(z_scores) - 1))
+    R[i] <- abs(z_scores[i+1] - z_scores[i])
+  
+  MR_mean <- sum(R)/ (length(data1$P) - 1)
+  sigma <- MR_mean/1.128
+  LCL <- ifelse(center - 3*sqrt(center*(1 - center)/data1$sample[1]) * sigma < 0, 0, center - 3*sqrt(center*(1 - center)/data1$sample[1]) * sigma)
+  UCL <- center + 3*sqrt(center*(1 - center)/data1$sample[1]) * sigma
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 0.1, UCL + 0.1))
+  yLimits <- range(yBreaks)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(data_plot$subgroups)
+  xLimits <- range(xBreaks + 3)
+  dfLabel <- data.frame(
+    x = max(xLimits),
+    y = c(center, UCL, LCL),
+    l = c(
+      gettextf("CL = %g", round(center, 3)),
+      gettextf("UCL = %g",   round(UCL, 3)),
+      gettextf("LCL = %g",   round(LCL, 3))
+    )
+  )
+  
+  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
+    jaspGraphs::geom_line() +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'gray')) +
+    ggplot2::geom_hline(yintercept =  center, color = 'black') +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
+    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
+    ggplot2::scale_y_continuous(name = "Sample count per unit" ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name = 'Subgroups', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+  
+  return(p)
+}
+
