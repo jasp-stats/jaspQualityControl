@@ -48,10 +48,9 @@ Form
 
        Group {
            columns: 									1
-        CheckBox {	name: "Xbarchart";		label: qsTr("X bar chart")              }
-        CheckBox {	name: "Rchart";		label: qsTr("R chart")                      }
-        CheckBox {	name: "ImRchart";		label: qsTr("I-mR chart for variables")				}
-        CheckBox {	name: "Schart";		label: qsTr("S chart")                      }
+        CheckBox {	name: "Xbarchart";		label: qsTr("X bar & R charts")              }
+        CheckBox {	name: "ImRchart";		label: qsTr("I-MR chart for variables")				}
+        CheckBox {	name: "Schart";		label: qsTr("X bar & S charts")                      }
             }
 
     }
