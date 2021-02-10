@@ -26,12 +26,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-
   ready <- (length(measurements) != 0 & operators != "" & parts != "")
 
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
   }
+
 
   .msaCheckErrors(dataset, options)
 
@@ -195,85 +195,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
 
   return()
-}
-
-
-.ScatterPlotOperators <- function(dataset, measurements, parts, operators, options){
-
-  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
-
-  plot$dependOn(c("rangeScatterPlotOperators", "rangeScatterPlotFitLine", "rangeScatterPlotOriginLine"))
-
-  p <- ggplot2::ggplot(data = dataset, ggplot2::aes_string(x = measurements[1], y = measurements[2])) +
-    jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
-    ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
-
-  if (options[["rangeScatterPlotFitLine"]])
-    p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
-
-  if (options[["rangeScatterPlotOriginLine"]])
-    p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
-
-  p <- jaspGraphs::themeJasp(p)
-
-  plot$plotObject <- p
-
-  return(plot)
-}
-
-
-.ScatterPlotOperatorParts <- function(dataset, measurements, parts, operators, options){
-
-  partIndex <- 1:length(dataset[[measurements[1]]])
-
-  dataset <- cbind(dataset, Parts = factor(partIndex, partIndex))
-
-
-  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A, Operator B vs Part"), width = 500, height = 320)
-
-  plot$dependOn(c("rangeScatterPlotOperatorParts"))
-
-  p <- ggplot2::ggplot() +
-    jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[1]), fill = "red",size = 4) +
-    jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[2]), fill = "green",size = 4)
-
-  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = "right")
-
-  plot$plotObject <- p
-
-  return(plot)
-}
-
-.rAndRtableRange <- function(dataset, measurements, parts, operators, options, jaspResults){
-
-  if(!is.null(jaspResults[["rAndR2"]]))
-    return()
-
-  table <- createJaspTable(title = gettext("r & R Table"))
-  table$position <- 2
-
-  table$dependOn(c("rangeRr"))
-
-  table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
-  table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
-  table$addColumnInfo(name = "PSD", title = gettext("Process SD"), type = "number")
-  table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
-  table$addColumnInfo(name = "GRRpercent", title = gettext("%GRR"), type = "number")
-
-  jaspResults[["rAndR2"]] <- table
-
-  Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / length(dataset[[measurements[1]]]))
-  d2 <- 1.19105
-  SD <- options$processVariationOrTolerance
-  GRR <- Rbar/d2
-  GRRpercent <- GRR/SD*100
-
-
-  table$addRows(list(      "Rbar"       = Rbar,
-                           "d2"         = d2,
-                           "PSD"        = SD,
-                           "GRR"        = GRR,
-                           "GRRpercent" = GRRpercent))
 }
 
 
@@ -530,6 +451,54 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   return(anovaTables)
 }
 
+.RangeChart <- function(dataset, measurements, parts, operators, options, title, ready){
+  if (ready) {
+    plot <- createJaspPlot(title = gettextf("Operator %s", title), width = 600, height = 300)
+    if (length(measurements) == 1){
+      plot$setError(gettext("At least 2 measurements per operator required."))
+    }else{
+      p <- .RchartNoId(dataset = dataset[measurements], options = options)
+      plot$plotObject <- p
+    }
+    return(plot)
+  }
+}
+
+.XbarChart <- function(dataset, measurements, parts, operators, options, title, ready){
+  if (ready){
+    plot <- createJaspPlot(title = gettextf("Operator %s", title), width = 600, height = 300)
+    if (length(measurements) == 1){
+      plot$setError(gettext("At least 2 measurements per operator required."))
+    }else{
+      p <- .XbarchartNoId(dataset = dataset[measurements], options = options)
+      plot$plotObject <- p
+    }
+    return(plot)
+  }
+}
+
+.ScatterPlotOperators <- function(dataset, measurements, parts, operators, options){
+
+  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
+
+  plot$dependOn(c("rangeScatterPlotOperators", "rangeScatterPlotFitLine", "rangeScatterPlotOriginLine"))
+
+  p <- ggplot2::ggplot(data = dataset, ggplot2::aes_string(x = measurements[1], y = measurements[2])) +
+    jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
+    ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
+
+  if (options[["rangeScatterPlotFitLine"]])
+    p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
+
+  if (options[["rangeScatterPlotOriginLine"]])
+    p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
+
+  p <- jaspGraphs::themeJasp(p)
+
+  plot$plotObject <- p
+
+  return(plot)
+}
 
 .gaugeByPartGraph <- function(dataset, measurements, parts, operators, options){
 
@@ -558,6 +527,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   return(plot)
 }
 
+
 .gaugeByOperatorGraph <- function(dataset, measurements, parts, operators, options){
 
 
@@ -576,8 +546,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
   return(plot)
 }
-
-
 
 .gaugeByInteractionGraph <- function(dataset, measurements, parts, operators, options){
 
@@ -614,30 +582,58 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   return(plot)
 }
 
-.XbarChart <- function(dataset, measurements, parts, operators, options, title, ready){
-  if (ready){
-    plot <- createJaspPlot(title = gettextf("Operator %s", title), width = 600, height = 300)
-    if (length(measurements) == 1){
-      plot$setError(gettext("At least 2 measurements per operator required."))
-    }else{
-      p <- .XbarchartNoId(dataset = dataset[measurements], options = options)
-      plot$plotObject <- p
-    }
-    return(plot)
-  }
+.ScatterPlotOperatorParts <- function(dataset, measurements, parts, operators, options){
+
+  partIndex <- 1:length(dataset[[measurements[1]]])
+
+  dataset <- cbind(dataset, Parts = factor(partIndex, partIndex))
+
+
+  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A, Operator B vs Part"), width = 500, height = 320)
+
+  plot$dependOn(c("rangeScatterPlotOperatorParts"))
+
+  p <- ggplot2::ggplot() +
+    jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[1]), fill = "red",size = 4) +
+    jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[2]), fill = "green",size = 4)
+
+  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = "right")
+
+  plot$plotObject <- p
+
+  return(plot)
 }
 
-.RangeChart <- function(dataset, measurements, parts, operators, options, title, ready){
-  if (ready) {
-    plot <- createJaspPlot(title = gettextf("Operator %s", title), width = 600, height = 300)
-    if (length(measurements) == 1){
-      plot$setError(gettext("At least 2 measurements per operator required."))
-    }else{
-      p <- .RchartNoId(dataset = dataset[measurements], options = options)
-      plot$plotObject <- p
-    }
-    return(plot)
-  }
+.rAndRtableRange <- function(dataset, measurements, parts, operators, options, jaspResults){
+
+  if(!is.null(jaspResults[["rAndR2"]]))
+    return()
+
+  table <- createJaspTable(title = gettext("r & R Table"))
+  table$position <- 2
+
+  table$dependOn(c("rangeRr"))
+
+  table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
+  table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
+  table$addColumnInfo(name = "PSD", title = gettext("Process SD"), type = "number")
+  table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
+  table$addColumnInfo(name = "GRRpercent", title = gettext("%GRR"), type = "number")
+
+  jaspResults[["rAndR2"]] <- table
+
+  Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / length(dataset[[measurements[1]]]))
+  d2 <- 1.19105
+  SD <- options$processVariationOrTolerance
+  GRR <- Rbar/d2
+  GRRpercent <- GRR/SD*100
+
+
+  table$addRows(list(      "Rbar"       = Rbar,
+                           "d2"         = d2,
+                           "PSD"        = SD,
+                           "GRR"        = GRR,
+                           "GRRpercent" = GRRpercent))
 }
 
 .biasTable <- function(dataset, measurements, parts, operators, options){
@@ -705,7 +701,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   return(table)
 }
 
-
 .biasHistogram <- function(dataset, measurements, parts, operators, options, title){
 
   dataForPart <- dataset[[measurements]]
@@ -721,7 +716,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   return(plot)
 
 }
-
 
 .biasRunChart <- function(dataset, measurements, parts, operators, options){
 
@@ -753,7 +747,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
   return(plot)
 }
-
 
 .gaugeScatterPlotOperators <- function(dataset, measurements, parts, operators, options){
 
