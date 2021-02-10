@@ -1,11 +1,9 @@
 # Function to create X-bar chart
 .XbarchartNoId <- function(dataset, options) {
-
-  if(!is.null(options$variables)){
     ready <- (length(options$variables) > 1)
     if (!ready)
       return()
-  }
+    
   data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   means <- rowMeans(data1)
   subgroups <- 1:length(means)
@@ -18,9 +16,9 @@
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1, data_plot$means))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -38,8 +36,8 @@
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_hline(yintercept = warn.limits, color = "red", linetype = "dashed") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Subgroup Mean" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name = gettext("Subgroup Mean") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -48,12 +46,10 @@
 
 # Function to create R chart
 .RchartNoId <- function(dataset, options) {
-
-  if(!is.null(options$variables)){
-    ready <- (length(options$variables) > 1)
-    if (!ready)
-      return()
-  }
+  ready <- (length(options$variables) > 1)
+  if (!ready)
+    return()
+  
   #Arrange data and compute
   data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   range <- apply(data1, 1, function(x) max(x) - min(x))
@@ -66,9 +62,9 @@
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(UCL, data_plot$range, UCL + 1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -86,8 +82,8 @@
     ggplot2::geom_hline(yintercept = c(UCL,LCL), color = "red") +
     ggplot2::geom_hline(yintercept = warn.limits, color = "red", linetype = "dashed") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Subgroup Range" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name= "Subgroup" ,breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name = gettext("Subgroup Range") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name= gettext("Subgroup") ,breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 

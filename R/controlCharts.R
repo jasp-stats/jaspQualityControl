@@ -17,13 +17,11 @@ controlCharts <- function(jaspResults, dataset, options){
   if(options$Xbarchart && is.null(jaspResults[["Xbarchart"]])){
     jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X bar chart"), width = 700, height = 350)
     jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart", "variables"))
-    jaspResults[["XbarPlot"]]$position <- 11
     XbarPlot <- jaspResults[["XbarPlot"]]
     XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset[, options$variables], options = options)
     
     jaspResults[["RPlot"]] <- createJaspPlot(title =  gettext("R chart"), width = 700, height = 350)
     jaspResults[["RPlot"]]$dependOn(c("Xbarchart", "variables"))
-    jaspResults[["RPlot"]]$position <- 11
     RPlot<- jaspResults[["RPlot"]]
     RPlot$plotObject <- .RchartNoId(dataset = dataset[, options$variables], options = options)
   }
@@ -32,13 +30,11 @@ controlCharts <- function(jaspResults, dataset, options){
   if(options$Schart && is.null(jaspResults[["Schart"]])){
     jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X bar chart"), width = 700, height = 350)
     jaspResults[["XbarPlot"]]$dependOn(c("Schart", "variables"))
-    jaspResults[["XbarPlot"]]$position <- 11
     XbarPlot <- jaspResults[["XbarPlot"]]
     XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset[, options$variables], options = options)
     
     jaspResults[["SPlot"]] <- createJaspPlot(title = gettext("S Chart"), width = 700, height = 350)
     jaspResults[["SPlot"]]$dependOn(c("Schart", "variables"))
-    jaspResults[["SPlot"]]$position <- 11
     SPlot<- jaspResults[["SPlot"]]
     SPlot$plotObject <- .Schart(dataset = dataset, options = options)
   }
@@ -49,8 +45,6 @@ controlCharts <- function(jaspResults, dataset, options){
       jaspResults[["MRchart"]] <- createJaspContainer(gettext("Moving range charts"))
       jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables"))
       jaspResults[["MRchart"]]$dependOn(c("ImRchart", "variables"))
-      jaspResults[["Ichart"]]$position <- 11
-      jaspResults[["MRchart"]]$position <- 11
     }
     
     Iplot <- jaspResults[["Ichart"]]
@@ -66,7 +60,6 @@ controlCharts <- function(jaspResults, dataset, options){
     if(options$TypeDefectives == "pchart" && is.null(jaspResults[["pchart"]])){
       jaspResults[["PchartPlot"]] <- createJaspPlot(title =  gettext("P chart"), width = 700, height = 350)
       jaspResults[["PchartPlot"]]$dependOn(c("total", "D", "Defectivescharts", "TypeDefectives"))
-      jaspResults[["PchartPlot"]]$position <- 11
       PPlot <- jaspResults[["PchartPlot"]]
       PPlot$plotObject <- .Pchart(dataset = dataset, options = options)
     }
@@ -76,7 +69,6 @@ if(options$Defectivescharts){
   if(options$TypeDefectives == "npchart" && is.null(jaspResults[["npchart"]])){
     jaspResults[["NPchartPlot"]] <- createJaspPlot(title =  gettext("NP chart"), width = 700, height = 350)
     jaspResults[["NPchartPlot"]]$dependOn(c("total", "D", "Defectivescharts", "TypeDefectives"))
-    jaspResults[["NPchartPlot"]]$position <- 11
     PPlot <- jaspResults[["NPchartPlot"]]
     PPlot$plotObject <- .NPchart(dataset = dataset, options = options)
   }
@@ -86,7 +78,6 @@ if(options$Defectivescharts){
     if(options$TypeDefects == "cchart" && is.null(jaspResults[["Cchart"]])){
       jaspResults[["CchartPlot"]] <- createJaspPlot(title =  gettext("C chart"), width = 700, height = 350)
       jaspResults[["CchartPlot"]]$dependOn(c("D", "Defectscharts", "TypeDefects","total"))
-      jaspResults[["CchartPlot"]]$position <- 11
       PPlot <- jaspResults[["CchartPlot"]]
       PPlot$plotObject <- .Cchart(dataset = dataset, options = options)
     }
@@ -96,7 +87,6 @@ if(options$Defectivescharts){
     if(options$TypeDefects == "uchart" && is.null(jaspResults[["Uchart"]])){
       jaspResults[["UchartPlot"]] <- createJaspPlot(title =  gettext("U chart"), width = 700, height = 350)
       jaspResults[["UchartPlot"]]$dependOn(c("D", "total","Defectscharts", "TypeDefects"))
-      jaspResults[["UchartPlot"]]$position <- 11
       PPlot <- jaspResults[["UchartPlot"]]
       PPlot$plotObject <- .Uchart(dataset = dataset, options = options)
     }
@@ -106,7 +96,6 @@ if(options$Defectivescharts){
     if(options$TypeDefects == "Laneychart" && is.null(jaspResults[["LaneyUchart"]])){
       jaspResults[["LaneyUPlot"]] <- createJaspPlot(title = "Laney U' chart", width = 700, height = 350)
       jaspResults[["LaneyUPlot"]]$dependOn(c("D", "total","Defectscharts", "TypeDefects"))
-      jaspResults[["LaneyUPlot"]]$position <- 11
       PPlot <- jaspResults[["LaneyUPlot"]]
       PPlot$plotObject <- .LanyU(dataset = dataset, options = options)
     }
@@ -116,7 +105,6 @@ if(options$Defectivescharts){
     if(options$TypeDefectives == "Laneyprimechart" && is.null(jaspResults[["LaneyPchart"]])){
       jaspResults[["LaneyPPlot"]] <- createJaspPlot(title =  gettext("Laney P' chart"), width = 700, height = 350)
       jaspResults[["LaneyPPlot"]]$dependOn(c("total", "D", "Defectivescharts", "TypeDefectives"))
-      jaspResults[["LaneyPPlot"]]$position <- 11
       PPlot <- jaspResults[["LaneyPPlot"]]
       PPlot$plotObject <- .LanyP(dataset = dataset, options = options)
     }
@@ -125,7 +113,6 @@ if(options$Defectivescharts){
   if(options$ImRchart2 && is.null(jaspResults[["ImRchart2"]])){
     jaspResults[["IMRPlot"]] <- createJaspPlot(title = "ImR chart", width = 900, height = 400)
     jaspResults[["IMRPlot"]]$dependOn(c("D", "total","ImRchart2"))
-    jaspResults[["IMRPlot"]]$position <- 11
     PPlot <- jaspResults[["IMRPlot"]]
     PPlot$plotObject <- .ImRchart_attributes(dataset = dataset, options = options)
   }
@@ -149,9 +136,9 @@ if(options$Defectivescharts){
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$Stdv, UCL + 1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -165,8 +152,8 @@ if(options$Defectivescharts){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Subgroup Standard Deviation" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Subgroup', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name =  gettext("Subgroup Standard Deviation") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name =  gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
@@ -187,9 +174,9 @@ if(options$Defectivescharts){
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -204,8 +191,8 @@ if(options$Defectivescharts){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Value" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Observations', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name =  gettext("Value") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name =  gettext('Observations'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
@@ -228,9 +215,9 @@ if(options$Defectivescharts){
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL + 1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(data_plot$subgroups)
-  xLimits <- c(min(range(xBreaks)), max(range(xBreaks) + 3))
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -245,8 +232,8 @@ if(options$Defectivescharts){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Moving Range" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Observations', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name =  gettext("Moving Range") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name =  gettext('Observations'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
@@ -270,9 +257,9 @@ if(options$Defectivescharts){
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$P ,UCL + 0.1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -287,8 +274,8 @@ if(options$Defectivescharts){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Subgroups' Proportions" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Subgroups', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name =  gettext("Subgroups' Proportions") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name =  gettext('Subgroups'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
@@ -310,9 +297,9 @@ if(options$Defectivescharts){
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$D ,UCL + 0.1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -327,8 +314,8 @@ if(options$Defectivescharts){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Subgroups' Proportions" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Subgroups', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name =  gettext("Subgroups' Proportions"),limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name =  gettext('Subgroups'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
@@ -350,9 +337,9 @@ if(options$Defectivescharts){
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$D ,UCL + 0.1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -367,8 +354,8 @@ if(options$Defectivescharts){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Subgroups' Proportions" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Subgroups', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name =  gettext("Subgroups' Proportions") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name =  gettext('Subgroups'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   return(p)
@@ -390,9 +377,9 @@ if(options$Defectivescharts){
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$P ,UCL + 0.1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -407,8 +394,8 @@ if(options$Defectivescharts){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Subgroups' Proportions" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Subgroups', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name =  gettext("Subgroups' Proportions") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name =  gettext('Subgroups'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
@@ -433,9 +420,9 @@ if(options$Defectivescharts){
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 0.1, UCL + 0.1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -450,8 +437,8 @@ if(options$Defectivescharts){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Subgroups' Proportions" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Subgroups', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name =  gettext("Subgroups' Proportions") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name =  gettext('Subgroups'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
@@ -483,9 +470,9 @@ if(options$Defectivescharts){
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 0.1, UCL + 0.1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(data_plot$subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -500,8 +487,8 @@ if(options$Defectivescharts){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Sample count per unit" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Subgroups', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name =  gettext("Sample count per unit") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name =  gettext('Subgroups'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
@@ -532,9 +519,9 @@ if(options$Defectivescharts){
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 0.1, UCL + 0.1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(data_plot$subgroups)
-  xLimits <- range(xBreaks + 3)
+  xLimits <- c(1, max(xBreaks) + 5)
   dfLabel <- data.frame(
-    x = max(xLimits),
+    x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -549,8 +536,8 @@ if(options$Defectivescharts){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE) +
-    ggplot2::scale_y_continuous(name = "Sample count per unit" ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = 'Subgroups', breaks = xBreaks, limits = c(min(xLimits), max(xLimits) + 1)) +
+    ggplot2::scale_y_continuous(name = gettext("Sample count per unit") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_x_continuous(name = gettext('Subgroups'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
