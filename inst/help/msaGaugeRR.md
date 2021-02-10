@@ -1,2 +1,2 @@
-Process capability
+Gauge r&R
 ==========================
