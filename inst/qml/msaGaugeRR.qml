@@ -232,29 +232,4 @@ Form
 				}
 			}
 	}
-	
-		Section
-	{
-		title: qsTr("Determine Bias")
-					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference Value:");		defaultValue: 0;	negativeValues: true	}
-					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance Value:");		defaultValue: 0;	negativeValues: true	}
-		CheckBox
-		{
-			name: "biasTable";		label: qsTr("Bias Table")
-		}
-			
-		CheckBox
-		{
-			name: "biasTtest";		label: qsTr("One Sample T-Test")
-
-		}
-		CheckBox
-		{
-			name: "biasHistogram";		label: qsTr("Histogram")
-		}
-						CheckBox
-		{
-			name: "biasRun";		label: qsTr("Run Chart")
-		}
-	}
 }
