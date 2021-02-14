@@ -52,7 +52,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if (options$histogram) {
     if(is.null(jaspResults[["histogram"]])) {
       jaspResults[["histogram"]] <- .histogram(options, dataset, diameter, subgroupsName)
-      jaspResults[["histogram"]]$position <- 4
+      jaspResults[["histogram"]]$position <- 3
     }
   }
 
@@ -62,9 +62,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
       jaspResults[["probabilityPlot"]] <- createJaspContainer(gettext("Probability Plots"))
       jaspResults[["probabilityPlot"]]$dependOn(c("probabilityPlot"))
       jaspResults[["probabilityPlot"]]$position <- 5
-      jaspResults[["PPtables"]] <- createJaspContainer(gettext("Probability Plots Tables"))
+      jaspResults[["PPtables"]] <- createJaspContainer(gettext("Probability Plot Table"))
       jaspResults[["PPtables"]]$dependOn(c("probabilityPlot"))
-      jaspResults[["PPtables"]]$position <- 6
+      jaspResults[["PPtables"]]$position <- 4
     }
 
     PPplots <- jaspResults[["probabilityPlot"]]
@@ -80,13 +80,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     if(is.null(jaspResults[["initialCapabilityAnalysis"]])) {
       jaspResults[["initialCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Initial Capability Study)"))
       jaspResults[["initialCapabilityAnalysis"]]$dependOn(c("capabilityStudy","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
-      jaspResults[["initialCapabilityAnalysis"]]$position <- 3
+      jaspResults[["initialCapabilityAnalysis"]]$position <- 5
     }
 
     initialCapabilityAnalysis <- jaspResults[["initialCapabilityAnalysis"]]
-    .processDataTable(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis)
+    initialCapabilityAnalysis[["processDataTable"]] <- .processDataTable(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis)
     initialCapabilityAnalysis[["capabilityPlot"]] <- .capabilityPlot(options, dataset, diameter, subgroupsName)
-    .capabilityTable(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis)
+    initialCapabilityAnalysis[["capabilityTable"]] <- .capabilityTable(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis)
   }
 
   # Follow-up Capability Analysis
@@ -94,15 +94,25 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     if(is.null(jaspResults[["followupCapabilityAnalysis"]])) {
       jaspResults[["followupCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Follow-up Capability Study)"))
       jaspResults[["followupCapabilityAnalysis"]]$dependOn(c("capabilityStudy","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
-      jaspResults[["followupCapabilityAnalysis"]]$position <- 3
+      jaspResults[["followupCapabilityAnalysis"]]$position <- 5
     }
 
     followupCapabilityAnalysis <- jaspResults[["followupCapabilityAnalysis"]]
-    .processDataTable(options, dataset, diameter, subgroupsName, followupCapabilityAnalysis)
+    followupCapabilityAnalysis[["processDataTable"]] <- .processDataTable(options, dataset, diameter, subgroupsName, followupCapabilityAnalysis)
     followupCapabilityAnalysis[["capabilityPlot"]] <- .capabilityPlot(options, dataset, diameter, subgroupsName)
-    .capabilityTable(options, dataset, diameter, subgroupsName, followupCapabilityAnalysis)
+    followupCapabilityAnalysis[["capabilityTable"]] <- .capabilityTable(options, dataset, diameter, subgroupsName, followupCapabilityAnalysis)
   }
+
+#Non normal Capability Analysis
+if(options[["nonNormalCapabilityStudy"]]){
+  if (is.null(jaspResults[["nonNormalCapabilityStudy"]])){
+    jaspResults[["nonNormalCapabilityStudy"]] <- createJaspContainer(gettext("Nonnormal Capability Analysis"))
+    jaspResults[["nonNormalCapabilityStudy"]]$dependOn(c("nonNormalCapabilityStudy","diameter","subgroups", "lowerSpecification", "upperSpecification"))
+    jaspResults[["nonNormalCapabilityStudy"]]$position <- 5
+  }
+    jaspResults[["nonNormalCapabilityStudy"]] <- .nonNormalCapabilityTable(options, dataset, diameter, subgroupsName,dis = options$nonNormalDist)
 }
+}  
 
 .histogram <- function(options, dataset, diameter, subgroupsName){
 
@@ -130,9 +140,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 .capabilityPlot <- function(options, dataset, diameter, subgroupsName){
 
   thePlot <- createJaspPlot(title = gettext("Capability of the Process"), width = 600, height = 300)
-
-  if(is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
-    return()
 
   plotDat <- data.frame(measurements = as.numeric(unlist(dataset[, diameter])))
   dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
@@ -183,14 +190,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   processDataTable$addColumnInfo(name = "lowerSpecificationLimit", type = "number", title = gettext("LSL"))
   processDataTable$addColumnInfo(name = "targetValue", type = "number", title = gettext("Target"))
   processDataTable$addColumnInfo(name = "upperSpecificationLimit", type = "number", title = gettext("USL"))
-  processDataTable$addColumnInfo(name = "sampleMean", type = "number", title = gettext("Sample Mean"))
+  processDataTable$addColumnInfo(name = "sampleMean", type = "number", title = gettext("Sample Average"))
   processDataTable$addColumnInfo(name = "sampleN", type = "number", title = gettext("Sample N"))
+  processDataTable$addColumnInfo(name = "stDevOverall", type = "number", title = gettext("StDev (Total)"))
   processDataTable$addColumnInfo(name = "stDevWithin", type = "number", title = gettext("StDev (Within)"))
-  processDataTable$addColumnInfo(name = "stDevOverall", type = "number", title = gettext("StDev (Overall)"))
-
-  initialCapabilityAnalysis[["processDataTable"]] <- processDataTable
-  if(is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
-    return()
 
   dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
 
@@ -211,28 +214,26 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
                                 "sampleN" = sampleN,
                                 "stDevWithin" = stDevWithin,
                                 "stDevOverall" = stDevOverall))
+  return(processDataTable)
 }
 
 .capabilityTable <- function(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis){
 
-  potentialCapabilityTable <- createJaspTable(title = gettext("Potential (Within) Capability"))
-  potentialCapabilityTable$addColumnInfo(name = "CP", type = "number", title = gettext("CP"))
+  potentialCapabilityTable <- createJaspTable(title = gettext("Process Capability (Within)"))
+  potentialCapabilityTable$addColumnInfo(name = "CP", type = "number", title = gettext("Cp"))
   potentialCapabilityTable$addColumnInfo(name = "CPL", type = "number", title = gettext("CPL"))
   potentialCapabilityTable$addColumnInfo(name = "CPU", type = "number", title = gettext("CPU"))
-  potentialCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("CPK"))
-  potentialCapabilityTable$addColumnInfo(name = "Z", type = "number", title = gettext("Z (Sigma Score)"))
+  potentialCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("Cpk"))
+  potentialCapabilityTable$addColumnInfo(name = "Z", type = "number", title = gettext("ppm"))
   initialCapabilityAnalysis[["potentialCapabilityTable"]] <- potentialCapabilityTable
 
-  overallCapabilityTable <- createJaspTable(title = gettext("Overall Capability"))
-  overallCapabilityTable$addColumnInfo(name = "PP", type = "number", title = gettext("PP"))
+  overallCapabilityTable <- createJaspTable(title = gettext("Process Performance (Total)"))
+  overallCapabilityTable$addColumnInfo(name = "PP", type = "number", title = gettext("Pp"))
   overallCapabilityTable$addColumnInfo(name = "PPL", type = "number", title = gettext("PPL"))
   overallCapabilityTable$addColumnInfo(name = "PPU", type = "number", title = gettext("PPU"))
-  overallCapabilityTable$addColumnInfo(name = "PPK", type = "number", title = gettext("PPK"))
-  overallCapabilityTable$addColumnInfo(name = "CPM", type = "number", title = gettext("CPM"))
+  overallCapabilityTable$addColumnInfo(name = "PPK", type = "number", title = gettext("Ppk"))
+  overallCapabilityTable$addColumnInfo(name = "CPM", type = "number", title = gettext("ppm"))
   initialCapabilityAnalysis[["overallCapabilityTable"]] <- overallCapabilityTable
-
-  if(is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
-    return()
 
   dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
 
@@ -270,4 +271,95 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
                                       "PPU" = PPU,
                                       "PPK" = PPK,
                                       "CPM" = CPM))
+  
+  capabilityTables <- list(potentialCapabilityTable, overallCapabilityTable)
+
+  return(capabilityTables)
 }
+
+.nonNormalCapabilityTable <- function(options, dataset, diameter, subgroupsName, dis){
+  
+  if (dis == "Lognormal"){
+    
+    nonNormalCapabilityTable <- createJaspTable(title = gettext("Process Capability based on Lognormal distribution"))
+    nonNormalCapabilityTable$dependOn(c("upperSpecification","lowerSpecification","targetValue","diameter","subgroups"))
+    
+    nonNormalCapabilityTable$addColumnInfo(name = "average", type = "number", title = gettext("Average"))
+    nonNormalCapabilityTable$addColumnInfo(name = "standardDeviation", type = "number", title = gettext("Standard Deviation"))
+    nonNormalCapabilityTable$addColumnInfo(name = "LSL", type = "number", title = gettext("Lower Specification Limit"))
+    nonNormalCapabilityTable$addColumnInfo(name = "USL", type = "number", title = gettext("Upper Specification Limit"))
+    nonNormalCapabilityTable$addColumnInfo(name = "partsLower", type = "number", title = gettext("P(X<LSL)"))
+    nonNormalCapabilityTable$addColumnInfo(name = "partsUpper", type = "number", title = gettext("P(X>USL)"))
+    nonNormalCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("Cpk"))
+    
+    dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
+    
+    USL <- as.numeric(options$upperSpecification)
+    LSL <- as.numeric(options$lowerSpecification)
+    targetValue <- as.numeric(options$targetValue)
+    sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
+    
+    q <- qcc::qcc(dataDiameter, type ='S', plot=FALSE)
+    stDevWithin <- q$std.dev   #stDevWithin <- rBar/d2
+    stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
+    average <- sampleMean
+    standardDeviation <- stDevOverall #sample standard deviation 
+    
+    tau <- standardDeviation / average
+    sdLog <- sqrt(log(tau^2 +1))
+    meanLog <- log(average) - ((sdLog^2) / 2)
+    partsLower <- plnorm(q = LSL, meanlog = meanLog, sdlog = sdLog)
+    partsUpper <- 1- plnorm(q = USL,meanlog = meanLog, sdlog = sdLog)
+    CPK <- 1- plnorm((max(partsLower,partsUpper)))/3
+    
+    nonNormalCapabilityTable$addRows(list("average" = average,
+                                          "standardDeviation" = standardDeviation,
+                                          "LSL" = LSL,
+                                          "USL" = USL,
+                                          "CPK" = CPK,
+                                          "partsLower" = partsLower,
+                                          "partsUpper" = partsUpper))
+  }
+  
+  if (dis == "Weibull"){
+    nonNormalCapabilityTable <- createJaspTable(title = gettext("Process Capability based on Weibull distribution"))
+    nonNormalCapabilityTable$dependOn(c("upperSpecification","lowerSpecification","targetValue","diameter","subgroups"))
+    
+    nonNormalCapabilityTable$addColumnInfo(name = "average", type = "number", title = gettext("Average"))
+    nonNormalCapabilityTable$addColumnInfo(name = "standardDeviation", type = "number", title = gettext("Standard Deviation"))
+    nonNormalCapabilityTable$addColumnInfo(name = "LSL", type = "number", title = gettext("Lower Specification Limit"))
+    nonNormalCapabilityTable$addColumnInfo(name = "USL", type = "number", title = gettext("Upper Specification Limit"))
+    nonNormalCapabilityTable$addColumnInfo(name = "beta", type = "number", title = gettext("Beta"))
+    nonNormalCapabilityTable$addColumnInfo(name = "theta", type = "number", title = gettext("Theta"))
+    nonNormalCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("Cpk"))
+    
+    dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
+    
+    USL <- as.numeric(options$upperSpecification)
+    LSL <- as.numeric(options$lowerSpecification)
+    targetValue <- as.numeric(options$targetValue)
+    sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
+    
+    q <- qcc::qcc(dataDiameter, type ='S', plot=FALSE)
+
+    stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
+    standardDeviation <- stDevOverall
+    average <- sampleMean
+    beta <- weibullpar(mu = average, sigma = standardDeviation, loc = 0)$shape
+    theta <- weibullpar(mu = average, sigma = standardDeviation, loc = 0)$scale
+    
+    nonNormalCapabilityTable$addRows(list("average" = average,
+                                          "standardDeviation" = standardDeviation,
+                                          "LSL" = LSL,
+                                          "USL" = USL,
+                                          "CPK" = CPK,
+                                          "beta" = beta,
+                                          "theta" = theta))
+  }
+  
+  return(nonNormalCapabilityTable)
+}
+
+
+
+
