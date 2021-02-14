@@ -93,21 +93,21 @@ Form
 		title:	qsTr("Process Capability Studies")
 		Group
 		{
-			DoubleField { name: "upperSpecification";  label: qsTr("Upper Specification Limit") ; negativeValues: true   }
-			DoubleField { name: "targetValue";         label: qsTr("Target value") ; negativeValues: true                }
 			DoubleField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit") ; negativeValues: true   }
+			DoubleField { name: "targetValue";         label: qsTr("Target Value") ; negativeValues: true                }
+			DoubleField { name: "upperSpecification";  label: qsTr("Upper Specification Limit") ; negativeValues: true   }
 		}
 		Group
 		{
-			CheckBox { name: "normalCapabilityStudy";			label: qsTr("Normal Capability Analysis")
+			CheckBox { name: "normalCapabilityStudy";			label: qsTr("Normal Capability Study")
 				RadioButtonGroup
 				{
 					name: "capabilityStudy"
-					RadioButton { name: "initialCapabilityAnalysis";	label: qsTr("Initial Capability Analysis"); checked: true	}
-					RadioButton { name: "followupCapabilityAnalysis";  label: qsTr("Follow-up Capability Analysis")	}
+					RadioButton { name: "initialCapabilityAnalysis";	label: qsTr("Initial Capability Study");	checked: true	}
+					RadioButton { name: "followupCapabilityAnalysis";  label: qsTr("Follow-up Capability Study")	}
 				}
 			}
-			CheckBox { name: "nonNormalCapabilityStudy";			label: qsTr("Non-normal Capability Analysis")
+			CheckBox { name: "nonNormalCapabilityStudy";			label: qsTr("Non-normal Capability Study")
 				DropDown
 				{
 					name: "nonNormalDist"
