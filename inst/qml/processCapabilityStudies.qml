@@ -52,14 +52,14 @@ Form
 	Group
 	{
 		title: qsTr("Stability of the Process")
-		CheckBox { name: "controlCharts";			label: qsTr("X-bar & Range Control Chart") }
+		CheckBox { name: "controlCharts";			label: qsTr("X-bar & range control chart") }
 	}
 
 	Group
 	{
 		title: qsTr("Distribution of the Process")
 		CheckBox { name: "histogram";			label: qsTr("Histogram")}
-		CheckBox { name: "probabilityPlot";    label: qsTr("Probability Plot")
+		CheckBox { name: "probabilityPlot";    label: qsTr("Probability plot")
 			DropDown
 			{
 				name: "rank"
@@ -93,21 +93,21 @@ Form
 		title:	qsTr("Process Capability Studies")
 		Group
 		{
-			DoubleField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit") ; negativeValues: true   }
-			DoubleField { name: "targetValue";         label: qsTr("Target Value") ; negativeValues: true                }
-			DoubleField { name: "upperSpecification";  label: qsTr("Upper Specification Limit") ; negativeValues: true   }
+			DoubleField { name: "lowerSpecification";  label: qsTr("Lower specification limit") ; negativeValues: true   }
+			DoubleField { name: "targetValue";         label: qsTr("Target value") ; negativeValues: true                }
+			DoubleField { name: "upperSpecification";  label: qsTr("Upper specification limit") ; negativeValues: true   }
 		}
 		Group
 		{
-			CheckBox { name: "normalCapabilityStudy";			label: qsTr("Normal Capability Study")
+			CheckBox { name: "normalCapabilityStudy";			label: qsTr("Normal capability study")
 				RadioButtonGroup
 				{
 					name: "capabilityStudy"
-					RadioButton { name: "initialCapabilityAnalysis";	label: qsTr("Initial Capability Study");	checked: true	}
-					RadioButton { name: "followupCapabilityAnalysis";  label: qsTr("Follow-up Capability Study")	}
+					RadioButton { name: "initialCapabilityAnalysis";	label: qsTr("Initial capability study");	checked: true	}
+					RadioButton { name: "followupCapabilityAnalysis";  label: qsTr("Follow-up capability study")	}
 				}
 			}
-			CheckBox { name: "nonNormalCapabilityStudy";			label: qsTr("Non-normal Capability Study")
+			CheckBox { name: "nonNormalCapabilityStudy";			label: qsTr("Non-normal capability study")
 				DropDown
 				{
 					name: "nonNormalDist"
