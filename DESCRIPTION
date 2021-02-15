@@ -19,7 +19,8 @@ Imports:
   jaspGraphs,
   mle.tools,
   qcc,
-  irr
+  irr,
+  mixdist
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
