@@ -345,8 +345,8 @@ if(options[["nonNormalCapabilityStudy"]]){
     stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
     standardDeviation <- stDevOverall
     average <- sampleMean
-    beta <- weibullpar(mu = average, sigma = standardDeviation, loc = 0)$shape
-    theta <- weibullpar(mu = average, sigma = standardDeviation, loc = 0)$scale
+    beta <- mixdist::weibullpar(mu = average, sigma = standardDeviation, loc = 0)$shape
+    theta <- mixdist::weibullpar(mu = average, sigma = standardDeviation, loc = 0)$scale
     
     nonNormalCapabilityTable$addRows(list("average" = average,
                                           "standardDeviation" = standardDeviation,
