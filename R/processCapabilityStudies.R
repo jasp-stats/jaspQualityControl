@@ -224,7 +224,7 @@ if(options[["nonNormalCapabilityStudy"]]){
   potentialCapabilityTable$addColumnInfo(name = "CPL", type = "number", title = gettext("CPL"))
   potentialCapabilityTable$addColumnInfo(name = "CPU", type = "number", title = gettext("CPU"))
   potentialCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("Cpk"))
-  potentialCapabilityTable$addColumnInfo(name = "Z", type = "number", title = gettext("ppm"))
+  potentialCapabilityTable$addColumnInfo(name = "Z", type = "number", title = gettext("Ppm"))
   initialCapabilityAnalysis[["potentialCapabilityTable"]] <- potentialCapabilityTable
 
   overallCapabilityTable <- createJaspTable(title = gettext("Process Performance (Total)"))
@@ -232,7 +232,7 @@ if(options[["nonNormalCapabilityStudy"]]){
   overallCapabilityTable$addColumnInfo(name = "PPL", type = "number", title = gettext("PPL"))
   overallCapabilityTable$addColumnInfo(name = "PPU", type = "number", title = gettext("PPU"))
   overallCapabilityTable$addColumnInfo(name = "PPK", type = "number", title = gettext("Ppk"))
-  overallCapabilityTable$addColumnInfo(name = "CPM", type = "number", title = gettext("ppm"))
+  overallCapabilityTable$addColumnInfo(name = "CPM", type = "number", title = gettext("Ppm"))
   initialCapabilityAnalysis[["overallCapabilityTable"]] <- overallCapabilityTable
 
   dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
@@ -286,10 +286,10 @@ if(options[["nonNormalCapabilityStudy"]]){
     
     nonNormalCapabilityTable$addColumnInfo(name = "average", type = "number", title = gettext("Average"))
     nonNormalCapabilityTable$addColumnInfo(name = "standardDeviation", type = "number", title = gettext("Standard Deviation"))
-    nonNormalCapabilityTable$addColumnInfo(name = "LSL", type = "number", title = gettext("Lower Specification Limit"))
-    nonNormalCapabilityTable$addColumnInfo(name = "USL", type = "number", title = gettext("Upper Specification Limit"))
-    nonNormalCapabilityTable$addColumnInfo(name = "partsLower", type = "number", title = gettext("P(X<LSL)"))
-    nonNormalCapabilityTable$addColumnInfo(name = "partsUpper", type = "number", title = gettext("P(X>USL)"))
+    nonNormalCapabilityTable$addColumnInfo(name = "LSL", type = "number", title = gettext("LSL"))
+    nonNormalCapabilityTable$addColumnInfo(name = "USL", type = "number", title = gettext("USL"))
+    nonNormalCapabilityTable$addColumnInfo(name = "partsLower", type = "number", title = gettext("P (X < LSL)"))
+    nonNormalCapabilityTable$addColumnInfo(name = "partsUpper", type = "number", title = gettext("P (X > USL)"))
     nonNormalCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("Cpk"))
     
     dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
@@ -327,8 +327,8 @@ if(options[["nonNormalCapabilityStudy"]]){
     
     nonNormalCapabilityTable$addColumnInfo(name = "average", type = "number", title = gettext("Average"))
     nonNormalCapabilityTable$addColumnInfo(name = "standardDeviation", type = "number", title = gettext("Standard Deviation"))
-    nonNormalCapabilityTable$addColumnInfo(name = "LSL", type = "number", title = gettext("Lower Specification Limit"))
-    nonNormalCapabilityTable$addColumnInfo(name = "USL", type = "number", title = gettext("Upper Specification Limit"))
+    nonNormalCapabilityTable$addColumnInfo(name = "LSL", type = "number", title = gettext("LSL"))
+    nonNormalCapabilityTable$addColumnInfo(name = "USL", type = "number", title = gettext("USL"))
     nonNormalCapabilityTable$addColumnInfo(name = "beta", type = "number", title = gettext("Beta"))
     nonNormalCapabilityTable$addColumnInfo(name = "theta", type = "number", title = gettext("Theta"))
     nonNormalCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("Cpk"))
@@ -347,6 +347,7 @@ if(options[["nonNormalCapabilityStudy"]]){
     average <- sampleMean
     beta <- mixdist::weibullpar(mu = average, sigma = standardDeviation, loc = 0)$shape
     theta <- mixdist::weibullpar(mu = average, sigma = standardDeviation, loc = 0)$scale
+    CPK <- 0
     
     nonNormalCapabilityTable$addRows(list("average" = average,
                                           "standardDeviation" = standardDeviation,
