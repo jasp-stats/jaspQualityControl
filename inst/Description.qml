@@ -24,6 +24,11 @@ Description
 		title:			qsTr("Type 1 Gauge")
 		func:			"msaType1Gauge"
 	}
+		 Analysis
+	{
+		title:			qsTr("Gauge Linearity and Bias")
+		func:			"msaGaugeLinearity"
+	}
 	Analysis
 	{
 		title:			qsTr("Gauge r&R")
