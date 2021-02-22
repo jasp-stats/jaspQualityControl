@@ -60,6 +60,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
 
 .linearityAndBias <- function(dataset, options, measurements, parts, standards){
 
+  tablesAndGraphs <- createJaspContainer(gettext("Linearity and Bias"))
 
   table1 <- createJaspTable(title = gettext("Gauge Bias"))
   table1$dependOn(c(""))
@@ -72,6 +73,8 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
 
   partValues <- unique(dataset[[parts]])
   df <- data.frame()
+  biases <- vector()
+  references <- vector()
 
   for (i in partValues){
     Part <- i
@@ -81,20 +84,37 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
     Bias <-  ObservedMean - Ref
     pvalue <- t.test(partData[[measurements]] - Ref, mu = 0)$p.value
     df <- rbind(df, list(Part = Part, Ref = Ref, ObservedMean = ObservedMean, Bias = Bias, pvalue = pvalue))
+    biases <- c(biases, partData[[measurements]] - partData[[standards]][1])
+    references <- c(references, partData[[standards]])
   }
 
-  table1$setData(list("part" = partValues,
-                        "referenceValue" = df$Ref,
-                        "observedMean" = df$ObservedMean,
-                        "bias" = df$Bias,
-                        "pvalue" = df$pvalue))
+  averageBias <- mean(df$Bias)
+  averagePvalue <- t.test(biases, mu = 0)$p.value
+
+  table1$setData(list("part" = c(partValues, gettext("Average")),
+                      "referenceValue" = df$Ref,
+                      "observedMean" = df$ObservedMean,
+                      "bias" = c(df$Bias, averageBias),
+                      "pvalue" = c(df$pvalue, averagePvalue)))
+  df2 <- data.frame(Bias = biases, Ref = references)
+
+  plot <- createJaspPlot(title = gettext("Bias and Linearity Graph"), width = 500, height = 500)
+
+  p <- ggplot2::ggplot() + ggplot2::geom_hline(yintercept = 0, lty = 2, color = "grey") +
+    ggplot2::geom_smooth(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias), method = "lm", color = "red") +
+    jaspGraphs::geom_point(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "blue",size = 2) +
+    jaspGraphs::geom_point(data = df, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "red",size = 4)
 
 
-plot <- createJaspPlot(title = gettext("Bias and Linearity Graph"), width = 700, height = 300)
+  p <- jaspGraphs::themeJasp(p)
+
+  plot$plotObject <- p
+
+  tablesAndGraphs[["table1"]] <- table1
+  tablesAndGraphs[["plot"]] <- plot
 
 
-
-return(table1)
+  return(tablesAndGraphs)
 
 }
 
