@@ -378,7 +378,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       p <- ggplot2::ggplot() + ggplot2::geom_bar(data = plotframe,
                                                  mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
                                                  position="dodge", stat = "identity")
-      p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
+      p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank(),
+                                                     plot.margin = ggplot2::unit(c(1,1,1,1),"cm")) +
         ggplot2::xlab('') + ggplot2::ylab('Percent')
       if (max(plotframe['value']) < 110)
         p <- p + ggplot2::scale_y_continuous(breaks = c(0, 25, 50, 75, 100))

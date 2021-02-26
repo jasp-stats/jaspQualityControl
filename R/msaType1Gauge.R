@@ -216,10 +216,13 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
 
     p <- ggplot2::ggplot() +
-      jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = index, y = Measurement, group = 1)) +
-      jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = index, y = Measurement)) +
-      ggplot2::geom_hline(yintercept = options$biasReferenceValue, data = dataset,
-                          mapping = ggplot2::aes(x = index, y = Measurement), color = "darkgreen") +
+      jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = index, y = Measurement, group = 1))
+
+    if (options$biasRunDots)
+      p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = index, y = Measurement))
+
+    p <- p + ggplot2::geom_hline(yintercept = options$biasReferenceValue, data = dataset,
+                                 mapping = ggplot2::aes(x = index, y = Measurement), color = "darkgreen") +
       ggplot2::geom_label(data = data.frame(x = max(index), y = options$biasReferenceValue, l = "Ref"),
                           ggplot2::aes(x = x, y = y, label = l), vjust="inward",hjust="inward", color = "darkgreen" ) +
       ggplot2::geom_hline(yintercept = toleranceLines[1], data = dataset,

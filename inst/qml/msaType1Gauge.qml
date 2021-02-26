@@ -50,11 +50,11 @@ Form
 					
 		DropDown{
 				name: "BiasStudyVarMultiplierType"
-				label: qsTr("Study Variation Multiplier")
+				label: qsTr("Study Var. Multiplier Type")
 				indexDefaultValue: 0
 				values:
 						[
-						{label: qsTr("Standard Deviation"),		value: "svmSD"},
+						{label: qsTr("Std. Deviation"),		value: "svmSD"},
 						{label: qsTr("Percent"),				value: "svmPercent"},
 						]
 				id: studyVarMultiplierType
@@ -62,14 +62,19 @@ Form
 										
 		DoubleField{ 
 					name: "BiasStudyVarMultiplier"
-					label: qsTr("Value")
+					label: qsTr("Study Var. Multiplier Value:")
 					fieldWidth: 60 
 					defaultValue: 6  
 					decimals: 3
 					}
-				CheckBox
+		CheckBox
 		{
 			name: "biasRun";		label: qsTr("Run Chart");		checked: true
+			
+			CheckBox
+			{
+			name: "biasRunDots";		label: qsTr("Display Individual Measurements")
+			}
 		}
 		CheckBox
 		{
