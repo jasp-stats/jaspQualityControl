@@ -64,12 +64,12 @@ Form
 		Group{
 						DropDown {
                 name: "standardDeviationReference"
-                label: qsTr("Standard Deviation Reference")
+                label: qsTr("Std. Deviation Reference")
                 indexDefaultValue: 0
                 values:
                 [	
-					{label: qsTr("Study Standard Deviation"),					value: "studyStandardDeviation"},
-					{label: qsTr("Historical Process Standard Deviation"),				value: "historicalStandardDeviation"},
+					{label: qsTr("Study Std. Deviation"),					value: "studyStandardDeviation"},
+					{label: qsTr("Historical Process Std. Deviation"),				value: "historicalStandardDeviation"},
 				]
 				
 				id: variationReference
@@ -77,7 +77,7 @@ Form
 				DoubleField
 				{
 					name:			"historicalStandardDeviationValue"
-					label:			qsTr("Value:")
+					label:			qsTr("Std. Deviation Value:")
 					defaultValue:	0
 					enabled:		variationReference.currentValue == "historicalStandardDeviation"
 				}
@@ -106,16 +106,16 @@ Form
 			{
 				name: "gaugeANOVA";		label: qsTr("R&R Table ANOVA Method"); checked: true
 			
-						DoubleField { name: "alphaForANOVA";		label: qsTr("Alpha Interaction Removal");	fieldWidth: 60; defaultValue: 0.05; max: 1; decimals: 3 }
+						DoubleField { name: "alphaForANOVA";		label: qsTr("Alpha Interaction Removal:");	fieldWidth: 60; defaultValue: 0.05; max: 1; decimals: 3 }
 					
 				
 				DropDown{
 						name: "studyVarMultiplierType"
-						label: qsTr("Study Variation Multiplier")
+						label: qsTr("Study Var. Multiplier Type")
 						indexDefaultValue: 0
 						values:
 							[
-							{label: qsTr("Standard Deviation"),		value: "svmSD"},
+							{label: qsTr("Std. Deviation"),		value: "svmSD"},
 							{label: qsTr("Percent"),				value: "svmPercent"},
 							]
 						id: studyVarMultiplierType
@@ -123,7 +123,7 @@ Form
 										
 				DoubleField { 
 						name: "studyVarMultiplier"
-						label: qsTr("Value")
+						label: qsTr("Study Var. Multiplier Value:")
 						fieldWidth: 60 
 						defaultValue: 6  
 						decimals: 3
