@@ -1,9 +1,6 @@
 # Function to create X-bar chart
 .XbarchartNoId <- function(dataset, options) {
-    ready <- (length(options$variables) > 1)
-    if (!ready)
-      return()
-    
+
   data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   means <- rowMeans(data1)
   subgroups <- 1:length(means)
@@ -26,9 +23,9 @@
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
-  warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1), 
+  warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
                    qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-  
+
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
     jaspGraphs::geom_line() +
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "gray")) +
@@ -46,10 +43,7 @@
 
 # Function to create R chart
 .RchartNoId <- function(dataset, options) {
-  ready <- (length(options$variables) > 1)
-  if (!ready)
-    return()
-  
+
   #Arrange data and compute
   data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   range <- apply(data1, 1, function(x) max(x) - min(x))
@@ -72,7 +66,7 @@
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
-  warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1), 
+  warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
                    qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +

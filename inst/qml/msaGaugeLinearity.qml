@@ -60,25 +60,11 @@ Form
 		}
 	}
 	
-	DoubleField { name: "linearityProcessVariation";	label: qsTr("Process Variation:");		defaultValue: 1;	negativeValues: false; decimals: 5; fieldWidth: 60}
-	
 	Group
 	{
-		title: qsTr("Graphs")
+		title: qsTr("Analysis Options")
 		
-		CheckBox
-		{
-			name: "LBgraph";		label: qsTr("Linearity and Bias Graph");		checked: true
-		}
-				CheckBox
-		{
-			name: "LBpercentGraph";		label: qsTr("Percent Process Variation Graph");		checked: true
-		}
-	}
-	
-		Group
-	{
-		title: qsTr("Tables")
+		DoubleField { name: "linearityProcessVariation";	label: qsTr("Process Variation:");		defaultValue: 1;	negativeValues: false; decimals: 5; fieldWidth: 60}
 		
 		CheckBox
 		{
@@ -87,6 +73,20 @@ Form
 		CheckBox
 		{
 			name: "LBtableBias";		label: qsTr("Bias Table");		checked: true
+		}
+	}
+	
+	Group
+	{
+		title: qsTr("Plots")
+		
+		CheckBox
+		{
+			name: "LBgraph";		label: qsTr("Linearity and Bias Graph");		checked: true
+		}
+				CheckBox
+		{
+			name: "LBpercentGraph";		label: qsTr("Percent Process Variation Graph");		checked: true
 		}
 	}
 }

@@ -61,14 +61,21 @@ Form
 
 	}
 	
+			RadioButtonGroup
+		{
+			name: "gaugeRRmethod"
+			RadioButton { name: "anovaMethod";	label: qsTr("ANOVA Method"); checked: true}
+			RadioButton { name: "rangeMethod";  label: qsTr("Range Method")	}
+		}
+	
 	
 		Section
 	{
-		title: qsTr("ANOVA Method")
+		title: qsTr("ANOVA Method Options")
 		
 		Group
 		{
-			title: qsTr("Options")
+			title: qsTr("Analysis Options")
 			
 									DropDown {
                 name: "standardDeviationReference"
@@ -137,7 +144,7 @@ Form
 		
 		Group
 		{
-			title: qsTr("Graphs")
+			title: qsTr("Plots")
 
 			CheckBox
 			{
@@ -188,11 +195,11 @@ Form
 	
 	Section
 	{
-		title: qsTr("Range Method")
+		title: qsTr("Range Method Options")
 		
 			Group
 			{
-				title: qsTr("Options")
+				title: qsTr("Analysis Options")
 				
 								DoubleField
 				{
@@ -204,13 +211,13 @@ Form
 				
 				CheckBox
 				{
-					name: "rangeRr";		label: qsTr("r&R Table")
+					name: "rangeRr";		label: qsTr("r&R Table"); checked: true
 				}
 			}
 		
 			Group
 			{
-				title: qsTr("Graphs")
+				title: qsTr("Plots")
 				
 				CheckBox
 				{
@@ -219,16 +226,16 @@ Form
 			
 				CheckBox
 				{
-					name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
+					name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators"); checked: true
 				
 					CheckBox
 					{
-						name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
+						name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line"); checked: true
 					}
 				
 					CheckBox
 					{
-						name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+						name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line"); checked: true
 					}
 		
 				}

@@ -42,8 +42,8 @@ Form
 	}
 	
 		Group
-	{
-		title: qsTr("Determine Bias")
+		{
+		title: qsTr("Analysis Options")
 					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference Value:");		defaultValue: 0;	negativeValues: true; decimals: 5; fieldWidth: 60}
 					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance Value:");		defaultValue: 1;	negativeValues: true; decimals: 5; fieldWidth: 60}
 					DoubleField { name: "biasPercentCG";	label: qsTr("Percent of Tolerance for CG:");		defaultValue: 20;	negativeValues: false	}
@@ -67,6 +67,13 @@ Form
 					defaultValue: 6  
 					decimals: 3
 					}
+					
+		}
+					
+		Group
+		{
+		
+		title: qsTr("Plots")
 		CheckBox
 		{
 			name: "biasRun";		label: qsTr("Run Chart");		checked: true
@@ -92,5 +99,5 @@ Form
 		}
 
 
-	}
+		}
 }
