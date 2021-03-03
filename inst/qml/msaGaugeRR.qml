@@ -61,8 +61,16 @@ Form
 
 	}
 	
-		Group{
-						DropDown {
+	
+		Section
+	{
+		title: qsTr("ANOVA Method")
+		
+		Group
+		{
+			title: qsTr("Options")
+			
+									DropDown {
                 name: "standardDeviationReference"
                 label: qsTr("Std. Deviation Reference")
                 indexDefaultValue: 0
@@ -81,7 +89,6 @@ Form
 					defaultValue:	0
 					enabled:		variationReference.currentValue == "historicalStandardDeviation"
 				}
-			}
 			
 			
 
@@ -92,15 +99,6 @@ Form
 					defaultValue:	10
 					enabled:		TRUE
 				}
-			
-	
-		Section
-	{
-		title: qsTr("Gauge r&R")
-		
-		Group
-		{
-			title: qsTr("ANOVA Method")
 			
 			CheckBox
 			{
@@ -194,7 +192,15 @@ Form
 		
 			Group
 			{
-				title: qsTr("Gauge r & R")
+				title: qsTr("Options")
+				
+								DoubleField
+				{
+					name:			"rangePSD"
+					label:			qsTr("Process Std. Deviation:")
+					defaultValue:	1
+					enabled:		TRUE
+				}
 				
 				CheckBox
 				{
