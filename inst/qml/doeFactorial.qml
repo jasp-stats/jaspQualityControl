@@ -23,27 +23,6 @@ Form
 	usesJaspResults:							true
 	columns:									2
 
-	DropDown
-	{
-		id:										design
-		name: 									"design"
-		label: 									qsTr("Design")
-		indexDefaultValue: 						0
-		values:
-		[
-			{ value: "factorial", label: qsTr("Factorial") 			},
-			{ value: "screening", label: qsTr("Screening") 			},
-			{ value: "response",  label: qsTr("Response surface") 	},
-			{ value: "mixture",   label: qsTr("Mixture") 			}
-		]
-	}
-
-	CheckBox
-	{
-		name: 									"displayDesign"
-		label:									"Preview design"
-	}
-
 	GroupBox
 	{
 		title: 									qsTr("Factor Info")
@@ -68,10 +47,42 @@ Form
 		values:
 		[
 			{ value: "2", label: qsTr("2")},
-			{ value: "3", label: qsTr("3")}
+            { value: "3", label: qsTr("3")},
+            { value: "Mixed", label: qsTr("Mixed")}
 		]
 		}
 	}
+
+    CheckBox
+    {
+        name: 									"displayDesign"
+        label:									"Preview design"
+    }
+
+    GroupBox
+    {
+        title:                              	qsTr("Data coding")
+
+        RadioButtonGroup
+        {
+            name:                               "dataCoding"
+
+            RadioButton
+            {
+                name:                           "dataUncoded"
+                label:                          qsTr("Uncoded")
+                checked:                        true
+
+            }
+
+            RadioButton
+            {
+                name:                           "dataCoded"
+                label:                          qsTr("Coded")
+
+            }
+        }
+    }
 
 	ColumnLayout
 	{
@@ -95,11 +106,11 @@ Form
 			defaultValues:
 			[
 				{ factorName: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high1: qsTr("Factor 1 Level 2") },
-				{ factorName: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high1: qsTr("Factor 2 Level 2") } //row 2 has to be fixed
+                { factorName: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high1: qsTr("Factor 2 Level 2") }
 			]
-			rowComponent: 						RowLayout
+            rowComponent: 						RowLayout
 			{
-				Row
+                Row
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		40 * preferencesModel.uiScale
@@ -108,22 +119,23 @@ Form
 						text: 					rowIndex + 1 
 					}
 				}
-				Row //Factor
+                Row //Factor
 				{
 					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		150 * preferencesModel.uiScale
+                    Layout.preferredWidth:		100 * preferencesModel.uiScale
+
 					TextField
 					{
 						id:						factorName
 						label: 					""
 						name: 					"factorName"
 						placeholderText:		qsTr("Factor ") + (rowIndex + 1)
-						fieldWidth:				150 * preferencesModel.uiScale
+                        fieldWidth:				100 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true
 					}
 				}
-				Row //Level1
+                Row //Level1
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		100 * preferencesModel.uiScale
@@ -137,7 +149,7 @@ Form
 						showBorder:				true
 					}
 				}
-				Row //Level2
+                Row //Level2
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		100 * preferencesModel.uiScale
@@ -151,7 +163,7 @@ Form
 						showBorder:				true
 					}
 				}
-				Row //Level3
+                Row //Level3
 				{
 					visible:					[1].includes(numberOfLevels.currentIndex)
 					spacing:					5 * preferencesModel.uiScale
@@ -172,7 +184,6 @@ Form
 
 	Section
 	{
-		visible: 								[0].includes(design.currentIndex)
 		title: 									qsTr("Factorial Design Options")
 		columns:								2
 
@@ -192,12 +203,31 @@ Form
 			{
 				name:							"factorialTypeSpecify"
 				label:							qsTr("2-level factorial (specify generators)")
+
+				TextArea
+				{
+					name:						"factorialTypeSpecifyGenerators"
+                    height:                     100 * preferencesModel.uiScale
+                    width:                      250 * preferencesModel.uiScale
+                    title:						"Design generators"
+					textType:					JASP.TextTypeSource
+				}
 			}
 
 			RadioButton
 			{
 				name:							"factorialTypeSplit"
 				label:							qsTr("2-level split-plot (hard-to-change factors)")
+
+                IntegerField
+                {
+                    name:						"numberHTCFactors"
+                    label:						qsTr("Number of hard-to-change factors")
+                    defaultValue:				1
+                    min:						1
+                    max:						numberOfFactors.value
+
+                }
 			}
 
 			RadioButton
@@ -301,67 +331,6 @@ Form
 		}
 	}
 
-	Section
-	{
-		visible: 								[1].includes(design.currentIndex)
-		title: 									qsTr("Screening Design Options")
-		columns:								1
-
-		RadioButtonGroup
-		{
-			name: 								"screeningType"
-			title:								qsTr("Type of Screening Design")
-
-			RadioButton
-			{
-				name:							"screeningTypePlackettBurman"
-				label:							qsTr("Plackett-Burman design")
-			}
-
-			RadioButton
-			{
-				name:							"screeningTypeTaguchi"
-				label:							qsTr("Taguchi design")
-			}
-		}
-	}
-
-	Section
-	{
-		visible: 								[2].includes(design.currentIndex)
-		title: 									qsTr("Response Surface Design Options")
-		
-		GroupBox
-		{
-			title: 							qsTr("Additional options")
-
-			IntegerField
-			{
-				name:						"responseSurfaceCenterPoints"
-				label:						qsTr("Number of center points per block")
-				defaultValue:				1
-				min:						1
-				max:						50
-			}
-
-			IntegerField
-			{
-				name:						"responseSurfaceCornerReplicates"
-				label:						qsTr("Number of replicates for corner points")
-				defaultValue:				3
-				min:						1
-				max:						50
-			}
-		}
-	}
-
-	Section
-	{
-		visible: 								[3].includes(design.currentIndex)
-		title: 									qsTr("Mixture Design Options")
-		
-	}
-
 	Item 
 	{
 		Layout.preferredHeight: 				generateDesign.height
@@ -373,7 +342,7 @@ Form
 			id: 								generateDesign
 			anchors.right:						parent.right
 			anchors.bottom:						parent.bottom
-			text: 								qsTr("<b>Create Design</b>")
+            text: 								qsTr("<b>Export Design</b>")
 			// onClicked: 							form.exportResults()
 		}
 	}
