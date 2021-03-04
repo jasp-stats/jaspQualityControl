@@ -12,3 +12,4 @@ export(msaGaugeLinearity)
 export(doeFactorial)
 export(doeResponseSurfaceMethodology)
 export(factorialAnalysis)
+
