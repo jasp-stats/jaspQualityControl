@@ -18,12 +18,23 @@ Description
 	 	title:			qsTr("Measurement Systems Analysis")
 	 	icon:			"processControl-measurement.svg"
 	 }
+	 
+	 Analysis
+	{
+		title:			qsTr("Type 1 Gauge")
+		func:			"msaType1Gauge"
+	}
+		 Analysis
+	{
+		title:			qsTr("Gauge Linearity and Bias")
+		func:			"msaGaugeLinearity"
+	}
 	Analysis
 	{
 		title:			qsTr("Gauge r&R")
 		func:			"msaGaugeRR"
 	}
-		Analysis
+	Analysis
 	{
 		title:			qsTr("Attributes Agreement Analysis")
 		func:			"msaAttribute"
@@ -36,9 +47,19 @@ Description
 	 }
 	Analysis
 	{
-		title:			qsTr("Control Charts")
-		func:			"controlCharts"
-	}	
+		title:			qsTr("Variable Charts for Subgroups")
+		func:			"VaribleChartsSubgroups"
+	}
+		Analysis
+	{
+		title:			qsTr("Variable Charts for Indviduals")
+		func:			"VaribleChartsIndviduals"
+	}
+			Analysis
+	{
+		title:			qsTr("Attribute Charts")
+		func:			"AttributeCharts"
+	}
 
 	 GroupTitle
 	 {
@@ -53,13 +74,31 @@ Description
 
 	 GroupTitle
 	 {
-	 	title:			qsTr("Design")
+        title:			qsTr("Design of Experiments")
 	 	icon:			"processControl-design.svg"
 	 }
+    Analysis
+    {
+        title:			qsTr("Screening")
+        func:			"doeScreening"
+        requiresData:	false
+    }
 	Analysis
 	{
-		title:			qsTr("Design of Experiments")
-		func:			"designOfExperiments"
+        title:			qsTr("Factorial")
+        func:			"doeFactorial"
 		requiresData:	false
 	}
+    Analysis
+    {
+        title:			qsTr("Response Surface")
+        func:			"doeResponseSurfaceMethodology"
+        requiresData:	false
+    }
+    Analysis
+    {
+        title:			qsTr("Mixed")
+        func:			"doeMixed"
+        requiresData:	false
+    }
 }

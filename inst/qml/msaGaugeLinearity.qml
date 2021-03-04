@@ -35,15 +35,6 @@ Form
 		AssignedVariablesList
 		{
 			id:									variable1
-			name:								"operators"
-			title:								qsTr("Operators")
-			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText"]
-		}
-		
-		AssignedVariablesList
-		{
-			id:									variable2
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
@@ -52,38 +43,50 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable3
+			id:									variable2
 			name:								"measurements"
 			title:								qsTr("Measurements")
-			singleVariable:						false
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 		
 		AssignedVariablesList
 		{
-			id:									variable4
+			id:									variable3
 			name:								"standard"
 			title:								qsTr("Standard")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 	}
-
+	
 	Group
 	{
-		title: qsTr("Tables")
+		title: qsTr("Analysis Options")
+		
+		DoubleField { name: "linearityProcessVariation";	label: qsTr("Process Variation:");		defaultValue: 1;	negativeValues: false; decimals: 5; fieldWidth: 60}
 		
 		CheckBox
 		{
-			name: "AAAfleissKappa";		label: qsTr("Fleiss Kappa")
+			name: "LBtableLinearity";		label: qsTr("Linearity Table");		checked: true
 		}
 		CheckBox
 		{
-			name: "AAAcohensKappa";		label: qsTr("Cohen's Kappa")
+			name: "LBtableBias";		label: qsTr("Bias Table");		checked: true
 		}
+	}
+	
+	Group
+	{
+		title: qsTr("Plots")
+		
 		CheckBox
 		{
-			name: "AAAkendallTau";		label: qsTr("Kendall's Tau")
+			name: "LBgraph";		label: qsTr("Linearity and Bias Graph");		checked: true
+		}
+				CheckBox
+		{
+			name: "LBpercentGraph";		label: qsTr("Percent Process Variation Graph");		checked: true
 		}
 	}
 }
