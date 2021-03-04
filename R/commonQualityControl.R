@@ -1,21 +1,18 @@
 # Function to create X-bar chart
 .XbarchartNoId <- function(dataset, options) {
-    ready <- (length(options$variables) > 1)
-    if (!ready)
-      return()
   data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   means <- rowMeans(data1)
-  subgroups <- 1:length(means)
+  subgroups <- c(1:length(means))
   data_plot <- data.frame(subgroups = subgroups, means = means)
   sixsigma <- qcc::qcc(data1, type ='xbar', plot=FALSE)
   center <- sixsigma$center
   sd1 <- sixsigma$std.dev
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1, data_plot$means))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -45,9 +42,6 @@
 
 # Function to create R chart
 .RchartNoId <- function(dataset, options) {
-  ready <- (length(options$variables) > 1)
-  if (!ready)
-    return()
   #Arrange data and compute
   data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   range <- apply(data1, 1, function(x) max(x) - min(x))
@@ -57,10 +51,10 @@
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(UCL, data_plot$range, UCL + 1))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),

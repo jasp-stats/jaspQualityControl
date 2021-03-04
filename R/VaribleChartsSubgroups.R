@@ -14,7 +14,7 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
   jaspResults[["intro"]] <- createJaspHtml(gettext("Select one of the control charts from the interface."))
   jaspResults[["intro"]]$position <- 0
 #X bar chart
-  if(options$Xbarchart && is.null(jaspResults[["Xbarchart"]])){
+  if(options$Xbarchart && is.null(jaspResults[["Xbarchart"]]) &&  length(options$variables) > 1){
     jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X bar chart"), width = 700, height = 350)
     jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart", "variables"))
     XbarPlot <- jaspResults[["XbarPlot"]]
@@ -27,7 +27,7 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
   }
 
 #S Chart
-  if(options$Schart && is.null(jaspResults[["Schart"]])){
+  if(options$Schart && is.null(jaspResults[["Schart"]]) &&  length(options$variables) > 1){
     jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X bar chart"), width = 700, height = 350)
     jaspResults[["XbarPlot"]]$dependOn(c("Schart", "variables"))
     XbarPlot <- jaspResults[["XbarPlot"]]
@@ -42,10 +42,6 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
 
 #Functions for control charts
 .Schart <- function(dataset, options){
-  ready <- (length(options$variables) > 1)
-  if (!ready)
-    return()
-
   data1 <- dataset[, options$variables]
   Stdv <- apply(data1, 1, function(x) sd(x))
   subgroups <- c(1:length(Stdv))
@@ -55,10 +51,10 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$Stdv, UCL + 1))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL + 0.5))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
