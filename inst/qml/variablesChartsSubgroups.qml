@@ -15,10 +15,15 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Column"),					value: "CClongFormat"},
-			{label: qsTr("Row"),				value: "CCwideFormat"},
+			{label: qsTr("Single column"),					value: "CClongFormat"},
+			{label: qsTr("Across rows"),				value: "CCwideFormat"},
 		]
 		id: pcDataFormat
+		onValueChanged:
+		{
+			variables.itemDoubleClicked(0)
+			variablesLong.itemDoubleClicked(0)
+		}
 	}
 
 	VariablesForm
@@ -56,7 +61,6 @@ Form
 			title:             			 	qsTr("Subgroups")
 			singleVariable:    	 			true
 			allowedColumns:     			["nominal", "nominalText", "ordinal"]
-			visible:						pcDataFormat.currentValue == "CCwideFormat"
 		}
 	}
 
@@ -76,10 +80,24 @@ Form
 		title: 									qsTr("Control Charts")
 		columns: 								1
 
-		CheckBox
-		{
-			name: 								"Xbarchart"
-			label: 								qsTr("X-bar & R")
+		  RadioButtonGroup
+			{
+			  name:						"TypeChart"
+
+				  RadioButton
+					{
+						value: 					"Xbarchart"
+						label: 					qsTr("X-bar & R")
+						checked:		 		true
+					}
+
+					RadioButton
+					{
+		      	value: 					"Schart"
+			      label: 					qsTr("X-bar & s")
+					}
+
+			}
 
 			CheckBox
 			{
@@ -87,12 +105,12 @@ Form
 				label: 								qsTr("Warning limits")
 			}
       	CheckBox
-			{	name: 								"Phase2_XR"
+			{	name: 								"Phase2"
 				label: 								qsTr("Known parameters:")
 
 			  DoubleField
 			  {
-				  name:			"mean_XR"
+				  name:			"mean"
 				  label:			qsTr("Mean:")
 				  defaultValue:	0
           negativeValues: true
@@ -100,42 +118,66 @@ Form
 
 			  DoubleField
 			  {
-			  	 name:			"SD_XR"
+			  	 name:			"SD"
 			  	 label:			qsTr("Standard deviation:")
 				  defaultValue:	0
 			  }
 		  }
+	}
 
+	Section
+	{
+		title: qsTr("Variable Charts for Subgroups Report")
+
+
+		TextField
+		{
+			id:						ccTitle
+			label: 					qsTr("Title:")
+			name: 					"ccTitle"
+			placeholderText:		qsTr("Measurement")
+			fieldWidth:				100
+		}
+
+		TextField
+		{
+			id:						ccName
+			label: 					qsTr("Name:")
+			name: 					"ccName"
+			placeholderText:		qsTr("Name")
+			fieldWidth:				100
+		}
+
+		TextField
+		{
+			id:						ccDate
+			label: 					qsTr("Date:")
+			name: 					"ccDate"
+			placeholderText:		qsTr("Date")
+			fieldWidth:				100
+		}
+
+		TextField
+		{
+			id:						ccReportedBy
+			label: 					qsTr("Reported by:")
+			name: 					"ccReportedBy"
+			placeholderText:		qsTr("Name")
+			fieldWidth:				100
+		}
+
+		TextField
+		{
+			id:						ccMisc
+			label: 					qsTr("Misc:")
+			name: 					"ccMisc"
+			placeholderText:		qsTr("Miscellaneous")
+			fieldWidth:				100
 		}
 
 		CheckBox
 		{
-			name: 								"Schart"
-			label: 								qsTr("X-bar & s")
-
-			CheckBox
-			{
-				name: 								"Wlimits2"
-				label: 								qsTr("Warning limits")
-			}
-      	CheckBox
-			{	name: 								"Phase2_S"
-				label: 								qsTr("Known parameters:")
-
-			  DoubleField
-			  {
-				  name:			"mean_S"
-				  label:			qsTr("Mean:")
-          negativeValues: true
-			  }
-
-			  DoubleField
-			  {
-			  	 name:			"SD_S"
-			  	 label:			qsTr("Standard deviation:")
-			  }
-		  }
-
+			name: "CCReport";		label: qsTr("Show Report")
 		}
 	}
 

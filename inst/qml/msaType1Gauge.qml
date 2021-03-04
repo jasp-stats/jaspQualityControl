@@ -18,7 +18,7 @@ import QtQuick.Layouts 							1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
-Form 
+Form
 {
 	columns:									1
 
@@ -39,7 +39,7 @@ Form
 			allowedColumns:						["scale"]
 		}
 	}
-	
+
 	Group
 	{
 		title: qsTr("Analysis Options")
@@ -70,17 +70,17 @@ Form
 
 	Group
 	{
-		
+
 		title: qsTr("Plots")
 		CheckBox
 		{
 			name: "biasRun";		label: qsTr("Run chart");		checked: true
-			
+
 			CheckBox
 			{
 				name: "biasRunDots";		label: qsTr("Display individual measurements");		checked: true
 			}
-			
+
 			CheckBox
 			{
 				name: "biasRunTolLims";		label: qsTr("Display tolerance limits");		checked: true
@@ -88,7 +88,7 @@ Form
 		}
 		CheckBox
 		{
-			name: "biasTable";		label: qsTr("Bias and gauge capability table");		checked: true
+			name: "biasTable";		label: qsTr("Bias and instrument capability table");		checked: true
 		}
 
 		CheckBox
@@ -100,7 +100,7 @@ Form
 		CheckBox
 		{
 			name: "biasHistogram";		label: qsTr("Histogram")
-			
+
 			DropDown {
 				name: "biasBinWidthType"
 				label: qsTr("Bin width type")
@@ -135,7 +135,7 @@ Form
 					CIField { name: "biasHistMeanConfidenceIntervalPercent" }
 				}
 			}
-			
+
 			CheckBox
 			{
 				name: "biasHistRef";		label: qsTr("Display reference value");		checked: true

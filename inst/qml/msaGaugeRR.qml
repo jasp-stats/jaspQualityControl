@@ -1,4 +1,3 @@
-
 // Copyright (C) 2013-2018 University of Amsterdam
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -18,11 +17,11 @@ import QtQuick.Layouts 							1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
-Form 
+Form
 {
 	usesJaspResults:							true
 	columns:									1
-	
+
 	DropDown
 	{
 		name: "gaugeRRdataFormat"
@@ -34,6 +33,12 @@ Form
 			{label: qsTr("Across rows"),				value: "gaugeRRwideFormat"},
 		]
 		id: gaugeRRdataFormat
+
+		onValueChanged:
+		{
+			variable4.itemDoubleClicked(0)
+			variable3.itemDoubleClicked(0)
+		}
 	}
 
 	VariablesForm
@@ -52,17 +57,18 @@ Form
 			title:								qsTr("Operators")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			enabled: !type3.checked
 		}
-		
+
 		AssignedVariablesList
 		{
 			id:									variable2
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
-		
+
 		AssignedVariablesList
 		{
 			id:									variable4
@@ -82,19 +88,26 @@ Form
 			visible:							gaugeRRdataFormat.currentValue == "gaugeRRwideFormat"
 			allowedColumns:						["scale"]
 		}
-		
+		CheckBox{
+		id: type3
+		name: "Type3"
+		label: qsTr("Type 3 study")
+		onCheckedChanged:
+		{
+			variable1.itemDoubleClicked(0)
+		}
 
-
+		}
 	}
-	
+
 	Section
 	{
 		title: qsTr("ANOVA Method Options")
-		
+
 		Group
 		{
 			title: qsTr("Analysis Options")
-			
+
 			DropDown
 			{
 				name: "standardDeviationReference"
@@ -107,7 +120,7 @@ Form
 				]
 				id: variationReference
 			}
-			
+
 			DoubleField
 			{
 				name:			"historicalStandardDeviationValue"
@@ -115,8 +128,8 @@ Form
 				defaultValue:	0
 				enabled:		variationReference.currentValue == "historicalStandardDeviation"
 			}
-			
-			
+
+
 			CheckBox
 			{
 				name: "gaugeToleranceEnabled"
@@ -132,7 +145,7 @@ Form
 					decimals: 3
 				}
 			}
-			
+
 			CheckBox
 			{
 				name: "gaugeANOVA"
@@ -176,13 +189,13 @@ Form
 				CheckBox
 				{
 					name: "gaugeVarCompGraph"
-					label: qsTr("Graph variation components")
+					label: qsTr("Components of variation")
 					checked: true
 				}
 			}
 		}
 
-		
+
 		Group
 		{
 			title: qsTr("Plots")
@@ -191,19 +204,22 @@ Form
 			{
 				name: "gaugeRchart"
 				label: qsTr("R charts by operator")
+				enabled: !type3.checked
 			}
-			
+
 			CheckBox
 			{
 				name: "gaugeXbarChart"
 				label: qsTr("X-bar charts by operator")
+				enabled: !type3.checked
 			}
 
 			CheckBox
 			{
 				name: "gaugeScatterPlotOperators"
 				label: qsTr("Scatter plots operators")
-				
+				enabled: !type3.checked
+
 				CheckBox
 				{
 					name: "gaugeScatterPlotFitLine"
@@ -233,22 +249,28 @@ Form
 			{
 				name: "gaugeByOperator"
 				label: qsTr("Measurement by operators plot")
+				enabled: !type3.checked
 			}
 
 			CheckBox
 			{
 				name: "gaugeByInteraction";		label: qsTr("Part x operator interaction plot")
+				enabled: !type3.checked
+			}
+			CheckBox
+			{
+				name: "trafficPlot";		label: qsTr("Traffic light graph")
 			}
 		}
 	}
-	
-	
+
+
 	Section
 	{
 		title: qsTr("ANOVA Method Report")
 		visible: gaugeRRmethod.currentValue == "anovaMethod"
-		
-		
+
+
 		TextField
 		{
 			id:						anovaGaugeTitle
@@ -257,7 +279,7 @@ Form
 			placeholderText:		qsTr("Measurement")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						anovaGaugeName
@@ -266,7 +288,7 @@ Form
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						anovaGaugeDate
@@ -275,7 +297,7 @@ Form
 			placeholderText:		qsTr("Date")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						anovaGaugeReportedBy
@@ -284,7 +306,7 @@ Form
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						anovaGaugeMisc
@@ -293,12 +315,10 @@ Form
 			placeholderText:		qsTr("Miscellaneous")
 			fieldWidth:				100
 		}
-		
+
 		CheckBox
 		{
 			name: "anovaGaugeReport";		label: qsTr("Show Report")
 		}
-		
-
 	}
 }

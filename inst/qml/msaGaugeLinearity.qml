@@ -18,7 +18,7 @@ import QtQuick.Layouts 							1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
-Form 
+Form
 {
 	usesJaspResults:							true
 	columns:									1
@@ -38,7 +38,7 @@ Form
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 
 		AssignedVariablesList
@@ -47,25 +47,29 @@ Form
 			name:								"measurements"
 			title:								qsTr("Measurements")
 			singleVariable:						true
-			allowedColumns:						["scale"]
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
-		
+
 		AssignedVariablesList
 		{
 			id:									variable3
 			name:								"standard"
 			title:								qsTr("Standard")
 			singleVariable:						true
-			allowedColumns:						["scale"]
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 	}
-	
+
 	Group
 	{
 		title: qsTr("Analysis Options")
-		
-		DoubleField { name: "linearityProcessVariation";	label: qsTr("Process variation:");		defaultValue: 1;	negativeValues: false; decimals: 5; fieldWidth: 60}
-		
+
+		DoubleField { name: "linearityProcessVariation";	label: qsTr("Process variation:");
+		defaultValue: 6;
+		negativeValues: false;
+		decimals: 5;
+		fieldWidth: 60}
+
 		CheckBox
 		{
 			name: "LBtableLinearity";		label: qsTr("Linearity table");		checked: true
@@ -75,11 +79,11 @@ Form
 			name: "LBtableBias";		label: qsTr("Bias table");		checked: true
 		}
 	}
-	
+
 	Group
 	{
 		title: qsTr("Plots")
-		
+
 		CheckBox
 		{
 			name: "LBgraph";		label: qsTr("Linearity and bias graph");		checked: true

@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' data-engine-version='2.0' width='720.00pt' height='576.00pt' viewBox='0 0 720.00 576.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA='>
+    <rect x='0.00' y='0.00' width='720.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<rect x='0.00' y='0.00' width='720.00' height='576.00' style='stroke-width: 10.67; stroke: none;' />
+</g>
+<defs>
+  <clipPath id='cpNjguMjN8NzIwLjAwfDE4LjkyfDUxMS4wNA=='>
+    <rect x='68.23' y='18.92' width='651.77' height='492.12' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNjguMjN8NzIwLjAwfDE4LjkyfDUxMS4wNA==)'>
+<rect x='68.23' y='18.92' width='651.77' height='492.12' style='stroke-width: 10.67; stroke: none;' />
+<line x1='190.43' y1='115.85' x2='190.43' y2='59.93' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<line x1='190.43' y1='278.96' x2='190.43' y2='451.38' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polygon points='114.05,115.85 114.05,278.96 266.81,278.96 266.81,115.85 114.05,115.85 ' style='stroke-width: 1.07; stroke: #333333; fill: #FFFFFF;' />
+<line x1='114.05' y1='227.69' x2='266.81' y2='227.69' style='stroke-width: 2.13; stroke: #333333; stroke-linecap: butt;' />
+<line x1='394.11' y1='115.85' x2='394.11' y2='59.93' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<line x1='394.11' y1='283.62' x2='394.11' y2='451.38' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polygon points='317.73,115.85 317.73,283.62 470.49,283.62 470.49,115.85 317.73,115.85 ' style='stroke-width: 1.07; stroke: #333333; fill: #FFFFFF;' />
+<line x1='317.73' y1='227.69' x2='470.49' y2='227.69' style='stroke-width: 2.13; stroke: #333333; stroke-linecap: butt;' />
+<line x1='597.79' y1='87.89' x2='597.79' y2='59.93' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<line x1='597.79' y1='264.98' x2='597.79' y2='451.38' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polygon points='521.41,87.89 521.41,264.98 674.17,264.98 674.17,87.89 521.41,87.89 ' style='stroke-width: 1.07; stroke: #333333; fill: #FFFFFF;' />
+<line x1='521.41' y1='209.05' x2='674.17' y2='209.05' style='stroke-width: 2.13; stroke: #333333; stroke-linecap: butt;' />
+<line x1='190.12' y1='511.04' x2='598.11' y2='511.04' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<line x1='68.23' y1='488.99' x2='68.23' y2='40.97' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<rect x='68.23' y='18.92' width='651.77' height='492.12' style='stroke-width: 0.00; stroke: none;' />
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<polyline points='68.23,511.04 68.23,18.92 ' style='stroke-width: 0.00; stroke: none; stroke-linecap: butt;' />
+<text x='52.75' y='493.83' text-anchor='end' style='font-size: 15.00px; font-family: sans;' textLength='21.68px' lengthAdjust='spacingAndGlyphs'>-12</text>
+<text x='52.75' y='419.26' text-anchor='end' style='font-size: 15.00px; font-family: sans;' textLength='21.68px' lengthAdjust='spacingAndGlyphs'>-10</text>
+<text x='52.75' y='344.70' text-anchor='end' style='font-size: 15.00px; font-family: sans;' textLength='13.34px' lengthAdjust='spacingAndGlyphs'>-8</text>
+<text x='52.75' y='270.14' text-anchor='end' style='font-size: 15.00px; font-family: sans;' textLength='13.34px' lengthAdjust='spacingAndGlyphs'>-6</text>
+<text x='52.75' y='195.57' text-anchor='end' style='font-size: 15.00px; font-family: sans;' textLength='13.34px' lengthAdjust='spacingAndGlyphs'>-4</text>
+<text x='52.75' y='121.01' text-anchor='end' style='font-size: 15.00px; font-family: sans;' textLength='13.34px' lengthAdjust='spacingAndGlyphs'>-2</text>
+<text x='52.75' y='46.45' text-anchor='end' style='font-size: 15.00px; font-family: sans;' textLength='8.34px' lengthAdjust='spacingAndGlyphs'>0</text>
+<polyline points='59.72,488.67 68.23,488.67 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='59.72,414.10 68.23,414.10 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='59.72,339.54 68.23,339.54 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='59.72,264.98 68.23,264.98 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='59.72,190.41 68.23,190.41 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='59.72,115.85 68.23,115.85 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='59.72,41.29 68.23,41.29 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='68.23,511.04 720.00,511.04 ' style='stroke-width: 0.00; stroke: none; stroke-linecap: butt;' />
+<polyline points='190.43,519.54 190.43,511.04 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='394.11,519.54 394.11,511.04 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='597.79,519.54 597.79,511.04 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<text x='190.43' y='536.84' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='73.38px' lengthAdjust='spacingAndGlyphs'>Operator A</text>
+<text x='394.11' y='536.84' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='73.38px' lengthAdjust='spacingAndGlyphs'>Operator B</text>
+<text x='597.79' y='536.84' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='74.20px' lengthAdjust='spacingAndGlyphs'>Operator C</text>
+<text x='394.11' y='567.28' text-anchor='middle' style='font-size: 18.00px; font-family: sans;' textLength='80.05px' lengthAdjust='spacingAndGlyphs'>Operators</text>
+<text transform='translate(17.37,264.98) rotate(-90)' text-anchor='middle' style='font-size: 18.00px; font-family: sans;' textLength='110.07px' lengthAdjust='spacingAndGlyphs'>Measurement</text>
+<text x='394.11' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='173.44px' lengthAdjust='spacingAndGlyphs'>measurement-by-operator</text>
+</g>
+</svg>

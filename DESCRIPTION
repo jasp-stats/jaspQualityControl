@@ -32,7 +32,6 @@ Imports:
   tidyr,
   cowplot,
   vipor,
-  fitdistrplus,
   ggpp,
   tibble,
   EnvStats,

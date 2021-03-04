@@ -71,7 +71,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
 .biasTable <- function(dataset, measurements, options, ready) {
 
-  biasTables <- createJaspContainer(gettext("Bias and Gauge Capability Table"))
+  biasTables <- createJaspContainer(gettext("Bias and Instrument Capability Table"))
 
   data <- dataset
 
@@ -99,8 +99,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   table2$addColumnInfo(name = "Cg",  title = gettext("Cg"), type = "string")
   table2$addColumnInfo(name = "Cgk",  title = gettext("Cgk"), type = "string")
-  table2$addColumnInfo(name = "percentRep",  title = gettext("% Var(Repeatability)"), type = "number")
-  table2$addColumnInfo(name = "percentRepBias",  title = gettext("% Var(Repeatability and bias)"), type = "number")
+  table2$addColumnInfo(name = "percentRep",  title = gettext("% Var(Repeatability)"), type = "integer")
+  table2$addColumnInfo(name = "percentRepBias",  title = gettext("% Var(Repeatability and bias)"), type = "integer")
 
   table1$setData(list(      "referenceValue"       = reference,
                             "tolerance"             = tolerance))
@@ -130,8 +130,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
     table2$setData(list(     "Cg"     = round(cg, 2),
                              "Cgk"    = round(cgk, 2),
-                             "percentRep"  =  percentRep,
-                             "percentRepBias"    = percentRepBias))
+                             "percentRep"  =  round(percentRep,2),
+                             "percentRepBias"    = round(percentRepBias,2)))
 
   }
 
@@ -158,7 +158,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   table$addColumnInfo(name = "lci",             title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Bias", paste(ciLevelPercent, "%")))
   table$addColumnInfo(name = "uci",             title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Bias", paste(ciLevelPercent, "%")))
   table$addColumnInfo(name = "t",               title = gettext("<i>t</i>"), type = "number")
-  table$addColumnInfo(name = "p",               title = gettext("<i>p<i/>"), type = "pvalue")
+  table$addColumnInfo(name = "p",               title = gettext("<i>p<i/>-value"), type = "pvalue")
 
 
   if (ready) {
