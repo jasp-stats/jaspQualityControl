@@ -1,2 +1,2 @@
-Design of experiments
+Variable Charts Indviduals
 ==========================
