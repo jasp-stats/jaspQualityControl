@@ -7,5 +7,7 @@ export(msaGaugeRR)
 export(msaAttribute)
 export(msaType1Gauge)
 export(msaGaugeLinearity)
-export(designOfExperiments)
+export(doeFactorial)
+export(doeResponseSurfaceMethodology)
+
 
