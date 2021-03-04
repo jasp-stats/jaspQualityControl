@@ -53,13 +53,31 @@ Description
 
 	 GroupTitle
 	 {
-	 	title:			qsTr("Design")
+        title:			qsTr("Design of Experiments")
 	 	icon:			"processControl-design.svg"
 	 }
+    Analysis
+    {
+        title:			qsTr("Screening")
+        func:			"doeScreening"
+        requiresData:	false
+    }
 	Analysis
 	{
-		title:			qsTr("Design of Experiments")
-		func:			"designOfExperiments"
+        title:			qsTr("Factorial")
+        func:			"doeFactorial"
 		requiresData:	false
 	}
+    Analysis
+    {
+        title:			qsTr("Response Surface")
+        func:			"doeResponseSurfaceMethodology"
+        requiresData:	false
+    }
+    Analysis
+    {
+        title:			qsTr("Mixed")
+        func:			"doeMixed"
+        requiresData:	false
+    }
 }
