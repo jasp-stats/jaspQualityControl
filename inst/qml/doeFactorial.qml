@@ -46,9 +46,9 @@ Form
 		indexDefaultValue: 						0
 		values:
 		[
-			{ value: "2", label: qsTr("2")},
-            { value: "3", label: qsTr("3")},
-            { value: "Mixed", label: qsTr("Mixed")}
+            { value: "2", label: qsTr("2")}
+//            { value: "3", label: qsTr("3")},
+//            { value: "Mixed", label: qsTr("Mixed")}
 		]
 		}
 	}
@@ -59,30 +59,30 @@ Form
         label:									"Preview design"
     }
 
-    GroupBox
-    {
-        title:                              	qsTr("Data coding")
+//    GroupBox
+//    {
+//        title:                              	qsTr("Data coding")
 
-        RadioButtonGroup
-        {
-            name:                               "dataCoding"
+//        RadioButtonGroup
+//        {
+//            name:                               "dataCoding"
 
-            RadioButton
-            {
-                name:                           "dataUncoded"
-                label:                          qsTr("Uncoded")
-                checked:                        true
+//            RadioButton
+//            {
+//                name:                           "dataUncoded"
+//                label:                          qsTr("Uncoded")
+//                checked:                        true
 
-            }
+//            }
 
-            RadioButton
-            {
-                name:                           "dataCoded"
-                label:                          qsTr("Coded")
+//            RadioButton
+//            {
+//                name:                           "dataCoded"
+//                label:                          qsTr("Coded")
 
-            }
-        }
-    }
+//            }
+//        }
+//    }
 
 	ColumnLayout
 	{
@@ -297,37 +297,37 @@ Form
 				}
 			}	
 
-			GroupBox
-			{
-				title: 							qsTr("Additional options")
+//			GroupBox
+//			{
+//				title: 							qsTr("Additional options")
 
-				IntegerField
-				{
-					name:						"factorialCenterPoints"
-					label:						qsTr("Number of center points per block")
-					defaultValue:				1
-					min:						1
-					max:						50
-				}
+//				IntegerField
+//				{
+//					name:						"factorialCenterPoints"
+//					label:						qsTr("Number of center points per block")
+//					defaultValue:				1
+//					min:						1
+//					max:						50
+//				}
 
-				IntegerField
-				{
-					name:						"factorialCornerReplicates"
-					label:						qsTr("Number of replicates for corner points")
-					defaultValue:				3
-					min:						1
-					max:						50
-				}
+//				IntegerField
+//				{
+//					name:						"factorialCornerReplicates"
+//					label:						qsTr("Number of replicates for corner points")
+//					defaultValue:				3
+//					min:						1
+//					max:						50
+//				}
 
-				IntegerField
-				{
-					name:						"factorialBlocks"
-					label:						qsTr("Number of blocks")
-					defaultValue:				1
-					min:						1
-					max:						50
-				}
-			}
+//				IntegerField
+//				{
+//					name:						"factorialBlocks"
+//					label:						qsTr("Number of blocks")
+//					defaultValue:				1
+//					min:						1
+//					max:						50
+//				}
+//			}
 		}
 	}
 
@@ -337,13 +337,13 @@ Form
 		Layout.fillWidth: 						true
 		Layout.columnSpan:						2
 
-		Button 
-		{
-			id: 								generateDesign
-			anchors.right:						parent.right
-			anchors.bottom:						parent.bottom
-            text: 								qsTr("<b>Export Design</b>")
-			// onClicked: 							form.exportResults()
-		}
+//        Button
+//        {
+//            id: 								generateDesign
+//            anchors.right:						parent.right
+//            anchors.bottom:						parent.bottom
+//            text: 								qsTr("<b>Export Design</b>")
+//            // onClicked: 							form.exportResults()
+//        }
 	}
 }
