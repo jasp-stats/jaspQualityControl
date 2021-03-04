@@ -23,27 +23,66 @@ Form
 	usesJaspResults:							true
 	columns:									2
 
-	DropDown
+	GroupBox
 	{
-		id:										design
-		name: 									"design"
-		label: 									qsTr("Design")
+		title: 									qsTr("Factor Info")
+		name:									"factorInfo"
+
+		IntegerField
+		{
+			id:									numberOfFactors
+			name:								"numberOfFactors"
+			label:								qsTr("Number of factors")
+			defaultValue:						2
+			min:								2
+			max:								256
+		}
+
+		DropDown
+		{	
+		id:										numberOfLevels
+		name: 									"numberOfLevels"
+		label: 									qsTr("Number of factor levels")
 		indexDefaultValue: 						0
 		values:
 		[
-			{ value: "factorial", label: qsTr("Factorial") 			},
-			{ value: "screening", label: qsTr("Screening") 			},
-			{ value: "response",  label: qsTr("Response surface") 	},
-			{ value: "mixture",   label: qsTr("Mixture") 			},
-			{ value: "taguchi",   label: qsTr("Taguchi")			}
+			{ value: "2", label: qsTr("2")},
+            { value: "3", label: qsTr("3")},
+            { value: "Mixed", label: qsTr("Mixed")}
 		]
+		}
 	}
 
-	CheckBox
-	{
-		name: 									"displayDesign"
-		label:									qsTr("Preview design")
-	}
+    CheckBox
+    {
+        name: 									"displayDesign"
+        label:									"Preview design"
+    }
+
+    GroupBox
+    {
+        title:                              	qsTr("Data coding")
+
+        RadioButtonGroup
+        {
+            name:                               "dataCoding"
+
+            RadioButton
+            {
+                name:                           "dataUncoded"
+                label:                          qsTr("Uncoded")
+                checked:                        true
+
+            }
+
+            RadioButton
+            {
+                name:                           "dataCoded"
+                label:                          qsTr("Coded")
+
+            }
+        }
+    }
 
 	ColumnLayout
 	{
@@ -54,21 +93,24 @@ Form
 		RowLayout
 		{
 			Label { text: qsTr("Factor");		Layout.leftMargin: 5 * preferencesModel.uiScale; Layout.preferredWidth: 42 * preferencesModel.uiScale}
-			Label { text: qsTr("Name");			Layout.preferredWidth: 200 * preferencesModel.uiScale	}
+			Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
 			Label { text: qsTr("Level 1");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
 			Label { text: qsTr("Level 2");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
+			Label { visible: 					[1].includes(numberOfLevels.currentIndex);
+					text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
 		}
 
 		ComponentsList
 		{
 			name:								"factors"
-			defaultValues: 			[
-				{ name: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high: qsTr("Factor 1 Level 2") },
-				{ name: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high: qsTr("Factor 2 Level 2") }
+			defaultValues:
+			[
+				{ factorName: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high1: qsTr("Factor 1 Level 2") },
+                { factorName: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high1: qsTr("Factor 2 Level 2") }
 			]
-			rowComponent: 						RowLayout
+            rowComponent: 						RowLayout
 			{
-				Row
+                Row
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		40 * preferencesModel.uiScale
@@ -77,21 +119,23 @@ Form
 						text: 					rowIndex + 1 
 					}
 				}
-				Row
+                Row //Factor
 				{
 					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		200 * preferencesModel.uiScale
+                    Layout.preferredWidth:		100 * preferencesModel.uiScale
+
 					TextField
 					{
+						id:						factorName
 						label: 					""
-						name: 					"name"
-						startValue:				qsTr("Factor ") + (rowIndex + 1)
-						fieldWidth:				200 * preferencesModel.uiScale
+						name: 					"factorName"
+						placeholderText:		qsTr("Factor ") + (rowIndex + 1)
+                        fieldWidth:				100 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true
 					}
 				}
-				Row
+                Row //Level1
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		100 * preferencesModel.uiScale
@@ -99,21 +143,36 @@ Form
 					{
 						label: 					""
 						name: 					"low"
-						startValue:				qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 1")
+						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 1")
 						fieldWidth:				100 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true
 					}
 				}
-				Row
+                Row //Level2
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		100 * preferencesModel.uiScale
 					TextField
 					{
 						label: 					""
-						name: 					"high"
-						startValue:				qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 2")
+						name: 					"high1"
+						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 2")
+						fieldWidth:				100 * preferencesModel.uiScale
+						useExternalBorder:		false
+						showBorder:				true
+					}
+				}
+                Row //Level3
+				{
+					visible:					[1].includes(numberOfLevels.currentIndex)
+					spacing:					5 * preferencesModel.uiScale
+					Layout.preferredWidth:		100 * preferencesModel.uiScale
+					TextField
+					{
+						label: 					""
+						name: 					"high2"
+						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
 						fieldWidth:				100 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true
@@ -125,7 +184,6 @@ Form
 
 	Section
 	{
-		visible: 								[0].includes(design.currentIndex)
 		title: 									qsTr("Factorial Design Options")
 		columns:								2
 
@@ -145,18 +203,31 @@ Form
 			{
 				name:							"factorialTypeSpecify"
 				label:							qsTr("2-level factorial (specify generators)")
+
+				TextArea
+				{
+					name:						"factorialTypeSpecifyGenerators"
+                    height:                     100 * preferencesModel.uiScale
+                    width:                      250 * preferencesModel.uiScale
+                    title:						"Design generators"
+					textType:					JASP.TextTypeSource
+				}
 			}
 
 			RadioButton
 			{
 				name:							"factorialTypeSplit"
 				label:							qsTr("2-level split-plot (hard-to-change factors)")
-			}
 
-			RadioButton
-			{
-				name:							"factorialTypePlackettBurman"
-				label:							qsTr("Plackett-Burman design")
+                IntegerField
+                {
+                    name:						"numberHTCFactors"
+                    label:						qsTr("Number of hard-to-change factors")
+                    defaultValue:				1
+                    min:						1
+                    max:						numberOfFactors.value
+
+                }
 			}
 
 			RadioButton
@@ -223,9 +294,7 @@ Form
 							]
 						}
 					}
-
 				}
-
 			}	
 
 			GroupBox
@@ -259,37 +328,7 @@ Form
 					max:						50
 				}
 			}
-
 		}
-	}
-
-	Section
-	{
-		visible: 								[1].includes(design.currentIndex)
-		title: 									qsTr("Screening Design Options")
-
-	}
-
-
-	Section
-	{
-		visible: 								[2].includes(design.currentIndex)
-		title: 									qsTr("Response Surface Design Options")
-		
-	}
-
-	Section
-	{
-		visible: 								[3].includes(design.currentIndex)
-		title: 									qsTr("Mixture Design Options")
-		
-	}
-
-	Section
-	{
-		visible: 								[4].includes(design.currentIndex)
-		title: 									qsTr("Taguchi Design Options")
-		
 	}
 
 	Item 
@@ -303,7 +342,7 @@ Form
 			id: 								generateDesign
 			anchors.right:						parent.right
 			anchors.bottom:						parent.bottom
-			text: 								qsTr("<b>Create Design</b>")
+            text: 								qsTr("<b>Export Design</b>")
 			// onClicked: 							form.exportResults()
 		}
 	}

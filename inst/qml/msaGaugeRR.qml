@@ -61,143 +61,188 @@ Form
 
 	}
 	
-		Group{
-						DropDown {
-                name: "variationReference"
-                label: qsTr("Variation Reference")
+			RadioButtonGroup
+		{
+			name: "gaugeRRmethod"
+			RadioButton { name: "anovaMethod";	label: qsTr("ANOVA Method"); checked: true}
+			RadioButton { name: "rangeMethod";  label: qsTr("Range Method")	}
+		}
+	
+	
+		Section
+	{
+		title: qsTr("ANOVA Method Options")
+		
+		Group
+		{
+			title: qsTr("Analysis Options")
+			
+									DropDown {
+                name: "standardDeviationReference"
+                label: qsTr("Std. Deviation Reference")
                 indexDefaultValue: 0
                 values:
                 [	
-					{label: qsTr("Known Process Variation"),				value: "processVariation"},
-                    {label: qsTr("Study Variation"),					value: "studyVariation"},
-                    {label: qsTr("Tolerance"),					value: "tolerance"},
-                ]
+					{label: qsTr("Study Std. Deviation"),					value: "studyStandardDeviation"},
+					{label: qsTr("Historical Process Std. Deviation"),				value: "historicalStandardDeviation"},
+				]
+				
 				id: variationReference
 				}
 				DoubleField
 				{
-					name:			"processVariationOrTolerance"
-					label:			qsTr("Value:")
+					name:			"historicalStandardDeviationValue"
+					label:			qsTr("Std. Deviation Value:")
 					defaultValue:	0
-					enabled:		variationReference.currentValue != "studyVariation"
+					enabled:		variationReference.currentValue == "historicalStandardDeviation"
 				}
-			}
-	
-		Section
-	{
-		title: qsTr("Gauge r&R")
+			
+			
 
-		CheckBox
-		{
-			name: "gaugeANOVA";		label: qsTr("ANOVA")
-		}
-		CheckBox
-		{
-			name: "gaugeRchart";		label: qsTr("R Chart by Operator")
-		}
-		CheckBox
-		{
-			name: "gaugeXbarChart";		label: qsTr("X-bar Chart by Operator")
-		}
-		
-		CheckBox
-		{
-			name: "gaugeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
-
+				DoubleField
+				{
+					name:			"tolerance"
+					label:			qsTr("Tolerance:")
+					defaultValue:	10
+					enabled:		TRUE
+				}
+			
 			CheckBox
 			{
-				name: "gaugeScatterPlotFitLine";		label: qsTr("Fit Line")
-			}
+				name: "gaugeANOVA";		label: qsTr("R&R Table ANOVA Method"); checked: true
+			
+						DoubleField { name: "alphaForANOVA";		label: qsTr("Alpha Interaction Removal:");	fieldWidth: 60; defaultValue: 0.05; max: 1; decimals: 3 }
+					
 				
-			CheckBox
-			{
-				name: "gaugeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+				DropDown{
+						name: "studyVarMultiplierType"
+						label: qsTr("Study Var. Multiplier Type")
+						indexDefaultValue: 0
+						values:
+							[
+							{label: qsTr("Std. Deviation"),		value: "svmSD"},
+							{label: qsTr("Percent"),				value: "svmPercent"},
+							]
+						id: studyVarMultiplierType
+						}
+										
+				DoubleField { 
+						name: "studyVarMultiplier"
+						label: qsTr("Study Var. Multiplier Value:")
+						fieldWidth: 60 
+						defaultValue: 6  
+						decimals: 3
+						}
+					
+				CheckBox{
+						name: "gaugeVarCompGraph";		label: qsTr("Graph Variation Components"); checked: true
+						}
+				
 			}
 		
 		}
 		
-		CheckBox
+		Group
 		{
-            name: "gaugeByPart";		label: qsTr("Measurement by Part Graph")
+			title: qsTr("Plots")
+
+			CheckBox
+			{
+				name: "gaugeRchart";		label: qsTr("R Chart by Operator")
+			}
+
+			CheckBox
+			{
+				name: "gaugeXbarChart";		label: qsTr("X-bar Chart by Operator")
+			}
+		
+			CheckBox
+			{
+				name: "gaugeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
 				
 				CheckBox
-			{
-					name: "gaugeByPartAll";		label: qsTr("Display all Measurements")
+				{
+					name: "gaugeScatterPlotFitLine";		label: qsTr("Fit Line")
+				}
+
+				CheckBox
+				{
+					name: "gaugeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+				}
 			}
-		}
-		
-		CheckBox
-		{
+
+			CheckBox
+			{
+			name: "gaugeByPart";		label: qsTr("Measurement by Part Graph")
+			
+				CheckBox
+				{
+					name: "gaugeByPartAll";		label: qsTr("Display all Measurements")
+				}
+			}	
+
+			CheckBox
+			{
 			name: "gaugeByOperator";		label: qsTr("Measurement by Operator Graph")
-		}
-		CheckBox
-		{
+			}
+		
+			CheckBox
+			{
 			name: "gaugeByInteraction";		label: qsTr("Measurement Interaction Graph")
+			}
 		}
 	}
 	
 	Section
 	{
-		title: qsTr("Range Method")
+		title: qsTr("Range Method Options")
 		
-		CheckBox
-		{
-                name: "rangeRr";		label: qsTr("r&R Table")
-		}
-		
-		
-		CheckBox
-		{
-                name: "rangeScatterPlotOperatorParts";		label: qsTr("Scatter Plot Operators vs. Parts")
-		}
-			
-		CheckBox
-		{
-                name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators")
-				
-
-				
-			CheckBox
+			Group
 			{
-                name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line")
-			}
+				title: qsTr("Analysis Options")
 				
-			CheckBox
-			{
-                name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line")
+								DoubleField
+				{
+					name:			"rangePSD"
+					label:			qsTr("Process Std. Deviation:")
+					defaultValue:	1
+					enabled:		TRUE
+				}
+				
+				CheckBox
+				{
+					name: "rangeRr";		label: qsTr("r&R Table"); checked: true
+				}
 			}
 		
-		}
-
-		CheckBox
-		{
-			name: "rangeRchart";		label: qsTr("R Chart")
-		}
-		
-	}
-	
-		Section
-	{
-		title: qsTr("Determine Bias")
-					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference Value:");		defaultValue: 0;	negativeValues: true	}
-					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance Value:");		defaultValue: 0;	negativeValues: true	}
-		CheckBox
-		{
-			name: "biasTable";		label: qsTr("Bias Table")
-		}
+			Group
+			{
+				title: qsTr("Plots")
+				
+				CheckBox
+				{
+					name: "rangeScatterPlotOperatorParts";		label: qsTr("Scatter Plot Operators vs. Parts")
+				}
 			
-		CheckBox
-		{
-			name: "biasTtest";		label: qsTr("One Sample T-Test")
-
-		}
-		CheckBox
-		{
-			name: "biasHistogram";		label: qsTr("Histogram")
-		}
-						CheckBox
-		{
-			name: "biasRun";		label: qsTr("Run Chart")
-		}
+				CheckBox
+				{
+					name: "rangeScatterPlotOperators";		label: qsTr("Scatter Plot Operators"); checked: true
+				
+					CheckBox
+					{
+						name: "rangeScatterPlotFitLine";		label: qsTr("Fit Line"); checked: true
+					}
+				
+					CheckBox
+					{
+						name: "rangeScatterPlotOriginLine";		label: qsTr("Show Origin Line"); checked: true
+					}
+		
+				}
+				CheckBox
+				{
+					name: "rangeRchart";		label: qsTr("R Chart")
+				}
+			}
 	}
 }

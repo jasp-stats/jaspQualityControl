@@ -26,351 +26,494 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-
   ready <- (length(measurements) != 0 & operators != "" & parts != "")
-
+  readyRangeMethod <- length(measurements) == 2
 
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
   }
 
+
   .msaCheckErrors(dataset, options)
 
-  .rAndRtableGauge(ready = ready, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults)
 
-  # Range Method r and R table
-  if (options[["rangeRr"]]) {
-    .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults)
+  #ANOVA method
+
+  if (options$gaugeRRmethod == "anovaMethod"){
+
+    # Gauge r&R ANOVA Table
+    if (options[["gaugeANOVA"]]) {
+      if(is.null(jaspResults[["gaugeANOVA"]])) {
+        jaspResults[["gaugeANOVA"]] <- createJaspContainer(gettext("Gauge r&R ANOVA Table"))
+        jaspResults[["gaugeANOVA"]]$dependOn(c("historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue"))
+        jaspResults[["gaugeANOVA"]]$position <- 1
+      }
+
+      jaspResults[["gaugeANOVA"]] <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+    }
+
+    # R chart by operator
+    if (options[["gaugeRchart"]]) {
+      if(is.null(jaspResults[["gaugeRchart"]])) {
+        jaspResults[["gaugeRchart"]] <- createJaspContainer(gettext("Range Chart by Operator"))
+        jaspResults[["gaugeRchart"]]$position <- 2
+      }
+      jaspResults[["gaugeRchart"]]$dependOn("gaugeRchart")
+
+      operatorData <- dataset[[operators]]
+      operatorLevels <- levels(operatorData)
+
+      for(operator in operatorLevels){
+        operatorSplit <- subset(dataset, dataset[operators] == operator)
+        jaspResults[["gaugeRchart"]][[as.character(operator)]] <- .RangeChart(dataset = operatorSplit, measurements = measurements, parts = parts, operators = operators, options =  options, title = operator, ready = ready)
+      }
+    }
+
+    # Xbar chart by operator
+    if (options[["gaugeXbarChart"]]) {
+      if(is.null(jaspResults[["gaugeXbarChart"]])) {
+        jaspResults[["gaugeXbarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
+        jaspResults[["gaugeXbarChart"]]$position <- 3
+      }
+      XbarCharts <- jaspResults[["gaugeXbarChart"]]
+      XbarCharts$dependOn("gaugeXbarChart")
+
+      operatorData <- dataset[[operators]]
+      operatorLevels <- levels(operatorData)
+
+      for(operator in operatorLevels){
+        operatorSplit <- subset(dataset, dataset[operators] == operator)
+        XbarCharts[[as.character(operator)]] <- .XbarChart(dataset = operatorSplit, measurements = measurements, parts = parts, operators = operators, options =  options, title = operator, ready = ready)
+      }
+    }
+
+    # gauge Scatter Plot Operators
+    if (options[["gaugeScatterPlotOperators"]]) {
+      if(is.null(jaspResults[["gaugeScatterOperators"]])) {
+        jaspResults[["gaugeScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
+        jaspResults[["gaugeScatterOperators"]]$position <- 4
+      }
+      jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+    }
+
+    # Measurement by Part Graph
+    if (options[["gaugeByPart"]]) {
+      if(is.null(jaspResults[["gaugeByPart"]])) {
+        jaspResults[["gaugeByPart"]] <- createJaspContainer(gettext("Measurement by Part Graph"))
+        jaspResults[["gaugeByPart"]]$position <- 5
+      }
+
+      jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+    }
+
+    # Measurement by Operator Box Plot
+    if (options[["gaugeByOperator"]]) {
+      if(is.null(jaspResults[["gaugeByOperator"]])) {
+        jaspResults[["gaugeByOperator"]] <- createJaspContainer(gettext("Measurement by Operator Graph"))
+        jaspResults[["gaugeByOperator"]]$position <- 6
+      }
+      jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+    }
+
+    # Parts by Operator Interaction Plot
+    if (options[["gaugeByInteraction"]]) {
+      if(is.null(jaspResults[["gaugeByInteraction"]])) {
+        jaspResults[["gaugeByInteraction"]] <- createJaspContainer(gettext("Parts by Operator Interaction Graph"))
+        jaspResults[["gaugeByInteraction"]]$position <- 7
+      }
+      jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+    }
+
   }
 
-  # Scatter Plot Operators
-  if (options[["rangeScatterPlotOperators"]]) {
-    if(is.null(jaspResults[["ScatterOperators"]])) {
-      jaspResults[["ScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
-      jaspResults[["ScatterOperators"]]$position <- 3
+
+  # Range Method
+
+  if (options$gaugeRRmethod == "rangeMethod"){
+
+    # Range Method r and R table
+    if (options[["rangeRr"]]) {
+      .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = readyRangeMethod)
     }
 
-    jaspResults[["ScatterOperators"]] <- .ScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+    # Scatter Plot Operators vs Parts
+    if (options[["rangeScatterPlotOperatorParts"]]) {
+      if(is.null(jaspResults[["ScatterOperatorParts"]])) {
+        jaspResults[["ScatterOperatorParts"]] <- createJaspContainer(gettext("Scatterplot Operators vs Parts"))
+        jaspResults[["ScatterOperatorParts"]]$position <- 9
+      }
+      jaspResults[["ScatterOperatorParts"]] <- .ScatterPlotOperatorParts(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = readyRangeMethod)
+    }
+
+    # Scatter Plot Operators
+    if (options[["rangeScatterPlotOperators"]]) {
+      if(is.null(jaspResults[["ScatterOperators"]])) {
+        jaspResults[["ScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
+        jaspResults[["ScatterOperators"]]$position <- 10
+      }
+      jaspResults[["ScatterOperators"]] <- .ScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = readyRangeMethod)
+    }
+
+    # Rchart Range method
+    if (options[["rangeRchart"]]) {
+      if(is.null(jaspResults[["rangeRchart"]])) {
+        jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
+        jaspResults[["rangeRchart"]]$position <- 11
+      }
+      jaspResults[["rangeRchart"]] <- .RangeChart(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, title = "vs. Operator", ready = readyRangeMethod)
+    }
 
   }
 
-
-  # Scatter Plot Operators vs Parts
-  if (options[["rangeScatterPlotOperatorParts"]]) {
-    if(is.null(jaspResults[["ScatterOperatorParts"]])) {
-      jaspResults[["ScatterOperatorParts"]] <- createJaspContainer(gettext("Scatterplot Operators vs Parts"))
-      jaspResults[["ScatterOperatorParts"]]$position <- 4
-    }
-
-    jaspResults[["ScatterOperatorParts"]] <- .ScatterPlotOperatorParts(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-  }
-
-  # Gauge r&R ANOVA Table
-  if (options[["gaugeANOVA"]]) {
-    if(is.null(jaspResults[["gaugeANOVA"]])) {
-      jaspResults[["gaugeANOVA"]] <- createJaspContainer(gettext("Gauge r&R ANOVA Table"))
-      jaspResults[["gaugeANOVA"]]$position <- 5
-    }
-
-    jaspResults[["gaugeANOVA"]] <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-  }
-
-  # Measurement by Part Graph
-  if (options[["gaugeByPart"]]) {
-    if(is.null(jaspResults[["gaugeByPart"]])) {
-      jaspResults[["gaugeByPart"]] <- createJaspContainer(gettext("Measurement by Part Graph"))
-      jaspResults[["gaugeByPart"]]$position <- 6
-    }
-
-    jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-  }
-
-  # Measurement by Operator Box Plot
-  if (options[["gaugeByOperator"]]) {
-    if(is.null(jaspResults[["gaugeByOperator"]])) {
-      jaspResults[["gaugeByOperator"]] <- createJaspContainer(gettext("Measurement by Operator Graph"))
-      jaspResults[["gaugeByOperator"]]$position <- 7
-    }
-
-    jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-  }
-
-  # Parts by Operator Interaction Plot
-  if (options[["gaugeByInteraction"]]) {
-    if(is.null(jaspResults[["gaugeByInteraction"]])) {
-      jaspResults[["gaugeByInteraction"]] <- createJaspContainer(gettext("Parts by Operator Interaction Graph"))
-      jaspResults[["gaugeByInteraction"]]$position <- 8
-    }
-
-    jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-  }
-
-  # Xbar chart by operator
-  if (options[["gaugeXbarChart"]]) {
-    if(is.null(jaspResults[["gaugeXbarChart"]])) {
-      jaspResults[["gaugeXbarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
-      jaspResults[["gaugeXbarChart"]]$position <- 9
-    }
-
-    XbarCharts <- jaspResults[["gaugeXbarChart"]]
-
-    operatorData <- dataset[[operators]]
-    operatorLevels <- levels(operatorData)
-
-
-    for(operator in operatorLevels){
-      operatorSplit <- subset(dataset, dataset[operators] == operator)
-      XbarCharts[[as.character(operator)]] <- .XbarChart(dataset = operatorSplit, measurements = measurements, parts = parts, operators = operators, options =  options, title = operator)
-    }
-  }
-
-  # R chart by operator
-  if (options[["gaugeRchart"]]) {
-    if(is.null(jaspResults[["gaugeRchart"]])) {
-      jaspResults[["gaugeRchart"]] <- createJaspContainer(gettext("Range Chart by Operator"))
-      jaspResults[["gaugeRchart"]]$position <- 10
-    }
-
-    rangeCharts <- jaspResults[["gaugeRchart"]]
-
-    rangeCharts$dependOn("gaugeRchart")
-
-    operatorData <- dataset[[operators]]
-    operatorLevels <- levels(operatorData)
-
-
-    for(operator in operatorLevels){
-      operatorSplit <- subset(dataset, dataset[operators] == operator)
-      rangeCharts[[as.character(operator)]] <- .RangeChart(dataset = operatorSplit, measurements = measurements, parts = parts, operators = operators, options =  options, title = operator)
-    }
-  }
-
-  # Determine Bias Table
-  if (options[["biasTable"]]) {
-    if(is.null(jaspResults[["biasTable"]])) {
-      jaspResults[["biasTable"]] <- createJaspContainer(gettext("Bias Table"))
-      jaspResults[["biasTable"]]$position <- 11
-    }
-
-    jaspResults[["biasTable"]] <- .biasTable(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-  }
-
-  # Determine Bias t-Test
-  if (options[["biasTtest"]]) {
-    if(is.null(jaspResults[["biasTtest"]])) {
-      jaspResults[["biasTtest"]] <- createJaspContainer(gettext("t-Test Bias"))
-      jaspResults[["biasTtest"]]$position <- 12
-    }
-
-    jaspResults[["biasTtest"]] <- .biasTtest(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-  }
-
-  # Determine Bias Histogram
-  if (options[["biasHistogram"]]) {
-    if(is.null(jaspResults[["biasHistogram"]])) {
-      jaspResults[["biasHistogram"]] <- createJaspContainer(gettext("Histogram Bias"))
-      jaspResults[["biasHistogram"]]$position <- 13
-    }
-
-    jaspResults[["biasHistogram"]] <- .biasHistogram(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-  }
-
-  # Rchart Range method
-  if (options[["rangeRchart"]]) {
-    if(is.null(jaspResults[["rangeRchart"]])) {
-      jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
-      jaspResults[["rangeRchart"]]$position <- 14
-    }
-
-
-    jaspResults[["rangeRchart"]] <- .RangeChart(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, title = "vs. Operator")
-    jaspResults[["rangeRchart"]]$dependOn("rangeRchart")
-  }
-
-  # Bias Run Chart
-  if (options[["biasRun"]]) {
-    if(is.null(jaspResults[["biasRun"]])) {
-      jaspResults[["biasRun"]] <- createJaspContainer(gettext("Run Chart"))
-      jaspResults[["biasRun"]]$position <- 15
-    }
-
-    jaspResults[["biasRun"]] <- .biasRunChart(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-  }
-
-  # gauge Scatter Plot Operators
-  if (options[["gaugeScatterPlotOperators"]]) {
-    if(is.null(jaspResults[["gaugeScatterOperators"]])) {
-      jaspResults[["gaugeScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
-      jaspResults[["gaugeScatterOperators"]]$position <- 16
-    }
-
-    jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
-
-  }
 
   return()
 }
 
+.gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready){
 
-.ScatterPlotOperators <- function(dataset, measurements, parts, operators, options){
+  anovaTables <- createJaspContainer(gettext("ANOVA Tables"))
+  anovaTables$dependOn(c("gaugeANOVA", "gaugeRRmethod"))
+  anovaTables$position <- 1
 
-  plot <- createJaspPlot(title = "Scatterplot of Operator A vs Operator B")
-
-  plot$dependOn(c("rangeScatterPlotOperators", "rangeScatterPlotFitLine", "rangeScatterPlotOriginLine"))
-
-  p <- ggplot2::ggplot(data = dataset, ggplot2::aes_string(x = measurements[1], y = measurements[2])) +
-    jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
-    ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
-
-  if (options[["rangeScatterPlotFitLine"]])
-    p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
-
-  if (options[["rangeScatterPlotOriginLine"]])
-    p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
-
-  p <- jaspGraphs::themeJasp(p)
-
-  plot$plotObject <- p
-
-  return(plot)
-}
-
-
-.ScatterPlotOperatorParts <- function(dataset, measurements, parts, operators, options){
-
-  partIndex <- 1:length(dataset[[measurements[1]]])
-
-  dataset <- cbind(dataset, Parts = factor(partIndex, partIndex))
-
-
-  plot <- createJaspPlot(title = "Scatterplot of Operator A, Operator B vs Part", width = 500, height = 320)
-
-  plot$dependOn(c("rangeScatterPlotOperatorParts"))
-
-  p <- ggplot2::ggplot() +
-    jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[1]), fill = "red",size = 4) +
-    jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[2]), fill = "green",size = 4)
-
-  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = "right")
-
-  plot$plotObject <- p
-
-  return(plot)
-}
-
-.rAndRtableRange <- function(dataset, measurements, parts, operators, options, jaspResults){
-
-  if(!is.null(jaspResults[["rAndR2"]]))
-    return()
-
-  table <- createJaspTable(title = gettext("r & R Table"))
-  table$position <- 2
-
-  table$dependOn(c("rangeRr"))
-
-  table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
-  table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
-  table$addColumnInfo(name = "PSD", title = gettext("Process SD"), type = "number")
-  table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
-  table$addColumnInfo(name = "GRRpercent", title = gettext("%GRR"), type = "number")
-
-  jaspResults[["rAndR2"]] <- table
-
-  Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / length(dataset[[measurements[1]]]))
-  d2 <- 1.19105
-  SD <- options$processVariationOrTolerance
-  GRR <- Rbar/d2
-  GRRpercent <- GRR/SD*100
-
-
-  table$addRows(list(      "Rbar"       = Rbar,
-                           "d2"         = d2,
-                           "PSD"        = SD,
-                           "GRR"        = GRR,
-                           "GRRpercent" = GRRpercent))
-}
-
-.rAndRtableGauge <- function(ready, dataset, measurements, parts, operators, options, jaspResults){
-
-	if(!is.null(jaspResults[["rAndR1"]]))
-		return()
-
-  table <- createJaspTable(title = gettext("r & R Table"))
-  table$position <- 1
-
-  table$dependOn(c("operators", "parts", "measurements"))
-
-  table$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
-  table$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
-
-  jaspResults[["rAndR1"]] <- table
-
-  if(ready){
-
-    interval <- 5.15
-
+  if (ready && length(measurements) >= 2){
     data <- dataset
 
     data <- tidyr::gather(data, repetition, measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
-    formula <- as.formula(paste("measurement ~",operators,"*",parts))
+    if (options$studyVarMultiplierType == "svmSD"){
+      studyVarMultiplier <- options$studyVarMultiplier
+    }else{
+      percent <- options$studyVarMultiplier/100
+      q <- (1 - percent)/2
+      studyVarMultiplier <- abs(2*qnorm(q))
+    }
+    anovaTable1 <- createJaspTable(title = gettext("Two-Way ANOVA Table with Interaction"))
 
-    anova <- summary(aov(formula = formula, data = data))
+    anovaTable1$addColumnInfo(title = gettext("Cases"),          name = "cases",   type = "string" )
+    anovaTable1$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
+    anovaTable1$addColumnInfo(title = gettext("Sum of Squares"), name = "Sum Sq",  type = "number")
+    anovaTable1$addColumnInfo(title = gettext("Mean Square"),    name = "Mean Sq", type = "number")
+    anovaTable1$addColumnInfo(title = gettext("F"),              name = "F value", type = "number")
+    anovaTable1$addColumnInfo(title = gettext("p"),              name = "Pr(>F)",  type = "pvalue")
+
+    formula1 <- as.formula(paste("measurement ~", parts,"*", operators))
+
+    anova1 <- summary(aov(formula = formula1, data = data))
+
+
+    anovaTable1$setData(list( "cases"              = c(parts, operators, paste(parts," x ", operators), "Repeatability", "Total"),
+                              "Df"                 = c(anova1[[1]]$Df, sum(anova1[[1]]$Df)),
+                              "Sum Sq"             = c(anova1[[1]]$`Sum Sq`, sum(anova1[[1]]$`Sum Sq`)),
+                              "Mean Sq"            = anova1[[1]]$`Mean Sq`,
+                              "F value"            = anova1[[1]]$`F value`,
+                              "Pr(>F)"             = anova1[[1]]$`Pr(>F)`))
+
+    anovaTables[['anovaTable1']] <- anovaTable1
+
+    if(anova1[[1]]$`Pr(>F)`[3] < options$alphaForANOVA){
+
+
+      RRtable1 <- createJaspTable(title = gettext("r & R Table 1"))
+
+      RRtable1$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
+
+      RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
+      RRtable1$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
+      RRtable1$addColumnInfo(name = "Percent", title = gettext("Percent Contribution to Total"), type = "number")
 
 
 
+      repeatability <- anova1[[1]]$`Mean Sq`[4]
 
-    repeatability <- interval*sqrt(anova[[1]]$`Mean Sq`[4])
-    reproducibility <- interval*sqrt((anova[[1]]$`Mean Sq`[1]-anova[[1]]$`Mean Sq`[3])/(length(measurements)*length(unique(data[[parts]]))))
-    interaction <- ifelse(anova[[1]]$`Mean Sq`[3] - anova[[1]]$`Mean Sq`[4] < 0, 0,
-                          interval*sqrt((anova[[1]]$`Mean Sq`[3] - anova[[1]]$`Mean Sq`[4])/(length(measurements))))
-    rR <- sqrt((repeatability^2)+(reproducibility^2)+(interaction^2))
-    partvar <- interval*sqrt((anova[[1]]$`Mean Sq`[2] - anova[[1]]$`Mean Sq`[3])/(length(measurements)*length(unique(data[[operators]]))))
-    totalvar <- sqrt((rR^2) + (partvar^2))
+      if(anova1[[1]]$`Mean Sq`[2] < anova1[[1]]$`Mean Sq`[3]){
+        operator <- 0
+      }else{
+        operator <- (anova1[[1]]$`Mean Sq`[2] - anova1[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements))
+      }
 
-    table$setData(list(      "Source"       = c("r & R", "Repeatability", "Reproducibility", "Interaction", "Part Variation", "Total Variation"),
-                             "Variation"    = c(rR, repeatability, reproducibility, interaction, partvar, totalvar)))
+      if(anova1[[1]]$`Mean Sq`[3] < anova1[[1]]$`Mean Sq`[4]){
+        operatorXpart <- 0
+      }else{
+        operatorXpart <- (anova1[[1]]$`Mean Sq`[3] - anova1[[1]]$`Mean Sq`[4]) / length(measurements)
+      }
 
-  } else {
-    table$setData(list(      "Source"       = c("r & R", "Repeatability", "Reproducibility", "Interaction", "Part Variation", "Total Variation"),
-                             "Variation"    = rep(".", 6)))
+      partToPart <- (anova1[[1]]$`Mean Sq`[1] - anova1[[1]]$`Mean Sq`[3]) / (length(measurements) * length(unique(data[[operators]])))
+      reproducibility <- operator + operatorXpart
+      totalRR <- repeatability + reproducibility
+      totalVar <- totalRR + partToPart
+
+
+
+      RRtable1$setData(list(      "Source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation")),
+                                  "Variation"    = c(totalRR, repeatability, reproducibility, operator, partToPart, operatorXpart, totalVar),
+                                  "Percent"      = c(totalRR, repeatability, reproducibility, operator, partToPart, operatorXpart, totalVar) / totalVar * 100))
+
+
+      anovaTables[['RRtable1']] <- RRtable1
+
+      RRtable2 <- createJaspTable(title = gettext("r & R Table 2"))
+
+      RRtable2$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
+
+      RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
+      RRtable2$addColumnInfo(name = "SD", title = gettext("SD"), type = "number")
+      RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation (SD * %.2f)", studyVarMultiplier), type = "number")
+      RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("Percent Study Variation"), type = "number")
+      RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("Percent Tolerance"), type = "number")
+
+      histSD <- options$historicalStandardDeviationValue
+
+      if(options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)){
+        SD <- c(sqrt(c(totalRR, repeatability, reproducibility, operator)),
+                sqrt(histSD^2 - totalRR),
+                sqrt(operatorXpart), histSD)
+
+      }else{
+        SD <- sqrt(c(totalRR, repeatability, reproducibility, operator, partToPart, operatorXpart, totalVar))
+      }
+      studyVar <- SD * studyVarMultiplier
+
+
+      RRtable2$setData(list(      "source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation")),
+                                  "SD"           = SD,
+                                  "studyVar"    = studyVar,
+                                  "percentStudyVar"    = studyVar/max(studyVar) * 100,
+                                  "percentTolerance" = studyVar / options$tolerance * 100))
+
+
+      anovaTables[['RRtable2']] <- RRtable2
+
+    }else if(anova1[[1]]$`Pr(>F)`[3] > options$alphaForANOVA){
+      anovaTable2 <- createJaspTable(title = gettext("Two-Way ANOVA Table without Interaction"))
+
+      anovaTable2$addColumnInfo(title = gettext("Cases"),          name = "cases",   type = "string" )
+      anovaTable2$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
+      anovaTable2$addColumnInfo(title = gettext("Sum of Squares"), name = "Sum Sq",  type = "number")
+      anovaTable2$addColumnInfo(title = gettext("Mean Square"),    name = "Mean Sq", type = "number")
+      anovaTable2$addColumnInfo(title = gettext("F"),              name = "F value", type = "number")
+      anovaTable2$addColumnInfo(title = gettext("p"),              name = "Pr(>F)",  type = "pvalue")
+
+      formula2 <- as.formula(paste("measurement ~",parts, "+",operators))
+
+      anova2 <- summary(aov(formula = formula2, data = data))
+
+
+      anovaTable2$setData(list( "cases"              = c(parts, operators, "Repeatability", "Total"),
+                                "Df"                 = c(anova2[[1]]$Df, sum(anova2[[1]]$Df)),
+                                "Sum Sq"             = c(anova2[[1]]$`Sum Sq`, sum(anova2[[1]]$`Sum Sq`)),
+                                "Mean Sq"            = anova2[[1]]$`Mean Sq`,
+                                "F value"            = anova2[[1]]$`F value`,
+                                "Pr(>F)"             = anova2[[1]]$`Pr(>F)`))
+
+
+      anovaTables[['anovaTable2']] <- anovaTable2
+
+
+      RRtable1 <- createJaspTable(title = gettext("r & R Table 1"))
+
+      RRtable1$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
+
+      RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
+      RRtable1$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
+      RRtable1$addColumnInfo(name = "Percent", title = gettext("Percent Contribution to Total"), type = "number")
+
+
+
+      repeatability <- anova2[[1]]$`Mean Sq`[3]
+
+      if(anova2[[1]]$`Mean Sq`[2] < anova2[[1]]$`Mean Sq`[3]){
+        operator <- 0
+      }else{
+        operator <- (anova2[[1]]$`Mean Sq`[2] - anova2[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements))
+      }
+
+      partToPart <- (anova2[[1]]$`Mean Sq`[1] - anova2[[1]]$`Mean Sq`[3]) / (length(measurements) * length(unique(data[[operators]])))
+      reproducibility <- operator
+      totalRR <- repeatability + reproducibility
+      totalVar <- totalRR + partToPart
+
+
+
+      RRtable1$setData(list(      "Source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Total Variation")),
+                                  "Variation"    = c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar),
+                                  "Percent"      = c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar) / totalVar * 100))
+
+
+      anovaTables[['RRtable1']] <- RRtable1
+
+      RRtable2 <- createJaspTable(title = gettext("r & R Table 2"))
+
+      RRtable2$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
+
+      RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
+      RRtable2$addColumnInfo(name = "SD", title = gettext("SD"), type = "number")
+      RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation (SD * %.2f)", studyVarMultiplier), type = "number")
+      RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("Percent Study Variation"), type = "number")
+      RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("Percent Tolerance"), type = "number")
+
+
+      histSD <- options$historicalStandardDeviationValue
+
+      if(options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)){
+        SD <- c(sqrt(c(totalRR, repeatability, reproducibility, operator)),
+                sqrt(histSD^2 - totalRR), histSD)
+      }else{
+        SD <- sqrt(c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar))
+      }
+
+      studyVar <- SD * studyVarMultiplier
+
+
+      RRtable2$setData(list(      "source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Total Variation")),
+                                  "SD"           = SD,
+                                  "studyVar"    = studyVar,
+                                  "percentStudyVar"    = studyVar/max(studyVar) * 100,
+                                  "percentTolerance" = studyVar / options$tolerance * 100))
+
+
+      anovaTables[['RRtable2']] <- RRtable2
+    }
+
+    if (options[["gaugeVarCompGraph"]]) {
+
+      plot <- createJaspPlot(title = gettext("Variation Components Graph"), width = 850, height = 500)
+
+      plot$dependOn(c("gaugeVarCompGraph"))
+
+      percentContributionValues <- c(totalRR, repeatability, reproducibility, partToPart)/totalVar * 100
+      SDs <- sqrt(c(totalRR, repeatability, reproducibility, partToPart))
+      studyvars <- SDs * studyVarMultiplier
+      studyVariationValues <- studyvars/max(studyVar) * 100
+      percentToleranceValues <- studyvars / options$tolerance * 100
+
+      plotframe <- data.frame(source = rep(gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part')), 3),
+                              reference = rep(gettext(c('Percent Contribution', 'Percent Study Variation', 'Percent Tolerance')), each = 4),
+                              value = c(percentContributionValues, studyVariationValues, percentToleranceValues))
+
+      p <- ggplot2::ggplot() + ggplot2::geom_bar(data = plotframe,
+                                                 mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
+                                                 position="dodge", stat = "identity")
+      p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank(),
+                                                     plot.margin = ggplot2::unit(c(1,1,1,1),"cm")) +
+        ggplot2::xlab('') + ggplot2::ylab('Percent')
+      if (max(plotframe['value']) < 110)
+        p <- p + ggplot2::scale_y_continuous(breaks = c(0, 25, 50, 75, 100))
+
+      plot$plotObject <- p
+
+      anovaTables[['VarCompGraph']] <- plot
+    }
+  }else {
+
+    anovaTable1 <- createJaspTable(title = gettext("Two-Way ANOVA Table with Interaction"))
+
+    anovaTable1$addColumnInfo(title = gettext("Cases"),          name = "cases",   type = "string" )
+    anovaTable1$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
+    anovaTable1$addColumnInfo(title = gettext("Sum of Squares"), name = "Sum Sq",  type = "number")
+    anovaTable1$addColumnInfo(title = gettext("Mean Square"),    name = "Mean Sq", type = "number")
+    anovaTable1$addColumnInfo(title = gettext("F"),              name = "F value", type = "number")
+    anovaTable1$addColumnInfo(title = gettext("p"),              name = "Pr(>F)",  type = "pvalue")
+
+    if (options$studyVarMultiplierType == "svmSD"){
+      studyVarMultiplier <- options$studyVarMultiplier
+    }else{
+      percent <- options$studyVarMultiplier/100
+      q <- (1 - percent)/2
+      studyVarMultiplier <- abs(2*qnorm(q))
+    }
+
+    RRtable1 <- createJaspTable(title = gettext("r & R Table 1"))
+
+    RRtable1$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
+
+    RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
+    RRtable1$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
+    RRtable1$addColumnInfo(name = "Percent", title = gettext("Percent Contribution to Total"), type = "number")
+
+    RRtable1$setData(list(      "Source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation"))))
+
+
+    RRtable2 <- createJaspTable(title = gettext("r & R Table 2"))
+
+    RRtable2$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
+
+    RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
+    RRtable2$addColumnInfo(name = "SD", title = gettext("SD"), type = "number")
+    RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation (SD * %.2f)", studyVarMultiplier), type = "number")
+    RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("Percent Study Variation"), type = "number")
+    RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("Percent Tolerance"), type = "number")
+
+    RRtable2$setData(list("source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation"))))
+
+    plot <- createJaspPlot(title = gettext("Variation Components Graph"), width = 850, height = 500)
+    plot$dependOn(c("gaugeVarCompGraph"))
+
+    anovaTables[['anovaTable1']] <- anovaTable1
+    anovaTables[['RRtable1']] <- RRtable1
+    anovaTables[['RRtable2']] <- RRtable2
+    anovaTables[['plot']] <- plot
+
+
+    if(ready){
+      RRtable1$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
+      RRtable2$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
+    }
+  }
+  return(anovaTables)
+}
+
+.RangeChart <- function(dataset, measurements, parts, operators, options, title, ready){
+
+  plot <- createJaspPlot(title = gettextf("Operator %s", title), width = 600, height = 300)
+  plot$dependOn(c("rangeRchart" , "gaugeRRmethod"))
+
+  if (ready) {
+    p <- .RchartNoId(dataset = dataset[measurements], options = options)
+    plot$plotObject <- p
+  }else{
+    plot$setError(gettext("At least 2 measurements per operator required."))
+  }
+  return(plot)
+}
+
+.XbarChart <- function(dataset, measurements, parts, operators, options, title, ready){
+  if (ready){
+    plot <- createJaspPlot(title = gettextf("Operator %s", title), width = 600, height = 300)
+    if (length(measurements) == 1){
+      plot$setError(gettext("At least 2 measurements per operator required."))
+    }else{
+      p <- .XbarchartNoId(dataset = dataset[measurements], options = options)
+      plot$plotObject <- p
+    }
+    return(plot)
   }
 }
 
-.gaugeANOVA <- function(dataset, measurements, parts, operators, options){
+.ScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready){
 
-  data <- dataset
+  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
+  plot$dependOn(c("rangeScatterPlotOperators", "rangeScatterPlotFitLine", "rangeScatterPlotOriginLine", "gaugeRRmethod"))
 
-  data <- tidyr::gather(data, repetition, measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
+  if (ready) {
 
-  anovaTable <- createJaspTable(title = gettext("ANOVA Table"))
-  anovaTable$position <- 5
+    p <- ggplot2::ggplot(data = dataset, ggplot2::aes_string(x = measurements[1], y = measurements[2])) +
+      jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
+      ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
 
-  anovaTable$dependOn(c("gaugeANOVA"))
+    if (options[["rangeScatterPlotFitLine"]])
+      p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
 
-  anovaTable$addColumnInfo(title = gettext("Cases"),          name = "cases",   type = "string" )
-  anovaTable$addColumnInfo(title = gettext("Sum of Squares"), name = "Sum Sq",  type = "number")
-  anovaTable$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
-  anovaTable$addColumnInfo(title = gettext("Mean Square"),    name = "Mean Sq", type = "number")
-  anovaTable$addColumnInfo(title = gettext("F"),              name = "F value", type = "number")
-  anovaTable$addColumnInfo(title = gettext("p"),              name = "Pr(>F)",  type = "pvalue")
+    if (options[["rangeScatterPlotOriginLine"]])
+      p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
 
-  formula <- as.formula(paste("measurement ~",operators,"*",parts))
+    p <- jaspGraphs::themeJasp(p)
 
-  anova <- summary(aov(formula = formula, data = data))
+    plot$plotObject <- p
 
+  }
 
-  anovaTable$setData(list( "cases"              = c(operators, parts, paste(parts," x ", operators), "Residuals"),
-                           "Sum Sq"             = anova[[1]]$`Sum Sq`,
-                           "Df"                 = anova[[1]]$Df,
-                           "Mean Sq"            = anova[[1]]$`Mean Sq`,
-                           "F value"            = anova[[1]]$`F value`,
-                           "Pr(>F)"             = anova[[1]]$`Pr(>F)`))
-
-
-  return(anovaTable)
+  return(plot)
 }
-
 
 .gaugeByPartGraph <- function(dataset, measurements, parts, operators, options){
 
@@ -379,9 +522,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   means <- aggregate(dataset["Measurement"], dataset[parts], mean)
 
 
-  plot <- createJaspPlot(title = "Measurements by Part")
+  plot <- createJaspPlot(title = gettext("Measurements by Part"))
 
-  plot$dependOn(c("gaugeByPart", "gaugeByPartAll"))
+  plot$dependOn(c("gaugeByPart", "gaugeByPartAll", "gaugeRRmethod"))
 
   p <- ggplot2::ggplot()
 
@@ -399,14 +542,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   return(plot)
 }
 
+
 .gaugeByOperatorGraph <- function(dataset, measurements, parts, operators, options){
 
 
   dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
-  plot <- createJaspPlot(title = "Measurements by Operator")
+  plot <- createJaspPlot(title = gettext("Measurements by Operator"))
 
-  plot$dependOn(c("gaugeByOperator"))
+  plot$dependOn(c("gaugeByOperator", "gaugeRRmethod"))
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_boxplot(data = dataset, ggplot2::aes_string(x = operators, y = "Measurement"))
@@ -417,8 +561,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
   return(plot)
 }
-
-
 
 .gaugeByInteractionGraph <- function(dataset, measurements, parts, operators, options){
 
@@ -433,175 +575,90 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   }
   colnames(meansPerOperator)[-1] <- names(byOperator)
 
-
-  plot <- createJaspPlot(title = "Parts by Operator Interaction", width = 600, height = 300)
-
-  plot$dependOn(c("gaugeByInteraction"))
-
-  p <- ggplot2::ggplot()
-
-  colors <- rainbow(length(names(byOperator)))
-
-  for(i in 1:length(names(byOperator))){
-    p <- p + jaspGraphs::geom_line(data = meansPerOperator, ggplot2::aes_string(x = "Part", y = names(byOperator)[i],
-                                                                                group = i), col = colors[i]) +
-      jaspGraphs::geom_point(data = meansPerOperator, ggplot2::aes_string(x = "Part", y = names(byOperator)[i],
-                                                                          group = i))
-  }
+  tidydata <- tidyr::gather(meansPerOperator, key = "Operator", value = "Measurements", -Part )
 
 
-  p <- jaspGraphs::themeJasp(p) +
-    ggplot2::ylab("Measurement") +
+  plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
+
+  plot$dependOn(c("gaugeByInteraction", "gaugeRRmethod"))
+
+  p <- ggplot2::ggplot(tidydata, ggplot2::aes(x = Part, y = Measurements, col = Operator, group = Operator)) +
+    jaspGraphs::geom_line() + jaspGraphs::geom_point()
+
+
+  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right')
+  ggplot2::ylab("Measurement") +
     ggplot2::scale_y_continuous(limits = c(min(meansPerOperator[names(byOperator)]) * 0.9, max(meansPerOperator[names(byOperator)]) * 1.1))
 
 
-  plot$plotObject <- p
-
-  return(plot)
-}
-
-.XbarChart <- function(dataset, measurements, parts, operators, options, title){
-
-  plot <- createJaspPlot(title = paste("Operator", title), width = 600, height = 300)
-
-  p <- .XbarchartNoId(dataset = dataset[measurements], options = options)
-
-  plot$dependOn(c("gaugeXbarChart"))
-
-  plot$plotObject <- p
-
-  return(plot)
-
-}
-
-.RangeChart <- function(dataset, measurements, parts, operators, options, title){
-
-  plot <- createJaspPlot(title = paste("Operator", title), width = 600, height = 300)
-
-  p <- .RchartNoId(dataset = dataset[measurements], options = options)
-
-  plot$plotObject <- p
-
-  return(plot)
-
-}
-
-.biasTable <- function(dataset, measurements, parts, operators, options){
-
-  dataForPart <- dataset[[measurements]]
-
-  table <- createJaspTable(title = gettext("Bias Table for Part"))
-
-  table$dependOn(c("biasReferenceValue", "biasTable", "biasTolerance"))
-
-  table$addColumnInfo(name = "referenceValue",  title = gettext("Reference Value"), type = "number")
-  table$addColumnInfo(name = "observedAverage", title = gettext("Observed Average"), type = "number")
-  table$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
-  table$addColumnInfo(name = "tolerance",       title = gettext("Tolerance"), type = "number")
-  table$addColumnInfo(name = "biasPercent",     title = gettext("Bias Percent"), type = "number")
-
-  observedAverage <- mean(unlist(dataForPart))
-  bias <- options$biasReferenceValue - observedAverage
-  biasPercent <- abs(bias) / options$biasTolerance * 100
-
-
-  table$addRows(list(      "referenceValue"       = options$biasReferenceValue,
-                           "observedAverage"      = observedAverage,
-                           "bias"                 = bias,
-                           "tolerance"            = options$biasTolerance,
-                           "biasPercent"          = biasPercent))
-
-
-
-  return(table)
-}
-
-.biasTtest <- function(dataset, measurements, parts, operators, options){
-
-  dataForPart <- dataset[[measurements]]
-
-  table <- createJaspTable(title = gettext("t-Test of Observed Value agaist Reference Value for Part"))
-
-  table$dependOn(c("biasReferenceValue", "biasTtest", "biasTolerance"))
-
-  table$addColumnInfo(name = "df",              title = gettext("df"), type = "integer")
-  table$addColumnInfo(name = "mean",            title = gettext("Mean"), type = "number")
-  table$addColumnInfo(name = "referenceValue",  title = gettext("Reference Value"), type = "number")
-  table$addColumnInfo(name = "sd",              title = gettext("SD"), type = "number")
-  table$addColumnInfo(name = "se",              title = gettext("SE"), type = "number")
-  table$addColumnInfo(name = "lci",             title = gettext("LB"), type = "number", overtitle = gettext("95% CI"))
-  table$addColumnInfo(name = "uci",             title = gettext("UB"), type = "number", overtitle = gettext("95% CI"))
-  table$addColumnInfo(name = "t",               title = gettext("t"), type = "number")
-  table$addColumnInfo(name = "p",               title = gettext("p"), type = "pvalue")
-
-  tTest <- t.test(dataForPart, mu = options$biasReferenceValue)
-
-  table$addRows(list(      "df"                   = tTest$parameter,
-                           "mean"                 = tTest$estimate,
-                           "referenceValue"       = options$biasReferenceValue,
-                           "sd"                   = sd(unlist(dataForPart)),
-                           "se"                   = tTest$stderr,
-                           "lci"                  = tTest$conf.int[1],
-                           "uci"                  = tTest$conf.int[2],
-                           "t"                    = tTest$statistic,
-                           "p"                    = tTest$p.value))
-
-
-
-  return(table)
-}
-
-
-.biasHistogram <- function(dataset, measurements, parts, operators, options, title){
-
-  dataForPart <- dataset[[measurements]]
-
-  plot <- createJaspPlot(title = "Bias Histogram")
-
-  p <- jaspDescriptives:::.plotMarginal(column = dataForPart, variableName = "Measurement")
-
-  plot$dependOn(c("biasHistogram"))
-
-  plot$plotObject <- p
-
-  return(plot)
-
-}
-
-
-.biasRunChart <- function(dataset, measurements, parts, operators, options){
-
-
-  dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-
-  plot <- createJaspPlot(title = "Run Chart", width = 600, height = 300)
-
-  index <- 1:length(dataset[["Measurement"]])
-
-  dataset <- cbind(dataset, index = factor(index, index))
-
-  plot$dependOn(c("biasRun"))
-
-  p <- ggplot2::ggplot() +
-    jaspGraphs::geom_line(data = dataset, ggplot2::aes(x = index, y = Measurement, group = 1)) +
-    jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = index, y = Measurement)) +
-    ggplot2::scale_x_discrete(name = "Index", breaks = c(seq(1, max(index), 5),max(index)))
-
-  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(plot.margin = ggplot2::unit(c(0.5, 0.5, 0.5, 0.5), "cm"))
 
   plot$plotObject <- p
 
   return(plot)
 }
 
+.ScatterPlotOperatorParts <- function(dataset, measurements, parts, operators, options, ready){
+
+
+  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A, Operator B vs Part"), width = 500, height = 320)
+  plot$dependOn(c("rangeScatterPlotOperatorParts", "gaugeRRmethod"))
+
+  if (ready){
+    partIndex <- 1:length(dataset[[measurements[1]]])
+    dataset <- cbind(dataset, Parts = factor(partIndex, partIndex))
+
+    p <- ggplot2::ggplot() +
+      jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[1]), fill = "red", size = 4) +
+      jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[2]), fill = "green", size = 4) +
+      ggplot2::ylab("Measurements")
+
+    p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = "right")
+
+    plot$plotObject <- p
+  }
+
+  return(plot)
+}
+
+.rAndRtableRange <- function(dataset, measurements, parts, operators, options, jaspResults, ready){
+
+  table <- createJaspTable(title = gettext("r & R Table"))
+  table$position <- 2
+  table$dependOn(c("rangeRr", "gaugeRRmethod"))
+
+  table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
+  table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
+  table$addColumnInfo(name = "PSD", title = gettext("Process Std. Dev."), type = "number")
+  table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
+  table$addColumnInfo(name = "GRRpercent", title = gettext("%GRR"), type = "number")
+
+  jaspResults[["rAndR2"]] <- table
+
+  if (ready){
+
+    n <- length(dataset[[measurements[1]]])
+    Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / n)
+    d2 <- .d2Value(n)
+    SD <- options$rangePSD
+    GRR <- Rbar/d2
+    GRRpercent <- GRR/SD*100
+
+
+    table$addRows(list(      "Rbar"       = Rbar,
+                             "d2"         = d2,
+                             "PSD"        = SD,
+                             "GRR"        = GRR,
+                             "GRRpercent" = GRRpercent))
+  }
+}
 
 .gaugeScatterPlotOperators <- function(dataset, measurements, parts, operators, options){
 
-  plot <- createJaspPlot(title = "Scatterplot of Operator A vs Operator B")
-  plot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine"))
+  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
+  plot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
 
   if(length(unique(dataset[[operators]])) > 2){
-    plot$setError(gettextf("Plotting not possible: More than 2 Operators"))
+    plot$setError(gettext("Plotting not possible: More than 2 Operators"))
   }else{
 
     operatorSplit <- split.data.frame(dataset, dataset[operators])
@@ -634,4 +691,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   #             exitAnalysisIfErrors = TRUE)
   #}
 
+}
+
+.d2Value <- function(n){
+  d2table <- data.frame(n = 1:20, d2 = c(1.41421, 1.27931, 1.23105, 1.20621, 1.19105, 1.18083, 1.17348, 1.16794, 1.16361, 1.16014,
+                              1.15729, 1.15490, 1.15289, 1.15115, 1.14965, 1.14833, 1.14717, 1.14613, 1.14520, 1.14437))
+
+  return(d2table$d2[d2table$n == n])
 }
