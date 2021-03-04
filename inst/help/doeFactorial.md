@@ -1,2 +1,2 @@
-Design of experiments
+DoE Factorial
 ==========================
