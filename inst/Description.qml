@@ -47,9 +47,19 @@ Description
 	 }
 	Analysis
 	{
-		title:			qsTr("Control Charts")
-		func:			"controlCharts"
-	}	
+		title:			qsTr("Variable Charts for Subgroups")
+		func:			"VaribleChartsSubgroups"
+	}
+		Analysis
+	{
+		title:			qsTr("Variable Charts for Indviduals")
+		func:			"VaribleChartsIndviduals"
+	}
+			Analysis
+	{
+		title:			qsTr("Attribute Charts")
+		func:			"AttributeCharts"
+	}
 
 	 GroupTitle
 	 {
