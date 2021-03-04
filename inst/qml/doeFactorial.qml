@@ -330,66 +330,6 @@ Form
 		}
 	}
 
-//	Section
-//	{
-//		title: 									qsTr("Screening Design Options")
-//		columns:								1
-
-//		RadioButtonGroup
-//		{
-//			name: 								"screeningType"
-//			title:								qsTr("Type of Screening Design")
-
-//			RadioButton
-//			{
-//				name:							"screeningTypePlackettBurman"
-//				label:							qsTr("Plackett-Burman design")
-//			}
-
-//			RadioButton
-//			{
-//				name:							"screeningTypeTaguchi"
-//				label:							qsTr("Taguchi design")
-//			}
-//		}
-//	}
-
-//	Section
-//	{
-//		visible: 								[2].includes(design.currentIndex)
-//		title: 									qsTr("Response Surface Design Options")
-		
-//		GroupBox
-//		{
-//			title: 							qsTr("Additional options")
-
-//			IntegerField
-//			{
-//				name:						"responseSurfaceCenterPoints"
-//				label:						qsTr("Number of center points per block")
-//				defaultValue:				1
-//				min:						1
-//				max:						50
-//			}
-
-//			IntegerField
-//			{
-//				name:						"responseSurfaceCornerReplicates"
-//				label:						qsTr("Number of replicates for corner points")
-//				defaultValue:				3
-//				min:						1
-//				max:						50
-//			}
-//		}
-//	}
-
-//	Section
-//	{
-//		visible: 								[3].includes(design.currentIndex)
-//		title: 									qsTr("Mixture Design Options")
-		
-//	}
-
 	Item 
 	{
 		Layout.preferredHeight: 				generateDesign.height
