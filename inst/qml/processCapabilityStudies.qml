@@ -51,15 +51,70 @@ Form
 
 	Group
 	{
+		title:	qsTr("Capability of the Process")
+		columns: 2
+
+		CheckBox { name: "normalCapabilityStudy";			label: qsTr("Normal capability study");	checked: true
+			RadioButtonGroup
+			{
+				name: "capabilityStudy"
+				RadioButton { name: "initialCapabilityAnalysis";	label: qsTr("Initial capability study");	checked: true	}
+				RadioButton { name: "followupCapabilityAnalysis";  label: qsTr("Follow-up capability study")					}
+			}
+		}
+
+		Group
+		{
+			title: qsTr("Specifications:")
+
+			CheckBox
+			{
+				name: "lowerSpecificationField"
+				childrenOnSameRow:	true
+				DoubleField { name: "lowerSpecification";  label: qsTr("Lower specification limit") ; negativeValues: true   }
+			}
+
+			CheckBox
+			{
+				name: "targetValueField"
+				childrenOnSameRow:	true
+				DoubleField { name: "targetValue";         label: qsTr("Target value") ; negativeValues: true                }
+			}
+
+			CheckBox
+			{
+				name: "upperSpecificationField"
+				childrenOnSameRow:	true
+				DoubleField { name: "upperSpecification";  label: qsTr("Upper specification limit") ; negativeValues: true   }
+			}
+		}
+
+		CheckBox { name: "nonNormalCapabilityStudy";			label: qsTr("Non-normal capability study")
+			DropDown
+			{
+				name: "nonNormalDist"
+				label: qsTr("Specify a distribution")
+				indexDefaultValue: 0
+				values:
+					[
+					{ label: qsTr("Weibull"),		value: "Weibull"    },
+					{ label: qsTr("Lognormal"),		value: "Lognormal"  }
+				]
+			}
+		}
+	}
+
+	Group
+	{
 		title: qsTr("Stability of the Process")
-		CheckBox { name: "controlCharts";			label: qsTr("X-bar & Range Control Chart") }
+		CheckBox { name: "controlCharts";			label: qsTr("X-bar & range control chart");	checked: true	}
 	}
 
 	Group
 	{
 		title: qsTr("Distribution of the Process")
-		CheckBox { name: "histogram";			label: qsTr("Histogram")}
-		CheckBox { name: "probabilityPlot";    label: qsTr("Probability Plot")
+		CheckBox { name: "histogram";			label: qsTr("Histogram");	checked: true	}
+		CheckBox { name: "probabilityPlot";    label: qsTr("Probability plot");	checked: true
 			DropDown
 			{
 				name: "rank"
@@ -81,27 +136,10 @@ Form
 				values:
 					[
 					{ label: qsTr("Normal"),		value: "Normal"			},
-					{ label: qsTr("Lognormal"),	value: "Lognormal"      },
+					{ label: qsTr("Lognormal"),	value: "Lognormal"			},
 					{ label: qsTr("Weibull"),		value: "Weibull"        }
 				]
 			}
-		}
-	}
-
-	Section
-	{
-		title:	qsTr("Process Capability Study")
-		RadioButtonGroup
-		{
-			name: "capabilityStudy"
-			RadioButton { name: "initialCapabilityAnalysis";	label: qsTr("Initial Capability Analysis"); checked: true	}
-			RadioButton { name: "followupCapabilityAnalysis";  label: qsTr("Follow-up Capability Analysis")	}
-		}
-		Group
-		{
-			DoubleField { name: "upperSpecification";  label: qsTr("Upper Specification Limit") ; negativeValues: true   }
-			DoubleField { name: "targetValue";         label: qsTr("Target value") ; negativeValues: true                }
-			DoubleField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit") ; negativeValues: true   }
 		}
 	}
 }

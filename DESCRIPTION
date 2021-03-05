@@ -20,8 +20,10 @@ Imports:
   mle.tools,
   qcc,
   irr,
+  mixdist,
   FrF2,
   rsm
+
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
