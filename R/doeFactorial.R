@@ -110,9 +110,9 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                        factors = options[["numberOfFactors"]],
                        runs = runs,
                        resolution = resolution,
-                       centers = options[["factorialCenterPoints"]],
-                       replicates = options[["factorialCornerReplicates"]],
-                       blocks = options[["factorialBlocks"]])
+                       centers = "NA",
+                       replicates = "NA",
+                       blocks = "NA")
 
     table$setData(rows)
     jaspResults[["selectedDesign"]] <- table
@@ -222,13 +222,13 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       rows <- cbind(runOrder = 1:nrow(rows), rows)
     }
 
-    if(options[["dataCoding"]] == "dataUncoded"){
-      table$setData(rows)
-    } else {
-      for(i in 1:as.numeric(options[["numberOfFactors"]])){
-        rows[,i+1]
-      }
-    }
+    # if(options[["dataCoding"]] == "dataUncoded"){
+    #   table$setData(rows)
+    # } else {
+    #   for(i in 1:as.numeric(options[["numberOfFactors"]])){
+    #     rows[,i+1]
+    #   }
+    # }
 
     table$setData(rows)
 
