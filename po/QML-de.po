@@ -1,0 +1,786 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Qt-Contexts: true\n"
+
+msgctxt "Description|"
+msgid "Quality Control"
+msgstr ""
+
+msgctxt "Description|"
+msgid "A JASP module for quality control analyses."
+msgstr ""
+
+msgctxt "Description|"
+msgid "Measurement Systems Analysis"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Type 1 Gauge"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Gauge Linearity and Bias"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Gauge r&R"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Attributes Agreement Analysis"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Control Charts"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Variable Charts for Subgroups"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Variable Charts for Indviduals"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Attribute Charts"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Capability Studies"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Process Capability Studies"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Design of Experiments"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Screening"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Factorial"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Response Surface"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Mixed"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "Defectives/Defects"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "Sample"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "Charts for Attributes"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "Defectives"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "Type"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "np chart"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "p chart"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "Laney p’ (p-prime) chart"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "Defects"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "c chart"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "u chart"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "Laney u’ (u-prime) chart"
+msgstr ""
+
+msgctxt "AttributeCharts|"
+msgid "I-MR chart"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor Info"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of factors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of factor levels"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "2"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "3"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Mixed"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Data coding"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Uncoded"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Coded"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Name"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Level 1"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Level 2"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Level 3"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor 1"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor 1 Level 1"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor 1 Level 2"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor 2"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor 2 Level 1"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor 2 Level 2"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor "
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid " Level 1"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid " Level 2"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid " Level 3"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factorial Design Options"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Type of Factorial Design"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "2-level factorial (default generators)"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "2-level factorial (specify generators)"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "2-level split-plot (hard-to-change factors)"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of hard-to-change factors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "General full factorial design"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design by"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of runs"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "4"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "8"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "16"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "32"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "64"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "128"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Resolution"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "I"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "II"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "III"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "IV"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "V"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "VI"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "VIII"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Full"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Additional options"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of center points per block"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of replicates for corner points"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of blocks"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "<b>Export Design</b>"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Predictors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Response"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Blocks"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Additional options"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Suggest designs"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of replicates for center points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of replicates for star points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Contour plots"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Divide the first variable by step"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Divide the second variable by step"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "<b>Create Design</b>"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Operators"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Parts"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Measurements"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Standard"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Tables"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Fleiss Kappa"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Cohen's Kappa"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Kendall's Tau"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Parts"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Measurements"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Standard"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Analysis Options"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Process Variation:"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Linearity Table"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Bias Table"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Plots"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Linearity and Bias Graph"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Percent Process Variation Graph"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Operators"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Parts"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurements"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "ANOVA Method"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Range Method"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "ANOVA Method Options"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Analysis Options"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Std. Deviation Reference"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Study Std. Deviation"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Historical Process Std. Deviation"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Std. Deviation Value:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Tolerance:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "R&R Table ANOVA Method"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Alpha Interaction Removal:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Study Var. Multiplier Type"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Std. Deviation"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Percent"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Study Var. Multiplier Value:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Graph Variation Components"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Plots"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "R Chart by Operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "X-bar Chart by Operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Scatter Plot Operators"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Fit Line"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show Origin Line"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurement by Part Graph"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Display all Measurements"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurement by Operator Graph"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurement Interaction Graph"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Range Method Options"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Process Std. Deviation:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "r&R Table"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Scatter Plot Operators vs. Parts"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "R Chart"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Measurements"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Analysis Options"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Reference Value:"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Tolerance Value:"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Percent of Tolerance for CG:"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Study Var. Multiplier Type"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Std. Deviation"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Percent"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Study Var. Multiplier Value:"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Plots"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Run Chart"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Display Individual Measurements"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Bias and Capability Table"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "One Sample T-Test"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Histogram"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Measurements"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Subgroups"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Capability of the Process"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Normal capability study"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Initial capability study"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Follow-up capability study"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Specifications:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Lower specification limit"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Target value"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Upper specification limit"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Non-normal capability study"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Specify a distribution"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Weibull"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Lognormal"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Stability of the Process"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "X-bar & range control chart"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Distribution of the Process"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Histogram"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Probability plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Rank method"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Median Rank (Benard)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Mean Rank (Herd-Johnson)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Kaplan-Meier"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Modified Kaplan-Meier (Hazen)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Null distribution"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Normal"
+msgstr ""
+
+msgctxt "VaribleChartsIndviduals|"
+msgid "Variables"
+msgstr ""
+
+msgctxt "VaribleChartsIndviduals|"
+msgid "Charts for Individuals"
+msgstr ""
+
+msgctxt "VaribleChartsIndviduals|"
+msgid "I-MR chart"
+msgstr ""
+
+msgctxt "VaribleChartsSubgroups|"
+msgid "Variables"
+msgstr ""
+
+msgctxt "VaribleChartsSubgroups|"
+msgid "Charts for Subgroups"
+msgstr ""
+
+msgctxt "VaribleChartsSubgroups|"
+msgid "X bar & R charts"
+msgstr ""
+
+msgctxt "VaribleChartsSubgroups|"
+msgid "X bar & S charts"
+msgstr ""
