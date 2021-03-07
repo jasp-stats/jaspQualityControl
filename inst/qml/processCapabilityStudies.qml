@@ -184,12 +184,21 @@ Form
 					label:					qsTr("Display density")
 					checked:				true
 				}
+
+				DoubleField
+				{
+					name:					"numberOfBins"
+					label:					qsTr("Number of bins")
+					defaultValue:			30
+					min:					3
+					max:					10000
+				}
 			}
 
 			CheckBox 
 			{ 
 				name: 						"probabilityPlot"
-				label: 						qsTr("Probability tables and plots")
+				label: 						qsTr("Probability table and plots")
 				checked: 					true
 
 				DropDown
@@ -222,7 +231,7 @@ Form
 				CheckBox
 				{
 					name:					"addGridlines"
-					label:					qsTr("Display grid lines in plot")
+					label:					qsTr("Display grid lines in plots")
 				}
 			}
 		}

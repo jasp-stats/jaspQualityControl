@@ -34,7 +34,7 @@
   if(!options[["controlCharts"]] || !is.null(jaspResults[["controlCharts"]]))
     return()
 
-  container <- createJaspContainer(title = gettext("X-bar Chart and R Chart"))
+  container <- createJaspContainer(title = gettext("Control Charts"))
   container$dependOn(options = c("controlCharts", "variables"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
@@ -42,7 +42,7 @@
   xplot <- createJaspPlot(title = "X-bar Chart", width = 600, height = 300)
   container[["xplot"]] <- xplot # Always has position = 1 in container
 
-  rplot <- createJaspPlot(title = "Range Chart", width = 600, height= 300)
+  rplot <- createJaspPlot(title = "R Chart", width = 600, height = 300)
   container[["rplot"]] <- rplot # Always has position = 2 in container
 
   if(!ready)

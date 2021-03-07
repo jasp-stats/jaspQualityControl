@@ -23,7 +23,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   # Check if analysis is ready
   ready <- .qcOptionsReady(options, type = "capabilityStudy")
 
-  # X-bar and Range Control Chart
+  # X-bar and R Chart
   .qcXbarAndRContainer(options, dataset, ready, jaspResults)
 
   # Distribution plot
@@ -558,7 +558,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     return()
 
   plot <- createJaspPlot(title = gettext("Distribution Plot"), width = 400, height = 400)
-  plot$dependOn(options = c("histogram", "displayDensity", "variables"))
+  plot$dependOn(options = c("histogram", "displayDensity", "variables", "numberOfBins"))
   plot$position <- 2
 
   jaspResults[["histogram"]] <- plot
@@ -572,19 +572,21 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData[["x"]], min.n = 4)
 
+  bins <- options[["numberOfBins"]] + 2 # For some reason the plot always seems to take 2 off...
+
   p <- ggplot2::ggplot(plotData, ggplot2::aes(x = x)) +
     ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks, limits = range(xBreaks))
 
   if(options[["displayDensity"]]){
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, hist(plotData[["x"]], freq = F, plot = F)$density + 0.1), min.n = 4)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, hist(plotData[["x"]], freq = F, plot = F, breaks = bins)$density + 0.1), min.n = 4)
     p <- p + ggplot2::scale_y_continuous(name = gettext("Density"), breaks = yBreaks, limits = range(yBreaks)) +
-      ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7) +
+      ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7, bins = bins) +
       ggplot2::stat_function(fun = dnorm, color = "dodgerblue", args = list(mean = mean(plotData[["x"]]), sd = sd(plotData[["x"]])))
     p <- jaspGraphs::themeJasp(p) + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
   } else {
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, hist(plotData[["x"]], freq = T, plot = F)$counts), min.n = 4)
     p <- p + ggplot2::scale_y_continuous(name = gettext("Counts"), breaks = yBreaks, limits = range(yBreaks)) +
-      ggplot2::geom_histogram(ggplot2::aes(y =..count..), fill = "grey", col = "black", size = .7)
+      ggplot2::geom_histogram(ggplot2::aes(y =..count..), fill = "grey", col = "black", size = .7, bins = bins)
     p <- jaspGraphs::themeJasp(p)
   }
 
