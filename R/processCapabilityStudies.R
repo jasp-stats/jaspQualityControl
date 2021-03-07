@@ -46,7 +46,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
 .qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults){
 
-  container <- createJaspContainer(gettext("Capability Analyses"))
+  container <- createJaspContainer(gettext("Capability Studies"))
   container$dependOn(options = c("normalCapabilityStudy", "capabilityStudy", "nonNormalCapabilityStudy", "variables", "subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
   container$position <- 4
 
@@ -110,7 +110,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if(!ready)
     return()
 
-  # Take a look at this input! Is is supposed to be like this or must it be transposed? 
+  # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
   qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
   allData <- unlist(dataset[, options[["variables"]]])
@@ -139,7 +139,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if(!ready)
     return()
 
-  # Take a look at this input! Is is supposed to be like this or must it be transposed? 
+  # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
   qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
   allData <- unlist(dataset[, options[["variables"]]])
@@ -152,18 +152,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
     ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks, limits = range(xBreaks)) +
-	ggplot2::scale_y_continuous(name = gettext("Density")) +
+    ggplot2::scale_y_continuous(name = gettext("Density")) +
     ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7) +
     ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)), color = "dodgerblue") +
     ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw), color = "red")
 
   if(options[["targetValueField"]])
-	p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen")
+    p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen")
   if(options[["lowerSpecificationField"]])
     p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecification"]], linetype = "dotted", color = "darkred")
   if(options[["upperSpecificationField"]])
-     p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecification"]], linetype = "dotted", color = "darkred")
-  
+    p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecification"]], linetype = "dotted", color = "darkred")
+
   p <- jaspGraphs::themeJasp(p) + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
 
   plot$plotObject <- p
@@ -171,7 +171,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
 .qcProcessCapabilityTableWithin <- function(options, dataset, ready, container){
 
-  if(!options[["lowerSpecificationField"]] || options[["upperSpecificationField"]])
+  if(!options[["lowerSpecificationField"]] && !options[["upperSpecificationField"]])
     return()
 
   table <- createJaspTable(title = gettext("Process Capability (Within)"))
@@ -180,18 +180,20 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     table$addColumnInfo(name = "cpl",   type = "number", title = gettext("CPL"))
   if (options[["upperSpecificationField"]])
     table$addColumnInfo(name = "cpu",   type = "number", title = gettext("CPU"))
-  if (options[["lowerSpecificationField"]] & options[["upperSpecificationField"]]) {
+  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]) {
     table$addColumnInfo(name = "cp",    type = "number", title = gettext("Cp"))
     table$addColumnInfo(name = "cpk",   type = "number", title = gettext("Cpk"))
     table$addColumnInfo(name = "z",     type = "number", title = gettext("ppm"))
   }
+
+  table$showSpecifiedColumnsOnly <- TRUE
 
   container[["capabilityTableWithin"]] <- table
 
   if(!ready)
     return()
 
-  # Take a look at this input! Is is supposed to be like this or must it be transposed? 
+  # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
   qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
   allData <- unlist(dataset[, options[["variables"]]])
@@ -215,7 +217,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     table$addColumnInfo(name = "ppl", type = "number", title = gettext("PPL"))
   if (options[["upperSpecificationField"]])
     table$addColumnInfo(name = "ppu", type = "number", title = gettext("PPU"))
-  if (options[["lowerSpecificationField"]] & options[["upperSpecificationField"]])
+  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]])
     table$addColumnInfo(name = "pp",  type = "number", title = gettext("Pp"))
   table$addColumnInfo(name = "ppk",   type = "number", title = gettext("Ppk"))
   table$addColumnInfo(name = "ppm",   type = "number", title = gettext("ppm"))
@@ -227,7 +229,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if(!ready)
     return()
 
-  # Take a look at this input! Is is supposed to be like this or must it be transposed? 
+  # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
   qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
   allData <- unlist(dataset[, options[["variables"]]])
@@ -261,7 +263,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
       table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
       table$addColumnInfo(name = "upper", type = "number", title = gettext("P (X > USL)"))
     }
-    if (options[["lowerSpecificationField"]] & options[["upperSpecificationField"]]) {
+    if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]) {
       table$addColumnInfo(name = "cpk", type = "number", title = gettext("Cpk"))
     }
 
@@ -284,7 +286,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if(!ready)
     return()
 
-  # Take a look at this input! Is is supposed to be like this or must it be transposed? 
+  # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
   qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
   allData <- unlist(dataset[, options[["variables"]]])
@@ -353,9 +355,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
 .qcProbabilityTable <- function(dataset, options, container){
 
-  table <- createJaspTable(title = gettextf("Summary of tests against the %1$s distribution", options[["nullDistribution"]]))
+  table <- createJaspTable(title = gettextf("Summary of Tests Against the %1$s Distribution", options[["nullDistribution"]]))
   table$position <- 1
- 
+
   table$addColumnInfo(name = "v", 		title = "",					type = "number")
   table$addColumnInfo(name = "n",      	title = gettext("n"),  		type = "integer")
 
@@ -364,7 +366,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     table$addColumnInfo(name = "sd",    title = gettextf("Std. deviation (%1$s)", "\u03C3"), 	type = "number")
   } else if (options[["nullDistribution"]] == 'Lognormal') {
     table$addColumnInfo(name = "mean",  title = gettextf("Location (%1$s)", "\u03BC"),  		type = "number")
-    table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03C3"), 			type = "number")	  
+    table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03C3"), 			type = "number")
   } else if (options[["nullDistribution"]] == 'Weibull') {
     table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03BB"), 			type = "number")
     table$addColumnInfo(name = "sd",    title = gettext("Scale (<i>k</i>)"),        			type = "number")
@@ -380,31 +382,31 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   for(variable in options[["variables"]]){
 
-  	values <- dataset[[variable]]
+    values <- dataset[[variable]]
 
-	if (options[["nullDistribution"]] == 'Normal') {
-		meanx   <- mean(values)
-		sdx     <- sd(values)
-		test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
-	} else if (options[["nullDistribution"]] == 'Lognormal') {
-		fit    <- fitdistrplus::fitdist(values, 'lnorm')
-		meanx  <- fit$estimate[1]
-		sdx    <- fit$estimate[2]
-		test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
-	} else if (options[["nullDistribution"]] == 'Weibull') {
-		fit    <- fitdistrplus::fitdist(values, 'weibull')
-		meanx  <- fit$estimate[1]
-		sdx    <- fit$estimate[2]
-		test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
-	}
+    if (options[["nullDistribution"]] == 'Normal') {
+      meanx   <- mean(values)
+      sdx     <- sd(values)
+      test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
+    } else if (options[["nullDistribution"]] == 'Lognormal') {
+      fit    <- fitdistrplus::fitdist(values, 'lnorm')
+      meanx  <- fit$estimate[1]
+      sdx    <- fit$estimate[2]
+      test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
+    } else if (options[["nullDistribution"]] == 'Weibull') {
+      fit    <- fitdistrplus::fitdist(values, 'weibull')
+      meanx  <- fit$estimate[1]
+      sdx    <- fit$estimate[2]
+      test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
+    }
 
-	n      <- length(values)
-	ad     <- test$statistic
-	p      <- test$p.value
-	reject <- if(p < 0.05) "Yes" else "No"
+    n      <- length(values)
+    ad     <- test$statistic
+    p      <- test$p.value
+    reject <- if(p < 0.05) "Yes" else "No"
 
-	row <- list(v = variable, mean = meanx, sd = sdx, n = n, ad = ad, p = p, reject = reject)
-	table$addRows(row)
+    row <- list(v = variable, mean = meanx, sd = sdx, n = n, ad = ad, p = p, reject = reject)
+    table$addRows(row)
   }
 }
 
