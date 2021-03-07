@@ -163,7 +163,7 @@ Form
 			CheckBox 
 			{ 
 				name: 						"controlCharts"
-				label: 						qsTr("X-bar & range control chart")
+				label: 						qsTr("X-bar & R chart")
 				checked: 					true
 			}
 		}
@@ -217,6 +217,12 @@ Form
 						{ label: qsTr("Lognormal"),		value: "Lognormal" },
 						{ label: qsTr("Weibull"),		value: "Weibull"   }
 					]
+				}
+
+				CheckBox
+				{
+					name:					"addGridlines"
+					label:					qsTr("Display grid lines in plot")
 				}
 			}
 		}

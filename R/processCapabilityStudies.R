@@ -330,7 +330,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     return()
 
   container <- createJaspContainer(gettext("Probability Tables and Plots"))
-  container$dependOn(options = c("variables", "probabilityPlot", "rank", "nullDistribution"))
+  container$dependOn(options = c("variables", "probabilityPlot", "rank", "nullDistribution", "addGridlines"))
   container$position <- 3
 
   plotContainer <- createJaspContainer(gettext("Probability Plots"))
@@ -374,7 +374,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   table$addColumnInfo(name = "ad",     	title = gettext("<i>A</i>"), type = "number")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>"), type = "pvalue")
-  table$addColumnInfo(name = "reject",	title = gettext("Reject null-distribution?"),      		type = "string")
+  table$addColumnInfo(name = "reject",	title = gettext("Reject null distribution?"),      		type = "string")
 
   table$addFootnote(gettextf("The Anderson-Darling statistic <i>A</i> is calculated against the %2$s distribution using the %3$s ranking method.", "\u00B2", options[["nullDistribution"]], options[["rank"]]))
 
@@ -503,6 +503,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = yBreaks)
 
   p <- jaspGraphs::themeJasp(p)
+
+  if(options[["addGridlines"]])
+	  p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
+
   plot$plotObject <- p
 
   return(plot)
