@@ -108,10 +108,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if(!ready)
     return()
 
-  qccData <- .qcConvertDatasetToQccReady(options, dataset)
-  allData <- as.vector(qccData)
-
-  qccFit <- qcc::qcc(qccData, type = 'R', plot = FALSE)
+  qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
+  allData <- unlist(dataset[, options[["variables"]]])
 
   if(is.na(qccFit$std.dev))
     table$addFootnote(gettext("The within standard deviation could not be calculated."))
@@ -121,7 +119,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     "target" = options[["targetValue"]],
     "usl" = options[["upperSpecification"]],
     "mean" = mean(allData, na.rm = TRUE),
-    "n" = ncol(qccData),
+    "n" = nrow(dataset),
     "sd" = sd(allData, na.rm = TRUE),
     "sdw" = qccFit$std.dev)
   table$addRows(rows)
@@ -136,12 +134,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if(!ready)
     return()
 
-  plotData <- as.data.frame(dataset[, options[["variables"]]])
-  qccData <- .qcConvertDatasetToQccReady(options, dataset)
-  allData <- unlist(plotData[, unlist(lapply(plotData, is.numeric))])
+  qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
+  allData <- unlist(dataset[, options[["variables"]]])
   plotData <- data.frame(x = allData)
 
-  sdw <- qcc::qcc(qccData, type ='R', plot=FALSE)$std.dev #stDevWithin <- rBar/d2
+  sdw <- qccFit[["std.dev"]]
   sdo <- sd(allData, na.rm = TRUE)
 
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], options[["lowerSpecification"]], options[["upperSpecification"]]), min.n = 4)
@@ -180,9 +177,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if(!ready)
     return()
 
-  qccData <- .qcConvertDatasetToQccReady(options, dataset)
-  qccFit <- qcc::qcc(qccData, type ='R', plot = FALSE)
-  allData <- as.vector(qccData)
+  qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
+  allData <- unlist(dataset[, options[["variables"]]])
 
   # Capability Indices
   cp <- (options[["upperSpecification"]] - options[["lowerSpecification"]]) / (6 * qccFit[["std.dev"]])
@@ -215,9 +211,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if(!ready)
     return()
 
-  qccData <- .qcConvertDatasetToQccReady(options, dataset)
-  qccFit <- qcc::qcc(qccData, type ='R', plot=FALSE)
-  allData <- as.vector(qccData)
+  qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
+  allData <- unlist(dataset[, options[["variables"]]])
   sdo <- sd(allData)
 
   pp <- (options[["upperSpecification"]] - options[["lowerSpecification"]]) / (6 * sdo)
@@ -259,8 +254,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     if (options[["upperSpecificationField"]])
       table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
 
-    table$addColumnInfo(name = "beta", type = "number", title = gettext("Beta"))
-    table$addColumnInfo(name = "theta", type = "number", title = gettext("Theta"))
+    table$addColumnInfo(name = "beta", type = "number", title = gettextf("%1$s", "\u03B2"))
+    table$addColumnInfo(name = "theta", type = "number", title = gettextf("%1$s", "\u03B8"))
 
   }
 
@@ -271,9 +266,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if(!ready)
     return()
 
-  qccData <- .qcConvertDatasetToQccReady(options, dataset)
-  qccFit  <- qcc::qcc(qccData, type = 'R', plot = FALSE)
-  allData <- as.vector(qccData)
+  qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
+  allData <- unlist(dataset[, options[["variables"]]])
 
   if (options[["nonNormalDist"]] == "Lognormal"){
 
@@ -317,8 +311,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   container$dependOn(options = c("variables", "probabilityPlot", "rank", "nullDistribution"))
   container$position <- 3
 
-  tableContainer <- createJaspContainer(gettext("Probability Tables"))
-  container[["tableContainer"]] <- tableContainer
   plotContainer <- createJaspContainer(gettext("Probability Plots"))
   container[["plotContainer"]] <- plotContainer
 
@@ -327,11 +319,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   if(!ready)
     return()
 
+  .qcProbabilityTable(dataset, options, container)
+
   for (variable in options[["variables"]]){
-    if(is.null(tableContainer[[variable]]))
-      tableContainer[[variable]] <- .qcProbabilityTable(dataset = dataset, options = options, variable = variable)
     if(is.null(plotContainer[[variable]]))
-      plotContainer[[variable]]  <- .qcProbabilityPlot(dataset = dataset, options = options, variable = variable)
+      plotContainer[[variable]]  <- .qcProbabilityPlot(dataset, options, variable)
   }
 }
 
@@ -339,54 +331,60 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 ## Output ######
 ################
 
-.qcProbabilityTable <- function(dataset, options, variable){
+.qcProbabilityTable <- function(dataset, options, container){
 
-  table <- createJaspTable(title = gettextf("Descriptive Statistics for %1$s", variable))
-  table$dependOn(optionContainsValue = list(variables = variable))
-
+  table <- createJaspTable(title = gettextf("Summary of tests against the %1$s distribution", options[["nullDistribution"]]))
+  table$position <- 1
+ 
+  table$addColumnInfo(name = "v", 		title = "",							type = "number")
   if (options[["nullDistribution"]] == 'Normal') {
-    table$addColumnInfo(name = "mean",  title = "Mean",        		type = "number")
-    table$addColumnInfo(name = "sd",    title = "Std. Deviation", 	type = "number")
+    table$addColumnInfo(name = "mean",  title = gettext("Mean"),    		type = "number")
+    table$addColumnInfo(name = "sd",    title = gettext("Std. Deviation"), 	type = "number")
   } else if (options[["nullDistribution"]] == 'Lognormal') {
-    table$addColumnInfo(name = "mean",  title = "Location",        	type = "number")
-    table$addColumnInfo(name = "sd",    title = "Scale",        	type = "number")
+    table$addColumnInfo(name = "mean",  title = gettext("Location"),        type = "number")
+    table$addColumnInfo(name = "sd",    title = gettext("Scale"),        	type = "number")
   } else if (options[["nullDistribution"]] == 'Weibull') {
-    table$addColumnInfo(name = "mean",  title = "Shape",         	type = "number")
-    table$addColumnInfo(name = "sd",    title = "Scale",         	type = "number")
+    table$addColumnInfo(name = "mean",  title = gettext("Shape"),         	type = "number")
+    table$addColumnInfo(name = "sd",    title = gettext("Scale"),         	type = "number")
   }
 
-  table$addColumnInfo(name = "n",      	title = "n",            	type = "integer")
-  table$addColumnInfo(name = "ad",     	title = "<i>A</i>", 		type = "number")
-  table$addColumnInfo(name = "p",		title = "<i>p</i>",      	type = "pvalue")
-  table$addColumnInfo(name = "reject",	title = "Reject null-distribution?",      type = "string")
+  table$addColumnInfo(name = "n",      	title = gettext("n"),            	type = "integer")
+  table$addColumnInfo(name = "ad",     	title = gettext("<i>A</i>"), 		type = "number")
+  table$addColumnInfo(name = "p",		title = gettext("<i>p</i>"),      	type = "pvalue")
+  table$addColumnInfo(name = "reject",	title = gettext("Reject null-distribution?"),      type = "string")
 
-  table$addFootnote(gettextf("The test statistic <i>A</i> is the Anderson-Darling statistic calculated from the null distribution.", "\u00B2"), )
+  table$addFootnote(gettextf("The Anderson-Darling statistic <i>A</i> is calculated against the %2$s distribution using the %3$s ranking method.", "\u00B2", options[["nullDistribution"]], options[["rank"]]))
 
-  values <- dataset[[variable]]
+  container[["probabilityTable"]] <- table
 
-  if (options[["nullDistribution"]] == 'Normal') {
-    meanx   <- mean(values)
-    sdx     <- sd(values)
-    test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
-  } else if (options[["nullDistribution"]] == 'Lognormal') {
-    fit    <- fitdistrplus::fitdist(values, 'lnorm')
-    meanx  <- fit$estimate[1]
-    sdx    <- fit$estimate[2]
-    test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
-  } else if (options[["nullDistribution"]] == 'Weibull') {
-    fit    <- fitdistrplus::fitdist(values, 'weibull')
-    meanx  <- fit$estimate[1]
-    sdx    <- fit$estimate[2]
-    test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
+  for(variable in options[["variables"]]){
+
+  	values <- dataset[[variable]]
+
+	if (options[["nullDistribution"]] == 'Normal') {
+		meanx   <- mean(values)
+		sdx     <- sd(values)
+		test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
+	} else if (options[["nullDistribution"]] == 'Lognormal') {
+		fit    <- fitdistrplus::fitdist(values, 'lnorm')
+		meanx  <- fit$estimate[1]
+		sdx    <- fit$estimate[2]
+		test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
+	} else if (options[["nullDistribution"]] == 'Weibull') {
+		fit    <- fitdistrplus::fitdist(values, 'weibull')
+		meanx  <- fit$estimate[1]
+		sdx    <- fit$estimate[2]
+		test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
+	}
+
+	n      <- length(values)
+	ad     <- test$statistic
+	p      <- test$p.value
+	reject <- if(p < 0.05) "Yes" else "No"
+
+	row <- list(v = variable, mean = meanx, sd = sdx, n = n, ad = ad, p = p, reject = reject)
+	table$addRows(row)
   }
-
-  n      <- length(values)
-  ad     <- test$statistic
-  p      <- test$p.value
-  reject <- if(p < 0.05) "Yes" else "No"
-
-  table$addRows(list(mean = meanx, sd = sdx, n = n, ad = ad, p = p, reject = reject))
-  return(table)
 }
 
 .qcProbabilityPlot <- function(dataset, options, variable){
@@ -402,7 +400,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   # Method for rank
   Rank_funs <- matrix(list(.qcPpMedian, .qcPpMean, .qcPpKmModif, .qcPpKm), ncol = 1,
-                      dimnames = list(c("median", "mean", "KMmodif", 'KM'), c("p")),byrow = TRUE)
+                      dimnames = list(c("Bernard", "Herd-Johnson", "Hazen", 'Kaplan-Meier'), c("p")), byrow = TRUE)
   rankByUser <- options[["rank"]]
   p <- Rank_funs[[rankByUser, 'p']](x)
 

@@ -198,10 +198,10 @@ Form
 					indexDefaultValue: 		0
 					values:
 					[
-						{ value: "median",    label: qsTr("Median Rank (Benard)")         },
-						{ value: "mean",      label: qsTr("Mean Rank (Herd-Johnson)")     },
-						{ value: "KM",        label: qsTr("Kaplan-Meier")                 },
-						{ value: "KMmodif",   label: qsTr("Modified Kaplan-Meier (Hazen)")}
+						{ value: "Bernard",    		label: qsTr("Median Rank (Benard)")         },
+						{ value: "Herd-Johnson",    label: qsTr("Mean Rank (Herd-Johnson)")     },
+						{ value: "Kaplan-Meier",    label: qsTr("Kaplan-Meier")                 },
+						{ value: "Hazen",   		label: qsTr("Modified Kaplan-Meier (Hazen)")}
 					]
 				}
 

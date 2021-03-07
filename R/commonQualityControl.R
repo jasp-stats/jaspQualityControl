@@ -24,12 +24,6 @@
   return(ready)
 }
 
-.qcConvertDatasetToQccReady <- function(options, dataset){
-  qccData <- as.matrix(t(as.data.frame(dataset[, options[["variables"]]])))
-  rownames(qccData) <- 1:nrow(qccData)
-  return(qccData)
-}
-
 #############################################################
 ## Common functions for plots ###############################
 #############################################################
