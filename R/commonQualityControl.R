@@ -87,8 +87,8 @@
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
-    ggplot2::geom_hline(yintercept = warn.limits, color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept = warn.limits, color = "darkred", linetype = "dashed") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Mean") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
@@ -129,8 +129,8 @@
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
     ggplot2::geom_hline(yintercept = center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
-    ggplot2::geom_hline(yintercept = warn.limits, color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept = warn.limits, color = "darkred", linetype = "dashed") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Range") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name= gettext("Subgroup") ,breaks = xBreaks, limits = range(xLimits)) +

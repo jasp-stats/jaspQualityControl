@@ -44,7 +44,8 @@ Form
 			name:               			"subgroups"
 			title:             			 	qsTr("Subgroups")
 			singleVariable:    	 			true
-			allowedColumns:     			["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:     			["nominal", "nominalText", "ordinal"]
+			debug:							true // Not sure how this is supposed to be used yet
 		}
 	}
 
