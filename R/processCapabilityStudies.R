@@ -50,6 +50,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   container$dependOn(options = c("normalCapabilityStudy", "capabilityStudy", "nonNormalCapabilityStudy", "variables", "subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
   container$position <- 4
 
+  ready <- length(options[["variables"]]) > 1L
+
   jaspResults[["capabilityAnalysis"]] <- container
 
   if (options[["normalCapabilityStudy"]]) {
