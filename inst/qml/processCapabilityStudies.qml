@@ -12,96 +12,228 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-import QtQuick                  	2.8
-import QtQuick.Layouts              1.3
-import JASP.Controls              	1.0
-import JASP.Widgets               	1.0
+import QtQuick                  			2.8
+import QtQuick.Layouts              		1.3
+import JASP.Controls              			1.0
+import JASP.Widgets               			1.0
 
 Form
 {
-	usesJaspResults:              true
-	columns:						1
+	columns:								2
 
 	VariablesForm
 	{
-		id:                   variablesForm
+		id:                   				variablesForm
 
 		AvailableVariablesList
 		{
-			name:               "variablesForm"
+			name:               			"variablesForm"
 		}
 
 		AssignedVariablesList
 		{
-			id:                 variable1
-			name:               "diameter"
-			title:              qsTr("Measurements")
-			allowedColumns:     ["scale"]
+			id:                 			variables
+			name:               			"variables"
+			title:              			qsTr("Measurements")
+			allowedColumns:     			["scale"]
 		}
 
 		AssignedVariablesList
 		{
-			id:                 variable2
-			name:               "subgroups"
-			title:              qsTr("Subgroups")
-			singleVariable:     true
-			allowedColumns:     ["nominal", "nominalText", "ordinal", "scale"]
+			id:                 			subgroups
+			name:               			"subgroups"
+			title:             			 	qsTr("Subgroups")
+			singleVariable:    	 			true
+			allowedColumns:     			["nominal", "nominalText", "ordinal"]
+			debug:							true // Not sure how this is supposed to be used yet
 		}
 	}
 
-	Group
+	ColumnLayout
 	{
-		title: qsTr("Stability of the Process")
-		CheckBox { name: "controlCharts";			label: qsTr("X-bar & Range Control Chart") }
-	}
-
-	Group
-	{
-		title: qsTr("Distribution of the Process")
-		CheckBox { name: "histogram";			label: qsTr("Histogram")}
-		CheckBox { name: "probabilityPlot";    label: qsTr("Probability Plot")
-			DropDown
-			{
-				name: "rank"
-				label: qsTr("Rank method")
-				indexDefaultValue: 0
-				values:
-					[
-					{ value: "median",    label: qsTr("Median Rank (Benard)")                        },
-					{ value: "mean",      label: qsTr("Mean Rank (Herd-Johnson)")                    },
-					{ value: "KM",        label: qsTr("Kaplan-Meier")                                },
-					{ value: "KMmodif",   label: qsTr("Modified Kaplan-Meier (Hazen)")               }
-				]
-			}
-			DropDown
-			{
-				name: "Nulldis"
-				label: qsTr("Null distribution")
-				indexDefaultValue: 0
-				values:
-					[
-					{ label: qsTr("Normal"),		value: "Normal"			},
-					{ label: qsTr("Lognormal"),	value: "Lognormal"      },
-					{ label: qsTr("Weibull"),		value: "Weibull"        }
-				]
-			}
-		}
-	}
-
-	Section
-	{
-		title:	qsTr("Process Capability Study")
-		RadioButtonGroup
-		{
-			name: "capabilityStudy"
-			RadioButton { name: "initialCapabilityAnalysis";	label: qsTr("Initial Capability Analysis"); checked: true	}
-			RadioButton { name: "followupCapabilityAnalysis";  label: qsTr("Follow-up Capability Analysis")	}
-		}
 		Group
 		{
-			DoubleField { name: "upperSpecification";  label: qsTr("Upper Specification Limit") ; negativeValues: true   }
-			DoubleField { name: "targetValue";         label: qsTr("Target value") ; negativeValues: true                }
-			DoubleField { name: "lowerSpecification";  label: qsTr("Lower Specification Limit") ; negativeValues: true   }
+			title:							qsTr("Study Type")
+
+			CheckBox 
+			{ 									
+				name: 						"normalCapabilityStudy"
+				label: 						qsTr("Normal capability study")
+				checked: 					true
+												
+				RadioButtonGroup
+				{
+					name: 					"capabilityStudy"
+
+					RadioButton 
+					{ 
+						name: 				"initialCapabilityAnalysis"
+						label: 				qsTr("Initial capability study")
+						checked: 			true	
+					}
+
+					RadioButton 
+					{ 
+						name: 				"followupCapabilityAnalysis"
+						label: 				qsTr("Follow-up capability study")
+					}
+				}
+			}
+
+			CheckBox 
+			{ 
+				name: 						"nonNormalCapabilityStudy"
+				label: 						qsTr("Non-normal capability study")
+
+				DropDown
+				{
+					name: 					"nonNormalDist"
+					label: 					qsTr("Specify a distribution")
+					indexDefaultValue: 		0
+					values:
+					[
+						{ label: qsTr("Weibull"),		value: "Weibull"  },
+						{ label: qsTr("Lognormal"),		value: "Lognormal"}
+					]
+				}
+			}
+		}
+
+		Group
+		{
+			title: 							qsTr("Study Limits")
+
+			CheckBox
+			{
+				name: 						"lowerSpecificationField"
+				label: 						qsTr("Lower specification limit")
+				childrenOnSameRow:			true
+				
+				DoubleField 
+				{ 
+					id:						lower
+					name: 					"lowerSpecification"
+					negativeValues:			true
+					defaultValue:			-1
+					max:					target.value
+				}
+			}
+
+			CheckBox
+			{
+				name: 						"targetValueField"
+				label: 						qsTr("Target value")
+				childrenOnSameRow:			true
+				
+				DoubleField 
+				{ 
+					id:						target
+					name: 					"targetValue"
+					negativeValues:			true
+					defaultValue:			0
+					max:					upper.value
+					min:					lower.value
+				}
+			}
+
+			CheckBox
+			{
+				name: 						"upperSpecificationField"
+				childrenOnSameRow:			true
+				label: 						qsTr("Upper specification limit")
+				
+				DoubleField 
+				{ 
+					id:						upper
+					name: 					"upperSpecification"
+					negativeValues:			true
+					defaultValue:			1
+					min:					target.value
+				}
+			}
+		}
+	}
+
+	ColumnLayout
+	{
+		Group
+		{
+			title: 							qsTr("Stability of the Process")
+			
+			CheckBox 
+			{ 
+				name: 						"controlCharts"
+				label: 						qsTr("X-bar & R chart")
+				checked: 					true
+			}
+		}
+
+		Group
+		{
+			title: 							qsTr("Distribution of the Process")
+
+			CheckBox 
+			{ 
+				name: 						"histogram"
+				label: 						qsTr("Distribution plot")
+				checked: 					true
+
+				CheckBox
+				{
+					name:					"displayDensity"
+					label:					qsTr("Display density")
+					checked:				true
+				}
+
+				DoubleField
+				{
+					name:					"numberOfBins"
+					label:					qsTr("Number of bins")
+					defaultValue:			30
+					min:					3
+					max:					10000
+				}
+			}
+
+			CheckBox 
+			{ 
+				name: 						"probabilityPlot"
+				label: 						qsTr("Probability table and plots")
+				checked: 					true
+
+				DropDown
+				{
+					name: 					"rank"
+					label: 					qsTr("Rank method")
+					indexDefaultValue: 		0
+					values:
+					[
+						{ value: "Bernard",    		label: qsTr("Median Rank (Benard)")         },
+						{ value: "Herd-Johnson",    label: qsTr("Mean Rank (Herd-Johnson)")     },
+						{ value: "Kaplan-Meier",    label: qsTr("Kaplan-Meier")                 },
+						{ value: "Hazen",   		label: qsTr("Modified Kaplan-Meier (Hazen)")}
+					]
+				}
+
+				DropDown
+				{
+					name: 					"nullDistribution"
+					label: 					qsTr("Null distribution")
+					indexDefaultValue: 		0
+					values:
+					[
+						{ label: qsTr("Normal"),		value: "Normal"	   },
+						{ label: qsTr("Lognormal"),		value: "Lognormal" },
+						{ label: qsTr("Weibull"),		value: "Weibull"   }
+					]
+				}
+
+				CheckBox
+				{
+					name:					"addGridlines"
+					label:					qsTr("Display grid lines in plots")
+				}
+			}
 		}
 	}
 }

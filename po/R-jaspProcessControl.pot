@@ -1,0 +1,566 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: jaspProcessControl NA\n"
+"POT-Creation-Date: 2021-03-06 15:53\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+msgid "Select one of the control charts from the interface."
+msgstr ""
+
+msgid "P chart"
+msgstr ""
+
+msgid "NP chart"
+msgstr ""
+
+msgid "Laney P' chart"
+msgstr ""
+
+msgid "C chart"
+msgstr ""
+
+msgid "U chart"
+msgstr ""
+
+msgid "CL = %g"
+msgstr ""
+
+msgid "UCL = %g"
+msgstr ""
+
+msgid "LCL = %g"
+msgstr ""
+
+msgid "Proportion"
+msgstr ""
+
+msgid "Sample"
+msgstr ""
+
+msgid "D"
+msgstr ""
+
+msgid "Moving Range"
+msgstr ""
+
+msgid "Observation"
+msgstr ""
+
+msgid "Individual charts"
+msgstr ""
+
+msgid "Moving range charts"
+msgstr ""
+
+msgid "Variable: %s"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "X bar chart"
+msgstr ""
+
+msgid "R chart"
+msgstr ""
+
+msgid "S Chart"
+msgstr ""
+
+msgid "Standard Deviation"
+msgstr ""
+
+msgid "Subgroup"
+msgstr ""
+
+msgid "Mean"
+msgstr ""
+
+msgid "Range"
+msgstr ""
+
+msgid "Descriptives for %s"
+msgstr ""
+
+msgid "Available Factorial Designs (with Resolution)"
+msgstr ""
+
+msgid "Runs"
+msgstr ""
+
+msgid "Design resolutions describe how much the effects in a fractional factorial design are aliased with other effects. See the help file for more information."
+msgstr ""
+
+msgid "Selected Design"
+msgstr ""
+
+msgid "Design"
+msgstr ""
+
+msgid "Factors"
+msgstr ""
+
+msgid "Resolution"
+msgstr ""
+
+msgid "Center points"
+msgstr ""
+
+msgid "Replicates"
+msgstr ""
+
+msgid "Blocks"
+msgstr ""
+
+msgid "2-level factorial"
+msgstr ""
+
+msgid "Design Preview"
+msgstr ""
+
+msgid "RunOrder"
+msgstr ""
+
+msgid "Design Choice"
+msgstr ""
+
+msgid "Cohen's Kappa"
+msgstr ""
+
+msgid "Attribute Agreement Analysis"
+msgstr ""
+
+msgid "Kendall's Tau"
+msgstr ""
+
+msgid "Cohen's Kappa for Appraiser vs Standard"
+msgstr ""
+
+msgid "Appraiser"
+msgstr ""
+
+msgid "Fleiss' Kappa"
+msgstr ""
+
+msgid "Within Appraisers"
+msgstr ""
+
+msgid "Appraiser vs Standard"
+msgstr ""
+
+msgid "Between Appraisers"
+msgstr ""
+
+msgid "Each Appraiser vs Standard"
+msgstr ""
+
+msgid "All Appraisers vs Standard"
+msgstr ""
+
+msgid "Inspected"
+msgstr ""
+
+msgid "Matched"
+msgstr ""
+
+msgid "Percent"
+msgstr ""
+
+msgid "More than 1 Measurement per Operator required."
+msgstr ""
+
+msgid "Kendall's Tau is only available for numeric measurements."
+msgstr ""
+
+msgid "Operator"
+msgstr ""
+
+msgid "Linearity and Bias"
+msgstr ""
+
+msgid "Gauge Bias"
+msgstr ""
+
+msgid "Part"
+msgstr ""
+
+msgid "Reference Value"
+msgstr ""
+
+msgid "Observed Mean"
+msgstr ""
+
+msgid "Bias"
+msgstr ""
+
+msgid "Percent Bias"
+msgstr ""
+
+msgid "p (t-test of Bias against 0)"
+msgstr ""
+
+msgid "Gauge Linearity 1"
+msgstr ""
+
+msgid "Predictor"
+msgstr ""
+
+msgid "Coefficient"
+msgstr ""
+
+msgid "SE Coefficient"
+msgstr ""
+
+msgid "p"
+msgstr ""
+
+msgid "Gauge Linearity 2"
+msgstr ""
+
+msgid "S"
+msgstr ""
+
+msgid "Linearity"
+msgstr ""
+
+msgid "R-squared"
+msgstr ""
+
+msgid "Percent Linearity"
+msgstr ""
+
+msgid "Bias and Linearity Graph"
+msgstr ""
+
+msgid "Percent Process Variation Graph"
+msgstr ""
+
+msgid "Average"
+msgstr ""
+
+msgid "Gauge r&R ANOVA Table"
+msgstr ""
+
+msgid "Range Chart by Operator"
+msgstr ""
+
+msgid "Xbar Chart by Operator"
+msgstr ""
+
+msgid "Scatterplot Operators"
+msgstr ""
+
+msgid "Measurement by Part Graph"
+msgstr ""
+
+msgid "Measurement by Operator Graph"
+msgstr ""
+
+msgid "Parts by Operator Interaction Graph"
+msgstr ""
+
+msgid "Scatterplot Operators vs Parts"
+msgstr ""
+
+msgid "Range Method R Chart"
+msgstr ""
+
+msgid "ANOVA Tables"
+msgstr ""
+
+msgid "Two-Way ANOVA Table with Interaction"
+msgstr ""
+
+msgid "Cases"
+msgstr ""
+
+msgid "df"
+msgstr ""
+
+msgid "Sum of Squares"
+msgstr ""
+
+msgid "Mean Square"
+msgstr ""
+
+msgid "F"
+msgstr ""
+
+msgid "r & R Table 1"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "Variation"
+msgstr ""
+
+msgid "Percent Contribution to Total"
+msgstr ""
+
+msgid "Total r & R"
+msgstr ""
+
+msgid "Repeatability"
+msgstr ""
+
+msgid "Reproducibility"
+msgstr ""
+
+msgid "Part-To-Part"
+msgstr ""
+
+msgid "Operator x Part"
+msgstr ""
+
+msgid "Total Variation"
+msgstr ""
+
+msgid "r & R Table 2"
+msgstr ""
+
+msgid "SD"
+msgstr ""
+
+msgid "Study Variation (SD * %.2f)"
+msgstr ""
+
+msgid "Percent Study Variation"
+msgstr ""
+
+msgid "Percent Tolerance"
+msgstr ""
+
+msgid "Two-Way ANOVA Table without Interaction"
+msgstr ""
+
+msgid "Variation Components Graph"
+msgstr ""
+
+msgid "Gauge r&R"
+msgstr ""
+
+msgid "Repeat"
+msgstr ""
+
+msgid "Reprod"
+msgstr ""
+
+msgid "Part-to-Part"
+msgstr ""
+
+msgid "Percent Contribution"
+msgstr ""
+
+msgid "Number of observations is < 2 in %s after grouping on %s"
+msgstr ""
+
+msgid "Operator %s"
+msgstr ""
+
+msgid "At least 2 measurements per operator required."
+msgstr ""
+
+msgid "Scatterplot of Operator A vs Operator B"
+msgstr ""
+
+msgid "Measurements by Part"
+msgstr ""
+
+msgid "Measurements by Operator"
+msgstr ""
+
+msgid "Parts by Operator Interaction"
+msgstr ""
+
+msgid "Scatterplot of Operator A, Operator B vs Part"
+msgstr ""
+
+msgid "r & R Table"
+msgstr ""
+
+msgid "R-bar"
+msgstr ""
+
+msgid "d2"
+msgstr ""
+
+msgid "Process Std. Dev."
+msgstr ""
+
+msgid "GRR"
+msgstr ""
+
+msgid "%GRR"
+msgstr ""
+
+msgid "Plotting not possible: More than 2 Operators"
+msgstr ""
+
+msgid "Run Chart"
+msgstr ""
+
+msgid "Bias Table"
+msgstr ""
+
+msgid "t-Test Bias"
+msgstr ""
+
+msgid "Histogram Bias"
+msgstr ""
+
+msgid "Bias and Capability Table"
+msgstr ""
+
+msgid "Basic Statistics"
+msgstr ""
+
+msgid "SV(%.2f * SD)"
+msgstr ""
+
+msgid "Tolerance"
+msgstr ""
+
+msgid "Bias Percent"
+msgstr ""
+
+msgid "Capability"
+msgstr ""
+
+msgid "Cg"
+msgstr ""
+
+msgid "Cgk"
+msgstr ""
+
+msgid "%Var(Repeatability)"
+msgstr ""
+
+msgid "%Var(Repeatability and Bias)"
+msgstr ""
+
+msgid "t-Test of Observed Bias Against 0"
+msgstr ""
+
+msgid "LB"
+msgstr ""
+
+msgid "95% CI"
+msgstr ""
+
+msgid "UB"
+msgstr ""
+
+msgid "t"
+msgstr ""
+
+msgid "Bias Histogram"
+msgstr ""
+
+msgid "Probability Plots"
+msgstr ""
+
+msgid "Probability Plot Table"
+msgstr ""
+
+msgid "Process Capability of Measurements (Initial Capability Study)"
+msgstr ""
+
+msgid "Process Capability of Measurements (Follow-up Capability Study)"
+msgstr ""
+
+msgid "Nonnormal Capability Analysis"
+msgstr ""
+
+msgid "Histogram"
+msgstr ""
+
+msgid "Measurements"
+msgstr ""
+
+msgid "Capability of the Process"
+msgstr ""
+
+msgid "Process Data"
+msgstr ""
+
+msgid "LSL"
+msgstr ""
+
+msgid "Target"
+msgstr ""
+
+msgid "USL"
+msgstr ""
+
+msgid "Sample Average"
+msgstr ""
+
+msgid "Sample N"
+msgstr ""
+
+msgid "Sd (Total)"
+msgstr ""
+
+msgid "Sd (Within)"
+msgstr ""
+
+msgid "Process Capability (Within)"
+msgstr ""
+
+msgid "CPL"
+msgstr ""
+
+msgid "CPU"
+msgstr ""
+
+msgid "Cp"
+msgstr ""
+
+msgid "Cpk"
+msgstr ""
+
+msgid "ppm"
+msgstr ""
+
+msgid "Process Performance (Total)"
+msgstr ""
+
+msgid "PPL"
+msgstr ""
+
+msgid "PPU"
+msgstr ""
+
+msgid "Pp"
+msgstr ""
+
+msgid "Ppk"
+msgstr ""
+
+msgid "Process Capability based on Lognormal Distribution"
+msgstr ""
+
+msgid "Sd"
+msgstr ""
+
+msgid "P (X < LSL)"
+msgstr ""
+
+msgid "P (X > USL)"
+msgstr ""
+
+msgid "Process Capability based on Weibull Distribution"
+msgstr ""
+
+msgid "Beta"
+msgstr ""
+
+msgid "Theta"
+msgstr ""
