@@ -130,7 +130,9 @@ Form
 						name: "studyVarMultiplier"
 						label: qsTr("Study Var. Multiplier Value:")
 						fieldWidth: 60 
-						defaultValue: 6  
+						defaultValue: 6
+						min:			0.001;
+						max:			99.999;						
 						decimals: 3
 						}
 					
