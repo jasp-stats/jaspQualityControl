@@ -13,7 +13,7 @@ options$upperSpecification <- 12
 options$upperSpecificationField <- TRUE
 options$variables <- c("Measurement1", "Measurement2", "Measurement3")
 set.seed(1)
-results <- runAnalysis("processCapabilityStudies", "C:/Users/derksk/OneDrive - NBU/Desktop/PhD/JASP modules/jaspProcessControl/tests/testthat/partOperatorData.csv", options)
+results <- runAnalysis("processCapabilityStudies", "partOperatorData.csv", options)
 
 
 test_that("Process Capability based on the Weibull Distribution table results match", {
