@@ -161,6 +161,15 @@ if(options$Attributes == "Defectives"){
   ready <- options$D != "" && options$total != ""
   if (!ready)
     return()
+  .hasErrors(
+    dataset,
+    all.target = options$total,
+    custom = function() {
+      if (length(unique(dataset[[options$total]])) > 1)
+        return("Samples must be equal in size")
+    },
+    exitAnalysisIfErrors = TRUE
+  )
 
   .Check_equal_samples(dataset, options)
 
