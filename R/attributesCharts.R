@@ -153,7 +153,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
   .Check_equal_samples(dataset, options)
 
-
   data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
   subgroups <- 1:nrow(data1)
   data_plot <- data.frame(subgroups = subgroups, D = data1$D)
@@ -193,15 +192,8 @@ attributesCharts <- function(jaspResults, dataset, options) {
   ready <- options$D != "" && options$total != ""
   if (!ready)
     return()
-  .hasErrors(
-    dataset,
-    all.target = options$total,
-    custom = function() {
-      if (length(unique(dataset[[options$total]])) > 1)
-        return("Samples must be equal in size")
-    },
-    exitAnalysisIfErrors = TRUE
-  )
+
+  .Check_equal_samples(dataset, options)
 
   .Check_equal_samples(dataset, options)
 
