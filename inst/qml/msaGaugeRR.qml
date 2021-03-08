@@ -38,7 +38,7 @@ Form
 			name:								"operators"
 			title:								qsTr("Operators")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText"]
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
 		
 		AssignedVariablesList
@@ -47,7 +47,7 @@ Form
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
 
 		AssignedVariablesList

@@ -35,6 +35,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
 
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
+    dataset <- na.omit(dataset)
   }
 
   # Linearity and Bias Analysis

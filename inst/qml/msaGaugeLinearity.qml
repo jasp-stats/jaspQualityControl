@@ -38,7 +38,7 @@ Form
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
 
 		AssignedVariablesList
@@ -47,7 +47,7 @@ Form
 			name:								"measurements"
 			title:								qsTr("Measurements")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["scale"]
 		}
 		
 		AssignedVariablesList
@@ -56,7 +56,7 @@ Form
 			name:								"standard"
 			title:								qsTr("Standard")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["scale"]
 		}
 	}
 	
