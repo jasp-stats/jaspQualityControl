@@ -120,15 +120,7 @@ if(options$Attributes == "Defectives"){
   if (!ready)
     return()
 
-  .hasErrors(
-    dataset,
-    all.target = options$total,
-    custom = function() {
-      if (length(unique(dataset[[options$total]])) > 1)
-        return("Samples must be equal in size")
-    },
-    exitAnalysisIfErrors = TRUE
-  )
+  .Check_equal_samples(dataset, options)
 
   data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
   subgroups <- 1:nrow(data1)
@@ -169,15 +161,8 @@ if(options$Attributes == "Defectives"){
   ready <- options$D != "" && options$total != ""
   if (!ready)
     return()
-  .hasErrors(
-    dataset,
-    all.target = options$total,
-    custom = function() {
-      if (length(unique(dataset[[options$total]])) > 1)
-        return("Samples must be equal in size")
-    },
-    exitAnalysisIfErrors = TRUE
-  )
+
+  .Check_equal_samples(dataset, options)
 
   data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
   subgroups <- 1:nrow(data1)
@@ -439,4 +424,15 @@ if(options$Attributes == "Defectives"){
     jaspGraphs::themeJaspRaw()
 
   return(p)
+}
+.Check_equal_samples <- function(dataset,options){
+  .hasErrors(
+    dataset,
+    all.target = options$total,
+    custom = function() {
+      if (length(unique(dataset[[options$total]])) > 1)
+        return("Samples must be equal in size")
+    },
+    exitAnalysisIfErrors = TRUE
+  )
 }
