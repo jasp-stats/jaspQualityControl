@@ -23,6 +23,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = measurements)
+    dataset <- na.omit(dataset)
   }
 
 
