@@ -7,7 +7,7 @@ AttributeCharts <- function(jaspResults, dataset, options){
 
   dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
   #Checking for errors in the dataset
-  .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
+  .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues', "negativeValues"),
              all.target = options$variables,
              observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE)
 
@@ -120,6 +120,16 @@ if(options$Attributes == "Defectives"){
   if (!ready)
     return()
 
+  .hasErrors(
+    dataset,
+    all.target = options$total,
+    custom = function() {
+      if (length(unique(dataset[[options$total]])) > 1)
+        return("Samples must be equal in size")
+    },
+    exitAnalysisIfErrors = TRUE
+  )
+
   data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
   subgroups <- 1:nrow(data1)
   data_plot <- data.frame(subgroups = subgroups, D = data1$D)
@@ -159,6 +169,15 @@ if(options$Attributes == "Defectives"){
   ready <- options$D != "" && options$total != ""
   if (!ready)
     return()
+  .hasErrors(
+    dataset,
+    all.target = options$total,
+    custom = function() {
+      if (length(unique(dataset[[options$total]])) > 1)
+        return("Samples must be equal in size")
+    },
+    exitAnalysisIfErrors = TRUE
+  )
 
   data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
   subgroups <- 1:nrow(data1)
@@ -192,6 +211,8 @@ if(options$Attributes == "Defectives"){
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$D > UCL | data_plot$D < LCL, 'red', 'gray')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
+
+
   return(p)
 }
 .Uchart <- function(dataset, options){
