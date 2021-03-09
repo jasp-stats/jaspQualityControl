@@ -17,379 +17,578 @@
 
 processCapabilityStudies <- function(jaspResults, dataset, options){
 
-  diameter <- unlist(options$diameter)
-  subgroupsName <- options$subgroups
-  makeSubgroups <- subgroupsName != ""
+  # Preparatory work
+  dataset <- .qcReadData(dataset, options, type = "capabilityStudy")
 
-  if (is.null(dataset)) {
-    if (makeSubgroups) {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = diameter, columns.as.factor = subgroupsName)
-      dataset.factors <- .readDataSetToEnd(columns = diameter, columns.as.factor = subgroupsName)
-    } else {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = diameter)
-      dataset.factors <- .readDataSetToEnd(columns = diameter)
-    }
-  }
+  # Check if analysis is ready
+  ready <- .qcOptionsReady(options, type = "capabilityStudy")
 
-  # X-bar & Range Control Chart (by Tom)
-  if(options$controlCharts & is.null(jaspResults[["controlCharts"]])) {
-    jaspResults[["XbarPlot"]] <- createJaspPlot(title = "X bar chart", width = 600, height = 300)
-    jaspResults[["XbarPlot"]]$dependOn(c("XbarRchart"))
-    jaspResults[["XbarPlot"]]$position <- 1
-    XbarPlot <- jaspResults[["XbarPlot"]]
-    XbarPlot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
-    XbarPlot$dependOn(optionContainsValue= list(diameter=diameter))
+  # X-bar and R Chart
+  .qcXbarAndRContainer(options, dataset, ready, jaspResults)
 
-    jaspResults[["RPlot"]] <- createJaspPlot(title = "R chart", width = 600, height= 300)
-    jaspResults[["RPlot"]]$dependOn(c("XbarRchart"))
-    jaspResults[["RPlot"]]$position <- 2
-    RPlot<- jaspResults[["RPlot"]]
-    RPlot$plotObject <- .RchartNoId(dataset = dataset, options = options)
-    RPlot$dependOn(optionContainsValue= list(diameter=diameter))
-  }
+  # Distribution plot
+  .qcDistributionPlot(options, dataset, ready, jaspResults)
 
-  # Histogram
-  if (options$histogram) {
-    if(is.null(jaspResults[["histogram"]])) {
-      jaspResults[["histogram"]] <- .histogram(options, dataset, diameter, subgroupsName)
-      jaspResults[["histogram"]]$position <- 3
-    }
-  }
+  # Probability plots section
+  .qcProbabilityPlotContainer(options, dataset, ready, jaspResults)
 
-  #Probability Plot
-  if(options$probabilityPlot) {
-    if (is.null(jaspResults[["probabilityPlot"]])){
-      jaspResults[["probabilityPlot"]] <- createJaspContainer(gettext("Probability Plots"))
-      jaspResults[["probabilityPlot"]]$dependOn(c("probabilityPlot"))
-      jaspResults[["probabilityPlot"]]$position <- 5
-      jaspResults[["PPtables"]] <- createJaspContainer(gettext("Probability Plot Table"))
-      jaspResults[["PPtables"]]$dependOn(c("probabilityPlot"))
-      jaspResults[["PPtables"]]$position <- 4
-    }
-
-    PPplots <- jaspResults[["probabilityPlot"]]
-    PPtables <- jaspResults[["PPtables"]]
-    for (var in diameter){
-      PPplots[[var]] <- .ProbabilityPlotNoId(dataset = dataset, options = options, variable = var, dis = options$Nulldis)
-      PPtables[[var]] <- .PPtable(dataset = dataset, options = options, variable = var, dis = options$Nulldis)
-    }
-  }
-
-  # Initial Capability Analysis
-  if (options[["capabilityStudy"]] == "initialCapabilityAnalysis"){
-    if(is.null(jaspResults[["initialCapabilityAnalysis"]])) {
-      jaspResults[["initialCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Initial Capability Study)"))
-      jaspResults[["initialCapabilityAnalysis"]]$dependOn(c("capabilityStudy","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
-      jaspResults[["initialCapabilityAnalysis"]]$position <- 5
-    }
-
-    initialCapabilityAnalysis <- jaspResults[["initialCapabilityAnalysis"]]
-    initialCapabilityAnalysis[["processDataTable"]] <- .processDataTable(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis)
-    initialCapabilityAnalysis[["capabilityPlot"]] <- .capabilityPlot(options, dataset, diameter, subgroupsName)
-    initialCapabilityAnalysis[["capabilityTable"]] <- .capabilityTable(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis)
-  }
-
-  # Follow-up Capability Analysis
-  if (options[["capabilityStudy"]] == "followupCapabilityAnalysis"){
-    if(is.null(jaspResults[["followupCapabilityAnalysis"]])) {
-      jaspResults[["followupCapabilityAnalysis"]] <- createJaspContainer(gettext("Process Capability of Measurements (Follow-up Capability Study)"))
-      jaspResults[["followupCapabilityAnalysis"]]$dependOn(c("capabilityStudy","diameter","subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
-      jaspResults[["followupCapabilityAnalysis"]]$position <- 5
-    }
-
-    followupCapabilityAnalysis <- jaspResults[["followupCapabilityAnalysis"]]
-    followupCapabilityAnalysis[["processDataTable"]] <- .processDataTable(options, dataset, diameter, subgroupsName, followupCapabilityAnalysis)
-    followupCapabilityAnalysis[["capabilityPlot"]] <- .capabilityPlot(options, dataset, diameter, subgroupsName)
-    followupCapabilityAnalysis[["capabilityTable"]] <- .capabilityTable(options, dataset, diameter, subgroupsName, followupCapabilityAnalysis)
-  }
-
-#Non normal Capability Analysis
-if(options[["nonNormalCapabilityStudy"]]){
-  if (is.null(jaspResults[["nonNormalCapabilityStudy"]])){
-    jaspResults[["nonNormalCapabilityStudy"]] <- createJaspContainer(gettext("Nonnormal Capability Analysis"))
-    jaspResults[["nonNormalCapabilityStudy"]]$dependOn(c("nonNormalCapabilityStudy","diameter","subgroups", "lowerSpecification", "upperSpecification"))
-    jaspResults[["nonNormalCapabilityStudy"]]$position <- 5
-  }
-    jaspResults[["nonNormalCapabilityStudy"]] <- .nonNormalCapabilityTable(options, dataset, diameter, subgroupsName,dis = options$nonNormalDist)
+  # Perform capability analysis
+  .qcCapabilityAnalysis(options, dataset, ready, jaspResults)
 }
-}  
 
-.histogram <- function(options, dataset, diameter, subgroupsName){
+#############################################################
+## Functions for capability analysis section ################
+#############################################################
 
-  if(!options[["histogram"]] || is.null(unlist(options[["diameter"]])) || options[["subgroups"]] == "")
+################
+## Containers ##
+################
+
+.qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults){
+
+  container <- createJaspContainer(gettext("Capability Studies"))
+  container$dependOn(options = c("normalCapabilityStudy", "capabilityStudy", "nonNormalCapabilityStudy", "variables", "subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
+  container$position <- 4
+
+  ready <- length(options[["variables"]]) > 1L
+
+  jaspResults[["capabilityAnalysis"]] <- container
+
+  if (options[["normalCapabilityStudy"]]) {
+
+    if(options[["capabilityStudy"]] == "initialCapabilityAnalysis")
+      title <- gettext("Process Capability of Measurements (Initial Capability Study)")
+    if(options[["capabilityStudy"]] == "followupCapabilityAnalysis")
+      title <- gettext("Process Capability of Measurements (Follow-Up Capability Study)")
+
+    childContainer <- createJaspContainer(title)
+    childContainer$position <- 1
+    container[["normalCapabilityAnalysis"]] <- childContainer
+
+    .qcProcessSummaryTable(options, dataset, ready, childContainer)
+    .qcProcessCapabilityPlot(options, dataset, ready, childContainer)
+    .qcProcessCapabilityTableWithin(options, dataset, ready, childContainer)
+    .qcProcessCapabilityTableOverall(options, dataset, ready, childContainer)
+
+  }
+
+  if (options[["nonNormalCapabilityStudy"]]) {
+
+    childContainer2 <- createJaspContainer(gettext("Process Capability of Measurements (Non-Normal Capability Study)"))
+    childContainer2$position <- 2
+    container[["nonNormalCapabilityAnalysis"]] <- childContainer2
+
+    .qcProcessCapabilityTableNonNormal(options, dataset, ready, childContainer2)
+  }
+}
+
+################
+## Output ######
+################
+
+.qcProcessSummaryTable <- function(options, dataset, ready, container){
+
+  table <- createJaspTable(title = gettext("Process Summary"))
+  table$position <- 1
+
+  if (options[["lowerSpecificationField"]])
+    table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
+  if (options[["targetValueField"]])
+    table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
+  if (options[["upperSpecificationField"]])
+    table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
+
+  table$addColumnInfo(name = "n", type = "integer", title = gettext("Measurements"))
+  table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
+  table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. Deviation (Total)"))
+  table$addColumnInfo(name = "sdw", type = "number", title = gettext("Std. Deviation (Within)"))
+
+  table$showSpecifiedColumnsOnly <- TRUE
+
+  container[["processSummaryTable"]] <- table
+
+  if(!ready)
     return()
 
-  diameter <- encodeColNames(diameter)
-  subgroupsName <- encodeColNames(subgroupsName)
-  thePlot <- createJaspPlot(title = gettext("Histogram"), width = 400, height = 400)
-  thePlot$dependOn(options = "histogram")
-  plotDat <- data.frame(measurements = as.numeric(unlist(dataset[, diameter])))
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotDat[["measurements"]], min.n = 4)
+  # Take a look at this input! Is is supposed to be like this or must it be transposed?
+  # Transposed gives NA often as std.dev
+  qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
+  allData <- unlist(dataset[, options[["variables"]]])
 
-  p <- ggplot2::ggplot(plotDat, ggplot2::aes(x = measurements)) +
-    ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks) +
-    ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7) +
-    ggplot2::stat_function(fun = dnorm, color = "blue",
-                           args = list(mean = mean(plotDat[["measurements"]]), sd = sd(plotDat[["measurements"]])))
-  p <- jaspGraphs::themeJasp(p)
+  if(is.na(qccFit[["std.dev"]]))
+    table$addFootnote(gettext("The within standard deviation could not be calculated."))
 
-  thePlot$plotObject <- p
-  return(thePlot)
+  rows <- list(
+    "lsl"    = options[["lowerSpecification"]],
+    "target" = options[["targetValue"]],
+    "usl"    = options[["upperSpecification"]],
+    "mean"   = mean(allData, na.rm = TRUE),
+    "n"      = nrow(dataset),
+    "sd"     = sd(allData, na.rm = TRUE),
+    "sdw"    = qccFit[["std.dev"]]
+  )
+  table$addRows(rows)
 }
 
-.capabilityPlot <- function(options, dataset, diameter, subgroupsName){
+.qcProcessCapabilityPlot <- function(options, dataset, ready, container){
 
-  thePlot <- createJaspPlot(title = gettext("Capability of the Process"), width = 600, height = 300)
+  plot <- createJaspPlot(title = gettext("Capability of the Process"), width = 600, height = 300)
+  plot$position <- 2
+  container[["capabilityPlot"]] <- plot
 
-  plotDat <- data.frame(measurements = as.numeric(unlist(dataset[, diameter])))
-  dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
+  if(!ready)
+    return()
 
-  USL <- as.numeric(options$upperSpecification)
-  LSL <- as.numeric(options$lowerSpecification)
-  targetValue <- as.numeric(options$targetValue)
-  sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
-  sampleN <- ncol(dataDiameter)
+  # Take a look at this input! Is is supposed to be like this or must it be transposed?
+  # Transposed gives NA often as std.dev
+  qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
+  allData <- unlist(dataset[, options[["variables"]]])
+  plotData <- data.frame(x = allData)
 
-  stDevWithin <- qcc::qcc(dataDiameter, type ='R', plot=FALSE)$std.dev #stDevWithin <- rBar/d2
-  stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
+  sdw <- qccFit[["std.dev"]]
+  sdo <- sd(allData, na.rm = TRUE)
 
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(unlist(dataDiameter), targetValue, LSL, USL), min.n = 4)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], options[["lowerSpecification"]], options[["upperSpecification"]]), min.n = 4)
 
-  p <- ggplot2::ggplot(plotDat, ggplot2::aes(x = measurements)) +
+  p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
     ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks, limits = range(xBreaks)) +
-    ggplot2::geom_histogram(ggplot2::aes(y =..density..),
-                            fill = "grey",
-                            col = "black",
-                            size = .7) +
-    ggplot2::stat_function(fun = dnorm,
-                           args = list(mean = sampleMean,
-                                       sd = stDevOverall),
-                           color = "black") +
-    ggplot2::stat_function(fun = dnorm,
-                           args = list(mean = sampleMean,
-                                       sd = stDevWithin),
-                           color = "red") +
-    ggplot2::geom_vline(xintercept = c(LSL,USL),
-                        linetype = "dotted",
-                        color = "red") +
-    ggplot2::geom_vline(xintercept = targetValue,
-                        linetype = "dotted",
-                        color = "green")
+    ggplot2::scale_y_continuous(name = gettext("Density")) +
+    ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7) +
+    ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)), color = "dodgerblue") +
+    ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw), color = "red")
+
+  if(options[["targetValueField"]])
+    p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen")
+  if(options[["lowerSpecificationField"]])
+    p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecification"]], linetype = "dotted", color = "darkred")
+  if(options[["upperSpecificationField"]])
+    p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecification"]], linetype = "dotted", color = "darkred")
+
+  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
+
+  plot$plotObject <- p
+}
+
+.qcProcessCapabilityTableWithin <- function(options, dataset, ready, container){
+
+  if(!options[["lowerSpecificationField"]] && !options[["upperSpecificationField"]])
+    return()
+
+  table <- createJaspTable(title = gettext("Process Capability (Within)"))
+
+  if (options[["lowerSpecificationField"]])
+    table$addColumnInfo(name = "cpl",   type = "number", title = gettext("CPL"))
+  if (options[["upperSpecificationField"]])
+    table$addColumnInfo(name = "cpu",   type = "number", title = gettext("CPU"))
+  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]) {
+    table$addColumnInfo(name = "cp",    type = "number", title = gettext("Cp"))
+    table$addColumnInfo(name = "cpk",   type = "number", title = gettext("Cpk"))
+    table$addColumnInfo(name = "z",     type = "number", title = gettext("ppm"))
+  }
+
+  table$showSpecifiedColumnsOnly <- TRUE
+
+  container[["capabilityTableWithin"]] <- table
+
+  if(!ready)
+    return()
+
+  # Take a look at this input! Is is supposed to be like this or must it be transposed?
+  # Transposed gives NA often as std.dev
+  qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
+  allData <- unlist(dataset[, options[["variables"]]])
+
+  # Calculate capability indices
+  cp <- (options[["upperSpecification"]] - options[["lowerSpecification"]]) / (6 * qccFit[["std.dev"]])
+  cpl <- (mean(allData) - options[["lowerSpecification"]]) / (3 * qccFit[["std.dev"]])
+  cpu <- (options[["upperSpecification"]] - mean(allData)) / (3 * qccFit[["std.dev"]])
+  cpk <- min(cpu, cpl)
+  z <- cpk * 3
+
+  rows <- list("cp" = cp, "cpl" = cpl, "cpu" = cpu, "cpk" = cpk, "z" = z)
+  table$addRows(rows)
+}
+
+.qcProcessCapabilityTableOverall <- function(options, dataset, ready, container){
+
+  table <- createJaspTable(title = gettext("Process Performance (Total)"))
+
+  if (options[["lowerSpecificationField"]])
+    table$addColumnInfo(name = "ppl", type = "number", title = gettext("PPL"))
+  if (options[["upperSpecificationField"]])
+    table$addColumnInfo(name = "ppu", type = "number", title = gettext("PPU"))
+  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]])
+    table$addColumnInfo(name = "pp",  type = "number", title = gettext("Pp"))
+  table$addColumnInfo(name = "ppk",   type = "number", title = gettext("Ppk"))
+  table$addColumnInfo(name = "ppm",   type = "number", title = gettext("ppm"))
+
+  table$showSpecifiedColumnsOnly <- TRUE
+
+  container[["capabilityTableOverall"]] <- table
+
+  if(!ready)
+    return()
+
+  # Take a look at this input! Is is supposed to be like this or must it be transposed?
+  # Transposed gives NA often as std.dev
+  qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
+  allData <- unlist(dataset[, options[["variables"]]])
+  sdo <- sd(allData)
+
+  pp <- (options[["upperSpecification"]] - options[["lowerSpecification"]]) / (6 * sdo)
+  ppl <- (mean(allData) - options[["lowerSpecification"]]) / (3 * sdo)
+  ppu <- (options[["upperSpecification"]] - mean(allData)) / (3 * sdo)
+  ppk <- min(ppu, ppl)
+  cp <- (options[["upperSpecification"]] - options[["lowerSpecification"]]) / (6 * qccFit[["std.dev"]])
+  ppm <- cp / sqrt(1 + ((mean(allData) - options[["targetValue"]]) / qccFit[["std.dev"]])^2)
+
+  rows <- list("pp" = pp, "ppl" = ppl, "ppu" = ppu, "ppk" = ppk, "ppm" = ppm)
+  table$addRows(rows)
+}
+
+.qcProcessCapabilityTableNonNormal <- function(options, dataset, ready, container){
+
+  table <- createJaspTable(title = gettextf("Process Capability based on the %1$s Distribution", options[["nonNormalDist"]]))
+
+  table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
+  table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. Deviation"))
+
+  if (options[["nonNormalDist"]] == "Lognormal"){
+
+    if (options[["lowerSpecificationField"]]) {
+      table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
+      table$addColumnInfo(name = "lower", type = "number", title = gettext("P (X < LSL)"))
+    }
+    if (options[["upperSpecificationField"]]) {
+      table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
+      table$addColumnInfo(name = "upper", type = "number", title = gettext("P (X > USL)"))
+    }
+    if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]) {
+      table$addColumnInfo(name = "cpk", type = "number", title = gettext("Cpk"))
+    }
+
+  } else if (options[["nonNormalDist"]] == "Weibull"){
+
+    if (options[["lowerSpecificationField"]])
+      table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
+    if (options[["upperSpecificationField"]])
+      table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
+
+    table$addColumnInfo(name = "beta", type = "number", title = gettextf("%1$s", "\u03B2"))
+    table$addColumnInfo(name = "theta", type = "number", title = gettextf("%1$s", "\u03B8"))
+
+  }
+
+  table$showSpecifiedColumnsOnly <- TRUE
+
+  container[["capabilityTableNonNormal"]] <- table
+
+  if(!ready)
+    return()
+
+  # Take a look at this input! Is is supposed to be like this or must it be transposed?
+  # Transposed gives NA often as std.dev
+  qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
+  allData <- unlist(dataset[, options[["variables"]]])
+
+  if (options[["nonNormalDist"]] == "Lognormal"){
+
+    tau     <- sd(allData) / mean(allData)
+    sdLog   <- sqrt(log(tau^2 +1))
+    meanLog <- log(mean(allData)) - ((sdLog^2) / 2)
+    lower   <- plnorm(q = options[["lowerSpecification"]], meanlog = meanLog, sdlog = sdLog)
+    upper   <- 1 - plnorm(q = options[["upperSpecification"]], meanlog = meanLog, sdlog = sdLog)
+    cpk     <- 1 - plnorm((max(partsLower, partsUpper))) / 3
+
+    rows <- list("mean" = mean(allData), "sd" = sd(allData), "lsl" = options[["lowerSpecification"]],
+                 "usl" = options[["upperSpecification"]], "cpk" = cpk, "lower" = lower, "upper" = upper)
+
+  } else if (options[["nonNormalDist"]] == "Weibull") {
+
+    beta    <- mixdist::weibullpar(mu = mean(allData), sigma = sd(allData), loc = 0)$shape
+    theta   <- mixdist::weibullpar(mu = mean(allData), sigma = sd(allData), loc = 0)$scale
+
+    rows <- list("mean" = mean(allData), "sd" = sd(allData), "lsl" = options[["lowerSpecification"]],
+                 "usl" = options[["upperSpecification"]], "beta" = beta, "theta" = theta)
+
+  }
+
+  table$addRows(rows)
+}
+
+#############################################################
+## Functions for probability plot section ###################
+#############################################################
+
+################
+## Containers ##
+################
+
+.qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults){
+
+  if(!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
+    return()
+
+  container <- createJaspContainer(gettext("Probability Tables and Plots"))
+  container$dependOn(options = c("variables", "probabilityPlot", "rank", "nullDistribution", "addGridlines"))
+  container$position <- 3
+
+  plotContainer <- createJaspContainer(gettext("Probability Plots"))
+  container[["plotContainer"]] <- plotContainer
+
+  jaspResults[["probabilityContainer"]] <- container
+
+  if(!ready)
+    return()
+
+  .qcProbabilityTable(dataset, options, container)
+
+  for (variable in options[["variables"]]){
+    if(is.null(plotContainer[[variable]]))
+      plotContainer[[variable]]  <- .qcProbabilityPlot(dataset, options, variable)
+  }
+}
+
+################
+## Output ######
+################
+
+.qcProbabilityTable <- function(dataset, options, container){
+
+  table <- createJaspTable(title = gettextf("Summary of Tests Against the %1$s Distribution", options[["nullDistribution"]]))
+  table$position <- 1
+
+  table$addColumnInfo(name = "v", 		title = "",					type = "number")
+  table$addColumnInfo(name = "n",      	title = gettext("n"),  		type = "integer")
+
+  if (options[["nullDistribution"]] == 'Normal') {
+    table$addColumnInfo(name = "mean",  title = gettextf("Mean (%1$s)", "\u03BC"), 				type = "number")
+    table$addColumnInfo(name = "sd",    title = gettextf("Std. deviation (%1$s)", "\u03C3"), 	type = "number")
+  } else if (options[["nullDistribution"]] == 'Lognormal') {
+    table$addColumnInfo(name = "mean",  title = gettextf("Location (%1$s)", "\u03BC"),  		type = "number")
+    table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03C3"), 			type = "number")
+  } else if (options[["nullDistribution"]] == 'Weibull') {
+    table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03BB"), 			type = "number")
+    table$addColumnInfo(name = "sd",    title = gettext("Scale (<i>k</i>)"),        			type = "number")
+  }
+
+  table$addColumnInfo(name = "ad",     	title = gettext("<i>A</i>"), type = "number")
+  table$addColumnInfo(name = "p",		title = gettext("<i>p</i>"), type = "pvalue")
+  table$addColumnInfo(name = "reject",	title = gettext("Reject null distribution?"),      		type = "string")
+
+  table$addFootnote(gettextf("The Anderson-Darling statistic <i>A</i> is calculated against the %2$s distribution using the %3$s ranking method.", "\u00B2", options[["nullDistribution"]], options[["rank"]]))
+
+  container[["probabilityTable"]] <- table
+
+  for(variable in options[["variables"]]){
+
+    values <- dataset[[variable]]
+
+    if (options[["nullDistribution"]] == 'Normal') {
+      meanx   <- mean(values)
+      sdx     <- sd(values)
+      test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
+    } else if (options[["nullDistribution"]] == 'Lognormal') {
+      fit    <- fitdistrplus::fitdist(values, 'lnorm')
+      meanx  <- fit$estimate[1]
+      sdx    <- fit$estimate[2]
+      test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
+    } else if (options[["nullDistribution"]] == 'Weibull') {
+      fit    <- fitdistrplus::fitdist(values, 'weibull')
+      meanx  <- fit$estimate[1]
+      sdx    <- fit$estimate[2]
+      test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
+    }
+
+    n      <- length(values)
+    ad     <- test$statistic
+    p      <- test$p.value
+    reject <- if(p < 0.05) "Yes" else "No"
+
+    row <- list(v = variable, mean = meanx, sd = sdx, n = n, ad = ad, p = p, reject = reject)
+    table$addRows(row)
+  }
+}
+
+.qcProbabilityPlot <- function(dataset, options, variable){
+
+  plot <- createJaspPlot(width = 400, aspectRatio = 1, title = variable)
+  plot$dependOn(optionContainsValue = list(variables = variable))
+
+  # Arrange data
+  x <- dataset[[variable]]
+  x <- x[order(x)]
+  n <- length(x)
+  i <- rank(x)
+
+  # Method for rank
+  Rank_funs <- matrix(list(.qcPpMedian, .qcPpMean, .qcPpKmModif, .qcPpKm), ncol = 1,
+                      dimnames = list(c("Bernard", "Herd-Johnson", "Hazen", 'Kaplan-Meier'), c("p")), byrow = TRUE)
+  rankByUser <- options[["rank"]]
+  p <- Rank_funs[[rankByUser, 'p']](x)
+
+  # Functions for computing y
+  y_funs <- matrix(list(qnorm,qnorm,.qcWeibull), ncol = 1,
+                   dimnames = list(c('Normal', 'Lognormal', 'Weibull'), c('y')), byrow = TRUE)
+  DisByUser <- options[["nullDistribution"]]
+  y <- y_funs[[DisByUser, 'y']](p)
+
+  data1 <- data.frame(x = x, y = y)
+
+  # Quantities
+  pSeq <- seq(0.001, 0.999, 0.001)
+  ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(min(x), max(x)))
+
+  # Computing according to the distribution
+  if (options[["nullDistribution"]] == 'Normal') {
+
+    lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
+    matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("mu", "sigma"), mle = c(mean(x), sd(x)))
+    varMu <- matrix$varcov[1, 1]
+    varSigma <- matrix$varcov[2,2]
+    covarMuSigma <- matrix$varcov[1, 2]
+    zp <- qnorm(p = pSeq)
+    zalpha <- qnorm(0.975)
+    percentileEstimate <- mean(x) + zp * sd(x)
+    varPercentile <- varMu + zp^2 * varSigma + 2*zp * covarMuSigma
+    percentileLower <- percentileEstimate - zalpha * sqrt(varPercentile)
+    percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
+    yBreaks <- qnorm(ticks / 100)
+
+  } else if (options[["nullDistribution"]] == 'Lognormal') {
+
+    fit <- fitdistrplus::fitdist(x, 'lnorm')
+    meanlog <- as.numeric(fit$estimate[1])
+    sdlog <- as.numeric(fit$estimate[2])
+    lpdf <- quote(log(1/(sqrt(2*pi)*x*sdlog) * exp(-(log(x)- meanlog)^2/(2*sdlog^2))))
+    matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("meanlog", "sdlog"), mle = fit$estimate)
+    varmeanlog <- matrix$varcov[1, 1]
+    varsdlog <- matrix$varcov[2,2]
+    covarSS <- matrix$varcov[1, 2]
+    zp <- qnorm(p = pSeq)
+    zalpha <- qnorm(0.975)
+    percentileEstimate <- exp(meanlog + zp*sdlog)
+    varPercentile <- percentileEstimate^2*( varmeanlog+zp^2*varsdlog + 2*zp * covarSS)
+    percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
+    percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
+    yBreaks <- qnorm(ticks / 100)
+
+  } else if (options[["nullDistribution"]] == 'Weibull') {
+
+    fit <- fitdistrplus::fitdist(x, 'weibull')
+    shape <- as.numeric(fit$estimate[1])
+    scale <- as.numeric(fit$estimate[2])
+    lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x / scale)^ shape )
+    matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("shape", "scale"), mle = fit$estimate)
+    varShape <- matrix$varcov[1,1]
+    varScale <- matrix$varcov[2,2]
+    covarSS <- matrix$varcov[1,2]
+    zp <- log(-1*log(1-pSeq))
+    zalpha <- log(-1*log(1-0.975))
+    percentileEstimate <- scale * (- log(1 - pSeq))^(1/shape)
+    varPercentile <- (percentileEstimate^2 / scale^2) * varScale + (percentileEstimate^2/shape^4)*zp^2*varShape - 2*((zp*percentileEstimate^2) / (scale * shape^2))*covarSS
+    percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
+    percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
+    yBreaks <- log(-1*log(1-(ticks / 100)))
+
+  }
+
+  p <- ggplot2::ggplot() +
+    ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
+    ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed") +
+    ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed") +
+    jaspGraphs::geom_point(ggplot2::aes(x = data1[["x"]], y = data1[["y"]])) +
+    ggplot2::scale_x_continuous(variable, breaks = xBreaks, limits = range(xBreaks)) +
+    ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = yBreaks)
+
   p <- jaspGraphs::themeJasp(p)
 
-  thePlot$plotObject <- p
-  return(thePlot)
+  if(options[["addGridlines"]])
+	  p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
+
+  plot$plotObject <- p
+
+  return(plot)
 }
 
-.processDataTable <- function(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis){
-
-  processDataTable <- createJaspTable(title = gettext("Process Data"))
-  processDataTable$dependOn(c("upperSpecificationField","lowerSpecificationField","upperSpecification","lowerSpecification","targetValue","diameter","subgroups"))
-
-  if (options$lowerSpecificationField) {
-  processDataTable$addColumnInfo(name = "lowerSpecificationLimit", type = "number", title = gettext("LSL"))
-  }
-  if (options$targetValueField) {
-  processDataTable$addColumnInfo(name = "targetValue", type = "number", title = gettext("Target"))
-  }
-  if (options$upperSpecificationField) {
-  processDataTable$addColumnInfo(name = "upperSpecificationLimit", type = "number", title = gettext("USL"))
-  }
-  processDataTable$addColumnInfo(name = "sampleMean", type = "number", title = gettext("Sample Average"))
-  processDataTable$addColumnInfo(name = "sampleN", type = "integer", title = gettext("Sample N"))
-  processDataTable$addColumnInfo(name = "stDevOverall", type = "number", title = gettext("Sd (Total)"))
-  processDataTable$addColumnInfo(name = "stDevWithin", type = "number", title = gettext("Sd (Within)"))
-
-  processDataTable$showSpecifiedColumnsOnly <- TRUE
-  dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
-
-  USL <- as.numeric(options$upperSpecification)
-  LSL <- as.numeric(options$lowerSpecification)
-  targetValue <- as.numeric(options$targetValue)
-  sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
-  sampleN <- ncol(dataDiameter)
-
-  stDevWithin <- qcc::qcc(dataDiameter, type ='R', plot=FALSE)$std.dev
-  stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
-
-  processDataTable$addRows(list("lowerSpecificationLimit" = LSL,
-                                "targetValue" = targetValue,
-                                "upperSpecificationLimit" = USL,
-                                "sampleMean" = sampleMean,
-                                "sampleN" = sampleN,
-                                "stDevWithin" = stDevWithin,
-                                "stDevOverall" = stDevOverall))
-  return(processDataTable)
+.qcPpMedian <- function(x) {
+  x <- x[order(x)]
+  n <- length(x)
+  i <- rank(x)
+  p <- (i - 0.3) / (n + 0.4)
+  return(p)
 }
 
-.capabilityTable <- function(options, dataset, diameter, subgroupsName, initialCapabilityAnalysis){
-  
-  potentialCapabilityTable <- createJaspTable(title = gettext("Process Capability (Within)"))
-  potentialCapabilityTable$dependOn(c("upperSpecificationField","lowerSpecificationField","upperSpecification","lowerSpecification","targetValue","diameter","subgroups"))
-  
-  if (options$lowerSpecificationField) {
-    potentialCapabilityTable$addColumnInfo(name = "CPL", type = "number", title = gettext("CPL"))
-  }
-  
-  if (options$upperSpecificationField) {
-    potentialCapabilityTable$addColumnInfo(name = "CPU", type = "number", title = gettext("CPU"))
-  }
-  
-  if (options$lowerSpecificationField & options$upperSpecificationField) {
-    potentialCapabilityTable$addColumnInfo(name = "CP", type = "number", title = gettext("Cp"))
-    potentialCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("Cpk"))
-    potentialCapabilityTable$addColumnInfo(name = "Z", type = "number", title = gettext("ppm"))
-  }
-  
-  potentialCapabilityTable$showSpecifiedColumnsOnly <- TRUE
-  
-  initialCapabilityAnalysis[["potentialCapabilityTable"]] <- potentialCapabilityTable
-  
-  overallCapabilityTable <- createJaspTable(title = gettext("Process Performance (Total)"))
-  overallCapabilityTable$dependOn(c("upperSpecificationField","lowerSpecificationField","upperSpecification","lowerSpecification","targetValue","diameter","subgroups"))
-  
-  if (options$lowerSpecificationField) {
-    overallCapabilityTable$addColumnInfo(name = "PPL", type = "number", title = gettext("PPL"))
-  }
-  
-  if (options$upperSpecificationField) {
-    overallCapabilityTable$addColumnInfo(name = "PPU", type = "number", title = gettext("PPU"))
-  }
-  
-  if (options$lowerSpecificationField & options$upperSpecificationField) {
-    overallCapabilityTable$addColumnInfo(name = "PP", type = "number", title = gettext("Pp"))
-    overallCapabilityTable$addColumnInfo(name = "PPK", type = "number", title = gettext("Ppk"))
-    overallCapabilityTable$addColumnInfo(name = "ppm", type = "number", title = gettext("ppm"))
-  }
-  
-  overallCapabilityTable$showSpecifiedColumnsOnly <- TRUE
-  
-  initialCapabilityAnalysis[["overallCapabilityTable"]] <- overallCapabilityTable
-  
-  dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
-  
-  USL <- as.numeric(options$upperSpecification)
-  LSL <- as.numeric(options$lowerSpecification)
-  targetValue <- as.numeric(options$targetValue)
-  sampleMean <- mean(as.matrix(dataDiameter),na.rm = TRUE)
-  sampleN <- ncol(dataDiameter)
-
-  stDevWithin <- qcc::qcc(dataDiameter, type ='R', plot=FALSE)$std.dev #stDevWithin <- rBar/d2
-  stDevOverall <- sd(as.matrix(dataDiameter),na.rm = TRUE)
-
-  #Capability Indices (short term)
-  CP <- (USL - LSL) / (6*stDevWithin)
-  CPL <- (sampleMean - LSL) / (3*stDevWithin)
-  CPU <- (USL - sampleMean) / (3*stDevWithin)
-  CPK <- min(CPU, CPL)
-  Z <- CPK * 3
-  potentialCapabilityTable$addRows(list("CP" = CP,
-                                        "CPL" = CPL,
-                                        "CPU" = CPU,
-                                        "CPK" = CPK,
-                                        "Z" = Z))
-
-  #Performance Indices (long term)
-  PP <- (USL - LSL) / (6*stDevOverall)
-  PPL <- (sampleMean - LSL) / (3*stDevOverall)
-  PPU <- (USL - sampleMean) / (3*stDevOverall)
-  PPK <- min(PPU, PPL)
-  ppm <- CP / sqrt(1 + ((sampleMean - targetValue) / stDevWithin)^2)
-
-  overallCapabilityTable$addRows(list("PP" = PP,
-                                      "PPL" = PPL,
-                                      "PPU" = PPU,
-                                      "PPK" = PPK,
-                                      "ppm" = ppm))
-  
-  capabilityTables <- list(potentialCapabilityTable, overallCapabilityTable)
-  
-  return(capabilityTables)
+.qcPpMean <- function(x){
+  x <- x[order(x)]
+  n <- length(x)
+  i <- rank(x)
+  p <- (i) / (n + 1)
+  return(p)
 }
 
-.nonNormalCapabilityTable <- function(options, dataset, diameter, subgroupsName, dis){
-  
-  dataDiameter <- .convertDatasetToQccReady(dataset, diameter, subgroupsName)
-  USL <- as.numeric(options$upperSpecification)
-  LSL <- as.numeric(options$lowerSpecification)
-  targetValue <- as.numeric(options$targetValue)
-  average <- mean(as.matrix(dataDiameter),na.rm = TRUE)
-  standardDeviation <- sd(as.matrix(dataDiameter),na.rm = TRUE) #overall sd 
-  
-  if (dis == "Lognormal"){
-    
-    nonNormalCapabilityTable <- createJaspTable(title = gettext("Process Capability based on Lognormal Distribution"))
-    nonNormalCapabilityTable$dependOn(c("upperSpecificationField","lowerSpecificationField","upperSpecification","lowerSpecification","targetValue","diameter","subgroups"))
-    
-    nonNormalCapabilityTable$addColumnInfo(name = "average", type = "number", title = gettext("Average"))
-    nonNormalCapabilityTable$addColumnInfo(name = "standardDeviation", type = "number", title = gettext("Sd"))
-    
-    if (options$lowerSpecificationField) {
-      nonNormalCapabilityTable$addColumnInfo(name = "LSL", type = "number", title = gettext("LSL"))
-      nonNormalCapabilityTable$addColumnInfo(name = "partsLower", type = "number", title = gettext("P (X < LSL)"))
-    }
-    
-    if (options$upperSpecificationField) {
-      nonNormalCapabilityTable$addColumnInfo(name = "USL", type = "number", title = gettext("USL"))
-      nonNormalCapabilityTable$addColumnInfo(name = "partsUpper", type = "number", title = gettext("P (X > USL)"))
-    }
-    
-    if (options$lowerSpecificationField & options$upperSpecificationField) {
-      nonNormalCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("Cpk"))
-    }
-    
-    nonNormalCapabilityTable$showSpecifiedColumnsOnly <- TRUE
-    
-    tau <- standardDeviation / average
-    sdLog <- sqrt(log(tau^2 +1))
-    meanLog <- log(average) - ((sdLog^2) / 2)
-    partsLower <- plnorm(q = LSL, meanlog = meanLog, sdlog = sdLog)
-    partsUpper <- 1- plnorm(q = USL,meanlog = meanLog, sdlog = sdLog)
-    CPK <- 1- plnorm((max(partsLower,partsUpper)))/3
-    
-    nonNormalCapabilityTable$addRows(list("average" = average,
-                                          "standardDeviation" = standardDeviation,
-                                          "LSL" = LSL,
-                                          "USL" = USL,
-                                          "CPK" = CPK,
-                                          "partsLower" = partsLower,
-                                          "partsUpper" = partsUpper))
-  } else if (dis == "Weibull"){
-    nonNormalCapabilityTable <- createJaspTable(title = gettext("Process Capability based on Weibull Distribution"))
-    nonNormalCapabilityTable$dependOn(c("upperSpecificationField","lowerSpecificationField","upperSpecification","lowerSpecification","targetValue","diameter","subgroups"))
-    
-    nonNormalCapabilityTable$addColumnInfo(name = "average", type = "number", title = gettext("Average"))
-    nonNormalCapabilityTable$addColumnInfo(name = "standardDeviation", type = "number", title = gettext("Sd"))
-    
-    if (options$lowerSpecificationField) {
-      nonNormalCapabilityTable$addColumnInfo(name = "LSL", type = "number", title = gettext("LSL"))
-    }
-    
-    if (options$upperSpecificationField) {
-      nonNormalCapabilityTable$addColumnInfo(name = "USL", type = "number", title = gettext("USL"))
-    }
-    
-    nonNormalCapabilityTable$addColumnInfo(name = "beta", type = "number", title = gettext("Beta"))
-    nonNormalCapabilityTable$addColumnInfo(name = "theta", type = "number", title = gettext("Theta"))
-    #nonNormalCapabilityTable$addColumnInfo(name = "CPK", type = "number", title = gettext("Cpk"))
-    
-    nonNormalCapabilityTable$showSpecifiedColumnsOnly <- TRUE
-    
-    beta <- mixdist::weibullpar(mu = average, sigma = standardDeviation, loc = 0)$shape
-    theta <- mixdist::weibullpar(mu = average, sigma = standardDeviation, loc = 0)$scale
-    #CPK <- 0
-    
-    nonNormalCapabilityTable$addRows(list("average" = average,
-                                          "standardDeviation" = standardDeviation,
-                                          "LSL" = LSL,
-                                          "USL" = USL,
-                                          "beta" = beta,
-                                          "theta" = theta))
-  }
-  
-  return(nonNormalCapabilityTable)
+.qcPpKmModif <- function(x,i,n) {
+  x <- x[order(x)]
+  n <- length(x)
+  i <- rank(x)
+  p <- (i - 0.5) / (n)
+  return(p)
 }
 
+.qcPpKm <- function(x) {
+  x <- x[order(x)]
+  n <- length(x)
+  i <- rank(x)
+  p <- (i) / (n)
+  return(p)
+}
 
+.qcWeibull <- function(p){
+  return(log(-log(1 - p)))
+}
 
+#############################################################
+## Functions for distribution plot section ##################
+#############################################################
 
+.qcDistributionPlot <- function(options, dataset, ready, jaspResults){
+
+  if(!options[["histogram"]] || !is.null(jaspResults[["histogram"]]))
+    return()
+
+  plot <- createJaspPlot(title = gettext("Distribution Plot"), width = 400, height = 400)
+  plot$dependOn(options = c("histogram", "displayDensity", "variables", "numberOfBins"))
+  plot$position <- 2
+
+  jaspResults[["histogram"]] <- plot
+
+  if(!ready)
+    return()
+
+  plotData <- as.data.frame(dataset[, options[["variables"]]])
+  plotData <- unlist(plotData[, unlist(lapply(plotData, is.numeric))])
+  plotData <- data.frame(x = plotData)
+
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData[["x"]], min.n = 4)
+
+  bins <- options[["numberOfBins"]] + 2 # For some reason the plot always seems to take 2 off...
+
+  p <- ggplot2::ggplot(plotData, ggplot2::aes(x = x)) +
+    ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks, limits = range(xBreaks))
+
+  if(options[["displayDensity"]]){
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, hist(plotData[["x"]], freq = F, plot = F, breaks = bins)$density + 0.1), min.n = 4)
+    p <- p + ggplot2::scale_y_continuous(name = gettext("Density"), breaks = yBreaks, limits = range(yBreaks)) +
+      ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7, bins = bins) +
+      ggplot2::stat_function(fun = dnorm, color = "dodgerblue", args = list(mean = mean(plotData[["x"]]), sd = sd(plotData[["x"]])))
+    p <- jaspGraphs::themeJasp(p) + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
+  } else {
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, hist(plotData[["x"]], freq = T, plot = F)$counts), min.n = 4)
+    p <- p + ggplot2::scale_y_continuous(name = gettext("Counts"), breaks = yBreaks, limits = range(yBreaks)) +
+      ggplot2::geom_histogram(ggplot2::aes(y =..count..), fill = "grey", col = "black", size = .7, bins = bins)
+    p <- jaspGraphs::themeJasp(p)
+  }
+
+  plot$plotObject <- p
+}
