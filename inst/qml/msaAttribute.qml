@@ -75,15 +75,15 @@ Form
 		
 		CheckBox
 		{
-			name: "AAAfleissKappa";		label: qsTr("Fleiss Kappa")
+			name: "AAAfleissKappa";		label: qsTr("Fleiss kappa")
 		}
 		CheckBox
 		{
-			name: "AAAcohensKappa";		label: qsTr("Cohen's Kappa")
+			name: "AAAcohensKappa";		label: qsTr("Cohen's kappa")
 		}
 		CheckBox
 		{
-			name: "AAAkendallTau";		label: qsTr("Kendall's Tau")
+			name: "AAAkendallTau";		label: qsTr("Kendall's tau")
 		}
 	}
 }

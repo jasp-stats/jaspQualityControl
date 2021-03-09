@@ -15,8 +15,8 @@ Description
 
 	GroupTitle
 	{
-	title:			qsTr("Measurement Systems Analysis")
-	icon:			"processControl-measurement.svg"
+		title:			qsTr("Measurement Systems Analysis")
+		icon:			"processControl-measurement.svg"
 	} 
 	 Analysis
 	{
@@ -41,29 +41,29 @@ Description
 
 	GroupTitle
 	{
-	title:			qsTr("Control Charts")
-	icon:			"processControl-control.svg"
+		title:			qsTr("Control Charts")
+		icon:			"processControl-control.svg"
+	}
+	Analysis
+	{
+		title:			qsTr("Attribute Charts")
+		func:			"AttributeCharts"
 	}
 	Analysis
 	{
 		title:			qsTr("Variable Charts for Subgroups")
 		func:			"VaribleChartsSubgroups"
 	}
-		Analysis
+	Analysis
 	{
 		title:			qsTr("Variable Charts for Indviduals")
 		func:			"VaribleChartsIndviduals"
 	}
-			Analysis
-	{
-		title:			qsTr("Attribute Charts")
-		func:			"AttributeCharts"
-	}
 
 	GroupTitle
 	{
-	title:			qsTr("Capability Studies")
-	icon:			"processControl-capability.svg"
+		title:			qsTr("Capability Studies")
+		icon:			"processControl-capability.svg"
 	}
 	Analysis
 	{
