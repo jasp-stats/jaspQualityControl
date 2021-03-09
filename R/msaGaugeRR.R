@@ -30,8 +30,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   readyRangeMethod <- length(measurements) == 2
 
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
-    dataset <- na.omit(dataset)
+    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
+                                         exclude.na.listwise = c(numeric.vars, factor.vars))
   }
 
 
