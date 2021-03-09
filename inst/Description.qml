@@ -94,7 +94,7 @@ Description
         func:			"doeResponseSurfaceMethodology"
         requiresData:	false
     }
-    Analysis
+    // Analysis
     // {
     //     title:			qsTr("Mixed")
     //     func:			"doeMixed"
