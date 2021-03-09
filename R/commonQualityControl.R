@@ -111,7 +111,7 @@
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1, range))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - (0.10 * abs(LCL)), range, UCL + (0.1 * UCL)), min.n = 4)
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
   xLimits <- c(0,max(xBreaks) + 5)

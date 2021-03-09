@@ -36,8 +36,8 @@ Form
 			id:									variable1
 			name:								"measurements"
 			title:								qsTr("Measurements")
-			singleVariable:						false
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			singleVariable:						true
+			allowedColumns:						["scale"]
 		}
 	}
 	
@@ -46,7 +46,14 @@ Form
 		title: qsTr("Analysis Options")
 					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference Value:");		defaultValue: 0;	negativeValues: true; decimals: 5; fieldWidth: 60}
 					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance Value:");		defaultValue: 1;	negativeValues: true; decimals: 5; fieldWidth: 60}
-					DoubleField { name: "biasPercentCG";	label: qsTr("Percent of Tolerance for CG:");		defaultValue: 20;	negativeValues: false	}
+					DoubleField {
+								name: "biasPercentCG";
+								label: qsTr("Percent of Tolerance for CG:");
+								defaultValue: 20;
+								negativeValues: false
+								min:			0.001;
+								max:			99.999;
+					}
 					
 		DropDown{
 				name: "BiasStudyVarMultiplierType"
@@ -64,7 +71,9 @@ Form
 					name: "BiasStudyVarMultiplier"
 					label: qsTr("Study Var. Multiplier Value:")
 					fieldWidth: 60 
-					defaultValue: 6  
+					defaultValue: 6 
+					min:			0.001;
+					max:			99.999;
 					decimals: 3
 					}
 					

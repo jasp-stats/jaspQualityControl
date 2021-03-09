@@ -26,11 +26,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-  ready <- (length(measurements) != 0 & operators != "" & parts != "")
+  ready <- (length(measurements) != 0 && operators != "" && parts != "")
   readyRangeMethod <- length(measurements) == 2
 
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
+    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
+                                         exclude.na.listwise = c(numeric.vars, factor.vars))
   }
 
 
@@ -174,6 +175,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   anovaTables <- createJaspContainer(gettext("ANOVA Tables"))
   anovaTables$dependOn(c("gaugeANOVA", "gaugeRRmethod"))
   anovaTables$position <- 1
+
+  for(measurement in measurements){
+    if (length(dataset[[measurement]]) <= 1)
+      ready <- FALSE
+  }
 
   if (ready && length(measurements) >= 2){
     data <- dataset
@@ -327,7 +333,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         operator <- (anova2[[1]]$`Mean Sq`[2] - anova2[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements))
       }
 
-      partToPart <- (anova2[[1]]$`Mean Sq`[1] - anova2[[1]]$`Mean Sq`[3]) / (length(measurements) * length(unique(data[[operators]])))
+      if(anova2[[1]]$`Mean Sq`[1] < anova2[[1]]$`Mean Sq`[3]){
+        partToPart <- 0
+      }else{
+        partToPart <- (anova2[[1]]$`Mean Sq`[1] - anova2[[1]]$`Mean Sq`[3]) / (length(measurements) * length(unique(data[[operators]])))
+      }
       reproducibility <- operator
       totalRR <- repeatability + reproducibility
       totalVar <- totalRR + partToPart
@@ -396,6 +406,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank(),
                                                      plot.margin = ggplot2::unit(c(1,1,1,1),"cm")) +
         ggplot2::xlab('') + ggplot2::ylab('Percent')
+
       if (max(plotframe['value']) < 110)
         p <- p + ggplot2::scale_y_continuous(breaks = c(0, 25, 50, 75, 100))
 
@@ -454,7 +465,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     anovaTables[['plot']] <- plot
 
 
-    if(ready){
+    if(length(measurements) >= 1 && operators != "" && parts != ""){
       RRtable1$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
       RRtable2$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
     }
@@ -570,17 +581,22 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
   meansPerOperator <- data.frame(Part = factor(partNames, partNames))
 
-  for(i in names(byOperator)){
-    meansPerOperator <- cbind(meansPerOperator, rowMeans(byOperator[[i]][c(measurements)]))
-  }
-  colnames(meansPerOperator)[-1] <- names(byOperator)
-
-  tidydata <- tidyr::gather(meansPerOperator, key = "Operator", value = "Measurements", -Part )
-
 
   plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
 
   plot$dependOn(c("gaugeByInteraction", "gaugeRRmethod"))
+
+  for(i in 1:length(names(byOperator))){
+    name <- names(byOperator)[i]
+    if (length(rowMeans(byOperator[[name]][c(measurements)])) != length(partNames)){
+      plot$setError(gettext("Operators measured different number of parts."))
+      return(plot)
+    }
+    meansPerOperator <- cbind(meansPerOperator, rowMeans(byOperator[[name]][c(measurements)]))
+  }
+  colnames(meansPerOperator)[-1] <- names(byOperator)
+
+  tidydata <- tidyr::gather(meansPerOperator, key = "Operator", value = "Measurements", -Part )
 
   p <- ggplot2::ggplot(tidydata, ggplot2::aes(x = Part, y = Measurements, col = Operator, group = Operator)) +
     jaspGraphs::geom_line() + jaspGraphs::geom_point()
@@ -636,6 +652,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
   if (ready){
 
+    if (nrow(dataset[measurements]) > 20)
+      table$setError("Range Method available for max. 20 unique Parts")
+
     n <- length(dataset[[measurements[1]]])
     Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / n)
     d2 <- .d2Value(n)
@@ -662,6 +681,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   }else{
 
     operatorSplit <- split.data.frame(dataset, dataset[operators])
+
+    if (length(rowMeans(operatorSplit[[1]][measurements]) != length(rowMeans(operatorSplit[[2]][measurements])))){
+      plot$setError(gettext("Operators measured different number of parts."))
+      return(plot)
+    }
 
     data <- data.frame(OperatorA = rowMeans(operatorSplit[[1]][measurements]), OperatorB = rowMeans(operatorSplit[[2]][measurements]))
 
