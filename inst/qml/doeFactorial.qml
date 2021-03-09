@@ -20,8 +20,8 @@ import JASP.Widgets 							1.0
 
 Form
 {
-    usesJaspResults:							true
-    columns:									2
+    usesJaspResults:                            true
+    columns:                                    2
 
     GroupBox
     {
@@ -59,30 +59,31 @@ Form
         label:									"Preview design"
     }
 
-//    GroupBox
-//    {
-//        title:                              	qsTr("Data coding")
+    GroupBox
+    {
+        title:                              	qsTr("Data coding")
+        debug:                                  true
 
-//        RadioButtonGroup
-//        {
-//            name:                               "dataCoding"
+        RadioButtonGroup
+        {
+            name:                               "dataCoding"
 
-//            RadioButton
-//            {
-//                name:                           "dataUncoded"
-//                label:                          qsTr("Uncoded")
-//                checked:                        true
+            RadioButton
+            {
+                name:                           "dataUncoded"
+                label:                          qsTr("Uncoded")
+                checked:                        true
 
-//            }
+            }
 
-//            RadioButton
-//            {
-//                name:                           "dataCoded"
-//                label:                          qsTr("Coded")
+            RadioButton
+            {
+                name:                           "dataCoded"
+                label:                          qsTr("Coded")
 
-//            }
-//        }
-//    }
+            }
+        }
+    }
 
     ColumnLayout
     {
@@ -297,53 +298,55 @@ Form
                 }
             }
 
-//            GroupBox
-//            {
-//                title: 							qsTr("Additional options")
+            GroupBox
+            {
+                title: 							qsTr("Additional options")
+                debug:                          true
 
-//                IntegerField
-//                {
-//                    name:						"factorialCenterPoints"
-//                    label:						qsTr("Number of center points per block")
-//                    defaultValue:				1
-//                    min:						1
-//                    max:						50
-//                }
+                IntegerField
+                {
+                    name:						"factorialCenterPoints"
+                    label:						qsTr("Number of center points per block")
+                    defaultValue:				1
+                    min:						1
+                    max:						50
+                }
 
-//                IntegerField
-//                {
-//                    name:						"factorialCornerReplicates"
-//                    label:						qsTr("Number of replicates for corner points")
-//                    defaultValue:				3
-//                    min:						1
-//                    max:						50
-//                }
+                IntegerField
+                {
+                    name:						"factorialCornerReplicates"
+                    label:						qsTr("Number of replicates for corner points")
+                    defaultValue:				3
+                    min:						1
+                    max:						50
+                }
 
-//                IntegerField
-//                {
-//                    name:						"factorialBlocks"
-//                    label:						qsTr("Number of blocks")
-//                    defaultValue:				1
-//                    min:						1
-//                    max:						50
-//                }
-//            }
+                IntegerField
+                {
+                    name:						"factorialBlocks"
+                    label:						qsTr("Number of blocks")
+                    defaultValue:				1
+                    min:						1
+                    max:						50
+                }
+            }
         }
     }
 
-//    Item
-//    {
-//        Layout.preferredHeight: 				generateDesign.height
-//        Layout.fillWidth: 						true
-//        Layout.columnSpan:						2
+    Item
+    {
+        Layout.preferredHeight: 				generateDesign.height
+        Layout.fillWidth: 						true
+        Layout.columnSpan:						2
 
-//        Button
-//        {
-//            id: 								generateDesign
-//            anchors.right:						parent.right
-//            anchors.bottom:						parent.bottom
-//            text: 								qsTr("<b>Export Design</b>")
-//            // onClicked: 							form.exportResults()
-//        }
-//    }
+        Button
+        {
+            debug:                              true
+            id: 								generateDesign
+            anchors.right:						parent.right
+            anchors.bottom:						parent.bottom
+            text: 								qsTr("<b>Export Design</b>")
+            // onClicked: 							form.exportResults()
+        }
+    }
 }
