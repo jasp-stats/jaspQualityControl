@@ -26,18 +26,18 @@ Form
         VariablesForm
         {
             AvailableVariablesList { name: "rsmVariablesList" }
-            AssignedVariablesList  { name: "rsmVariables";	        title: qsTr("Predictors (Two)");	suggestedColumns: ["scale"]   }
-            AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response (One)");  suggestedColumns: ["scale"]   }
-            AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (One)");    suggestedColumns: ["nominal"]   }
+            AssignedVariablesList  { name: "rsmVariables";	        title: qsTr("Predictors");	suggestedColumns: ["scale"]   }
+            AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns: ["scale"]; singleVariable: true}
+            AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns: ["nominal"]; singleVariable: true}
         }
 		
 		GroupBox
 		{
-			title: 							qsTr("Additional options")
+			title: 							qsTr("Additional Options")
 
             CheckBox
             {
-                name:                       "showDesign";label:            qsTr("Suggest Central Composite Designs")
+                name:                       "showDesign";label:            qsTr("Suggest central composite designs")
                 IntegerField
                 {
                     name:                       "factorResponse"
