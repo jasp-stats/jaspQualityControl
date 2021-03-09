@@ -26,9 +26,9 @@ Form
         VariablesForm
         {
             AvailableVariablesList { name: "rsmVariablesList" }
-            AssignedVariablesList  { name: "rsmVariables";	        title: qsTr("Predictors");	suggestedColumns: ["scale"]   }
-            AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response"  );  suggestedColumns: ["scale"]   }
-            AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks"  );    suggestedColumns: ["nominal"]   }
+            AssignedVariablesList  { name: "rsmVariables";	        title: qsTr("Predictors (Two)");	suggestedColumns: ["scale"]   }
+            AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response (One)");  suggestedColumns: ["scale"]   }
+            AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (One)");    suggestedColumns: ["nominal"]   }
         }
 		
 		GroupBox
@@ -37,34 +37,53 @@ Form
 
             CheckBox
             {
-                name:                       "showDesign";label:     qsTr("Suggest designs"); checked: true
+                name:                       "showDesign";label:            qsTr("Suggest Central Composite Designs")
                 IntegerField
                 {
                     name:                       "factorResponse"
                     label:                      "Number of factors"
                     defaultValue:               2
-
+                    min:                        2
+                    max:                        50
                 }
-
 
                 IntegerField
                 {
-                    name:						"responseSurfaceCenterReplicates"
-                    label:						qsTr("Number of replicates for center points")
+                    name:						"responseSurfaceCenter"
+                    label:						qsTr("Number of center points in each cube block")
+                    defaultValue:				3
+                    min:						1
+                    max:						50
+                }
+
+                IntegerField
+                {
+                    name:						"responseSurfaceBlocks"
+                    label:						qsTr("Number of cube blocks that comprise one rep of cube portion")
+                    defaultValue:				3
+                    min:						1
+                    max:						50
+                }
+
+                IntegerField
+                {
+                    name:						"responseSurfaceCenterPointStar"
+                    label:						qsTr("Number of center points in each star block")
+                    defaultValue:				3
+                    min:						1
+                    max:						50
+                }
+
+                IntegerField
+                {
+                    name:						"responseSurfaceReplicationStar"
+                    label:						qsTr("Number of replications of each within-block star point")
                     defaultValue:				3
                     min:						1
                     max:						50
                 }
 
 
-                IntegerField
-                {
-                    name:						"responseSurfaceStarReplicates"
-                    label:						qsTr("Number of replicates for star points")
-                    defaultValue:				3
-                    min:						1
-                    max:						50
-                }
 
             }
 
