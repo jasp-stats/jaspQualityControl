@@ -13,10 +13,10 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-import QtQuick 									2.8
-import QtQuick.Layouts 							1.3
-import JASP.Controls 							1.0
-import JASP.Widgets 							1.0
+import QtQuick                                  2.8
+import QtQuick.Layouts                          1.3
+import JASP.Controls                            1.0
+import JASP.Widgets                             1.0
 
 Form
 {
@@ -61,7 +61,7 @@ Form
 
     GroupBox
     {
-        title:                              	qsTr("Data coding")
+        title:                                  qsTr("Data coding")
         debug:                                  true
 
         RadioButtonGroup
@@ -87,7 +87,7 @@ Form
 
     ColumnLayout
     {
-        spacing:								0
+        spacing:                                0
         Layout.preferredWidth:					parent.width
         Layout.columnSpan:						2
 
@@ -210,14 +210,14 @@ Form
                     name:						"factorialTypeSpecifyGenerators"
                     height:                     100 * preferencesModel.uiScale
                     width:                      250 * preferencesModel.uiScale
-                    title:						"Design generators"
-                    textType:					JASP.TextTypeSource
+                    title:                      "Design generators"
+                    textType:                   JASP.TextTypeSource
                 }
             }
 
             RadioButton
             {
-                name:							"factorialTypeSplit"
+                name:                           "factorialTypeSplit"
                 label:							qsTr("2-level split-plot (hard-to-change factors)")
 
                 IntegerField
@@ -300,7 +300,7 @@ Form
 
             GroupBox
             {
-                title: 							qsTr("Additional options")
+                title:                          qsTr("Additional options")
                 debug:                          true
 
                 IntegerField
