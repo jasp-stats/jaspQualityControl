@@ -22,7 +22,8 @@ Imports:
   irr,
   mixdist,
   FrF2,
-  rsm
+  rsm,
+  gridGraphics
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
