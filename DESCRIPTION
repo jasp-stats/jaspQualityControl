@@ -23,6 +23,7 @@ Imports:
   mixdist,
   FrF2,
   rsm,
+  DoE.base,
   gridGraphics
 Remotes:
   jasp-stats/jaspBase,
