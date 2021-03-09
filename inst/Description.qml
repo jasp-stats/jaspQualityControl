@@ -76,13 +76,12 @@ Description
         title:			qsTr("Design of Experiments")
 	 	icon:			"processControl-design.svg"
 	 }
-    Analysis
-    {
-        title:			qsTr("Screening")
-        func:			"doeScreening"
-        requiresData:	false
-		debug: 			true
-    }
+    // Analysis
+    // {
+    //     title:			qsTr("Screening")
+    //     func:			"doeScreening"
+    //     requiresData:	false
+    // }
 	Analysis
 	{
         title:			qsTr("Factorial")
@@ -96,10 +95,9 @@ Description
         requiresData:	false
     }
     Analysis
-    {
-        title:			qsTr("Mixed")
-        func:			"doeMixed"
-        requiresData:	false
-		debug: 			true
-    }
+    // {
+    //     title:			qsTr("Mixed")
+    //     func:			"doeMixed"
+    //     requiresData:	false
+    // }
 }

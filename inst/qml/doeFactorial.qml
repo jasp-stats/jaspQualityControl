@@ -20,7 +20,6 @@ import JASP.Widgets                             1.0
 
 Form
 {
-    usesJaspResults:                            true
     columns:                                    2
 
     GroupBox
@@ -40,16 +39,16 @@ Form
 
         DropDown
         {
-        id:										numberOfLevels
-        name: 									"numberOfLevels"
-        label: 									qsTr("Number of factor levels")
-        indexDefaultValue: 						0
-        values:
-        [
-            { value: "2", label: qsTr("2")}
-//            { value: "3", label: qsTr("3")},
-//            { value: "Mixed", label: qsTr("Mixed")}
-        ]
+			id:										numberOfLevels
+			name: 									"numberOfLevels"
+			label: 									qsTr("Number of factor levels")
+			indexDefaultValue: 						0
+			values:
+			[
+				{ value: "2", label: qsTr("2")}
+	//            { value: "3", label: qsTr("3")},
+	//            { value: "Mixed", label: qsTr("Mixed")}
+			]
         }
     }
 
@@ -73,14 +72,12 @@ Form
                 name:                           "dataUncoded"
                 label:                          qsTr("Uncoded")
                 checked:                        true
-
             }
 
             RadioButton
             {
                 name:                           "dataCoded"
                 label:                          qsTr("Coded")
-
             }
         }
     }
@@ -109,7 +106,9 @@ Form
                 { factorName: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high1: qsTr("Factor 1 Level 2") },
                 { factorName: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high1: qsTr("Factor 2 Level 2") }
             ]
-            rowComponent: 						RowLayout
+            rowComponent: 						
+			
+			RowLayout
             {
                 Row
                 {
@@ -191,7 +190,7 @@ Form
         RadioButtonGroup
         {
             name: 								"factorialType"
-            title:								qsTr("Type of Factorial Design")
+            title:								qsTr("Type of factorial design")
 
             RadioButton
             {
