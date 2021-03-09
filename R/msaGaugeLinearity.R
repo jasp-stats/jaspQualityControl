@@ -68,7 +68,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
   table1$addColumnInfo(name = "observedMean", title = gettext("Mean"), type = "number")
   table1$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
   table1$addColumnInfo(name = "percentBias",            title = gettext("Percent bias"), type = "number")
-  table1$addColumnInfo(name = "pvalue",            title = gettext("p (t-test of Bias against 0)"), type = "pvalue")
+  table1$addColumnInfo(name = "pvalue",            title = gettext("p (<i>t</i>-test of bias against 0)"), type = "pvalue")
 
 
   table2 <- createJaspTable(title = gettext("Gauge Linearity 1"))
@@ -76,16 +76,16 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
 
   table2$addColumnInfo(name = "predictor",  title = gettext("Predictor"), type = "string")
   table2$addColumnInfo(name = "coefficient", title = gettext("Coefficient"), type = "number")
-  table2$addColumnInfo(name = "SEcoefficient",            title = gettext("SE Coefficient"), type = "number")
-  table2$addColumnInfo(name = "pvalue",            title = gettext("p"), type = "pvalue")
+  table2$addColumnInfo(name = "SEcoefficient", title = gettext("Std. Error coefficients"), type = "number")
+  table2$addColumnInfo(name = "pvalue",            title = gettext("<i>p</i>"), type = "pvalue")
 
   table3 <- createJaspTable(title = gettext("Gauge Linearity 2"))
   table3$dependOn(c(""))
 
   table3$addColumnInfo(name = "S",  title = gettext("S"), type = "number")
   table3$addColumnInfo(name = "linearity", title = gettext("Linearity"), type = "number")
-  table3$addColumnInfo(name = "rsq",            title = gettext("R-squared"), type = "number")
-  table3$addColumnInfo(name = "percentLin",            title = gettext("Percent Linearity"), type = "number")
+  table3$addColumnInfo(name = "rsq",       title = gettextf("R%1$s", "\u00B2"), type = "number")
+  table3$addColumnInfo(name = "percentLin", title = gettext("% Linearity"), type = "number")
 
   plot1 <- createJaspPlot(title = gettext("Bias and Linearity Graph"), width = 500, height = 500)
 
