@@ -64,10 +64,10 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
   table1$dependOn(c(""))
 
   table1$addColumnInfo(name = "part",  title = gettext("Part"), type = "string")
-  table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference Value"), type = "number")
-  table1$addColumnInfo(name = "observedMean", title = gettext("Observed Mean"), type = "number")
+  table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
+  table1$addColumnInfo(name = "observedMean", title = gettext("Mean"), type = "number")
   table1$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
-  table1$addColumnInfo(name = "percentBias",            title = gettext("Percent Bias"), type = "number")
+  table1$addColumnInfo(name = "percentBias",            title = gettext("Percent bias"), type = "number")
   table1$addColumnInfo(name = "pvalue",            title = gettext("p (t-test of Bias against 0)"), type = "pvalue")
 
 
