@@ -38,7 +38,7 @@ Form
 			name:								"operators"
 			title:								qsTr("Operators")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText"]
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
 		
 		AssignedVariablesList
@@ -47,7 +47,7 @@ Form
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
 
 		AssignedVariablesList
@@ -130,7 +130,9 @@ Form
 						name: "studyVarMultiplier"
 						label: qsTr("Study Var. Multiplier Value:")
 						fieldWidth: 60 
-						defaultValue: 6  
+						defaultValue: 6
+						min:			0.001;
+						max:			99.999;						
 						decimals: 3
 						}
 					

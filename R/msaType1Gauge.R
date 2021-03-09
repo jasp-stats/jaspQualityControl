@@ -18,11 +18,12 @@
 msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   measurements <- unlist(options$measurements)
+  measurements <- measurements[measurements != ""]
 
   ready <- (length(measurements) != 0)
 
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns.as.numeric  = measurements)
+    dataset         <- .readDataSetToEnd(columns.as.numeric  = measurements, exclude.na.listwise = measurements)
   }
 
 
@@ -110,7 +111,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   if (ready){
 
-    observedAverage <- mean(unlist(data))
+    observedAverage <- mean(dataset[[measurements]])
     bias <- observedAverage - options$biasReferenceValue
     biasPercent <- abs(bias) / options$biasTolerance * 100
     sd <- sd(unlist(data))
