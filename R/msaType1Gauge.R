@@ -89,13 +89,15 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   table1 <- createJaspTable(title = gettext("Basic Statistics"))
   table1$dependOn(c("biasReferenceValue", "biastable", "biasTolerance"))
 
-  table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference Value"), type = "number")
-  table1$addColumnInfo(name = "observedMean", title = gettext("Observed Mean"), type = "number")
+  table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
+  table1$addColumnInfo(name = "observedMean", title = gettext("Mean"), type = "number")
   table1$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
-  table1$addColumnInfo(name = "sd",            title = gettext("SD"), type = "number")
-  table1$addColumnInfo(name = "SV",            title = gettextf("SV(%.2f * SD)", studyVarMultiplier), type = "number")
+  table1$addColumnInfo(name = "sd",            title = gettext("Std. Deviation (<i>s</i>)"), type = "number")
+  table1$addColumnInfo(name = "SV",            title = gettext("Study variation"), type = "number")
   table1$addColumnInfo(name = "tolerance",       title = gettext("Tolerance"), type = "number")
-  table1$addColumnInfo(name = "biasPercent",     title = gettext("Bias Percent"), type = "number")
+  table1$addColumnInfo(name = "biasPercent",     title = gettext("% Bias"), type = "number")
+
+  table1$addFootnote(gettextf("The study variation is calculated as %.2f * <i>s</i>.", studyVarMultiplier))
 
   table2 <- createJaspTable(title = gettext("Capability"))
   table2$dependOn(c("biasReferenceValue", "biastable", "biasTolerance"))
@@ -103,8 +105,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   table2$addColumnInfo(name = "Cg",  title = gettext("Cg"), type = "number")
   table2$addColumnInfo(name = "Cgk",  title = gettext("Cgk"), type = "number")
-  table2$addColumnInfo(name = "percentRep",  title = gettext("%Var(Repeatability)"), type = "number")
-  table2$addColumnInfo(name = "percentRepBias",  title = gettext("%Var(Repeatability and Bias)"), type = "number")
+  table2$addColumnInfo(name = "percentRep",  title = gettext("% Var(Repeatability)"), type = "number")
+  table2$addColumnInfo(name = "percentRepBias",  title = gettext("% Var(Repeatability and bias)"), type = "number")
 
   table1$setData(list(      "referenceValue"       = reference,
                             "tolerance"             = tolerance))
@@ -158,10 +160,10 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   table$addColumnInfo(name = "df",              title = gettext("df"), type = "integer")
   table$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
-  table$addColumnInfo(name = "lci",             title = gettext("LB"), type = "number", overtitle = gettext("95% CI"))
-  table$addColumnInfo(name = "uci",             title = gettext("UB"), type = "number", overtitle = gettext("95% CI"))
-  table$addColumnInfo(name = "t",               title = gettext("t"), type = "number")
-  table$addColumnInfo(name = "p",               title = gettext("p"), type = "pvalue")
+  table$addColumnInfo(name = "lci",             title = gettext("Lower"), type = "number", overtitle = gettext("95% CI for Bias"))
+  table$addColumnInfo(name = "uci",             title = gettext("Upper"), type = "number", overtitle = gettext("95% CI for Bias"))
+  table$addColumnInfo(name = "t",               title = gettext("<i>t</i>"), type = "number")
+  table$addColumnInfo(name = "p",               title = gettext("<i>p<i/>"), type = "pvalue")
 
 
   if (ready){

@@ -20,7 +20,6 @@ import JASP.Widgets 							1.0
 
 Form 
 {
-	usesJaspResults:							true
 	columns:									1
 
 	VariablesForm
@@ -44,11 +43,11 @@ Form
 		Group
 		{
 		title: qsTr("Analysis Options")
-					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference Value:");		defaultValue: 0;	negativeValues: true; decimals: 5; fieldWidth: 60}
-					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance Value:");		defaultValue: 1;	negativeValues: true; decimals: 5; fieldWidth: 60}
+					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference value:");		defaultValue: 0;	negativeValues: true; decimals: 5; fieldWidth: 60}
+					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance value:");		defaultValue: 1;	negativeValues: true; decimals: 5; fieldWidth: 60}
 					DoubleField {
 								name: "biasPercentCG";
-								label: qsTr("Percent of Tolerance for CG:");
+								label: qsTr("Percent of tolerance for CG:");
 								defaultValue: 20;
 								negativeValues: false
 								min:			0.001;
@@ -57,7 +56,7 @@ Form
 					
 		DropDown{
 				name: "BiasStudyVarMultiplierType"
-				label: qsTr("Study Var. Multiplier Type")
+				label: qsTr("Study var. multiplier type")
 				indexDefaultValue: 0
 				values:
 						[
@@ -69,7 +68,7 @@ Form
 										
 		DoubleField{ 
 					name: "BiasStudyVarMultiplier"
-					label: qsTr("Study Var. Multiplier Value:")
+					label: qsTr("Study var. multiplier value:")
 					fieldWidth: 60 
 					defaultValue: 6 
 					min:			0.001;
@@ -85,21 +84,21 @@ Form
 		title: qsTr("Plots")
 		CheckBox
 		{
-			name: "biasRun";		label: qsTr("Run Chart");		checked: true
+			name: "biasRun";		label: qsTr("Run chart");		checked: true
 			
 			CheckBox
 			{
-			name: "biasRunDots";		label: qsTr("Display Individual Measurements")
+			name: "biasRunDots";		label: qsTr("Display individual measurements")
 			}
 		}
 		CheckBox
 		{
-			name: "biasTable";		label: qsTr("Bias and Capability Table");		checked: true
+			name: "biasTable";		label: qsTr("Bias and capability table");		checked: true
 		}
 			
 		CheckBox
 		{
-			name: "biasTtest";		label: qsTr("One Sample T-Test");		checked: true
+			name: "biasTtest";		label: qsTr("One sample T-test");		checked: true
 
 		}
 		CheckBox

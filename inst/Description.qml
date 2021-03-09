@@ -13,18 +13,17 @@ Description
 	license				: "GPL (>= 2)"
 	icon				: "processControl-module.svg"
 
-	 GroupTitle
-	 {
-	 	title:			qsTr("Measurement Systems Analysis")
-	 	icon:			"processControl-measurement.svg"
-	 }
-	 
+	GroupTitle
+	{
+	title:			qsTr("Measurement Systems Analysis")
+	icon:			"processControl-measurement.svg"
+	} 
 	 Analysis
 	{
 		title:			qsTr("Type 1 Gauge")
 		func:			"msaType1Gauge"
 	}
-		 Analysis
+	Analysis
 	{
 		title:			qsTr("Gauge Linearity and Bias")
 		func:			"msaGaugeLinearity"
@@ -40,11 +39,11 @@ Description
 		func:			"msaAttribute"
 	}
 
-	 GroupTitle
-	 {
-	 	title:			qsTr("Control Charts")
-	 	icon:			"processControl-control.svg"
-	 }
+	GroupTitle
+	{
+	title:			qsTr("Control Charts")
+	icon:			"processControl-control.svg"
+	}
 	Analysis
 	{
 		title:			qsTr("Variable Charts for Subgroups")
@@ -61,11 +60,11 @@ Description
 		func:			"AttributeCharts"
 	}
 
-	 GroupTitle
-	 {
-	 	title:			qsTr("Capability Studies")
-	 	icon:			"processControl-capability.svg"
-	 }
+	GroupTitle
+	{
+	title:			qsTr("Capability Studies")
+	icon:			"processControl-capability.svg"
+	}
 	Analysis
 	{
 		title:			qsTr("Process Capability Studies")
@@ -77,12 +76,12 @@ Description
         title:			qsTr("Design of Experiments")
 	 	icon:			"processControl-design.svg"
 	 }
-    Analysis
-    {
-        title:			qsTr("Screening")
-        func:			"doeScreening"
-        requiresData:	false
-    }
+    // Analysis
+    // {
+    //     title:			qsTr("Screening")
+    //     func:			"doeScreening"
+    //     requiresData:	false
+    // }
 	Analysis
 	{
         title:			qsTr("Factorial")
@@ -95,10 +94,10 @@ Description
         func:			"doeResponseSurfaceMethodology"
         requiresData:	false
     }
-    Analysis
-    {
-        title:			qsTr("Mixed")
-        func:			"doeMixed"
-        requiresData:	false
-    }
+    // Analysis
+    // {
+    //     title:			qsTr("Mixed")
+    //     func:			"doeMixed"
+    //     requiresData:	false
+    // }
 }
