@@ -225,7 +225,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
       RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
       RRtable1$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
-      RRtable1$addColumnInfo(name = "Percent", title = gettext("Percent Contribution to Total"), type = "number")
+      RRtable1$addColumnInfo(name = "Percent", title = gettext("% Contribution total"), type = "number")
 
 
 
@@ -262,10 +262,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       RRtable2$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
 
       RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
-      RRtable2$addColumnInfo(name = "SD", title = gettext("SD"), type = "number")
-      RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation (SD * %.2f)", studyVarMultiplier), type = "number")
-      RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("Percent Study Variation"), type = "number")
-      RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("Percent Tolerance"), type = "number")
+      RRtable2$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
+      RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study variation"), type = "number")
+      RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("% Study variation"), type = "number")
+      RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
+
+      RRtable2$addFootnote(gettextf("Study variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
 
       histSD <- options$historicalStandardDeviationValue
 
@@ -321,7 +323,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
       RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
       RRtable1$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
-      RRtable1$addColumnInfo(name = "Percent", title = gettext("Percent Contribution to Total"), type = "number")
+      RRtable1$addColumnInfo(name = "Percent", title = gettext("% Contribution total"), type = "number")
 
 
 
@@ -356,10 +358,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       RRtable2$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
 
       RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
-      RRtable2$addColumnInfo(name = "SD", title = gettext("SD"), type = "number")
-      RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation (SD * %.2f)", studyVarMultiplier), type = "number")
-      RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("Percent Study Variation"), type = "number")
-      RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("Percent Tolerance"), type = "number")
+      RRtable2$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
+      RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study variation"), type = "number")
+      RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("% Study variation"), type = "number")
+      RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
+
+      RRtable2$addFootnote(gettextf("Study variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
 
 
       histSD <- options$historicalStandardDeviationValue
@@ -439,7 +443,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
     RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
     RRtable1$addColumnInfo(name = "Variation", title = gettext("Variation"), type = "number")
-    RRtable1$addColumnInfo(name = "Percent", title = gettext("Percent Contribution to Total"), type = "number")
+    RRtable1$addColumnInfo(name = "Percent", title = gettext("% Contribution total"), type = "number")
 
     RRtable1$setData(list(      "Source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation"))))
 
@@ -449,10 +453,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     RRtable2$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
 
     RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
-    RRtable2$addColumnInfo(name = "SD", title = gettext("SD"), type = "number")
-    RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation (SD * %.2f)", studyVarMultiplier), type = "number")
-    RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("Percent Study Variation"), type = "number")
-    RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("Percent Tolerance"), type = "number")
+    RRtable2$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
+    RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study variation"), type = "number")
+    RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("% Study variation"), type = "number")
+    RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
+
+    RRtable2$addFootnote(gettextf("Study variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
 
     RRtable2$setData(list("source"       = gettext(c("Total r & R", "Repeatability", "Reproducibility", "Operator", "Part-To-Part", "Operator x Part", "Total Variation"))))
 
