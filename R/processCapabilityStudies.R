@@ -298,7 +298,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     meanLog <- log(mean(allData)) - ((sdLog^2) / 2)
     lower   <- plnorm(q = options[["lowerSpecification"]], meanlog = meanLog, sdlog = sdLog)
     upper   <- 1 - plnorm(q = options[["upperSpecification"]], meanlog = meanLog, sdlog = sdLog)
-    cpk     <- 1 - plnorm((max(partsLower, partsUpper))) / 3
+    cpk     <- 1 - plnorm((max(lower, upper))) / 3
 
     rows <- list("mean" = mean(allData), "sd" = sd(allData), "lsl" = options[["lowerSpecification"]],
                  "usl" = options[["upperSpecification"]], "cpk" = cpk, "lower" = lower, "upper" = upper)

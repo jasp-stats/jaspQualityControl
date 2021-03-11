@@ -47,14 +47,14 @@ Form
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
 
 		AssignedVariablesList
 		{
 			id:									variable3
 			name:								"measurements"
-			title:								qsTr("Measurements")
+			title:								qsTr("Appraisal")
 			singleVariable:						false
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
@@ -75,15 +75,15 @@ Form
 		
 		CheckBox
 		{
-			name: "AAAfleissKappa";		label: qsTr("Fleiss Kappa")
+			name: "AAAfleissKappa";		label: qsTr("Fleiss kappa")
 		}
 		CheckBox
 		{
-			name: "AAAcohensKappa";		label: qsTr("Cohen's Kappa")
+			name: "AAAcohensKappa";		label: qsTr("Cohen's kappa")
 		}
 		CheckBox
 		{
-			name: "AAAkendallTau";		label: qsTr("Kendall's Tau")
+			name: "AAAkendallTau";		label: qsTr("Kendall's tau")
 		}
 	}
 }
