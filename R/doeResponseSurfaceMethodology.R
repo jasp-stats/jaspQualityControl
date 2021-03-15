@@ -152,10 +152,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op2  <- length(options[["rsmResponseVariables"]]) 
   op3  <- length(options[["rsmBlocks"]]) 
   
-  for (i in 1:(op1+op2+op3)) {
-    name[i] <- paste("v", as.character(i), sep = "")
-  }
-  
+
+  name <- paste("v", 1:(op1+op2+op3), sep = "")
+
   names(data) <- name 
   data$v1 <- (data$v1 - mean(data$v1))/val1
   data$v2 <- (data$v2 - mean(data$v1))/val2
