@@ -34,7 +34,7 @@
   if(!options[["controlCharts"]] || !is.null(jaspResults[["controlCharts"]]))
     return()
 
-  container <- createJaspContainer(title = gettext("X-bar Chart and R-Chart"))
+  container <- createJaspContainer(title = gettext("Control Charts"))
   container$dependOn(options = c("controlCharts", "variables"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
@@ -42,7 +42,7 @@
   xplot <- createJaspPlot(title = "X-bar Chart", width = 600, height = 300)
   container[["xplot"]] <- xplot # Always has position = 1 in container
 
-  rplot <- createJaspPlot(title = "Range Chart", width = 600, height= 300)
+  rplot <- createJaspPlot(title = "R Chart", width = 600, height = 300)
   container[["rplot"]] <- rplot # Always has position = 2 in container
 
   if(!ready)
@@ -87,8 +87,8 @@
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
-    ggplot2::geom_hline(yintercept = warn.limits, color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept = warn.limits, color = "darkred", linetype = "dashed") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Mean") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
@@ -111,7 +111,7 @@
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL + 0.1))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - (0.10 * abs(LCL)), range, UCL + (0.1 * UCL)), min.n = 4)
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
   xLimits <- c(0,max(xBreaks) + 5)
@@ -129,8 +129,8 @@
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
     ggplot2::geom_hline(yintercept = center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
-    ggplot2::geom_hline(yintercept = warn.limits, color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept = warn.limits, color = "darkred", linetype = "dashed") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Range") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name= gettext("Subgroup") ,breaks = xBreaks, limits = range(xLimits)) +
