@@ -96,8 +96,8 @@ attributesCharts <- function(jaspResults, dataset, options) {
     }
   }
   #ImRchart for attributes
-  if (options$ImRchart2 && length(options$D) > 0) {
-    jaspResults[["IPlotA"]] <- createJaspPlot(title = gettext("Individual and Moving Range Control Charts"), width = 700, height = 350)
+  if(options$ImRchart2){
+    jaspResults[["IPlotA"]] <- createJaspPlot(title = "Individual and Moving range charts", width = 700, height = 350)
     jaspResults[["IPlotA"]]$dependOn(c("D", "total","ImRchart2"))
 
     IPlot <- jaspResults[["IPlotA"]]
