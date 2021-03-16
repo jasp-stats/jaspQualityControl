@@ -65,6 +65,20 @@ Description
 		title:			qsTr("Capability Studies")
 		icon:			"processControl-capability.svg"
 	}
+<<<<<<< HEAD
+=======
+		Analysis
+	{
+		title:			qsTr("Time Weighted Charts")
+		func:			"TimeWeightedCharts"
+	}
+
+	 GroupTitle
+	 {
+	 	title:			qsTr("Capability Studies")
+	 	icon:			"processControl-capability.svg"
+	 }
+>>>>>>> Time Weighted Charts
 	Analysis
 	{
 		title:			qsTr("Process Capability Studies")
