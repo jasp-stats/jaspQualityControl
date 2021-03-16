@@ -1,6 +1,7 @@
 import(jaspBase)
 export(processCapabilityStudies)
 export(AttributeCharts)
+export(TimeWeightedCharts)
 export(VaribleChartsIndviduals)
 export(VaribleChartsSubgroups)
 export(msaGaugeRR)

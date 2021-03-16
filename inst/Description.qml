@@ -64,12 +64,17 @@ Description
 		title:			qsTr("Variables Charts for Indviduals")
 		func:			"VaribleChartsIndviduals"
 	}
-
-	GroupTitle
+	Analysis
 	{
-		title:			qsTr("Capability Studies")
-		icon:			"processControl-capability.svg"
+		title:			qsTr("Time Weighted Charts")
+		func:			"TimeWeightedCharts"
 	}
+
+	 GroupTitle
+	 {
+	 	title:			qsTr("Capability Studies")
+	 	icon:			"processControl-capability.svg"
+	 }
 	Analysis
 	{
 		title:			qsTr("Process Capability Studies")
