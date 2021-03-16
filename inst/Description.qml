@@ -18,7 +18,7 @@ Description
 	 	title:			qsTr("Measurement Systems Analysis")
 	 	icon:			"processControl-measurement.svg"
 	 }
-	 
+
 	 Analysis
 	{
 		title:			qsTr("Type 1 Gauge")
@@ -59,6 +59,11 @@ Description
 	{
 		title:			qsTr("Attribute Charts")
 		func:			"AttributeCharts"
+	}
+		Analysis
+	{
+		title:			qsTr("Time Weighted Charts")
+		func:			"TimeWeightedCharts"
 	}
 
 	 GroupTitle
