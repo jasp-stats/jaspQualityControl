@@ -16,27 +16,24 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
 
   #ImR chart
   if(options$ImRchart){
-    if(is.null(jaspResults[["Ichart"]]) & is.null(jaspResults[["MRchart"]])){
-      jaspResults[["Ichart"]] <- createJaspContainer(gettext("Individual charts"))
-      jaspResults[["MRchart"]] <- createJaspContainer(gettext("Moving range charts"))
-      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables"))
-      jaspResults[["MRchart"]]$dependOn(c("ImRchart", "variables"))
+    if(is.null(jaspResults[["Ichart"]])){
+      jaspResults[["Ichart"]] <- createJaspContainer(gettext("Charts per variable"))
     }
 
     Iplot <- jaspResults[["Ichart"]]
-    MRplot <- jaspResults[["MRchart"]]
 
     for(var in variables){
-      Iplot[[var]] <- .Ichart(dataset = dataset, options = options, variable = var)
-      MRplot[[var]] <- .MRchart(dataset = dataset, options = options, variable = var)
+      Iplot[[var]] <- .IMRchart(dataset = dataset, options = options, variable = var)
     }
   }
 }
-.Ichart <- function(dataset, options, variable){
+.IMRchart <- function(dataset, options, variable){
+
   title <- gettextf("Variable: %s", variable )
   ppPlot <- createJaspPlot(width = 700, height = 350, title = title)
   ppPlot$dependOn(optionContainsValue = list(variables = variable))
 
+  #Individual chart
   #data
   data <- data.frame(process = dataset[[.v(variable)]])
   subgroups <- c(1:length(data$process))
@@ -58,7 +55,7 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
     )
   )
 
-  p <- ggplot2::ggplot(data, ggplot2::aes(x = subgroups, y = process)) +
+  p1 <- ggplot2::ggplot(data, ggplot2::aes(x = subgroups, y = process)) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
@@ -69,19 +66,12 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  ppPlot$plotObject <-  p
-  return(ppPlot)
-}
-.MRchart <- function(dataset, options, variable){
-  title <- gettextf("Variable: %s", variable )
-  ppPlot <- createJaspPlot(width = 700, height = 350, title = title)
-  ppPlot$dependOn(optionContainsValue = list(variables = variable))
-
+  #Moving rage chart
   #data
-  data <- data.frame(process = dataset[[.v(variable)]])
-  xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol=2)
+  data2 <- data.frame(process = dataset[[.v(variable)]])
+  xmr.raw.r <- matrix(cbind(data2$process[1:length(data2$process)-1], data2$process[2:length(data2$process)]), ncol=2)
   sixsigma <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
-  data_plot <- data.frame(subgroups = c(1:length(sixsigma$statistics)), data = sixsigma$statistics)
+  data_plot <- data.frame(subgroups = c(1:length(sixsigma$statistics)), data2 = sixsigma$statistics)
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
@@ -99,7 +89,7 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
     )
   )
 
-  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data)) +
+  p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data2)) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
@@ -110,6 +100,7 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  ppPlot$plotObject <-  p
+  ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
   return(ppPlot)
 }
+

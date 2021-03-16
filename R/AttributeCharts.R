@@ -61,16 +61,12 @@ if(options$Attributes == "Defectives"){
     }
 }
   #ImRchart for attributes
-  if(options$ImRchart2 && is.null(jaspResults[["ImRchart2"]])){
-    jaspResults[["IPlotA"]] <- createJaspPlot(title = "Individual chart", width = 700, height = 350)
-    jaspResults[["MRPlotA"]] <- createJaspPlot(title = "MR chart", width = 700, height = 350)
+  if(options$ImRchart2){
+    jaspResults[["IPlotA"]] <- createJaspPlot(title = "Individual and Moving range charts", width = 700, height = 350)
     jaspResults[["IPlotA"]]$dependOn(c("D", "total","ImRchart2"))
-    jaspResults[["MRPlotA"]]$dependOn(c("D", "total","ImRchart2"))
 
     IPlot <- jaspResults[["IPlotA"]]
-    MRPlot <- jaspResults[["MRPlotA"]]
     IPlot$plotObject <- .Ichart_attributes(dataset = dataset, options = options)
-    MRPlot$plotObject <- .MR_attributes(dataset = dataset, options = options)
   }
 }
 
@@ -271,7 +267,7 @@ if(options$Attributes == "Defectives"){
     )
   )
 
-  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
+  p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
@@ -281,13 +277,6 @@ if(options$Attributes == "Defectives"){
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'gray')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-
-  return(p)
-}
-.MR_attributes <- function(dataset, options){
-  ready <- options$D != "" && options$total != ""
-  if (!ready)
-    return()
 
   #data
   data <- data.frame(process = dataset[, options$D] / dataset[, options$total])
@@ -311,7 +300,7 @@ if(options$Attributes == "Defectives"){
     )
   )
 
-  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data)) +
+  p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data)) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
@@ -322,7 +311,9 @@ if(options$Attributes == "Defectives"){
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  return(p)
+  p3 <-  jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
+
+  return(p3)
 }
 
 ### Lanys charts
