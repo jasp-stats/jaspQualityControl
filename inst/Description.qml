@@ -13,6 +13,7 @@ Description
 	license				: "GPL (>= 2)"
 	icon				: "processControl-module.svg"
 
+
 	GroupTitle
 	{
 		title:			qsTr("Measurement Systems Analysis")
@@ -68,6 +69,11 @@ Description
 	{
 		title:			qsTr("Time Weighted Charts")
 		func:			"timeWeightedCharts"
+	}
+		Analysis
+	{
+		title:			qsTr("Time Weighted Charts")
+		func:			"TimeWeightedCharts"
 	}
 
 	 GroupTitle

@@ -5,10 +5,10 @@ import JASP.Widgets 							1.0
 
 Form
 {
-	usesJaspResults:							true
+  usesJaspResults:							true
 	columns:									1
 
-	VariablesForm
+  VariablesForm
 	{
 		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
 		id:										variablesForm3
@@ -27,7 +27,7 @@ Form
 		}
 	}
 
-	Group{
+  Group{
 		columns: 									1
 		CheckBox {	name: "Cumulativechart";				label: qsTr("Cumulative sum chart")
 			DoubleField
@@ -65,7 +65,6 @@ Form
 		CheckBox {	name: "gchart";							label: qsTr("g chart")												}
 		CheckBox {	name: "tchart";							label: qsTr("t chart")												}
 	}
-
 }
 
 
