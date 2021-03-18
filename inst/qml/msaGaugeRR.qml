@@ -61,17 +61,26 @@ Form
 
 	}
 	
-			RadioButtonGroup
-		{
-			name: "gaugeRRmethod"
-			RadioButton { name: "anovaMethod";	label: qsTr("ANOVA Method"); checked: true}
-			RadioButton { name: "rangeMethod";  label: qsTr("Range Method")	}
-		}
-	
+
+		
+		
+		DropDown {
+                name: "gaugeRRmethod"
+                label: qsTr("Gauge r&R Method")
+                indexDefaultValue: 0
+                values:
+                [	
+					{label: qsTr("ANOVA method"),					value: "anovaMethod"},
+					{label: qsTr("Range method"),				value: "rangeMethod"},
+				]
+				
+				id: gaugeRRmethod
+				}
 	
 		Section
 	{
 		title: qsTr("ANOVA Method Options")
+		visible: gaugeRRmethod.currentValue == "anovaMethod"
 		
 		Group
 		{
@@ -198,6 +207,7 @@ Form
 	Section
 	{
 		title: qsTr("Range Method Options")
+		visible: gaugeRRmethod.currentValue == "rangeMethod"
 		
 			Group
 			{
