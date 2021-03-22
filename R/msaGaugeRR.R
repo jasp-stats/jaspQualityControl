@@ -585,12 +585,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
   if (ready){
     byOperator <- split.data.frame(dataset, dataset[operators])
-    partNames <- levels(as.factor(dataset[[parts]]))
+    partNames <- unique(dataset[[parts]])
     meansPerOperator <- data.frame(Part = factor(partNames, partNames))
 
     for(i in 1:length(names(byOperator))){
       name <- names(byOperator)[i]
-      if (length(rowMeans(byOperator[[name]][measurements])) != length(partNames)){
+      if (nrow(byOperator[[name]][measurements]) != length(partNames)){
         plot$setError(gettext("Operators measured different number of parts."))
         return(plot)
       }
@@ -680,7 +680,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
       operatorSplit <- split.data.frame(dataset, dataset[operators])
 
-      if (length(rowMeans(operatorSplit[[1]][measurements]) != length(rowMeans(operatorSplit[[2]][measurements])))){
+      if (nrow(operatorSplit[[1]][measurements]) != nrow(operatorSplit[[2]][measurements])){
         plot$setError(gettext("Operators measured different number of parts."))
         return(plot)
       }
