@@ -590,7 +590,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
     for(i in 1:length(names(byOperator))){
       name <- names(byOperator)[i]
-      if (length(rowMeans(byOperator[[name]][c(measurements)])) != length(partNames)){
+      if (length(rowMeans(byOperator[[name]][measurements])) != length(partNames)){
         plot$setError(gettext("Operators measured different number of parts."))
         return(plot)
       }
