@@ -601,10 +601,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     tidydata <- tidyr::gather(meansPerOperator, key = "Operator", value = "Measurements", -Part )
 
     p <- ggplot2::ggplot(tidydata, ggplot2::aes(x = Part, y = Measurements, col = Operator, group = Operator)) +
-      jaspGraphs::geom_line() + jaspGraphs::geom_point()
-    p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right')
-    ggplot2::ylab("Measurement") +
-      ggplot2::scale_y_continuous(limits = c(min(meansPerOperator[names(byOperator)]) * 0.9, max(meansPerOperator[names(byOperator)]) * 1.1))
+      jaspGraphs::geom_line() + 
+      jaspGraphs::geom_point() +
+      ggplot2::scale_y_continuous(name = "Measurement", limits = c(min(meansPerOperator[names(byOperator)]) * 0.9, max(meansPerOperator[names(byOperator)]) * 1.1)) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw() + 
+      ggplot2::theme(legend.position = 'right')
     plot$plotObject <- p
   }
   return(plot)
