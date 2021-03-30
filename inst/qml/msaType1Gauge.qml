@@ -44,10 +44,10 @@ Form
 		{
 		title: qsTr("Analysis Options")
 					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference value:");		defaultValue: 0;	negativeValues: true; decimals: 5; fieldWidth: 60}
-					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance value:");		defaultValue: 1;	negativeValues: true; decimals: 5; fieldWidth: 60}
+					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance range:");		defaultValue: 1;	negativeValues: true; decimals: 5; fieldWidth: 60}
 					DoubleField {
 								name: "biasPercentCG";
-								label: qsTr("Percent of tolerance for CG:");
+								label: qsTr("Percent of tolerance for Cg:");
 								defaultValue: 20;
 								negativeValues: false
 								min:			0.001;
@@ -55,26 +55,16 @@ Form
 					}
 					
 		DropDown{
-				name: "BiasStudyVarMultiplierType"
-				label: qsTr("Study var. multiplier type")
+				name: "BiasStudyVarMultiplier"
+				label: qsTr("Study var. (number of std. deviations):")
 				indexDefaultValue: 0
 				values:
 						[
-						{label: qsTr("Std. Deviation"),		value: "svmSD"},
-						{label: qsTr("Percent"),				value: "svmPercent"},
+						{label: qsTr("6"),		value: 6},
+						{label: qsTr("4"),		value: 4}
 						]
-				id: studyVarMultiplierType
+				id: studyVarMultiplier
 				}
-										
-		DoubleField{ 
-					name: "BiasStudyVarMultiplier"
-					label: qsTr("Study var. multiplier value:")
-					fieldWidth: 60 
-					defaultValue: 6 
-					min:			0.001;
-					max:			99.999;
-					decimals: 3
-					}
 					
 		}
 					

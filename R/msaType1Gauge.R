@@ -78,13 +78,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   tolerance <- options$biasTolerance
   reference <- options$biasReferenceValue
 
-  if (options$BiasStudyVarMultiplierType == "svmSD"){
-    studyVarMultiplier <- options$BiasStudyVarMultiplier
-  }else{
-    percent <- options$BiasStudyVarMultiplier/100
-    q <- (1 - percent)/2
-    studyVarMultiplier <- abs(2*qnorm(q))
-  }
+  studyVarMultiplier <- as.numeric(options$BiasStudyVarMultiplier)
 
   table1 <- createJaspTable(title = gettext("Basic Statistics"))
   table1$dependOn(c("biasReferenceValue", "biastable", "biasTolerance"))
@@ -97,7 +91,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   table1$addColumnInfo(name = "tolerance",       title = gettext("Tolerance"), type = "number")
   table1$addColumnInfo(name = "biasPercent",     title = gettext("% Bias"), type = "number")
 
-  table1$addFootnote(gettextf("The study variation is calculated as %.2f * <i>s</i>.", studyVarMultiplier))
+  table1$addFootnote(gettextf("The study variation is calculated as %i * <i>s</i>.", studyVarMultiplier))
 
   table2 <- createJaspTable(title = gettext("Capability"))
   table2$dependOn(c("biasReferenceValue", "biastable", "biasTolerance"))
@@ -205,7 +199,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   if (ready){
 
-    plot <- createJaspPlot(title = "Run Chart", width = 700, height = 300)
+    plot <- createJaspPlot(title = gettextf("Run Chart of %s", measurements), width = 700, height = 300)
 
     dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
@@ -216,7 +210,6 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
     plot$dependOn(c("biasRun"))
 
     toleranceLines <- c(options$biasReferenceValue + 0.1 * options$biasTolerance, options$biasReferenceValue - 0.1 * options$biasTolerance)
-    yLimits <- range(c(dataset[["Measurement"]], toleranceLines))
 
 
     p <- ggplot2::ggplot() +
@@ -237,7 +230,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
                           mapping = ggplot2::aes(x = index, y = Measurement), color = "darkred") +
       ggplot2::geom_label(data = data.frame(x = max(index), y = toleranceLines[2], l = "Ref - 0.1 * Tol"),
                           ggplot2::aes(x = x, y = y, label = l), vjust="outward",hjust="inward", color = "darkred" ) +
-      ggplot2::scale_x_discrete(name = "Index", breaks = c(seq(1, max(index), 5),max(index)))
+      ggplot2::scale_x_discrete(name = "Index", breaks = c(seq(1, max(index), 5),max(index))) +
+      ggplot2::scale_y_continuous(name = measurements)
 
     p <- jaspGraphs::themeJasp(p) + ggplot2::theme(plot.margin = ggplot2::unit(c(.5, .5, .5, .5), "cm"))
 
