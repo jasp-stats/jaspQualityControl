@@ -548,9 +548,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = parts, y = "Measurement"), col = "gray")
 
     p <- p + jaspGraphs::geom_point(data = means, ggplot2::aes_string(x = parts, y = "Measurement")) +
-      ggplot2::scale_y_continuous(limits = c(min(dataset["Measurement"]) * 0.9, max(dataset["Measurement"]) * 1.1))
-
-    p <- jaspGraphs::themeJasp(p)
+      ggplot2::scale_y_continuous(limits = c(min(dataset["Measurement"]) * 0.9, max(dataset["Measurement"]) * 1.1)) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
 
     plot$plotObject <- p
 
@@ -588,8 +588,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     partNames <- unique(dataset[[parts]])
     meansPerOperator <- data.frame(Part = factor(partNames, partNames))
 
-    for(i in 1:length(names(byOperator))){
-      name <- names(byOperator)[i]
+    for(name in names(byOperator)){
       if (nrow(byOperator[[name]][measurements]) != length(partNames)){
         plot$setError(gettext("Operators measured different number of parts."))
         return(plot)
