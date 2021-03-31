@@ -1,10 +1,6 @@
 VaribleChartsIndviduals <- function(jaspResults, dataset, options){
   variables <- options$variables
-  total <- options$total
-  D <- options$D
-  numeric_variables <- c(variables, total, D)
-  numeric_variables  <- numeric_variables[numeric_variables != ""]
-
+  numeric_variables  <- variables[variables != ""]
   dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
@@ -61,7 +57,7 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Value") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Observation'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line() +
+    jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(data$process > UCL | data$process < LCL, 'red', 'gray')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
@@ -95,7 +91,7 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Moving Range") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Observation'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line() +
+    jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$data > UCL | data_plot$data < LCL, 'red', 'gray')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()

@@ -5,39 +5,39 @@ import JASP.Widgets 							1.0
 
 Form
 {
-    usesJaspResults:							true
-    columns:									1
+  usesJaspResults:							true
+  columns:									1
 
-    VariablesForm
-    {
+  VariablesForm
+  {
       preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
       id:										variablesForm3
 
-      AvailableVariablesList
-      {
+    AvailableVariablesList
+    {
         name:								"variablesForm3"
-      }
+    }
 
-      AssignedVariablesList
-      {
+    AssignedVariablesList
+    {
         id:									variables5
         name:								"variables"
         title:								qsTr("Measurements")
         allowedColumns:						["scale"]
-      }
     }
+  }
 
-    Group{
-      columns: 									1
-      CheckBox {	name: "Cumulativechart";				label: qsTr("Cumulative sum chart")
-        DoubleField
+  Group{
+    columns: 									1
+    CheckBox {	name: "Cumulativechart";				label: qsTr("Cumulative sum chart")
+      DoubleField
         {
           name:			"h"
           label:			qsTr("Number of standard deviations:")
           defaultValue:	4
           enabled:		variationReference.currentValue != "studyVariation"
         }
-        DoubleField
+      DoubleField
         {
           name:			"k"
           label:			qsTr("Shift size:")
@@ -45,15 +45,15 @@ Form
           enabled:		variationReference.currentValue != "studyVariation"
         }
       }
-      CheckBox {	name: "Exponentialchart";				label: qsTr("Exponentially weighted moving average chart")
-              DoubleField
+    CheckBox {	name: "Exponentialchart";				label: qsTr("Exponentially weighted moving average chart")
+      DoubleField
         {
           name:			"sigma"
           label:			qsTr("Number of standard deviations:")
           defaultValue:	3
           enabled:		variationReference.currentValue != "studyVariation"
         }
-        DoubleField
+       DoubleField
         {
           name:			"lambda"
           label:			qsTr("Lambda:")
