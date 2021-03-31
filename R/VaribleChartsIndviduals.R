@@ -53,7 +53,7 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
 
   p1 <- ggplot2::ggplot(data, ggplot2::aes(x = subgroups, y = process)) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Value") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Observation'), breaks = xBreaks, limits = range(xLimits)) +
@@ -87,7 +87,7 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
 
   p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data2)) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Moving Range") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Observation'), breaks = xBreaks, limits = range(xLimits)) +

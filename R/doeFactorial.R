@@ -92,16 +92,24 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     designs <- jaspResults[["state"]]$object
 
     if(options[["designBy"]] == "designByRuns"){
-      rowIndex 	    <- which(designs[, 1] == options[["factorialRuns"]])
-      resolution    <- designs[rowIndex, options[["numberOfFactors"]]]
-      runs          <- options[["factorialRuns"]]
+      runs <- options[["factorialRuns"]]
+      if(log2(as.numeric(options[["factorialRuns"]])) < options[["numberOfFactors"]]){
+      resolution <- DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
+                                                                  nruns = as.numeric(options[["factorialRuns"]])))$catlg.entry[[1]]$res
+      } else {
+        resolution <- "Full"
+      }
+
     } else {
-      resolution    <- options[["factorialResolution"]]
-      rowIndex      <- which(designs[,options[["numberOfFactors"]]] == resolution)[1]
-      runs          <- designs[rowIndex, 1]
+      resolution <- options[["factorialResolution"]]
+      if(options[["factorialResolution"]] != "Full"){
+      runs <- DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
+                                               resolution = as.numeric(as.roman(options[["factorialResolution"]]))))$nruns
+      } else {
+        runs <- DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
+                                                 resolution = 100))$nruns
+      }
     }
-    if(resolution == "")
-      resolution <- "None"
 
     design <- base::switch(options[["factorialType"]],
                            "factorialTypeDefault" = gettext("2-level factorial"))
@@ -109,10 +117,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     rows <- data.frame(type = "Factorial",
                        factors = options[["numberOfFactors"]],
                        runs = runs,
-                       resolution = resolution,
-                       centers = options[["factorialCenterPoints"]],
-                       replicates = options[["factorialCornerReplicates"]],
-                       blocks = options[["factorialBlocks"]])
+                       resolution = resolution
+                       # centers = "NA",
+                       # replicates = "NA",
+                       # blocks = "NA"
+                       )
 
     table$setData(rows)
     jaspResults[["selectedDesign"]] <- table
@@ -222,13 +231,13 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       rows <- cbind(runOrder = 1:nrow(rows), rows)
     }
 
-    if(options[["dataCoding"]] == "dataUncoded"){
-      table$setData(rows)
-    } else {
-      for(i in 1:as.numeric(options[["numberOfFactors"]])){
-        rows[,i+1]
-      }
-    }
+    # if(options[["dataCoding"]] == "dataUncoded"){
+    #   table$setData(rows)
+    # } else {
+    #   for(i in 1:as.numeric(options[["numberOfFactors"]])){
+    #     rows[,i+1]
+    #   }
+    # }
 
     table$setData(rows)
 

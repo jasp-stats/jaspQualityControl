@@ -44,7 +44,8 @@ Form
 			name:               			"subgroups"
 			title:             			 	qsTr("Subgroups")
 			singleVariable:    	 			true
-			allowedColumns:     			["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:     			["nominal", "nominalText", "ordinal"]
+			debug:							true // Not sure how this is supposed to be used yet
 		}
 	}
 
@@ -162,7 +163,7 @@ Form
 			CheckBox 
 			{ 
 				name: 						"controlCharts"
-				label: 						qsTr("X-bar & range control chart")
+				label: 						qsTr("X-bar & R chart")
 				checked: 					true
 			}
 		}
@@ -183,12 +184,21 @@ Form
 					label:					qsTr("Display density")
 					checked:				true
 				}
+
+				DoubleField
+				{
+					name:					"numberOfBins"
+					label:					qsTr("Number of bins")
+					defaultValue:			30
+					min:					3
+					max:					10000
+				}
 			}
 
 			CheckBox 
 			{ 
 				name: 						"probabilityPlot"
-				label: 						qsTr("Probability tables and plots")
+				label: 						qsTr("Probability table and plots")
 				checked: 					true
 
 				DropDown
@@ -216,6 +226,12 @@ Form
 						{ label: qsTr("Lognormal"),		value: "Lognormal" },
 						{ label: qsTr("Weibull"),		value: "Weibull"   }
 					]
+				}
+
+				CheckBox
+				{
+					name:					"addGridlines"
+					label:					qsTr("Display grid lines in plots")
 				}
 			}
 		}
