@@ -99,14 +99,14 @@ if(options$Attributes == "Defectives"){
   )
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept =  center, color = "green", size  = 1) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed",size = 1) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
     jaspGraphs::themeJaspRaw()
 
   return(p)
@@ -141,14 +141,14 @@ if(options$Attributes == "Defectives"){
   )
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = D)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept =  center, color = 'green', size  = 1) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed",size = 1) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("D"),limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$D > UCL | data_plot$D < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$D > UCL | data_plot$D < LCL, 'red', 'blue')) +
     jaspGraphs::themeJaspRaw()
 
   return(p)
@@ -185,13 +185,13 @@ if(options$Attributes == "Defectives"){
   )
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = D)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept =  center, color = 'green', size  = 1) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed",size = 1) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("D") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$D > UCL | data_plot$D < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$D > UCL | data_plot$D < LCL, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -227,14 +227,14 @@ if(options$Attributes == "Defectives"){
   )
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept =  center, color = 'green', size  = 1) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed",size = 1) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
     jaspGraphs::themeJaspRaw()
 
   return(p)
@@ -270,13 +270,13 @@ if(options$Attributes == "Defectives"){
   )
 
   p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept =  center, color = 'green', size  = 1) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed",size = 1) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -303,13 +303,13 @@ if(options$Attributes == "Defectives"){
   )
 
   p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept =  center, color = 'green', size  = 1) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed",size = 1) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Moving Range") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Observation'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$data > UCL | data_plot$data < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$data > UCL | data_plot$data < LCL, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -355,14 +355,14 @@ if(options$Attributes == "Defectives"){
   )
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    ggplot2::geom_hline(yintercept =  center, color = 'green', size  = 1) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed",size = 1) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
     jaspGraphs::themeJaspRaw()
 
   return(p)
@@ -405,14 +405,14 @@ if(options$Attributes == "Defectives"){
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
     jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'gray')) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
+    ggplot2::geom_hline(yintercept =  center, color = 'green', size  = 1) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed",size = 1) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name = gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 

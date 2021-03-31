@@ -1,7 +1,6 @@
 TimeWeightedCharts <- function(jaspResults, dataset, options){
   variables <- options$variables
   numeric_variables  <- variables[variables != ""]
-
   dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
@@ -29,12 +28,12 @@ TimeWeightedCharts <- function(jaspResults, dataset, options){
 
   data1 <- dataset[, options$variables]
   sixsigma <- qcc::cusum(data1, decision.interval = options$h, se.shift = options$k, plot = FALSE)
-  subgroups = c(1:length(sixsigma$pos))
+  subgroups <- c(1:length(sixsigma$pos))
   data_plot <- data.frame(y_neg = sixsigma$neg , y_pos = sixsigma$pos, x = subgroups)
 
   center <- 0
   UCL <- sixsigma$decision.interval
-  LCL <- c(-UCL)
+  LCL <- -UCL
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1 , UCL + 1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
@@ -70,10 +69,10 @@ TimeWeightedCharts <- function(jaspResults, dataset, options){
 
   data1 <- dataset[, options$variables]
   sixsigma <- qcc::ewma(data1, lambda = options$lambda, nsigmas= options$sigma, plot = FALSE)
-  subgroups = c(1:length(sixsigma$sizes))
+  subgroups <- 1:length(sixsigma$sizes)
   center <- sixsigma$center
-  UCL =  sixsigma$limits[,2]
-  LCL = sixsigma$limits[,1]
+  UCL <-  sixsigma$limits[,2]
+  LCL <- sixsigma$limits[,1]
   data_plot <- data.frame(y = sixsigma$y, x = subgroups, UCL = UCL, LCL = LCL)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(min(LCL) - 0.001 , max(UCL) +  0.001))
   yLimits <- range(yBreaks)
@@ -88,13 +87,13 @@ TimeWeightedCharts <- function(jaspResults, dataset, options){
   )
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = x, y = y)) +
-    geom_line(ggplot2::aes(x = x, y = UCL, color = "red")) +
-    geom_line(ggplot2::aes(x = x, y = LCL, color = "red")) +
+    ggplot2::geom_line(ggplot2::aes(x = x, y = UCL, color = "red")) +
+    ggplot2::geom_line(ggplot2::aes(x = x, y = LCL, color = "red")) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Standard Deviation") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line() +
+    ggplot2::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$y > UCL | data_plot$y < LCL, 'red', 'gray')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()

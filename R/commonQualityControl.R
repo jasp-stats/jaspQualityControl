@@ -78,7 +78,6 @@
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, means))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -89,20 +88,19 @@
     )
   )
 
-
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred")
+        ggplot2::geom_hline(yintercept =  center, color = 'green', size = 1) +
+        ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1)
   if (warningLimits){
     warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "darkred", linetype = "dashed")
+    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
   }
-   p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = gettext("Mean") ,limits = yLimits, breaks = yBreaks) +
+  p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
+    ggplot2::scale_y_continuous(name = gettext("Subgroup mean") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "gray")) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "blue")) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -129,7 +127,8 @@
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - (0.10 * abs(LCL)), range, UCL + (0.1 * UCL)), min.n = 4)
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(0,max(xBreaks) + 5)
+  xLimits <- c(0, max(xBreaks) + 5)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -142,20 +141,21 @@
 
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
-    ggplot2::geom_hline(yintercept = center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred")
-  if (warningLimits){
+        ggplot2::geom_hline(yintercept = center,  color = 'green', size = 1) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", , linetype = "dashed", size = 1)
+	if (warningLimits){
     warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "darkred", linetype = "dashed")
+    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1) 
   }
   p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = gettext("Range") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_y_continuous(name = gettext("Subgroup range") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name= gettext("Subgroup") ,breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
   return(p)
 }
+

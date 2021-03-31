@@ -24,6 +24,14 @@ Form
 			title:								qsTr("Variables")
 			allowedColumns:						["scale"]
 		}
+		AssignedVariablesList
+		{
+				id:                 			time
+				name:               			"time"
+				title:             			 	qsTr("Time Stamp (optional)")
+				singleVariable:    	 			true
+				allowedColumns:     			["nominal", "nominalText", "ordinal", "scale"]
+		}
 	}
 
 	Group
