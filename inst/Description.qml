@@ -17,7 +17,7 @@ Description
 	{
 		title:			qsTr("Measurement Systems Analysis")
 		icon:			"processControl-measurement.svg"
-	} 
+	}
 	 Analysis
 	{
 		title:			qsTr("Type 1 Study")
