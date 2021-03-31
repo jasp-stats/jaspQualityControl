@@ -12,12 +12,12 @@ Description
 	website				: "https://github.com/jasp-stats/jaspProcessControl"
 	license				: "GPL (>= 2)"
 	icon				: "processControl-module.svg"
-  
+
 	GroupTitle
 	{
 		title:			qsTr("Measurement Systems Analysis")
 		icon:			"processControl-measurement.svg"
-	} 
+	}
 	 Analysis
 	{
 		title:			qsTr("Type 1 Gauge")
@@ -59,13 +59,7 @@ Description
 		title:			qsTr("Variable Charts for Indviduals")
 		func:			"VaribleChartsIndviduals"
 	}
-
-	GroupTitle
-	{
-		title:			qsTr("Capability Studies")
-		icon:			"processControl-capability.svg"
-	}
-		Analysis
+			Analysis
 	{
 		title:			qsTr("Time Weighted Charts")
 		func:			"TimeWeightedCharts"
