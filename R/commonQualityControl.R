@@ -168,7 +168,6 @@
 
   return(p)
 }
-
 NelsonLaws <- function(data, UCL, LCL, center, which = c(1:3,5,7:8), chart = "i") {
 
   # Adjust Rules to SKF
@@ -266,4 +265,3 @@ NelsonLaws <- function(data, UCL, LCL, center, which = c(1:3,5,7:8), chart = "i"
 
   return(table)
 }
-

@@ -2,7 +2,6 @@
 timeWeightedCharts <- function(jaspResults, dataset, options) {
   variables <- options$variables
   numeric_variables  <- variables[variables != ""]
-
   dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
