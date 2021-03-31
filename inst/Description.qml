@@ -17,7 +17,7 @@ Description
 	{
 		title:			qsTr("Measurement Systems Analysis")
 		icon:			"processControl-measurement.svg"
-	} 
+	}
 	 Analysis
 	{
 		title:			qsTr("Type 1 Gauge")
@@ -59,26 +59,17 @@ Description
 		title:			qsTr("Variable Charts for Indviduals")
 		func:			"VaribleChartsIndviduals"
 	}
+	Analysis
+	{
+		title:			qsTr("Time Weighted Charts")
+		func:			"TimeWeightedCharts"
+	}
 
 	GroupTitle
 	{
 		title:			qsTr("Capability Studies")
 		icon:			"processControl-capability.svg"
 	}
-<<<<<<< HEAD
-=======
-		Analysis
-	{
-		title:			qsTr("Time Weighted Charts")
-		func:			"TimeWeightedCharts"
-	}
-
-	 GroupTitle
-	 {
-	 	title:			qsTr("Capability Studies")
-	 	icon:			"processControl-capability.svg"
-	 }
->>>>>>> Time Weighted Charts
 	Analysis
 	{
 		title:			qsTr("Process Capability Studies")
