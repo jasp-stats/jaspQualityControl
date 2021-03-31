@@ -14,6 +14,7 @@ Description
 	icon				: "processControl-module.svg"
 
 
+
 	GroupTitle
 	{
 		title:			qsTr("Measurement Systems Analysis")
