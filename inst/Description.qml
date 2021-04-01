@@ -46,17 +46,17 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Attribute Charts")
+		title:			qsTr("Attributes Charts")
 		func:			"AttributeCharts"
 	}
 	Analysis
 	{
-		title:			qsTr("Variable Charts for Subgroups")
+		title:			qsTr("Variable Chart for Subgroups")
 		func:			"VaribleChartsSubgroups"
 	}
 	Analysis
 	{
-		title:			qsTr("Variable Charts for Indviduals")
+		title:			qsTr("Variable Chart for Individuals")
 		func:			"VaribleChartsIndviduals"
 	}
 			Analysis

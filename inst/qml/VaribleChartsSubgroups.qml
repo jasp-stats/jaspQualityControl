@@ -36,19 +36,19 @@ Form
 
   Group
 	{
-		title: 									qsTr("Charts for Subgroups")
+		title: 									qsTr("Control Charts")
 		columns: 								1
 
 		CheckBox
 		{
 			name: 								"Xbarchart"
-			label: 								qsTr("X-bar & R chart")
+			label: 								qsTr("X-bar & R")
 		}
 
 		CheckBox
 		{
 			name: 								"Schart"
-			label: 								qsTr("X-bar & S chart")
+			label: 								qsTr("X-bar & s")
 		}
     }
 }

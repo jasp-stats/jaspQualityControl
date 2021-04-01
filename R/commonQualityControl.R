@@ -59,7 +59,7 @@
 }
 
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options){
+.XbarchartNoId <- function(dataset, options, time = FALSE){
   #Xbar
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   means <- rowMeans(data)
@@ -87,9 +87,9 @@
                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green', size = 1) +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1) +
-    ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1) +
+    ggplot2::geom_hline(yintercept =  center, color = 'green') +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Subgroup mean") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
@@ -98,10 +98,14 @@
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
+  if (time){
+    xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
+    p <- p + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)
+  }
   return(p)
 }
 
-.RchartNoId <- function(dataset, options){
+.RchartNoId <- function(dataset, options, time = FALSE){
   #R-chart
   data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   range <- apply(data1, 1, function(x) max(x) - min(x))
@@ -130,9 +134,9 @@
                    qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
-    ggplot2::geom_hline(yintercept = center,  color = 'green', size = 1) +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", , linetype = "dashed", size = 1) +
-    ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1) +
+    ggplot2::geom_hline(yintercept = center,  color = 'green') +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", , linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Subgroup range") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name= gettext("Subgroup") ,breaks = xBreaks, limits = range(xLimits)) +
@@ -140,6 +144,11 @@
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
+
+  if (time){
+    xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
+    p <- p + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)
+  }
 
   return(p)
 }
