@@ -59,9 +59,9 @@
 }
 
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE) {
-  data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
-  means <- rowMeans(data1)
+.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE) {
+  data <- dataset[, unlist(lapply(dataset, is.numeric))]
+  means <- rowMeans(data)
   subgroups <- c(1:length(means))
   data_plot <- data.frame(subgroups = subgroups, means = means)
   sixsigma <- qcc::qcc(data1, type ='xbar', plot=FALSE)
@@ -104,17 +104,21 @@
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
+  if (time){
+    xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
+    p <- p + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)
+  }
   return(p)
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE) {
+.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE) {
   #Arrange data and compute
-  data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
-  range <- apply(data1, 1, function(x) max(x) - min(x))
+  data <- dataset[, unlist(lapply(dataset, is.numeric))]
+  range <- apply(data, 1, function(x) max(x) - min(x))
   subgroups <- 1:length(range)
   data_plot <- data.frame(subgroups = subgroups, range = range)
-  sixsigma <- qcc::qcc(data1, type= 'R', plot = FALSE)
+  sixsigma <- qcc::qcc(data, type= 'R', plot = FALSE)
   if (manualLimits != ""){
     LCL <- manualLimits[1]
     center <- manualLimits[2]
@@ -155,6 +159,11 @@
     jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
+
+  if (time){
+    xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
+    p <- p + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)
+  }
 
   return(p)
 }
