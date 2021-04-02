@@ -83,7 +83,7 @@ Form
 		}
 		CheckBox
 		{
-			name: "biasTable";		label: qsTr("Bias and capability table");		checked: true
+			name: "biasTable";		label: qsTr("Bias and gauge capability table");		checked: true
 		}
 			
 		CheckBox

@@ -71,7 +71,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
 .biasTable <- function(dataset, measurements, options, ready){
 
-  biasTables <- createJaspContainer(gettext("Bias and Capability Table"))
+  biasTables <- createJaspContainer(gettext("Bias and Gauge Capability Table"))
 
   data <- dataset
 
@@ -97,8 +97,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   table2$dependOn(c("biasReferenceValue", "biastable", "biasTolerance"))
 
 
-  table2$addColumnInfo(name = "Cg",  title = gettext("Cg"), type = "number")
-  table2$addColumnInfo(name = "Cgk",  title = gettext("Cgk"), type = "number")
+  table2$addColumnInfo(name = "Cg",  title = gettext("Cg"), type = "string")
+  table2$addColumnInfo(name = "Cgk",  title = gettext("Cgk"), type = "string")
   table2$addColumnInfo(name = "percentRep",  title = gettext("% Var(Repeatability)"), type = "number")
   table2$addColumnInfo(name = "percentRepBias",  title = gettext("% Var(Repeatability and bias)"), type = "number")
 
@@ -128,8 +128,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
     percentRepBias <- k/cgk
 
 
-    table2$setData(list(     "Cg"     = cg,
-                             "Cgk"    = cgk,
+    table2$setData(list(     "Cg"     = round(cg, 2),
+                             "Cgk"    = round(cgk, 2),
                              "percentRep"  =  percentRep,
                              "percentRepBias"    = percentRepBias))
 
@@ -203,9 +203,9 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
     dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
-    index <- 1:length(dataset[["Measurement"]])
+    Observation <- 1:length(dataset[["Measurement"]])
 
-    dataset <- cbind(dataset, index = factor(index, index))
+    dataset <- cbind(dataset, Observation = factor(Observation, Observation))
 
     plot$dependOn(c("biasRun"))
 
@@ -213,24 +213,24 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
 
     p <- ggplot2::ggplot() +
-      jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = index, y = Measurement, group = 1))
+      jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1))
 
     if (options$biasRunDots)
-      p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = index, y = Measurement))
+      p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = Observation, y = Measurement))
 
     p <- p + ggplot2::geom_hline(yintercept = options$biasReferenceValue, data = dataset,
-                                 mapping = ggplot2::aes(x = index, y = Measurement), color = "darkgreen") +
-      ggplot2::geom_label(data = data.frame(x = max(index), y = options$biasReferenceValue, l = "Ref"),
+                                 mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkgreen") +
+      ggplot2::geom_label(data = data.frame(x = max(Observation), y = options$biasReferenceValue, l = "Ref"),
                           ggplot2::aes(x = x, y = y, label = l), vjust="inward",hjust="inward", color = "darkgreen" ) +
       ggplot2::geom_hline(yintercept = toleranceLines[1], data = dataset,
-                          mapping = ggplot2::aes(x = index, y = Measurement), color = "darkred") +
-      ggplot2::geom_label(data = data.frame(x = max(index), y = toleranceLines[1], l = "Ref + 0.1 * Tol"),
+                          mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
+      ggplot2::geom_label(data = data.frame(x = max(Observation), y = toleranceLines[1], l = "Ref + 0.1 * Tol"),
                           ggplot2::aes(x = x, y = y, label = l), vjust="outward",hjust="inward", color = "darkred" ) +
       ggplot2::geom_hline(yintercept = toleranceLines[2], data = dataset,
-                          mapping = ggplot2::aes(x = index, y = Measurement), color = "darkred") +
-      ggplot2::geom_label(data = data.frame(x = max(index), y = toleranceLines[2], l = "Ref - 0.1 * Tol"),
+                          mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
+      ggplot2::geom_label(data = data.frame(x = max(Observation), y = toleranceLines[2], l = "Ref - 0.1 * Tol"),
                           ggplot2::aes(x = x, y = y, label = l), vjust="outward",hjust="inward", color = "darkred" ) +
-      ggplot2::scale_x_discrete(name = "Index", breaks = c(seq(1, max(index), 5),max(index))) +
+      ggplot2::scale_x_discrete(name = "Observation", breaks = c(seq(1, max(Observation), 5),max(Observation))) +
       ggplot2::scale_y_continuous(name = measurements)
 
     p <- jaspGraphs::themeJasp(p) + ggplot2::theme(plot.margin = ggplot2::unit(c(.5, .5, .5, .5), "cm"))
