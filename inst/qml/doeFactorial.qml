@@ -20,6 +20,7 @@ import JASP.Widgets                             1.0
 
 Form
 {
+    usesJaspResults:                            true
     columns:                                    2
 
     GroupBox
@@ -39,16 +40,16 @@ Form
 
         DropDown
         {
-			id:										numberOfLevels
-			name: 									"numberOfLevels"
-			label: 									qsTr("Number of factor levels")
-			indexDefaultValue: 						0
-			values:
-			[
-				{ value: "2", label: qsTr("2")}
-	//            { value: "3", label: qsTr("3")},
-	//            { value: "Mixed", label: qsTr("Mixed")}
-			]
+        id:										numberOfLevels
+        name: 									"numberOfLevels"
+        label: 									qsTr("Number of factor levels")
+        indexDefaultValue: 						0
+        values:
+        [
+            { value: "2", label: qsTr("2")}
+//            { value: "3", label: qsTr("3")},
+//            { value: "Mixed", label: qsTr("Mixed")}
+        ]
         }
     }
 
@@ -61,7 +62,7 @@ Form
     GroupBox
     {
         title:                                  qsTr("Data coding")
-        debug:                                  true
+        debug:                                  false
 
         RadioButtonGroup
         {
@@ -72,12 +73,14 @@ Form
                 name:                           "dataUncoded"
                 label:                          qsTr("Uncoded")
                 checked:                        true
+
             }
 
             RadioButton
             {
                 name:                           "dataCoded"
                 label:                          qsTr("Coded")
+
             }
         }
     }
@@ -106,9 +109,7 @@ Form
                 { factorName: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high1: qsTr("Factor 1 Level 2") },
                 { factorName: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high1: qsTr("Factor 2 Level 2") }
             ]
-            rowComponent: 						
-			
-			RowLayout
+            rowComponent: 						RowLayout
             {
                 Row
                 {
@@ -190,10 +191,11 @@ Form
         RadioButtonGroup
         {
             name: 								"factorialType"
-            title:								qsTr("Type of factorial design")
+            title:								qsTr("Type of Factorial Design")
 
             RadioButton
             {
+                id:                             factorialTypeDefault
                 name:							"factorialTypeDefault"
                 label:							qsTr("2-level factorial (default generators)")
                 checked:						true
@@ -201,6 +203,7 @@ Form
 
             RadioButton
             {
+                id:                             factorialTypeSpecify
                 name:							"factorialTypeSpecify"
                 label:							qsTr("2-level factorial (specify generators)")
 
@@ -216,6 +219,7 @@ Form
 
             RadioButton
             {
+                id:                             factorialTypeSplit
                 name:                           "factorialTypeSplit"
                 label:							qsTr("2-level split-plot (hard-to-change factors)")
 
@@ -232,6 +236,7 @@ Form
 
             RadioButton
             {
+                id:                             factorialTypeFull
                 name:							"factorialTypeFull"
                 label:							qsTr("General full factorial design")
             }
@@ -247,6 +252,7 @@ Form
                 RadioButtonGroup
                 {
                     name:						"designBy"
+                    enabled:                    factorialTypeDefault.checked | factorialTypeSpecify.checked | factorialTypeSplit.checked
 
                     RadioButton
                     {
@@ -266,7 +272,9 @@ Form
                                 { value: "16", 	label: qsTr("16") 	},
                                 { value: "32", 	label: qsTr("32") 	},
                                 { value: "64", 	label: qsTr("64") 	},
-                                { value: "128", label: qsTr("128")	}
+                                { value: "128", label: qsTr("128")	},
+                                { value: "256", label: qsTr("256")	},
+                                { value: "512", label: qsTr("512")	}
                             ]
                         }
                     }
@@ -274,6 +282,7 @@ Form
                     RadioButton
                     {
                         name:					"designByResolution"
+                        enabled:                factorialTypeDefault.checked | factorialTypeSplit.checked
                         label: 					qsTr("Resolution")
                         childrenOnSameRow:		true
 
@@ -297,13 +306,47 @@ Form
                 }
             }
 
+            RadioButtonGroup
+            {
+                title:                          qsTr("Blocking options")
+                name:                           "blocking"
+
+                RadioButton
+                {
+                    name:                       "noBlocking"
+                    label:                      qsTr("No blocking (1 block design)")
+                    checked:                    true
+                }
+
+                RadioButton
+                {
+                    id:                         autoBlocking
+                    name:                       "autoBlocking"
+                    label:                      qsTr("Automatic definition")
+
+                    IntegerField
+                    {
+                        name:                   "numberOfBlocks"
+                        visible:                autoBlocking.checked
+                        label:                  qsTr("Number of blocks")
+                    }
+                }
+
+                RadioButton
+                {
+                    name:                       "manualBlocking"
+                    label:                      qsTr("Manual definition")
+                }
+
+            }
+
             GroupBox
             {
                 title:                          qsTr("Additional options")
-                debug:                          true
 
                 IntegerField
                 {
+                    debug:                      true
                     name:						"factorialCenterPoints"
                     label:						qsTr("Number of center points per block")
                     defaultValue:				1
@@ -313,6 +356,7 @@ Form
 
                 IntegerField
                 {
+                    debug:                      true
                     name:						"factorialCornerReplicates"
                     label:						qsTr("Number of replicates for corner points")
                     defaultValue:				3
@@ -323,6 +367,7 @@ Form
                 IntegerField
                 {
                     name:						"factorialBlocks"
+                    enabled:                    factorialTypeDefault.checked | factorialTypeSpecify.checked | factorialTypeFull.checked
                     label:						qsTr("Number of blocks")
                     defaultValue:				1
                     min:						1
@@ -340,7 +385,7 @@ Form
 
         Button
         {
-            debug:                              true
+            debug:                              false
             id: 								generateDesign
             anchors.right:						parent.right
             anchors.bottom:						parent.bottom

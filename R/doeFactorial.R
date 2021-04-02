@@ -94,8 +94,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     if(options[["designBy"]] == "designByRuns"){
       runs <- options[["factorialRuns"]]
       if(log2(as.numeric(options[["factorialRuns"]])) < options[["numberOfFactors"]]){
-      resolution <- DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
-                                                                  nruns = as.numeric(options[["factorialRuns"]])))$catlg.entry[[1]]$res
+        resolution <- DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
+                                                       nruns = as.numeric(options[["factorialRuns"]])))$catlg.entry[[1]]$res
       } else {
         resolution <- "Full"
       }
@@ -103,8 +103,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     } else {
       resolution <- options[["factorialResolution"]]
       if(options[["factorialResolution"]] != "Full"){
-      runs <- DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
-                                               resolution = as.numeric(as.roman(options[["factorialResolution"]]))))$nruns
+        runs <- DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
+                                                 resolution = as.numeric(as.roman(options[["factorialResolution"]]))))$nruns
       } else {
         runs <- DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
                                                  resolution = 100))$nruns
@@ -117,11 +117,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     rows <- data.frame(type = "Factorial",
                        factors = options[["numberOfFactors"]],
                        runs = runs,
-                       resolution = resolution
+                       resolution = resolution,
                        # centers = "NA",
                        # replicates = "NA",
-                       # blocks = "NA"
-                       )
+                       blocks = options[["factorialBlocks"]]
+    )
 
     table$setData(rows)
     jaspResults[["selectedDesign"]] <- table
@@ -139,6 +139,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     table$position <- position
 
     table$dependOn(options = c("displayDesign",
+                               "dataCoding",
                                "factors",
                                "factorialType",
                                "factorialRuns",
@@ -172,15 +173,18 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
         rows <- cbind.data.frame(rows,
                                  FrF2::FrF2(nfactors = options[["numberOfFactors"]],
                                             nruns = length(runOrder)))
-      } else {
+      } else { #if by resolution
         byResolutionRuns <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                                       resolution = as.numeric(as.roman(options[["factorialResolution"]])))
+                                       resolution = ifelse(options[["factorialResolution"]] != "Full",
+                                                           as.numeric(as.roman(options[["factorialResolution"]])),
+                                                           999)
+        )
         runOrder <- 1:nrow(byResolutionRuns)
         rows <- data.frame(runOrder = runOrder)
         rows <- cbind.data.frame(rows,
                                  byResolutionRuns)
       }
-    }
+    } #blocks YES
 
     if(options[["factorialType"]] == "factorialTypeSpecify"){
       specifyGeneratorsRuns <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
@@ -190,17 +194,29 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       rows <- data.frame(runOrder = runOrder)
       rows <- cbind.data.frame(rows,
                                specifyGeneratorsRuns)
-    }
+    } #blocks YES
 
     if(options[["factorialType"]] == "factorialTypeSplit"){
-      runOrder <- 1:options[["factorialRuns"]]
-      splitRuns <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                              nruns = as.numeric(options[["factorialRuns"]]),
-                              hard = options[["numberHTCFactors"]])
-      rows <- data.frame(runOrder = runOrder)
-      rows <- cbind.data.frame(rows,
-                               splitRuns)
-    }
+      if(options[["designBy"]] == "designByRuns"){
+        runOrder <- 1:options[["factorialRuns"]]
+        splitRuns <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+                                nruns = as.numeric(options[["factorialRuns"]]),
+                                hard = options[["numberHTCFactors"]])
+        rows <- data.frame(runOrder = runOrder)
+        rows <- cbind.data.frame(rows,
+                                 splitRuns)
+      } else {
+        splitRuns <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+                                resolution = ifelse(options[["factorialResolution"]] != "Full",
+                                                    as.numeric(as.roman(options[["factorialResolution"]])),
+                                                    999),
+                                hard = options[["numberHTCFactors"]])
+        runOrder <- 1:nrow(splitRuns)
+        rows <- data.frame(runOrder = runOrder)
+        rows <- cbind.data.frame(rows,
+                                 splitRuns)
+      }
+    } #blocks NO
 
     if(options[["factorialType"]] == "factorialTypeFull"){
       runOrder <- 1:2^options[["numberOfFactors"]]
@@ -215,7 +231,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
         rows[,i+1] <- rep(c(rep(1, 2^(options[["numberOfFactors"]]-i)),
                             rep(-1, 2^(options[["numberOfFactors"]]-i))), 2^(i-1))
       }
-    }
+    } #blocks YES
 
     for(i in 1:as.numeric(options[["numberOfFactors"]])){
       colnames(rows)[i+1] <- factorNames[i]
@@ -231,15 +247,14 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       rows <- cbind(runOrder = 1:nrow(rows), rows)
     }
 
-    # if(options[["dataCoding"]] == "dataUncoded"){
-    #   table$setData(rows)
-    # } else {
-    #   for(i in 1:as.numeric(options[["numberOfFactors"]])){
-    #     rows[,i+1]
-    #   }
-    # }
-
-    table$setData(rows)
-
+    if(options[["dataCoding"]] == "dataUncoded"){
+      table$setData(rows)
+    } else {
+      for(i in 1:as.numeric(options[["numberOfFactors"]])){
+        rows[,i+1][rows[,i+1] == 1] <- factorHighs[i]
+        rows[,i+1][rows[,i+1] == -1] <- factorLows[i]
+      }
+      table$setData(rows)
+    }
   }
 }
