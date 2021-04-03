@@ -25,7 +25,7 @@ Form
 
     GroupBox
     {
-        title: 									qsTr("Factor Info")
+        title: 									qsTr("Factor info")
         name:									"factorInfo"
 
         IntegerField
@@ -104,11 +104,9 @@ Form
         ComponentsList
         {
             name:								"factors"
-            defaultValues:
-            [
-                { factorName: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high1: qsTr("Factor 1 Level 2") },
-                { factorName: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high1: qsTr("Factor 2 Level 2") }
-            ]
+            addItemManually:                    false
+            values:                             numberOfFactors.value
+
             rowComponent: 						RowLayout
             {
                 Row
