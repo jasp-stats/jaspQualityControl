@@ -78,7 +78,12 @@ Form
 			
 			CheckBox
 			{
-			name: "biasRunDots";		label: qsTr("Display individual measurements")
+			name: "biasRunDots";		label: qsTr("Display individual measurements");		checked: true
+			}
+			
+			CheckBox
+			{
+			name: "biasRunTolLims";		label: qsTr("Display tolerance limits");		checked: true
 			}
 		}
 		CheckBox
@@ -118,6 +123,15 @@ Form
 					max:			10000;
 					enabled:		binWidthType.currentValue === "manual"
 				}
+			CheckBox
+			{
+			name: "biasHistMean";		label: qsTr("Display mean");		checked: true
+			}
+			
+			CheckBox
+			{
+			name: "biasHistRef";		label: qsTr("Display reference value");		checked: true
+			}
 		}
 
 

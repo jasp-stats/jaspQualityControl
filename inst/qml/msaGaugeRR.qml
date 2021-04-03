@@ -157,7 +157,13 @@ Form
 					checked: true
 				}
 			}
+
+			CheckBox
+			{
+				name: "gaugeDescriptives";		label: qsTr("Descriptives table");		checked: true
+			}
 		}
+
 		
 		Group
 		{

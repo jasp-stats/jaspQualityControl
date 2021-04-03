@@ -186,6 +186,12 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
     p <- jaspDescriptives:::.plotMarginal(column = dataForPart, variableName = "Measurement",
                                           binWidthType = options$biasBinWidthType, numberOfBins = options$biasNumberOfBins)
 
+    if (options$biasHistMean)
+      p <- p + ggplot2::geom_vline(xintercept = mean(dataForPart), lwd = 2)
+
+    if (options$biasHistRef)
+      p <- p + ggplot2::geom_vline(xintercept = options$biasReferenceValue, lwd = 2)
+
     plot$dependOn(c("biasHistogram"))
 
     plot$plotObject <- p
@@ -211,29 +217,31 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
     toleranceLines <- c(options$biasReferenceValue + 0.1 * options$biasTolerance, options$biasReferenceValue - 0.1 * options$biasTolerance)
 
-
     p <- ggplot2::ggplot() +
-      jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1))
+      jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1)) +
+      ggplot2::geom_hline(yintercept = options$biasReferenceValue, data = dataset,
+                          mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkgreen") +
+      ggplot2::geom_label(data = data.frame(x = max(Observation), y = options$biasReferenceValue, l = "Ref"),
+                          ggplot2::aes(x = x, y = y, label = l), vjust="inward",hjust="inward", color = "darkgreen" ) +
+      ggplot2::scale_x_discrete(name = "Observation", breaks = c(seq(1, max(Observation), 5),max(Observation))) +
+      ggplot2::scale_y_continuous(name = measurements) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw() +
+      ggplot2::theme(plot.margin = ggplot2::unit(c(.5, .5, .5, .5), "cm"))
 
     if (options$biasRunDots)
       p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = Observation, y = Measurement))
 
-    p <- p + ggplot2::geom_hline(yintercept = options$biasReferenceValue, data = dataset,
-                                 mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkgreen") +
-      ggplot2::geom_label(data = data.frame(x = max(Observation), y = options$biasReferenceValue, l = "Ref"),
-                          ggplot2::aes(x = x, y = y, label = l), vjust="inward",hjust="inward", color = "darkgreen" ) +
-      ggplot2::geom_hline(yintercept = toleranceLines[1], data = dataset,
-                          mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
-      ggplot2::geom_label(data = data.frame(x = max(Observation), y = toleranceLines[1], l = "Ref + 0.1 * Tol"),
-                          ggplot2::aes(x = x, y = y, label = l), vjust="outward",hjust="inward", color = "darkred" ) +
-      ggplot2::geom_hline(yintercept = toleranceLines[2], data = dataset,
-                          mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
-      ggplot2::geom_label(data = data.frame(x = max(Observation), y = toleranceLines[2], l = "Ref - 0.1 * Tol"),
-                          ggplot2::aes(x = x, y = y, label = l), vjust="outward",hjust="inward", color = "darkred" ) +
-      ggplot2::scale_x_discrete(name = "Observation", breaks = c(seq(1, max(Observation), 5),max(Observation))) +
-      ggplot2::scale_y_continuous(name = measurements)
-
-    p <- jaspGraphs::themeJasp(p) + ggplot2::theme(plot.margin = ggplot2::unit(c(.5, .5, .5, .5), "cm"))
+    if (options$biasRunTolLims) {
+      p <- p + ggplot2::geom_hline(yintercept = toleranceLines[1], data = dataset,
+                                   mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
+        ggplot2::geom_label(data = data.frame(x = max(Observation), y = toleranceLines[1], l = "Ref + 0.1 * Tol"),
+                            ggplot2::aes(x = x, y = y, label = l), vjust="outward",hjust="inward", color = "darkred" ) +
+        ggplot2::geom_hline(yintercept = toleranceLines[2], data = dataset,
+                            mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
+        ggplot2::geom_label(data = data.frame(x = max(Observation), y = toleranceLines[2], l = "Ref - 0.1 * Tol"),
+                            ggplot2::aes(x = x, y = y, label = l), vjust="outward",hjust="inward", color = "darkred" )
+    }
 
     plot$plotObject <- p
 

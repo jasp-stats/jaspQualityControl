@@ -53,11 +53,20 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       jaspResults[["gaugeANOVA"]] <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
 
+    # Gauge r&R ANOVA Table
+    if (options[["gaugeDescriptives"]]) {
+      if(is.null(jaspResults[["gaugeDescriptives"]])) {
+        jaspResults[["gaugeDescriptives"]] <- createJaspContainer(gettext("Descriptives Table"))
+        jaspResults[["gaugeDescriptives"]]$position <- 2
+      }
+      jaspResults[["gaugeDescriptives"]] <- .gaugeDescriptives(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+    }
+
     # R chart by operator
     if (options[["gaugeRchart"]]) {
       if(is.null(jaspResults[["gaugeRchart"]])) {
         jaspResults[["gaugeRchart"]] <- createJaspContainer(gettext("Range Chart by Operator"))
-        jaspResults[["gaugeRchart"]]$position <- 2
+        jaspResults[["gaugeRchart"]]$position <- 3
       }
       jaspResults[["gaugeRchart"]]$dependOn("gaugeRchart")
 
@@ -74,7 +83,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     if (options[["gaugeXbarChart"]]) {
       if(is.null(jaspResults[["gaugeXbarChart"]])) {
         jaspResults[["gaugeXbarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
-        jaspResults[["gaugeXbarChart"]]$position <- 3
+        jaspResults[["gaugeXbarChart"]]$position <- 4
       }
       XbarCharts <- jaspResults[["gaugeXbarChart"]]
       XbarCharts$dependOn("gaugeXbarChart")
@@ -92,7 +101,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     if (options[["gaugeScatterPlotOperators"]]) {
       if(is.null(jaspResults[["gaugeScatterOperators"]])) {
         jaspResults[["gaugeScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
-        jaspResults[["gaugeScatterOperators"]]$position <- 4
+        jaspResults[["gaugeScatterOperators"]]$position <- 5
       }
       jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
@@ -101,7 +110,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     if (options[["gaugeByPart"]]) {
       if(is.null(jaspResults[["gaugeByPart"]])) {
         jaspResults[["gaugeByPart"]] <- createJaspContainer(gettext("Measurement by Part Graph"))
-        jaspResults[["gaugeByPart"]]$position <- 5
+        jaspResults[["gaugeByPart"]]$position <- 6
       }
 
       jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
@@ -111,7 +120,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     if (options[["gaugeByOperator"]]) {
       if(is.null(jaspResults[["gaugeByOperator"]])) {
         jaspResults[["gaugeByOperator"]] <- createJaspContainer(gettext("Measurement by Operator Graph"))
-        jaspResults[["gaugeByOperator"]]$position <- 6
+        jaspResults[["gaugeByOperator"]]$position <- 7
       }
       jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
@@ -120,7 +129,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     if (options[["gaugeByInteraction"]]) {
       if(is.null(jaspResults[["gaugeByInteraction"]])) {
         jaspResults[["gaugeByInteraction"]] <- createJaspContainer(gettext("Parts by Operator Interaction Graph"))
-        jaspResults[["gaugeByInteraction"]]$position <- 7
+        jaspResults[["gaugeByInteraction"]]$position <- 8
       }
       jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
@@ -195,7 +204,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     }
     anovaTable1 <- createJaspTable(title = gettext("Two-Way ANOVA Table with Interaction"))
 
-    anovaTable1$addColumnInfo(title = gettext("Cases"),          name = "cases",   type = "string" )
+    anovaTable1$addColumnInfo(title = gettext("Sources"),       name = "sources",   type = "string" )
     anovaTable1$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
     anovaTable1$addColumnInfo(title = gettext("Sum of Squares"), name = "Sum Sq",  type = "number")
     anovaTable1$addColumnInfo(title = gettext("Mean Square"),    name = "Mean Sq", type = "number")
@@ -207,7 +216,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     anova1 <- summary(aov(formula = formula1, data = data))
 
 
-    anovaTable1$setData(list( "cases"              = c(parts, operators, paste(parts," x ", operators), "Repeatability", "Total"),
+    anovaTable1$setData(list( "sources"              = c(parts, operators, paste(parts," x ", operators), "Repeatability", "Total"),
                               "Df"                 = c(anova1[[1]]$Df, sum(anova1[[1]]$Df)),
                               "Sum Sq"             = c(anova1[[1]]$`Sum Sq`, sum(anova1[[1]]$`Sum Sq`)),
                               "Mean Sq"            = anova1[[1]]$`Mean Sq`,
@@ -294,7 +303,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     }else if(anova1[[1]]$`Pr(>F)`[3] > options$alphaForANOVA){
       anovaTable2 <- createJaspTable(title = gettext("Two-Way ANOVA Table without Interaction"))
 
-      anovaTable2$addColumnInfo(title = gettext("Cases"),          name = "cases",   type = "string" )
+      anovaTable2$addColumnInfo(title = gettext("Sources"),        name = "sources",   type = "string" )
       anovaTable2$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
       anovaTable2$addColumnInfo(title = gettext("Sum of Squares"), name = "Sum Sq",  type = "number")
       anovaTable2$addColumnInfo(title = gettext("Mean Square"),    name = "Mean Sq", type = "number")
@@ -306,7 +315,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       anova2 <- summary(aov(formula = formula2, data = data))
 
 
-      anovaTable2$setData(list( "cases"              = c(parts, operators, "Repeatability", "Total"),
+      anovaTable2$setData(list( "sources"              = c(parts, operators, "Repeatability", "Total"),
                                 "Df"                 = c(anova2[[1]]$Df, sum(anova2[[1]]$Df)),
                                 "Sum Sq"             = c(anova2[[1]]$`Sum Sq`, sum(anova2[[1]]$`Sum Sq`)),
                                 "Mean Sq"            = anova2[[1]]$`Mean Sq`,
@@ -422,7 +431,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
     anovaTable1 <- createJaspTable(title = gettext("Two-Way ANOVA Table with Interaction"))
 
-    anovaTable1$addColumnInfo(title = gettext("Cases"),          name = "cases",   type = "string" )
+    anovaTable1$addColumnInfo(title = gettext("Sources"),          name = "sources",   type = "string" )
     anovaTable1$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
     anovaTable1$addColumnInfo(title = gettext("Sum of Squares"), name = "Sum Sq",  type = "number")
     anovaTable1$addColumnInfo(title = gettext("Mean Square"),    name = "Mean Sq", type = "number")
@@ -477,6 +486,50 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     }
   }
   return(anovaTables)
+}
+
+.gaugeDescriptives <- function(dataset, measurements, parts, operators, options, ready){
+  descriptivesTable <- createJaspTable(title = gettext("Descriptives"))
+  descriptivesTable$dependOn("gaugeDescriptives")
+
+  descriptivesTable$addColumnInfo(title = gettext("Operator"), name = "operator", type = "string" )
+  descriptivesTable$addColumnInfo(title = gettext("Mean"), name = "mean",  type = "number")
+  descriptivesTable$addColumnInfo(title = gettext("Std. Dev."), name = "sd",  type = "number")
+  descriptivesTable$addColumnInfo(title = gettext("Min."), name = "min",  type = "number")
+  descriptivesTable$addColumnInfo(title = gettext("Max."), name = "max",  type = "number")
+
+  if (ready){
+
+    operatorVector <- unique(dataset[[operators]])
+    meanVector <- vector(mode = "numeric")
+    sdVector <- vector(mode = "numeric")
+    minVector <- vector(mode = "numeric")
+    maxVector <- vector(mode = "numeric")
+
+    for(op in operatorVector){
+      measurementsOneOperator <- subset.data.frame(dataset[measurements], dataset[operators] == op)
+      measurementsOneOperator <- unlist(measurementsOneOperator)
+      meanVector <- c(meanVector, mean(measurementsOneOperator))
+      sdVector <- c(sdVector, sd(measurementsOneOperator))
+      minVector <- c(minVector, min(measurementsOneOperator))
+      maxVector <- c(maxVector, max(measurementsOneOperator))
+    }
+
+    allMeasurements <- unlist(dataset[measurements])
+
+    operatorVector <- c(operatorVector, "Overall")
+    meanVector <- c(meanVector, mean(allMeasurements))
+    sdVector <- c(sdVector, sd(allMeasurements))
+    minVector <- c(minVector, min(allMeasurements))
+    maxVector <- c(maxVector, max(allMeasurements))
+
+    descriptivesTable$setData(list("operator" = operatorVector,
+                                   "mean" = meanVector,
+                                   "sd" = sdVector,
+                                   "min" = minVector,
+                                   "max" = maxVector))
+  }
+  return(descriptivesTable)
 }
 
 .RangeChart <- function(dataset, measurements, parts, operators, options, title, ready){
