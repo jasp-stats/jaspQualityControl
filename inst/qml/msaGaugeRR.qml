@@ -219,8 +219,7 @@ Form
 		
 			CheckBox
 			{
-			name: "gaugeByInteraction"
-			label: qsTr("Measurement interaction plot")
+			name: "gaugeByInteraction";		label: qsTr("Part x operator interaction plot")
 			}
 		}
 	}
