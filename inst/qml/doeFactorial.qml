@@ -105,7 +105,7 @@ Form
         {
             name:								"factors"
             addItemManually:                    false
-            values:                             numberOfFactors.value
+            values:                             numberOfFactors.value // update only when numberOfFactors.value gets "entered"
 
             rowComponent: 						RowLayout
             {
@@ -210,7 +210,8 @@ Form
                     name:						"factorialTypeSpecifyGenerators"
                     height:                     100 * preferencesModel.uiScale
                     width:                      250 * preferencesModel.uiScale
-                    title:                      "Design generators"
+                    visible:                    factorialTypeSpecify.checked
+                    title:                      qsTr("Design generators")
                     textType:                   JASP.TextTypeSource
                 }
             }
@@ -225,6 +226,7 @@ Form
                 {
                     name:						"numberHTCFactors"
                     label:						qsTr("Number of hard-to-change factors")
+                    visible:                    factorialTypeSplit.checked
                     defaultValue:				1
                     min:						1
                     max:						numberOfFactors.value
@@ -250,7 +252,7 @@ Form
                 RadioButtonGroup
                 {
                     name:						"designBy"
-                    enabled:                    factorialTypeDefault.checked | factorialTypeSpecify.checked | factorialTypeSplit.checked
+                    enabled:                    !factorialTypeFull.checked
 
                     RadioButton
                     {
@@ -365,7 +367,7 @@ Form
                 IntegerField
                 {
                     name:						"factorialBlocks"
-                    enabled:                    factorialTypeDefault.checked | factorialTypeSpecify.checked | factorialTypeFull.checked
+                    enabled:                    !factorialTypeSplit.checked
                     label:						qsTr("Number of blocks")
                     defaultValue:				1
                     min:						1

@@ -222,15 +222,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       runOrder <- 1:2^options[["numberOfFactors"]]
       rows <- data.frame(runOrder = runOrder)
       rows <- cbind.data.frame(rows,
-                               matrix(0,
-                                      ncol = options[["numberOfFactors"]],
-                                      nrow = nrow(rows),
-                                      dimnames = NULL))
-
-      for(i in 1:as.numeric(options[["numberOfFactors"]])){
-        rows[,i+1] <- rep(c(rep(1, 2^(options[["numberOfFactors"]]-i)),
-                            rep(-1, 2^(options[["numberOfFactors"]]-i))), 2^(i-1))
-      }
+                               FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+                                          nruns = 2^options[["numberOfFactors"]]))
     } #blocks YES
 
     for(i in 1:as.numeric(options[["numberOfFactors"]])){
