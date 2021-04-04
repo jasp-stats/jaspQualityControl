@@ -723,8 +723,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   }
 }
 
-.gaugeScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready){
 
+.gaugeScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready){
   plot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
   plot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
 
