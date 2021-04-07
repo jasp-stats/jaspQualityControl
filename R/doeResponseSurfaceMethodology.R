@@ -130,11 +130,11 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 .responseSurfaceContourPlot <- function(jaspResults, dataset, options, ready) {
   contourPlot <- createJaspPlot(title = "Contour Plot", width = 540, height = 540)
 
-  contourPlot$dependOn(c("rsmVariables", "rsmResponseVariables", "rsmBlocks", "firstVar","secondVar", "contour"))
+  contourPlot$dependOn(c("rsmVariables", "rsmResponseVariables", "rsmBlocks", "firstVar","secondVar", "contour", "psi", "theta"))
 
   jaspResults[["contourPlot"]] <- contourPlot
   
-  if (length(options[["rsmVariables"]]) == 2 & length(options[["rsmResponseVariables"]]) >= 1 & length(options[["rsmBlocks"]]) >= 1)
+  if (length(options[["rsmResponseVariables"]]) >= 1 & length(options[["rsmBlocks"]]) >= 1)
     .responseSurfaceContourFill(contourPlot, options)
 
   return()
@@ -142,35 +142,72 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
 .responseSurfaceContourFill <- function(contourPlot, options, dataset) {
+ 
   val1 <- options[["firstVar"]]
   val2 <- options[["secondVar"]]
+  val3 <- 5
+  val4 <- options[["fourthVar"]]
 
-  data <- .readDataSetToEnd(columns.as.numeric = c(options[["rsmVariables"]],options[["rsmResponseVariables"]]), columns.as.factor = options[["rsmBlocks"]])
+  data <- .readDataSetToEnd(columns.as.numeric = c(options[["rsmVariables"]],
+                                                   options[["rsmResponseVariables"]]),
+                            columns.as.factor  =   options[["rsmBlocks"]])
+  
+  
   
   name <- vector()
   op1  <- length(options[["rsmVariables"]]) 
   op2  <- length(options[["rsmResponseVariables"]]) 
   op3  <- length(options[["rsmBlocks"]]) 
+
+  mean.col <- apply(data, 2, mean)
+  colnames(data) <- decodeColNames(colnames(data))
+  opt1 <- colnames(data)[1:op1]
+  opt2 <- colnames(data)[(op1+1)]
+  opt3 <- colnames(data)[(op1+2)]
   
 
-  name <- paste("v", 1:(op1+op2+op3), sep = "")
-
-  names(data) <- name 
-  data$v1 <- (data$v1 - mean(data$v1))/val1
-  data$v2 <- (data$v2 - mean(data$v1))/val2
-
-  var.code <- rsm::coded.data(data, x1 ~ v1, x2 ~ v2)
-
-  var.rsm <- rsm::rsm(v3 ~ v4 + SO(x1, x2), data = var.code)
-  
-
-  cont <- function () {
-    contour(var.rsm, ~ x1 + x2 , image = TRUE,
-            at = summary(var.rsm)$canonical$xs
-            )
+  data.list <- list()
+  for (i in 1:op1) {
+    data.list[[i]] <- as.formula(paste0("x", i, " ~ ", "(", opt1[i], "-", 
+                           mean(data[,i]), ")/", 
+                           eval(parse(text = paste("val", i, sep = "")))))
   }
 
-  contourPlot[["plotObject"]] <- cont
+  var.code <- rsm::coded.data(data, formulas = data.list)
+  print(var.code)
+
+  str1   <- "x1"
+  for (i in 2:op1) {
+    str1   <- paste0(str1, ",x", i, sep = "")
+  }
+  str2 <-  paste0("SO(", str1, ")", sep = "")
+  formula.rsm <- as.formula(paste0(opt2, "~", 
+                           opt3,
+                           "+", str2, 
+                           sep = ""))
+  
+  print(formula.rsm)
+  
+  var.rsm <-  rsm::rsm(formula.rsm, data = var.code)
+
+  
+  contour.fill <- function () {
+    
+    kont <- "~x1" 
+    for (i in 2:op1) {
+      kont <- paste(kont, "+x", i, sep = "")
+    }
+    persp(var.rsm, eval(parse(text = kont)), 
+               at = summary(var.rsm)$canonical$xs, contours = "colors", 
+               col = rainbow(7),
+               zlab = opt2,
+               ticktype = "detailed",
+               phi = options[["phi"]],
+               theta = options[["theta"]])
+  
+  }
+
+  contourPlot[["plotObject"]] <- contour.fill
 
   return()
 }

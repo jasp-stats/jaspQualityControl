@@ -109,6 +109,20 @@ Form
                         max:						50
                     }
 
+                    IntegerField
+                    {
+                        name:                       "phi"
+                        label:                      qsTr("Rotating angle (vertical plane)")
+                        defaultValue:               0
+                    }
+
+                    IntegerField
+                    {
+                        name:                       "theta"
+                        label:                      qsTr("Rotating angle (horizontal plane)")
+                        defaultValue:               0
+                    }
+
             }
 
         }
