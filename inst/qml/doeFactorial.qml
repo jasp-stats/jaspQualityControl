@@ -97,7 +97,7 @@ Form
             Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
             Label { text: qsTr("Level 1");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
             Label { text: qsTr("Level 2");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
-            Label { visible: 					[1].includes(numberOfLevels.currentIndex);
+            Label { visible: 					numberOfLevels.currentIndex == 1;
                     text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
         }
 
@@ -377,20 +377,31 @@ Form
         }
     }
 
-    Item
+    GroupBox
     {
-        Layout.preferredHeight: 				generateDesign.height
-        Layout.fillWidth: 						true
-        Layout.columnSpan:						2
+        FileSelector
+        {
+            id:                                 file
+            name:                               "file"
+            label:                              qsTr("Save as:")
+            filter:                             "*.csv"
+            save:                               true
+        }
 
         Button
         {
-            debug:                              false
-            id: 								generateDesign
+            id: 								exportDesign
             anchors.right:						parent.right
             anchors.bottom:						parent.bottom
             text: 								qsTr("<b>Export Design</b>")
-            // onClicked: 							form.exportResults()
+            onClicked: 							actualExporter.click()
+        }
+
+        CheckBox
+        {
+            id:                                 actualExporter
+            name:                               "actualExporter"
+            visible:                            false
         }
     }
 }
