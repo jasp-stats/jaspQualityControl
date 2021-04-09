@@ -103,7 +103,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         jaspResults[["gaugeScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
         jaspResults[["gaugeScatterOperators"]]$position <- 5
       }
-      jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+      jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(jaspResults = jaspResults, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
     }
 
     # Measurement by Part Graph
@@ -723,28 +723,64 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   }
 }
 
+.gaugeScatterPlotOperators <- function(jaspResults, dataset, measurements, parts, operators, options){
 
-.gaugeScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready){
-  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
-  plot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
+  singlePlot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
+  singlePlot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
 
-  if (ready){
-    if(length(unique(dataset[[operators]])) > 2){
-      plot$setError(gettext("Plotting not possible: More than 2 Operators"))
-    }else{
+  operatorVector <- as.character(unique(dataset[[operators]]))
+  len <- length(operatorVector)
 
-      operatorSplit <- split.data.frame(dataset, dataset[operators])
-
-      if (nrow(operatorSplit[[1]][measurements]) != nrow(operatorSplit[[2]][measurements])){
-        plot$setError(gettext("Operators measured different number of parts."))
-        return(plot)
+  if(len < 2){
+    singlePlot$setError(gettext("Cannot plot scatterplot for less than 2 operators."))
+    return(singlePlot)
+  }else{
+    operatorSplit <- split.data.frame(dataset, dataset[operators])
+    nparts <- length(unique(subset(dataset, dataset[operators] == operatorVector[1])[[parts]]))
+    for(op in operatorVector){
+      if (length(unique(subset(dataset, dataset[operators] == op)[[parts]])) != nparts){
+        singlePlot$setError(gettext("Operators measured different number of parts."))
+        return(singlePlot)
       }
+    }
+    if (len == 2){
+      singlePlot$plotObject <- .singleScatterPlot(operator1 = operatorVector[1], operator2 = operatorVector[2],
+                                                  data = operatorSplit, options = options, measurements = measurements)
+      return(singlePlot)
+    }else{
+      matrixPlot <- createJaspPlot(title = gettext("Matrix Plot for Operators"), width = 700, height = 700)
+      plotMat <- matrix(list(), len, len)
+      for(row in 1:len){
+        for(col in 1:len){
+          if (row >= col){
+            plotMat[[row, col]] <- ggplot2::ggplot()
+          }else{
+            plotMat[[row, col]] <- .singleScatterPlot(operator1 = operatorVector[row], operator2 = operatorVector[col],
+                                                      data = operatorSplit, options = options, measurements = measurements, axisLabels = FALSE)
+          }
+        }
+      }
+      p <- jaspGraphs::ggMatrixPlot(plotMat, leftLabels = operatorVector, topLabels = operatorVector)
+      matrixPlot$plotObject <- p
+      return(matrixPlot)
+    }
+  }
+}
 
-      data <- data.frame(OperatorA = rowMeans(operatorSplit[[1]][measurements]), OperatorB = rowMeans(operatorSplit[[2]][measurements]))
+.singleScatterPlot <- function(operator1, operator2, data, options, measurements, axisLabels = T){
 
-      p <- ggplot2::ggplot(data = data, ggplot2::aes_string(x = "OperatorA", y = "OperatorB")) +
-        jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
-        ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
+  df <- data.frame(Operator1 = rowMeans(data[[operator1]][measurements]), Operator2 = rowMeans(data[[operator2]][measurements]))
+
+  if(axisLabels){
+    xlab <- paste("Operator", operator1)
+    ylab <- paste("Operator", operator2)
+  }else{
+    xlab <- ylab <- ggplot2::element_blank()
+  }
+
+  p <- ggplot2::ggplot(data = df, ggplot2::aes(x = Operator1, y = Operator2)) +
+    jaspGraphs::geom_point() + ggplot2::scale_x_continuous(name = xlab ,limits = c(min(df)*0.9,max(df)*1.1)) +
+    ggplot2::scale_y_continuous(name = ylab, limits = c(min(df)*0.9,max(df)*1.1))
 
       if (options[["gaugeScatterPlotFitLine"]])
         p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
@@ -754,10 +790,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
       p <- jaspGraphs::themeJasp(p)
 
-      plot$plotObject <- p
-    }
-  }
-  return(plot)
+  return(p)
 }
 
 .msaCheckErrors <- function(dataset, options) {
