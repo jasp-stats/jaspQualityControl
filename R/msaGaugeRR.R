@@ -103,7 +103,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         jaspResults[["gaugeScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
         jaspResults[["gaugeScatterOperators"]]$position <- 5
       }
-      jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(jaspResults = jaspResults, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+      jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(jaspResults = jaspResults, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
 
     # Measurement by Part Graph
@@ -723,18 +723,24 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   }
 }
 
-.gaugeScatterPlotOperators <- function(jaspResults, dataset, measurements, parts, operators, options){
 
-  singlePlot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
-  singlePlot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
+.gaugeScatterPlotOperators <- function(jaspResults, dataset, measurements, parts, operators, options, ready){
+
+  singleEmptyPlot <- createJaspPlot(title = gettext("Scatterplot of Operator vs Operator"))
+  singleEmptyPlot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
+
+  if (!ready)
+    return(singleEmptyPlot)
 
   operatorVector <- as.character(unique(dataset[[operators]]))
   len <- length(operatorVector)
 
   if(len < 2){
-    singlePlot$setError(gettext("Cannot plot scatterplot for less than 2 operators."))
-    return(singlePlot)
+    singleEmptyPlot$setError(gettext("Cannot plot scatterplot for less than 2 operators."))
+    return(singleEmptyPlot)
   }else{
+    singlePlot <- createJaspPlot(title = gettextf("Scatterplot of Operator  %s vs Operator %s", operatorVector[1], operatorVector[2]))
+    singlePlot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
     operatorSplit <- split.data.frame(dataset, dataset[operators])
     nparts <- length(unique(subset(dataset, dataset[operators] == operatorVector[1])[[parts]]))
     for(op in operatorVector){
@@ -772,15 +778,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   df <- data.frame(Operator1 = rowMeans(data[[operator1]][measurements]), Operator2 = rowMeans(data[[operator2]][measurements]))
 
   if(axisLabels){
-    xlab <- paste("Operator", operator1)
-    ylab <- paste("Operator", operator2)
+    xlab <- paste("Operator", operator2)
+    ylab <- paste("Operator", operator1)
   }else{
     xlab <- ylab <- ggplot2::element_blank()
   }
 
-  p <- ggplot2::ggplot(data = df, ggplot2::aes(x = Operator1, y = Operator2)) +
-    jaspGraphs::geom_point() + ggplot2::scale_x_continuous(name = xlab ,limits = c(min(df)*0.9,max(df)*1.1)) +
-    ggplot2::scale_y_continuous(name = ylab, limits = c(min(df)*0.9,max(df)*1.1))
+  p <- ggplot2::ggplot(data = df, ggplot2::aes(x = Operator2, y = Operator1)) +
+    jaspGraphs::geom_point() + ggplot2::scale_x_continuous(name = xlab) +
+    ggplot2::scale_y_continuous(name = ylab)
 
       if (options[["gaugeScatterPlotFitLine"]])
         p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
