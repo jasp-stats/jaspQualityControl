@@ -69,14 +69,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         jaspResults[["gaugeRchart"]]$position <- 3
       }
       jaspResults[["gaugeRchart"]]$dependOn("gaugeRchart")
-
-      operatorData <- dataset[[operators]]
-      operatorLevels <- levels(operatorData)
-
-      for(operator in operatorLevels){
-        operatorSplit <- subset(dataset, dataset[operators] == operator)
-        jaspResults[["gaugeRchart"]][[as.character(operator)]] <- .RangeChart(dataset = operatorSplit, measurements = measurements, parts = parts, operators = operators, options =  options, title = operator, ready = ready)
-      }
+      jaspResults[["gaugeRchart"]] <- .xBarOrRangeChart(type = "Range", dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
 
     # Xbar chart by operator
@@ -85,16 +78,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         jaspResults[["gaugeXbarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
         jaspResults[["gaugeXbarChart"]]$position <- 4
       }
-      XbarCharts <- jaspResults[["gaugeXbarChart"]]
-      XbarCharts$dependOn("gaugeXbarChart")
-
-      operatorData <- dataset[[operators]]
-      operatorLevels <- levels(operatorData)
-
-      for(operator in operatorLevels){
-        operatorSplit <- subset(dataset, dataset[operators] == operator)
-        XbarCharts[[as.character(operator)]] <- .XbarChart(dataset = operatorSplit, measurements = measurements, parts = parts, operators = operators, options =  options, title = operator, ready = ready)
-      }
+      jaspResults[["gaugeXbarChart"]]$dependOn("gaugeXbarChart")
+      jaspResults[["gaugeXbarChart"]] <- .xBarOrRangeChart(type = "Xbar",dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
 
     # gauge Scatter Plot Operators
@@ -170,13 +155,17 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
         jaspResults[["rangeRchart"]]$position <- 11
       }
-      jaspResults[["rangeRchart"]] <- .RangeChart(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, title = "vs. Operator", ready = readyRangeMethod)
+      plot <- createJaspPlot(title = gettext("Range Chart by Operator"), width = 600, height = 300)
+      plot$dependOn(c("rangeRchart"))
+      p <- .RchartNoId(dataset = dataset[measurements], options = options, warningLimits = FALSE)
+      plot$plotObject <- p
+      jaspResults[["rangeRchart"]] <- plot
     }
 
+
+    return()
   }
 
-
-  return()
 }
 
 .gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready){
@@ -532,31 +521,41 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   return(descriptivesTable)
 }
 
-.RangeChart <- function(dataset, measurements, parts, operators, options, title, ready){
-
-  plot <- createJaspPlot(title = gettextf("Operator %s", title), width = 600, height = 300)
-  plot$dependOn(c("rangeRchart" , "gaugeRRmethod"))
-
-  if (ready) {
-    p <- .RchartNoId(dataset = dataset[measurements], options = options)
-    plot$plotObject <- p
-  }else{
-    plot$setError(gettext("At least 2 measurements per operator required."))
-  }
-  return(plot)
-}
-
-.XbarChart <- function(dataset, measurements, parts, operators, options, title, ready){
-  if (ready){
-    plot <- createJaspPlot(title = gettextf("Operator %s", title), width = 600, height = 300)
-    if (length(measurements) == 1){
-      plot$setError(gettext("At least 2 measurements per operator required."))
-    }else{
-      p <- .XbarchartNoId(dataset = dataset[measurements], options = options)
-      plot$plotObject <- p
-    }
+.xBarOrRangeChart <- function(type = c("Xbar", "Range"), dataset, measurements, parts, operators, options, ready){
+  if (!ready){
+    plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 600, height = 300)
     return(plot)
   }
+  if (length(measurements) < 2){
+    plot <- createJaspPlot(title = gettextf("%s Chart by Operator"), width = 600, height = 300)
+    plot$setError(gettext("More than 1 Measurement per Operator required."))
+    return(plot)
+  }
+  plotContainer <- createJaspContainer(gettextf("%s Chart by Operator", type))
+  operatorVector <- unique(dataset[[operators]])
+  data <- dataset[measurements]
+  if (type == "Range"){
+    ChartData <- qcc::qcc(data, type= 'R', plot = FALSE)
+  }else{
+    ChartData <- qcc::qcc(data, type= 'xbar', plot = FALSE)
+  }
+  center <- ChartData$center
+  UCL <- max(ChartData$limits)
+  LCL <- min(ChartData$limits)
+  manualLimits <- c(LCL, center, UCL)
+  for (op in operatorVector){
+    dataPerOP <- subset(dataset, dataset[[operators]] == op)
+    plot <- createJaspPlot(title = gettextf("Operator %s", op), width = 600, height = 300)
+    plot$dependOn(c("rangeRchart" , "gaugeRRmethod"))
+    if (type == "Range"){
+      p <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE)
+    }else{
+      p <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE)
+    }
+    plot$plotObject <- p
+    plotContainer[[op]] <- plot
+  }
+  return(plotContainer)
 }
 
 .ScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready){

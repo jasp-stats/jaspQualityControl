@@ -59,16 +59,22 @@
 }
 
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options) {
+.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE) {
   data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   means <- rowMeans(data1)
   subgroups <- c(1:length(means))
   data_plot <- data.frame(subgroups = subgroups, means = means)
   sixsigma <- qcc::qcc(data1, type ='xbar', plot=FALSE)
-  center <- sixsigma$center
   sd1 <- sixsigma$std.dev
-  UCL <- max(sixsigma$limits)
-  LCL <- min(sixsigma$limits)
+  if (manualLimits != ""){
+    LCL <- manualLimits[1]
+    center <- manualLimits[2]
+    UCL <- manualLimits[3]
+  }else{
+    center <- sixsigma$center
+    UCL <- max(sixsigma$limits)
+    LCL <- min(sixsigma$limits)
+  }
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, means))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
@@ -82,14 +88,17 @@
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
-  warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                   qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
+
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
-    ggplot2::geom_hline(yintercept = warn.limits, color = "darkred", linetype = "dashed") +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred")
+  if (warningLimits){
+    warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
+                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
+    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "darkred", linetype = "dashed")
+  }
+   p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Mean") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line() +
@@ -101,16 +110,22 @@
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options) {
+.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE) {
   #Arrange data and compute
   data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
   range <- apply(data1, 1, function(x) max(x) - min(x))
   subgroups <- 1:length(range)
   data_plot <- data.frame(subgroups = subgroups, range = range)
   sixsigma <- qcc::qcc(data1, type= 'R', plot = FALSE)
-  center <- sixsigma$center
-  UCL <- max(sixsigma$limits)
-  LCL <- min(sixsigma$limits)
+  if (manualLimits != ""){
+    LCL <- manualLimits[1]
+    center <- manualLimits[2]
+    UCL <- manualLimits[3]
+  }else{
+    center <- sixsigma$center
+    UCL <- max(sixsigma$limits)
+    LCL <- min(sixsigma$limits)
+  }
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - (0.10 * abs(LCL)), range, UCL + (0.1 * UCL)), min.n = 4)
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
@@ -124,14 +139,17 @@
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
-  warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                   qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
+
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
     ggplot2::geom_hline(yintercept = center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred") +
-    ggplot2::geom_hline(yintercept = warn.limits, color = "darkred", linetype = "dashed") +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "darkred")
+  if (warningLimits){
+    warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
+                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
+    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "darkred", linetype = "dashed")
+  }
+  p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Range") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name= gettext("Subgroup") ,breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line() +
