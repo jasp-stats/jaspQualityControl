@@ -43,24 +43,7 @@ Form
             CheckBox
             {
                     name:                      "contour";label:   qsTr("Contour plots")
-                    IntegerField
-                    {
-                        name:						"firstVar"
-                        label:						qsTr("Divide the first variable by step")
-                        defaultValue:				5
-                        min:						1
-                        max:						50
-                    }
 
-
-                    IntegerField
-                    {
-                        name:						"secondVar"
-                        label:						qsTr("Divide the second variable by step")
-                        defaultValue:				5
-                        min:						1
-                        max:						50
-                    }
 
                     IntegerField
                     {

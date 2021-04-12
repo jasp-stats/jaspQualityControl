@@ -134,45 +134,46 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op2  <- length(options[["rsmResponseVariables"]]) 
   op3  <- length(options[["rsmBlocks"]]) 
   
+  
+  op_pair <- length(options[["pairs"]])
+  
   jaspResults[["contourPlot"]] <- contourPlot
   
-  if (!(op1 > 1 & op3 >= 1)) {
+  if (!(op1 > 1 & op3 > 0) & op_pair == 0) {
     jaspResults[["contourPlot"]][["1"]] <- createJaspPlot()
     return ()
   }
-    
-  
-  val1 <- options[["firstVar"]]
-  val2 <- options[["secondVar"]]
-  val3 <- 5
-  val4 <- options[["fourthVar"]]
-  
   data <- .readDataSetToEnd(columns.as.numeric = c(options[["rsmVariables"]],
                                                    options[["rsmResponseVariables"]]),
                             columns.as.factor  =   options[["rsmBlocks"]])
   
+  pair.data <- .readDataSetToEnd(columns.as.numeric = options[["rsmVariables"]])
   
+  
+  pair <- options[["pairs"]]
   
   name <- vector()
-
+  
   mean.col <- apply(data, 2, mean)
   colnames(data) <- decodeColNames(colnames(data))
   opt1 <- colnames(data)[1:op1]
   opt2 <- colnames(data)[(op1+1)]
   opt3 <- colnames(data)[(op1+2)]
   
-  
+  optio <- options[["rsmVariables"]]
   data.list <- list()
+  
+  
   for (i in 1:op1) {
     data.list[[i]] <- as.formula(paste0("x", i, " ~ ", "(", opt1[i], "-", 
                                         mean(data[,i]), ")/", 
-                                        eval(parse(text = paste("val", i, sep = "")))))
+                                        abs(data[1,i] - mean(data[,i]))))
   }
   
   var.code <- rsm::coded.data(data, formulas = data.list)
   print(var.code)
   
-  for (i in 1:ncol(combn(op1,2))) {
+  for (i in 1:op_pair) {
     
     
     plot <- createJaspPlot(
@@ -180,28 +181,44 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       width = 320, height = 320)
     plot$dependOn(c("rsmVariables", "rsmResponseVariables", 
                     "rsmBlocks", "firstVar","secondVar", 
-                    "contour", "psi", "theta"))
+                    "contour", "psi", "theta", "rsmVariables2","pairs"))
     contourPlot[[paste0("plotObject", i, sep = "")]] <- plot
   }
   
   
-  pop <- combn(op1,2)
-  for (i in 1:ncol(combn(op1,2))){
+  
+  l_gen <- 1:op1
+  
+  col <- 1
+  for (i in pair){
     
+    if (!(i[1] == "") & !(i[2] == "")) {
+      str1 <- paste("x", l_gen[optio %in% i[1]],",","x", 
+                    l_gen[optio %in% i[2]], sep = "")
+      str2 <-  paste("SO(", str1, ")", sep = "")
+      str3 <- as.formula(paste(opt2, "~", 
+                               opt3,
+                               "+", str2, sep = ""))
+      po <- as.formula(paste("~x", l_gen[optio %in% i[1]], 
+                             "+", "x",
+                             l_gen[optio %in% i[2]], sep = ""))
+      heli.rsm1 <- rsm::rsm(str3, data = var.code)
+      .responseSurfaceContourFill(contourPlot[[paste0("plotObject", col, sep = "")]], 
+                                  heli.rsm1, po, options)
+      col <- col + 1
+    }
     
-    str1 <- paste("x", pop[1,i],",", "x", pop[2,i], sep = "")
-    str2 <-  paste("SO(", str1, ")", sep = "")
-    str3 <- as.formula(paste(opt2, "~", 
-                             opt3,
-                             "+", str2, sep = ""))
-    po <- as.formula(paste("~x", pop[1,i], "+", "x",pop[2,i], sep = ""))
-    heli.rsm1 <- rsm::rsm(str3, data = var.code)
-    .responseSurfaceContourFill(contourPlot[[paste0("plotObject", i, sep = "")]], heli.rsm1, po, options)
-        
-      }
+      
+    
+  }
+  
+  
+  
+  return()
+
     
 
-  return()
+  
 }
 
 
@@ -211,7 +228,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op2  <- length(options[["rsmResponseVariables"]]) 
   op3  <- length(options[["rsmBlocks"]]) 
   
-opt2 <- options[["rsmResponseVariables"]]
+  opt2 <- options[["rsmResponseVariables"]]
   contour.fill <- function () {
     persp(heli.rsm1, po, 
           at = summary(heli.rsm1)$canonical$xs, contours = "colors", 
