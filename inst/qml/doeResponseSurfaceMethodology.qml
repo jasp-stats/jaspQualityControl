@@ -31,9 +31,59 @@ Form
             AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns: ["nominal"]; singleVariable: true}
         }
 		
-		GroupBox
+        Section
+        {
+            title: qsTr("Contour Plot Options")
+            VariablesForm
+            {
+                    preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+                    AvailableVariablesList		{	name:  "rsmVariables2";	source:"rsmVariables" }
+                    AssignedPairsVariablesList	{	name:  "pairs";				suggestedColumns: "scale" }
+            }
+            CheckBox
+            {
+                    name:                      "contour";label:   qsTr("Contour plots")
+                    IntegerField
+                    {
+                        name:						"firstVar"
+                        label:						qsTr("Divide the first variable by step")
+                        defaultValue:				5
+                        min:						1
+                        max:						50
+                    }
+
+
+                    IntegerField
+                    {
+                        name:						"secondVar"
+                        label:						qsTr("Divide the second variable by step")
+                        defaultValue:				5
+                        min:						1
+                        max:						50
+                    }
+
+                    IntegerField
+                    {
+                        name:                       "phi"
+                        label:                      qsTr("Rotating angle (vertical plane)")
+                        defaultValue:               0
+                    }
+
+                    IntegerField
+                    {
+                        name:                       "theta"
+                        label:                      qsTr("Rotating angle (horizontal plane)")
+                        defaultValue:               0
+                    }
+
+            }
+        }
+
+
+
+        Section
 		{
-			title: 							qsTr("Additional Options")
+            title: 							qsTr("Box designs")
 
             CheckBox
             {
@@ -87,43 +137,7 @@ Form
 
             }
 
-            CheckBox
-            {
-                    name:                      "contour";label:   qsTr("Contour plots")
-                    IntegerField
-                    {
-                        name:						"firstVar"
-                        label:						qsTr("Divide the first variable by step")
-                        defaultValue:				5
-                        min:						1
-                        max:						50
-                    }
 
-
-                    IntegerField
-                    {
-                        name:						"secondVar"
-                        label:						qsTr("Divide the second variable by step")
-                        defaultValue:				5
-                        min:						1
-                        max:						50
-                    }
-
-                    IntegerField
-                    {
-                        name:                       "phi"
-                        label:                      qsTr("Rotating angle (vertical plane)")
-                        defaultValue:               0
-                    }
-
-                    IntegerField
-                    {
-                        name:                       "theta"
-                        label:                      qsTr("Rotating angle (horizontal plane)")
-                        defaultValue:               0
-                    }
-
-            }
 
         }
 
