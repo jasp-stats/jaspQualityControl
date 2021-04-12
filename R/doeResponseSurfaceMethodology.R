@@ -234,9 +234,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
           at = summary(heli.rsm1)$canonical$xs, contours = "colors", 
           col = rainbow(7),
           zlab = opt2,
+          line = 5,
           ticktype = "detailed",
           phi = options[["phi"]],
-          theta = options[["theta"]])
+          theta = (options[["theta"]] + 330))
   }
   
   
