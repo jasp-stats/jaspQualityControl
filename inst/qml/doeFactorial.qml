@@ -309,6 +309,7 @@ Form
             RadioButtonGroup
             {
                 title:                          qsTr("Blocking options")
+                debug:                          true
                 name:                           "blocking"
 
                 RadioButton

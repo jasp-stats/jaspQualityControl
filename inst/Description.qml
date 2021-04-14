@@ -100,4 +100,10 @@ Description
     //     func:			"doeMixed"
     //     requiresData:	false
     // }
+    Analysis
+    {
+        title:          qsTr("Factorial Analysis")
+        func:           "factorialAnalysis"
+        requiresData:   true
+    }
 }

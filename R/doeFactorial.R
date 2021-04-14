@@ -253,7 +253,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     #export design
     if(options[["actualExporter"]] && options[["file"]] != ""){
       exportDesign <- data.frame(rows)
-      exportDesign <- cbind(sampleExport, rep(NA, nrow(exportDesign)))
+      exportDesign <- cbind(exportDesign, rep(NA, nrow(exportDesign)))
       colnames(exportDesign)[ncol(exportDesign)] <- "Response"
       utils::write.csv(x = exportDesign, file = options[["file"]], row.names = FALSE, na = "", quote = FALSE)
     }
