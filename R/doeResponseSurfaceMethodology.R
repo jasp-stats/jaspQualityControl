@@ -254,6 +254,23 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
           ticktype = "detailed",
           phi = options[["phi"]],
           theta = (options[["theta"]] + 330))
+    if (options[["legend"]]){
+      a <- persp(heli.rsm1, po, 
+                 at = summary(heli.rsm1)$canonical$xs, contours = "colors", 
+                 col = rainbow(7),
+                 zlab = opt2,
+                 ticktype = "detailed",
+                 phi = options[["phi"]],
+                 theta = (options[["theta"]] + 330))
+      
+      je <- (a[[1]][[5]][[2]] - a[[1]][[5]][[1]])/(length(rainbow(7)))
+      q <- c()
+      for (i in 1:length(rainbow(7))) {
+        q[i] <- paste(as.character(round(a[[1]][[5]][[1]]+(i-1)*je,1)), "-", as.character(round(a[[1]][[5]][[1]]+i*je,1)), sep = "")
+      }
+      legend(x = "topright", legend = q, fill = rainbow(7), text.width = 0.1, cex = 0.9)
+    }
+   
   }
   
   

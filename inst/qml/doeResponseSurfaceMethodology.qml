@@ -50,6 +50,12 @@ Form
                         label:                      qsTr("Show analysis and graphs in coded form")
                     }
 
+                    CheckBox
+                    {
+                        name:                       "legend"
+                        label:                      qsTr("Show legend next to graph")
+                    }
+
                     IntegerField
                     {
                         name:                       "phi"
