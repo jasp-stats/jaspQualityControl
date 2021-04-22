@@ -26,12 +26,165 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-  ready <- (length(measurements) != 0 && operators != "" && parts != "")
-  readyRangeMethod <- length(measurements) == 2
+  ready <- (measurements != "" && operators != "" && parts != "")
 
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
   }
 
+
+  # Gauge r&R non replicable
+
+  if (options[["NRgaugeRR"]]) {
+    if(is.null(jaspResults[["gaugeRRNonRep"]])) {
+      jaspResults[["gaugeRRNonRep"]] <- createJaspContainer(gettext("Gauge r&R Tables"))
+      jaspResults[["gaugeRRNonRep"]]$position <- 1
+    }
+
+    jaspResults[["gaugeRRNonRep"]] <- .gaugeRRNonRep(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+  }
+
+
+  return()
+}
+
+.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready){
+  gaugeRRNonRepTables <- createJaspContainer(gettext("Gauge r&R Tables"))
+  gaugeRRNonRepTables$position <- 1
+
+  gaugeRRNonRepTable1 <- createJaspTable(title = gettext("Gauge r&R (Nested)"))
+
+  gaugeRRNonRepTable1$addColumnInfo(title = gettext("Sources"),       name = "sources",   type = "string" )
+  gaugeRRNonRepTable1$addColumnInfo(title = gettext("df"),             name = "DF",      type = "integer")
+  gaugeRRNonRepTable1$addColumnInfo(title = gettext("Sum of Squares"), name = "SS",  type = "number")
+  gaugeRRNonRepTable1$addColumnInfo(title = gettext("Mean Square"),    name = "MS", type = "number")
+  gaugeRRNonRepTable1$addColumnInfo(title = gettext("F"),              name = "F.value", type = "number")
+  gaugeRRNonRepTable1$addColumnInfo(title = gettext("p"),              name = "p.value",  type = "pvalue")
+
+  if (ready){
+    anovaTable <- .gaugeNestedANOVA(dataset, operators, parts, measurements)
+    sources <- as.character(anovaTable$Source)
+    df <- anovaTable$DF
+    ss <- anovaTable$SS
+    ms <- anovaTable$MS
+    f <- anovaTable$F.value
+    p <- anovaTable$p.value
+
+    gaugeRRNonRepTable1$setData(list("sources" = sources,
+                                     "DF" = df,
+                                     "SS" = ss,
+                                     "MS" = ms,
+                                     "F.value" = f,
+                                     "p.value" = p))
+  }
+
+
+  gaugeRRNonRepTables[["Table1"]] <- gaugeRRNonRepTable1
+
+
+
+  return(gaugeRRNonRepTables)
+
+
+}
+
+.ssOperator <- function(dataset, operators, parts, measurements){
+  grandmean    <- mean(dataset[[measurements]])
+  operatormean <- tapply(dataset[[measurements]], dataset[operators], mean)
+  nreplicates   <- table(dataset[parts])[1]
+  nparts  <- table(dataset[operators])[1] / nreplicates
+  ssOperator <- as.vector(nreplicates) * as.vector(nparts) * sum((grandmean - operatormean)^2)
+  return(ssOperator)
+}
+
+.ssPartOperator <- function(dataset, operators, parts, measurements){
+  dataset[operators] <- as.character(dataset[[operators]])
+  dataset[parts] <- as.character(dataset[[parts]])
+  operatorVector <- unique(dataset[[operators]])
+  nreplicates       <- table(dataset[parts])[1]
+  nparts  <- table(dataset[operators])[1] / nreplicates
+  ssPartOperator <- 0
+  for(op in operatorVector){
+    dataPerOP <- subset(dataset, dataset[[operators]] == op)
+    opMean <- mean(dataPerOP[[measurements]])
+    partMean <- tapply(dataPerOP[[measurements]], dataPerOP[parts], mean)
+    ssPartOperator <- ssPartOperator + sum((partMean - opMean)^2)
+  }
+  ssPartOperator <- as.vector(nreplicates) * ssPartOperator
+  return(ssPartOperator)
+}
+
+.ssRepeat <- function(dataset, operators, parts, measurements){
+  dataset[operators] <- as.character(dataset[operators])
+  partVector <- unique(dataset[[parts]])
+  ssRepeat <- 0
+  for(p in partVector){
+    dataPerP <- subset(dataset, dataset[parts] == p)
+    partMean <- as.vector(tapply(dataPerP[[measurements]], dataPerP[operators], mean))
+    measurementsPerP <- dataPerP[[measurements]]
+    ssRepeat <- ssRepeat + sum((measurementsPerP - partMean)^2)
+  }
+  return(ssRepeat)
+}
+
+.ssGaugeNested <- function(dataset, operators, parts, measurements){
+  ssOperator <- .ssOperator(dataset, operators, parts, measurements)
+  ssPartOperator <- .ssPartOperator(dataset, operators, parts, measurements)
+  ssRepeat <- .ssRepeat(dataset, operators, parts, measurements)
+  ssTotal <- sum(ssOperator, ssPartOperator, ssRepeat)
+
+  return(c(ssOperator, ssPartOperator, ssRepeat, ssTotal))
+}
+
+.dfGaugeNested <- function(dataset, operators, parts, measurements){
+  noperators <- length(unique(dataset[[operators]]))
+  nreplicates <- as.vector(table(dataset[parts])[1])
+  nparts  <- as.vector(table(dataset[operators])[1] / nreplicates)
+
+  dfOperator <- noperators - 1
+  dfPartOperator <- noperators * (nparts - 1)
+  dfRepeat <- nparts * noperators * (nreplicates - 1)
+  dfTotal <- noperators * nreplicates * nparts - 1
+
+  return(c(dfOperator, dfPartOperator, dfRepeat, dfTotal))
+}
+
+.msGaugeNested <- function(ss, df){
+  msOperator <- ss[1] / df[1]
+  msPartOperator <- ss[2] / df[2]
+  msRepeat <- ss[3] / df[3]
+  return(c(msOperator, msPartOperator, msRepeat))
+}
+
+.fGaugeNested <- function(ms){
+  fOperator <- ms[1] /  ms[2]
+  fPartOperator <- ms[2] / ms[3]
+  return(c(fOperator, fPartOperator))
+}
+
+.pGaugeNested <- function(f, df){
+  p1 <- pf(f[1], df[1], df[2], lower.tail = F)
+  p2 <- pf(f[2], df[2], df[3], lower.tail = F)
+  return(c(p1, p2))
+}
+
+.gaugeNestedANOVA <- function(dataset, operators, parts, measurements){
+
+  ss <- .ssGaugeNested(dataset, operators, parts, measurements)
+  df <- .dfGaugeNested(dataset, operators, parts, measurements)
+  ms <- .msGaugeNested(ss, df)
+  f <- .fGaugeNested(ms)
+  p <- .pGaugeNested(f, df)
+  sources <- c(operators, paste(parts, "(", operators, ")", sep = ""), "Repeatability", "Total")
+
+  anovaTable <- data.frame(Source = sources,
+                           DF = df,
+                           SS = ss,
+                           MS = c(ms, NA),
+                           "F-value" = c(f, rep(NA, 2)),
+                           "p-value" = c(p, rep(NA, 2)))
+
+
+  return(anovaTable)
 }

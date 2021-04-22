@@ -235,12 +235,12 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
     if (options$biasRunTolLims) {
       p <- p + ggplot2::geom_hline(yintercept = toleranceLines[1], data = dataset,
                                    mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
-        ggplot2::geom_label(data = data.frame(x = max(Observation), y = toleranceLines[1], l = "Ref + 0.1 * Tol"),
-                            ggplot2::aes(x = x, y = y, label = l), vjust="outward",hjust="inward", color = "darkred" ) +
+        ggplot2::geom_label(data = data.frame(x = max(Observation) * 1.1 , y = toleranceLines[1], l = "Ref + 0.1 * Tol"),
+                            ggplot2::aes(x = x, y = y, label = l), vjust="top",hjust="inward", color = "darkred" ) +
         ggplot2::geom_hline(yintercept = toleranceLines[2], data = dataset,
                             mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
-        ggplot2::geom_label(data = data.frame(x = max(Observation), y = toleranceLines[2], l = "Ref - 0.1 * Tol"),
-                            ggplot2::aes(x = x, y = y, label = l), vjust="outward",hjust="inward", color = "darkred" )
+        ggplot2::geom_label(data = data.frame(x = max(Observation) * 1.1, y = toleranceLines[2], l = "Ref - 0.1 * Tol"),
+                            ggplot2::aes(x = x, y = y, label = l), vjust="bottom",hjust="inward", color = "darkred" )
     }
 
     plot$plotObject <- p

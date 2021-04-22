@@ -163,9 +163,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     }
 
 
-    return()
-  }
 
+  }
+  return()
 }
 
 .gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready){
@@ -489,7 +489,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 
   if (ready){
 
-    operatorVector <- unique(dataset[[operators]])
+    operatorVector <- as.character(unique(dataset[[operators]]))
     meanVector <- vector(mode = "numeric")
     sdVector <- vector(mode = "numeric")
     minVector <- vector(mode = "numeric")

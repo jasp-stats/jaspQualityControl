@@ -55,30 +55,19 @@ Form
 			id:									variable3
 			name:								"measurements"
 			title:								qsTr("Measurements")
-			singleVariable:						false
+			singleVariable:						true
 			allowedColumns:						["scale"]
 		}
 
 	}
 	
-			RadioButtonGroup
-		{
-			name: "gaugeRRmethod"
-			RadioButton { name: "anovaMethod";	label: qsTr("ANOVA Method"); checked: true}
-			RadioButton { name: "rangeMethod";  label: qsTr("Range Method")	}
-		}
-	
-	
-		Section
-	{
-		title: qsTr("ANOVA Method Options")
-		
+
 		Group
 		{
 			title: qsTr("Analysis Options")
 			
 									DropDown {
-                name: "standardDeviationReference"
+                name: "standardDeviationReferenceNR"
                 label: qsTr("Std. Deviation reference")
                 indexDefaultValue: 0
                 values:
@@ -91,7 +80,7 @@ Form
 				}
 				DoubleField
 				{
-					name:			"historicalStandardDeviationValue"
+					name:			"NRhistoricalStandardDeviationValue"
 					label:			qsTr("Std. Deviation value:")
 					defaultValue:	0
 					enabled:		variationReference.currentValue == "historicalStandardDeviation"
@@ -101,7 +90,7 @@ Form
 
 				DoubleField
 				{
-					name:			"tolerance"
+					name:			"NRtolerance"
 					label:			qsTr("Tolerance:")
 					defaultValue:	10
 					enabled:		TRUE
@@ -109,13 +98,11 @@ Form
 			
 			CheckBox
 			{
-				name: "gaugeANOVA";		label: qsTr("r&R table ANOVA method"); checked: true
-			
-						DoubleField { name: "alphaForANOVA";		label: qsTr("Alpha interaction removal:");	fieldWidth: 60; defaultValue: 0.05; max: 1; decimals: 3 }
-					
+				name: "NRgaugeRR";		label: qsTr("r&R tables"); checked: true
+				
 				
 				DropDown{
-						name: "studyVarMultiplierType"
+						name: "NRstudyVarMultiplierType"
 						label: qsTr("Study Var. multiplier type")
 						indexDefaultValue: 0
 						values:
@@ -127,7 +114,7 @@ Form
 						}
 										
 				DoubleField { 
-						name: "studyVarMultiplier"
+						name: "NRstudyVarMultiplier"
 						label: qsTr("Study Var. multiplier value:")
 						fieldWidth: 60 
 						defaultValue: 6
@@ -137,7 +124,7 @@ Form
 						}
 					
 				CheckBox{
-						name: "gaugeVarCompGraph";		label: qsTr("Graph variation components"); checked: true
+						name: "NRgaugeVarCompGraph";		label: qsTr("Graph variation components"); checked: true
 						}
 				
 			}
@@ -148,103 +135,6 @@ Form
 		{
 			title: qsTr("Plots")
 
-			CheckBox
-			{
-				name: "gaugeRchart";		label: qsTr("R charts by operator")
-			}
-
-			CheckBox
-			{
-				name: "gaugeXbarChart";		label: qsTr("X-bar charts by operator")
-			}
-		
-			CheckBox
-			{
-				name: "gaugeScatterPlotOperators";		label: qsTr("Scatter plots operators")
-				
-				CheckBox
-				{
-					name: "gaugeScatterPlotFitLine";		label: qsTr("Fit line")
-				}
-
-				CheckBox
-				{
-					name: "gaugeScatterPlotOriginLine";		label: qsTr("Show origin line")
-				}
-			}
-
-			CheckBox
-			{
-			name: "gaugeByPart";		label: qsTr("Measurement by part plot")
-			
-				CheckBox
-				{
-					name: "gaugeByPartAll";		label: qsTr("Display all measurements")
-				}
-			}	
-
-			CheckBox
-			{
-			name: "gaugeByOperator";		label: qsTr("Measurement by operators plot")
-			}
-		
-			CheckBox
-			{
-			name: "gaugeByInteraction";		label: qsTr("Measurement interaction plot")
-			}
 		}
-	}
 	
-	Section
-	{
-		title: qsTr("Range Method Options")
-		
-			Group
-			{
-				title: qsTr("Analysis Options")
-				
-								DoubleField
-				{
-					name:			"rangePSD"
-					label:			qsTr("Process Std. Deviation:")
-					defaultValue:	1
-					enabled:		TRUE
-				}
-				
-				CheckBox
-				{
-					name: "rangeRr";		label: qsTr("r&R table"); checked: true
-				}
-			}
-		
-			Group
-			{
-				title: qsTr("Plots")
-				
-				CheckBox
-				{
-					name: "rangeScatterPlotOperatorParts";		label: qsTr("Scatter plot operators vs. parts")
-				}
-			
-				CheckBox
-				{
-					name: "rangeScatterPlotOperators";		label: qsTr("Scatter plot operators"); checked: true
-				
-					CheckBox
-					{
-						name: "rangeScatterPlotFitLine";		label: qsTr("Fit line"); checked: true
-					}
-				
-					CheckBox
-					{
-						name: "rangeScatterPlotOriginLine";		label: qsTr("Show origin line"); checked: true
-					}
-		
-				}
-				CheckBox
-				{
-					name: "rangeRchart";		label: qsTr("R chart")
-				}
-			}
-	}
 }
