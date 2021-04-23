@@ -247,28 +247,23 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   
   opt2 <- options[["rsmResponseVariables"]]
   contour.fill <- function () {
-    persp(heli.rsm1, po, 
+    plot <- persp(heli.rsm1, po, 
           at = summary(heli.rsm1)$canonical$xs, contours = "colors", 
-          col = rainbow(7),
+          col = rainbow(options["divide"]),
           zlab = opt2,
           ticktype = "detailed",
-          phi = options[["phi"]],
-          theta = (options[["theta"]] + 330))
+          phi = options[["phi"]]*360,
+          theta = (options[["theta"]]*360 + 330))
     if (options[["legend"]]){
-      a <- persp(heli.rsm1, po, 
-                 at = summary(heli.rsm1)$canonical$xs, contours = "colors", 
-                 col = rainbow(7),
-                 zlab = opt2,
-                 ticktype = "detailed",
-                 phi = options[["phi"]],
-                 theta = (options[["theta"]] + 330))
-      
-      je <- (a[[1]][[5]][[2]] - a[[1]][[5]][[1]])/(length(rainbow(7)))
-      q <- c()
-      for (i in 1:length(rainbow(7))) {
-        q[i] <- paste(as.character(round(a[[1]][[5]][[1]]+(i-1)*je,1)), "-", as.character(round(a[[1]][[5]][[1]]+i*je,1)), sep = "")
+      #Divide the difference between the upper and lower z-axis boundary by number of colours
+      z_step <- (plot[[1]][[5]][[2]] - plot[[1]][[5]][[1]])/(length(rainbow(options["divide"])))
+      #Create a string of intervals corresponding to each colour 
+      string <- c()
+      for (i in 1:length(rainbow(options["divide"]))) {
+        string[i] <- paste(as.character(round(plot[[1]][[5]][[1]]+(i-1)*z_step,1)), "-", 
+                           as.character(round(plot[[1]][[5]][[1]]+i*z_step,1)), sep = "")
       }
-      legend(x = "topright", legend = q, fill = rainbow(7), text.width = 0.1, cex = 0.9)
+      legend(x = "topright", legend = string, fill = rainbow(options["divide"]), text.width = 0.1, cex = 0.9)
     }
    
   }

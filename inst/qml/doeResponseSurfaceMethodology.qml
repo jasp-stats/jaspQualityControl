@@ -26,9 +26,9 @@ Form
         VariablesForm
         {
             AvailableVariablesList { name: "rsmVariablesList" }
-            AssignedVariablesList  { name: "rsmVariables";	        title: qsTr("Predictors");	suggestedColumns: ["scale", "ordinal"]   }
-            AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns: ["scale", "ordinal"]; singleVariable: true}
-            AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns: ["nominal"]; singleVariable: true}
+            AssignedVariablesList  { name: "rsmVariables";	        title: qsTr("Predictors");suggestedColumns:   ["scale", "ordinal", "nominal"]   }
+            AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
+            AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
         }
 		
         Section
@@ -38,7 +38,7 @@ Form
             {
                     preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
                     AvailableVariablesList		{	name:  "rsmVariables2";	    source:"rsmVariables" }
-                    AssignedPairsVariablesList	{	name:  "pairs";				suggestedColumns: ["scale", "ordinal"] }
+                    AssignedPairsVariablesList	{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
             }
             CheckBox
             {
@@ -55,19 +55,28 @@ Form
                         name:                       "legend"
                         label:                      qsTr("Show legend next to graph")
                     }
+                    DropDown
+                    {
+                        name:                       "divide"
+                        label:                      qsTr("Divide response surface into N parts")
+                        values:                     [2,3,4,5,6,7]
+                    }
 
-                    IntegerField
+                    Slider
                     {
                         name:                       "phi"
                         label:                      qsTr("Rotating angle (vertical plane)")
-                        defaultValue:               0
+                        value:                      0
+
+
                     }
 
-                    IntegerField
+                    Slider
                     {
                         name:                       "theta"
                         label:                      qsTr("Rotating angle (horizontal plane)")
-                        defaultValue:               0
+                        value:                      0.5
+                        vertical:                   false
                     }
 
             }
