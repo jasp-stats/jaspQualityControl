@@ -22,6 +22,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   operators <- unlist(options$operators)
 
   numeric.vars <- measurements
+  numeric.vars <- numeric.vars[numeric.vars != ""]
 
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
@@ -54,33 +55,80 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   gaugeRRNonRepTables$position <- 1
 
   gaugeRRNonRepTable1 <- createJaspTable(title = gettext("Gauge r&R (Nested)"))
-
-  gaugeRRNonRepTable1$addColumnInfo(title = gettext("Sources"),       name = "sources",   type = "string" )
+  gaugeRRNonRepTable1$addColumnInfo(title = gettext("Source"),       name = "sources",   type = "string" )
   gaugeRRNonRepTable1$addColumnInfo(title = gettext("df"),             name = "DF",      type = "integer")
   gaugeRRNonRepTable1$addColumnInfo(title = gettext("Sum of Squares"), name = "SS",  type = "number")
   gaugeRRNonRepTable1$addColumnInfo(title = gettext("Mean Square"),    name = "MS", type = "number")
   gaugeRRNonRepTable1$addColumnInfo(title = gettext("F"),              name = "F.value", type = "number")
   gaugeRRNonRepTable1$addColumnInfo(title = gettext("p"),              name = "p.value",  type = "pvalue")
 
+  gaugeRRNonRepTable2 <- createJaspTable(title = gettext("Variance Components"))
+  gaugeRRNonRepTable2$addColumnInfo(title = gettext("Source"),       name = "sources",   type = "string" )
+  gaugeRRNonRepTable2$addColumnInfo(title = gettext("Variation"), name = "Var",  type = "number")
+  gaugeRRNonRepTable2$addColumnInfo(title = gettext("% Contribution"),    name = "percentVar", type = "number")
+
+  gaugeRRNonRepTable3 <- createJaspTable(title = gettext("Gauge Evaluation"))
+  gaugeRRNonRepTable3$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
+  gaugeRRNonRepTable3$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
+  gaugeRRNonRepTable3$addColumnInfo(name = "studyVar", title = gettextf("Study variation"), type = "number")
+  gaugeRRNonRepTable3$addColumnInfo(name = "percentStudyVar", title = gettext("% Study variation"), type = "number")
+  gaugeRRNonRepTable3$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
+
+
   if (ready){
     anovaTable <- .gaugeNestedANOVA(dataset, operators, parts, measurements)
-    sources <- as.character(anovaTable$Source)
+    anovaSources <- as.character(anovaTable$Source)
     df <- anovaTable$DF
     ss <- anovaTable$SS
     ms <- anovaTable$MS
     f <- anovaTable$F.value
     p <- anovaTable$p.value
-
-    gaugeRRNonRepTable1$setData(list("sources" = sources,
+    gaugeRRNonRepTable1$setData(list("sources" = anovaSources,
                                      "DF" = df,
                                      "SS" = ss,
                                      "MS" = ms,
                                      "F.value" = f,
                                      "p.value" = p))
+
+    varCompTable <- .gaugeNestedVarComponents(dataset, operators, parts, measurements, ms)
+    varSources <- gettext(c("Total Gauge r & R", "Repeatability", "Reproducibility", "Part-To-Part", "Total Variation"))
+    varComps <- c(varCompTable$varGaugeTotal, varCompTable$varRepeat, varCompTable$varReprod, varCompTable$varPart, varCompTable$varTotal)
+    percentVarComps <- (varComps / varCompTable$varTotal) * 100
+    gaugeRRNonRepTable2$setData(list("sources" = varSources,
+                                     "Var" = varComps,
+                                     "percentVar" = percentVarComps))
+
+    stdDevs <- sqrt(varComps)
+    if (options$NRstudyVarMultiplierType == "svmSD"){
+      studyVarMultiplier <- options$NRstudyVarMultiplier
+    }else{
+      percent <- options$NRstudyVarMultiplier/100
+      q <- (1 - percent)/2
+      studyVarMultiplier <- abs(2*qnorm(q))
+    }
+    studyVar <- stdDevs * studyVarMultiplier
+    percentStudyVar <- studyVar/max(studyVar) * 100
+    percentTolerance <- studyVar / options$NRtolerance * 100
+    gaugeRRNonRepTable3$setData(list("source" = varSources,
+                                     "SD" = stdDevs,
+                                     "studyVar" = studyVar,
+                                     "percentStudyVar" = percentStudyVar,
+                                     "percentTolerance" = percentTolerance))
+
+
+    gaugeRRNonRepTable3$addFootnote(gettextf("Study variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
+
+
+
   }
 
 
   gaugeRRNonRepTables[["Table1"]] <- gaugeRRNonRepTable1
+  gaugeRRNonRepTables[["Table2"]] <- gaugeRRNonRepTable2
+  gaugeRRNonRepTables[["Table3"]] <- gaugeRRNonRepTable3
+
+
+
 
 
 
@@ -187,4 +235,28 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
 
 
   return(anovaTable)
+}
+
+.gaugeNestedVarComponents <- function(dataset, operators, parts, measurements, ms){
+  nOperators <- length(unique(dataset[[operators]]))
+  nReplicates <- as.vector(table(dataset[parts])[1])
+  nParts  <- as.vector(table(dataset[operators])[1] / nReplicates)
+  msOperator <- ms[1]
+  msOperatorPart <- ms[2]
+  msRepeat <- ms[3]
+  varRepeat <- msRepeat
+  varReprod <- (msOperator - msOperatorPart) / (nParts * nReplicates)
+  if (varReprod < 0)
+    varReprod <- 0
+  varPart <- (msOperatorPart - msRepeat) / nReplicates
+  if (varPart < 0)
+    varPart <- 0
+  varGaugeTotal <- varRepeat + varReprod
+  varTotal <- varGaugeTotal + varPart
+  dframe <- data.frame("varGaugeTotal" = varGaugeTotal,
+                       "varRepeat" = varRepeat,
+                       "varReprod" = varReprod,
+                       "varPart" = varPart,
+                       "varTotal" = varTotal)
+  return(dframe)
 }
