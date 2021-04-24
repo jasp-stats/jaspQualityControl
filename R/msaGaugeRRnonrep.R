@@ -35,6 +35,11 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   }
 
 
+  if(ready){
+  datasetWide <- .reshapeToWide(dataset, measurements, parts, operators)
+  wideMeasurementCols <- colnames(datasetWide)[colnames(datasetWide) != c(parts, operators)]
+  }
+
   # Gauge r&R non replicable
 
   if (options[["NRgaugeRR"]]) {
@@ -44,6 +49,36 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
     }
 
     jaspResults[["gaugeRRNonRep"]] <- .gaugeRRNonRep(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+  }
+
+
+  # R chart by operator
+  if (options[["NRrCharts"]]) {
+    if(is.null(jaspResults[["NRrCharts"]])) {
+      jaspResults[["NRrCharts"]] <- createJaspContainer(gettext("Range Chart by Operator"))
+      jaspResults[["NRrCharts"]]$position <- 3
+    }
+    jaspResults[["NRrCharts"]]$dependOn("NRrCharts")
+    jaspResults[["NRrCharts"]] <- .xBarOrRangeChart(type = "Range", dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options =  options, ready = ready)
+  }
+
+  # Xbar chart by operator
+  if (options[["NRxbarCharts"]]) {
+    if(is.null(jaspResults[["NRxbarCharts"]])) {
+      jaspResults[["NRxbarCharts"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
+      jaspResults[["NRxbarCharts"]]$position <- 4
+    }
+    jaspResults[["NRxbarCharts"]]$dependOn("NRxbarCharts")
+    jaspResults[["NRxbarCharts"]] <- .xBarOrRangeChartLong(type = "Xbar",dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options =  options, ready = ready)
+  }
+
+  if (options[["NRoperatorGraph"]]) {
+    if(is.null(jaspResults[["NRoperatorGraph"]])) {
+      jaspResults[["NRoperatorGraph"]] <- createJaspContainer(gettext("Gauge r&R Tables"))
+      jaspResults[["NRoperatorGraph"]]$position <- 5
+    }
+
+    jaspResults[["NRoperatorGraph"]] <- .gaugeByOperatorGraph(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options)
   }
 
 
@@ -73,7 +108,6 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   gaugeRRNonRepTable3$addColumnInfo(name = "studyVar", title = gettextf("Study variation"), type = "number")
   gaugeRRNonRepTable3$addColumnInfo(name = "percentStudyVar", title = gettext("% Study variation"), type = "number")
   gaugeRRNonRepTable3$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
-
 
   if (ready){
     anovaTable <- .gaugeNestedANOVA(dataset, operators, parts, measurements)
@@ -128,6 +162,13 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   gaugeRRNonRepTables[["Table3"]] <- gaugeRRNonRepTable3
 
 
+  if (options[["NRgaugeVarCompGraph"]]){
+    plot <- createJaspPlot(title = gettext("Components of Variation"), width = 850, height = 500)
+    plot$dependOn(c("NRgaugeVarCompGraph"))
+    if(ready)
+      plot$plotObject <- .gaugeVarCompGraph(percentVarComps[1:4], percentStudyVar[1:4], percentTolerance[1:4])
+    gaugeRRNonRepTables[["Plot"]] <- plot
+  }
 
 
 
@@ -259,4 +300,15 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
                        "varPart" = varPart,
                        "varTotal" = varTotal)
   return(dframe)
+}
+
+.reshapeToWide <- function(dataset, measurements, parts, operators){
+  nreplicates       <- as.vector(table(dataset[parts])[1])
+  nparts <- length(unique(dataset[[parts]]))
+  dataset <- dataset[order(dataset[parts]),]
+  dataset <- cbind(dataset, data.frame(index = rep(1:nreplicates, nparts)))
+  dataset <- tidyr::spread(dataset, index, measurements)
+  measurementColNames <- paste("M", 1:nreplicates, sep = "")
+  colnames(dataset) <- c(parts, operators, measurementColNames)
+  return(dataset)
 }

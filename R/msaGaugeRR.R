@@ -398,21 +398,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       studyVariationValues <- studyvars/max(studyVar) * 100
       percentToleranceValues <- studyvars / options$tolerance * 100
 
-      plotframe <- data.frame(source = rep(gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part')), 3),
-                              reference = rep(gettext(c('Percent Contribution', 'Percent Study Variation', 'Percent Tolerance')), each = 4),
-                              value = c(percentContributionValues, studyVariationValues, percentToleranceValues))
-
-      p <- ggplot2::ggplot() + ggplot2::geom_bar(data = plotframe,
-                                                 mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
-                                                 position="dodge", stat = "identity")
-      p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank(),
-                                                     plot.margin = ggplot2::unit(c(1,1,1,1),"cm")) +
-        ggplot2::xlab('') + ggplot2::ylab('Percent')
-
-      if (max(plotframe['value']) < 110)
-        p <- p + ggplot2::scale_y_continuous(breaks = c(0, 25, 50, 75, 100))
-
-      plot$plotObject <- p
+      plot$plotObject <- .gaugeVarCompGraph(percentContributionValues, studyVariationValues, percentToleranceValues)
 
       anovaTables[['VarCompGraph']] <- plot
     }
@@ -544,9 +530,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   LCL <- min(ChartData$limits)
   manualLimits <- c(LCL, center, UCL)
   for (op in operatorVector){
-    dataPerOP <- subset(dataset, dataset[[operators]] == op)
+    dataPerOP <- subset(dataset, dataset[operators] == op)
     plot <- createJaspPlot(title = gettextf("Operator %s", op), width = 600, height = 300)
-    plot$dependOn(c("rangeRchart" , "gaugeRRmethod"))
     if (type == "Range"){
       p <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE)
     }else{
@@ -813,4 +798,24 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
                               1.15729, 1.15490, 1.15289, 1.15115, 1.14965, 1.14833, 1.14717, 1.14613, 1.14520, 1.14437))
 
   return(d2table$d2[d2table$n == n])
+}
+
+.gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues){
+
+  plotframe <- data.frame(source = rep(gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part')), 3),
+                          reference = rep(gettext(c('Percent Contribution', 'Percent Study Variation', 'Percent Tolerance')), each = 4),
+                          value = c(percentContributionValues, studyVariationValues, percentToleranceValues))
+
+  p <- ggplot2::ggplot() + ggplot2::geom_bar(data = plotframe,
+                                             mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
+                                             position="dodge", stat = "identity")
+  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank(),
+                                                 plot.margin = ggplot2::unit(c(1,1,1,1),"cm")) +
+    ggplot2::xlab('') + ggplot2::ylab('Percent')
+
+  if (max(plotframe['value']) < 110)
+    p <- p + ggplot2::scale_y_continuous(breaks = c(0, 25, 50, 75, 100))
+
+  return(p)
+
 }

@@ -123,9 +123,7 @@ Form
 						decimals: 3
 						}
 					
-				CheckBox{
-						name: "NRgaugeVarCompGraph";		label: qsTr("Graph variation components"); checked: true
-						}
+				CheckBox{name: "NRgaugeVarCompGraph";		label: qsTr("Graph variation components"); checked: true}
 				
 			}
 		
@@ -134,6 +132,11 @@ Form
 		Group
 		{
 			title: qsTr("Plots")
+			
+			CheckBox{name: "NRrCharts";		label: qsTr("R charts by operator")}
+			CheckBox{name: "NRxbarCharts";		label: qsTr("X-bar charts by operator")}
+			CheckBox{name: "NRpartOperatorGraph";		label: qsTr("Measurement by part x operator plot")}
+			CheckBox{name: "NRoperatorGraph";		label: qsTr("Measurement by operator plot")}
 
 		}
 	
