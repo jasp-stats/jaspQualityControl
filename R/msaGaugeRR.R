@@ -97,8 +97,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         jaspResults[["gaugeByPart"]] <- createJaspContainer(gettext("Measurement by Part Graph"))
         jaspResults[["gaugeByPart"]]$position <- 6
       }
-
-      jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+      jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options = options)
     }
 
     # Measurement by Operator Box Plot
@@ -198,19 +197,27 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     anovaTable1$addColumnInfo(title = gettext("Sum of Squares"), name = "Sum Sq",  type = "number")
     anovaTable1$addColumnInfo(title = gettext("Mean Square"),    name = "Mean Sq", type = "number")
     anovaTable1$addColumnInfo(title = gettext("F"),              name = "F value", type = "number")
-    anovaTable1$addColumnInfo(title = gettext("p"),              name = "Pr(>F)",  type = "pvalue")
+    anovaTable1$addColumnInfo(title = gettext("p"),              name = "Pr(>F)",  type = "number")
 
     formula1 <- as.formula(paste("measurement ~", parts,"*", operators))
 
     anova1 <- summary(aov(formula = formula1, data = data))
-
+    fvaluePart <- anova1[[1]]$`Mean Sq`[1] / anova1[[1]]$`Mean Sq`[3]
+    fvalueOperator <- anova1[[1]]$`Mean Sq`[2] / anova1[[1]]$`Mean Sq`[3]
+    fvaluePartxOperator <- anova1[[1]]$`Mean Sq`[3] / anova1[[1]]$`Mean Sq`[4]
+    fValues <- c(fvaluePart, fvalueOperator, fvaluePartxOperator)
+    df <- anova1[[1]]$Df
+    p1 <- pf(fValues[1], df[1], df[3], lower.tail = F)
+    p2 <- pf(fValues[2], df[2], df[3], lower.tail = F)
+    p3 <- anova1[[1]]$`Pr(>F)`[3]
+    pValues <- c(p1, p2, p3)
 
     anovaTable1$setData(list( "sources"              = c(parts, operators, paste(parts," x ", operators), "Repeatability", "Total"),
-                              "Df"                 = c(anova1[[1]]$Df, sum(anova1[[1]]$Df)),
+                              "Df"                 = c(df, sum(anova1[[1]]$Df)),
                               "Sum Sq"             = c(anova1[[1]]$`Sum Sq`, sum(anova1[[1]]$`Sum Sq`)),
                               "Mean Sq"            = anova1[[1]]$`Mean Sq`,
-                              "F value"            = anova1[[1]]$`F value`,
-                              "Pr(>F)"             = anova1[[1]]$`Pr(>F)`))
+                              "F value"            = fValues,
+                              "Pr(>F)"             = pValues))
 
     anovaTables[['anovaTable1']] <- anovaTable1
 
@@ -569,31 +576,24 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   return(plot)
 }
 
-.gaugeByPartGraph <- function(dataset, measurements, parts, operators, options, ready){
-
+.gaugeByPartGraph <- function(dataset, measurements, parts, operators, options){
   plot <- createJaspPlot(title = gettext("Measurements by Part"))
-
-  plot$dependOn(c("gaugeByPart", "gaugeByPartAll", "gaugeRRmethod"))
-
-  if (ready){
-    dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-    means <- aggregate(dataset["Measurement"], dataset[parts], mean)
-
-    p <- ggplot2::ggplot()
-
-    if(options$gaugeByPartAll)
-      p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = parts, y = "Measurement"), col = "gray")
-
-    p <- p + jaspGraphs::geom_point(data = means, ggplot2::aes_string(x = parts, y = "Measurement")) +
-      ggplot2::scale_y_continuous(limits = c(min(dataset["Measurement"]) * 0.9, max(dataset["Measurement"]) * 1.1)) +
-      jaspGraphs::geom_rangeframe() +
-      jaspGraphs::themeJaspRaw()
-
-    plot$plotObject <- p
-
-  }
-
+  p <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = options$gaugeByPartAll)
+  plot$plotObject <- p
+  options$gaugeByPartAll
   return(plot)
+}
+
+.gaugeByPartGraphPlotObject <- function(dataset, measurements, parts, operators, displayAll = FALSE){
+  dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
+  means <- aggregate(dataset["Measurement"], dataset[parts], mean)
+  p <- ggplot2::ggplot()
+   if(displayAll)
+     p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = parts, y = "Measurement"), col = "gray")
+  p <- p + jaspGraphs::geom_point(data = means, ggplot2::aes_string(x = parts, y = "Measurement")) +
+    ggplot2::scale_y_continuous(limits = c(min(dataset["Measurement"]) * 0.9, max(dataset["Measurement"]) * 1.1)) +
+    jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
+  return(p)
 }
 
 
@@ -805,7 +805,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   plotframe <- data.frame(source = rep(gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part')), 3),
                           reference = rep(gettext(c('Percent Contribution', 'Percent Study Variation', 'Percent Tolerance')), each = 4),
                           value = c(percentContributionValues, studyVariationValues, percentToleranceValues))
-
+  plotframe$source <- factor(plotframe$source, levels = c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part'))
   p <- ggplot2::ggplot() + ggplot2::geom_bar(data = plotframe,
                                              mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
                                              position="dodge", stat = "identity")

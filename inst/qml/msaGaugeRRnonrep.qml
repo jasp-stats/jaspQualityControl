@@ -67,7 +67,7 @@ Form
 			title: qsTr("Analysis Options")
 			
 									DropDown {
-                name: "standardDeviationReferenceNR"
+                name: "NRstandardDeviationReference"
                 label: qsTr("Std. Deviation reference")
                 indexDefaultValue: 0
                 values:
@@ -135,7 +135,9 @@ Form
 			
 			CheckBox{name: "NRrCharts";		label: qsTr("R charts by operator")}
 			CheckBox{name: "NRxbarCharts";		label: qsTr("X-bar charts by operator")}
-			CheckBox{name: "NRpartOperatorGraph";		label: qsTr("Measurement by part x operator plot")}
+			CheckBox{name: "NRpartOperatorGraph";		label: qsTr("Measurement by part x operator plot")
+					CheckBox{name: "NRpartOperatorGraphAll";		label: qsTr("Display all measurements")}
+					}
 			CheckBox{name: "NRoperatorGraph";		label: qsTr("Measurement by operator plot")}
 
 		}
