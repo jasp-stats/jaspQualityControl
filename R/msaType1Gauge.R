@@ -182,9 +182,10 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
     dataForPart <- dataset[[measurements]]
 
     plot <- createJaspPlot(title = gettext("Bias Histogram"), width = 400, height = 400)
-
+    breaks <- jaspGraphs::getPrettyAxisBreaks(dataForPart)
     p <- jaspDescriptives:::.plotMarginal(column = dataForPart, variableName = "Measurement",
-                                          binWidthType = options$biasBinWidthType, numberOfBins = options$biasNumberOfBins)
+                                          binWidthType = options$biasBinWidthType, numberOfBins = options$biasNumberOfBins) +
+     ggplot2::scale_x_continuous(breaks = breaks)
 
     if (options$biasHistMean)
       p <- p + ggplot2::geom_vline(xintercept = mean(dataForPart), lwd = 2)
@@ -214,8 +215,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
     dataset <- cbind(dataset, Observation = factor(Observation, Observation))
 
     plot$dependOn(c("biasRun"))
-
     toleranceLines <- c(options$biasReferenceValue + 0.1 * options$biasTolerance, options$biasReferenceValue - 0.1 * options$biasTolerance)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(dataset[["Measurement"]])
 
     p <- ggplot2::ggplot() +
       jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1)) +
@@ -224,7 +225,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
       ggplot2::geom_label(data = data.frame(x = max(Observation), y = options$biasReferenceValue, l = "Ref"),
                           ggplot2::aes(x = x, y = y, label = l), vjust="inward",hjust="inward", color = "darkgreen" ) +
       ggplot2::scale_x_discrete(name = "Observation", breaks = c(seq(1, max(Observation), 5),max(Observation))) +
-      ggplot2::scale_y_continuous(name = measurements) +
+      ggplot2::scale_y_continuous(name = measurements, breaks = yBreaks) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw() +
       ggplot2::theme(plot.margin = ggplot2::unit(c(.5, .5, .5, .5), "cm"))
