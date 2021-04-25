@@ -125,17 +125,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   return(table)
 }
 
-
-
-# dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Resources/CSV Files/AAAwide.csv")
-# measurements <- c("Measurement1", "Measurement2", "Measurement3")
-# parts <- "Part"
-# operators <- "Appraiser"
-# standards <- "Standard"
-
-
-
-
 .fleissKappa <- function(dataset, measurements, parts, operators, standards, options){
 
   table <- createJaspTable(title = gettext("Fleiss' Kappa"))
