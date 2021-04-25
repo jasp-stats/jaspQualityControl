@@ -10,20 +10,39 @@ AttributeCharts <- function(jaspResults, dataset, options){
   .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues', "negativeValues"),
              all.target = options$variables,
              observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE)
-if(options$Attributes == "Defectives"){
+
+if(options$Attributes == "Defectives" && options$D != "" && options$total != ""){
   #P chart
     if(options$TypeDefectives == "pchart" && is.null(jaspResults[["pchart"]])){
       jaspResults[["PchartPlot"]] <- createJaspPlot(title =  gettext("P Control Chart"), width = 700, height = 350)
       jaspResults[["PchartPlot"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
+      jaspResults[["PchartPlot"]]$position <- 1
       PPlot <- jaspResults[["PchartPlot"]]
       PPlot$plotObject <- .Pchart(dataset = dataset, options = options)
+
+      # Nelson tests tables
+      if(is.null(jaspResults[["NelsonTable"]])){
+        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
+        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, type = "p")
+        jaspResults[["NelsonTable"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
+        jaspResults[["NelsonTable"]]$position <- 2
+      }
     }
   #NP chart
     if(options$TypeDefectives == "npchart" && is.null(jaspResults[["npchart"]])){
       jaspResults[["NPchartPlot"]] <- createJaspPlot(title =  gettext("NP Control Chart"), width = 700, height = 350)
       jaspResults[["NPchartPlot"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
+      jaspResults[["NPchartPlot"]]$position <- 1
       PPlot <- jaspResults[["NPchartPlot"]]
       PPlot$plotObject <- .NPchart(dataset = dataset, options = options)
+
+      # Nelson tests tables
+      if(is.null(jaspResults[["NelsonTable"]])){
+        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
+        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, type = "np")
+        jaspResults[["NelsonTable"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
+        jaspResults[["NelsonTable"]]$position <- 2
+      }
     }
 
   #Laney P chart
@@ -34,32 +53,51 @@ if(options$Attributes == "Defectives"){
       PPlot$plotObject <- .LanyP(dataset = dataset, options = options)
     }
 }
-  if(options$Attributes == "Defects"){
+
+if(options$Attributes == "Defects" && options$D != "" && options$total != ""){
   #Cchart
     if(options$TypeDefects == "cchart" && is.null(jaspResults[["Cchart"]])){
       jaspResults[["CchartPlot"]] <- createJaspPlot(title =  gettext("C Control Chart"), width = 700, height = 350)
       jaspResults[["CchartPlot"]]$dependOn(c("D", "Attributes", "TypeDefects","total"))
+      jaspResults[["CchartPlot"]]$position <- 1
       PPlot <- jaspResults[["CchartPlot"]]
       PPlot$plotObject <- .Cchart(dataset = dataset, options = options)
+
+      # Nelson tests tables
+      if(is.null(jaspResults[["NelsonTable"]])){
+        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
+        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, type = "c")
+        jaspResults[["NelsonTable"]]$dependOn(c("total", "D", "Attributes", "TypeDefects"))
+        jaspResults[["NelsonTable"]]$position <- 2
+      }
     }
   #Uchart
     if(options$TypeDefects == "uchart" && is.null(jaspResults[["Uchart"]])){
       jaspResults[["UchartPlot"]] <- createJaspPlot(title =  gettext("U Control Chart"), width = 700, height = 350)
       jaspResults[["UchartPlot"]]$dependOn(c("D", "total","Attributes", "TypeDefects"))
+      jaspResults[["UchartPlot"]]$position <- 1
       PPlot <- jaspResults[["UchartPlot"]]
       PPlot$plotObject <- .Uchart(dataset = dataset, options = options)
+
+      # Nelson tests tables
+      if(is.null(jaspResults[["NelsonTable"]])){
+        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
+        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, type = "u")
+        jaspResults[["NelsonTable"]]$dependOn(c("total", "D", "Attributes", "TypeDefects"))
+        jaspResults[["NelsonTable"]]$position <- 2
+      }
     }
   #Laney U chart
     if(options$TypeDefects == "Laneychart" && is.null(jaspResults[["LaneyUchart"]])){
-      jaspResults[["LaneyUPlot"]] <- createJaspPlot(title = "Laney U' Control Chart", width = 700, height = 350)
+      jaspResults[["LaneyUPlot"]] <- createJaspPlot(title = gettext("Laney U' Control Chart"), width = 700, height = 350)
       jaspResults[["LaneyUPlot"]]$dependOn(c("D", "total","Attributes", "TypeDefects"))
       PPlot <- jaspResults[["LaneyUPlot"]]
       PPlot$plotObject <- .LanyU(dataset = dataset, options = options)
     }
 }
   #ImRchart for attributes
-  if(options$ImRchart2){
-    jaspResults[["IPlotA"]] <- createJaspPlot(title = "Individual and Moving Range Control Charts", width = 700, height = 350)
+  if(options$ImRchart2 && length(options$D) > 0){
+    jaspResults[["IPlotA"]] <- createJaspPlot(title = gettext("Individual and Moving Range Control Charts"), width = 700, height = 350)
     jaspResults[["IPlotA"]]$dependOn(c("D", "total","ImRchart2"))
 
     IPlot <- jaspResults[["IPlotA"]]
@@ -83,8 +121,8 @@ if(options$Attributes == "Defectives"){
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$P ,UCL + 0.1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -97,7 +135,7 @@ if(options$Attributes == "Defectives"){
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
     ggplot2::geom_hline(yintercept =  center, color = "green") +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
@@ -125,8 +163,8 @@ if(options$Attributes == "Defectives"){
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$D ,UCL + 0.1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -139,7 +177,7 @@ if(options$Attributes == "Defectives"){
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = D)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("D"),limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
@@ -167,8 +205,8 @@ if(options$Attributes == "Defectives"){
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$D ,UCL + 0.1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -181,7 +219,7 @@ if(options$Attributes == "Defectives"){
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = D)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("D") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
@@ -209,8 +247,8 @@ if(options$Attributes == "Defectives"){
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$P ,UCL + 0.1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -223,7 +261,7 @@ if(options$Attributes == "Defectives"){
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
@@ -252,8 +290,8 @@ if(options$Attributes == "Defectives"){
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 0.1, UCL + 0.1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -266,7 +304,7 @@ if(options$Attributes == "Defectives"){
 
   p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
@@ -285,8 +323,8 @@ if(options$Attributes == "Defectives"){
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL + 0.1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(data_plot$subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -299,7 +337,7 @@ if(options$Attributes == "Defectives"){
 
   p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Moving Range") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Observation'), breaks = xBreaks, limits = range(xLimits)) +
@@ -337,8 +375,8 @@ if(options$Attributes == "Defectives"){
   UCL <- center + 3*sqrt(center/data1$sample[1]) * sigma
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 0.1, UCL + 0.1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(data_plot$subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -351,7 +389,7 @@ if(options$Attributes == "Defectives"){
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
@@ -386,8 +424,8 @@ if(options$Attributes == "Defectives"){
   UCL <- center + 3*sqrt(center*(1 - center)/data1$sample[1]) * sigma
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 0.1, UCL + 0.1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(data_plot$subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -400,7 +438,7 @@ if(options$Attributes == "Defectives"){
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name = gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +

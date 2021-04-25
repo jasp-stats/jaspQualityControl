@@ -51,12 +51,12 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Variable Chart for Subgroups")
+		title:			qsTr("Variables Charts for Subgroups")
 		func:			"VaribleChartsSubgroups"
 	}
 	Analysis
 	{
-		title:			qsTr("Variable Chart for Individuals")
+		title:			qsTr("Variables Charts for Individuals")
 		func:			"VaribleChartsIndviduals"
 	}
 			Analysis
