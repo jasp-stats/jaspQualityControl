@@ -39,8 +39,8 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -52,13 +52,13 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
   )
 
   p1 <- ggplot2::ggplot(data, ggplot2::aes(x = subgroups, y = process)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
+    ggplot2::geom_hline(yintercept =  center, color = 'green') +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Value") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Observation'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data$process > UCL | data$process < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data$process > UCL | data$process < LCL, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -73,8 +73,8 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL + .1))
   yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(data_plot$subgroups)
-  xLimits <- c(1, max(xBreaks) + 5)
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -86,13 +86,13 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
   )
 
   p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data2)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'black') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
+    ggplot2::geom_hline(yintercept =  center, color = 'green') +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red",linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Moving Range") ,limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name =  gettext('Observation'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$data > UCL | data_plot$data < LCL, 'red', 'gray')) +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$data > UCL | data_plot$data < LCL, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
