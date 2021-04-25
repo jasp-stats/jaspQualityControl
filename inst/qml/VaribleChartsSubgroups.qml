@@ -7,7 +7,7 @@ Form
 {
     columns:									1
 
-	VariablesForm
+  VariablesForm
 	{
 		preferredHeight: 						jaspTheme.smallDefaultVariablesFormHeight
 		id:										variablesForm
@@ -42,13 +42,27 @@ Form
 		CheckBox 
 		{	
 			name: 								"Xbarchart"
-			label: 								qsTr("X-bar & R")              
+			label: 								qsTr("X-bar & R")
+
+		  CheckBox
+		  {
+			  name: 								"Wlimits"
+			  label: 								qsTr("Warning limits")
+		  }
+
 		}
 
 		CheckBox 
 		{	
 			name: 								"Schart"
 			label: 								qsTr("X-bar & s")
+
+		  CheckBox
+		  {
+			  name: 								"Wlimits2"
+			  label: 								qsTr("Warning limits")
+		  }
+
 		}
-    }
+	}
 }

@@ -61,7 +61,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Variables Charts for Indviduals")
+		title:			qsTr("Variables Charts for Individuals")
 		func:			"VaribleChartsIndviduals"
 	}
 	Analysis
