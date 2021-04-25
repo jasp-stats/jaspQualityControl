@@ -197,7 +197,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
     anovaTable1$addColumnInfo(title = gettext("Sum of Squares"), name = "Sum Sq",  type = "number")
     anovaTable1$addColumnInfo(title = gettext("Mean Square"),    name = "Mean Sq", type = "number")
     anovaTable1$addColumnInfo(title = gettext("F"),              name = "F value", type = "number")
-    anovaTable1$addColumnInfo(title = gettext("p"),              name = "Pr(>F)",  type = "number")
+    anovaTable1$addColumnInfo(title = gettext("p"),              name = "Pr(>F)",  type = "pvalue")
 
     formula1 <- as.formula(paste("measurement ~", parts,"*", operators))
 
@@ -272,8 +272,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("% Study variation"), type = "number")
       RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
 
-      RRtable2$addFootnote(gettextf("Study variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
-
       histSD <- options$historicalStandardDeviationValue
 
       if(options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)){
@@ -292,6 +290,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
                                   "studyVar"    = studyVar,
                                   "percentStudyVar"    = studyVar/max(studyVar) * 100,
                                   "percentTolerance" = studyVar / options$tolerance * 100))
+      nCategories <- .gaugeNumberDistinctCategories(SD[5], SD[1])
+      RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
+      RRtable2$addFootnote(gettextf("Study variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
 
 
       anovaTables[['RRtable2']] <- RRtable2
@@ -368,9 +369,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("% Study variation"), type = "number")
       RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
 
-      RRtable2$addFootnote(gettextf("Study variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
-
-
       histSD <- options$historicalStandardDeviationValue
 
       if(options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)){
@@ -388,6 +386,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
                                   "studyVar"    = studyVar,
                                   "percentStudyVar"    = studyVar/max(studyVar) * 100,
                                   "percentTolerance" = studyVar / options$tolerance * 100))
+      nCategories <- .gaugeNumberDistinctCategories(SD[5], SD[1])
+      RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
+      RRtable2$addFootnote(gettextf("Study variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
 
 
       anovaTables[['RRtable2']] <- RRtable2
@@ -743,14 +744,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
       for(row in 1:len){
         for(col in 1:len){
           if (row >= col){
-            plotMat[[row, col]] <- ggplot2::ggplot()
+            plotMat[[row, col]] <- ggplot2::ggplot() + ggplot2::theme_void()
           }else{
             plotMat[[row, col]] <- .singleScatterPlot(operator1 = operatorVector[row], operator2 = operatorVector[col],
                                                       data = operatorSplit, options = options, measurements = measurements, axisLabels = FALSE)
           }
         }
       }
-      p <- jaspGraphs::ggMatrixPlot(plotMat, leftLabels = operatorVector, topLabels = operatorVector)
+      labels <- paste(operators, operatorVector)
+      p <- jaspGraphs::ggMatrixPlot(plotMat, leftLabels = labels, topLabels = labels)
       matrixPlot$plotObject <- p
       return(matrixPlot)
     }
@@ -758,27 +760,24 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
 }
 
 .singleScatterPlot <- function(operator1, operator2, data, options, measurements, axisLabels = T){
-
   df <- data.frame(Operator1 = rowMeans(data[[operator1]][measurements]), Operator2 = rowMeans(data[[operator2]][measurements]))
-
   if(axisLabels){
     xlab <- paste("Operator", operator2)
     ylab <- paste("Operator", operator1)
   }else{
     xlab <- ylab <- ggplot2::element_blank()
   }
-
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(df$Operator1)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(df$Operator2)
   p <- ggplot2::ggplot(data = df, ggplot2::aes(x = Operator2, y = Operator1)) +
-    jaspGraphs::geom_point() + ggplot2::scale_x_continuous(name = xlab) +
-    ggplot2::scale_y_continuous(name = ylab)
-
-      if (options[["gaugeScatterPlotFitLine"]])
-        p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
-
-      if (options[["gaugeScatterPlotOriginLine"]])
-        p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
-
-      p <- jaspGraphs::themeJasp(p)
+    jaspGraphs::geom_point() + ggplot2::scale_x_continuous(name = xlab, breaks = xBreaks, limits = range(c(xBreaks, df$Operator2))) +
+    ggplot2::scale_y_continuous(name = ylab, breaks = yBreaks, limits = range(c(yBreaks, df$Operator1)))
+  if (options[["gaugeScatterPlotFitLine"]])
+    p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
+  if (options[["gaugeScatterPlotOriginLine"]])
+    p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
+	
+  p <- jaspGraphs::themeJasp(p)
 
   return(p)
 }
@@ -806,16 +805,20 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
                           reference = rep(gettext(c('Percent Contribution', 'Percent Study Variation', 'Percent Tolerance')), each = 4),
                           value = c(percentContributionValues, studyVariationValues, percentToleranceValues))
   plotframe$source <- factor(plotframe$source, levels = c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part'))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(plotframe$value)
   p <- ggplot2::ggplot() + ggplot2::geom_bar(data = plotframe,
                                              mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
                                              position="dodge", stat = "identity")
   p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank(),
                                                  plot.margin = ggplot2::unit(c(1,1,1,1),"cm")) +
-    ggplot2::xlab('') + ggplot2::ylab('Percent')
-
-  if (max(plotframe['value']) < 110)
-    p <- p + ggplot2::scale_y_continuous(breaks = c(0, 25, 50, 75, 100))
-
+    ggplot2::xlab("") + ggplot2::scale_y_continuous(name = "Percent", breaks = yBreaks, limits = range(c(yBreaks, plotframe$value)))
   return(p)
 
+}
+
+.gaugeNumberDistinctCategories <- function(sdPart, sdGauge){
+  nCategories <- (sdPart / sdGauge) * 1.41
+  if (nCategories < 1)
+    nCategories <- 1
+  return(as.integer(nCategories))
 }

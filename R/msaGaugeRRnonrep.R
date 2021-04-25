@@ -157,6 +157,8 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
                                      "percentStudyVar" = percentStudyVar,
                                      "percentTolerance" = percentTolerance))
     gaugeRRNonRepTable3$addFootnote(gettextf("Study variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
+    nCategories <- .gaugeNumberDistinctCategories(stdDevs[4], stdDevs[1])
+    gaugeRRNonRepTable3$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
   }
   gaugeRRNonRepTables[["Table1"]] <- gaugeRRNonRepTable1
   gaugeRRNonRepTables[["Table2"]] <- gaugeRRNonRepTable2

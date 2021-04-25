@@ -94,6 +94,7 @@ Form
 		CheckBox
 		{
 			name: "biasTtest";		label: qsTr("One sample T-test");		checked: true
+				CIField { name: "biasTtestConfidenceIntervalPercent"; label: qsTr("Confidence interval for bias");}
 
 		}
 		CheckBox
@@ -126,6 +127,13 @@ Form
 			CheckBox
 			{
 			name: "biasHistMean";		label: qsTr("Display mean");		checked: true
+				CheckBox
+				{
+				name: "biasHistMeanConfidenceInterval";	label: qsTr("Confidence interval for mean")
+				checked: true
+				childrenOnSameRow: true
+				CIField { name: "biasHistMeanConfidenceIntervalPercent" }
+				}
 			}
 			
 			CheckBox

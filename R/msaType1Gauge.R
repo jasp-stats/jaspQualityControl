@@ -151,18 +151,19 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   table <- createJaspTable(title = gettext("t-Test of Observed Bias Against 0"))
 
   table$dependOn(c("biasReferenceValue", "biasTtest", "biasTolerance"))
-
+  ciLevel <- options$biasTtestConfidenceIntervalPercent
+  ciLevelPercent <- ciLevel * 100
   table$addColumnInfo(name = "df",              title = gettext("df"), type = "integer")
   table$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
-  table$addColumnInfo(name = "lci",             title = gettext("Lower"), type = "number", overtitle = gettext("95% CI for Bias"))
-  table$addColumnInfo(name = "uci",             title = gettext("Upper"), type = "number", overtitle = gettext("95% CI for Bias"))
+  table$addColumnInfo(name = "lci",             title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Bias", paste(ciLevelPercent, "%")))
+  table$addColumnInfo(name = "uci",             title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Bias", paste(ciLevelPercent, "%")))
   table$addColumnInfo(name = "t",               title = gettext("<i>t</i>"), type = "number")
   table$addColumnInfo(name = "p",               title = gettext("<i>p<i/>"), type = "pvalue")
 
 
   if (ready){
     bias <- data - options$biasReferenceValue
-    tTest <- t.test(bias, mu = 0)
+    tTest <- t.test(bias, mu = 0, conf.level = ciLevel)
 
     table$addRows(list(      "df"                   = tTest$parameter,
                              "bias"                 = tTest$estimate,
@@ -179,19 +180,34 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   if (ready){
 
-    dataForPart <- dataset[[measurements]]
+    data <- dataset[[measurements]]
 
-    plot <- createJaspPlot(title = gettext("Bias Histogram"), width = 400, height = 400)
-    breaks <- jaspGraphs::getPrettyAxisBreaks(dataForPart)
-    p <- jaspDescriptives:::.plotMarginal(column = dataForPart, variableName = "Measurement",
-                                          binWidthType = options$biasBinWidthType, numberOfBins = options$biasNumberOfBins) +
-     ggplot2::scale_x_continuous(breaks = breaks)
+    plot <- createJaspPlot(title = gettext("Bias Histogram"), width = 700, height = 400)
+    dataForBreaks <- c(data)
+    p <- jaspDescriptives:::.plotMarginal(column = data, variableName = measurements, binWidthType = options$biasBinWidthType, numberOfBins = options$biasNumberOfBins)
 
-    if (options$biasHistMean)
-      p <- p + ggplot2::geom_vline(xintercept = mean(dataForPart), lwd = 2)
+    if (options$biasHistMean){
+      mean <- mean(data)
+      p <- p + ggplot2::geom_vline(ggplot2::aes(xintercept = mean, color = "Mean"), lwd = 1.5) +
+        ggplot2::scale_color_manual(name = "", values = c("Mean" = "red"))
+      dataForBreaks <- c(dataForBreaks, mean)
+      if (options$biasHistMeanConfidenceInterval){
+        CI <- t.test(data, mu = 0, conf.level = options$biasHistMeanConfidenceIntervalPercent)$conf.int
+        p <- p + ggplot2::geom_errorbarh(ggplot2::aes(y = .5, x = mean, xmin = CI[1], xmax = CI[2]), lwd = 1, color = "red")
+        dataForBreaks <- c(dataForBreaks, CI)
+      }
+    }
+    if (options$biasHistRef){
+      reference <- options$biasReferenceValue
+      p <- p + ggplot2::geom_vline(ggplot2::aes(xintercept = reference, color = "Reference"), lwd = 1.5) +
+        ggplot2::scale_color_manual(name = "", values = c("Reference" = "blue"))
+      dataForBreaks <- c(dataForBreaks, reference)
+    }
+    if (options$biasHistRef && options$biasHistMean)
+      p <- p + ggplot2::scale_color_manual(name = "", values = c("Mean" = "red", "Reference" = "blue"))
 
-    if (options$biasHistRef)
-      p <- p + ggplot2::geom_vline(xintercept = options$biasReferenceValue, lwd = 2)
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(dataForBreaks)
+    p <- p + ggplot2::theme(legend.position = "right") + ggplot2::scale_x_continuous(breaks = xBreaks)
 
     plot$dependOn(c("biasHistogram"))
 
@@ -215,16 +231,28 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
     dataset <- cbind(dataset, Observation = factor(Observation, Observation))
 
     plot$dependOn(c("biasRun"))
-    toleranceLines <- c(options$biasReferenceValue + 0.1 * options$biasTolerance, options$biasReferenceValue - 0.1 * options$biasTolerance)
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(dataset[["Measurement"]])
-
-    p <- ggplot2::ggplot() +
-      jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1)) +
+    datayBreaks <- c(dataset[["Measurement"]], options$biasReferenceValue)
+    p <- ggplot2::ggplot()
+    if (options$biasRunTolLims) {
+      toleranceLines <- c(options$biasReferenceValue + 0.1 * options$biasTolerance, options$biasReferenceValue - 0.1 * options$biasTolerance)
+      datayBreaks <- c(datayBreaks, toleranceLines)
+      p <- p + ggplot2::geom_hline(yintercept = toleranceLines[1], data = dataset,
+                                   mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
+        ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.2 , y = toleranceLines[1], l = "Ref + 0.1 * Tol"),
+                                  ggplot2::aes(x = x, y = y, label = l), vjust="top",hjust="inward", color = "darkred", size = 5) +
+        ggplot2::geom_hline(yintercept = toleranceLines[2], data = dataset,
+                            mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
+        ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.2, y = toleranceLines[2], l = "Ref - 0.1 * Tol"),
+                                  ggplot2::aes(x = x, y = y, label = l), vjust="bottom",hjust="inward", color = "darkred", size = 5)
+    }
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(datayBreaks)
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(x = Observation, n = 10)
+    p <- p + jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1)) +
       ggplot2::geom_hline(yintercept = options$biasReferenceValue, data = dataset,
                           mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkgreen") +
-      ggplot2::geom_label(data = data.frame(x = max(Observation), y = options$biasReferenceValue, l = "Ref"),
-                          ggplot2::aes(x = x, y = y, label = l), vjust="inward",hjust="inward", color = "darkgreen" ) +
-      ggplot2::scale_x_discrete(name = "Observation", breaks = c(seq(1, max(Observation), 5),max(Observation))) +
+      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.1, y = options$biasReferenceValue, l = "Ref"),
+                                ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "darkgreen", size = 5) +
+      ggplot2::scale_x_discrete(name = "Observation", breaks = xBreaks, limits = c(Observation, seq(max(Observation),max(Observation)*1.2))) +
       ggplot2::scale_y_continuous(name = measurements, breaks = yBreaks) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw() +
@@ -233,16 +261,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
     if (options$biasRunDots)
       p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = Observation, y = Measurement))
 
-    if (options$biasRunTolLims) {
-      p <- p + ggplot2::geom_hline(yintercept = toleranceLines[1], data = dataset,
-                                   mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
-        ggplot2::geom_label(data = data.frame(x = max(Observation) * 1.1 , y = toleranceLines[1], l = "Ref + 0.1 * Tol"),
-                            ggplot2::aes(x = x, y = y, label = l), vjust="top",hjust="inward", color = "darkred" ) +
-        ggplot2::geom_hline(yintercept = toleranceLines[2], data = dataset,
-                            mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
-        ggplot2::geom_label(data = data.frame(x = max(Observation) * 1.1, y = toleranceLines[2], l = "Ref - 0.1 * Tol"),
-                            ggplot2::aes(x = x, y = y, label = l), vjust="bottom",hjust="inward", color = "darkred" )
-    }
+
 
     plot$plotObject <- p
 
