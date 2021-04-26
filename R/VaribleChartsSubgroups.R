@@ -28,7 +28,7 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
     jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 700, height = 350)
     jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart", "variables", "Wlimits"))
     XbarPlot <- jaspResults[["XbarPlot"]]
-    XbarPlot$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(.RchartNoId(dataset = dataset, options = options, time = makeTime), .XbarchartNoId(dataset = dataset, options = options, time = makeTime)), layout = matrix(2:1, 2), removeXYlabels= "x")
+    XbarPlot$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(.RchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits2"]], time = makeTime), .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]], time = makeTime)), layout = matrix(2:1, 2), removeXYlabels= "x")
 
     # Nelson tests tables
     if(is.null(jaspResults[["NelsonTable"]]) & is.null(jaspResults[["NelsonTable2"]])){
@@ -102,12 +102,12 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  p2 <- .XbarchartNoId(dataset = dataset, options = options)
+  p2 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]])
 
   if (time){
     xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
     p1 <- p1 + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
-    p2 <- .XbarchartNoId(dataset = dataset, options = options) + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)
+    p2 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]]) + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)
   }
   p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
 
