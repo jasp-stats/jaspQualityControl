@@ -1,4 +1,4 @@
-variablesChartsIndviduals <- function(jaspResults, dataset, options) {
+variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   variables <- options$variables
   numeric_variables  <- variables[variables != ""]
   dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
@@ -37,7 +37,6 @@ variablesChartsIndviduals <- function(jaspResults, dataset, options) {
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, center, UCL))
   xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
   xLimits <- c(0, max(xBreaks) + 5)
   dfLabel <- data.frame(
@@ -49,6 +48,7 @@ variablesChartsIndviduals <- function(jaspResults, dataset, options) {
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data$process, UCL))
 
   p1 <- ggplot2::ggplot(data, ggplot2::aes(x = subgroups, y = process)) +
     ggplot2::geom_hline(yintercept = center, color = 'green') +
@@ -61,7 +61,7 @@ variablesChartsIndviduals <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  #Moving rage chart
+  #Moving range chart
   #data
   data2 <- data.frame(process = dataset[[.v(variable)]])
   xmr.raw.r <- matrix(cbind(data2$process[1:length(data2$process)-1], data2$process[2:length(data2$process)]), ncol=2)
@@ -70,7 +70,6 @@ variablesChartsIndviduals <- function(jaspResults, dataset, options) {
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, center, UCL))
   xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
   xLimits <- c(0,max(xBreaks) + 5)
   dfLabel <- data.frame(
@@ -82,6 +81,7 @@ variablesChartsIndviduals <- function(jaspResults, dataset, options) {
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$data2, UCL))
 
   p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data2)) +
     ggplot2::geom_hline(yintercept = center, color = 'green') +
