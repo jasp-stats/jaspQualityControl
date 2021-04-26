@@ -94,7 +94,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         jaspResults[["gaugeScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
         jaspResults[["gaugeScatterOperators"]]$position <- 4
       }
-      jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+      jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
 
     # Measurement by Part Graph
@@ -104,7 +104,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         jaspResults[["gaugeByPart"]]$position <- 5
       }
 
-      jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+      jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
 
     # Measurement by Operator Box Plot
@@ -113,7 +113,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         jaspResults[["gaugeByOperator"]] <- createJaspContainer(gettext("Measurement by Operator Graph"))
         jaspResults[["gaugeByOperator"]]$position <- 6
       }
-      jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+      jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
 
     # Parts by Operator Interaction Plot
@@ -122,7 +122,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
         jaspResults[["gaugeByInteraction"]] <- createJaspContainer(gettext("Parts by Operator Interaction Graph"))
         jaspResults[["gaugeByInteraction"]]$position <- 7
       }
-      jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options)
+      jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
 
   }
@@ -532,90 +532,82 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   return(plot)
 }
 
-.gaugeByPartGraph <- function(dataset, measurements, parts, operators, options){
-
-  dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-
-  means <- aggregate(dataset["Measurement"], dataset[parts], mean)
-
+.gaugeByPartGraph <- function(dataset, measurements, parts, operators, options, ready){
 
   plot <- createJaspPlot(title = gettext("Measurements by Part"))
 
   plot$dependOn(c("gaugeByPart", "gaugeByPartAll", "gaugeRRmethod"))
 
-  p <- ggplot2::ggplot()
+  if (ready){
+    dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
+    means <- aggregate(dataset["Measurement"], dataset[parts], mean)
 
-  if(options$gaugeByPartAll)
-    p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = parts, y = "Measurement"), col = "gray")
+    p <- ggplot2::ggplot()
 
+    if(options$gaugeByPartAll)
+      p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = parts, y = "Measurement"), col = "gray")
 
-  p <- p + jaspGraphs::geom_point(data = means, ggplot2::aes_string(x = parts, y = "Measurement")) +
-    ggplot2::scale_y_continuous(limits = c(min(dataset["Measurement"]) * 0.9, max(dataset["Measurement"]) * 1.1))
+    p <- p + jaspGraphs::geom_point(data = means, ggplot2::aes_string(x = parts, y = "Measurement")) +
+      ggplot2::scale_y_continuous(limits = c(min(dataset["Measurement"]) * 0.9, max(dataset["Measurement"]) * 1.1)) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
 
-  p <- jaspGraphs::themeJasp(p)
+    plot$plotObject <- p
 
-  plot$plotObject <- p
+  }
 
   return(plot)
 }
 
 
-.gaugeByOperatorGraph <- function(dataset, measurements, parts, operators, options){
-
-
-  dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
+.gaugeByOperatorGraph <- function(dataset, measurements, parts, operators, options, ready){
 
   plot <- createJaspPlot(title = gettext("Measurements by Operator"))
-
   plot$dependOn(c("gaugeByOperator", "gaugeRRmethod"))
 
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_boxplot(data = dataset, ggplot2::aes_string(x = operators, y = "Measurement"))
+  if (ready){
+    dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
-  p <- jaspGraphs::themeJasp(p)
+    p <- ggplot2::ggplot() +
+      ggplot2::geom_boxplot(data = dataset, ggplot2::aes_string(x = operators, y = "Measurement"))
 
-  plot$plotObject <- p
+    p <- jaspGraphs::themeJasp(p)
 
+    plot$plotObject <- p
+  }
   return(plot)
 }
 
-.gaugeByInteractionGraph <- function(dataset, measurements, parts, operators, options){
-
-  byOperator <- split.data.frame(dataset, dataset[operators])
-
-  partNames <- levels(as.factor(dataset[[parts]]))
-
-  meansPerOperator <- data.frame(Part = factor(partNames, partNames))
-
+.gaugeByInteractionGraph <- function(dataset, measurements, parts, operators, options, ready){
 
   plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
-
   plot$dependOn(c("gaugeByInteraction", "gaugeRRmethod"))
 
-  for(i in 1:length(names(byOperator))){
-    name <- names(byOperator)[i]
-    if (length(rowMeans(byOperator[[name]][c(measurements)])) != length(partNames)){
-      plot$setError(gettext("Operators measured different number of parts."))
-      return(plot)
+  if (ready){
+    byOperator <- split.data.frame(dataset, dataset[operators])
+    partNames <- unique(dataset[[parts]])
+    meansPerOperator <- data.frame(Part = factor(partNames, partNames))
+
+    for(name in names(byOperator)){
+      if (nrow(byOperator[[name]][measurements]) != length(partNames)){
+        plot$setError(gettext("Operators measured different number of parts."))
+        return(plot)
+      }
+      meansPerOperator <- cbind(meansPerOperator, rowMeans(byOperator[[name]][c(measurements)]))
     }
-    meansPerOperator <- cbind(meansPerOperator, rowMeans(byOperator[[name]][c(measurements)]))
+
+    colnames(meansPerOperator)[-1] <- names(byOperator)
+    tidydata <- tidyr::gather(meansPerOperator, key = "Operator", value = "Measurements", -Part )
+
+    p <- ggplot2::ggplot(tidydata, ggplot2::aes(x = Part, y = Measurements, col = Operator, group = Operator)) +
+      jaspGraphs::geom_line() + 
+      jaspGraphs::geom_point() +
+      ggplot2::scale_y_continuous(name = "Measurement", limits = c(min(meansPerOperator[names(byOperator)]) * 0.9, max(meansPerOperator[names(byOperator)]) * 1.1)) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw() + 
+      ggplot2::theme(legend.position = 'right')
+    plot$plotObject <- p
   }
-  colnames(meansPerOperator)[-1] <- names(byOperator)
-
-  tidydata <- tidyr::gather(meansPerOperator, key = "Operator", value = "Measurements", -Part )
-
-  p <- ggplot2::ggplot(tidydata, ggplot2::aes(x = Part, y = Measurements, col = Operator, group = Operator)) +
-    jaspGraphs::geom_line() + jaspGraphs::geom_point()
-
-
-  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right')
-  ggplot2::ylab("Measurement") +
-    ggplot2::scale_y_continuous(limits = c(min(meansPerOperator[names(byOperator)]) * 0.9, max(meansPerOperator[names(byOperator)]) * 1.1))
-
-
-
-  plot$plotObject <- p
-
   return(plot)
 }
 
@@ -677,39 +669,40 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...){
   }
 }
 
-.gaugeScatterPlotOperators <- function(dataset, measurements, parts, operators, options){
+.gaugeScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready){
 
   plot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
   plot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
 
-  if(length(unique(dataset[[operators]])) > 2){
-    plot$setError(gettext("Plotting not possible: More than 2 Operators"))
-  }else{
+  if (ready){
+    if(length(unique(dataset[[operators]])) > 2){
+      plot$setError(gettext("Plotting not possible: More than 2 Operators"))
+    }else{
 
-    operatorSplit <- split.data.frame(dataset, dataset[operators])
+      operatorSplit <- split.data.frame(dataset, dataset[operators])
 
-    if (length(rowMeans(operatorSplit[[1]][measurements]) != length(rowMeans(operatorSplit[[2]][measurements])))){
-      plot$setError(gettext("Operators measured different number of parts."))
-      return(plot)
+      if (nrow(operatorSplit[[1]][measurements]) != nrow(operatorSplit[[2]][measurements])){
+        plot$setError(gettext("Operators measured different number of parts."))
+        return(plot)
+      }
+
+      data <- data.frame(OperatorA = rowMeans(operatorSplit[[1]][measurements]), OperatorB = rowMeans(operatorSplit[[2]][measurements]))
+
+      p <- ggplot2::ggplot(data = data, ggplot2::aes_string(x = "OperatorA", y = "OperatorB")) +
+        jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
+        ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
+
+      if (options[["gaugeScatterPlotFitLine"]])
+        p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
+
+      if (options[["gaugeScatterPlotOriginLine"]])
+        p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
+
+      p <- jaspGraphs::themeJasp(p)
+
+      plot$plotObject <- p
     }
-
-    data <- data.frame(OperatorA = rowMeans(operatorSplit[[1]][measurements]), OperatorB = rowMeans(operatorSplit[[2]][measurements]))
-
-    p <- ggplot2::ggplot(data = data, ggplot2::aes_string(x = "OperatorA", y = "OperatorB")) +
-      jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
-      ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
-
-    if (options[["gaugeScatterPlotFitLine"]])
-      p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
-
-    if (options[["gaugeScatterPlotOriginLine"]])
-      p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
-
-    p <- jaspGraphs::themeJasp(p)
-
-    plot$plotObject <- p
   }
-
   return(plot)
 }
 

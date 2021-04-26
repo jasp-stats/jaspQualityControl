@@ -189,7 +189,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
     plot <- createJaspPlot(title = gettext("Bias Histogram"), width = 400, height = 400)
 
-    p <- jaspDescriptives:::.plotMarginal(column = dataForPart, variableName = "Measurement")
+    p <- jaspDescriptives:::.plotMarginal(column = dataForPart, variableName = "Measurement",
+                                          binWidthType = options$biasBinWidthType, numberOfBins = options$biasNumberOfBins)
 
     plot$dependOn(c("biasHistogram"))
 
