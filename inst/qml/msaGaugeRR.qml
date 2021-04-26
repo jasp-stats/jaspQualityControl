@@ -157,7 +157,13 @@ Form
 					checked: true
 				}
 			}
+
+			CheckBox
+			{
+				name: "gaugeDescriptives";		label: qsTr("Descriptives table");		checked: true
+			}
 		}
+
 		
 		Group
 		{
@@ -213,8 +219,7 @@ Form
 		
 			CheckBox
 			{
-			name: "gaugeByInteraction"
-			label: qsTr("Measurement interaction plot")
+			name: "gaugeByInteraction";		label: qsTr("Part x operator interaction plot")
 			}
 		}
 	}

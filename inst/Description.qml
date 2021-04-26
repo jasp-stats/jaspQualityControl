@@ -20,18 +20,23 @@ Description
 	} 
 	 Analysis
 	{
-		title:			qsTr("Type 1 Gauge")
+		title:			qsTr("Type 1 Study")
 		func:			"msaType1Gauge"
 	}
 	Analysis
 	{
-		title:			qsTr("Gauge Linearity and Bias")
+		title:			qsTr("Linearity Study")
 		func:			"msaGaugeLinearity"
 	}
 	Analysis
 	{
 		title:			qsTr("Gauge r&R")
 		func:			"msaGaugeRR"
+	}
+		Analysis
+	{
+		title:			qsTr("Gauge r&R (Non-Replicable Measurements)")
+		func:			"msaGaugeRRnonrep"
 	}
 	Analysis
 	{
@@ -46,17 +51,17 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Attribute Charts")
+		title:			qsTr("Attributes Charts")
 		func:			"AttributeCharts"
 	}
 	Analysis
 	{
-		title:			qsTr("Variable Charts for Subgroups")
+		title:			qsTr("Variables Charts for Subgroups")
 		func:			"VaribleChartsSubgroups"
 	}
 	Analysis
 	{
-		title:			qsTr("Variable Charts for Indviduals")
+		title:			qsTr("Variables Charts for Indviduals")
 		func:			"VaribleChartsIndviduals"
 	}
 
