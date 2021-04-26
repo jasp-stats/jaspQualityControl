@@ -74,6 +74,7 @@ test_that("Parts by Operator Interaction plot matches", {
 })
 
 test_that("Measurement by Operator plot matches", {
+  skip("Does not reproduce on windows <-> osx")
   plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "measurement-by-operator", dir="msaGaugeRR")
