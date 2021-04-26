@@ -72,7 +72,7 @@
   LCL <- min(sixsigma$limits)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
   xLimits <- c(0,max(xBreaks) + 5)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, means, UCL))
   yLimits <- range(yBreaks)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
