@@ -110,13 +110,6 @@
     p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
   }
 
-  if (options$Wlimits | options$Wlimits2){
-    warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 0.5)
-  }
-
   return(p)
 }
 
@@ -171,13 +164,6 @@
   if (time){
     xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
     p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
-  }
-
-  if (options$Wlimits){
-    warn.limits <- c(qcc::limits.R(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                     qcc::limits.R(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 0.5)
   }
 
   return(p)
