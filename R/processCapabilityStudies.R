@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-processCapabilityStudies <- function(jaspResults, dataset, options){
+processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Preparatory work
   dataset <- .qcReadData(dataset, options, type = "capabilityStudy")
@@ -44,7 +44,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 ## Containers ##
 ################
 
-.qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults){
+.qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults) {
 
   container <- createJaspContainer(gettext("Capability Studies"))
   container$dependOn(options = c("normalCapabilityStudy", "capabilityStudy", "nonNormalCapabilityStudy", "variables", "subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
@@ -56,9 +56,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   if (options[["normalCapabilityStudy"]]) {
 
-    if(options[["capabilityStudy"]] == "initialCapabilityAnalysis")
+    if (options[["capabilityStudy"]] == "initialCapabilityAnalysis")
       title <- gettext("Process Capability of Measurements (Initial Capability Study)")
-    if(options[["capabilityStudy"]] == "followupCapabilityAnalysis")
+    if (options[["capabilityStudy"]] == "followupCapabilityAnalysis")
       title <- gettext("Process Capability of Measurements (Follow-Up Capability Study)")
 
     childContainer <- createJaspContainer(title)
@@ -86,7 +86,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 ## Output ######
 ################
 
-.qcProcessSummaryTable <- function(options, dataset, ready, container){
+.qcProcessSummaryTable <- function(options, dataset, ready, container) {
 
   table <- createJaspTable(title = gettext("Process Summary"))
   table$position <- 1
@@ -107,7 +107,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   container[["processSummaryTable"]] <- table
 
-  if(!ready)
+  if (!ready)
     return()
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
@@ -115,7 +115,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
   allData <- unlist(dataset[, options[["variables"]]])
 
-  if(is.na(qccFit[["std.dev"]]))
+  if (is.na(qccFit[["std.dev"]]))
     table$addFootnote(gettext("The within standard deviation could not be calculated."))
 
   rows <- list(
@@ -130,13 +130,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   table$addRows(rows)
 }
 
-.qcProcessCapabilityPlot <- function(options, dataset, ready, container){
+.qcProcessCapabilityPlot <- function(options, dataset, ready, container) {
 
   plot <- createJaspPlot(title = gettext("Capability of the Process"), width = 600, height = 300)
   plot$position <- 2
   container[["capabilityPlot"]] <- plot
 
-  if(!ready)
+  if (!ready)
     return()
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
@@ -157,11 +157,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)), color = "dodgerblue") +
     ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw), color = "red")
 
-  if(options[["targetValueField"]])
+  if (options[["targetValueField"]])
     p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen")
-  if(options[["lowerSpecificationField"]])
+  if (options[["lowerSpecificationField"]])
     p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecification"]], linetype = "dotted", color = "darkred")
-  if(options[["upperSpecificationField"]])
+  if (options[["upperSpecificationField"]])
     p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecification"]], linetype = "dotted", color = "darkred")
 
   p <- jaspGraphs::themeJasp(p) + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
@@ -169,9 +169,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   plot$plotObject <- p
 }
 
-.qcProcessCapabilityTableWithin <- function(options, dataset, ready, container){
+.qcProcessCapabilityTableWithin <- function(options, dataset, ready, container) {
 
-  if(!options[["lowerSpecificationField"]] && !options[["upperSpecificationField"]])
+  if (!options[["lowerSpecificationField"]] && !options[["upperSpecificationField"]])
     return()
 
   table <- createJaspTable(title = gettext("Process Capability (Within)"))
@@ -190,7 +190,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   container[["capabilityTableWithin"]] <- table
 
-  if(!ready)
+  if (!ready)
     return()
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
@@ -209,7 +209,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   table$addRows(rows)
 }
 
-.qcProcessCapabilityTableOverall <- function(options, dataset, ready, container){
+.qcProcessCapabilityTableOverall <- function(options, dataset, ready, container) {
 
   table <- createJaspTable(title = gettext("Process Performance (Total)"))
 
@@ -226,7 +226,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   container[["capabilityTableOverall"]] <- table
 
-  if(!ready)
+  if (!ready)
     return()
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
@@ -246,14 +246,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   table$addRows(rows)
 }
 
-.qcProcessCapabilityTableNonNormal <- function(options, dataset, ready, container){
+.qcProcessCapabilityTableNonNormal <- function(options, dataset, ready, container) {
 
   table <- createJaspTable(title = gettextf("Process Capability based on the %1$s Distribution", options[["nonNormalDist"]]))
 
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. Deviation"))
 
-  if (options[["nonNormalDist"]] == "Lognormal"){
+  if (options[["nonNormalDist"]] == "Lognormal") {
 
     if (options[["lowerSpecificationField"]]) {
       table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
@@ -267,7 +267,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
       table$addColumnInfo(name = "cpk", type = "number", title = gettext("Cpk"))
     }
 
-  } else if (options[["nonNormalDist"]] == "Weibull"){
+  } else if (options[["nonNormalDist"]] == "Weibull") {
 
     if (options[["lowerSpecificationField"]])
       table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
@@ -283,7 +283,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   container[["capabilityTableNonNormal"]] <- table
 
-  if(!ready)
+  if (!ready)
     return()
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
@@ -291,7 +291,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
   allData <- unlist(dataset[, options[["variables"]]])
 
-  if (options[["nonNormalDist"]] == "Lognormal"){
+  if (options[["nonNormalDist"]] == "Lognormal") {
 
     tau     <- sd(allData) / mean(allData)
     sdLog   <- sqrt(log(tau^2 +1))
@@ -324,9 +324,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 ## Containers ##
 ################
 
-.qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults){
+.qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults) {
 
-  if(!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
+  if (!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
     return()
 
   container <- createJaspContainer(gettext("Probability Tables and Plots"))
@@ -338,13 +338,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   jaspResults[["probabilityContainer"]] <- container
 
-  if(!ready)
+  if (!ready)
     return()
 
   .qcProbabilityTable(dataset, options, container)
 
-  for (variable in options[["variables"]]){
-    if(is.null(plotContainer[[variable]]))
+  for (variable in options[["variables"]]) {
+    if (is.null(plotContainer[[variable]]))
       plotContainer[[variable]]  <- .qcProbabilityPlot(dataset, options, variable)
   }
 }
@@ -353,7 +353,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 ## Output ######
 ################
 
-.qcProbabilityTable <- function(dataset, options, container){
+.qcProbabilityTable <- function(dataset, options, container) {
 
   table <- createJaspTable(title = gettextf("Summary of Tests Against the %1$s Distribution", options[["nullDistribution"]]))
   table$position <- 1
@@ -380,7 +380,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   container[["probabilityTable"]] <- table
 
-  for(variable in options[["variables"]]){
+  for (variable in options[["variables"]]) {
 
     values <- dataset[[variable]]
 
@@ -403,14 +403,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
     n      <- length(values)
     ad     <- test$statistic
     p      <- test$p.value
-    reject <- if(p < 0.05) "Yes" else "No"
+    reject <- if (p < 0.05) "Yes" else "No"
 
     row <- list(v = variable, mean = meanx, sd = sdx, n = n, ad = ad, p = p, reject = reject)
     table$addRows(row)
   }
 }
 
-.qcProbabilityPlot <- function(dataset, options, variable){
+.qcProbabilityPlot <- function(dataset, options, variable) {
 
   plot <- createJaspPlot(width = 400, aspectRatio = 1, title = variable)
   plot$dependOn(optionContainsValue = list(variables = variable))
@@ -504,8 +504,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   p <- jaspGraphs::themeJasp(p)
 
-  if(options[["addGridlines"]])
-	  p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
+  if (options[["addGridlines"]])
+    p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
 
   plot$plotObject <- p
 
@@ -520,7 +520,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   return(p)
 }
 
-.qcPpMean <- function(x){
+.qcPpMean <- function(x) {
   x <- x[order(x)]
   n <- length(x)
   i <- rank(x)
@@ -544,7 +544,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   return(p)
 }
 
-.qcWeibull <- function(p){
+.qcWeibull <- function(p) {
   return(log(-log(1 - p)))
 }
 
@@ -552,9 +552,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 ## Functions for distribution plot section ##################
 #############################################################
 
-.qcDistributionPlot <- function(options, dataset, ready, jaspResults){
+.qcDistributionPlot <- function(options, dataset, ready, jaspResults) {
 
-  if(!options[["histogram"]] || !is.null(jaspResults[["histogram"]]))
+  if (!options[["histogram"]] || !is.null(jaspResults[["histogram"]]))
     return()
 
   plot <- createJaspPlot(title = gettext("Distribution Plot"), width = 400, height = 400)
@@ -563,7 +563,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
 
   jaspResults[["histogram"]] <- plot
 
-  if(!ready)
+  if (!ready)
     return()
 
   plotData <- as.data.frame(dataset[, options[["variables"]]])
@@ -577,7 +577,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options){
   p <- ggplot2::ggplot(plotData, ggplot2::aes(x = x)) +
     ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks, limits = range(xBreaks))
 
-  if(options[["displayDensity"]]){
+  if (options[["displayDensity"]]) {
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, hist(plotData[["x"]], freq = F, plot = F, breaks = bins)$density + 0.1), min.n = 4)
     p <- p + ggplot2::scale_y_continuous(name = gettext("Density"), breaks = yBreaks, limits = range(yBreaks)) +
       ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7, bins = bins) +

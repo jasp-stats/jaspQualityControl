@@ -5,7 +5,7 @@ import JASP.Widgets 							1.0
 
 Form
 {
-    columns:									1
+	columns:									1
 
 	VariablesForm
 	{
@@ -30,11 +30,11 @@ Form
 	{
 		title: 									qsTr("Charts for Individuals")
 
-		CheckBox 
-		{	
+		CheckBox
+		{
 			name: 								"ImRchart"
 			label: 								qsTr("I-MR chart")
-			checked: 							true				
+			checked: 							true
 		}
 	}
 }

@@ -84,7 +84,7 @@ Form
 		{
 			name: "LBgraph";		label: qsTr("Linearity and bias graph");		checked: true
 		}
-				CheckBox
+		CheckBox
 		{
 			name: "LBpercentGraph";		label: qsTr("Percent process variation graph");		checked: true
 		}

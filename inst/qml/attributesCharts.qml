@@ -5,7 +5,7 @@ import JASP.Widgets 							1.0
 
 Form
 {
-    columns:									1
+	columns:									1
 
 	VariablesForm
 	{
@@ -35,15 +35,15 @@ Form
 		}
 	}
 
-    Group
-    {
+	Group
+	{
 		RadioButtonGroup
 		{
 			name:								"Attributes"
 			title: 								qsTr("Charts for Attributes")
 			columns: 							3
 
-			RadioButton 
+			RadioButton
 			{
 				value: 							"Defectives"
 				label: 							qsTr("Defectives")
@@ -53,21 +53,21 @@ Form
 				{
 					name:						"TypeDefectives"
 					
-					RadioButton 
-					{ 
+					RadioButton
+					{
 						value: 					"npchart"
 						label: 					qsTr("np chart")
 						checked:		 		true
 					}
 
-					RadioButton 
-					{ 
+					RadioButton
+					{
 						value: 					"pchart"
 						label: 					qsTr("p chart")
 					}
 
-					RadioButton 
-					{ 
+					RadioButton
+					{
 						value: 					"Laneyprimechart"
 						label: 					qsTr("Laney p’ (p-prime) chart")
 					}
@@ -75,8 +75,8 @@ Form
 			}
 
 
-			RadioButton 
-			{      
+			RadioButton
+			{
 				value: 							"Defects"
 				label: 							qsTr("Defects")
 
@@ -84,20 +84,20 @@ Form
 				{
 					name:						"TypeDefects"
 
-					RadioButton 
+					RadioButton
 					{
 						value: 					"cchart"
 						label: 					qsTr("c chart")
-						checked: 				true	
+						checked: 				true
 					}
 
-					RadioButton 
+					RadioButton
 					{
 						value: 					"uchart"
 						label: 					qsTr("u chart")
 					}
 
-					RadioButton 
+					RadioButton
 					{
 						value: 					"Laneychart"
 						label: 					qsTr("Laney u’ (u-prime) chart")
@@ -105,11 +105,11 @@ Form
 				}
 			}
 
-			CheckBox 
-			{	
+			CheckBox
+			{
 				name: 							"ImRchart2"
 				label: 							qsTr("I-MR chart")
 			}
-    	}
+		}
 	}
 }

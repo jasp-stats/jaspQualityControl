@@ -60,13 +60,13 @@ Form
 		}
 
 	}
-	DropDown 
+	DropDown
 	{
 		name: "gaugeRRmethod"
 		label: qsTr("Gauge r&R Method")
 		indexDefaultValue: 0
 		values:
-		[	
+			[
 			{label: qsTr("ANOVA method"),					value: "anovaMethod"},
 			{label: qsTr("Range method"),				value: "rangeMethod"},
 		]
@@ -88,7 +88,7 @@ Form
 				label: qsTr("Std. Deviation reference")
 				indexDefaultValue: 0
 				values:
-				[
+					[
 					{label: qsTr("Study Std. Deviation"),					value: "studyStandardDeviation"},
 					{label: qsTr("Historical process Std. Deviation"),				value: "historicalStandardDeviation"}
 				]
@@ -115,41 +115,41 @@ Form
 				name: "gaugeANOVA"
 				label: qsTr("r&R table ANOVA method")
 				checked: true
-			
-				DoubleField 
+
+				DoubleField
 				{
 					name: "alphaForANOVA"
 					label: qsTr("Alpha interaction removal:")
 					fieldWidth: 60
-					defaultValue: 0.05 
+					defaultValue: 0.05
 					max: 1
 					decimals: 3
 				}
-			
+
 				DropDown
 				{
 					name: "studyVarMultiplierType"
 					label: qsTr("Study Var. multiplier type")
 					indexDefaultValue: 0
 					values:
-					[
+						[
 						{label: qsTr("Std. Deviation"),		value: "svmSD"},
 						{label: qsTr("Percent"),				value: "svmPercent"}
 					]
 					id: studyVarMultiplierType
 				}
-										
+
 				DoubleField
-				{ 
+				{
 					name: "studyVarMultiplier"
 					label: qsTr("Study Var. multiplier value:")
-					fieldWidth: 60 
+					fieldWidth: 60
 					defaultValue: 6
 					min:			0.001
-					max:			99.999						
+					max:			99.999
 					decimals: 3
 				}
-			
+
 				CheckBox
 				{
 					name: "gaugeVarCompGraph"
@@ -180,7 +180,7 @@ Form
 				name: "gaugeXbarChart"
 				label: qsTr("X-bar charts by operator")
 			}
-		
+
 			CheckBox
 			{
 				name: "gaugeScatterPlotOperators"
@@ -203,23 +203,23 @@ Form
 			{
 				name: "gaugeByPart"
 				label: qsTr("Measurement by part plot")
-			
+
 				CheckBox
 				{
 					name: "gaugeByPartAll"
 					label: qsTr("Display all measurements")
 				}
-			}	
+			}
 
 			CheckBox
 			{
-			name: "gaugeByOperator"
-			label: qsTr("Measurement by operators plot")
+				name: "gaugeByOperator"
+				label: qsTr("Measurement by operators plot")
 			}
-		
+
 			CheckBox
 			{
-			name: "gaugeByInteraction";		label: qsTr("Part x operator interaction plot")
+				name: "gaugeByInteraction";		label: qsTr("Part x operator interaction plot")
 			}
 		}
 	}
@@ -252,7 +252,7 @@ Form
 		Group
 		{
 			title: qsTr("Plots")
-				
+
 			CheckBox
 			{
 				name: "rangeScatterPlotOperatorParts"
@@ -278,7 +278,7 @@ Form
 					label: qsTr("Show origin line")
 					checked: true
 				}
-		
+
 			}
 			
 			CheckBox
