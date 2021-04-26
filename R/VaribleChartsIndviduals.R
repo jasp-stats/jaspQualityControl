@@ -37,7 +37,7 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, UCL + 1))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1, center, UCL + 1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
   xLimits <- c(1, max(xBreaks) + 5)

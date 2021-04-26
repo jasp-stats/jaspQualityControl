@@ -34,7 +34,7 @@ TimeWeightedCharts <- function(jaspResults, dataset, options){
   center <- 0
   UCL <- sixsigma$decision.interval
   LCL <- -UCL
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1 , UCL + 1))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - 1 , center, UCL + 1))
   yLimits <- range(yBreaks)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups)
   xLimits <- c(0,max(xBreaks) + 5)
@@ -55,7 +55,7 @@ TimeWeightedCharts <- function(jaspResults, dataset, options){
     ggplot2::geom_hline(yintercept =  center, color = 'black') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red") +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = gettext("Cumulative sum") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_y_continuous(name = gettext("Cumulative sum"), limits = yLimits, breaks = yBreaks) +
     ggplot2::scale_x_continuous(name = gettext('Subgroups'), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
