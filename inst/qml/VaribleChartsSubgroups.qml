@@ -7,7 +7,7 @@ Form
 {
     columns:									1
 
-	VariablesForm
+  VariablesForm
 	{
 		preferredHeight: 						jaspTheme.smallDefaultVariablesFormHeight
 		id:										variablesForm
@@ -24,23 +24,45 @@ Form
 			title:								qsTr("Variables")
 			allowedColumns:						["scale"]
 		}
+		AssignedVariablesList
+		{
+				id:                 			time
+				name:               			"time"
+				title:             			 	qsTr("Time Stamp (optional)")
+				singleVariable:    	 			true
+				allowedColumns:     			["nominal", "nominalText", "ordinal", "scale"]
+		}
 	}
 
 	Group
 	{
-		title: 									qsTr("Charts for Subgroups")
+		title: 									qsTr("Control Charts")
 		columns: 								1
 	
 		CheckBox 
 		{	
 			name: 								"Xbarchart"
-			label: 								qsTr("X-bar & R chart")              
+			label: 								qsTr("X-bar & R")
+
+		  CheckBox
+		  {
+			  name: 								"Wlimits"
+			  label: 								qsTr("Warning limits")
+		  }
+
 		}
 
 		CheckBox 
 		{	
 			name: 								"Schart"
-			label: 								qsTr("X-bar & S chart")
+			label: 								qsTr("X-bar & s")
+
+		  CheckBox
+		  {
+			  name: 								"Wlimits2"
+			  label: 								qsTr("Warning limits")
+		  }
+
 		}
-    }
+	}
 }

@@ -17,7 +17,7 @@ Description
 	{
 		title:			qsTr("Measurement Systems Analysis")
 		icon:			"processControl-measurement.svg"
-	} 
+	}
 	 Analysis
 	{
 		title:			qsTr("Type 1 Study")
@@ -61,15 +61,20 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Variables Charts for Indviduals")
+		title:			qsTr("Variables Charts for Individuals")
 		func:			"VaribleChartsIndviduals"
 	}
-
-	GroupTitle
+	Analysis
 	{
-		title:			qsTr("Capability Studies")
-		icon:			"processControl-capability.svg"
+		title:			qsTr("Time Weighted Charts")
+		func:			"TimeWeightedCharts"
 	}
+
+	 GroupTitle
+	 {
+	 	title:			qsTr("Capability Studies")
+	 	icon:			"processControl-capability.svg"
+	 }
 	Analysis
 	{
 		title:			qsTr("Process Capability Studies")
