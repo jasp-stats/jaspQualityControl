@@ -5,9 +5,9 @@ import JASP.Widgets 							1.0
 
 Form
 {
-    columns:									1
+	columns:									1
 
-  VariablesForm
+	VariablesForm
 	{
 		preferredHeight: 						jaspTheme.smallDefaultVariablesFormHeight
 		id:										variablesForm
@@ -26,11 +26,11 @@ Form
 		}
 		AssignedVariablesList
 		{
-				id:                 			time
-				name:               			"time"
-				title:             			 	qsTr("Time Stamp (optional)")
-				singleVariable:    	 			true
-				allowedColumns:     			["nominal", "nominalText", "ordinal", "scale"]
+			id:                 			time
+			name:               			"time"
+			title:             			 	qsTr("Time Stamp (optional)")
+			singleVariable:    	 			true
+			allowedColumns:     			["nominal", "nominalText", "ordinal", "scale"]
 		}
 	}
 
@@ -38,30 +38,30 @@ Form
 	{
 		title: 									qsTr("Control Charts")
 		columns: 								1
-	
-		CheckBox 
-		{	
+
+		CheckBox
+		{
 			name: 								"Xbarchart"
 			label: 								qsTr("X-bar & R")
 
-		  CheckBox
-		  {
-			  name: 								"Wlimits"
-			  label: 								qsTr("Warning limits")
-		  }
+			CheckBox
+			{
+				name: 								"Wlimits"
+				label: 								qsTr("Warning limits")
+			}
 
 		}
 
-		CheckBox 
-		{	
+		CheckBox
+		{
 			name: 								"Schart"
 			label: 								qsTr("X-bar & s")
 
-		  CheckBox
-		  {
-			  name: 								"Wlimits2"
-			  label: 								qsTr("Warning limits")
-		  }
+			CheckBox
+			{
+				name: 								"Wlimits2"
+				label: 								qsTr("Warning limits")
+			}
 
 		}
 	}
