@@ -26,18 +26,71 @@ Form
         VariablesForm
         {
             AvailableVariablesList { name: "rsmVariablesList" }
-            AssignedVariablesList  { name: "rsmVariables";	        title: qsTr("Predictors");	suggestedColumns: ["scale"]   }
-            AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns: ["scale"]; singleVariable: true}
-            AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns: ["nominal"]; singleVariable: true}
+            AssignedVariablesList  { name: "rsmVariables";	        title: qsTr("Predictors");suggestedColumns:   ["scale", "ordinal", "nominal"]   }
+            AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
+            AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
         }
 		
-		GroupBox
+        Section
+        {
+            title: qsTr("Contour Plot Options")
+            VariablesForm
+            {
+                    preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+                    AvailableVariablesList		{	name:  "rsmVariables2";	    source:"rsmVariables" }
+                    AssignedPairsVariablesList	{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
+            }
+            CheckBox
+            {
+                    name:                      "contour";label:   qsTr("Contour plots")
+
+                    CheckBox
+                    {
+                        name:                       "coded"
+                        label:                      qsTr("Show analysis and graphs in coded form")
+                    }
+
+                    CheckBox
+                    {
+                        name:                       "legend"
+                        label:                      qsTr("Show legend next to graph")
+                    }
+                    DropDown
+                    {
+                        name:                       "divide"
+                        label:                      qsTr("Divide response surface into N parts")
+                        values:                     [2,3,4,5,6,7]
+                    }
+
+                    Slider
+                    {
+                        name:                       "phi"
+                        label:                      qsTr("Rotating angle (vertical plane)")
+                        value:                      0
+
+
+                    }
+
+                    Slider
+                    {
+                        name:                       "theta"
+                        label:                      qsTr("Rotating angle (horizontal plane)")
+                        value:                      0.5
+                        vertical:                   false
+                    }
+
+            }
+        }
+
+
+
+        Section
 		{
-			title: 							qsTr("Additional Options")
+            title: 							qsTr("Box designs")
 
             CheckBox
             {
-                name:                       "showDesign";label:            qsTr("Suggest central composite designs")
+                name:                       "showDesign";label:            qsTr("Central composite design")
                 IntegerField
                 {
                     name:                       "factorResponse"
@@ -49,35 +102,18 @@ Form
 
                 IntegerField
                 {
-                    name:						"responseSurfaceCenter"
-                    label:						qsTr("Number of center points in each cube block")
+                    name:						"responseSurfaceCentre"
+                    label:						qsTr("Number of centre points")
                     defaultValue:				3
                     min:						1
                     max:						50
                 }
 
-                IntegerField
-                {
-                    name:						"responseSurfaceBlocks"
-                    label:						qsTr("Number of cube blocks that comprise one rep of cube portion")
-                    defaultValue:				3
-                    min:						1
-                    max:						50
-                }
-
-                IntegerField
-                {
-                    name:						"responseSurfaceCenterPointStar"
-                    label:						qsTr("Number of center points in each star block")
-                    defaultValue:				3
-                    min:						1
-                    max:						50
-                }
 
                 IntegerField
                 {
                     name:						"responseSurfaceReplicationStar"
-                    label:						qsTr("Number of replications of each within-block star point")
+                    label:						qsTr("Number of replicates")
                     defaultValue:				3
                     min:						1
                     max:						50
@@ -87,45 +123,23 @@ Form
 
             }
 
-            CheckBox
-            {
-                    name:                      "contour";label:   qsTr("Contour plots")
-                    IntegerField
-                    {
-                        name:						"firstVar"
-                        label:						qsTr("Divide the first variable by step")
-                        defaultValue:				5
-                        min:						1
-                        max:						50
-                    }
 
-
-                    IntegerField
-                    {
-                        name:						"secondVar"
-                        label:						qsTr("Divide the second variable by step")
-                        defaultValue:				5
-                        min:						1
-                        max:						50
-                    }
-
-            }
 
         }
 
 	Item 
 	{
-		Layout.preferredHeight: 				generateDesign.height
-		Layout.fillWidth: 						true
-		Layout.columnSpan:						2
+        Layout.preferredHeight: 				generateDesign.height
+        Layout.fillWidth: 						true
+        Layout.columnSpan:						2
 
-		Button 
-		{
-			id: 								generateDesign
-			anchors.right:						parent.right
-			anchors.bottom:						parent.bottom
-			text: 								qsTr("<b>Create Design</b>")
-			// onClicked: 							form.exportResults()
-		}
-	}
+        Button
+        {
+            id: 								generateDesign
+            anchors.right:						parent.right
+            anchors.bottom:						parent.bottom
+            text: 								qsTr("<b>Create Design</b>")
+            // onClicked: 							form.exportResults()
+        }
+    }
 }
