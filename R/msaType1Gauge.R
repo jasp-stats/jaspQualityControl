@@ -228,7 +228,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
     Observation <- 1:length(dataset[["Measurement"]])
 
-    dataset <- cbind(dataset, Observation = factor(Observation, Observation))
+    dataset <- cbind(dataset, Observation = Observation)
 
     plot$dependOn(c("biasRun"))
     datayBreaks <- c(dataset[["Measurement"]], options$biasReferenceValue)
@@ -247,12 +247,13 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
     }
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(datayBreaks)
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(x = Observation, n = 10)
+    xBreaks[1] <- 1
     p <- p + jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1)) +
       ggplot2::geom_hline(yintercept = options$biasReferenceValue, data = dataset,
                           mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkgreen") +
       ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.1, y = options$biasReferenceValue, l = "Ref"),
                                 ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "darkgreen", size = 5) +
-      ggplot2::scale_x_discrete(name = "Observation", breaks = xBreaks, limits = c(Observation, seq(max(Observation),max(Observation)*1.2))) +
+      ggplot2::scale_x_continuous(name = "Observation", breaks = xBreaks, limits = c(min(xBreaks), max(xBreaks) * 1.2)) +
       ggplot2::scale_y_continuous(name = measurements, breaks = yBreaks) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw() +
