@@ -73,7 +73,7 @@ Description
 
 	 GroupTitle
 	 {
-        title:			qsTr("Design of Experiments")
+        title:			qsTr("DOE")
 	 	icon:			"processControl-design.svg"
 	 }
     // Analysis
@@ -84,7 +84,7 @@ Description
     // }
 	Analysis
 	{
-        title:			qsTr("Factorial")
+        title:			qsTr("Two-level Factorial Design")
         func:			"doeFactorial"
 		requiresData:	false
 	}
@@ -100,10 +100,10 @@ Description
     //     func:			"doeMixed"
     //     requiresData:	false
     // }
-    Analysis
-    {
-        title:          qsTr("Factorial Analysis")
-        func:           "factorialAnalysis"
-        requiresData:   true
-    }
+//    Analysis
+//    {
+//        title:          qsTr("Two-level Factorial Analysis")
+//        func:           "factorialAnalysis"
+//        requiresData:   true
+//    }
 }

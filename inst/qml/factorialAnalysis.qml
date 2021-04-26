@@ -21,26 +21,73 @@ import JASP.Widgets                             1.0
 Form
 {
     usesJaspResults:                            true
-    columns:                                    2
+    columns:                                    1
 
     VariablesForm
     {
         AvailableVariablesList
         {
-            name: "allVariables"
-            label: qsTr("Available factors")
+            name:                               "FAallVariables"
+            label:                              qsTr("Available factors")
         }
 
         AssignedVariablesList
         {
-            name: "runOrder"
-            label: qsTr("Run order")
+            name:                               "FAresponse"
+            singleVariable:                     true
+            label:                              qsTr("Response variable")
         }
 
         AssignedVariablesList
         {
-            name: "assignedFactors"
-            label: qsTr("Assigned factors")
+            name:                               "FAassignedFactors"
+            label:                              qsTr("Assigned factors")
+        }
+
+        AssignedVariablesList
+        {
+            name:                               "FArunOrder"
+            singleVariable:                     true
+            label:                              qsTr("Run order")
+        }
+    }
+
+    IntegerField
+    {
+        name:                                   "intOrder"
+        label:                                  qsTr("Highest order interaction term:")
+        defaultValue:                           1
+        min:                                    1
+        max:                                    5 // change this to number of items in assignedFactors
+    }
+
+    Group
+    {
+        name:                                   "resPlots"
+        title:                                  qsTr("Residuals plots")
+
+        CheckBox
+        {
+            name:                               "resNorm"
+            label:                              qsTr("Normal probability plot of residuals")
+        }
+
+        CheckBox
+        {
+            name:                               "resHist"
+            label:                              qsTr("Histogram of residuals")
+        }
+
+        CheckBox
+        {
+            name:                               "resFitted"
+            label:                              qsTr("Residuals vs fitted value")
+        }
+
+        CheckBox
+        {
+            name:                               "resOrder"
+            label:                              qsTr("Residuals vs run order")
         }
     }
 }

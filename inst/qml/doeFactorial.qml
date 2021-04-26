@@ -25,8 +25,8 @@ Form
 
     GroupBox
     {
-        title: 									qsTr("Factor info")
-        name:									"factorInfo"
+        title: 									qsTr("Design Information")
+        name:									"designInfo"
 
         IntegerField
         {
@@ -56,32 +56,48 @@ Form
     CheckBox
     {
         name: 									"displayDesign"
-        label:									"Preview design"
+        label:									"Display design"
     }
 
-    GroupBox
+    RadioButtonGroup
     {
-        title:                                  qsTr("Data coding")
-        debug:                                  false
+        title:                                  qsTr("Data Coding")
+        debug:                                  true
+        name:                                   "dataCoding"
 
-        RadioButtonGroup
+        RadioButton
         {
-            name:                               "dataCoding"
+            name:                               "dataUncoded"
+            label:                              qsTr("Uncoded")
+            checked:                            true
 
-            RadioButton
-            {
-                name:                           "dataUncoded"
-                label:                          qsTr("Uncoded")
-                checked:                        true
+        }
 
-            }
+        RadioButton
+        {
+            name:                               "dataCoded"
+            label:                              qsTr("Coded")
 
-            RadioButton
-            {
-                name:                           "dataCoded"
-                label:                          qsTr("Coded")
+        }
+    }
 
-            }
+    RadioButtonGroup
+    {
+        name:                                   "runOrder"
+        title:                                  qsTr("Run Order")
+        enabled:                                !factorialTypeSplit.checked
+
+        RadioButton
+        {
+            name:                              "runOrderStandard"
+            label:                              qsTr("Standard")
+            checked:                            true
+        }
+
+        RadioButton
+        {
+            name:                               "runOrderRandom"
+            label:                              qsTr("Random")
         }
     }
 
@@ -196,7 +212,6 @@ Form
                 id:                             factorialTypeDefault
                 name:							"factorialTypeDefault"
                 label:							qsTr("2-level factorial (default generators)")
-                checked:						true
             }
 
             RadioButton
@@ -239,6 +254,7 @@ Form
                 id:                             factorialTypeFull
                 name:							"factorialTypeFull"
                 label:							qsTr("General full factorial design")
+                checked:						true
             }
         }
 
@@ -343,6 +359,7 @@ Form
 
             GroupBox
             {
+                debug:                          true
                 title:                          qsTr("Additional options")
 
                 IntegerField

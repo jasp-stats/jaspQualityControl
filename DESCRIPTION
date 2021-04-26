@@ -24,7 +24,8 @@ Imports:
   FrF2,
   rsm,
   DoE.base,
-  gridGraphics
+  gridGraphics,
+  ragg
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
