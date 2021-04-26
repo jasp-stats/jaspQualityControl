@@ -82,7 +82,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       jaspResults[["NRoperatorGraph"]]$position <- 5
     }
 
-    jaspResults[["NRoperatorGraph"]] <- .gaugeByOperatorGraph(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options)
+    jaspResults[["NRoperatorGraph"]] <- .gaugeByOperatorGraph(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options, ready = ready)
     jaspResults[["NRoperatorGraph"]]$dependOn(c("NRoperatorGraph"))
   }
   return()
