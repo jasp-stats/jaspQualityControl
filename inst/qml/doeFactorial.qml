@@ -20,12 +20,13 @@ import JASP.Widgets                             1.0
 
 Form
 {
+    usesJaspResults:                            true
     columns:                                    2
 
     GroupBox
     {
-        title: 									qsTr("Factor Info")
-        name:									"factorInfo"
+        title: 									qsTr("Design Information")
+        name:									"designInfo"
 
         IntegerField
         {
@@ -39,46 +40,64 @@ Form
 
         DropDown
         {
-			id:										numberOfLevels
-			name: 									"numberOfLevels"
-			label: 									qsTr("Number of factor levels")
-			indexDefaultValue: 						0
-			values:
-			[
-				{ value: "2", label: qsTr("2")}
-	//            { value: "3", label: qsTr("3")},
-	//            { value: "Mixed", label: qsTr("Mixed")}
-			]
+        id:										numberOfLevels
+        name: 									"numberOfLevels"
+        label: 									qsTr("Number of factor levels")
+        indexDefaultValue: 						0
+        values:
+        [
+            { value: "2", label: qsTr("2")}
+//            { value: "3", label: qsTr("3")},
+//            { value: "Mixed", label: qsTr("Mixed")}
+        ]
         }
     }
 
     CheckBox
     {
         name: 									"displayDesign"
-        label:									"Preview design"
+        label:									"Display design"
     }
 
-    GroupBox
+    RadioButtonGroup
     {
-        title:                                  qsTr("Data coding")
+        title:                                  qsTr("Data Coding")
         debug:                                  true
+        name:                                   "dataCoding"
 
-        RadioButtonGroup
+        RadioButton
         {
-            name:                               "dataCoding"
+            name:                               "dataUncoded"
+            label:                              qsTr("Uncoded")
+            checked:                            true
 
-            RadioButton
-            {
-                name:                           "dataUncoded"
-                label:                          qsTr("Uncoded")
-                checked:                        true
-            }
+        }
 
-            RadioButton
-            {
-                name:                           "dataCoded"
-                label:                          qsTr("Coded")
-            }
+        RadioButton
+        {
+            name:                               "dataCoded"
+            label:                              qsTr("Coded")
+
+        }
+    }
+
+    RadioButtonGroup
+    {
+        name:                                   "runOrder"
+        title:                                  qsTr("Run Order")
+        enabled:                                !factorialTypeSplit.checked
+
+        RadioButton
+        {
+            name:                              "runOrderStandard"
+            label:                              qsTr("Standard")
+            checked:                            true
+        }
+
+        RadioButton
+        {
+            name:                               "runOrderRandom"
+            label:                              qsTr("Random")
         }
     }
 
@@ -94,21 +113,17 @@ Form
             Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
             Label { text: qsTr("Level 1");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
             Label { text: qsTr("Level 2");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
-            Label { visible: 					[1].includes(numberOfLevels.currentIndex);
+            Label { visible: 					numberOfLevels.currentIndex == 1;
                     text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
         }
 
         ComponentsList
         {
             name:								"factors"
-            defaultValues:
-            [
-                { factorName: qsTr("Factor 1"), low: qsTr("Factor 1 Level 1"), high1: qsTr("Factor 1 Level 2") },
-                { factorName: qsTr("Factor 2"), low: qsTr("Factor 2 Level 1"), high1: qsTr("Factor 2 Level 2") }
-            ]
-            rowComponent: 						
-			
-			RowLayout
+            addItemManually:                    false
+            values:                             numberOfFactors.value // update only when numberOfFactors.value gets "entered"
+
+            rowComponent: 						RowLayout
             {
                 Row
                 {
@@ -190,17 +205,18 @@ Form
         RadioButtonGroup
         {
             name: 								"factorialType"
-            title:								qsTr("Type of factorial design")
+            title:								qsTr("Type of Factorial Design")
 
             RadioButton
             {
+                id:                             factorialTypeDefault
                 name:							"factorialTypeDefault"
                 label:							qsTr("2-level factorial (default generators)")
-                checked:						true
             }
 
             RadioButton
             {
+                id:                             factorialTypeSpecify
                 name:							"factorialTypeSpecify"
                 label:							qsTr("2-level factorial (specify generators)")
 
@@ -209,13 +225,15 @@ Form
                     name:						"factorialTypeSpecifyGenerators"
                     height:                     100 * preferencesModel.uiScale
                     width:                      250 * preferencesModel.uiScale
-                    title:                      "Design generators"
+                    visible:                    factorialTypeSpecify.checked
+                    title:                      qsTr("Design generators")
                     textType:                   JASP.TextTypeSource
                 }
             }
 
             RadioButton
             {
+                id:                             factorialTypeSplit
                 name:                           "factorialTypeSplit"
                 label:							qsTr("2-level split-plot (hard-to-change factors)")
 
@@ -223,6 +241,7 @@ Form
                 {
                     name:						"numberHTCFactors"
                     label:						qsTr("Number of hard-to-change factors")
+                    visible:                    factorialTypeSplit.checked
                     defaultValue:				1
                     min:						1
                     max:						numberOfFactors.value
@@ -232,8 +251,10 @@ Form
 
             RadioButton
             {
+                id:                             factorialTypeFull
                 name:							"factorialTypeFull"
                 label:							qsTr("General full factorial design")
+                checked:						true
             }
         }
 
@@ -247,6 +268,7 @@ Form
                 RadioButtonGroup
                 {
                     name:						"designBy"
+                    enabled:                    !factorialTypeFull.checked
 
                     RadioButton
                     {
@@ -266,7 +288,9 @@ Form
                                 { value: "16", 	label: qsTr("16") 	},
                                 { value: "32", 	label: qsTr("32") 	},
                                 { value: "64", 	label: qsTr("64") 	},
-                                { value: "128", label: qsTr("128")	}
+                                { value: "128", label: qsTr("128")	},
+                                { value: "256", label: qsTr("256")	},
+                                { value: "512", label: qsTr("512")	}
                             ]
                         }
                     }
@@ -274,6 +298,7 @@ Form
                     RadioButton
                     {
                         name:					"designByResolution"
+                        enabled:                factorialTypeDefault.checked | factorialTypeSplit.checked
                         label: 					qsTr("Resolution")
                         childrenOnSameRow:		true
 
@@ -297,13 +322,49 @@ Form
                 }
             }
 
+            RadioButtonGroup
+            {
+                title:                          qsTr("Blocking options")
+                debug:                          true
+                name:                           "blocking"
+
+                RadioButton
+                {
+                    name:                       "noBlocking"
+                    label:                      qsTr("No blocking (1 block design)")
+                    checked:                    true
+                }
+
+                RadioButton
+                {
+                    id:                         autoBlocking
+                    name:                       "autoBlocking"
+                    label:                      qsTr("Automatic definition")
+
+                    IntegerField
+                    {
+                        name:                   "numberOfBlocks"
+                        visible:                autoBlocking.checked
+                        label:                  qsTr("Number of blocks")
+                    }
+                }
+
+                RadioButton
+                {
+                    name:                       "manualBlocking"
+                    label:                      qsTr("Manual definition")
+                }
+
+            }
+
             GroupBox
             {
-                title:                          qsTr("Additional options")
                 debug:                          true
+                title:                          qsTr("Additional options")
 
                 IntegerField
                 {
+                    debug:                      true
                     name:						"factorialCenterPoints"
                     label:						qsTr("Number of center points per block")
                     defaultValue:				1
@@ -313,6 +374,7 @@ Form
 
                 IntegerField
                 {
+                    debug:                      true
                     name:						"factorialCornerReplicates"
                     label:						qsTr("Number of replicates for corner points")
                     defaultValue:				3
@@ -323,6 +385,7 @@ Form
                 IntegerField
                 {
                     name:						"factorialBlocks"
+                    enabled:                    !factorialTypeSplit.checked
                     label:						qsTr("Number of blocks")
                     defaultValue:				1
                     min:						1
@@ -332,20 +395,31 @@ Form
         }
     }
 
-    Item
+    GroupBox
     {
-        Layout.preferredHeight: 				generateDesign.height
-        Layout.fillWidth: 						true
-        Layout.columnSpan:						2
+        FileSelector
+        {
+            id:                                 file
+            name:                               "file"
+            label:                              qsTr("Save as:")
+            filter:                             "*.csv"
+            save:                               true
+        }
 
         Button
         {
-            debug:                              true
-            id: 								generateDesign
+            id: 								exportDesign
             anchors.right:						parent.right
             anchors.bottom:						parent.bottom
             text: 								qsTr("<b>Export Design</b>")
-            // onClicked: 							form.exportResults()
+            onClicked: 							actualExporter.click()
+        }
+
+        CheckBox
+        {
+            id:                                 actualExporter
+            name:                               "actualExporter"
+            visible:                            false
         }
     }
 }
