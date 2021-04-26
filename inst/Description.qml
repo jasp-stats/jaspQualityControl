@@ -52,22 +52,22 @@ Description
 	Analysis
 	{
 		title:			qsTr("Attributes Charts")
-		func:			"AttributeCharts"
+		func:			"attributesCharts"
 	}
 	Analysis
 	{
 		title:			qsTr("Variables Charts for Subgroups")
-		func:			"VaribleChartsSubgroups"
+		func:			"variablesChartsSubgroups"
 	}
 	Analysis
 	{
 		title:			qsTr("Variables Charts for Individuals")
-		func:			"VaribleChartsIndviduals"
+		func:			"variablesChartsIndviduals"
 	}
 	Analysis
 	{
 		title:			qsTr("Time Weighted Charts")
-		func:			"TimeWeightedCharts"
+		func:			"timeWeightedCharts"
 	}
 
 	 GroupTitle

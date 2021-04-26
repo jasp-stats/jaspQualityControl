@@ -1,4 +1,4 @@
-TimeWeightedCharts <- function(jaspResults, dataset, options) {
+timeWeightedCharts <- function(jaspResults, dataset, options) {
   variables <- options$variables
   numeric_variables  <- variables[variables != ""]
   dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)

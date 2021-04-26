@@ -1,4 +1,4 @@
-VaribleChartsSubgroups <- function(jaspResults, dataset, options) {
+variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   variables <- unlist(options$variables)
   time <- options$time
   makeTime <- time != ""

@@ -1,4 +1,4 @@
-AttributeCharts <- function(jaspResults, dataset, options) {
+attributesCharts <- function(jaspResults, dataset, options) {
   variables <- options$variables
   total <- options$total
   D <- options$D
