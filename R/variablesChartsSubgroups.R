@@ -75,12 +75,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - (0.1 * abs(LCL)), Stdv, UCL + (0.1 * UCL)), min.n = 4)
-  yLimits <- range(yBreaks)
   xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
   xLimits <- c(0,max(xBreaks) + 5)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
-  yLimits <- range(yBreaks)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -90,12 +86,13 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$Stdv, UCL))
 
   p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Standard Deviation") ,limits = yLimits, breaks = yBreaks) +
+    ggplot2::scale_y_continuous(name =  gettext("Standard Deviation"), breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks) +
     jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(Stdv, UCL = UCL, LCL = LCL, center = center)$red_points, 'red', 'blue')) +
