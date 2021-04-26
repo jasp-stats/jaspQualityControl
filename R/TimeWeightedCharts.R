@@ -1,4 +1,4 @@
-TimeWeightedCharts <- function(jaspResults, dataset, options){
+TimeWeightedCharts <- function(jaspResults, dataset, options) {
   variables <- options$variables
   numeric_variables  <- variables[variables != ""]
   dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
@@ -6,24 +6,24 @@ TimeWeightedCharts <- function(jaspResults, dataset, options){
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = options$variables, exitAnalysisIfErrors = TRUE)
 
-if(length(variables) > 0){
-  #Cusum chart
-  if(options$Cumulativechart && is.null(jaspResults[["Cumulativechart"]])){
-    jaspResults[["CusumPlot"]] <- createJaspPlot(title = gettext("Cumulative sum chart"), width = 900, height = 400)
-    jaspResults[["CusumPlot"]]$dependOn(c("Cumulativechart", "variables"))
-    CusumPlotPlot <- jaspResults[["CusumPlot"]]
-    CusumPlotPlot$plotObject <- .Cusumchart(dataset = dataset, options = options)
-  }
-#EWMA chart
-  if(options$Exponentialchart && is.null(jaspResults[["Exponentialchart"]])){
-    jaspResults[["EWMAPlot"]] <- createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 900, height = 400)
-    jaspResults[["EWMAPlot"]]$dependOn(c("Exponentialchart", "variables"))
-    EWMAPlot <- jaspResults[["EWMAPlot"]]
-    EWMAPlot$plotObject <- .EWMA(dataset = dataset, options = options)
+  if (length(variables) > 0) {
+    #Cusum chart
+    if (options$Cumulativechart && is.null(jaspResults[["Cumulativechart"]])) {
+      jaspResults[["CusumPlot"]] <- createJaspPlot(title = gettext("Cumulative sum chart"), width = 900, height = 400)
+      jaspResults[["CusumPlot"]]$dependOn(c("Cumulativechart", "variables"))
+      CusumPlotPlot <- jaspResults[["CusumPlot"]]
+      CusumPlotPlot$plotObject <- .Cusumchart(dataset = dataset, options = options)
+    }
+    #EWMA chart
+    if (options$Exponentialchart && is.null(jaspResults[["Exponentialchart"]])) {
+      jaspResults[["EWMAPlot"]] <- createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 900, height = 400)
+      jaspResults[["EWMAPlot"]]$dependOn(c("Exponentialchart", "variables"))
+      EWMAPlot <- jaspResults[["EWMAPlot"]]
+      EWMAPlot$plotObject <- .EWMA(dataset = dataset, options = options)
+    }
   }
 }
-}
-.Cusumchart <- function(dataset, options){
+.Cusumchart <- function(dataset, options) {
   ready <- options$variables != ""
   if (!ready)
     return()
@@ -64,7 +64,7 @@ if(length(variables) > 0){
 
   return(p)
 }
-.EWMA <- function(dataset, options){
+.EWMA <- function(dataset, options) {
   ready <- options$variables != ""
   if (!ready)
     return()

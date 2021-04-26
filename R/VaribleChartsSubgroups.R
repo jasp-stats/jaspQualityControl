@@ -1,4 +1,4 @@
-VaribleChartsSubgroups <- function(jaspResults, dataset, options){
+VaribleChartsSubgroups <- function(jaspResults, dataset, options) {
   variables <- unlist(options$variables)
   time <- options$time
   makeTime <- time != ""
@@ -22,8 +22,8 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
              all.target = options$variables,
              observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE)
 
-#X bar & R chart
-  if(options$Xbarchart && is.null(jaspResults[["XbarPlot"]]) &&  length(options$variables) > 1){
+  #X bar & R chart
+  if (options$Xbarchart && is.null(jaspResults[["XbarPlot"]]) &&  length(options$variables) > 1) {
 
     jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 700, height = 350)
     jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart", "variables", "Wlimits"))
@@ -31,7 +31,7 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
     XbarPlot$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(.RchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits2"]], time = makeTime), .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]], time = makeTime)), layout = matrix(2:1, 2), removeXYlabels= "x")
 
     # Nelson tests tables
-    if(is.null(jaspResults[["NelsonTable"]]) & is.null(jaspResults[["NelsonTable2"]])){
+    if (is.null(jaspResults[["NelsonTable"]]) & is.null(jaspResults[["NelsonTable2"]])) {
       jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
       jaspResults[["NelsonTable2"]] <- createJaspContainer(gettext(""))
       jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset[, options$variables], options = options, type = "R")
@@ -44,15 +44,15 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
 
   }
 
-#S Chart
-  if(options$Schart && is.null(jaspResults[["SPlot"]]) &&  length(options$variables) > 1){
+  #S Chart
+  if (options$Schart && is.null(jaspResults[["SPlot"]]) &&  length(options$variables) > 1) {
     jaspResults[["SPlot"]] <- createJaspPlot(title = gettext("Xbar & s Control Chart"), width = 700, height = 350)
     jaspResults[["SPlot"]]$dependOn(c("Schart", "variables", "Wlimits2"))
     SPlot<- jaspResults[["SPlot"]]
     SPlot$plotObject <- .XbarSchart(dataset = dataset, options = options, time = makeTime)
 
-  # Nelson tests tables
-    if(is.null(jaspResults[["NelsonTableS"]]) & is.null(jaspResults[["NelsonTableX"]])){
+    # Nelson tests tables
+    if (is.null(jaspResults[["NelsonTableS"]]) & is.null(jaspResults[["NelsonTableX"]])) {
       jaspResults[["NelsonTableS"]] <- createJaspContainer(gettext(""))
       jaspResults[["NelsonTableX"]] <- createJaspContainer(gettext(""))
       jaspResults[["NelsonTableS"]] <- .NelsonTable(dataset = dataset[, options$variables], options = options, type = "S")
@@ -66,7 +66,7 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
 }
 
 #Functions for control charts
-.XbarSchart <- function(dataset, options, time = FALSE){
+.XbarSchart <- function(dataset, options, time = FALSE) {
   data1 <- dataset[, options$variables]
   Stdv <- apply(data1, 1, function(x) sd(x))
   subgroups <- c(1:length(Stdv))
@@ -104,7 +104,7 @@ VaribleChartsSubgroups <- function(jaspResults, dataset, options){
 
   p2 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]])
 
-  if (time){
+  if (time) {
     xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
     p1 <- p1 + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
     p2 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]]) + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)

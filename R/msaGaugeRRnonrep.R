@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
+msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
   measurements <- unlist(options$measurements)
   parts <- unlist(options$parts)
@@ -29,14 +29,14 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
   }
-  if(ready){
+  if (ready) {
     datasetWide <- .reshapeToWide(dataset, measurements, parts, operators)
     wideMeasurementCols <- colnames(datasetWide)[colnames(datasetWide) != c(parts, operators)]
   }
 
   # Gauge r&R non replicable
   if (options[["NRgaugeRR"]]) {
-    if(is.null(jaspResults[["gaugeRRNonRep"]])) {
+    if (is.null(jaspResults[["gaugeRRNonRep"]])) {
       jaspResults[["gaugeRRNonRep"]] <- createJaspContainer(gettext("Gauge r&R Tables"))
       jaspResults[["gaugeRRNonRep"]]$position <- 1
     }
@@ -47,7 +47,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
 
   # R chart by operator
   if (options[["NRrCharts"]]) {
-    if(is.null(jaspResults[["NRrCharts"]])) {
+    if (is.null(jaspResults[["NRrCharts"]])) {
       jaspResults[["NRrCharts"]] <- createJaspContainer(gettext("Range Chart by Operator"))
       jaspResults[["NRrCharts"]]$position <- 2
     }
@@ -57,7 +57,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
 
   # Xbar chart by operator
   if (options[["NRxbarCharts"]]) {
-    if(is.null(jaspResults[["NRxbarCharts"]])) {
+    if (is.null(jaspResults[["NRxbarCharts"]])) {
       jaspResults[["NRxbarCharts"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
       jaspResults[["NRxbarCharts"]]$position <- 3
     }
@@ -67,7 +67,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
 
   #Measurement by part x operator plot
   if (options[["NRpartOperatorGraph"]]) {
-    if(is.null(jaspResults[["NRpartOperatorGraph"]])) {
+    if (is.null(jaspResults[["NRpartOperatorGraph"]])) {
       jaspResults[["NRpartOperatorGraph"]] <- createJaspContainer(gettext("Measurement by part x operator plot"))
       jaspResults[["NRpartOperatorGraph"]]$position <- 4
     }
@@ -77,7 +77,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
 
   #Measurement by operator plot
   if (options[["NRoperatorGraph"]]) {
-    if(is.null(jaspResults[["NRoperatorGraph"]])) {
+    if (is.null(jaspResults[["NRoperatorGraph"]])) {
       jaspResults[["NRoperatorGraph"]] <- createJaspContainer(gettext("Gauge r&R Tables"))
       jaspResults[["NRoperatorGraph"]]$position <- 5
     }
@@ -88,7 +88,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   return()
 }
 
-.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready){
+.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready) {
   gaugeRRNonRepTables <- createJaspContainer(gettext("Gauge r&R Tables"))
   gaugeRRNonRepTables$position <- 1
 
@@ -112,7 +112,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   gaugeRRNonRepTable3$addColumnInfo(name = "percentStudyVar", title = gettext("% Study variation"), type = "number")
   gaugeRRNonRepTable3$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
 
-  if (ready){
+  if (ready) {
     anovaTable <- .gaugeNestedANOVA(dataset, operators, parts, measurements)
     anovaSources <- as.character(anovaTable$Source)
     df <- anovaTable$DF
@@ -135,13 +135,13 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
                                      "Var" = varComps,
                                      "percentVar" = percentVarComps))
     histSD <- options$NRhistoricalStandardDeviationValue
-    if(options$NRstandardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTable$varGaugeTotal)){
+    if (options$NRstandardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTable$varGaugeTotal)) {
       stdDevs <- c(sqrt(c(varCompTable$varGaugeTotal, varCompTable$varRepeat, varCompTable$varReprod)),
                    sqrt(histSD^2 - varCompTable$varGaugeTotal), histSD)
     }else{
       stdDevs <- sqrt(varComps)
     }
-    if (options$NRstudyVarMultiplierType == "svmSD"){
+    if (options$NRstudyVarMultiplierType == "svmSD") {
       studyVarMultiplier <- options$NRstudyVarMultiplier
     }else{
       percent <- options$NRstudyVarMultiplier/100
@@ -164,17 +164,17 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   gaugeRRNonRepTables[["Table2"]] <- gaugeRRNonRepTable2
   gaugeRRNonRepTables[["Table3"]] <- gaugeRRNonRepTable3
 
-  if (options[["NRgaugeVarCompGraph"]]){
+  if (options[["NRgaugeVarCompGraph"]]) {
     plot <- createJaspPlot(title = gettext("Components of Variation"), width = 850, height = 500)
     plot$dependOn(c("NRgaugeVarCompGraph"))
-    if(ready)
+    if (ready)
       plot$plotObject <- .gaugeVarCompGraph(percentVarComps[1:4], percentStudyVar[1:4], percentTolerance[1:4])
     gaugeRRNonRepTables[["Plot"]] <- plot
   }
   return(gaugeRRNonRepTables)
 }
 
-.ssOperator <- function(dataset, operators, parts, measurements){
+.ssOperator <- function(dataset, operators, parts, measurements) {
   grandmean    <- mean(dataset[[measurements]])
   operatormean <- tapply(dataset[[measurements]], dataset[operators], mean)
   nreplicates   <- table(dataset[parts])[1]
@@ -183,14 +183,14 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   return(ssOperator)
 }
 
-.ssPartOperator <- function(dataset, operators, parts, measurements){
+.ssPartOperator <- function(dataset, operators, parts, measurements) {
   dataset[operators] <- as.character(dataset[[operators]])
   dataset[parts] <- as.character(dataset[[parts]])
   operatorVector <- unique(dataset[[operators]])
   nreplicates       <- table(dataset[parts])[1]
   nparts  <- table(dataset[operators])[1] / nreplicates
   ssPartOperator <- 0
-  for(op in operatorVector){
+  for (op in operatorVector) {
     dataPerOP <- subset(dataset, dataset[[operators]] == op)
     opMean <- mean(dataPerOP[[measurements]])
     partMean <- tapply(dataPerOP[[measurements]], dataPerOP[parts], mean)
@@ -200,11 +200,11 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   return(ssPartOperator)
 }
 
-.ssRepeat <- function(dataset, operators, parts, measurements){
+.ssRepeat <- function(dataset, operators, parts, measurements) {
   dataset[operators] <- as.character(dataset[operators])
   partVector <- unique(dataset[[parts]])
   ssRepeat <- 0
-  for(p in partVector){
+  for (p in partVector) {
     dataPerP <- subset(dataset, dataset[parts] == p)
     partMean <- as.vector(tapply(dataPerP[[measurements]], dataPerP[operators], mean))
     measurementsPerP <- dataPerP[[measurements]]
@@ -213,7 +213,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   return(ssRepeat)
 }
 
-.ssGaugeNested <- function(dataset, operators, parts, measurements){
+.ssGaugeNested <- function(dataset, operators, parts, measurements) {
   ssOperator <- .ssOperator(dataset, operators, parts, measurements)
   ssPartOperator <- .ssPartOperator(dataset, operators, parts, measurements)
   ssRepeat <- .ssRepeat(dataset, operators, parts, measurements)
@@ -222,7 +222,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   return(c(ssOperator, ssPartOperator, ssRepeat, ssTotal))
 }
 
-.dfGaugeNested <- function(dataset, operators, parts, measurements){
+.dfGaugeNested <- function(dataset, operators, parts, measurements) {
   noperators <- length(unique(dataset[[operators]]))
   nreplicates <- as.vector(table(dataset[parts])[1])
   nparts  <- as.vector(table(dataset[operators])[1] / nreplicates)
@@ -235,26 +235,26 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   return(c(dfOperator, dfPartOperator, dfRepeat, dfTotal))
 }
 
-.msGaugeNested <- function(ss, df){
+.msGaugeNested <- function(ss, df) {
   msOperator <- ss[1] / df[1]
   msPartOperator <- ss[2] / df[2]
   msRepeat <- ss[3] / df[3]
   return(c(msOperator, msPartOperator, msRepeat))
 }
 
-.fGaugeNested <- function(ms){
+.fGaugeNested <- function(ms) {
   fOperator <- ms[1] /  ms[2]
   fPartOperator <- ms[2] / ms[3]
   return(c(fOperator, fPartOperator))
 }
 
-.pGaugeNested <- function(f, df){
+.pGaugeNested <- function(f, df) {
   p1 <- pf(f[1], df[1], df[2], lower.tail = F)
   p2 <- pf(f[2], df[2], df[3], lower.tail = F)
   return(c(p1, p2))
 }
 
-.gaugeNestedANOVA <- function(dataset, operators, parts, measurements){
+.gaugeNestedANOVA <- function(dataset, operators, parts, measurements) {
 
   ss <- .ssGaugeNested(dataset, operators, parts, measurements)
   df <- .dfGaugeNested(dataset, operators, parts, measurements)
@@ -272,7 +272,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   return(anovaTable)
 }
 
-.gaugeNestedVarComponents <- function(dataset, operators, parts, measurements, ms){
+.gaugeNestedVarComponents <- function(dataset, operators, parts, measurements, ms) {
   nOperators <- length(unique(dataset[[operators]]))
   nReplicates <- as.vector(table(dataset[parts])[1])
   nParts  <- as.vector(table(dataset[operators])[1] / nReplicates)
@@ -296,7 +296,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   return(dframe)
 }
 
-.reshapeToWide <- function(dataset, measurements, parts, operators){
+.reshapeToWide <- function(dataset, measurements, parts, operators) {
   nreplicates       <- as.vector(table(dataset[parts])[1])
   nparts <- length(unique(dataset[[parts]]))
   dataset <- dataset[order(dataset[parts]),]
@@ -307,10 +307,10 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...){
   return(dataset)
 }
 
-.gaugeMeasurmentsByPartXOperator <- function(dataset, measurements, parts, operators, options){
+.gaugeMeasurmentsByPartXOperator <- function(dataset, measurements, parts, operators, options) {
   plotContainer <- createJaspContainer(gettext("Measurements by part x operator"))
   operatorVector <- unique(dataset[[operators]])
-  for (op in operatorVector){
+  for (op in operatorVector) {
     dataPerOP <- subset(dataset, dataset[operators] == op)
     plot <- createJaspPlot(title = gettextf("Operator %s", op), width = 600, height = 300)
     plot$plotObject <- .gaugeByPartGraphPlotObject(dataset = dataPerOP, measurements = measurements, parts = parts, operators = operators, displayAll = options[["NRpartOperatorGraphAll"]])

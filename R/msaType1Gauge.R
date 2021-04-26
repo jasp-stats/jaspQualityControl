@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-msaType1Gauge <- function(jaspResults, dataset, options, ...){
+msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   measurements <- unlist(options$measurements)
   measurements <- measurements[measurements != ""]
@@ -31,7 +31,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   # Bias Run Chart
   if (options[["biasRun"]]) {
-    if(is.null(jaspResults[["biasRun"]])) {
+    if (is.null(jaspResults[["biasRun"]])) {
       jaspResults[["biasRun"]] <- createJaspContainer(gettext("Run Chart"))
     }
 
@@ -41,7 +41,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   # Determine Bias Table
   if (options[["biasTable"]]) {
-    if(is.null(jaspResults[["biasTable"]])) {
+    if (is.null(jaspResults[["biasTable"]])) {
       jaspResults[["biasTable"]] <- createJaspContainer(gettext("Bias Table"))
     }
     jaspResults[["biasTable"]] <- .biasTable(dataset = dataset, measurements = measurements, options = options, ready = ready)
@@ -50,7 +50,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   # Determine Bias t-Test
   if (options[["biasTtest"]]) {
-    if(is.null(jaspResults[["biasTtest"]])) {
+    if (is.null(jaspResults[["biasTtest"]])) {
       jaspResults[["biasTtest"]] <- createJaspContainer(gettext("t-Test Bias"))
     }
     jaspResults[["biasTtest"]] <- .biasTtest(dataset = dataset, measurements = measurements, options =  options, ready = ready)
@@ -59,7 +59,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
   # Determine Bias Histogram
   if (options[["biasHistogram"]]) {
-    if(is.null(jaspResults[["biasHistogram"]])) {
+    if (is.null(jaspResults[["biasHistogram"]])) {
       jaspResults[["biasHistogram"]] <- createJaspContainer(gettext("Histogram Bias"))
     }
     jaspResults[["biasHistogram"]] <- .biasHistogram(dataset = dataset, measurements = measurements, options =  options, ready = ready)
@@ -69,7 +69,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   return()
 }
 
-.biasTable <- function(dataset, measurements, options, ready){
+.biasTable <- function(dataset, measurements, options, ready) {
 
   biasTables <- createJaspContainer(gettext("Bias and Gauge Capability Table"))
 
@@ -105,7 +105,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   table1$setData(list(      "referenceValue"       = reference,
                             "tolerance"             = tolerance))
 
-  if (ready){
+  if (ready) {
 
     observedAverage <- mean(dataset[[measurements]])
     bias <- observedAverage - options$biasReferenceValue
@@ -144,7 +144,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   return(biasTables)
 }
 
-.biasTtest <- function(dataset, measurements, options, ready){
+.biasTtest <- function(dataset, measurements, options, ready) {
 
   data <- dataset
 
@@ -161,7 +161,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   table$addColumnInfo(name = "p",               title = gettext("<i>p<i/>"), type = "pvalue")
 
 
-  if (ready){
+  if (ready) {
     bias <- data - options$biasReferenceValue
     tTest <- t.test(bias, mu = 0, conf.level = ciLevel)
 
@@ -176,9 +176,9 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   return(table)
 }
 
-.biasHistogram <- function(dataset, measurements, options, ready){
+.biasHistogram <- function(dataset, measurements, options, ready) {
 
-  if (ready){
+  if (ready) {
 
     data <- dataset[[measurements]]
 
@@ -186,18 +186,18 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
     dataForBreaks <- c(data)
     p <- jaspDescriptives:::.plotMarginal(column = data, variableName = measurements, binWidthType = options$biasBinWidthType, numberOfBins = options$biasNumberOfBins)
 
-    if (options$biasHistMean){
+    if (options$biasHistMean) {
       mean <- mean(data)
       p <- p + ggplot2::geom_vline(ggplot2::aes(xintercept = mean, color = "Mean"), lwd = 1.5) +
         ggplot2::scale_color_manual(name = "", values = c("Mean" = "red"))
       dataForBreaks <- c(dataForBreaks, mean)
-      if (options$biasHistMeanConfidenceInterval){
+      if (options$biasHistMeanConfidenceInterval) {
         CI <- t.test(data, mu = 0, conf.level = options$biasHistMeanConfidenceIntervalPercent)$conf.int
         p <- p + ggplot2::geom_errorbarh(ggplot2::aes(y = .5, x = mean, xmin = CI[1], xmax = CI[2]), lwd = 1, color = "red")
         dataForBreaks <- c(dataForBreaks, CI)
       }
     }
-    if (options$biasHistRef){
+    if (options$biasHistRef) {
       reference <- options$biasReferenceValue
       p <- p + ggplot2::geom_vline(ggplot2::aes(xintercept = reference, color = "Reference"), lwd = 1.5) +
         ggplot2::scale_color_manual(name = "", values = c("Reference" = "blue"))
@@ -218,9 +218,9 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
   }
 }
 
-.biasRunChart <- function(dataset, measurements, options, ready){
+.biasRunChart <- function(dataset, measurements, options, ready) {
 
-  if (ready){
+  if (ready) {
 
     plot <- createJaspPlot(title = gettextf("Run Chart of %s", measurements), width = 700, height = 300)
 
@@ -273,7 +273,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...){
 
 .msaCheckErrors <- function(dataset, options) {
 
-  #if (options[["gaugeScatterPlotOperators"]]){
+  #if (options[["gaugeScatterPlotOperators"]]) {
   #  .hasErrors(dataset = dataset, type = "factorLevels",
   #             factorLevels.target  = options$operators, factorLevels.amount  = "> 2",
   #             exitAnalysisIfErrors = TRUE)

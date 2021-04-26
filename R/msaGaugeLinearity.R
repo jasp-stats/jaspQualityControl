@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
+msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
   measurements <- unlist(options$measurements)
   parts <- unlist(options$parts)
@@ -30,7 +30,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
   factor.vars <- factor.vars[factor.vars != ""]
 
 
-  #if(length(measurements) == 0)
+  #if (length(measurements) == 0)
   #  return()
 
   if (is.null(dataset)) {
@@ -40,7 +40,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
 
   # Linearity and Bias Analysis
 
-  if(is.null(jaspResults[["LB"]])) {
+  if (is.null(jaspResults[["LB"]])) {
     jaspResults[["LB"]] <- createJaspContainer(gettext("Linearity and Bias"))
     jaspResults[["LB"]]$position <- 1
   }
@@ -56,7 +56,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
 #measurements <- "Response"
 #standards <- "Master"
 
-.linearityAndBias <- function(ready, dataset, options, measurements, parts, standards){
+.linearityAndBias <- function(ready, dataset, options, measurements, parts, standards) {
 
   tablesAndGraphs <- createJaspContainer(gettext("Linearity and Bias"))
 
@@ -91,13 +91,13 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
 
   plot2 <- createJaspPlot(title = gettext("Percent Process Variation Graph"), width = 500, height = 500)
 
-  if (ready){
+  if (ready) {
     partValues <- unique(dataset[[parts]])
     df <- data.frame()
     biases <- vector()
     references <- vector()
 
-    for (i in partValues){
+    for (i in partValues) {
       Part <- i
       partData <- subset.data.frame(dataset, dataset[[parts]] == i)
       Ref <- partData[[standards]][1]
@@ -168,7 +168,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...){
     tablesAndGraphs[["table1"]] <- table1
 
 
-  if (options$LBtableLinearity){
+  if (options$LBtableLinearity) {
     tablesAndGraphs[["table2"]] <- table2
     tablesAndGraphs[["table3"]] <- table3
   }

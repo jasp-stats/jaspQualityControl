@@ -1,4 +1,4 @@
-VaribleChartsIndviduals <- function(jaspResults, dataset, options){
+VaribleChartsIndviduals <- function(jaspResults, dataset, options) {
   variables <- options$variables
   numeric_variables  <- variables[variables != ""]
   dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
@@ -11,19 +11,19 @@ VaribleChartsIndviduals <- function(jaspResults, dataset, options){
   jaspResults[["intro"]]$position <- 0
 
   #ImR chart
-  if(options$ImRchart){
-    if(is.null(jaspResults[["Ichart"]])){
+  if (options$ImRchart) {
+    if (is.null(jaspResults[["Ichart"]])) {
       jaspResults[["Ichart"]] <- createJaspContainer(gettext("Charts per variable"))
     }
 
     Iplot <- jaspResults[["Ichart"]]
 
-    for(var in variables){
+    for (var in variables) {
       Iplot[[var]] <- .IMRchart(dataset = dataset, options = options, variable = var)
     }
   }
 }
-.IMRchart <- function(dataset, options, variable){
+.IMRchart <- function(dataset, options, variable) {
 
   title <- gettextf("Variable: %s", variable )
   ppPlot <- createJaspPlot(width = 700, height = 350, title = title)

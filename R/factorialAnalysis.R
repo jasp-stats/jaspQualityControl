@@ -15,26 +15,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-factorialAnalysis <- function(jaspResults, dataset, options, ...){
+factorialAnalysis <- function(jaspResults, dataset, options, ...) {
 
   ready <- (length(options[["FAassignedFactors"]]) >= 2 && !is.null(options[["FAresponse"]]))
 
-  if(ready)
+  if (ready)
     dataset <- .factorialAnalysisReadData(dataset, options)
 
-  if(is.null(jaspResults[["factorialRegressionANOVA"]]))
+  if (is.null(jaspResults[["factorialRegressionANOVA"]]))
     .factorialRegressionANOVAcreateTable(jaspResults, options)
 
-  if(is.null(jaspResults[["factorialRegressionCoefficients"]]))
+  if (is.null(jaspResults[["factorialRegressionCoefficients"]]))
     .factorialRegressionCoefficientsCreateTable(jaspResults, options)
 
   .factorialRegression(jaspResults, dataset, options, ready)
 
 }
 
-.factorialAnalysisReadData <- function(dataset, options){
+.factorialAnalysisReadData <- function(dataset, options) {
 
-  if(!is.null(dataset))
+  if (!is.null(dataset))
     return(dataset)
   else
     return(.readDataSetToEnd(columns.as.numeric = c(options[["FArunOrder"]],
@@ -43,9 +43,9 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
 
 }
 
-.factorialRegression <- function(jaspResults, dataset, options, ready, ...){
+.factorialRegression <- function(jaspResults, dataset, options, ready, ...) {
 
-  if(!ready)
+  if (!ready)
     return()
 
   factors <- unlist(dataset[,options[["FAassignedFactors"]]])
@@ -59,32 +59,32 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
          fit <- lm(response ~., forFit),
          fit <- lm(paste0("response ~ (.)^", order), forFit))
 
-  if(options[["resNorm"]]){
-    if(is.null(jaspResults[["resNorm"]])){
+  if (options[["resNorm"]]) {
+    if (is.null(jaspResults[["resNorm"]])) {
       jaspResults[["resNorm"]] <- createJaspContainer(gettext("Normal Probability Plot of Residuals"))
     }
     jaspResults[["resNorm"]] <- .factorialResNorm(jaspResults = jaspResults, options = options, fit = fit)
     jaspResults[["resNorm"]]$position <- 3
   }
 
-  if(options[["resHist"]]){
-    if(is.null(jaspResults[["resHist"]])){
+  if (options[["resHist"]]) {
+    if (is.null(jaspResults[["resHist"]])) {
       jaspResults[["resHist"]] <- createJaspContainer(gettext("Histogram of Residuals"))
     }
     jaspResults[["resHist"]] <- .factorialResHist(jaspResults = jaspResults, options = options, fit = fit)
     jaspResults[["resHist"]]$position <- 4
   }
 
-  if(options[["resFitted"]]){
-    if(is.null(jaspResults[["resFitted"]])){
+  if (options[["resFitted"]]) {
+    if (is.null(jaspResults[["resFitted"]])) {
       jaspResults[["resFitted"]] <- createJaspContainer(gettext("Residuals vs. Fitted Value"))
     }
     jaspResults[["resFitted"]] <- .factorialResFitted(jaspResults = jaspResults, options = options, fit = fit)
     jaspResults[["resFitted"]]$position <- 5
   }
 
-  if(options[["resOrder"]]){
-    if(is.null(jaspResults[["resOrder"]])){
+  if (options[["resOrder"]]) {
+    if (is.null(jaspResults[["resOrder"]])) {
       jaspResults[["resOrder"]] <- createJaspContainer(gettext("Residuals vs. Run Order"))
     }
     jaspResults[["resOrder"]] <- .factorialResOrder(jaspResults = jaspResults, options = options, fit = fit)
@@ -94,7 +94,7 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   return()
 }
 
-.factorialResNorm <- function(jaspResults, options, fit){
+.factorialResNorm <- function(jaspResults, options, fit) {
 
   plot <- createJaspPlot(title = "Normal Probability Plot of Residuals", width = 500, height = 500)
   plot$dependOn("resNorm")
@@ -113,7 +113,7 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   return(plot)
 }
 
-.factorialResHist <- function(jaspResults, options, fit){
+.factorialResHist <- function(jaspResults, options, fit) {
 
   plot <- createJaspPlot(title = "Histogram of Residuals", width = 500, height = 500)
   plot$dependOn("resHist")
@@ -132,7 +132,7 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   return(plot)
 }
 
-.factorialResFitted <- function(jaspResults, options, fit){
+.factorialResFitted <- function(jaspResults, options, fit) {
 
   plot <- createJaspPlot(title = "Residuals vs. Fitted Value", width = 500, height = 500)
   plot$dependOn("resFitted")
@@ -150,7 +150,7 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   return(plot)
 }
 
-.factorialResOrder <- function(jaspResults, options, fit){
+.factorialResOrder <- function(jaspResults, options, fit) {
 
   plot <- createJaspPlot(title = "Residuals vs. Run Order", width = 500, height = 500)
   plot$dependOn("resOrder")
@@ -168,13 +168,13 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   return(plot)
 }
 
-.factorialRegressionANOVAcreateTable <- function(jaspResults, options){
+.factorialRegressionANOVAcreateTable <- function(jaspResults, options) {
 
   factorialRegressionANOVA <- createJaspTable(gettext("ANOVA"))
   factorialRegressionANOVA$position <- 1
 
   factorialRegressionANOVA$dependOn(c("FAassginedFactors",
-                                           "FAresponse"))
+                                      "FAresponse"))
 
   factorialRegressionANOVA$addColumnInfo(name = "terms", title = "", type = "string")
   factorialRegressionANOVA$addColumnInfo(name = "df", title = gettext("df"), type = "integer")
@@ -186,13 +186,13 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   jaspResults[["factorialRegressionANOVA"]] <- factorialRegressionANOVA
 }
 
-.factorialRegressionCoefficientsCreateTable <- function(jaspResults, options){
+.factorialRegressionCoefficientsCreateTable <- function(jaspResults, options) {
 
   factorialRegressionCoefficients <- createJaspTable(gettext("Coefficients"))
   factorialRegressionCoefficients$position <- 2
 
   factorialRegressionCoefficients$dependOn(c("FAassginedFactors",
-                                           "FAresponse"))
+                                             "FAresponse"))
 
   factorialRegressionCoefficients$addColumnInfo(name = "terms", title = "", type = "string")
   factorialRegressionCoefficients$addColumnInfo(name = "effect", title = gettext("Effect"), type = "number")
