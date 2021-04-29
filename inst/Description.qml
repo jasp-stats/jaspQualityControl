@@ -71,11 +71,6 @@ Description
 		title:			qsTr("Time Weighted Charts")
 		func:			"timeWeightedCharts"
 	}
-		Analysis
-	{
-		title:			qsTr("Time Weighted Charts")
-		func:			"TimeWeightedCharts"
-	}
 
 	 GroupTitle
 	 {
