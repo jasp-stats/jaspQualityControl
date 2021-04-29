@@ -540,10 +540,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   for (op in operatorVector) {
     dataPerOP <- subset(dataset, dataset[operators] == op)
     plot <- createJaspPlot(title = gettextf("Operator %s", op), width = 600, height = 300)
-    if (type == "Range") {
-      p <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE)
+    manualSubgroups <- as.numeric(dataPerOP[[parts]])
+    if (type == "Range"){
+      p <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups)
     }else{
-      p <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE)
+      p <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups)
     }
     plot$plotObject <- p
     plotContainer[[op]] <- plot

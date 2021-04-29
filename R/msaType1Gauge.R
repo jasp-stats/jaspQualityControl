@@ -246,7 +246,12 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
                                   ggplot2::aes(x = x, y = y, label = l), vjust="bottom",hjust="inward", color = "darkred", size = 5)
     }
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(datayBreaks)
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(x = Observation, n = 10)
+    if (max(Observation) <= 15){
+      nxBreaks <- max(Observation)
+    }else{
+      nxBreaks <- 5
+    }
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(x = Observation, n = nxBreaks)
     xBreaks[1] <- 1
     p <- p + jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1)) +
       ggplot2::geom_hline(yintercept = options$biasReferenceValue, data = dataset,
@@ -254,7 +259,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
       ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.1, y = options$biasReferenceValue, l = "Ref"),
                                 ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "darkgreen", size = 5) +
       ggplot2::scale_x_continuous(name = "Observation", breaks = xBreaks, limits = c(min(xBreaks), max(xBreaks) * 1.2)) +
-      ggplot2::scale_y_continuous(name = measurements, breaks = yBreaks) +
+      ggplot2::scale_y_continuous(name = measurements, breaks = yBreaks, limits = range(yBreaks)) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw() +
       ggplot2::theme(plot.margin = ggplot2::unit(c(.5, .5, .5, .5), "cm"))
