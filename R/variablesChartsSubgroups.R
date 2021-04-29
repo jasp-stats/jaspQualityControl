@@ -106,7 +106,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     p1 <- p1 + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
     p2 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits2"]]) + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)
   }
-  p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
+  p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(2:1, 2), removeXYlabels= "x")
 
   return(p3)
 }
