@@ -37,8 +37,13 @@ Form
             VariablesForm
             {
                     preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-                    AvailableVariablesList		{	name:  "rsmVariables2";	    source:"rsmVariables" }
-                    AssignedPairsVariablesList	{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
+                    AvailableVariablesList
+                    {
+                        name:  "rsmVariables2";	    source:"rsmVariables"
+                        rowComponent: DoubleField { name: "Point"}
+                    }
+                    AssignedPairsVariablesList
+                    {	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
             }
             CheckBox
             {

@@ -194,6 +194,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }
     
     
+    print(options[["rsmVariables2"]])
     
     
     l_gen <- 1:op1
@@ -216,9 +217,24 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
         po <- as.formula(paste("~x", l_gen[optio %in% i[1]], 
                                "+", "x",
                                l_gen[optio %in% i[2]], sep = ""))
+        
+        point_spec <- c()
+        k <- 1
+        e <- 1
+        for (j in options[["rsmVariables2"]]) {
+          if (i[1] != j & i[2] != j){
+            point_spec[k] <- options[["rsmVariables2"]]
+            names(point_spec)[k] <- paste("x", j, sep = "") 
+            k <- k + 1
+          }
+          e <- e + 1
+        }
+        
+       
+        
         heli.rsm1 <- rsm::rsm(str3, data = var.code)
         .responseSurfaceContourFill(contourPlot[[paste0("plotObject", col, sep = "")]], 
-                                    heli.rsm1, po, options)
+                                    heli.rsm1, po, options, point_spec)
         col <- col + 1
       }
       
@@ -239,16 +255,18 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 
-.responseSurfaceContourFill <- function(contourPlot,heli.rsm1,po, options, dataset) {
+.responseSurfaceContourFill <- function(contourPlot,heli.rsm1,po, options, point_spec, dataset) {
   
   op1  <- length(options[["rsmVariables"]]) 
   op2  <- length(options[["rsmResponseVariables"]]) 
   op3  <- length(options[["rsmBlocks"]]) 
   
   opt2 <- options[["rsmResponseVariables"]]
+  
+  
   contour.fill <- function () {
     plot <- persp(heli.rsm1, po, 
-          at = summary(heli.rsm1)$canonical$xs, contours = "colors", 
+          at = point_spec, contours = "colors", 
           col = rainbow(options["divide"]),
           zlab = opt2,
           ticktype = "detailed",
