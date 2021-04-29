@@ -88,7 +88,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   )
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$Stdv, UCL))
 
-  p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
+  p1 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits2"]])
+
+  p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
@@ -99,12 +101,10 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  p2 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits2"]])
-
   if (time) {
     xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
-    p1 <- p1 + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
-    p2 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits2"]]) + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)
+    p1 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits2"]]) + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)
+    p2 <- p2 + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
   }
   p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
 
