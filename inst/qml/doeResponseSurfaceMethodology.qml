@@ -26,9 +26,30 @@ Form
         VariablesForm
         {
             AvailableVariablesList { name: "rsmVariablesList" }
-            AssignedVariablesList  { name: "rsmVariables";	        title: qsTr("Predictors");suggestedColumns:   ["scale", "ordinal", "nominal"]   }
+            AssignedVariablesList
+            {
+                name: "rsmVariables"
+                title: qsTr("Predictors")
+                suggestedColumns:   ["scale", "ordinal", "nominal"]
+
+
+
+            }
             AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
             AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
+        }
+
+
+        ComponentsList
+        {
+            name: "Component"
+            title: "Location of Response Surface/Contour Plot"
+            source: "rsmVariables2"
+            rowComponent: Row
+            {
+                TextField {name: "Text"; value: rsmVariables2.value}
+                DoubleField {name: "Point"; negativeValues: true}
+            }
         }
 		
         Section
@@ -40,11 +61,17 @@ Form
                     AvailableVariablesList
                     {
                         name:  "rsmVariables2";	    source:"rsmVariables"
-                        rowComponent: DoubleField { name: "Point"}
+
                     }
+
+
                     AssignedPairsVariablesList
                     {	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
+
+
             }
+
+
             CheckBox
             {
                     name:                      "contour";label:   qsTr("Contour plots")

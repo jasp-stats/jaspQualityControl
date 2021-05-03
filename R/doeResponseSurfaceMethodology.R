@@ -140,15 +140,22 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   
   if (op_pair == 0 & options[["contour"]]) {
     jaspResults[["contourPlot"]][["1"]] <- createJaspPlot()
+    
     return ()
   }else {
     
-    data <- .readDataSetToEnd(columns.as.numeric = c(options[["rsmVariables"]],
-                                                     options[["rsmResponseVariables"]]),
+    
+    if (options[["rsmBlocks"]] != ""){
+      data <- .readDataSetToEnd(columns.as.numeric = c(options[["rsmVariables"]],
+                                                       options[["rsmResponseVariables"]]),
                                 columns.as.factor  = options[["rsmBlocks"]])
+    }else{
+      data <- .readDataSetToEnd(columns.as.numeric = c(options[["rsmVariables"]],
+                                                       options[["rsmResponseVariables"]]))
+    }
   
     
-    print(data)
+    
     
     
     pair <- options[["pairs"]]
@@ -159,10 +166,12 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     
     opt1 <- colnames(data)[1:op1]
     opt2 <- colnames(data)[(op1+1)]
-    if (op3 > 0) {
+    if (options[["rsmBlocks"]] != "") {
       opt3 <- colnames(data)[(op1+2)]
+    }else{
+      data[,(op1+2)] <- rep(1, times = nrow(data))
     }
-    
+    print(data)
     
     optio <- options[["rsmVariables"]]
     data.list <- list()
@@ -188,19 +197,28 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
           width = 320, height = 320)
         plot$dependOn(c("rsmResponseVariables", 
                         "rsmBlocks",
-                        "contour", "psi", "theta","pairs"))
+                        "contour", "psi", "theta","pairs", "Component"))
         contourPlot[[paste0("plotObject", i, sep = "")]] <- plot
       }
     }
     
     
-    print(options[["rsmVariables2"]])
     
+    print(var.code)
     
     l_gen <- 1:op1
     
     col <- 1
     
+    point_vec <- c()
+    
+    for (i in seq_along(options[["rsmVariables"]])) {
+      point_vec[i] <- options[["Component"]][[i]][["Point"]]
+    }
+    names(point_vec) <- paste("x", seq_along(options[["rsmVariables"]]), sep = "")
+    
+  
+ 
     for (i in pair){
       
       if (!(i[1] == "") & !(i[2] == "")) {
@@ -218,23 +236,20 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                "+", "x",
                                l_gen[optio %in% i[2]], sep = ""))
         
-        point_spec <- c()
+        point_spec_r <- c()
         k <- 1
-        e <- 1
-        for (j in options[["rsmVariables2"]]) {
-          if (i[1] != j & i[2] != j){
-            point_spec[k] <- options[["rsmVariables2"]]
-            names(point_spec)[k] <- paste("x", j, sep = "") 
+        for (j in 1:op1) {
+          if (!(l_gen[optio %in% i[1]] == j || l_gen[optio %in% i[2]] == j)){
+            point_spec_r[k] <- point_vec[j]
+            names(point_spec_r)[k] <- paste("x", j, sep = "") 
             k <- k + 1
           }
-          e <- e + 1
         }
         
-       
-        
+        print(point_spec_r)
         heli.rsm1 <- rsm::rsm(str3, data = var.code)
         .responseSurfaceContourFill(contourPlot[[paste0("plotObject", col, sep = "")]], 
-                                    heli.rsm1, po, options, point_spec)
+                                    heli.rsm1, po, options, point_spec_r)
         col <- col + 1
       }
       
@@ -255,23 +270,25 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 
-.responseSurfaceContourFill <- function(contourPlot,heli.rsm1,po, options, point_spec, dataset) {
+.responseSurfaceContourFill <- function(contourPlot,heli.rsm1,po, options, point_spec_r, dataset) {
   
   op1  <- length(options[["rsmVariables"]]) 
   op2  <- length(options[["rsmResponseVariables"]]) 
   op3  <- length(options[["rsmBlocks"]]) 
   
   opt2 <- options[["rsmResponseVariables"]]
-  
+  print(po)
+  print(point_spec_r)
   
   contour.fill <- function () {
     plot <- persp(heli.rsm1, po, 
-          at = point_spec, contours = "colors", 
+          at = point_spec_r, contours = "colors", 
           col = rainbow(options["divide"]),
           zlab = opt2,
           ticktype = "detailed",
           phi = options[["phi"]]*360,
           theta = (options[["theta"]]*360 + 330))
+    mtext(plot[[1]][[4]][[5]])
     if (options[["legend"]]){
       #Divide the difference between the upper and lower z-axis boundary by number of colours
       z_step <- (plot[[1]][[5]][[2]] - plot[[1]][[5]][[1]])/(length(rainbow(options["divide"])))
