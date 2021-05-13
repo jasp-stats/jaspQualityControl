@@ -6,7 +6,7 @@ Date: 2021-03-07
 Author: JASP team
 Website: https://github.com/jasp-stats/jaspProcessControl
 Maintainer: JASP <info@jasp-stats.org>
-Description: Quality Control Module for JASP
+Description: Investigate if a manufactured product adheres to a defined set of quality criteria.
 License: GPL (>= 2)
 Encoding: UTF-8
 Imports:
