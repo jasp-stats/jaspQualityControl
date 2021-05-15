@@ -59,7 +59,7 @@
 }
 
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "") {
+.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", allAxis = TRUE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   means <- rowMeans(data)
   if (manualSubgroups != ""){
@@ -109,10 +109,15 @@
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
     p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
   }
-  p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = gettext("Subgroup mean") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line(color = "blue") +
+  p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5)
+    if (allAxis){
+      p <- p + ggplot2::scale_y_continuous(name = gettext("Subgroup mean") ,limits = yLimits, breaks = yBreaks) +
+        ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits))
+    }else{
+      p <- p + ggplot2::scale_y_continuous(name = ggplot2::element_blank() ,limits = yLimits, breaks = yBreaks) +
+        ggplot2::scale_x_continuous(name = ggplot2::element_blank(), breaks = xBreaks, limits = range(xLimits))
+    }
+  p <- p + jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(means, UCL = UCL, LCL = LCL, center = center)$red_points, "red", "blue")) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()

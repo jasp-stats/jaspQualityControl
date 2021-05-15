@@ -103,11 +103,21 @@ Form
 				enabled:		variationReference.currentValue == "historicalStandardDeviation"
 			}
 			
-			DoubleField
+			
+			CheckBox
 			{
-				name:			"tolerance"
-				label:			qsTr("Tolerance:")
-				defaultValue:	10
+			name: "gaugeToleranceEnabled"
+			label: qsTr("Tolerance:")
+			checked: false
+			childrenOnSameRow: true
+			
+				DoubleField
+				{
+				name: "tolerance"
+				defaultValue: 1
+				min: 0.001
+				decimals: 3
+				}
 			}
 			
 			CheckBox
