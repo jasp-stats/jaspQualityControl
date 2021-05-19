@@ -11,22 +11,25 @@ License: GPL (>= 2)
 Encoding: UTF-8
 Imports:
   afex,
+  DoE.base,
   fitdistrplus,
+  FrF2,
   ggplot2,
+  ggrepel,
   goftest,
+  gridGraphics,
+  irr,
   jaspBase,
   jaspDescriptives,
   jaspGraphs,
-  mle.tools,
-  qcc,
-  irr,
   mixdist,
-  FrF2,
-  rsm,
-  DoE.base,
-  gridGraphics,
+  mle.tools,
+  psych,
+  qcc,
   ragg,
-  Rspc
+  rsm,
+  Rspc,
+  tidyr
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
