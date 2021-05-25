@@ -591,23 +591,22 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   if (ready) {
     byOperator <- split.data.frame(dataset, dataset[operators])
     partNames <- unique(dataset[[parts]])
-    meansPerOperator <- data.frame(Part = factor(partNames, partNames))
 
     for (name in names(byOperator)) {
       if (nrow(byOperator[[name]][measurements]) != length(partNames)) {
         plot$setError(gettext("Operators measured different number of parts."))
         return(plot)
       }
-      meansPerOperator <- cbind(meansPerOperator, rowMeans(byOperator[[name]][c(measurements)]))
     }
 
-    colnames(meansPerOperator)[-1] <- names(byOperator)
-    tidydata <- tidyr::gather(meansPerOperator, key = "Operator", value = "Measurements", -Part )
-
-    p <- ggplot2::ggplot(tidydata, ggplot2::aes(x = Part, y = Measurements, col = Operator, group = Operator)) +
+    means <- rowMeans(dataset[measurements])
+    df <- data.frame(Part = dataset[[parts]], Operator = dataset[[operators]], Means = means)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(means)
+    yLimits <- range(c(yBreaks, means))
+    p <- ggplot2::ggplot(df, ggplot2::aes(x = Part, y = Means, col = Operator, group = Operator)) +
       jaspGraphs::geom_line() +
       jaspGraphs::geom_point() +
-      ggplot2::scale_y_continuous(name = "Measurement", limits = c(min(meansPerOperator[names(byOperator)]) * 0.9, max(meansPerOperator[names(byOperator)]) * 1.1)) +
+      ggplot2::scale_y_continuous(name = "Measurement", breaks = yBreaks, limits = yLimits) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw() +
       ggplot2::theme(legend.position = 'right')
