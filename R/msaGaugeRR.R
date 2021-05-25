@@ -453,14 +453,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     plot$setError(gettext("More than 1 Measurement per Operator required."))
     return(plot)
   }
-  plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 1000, height = 300)
+  plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 1100, height = 400)
   operatorVector <- unique(dataset[[operators]])
   nOperators <- length(operatorVector)
   data <- dataset[measurements]
   if (type == "Range") {
     ChartData <- qcc::qcc(data, type= 'R', plot = FALSE)
+    leftLabel <- "Subgroup range"
   }else{
     ChartData <- qcc::qcc(data, type= 'xbar', plot = FALSE)
+    leftLabel <- "Subgroup mean"
   }
   center <- ChartData$center
   UCL <- max(ChartData$limits)
@@ -468,6 +470,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   manualLimits <- c(LCL, center, UCL)
 
   plotMat <- matrix(list(), 1, nOperators)
+  titleVector <- vector(mode = "character")
 
   for (i in 1:nOperators) {
     op <- as.character(operatorVector[i])
@@ -477,24 +480,39 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }else{
       title <- op
     }
+    titleVector <- c(titleVector, title)
     manualSubgroups <- as.numeric(dataPerOP[[parts]])
     if (type == "Range"){
       if (i == 1){
-        p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups)
-      }else{
-        p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups)
+        p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = FALSE,
+                          xAxisLab = ggplot2::element_blank(), yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
+      }else if(i == nOperators){
+        p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE,
+                                xAxisLab = ggplot2::element_blank(), yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
+      }
+      else{
+        p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
+                                xAxisLab = ggplot2::element_blank(), yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
       }
     }else{
       if (i == 1){
-      p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups)
+        p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
+                             warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = FALSE,
+                             xAxisLab = ggplot2::element_blank(), yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
+      }else if(i == nOperators){
+        p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
+                             warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
       }else{
-        p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, allAxis = FALSE)
+        p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
+                             warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
+                             xAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
       }
     }
     plotMat[[1, i]] <- p1
 
   }
-  p2 <- jaspGraphs::ggMatrixPlot(plotMat)
+  p2 <- jaspGraphs::ggMatrixPlot(plotList = plotMat, bottomLabels = c(rep("", as.integer(nOperators/2)), parts, rep("", nOperators - 1 - as.integer(nOperators/2))),
+                                 leftLabels = leftLabel, topLabels = titleVector)
   plot$plotObject <- p2
   return(plot)
 }
