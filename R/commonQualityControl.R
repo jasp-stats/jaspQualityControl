@@ -59,7 +59,7 @@
 }
 
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", allAxis = TRUE) {
+.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Subgroup mean", xAxisLab = "Subgroup", manualDataYaxis = "") {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   means <- rowMeans(data)
   if (manualSubgroups != ""){
@@ -79,7 +79,12 @@
     UCL <- max(sixsigma$limits)
     LCL <- min(sixsigma$limits)
   }
+  if (manualDataYaxis != ""){
+    manualMeans <- rowMeans(manualDataYaxis)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, manualMeans))
+  }else{
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, means))
+  }
   yLimits <- range(yBreaks)
   if (length(subgroups) <= 15){
     nxBreaks <- length(subgroups)
@@ -109,15 +114,16 @@
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
     p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
   }
-  p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5)
-    if (allAxis){
-      p <- p + ggplot2::scale_y_continuous(name = gettext("Subgroup mean") ,limits = yLimits, breaks = yBreaks) +
-        ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits))
-    }else{
-      p <- p + ggplot2::scale_y_continuous(name = ggplot2::element_blank() ,limits = yLimits, breaks = yBreaks) +
-        ggplot2::scale_x_continuous(name = ggplot2::element_blank(), breaks = xBreaks, limits = range(xLimits))
-    }
-  p <- p + jaspGraphs::geom_line(color = "blue") +
+  if (plotLimitLabels)
+    p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5)
+  if (yAxis){
+    p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab) ,limits = yLimits, breaks = yBreaks)
+  }else{
+    p <- p + ggplot2::scale_y_continuous(name = ggplot2::element_blank(), limits = yLimits, breaks = yBreaks, labels = NULL) +
+      ggplot2::theme(axis.line.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
+  }
+  p <- p + ggplot2::scale_x_continuous(name = gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
+    jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(means, UCL = UCL, LCL = LCL, center = center)$red_points, "red", "blue")) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
@@ -130,7 +136,7 @@
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "") {
+.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,  yAxisLab = "Subgroup range", xAxisLab = "Subgroup", manualDataYaxis = "") {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   range <- apply(data, 1, function(x) max(x) - min(x))
@@ -150,7 +156,12 @@
     UCL <- max(sixsigma$limits)
     LCL <- min(sixsigma$limits)
   }
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - (0.10 * abs(LCL)), range, UCL + (0.1 * UCL)), min.n = 4)
+  if (manualDataYaxis != ""){
+    manualRange <- apply(manualDataYaxis, 1, function(x) max(x) - min(x))
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, manualRange))
+  }else{
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - (0.10 * abs(LCL)), range, UCL + (0.1 * UCL)), min.n = 4)
+  }
   yLimits <- range(yBreaks)
   if (length(subgroups) <= 15){
     nxBreaks <- length(subgroups)
@@ -161,7 +172,6 @@
   prettyxBreaks[prettyxBreaks == 0] <- 1
   xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
   xLimits <- c(min(xBreaks), max(xBreaks) + 5)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
@@ -180,9 +190,16 @@
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
     p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
   }
-  p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = gettext("Subgroup range") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name= gettext("Subgroup") ,breaks = xBreaks, limits = range(xLimits)) +
+  if (plotLimitLabels)
+    p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5)
+  if (yAxis){
+    p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab) ,limits = yLimits, breaks = yBreaks)
+  }else{
+    p <- p +
+      ggplot2::scale_y_continuous(name = ggplot2::element_blank() ,limits = yLimits, breaks = yBreaks, labels = NULL) +
+      ggplot2::theme(axis.line.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
+  }
+  p <- p + ggplot2::scale_x_continuous(name= gettext(xAxisLab) ,breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(range, UCL = UCL, LCL = LCL, center = center)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
