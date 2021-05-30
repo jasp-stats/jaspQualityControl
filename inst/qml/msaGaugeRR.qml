@@ -22,6 +22,19 @@ Form
 {
 	usesJaspResults:							true
 	columns:									1
+	
+		DropDown
+	{
+		name: "gaugeRRdataFormat"
+		label: qsTr("Data format")
+		indexDefaultValue: 0
+		values:
+			[
+			{label: qsTr("Long format"),					value: "gaugeRRlongFormat"},
+			{label: qsTr("Wide format"),				value: "gaugeRRwideFormat"},
+		]
+		id: gaugeRRdataFormat
+	}
 
 	VariablesForm
 	{
@@ -49,6 +62,16 @@ Form
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
+		
+						AssignedVariablesList
+		{
+			id:									variable4
+			name:								"measurementsLong"
+			title:								qsTr("Measurements")
+			singleVariable:						true
+			visible:							gaugeRRdataFormat.currentValue == "gaugeRRlongFormat"
+			allowedColumns:						["scale"]
+		}
 
 		AssignedVariablesList
 		{
@@ -56,8 +79,11 @@ Form
 			name:								"measurements"
 			title:								qsTr("Measurements")
 			singleVariable:						false
+			visible:							gaugeRRdataFormat.currentValue == "gaugeRRwideFormat"
 			allowedColumns:						["scale"]
 		}
+		
+
 
 	}
 	DropDown
@@ -232,6 +258,66 @@ Form
 				name: "gaugeByInteraction";		label: qsTr("Part x operator interaction plot")
 			}
 		}
+	}
+	
+	
+		Section
+	{
+		title: qsTr("ANOVA Method Report")
+		visible: gaugeRRmethod.currentValue == "anovaMethod"
+		
+		
+				TextField
+		{
+			id:						anovaGaugeTitle
+			label: 					qsTr("Title:")
+			name: 					"anovaGaugeTitle"
+			placeholderText:		qsTr("Measurement")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeName
+			label: 					qsTr("Gauge Name:")
+			name: 					"anovaGaugeName"
+			placeholderText:		qsTr("Name")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeDate
+			label: 					qsTr("Date:")
+			name: 					"anovaGaugeDate"
+			placeholderText:		qsTr("Date")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeReportedBy
+			label: 					qsTr("Reported by:")
+			name: 					"anovaGaugeReportedBy"
+			placeholderText:		qsTr("Name")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeMisc
+			label: 					qsTr("Misc:")
+			name: 					"anovaGaugeMisc"
+			placeholderText:		qsTr("Miscellaneous")
+			fieldWidth:				100
+		}
+		
+			CheckBox
+			{
+				name: "anovaGaugeReport";		label: qsTr("Show Report")
+			}
+		
+	
 	}
 	
 	Section
