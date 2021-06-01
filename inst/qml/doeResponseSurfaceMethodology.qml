@@ -47,7 +47,6 @@ Form
             source: "rsmVariables2"
             rowComponent: Row
             {
-                TextField {name: "Text"; value: rsmVariables2.value}
                 DoubleField {name: "Point"; negativeValues: true}
             }
         }
@@ -74,7 +73,12 @@ Form
 
             CheckBox
             {
-                    name:                      "contour";label:   qsTr("Contour plots")
+                    name:                      "contour";label:   qsTr("Contour Surface")
+                    CheckBox
+                    {
+                        name:                       "cplot"
+                        label:                      qsTr("Only show 2D plot")
+                    }
 
                     CheckBox
                     {
