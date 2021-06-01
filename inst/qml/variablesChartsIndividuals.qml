@@ -5,7 +5,7 @@ import JASP.Widgets 							1.0
 
 Form
 {
-    columns:									1
+	columns:									1
 
 	VariablesForm
 	{
@@ -28,19 +28,13 @@ Form
 
 	Group
 	{
-		title: 									qsTr("Charts for Subgroups")
-		columns: 								1
-	
-		CheckBox 
-		{	
-			name: 								"Xbarchart"
-			label: 								qsTr("X-bar & R chart")              
-		}
+		title: 									qsTr("Charts for Individuals")
 
-		CheckBox 
-		{	
-			name: 								"Schart"
-			label: 								qsTr("X-bar & S chart")
+		CheckBox
+		{
+			name: 								"ImRchart"
+			label: 								qsTr("I-MR chart")
+			checked: 							true
 		}
-    }
+	}
 }

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspProcessControl NA\n"
-"POT-Creation-Date: 2021-03-06 15:53\n"
+"Project-Id-Version: jaspProcessControl 0.15.0\n"
+"POT-Creation-Date: 2021-05-07 13:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -10,22 +10,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 
-msgid "Select one of the control charts from the interface."
+msgid "Cumulative sum chart"
 msgstr ""
 
-msgid "P chart"
-msgstr ""
-
-msgid "NP chart"
-msgstr ""
-
-msgid "Laney P' chart"
-msgstr ""
-
-msgid "C chart"
-msgstr ""
-
-msgid "U chart"
+msgid "Exponentially weighted moving average chart"
 msgstr ""
 
 msgid "CL = %g"
@@ -35,6 +23,39 @@ msgid "UCL = %g"
 msgstr ""
 
 msgid "LCL = %g"
+msgstr ""
+
+msgid "Cumulative sum"
+msgstr ""
+
+msgid "Subgroups"
+msgstr ""
+
+msgid "Standard Deviation"
+msgstr ""
+
+msgid "Subgroup"
+msgstr ""
+
+msgid "P Control Chart"
+msgstr ""
+
+msgid "NP Control Chart"
+msgstr ""
+
+msgid "Laney P' Control Chart"
+msgstr ""
+
+msgid "C Control Chart"
+msgstr ""
+
+msgid "U Control Chart"
+msgstr ""
+
+msgid "Laney U' Control Chart"
+msgstr ""
+
+msgid "Individual and Moving Range Control Charts"
 msgstr ""
 
 msgid "Proportion"
@@ -52,40 +73,40 @@ msgstr ""
 msgid "Observation"
 msgstr ""
 
-msgid "Individual charts"
+msgid "Control Charts"
 msgstr ""
 
-msgid "Moving range charts"
+msgid "You must enter at least 2 measurements to get this output."
 msgstr ""
 
-msgid "Variable: %s"
+msgid "Subgroup mean"
 msgstr ""
 
-msgid "Value"
+msgid "Time"
 msgstr ""
 
-msgid "X bar chart"
+msgid "Subgroup range"
 msgstr ""
 
-msgid "R chart"
+msgid "Test Results for %s Chart"
 msgstr ""
 
-msgid "S Chart"
+msgid "Test 1: Sporadic issue."
 msgstr ""
 
-msgid "Standard Deviation"
+msgid "Test 2: Mean shift."
 msgstr ""
 
-msgid "Subgroup"
+msgid "Test 3: Trend."
 msgstr ""
 
-msgid "Mean"
+msgid "Test 4: Increasing variation."
 msgstr ""
 
-msgid "Range"
+msgid "Test 5: Reducing variation."
 msgstr ""
 
-msgid "Descriptives for %s"
+msgid "Test 6: Bimodal distribution."
 msgstr ""
 
 msgid "Available Factorial Designs (with Resolution)"
@@ -128,6 +149,54 @@ msgid "RunOrder"
 msgstr ""
 
 msgid "Design Choice"
+msgstr ""
+
+msgid "Normal Probability Plot of Residuals"
+msgstr ""
+
+msgid "Histogram of Residuals"
+msgstr ""
+
+msgid "Residuals vs. Fitted Value"
+msgstr ""
+
+msgid "Residuals vs. Run Order"
+msgstr ""
+
+msgid "ANOVA"
+msgstr ""
+
+msgid "df"
+msgstr ""
+
+msgid "SS"
+msgstr ""
+
+msgid "MS"
+msgstr ""
+
+msgid "F"
+msgstr ""
+
+msgid "p"
+msgstr ""
+
+msgid "Coefficients"
+msgstr ""
+
+msgid "Effect"
+msgstr ""
+
+msgid "Unstandardized"
+msgstr ""
+
+msgid "Standard Error"
+msgstr ""
+
+msgid "Standardized"
+msgstr ""
+
+msgid "t"
 msgstr ""
 
 msgid "Cohen's Kappa"
@@ -190,19 +259,19 @@ msgstr ""
 msgid "Part"
 msgstr ""
 
-msgid "Reference Value"
+msgid "Reference value"
 msgstr ""
 
-msgid "Observed Mean"
+msgid "Mean"
 msgstr ""
 
 msgid "Bias"
 msgstr ""
 
-msgid "Percent Bias"
+msgid "Percent bias"
 msgstr ""
 
-msgid "p (t-test of Bias against 0)"
+msgid "p (<i>t</i>-test of bias against 0)"
 msgstr ""
 
 msgid "Gauge Linearity 1"
@@ -214,10 +283,10 @@ msgstr ""
 msgid "Coefficient"
 msgstr ""
 
-msgid "SE Coefficient"
+msgid "Std. Error coefficients"
 msgstr ""
 
-msgid "p"
+msgid "<i>p</i>"
 msgstr ""
 
 msgid "Gauge Linearity 2"
@@ -229,10 +298,10 @@ msgstr ""
 msgid "Linearity"
 msgstr ""
 
-msgid "R-squared"
+msgid "R%1$s"
 msgstr ""
 
-msgid "Percent Linearity"
+msgid "% Linearity"
 msgstr ""
 
 msgid "Bias and Linearity Graph"
@@ -245,6 +314,9 @@ msgid "Average"
 msgstr ""
 
 msgid "Gauge r&R ANOVA Table"
+msgstr ""
+
+msgid "Descriptives Table"
 msgstr ""
 
 msgid "Range Chart by Operator"
@@ -277,10 +349,7 @@ msgstr ""
 msgid "Two-Way ANOVA Table with Interaction"
 msgstr ""
 
-msgid "Cases"
-msgstr ""
-
-msgid "df"
+msgid "Sources"
 msgstr ""
 
 msgid "Sum of Squares"
@@ -289,10 +358,7 @@ msgstr ""
 msgid "Mean Square"
 msgstr ""
 
-msgid "F"
-msgstr ""
-
-msgid "r & R Table 1"
+msgid "Gauge r & R Variance Components"
 msgstr ""
 
 msgid "Source"
@@ -301,10 +367,10 @@ msgstr ""
 msgid "Variation"
 msgstr ""
 
-msgid "Percent Contribution to Total"
+msgid "% Contribution"
 msgstr ""
 
-msgid "Total r & R"
+msgid "Total Gauge r & R"
 msgstr ""
 
 msgid "Repeatability"
@@ -322,49 +388,52 @@ msgstr ""
 msgid "Total Variation"
 msgstr ""
 
-msgid "r & R Table 2"
+msgid "Gauge Evaluation"
 msgstr ""
 
-msgid "SD"
+msgid "Std. Deviation"
 msgstr ""
 
-msgid "Study Variation (SD * %.2f)"
+msgid "Study variation"
 msgstr ""
 
-msgid "Percent Study Variation"
+msgid "% Study variation"
 msgstr ""
 
-msgid "Percent Tolerance"
+msgid "% Tolerance"
+msgstr ""
+
+msgid "Number of distinct categories = %i"
+msgstr ""
+
+msgid "Study variation is calculated as Std. Deviation * %.2f"
 msgstr ""
 
 msgid "Two-Way ANOVA Table without Interaction"
 msgstr ""
 
-msgid "Variation Components Graph"
-msgstr ""
-
-msgid "Gauge r&R"
-msgstr ""
-
-msgid "Repeat"
-msgstr ""
-
-msgid "Reprod"
-msgstr ""
-
-msgid "Part-to-Part"
-msgstr ""
-
-msgid "Percent Contribution"
+msgid "Components of Variation"
 msgstr ""
 
 msgid "Number of observations is < 2 in %s after grouping on %s"
 msgstr ""
 
-msgid "Operator %s"
+msgid "Descriptives"
 msgstr ""
 
-msgid "At least 2 measurements per operator required."
+msgid "Std. Dev."
+msgstr ""
+
+msgid "Min."
+msgstr ""
+
+msgid "Max."
+msgstr ""
+
+msgid "%s Chart by Operator"
+msgstr ""
+
+msgid "Operator %s"
 msgstr ""
 
 msgid "Scatterplot of Operator A vs Operator B"
@@ -373,10 +442,13 @@ msgstr ""
 msgid "Measurements by Part"
 msgstr ""
 
-msgid "Measurements by Operator"
+msgid "Measurement by Operator"
 msgstr ""
 
 msgid "Parts by Operator Interaction"
+msgstr ""
+
+msgid "Operators measured different number of parts."
 msgstr ""
 
 msgid "Scatterplot of Operator A, Operator B vs Part"
@@ -400,7 +472,52 @@ msgstr ""
 msgid "%GRR"
 msgstr ""
 
-msgid "Plotting not possible: More than 2 Operators"
+msgid "Scatterplot of Operator vs Operator"
+msgstr ""
+
+msgid "Cannot plot scatterplot for less than 2 operators."
+msgstr ""
+
+msgid "Scatterplot of Operator  %s vs Operator %s"
+msgstr ""
+
+msgid "Matrix Plot for Operators"
+msgstr ""
+
+msgid "Gauge r&R"
+msgstr ""
+
+msgid "Repeat"
+msgstr ""
+
+msgid "Reprod"
+msgstr ""
+
+msgid "Part-to-Part"
+msgstr ""
+
+msgid "Percent Contribution"
+msgstr ""
+
+msgid "Percent Study Variation"
+msgstr ""
+
+msgid "Percent Tolerance"
+msgstr ""
+
+msgid "Gauge r&R Tables"
+msgstr ""
+
+msgid "Measurement by part x operator plot"
+msgstr ""
+
+msgid "Gauge r&R (Nested)"
+msgstr ""
+
+msgid "Variance Components"
+msgstr ""
+
+msgid "Measurements by part x operator"
 msgstr ""
 
 msgid "Run Chart"
@@ -415,19 +532,22 @@ msgstr ""
 msgid "Histogram Bias"
 msgstr ""
 
-msgid "Bias and Capability Table"
+msgid "Bias and Gauge Capability Table"
 msgstr ""
 
 msgid "Basic Statistics"
 msgstr ""
 
-msgid "SV(%.2f * SD)"
+msgid "Std. Deviation (<i>s</i>)"
 msgstr ""
 
 msgid "Tolerance"
 msgstr ""
 
-msgid "Bias Percent"
+msgid "% Bias"
+msgstr ""
+
+msgid "The study variation is calculated as %i * <i>s</i>."
 msgstr ""
 
 msgid "Capability"
@@ -439,55 +559,49 @@ msgstr ""
 msgid "Cgk"
 msgstr ""
 
-msgid "%Var(Repeatability)"
+msgid "% Var(Repeatability)"
 msgstr ""
 
-msgid "%Var(Repeatability and Bias)"
+msgid "% Var(Repeatability and bias)"
 msgstr ""
 
 msgid "t-Test of Observed Bias Against 0"
 msgstr ""
 
-msgid "LB"
+msgid "Lower"
 msgstr ""
 
-msgid "95% CI"
+msgid "%s CI for Bias"
 msgstr ""
 
-msgid "UB"
+msgid "Upper"
 msgstr ""
 
-msgid "t"
+msgid "<i>t</i>"
+msgstr ""
+
+msgid "<i>p<i/>"
 msgstr ""
 
 msgid "Bias Histogram"
 msgstr ""
 
-msgid "Probability Plots"
+msgid "Run Chart of %s"
 msgstr ""
 
-msgid "Probability Plot Table"
+msgid "Capability Studies"
 msgstr ""
 
 msgid "Process Capability of Measurements (Initial Capability Study)"
 msgstr ""
 
-msgid "Process Capability of Measurements (Follow-up Capability Study)"
+msgid "Process Capability of Measurements (Follow-Up Capability Study)"
 msgstr ""
 
-msgid "Nonnormal Capability Analysis"
+msgid "Process Capability of Measurements (Non-Normal Capability Study)"
 msgstr ""
 
-msgid "Histogram"
-msgstr ""
-
-msgid "Measurements"
-msgstr ""
-
-msgid "Capability of the Process"
-msgstr ""
-
-msgid "Process Data"
+msgid "Process Summary"
 msgstr ""
 
 msgid "LSL"
@@ -499,16 +613,22 @@ msgstr ""
 msgid "USL"
 msgstr ""
 
-msgid "Sample Average"
+msgid "Measurements"
 msgstr ""
 
-msgid "Sample N"
+msgid "Std. Deviation (Total)"
 msgstr ""
 
-msgid "Sd (Total)"
+msgid "Std. Deviation (Within)"
 msgstr ""
 
-msgid "Sd (Within)"
+msgid "The within standard deviation could not be calculated."
+msgstr ""
+
+msgid "Capability of the Process"
+msgstr ""
+
+msgid "Density"
 msgstr ""
 
 msgid "Process Capability (Within)"
@@ -544,10 +664,7 @@ msgstr ""
 msgid "Ppk"
 msgstr ""
 
-msgid "Process Capability based on Lognormal Distribution"
-msgstr ""
-
-msgid "Sd"
+msgid "Process Capability based on the %1$s Distribution"
 msgstr ""
 
 msgid "P (X < LSL)"
@@ -556,11 +673,68 @@ msgstr ""
 msgid "P (X > USL)"
 msgstr ""
 
-msgid "Process Capability based on Weibull Distribution"
+msgid "%1$s"
 msgstr ""
 
-msgid "Beta"
+msgid "Probability Tables and Plots"
 msgstr ""
 
-msgid "Theta"
+msgid "Probability Plots"
+msgstr ""
+
+msgid "Summary of Tests Against the %1$s Distribution"
+msgstr ""
+
+msgid "n"
+msgstr ""
+
+msgid "Mean (%1$s)"
+msgstr ""
+
+msgid "Std. deviation (%1$s)"
+msgstr ""
+
+msgid "Location (%1$s)"
+msgstr ""
+
+msgid "Scale (%1$s)"
+msgstr ""
+
+msgid "Shape (%1$s)"
+msgstr ""
+
+msgid "Scale (<i>k</i>)"
+msgstr ""
+
+msgid "<i>A</i>"
+msgstr ""
+
+msgid "Reject null distribution?"
+msgstr ""
+
+msgid "The Anderson-Darling statistic <i>A</i> is calculated against the %2$s distribution using the %3$s ranking method."
+msgstr ""
+
+msgid "Distribution Plot"
+msgstr ""
+
+msgid "Counts"
+msgstr ""
+
+msgid "Select one of the control charts from the interface."
+msgstr ""
+
+msgid "Charts per variable"
+msgstr ""
+
+msgid "Variable: %s"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "X-bar & R Control Chart"
+msgstr ""
+
+msgid "Xbar & s Control Chart"
 msgstr ""

@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-msaAttribute <- function(jaspResults, dataset, options, ...){
+msaAttribute <- function(jaspResults, dataset, options, ...) {
 
   measurements <- unlist(options$measurements)
   parts <- unlist(options$parts)
@@ -29,7 +29,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   factor.vars <- c(parts, operators, standards)
   factor.vars <- factor.vars[factor.vars != ""]
 
-  #if(length(measurements) == 0)
+  #if (length(measurements) == 0)
   #  return()
 
   if (is.null(dataset)) {
@@ -43,7 +43,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
   # Cohen's Kappa Operator vs Standard
   if (options[["AAAcohensKappa"]]) {
-    if(is.null(jaspResults[["cohensKappa"]])) {
+    if (is.null(jaspResults[["cohensKappa"]])) {
       jaspResults[["cohensKappa"]] <- createJaspContainer(gettext("Cohen's Kappa"))
       jaspResults[["cohensKappa"]]$position <- 17
     }
@@ -55,7 +55,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
   # Fleiss' Kappa
   if (options[["AAAfleissKappa"]]) {
-    if(is.null(jaspResults[["fleissKappa"]])) {
+    if (is.null(jaspResults[["fleissKappa"]])) {
       jaspResults[["fleissKappa"]] <- createJaspContainer(gettext("Cohen's Kappa"))
       jaspResults[["fleissKappa"]]$position <- 18
     }
@@ -65,14 +65,14 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   }
 
   # Attribute Agreement Analysis Table & Graph
-  if(length(measurements) == 0){
-    if(is.null(jaspResults[["AAAtableGraphs"]])) {
+  if (length(measurements) == 0) {
+    if (is.null(jaspResults[["AAAtableGraphs"]])) {
       jaspResults[["AAAtableGraphs"]] <- createJaspContainer(gettext("Attribute Agreement Analysis"))
       jaspResults[["AAAtableGraphs"]]$position <- 19
     }
     jaspResults[["AAAtableGraphs"]] <- .aaaTableGraphs(ready = ready, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
   }else{
-    if(is.null(jaspResults[["AAAtableGraphs"]])) {
+    if (is.null(jaspResults[["AAAtableGraphs"]])) {
       jaspResults[["AAAtableGraphs"]] <- createJaspContainer(gettext("Attribute Agreement Analysis"))
       jaspResults[["AAAtableGraphs"]]$position <- 19
     }
@@ -80,8 +80,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   }
 
   # Kendall Tau
-  if(options[["AAAkendallTau"]]){
-    if(is.null(jaspResults[["KendallTau"]])) {
+  if (options[["AAAkendallTau"]]) {
+    if (is.null(jaspResults[["KendallTau"]])) {
       jaspResults[["KendallTau"]] <- createJaspContainer(gettext("Kendall's Tau"))
       jaspResults[["KendallTau"]]$position <- 20
     }
@@ -93,7 +93,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   return()
 }
 
-.cohensKappa <- function(dataset, measurements, parts, operators, standards, options){
+.cohensKappa <- function(dataset, measurements, parts, operators, standards, options) {
 
   dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
@@ -106,7 +106,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
   appraiserVector <- vector(mode = "character")
   kappaVector <- vector(mode = "numeric")
-  for(i in 1:length(unique(dataset[[operators]]))){
+  for (i in 1:length(unique(dataset[[operators]]))) {
     appraiser <- as.character(unique(dataset[[operators]])[i])
     appraiserVector[i] <- appraiser
     onlyAppraiser <- subset(dataset, dataset[operators] == appraiser)
@@ -125,7 +125,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   return(table)
 }
 
-.fleissKappa <- function(dataset, measurements, parts, operators, standards, options){
+.fleissKappa <- function(dataset, measurements, parts, operators, standards, options) {
 
   table <- createJaspTable(title = gettext("Fleiss' Kappa"))
 
@@ -141,7 +141,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   kappaBetweenVector <- vector(mode = "numeric")
   kappaStandardVector <- vector(mode = "numeric")
 
-  for(i in 1:length(unique(dataset[[operators]]))){
+  for (i in 1:length(unique(dataset[[operators]]))) {
     appraiser <- as.character(unique(dataset[[operators]])[i])
     appraiserVector[i] <- appraiser
     onlyAppraiser <- subset(dataset, dataset[operators] == appraiser)
@@ -152,7 +152,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
   datasetLong <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
-  for(i in 1:length(unique(datasetLong[[operators]]))){
+  for (i in 1:length(unique(datasetLong[[operators]]))) {
     appraiser <- as.character(unique(datasetLong[[operators]])[i])
     onlyAppraiser <- subset(datasetLong, datasetLong[[operators]] == appraiser)
     kappaFrame <- data.frame(standard = onlyAppraiser[[standards]], measurement = onlyAppraiser[["Measurement"]])
@@ -161,7 +161,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   }
 
   reshapeData <- data.frame(rep(NA,nrow(subset(datasetLong, datasetLong[[operators]] == unique(datasetLong[[operators]])[1]))))
-  for(i in 1:length(unique(datasetLong[[operators]]))){
+  for (i in 1:length(unique(datasetLong[[operators]]))) {
     appraiser <- as.character(unique(datasetLong[[operators]])[i])
     reshapeData[,i] <- subset(datasetLong, datasetLong[operators] == appraiser)['Measurement']
   }
@@ -179,7 +179,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   return(table)
 }
 
-.aaaTableGraphs <- function(ready, dataset, measurements, parts, operators, standards, options){
+.aaaTableGraphs <- function(ready, dataset, measurements, parts, operators, standards, options) {
 
   tableWithin <- createJaspTable(title = gettext("Within Appraisers"))
   tableEachVsStandard <- createJaspTable(title = gettext("Each Appraiser vs Standard"))
@@ -188,23 +188,23 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
   allTables <- list(tableWithin, tableEachVsStandard, tableBetween, tableAllVsStandard)
 
-  for(table in allTables[1:2]){
+  for (table in allTables[1:2]) {
     table$addColumnInfo(name = "Appraiser",  title = gettext("Appraiser"), type = "string")
   }
 
-  for(table in allTables){
+  for (table in allTables) {
     table$addColumnInfo(name = "Inspected", title = gettext("Inspected"), type = "integer")
     table$addColumnInfo(name = "Matched", title = gettext("Matched"), type = "integer")
     table$addColumnInfo(name = "Percent", title = gettext("Percent"), type = "number")
 
   }
 
-  if(ready){
+  if (ready) {
     appraiserVector <- as.character(unique(dataset[[operators]]))
     numberInspected <- length(unique(dataset[[parts]]))
 
-    for(measurement in measurements){
-      if(is.numeric(dataset[[measurement]])){
+    for (measurement in measurements) {
+      if (is.numeric(dataset[[measurement]])) {
         dataset[measurement] <- as.character(dataset[[measurement]])
         dataset[standards] <- as.character(dataset[[standards]])
       }
@@ -212,7 +212,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
     matchesWithin <- vector(mode = "numeric")
 
-    for(i in 1:length(appraiserVector)){
+    for (i in 1:length(appraiserVector)) {
       onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
       matchesWithin[i] <- .countRowMatches(onlyAppraiser[measurements])
     }
@@ -221,7 +221,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
     matchesEachVsStandard <- vector(mode = "numeric")
 
-    for(i in 1:length(appraiserVector)){
+    for (i in 1:length(appraiserVector)) {
       onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
       matchesEachVsStandard[i] <- .countRowMatches(onlyAppraiser[c(measurements, standards)])
     }
@@ -230,7 +230,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
     percentEachVsStandard <- matchesEachVsStandard / numberInspected* 100
 
     reshapeData <- data.frame(subset(dataset, dataset[[operators]] == unique(dataset[[operators]])[1])[standards])
-    for(i in 1:length(appraiserVector)){
+    for (i in 1:length(appraiserVector)) {
       appraiser <- as.character(unique(dataset[[operators]])[i])
       reshapeData <- cbind(reshapeData, subset(dataset, dataset[operators] == appraiser)[measurements])
     }
@@ -241,7 +241,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
     matchesAllVsStandard <- .countRowMatches(reshapeData)
     percentAllVsStandard <- matchesAllVsStandard / numberInspected* 100
 
-    if(length(measurements) == 1){
+    if (length(measurements) == 1) {
       tableWithin$setError(gettext("More than 1 Measurement per Operator required."))
     }else{
       tableWithin$setData(list(      "Appraiser"       = appraiserVector,
@@ -273,9 +273,9 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   AAA[["Between"]] <- tableBetween
   AAA[["AllVsStandard"]] <-tableAllVsStandard
 
-  if(ready){
+  if (ready) {
 
-    if(length(measurements) > 1){
+    if (length(measurements) > 1) {
       plotWithin <- createJaspPlot(title = "Within Appraisers", width = 300, height = 400)
 
       withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
@@ -310,18 +310,18 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
   return(AAA)
 }
 
-.countRowMatches <- function(data){
+.countRowMatches <- function(data) {
   count <- 0
-  for(i in 1:nrow(data)){
+  for (i in 1:nrow(data)) {
     matches <- unlist(data[i,]) == data[i,1]
-    if(all(matches))
+    if (all(matches))
       count <- count + 1
   }
   return(count)
 }
 
 
-.kendallTau <- function(dataset, measurements, parts, operators, standards, options){
+.kendallTau <- function(dataset, measurements, parts, operators, standards, options) {
 
   operatorVector <- as.character(unique(dataset[[operators]]))
 
@@ -329,12 +329,12 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
   table$dependOn(c("AAAkendallTau", "measurements", "parts", "operators", "standard"))
 
-  if(!is.numeric(dataset[[measurements[1]]])){
+  if (!is.numeric(dataset[[measurements[1]]])) {
     table$setError(gettext("Kendall's Tau is only available for numeric measurements."))
   }else{
     table$addColumnInfo(name = "Operator",  title = gettext("Operator"), type = "string")
 
-    for(operator in operatorVector){
+    for (operator in operatorVector) {
       table$addColumnInfo(name = operator, title = gettext(operator), type = "number")
     }
 
@@ -342,11 +342,11 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
     standCorrVector <- vector(mode = "numeric")
     tableColumns <- list()
-    for(i in 1:length(operatorVector)){
+    for (i in 1:length(operatorVector)) {
       corrVector <- vector(mode = "numeric")
       operator1 <- subset(dataset, dataset[operators] == operatorVector[i])
-      for(j in 1:length(operatorVector)){
-        if(j == i){
+      for (j in 1:length(operatorVector)) {
+        if (j == i) {
           corrVector <- c(corrVector, 1)
         }else{
           operator2 <- subset(dataset, dataset[operators] == operatorVector[j])
@@ -369,7 +369,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...){
 
 .msaCheckErrors <- function(dataset, options) {
 
-  #if (options[["gaugeScatterPlotOperators"]]){
+  #if (options[["gaugeScatterPlotOperators"]]) {
   #  .hasErrors(dataset = dataset, type = "factorLevels",
   #             factorLevels.target  = options$operators, factorLevels.amount  = "> 2",
   #             exitAnalysisIfErrors = TRUE)

@@ -40,46 +40,36 @@ Form
 		}
 	}
 	
-		Group
-		{
+	Group
+	{
 		title: qsTr("Analysis Options")
-					DoubleField { name: "biasReferenceValue";	label: qsTr("Reference value:");		defaultValue: 0;	negativeValues: true; decimals: 5; fieldWidth: 60}
-					DoubleField { name: "biasTolerance";	label: qsTr("Tolerance value:");		defaultValue: 1;	negativeValues: true; decimals: 5; fieldWidth: 60}
-					DoubleField {
-								name: "biasPercentCG";
-								label: qsTr("Percent of tolerance for CG:");
-								defaultValue: 20;
-								negativeValues: false
-								min:			0.001;
-								max:			99.999;
-					}
-					
-		DropDown{
-				name: "BiasStudyVarMultiplierType"
-				label: qsTr("Study var. multiplier type")
-				indexDefaultValue: 0
-				values:
-						[
-						{label: qsTr("Std. Deviation"),		value: "svmSD"},
-						{label: qsTr("Percent"),				value: "svmPercent"},
-						]
-				id: studyVarMultiplierType
-				}
-										
-		DoubleField{ 
-					name: "BiasStudyVarMultiplier"
-					label: qsTr("Study var. multiplier value:")
-					fieldWidth: 60 
-					defaultValue: 6 
-					min:			0.001;
-					max:			99.999;
-					decimals: 3
-					}
-					
+		DoubleField { name: "biasReferenceValue";	label: qsTr("Reference value:");		defaultValue: 0;	negativeValues: true; decimals: 5; fieldWidth: 60}
+		DoubleField { name: "biasTolerance";	label: qsTr("Tolerance range:");		defaultValue: 1;	negativeValues: true; decimals: 5; fieldWidth: 60}
+		DoubleField {
+			name: "biasPercentCG";
+			label: qsTr("Percent of tolerance for Cg:");
+			defaultValue: 20;
+			negativeValues: false
+			min:			0.001;
+			max:			99.999;
 		}
-					
-		Group
-		{
+
+		DropDown{
+			name: "BiasStudyVarMultiplier"
+			label: qsTr("Study var. (number of std. deviations):")
+			indexDefaultValue: 0
+			values:
+				[
+				{label: qsTr("6"),		value: 6},
+				{label: qsTr("4"),		value: 4}
+			]
+			id: studyVarMultiplier
+		}
+
+	}
+
+	Group
+	{
 		
 		title: qsTr("Plots")
 		CheckBox
@@ -88,24 +78,70 @@ Form
 			
 			CheckBox
 			{
-			name: "biasRunDots";		label: qsTr("Display individual measurements")
+				name: "biasRunDots";		label: qsTr("Display individual measurements");		checked: true
+			}
+			
+			CheckBox
+			{
+				name: "biasRunTolLims";		label: qsTr("Display tolerance limits");		checked: true
 			}
 		}
 		CheckBox
 		{
-			name: "biasTable";		label: qsTr("Bias and capability table");		checked: true
+			name: "biasTable";		label: qsTr("Bias and gauge capability table");		checked: true
 		}
-			
+
 		CheckBox
 		{
 			name: "biasTtest";		label: qsTr("One sample T-test");		checked: true
+			CIField { name: "biasTtestConfidenceIntervalPercent"; label: qsTr("Confidence interval for bias");}
 
 		}
 		CheckBox
 		{
 			name: "biasHistogram";		label: qsTr("Histogram")
+			
+			DropDown {
+				name: "biasBinWidthType"
+				label: qsTr("Bin width type")
+				indexDefaultValue: 0
+				values:
+					[
+					{label: qsTr("Sturges"),				value: "sturges"},
+					{label: qsTr("Scott"),					value: "scott"},
+					{label: qsTr("Doane"),					value: "doane"},
+					{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
+					{label: qsTr("Manual"),					value: "manual"	}
+				]
+				id: binWidthType
+			}
+			DoubleField
+			{
+				name:			"biasNumberOfBins"
+				label:			qsTr("Number of bins")
+				defaultValue:	30
+				min:			3;
+				max:			10000;
+				enabled:		binWidthType.currentValue === "manual"
+			}
+			CheckBox
+			{
+				name: "biasHistMean";		label: qsTr("Display mean");		checked: true
+				CheckBox
+				{
+					name: "biasHistMeanConfidenceInterval";	label: qsTr("Confidence interval for mean")
+					checked: true
+					childrenOnSameRow: true
+					CIField { name: "biasHistMeanConfidenceIntervalPercent" }
+				}
+			}
+			
+			CheckBox
+			{
+				name: "biasHistRef";		label: qsTr("Display reference value");		checked: true
+			}
 		}
 
 
-		}
+	}
 }

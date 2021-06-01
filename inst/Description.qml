@@ -5,7 +5,7 @@ Description
 {
 	name				: "jaspProcessControl"
 	title				: qsTr("Quality Control")
-	description			: qsTr("A JASP module for quality control analyses.")
+	description			: qsTr("Investigate if a manufactured product adheres to a defined set of quality criteria.")
 	version				: "0.0.1"
 	author				: "JASP Team"
 	maintainer			: "JASP <info@jasp-stats.org>"
@@ -17,21 +17,26 @@ Description
 	{
 		title:			qsTr("Measurement Systems Analysis")
 		icon:			"processControl-measurement.svg"
-	} 
+	}
 	 Analysis
 	{
-		title:			qsTr("Type 1 Gauge")
+		title:			qsTr("Type 1 Study")
 		func:			"msaType1Gauge"
 	}
 	Analysis
 	{
-		title:			qsTr("Gauge Linearity and Bias")
+		title:			qsTr("Linearity Study")
 		func:			"msaGaugeLinearity"
 	}
 	Analysis
 	{
 		title:			qsTr("Gauge r&R")
 		func:			"msaGaugeRR"
+	}
+		Analysis
+	{
+		title:			qsTr("Gauge r&R (Non-Replicable Measurements)")
+		func:			"msaGaugeRRnonrep"
 	}
 	Analysis
 	{
@@ -46,25 +51,30 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Attribute Charts")
-		func:			"AttributeCharts"
+		title:			qsTr("Attributes Charts")
+		func:			"attributesCharts"
 	}
 	Analysis
 	{
-		title:			qsTr("Variable Charts for Subgroups")
-		func:			"VaribleChartsSubgroups"
+		title:			qsTr("Variables Charts for Subgroups")
+		func:			"variablesChartsSubgroups"
 	}
 	Analysis
 	{
-		title:			qsTr("Variable Charts for Indviduals")
-		func:			"VaribleChartsIndviduals"
+		title:			qsTr("Variables Charts for Individuals")
+		func:			"variablesChartsIndividuals"
+	}
+	Analysis
+	{
+		title:			qsTr("Time Weighted Charts")
+		func:			"timeWeightedCharts"
 	}
 
-	GroupTitle
-	{
-		title:			qsTr("Capability Studies")
-		icon:			"processControl-capability.svg"
-	}
+	 GroupTitle
+	 {
+	 	title:			qsTr("Capability Studies")
+	 	icon:			"processControl-capability.svg"
+	 }
 	Analysis
 	{
 		title:			qsTr("Process Capability Studies")
@@ -73,7 +83,7 @@ Description
 
 	 GroupTitle
 	 {
-        title:			qsTr("Design of Experiments")
+        title:			qsTr("DOE")
 	 	icon:			"processControl-design.svg"
 	 }
     // Analysis
@@ -84,7 +94,7 @@ Description
     // }
 	Analysis
 	{
-        title:			qsTr("Factorial")
+        title:			qsTr("Two-level Factorial Design")
         func:			"doeFactorial"
 		requiresData:	false
 	}
@@ -100,4 +110,10 @@ Description
     //     func:			"doeMixed"
     //     requiresData:	false
     // }
+//    Analysis
+//    {
+//        title:          qsTr("Two-level Factorial Analysis")
+//        func:           "factorialAnalysis"
+//        requiresData:   true
+//    }
 }

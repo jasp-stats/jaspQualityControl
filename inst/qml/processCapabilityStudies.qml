@@ -55,33 +55,33 @@ Form
 		{
 			title:							qsTr("Study Type")
 
-			CheckBox 
-			{ 									
+			CheckBox
+			{
 				name: 						"normalCapabilityStudy"
 				label: 						qsTr("Normal capability study")
 				checked: 					true
-												
+
 				RadioButtonGroup
 				{
 					name: 					"capabilityStudy"
 
-					RadioButton 
-					{ 
+					RadioButton
+					{
 						name: 				"initialCapabilityAnalysis"
 						label: 				qsTr("Initial capability study")
-						checked: 			true	
+						checked: 			true
 					}
 
-					RadioButton 
-					{ 
+					RadioButton
+					{
 						name: 				"followupCapabilityAnalysis"
 						label: 				qsTr("Follow-up capability study")
 					}
 				}
 			}
 
-			CheckBox 
-			{ 
+			CheckBox
+			{
 				name: 						"nonNormalCapabilityStudy"
 				label: 						qsTr("Non-normal capability study")
 
@@ -91,7 +91,7 @@ Form
 					label: 					qsTr("Specify a distribution")
 					indexDefaultValue: 		0
 					values:
-					[
+						[
 						{ label: qsTr("Weibull"),		value: "Weibull"  },
 						{ label: qsTr("Lognormal"),		value: "Lognormal"}
 					]
@@ -109,8 +109,8 @@ Form
 				label: 						qsTr("Lower specification limit")
 				childrenOnSameRow:			true
 				
-				DoubleField 
-				{ 
+				DoubleField
+				{
 					id:						lower
 					name: 					"lowerSpecification"
 					negativeValues:			true
@@ -125,8 +125,8 @@ Form
 				label: 						qsTr("Target value")
 				childrenOnSameRow:			true
 				
-				DoubleField 
-				{ 
+				DoubleField
+				{
 					id:						target
 					name: 					"targetValue"
 					negativeValues:			true
@@ -142,8 +142,8 @@ Form
 				childrenOnSameRow:			true
 				label: 						qsTr("Upper specification limit")
 				
-				DoubleField 
-				{ 
+				DoubleField
+				{
 					id:						upper
 					name: 					"upperSpecification"
 					negativeValues:			true
@@ -160,8 +160,8 @@ Form
 		{
 			title: 							qsTr("Stability of the Process")
 			
-			CheckBox 
-			{ 
+			CheckBox
+			{
 				name: 						"controlCharts"
 				label: 						qsTr("X-bar & R chart")
 				checked: 					true
@@ -172,8 +172,8 @@ Form
 		{
 			title: 							qsTr("Distribution of the Process")
 
-			CheckBox 
-			{ 
+			CheckBox
+			{
 				name: 						"histogram"
 				label: 						qsTr("Distribution plot")
 				checked: 					true
@@ -195,8 +195,8 @@ Form
 				}
 			}
 
-			CheckBox 
-			{ 
+			CheckBox
+			{
 				name: 						"probabilityPlot"
 				label: 						qsTr("Probability table and plots")
 				checked: 					true
@@ -207,7 +207,7 @@ Form
 					label: 					qsTr("Rank method")
 					indexDefaultValue: 		0
 					values:
-					[
+						[
 						{ value: "Bernard",    		label: qsTr("Median Rank (Benard)")         },
 						{ value: "Herd-Johnson",    label: qsTr("Mean Rank (Herd-Johnson)")     },
 						{ value: "Kaplan-Meier",    label: qsTr("Kaplan-Meier")                 },
@@ -221,7 +221,7 @@ Form
 					label: 					qsTr("Null distribution")
 					indexDefaultValue: 		0
 					values:
-					[
+						[
 						{ label: qsTr("Normal"),		value: "Normal"	   },
 						{ label: qsTr("Lognormal"),		value: "Lognormal" },
 						{ label: qsTr("Weibull"),		value: "Weibull"   }
