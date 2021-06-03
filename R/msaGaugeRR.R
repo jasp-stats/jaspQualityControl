@@ -27,11 +27,17 @@ if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
   operators <- unlist(options$operators)
 
   numeric.vars <- measurements
-
+  numeric.vars <- numeric.vars[numeric.vars != ""]
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-  ready <- (length(measurements) != 0 && operators != "" && parts != "")
+  if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
+    ready <- (length(measurements) != 0 && operators != "" && parts != "")
+  }else{
+    ready <- (measurements != "" && operators != "" && parts != "")
+  }
+
+
   readyRangeMethod <- length(measurements) == 2
 
   if (is.null(dataset)) {
@@ -39,7 +45,7 @@ if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
   }
 
-  if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat"){
+  if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat" && ready){
     dataset <- dataset[order(dataset[operators]),]
     nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
     index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
@@ -486,7 +492,7 @@ if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
   return(plot)
 }
 
-.xBarOrRangeChartPlotFunction <- function(type = c("Xbar", "Range"), dataset, measurements, parts, operators, options){
+.xBarOrRangeChartPlotFunction <- function(type = c("Xbar", "Range"), dataset, measurements, parts, operators, options, smallLabels = FALSE){
   operatorVector <- unique(dataset[[operators]])
   nOperators <- length(operatorVector)
   data <- dataset[measurements]
@@ -502,7 +508,7 @@ if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
   LCL <- min(ChartData$limits)
   manualLimits <- c(LCL, center, UCL)
 
-  plotMat <- matrix(list(), 1, nOperators)
+  plotMat <- list()
   titleVector <- vector(mode = "character")
 
   for (i in 1:nOperators) {
@@ -518,34 +524,36 @@ if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
     if (type == "Range"){
       if (i == 1){
         p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = FALSE,
-                          xAxisLab = ggplot2::element_blank(), yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
+                          xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels)
       }else if(i == nOperators){
         p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE,
-                                xAxisLab = ggplot2::element_blank(), yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
+                                xAxisLab = parts, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels)
       }
       else{
         p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
-                                xAxisLab = ggplot2::element_blank(), yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
+                                xAxisLab = parts, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels)
       }
     }else{
       if (i == 1){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = FALSE,
-                             xAxisLab = ggplot2::element_blank(), yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
+                             xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels)
       }else if(i == nOperators){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
-                             warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
+                             warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
+                             smallLabels = smallLabels)
       }else{
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
-                             xAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements])
+                             xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
+                             smallLabels = smallLabels)
       }
     }
-    plotMat[[1, i]] <- p1
+    plotMat[[i]] <- p1
 
   }
-  p2 <- jaspGraphs::ggMatrixPlot(plotList = plotMat, bottomLabels = c(rep("", as.integer(nOperators/2)), parts, rep("", nOperators - 1 - as.integer(nOperators/2))),
-                                 leftLabels = leftLabel, topLabels = titleVector)
+  p2 <- cowplot::plot_grid(plotlist = plotMat, ncol = nOperators, nrow = 1)
+
   return(p2)
 }
 
@@ -862,11 +870,10 @@ if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
   plotMat[[1, 2]] <- .ggplotWithText(text2)
   plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE)
   plotMat[[2, 2]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE)
-  plotMat[[3, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()  #.xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options)
+  plotMat[[3, 1]] <- .xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options, smallLabels = TRUE)
   plotMat[[3, 2]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options)
-  plotMat[[4, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()  #.xBarOrRangeChartPlotFunction("Xbar", dataset, measurements, parts, operators, options)
+  plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Xbar", dataset, measurements, parts, operators, options, smallLabels = TRUE)
   plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options)
-
 
   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Measurement systems analysis for %s", title), ""))
   matrixPlot$plotObject <- p
