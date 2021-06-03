@@ -59,7 +59,8 @@
 }
 
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Subgroup mean", xAxisLab = "Subgroup", manualDataYaxis = "") {
+.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Subgroup mean", xAxisLab = "Subgroup",
+                           manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   means <- rowMeans(data)
   if (manualSubgroups != ""){
@@ -83,7 +84,7 @@
     manualMeans <- rowMeans(manualDataYaxis)
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, manualMeans))
   }else{
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, means))
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, means))
   }
   yLimits <- range(yBreaks)
   if (length(subgroups) <= 15){
@@ -94,10 +95,10 @@
   prettyxBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)
   prettyxBreaks[prettyxBreaks == 0] <- 1
   xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
-  xLimits <- c(min(xBreaks), max(xBreaks) + 5)
+  xLimits <- range(xBreaks)
 
   dfLabel <- data.frame(
-    x = max(xLimits - 1),
+    x = max(xLimits * 1.3),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -114,14 +115,22 @@
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
     p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
   }
-  if (plotLimitLabels)
-    p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5)
   if (yAxis){
     p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab) ,limits = yLimits, breaks = yBreaks)
   }else{
     p <- p + ggplot2::scale_y_continuous(name = ggplot2::element_blank(), limits = yLimits, breaks = yBreaks, labels = NULL) +
       ggplot2::theme(axis.line.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
   }
+
+  if(smallLabels){
+    labelSize <- 2
+  }else{
+    labelSize <- 4
+  }
+
+  if (plotLimitLabels)
+    p <- p + ggrepel::geom_label_repel(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), direction = "both", size = labelSize)
+
   p <- p + ggplot2::scale_x_continuous(name = gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(means, UCL = UCL, LCL = LCL, center = center)$red_points, "red", "blue")) +
@@ -132,11 +141,20 @@
     xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
     p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
   }
+
+  if (manualXaxis != "") {
+    xLabels <- factor(manualXaxis, levels = manualXaxis)
+    p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
+  }
+
+  if (title != "")
+    p <- p + ggplot2::ggtitle(title)
   return(p)
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,  yAxisLab = "Subgroup range", xAxisLab = "Subgroup", manualDataYaxis = "") {
+.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,
+                        yAxisLab = "Subgroup range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   range <- apply(data, 1, function(x) max(x) - min(x))
@@ -171,9 +189,9 @@
   prettyxBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)
   prettyxBreaks[prettyxBreaks == 0] <- 1
   xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
-  xLimits <- c(min(xBreaks), max(xBreaks) + 5)
+  xLimits <- range(xBreaks)
   dfLabel <- data.frame(
-    x = max(xLimits - 1),
+    x = max(xLimits * 1.3),
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -190,8 +208,6 @@
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
     p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
   }
-  if (plotLimitLabels)
-    p <- p + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5)
   if (yAxis){
     p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab) ,limits = yLimits, breaks = yBreaks)
   }else{
@@ -199,6 +215,15 @@
       ggplot2::scale_y_continuous(name = ggplot2::element_blank() ,limits = yLimits, breaks = yBreaks, labels = NULL) +
       ggplot2::theme(axis.line.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
   }
+
+  if(smallLabels){
+    labelSize <- 2
+  }else{
+    labelSize <- 4
+  }
+  if (plotLimitLabels)
+    p <- p + ggrepel::geom_label_repel(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), vjust="top",hjust="inward", size = labelSize)
+
   p <- p + ggplot2::scale_x_continuous(name= gettext(xAxisLab) ,breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(range, UCL = UCL, LCL = LCL, center = center)$red_points, 'red', 'blue')) +
@@ -209,6 +234,14 @@
     xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
     p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
   }
+
+  if (manualXaxis != "") {
+    xLabels <- factor(manualXaxis, levels = manualXaxis)
+    p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
+  }
+
+  if (title != "")
+    p <- p + ggplot2::ggtitle(title)
 
   return(p)
 }
