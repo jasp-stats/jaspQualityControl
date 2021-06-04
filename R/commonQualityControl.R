@@ -29,21 +29,18 @@
 #############################################################
 
 # Function to create the x-bar and r-chart section
-.qcXbarAndRContainer <- function(options, dataset, ready, jaspResults) {
+.qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups) {
 
   if (!options[["controlCharts"]] || !is.null(jaspResults[["controlCharts"]]))
     return()
 
-  container <- createJaspContainer(title = gettext("Control Charts"))
-  container$dependOn(options = c("controlCharts", "variables"))
+  container <- createJaspContainer(title = gettext("Control Chart"))
+  container$dependOn(options = c("controlCharts", "variables", "subgroups"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
 
-  xplot <- createJaspPlot(title = "X-bar Chart", width = 600, height = 300)
-  container[["xplot"]] <- xplot # Always has position = 1 in container
-
-  rplot <- createJaspPlot(title = "R Chart", width = 600, height = 300)
-  container[["rplot"]] <- rplot # Always has position = 2 in container
+  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 700, height = 500)
+  container[["plot"]] <- matrixPlot
 
   if (!ready)
     return()
@@ -54,8 +51,13 @@
     return()
   }
 
-  xplot$plotObject <- .XbarchartNoId(dataset = dataset, options = options)
-  rplot$plotObject <- .RchartNoId(dataset = dataset, options = options)
+  if(subgroups != "")
+    subgroups <- dataset[[subgroups]]
+
+  plotMat <- matrix(list(), 2, 1)
+  plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups)
+  plotMat[[2,1]] <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups)
+  matrixPlot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
 }
 
 # Function to create X-bar chart
@@ -95,10 +97,9 @@
   prettyxBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)
   prettyxBreaks[prettyxBreaks == 0] <- 1
   xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
-  xLimits <- range(xBreaks)
 
   dfLabel <- data.frame(
-    x = max(xLimits * 1.3),
+    x = max(xBreaks) * 1.2,
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -106,6 +107,8 @@
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
+
+  xLimits <- range(c(xBreaks, dfLabel$x))
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green', size = 1) +
@@ -135,7 +138,7 @@
     jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(means, UCL = UCL, LCL = LCL, center = center)$red_points, "red", "blue")) +
     jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
+    jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
 
   if (time) {
     xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
@@ -189,9 +192,8 @@
   prettyxBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)
   prettyxBreaks[prettyxBreaks == 0] <- 1
   xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
-  xLimits <- range(xBreaks)
   dfLabel <- data.frame(
-    x = max(xLimits * 1.3),
+    x = max(xBreaks)  * 1.2,
     y = c(center, UCL, LCL),
     l = c(
       gettextf("CL = %g", round(center, 3)),
@@ -199,6 +201,7 @@
       gettextf("LCL = %g",   round(LCL, 3))
     )
   )
+  xLimits <- range(c(xBreaks, dfLabel$x))
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
     ggplot2::geom_hline(yintercept = center,  color = 'green', size = 1) +

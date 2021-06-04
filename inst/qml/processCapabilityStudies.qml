@@ -45,7 +45,6 @@ Form
 			title:             			 	qsTr("Subgroups")
 			singleVariable:    	 			true
 			allowedColumns:     			["nominal", "nominalText", "ordinal"]
-			debug:							true // Not sure how this is supposed to be used yet
 		}
 	}
 
@@ -185,13 +184,30 @@ Form
 					checked:				true
 				}
 
+				DropDown
+				{
+				name: "pcBinWidthType"
+				label: qsTr("Bin width type")
+				indexDefaultValue: 0
+				values:
+					[
+					{label: qsTr("Sturges"),				value: "sturges"},
+					{label: qsTr("Scott"),					value: "scott"},
+					{label: qsTr("Doane"),					value: "doane"},
+					{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
+					{label: qsTr("Manual"),					value: "manual"	}
+				]
+				id: binWidthType
+				}
+			
 				DoubleField
 				{
-					name:					"numberOfBins"
-					label:					qsTr("Number of bins")
-					defaultValue:			30
-					min:					3
-					max:					10000
+				name:			"pcNumberOfBins"
+				label:			qsTr("Number of bins")
+				defaultValue:	30
+				min:			3;
+				max:			10000;
+				enabled:		binWidthType.currentValue === "manual"
 				}
 			}
 

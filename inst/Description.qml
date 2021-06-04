@@ -72,12 +72,12 @@ Description
 
 	 GroupTitle
 	 {
-	 	title:			qsTr("Capability Studies")
+	 	title:			qsTr("Capability Study")
 	 	icon:			"processControl-capability.svg"
 	 }
 	Analysis
 	{
-		title:			qsTr("Process Capability Studies")
+		title:			qsTr("Process Capability Study")
 		func:			"processCapabilityStudies"
 	}
 
