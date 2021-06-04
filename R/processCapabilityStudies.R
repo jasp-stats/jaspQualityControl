@@ -17,6 +17,9 @@
 
 processCapabilityStudies <- function(jaspResults, dataset, options) {
 
+  measurements <- unlist(options$variables)
+  subgroups <- unlist(options$subgroups)
+
   # Preparatory work
   dataset <- .qcReadData(dataset, options, type = "capabilityStudy")
 
@@ -24,10 +27,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ready <- .qcOptionsReady(options, type = "capabilityStudy")
 
   # X-bar and R Chart
-  .qcXbarAndRContainer(options, dataset, ready, jaspResults)
+  .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = subgroups)
 
   # Distribution plot
-  .qcDistributionPlot(options, dataset, ready, jaspResults)
+  .qcDistributionPlot(options, dataset, ready, jaspResults, measurements = measurements)
 
   # Probability plots section
   .qcProbabilityPlotContainer(options, dataset, ready, jaspResults)
@@ -552,13 +555,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Functions for distribution plot section ##################
 #############################################################
 
-.qcDistributionPlot <- function(options, dataset, ready, jaspResults) {
+.qcDistributionPlot <- function(options, dataset, ready, jaspResults, measurements) {
+
+  data <- unlist(dataset[measurements])
 
   if (!options[["histogram"]] || !is.null(jaspResults[["histogram"]]))
     return()
 
-  plot <- createJaspPlot(title = gettext("Distribution Plot"), width = 400, height = 400)
-  plot$dependOn(options = c("histogram", "displayDensity", "variables", "numberOfBins"))
+  plot <- createJaspPlot(title = gettext("Histogram"), width = 400, height = 400)
+  plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType"))
   plot$position <- 2
 
   jaspResults[["histogram"]] <- plot
@@ -566,28 +571,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
 
-  plotData <- as.data.frame(dataset[, options[["variables"]]])
-  plotData <- unlist(plotData[, unlist(lapply(plotData, is.numeric))])
-  plotData <- data.frame(x = plotData)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(data, min.n = 4)
 
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData[["x"]], min.n = 4)
-
-  bins <- options[["numberOfBins"]] + 2 # For some reason the plot always seems to take 2 off...
-
-  p <- ggplot2::ggplot(plotData, ggplot2::aes(x = x)) +
-    ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks, limits = range(xBreaks))
+  p <- ggplot2::ggplot() +
+    ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = range(xBreaks))
 
   if (options[["displayDensity"]]) {
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, hist(plotData[["x"]], freq = F, plot = F, breaks = bins)$density + 0.1), min.n = 4)
-    p <- p + ggplot2::scale_y_continuous(name = gettext("Density"), breaks = yBreaks, limits = range(yBreaks)) +
-      ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7, bins = bins) +
-      ggplot2::stat_function(fun = dnorm, color = "dodgerblue", args = list(mean = mean(plotData[["x"]]), sd = sd(plotData[["x"]])))
+    #yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, hist(data, freq = T, plot = F, breaks = bins)$freq), min.n = 4)
+    p <- p + ggplot2::geom_histogram(data, ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7) +     #ggplot2::scale_y_continuous(name = gettext("Density"), breaks = yBreaks, limits = range(yBreaks)) +
+      ggplot2::stat_function(fun = dnorm, color = "dodgerblue", args = list(mean = mean(data), sd = sd(data)))
     p <- jaspGraphs::themeJasp(p) + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
-  } else {
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, hist(plotData[["x"]], freq = T, plot = F)$counts), min.n = 4)
-    p <- p + ggplot2::scale_y_continuous(name = gettext("Counts"), breaks = yBreaks, limits = range(yBreaks)) +
-      ggplot2::geom_histogram(ggplot2::aes(y =..count..), fill = "grey", col = "black", size = .7, bins = bins)
-    p <- jaspGraphs::themeJasp(p)
   }
 
   plot$plotObject <- p
