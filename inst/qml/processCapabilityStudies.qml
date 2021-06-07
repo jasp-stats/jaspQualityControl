@@ -174,13 +174,13 @@ Form
 			CheckBox
 			{
 				name: 						"histogram"
-				label: 						qsTr("Distribution plot")
+				label: 						qsTr("Histogram")
 				checked: 					true
 
 				CheckBox
 				{
 					name:					"displayDensity"
-					label:					qsTr("Display density")
+					label:					qsTr("Fit normal distribution")
 					checked:				true
 				}
 

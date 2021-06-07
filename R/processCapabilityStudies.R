@@ -33,7 +33,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   .qcDistributionPlot(options, dataset, ready, jaspResults, measurements = measurements)
 
   # Probability plots section
-  .qcProbabilityPlotContainer(options, dataset, ready, jaspResults)
+  .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements = measurements)
 
   # Perform capability analysis
   .qcCapabilityAnalysis(options, dataset, ready, jaspResults)
@@ -327,41 +327,35 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Containers ##
 ################
 
-.qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults) {
+.qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults, measurements) {
 
   if (!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
     return()
 
-  container <- createJaspContainer(gettext("Probability Tables and Plots"))
+  container <- createJaspContainer(gettext("Probability Table and Plot"))
   container$dependOn(options = c("variables", "probabilityPlot", "rank", "nullDistribution", "addGridlines"))
   container$position <- 3
-
-  plotContainer <- createJaspContainer(gettext("Probability Plots"))
-  container[["plotContainer"]] <- plotContainer
 
   jaspResults[["probabilityContainer"]] <- container
 
   if (!ready)
     return()
 
-  .qcProbabilityTable(dataset, options, container)
+  .qcProbabilityTable(dataset, options, container, measurements)
 
-  for (variable in options[["variables"]]) {
-    if (is.null(plotContainer[[variable]]))
-      plotContainer[[variable]]  <- .qcProbabilityPlot(dataset, options, variable)
-  }
+  if (is.null(container[["ProbabilityPlot"]]))
+      container[["ProbabilityPlot"]]  <- .qcProbabilityPlot(dataset, options, measurements)
 }
 
 ################
 ## Output ######
 ################
 
-.qcProbabilityTable <- function(dataset, options, container) {
+.qcProbabilityTable <- function(dataset, options, container, measurements) {
 
   table <- createJaspTable(title = gettextf("Summary of Tests Against the %1$s Distribution", options[["nullDistribution"]]))
   table$position <- 1
 
-  table$addColumnInfo(name = "v", 		title = "",					type = "number")
   table$addColumnInfo(name = "n",      	title = gettext("n"),  		type = "integer")
 
   if (options[["nullDistribution"]] == 'Normal') {
@@ -383,43 +377,40 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   container[["probabilityTable"]] <- table
 
-  for (variable in options[["variables"]]) {
+  values <- as.vector(unlist(dataset[measurements]))
 
-    values <- dataset[[variable]]
-
-    if (options[["nullDistribution"]] == 'Normal') {
-      meanx   <- mean(values)
-      sdx     <- sd(values)
-      test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
-    } else if (options[["nullDistribution"]] == 'Lognormal') {
-      fit    <- fitdistrplus::fitdist(values, 'lnorm')
-      meanx  <- fit$estimate[1]
-      sdx    <- fit$estimate[2]
-      test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
-    } else if (options[["nullDistribution"]] == 'Weibull') {
-      fit    <- fitdistrplus::fitdist(values, 'weibull')
-      meanx  <- fit$estimate[1]
-      sdx    <- fit$estimate[2]
-      test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
-    }
-
-    n      <- length(values)
-    ad     <- test$statistic
-    p      <- test$p.value
-    reject <- if (p < 0.05) "Yes" else "No"
-
-    row <- list(v = variable, mean = meanx, sd = sdx, n = n, ad = ad, p = p, reject = reject)
-    table$addRows(row)
+  if (options[["nullDistribution"]] == 'Normal') {
+    meanx   <- mean(values)
+    sdx     <- sd(values)
+    test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
+  } else if (options[["nullDistribution"]] == 'Lognormal') {
+    fit    <- fitdistrplus::fitdist(values, 'lnorm')
+    meanx  <- fit$estimate[1]
+    sdx    <- fit$estimate[2]
+    test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
+  } else if (options[["nullDistribution"]] == 'Weibull') {
+    fit    <- fitdistrplus::fitdist(values, 'weibull')
+    meanx  <- fit$estimate[1]
+    sdx    <- fit$estimate[2]
+    test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
   }
+
+  n      <- length(values)
+  ad     <- test$statistic
+  p      <- test$p.value
+  reject <- if (p < 0.05) "Yes" else "No"
+
+  row <- list(mean = meanx, sd = sdx, n = n, ad = ad, p = p, reject = reject)
+  table$addRows(row)
 }
 
-.qcProbabilityPlot <- function(dataset, options, variable) {
+.qcProbabilityPlot <- function(dataset, options, measurements) {
 
-  plot <- createJaspPlot(width = 400, aspectRatio = 1, title = variable)
-  plot$dependOn(optionContainsValue = list(variables = variable))
+  plot <- createJaspPlot(width = 400, aspectRatio = 1, title = "Probability Plot")
+  #plot$dependOn()
 
   # Arrange data
-  x <- dataset[[variable]]
+  x <- as.vector(unlist(dataset[measurements]))
   x <- x[order(x)]
   n <- length(x)
   i <- rank(x)
@@ -441,7 +432,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Quantities
   pSeq <- seq(0.001, 0.999, 0.001)
   ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(min(x), max(x)))
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(x)
+  xLimits <- range(xBreaks)
 
   # Computing according to the distribution
   if (options[["nullDistribution"]] == 'Normal') {
@@ -496,14 +488,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     yBreaks <- log(-1*log(1-(ticks / 100)))
 
   }
-
+  yLimits <- range(yBreaks)
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed") +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed") +
     jaspGraphs::geom_point(ggplot2::aes(x = data1[["x"]], y = data1[["y"]])) +
-    ggplot2::scale_x_continuous(variable, breaks = xBreaks, limits = range(xBreaks)) +
-    ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = yBreaks)
+    ggplot2::scale_x_continuous("Measurement", breaks = xBreaks, limits = xLimits) +
+    ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = yBreaks, limits = yLimits)
 
   p <- jaspGraphs::themeJasp(p)
 
@@ -571,17 +563,40 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
 
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(data, min.n = 4)
+  binWidthType <- options$pcBinWidthType
 
-  p <- ggplot2::ggplot() +
-    ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = range(xBreaks))
-
-  if (options[["displayDensity"]]) {
-    #yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, hist(data, freq = T, plot = F, breaks = bins)$freq), min.n = 4)
-    p <- p + ggplot2::geom_histogram(data, ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7) +     #ggplot2::scale_y_continuous(name = gettext("Density"), breaks = yBreaks, limits = range(yBreaks)) +
-      ggplot2::stat_function(fun = dnorm, color = "dodgerblue", args = list(mean = mean(data), sd = sd(data)))
-    p <- jaspGraphs::themeJasp(p) + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
+  if (binWidthType == "doane") {  # https://en.wikipedia.org/wiki/Histogram#Doane's_formula
+    sigma.g1 <- sqrt((6*(length(data) - 2)) / ((length(data) + 1)*(length(data) + 3)))
+    g1 <- mean(abs(data)^3)
+    k <- 1 + log2(length(data)) + log2(1 + (g1 / sigma.g1))
+    binWidthType <- k
+  } else if (binWidthType == "manual") {
+    binWidthType <- options$pcNumberOfBins
   }
+
+  # } else if (binWidthType == "fd" && nclass.FD(variable) > 10000) { # FD-method will produce extreme number of bins and crash ggplot, mention this in footnote
+  #   binWidthType <- 10000
+
+  n <- length(data)
+  df <- data.frame(measurements = data)
+  h <- hist(data, plot = F, breaks = binWidthType)
+  binWidth <- (h$breaks[2] - h$breaks[1])
+  freqs <- h$counts
+  yLabels <- jaspGraphs::getPrettyAxisBreaks(c(0, freqs))
+  yBreaks <- yLabels / (n * binWidth)
+  yLimits <- range(yBreaks)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(h$breaks, data), min.n = 4)
+  xLimits <- range(xBreaks)
+
+  p <- ggplot2::ggplot() + ggplot2::geom_histogram(data = df, mapping = ggplot2::aes(y =..density.., x = measurements), fill = "grey", col = "black", size = .7, binwidth = binWidth, center = binWidth/2) +
+    ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits) +
+    ggplot2::scale_y_continuous(name =  gettext("Counts"), labels = yLabels, breaks = yBreaks, limits = yLimits) +
+    jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
+
+
+   if (options[["displayDensity"]]) {
+     p <- p + ggplot2::stat_function(fun = dnorm, color = "dodgerblue", args = list(mean = mean(data), sd = sd(data)))
+   }
 
   plot$plotObject <- p
 }
