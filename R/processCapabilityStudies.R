@@ -126,7 +126,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     "target" = options[["targetValue"]],
     "usl"    = options[["upperSpecification"]],
     "mean"   = mean(allData, na.rm = TRUE),
-    "n"      = nrow(dataset),
+    "n"      = length(allData),
     "sd"     = sd(allData, na.rm = TRUE),
     "sdw"    = qccFit[["std.dev"]]
   )
@@ -152,9 +152,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   sdo <- sd(allData, na.rm = TRUE)
 
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], options[["lowerSpecification"]], options[["upperSpecification"]]), min.n = 4)
+  xLimits <- range(xBreaks)
 
   p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
-    ggplot2::scale_x_continuous(name = gettext("Measurements"), breaks = xBreaks, limits = range(xBreaks)) +
+    ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits) +
     ggplot2::scale_y_continuous(name = gettext("Density")) +
     ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7) +
     ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)), color = "dodgerblue") +
@@ -177,7 +178,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!options[["lowerSpecificationField"]] && !options[["upperSpecificationField"]])
     return()
 
-  table <- createJaspTable(title = gettext("Process Capability (Within)"))
+  table <- createJaspTable(title = gettext("Potential Capability (Within)"))
 
   if (options[["lowerSpecificationField"]])
     table$addColumnInfo(name = "cpl",   type = "number", title = gettext("CPL"))
@@ -214,7 +215,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcProcessCapabilityTableOverall <- function(options, dataset, ready, container) {
 
-  table <- createJaspTable(title = gettext("Process Performance (Total)"))
+  table <- createJaspTable(title = gettext("Actual (Total) Performance"))
 
   if (options[["lowerSpecificationField"]])
     table$addColumnInfo(name = "ppl", type = "number", title = gettext("PPL"))
@@ -224,6 +225,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "pp",  type = "number", title = gettext("Pp"))
   table$addColumnInfo(name = "ppk",   type = "number", title = gettext("Ppk"))
   table$addColumnInfo(name = "ppm",   type = "number", title = gettext("ppm"))
+  if (options[["targetValueField"]])
+    table$addColumnInfo(name = "cpm", type = "number", title = gettext("Cpm"))
 
   table$showSpecifiedColumnsOnly <- TRUE
 
@@ -237,15 +240,37 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   qccFit <- qcc::qcc(as.data.frame(dataset[, options[["variables"]]]), type = 'R', plot = FALSE)
   allData <- unlist(dataset[, options[["variables"]]])
   sdo <- sd(allData)
+  usl <- options[["upperSpecification"]]
+  lsl <- options[["lowerSpecification"]]
+  m <- (options[["upperSpecification"]] + options[["lowerSpecification"]])/2
+  n <- length(allData)
+  t <- options[["targetValue"]]
+  tolMultiplier <- 6
 
-  pp <- (options[["upperSpecification"]] - options[["lowerSpecification"]]) / (6 * sdo)
-  ppl <- (mean(allData) - options[["lowerSpecification"]]) / (3 * sdo)
-  ppu <- (options[["upperSpecification"]] - mean(allData)) / (3 * sdo)
+  pp <- (usl - lsl) / (6 * sdo)
+  ppl <- (mean(allData) - lsl) / (3 * sdo)
+  ppu <- (usl - mean(allData)) / (3 * sdo)
   ppk <- min(ppu, ppl)
-  cp <- (options[["upperSpecification"]] - options[["lowerSpecification"]]) / (6 * qccFit[["std.dev"]])
-  ppm <- cp / sqrt(1 + ((mean(allData) - options[["targetValue"]]) / qccFit[["std.dev"]])^2)
+  cp <- (usl - lsl) / (6 * qccFit[["std.dev"]])
+  ppm <- cp / sqrt(1 + ((mean(allData) - t / qccFit[["std.dev"]])^2))
+
+   if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]] && options[["targetValueField"]]){
+     if (t == m){
+       cpm <- (usl - lsl) / (tolMultiplier * sqrt((sum((allData - t)^2)) / n))
+     }else{
+       cpm <- min(c(t - lsl, usl - t)) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
+     }
+   }else if (options[["upperSpecificationField"]] && options[["targetValueField"]]){
+     cpm <- (usl - t) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
+   }else if (options[["lowerSpecificationField"]] && options[["targetValueField"]]){
+     cpm <- (t - lsl) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
+   }
+
+
 
   rows <- list("pp" = pp, "ppl" = ppl, "ppu" = ppu, "ppk" = ppk, "ppm" = ppm)
+  if (options[["targetValueField"]])
+    rows[["cpm"]] <- cpm
   table$addRows(rows)
 }
 
@@ -353,7 +378,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcProbabilityTable <- function(dataset, options, container, measurements) {
 
-  table <- createJaspTable(title = gettextf("Summary of Tests Against the %1$s Distribution", options[["nullDistribution"]]))
+  table <- createJaspTable(title = gettextf("Summary of test against the %1$s distribution", options[["nullDistribution"]]))
   table$position <- 1
 
   table$addColumnInfo(name = "n",      	title = gettext("n"),  		type = "integer")
@@ -371,9 +396,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table$addColumnInfo(name = "ad",     	title = gettext("<i>A</i>"), type = "number")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>"), type = "pvalue")
-  table$addColumnInfo(name = "reject",	title = gettext("Reject null distribution?"),      		type = "string")
 
-  table$addFootnote(gettextf("The Anderson-Darling statistic <i>A</i> is calculated against the %2$s distribution using the %3$s ranking method.", "\u00B2", options[["nullDistribution"]], options[["rank"]]))
+  table$addFootnote(gettextf("The Anderson-Darling statistic <i>A</i> is calculated against the %2$s distribution.", "\u00B2", options[["nullDistribution"]]))
 
   container[["probabilityTable"]] <- table
 
@@ -398,9 +422,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   n      <- length(values)
   ad     <- test$statistic
   p      <- test$p.value
-  reject <- if (p < 0.05) "Yes" else "No"
 
-  row <- list(mean = meanx, sd = sdx, n = n, ad = ad, p = p, reject = reject)
+  row <- list(mean = meanx, sd = sdx, n = n, ad = ad, p = p)
   table$addRows(row)
 }
 

@@ -96,11 +96,54 @@ Form
 					]
 				}
 			}
+			
+			
+			
+			CheckBox
+			{
+				name: 						"CapabilityStudyPlot"
+				label: 						qsTr("Process capability plot")
+				checked: 					true
+				
+				DropDown
+				{
+				name: "csBinWidthType"
+				label: qsTr("Bin width type")
+				indexDefaultValue: 0
+				values:
+					[
+					{label: qsTr("Sturges"),				value: "sturges"},
+					{label: qsTr("Scott"),					value: "scott"},
+					{label: qsTr("Doane"),					value: "doane"},
+					{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
+					{label: qsTr("Manual"),					value: "manual"	}
+				]
+				id: csBinWidthType
+				}
+			
+				DoubleField
+				{
+				name:			"csNumberOfBins"
+				label:			qsTr("Number of bins")
+				defaultValue:	30
+				min:			3;
+				max:			10000;
+				enabled:		binWidthType.currentValue === "manual"
+				}
+			}
+			
+			CheckBox
+			{
+				name: 						"CapabilityStudyTables"
+				label: 						qsTr("Process capability tables")
+				checked: 					true
+			}
+
 		}
 
 		Group
 		{
-			title: 							qsTr("Study Limits")
+			title: 							qsTr("Specification Limits")
 
 			CheckBox
 			{
@@ -214,7 +257,7 @@ Form
 			CheckBox
 			{
 				name: 						"probabilityPlot"
-				label: 						qsTr("Probability table and plots")
+				label: 						qsTr("Probability table and plot")
 				checked: 					true
 
 				DropDown
