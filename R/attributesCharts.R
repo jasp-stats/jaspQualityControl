@@ -54,9 +54,9 @@ attributesCharts <- function(jaspResults, dataset, options) {
       jaspResults[["LaneyPPlot"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
 
       if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspPlot(title =  gettext(""), position = 2)
-        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Lanychart$sixsigma, name = "Laney P'")
-        jaspResults[["NelsonTable"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
+      jaspResults[["NelsonTable"]] <- createJaspPlot(title =  gettext(""), position = 2)
+      jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Lanychart$sixsigma, name = "Laney P'")
+      jaspResults[["NelsonTable"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
       }
     }
   }
