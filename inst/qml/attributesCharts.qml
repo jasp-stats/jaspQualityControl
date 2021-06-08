@@ -52,7 +52,7 @@ Form
 				RadioButtonGroup
 				{
 					name:						"TypeDefectives"
-					
+
 					RadioButton
 					{
 						value: 					"npchart"
@@ -104,12 +104,11 @@ Form
 					}
 				}
 			}
-
-			CheckBox
-			{
-				name: 							"ImRchart2"
-				label: 							qsTr("I-MR chart")
-			}
+					RadioButton
+					{
+						value: 					"ImR"
+						label: 					qsTr("X-mR chart")
+					}
 		}
 	}
 }

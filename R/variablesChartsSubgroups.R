@@ -24,42 +24,41 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
   #X bar & R chart
   if (options$Xbarchart && is.null(jaspResults[["XbarPlot"]]) &&  length(options$variables) > 1) {
-
-    jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 700, height = 350)
-    jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart", "variables", "Wlimits"))
-    XbarPlot <- jaspResults[["XbarPlot"]]
-    XbarPlot$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(.RchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]], time = makeTime), .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]], time = makeTime)), layout = matrix(2:1, 2), removeXYlabels= "x")
+    jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
+    Xchart <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]], time = makeTime, Phase2 = options$Phase2_XR, target = options$mean_XR, sd = options$SD_XR)
+    Rchart <- .RchartNoId(dataset = dataset, options = options, time = makeTime)
+    jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
+    jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart", "variables", "Wlimits", "Phase2_XR", "mean_XR", "SD_XR"))
 
     # Nelson tests tables
     if (is.null(jaspResults[["NelsonTable"]]) & is.null(jaspResults[["NelsonTable2"]])) {
       jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
       jaspResults[["NelsonTable2"]] <- createJaspContainer(gettext(""))
-      jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset[, options$variables], options = options, type = "R")
-      jaspResults[["NelsonTable2"]] <- .NelsonTable(dataset = dataset[, options$variables], options = options, type = "xbar")
+      jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Rchart$sixsigma, name = "R", xLabels = Rchart$xLabels)
+      jaspResults[["NelsonTable2"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Xchart$sixsigma, Phase2 = options$Phase2_XR, xLabels = Xchart$xLabels)
 
-      jaspResults[["NelsonTable"]]$dependOn(c("Xbarchart", "variables"))
-      jaspResults[["NelsonTable2"]]$dependOn(c("Xbarchart", "variables"))
+      jaspResults[["NelsonTable"]]$dependOn(c("Xbarchart", "variables", "time", "Phase2_XR", "mean_XR", "SD_XR"))
+      jaspResults[["NelsonTable2"]]$dependOn(c("Xbarchart", "variables", "time", "Phase2_XR", "mean_XR", "SD_XR"))
     }
-
-
   }
 
   #S Chart
   if (options$Schart && is.null(jaspResults[["SPlot"]]) &&  length(options$variables) > 1) {
-    jaspResults[["SPlot"]] <- createJaspPlot(title = gettext("Xbar & s Control Chart"), width = 700, height = 350)
-    jaspResults[["SPlot"]]$dependOn(c("Schart", "variables", "Wlimits2"))
-    SPlot<- jaspResults[["SPlot"]]
-    SPlot$plotObject <- .XbarSchart(dataset = dataset, options = options, time = makeTime)
+    jaspResults[["SPlot"]] <- createJaspPlot(title = gettext("Xbar & s Control Chart"), width = 1200, height = 500)
+    jaspResults[["SPlot"]]$dependOn(c("Schart", "variables", "Wlimits2", "Phase2_S", "time", "mean_S", "SD_S"))
+    Schart <- .XbarSchart(dataset = dataset, options = options, time = makeTime)
+    Xchart <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits2"]], time = makeTime,Phase2 = options$Phase2_S, target = options$mean_S, sd = options$SD_S)
+    jaspResults[["SPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Schart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
 
     # Nelson tests tables
     if (is.null(jaspResults[["NelsonTableS"]]) & is.null(jaspResults[["NelsonTableX"]])) {
       jaspResults[["NelsonTableS"]] <- createJaspContainer(gettext(""))
       jaspResults[["NelsonTableX"]] <- createJaspContainer(gettext(""))
-      jaspResults[["NelsonTableS"]] <- .NelsonTable(dataset = dataset[, options$variables], options = options, type = "S")
-      jaspResults[["NelsonTableX"]] <- .NelsonTable(dataset = dataset[, options$variables], options = options, type = "xbar")
+      jaspResults[["NelsonTableS"]] <- .NelsonTable(dataset = dataset, options = options, name = "s", sixsigma = Schart$sixsigma, xLabels = Schart$xLabels)
+      jaspResults[["NelsonTableX"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Xchart$sixsigma, Phase2 = options$Phase2_S, xLabels = Xchart$xLabels)
 
-      jaspResults[["NelsonTableS"]]$dependOn(c("Schart", "variables"))
-      jaspResults[["NelsonTableX"]]$dependOn(c("Schart", "variables"))
+      jaspResults[["NelsonTableS"]]$dependOn(c("Schart", "variables", "time", "Phase2_S", "mean_S", "SD_S"))
+      jaspResults[["NelsonTableX"]]$dependOn(c("Schart", "variables", "time", "Phase2_S", "mean_S", "SD_S"))
     }
 
   }
@@ -75,38 +74,39 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
-  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  xLimits <- c(0,max(xBreaks) + 5)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$Stdv, UCL))
+  yLimits <- range(yBreaks)
+  if (length(subgroups) > 60)
+    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  else
+    xBreaks <- c(subgroups)
+  xLimits <- c(1,max(xBreaks) + 2.5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, 3)),
-      gettextf("UCL = %g",   round(UCL, 3)),
-      gettextf("LCL = %g",   round(LCL, 3))
+      gettextf("CL = %g", round(center, 4)),
+      gettextf("UCL = %g",   round(UCL, 5)),
+      gettextf("LCL = %g",   round(LCL, 5))
     )
   )
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$Stdv, UCL))
 
-  p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
+  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Standard Deviation"), breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks) +
     jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(Stdv, UCL = UCL, LCL = LCL, center = center)$red_points, 'red', 'blue')) +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  p2 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits2"]])
 
   if (time) {
     xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
-    p1 <- p1 + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
-    p2 <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits2"]]) + ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = 1:length(subgroups), labels = xLabels)
+    p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
+    return(list(p = p, sixsigma = sixsigma, xLabels = dataset[[.v(options$time)]]))
   }
-  p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
-
-  return(p3)
+  else {return(list(p = p, sixsigma = sixsigma))}
 }

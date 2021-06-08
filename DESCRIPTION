@@ -1,33 +1,10 @@
 Package: jaspProcessControl
 Type: Package
-Title: Quality Control
-Version: 0.15.0
-Date: 2021-03-07
-Author: JASP team
+Title: Quality Control Module for JASP
+Version: 0.0.1
+Date: 2021-05-20
+Author: JASP Team
 Website: https://github.com/jasp-stats/jaspProcessControl
 Maintainer: JASP <info@jasp-stats.org>
-Description: Quality Control Module for JASP
+Description: A JASP module for quality control analyses.
 License: GPL (>= 2)
-Encoding: UTF-8
-Imports:
-  afex,
-  fitdistrplus,
-  ggplot2,
-  goftest,
-  jaspBase,
-  jaspDescriptives,
-  jaspGraphs,
-  mle.tools,
-  qcc,
-  irr,
-  mixdist,
-  FrF2,
-  rsm,
-  DoE.base,
-  gridGraphics,
-  ragg,
-  Rspc
-Remotes:
-  jasp-stats/jaspBase,
-  jasp-stats/jaspDescriptives,
-  jasp-stats/jaspGraphs
