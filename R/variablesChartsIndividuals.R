@@ -30,7 +30,6 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
 }
 .IMRchart <- function(dataset, options, variable) {
-
   title <- gettextf("Charts for: %s", variable)
   ppPlot <- createJaspPlot(width = 1200, height = 500, title = title)
   ppPlot$dependOn(optionContainsValue = list(variables = variable))

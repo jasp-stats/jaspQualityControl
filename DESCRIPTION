@@ -6,5 +6,31 @@ Date: 2021-05-20
 Author: JASP Team
 Website: https://github.com/jasp-stats/jaspProcessControl
 Maintainer: JASP <info@jasp-stats.org>
-Description: A JASP module for quality control analyses.
+Description: Investigate if a manufactured product adheres to a defined set of quality criteria.
 License: GPL (>= 2)
+Encoding: UTF-8
+Imports:
+  afex,
+  DoE.base,
+  fitdistrplus,
+  FrF2,
+  ggplot2,
+  ggrepel,
+  goftest,
+  gridGraphics,
+  irr,
+  jaspBase,
+  jaspDescriptives,
+  jaspGraphs,
+  mixdist,
+  mle.tools,
+  psych,
+  qcc,
+  ragg,
+  rsm,
+  Rspc,
+  tidyr
+Remotes:
+  jasp-stats/jaspBase,
+  jasp-stats/jaspDescriptives,
+  jasp-stats/jaspGraphs

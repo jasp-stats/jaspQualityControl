@@ -5,7 +5,7 @@ Description
 {
 	name				: "jaspProcessControl"
 	title				: qsTr("Quality Control")
-	description			: qsTr("A JASP module for quality control analyses.")
+	description			: qsTr("Investigate if a manufactured product adheres to a defined set of quality criteria.")
 	version				: "0.0.1"
 	author				: "JASP Team"
 	maintainer			: "JASP <info@jasp-stats.org>"

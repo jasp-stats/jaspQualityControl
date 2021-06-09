@@ -15,7 +15,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   }
   if (makeTime && length(variables) > 0) {
     # For the time-variable we first convert the original factor to a character so that the order of input is kept!
-    dataset[[.v(time)]] <- as.character(dataset[[.v(time)]])
+    dataset[[time]] <- as.character(dataset[[time]])
   }
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
@@ -101,7 +101,6 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-
 
   if (time) {
     xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))

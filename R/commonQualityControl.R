@@ -126,12 +126,16 @@
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options, manualLimits = "", time = FALSE) {
+.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "") {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
   range = sixsigma$statistics
-  subgroups = c(1:length(sixsigma$statistics))
+  if (manualSubgroups != ""){
+    subgroups <- manualSubgroups
+  }else{
+    subgroups = c(1:length(sixsigma$statistics))
+  }
   data_plot <- data.frame(subgroups = subgroups, range = range)
   if (manualLimits != "") {
     LCL <- manualLimits[1]
@@ -144,11 +148,16 @@
   }
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - (0.10 * abs(LCL)), range, UCL + (0.1 * UCL)), min.n = 4)
   yLimits <- range(yBreaks)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks) + 2.5)
+  if (length(subgroups) <= 15){
+    nxBreaks <- length(subgroups)
+  }else{
+    nxBreaks <- 5
+  }
+  prettyxBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)
+  prettyxBreaks[prettyxBreaks == 0] <- 1
+  xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
+  xLimits <- c(min(xBreaks), max(xBreaks) + 5)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
