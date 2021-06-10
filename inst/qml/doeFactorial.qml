@@ -28,7 +28,7 @@ Form
 		title: 									qsTr("Design Information")
 		name:									"designInfo"
 
-		IntegerField
+        IntegerField
 		{
 			id:									numberOfFactors
 			name:								"numberOfFactors"
@@ -37,6 +37,14 @@ Form
 			min:								2
 			max:								256
 		}
+
+        IntegerField
+        {
+            visible:                            false
+            id:                                 numberOfFactorsForTable
+            name:                               "numberOfFactorsForTable"
+            defaultValue:                       numberOfFactors.value
+        }
 
 		DropDown
 		{
@@ -53,30 +61,24 @@ Form
 		}
 	}
 
-	CheckBox
-	{
-		name: 									"displayDesign"
-		label:									"Display design"
-	}
-
 	RadioButtonGroup
 	{
 		title:                                  qsTr("Data Coding")
-		debug:                                  true
+        debug:                                  false
 		name:                                   "dataCoding"
 
 		RadioButton
 		{
-			name:                               "dataUncoded"
-			label:                              qsTr("Uncoded")
+            name:                               "dataCoded"
+            label:                              qsTr("Coded")
 			checked:                            true
 
 		}
 
 		RadioButton
 		{
-			name:                               "dataCoded"
-			label:                              qsTr("Coded")
+            name:                               "dataUncoded"
+            label:                              qsTr("Uncoded")
 
 		}
 	}
@@ -121,7 +123,7 @@ Form
 		{
 			name:								"factors"
 			addItemManually:                    false
-			values:                             numberOfFactors.value // update only when numberOfFactors.value gets "entered"
+            values:                             numberOfFactorsForTable.value // update only when numberOfFactors.value gets "entered"
 
 			rowComponent: 						RowLayout
 			{
@@ -256,6 +258,40 @@ Form
 				label:							qsTr("General full factorial design")
 				checked:						true
 			}
+
+            RadioButton
+            {
+                id:                             factorialPlackettBurman
+                name:                           "factorialPlackettBurman"
+                label:                          qsTr("Plackett-Burman design")
+
+                DropDown
+                {
+                    name: 				"PBruns"
+                    label:              qsTr("Number of runs")
+                    visible:            factorialPlackettBurman.checked
+                    indexDefaultValue: 	0
+                    values:
+                    [
+                        { value: "4",  label: qsTr("4") 	},
+                        { value: "8",  label: qsTr("8") 	},
+                        { value: "12", label: qsTr("12") 	},
+                        { value: "16", label: qsTr("16") 	},
+                        { value: "20", label: qsTr("20") 	},
+                        { value: "24", label: qsTr("24")	},
+                        { value: "28", label: qsTr("28")	},
+                        { value: "32", label: qsTr("32")	},
+                        { value: "36", label: qsTr("36")	},
+                        { value: "40", label: qsTr("40")	},
+                        { value: "44", label: qsTr("44")	},
+                        { value: "48", label: qsTr("48")	},
+                        { value: "52", label: qsTr("52")	},
+                        { value: "56", label: qsTr("56")	},
+                        { value: "60", label: qsTr("60")	},
+                        { value: "64", label: qsTr("64")	}
+                    ]
+                }
+            }
 		}
 
 		ColumnLayout
@@ -264,17 +300,17 @@ Form
 			GroupBox
 			{
 				title: 							qsTr("Design by")
+                enabled:                        factorialTypeDefault.checked | factorialTypeSpecify.checked | factorialTypeSplit.checked
 
 				RadioButtonGroup
 				{
 					name:						"designBy"
-					enabled:                    !factorialTypeFull.checked
 
 					RadioButton
 					{
 						name:					"designByRuns"
 						label: 					qsTr("Number of runs")
-						childrenOnSameRow:		true
+                        childrenOnSameRow:		true
 						checked:				true
 
 						DropDown
@@ -282,7 +318,7 @@ Form
 							name: 				"factorialRuns"
 							indexDefaultValue: 	0
 							values:
-								[
+                            [
 								{ value: "4", 	label: qsTr("4") 	},
 								{ value: "8", 	label: qsTr("8") 	},
 								{ value: "16", 	label: qsTr("16") 	},
@@ -290,14 +326,18 @@ Form
 								{ value: "64", 	label: qsTr("64") 	},
 								{ value: "128", label: qsTr("128")	},
 								{ value: "256", label: qsTr("256")	},
-								{ value: "512", label: qsTr("512")	}
-							]
+                                { value: "512", label: qsTr("512")	},
+                                { value: "1024", label: qsTr("1024")},
+                                { value: "2048", label: qsTr("2048")},
+                                { value: "4096", label: qsTr("4096")}
+                            ]
 						}
 					}
 
 					RadioButton
 					{
-						name:					"designByResolution"
+                        id:                     designByResolution
+                        name:					"designByResolution"
 						enabled:                factorialTypeDefault.checked | factorialTypeSplit.checked
 						label: 					qsTr("Resolution")
 						childrenOnSameRow:		true
@@ -322,70 +362,81 @@ Form
 				}
 			}
 
-			RadioButtonGroup
-			{
-				title:                          qsTr("Blocking options")
-				debug:                          true
-				name:                           "blocking"
+//			RadioButtonGroup
+//			{
+//				title:                          qsTr("Blocking options")
+//              debug:                          true
+//				name:                           "blocking"
 
-				RadioButton
-				{
-					name:                       "noBlocking"
-					label:                      qsTr("No blocking (1 block design)")
-					checked:                    true
-				}
+//				RadioButton
+//				{
+//					name:                       "noBlocking"
+//					label:                      qsTr("No blocking (1 block design)")
+//					checked:                    true
+//				}
 
-				RadioButton
-				{
-					id:                         autoBlocking
-					name:                       "autoBlocking"
-					label:                      qsTr("Automatic definition")
+//				RadioButton
+//				{
+//					id:                         autoBlocking
+//					name:                       "autoBlocking"
+//					label:                      qsTr("Automatic definition")
 
-					IntegerField
-					{
-						name:                   "numberOfBlocks"
-						visible:                autoBlocking.checked
-						label:                  qsTr("Number of blocks")
-					}
-				}
+//					IntegerField
+//					{
+//						name:                   "numberOfBlocks"
+//						visible:                autoBlocking.checked
+//						label:                  qsTr("Number of blocks")
+//					}
+//				}
 
-				RadioButton
-				{
-					name:                       "manualBlocking"
-					label:                      qsTr("Manual definition")
-				}
+//				RadioButton
+//				{
+//					name:                       "manualBlocking"
+//					label:                      qsTr("Manual definition")
+//				}
 
-			}
+//			}
 
 			GroupBox
 			{
-				debug:                          true
-				title:                          qsTr("Additional options")
+                debug:                          false
+                title:                          qsTr("Additional Options")
 
 				IntegerField
 				{
-					debug:                      true
+                    debug:                      false
+                    enabled:                    !factorialTypeSplit.checked
 					name:						"factorialCenterPoints"
 					label:						qsTr("Number of center points per block")
-					defaultValue:				1
-					min:						1
-					max:						50
+                    defaultValue:				0
+                    min:						0
+                    max:						2**(numberOfFactorsForTable.value - 1)
 				}
 
 				IntegerField
 				{
-					debug:                      true
+                    id:                         factorialCornerReplicates
+                    debug:                      false
 					name:						"factorialCornerReplicates"
 					label:						qsTr("Number of replicates for corner points")
-					defaultValue:				3
+                    defaultValue:               1
 					min:						1
-					max:						50
+                    max:						10
+
 				}
+
+                CheckBox
+                {
+                    visible:                    factorialCornerReplicates.value > 1
+                    name:                       "factorialRepeats"
+                    label:                      "Repeats only"
+                }
 
 				IntegerField
 				{
-					name:						"factorialBlocks"
-					enabled:                    !factorialTypeSplit.checked
+                    debug:                      false
+                    name:						"factorialBlocks"
+                    enabled:                    !factorialTypeSplit.checked & !designByResolution.checked & !factorialTypeSpecify.checked & !factorialPlackettBurman.checked
 					label:						qsTr("Number of blocks")
 					defaultValue:				1
 					min:						1
@@ -397,7 +448,19 @@ Form
 
 	GroupBox
 	{
-		FileSelector
+        CheckBox
+        {
+            name:                               "showAvailableDesigns"
+            label:                              "Show available designs"
+        }
+
+        CheckBox
+        {
+            name:                               "displayDesign"
+            label:                              "Display selected design"
+        }
+
+        FileSelector
 		{
 			id:                                 file
 			name:                               "file"
