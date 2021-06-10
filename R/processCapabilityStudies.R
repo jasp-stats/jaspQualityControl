@@ -53,7 +53,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container$dependOn(options = c("normalCapabilityStudy", "capabilityStudy", "nonNormalCapabilityStudy", "variables", "subgroups", "lowerSpecification", "upperSpecification", "targetValue"))
   container$position <- 4
 
-  ready <- length(options[["variables"]]) > 1L
+  ready <- (length(options[["variables"]]) > 1L && (options[["lowerSpecificationField"]] | options[["upperSpecificationField"]]))
 
   jaspResults[["capabilityAnalysis"]] <- container
 
@@ -135,7 +135,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcProcessCapabilityPlot <- function(options, dataset, ready, container) {
 
-  plot <- createJaspPlot(title = gettext("Capability of the Process"), width = 600, height = 300)
+  plot <- createJaspPlot(title = gettext("Capability of the Process"), width = 700, height = 400)
   plot$position <- 2
   container[["capabilityPlot"]] <- plot
 
@@ -186,8 +186,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "cpu",   type = "number", title = gettext("CPU"))
   if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]) {
     table$addColumnInfo(name = "cp",    type = "number", title = gettext("Cp"))
+    if (options[["csConfidenceInterval"]]){
+      ciLevel <- options[["csConfidenceIntervalPercent"]]
+      ciLevelPercent <- ciLevel * 100
+      table$addColumnInfo(name = "cplci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
+      table$addColumnInfo(name = "cpuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
+    }
     table$addColumnInfo(name = "cpk",   type = "number", title = gettext("Cpk"))
+    if (options[["csConfidenceInterval"]]){
+      table$addColumnInfo(name = "cpklci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
+      table$addColumnInfo(name = "cpkuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
+    }
     table$addColumnInfo(name = "z",     type = "number", title = gettext("ppm"))
+
   }
 
   table$showSpecifiedColumnsOnly <- TRUE
@@ -203,13 +214,39 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   allData <- unlist(dataset[, options[["variables"]]])
 
   # Calculate capability indices
-  cp <- (options[["upperSpecification"]] - options[["lowerSpecification"]]) / (6 * qccFit[["std.dev"]])
-  cpl <- (mean(allData) - options[["lowerSpecification"]]) / (3 * qccFit[["std.dev"]])
-  cpu <- (options[["upperSpecification"]] - mean(allData)) / (3 * qccFit[["std.dev"]])
+  usl <- options[["upperSpecification"]]
+  lsl <- options[["lowerSpecification"]]
+  n <- length(allData)
+  k <- length(options[["variables"]])
+  tolMultiplier <- 6
+  cp <- (usl - lsl) / (6 * qccFit[["std.dev"]])
+  cpl <- (mean(allData) - lsl) / (3 * qccFit[["std.dev"]])
+  cpu <- (usl - mean(allData)) / (3 * qccFit[["std.dev"]])
   cpk <- min(cpu, cpl)
   z <- cpk * 3
 
   rows <- list("cp" = cp, "cpl" = cpl, "cpu" = cpu, "cpk" = cpk, "z" = z)
+
+  if (options[["csConfidenceInterval"]]){
+    ciAlpha <- 1 - ciLevel
+
+    #CI for Cp
+    dfCp <- 0.9 * k * ((n/k) - 1)
+    ciLbCp <- cp * sqrt( qchisq(p = ciAlpha/2, df = dfCp) /dfCp)
+    ciUbCp <- cp * sqrt( qchisq(p = 1 - (ciAlpha/2), df = dfCp) /dfCp)
+
+    #CI for Cpk
+    dfCpk <- 0.9 * k * ((n/k) - 1)
+    normCIrange <- qnorm(1 - (ciAlpha / 2))
+    intervalCpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((cpk^2)/ (2 * dfCpk)))
+    ciLbCpk <- cpk - (normCIrange * intervalCpk)
+    ciUbCpk <- cpk + (normCIrange * intervalCpk)
+
+    rows[["cplci"]] <- ciLbCp
+    rows[["cpuci"]] <- ciUbCp
+    rows[["cpklci"]] <- ciLbCpk
+    rows[["cpkuci"]] <- ciUbCpk
+  }
   table$addRows(rows)
 }
 
@@ -221,12 +258,28 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "ppl", type = "number", title = gettext("PPL"))
   if (options[["upperSpecificationField"]])
     table$addColumnInfo(name = "ppu", type = "number", title = gettext("PPU"))
-  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]])
+  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]){
     table$addColumnInfo(name = "pp",  type = "number", title = gettext("Pp"))
-  table$addColumnInfo(name = "ppk",   type = "number", title = gettext("Ppk"))
-  table$addColumnInfo(name = "ppm",   type = "number", title = gettext("ppm"))
-  if (options[["targetValueField"]])
+    if (options[["csConfidenceInterval"]]){
+      ciLevel <- options[["csConfidenceIntervalPercent"]]
+      ciLevelPercent <- ciLevel * 100
+      table$addColumnInfo(name = "pplci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
+      table$addColumnInfo(name = "ppuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
+    }
+    table$addColumnInfo(name = "ppk",   type = "number", title = gettext("Ppk"))
+    if (options[["csConfidenceInterval"]]){
+      table$addColumnInfo(name = "ppklci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
+      table$addColumnInfo(name = "ppkuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
+    }
+    table$addColumnInfo(name = "ppm",   type = "number", title = gettext("ppm"))
+  }
+  if (options[["targetValueField"]]){
     table$addColumnInfo(name = "cpm", type = "number", title = gettext("Cpm"))
+    if (options[["csConfidenceInterval"]]){
+      table$addColumnInfo(name = "cpmlci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
+      table$addColumnInfo(name = "cpmuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
+    }
+  }
 
   table$showSpecifiedColumnsOnly <- TRUE
 
@@ -251,26 +304,63 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ppl <- (mean(allData) - lsl) / (3 * sdo)
   ppu <- (usl - mean(allData)) / (3 * sdo)
   ppk <- min(ppu, ppl)
-  cp <- (usl - lsl) / (6 * qccFit[["std.dev"]])
+  cp <- (usl - lsl) / (tolMultiplier * qccFit[["std.dev"]])
   ppm <- cp / sqrt(1 + ((mean(allData) - t / qccFit[["std.dev"]])^2))
 
-   if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]] && options[["targetValueField"]]){
-     if (t == m){
-       cpm <- (usl - lsl) / (tolMultiplier * sqrt((sum((allData - t)^2)) / n))
-     }else{
-       cpm <- min(c(t - lsl, usl - t)) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
-     }
-   }else if (options[["upperSpecificationField"]] && options[["targetValueField"]]){
-     cpm <- (usl - t) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
-   }else if (options[["lowerSpecificationField"]] && options[["targetValueField"]]){
-     cpm <- (t - lsl) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
-   }
+  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]] && options[["targetValueField"]]){
+    if (t == m){
+      cpm <- (usl - lsl) / (tolMultiplier * sqrt((sum((allData - t)^2)) / n))
+    }else{
+      cpm <- min(c(t - lsl, usl - t)) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
+    }
+  }else if (options[["upperSpecificationField"]] && options[["targetValueField"]]){
+    cpm <- (usl - t) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
+  }else if (options[["lowerSpecificationField"]] && options[["targetValueField"]]){
+    cpm <- (t - lsl) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
+  }
 
 
 
   rows <- list("pp" = pp, "ppl" = ppl, "ppu" = ppu, "ppk" = ppk, "ppm" = ppm)
   if (options[["targetValueField"]])
     rows[["cpm"]] <- cpm
+
+  if (options[["csConfidenceInterval"]]){
+    ciAlpha <- 1 - ciLevel
+
+    #CI for Pp
+    dfPp <- n - 1
+    ciLbPp <- pp * sqrt( qchisq(p = ciAlpha/2, df = dfPp) /dfPp)
+    ciUbPp <- pp * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfPp) / dfPp)
+
+    #CI for Ppk
+    dfPpk <- n - 1
+    normCIrange <- qnorm(1 - (ciAlpha / 2))
+    intervalPpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((ppk^2)/ (2 * dfPpk)))
+    ciLbPpk <- ppk - (normCIrange * intervalPpk)
+    ciUbPpk <- ppk + (normCIrange * intervalPpk)
+
+
+
+    rows[["pplci"]] <- ciLbPp
+    rows[["ppuci"]] <- ciUbPp
+    rows[["ppklci"]] <- ciLbPpk
+    rows[["ppkuci"]] <- ciUbPpk
+
+    if (options[["targetValueField"]]){
+
+      #CI for Cpm
+      a <- (mean(allData) - t) / sdo
+      dfCpm <- (n * ((1 + (a^2))^2)) / (1 + (2 * (a^2)))
+      ciLbCpm <- cpm * sqrt( qchisq(p = ciAlpha/2, df = dfCpm) /dfCpm)
+      ciUbCpm <- cpm * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfCpm) / dfCpm)
+
+
+      rows[["cpmlci"]] <- ciLbCpm
+      rows[["cpmuci"]] <- ciUbCpm
+
+    }
+  }
   table$addRows(rows)
 }
 

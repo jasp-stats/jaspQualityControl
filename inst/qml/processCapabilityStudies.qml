@@ -137,6 +137,15 @@ Form
 				name: 						"CapabilityStudyTables"
 				label: 						qsTr("Process capability tables")
 				checked: 					true
+				
+				CheckBox
+				{
+					name: "csConfidenceInterval";	label: qsTr("Confidence intervals")
+					checked: true
+					childrenOnSameRow: true
+					CIField { name: "csConfidenceIntervalPercent"}
+				}
+				
 			}
 
 		}
