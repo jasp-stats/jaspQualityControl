@@ -16,14 +16,6 @@
   return(dataset)
 }
 
-# Common function to check if options are ready
-.qcOptionsReady <- function(options, type) {
-  if (type == "capabilityStudy") {
-    ready <- length(unlist(options[["variables"]])) > 0
-  }
-  return(ready)
-}
-
 #############################################################
 ## Common functions for plots ###############################
 #############################################################
@@ -31,11 +23,11 @@
 # Function to create the x-bar and r-chart section
 .qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups) {
 
-  if (!options[["controlCharts"]] || !is.null(jaspResults[["controlCharts"]]))
+  if (!is.null(jaspResults[["controlCharts"]]))
     return()
 
   container <- createJaspContainer(title = gettext("Control Chart"))
-  container$dependOn(options = c("controlCharts", "variables", "subgroups"))
+  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
 
@@ -45,9 +37,8 @@
   if (!ready)
     return()
 
-  if (length(options[["variables"]]) < 2) {
-    xplot$setError(gettext("You must enter at least 2 measurements to get this output."))
-    rplot$setError(gettext("You must enter at least 2 measurements to get this output."))
+  if (length(measurements) < 2) {
+    matrixPlot$setError(gettext("You must enter at least 2 measurements to get this output."))
     return()
   }
 
@@ -55,9 +46,9 @@
     subgroups <- dataset[[subgroups]]
 
   plotMat <- matrix(list(), 2, 1)
-  plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups)
-  plotMat[[2,1]] <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups)
-  matrixPlot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
+  plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)
+  plotMat[[2,1]] <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)
+  matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
 }
 
 # Function to create X-bar chart

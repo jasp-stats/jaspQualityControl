@@ -23,7 +23,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     }
   }
 }
-.IMRchart <- function(dataset, options, variable) {
+.IMRchart <- function(dataset, options, variable, cowPlot = FALSE) {
 
   title <- gettextf("Variable: %s", variable )
   ppPlot <- createJaspPlot(width = 700, height = 350, title = title)
@@ -94,7 +94,16 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
+  plotMat <- matrix(list(), 2, 1)
+  plotMat[[1,1]] <- p1
+  plotMat[[2,1]] <- p2
+
+  if(!cowPlot){
+    ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = plotMat, removeXYlabels= "x")
+  }else{
+    ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
+  }
+
   return(ppPlot)
 }
 
