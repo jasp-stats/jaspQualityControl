@@ -29,9 +29,13 @@ Form
             AssignedVariablesList
             {
                 name: "rsmVariables"
-                title: qsTr("Predictors")
+                title: qsTr("Predictors [Location in coded format]")
                 suggestedColumns:   ["scale", "ordinal", "nominal"]
 
+                rowComponent: Row
+                            {
+                                DoubleField {name: "Point_P"; negativeValues: true}
+                            }
 
 
             }
@@ -40,18 +44,9 @@ Form
         }
 
 
-        ComponentsList
-        {
-            name: "Component"
-            title: "Location of Response Surface/Contour Plot"
-            source: "rsmVariables2"
-            rowComponent: Row
-            {
-                DoubleField {name: "Point"; negativeValues: true}
-            }
-        }
+
 		
-        Section
+        Group
         {
             title: qsTr("Contour Plot Options")
             VariablesForm
@@ -64,10 +59,20 @@ Form
                     }
 
 
+
+
                     AssignedPairsVariablesList
                     {	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
 
 
+            }
+
+            TextArea
+            {
+                title: qsTr("RSM formula")
+                name: "Formula"
+                text: "Enter the formula used in RSM prediction. Separate terms with a new line, change predictors into x's (x1 for first, x2 for second,...)"
+                width: 200
             }
 
 
