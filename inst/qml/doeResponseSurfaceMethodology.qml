@@ -71,7 +71,7 @@ Form
             {
                 title: qsTr("RSM formula")
                 name: "Formula"
-                text: "Enter the formula used in RSM prediction. Separate terms with a new line, change predictors into x's (x1 for first, x2 for second,...)"
+                text: "Enter the formula used in RSM"
                 width: 200
             }
 

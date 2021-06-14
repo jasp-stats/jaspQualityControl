@@ -307,6 +307,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
           col = rainbow(options["divide"]),
           zlab = opt2,
           box = T,
+          decode = F,
           ticktype = "detailed",
           phi = options[["phi"]]*360,
           theta = (options[["theta"]]*360 + 330))
