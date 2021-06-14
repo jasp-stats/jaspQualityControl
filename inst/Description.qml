@@ -72,12 +72,12 @@ Description
 
 	 GroupTitle
 	 {
-	 	title:			qsTr("Capability Studies")
+	 	title:			qsTr("Capability Study")
 	 	icon:			"processControl-capability.svg"
 	 }
 	Analysis
 	{
-		title:			qsTr("Process Capability Studies")
+		title:			qsTr("Process Capability Study")
 		func:			"processCapabilityStudies"
 	}
 
@@ -86,34 +86,28 @@ Description
         title:			qsTr("DOE")
 	 	icon:			"processControl-design.svg"
 	 }
-    // Analysis
-    // {
-    //     title:			qsTr("Screening")
-    //     func:			"doeScreening"
-    //     requiresData:	false
-    // }
-	Analysis
-	{
+//     Analysis
+//     {
+//         title:			qsTr("Plackett-Burman Design")
+//         func:			"doePlackettBurman"
+//         requiresData:	false
+//     }
+    Analysis
+    {
         title:			qsTr("Two-level Factorial Design")
         func:			"doeFactorial"
-		requiresData:	false
-	}
+        requiresData:	false
+    }
     Analysis
     {
         title:			qsTr("Response Surface")
         func:			"doeResponseSurfaceMethodology"
         requiresData:	false
     }
-    // Analysis
-    // {
-    //     title:			qsTr("Mixed")
-    //     func:			"doeMixed"
-    //     requiresData:	false
-    // }
-//    Analysis
-//    {
-//        title:          qsTr("Two-level Factorial Analysis")
-//        func:           "factorialAnalysis"
-//        requiresData:   true
-//    }
+    Analysis
+    {
+        title:          qsTr("Two-level Factorial Analysis")
+        func:           "factorialAnalysis"
+        requiresData:   true
+    }
 }

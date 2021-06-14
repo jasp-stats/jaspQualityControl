@@ -26,40 +26,85 @@ Form
 	VariablesForm
 	{
 		AvailableVariablesList { name: "rsmVariablesList" }
-		AssignedVariablesList  { name: "rsmVariables";	        title: qsTr("Predictors");suggestedColumns:   ["scale", "ordinal", "nominal"]   }
+		AssignedVariablesList
+		{
+			name: "rsmVariables"
+			title: qsTr("Predictors [Location in coded format]")
+			suggestedColumns:   ["scale", "ordinal", "nominal"]
+
+			rowComponent: Row
+			{
+				DoubleField {name: "Point_P"; negativeValues: true}
+			}
+
+
+		}
 		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
 		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
 	}
 
-	Section
+
+
+
+	Group
 	{
 		title: qsTr("Contour Plot Options")
 		VariablesForm
 		{
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList		{	name:  "rsmVariables2";	    source:"rsmVariables" }
-			AssignedPairsVariablesList	{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
+			AvailableVariablesList
+			{
+				name:  "rsmVariables2";	    source:"rsmVariables"
+
+			}
+
+
+
+
+			AssignedPairsVariablesList
+			{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
+
+
 		}
+
+		TextArea
+		{
+			title: qsTr("RSM formula")
+			name: "Formula"
+			text: "Enter the formula used in RSM"
+			width: 200
+		}
+
+
 		CheckBox
 		{
-			name:                      "contour";label:   qsTr("Contour plots")
+			name:                      "contour";label:   qsTr("Contour Surface")
+			CheckBox
+			{
+				name:                       "cplot"
+				label:                      qsTr("Only show 2D plot")
+				id:                         cplot
+			}
 
 			CheckBox
 			{
 				name:                       "coded"
 				label:                      qsTr("Show analysis and graphs in coded form")
+				enabled:					cplot.checked
 			}
 
 			CheckBox
 			{
 				name:                       "legend"
 				label:                      qsTr("Show legend next to graph")
+				enabled:					!cplot.checked
 			}
 			DropDown
 			{
 				name:                       "divide"
 				label:                      qsTr("Divide response surface into N parts")
 				values:                     [2,3,4,5,6,7]
+				enabled:					!cplot.checked
 			}
 
 			Slider
@@ -67,6 +112,7 @@ Form
 				name:                       "phi"
 				label:                      qsTr("Rotating angle (vertical plane)")
 				value:                      0
+				enabled:					!cplot.checked
 
 
 			}
@@ -77,6 +123,7 @@ Form
 				label:                      qsTr("Rotating angle (horizontal plane)")
 				value:                      0.5
 				vertical:                   false
+				enabled:					!cplot.checked
 			}
 
 		}

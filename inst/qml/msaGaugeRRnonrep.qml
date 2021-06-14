@@ -87,14 +87,22 @@ Form
 		}
 
 
-
-		DoubleField
+		CheckBox
 		{
-			name:			"NRtolerance"
-			label:			qsTr("Tolerance:")
-			defaultValue:	10
-			enabled:		TRUE
+			name: "gaugeNRToleranceEnabled"
+			label: qsTr("Tolerance:")
+			checked: false
+			childrenOnSameRow: true
+			
+				DoubleField
+				{
+				name: "NRtolerance"
+				defaultValue: 1
+				min: 0.001
+				decimals: 3
+				}
 		}
+
 
 		CheckBox
 		{

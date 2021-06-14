@@ -20,6 +20,20 @@ import JASP.Widgets               			1.0
 Form
 {
 	columns:								2
+	
+	
+	DropDown
+	{
+		name: "pcDataFormat"
+		label: qsTr("Data format")
+		indexDefaultValue: 0
+		values:
+			[
+			{label: qsTr("Long format"),					value: "PClongFormat"},
+			{label: qsTr("Wide format"),				value: "PCwideFormat"},
+		]
+		id: pcDataFormat
+	}
 
 	VariablesForm
 	{
@@ -29,6 +43,16 @@ Form
 		{
 			name:               			"variablesForm"
 		}
+		
+				AssignedVariablesList
+		{
+			id:                 			variablesLong
+			name:               			"variablesLong"
+			title:              			qsTr("Measurements")
+			allowedColumns:     			["scale"]
+			singleVariable:					true
+			visible:						pcDataFormat.currentValue == "PClongFormat"
+		}
 
 		AssignedVariablesList
 		{
@@ -36,6 +60,7 @@ Form
 			name:               			"variables"
 			title:              			qsTr("Measurements")
 			allowedColumns:     			["scale"]
+			visible:						pcDataFormat.currentValue == "PCwideFormat"
 		}
 
 		AssignedVariablesList
@@ -45,63 +70,116 @@ Form
 			title:             			 	qsTr("Subgroups")
 			singleVariable:    	 			true
 			allowedColumns:     			["nominal", "nominalText", "ordinal"]
-			debug:							true // Not sure how this is supposed to be used yet
 		}
 	}
+	
+				DoubleField
+				{
+				id:						pcSubgroupSize
+				name: 					"pcSubgroupSize"
+				label: 					qsTr("Subgroup size:")
+				negativeValues:			false
+				min: 					5
+				defaultValue:			5
+				visible:				pcDataFormat.currentValue == "PClongFormat"
+				}
+	
+	
+				Section
+	{
+		title: qsTr("Process Capability Options")
 
 	ColumnLayout
 	{
 		Group
 		{
 			title:							qsTr("Study Type")
-
-			CheckBox
-			{
-				name: 						"normalCapabilityStudy"
-				label: 						qsTr("Normal capability study")
-				checked: 					true
-
+			
+			
 				RadioButtonGroup
 				{
-					name: 					"capabilityStudy"
+					name: 					"capabilityStudyType"
 
 					RadioButton
 					{
-						name: 				"initialCapabilityAnalysis"
-						label: 				qsTr("Initial capability study")
+						name: 				"normalCapabilityAnalysis"
+						label: 				qsTr("Normal capability study")
 						checked: 			true
 					}
 
 					RadioButton
 					{
-						name: 				"followupCapabilityAnalysis"
-						label: 				qsTr("Follow-up capability study")
+						name: 				"nonnormalCapabilityAnalysis"
+						label: 				qsTr("Non-normal capability study")
+						
+						DropDown
+						{
+							name: 					"nonNormalDist"
+							label: 					qsTr("Specify a distribution")
+							indexDefaultValue: 		0
+							values:
+							[
+								{label: qsTr("Weibull"),		value: "Weibull"  },
+								{label: qsTr("Lognormal"),		value: "Lognormal"}
+							]
+						}
 					}
 				}
-			}
 
 			CheckBox
 			{
-				name: 						"nonNormalCapabilityStudy"
-				label: 						qsTr("Non-normal capability study")
-
+				name: 						"CapabilityStudyPlot"
+				label: 						qsTr("Process capability plot")
+				checked: 					true
+				
 				DropDown
 				{
-					name: 					"nonNormalDist"
-					label: 					qsTr("Specify a distribution")
-					indexDefaultValue: 		0
-					values:
-						[
-						{ label: qsTr("Weibull"),		value: "Weibull"  },
-						{ label: qsTr("Lognormal"),		value: "Lognormal"}
-					]
+				name: "csBinWidthType"
+				label: qsTr("Bin width type")
+				indexDefaultValue: 0
+				values:
+					[
+					{label: qsTr("Sturges"),				value: "sturges"},
+					{label: qsTr("Scott"),					value: "scott"},
+					{label: qsTr("Doane"),					value: "doane"},
+					{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
+					{label: qsTr("Manual"),					value: "manual"	}
+				]
+				id: csBinWidthType
+				}
+			
+				DoubleField
+				{
+				name:			"csNumberOfBins"
+				label:			qsTr("Number of bins")
+				defaultValue:	30
+				min:			3;
+				max:			10000;
+				enabled:		csBinWidthType.currentValue === "manual"
 				}
 			}
+			
+			CheckBox
+			{
+				name: 						"CapabilityStudyTables"
+				label: 						qsTr("Process capability tables")
+				checked: 					true
+				
+				CheckBox
+				{
+					name: "csConfidenceInterval";	label: qsTr("Confidence intervals")
+					checked: true
+					childrenOnSameRow: true
+					CIField { name: "csConfidenceIntervalPercent"}
+				}
+				
+			}
+
 		}
 
 		Group
 		{
-			title: 							qsTr("Study Limits")
+			title: 							qsTr("Specification Limits")
 
 			CheckBox
 			{
@@ -159,13 +237,25 @@ Form
 		Group
 		{
 			title: 							qsTr("Stability of the Process")
+				
 			
-			CheckBox
-			{
-				name: 						"controlCharts"
-				label: 						qsTr("X-bar & R chart")
-				checked: 					true
-			}
+				RadioButtonGroup
+				{
+					name: 					"controlChartsType"
+
+					RadioButton
+					{
+						name: 				"xbarR"
+						label: 				qsTr("X-bar & R chart")
+						checked: 			true
+					}
+
+					RadioButton
+					{
+						name: 				"IMR"
+						label: 				qsTr("I-MR chart")
+					}
+				}
 		}
 
 		Group
@@ -175,30 +265,47 @@ Form
 			CheckBox
 			{
 				name: 						"histogram"
-				label: 						qsTr("Distribution plot")
+				label: 						qsTr("Histogram")
 				checked: 					true
 
 				CheckBox
 				{
 					name:					"displayDensity"
-					label:					qsTr("Display density")
+					label:					qsTr("Fit normal distribution")
 					checked:				true
 				}
 
+				DropDown
+				{
+				name: "pcBinWidthType"
+				label: qsTr("Bin width type")
+				indexDefaultValue: 0
+				values:
+					[
+					{label: qsTr("Sturges"),				value: "sturges"},
+					{label: qsTr("Scott"),					value: "scott"},
+					{label: qsTr("Doane"),					value: "doane"},
+					{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
+					{label: qsTr("Manual"),					value: "manual"	}
+				]
+				id: binWidthType
+				}
+			
 				DoubleField
 				{
-					name:					"numberOfBins"
-					label:					qsTr("Number of bins")
-					defaultValue:			30
-					min:					3
-					max:					10000
+				name:			"pcNumberOfBins"
+				label:			qsTr("Number of bins")
+				defaultValue:	30
+				min:			3;
+				max:			10000;
+				enabled:		binWidthType.currentValue === "manual"
 				}
 			}
 
 			CheckBox
 			{
 				name: 						"probabilityPlot"
-				label: 						qsTr("Probability table and plots")
+				label: 						qsTr("Probability table and plot")
 				checked: 					true
 
 				DropDown
@@ -235,5 +342,66 @@ Form
 				}
 			}
 		}
+	}
+	}
+	
+	
+	
+			Section
+	{
+		title: qsTr("Process Capability Report")
+		
+		
+				TextField
+		{
+			id:						anovaGaugeTitle
+			label: 					qsTr("Title:")
+			name: 					"anovaGaugeTitle"
+			placeholderText:		qsTr("Measurement")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeName
+			label: 					qsTr("Gauge Name:")
+			name: 					"anovaGaugeName"
+			placeholderText:		qsTr("Name")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeDate
+			label: 					qsTr("Date:")
+			name: 					"anovaGaugeDate"
+			placeholderText:		qsTr("Date")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeReportedBy
+			label: 					qsTr("Reported by:")
+			name: 					"anovaGaugeReportedBy"
+			placeholderText:		qsTr("Name")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeMisc
+			label: 					qsTr("Misc:")
+			name: 					"anovaGaugeMisc"
+			placeholderText:		qsTr("Miscellaneous")
+			fieldWidth:				100
+		}
+		
+			CheckBox
+			{
+				name: "anovaGaugeReport";		label: qsTr("Show Report")
+			}
+		
+	
 	}
 }

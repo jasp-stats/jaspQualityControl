@@ -108,9 +108,10 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   gaugeRRNonRepTable3 <- createJaspTable(title = gettext("Gauge Evaluation"))
   gaugeRRNonRepTable3$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
   gaugeRRNonRepTable3$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
-  gaugeRRNonRepTable3$addColumnInfo(name = "studyVar", title = gettextf("Study variation"), type = "number")
-  gaugeRRNonRepTable3$addColumnInfo(name = "percentStudyVar", title = gettext("% Study variation"), type = "number")
-  gaugeRRNonRepTable3$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
+  gaugeRRNonRepTable3$addColumnInfo(name = "studyVar", title = gettextf("Study Variation"), type = "number")
+  gaugeRRNonRepTable3$addColumnInfo(name = "percentStudyVar", title = gettext("% Study Variation"), type = "number")
+  if(options[["gaugeNRToleranceEnabled"]])
+    gaugeRRNonRepTable3$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
 
   if (ready) {
     anovaTable <- .gaugeNestedANOVA(dataset, operators, parts, measurements)
@@ -150,13 +151,20 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     }
     studyVar <- stdDevs * studyVarMultiplier
     percentStudyVar <- studyVar/max(studyVar) * 100
-    percentTolerance <- studyVar / options$NRtolerance * 100
-    gaugeRRNonRepTable3$setData(list("source" = varSources,
-                                     "SD" = stdDevs,
-                                     "studyVar" = studyVar,
-                                     "percentStudyVar" = percentStudyVar,
-                                     "percentTolerance" = percentTolerance))
-    gaugeRRNonRepTable3$addFootnote(gettextf("Study variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
+    gaugeRRNonRepTable3DataList <- list("source" = varSources,
+                                        "SD" = stdDevs,
+                                        "studyVar" = studyVar,
+                                        "percentStudyVar" = percentStudyVar)
+    if(options[["gaugeNRToleranceEnabled"]]){
+      percentTolerance <- studyVar / options$NRtolerance * 100
+      gaugeRRNonRepTable3DataList <- append(gaugeRRNonRepTable3DataList, list("percentTolerance" = percentTolerance))
+    }
+    gaugeRRNonRepTable3$setData(gaugeRRNonRepTable3DataList)
+    if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
+      gaugeRRNonRepTable3$addFootnote(gettextf("Study Variation is calculated as Std. Deviation * %i", as.integer(studyVarMultiplier)))
+    }else{
+      gaugeRRNonRepTable3$addFootnote(gettextf("Study Variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
+    }
     nCategories <- .gaugeNumberDistinctCategories(stdDevs[4], stdDevs[1])
     gaugeRRNonRepTable3$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
   }
@@ -167,8 +175,14 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   if (options[["NRgaugeVarCompGraph"]]) {
     plot <- createJaspPlot(title = gettext("Components of Variation"), width = 850, height = 500)
     plot$dependOn(c("NRgaugeVarCompGraph"))
-    if (ready)
-      plot$plotObject <- .gaugeVarCompGraph(percentVarComps[1:4], percentStudyVar[1:4], percentTolerance[1:4])
+    if (ready){
+      if(options[["gaugeNRToleranceEnabled"]]){
+        percentToleranceForGraph <- percentTolerance[1:4]
+      }else{
+        percentToleranceForGraph <- NA
+      }
+      plot$plotObject <- .gaugeVarCompGraph(percentVarComps[1:4], percentStudyVar[1:4], percentToleranceForGraph)
+    }
     gaugeRRNonRepTables[["Plot"]] <- plot
   }
   return(gaugeRRNonRepTables)

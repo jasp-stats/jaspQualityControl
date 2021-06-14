@@ -29,7 +29,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     }
   }
 }
-.IMRchart <- function(dataset, options, variable) {
+
+.IMRchart <- function(dataset, options, variable, cowPlot = FALSE) {
+
   title <- gettextf("Charts for: %s", variable)
   ppPlot <- createJaspPlot(width = 1200, height = 500, title = title)
   ppPlot$dependOn(optionContainsValue = list(variables = variable))
@@ -104,6 +106,16 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_R)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
+
+  plotMat <- matrix(list(), 2, 1)
+  plotMat[[1,1]] <- p1
+  plotMat[[2,1]] <- p2
+
+  if(!cowPlot){
+    ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = plotMat, removeXYlabels= "x")
+  }else{
+    ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
+  }
 
   ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
   return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R))
