@@ -99,25 +99,45 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     designs <- jaspResults[["state"]]$object
 
     if(options[["factorialType"]] == "factorialPlackettBurman"){
-      runs <- (as.numeric(options[["PBruns"]]) + options[["factorialCenterPoints"]] * options[["factorialBlocks"]]) * options[["factorialCornerReplicates"]]
+      runs <- (as.numeric(options[["PBruns"]]) +
+                 options[["factorialCenterPoints"]] *
+                 options[["factorialBlocks"]]) *
+        options[["factorialCornerReplicates"]]
       resolution <- "?"
     } else {
       if(options[["factorialType"]] == "factorialTypeFull"){
-        runs <- (2^options[["numberOfFactors"]] + options[["factorialCenterPoints"]] * options[["factorialBlocks"]]) * options[["factorialCornerReplicates"]]
+        runs <- (2^options[["numberOfFactors"]] +
+                   options[["factorialCenterPoints"]] *
+                   options[["factorialBlocks"]]) *
+          options[["factorialCornerReplicates"]]
         resolution <- "Full"
       } else {
         if(options[["designBy"]] == "designByRuns"){
-          runs <- (as.numeric(options[["factorialRuns"]]) + options[["factorialCenterPoints"]] * options[["factorialBlocks"]]) * options[["factorialCornerReplicates"]]
-          ifelse(log2(as.numeric(options[["factorialRuns"]])) < options[["numberOfFactors"]],
-                 resolution <- as.character(as.roman(DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
-                                                                                      nruns = as.numeric(options[["factorialRuns"]])))$catlg.entry[[1]]$res)),
-                 resolution <- "Full")
+          runs <- (as.numeric(options[["factorialRuns"]]) +
+                     options[["factorialCenterPoints"]] *
+                     options[["factorialBlocks"]]) *
+            options[["factorialCornerReplicates"]]
+
+          resolution <- if(log2(as.numeric(options[["factorialRuns"]])) < options[["numberOfFactors"]]){
+            as.character(as.roman(DoE.base::design.info(
+              FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
+                         nruns = as.numeric(options[["factorialRuns"]])))$catlg.entry[[1]]$res))
+          } else {
+            "Full"
+          }
+
         } else {
-          resolution <- options[["factorialResolution"]]
-          ifelse(options[["factorialResolution"]] == "Full",
-                 runs <- (DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]), resolution = 100))$nruns + options[["factorialCenterPoints"]] * options[["factorialBlocks"]]) * options[["factorialCornerReplicates"]],
-                 runs <- (DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]), resolution = as.numeric(as.roman(options[["factorialResolution"]]))))$nruns + options[["factorialCenterPoints"]] * options[["factorialBlocks"]]) * options[["factorialCornerReplicates"]]
-                 )
+          resolution <- if(options[["factorialResolution"]] == "Full"){
+            100
+          } else {
+            as.numeric(as.roman(options[["factorialResolution"]]))
+          }
+
+          runs <- (DoE.base::design.info(FrF2::FrF2(nfactors = as.numeric(options[["numberOfFactors"]]),
+                                                    resolution = resolution))$nruns +
+                     options[["factorialCenterPoints"]] *
+                     options[["factorialBlocks"]]) *
+            options[["factorialCornerReplicates"]]
         }
       }
     }
@@ -171,7 +191,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     factorVectors <- list()
 
     for (i in 1:length(results)) {
-      factorNames[i]      <- paste(results[[i]]$factorName, " (", i, ")", sep = "")
+      factorNames[i]      <- paste0(results[[i]]$factorName, " (", i, ")")
       factorLows[i]       <- results[[i]]$low
       factorHighs[i]      <- results[[i]]$high1
       factorVectors[[i]]  <- c(factorLows[i], factorHighs[i])
@@ -181,9 +201,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
            rnd <- FALSE,
            rnd <- TRUE)
 
-    ifelse(options[["factorialRepeats"]],
-           rep <- TRUE,
-           rep <- FALSE)
+    rep <- options[["factorialRepeats"]] > 0
 
     table$addColumnInfo(name = 'runOrder', title = gettext("Run order"), type = 'string')
 
@@ -289,8 +307,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
       # table$addColumnInfo(name = 'blocks', title = gettext("Blocks"), type = 'string')
 
       if(options[["factorialBlocks"]] == 1 && options[["factorialCornerReplicates"]] > 1 && options[["factorialCenterPoints"]] > 0){
-        for(i in 1:options[["factorialCornerReplicates"]]){
-          for(j in 1:options[["factorialCenterPoints"]]){
+        for(i in seq_len(options[["factorialCornerReplicates"]])){
+          for(j in seq_len(options[["factorialCenterPoints"]])){
             blocks[is.na(blocks)][1] <- as.character(i)
           }
         }
@@ -311,9 +329,9 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
 
     #DATA CODING
     if(options[["factorialCenterPoints"]] >= 1){
-      rows[,2:(options[["numberOfFactors"]]+1)] <- sapply(rows[,2:(options[["numberOfFactors"]]+1)], as.numeric)
+      rows[,2:(options[["numberOfFactors"]]+1)] <- as.numeric(rows[,2:(options[["numberOfFactors"]]+1)])
     } else {
-      rows[,2:(options[["numberOfFactors"]]+1)] <- sapply(rows[,2:(options[["numberOfFactors"]]+1)], as.numeric) * 2 - 3
+      rows[,2:(options[["numberOfFactors"]]+1)] <- as.numeric(rows[,2:(options[["numberOfFactors"]]+1)]) * 2 - 3
     }
 
 
@@ -321,9 +339,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
       for(i in 1:as.numeric(options[["numberOfFactors"]])){
         rows[,i+1][rows[,i+1] == -1] <- factorLows[i]
         if(options[["factorialCenterPoints"]] >= 1){
-          rows[,i+1][rows[,i+1] == 0] <- ifelse(!is.na(as.numeric(factorLows[i]) + as.numeric(factorHighs[i])),
-                                                (as.numeric(factorLows[i]) + as.numeric(factorHighs[i]))/2,
-                                                "center")
+          rows[,i+1][rows[,i+1] == 0] <- if(!is.na(as.numeric(factorLows[i]) + as.numeric(factorHighs[i]))){
+            (as.numeric(factorLows[i]) + as.numeric(factorHighs[i]))/2
+          } else {
+            "center"
+          }
         }
         rows[,i+1][rows[,i+1] == 1] <- factorHighs[i]
       }

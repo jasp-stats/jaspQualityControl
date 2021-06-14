@@ -49,20 +49,20 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   factors <- unlist(dataset[,options[["FAassignedFactors"]]], use.names = FALSE)
   response <- unlist(dataset[,options[["FAresponse"]]], use.names = FALSE)
 
-  print(1:100)
-  names <- print(colnames(decodeColNames(dataset[options[["FAassignedFactors"]]])))
-
   perF <- length(factors) / length(options[["FAassignedFactors"]])
   factorsDF <- data.frame(split(factors, ceiling(seq_along(factors) / perF)))
   forFit <- cbind.data.frame(factorsDF, response)
 
+  names <- LETTERS[1:length(factors)]
   colnames(forFit) <- c(names, "response")
 
   order <- as.numeric(options[["intOrder"]])
 
-  ifelse(order == 1,
-         fit <- lm(response ~., forFit),
-         fit <- lm(paste0("response ~ (.)^", order), forFit))
+  fit <- if(order == 1){
+    lm(response ~., forFit)
+  } else {
+    lm(paste0("response ~ (.)^", order), forFit)
+  }
 
   if(options[["resNorm"]]){
     if(is.null(jaspResults[["resNorm"]])){
@@ -126,7 +126,7 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
 
   x <- resid(fit)
 
-  h <- hist(resid(fit), plot = FALSE)
+  h <- hist(x, plot = FALSE)
 
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(h$breaks)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(h$counts)
@@ -246,16 +246,15 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   anova <- summary(aov(fit))
 
   names <- c(names(aov(fit)$coefficients)[-1], "Residuals")
-  anovaFill <- as.data.frame(matrix(0, length(names), 6))
 
-  anovaFill[,1] <- names
-  anovaFill[,2] <- anova[[1]]$Df
-  anovaFill[,3] <- anova[[1]]$`Sum Sq`
-  anovaFill[,4] <- anova[[1]]$`Mean Sq`
-  anovaFill[,5] <- anova[[1]]$`F value`
-  anovaFill[,6] <- anova[[1]]$`Pr(>F)`
-
-  colnames(anovaFill) <- c("terms", "df", "SS", "adjMS", "F", "p")
+  anovaFill <- data.frame(
+    terms = names,
+    df    = anova[[1]]$Df,
+    SS    = anova[[1]]$`Sum Sq`,
+    adjMS = anova[[1]]$`Mean Sq`,
+    `F`   = anova[[1]]$`F value`,
+    p     = anova[[1]]$`Pr(>F)`
+  )
 
   factorialRegressionANOVA$setData(anovaFill)
 
@@ -288,15 +287,14 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   coefs <- as.data.frame(summary(fit)$coefficients)
 
   names <- names(coef(fit))
-  coefsFill <-  as.data.frame(matrix(0, length(names), 5))
 
-  coefsFill[,1] <- gettext(names)
-  coefsFill[,2] <- coefs$Estimate
-  coefsFill[,3] <- coefs$`Std. Error`
-  coefsFill[,4] <- coefs$`t value`
-  coefsFill[,5] <- coefs$`Pr(>|t|)`
-
-  colnames(coefsFill) <- c("terms", "coef", "se", "t", "p")
+  coefsFill <- data.frame(
+    terms = names,
+    coef  = coefs$Estimate,
+    se    = coefs$`Std. Error`,
+    t     = coefs$`t value`,
+    p     = coefs$`Pr(>|t|)`
+  )
 
   factorialRegressionCoefficients$setData(coefsFill)
 

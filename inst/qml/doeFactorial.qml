@@ -64,7 +64,6 @@ Form
 	RadioButtonGroup
 	{
 		title:                                  qsTr("Data Coding")
-        debug:                                  false
 		name:                                   "dataCoding"
 
 		RadioButton
@@ -399,12 +398,10 @@ Form
 
 			GroupBox
 			{
-                debug:                          false
                 title:                          qsTr("Additional Options")
 
 				IntegerField
 				{
-                    debug:                      false
                     enabled:                    !factorialTypeSplit.checked
 					name:						"factorialCenterPoints"
 					label:						qsTr("Number of center points per block")
@@ -416,7 +413,6 @@ Form
 				IntegerField
 				{
                     id:                         factorialCornerReplicates
-                    debug:                      false
 					name:						"factorialCornerReplicates"
 					label:						qsTr("Number of replicates for corner points")
                     defaultValue:               1
@@ -434,7 +430,6 @@ Form
 
 				IntegerField
 				{
-                    debug:                      false
                     name:						"factorialBlocks"
                     enabled:                    !factorialTypeSplit.checked & !designByResolution.checked & !factorialTypeSpecify.checked & !factorialPlackettBurman.checked
 					label:						qsTr("Number of blocks")
