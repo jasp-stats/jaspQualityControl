@@ -83,24 +83,28 @@ Form
                     {
                         name:                       "cplot"
                         label:                      qsTr("Only show 2D plot")
+						id:                         cplot
                     }
 
                     CheckBox
                     {
                         name:                       "coded"
                         label:                      qsTr("Show analysis and graphs in coded form")
+						enabled:                    cplot.checked
                     }
 
                     CheckBox
                     {
                         name:                       "legend"
                         label:                      qsTr("Show legend next to graph")
+						enabled:                    !cplot.checked
                     }
                     DropDown
                     {
                         name:                       "divide"
                         label:                      qsTr("Divide response surface into N parts")
                         values:                     [2,3,4,5,6,7]
+						enabled:                    !cplot.checked
                     }
 
                     Slider
@@ -108,6 +112,7 @@ Form
                         name:                       "phi"
                         label:                      qsTr("Rotating angle (vertical plane)")
                         value:                      0
+						enabled:                    !cplot.checked
 
 
                     }
@@ -118,6 +123,7 @@ Form
                         label:                      qsTr("Rotating angle (horizontal plane)")
                         value:                      0.5
                         vertical:                   false
+						enabled:                    !cplot.checked
                     }
 
             }
