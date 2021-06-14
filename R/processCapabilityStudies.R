@@ -104,7 +104,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     childContainer2$position <- 2
     container[["nonNormalCapabilityAnalysis"]] <- childContainer2
 
-    .qcProcessCapabilityTableNonNormal(options, dataset, ready, childContainer2)
+    .qcProcessCapabilityTableNonNormal(options, dataset, ready, childContainer2, measurements)
   }
 }
 
@@ -557,42 +557,44 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 }
 
-.qcProcessCapabilityTableNonNormal <- function(options, dataset, ready, container) {
+.qcProcessCapabilityTableNonNormal <- function(options, dataset, ready, container, measurements) {
 
-  table <- createJaspTable(title = gettextf("Process Capability based on the %1$s Distribution", options[["nonNormalDist"]]))
+  table <- createJaspTable(title = gettextf("Process Summary"))
 
+  if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
+    table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
+    container[["summaryTableNonNormal"]] <- table
+    return()
+  }
+
+  if(!options[["upperSpecificationField"]] && !options[["lowerSpecificationField"]]){
+    table$setError(gettext("No specification limits set."))
+    container[["summaryTableNonNormal"]] <- table
+    return()
+  }
+
+  if (options[["lowerSpecificationField"]])
+    table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
+  if (options[["upperSpecificationField"]])
+    table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
+  if (options[["targetValueField"]])
+    table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
+
+  table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. Deviation"))
 
   if (options[["nonNormalDist"]] == "Lognormal") {
+    TRUE
 
-    if (options[["lowerSpecificationField"]]) {
-      table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
-      table$addColumnInfo(name = "lower", type = "number", title = gettext("P (X < LSL)"))
-    }
-    if (options[["upperSpecificationField"]]) {
-      table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
-      table$addColumnInfo(name = "upper", type = "number", title = gettext("P (X > USL)"))
-    }
-    if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]) {
-      table$addColumnInfo(name = "cpk", type = "number", title = gettext("Cpk"))
-    }
 
   } else if (options[["nonNormalDist"]] == "Weibull") {
-
-    if (options[["lowerSpecificationField"]])
-      table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
-    if (options[["upperSpecificationField"]])
-      table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
-
     table$addColumnInfo(name = "beta", type = "number", title = gettextf("%1$s", "\u03B2"))
     table$addColumnInfo(name = "theta", type = "number", title = gettextf("%1$s", "\u03B8"))
+ }
 
-  }
 
   table$showSpecifiedColumnsOnly <- TRUE
-
-  container[["capabilityTableNonNormal"]] <- table
 
   if (!ready)
     return()
@@ -601,6 +603,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Transposed gives NA often as std.dev
   qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'R', plot = FALSE)
   allData <- unlist(dataset[, measurements])
+  n <- length(allData)
+  lsl <- options[["lowerSpecification"]]
+  usl <- options[["upperSpecification"]]
 
   if (options[["nonNormalDist"]] == "Lognormal") {
 
@@ -619,13 +624,113 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     beta    <- mixdist::weibullpar(mu = mean(allData), sigma = sd(allData), loc = 0)$shape
     theta   <- mixdist::weibullpar(mu = mean(allData), sigma = sd(allData), loc = 0)$scale
 
-    rows <- list("mean" = mean(allData), "sd" = sd(allData), "lsl" = options[["lowerSpecification"]],
-                 "usl" = options[["upperSpecification"]], "beta" = beta, "theta" = theta)
+    rows <- list("n" = n,"mean" = mean(allData), "sd" = sd(allData), "lsl" = options[["lowerSpecification"]],
+                 "usl" = options[["upperSpecification"]], "target" = options[["targetValue"]], "beta" = beta, "theta" = theta)
 
   }
 
   table$addRows(rows)
+
+  container[["summaryTableNonNormal"]] <- table
+
+
+  table2 <- createJaspTable(title = gettextf("Overall Capability"))
+
+  if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]])
+    table2$addColumnInfo(name = "pp", type = "number", title = gettext("Pp"))
+
+  if (options[["lowerSpecificationField"]])
+    table2$addColumnInfo(name = "ppl", type = "number", title = gettext("PPL"))
+  if (options[["upperSpecificationField"]])
+    table2$addColumnInfo(name = "ppu", type = "number", title = gettext("PPU"))
+  table2$addColumnInfo(name = "ppk", type = "number", title = gettext("Ppk"))
+
+  table2data <- list()
+
+  if (options[["nonNormalDist"]] == "Lognormal") {
+
+
+  } else if (options[["nonNormalDist"]] == "Weibull") {
+    if (options[["lowerSpecificationField"]]){
+      p1 <- pweibull(q = lsl, shape = beta, scale = theta, lower.tail = T)
+      zLSL <- qnorm(p1)
+      ppl <- -zLSL/3
+      table2data[["ppl"]] <- ppl
+    }else{
+      ppl <- NA
+    }
+    if (options[["upperSpecificationField"]]){
+      p2 <- pweibull(q = usl, shape = beta, scale = theta)
+      zUSL <- qnorm(p2)
+      ppu <- zUSL/3
+      table2data[["ppu"]] <- ppu
+    }else{
+      ppu <- NA
+    }
+    if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]]){
+      pp <- (zUSL - zLSL)/6
+      table2data[["pp"]] <- pp
+    }
+    ppk <- min(c(ppl, ppu), na.rm = T)
+    table2data[["ppk"]] <- ppk
+  }
+
+  table2$setData(table2data)
+  container[["overallCapabilityNonNormal"]] <- table2
+
+  table3 <- createJaspTable(title = gettextf("Performance"))
+
+  table3$addColumnInfo(name = "rowNames", type = "string", title = gettext(""))
+  table3$addColumnInfo(name = "observed", type = "number", title = gettext("Observed"))
+  table3$addColumnInfo(name = "expOverall", type = "number", title = gettext("Expected overall"))
+
+
+  allDataVector <- as.vector(allData)
+  rowNames <- c("PPM < LSL", "PPM > USL", "PPM total")
+
+  #observed
+  if (options[["lowerSpecificationField"]]){
+    oLSL <- (1e6*length(allDataVector[allDataVector < lsl])) / n
+  }else{
+    oLSL <- NA
+  }
+  if (options[["upperSpecificationField"]]){
+    oUSL <- (1e6*length(allDataVector[allDataVector > usl])) / n
+  }else{
+    oUSL <- NA
+  }
+  oTOT <- sum(c(oLSL, oUSL), na.rm = T)
+  observed <- c(oLSL, oUSL, oTOT)
+
+  # expected overall
+
+  if (options[["nonNormalDist"]] == "Lognormal") {
+
+
+  } else if (options[["nonNormalDist"]] == "Weibull") {
+    if (options[["lowerSpecificationField"]]){
+      eoLSL <- 1e6 * pweibull(q = lsl, shape = beta, scale = theta)
+    }else{
+      eoLSL <- NA
+    }
+    if (options[["upperSpecificationField"]]){
+      eoUSL <- 1e6 * (1 - pweibull(q = usl, shape = beta, scale = theta))
+    }else{
+      eoUSL <- NA
+    }
+    eoTOT <- sum(c(eoLSL, eoUSL), na.rm = T)
+    expOverall <- c(eoLSL, eoUSL, eoTOT)
+  }
+
+  table3data <- list("rowNames" = rowNames, "observed" = observed, "expOverall" = expOverall)
+  table3$setData(table3data)
+
+  container[["PerformanceNonNormal"]] <- table3
+
+
 }
+
+
 
 #############################################################
 ## Functions for probability plot section ###################
@@ -682,7 +787,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table$addFootnote(gettextf("The Anderson-Darling statistic <i>A</i> is calculated against the %2$s distribution.", "\u00B2", options[["nullDistribution"]]))
 
-  container[["probabilityTable"]] <- table
+  if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
+    table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
+    container[["probabilityTable"]] <- table
+    return()
+  }
+
+
+
+
 
   values <- as.vector(unlist(dataset[measurements]))
 
@@ -708,12 +821,20 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   row <- list(mean = meanx, sd = sdx, n = n, ad = ad, p = p)
   table$addRows(row)
+
+
+  container[["probabilityTable"]] <- table
 }
 
 .qcProbabilityPlot <- function(dataset, options, measurements) {
 
   plot <- createJaspPlot(width = 400, aspectRatio = 1, title = "Probability Plot")
   plot$dependOn(c("variablesLong", "pcSubgroupSize"))
+
+  if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
+    plot$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
+    return(plot)
+  }
 
   # Arrange data
   x <- as.vector(unlist(dataset[measurements]))
