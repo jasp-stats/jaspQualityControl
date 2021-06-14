@@ -116,7 +116,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceContour <- function(jaspResults, options, position, dataset) {
   ready <- 1
-  print(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2])
+  #print(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2])
   if (is.null(jaspResults[["ContourPlot"]]))
     .responseSurfaceContourPlot(jaspResults, dataset, options)
 
@@ -153,7 +153,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }
     
 
-    print(data)
+    #print(data)
 
 
     pair <- options[["pairs"]]
@@ -230,7 +230,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
         contourPlot[[paste0("plotObject", col, sep = "")]] <- plot
 
         str1 <-  paste0("x",1:op1, collapse = ",")
-        print(str1)
+        #print(str1)
         str2 <-  paste("SO(", str1, ")", sep = "")
         if (length(unique(data[,(op1+2)])) > 1){
           str3 <- as.formula(paste(opt2, "~",
@@ -295,7 +295,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   
   opt2 <- options[["rsmResponseVariables"]]
   
-  print(options[["Formula"]])
+  #print(options[["Formula"]])
   
   
   # print(point_spec_r)
