@@ -1,9 +1,9 @@
 Package: jaspProcessControl
 Type: Package
-Title: Quality Control
-Version: 0.15.0
-Date: 2021-03-07
-Author: JASP team
+Title: Quality Control Module for JASP
+Version: 0.0.1
+Date: 2021-05-20
+Author: JASP Team
 Website: https://github.com/jasp-stats/jaspProcessControl
 Maintainer: JASP <info@jasp-stats.org>
 Description: Investigate if a manufactured product adheres to a defined set of quality criteria.
