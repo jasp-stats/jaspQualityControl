@@ -69,7 +69,7 @@ Form
 					RadioButton
 					{
 						value: 					"Laneyprimechart"
-						label: 					qsTr("Laney p’ (p-prime) chart")
+						label: 					qsTr("Laney p' (p-prime) chart")
 					}
 				}
 			}
@@ -100,16 +100,15 @@ Form
 					RadioButton
 					{
 						value: 					"Laneychart"
-						label: 					qsTr("Laney u’ (u-prime) chart")
+						label: 					qsTr("Laney u' (u-prime) chart")
 					}
 				}
 			}
-
-					RadioButton
-					{
-						value: 					"ImR"
-						label: 					qsTr("X-mR chart")
-					}
+			RadioButton
+			{
+				value: 					"ImR"
+				label: 					qsTr("X-mR chart")
+			}
 		}
 	}
 }

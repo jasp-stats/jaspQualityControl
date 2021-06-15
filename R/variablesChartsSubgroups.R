@@ -26,7 +26,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (options$Xbarchart && is.null(jaspResults[["XbarPlot"]]) &&  length(options$variables) > 1) {
     jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
     Xchart <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]], time = makeTime, Phase2 = options$Phase2_XR, target = options$mean_XR, sd = options$SD_XR)
-    Rchart <- .RchartNoId(dataset = dataset, options = options, time = makeTime)
+    Rchart <- .RchartNoId(dataset = dataset, options = options, time = makeTime, warningLimits = FALSE)
     jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
     jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart", "variables", "Wlimits", "Phase2_XR", "mean_XR", "SD_XR"))
 

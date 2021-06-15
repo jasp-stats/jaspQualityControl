@@ -66,11 +66,6 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Attributes Charts")
-		func:			"attributesCharts"
-	}
-	Analysis
-	{
 		title:			qsTr("Time Weighted Charts")
 		func:			"timeWeightedCharts"
 	}

@@ -87,6 +87,7 @@
   prettyxBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)
   prettyxBreaks[prettyxBreaks == 0] <- 1
   xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
+
   dfLabel <- data.frame(
     x = max(xBreaks) * 1.2,
     y = c(center, UCL, LCL),
@@ -102,13 +103,11 @@
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green', size = 1) +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5)
-
   if (warningLimits) {
     warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
     p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
   }
-
   if (yAxis){
     p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab) ,limits = yLimits, breaks = yBreaks)
   }else{
@@ -141,24 +140,11 @@
   else
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
-  if (warningLimits) {
-    warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
-  }
-
-  if (Phase2)
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
-  else
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
-
   if (time) {
     xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
     xBreaks <- c(subgroups)
     p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
-    return(list(p = p, sixsigma = sixsigma, xLabels = dataset[[.v(options$time)]]))
   }
-
   if (manualXaxis != "") {
     xLabels <- factor(manualXaxis, levels = manualXaxis)
     p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
@@ -223,7 +209,6 @@
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
     ggplot2::geom_hline(yintercept = center,  color = 'green', size = 1) +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", , linetype = "dashed", size = 1.5)
-
   if (warningLimits) {
     warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
@@ -268,6 +253,7 @@
 
   if (time)
     return(list(p = p, sixsigma = sixsigma, xLabels = dataset[[.v(options$time)]]))
+
   else  {return(list(p = p, sixsigma = sixsigma))}
 }
 
@@ -346,16 +332,17 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
 
 
-      table$setData(list(
-        "test1" = c(Test$Rules$R1),
-        "test2" = c(Test$Rules$R2),
-        "test3" = c(Test$Rules$R3),
-        "test4" = c(Test$Rules$R4),
-        "test5" = c(Test$Rules$R5),
-        "test6" = c(Test$Rules$R6)
-      ))
 
-    }
+    table$setData(list(
+      "test1" = c(Test$Rules$R1),
+      "test2" = c(Test$Rules$R2),
+      "test3" = c(Test$Rules$R3),
+      "test4" = c(Test$Rules$R4),
+      "test5" = c(Test$Rules$R5),
+      "test6" = c(Test$Rules$R6)
+    ))
+
+  }
   else {
 
     if (name == "P" || name == "NP" || name == "C" || name == "U" || name == "Laney P'" || name == "Laney U'")
@@ -373,15 +360,14 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
 
 
-      table$setData(list(
-        "test1" = c(Test$Rules$R1),
-        "test2" = c(Test$Rules$R2),
-        "test3" = c(Test$Rules$R3)
-      ))
-    }
+    table$setData(list(
+      "test1" = c(Test$Rules$R1),
+      "test2" = c(Test$Rules$R2),
+      "test3" = c(Test$Rules$R3)
+    ))
+  }
 
   table$showSpecifiedColumnsOnly <- TRUE
   table$addFootnote(message = gettext("Numbers index data points where test violations occur."))
   return(table)
 }
-
