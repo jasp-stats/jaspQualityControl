@@ -1036,7 +1036,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   jaspResults[["ImR Charts"]] <- container
 
   for(measurement in measurements){
-    container[[measurement]] <- .IMRchart(dataset, options, variable = measurement, cowPlot = TRUE)
+    container[[measurement]] <- .IMRchart(dataset, options, variable = measurement, cowPlot = TRUE)$p
   }
 
 }
