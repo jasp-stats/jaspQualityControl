@@ -28,12 +28,12 @@ Form
 
 	Group
 	{
-		title: 									qsTr("Charts for Individuals")
+		title: 									qsTr("Variables Chart for Individuals")
 
 		CheckBox
 		{
 			name: 								"ImRchart"
-			label: 								qsTr("I-MR chart")
+			label: 								qsTr("X-mR chart")
 			checked: 							true
 		}
 	}

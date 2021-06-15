@@ -54,30 +54,30 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
     DesignChoiceTable <- createJaspTable(gettext("Design Choice"))
 
-    DesignChoiceTable$dependOn(options = c("factorResponse","showDesign", "responseSurfaceCenter","responseSurfaceBlocks",    "responseSurfaceCenterPointStar","responseSurfaceReplicationStar"))
+  DesignChoiceTable$dependOn(options = c("factorResponse","showDesign", "responseSurfaceCenter","responseSurfaceBlocks",    "responseSurfaceCenterPointStar","responseSurfaceReplicationStar"))
 
-    DesignChoiceTable$addCitation("Lenth, R.V. (2020). Response-Surface Methods in R, Using rsm.")
+  DesignChoiceTable$addCitation("Lenth, R.V. (2020). Response-Surface Methods in R, Using rsm.")
 
-    DesignChoiceTable$addColumnInfo(name = "n.c",        title = "N Fac Points",                                type = "integer")
-    DesignChoiceTable$addColumnInfo(name = "n0.c",       title = "N Centre Points/Block",                       type = "integer")
-    DesignChoiceTable$addColumnInfo(name = "blks.c",     title = "N Cube Blocks/Cube Portion",                  type = "integer")
-    DesignChoiceTable$addColumnInfo(name = "n.s",        title = "N Design Star Points/Block",                  type = "integer")
-    DesignChoiceTable$addColumnInfo(name = "n0.s",       title = "N Centre Points/Star Block",                  type = "integer")
-    DesignChoiceTable$addColumnInfo(name = "bbr.c",      title = "N Copies of Each Cube Block",                 type = "integer")
-    DesignChoiceTable$addColumnInfo(name = "wbr.s",      title = "N Replications of Each Star Point/Block",     type = "integer")
-    DesignChoiceTable$addColumnInfo(name = "bbr.s",      title = "N Copies of Each Star Block",                 type = "integer")
-    DesignChoiceTable$addColumnInfo(name = "N",          title = "Total Experiment Size",                       type = "integer")
-    DesignChoiceTable$addColumnInfo(name = "alpha.rot",  title = "Rotational Alpha",                            type = "number")
-    DesignChoiceTable$addColumnInfo(name = "alpha.orth", title = "Orthogonal Alpha",                            type = "number")
+  DesignChoiceTable$addColumnInfo(name = "n.c",        title = "N Fac Points",                                type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "n0.c",       title = "N Centre Points/Block",                       type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "blks.c",     title = "N Cube Blocks/Cube Portion",                  type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "n.s",        title = "N Design Star Points/Block",                  type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "n0.s",       title = "N Centre Points/Star Block",                  type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "bbr.c",      title = "N Copies of Each Cube Block",                 type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "wbr.s",      title = "N Replications of Each Star Point/Block",     type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "bbr.s",      title = "N Copies of Each Star Block",                 type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "N",          title = "Total Experiment Size",                       type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "alpha.rot",  title = "Rotational Alpha",                            type = "number")
+  DesignChoiceTable$addColumnInfo(name = "alpha.orth", title = "Orthogonal Alpha",                            type = "number")
 
-    message <- "n."
-    
-    jaspResults[["showDesign"]] <- DesignChoiceTable
+  message <- "n."
 
-    .qualityControlFillChoice(DesignChoiceTable, options)
+  jaspResults[["showDesign"]] <- DesignChoiceTable
+
+  .qualityControlFillChoice(DesignChoiceTable, options)
 
 
-    return()
+  return()
 }
 
 .qualityControlFillChoice <- function(DesignChoiceTable, options) {
@@ -86,16 +86,16 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   n0.c          <- options[["responseSurfaceCentre"]]
   wbr.s         <- options[["responseSurfaceReplicationStar"]]
 
-  
-  
+
+
 
   results       <- rsm::ccd.pick(k,
                                  n0.c   = n0.c,
                                  n.c    = c(2^k,2^(k+1)),
                                  wbr.s  = 1:wbr.s
   )
-                                 
-                                
+
+
 
   DesignChoiceTable$setData(list(n.c        = results$n.c,
                                  n0.c       = results$n0.c,
@@ -125,33 +125,33 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceContourPlot <- function(jaspResults, dataset, options, ready) {
   contourPlot <- createJaspContainer(title = "Contour Plot")
-  
-  op1  <- length(options[["rsmVariables"]]) 
-  op2  <- length(options[["rsmResponseVariables"]]) 
-  op3  <- length(options[["rsmBlocks"]]) 
-  
-  
-  
+
+  op1  <- length(options[["rsmVariables"]])
+  op2  <- length(options[["rsmResponseVariables"]])
+  op3  <- length(options[["rsmBlocks"]])
+
+
+
   op_pair <- length(options[["pairs"]])
-  
+
   jaspResults[["contourPlot"]] <- contourPlot
-  
+
   if (op_pair == 0 & options[["contour"]]) {
     jaspResults[["contourPlot"]][["1"]] <- createJaspPlot(width = 540, height = 540)
-    
+
     return ()
   }else if(op2 >= 1) {
-    
-    
+
+
     if (options[["rsmBlocks"]] != ""){
       data <- .readDataSetToEnd(columns.as.numeric =   c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
-                                                       options[["rsmResponseVariables"]]),
+                                                         options[["rsmResponseVariables"]]),
                                 columns.as.factor  =   options[["rsmBlocks"]])
     }else{
       data <- .readDataSetToEnd(columns.as.numeric = c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
                                                        options[["rsmResponseVariables"]]))
     }
-    
+
 
     #print(data)
 
@@ -272,82 +272,82 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
     }
 
-  
-      
-    
+
+
+
   }
-  
-  
-  
+
+
+
   return()
 
-    
 
-  
+
+
 }
 
 
 .responseSurfaceContourFill <- function(contourPlot,heli.rsm1,po, options, point_spec_r, dataset) {
-  
-  op1  <- length(options[["rsmVariables"]]) 
-  op2  <- length(options[["rsmResponseVariables"]]) 
-  op3  <- length(options[["rsmBlocks"]]) 
-  
+
+  op1  <- length(options[["rsmVariables"]])
+  op2  <- length(options[["rsmResponseVariables"]])
+  op3  <- length(options[["rsmBlocks"]])
+
   opt2 <- options[["rsmResponseVariables"]]
-  
+
   #print(options[["Formula"]])
-  
-  
+
+
   # print(point_spec_r)
   # print(heli.rsm1)
   # print(po)
   contour.fill <- function() {
-    plot <- persp(heli.rsm1, po, 
-          at = point_spec_r, contours = "colors", 
-          col = rainbow(options["divide"]),
-          zlab = opt2,
-          box = T,
-          decode = F,
-          ticktype = "detailed",
-          phi = options[["phi"]]*360,
-          theta = (options[["theta"]]*360 + 330))
+    plot <- persp(heli.rsm1, po,
+                  at = point_spec_r, contours = "colors",
+                  col = rainbow(options["divide"]),
+                  zlab = opt2,
+                  box = T,
+                  decode = F,
+                  ticktype = "detailed",
+                  phi = options[["phi"]]*360,
+                  theta = (options[["theta"]]*360 + 330))
     #mtext(plot[[1]][[4]][[5]])
     if (options[["legend"]]){
       #Divide the difference between the upper and lower z-axis boundary by number of colours
       z_step <- (plot[[1]][[5]][[2]] - plot[[1]][[5]][[1]])/(length(rainbow(options["divide"])))
-      #Create a string of intervals corresponding to each colour 
+      #Create a string of intervals corresponding to each colour
       string <- c()
       for (i in 1:length(rainbow(options["divide"]))) {
-        string[i] <- paste(as.character(round(plot[[1]][[5]][[1]]+(i-1)*z_step,1)), "-", 
+        string[i] <- paste(as.character(round(plot[[1]][[5]][[1]]+(i-1)*z_step,1)), "-",
                            as.character(round(plot[[1]][[5]][[1]]+i*z_step,1)), sep = "")
       }
       legend(x = "topright", legend = string, fill = rainbow(options["divide"]), text.width = 0.1, cex = 0.9)
     }
-   
+
   }
-  
-  
+
+
   plot.contour <- function() {
     contour(heli.rsm1,
-            po, 
+            po,
             image = T,
             at = point_spec_r,
             contours = terrain.colors(5),
             decode = ifelse(options[["coded"]], F,T),
             las = 1)
   }
-  
+
   if (options[["cplot"]]) {
     contourPlot$plotObject <- plot.contour
   }else {
     contourPlot$plotObject <- contour.fill
   }
-  
-  
 
-  
-  
-  
+
+
+
+
+
 
   return()
 }

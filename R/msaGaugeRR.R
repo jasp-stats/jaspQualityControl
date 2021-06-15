@@ -18,11 +18,11 @@
 msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
-if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
-  measurements <- unlist(options$measurements)
-}else{
-  measurements <- unlist(options$measurementsLong)
-}
+  if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
+    measurements <- unlist(options$measurements)
+  }else{
+    measurements <- unlist(options$measurementsLong)
+  }
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
 

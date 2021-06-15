@@ -7,45 +7,55 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
              all.target = options$variables,
              observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE)
 
-  jaspResults[["intro"]] <- createJaspHtml(gettext("Select one of the control charts from the interface."))
-  jaspResults[["intro"]]$position <- 0
-
   #ImR chart
   if (options$ImRchart) {
-    if (is.null(jaspResults[["Ichart"]])) {
-      jaspResults[["Ichart"]] <- createJaspContainer(gettext("Charts per variable"))
-    }
+    if(is.null(jaspResults[["Ichart"]])){
+      jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
+      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables"))
+      Iplot <- jaspResults[["Ichart"]]
 
-    Iplot <- jaspResults[["Ichart"]]
+      for (var in variables) {
 
-    for (var in variables) {
-      Iplot[[var]] <- .IMRchart(dataset = dataset, options = options, variable = var)
+        ALL <- createJaspContainer(gettextf("Charts and Tests for %s", var))
+
+        ALL[["Plot"]] <- .IMRchart(dataset = dataset, options = options, variable = var)$p
+
+        ALL[["Table1"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", name = "Individual", sixsigma = .IMRchart(dataset = dataset, options = options, variable = var)$sixsigma_I)
+
+        ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, name = "R", sixsigma = .IMRchart(dataset = dataset, options = options, variable = var)$sixsigma_R)
+
+        Iplot[[var]] <- ALL
+      }
     }
   }
 }
+
 .IMRchart <- function(dataset, options, variable, cowPlot = FALSE) {
 
-  title <- gettextf("Variable: %s", variable )
-  ppPlot <- createJaspPlot(width = 700, height = 350, title = title)
-  ppPlot$dependOn(options = "ImRchart", optionContainsValue = list(variables = variable))
+  title <- gettextf("Charts for: %s", variable)
+  ppPlot <- createJaspPlot(width = 1200, height = 500, title = title)
+  ppPlot$dependOn(optionContainsValue = list(variables = variable))
 
   #Individual chart
   #data
   data <- data.frame(process = dataset[[variable]])
   subgroups <- c(1:length(data$process))
-  sixsigma <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
-  center <- sixsigma$center
-  UCL <- max(sixsigma$limits)
-  LCL <- min(sixsigma$limits)
-  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  xLimits <- c(0, max(xBreaks) + 5)
+  sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
+  center <- sixsigma_I$center
+  UCL <- max(sixsigma_I$limits)
+  LCL <- min(sixsigma_I$limits)
+  if (length(subgroups) > 60)
+    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  else
+    xBreaks <- c(subgroups)
+  xLimits <- c(1,max(xBreaks) + 2.5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, 3)),
-      gettextf("UCL = %g",   round(UCL, 3)),
-      gettextf("LCL = %g",   round(LCL, 3))
+      gettextf("CL = %g", round(center, 4)),
+      gettextf("UCL = %g",   round(UCL, 5)),
+      gettextf("LCL = %g",   round(LCL, 5))
     )
   )
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data$process, UCL))
@@ -57,7 +67,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     ggplot2::scale_y_continuous(name = gettext("Value"), breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
     jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data$process > UCL | data$process < LCL, 'red', 'blue')) +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -65,20 +75,23 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   #data
   data2 <- data.frame(process = dataset[[.v(variable)]])
   xmr.raw.r <- matrix(cbind(data2$process[1:length(data2$process)-1], data2$process[2:length(data2$process)]), ncol=2)
-  sixsigma <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
-  data_plot <- data.frame(subgroups = c(1:length(sixsigma$statistics)), data2 = sixsigma$statistics)
-  center <- sixsigma$center
-  UCL <- max(sixsigma$limits)
-  LCL <- min(sixsigma$limits)
-  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  xLimits <- c(0,max(xBreaks) + 5)
+  sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
+  data_plot <- data.frame(subgroups = c(1:length(sixsigma_R$statistics)), data2 = sixsigma_R$statistics)
+  center <- sixsigma_R$center
+  UCL <- max(sixsigma_R$limits)
+  LCL <- min(sixsigma_R$limits)
+  if (length(subgroups) > 60)
+    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  else
+    xBreaks <- c(subgroups)
+  xLimits <- c(1,max(xBreaks) + 2.5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, 3)),
-      gettextf("UCL = %g",   round(UCL, 3)),
-      gettextf("LCL = %g",   round(LCL, 3))
+      gettextf("CL = %g", round(center, 4)),
+      gettextf("UCL = %g",   round(UCL, 5)),
+      gettextf("LCL = %g",   round(LCL, 5))
     )
   )
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$data2, UCL))
@@ -90,7 +103,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     ggplot2::scale_y_continuous(name = gettext("Moving Range"), breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
     jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$data > UCL | data_plot$data < LCL, 'red', 'blue')) +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_R)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -104,6 +117,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
   }
 
-  return(ppPlot)
+  ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
+  return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R))
 }
 

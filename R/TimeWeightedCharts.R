@@ -8,18 +8,16 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
 
   if (length(variables) > 0) {
     #Cusum chart
-    if (options$Cumulativechart && is.null(jaspResults[["Cumulativechart"]])) {
-      jaspResults[["CusumPlot"]] <- createJaspPlot(title = gettext("Cumulative sum chart"), width = 900, height = 400)
+    if (options$Cumulativechart && is.null(jaspResults[["CusumPlot"]])) {
+      jaspResults[["CusumPlot"]] <- createJaspPlot(title = gettext("Cumulative sum chart"), width = 1200, height = 500)
       jaspResults[["CusumPlot"]]$dependOn(c("Cumulativechart", "variables"))
-      CusumPlotPlot <- jaspResults[["CusumPlot"]]
-      CusumPlotPlot$plotObject <- .Cusumchart(dataset = dataset, options = options)
+      jaspResults[["CusumPlot"]]$plotObject <- .Cusumchart(dataset = dataset, options = options)
     }
     #EWMA chart
-    if (options$Exponentialchart && is.null(jaspResults[["Exponentialchart"]])) {
-      jaspResults[["EWMAPlot"]] <- createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 900, height = 400)
+    if (options$Exponentialchart && is.null(jaspResults[["EWMAPlot"]])) {
+      jaspResults[["EWMAPlot"]] <- createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 1200, height = 500)
       jaspResults[["EWMAPlot"]]$dependOn(c("Exponentialchart", "variables"))
-      EWMAPlot <- jaspResults[["EWMAPlot"]]
-      EWMAPlot$plotObject <- .EWMA(dataset = dataset, options = options)
+      jaspResults[["EWMAPlot"]]$plotObject <- .EWMA(dataset = dataset, options = options)
     }
   }
 }
@@ -38,17 +36,21 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   LCL <- -UCL
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, data_plot$y_neg,  data_plot$y_pos))
   yLimits <- range(yBreaks)
-  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  xLimits <- c(0,max(xBreaks) + 5)
+  if (length(subgroups) > 60)
+    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  else
+    xBreaks <- c(subgroups)
+  xLimits <- c(1,max(xBreaks) + 2.5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", center),
-      gettextf("UCL = %g", UCL),
-      gettextf("LCL = %g", LCL)
+      gettextf("CL = %g", round(center, 4)),
+      gettextf("UCL = %g",   round(UCL, 5)),
+      gettextf("LCL = %g",   round(LCL, 5))
     )
   )
+
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x))  +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
@@ -78,13 +80,16 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   data_plot <- data.frame(y = sixsigma$y, x = subgroups, UCL = UCL, LCL = LCL)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, data_plot$y))
   yLimits <- range(yBreaks)
-  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  xLimits <- c(0,max(xBreaks) + 5)
+  if (length(subgroups) > 60)
+    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  else
+    xBreaks <- c(subgroups)
+  xLimits <- c(1,max(xBreaks) + 2.5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center),
     l = c(
-      gettextf("CL = %g", center)
+      gettextf("CL = %g", round(center, 4))
     )
   )
 

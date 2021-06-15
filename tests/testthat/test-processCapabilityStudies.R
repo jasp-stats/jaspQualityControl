@@ -8,7 +8,7 @@ options$rank <- "Bernard"
 options$upperSpecificationField <- TRUE
 options$variablesLong <- "Measurement1"
 set.seed(1)
-results <- runAnalysis("processCapabilityStudies", "C:/Users/derksk/OneDrive - NBU/Desktop/PhD/JASP modules/jaspProcessControl/tests/testthat/partOperatorData.csv", options)
+results <- runAnalysis("processCapabilityStudies", "partOperatorData.csv", options)
 
 
 test_that("Capability of the Process plot matches", {

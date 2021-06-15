@@ -23,7 +23,7 @@ Form
 	usesJaspResults:							true
 	columns:									1
 	
-		DropDown
+	DropDown
 	{
 		name: "gaugeRRdataFormat"
 		label: qsTr("Data format")
@@ -63,7 +63,7 @@ Form
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
 		
-						AssignedVariablesList
+		AssignedVariablesList
 		{
 			id:									variable4
 			name:								"measurementsLong"
@@ -132,17 +132,17 @@ Form
 			
 			CheckBox
 			{
-			name: "gaugeToleranceEnabled"
-			label: qsTr("Tolerance:")
-			checked: false
-			childrenOnSameRow: true
-			
+				name: "gaugeToleranceEnabled"
+				label: qsTr("Tolerance:")
+				checked: false
+				childrenOnSameRow: true
+
 				DoubleField
 				{
-				name: "tolerance"
-				defaultValue: 1
-				min: 0.001
-				decimals: 3
+					name: "tolerance"
+					defaultValue: 1
+					min: 0.001
+					decimals: 3
 				}
 			}
 			
@@ -261,13 +261,13 @@ Form
 	}
 	
 	
-		Section
+	Section
 	{
 		title: qsTr("ANOVA Method Report")
 		visible: gaugeRRmethod.currentValue == "anovaMethod"
 		
 		
-				TextField
+		TextField
 		{
 			id:						anovaGaugeTitle
 			label: 					qsTr("Title:")
@@ -312,12 +312,12 @@ Form
 			fieldWidth:				100
 		}
 		
-			CheckBox
-			{
-				name: "anovaGaugeReport";		label: qsTr("Show Report")
-			}
+		CheckBox
+		{
+			name: "anovaGaugeReport";		label: qsTr("Show Report")
+		}
 		
-	
+
 	}
 	
 	Section
