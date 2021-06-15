@@ -104,12 +104,11 @@ Form
 					}
 				}
 			}
-
-					RadioButton
-					{
-						value: 					"ImR"
-						label: 					qsTr("X-mR chart")
-					}
+			RadioButton
+			{
+				value: 					"ImR"
+				label: 					qsTr("X-mR chart")
+			}
 		}
 	}
 }
