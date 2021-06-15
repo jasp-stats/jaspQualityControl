@@ -94,13 +94,13 @@ Form
 			checked: false
 			childrenOnSameRow: true
 			
-				DoubleField
-				{
+			DoubleField
+			{
 				name: "NRtolerance"
 				defaultValue: 1
 				min: 0.001
 				decimals: 3
-				}
+			}
 		}
 
 

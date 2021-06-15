@@ -28,7 +28,7 @@ Form
 		AvailableVariablesList
 		{
 			name:                               "FAallVariables"
-            label:                              qsTr("Available factors")
+			label:                              qsTr("Available factors")
 		}
 
 		AssignedVariablesList
@@ -44,13 +44,13 @@ Form
 			label:                              qsTr("Assigned factors")
 		}
 
-        AssignedVariablesList
-        {
-            debug:                              true
-            name:                               "FAblocks"
-            singleVariable:                     true
-            label:                              qsTr("Blocks")
-        }
+		AssignedVariablesList
+		{
+			debug:                              true
+			name:                               "FAblocks"
+			singleVariable:                     true
+			label:                              qsTr("Blocks")
+		}
 
 		AssignedVariablesList
 		{
@@ -66,14 +66,14 @@ Form
 		label:                                  qsTr("Highest order interaction term:")
 		defaultValue:                           1
 		min:                                    1
-        max:                                    5 // change this to number of items in FAassignedFactors
+		max:                                    5 // change this to number of items in FAassignedFactors
 	}
 
-    CheckBox
-    {
-        name:                                   "paretoPlot"
-        label:                                  qsTr("Pareto plot of standardized effects")
-    }
+	CheckBox
+	{
+		name:                                   "paretoPlot"
+		label:                                  qsTr("Pareto plot of standardized effects")
+	}
 
 	Group
 	{

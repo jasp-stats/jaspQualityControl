@@ -145,14 +145,14 @@
     xBreaks <- c(subgroups)
     p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
   }
-    if (manualXaxis != "") {
+  if (manualXaxis != "") {
     xLabels <- factor(manualXaxis, levels = manualXaxis)
     p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
   }
 
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
-  
+
   if (time)
     return(list(p = p, sixsigma = sixsigma, xLabels = dataset[[.v(options$time)]]))
   else {return(list(p = p, sixsigma = sixsigma))}
@@ -242,7 +242,7 @@
     xBreaks <- c(subgroups)
     p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = xBreaks, labels = xLabels[xBreaks])
   }
-                         
+
   if (manualXaxis != "") {
     xLabels <- factor(manualXaxis, levels = manualXaxis)
     p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
@@ -250,9 +250,9 @@
 
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
-  
+
   if (time)
-     return(list(p = p, sixsigma = sixsigma, xLabels = dataset[[.v(options$time)]]))
+    return(list(p = p, sixsigma = sixsigma, xLabels = dataset[[.v(options$time)]]))
 
   else  {return(list(p = p, sixsigma = sixsigma))}
 }
@@ -311,38 +311,38 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   if (Phase2 == "TRUE" || type == "xbar.one") {
 
-      Test <- NelsonLaws(data = sixsigma, allsix = TRUE, xLabels = xLabels)
+    Test <- NelsonLaws(data = sixsigma, allsix = TRUE, xLabels = xLabels)
 
-      if (length(Test$Rules$R1) > 0)
-        table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
+    if (length(Test$Rules$R1) > 0)
+      table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
 
-      if (length(Test$Rules$R2) > 0)
-        table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
+    if (length(Test$Rules$R2) > 0)
+      table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
 
-      if (length(Test$Rules$R3) > 0)
-        table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
+    if (length(Test$Rules$R3) > 0)
+      table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
 
-      if (length(Test$Rules$R4) > 0)
-        table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
+    if (length(Test$Rules$R4) > 0)
+      table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
 
-      if (length(Test$Rules$R5) > 0)
-        table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
+    if (length(Test$Rules$R5) > 0)
+      table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
 
-      if (length(Test$Rules$R6) > 0)
-        table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
+    if (length(Test$Rules$R6) > 0)
+      table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
 
 
 
-      table$setData(list(
-        "test1" = c(Test$Rules$R1),
-        "test2" = c(Test$Rules$R2),
-        "test3" = c(Test$Rules$R3),
-        "test4" = c(Test$Rules$R4),
-        "test5" = c(Test$Rules$R5),
-        "test6" = c(Test$Rules$R6)
-      ))
+    table$setData(list(
+      "test1" = c(Test$Rules$R1),
+      "test2" = c(Test$Rules$R2),
+      "test3" = c(Test$Rules$R3),
+      "test4" = c(Test$Rules$R4),
+      "test5" = c(Test$Rules$R5),
+      "test6" = c(Test$Rules$R6)
+    ))
 
-    }
+  }
   else {
 
     if (name == "P" || name == "NP" || name == "C" || name == "U" || name == "Laney P'" || name == "Laney U'")
@@ -350,22 +350,22 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     else
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels)
 
-      if (length(Test$Rules$R1) > 0)
-        table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
+    if (length(Test$Rules$R1) > 0)
+      table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
 
-      if (length(Test$Rules$R2) > 0)
-        table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
+    if (length(Test$Rules$R2) > 0)
+      table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
 
-      if (length(Test$Rules$R3) > 0)
-        table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
+    if (length(Test$Rules$R3) > 0)
+      table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
 
 
-      table$setData(list(
-        "test1" = c(Test$Rules$R1),
-        "test2" = c(Test$Rules$R2),
-        "test3" = c(Test$Rules$R3)
-      ))
-    }
+    table$setData(list(
+      "test1" = c(Test$Rules$R1),
+      "test2" = c(Test$Rules$R2),
+      "test3" = c(Test$Rules$R3)
+    ))
+  }
 
   table$showSpecifiedColumnsOnly <- TRUE
   table$addFootnote(message = gettext("Numbers index data points where test violations occur."))
