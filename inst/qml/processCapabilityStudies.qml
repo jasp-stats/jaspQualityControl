@@ -44,7 +44,7 @@ Form
 			name:               			"variablesForm"
 		}
 		
-				AssignedVariablesList
+		AssignedVariablesList
 		{
 			id:                 			variablesLong
 			name:               			"variablesLong"
@@ -73,29 +73,29 @@ Form
 		}
 	}
 	
-				DoubleField
-				{
-				id:						pcSubgroupSize
-				name: 					"pcSubgroupSize"
-				label: 					qsTr("Subgroup size:")
-				negativeValues:			false
-				min: 					5
-				defaultValue:			5
-				visible:				pcDataFormat.currentValue == "PClongFormat"
-				}
+	DoubleField
+	{
+		id:						pcSubgroupSize
+		name: 					"pcSubgroupSize"
+		label: 					qsTr("Subgroup size:")
+		negativeValues:			false
+		min: 					5
+		defaultValue:			5
+		visible:				pcDataFormat.currentValue == "PClongFormat"
+	}
 	
 	
-				Section
+	Section
 	{
 		title: qsTr("Process Capability Options")
 
-	ColumnLayout
-	{
-		Group
+		ColumnLayout
 		{
-			title:							qsTr("Study Type")
-			
-			
+			Group
+			{
+				title:							qsTr("Study Type")
+
+
 				RadioButtonGroup
 				{
 					name: 					"capabilityStudyType"
@@ -118,7 +118,7 @@ Form
 							label: 					qsTr("Specify a distribution")
 							indexDefaultValue: 		0
 							values:
-							[
+								[
 								{label: qsTr("Weibull"),		value: "Weibull"  },
 								{label: qsTr("Lognormal"),		value: "Lognormal"}
 							]
@@ -126,119 +126,119 @@ Form
 					}
 				}
 
-			CheckBox
-			{
-				name: 						"CapabilityStudyPlot"
-				label: 						qsTr("Process capability plot")
-				checked: 					true
-				
-				DropDown
-				{
-				name: "csBinWidthType"
-				label: qsTr("Bin width type")
-				indexDefaultValue: 0
-				values:
-					[
-					{label: qsTr("Sturges"),				value: "sturges"},
-					{label: qsTr("Scott"),					value: "scott"},
-					{label: qsTr("Doane"),					value: "doane"},
-					{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
-					{label: qsTr("Manual"),					value: "manual"	}
-				]
-				id: csBinWidthType
-				}
-			
-				DoubleField
-				{
-				name:			"csNumberOfBins"
-				label:			qsTr("Number of bins")
-				defaultValue:	30
-				min:			3;
-				max:			10000;
-				enabled:		csBinWidthType.currentValue === "manual"
-				}
-			}
-			
-			CheckBox
-			{
-				name: 						"CapabilityStudyTables"
-				label: 						qsTr("Process capability tables")
-				checked: 					true
-				
 				CheckBox
 				{
-					name: "csConfidenceInterval";	label: qsTr("Confidence intervals")
-					checked: true
-					childrenOnSameRow: true
-					CIField { name: "csConfidenceIntervalPercent"}
+					name: 						"CapabilityStudyPlot"
+					label: 						qsTr("Process capability plot")
+					checked: 					true
+
+					DropDown
+					{
+						name: "csBinWidthType"
+						label: qsTr("Bin width type")
+						indexDefaultValue: 0
+						values:
+							[
+							{label: qsTr("Sturges"),				value: "sturges"},
+							{label: qsTr("Scott"),					value: "scott"},
+							{label: qsTr("Doane"),					value: "doane"},
+							{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
+							{label: qsTr("Manual"),					value: "manual"	}
+						]
+						id: csBinWidthType
+					}
+
+					DoubleField
+					{
+						name:			"csNumberOfBins"
+						label:			qsTr("Number of bins")
+						defaultValue:	30
+						min:			3;
+						max:			10000;
+						enabled:		csBinWidthType.currentValue === "manual"
+					}
 				}
-				
+
+				CheckBox
+				{
+					name: 						"CapabilityStudyTables"
+					label: 						qsTr("Process capability tables")
+					checked: 					true
+
+					CheckBox
+					{
+						name: "csConfidenceInterval";	label: qsTr("Confidence intervals")
+						checked: true
+						childrenOnSameRow: true
+						CIField { name: "csConfidenceIntervalPercent"}
+					}
+
+				}
+
 			}
 
+			Group
+			{
+				title: 							qsTr("Specification Limits")
+
+				CheckBox
+				{
+					name: 						"lowerSpecificationField"
+					label: 						qsTr("Lower specification limit")
+					childrenOnSameRow:			true
+
+					DoubleField
+					{
+						id:						lower
+						name: 					"lowerSpecification"
+						negativeValues:			true
+						defaultValue:			-1
+						max:					target.value
+					}
+				}
+
+				CheckBox
+				{
+					name: 						"targetValueField"
+					label: 						qsTr("Target value")
+					childrenOnSameRow:			true
+
+					DoubleField
+					{
+						id:						target
+						name: 					"targetValue"
+						negativeValues:			true
+						defaultValue:			0
+						max:					upper.value
+						min:					lower.value
+					}
+				}
+
+				CheckBox
+				{
+					name: 						"upperSpecificationField"
+					childrenOnSameRow:			true
+					label: 						qsTr("Upper specification limit")
+
+					DoubleField
+					{
+						id:						upper
+						name: 					"upperSpecification"
+						negativeValues:			true
+						defaultValue:			1
+						min:					target.value
+					}
+				}
+			}
 		}
 
-		Group
+		ColumnLayout
 		{
-			title: 							qsTr("Specification Limits")
-
-			CheckBox
+			Group
 			{
-				name: 						"lowerSpecificationField"
-				label: 						qsTr("Lower specification limit")
-				childrenOnSameRow:			true
+				title: 							qsTr("Stability of the Process")
 				
-				DoubleField
-				{
-					id:						lower
-					name: 					"lowerSpecification"
-					negativeValues:			true
-					defaultValue:			-1
-					max:					target.value
-				}
-			}
 
-			CheckBox
-			{
-				name: 						"targetValueField"
-				label: 						qsTr("Target value")
-				childrenOnSameRow:			true
-				
-				DoubleField
-				{
-					id:						target
-					name: 					"targetValue"
-					negativeValues:			true
-					defaultValue:			0
-					max:					upper.value
-					min:					lower.value
-				}
-			}
-
-			CheckBox
-			{
-				name: 						"upperSpecificationField"
-				childrenOnSameRow:			true
-				label: 						qsTr("Upper specification limit")
-				
-				DoubleField
-				{
-					id:						upper
-					name: 					"upperSpecification"
-					negativeValues:			true
-					defaultValue:			1
-					min:					target.value
-				}
-			}
-		}
-	}
-
-	ColumnLayout
-	{
-		Group
-		{
-			title: 							qsTr("Stability of the Process")
-				
-			
 				RadioButtonGroup
 				{
 					name: 					"controlChartsType"
@@ -256,103 +256,103 @@ Form
 						label: 				qsTr("I-MR chart")
 					}
 				}
-		}
+			}
 
-		Group
-		{
-			title: 							qsTr("Distribution of the Process")
-
-			CheckBox
+			Group
 			{
-				name: 						"histogram"
-				label: 						qsTr("Histogram")
-				checked: 					true
+				title: 							qsTr("Distribution of the Process")
 
 				CheckBox
 				{
-					name:					"displayDensity"
-					label:					qsTr("Fit normal distribution")
-					checked:				true
-				}
+					name: 						"histogram"
+					label: 						qsTr("Histogram")
+					checked: 					true
 
-				DropDown
-				{
-				name: "pcBinWidthType"
-				label: qsTr("Bin width type")
-				indexDefaultValue: 0
-				values:
-					[
-					{label: qsTr("Sturges"),				value: "sturges"},
-					{label: qsTr("Scott"),					value: "scott"},
-					{label: qsTr("Doane"),					value: "doane"},
-					{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
-					{label: qsTr("Manual"),					value: "manual"	}
-				]
-				id: binWidthType
-				}
-			
-				DoubleField
-				{
-				name:			"pcNumberOfBins"
-				label:			qsTr("Number of bins")
-				defaultValue:	30
-				min:			3;
-				max:			10000;
-				enabled:		binWidthType.currentValue === "manual"
-				}
-			}
+					CheckBox
+					{
+						name:					"displayDensity"
+						label:					qsTr("Fit normal distribution")
+						checked:				true
+					}
 
-			CheckBox
-			{
-				name: 						"probabilityPlot"
-				label: 						qsTr("Probability table and plot")
-				checked: 					true
+					DropDown
+					{
+						name: "pcBinWidthType"
+						label: qsTr("Bin width type")
+						indexDefaultValue: 0
+						values:
+							[
+							{label: qsTr("Sturges"),				value: "sturges"},
+							{label: qsTr("Scott"),					value: "scott"},
+							{label: qsTr("Doane"),					value: "doane"},
+							{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
+							{label: qsTr("Manual"),					value: "manual"	}
+						]
+						id: binWidthType
+					}
 
-				DropDown
-				{
-					name: 					"rank"
-					label: 					qsTr("Rank method")
-					indexDefaultValue: 		0
-					values:
-						[
-						{ value: "Bernard",    		label: qsTr("Median Rank (Benard)")         },
-						{ value: "Herd-Johnson",    label: qsTr("Mean Rank (Herd-Johnson)")     },
-						{ value: "Kaplan-Meier",    label: qsTr("Kaplan-Meier")                 },
-						{ value: "Hazen",   		label: qsTr("Modified Kaplan-Meier (Hazen)")}
-					]
-				}
-
-				DropDown
-				{
-					name: 					"nullDistribution"
-					label: 					qsTr("Null distribution")
-					indexDefaultValue: 		0
-					values:
-						[
-						{ label: qsTr("Normal"),		value: "Normal"	   },
-						{ label: qsTr("Lognormal"),		value: "Lognormal" },
-						{ label: qsTr("Weibull"),		value: "Weibull"   }
-					]
+					DoubleField
+					{
+						name:			"pcNumberOfBins"
+						label:			qsTr("Number of bins")
+						defaultValue:	30
+						min:			3;
+						max:			10000;
+						enabled:		binWidthType.currentValue === "manual"
+					}
 				}
 
 				CheckBox
 				{
-					name:					"addGridlines"
-					label:					qsTr("Display grid lines in plots")
+					name: 						"probabilityPlot"
+					label: 						qsTr("Probability table and plot")
+					checked: 					true
+
+					DropDown
+					{
+						name: 					"rank"
+						label: 					qsTr("Rank method")
+						indexDefaultValue: 		0
+						values:
+							[
+							{ value: "Bernard",    		label: qsTr("Median Rank (Benard)")         },
+							{ value: "Herd-Johnson",    label: qsTr("Mean Rank (Herd-Johnson)")     },
+							{ value: "Kaplan-Meier",    label: qsTr("Kaplan-Meier")                 },
+							{ value: "Hazen",   		label: qsTr("Modified Kaplan-Meier (Hazen)")}
+						]
+					}
+
+					DropDown
+					{
+						name: 					"nullDistribution"
+						label: 					qsTr("Null distribution")
+						indexDefaultValue: 		0
+						values:
+							[
+							{ label: qsTr("Normal"),		value: "Normal"	   },
+							{ label: qsTr("Lognormal"),		value: "Lognormal" },
+							{ label: qsTr("Weibull"),		value: "Weibull"   }
+						]
+					}
+
+					CheckBox
+					{
+						name:					"addGridlines"
+						label:					qsTr("Display grid lines in plots")
+					}
 				}
 			}
 		}
 	}
-	}
 	
 	
 	
-			Section
+	Section
 	{
 		title: qsTr("Process Capability Report")
 		
 		
-				TextField
+		TextField
 		{
 			id:						anovaGaugeTitle
 			label: 					qsTr("Title:")
@@ -397,11 +397,11 @@ Form
 			fieldWidth:				100
 		}
 		
-			CheckBox
-			{
-				name: "anovaGaugeReport";		label: qsTr("Show Report")
-			}
+		CheckBox
+		{
+			name: "anovaGaugeReport";		label: qsTr("Show Report")
+		}
 		
-	
+
 	}
 }

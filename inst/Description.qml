@@ -18,7 +18,7 @@ Description
 		title:			qsTr("Measurement Systems Analysis")
 		icon:			"processControl-measurement.svg"
 	}
-	 Analysis
+	Analysis
 	{
 		title:			qsTr("Type 1 Study")
 		func:			"msaType1Gauge"
@@ -33,7 +33,7 @@ Description
 		title:			qsTr("Gauge r&R")
 		func:			"msaGaugeRR"
 	}
-		Analysis
+	Analysis
 	{
 		title:			qsTr("Gauge r&R (Non-Replicable Measurements)")
 		func:			"msaGaugeRRnonrep"
@@ -59,7 +59,7 @@ Description
 		title:			qsTr("Variables Chart for Individuals")
 		func:			"variablesChartsIndividuals"
 	}
-		Analysis
+	Analysis
 	{
 		title:			qsTr("Attributes Charts")
 		func:			"attributesCharts"
@@ -70,44 +70,44 @@ Description
 		func:			"timeWeightedCharts"
 	}
 
-	 GroupTitle
-	 {
-	 	title:			qsTr("Capability Study")
-	 	icon:			"processControl-capability.svg"
-	 }
+	GroupTitle
+	{
+		title:			qsTr("Capability Study")
+		icon:			"processControl-capability.svg"
+	}
 	Analysis
 	{
 		title:			qsTr("Process Capability Study")
 		func:			"processCapabilityStudies"
 	}
 
-	 GroupTitle
-	 {
-        title:			qsTr("DOE")
-	 	icon:			"processControl-design.svg"
-	 }
-//     Analysis
-//     {
-//         title:			qsTr("Plackett-Burman Design")
-//         func:			"doePlackettBurman"
-//         requiresData:	false
-//     }
-    Analysis
-    {
-        title:			qsTr("Two-level Factorial Design")
-        func:			"doeFactorial"
-        requiresData:	false
-    }
-    Analysis
-    {
-        title:			qsTr("Response Surface")
-        func:			"doeResponseSurfaceMethodology"
-        requiresData:	false
-    }
-    Analysis
-    {
-        title:          qsTr("Two-level Factorial Analysis")
-        func:           "factorialAnalysis"
-        requiresData:   true
-    }
+	GroupTitle
+	{
+		title:			qsTr("DOE")
+		icon:			"processControl-design.svg"
+	}
+	//     Analysis
+	//     {
+	//         title:			qsTr("Plackett-Burman Design")
+	//         func:			"doePlackettBurman"
+	//         requiresData:	false
+	//     }
+	Analysis
+	{
+		title:			qsTr("Two-level Factorial Design")
+		func:			"doeFactorial"
+		requiresData:	false
+	}
+	Analysis
+	{
+		title:			qsTr("Response Surface")
+		func:			"doeResponseSurfaceMethodology"
+		requiresData:	false
+	}
+	Analysis
+	{
+		title:          qsTr("Two-level Factorial Analysis")
+		func:           "factorialAnalysis"
+		requiresData:   true
+	}
 }

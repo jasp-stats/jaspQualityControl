@@ -591,7 +591,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   } else if (options[["nonNormalDist"]] == "Weibull") {
     table$addColumnInfo(name = "beta", type = "number", title = gettextf("%1$s", "\u03B2"))
     table$addColumnInfo(name = "theta", type = "number", title = gettextf("%1$s", "\u03B8"))
- }
+  }
 
 
   table$showSpecifiedColumnsOnly <- TRUE

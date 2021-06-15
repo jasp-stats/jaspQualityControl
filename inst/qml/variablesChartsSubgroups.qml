@@ -50,26 +50,26 @@ Form
 				label: 								qsTr("Warning limits")
 			}
 
-      	CheckBox
+			CheckBox
 			{	name: 								"Phase2_XR"
 				label: 								qsTr("Known parameters:")
 
-			  DoubleField
-			  {
-				  name:			"mean_XR"
-				  label:			qsTr("Target:")
-				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
-			  }
+				DoubleField
+				{
+					name:			"mean_XR"
+					label:			qsTr("Target:")
+					defaultValue:	0
+					enabled:		variationReference.currentValue != "studyVariation"
+				}
 
-			  DoubleField
-			  {
-			  	 name:			"SD_XR"
-			  	 label:			qsTr("Standard deviation:")
-				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
-			  }
-		  }
+				DoubleField
+				{
+					name:			"SD_XR"
+					label:			qsTr("Standard deviation:")
+					defaultValue:	0
+					enabled:		variationReference.currentValue != "studyVariation"
+				}
+			}
 
 		}
 
@@ -84,26 +84,26 @@ Form
 				label: 								qsTr("Warning limits")
 			}
 
-      	CheckBox
+			CheckBox
 			{	name: 								"Phase2_S"
 				label: 								qsTr("Known parameters:")
 
-			  DoubleField
-			  {
-				  name:			"mean_S"
-				  label:			qsTr("Target:")
-				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
-			  }
+				DoubleField
+				{
+					name:			"mean_S"
+					label:			qsTr("Target:")
+					defaultValue:	0
+					enabled:		variationReference.currentValue != "studyVariation"
+				}
 
-			  DoubleField
-			  {
-			  	 name:			"SD_S"
-			  	 label:			qsTr("Standard deviation:")
-				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
-			  }
-		  }
+				DoubleField
+				{
+					name:			"SD_S"
+					label:			qsTr("Standard deviation:")
+					defaultValue:	0
+					enabled:		variationReference.currentValue != "studyVariation"
+				}
+			}
 
 		}
 	}
