@@ -120,7 +120,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
 
           resolution <- if(log2(as.numeric(options[["factorialRuns"]])) < options[["numberOfFactors"]]){
             as.character(as.roman(DoE.base::design.info(
-              FrF2::FrF2(nfactors = (options[["numberOfFactors"]]),
+              FrF2::FrF2(nfactors = options[["numberOfFactors"]],
                          nruns = as.numeric(options[["factorialRuns"]])))$catlg.entry[[1]]$res))
           } else {
             "Full"
@@ -133,7 +133,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
             as.numeric(as.roman(options[["factorialResolution"]]))
           }
 
-          runs <- (DoE.base::design.info(FrF2::FrF2(nfactors = (options[["numberOfFactors"]]),
+          runs <- (DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfFactors"]],
                                                     resolution = resolution))$nruns +
                      options[["factorialCenterPoints"]] *
                      options[["factorialBlocks"]]) *
@@ -287,7 +287,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     rows <- rows[,!names(rows) %in% "Blocks"]
 
     #filling in table
-    for (i in 1:(options[["numberOfFactors"]])) {
+    for (i in 1:options[["numberOfFactors"]]) {
       colnames(rows)[i+1] <- factorNames[i]
       table$addColumnInfo(name = factorNames[i], title = factorNames[i], type = 'string')
     }
@@ -327,7 +327,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
 
 
     if(options[["dataCoding"]] == "dataUncoded"){
-      for(i in 1:(options[["numberOfFactors"]])){
+      for(i in 1:options[["numberOfFactors"]]){
         rows[,i+1][rows[,i+1] == -1] <- factorLows[i]
         if(options[["factorialCenterPoints"]] >= 1){
           rows[,i+1][rows[,i+1] == 0] <- if(!is.na(as.numeric(factorLows[i]) + as.numeric(factorHighs[i]))){
