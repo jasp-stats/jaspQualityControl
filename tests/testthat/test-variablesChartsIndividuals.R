@@ -3,7 +3,7 @@ context("[Quality Control] Variables Charts for Individuals")
 options <- analysisOptions("variablesChartsIndividuals")
 options$variables <- "Measurement1"
 set.seed(1)
-results <- runAnalysis("variablesChartsIndividuals", "C:/Users/derksk/OneDrive - NBU/Desktop/PhD/JASP modules/jaspProcessControl/tests/testthat/partOperatorData.csv", options)
+results <- runAnalysis("variablesChartsIndividuals", "partOperatorData.csv", options)
 
 
 test_that("Charts for: Measurement1 plot matches", {

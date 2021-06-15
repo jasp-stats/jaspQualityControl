@@ -6,7 +6,7 @@ options$time <- "Part"
 options$Xbarchart <- TRUE
 options$Schart <- TRUE
 set.seed(1)
-results <- runAnalysis("variablesChartsSubgroups", "C:/Users/derksk/OneDrive - NBU/Desktop/PhD/JASP modules/jaspProcessControl/tests/testthat/partOperatorData.csv", options)
+results <- runAnalysis("variablesChartsSubgroups", "partOperatorData.csv", options)
 
 
 test_that("Nelson tests' results for R chart table results match", {
