@@ -29,7 +29,8 @@ Imports:
   ragg,
   rsm,
   Rspc,
-  tidyr
+  tidyr,
+  cowplot
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
