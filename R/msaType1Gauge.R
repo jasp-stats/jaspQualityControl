@@ -148,10 +148,10 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   data <- dataset
 
-  table <- createJaspTable(title = gettext("t-Test of Observed Bias Against 0"))
+  table <- createJaspTable(title = gettext("T-Test of Observed Bias Against 0"))
 
   if (nrow(dataset[measurements]) < 2){
-    table$setError(gettextf("t-Test requires more than 1 measurement. %i valid measurement(s) detected in %s.", nrow(dataset[measurements]), measurements))
+    table$setError(gettextf("T-Test requires more than 1 measurement. %i valid measurement(s) detected in %s.", nrow(dataset[measurements]), measurements))
     return(table)
   }
 
