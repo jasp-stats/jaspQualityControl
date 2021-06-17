@@ -150,6 +150,11 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   table <- createJaspTable(title = gettext("t-Test of Observed Bias Against 0"))
 
+  if (nrow(dataset[measurements]) < 2){
+    table$setError(gettextf("t-Test requires more than 1 measurement. %i valid measurement(s) detected in %s.", nrow(dataset[measurements]), measurements))
+    return(table)
+  }
+
   table$dependOn(c("biasReferenceValue", "biasTtest", "biasTolerance"))
   ciLevel <- options$biasTtestConfidenceIntervalPercent
   ciLevelPercent <- ciLevel * 100
@@ -225,6 +230,11 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
     plot <- createJaspPlot(title = gettextf("Run Chart of %s", measurements), width = 700, height = 300)
 
     dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
+
+    if (nrow(dataset["Measurement"]) == 0){
+      plot$setError(gettextf("No valid measurements in %s.", measurements))
+      return(plot)
+    }
 
     Observation <- 1:length(dataset[["Measurement"]])
 

@@ -90,7 +90,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         jaspResults[["gaugeRchart"]]$position <- 3
       }
       jaspResults[["gaugeRchart"]] <- .xBarOrRangeChart(type = "Range", dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
-      jaspResults[["gaugeRchart"]]$dependOn("gaugeRchart")
+      jaspResults[["gaugeRchart"]]$dependOn(c("gaugeRchart", "gaugeRRmethod"))
     }
 
     # Xbar chart by operator
@@ -100,7 +100,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         jaspResults[["gaugeXbarChart"]]$position <- 4
       }
       jaspResults[["gaugeXbarChart"]] <- .xBarOrRangeChart(type = "Xbar",dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
-      jaspResults[["gaugeXbarChart"]]$dependOn("gaugeXbarChart")
+      jaspResults[["gaugeXbarChart"]]$dependOn(c("gaugeXbarChart", "gaugeRRmethod"))
     }
 
     # gauge Scatter Plot Operators
@@ -110,6 +110,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         jaspResults[["gaugeScatterOperators"]]$position <- 5
       }
       jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(jaspResults = jaspResults, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+      jaspResults[["gaugeScatterOperators"]]$dependOn("gaugeRRmethod")
     }
 
     # Measurement by Part Graph
@@ -146,6 +147,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         jaspResults[["anovaGaugeReport"]]$position <- 9
       }
       jaspResults[["anovaGaugeReport"]] <- .anovaGaugeReport(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options = options)
+      jaspResults[["anovaGaugeReport"]]$dependOn("gaugeRRmethod")
     }
 
   }
@@ -618,8 +620,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeByOperatorGraphPlotObject <- function(dataset, measurements, parts, operators, options){
   dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
+  # yBreaks <- jaspGraphs::getPrettyAxisBreaks(dataset[measurements])
+  # yLimits <- range(yBreaks)
   p <- ggplot2::ggplot() +
-    ggplot2::geom_boxplot(data = dataset, ggplot2::aes_string(x = operators, y = "Measurement"))
+    ggplot2::geom_boxplot(data = dataset, ggplot2::aes_string(x = operators, y = "Measurement"))  #+ ggplot2::scale_y_continuous(breaks = yBreaks, limits = yLimits)
   p <- jaspGraphs::themeJasp(p)
   return(p)
 }
