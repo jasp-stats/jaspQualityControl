@@ -117,7 +117,6 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
   }
 
-  ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
   return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R))
 }
 

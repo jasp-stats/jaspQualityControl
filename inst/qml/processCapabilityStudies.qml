@@ -70,6 +70,7 @@ Form
 			title:             			 	qsTr("Subgroups")
 			singleVariable:    	 			true
 			allowedColumns:     			["nominal", "nominalText", "ordinal"]
+			visible:						pcDataFormat.currentValue == "PCwideFormat"
 		}
 	}
 	
@@ -350,6 +351,7 @@ Form
 	Section
 	{
 		title: qsTr("Process Capability Report")
+		visible:	false
 		
 		
 		TextField
