@@ -371,4 +371,3 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   table$addFootnote(message = gettext("Numbers index data points where test violations occur."))
   return(table)
 }
-

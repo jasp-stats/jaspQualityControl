@@ -59,7 +59,7 @@ Description
 		title:			qsTr("Variables Chart for Individuals")
 		func:			"variablesChartsIndividuals"
 	}
-	Analysis
+		Analysis
 	{
 		title:			qsTr("Attributes Charts")
 		func:			"attributesCharts"
