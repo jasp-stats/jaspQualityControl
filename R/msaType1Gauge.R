@@ -150,11 +150,6 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   table <- createJaspTable(title = gettext("T-Test of Observed Bias Against 0"))
 
-  if (nrow(dataset[measurements]) < 2){
-    table$setError(gettextf("T-Test requires more than 1 measurement. %i valid measurement(s) detected in %s.", nrow(dataset[measurements]), measurements))
-    return(table)
-  }
-
   table$dependOn(c("biasReferenceValue", "biasTtest", "biasTolerance"))
   ciLevel <- options$biasTtestConfidenceIntervalPercent
   ciLevelPercent <- ciLevel * 100
@@ -167,6 +162,12 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
 
   if (ready) {
+
+    if (nrow(dataset[measurements]) < 2){
+      table$setError(gettextf("T-Test requires more than 1 measurement. %i valid measurement(s) detected in %s.", nrow(dataset[measurements]), measurements))
+      return(table)
+    }
+
     bias <- data - options$biasReferenceValue
     tTest <- t.test(bias, mu = 0, conf.level = ciLevel)
 
