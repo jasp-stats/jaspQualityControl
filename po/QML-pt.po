@@ -26,14 +26,6 @@ msgid "Control Charts"
 msgstr ""
 
 msgctxt "Description|"
-msgid "Capability Studies"
-msgstr ""
-
-msgctxt "Description|"
-msgid "Process Capability Studies"
-msgstr ""
-
-msgctxt "Description|"
 msgid "Response Surface"
 msgstr ""
 
@@ -190,10 +182,6 @@ msgid "Full"
 msgstr ""
 
 msgctxt "doeFactorial|"
-msgid "Additional options"
-msgstr ""
-
-msgctxt "doeFactorial|"
 msgid "Number of center points per block"
 msgstr ""
 
@@ -210,19 +198,11 @@ msgid "<b>Export Design</b>"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Predictors"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Response"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Blocks"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour plots"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
@@ -342,14 +322,6 @@ msgid "Normal capability study"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid "Initial capability study"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Follow-up capability study"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Lower specification limit"
 msgstr ""
 
@@ -434,10 +406,6 @@ msgid "Variables Charts for Subgroups"
 msgstr ""
 
 msgctxt "Description|"
-msgid "Variables Charts for Individuals"
-msgstr ""
-
-msgctxt "Description|"
 msgid "Time Weighted Charts"
 msgstr ""
 
@@ -474,10 +442,6 @@ msgid "p chart"
 msgstr ""
 
 msgctxt "attributesCharts|"
-msgid "Laney p’ (p-prime) chart"
-msgstr ""
-
-msgctxt "attributesCharts|"
 msgid "Defects"
 msgstr ""
 
@@ -487,14 +451,6 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "u chart"
-msgstr ""
-
-msgctxt "attributesCharts|"
-msgid "Laney u’ (u-prime) chart"
-msgstr ""
-
-msgctxt "attributesCharts|"
-msgid "I-MR chart"
 msgstr ""
 
 msgctxt "doeFactorial|"
@@ -527,22 +483,6 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "512"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Blocking options"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "No blocking (1 block design)"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Automatic definition"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Manual definition"
 msgstr ""
 
 msgctxt "doeFactorial|"
@@ -942,27 +882,11 @@ msgid "Study Type"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid "Study Limits"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "X-bar & R chart"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid "Distribution plot"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Display density"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Probability table and plots"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
@@ -1037,14 +961,6 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
 msgstr ""
 
-msgctxt "variablesChartsIndividuals|"
-msgid "Charts for Individuals"
-msgstr ""
-
-msgctxt "variablesChartsIndividuals|"
-msgid "I-MR chart"
-msgstr ""
-
 msgctxt "variablesChartsSubgroups|"
 msgid "Variables"
 msgstr ""
@@ -1073,4 +989,316 @@ msgctxt "Description|"
 msgid ""
 "Investigate if a manufactured product adheres to a defined set of quality "
 "criteria."
+msgstr ""
+
+msgctxt "Description|"
+msgid "Variables Chart for Individuals"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Capability Study"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Process Capability Study"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Two-level Factorial Analysis"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Laney p' (p-prime) chart"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Laney u' (u-prime) chart"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "X-mR chart"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Plackett-Burman design"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "12"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "20"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "24"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "28"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "36"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "40"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "44"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "48"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "52"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "56"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "60"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "1024"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "2048"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "4096"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Additional Options"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Predictors [Location in coded format]"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "RSM formula"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Contour Surface"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Only show 2D plot"
+msgstr ""
+
+msgctxt "factorialAnalysis|"
+msgid "Blocks"
+msgstr ""
+
+msgctxt "factorialAnalysis|"
+msgid "Pareto plot of standardized effects"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Data format"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Long format"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Wide format"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "ANOVA Method Report"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Title:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurement"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Gauge Name:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Name"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Date:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Date"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Reported by:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Misc:"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Miscellaneous"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show Report"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Data format"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Long format"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Wide format"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Subgroup size:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Process Capability Options"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Process capability plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Bin width type"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Sturges"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Scott"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Doane"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Freedman-Diaconis"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Manual"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Process capability tables"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Confidence intervals"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Specification Limits"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "I-MR chart"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Histogram"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Fit normal distribution"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Probability table and plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Process Capability Report"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Title:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Measurement"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Gauge Name:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Name"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Date:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Date"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Reported by:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Misc:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Miscellaneous"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show Report"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Variables Chart for Individuals"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "X-mR chart"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Known parameters:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Target:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Standard deviation:"
 msgstr ""
