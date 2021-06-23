@@ -18,3 +18,4 @@ export(factorialAnalysis)
 export(definitiveScreeningAnalysis)
 export(probabilityOfDetection)
 export(msaTestRetest)
+
