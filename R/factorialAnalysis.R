@@ -53,7 +53,7 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   factorsDF <- data.frame(split(factors, ceiling(seq_along(factors) / perF)))
   forFit <- cbind.data.frame(factorsDF, response)
 
-  names <- LETTERS[1:length(factors)]
+  names <- LETTERS[1:length(options[["FAassignedFactors"]])]
   colnames(forFit) <- c(names, "response")
 
   order <- as.numeric(options[["intOrder"]])
