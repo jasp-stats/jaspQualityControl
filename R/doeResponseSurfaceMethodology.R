@@ -22,6 +22,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   if (options[["contour"]])
     .responseSurfaceContour(jaspResults, options, position = 2)
+
+  if(options[["coef"]] | options[["anova"]])
+    .responseSurfaceTableCall(jaspResults, options, position = 3)
 }
 
 .qualityCOntrolResponseReadData <- function(dataset, options) {
@@ -116,12 +119,17 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceContour <- function(jaspResults, options, position, dataset) {
   ready <- 1
-  #print(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2])
+
+
   if (is.null(jaspResults[["ContourPlot"]]))
     .responseSurfaceContourPlot(jaspResults, dataset, options)
 
 }
 
+
+.responseSurfaceCheckError <- function(dataset, options) {
+  #Error 1: Does
+}
 
 .responseSurfaceContourPlot <- function(jaspResults, dataset, options, ready) {
   contourPlot <- createJaspContainer(title = "Contour Plot")
@@ -232,10 +240,24 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
         str1 <-  paste0("x",1:op1, collapse = ",")
         #print(str1)
         str2 <-  paste("SO(", str1, ")", sep = "")
+
+        #Error Checking
+        #---------------------------------------
+        check <- "Formula"
+        if (options[["Formula"]] == check) {
+          error <- "Change the placeholder text into a formula."
+          plot$setError(error)
+          return()
+        }
+
+
+
+        #---------------------------------------
+
         if (length(unique(data[,(op1+2)])) > 1){
           str3 <- as.formula(paste(opt2, "~",
                                    opt3,
-                                   "+", str2, sep = ""))
+                                   "+", options[["Formula"]], sep = ""))
         }else {
           #str3 <- as.formula(paste(opt2, "~", str2, sep = ""))
           str3 <- as.formula(paste(opt2, "~", options[["Formula"]], sep = ""))
@@ -350,9 +372,168 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
   return()
+
 }
 
 
 
 
 
+
+
+.responseSurfaceTableCall <- function(jaspResults, options, dataset, position) {
+  if (is.null(jaspResults[["TableContainer"]]))
+    .responseSurfaceTable(jaspResults, options, dataset)
+}
+
+
+
+.responseSurfaceTable <- function(jaspResults, options, dataset) {
+  TableContainer <- createJaspContainer(title = "RSM Summary")
+  jaspResults[["TableContainer"]] <- TableContainer
+  if (options[["coef"]]) {
+    if (is.null(jaspResults[["TableContainer"]][["coef"]]))
+      CoefTable <- createJaspTable(gettext("RSM Coefficients"))
+    if (is.null(jaspResults[["TableContainer"]][["RSQTable"]]))
+      RSQTable  <- createJaspTable()
+    CoefTable$dependOn(     options = c("coef","Formula", "rsmBlocks",
+                                        "rsmResponseVariables",
+                                        "rsmVariables"))
+    RSQTable$dependOn(      options = c("coef","Formula", "rsmBlocks",
+                                        "rsmResponseVariables",
+                                        "rsmVariables"))
+
+    CoefTable$addColumnInfo(name = "names",title = " ")
+    CoefTable$addColumnInfo(name = "est",  title = "Estimate")
+    CoefTable$addColumnInfo(name = "std",  title = "Standard Error")
+    CoefTable$addColumnInfo(name = "tval", title = "t")
+    CoefTable$addColumnInfo(name = "pval", title = "p")
+
+    RSQTable$addColumnInfo( name = "RSQ",   title = "Multiple R-squared")
+    RSQTable$addColumnInfo( name = "ARSQ",  title = "Adjusted R-squared")
+    RSQTable$addColumnInfo( name = "DF1",   title = "DF1")
+    RSQTable$addColumnInfo( name = "DF2",   title = "DF2")
+    RSQTable$addColumnInfo( name = "FStat", title = "F")
+    RSQTable$addColumnInfo( name = "pval_2",title = "p")
+
+    jaspResults[["TableContainer"]][["coef"]] <- CoefTable
+    jaspResults[["TableContainer"]][["RSQTable"]] <- RSQTable
+
+  }
+
+  if (options[["anova"]]) {
+    if (is.null(jaspResults[["TableContainer"]][["anova"]]))
+      AnovaTable <- createJaspTable(title = gettext("ANOVA"))
+    AnovaTable$dependOn(     options = c("anova","Formula", "rsmBlocks",
+                                        "rsmResponseVariables",
+                                        "rsmVariables"))
+    AnovaTable$addColumnInfo( name = "name",     title = " ")
+    AnovaTable$addColumnInfo( name = "Df",       title = "DF")
+    AnovaTable$addColumnInfo( name = "Sum",      title = "Sum of Squares")
+    AnovaTable$addColumnInfo( name = "Mean",     title = "Mean of Squares")
+    AnovaTable$addColumnInfo( name = "FValue",   title = "F")
+    AnovaTable$addColumnInfo( name = "PValue",   title = "p")
+
+  }
+
+  op1  <- length(options[["rsmVariables"]])
+  op2  <- length(options[["rsmResponseVariables"]])
+  op3  <- length(options[["rsmBlocks"]])
+
+
+  if (options[["rsmBlocks"]] != ""){
+    data <- .readDataSetToEnd(columns.as.numeric =   c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
+                                                       options[["rsmResponseVariables"]]),
+                              columns.as.factor  =   options[["rsmBlocks"]])
+  }else{
+    data <- .readDataSetToEnd(columns.as.numeric = c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
+                                                     options[["rsmResponseVariables"]]))
+  }
+
+
+
+  name <- vector()
+
+  mean.col <- apply(data, 2, mean)
+
+  opt1 <- colnames(data)[1:op1]
+  opt2 <- colnames(data)[(op1+1)]
+  if (options[["rsmBlocks"]] != "") {
+    opt3 <- colnames(data)[(op1+2)]
+  }else{
+    data[,(op1+2)] <- rep(1, times = nrow(data))
+  }
+
+  optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
+  data.list <- list()
+
+
+  for (i in 1:op1) {
+    data.list[[i]] <- as.formula(paste0("x",i , " ~ ", "(", opt1[i], "-",
+                                        mean(data[,i]), ")/",
+                                        abs(data[1,i] - mean(data[,i]))))
+  }
+
+  var.code <- rsm::coded.data(data, formulas = data.list)
+
+
+  if (length(unique(data[,(op1+2)])) > 1){
+    str3 <- as.formula(paste(opt2, "~",
+                             opt3,
+                             "+", options[["Formula"]], sep = ""))
+  }else {
+    str3 <- as.formula(paste(opt2, "~", options[["Formula"]], sep = ""))
+  }
+
+  rsm <- summary(rsm::rsm(str3, data = var.code))
+  if (options[["coef"]]) {
+    .responseSurfaceTableFill(rsm, TableContainer, options)
+  }
+
+  if (options[["anova"]]) {
+    .responseSurfaceAnovaFill(rsm,TableContainer, options)
+  }
+
+  return()
+}
+
+
+
+.responseSurfaceTableFill <- function(rsm, TableContainer, options) {
+
+
+  TableContainer[["coef"]]$setData(list(names = rownames(rsm[[4]]),
+                                        est  = round(rsm[[4]][,1],3),
+                                        std  = round(rsm[[4]][,2],3),
+                                        tval = round(rsm[[4]][,3],3),
+                                        pval = ifelse(rsm[[4]][,4] > 0.001,round(rsm[[4]][,4],3), "< .001")))
+
+  TableContainer[["RSQTable"]]$setData(list(RSQ    = round(rsm[[8]],3),
+                                            ARSQ   = round(rsm[[9]],3),
+                                            DF1    = rsm[[10]][[2]],
+                                            DF2    = rsm[[10]][[3]],
+                                            FStat  = round(rsm[[10]][[1]],3),
+                                            pval_2 = ifelse((1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]])) > 0.001,
+                                                            round(1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]]),3),
+                                                            "<.001")))
+
+
+
+
+
+  return()
+}
+
+.responseSurfaceAnovaFill <- function(rsm, TableContainer, options) {
+
+  TableContainer[["anova"]]$setData(list(name   = rownames(rsm[[13]]),
+                                         Df     = rsm[[13]][,1],
+                                         Sum    = round(rsm[[13]][,2],3),
+                                         Mean   = round(rsm[[13]][,3],3),
+                                         FValue = round(rsm[[13]][,4],3),
+                                         PValue = ifelse(rsm[[13]][,5] > 0.001,
+                                                         round(rsm[[13]][,5],3),
+                                                         "<.001")))
+
+  return()
+}

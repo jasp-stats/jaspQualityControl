@@ -66,12 +66,19 @@ Form
 
 
 		}
+		
+		VariablesForm
+		{
+			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
+			AssignedVariablesList {  name: "modelTerms"; title: qsTr("Model Terms"); listViewType: JASP.Interaction }
+		}
 
 		TextArea
 		{
 			title: qsTr("RSM formula")
 			name: "Formula"
-			text: "Enter the formula used in RSM"
+			text: "Formula"
 			width: 200
 		}
 
@@ -127,7 +134,23 @@ Form
 			}
 
 		}
+		
+		CheckBox 
+		{
+			name:                       "coef"; label:                  qsTr("Show Coefficient Table")
+			
+		}
+		CheckBox
+		{
+			name:                       "anova";label:                  qsTr("ANOVA Table")
+		}
+		
 	}
+	
+	
+	
+
+	
 
 
 
