@@ -150,14 +150,6 @@ msgid "Resolution"
 msgstr ""
 
 msgctxt "doeFactorial|"
-msgid "I"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "II"
-msgstr ""
-
-msgctxt "doeFactorial|"
 msgid "III"
 msgstr ""
 
