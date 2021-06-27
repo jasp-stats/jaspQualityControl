@@ -137,12 +137,20 @@ Form
 		
 		CheckBox 
 		{
-			name:                       "coef"; label:                  qsTr("Show Coefficient Table")
+			name:                       "coef"; label:                  qsTr("Coefficient Table")
 			
 		}
+		
+		
 		CheckBox
 		{
 			name:                       "anova";label:                  qsTr("ANOVA Table")
+		}
+		
+		
+		CheckBox
+		{
+			name:                       "eigen";label:                  qsTr("Eigen Table")
 		}
 		
 	}

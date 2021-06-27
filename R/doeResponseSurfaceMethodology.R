@@ -23,8 +23,14 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   if (options[["contour"]])
     .responseSurfaceContour(jaspResults, options, position = 2)
 
-  if(options[["coef"]] | options[["anova"]])
+  if(options[["coef"]])
     .responseSurfaceTableCall(jaspResults, options, position = 3)
+
+  if(options[["anova"]])
+    .responseSurfaceTableAnovaCall(jaspResults, options, position = 4)
+
+  if(options[["eigen"]])
+    .responseSurfaceTableEigenCall(jaspResults, options, position = 5)
 }
 
 .qualityCOntrolResponseReadData <- function(dataset, options) {
@@ -113,6 +119,60 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                  alpha.orth = results$alpha.orth))
 
   return()
+
+}
+
+.responseSurfaceCalculateTable <- function(jaspResults,options, dataset) {
+  op1  <- length(options[["rsmVariables"]])
+  op2  <- length(options[["rsmResponseVariables"]])
+  op3  <- length(options[["rsmBlocks"]])
+
+
+  if (options[["rsmBlocks"]] != ""){
+    data <- .readDataSetToEnd(columns.as.numeric =   c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
+                                                       options[["rsmResponseVariables"]]),
+                              columns.as.factor  =   options[["rsmBlocks"]])
+  }else{
+    data <- .readDataSetToEnd(columns.as.numeric = c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
+                                                     options[["rsmResponseVariables"]]))
+  }
+
+
+
+  name <- vector()
+
+  mean.col <- apply(data, 2, mean)
+
+  opt1 <- colnames(data)[1:op1]
+  opt2 <- colnames(data)[(op1+1)]
+  if (options[["rsmBlocks"]] != "") {
+    opt3 <- colnames(data)[(op1+2)]
+  }else{
+    data[,(op1+2)] <- rep(1, times = nrow(data))
+  }
+
+  optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
+  data.list <- list()
+
+
+  for (i in 1:op1) {
+    data.list[[i]] <- as.formula(paste0("x",i , " ~ ", "(", opt1[i], "-",
+                                        mean(data[,i]), ")/",
+                                        abs(data[1,i] - mean(data[,i]))))
+  }
+
+  var.code <- rsm::coded.data(data, formulas = data.list)
+
+
+  if (length(unique(data[,(op1+2)])) > 1){
+    str3 <- as.formula(paste(opt2, "~",
+                             opt3,
+                             "+", options[["Formula"]], sep = ""))
+  }else {
+    str3 <- as.formula(paste(opt2, "~", options[["Formula"]], sep = ""))
+  }
+
+  rsm <- summary(rsm::rsm(str3, data = var.code))
 
 }
 
@@ -382,124 +442,55 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
 .responseSurfaceTableCall <- function(jaspResults, options, dataset, position) {
-  if (is.null(jaspResults[["TableContainer"]]))
-    .responseSurfaceTable(jaspResults, options, dataset)
+
+  rsm <- .responseSurfaceCalculateTable(jaspResults, options, dataset)
+
+  .responseSurfaceTable(jaspResults, options, dataset, rsm)
+
+  return()
 }
 
+.responseSurfaceTable <- function(jaspResults, options, dataset, rsm) {
 
-
-.responseSurfaceTable <- function(jaspResults, options, dataset) {
-  TableContainer <- createJaspContainer(title = "RSM Summary")
+  TableContainer <- createJaspContainer()
   jaspResults[["TableContainer"]] <- TableContainer
-  if (options[["coef"]]) {
-    if (is.null(jaspResults[["TableContainer"]][["coef"]]))
-      CoefTable <- createJaspTable(gettext("RSM Coefficients"))
-    if (is.null(jaspResults[["TableContainer"]][["RSQTable"]]))
-      RSQTable  <- createJaspTable()
-    CoefTable$dependOn(     options = c("coef","Formula", "rsmBlocks",
-                                        "rsmResponseVariables",
-                                        "rsmVariables"))
-    RSQTable$dependOn(      options = c("coef","Formula", "rsmBlocks",
-                                        "rsmResponseVariables",
-                                        "rsmVariables"))
 
-    CoefTable$addColumnInfo(name = "names",title = " ")
-    CoefTable$addColumnInfo(name = "est",  title = "Estimate")
-    CoefTable$addColumnInfo(name = "std",  title = "Standard Error")
-    CoefTable$addColumnInfo(name = "tval", title = "t")
-    CoefTable$addColumnInfo(name = "pval", title = "p")
-
-    RSQTable$addColumnInfo( name = "RSQ",   title = "Multiple R-squared")
-    RSQTable$addColumnInfo( name = "ARSQ",  title = "Adjusted R-squared")
-    RSQTable$addColumnInfo( name = "DF1",   title = "DF1")
-    RSQTable$addColumnInfo( name = "DF2",   title = "DF2")
-    RSQTable$addColumnInfo( name = "FStat", title = "F")
-    RSQTable$addColumnInfo( name = "pval_2",title = "p")
-
-    jaspResults[["TableContainer"]][["coef"]] <- CoefTable
-    jaspResults[["TableContainer"]][["RSQTable"]] <- RSQTable
-
-  }
-
-  if (options[["anova"]]) {
-    if (is.null(jaspResults[["TableContainer"]][["anova"]]))
-      AnovaTable <- createJaspTable(title = gettext("ANOVA"))
-    AnovaTable$dependOn(     options = c("anova","Formula", "rsmBlocks",
-                                        "rsmResponseVariables",
-                                        "rsmVariables"))
-    AnovaTable$addColumnInfo( name = "name",     title = " ")
-    AnovaTable$addColumnInfo( name = "Df",       title = "DF")
-    AnovaTable$addColumnInfo( name = "Sum",      title = "Sum of Squares")
-    AnovaTable$addColumnInfo( name = "Mean",     title = "Mean of Squares")
-    AnovaTable$addColumnInfo( name = "FValue",   title = "F")
-    AnovaTable$addColumnInfo( name = "PValue",   title = "p")
-
-  }
-
-  op1  <- length(options[["rsmVariables"]])
-  op2  <- length(options[["rsmResponseVariables"]])
-  op3  <- length(options[["rsmBlocks"]])
+  if (is.null(jaspResults[["TableContainer"]][["coef"]]))
+    CoefTable <- createJaspTable(gettext("RSM Coefficients"))
+  if (is.null(jaspResults[["TableContainer"]][["RSQTable"]]))
+    RSQTable  <- createJaspTable()
+  TableContainer$dependOn(     options = c("coef","Formula", "rsmBlocks",
+                                      "rsmResponseVariables",
+                                      "rsmVariables"))
 
 
-  if (options[["rsmBlocks"]] != ""){
-    data <- .readDataSetToEnd(columns.as.numeric =   c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
-                                                       options[["rsmResponseVariables"]]),
-                              columns.as.factor  =   options[["rsmBlocks"]])
-  }else{
-    data <- .readDataSetToEnd(columns.as.numeric = c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
-                                                     options[["rsmResponseVariables"]]))
-  }
+  CoefTable$addColumnInfo(name = "names",title = " ")
+  CoefTable$addColumnInfo(name = "est",  title = "Estimate")
+  CoefTable$addColumnInfo(name = "std",  title = "Standard Error")
+  CoefTable$addColumnInfo(name = "tval", title = "t")
+  CoefTable$addColumnInfo(name = "pval", title = "p")
+
+  RSQTable$addColumnInfo( name = "RSQ",   title = "Multiple R-squared")
+  RSQTable$addColumnInfo( name = "ARSQ",  title = "Adjusted R-squared")
+  RSQTable$addColumnInfo( name = "DF1",   title = "DF1")
+  RSQTable$addColumnInfo( name = "DF2",   title = "DF2")
+  RSQTable$addColumnInfo( name = "FStat", title = "F")
+  RSQTable$addColumnInfo( name = "pval_2",title = "p")
+
+  jaspResults[["TableContainer"]][["coef"]] <- CoefTable
+  jaspResults[["TableContainer"]][["RSQTable"]] <- RSQTable
+
+
+  .responseSurfaceTableFill(TableContainer, options,rsm)
 
 
 
-  name <- vector()
-
-  mean.col <- apply(data, 2, mean)
-
-  opt1 <- colnames(data)[1:op1]
-  opt2 <- colnames(data)[(op1+1)]
-  if (options[["rsmBlocks"]] != "") {
-    opt3 <- colnames(data)[(op1+2)]
-  }else{
-    data[,(op1+2)] <- rep(1, times = nrow(data))
-  }
-
-  optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
-  data.list <- list()
-
-
-  for (i in 1:op1) {
-    data.list[[i]] <- as.formula(paste0("x",i , " ~ ", "(", opt1[i], "-",
-                                        mean(data[,i]), ")/",
-                                        abs(data[1,i] - mean(data[,i]))))
-  }
-
-  var.code <- rsm::coded.data(data, formulas = data.list)
-
-
-  if (length(unique(data[,(op1+2)])) > 1){
-    str3 <- as.formula(paste(opt2, "~",
-                             opt3,
-                             "+", options[["Formula"]], sep = ""))
-  }else {
-    str3 <- as.formula(paste(opt2, "~", options[["Formula"]], sep = ""))
-  }
-
-  rsm <- summary(rsm::rsm(str3, data = var.code))
-  if (options[["coef"]]) {
-    .responseSurfaceTableFill(rsm, TableContainer, options)
-  }
-
-  if (options[["anova"]]) {
-    .responseSurfaceAnovaFill(rsm,TableContainer, options)
-  }
 
   return()
 }
 
 
-
-.responseSurfaceTableFill <- function(rsm, TableContainer, options) {
+.responseSurfaceTableFill <- function(TableContainer, options, rsm) {
 
 
   TableContainer[["coef"]]$setData(list(names = rownames(rsm[[4]]),
@@ -521,19 +512,106 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
 
+
   return()
 }
 
-.responseSurfaceAnovaFill <- function(rsm, TableContainer, options) {
+.responseSurfaceTableAnovaCall <- function(jaspResults, options, dataset, position) {
 
-  TableContainer[["anova"]]$setData(list(name   = rownames(rsm[[13]]),
-                                         Df     = rsm[[13]][,1],
-                                         Sum    = round(rsm[[13]][,2],3),
-                                         Mean   = round(rsm[[13]][,3],3),
-                                         FValue = round(rsm[[13]][,4],3),
-                                         PValue = ifelse(rsm[[13]][,5] > 0.001,
-                                                         round(rsm[[13]][,5],3),
+  rsm <- .responseSurfaceCalculateTable(jaspResults, options, dataset)
+
+  .responseSurfaceAnovaTable(jaspResults, options, dataset, rsm)
+
+  return()
+}
+
+
+.responseSurfaceAnovaTable <- function(jaspResults, options, dataset,rsm) {
+
+
+  AnovaTable <- createJaspTable(gettext("ANOVA"))
+
+
+  AnovaTable$dependOn(      options = c("anova","Formula", "rsmBlocks",
+                                       "rsmResponseVariables",
+                                       "rsmVariables"))
+  AnovaTable$addColumnInfo( name = "names",     title = " ")
+  AnovaTable$addColumnInfo( name = "Df",       title = "DF")
+  AnovaTable$addColumnInfo( name = "Sum",      title = "Sum of Squares")
+  AnovaTable$addColumnInfo( name = "Mean",     title = "Mean of Squares")
+  AnovaTable$addColumnInfo( name = "FValue",   title = "F")
+  AnovaTable$addColumnInfo( name = "PValue",   title = "p")
+
+  jaspResults[["anova"]] <- AnovaTable
+
+  .responseSurfaceAnovaFill(AnovaTable, jaspResults, options,rsm)
+
+  return()
+}
+
+
+
+.responseSurfaceAnovaFill <- function(AnovaTable, jaspResults, options,rsm) {
+
+
+
+ jaspResults[["anova"]]$setData(list(    names  = rownames(rsm[[13]]),
+                                         Df     = round(rsm[[13]][[1]],3),
+                                         Sum    = round(rsm[[13]][[2]],3),
+                                         Mean   = round(rsm[[13]][[3]],3),
+                                         FValue = round(rsm[[13]][[4]],3),
+                                         PValue = ifelse(rsm[[13]][[5]] > 0.001,
+                                                         round(rsm[[13]][[5]],3),
                                                          "<.001")))
 
+  return()
+}
+
+.responseSurfaceTableEigenCall <- function(jaspResults, options, dataset, position) {
+  rsm <- .responseSurfaceCalculateTable(jaspResults, options, dataset)
+
+  .responseSurfaceEigenTable(jaspResults, options, dataset, rsm)
+
+  return()
+}
+
+.responseSurfaceEigenTable <- function(jaspResults, options, dataset, rsm) {
+
+  eigen      <- createJaspContainer()
+  jaspResults[["eigen"]] <- eigen
+
+  if (is.null(eigen[["XTable"]]))
+    XTable <- createJaspTable(title = gettext("Stationary Points of Response Surface (Coded)"))
+  if (is.null(eigen[["EigenValue"]]))
+    EigenValue <- createJaspTable(title = gettext("Eigenvalues"))
+
+  if (is.null(eigen[["EigenVectors"]]))
+    EigenVector <- createJaspTable(title = gettext("Eigenvectors"))
+
+  eigen$dependOn(      options = c("eigen","Formula", "rsmBlocks",
+                                        "rsmResponseVariables",
+                                        "rsmVariables"))
+
+
+  op1  <- length(options[["rsmVariables"]])
+
+  for (i in 1:op1) {
+    XTable$addColumnInfo(name = paste0("x",i, sep = ""), title = paste0("x",i, sep = ""))
+    EigenValue$addColumnInfo(name = paste0("x",i, sep = ""), title = "")
+    EigenVector$addColumnInfo(name = paste0("x",i, sep = ""), title = "")
+  }
+
+  eigen[["XTable"]] <- XTable
+  eigen[["EigenValue"]] <- EigenValue
+  eigen[["EigenVectors"]] <- EigenVector
+
+  .responseSurfaceTableEigenFill(eigen, jaspResults, options, rsm)
+
+  return()
+}
+
+.responseSurfaceTableEigenFill <- function(eigen, jaspResults, options, rsm) {
+  eigen[["XTable"]]$addRows(round(rsm[[12]][[1]],3))
+  # eigen[["EigenValue"]]$setData(round(rsm[[12]][[2]][[1]]),3)
   return()
 }
