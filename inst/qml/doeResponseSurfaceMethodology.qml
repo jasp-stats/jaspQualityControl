@@ -71,7 +71,7 @@ Form
 		{
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
 			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
-			AssignedVariablesList {  name: "modelTerms"; title: qsTr("Model Terms"); listViewType: JASP.Interaction }
+			ModelTermsList {listViewType: JASP.Interaction}
 		}
 
 		TextArea
@@ -134,6 +134,8 @@ Form
 			}
 
 		}
+		
+	
 		
 		CheckBox 
 		{

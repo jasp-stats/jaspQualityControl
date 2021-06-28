@@ -594,7 +594,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
   op1  <- length(options[["rsmVariables"]])
-
+  EigenVector$addColumnInfo(name = "names", title = "")
   for (i in 1:op1) {
     XTable$addColumnInfo(name = paste0("x",i, sep = ""), title = paste0("x",i, sep = ""))
     EigenValue$addColumnInfo(name = paste0("x",i, sep = ""), title = "")
@@ -611,7 +611,22 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 .responseSurfaceTableEigenFill <- function(eigen, jaspResults, options, rsm) {
+
+  op1  <- length(options[["rsmVariables"]])
+
   eigen[["XTable"]]$addRows(round(rsm[[12]][[1]],3))
-  # eigen[["EigenValue"]]$setData(round(rsm[[12]][[2]][[1]]),3)
+  eigen[["EigenValue"]]$setData(round(rsm[[12]][[2]][[1]],3))
+  eigen[["EigenVectors"]]$setData(list(names = rownames(rsm[[12]][[2]][[2]])))
+
+  m <- as.data.frame(matrix(0, ncol = op1 + 1, nrow = op1))
+  m[,1] <- rownames(rsm[[12]][[2]][[2]])
+  colnames(m) <- rep("", times = op1+1)
+
+  for (i in 1:op1) {
+    m[,i+1] <- round(rsm[[12]][[2]][[2]][,i],3)
+  }
+
+  eigen[["EigenVectors"]]$setData(m)
+
   return()
 }
