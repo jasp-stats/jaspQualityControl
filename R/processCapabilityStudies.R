@@ -75,6 +75,25 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                  "CapabilityStudyPlot", "CapabilityStudyTables"))
   container$position <- 4
 
+
+  if( sum(options[["upperSpecificationField"]], options[["lowerSpecificationField"]], options[["targetValueField"]]) >= 2){
+    if (options[["lowerSpecificationField"]]){
+      lowSpec <- options[["lowerSpecification"]]
+      if (options[["upperSpecificationField"]] && options[["upperSpecification"]] < lowSpec){
+        container$setError(gettext("Error: LSL > USL."))
+      }
+    }
+    if (options[["targetValueField"]]){
+      target <- options[["targetValue"]]
+      if ((options[["upperSpecificationField"]] && options[["upperSpecification"]] < target) || (options[["lowerSpecificationField"]] && options[["lowerSpecification"]] > target)){
+        container$setError(gettext("Error: Target outside of specification limits."))
+      }
+    }
+  }
+
+
+
+
   ready <- (length(measurements) > 1L && (options[["lowerSpecificationField"]] | options[["upperSpecificationField"]]))
 
   jaspResults[["capabilityAnalysis"]] <- container
