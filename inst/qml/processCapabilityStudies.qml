@@ -81,6 +81,7 @@ Form
 		label: 					qsTr("Subgroup size:")
 		negativeValues:			false
 		min: 					5
+		max: 					dataSetModel.rowCount()
 		defaultValue:			5
 		visible:				pcDataFormat.currentValue == "PClongFormat"
 	}
@@ -194,7 +195,6 @@ Form
 						name: 					"lowerSpecification"
 						negativeValues:			true
 						defaultValue:			-1
-						max:					target.value
 					}
 				}
 
@@ -210,8 +210,6 @@ Form
 						name: 					"targetValue"
 						negativeValues:			true
 						defaultValue:			0
-						max:					upper.value
-						min:					lower.value
 					}
 				}
 
@@ -227,7 +225,6 @@ Form
 						name: 					"upperSpecification"
 						negativeValues:			true
 						defaultValue:			1
-						min:					target.value
 					}
 				}
 			}
