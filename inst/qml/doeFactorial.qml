@@ -344,11 +344,9 @@ Form
 						DropDown
 						{
 							name: 				"factorialResolution"
-							indexDefaultValue: 	7
+                            indexDefaultValue: 	0
 							values:
 								[
-								{ value: "I", 	label: qsTr("I") 	},
-								{ value: "II", 	label: qsTr("II") 	},
 								{ value: "III", label: qsTr("III") 	},
 								{ value: "IV", 	label: qsTr("IV") 	},
 								{ value: "V", 	label: qsTr("V") 	},
