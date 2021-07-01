@@ -116,7 +116,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceContour <- function(jaspResults, options, position, dataset) {
   ready <- 1
-  #print(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2])
   if (is.null(jaspResults[["ContourPlot"]]))
     .responseSurfaceContourPlot(jaspResults, dataset, options)
 
@@ -152,10 +151,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                                        options[["rsmResponseVariables"]]))
     }
 
-
-    #print(data)
-
-
     pair <- options[["pairs"]]
 
     name <- vector()
@@ -169,7 +164,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }else{
       data[,(op1+2)] <- rep(1, times = nrow(data))
     }
-    # print(data)
 
     optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
     data.list <- list()
@@ -184,7 +178,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }
 
     var.code <- rsm::coded.data(data, formulas = data.list)
-    # print(var.code)
 
     # if (op_pair > 0) {
     #   for (i in 1:op_pair) {
@@ -199,10 +192,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     #     contourPlot[[paste0("plotObject", i, sep = "")]] <- plot
     #   }
     # }
-
-
-
-    # print(var.code)
 
     l_gen <- 1:op1
 
@@ -230,7 +219,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
         contourPlot[[paste0("plotObject", col, sep = "")]] <- plot
 
         str1 <-  paste0("x",1:op1, collapse = ",")
-        #print(str1)
         str2 <-  paste("SO(", str1, ")", sep = "")
         if (length(unique(data[,(op1+2)])) > 1){
           str3 <- as.formula(paste(opt2, "~",
@@ -263,7 +251,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
             }
           }
         }
-        # print(point_spec_r)
         heli.rsm1 <- rsm::rsm(str3, data = var.code)
         .responseSurfaceContourFill(contourPlot[[paste0("plotObject", col, sep = "")]],
                                     heli.rsm1, po, options, point_spec_r)
@@ -295,12 +282,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   opt2 <- options[["rsmResponseVariables"]]
 
-  #print(options[["Formula"]])
-
-
-  # print(point_spec_r)
-  # print(heli.rsm1)
-  # print(po)
   contour.fill <- function() {
     plot <- persp(heli.rsm1, po,
                   at = point_spec_r, contours = "colors",

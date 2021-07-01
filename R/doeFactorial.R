@@ -298,8 +298,6 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     }
 
     rows <- rows[,!names(rows) %in% "Blocks"]
-    print(1:100)
-    print(blocks)
 
     for(i in 1:options[["numberOfFactors"]]){
       colnames(rows)[i+k] <- factorNames[i]
