@@ -163,16 +163,107 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   var.code <- rsm::coded.data(data, formulas = data.list)
 
+  vari <- matrix(unlist(options[["rsmVariables"]]),ncol = 2, byrow = T)[,2]
+  len_mo <- length(options[["modelTerms"]])
+
+  pq <- character()
+  fo <- character()
+  for (i in seq_along(options[["modelTerms"]])) {
+    if (!any(options[["modelTerms"]][[i]][[2]] %in% vari == "FALSE")) {
+      if (options[["modelTerms"]][[i]][[1]] == "fopq") {
+        pq[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
+        fo[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
+        # formula_str[i] <- paste("FO(x",
+        #                         which(vari %in% options[["modelTerms"]][[i]][[2]]),")+PQ(x",
+        #                         which(vari %in% options[["modelTerms"]][[i]][[2]]),")",
+        #                         sep = "")
+      }else if (options[["modelTerms"]][[i]][[1]] == "fo") {
+        fo[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
+        # formula_str[i] <- paste("FO(x",
+        #                         which(vari %in% options[["modelTerms"]][[i]][[2]]),")",
+        #                         sep = "")
+      }else if (options[["modelTerms"]][[i]][[1]] == "pq") {
+        pq[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
+        # formula_str[i] <- paste("PQ(x",
+        #                         which(vari %in% options[["modelTerms"]][[i]][[2]]),")",
+        #                         sep = "")
+      }
+    }
+  }
+  print(pq)
+  pq <- pq[!is.na(pq)]
+  fo <- fo[!is.na(fo)]
+  print(fo)
+  start <- ifelse(length(fo) == 0, 0, 1) + ifelse(length(pq) == 0, 0 ,1)
+  formula_str <- rep("", times = start + len_mo - op1)
+  if (length (fo) > 0){
+    fo <- paste(fo, collapse = ",")
+    formula_str[1] <- paste("FO(",fo,")", sep = "")
+  }
+  if (length (pq) > 0){
+    pq <- paste(pq, collapse = ",")
+    formula_str[2] <- paste("PQ(", pq, ")", sep = "")
+  }
+  print(formula_str)
+
+  op1 <- length(options[["rsmVariables"]])
+
+  l_gen <- 1:op1
+
+  for (i in seq_along(options[["modelTerms"]])) {
+
+    if (length(options[["modelTerms"]][[i]][[2]]) > 1) {
+
+      jo <- character(length = length(options[["modelTerms"]][[i]][[2]]))
+
+      for (j in seq_along(formula_str)){
+
+        if (formula_str[j] == "") {
+
+
+          optio_2 <- options[["modelTerms"]][[i]][[2]][[1]]
+
+          jo[1] <- paste("x",l_gen[vari %in% optio_2], sep = "")
+
+          for (k in seq_along(jo)) {
+
+            if (jo[k] == "") {
+
+              optio_3 <- options[["modelTerms"]][[i]][[2]][[k]]
+
+              jo[k] <- paste(",x", l_gen[vari %in% optio_3], sep = "")
+
+            }
+          }
+          jo_2 <- paste(jo, collapse = "")
+          jo_3 <- paste("TWI(",jo_2,")", sep = "")
+          formula_str[j] <- jo_3
+          break()
+        }
+
+
+      }
+    }
+  }
+  # print(formula_str)
+  # print(paste(formula_str, collapse = "+"))
 
   if (length(unique(data[,(op1+2)])) > 1){
     str3 <- as.formula(paste(opt2, "~",
                              opt3,
                              "+", options[["Formula"]], sep = ""))
   }else {
+    form <- paste(formula_str, collapse = "+")
+    print(form)
+    form_2 <- paste(opt2, "~", form, sep = "")
+    print(paste(opt2, "~", form, sep = ""))
+    form_3 <- as.formula(form_2)
+    print(form_3)
+
     str3 <- as.formula(paste(opt2, "~", options[["Formula"]], sep = ""))
   }
 
-  rsm <- summary(rsm::rsm(str3, data = var.code))
+  rsm <- summary(rsm::rsm(form_3 , data = var.code))
 
 }
 
@@ -271,6 +362,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
     # print(var.code)
+
+
 
     l_gen <- 1:op1
 
@@ -479,6 +572,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   jaspResults[["TableContainer"]][["coef"]] <- CoefTable
   jaspResults[["TableContainer"]][["RSQTable"]] <- RSQTable
+
+
 
 
   .responseSurfaceTableFill(TableContainer, options,rsm)

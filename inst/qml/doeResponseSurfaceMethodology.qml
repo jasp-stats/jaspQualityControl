@@ -65,13 +65,28 @@ Form
 			{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
 
 
-		}
+		} 
 		
 		VariablesForm
 		{
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
 			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
-			ModelTermsList {listViewType: JASP.Interaction}
+			ModelTermsList
+			{
+				listViewType			: JASP.Interaction
+				rowComponentTitle		: qsTr("Term Type")
+				rowComponent			: DropDown
+				{
+					name: "TermType"
+					label: ""
+					values: [
+						{ label: qsTr(""), value: "nothing"},
+						{ label: qsTr("FO"), value: "fo"},
+						{ label: qsTr("FO + PQ"), value: "fopq"},
+						{ label: qsTr("PQ"), value: "pq"}
+					]
+				}
+			}
 		}
 
 		TextArea
