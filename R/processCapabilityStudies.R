@@ -22,26 +22,38 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }else{
     measurements <- unlist(options$variablesLong)
   }
-  measurements <- measurements[measurements != ""]
   subgroups <- unlist(options$subgroups)
+  num.vars <- measurements[measurements != ""]
+  fac.vars <- subgroups[subgroups != ""]
+
+  dataset <- .readDataSetToEnd(columns.as.numeric = num.vars, columns.as.factor = fac.vars)
 
   if (options[["pcDataFormat"]] == "PCwideFormat"){
-    dataset <- .qcReadData(dataset, options, type = "capabilityStudy")
+    ready <- length(measurements > 0)
   }else{
-    dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
+    ready <- (length(measurements > 0) && (options[["manualSubgroupSize"]] | subgroups != ""))
   }
 
-  # Check if analysis is ready
-  ready <- length(measurements > 0)
-
   if (options[["pcDataFormat"]] == "PClongFormat" && ready){
-    k <- options[["pcSubgroupSize"]]
-    dataset <- .PClongTowide(dataset, k, measurements)
-    measurements <- colnames(dataset)
+    if(options[["manualSubgroupSize"]]){
+      k <- options[["pcSubgroupSize"]]
+      dataset <- .PClongTowide(dataset, k, measurements, mode = "manual")
+      if (dataset == "error"){
+        container <- createJaspContainer(gettext("Error"))
+        container$setError(gettext("Test"))
+        return()
+      }
+      measurements <- colnames(dataset)
+      subgroups <- ""
+    }else{
+      k <- subgroups
+      dataset <- .PClongTowide(dataset, k, measurements, mode = "subgroups")
+      measurements <- colnames(dataset)
+      measurements <- measurements[measurements != k]
+    }
   }
 
   dataset <- na.omit(dataset)
-
 
   # X-bar and R Chart OR ImR Chart
   if(options[["controlChartsType"]] == "xbarR"){
@@ -72,7 +84,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   container <- createJaspContainer(gettext("Capability Studies"))
   container$dependOn(options = c("CapabilityStudyType", "variables", "subgroups", "lowerSpecification", "upperSpecification", "targetValue", "variablesLong", "pcSubgroupSize", "pcDataFormat",
-                                 "CapabilityStudyPlot", "CapabilityStudyTables"))
+                                 "CapabilityStudyPlot", "CapabilityStudyTables", "manualSubgroupSize"))
   container$position <- 4
 
 
@@ -999,7 +1011,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   plot <- createJaspPlot(title = gettext("Histogram"), width = 400, height = 400)
-  plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "variablesLong", "pcSubgroupSize"))
+  plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "subgroups"))
   plot$position <- 2
 
   jaspResults[["histogram"]] <- plot
@@ -1060,27 +1072,31 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 }
 
-.PClongTowide<- function(dataset, k, measurements){
-  n <- nrow(dataset)
-  nGroups <- n/k
+.PClongTowide<- function(dataset, k, measurements, mode = c("manual", "subgroups")){
+  if(mode == "manual"){
+    dataset <- dataset[measurements]
+    n <- nrow(dataset)
+    nGroups <- n/k
 
-  if (nGroups != as.integer(nGroups)){
-    nGroups <- as.integer(nGroups + 1)
-    reqLength <- nGroups * k
-    deficit <- reqLength - n
-    fillNA <- data.frame(x = rep(NA, deficit))
-    colnames(fillNA) <- measurements
-    dataset <- rbind(dataset, fillNA)
+    if (nGroups != as.integer(nGroups)){
+      return("error")
+    }
+    groupVector <- paste("V", 1:k, sep = "")
+    group <- rep(groupVector, nGroups)
+    wideDataset <- data.frame(row = 1:nGroups)
+    dataset <- cbind(dataset, group)
+    for(g in groupVector){
+      groupData <- data.frame(x = dataset[[measurements]][dataset$group == g])
+      colnames(groupData) <- g
+      wideDataset <- cbind(wideDataset, groupData)
+    }
+    wideDataset <- wideDataset[groupVector]
+    return(wideDataset)
+  }else{
+    nrep <- table(dataset[k])[[1]]
+    dataset <- dataset[order(dataset[k]),]
+    dataset <- cbind(dataset, data.frame(rep = rep(paste("V", 1:nrep, sep = ""))))
+    wideDataset <- tidyr::spread(dataset, rep, measurements)
+    return(wideDataset)
   }
-  groupVector <- paste("V", 1:nGroups, sep = "")
-  group <- rep(groupVector, each = k)
-  wideDataset <- data.frame(row = 1:k)
-  dataset <- cbind(dataset, group)
-  for(g in groupVector){
-    groupData <- data.frame(x = dataset[[measurements]][dataset$group == g])
-    colnames(groupData) <- g
-    wideDataset <- cbind(wideDataset, groupData)
-  }
-  wideDataset <- wideDataset[groupVector]
-  return(wideDataset)
 }
