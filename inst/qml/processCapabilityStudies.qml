@@ -70,22 +70,28 @@ Form
 			title:             			 	qsTr("Subgroups")
 			singleVariable:    	 			true
 			allowedColumns:     			["nominal", "nominalText", "ordinal"]
-			visible:						pcDataFormat.currentValue == "PCwideFormat"
 		}
 	}
 	
-	DoubleField
+	CheckBox
 	{
-		id:						pcSubgroupSize
-		name: 					"pcSubgroupSize"
-		label: 					qsTr("Subgroup size:")
-		negativeValues:			false
-		min: 					5
-		max: 					dataSetModel.rowCount()
-		defaultValue:			5
-		visible:				pcDataFormat.currentValue == "PClongFormat"
-	}
+		name: 						"manualSubgroupSize"
+		label: 						qsTr("Specifiy subgroup size manually:")
+		checked: 					false
+		childrenOnSameRow:			true
 	
+		DoubleField
+		{
+			id:						pcSubgroupSize
+			name: 					"pcSubgroupSize"
+			label: 					qsTr("")
+			negativeValues:			false
+			min: 					1
+			max: 					dataSetModel.rowCount()
+			defaultValue:			5
+			visible:				pcDataFormat.currentValue == "PClongFormat"
+		}
+	}
 	
 	Section
 	{
@@ -154,7 +160,7 @@ Form
 					{
 						name:			"csNumberOfBins"
 						label:			qsTr("Number of bins")
-						defaultValue:	30
+						defaultValue:	10
 						min:			3;
 						max:			10000;
 						enabled:		csBinWidthType.currentValue === "manual"
@@ -195,6 +201,7 @@ Form
 						name: 					"lowerSpecification"
 						negativeValues:			true
 						defaultValue:			-1
+						decimals:				7
 					}
 				}
 
@@ -210,6 +217,8 @@ Form
 						name: 					"targetValue"
 						negativeValues:			true
 						defaultValue:			0
+						decimals:				7
+						
 					}
 				}
 
@@ -225,6 +234,7 @@ Form
 						name: 					"upperSpecification"
 						negativeValues:			true
 						defaultValue:			1
+						decimals:				7
 					}
 				}
 			}
@@ -293,7 +303,7 @@ Form
 					{
 						name:			"pcNumberOfBins"
 						label:			qsTr("Number of bins")
-						defaultValue:	30
+						defaultValue:	10
 						min:			3;
 						max:			10000;
 						enabled:		binWidthType.currentValue === "manual"

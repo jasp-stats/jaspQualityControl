@@ -1,22 +1,4 @@
 #############################################################
-## Common functions for preparatory work ####################
-#############################################################
-
-# Common function to read in data set
-.qcReadData <- function(dataset, options, type) {
-  if (type == "capabilityStudy") {
-    if (is.null(dataset)) {
-      if (options[["subgroups"]] != "") {
-        dataset <- .readDataSetToEnd(columns.as.numeric = options[["variables"]], columns.as.factor = options[["subgroups"]])
-      } else {
-        dataset <- .readDataSetToEnd(columns.as.numeric = options[["variables"]])
-      }
-    }
-  }
-  return(dataset)
-}
-
-#############################################################
 ## Common functions for plots ###############################
 #############################################################
 
@@ -27,7 +9,7 @@
     return()
 
   container <- createJaspContainer(title = gettext("Control Chart"))
-  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
+  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
 
