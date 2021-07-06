@@ -122,7 +122,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 }
 
-.responseSurfaceCalculateTable <- function(jaspResults,options, dataset) {
+.responseSurfaceCalculate <- function(jaspResults,options, dataset) {
   op1  <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
@@ -173,21 +173,16 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       if (options[["modelTerms"]][[i]][[1]] == "fopq") {
         pq[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
         fo[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
-        # formula_str[i] <- paste("FO(x",
-        #                         which(vari %in% options[["modelTerms"]][[i]][[2]]),")+PQ(x",
-        #                         which(vari %in% options[["modelTerms"]][[i]][[2]]),")",
-        #                         sep = "")
+
       }else if (options[["modelTerms"]][[i]][[1]] == "fo") {
         fo[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
-        # formula_str[i] <- paste("FO(x",
-        #                         which(vari %in% options[["modelTerms"]][[i]][[2]]),")",
-        #                         sep = "")
-      }else if (options[["modelTerms"]][[i]][[1]] == "pq") {
-        pq[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
-        # formula_str[i] <- paste("PQ(x",
-        #                         which(vari %in% options[["modelTerms"]][[i]][[2]]),")",
-        #                         sep = "")
-      }
+
+      }#else if (options[["modelTerms"]][[i]][[1]] == "pq") {
+      #   pq[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
+      #   # formula_str[i] <- paste("PQ(x",
+      #   #                         which(vari %in% options[["modelTerms"]][[i]][[2]]),")",
+      #   #                         sep = "")
+      # }
     }
   }
   print(pq)
@@ -249,21 +244,28 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   # print(paste(formula_str, collapse = "+"))
 
   if (length(unique(data[,(op1+2)])) > 1){
-    str3 <- as.formula(paste(opt2, "~",
-                             opt3,
-                             "+", options[["Formula"]], sep = ""))
+    form <- paste(formula_str, collapse = "+")
+
+    form_2 <- paste(opt2, "~", options[["rsmBlocks"]], "+", form, sep = "")
+
+    form_3 <- as.formula(form_2)
+
+
+     # str3 <- as.formula(paste(opt2, "~",
+    #                          opt3,
+    #                          "+", options[["Formula"]], sep = ""))
   }else {
     form <- paste(formula_str, collapse = "+")
-    print(form)
+    # print(form)
     form_2 <- paste(opt2, "~", form, sep = "")
-    print(paste(opt2, "~", form, sep = ""))
+    # print(paste(opt2, "~", form, sep = ""))
     form_3 <- as.formula(form_2)
-    print(form_3)
+    # print(form_3)
 
-    str3 <- as.formula(paste(opt2, "~", options[["Formula"]], sep = ""))
+    # str3 <- as.formula(paste(opt2, "~", options[["Formula"]], sep = ""))
   }
 
-  rsm <- summary(rsm::rsm(form_3 , data = var.code))
+  rsm <- rsm::rsm(form_3 , data = var.code)
 
 }
 
@@ -301,67 +303,12 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     return ()
   }else if(op2 >= 1) {
 
-
-    if (options[["rsmBlocks"]] != ""){
-      data <- .readDataSetToEnd(columns.as.numeric =   c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
-                                                         options[["rsmResponseVariables"]]),
-                                columns.as.factor  =   options[["rsmBlocks"]])
-    }else{
-      data <- .readDataSetToEnd(columns.as.numeric = c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
-                                                       options[["rsmResponseVariables"]]))
-    }
-
-
-    #print(data)
-
-
     pair <- options[["pairs"]]
 
-    name <- vector()
 
-    mean.col <- apply(data, 2, mean)
-
-    opt1 <- colnames(data)[1:op1]
-    opt2 <- colnames(data)[(op1+1)]
-    if (options[["rsmBlocks"]] != "") {
-      opt3 <- colnames(data)[(op1+2)]
-    }else{
-      data[,(op1+2)] <- rep(1, times = nrow(data))
-    }
-    # print(data)
 
     optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
-    data.list <- list()
 
-
-    for (i in 1:op1) {
-      data.list[[i]] <- as.formula(paste0("x", i, " ~ ", "(", opt1[i], "-",
-                                          mean(data[,i]), ")/",
-                                          abs(data[1,i] - mean(data[,i]))))
-      # if (options[["coded"]])
-      #   data[,i] <- (data[,i] - mean(data[,i]))/(abs(data[1,i] - mean(data[,i])))
-    }
-
-    var.code <- rsm::coded.data(data, formulas = data.list)
-    # print(var.code)
-
-    # if (op_pair > 0) {
-    #   for (i in 1:op_pair) {
-    #
-    #
-    #     plot <- createJaspPlot(
-    #       title = paste("Plot", i, sep = " "),
-    #       width = 540, height = 540)
-    #     plot$dependOn(c("rsmResponseVariables",
-    #                     "rsmBlocks",
-    #                     "contour", "psi", "theta","pairs", "Component", "Point"))
-    #     contourPlot[[paste0("plotObject", i, sep = "")]] <- plot
-    #   }
-    # }
-
-
-
-    # print(var.code)
 
 
 
@@ -390,31 +337,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                         "contour", "psi", "theta","pairs", "Component", "Point"))
         contourPlot[[paste0("plotObject", col, sep = "")]] <- plot
 
-        str1 <-  paste0("x",1:op1, collapse = ",")
-        #print(str1)
-        str2 <-  paste("SO(", str1, ")", sep = "")
-
-        #Error Checking
-        #---------------------------------------
-        check <- "Formula"
-        if (options[["Formula"]] == check) {
-          error <- "Change the placeholder text into a formula."
-          plot$setError(error)
-          return()
-        }
 
 
-
-        #---------------------------------------
-
-        if (length(unique(data[,(op1+2)])) > 1){
-          str3 <- as.formula(paste(opt2, "~",
-                                   opt3,
-                                   "+", options[["Formula"]], sep = ""))
-        }else {
-          #str3 <- as.formula(paste(opt2, "~", str2, sep = ""))
-          str3 <- as.formula(paste(opt2, "~", options[["Formula"]], sep = ""))
-        }
         po <- as.formula(paste("~x", l_gen[optio %in% i[1]],
                                "+", "x",
                                l_gen[optio %in% i[2]], sep = ""))
@@ -439,9 +363,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
           }
         }
         # print(point_spec_r)
-        heli.rsm1 <- rsm::rsm(str3, data = var.code)
+
+        heli.rsm  <- .responseSurfaceCalculate(jaspResults, options, dataset)
         .responseSurfaceContourFill(contourPlot[[paste0("plotObject", col, sep = "")]],
-                                    heli.rsm1, po, options, point_spec_r)
+                                    heli.rsm, po, options, point_spec_r)
         col <- col + 1
       }
 
@@ -462,7 +387,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 
-.responseSurfaceContourFill <- function(contourPlot,heli.rsm1,po, options, point_spec_r, dataset) {
+.responseSurfaceContourFill <- function(contourPlot,heli.rsm,po, options, point_spec_r, dataset) {
 
   op1  <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
@@ -477,7 +402,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   # print(heli.rsm1)
   # print(po)
   contour.fill <- function() {
-    plot <- persp(heli.rsm1, po,
+    plot <- persp(heli.rsm, po,
                   at = point_spec_r, contours = "colors",
                   col = rainbow(options["divide"]),
                   zlab = opt2,
@@ -536,7 +461,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceTableCall <- function(jaspResults, options, dataset, position) {
 
-  rsm <- .responseSurfaceCalculateTable(jaspResults, options, dataset)
+  rsm <- summary(.responseSurfaceCalculate(jaspResults, options, dataset))
 
   .responseSurfaceTable(jaspResults, options, dataset, rsm)
 
@@ -613,7 +538,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceTableAnovaCall <- function(jaspResults, options, dataset, position) {
 
-  rsm <- .responseSurfaceCalculateTable(jaspResults, options, dataset)
+  rsm <- summary(.responseSurfaceCalculate(jaspResults, options, dataset))
 
   .responseSurfaceAnovaTable(jaspResults, options, dataset, rsm)
 
@@ -663,7 +588,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 .responseSurfaceTableEigenCall <- function(jaspResults, options, dataset, position) {
-  rsm <- .responseSurfaceCalculateTable(jaspResults, options, dataset)
+  rsm <- summary(.responseSurfaceCalculate(jaspResults, options, dataset))
+
 
   .responseSurfaceEigenTable(jaspResults, options, dataset, rsm)
 

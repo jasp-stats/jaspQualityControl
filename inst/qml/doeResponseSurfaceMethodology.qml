@@ -44,11 +44,58 @@ Form
 	}
 
 
-
+	VariablesForm
+	{
+		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+		AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
+		ModelTermsList
+		{
+			listViewType			: JASP.Interaction
+			rowComponentTitle		: qsTr("Term Type")
+			rowComponent			: DropDown
+			{
+				name: "TermType"
+				label: ""
+				values: [
+					{ label: qsTr(""), value: "nothing"},
+					{ label: qsTr("FO"), value: "fo"},
+					{ label: qsTr("FO + PQ"), value: "fopq"},
+					
+				]
+			}
+		}
+	}
+	
+	Group 
+	{
+		title: qsTr("Response Surface Summaries")
+		columns: 3
+		
+		CheckBox 
+		{
+			name:                       "coef"; label:                  qsTr("Coefficient Table")
+			
+		}
+		
+		
+		CheckBox
+		{
+			name:                       "anova";label:                  qsTr("ANOVA Table")
+		}
+		
+		
+		CheckBox
+		{
+			name:                       "eigen";label:                  qsTr("Eigen Table")
+		}
+	}
+	
+	
 
 	Group
 	{
 		title: qsTr("Contour Plot Options")
+		
 		VariablesForm
 		{
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
@@ -67,40 +114,15 @@ Form
 
 		} 
 		
-		VariablesForm
-		{
-			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
-			ModelTermsList
-			{
-				listViewType			: JASP.Interaction
-				rowComponentTitle		: qsTr("Term Type")
-				rowComponent			: DropDown
-				{
-					name: "TermType"
-					label: ""
-					values: [
-						{ label: qsTr(""), value: "nothing"},
-						{ label: qsTr("FO"), value: "fo"},
-						{ label: qsTr("FO + PQ"), value: "fopq"},
-						{ label: qsTr("PQ"), value: "pq"}
-					]
-				}
-			}
-		}
+		
 
-		TextArea
-		{
-			title: qsTr("RSM formula")
-			name: "Formula"
-			text: "Formula"
-			width: 200
-		}
+
 
 
 		CheckBox
 		{
 			name:                      "contour";label:   qsTr("Contour Surface")
+			columns: 2
 			CheckBox
 			{
 				name:                       "cplot"
@@ -152,23 +174,7 @@ Form
 		
 	
 		
-		CheckBox 
-		{
-			name:                       "coef"; label:                  qsTr("Coefficient Table")
-			
-		}
 		
-		
-		CheckBox
-		{
-			name:                       "anova";label:                  qsTr("ANOVA Table")
-		}
-		
-		
-		CheckBox
-		{
-			name:                       "eigen";label:                  qsTr("Eigen Table")
-		}
 		
 	}
 	
