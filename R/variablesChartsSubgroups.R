@@ -1,26 +1,43 @@
 variablesChartsSubgroups <- function(jaspResults, dataset, options) {
-  variables <- unlist(options$variables)
+  # read variables
+  if (options[["pcDataFormat"]] == "PCwideFormat"){
+    variables <- unlist(options$variables)
+  }else{
+    variables <- unlist(options$variablesLong)
+  }
+
+  # read time
   time <- options$time
   makeTime <- time != ""
-  numberMissingSplitBy <- 0
-
-  if (is.null(dataset)) {
-    if (makeTime) {
-      dataset         <- .readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = time)
-      dataset.factors <- .readDataSetToEnd(columns=variables, columns.as.factor=time)
-    } else {
-      dataset         <- .readDataSetToEnd(columns.as.numeric=variables)
-      dataset.factors <- .readDataSetToEnd(columns=variables)
+  if (options[["pcDataFormat"]] == "PCwideFormat"){
+    if (is.null(dataset)) {
+      if (makeTime) {
+        dataset <- .readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = time)
+        dataset.factors <- .readDataSetToEnd(columns=variables, columns.as.factor=time)
+      } else {
+        dataset <- .readDataSetToEnd(columns.as.numeric = variables)
+        dataset.factors <- .readDataSetToEnd(columns=variables)
+      }
     }
+  }else{
+    dataset <- .readDataSetToEnd(columns.as.numeric = variables)
   }
-  if (makeTime && length(variables) > 0) {
-    # For the time-variable we first convert the original factor to a character so that the order of input is kept!
-    dataset[[time]] <- as.character(dataset[[time]])
+
+  # Check if analysis is ready
+  ready <- length(variables > 0)
+
+  if (options[["pcDataFormat"]] == "PClongFormat" && ready){
+    k <- options[["pcSubgroupSize"]]
+    dataset <- .PClongTowide(dataset, k, variables)
+    measurements <- colnames(dataset)
   }
+
+  dataset <- na.omit(dataset)
+
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
              all.target = options$variables,
-             observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE)
+             observations.amount = c(' < 0'), exitAnalysisIfErrors = TRUE)
 
   #X bar & R chart
   if (options$Xbarchart && is.null(jaspResults[["XbarPlot"]]) &&  length(options$variables) > 1) {
@@ -28,7 +45,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     Xchart <- .XbarchartNoId(dataset = dataset, options = options, warningLimits = options[["Wlimits"]], time = makeTime, Phase2 = options$Phase2_XR, target = options$mean_XR, sd = options$SD_XR)
     Rchart <- .RchartNoId(dataset = dataset, options = options, time = makeTime, warningLimits = FALSE)
     jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
-    jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart", "variables", "Wlimits", "Phase2_XR", "mean_XR", "SD_XR"))
+    jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart", "variables", "Wlimits", "Phase2_XR", "mean_XR", "SD_XR", "time"))
 
     # Nelson tests tables
     if (is.null(jaspResults[["NelsonTable"]]) & is.null(jaspResults[["NelsonTable2"]])) {
@@ -85,9 +102,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
+      gettextf("CL = %g", round(center, decimalplaces(data1[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(data1[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(data1[1,1]) + 2))
     )
   )
 

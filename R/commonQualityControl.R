@@ -92,9 +92,9 @@
     x = max(xBreaks) * 1.2,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
+      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
     )
   )
 
@@ -199,9 +199,9 @@
     x = max(xBreaks)  * 1.2,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
+      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
     )
   )
   xLimits <- range(c(xBreaks, dfLabel$x))
@@ -307,7 +307,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 .NelsonTable <- function(dataset, options, sixsigma, type = "xbar", Phase2 = FALSE, name = "X-bar", xLabels = NULL) {
 
-  table <- createJaspTable(title = gettextf("Nelson tests' results for %s chart", name))
+  table <- createJaspTable(title = gettextf("Test result for %s chart", name))
 
   if (Phase2 == "TRUE" || type == "xbar.one") {
 
@@ -370,4 +370,12 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   table$showSpecifiedColumnsOnly <- TRUE
   table$addFootnote(message = gettext("Numbers index data points where test violations occur."))
   return(table)
+}
+
+decimalplaces <- function(x) {
+  if ((x %% 1) != 0) {
+    nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed=TRUE)[[1]][[2]])
+  } else {
+    return(0)
+  }
 }

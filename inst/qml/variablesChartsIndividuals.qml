@@ -35,6 +35,13 @@ Form
 			name: 								"ImRchart"
 			label: 								qsTr("X-mR chart")
 			checked: 							true
+
+			  DoubleField
+			  {
+				  name:			"ncol"
+				  label:			qsTr("Moving range length:")
+				  defaultValue:	2
+			  }
 		}
 	}
 }

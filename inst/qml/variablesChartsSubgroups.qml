@@ -5,35 +5,77 @@ import JASP.Widgets 							1.0
 
 Form
 {
-	columns:									1
+	columns:									2
 
-	VariablesForm
+		DropDown
 	{
-		preferredHeight: 						jaspTheme.smallDefaultVariablesFormHeight
-		id:										variablesForm
-
-		AvailableVariablesList
-		{
-			name:								"variablesForm"
-		}
-
-		AssignedVariablesList
-		{
-			id:									variables
-			name:								"variables"
-			title:								qsTr("Variables")
-			allowedColumns:						["scale"]
-		}
-		AssignedVariablesList
-		{
-			id:                 			time
-			name:               			"time"
-			title:             			 	qsTr("Time Stamp (optional)")
-			singleVariable:    	 			true
-			allowedColumns:     			["nominal", "nominalText", "ordinal", "scale"]
-		}
+		name: "pcDataFormat"
+		label: qsTr("Data format")
+		indexDefaultValue: 0
+		values:
+			[
+			{label: qsTr("Long format"),					value: "PClongFormat"},
+			{label: qsTr("Wide format"),				value: "PCwideFormat"},
+		]
+		id: pcDataFormat
 	}
 
+VariablesForm
+{
+  id:                   				variablesForm
+
+  AvailableVariablesList
+  {
+    name:               			"variablesForm"
+  }
+
+  AssignedVariablesList
+  {
+    id:                 			variablesLong
+    name:               			"variablesLong"
+    title:              			qsTr("Measurements")
+    allowedColumns:     			["scale"]
+    singleVariable:					true
+    visible:						pcDataFormat.currentValue == "PClongFormat"
+  }
+
+  AssignedVariablesList
+  {
+    id:                 			variables
+    name:               			"variables"
+    title:              			qsTr("Measurements")
+    allowedColumns:     			["scale"]
+    visible:						pcDataFormat.currentValue == "PCwideFormat"
+  }
+
+  AssignedVariablesList
+  {
+    id:                 			subgroups
+    name:               			"subgroups"
+    title:             			 	qsTr("Subgroups")
+    singleVariable:    	 			true
+    allowedColumns:     			["nominal", "nominalText", "ordinal"]
+    visible:						pcDataFormat.currentValue == "PClongFormat"
+  }
+  AssignedVariablesList
+  {
+    id:                 			time
+    name:               			"time"
+    title:             			 	qsTr("Time Stamp (optional)")
+    singleVariable:    	 			true
+    allowedColumns:     			["nominal", "nominalText", "ordinal", "scale"]
+  }
+}
+	DoubleField
+	{
+		id:						pcSubgroupSize
+		name: 					"pcSubgroupSize"
+		label: 					qsTr("Subgroup size:")
+		negativeValues:			false
+		min: 					5
+		defaultValue:			5
+		visible:				pcDataFormat.currentValue == "PClongFormat"
+	}
 	Group
 	{
 		title: 									qsTr("Control Charts")
@@ -56,9 +98,9 @@ Form
 			  DoubleField
 			  {
 				  name:			"mean_XR"
-				  label:			qsTr("Target:")
+				  label:			qsTr("Mean:")
 				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
+          negativeValues: true
 			  }
 
 			  DoubleField
@@ -66,7 +108,6 @@ Form
 			  	 name:			"SD_XR"
 			  	 label:			qsTr("Standard deviation:")
 				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
 			  }
 		  }
 
@@ -89,17 +130,14 @@ Form
 			  DoubleField
 			  {
 				  name:			"mean_S"
-				  label:			qsTr("Target:")
-				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
+				  label:			qsTr("Mean:")
+          negativeValues: true
 			  }
 
 			  DoubleField
 			  {
 			  	 name:			"SD_S"
 			  	 label:			qsTr("Standard deviation:")
-				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
 			  }
 		  }
 
