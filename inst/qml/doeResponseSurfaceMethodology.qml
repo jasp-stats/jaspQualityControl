@@ -91,28 +91,30 @@ Form
 	}
 	
 	
+	VariablesForm
+	{
+		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+		AvailableVariablesList
+		{
+			name:  "rsmVariables2";	    source:"rsmVariables"
+
+		}
+
+
+
+
+		AssignedPairsVariablesList
+		{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
+
+
+	} 
+	
 
 	Group
 	{
 		title: qsTr("Contour Plot Options")
 		
-		VariablesForm
-		{
-			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList
-			{
-				name:  "rsmVariables2";	    source:"rsmVariables"
-
-			}
-
-
-
-
-			AssignedPairsVariablesList
-			{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
-
-
-		} 
+		
 		
 		
 
