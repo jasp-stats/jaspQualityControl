@@ -43,5 +43,25 @@ Form
 				  defaultValue:	2
 			  }
 		}
+
+		CheckBox
+		{
+			name: 								"CorPlot"
+			label: 								qsTr("Autocorrelation")
+			checked: 							false
+
+			  DoubleField
+			  {
+				  name:			"nLag"
+				  label:			qsTr("Number of lags:")
+				  defaultValue:	24
+			  }
+			  DoubleField
+			  {
+				  name:			"CI"
+				  label:			qsTr("Confidence interval size:")
+				  defaultValue:	0.95
+			  }
+		}
 	}
 }

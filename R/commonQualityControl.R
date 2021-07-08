@@ -52,7 +52,7 @@
 }
 
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Subgroup mean", xAxisLab = "Subgroup",
+.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Subgroup mean", xAxisLab = "Subgroup",
                            manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   if(Phase2)
@@ -140,11 +140,6 @@
   else
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
-  if (time) {
-    xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
-    xBreaks <- c(subgroups)
-    p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
-  }
   if (manualXaxis != "") {
     xLabels <- factor(manualXaxis, levels = manualXaxis)
     p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
@@ -153,13 +148,13 @@
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
 
-  if (time)
-    return(list(p = p, sixsigma = sixsigma, xLabels = dataset[[.v(options$time)]]))
-  else {return(list(p = p, sixsigma = sixsigma))}
+  if (manualXaxis != "")
+    return(list(p = p, sixsigma = sixsigma, xLabels = levels(xLabels)))
+  else return(list(p = p, sixsigma = sixsigma))
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,
+.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,
                         yAxisLab = "Subgroup range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
@@ -236,13 +231,6 @@
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
 
-
-  if (time) {
-    xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
-    xBreaks <- c(subgroups)
-    p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = xBreaks, labels = xLabels[xBreaks])
-  }
-
   if (manualXaxis != "") {
     xLabels <- factor(manualXaxis, levels = manualXaxis)
     p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
@@ -251,10 +239,9 @@
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
 
-  if (time)
-    return(list(p = p, sixsigma = sixsigma, xLabels = dataset[[.v(options$time)]]))
-
-  else  {return(list(p = p, sixsigma = sixsigma))}
+  if (manualXaxis != "")
+    return(list(p = p, sixsigma = sixsigma, xLabels = levels(xLabels)))
+  else return(list(p = p, sixsigma = sixsigma))
 }
 
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {

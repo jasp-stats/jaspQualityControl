@@ -5,77 +5,72 @@ import JASP.Widgets 							1.0
 
 Form
 {
-	columns:									2
+	columns:								2
 
-		DropDown
+
+	DropDown
 	{
-		name: "pcDataFormat"
+		name: "CCDataFormat"
 		label: qsTr("Data format")
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Long format"),					value: "PClongFormat"},
-			{label: qsTr("Wide format"),				value: "PCwideFormat"},
+			{label: qsTr("Column"),					value: "CClongFormat"},
+			{label: qsTr("Row"),				value: "CCwideFormat"},
 		]
 		id: pcDataFormat
 	}
 
-VariablesForm
-{
-  id:                   				variablesForm
+	VariablesForm
+	{
+		id:                   				variablesForm
 
-  AvailableVariablesList
-  {
-    name:               			"variablesForm"
-  }
+		AvailableVariablesList
+		{
+			name:               			"variablesForm"
+		}
 
-  AssignedVariablesList
-  {
-    id:                 			variablesLong
-    name:               			"variablesLong"
-    title:              			qsTr("Measurements")
-    allowedColumns:     			["scale"]
-    singleVariable:					true
-    visible:						pcDataFormat.currentValue == "PClongFormat"
-  }
+		AssignedVariablesList
+		{
+			id:                 			variablesLong
+			name:               			"variablesLong"
+			title:              			qsTr("Measurements")
+			allowedColumns:     			["scale"]
+			singleVariable:					true
+			visible:						pcDataFormat.currentValue == "CClongFormat"
+		}
 
-  AssignedVariablesList
-  {
-    id:                 			variables
-    name:               			"variables"
-    title:              			qsTr("Measurements")
-    allowedColumns:     			["scale"]
-    visible:						pcDataFormat.currentValue == "PCwideFormat"
-  }
+		AssignedVariablesList
+		{
+			id:                 			variables
+			name:               			"variables"
+			title:              			qsTr("Measurements")
+			allowedColumns:     			["scale"]
+			visible:						pcDataFormat.currentValue == "CCwideFormat"
+		}
 
-  AssignedVariablesList
-  {
-    id:                 			subgroups
-    name:               			"subgroups"
-    title:             			 	qsTr("Subgroups")
-    singleVariable:    	 			true
-    allowedColumns:     			["nominal", "nominalText", "ordinal"]
-    visible:						pcDataFormat.currentValue == "PClongFormat"
-  }
-  AssignedVariablesList
-  {
-    id:                 			time
-    name:               			"time"
-    title:             			 	qsTr("Time Stamp (optional)")
-    singleVariable:    	 			true
-    allowedColumns:     			["nominal", "nominalText", "ordinal", "scale"]
-  }
-}
+		AssignedVariablesList
+		{
+			id:                 			subgroups
+			name:               			"subgroups"
+			title:             			 	qsTr("Subgroups")
+			singleVariable:    	 			true
+			allowedColumns:     			["nominal", "nominalText", "ordinal"]
+			visible:						pcDataFormat.currentValue == "CCwideFormat"
+		}
+	}
+
 	DoubleField
 	{
 		id:						pcSubgroupSize
-		name: 					"pcSubgroupSize"
+		name: 					"CCSubgroupSize"
 		label: 					qsTr("Subgroup size:")
 		negativeValues:			false
 		min: 					5
 		defaultValue:			5
-		visible:				pcDataFormat.currentValue == "PClongFormat"
+		visible:				pcDataFormat.currentValue == "CClongFormat"
 	}
+
 	Group
 	{
 		title: 									qsTr("Control Charts")

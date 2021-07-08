@@ -27,6 +27,17 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       }
     }
   }
+
+  # Autocorrelation Plot
+  if(options$CorPlot){
+    jaspResults[["CorPlot"]] <- createJaspContainer(position = 2, title = "Autocorrelation plot")
+    jaspResults[["CorPlot"]]$dependOn(c("CorPlot", "variables", "nLag"))
+    Corplot <- jaspResults[["CorPlot"]]
+
+    for (var in variables) {
+      Corplot[[var]] <- .CorPlot(dataset = dataset, options = options, variable = var, CI = options$CI, Lags = options$nLag)
+    }
+  }
 }
 
 .IMRchart <- function(dataset, options, variable, cowPlot = FALSE) {
@@ -118,3 +129,31 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R))
 }
 
+.CorPlot <- function(dataset = dataset, options = options, variable = var, Lags = NULL, CI = 0.95){
+  ppPlot <- createJaspPlot(width = 1200, height = 500, title = gettextf("%s",variable))
+  ppPlot$dependOn(optionContainsValue = list(variables = variable))
+
+  list.acf <- stats::acf(dataset[[variable]], lag.max = Lags, type = "correlation", ci.type = "ma", plot = FALSE, ci = CI)
+  N <- as.numeric(list.acf$n.used)
+  df1 <- data.frame(lag = list.acf$lag, acf = list.acf$acf)
+  df1$lag.acf <- dplyr::lag(df1$acf, default = 0)
+  df1$lag.acf[2] <- 0
+  df1$lag.acf.cumsum <- cumsum((df1$lag.acf)^2)
+  df1$acfstd <- sqrt(1/N * (1 + 2 * df1$lag.acf.cumsum))
+  df1$acfstd[1] <- 0
+  df1 <- dplyr::select(df1, lag, acf, acfstd)
+
+  p <- ggplot2::ggplot(data = df1, ggplot2::aes(x = lag, y = acf)) +
+    ggplot2::geom_col(fill = "#4373B6", width = 0.2) +
+    jaspGraphs::geom_line(ggplot2::aes(x = lag, y = qnorm((1+CI)/2)*acfstd), color = "red") +
+    jaspGraphs::geom_line(ggplot2::aes(x = lag, y = -qnorm((1+CI)/2)*acfstd), color = "red") +
+    ggplot2::geom_hline(yintercept = 0, color = 'green') +
+    ggplot2::scale_y_continuous(name = gettext("Autocorrelation"), limits = c(-1,1), breaks = seq(-1,1,0.2)) +
+    ggplot2::scale_x_continuous(name = gettext('Lag'), breaks = seq(0,max(df1$lag),2)) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+
+  ppPlot$plotObject <- p
+
+  return(ppPlot)
+}
