@@ -234,6 +234,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   if (ready && length(measurements) >= 2) {
+    singleOperator <- length(unique(dataset[[operators]])) == 1
+
     data <- dataset
 
     data <- tidyr::gather(data, repetition, measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
@@ -246,74 +248,150 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       studyVarMultiplier <- abs(2*qnorm(q))
     }
 
-    formula1 <- as.formula(paste("measurement ~", parts,"*", operators))
+    measurements <- "measurement"
+    ssPart <- .ssPart(data, operators, parts, measurements)
+    ssRepWithInteraction <- .ssRepWithInteraction(data, operators, parts, measurements)
+    ssTotal <- .ssTotal(data, operators, parts, measurements)
+    if(!singleOperator){
+    ssOperator <- .ssOperator(data, operators, parts, measurements)
+    ssInteraction <- ssTotal - sum(ssPart, ssOperator, ssRepWithInteraction)
+    }
 
-    anova1 <- summary(aov(formula = formula1, data = data))
-    fvaluePart <- anova1[[1]]$`Mean Sq`[1] / anova1[[1]]$`Mean Sq`[3]
-    fvalueOperator <- anova1[[1]]$`Mean Sq`[2] / anova1[[1]]$`Mean Sq`[3]
-    fvaluePartxOperator <- anova1[[1]]$`Mean Sq`[3] / anova1[[1]]$`Mean Sq`[4]
-    fValues <- c(fvaluePart, fvalueOperator, fvaluePartxOperator)
-    df <- anova1[[1]]$Df
-    p1 <- pf(fValues[1], df[1], df[3], lower.tail = F)
-    p2 <- pf(fValues[2], df[2], df[3], lower.tail = F)
-    p3 <- anova1[[1]]$`Pr(>F)`[3]
-    pValues <- c(p1, p2, p3)
+    DFlist <- .dfGaugeCrossed(data, operators, parts, measurements)
+    dfPart <- DFlist$dfPart
+    dfRepWithInteraction <- DFlist$dfRepeat
+    dfTotal <- DFlist$dfTotal
+    if(!singleOperator){
+    dfOperators <- DFlist$dfOperator
+    dfInteraction <- DFlist$dfPartXOperator
+    }
 
-    anovaTable1$setData(list( "source"              = c(parts, operators, paste(parts," x ", operators), "Repeatability", "Total"),
-                              "Df"                 = c(df, sum(anova1[[1]]$Df)),
-                              "Sum Sq"             = c(anova1[[1]]$`Sum Sq`, sum(anova1[[1]]$`Sum Sq`)),
-                              "Mean Sq"            = anova1[[1]]$`Mean Sq`,
-                              "F value"            = fValues,
-                              "Pr(>F)"             = pValues))
+    msPart <- ssPart / dfPart
+    msRepWithInteraction <- ssRepWithInteraction / dfRepWithInteraction
+    if(!singleOperator){
+    msOperator <- ssOperator / dfOperators
+    msInteraction <- ssInteraction / dfInteraction
+    }
+
+    if(singleOperator){
+      fPart <- msPart / msRepWithInteraction
+    }else{
+    fPart <- msPart / msInteraction
+    fOperator <- msOperator / msInteraction
+    fInteraction <- msInteraction / msRepWithInteraction
+    }
+
+    if(singleOperator){
+      pPart <- pf(fPart, dfPart, dfRepWithInteraction, lower.tail = F)
+    }else{
+    pPart <- pf(fPart, dfPart, dfInteraction, lower.tail = F)
+    pOperator <- pf(fOperator, dfOperators, dfInteraction, lower.tail = F)
+    pInteraction <- pf(fInteraction, dfInteraction, dfRepWithInteraction, lower.tail = F)
+    }
+
+    if(singleOperator){
+      sources <- c(parts, 'Repeatability', 'Total')
+      dfVector <- c(dfPart, dfRepWithInteraction, dfTotal)
+      ssVector <- c(ssPart, ssRepWithInteraction, ssTotal)
+      msVector <- c(msPart, msRepWithInteraction)
+      fVector <- fPart
+      pVector <- pPart
+    }else{
+      sources <- c(parts, operators, paste(parts," x ", operators), "Repeatability", "Total")
+      dfVector <- c(dfPart, dfOperators, dfInteraction, dfRepWithInteraction, dfTotal)
+      ssVector <- c(ssPart, ssOperator, ssInteraction, ssRepWithInteraction, ssTotal)
+      msVector <- c(msPart, msOperator, msInteraction, msRepWithInteraction)
+      fVector <- c(fPart, fOperator, fInteraction)
+      pVector <- c(pPart, pOperator, pInteraction)
+    }
+
+    anovaTable1$setData(list( "source"              = sources,
+                              "Df"                 = dfVector,
+                              "Sum Sq"             = ssVector,
+                              "Mean Sq"            = msVector,
+                              "F value"            = fVector,
+                              "Pr(>F)"             = pVector))
 
     anovaTables[['anovaTable1']] <- anovaTable1
 
-    if (anova1[[1]]$`Pr(>F)`[3] < options$alphaForANOVA) {
+    if(!singleOperator){
+      interactionSignificant <- pInteraction < options$alphaForANOVA
+    }else{
+      interactionSignificant <- 'not applicable'
+    }
 
-      repeatability <- anova1[[1]]$`Mean Sq`[4]
-      if (anova1[[1]]$`Mean Sq`[2] < anova1[[1]]$`Mean Sq`[3]) {
-        operator <- 0
+    if (singleOperator || interactionSignificant){
+
+      #r & R varcomps
+
+      if(singleOperator){
+        varCompList <- .gaugeCrossedVarCompsSingleOP(data, operators, parts, measurements, msPart, msRepWithInteraction)
+        varCompRepeat <- varCompList$repeatability
+        varCompPart <- varCompList$part
+        varCompTotalGauge <- varCompList$totalGauge
+        varCompTotalVar <- varCompList$totalVar
+        varCompVector <- c(varCompTotalGauge, varCompRepeat, varCompPart, varCompTotalVar)
+        sources <- gettext(c("Total Gauge r & R", "Repeatability", "Part-to-Part", "Total Variation"))
       }else{
-        operator <- (anova1[[1]]$`Mean Sq`[2] - anova1[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements))
+      varCompList <- .gaugeCrossedVarComps(data, operators, parts, measurements, msPart, msOperator, msRepWithInteraction, msInteraction)
+      varCompRepeat <- varCompList$repeatability
+      varCompOperator <- varCompList$operator
+      varCompPart <- varCompList$part
+      varCompReprod <- varCompList$reprod
+      varCompTotalGauge <- varCompList$totalGauge
+      varCompTotalVar <- varCompList$totalVar
+      varCompInteraction <- varCompList$interaction
+      varCompVector <- c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator, varCompPart, varCompInteraction, varCompTotalVar)
+      sources <- gettext(c("Total Gauge r & R", "Repeatability", "Reproducibility", "Operator", "Part-to-Part", "Operator x Part", "Total Variation"))
       }
-      if (anova1[[1]]$`Mean Sq`[3] < anova1[[1]]$`Mean Sq`[4]) {
-        operatorXpart <- 0
-      }else{
-        operatorXpart <- (anova1[[1]]$`Mean Sq`[3] - anova1[[1]]$`Mean Sq`[4]) / length(measurements)
-      }
-      partToPart <- (anova1[[1]]$`Mean Sq`[1] - anova1[[1]]$`Mean Sq`[3]) / (length(measurements) * length(unique(data[[operators]])))
-      reproducibility <- operator + operatorXpart
-      totalRR <- repeatability + reproducibility
-      totalVar <- totalRR + partToPart
+
+      varCompPercent <- varCompVector / varCompTotalVar * 100
 
 
 
-      RRtable1$setData(list(      "Source"       = gettext(c("Total Gauge r & R", "Repeatability", "Reproducibility", "Operator", "Part-to-Part", "Operator x Part", "Total Variation")),
-                                  "Variation"    = c(totalRR, repeatability, reproducibility, operator, partToPart, operatorXpart, totalVar),
-                                  "Percent"      = c(totalRR, repeatability, reproducibility, operator, partToPart, operatorXpart, totalVar) / totalVar * 100))
+
+
+      RRtable1$setData(list(      "Source"       = sources,
+                                  "Variation"    = varCompVector,
+                                  "Percent"      = varCompPercent))
 
 
       anovaTables[['RRtable1']] <- RRtable1
 
+      #Gauge evaluation
+
       histSD <- options$historicalStandardDeviationValue
 
-      if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)) {
-        SD <- c(sqrt(c(totalRR, repeatability, reproducibility, operator)),
-                sqrt(histSD^2 - totalRR),
-                sqrt(operatorXpart), histSD)
+      if(!singleOperator){
+        if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTotalGauge)) {
+          SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator)),
+                  sqrt(histSD^2 - varCompTotalGauge),
+                  sqrt(varCompInteraction), histSD)
 
+        }else{
+          SD <- sqrt(varCompVector)
+        }
+        sdParts <- SD[5]
+        sdGauge <- SD[1]
       }else{
-        SD <- sqrt(c(totalRR, repeatability, reproducibility, operator, partToPart, operatorXpart, totalVar))
+        if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTotalGauge)) {
+          SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat), sqrt(histSD^2 - varCompTotalGauge), histSD))
+        }else{
+          SD <- sqrt(varCompVector)
+        }
+        sdParts <- SD[3]
+        sdGauge <- SD[1]
+
       }
       studyVar <- SD * studyVarMultiplier
-      RRtable2DataList <- list("source"       = gettext(c("Total Gauge r & R", "Repeatability", "Reproducibility", "Operator", "Part-to-Part", "Operator x Part", "Total Variation")),
+      RRtable2DataList <- list("source"       = sources,
                                "SD"           = SD,
                                "studyVar"    = studyVar,
                                "percentStudyVar"    = studyVar/max(studyVar) * 100)
       if(options[["gaugeToleranceEnabled"]])
         RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = studyVar / options$tolerance * 100))
       RRtable2$setData(RRtable2DataList)
-      nCategories <- .gaugeNumberDistinctCategories(SD[5], SD[1])
+      nCategories <- .gaugeNumberDistinctCategories(sdParts, sdGauge)
       RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
       if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
         RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation * %i", as.integer(studyVarMultiplier)))
@@ -322,7 +400,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       }
       anovaTables[['RRtable2']] <- RRtable2
 
-    }else if (anova1[[1]]$`Pr(>F)`[3] > options$alphaForANOVA) {
+    }else{
+
       anovaTable2 <- createJaspTable(title = gettext("Two-Way ANOVA Table without Interaction"))
       anovaTable2$addColumnInfo(title = gettext("Source"),        name = "source",   type = "string" )
       anovaTable2$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
@@ -331,52 +410,56 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       anovaTable2$addColumnInfo(title = gettext("F"),              name = "F value", type = "number")
       anovaTable2$addColumnInfo(title = gettext("p"),              name = "Pr(>F)",  type = "pvalue")
 
-      formula2 <- as.formula(paste("measurement ~",parts, "+",operators))
+      ssRepWithoutInteraction <- ssTotal - ssPart - ssOperator
+      dfRepWithoutInteraction <- dfTotal - dfPart - dfOperators
+      msRepWithoutInteraction <- ssRepWithoutInteraction / dfRepWithoutInteraction
 
-      anova2 <- summary(aov(formula = formula2, data = data))
+      fPartWithoutInteraction <- msPart / msRepWithoutInteraction
+      fOperatorWithoutInteraction <- msOperator / msRepWithoutInteraction
+
+      pPartWithoutInteraction <- pf(fPartWithoutInteraction, dfPart, dfRepWithoutInteraction, lower.tail = F)
+      pOperatorWithoutInteraction  <- pf(fOperatorWithoutInteraction, dfOperators, dfRepWithoutInteraction, lower.tail = F)
 
 
       anovaTable2$setData(list( "source"              = c(parts, operators, "Repeatability", "Total"),
-                                "Df"                 = c(anova2[[1]]$Df, sum(anova2[[1]]$Df)),
-                                "Sum Sq"             = c(anova2[[1]]$`Sum Sq`, sum(anova2[[1]]$`Sum Sq`)),
-                                "Mean Sq"            = anova2[[1]]$`Mean Sq`,
-                                "F value"            = anova2[[1]]$`F value`,
-                                "Pr(>F)"             = anova2[[1]]$`Pr(>F)`))
+                                "Df"                 = c(dfPart, dfOperators, dfRepWithoutInteraction, dfTotal),
+                                "Sum Sq"             = c(ssPart, ssOperator, ssRepWithoutInteraction, ssTotal),
+                                "Mean Sq"            = c(msPart, msOperator, msRepWithoutInteraction),
+                                "F value"            = c(fPartWithoutInteraction, fOperatorWithoutInteraction),
+                                "Pr(>F)"             = c(pPartWithoutInteraction, pOperatorWithoutInteraction)))
 
 
       anovaTables[['anovaTable2']] <- anovaTable2
 
-      repeatability <- anova2[[1]]$`Mean Sq`[3]
+      #r & R varcomps
 
-      if (anova2[[1]]$`Mean Sq`[2] < anova2[[1]]$`Mean Sq`[3]) {
-        operator <- 0
-      }else{
-        operator <- (anova2[[1]]$`Mean Sq`[2] - anova2[[1]]$`Mean Sq`[3]) / (length(unique(data[[parts]])) * length(measurements))
-      }
+      varCompList <- .gaugeCrossedVarComps(data, operators, parts, measurements, msPart, msOperator, msRepWithoutInteraction)
+      varCompRepeat <- varCompList$repeatability
+      varCompOperator <- varCompList$operator
+      varCompPart <- varCompList$part
+      varCompReprod <- varCompList$reprod
+      varCompTotalGauge <- varCompList$totalGauge
+      varCompTotalVar <- varCompList$totalVar
 
-      if (anova2[[1]]$`Mean Sq`[1] < anova2[[1]]$`Mean Sq`[3]) {
-        partToPart <- 0
-      }else{
-        partToPart <- (anova2[[1]]$`Mean Sq`[1] - anova2[[1]]$`Mean Sq`[3]) / (length(measurements) * length(unique(data[[operators]])))
-      }
-      reproducibility <- operator
-      totalRR <- repeatability + reproducibility
-      totalVar <- totalRR + partToPart
+      varCompVector <- c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator, varCompPart, varCompTotalVar)
+      varCompPercent <- varCompVector / varCompTotalVar * 100
 
       RRtable1$setData(list(      "Source"       = gettext(c("Total Gauge r & R", "Repeatability", "Reproducibility", "Operator", "Part-to-Part", "Total Variation")),
-                                  "Variation"    = c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar),
-                                  "Percent"      = c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar) / totalVar * 100))
+                                  "Variation"    = varCompVector,
+                                  "Percent"      = varCompPercent))
 
 
       anovaTables[['RRtable1']] <- RRtable1
 
+      #Gauge evaluation
+
       histSD <- options$historicalStandardDeviationValue
 
-      if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)) {
-        SD <- c(sqrt(c(totalRR, repeatability, reproducibility, operator)),
-                sqrt(histSD^2 - totalRR), histSD)
+      if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTotalGauge)) {
+        SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator)),
+                sqrt(histSD^2 - varCompTotalGauge), histSD)
       }else{
-        SD <- sqrt(c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar))
+        SD <- sqrt(varCompVector)
       }
 
       studyVar <- SD * studyVarMultiplier
@@ -397,8 +480,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       anovaTables[['RRtable2']] <- RRtable2
     }
 
-    percentContributionValues <- c(totalRR, repeatability, reproducibility, partToPart)/totalVar * 100
-    SDs <- sqrt(c(totalRR, repeatability, reproducibility, partToPart))
+    if(singleOperator)
+      varCompReprod <- 0
+
+    percentContributionValues <- c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompPart)/varCompTotalVar * 100
+    SDs <- sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompPart))
     studyvars <- SDs * studyVarMultiplier
     studyVariationValues <- studyvars/max(studyVar) * 100
     if(options[["gaugeToleranceEnabled"]]){
@@ -406,7 +492,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }else{
       percentToleranceValues <- NA
     }
+
     p <- .gaugeVarCompGraph(percentContributionValues, studyVariationValues, percentToleranceValues)
+
     if (returnPlotOnly)
       return(p)
 
@@ -597,10 +685,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
   means <- aggregate(dataset["Measurement"], dataset[parts], mean)
   p <- ggplot2::ggplot()
-  if (displayAll)
+  if (displayAll){
+    yAxisBreaks <- jaspGraphs::getPrettyAxisBreaks(dataset[["Measurement"]])
+    yAxisLimits <- range(c(dataset[["Measurement"]],yAxisBreaks))
     p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = parts, y = "Measurement"), col = "gray")
+  }else{
+    yAxisBreaks <- jaspGraphs::getPrettyAxisBreaks(means[["Measurement"]])
+    yAxisLimits <- range(c(means[["Measurement"]], yAxisBreaks))
+  }
   p <- p + jaspGraphs::geom_point(data = means, ggplot2::aes_string(x = parts, y = "Measurement")) +
-    ggplot2::scale_y_continuous(limits = c(min(dataset["Measurement"]) * 0.9, max(dataset["Measurement"]) * 1.1)) +
+    ggplot2::scale_y_continuous(limits = yAxisLimits, breaks = yAxisBreaks) +
     jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
   return(p)
 }
@@ -891,4 +985,104 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   p <- ggplot2::ggplot() + ggplot2::theme_void() +
     ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 5) +
     ggplot2::scale_y_continuous(breaks = 0:nText, limits = c(0, nText))
+}
+
+
+.ssPart <- function(dataset, operators, parts, measurements){
+  nOperator <- length(unique(dataset[[operators]]))
+  nReplicates <- table(dataset[parts])[1] / nOperator
+  grandMean <- mean(dataset[[measurements]])
+  partVector <- as.character(unique(dataset[[parts]]))
+  SS <- 0
+  for(part in partVector){
+    dataPerPart <- subset(dataset, dataset[parts] == part)
+    meanPerPart <- mean(dataPerPart[[measurements]])
+    SS <- SS + (meanPerPart - grandMean)^2
+  }
+  SS <- nOperator * nReplicates * SS
+  return(as.vector(SS))
+}
+
+
+.ssRepWithInteraction <- function(dataset, operators, parts, measurements){
+  operatorVector <- as.character(unique(dataset[[operators]]))
+  partVector <- as.character(unique(dataset[[parts]]))
+  SS <- 0
+  for(op in operatorVector){
+    dataPerOP <- subset(dataset, dataset[operators] == op)
+    for(part in partVector){
+      partDataPerOP <- subset(dataPerOP, dataPerOP[parts] == part)
+      meanPartPerOP <- mean(partDataPerOP[[measurements]])
+      SS <- SS + sum((partDataPerOP[[measurements]] - meanPartPerOP)^2)
+    }
+  }
+  return(SS)
+}
+
+
+.ssTotal <- function(dataset, operators, parts, measurements){
+  grandMean <- mean(dataset[[measurements]])
+  SS <- sum((dataset[[measurements]] - grandMean)^2)
+  return(SS)
+}
+
+.dfGaugeCrossed <- function(dataset, operators, parts, measurements){
+  nParts <- length(unique(dataset[[parts]]))
+  nOperators <- length(unique(dataset[[operators]]))
+  nReplicates <- as.vector(table(dataset[parts])[1] / nOperators)
+  dfList <- list(dfPart          = nParts - 1,
+                 dfOperator      = nOperators - 1,
+                 dfPartXOperator = (nParts - 1) * (nOperators - 1),
+                 dfRepeat        = nParts * nOperators * (nReplicates - 1),
+                 dfTotal         = (nParts * nOperators * nReplicates) - 1)
+  return(dfList)
+}
+
+.gaugeCrossedVarComps <- function(dataset, operators, parts, measurements, msPart, msOperator, msRep, msInteraction = ""){
+  nParts <- length(unique(dataset[[parts]]))
+  nOperators <- length(unique(dataset[[operators]]))
+  nReplicates <- as.vector(table(dataset[parts])[1] / nOperators)
+  repeatability <- msRep
+  if (msInteraction != ""){
+    operator <- (msOperator - msInteraction) / (nParts * nReplicates)
+    interaction <- (msInteraction - msRep) / nReplicates
+    part <- (msPart - msInteraction) / (nOperators * nReplicates)
+    reprod <- operator + interaction
+  }else{
+    operator <- (msOperator - msRep) / (nParts * nReplicates)
+    part <- (msPart - msRep) / (nOperators * nReplicates)
+    reprod <- operator
+  }
+  totalGauge <- repeatability + reprod
+  totalVar <- totalGauge + part
+  varcompList <- list(repeatability = repeatability,
+                      operator      = operator,
+                      part          = part,
+                      reprod        = reprod,
+                      totalGauge    = totalGauge,
+                      totalVar      = totalVar)
+  if (msInteraction != ""){
+    varcompList[["interaction"]] <- interaction
+  }
+  for (i in 1:length(varcompList)){
+    if (varcompList[[i]] < 0){
+      varcompList[[i]] <- 0
+    }
+  }
+  return(varcompList)
+}
+
+.gaugeCrossedVarCompsSingleOP <- function(dataset, operators, parts, measurements, msPart, msRep){
+  nParts <- length(unique(dataset[[parts]]))
+  nOperators <- length(unique(dataset[[operators]]))
+  nReplicates <- length(dataset[[measurements]]) / nParts
+  repeatability <- msRep
+  totalGauge <- repeatability
+  part <- (msPart - msRep) / (nOperators * nReplicates)
+  totalVar <- totalGauge + part
+  varcompList <- list(repeatability = repeatability,
+                      part          = part,
+                      totalGauge    = totalGauge,
+                      totalVar      = totalVar)
+  return(varcompList)
 }
