@@ -14,6 +14,7 @@ Imports:
   DoE.base,
   fitdistrplus,
   FrF2,
+  ggbeeswarm,
   ggplot2,
   ggrepel,
   goftest,

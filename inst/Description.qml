@@ -110,4 +110,10 @@ Description
 		func:           "factorialAnalysis"
 		requiresData:   true
 	}
+	Analysis
+	{
+		title:			qsTr("Probability of Detection")
+		func:			"probabilityOfDetection"
+		requiresData:	true
+	}
 }
