@@ -50,3 +50,27 @@ test_that("Parameter estimates table results match", {
                                  list(-0.939354906227213, "Intercept", 16.1813493626685, "target.size"
                                  ))
 })
+
+options <- analysisOptions("probabilityOfDetection")
+options$covariates <- "depth.inch"
+options$horizontalAsymptotes <- list()
+options$logTransform <- TRUE
+options$outcome <- "hit.miss"
+options$showDataGeom <- "points"
+options$verticalAsymptotes <- list()
+options$wantsConfidenceInterval <- TRUE
+options$xTicks <- "data + model-based"
+set.seed(1)
+results <- runAnalysis("probabilityOfDetection", "EXAMPLE 3 hm.csv", options)
+
+
+test_that("Detection plot matches for example 3", {
+  plotName <- results[["results"]][["mainContainer"]][["collection"]][["mainContainer_detectionPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "detection-plot-ex3")
+})
+
+test_that("Parameter estimates table results matches for example 3", {
+  table <- results[["results"]][["mainContainer"]][["collection"]][["mainContainer_mainTable"]][["data"]]
+  jaspTools::expect_equal_tables(table, list(17.6573206618451, "Intercept", 4.39007841700679, "depth.inch"))
+})

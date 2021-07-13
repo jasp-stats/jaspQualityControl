@@ -46,7 +46,8 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
   dataset <- .readDataSetToEnd(
     columns.as.numeric  = options[["covariates"]],
-    columns.as.factor   = unlist(options[["outcome"]])
+    columns.as.factor   = unlist(options[["outcome"]]),
+    exclude.na.listwise = c(options[["covariates"]], unlist(options[["outcome"]]))
   )
 
   .podCheckErrors(dataset, options)
@@ -68,8 +69,11 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     colnames(dataset)[colnames(dataset) == unlist(options[["outcome"]])] <- "outcome"
   }
 
-  if (options[["logTransform"]])
+  if (options[["logTransform"]]) {
     dataset[[options[["covariates"]]]] <- log(dataset[[options[["covariates"]]]])
+    # filter out any infinite values caused by the log transformation
+    dataset <- dataset[is.finite(dataset[[options[["covariates"]]]]), ]
+  }
 
   return(na.omit(dataset))
 
@@ -114,7 +118,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
 .podMainTable <- function(container, dataset, options, ready) {
 
-  mainTable <- createJaspTable(title = gettext("Parameter estimates"), position = 1)
+  mainTable <- createJaspTable(title = gettext("Parameter Estimates"), position = 1)
   mainTable$addColumnInfo(name = "parameters",  title = gettext("Parameter"), type = "string")
   mainTable$addColumnInfo(name = "estimates",   title = gettext("Estimate"),  type = "number")
 
@@ -139,9 +143,9 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     mainTable[["parameters"]] <- c(gettext("Intercept"), unlist(options[["covariates"]]))
     mainTable[["estimates"]]  <- coef(model)
 
-  }
+    .podMainTableFootnotes(mainTable, model)
 
-  .podMainTableFootnotes(mainTable, model)
+  }
 
   return(model)
 
@@ -163,7 +167,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
   if (!is.null(container[["fitTable"]]) || !options[["wantsModelFitTable"]])
     return()
 
-  fitTable <- createJaspTable(gettext("Fit table"), dependencies = "wantsModelFitTable", position = 2)
+  fitTable <- createJaspTable(gettext("Fit Table"), dependencies = "wantsModelFitTable", position = 2)
   fitTable$addColumnInfo(name = "AIC",  title = gettext("AIC"), type = "number")
 
   container[["fitTable"]] <- fitTable
@@ -180,7 +184,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
   if (!is.null(container[["detectionPlot"]]))
     return()
 
-  detectionPlot <- createJaspPlot(title = gettext("Detection plot"), width = 600, height = 600, position = 3)
+  detectionPlot <- createJaspPlot(title = gettext("Detection Plot"), width = 600, height = 600, position = 3)
   detectionPlot$dependOn(c(
     "showData", "showDataGeom", "wantsConfidenceInterval", "confidenceIntervalValue", "xTicks", "addJitter", "showDensity", "verticalAsymptotes",
     "horizontalAsymptotes", "logarithmicXAxis"#, "logarithmicYAxis"
