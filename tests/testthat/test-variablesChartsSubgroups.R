@@ -36,11 +36,11 @@ test_that("Nelson tests' results for X-bar chart table results match", {
 test_that("Xbar & s Control Chart plot matches", {
 	plotName <- results[["results"]][["SPlot"]][["data"]]
 	testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-	jaspTools::expect_equal_plots(testPlot, "xbar-s-control-chart", dir="variablesChartsSubgroups")
+	jaspTools::expect_equal_plots(testPlot, "xbar-s-control-chart")
 })
 
 test_that("X-bar & R Control Chart plot matches", {
 	plotName <- results[["results"]][["XbarPlot"]][["data"]]
 	testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-	jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart", dir="variablesChartsSubgroups")
+	jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart")
 })
