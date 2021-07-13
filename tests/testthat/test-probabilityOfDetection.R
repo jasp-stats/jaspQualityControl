@@ -18,19 +18,18 @@ options$xTicks <- "data + model-based"
 set.seed(1)
 results <- runAnalysis("probabilityOfDetection", "EXAMPLE 8 hit miss repeated measures 24.csv", options)
 
-
 test_that("Vertical asymptotes table results match", {
   table <- results[["results"]][["mainContainer"]][["collection"]][["mainContainer_asymptoteContainer"]][["collection"]][["mainContainer_asymptoteContainer_xAsymptotesTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Asymptote 1", 0.1, 0.0580637232550454, "Asymptote 2", 0.2, -0.00981973596020396,
-                                      "Asymptote 3", 0.3, 0.125953355588338))
+                                 list("Asymptote 1", 0.1, 0.663466358381688, "Asymptote 2", 0.2, 0.908621215337589,
+                                      "Asymptote 3", 0.3, 0.980450259512257))
 })
 
 test_that("Horizontal asymptotes table results match", {
   table <- results[["results"]][["mainContainer"]][["collection"]][["mainContainer_asymptoteContainer"]][["collection"]][["mainContainer_asymptoteContainer_yAsymptotesTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Asymptote 1", 0.663466358381688, 0.5, "Asymptote 2", 0.908621215337589,
-                                      0.25, "Asymptote 3", 0.980450259512257, 0.75))
+                                 list("Asymptote 1", 0.0580637232550454, 0.5, "Asymptote 2", -0.00981973596020396,
+                                      0.25, "Asymptote 3", 0.125953355588338, 0.75))
 })
 
 test_that("Detection plot matches", {
