@@ -23,9 +23,11 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
   mainContainer <- .podMainContainer(jaspResults, options)
 
   model <- .podMainTable(mainContainer, dataset, options, ready)
+  model[["asymptotes"]] <- .podComputeAsymptotes(mainContainer, options, model, ready)
 
-  .podFitTable     (mainContainer, dataset, options, model, ready)
-  .podDetectionPlot(mainContainer, dataset, options, model, ready)
+  .podFitTable      (mainContainer, dataset, options, model, ready)
+  .podDetectionPlot (mainContainer, dataset, options, model, ready)
+  .podAsymptoteTable(mainContainer, dataset, options, model, ready)
 
 }
 
@@ -360,7 +362,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
         x = c(dataset[[xvar]][idx0], dataset[[xvar]][!idx0]),
         y = y0 + c(
           -1 * abs(vipor::offsetX(dataset[[xvar]][ idx0], width = jitterWidth, varwidth = FALSE, adjust = 0.5, method = "quasirandom", nbins = NULL)),
-          abs(vipor::offsetX(dataset[[xvar]][!idx0], width = jitterWidth, varwidth = FALSE, adjust = 0.5, method = "quasirandom", nbins = NULL))
+               abs(vipor::offsetX(dataset[[xvar]][!idx0], width = jitterWidth, varwidth = FALSE, adjust = 0.5, method = "quasirandom", nbins = NULL))
         )
       )
     } else {
@@ -489,7 +491,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     yBreaks <- seq(0, 1, .2)
 
   if (useLevelForYName)
-    yName <- gettextf("Probability of detecting %s", yvarLevels[refLevel])
+    yName <- .podGetPlotYaxisLabel(yvarLevels[refLevel])
 
   # this makes no sense and is disabled in QML
   yscale <- if (logarithmicYaxis) {
@@ -540,7 +542,93 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
 }
 
+.podComputeAsymptotes <- function(mainContainer, options, model, ready) {
+
+  # we probably could store this in the state, but it's very cheap to compute.
+
+  xAsymptotes <- vapply(options[["verticalAsymptotes"]],   `[[`, FUN.VALUE = numeric(1), "verticalAsymptoteValue")
+  yAsymptotes <- vapply(options[["horizontalAsymptotes"]], `[[`, FUN.VALUE = numeric(1), "horizontalAsymptoteValue")
+
+  if (!ready)
+    return(list(vertical = NULL, horizontal = NULL))
+
+  xvar <- .podGetXvarFromModel(model)
+  yInterval <- range(model[["data"]][[xvar]])
+
+  return(list(
+    vertical   = vapply(yAsymptotes, function(y) .podFindModelPoint(model, y, yInterval), FUN.VALUE = numeric(1)),
+    horizontal = if (length(xAsymptotes) == 0L) numeric() else predict(model, setNames(data.frame(xAsymptotes), xvar), type = "response")
+  ))
+
+}
+
+.podAsymptoteTable <- function(container, dataset, options, model, ready) {
+
+  asymptoteContainer <- createJaspContainer(title = gettext("Asymptotes"))
+
+  yAsymptotes <- vapply(options[["horizontalAsymptotes"]], `[[`, FUN.VALUE = numeric(1), "horizontalAsymptoteValue")
+  xAsymptotes <- vapply(options[["verticalAsymptotes"]],   `[[`, FUN.VALUE = numeric(1), "verticalAsymptoteValue")
+
+  if (ready) {
+    xvar <- .podGetXvarFromModel(model)
+    yvar <- .podGetYvarFromModel(model)
+    levelName <- levels(model[["data"]][[yvar]])[2L]
+  } else {
+    xvar <- gettext("covariate")
+    levelName <- "..."
+  }
+  yLabel <- .podGetPlotYaxisLabel(levelName)
+
+  if (length(yAsymptotes) > 0L)
+    asymptoteContainer[["yAsymptotesTable"]] <- .podAsymptoteTableMeta(gettext("Horizontal asymptotes"), xvar, yLabel, position = 1, dependencies = "horizontalAsymptotes")
+
+  if (length(xAsymptotes) > 0L)
+    asymptoteContainer[["xAsymptotesTable"]] <- .podAsymptoteTableMeta(gettext("Vertical asymptotes"), xvar, yLabel, position = 2, dependencies = "verticalAsymptotes")
+
+  container[["asymptoteContainer"]] <- asymptoteContainer
+  if (!ready)
+    return()
+
+  yAsymptotesLabels <- vapply(options[["horizontalAsymptotes"]], `[[`, FUN.VALUE = character(1), "horizontalAsymptoteName")
+  xAsymptotesLabels <- vapply(options[["verticalAsymptotes"]],   `[[`, FUN.VALUE = character(1), "verticallAsymptoteName")
+
+  if (length(yAsymptotes) > 0L)
+    .podFillAsymptoteTable(asymptoteContainer[["yAsymptotesTable"]], label = yAsymptotesLabels, x = model[["asymptotes"]][["vertical"]], y = yAsymptotes)
+
+  if (length(xAsymptotes) > 0L)
+    .podFillAsymptoteTable(asymptoteContainer[["xAsymptotesTable"]], label = xAsymptotesLabels, x = xAsymptotes, y = model[["asymptotes"]][["horizontal"]])
+
+}
+
+.podAsymptoteTableMeta <- function(title, xCoordName, yCoordName, position, dependencies) {
+  table <- createJaspTable(title = title, position = position)
+  table$dependOn(dependencies)
+  table$addColumnInfo(name = "label", title = gettext("Label"), type = "string")
+  table$addColumnInfo(name = "x",     title = xCoordName,       type = "number")
+  table$addColumnInfo(name = "y",     title = yCoordName,       type = "number")
+  return(table)
+}
+
+.podFillAsymptoteTable <- function(table, label, x, y) {
+
+  table[["label"]] <- label
+  table[["x"]]     <- x
+  table[["y"]]     <- y
+
+}
+
 .podGetWarningSymbol <- function() {
   gettext("<b><em>Warning.</em></b>")
 }
 
+.podGetXvarFromModel <- function(model) {
+  all.vars(formula(model))[2L]
+}
+
+.podGetYvarFromModel <- function(model) {
+  all.vars(formula(model))[1L]
+}
+
+.podGetPlotYaxisLabel <- function(levelName) {
+  gettextf("Probability of detecting %s", levelName)
+}

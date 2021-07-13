@@ -14,7 +14,6 @@ Imports:
   DoE.base,
   fitdistrplus,
   FrF2,
-  ggbeeswarm,
   ggplot2,
   ggrepel,
   goftest,
@@ -31,7 +30,8 @@ Imports:
   rsm,
   Rspc,
   tidyr,
-  cowplot
+  cowplot,
+  vipor
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,

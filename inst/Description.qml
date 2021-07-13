@@ -110,6 +110,11 @@ Description
 		func:           "factorialAnalysis"
 		requiresData:   true
 	}
+	GroupTitle
+	{
+		title:			qsTr("Probability of Detection")
+//		icon:			"processControl-measurement.svg"
+	}
 	Analysis
 	{
 		title:			qsTr("Probability of Detection")
