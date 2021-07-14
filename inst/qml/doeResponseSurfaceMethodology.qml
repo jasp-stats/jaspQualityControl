@@ -88,6 +88,27 @@ Form
 		{
 			name:                       "eigen";label:                  qsTr("Eigen Table")
 		}
+		
+		CheckBox
+		{
+			name:                       "res";  label:                  qsTr("Residual Histogram")
+		}
+		
+		CheckBox
+		{
+			name:                       "resNorm";label:                 qsTr("Normal Residual Plot")
+		}
+		
+		CheckBox
+		{
+			name:                       "ResFitted";label:                 qsTr("Residual vs. Fitted Plot")
+		}
+
+		
+		CheckBox
+		{
+			name:                       "pareto";label:                 qsTr("Pareto Plot of Standardized Effects")
+		}
 	}
 	
 	

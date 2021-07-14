@@ -17,7 +17,6 @@
 
 doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   if (options[["showDesign"]])
-
     .qualityControlDesignMainRSM(jaspResults,options, position = 1)
 
   if (options[["contour"]])
@@ -31,6 +30,18 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   if(options[["eigen"]])
     .responseSurfaceTableEigenCall(jaspResults, options, position = 5)
+
+  if(options[["res"]])
+    .responsePlotResidualCall(jaspResults, options, position = 6)
+
+  if(options[["pareto"]])
+    .responsePlotPareto(jaspResults, options, position = 7)
+
+  if(options[["resNorm"]])
+    .responsePlotResNorm(jaspResults, options, position = 8)
+
+  if(options[["ResFitted"]])
+    .responsePlotResFitted(jaspResults, options, position = 9)
 }
 
 .qualityCOntrolResponseReadData <- function(dataset, options) {
@@ -298,7 +309,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   jaspResults[["contourPlot"]] <- contourPlot
 
   if (op_pair == 0 & options[["contour"]]) {
-    jaspResults[["contourPlot"]][["1"]] <- createJaspPlot(width = 540, height = 540)
+    jaspResults[["contourPlot"]][["1"]] <- createJaspPlot(width = 400, height = 400)
 
     return ()
   }else if(op2 >= 1) {
@@ -331,7 +342,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
         plot <- createJaspPlot(
           title = paste(i[1], "-", i[2], " Plot", sep = ""),
-          width = 540, height = 540)
+          width = 400, height = 400)
         plot$dependOn(c("rsmResponseVariables",
                         "rsmBlocks",
                         "contour", "psi", "theta","pairs", "Component", "Point"))
@@ -385,6 +396,122 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
 }
+
+.responsePlotResNorm <- function(jaspResults, options, position, dataset){
+  if (is.null(jaspResults[["resNorm"]])){
+    plot <- createJaspPlot(title = "Normal Probability Plot of Residuals", width = 400, height = 400)
+    jaspResults[["resNorm"]] <- plot
+  }
+  plot$dependOn("resNorm")
+
+  rsm <- .responseSurfaceCalculate(jaspResults, options, dataset)
+  p <- jaspGraphs::plotQQnorm(resid(rsm))
+
+  plot$plotObject <- p
+
+  return()
+}
+
+
+
+.responsePlotResidualCall <- function(jaspResults, options, position, dataset) {
+  if (is.null(jaspResults[["Residual"]])) {
+    plot <- createJaspPlot(
+      title = "Residual Plot",
+      width = 400, height = 400)
+  }
+  plot$dependOn(c("rsmResponseVariables",
+                  "rsmBlocks",
+                  "res"))
+
+
+  jaspResults[["Residual"]] <- plot
+  rsm <- .responseSurfaceCalculate(jaspResults, options, dataset)
+  x <- resid(rsm)
+  #print(x)
+  h <- hist(x, plot = FALSE)
+  #print(h)
+
+
+  p <- ggplot2::ggplot(data.frame(x), ggplot2::aes(x = x)) +
+    ggplot2::geom_histogram(binwidth = abs(h$breaks[1] - h$breaks[2])) +
+    ggplot2::labs(y = "Count")
+
+
+  p <- jaspGraphs::themeJasp(p)
+
+  plot$plotObject <- p
+  return()
+
+
+
+}
+
+.responsePlotResFitted <- function(jaspResults, options, position, dataset){
+
+  if (is.null(jaspResults[["ResFitted"]])){
+    plot <- createJaspPlot(title = "Residuals vs. Fitted Value", width = 400, height = 400)
+    jaspResults[["ResFitted"]] <- plot
+  }
+
+  plot$dependOn("resFitted")
+
+  rsm <- .responseSurfaceCalculate(jaspResults, options, dataset)
+  df <- data.frame(x = fitted(rsm), y = resid(rsm))
+
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(df$x)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(df$y)
+
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = x, y = y)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_hline(yintercept = 0, color = "grey", linetype = "dashed") +
+    ggplot2::scale_x_continuous(name = gettext("Fitted values"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks) +
+    ggplot2::scale_y_continuous(name = gettext("Residuals"), limits = c(min(yBreaks), max(yBreaks)), breaks = yBreaks)
+
+  p <- jaspGraphs::themeJasp(p)
+
+  plot$plotObject <- p
+
+  return()
+}
+
+.responsePlotPareto <- function(jaspResults, options, position, dataset) {
+
+  if (is.null(jaspResults[["pareto"]])) {
+    plot <- createJaspPlot(title = "Pareto Plot of Standardized Effects",
+                           width = 400, height = 400)
+  }
+
+  jaspResults[["pareto"]] <- plot
+  plot$dependOn(c("pareto"))
+
+  rsm <- .responseSurfaceCalculate(jaspResults, options, dataset)
+
+  t <- abs(data.frame(summary(rsm)[[4]][,4]))
+  name <- rownames(summary(rsm)[[4]])
+  par <- cbind.data.frame(name, t)
+  names(par)[2] <- "t"
+  par <- par[rev(order(par$t)),]
+
+  df <- summary(rsm)$df[2]
+  crit <- abs(qt(0.025, df))
+
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(abs(summary(rsm)[[4]][,4]))
+
+  p <- ggplot2::ggplot(par, ggplot2::aes(y = name)) +
+    ggplot2::geom_bar(ggplot2::aes(x = t), stat = "identity") +
+    ggplot2::geom_vline(xintercept = crit, linetype = "dashed", color = "red") +
+    ggplot2::labs(x = 'Standardized Effect', y ='Term') +
+    ggplot2::scale_x_continuous(name = gettext("Standardized Effect"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks)
+
+  p <- jaspGraphs::themeJasp(p)
+
+  plot$plotObject <- p
+
+  return()
+
+}
+
 
 
 .responseSurfaceContourFill <- function(contourPlot,heli.rsm,po, options, point_spec_r, dataset) {
