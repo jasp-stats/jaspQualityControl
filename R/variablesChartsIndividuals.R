@@ -20,9 +20,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
         ALL[["Plot"]] <- .IMRchart(dataset = dataset, options = options, variable = var)$p
 
-        ALL[["Table1"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", name = gettextf("Individual for %s", var), sixsigma = .IMRchart(dataset = dataset, options = options, variable = var)$sixsigma_I)
+        ALL[["Table1"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", name = gettextf("%s for Individual", var), sixsigma = .IMRchart(dataset = dataset, options = options, variable = var)$sixsigma_I)
 
-        ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, name = gettextf("R for %s", var), sixsigma = .IMRchart(dataset = dataset, options = options, variable = var)$sixsigma_R)
+        ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, name = gettextf("%s for R", var), sixsigma = .IMRchart(dataset = dataset, options = options, variable = var)$sixsigma_R)
         Iplot[[var]] <- ALL
       }
     }

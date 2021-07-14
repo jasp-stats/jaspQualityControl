@@ -223,7 +223,7 @@
     labelSize <- 4
   }
   if (plotLimitLabels)
-    p <- p + ggrepel::geom_label_repel(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), vjust="top",hjust="inward", size = labelSize)
+    p <- p + ggrepel::geom_label_repel(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), direction = "both", size = labelSize)
 
   p <- p + ggplot2::scale_x_continuous(name= gettext(xAxisLab) ,breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(color = "blue") +

@@ -41,6 +41,7 @@ Form
 				  name:			"ncol"
 				  label:			qsTr("Moving range length:")
 				  defaultValue:	2
+				  min: 					2
 			  }
 		}
 
