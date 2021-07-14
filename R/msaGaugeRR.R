@@ -627,15 +627,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       if (i == 1){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = FALSE,
-                             xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels)$p
+                             xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataPerOP[[parts]]), title = title, smallLabels = smallLabels)$p
       }else if(i == nOperators){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
-                             warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
+                             warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataPerOP[[parts]]), title = title,
                              smallLabels = smallLabels)$p
       }else{
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
-                             xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
+                             xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataPerOP[[parts]]), title = title,
                              smallLabels = smallLabels)$p
       }
     }

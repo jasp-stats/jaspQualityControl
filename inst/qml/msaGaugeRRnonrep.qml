@@ -22,6 +22,20 @@ Form
 {
 	usesJaspResults:							true
 	columns:									1
+	
+	
+		DropDown
+	{
+		name: "gaugeRRNonRepDataFormat"
+		label: qsTr("Data format")
+		indexDefaultValue: 0
+		values:
+			[
+			{label: qsTr("Long format"),					value: "gaugeRRNonRepLongFormat"},
+			{label: qsTr("Wide format"),				value: "gaugeRRNonRepWideFormat"},
+		]
+		id: gaugeRRNonRepDataFormat
+	}
 
 	VariablesForm
 	{
@@ -57,9 +71,27 @@ Form
 			title:								qsTr("Measurements")
 			singleVariable:						true
 			allowedColumns:						["scale"]
+			visible:							gaugeRRNonRepDataFormat.currentValue == "gaugeRRNonRepLongFormat"
+		}
+		
+				AssignedVariablesList
+		{
+			id:									variable4
+			name:								"measurementsWide"
+			title:								qsTr("Measurements")
+			singleVariable:						false
+			allowedColumns:						["scale"]
+			visible:							gaugeRRNonRepDataFormat.currentValue == "gaugeRRNonRepWideFormat"
 		}
 
+
 	}
+	
+	
+			Section
+	{
+		title: qsTr("Gauge r&R Options")
+		
 	
 
 	Group
@@ -148,6 +180,67 @@ Form
 		}
 		CheckBox{name: "NRoperatorGraph";		label: qsTr("Measurement by operator plot")}
 
+	}
+	
+	}
+	
+	
+	
+		Section
+	{
+		title: qsTr("Gauge r&R Report")
+		
+		
+		TextField
+		{
+			id:						anovaGaugeNestedTitle
+			label: 					qsTr("Title:")
+			name: 					"anovaGaugeNestedTitle"
+			placeholderText:		qsTr("Measurement")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeNestedName
+			label: 					qsTr("Gauge Name:")
+			name: 					"anovaGaugeNestedName"
+			placeholderText:		qsTr("Name")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeNestedDate
+			label: 					qsTr("Date:")
+			name: 					"anovaGaugeNestedDate"
+			placeholderText:		qsTr("Date")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeNestedReportedBy
+			label: 					qsTr("Reported by:")
+			name: 					"anovaGaugeNestedReportedBy"
+			placeholderText:		qsTr("Name")
+			fieldWidth:				100
+		}
+		
+		TextField
+		{
+			id:						anovaGaugeNestedMisc
+			label: 					qsTr("Misc:")
+			name: 					"anovaGaugeNestedMisc"
+			placeholderText:		qsTr("Miscellaneous")
+			fieldWidth:				100
+		}
+		
+		CheckBox
+		{
+			name: "anovaGaugeNestedReport";		label: qsTr("Show Report")
+		}
+		
 	}
 	
 }

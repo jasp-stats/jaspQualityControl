@@ -70,6 +70,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Perform capability analysis
   .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements = measurements)
+
+  # Report
+  if (options[["pcReportDisplay"]]) {
+    if (is.null(jaspResults[["pcReport"]])) {
+      jaspResults[["pcReport"]] <- createJaspContainer(gettext("Report"))
+      jaspResults[["pcReport"]]$position <- 6
+    }
+    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options)
+  }
 }
 
 #############################################################
@@ -1099,4 +1108,37 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     wideDataset <- tidyr::spread(dataset, rep, measurements)
     return(wideDataset)
   }
+}
+
+
+.pcReport <- function(dataset, measurements, parts, operators, options){
+
+  if (options[["pcReportTitle"]] == ""){
+    title <- "Measurement"
+  }else{
+    title <- options[["pcReportTitle"]]
+  }
+  name <- gettextf("Process name: %s", options[["pcReportName"]])
+  date <- gettextf("Date of study: %s", options[["pcReportDate"]])
+  text1 <- c(name, date)
+
+  reportedBy <- gettextf("Reported by: %s", options[["pcReportReportedBy"]])
+  misc <- gettextf("Misc: %s", options[["pcReportMisc"]])
+  text2 <- c(reportedBy, misc)
+
+  matrixPlot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
+  plotMat <- matrix(list(), 4, 2)
+  plotMat[[1, 1]] <- .ggplotWithText(text1)
+  plotMat[[1, 2]] <- .ggplotWithText(text2)
+  plotMat[[2, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  plotMat[[2, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  plotMat[[3, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  plotMat[[3, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  plotMat[[4, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  plotMat[[4, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
+
+  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Process Capability Report for %s", title), ""))
+  matrixPlot$plotObject <- p
+
+  return(matrixPlot)
 }

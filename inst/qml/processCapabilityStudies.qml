@@ -358,57 +358,56 @@ Form
 	Section
 	{
 		title: qsTr("Process Capability Report")
-		visible:	false
 		
 		
 		TextField
 		{
-			id:						anovaGaugeTitle
+			id:						pcReportTitle
 			label: 					qsTr("Title:")
-			name: 					"anovaGaugeTitle"
+			name: 					"pcReportTitle"
 			placeholderText:		qsTr("Measurement")
 			fieldWidth:				100
 		}
 		
 		TextField
 		{
-			id:						anovaGaugeName
-			label: 					qsTr("Gauge Name:")
-			name: 					"anovaGaugeName"
+			id:						apcReportName
+			label: 					qsTr("Process Name:")
+			name: 					"pcReportName"
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
 		
 		TextField
 		{
-			id:						anovaGaugeDate
+			id:						pcReportDate
 			label: 					qsTr("Date:")
-			name: 					"anovaGaugeDate"
+			name: 					"pcReportDate"
 			placeholderText:		qsTr("Date")
 			fieldWidth:				100
 		}
 		
 		TextField
 		{
-			id:						anovaGaugeReportedBy
+			id:						pcReportReportedBy
 			label: 					qsTr("Reported by:")
-			name: 					"anovaGaugeReportedBy"
+			name: 					"pcReportReportedBy"
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
 		
 		TextField
 		{
-			id:						anovaGaugeMisc
+			id:						pcReportMisc
 			label: 					qsTr("Misc:")
-			name: 					"anovaGaugeMisc"
+			name: 					"pcReportMisc"
 			placeholderText:		qsTr("Miscellaneous")
 			fieldWidth:				100
 		}
 		
 		CheckBox
 		{
-			name: "anovaGaugeReport";		label: qsTr("Show Report")
+			name: "pcReportDisplay";		label: qsTr("Show Report")
 		}
 		
 
