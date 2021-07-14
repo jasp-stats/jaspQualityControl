@@ -17,21 +17,39 @@
 
 msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
+  if(options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepLongFormat"){
   measurements <- unlist(options$measurements)
+  }else{
+    measurements <- unlist(options$measurementsWide)
+  }
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
-  ready <- (measurements != "" && operators != "" && parts != "")
+
+  if(options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepLongFormat"){
+    ready <- (measurements != "" && operators != "" && parts != "")
+  }else{
+    ready <- (length(measurements) > 1 && operators != "" && parts != "")
+  }
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
   }
-  if (ready) {
+  if (ready && options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepLongFormat"){
+    datasetLong <- dataset
     datasetWide <- .reshapeToWide(dataset, measurements, parts, operators)
     wideMeasurementCols <- colnames(datasetWide)[colnames(datasetWide) != c(parts, operators)]
+    longMeasurementCols <- measurements
+  }
+
+  if (ready && options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepWideFormat"){
+    datasetWide <- dataset
+    datasetLong <- .reshapeToLong(dataset, measurements, parts, operators)
+    wideMeasurementCols <- measurements
+    longMeasurementCols <- "Measurement"
   }
 
   # Gauge r&R non replicable
@@ -40,7 +58,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       jaspResults[["gaugeRRNonRep"]] <- createJaspContainer(gettext("Gauge r&R Tables"))
       jaspResults[["gaugeRRNonRep"]]$position <- 1
     }
-    jaspResults[["gaugeRRNonRep"]] <- .gaugeRRNonRep(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+    jaspResults[["gaugeRRNonRep"]] <- .gaugeRRNonRep(dataset = datasetLong, measurements = longMeasurementCols, parts = parts, operators = operators, options =  options, ready = ready)
     jaspResults[["gaugeRRNonRep"]]$dependOn(c("NRstandardDeviationReference", "NRhistoricalStandardDeviationValue", "NRtolerance", "NRstudyVarMultiplierType",
                                               "NRstudyVarMultiplier", "NRgaugeVarCompGraph"))
   }
@@ -61,7 +79,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       jaspResults[["NRxbarCharts"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
       jaspResults[["NRxbarCharts"]]$position <- 3
     }
-    jaspResults[["NRxbarCharts"]] <- .xBarOrRangeChart(type = "Xbar",dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options =  options, ready = ready)
+    jaspResults[["NRxbarCharts"]] <- .xBarOrRangeChart(type = "Xbar", dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options =  options, ready = ready)
     jaspResults[["NRxbarCharts"]]$dependOn("NRxbarCharts")
   }
 
@@ -85,10 +103,20 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     jaspResults[["NRoperatorGraph"]] <- .gaugeByOperatorGraph(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options, ready = ready)
     jaspResults[["NRoperatorGraph"]]$dependOn(c("NRoperatorGraph"))
   }
+
+  # Report
+  if (options[["anovaGaugeNestedReport"]]) {
+    if (is.null(jaspResults[["anovaGaugeNestedReport"]])) {
+      jaspResults[["anovaGaugeNestedReport"]] <- createJaspContainer(gettext("Report"))
+      jaspResults[["anovaGaugeNestedReport"]]$position <- 6
+    }
+    jaspResults[["anovaGaugeNestedReport"]] <- .anovaGaugeNestedReport(datasetWide, datasetLong, wideMeasurementCols, longMeasurementCols, parts = parts, operators = operators, options = options)
+  }
+
   return()
 }
 
-.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready) {
+.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready, plotOnly = F) {
   gaugeRRNonRepTables <- createJaspContainer(gettext("Gauge r&R Tables"))
   gaugeRRNonRepTables$position <- 1
 
@@ -181,8 +209,11 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       }else{
         percentToleranceForGraph <- NA
       }
-      plot$plotObject <- .gaugeVarCompGraph(percentVarComps[1:4], percentStudyVar[1:4], percentToleranceForGraph)
+      p <- .gaugeVarCompGraph(percentVarComps[1:4], percentStudyVar[1:4], percentToleranceForGraph)
+      plot$plotObject <- p
     }
+    if(plotOnly)
+      return(p)
     gaugeRRNonRepTables[["Plot"]] <- plot
   }
   return(gaugeRRNonRepTables)
@@ -332,3 +363,46 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
   return(plotContainer)
 }
+
+ .reshapeToLong <- function(dataset, measurements, parts, operators){
+   longData <- tidyr::gather(dataset, repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
+   longData <- longData[c(parts, operators, "Measurement" )]
+   return(longData)
+ }
+
+ .anovaGaugeNestedReport <- function(datasetWide, datasetLong, measurementsWide, measurementsLong, parts, operators, options){
+
+   if (options[["anovaGaugeNestedTitle"]] == ""){
+     title <- "Measurement"
+   }else{
+     title <- options[["anovaGaugeNestedTitle"]]
+   }
+   name <- gettextf("Gauge name: %s", options[["anovaGaugeNestedName"]])
+   date <- gettextf("Date of study: %s", options[["anovaGaugeNestedDate"]])
+   text1 <- c(name, date)
+
+   reportedBy <- gettextf("Reported by: %s", options[["anovaGaugeNestedReportedBy"]])
+   misc <- gettextf("Misc: %s", options[["anovaGaugeNestedMisc"]])
+   if (options[["gaugeNRToleranceEnabled"]]){
+     tolerance <- gettextf("Tolerance: %s", options[["NRtolerance"]])
+     text2 <- c(reportedBy, tolerance, misc)
+   }else{
+     text2 <- c(reportedBy, misc)
+   }
+
+   matrixPlot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
+   plotMat <- matrix(list(), 4, 2)
+   plotMat[[1, 1]] <- .ggplotWithText(text1)
+   plotMat[[1, 2]] <- .ggplotWithText(text2)
+   plotMat[[2, 1]] <- .gaugeRRNonRep(datasetLong, measurementsLong, parts = parts, operators = operators, options =  options, ready = TRUE, plotOnly = TRUE)
+   plotMat[[2, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
+   plotMat[[3, 1]] <- .xBarOrRangeChartPlotFunction("Range", datasetWide, measurementsWide, parts, operators, options, smallLabels = TRUE)
+   plotMat[[3, 2]] <- .gaugeByOperatorGraphPlotObject(datasetWide, measurementsWide, parts, operators, options)
+   plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Xbar", datasetWide, measurementsWide, parts, operators, options, smallLabels = TRUE)
+   plotMat[[4, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
+
+   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Measurement systems analysis for %s", title), ""))
+   matrixPlot$plotObject <- p
+
+   return(matrixPlot)
+ }
