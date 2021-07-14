@@ -6,7 +6,7 @@ options <- analysisOptions("attributesCharts")
 options$D <- "D"
 options$total <- "Size"
 set.seed(1)
-results <- runAnalysis("attributesCharts", "tests\\testthat\\P_dat.csv", options, makeTests = T)
+results <- runAnalysis("attributesCharts", "P_dat.csv", options)
 
 test_that("NP Control Chart plot matches", {
   plotName <- results[["results"]][["NPchartPlot"]][["data"]]
@@ -23,7 +23,7 @@ test_that("Test result for NP chart table results match", {
 
 # P
 options$TypeDefectives <- "pchart"
-results <- runAnalysis("attributesCharts", "tests\\testthat\\P_dat.csv", options, makeTests = T)
+results <- runAnalysis("attributesCharts", "P_dat.csv", options)
 
 test_that("Test result for P chart table results match", {
   table <- results[["results"]][["NelsonTable"]][["data"]]
@@ -40,7 +40,7 @@ test_that("P Control Chart plot matches", {
 
 # Laney's P
 options$TypeDefectives <- "Laneyprimechart"
-results <- runAnalysis("attributesCharts", "tests\\testthat\\P_dat.csv", options, makeTests = T)
+results <- runAnalysis("attributesCharts", "P_dat.csv", options)
 
 test_that("Laney P' Control Chart plot matches", {
   options <- analysisOptions("attributesCharts")
@@ -57,7 +57,7 @@ test_that("Laney P' Control Chart plot matches", {
 ## Defects
 # C
 options$Attributes <- "Defects"
-results <- runAnalysis("attributesCharts", "tests\\testthat\\P_dat.csv", options, makeTests = T)
+results <- runAnalysis("attributesCharts", "P_dat.csv", options)
 
 test_that("C Control Chart plot matches", {
   plotName <- results[["results"]][["CchartPlot"]][["data"]]
@@ -73,7 +73,7 @@ test_that("Test result for C chart table results match", {
 
 # U
 options$TypeDefects <- "uchart"
-results <- runAnalysis("attributesCharts", "tests\\testthat\\P_dat.csv", options, makeTests = T)
+results <- runAnalysis("attributesCharts", "P_dat.csv", options)
 
 test_that("Test result for U chart table results match", {
   table <- results[["results"]][["NelsonTable"]][["data"]]
@@ -89,7 +89,7 @@ test_that("U Control Chart plot matches", {
 
 # Laneys U
 options$TypeDefects <- "Laneychart"
-results <- runAnalysis("attributesCharts", "tests\\testthat\\P_dat.csv", options, makeTests = T)
+results <- runAnalysis("attributesCharts", "P_dat.csv", options)
 
 test_that("Laney U' Control Chart plot matches", {
   plotName <- results[["results"]][["LaneyUPlot"]][["data"]]
@@ -99,7 +99,7 @@ test_that("Laney U' Control Chart plot matches", {
 
 ## I MR
 options$Attributes <- "ImR"
-results <- runAnalysis("attributesCharts", "tests\\testthat\\P_dat.csv", options, makeTests = T)
+results <- runAnalysis("attributesCharts", "P_dat.csv", options)
 
 test_that("Individual and Moving Range Control Charts plot matches", {
   plotName <- results[["results"]][["IPlotA"]][["data"]]

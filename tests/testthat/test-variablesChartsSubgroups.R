@@ -34,7 +34,7 @@ test_that("X-bar & R Control Chart plot matches", {
 options$CCDataFormat <- "CCwideFormat"
 options$variables <- c("Measurement1","Measurement2","Measurement3")
 set.seed(1)
-results <- runAnalysis("variablesChartsSubgroups", "tests\\testthat\\partOperatorData.csv", options, makeTests = T)
+results <- runAnalysis("variablesChartsSubgroups", "partOperatorData.csv", options)
 
 test_that("Test result for X-bar chart table results match", {
   table <- results[["results"]][["NelsonTable"]][["data"]]
