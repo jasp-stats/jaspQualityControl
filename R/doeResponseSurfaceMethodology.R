@@ -435,7 +435,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   p <- ggplot2::ggplot(data.frame(x), ggplot2::aes(x = x)) +
     ggplot2::geom_histogram(binwidth = abs(h$breaks[1] - h$breaks[2])) +
-    ggplot2::labs(y = "Count")
+    ggplot2::labs(y = "Count", x = "Residuals")
 
 
   p <- jaspGraphs::themeJasp(p)
@@ -451,10 +451,11 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   if (is.null(jaspResults[["ResFitted"]])){
     plot <- createJaspPlot(title = "Residuals vs. Fitted Value", width = 400, height = 400)
-    jaspResults[["ResFitted"]] <- plot
+
   }
 
   plot$dependOn("resFitted")
+  jaspResults[["ResFitted"]] <- plot
 
   rsm <- .responseSurfaceCalculate(jaspResults, options, dataset)
   df <- data.frame(x = fitted(rsm), y = resid(rsm))
