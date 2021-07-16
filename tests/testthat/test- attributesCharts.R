@@ -48,7 +48,7 @@ test_that("Laney P' Control Chart plot matches", {
   options$total <- "Size"
   options$TypeDefectives <- "Laneyprimechart"
   set.seed(1)
-  results <- runAnalysis("attributesCharts", "tests\testthat\P_dat.csv", options)
+  results <- runAnalysis("attributesCharts", "P_dat.csv", options)
   plotName <- results[["results"]][["LaneyPPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "laney-p-control-chart")
