@@ -21,13 +21,13 @@ test_that("Test result for X-bar chart table results match", {
 test_that("Xbar & s Control Chart plot matches", {
   plotName <- results[["results"]][["SPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Xbar & s Plot")
+  jaspTools::expect_equal_plots(testPlot, "Xbar & s Plot 1")
 })
 
 test_that("X-bar & R Control Chart plot matches", {
   plotName <- results[["results"]][["XbarPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Xbar & R Plot")
+  jaspTools::expect_equal_plots(testPlot, "Xbar & R Plot 1")
 })
 
 # Tests for Row data format
@@ -57,11 +57,11 @@ test_that("Test result for s chart table results match", {
 test_that("Xbar & s Control Chart plot matches", {
   plotName <- results[["results"]][["SPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Xbar & s Plot")
+  jaspTools::expect_equal_plots(testPlot, "Xbar & s Plot 2")
 })
 
 test_that("X-bar & R Control Chart plot matches", {
   plotName <- results[["results"]][["XbarPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Xbar & R Plot")
+  jaspTools::expect_equal_plots(testPlot, "Xbar & R Plot 2")
 })
