@@ -77,7 +77,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["pcReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["pcReport"]]$position <- 6
     }
-    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options)
+    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults)
+    jaspResults[["pcReport"]]$dependOn(c('pcReportDisplay'))
   }
 }
 
@@ -152,13 +153,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Output ######
 ################
 
-.qcProcessSummaryTable <- function(options, dataset, ready, container, measurements) {
+.qcProcessSummaryTable <- function(options, dataset, ready, container, measurements, returnDataframe = FALSE) {
 
   table <- createJaspTable(title = gettext("Process Summary"))
   table$position <- 1
 
-  if (options[["lowerSpecificationField"]])
+  if (options[["lowerSpecificationField"]]){
     table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
+  }
   if (options[["targetValueField"]])
     table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
   if (options[["upperSpecificationField"]])
@@ -194,9 +196,32 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     "sdw"    = qccFit[["std.dev"]]
   )
   table$addRows(rows)
+
+  if(returnDataframe){
+    sourceVector <- c('LSL', 'Target', 'USL', 'Sample size', 'Mean', "Std. Deviation (Total)", "Std. Deviation (Within)")
+    lsl <- options[["lowerSpecification"]]
+    target <- options[["targetValue"]]
+    usl <- options[["upperSpecification"]]
+    if (!options[["lowerSpecificationField"]])
+      lsl <- '*'
+    if (!options[["targetValueField"]])
+      target <- '*'
+    if (!options[["upperSpecificationField"]])
+      usl <- '*'
+    mean <- mean(allData, na.rm = TRUE)
+    n <- as.integer(length(allData))
+    sd <- sd(allData, na.rm = TRUE)
+    sdw <- qccFit[["std.dev"]]
+    valueVector <- c(lsl, target, usl, n, mean, sd, sdw)
+    df <- data.frame(sources = sourceVector,
+                     values = valueVector)
+    return(df)
+  }
+
+
 }
 
-.qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements) {
+.qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements, returnPlotObject = FALSE) {
 
   plot <- createJaspPlot(title = gettext("Capability of the Process"), width = 700, height = 400)
   plot$dependOn(c("csBinWidthType", "csNumberOfBins"))
@@ -257,10 +282,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   p <- jaspGraphs::themeJasp(p) + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
 
+  if(returnPlotObject)
+    return(p)
+
   plot$plotObject <- p
 }
 
-.qcProcessCapabilityTableWithin <- function(options, dataset, ready, container, measurements) {
+.qcProcessCapabilityTableWithin <- function(options, dataset, ready, container, measurements, returnDataframe = FALSE) {
 
   if (!options[["lowerSpecificationField"]] && !options[["upperSpecificationField"]])
     return()
@@ -269,23 +297,29 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   table <- createJaspTable(title = gettext("Potential Capability (Within)"))
+  sourceVector <- vector()
 
   ciLevel <- options[["csConfidenceIntervalPercent"]]
   ciLevelPercent <- ciLevel * 100
 
-  if (options[["lowerSpecificationField"]])
+  if (options[["lowerSpecificationField"]]){
     table$addColumnInfo(name = "cpl",   type = "number", title = gettext("CPL"))
-  if (options[["upperSpecificationField"]])
+    sourceVector <- c(sourceVector, 'CPL')
+  }
+  if (options[["upperSpecificationField"]]){
     table$addColumnInfo(name = "cpu",   type = "number", title = gettext("CPU"))
+    sourceVector <- c(sourceVector, 'CPU')
+  }
   if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]) {
     table$addColumnInfo(name = "cp",    type = "number", title = gettext("Cp"))
+    sourceVector <- c(sourceVector, 'Cp')
     if (options[["csConfidenceInterval"]]){
       table$addColumnInfo(name = "cplci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "cpuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
     }
-    table$addColumnInfo(name = "z",     type = "number", title = gettext("ppm"))
   }
   table$addColumnInfo(name = "cpk",   type = "number", title = gettext("Cpk"))
+  sourceVector <- c(sourceVector, 'Cpk')
   if (options[["csConfidenceInterval"]]){
     table$addColumnInfo(name = "cpklci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "cpkuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
@@ -293,8 +327,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 
   table$showSpecifiedColumnsOnly <- TRUE
-
-  container[["capabilityTableWithin"]] <- table
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
@@ -317,9 +349,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }else{
     cpk <- cpu
   }
-  z <- cpk * 3
 
-  rows <- list("cp" = cp, "cpl" = cpl, "cpu" = cpu, "cpk" = cpk, "z" = z)
+   rows <- list("cp" = cp, "cpl" = cpl, "cpu" = cpu, "cpk" = cpk)
 
   if (options[["csConfidenceInterval"]]){
     ciAlpha <- 1 - ciLevel
@@ -342,37 +373,60 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     rows[["cpkuci"]] <- ciUbCpk
   }
   table$addRows(rows)
+
+  if(returnDataframe){
+    if(!options[["upperSpecificationField"]])
+      cpu <- NA
+    if(!options[["lowerSpecificationField"]])
+      cpl <- NA
+    if(!(options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]))
+      cp <- NA
+    valueVector <- na.omit(c(cp, cpl, cpu, cpk))
+    df <- data.frame(sources = sourceVector,
+                     values = valueVector)
+    return(df)
+  }
+
+  container[["capabilityTableWithin"]] <- table
 }
 
-.qcProcessCapabilityTableOverall <- function(options, dataset, ready, container, measurements) {
+.qcProcessCapabilityTableOverall <- function(options, dataset, ready, container, measurements, returnOverallCapDataframe = FALSE) {
 
   if (!ready)
     return()
 
   table <- createJaspTable(title = gettext("Overall Capability"))
+  sourceVector1 <- vector()
 
   ciLevel <- options[["csConfidenceIntervalPercent"]]
   ciLevelPercent <- ciLevel * 100
   ciAlpha <- 1 - ciLevel
 
-  if (options[["lowerSpecificationField"]])
+  if (options[["lowerSpecificationField"]]){
     table$addColumnInfo(name = "ppl", type = "number", title = gettext("PPL"))
-  if (options[["upperSpecificationField"]])
+    sourceVector1 <- c(sourceVector1, 'PPL')
+  }
+  if (options[["upperSpecificationField"]]){
     table$addColumnInfo(name = "ppu", type = "number", title = gettext("PPU"))
+    sourceVector1 <- c(sourceVector1, 'PPU')
+  }
   if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]){
     table$addColumnInfo(name = "pp",  type = "number", title = gettext("Pp"))
+    sourceVector1 <- c(sourceVector1, 'Pp')
     if (options[["csConfidenceInterval"]]){
       table$addColumnInfo(name = "pplci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "ppuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
     }
   }
   table$addColumnInfo(name = "ppk",   type = "number", title = gettext("Ppk"))
+  sourceVector1 <- c(sourceVector1, 'Ppk')
   if (options[["csConfidenceInterval"]]){
     table$addColumnInfo(name = "ppklci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "ppkuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
   }
   if (options[["targetValueField"]]){
     table$addColumnInfo(name = "cpm", type = "number", title = gettext("Cpm"))
+    sourceVector1 <- c(sourceVector1, 'Cpm')
     if (options[["csConfidenceInterval"]]){
       table$addColumnInfo(name = "cpmlci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "cpmuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
@@ -380,26 +434,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   table$showSpecifiedColumnsOnly <- TRUE
-
-  table2 <- createJaspTable(title = gettext("Performance"))
-  table2$addColumnInfo(name = "rowNames", type = "string", title = "")
-  table2$addColumnInfo(name = "observed", type = "number", title = "Observed")
-  table2$addColumnInfo(name = "expOverall", type = "number", title = "Expected overall")
-  if (options[["csConfidenceInterval"]]){
-    table2$addColumnInfo(name = "xpolb", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for exp. overall", paste(ciLevelPercent, "%")))
-    table2$addColumnInfo(name = "xpoub", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for exp. overall", paste(ciLevelPercent, "%")))
-  }
-  table2$addColumnInfo(name = "expWithin", type = "number", title = "Expected within")
-  if (options[["csConfidenceInterval"]]){
-    table2$addColumnInfo(name = "xpwlb", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for exp. within", paste(ciLevelPercent, "%")))
-    table2$addColumnInfo(name = "xpwub", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for exp. within", paste(ciLevelPercent, "%")))
-  }
-
-  table2$showSpecifiedColumnsOnly <- TRUE
-
-  container[["capabilityTableOverall"]] <- table
-  container[["capabilityTablePerformance"]] <- table2
-
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
@@ -439,8 +473,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }else if (options[["lowerSpecificationField"]] && options[["targetValueField"]]){
     cpm <- (t - lsl) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
   }
-
-
 
   rows <- list("pp" = pp, "ppl" = ppl, "ppu" = ppu, "ppk" = ppk)
   if (options[["targetValueField"]])
@@ -482,6 +514,37 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
   table$addRows(rows)
+
+  if(returnOverallCapDataframe){
+    if(!options[["upperSpecificationField"]])
+      ppu <- NA
+    if(!options[["lowerSpecificationField"]])
+      ppl <- NA
+    if(!(options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]))
+      pp <- NA
+    if(!options[["targetValueField"]])
+      cpm <- NA
+    valueVector1 <- na.omit(c(ppl, ppu, pp, ppk, cpm))
+    df <- data.frame(sources = sourceVector1,
+                     values = valueVector1)
+    return(df)
+  }
+
+  table2 <- createJaspTable(title = gettext("Performance"))
+  table2$addColumnInfo(name = "rowNames", type = "string", title = "")
+  table2$addColumnInfo(name = "observed", type = "number", title = "Observed")
+  table2$addColumnInfo(name = "expOverall", type = "number", title = "Expected overall")
+  if (options[["csConfidenceInterval"]]){
+    table2$addColumnInfo(name = "xpolb", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for exp. overall", paste(ciLevelPercent, "%")))
+    table2$addColumnInfo(name = "xpoub", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for exp. overall", paste(ciLevelPercent, "%")))
+  }
+  table2$addColumnInfo(name = "expWithin", type = "number", title = "Expected within")
+  if (options[["csConfidenceInterval"]]){
+    table2$addColumnInfo(name = "xpwlb", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for exp. within", paste(ciLevelPercent, "%")))
+    table2$addColumnInfo(name = "xpwub", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for exp. within", paste(ciLevelPercent, "%")))
+  }
+
+  table2$showSpecifiedColumnsOnly <- TRUE
 
 
   #Calculate performance
@@ -594,6 +657,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   table2$setData(table2List)
+
+  container[["capabilityTableOverall"]] <- table
+  container[["capabilityTablePerformance"]] <- table2
 
 }
 
@@ -1111,7 +1177,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 
-.pcReport <- function(dataset, measurements, parts, operators, options){
+.pcReport <- function(dataset, measurements, parts, operators, options, ready, container){
 
   if (options[["pcReportTitle"]] == ""){
     title <- "Measurement"
@@ -1126,19 +1192,43 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   misc <- gettextf("Misc: %s", options[["pcReportMisc"]])
   text2 <- c(reportedBy, misc)
 
+
+  processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, returnDataframe = TRUE)
+  potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, returnDataframe = TRUE)
+  overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnOverallCapDataframe = TRUE)
+
   matrixPlot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
+
+  if(!options[["upperSpecificationField"]] && !options[["lowerSpecificationField"]]){
+    matrixPlot$setError(gettext("No specification limits set."))
+    return(matrixPlot)
+  }
+
+  if(!ready)
+    return(matrixPlot)
+
   plotMat <- matrix(list(), 4, 2)
   plotMat[[1, 1]] <- .ggplotWithText(text1)
   plotMat[[1, 2]] <- .ggplotWithText(text2)
-  plotMat[[2, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
-  plotMat[[2, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
-  plotMat[[3, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
-  plotMat[[3, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  plotMat[[2, 1]] <- ggplotTable(processSummaryDF) #process summary
+  plotMat[[2, 2]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE)
+  plotMat[[3, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()   # performance
+  plotMat[[3, 2]] <- ggplotTable(potentialWithinDF)  #Potential within
   plotMat[[4, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
-  plotMat[[4, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  plotMat[[4, 2]] <- ggplotTable(overallCapDF) #overall capability
 
   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Process Capability Report for %s", title), ""))
   matrixPlot$plotObject <- p
 
   return(matrixPlot)
 }
+
+ggplotTable <- function(dataframe){
+  df <- tibble::tibble(dataframe)
+  p <- ggplot2::ggplot() + ggplot2::theme_void() + ggpp::geom_table(data = data.frame(x = 1, y = 1), ggplot2::aes(x = x, y = y), label = list(df),
+                                                                    table.colnames = FALSE, size = 7)
+
+  return(p)
+}
+
+
