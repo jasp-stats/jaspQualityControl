@@ -48,10 +48,6 @@ msgid "Variables Charts for Subgroups"
 msgstr ""
 
 msgctxt "Description|"
-msgid "Variables Chart for Individuals"
-msgstr ""
-
-msgctxt "Description|"
 msgid "Attributes Charts"
 msgstr ""
 
@@ -1260,14 +1256,6 @@ msgid "X-mR chart"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Variables"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Time Stamp (optional)"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Control Charts"
 msgstr ""
 
@@ -1284,13 +1272,213 @@ msgid "Known parameters:"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Target:"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Standard deviation:"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & s"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Variables Charts for Individuals"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Probability of Detection"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Outcomes"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Covariates"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Tables"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Model fit table"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Detection plot"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Show data"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Rugs"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Points"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Add jitter"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Show density"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Confidence interval"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Ticks x-axis"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "based on data"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "based on data and model"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Logarithmic x-axis"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Asymptotes"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Horizontal asymptotes"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Label"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "y-coordinate"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Asymptote "
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Vertical asymptotes"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "x-coordinate"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Fitting options"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Link function"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Logit"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Probit"
+msgstr ""
+
+msgctxt "probabilityOfDetection|"
+msgid "Log transform covariate"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Moving range length:"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Autocorrelation"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Number of lags:"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Confidence interval size:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Data format"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Column"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Row"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Measurements"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Subgroups"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Subgroup size:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Mean:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Variable Charts for Subgroups Report"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Title:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Measurement"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Name:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Name"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Date:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Date"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Reported by:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Misc:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Miscellaneous"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Show Report"
 msgstr ""

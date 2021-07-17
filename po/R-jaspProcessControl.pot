@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.0.1\n"
-"POT-Creation-Date: 2021-07-03 03:44\n"
+"POT-Creation-Date: 2021-07-17 03:45\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,6 +14,12 @@ msgid "Cumulative sum chart"
 msgstr ""
 
 msgid "Exponentially weighted moving average chart"
+msgstr ""
+
+msgid "G chart"
+msgstr ""
+
+msgid "T chart"
 msgstr ""
 
 msgid "CL = %g"
@@ -35,6 +41,9 @@ msgid "Standard Deviation"
 msgstr ""
 
 msgid "Subgroup"
+msgstr ""
+
+msgid "Counts"
 msgstr ""
 
 msgid "P Control Chart"
@@ -85,10 +94,7 @@ msgstr ""
 msgid "You must enter at least 2 measurements to get this output."
 msgstr ""
 
-msgid "Time"
-msgstr ""
-
-msgid "Nelson tests' results for %s chart"
+msgid "Test result for %s chart"
 msgstr ""
 
 msgid "Test 1: Beyond limit"
@@ -613,6 +619,63 @@ msgstr ""
 msgid "No valid measurements in %s."
 msgstr ""
 
+msgid "Parameter Estimates"
+msgstr ""
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Estimate"
+msgstr ""
+
+msgid "Fitting the model failed with the following error message:\n%s"
+msgstr ""
+
+msgid "Intercept"
+msgstr ""
+
+msgid "The IWLS algorithm did not converge. Interpret the results with caution."
+msgstr ""
+
+msgid "There is only observed category (%s). The results are likely meaningless."
+msgstr ""
+
+msgid "Fit Table"
+msgstr ""
+
+msgid "AIC"
+msgstr ""
+
+msgid "Detection Plot"
+msgstr ""
+
+msgid "log(%s)"
+msgstr ""
+
+msgid "The detection plot failed with the following error message:\n%s"
+msgstr ""
+
+msgid "Asymptotes"
+msgstr ""
+
+msgid "covariate"
+msgstr ""
+
+msgid "Horizontal asymptotes"
+msgstr ""
+
+msgid "Vertical asymptotes"
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "<b><em>Warning.</em></b>"
+msgstr ""
+
+msgid "Probability of detecting %s"
+msgstr ""
+
 msgid "Capability Studies"
 msgstr ""
 
@@ -766,20 +829,38 @@ msgstr ""
 msgid "Histogram"
 msgstr ""
 
-msgid "Counts"
+msgid "X-mR control chart"
 msgstr ""
 
-msgid "Charts and Tests for %s"
+msgid "%s for Individual"
 msgstr ""
 
-msgid "Charts for: %s"
+msgid "%s for R"
 msgstr ""
 
-msgid "Value"
+msgid "%s"
+msgstr ""
+
+msgid "Autocorrelation"
+msgstr ""
+
+msgid "Lag"
 msgstr ""
 
 msgid "X-bar & R Control Chart"
 msgstr ""
 
+msgid "You must enter more measurements to get this output."
+msgstr ""
+
 msgid "Xbar & s Control Chart"
+msgstr ""
+
+msgid "Name: %s"
+msgstr ""
+
+msgid "Date: %s"
+msgstr ""
+
+msgid "Control Charts Report for %s"
 msgstr ""
