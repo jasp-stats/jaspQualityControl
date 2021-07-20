@@ -37,10 +37,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (options[["pcDataFormat"]] == "PClongFormat" && ready){
     if(options[["manualSubgroupSize"]]){
       k <- options[["pcSubgroupSize"]]
+      n <- nrow(dataset)
       dataset <- .PClongTowide(dataset, k, measurements, mode = "manual")
       if (dataset == "error"){
-        container <- createJaspContainer(gettext("Error"))
-        container$setError(gettext("Test"))
+        plot <- createJaspPlot(title = gettext("Capability of the Process"), width = 700, height = 400)
+        jaspResults[["plot"]] <- plot
+        plot$setError(gettextf("Could not equally divide %i data points into groups of size %i.", n, k))
         return()
       }
       measurements <- colnames(dataset)
@@ -116,7 +118,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 
 
-  ready <- (length(measurements) > 1L && (options[["lowerSpecificationField"]] | options[["upperSpecificationField"]]))
+  ready <- (length(measurements) > 0 && (options[["lowerSpecificationField"]] | options[["upperSpecificationField"]]))
 
   jaspResults[["capabilityAnalysis"]] <- container
 
@@ -180,7 +182,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
-  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'R', plot = FALSE)
+  if(length(measurements) < 2){
+    type <- 'xbar.one'
+  }else{
+    type <- 'R'
+  }
+  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
   allData <- unlist(dataset[, measurements])
 
   if (is.na(qccFit[["std.dev"]]))
@@ -239,7 +246,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
-  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'R', plot = FALSE)
+  if(length(measurements) < 2){
+    type <- 'xbar.one'
+  }else{
+    type <- 'R'
+  }
+  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
   allData <- unlist(dataset[, measurements])
   plotData <- data.frame(x = allData)
 
@@ -302,6 +314,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ciLevel <- options[["csConfidenceIntervalPercent"]]
   ciLevelPercent <- ciLevel * 100
 
+  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]) {
+    table$addColumnInfo(name = "cp",    type = "number", title = gettext("Cp"))
+    sourceVector <- c(sourceVector, 'Cp')
+    if (options[["csConfidenceInterval"]]){
+      table$addColumnInfo(name = "cplci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
+      table$addColumnInfo(name = "cpuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
+    }
+
   if (options[["lowerSpecificationField"]]){
     table$addColumnInfo(name = "cpl",   type = "number", title = gettext("CPL"))
     sourceVector <- c(sourceVector, 'CPL')
@@ -310,13 +330,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "cpu",   type = "number", title = gettext("CPU"))
     sourceVector <- c(sourceVector, 'CPU')
   }
-  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]) {
-    table$addColumnInfo(name = "cp",    type = "number", title = gettext("Cp"))
-    sourceVector <- c(sourceVector, 'Cp')
-    if (options[["csConfidenceInterval"]]){
-      table$addColumnInfo(name = "cplci", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
-      table$addColumnInfo(name = "cpuci", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
-    }
+
   }
   table$addColumnInfo(name = "cpk",   type = "number", title = gettext("Cpk"))
   sourceVector <- c(sourceVector, 'Cpk')
@@ -330,7 +344,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
-  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'R', plot = FALSE)
+  if(length(measurements) < 2){
+    type <- 'xbar.one'
+  }else{
+    type <- 'R'
+  }
+  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
   allData <- unlist(dataset[, measurements])
 
   # Calculate capability indices
@@ -390,7 +409,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container[["capabilityTableWithin"]] <- table
 }
 
-.qcProcessCapabilityTableOverall <- function(options, dataset, ready, container, measurements, returnOverallCapDataframe = FALSE) {
+.qcProcessCapabilityTableOverall <- function(options, dataset, ready, container, measurements, returnOverallCapDataframe = FALSE,
+                                             returnPerformanceDataframe = FALSE) {
 
   if (!ready)
     return()
@@ -437,7 +457,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
-  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'R', plot = FALSE)
+  if(length(measurements) < 2){
+    type <- 'xbar.one'
+  }else{
+    type <- 'R'
+  }
+  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
   allData <- unlist(dataset[, measurements])
   sdo <- sd(allData)
   sdw <- qccFit[["std.dev"]]
@@ -534,15 +559,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table2$addColumnInfo(name = "rowNames", type = "string", title = "")
   table2$addColumnInfo(name = "observed", type = "number", title = "Observed")
   table2$addColumnInfo(name = "expOverall", type = "number", title = "Expected overall")
-  if (options[["csConfidenceInterval"]]){
-    table2$addColumnInfo(name = "xpolb", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for exp. overall", paste(ciLevelPercent, "%")))
-    table2$addColumnInfo(name = "xpoub", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for exp. overall", paste(ciLevelPercent, "%")))
-  }
   table2$addColumnInfo(name = "expWithin", type = "number", title = "Expected within")
-  if (options[["csConfidenceInterval"]]){
-    table2$addColumnInfo(name = "xpwlb", title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for exp. within", paste(ciLevelPercent, "%")))
-    table2$addColumnInfo(name = "xpwub", title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for exp. within", paste(ciLevelPercent, "%")))
-  }
 
   table2$showSpecifiedColumnsOnly <- TRUE
 
@@ -594,67 +611,21 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ewTOT <- sum(c(ewLSL, ewUSL), na.rm = T)
   expWithin <- c(ewLSL, ewUSL, ewTOT)
 
+  if(returnPerformanceDataframe){
+    df <- data.frame("Source" = rowNames,
+                     "Observed" = observed,
+                     "Expected Overall" = expOverall,
+                     "Expected Within"  = expWithin)
+    return(df)
+
+  }
+
+
 
   table2List <- list("rowNames" = rowNames,
                      "observed" = observed,
                      "expOverall" = expOverall,
                      "expWithin" = expWithin)
-
-
-  if (options[["csConfidenceInterval"]]){
-    zLSL <- (meanOverall - lsl)/sdo
-    zUSL <- (usl - meanOverall)/sdo
-
-    # expected overall CI
-    if (options[["lowerSpecificationField"]]){
-      u <- zLSL + qnorm(1 - ciAlpha/2) * sqrt((1/n) + ((zLSL^2) / (2*(n-1))))
-      eoLSLcil <- 1e6 * (1 - pnorm(u))
-      l <- zLSL - qnorm(1 - ciAlpha/2) * sqrt((1/n) + ((zLSL^2) / (2*(n-1))))
-      eoLSLciu <- 1e6 * (1 - pnorm(l))
-    }else{
-      eoLSLcil <- NA
-      eoLSLciu <- NA
-    }
-    if (options[["upperSpecificationField"]]){
-      u <- zUSL + qnorm(1 - ciAlpha/2) * sqrt((1/n) + ((zUSL^2) / (2*(n-1))))
-      eoUSLcil <- 1e6 * (1 - pnorm(u))
-      l <- zUSL - qnorm(1 - ciAlpha/2) * sqrt((1/n) + ((zUSL^2) / (2*(n-1))))
-      eoUSLciu <- 1e6 * (1 - pnorm(l))
-    }else{
-      eoUSLcil <- NA
-      eoUSLciu <- NA
-    }
-    eoTOTcil <- NA
-    eoTOTciu <- NA
-
-    xpolb <- c(eoLSLcil, eoUSLcil, eoTOTcil)
-    xpoub <- c(eoLSLciu, eoUSLciu, eoTOTciu)
-
-    table2List[["xpolb"]] <- xpolb
-    table2List[["xpoub"]] <- xpoub
-
-
-    # expected within CI
-    zLSLw <- (meanOverall - lsl)/sdw
-
-    zUSLw <- (usl - meanOverall)/sdw
-    if (options[["lowerSpecificationField"]]){
-      u <- zLSLw + qnorm(1 - ciAlpha/2) * sqrt((1/n) + ((zLSLw^2) / (2*(20-1))))
-      ewLSLcil <- 1e6 * (1 - pnorm(u))
-      l <- zLSLw - qnorm(1 - ciAlpha/2) * sqrt((1/n) + ((zLSLw^2) / (2*(95))))
-      ewLSLciu <- 1e6 * (1 - pnorm(l))
-    }else{
-      ewLSL <- NA
-    }
-    if (options[["upperSpecificationField"]]){
-      ewUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdw))
-    }else{
-      ewUSL <- NA
-    }
-    ewTOT <- sum(c(ewLSL, ewUSL), na.rm = T)
-    expWithin <- c(ewLSL, ewUSL, ewTOT)
-
-  }
 
   table2$setData(table2List)
 
@@ -707,7 +678,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
-  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'R', plot = FALSE)
+  if(length(measurements) < 2){
+    type <- 'xbar.one'
+  }else{
+    type <- 'R'
+  }
+  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
   allData <- unlist(dataset[, measurements])
   n <- length(allData)
   lsl <- options[["lowerSpecification"]]
@@ -1196,6 +1172,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, returnDataframe = TRUE)
   potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, returnDataframe = TRUE)
   overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnOverallCapDataframe = TRUE)
+  performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnPerformanceDataframe = TRUE)
 
   matrixPlot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
 
@@ -1212,7 +1189,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotMat[[1, 2]] <- .ggplotWithText(text2)
   plotMat[[2, 1]] <- ggplotTable(processSummaryDF) #process summary
   plotMat[[2, 2]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE)
-  plotMat[[3, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()   # performance
+  plotMat[[3, 1]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
   plotMat[[3, 2]] <- ggplotTable(potentialWithinDF)  #Potential within
   plotMat[[4, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
   plotMat[[4, 2]] <- ggplotTable(overallCapDF) #overall capability
@@ -1223,10 +1200,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(matrixPlot)
 }
 
-ggplotTable <- function(dataframe){
+ggplotTable <- function(dataframe, displayColNames = FALSE){
   df <- tibble::tibble(dataframe)
   p <- ggplot2::ggplot() + ggplot2::theme_void() + ggpp::geom_table(data = data.frame(x = 1, y = 1), ggplot2::aes(x = x, y = y), label = list(df),
-                                                                    table.colnames = FALSE, size = 7)
+                                                                    table.colnames = displayColNames, size = 7)
 
   return(p)
 }
