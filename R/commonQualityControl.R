@@ -19,13 +19,13 @@
   if (!ready)
     return()
 
-  if (length(measurements) < 2) {
-    matrixPlot$setError(gettext("You must enter at least 2 measurements to get this output."))
-    return()
-  }
-
   if(subgroups != "")
     subgroups <- dataset[[subgroups]]
+
+  if (length(measurements) < 2) {
+      matrixPlot$setError(gettext("Subgroup size must be > 1 to display X-bar & R Chart."))
+      return()
+    }
 
   plotMat <- matrix(list(), 2, 1)
   plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
