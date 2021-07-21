@@ -133,7 +133,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     .qcProcessSummaryTable(options, dataset, ready, childContainer, measurements)
 
     if (options[["CapabilityStudyPlot"]])
-      .qcProcessCapabilityPlot(options, dataset, ready, childContainer, measurements)
+      .qcProcessCapabilityPlot(options, dataset, ready, childContainer, measurements, distribution = 'normal')
     if (options[["CapabilityStudyTables"]]){
       .qcProcessCapabilityTableWithin(options, dataset, ready, childContainer, measurements)
       .qcProcessCapabilityTableOverall(options, dataset, ready, childContainer, measurements)
@@ -145,9 +145,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     childContainer2 <- createJaspContainer(gettext("Process Capability of Measurements (Non-Normal Capability Study)"))
     childContainer2$position <- 2
-    container[["nonNormalCapabilityAnalysis"]] <- childContainer2
 
-    .qcProcessCapabilityTableNonNormal(options, dataset, ready, childContainer2, measurements)
+    container[["nonNormalCapabilityAnalysis"]] <- childContainer2
+    if (options[["CapabilityStudyPlot"]])
+      .qcProcessCapabilityPlot(options, dataset, ready, childContainer2, measurements, distribution = options[["nonNormalDist"]])
+    if (options[["CapabilityStudyTables"]])
+      .qcProcessCapabilityTableNonNormal(options, dataset, ready, childContainer2, measurements)
   }
 }
 
@@ -228,7 +231,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 }
 
-.qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements, returnPlotObject = FALSE) {
+.qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements, returnPlotObject = FALSE, distribution = c('normal', 'Weibull',
+                                                                                                                                  'Lognormal', '3lognormal', '3weibull')) {
 
   plot <- createJaspPlot(title = gettext("Capability of the Process"), width = 700, height = 400)
   plot$dependOn(c("csBinWidthType", "csNumberOfBins"))
@@ -279,11 +283,31 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   binWidth <- (h$breaks[2] - h$breaks[1])
 
   p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
-    ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits) +
     ggplot2::scale_y_continuous(name = gettext("Density")) +
     ggplot2::geom_histogram(ggplot2::aes(y =..density..), fill = "grey", col = "black", size = .7, binwidth = binWidth, center = binWidth/2) +
-    ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)), color = "dodgerblue") +
-    ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw), color = "red")
+    ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits)
+  if(distribution == 'normal'){
+    p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)), color = "dodgerblue") +
+      ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw), color = "red")
+  }else if(distribution == 'Weibull'){
+    shape <- .distributionParameters(data = allData, distribution = distribution)$beta
+    scale <- .distributionParameters(data = allData, distribution = distribution)$theta
+    p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale), color = "red")
+  }else if(distribution == 'Lognormal'){
+    shape <- .distributionParameters(data = allData, distribution = distribution)$beta
+    scale <- .distributionParameters(data = allData, distribution = distribution)$theta
+    p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale), color = "red")
+  }else if(distribution == '3lognormal'){
+    shape <- .distributionParameters(data = allData, distribution = distribution)$theta
+    scale <- .distributionParameters(data = allData, distribution = distribution)$beta
+    threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
+    p <- p + ggplot2::stat_function(fun = FAdist::dlnorm3 , args = list(shape = shape, scale = scale, thres = threshold), color = "red")
+  }else if(distribution == '3weibull'){
+    shape <- .distributionParameters(data = allData, distribution = distribution)$beta
+    scale <- .distributionParameters(data = allData, distribution = distribution)$theta
+    threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
+    p <- p + ggplot2::stat_function(fun = FAdist::dweibull3 , args = list(shape = shape, scale = scale, thres = threshold), color = "red")
+  }
 
   if (options[["targetValueField"]])
     p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen")
@@ -676,27 +700,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   lsl <- options[["lowerSpecification"]]
   usl <- options[["upperSpecification"]]
 
-  if (options[["nonNormalDist"]] == "Lognormal") {
-    beta <- fitdistrplus::fitdist(allData, 'lnorm')$estimate[[1]]
-    theta <- fitdistrplus::fitdist(allData, 'lnorm')$estimate[[2]]
-  } else if (options[["nonNormalDist"]] == "Weibull") {
-    beta    <- mixdist::weibullpar(mu = mean(allData), sigma = sd(allData), loc = 0)$shape
-    theta   <- mixdist::weibullpar(mu = mean(allData), sigma = sd(allData), loc = 0)$scale
-  }else if(options[["nonNormalDist"]] == "3lognormal"){
-    beta <- EnvStats::elnorm3(allData)$parameters[[1]]
-    theta <- EnvStats::elnorm3(allData)$parameters[[2]]
-    threshold <- EnvStats::elnorm3(allData)$parameters[[3]]
-  }else if(options[["nonNormalDist"]] == "3weibull"){
-    beta <- weibullness::weibull.mle(allData)[[1]]
-    theta <- weibullness::weibull.mle(allData)[[2]]
-    threshold <- as.vector(weibullness::weibull.mle(allData)[[3]])
-  }
-
+  distParameters <- .distributionParameters(data = allData, distribution = options[["nonNormalDist"]])
+  beta <- distParameters$beta
+  theta <- distParameters$theta
 
   rows <- list("n" = n,"mean" = mean(allData), "sd" = sd(allData), "lsl" = options[["lowerSpecification"]],
                "usl" = options[["upperSpecification"]], "target" = options[["targetValue"]], "beta" = beta, "theta" = theta)
-  if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull")
+  if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull"){
+    threshold <- distParameters$threshold
     rows[['threshold']] <- threshold
+  }
 
   table$addRows(rows)
 
@@ -1274,4 +1287,26 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
   return(p)
 }
 
+.distributionParameters <- function(data, distribution = c('Lognormal', 'Weibull', '3lognormal', '3weibull')){
+  if (distribution == "Lognormal") {
+    beta <- fitdistrplus::fitdist(data, 'lnorm')$estimate[[1]]
+    theta <- fitdistrplus::fitdist(data, 'lnorm')$estimate[[2]]
+  } else if (distribution == "Weibull") {
+    beta    <- mixdist::weibullpar(mu = mean(data), sigma = sd(data), loc = 0)$shape
+    theta   <- mixdist::weibullpar(mu = mean(data), sigma = sd(data), loc = 0)$scale
+  }else if(distribution == "3lognormal"){
+    beta <- EnvStats::elnorm3(data)$parameters[[1]]
+    theta <- EnvStats::elnorm3(data)$parameters[[2]]
+    threshold <- EnvStats::elnorm3(data)$parameters[[3]]
+  }else if(distribution == "3weibull"){
+    beta <- weibullness::weibull.mle(data)[[1]]
+    theta <- weibullness::weibull.mle(data)[[2]]
+    threshold <- as.vector(weibullness::weibull.mle(data)[[3]])
+  }
+  list <- list(beta = beta,
+               theta = theta)
+  if(distribution == '3weibull' | distribution == '3lognormal')
+    list['threshold'] <- threshold
+  return(list)
+}
 
