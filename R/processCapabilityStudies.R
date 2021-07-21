@@ -660,15 +660,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. Deviation"))
-
-  if (options[["nonNormalDist"]] == "Lognormal") {
-    TRUE
-
-
-  } else if (options[["nonNormalDist"]] == "Weibull") {
-    table$addColumnInfo(name = "beta", type = "number", title = gettextf("%1$s", "\u03B2"))
-    table$addColumnInfo(name = "theta", type = "number", title = gettextf("%1$s", "\u03B8"))
-  }
+  table$addColumnInfo(name = "beta", type = "number", title = gettextf("%1$s", "\u03B2"))
+  table$addColumnInfo(name = "theta", type = "number", title = gettextf("%1$s", "\u03B8"))
+  if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull")
+    table$addColumnInfo(name = "threshold", type = "number", title = gettext('Threshold'))
 
 
   table$showSpecifiedColumnsOnly <- TRUE
@@ -676,40 +671,32 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
 
-  # Take a look at this input! Is is supposed to be like this or must it be transposed?
-  # Transposed gives NA often as std.dev
-  if(length(measurements) < 2){
-    type <- 'xbar.one'
-  }else{
-    type <- 'R'
-  }
-  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
   allData <- unlist(dataset[, measurements])
   n <- length(allData)
   lsl <- options[["lowerSpecification"]]
   usl <- options[["upperSpecification"]]
 
   if (options[["nonNormalDist"]] == "Lognormal") {
-
-    tau     <- sd(allData) / mean(allData)
-    sdLog   <- sqrt(log(tau^2 +1))
-    meanLog <- log(mean(allData)) - ((sdLog^2) / 2)
-    lower   <- plnorm(q = options[["lowerSpecification"]], meanlog = meanLog, sdlog = sdLog)
-    upper   <- 1 - plnorm(q = options[["upperSpecification"]], meanlog = meanLog, sdlog = sdLog)
-    cpk     <- 1 - plnorm((max(lower, upper))) / 3
-
-    rows <- list("mean" = mean(allData), "sd" = sd(allData), "lsl" = options[["lowerSpecification"]],
-                 "usl" = options[["upperSpecification"]], "cpk" = cpk, "lower" = lower, "upper" = upper)
-
+    beta <- fitdistrplus::fitdist(allData, 'lnorm')$estimate[[1]]
+    theta <- fitdistrplus::fitdist(allData, 'lnorm')$estimate[[2]]
   } else if (options[["nonNormalDist"]] == "Weibull") {
-
     beta    <- mixdist::weibullpar(mu = mean(allData), sigma = sd(allData), loc = 0)$shape
     theta   <- mixdist::weibullpar(mu = mean(allData), sigma = sd(allData), loc = 0)$scale
-
-    rows <- list("n" = n,"mean" = mean(allData), "sd" = sd(allData), "lsl" = options[["lowerSpecification"]],
-                 "usl" = options[["upperSpecification"]], "target" = options[["targetValue"]], "beta" = beta, "theta" = theta)
-
+  }else if(options[["nonNormalDist"]] == "3lognormal"){
+    beta <- EnvStats::elnorm3(allData)$parameters[[1]]
+    theta <- EnvStats::elnorm3(allData)$parameters[[2]]
+    threshold <- EnvStats::elnorm3(allData)$parameters[[3]]
+  }else if(options[["nonNormalDist"]] == "3weibull"){
+    beta <- weibullness::weibull.mle(allData)[[1]]
+    theta <- weibullness::weibull.mle(allData)[[2]]
+    threshold <- as.vector(weibullness::weibull.mle(allData)[[3]])
   }
+
+
+  rows <- list("n" = n,"mean" = mean(allData), "sd" = sd(allData), "lsl" = options[["lowerSpecification"]],
+               "usl" = options[["upperSpecification"]], "target" = options[["targetValue"]], "beta" = beta, "theta" = theta)
+  if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull")
+    rows[['threshold']] <- threshold
 
   table$addRows(rows)
 
@@ -720,7 +707,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]])
     table2$addColumnInfo(name = "pp", type = "number", title = gettext("Pp"))
-
   if (options[["lowerSpecificationField"]])
     table2$addColumnInfo(name = "ppl", type = "number", title = gettext("PPL"))
   if (options[["upperSpecificationField"]])
@@ -730,9 +716,23 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table2data <- list()
 
   if (options[["nonNormalDist"]] == "Lognormal") {
-
-
-  } else if (options[["nonNormalDist"]] == "Weibull") {
+    if (options[["lowerSpecificationField"]]){
+      p1 <- plnorm(q = lsl, meanlog = beta, sdlog = theta, lower.tail = T)
+      zLSL <- qnorm(p1)
+      ppl <- -zLSL/3
+      table2data[["ppl"]] <- ppl
+    }else{
+      ppl <- NA
+    }
+    if (options[["upperSpecificationField"]]){
+      p2 <- plnorm(q = usl,  meanlog = beta, sdlog = theta)
+      zUSL <- qnorm(p2)
+      ppu <- zUSL/3
+      table2data[["ppu"]] <- ppu
+    }else{
+      ppu <- NA
+    }
+  }else if (options[["nonNormalDist"]] == "Weibull") {
     if (options[["lowerSpecificationField"]]){
       p1 <- pweibull(q = lsl, shape = beta, scale = theta, lower.tail = T)
       zLSL <- qnorm(p1)
@@ -749,13 +749,48 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else{
       ppu <- NA
     }
-    if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]]){
-      pp <- (zUSL - zLSL)/6
-      table2data[["pp"]] <- pp
+  }else if (options[["nonNormalDist"]] == "3lognormal") {
+    if (options[["lowerSpecificationField"]]){
+      p1 <- FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = T)
+      zLSL <- qnorm(p1)
+      ppl <- -zLSL/3
+      table2data[["ppl"]] <- ppl
+    }else{
+      ppl <- NA
     }
-    ppk <- min(c(ppl, ppu), na.rm = T)
-    table2data[["ppk"]] <- ppk
+    if (options[["upperSpecificationField"]]){
+      p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)
+      zUSL <- qnorm(p2)
+      ppu <- zUSL/3
+      table2data[["ppu"]] <- ppu
+    }else{
+      ppu <- NA
+    }
+  }else if (options[["nonNormalDist"]] == "3weibull") {
+    if (options[["lowerSpecificationField"]]){
+      p1 <- FAdist::pweibull3(q = lsl, shape = beta, scale = theta, thres = threshold, lower.tail = T)
+      zLSL <- qnorm(p1)
+      ppl <- -zLSL/3
+      table2data[["ppl"]] <- ppl
+    }else{
+      ppl <- NA
+    }
+    if (options[["upperSpecificationField"]]){
+      p2 <- FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold)
+      zUSL <- qnorm(p2)
+      ppu <- zUSL/3
+      table2data[["ppu"]] <- ppu
+    }else{
+      ppu <- NA
+    }
   }
+
+  if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]]){
+    pp <- (zUSL - zLSL)/6
+    table2data[["pp"]] <- pp
+  }
+  ppk <- min(c(ppl, ppu), na.rm = T)
+  table2data[["ppk"]] <- ppk
 
   table2$setData(table2data)
   container[["overallCapabilityNonNormal"]] <- table2
@@ -787,11 +822,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # expected overall
 
   if (options[["nonNormalDist"]] == "Lognormal") {
-
-
+    if (options[["lowerSpecificationField"]]){
+      eoLSL <- 1e6 * plnorm(q = lsl, meanlog = beta, sdlog = theta, lower.tail = T)
+    }else{
+      eoLSL <- NA
+    }
+    if (options[["upperSpecificationField"]]){
+      eoUSL <- 1e6 * (1 - plnorm(q = usl, meanlog = beta, sdlog = theta))
+    }else{
+      eoUSL <- NA
+    }
   } else if (options[["nonNormalDist"]] == "Weibull") {
     if (options[["lowerSpecificationField"]]){
-      eoLSL <- 1e6 * pweibull(q = lsl, shape = beta, scale = theta)
+      eoLSL <- 1e6 * pweibull(q = lsl, shape = beta, scale = theta, lower.tail = T)
     }else{
       eoLSL <- NA
     }
@@ -800,9 +843,32 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else{
       eoUSL <- NA
     }
-    eoTOT <- sum(c(eoLSL, eoUSL), na.rm = T)
-    expOverall <- c(eoLSL, eoUSL, eoTOT)
+  }else if (options[["nonNormalDist"]] == "3lognormal") {
+    if (options[["lowerSpecificationField"]]){
+      eoLSL <- 1e6 * FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold, lower.tail = T)
+    }else{
+      eoLSL <- NA
+    }
+    if (options[["upperSpecificationField"]]){
+      eoUSL <- 1e6 * (1 - FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold))
+    }else{
+      eoUSL <- NA
+    }
+  }else if (options[["nonNormalDist"]] == "3weibull") {
+    if (options[["lowerSpecificationField"]]){
+      eoLSL <- 1e6 * FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold, lower.tail = T)
+    }else{
+      eoLSL <- NA
+    }
+    if (options[["upperSpecificationField"]]){
+      eoUSL <- 1e6 * (1 - FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold))
+    }else{
+      eoUSL <- NA
+    }
   }
+  eoTOT <- sum(c(eoLSL, eoUSL), na.rm = T)
+  expOverall <- c(eoLSL, eoUSL, eoTOT)
+
 
   table3data <- list("rowNames" = rowNames, "observed" = observed, "expOverall" = expOverall)
   table3$setData(table3data)

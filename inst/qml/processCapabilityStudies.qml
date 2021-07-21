@@ -128,7 +128,9 @@ Form
 							values:
 								[
 								{label: qsTr("Weibull"),		value: "Weibull"  },
-								{label: qsTr("Lognormal"),		value: "Lognormal"}
+								{label: qsTr("Lognormal"),		value: "Lognormal"},
+								{label: qsTr("3-paramter lognormal"),		value: "3lognormal"},
+								{label: qsTr("3-paramter weibull"),		value: "3weibull"}
 							]
 						}
 					}
