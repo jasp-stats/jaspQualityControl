@@ -658,7 +658,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 }
 
-.qcProcessCapabilityTableNonNormal <- function(options, dataset, ready, container, measurements) {
+.qcProcessCapabilityTableNonNormal <- function(options, dataset, ready, container, measurements, returnSummaryDF = FALSE, returnCapabilityDF = FALSE,
+                                               returnPerformanceDF = FALSE) {
 
   table <- createJaspTable(title = gettextf("Process Summary"))
 
@@ -674,20 +675,27 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
   }
 
+  sourceVector1 <- vector()
+
   if (options[["lowerSpecificationField"]])
     table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
-  if (options[["upperSpecificationField"]])
-    table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
+
   if (options[["targetValueField"]])
     table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
+
+  if (options[["upperSpecificationField"]])
+    table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
 
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. Deviation"))
   table$addColumnInfo(name = "beta", type = "number", title = gettextf("%1$s", "\u03B2"))
   table$addColumnInfo(name = "theta", type = "number", title = gettextf("%1$s", "\u03B8"))
-  if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull")
+  sourceVector1 <- c(sourceVector1, 'LSL', 'Target', 'USL', 'Sample size', 'Mean', 'Std. Deviation', "Beta", "Theta")
+  if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull"){
     table$addColumnInfo(name = "threshold", type = "number", title = gettext('Threshold'))
+    sourceVector1 <- c(sourceVector1, 'Threshold')
+  }
 
 
   table$showSpecifiedColumnsOnly <- TRUE
@@ -699,32 +707,54 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   n <- length(allData)
   lsl <- options[["lowerSpecification"]]
   usl <- options[["upperSpecification"]]
+  target <- options[["targetValue"]]
+  sd <- sd(allData)
+  mean <- mean(allData, na.rm = TRUE)
 
   distParameters <- .distributionParameters(data = allData, distribution = options[["nonNormalDist"]])
   beta <- distParameters$beta
   theta <- distParameters$theta
 
-  rows <- list("n" = n,"mean" = mean(allData), "sd" = sd(allData), "lsl" = options[["lowerSpecification"]],
-               "usl" = options[["upperSpecification"]], "target" = options[["targetValue"]], "beta" = beta, "theta" = theta)
+  rows <- list("n" = n,"mean" = mean, "sd" = sd, "lsl" = lsl,
+               "usl" = usl, "target" = target, "beta" = beta, "theta" = theta)
   if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull"){
     threshold <- distParameters$threshold
     rows[['threshold']] <- threshold
   }
 
-  table$addRows(rows)
-
-  container[["summaryTableNonNormal"]] <- table
-
+  if(returnSummaryDF){
+    if (!options[["lowerSpecificationField"]])
+      lsl <- '*'
+    if (!options[["targetValueField"]])
+      target <- '*'
+    if (!options[["upperSpecificationField"]])
+      usl <- '*'
+    valueVector <- c(lsl, target, usl, n, mean, sd, beta, theta)
+    if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull")
+      valueVector <- c(valueVector, threshold)
+    df <- data.frame(sources = sourceVector1,
+                     values = valueVector)
+    return(df)
+  }
 
   table2 <- createJaspTable(title = gettextf("Overall Capability"))
 
-  if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]])
+  sourceVector2 <- vector()
+
+  if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]]){
     table2$addColumnInfo(name = "pp", type = "number", title = gettext("Pp"))
-  if (options[["lowerSpecificationField"]])
+    sourceVector2 <- c(sourceVector2, 'Pp')
+  }
+  if (options[["lowerSpecificationField"]]){
     table2$addColumnInfo(name = "ppl", type = "number", title = gettext("PPL"))
-  if (options[["upperSpecificationField"]])
+    sourceVector2 <- c(sourceVector2, 'PPL')
+  }
+  if (options[["upperSpecificationField"]]){
     table2$addColumnInfo(name = "ppu", type = "number", title = gettext("PPU"))
+    sourceVector2 <- c(sourceVector2, 'PPU')
+  }
   table2$addColumnInfo(name = "ppk", type = "number", title = gettext("Ppk"))
+  sourceVector2 <- c(sourceVector2, 'Ppk')
 
   table2data <- list()
 
@@ -801,12 +831,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]]){
     pp <- (zUSL - zLSL)/6
     table2data[["pp"]] <- pp
+  }else{
+    pp <- NA
   }
   ppk <- min(c(ppl, ppu), na.rm = T)
   table2data[["ppk"]] <- ppk
 
-  table2$setData(table2data)
-  container[["overallCapabilityNonNormal"]] <- table2
+  if(returnCapabilityDF){
+    valueVector <- c(pp, ppl, ppu, ppk)
+    df <- data.frame(source = sourceVector2,
+                     values = na.omit(valueVector))
+    return(df)
+  }
 
   table3 <- createJaspTable(title = gettextf("Performance"))
 
@@ -882,10 +918,22 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   eoTOT <- sum(c(eoLSL, eoUSL), na.rm = T)
   expOverall <- c(eoLSL, eoUSL, eoTOT)
 
-
   table3data <- list("rowNames" = rowNames, "observed" = observed, "expOverall" = expOverall)
-  table3$setData(table3data)
 
+  if(returnPerformanceDF){
+    df <- data.frame("Source" = rowNames,
+                     "Observed" = observed,
+                     "Expected Overall" = expOverall)
+    return(df)
+  }
+
+  table$addRows(rows)
+  container[["summaryTableNonNormal"]] <- table
+
+  table2$setData(table2data)
+  container[["overallCapabilityNonNormal"]] <- table2
+
+  table3$setData(table3data)
   container[["PerformanceNonNormal"]] <- table3
 
 
@@ -1247,12 +1295,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   misc <- gettextf("Misc: %s", options[["pcReportMisc"]])
   text2 <- c(reportedBy, misc)
 
-
-  processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, returnDataframe = TRUE)
-  potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, returnDataframe = TRUE)
-  overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnOverallCapDataframe = TRUE)
-  performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnPerformanceDataframe = TRUE)
-
   matrixPlot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
 
   if(!options[["upperSpecificationField"]] && !options[["lowerSpecificationField"]]){
@@ -1263,15 +1305,34 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if(!ready)
     return(matrixPlot)
 
-  plotMat <- matrix(list(), 4, 2)
-  plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- .ggplotWithText(text2)
-  plotMat[[2, 1]] <- ggplotTable(processSummaryDF) #process summary
-  plotMat[[2, 2]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE)
-  plotMat[[3, 1]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
-  plotMat[[3, 2]] <- ggplotTable(potentialWithinDF)  #Potential within
-  plotMat[[4, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
-  plotMat[[4, 2]] <- ggplotTable(overallCapDF) #overall capability
+  if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis"){
+    processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, returnDataframe = TRUE)
+    potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, returnDataframe = TRUE)
+    overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnOverallCapDataframe = TRUE)
+    performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnPerformanceDataframe = TRUE)
+
+    plotMat <- matrix(list(), 4, 2)
+    plotMat[[1, 1]] <- .ggplotWithText(text1)
+    plotMat[[1, 2]] <- .ggplotWithText(text2)
+    plotMat[[2, 1]] <- ggplotTable(processSummaryDF) #process summary
+    plotMat[[2, 2]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = 'normal')
+    plotMat[[3, 1]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
+    plotMat[[3, 2]] <- ggplotTable(potentialWithinDF)  #Potential within
+    plotMat[[4, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
+    plotMat[[4, 2]] <- ggplotTable(overallCapDF) #overall capability
+  }else{
+    processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnSummaryDF = TRUE)
+    overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnCapabilityDF = TRUE)
+    performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnPerformanceDF = TRUE)
+
+    plotMat <- matrix(list(), 3, 2)
+    plotMat[[1, 1]] <- .ggplotWithText(text1)
+    plotMat[[1, 2]] <- .ggplotWithText(text2)
+    plotMat[[2, 1]] <- ggplotTable(processSummaryDF) #process summary
+    plotMat[[2, 2]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = options[["nonNormalDist"]])
+    plotMat[[3, 1]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
+    plotMat[[3, 2]] <- ggplotTable(overallCapDF)  #overall capability
+  }
 
   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Process Capability Report for %s", title), ""))
   matrixPlot$plotObject <- p
