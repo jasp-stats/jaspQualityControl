@@ -39,7 +39,7 @@ Form
 
 
 		}
-		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
+		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]}
 		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
 	}
 
