@@ -20,7 +20,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Type 1 Study")
+		title:			qsTr("Type 1 Instrument Study")
 		func:			"msaType1Gauge"
 	}
 	Analysis
@@ -30,18 +30,23 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Gauge r&R")
+		title:			qsTr("Type 2/3 Gauge r&R (manual/automatic equipment)")
 		func:			"msaGaugeRR"
 	}
 	Analysis
 	{
-		title:			qsTr("Gauge r&R (Non-Replicable Measurements)")
+		title:			qsTr("Gauge r&R (non-replicable measurements)")
 		func:			"msaGaugeRRnonrep"
 	}
 	Analysis
 	{
 		title:			qsTr("Attributes Agreement Analysis")
 		func:			"msaAttribute"
+	}
+		Analysis
+	{
+		title:			qsTr("Test-retest (Range method)")
+		func:			"msaTestRetest"
 	}
 
 	GroupTitle

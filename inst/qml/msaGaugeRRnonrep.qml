@@ -31,8 +31,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Long format"),					value: "gaugeRRNonRepLongFormat"},
-			{label: qsTr("Wide format"),				value: "gaugeRRNonRepWideFormat"},
+			{label: qsTr("Single column"),					value: "gaugeRRNonRepLongFormat"},
+			{label: qsTr("Across rows"),				value: "gaugeRRNonRepWideFormat"},
 		]
 		id: gaugeRRNonRepDataFormat
 	}

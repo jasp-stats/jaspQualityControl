@@ -29,8 +29,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Long format"),					value: "PClongFormat"},
-			{label: qsTr("Wide format"),				value: "PCwideFormat"},
+			{label: qsTr("Single column"),					value: "PClongFormat"},
+			{label: qsTr("Across rows"),				value: "PCwideFormat"},
 		]
 		id: pcDataFormat
 	}
@@ -101,7 +101,7 @@ Form
 		{
 			Group
 			{
-				title:							qsTr("Study Type")
+				title:							qsTr("Type of data distribution")
 
 
 				RadioButtonGroup
@@ -111,14 +111,14 @@ Form
 					RadioButton
 					{
 						name: 				"normalCapabilityAnalysis"
-						label: 				qsTr("Normal capability study")
+						label: 				qsTr("Normal distribution")
 						checked: 			true
 					}
 
 					RadioButton
 					{
 						name: 				"nonnormalCapabilityAnalysis"
-						label: 				qsTr("Non-normal capability study")
+						label: 				qsTr("Non-normal distribution")
 						
 						DropDown
 						{
@@ -246,7 +246,7 @@ Form
 		{
 			Group
 			{
-				title: 							qsTr("Stability of the Process")
+				title: 							qsTr("Stability of the process")
 				
 
 				RadioButtonGroup
@@ -263,14 +263,14 @@ Form
 					RadioButton
 					{
 						name: 				"IMR"
-						label: 				qsTr("I-MR chart")
+						label: 				qsTr("x-mR chart")
 					}
 				}
 			}
 
 			Group
 			{
-				title: 							qsTr("Distribution of the Process")
+				title: 							qsTr("Distribution of the process")
 
 				CheckBox
 				{
@@ -281,7 +281,7 @@ Form
 					CheckBox
 					{
 						name:					"displayDensity"
-						label:					qsTr("Fit normal distribution")
+						label:					qsTr("Fit distribution")
 						checked:				true
 					}
 

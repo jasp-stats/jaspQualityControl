@@ -30,8 +30,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Long format"),					value: "gaugeRRlongFormat"},
-			{label: qsTr("Wide format"),				value: "gaugeRRwideFormat"},
+			{label: qsTr("Single column"),					value: "gaugeRRlongFormat"},
+			{label: qsTr("Across rows"),				value: "gaugeRRwideFormat"},
 		]
 		id: gaugeRRdataFormat
 	}
@@ -86,23 +86,10 @@ Form
 
 
 	}
-	DropDown
-	{
-		name: "gaugeRRmethod"
-		label: qsTr("Gauge r&R Method")
-		indexDefaultValue: 0
-		values:
-			[
-			{label: qsTr("ANOVA method"),					value: "anovaMethod"},
-			{label: qsTr("Range method"),				value: "rangeMethod"},
-		]
-		id: gaugeRRmethod
-	}
 	
 	Section
 	{
 		title: qsTr("ANOVA Method Options")
-		visible: gaugeRRmethod.currentValue == "anovaMethod"
 		
 		Group
 		{
@@ -111,12 +98,12 @@ Form
 			DropDown
 			{
 				name: "standardDeviationReference"
-				label: qsTr("Std. Deviation reference")
+				label: qsTr("Process variation based on")
 				indexDefaultValue: 0
 				values:
 					[
-					{label: qsTr("Study Std. Deviation"),					value: "studyStandardDeviation"},
-					{label: qsTr("Historical process Std. Deviation"),				value: "historicalStandardDeviation"}
+					{label: qsTr("Study variation"),					value: "studyStandardDeviation"},
+					{label: qsTr("Historical standard deviation"),				value: "historicalStandardDeviation"}
 				]
 				id: variationReference
 			}
@@ -124,7 +111,7 @@ Form
 			DoubleField
 			{
 				name:			"historicalStandardDeviationValue"
-				label:			qsTr("Hist. Std. Deviation value:")
+				label:			qsTr("Historical standard deviation:")
 				defaultValue:	0
 				enabled:		variationReference.currentValue == "historicalStandardDeviation"
 			}
@@ -178,7 +165,7 @@ Form
 				DoubleField
 				{
 					name: "studyVarMultiplier"
-					label: qsTr("Study Var. multiplier value:")
+					label: qsTr("Study variation multiplier:")
 					fieldWidth: 60
 					defaultValue: 6
 					min:			0.001
@@ -192,11 +179,6 @@ Form
 					label: qsTr("Graph variation components")
 					checked: true
 				}
-			}
-
-			CheckBox
-			{
-				name: "gaugeDescriptives";		label: qsTr("Descriptives table");		checked: true
 			}
 		}
 
@@ -318,70 +300,5 @@ Form
 		}
 		
 
-	}
-	
-	Section
-	{
-		title: qsTr("Range Method Options")
-		visible: gaugeRRmethod.currentValue == "rangeMethod"
-		
-		Group
-		{
-			title: qsTr("Analysis Options")
-			
-			DoubleField
-			{
-				name:			"rangePSD"
-				label:			qsTr("Process Std. Deviation:")
-				defaultValue:	1
-				enabled:		TRUE
-			}
-			
-			CheckBox
-			{
-				name: "rangeRr"
-				label: qsTr("r&R table")
-				checked: true
-			}
-		}
-		
-		Group
-		{
-			title: qsTr("Plots")
-
-			CheckBox
-			{
-				name: "rangeScatterPlotOperatorParts"
-				label: qsTr("Scatter plot operators vs. parts")
-			}
-			
-			CheckBox
-			{
-				name: "rangeScatterPlotOperators"
-				label: qsTr("Scatter plot operators")
-				checked: true
-				
-				CheckBox
-				{
-					name: "rangeScatterPlotFitLine"
-					label: qsTr("Fit line")
-					checked: true
-				}
-				
-				CheckBox
-				{
-					name: "rangeScatterPlotOriginLine"
-					label: qsTr("Show origin line")
-					checked: true
-				}
-
-			}
-			
-			CheckBox
-			{
-				name: "rangeRchart"
-				label: qsTr("R chart")
-			}
-		}
 	}
 }

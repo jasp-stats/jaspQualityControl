@@ -36,7 +36,8 @@ Imports:
   ggpp,
   tibble,
   EnvStats,
-  FAdist
+  FAdist,
+  kSamples
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
