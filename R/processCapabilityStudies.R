@@ -143,7 +143,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis") {
 
-    childContainer2 <- createJaspContainer(gettext("Process Capability (Non-nqormal Capability Analysis)"))
+    childContainer2 <- createJaspContainer(gettext("Process Capability (Non-normal Capability Analysis)"))
     childContainer2$position <- 2
 
     container[["nonNormalCapabilityAnalysis"]] <- childContainer2

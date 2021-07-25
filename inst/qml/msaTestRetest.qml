@@ -49,9 +49,10 @@ Form
 		{
 			id:									variable1
 			name:								"operators"
-			title:								qsTr("Operators")
+			title:								qsTr("Operator / Repetition")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			visible:							gaugeRRdataFormat.currentValue == "testRetestLongFormat"
 		}
 		
 		AssignedVariablesList
@@ -118,7 +119,22 @@ Form
 			CheckBox
 			{
 				name: "rangeScatterPlotOperatorParts"
-				label: qsTr("Scatter plot operators vs. parts")
+				label: qsTr("Runchart of parts")
+			}
+			
+			CheckBox
+			{
+			name: "rangeScatterPlotOperators"
+			label: qsTr("Scatter plot operators")
+			checked: true
+			
+				CheckBox
+				{
+				name: "rangeScatterPlotFitLine"
+				label: qsTr("Regression line")
+				checked: true
+				}
+				
 			}
 
 			

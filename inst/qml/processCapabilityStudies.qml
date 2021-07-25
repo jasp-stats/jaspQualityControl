@@ -133,6 +133,18 @@ Form
 								{label: qsTr("3-parameter weibull"),		value: "3weibull"}
 							]
 						}
+						
+												DropDown
+						{
+							name: 					"nonNormalMethod"
+							label: 					qsTr("Method:")
+							indexDefaultValue: 		0
+							values:
+								[
+								{label: qsTr("Non-conformance method"),		value: "nonconformance"  },
+								{label: qsTr("Percentile method"),		value: "percentile"}
+							]
+						}
 					}
 				}
 

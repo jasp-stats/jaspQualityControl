@@ -32,13 +32,10 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   factor.vars <- factor.vars[factor.vars != ""]
 
   if (options[["testRetestDataFormat"]] == "testRetestWideFormat"){
-    ready <- (length(measurements) != 0 && operators != "" && parts != "")
+    ready <- (length(measurements) > 1 && parts != "")
   }else{
     ready <- (measurements != "" && operators != "" && parts != "")
   }
-
-
-  readyRangeMethod <- length(measurements) == 2
 
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
@@ -46,13 +43,10 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   }
 
   if (options[["testRetestDataFormat"]] == "testRetestLongFormat" && ready){
-    dataset <- dataset[order(dataset[operators]),]
-    nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
-    index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
-    dataset <- cbind(dataset, data.frame(index = index))
-    dataset <- tidyr::spread(dataset, index, measurements)
-    measurements <- unique(index)
-    dataset <- dataset[,c(operators, parts, measurements)]
+    wideData <- tidyr::spread(dataset, operators, measurements)
+    measurements <- colnames(wideData)
+    measurements <- measurements[measurements != parts]
+    dataset <- wideData
   }
 
 
@@ -62,7 +56,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
     # Range Method r and R table
     if (options[["rangeRr"]]) {
-      .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = readyRangeMethod)
+      .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready)
     }
 
     # Scatter Plot Operators vs Parts
@@ -71,7 +65,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
         jaspResults[["ScatterOperatorParts"]] <- createJaspContainer(gettext("Scatterplot Operators vs Parts"))
         jaspResults[["ScatterOperatorParts"]]$position <- 9
       }
-      jaspResults[["ScatterOperatorParts"]] <- .ScatterPlotOperatorParts(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = readyRangeMethod)
+      jaspResults[["ScatterOperatorParts"]] <- .ScatterPlotOperatorParts(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
 
     # Rchart Range method
@@ -80,12 +74,21 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
         jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
         jaspResults[["rangeRchart"]]$position <- 11
       }
-      plot <- createJaspPlot(title = gettext("Range Chart by Operator"), width = 600, height = 300)
+      plot <- createJaspPlot(title = gettext("Range chart by part"), width = 600, height = 300)
       plot$dependOn(c("rangeRchart"))
-      p <- .RchartNoId(dataset = dataset[measurements], options = options, warningLimits = FALSE)
+      p <- .RchartNoId(dataset = dataset[measurements], options = options, warningLimits = FALSE)$p
       plot$plotObject <- p
       jaspResults[["rangeRchart"]] <- plot
     }
+
+  # Scatter Plot Operators
+  if (options[["rangeScatterPlotOperators"]]) {
+    if (is.null(jaspResults[["ScatterOperators"]])) {
+      jaspResults[["ScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
+      jaspResults[["ScatterOperators"]]$position <- 10
+    }
+    jaspResults[["ScatterOperators"]] <- .ScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+  }
 
 
   return()
@@ -98,17 +101,21 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 .ScatterPlotOperatorParts <- function(dataset, measurements, parts, operators, options, ready) {
 
 
-  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A, Operator B vs Part"), width = 500, height = 320)
-  plot$dependOn(c("rangeScatterPlotOperatorParts", "gaugeRRmethod"))
+  plot <- createJaspPlot(title = gettext("Runchart of parts"), width = 500, height = 320)
+  plot$dependOn(c("rangeScatterPlotOperatorParts"))
 
   if (ready) {
     partIndex <- 1:length(dataset[[measurements[1]]])
     dataset <- cbind(dataset, Parts = factor(partIndex, partIndex))
 
+    allMeasurements <- as.vector(unlist(dataset[measurements]))
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(allMeasurements)
+    yLimits <- range(yBreaks)
+
     p <- ggplot2::ggplot() +
-      jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[1]), fill = "red", size = 4) +
-      jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[2]), fill = "green", size = 4) +
-      ggplot2::ylab("Measurements")
+      jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[1], group = 1), fill = "red",  size = 4) +
+      jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[2], group = 2),fill = "green", shape = 22, size = 4) +
+      ggplot2::scale_y_continuous(name = "Measurements", limits = yLimits, breaks = yBreaks)
 
     p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = "right")
 
@@ -120,10 +127,11 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
 .rAndRtableRange <- function(dataset, measurements, parts, operators, options, jaspResults, ready) {
 
-  table <- createJaspTable(title = gettext("r&R Table"))
+  table <- createJaspTable(title = gettext("Short gauge study"))
   table$position <- 2
   table$dependOn(c("rangeRr", "gaugeRRmethod"))
 
+  table$addColumnInfo(name = "n", title = gettext("Sample size (n)"), type = "integer")
   table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
   table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
   table$addColumnInfo(name = "PSD", title = gettext("Process Std. Dev."), type = "number")
@@ -133,10 +141,6 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   jaspResults[["rAndR2"]] <- table
 
   if (ready) {
-
-    if (nrow(dataset[measurements]) > 20)
-      table$setError("Range Method available for max. 20 unique Parts")
-
     n <- length(dataset[[measurements[1]]])
     Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / n)
     d2 <- .d2Value(n)
@@ -145,10 +149,47 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     GRRpercent <- GRR/SD*100
 
 
-    table$addRows(list(      "Rbar"       = Rbar,
+    table$addRows(list(      "n"          = n,
+                             "Rbar"       = Rbar,
                              "d2"         = d2,
                              "PSD"        = SD,
                              "GRR"        = GRR,
                              "GRRpercent" = GRRpercent))
   }
 }
+
+.ScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready) {
+
+  plot <- createJaspPlot(title = gettext("Scatterplot of Operator A vs Operator B"))
+  plot$dependOn(c("rangeScatterPlotOperators", "rangeScatterPlotFitLine", "rangeScatterPlotOriginLine", "gaugeRRmethod"))
+
+  if (ready) {
+
+    p <- ggplot2::ggplot(data = dataset, ggplot2::aes_string(x = measurements[1], y = measurements[2])) +
+      jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
+      ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
+
+    if (options[["rangeScatterPlotFitLine"]])
+      p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
+
+      p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
+
+    p <- jaspGraphs::themeJasp(p)
+
+    plot$plotObject <- p
+
+  }
+
+  return(plot)
+}
+
+.d2Value <- function(n) {
+  d2table <- data.frame(n = 1:20, d2 = c(1.41421, 1.27931, 1.23105, 1.20621, 1.19105, 1.18083, 1.17348, 1.16794, 1.16361, 1.16014,
+                                         1.15729, 1.15490, 1.15289, 1.15115, 1.14965, 1.14833, 1.14717, 1.14613, 1.14520, 1.14437))
+  if(n <= 20){
+    return(d2table$d2[d2table$n == n])
+  }else{
+    return(1.12838)
+  }
+}
+
