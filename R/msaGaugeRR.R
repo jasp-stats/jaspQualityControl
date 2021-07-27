@@ -37,12 +37,19 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     ready <- (measurements != "" && operators != "" && parts != "")
   }
 
-
-  readyRangeMethod <- length(measurements) == 2
-
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
+  }
+
+  if(ready){
+    crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
+    if(!crossed){
+      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+      jaspResults[["plot"]] <- plot
+      plot$setError(gettext("Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."))
+      return()
+    }
   }
 
   if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat" && ready){
@@ -896,4 +903,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                       totalGauge    = totalGauge,
                       totalVar      = totalVar)
   return(varcompList)
+}
+
+.checkIfCrossed <- function(dataset, operators, parts, measurements){
+  partVector <- as.character(unique(dataset[[parts]]))
+  operatorVector <- as.character(unique(dataset[[operators]]))
+  for(part in partVector){
+    partData <- subset.data.frame(dataset, dataset[parts] == part)
+    if(!all(operatorVector %in% partData[[operators]])){
+      return(FALSE)
+    }
+  }
+  return(TRUE)
 }
