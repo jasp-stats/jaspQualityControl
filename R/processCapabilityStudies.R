@@ -178,8 +178,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table$showSpecifiedColumnsOnly <- TRUE
 
-  container[["processSummaryTable"]] <- table
-
   if (!ready)
     return()
 
@@ -228,8 +226,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                      values = valueVector)
     return(df)
   }
-
-
+  container[["processSummaryTable"]] <- table
 }
 
 .qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements, returnPlotObject = FALSE, distribution = c('normal', 'Weibull',
@@ -238,7 +235,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plot <- createJaspPlot(title = gettext("Capability of the process"), width = 700, height = 400)
   plot$dependOn(c("csBinWidthType", "csNumberOfBins"))
   plot$position <- 2
-  container[["capabilityPlot"]] <- plot
+
 
   if(!options[["upperSpecificationField"]] && !options[["lowerSpecificationField"]]){
     plot$setError(gettext("No specification limits set."))
@@ -323,6 +320,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return(p)
 
   plot$plotObject <- p
+
+  container[["capabilityPlot"]] <- plot
 }
 
 .qcProcessCapabilityTableWithin <- function(options, dataset, ready, container, measurements, returnDataframe = FALSE) {
@@ -760,68 +759,116 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (options[["nonNormalDist"]] == "Lognormal") {
     if (options[["lowerSpecificationField"]]){
-      p1 <- plnorm(q = lsl, meanlog = beta, sdlog = theta, lower.tail = T)
-      zLSL <- qnorm(p1)
-      ppl <- -zLSL/3
+      if(options[['nonNormalMethod' ]] == "nonconformance"){
+        p1 <- plnorm(q = lsl, meanlog = beta, sdlog = theta, lower.tail = T)
+        zLSL <- qnorm(p1)
+        ppl <- -zLSL/3
+      }else{
+        x135 <- qlnorm(p = 0.00135, meanlog = beta, sdlog = theta)
+        x05 <- qlnorm(p = 0.5, meanlog = beta, sdlog = theta)
+        ppl <- (x05 - lsl) / (x05 - x135)
+      }
       table2data[["ppl"]] <- ppl
     }else{
       ppl <- NA
     }
     if (options[["upperSpecificationField"]]){
-      p2 <- plnorm(q = usl,  meanlog = beta, sdlog = theta)
-      zUSL <- qnorm(p2)
-      ppu <- zUSL/3
+      if(options[['nonNormalMethod' ]] == "nonconformance"){
+        p2 <- plnorm(q = usl,  meanlog = beta, sdlog = theta)
+        zUSL <- qnorm(p2)
+        ppu <- zUSL/3
+      }else{
+        x99 <- qlnorm(p = 0.99865, meanlog = beta, sdlog = theta)
+        x05 <- qlnorm(p = 0.5, meanlog = beta, sdlog = theta)
+        ppu <- (usl - x05) / (x99 - x05)
+      }
       table2data[["ppu"]] <- ppu
     }else{
       ppu <- NA
     }
   }else if (options[["nonNormalDist"]] == "Weibull") {
     if (options[["lowerSpecificationField"]]){
-      p1 <- pweibull(q = lsl, shape = beta, scale = theta, lower.tail = T)
-      zLSL <- qnorm(p1)
-      ppl <- -zLSL/3
+      if(options[['nonNormalMethod' ]] == "nonconformance"){
+        p1 <- pweibull(q = lsl, shape = beta, scale = theta, lower.tail = T)
+        zLSL <- qnorm(p1)
+        ppl <- -zLSL/3
+      }else{
+        x135 <- qweibull(p = 0.00135, shape = beta, scale = theta)
+        x05 <- qweibull(p = 0.5, shape = beta, scale = theta)
+        ppl <- (x05 - lsl) / (x05 - x135)
+      }
       table2data[["ppl"]] <- ppl
     }else{
       ppl <- NA
     }
     if (options[["upperSpecificationField"]]){
-      p2 <- pweibull(q = usl, shape = beta, scale = theta)
-      zUSL <- qnorm(p2)
-      ppu <- zUSL/3
+      if(options[['nonNormalMethod' ]] == "nonconformance"){
+        p2 <- pweibull(q = usl, shape = beta, scale = theta)
+        zUSL <- qnorm(p2)
+        ppu <- zUSL/3
+      }else{
+        x99 <- qweibull(p = 0.99865, shape = beta, scale = theta)
+        x05 <- qweibull(p = 0.5, shape = beta, scale = theta)
+        ppu <- (usl - x05) / (x99 - x05)
+      }
       table2data[["ppu"]] <- ppu
     }else{
       ppu <- NA
     }
   }else if (options[["nonNormalDist"]] == "3lognormal") {
     if (options[["lowerSpecificationField"]]){
-      p1 <- FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = T)
-      zLSL <- qnorm(p1)
-      ppl <- -zLSL/3
+      if(options[['nonNormalMethod' ]] == "nonconformance"){
+        p1 <- FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = T)
+        zLSL <- qnorm(p1)
+        ppl <- -zLSL/3
+      }else{
+        x135 <- FAdist::qlnorm3(p = 0.00135, shape = theta, scale = beta, thres = threshold)
+        x05 <- FAdist::qlnorm3(p = 0.5, shape = theta, scale = beta, thres = threshold)
+        ppl <- (x05 - lsl) / (x05 - x135)
+      }
       table2data[["ppl"]] <- ppl
     }else{
       ppl <- NA
     }
     if (options[["upperSpecificationField"]]){
-      p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)
-      zUSL <- qnorm(p2)
-      ppu <- zUSL/3
+      if(options[['nonNormalMethod' ]] == "nonconformance"){
+        p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)
+        zUSL <- qnorm(p2)
+        ppu <- zUSL/3
+      }else{
+        x99 <- FAdist::qlnorm3(p = 0.99865, shape = theta, scale = beta, thres = threshold)
+        x05 <- FAdist::qlnorm3(p = 0.5, shape = theta, scale = beta, thres = threshold)
+        ppu <- (usl - x05) / (x99 - x05)
+      }
       table2data[["ppu"]] <- ppu
     }else{
       ppu <- NA
     }
   }else if (options[["nonNormalDist"]] == "3weibull") {
     if (options[["lowerSpecificationField"]]){
-      p1 <- FAdist::pweibull3(q = lsl, shape = beta, scale = theta, thres = threshold, lower.tail = T)
-      zLSL <- qnorm(p1)
-      ppl <- -zLSL/3
+      if(options[['nonNormalMethod' ]] == "nonconformance"){
+        p1 <- FAdist::pweibull3(q = lsl, shape = beta, scale = theta, thres = threshold, lower.tail = T)
+        zLSL <- qnorm(p1)
+        ppl <- -zLSL/3
+      }else{
+        x135 <- FAdist::qweibull3(p = 0.00135, shape = beta, scale = theta, thres = threshold)
+        x05 <- FAdist::qweibull3(p = 0.5, shape = beta, scale = theta, thres = threshold)
+        ppl <- (x05 - lsl) / (x05 - x135)
+      }
       table2data[["ppl"]] <- ppl
     }else{
       ppl <- NA
     }
     if (options[["upperSpecificationField"]]){
-      p2 <- FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold)
-      zUSL <- qnorm(p2)
-      ppu <- zUSL/3
+      if(options[['nonNormalMethod' ]] == "nonconformance"){
+        p2 <- FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold)
+        zUSL <- qnorm(p2)
+        ppu <- zUSL/3
+      }else{
+        x99 <- FAdist::qweibull3(p = 0.99865, shape = beta, scale = theta, thres = threshold)
+        x05 <- FAdist::qweibull3(p = 0.5, shape = beta, scale = theta, thres = threshold)
+        ppu <- (usl - x05) / (x99 - x05)
+      }
       table2data[["ppu"]] <- ppu
     }else{
       ppu <- NA
@@ -829,7 +876,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]]){
-    pp <- (zUSL - zLSL)/6
+    if(options[['nonNormalMethod' ]] == "nonconformance"){
+      pp <- (zUSL - zLSL)/6
+    }else{
+      pp <- (usl - lsl) / (x99 - x135)
+    }
     table2data[["pp"]] <- pp
   }else{
     pp <- NA
