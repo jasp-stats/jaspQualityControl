@@ -327,7 +327,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         sdGauge <- SD[1]
       }else{
         if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTotalGauge)) {
-          SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat), sqrt(histSD^2 - varCompTotalGauge), histSD))
+          SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat)), sqrt(histSD^2 - varCompTotalGauge), histSD)
         }else{
           SD <- sqrt(varCompVector)
         }
