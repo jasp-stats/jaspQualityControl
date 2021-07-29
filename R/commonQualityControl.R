@@ -33,6 +33,20 @@
   matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
 }
 
+
+.qcReadData <- function(dataset, options, type) {
+  if (type == "capabilityStudy") {
+    if (is.null(dataset)) {
+      if (options[["subgroups"]] != "") {
+        dataset <- .readDataSetToEnd(columns.as.numeric = options[["variables"]], columns.as.factor = options[["subgroups"]])
+      } else {
+        dataset <- .readDataSetToEnd(columns.as.numeric = options[["variables"]])
+      }
+    }
+  }
+  return(dataset)
+}
+
 # Function to create X-bar chart
 .XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Subgroup mean", xAxisLab = "Subgroup",
                            manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL) {
