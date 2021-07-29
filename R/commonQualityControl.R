@@ -1,8 +1,39 @@
 #############################################################
-## Common functions for preparatory work ####################
+## Common functions for plots ###############################
 #############################################################
 
-# Common function to read in data set
+# Function to create the x-bar and r-chart section
+.qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups) {
+
+  if (!is.null(jaspResults[["controlCharts"]]))
+    return()
+
+  container <- createJaspContainer(title = gettext("Control Chart"))
+  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize"))
+  container$position <- 1
+  jaspResults[["controlCharts"]] <- container
+
+  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 700, height = 500)
+  container[["plot"]] <- matrixPlot
+
+  if (!ready)
+    return()
+
+  if(subgroups != "")
+    subgroups <- dataset[[subgroups]]
+
+  if (length(measurements) < 2) {
+      matrixPlot$setError(gettext("Subgroup size must be > 1 to display X-bar & R Chart."))
+      return()
+    }
+
+  plotMat <- matrix(list(), 2, 1)
+  plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
+  plotMat[[2,1]] <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
+  matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
+}
+
+
 .qcReadData <- function(dataset, options, type) {
   if (type == "capabilityStudy") {
     if (is.null(dataset)) {
@@ -14,41 +45,6 @@
     }
   }
   return(dataset)
-}
-
-#############################################################
-## Common functions for plots ###############################
-#############################################################
-
-# Function to create the x-bar and r-chart section
-.qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups) {
-
-  if (!is.null(jaspResults[["controlCharts"]]))
-    return()
-
-  container <- createJaspContainer(title = gettext("Control Chart"))
-  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
-  container$position <- 1
-  jaspResults[["controlCharts"]] <- container
-
-  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 700, height = 500)
-  container[["plot"]] <- matrixPlot
-
-  if (!ready)
-    return()
-
-  if (length(measurements) < 2) {
-    matrixPlot$setError(gettext("You must enter at least 2 measurements to get this output."))
-    return()
-  }
-
-  if(subgroups != "")
-    subgroups <- dataset[[subgroups]]
-
-  plotMat <- matrix(list(), 2, 1)
-  plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
-  plotMat[[2,1]] <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
-  matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
 }
 
 # Function to create X-bar chart

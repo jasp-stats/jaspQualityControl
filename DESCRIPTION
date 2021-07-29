@@ -31,8 +31,14 @@ Imports:
   Rspc,
   tidyr,
   cowplot,
-  daewr,
-  vipor
+  vipor,
+  fitdistrplus,
+  ggpp,
+  tibble,
+  EnvStats,
+  FAdist,
+  kSamples,
+  daewr
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
