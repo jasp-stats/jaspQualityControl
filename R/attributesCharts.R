@@ -140,7 +140,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
   center <- sixsigma$center
   UCL <- sixsigma$limits[,2]
   LCL <- sixsigma$limits[,1]
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$P ,UCL + 0.1))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL + 0.1))
   yLimits <- range(yBreaks)
   if (length(subgroups) > 60)
     xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])

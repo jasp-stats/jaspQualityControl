@@ -56,7 +56,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Variables Chart for Individuals")
+		title:			qsTr("Variables Charts for Individuals")
 		func:			"variablesChartsIndividuals"
 	}
 		Analysis
@@ -109,5 +109,16 @@ Description
 		title:          qsTr("Two-level Factorial Analysis")
 		func:           "factorialAnalysis"
 		requiresData:   true
+	}
+	GroupTitle
+	{
+		title:			qsTr("Probability of Detection")
+//		icon:			"processControl-measurement.svg"
+	}
+	Analysis
+	{
+		title:			qsTr("Probability of Detection")
+		func:			"probabilityOfDetection"
+		requiresData:	true
 	}
 }
