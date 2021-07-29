@@ -30,7 +30,8 @@ Imports:
   rsm,
   Rspc,
   tidyr,
-  cowplot
+  cowplot,
+  daewr
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,

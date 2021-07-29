@@ -46,19 +46,20 @@ Form
 			defaultValue:                       numberOfFactors.value
 		}
 
-		DropDown
-		{
-			id:										numberOfLevels
-			name: 									"numberOfLevels"
-			label: 									qsTr("Number of factor levels")
-			indexDefaultValue: 						0
-			values:
-				[
-				{ value: "2", label: qsTr("2")}
-				//            { value: "3", label: qsTr("3")},
-				//            { value: "Mixed", label: qsTr("Mixed")}
-			]
-		}
+//		DropDown
+//		{
+//            debug:                              true
+//            id:                                 numberOfLevels
+//            name:                               "numberOfLevels"
+//            label:                              qsTr("Number of factor levels")
+//            indexDefaultValue:                  0
+//			values:
+//				[
+//				{ value: "2", label: qsTr("2")}
+//				//            { value: "3", label: qsTr("3")},
+//				//            { value: "Mixed", label: qsTr("Mixed")}
+//			]
+//		}
 	}
 
 	RadioButtonGroup
@@ -114,15 +115,15 @@ Form
 			Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
 			Label { text: qsTr("Level 1");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
 			Label { text: qsTr("Level 2");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
-			Label { visible: 					numberOfLevels.currentIndex == 1;
-				text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
-		}
+//			Label { visible: 					numberOfLevels.currentIndex == 1;
+//                    text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
+        }
 
 		ComponentsList
 		{
 			name:								"factors"
 			addItemManually:                    false
-			values:                             numberOfFactorsForTable.value // update only when numberOfFactors.value gets "entered"
+            values:                             numberOfFactorsForTable.value // update only when numberOfFactors.value gets "entered"
 
 			rowComponent: 						RowLayout
 			{
@@ -159,7 +160,7 @@ Form
 					{
 						label: 					""
 						name: 					"low"
-						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 1")
+                        placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 1")
 						fieldWidth:				100 * preferencesModel.uiScale
 						useExternalBorder:		false
 						showBorder:				true
@@ -179,21 +180,21 @@ Form
 						showBorder:				true
 					}
 				}
-				Row //Level3
-				{
-					visible:					[1].includes(numberOfLevels.currentIndex)
-					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		100 * preferencesModel.uiScale
-					TextField
-					{
-						label: 					""
-						name: 					"high2"
-						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
-						fieldWidth:				100 * preferencesModel.uiScale
-						useExternalBorder:		false
-						showBorder:				true
-					}
-				}
+//				Row //Level3
+//				{
+//					visible:					[1].includes(numberOfLevels.currentIndex)
+//					spacing:					5 * preferencesModel.uiScale
+//					Layout.preferredWidth:		100 * preferencesModel.uiScale
+//					TextField
+//					{
+//						label: 					""
+//						name: 					"high2"
+//						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
+//						fieldWidth:				100 * preferencesModel.uiScale
+//						useExternalBorder:		false
+//						showBorder:				true
+//					}
+//				}
 			}
 		}
 	}
@@ -212,14 +213,14 @@ Form
 			{
 				id:                             factorialTypeDefault
 				name:							"factorialTypeDefault"
-				label:							qsTr("2-level factorial (default generators)")
+                label:							qsTr("2-level factorial (default generator)")
 			}
 
 			RadioButton
 			{
 				id:                             factorialTypeSpecify
 				name:							"factorialTypeSpecify"
-				label:							qsTr("2-level factorial (specify generators)")
+                label:							qsTr("2-level factorial (specify generator)")
 
 				TextArea
 				{
@@ -257,40 +258,6 @@ Form
 				label:							qsTr("General full factorial design")
 				checked:						true
 			}
-
-			RadioButton
-			{
-				id:                             factorialPlackettBurman
-				name:                           "factorialPlackettBurman"
-				label:                          qsTr("Plackett-Burman design")
-
-				DropDown
-				{
-					name: 				"PBruns"
-					label:              qsTr("Number of runs")
-					visible:            factorialPlackettBurman.checked
-					indexDefaultValue: 	0
-					values:
-						[
-						{ value: "4",  label: qsTr("4") 	},
-						{ value: "8",  label: qsTr("8") 	},
-						{ value: "12", label: qsTr("12") 	},
-						{ value: "16", label: qsTr("16") 	},
-						{ value: "20", label: qsTr("20") 	},
-						{ value: "24", label: qsTr("24")	},
-						{ value: "28", label: qsTr("28")	},
-						{ value: "32", label: qsTr("32")	},
-						{ value: "36", label: qsTr("36")	},
-						{ value: "40", label: qsTr("40")	},
-						{ value: "44", label: qsTr("44")	},
-						{ value: "48", label: qsTr("48")	},
-						{ value: "52", label: qsTr("52")	},
-						{ value: "56", label: qsTr("56")	},
-						{ value: "60", label: qsTr("60")	},
-						{ value: "64", label: qsTr("64")	}
-					]
-				}
-			}
 		}
 
 		ColumnLayout
@@ -317,7 +284,7 @@ Form
 							name: 				"factorialRuns"
 							indexDefaultValue: 	0
 							values:
-								[
+                            [
 								{ value: "4", 	label: qsTr("4") 	},
 								{ value: "8", 	label: qsTr("8") 	},
 								{ value: "16", 	label: qsTr("16") 	},
@@ -346,7 +313,7 @@ Form
 							name: 				"factorialResolution"
                             indexDefaultValue: 	0
 							values:
-								[
+                            [
 								{ value: "III", label: qsTr("III") 	},
 								{ value: "IV", 	label: qsTr("IV") 	},
 								{ value: "V", 	label: qsTr("V") 	},
@@ -415,7 +382,7 @@ Form
 					label:						qsTr("Number of replicates for corner points")
 					defaultValue:               1
 					min:						1
-					max:						10
+                    max:						8
 
 				}
 
@@ -429,12 +396,21 @@ Form
 				IntegerField
 				{
 					name:						"factorialBlocks"
-					enabled:                    !factorialTypeSplit.checked & !designByResolution.checked & !factorialTypeSpecify.checked & !factorialPlackettBurman.checked
+                    enabled:                    !factorialTypeSplit.checked & !designByResolution.checked & !factorialTypeSpecify.checked
 					label:						qsTr("Number of blocks")
 					defaultValue:				1
 					min:						1
-					max:						50
+                    max:						8
 				}
+
+                IntegerField
+                {
+                    name:                       "repeatRuns"
+                    label:                      qsTr("Number of random runs to repeat")
+                    defaultValue:               0
+                    min:                        0
+                    max:                        10
+                }
 			}
 		}
 	}
@@ -449,9 +425,18 @@ Form
 
 		CheckBox
 		{
-			name:                               "displayDesign"
+            id:                                 displayDesign
+            name:                               "displayDesign"
 			label:                              "Display selected design"
 		}
+
+
+        CheckBox
+        {
+            name:                               "showAliasStructure"
+            label:                              "Show alias structure"
+            enabled:                            displayDesign.checked
+        }
 
 		FileSelector
 		{

@@ -86,12 +86,12 @@ Description
 		title:			qsTr("DOE")
 		icon:			"processControl-design.svg"
 	}
-	//     Analysis
-	//     {
-	//         title:			qsTr("Plackett-Burman Design")
-	//         func:			"doePlackettBurman"
-	//         requiresData:	false
-	//     }
+    Analysis
+    {
+        title:			qsTr("Screening")
+        func:			"doeScreening"
+        requiresData:	false
+    }
 	Analysis
 	{
 		title:			qsTr("Two-level Factorial Design")
@@ -110,4 +110,10 @@ Description
 		func:           "factorialAnalysis"
 		requiresData:   true
 	}
+    Analysis
+    {
+        title:          qsTr("Definitive Screening Analysis")
+        func:           "definitiveScreeningAnalysis"
+        requiresData:   true
+    }
 }
