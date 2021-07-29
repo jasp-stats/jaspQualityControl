@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2018 University of Amsterdam
+# Copyright (C) 2013-2021 University of Amsterdam
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,11 +33,20 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
 
 .factorialAnalysisReadData <- function(dataset, options){
 
-  if(!is.null(dataset))
+  if(!is.null(dataset)){
     return(dataset)
-  else
-    return(.readDataSetToEnd(columns.as.numeric = c(options[["FArunOrder"]], options[["FAresponse"]]),
-                             columns.as.factor = options[["FAassignedFactors"]]))
+  } else {
+    dataset <-
+      if(options[["FArunOrder"]]!=""){
+        .readDataSetToEnd(columns.as.numeric = c(options[["FAresponse"]],
+                                                 options[["FArunOrder"]],
+                                                 options[["FAassignedFactors"]]))
+      } else {
+        .readDataSetToEnd(columns.as.numeric = c(options[["FAresponse"]],
+                                                 options[["FAassignedFactors"]]))
+      }
+    return(dataset)
+  }
 
 }
 
