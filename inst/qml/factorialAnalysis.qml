@@ -54,7 +54,8 @@ Form
 
 		AssignedVariablesList
 		{
-			name:                               "FArunOrder"
+            id:                                 runOrder
+            name:                               "FArunOrder"
 			singleVariable:                     true
 			label:                              qsTr("Run order")
 		}
