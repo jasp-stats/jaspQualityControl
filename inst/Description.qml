@@ -56,7 +56,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Variables Chart for Individuals")
+		title:			qsTr("Variables Charts for Individuals")
 		func:			"variablesChartsIndividuals"
 	}
 		Analysis
@@ -116,4 +116,15 @@ Description
         func:           "definitiveScreeningAnalysis"
         requiresData:   true
     }
+	GroupTitle
+	{
+		title:			qsTr("Probability of Detection")
+//		icon:			"processControl-measurement.svg"
+	}
+	Analysis
+	{
+		title:			qsTr("Probability of Detection")
+		func:			"probabilityOfDetection"
+		requiresData:	true
+	}
 }

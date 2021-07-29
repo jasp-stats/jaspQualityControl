@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspProcessControl 0.15.0\n"
-"POT-Creation-Date: 2021-05-07 13:30\n"
+"Project-Id-Version: jaspProcessControl 0.0.1\n"
+"POT-Creation-Date: 2021-07-17 03:45\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,6 +14,12 @@ msgid "Cumulative sum chart"
 msgstr ""
 
 msgid "Exponentially weighted moving average chart"
+msgstr ""
+
+msgid "G chart"
+msgstr ""
+
+msgid "T chart"
 msgstr ""
 
 msgid "CL = %g"
@@ -37,6 +43,9 @@ msgstr ""
 msgid "Subgroup"
 msgstr ""
 
+msgid "Counts"
+msgstr ""
+
 msgid "P Control Chart"
 msgstr ""
 
@@ -58,6 +67,12 @@ msgstr ""
 msgid "Individual and Moving Range Control Charts"
 msgstr ""
 
+msgid "Indvidual"
+msgstr ""
+
+msgid "Range"
+msgstr ""
+
 msgid "Proportion"
 msgstr ""
 
@@ -73,49 +88,37 @@ msgstr ""
 msgid "Observation"
 msgstr ""
 
-msgid "Control Charts"
+msgid "Control Chart"
 msgstr ""
 
 msgid "You must enter at least 2 measurements to get this output."
 msgstr ""
 
-msgid "Subgroup mean"
+msgid "Test result for %s chart"
 msgstr ""
 
-msgid "Time"
+msgid "Test 1: Beyond limit"
 msgstr ""
 
-msgid "Subgroup range"
+msgid "Test 2: Shift"
 msgstr ""
 
-msgid "Test Results for %s Chart"
+msgid "Test 3: Trend"
 msgstr ""
 
-msgid "Test 1: Sporadic issue."
+msgid "Test 4: Increasing variation"
 msgstr ""
 
-msgid "Test 2: Mean shift."
+msgid "Test 5: Reducing variation"
 msgstr ""
 
-msgid "Test 3: Trend."
+msgid "Test 6: Bimodal distribution"
 msgstr ""
 
-msgid "Test 4: Increasing variation."
+msgid "Numbers index data points where test violations occur."
 msgstr ""
 
-msgid "Test 5: Reducing variation."
-msgstr ""
-
-msgid "Test 6: Bimodal distribution."
-msgstr ""
-
-msgid "Available Factorial Designs (with Resolution)"
-msgstr ""
-
-msgid "Runs"
-msgstr ""
-
-msgid "Design resolutions describe how much the effects in a fractional factorial design are aliased with other effects. See the help file for more information."
+msgid "Available Factorial Designs"
 msgstr ""
 
 msgid "Selected Design"
@@ -125,6 +128,9 @@ msgid "Design"
 msgstr ""
 
 msgid "Factors"
+msgstr ""
+
+msgid "Runs"
 msgstr ""
 
 msgid "Resolution"
@@ -145,7 +151,7 @@ msgstr ""
 msgid "Design Preview"
 msgstr ""
 
-msgid "RunOrder"
+msgid "Run order"
 msgstr ""
 
 msgid "Design Choice"
@@ -161,6 +167,18 @@ msgid "Residuals vs. Fitted Value"
 msgstr ""
 
 msgid "Residuals vs. Run Order"
+msgstr ""
+
+msgid "Pareto Plot of Standardized Effects"
+msgstr ""
+
+msgid "Fitted values"
+msgstr ""
+
+msgid "Residuals"
+msgstr ""
+
+msgid "Standardized Effect"
 msgstr ""
 
 msgid "ANOVA"
@@ -184,16 +202,10 @@ msgstr ""
 msgid "Coefficients"
 msgstr ""
 
-msgid "Effect"
-msgstr ""
-
-msgid "Unstandardized"
+msgid "Coefficient"
 msgstr ""
 
 msgid "Standard Error"
-msgstr ""
-
-msgid "Standardized"
 msgstr ""
 
 msgid "t"
@@ -280,9 +292,6 @@ msgstr ""
 msgid "Predictor"
 msgstr ""
 
-msgid "Coefficient"
-msgstr ""
-
 msgid "Std. Error coefficients"
 msgstr ""
 
@@ -337,19 +346,22 @@ msgstr ""
 msgid "Parts by Operator Interaction Graph"
 msgstr ""
 
+msgid "Report"
+msgstr ""
+
 msgid "Scatterplot Operators vs Parts"
 msgstr ""
 
 msgid "Range Method R Chart"
 msgstr ""
 
-msgid "ANOVA Tables"
+msgid "ANOVA Table"
 msgstr ""
 
 msgid "Two-Way ANOVA Table with Interaction"
 msgstr ""
 
-msgid "Sources"
+msgid "Source"
 msgstr ""
 
 msgid "Sum of Squares"
@@ -361,13 +373,25 @@ msgstr ""
 msgid "Gauge r & R Variance Components"
 msgstr ""
 
-msgid "Source"
-msgstr ""
-
 msgid "Variation"
 msgstr ""
 
 msgid "% Contribution"
+msgstr ""
+
+msgid "Gauge Evaluation"
+msgstr ""
+
+msgid "Std. Deviation"
+msgstr ""
+
+msgid "Study Variation"
+msgstr ""
+
+msgid "% Study Variation"
+msgstr ""
+
+msgid "% Tolerance"
 msgstr ""
 
 msgid "Total Gauge r & R"
@@ -379,7 +403,7 @@ msgstr ""
 msgid "Reproducibility"
 msgstr ""
 
-msgid "Part-To-Part"
+msgid "Part-to-Part"
 msgstr ""
 
 msgid "Operator x Part"
@@ -388,25 +412,13 @@ msgstr ""
 msgid "Total Variation"
 msgstr ""
 
-msgid "Gauge Evaluation"
-msgstr ""
-
-msgid "Std. Deviation"
-msgstr ""
-
-msgid "Study variation"
-msgstr ""
-
-msgid "% Study variation"
-msgstr ""
-
-msgid "% Tolerance"
-msgstr ""
-
 msgid "Number of distinct categories = %i"
 msgstr ""
 
-msgid "Study variation is calculated as Std. Deviation * %.2f"
+msgid "Study Variation is calculated as Std. Deviation * %i"
+msgstr ""
+
+msgid "Study Variation is calculated as Std. Deviation * %.2f"
 msgstr ""
 
 msgid "Two-Way ANOVA Table without Interaction"
@@ -493,16 +505,22 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
-msgid "Part-to-Part"
+msgid "Gauge name: %s"
 msgstr ""
 
-msgid "Percent Contribution"
+msgid "Date of study: %s"
 msgstr ""
 
-msgid "Percent Study Variation"
+msgid "Reported by: %s"
 msgstr ""
 
-msgid "Percent Tolerance"
+msgid "Misc: %s"
+msgstr ""
+
+msgid "Tolerance: %s"
+msgstr ""
+
+msgid "Measurement systems analysis for %s"
 msgstr ""
 
 msgid "Gauge r&R Tables"
@@ -515,6 +533,9 @@ msgid "Gauge r&R (Nested)"
 msgstr ""
 
 msgid "Variance Components"
+msgstr ""
+
+msgid "Part-To-Part"
 msgstr ""
 
 msgid "Measurements by part x operator"
@@ -541,6 +562,9 @@ msgstr ""
 msgid "Std. Deviation (<i>s</i>)"
 msgstr ""
 
+msgid "Study variation"
+msgstr ""
+
 msgid "Tolerance"
 msgstr ""
 
@@ -565,7 +589,7 @@ msgstr ""
 msgid "% Var(Repeatability and bias)"
 msgstr ""
 
-msgid "t-Test of Observed Bias Against 0"
+msgid "T-Test of Observed Bias Against 0"
 msgstr ""
 
 msgid "Lower"
@@ -583,19 +607,79 @@ msgstr ""
 msgid "<i>p<i/>"
 msgstr ""
 
+msgid "T-Test requires more than 1 measurement. %i valid measurement(s) detected in %s."
+msgstr ""
+
 msgid "Bias Histogram"
 msgstr ""
 
 msgid "Run Chart of %s"
 msgstr ""
 
+msgid "No valid measurements in %s."
+msgstr ""
+
+msgid "Parameter Estimates"
+msgstr ""
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Estimate"
+msgstr ""
+
+msgid "Fitting the model failed with the following error message:\n%s"
+msgstr ""
+
+msgid "Intercept"
+msgstr ""
+
+msgid "The IWLS algorithm did not converge. Interpret the results with caution."
+msgstr ""
+
+msgid "There is only observed category (%s). The results are likely meaningless."
+msgstr ""
+
+msgid "Fit Table"
+msgstr ""
+
+msgid "AIC"
+msgstr ""
+
+msgid "Detection Plot"
+msgstr ""
+
+msgid "log(%s)"
+msgstr ""
+
+msgid "The detection plot failed with the following error message:\n%s"
+msgstr ""
+
+msgid "Asymptotes"
+msgstr ""
+
+msgid "covariate"
+msgstr ""
+
+msgid "Horizontal asymptotes"
+msgstr ""
+
+msgid "Vertical asymptotes"
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "<b><em>Warning.</em></b>"
+msgstr ""
+
+msgid "Probability of detecting %s"
+msgstr ""
+
 msgid "Capability Studies"
 msgstr ""
 
-msgid "Process Capability of Measurements (Initial Capability Study)"
-msgstr ""
-
-msgid "Process Capability of Measurements (Follow-Up Capability Study)"
+msgid "Process Capability of Measurements"
 msgstr ""
 
 msgid "Process Capability of Measurements (Non-Normal Capability Study)"
@@ -613,7 +697,7 @@ msgstr ""
 msgid "USL"
 msgstr ""
 
-msgid "Measurements"
+msgid "Sample size"
 msgstr ""
 
 msgid "Std. Deviation (Total)"
@@ -628,10 +712,16 @@ msgstr ""
 msgid "Capability of the Process"
 msgstr ""
 
+msgid "No specification limits set."
+msgstr ""
+
+msgid "Measurement"
+msgstr ""
+
 msgid "Density"
 msgstr ""
 
-msgid "Process Capability (Within)"
+msgid "Potential Capability (Within)"
 msgstr ""
 
 msgid "CPL"
@@ -643,13 +733,19 @@ msgstr ""
 msgid "Cp"
 msgstr ""
 
-msgid "Cpk"
+msgid "%s CI for Cp"
 msgstr ""
 
 msgid "ppm"
 msgstr ""
 
-msgid "Process Performance (Total)"
+msgid "Cpk"
+msgstr ""
+
+msgid "%s CI for Cpk"
+msgstr ""
+
+msgid "Overall Capability"
 msgstr ""
 
 msgid "PPL"
@@ -661,28 +757,46 @@ msgstr ""
 msgid "Pp"
 msgstr ""
 
+msgid "%s CI for Pp"
+msgstr ""
+
 msgid "Ppk"
 msgstr ""
 
-msgid "Process Capability based on the %1$s Distribution"
+msgid "%s CI for Ppk"
 msgstr ""
 
-msgid "P (X < LSL)"
+msgid "Cpm"
 msgstr ""
 
-msgid "P (X > USL)"
+msgid "%s CI for Cpm"
+msgstr ""
+
+msgid "Performance"
+msgstr ""
+
+msgid "%s CI for exp. overall"
+msgstr ""
+
+msgid "%s CI for exp. within"
+msgstr ""
+
+msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
 msgstr ""
 
 msgid "%1$s"
 msgstr ""
 
-msgid "Probability Tables and Plots"
+msgid "Observed"
 msgstr ""
 
-msgid "Probability Plots"
+msgid "Expected overall"
 msgstr ""
 
-msgid "Summary of Tests Against the %1$s Distribution"
+msgid "Probability Table and Plot"
+msgstr ""
+
+msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
 msgid "n"
@@ -709,32 +823,44 @@ msgstr ""
 msgid "<i>A</i>"
 msgstr ""
 
-msgid "Reject null distribution?"
+msgid "The Anderson-Darling statistic <i>A</i> is calculated against the %2$s distribution."
 msgstr ""
 
-msgid "The Anderson-Darling statistic <i>A</i> is calculated against the %2$s distribution using the %3$s ranking method."
+msgid "Histogram"
 msgstr ""
 
-msgid "Distribution Plot"
+msgid "X-mR control chart"
 msgstr ""
 
-msgid "Counts"
+msgid "%s for Individual"
 msgstr ""
 
-msgid "Select one of the control charts from the interface."
+msgid "%s for R"
 msgstr ""
 
-msgid "Charts per variable"
+msgid "%s"
 msgstr ""
 
-msgid "Variable: %s"
+msgid "Autocorrelation"
 msgstr ""
 
-msgid "Value"
+msgid "Lag"
 msgstr ""
 
 msgid "X-bar & R Control Chart"
 msgstr ""
 
+msgid "You must enter more measurements to get this output."
+msgstr ""
+
 msgid "Xbar & s Control Chart"
+msgstr ""
+
+msgid "Name: %s"
+msgstr ""
+
+msgid "Date: %s"
+msgstr ""
+
+msgid "Control Charts Report for %s"
 msgstr ""

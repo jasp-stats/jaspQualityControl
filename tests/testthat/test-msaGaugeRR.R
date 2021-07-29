@@ -44,7 +44,7 @@ context("[Quality Control] Gauge r&R")
 # test_that("Components of Variation plot matches", {
 #   plotName <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_VarCompGraph"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "components-of-variation", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "components-of-variation")
 # })
 
 # test_that("Two-Way ANOVA Table with Interaction results match", {
@@ -70,20 +70,20 @@ context("[Quality Control] Gauge r&R")
 # test_that("Parts by Operator Interaction plot matches", {
 #   plotName <- results[["results"]][["gaugeByInteraction"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "parts-by-operator-interaction", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "parts-by-operator-interaction")
 # })
 
 # test_that("Measurement by Operator plot matches", {
 #   skip("Does not reproduce on windows <-> osx")
 #   plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "measurement-by-operator", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "measurement-by-operator")
 # })
 
 # test_that("Measurements by Part plot matches", {
 #   plotName <- results[["results"]][["gaugeByPart"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "measurements-by-part", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "measurements-by-part")
 # })
 
 # test_that("Descriptives table results match", {
@@ -99,41 +99,41 @@ context("[Quality Control] Gauge r&R")
 # test_that("Operator A plot matches", {
 #   plotName <- results[["results"]][["gaugeRchart"]][["collection"]][["gaugeRchart_A"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "operator-ar", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "operator-ar")
 # })
 
 # test_that("Operator B plot matches", {
 #   plotName <- results[["results"]][["gaugeRchart"]][["collection"]][["gaugeRchart_B"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "operator-br", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "operator-br")
 # })
 
 # test_that("Operator C plot matches", {
 #   plotName <- results[["results"]][["gaugeRchart"]][["collection"]][["gaugeRchart_C"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "operator-cr", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "operator-cr")
 # })
 
 # test_that("Matrix Plot for Operators matches", {
 #   plotName <- results[["results"]][["gaugeScatterOperators"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "matrix-plot-for-operators", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "matrix-plot-for-operators")
 # })
 
 # test_that("Operator A plot matches", {
 #   plotName <- results[["results"]][["gaugeXbarChart"]][["collection"]][["gaugeXbarChart_A"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "operator-ax", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "operator-ax")
 # })
 
 # test_that("Operator B plot matches", {
 #   plotName <- results[["results"]][["gaugeXbarChart"]][["collection"]][["gaugeXbarChart_B"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "operator-bx", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "operator-bx")
 # })
 
 # test_that("Operator C plot matches", {
 #   plotName <- results[["results"]][["gaugeXbarChart"]][["collection"]][["gaugeXbarChart_C"]][["data"]]
 #   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "operator-cx", dir="msaGaugeRR")
+#   jaspTools::expect_equal_plots(testPlot, "operator-cx")
 # })

@@ -14,7 +14,7 @@ results <- runAnalysis("processCapabilityStudies", "partOperatorData.csv", optio
 test_that("Capability of the Process plot matches", {
 	plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
 	testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-	jaspTools::expect_equal_plots(testPlot, "capability-of-the-process", dir="processCapabilityStudies")
+	jaspTools::expect_equal_plots(testPlot, "capability-of-the-process")
 })
 
 test_that("Overall Capability table results match", {
@@ -52,19 +52,19 @@ test_that("Process Summary table results match", {
 test_that("X-bar & R Chart plot matches", {
 	plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
 	testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-	jaspTools::expect_equal_plots(testPlot, "x-bar-r-chart", dir="processCapabilityStudies")
+	jaspTools::expect_equal_plots(testPlot, "x-bar-r-chart")
 })
 
 test_that("Histogram plot matches", {
 	plotName <- results[["results"]][["histogram"]][["data"]]
 	testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-	jaspTools::expect_equal_plots(testPlot, "histogram", dir="processCapabilityStudies")
+	jaspTools::expect_equal_plots(testPlot, "histogram")
 })
 
 test_that("Probability Plot matches", {
 	plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
 	testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-	jaspTools::expect_equal_plots(testPlot, "probability-plot", dir="processCapabilityStudies")
+	jaspTools::expect_equal_plots(testPlot, "probability-plot")
 })
 
 test_that("Summary of test against the Normal distribution table results match", {
