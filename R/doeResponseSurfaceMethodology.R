@@ -21,11 +21,11 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
-  if (op1 > 0 & op2 > 0 & op3 > 0) {
+  if (op1 > 0 & op2 > 0) {
     rsm <- .responseSurfaceCalculate(jaspResults, options, dataset)
     data <- .readDataSet(jaspResults, options, dataset)
   }
-  .responseSurfaceOptimize(jaspResults, options, rsm, data, dataset = dataset)
+  # .responseSurfaceOptimize(jaspResults, options, rsm, data, dataset = dataset)
   if (options[["showDesign"]])
     .qualityControlDesignMainRSM(jaspResults,options, position = 1)
 
@@ -203,11 +203,11 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   fo <- character()
   for (i in seq_along(options[["modelTerms"]])) {
     if (!any(options[["modelTerms"]][[i]][[2]] %in% vari == "FALSE")) {
-      if (options[["modelTerms"]][[i]][[1]] == "fopq") {
+      if (options[["modelTerms"]][[i]][[1]] == "fopq" & length(options[["modelTerms"]][[i]][[2]]) == 1) {
         pq[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
         fo[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
 
-      }else if (options[["modelTerms"]][[i]][[1]] == "fo") {
+      }else if (options[["modelTerms"]][[i]][[1]] == "fo" & length(options[["modelTerms"]][[i]][[2]])) {
         fo[i] <- paste("x", which(vari %in% options[["modelTerms"]][[i]][[2]]), sep = "")
 
       }
@@ -413,7 +413,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                          width = 400, height = 400)
   jaspResults[["resNorm"]] <- plot
 
-  plot$dependOn("resNorm")
+  plot$dependOn(c("resNorm", "rsmBlocks",
+                  "rsmResponseVariables",
+                  "rsmVariables","modelTerms"))
   p <- jaspGraphs::plotQQnorm(resid(rsm))
 
   plot$plotObject <- p
@@ -432,7 +434,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     width = 400, height = 400)
   plot$dependOn(c("rsmResponseVariables",
                   "rsmBlocks",
-                  "res"))
+                  "res", "modelTerms"))
 
 
   jaspResults[["Residual"]] <- plot
@@ -465,7 +467,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
   plot <- createJaspPlot(title = "Residuals vs. Fitted Value", width = 400, height = 400)
   jaspResults[["ResFitted"]] <- plot
-  plot$dependOn("resFitted")
+  plot$dependOn(c("resFitted","rsmBlocks",
+                "rsmResponseVariables",
+                "rsmVariables","modelTerms"))
 
   df <- data.frame(x = fitted(rsm), y = resid(rsm))
 
@@ -494,7 +498,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   plot <- createJaspPlot(title = "Pareto Plot of Standardized Effects",
                          width = 400, height = 400)
   jaspResults[["pareto"]] <- plot
-  plot$dependOn(c("pareto"))
+  plot$dependOn(c("pareto","rsmBlocks",
+                  "rsmResponseVariables",
+                  "rsmVariables", "modelTerms"))
 
   t <- abs(data.frame(summary(rsm)[[4]][,4]))
   name <- rownames(summary(rsm)[[4]])
@@ -608,7 +614,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     CoefTable <- createJaspTable(gettext("RSM Coefficients"))
   if (is.null(jaspResults[["TableContainer"]][["RSQTable"]]))
     RSQTable  <- createJaspTable()
-  TableContainer$dependOn(     options = c("coef","Formula", "rsmBlocks",
+  TableContainer$dependOn(     options = c("coef","modelTerms", "rsmBlocks",
                                       "rsmResponseVariables",
                                       "rsmVariables"))
 
@@ -683,7 +689,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   AnovaTable <- createJaspTable(gettext("ANOVA"))
 
 
-  AnovaTable$dependOn(      options = c("anova","Formula", "rsmBlocks",
+  AnovaTable$dependOn(      options = c("anova","modelTerms", "rsmBlocks",
                                        "rsmResponseVariables",
                                        "rsmVariables"))
   AnovaTable$addColumnInfo( name = "names",     title = " ")
@@ -738,7 +744,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   if (is.null(eigen[["EigenVectors"]]))
     EigenVector <- createJaspTable(title = gettext("Eigenvectors"))
 
-  eigen$dependOn(      options = c("eigen","Formula", "rsmBlocks",
+  eigen$dependOn(      options = c("eigen","modelTerms", "rsmBlocks",
                                         "rsmResponseVariables",
                                         "rsmVariables"))
 

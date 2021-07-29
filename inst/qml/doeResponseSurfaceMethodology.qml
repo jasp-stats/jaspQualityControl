@@ -39,8 +39,8 @@ Form
 
 
 		}
-		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]}
-		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
+		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
+		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
 	}
 
 
@@ -57,9 +57,10 @@ Form
 				name: "TermType"
 				label: ""
 				values: [
+					{ label: qsTr("FO + PQ"), value: "fopq"},
 					{ label: qsTr(""), value: "nothing"},
 					{ label: qsTr("FO"), value: "fo"},
-					{ label: qsTr("FO + PQ"), value: "fopq"},
+					
 					
 				]
 			}
@@ -84,10 +85,6 @@ Form
 		}
 		
 		
-		CheckBox
-		{
-			name:                       "eigen";label:                  qsTr("Eigen Table")
-		}
 		
 		CheckBox
 		{
@@ -251,19 +248,5 @@ Form
 
 	}
 
-	Item
-	{
-		Layout.preferredHeight: 				generateDesign.height
-		Layout.fillWidth: 						true
-		Layout.columnSpan:						2
 
-		Button
-		{
-			id: 								generateDesign
-			anchors.right:						parent.right
-			anchors.bottom:						parent.bottom
-			text: 								qsTr("<b>Create Design</b>")
-			// onClicked: 							form.exportResults()
-		}
-	}
 }
