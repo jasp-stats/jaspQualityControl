@@ -40,45 +40,109 @@ Form
 
 		}
 		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
-		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
+		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
 	}
 
 
+	VariablesForm
+	{
+		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+		AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
+		ModelTermsList
+		{
+			listViewType			: JASP.Interaction
+			rowComponentTitle		: qsTr("Term Type")
+			rowComponent			: DropDown
+			{
+				name: "TermType"
+				label: ""
+				values: [
+					{ label: qsTr("FO + PQ"), value: "fopq"},
+					{ label: qsTr(""), value: "nothing"},
+					{ label: qsTr("FO"), value: "fo"},
+					
+					
+				]
+			}
+		}
+	}
+	
+	Group 
+	{
+		title: qsTr("Response Surface Summaries")
+		columns: 3
+		
+		CheckBox 
+		{
+			name:                       "coef"; label:                  qsTr("Coefficient Table")
+			
+		}
+		
+		
+		CheckBox
+		{
+			name:                       "anova";label:                  qsTr("ANOVA Table")
+		}
+		
+		
+		
+		CheckBox
+		{
+			name:                       "res";  label:                  qsTr("Residual Histogram")
+		}
+		
+		CheckBox
+		{
+			name:                       "resNorm";label:                 qsTr("Normal Residual Plot")
+		}
+		
+		CheckBox
+		{
+			name:                       "ResFitted";label:                 qsTr("Residual vs. Fitted Plot")
+		}
 
+		
+		CheckBox
+		{
+			name:                       "pareto";label:                 qsTr("Pareto Plot of Standardized Effects")
+		}
+	}
+	
+	
+	VariablesForm
+	{
+		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+		AvailableVariablesList
+		{
+			name:  "rsmVariables2";	    source:"rsmVariables"
+
+		}
+
+
+
+
+		AssignedPairsVariablesList
+		{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
+
+
+	} 
+	
 
 	Group
 	{
 		title: qsTr("Contour Plot Options")
-		VariablesForm
-		{
-			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList
-			{
-				name:  "rsmVariables2";	    source:"rsmVariables"
-
-			}
+		
+		
+		
+		
 
 
-
-
-			AssignedPairsVariablesList
-			{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
-
-
-		}
-
-		TextArea
-		{
-			title: qsTr("RSM formula")
-			name: "Formula"
-			text: "Enter the formula used in RSM"
-			width: 200
-		}
 
 
 		CheckBox
 		{
 			name:                      "contour";label:   qsTr("Contour Surface")
+			columns: 2
 			CheckBox
 			{
 				name:                       "cplot"
@@ -127,7 +191,17 @@ Form
 			}
 
 		}
+		
+	
+		
+		
+		
 	}
+	
+	
+	
+
+	
 
 
 
@@ -174,19 +248,5 @@ Form
 
 	}
 
-	Item
-	{
-		Layout.preferredHeight: 				generateDesign.height
-		Layout.fillWidth: 						true
-		Layout.columnSpan:						2
 
-		Button
-		{
-			id: 								generateDesign
-			anchors.right:						parent.right
-			anchors.bottom:						parent.bottom
-			text: 								qsTr("<b>Create Design</b>")
-			// onClicked: 							form.exportResults()
-		}
-	}
 }
