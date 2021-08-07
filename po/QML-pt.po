@@ -1372,10 +1372,6 @@ msgid "FO + PQ"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "FO"
 msgstr ""
 
@@ -1668,10 +1664,6 @@ msgid "Specifiy subgroup size manually:"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid ""
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Type of data distribution"
 msgstr ""
 
@@ -1721,4 +1713,12 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Name:"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid ""
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid ""
 msgstr ""
