@@ -20,8 +20,8 @@ import JASP.Widgets               			1.0
 Form
 {
 	columns:								2
-	
-	
+
+
 	DropDown
 	{
 		name: "pcDataFormat"
@@ -29,8 +29,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Long format"),					value: "PClongFormat"},
-			{label: qsTr("Wide format"),				value: "PCwideFormat"},
+			{label: qsTr("Single column"),					value: "PClongFormat"},
+			{label: qsTr("Across rows"),				value: "PCwideFormat"},
 		]
 		id: pcDataFormat
 	}
@@ -43,7 +43,7 @@ Form
 		{
 			name:               			"variablesForm"
 		}
-		
+
 		AssignedVariablesList
 		{
 			id:                 			variablesLong
@@ -70,22 +70,30 @@ Form
 			title:             			 	qsTr("Subgroups")
 			singleVariable:    	 			true
 			allowedColumns:     			["nominal", "nominalText", "ordinal"]
-			visible:						pcDataFormat.currentValue == "PCwideFormat"
 		}
 	}
-	
-	DoubleField
+
+	CheckBox
 	{
-		id:						pcSubgroupSize
-		name: 					"pcSubgroupSize"
-		label: 					qsTr("Subgroup size:")
-		negativeValues:			false
-		min: 					5
-		defaultValue:			5
-		visible:				pcDataFormat.currentValue == "PClongFormat"
+		name: 						"manualSubgroupSize"
+		label: 						qsTr("Specifiy subgroup size manually:")
+		checked: 					false
+		childrenOnSameRow:			true
+		visible:						pcDataFormat.currentValue == "PClongFormat"
+
+		DoubleField
+		{
+			id:						pcSubgroupSize
+			name: 					"pcSubgroupSize"
+			label: 					qsTr("")
+			negativeValues:			false
+			min: 					1
+			max: 					dataSetModel.rowCount()
+			defaultValue:			5
+			visible:				pcDataFormat.currentValue == "PClongFormat"
+		}
 	}
-	
-	
+
 	Section
 	{
 		title: qsTr("Process Capability Options")
@@ -94,7 +102,7 @@ Form
 		{
 			Group
 			{
-				title:							qsTr("Study Type")
+				title:							qsTr("Type of data distribution")
 
 
 				RadioButtonGroup
@@ -104,15 +112,15 @@ Form
 					RadioButton
 					{
 						name: 				"normalCapabilityAnalysis"
-						label: 				qsTr("Normal capability study")
+						label: 				qsTr("Normal distribution")
 						checked: 			true
 					}
 
 					RadioButton
 					{
 						name: 				"nonnormalCapabilityAnalysis"
-						label: 				qsTr("Non-normal capability study")
-						
+						label: 				qsTr("Non-normal distribution")
+
 						DropDown
 						{
 							name: 					"nonNormalDist"
@@ -121,7 +129,21 @@ Form
 							values:
 								[
 								{label: qsTr("Weibull"),		value: "Weibull"  },
-								{label: qsTr("Lognormal"),		value: "Lognormal"}
+								{label: qsTr("Lognormal"),		value: "Lognormal"},
+								{label: qsTr("3-parameter lognormal"),		value: "3lognormal"},
+								{label: qsTr("3-parameter weibull"),		value: "3weibull"}
+							]
+						}
+
+												DropDown
+						{
+							name: 					"nonNormalMethod"
+							label: 					qsTr("Method:")
+							indexDefaultValue: 		0
+							values:
+								[
+								{label: qsTr("Non-conformance method"),		value: "nonconformance"  },
+								{label: qsTr("Percentile method"),		value: "percentile"}
 							]
 						}
 					}
@@ -133,27 +155,11 @@ Form
 					label: 						qsTr("Process capability plot")
 					checked: 					true
 
-					DropDown
-					{
-						name: "csBinWidthType"
-						label: qsTr("Bin width type")
-						indexDefaultValue: 0
-						values:
-							[
-							{label: qsTr("Sturges"),				value: "sturges"},
-							{label: qsTr("Scott"),					value: "scott"},
-							{label: qsTr("Doane"),					value: "doane"},
-							{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
-							{label: qsTr("Manual"),					value: "manual"	}
-						]
-						id: csBinWidthType
-					}
-
 					DoubleField
 					{
 						name:			"csNumberOfBins"
 						label:			qsTr("Number of bins")
-						defaultValue:	30
+						defaultValue:	10
 						min:			3;
 						max:			10000;
 						enabled:		csBinWidthType.currentValue === "manual"
@@ -171,7 +177,9 @@ Form
 						name: "csConfidenceInterval";	label: qsTr("Confidence intervals")
 						checked: true
 						childrenOnSameRow: true
-						CIField { name: "csConfidenceIntervalPercent"}
+						CIField {
+						name: "csConfidenceIntervalPercent"
+						defaultValue: 90}
 					}
 
 				}
@@ -194,7 +202,7 @@ Form
 						name: 					"lowerSpecification"
 						negativeValues:			true
 						defaultValue:			-1
-						max:					target.value
+						decimals:				7
 					}
 				}
 
@@ -210,8 +218,8 @@ Form
 						name: 					"targetValue"
 						negativeValues:			true
 						defaultValue:			0
-						max:					upper.value
-						min:					lower.value
+						decimals:				7
+
 					}
 				}
 
@@ -227,7 +235,7 @@ Form
 						name: 					"upperSpecification"
 						negativeValues:			true
 						defaultValue:			1
-						min:					target.value
+						decimals:				7
 					}
 				}
 			}
@@ -237,8 +245,8 @@ Form
 		{
 			Group
 			{
-				title: 							qsTr("Stability of the Process")
-				
+				title: 							qsTr("Stability of the process")
+
 
 				RadioButtonGroup
 				{
@@ -254,14 +262,14 @@ Form
 					RadioButton
 					{
 						name: 				"IMR"
-						label: 				qsTr("I-MR chart")
+						label: 				qsTr("X-mR chart")
 					}
 				}
 			}
 
 			Group
 			{
-				title: 							qsTr("Distribution of the Process")
+				title: 							qsTr("Distribution of the process")
 
 				CheckBox
 				{
@@ -272,31 +280,15 @@ Form
 					CheckBox
 					{
 						name:					"displayDensity"
-						label:					qsTr("Fit normal distribution")
+						label:					qsTr("Fit distribution")
 						checked:				true
-					}
-
-					DropDown
-					{
-						name: "pcBinWidthType"
-						label: qsTr("Bin width type")
-						indexDefaultValue: 0
-						values:
-							[
-							{label: qsTr("Sturges"),				value: "sturges"},
-							{label: qsTr("Scott"),					value: "scott"},
-							{label: qsTr("Doane"),					value: "doane"},
-							{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
-							{label: qsTr("Manual"),					value: "manual"	}
-						]
-						id: binWidthType
 					}
 
 					DoubleField
 					{
 						name:			"pcNumberOfBins"
 						label:			qsTr("Number of bins")
-						defaultValue:	30
+						defaultValue:	10
 						min:			3;
 						max:			10000;
 						enabled:		binWidthType.currentValue === "manual"
@@ -345,65 +337,64 @@ Form
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	Section
 	{
 		title: qsTr("Process Capability Report")
-		visible:	false
-		
-		
+
+
 		TextField
 		{
-			id:						anovaGaugeTitle
+			id:						pcReportTitle
 			label: 					qsTr("Title:")
-			name: 					"anovaGaugeTitle"
+			name: 					"pcReportTitle"
 			placeholderText:		qsTr("Measurement")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
-			id:						anovaGaugeName
-			label: 					qsTr("Gauge Name:")
-			name: 					"anovaGaugeName"
+			id:						apcReportName
+			label: 					qsTr("Process Name:")
+			name: 					"pcReportName"
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
-			id:						anovaGaugeDate
+			id:						pcReportDate
 			label: 					qsTr("Date:")
-			name: 					"anovaGaugeDate"
+			name: 					"pcReportDate"
 			placeholderText:		qsTr("Date")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
-			id:						anovaGaugeReportedBy
+			id:						pcReportReportedBy
 			label: 					qsTr("Reported by:")
-			name: 					"anovaGaugeReportedBy"
+			name: 					"pcReportReportedBy"
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
-			id:						anovaGaugeMisc
+			id:						pcReportMisc
 			label: 					qsTr("Misc:")
-			name: 					"anovaGaugeMisc"
+			name: 					"pcReportMisc"
 			placeholderText:		qsTr("Miscellaneous")
 			fieldWidth:				100
 		}
-		
+
 		CheckBox
 		{
-			name: "anovaGaugeReport";		label: qsTr("Show Report")
+			name: "pcReportDisplay";		label: qsTr("Show Report")
 		}
-		
+
 
 	}
 }

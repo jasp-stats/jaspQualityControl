@@ -52,7 +52,7 @@
 }
 
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Subgroup mean", xAxisLab = "Subgroup",
+.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Sample average", xAxisLab = "Subgroup",
                            manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   if(Phase2)
@@ -155,7 +155,7 @@
 
 # Function to create R chart
 .RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,
-                        yAxisLab = "Subgroup range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE) {
+                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
