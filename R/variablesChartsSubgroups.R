@@ -16,6 +16,10 @@
 #
 variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
+  variables <- unlist(options$variables)
+  splitName <- options$subgroups
+  makeSplit <- splitName != ""
+
   if (options[["CCDataFormat"]] == "CCwideFormat"){
     measurements <- unlist(options$variables)
   }else{
@@ -24,10 +28,32 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   measurements <- measurements[measurements != ""]
   subgroups <- unlist(options$subgroups)
 
+
+
   if (options[["CCDataFormat"]] == "CCwideFormat"){
-    dataset <- .qcReadData(dataset, options, type = "capabilityStudy")
+    if (is.null(dataset)) {
+      if (options[["subgroups"]] != "") {
+        dataset <- .readDataSetToEnd(columns.as.numeric = options[["variables"]], columns.as.factor = splitName)
+        dataset.factors <- .readDataSetToEnd(columns=variables, columns.as.factor=splitName)
+      } else {
+        dataset <- .readDataSetToEnd(columns.as.numeric = options[["variables"]])
+      }
+    }
   }else{
     dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
+  }
+
+  if (makeSplit && length(variables) > 0) {
+    splitFactor      <- dataset[[.v(splitName)]]
+    splitLevels      <- levels(splitFactor)
+    # remove missing values from the grouping variable
+    dataset <- dataset[!is.na(splitFactor), ]
+    dataset.factors <- dataset.factors[!is.na(splitFactor), ]
+
+    numberMissingSplitBy <- sum(is.na(splitFactor))
+
+    # Actually remove missing values from the split factor
+    splitFactor <- na.omit(splitFactor)
   }
 
   # Check if analysis is ready
@@ -41,7 +67,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
   dataset <- na.omit(dataset)
   if(subgroups != "")
-    subgroups <- dataset[[subgroups]]
+    subgroups <- splitLevels
 
   #Checking for errors in the dataset
 

@@ -131,14 +131,14 @@ Form
 								{label: qsTr("Weibull"),		value: "Weibull"  },
 								{label: qsTr("Lognormal"),		value: "Lognormal"},
 								{label: qsTr("3-parameter lognormal"),		value: "3lognormal"},
-								{label: qsTr("3-parameter weibull"),		value: "3weibull"}
+								{label: qsTr("3-parameter Weibull"),		value: "3weibull"}
 							]
 						}
 
 												DropDown
 						{
 							name: 					"nonNormalMethod"
-							label: 					qsTr("Method:")
+							label: 					qsTr("Non-normal capability statistics:")
 							indexDefaultValue: 		0
 							values:
 								[

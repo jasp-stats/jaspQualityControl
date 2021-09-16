@@ -21,7 +21,7 @@
 #############################################################
 
 # Function to create the x-bar and r-chart section
-.qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups) {
+.qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups, subgroups_ticks) {
 
   if (!is.null(jaspResults[["controlCharts"]]))
     return()
@@ -43,7 +43,7 @@
   }
 
   if(subgroups != "")
-    subgroups <- dataset[[subgroups]]
+    subgroups <- subgroups_ticks
 
   plotMat <- matrix(list(), 2, 1)
   plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
@@ -79,7 +79,7 @@
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, means))
   }
   yLimits <- range(yBreaks)
-  if (length(subgroups) <= 15){
+  if (length(subgroups) <= 10){
     nxBreaks <- length(subgroups)
   }else{
     nxBreaks <- 5
