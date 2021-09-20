@@ -52,7 +52,7 @@
 }
 
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Subgroup mean", xAxisLab = "Subgroup",
+.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Subgroup mean", xAxisLab = "Subgroup",
                            manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   if(Phase2)
@@ -92,9 +92,9 @@
     x = max(xBreaks) * 1.2,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
+      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
     )
   )
 
@@ -140,11 +140,6 @@
   else
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
-  if (time) {
-    xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
-    xBreaks <- c(subgroups)
-    p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = 1:length(subgroups), labels = xLabels)
-  }
   if (manualXaxis != "") {
     xLabels <- factor(manualXaxis, levels = manualXaxis)
     p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
@@ -153,13 +148,13 @@
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
 
-  if (time)
-    return(list(p = p, sixsigma = sixsigma, xLabels = dataset[[.v(options$time)]]))
-  else {return(list(p = p, sixsigma = sixsigma))}
+  if (manualXaxis != "")
+    return(list(p = p, sixsigma = sixsigma, xLabels = levels(xLabels)))
+  else return(list(p = p, sixsigma = sixsigma))
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, time = FALSE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,
+.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,
                         yAxisLab = "Subgroup range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
@@ -199,9 +194,9 @@
     x = max(xBreaks)  * 1.2,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
+      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
     )
   )
   xLimits <- range(c(xBreaks, dfLabel$x))
@@ -228,20 +223,13 @@
     labelSize <- 4
   }
   if (plotLimitLabels)
-    p <- p + ggrepel::geom_label_repel(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), vjust="top",hjust="inward", size = labelSize)
+    p <- p + ggrepel::geom_label_repel(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), direction = "both", size = labelSize)
 
   p <- p + ggplot2::scale_x_continuous(name= gettext(xAxisLab) ,breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
-
-
-  if (time) {
-    xLabels <- factor(dataset[[.v(options$time)]], levels = unique(as.character(dataset[[.v(options$time)]])))
-    xBreaks <- c(subgroups)
-    p <- p + ggplot2::scale_x_continuous(name = gettext('Time'), breaks = xBreaks, labels = xLabels[xBreaks])
-  }
 
   if (manualXaxis != "") {
     xLabels <- factor(manualXaxis, levels = manualXaxis)
@@ -251,10 +239,9 @@
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
 
-  if (time)
-    return(list(p = p, sixsigma = sixsigma, xLabels = dataset[[.v(options$time)]]))
-
-  else  {return(list(p = p, sixsigma = sixsigma))}
+  if (manualXaxis != "")
+    return(list(p = p, sixsigma = sixsigma, xLabels = levels(xLabels)))
+  else return(list(p = p, sixsigma = sixsigma))
 }
 
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
@@ -307,7 +294,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 .NelsonTable <- function(dataset, options, sixsigma, type = "xbar", Phase2 = FALSE, name = "X-bar", xLabels = NULL) {
 
-  table <- createJaspTable(title = gettextf("Nelson tests' results for %s chart", name))
+  table <- createJaspTable(title = gettextf("Test result for %s chart", name))
 
   if (Phase2 == "TRUE" || type == "xbar.one") {
 
@@ -370,4 +357,12 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   table$showSpecifiedColumnsOnly <- TRUE
   table$addFootnote(message = gettext("Numbers index data points where test violations occur."))
   return(table)
+}
+
+decimalplaces <- function(x) {
+  if ((x %% 1) != 0) {
+    nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed=TRUE)[[1]][[2]])
+  } else {
+    return(0)
+  }
 }

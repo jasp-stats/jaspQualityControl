@@ -5,33 +5,70 @@ import JASP.Widgets 							1.0
 
 Form
 {
-	columns:									1
+	columns:								2
+
+
+	DropDown
+	{
+		name: "CCDataFormat"
+		label: qsTr("Data format")
+		indexDefaultValue: 0
+		values:
+			[
+			{label: qsTr("Column"),					value: "CClongFormat"},
+			{label: qsTr("Row"),				value: "CCwideFormat"},
+		]
+		id: pcDataFormat
+	}
 
 	VariablesForm
 	{
-		preferredHeight: 						jaspTheme.smallDefaultVariablesFormHeight
-		id:										variablesForm
+		id:                   				variablesForm
 
 		AvailableVariablesList
 		{
-			name:								"variablesForm"
+			name:               			"variablesForm"
 		}
 
 		AssignedVariablesList
 		{
-			id:									variables
-			name:								"variables"
-			title:								qsTr("Variables")
-			allowedColumns:						["scale"]
+			id:                 			variablesLong
+			name:               			"variablesLong"
+			title:              			qsTr("Measurements")
+			allowedColumns:     			["scale"]
+			singleVariable:					true
+			visible:						pcDataFormat.currentValue == "CClongFormat"
 		}
+
 		AssignedVariablesList
 		{
-			id:                 			time
-			name:               			"time"
-			title:             			 	qsTr("Time Stamp (optional)")
-			singleVariable:    	 			true
-			allowedColumns:     			["nominal", "nominalText", "ordinal", "scale"]
+			id:                 			variables
+			name:               			"variables"
+			title:              			qsTr("Measurements")
+			allowedColumns:     			["scale"]
+			visible:						pcDataFormat.currentValue == "CCwideFormat"
 		}
+
+		AssignedVariablesList
+		{
+			id:                 			subgroups
+			name:               			"subgroups"
+			title:             			 	qsTr("Subgroups")
+			singleVariable:    	 			true
+			allowedColumns:     			["nominal", "nominalText", "ordinal"]
+			visible:						pcDataFormat.currentValue == "CCwideFormat"
+		}
+	}
+
+	DoubleField
+	{
+		id:						pcSubgroupSize
+		name: 					"CCSubgroupSize"
+		label: 					qsTr("Subgroup size:")
+		negativeValues:			false
+		min: 					2
+		defaultValue:			5
+		visible:				pcDataFormat.currentValue == "CClongFormat"
 	}
 
 	Group
@@ -56,9 +93,9 @@ Form
 			  DoubleField
 			  {
 				  name:			"mean_XR"
-				  label:			qsTr("Target:")
+				  label:			qsTr("Mean:")
 				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
+          negativeValues: true
 			  }
 
 			  DoubleField
@@ -66,7 +103,6 @@ Form
 			  	 name:			"SD_XR"
 			  	 label:			qsTr("Standard deviation:")
 				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
 			  }
 		  }
 
@@ -89,20 +125,73 @@ Form
 			  DoubleField
 			  {
 				  name:			"mean_S"
-				  label:			qsTr("Target:")
-				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
+				  label:			qsTr("Mean:")
+          negativeValues: true
 			  }
 
 			  DoubleField
 			  {
 			  	 name:			"SD_S"
 			  	 label:			qsTr("Standard deviation:")
-				  defaultValue:	0
-				  enabled:		variationReference.currentValue != "studyVariation"
 			  }
 		  }
 
+		}
+	}
+
+	Section
+	{
+		title: qsTr("Variable Charts for Subgroups Report")
+
+
+		TextField
+		{
+			id:						ccTitle
+			label: 					qsTr("Title:")
+			name: 					"ccTitle"
+			placeholderText:		qsTr("Measurement")
+			fieldWidth:				100
+		}
+
+		TextField
+		{
+			id:						ccName
+			label: 					qsTr("Name:")
+			name: 					"ccName"
+			placeholderText:		qsTr("Name")
+			fieldWidth:				100
+		}
+
+		TextField
+		{
+			id:						ccDate
+			label: 					qsTr("Date:")
+			name: 					"ccDate"
+			placeholderText:		qsTr("Date")
+			fieldWidth:				100
+		}
+
+		TextField
+		{
+			id:						ccReportedBy
+			label: 					qsTr("Reported by:")
+			name: 					"ccReportedBy"
+			placeholderText:		qsTr("Name")
+			fieldWidth:				100
+		}
+
+		TextField
+		{
+			id:						ccMisc
+			label: 					qsTr("Misc:")
+			name: 					"ccMisc"
+			placeholderText:		qsTr("Miscellaneous")
+			fieldWidth:				100
+		}
+
+		CheckBox
+		{
+			name: "CCReport";		label: qsTr("Show Report")
 		}
 	}
 }

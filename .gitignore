@@ -58,3 +58,7 @@ Rproj.user
 
 # Icloud files
 *.icloud
+
+*.Rprofile
+renv/
+renv.lock

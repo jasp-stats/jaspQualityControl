@@ -11,28 +11,38 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   if (options$ImRchart) {
     if(is.null(jaspResults[["Ichart"]])){
       jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
-      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables"))
+      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "ncol"))
       Iplot <- jaspResults[["Ichart"]]
 
       for (var in variables) {
 
-        ALL <- createJaspContainer(gettextf("Charts and Tests for %s", var))
+        ALL <- createJaspContainer(gettextf("X-mR control chart"))
 
         ALL[["Plot"]] <- .IMRchart(dataset = dataset, options = options, variable = var)$p
 
-        ALL[["Table1"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", name = "Individual", sixsigma = .IMRchart(dataset = dataset, options = options, variable = var)$sixsigma_I)
+        ALL[["Table1"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", name = gettextf("%s for Individual", var), sixsigma = .IMRchart(dataset = dataset, options = options, variable = var)$sixsigma_I)
 
-        ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, name = "R", sixsigma = .IMRchart(dataset = dataset, options = options, variable = var)$sixsigma_R)
+        ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, name = gettextf("%s for R", var), sixsigma = .IMRchart(dataset = dataset, options = options, variable = var)$sixsigma_R)
         Iplot[[var]] <- ALL
       }
+    }
+  }
+
+  # Autocorrelation Plot
+  if(options$CorPlot){
+    jaspResults[["CorPlot"]] <- createJaspContainer(position = 2, title = "Autocorrelation plot")
+    jaspResults[["CorPlot"]]$dependOn(c("CorPlot", "variables", "nLag"))
+    Corplot <- jaspResults[["CorPlot"]]
+
+    for (var in variables) {
+      Corplot[[var]] <- .CorPlot(dataset = dataset, options = options, variable = var, CI = options$CI, Lags = options$nLag)
     }
   }
 }
 
 .IMRchart <- function(dataset, options, variable, cowPlot = FALSE) {
 
-  title <- gettextf("Charts for: %s", variable)
-  ppPlot <- createJaspPlot(width = 1200, height = 500, title = title)
+  ppPlot <- createJaspPlot(width = 1200, height = 500)
   ppPlot$dependOn(optionContainsValue = list(variables = variable))
 
   #Individual chart
@@ -52,9 +62,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
+      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
     )
   )
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data$process, UCL))
@@ -63,7 +73,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     ggplot2::geom_hline(yintercept = center, color = 'green') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = gettext("Value"), breaks = yBreaks, limits = range(yBreaks)) +
+    ggplot2::scale_y_continuous(name = gettextf("%s", variable), breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
     jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')) +
@@ -73,24 +83,24 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   #Moving range chart
   #data
   data2 <- data.frame(process = dataset[[.v(variable)]])
-  xmr.raw.r <- matrix(cbind(data2$process[1:length(data2$process)-1], data2$process[2:length(data2$process)]), ncol=2)
+  xmr.raw.r <- matrix(cbind(data2$process[1:length(data2$process)-1], data2$process[2:length(data2$process)]), ncol = options$ncol, byrow = T)
   sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
   data_plot <- data.frame(subgroups = c(1:length(sixsigma_R$statistics)), data2 = sixsigma_R$statistics)
   center <- sixsigma_R$center
   UCL <- max(sixsigma_R$limits)
   LCL <- min(sixsigma_R$limits)
   if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+    xBreaks <- c(2,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
   else
     xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks) + 2.5)
+  xLimits <- c(2,max(xBreaks) + 2.5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
+      gettextf("CL = %g", round(center, decimalplaces(data2[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(data2[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(data2[1,1]) + 2))
     )
   )
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$data2, UCL))
@@ -119,3 +129,31 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R))
 }
 
+.CorPlot <- function(dataset = dataset, options = options, variable = var, Lags = NULL, CI = 0.95){
+  ppPlot <- createJaspPlot(width = 1200, height = 500, title = gettextf("%s",variable))
+  ppPlot$dependOn(optionContainsValue = list(variables = variable))
+
+  list.acf <- stats::acf(dataset[[variable]], lag.max = Lags, type = "correlation", ci.type = "ma", plot = FALSE, ci = CI)
+  N <- as.numeric(list.acf$n.used)
+  df1 <- data.frame(lag = list.acf$lag, acf = list.acf$acf)
+  df1$lag.acf <- dplyr::lag(df1$acf, default = 0)
+  df1$lag.acf[2] <- 0
+  df1$lag.acf.cumsum <- cumsum((df1$lag.acf)^2)
+  df1$acfstd <- sqrt(1/N * (1 + 2 * df1$lag.acf.cumsum))
+  df1$acfstd[1] <- 0
+  df1 <- dplyr::select(df1, lag, acf, acfstd)
+
+  p <- ggplot2::ggplot(data = df1, ggplot2::aes(x = lag, y = acf)) +
+    ggplot2::geom_col(fill = "#4373B6", width = 0.2) +
+    jaspGraphs::geom_line(ggplot2::aes(x = lag, y = qnorm((1+CI)/2)*acfstd), color = "red") +
+    jaspGraphs::geom_line(ggplot2::aes(x = lag, y = -qnorm((1+CI)/2)*acfstd), color = "red") +
+    ggplot2::geom_hline(yintercept = 0, color = 'green') +
+    ggplot2::scale_y_continuous(name = gettext("Autocorrelation"), limits = c(-1,1), breaks = seq(-1,1,0.2)) +
+    ggplot2::scale_x_continuous(name = gettext('Lag'), breaks = seq(0,max(df1$lag),2)) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+
+  ppPlot$plotObject <- p
+
+  return(ppPlot)
+}
