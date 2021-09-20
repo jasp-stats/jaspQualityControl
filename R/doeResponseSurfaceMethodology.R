@@ -38,8 +38,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   if(options[["anova"]])
     .responseSurfaceTableAnovaCall(jaspResults, options, rsm, position = 4)
 
-  if(options[["eigen"]])
-    .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
+  # if(options[["eigen"]])
+  #   .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
 
   if(options[["res"]])
     .responsePlotResidualCall(jaspResults, options, rsm, position = 6)
