@@ -27,10 +27,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   splitName <- options$subgroups
   makeSplit <- splitName != ""
 
-
   dataset <- .readDataSetToEnd(columns.as.numeric = num.vars, columns.as.factor = fac.vars)
 
-  if (makeSplit && length(measurements) > 0) {
+  # Check if the analysis is ready
+  if (options[["pcDataFormat"]] == "PCwideFormat"){
+    ready <- length(measurements) > 0
+  }else{
+    ready <- (measurements != "" && (options[["manualSubgroupSize"]] | subgroups != ""))
+  }
+
+  if (makeSplit && ready) {
     dataset.factors <- .readDataSetToEnd(columns=num.vars, columns.as.factor=splitName)
     splitFactor      <- dataset[[.v(splitName)]]
     splitLevels      <- levels(splitFactor)
@@ -42,12 +48,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     # Actually remove missing values from the split factor
     splitFactor <- na.omit(splitFactor)
-  }
-
-  if (options[["pcDataFormat"]] == "PCwideFormat"){
-    ready <- length(measurements > 0)
-  }else{
-    ready <- (length(measurements > 0) && (options[["manualSubgroupSize"]] | subgroups != ""))
   }
 
   if (options[["pcDataFormat"]] == "PClongFormat" && ready){
@@ -73,10 +73,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   dataset <- na.omit(dataset)
 
+  # Error Handling
+  .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
+             all.target = c(options$variables, options$variablesLong),
+             observations.amount =  c('1'), exitAnalysisIfErrors = TRUE)
+
+
   # X-bar and R Chart OR ImR Chart
   if(options[["controlChartsType"]] == "xbarR"){
     .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups_ticks = splitLevels, subgroups = subgroups)
-  }else{
+  } else{
     .qcImRChart(options, dataset, ready, jaspResults, measurements)
   }
 
@@ -1309,6 +1315,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 
 .qcImRChart<- function(options, dataset, ready, jaspResults, measurements){
+  if (!ready)
+    return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
   Container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
   Container$position <- 1

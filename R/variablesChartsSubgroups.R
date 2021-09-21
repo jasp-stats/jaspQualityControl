@@ -28,8 +28,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   measurements <- measurements[measurements != ""]
   subgroups <- unlist(options$subgroups)
 
-
-
+  # Data transformation
   if (options[["CCDataFormat"]] == "CCwideFormat"){
     if (is.null(dataset)) {
       if (options[["subgroups"]] != "") {
@@ -43,7 +42,22 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
   }
 
-  if (makeSplit && length(variables) > 0) {
+  # Check if analysis is ready
+  if (options[["CCDataFormat"]] == "CCwideFormat"){
+    ready <- length(measurements) > 1
+  }else{
+    ready <- length(measurements) > 0
+  }
+
+  if ((options$CCReport | options$Schart | options$Xbarchart) && !ready) {
+    plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
+    jaspResults[["plot"]] <- plot
+    plot$setError(gettext("Please insert more measurements."))
+    plot$dependOn(c("CCReport", "Schart", "Xbarchart"))
+    return()
+  }
+
+  if (makeSplit && ready) {
     splitFactor      <- dataset[[.v(splitName)]]
     splitLevels      <- levels(splitFactor)
     # remove missing values from the grouping variable
@@ -54,20 +68,26 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
     # Actually remove missing values from the split factor
     splitFactor <- na.omit(splitFactor)
-  }
 
-  # Check if analysis is ready
-  ready <- length(measurements > 0)
+    if(subgroups != "")
+      subgroups <- splitLevels
+  }
 
   if (options[["CCDataFormat"]] == "CClongFormat" && ready){
     k <- options[["CCSubgroupSize"]]
+    n <- nrow(dataset)
     dataset <- .PClongTowide(dataset, k, measurements)
+    if (dataset == "error"){
+      plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
+      jaspResults[["plot"]] <- plot
+      plot$setError(gettextf("Could not equally divide data points into groups of size %i.", k))
+      plot$dependOn("CCSubgroupSize")
+      return()
+    }
     measurements <- colnames(dataset)
   }
 
   dataset <- na.omit(dataset)
-  if(subgroups != "")
-    subgroups <- splitLevels
 
   #Checking for errors in the dataset
 
@@ -76,14 +96,10 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
              observations.amount =  c('< 0'), exitAnalysisIfErrors = TRUE)
 
   #X bar & R chart
-  if (options$Xbarchart && is.null(jaspResults[["XbarPlot"]])) {
+  if (options$Xbarchart && is.null(jaspResults[["XbarPlot"]]) && ready) {
     jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
     jaspResults[["XbarPlot"]]$dependOn(c("Xbarchart", "variables", "Wlimits", "Phase2_XR", "mean_XR", "SD_XR", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong"))
 
-    if (length(measurements) < 2) {
-      jaspResults[["XbarPlot"]]$setError(gettext("You must enter more measurements to get this output."))
-      return()
-    }
     Xchart <- .XbarchartNoId(dataset = dataset[measurements], options = options,  manualXaxis = subgroups ,warningLimits = options[["Wlimits"]], Phase2 = options$Phase2_XR, target = options$mean_XR, sd = options$SD_XR)
     Rchart <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)
     jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
@@ -101,13 +117,10 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   }
 
   #S Chart
-  if (options$Schart && is.null(jaspResults[["SPlot"]])) {
+  if (options$Schart && is.null(jaspResults[["SPlot"]]) && ready) {
     jaspResults[["SPlot"]] <- createJaspPlot(title = gettext("Xbar & s Control Chart"), width = 1200, height = 500)
     jaspResults[["SPlot"]]$dependOn(c("Schart", "variables", "Wlimits2", "Phase2_S", "mean_S", "SD_S", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong"))
-    if (length(measurements) < 2) {
-      jaspResults[["SPlot"]]$setError(gettext("You must enter more measurements to get this output."))
-      return()
-    }
+
     Schart <- .XbarSchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups)
     Xchart <- .XbarchartNoId(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits2"]], manualXaxis = subgroups, Phase2 = options$Phase2_S, target = options$mean_S, sd = options$SD_S)
     jaspResults[["SPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Schart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
@@ -124,14 +137,12 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
   }
   # Report
-  if (options[["CCReport"]]) {
-    if (is.null(jaspResults[["CCReport"]])) {
+  if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]]) && ready) {
+    jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
+    jaspResults[["CCReport"]]$dependOn(c("CCReport", "Schart", "Xbarchart", "variables", "variablesLong", "CCDataFormat", "subgroups"))
+    jaspResults[["CCReport"]]$position <- 9
+    Iplot <- jaspResults[["CCReport"]]
 
-      jaspResults[["Report"]] <- createJaspContainer(gettext("Report"))
-      jaspResults[["Report"]]$dependOn(c("CCReport", "Schart", "Xbarchart", "variables", "variablesLong", "CCDataFormat", "subgroups"))
-      jaspResults[["Report"]]$position <- 9
-      Iplot <- jaspResults[["Report"]]
-    }
     Iplot[["ccReport"]] <- .CCReport(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits_X = options[["Wlimits"]], Phase2_X = options$Phase2_XR, target_X = options$mean_XR, sd_X = options$SD_XR,
                                            warningLimits_S = options[["Wlimits2"]], Phase2_S = options$Phase2_S, target_S = options$mean_S, sd_S = options$SD_S)
 
@@ -146,6 +157,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     Iplot[["ccTableS"]]  <- .NelsonTable(dataset = dataset[measurements], options = options, name = "s", sixsigma = Schart$sixsigma, xLabels = Schart$xLabels)
   }
 }
+
 #Functions for control charts
 .XbarSchart <- function(dataset, options, manualXaxis = "") {
   data1 <- dataset[, unlist(lapply(dataset, is.numeric))]

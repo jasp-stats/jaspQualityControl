@@ -6,12 +6,16 @@ attributesCharts <- function(jaspResults, dataset, options) {
   numeric_variables  <- numeric_variables[numeric_variables != ""]
 
   dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
+
+  # Checking if the analysis is ready
+  ready <- options$D != "" && options$total != ""
+
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues', "negativeValues"),
-             all.target = options$variables,
+             all.target = c(options$variables, options$D),
              observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE)
 
-  if (options$Attributes == "Defectives" && options$D != "" && options$total != "") {
+  if (options$Attributes == "Defectives" && ready) {
 
     #P chart
     if (options$TypeDefectives == "pchart" && is.null(jaspResults[["PchartPlot"]])) {
@@ -61,7 +65,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     }
   }
 
-  if (options$Attributes == "Defects" && options$D != "" && options$total != "") {
+  if (options$Attributes == "Defects" && ready) {
     #Cchart
     if (options$TypeDefects == "cchart" && is.null(jaspResults[["CchartPlot"]])) {
       jaspResults[["CchartPlot"]] <- createJaspPlot(title =  gettext("C Control Chart"), width = 1200, height = 500)
@@ -107,7 +111,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     }
   }
   #ImRchart for attributes
-  if (options$Attributes == "ImR" && length(options$D) > 0) {
+  if (options$Attributes == "ImR" && D != "") {
     jaspResults[["IPlotA"]] <- createJaspPlot(title = gettext("Individual and Moving Range Control Charts"), width = 1200, height = 500, position = 1)
     IMRchart <- .Ichart_attributes(dataset = dataset, options = options)
     jaspResults[["IPlotA"]]$plotObject <- IMRchart$p
@@ -124,7 +128,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
       jaspResults[["NelsonTableI"]]$dependOn(c("D", "total","ImRchart2", "Attributes"))
       jaspResults[["NelsonTableMR"]]$dependOn(c("D", "total","ImRchart2", "Attributes"))
     }
-
   }
 }
 
