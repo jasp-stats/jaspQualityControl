@@ -20,23 +20,23 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Type 1 Study")
+		title:			qsTr("Type 1 Instrument Capability")
 		func:			"msaType1Gauge"
 	}
 	Analysis
 	{
-		title:			qsTr("Linearity Study")
-		func:			"msaGaugeLinearity"
-	}
-	Analysis
-	{
-		title:			qsTr("Gauge r&R")
+		title:			qsTr("Type 2 and 3 Gauge r&R")
 		func:			"msaGaugeRR"
 	}
 	Analysis
 	{
 		title:			qsTr("Gauge r&R (Non-Replicable Measurements)")
 		func:			"msaGaugeRRnonrep"
+	}
+  Analysis
+	{
+		title:			qsTr("Linearity Study")
+		func:			"msaGaugeLinearity"
 	}
 	Analysis
 	{

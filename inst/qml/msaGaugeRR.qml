@@ -18,11 +18,11 @@ import QtQuick.Layouts 							1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
-Form 
+Form
 {
 	usesJaspResults:							true
 	columns:									1
-	
+
 	DropDown
 	{
 		name: "gaugeRRdataFormat"
@@ -30,8 +30,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Long format"),					value: "gaugeRRlongFormat"},
-			{label: qsTr("Wide format"),				value: "gaugeRRwideFormat"},
+			{label: qsTr("Column"),					value: "gaugeRRlongFormat"},
+			{label: qsTr("Row"),				value: "gaugeRRwideFormat"},
 		]
 		id: gaugeRRdataFormat
 	}
@@ -53,16 +53,16 @@ Form
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
-		
+
 		AssignedVariablesList
 		{
 			id:									variable2
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
-		
+
 		AssignedVariablesList
 		{
 			id:									variable4
@@ -82,7 +82,7 @@ Form
 			visible:							gaugeRRdataFormat.currentValue == "gaugeRRwideFormat"
 			allowedColumns:						["scale"]
 		}
-		
+
 
 
 	}
@@ -98,16 +98,16 @@ Form
 		]
 		id: gaugeRRmethod
 	}
-	
+
 	Section
 	{
 		title: qsTr("ANOVA Method Options")
 		visible: gaugeRRmethod.currentValue == "anovaMethod"
-		
+
 		Group
 		{
 			title: qsTr("Analysis Options")
-			
+
 			DropDown
 			{
 				name: "standardDeviationReference"
@@ -120,7 +120,7 @@ Form
 				]
 				id: variationReference
 			}
-			
+
 			DoubleField
 			{
 				name:			"historicalStandardDeviationValue"
@@ -128,8 +128,8 @@ Form
 				defaultValue:	0
 				enabled:		variationReference.currentValue == "historicalStandardDeviation"
 			}
-			
-			
+
+
 			CheckBox
 			{
 				name: "gaugeToleranceEnabled"
@@ -145,7 +145,7 @@ Form
 					decimals: 3
 				}
 			}
-			
+
 			CheckBox
 			{
 				name: "gaugeANOVA"
@@ -189,7 +189,7 @@ Form
 				CheckBox
 				{
 					name: "gaugeVarCompGraph"
-					label: qsTr("Graph variation components")
+					label: qsTr("Components of variation")
 					checked: true
 				}
 			}
@@ -200,7 +200,7 @@ Form
 			}
 		}
 
-		
+
 		Group
 		{
 			title: qsTr("Plots")
@@ -210,7 +210,7 @@ Form
 				name: "gaugeRchart"
 				label: qsTr("R charts by operator")
 			}
-			
+
 			CheckBox
 			{
 				name: "gaugeXbarChart"
@@ -221,7 +221,7 @@ Form
 			{
 				name: "gaugeScatterPlotOperators"
 				label: qsTr("Scatter plots operators")
-				
+
 				CheckBox
 				{
 					name: "gaugeScatterPlotFitLine"
@@ -259,14 +259,14 @@ Form
 			}
 		}
 	}
-	
-	
+
+
 	Section
 	{
 		title: qsTr("ANOVA Method Report")
 		visible: gaugeRRmethod.currentValue == "anovaMethod"
-		
-		
+
+
 		TextField
 		{
 			id:						anovaGaugeTitle
@@ -275,7 +275,7 @@ Form
 			placeholderText:		qsTr("Measurement")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						anovaGaugeName
@@ -284,7 +284,7 @@ Form
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						anovaGaugeDate
@@ -293,7 +293,7 @@ Form
 			placeholderText:		qsTr("Date")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						anovaGaugeReportedBy
@@ -302,7 +302,7 @@ Form
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						anovaGaugeMisc
@@ -311,24 +311,24 @@ Form
 			placeholderText:		qsTr("Miscellaneous")
 			fieldWidth:				100
 		}
-		
+
 		CheckBox
 		{
 			name: "anovaGaugeReport";		label: qsTr("Show Report")
 		}
-		
+
 
 	}
-	
+
 	Section
 	{
 		title: qsTr("Range Method Options")
 		visible: gaugeRRmethod.currentValue == "rangeMethod"
-		
+
 		Group
 		{
 			title: qsTr("Analysis Options")
-			
+
 			DoubleField
 			{
 				name:			"rangePSD"
@@ -336,7 +336,7 @@ Form
 				defaultValue:	1
 				enabled:		TRUE
 			}
-			
+
 			CheckBox
 			{
 				name: "rangeRr"
@@ -344,7 +344,7 @@ Form
 				checked: true
 			}
 		}
-		
+
 		Group
 		{
 			title: qsTr("Plots")
@@ -354,20 +354,20 @@ Form
 				name: "rangeScatterPlotOperatorParts"
 				label: qsTr("Scatter plot operators vs. parts")
 			}
-			
+
 			CheckBox
 			{
 				name: "rangeScatterPlotOperators"
 				label: qsTr("Scatter plot operators")
 				checked: true
-				
+
 				CheckBox
 				{
 					name: "rangeScatterPlotFitLine"
 					label: qsTr("Fit line")
 					checked: true
 				}
-				
+
 				CheckBox
 				{
 					name: "rangeScatterPlotOriginLine"
@@ -376,7 +376,7 @@ Form
 				}
 
 			}
-			
+
 			CheckBox
 			{
 				name: "rangeRchart"

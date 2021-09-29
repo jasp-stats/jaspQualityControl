@@ -53,7 +53,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
     plot$setError(gettext("Please insert more measurements."))
-    plot$dependOn(c("CCReport", "Schart", "Xbarchart"))
+    plot$dependOn(c("CCReport", "Schart", "Xbarchart", "variablesLong", "variables"))
     return()
   }
 

@@ -77,6 +77,6 @@
 <text x='690.02' y='539.52' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='16.69px' lengthAdjust='spacingAndGlyphs'>12</text>
 <text x='390.27' y='567.90' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='91.73px' lengthAdjust='spacingAndGlyphs'>Measurement</text>
 <text transform='translate(15.30,266.32) rotate(-90)' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='47.54px' lengthAdjust='spacingAndGlyphs'>Counts</text>
-<text x='390.27' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='65.87px' lengthAdjust='spacingAndGlyphs'>histogram</text>
+<text x='390.27' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='101.72px' lengthAdjust='spacingAndGlyphs'>histogram-wide</text>
 </g>
 </svg>

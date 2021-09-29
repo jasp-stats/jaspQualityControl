@@ -1117,7 +1117,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcProbabilityPlot <- function(dataset, options, measurements) {
 
-  plot <- createJaspPlot(width = 400, aspectRatio = 1, title = "Probability Plot")
+  plot <- createJaspPlot(width = 600, aspectRatio = 1, title = "Probability Plot")
   plot$dependOn(c("variablesLong", "pcSubgroupSize"))
 
   if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
@@ -1128,6 +1128,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Arrange data
   x <- as.vector(unlist(dataset[measurements]))
   x <- x[order(x)]
+  label_x <- x
   n <- length(x)
   i <- rank(x)
 
@@ -1146,8 +1147,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Quantities
   pSeq <- seq(0.001, 0.999, 0.001)
   ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(x)
-  xLimits <- range(xBreaks)
 
   # Computing according to the distribution
   if (options[["nullDistribution"]] == 'Normal') {
@@ -1165,7 +1164,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     yBreaks <- qnorm(ticks / 100)
 
   } else if (options[["nullDistribution"]] == 'Lognormal') {
-    x <- log(x)
     fit <- fitdistrplus::fitdist(x, 'lnorm')
     meanlog <- as.numeric(fit$estimate[1])
     sdlog <- as.numeric(fit$estimate[2])
@@ -1180,7 +1178,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     varPercentile <- percentileEstimate^2*( varmeanlog+zp^2*varsdlog + 2*zp * covarSS)
     percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
     percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
+
     yBreaks <- qnorm(ticks / 100)
+    x <- log(label_x)
+    percentileEstimate <- log(percentileEstimate)
+    percentileLower <- log(percentileLower)
+    percentileUpper <- log(percentileUpper)
   } else if (options[["nullDistribution"]] == 'Weibull') {
     fit <- fitdistrplus::fitdist(x, 'weibull')
     shape <- as.numeric(fit$estimate[1])
@@ -1196,17 +1199,25 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     varPercentile <- (percentileEstimate^2 / scale^2) * varScale + (percentileEstimate^2/shape^4)*zp^2*varShape - 2*((zp*percentileEstimate^2) / (scale * shape^2))*covarSS
     percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
     percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
+
     yBreaks <- log(-1*log(1-(ticks / 100)))
+    x <- log(label_x)
+    percentileEstimate <- log(percentileEstimate)
+    percentileLower <- log(percentileLower)
+    percentileUpper <- log(percentileUpper)
   }
-  data1 <- data.frame(x = x, y = y)
   yLimits <- range(yBreaks)
+  xBreaks <- c(x[seq(1,length(x), 10)], x[length(x)])
+  label_x <- round(c(label_x[seq(1,length(label_x), 10)], label_x[length(label_x)]),2)
+  xLimits <- range(xBreaks)
+
 
   p <- ggplot2::ggplot() +
-    ggplot2::geom_line(ggplot2::aes(y = zp, x = log(percentileEstimate))) +
-    ggplot2::geom_line(ggplot2::aes(y = zp, x = log(percentileLower)), col = "darkred", linetype = "dashed") +
-    ggplot2::geom_line(ggplot2::aes(y = zp, x = log(percentileUpper)), col = "darkred", linetype = "dashed") +
-    jaspGraphs::geom_point(ggplot2::aes(x = log(data1[["x"]]), y = data1[["y"]])) +
-    ggplot2::scale_x_continuous("Measurement", breaks = xBreaks, limits = xLimits) +
+    ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
+    ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed") +
+    ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed") +
+    jaspGraphs::geom_point(ggplot2::aes(x = x, y = y)) +
+    ggplot2::scale_x_continuous("Measurement", breaks = xBreaks, limits = xLimits, labels = label_x) +
     ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = yBreaks, limits = yLimits)
 
   p <- jaspGraphs::themeJasp(p)
@@ -1300,12 +1311,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if(options[['nullDistribution']]  == 'Normal'){
       p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(data), sd = sd(data)), color = "dodgerblue")
     }else if(options[['nullDistribution']]  == 'Weibull'){
-      shape <- .distributionParameters(data = data, distribution = 'Weibull')$beta
-      scale <- .distributionParameters(data = data, distribution = 'Weibull')$theta
+      fit_Weibull <- fitdistrplus::fitdist(data, "weibull", method = "mle",
+                                          control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
+      shape <- fit_Weibull$estimate[[1]]
+      scale <- fit_Weibull$estimate[[2]]
       p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale), color = "dodgerblue")
     }else if(options[['nullDistribution']]  == 'Lognormal'){
-      shape <- .distributionParameters(data = data, distribution = 'Lognormal')$beta
-      scale <- .distributionParameters(data = data, distribution = 'Lognormal')$theta
+      fit_Lnorm <- fitdistrplus::fitdist(data, "lnorm", method = "mle",
+                                           control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
+      shape <- fit_Lnorm$estimate[[1]]
+      scale <- fit_Lnorm$estimate[[2]]
       p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale), color = "dodgerblue")
     }
   }
@@ -1424,11 +1439,15 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
 
 .distributionParameters <- function(data, distribution = c('Lognormal', 'Weibull', '3lognormal', '3weibull')){
   if (distribution == "Lognormal") {
-    beta <- fitdistrplus::fitdist(data, 'lnorm')$estimate[[1]]
-    theta <- fitdistrplus::fitdist(data, 'lnorm')$estimate[[2]]
+    fit_Lnorm <- fitdistrplus::fitdist(data, "lnorm", method = "mle",
+                                       control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
+    beta <- fit_Lnorm$estimate[[1]]
+    theta <- fit_Lnorm$estimate[[2]]
   } else if (distribution == "Weibull") {
-    beta    <- mixdist::weibullpar(mu = mean(data), sigma = sd(data), loc = 0)$shape
-    theta   <- mixdist::weibullpar(mu = mean(data), sigma = sd(data), loc = 0)$scale
+    fit_Weibull <- fitdistrplus::fitdist(data, "weibull", method = "mle",
+                                         control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
+    beta <- fit_Weibull$estimate[[1]]
+    theta <- fit_Weibull$estimate[[2]]
   }else if(distribution == "3lognormal"){
     beta <- EnvStats::elnorm3(data)$parameters[[1]]
     theta <- EnvStats::elnorm3(data)$parameters[[2]]

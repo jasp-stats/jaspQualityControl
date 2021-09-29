@@ -191,6 +191,6 @@
 <text x='690.72' y='536.84' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='16.69px' lengthAdjust='spacingAndGlyphs'>11</text>
 <text x='397.87' y='567.28' text-anchor='middle' style='font-size: 18.00px; font-family: sans;' textLength='110.07px' lengthAdjust='spacingAndGlyphs'>Measurement</text>
 <text transform='translate(17.37,264.98) rotate(-90)' text-anchor='middle' style='font-size: 18.00px; font-family: sans;' textLength='62.05px' lengthAdjust='spacingAndGlyphs'>Percent</text>
-<text x='397.87' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='97.55px' lengthAdjust='spacingAndGlyphs'>probability-plot</text>
+<text x='397.87' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='133.40px' lengthAdjust='spacingAndGlyphs'>probability-plot-wide</text>
 </g>
 </svg>

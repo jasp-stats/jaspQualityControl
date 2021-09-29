@@ -42,7 +42,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
 .IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE) {
 
-  ppPlot <- createJaspPlot(width = 1200, height = 500)
+  ppPlot <- createJaspPlot(width = 1000, height = 550)
 
   #Individual chart
   #data

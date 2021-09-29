@@ -31,7 +31,7 @@
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
 
-  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 700, height = 500)
+  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 1000, height = 550)
   container[["plot"]] <- matrixPlot
 
   if (!ready)
@@ -53,7 +53,7 @@
 
 # Function to create X-bar chart
 .XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Sample average", xAxisLab = "Subgroup",
-                           manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL) {
+                           manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL, NoWarningSignals = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   if(Phase2)
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
@@ -137,6 +137,8 @@
 
   if (Phase2)
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+  else if (NoWarningSignals)
+    p <- p + jaspGraphs::geom_point(size = 4, fill = "blue")
   else
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
@@ -155,7 +157,7 @@
 
 # Function to create R chart
 .RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,
-                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE) {
+                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
@@ -234,6 +236,10 @@
   if (manualXaxis != "") {
     xLabels <- factor(manualXaxis, levels = manualXaxis)
     p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
+  }
+
+  if (OnlyOutofLimit){
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, 'red', 'blue'))
   }
 
   if (title != "")
