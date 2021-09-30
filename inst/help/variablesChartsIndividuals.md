@@ -1,29 +1,45 @@
 Variable Charts Indviduals
 ==========================
-For low volume production runs the best alternative for X-bar & R and X-bar & s control charts is an individual moving Range (I-mR) chart. 
-An I-mR chart is also useful when there is no obvious source of variation related to a rational subgroup or when there is no practical subgroup.
+Control charts are a set of tools used to model the variation of a process, thereby indicating its stability and establishing a state of statistical control. 
 
-The basic assumptions for individual and moving Range charts are:
-- the measurements must be sequential or time sequenced.
-- the measurements are independent of each other – one data point does not determine or impact the next data point.
-- the data must approximate a normal distribution.
+For low volume production runs the best alternative for X-bar & R and X-bar & s control charts is an individual moving Range (X-mR) chart. 
+An X-mR chart is also useful when there is no obvious source of variation related to a rational subgroup or when there is no practical subgroup.
+An individual moving Range (X-mR) chart is used in the absence of subgroups or/and the source of process variation is unclear. It is therefore an alternative to the X-bar & R and X-bar & s control charts when analyzing small-scale production data.
 
-The basic assumptions for Autocorrelation are:
-- each data point plotted is dependent on previously plotted points. 
+An Autocorrelation chart models the pairwise correlation of values returned from a certain function. The correlation can be based on values following one another (lag of 1) or
+on every second value (lag of 2).
 
-#### Assignment Box 
+## Assumptions 
+The assumptions associated with the I-mR chart are: 
+- sequential or time-sequenced measurements must be used. 
+- the data points are independent of one another- a given data point is unrelated to the next. 
+- the data must be approximately normally distributed. 
+
+The assumptions associated with the Autocorrelation chart are:
+- the data points are dependent on one another- a given data point is related to the next. 
+
+## Input
+### Assignment Box 
 -------
 - Variables: the observations collected from a process.  
 
-### Charts
--------
-- X-mR chart: outlines the process (Individual) and process's moving range (MR) over time.
+### Options
+- X-mR chart:
   - Moving range length: the size of the range between observations. 
-- Autocorrelation: outlines the autocorrelation over the lags.
+- Autocorrelation:
   - Number of lags: the number of lags to be used.
   - Confidence size: the size of the confidence interval used to calculate the limits. 
 
-### R Packages
+## Output
+### Charts
+-------
+- X-mR chart: outlines the process's value and moving range (MR) over time.
+- Autocorrelation: outlines the autocorrelation over the lags. 
+
+## References
+- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2019).*Statistical process control*. SKF group. 
+
+## R Packages
 -------
 - ggplot2
 - qcc

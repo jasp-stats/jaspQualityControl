@@ -331,7 +331,7 @@ Form
 					CheckBox
 					{
 						name:					"addGridlines"
-						label:					qsTr("Display grid lines in plots")
+						label:					qsTr("Display grid lines")
 					}
 				}
 			}
