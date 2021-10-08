@@ -51,7 +51,7 @@ Form
 			name:								"operators"
 			title:								qsTr("Operators")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 
 		AssignedVariablesList
@@ -257,6 +257,12 @@ Form
 			{
 				name: "gaugeByInteraction";		label: qsTr("Part x operator interaction plot")
 			}
+
+			CheckBox
+			{
+				name: "trafficPlot";		label: qsTr("Traffic light graph")
+			}
+
 		}
 	}
 

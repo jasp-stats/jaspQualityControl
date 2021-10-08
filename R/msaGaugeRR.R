@@ -140,6 +140,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
     }
 
+    # Traffic light plot
+    if(options[["trafficPlot"]] & is.null(jaspResults[["trafficPlot"]] )) {
+      jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic Light Graph"))
+      jaspResults[["trafficPlot"]]$position <- 9
+      valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, returnTrafficValues = TRUE)
+      jaspResults[["trafficPlot"]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceVar = valuesVec$tol, options = options, ready = ready)
+
+    }
+
     # Report
     if (options[["anovaGaugeReport"]]) {
       if (is.null(jaspResults[["anovaGaugeReport"]])) {
@@ -193,13 +202,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       jaspResults[["rangeRchart"]] <- plot
     }
 
-
-
   }
-  return()
 }
 
-.gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready, returnPlotOnly = FALSE) {
+.gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready, returnPlotOnly = FALSE, returnTrafficValues = FALSE) {
 
   anovaTables <- createJaspContainer(gettext("ANOVA Table"))
   anovaTables$dependOn(c("gaugeANOVA", "gaugeRRmethod"))
@@ -286,25 +292,23 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       totalRR <- repeatability + reproducibility
       totalVar <- totalRR + partToPart
 
-
-
-      RRtable1$setData(list(      "Source"       = gettext(c("Total Gauge r & R", "Repeatability", "Reproducibility", "Operator", "Part-to-Part", "Operator x Part", "Total Variation")),
-                                  "Variation"    = c(totalRR, repeatability, reproducibility, operator, partToPart, operatorXpart, totalVar),
-                                  "Percent"      = c(round(c(totalRR, repeatability, reproducibility, operator, partToPart)/ totalVar * 100,2), ifelse(decimalplaces(totalVar/ totalVar * 100) == 0, round(totalVar/ totalVar * 100,0), totalVar))))
-
-
-      anovaTables[['RRtable1']] <- RRtable1
-
       histSD <- options$historicalStandardDeviationValue
-
-      if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)) {
+      if (options$standardDeviationReference == "historicalStandardDeviation") {
         SD <- c(sqrt(c(totalRR, repeatability, reproducibility, operator)),
                 sqrt(histSD^2 - totalRR),
                 sqrt(operatorXpart), histSD)
-
-      }else{
+        totalVar <- histSD^2
+        partToPart <- totalVar - totalRR
+      } else{
         SD <- sqrt(c(totalRR, repeatability, reproducibility, operator, partToPart, operatorXpart, totalVar))
       }
+
+      RRtable1$setData(list(      "Source"       = gettext(c("Total Gauge r & R", "Repeatability", "Reproducibility", "Operator", "Part-to-Part", "Total Variation")),
+                                  "Variation"    = c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar),
+                                  "Percent"      = c(round(c(totalRR, repeatability, reproducibility, operator, partToPart)/ totalVar * 100,2), ifelse(decimalplaces(totalVar/ totalVar * 100) == 0, round(totalVar/ totalVar * 100,0), totalVar))))
+
+      anovaTables[['RRtable1']] <- RRtable1
+
       studyVar <- SD * studyVarMultiplier
       RRtable2DataList <- list("source"       = gettext(c("Total Gauge r & R", "Repeatability", "Reproducibility", "Operator", "Part-to-Part", "Operator x Part", "Total Variation")),
                                "SD"           = SD,
@@ -367,6 +371,17 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       totalRR <- repeatability + reproducibility
       totalVar <- totalRR + partToPart
 
+      histSD <- options$historicalStandardDeviationValue
+
+      if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)) {
+        SD <- c(sqrt(c(totalRR, repeatability, reproducibility, operator)),
+                sqrt(histSD^2 - totalRR), histSD)
+        totalVar <- histSD^2
+        partToPart <- totalVar - totalRR
+      }else{
+        SD <- sqrt(c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar))
+      }
+
       RRtable1$setData(list(      "Source"       = gettext(c("Total Gauge r & R", "Repeatability", "Reproducibility", "Operator", "Part-to-Part", "Total Variation")),
                                   "Variation"    = c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar),
                                   "Percent"      = c(round(c(totalRR, repeatability, reproducibility, operator, partToPart)/ totalVar * 100,2), ifelse(decimalplaces(totalVar/ totalVar * 100) == 0, round(totalVar/ totalVar * 100,0), totalVar))))
@@ -374,14 +389,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       anovaTables[['RRtable1']] <- RRtable1
 
-      histSD <- options$historicalStandardDeviationValue
-
-      if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(totalRR)) {
-        SD <- c(sqrt(c(totalRR, repeatability, reproducibility, operator)),
-                sqrt(histSD^2 - totalRR), histSD)
-      }else{
-        SD <- sqrt(c(totalRR, repeatability, reproducibility, operator, partToPart, totalVar))
-      }
 
       studyVar <- SD * studyVarMultiplier
       RRtable2DataList <- list("source"       = gettext(c("Total Gauge r & R", "Repeatability", "Reproducibility", "Operator", "Part-to-Part", "Total Variation")),
@@ -417,6 +424,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     p <- .gaugeVarCompGraph(percentContributionValues, studyVariationValues, percentToleranceValues)
     if (returnPlotOnly)
       return(p)
+    else if (returnTrafficValues)
+      return(list(study = c(round(studyVar/max(studyVar) * 100,2))[1], tol = c(round(studyVar / options$tolerance * 100,2))[1]))
 
     if (options[["gaugeVarCompGraph"]]) {
       plot <- createJaspPlot(title = gettext("Components of Variation"), width = 850, height = 500)
@@ -899,4 +908,46 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   p <- ggplot2::ggplot() + ggplot2::theme_void() +
     ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 5) +
     ggplot2::scale_y_continuous(breaks = 0:nText, limits = c(0, nText))
+}
+.trafficplot <- function(StudyVar, ToleranceVar, options, ready){
+
+  if (!ready)
+    return()
+
+  Plot <- createJaspPlot(title = gettext("Traffic Light Plot"), width = 1000)
+  Plot$dependOn(c("trafficPlot", "tolerance","gaugeToleranceEnabled", "gaugeRRmethod", "historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue"))
+
+  mat <- data.frame(
+    x = rep(c(60,30,10),2),
+    Yes = c(rep('A',3), rep("B",3)),
+    fill = rep(c("G","R","Y"),2)
+  )
+
+  p1 <- ggplot2::ggplot(mat[c(1:3),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
+    ggplot2::geom_bar(stat = "identity") +
+    ggplot2::scale_x_continuous(breaks = c(0,10,40,100), labels = c("0%","10%","30%","100%"), name = "Precent of Process variation") +
+    ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13'))) +
+    ggplot2::geom_vline(xintercept = StudyVar) +
+    ggplot2::theme(legend.position="none",
+          axis.text.y = ggplot2::element_blank(),
+          axis.ticks.y = ggplot2::element_blank(),
+          axis.title.y = ggplot2::element_blank())+
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
+
+  p2 <- ggplot2::ggplot(mat[c(4:6),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
+    ggplot2::geom_bar(stat = "identity") +
+    ggplot2::scale_x_continuous(breaks = c(0,10,40,100), labels = c("0%","10%","30%","100%"), name = "Precent of the Tolerance") +
+    ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13')))+
+    ggplot2::geom_vline(xintercept = ToleranceVar) +
+    ggplot2::theme(legend.position="none",
+          axis.text.y = ggplot2::element_blank(),
+          axis.ticks.y = ggplot2::element_blank(),
+          axis.title.y = ggplot2::element_blank()) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
+
+  p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(2:1, 2))
+  Plot$plotObject <- p3
+  return(Plot)
 }
