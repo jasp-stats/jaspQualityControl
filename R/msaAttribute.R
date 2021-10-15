@@ -17,17 +17,28 @@
 
 msaAttribute <- function(jaspResults, dataset, options, ...) {
 
-  measurements <- unlist(options$measurements)
+  if (options[["AAAdataFormat"]] == "AAAwideFormat"){
+    measurements <- unlist(options$measurements)
+  }else{
+    measurements <- unlist(options$measurementsLong)
+  }
+
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
   standards <- unlist(options$standard)
 
-
-  ready <- (length(measurements) != 0 & operators != "" & standards != "" & parts != "")
   numeric.vars <- measurements
-
+  numeric.vars <- numeric.vars[numeric.vars != ""]
   factor.vars <- c(parts, operators, standards)
   factor.vars <- factor.vars[factor.vars != ""]
+
+  # Ready
+  if (options[["AAAdataFormat"]] == "AAAwideFormat"){
+    ready <- (length(measurements) != 0 && operators != "" && parts != "")
+  } else {
+    ready <- (measurements != "" && operators != "" && parts != "")
+  }
+
 
   #if (length(measurements) == 0)
   #  return()
@@ -36,6 +47,21 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
   }
+
+  if (options[["AAAdataFormat"]] == "AAAlongFormat" && ready){
+    dataset <- dataset[order(dataset[operators]),]
+    nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
+    index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
+    dataset <- cbind(dataset, data.frame(index = index))
+    dataset <- tidyr::spread(dataset, index, measurements)
+    measurements <- unique(index)
+
+    if (standards != "")
+      dataset <- dataset[,c(operators, parts, measurements,standards)]
+    else
+      dataset <- dataset[,c(operators, parts, measurements)]
+  }
+
 
   .msaCheckErrors(dataset, options)
 
@@ -67,13 +93,13 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   # Attribute Agreement Analysis Table & Graph
   if (length(measurements) == 0) {
     if (is.null(jaspResults[["AAAtableGraphs"]])) {
-      jaspResults[["AAAtableGraphs"]] <- createJaspContainer(gettext("Attribute Agreement Analysis"))
+      jaspResults[["AAAtableGraphs"]] <- createJaspContainer(gettext("Attributes Agreement Analysis"))
       jaspResults[["AAAtableGraphs"]]$position <- 19
     }
     jaspResults[["AAAtableGraphs"]] <- .aaaTableGraphs(ready = ready, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
   }else{
     if (is.null(jaspResults[["AAAtableGraphs"]])) {
-      jaspResults[["AAAtableGraphs"]] <- createJaspContainer(gettext("Attribute Agreement Analysis"))
+      jaspResults[["AAAtableGraphs"]] <- createJaspContainer(gettext("Attributes Agreement Analysis"))
       jaspResults[["AAAtableGraphs"]]$position <- 19
     }
     jaspResults[["AAAtableGraphs"]] <- .aaaTableGraphs(ready = ready, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
@@ -181,131 +207,245 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
 .aaaTableGraphs <- function(ready, dataset, measurements, parts, operators, standards, options) {
 
-  tableWithin <- createJaspTable(title = gettext("Within Appraisers"))
-  tableEachVsStandard <- createJaspTable(title = gettext("Each Appraiser vs Standard"))
-  tableBetween <- createJaspTable(title = gettext("Between Appraisers"))
-  tableAllVsStandard <- createJaspTable(title = gettext("All Appraisers vs Standard"))
 
-  allTables <- list(tableWithin, tableEachVsStandard, tableBetween, tableAllVsStandard)
+  if (standards != "") {
+    tableWithin <- createJaspTable(title = gettext("Within Appraisers"))
+    tableBetween <- createJaspTable(title = gettext("Between Appraisers"))
+    tableEachVsStandard <- createJaspTable(title = gettext("Each Appraiser vs Standard"))
+    tableAllVsStandard <- createJaspTable(title = gettext("All Appraisers vs Standard"))
 
-  for (table in allTables[1:2]) {
-    table$addColumnInfo(name = "Appraiser",  title = gettext("Appraiser"), type = "string")
-  }
 
-  for (table in allTables) {
-    table$addColumnInfo(name = "Inspected", title = gettext("Inspected"), type = "integer")
-    table$addColumnInfo(name = "Matched", title = gettext("Matched"), type = "integer")
-    table$addColumnInfo(name = "Percent", title = gettext("Percent"), type = "number")
+    allTables <- list(tableWithin, tableEachVsStandard, tableBetween, tableAllVsStandard)
 
-  }
+    for (table in allTables[1:2]) {
+      table$addColumnInfo(name = "Appraiser",  title = gettext("Appraiser"), type = "string")
+    }
 
-  if (ready) {
-    appraiserVector <- as.character(unique(dataset[[operators]]))
-    numberInspected <- length(unique(dataset[[parts]]))
+    for (table in allTables) {
+      table$addColumnInfo(name = "Inspected", title = gettext("Inspected"), type = "integer")
+      table$addColumnInfo(name = "Matched", title = gettext("Matched"), type = "integer")
+      table$addColumnInfo(name = "Percent", title = gettext("Percent"), type = "number")
+      table$addColumnInfo(name = "CIL", title = gettext("Lower"), type = "integer", overtitle = gettext("Confidence interval of 95%"))
+      table$addColumnInfo(name = "CIU", title = gettext("Upper"), type = "integer", overtitle = gettext("Confidence interval of 95%"))
+    }
+    tableEachVsStandard$addColumnInfo(name = "decision", title = gettext("Decision"))
 
-    for (measurement in measurements) {
-      if (is.numeric(dataset[[measurement]])) {
-        dataset[measurement] <- as.character(dataset[[measurement]])
-        dataset[standards] <- as.character(dataset[[standards]])
+    if (ready) {
+      appraiserVector <- as.character(unique(dataset[[operators]]))
+      numberInspected <- length(unique(dataset[[parts]]))
+
+      for (measurement in measurements) {
+        if (is.numeric(dataset[[measurement]])) {
+          dataset[measurement] <- as.character(dataset[[measurement]])
+          dataset[standards] <- as.character(dataset[[standards]])
+        }
+      }
+
+      matchesWithin <- vector(mode = "numeric")
+
+      for (i in 1:length(appraiserVector)) {
+        onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
+        matchesWithin[i] <- .countRowMatches(onlyAppraiser[measurements])
+      }
+
+      percentWithin <- matchesWithin / numberInspected* 100
+
+      matchesEachVsStandard <- vector(mode = "numeric")
+
+      for (i in 1:length(appraiserVector)) {
+        onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
+        matchesEachVsStandard[i] <- .countRowMatches(onlyAppraiser[c(measurements, standards)])
+      }
+
+
+      percentEachVsStandard <- matchesEachVsStandard / numberInspected* 100
+
+      reshapeData <- data.frame(subset(dataset, dataset[[operators]] == unique(dataset[[operators]])[1])[standards])
+      for (i in 1:length(appraiserVector)) {
+        appraiser <- as.character(unique(dataset[[operators]])[i])
+        reshapeData <- cbind(reshapeData, subset(dataset, dataset[operators] == appraiser)[measurements])
+      }
+
+      matchesBetween <- .countRowMatches(reshapeData[2:ncol(reshapeData)])
+      percentBetween <- matchesBetween / numberInspected* 100
+
+      matchesAllVsStandard <- .countRowMatches(reshapeData)
+      percentAllVsStandard <- matchesAllVsStandard / numberInspected* 100
+
+      if (length(measurements) == 1) {
+        tableWithin$setError(gettext("More than 1 Measurement per Operator required."))
+      }else{
+        CIWithin <- .AAACI(matchesWithin, rep(numberInspected, length(appraiserVector)))
+        tableWithin$setData(list(      "Appraiser"       = appraiserVector,
+                                       "Inspected"       = rep(numberInspected, length(appraiserVector)),
+                                       "Matched"         = matchesWithin,
+                                       "Percent"         = percentWithin,
+                                       "CIL" = CIWithin$lower,
+                                       "CIU" = CIWithin$upper))
+      }
+
+      CIEachVsStandard <- .AAACI(matchesEachVsStandard, rep(numberInspected, length(appraiserVector)))
+      tableEachVsStandard$setData(list("Appraiser"     = appraiserVector,
+                                       "Inspected"       = rep(numberInspected, length(appraiserVector)),
+                                       "Matched"         = matchesEachVsStandard,
+                                       "Percent"         = percentEachVsStandard,
+                                       "CIL" = CIEachVsStandard$lower,
+                                       "CIU" = CIEachVsStandard$upper,
+                                       "decision" = .decisionNote(percentEachVsStandard)))
+
+      CIBetween <- .AAACI(matchesBetween, rep(numberInspected, length(appraiserVector)))
+      tableBetween$setData(list(     "Inspected"       = c(numberInspected),
+                                     "Matched"         = c(matchesBetween),
+                                     "Percent"         = c(percentBetween),
+                                     "CIL" = unique(CIBetween$lower),
+                                     "CIU" = unique(CIBetween$upper)))
+
+      CIAllVsStandard <- .AAACI(matchesAllVsStandard, rep(numberInspected, length(appraiserVector)))
+      tableAllVsStandard$setData(list("Inspected"      = numberInspected,
+                                      "Matched"         = matchesAllVsStandard,
+                                      "Percent"         = percentAllVsStandard,
+                                      "CIL" = unique(CIAllVsStandard$lower),
+                                      "CIU" = unique(CIAllVsStandard$upper)))
+    }
+
+    AAA <- createJaspContainer(gettext("Attributes Agreement Analysis"))
+
+    AAA$dependOn(c("measurements", "parts", "operators", "standard"))
+
+    AAA[["Within"]] <- tableWithin
+    AAA[["EachVsStandard"]] <- tableEachVsStandard
+    AAA[["Between"]] <- tableBetween
+    AAA[["AllVsStandard"]] <- tableAllVsStandard
+
+    if (ready) {
+
+      if (length(measurements) > 1) {
+        plotWithin <- createJaspPlot(title = "Within Appraisers", width = 300, height = 400)
+
+        withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
+
+        pw <- ggplot2::ggplot(withinDataframe, ggplot2::aes(x = x, y = y)) +
+          jaspGraphs::geom_point() +
+          ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10))+
+          ggplot2::geom_errorbar(ggplot2::aes(ymin = c(CIWithin$lower),
+                                              ymax = c(CIWithin$upper)))
+
+
+        pw <- jaspGraphs::themeJasp(pw) +
+          ggplot2::ylab("Percent") +
+          ggplot2::xlab("Appraiser")
+        plotWithin$plotObject <- pw
+
+        AAA[["PlotWithin"]] <- plotWithin
+      }
+
+      plotVs <- createJaspPlot(title = "Each Appraiser vs Standard", width = 300, height = 400)
+
+      vsDataframe <- data.frame(x = appraiserVector, y = percentEachVsStandard)
+
+      pvs <- ggplot2::ggplot(vsDataframe, ggplot2::aes(x = x, y = y)) +
+        jaspGraphs::geom_point() +
+        ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10)) +
+        ggplot2::geom_errorbar(ggplot2::aes(ymin = c(CIEachVsStandard$lower),
+                                            ymax = c(CIEachVsStandard$upper)))
+
+
+      pvs <- jaspGraphs::themeJasp(pvs) +
+        ggplot2::ylab("Percent") +
+        ggplot2::xlab("Appraiser")
+
+      plotVs$plotObject <- pvs
+
+      AAA[["PlotVs"]] <- plotVs
+    }
+
+  } else{
+    tableWithin <- createJaspTable(title = gettext("Within Appraisers"))
+    tableBetween <- createJaspTable(title = gettext("Between Appraisers"))
+
+
+    allTables <- list(tableWithin, tableBetween)
+
+    for (table in allTables[1:2]) {
+      table$addColumnInfo(name = "Appraiser",  title = gettext("Appraiser"), type = "string")
+    }
+
+    for (table in allTables) {
+      table$addColumnInfo(name = "Inspected", title = gettext("Inspected"), type = "integer")
+      table$addColumnInfo(name = "Matched", title = gettext("Matched"), type = "integer")
+      table$addColumnInfo(name = "Percent", title = gettext("Percent"), type = "number")
+
+    }
+
+    if (ready) {
+      appraiserVector <- as.character(unique(dataset[[operators]]))
+      numberInspected <- length(unique(dataset[[parts]]))
+
+      for (measurement in measurements) {
+        if (is.numeric(dataset[[measurement]])) {
+          dataset[measurement] <- as.character(dataset[[measurement]])
+        }
+      }
+
+      matchesWithin <- vector(mode = "numeric")
+
+      for (i in 1:length(appraiserVector)) {
+        onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
+        matchesWithin[i] <- .countRowMatches(onlyAppraiser[measurements])
+      }
+
+      percentWithin <- matchesWithin / numberInspected* 100
+
+
+      reshapeData <- data.frame(subset(dataset, dataset[[operators]] == unique(dataset[[operators]])[1])[measurements])
+      for (i in 1:length(appraiserVector)) {
+        appraiser <- as.character(unique(dataset[[operators]])[i])
+        reshapeData <- cbind(reshapeData, subset(dataset, dataset[operators] == appraiser)[measurements])
+      }
+
+      matchesBetween <- .countRowMatches(reshapeData[2:ncol(reshapeData)])
+      percentBetween <- matchesBetween / numberInspected* 100
+
+      if (length(measurements) == 1) {
+        tableWithin$setError(gettext("More than 1 Measurement per Operator required."))
+      }else{
+        tableWithin$setData(list(      "Appraiser"       = appraiserVector,
+                                       "Inspected"       = rep(numberInspected, length(appraiserVector)),
+                                       "Matched"         = matchesWithin,
+                                       "Percent"         = percentWithin))
+      }
+
+      tableBetween$setData(list(     "Inspected"       = numberInspected,
+                                     "Matched"         = matchesBetween,
+                                     "Percent"         = percentBetween))
+    }
+
+    AAA <- createJaspContainer(gettext("Attributes Agreement Analysis"))
+
+    AAA$dependOn(c("measurements", "parts", "operators"))
+
+    AAA[["Within"]] <- tableWithin
+    AAA[["Between"]] <- tableBetween
+
+    if (ready) {
+
+      if (length(measurements) > 1) {
+        plotWithin <- createJaspPlot(title = "Within Appraisers", width = 300, height = 400)
+
+        withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
+
+        pw <- ggplot2::ggplot(withinDataframe, ggplot2::aes(x = x, y = y)) + jaspGraphs::geom_point()
+
+        pw <- jaspGraphs::themeJasp(pw) +
+          ggplot2::ylab("Percent") +
+          ggplot2::xlab("Appraiser") +
+          ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10))
+
+        plotWithin$plotObject <- pw
+
+        AAA[["PlotWithin"]] <- plotWithin
       }
     }
-
-    matchesWithin <- vector(mode = "numeric")
-
-    for (i in 1:length(appraiserVector)) {
-      onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
-      matchesWithin[i] <- .countRowMatches(onlyAppraiser[measurements])
-    }
-
-    percentWithin <- matchesWithin / numberInspected* 100
-
-    matchesEachVsStandard <- vector(mode = "numeric")
-
-    for (i in 1:length(appraiserVector)) {
-      onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
-      matchesEachVsStandard[i] <- .countRowMatches(onlyAppraiser[c(measurements, standards)])
-    }
-
-
-    percentEachVsStandard <- matchesEachVsStandard / numberInspected* 100
-
-    reshapeData <- data.frame(subset(dataset, dataset[[operators]] == unique(dataset[[operators]])[1])[standards])
-    for (i in 1:length(appraiserVector)) {
-      appraiser <- as.character(unique(dataset[[operators]])[i])
-      reshapeData <- cbind(reshapeData, subset(dataset, dataset[operators] == appraiser)[measurements])
-    }
-
-    matchesBetween <- .countRowMatches(reshapeData[2:ncol(reshapeData)])
-    percentBetween <- matchesBetween / numberInspected* 100
-
-    matchesAllVsStandard <- .countRowMatches(reshapeData)
-    percentAllVsStandard <- matchesAllVsStandard / numberInspected* 100
-
-    if (length(measurements) == 1) {
-      tableWithin$setError(gettext("More than 1 Measurement per Operator required."))
-    }else{
-      tableWithin$setData(list(      "Appraiser"       = appraiserVector,
-                                     "Inspected"       = rep(numberInspected, length(appraiserVector)),
-                                     "Matched"         = matchesWithin,
-                                     "Percent"         = percentWithin))
-    }
-
-    tableEachVsStandard$setData(list("Appraiser"     = appraiserVector,
-                                     "Inspected"       = rep(numberInspected, length(appraiserVector)),
-                                     "Matched"         = matchesEachVsStandard,
-                                     "Percent"         = percentEachVsStandard))
-
-    tableBetween$setData(list(     "Inspected"       = numberInspected,
-                                   "Matched"         = matchesBetween,
-                                   "Percent"         = percentBetween))
-
-    tableAllVsStandard$setData(list("Inspected"      = numberInspected,
-                                    "Matched"         = matchesAllVsStandard,
-                                    "Percent"         = percentAllVsStandard))
-  }
-
-  AAA <- createJaspContainer(gettext("Attribute Agreement Analysis"))
-
-  AAA$dependOn(c("measurements", "parts", "operators", "standard"))
-
-  AAA[["Within"]] <- tableWithin
-  AAA[["EachVsStandard"]] <- tableEachVsStandard
-  AAA[["Between"]] <- tableBetween
-  AAA[["AllVsStandard"]] <-tableAllVsStandard
-
-  if (ready) {
-
-    if (length(measurements) > 1) {
-      plotWithin <- createJaspPlot(title = "Within Appraisers", width = 300, height = 400)
-
-      withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
-
-      pw <- ggplot2::ggplot(withinDataframe, ggplot2::aes(x = x, y = y)) + jaspGraphs::geom_point()
-
-      pw <- jaspGraphs::themeJasp(pw) +
-        ggplot2::ylab("Percent") +
-        ggplot2::xlab("Appraiser") +
-        ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10))
-
-      plotWithin$plotObject <- pw
-
-      AAA[["PlotWithin"]] <- plotWithin
-    }
-
-    plotVs <- createJaspPlot(title = "Each Appraiser vs Standard", width = 300, height = 400)
-
-    vsDataframe <- data.frame(x = appraiserVector, y = percentEachVsStandard)
-
-    pvs <- ggplot2::ggplot(vsDataframe, ggplot2::aes(x = x, y = y)) + jaspGraphs::geom_point()
-
-    pvs <- jaspGraphs::themeJasp(pvs) +
-      ggplot2::ylab("Percent") +
-      ggplot2::xlab("Appraiser") +
-      ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10))
-
-    plotVs$plotObject <- pvs
-
-    AAA[["PlotVs"]] <- plotVs
   }
   return(AAA)
 }
@@ -375,4 +515,32 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   #             exitAnalysisIfErrors = TRUE)
   #}
 
+}
+
+.AAACI <- function(m,N){
+  v1_L <- m * 2
+  v2_L <- 2 * (N - m + 1)
+
+  v1_U <- 2*(m + 1)
+  v2_U <- 2*(N - m)
+
+  return(
+    list(
+      lower = round((v1_L * qf(0.025,v1_L,v2_L))/(v2_L + v1_L*qf(0.025,v1_L,v2_L)) * 100,3) ,
+      upper = round((v1_U * qf(0.975, v1_U,v2_U))/(v2_U + v1_U*qf(0.975,v1_U,v2_U)) * 100,3)
+    )
+  )
+}
+
+.decisionNote <- function(vec) {
+  decisionVec = vector()
+  for (i in 1:length(vec)){
+    if (vec[i] < 80)
+      decisionVec[i] = "Unacceptable"
+    else if (vec[i] >= 80 & vec[i] <= 90)
+      decisionVec[i] = "Marginally acceptable"
+    else
+      decisionVec[i] = "Acceptable"
+  }
+  return(decisionVec)
 }

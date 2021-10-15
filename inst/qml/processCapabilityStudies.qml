@@ -33,6 +33,11 @@ Form
 			{label: qsTr("Row"),				value: "PCwideFormat"},
 		]
 		id: pcDataFormat
+		onValueChanged:
+		{
+			variablesLong.itemDoubleClicked(0)
+			variables.itemDoubleClicked(0)
+		}
 	}
 
 	VariablesForm

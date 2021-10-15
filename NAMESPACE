@@ -1,6 +1,7 @@
 export(msaType1Gauge)
 export(msaGaugeLinearity)
 export(msaGaugeRR)
+export(msaTestRetest)
 export(msaGaugeRRnonrep)
 export(msaAttribute)
 export(variablesChartsSubgroups)

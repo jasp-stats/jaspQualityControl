@@ -157,7 +157,7 @@
 
 # Function to create R chart
 .RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,
-                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE) {
+                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE, jitter = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
@@ -244,6 +244,9 @@
 
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
+
+  if (jitter)
+    p <- p + ggplot2::geom_jitter(size = 3)
 
   if (manualXaxis != "")
     return(list(p = p, sixsigma = sixsigma, xLabels = levels(xLabels)))

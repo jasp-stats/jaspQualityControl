@@ -43,6 +43,11 @@ Description
 		title:			qsTr("Attributes Agreement Analysis")
 		func:			"msaAttribute"
 	}
+	Analysis
+	{
+		title:			qsTr("Test-retest (Range method)")
+		func:			"msaTestRetest"
+	}
 
 	GroupTitle
 	{
