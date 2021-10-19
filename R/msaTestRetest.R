@@ -56,7 +56,8 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
   # Range Method r and R table
   if (options[["rangeRr"]]) {
-    .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready)
+    .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready,
+                     EnableSD = options$EnableRangePSD, EnableTol = options$EnableRangeTolerance)
   }
 
   # Scatter Plot Operators vs Parts
@@ -94,11 +95,11 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   if(options[["trafficPlot"]] & is.null(jaspResults[["trafficPlot"]] )) {
     jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light graph"))
     jaspResults[["trafficPlot"]]$position <- 4
-    jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "rangePSD"))
+    jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "rangePSD", "EnableRangePSD", "rangeTolerance", "EnableRangeTolerance"))
     TrafficContainer <- jaspResults[["trafficPlot"]]
 
     valuesVec <- .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready, GRRpercent = TRUE)
-    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], options = options, ready = ready, tolerancePlot = FALSE, horizontal = TRUE, Xlab = "Precent of GRR")
+    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceVar = valuesVec[2],options = options, ready = ready, horizontal = TRUE, Xlab.StudySD = "SD Precent of GRR", Xlab.Tol = "Tolerance Percent of GRR")
 
   }
 
@@ -136,18 +137,20 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   return(plot)
 }
 
-.rAndRtableRange <- function(dataset, measurements, parts, operators, options, jaspResults, ready, GRRpercent = FALSE) {
+.rAndRtableRange <- function(dataset, measurements, parts, operators, options, jaspResults, ready, GRRpercent = FALSE, ProcessSD = "", tolerance = "", EnableSD = FALSE, EnableTol = FALSE) {
 
   table <- createJaspTable(title = gettext("Short gauge study"))
   table$position <- 1
-  table$dependOn(c("rangeRr", "gaugeRRmethod"))
+  table$dependOn(c("rangeRr", "gaugeRRmethod", "rangeTolerance", "rangePSD", "EnableRangeTolerance", "EnableRangePSD"))
 
   table$addColumnInfo(name = "n", title = gettext("Sample size (n)"), type = "integer")
   table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
   table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
-  table$addColumnInfo(name = "PSD", title = gettext("Tolerance"), type = "number")
+  table$addColumnInfo(name = "PSD", title = gettext("Process Std. Dev."), type = "number")
+  table$addColumnInfo(name = "tolerance", title = gettext("Tolerance"), type = "number")
   table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
-  table$addColumnInfo(name = "GRRpercent", title = gettext("%GRR"), type = "number")
+  table$addColumnInfo(name = "GRRpercent.PSD", title = gettext("%GRR of Process Std. Dev."), type = "number")
+  table$addColumnInfo(name = "GRRpercent.Tol", title = gettext("%GRR of Tolerance"), type = "number")
 
   jaspResults[["rAndR2"]] <- table
 
@@ -155,19 +158,31 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     n <- length(dataset[[measurements[1]]])
     Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / n)
     d2 <- .d2Value(n)
-    SD <- options$rangePSD
     GRR <- Rbar/d2
-    GRRpercent <- GRR/SD*100
+    GRRpercent.PSD <- GRR/options$rangePSD*100
+    GRRpercent.Tol <- GRR/(options$rangeTolerance/6)
 
+    rows <- list()
+    rows[["n"]] = n
+    rows[["Rbar"]] = Rbar
+    rows[["d2"]] = d2
+    rows[["GRR"]] = GRR
 
-    table$addRows(list(      "n"          = n,
-                             "Rbar"       = Rbar,
-                             "d2"         = d2,
-                             "PSD"        = SD,
-                             "GRR"        = GRR,
-                             "GRRpercent" = GRRpercent))
+    if (EnableSD) {
+      rows[["PSD"]] = options$rangePSD
+      rows[["GRRpercent.PSD"]] = GRRpercent.PSD
+    }
+
+    if (EnableTol){
+      rows[["tolerance"]] = options$rangeTolerance
+      rows[["GRRpercent.Tol"]] = GRRpercent.Tol
+    }
+
+    table$addRows(rows)
+    table$showSpecifiedColumnsOnly <- TRUE
+
     if (GRRpercent)
-      return(c(GRRpercent))
+      return(c(GRRpercent.PSD, GRRpercent.Tol))
   }
 }
 

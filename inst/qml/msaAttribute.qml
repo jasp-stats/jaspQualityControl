@@ -96,6 +96,12 @@ Form
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
+
+	TextField
+	{
+		name: 					"PositiveRef"
+		label: 					qsTr("Positive refernce:")
+	}
 	}
 
 	Section

@@ -61,18 +61,16 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   tablesAndGraphs <- createJaspContainer(gettext("Linearity and Bias"))
 
   table1 <- createJaspTable(title = gettext("Gauge Bias"))
-  table1$dependOn(c(""))
 
   table1$addColumnInfo(name = "part",  title = gettext("Part"), type = "string")
   table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
-  table1$addColumnInfo(name = "observedMean", title = gettext("Mean"), type = "number")
-  table1$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
-  table1$addColumnInfo(name = "percentBias",            title = gettext("Percent bias"), type = "number")
+  table1$addColumnInfo(name = "observedMean", title = gettext("Mean per reference value"), type = "number")
+  table1$addColumnInfo(name = "bias",            title = gettext("Bias per reference value"), type = "number")
+  table1$addColumnInfo(name = "percentBias",            title = gettext("Percent bias per reference value"), type = "number")
   table1$addColumnInfo(name = "pvalue",            title = gettext("p (<i>t</i>-test of bias against 0)"), type = "pvalue")
 
 
   table2 <- createJaspTable(title = gettext("Gauge Linearity 1"))
-  table2$dependOn(c(""))
 
   table2$addColumnInfo(name = "predictor",  title = gettext("Predictor"), type = "string")
   table2$addColumnInfo(name = "coefficient", title = gettext("Coefficient"), type = "number")
@@ -80,7 +78,6 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   table2$addColumnInfo(name = "pvalue",            title = gettext("<i>p</i>"), type = "pvalue")
 
   table3 <- createJaspTable(title = gettext("Gauge Linearity 2"))
-  table3$dependOn(c(""))
 
   table3$addColumnInfo(name = "S",  title = gettext("S"), type = "number")
   table3$addColumnInfo(name = "linearity", title = gettext("Linearity"), type = "number")
@@ -92,27 +89,29 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   plot2 <- createJaspPlot(title = gettext("Percent Process Variation Graph"), width = 500, height = 500)
 
   if (ready) {
-    partValues <- unique(dataset[[parts]])
+    ReferenceValues <- unique(dataset[[standards]])
     df <- data.frame()
     biases <- vector()
+    Part <- vector()
     references <- vector()
 
-    for (i in partValues) {
-      Part <- i
-      partData <- subset.data.frame(dataset, dataset[[parts]] == i)
-      Ref <- partData[[standards]][1]
-      ObservedMean <- mean(partData[[measurements]])
+    for (i in ReferenceValues) {
+      ReferenceValue <- i
+      ReferenceData <- subset.data.frame(dataset, dataset[[standards]] == i)
+      Ref <- ReferenceData[[standards]][1]
+      Part <- unique(ReferenceData[[parts]])
+      ObservedMean <- mean(ReferenceData[[measurements]])
       Bias <-  ObservedMean - Ref
-      pvalue <- t.test(partData[[measurements]] - Ref, mu = 0)$p.value
-      df <- rbind(df, list(Part = Part, Ref = Ref, ObservedMean = ObservedMean, Bias = Bias, pvalue = pvalue))
-      biases <- c(biases, partData[[measurements]] - partData[[standards]][1])
-      references <- c(references, partData[[standards]])
+      pvalue <- t.test(ReferenceData[[measurements]] - Ref, mu = 0)$p.value
+      df <- rbind(df, list(Part = Part,Ref = rep(Ref,length(Part)), ObservedMean =  rep(ObservedMean,length(Part)), Bias =  rep(Bias,length(Part)), pvalue =  rep(pvalue,length(Part))))
+      biases <- c(biases, ReferenceData[[measurements]] - ReferenceData[[standards]][1])
+      references <- c(references, ReferenceData[[standards]])
     }
 
     averageBias <- mean(df$Bias)
     averagePvalue <- t.test(biases, mu = 0)$p.value
 
-    table1$setData(list("part" = c(partValues, gettext("Average")),
+    table1$setData(list("part" = c(df$Part,gettext("Average")),
                         "referenceValue" = df$Ref,
                         "observedMean" = df$ObservedMean,
                         "bias" = c(df$Bias, averageBias),

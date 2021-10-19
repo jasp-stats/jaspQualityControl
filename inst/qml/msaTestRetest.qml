@@ -30,8 +30,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Single column"),					value: "testRetestLongFormat"},
-			{label: qsTr("Across rows"),				value: "testRetestWideFormat"},
+			{label: qsTr("Column"),					value: "testRetestLongFormat"},
+			{label: qsTr("Row"),				value: "testRetestWideFormat"},
 		]
 		id: gaugeRRdataFormat
 		onValueChanged:
@@ -101,12 +101,26 @@ Form
 		{
 			title: qsTr("Analysis Options")
 
-			DoubleField
-			{
-				name:			"rangePSD"
-				label:			qsTr("Process Std. Deviation:")
-				defaultValue:	1
-				enabled:		TRUE
+			CheckBox {
+			name: "EnableRangePSD"
+			childrenOnSameRow: true
+  			DoubleField
+  			{
+  				name:			"rangePSD"
+  				label:			qsTr("Process Std. Deviation:")
+  				enabled:		TRUE
+  			}
+			}
+
+			CheckBox{
+			name: "EnableRangeTolerance"
+			childrenOnSameRow: true
+  			DoubleField
+  			{
+  				name:			"rangeTolerance"
+  				label:			qsTr("Tolerance:")
+  				enabled:		TRUE
+  			}
 			}
 
 			CheckBox

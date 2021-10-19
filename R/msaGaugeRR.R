@@ -956,7 +956,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   return(TRUE)
 }
-.trafficplot <- function(StudyVar = "", ToleranceVar = "", options, ready, tolerancePlot = TRUE, horizontal = FALSE, Xlab = ""){
+.trafficplot <- function(StudyVar = "", ToleranceVar = "", options, ready, horizontal = FALSE, Xlab.StudySD = "", Xlab.Tol = ""){
 
   if (!ready)
     return()
@@ -977,41 +977,55 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15)) +
     ggplot2::scale_y_discrete(name = NULL)
 
+  if (Xlab.StudySD != "")
+    p1 <- p1 + ggplot2::scale_x_continuous(name = gettext(Xlab.StudySD))
+
+
+  if (ToleranceVar != ""){
+    p2 <- ggplot2::ggplot(mat[c(4:6),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
+      ggplot2::geom_bar(stat = "identity") +
+      ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13')))+
+      ggplot2::geom_vline(xintercept = ToleranceVar) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
+    if (Xlab.Tol != "")
+      p2 <- p2 + ggplot2::scale_x_continuous(name = gettext(Xlab.Tol))
+  }
+
   if (horizontal) {
     p1 <- p1 +
       ggplot2::theme(legend.position="none",
-                 axis.text.x = ggplot2::element_blank(),
-                 axis.ticks.x = ggplot2::element_blank(),
-                 axis.title.x = ggplot2::element_blank()) +
+                     axis.text.x = ggplot2::element_blank(),
+                     axis.ticks.x = ggplot2::element_blank(),
+                     axis.title.x = ggplot2::element_blank()) +
+      ggplot2::coord_flip()
+
+    p2 <- p2 +
+      ggplot2::theme(legend.position="none",
+                     axis.text.x = ggplot2::element_blank(),
+                     axis.ticks.x = ggplot2::element_blank(),
+                     axis.title.x = ggplot2::element_blank()) +
       ggplot2::coord_flip()
 
     Plot <- createJaspPlot(width = 250, height = 600)
   } else{
     p1 <- p1 +
       ggplot2::theme(legend.position="none",
-                              axis.text.y = ggplot2::element_blank(),
-                              axis.ticks.y = ggplot2::element_blank(),
-                              axis.title.y = ggplot2::element_blank()) +
+                     axis.text.y = ggplot2::element_blank(),
+                     axis.ticks.y = ggplot2::element_blank(),
+                     axis.title.y = ggplot2::element_blank()) +
       ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Precent of Process variation")
-  }
 
-  if (Xlab != "")
-    p1 <- p1 + ggplot2::scale_x_continuous(name = gettext(Xlab))
-
-  if (tolerancePlot){
-    p2 <- ggplot2::ggplot(mat[c(4:6),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
-      ggplot2::geom_bar(stat = "identity") +
-      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Precent of the Tolerance") +
-      ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13')))+
-      ggplot2::geom_vline(xintercept = ToleranceVar) +
-      jaspGraphs::geom_rangeframe() +
-      jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15)) +
+    p2 <- p2 +
       ggplot2::theme(legend.position="none",
                      axis.text.y = ggplot2::element_blank(),
                      axis.ticks.y = ggplot2::element_blank(),
-                     axis.title.y = ggplot2::element_blank())
+                     axis.title.y = ggplot2::element_blank()) +
+      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Precent of the Tolerance")
+  }
 
-    p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(2:1, 2))
+  if (ToleranceVar != ""){
+    p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(2:1, ifelse(horizontal, 1,2)))
     Plot$plotObject <- p3
   } else {
     Plot$plotObject <- p1
