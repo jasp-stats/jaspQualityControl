@@ -149,7 +149,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     TrafficContainer <- jaspResults[["trafficPlot"]]
 
     valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, returnTrafficValues = TRUE)
-    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceVar = valuesVec$tol, options = options, ready = ready, tolerancePlot = options$gaugeToleranceEnabled)
+    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceVar = valuesVec$tol, options = options, ready = ready)
 
   }
 

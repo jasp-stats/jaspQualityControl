@@ -213,7 +213,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     tableBetween <- createJaspTable(title = gettext("Between Appraisers"))
     tableEachVsStandard <- createJaspTable(title = gettext("Each Appraiser vs Standard"))
     tableAllVsStandard <- createJaspTable(title = gettext("All Appraisers vs Standard"))
-    tableDecisions <- createJaspTable(title = gettext("Study effectiveness summary"))
 
 
     allTables <- list(tableWithin, tableEachVsStandard, tableBetween, tableAllVsStandard)
@@ -229,10 +228,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       table$addColumnInfo(name = "CIL", title = gettext("Lower"), type = "integer", overtitle = gettext("Confidence interval of 95%"))
       table$addColumnInfo(name = "CIU", title = gettext("Upper"), type = "integer", overtitle = gettext("Confidence interval of 95%"))
     }
-    tableDecisions$addColumnInfo(name = "Appraiser", title = gettext("Appraiser"), type = "string")
-    tableDecisions$addColumnInfo(name = "Effectiveness", title = gettext("Effectiveness"), type = "string")
-    tableDecisions$addColumnInfo(name = "Miss", title = gettext("Miss rate"), type = "string")
-    tableDecisions$addColumnInfo(name = "False", title = gettext("False alarm rate"), type = "string")
 
     if (ready) {
       appraiserVector <- as.character(unique(dataset[[operators]]))
@@ -243,19 +238,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
           dataset[measurement] <- as.character(dataset[[measurement]])
           dataset[standards] <- as.character(dataset[[standards]])
         }
-      }
-
-      PositiveRef <- options$PositiveRef
-      Misses <- vector()
-      Falses <- vector()
-      for (i in 1:length(appraiserVector)) {
-        #Miss Rate
-        dat_Neg <- subset(dataset, dataset[operators] == appraiserVector[i] & dataset[standards] != PositiveRef)
-        Misses[i] = sum(as.character(unlist(dat_Neg[measurements])) == PositiveRef) / length(unlist(dat_Neg[measurements])) * 100
-
-        #False Rate
-        dat_Pos <- subset(dataset, dataset[operators] == appraiserVector[i] & dataset[standards] == PositiveRef)
-        Falses[i] = sum(as.character(unlist(dat_Pos[measurements])) != PositiveRef) / length(unlist(dat_Pos[measurements])) * 100
       }
 
       matchesWithin <- vector(mode = "numeric")
@@ -292,6 +274,39 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       if (length(measurements) == 1) {
         tableWithin$setError(gettext("More than 1 Measurement per Operator required."))
       }else{
+
+        if (!options$AAAkendallTau && standards != "")
+        {
+          tableDecisions <- createJaspTable(title = gettext("Study effectiveness summary"))
+          tableDecisions$addColumnInfo(name = "Appraiser", title = gettext("Appraiser"), type = "string")
+          tableDecisions$addColumnInfo(name = "Effectiveness", title = gettext("Effectiveness"), type = "string")
+          tableDecisions$addColumnInfo(name = "Miss", title = gettext("Miss rate"), type = "string")
+          tableDecisions$addColumnInfo(name = "False", title = gettext("False alarm rate"), type = "string")
+
+          PositiveRef <- options$PositiveRef
+          Misses <- vector()
+          Falses <- vector()
+          for (i in 1:length(appraiserVector)) {
+            #Miss Rate
+            dat_Neg <- subset(dataset, dataset[operators] == appraiserVector[i] & dataset[standards] != PositiveRef)
+            Misses[i] = sum(as.character(unlist(dat_Neg[measurements])) == PositiveRef) / length(unlist(dat_Neg[measurements])) * 100
+
+            #False Rate
+            dat_Pos <- subset(dataset, dataset[operators] == appraiserVector[i] & dataset[standards] == PositiveRef)
+            Falses[i] = sum(as.character(unlist(dat_Pos[measurements])) != PositiveRef) / length(unlist(dat_Pos[measurements])) * 100
+          }
+
+          tableDecisions$setData(list("Appraiser"     = appraiserVector,
+                                      "Effectiveness" = .decisionNote(percentEachVsStandard),
+                                      "Miss" = .decisionNote(Misses, type = "Miss"),
+                                      "False" = .decisionNote(Falses, type = "Falses")))
+          tableDecisions$addFootnote(gettext("Acceptable: x >= 90% (Effectiveness), x =< 2% (Miss rate), x =< 5% (False alarm rate)"))
+          tableDecisions$addFootnote(gettext("Marginally acceptable: x >= 80% (Effectiveness), x =< 5% (Miss rate), x =< 10% (False alarm rate)"))
+          tableDecisions$addFootnote(gettext("Unacceptable: x < 80% (Effectiveness), x > 5% (Miss rate), x > 10% (False alarm rate)"))
+
+          AAA[["StudyEffectiveness"]] <- tableDecisions
+        }
+
         CIWithin <- .AAACI(matchesWithin, rep(numberInspected, length(appraiserVector)))
         tableWithin$setData(list(      "Appraiser"       = appraiserVector,
                                        "Inspected"       = rep(numberInspected, length(appraiserVector)),
@@ -322,13 +337,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
                                       "Percent"         = percentAllVsStandard,
                                       "CIL" = unique(CIAllVsStandard$lower),
                                       "CIU" = unique(CIAllVsStandard$upper)))
-      tableDecisions$setData(list("Appraiser"     = appraiserVector,
-                                  "Effectiveness" = .decisionNote(percentEachVsStandard),
-                                  "Miss" = .decisionNote(Misses, type = "Miss"),
-                                  "False" = .decisionNote(Falses, type = "Falses")))
-      tableDecisions$addFootnote(gettext("Acceptable: x >= 90% (Effectiveness), x =< 2% (Miss rate), x =< 5% (False alarm rate)"))
-      tableDecisions$addFootnote(gettext("Marginally acceptable: x >= 80% (Effectiveness), x =< 5% (Miss rate), x =< 10% (False alarm rate)"))
-      tableDecisions$addFootnote(gettext("Unacceptable: x < 80% (Effectiveness), x > 5% (Miss rate), x > 10% (False alarm rate)"))
     }
 
     AAA <- createJaspContainer(gettext("Attributes Agreement Analysis"))
@@ -339,7 +347,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     AAA[["EachVsStandard"]] <- tableEachVsStandard
     AAA[["Between"]] <- tableBetween
     AAA[["AllVsStandard"]] <- tableAllVsStandard
-    AAA[["StudyEffectiveness"]] <- tableDecisions
 
     if (ready) {
 
@@ -518,13 +525,17 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
           corrVector <- c(corrVector, kt$r)
         }
       }
+      tableColumns[[operatorVector[i]]] <- corrVector
+
+      if (standards != ""){
       kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(operator1[[standards]]))
       standCorrVector <- c(standCorrVector, kt$r)
-      tableColumns[[operatorVector[i]]] <- corrVector
+      }
     }
 
     tableColumns[["Operator"]] <- operatorVector
-    tableColumns[[standards]] <- standCorrVector
+    if (standards != "")
+      tableColumns[[standards]] <- standCorrVector
     table$setData(tableColumns)
   }
 
