@@ -132,13 +132,6 @@ Form
 	{
 		title: qsTr("Contour Plot Options")
 		
-		
-		
-		
-
-
-
-
 		CheckBox
 		{
 			name:                      "contour";label:   qsTr("Contour Surface")
@@ -199,6 +192,55 @@ Form
 	}
 	
 	
+	Section
+	{
+		title: qsTr("Desirability")
+		VariablesForm 
+		{
+			AvailableVariablesList 
+			{ 
+				name: "rsmDesirability";       label: qsTr("Response Variable List");    source: "rsmResponseVariables" 
+				
+			}
+			AssignedVariablesList  
+			{
+				name: "rsmMin";	            title: qsTr("Minimum [Min/Max]");     suggestedColumns:   ["scale", "ordinal", "nominal"]
+				rowComponent: Row
+				{
+					DoubleField {name: "Point_Min"; negativeValues: true}
+					DoubleField {name: "Point_Max"; negativeValues: true}
+				}
+
+			}
+			AssignedVariablesList  
+			{
+				name: "rsmMax";	            title: qsTr("Maximum [Min/Max]");     suggestedColumns:   ["scale", "ordinal", "nominal"]
+				rowComponent: Row
+				{
+					DoubleField {name: "Point_Min_1"; negativeValues: true}
+					DoubleField {name: "Point_Max_1"; negativeValues: true}
+				}
+
+			}
+			AssignedVariablesList  
+			{
+				name: "rsmTar";	            title: qsTr("Target [Min/Target/Max]");suggestedColumns:   ["scale", "ordinal", "nominal"]
+				rowComponent: Row
+				{
+					DoubleField {name: "Point_Min_2"; negativeValues: true}
+					DoubleField {name: "Point_Tar_2"; negativeValues: true}
+					DoubleField {name: "Point_Max_2"; negativeValues: true}
+				}
+
+			}
+		
+		}
+		
+		
+		
+	
+	
+	}
 	
 
 	
