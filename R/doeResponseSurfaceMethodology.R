@@ -21,39 +21,78 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
+
   if (op1 > 0 & op2 > 0) {
-    rsm <- .responseSurfaceCalculate(jaspResults, options, dataset)
-    data <- .readDataSet(jaspResults, options, dataset)
+    rsm <- list()
+    if (op2 == 1) {
+      data <- .readDataSet(jaspResults, options, dataset, 1)
+      rsm[[1]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
+
+      if (options[["showDesign"]])
+        .qualityControlDesignMainRSM(jaspResults,options, position = 1)
+
+      if (options[["contour"]])
+        .responseSurfaceContour(jaspResults, options, position = 2, data, i = 1)
+
+      if(options[["coef"]])
+        .responseSurfaceTableCall(jaspResults, options, rsm[[1]], position = 3)
+
+      if(options[["anova"]])
+        .responseSurfaceTableAnovaCall(jaspResults, options, rsm[[1]], position = 4)
+
+      # if(options[["eigen"]])
+      #   .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
+
+      if(options[["res"]])
+        .responsePlotResidualCall(jaspResults, options, rsm[[1]], position = 6)
+
+      if(options[["pareto"]])
+        .responsePlotPareto(jaspResults, options, rsm[[1]], position = 7)
+
+      if(options[["resNorm"]])
+        .responsePlotResNorm(jaspResults, options, rsm[[1]], position = 8)
+
+      if(options[["ResFitted"]])
+        .responsePlotResFitted(jaspResults, options, rsm[[1]], position = 9)
+    }else {
+      for (i in 1:op2) {
+        data <- .readDataSet(jaspResults, options, dataset, i)
+        rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
+
+        if (options[["showDesign"]])
+          .qualityControlDesignMainRSM(jaspResults,options, position = 1)
+
+        if (options[["contour"]])
+          .responseSurfaceContour(jaspResults, options, position = 2, data, i)
+
+        if(options[["coef"]])
+          .responseSurfaceTableCall(jaspResults, options, rsm[[i]], position = 3)
+
+        if(options[["anova"]])
+          .responseSurfaceTableAnovaCall(jaspResults, options, rsm[[i]], position = 4)
+
+        # if(options[["eigen"]])
+        #   .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
+
+        if(options[["res"]])
+          .responsePlotResidualCall(jaspResults, options, rsm[[i]], position = 6)
+
+        if(options[["pareto"]])
+          .responsePlotPareto(jaspResults, options, rsm[[i]], position = 7)
+
+        if(options[["resNorm"]])
+          .responsePlotResNorm(jaspResults, options, rsm[[i]], position = 8)
+
+        if(options[["ResFitted"]])
+          .responsePlotResFitted(jaspResults, options, rsm[[i]], position = 9)
+
+      }
+    }
   }
-  # .responseSurfaceOptimize(jaspResults, options, rsm, data, dataset = dataset)
-  if (options[["showDesign"]])
-    .qualityControlDesignMainRSM(jaspResults,options, position = 1)
 
-  if (options[["contour"]])
-    .responseSurfaceContour(jaspResults, options, position = 2)
 
-  if(options[["coef"]])
-    .responseSurfaceTableCall(jaspResults, options, rsm, position = 3)
 
-  if(options[["anova"]])
-    .responseSurfaceTableAnovaCall(jaspResults, options, rsm, position = 4)
-
-  # if(options[["eigen"]])
-  #   .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
-
-  if(options[["res"]])
-    .responsePlotResidualCall(jaspResults, options, rsm, position = 6)
-
-  if(options[["pareto"]])
-    .responsePlotPareto(jaspResults, options, rsm, position = 7)
-
-  if(options[["resNorm"]])
-    .responsePlotResNorm(jaspResults, options, rsm, position = 8)
-
-  if(options[["ResFitted"]])
-    .responsePlotResFitted(jaspResults, options, rsm, position = 9)
-
-  .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 10, dataset)
+  #.responseSurfaceOptimize(jaspResults, options, rsm, data, position = 10, dataset)
 
 }
 
@@ -146,26 +185,22 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 }
 
-.readDataSet <- function(jaspResults, options, dataset) {
+.readDataSet <- function(jaspResults, options, dataset, i) {
   if (options[["rsmBlocks"]] != ""){
     data <- .readDataSetToEnd(columns.as.numeric =   c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
-                                                       options[["rsmResponseVariables"]]),
+                                                       options[["rsmResponseVariables"]][[i]]),
                               columns.as.factor  =   options[["rsmBlocks"]])
   }else{
     data <- .readDataSetToEnd(columns.as.numeric = c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
-                                                     options[["rsmResponseVariables"]]))
+                                                     options[["rsmResponseVariables"]][[i]]))
   }
 }
 
-.responseSurfaceCalculate <- function(jaspResults,options, dataset) {
+.responseSurfaceCalculate <- function(jaspResults,options, dataset, data) {
   op1  <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
-
-  data <- .readDataSet(jaspResults, options, dataset)
-
-  print(options[["rsmTar"]])
 
   name <- vector()
 
@@ -294,12 +329,12 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 
-.responseSurfaceContour <- function(jaspResults, options, position, dataset) {
+.responseSurfaceContour <- function(jaspResults, options, position, data, i, dataset) {
   ready <- 1
 
 
   if (is.null(jaspResults[["ContourPlot"]]))
-    .responseSurfaceContourPlot(jaspResults, dataset, options)
+    .responseSurfaceContourPlot(jaspResults, dataset, options, data, lol = i)
 
 }
 
@@ -308,8 +343,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   #Error 1: Does
 }
 
-.responseSurfaceContourPlot <- function(jaspResults, dataset, options, ready) {
-  contourPlot <- createJaspContainer(title = "Contour Plot")
+.responseSurfaceContourPlot <- function(jaspResults, dataset, options, data, lol) {
+  contourPlot <- createJaspContainer(title = paste(options[["rsmResponseVariables"]][[lol]],"Contour Plot", sep = ""))
 
   op1  <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
@@ -388,9 +423,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
         }
         # print(point_spec_r)
 
-        heli.rsm  <- .responseSurfaceCalculate(jaspResults, options, dataset)
+        heli.rsm  <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
         .responseSurfaceContourFill(contourPlot[[paste0("plotObject", col, sep = "")]],
-                                    heli.rsm, po, options, point_spec_r)
+                                    heli.rsm, po, options, point_spec_r, lol)
         col <- col + 1
       }
 
@@ -525,13 +560,13 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
 
-.responseSurfaceContourFill <- function(contourPlot,heli.rsm,po, options, point_spec_r, dataset) {
+.responseSurfaceContourFill <- function(contourPlot,heli.rsm,po, options, point_spec_r, lol, dataset) {
 
   op1  <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
-  opt2 <- options[["rsmResponseVariables"]]
+  opt2 <- options[["rsmResponseVariables"]][[lol]]
 
   #print(options[["Formula"]])
 
