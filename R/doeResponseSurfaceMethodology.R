@@ -21,7 +21,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
-
   if (op1 > 0 & op2 > 0) {
     rsm <- list()
     for (i in 1:op2) {
@@ -60,7 +59,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
 
-  #.responseSurfaceOptimize(jaspResults, options, rsm, data, position = 10, dataset)
+  .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 10, dataset)
 
 }
 
@@ -812,12 +811,12 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       k <- k +1
     }
   }
-  # if (length(options[["rsmTar"]]) > 0) {
-  #   for (i in 1:length(options[["rsmTar"]])) {
-  #     desire_list[[k]] <- desirability::dMin(options[["rsmMax"]][[i]][[2]], , options[["rsmMax"]][[i]][[1]])
-  #     k <- k +1
-  #   }
-  # }
+  if (length(options[["rsmTar"]]) > 0) {
+    for (i in 1:length(options[["rsmTar"]])) {
+      desire_list[[k]] <- desirability::dMin(options[["rsmTar"]][[i]][[2]],options[["rsmTar"]][[i]][[3]], options[["rsmTar"]][[i]][[1]])
+      k <- k +1
+    }
+  }
 
   desire_final <- do.call(desirability::dOverall, desire_list)
 
@@ -834,7 +833,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     names(op) <- paste("x",1:op1, sep = "")
   }
 
-  var.code <- rsm::coded.data(data)
 
   you <- expand.grid(op)
 
@@ -842,10 +840,13 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   # print(length(desire_final))
   # print(predict(rsm, newdata = you[i,]))
   # print(desire_final)
-
+  print(you[i,])
   rsmOpt_2 <- function(you_2, rsm, dObject, space = "square") {
-    conv <- predict(rsm, newdata = you[i,])
-    out <- predict(desire_final, newdata = as.vector(conv))
+    conv <- numeric()
+    for (j in 1:length(rsm)) {
+      conv[j] <- predict(rsm[[j]], newdata = you[i,])
+    }
+    out <- do.call(predict, list(object = dObject, newobject = conv))
 
     if (space == "circular") {
       if (sqrt(sum(you[i,]^2)) > 1.682)
@@ -869,11 +870,11 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }
   }
 
-
+  print(tmp)
 
   desirability_table <- createJaspContainer()
   jaspResults[["desirability_table"]] <- desirability_table
-  desirability_table$dependOn(options = c("rsmMin", "rsmMax", "rsmVariables"))
+  desirability_table$dependOn(options = c("rsmMin", "rsmMax", "rsmVariables", "rsmTar"))
 
 
   if (is.null(desirability_table[["predictor_value"]])) {
