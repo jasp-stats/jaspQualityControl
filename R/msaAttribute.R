@@ -207,7 +207,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
 .aaaTableGraphs <- function(ready, dataset, measurements, parts, operators, standards, options) {
 
-
+  AAA <- createJaspContainer(gettext("Attributes Agreement Analysis"))
+  AAA$dependOn(c("measurements", "parts", "operators", "standard"))
   if (standards != "") {
     tableWithin <- createJaspTable(title = gettext("Within Appraisers"))
     tableBetween <- createJaspTable(title = gettext("Between Appraisers"))
@@ -275,7 +276,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
         tableWithin$setError(gettext("More than 1 Measurement per Operator required."))
       }else{
 
-        if (!options$AAAkendallTau && standards != "")
+        if (!options$AAAkendallTau && standards != "" && options$PositiveRef != "")
         {
           tableDecisions <- createJaspTable(title = gettext("Study effectiveness summary"))
           tableDecisions$addColumnInfo(name = "Appraiser", title = gettext("Appraiser"), type = "string")
@@ -338,10 +339,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
                                       "CIL" = unique(CIAllVsStandard$lower),
                                       "CIU" = unique(CIAllVsStandard$upper)))
     }
-
-    AAA <- createJaspContainer(gettext("Attributes Agreement Analysis"))
-
-    AAA$dependOn(c("measurements", "parts", "operators", "standard"))
 
     AAA[["Within"]] <- tableWithin
     AAA[["EachVsStandard"]] <- tableEachVsStandard
