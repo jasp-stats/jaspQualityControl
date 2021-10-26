@@ -37,6 +37,7 @@ Data can be in the form of all observations in one column ("Column" option) or a
  - Display grid lines: add grid lines to the probability plot. 
 
 ## Output
+-------
 ### Control charts:
 - X-bar & R chart: plots the process average (x-bar) and process range (R) over time.
 - X-mR chart: outlines the process's value and moving range (MR) over time.
@@ -56,6 +57,7 @@ Data can be in the form of all observations in one column ("Column" option) or a
 - Non-conformance statistics: ppm and its relation to the specification limits across the observed, expected overall, and (only for normally distributed data) expected within statistics. 
 
 ## References
+-------
 - Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2019).*Statistical process control*. SKF group. 
 
 ## R Packages

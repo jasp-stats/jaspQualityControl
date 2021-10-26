@@ -156,11 +156,14 @@
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,
-                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE, jitter = FALSE) {
+.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE, Phase2, target = NULL, sd = NULL,
+                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
-  sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
+  if(Phase2)
+    sixsigma <- qcc::qcc(data, type ='R', plot=FALSE, center = abs(as.numeric(target)), std.dev = as.numeric(sd))
+  else
+    sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
   range = sixsigma$statistics
   if (manualSubgroups != ""){
     subgroups <- manualSubgroups
@@ -242,11 +245,13 @@
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, 'red', 'blue'))
   }
 
+  if (Phase2)
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+  else
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
+
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
-
-  if (jitter)
-    p <- p + ggplot2::geom_jitter(size = 3)
 
   if (manualXaxis != "")
     return(list(p = p, sixsigma = sixsigma, xLabels = levels(xLabels)))
@@ -364,7 +369,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   }
 
   table$showSpecifiedColumnsOnly <- TRUE
-  table$addFootnote(message = gettext("Numbers index data points where test violations occur."))
+  table$addFootnote(message = gettext("Numbers are data points where test violations occur."))
   return(table)
 }
 

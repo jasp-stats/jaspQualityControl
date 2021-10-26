@@ -29,8 +29,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Column"),			value: "PClongFormat"},
-			{label: qsTr("Row"),				value: "PCwideFormat"},
+			{label: qsTr("Single column"),			value: "PClongFormat"},
+			{label: qsTr("Across rows"),				value: "PCwideFormat"},
 		]
 		id: pcDataFormat
 		onValueChanged:

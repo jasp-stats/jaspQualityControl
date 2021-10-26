@@ -30,8 +30,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Column"),					value: "testRetestLongFormat"},
-			{label: qsTr("Row"),				value: "testRetestWideFormat"},
+			{label: qsTr("Single column"),					value: "testRetestLongFormat"},
+			{label: qsTr("Across rows"),				value: "testRetestWideFormat"},
 		]
 		id: gaugeRRdataFormat
 		onValueChanged:
@@ -154,6 +154,12 @@ Form
 				checked: true
 				}
 
+				CheckBox
+				{
+				name: "jitter"
+				label: qsTr("Add jitter")
+				}
+
 			}
 
 
@@ -161,12 +167,6 @@ Form
 			{
 				name: "rangeRchart"
 				label: qsTr("Range chart")
-
-			    CheckBox
-				  {
-				  name: "jitter"
-				  label: qsTr("Add jitter")
-				  }
 			}
 						CheckBox
 			{

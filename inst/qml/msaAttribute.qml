@@ -30,8 +30,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Column"),					value: "AAAlongFormat"},
-			{label: qsTr("Rows"),				value: "AAAwideFormat"},
+			{label: qsTr("Single column"),					value: "AAAlongFormat"},
+			{label: qsTr("Across rows"),				value: "AAAwideFormat"},
 		]
 		id: aaadataFormat
 		onValueChanged:
@@ -100,7 +100,7 @@ Form
 
 	Section
 	{
-	  title: qsTr("Kappa Stuides (Binary Data)")
+	  title: qsTr("Kappa Stuides")
 	  Group
 	  {
 		  title: qsTr("Tables")
@@ -122,7 +122,7 @@ Form
 
   Section
   {
-    title: qsTr("Tau Stuides (Ordinal Data)")
+    title: qsTr("Tau Stuides")
       CheckBox
   		{
   			name: "AAAkendallTau";		label: qsTr("Kendall's tau")

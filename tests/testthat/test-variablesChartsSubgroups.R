@@ -4,13 +4,14 @@ context("[Quality Control] Variables Charts for Subgroups")
 options <- analysisOptions("variablesChartsSubgroups")
 options$CCDataFormat <- "CClongFormat"
 options$variablesLong <- "Ovality"
+options$subgroups <- "Time"
 options$CCSubgroupSize <- 5
 options$Wlimits <- TRUE
 options$Wlimits2 <- TRUE
 options$Xbarchart <- TRUE
 options$Schart <- TRUE
 set.seed(1)
-results <- runAnalysis("variablesChartsSubgroups", "Ovality.csv", options)
+results <- runAnalysis("variablesChartsSubgroups", "Ovality2.csv", options)
 
 test_that("Test result for R chart table results match", {
   table <- results[["results"]][["NelsonTable2"]][["data"]]

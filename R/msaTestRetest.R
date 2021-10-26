@@ -76,8 +76,8 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
       jaspResults[["rangeRchart"]]$position <- 3
     }
     plot <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
-    plot$dependOn(c("rangeRchart", "jitter"))
-    p <- .RchartNoId(dataset = dataset[measurements], options = options, warningLimits = FALSE, jitter = options$jitter)$p
+    plot$dependOn("rangeRchart")
+    p <- .RchartNoId(dataset = dataset[measurements], options = options, warningLimits = FALSE)$p
     plot$plotObject <- p
     jaspResults[["rangeRchart"]] <- plot
   }
@@ -105,9 +105,6 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
   return()
 }
-
-
-
 
 
 .ScatterPlotOperatorParts <- function(dataset, measurements, parts, operators, options, ready) {
@@ -139,28 +136,31 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
 .rAndRtableRange <- function(dataset, measurements, parts, operators, options, jaspResults, ready, GRRpercent = FALSE, ProcessSD = "", tolerance = "", EnableSD = FALSE, EnableTol = FALSE) {
 
-  table <- createJaspTable(title = gettext("Short gauge study"))
-  table$position <- 1
-  table$dependOn(c("rangeRr", "gaugeRRmethod", "rangeTolerance", "rangePSD", "EnableRangeTolerance", "EnableRangePSD"))
+  if (!ready)
+    return()
 
-  table$addColumnInfo(name = "n", title = gettext("Sample size (n)"), type = "integer")
-  table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
-  table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
-  table$addColumnInfo(name = "PSD", title = gettext("Process Std. Dev."), type = "number")
-  table$addColumnInfo(name = "tolerance", title = gettext("Tolerance"), type = "number")
-  table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
-  table$addColumnInfo(name = "GRRpercent.PSD", title = gettext("%GRR of Process Std. Dev."), type = "number")
-  table$addColumnInfo(name = "GRRpercent.Tol", title = gettext("%GRR of Tolerance"), type = "number")
+  n <- length(dataset[[measurements[1]]])
+  Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / n)
+  d2 <- .d2Value(n)
+  GRR <- Rbar/d2
+  GRRpercent.PSD <- GRR/options$rangePSD*100
+  GRRpercent.Tol <- GRR/(options$rangeTolerance/6)
 
-  jaspResults[["rAndR2"]] <- table
+  if (GRRpercent)
+    return(c(GRRpercent.PSD, GRRpercent.Tol))
+  else {
+    table <- createJaspTable(title = gettext("Short gauge study"))
+    table$position <- 1
+    table$dependOn(c("rangeRr", "rangeTolerance", "rangePSD", "EnableRangeTolerance", "EnableRangePSD"))
 
-  if (ready) {
-    n <- length(dataset[[measurements[1]]])
-    Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / n)
-    d2 <- .d2Value(n)
-    GRR <- Rbar/d2
-    GRRpercent.PSD <- GRR/options$rangePSD*100
-    GRRpercent.Tol <- GRR/(options$rangeTolerance/6)
+    table$addColumnInfo(name = "n", title = gettext("Sample size (n)"), type = "integer")
+    table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
+    table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
+    table$addColumnInfo(name = "PSD", title = gettext("Process Std. Dev."), type = "number")
+    table$addColumnInfo(name = "tolerance", title = gettext("Tolerance"), type = "number")
+    table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
+    table$addColumnInfo(name = "GRRpercent.PSD", title = gettext("%GRR of Process Std. Dev."), type = "number")
+    table$addColumnInfo(name = "GRRpercent.Tol", title = gettext("%GRR of Tolerance"), type = "number")
 
     rows <- list()
     rows[["n"]] = n
@@ -180,9 +180,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
     table$addRows(rows)
     table$showSpecifiedColumnsOnly <- TRUE
-
-    if (GRRpercent)
-      return(c(GRRpercent.PSD, GRRpercent.Tol))
+    jaspResults[["rAndR2"]] <- table
   }
 }
 
@@ -199,6 +197,9 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
     if (options[["rangeScatterPlotFitLine"]])
       p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
+
+    if (options$jitter)
+      p <- p + ggplot2::geom_jitter(size = 2)
 
     p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
 

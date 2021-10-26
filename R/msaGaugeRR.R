@@ -1024,7 +1024,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Precent of the Tolerance")
   }
 
-  if (ToleranceVar != ""){
+  if (ToleranceVar != 0){
     p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(2:1, ifelse(horizontal, 1,2)))
     Plot$plotObject <- p3
   } else {

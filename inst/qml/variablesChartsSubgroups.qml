@@ -15,8 +15,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Column"),					value: "CClongFormat"},
-			{label: qsTr("Row"),				value: "CCwideFormat"},
+			{label: qsTr("Single column"),					value: "CClongFormat"},
+			{label: qsTr("Across rows"),				value: "CCwideFormat"},
 		]
 		id: pcDataFormat
 		onValueChanged:
@@ -61,7 +61,6 @@ Form
 			title:             			 	qsTr("Subgroups")
 			singleVariable:    	 			true
 			allowedColumns:     			["nominal", "nominalText", "ordinal"]
-			visible:						pcDataFormat.currentValue == "CCwideFormat"
 		}
 	}
 
@@ -81,10 +80,24 @@ Form
 		title: 									qsTr("Control Charts")
 		columns: 								1
 
-		CheckBox
-		{
-			name: 								"Xbarchart"
-			label: 								qsTr("X-bar & R")
+		  RadioButtonGroup
+			{
+			  name:						"TypeChart"
+
+				  RadioButton
+					{
+						value: 					"Xbarchart"
+						label: 					qsTr("X-bar & R")
+						checked:		 		true
+					}
+
+					RadioButton
+					{
+		      	value: 					"Schart"
+			      label: 					qsTr("X-bar & s")
+					}
+
+			}
 
 			CheckBox
 			{
@@ -92,12 +105,12 @@ Form
 				label: 								qsTr("Warning limits")
 			}
       	CheckBox
-			{	name: 								"Phase2_XR"
+			{	name: 								"Phase2"
 				label: 								qsTr("Known parameters:")
 
 			  DoubleField
 			  {
-				  name:			"mean_XR"
+				  name:			"mean"
 				  label:			qsTr("Mean:")
 				  defaultValue:	0
           negativeValues: true
@@ -105,43 +118,11 @@ Form
 
 			  DoubleField
 			  {
-			  	 name:			"SD_XR"
+			  	 name:			"SD"
 			  	 label:			qsTr("Standard deviation:")
 				  defaultValue:	0
 			  }
 		  }
-
-		}
-
-		CheckBox
-		{
-			name: 								"Schart"
-			label: 								qsTr("X-bar & s")
-
-			CheckBox
-			{
-				name: 								"Wlimits2"
-				label: 								qsTr("Warning limits")
-			}
-      	CheckBox
-			{	name: 								"Phase2_S"
-				label: 								qsTr("Known parameters:")
-
-			  DoubleField
-			  {
-				  name:			"mean_S"
-				  label:			qsTr("Mean:")
-          negativeValues: true
-			  }
-
-			  DoubleField
-			  {
-			  	 name:			"SD_S"
-			  	 label:			qsTr("Standard deviation:")
-			  }
-		  }
-
-		}
 	}
 
 	Section

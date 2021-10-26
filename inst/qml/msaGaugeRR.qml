@@ -29,8 +29,8 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Column"),					value: "gaugeRRlongFormat"},
-			{label: qsTr("Row"),				value: "gaugeRRwideFormat"},
+			{label: qsTr("Single column"),					value: "gaugeRRlongFormat"},
+			{label: qsTr("Across rows"),				value: "gaugeRRwideFormat"},
 		]
 		id: gaugeRRdataFormat
 
