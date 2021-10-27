@@ -58,8 +58,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
 
 
-
-  .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 10, dataset)
+  if(options[["desirability"]])
+    .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 10, dataset)
 
 }
 

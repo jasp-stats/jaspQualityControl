@@ -195,6 +195,11 @@ Form
 	Section
 	{
 		title: qsTr("Desirability")
+		CheckBox 
+		{
+			name: "desirability";label: "Calculate Desirability"
+			
+		}
 		VariablesForm 
 		{
 			AvailableVariablesList 
@@ -241,6 +246,7 @@ Form
 	
 	
 	}
+		
 	
 
 	
