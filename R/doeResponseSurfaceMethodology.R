@@ -797,6 +797,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceOptimize <- function(jaspResults, options, rsm, data, position, dataset) {
 
+  if (length(options[["rsmMin"]]) + length(options[["rsmMax"]]) + length(options[["rsmTar"]]) == 0)
+    return()
+
   desire_list <- list()
   k <- 1
   if (length(options[["rsmMin"]]) > 0) {
