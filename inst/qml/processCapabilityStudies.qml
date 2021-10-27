@@ -20,8 +20,8 @@ import JASP.Widgets               			1.0
 Form
 {
 	columns:								2
-	
-	
+
+
 	DropDown
 	{
 		name: "pcDataFormat"
@@ -29,10 +29,15 @@ Form
 		indexDefaultValue: 0
 		values:
 			[
-			{label: qsTr("Single column"),					value: "PClongFormat"},
+			{label: qsTr("Single column"),			value: "PClongFormat"},
 			{label: qsTr("Across rows"),				value: "PCwideFormat"},
 		]
 		id: pcDataFormat
+		onValueChanged:
+		{
+			variablesLong.itemDoubleClicked(0)
+			variables.itemDoubleClicked(0)
+		}
 	}
 
 	VariablesForm
@@ -43,7 +48,7 @@ Form
 		{
 			name:               			"variablesForm"
 		}
-		
+
 		AssignedVariablesList
 		{
 			id:                 			variablesLong
@@ -72,14 +77,14 @@ Form
 			allowedColumns:     			["nominal", "nominalText", "ordinal"]
 		}
 	}
-	
 	CheckBox
 	{
 		name: 						"manualSubgroupSize"
 		label: 						qsTr("Specifiy subgroup size manually:")
 		checked: 					false
 		childrenOnSameRow:			true
-	
+		visible:						pcDataFormat.currentValue == "PClongFormat"
+
 		DoubleField
 		{
 			id:						pcSubgroupSize
@@ -92,7 +97,6 @@ Form
 			visible:				pcDataFormat.currentValue == "PClongFormat"
 		}
 	}
-	
 	Section
 	{
 		title: qsTr("Process Capability Options")
@@ -119,7 +123,6 @@ Form
 					{
 						name: 				"nonnormalCapabilityAnalysis"
 						label: 				qsTr("Non-normal distribution")
-						
 						DropDown
 						{
 							name: 					"nonNormalDist"
@@ -130,14 +133,14 @@ Form
 								{label: qsTr("Weibull"),		value: "Weibull"  },
 								{label: qsTr("Lognormal"),		value: "Lognormal"},
 								{label: qsTr("3-parameter lognormal"),		value: "3lognormal"},
-								{label: qsTr("3-parameter weibull"),		value: "3weibull"}
+								{label: qsTr("3-parameter Weibull"),		value: "3weibull"}
 							]
 						}
-						
+
 												DropDown
 						{
 							name: 					"nonNormalMethod"
-							label: 					qsTr("Method:")
+							label: 					qsTr("Non-normal capability statistics:")
 							indexDefaultValue: 		0
 							values:
 								[
@@ -153,22 +156,6 @@ Form
 					name: 						"CapabilityStudyPlot"
 					label: 						qsTr("Process capability plot")
 					checked: 					true
-
-					DropDown
-					{
-						name: "csBinWidthType"
-						label: qsTr("Bin width type")
-						indexDefaultValue: 0
-						values:
-							[
-							{label: qsTr("Sturges"),				value: "sturges"},
-							{label: qsTr("Scott"),					value: "scott"},
-							{label: qsTr("Doane"),					value: "doane"},
-							{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
-							{label: qsTr("Manual"),					value: "manual"	}
-						]
-						id: csBinWidthType
-					}
 
 					DoubleField
 					{
@@ -192,7 +179,9 @@ Form
 						name: "csConfidenceInterval";	label: qsTr("Confidence intervals")
 						checked: true
 						childrenOnSameRow: true
-						CIField { name: "csConfidenceIntervalPercent"}
+						CIField {
+						name: "csConfidenceIntervalPercent"
+						defaultValue: 90}
 					}
 
 				}
@@ -232,7 +221,6 @@ Form
 						negativeValues:			true
 						defaultValue:			0
 						decimals:				7
-						
 					}
 				}
 
@@ -259,7 +247,6 @@ Form
 			Group
 			{
 				title: 							qsTr("Stability of the process")
-				
 
 				RadioButtonGroup
 				{
@@ -275,7 +262,7 @@ Form
 					RadioButton
 					{
 						name: 				"IMR"
-						label: 				qsTr("x-mR chart")
+						label: 				qsTr("X-mR chart")
 					}
 				}
 			}
@@ -295,22 +282,6 @@ Form
 						name:					"displayDensity"
 						label:					qsTr("Fit distribution")
 						checked:				true
-					}
-
-					DropDown
-					{
-						name: "pcBinWidthType"
-						label: qsTr("Bin width type")
-						indexDefaultValue: 0
-						values:
-							[
-							{label: qsTr("Sturges"),				value: "sturges"},
-							{label: qsTr("Scott"),					value: "scott"},
-							{label: qsTr("Doane"),					value: "doane"},
-							{label: qsTr("Freedman-Diaconis"),		value: "fd"	},
-							{label: qsTr("Manual"),					value: "manual"	}
-						]
-						id: binWidthType
 					}
 
 					DoubleField
@@ -360,20 +331,19 @@ Form
 					CheckBox
 					{
 						name:					"addGridlines"
-						label:					qsTr("Display grid lines in plots")
+						label:					qsTr("Display grid lines")
 					}
 				}
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	Section
 	{
 		title: qsTr("Process Capability Report")
-		
-		
+
 		TextField
 		{
 			id:						pcReportTitle
@@ -382,7 +352,7 @@ Form
 			placeholderText:		qsTr("Measurement")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						apcReportName
@@ -391,7 +361,7 @@ Form
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						pcReportDate
@@ -400,7 +370,7 @@ Form
 			placeholderText:		qsTr("Date")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						pcReportReportedBy
@@ -409,7 +379,7 @@ Form
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
-		
+
 		TextField
 		{
 			id:						pcReportMisc
@@ -418,12 +388,10 @@ Form
 			placeholderText:		qsTr("Miscellaneous")
 			fieldWidth:				100
 		}
-		
+
 		CheckBox
 		{
 			name: "pcReportDisplay";		label: qsTr("Show Report")
 		}
-		
-
 	}
 }

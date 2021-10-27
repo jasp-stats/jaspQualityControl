@@ -18,7 +18,6 @@ test_that("Individual and Moving Range Plot matches", {
   jaspTools::expect_equal_plots(testPlot, "Individual and MR Plot for Measurement3")
 })
 
-
 test_that("Test result for Measurement3 for Individual chart table results match", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_Measurement3"]][["collection"]][["Ichart_Measurement3_Table1"]][["data"]]
   jaspTools::expect_equal_tables(table,

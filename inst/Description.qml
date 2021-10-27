@@ -20,7 +20,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Type 1 Instrument Study")
+		title:			qsTr("Type 1 Instrument Capability")
 		func:			"msaType1Gauge"
 	}
 	Analysis
@@ -30,7 +30,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Type 2/3 Gauge r&R (manual/automatic equipment)")
+		title:			qsTr("Type 2 and 3 Gauge r&R (manual/automatic equipment)")
 		func:			"msaGaugeRR"
 	}
 	Analysis
@@ -43,7 +43,7 @@ Description
 		title:			qsTr("Attributes Agreement Analysis")
 		func:			"msaAttribute"
 	}
-		Analysis
+	Analysis
 	{
 		title:			qsTr("Test-retest (Range method)")
 		func:			"msaTestRetest"

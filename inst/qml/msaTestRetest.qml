@@ -18,11 +18,11 @@ import QtQuick.Layouts 							1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
-Form 
+Form
 {
 	usesJaspResults:							true
 	columns:									1
-	
+
 	DropDown
 	{
 		name: "testRetestDataFormat"
@@ -34,6 +34,11 @@ Form
 			{label: qsTr("Across rows"),				value: "testRetestWideFormat"},
 		]
 		id: gaugeRRdataFormat
+		onValueChanged:
+		{
+			variable3.itemDoubleClicked(0)
+			variable4.itemDoubleClicked(0)
+		}
 	}
 
 	VariablesForm
@@ -54,16 +59,15 @@ Form
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 			visible:							gaugeRRdataFormat.currentValue == "testRetestLongFormat"
 		}
-		
 		AssignedVariablesList
 		{
 			id:									variable2
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
-		
+
 		AssignedVariablesList
 		{
 			id:									variable4
@@ -83,27 +87,38 @@ Form
 			visible:							gaugeRRdataFormat.currentValue == "testRetestWideFormat"
 			allowedColumns:						["scale"]
 		}
-		
-
-
 	}
-	
+
 	Section
 	{
 		title: qsTr("Range Method Options")
-		
+
 		Group
 		{
 			title: qsTr("Analysis Options")
-			
-			DoubleField
-			{
-				name:			"rangePSD"
-				label:			qsTr("Process Std. Deviation:")
-				defaultValue:	1
-				enabled:		TRUE
+
+			CheckBox {
+			name: "EnableRangePSD"
+			childrenOnSameRow: true
+  			DoubleField
+  			{
+  				name:			"rangePSD"
+  				label:			qsTr("Process Std. Deviation:")
+  				enabled:		TRUE
+  			}
 			}
-			
+
+			CheckBox{
+			name: "EnableRangeTolerance"
+			childrenOnSameRow: true
+  			DoubleField
+  			{
+  				name:			"rangeTolerance"
+  				label:			qsTr("Tolerance:")
+  				enabled:		TRUE
+  			}
+			}
+
 			CheckBox
 			{
 				name: "rangeRr"
@@ -111,7 +126,6 @@ Form
 				checked: true
 			}
 		}
-		
 		Group
 		{
 			title: qsTr("Plots")
@@ -119,29 +133,40 @@ Form
 			CheckBox
 			{
 				name: "rangeScatterPlotOperatorParts"
-				label: qsTr("Runchart of parts")
+				label: qsTr("Run chart of parts")
 			}
-			
+
 			CheckBox
 			{
 			name: "rangeScatterPlotOperators"
-			label: qsTr("Scatter plot operators")
+			label: qsTr("Scatter plot")
 			checked: true
-			
+
 				CheckBox
 				{
 				name: "rangeScatterPlotFitLine"
 				label: qsTr("Regression line")
 				checked: true
 				}
-				
+
+				CheckBox
+				{
+				name: "jitter"
+				label: qsTr("Add jitter")
+				}
+
 			}
 
-			
+
 			CheckBox
 			{
 				name: "rangeRchart"
-				label: qsTr("R chart")
+				label: qsTr("Range chart")
+			}
+						CheckBox
+			{
+				name: "trafficPlot"
+				label: qsTr("Traffic light graph")
 			}
 		}
 	}
