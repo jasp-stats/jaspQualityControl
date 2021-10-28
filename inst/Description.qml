@@ -20,7 +20,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Type 1 Study")
+		title:			qsTr("Type 1 Instrument Capability")
 		func:			"msaType1Gauge"
 	}
 	Analysis
@@ -30,18 +30,23 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Gauge r&R")
+		title:			qsTr("Type 2 and 3 Gauge r&R (manual/automatic equipment)")
 		func:			"msaGaugeRR"
 	}
 	Analysis
 	{
-		title:			qsTr("Gauge r&R (Non-Replicable Measurements)")
+		title:			qsTr("Gauge r&R (non-replicable measurements)")
 		func:			"msaGaugeRRnonrep"
 	}
 	Analysis
 	{
 		title:			qsTr("Attributes Agreement Analysis")
 		func:			"msaAttribute"
+	}
+	Analysis
+	{
+		title:			qsTr("Test-retest (Range method)")
+		func:			"msaTestRetest"
 	}
 
 	GroupTitle
@@ -86,12 +91,12 @@ Description
 		title:			qsTr("DOE")
 		icon:			"processControl-design.svg"
 	}
-	//     Analysis
-	//     {
-	//         title:			qsTr("Plackett-Burman Design")
-	//         func:			"doePlackettBurman"
-	//         requiresData:	false
-	//     }
+    Analysis
+    {
+        title:			qsTr("Screening")
+        func:			"doeScreening"
+        requiresData:	false
+    }
 	Analysis
 	{
 		title:			qsTr("Two-level Factorial Design")
@@ -110,6 +115,12 @@ Description
 		func:           "factorialAnalysis"
 		requiresData:   true
 	}
+    Analysis
+    {
+        title:          qsTr("Definitive Screening Analysis")
+        func:           "definitiveScreeningAnalysis"
+        requiresData:   true
+    }
 	GroupTitle
 	{
 		title:			qsTr("Probability of Detection")

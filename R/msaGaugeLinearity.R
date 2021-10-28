@@ -61,58 +61,58 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   tablesAndGraphs <- createJaspContainer(gettext("Linearity and Bias"))
 
   table1 <- createJaspTable(title = gettext("Gauge Bias"))
-  table1$dependOn(c(""))
 
   table1$addColumnInfo(name = "part",  title = gettext("Part"), type = "string")
   table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
-  table1$addColumnInfo(name = "observedMean", title = gettext("Mean"), type = "number")
-  table1$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
-  table1$addColumnInfo(name = "percentBias",            title = gettext("Percent bias"), type = "number")
-  table1$addColumnInfo(name = "pvalue",            title = gettext("p (<i>t</i>-test of bias against 0)"), type = "pvalue")
+  table1$addColumnInfo(name = "observedMean", title = gettext("Mean per reference value"), type = "number")
+  table1$addColumnInfo(name = "bias",            title = gettext("Bias per reference value"), type = "number")
+  table1$addColumnInfo(name = "percentBias",            title = gettext("Percent bias per reference value"), type = "number")
+  table1$addColumnInfo(name = "pvalue",            title = gettext("<i>p(t</i>-test of bias against 0)"), type = "pvalue")
 
 
-  table2 <- createJaspTable(title = gettext("Gauge Linearity 1"))
-  table2$dependOn(c(""))
+  table2 <- createJaspTable(title = gettext("Regression Model"))
 
   table2$addColumnInfo(name = "predictor",  title = gettext("Predictor"), type = "string")
   table2$addColumnInfo(name = "coefficient", title = gettext("Coefficient"), type = "number")
+  table2$addColumnInfo(name = "Tvalues", title = gettext("<i>t</i>-statistic"), type = "number")
   table2$addColumnInfo(name = "SEcoefficient", title = gettext("Std. Error coefficients"), type = "number")
   table2$addColumnInfo(name = "pvalue",            title = gettext("<i>p</i>"), type = "pvalue")
 
-  table3 <- createJaspTable(title = gettext("Gauge Linearity 2"))
-  table3$dependOn(c(""))
+  table3 <- createJaspTable(title = gettext("Gauge Linearity"))
 
   table3$addColumnInfo(name = "S",  title = gettext("S"), type = "number")
   table3$addColumnInfo(name = "linearity", title = gettext("Linearity"), type = "number")
   table3$addColumnInfo(name = "rsq",       title = gettextf("R%1$s", "\u00B2"), type = "number")
   table3$addColumnInfo(name = "percentLin", title = gettext("% Linearity"), type = "number")
 
-  plot1 <- createJaspPlot(title = gettext("Bias and Linearity Graph"), width = 500, height = 500)
+  plot1 <- createJaspPlot(title = gettext("Bias and Linearity"), width = 500, height = 500)
 
-  plot2 <- createJaspPlot(title = gettext("Percent Process Variation Graph"), width = 500, height = 500)
+  plot2 <- createJaspPlot(title = gettext("Percentage Process Variation Graph"), width = 500, height = 500)
 
   if (ready) {
-    partValues <- unique(dataset[[parts]])
+    ReferenceValues <- unique(dataset[[standards]])
     df <- data.frame()
     biases <- vector()
+    Part <- vector()
     references <- vector()
 
-    for (i in partValues) {
-      Part <- i
-      partData <- subset.data.frame(dataset, dataset[[parts]] == i)
-      Ref <- partData[[standards]][1]
-      ObservedMean <- mean(partData[[measurements]])
+    for (i in ReferenceValues) {
+      ReferenceValue <- i
+      ReferenceData <- subset.data.frame(dataset, dataset[[standards]] == i)
+      Ref <- ReferenceData[[standards]][1]
+      Part <- unique(ReferenceData[[parts]])
+      ObservedMean <- mean(ReferenceData[[measurements]])
       Bias <-  ObservedMean - Ref
-      pvalue <- t.test(partData[[measurements]] - Ref, mu = 0)$p.value
-      df <- rbind(df, list(Part = Part, Ref = Ref, ObservedMean = ObservedMean, Bias = Bias, pvalue = pvalue))
-      biases <- c(biases, partData[[measurements]] - partData[[standards]][1])
-      references <- c(references, partData[[standards]])
+      pvalue <- t.test(ReferenceData[[measurements]] - Ref, mu = 0)$p.value
+      df <- rbind(df, list(Part = Part,Ref = rep(Ref,length(Part)), ObservedMean =  rep(ObservedMean,length(Part)), Bias =  rep(Bias,length(Part)), pvalue =  rep(pvalue,length(Part))))
+      biases <- c(biases, ReferenceData[[measurements]] - ReferenceData[[standards]][1])
+      references <- c(references, ReferenceData[[standards]])
     }
 
     averageBias <- mean(df$Bias)
     averagePvalue <- t.test(biases, mu = 0)$p.value
 
-    table1$setData(list("part" = c(partValues, gettext("Average")),
+    table1$setData(list("part" = c(df$Part,gettext("Average")),
                         "referenceValue" = df$Ref,
                         "observedMean" = df$ObservedMean,
                         "bias" = c(df$Bias, averageBias),
@@ -122,10 +122,14 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
 
 
-    p1 <- ggplot2::ggplot() + ggplot2::geom_hline(yintercept = 0, lty = 2, color = "grey") +
+    p1 <- ggplot2::ggplot(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias)) + ggplot2::geom_hline(yintercept = 0, lty = 2, color = "grey") +
       ggplot2::geom_smooth(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias), method = "lm", color = "red") +
-      jaspGraphs::geom_point(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "blue",size = 2) +
-      jaspGraphs::geom_point(data = df, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "red",size = 4)
+      ggplot2::scale_x_continuous(name = gettext("Reference")) +
+      jaspGraphs::geom_point(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "blue", size = 4, shape = "X") +
+      jaspGraphs::geom_point(data = df, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "red",size = 4) +
+      #ggplot2::geom_text(x = mean(df2$Ref), y = max(df2$Bias) * 1.5, label = eq(df2$Ref, df2$Bias), parse = TRUE) +
+      ggpubr::stat_regline_equation(label.x = mean(df2$Ref),label.y = max(df2$Bias) * 1.5, ggplot2::aes(label = ..eq.label..), size = 5)+
+      ggplot2::scale_y_continuous(limits = c(min(df2$Bias), max(df2$Bias) * 2))
 
 
     p1 <- jaspGraphs::themeJasp(p1)
@@ -139,14 +143,16 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
     coefficientSlope <- lm$coefficients[2]
     coefficients <- c(coefficientConstant, coefficientSlope)
     SEcoefficients <- lm$coefficients[c(3,4)]
+    Tvalues <- lm$coefficients[c(5,6)]
     pvalues <- lm$coefficients[c(7,8)]
     S <- lm$sigma
     rsq <- lm$r.squared
     linearity <- abs(coefficientSlope) * options$linearityProcessVariation
     percentLin <- (linearity / options$linearityProcessVariation) * 100
 
-    table2$setData(list("predictor" = c("Constant", "Slope"),
+    table2$setData(list("predictor" = c("Intercept", "Slope"),
                         "coefficient" = coefficients,
+                        "Tvalues" = Tvalues,
                         "SEcoefficient" = SEcoefficients,
                         "pvalue" = pvalues))
 
@@ -186,3 +192,14 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
 }
 
+eq <- function(x,y) {
+  m <- lm(y ~ x)
+  as.character(
+    as.expression(
+      substitute(italic(y) == a + b %.% italic(x)*","~~italic(r)^2~"="~r2,
+                 list(a = format(coef(m)[1], digits = 4),
+                      b = format(coef(m)[2], digits = 4),
+                      r2 = format(summary(m)$r.squared, digits = 3)))
+    )
+  )
+}

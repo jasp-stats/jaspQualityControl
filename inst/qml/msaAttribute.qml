@@ -18,10 +18,28 @@ import QtQuick.Layouts 							1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
-Form 
+Form
 {
 	usesJaspResults:							true
 	columns:									1
+
+	DropDown
+	{
+		name: "AAAdataFormat"
+		label: qsTr("Data format")
+		indexDefaultValue: 0
+		values:
+			[
+			{label: qsTr("Single column"),					value: "AAAlongFormat"},
+			{label: qsTr("Across rows"),				value: "AAAwideFormat"},
+		]
+		id: aaadataFormat
+		onValueChanged:
+		{
+			variable4.itemDoubleClicked(0)
+			variable3.itemDoubleClicked(0)
+		}
+	}
 
 	VariablesForm
 	{
@@ -40,28 +58,39 @@ Form
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText"]
 		}
-		
+
 		AssignedVariablesList
 		{
 			id:									variable2
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 
 		AssignedVariablesList
 		{
 			id:									variable3
 			name:								"measurements"
-			title:								qsTr("Appraisal")
+			title:								qsTr("Result")
 			singleVariable:						false
+			visible:							aaadataFormat.currentValue == "AAAwideFormat"
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
-		
+
 		AssignedVariablesList
 		{
 			id:									variable4
+			name:								"measurementsLong"
+			title:								qsTr("Result")
+			singleVariable:						true
+			visible:							aaadataFormat.currentValue == "AAAlongFormat"
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
+
+		AssignedVariablesList
+		{
+			id:									variable5
 			name:								"standard"
 			title:								qsTr("Standard")
 			singleVariable:						true
@@ -69,21 +98,34 @@ Form
 		}
 	}
 
-	Group
+	Section
 	{
-		title: qsTr("Tables")
-		
-		CheckBox
-		{
-			name: "AAAfleissKappa";		label: qsTr("Fleiss kappa")
-		}
-		CheckBox
-		{
-			name: "AAAcohensKappa";		label: qsTr("Cohen's kappa")
-		}
-		CheckBox
-		{
-			name: "AAAkendallTau";		label: qsTr("Kendall's tau")
+	  title: qsTr("Kappa Stuides")
+	  Group
+	  {
+		  title: qsTr("Tables")
+    		CheckBox
+    		{
+    			name: "AAAcohensKappa";		label: qsTr("Cohen's kappa (interrater kappa)")
+    		}
+    		CheckBox
+    		{
+    			name: "AAAfleissKappa";		label: qsTr("Fleiss' kappa (multirater kappa)")
+    		}
+    		TextField
+      	{
+      		name: 					"PositiveRef"
+      		label: 					qsTr("Positive refernce:")
+      	}
 		}
 	}
+
+  Section
+  {
+    title: qsTr("Tau Stuides")
+      CheckBox
+  		{
+  			name: "AAAkendallTau";		label: qsTr("Kendall's tau")
+  		}
+    }
 }

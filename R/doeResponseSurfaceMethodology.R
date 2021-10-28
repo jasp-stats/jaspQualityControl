@@ -168,7 +168,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
-
   name <- vector()
 
   mean.col <- apply(data, 2, mean)
@@ -292,7 +291,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   rsm <- rsm::rsm(form_3 , data = var.code)
 
-
 }
 
 
@@ -300,8 +298,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   ready <- 1
 
 
+
   if (is.null(jaspResults[[paste("contourPlot", i, sep = "")]]))
     .responseSurfaceContourPlot(jaspResults, dataset, options, data, lol = i)
+
 
 }
 
@@ -310,8 +310,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   #Error 1: Does
 }
 
+
 .responseSurfaceContourPlot <- function(jaspResults, dataset, options, data, lol) {
   contourPlot <- createJaspContainer(title = paste(options[["rsmResponseVariables"]][[lol]],"Contour Plots", sep = " "))
+
 
   op1  <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
@@ -324,12 +326,16 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   jaspResults[[paste("contourPlot", lol, sep = "")]] <- contourPlot
 
   if (op_pair == 0 & options[["contour"]]) {
+
     jaspResults[[paste("contourPlot", lol, sep = "")]][["1"]] <- createJaspPlot(width = 400, height = 400)
+
 
     return ()
   }else if(op2 >= 1) {
 
+
     pair <- options[["pairs"]]
+
 
 
 
@@ -361,7 +367,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
         plot$dependOn(c("rsmResponseVariables",
                         "rsmBlocks",
                         "contour", "psi", "theta","pairs", "Component", "Point"))
+
         jaspResults[[paste("contourPlot", lol, sep = "")]][[paste0("plotObject", col, sep = "")]] <- plot
+
 
 
 
@@ -390,15 +398,18 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
         }
         # print(point_spec_r)
 
+
         heli.rsm  <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
         .responseSurfaceContourFill(jaspResults[[paste("contourPlot", lol, sep = "")]][[paste0("plotObject", col, sep = "")]],
                                     heli.rsm, po, options, point_spec_r, lol)
+
         col <- col + 1
       }
 
     }
 
   }
+
 
   return()
 }
@@ -463,10 +474,16 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responsePlotResFitted <- function(jaspResults, options, rsm, position, i, dataset){
 
+
   if (!(is.null(jaspResults[[paste("ResFitted", i, sep = "")]]))){
    return()
 
+
+.responsePlotResidualCall <- function(jaspResults, options, rsm, position, dataset) {
+  if (!(is.null(jaspResults[["Residual"]]))) {
+    return()
   }
+
   plot <- createJaspPlot(title = paste("Residuals vs. Fitted Value for ", options[["rsmResponseVariables"]][[i]], sep = ""),
                          width = 400, height = 400)
   jaspResults[[paste("ResFitted", i, sep = "")]] <- plot
@@ -485,10 +502,17 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     ggplot2::scale_x_continuous(name = gettext("Fitted values"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks) +
     ggplot2::scale_y_continuous(name = gettext("Residuals"),     limits = c(min(yBreaks), max(yBreaks)), breaks = yBreaks)
 
+
   p <- jaspGraphs::themeJasp(p)
+
 
   plot$plotObject <- p
 
+
+
+  p <- jaspGraphs::themeJasp(p)
+
+  plot$plotObject <- p
   return()
 }
 
@@ -513,6 +537,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   names(par)[2] <- "t"
   par <- par[rev(order(par$t)),]
 
+
   df <- summary(rsm)$df[2]
   crit <- abs(qt(0.025, df))
 
@@ -530,11 +555,40 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   return()
 
+
+  p <- jaspGraphs::themeJasp(p)
+
+  plot$plotObject <- p
+
+  return()
 }
+
+.responsePlotPareto <- function(jaspResults, options, rsm, position, dataset) {
+
+  if (!(is.null(jaspResults[["pareto"]]))) {
+    return()
+  }
+
+  plot <- createJaspPlot(title = "Pareto Plot of Standardized Effects",
+                         width = 400, height = 400)
+  jaspResults[["pareto"]] <- plot
+  plot$dependOn(c("pareto","rsmBlocks",
+                  "rsmResponseVariables",
+                  "rsmVariables", "modelTerms"))
+
+  t <- abs(data.frame(summary(rsm)[[4]][,4]))
+  name <- rownames(summary(rsm)[[4]])
+  par <- cbind.data.frame(name, t)
+  names(par)[2] <- "t"
+  par <- par[rev(order(par$t)),]
+
+  df <- summary(rsm)$df[2]
+  crit <- abs(qt(0.025, df))
 
 
 
 .responseSurfaceContourFill <- function(contourPlot,heli.rsm,po, options, point_spec_r, lol, dataset) {
+
 
   op1  <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
@@ -594,6 +648,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   return()
 
 }
+
 
 
 
@@ -696,6 +751,46 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                               options[["rsmResponseVariables"]][[i]], sep = "")))
 
 
+  .responseSurfaceTable(jaspResults, options, dataset, rsm)
+
+  return()
+}
+
+.responseSurfaceTable <- function(jaspResults, options, dataset, rsm) {
+
+  TableContainer <- createJaspContainer()
+  jaspResults[["TableContainer"]] <- TableContainer
+
+  if (is.null(jaspResults[["TableContainer"]][["coef"]]))
+    CoefTable <- createJaspTable(gettext("RSM Coefficients"))
+  if (is.null(jaspResults[["TableContainer"]][["RSQTable"]]))
+    RSQTable  <- createJaspTable()
+  TableContainer$dependOn(     options = c("coef","modelTerms", "rsmBlocks",
+                                      "rsmResponseVariables",
+                                      "rsmVariables"))
+
+
+  CoefTable$addColumnInfo(name = "names",title = " ")
+  CoefTable$addColumnInfo(name = "est",  title = "Estimate")
+  CoefTable$addColumnInfo(name = "std",  title = "Standard Error")
+  CoefTable$addColumnInfo(name = "tval", title = "t")
+  CoefTable$addColumnInfo(name = "pval", title = "p")
+
+  RSQTable$addColumnInfo( name = "RSQ",   title = "Multiple R-squared")
+  RSQTable$addColumnInfo( name = "ARSQ",  title = "Adjusted R-squared")
+  RSQTable$addColumnInfo( name = "DF1",   title = "DF1")
+  RSQTable$addColumnInfo( name = "DF2",   title = "DF2")
+  RSQTable$addColumnInfo( name = "FStat", title = "F")
+  RSQTable$addColumnInfo( name = "pval_2",title = "p")
+
+  jaspResults[["TableContainer"]][["coef"]] <- CoefTable
+  jaspResults[["TableContainer"]][["RSQTable"]] <- RSQTable
+
+
+
+
+  .responseSurfaceTableFill(TableContainer, options,rsm)
+
 
   AnovaTable$dependOn(      options = c("anova","modelTerms", "rsmBlocks",
                                        "rsmResponseVariables",
@@ -713,6 +808,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   return()
 }
+
+
+.responseSurfaceTableFill <- function(TableContainer, options, rsm) {
 
 
 
@@ -743,6 +841,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   eigen      <- createJaspContainer()
   jaspResults[["eigen"]] <- eigen
+
 
   if (is.null(eigen[["XTable"]]))
     XTable <- createJaspTable(title = gettext("Stationary Points of Response Surface (Coded)"))
@@ -796,6 +895,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 .responseSurfaceOptimize <- function(jaspResults, options, rsm, data, position, dataset) {
+
 
   if (length(options[["rsmMin"]]) + length(options[["rsmMax"]]) + length(options[["rsmTar"]]) == 0)
     return()
@@ -908,4 +1008,5 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   desirability_table[["value"]]$setData(round(best_2[["value"]],3))
 
   return()
+
 }

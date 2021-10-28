@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.0.1\n"
-"POT-Creation-Date: 2021-07-17 03:45\n"
+"POT-Creation-Date: 2021-07-31 03:44\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,7 +91,7 @@ msgstr ""
 msgid "Control Chart"
 msgstr ""
 
-msgid "You must enter at least 2 measurements to get this output."
+msgid "Subgroup size must be > 1 to display X-bar & R Chart."
 msgstr ""
 
 msgid "Test result for %s chart"
@@ -116,6 +116,48 @@ msgid "Test 6: Bimodal distribution"
 msgstr ""
 
 msgid "Numbers index data points where test violations occur."
+msgstr ""
+
+msgid "Normal Probability Plot of Residuals"
+msgstr ""
+
+msgid "Histogram of Residuals"
+msgstr ""
+
+msgid "Residuals vs. Fitted Value"
+msgstr ""
+
+msgid "Residuals vs. Run Order"
+msgstr ""
+
+msgid "Pareto Plot of Standardized Effects"
+msgstr ""
+
+msgid "Fitted values"
+msgstr ""
+
+msgid "Residuals"
+msgstr ""
+
+msgid "Run order"
+msgstr ""
+
+msgid "Standardized Effect"
+msgstr ""
+
+msgid "Coefficients"
+msgstr ""
+
+msgid "Coefficient"
+msgstr ""
+
+msgid "Standard Error"
+msgstr ""
+
+msgid "t"
+msgstr ""
+
+msgid "p"
 msgstr ""
 
 msgid "Available Factorial Designs"
@@ -145,43 +187,37 @@ msgstr ""
 msgid "Blocks"
 msgstr ""
 
+msgid "Repeats"
+msgstr ""
+
 msgid "2-level factorial"
 msgstr ""
 
 msgid "Design Preview"
 msgstr ""
 
-msgid "Run order"
+msgid "Alias Structure"
 msgstr ""
 
 msgid "Design Choice"
 msgstr ""
 
-msgid "Normal Probability Plot of Residuals"
-msgstr ""
-
-msgid "Histogram of Residuals"
-msgstr ""
-
-msgid "Residuals vs. Fitted Value"
-msgstr ""
-
-msgid "Residuals vs. Run Order"
-msgstr ""
-
-msgid "Pareto Plot of Standardized Effects"
-msgstr ""
-
-msgid "Fitted values"
-msgstr ""
-
-msgid "Residuals"
-msgstr ""
-
-msgid "Standardized Effect"
+msgid "RSM Coefficients"
 msgstr ""
 
 msgid "ANOVA"
+msgstr ""
+
+msgid "Stationary Points of Response Surface (Coded)"
+msgstr ""
+
+msgid "Eigenvalues"
+msgstr ""
+
+msgid "Eigenvectors"
+msgstr ""
+
+msgid "Standard order"
 msgstr ""
 
 msgid "df"
@@ -194,21 +230,6 @@ msgid "MS"
 msgstr ""
 
 msgid "F"
-msgstr ""
-
-msgid "p"
-msgstr ""
-
-msgid "Coefficients"
-msgstr ""
-
-msgid "Coefficient"
-msgstr ""
-
-msgid "Standard Error"
-msgstr ""
-
-msgid "t"
 msgstr ""
 
 msgid "Cohen's Kappa"
@@ -322,10 +343,13 @@ msgstr ""
 msgid "Average"
 msgstr ""
 
-msgid "Gauge r&R ANOVA Table"
+msgid "Gauge r&R"
 msgstr ""
 
-msgid "Descriptives Table"
+msgid "Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."
+msgstr ""
+
+msgid "Gauge r&R ANOVA Table"
 msgstr ""
 
 msgid "Range Chart by Operator"
@@ -349,16 +373,10 @@ msgstr ""
 msgid "Report"
 msgstr ""
 
-msgid "Scatterplot Operators vs Parts"
-msgstr ""
-
-msgid "Range Method R Chart"
-msgstr ""
-
 msgid "ANOVA Table"
 msgstr ""
 
-msgid "Two-Way ANOVA Table with Interaction"
+msgid "Two-way ANOVA Table with Interaction"
 msgstr ""
 
 msgid "Source"
@@ -367,10 +385,13 @@ msgstr ""
 msgid "Sum of Squares"
 msgstr ""
 
-msgid "Mean Square"
+msgid "Mean Squares"
 msgstr ""
 
-msgid "Gauge r & R Variance Components"
+msgid "<i>p</i>-value"
+msgstr ""
+
+msgid "Gauge r&R Variance Components"
 msgstr ""
 
 msgid "Variation"
@@ -394,34 +415,34 @@ msgstr ""
 msgid "% Tolerance"
 msgstr ""
 
-msgid "Total Gauge r & R"
+msgid "Total Gauge r&R"
 msgstr ""
 
 msgid "Repeatability"
 msgstr ""
 
-msgid "Reproducibility"
-msgstr ""
-
 msgid "Part-to-Part"
-msgstr ""
-
-msgid "Operator x Part"
 msgstr ""
 
 msgid "Total Variation"
 msgstr ""
 
+msgid "Reproducibility"
+msgstr ""
+
+msgid "x"
+msgstr ""
+
 msgid "Number of distinct categories = %i"
 msgstr ""
 
-msgid "Study Variation is calculated as Std. Deviation * %i"
+msgid "Study Variation is calculated as Std. Deviation x %i"
 msgstr ""
 
-msgid "Study Variation is calculated as Std. Deviation * %.2f"
+msgid "Study Variation is calculated as Std. Deviation x %.2f"
 msgstr ""
 
-msgid "Two-Way ANOVA Table without Interaction"
+msgid "Two-way ANOVA Table without Interaction"
 msgstr ""
 
 msgid "Components of Variation"
@@ -430,25 +451,10 @@ msgstr ""
 msgid "Number of observations is < 2 in %s after grouping on %s"
 msgstr ""
 
-msgid "Descriptives"
-msgstr ""
-
-msgid "Std. Dev."
-msgstr ""
-
-msgid "Min."
-msgstr ""
-
-msgid "Max."
-msgstr ""
-
 msgid "%s Chart by Operator"
 msgstr ""
 
 msgid "Operator %s"
-msgstr ""
-
-msgid "Scatterplot of Operator A vs Operator B"
 msgstr ""
 
 msgid "Measurements by Part"
@@ -463,27 +469,6 @@ msgstr ""
 msgid "Operators measured different number of parts."
 msgstr ""
 
-msgid "Scatterplot of Operator A, Operator B vs Part"
-msgstr ""
-
-msgid "r & R Table"
-msgstr ""
-
-msgid "R-bar"
-msgstr ""
-
-msgid "d2"
-msgstr ""
-
-msgid "Process Std. Dev."
-msgstr ""
-
-msgid "GRR"
-msgstr ""
-
-msgid "%GRR"
-msgstr ""
-
 msgid "Scatterplot of Operator vs Operator"
 msgstr ""
 
@@ -494,9 +479,6 @@ msgid "Scatterplot of Operator  %s vs Operator %s"
 msgstr ""
 
 msgid "Matrix Plot for Operators"
-msgstr ""
-
-msgid "Gauge r&R"
 msgstr ""
 
 msgid "Repeat"
@@ -532,13 +514,61 @@ msgstr ""
 msgid "Gauge r&R (Nested)"
 msgstr ""
 
+msgid "Mean Square"
+msgstr ""
+
 msgid "Variance Components"
+msgstr ""
+
+msgid "Total Gauge r & R"
 msgstr ""
 
 msgid "Part-To-Part"
 msgstr ""
 
+msgid "Study Variation is calculated as Std. Deviation * %i"
+msgstr ""
+
+msgid "Study Variation is calculated as Std. Deviation * %.2f"
+msgstr ""
+
 msgid "Measurements by part x operator"
+msgstr ""
+
+msgid "Scatterplot Operators vs Parts"
+msgstr ""
+
+msgid "Range Method R Chart"
+msgstr ""
+
+msgid "Range chart by part"
+msgstr ""
+
+msgid "Runchart of parts"
+msgstr ""
+
+msgid "Short gauge study"
+msgstr ""
+
+msgid "Sample size (n)"
+msgstr ""
+
+msgid "R-bar"
+msgstr ""
+
+msgid "d2"
+msgstr ""
+
+msgid "Process Std. Dev."
+msgstr ""
+
+msgid "GRR"
+msgstr ""
+
+msgid "%GRR"
+msgstr ""
+
+msgid "Scatterplot of Operator A vs Operator B"
 msgstr ""
 
 msgid "Run Chart"
@@ -676,16 +706,28 @@ msgstr ""
 msgid "Probability of detecting %s"
 msgstr ""
 
+msgid "Capability of the process"
+msgstr ""
+
+msgid "Could not equally divide %i data points into groups of size %i."
+msgstr ""
+
 msgid "Capability Studies"
 msgstr ""
 
-msgid "Process Capability of Measurements"
+msgid "Error: LSL > USL."
 msgstr ""
 
-msgid "Process Capability of Measurements (Non-Normal Capability Study)"
+msgid "Error: Target outside of specification limits."
 msgstr ""
 
-msgid "Process Summary"
+msgid "Process Capability"
+msgstr ""
+
+msgid "Process Capability (Non-normal Capability Analysis)"
+msgstr ""
+
+msgid "Process summary"
 msgstr ""
 
 msgid "LSL"
@@ -700,34 +742,28 @@ msgstr ""
 msgid "Sample size"
 msgstr ""
 
-msgid "Std. Deviation (Total)"
+msgid "Std. deviation (overall)"
 msgstr ""
 
-msgid "Std. Deviation (Within)"
+msgid "Std. deviation (within)"
 msgstr ""
 
 msgid "The within standard deviation could not be calculated."
 msgstr ""
 
-msgid "Capability of the Process"
+msgid "Calculations based on Normal distribution."
 msgstr ""
 
 msgid "No specification limits set."
 msgstr ""
 
-msgid "Measurement"
-msgstr ""
-
 msgid "Density"
 msgstr ""
 
-msgid "Potential Capability (Within)"
+msgid "Measurement"
 msgstr ""
 
-msgid "CPL"
-msgstr ""
-
-msgid "CPU"
+msgid "Process apability (Within)"
 msgstr ""
 
 msgid "Cp"
@@ -736,7 +772,10 @@ msgstr ""
 msgid "%s CI for Cp"
 msgstr ""
 
-msgid "ppm"
+msgid "CpL"
+msgstr ""
+
+msgid "CpU"
 msgstr ""
 
 msgid "Cpk"
@@ -745,19 +784,19 @@ msgstr ""
 msgid "%s CI for Cpk"
 msgstr ""
 
-msgid "Overall Capability"
-msgstr ""
-
-msgid "PPL"
-msgstr ""
-
-msgid "PPU"
+msgid "Process performance (overall)"
 msgstr ""
 
 msgid "Pp"
 msgstr ""
 
 msgid "%s CI for Pp"
+msgstr ""
+
+msgid "PpL"
+msgstr ""
+
+msgid "PpU"
 msgstr ""
 
 msgid "Ppk"
@@ -772,19 +811,25 @@ msgstr ""
 msgid "%s CI for Cpm"
 msgstr ""
 
-msgid "Performance"
-msgstr ""
-
-msgid "%s CI for exp. overall"
-msgstr ""
-
-msgid "%s CI for exp. within"
+msgid "Non-conformance statistics"
 msgstr ""
 
 msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
 msgstr ""
 
+msgid "Std. deviation"
+msgstr ""
+
 msgid "%1$s"
+msgstr ""
+
+msgid "Threshold"
+msgstr ""
+
+msgid "PPL"
+msgstr ""
+
+msgid "PPU"
 msgstr ""
 
 msgid "Observed"
@@ -793,13 +838,16 @@ msgstr ""
 msgid "Expected overall"
 msgstr ""
 
+msgid "Calculations based on %s distribution."
+msgstr ""
+
 msgid "Probability Table and Plot"
 msgstr ""
 
 msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
-msgid "n"
+msgid "N"
 msgstr ""
 
 msgid "Mean (%1$s)"
@@ -820,13 +868,19 @@ msgstr ""
 msgid "Scale (<i>k</i>)"
 msgstr ""
 
-msgid "<i>A</i>"
+msgid "AD"
 msgstr ""
 
-msgid "The Anderson-Darling statistic <i>A</i> is calculated against the %2$s distribution."
+msgid "The Anderson-Darling statistic AD is calculated against the %2$s distribution."
 msgstr ""
 
 msgid "Histogram"
+msgstr ""
+
+msgid "Process name: %s"
+msgstr ""
+
+msgid "Process Capability Report for %s"
 msgstr ""
 
 msgid "X-mR control chart"

@@ -40,16 +40,26 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
 }
 
-.IMRchart <- function(dataset, options, variable, cowPlot = FALSE) {
+.IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE) {
 
-  ppPlot <- createJaspPlot(width = 1200, height = 500)
-  ppPlot$dependOn(optionContainsValue = list(variables = variable))
+  ppPlot <- createJaspPlot(width = 1000, height = 550)
 
   #Individual chart
   #data
-  data <- data.frame(process = dataset[[variable]])
-  subgroups <- c(1:length(data$process))
-  sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
+  if (measurements == "" & variable != ""){
+    ppPlot$dependOn(optionContainsValue = list(variables = variable))
+    data <- data.frame(process = dataset[[variable]])
+    sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
+    xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol, byrow = T)
+    sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
+  } else{
+    data <- unlist(dataset[, measurements])
+    sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE)
+    xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2, byrow = T)
+    sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
+  }
+  subgroups = c(1:length(sixsigma_I$statistics))
+  data_plot <- data.frame(subgroups = subgroups ,process = sixsigma_I$statistics)
   center <- sixsigma_I$center
   UCL <- max(sixsigma_I$limits)
   LCL <- min(sixsigma_I$limits)
@@ -62,18 +72,18 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
+      gettextf("CL = %g", round(center, decimalplaces(sample(sixsigma_I$data,1)) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(sample(sixsigma_I$data,1)) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(sample(sixsigma_I$data,1)) + 2))
     )
   )
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data$process, UCL))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$process, UCL))
 
-  p1 <- ggplot2::ggplot(data, ggplot2::aes(x = subgroups, y = process)) +
+  p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = process)) +
     ggplot2::geom_hline(yintercept = center, color = 'green') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = gettextf("%s", variable), breaks = yBreaks, limits = range(yBreaks)) +
+    ggplot2::scale_y_continuous(name = ifelse(variable != "" , gettextf("%s", variable), "Individual value"), breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
     jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')) +
@@ -81,10 +91,6 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw()
 
   #Moving range chart
-  #data
-  data2 <- data.frame(process = dataset[[.v(variable)]])
-  xmr.raw.r <- matrix(cbind(data2$process[1:length(data2$process)-1], data2$process[2:length(data2$process)]), ncol = options$ncol, byrow = T)
-  sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
   data_plot <- data.frame(subgroups = c(1:length(sixsigma_R$statistics)), data2 = sixsigma_R$statistics)
   center <- sixsigma_R$center
   UCL <- max(sixsigma_R$limits)
@@ -98,9 +104,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, decimalplaces(data2[1,1]) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(data2[1,1]) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(data2[1,1]) + 2))
+      gettextf("CL = %g", round(center, decimalplaces(sample(sixsigma_I$data,1)) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(sample(sixsigma_I$data,1)) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(sample(sixsigma_I$data,1)) + 2))
     )
   )
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$data2, UCL))

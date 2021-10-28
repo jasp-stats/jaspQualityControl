@@ -1,8 +1,39 @@
 #############################################################
-## Common functions for preparatory work ####################
+## Common functions for plots ###############################
 #############################################################
 
-# Common function to read in data set
+# Function to create the x-bar and r-chart section
+.qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups, subgroups_ticks) {
+
+  if (!is.null(jaspResults[["controlCharts"]]))
+    return()
+
+  container <- createJaspContainer(title = gettext("Control Chart"))
+  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize"))
+  container$position <- 1
+  jaspResults[["controlCharts"]] <- container
+
+  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 1000, height = 550)
+  container[["plot"]] <- matrixPlot
+
+  if (!ready)
+    return()
+
+  if(subgroups != "")
+    subgroups <- subgroups_ticks
+
+  if (length(measurements) < 2) {
+      matrixPlot$setError(gettext("Subgroup size must be > 1 to display X-bar & R Chart."))
+      return()
+    }
+
+  plotMat <- matrix(list(), 2, 1)
+  plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
+  plotMat[[2,1]] <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
+  matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
+}
+
+
 .qcReadData <- function(dataset, options, type) {
   if (type == "capabilityStudy") {
     if (is.null(dataset)) {
@@ -16,44 +47,9 @@
   return(dataset)
 }
 
-#############################################################
-## Common functions for plots ###############################
-#############################################################
-
-# Function to create the x-bar and r-chart section
-.qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups) {
-
-  if (!is.null(jaspResults[["controlCharts"]]))
-    return()
-
-  container <- createJaspContainer(title = gettext("Control Chart"))
-  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
-  container$position <- 1
-  jaspResults[["controlCharts"]] <- container
-
-  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 700, height = 500)
-  container[["plot"]] <- matrixPlot
-
-  if (!ready)
-    return()
-
-  if (length(measurements) < 2) {
-    matrixPlot$setError(gettext("You must enter at least 2 measurements to get this output."))
-    return()
-  }
-
-  if(subgroups != "")
-    subgroups <- dataset[[subgroups]]
-
-  plotMat <- matrix(list(), 2, 1)
-  plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
-  plotMat[[2,1]] <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
-  matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
-}
-
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Subgroup mean", xAxisLab = "Subgroup",
-                           manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL) {
+.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Sample average", xAxisLab = "Subgroup",
+                           manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL, NoWarningSignals = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   if(Phase2)
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
@@ -79,7 +75,7 @@
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, means))
   }
   yLimits <- range(yBreaks)
-  if (length(subgroups) <= 15){
+  if (length(subgroups) <= 10){
     nxBreaks <- length(subgroups)
   }else{
     nxBreaks <- 5
@@ -137,6 +133,8 @@
 
   if (Phase2)
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+  else if (NoWarningSignals)
+    p <- p + jaspGraphs::geom_point(size = 4, fill = "blue")
   else
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
@@ -154,11 +152,14 @@
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE,
-                        yAxisLab = "Subgroup range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE) {
+.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = NULL,
+                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
-  sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
+  if(Phase2)
+    sixsigma <- qcc::qcc(data, type ='R', plot=FALSE, center = abs(as.numeric(target)), std.dev = as.numeric(sd))
+  else
+    sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
   range = sixsigma$statistics
   if (manualSubgroups != ""){
     subgroups <- manualSubgroups
@@ -235,6 +236,15 @@
     xLabels <- factor(manualXaxis, levels = manualXaxis)
     p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
   }
+
+  if (OnlyOutofLimit){
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, 'red', 'blue'))
+  }
+
+  if (Phase2)
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+  else
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
@@ -355,7 +365,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   }
 
   table$showSpecifiedColumnsOnly <- TRUE
-  table$addFootnote(message = gettext("Numbers index data points where test violations occur."))
+  table$addFootnote(message = gettext("Numbers are data points where test violations occur."))
   return(table)
 }
 
