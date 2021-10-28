@@ -20,24 +20,22 @@ import JASP.Widgets 							1.0
 
 Form
 {
-	usesJaspResults:							true
 	columns:									1
 
 	DropDown
 	{
-		name: "AAAdataFormat"
-		label: qsTr("Data format")
-		indexDefaultValue: 0
-		values:
-			[
-			{label: qsTr("Single column"),					value: "AAAlongFormat"},
-			{label: qsTr("Across rows"),				value: "AAAwideFormat"},
+		id: 									aaadataFormat
+		name: 									"AAAdataFormat"
+		label: 									qsTr("Data format")
+		indexDefaultValue: 						0
+		values: [
+			{ label: qsTr("Single column"), value: "AAAlongFormat"},
+			{ label: qsTr("Across rows"), value: "AAAwideFormat"},
 		]
-		id: aaadataFormat
 		onValueChanged:
 		{
-			variable4.itemDoubleClicked(0)
-			variable3.itemDoubleClicked(0)
+			measurements.itemDoubleClicked(0)
+			measurementsLong.itemDoubleClicked(0)
 		}
 	}
 
@@ -52,7 +50,6 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable1
 			name:								"operators"
 			title:								qsTr("Operators")
 			singleVariable:						true
@@ -61,7 +58,6 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable2
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
@@ -70,17 +66,16 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable3
+			id:									measurements
 			name:								"measurements"
 			title:								qsTr("Result")
-			singleVariable:						false
 			visible:							aaadataFormat.currentValue == "AAAwideFormat"
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
 
 		AssignedVariablesList
 		{
-			id:									variable4
+			id:									measurementsLong
 			name:								"measurementsLong"
 			title:								qsTr("Result")
 			singleVariable:						true
@@ -90,7 +85,6 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable5
 			name:								"standard"
 			title:								qsTr("Standard")
 			singleVariable:						true
@@ -100,32 +94,40 @@ Form
 
 	Section
 	{
-	  title: qsTr("Kappa Stuides")
-	  Group
-	  {
-		  title: qsTr("Tables")
-    		CheckBox
-    		{
-    			name: "AAAcohensKappa";		label: qsTr("Cohen's kappa (interrater kappa)")
-    		}
-    		CheckBox
-    		{
-    			name: "AAAfleissKappa";		label: qsTr("Fleiss' kappa (multirater kappa)")
-    		}
-    		TextField
-      	{
-      		name: 					"PositiveRef"
-      		label: 					qsTr("Positive refernce:")
-      	}
+		title:									qsTr("Kappa Stuides")
+		
+		Group
+		{
+			title: 								qsTr("Tables")
+			
+			CheckBox
+			{
+				name: 							"AAAcohensKappa"
+				label: 							qsTr("Cohen's kappa (interrater kappa)")
+			}
+
+			CheckBox
+			{
+				name: 							"AAAfleissKappa"
+				label: 							qsTr("Fleiss' kappa (multirater kappa)")
+			}
+
+			TextField
+			{
+				name: 							"PositiveRef"
+				label: 							qsTr("Positive refernce:")
+			}
 		}
 	}
 
-  Section
-  {
-    title: qsTr("Tau Stuides")
-      CheckBox
-  		{
-  			name: "AAAkendallTau";		label: qsTr("Kendall's tau")
-  		}
-    }
+	Section
+	{
+		title: 									qsTr("Tau Stuides")
+		
+		CheckBox
+		{
+			name: 								"AAAkendallTau"
+			label: 								qsTr("Kendall's tau")
+		}
+	}
 }

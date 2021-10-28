@@ -137,7 +137,7 @@ Form
 							]
 						}
 
-												DropDown
+						DropDown
 						{
 							name: 					"nonNormalMethod"
 							label: 					qsTr("Non-normal capability statistics:")
@@ -180,8 +180,8 @@ Form
 						checked: true
 						childrenOnSameRow: true
 						CIField {
-						name: "csConfidenceIntervalPercent"
-						defaultValue: 90}
+							name: "csConfidenceIntervalPercent"
+							defaultValue: 90}
 					}
 
 				}

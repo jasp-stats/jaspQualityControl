@@ -20,24 +20,22 @@ import JASP.Widgets 							1.0
 
 Form
 {
-	usesJaspResults:							true
 	columns:									1
 
 	DropDown
 	{
-		name: "testRetestDataFormat"
-		label: qsTr("Data format")
-		indexDefaultValue: 0
-		values:
-			[
-			{label: qsTr("Single column"),					value: "testRetestLongFormat"},
-			{label: qsTr("Across rows"),				value: "testRetestWideFormat"},
+		id: 									gaugeRRdataFormat
+		name: 									"testRetestDataFormat"
+		label: 									qsTr("Data format")
+		indexDefaultValue:						0
+		values: [
+			{ label: qsTr("Single column"), value: "testRetestLongFormat"},
+			{ label: qsTr("Across rows"), value: "testRetestWideFormat"}
 		]
-		id: gaugeRRdataFormat
 		onValueChanged:
 		{
-			variable3.itemDoubleClicked(0)
-			variable4.itemDoubleClicked(0)
+			measurements.itemDoubleClicked(0)
+			measurementsLong.itemDoubleClicked(0)
 		}
 	}
 
@@ -52,16 +50,15 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable1
 			name:								"operators"
 			title:								qsTr("Operator / Repetition")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 			visible:							gaugeRRdataFormat.currentValue == "testRetestLongFormat"
 		}
+
 		AssignedVariablesList
 		{
-			id:									variable2
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
@@ -70,7 +67,7 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable4
+			id:									measurementsLong
 			name:								"measurementsLong"
 			title:								qsTr("Measurements")
 			singleVariable:						true
@@ -80,10 +77,9 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable3
+			id:									measurements
 			name:								"measurements"
 			title:								qsTr("Measurements")
-			singleVariable:						false
 			visible:							gaugeRRdataFormat.currentValue == "testRetestWideFormat"
 			allowedColumns:						["scale"]
 		}
@@ -91,82 +87,84 @@ Form
 
 	Section
 	{
-		title: qsTr("Range Method Options")
+		title: 									qsTr("Range Method Options")
 
 		Group
 		{
-			title: qsTr("Analysis Options")
+			title: 								qsTr("Analysis Options")
 
-			CheckBox {
-			name: "EnableRangePSD"
-			childrenOnSameRow: true
-  			DoubleField
-  			{
-  				name:			"rangePSD"
-  				label:			qsTr("Process Std. Deviation:")
-  				enabled:		TRUE
-  			}
-			}
-
-			CheckBox{
-			name: "EnableRangeTolerance"
-			childrenOnSameRow: true
-  			DoubleField
-  			{
-  				name:			"rangeTolerance"
-  				label:			qsTr("Tolerance:")
-  				enabled:		TRUE
-  			}
+			CheckBox 
+			{
+				name:							"EnableRangePSD"
+				childrenOnSameRow:				true
+				
+				DoubleField
+				{
+					name:						"rangePSD"
+					label:						qsTr("Process Std. Deviation")
+				}
 			}
 
 			CheckBox
 			{
-				name: "rangeRr"
-				label: qsTr("r&R table")
-				checked: true
+				name:							"EnableRangeTolerance"
+				childrenOnSameRow: 				true
+				
+				DoubleField
+				{
+					name:						"rangeTolerance"
+					label:						qsTr("Tolerance")
+				}
+			}
+
+			CheckBox
+			{
+				name: 							"rangeRr"
+				label: 							qsTr("r&R table")
+				checked: 						true
 			}
 		}
+
 		Group
 		{
-			title: qsTr("Plots")
+			title: 								qsTr("Plots")
 
 			CheckBox
 			{
-				name: "rangeScatterPlotOperatorParts"
-				label: qsTr("Run chart of parts")
+				name: 							"rangeScatterPlotOperatorParts"
+				label:							qsTr("Run chart of parts")
 			}
 
 			CheckBox
 			{
-			name: "rangeScatterPlotOperators"
-			label: qsTr("Scatter plot")
-			checked: true
+				name:							"rangeScatterPlotOperators"
+				label:							qsTr("Scatter plot")
+				checked:						true
 
 				CheckBox
 				{
-				name: "rangeScatterPlotFitLine"
-				label: qsTr("Regression line")
-				checked: true
+					name:						"rangeScatterPlotFitLine"
+					label:						qsTr("Regression line")
+					checked:					true
 				}
 
 				CheckBox
 				{
-				name: "jitter"
-				label: qsTr("Add jitter")
+					name:						"jitter"
+					label:						qsTr("Add jitter")
 				}
-
 			}
-
 
 			CheckBox
 			{
-				name: "rangeRchart"
-				label: qsTr("Range chart")
+				name: 							"rangeRchart"
+				label: 							qsTr("Range chart")
 			}
-						CheckBox
+
+			CheckBox
 			{
-				name: "trafficPlot"
-				label: qsTr("Traffic light graph")
+				name: 							"trafficPlot"
+				label: 							qsTr("Traffic light graph")
 			}
 		}
 	}

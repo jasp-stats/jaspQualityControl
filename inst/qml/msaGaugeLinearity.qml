@@ -20,7 +20,6 @@ import JASP.Widgets 							1.0
 
 Form
 {
-	usesJaspResults:							true
 	columns:									1
 
 	VariablesForm
@@ -34,7 +33,6 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable1
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
@@ -43,7 +41,6 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable2
 			name:								"measurements"
 			title:								qsTr("Measurements")
 			singleVariable:						true
@@ -52,7 +49,6 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variable3
 			name:								"standard"
 			title:								qsTr("Standard")
 			singleVariable:						true
@@ -62,35 +58,49 @@ Form
 
 	Group
 	{
-		title: qsTr("Analysis Options")
+		title: 									qsTr("Analysis Options")
 
-		DoubleField { name: "linearityProcessVariation";	label: qsTr("Process variation:");
-		defaultValue: 6;
-		negativeValues: false;
-		decimals: 5;
-		fieldWidth: 60}
-
-		CheckBox
-		{
-			name: "LBtableLinearity";		label: qsTr("Linearity table");		checked: true
+		DoubleField 
+		{ 
+			name: 								"linearityProcessVariation"
+			label: 								qsTr("Process variation")
+			defaultValue:						6
+			negativeValues:						false
+			decimals: 							5
+			fieldWidth: 						60
 		}
+
 		CheckBox
 		{
-			name: "LBtableBias";		label: qsTr("Bias table");		checked: true
+			name: 								"LBtableLinearity"
+			label: 								qsTr("Linearity table")
+			checked: 							true
+		}
+
+		CheckBox
+		{
+			name: 								"LBtableBias"
+			label: 								qsTr("Bias table")
+			checked:							true
 		}
 	}
 
 	Group
 	{
-		title: qsTr("Plots")
+		title:									qsTr("Plots")
 
 		CheckBox
 		{
-			name: "LBgraph";		label: qsTr("Linearity and bias graph");		checked: true
+			name:								"LBgraph"
+			label:								qsTr("Linearity and bias graph")
+			checked:							true
 		}
+
 		CheckBox
 		{
-			name: "LBpercentGraph";		label: qsTr("Percent process variation graph");		checked: true
+			name: 								"LBpercentGraph"
+			label: 								qsTr("Percent process variation graph")
+			checked: 							true
 		}
 	}
 }
