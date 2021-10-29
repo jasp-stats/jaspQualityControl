@@ -20,7 +20,7 @@ import JASP.Widgets 							1.0
 
 Form
 {
-	columns:									1
+	columns:									2
 
 	VariablesForm
 	{
@@ -42,7 +42,6 @@ Form
 
 	Group
 	{
-		title: 									qsTr("Analysis Options")
 
 		DoubleField 
 		{
