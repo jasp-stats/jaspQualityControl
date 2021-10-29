@@ -50,12 +50,12 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     ppPlot$dependOn(optionContainsValue = list(variables = variable))
     data <- data.frame(process = dataset[[variable]])
     sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
-    xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol, byrow = T)
+    xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol)
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
   } else{
     data <- unlist(dataset[, measurements])
     sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE)
-    xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2, byrow = T)
+    xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2)
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
   }
   subgroups = c(1:length(sixsigma_I$statistics))
@@ -99,7 +99,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     xBreaks <- c(2,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
   else
     xBreaks <- c(subgroups)
-  xLimits <- c(2,max(xBreaks) + 2.5)
+  xLimits <- c(1,max(xBreaks) + 2.5)
   dfLabel <- data.frame(
     x = max(xLimits - 1),
     y = c(center, UCL, LCL),
