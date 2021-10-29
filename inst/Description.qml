@@ -1,17 +1,17 @@
-import QtQuick 			2.12
-import JASP.Module 		1.0
+import QtQuick			2.12
+import JASP.Module		1.0
 
 Description
 {
-	name				: "jaspProcessControl"
-	title				: qsTr("Quality Control")
-	description			: qsTr("Investigate if a manufactured product adheres to a defined set of quality criteria.")
-	version				: "0.0.1"
-	author				: "JASP Team"
-	maintainer			: "JASP <info@jasp-stats.org>"
-	website				: "https://github.com/jasp-stats/jaspProcessControl"
-	license				: "GPL (>= 2)"
-	icon				: "processControl-module.svg"
+	name:				"jaspProcessControl"
+	title:				qsTr("Quality Control")
+	description:		qsTr("Investigate if a manufactured product adheres to a defined set of quality criteria")
+	version:			"0.16"
+	author:				"JASP Team"
+	maintainer:			"JASP <info@jasp-stats.org>"
+	website:			"https://github.com/jasp-stats/jaspProcessControl"
+	license:			"GPL (>= 2)"
+	icon:				"processControl-module.svg"
 
 	GroupTitle
 	{
@@ -64,7 +64,7 @@ Description
 		title:			qsTr("Variables Charts for Individuals")
 		func:			"variablesChartsIndividuals"
 	}
-		Analysis
+	Analysis
 	{
 		title:			qsTr("Attributes Charts")
 		func:			"attributesCharts"
@@ -91,12 +91,12 @@ Description
 		title:			qsTr("DOE")
 		icon:			"processControl-design.svg"
 	}
-    Analysis
-    {
-        title:			qsTr("Screening")
-        func:			"doeScreening"
-        requiresData:	false
-    }
+	Analysis
+	{
+		title:			qsTr("Screening")
+		func:			"doeScreening"
+		requiresData:	false
+	}
 	Analysis
 	{
 		title:			qsTr("Two-level Factorial Design")
@@ -111,16 +111,15 @@ Description
 	}
 	Analysis
 	{
-		title:          qsTr("Two-level Factorial Analysis")
-		func:           "factorialAnalysis"
-		requiresData:   true
+		title:			qsTr("Two-level Factorial Analysis")
+		func:			"factorialAnalysis"
 	}
     Analysis
     {
-        title:          qsTr("Definitive Screening Analysis")
-        func:           "definitiveScreeningAnalysis"
-        requiresData:   true
+        title:			qsTr("Definitive Screening Analysis")
+        func:			"definitiveScreeningAnalysis"
     }
+
 	GroupTitle
 	{
 		title:			qsTr("Probability of Detection")
@@ -130,6 +129,5 @@ Description
 	{
 		title:			qsTr("Probability of Detection")
 		func:			"probabilityOfDetection"
-		requiresData:	true
 	}
 }

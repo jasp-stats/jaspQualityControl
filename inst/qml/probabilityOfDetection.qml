@@ -85,7 +85,7 @@ Form
 		Group
 		{
 			CheckBox		{ name: "logarithmicXAxis";	label: qsTr("Logarithmic x-axis"); checked: false	}
-//			CheckBox		{ name: "logarithmicYAxis";	label: qsTr("Logarithmic y-axis"); checked: false; debug: true	}
+			//			CheckBox		{ name: "logarithmicYAxis";	label: qsTr("Logarithmic y-axis"); checked: false; debug: true	}
 		}
 
 

@@ -1,5 +1,5 @@
-import QtQuick 								    2.8
-import QtQuick.Layouts 						    1.3
+import QtQuick									2.8
+import QtQuick.Layouts							1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
@@ -18,7 +18,6 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variables3
 			name:								"D"
 			title:								qsTr("Defectives/Defects")
 			allowedColumns:						["scale"]
@@ -27,7 +26,6 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variables4
 			name:								"total"
 			title:								qsTr("Sample")
 			allowedColumns:						["scale"]
@@ -45,7 +43,7 @@ Form
 
 			RadioButton
 			{
-				value: 							"Defectives"
+				name: 							"Defectives"
 				label: 							qsTr("Defectives")
 				checked: 						true
 
@@ -55,25 +53,24 @@ Form
 
 					RadioButton
 					{
-						value: 					"npchart"
+						name: 					"npchart"
 						label: 					qsTr("np chart")
 						checked:		 		true
 					}
 
 					RadioButton
 					{
-						value: 					"pchart"
+						name: 					"pchart"
 						label: 					qsTr("p chart")
 					}
 
 					RadioButton
 					{
-						value: 					"Laneyprimechart"
+						name: 					"Laneyprimechart"
 						label: 					qsTr("Laney p' (p-prime) chart")
 					}
 				}
 			}
-
 
 			RadioButton
 			{
@@ -93,21 +90,22 @@ Form
 
 					RadioButton
 					{
-						value: 					"uchart"
-						label: 					qsTr("u chart")
+						value:					"uchart"
+						label:					qsTr("u chart")
 					}
 
 					RadioButton
 					{
-						value: 					"Laneychart"
-						label: 					qsTr("Laney u' (u-prime) chart")
+						value:					"Laneychart"
+						label:					qsTr("Laney u' (u-prime) chart")
 					}
 				}
 			}
+
 			RadioButton
 			{
-				value: 					"ImR"
-				label: 					qsTr("X-mR chart")
+				value:					"ImR"
+				label:					qsTr("X-mR chart")
 			}
 		}
 	}
