@@ -10,12 +10,6 @@ msgid "Quality Control"
 msgstr ""
 
 msgctxt "Description|"
-msgid ""
-"Investigate if a manufactured product adheres to a defined set of quality "
-"criteria."
-msgstr ""
-
-msgctxt "Description|"
 msgid "Measurement Systems Analysis"
 msgstr ""
 
@@ -416,23 +410,11 @@ msgid "Parts"
 msgstr ""
 
 msgctxt "msaAttribute|"
-msgid "Appraisal"
-msgstr ""
-
-msgctxt "msaAttribute|"
 msgid "Standard"
 msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Tables"
-msgstr ""
-
-msgctxt "msaAttribute|"
-msgid "Fleiss kappa"
-msgstr ""
-
-msgctxt "msaAttribute|"
-msgid "Cohen's kappa"
 msgstr ""
 
 msgctxt "msaAttribute|"
@@ -453,10 +435,6 @@ msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Analysis Options"
-msgstr ""
-
-msgctxt "msaGaugeLinearity|"
-msgid "Process variation:"
 msgstr ""
 
 msgctxt "msaGaugeLinearity|"
@@ -504,15 +482,7 @@ msgid "Analysis Options"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
-msgid "Tolerance:"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
 msgid "r&R table ANOVA method"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Alpha interaction removal:"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
@@ -525,10 +495,6 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Percent"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Graph variation components"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
@@ -576,15 +542,7 @@ msgid "ANOVA Method Report"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
-msgid "Title:"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
 msgid "Measurement"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Gauge Name:"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
@@ -592,19 +550,7 @@ msgid "Name"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
-msgid "Date:"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
 msgid "Date"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Reported by:"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Misc:"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
@@ -644,14 +590,6 @@ msgid "Historical process Std. Deviation"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Std. Deviation value:"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Tolerance:"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "r&R tables"
 msgstr ""
 
@@ -665,10 +603,6 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Percent"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Study Var. multiplier value:"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
@@ -704,26 +638,6 @@ msgid "Measurements"
 msgstr ""
 
 msgctxt "msaType1Gauge|"
-msgid "Analysis Options"
-msgstr ""
-
-msgctxt "msaType1Gauge|"
-msgid "Reference value:"
-msgstr ""
-
-msgctxt "msaType1Gauge|"
-msgid "Tolerance range:"
-msgstr ""
-
-msgctxt "msaType1Gauge|"
-msgid "Percent of tolerance for Cg:"
-msgstr ""
-
-msgctxt "msaType1Gauge|"
-msgid "Study var. (number of std. deviations):"
-msgstr ""
-
-msgctxt "msaType1Gauge|"
 msgid "6"
 msgstr ""
 
@@ -745,10 +659,6 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Display tolerance limits"
-msgstr ""
-
-msgctxt "msaType1Gauge|"
-msgid "Bias and gauge capability table"
 msgstr ""
 
 msgctxt "msaType1Gauge|"
@@ -836,30 +746,6 @@ msgid "Process capability plot"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid "Bin width type"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Sturges"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Scott"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Doane"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Freedman-Diaconis"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Manual"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
 msgstr ""
 
@@ -928,10 +814,6 @@ msgid "Normal"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid "Display grid lines in plots"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Process Capability Report"
 msgstr ""
 
@@ -980,19 +862,7 @@ msgid "Cumulative sum chart"
 msgstr ""
 
 msgctxt "timeWeightedCharts|"
-msgid "Number of standard deviations:"
-msgstr ""
-
-msgctxt "timeWeightedCharts|"
-msgid "Shift size:"
-msgstr ""
-
-msgctxt "timeWeightedCharts|"
 msgid "Exponentially weighted moving average chart"
-msgstr ""
-
-msgctxt "timeWeightedCharts|"
-msgid "Lambda:"
 msgstr ""
 
 msgctxt "timeWeightedCharts|"
@@ -1012,19 +882,7 @@ msgid "Cumulative sum chart"
 msgstr ""
 
 msgctxt "TimeWeightedCharts|"
-msgid "Number of standard deviations:"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Shift size:"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
 msgid "Exponentially weighted moving average chart"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Lambda:"
 msgstr ""
 
 msgctxt "TimeWeightedCharts|"
@@ -1057,14 +915,6 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Warning limits"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Known parameters:"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Standard deviation:"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
@@ -1188,31 +1038,11 @@ msgid "Log transform covariate"
 msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
-msgid "Moving range length:"
-msgstr ""
-
-msgctxt "variablesChartsIndividuals|"
 msgid "Autocorrelation"
-msgstr ""
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Number of lags:"
-msgstr ""
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Confidence interval size:"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Data format"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Column"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Row"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
@@ -1224,19 +1054,7 @@ msgid "Subgroups"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Subgroup size:"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Mean:"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Title:"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
@@ -1244,27 +1062,11 @@ msgid "Measurement"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Name:"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Name"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Date:"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Date"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Reported by:"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Misc:"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
@@ -1273,14 +1075,6 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
-msgstr ""
-
-msgctxt "Description|"
-msgid "Type 1 Instrument Study"
-msgstr ""
-
-msgctxt "Description|"
-msgid "Type 2/3 Gauge r&R (manual/automatic equipment)"
 msgstr ""
 
 msgctxt "Description|"
@@ -1527,10 +1321,6 @@ msgctxt "msaGaugeRR|"
 msgid "Historical standard deviation:"
 msgstr ""
 
-msgctxt "msaGaugeRR|"
-msgid "Study variation multiplier:"
-msgstr ""
-
 msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
 msgstr ""
@@ -1552,15 +1342,7 @@ msgid "Gauge r&R Report"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Title:"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Gauge Name:"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
@@ -1568,19 +1350,7 @@ msgid "Name"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Date:"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Reported by:"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Misc:"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
@@ -1624,10 +1394,6 @@ msgid "Analysis Options"
 msgstr ""
 
 msgctxt "msaTestRetest|"
-msgid "Process Std. Deviation:"
-msgstr ""
-
-msgctxt "msaTestRetest|"
 msgid "r&R table"
 msgstr ""
 
@@ -1636,19 +1402,7 @@ msgid "Plots"
 msgstr ""
 
 msgctxt "msaTestRetest|"
-msgid "Runchart of parts"
-msgstr ""
-
-msgctxt "msaTestRetest|"
-msgid "Scatter plot operators"
-msgstr ""
-
-msgctxt "msaTestRetest|"
 msgid "Regression line"
-msgstr ""
-
-msgctxt "msaTestRetest|"
-msgid "R chart"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
@@ -1680,14 +1434,6 @@ msgid "3-parameter lognormal"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid "3-parameter weibull"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Method:"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Non-conformance method"
 msgstr ""
 
@@ -1697,10 +1443,6 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "x-mR chart"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
@@ -1715,10 +1457,288 @@ msgctxt "processCapabilityStudies|"
 msgid "Process Name:"
 msgstr ""
 
+msgctxt "Description|"
+msgid ""
+"Investigate if a manufactured product adheres to a defined set of quality "
+"criteria"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Type 1 Instrument Capability"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
+msgstr ""
+
 msgctxt "doeResponseSurfaceMethodology|"
 msgid ""
 msgstr ""
 
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Desirability"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Response Variable List"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Minimum [Min/Max]"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Maximum [Min/Max]"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Target [Min/Target/Max]"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Data format"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Single column"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Across rows"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Result"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Kappa Stuides"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Cohen's kappa (interrater kappa)"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Fleiss' kappa (multirater kappa)"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Positive refernce:"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Tau Stuides"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Process variation"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Type 3 study"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Tolerance"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Alpha interaction removal"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Study variation multiplier"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Components of variation"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Traffic light graph"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Title"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Gauge name"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Reported by"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Misc"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Std. Deviation value"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Tolerance"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Study Var. multiplier value"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Title"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Gauge name"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Reported by"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Misc"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Process Std. Deviation"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Tolerance"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Run chart of parts"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Scatter plot"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Add jitter"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Range chart"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Traffic light graph"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Reference value"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Tolerance range"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Percent of tolerance for Cg"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Study var. (number of std. deviations)"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Bias and instrument capability table"
+msgstr ""
+
 msgctxt "processCapabilityStudies|"
 msgid ""
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "3-parameter Weibull"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Non-normal capability statistics:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "X-mR chart"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Display grid lines"
+msgstr ""
+
+msgctxt "TimeWeightedCharts|"
+msgid "Number of standard deviations"
+msgstr ""
+
+msgctxt "TimeWeightedCharts|"
+msgid "Shift size"
+msgstr ""
+
+msgctxt "TimeWeightedCharts|"
+msgid "Lambda"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Number of standard deviations"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Shift size"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Lambda"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Moving range length"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Number of lags"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Confidence interval size"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Single column"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Across rows"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Subgroup size"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Known parameters"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Mean"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Standard deviation"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Title"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Reported by"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Misc"
 msgstr ""

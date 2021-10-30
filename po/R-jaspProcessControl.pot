@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspProcessControl 0.0.1\n"
-"POT-Creation-Date: 2021-07-31 03:44\n"
+"Project-Id-Version: jaspProcessControl 0.16\n"
+"POT-Creation-Date: 2021-10-30 03:36\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -115,7 +115,7 @@ msgstr ""
 msgid "Test 6: Bimodal distribution"
 msgstr ""
 
-msgid "Numbers index data points where test violations occur."
+msgid "Numbers are data points where test violations occur."
 msgstr ""
 
 msgid "Normal Probability Plot of Residuals"
@@ -235,7 +235,7 @@ msgstr ""
 msgid "Cohen's Kappa"
 msgstr ""
 
-msgid "Attribute Agreement Analysis"
+msgid "Attributes Agreement Analysis"
 msgstr ""
 
 msgid "Kendall's Tau"
@@ -274,13 +274,52 @@ msgstr ""
 msgid "Percent"
 msgstr ""
 
+msgid "Lower"
+msgstr ""
+
+msgid "Confidence interval of 95%"
+msgstr ""
+
+msgid "Upper"
+msgstr ""
+
 msgid "More than 1 Measurement per Operator required."
+msgstr ""
+
+msgid "Study effectiveness summary"
+msgstr ""
+
+msgid "Effectiveness"
+msgstr ""
+
+msgid "Miss rate"
+msgstr ""
+
+msgid "False alarm rate"
+msgstr ""
+
+msgid "Acceptable: x >= 90% (Effectiveness), x =< 2% (Miss rate), x =< 5% (False alarm rate)"
+msgstr ""
+
+msgid "Marginally acceptable: x >= 80% (Effectiveness), x =< 5% (Miss rate), x =< 10% (False alarm rate)"
+msgstr ""
+
+msgid "Unacceptable: x < 80% (Effectiveness), x > 5% (Miss rate), x > 10% (False alarm rate)"
 msgstr ""
 
 msgid "Kendall's Tau is only available for numeric measurements."
 msgstr ""
 
 msgid "Operator"
+msgstr ""
+
+msgid "%f (Unacceptable)"
+msgstr ""
+
+msgid "%f (Marginally acceptable)"
+msgstr ""
+
+msgid "%f (Acceptable)"
 msgstr ""
 
 msgid "Linearity and Bias"
@@ -295,22 +334,25 @@ msgstr ""
 msgid "Reference value"
 msgstr ""
 
-msgid "Mean"
+msgid "Mean per reference value"
 msgstr ""
 
-msgid "Bias"
+msgid "Bias per reference value"
 msgstr ""
 
-msgid "Percent bias"
+msgid "Percent bias per reference value"
 msgstr ""
 
-msgid "p (<i>t</i>-test of bias against 0)"
+msgid "<i>p(t</i>-test of bias against 0)"
 msgstr ""
 
-msgid "Gauge Linearity 1"
+msgid "Regression Model"
 msgstr ""
 
 msgid "Predictor"
+msgstr ""
+
+msgid "<i>t</i>-statistic"
 msgstr ""
 
 msgid "Std. Error coefficients"
@@ -319,7 +361,7 @@ msgstr ""
 msgid "<i>p</i>"
 msgstr ""
 
-msgid "Gauge Linearity 2"
+msgid "Gauge Linearity"
 msgstr ""
 
 msgid "S"
@@ -334,13 +376,16 @@ msgstr ""
 msgid "% Linearity"
 msgstr ""
 
-msgid "Bias and Linearity Graph"
+msgid "Bias and Linearity"
 msgstr ""
 
-msgid "Percent Process Variation Graph"
+msgid "Percentage Process Variation Graph"
 msgstr ""
 
 msgid "Average"
+msgstr ""
+
+msgid "Reference"
 msgstr ""
 
 msgid "Gauge r&R"
@@ -370,6 +415,9 @@ msgstr ""
 msgid "Parts by Operator Interaction Graph"
 msgstr ""
 
+msgid "Traffic light graph"
+msgstr ""
+
 msgid "Report"
 msgstr ""
 
@@ -394,7 +442,7 @@ msgstr ""
 msgid "Gauge r&R Variance Components"
 msgstr ""
 
-msgid "Variation"
+msgid "Variance"
 msgstr ""
 
 msgid "% Contribution"
@@ -440,6 +488,12 @@ msgid "Study Variation is calculated as Std. Deviation x %i"
 msgstr ""
 
 msgid "Study Variation is calculated as Std. Deviation x %.2f"
+msgstr ""
+
+msgid "Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %Study Variation."
+msgstr ""
+
+msgid "Values for %Process Variation are not displayed because they are identical to values for %Study Variation."
 msgstr ""
 
 msgid "Two-way ANOVA Table without Interaction"
@@ -520,6 +574,9 @@ msgstr ""
 msgid "Variance Components"
 msgstr ""
 
+msgid "Variation"
+msgstr ""
+
 msgid "Total Gauge r & R"
 msgstr ""
 
@@ -544,7 +601,7 @@ msgstr ""
 msgid "Range chart by part"
 msgstr ""
 
-msgid "Runchart of parts"
+msgid "Run chart of parts"
 msgstr ""
 
 msgid "Short gauge study"
@@ -562,13 +619,19 @@ msgstr ""
 msgid "Process Std. Dev."
 msgstr ""
 
+msgid "Tolerance"
+msgstr ""
+
 msgid "GRR"
 msgstr ""
 
-msgid "%GRR"
+msgid "%GRR of Process Std. Dev."
 msgstr ""
 
-msgid "Scatterplot of Operator A vs Operator B"
+msgid "%GRR of Tolerance"
+msgstr ""
+
+msgid "Scatterplot of 1st measurement vs 2nd measurement"
 msgstr ""
 
 msgid "Run Chart"
@@ -583,19 +646,22 @@ msgstr ""
 msgid "Histogram Bias"
 msgstr ""
 
-msgid "Bias and Gauge Capability Table"
+msgid "Bias and Instrument Capability Table"
 msgstr ""
 
 msgid "Basic Statistics"
+msgstr ""
+
+msgid "Mean"
+msgstr ""
+
+msgid "Bias"
 msgstr ""
 
 msgid "Std. Deviation (<i>s</i>)"
 msgstr ""
 
 msgid "Study variation"
-msgstr ""
-
-msgid "Tolerance"
 msgstr ""
 
 msgid "% Bias"
@@ -622,19 +688,13 @@ msgstr ""
 msgid "T-Test of Observed Bias Against 0"
 msgstr ""
 
-msgid "Lower"
-msgstr ""
-
 msgid "%s CI for Bias"
-msgstr ""
-
-msgid "Upper"
 msgstr ""
 
 msgid "<i>t</i>"
 msgstr ""
 
-msgid "<i>p<i/>"
+msgid "<i>p<i/>-value"
 msgstr ""
 
 msgid "T-Test requires more than 1 measurement. %i valid measurement(s) detected in %s."
@@ -742,16 +802,13 @@ msgstr ""
 msgid "Sample size"
 msgstr ""
 
-msgid "Std. deviation (overall)"
+msgid "Std. deviation (total)"
 msgstr ""
 
 msgid "Std. deviation (within)"
 msgstr ""
 
 msgid "The within standard deviation could not be calculated."
-msgstr ""
-
-msgid "Calculations based on Normal distribution."
 msgstr ""
 
 msgid "No specification limits set."
@@ -763,7 +820,7 @@ msgstr ""
 msgid "Measurement"
 msgstr ""
 
-msgid "Process apability (Within)"
+msgid "Process capability (within)"
 msgstr ""
 
 msgid "Cp"
@@ -784,7 +841,7 @@ msgstr ""
 msgid "%s CI for Cpk"
 msgstr ""
 
-msgid "Process performance (overall)"
+msgid "Process performance (total)"
 msgstr ""
 
 msgid "Pp"
@@ -820,16 +877,19 @@ msgstr ""
 msgid "Std. deviation"
 msgstr ""
 
-msgid "%1$s"
+msgid "Log mean (mu)"
+msgstr ""
+
+msgid "Log std.dev (%1$s)"
+msgstr ""
+
+msgid "Shape (%1$s)"
+msgstr ""
+
+msgid "Scale (%1$s)"
 msgstr ""
 
 msgid "Threshold"
-msgstr ""
-
-msgid "PPL"
-msgstr ""
-
-msgid "PPU"
 msgstr ""
 
 msgid "Observed"
@@ -859,12 +919,6 @@ msgstr ""
 msgid "Location (%1$s)"
 msgstr ""
 
-msgid "Scale (%1$s)"
-msgstr ""
-
-msgid "Shape (%1$s)"
-msgstr ""
-
 msgid "Scale (<i>k</i>)"
 msgstr ""
 
@@ -877,13 +931,13 @@ msgstr ""
 msgid "Histogram"
 msgstr ""
 
+msgid "X-mR control chart"
+msgstr ""
+
 msgid "Process name: %s"
 msgstr ""
 
 msgid "Process Capability Report for %s"
-msgstr ""
-
-msgid "X-mR control chart"
 msgstr ""
 
 msgid "%s for Individual"
@@ -901,10 +955,19 @@ msgstr ""
 msgid "Lag"
 msgstr ""
 
+msgid "Control Charts"
+msgstr ""
+
+msgid "Please insert more measurements."
+msgstr ""
+
+msgid "Could not equally divide data points into groups of size %i."
+msgstr ""
+
 msgid "X-bar & R Control Chart"
 msgstr ""
 
-msgid "You must enter more measurements to get this output."
+msgid "Out of-control Signals"
 msgstr ""
 
 msgid "Xbar & s Control Chart"
