@@ -170,6 +170,22 @@ Form
 			fieldWidth:							100
 		}
 
+		TextField
+		{
+			label: 								qsTr("Sub-title:")
+			name: 								"ccSubTitle"
+			placeholderText:					qsTr("Sub-title")
+			fieldWidth:							100
+		}
+
+		TextField
+		{
+			label: 								qsTr("Chart name:")
+			name: 								"ccChartName"
+			placeholderText:					qsTr("Name of the chart")
+			fieldWidth:							100
+		}
+
 		CheckBox
 		{
 			name: 								"CCReport"
