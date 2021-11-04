@@ -6,9 +6,9 @@ Variable charts for subgroups are used to monitor the behavior of a dimensional 
 Depending on the data collected from a given process, the analysis can be executed using historical data (Phase 2) or new data (Phase 1).  
 
 ## Input
-### Data Format
 -------
-Data can be in the form of all observations in one column ("Column" option) or across rows with a subgroup index ("Row" option).
+### Data Format
+Data can be in the form of all observations in one column ("Single column") or across rows with a subgroup index ("Across rows").
 
 ### Assignment Box 
 -------
@@ -27,8 +27,10 @@ Data can be in the form of all observations in one column ("Column" option) or a
 - X-bar & R chart: plots the process mean (x-bar) and process range (R) over time.
 - X-bar & s chart: plots the process mean (x-bar) and process standard deviation (s) over time.
 
-## References
-- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2019).*Statistical process control*. SKF group. 
+## References 
+-------
+- Chrysler Group LLC, Ford Motor Company, & General Motors Corporation. (2010). *Measurement Systems Analysis* (4th ed.). http://www.aiag.orgt. 
+- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbooks*. SKF group.
 
 ## R Packages
 -------

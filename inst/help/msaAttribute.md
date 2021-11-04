@@ -4,9 +4,9 @@ Attribute Agreement Analysis is used to deem the agreement between operators' an
 One of the aims is thus to determine the accuracy of the investigated operators. 
 
 ## Input
-### Data Format
 -------
-Data can be in the form of all observations in one column ("Column" option) or across rows with a subgroup index ("Row" option).
+### Data Format
+Data can be in the form of all observations in one column ("Single column") or across rows with a subgroup index ("Across rows").
 
 ### Assignment Box
 - Operators: the operators in the measurement system. 
@@ -35,6 +35,11 @@ Data can be in the form of all observations in one column ("Column" option) or a
 ### Plots
 - Within Appraisers: plotting the matching's percentage within appraiser and its confidence intervals. 
 - Each Appraiser vs Standard: plotting the matching's percentage between the known standard and inspected items per operator and its confidence intervals. 
+
+## References 
+-------
+- Chrysler Group LLC, Ford Motor Company, & General Motors Corporation. (2010). *Measurement Systems Analysis* (4th ed.). http://www.aiag.orgt. 
+- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbooks*. SKF group.
 
 ## R Packages
 -------

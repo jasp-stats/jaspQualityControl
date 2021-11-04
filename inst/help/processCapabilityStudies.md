@@ -3,9 +3,9 @@ Process capability Studies
 Process capability studies are a set of tools used to model and determine the statistical control of a process using capability indices and limits specification. 
 
 ## Input
-### Data Format
 -------
-Data can be in the form of all observations in one column ("Column" option) or across rows with a subgroup index ("Row" option).
+### Data Format
+Data can be in the form of all observations in one column ("Single column") or across rows with a subgroup index ("Across rows").
 
 ### Assignment Box
 - Measurements: the observations/data collected from a process.
@@ -58,7 +58,7 @@ Data can be in the form of all observations in one column ("Column" option) or a
 
 ## References
 -------
-- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2019).*Statistical process control*. SKF group. 
+- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control*. SKF group. 
 
 ## R Packages
 -------

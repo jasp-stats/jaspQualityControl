@@ -10,6 +10,7 @@ An Autocorrelation chart models the pairwise correlation of values returned from
 on every second value (lag of 2).
 
 ## Assumptions 
+-------
 The assumptions associated with the I-mR chart are: 
 - sequential or time-sequenced measurements must be used. 
 - the data points are independent of one another- a given data point is unrelated to the next. 
@@ -19,8 +20,8 @@ The assumptions associated with the Autocorrelation chart are:
 - the data points are dependent on one another- a given data point is related to the next. 
 
 ## Input
-### Assignment Box 
 -------
+### Assignment Box 
 - Variables: the observations collected from a process.  
 
 ### Options
@@ -31,13 +32,15 @@ The assumptions associated with the Autocorrelation chart are:
   - Confidence size: the size of the confidence interval used to calculate the limits. 
 
 ## Output
-### Charts
 -------
+### Charts
 - X-mR chart: outlines the process's value and moving range (MR) over time.
 - Autocorrelation: outlines the autocorrelation over the lags. 
 
-## References
-- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2019).*Statistical process control*. SKF group. 
+## References 
+-------
+- Chrysler Group LLC, Ford Motor Company, & General Motors Corporation. (2010). *Measurement Systems Analysis* (4th ed.). http://www.aiag.orgt. 
+- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbooks*. SKF group.
 
 ## R Packages
 -------

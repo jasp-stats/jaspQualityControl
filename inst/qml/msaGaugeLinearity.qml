@@ -60,14 +60,14 @@ Form
 	{
 		title: 									qsTr("Analysis Options")
 
-		DoubleField 
-		{ 
+		DoubleField
+		{
 			name: 								"linearityProcessVariation"
 			label: 								qsTr("Process variation")
-			defaultValue:						6
-			negativeValues:						false
-			decimals: 							5
-			fieldWidth: 						60
+			defaultValue:					6
+			negativeValues:				false
+			decimals: 						5
+			fieldWidth: 					60
 		}
 
 		CheckBox

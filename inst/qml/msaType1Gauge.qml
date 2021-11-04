@@ -42,8 +42,9 @@ Form
 
 	Group
 	{
+	title: 									qsTr("Analysis options")
 
-		DoubleField 
+		DoubleField
 		{
 			name: 								"biasReferenceValue"
 			label: 								qsTr("Reference value")
@@ -53,8 +54,8 @@ Form
 			fieldWidth: 						60
 		}
 
-		DoubleField 
-		{ 
+		DoubleField
+		{
 			name: 								"biasTolerance"
 			label: 								qsTr("Tolerance range")
 			defaultValue: 						1
@@ -63,7 +64,7 @@ Form
 			fieldWidth: 						60
 		}
 
-		DoubleField 
+		DoubleField
 		{
 			name: 								"biasPercentCG"
 			label: 								qsTr("Percent of tolerance for Cg")
@@ -83,6 +84,26 @@ Form
 				{ label: qsTr("6"), value: 6},
 				{ label: qsTr("4"), value: 4}
 			]
+		}
+
+		CheckBox
+		{
+			name: 								"biasTable"
+			label: 								qsTr("Bias and instrument capability table")
+			checked: 							true
+		}
+
+		CheckBox
+		{
+			name: 								"biasTtest"
+			label: 								qsTr("One sample T-test")
+			checked:							true
+
+			CIField
+			{
+				name: 							"biasTtestConfidenceIntervalPercent"
+				label: 							qsTr("Confidence interval for bias")
+			}
 		}
 	}
 
@@ -113,30 +134,10 @@ Form
 
 		CheckBox
 		{
-			name: 								"biasTable"
-			label: 								qsTr("Bias and instrument capability table")
-			checked: 							true
-		}
-
-		CheckBox
-		{
-			name: 								"biasTtest"
-			label: 								qsTr("One sample T-test")
-			checked:							true
-
-			CIField 
-			{ 
-				name: 							"biasTtestConfidenceIntervalPercent"
-				label: 							qsTr("Confidence interval for bias")
-			}
-		}
-
-		CheckBox
-		{
 			name: 								"biasHistogram"
 			label: 								qsTr("Histogram")
 
-			DropDown 
+			DropDown
 			{
 				id: 							binWidthType
 				name:							"biasBinWidthType"
@@ -173,10 +174,10 @@ Form
 					label: 						qsTr("Confidence interval for mean")
 					checked:					true
 					childrenOnSameRow:			true
-					
-					CIField 
-					{ 
-						name: 					"biasHistMeanConfidenceIntervalPercent" 
+
+					CIField
+					{
+						name: 					"biasHistMeanConfidenceIntervalPercent"
 					}
 				}
 			}
