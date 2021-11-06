@@ -416,10 +416,6 @@ msgid "FO + PQ"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "FO"
 msgstr ""
 
@@ -1376,10 +1372,6 @@ msgid "Specifiy subgroup size manually:"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid ""
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Process Capability Options"
 msgstr ""
 
@@ -1741,4 +1733,12 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid ""
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid ""
 msgstr ""

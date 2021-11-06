@@ -1472,10 +1472,6 @@ msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Desirability"
 msgstr ""
 
@@ -1652,10 +1648,6 @@ msgid "Bias and instrument capability table"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid ""
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "3-parameter Weibull"
 msgstr ""
 
@@ -1741,4 +1733,12 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Misc"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid ""
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid ""
 msgstr ""
