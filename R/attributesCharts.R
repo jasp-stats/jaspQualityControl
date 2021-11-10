@@ -26,7 +26,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
       jaspResults[["PchartPlot"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
       jaspResults[["PchartPlot"]]$position <- 1
       Pchart <- .Pchart(dataset = dataset, options = options)
-      jaspResults[["PchartPlot"]]$plotObject <- PlotReport <- Pchart$p
+      jaspResults[["PchartPlot"]]$plotObject <- Pchart$p
 
 
 
@@ -44,7 +44,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
       jaspResults[["NPchartPlot"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
       jaspResults[["NPchartPlot"]]$position <- 1
       NPchart <- .NPchart(dataset = dataset, options = options)
-      jaspResults[["NPchartPlot"]]$plotObject <- PlotReport <- NPchart$p
+      jaspResults[["NPchartPlot"]]$plotObject <- NPchart$p
 
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTable"]])) {
@@ -59,7 +59,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     if (options$TypeDefectives == "Laneyprimechart" && is.null(jaspResults[["LaneyPPlot"]])) {
       jaspResults[["LaneyPPlot"]] <- createJaspPlot(title =  gettext("Laney p' Chart"), width = 1200, height = 500, position = 1)
       Lanychart <- .LanyP(dataset = dataset, options = options)
-      jaspResults[["LaneyPPlot"]]$plotObject <- PlotReport <- Lanychart$p
+      jaspResults[["LaneyPPlot"]]$plotObject <- Lanychart$p
       jaspResults[["LaneyPPlot"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
 
       if (is.null(jaspResults[["NelsonTable"]])) {
@@ -81,7 +81,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
+        jaspResults[["NelsonTable"]] <- createJaspContainer()
         jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Cchart$sixsigma, name = "c")
         jaspResults[["NelsonTable"]]$dependOn(c("total", "D", "Attributes", "TypeDefects"))
         jaspResults[["NelsonTable"]]$position <- 2
@@ -136,19 +136,31 @@ attributesCharts <- function(jaspResults, dataset, options) {
   #Report
   if (options[["AReport"]] && is.null(jaspResults[["AReport"]]) && ready) {
     jaspResults[["AReport"]] <- createJaspContainer(title = gettextf("Report for Attribute Control Charts"))
-    jaspResults[["AReport"]]$dependOn(c("ATitle, AName, AOperator, AID, AMisc, AAppraiser, AMeasurement, ASize, ATime, AFrequency,
-                                        D, total, Attributes, TypeDefects, TypeDefectives"))
+    jaspResults[["AReport"]]$dependOn(c("AReport", "ATitle", "AName", "AOperator", "AID", "AMisc", "AAppraiser", "AMeasurement", "ASize", "ATime", "AFrequency",
+                                        "D", "total", "Attributes", "TypeDefects", "TypeDefectives"))
     Report <- jaspResults[["AReport"]]
 
-    ALL <- createJaspContainer()
-    ALL[["AReport"]] <- .AReport(ccTitle = options$ATitle, ccName = options$AName,
+    Report[["Report"]] <- .AReport(ccTitle = options$ATitle, ccName = options$AName,
                                  ccOperator = options$AOperator, ccID = options$AID, ccMisc = options$AMisc, ccAppraiser = options$AAppraiser,
                                  ccMeasurement = options$AMeasurement, ccSize = options$ASize, ccTime = options$ATime, ccFrequency = options$AFrequency)
 
-    ALL[["Plot"]] <- createJaspPlot(width = 1000, height = 800, position = 2)
-    ALL[["Plot"]]$plotObject <- PlotReport
+    Report[["Plot"]] <- createJaspPlot(width = 1000, height = 800, position = 2)
+    if (options$Attributes == "Defectives" & options$TypeDefectives == "pchart")
+      PlotReport <- .Pchart(dataset = dataset, options = options)$p
+    else if (options$Attributes == "Defectives" & options$TypeDefectives == "npchart")
+      PlotReport <- .NPchart(dataset = dataset, options = options)$p
+    else if (options$Attributes == "Defectives" & options$TypeDefectives == "Laneyprimechart")
+      PlotReport <- .LanyP(dataset = dataset, options = options)$p
+    else if (options$Attributes == "Defects" & options$TypeDefects == "cchart")
+      PlotReport <- .Cchart(dataset = dataset, options = options)$p
+    else if (options$Attributes == "Defects" & options$TypeDefects == "uchart")
+      PlotReport <- .Uchart(dataset = dataset, options = options)$p
+    else if (options$Attributes == "Defects" & options$TypeDefects == "Laneychart")
+      PlotReport <- .LanyU(dataset = dataset, options = options)$p
+    else if (options$Attributes == "ImR")
+      PlotReport <- .Ichart_attributes(dataset = dataset, options = options)$p
 
-    Report[["AReport"]] <- ALL
+    Report[["Plot"]]$plotObject <- PlotReport
   }
 }
 
