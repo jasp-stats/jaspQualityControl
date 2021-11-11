@@ -166,35 +166,32 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   kappaWithinVector <- vector(mode = "numeric")
   kappaBetweenVector <- vector(mode = "numeric")
   kappaStandardVector <- vector(mode = "numeric")
+  listBetween <- list()
 
   for (i in 1:length(unique(dataset[[operators]]))) {
     appraiser <- as.character(unique(dataset[[operators]])[i])
     appraiserVector[i] <- appraiser
     onlyAppraiser <- subset(dataset, dataset[operators] == appraiser)
+
+    # Within
     fkappa <- irr::kappam.fleiss(onlyAppraiser[measurements])
     kappaWithinVector[i] <- fkappa$value
-    kappaBetweenVector[i] <- NA
+
+    # Versus Standard
+    Kappa0 <- NULL
+    count = 0
+    for (j in measurements){
+      count = count + 1
+      Kappa0[count] <- irr::kappam.fleiss(cbind(onlyAppraiser[[j]], onlyAppraiser[[standards]]))$value
+    }
+    kappaStandardVector[i] <- mean(Kappa0)
+
+    # Between
+    listBetween[[i]] <- onlyAppraiser[measurements]
   }
 
-  datasetLong <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-
-  for (i in 1:length(unique(datasetLong[[operators]]))) {
-    appraiser <- as.character(unique(datasetLong[[operators]])[i])
-    onlyAppraiser <- subset(datasetLong, datasetLong[[operators]] == appraiser)
-    kappaFrame <- data.frame(standard = onlyAppraiser[[standards]], measurement = onlyAppraiser[["Measurement"]])
-    fkappa <- irr::kappam.fleiss(kappaFrame)
-    kappaStandardVector[i] <- fkappa$value
-  }
-
-  reshapeData <- data.frame(rep(NA,nrow(subset(datasetLong, datasetLong[[operators]] == unique(datasetLong[[operators]])[1]))))
-  for (i in 1:length(unique(datasetLong[[operators]]))) {
-    appraiser <- as.character(unique(datasetLong[[operators]])[i])
-    reshapeData[,i] <- subset(datasetLong, datasetLong[operators] == appraiser)['Measurement']
-  }
-  betweenKappa <- irr::kappam.fleiss(reshapeData)
-  kappaBetweenVector <- c(kappaBetweenVector, betweenKappa$value)
-  allKappa <- irr::kappam.fleiss(data.frame(standard = datasetLong[standards], measurement = datasetLong["Measurement"]))
-  kappaStandardVector <- c(kappaStandardVector, allKappa$value)
+  kappaBetweenVector <- c(rep(NA,length(unique(dataset[[operators]]))), irr::kappam.fleiss(as.data.frame(listBetween))$value)
+  kappaStandardVector <- c(kappaStandardVector, mean(kappaStandardVector))
   appraiserVector <- c(appraiserVector, 'All')
 
   table$setData(list(      "appraiser"       = appraiserVector,
