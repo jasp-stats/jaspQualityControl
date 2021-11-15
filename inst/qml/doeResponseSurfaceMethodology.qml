@@ -39,9 +39,7 @@ Form
 
 
 		}
-
 		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]}
-
 		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
 	}
 
@@ -127,7 +125,6 @@ Form
 		{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
 
 
-
 	} 
 	
 
@@ -195,7 +192,6 @@ Form
 	}
 	
 	
-
 	Section
 	{
 		title: qsTr("Desirability")
@@ -251,7 +247,6 @@ Form
 	
 	}
 		
-
 	
 
 	
