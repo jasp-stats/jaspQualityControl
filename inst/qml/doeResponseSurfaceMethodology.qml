@@ -49,6 +49,7 @@ Form
 		AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
 		ModelTermsList
 		{
+
 			name					: "modelSpec"
 			listViewType			: JASP.Interaction
 			rowComponentTitle		: qsTr("Term Type")
@@ -108,7 +109,9 @@ Form
 		}
 	}
 	
+
 	Section 
+
 	{
 		title: qsTr("Design Specification")
 
@@ -379,6 +382,8 @@ Form
 		
 		IntegerField
 		{
+
+
 			visible:                            false
 			id:                                 numberOfGeneratorsForTable
 			name:                               "numberOfGeneratorsForTable"
@@ -497,6 +502,7 @@ Form
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
 			AvailableVariablesList
 			{
+
 				name:  "rsmVariables2";	    source:"rsmVariables"
 
 			}
@@ -617,6 +623,7 @@ Form
 				rowComponent: Row
 				{
 					DoubleField {name: "Point_Min_2"; negativeValues: true}
+
 					DoubleField {name: "Point_Tar_2"; negativeValues: true; defaultValue: 1}
 					DoubleField {name: "Point_Max_2"; negativeValues: true; defaultValue: 2}
 				}
