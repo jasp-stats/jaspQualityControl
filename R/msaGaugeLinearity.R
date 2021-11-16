@@ -85,6 +85,11 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   table3$addColumnInfo(name = "rsq",       title = gettextf("R%1$s", "\u00B2"), type = "number")
   table3$addColumnInfo(name = "percentLin", title = gettext("% Linearity"), type = "number")
 
+  Note <- gettext("Calculations are based on 6 times the historical standard variation unless specified otherwise.")
+  table1$addFootnote(Note)
+  table2$addFootnote(Note)
+  table3$addFootnote(Note)
+
   plot1 <- createJaspPlot(title = gettext("Bias and Linearity"), width = 500, height = 500)
 
   plot2 <- createJaspPlot(title = gettext("Percentage Process Variation Graph"), width = 500, height = 500)

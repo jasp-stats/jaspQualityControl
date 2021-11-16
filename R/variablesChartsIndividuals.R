@@ -106,7 +106,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol)
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
   } else{
-    data <- unlist(dataset[, measurements])
+    data <- as.data.frame(dataset[, measurements])[,1]
     sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE)
     xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2)
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
@@ -174,7 +174,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw()
 
   if (manualXaxis != "") {
-    xLabels <- dataset[[.v(options$subgroups)]]
+    if (measurements != "")
+      xLabels <- factor(manualXaxis, levels = manualXaxis)
+    else
+      xLabels <- dataset[[.v(options$subgroups)]]
+
     Xbreaks <- c(seq(1,length(xLabels),5), length(xLabels))
     p1 <- p1 + ggplot2::scale_x_continuous(breaks = Xbreaks, labels = xLabels[Xbreaks])
     p2 <- p2 + ggplot2::scale_x_continuous(breaks = Xbreaks, labels = xLabels[Xbreaks])

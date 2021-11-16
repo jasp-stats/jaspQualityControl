@@ -60,16 +60,6 @@ Form
 	{
 		title: 									qsTr("Analysis Options")
 
-		DoubleField
-		{
-			name: 								"linearityProcessVariation"
-			label: 								qsTr("Process variation")
-			defaultValue:					6
-			negativeValues:				false
-			decimals: 						5
-			fieldWidth: 					60
-		}
-
 		CheckBox
 		{
 			name: 								"LBtableLinearity"
@@ -101,6 +91,27 @@ Form
 			name: 								"LBpercentGraph"
 			label: 								qsTr("Percent process variation graph")
 			checked: 							true
+		}
+	}
+
+	Group
+	{
+	title: qsTr("Optional")
+
+	    CheckBox
+		{
+			name: 								"EnablePV"
+			label: 								qsTr("Process variation")
+			childrenOnSameRow: 				true
+
+			DoubleField
+		  {
+			  name: 								"linearityProcessVariation"
+		  	defaultValue:					6
+		  	negativeValues:				false
+			  decimals: 						5
+		  	fieldWidth: 					50
+		  }
 		}
 	}
 }

@@ -167,11 +167,19 @@ attributesCharts <- function(jaspResults, dataset, options) {
 .Pchart <- function(dataset, options) {
   data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
   sixsigma <- with(data1, qcc::qcc(D, sample, type = "p", plot = FALSE))
+  sample <- data1$sample
+  D <- data1$D
   subgroups = c(1:length(sixsigma$statistics))
   data_plot <- data.frame(subgroups = subgroups, P = sixsigma$statistics)
   center <- sixsigma$center
   UCL <- sixsigma$limits[,2]
   LCL <- sixsigma$limits[,1]
+  if (min(sample)/max(sample) >= 0.75){
+    p.hat <- mean(sixsigma$statistics)
+    n.mean <- mean(sample)
+    UCL <- p.hat + 3 * (sqrt(p.hat*(1 - p.hat))) / (sqrt(n.mean))
+    LCL <- p.hat - 3 * (sqrt(p.hat*(1 - p.hat))) / (sqrt(n.mean))
+  }
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
   if (length(subgroups) > 60)
@@ -194,7 +202,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (length(unique(data1$sample)) == 1){
+  if (length(unique(UCL)) == 1){
     dfLabel <- data.frame(
       x = max(xLimits) * .95,
       y = c(center, UCL, LCL),
@@ -272,7 +280,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
   data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
   subgroups <- 1:nrow(data1)
   data_plot <- data.frame(subgroups = subgroups, D = data1$D)
-
   sixsigma <- with(data1, qcc::qcc(D, sample, type = "c", plot = FALSE))
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
@@ -325,7 +332,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1]) + 0.5
   else
     xBreaks <- c(subgroups) + 0.5
-  xLimits <- c(1,max(xBreaks-0.5) * 1.15)
+  xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
     y = c(center),
@@ -341,7 +348,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (length(unique(data1$sample)) == 1){
+  if (length(unique(UCL)) == 1){
     dfLabel <- data.frame(
       x = max(xLimits) * 0.95,
       y = c(center, UCL, LCL),
@@ -473,7 +480,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
   LCL <- ifelse(center - 3*sqrt(center/data1$sample) * sigma < 0, 0, center - 3*sqrt(center/data1$sample) * sigma)
   UCL <- center + 3*sqrt(center/data1$sample) * sigma
   sixsigma <- list(statistics = data1$P, limits = data.frame(LCL, UCL), center = center)
-
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
   if (length(subgroups) > 60)
@@ -496,7 +502,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (length(unique(data1$sample)) == 1){
+  if (length(UCL) == 1){
     dfLabel <- data.frame(
       x = max(xLimits) * .95,
       y = c(center, UCL, LCL),
@@ -546,7 +552,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
   LCL <- ifelse(center - 3*sqrt(center*(1 - center)/data1$sample) * sigma < 0, 0, center - 3*sqrt(center*(1 - center)/data1$sample) * sigma)
   UCL <- center + 3*sqrt(center*(1 - center)/data1$sample) * sigma
   sixsigma <- list(statistics = data1$P, limits = data.frame(LCL, UCL), center = center)
-
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
   yLimits <- range(c(0,yBreaks * 1.2))
   if (length(subgroups) > 60)
@@ -569,7 +574,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (length(unique(data1$sample)) == 1){
+  if (length(UCL) == 1){
     dfLabel <- data.frame(
       x = max(xLimits) * .95,
       y = c(center, UCL, LCL),

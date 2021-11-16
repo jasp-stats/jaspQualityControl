@@ -95,27 +95,30 @@ Form
 	Section
 	{
 		title:									qsTr("Kappa Stuides")
-		
+
 		Group
 		{
 			title: 								qsTr("Tables")
-			
+
+			TextField
+			{
+				name: 							"PositiveRef"
+				id:                 positiveRef
+				label: 							qsTr("Positive refernce:")
+			}
+
 			CheckBox
 			{
 				name: 							"AAAcohensKappa"
 				label: 							qsTr("Cohen's kappa (interrater kappa)")
+				enabled:            positiveRef.value != ""
 			}
 
 			CheckBox
 			{
 				name: 							"AAAfleissKappa"
 				label: 							qsTr("Fleiss' kappa (multirater kappa)")
-			}
-
-			TextField
-			{
-				name: 							"PositiveRef"
-				label: 							qsTr("Positive refernce:")
+				enabled:            positiveRef.value != ""
 			}
 		}
 	}
@@ -123,7 +126,7 @@ Form
 	Section
 	{
 		title: 									qsTr("Tau Stuides")
-		
+
 		CheckBox
 		{
 			name: 								"AAAkendallTau"

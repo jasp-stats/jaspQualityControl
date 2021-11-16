@@ -62,7 +62,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       dataset <- dataset[,c(operators, parts, measurements)]
   }
 
-
   .msaCheckErrors(dataset, options)
 
 
@@ -75,7 +74,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     }
 
     jaspResults[["cohensKappa"]] <- .cohensKappa(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
-
+    jaspResults[["cohensKappaCor"]] <- .corCohenTable(ready = ready, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
   }
 
 
@@ -151,6 +150,38 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   return(table)
 }
 
+.corCohenTable <- function(dataset, ready, measurements, parts, operators, options, standards) {
+
+  table <- createJaspTable(title = gettext("Cohen's Kappa Correlations"))
+  table$dependOn(c("AAAcohensKappa"))
+  table$addColumnInfo(name = "Appraiser",  title = gettext("Appraiser"), type = "string")
+
+  appraiserVector <- vector(mode = "character")
+  listCor <- list()
+  for (i in 1:length(unique(dataset[[operators]]))) {
+    appraiser <- as.character(unique(dataset[[operators]])[i])
+    appraiserVector[i] <- appraiser
+    onlyAppraiser <- subset(dataset, dataset[operators] == appraiser)
+
+    DataPerAppriaser <- unlist(onlyAppraiser[,measurements])
+
+    if (!is.numeric(DataPerAppriaser))
+      DataPerAppriaser <- ifelse(DataPerAppriaser == options$PositiveRef, 1, 0)
+
+
+    listCor[[appraiser]] <- c(DataPerAppriaser)
+    table$addColumnInfo(name = appraiser,  title = gettext(appraiser), type = "integer")
+
+  }
+  cors <- cor(as.data.frame(listCor))
+
+  if (!any(options$PositiveRef == unique(unlist(dataset[measurements]))))
+    table$setError(gettext("Please inseret a vaild Positive reference as used in the 'Results' variables."))
+
+  table$setData(cors)
+  return(table)
+}
+
 .fleissKappa <- function(dataset, measurements, parts, operators, standards, options) {
 
   table <- createJaspTable(title = gettext("Fleiss' Kappa"))
@@ -182,7 +213,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     count = 0
     for (j in measurements){
       count = count + 1
-      Kappa0[count] <- irr::kappam.fleiss(cbind(onlyAppraiser[[j]], onlyAppraiser[[standards]]))$value
+      Kappa0[count] <- irr::kappam.fleiss(cbind(onlyAppraiser[j], onlyAppraiser[[standards]]))$value
     }
     kappaStandardVector[i] <- mean(Kappa0)
 
@@ -273,14 +304,18 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
         tableWithin$setError(gettext("More than 1 Measurement per Operator required."))
       }else{
 
-        if (!options$AAAkendallTau && standards != "" && options$PositiveRef != "")
-        {
-          tableDecisions <- createJaspTable(title = gettext("Study effectiveness summary"))
-          tableDecisions$addColumnInfo(name = "Appraiser", title = gettext("Appraiser"), type = "string")
-          tableDecisions$addColumnInfo(name = "Effectiveness", title = gettext("Effectiveness"), type = "string")
-          tableDecisions$addColumnInfo(name = "Miss", title = gettext("Miss rate"), type = "string")
-          tableDecisions$addColumnInfo(name = "False", title = gettext("False alarm rate"), type = "string")
+        tableDecisions <- createJaspTable(title = gettext("Study effectiveness summary"))
+        tableDecisions$addColumnInfo(name = "Appraiser", title = gettext("Appraiser"), type = "string")
+        tableDecisions$addColumnInfo(name = "Effectiveness", title = gettext("Effectiveness"), type = "string")
+        tableDecisions$addColumnInfo(name = "Miss", title = gettext("Miss rate"), type = "string")
+        tableDecisions$addColumnInfo(name = "False", title = gettext("False alarm rate"), type = "string")
 
+        if (!any(options$PositiveRef == unique(unlist(dataset[measurements]))))
+          tableDecisions$setError(gettext("Please inseret a vaild Positive reference as used in the 'Results' variables."))
+
+
+        if (!options$AAAkendallTau && standards != "" && options$PositiveRef != "" && any(options$PositiveRef == dataset[measurements]))
+        {
           PositiveRef <- options$PositiveRef
           Misses <- vector()
           Falses <- vector()
@@ -301,9 +336,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
           tableDecisions$addFootnote(gettext("Acceptable: x >= 90% (Effectiveness), x =< 2% (Miss rate), x =< 5% (False alarm rate)"))
           tableDecisions$addFootnote(gettext("Marginally acceptable: x >= 80% (Effectiveness), x =< 5% (Miss rate), x =< 10% (False alarm rate)"))
           tableDecisions$addFootnote(gettext("Unacceptable: x < 80% (Effectiveness), x > 5% (Miss rate), x > 10% (False alarm rate)"))
-
-          AAA[["StudyEffectiveness"]] <- tableDecisions
         }
+        AAA[["StudyEffectiveness"]] <- tableDecisions
 
         CIWithin <- .AAACI(matchesWithin, rep(numberInspected, length(appraiserVector)))
         tableWithin$setData(list(      "Appraiser"       = appraiserVector,

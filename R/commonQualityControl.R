@@ -83,7 +83,7 @@
   prettyxBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)
   prettyxBreaks[prettyxBreaks == 0] <- 1
   xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
-  xLimits <- range(xBreaks) * 1.15
+  xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
     y = c(center, UCL, LCL),
