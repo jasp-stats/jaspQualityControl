@@ -853,8 +853,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     out
   }
 
-  tmp <- list()
-  for (i in 1:dim(you)[1]) {
+  tmp <- vector("list", dim(you)[1])
+  for (i in seq_len(dim(you)[1])) {
     tmp[[i]] <- optim(as.vector(you[i,]), rsmOpt_2, dObject = desire_final,
                       rsm = rsm, space = "square", control = list(fnscale = -1))
     if (i == 1) {
