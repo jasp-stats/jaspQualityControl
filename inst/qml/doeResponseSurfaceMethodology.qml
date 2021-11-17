@@ -213,7 +213,7 @@ Form
 				rowComponent: Row
 				{
 					DoubleField {name: "Point_Min"; negativeValues: true}
-					DoubleField {name: "Point_Max"; negativeValues: true}
+					DoubleField {name: "Point_Max"; negativeValues: true; defaultValue: 1}
 				}
 
 			}
@@ -223,7 +223,7 @@ Form
 				rowComponent: Row
 				{
 					DoubleField {name: "Point_Min_1"; negativeValues: true}
-					DoubleField {name: "Point_Max_1"; negativeValues: true}
+					DoubleField {name: "Point_Max_1"; negativeValues: true; defaultValue: 1}
 				}
 
 			}
@@ -233,8 +233,8 @@ Form
 				rowComponent: Row
 				{
 					DoubleField {name: "Point_Min_2"; negativeValues: true}
-					DoubleField {name: "Point_Tar_2"; negativeValues: true}
-					DoubleField {name: "Point_Max_2"; negativeValues: true}
+					DoubleField {name: "Point_Tar_2"; negativeValues: true; defaultValue: 1}
+					DoubleField {name: "Point_Max_2"; negativeValues: true; defaultValue: 2}
 				}
 
 			}

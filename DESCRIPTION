@@ -32,7 +32,8 @@ Imports:
   tibble,
   EnvStats,
   FAdist,
-  daewr
+  daewr,
+  desirability
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
