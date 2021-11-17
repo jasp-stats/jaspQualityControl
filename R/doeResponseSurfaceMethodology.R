@@ -836,11 +836,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   you <- expand.grid(op)
 
-  # print(desire_final)
-  # print(length(desire_final))
-  # print(predict(rsm, newdata = you[i,]))
-  # print(desire_final)
-  print(you[i,])
   rsmOpt_2 <- function(you_2, rsm, dObject, space = "square") {
     conv <- numeric()
     for (j in 1:length(rsm)) {
