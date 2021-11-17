@@ -867,9 +867,13 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   print(tmp)
 
-  desirability_table <- createJaspContainer()
-  jaspResults[["desirability_table"]] <- desirability_table
-  desirability_table$dependOn(options = c("rsmMin", "rsmMax", "rsmVariables", "rsmTar"))
+  if (is.null(jaspResults[["desirability_table"]])) {
+    desirability_table <- createJaspContainer()
+    jaspResults[["desirability_table"]] <- desirability_table
+    desirability_table$dependOn(options = c("rsmMin", "rsmMax", "rsmVariables", "rsmTar"))
+  } else {
+     desirability_table <- jaspResults[["desirability_table"]]
+  }
 
 
   if (is.null(desirability_table[["predictor_value"]])) {
