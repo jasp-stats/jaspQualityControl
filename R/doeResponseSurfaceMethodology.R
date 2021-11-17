@@ -837,8 +837,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   you <- expand.grid(op)
 
   rsmOpt_2 <- function(you_2, rsm, dObject, space = "square") {
-    conv <- numeric()
-    for (j in 1:length(rsm)) {
+    conv <- numeric(length(rsm))
+    for (j in seq_along(rsm)) {
       conv[j] <- predict(rsm[[j]], newdata = you[i,])
     }
     out <- do.call(predict, list(object = dObject, newobject = conv))
