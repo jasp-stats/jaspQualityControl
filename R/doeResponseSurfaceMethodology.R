@@ -97,17 +97,17 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   DesignChoiceTable$addCitation("Lenth, R.V. (2020). Response-Surface Methods in R, Using rsm.")
 
-  DesignChoiceTable$addColumnInfo(name = "n.c",        title = "N Fac Points",                                type = "integer")
-  DesignChoiceTable$addColumnInfo(name = "n0.c",       title = "N Centre Points/Block",                       type = "integer")
-  DesignChoiceTable$addColumnInfo(name = "blks.c",     title = "N Cube Blocks/Cube Portion",                  type = "integer")
-  DesignChoiceTable$addColumnInfo(name = "n.s",        title = "N Design Star Points/Block",                  type = "integer")
-  DesignChoiceTable$addColumnInfo(name = "n0.s",       title = "N Centre Points/Star Block",                  type = "integer")
-  DesignChoiceTable$addColumnInfo(name = "bbr.c",      title = "N Copies of Each Cube Block",                 type = "integer")
-  DesignChoiceTable$addColumnInfo(name = "wbr.s",      title = "N Replications of Each Star Point/Block",     type = "integer")
-  DesignChoiceTable$addColumnInfo(name = "bbr.s",      title = "N Copies of Each Star Block",                 type = "integer")
-  DesignChoiceTable$addColumnInfo(name = "N",          title = "Total Experiment Size",                       type = "integer")
-  DesignChoiceTable$addColumnInfo(name = "alpha.rot",  title = "Rotational Alpha",                            type = "number")
-  DesignChoiceTable$addColumnInfo(name = "alpha.orth", title = "Orthogonal Alpha",                            type = "number")
+  DesignChoiceTable$addColumnInfo(name = "n.c",        title = gettext("N Fac Points"),                                type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "n0.c",       title = gettext("N Centre Points/Block"),                       type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "blks.c",     title = gettext("N Cube Blocks/Cube Portion"),                  type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "n.s",        title = gettext("N Design Star Points/Block"),                  type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "n0.s",       title = gettext("N Centre Points/Star Block"),                  type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "bbr.c",      title = gettext("N Copies of Each Cube Block"),                 type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "wbr.s",      title = gettext("N Replications of Each Star Point/Block"),     type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "bbr.s",      title = gettext("N Copies of Each Star Block"),                 type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "N",          title = gettext("Total Experiment Size"),                       type = "integer")
+  DesignChoiceTable$addColumnInfo(name = "alpha.rot",  title = gettext("Rotational Alpha"),                            type = "number")
+  DesignChoiceTable$addColumnInfo(name = "alpha.orth", title = gettext("Orthogonal Alpha"),                            type = "number")
 
   message <- "n."
 
