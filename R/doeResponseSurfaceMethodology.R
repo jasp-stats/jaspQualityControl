@@ -1,17 +1,17 @@
 #
 # Copyright (C) 2013-2018 University of Amsterdam
 #
-# This program is free software: possibleCodedCombinationsOfPredictors can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
-# (at possibleCodedCombinationsOfPredictorsr option) any later version.
+# (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# possibleCodedCombinationsOfPredictors should have received a copy of the GNU General Public License
+# You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
@@ -91,7 +91,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   if (is.null(jaspResults[["showDesign"]]))
 
-    DesignChoiceTable <- createJaspTable(gettext("Design Choice"))
+    DesignChoiceTable <- createJaspTable(gettextf("Design Choice"))
 
   DesignChoiceTable$dependOn(options = c("factorResponse","showDesign", "responseSurfaceCenter","responseSurfaceBlocks",    "responseSurfaceCenterPointStar","responseSurfaceReplicationStar"))
 
@@ -474,8 +474,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   p <- ggplot2::ggplot(df, ggplot2::aes(x = x, y = y)) +
     ggplot2::geom_point() +
     ggplot2::geom_hline(yintercept = 0, color = "grey", linetype = "dashed") +
-    ggplot2::scale_x_continuous(name = gettext("Fitted values"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks) +
-    ggplot2::scale_y_continuous(name = gettext("Residuals"),     limits = c(min(yBreaks), max(yBreaks)), breaks = yBreaks)
+    ggplot2::scale_x_continuous(name = gettextf("Fitted values"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks) +
+    ggplot2::scale_y_continuous(name = gettextf("Residuals"),     limits = c(min(yBreaks), max(yBreaks)), breaks = yBreaks)
 
   p <- jaspGraphs::themeJasp(p)
 
@@ -514,7 +514,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     ggplot2::geom_bar(ggplot2::aes(x = t), stat = "identity") +
     ggplot2::geom_vline(xintercept = crit, linetype = "dashed", color = "red") +
     ggplot2::labs(x = 'Standardized Effect', y ='Term') +
-    ggplot2::scale_x_continuous(name = gettext("Standardized Effect"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks)
+    ggplot2::scale_x_continuous(name = gettextf("Standardized Effect"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks)
 
   p <- jaspGraphs::themeJasp(p)
 
@@ -599,34 +599,47 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceTable <- function(jaspResults, options, rsm, i, dataset) {
 
-  TableContainer <- createJaspContainer()
-  jaspResults[[paste0("TableContainer", i)]] <- TableContainer
+  if (is.null(jaspResults[[paste0("TableContainer", i)]])) {
+    TableContainer <- createJaspContainer()
+    jaspResults[[paste0("TableContainer", i)]] <- TableContainer
+  } else {
+    TableContainer <- jaspResults[[paste0("TableContainer", i)]]
+  }
 
-  if (is.null(jaspResults[[paste0("TableContainer", i)]][["coef"]]))
-    CoefTable <- createJaspTable(gettext(paste0("RSM Coefficients for ",
-                                               options[["rsmResponseVariables"]][[i]])))
-  if (is.null(jaspResults[[paste0("TableContainer", i)]][["RSQTable"]]))
+  if (is.null(jaspResults[[paste0("TableContainer", i)]][["coef"]])) {
+    CoefTable <- createJaspTable(gettextf("RSM Coefficients for %s",
+                                               options[["rsmResponseVariables"]][[i]]))
+    jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
+  } else {
+    CoefTable  <- jaspResults[[paste0("TableContainer", i)]][["coef"]]
+  }
+
+  if (is.null(jaspResults[[paste0("TableContainer", i)]][["RSQTable"]])){
     RSQTable  <- createJaspTable()
+    jaspResults[[paste0("TableContainer", i)]][["RSQTable"]] <- RSQTable
+  }else {
+    RSQTable <- jaspResults[[paste0("TableContainer", i)]][["RSQTable"]]
+  }
   TableContainer$dependOn(     options = c("coef","modelTerms", "rsmBlocks",
                                       "rsmResponseVariables",
                                       "rsmVariables"))
 
 
-  CoefTable$addColumnInfo(name = "names",title = " ")
-  CoefTable$addColumnInfo(name = "est",  title = "Estimate")
-  CoefTable$addColumnInfo(name = "std",  title = "Standard Error")
-  CoefTable$addColumnInfo(name = "tval", title = "t")
-  CoefTable$addColumnInfo(name = "pval", title = "p")
+  CoefTable$addColumnInfo(name = "names",title = gettext(" "))
+  CoefTable$addColumnInfo(name = "est",  title = gettext("Estimate"))
+  CoefTable$addColumnInfo(name = "std",  title = gettext("Standard Error"))
+  CoefTable$addColumnInfo(name = "tval", title = gettext("t"))
+  CoefTable$addColumnInfo(name = "pval", title = gettext("p"))
 
-  RSQTable$addColumnInfo( name = "RSQ",   title = "Multiple R-squared")
-  RSQTable$addColumnInfo( name = "ARSQ",  title = "Adjusted R-squared")
-  RSQTable$addColumnInfo( name = "DF1",   title = "DF1")
-  RSQTable$addColumnInfo( name = "DF2",   title = "DF2")
-  RSQTable$addColumnInfo( name = "FStat", title = "F")
-  RSQTable$addColumnInfo( name = "pval_2",title = "p")
+  RSQTable$addColumnInfo( name = "RSQ",   title = gettext("Multiple R-squared"))
+  RSQTable$addColumnInfo( name = "ARSQ",  title = gettext("Adjusted R-squared"))
+  RSQTable$addColumnInfo( name = "DF1",   title = gettext("DF1"))
+  RSQTable$addColumnInfo( name = "DF2",   title = gettext("DF2"))
+  RSQTable$addColumnInfo( name = "FStat", title = gettext("F"))
+  RSQTable$addColumnInfo( name = "pval_2",title = gettext("p"))
 
-  jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
-  jaspResults[[paste0("TableContainer", i)]][["RSQTable"]] <- RSQTable
+  # jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
+  # jaspResults[[paste0("TableContainer", i)]][["RSQTable"]] <- RSQTable
 
 
 
@@ -678,9 +691,15 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceAnovaTable <- function(jaspResults, options, rsm, i, dataset) {
 
+  if (is.null(jaspResults[[paste0("anova", i)]])) {
+    AnovaTable <- createJaspTable(gettextf("ANOVA for %s",
+                                           options[["rsmResponseVariables"]][[i]]))
 
-  AnovaTable <- createJaspTable(gettext(paste0("ANOVA for ",
-                                              options[["rsmResponseVariables"]][[i]])))
+    jaspResults[[paste0("anova", i)]] <- AnovaTable
+  }else{
+    AnovaTable <- jaspResults[[paste0("anova", i)]]
+  }
+
 
 
 
@@ -694,7 +713,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   AnovaTable$addColumnInfo( name = "FValue",   title = "F")
   AnovaTable$addColumnInfo( name = "PValue",   title = "p")
 
-  jaspResults[[paste0("anova", i)]] <- AnovaTable
+
 
   .responseSurfaceAnovaFill(AnovaTable, jaspResults, options,rsm, i)
 
@@ -731,13 +750,26 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   eigen      <- createJaspContainer()
   jaspResults[["eigen"]] <- eigen
 
-  if (is.null(eigen[["XTable"]]))
-    XTable <- createJaspTable(title = gettext("Stationary Points of Response Surface (Coded)"))
-  if (is.null(eigen[["EigenValue"]]))
-    EigenValue <- createJaspTable(title = gettext("Eigenvalues"))
+  if (is.null(eigen[["XTable"]])){
+    XTable <- createJaspTable(title = gettextf("Stationary Points of Response Surface (Coded)"))
+    eigen[["XTable"]] <- XTable
+  }else {
+    XTable <- eigen[["XTable"]]
+  }
 
-  if (is.null(eigen[["EigenVectors"]]))
-    EigenVector <- createJaspTable(title = gettext("Eigenvectors"))
+  if (is.null(eigen[["EigenValue"]])){
+    EigenValue <- createJaspTable(title = gettextf("Eigenvalues"))
+    eigen[["EigenValue"]] <- EigenValue
+  }else {
+    EigenValue <- eigen[["EigenValue"]]
+  }
+
+  if (is.null(eigen[["EigenVectors"]])){
+    EigenVector <- createJaspTable(title = gettextf("Eigenvectors"))
+    eigen[["EigenVectors"]] <- EigenVector
+  }else{
+    EigenVector <- eigen[["EigenVectors"]]
+  }
 
   eigen$dependOn(      options = c("eigen","modelTerms", "rsmBlocks",
                                         "rsmResponseVariables",
@@ -751,10 +783,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     EigenValue$addColumnInfo(name = paste0("x",i), title = "")
     EigenVector$addColumnInfo(name = paste0("x",i), title = "")
   }
-
-  eigen[["XTable"]] <- XTable
-  eigen[["EigenValue"]] <- EigenValue
-  eigen[["EigenVectors"]] <- EigenVector
 
   .responseSurfaceTableEigenFill(eigen, jaspResults, options, rsm)
 
@@ -865,20 +893,22 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   if (is.null(desirability_table[["predictor_value"]])) {
     predictor_value <- createJaspTable(title = "Predictor Values")
+    desirability_table[["predictor_value"]] <- predictor_value
+  }else {
+    predictor_value <- desirability_table[["predictor_value"]]
   }
 
   if (is.null(desirability_table[["value"]])) {
     value <- createJaspTable(title = "Overall Desirability")
     value$addColumnInfo(name = "Value", title = "Value")
+    desirability_table[["value"]] <- value
+  }else {
+    value <- desirability_table[["value"]]
   }
 
   for (i in 1:op1) {
     predictor_value$addColumnInfo(name = paste0("x",i), title = paste0("x",i))
   }
-
-
-  desirability_table[["predictor_value"]] <- predictor_value
-  desirability_table[["value"]] <- value
 
   .responseSurfaceOptimizeFill(predictor_value, value, desirability_table, bestCombinedDesirability, jaspResults, options, dataset)
 
