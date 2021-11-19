@@ -97,13 +97,13 @@ Form
 		}
 	}
 
-	Section
+	Group
 	{
 		title: 									qsTr("ANOVA Method Options")
+		columns: 								2
 
 		Group
 		{
-			title: 								qsTr("Analysis Options")
 
 			DropDown
 			{
@@ -121,7 +121,7 @@ Form
 			{
 				name:							"historicalStandardDeviationValue"
 				label:							qsTr("Historical standard deviation:")
-				defaultValue:					0
+				defaultValue:					3
 				enabled:						variationReference.currentValue == "historicalStandardDeviation"
 			}
 
@@ -145,6 +145,16 @@ Form
 				name: 							"gaugeANOVA"
 				label: 							qsTr("r&R table ANOVA method")
 				checked: 						true
+
+				DropDown
+				{
+					name: 						"TypeForFstat"
+					label: 						qsTr("Type of model for F-statistic")
+					values: [
+						{ label: qsTr("Fixed effects"), value: "FixedEffects" },
+						{ label: qsTr("Random effects"), value: "RandomEffects" }
+					]
+				}
 
 				DoubleField
 				{

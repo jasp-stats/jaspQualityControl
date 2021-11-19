@@ -62,8 +62,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       dataset <- dataset[,c(operators, parts, measurements)]
   }
 
-  .msaCheckErrors(dataset, options)
-
 
 
   # Cohen's Kappa Operator vs Standard
@@ -152,9 +150,9 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
 .corCohenTable <- function(dataset, ready, measurements, parts, operators, options, standards) {
 
-  table <- createJaspTable(title = gettext("Cohen's Kappa Correlations"))
+  table <- createJaspTable(title = gettext("Cohen's Kappa correlations summary"))
   table$dependOn(c("AAAcohensKappa"))
-  table$addColumnInfo(name = "Appraiser",  title = gettext("Appraiser"), type = "string")
+  table$addColumnInfo(name = "appraiserVector",  title = gettext("Appraiser"), type = "string")
 
   appraiserVector <- vector(mode = "character")
   listCor <- list()
@@ -173,12 +171,13 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     table$addColumnInfo(name = appraiser,  title = gettext(appraiser), type = "integer")
 
   }
-  cors <- cor(as.data.frame(listCor))
+  cors <- cbind(appraiserVector, round(cor(as.data.frame(listCor)), 2))
 
-  if (!any(options$PositiveRef == unique(unlist(dataset[measurements]))))
+  if (!any(options$PositiveRef == as.character(unique(unlist(dataset[measurements])))) && options$PositiveRef != "" && !options$AAAkendallTau)
     table$setError(gettext("Please inseret a vaild Positive reference as used in the 'Results' variables."))
 
-  table$setData(cors)
+
+  table$setData(ifelse(cors == "1", "-", cors))
   return(table)
 }
 
@@ -243,7 +242,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     tableEachVsStandard <- createJaspTable(title = gettext("Each Appraiser vs Standard"))
     tableAllVsStandard <- createJaspTable(title = gettext("All Appraisers vs Standard"))
 
-
     allTables <- list(tableWithin, tableEachVsStandard, tableBetween, tableAllVsStandard)
 
     for (table in allTables[1:2]) {
@@ -259,6 +257,12 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     }
 
     if (ready) {
+
+      if ((length(unique(unlist(dataset[measurements]))) != 2 | length(unique(dataset[[standards]])) != 2) && !options$AAAkendallTau && options$PositiveRef != "") {
+        table$setError(gettext("An invalid Reference and/or Results were inserted."))
+        return(table)
+      }
+
       appraiserVector <- as.character(unique(dataset[[operators]]))
       numberInspected <- length(unique(dataset[[parts]]))
 
@@ -310,7 +314,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
         tableDecisions$addColumnInfo(name = "Miss", title = gettext("Miss rate"), type = "string")
         tableDecisions$addColumnInfo(name = "False", title = gettext("False alarm rate"), type = "string")
 
-        if (!any(options$PositiveRef == unique(unlist(dataset[measurements]))))
+        if (!any(options$PositiveRef == as.character(unique(unlist(dataset[measurements])))) && options$PositiveRef != "" && !options$AAAkendallTau)
           tableDecisions$setError(gettext("Please inseret a vaild Positive reference as used in the 'Results' variables."))
 
 
@@ -530,7 +534,11 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
   if (!is.numeric(dataset[[measurements[1]]])) {
     table$setError(gettext("Kendall's Tau is only available for numeric measurements."))
-  }else{
+  }
+  else if (length(unique(unlist(dataset[measurements]))) <= 2) {
+    table$setError(gettext("Kendall's Tau is only available for non-binary measurements."))
+  }
+  else{
     table$addColumnInfo(name = "Operator",  title = gettext("Operator"), type = "string")
 
     for (operator in operatorVector) {
@@ -564,6 +572,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     tableColumns[["Operator"]] <- operatorVector
     if (standards != "")
       tableColumns[[standards]] <- standCorrVector
+
     table$setData(tableColumns)
   }
 

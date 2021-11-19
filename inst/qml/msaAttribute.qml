@@ -110,15 +110,19 @@ Form
 			CheckBox
 			{
 				name: 							"AAAcohensKappa"
+				id:                 cohenskappa
 				label: 							qsTr("Cohen's kappa (interrater kappa)")
 				enabled:            positiveRef.value != ""
+				checked:            !positiveRef.value == ""
 			}
 
 			CheckBox
 			{
 				name: 							"AAAfleissKappa"
+				id:                 fleisskappa
 				label: 							qsTr("Fleiss' kappa (multirater kappa)")
 				enabled:            positiveRef.value != ""
+				checked:            !positiveRef.value == ""
 			}
 		}
 	}

@@ -78,6 +78,7 @@ Form
 		RadioButtonGroup
 		{
 			name:								"TypeChart"
+			id:                  typechart
 
 			RadioButton
 			{
@@ -104,20 +105,32 @@ Form
 			name: 								"Phase2"
 			label: 								qsTr("Known parameters")
 
-			DoubleField
+			Group
 			{
-				name:							"mean"
-				label:							qsTr("Mean")
-				defaultValue:					0
-				negativeValues: 				true
+
+			columns: 2
+
+  			DoubleField
+  			{
+  				name:							"mean"
+  				label:							qsTr("Mean")
+  				defaultValue:					0
+  				negativeValues: 				true
+  				fieldWidth:					  70
+  				decimals:            10
+  			}
+
+  			DoubleField
+  			{
+  				name:							"SD"
+  				label:							qsTr("Standard deviation")
+  				defaultValue:					0
+  				fieldWidth:					  70
+  				decimals:            10
+  			}
+
 			}
 
-			DoubleField
-			{
-				name:							"SD"
-				label:							qsTr("Standard deviation")
-				defaultValue:					0
-			}
 		}
 	}
 

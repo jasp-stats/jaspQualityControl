@@ -49,7 +49,7 @@
 
 # Function to create X-bar chart
 .XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Sample average", xAxisLab = "Subgroup",
-                           manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL, NoWarningSignals = FALSE) {
+                           manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL, OnlyOutofLimit = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   if(Phase2)
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
@@ -131,8 +131,8 @@
 
   if (Phase2)
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
-  else if (NoWarningSignals)
-    p <- p + jaspGraphs::geom_point(size = 4, fill = "blue")
+  else if (OnlyOutofLimit)
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "blue"))
   else
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
@@ -150,15 +150,18 @@
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = NULL,
+.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = "",
                         yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
-  if(Phase2)
-    sixsigma <- qcc::qcc(data, type ='R', plot=FALSE, center = abs(as.numeric(target)), std.dev = as.numeric(sd))
-  else
-    sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
-  range = sixsigma$statistics
+  sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
+
+  if(Phase2 && sd != "")
+    sixsigma <- list(statistics = sixsigma$statistics,
+                     limits = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$limits,
+                     center = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$center)
+
+  range <- sixsigma$statistics
   if (manualSubgroups != ""){
     subgroups <- manualSubgroups
   }else{
@@ -224,9 +227,8 @@
   if (plotLimitLabels)
     p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = 4.5)
 
-  p <- p + ggplot2::scale_x_continuous(name= gettext(xAxisLab) ,breaks = xBreaks, limits = range(xLimits)) +
+  p <- p + ggplot2::scale_x_continuous(name= gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
 
@@ -235,12 +237,10 @@
     p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = xLabels)
   }
 
-  if (OnlyOutofLimit){
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, 'red', 'blue'))
-  }
-
   if (Phase2)
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+  else if (OnlyOutofLimit)
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, "red", "blue"))
   else
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
@@ -312,7 +312,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 .NelsonTable <- function(dataset, options, sixsigma, type = "xbar", Phase2 = FALSE, name = "X-bar", xLabels = NULL) {
 
-  table <- createJaspTable(title = gettextf("Test result for %s chart", name))
+  table <- createJaspTable(title = gettextf("Test results for %s chart", name))
 
   if (Phase2 == "TRUE" || type == "xbar.one") {
 

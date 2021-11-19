@@ -260,6 +260,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       fInteraction <- msInteraction / msRepWithInteraction
     }
 
+    if (options$TypeForFstat == 'FixedEffects'){
+      fPart <- msPart / msRepWithInteraction
+      fOperator <- msOperator / msRepWithInteraction
+    }
+
     if(singleOperator){
       pPart <- pf(fPart, dfPart, dfRepWithInteraction, lower.tail = F)
     }else{
@@ -516,7 +521,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     anovaTables[['plot']] <- plot
 
 
-    if (length(measurements) >= 1 && operators != "" && parts != "") {
+    if (length(measurements) >= 1 && operators != "" && parts != "" && ready) {
       RRtable1$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
       RRtable2$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
     }
@@ -584,16 +589,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       if (i == 1){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = FALSE,
-                             xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, NoWarningSignals = TRUE)$p
+                             xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }else if(i == nOperators){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
-                             smallLabels = smallLabels, NoWarningSignals = TRUE)$p
+                             smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }else{
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
                              xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
-                             smallLabels = smallLabels, NoWarningSignals = TRUE)$p
+                             smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }
     }
     plotMat[[i]] <- p1
@@ -1007,14 +1012,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                      axis.text.x = ggplot2::element_blank(),
                      axis.ticks.x = ggplot2::element_blank(),
                      axis.title.x = ggplot2::element_blank()) +
-      ggplot2::coord_flip()
+      ggplot2::coord_flip() +
+      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "")
 
     p2 <- p2 +
       ggplot2::theme(legend.position="none",
                      axis.text.x = ggplot2::element_blank(),
                      axis.ticks.x = ggplot2::element_blank(),
                      axis.title.x = ggplot2::element_blank()) +
-      ggplot2::coord_flip()
+      ggplot2::coord_flip() +
+      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "")
 
     Plot <- createJaspPlot(width = 250, height = 600)
   } else{

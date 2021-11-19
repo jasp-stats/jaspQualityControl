@@ -148,7 +148,10 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   center <- sixsigma_R$center
   UCL <- max(sixsigma_R$limits)
   LCL <- min(sixsigma_R$limits)
-  xBreaks <- seq(1,length(sixsigma_R$statistics), 2)
+  if (length(subgroups) > 60)
+    xBreaks <- c(seq(1,length(sixsigma_R$statistics), 5), length(sixsigma_R$statistics))
+  else
+    xBreaks <- c(seq(1,length(sixsigma_R$statistics), 2),  length(sixsigma_R$statistics))
   Xlabels <- xBreaks + 1
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
@@ -179,7 +182,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     else
       xLabels <- dataset[[.v(options$subgroups)]]
 
-    Xbreaks <- c(seq(1,length(xLabels),5), length(xLabels))
+    if (length(subgroups) > 60)
+      Xbreaks <- c(seq(1,length(xLabels),10), length(xLabels))
+    else
+      Xbreaks <- c(seq(1,length(xLabels),5), length(xLabels))
+
     p1 <- p1 + ggplot2::scale_x_continuous(breaks = Xbreaks, labels = xLabels[Xbreaks])
     p2 <- p2 + ggplot2::scale_x_continuous(breaks = Xbreaks, labels = xLabels[Xbreaks])
   }
