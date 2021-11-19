@@ -164,35 +164,32 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 .responseSurfaceCalculate <- function(jaspResults,options, dataset, data) {
-  op1  <- length(options[["rsmVariables"]])
+  op1  <- length(options[["modelTerms"]])
+  length_rsmVariables <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
-
+  print(data)
+  # print(nrow(data))
   name <- vector()
 
   mean.col <- colMeans(data)
 
-  opt1 <- colnames(data)[1:op1]
-  opt2 <- colnames(data)[(op1+1)]
-  if (options[["rsmBlocks"]] != "") {
-    opt3 <- colnames(data)[(op1+2)]
-  }else{
-    data[,(op1+2)] <- rep(1, times = nrow(data))
-  }
-
   optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
   data.list <- list()
 
+  print(optio)
 
-  for (i in 1:op1) {
-    data.list[[i]] <- as.formula(paste0("x",i , " ~ ", "(", opt1[i], "-",
-                                        mean(data[,i]), ")/",
-                                        abs(data[1,i] - mean(data[,i]))))
+  opt1 <- colnames(data)[1:op1]
+  opt2 <- colnames(data)[(length_rsmVariables+1)]
+  if (options[["rsmBlocks"]] != "") {
+    opt3 <- colnames(data)[(length_rsmVariables+2)]
   }
 
-  var.code <- rsm::coded.data(data)
 
+
+  var.code <- rsm::coded.data(data)
+  print(var.code)
   vari <- matrix(unlist(options[["rsmVariables"]]),ncol = 2, byrow = T)[,2]
   len_mo <- length(options[["modelTerms"]])
 
@@ -215,7 +212,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   fo <- fo[!is.na(fo)]
 
   start <- ifelse(length(fo) == 0, 0, 1) + ifelse(length(pq) == 0, 0 ,1)
-  formula_str <- rep("", times = start + len_mo - op1)
+  formula_str <- rep("", times = start + len_mo - length_rsmVariables)
   if (length (fo) > 0){
     fo <- paste(fo, collapse = ",")
     formula_str[1] <- paste0("FO(",fo,")")
@@ -226,9 +223,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
 
 
-  op1 <- length(options[["rsmVariables"]])
 
-  l_gen <- 1:op1
+
+  l_gen <- seq_along(options[["rsmVariables"]])
 
   for (i in seq_along(options[["modelTerms"]])) {
 
@@ -266,22 +263,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }
   }
 
+  if (options[["rsmBlocks"]] != "") {
+    if (length(unique(data[,(op1+2)])) > 1){
+      form <- paste(formula_str, collapse = "+")
 
-  if (length(unique(data[,(op1+2)])) > 1){
-    form <- paste(formula_str, collapse = "+")
+      form_2 <- paste0(opt2, "~", options[["rsmBlocks"]], "+", form)
 
-    form_2 <- paste0(opt2, "~", options[["rsmBlocks"]], "+", form)
-
-    form_3 <- as.formula(form_2)
-
-
-
+      form_3 <- as.formula(form_2)
+    }
   }else {
     form <- paste(formula_str, collapse = "+")
     form_2 <- paste0(opt2, "~", form)
     form_3 <- as.formula(form_2)
 
   }
+
 
   rsm <- rsm::rsm(form_3 , data = var.code)
 
