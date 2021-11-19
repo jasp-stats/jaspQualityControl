@@ -857,7 +857,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       conv[j] <- predict(rsm[[j]], newdata = possibleCodedCombinationsOfPredictors[i,])
     }
     out <- do.call(predict, list(object = dObject, newobject = conv))
-
+    #Value of 1.682 taken from https://rdrr.io/rforge/desirability/f/inst/doc/desirability.pdf , 5. Maximizing Desirability
     if (space == "circular") {
       if (sqrt(sum(possibleCodedCombinationsOfPredictors[i,]^2)) > 1.682)
         out <- 0
@@ -882,43 +882,43 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
 
-  if (is.null(jaspResults[["desirability_table"]])) {
-    desirability_table <- createJaspContainer()
-    jaspResults[["desirability_table"]] <- desirability_table
-    desirability_table$dependOn(options = c("rsmMin", "rsmMax", "rsmVariables", "rsmTar"))
+  if (is.null(jaspResults[["desirability_container"]])) {
+    desirability_container <- createJaspContainer()
+    jaspResults[["desirability_container"]] <- desirability_container
+    desirability_container$dependOn(options = c("rsmMin", "rsmMax", "rsmVariables", "rsmTar"))
   } else {
-     desirability_table <- jaspResults[["desirability_table"]]
+     desirability_container <- jaspResults[["desirability_container"]]
   }
 
 
-  if (is.null(desirability_table[["predictor_value"]])) {
+  if (is.null(desirability_container[["predictor_value"]])) {
     predictor_value <- createJaspTable(title = "Predictor Values")
-    desirability_table[["predictor_value"]] <- predictor_value
+    desirability_container[["predictor_value"]] <- predictor_value
   }else {
-    predictor_value <- desirability_table[["predictor_value"]]
+    predictor_value <- desirability_container[["predictor_value"]]
   }
 
-  if (is.null(desirability_table[["value"]])) {
+  if (is.null(desirability_container[["value"]])) {
     value <- createJaspTable(title = "Overall Desirability")
     value$addColumnInfo(name = "Value", title = "Value")
-    desirability_table[["value"]] <- value
+    desirability_container[["value"]] <- value
   }else {
-    value <- desirability_table[["value"]]
+    value <- desirability_container[["value"]]
   }
 
   for (i in 1:op1) {
     predictor_value$addColumnInfo(name = paste0("x",i), title = paste0("x",i))
   }
 
-  .responseSurfaceOptimizeFill(predictor_value, value, desirability_table, bestCombinedDesirability, jaspResults, options, dataset)
+  .responseSurfaceOptimizeFill(predictor_value, value, desirability_container, bestCombinedDesirability, jaspResults, options, dataset)
 
   return()
 }
 
-.responseSurfaceOptimizeFill <- function(predictor_value, value, desirability_table, bestCombinedDesirability, jaspResults, options, dataset) {
+.responseSurfaceOptimizeFill <- function(predictor_value, value, desirability_container, bestCombinedDesirability, jaspResults, options, dataset) {
 
-  desirability_table[["predictor_value"]]$addRows(bestCombinedDesirability[["par"]])
-  desirability_table[["value"]]$setData(round(bestCombinedDesirability[["value"]],3))
+  desirability_container[["predictor_value"]]$addRows(bestCombinedDesirability[["par"]])
+  desirability_container[["value"]]$setData(round(bestCombinedDesirability[["value"]],3))
 
   return()
 }
