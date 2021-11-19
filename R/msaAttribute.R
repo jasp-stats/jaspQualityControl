@@ -251,7 +251,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     for (table in allTables) {
       table$addColumnInfo(name = "Inspected", title = gettext("Inspected"), type = "integer")
       table$addColumnInfo(name = "Matched", title = gettext("Matched"), type = "integer")
-      table$addColumnInfo(name = "Percent", title = gettext("Percent"), type = "number")
+      table$addColumnInfo(name = "Percent", title = gettext("Percent"), type = "integer")
       table$addColumnInfo(name = "CIL", title = gettext("Lower"), type = "integer", overtitle = gettext("Confidence interval of 95%"))
       table$addColumnInfo(name = "CIU", title = gettext("Upper"), type = "integer", overtitle = gettext("Confidence interval of 95%"))
     }
@@ -290,7 +290,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       }
 
 
-      percentEachVsStandard <- matchesEachVsStandard / numberInspected* 100
+      percentEachVsStandard <- round(matchesEachVsStandard / numberInspected* 100, 2)
 
       reshapeData <- data.frame(subset(dataset, dataset[[operators]] == unique(dataset[[operators]])[1])[standards])
       for (i in 1:length(appraiserVector)) {
@@ -347,7 +347,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
         tableWithin$setData(list(      "Appraiser"       = appraiserVector,
                                        "Inspected"       = rep(numberInspected, length(appraiserVector)),
                                        "Matched"         = matchesWithin,
-                                       "Percent"         = percentWithin,
+                                       "Percent"         = round(percentWithin, 2),
                                        "CIL" = CIWithin$lower,
                                        "CIU" = CIWithin$upper))
       }
@@ -617,20 +617,20 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   if (type == "Effectiveness"){
     for (i in 1:length(vec)){
       if (vec[i] < decisionCriterions[1])
-        decisionVec[i] = gettextf("%f (Unacceptable)", round(vec[i],2))
+        decisionVec[i] = gettextf("%g (Unacceptable)", round(vec[i],2))
       else if (vec[i] >= decisionCriterions[1] & vec[i] <= decisionCriterions[2])
-        decisionVec[i] = gettextf("%f (Marginally acceptable)", round(vec[i],2))
+        decisionVec[i] = gettextf("%g (Marginally acceptable)", round(vec[i],2))
       else
-        decisionVec[i] = gettextf("%f (Acceptable)", round(vec[i],2))
+        decisionVec[i] = gettextf("%g (Acceptable)", round(vec[i],2))
     }
   } else{
     for (i in 1:length(vec)){
       if (vec[i] > decisionCriterions[1])
-        decisionVec[i] = gettextf("%f (Unacceptable)", round(vec[i],2))
+        decisionVec[i] = gettextf("%g (Unacceptable)", round(vec[i],2))
       else if (vec[i] <= decisionCriterions[1] & vec[i] >= decisionCriterions[2])
-        decisionVec[i] = gettextf("%f (Marginally acceptable)", round(vec[i],2))
+        decisionVec[i] = gettextf("%g (Marginally acceptable)", round(vec[i],2))
       else
-        decisionVec[i] = gettextf("%f (Acceptable)", round(vec[i],2))
+        decisionVec[i] = gettextf("%g (Acceptable)", round(vec[i],2))
     }
   }
 

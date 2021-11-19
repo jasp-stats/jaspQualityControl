@@ -151,9 +151,10 @@ Form
 					name: 						"TypeForFstat"
 					label: 						qsTr("Type of model for F-statistic")
 					values: [
-						{ label: qsTr("Fixed effects"), value: "FixedEffects" },
-						{ label: qsTr("Random effects"), value: "RandomEffects" }
-					]
+            				{ label: qsTr("Random effects"), value: "RandomEffects"},
+        						{ label: qsTr("Fixed effects"), value: "FixedEffects"}
+        					]
+					enabled:      !type3.checked
 				}
 
 				DoubleField

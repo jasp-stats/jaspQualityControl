@@ -26,13 +26,13 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
 
-  if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
+  if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat" && !options$Type3)
     ready <- (length(measurements) != 0 && operators != "" && parts != "")
-  }else if (options$Type3){
+  else if (options$Type3)
     ready <- (measurements != "" && parts != "")
-  } else {
+  else
     ready <- (measurements != "" && operators != "" && parts != "")
-  }
+
 
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
@@ -68,7 +68,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
-  if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat" && ready){
+  if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat" && ready) {
     dataset <- dataset[order(dataset[operators]),]
     nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
     index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
@@ -610,7 +610,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .gaugeByPartGraph <- function(dataset, measurements, parts, operators, options) {
-  plot <- createJaspPlot(title = gettext("Measurements by Part"))
+  plot <- createJaspPlot(title = gettext("Measurements by Part"), width = 700, height = 300)
   plot$dependOn('gaugeByPart')
   p <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = options$gaugeByPartAll)
   plot$plotObject <- p
@@ -835,15 +835,23 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   matrixPlot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
-  plotMat <- matrix(list(), 4, 2)
-  plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- .ggplotWithText(text2)
-  plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE)
-  plotMat[[2, 2]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE)
-  plotMat[[3, 1]] <- .xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options, smallLabels = TRUE)
-  plotMat[[3, 2]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options)
-  plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Average", dataset, measurements, parts, operators, options, smallLabels = TRUE)
-  plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options)
+  if (options$Type3){
+    plotMat <- matrix(list(), 2, 2)
+    plotMat[[1, 1]] <- .ggplotWithText(text1)
+    plotMat[[1, 2]] <- .ggplotWithText(text2)
+    plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE)
+    plotMat[[2, 2]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE)
+  } else {
+    plotMat <- matrix(list(), 4, 2)
+    plotMat[[1, 1]] <- .ggplotWithText(text1)
+    plotMat[[1, 2]] <- .ggplotWithText(text2)
+    plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE)
+    plotMat[[2, 2]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE)
+    plotMat[[3, 1]] <- .xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options, smallLabels = TRUE)
+    plotMat[[3, 2]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options)
+    plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Average", dataset, measurements, parts, operators, options, smallLabels = TRUE)
+    plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options)
+  }
 
   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Measurement systems analysis for %s", title), ""))
   matrixPlot$plotObject <- p
