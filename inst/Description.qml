@@ -103,6 +103,12 @@ Description
 		func:			"doeFactorial"
 		requiresData:	false
 	}
+    Analysis
+    {
+        title:          qsTr("Modify Existing Design")
+        func:           "doeModifyDesign"
+    }
+
 	Analysis
 	{
 		title:			qsTr("Response Surface")
