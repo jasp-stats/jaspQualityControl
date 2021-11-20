@@ -25,6 +25,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     rsm <- list()
     for (i in 1:op2) {
       data <- .readDataSet(jaspResults, options, dataset, i)
+      dataErrorCheck(data)
+
       rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
 
       if (options[["showDesign"]])
@@ -63,12 +65,13 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 }
 
-.qualityCOntrolResponseReadData <- function(dataset, options) {
-  if(!is.null(dataset))
-    return(dataset)
-  else
-    return(.readDataSetToEnd(columns.as.numeric = options[["rsmVariables"]]))
-
+dataErrorCheck <- function(data) {
+  .hasErrors(dataset = data,
+             custom = function() {
+               if(any(unique(data) > 5))
+                 return(gettext("This analysis does not take variables with more than 5 unique values."))
+             },
+             exitAnalysisIfErrors = T)
 }
 
 .qualityControlDesignMainRSM <- function(jaspResults,options,dataset,position) {
@@ -80,11 +83,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 }
 
-.qualityControlResponseError <- function(dataset, options) {
-  #Error check: Check for infinity, NA
-  .hasErrors(dataset, type = c('infinity', 'missingValues','observations'),
-             all.target = c(options[["rsmVariables"]],options[["rsmResponseVariables"]], observations.amount = c('<1')), exitAnalysisIfErrors = T)
-}
+
 
 .qualityControlDesignChoice <- function(jaspResults,options, dataset) {
 
@@ -161,16 +160,17 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     data <- .readDataSetToEnd(columns.as.numeric = c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
                                                      options[["rsmResponseVariables"]][[i]]))
   }
+
 }
 
 .responseSurfaceCalculate <- function(jaspResults,options, dataset, data) {
+
+
   op1  <- length(options[["modelTerms"]])
   length_rsmVariables <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
-  print(data)
-  # print(nrow(data))
   name <- vector()
 
   mean.col <- colMeans(data)
@@ -178,7 +178,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
   data.list <- list()
 
-  print(optio)
 
   opt1 <- colnames(data)[1:op1]
   opt2 <- colnames(data)[(length_rsmVariables+1)]
@@ -189,7 +188,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
   var.code <- rsm::coded.data(data)
-  print(var.code)
+
   vari <- matrix(unlist(options[["rsmVariables"]]),ncol = 2, byrow = T)[,2]
   len_mo <- length(options[["modelTerms"]])
 
