@@ -67,10 +67,12 @@ doeScreening <- function(jaspResults, dataset, options, ...){
 
 .doeScreeningShowSelectedDesign <- function(options, jaspResults, position){
 
-  if(!options[["displayScreeningDesign"]])
+  if(!options[["displayScreeningDesign"]]){
+    jaspResults[["displayScreeningDesign"]] <- NULL
     return()
+  }
 
-  if(is.null(jaspResults[["displayDesign"]])){
+  if(is.null(jaspResults[["displayScreeningDesign"]])){
 
     table <- createJaspTable(gettext("Design Preview"))
     table$position <- position
@@ -82,6 +84,8 @@ doeScreening <- function(jaspResults, dataset, options, ...){
                                "numberOfFactorsScreen3",
                                "numberOfFactorsScreen2",
                                "PBruns",
+                               "factors3",
+                               "factors2",
                                "screeningCenterPoints",
                                "screeningCornerReplicates",
                                "screeningRepeats"))
@@ -89,8 +93,13 @@ doeScreening <- function(jaspResults, dataset, options, ...){
     if(options[["numberOfFactorsScreen2"]] > 0){
       twoLevels <- options[["factors2"]]
       factorNames2 <- factorLows2 <- factorHighs2 <- character()
+      threePlus <- if(!is.na(options[["factors3"]])){
+        length(options[["factors3"]])
+      } else {
+        0
+      }
       for(i in 1:length(twoLevels)){
-        factorNames2[i] <- paste0(twoLevels[[i]]$factorName2, " (", i, ")")
+        factorNames2[i] <- paste0(twoLevels[[i]]$factorName2, " (", (i+threePlus), ")")
         factorLows2[i]  <- twoLevels[[i]]$low2
         factorHighs2[i] <- twoLevels[[i]]$high2
       }
@@ -114,7 +123,6 @@ doeScreening <- function(jaspResults, dataset, options, ...){
       factorNamesAll <- factorNames2
     }
 
-    rnd <- options[["runOrderScreen"]] == "runOrderRandom"
     rep <- options[["screeningRepeats"]] > 0
 
     desScreen <- if(options[["screeningType"]] == "PBdes"){
@@ -123,19 +131,18 @@ doeScreening <- function(jaspResults, dataset, options, ...){
                ncenter = options[["screeningCenterPoints"]],
                replications = options[["screeningCornerReplicates"]],
                repeat.only = rep,
-               randomize = rnd)
+               randomize = F)
     } else {
       daewr::DefScreen(m = options[["numberOfFactorsScreen3"]],
                        c = options[["numberOfFactorsScreen2"]],
-                       center = options[["screeningCenterPoints"]],
-                       randomize = rnd)
+                       center = options[["screeningCenterPoints"]])
     }
 
-    runOrder <- 1:nrow(desScreen)
+    runOrder <- sample(nrow(desScreen), nrow(desScreen))
     standard <- if(options[["screeningType"]] == "PBdes"){
       DoE.base::run.order(desScreen)[,1]
     } else {
-      rownames(desScreen)
+      1:nrow(desScreen)
     }
 
     #datacoding
@@ -163,6 +170,11 @@ doeScreening <- function(jaspResults, dataset, options, ...){
     }
 
     rows <- cbind.data.frame(runOrder, standard, desScreen)
+    if(options[["runOrderScreen"]] == "runOrderStandard"){
+      rows <- rows[order(rows$standard),]
+    } else {
+      rows <- rows[order(rows$runOrder),]
+    }
 
     #table naming
     table$addColumnInfo(name = 'runOrder', title = gettext("Run order"), type = 'string')
@@ -171,8 +183,9 @@ doeScreening <- function(jaspResults, dataset, options, ...){
       colnames(rows)[i+2] <- factorNamesAll[i]
       table$addColumnInfo(name = factorNamesAll[i], title = factorNamesAll[i], type = 'string')
     }
+    print(rows)
 
     table$setData(rows)
-    jaspResults[["displayDesign"]] <- table
+    jaspResults[["displayScreeningDesign"]] <- table
   }
 }

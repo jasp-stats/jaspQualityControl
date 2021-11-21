@@ -93,7 +93,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Screening")
+        title:			qsTr("Screening Design")
 		func:			"doeScreening"
 		requiresData:	false
 	}
