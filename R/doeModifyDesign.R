@@ -59,7 +59,14 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
                                "MDresolution",
                                "MDruns",
                                "MDfraction",
-                               "dataCoding"))
+                               "MDrunOrder",
+                               "MDresponse",
+                               "MDcenterPoints",
+                               "MDrepeats",
+                               "dataCoding",
+                               "displayRunOrder",
+                               "repeatRuns",
+                               "showDesiredDesign"))
 
     factors <- unlist(dataset[,options[["MDassignedFactors"]]], use.names = FALSE)
     response <- unlist(dataset[,options[["MDresponse"]]], use.names = FALSE)
@@ -106,23 +113,38 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
                                "MDresolution",
                                "MDruns",
                                "MDfraction",
-                               "dataCoding"))
+                               "MDresponse",
+                               "MDcenterPoints",
+                               "MDrepeats",
+                               "dataCoding",
+                               "displayRunOrder",
+                               "showDesiredDesign"))
 
     if(options[["designBy"]] == "byRuns"){
       desiredDesign <- FrF2::FrF2(nfactors = length(options[["MDassignedFactors"]]),
                                   nruns = as.numeric(options[["MDruns"]]),
-                                  ncenter = options[["MDcenterPoints"]],
-                                  replications = options[["MDcornerReplicates"]])
+                                  ncenter = options[["MDcenterPoints"]])
     } else if(options[["designBy"]] == "byResolution"){
       desiredDesign <- FrF2::FrF2(nfactors = length(options[["MDassignedFactors"]]),
                                   resolution = ifelse(options[["MDresolution"]] != "Full",
                                                       as.numeric(as.roman(options[["MDresolution"]])),
                                                       999),
-                                  ncenter = options[["MDcenterPoints"]],
-                                  replications = options[["MDcornerReplicates"]])
+                                  ncenter = options[["MDcenterPoints"]])
+    } else {
+      desiredDesign <- FrF2::FrF2(nfactors = length(options[["MDassignedFactors"]]),
+                                  nruns = (2^length(options[["MDassignedFactors"]]) * as.numeric(options[["MDfraction"]])),
+                                  ncenter = options[["MDcenterPoints"]])
     }
 
-    desiredDesign <- sapply(desiredDesign, as.numeric)*2-3
+    desiredStdOrder <- DoE.base::run.order(desiredDesign)[,1]
+    print(1:100)
+    print(desiredStdOrder)
+
+    desiredDesign <- if(options[["MDcenterPoints"]] == 0){
+      sapply(desiredDesign, as.numeric)*2-3
+    } else {
+      sapply(desiredDesign, as.numeric)
+    }
 
     if(options[["dataCoding"]] == "dataUncoded"){
       for(i in 1:ncol(desiredDesign)){
@@ -131,12 +153,17 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
       }
     }
 
-    table$setData(desiredDesign)
+    showDesiredDesign <- cbind.data.frame(1:nrow(desiredDesign), desiredStdOrder, desiredDesign)
+    colnames(showDesiredDesign)[c(1,2)] <- c("Run order", "Standard order")
+
+    if(options[["displayRunOrder"]] == "runOrderStandard"){
+      showDesiredDesign <- showDesiredDesign[order(showDesiredDesign$`Standard order`),]
+    }
+
+    table$setData(showDesiredDesign)
     jaspResults[["desiredDesign"]] <- table
 
     .modifyDesignAntiJoin(jaspResults, inputDesign = inputDesign, desiredDesign = desiredDesign)
-
-    return(desiredDesign)
   }
 }
 
@@ -150,13 +177,14 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
                                "MDresolution",
                                "MDruns",
                                "MDfraction",
-                               "dataCoding"))
+                               "dataCoding",
+                               "showDesiredDesign"))
 
     colnames(inputDesign) <- LETTERS[1:ncol(inputDesign)]
     colnames(desiredDesign) <- LETTERS[1:ncol(desiredDesign)]
 
     missing <- dplyr::anti_join(as.data.frame(desiredDesign), as.data.frame(inputDesign))
-    print(missing)
+    missing <- cbind.data.frame('Run order' = 1:nrow(missing), missing)
     table$setData(missing)
     jaspResults[["showMissingRuns"]] <- table
 

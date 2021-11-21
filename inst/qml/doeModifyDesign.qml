@@ -41,6 +41,7 @@ Form
         AssignedVariablesList
         {
             name:                               "MDassignedFactors"
+            id:                                 mdAssignedFactors
             label:                              qsTr("Assigned factors")
         }
 
@@ -84,7 +85,7 @@ Form
 
     RadioButtonGroup
     {
-        name:                                   "runOrder"
+        name:                                   "displayRunOrder"
         title:                                  qsTr("Run Order")
         enabled:                                !factorialTypeSplit.checked
 
@@ -128,16 +129,10 @@ Form
                         indexDefaultValue:      0
                         values:
                         [
-                            { value: "8", 	label: qsTr("8") 	},
-                            { value: "16", 	label: qsTr("16") 	},
-                            { value: "32", 	label: qsTr("32") 	},
-                            { value: "64", 	label: qsTr("64") 	},
-                            { value: "128", label: qsTr("128")	},
-                            { value: "256", label: qsTr("256")	},
-                            { value: "512", label: qsTr("512")	},
-                            { value: "1024", label: qsTr("1024")},
-                            { value: "2048", label: qsTr("2048")},
-                            { value: "4096", label: qsTr("4096")}
+                            { value: 2**(1+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(1+Math.floor(Math.log2(nAssignedFactors.value))))},
+                            { value: 2**(2+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(2+Math.floor(Math.log2(nAssignedFactors.value))))},
+                            { value: 2**(3+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(3+Math.floor(Math.log2(nAssignedFactors.value))))},
+                            { value: 2**(4+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(4+Math.floor(Math.log2(nAssignedFactors.value))))}
                         ]
                     }
                 }
@@ -178,9 +173,9 @@ Form
                         indexDefaultValue:      0
                         values:
                         [
-                            { value: "1/2", label: qsTr("1/2")  },
-                            { value: "1/4", label: qsTr("1/4")  },
-                            { value: "1/8", label: qsTr("1/8")  }
+                            { value: "0.5", label: qsTr("1/2")  },
+                            { value: "0.25", label: qsTr("1/4")  },
+                            { value: "0.125", label: qsTr("1/8")  }
                         ]
                     }
                 }
@@ -195,30 +190,11 @@ Form
             IntegerField
             {
                 name:                           "MDcenterPoints"
-                label:                          qsTr("Number of center points per block")
+                label:                          qsTr("Number of center points")
                 defaultValue:                   0
                 min:                            0
                 max:                            2**(numberOfFactorsForTable.value - 1)
             }
-
-            IntegerField
-            {
-                id:                             mdCornerReplicates
-                name:                           "MDcornerReplicates"
-                label:                          qsTr("Number of replicates for corner points")
-                defaultValue:                   1
-                min:                            1
-                max:                            8
-
-            }
-
-            CheckBox
-            {
-                visible:                        mdCornerReplicates.value > 1
-                name:                           "MDrepeats"
-                label:                          "Repeats only"
-            }
-
 
             IntegerField
             {
@@ -235,5 +211,13 @@ Form
     {
         name:                                   "showDesiredDesign"
         label:                                  qsTr("Show desired design")
+    }
+
+    IntegerField
+    {
+        name:                                   "nAssignedFactors"
+        visible:                                false
+        id:                                     nAssignedFactors
+        defaultValue:                           mdAssignedFactors.count
     }
 }

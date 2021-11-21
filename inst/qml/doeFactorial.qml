@@ -45,21 +45,6 @@ Form
 			name:                               "numberOfFactorsForTable"
 			defaultValue:                       numberOfFactors.value
 		}
-
-//		DropDown
-//		{
-//            debug:                              true
-//            id:                                 numberOfLevels
-//            name:                               "numberOfLevels"
-//            label:                              qsTr("Number of factor levels")
-//            indexDefaultValue:                  0
-//			values:
-//				[
-//				{ value: "2", label: qsTr("2")}
-//				//            { value: "3", label: qsTr("3")},
-//				//            { value: "Mixed", label: qsTr("Mixed")}
-//			]
-//		}
 	}
 
 	RadioButtonGroup
