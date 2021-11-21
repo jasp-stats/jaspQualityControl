@@ -22,10 +22,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op3  <- length(options[["rsmBlocks"]])
 
   if (op1 > 0 & op2 > 0) {
+
     rsm <- list()
+    #Placeholder table when the user inputs something. If an analysis gets picked, remove the table
+    if(!(any(options[["showDesign"]], options[["contour"]], options[["coef"]], options[["anova"]],
+             options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]]))) {
+      placeholder <- createJaspTable(title = gettext(" "))
+      jaspResults[["placeholder"]] <- placeholder
+    }else{
+      jaspResults[["placeholder"]] <- NULL
+    }
+
     for (i in 1:op2) {
       data <- .readDataSet(jaspResults, options, dataset, i)
-      dataErrorCheck(data)
+
+      .dataErrorCheck(data)
 
       rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
 
@@ -65,11 +76,11 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 }
 
-dataErrorCheck <- function(data) {
+.dataErrorCheck <- function(data) {
   .hasErrors(dataset = data,
              custom = function() {
-               if(any(unique(data) > 5))
-                 return(gettext("This analysis does not take variables with more than 5 unique values."))
+               if(any(unique(data[,seq_along(options[["rsmVariables"]])]) > 5))
+                 return(gettext("This analysis does not take predictor variables with more than 5 unique values."))
              },
              exitAnalysisIfErrors = T)
 }
@@ -179,14 +190,28 @@ dataErrorCheck <- function(data) {
   data.list <- list()
 
 
-  opt1 <- colnames(data)[1:op1]
+  opt1 <- colnames(data)[1:length_rsmVariables]
   opt2 <- colnames(data)[(length_rsmVariables+1)]
   if (options[["rsmBlocks"]] != "") {
     opt3 <- colnames(data)[(length_rsmVariables+2)]
   }
 
 
+  #For some reason, if I call .dataErrorCheck(data) right before var.code,
+  #the analysis does not stop even if the
+  #logical condition for stopping is met.
+  #Also, the .dataErrorCheck(data) in the doeResponseSurfaceMethodology function
+  #does not catch a subsequently added predictor which has more than 5 unique
+  #values, so this error check needs to be repeated here.
+  #Makes me wonder whether .dataErrorCheck is even needed, but I left it in
+  #as I believe it looks nicer with it.
 
+  .hasErrors(dataset = data,
+             custom = function() {
+               if(any(unique(data[,seq_along(options[["rsmVariables"]])]) > 5))
+                 return(gettext("This analysis does not take predictor variables with more than 5 unique values."))
+             },
+             exitAnalysisIfErrors = T)
   var.code <- rsm::coded.data(data)
 
   vari <- matrix(unlist(options[["rsmVariables"]]),ncol = 2, byrow = T)[,2]
