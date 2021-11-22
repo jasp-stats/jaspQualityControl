@@ -27,10 +27,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   operators <- unlist(options$operators)
   standards <- unlist(options$standard)
 
-  numeric.vars <- measurements
-  numeric.vars <- numeric.vars[numeric.vars != ""]
-  factor.vars <- c(parts, operators, standards)
-  factor.vars <- factor.vars[factor.vars != ""]
+  Variables <- c(parts, operators, standards, measurements)
+  Variables <- Variables[Variables != ""]
 
   # Ready
   if (options[["AAAdataFormat"]] == "AAAwideFormat"){
@@ -44,8 +42,12 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   #  return()
 
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
-                                         exclude.na.listwise = c(numeric.vars, factor.vars))
+    if (!options$AAAkendallTau)
+      dataset         <- .readDataSetToEnd(columns = Variables, exclude.na.listwise = Variables)
+    else dataset         <- .readDataSetToEnd(columns.as.numeric = measurements[measurements != ""],
+                                              columns.as.factor = Variables[1:3],
+                                              exclude.na.listwise = Variables)
+
   }
 
   if (options[["AAAdataFormat"]] == "AAAlongFormat" && ready){
