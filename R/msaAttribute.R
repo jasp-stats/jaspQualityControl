@@ -27,9 +27,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   operators <- unlist(options$operators)
   standards <- unlist(options$standard)
 
-  Variables <- c(parts, operators, standards, measurements)
-  Variables <- Variables[Variables != ""]
-
   # Ready
   if (options[["AAAdataFormat"]] == "AAAwideFormat"){
     ready <- (length(measurements) != 0 && operators != "" && parts != "")
@@ -42,11 +39,19 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   #  return()
 
   if (is.null(dataset)) {
-    if (!options$AAAkendallTau)
+    if (!options$AAAkendallTau){
+      Variables <- c(parts, operators, standards, measurements)
+      Variables <- Variables[Variables != ""]
       dataset         <- .readDataSetToEnd(columns = Variables, exclude.na.listwise = Variables)
-    else dataset         <- .readDataSetToEnd(columns.as.numeric = measurements[measurements != ""],
-                                              columns.as.factor = Variables[1:3],
-                                              exclude.na.listwise = Variables)
+    } else{
+      numeric.vars <- measurements
+      numeric.vars <- numeric.vars[numeric.vars != ""]
+      factor.vars <- c(parts, operators, standards)
+      factor.vars <- factor.vars[factor.vars != ""]
+
+      dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
+                                           exclude.na.listwise = c(numeric.vars, factor.vars))
+    }
 
   }
 
@@ -376,11 +381,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
                                       "CIL" = unique(CIAllVsStandard$lower),
                                       "CIU" = unique(CIAllVsStandard$upper)))
     }
-
-    AAA[["Within"]] <- tableWithin
-    AAA[["EachVsStandard"]] <- tableEachVsStandard
-    AAA[["Between"]] <- tableBetween
-    AAA[["AllVsStandard"]] <- tableAllVsStandard
 
     if (ready) {
 
