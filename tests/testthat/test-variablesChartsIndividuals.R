@@ -1,31 +1,34 @@
 context("[Quality Control] Variables Charts for Individuals")
 
 options <- analysisOptions("variablesChartsIndividuals")
-options$variables <- "Measurement3"
-options$ImRchart <- TRUE
+options$variables <- "Diameter"
+options$subgroups <- "Time"
 options$CorPlot <- TRUE
-results <- runAnalysis("variablesChartsIndividuals", "partOperatorData.csv", options)
+set.seed(1)
+results <- runAnalysis("variablesChartsIndividuals", "SPCSubgroups_Long.csv", options)
 
-test_that("Individuals chart matches", {
-  plotName <- results[["results"]][["CorPlot"]][["collection"]][["CorPlot_Measurement3"]][["data"]]
+
+test_that("Diameter plot matches", {
+  plotName <- results[["results"]][["CorPlot"]][["collection"]][["CorPlot_Diameter"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Individuals chart")
+  jaspTools::expect_equal_plots(testPlot, "diameter")
 })
 
-test_that("Range chart matches", {
-  plotName <- results[["results"]][["Ichart"]][["collection"]][["Ichart_Measurement3"]][["collection"]][["Ichart_Measurement3_Plot"]][["data"]]
+test_that("titleless-plot-1 matches", {
+  plotName <- results[["results"]][["Ichart"]][["collection"]][["Ichart_Diameter"]][["collection"]][["Ichart_Diameter_Plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Range chart")
+  jaspTools::expect_equal_plots(testPlot, "titleless-plot-1")
 })
 
-test_that("Test result for Measurement3 for Individuals chart table results match", {
-  table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_Measurement3"]][["collection"]][["Ichart_Measurement3_Table1"]][["data"]]
+test_that("Test results for Diameter for Individuals chart table results match", {
+  table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_Diameter"]][["collection"]][["Ichart_Diameter_Table1"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1, 16, 3, 9, 17, 14, 29, 18, 29, 30, 30))
+                                 list("16:55"))
 })
 
-test_that("Test result for Measurement3 for Range chart table results match", {
-  table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_Measurement3"]][["collection"]][["Ichart_Measurement3_Table2"]][["data"]]
+test_that("Test results for Diameter for Range chart table results match", {
+  table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_Diameter"]][["collection"]][["Ichart_Diameter_Table2"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(9))
+                                 list("10:10", "16:10", "16:10", "16:10", "16:10", "20:10", "20:10",
+                                      "20:10", "21:00", "21:00", "21:00"))
 })

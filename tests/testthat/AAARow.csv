@@ -1,46 +1,46 @@
-﻿Operator,Part,Repeat 1,Repeat 2,Repeat 3,Reference,,
-EG,1,Yes,Yes,Yes,Yes,,Visual inspection of black spots
-EG,2,No,No,No,No,,Bore of inner ring of plain bearings
-EG,3,Yes,Yes,Yes,Yes,,Black spots do exist or do not exist
-EG,4,Yes,No,No,Yes,,
-EG,5,Yes,Yes,Yes,Yes,,Three appraisers
-EG,6,Yes,Yes,Yes,No,,The subject matter expert was involved to determine the standard
-EG,7,Yes,Yes,Yes,Yes,,
-EG,8,No,No,No,No,,Location: Airasca
-EG,9,No,No,No,No,,Product: Plain bearings
-EG,10,Yes,Yes,Yes,Yes,,
-EG,11,No,No,No,No,,
-EG,12,Yes,Yes,Yes,Yes,,
-EG,13,Yes,Yes,Yes,Yes,,
-EG,14,No,No,No,Yes,,
-EG,15,Yes,Yes,Yes,Yes,,
-BL,1,Yes,Yes,Yes,Yes,,
-BL,2,No,No,No,No,,
-BL,3,Yes,Yes,Yes,Yes,,
-BL,4,Yes,No,No,Yes,,
-BL,5,Yes,Yes,Yes,Yes,,
-BL,6,Yes,Yes,Yes,No,,
-BL,7,No,No,No,Yes,,
-BL,8,No,No,No,No,,
-BL,9,No,No,No,No,,
-BL,10,Yes,Yes,Yes,Yes,,
-BL,11,No,No,No,No,,
-BL,12,Yes,Yes,Yes,Yes,,
-BL,13,Yes,Yes,Yes,Yes,,
-BL,14,No,No,No,Yes,,
-BL,15,Yes,Yes,Yes,Yes,,
-MH,1,Yes,Yes,Yes,Yes,,
-MH,2,Yes,Yes,Yes,No,,
-MH,3,Yes,Yes,Yes,Yes,,
-MH,4,Yes,Yes,Yes,Yes,,
-MH,5,Yes,Yes,Yes,Yes,,
-MH,6,Yes,Yes,Yes,No,,
-MH,7,Yes,Yes,Yes,Yes,,
-MH,8,No,No,Yes,No,,
-MH,9,Yes,No,No,No,,
-MH,10,Yes,Yes,Yes,Yes,,
-MH,11,Yes,No,Yes,No,,
-MH,12,Yes,Yes,Yes,Yes,,
-MH,13,Yes,Yes,Yes,Yes,,
-MH,14,No,No,No,Yes,,
-MH,15,Yes,Yes,Yes,Yes,,
+"","Operator","Part","Repeat.1","Repeat.2","Repeat.3","Reference","X","X.1"
+"1","EG",1,"Yes","Yes","Yes","Yes",NA,"Visual inspection of black spots"
+"2","EG",2,"No","No","No","No",NA,"Bore of inner ring of plain bearings"
+"3","EG",3,"Yes","Yes","Yes","Yes",NA,"Black spots do exist or do not exist"
+"4","EG",4,"Yes","No","No","Yes",NA,""
+"5","EG",5,"Yes","Yes","Yes","Yes",NA,"Three appraisers"
+"6","EG",6,"Yes","Yes","Yes","No",NA,"The subject matter expert was involved to determine the standard"
+"7","EG",7,"Yes","Yes","Yes","Yes",NA,""
+"8","EG",8,"No","No","No","No",NA,"Location: Airasca"
+"9","EG",9,"No","No","No","No",NA,"Product: Plain bearings"
+"10","EG",10,"Yes","Yes","Yes","Yes",NA,""
+"11","EG",11,"No","No","No","No",NA,""
+"12","EG",12,"Yes","Yes","Yes","Yes",NA,""
+"13","EG",13,"Yes","Yes","Yes","Yes",NA,""
+"14","EG",14,"No","No","No","Yes",NA,""
+"15","EG",15,"Yes","Yes","Yes","Yes",NA,""
+"16","BL",1,"Yes","Yes","Yes","Yes",NA,""
+"17","BL",2,"No","No","No","No",NA,""
+"18","BL",3,"Yes","Yes","Yes","Yes",NA,""
+"19","BL",4,"Yes","No","No","Yes",NA,""
+"20","BL",5,"Yes","Yes","Yes","Yes",NA,""
+"21","BL",6,"Yes","Yes","Yes","No",NA,""
+"22","BL",7,"No","No","No","Yes",NA,""
+"23","BL",8,"No","No","No","No",NA,""
+"24","BL",9,"No","No","No","No",NA,""
+"25","BL",10,"Yes","Yes","Yes","Yes",NA,""
+"26","BL",11,"No","No","No","No",NA,""
+"27","BL",12,"Yes","Yes","Yes","Yes",NA,""
+"28","BL",13,"Yes","Yes","Yes","Yes",NA,""
+"29","BL",14,"No","No","No","Yes",NA,""
+"30","BL",15,"Yes","Yes","Yes","Yes",NA,""
+"31","MH",1,"Yes","Yes","Yes","Yes",NA,""
+"32","MH",2,"Yes","Yes","Yes","No",NA,""
+"33","MH",3,"Yes","Yes","Yes","Yes",NA,""
+"34","MH",4,"Yes","Yes","Yes","Yes",NA,""
+"35","MH",5,"Yes","Yes","Yes","Yes",NA,""
+"36","MH",6,"Yes","Yes","Yes","No",NA,""
+"37","MH",7,"Yes","Yes","Yes","Yes",NA,""
+"38","MH",8,"No","No","Yes","No",NA,""
+"39","MH",9,"Yes","No","No","No",NA,""
+"40","MH",10,"Yes","Yes","Yes","Yes",NA,""
+"41","MH",11,"Yes","No","Yes","No",NA,""
+"42","MH",12,"Yes","Yes","Yes","Yes",NA,""
+"43","MH",13,"Yes","Yes","Yes","Yes",NA,""
+"44","MH",14,"No","No","No","Yes",NA,""
+"45","MH",15,"Yes","Yes","Yes","Yes",NA,""

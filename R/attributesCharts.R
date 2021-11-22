@@ -33,7 +33,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTable"]])) {
         jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
-        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Pchart$sixsigma, name = "p")
+        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Pchart$sixsigma, name = "P")
         jaspResults[["NelsonTable"]]$dependOn(c("total", "D", "Attributes", "TypeDefectives"))
         jaspResults[["NelsonTable"]]$position <- 2
       }
@@ -435,6 +435,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
   else
     xBreaks <- c(subgroups)
   xLimits <- c(1,max(xBreaks) * 1.15)
+  Xlabels <- xBreaks + 1
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
     y = c(center, UCL, LCL),
@@ -450,7 +451,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Moving Range") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
+    ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = Xlabels) +
     jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_R, chart = "c")$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +

@@ -1,20 +1,14 @@
 context("[Quality Control] Variables Charts for Subgroups")
 
-# Tests for Column data format
+## Long
 options <- analysisOptions("variablesChartsSubgroups")
-options$CCDataFormat <- "CClongFormat"
-options$variablesLong <- "Ovality"
+options$variablesLong <- "Diameter"
 options$subgroups <- "Time"
 options$Wlimits <- TRUE
-options$TypeChart <- "Xbarchart"
-results <- runAnalysis("variablesChartsSubgroups", "Ovality2.csv", options)
+set.seed(1)
+results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Long.csv", options)
 
-test_that("Test result for R chart table results match", {
-  table <- results[["results"]][["NelsonTables"]][["collection"]][["NelsonTables_NelsonTableR"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list("00:20"))
-})
-
+# R cahrt
 test_that("X-bar & R Control Chart plot matches", {
   plotName <- results[["results"]][["XbarPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
@@ -22,3 +16,35 @@ test_that("X-bar & R Control Chart plot matches", {
 })
 
 
+# S chart
+options$TypeChart <- "Schart"
+results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Long.csv", options)
+
+test_that("X-bar & s Control Chart plot matches", {
+  plotName <- results[["results"]][["SPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart")
+})
+
+## Wide
+options$CCDataFormat <- "CCwideFormat"
+options$TypeChart <- "Xbarchart"
+options$variables <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+set.seed(1)
+results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Wide.csv", options)
+
+test_that("X-bar & R Control Chart plot matches2", {
+plotName <- results[["results"]][["XbarPlot"]][["data"]]
+testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart2")
+})
+
+# S chart
+options$TypeChart <- "Schart"
+results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Wide.csv", options)
+
+test_that("X-bar & s Control Chart plot matches2", {
+plotName <- results[["results"]][["SPlot"]][["data"]]
+testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart2")
+})

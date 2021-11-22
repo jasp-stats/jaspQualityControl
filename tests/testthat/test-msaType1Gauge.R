@@ -4,18 +4,10 @@ options <- analysisOptions("msaType1Gauge")
 options$measurements <- "dm"
 options$biasReferenceValue <- -4
 options$biasTolerance <- 15
-options$biasPercentCG <- 20
-options$biasRun <- TRUE
-options$biasRunDots <- TRUE
-options$biasRunTolLims <- TRUE
-options$biasTable <- T
-options$biasTtest <- TRUE
 options$biasHistogram <- TRUE
-options$biasHistMean <- TRUE
-options$biasHistMeanConfidenceInterval <- TRUE
-options$biasHistRef <- TRUE
+set.seed(1)
+results <- runAnalysis("msaType1Gauge", "msaType1.csv", options)
 
-results <- runAnalysis("msaType1Gauge", "Type1.csv", options)
 
 test_that("Bias Histogram plot matches", {
   plotName <- results[["results"]][["biasHistogram"]][["data"]]

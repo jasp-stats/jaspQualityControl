@@ -16,7 +16,7 @@ options$jitter <- TRUE
 options$rangeRchart <- TRUE
 options$trafficPlot <- TRUE
 
-results <- runAnalysis("msaTestRetest", "TestRetest.csv", options)
+results <- runAnalysis("msaTestRetest", "msaTestRetest.csv", options)
 
 test_that("Run chart of parts plot matches", {
   plotName <- results[["results"]][["ScatterOperatorParts"]][["data"]]

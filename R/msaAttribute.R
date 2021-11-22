@@ -259,7 +259,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     if (ready) {
 
       if ((length(unique(unlist(dataset[measurements]))) != 2 | length(unique(dataset[[standards]])) != 2) && !options$AAAkendallTau && options$PositiveRef != "") {
-        table$setError(gettext("An invalid Reference and/or Results were inserted."))
+        table$setError(gettext("Invalid Reference and/or Results were inserted."))
         return(table)
       }
 

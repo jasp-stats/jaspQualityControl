@@ -97,15 +97,9 @@
 <circle cx='391.91' cy='353.05' r='4.62' style='stroke-width: 0.71; fill: #FF0000;' />
 <circle cx='541.04' cy='398.22' r='4.62' style='stroke-width: 0.71; fill: #FF0000;' />
 <circle cx='690.17' cy='444.57' r='4.62' style='stroke-width: 0.71; fill: #FF0000;' />
-<text x='391.91' y='124.76' style='font-size: 14.23px; font-style: italic; font-family: sans;' textLength='7.12px' lengthAdjust='spacingAndGlyphs'>y</text>
-<text x='399.03' y='124.76' style='font-size: 14.23px; font-family: sans;' textLength='3.56px' lengthAdjust='spacingAndGlyphs'> </text>
-<text x='402.58' y='124.76' style='font-size: 14.23px; font-family: sans;' textLength='8.31px' lengthAdjust='spacingAndGlyphs'>=</text>
-<text x='410.90' y='124.76' style='font-size: 14.23px; font-family: sans;' textLength='3.56px' lengthAdjust='spacingAndGlyphs'> </text>
-<text x='414.46' y='124.76' style='font-size: 14.23px; font-family: sans;' textLength='27.69px' lengthAdjust='spacingAndGlyphs'>0.74</text>
-<text x='444.78' y='124.76' style='font-size: 14.23px; font-family: sans;' textLength='11.05px' lengthAdjust='spacingAndGlyphs'>−</text>
-<text x='458.47' y='124.76' style='font-size: 14.23px; font-family: sans;' textLength='27.69px' lengthAdjust='spacingAndGlyphs'>0.13</text>
-<text x='486.16' y='124.76' style='font-size: 14.23px; font-family: sans;' textLength='3.56px' lengthAdjust='spacingAndGlyphs'> </text>
-<text x='489.72' y='124.76' style='font-size: 14.23px; font-style: italic; font-family: sans;' textLength='7.12px' lengthAdjust='spacingAndGlyphs'>x</text>
+<text x='391.91' y='165.88' text-anchor='middle' style='font-size: 15.65px; font-family: sans;' textLength='108.33px' lengthAdjust='spacingAndGlyphs'>y = 0.74 - 0.13x</text>
+<line x1='93.32' y1='507.09' x2='690.49' y2='507.09' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<line x1='63.81' y1='499.57' x2='63.81' y2='71.02' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <line x1='93.32' y1='507.09' x2='690.49' y2='507.09' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <line x1='63.81' y1='499.57' x2='63.81' y2='71.02' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <rect x='63.81' y='20.71' width='656.19' height='486.39' style='stroke-width: 0.00; stroke: none;' />
