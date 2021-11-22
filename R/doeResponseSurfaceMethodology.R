@@ -21,13 +21,16 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
+  if (!(options[["designModel"]] == "") && options[["designType"]] == "cube")
+    .cubeDesign(jaspResuts, options, dataset)
+
   if (op1 > 0 & op2 > 0) {
 
     rsm <- list()
     #Placeholder table when the user inputs something. If an analysis gets picked, remove the table
     if(!(any(options[["showDesign"]], options[["contour"]], options[["coef"]], options[["anova"]],
              options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]]))) {
-      placeholder <- createJaspTable(title = gettext(" "))
+      placeholder <- createJaspTable(title = gettext("Response Surface Methodology"))
       jaspResults[["placeholder"]] <- placeholder
     }else{
       jaspResults[["placeholder"]] <- NULL
@@ -35,9 +38,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
     for (i in 1:op2) {
       data <- .readDataSet(jaspResults, options, dataset, i)
-
-      .dataErrorCheck(data)
-
+      #check for more than 5 unique
+      .dataErrorCheck(data, options)
       rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
 
       if (options[["showDesign"]])
@@ -76,10 +78,61 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 }
 
-.dataErrorCheck <- function(data) {
+.cubeDesign <- function(jaspResults, options, dataset) {
+  print(options[["designModel"]])
+  clean_designModel <- stringr::str_replace_all(options[["designModel"]], c(",", " "), "")
+  formula <- as.formula(paste0("~", print(options[["designModel"]])))
+  generators <- vector()
+
+  if (options[["numberOfGenerators"]] > 0) {
+    for (i in seq_along(options[["generators"]])) {
+      if (!(options[["generators"]][[i]][["generatorName"]] == "" ||
+            options[["generators"]][[i]][["generatorFormula"]] == "")){
+        generators <- c(generators, paste0(options[["generators"]][[i]][["generatorName"]],
+                                "~", options[["generators"]][[i]][["generatorFormula"]]))
+      }
+    }
+  }
+
+  coding_list <- list()
+  for (i in seq_along(options[["factors"]])) {
+
+    if (!(options[["factors"]][[i]][["factorName"]] == "" |
+          options[["factors"]][[i]][["centre"]] == ""     |
+          options[["factors"]][[i]][["distance"]] == ""))  {
+
+      coding_list <- c(coding_list, as.formula(paste0("x", i, "~(",options[["factors"]][[i]][["factorName"]],
+                                                      "-",options[["factors"]][[i]][["centre"]], ")/",
+                                                      options[["factors"]][[i]][["distance"]])))
+    }
+  }
+  print(formula)
+  if(length(coding_list) == 0 && length(generators) == 0){
+    if(length(generators) == 0){
+      ccd <- rsm::ccd(basis = formula)
+    }else
+
+      ccd <- rsm::ccd(basis = formula, generators = generators)
+
+  }else {
+    if(length(generators) == 0){
+      ccd <- rsm::ccd(basis = formula, coding = coding_list)
+
+    }else {
+      ccd <- rsm::ccd(basis = formula, generators = generators, coding = coding_list)
+
+    }
+  }
+
+
+  print(ccd)
+
+}
+
+.dataErrorCheck <- function(data, options) {
   .hasErrors(dataset = data,
              custom = function() {
-               if(any(unique(data[,seq_along(options[["rsmVariables"]])]) > 5))
+               if(any(rapply(data[,seq_along(options[["rsmVariables"]])], function(x)length(unique(x)) > 5)))
                  return(gettext("This analysis does not take predictor variables with more than 5 unique values."))
              },
              exitAnalysisIfErrors = T)
@@ -197,21 +250,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
 
 
-  #For some reason, if I call .dataErrorCheck(data) right before var.code,
-  #the analysis does not stop even if the
-  #logical condition for stopping is met.
-  #Also, the .dataErrorCheck(data) in the doeResponseSurfaceMethodology function
-  #does not catch a subsequently added predictor which has more than 5 unique
-  #values, so this error check needs to be repeated here.
-  #Makes me wonder whether .dataErrorCheck is even needed, but I left it in
-  #as I believe it looks nicer with it.
-
-  .hasErrors(dataset = data,
-             custom = function() {
-               if(any(unique(data[,seq_along(options[["rsmVariables"]])]) > 5))
-                 return(gettext("This analysis does not take predictor variables with more than 5 unique values."))
-             },
-             exitAnalysisIfErrors = T)
   var.code <- rsm::coded.data(data)
 
   vari <- matrix(unlist(options[["rsmVariables"]]),ncol = 2, byrow = T)[,2]
@@ -622,6 +660,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   if (is.null(jaspResults[[paste0("TableContainer", i)]])) {
     TableContainer <- createJaspContainer()
     jaspResults[[paste0("TableContainer", i)]] <- TableContainer
+
+    TableContainer$dependOn(options = c("coef","modelTerms", "rsmBlocks",
+                                             "rsmResponseVariables",
+                                             "rsmVariables"))
   } else {
     TableContainer <- jaspResults[[paste0("TableContainer", i)]]
   }
@@ -630,74 +672,44 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     CoefTable <- createJaspTable(gettextf("RSM Coefficients for %s",
                                                options[["rsmResponseVariables"]][[i]]))
     jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
-  } else {
-    CoefTable  <- jaspResults[[paste0("TableContainer", i)]][["coef"]]
+    CoefTable$addColumnInfo(name = "names",title = gettext(" "))
+    CoefTable$addColumnInfo(name = "est",  title = gettext("Estimate"))
+    CoefTable$addColumnInfo(name = "std",  title = gettext("Standard Error"))
+    CoefTable$addColumnInfo(name = "tval", title = gettext("t"))
+    CoefTable$addColumnInfo(name = "pval", title = gettext("p"))
+
+    CoefTable$setData(list(names = rownames(rsm[[4]]),
+                                          est  = round(rsm[[4]][,1],3),
+                                          std  = round(rsm[[4]][,2],3),
+                                          tval = round(rsm[[4]][,3],3),
+                                          pval = ifelse(rsm[[4]][,4] > 0.001,round(rsm[[4]][,4],3), "< .001")))
+
   }
 
   if (is.null(jaspResults[[paste0("TableContainer", i)]][["RSQTable"]])){
     RSQTable  <- createJaspTable()
     jaspResults[[paste0("TableContainer", i)]][["RSQTable"]] <- RSQTable
-  }else {
-    RSQTable <- jaspResults[[paste0("TableContainer", i)]][["RSQTable"]]
+    RSQTable$addColumnInfo( name = "RSQ",   title = gettext("Multiple R-squared"))
+    RSQTable$addColumnInfo( name = "ARSQ",  title = gettext("Adjusted R-squared"))
+    RSQTable$addColumnInfo( name = "DF1",   title = gettext("DF1"))
+    RSQTable$addColumnInfo( name = "DF2",   title = gettext("DF2"))
+    RSQTable$addColumnInfo( name = "FStat", title = gettext("F"))
+    RSQTable$addColumnInfo( name = "pval_2",title = gettext("p"))
+
+    RSQTable$setData(list(RSQ    = round(rsm[[8]],3),
+                                              ARSQ   = round(rsm[[9]],3),
+                                              DF1    = rsm[[10]][[2]],
+                                              DF2    = rsm[[10]][[3]],
+                                              FStat  = round(rsm[[10]][[1]],3),
+                                              pval_2 = ifelse((1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]])) > 0.001,
+                                                              round(1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]]),3),
+                                                              "<.001")))
+
   }
-  TableContainer$dependOn(     options = c("coef","modelTerms", "rsmBlocks",
-                                      "rsmResponseVariables",
-                                      "rsmVariables"))
-
-
-  CoefTable$addColumnInfo(name = "names",title = gettext(" "))
-  CoefTable$addColumnInfo(name = "est",  title = gettext("Estimate"))
-  CoefTable$addColumnInfo(name = "std",  title = gettext("Standard Error"))
-  CoefTable$addColumnInfo(name = "tval", title = gettext("t"))
-  CoefTable$addColumnInfo(name = "pval", title = gettext("p"))
-
-  RSQTable$addColumnInfo( name = "RSQ",   title = gettext("Multiple R-squared"))
-  RSQTable$addColumnInfo( name = "ARSQ",  title = gettext("Adjusted R-squared"))
-  RSQTable$addColumnInfo( name = "DF1",   title = gettext("DF1"))
-  RSQTable$addColumnInfo( name = "DF2",   title = gettext("DF2"))
-  RSQTable$addColumnInfo( name = "FStat", title = gettext("F"))
-  RSQTable$addColumnInfo( name = "pval_2",title = gettext("p"))
-
-  # jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
-  # jaspResults[[paste0("TableContainer", i)]][["RSQTable"]] <- RSQTable
-
-
-
-
-  .responseSurfaceTableFill(TableContainer, options,rsm)
-
-
-
 
   return()
 }
 
-
-.responseSurfaceTableFill <- function(TableContainer, options, rsm) {
-
-
-  TableContainer[["coef"]]$setData(list(names = rownames(rsm[[4]]),
-                                        est  = round(rsm[[4]][,1],3),
-                                        std  = round(rsm[[4]][,2],3),
-                                        tval = round(rsm[[4]][,3],3),
-                                        pval = ifelse(rsm[[4]][,4] > 0.001,round(rsm[[4]][,4],3), "< .001")))
-
-  TableContainer[["RSQTable"]]$setData(list(RSQ    = round(rsm[[8]],3),
-                                            ARSQ   = round(rsm[[9]],3),
-                                            DF1    = rsm[[10]][[2]],
-                                            DF2    = rsm[[10]][[3]],
-                                            FStat  = round(rsm[[10]][[1]],3),
-                                            pval_2 = ifelse((1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]])) > 0.001,
-                                                            round(1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]]),3),
-                                                            "<.001")))
-
-
-
-
-
-
-  return()
-}
 
 .responseSurfaceTableAnovaCall <- function(jaspResults, options, rsm, i,  position, dataset) {
 
@@ -717,7 +729,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
     jaspResults[[paste0("anova", i)]] <- AnovaTable
   }else{
-    AnovaTable <- jaspResults[[paste0("anova", i)]]
+    return()
   }
 
 
@@ -774,21 +786,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     XTable <- createJaspTable(title = gettextf("Stationary Points of Response Surface (Coded)"))
     eigen[["XTable"]] <- XTable
   }else {
-    XTable <- eigen[["XTable"]]
+    return()
   }
 
   if (is.null(eigen[["EigenValue"]])){
     EigenValue <- createJaspTable(title = gettextf("Eigenvalues"))
     eigen[["EigenValue"]] <- EigenValue
   }else {
-    EigenValue <- eigen[["EigenValue"]]
+    return()
   }
 
   if (is.null(eigen[["EigenVectors"]])){
     EigenVector <- createJaspTable(title = gettextf("Eigenvectors"))
     eigen[["EigenVectors"]] <- EigenVector
   }else{
-    EigenVector <- eigen[["EigenVectors"]]
+    return()
   }
 
   eigen$dependOn(      options = c("eigen","modelTerms", "rsmBlocks",
@@ -907,7 +919,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     jaspResults[["desirability_container"]] <- desirability_container
     desirability_container$dependOn(options = c("rsmMin", "rsmMax", "rsmVariables", "rsmTar"))
   } else {
-     desirability_container <- jaspResults[["desirability_container"]]
+     return()
   }
 
 
@@ -915,7 +927,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     predictor_value <- createJaspTable(title = "Predictor Values")
     desirability_container[["predictor_value"]] <- predictor_value
   }else {
-    predictor_value <- desirability_container[["predictor_value"]]
+    return()
   }
 
   if (is.null(desirability_container[["value"]])) {
@@ -923,7 +935,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     value$addColumnInfo(name = "Value", title = "Value")
     desirability_container[["value"]] <- value
   }else {
-    value <- desirability_container[["value"]]
+    return()
   }
 
   for (i in 1:op1) {

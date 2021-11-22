@@ -49,6 +49,7 @@ Form
 		AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
 		ModelTermsList
 		{
+			name					: "modelSpec"
 			listViewType			: JASP.Interaction
 			rowComponentTitle		: qsTr("Term Type")
 			rowComponent			: DropDown
@@ -107,87 +108,363 @@ Form
 		}
 	}
 	
-	
-	VariablesForm
+	Section 
 	{
-		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-		AvailableVariablesList
-		{
-			name:  "rsmVariables2";	    source:"rsmVariables"
+		title: qsTr("Design Specification")
 
+		
+		GroupBox
+		{
+			title: 									qsTr("Design Information")
+			name:									"designInfo"
+
+			IntegerField
+			{
+				id:									numberOfFactors
+				name:								"numberOfFactors"
+				label:								qsTr("Number of factors")
+				defaultValue:						2
+				min:								2
+				max:								256
+			}
+
+			IntegerField
+			{
+				visible:                            false
+				id:                                 numberOfFactorsForTable
+				name:                               "numberOfFactorsForTable"
+				defaultValue:                       numberOfFactors.value
+			}
+			
+			RadioButtonGroup
+			{
+				columns: 2
+				name:								"designType"
+				RadioButton
+				{
+					id:								cube
+					name:							"cube"
+					label:							qsTr("Cube Design")
+					checked:						true
+				}
+				
+				RadioButton
+				{
+					id:								star
+					name:							"star"
+					label:							qsTr("Star Design")
+				}
+			}
+
+	//		DropDown
+	//		{
+	//            debug:                              true
+	//            id:                                 numberOfLevels
+	//            name:                               "numberOfLevels"
+	//            label:                              qsTr("Number of factor levels")
+	//            indexDefaultValue:                  0
+	//			values:
+	//				[
+	//				{ value: "2", label: qsTr("2")}
+	//				//            { value: "3", label: qsTr("3")},
+	//				//            { value: "Mixed", label: qsTr("Mixed")}
+	//			]
+//			}
+		}
+		ColumnLayout
+		{
+			spacing:                                0
+			Layout.preferredWidth:					parent.width
+			Layout.columnSpan:						2
+
+			RowLayout
+			{
+				Label { text: qsTr("Factor");			Layout.leftMargin: 5 * preferencesModel.uiScale;		Layout.preferredWidth: 42 * preferencesModel.uiScale}
+				Label { text: qsTr("Name");				Layout.preferredWidth: 150 * preferencesModel.uiScale}
+				Label { text: qsTr("Centre");			Layout.preferredWidth: 100 * preferencesModel.uiScale}
+				Label { text: qsTr("Distance to |1|");	Layout.preferredWidth: 100 * preferencesModel.uiScale}
+	//			Label { visible: 					numberOfLevels.currentIndex == 1;
+	//                    text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
+			}
+
+			ComponentsList
+			{
+				name:								"factors"
+				addItemManually:                    false
+				values:                             numberOfFactorsForTable.value // update only when numberOfFactors.value gets "entered"
+
+				rowComponent: 						RowLayout
+				{
+					Row
+					{
+						spacing:					5 * preferencesModel.uiScale
+						Layout.preferredWidth:		40 * preferencesModel.uiScale
+						Label
+						{
+							text: 					qsTr("x") + (rowIndex + 1)
+						}
+					}
+					Row //Factor
+					{
+						spacing:					5 * preferencesModel.uiScale
+						Layout.preferredWidth:		100 * preferencesModel.uiScale
+
+						TextField
+						{
+							id:						factorName
+							label: 					""
+							name: 					"factorName"
+							placeholderText:		qsTr("x") + (rowIndex + 1)
+							fieldWidth:				100 * preferencesModel.uiScale
+							useExternalBorder:		false
+							showBorder:				true
+							
+						}
+					}
+					Row //Level1
+					{
+						spacing:					5 * preferencesModel.uiScale
+						Layout.preferredWidth:		100 * preferencesModel.uiScale
+						TextField
+						{
+							label: 					""
+							name: 					"centre"
+							placeholderText:		qsTr("x") + (rowIndex + 1) + qsTr(" Centre")
+							fieldWidth:				100 * preferencesModel.uiScale
+							useExternalBorder:		false
+							showBorder:				true
+						}
+					}
+					Row //Level2
+					{
+						spacing:					5 * preferencesModel.uiScale
+						Layout.preferredWidth:		100 * preferencesModel.uiScale
+						TextField
+						{
+							label: 					""
+							name: 					"distance"
+							placeholderText:		qsTr("x") + (rowIndex + 1) + qsTr(" Distance")
+							fieldWidth:				100 * preferencesModel.uiScale
+							useExternalBorder:		false
+							showBorder:				true
+						}
+					}
+	//				Row //Level3
+	//				{
+	//					visible:					[1].includes(numberOfLevels.currentIndex)
+	//					spacing:					5 * preferencesModel.uiScale
+	//					Layout.preferredWidth:		100 * preferencesModel.uiScale
+	//					TextField
+	//					{
+	//						label: 					""
+	//						name: 					"high2"
+	//						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
+	//						fieldWidth:				100 * preferencesModel.uiScale
+	//						useExternalBorder:		false
+	//						showBorder:				true
+	//					}
+	//				}
+				}
+			}
+		}
+		
+		TextArea 
+		{
+			id:									designModel
+			name:								"designModel"
+			title:								"Specify Model for CCD"
+			height:                     		100 * preferencesModel.uiScale
+			width:                      		250 * preferencesModel.uiScale
+			visible:							cube.checked
+		}
+		
+		IntegerField
+		{
+			id:									numberOfGenerators
+			name:								"numberOfGenerators"
+			label:								qsTr("Number of generators")
+			defaultValue:						0
+			min:								0
+			max:								256
 		}
 
-
-
-
-		AssignedPairsVariablesList
-		{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
-
-
-	} 
-	
-
-	Group
-	{
-		title: qsTr("Contour Plot Options")
-		
-		CheckBox
+		IntegerField
 		{
-			name:                      "contour";label:   qsTr("Contour Surface")
-			columns: 2
-			CheckBox
-			{
-				name:                       "cplot"
-				label:                      qsTr("Only show 2D plot")
-				id:                         cplot
-			}
-
-			CheckBox
-			{
-				name:                       "coded"
-				label:                      qsTr("Show analysis and graphs in coded form")
-				enabled:					cplot.checked
-			}
-
-			CheckBox
-			{
-				name:                       "legend"
-				label:                      qsTr("Show legend next to graph")
-				enabled:					!cplot.checked
-			}
-			DropDown
-			{
-				name:                       "divide"
-				label:                      qsTr("Divide response surface into N parts")
-				values:                     [2,3,4,5,6,7]
-				enabled:					!cplot.checked
-			}
-
-			Slider
-			{
-				name:                       "phi"
-				label:                      qsTr("Rotating angle (vertical plane)")
-				value:                      0
-				enabled:					!cplot.checked
-
-
-			}
-
-			Slider
-			{
-				name:                       "theta"
-				label:                      qsTr("Rotating angle (horizontal plane)")
-				value:                      0.5
-				vertical:                   false
-				enabled:					!cplot.checked
-			}
-
+			visible:                            false
+			id:                                 numberOfGeneratorsForTable
+			name:                               "numberOfGeneratorsForTable"
+			defaultValue:                       numberOfGenerators.value
 		}
 		
+		ColumnLayout
+		{
+			spacing:                                0
+			Layout.preferredWidth:					parent.width
+			Layout.columnSpan:						2
+
+			RowLayout
+			{
+				Label { text: qsTr("Factor");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
+				Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
+				Label { text: qsTr("Formula");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
+
+			}
+
+			ComponentsList
+			{
+				name:								"generators"
+				addItemManually:                    false
+				values:                             numberOfGeneratorsForTable.value //
+
+				rowComponent: 						RowLayout
+				{
+					Row
+					{
+						spacing:					5 * preferencesModel.uiScale
+						Layout.preferredWidth:		40 * preferencesModel.uiScale
+						Label
+						{
+							text: 					qsTr("x") + (rowIndex + 1)
+						}
+					}
+
+
+					Row 
+					{
+						spacing:					5 * preferencesModel.uiScale
+						Layout.preferredWidth:		100 * preferencesModel.uiScale
+
+						TextField
+						{
+							id:						generatorName
+							label: 					""
+							placeholderText:		qsTr("Generator Name")
+							name: 					"generatorName"
+							fieldWidth:				100 * preferencesModel.uiScale
+							useExternalBorder:		false
+							showBorder:				true
+						}
+					}
+					Row //Level1
+					{
+						spacing:					5 * preferencesModel.uiScale
+						Layout.preferredWidth:		100 * preferencesModel.uiScale
+						TextField
+						{
+							label: 					""
+							name: 					"generatorFormula"
+							placeholderText:		qsTr("Generator Formula")
+							fieldWidth:				100 * preferencesModel.uiScale
+							useExternalBorder:		false
+							showBorder:				true
+						}
+					}
+
+	//				Row //Level3
+	//				{
+	//					visible:					[1].includes(numberOfLevels.currentIndex)
+	//					spacing:					5 * preferencesModel.uiScale
+	//					Layout.preferredWidth:		100 * preferencesModel.uiScale
+	//					TextField
+	//					{
+	//						label: 					""
+	//						name: 					"high2"
+	//						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
+	//						fieldWidth:				100 * preferencesModel.uiScale
+	//						useExternalBorder:		false
+	//						showBorder:				true
+	//					}
+	//				}
+				}
+			}
+		}
 	
+	}
+	
+	Section 
+	{
+		title: qsTr("Contour Plots")
+		VariablesForm
+		{
+			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+			AvailableVariablesList
+			{
+				name:  "rsmVariables2";	    source:"rsmVariables"
+
+			}
+
+
+
+
+			AssignedPairsVariablesList
+			{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
+
+
+		} 
 		
+
+		Group
+		{
+			title: qsTr("Contour Plot Options")
+			
+			CheckBox
+			{
+				name:                      "contour";label:   qsTr("Contour Surface")
+				columns: 2
+				CheckBox
+				{
+					name:                       "cplot"
+					label:                      qsTr("Only show 2D plot")
+					id:                         cplot
+				}
+
+				CheckBox
+				{
+					name:                       "coded"
+					label:                      qsTr("Show analysis and graphs in coded form")
+					enabled:					cplot.checked
+				}
+
+				CheckBox
+				{
+					name:                       "legend"
+					label:                      qsTr("Show legend next to graph")
+					enabled:					!cplot.checked
+				}
+				DropDown
+				{
+					name:                       "divide"
+					label:                      qsTr("Divide response surface into N parts")
+					values:                     [2,3,4,5,6,7]
+					enabled:					!cplot.checked
+				}
+
+				Slider
+				{
+					name:                       "phi"
+					label:                      qsTr("Rotating angle (vertical plane)")
+					value:                      0
+					enabled:					!cplot.checked
+
+
+				}
+
+				Slider
+				{
+					name:                       "theta"
+					label:                      qsTr("Rotating angle (horizontal plane)")
+					value:                      0.5
+					vertical:                   false
+					enabled:					!cplot.checked
+				}
+
+			}
+			
 		
-		
+			
+			
+			
+		}
 	}
 	
 	
