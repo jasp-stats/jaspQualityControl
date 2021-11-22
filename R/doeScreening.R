@@ -88,12 +88,14 @@ doeScreening <- function(jaspResults, dataset, options, ...){
                                "factors2",
                                "screeningCenterPoints",
                                "screeningCornerReplicates",
-                               "screeningRepeats"))
+                               "screeningRepeats",
+                               "fileScreening",
+                               "actualExporter"))
 
     if(options[["numberOfFactorsScreen2"]] > 0){
       twoLevels <- options[["factors2"]]
       factorNames2 <- factorLows2 <- factorHighs2 <- character()
-      threePlus <- if(!is.na(options[["factors3"]])){
+      threePlus <- if(options[["screeningType"]] == "DSdes"){
         length(options[["factors3"]])
       } else {
         0
@@ -183,7 +185,12 @@ doeScreening <- function(jaspResults, dataset, options, ...){
       colnames(rows)[i+2] <- factorNamesAll[i]
       table$addColumnInfo(name = factorNamesAll[i], title = factorNamesAll[i], type = 'string')
     }
-    print(rows)
+
+    if(options[["actualExporter"]] == TRUE && options[["fileScreening"]] != ""){
+      print("ready to print")
+      exportDesign <- cbind.data.frame(rows, Response = rep(NA, nrow(rows)))
+      utils::write.csv(x = exportDesign, file = options[["fileScreening"]], row.names = FALSE, na = "", quote = FALSE)
+    }
 
     table$setData(rows)
     jaspResults[["displayScreeningDesign"]] <- table
