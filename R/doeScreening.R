@@ -25,7 +25,7 @@ doeScreening <- function(jaspResults, dataset, options, ...){
 
 .doeScreeningSummarySelectedDesign <- function(options, jaspResults, position){
 
-  if (is.null(jaspResults[["selectedDesignScreening"]])) {
+  if(is.null(jaspResults[["selectedDesignScreening"]])){
     table <- createJaspTable(gettext("Selected Design"))
     table$position <- position
     table$dependOn(options = c("screeningType",

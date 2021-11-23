@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-doeFactorial <- function(jaspResults, dataset, options, ...) {
+doeFactorial <- function(jaspResults, dataset, options, ...){
 
   .doeFactorialShowAvailableDesigns(options, jaspResults, position = 1)
 

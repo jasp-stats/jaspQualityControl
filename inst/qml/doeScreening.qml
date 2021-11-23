@@ -39,7 +39,7 @@ Form
 
     GroupBox
     {
-        title: 									qsTr("Design Information")
+        title: 									qsTr("Design Space")
         name:									"designInfo"
 
         IntegerField
@@ -124,15 +124,15 @@ Form
 
         RadioButton
         {
-            name:                              "runOrderStandard"
-            label:                              qsTr("Standard")
+            name:                               "runOrderRandom"
+            label:                              qsTr("Random")
             checked:                            true
         }
 
         RadioButton
         {
-            name:                               "runOrderRandom"
-            label:                              qsTr("Random")
+            name:                              "runOrderStandard"
+            label:                              qsTr("Standard")
         }
     }
 

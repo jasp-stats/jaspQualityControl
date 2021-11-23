@@ -105,10 +105,15 @@ Description
 	}
     Analysis
     {
+        title:          qsTr("General Full Factorial Design")
+        func:           "doeFull"
+        requiresData:   false
+    }
+    Analysis
+    {
         title:          qsTr("Modify Existing Design")
         func:           "doeModifyDesign"
     }
-
 	Analysis
 	{
 		title:			qsTr("Response Surface")

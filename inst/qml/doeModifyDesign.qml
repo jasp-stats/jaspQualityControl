@@ -21,7 +21,7 @@ import JASP.Widgets 							1.0
 Form
 {
     usesJaspResults:                            true
-    columns:                                    2
+    columns:                                    1
 
     VariablesForm
     {
@@ -64,7 +64,7 @@ Form
 
     RadioButtonGroup
     {
-        title:                                  qsTr("Data Coding")
+        title:                                  qsTr("Unit Display")
         name:                                   "dataCoding"
 
         RadioButton
@@ -91,15 +91,15 @@ Form
 
         RadioButton
         {
-            name:                              "runOrderStandard"
-            label:                              qsTr("Standard")
+            name:                               "runOrderRandom"
+            label:                              qsTr("Random")
             checked:                            true
         }
 
         RadioButton
         {
-            name:                               "runOrderRandom"
-            label:                              qsTr("Random")
+            name:                              "runOrderStandard"
+            label:                              qsTr("Standard")
         }
     }
 
@@ -110,7 +110,7 @@ Form
 
         GroupBox
         {
-            title:                              qsTr("Design by")
+            title:                              qsTr("Design Options")
 
             RadioButtonGroup
             {
@@ -132,7 +132,8 @@ Form
                             { value: 2**(1+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(1+Math.floor(Math.log2(nAssignedFactors.value))))},
                             { value: 2**(2+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(2+Math.floor(Math.log2(nAssignedFactors.value))))},
                             { value: 2**(3+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(3+Math.floor(Math.log2(nAssignedFactors.value))))},
-                            { value: 2**(4+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(4+Math.floor(Math.log2(nAssignedFactors.value))))}
+                            { value: 2**(4+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(4+Math.floor(Math.log2(nAssignedFactors.value))))},
+                            { value: 2**(5+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(5+Math.floor(Math.log2(nAssignedFactors.value))))}
                         ]
                     }
                 }
