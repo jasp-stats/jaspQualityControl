@@ -228,6 +228,14 @@ Form
 			
 			CheckBox 
 			{
+				id:									coded_out
+				name:								"coded_out"
+				label:								qsTr("Coded Output")
+				visible:							cube.checked
+			}
+			
+			CheckBox 
+			{
 				id:									replication
 				name:								"replication"
 				label:								qsTr("Replicate Points")
@@ -438,7 +446,7 @@ Form
 
 			RowLayout
 			{
-				Label { text: qsTr("Generator");	Layout.preferredWidth: 150 * preferencesModel.uiScale; visible: cube.checked }
+				
 				Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale; visible: cube.checked }
 				Label { text: qsTr("Formula");		Layout.preferredWidth: 100 * preferencesModel.uiScale; visible: cube.checked }
 
@@ -453,15 +461,7 @@ Form
 
 				rowComponent: 						RowLayout
 				{
-					Row
-					{
-						spacing:					5 * preferencesModel.uiScale
-						Layout.preferredWidth:		40 * preferencesModel.uiScale
-						Label
-						{
-							text: 					qsTr("x") +  (rowIndex + numberOfFactorsForTable.value + 1)
-						}
-					}
+
 
 
 					Row 
