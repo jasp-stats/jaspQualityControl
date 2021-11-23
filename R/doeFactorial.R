@@ -65,7 +65,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
 .doeFactorialSummarySelectedDesign <- function(options, jaspResults, position) {
 
-  if (is.null(jaspResults[["selectedDesign"]])) {
+  if(is.null(jaspResults[["selectedDesign"]])){
 
     table <- createJaspTable(gettext("Selected Design"))
     table$position <- position
@@ -78,6 +78,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                                "factorialType",
                                "designBy",
                                "factorialResolution",
+                               "factorialFraction",
                                "numberOfFactors",
                                "repeatRuns"))
 
@@ -85,48 +86,50 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     table$addColumnInfo(name = 'factors', title = gettext("Factors"), type = 'integer')
     table$addColumnInfo(name = 'runs', title = gettext("Runs"), type = 'integer')
     table$addColumnInfo(name = 'resolution', title = gettext("Resolution"), type = 'string')
-    table$addColumnInfo(name = 'centers', title = gettext("Center points"), type = 'integer')
+    table$addColumnInfo(name = 'centers', title = gettext("Centre points"), type = 'integer')
     table$addColumnInfo(name = 'replicates', title = gettext("Replicates"), type = 'integer')
     table$addColumnInfo(name = 'blocks', title = gettext("Blocks"), type = 'integer')
     table$addColumnInfo(name = 'repeats', title = gettext("Repeats"), type = 'integer')
 
     designs <- jaspResults[["state"]]$object
 
-    if(options[["factorialType"]] == "factorialTypeFull"){
-      runs <- (2^options[["numberOfFactors"]] +
+    if(options[["designBy"]] == "designByRuns"){
+      runs <- (as.numeric(options[["factorialRuns"]]) +
                  options[["factorialCenterPoints"]] *
                  options[["factorialBlocks"]]) *
         options[["factorialCornerReplicates"]] +
         options[["repeatRuns"]]
-      resolution <- "Full"
-    } else {
-      if(options[["designBy"]] == "designByRuns"){
-        runs <- (as.numeric(options[["factorialRuns"]]) +
-                   options[["factorialCenterPoints"]] *
-                   options[["factorialBlocks"]]) *
-          options[["factorialCornerReplicates"]] +
-          options[["repeatRuns"]]
-        resolution <-
-          if(log2(as.numeric(options[["factorialRuns"]])) < options[["numberOfFactors"]]){
-          as.character(as.roman(DoE.base::design.info(
-            FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                       nruns = as.numeric(options[["factorialRuns"]])))$catlg.entry[[1]]$res))
-        } else {
-          "Full"
-        }
+      resolution <-
+        if(log2(as.numeric(options[["factorialRuns"]])) < options[["numberOfFactors"]]){
+        as.character(as.roman(DoE.base::design.info(
+          FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+                     nruns = as.numeric(options[["factorialRuns"]]))
+          )$catlg.entry[[1]]$res))
       } else {
-        resolution <- if(options[["factorialResolution"]] == "Full"){
-          100
-        } else {
-          as.numeric(as.roman(options[["factorialResolution"]]))
-        }
-        runs <- (DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                                                  resolution = resolution))$nruns +
-                   options[["factorialCenterPoints"]] *
-                   options[["factorialBlocks"]]) *
-          options[["factorialCornerReplicates"]] +
-          options[["repeatRuns"]]
+        "Full"
       }
+    } else if(options[["designBy"]] == "designByResolution"){
+      resolution <- if(options[["factorialResolution"]] == "Full"){
+        100
+      } else {
+        as.numeric(as.roman(options[["factorialResolution"]]))
+      }
+      runs <- (DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+                                                resolution = resolution))$nruns +
+                 options[["factorialCenterPoints"]] *
+                 options[["factorialBlocks"]]) *
+        options[["factorialCornerReplicates"]] +
+        options[["repeatRuns"]]
+    } else {
+      runs <- ((2^options[["numberOfFactors"]] * as.numeric(options[["factorialFraction"]])) +
+                 options[["factorialCenterPoints"]] *
+                 options[["factorialBlocks"]]) *
+        options[["factorialCornerReplicates"]] +
+        options[["repeatRuns"]]
+      resolution <- as.character(as.roman(DoE.base::design.info(
+        FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+                   nruns = (2^options[["numberOfFactors"]] * as.numeric(options[["factorialFraction"]])))
+        )$catlg.entry[[1]]$res))
     }
 
     design <- base::switch(options[["factorialType"]],
@@ -135,8 +138,9 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     res <- if(resolution == 100){
       "Full"
     } else {
-      resolution
+      as.character(as.roman(options[["factorialResolution"]]))
     }
+
     rows <- data.frame(type = "Factorial",
                        factors = options[["numberOfFactors"]],
                        runs = runs,
@@ -154,10 +158,10 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
 .doeFactorialShowSelectedDesign <- function(options, jaspResults, position) {
 
-  if (!options[["displayDesign"]])
+  if(!options[["displayDesign"]])
     return()
 
-  if (is.null(jaspResults[["displayDesign"]])){
+  if(is.null(jaspResults[["displayDesign"]])){
     table <- createJaspTable(gettext("Design Preview"))
     table$position <- position
 
@@ -172,6 +176,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                                "factorialRepeats",
                                "designBy",
                                "factorialResolution",
+                               "factorialFraction",
                                "numberOfFactors",
                                "showAliasStructure",
                                "factorialTypeSpecifyGenerators",
@@ -195,8 +200,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
     rep <- options[["factorialRepeats"]] > 0
 
-    if (options[["factorialType"]] == "factorialTypeDefault") {
-      if (options[["designBy"]] == "designByRuns") {
+    if(options[["factorialType"]] == "factorialTypeDefault"){
+      if(options[["designBy"]] == "designByRuns"){
         desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
                            nruns = as.numeric(options[["factorialRuns"]]),
                            ncenter = options[["factorialCenterPoints"]],
@@ -204,7 +209,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                            repeat.only = rep,
                            blocks = options[["factorialBlocks"]],
                            randomize = rnd)
-      } else {
+      } else if(options[["designBy"]] == "designByResolution"){
         desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
                            resolution = ifelse(options[["factorialResolution"]] != "Full",
                                                as.numeric(as.roman(options[["factorialResolution"]])),
@@ -213,24 +218,39 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                            replications = options[["factorialCornerReplicates"]],
                            repeat.only = rep,
                            randomize = rnd)
+      } else {
+        desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+                           nruns = (2^options[["numberOfFactors"]]) * as.numeric(options[["factorialFraction"]]),
+                           ncenter = options[["factorialCenterPoints"]],
+                           replications = options[["factorialCornerReplicates"]],
+                           repeat.only = rep,
+                           blocks = options[["factorialBlocks"]],
+                           randomize = rnd)
       }
-    } else if (options[["factorialType"]] == "factorialTypeSpecify") {
+    } else if(options[["factorialType"]] == "factorialTypeSpecify"){
+      whichHow <- strsplit(gsub(" ", "", strsplit(options[["factorialTypeSpecifyGenerators"]], ",")[[1]], fixed = TRUE), "=")
+      gen <- character(length(whichHow))
+      for(i in 1:length(whichHow)){
+        gen[i] <- whichHow[[i]][length(whichHow[[i]])]
+      }
       desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                         nruns = as.numeric(options[["factorialRuns"]]),
-                         generators = strsplit(options[["factorialTypeSpecifyGenerators"]], "\\s+")[[1]],
+                         nruns = ifelse(options[["designBy"]] == "designByRuns",
+                                        as.numeric(options[["factorialRuns"]]),
+                                        2^options[["numberOfFactors"]] * as.numeric(options[["factorialFraction"]])),
+                         generators = gen,
                          ncenter = options[["factorialCenterPoints"]],
                          replications = options[["factorialCornerReplicates"]],
                          repeat.only = rep,
                          randomize = rnd)
-    } else if (options[["factorialType"]] == "factorialTypeSplit") {
-      if (options[["designBy"]] == "designByRuns") {
+    } else if(options[["factorialType"]] == "factorialTypeSplit"){
+      if(options[["designBy"]] == "designByRuns"){
         desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
                            nruns = as.numeric(options[["factorialRuns"]]),
                            hard = options[["numberHTCFactors"]],
                            replications = options[["factorialCornerReplicates"]],
                            repeat.only = rep,
                            randomize = rnd)
-      } else {
+      } else if(options[["designBy"]] == "designByResolution"){
         desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
                            resolution = ifelse(options[["factorialResolution"]] != "Full",
                                                as.numeric(as.roman(options[["factorialResolution"]])),
@@ -239,17 +259,17 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                            replications = options[["factorialCornerReplicates"]],
                            repeat.only = rep,
                            randomize = rnd)
+      } else {
+        desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+                           nruns = (2^options[["numberOfFactors"]]) * as.numeric(options[["factorialFraction"]]),
+                           hard = options[["numberHTCFactors"]],
+                           replications = options[["factorialCornerReplicates"]],
+                           repeat.only = rep,
+                           randomize = rnd)
       }
       table$addFootnote(paste("Hard-to-change factors: ", paste(factorNames[1:options[["numberHTCFactors"]]], collapse = ", "), sep = ""))
-    } else if (options[["factorialType"]] == "factorialTypeFull") {
-      desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                         nruns = 2^options[["numberOfFactors"]],
-                         ncenter = options[["factorialCenterPoints"]],
-                         replications = options[["factorialCornerReplicates"]],
-                         repeat.only = rep,
-                         blocks = options[["factorialBlocks"]],
-                         randomize = rnd)
     }
+
     runOrder <- 1:nrow(desx)
     rows <- cbind.data.frame(runOrder, desx)
 

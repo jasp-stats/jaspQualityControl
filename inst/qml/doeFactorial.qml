@@ -278,32 +278,32 @@ Form
                             indexDefaultValue: 	1
 							values:
                             [
-                                { value: "Full", label: qsTr("Full")},
+                                { value: "Full",label: qsTr("Full")},
                                 { value: "III", label: qsTr("III") 	},
 								{ value: "IV", 	label: qsTr("IV") 	},
 								{ value: "V", 	label: qsTr("V") 	},
 								{ value: "VI", 	label: qsTr("VI")	},
                                 { value: "VII", label: qsTr("VII")	},
-                                { value: "VIII", label: qsTr("VIII")}
+                                { value: "VIII",label: qsTr("VIII")}
 							]
 						}
                     }
 
                     RadioButton
                     {
-                        name:                       "byFraction"
-                        label:                      qsTr("Fraction")
-                        childrenOnSameRow:          true
+                        name:                   "designByFraction"
+                        label:                  qsTr("Fraction")
+                        childrenOnSameRow:      true
 
                         DropDown
                         {
-                            name:                   "factorialFraction"
-                            indexDefaultValue:      0
+                            name:               "factorialFraction"
+                            indexDefaultValue:  0
                             values:
                             [
                                 { value: "0.5", label: qsTr("1/2")  },
-                                { value: "0.25", label: qsTr("1/4")  },
-                                { value: "0.125", label: qsTr("1/8")  }
+                                { value: "0.25",label: qsTr("1/4")  },
+                                { value: "0.125",label: qsTr("1/8")  }
                             ]
                         }
                     }
