@@ -117,15 +117,176 @@ Form
 		{
 			title: 									qsTr("Design Information")
 			name:									"designInfo"
+			columns:								3
+			
+			RadioButtonGroup
+			{
+				columns: 2
+				name:								"designType"
+				RadioButton
+				{
+					id:								cube
+					name:							"cube"
+					label:							qsTr("Central Composite Design (CCD)")
+					checked:						true
+				}
+				
+				RadioButton
+				{
+					id:								star
+					name:							"star"
+					label:							qsTr("+ Star Points")
+				}
+			}
 
 			IntegerField
 			{
 				id:									numberOfFactors
 				name:								"numberOfFactors"
-				label:								qsTr("Number of factors")
+				label:								qsTr("Number of Factors")
 				defaultValue:						2
 				min:								2
 				max:								256
+			}
+			IntegerField
+			{
+			
+				id:									numberOfCubes
+				name:								"numberOfCubes"
+				label:								qsTr("Number of Cube Points")
+				defaultValue:						4
+				min:								0
+				max:								256
+			
+			
+			}
+			
+			IntegerField
+			{
+			
+				id:									numberOfStars
+				name:								"numberOfStars"
+				label:								qsTr("Number of Star Points")
+				defaultValue:						0
+				min:								0
+				max:								256
+				visible:							star.checked
+				
+			
+			}
+			
+			IntegerField
+			{
+				id:									numberOfGenerators
+				name:								"numberOfGenerators"
+				label:								qsTr("Number of Generators")
+				defaultValue:						0
+				min:								0
+				max:								256
+				visible: 							cube.checked
+			}
+			
+			CheckBox 
+			{
+				id:									randomize
+				name:								"randomize"
+				label:								qsTr("Randomize Design")
+			}
+			
+			CheckBox
+			{
+				id:									inscribed
+				name:								"inscribed"
+				label:								qsTr("Inscribed Design")
+				visible:							cube.checked
+			
+			}
+			
+			CheckBox
+			{
+				id:									oneBlock
+				name:								"oneBlock"
+				label:								qsTr("Force One Block")
+				visible:							cube.checked
+			}
+			
+			CheckBox 
+			{
+				id:									noModel
+				name:								"noModel"
+				label:								qsTr("Use # of Variables instead of Model")
+				visible:							cube.checked
+			}
+			
+			CheckBox 
+			{
+				id:									block
+				name:								"block"
+				label:								qsTr("Introduce Blocking")
+				visible:							cube.checked
+			}
+			
+			CheckBox 
+			{
+				id:									replication
+				name:								"replication"
+				label:								qsTr("Replicate Points")
+				columns: 							2
+				visible:							star.checked
+				
+				IntegerField
+				{
+					id:									withinCube
+					name:								"withinCube"
+					label:								qsTr("Cube Replication within Block")
+					defaultValue:						0
+					min:								0
+					max:								256
+					visible: 							star.checked && replication.checked
+				}
+				
+				IntegerField
+				{
+					id:									withinStar
+					name:								"withinStar"
+					label:								qsTr("Star Replication within Block")
+					defaultValue:						0
+					min:								0
+					max:								256
+					visible: 							star.checked && replication.checked
+				}
+				
+				IntegerField
+				{
+					id:									betweenCube
+					name:								"betweenCube"
+					label:								qsTr("Cube Replication between Block")
+					defaultValue:						0
+					min:								0
+					max:								256
+					visible: 							star.checked && replication.checked
+				}
+				
+				IntegerField
+				{
+					id:									betweenStar
+					name:								"betweenStar"
+					label:								qsTr("Cube Replication between Block")
+					defaultValue:						0
+					min:								0
+					max:								256
+					visible: 							star.checked && replication.checked
+				}
+				
+			}
+			
+			DropDown
+			{
+			  name: 								"alpha"
+			  indexDefaultValue: 					0
+			  label:								qsTr("Alpha Type")
+			  values: 								["Orthogonal", "Rotatable", "Spherical", "Faces"]
+			  visible:								star.checked
 			}
 
 			IntegerField
@@ -136,25 +297,7 @@ Form
 				defaultValue:                       numberOfFactors.value
 			}
 			
-			RadioButtonGroup
-			{
-				columns: 2
-				name:								"designType"
-				RadioButton
-				{
-					id:								cube
-					name:							"cube"
-					label:							qsTr("Cube Design")
-					checked:						true
-				}
-				
-				RadioButton
-				{
-					id:								star
-					name:							"star"
-					label:							qsTr("Star Design")
-				}
-			}
+			
 
 	//		DropDown
 	//		{
@@ -268,6 +411,7 @@ Form
 			}
 		}
 		
+	
 		TextArea 
 		{
 			id:									designModel
@@ -275,19 +419,9 @@ Form
 			title:								"Specify Model for CCD"
 			height:                     		100 * preferencesModel.uiScale
 			width:                      		250 * preferencesModel.uiScale
-			visible:							cube.checked
+			visible:							cube.checked && !noModel.checked
 		}
 		
-		IntegerField
-		{
-			id:									numberOfGenerators
-			name:								"numberOfGenerators"
-			label:								qsTr("Number of generators")
-			defaultValue:						0
-			min:								0
-			max:								256
-		}
-
 		IntegerField
 		{
 			visible:                            false
@@ -304,9 +438,9 @@ Form
 
 			RowLayout
 			{
-				Label { text: qsTr("Factor");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
-				Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
-				Label { text: qsTr("Formula");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
+				Label { text: qsTr("Generator");	Layout.preferredWidth: 150 * preferencesModel.uiScale; visible: cube.checked }
+				Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale; visible: cube.checked }
+				Label { text: qsTr("Formula");		Layout.preferredWidth: 100 * preferencesModel.uiScale; visible: cube.checked }
 
 			}
 
@@ -315,6 +449,7 @@ Form
 				name:								"generators"
 				addItemManually:                    false
 				values:                             numberOfGeneratorsForTable.value //
+				visible:							cube.checked 
 
 				rowComponent: 						RowLayout
 				{
@@ -324,7 +459,7 @@ Form
 						Layout.preferredWidth:		40 * preferencesModel.uiScale
 						Label
 						{
-							text: 					qsTr("x") + (rowIndex + 1)
+							text: 					qsTr("x") +  (rowIndex + numberOfFactorsForTable.value + 1)
 						}
 					}
 
@@ -377,6 +512,32 @@ Form
 	//				}
 				}
 			}
+		}
+		
+		TextArea 
+		{
+			id:									designBlock
+			name:								"designBlock"
+			title:								"Specify Blocks for CCD"
+			height:                     		100 * preferencesModel.uiScale
+			width:                      		250 * preferencesModel.uiScale
+			visible:							cube.checked && block.checked
+		}
+		
+		Button
+		{
+			id: 								buildDesign
+			anchors.right:						parent.right
+			anchors.bottom:						parent.bottom
+			text: 								qsTr("<b>Build Design</b>")
+			onClicked: 							buildDesignInv.click()
+		}
+		
+		CheckBox 
+		{
+			id:									buildDesignInv	
+			name:								"buildDesignInv"
+			visible:							false
 		}
 	
 	}
