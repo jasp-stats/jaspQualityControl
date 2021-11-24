@@ -23,6 +23,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   if (options[["designType"]] == "cube" && options[["buildDesignInv"]])
     .cubeDesign(jaspResults, options, dataset)
+  if (options[["designType"]] == "star" && options[["buildDesignInv"]])
+    .starDesign(jaspResults, options)
 
   if (op1 > 0 & op2 > 0) {
 
@@ -80,22 +82,38 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .cubeDesign <- function(jaspResults, options, dataset) {
   if(is.null(jaspResults[["ccd"]])) {
-    ccd_table <- createJaspTable(title = gettext("Central Composite Design"))
-    jaspResults[["ccd"]] <- ccd_table
-    ccd_table$dependOn(options = c("noModel","designModel","randomize",
-                                   "inscribed","oneBlock","block","designBlock",
+    ccd.table <- createJaspTable(title = gettext("Central Composite Design"))
+    jaspResults[["ccd"]] <- ccd.table
+    ccd.table$dependOn(options = c("noModel","designModel","randomize",
+                                   "inscribed","block","designBlock",
                                    "numberOfCubes","numberOfGenerators","generators",
-                                   "factors","coded_out","numberOfFactors"))
+                                   "factors","coded_out","numberOfFactors", "buildDesignInv"))
 
 
 
-    ccd_table$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
-    ccd_table$addColumnInfo(name = "std.order", title = gettext("Standard Order"), type = "integer")
+    ccd.table$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
+    ccd.table$addColumnInfo(name = "std.order", title = gettext("Standard Order"), type = "integer")
 
-    for (i in 1:(options[["numberOfFactors"]])) {
-      ccd_table$addColumnInfo(name = options[["factors"]][[i]][["factorName"]], title = gettext(options[["factors"]][[i]][["factorName"]]),
-                              type = "number")
+    if (options[["coded_out"]]) {
+      for (i in 1:(options[["numberOfFactors"]])) {
+        ccd.table$addColumnInfo(name = paste0("x",i), title = gettext(paste0("x",i)),
+                                type = "number")
+      }
+    } else {
+      for (i in 1:(options[["numberOfFactors"]])) {
+        ccd.table$addColumnInfo(name = options[["factors"]][[i]][["factorName"]], title = gettext(options[["factors"]][[i]][["factorName"]]),
+                                type = "number")
+      }
     }
+
+
+    if(options[["numberOfGenerators"]] > 0){
+      for (i in 1:(options[["numberOfGenerators"]])) {
+        ccd.table$addColumnInfo(name = options[["generators"]][[i]][["generatorName"]], title = gettext(options[["generators"]][[i]][["generatorName"]]),
+                                type = "number")
+      }
+    }
+
 
     model_error <- !(options[["noModel"]]) && options[["designModel"]] == ""
     block_error <- options[["block"]] && options[["designBlock"]] == ""
@@ -105,109 +123,22 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
       if(model_error) {
         text <- gettext("The analysis will not run when the 'Specify Model for CCD' field is empty and the 'Use # of Variables instead of Model' is not ticked.")
-        ccd_table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+        ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
       }
 
       if(block_error) {
         text <- gettext("The analysis will not run when the 'Specify Blocks for CCD' field is empty and the Introduce Blocking is ticked.")
-        ccd_table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+        ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
       }
 
     }else {
+
       ready <- 1
     }
 
     if (ready) {
 
-      if (options[["noModel"]])
-        formula <- as.integer(options[["numberOfFactors"]])
-      else {
-        clean_designModel <- stringr::str_replace_all(options[["designModel"]], c(",", " "), "")
-        formula <- as.formula(paste0("~",  clean_designModel))
-      }
-
-      randomize <- options[["randomize"]]
-      inscribed <- options[["inscribed"]]
-      oneblock  <- options[["oneBlock"]]
-
-
-      block_formula <- vector()
-      if (options[["block"]] && length(options[["designBlock"]]) > 0){
-        clean_Blocks  <- stringr::str_replace_all(options[["designBlock"]], " ", "")
-        vector_blocks <- stringr::str_split(clean_Blocks, ",")
-        block_formula <- as.formula(paste0("~", clean_Blocks))
-      }
-
-
-      n0 <- options[["numberOfCubes"]]
-      generators <- vector()
-      if (options[["numberOfGenerators"]] > 0) {
-        for (i in seq_along(options[["generators"]])) {
-          if (!(options[["generators"]][[i]][["generatorName"]] == "" ||
-                options[["generators"]][[i]][["generatorFormula"]] == "")){
-            generators <- c(generators, paste0(options[["generators"]][[i]][["generatorName"]],
-                                               "~", options[["generators"]][[i]][["generatorFormula"]]))
-          }
-        }
-      }
-
-      coding_list <- list()
-      for (i in seq_along(options[["factors"]])) {
-
-        if (!(options[["factors"]][[i]][["factorName"]] == "" |
-              options[["factors"]][[i]][["centre"]] == ""     |
-              options[["factors"]][[i]][["distance"]] == ""))  {
-
-          coding_list <- c(coding_list, as.formula(paste0("x", i, "~(",options[["factors"]][[i]][["factorName"]],
-                                                          "-",options[["factors"]][[i]][["centre"]], ")/",
-                                                          options[["factors"]][[i]][["distance"]])))
-        }
-      }
-
-
-      if(length(coding_list) == 0 & length(generators) == 0 & length(block_formula) == 0){
-        ccd <- rsm::ccd(basis = formula, n0 = n0,
-                        inscribed = inscribed, randomize = randomize,
-                        oneblock = oneblock)
-
-      }else if (length(coding_list) == 0 & length(generators) == 0){
-        ccd <- rsm::ccd(basis = formula, n0 = n0, blocks = block_formula,
-                        inscribed = inscribed, randomize = randomize,
-                        oneblock = oneblock)
-
-      }else if(length(coding_list) == 0 & length(block_formula) == 0){
-        ccd <- rsm::ccd(basis = formula, n0 = n0, generators = generators,
-                        inscribed = inscribed, randomize = randomize,
-                        oneblock = oneblock)
-
-      }else if(length(generators) == 0 & length(block_formula) == 0){
-        ccd <- rsm::ccd(basis = formula, n0 = n0, coding = coding_list,
-                        inscribed = inscribed, randomize = randomize,
-                        oneblock = oneblock)
-
-      }else if(length(coding_list) == 0) {
-        ccd <- rsm::ccd(basis = formula, n0 = n0, generators = generators,
-                        blocks = block_formula, inscribed = inscribed, randomize = randomize,
-                        oneblock = oneblock)
-
-      }else if(length(generators) == 0) {
-        ccd <- rsm::ccd(basis = formula, n0 = n0, randomize = randomize,
-                        blocks = block_formula, coding = coding_list,
-                        inscribed = inscribed,
-                        oneblock = oneblock)
-
-      }else if(length(block_formula) == 0){
-        ccd <- rsm::ccd(basis = formula, n0 = n0, randomize = randomize,
-                        generators = generators, coding = coding_list,
-                        inscribed = inscribed,
-                        oneblock = oneblock)
-
-      }else{
-        ccd <- rsm::ccd(basis = formula, n0 = n0, randomize = randomize,
-                        blocks = block_formula, generators = generators,
-                        coding = coding_list, inscribed = inscribed,
-                        oneblock = oneblock)
-      }
+      ccd <- .designGenerate(options)
 
       if(options[["coded_out"]]){
         ccd_true <- rsm::val2code(ccd, codings = rsm::codings(ccd))
@@ -215,18 +146,158 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
         ccd_true <- rsm::code2val(ccd, codings = rsm::codings(ccd))
       }
       ccd_true <- lapply(ccd_true, round , 3)
-      ccd_table$setData(ccd_true)
+      ccd.table$setData(ccd_true)
 
     }
 
   }else {
-    ccd_table <- jaspResults[["ccd"]]
+    ccd.table <- jaspResults[["ccd"]]
   }
-
 
 
 }
 
+.starDesign <- function(jaspResults, options) {
+  if (is.null(jaspResults[["star"]])) {
+    star.table <- createJaspTable(title = gettext("Central Composite Design with Star Points"))
+    jaspResults[["star"]] <- star.table
+
+    star.table$dependOn(options = c("randomize", "numberOfStars","alpha",
+                                   "numberOfCubes","numberOfGenerators","generators",
+                                   "factors","numberOfFactors", "buildDesignInv"))
+
+    star.table$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
+    star.table$addColumnInfo(name = "std.order", title = gettext("Standard Order"), type = "integer")
+
+
+    for (i in 1:(options[["numberOfFactors"]])) {
+      star.table$addColumnInfo(name = paste0("x",i), title = gettext(paste0("x",i)),
+                              type = "number")
+    }
+
+
+    generatorError <- options[["numberOfGenerators"]] > 0
+
+    if(generatorError) {
+      ready <- 0
+      text  <- gettext("The analysis will not run when the 'Number of Generators' > 0")
+      star.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+
+    } else{
+      ready <- 1
+    }
+
+    if (ready) {
+      alpha <- tolower(options[["alpha"]])
+      ccd   <- .designGenerate(options)
+
+      n0    <- options[["numberOfStars"]]
+      randomize <- options[["randomize"]]
+
+      star.ccd <- rsm::star(basis = ccd, n0 = n0, alpha = alpha)
+      star.ccd <- lapply(star.ccd, round, 3)
+      star.table$setData(star.ccd)
+    }
+
+  }else {
+    star.table <- jaspResults[["star"]]
+  }
+}
+
+
+.designGenerate <- function(options) {
+  if (options[["noModel"]])
+    formula <- as.integer(options[["numberOfFactors"]])
+  else {
+    clean_designModel <- stringr::str_replace_all(options[["designModel"]], c(",", " "), "")
+    formula <- as.formula(paste0("~",  clean_designModel))
+  }
+
+  randomize <- options[["randomize"]]
+  inscribed <- options[["inscribed"]]
+  oneblock  <- options[["oneBlock"]]
+
+
+  block_formula <- vector()
+  if (options[["block"]] && length(options[["designBlock"]]) > 0){
+    clean_Blocks  <- stringr::str_replace_all(options[["designBlock"]], " ", "")
+    vector_blocks <- stringr::str_split(clean_Blocks, ",")
+    block_formula <- as.formula(paste0("~", clean_Blocks))
+  }
+
+
+  n0 <- options[["numberOfCubes"]]
+  generators <- vector()
+  if (options[["numberOfGenerators"]] > 0) {
+    for (i in seq_along(options[["generators"]])) {
+      if (!(options[["generators"]][[i]][["generatorName"]] == "" ||
+            options[["generators"]][[i]][["generatorFormula"]] == "")){
+        generators <- c(generators, as.formula(paste0(options[["generators"]][[i]][["generatorName"]],
+                                                      "~", options[["generators"]][[i]][["generatorFormula"]])))
+      }
+    }
+  }
+
+  coding_list <- list()
+  for (i in seq_along(options[["factors"]])) {
+
+    if (!(options[["factors"]][[i]][["factorName"]] == "" |
+          options[["factors"]][[i]][["centre"]] == ""     |
+          options[["factors"]][[i]][["distance"]] == ""))  {
+
+      coding_list <- c(coding_list, as.formula(paste0("x", i, "~(",options[["factors"]][[i]][["factorName"]],
+                                                      "-",options[["factors"]][[i]][["centre"]], ")/",
+                                                      options[["factors"]][[i]][["distance"]])))
+    }
+  }
+
+
+  if(length(coding_list) == 0 & length(generators) == 0 & length(block_formula) == 0){
+    ccd <- rsm::cube(basis = formula, n0 = n0,
+                     inscribed = inscribed, randomize = randomize)
+
+
+  }else if (length(coding_list) == 0 & length(generators) == 0){
+    ccd <- rsm::cube(basis = formula, n0 = n0, blockgen = block_formula,
+                     inscribed = inscribed, randomize = randomize)
+
+
+  }else if(length(coding_list) == 0 & length(block_formula) == 0){
+    ccd <- rsm::cube(basis = formula, n0 = n0, generators = generators,
+                     inscribed = inscribed, randomize = randomize,
+                     oneblock = oneblock)
+
+
+  }else if(length(generators) == 0 & length(block_formula) == 0){
+    ccd <- rsm::cube(basis = formula, n0 = n0, coding = coding_list,
+                     inscribed = inscribed, randomize = randomize)
+    # print("4")
+
+  }else if(length(coding_list) == 0) {
+    ccd <- rsm::cube(basis = formula, n0 = n0, generators = generators,
+                     blockgen = block_formula, inscribed = inscribed, randomize = randomize)
+
+
+  }else if(length(generators) == 0) {
+    ccd <- rsm::cube(basis = formula, n0 = n0, randomize = randomize,
+                     blockgen = block_formula, coding = coding_list,
+                     inscribed = inscribed)
+
+
+  }else if(length(block_formula) == 0){
+    ccd <- rsm::cube(basis = formula, n0 = n0, randomize = randomize,
+                     generators = generators, coding = coding_list,
+                     inscribed = inscribed)
+
+
+  }else{
+    ccd <- rsm::cube(basis = formula, n0 = n0, randomize = randomize,
+                     blockgen = block_formula, generators = generators,
+                     coding = coding_list, inscribed = inscribed)
+
+  }
+
+}
 
 .dataErrorCheck <- function(data, options) {
   .hasErrors(dataset = data,

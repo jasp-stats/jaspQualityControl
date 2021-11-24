@@ -154,9 +154,10 @@ Form
 				id:									numberOfCubes
 				name:								"numberOfCubes"
 				label:								qsTr("Number of Cube Points")
-				defaultValue:						4
+				defaultValue:						0
 				min:								0
 				max:								256
+				visible:							cube.checked
 			
 			
 			}
@@ -207,7 +208,7 @@ Form
 				id:									oneBlock
 				name:								"oneBlock"
 				label:								qsTr("Force One Block")
-				visible:							cube.checked
+				visible:							false
 			}
 			
 			CheckBox 
@@ -231,62 +232,8 @@ Form
 				id:									coded_out
 				name:								"coded_out"
 				label:								qsTr("Coded Output")
-				visible:							cube.checked
 			}
 			
-			CheckBox 
-			{
-				id:									replication
-				name:								"replication"
-				label:								qsTr("Replicate Points")
-				columns: 							2
-				visible:							star.checked
-				
-				IntegerField
-				{
-					id:									withinCube
-					name:								"withinCube"
-					label:								qsTr("Cube Replication within Block")
-					defaultValue:						0
-					min:								0
-					max:								256
-					visible: 							star.checked && replication.checked
-				}
-				
-				IntegerField
-				{
-					id:									withinStar
-					name:								"withinStar"
-					label:								qsTr("Star Replication within Block")
-					defaultValue:						0
-					min:								0
-					max:								256
-					visible: 							star.checked && replication.checked
-				}
-				
-				IntegerField
-				{
-					id:									betweenCube
-					name:								"betweenCube"
-					label:								qsTr("Cube Replication between Block")
-					defaultValue:						0
-					min:								0
-					max:								256
-					visible: 							star.checked && replication.checked
-				}
-				
-				IntegerField
-				{
-					id:									betweenStar
-					name:								"betweenStar"
-					label:								qsTr("Cube Replication between Block")
-					defaultValue:						0
-					min:								0
-					max:								256
-					visible: 							star.checked && replication.checked
-				}
-				
-			}
 			
 			DropDown
 			{
