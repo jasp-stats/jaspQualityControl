@@ -70,7 +70,7 @@ Form
 			name:								"measurements"
 			title:								qsTr("Result")
 			visible:							aaadataFormat.currentValue == "AAAwideFormat"
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 
 		AssignedVariablesList
@@ -80,7 +80,7 @@ Form
 			title:								qsTr("Result")
 			singleVariable:						true
 			visible:							aaadataFormat.currentValue == "AAAlongFormat"
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 
 		AssignedVariablesList
@@ -88,7 +88,7 @@ Form
 			name:								"standard"
 			title:								qsTr("Standard")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 	}
 
@@ -105,6 +105,7 @@ Form
 				name: 							"PositiveRef"
 				id:                 positiveRef
 				label: 							qsTr("Positive refernce:")
+				enabled:            !kendallTau.checked
 			}
 
 			CheckBox
@@ -121,8 +122,9 @@ Form
 				name: 							"AAAfleissKappa"
 				id:                 fleisskappa
 				label: 							qsTr("Fleiss' kappa (multirater kappa)")
-				enabled:            positiveRef.value != ""
 				checked:            !positiveRef.value == ""
+				enabled:            !kendallTau.checked
+
 			}
 		}
 	}
@@ -134,6 +136,7 @@ Form
 		CheckBox
 		{
 			name: 								"AAAkendallTau"
+			id:                   kendallTau
 			label: 								qsTr("Kendall's tau")
 		}
 	}

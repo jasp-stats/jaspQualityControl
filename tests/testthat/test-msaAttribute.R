@@ -15,7 +15,7 @@ results <- runAnalysis("msaAttribute", "AAALong.csv", options)
 test_that("All Appraisers vs Standard table results match", {
   table <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_AllVsStandard"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(21.267, 73.414, 15, 7, 46.6666666666667))
+                                 list(21.267, 73.414, 15, 7, 46.67))
 })
 
 test_that("Between Appraisers table results match", {
@@ -92,7 +92,7 @@ results <- runAnalysis("msaAttribute", "AAARow.csv", options)
 test_that("All Appraisers vs Standard table results match", {
   table <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_AllVsStandard"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(21.267, 73.414, 15, 7, 46.6666666666667))
+                                 list(21.267, 73.414, 15, 7, 46.67))
 })
 
 test_that("Between Appraisers table results match", {
@@ -108,13 +108,13 @@ test_that("Each Appraiser vs Standard table results match", {
                                       73.33, "MH", 32.287, 83.664, 15, 9, 60))
 })
 
-test_that("Each Appraiser vs Standard plot matches2", {
+test_that("Each Appraiser vs Standard plot matches", {
   plotName <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_PlotVs"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "each-appraiser-vs-standard2")
 })
 
-test_that("Within Appraisers plot matches2", {
+test_that("Within Appraisers plot matches", {
   plotName <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_PlotWithin"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "within-appraisers2")
@@ -164,7 +164,8 @@ options$operators <- "Operator"
 options$parts <- "Sample"
 options$measurementsLong <- c("Rating")
 options$standard <- "Agreed"
-options$AAAfleissKappa <- TRUE
+options$AAAfleissKappa <- F
+options$AAAcohensKappa <- F
 options$PositiveRef <- ""
 options$AAAkendallTau <- TRUE
 results <- runAnalysis("msaAttribute", "msaTau.csv", options)
@@ -172,24 +173,24 @@ results <- runAnalysis("msaAttribute", "msaTau.csv", options)
 test_that("All Appraisers vs Standard table results match", {
   table <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_AllVsStandard"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(3.755, 30.722, 30, 4, 13.3333333333333))
+                                 list(25.461, 62.573, 30, 13, 43.33))
 })
 
 test_that("Between Appraisers table results match", {
   table <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_Between"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(25.461, 62.573, 30, 13, 43.3333333333333))
+                                 list(25.461, 62.573, 30, 13, 43.33))
 })
 
 test_that("Each Appraiser vs Standard table results match", {
   table <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_EachVsStandard"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("A", 5.642, 34.721, 30, 5, 16.67, "B", 14.735, 49.396, 30, 9,
-                                      30, "C", 7.714, 38.567, 30, 6, 20, "D", 12.279, 45.889, 30,
-                                      8, 26.67))
+                                 list("A", 50.604, 85.265, 30, 21, 70, "B", 50.604, 85.265, 30, 21,
+                                      70, "C", 47.188, 82.713, 30, 20, 66.67, "D", 47.188, 82.713,
+                                      30, 20, 66.67))
 })
 
-test_that("Each Appraiser vs Standard plot matches3", {
+test_that("Each Appraiser vs Standard plot matches", {
   plotName <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_PlotVs"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "each-appraiser-vs-standard3")
@@ -198,33 +199,11 @@ test_that("Each Appraiser vs Standard plot matches3", {
 test_that("Kendall's Tau table results match", {
   table <- results[["results"]][["KendallTau"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1, -0.0576178502151195, 0.544077276765283, 0.603570260407359,
-                                      0.784579319887982, "A", 0.544077276765283, -0.0320215763704757,
-                                      1, 0.485871445981783, 0.604587661572944, "B", 0.603570260407359,
-                                      0.0497740024706929, 0.485871445981783, 1, 0.474625719247113,
-                                      "C", 0.784579319887982, -0.150970271219279, 0.604587661572944,
-                                      0.474625719247113, 1, "D"))
-})
-
-test_that("Cohen's Kappa for Appraiser vs Standard table results match", {
-  table <- results[["results"]][["cohensKappa"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list("A", -0.085383502170767, "B", 0.0247678018575851, "C", -0.00278551532033424,
-                                      "D", -0.0248447204968944, "All", -0.0318721375829516))
-})
-
-test_that("Cohen's Kappa correlations summary table results match", {
-  table <- results[["results"]][["cohensKappaCor"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list("-", 0.6, 0.63, 0.86, "A", 0.6, "-", 0.61, 0.63, "B", 0.63, 0.61,
-                                      "-", 0.52, "C", 0.86, 0.63, 0.52, "-", "D"))
-})
-
-test_that("Fleiss' Kappa table results match", {
-  table <- results[["results"]][["fleissKappa"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list("A", "", -0.167315175097276, "NaN", "B", "", -0.0413223140495868,
-                                      "NaN", "C", "", -0.0580455547391623, "NaN", "D", "", -0.113924050632911,
-                                      "NaN", "All", 0.405850091407678, -0.0951517736297342))
+                                 list(1, 0.790897539450037, 0.544077276765283, 0.603570260407359, 0.784579319887982,
+                                      "A", 0.544077276765283, 0.818329173912156, 1, 0.485871445981783,
+                                      0.604587661572944, "B", 0.603570260407359, 0.573358877643966,
+                                      0.485871445981783, 1, 0.474625719247113, "C", 0.784579319887982,
+                                      0.763623484279901, 0.604587661572944, 0.474625719247113, 1,
+                                      "D"))
 })
 
