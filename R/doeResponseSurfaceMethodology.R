@@ -21,10 +21,27 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
+  if (options[["designType"]] == "cube" && options[["buildDesignInv"]])
+    .cubeDesign(jaspResults, options, dataset)
+  if (options[["designType"]] == "star" && options[["buildDesignInv"]])
+    .starDesign(jaspResults, options)
+
   if (op1 > 0 & op2 > 0) {
+
     rsm <- list()
+    #Placeholder table when the user inputs something. If an analysis gets picked, remove the table
+    if(!(any(options[["showDesign"]], options[["contour"]], options[["coef"]], options[["anova"]],
+             options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]]))) {
+      placeholder <- createJaspTable(title = gettext("Response Surface Methodology"))
+      jaspResults[["placeholder"]] <- placeholder
+    }else{
+      jaspResults[["placeholder"]] <- NULL
+    }
+
     for (i in 1:op2) {
       data <- .readDataSet(jaspResults, options, dataset, i)
+      #check for more than 5 unique
+      .dataErrorCheck(data, options)
       rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
 
       if (options[["showDesign"]])
@@ -63,12 +80,232 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 }
 
-.qualityCOntrolResponseReadData <- function(dataset, options) {
-  if(!is.null(dataset))
-    return(dataset)
-  else
-    return(.readDataSetToEnd(columns.as.numeric = options[["rsmVariables"]]))
+.cubeDesign <- function(jaspResults, options, dataset) {
+  if(is.null(jaspResults[["ccd"]])) {
+    ccd.table <- createJaspTable(title = gettext("Central Composite Design"))
+    jaspResults[["ccd"]] <- ccd.table
+    ccd.table$dependOn(options = c("noModel","designModel","randomize",
+                                   "inscribed","block","designBlock",
+                                   "numberOfCubes","numberOfGenerators","generators",
+                                   "factors","coded_out","numberOfFactors", "buildDesignInv"))
 
+
+
+    ccd.table$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
+    ccd.table$addColumnInfo(name = "std.order", title = gettext("Standard Order"), type = "integer")
+
+    if (options[["coded_out"]]) {
+      for (i in 1:(options[["numberOfFactors"]])) {
+        ccd.table$addColumnInfo(name = paste0("x",i), title = gettext(paste0("x",i)),
+                                type = "number")
+      }
+    } else {
+      for (i in 1:(options[["numberOfFactors"]])) {
+        ccd.table$addColumnInfo(name = options[["factors"]][[i]][["factorName"]], title = gettext(options[["factors"]][[i]][["factorName"]]),
+                                type = "number")
+      }
+    }
+
+
+    if(options[["numberOfGenerators"]] > 0){
+      for (i in 1:(options[["numberOfGenerators"]])) {
+        ccd.table$addColumnInfo(name = options[["generators"]][[i]][["generatorName"]], title = gettext(options[["generators"]][[i]][["generatorName"]]),
+                                type = "number")
+      }
+    }
+
+
+    model_error <- !(options[["noModel"]]) && options[["designModel"]] == ""
+    block_error <- options[["block"]] && options[["designBlock"]] == ""
+
+    if(model_error || block_error) {
+      ready <- 0
+
+      if(model_error) {
+        text <- gettext("The analysis will not run when the 'Specify Model for CCD' field is empty and the 'Use # of Variables instead of Model' is not ticked.")
+        ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+      }
+
+      if(block_error) {
+        text <- gettext("The analysis will not run when the 'Specify Blocks for CCD' field is empty and the Introduce Blocking is ticked.")
+        ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+      }
+
+    }else {
+
+      ready <- 1
+    }
+
+    if (ready) {
+
+      ccd <- .designGenerate(options)
+
+      if(options[["coded_out"]]){
+        ccd_true <- rsm::val2code(ccd, codings = rsm::codings(ccd))
+      }else {
+        ccd_true <- rsm::code2val(ccd, codings = rsm::codings(ccd))
+      }
+      ccd_true <- lapply(ccd_true, round , 3)
+      ccd.table$setData(ccd_true)
+
+    }
+
+  }else {
+    ccd.table <- jaspResults[["ccd"]]
+  }
+
+
+}
+
+.starDesign <- function(jaspResults, options) {
+  if (is.null(jaspResults[["star"]])) {
+    star.table <- createJaspTable(title = gettext("Central Composite Design with Star Points"))
+    jaspResults[["star"]] <- star.table
+
+    star.table$dependOn(options = c("randomize", "numberOfStars","alpha",
+                                   "numberOfCubes","numberOfGenerators","generators",
+                                   "factors","numberOfFactors", "buildDesignInv"))
+
+    star.table$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
+    star.table$addColumnInfo(name = "std.order", title = gettext("Standard Order"), type = "integer")
+
+
+    for (i in 1:(options[["numberOfFactors"]])) {
+      star.table$addColumnInfo(name = paste0("x",i), title = gettext(paste0("x",i)),
+                              type = "number")
+    }
+
+
+    generatorError <- options[["numberOfGenerators"]] > 0
+
+    if(generatorError) {
+      ready <- 0
+      text  <- gettext("The analysis will not run when the 'Number of Generators' > 0")
+      star.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+
+    } else{
+      ready <- 1
+    }
+
+    if (ready) {
+      alpha <- tolower(options[["alpha"]])
+      ccd   <- .designGenerate(options)
+
+      n0    <- options[["numberOfStars"]]
+      randomize <- options[["randomize"]]
+
+      star.ccd <- rsm::star(basis = ccd, n0 = n0, alpha = alpha)
+      star.ccd <- lapply(star.ccd, round, 3)
+      star.table$setData(star.ccd)
+    }
+
+  }else {
+    star.table <- jaspResults[["star"]]
+  }
+}
+
+
+.designGenerate <- function(options) {
+  if (options[["noModel"]])
+    formula <- as.integer(options[["numberOfFactors"]])
+  else {
+    clean_designModel <- stringr::str_replace_all(options[["designModel"]], c(",", " "), "")
+    formula <- as.formula(paste0("~",  clean_designModel))
+  }
+
+  randomize <- options[["randomize"]]
+  inscribed <- options[["inscribed"]]
+  oneblock  <- options[["oneBlock"]]
+
+
+  block_formula <- vector()
+  if (options[["block"]] && length(options[["designBlock"]]) > 0){
+    clean_Blocks  <- stringr::str_replace_all(options[["designBlock"]], " ", "")
+    vector_blocks <- stringr::str_split(clean_Blocks, ",")
+    block_formula <- as.formula(paste0("~", clean_Blocks))
+  }
+
+
+  n0 <- options[["numberOfCubes"]]
+  generators <- vector()
+  if (options[["numberOfGenerators"]] > 0) {
+    for (i in seq_along(options[["generators"]])) {
+      if (!(options[["generators"]][[i]][["generatorName"]] == "" ||
+            options[["generators"]][[i]][["generatorFormula"]] == "")){
+        generators <- c(generators, as.formula(paste0(options[["generators"]][[i]][["generatorName"]],
+                                                      "~", options[["generators"]][[i]][["generatorFormula"]])))
+      }
+    }
+  }
+
+  coding_list <- list()
+  for (i in seq_along(options[["factors"]])) {
+
+    if (!(options[["factors"]][[i]][["factorName"]] == "" |
+          options[["factors"]][[i]][["centre"]] == ""     |
+          options[["factors"]][[i]][["distance"]] == ""))  {
+
+      coding_list <- c(coding_list, as.formula(paste0("x", i, "~(",options[["factors"]][[i]][["factorName"]],
+                                                      "-",options[["factors"]][[i]][["centre"]], ")/",
+                                                      options[["factors"]][[i]][["distance"]])))
+    }
+  }
+
+
+  if(length(coding_list) == 0 & length(generators) == 0 & length(block_formula) == 0){
+    ccd <- rsm::cube(basis = formula, n0 = n0,
+                     inscribed = inscribed, randomize = randomize)
+
+
+  }else if (length(coding_list) == 0 & length(generators) == 0){
+    ccd <- rsm::cube(basis = formula, n0 = n0, blockgen = block_formula,
+                     inscribed = inscribed, randomize = randomize)
+
+
+  }else if(length(coding_list) == 0 & length(block_formula) == 0){
+    ccd <- rsm::cube(basis = formula, n0 = n0, generators = generators,
+                     inscribed = inscribed, randomize = randomize,
+                     oneblock = oneblock)
+
+
+  }else if(length(generators) == 0 & length(block_formula) == 0){
+    ccd <- rsm::cube(basis = formula, n0 = n0, coding = coding_list,
+                     inscribed = inscribed, randomize = randomize)
+    # print("4")
+
+  }else if(length(coding_list) == 0) {
+    ccd <- rsm::cube(basis = formula, n0 = n0, generators = generators,
+                     blockgen = block_formula, inscribed = inscribed, randomize = randomize)
+
+
+  }else if(length(generators) == 0) {
+    ccd <- rsm::cube(basis = formula, n0 = n0, randomize = randomize,
+                     blockgen = block_formula, coding = coding_list,
+                     inscribed = inscribed)
+
+
+  }else if(length(block_formula) == 0){
+    ccd <- rsm::cube(basis = formula, n0 = n0, randomize = randomize,
+                     generators = generators, coding = coding_list,
+                     inscribed = inscribed)
+
+
+  }else{
+    ccd <- rsm::cube(basis = formula, n0 = n0, randomize = randomize,
+                     blockgen = block_formula, generators = generators,
+                     coding = coding_list, inscribed = inscribed)
+
+  }
+
+}
+
+.dataErrorCheck <- function(data, options) {
+  .hasErrors(dataset = data,
+             custom = function() {
+               if(any(rapply(data[,seq_along(options[["rsmVariables"]])], function(x)length(unique(x)) > 5)))
+                 return(gettext("This analysis does not take predictor variables with more than 5 unique values."))
+             },
+             exitAnalysisIfErrors = T)
 }
 
 .qualityControlDesignMainRSM <- function(jaspResults,options,dataset,position) {
@@ -80,11 +317,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 }
 
-.qualityControlResponseError <- function(dataset, options) {
-  #Error check: Check for infinity, NA
-  .hasErrors(dataset, type = c('infinity', 'missingValues','observations'),
-             all.target = c(options[["rsmVariables"]],options[["rsmResponseVariables"]], observations.amount = c('<1')), exitAnalysisIfErrors = T)
-}
+
 
 .qualityControlDesignChoice <- function(jaspResults,options, dataset) {
 
@@ -161,35 +394,31 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     data <- .readDataSetToEnd(columns.as.numeric = c(matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2],
                                                      options[["rsmResponseVariables"]][[i]]))
   }
+
 }
 
 .responseSurfaceCalculate <- function(jaspResults,options, dataset, data) {
-  op1  <- length(options[["rsmVariables"]])
+
+
+  op1  <- length(options[["modelTerms"]])
+  length_rsmVariables <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
-
 
   name <- vector()
 
   mean.col <- colMeans(data)
 
-  opt1 <- colnames(data)[1:op1]
-  opt2 <- colnames(data)[(op1+1)]
-  if (options[["rsmBlocks"]] != "") {
-    opt3 <- colnames(data)[(op1+2)]
-  }else{
-    data[,(op1+2)] <- rep(1, times = nrow(data))
-  }
-
   optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
   data.list <- list()
 
 
-  for (i in 1:op1) {
-    data.list[[i]] <- as.formula(paste0("x",i , " ~ ", "(", opt1[i], "-",
-                                        mean(data[,i]), ")/",
-                                        abs(data[1,i] - mean(data[,i]))))
+  opt1 <- colnames(data)[1:length_rsmVariables]
+  opt2 <- colnames(data)[(length_rsmVariables+1)]
+  if (options[["rsmBlocks"]] != "") {
+    opt3 <- colnames(data)[(length_rsmVariables+2)]
   }
+
 
   var.code <- rsm::coded.data(data)
 
@@ -215,7 +444,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   fo <- fo[!is.na(fo)]
 
   start <- ifelse(length(fo) == 0, 0, 1) + ifelse(length(pq) == 0, 0 ,1)
-  formula_str <- rep("", times = start + len_mo - op1)
+  formula_str <- rep("", times = start + len_mo - length_rsmVariables)
   if (length (fo) > 0){
     fo <- paste(fo, collapse = ",")
     formula_str[1] <- paste0("FO(",fo,")")
@@ -226,9 +455,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
 
 
-  op1 <- length(options[["rsmVariables"]])
 
-  l_gen <- 1:op1
+
+  l_gen <- seq_along(options[["rsmVariables"]])
 
   for (i in seq_along(options[["modelTerms"]])) {
 
@@ -266,22 +495,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }
   }
 
+  if (options[["rsmBlocks"]] != "") {
+    if (length(unique(data[,(op1+2)])) > 1){
+      form <- paste(formula_str, collapse = "+")
 
-  if (length(unique(data[,(op1+2)])) > 1){
-    form <- paste(formula_str, collapse = "+")
+      form_2 <- paste0(opt2, "~", options[["rsmBlocks"]], "+", form)
 
-    form_2 <- paste0(opt2, "~", options[["rsmBlocks"]], "+", form)
-
-    form_3 <- as.formula(form_2)
-
-
-
+      form_3 <- as.formula(form_2)
+    }
   }else {
     form <- paste(formula_str, collapse = "+")
     form_2 <- paste0(opt2, "~", form)
     form_3 <- as.formula(form_2)
 
   }
+
 
   rsm <- rsm::rsm(form_3 , data = var.code)
 
@@ -602,6 +830,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   if (is.null(jaspResults[[paste0("TableContainer", i)]])) {
     TableContainer <- createJaspContainer()
     jaspResults[[paste0("TableContainer", i)]] <- TableContainer
+
+    TableContainer$dependOn(options = c("coef","modelTerms", "rsmBlocks",
+                                             "rsmResponseVariables",
+                                             "rsmVariables"))
   } else {
     TableContainer <- jaspResults[[paste0("TableContainer", i)]]
   }
@@ -610,74 +842,44 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     CoefTable <- createJaspTable(gettextf("RSM Coefficients for %s",
                                                options[["rsmResponseVariables"]][[i]]))
     jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
-  } else {
-    CoefTable  <- jaspResults[[paste0("TableContainer", i)]][["coef"]]
+    CoefTable$addColumnInfo(name = "names",title = gettext(" "))
+    CoefTable$addColumnInfo(name = "est",  title = gettext("Estimate"))
+    CoefTable$addColumnInfo(name = "std",  title = gettext("Standard Error"))
+    CoefTable$addColumnInfo(name = "tval", title = gettext("t"))
+    CoefTable$addColumnInfo(name = "pval", title = gettext("p"))
+
+    CoefTable$setData(list(names = rownames(rsm[[4]]),
+                                          est  = round(rsm[[4]][,1],3),
+                                          std  = round(rsm[[4]][,2],3),
+                                          tval = round(rsm[[4]][,3],3),
+                                          pval = ifelse(rsm[[4]][,4] > 0.001,round(rsm[[4]][,4],3), "< .001")))
+
   }
 
   if (is.null(jaspResults[[paste0("TableContainer", i)]][["RSQTable"]])){
     RSQTable  <- createJaspTable()
     jaspResults[[paste0("TableContainer", i)]][["RSQTable"]] <- RSQTable
-  }else {
-    RSQTable <- jaspResults[[paste0("TableContainer", i)]][["RSQTable"]]
+    RSQTable$addColumnInfo( name = "RSQ",   title = gettext("Multiple R-squared"))
+    RSQTable$addColumnInfo( name = "ARSQ",  title = gettext("Adjusted R-squared"))
+    RSQTable$addColumnInfo( name = "DF1",   title = gettext("DF1"))
+    RSQTable$addColumnInfo( name = "DF2",   title = gettext("DF2"))
+    RSQTable$addColumnInfo( name = "FStat", title = gettext("F"))
+    RSQTable$addColumnInfo( name = "pval_2",title = gettext("p"))
+
+    RSQTable$setData(list(RSQ    = round(rsm[[8]],3),
+                                              ARSQ   = round(rsm[[9]],3),
+                                              DF1    = rsm[[10]][[2]],
+                                              DF2    = rsm[[10]][[3]],
+                                              FStat  = round(rsm[[10]][[1]],3),
+                                              pval_2 = ifelse((1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]])) > 0.001,
+                                                              round(1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]]),3),
+                                                              "<.001")))
+
   }
-  TableContainer$dependOn(     options = c("coef","modelTerms", "rsmBlocks",
-                                      "rsmResponseVariables",
-                                      "rsmVariables"))
-
-
-  CoefTable$addColumnInfo(name = "names",title = gettext(" "))
-  CoefTable$addColumnInfo(name = "est",  title = gettext("Estimate"))
-  CoefTable$addColumnInfo(name = "std",  title = gettext("Standard Error"))
-  CoefTable$addColumnInfo(name = "tval", title = gettext("t"))
-  CoefTable$addColumnInfo(name = "pval", title = gettext("p"))
-
-  RSQTable$addColumnInfo( name = "RSQ",   title = gettext("Multiple R-squared"))
-  RSQTable$addColumnInfo( name = "ARSQ",  title = gettext("Adjusted R-squared"))
-  RSQTable$addColumnInfo( name = "DF1",   title = gettext("DF1"))
-  RSQTable$addColumnInfo( name = "DF2",   title = gettext("DF2"))
-  RSQTable$addColumnInfo( name = "FStat", title = gettext("F"))
-  RSQTable$addColumnInfo( name = "pval_2",title = gettext("p"))
-
-  # jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
-  # jaspResults[[paste0("TableContainer", i)]][["RSQTable"]] <- RSQTable
-
-
-
-
-  .responseSurfaceTableFill(TableContainer, options,rsm)
-
-
-
 
   return()
 }
 
-
-.responseSurfaceTableFill <- function(TableContainer, options, rsm) {
-
-
-  TableContainer[["coef"]]$setData(list(names = rownames(rsm[[4]]),
-                                        est  = round(rsm[[4]][,1],3),
-                                        std  = round(rsm[[4]][,2],3),
-                                        tval = round(rsm[[4]][,3],3),
-                                        pval = ifelse(rsm[[4]][,4] > 0.001,round(rsm[[4]][,4],3), "< .001")))
-
-  TableContainer[["RSQTable"]]$setData(list(RSQ    = round(rsm[[8]],3),
-                                            ARSQ   = round(rsm[[9]],3),
-                                            DF1    = rsm[[10]][[2]],
-                                            DF2    = rsm[[10]][[3]],
-                                            FStat  = round(rsm[[10]][[1]],3),
-                                            pval_2 = ifelse((1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]])) > 0.001,
-                                                            round(1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]]),3),
-                                                            "<.001")))
-
-
-
-
-
-
-  return()
-}
 
 .responseSurfaceTableAnovaCall <- function(jaspResults, options, rsm, i,  position, dataset) {
 
@@ -697,7 +899,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
     jaspResults[[paste0("anova", i)]] <- AnovaTable
   }else{
-    AnovaTable <- jaspResults[[paste0("anova", i)]]
+    return()
   }
 
 
@@ -754,21 +956,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     XTable <- createJaspTable(title = gettextf("Stationary Points of Response Surface (Coded)"))
     eigen[["XTable"]] <- XTable
   }else {
-    XTable <- eigen[["XTable"]]
+    return()
   }
 
   if (is.null(eigen[["EigenValue"]])){
     EigenValue <- createJaspTable(title = gettextf("Eigenvalues"))
     eigen[["EigenValue"]] <- EigenValue
   }else {
-    EigenValue <- eigen[["EigenValue"]]
+    return()
   }
 
   if (is.null(eigen[["EigenVectors"]])){
     EigenVector <- createJaspTable(title = gettextf("Eigenvectors"))
     eigen[["EigenVectors"]] <- EigenVector
   }else{
-    EigenVector <- eigen[["EigenVectors"]]
+    return()
   }
 
   eigen$dependOn(      options = c("eigen","modelTerms", "rsmBlocks",
@@ -887,7 +1089,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     jaspResults[["desirability_container"]] <- desirability_container
     desirability_container$dependOn(options = c("rsmMin", "rsmMax", "rsmVariables", "rsmTar"))
   } else {
-     desirability_container <- jaspResults[["desirability_container"]]
+     return()
   }
 
 
@@ -895,7 +1097,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     predictor_value <- createJaspTable(title = "Predictor Values")
     desirability_container[["predictor_value"]] <- predictor_value
   }else {
-    predictor_value <- desirability_container[["predictor_value"]]
+    return()
   }
 
   if (is.null(desirability_container[["value"]])) {
@@ -903,7 +1105,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     value$addColumnInfo(name = "Value", title = "Value")
     desirability_container[["value"]] <- value
   }else {
-    value <- desirability_container[["value"]]
+    return()
   }
 
   for (i in 1:op1) {
