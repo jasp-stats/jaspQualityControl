@@ -27,8 +27,8 @@ Form
 	Group
 	{
 		columns: 								1
-		
-		CheckBox 
+
+		CheckBox
 		{
 			name: 								"Cumulativechart"
 			label: 								qsTr("Cumulative sum chart")
@@ -50,33 +50,47 @@ Form
 			}
 		}
 
-		CheckBox 
-		{	
+		CheckBox
+		{
 			name: 								"Exponentialchart"
 			label: 								qsTr("Exponentially weighted moving average chart")
 
 			DoubleField
 			{
-				name:							"sigma"
-				label:							qsTr("Number of standard deviations")
-				defaultValue:					3
-				enabled:						variationReference.currentValue != "studyVariation"
+				name:							"EWMAlambda"
+				label:							qsTr("Lambda")
+				defaultValue:					0.3
 			}
+
 			DoubleField
 			{
-				name:							"lambda"
-				label:							qsTr("Lambda")
-				defaultValue:					0.2
-				enabled:						variationReference.currentValue != "studyVariation"
+				name:							"EWMAcenter"
+				label:							qsTr("Center")
+			}
+
+			DoubleField
+			{
+				name:							"EWMAStd"
+				label:							qsTr("Within-group standard deviation")
+				defaultValue:					3
+				fieldWidth: 					50
+			}
+
+			DoubleField
+			{
+				name:							"EWMANsigma"
+				label:							qsTr("Sigmas for computing control limits")
+				defaultValue:					3
 			}
 		}
-		CheckBox 
+
+		CheckBox
 		{
 			name: 								"gchart"
 			label: 								qsTr("g chart")
 		}
 
-		CheckBox 
+		CheckBox
 		{
 			name: 								"tchart"
 			label: 								qsTr("t chart")

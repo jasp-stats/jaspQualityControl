@@ -66,7 +66,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Attributes Charts")
+		title:			qsTr("Control Charts for Attributes")
 		func:			"attributesCharts"
 	}
 	Analysis

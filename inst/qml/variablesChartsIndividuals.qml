@@ -22,6 +22,14 @@ Form
 			title:								qsTr("Variables")
 			allowedColumns:						["scale"]
 		}
+
+	  AssignedVariablesList
+		{
+			name:								"subgroups"
+			title:								qsTr("Subgroups")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
 	}
 
 	Group
@@ -53,7 +61,7 @@ Form
 			{
 				name:							"nLag"
 				label:							qsTr("Number of lags")
-				defaultValue:					24
+				defaultValue:					25
 			}
 
 			DoubleField
@@ -62,6 +70,78 @@ Form
 				label:							qsTr("Confidence interval size")
 				defaultValue:					0.95
 			}
+		}
+	}
+
+	Section
+	{
+		title: 									qsTr("Variable Charts for Individuals Report")
+
+		TextField
+		{
+			id:									ccTitle
+			label: 								qsTr("Title")
+			name: 								"ccTitle"
+			placeholderText:			qsTr("Measurement")
+			fieldWidth:							100
+		}
+
+		TextField
+		{
+			id:									ccName
+			label: 								qsTr("Name")
+			name: 								"ccName"
+			placeholderText:					qsTr("Name")
+			fieldWidth:							100
+		}
+
+		TextField
+		{
+			id:									ccDate
+			label: 								qsTr("Date")
+			name: 								"ccDate"
+			placeholderText:					qsTr("Date")
+			fieldWidth:							100
+		}
+
+		TextField
+		{
+			id:									ccReportedBy
+			label: 								qsTr("Reported by")
+			name: 								"ccReportedBy"
+			placeholderText:					qsTr("Name")
+			fieldWidth:							100
+		}
+
+		TextField
+		{
+			id:									ccMisc
+			label: 								qsTr("Misc")
+			name: 								"ccMisc"
+			placeholderText:					qsTr("Miscellaneous")
+			fieldWidth:							100
+		}
+
+		TextField
+		{
+			label: 								qsTr("Sub-title:")
+			name: 								"ccSubTitle"
+			placeholderText:					qsTr("Sub-title")
+			fieldWidth:							100
+		}
+
+		TextField
+		{
+			label: 								qsTr("Chart name:")
+			name: 								"ccChartName"
+			placeholderText:					qsTr("Name of the chart")
+			fieldWidth:							100
+		}
+
+		CheckBox
+		{
+			name: 								"CCReport"
+			label: 								qsTr("Show Report")
 		}
 	}
 }

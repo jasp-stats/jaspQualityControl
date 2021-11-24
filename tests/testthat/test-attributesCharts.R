@@ -5,16 +5,18 @@ context("[Quality Control] Attributes Charts")
 options <- analysisOptions("attributesCharts")
 options$D <- "D"
 options$total <- "Size"
+options$Attributes <- "Defectives"
+options$TypeDefectives <- "npchart"
 set.seed(1)
-results <- runAnalysis("attributesCharts", "P_dat.csv", options)
+results <- runAnalysis("attributesCharts", "SPC_NP.csv", options)
 
-test_that("NP Control Chart plot matches", {
+test_that("np Chart plot matches", {
   plotName <- results[["results"]][["NPchartPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "np-control-chart")
+  jaspTools::expect_equal_plots(testPlot, "np-chart")
 })
 
-test_that("Test result for NP chart table results match", {
+test_that("Test results for np chart table results match", {
   table <- results[["results"]][["NelsonTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
@@ -23,49 +25,37 @@ test_that("Test result for NP chart table results match", {
 
 # P
 options$TypeDefectives <- "pchart"
-results <- runAnalysis("attributesCharts", "P_dat.csv", options)
+results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
-test_that("Test result for P chart table results match", {
-  table <- results[["results"]][["NelsonTable"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-                                 ))
-})
-
-test_that("P Control Chart plot matches", {
+test_that("p Chart plot matches", {
   plotName <- results[["results"]][["PchartPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "p-control-chart")
+  jaspTools::expect_equal_plots(testPlot, "p-chart")
 })
 
 # Laney's P
 options$TypeDefectives <- "Laneyprimechart"
-results <- runAnalysis("attributesCharts", "P_dat.csv", options)
+results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
-test_that("Laney P' Control Chart plot matches", {
-  options <- analysisOptions("attributesCharts")
-  options$D <- "D"
-  options$total <- "Size"
-  options$TypeDefectives <- "Laneyprimechart"
-  set.seed(1)
-  results <- runAnalysis("attributesCharts", "P_dat.csv", options)
+test_that("Laney p' Chart plot matches", {
   plotName <- results[["results"]][["LaneyPPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "laney-p-control-chart")
+  jaspTools::expect_equal_plots(testPlot, "laney-p-chart")
 })
 
 ## Defects
 # C
 options$Attributes <- "Defects"
-results <- runAnalysis("attributesCharts", "P_dat.csv", options)
+options$TypeDefects <- "cchart"
+results <- runAnalysis("attributesCharts", "SPC_NP.csv", options)
 
-test_that("C Control Chart plot matches", {
+test_that("c Chart plot matches", {
   plotName <- results[["results"]][["CchartPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "c-control-chart")
+  jaspTools::expect_equal_plots(testPlot, "c-chart")
 })
 
-test_that("Test result for C chart table results match", {
+test_that("Test results for c chart table results match", {
   table <- results[["results"]][["NelsonTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1, 3, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 18, 19, 20))
@@ -73,36 +63,30 @@ test_that("Test result for C chart table results match", {
 
 # U
 options$TypeDefects <- "uchart"
-results <- runAnalysis("attributesCharts", "P_dat.csv", options)
+results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
-test_that("Test result for U chart table results match", {
-  table <- results[["results"]][["NelsonTable"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(1, 3, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 18, 19, 20))
-})
-
-test_that("U Control Chart plot matches", {
+test_that("u Chart plot matches", {
   plotName <- results[["results"]][["UchartPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "u-control-chart")
+  jaspTools::expect_equal_plots(testPlot, "u-chart")
 })
 
 # Laneys U
 options$TypeDefects <- "Laneychart"
-results <- runAnalysis("attributesCharts", "P_dat.csv", options)
+results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
-test_that("Laney U' Control Chart plot matches", {
+test_that("Laney u' Chart plot matches", {
   plotName <- results[["results"]][["LaneyUPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "laney-u-control-chart")
+  jaspTools::expect_equal_plots(testPlot, "laney-u-chart")
 })
 
 ## I MR
 options$Attributes <- "ImR"
-results <- runAnalysis("attributesCharts", "P_dat.csv", options)
+results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
-test_that("Individual and Moving Range Control Charts plot matches", {
+test_that("Individuals and Moving Range Chart plot matches", {
   plotName <- results[["results"]][["IPlotA"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "individual-and-moving-range-control-charts")
+  jaspTools::expect_equal_plots(testPlot, "individuals-and-moving-range-chart")
 })

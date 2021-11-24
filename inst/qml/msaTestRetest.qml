@@ -93,11 +93,11 @@ Form
 		{
 			title: 								qsTr("Analysis Options")
 
-			CheckBox 
+			CheckBox
 			{
 				name:							"EnableRangePSD"
 				childrenOnSameRow:				true
-				
+
 				DoubleField
 				{
 					name:						"rangePSD"
@@ -109,7 +109,7 @@ Form
 			{
 				name:							"EnableRangeTolerance"
 				childrenOnSameRow: 				true
-				
+
 				DoubleField
 				{
 					name:						"rangeTolerance"
@@ -151,7 +151,7 @@ Form
 				CheckBox
 				{
 					name:						"jitter"
-					label:						qsTr("Add jitter")
+					label:						qsTr("Jitter")
 				}
 			}
 

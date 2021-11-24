@@ -26,13 +26,13 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
 
-  if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
+  if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat" && !options$Type3)
     ready <- (length(measurements) != 0 && operators != "" && parts != "")
-  }else if (options$Type3){
+  else if (options$Type3)
     ready <- (measurements != "" && parts != "")
-  } else {
+  else
     ready <- (measurements != "" && operators != "" && parts != "")
-  }
+
 
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
@@ -68,7 +68,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
-  if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat" && ready){
+  if (ready && nrow(dataset[measurements]) == 0){
+    jaspResults[["plot"]] <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+    jaspResults[["plot"]]$setError(gettextf("No valid measurements in %s.", measurements))
+    jaspResults[["plot"]]$position <- 1
+    jaspResults[["plot"]]$dependOn(c("measurements", "measurementsLong"))
+    return()
+  }
+
+  if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat" && ready) {
     dataset <- dataset[order(dataset[operators]),]
     nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
     index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
@@ -258,6 +266,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       fPart <- msPart / msInteraction
       fOperator <- msOperator / msInteraction
       fInteraction <- msInteraction / msRepWithInteraction
+    }
+
+    if (options$TypeForFstat == 'FixedEffects'){
+      fPart <- msPart / msRepWithInteraction
+      fOperator <- msOperator / msRepWithInteraction
     }
 
     if(singleOperator){
@@ -516,7 +529,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     anovaTables[['plot']] <- plot
 
 
-    if (length(measurements) >= 1 && operators != "" && parts != "") {
+    if (length(measurements) >= 1 && operators != "" && parts != "" && ready) {
       RRtable1$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
       RRtable2$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
     }
@@ -584,16 +597,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       if (i == 1){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = FALSE,
-                             xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, NoWarningSignals = TRUE)$p
+                             xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }else if(i == nOperators){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
-                             smallLabels = smallLabels, NoWarningSignals = TRUE)$p
+                             smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }else{
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
                              xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
-                             smallLabels = smallLabels, NoWarningSignals = TRUE)$p
+                             smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }
     }
     plotMat[[i]] <- p1
@@ -605,7 +618,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .gaugeByPartGraph <- function(dataset, measurements, parts, operators, options) {
-  plot <- createJaspPlot(title = gettext("Measurements by Part"))
+  plot <- createJaspPlot(title = gettext("Measurements by Part"), width = 700, height = 300)
   plot$dependOn('gaugeByPart')
   p <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = options$gaugeByPartAll)
   plot$plotObject <- p
@@ -830,15 +843,23 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   matrixPlot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
-  plotMat <- matrix(list(), 4, 2)
-  plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- .ggplotWithText(text2)
-  plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE)
-  plotMat[[2, 2]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE)
-  plotMat[[3, 1]] <- .xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options, smallLabels = TRUE)
-  plotMat[[3, 2]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options)
-  plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Average", dataset, measurements, parts, operators, options, smallLabels = TRUE)
-  plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options)
+  if (options$Type3){
+    plotMat <- matrix(list(), 2, 2)
+    plotMat[[1, 1]] <- .ggplotWithText(text1)
+    plotMat[[1, 2]] <- .ggplotWithText(text2)
+    plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE)
+    plotMat[[2, 2]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE)
+  } else {
+    plotMat <- matrix(list(), 4, 2)
+    plotMat[[1, 1]] <- .ggplotWithText(text1)
+    plotMat[[1, 2]] <- .ggplotWithText(text2)
+    plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE)
+    plotMat[[2, 2]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE)
+    plotMat[[3, 1]] <- .xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options, smallLabels = TRUE)
+    plotMat[[3, 2]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options)
+    plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Average", dataset, measurements, parts, operators, options, smallLabels = TRUE)
+    plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options)
+  }
 
   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Measurement systems analysis for %s", title), ""))
   matrixPlot$plotObject <- p
@@ -1007,14 +1028,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                      axis.text.x = ggplot2::element_blank(),
                      axis.ticks.x = ggplot2::element_blank(),
                      axis.title.x = ggplot2::element_blank()) +
-      ggplot2::coord_flip()
+      ggplot2::coord_flip() +
+      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "")
 
     p2 <- p2 +
       ggplot2::theme(legend.position="none",
                      axis.text.x = ggplot2::element_blank(),
                      axis.ticks.x = ggplot2::element_blank(),
                      axis.title.x = ggplot2::element_blank()) +
-      ggplot2::coord_flip()
+      ggplot2::coord_flip() +
+      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "")
 
     Plot <- createJaspPlot(width = 250, height = 600)
   } else{

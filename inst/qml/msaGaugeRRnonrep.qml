@@ -18,11 +18,11 @@ import QtQuick.Layouts 							1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
-Form 
+Form
 {
 	columns:									1
-	
-	
+
+
 	DropDown
 	{
 		id: 									gaugeRRNonRepDataFormat
@@ -51,13 +51,13 @@ Form
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
-		
+
 		AssignedVariablesList
 		{
 			name:								"parts"
 			title:								qsTr("Parts")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 
 		AssignedVariablesList
@@ -68,7 +68,7 @@ Form
 			allowedColumns:						["scale"]
 			visible:							gaugeRRNonRepDataFormat.currentValue == "gaugeRRNonRepLongFormat"
 		}
-		
+
 		AssignedVariablesList
 		{
 			name:								"measurementsWide"
@@ -78,16 +78,16 @@ Form
 			visible:							gaugeRRNonRepDataFormat.currentValue == "gaugeRRNonRepWideFormat"
 		}
 	}
-	
+
 	Section
 	{
 		title: 									qsTr("Gauge r&R Options")
-		
+
 		Group
 		{
 			title: 								qsTr("Analysis Options")
 
-			DropDown 
+			DropDown
 			{
 				id: 							variationReference
 				name: 							"NRstandardDeviationReference"
@@ -140,7 +140,7 @@ Form
 					]
 				}
 
-				DoubleField 
+				DoubleField
 				{
 					name: 						"NRstudyVarMultiplier"
 					label: 						qsTr("Study Var. multiplier value")
@@ -195,11 +195,11 @@ Form
 			}
 		}
 	}
-	
+
 	Section
 	{
 		title: 									qsTr("Gauge r&R Report")
-		
+
 		TextField
 		{
 			id:									anovaGaugeNestedTitle
@@ -208,7 +208,7 @@ Form
 			placeholderText:					qsTr("Measurement")
 			fieldWidth:							100
 		}
-		
+
 		TextField
 		{
 			id:									anovaGaugeNestedName
@@ -217,7 +217,7 @@ Form
 			placeholderText:					qsTr("Name")
 			fieldWidth:							100
 		}
-		
+
 		TextField
 		{
 			id:									anovaGaugeNestedDate
@@ -226,7 +226,7 @@ Form
 			placeholderText:					qsTr("Date")
 			fieldWidth:							100
 		}
-		
+
 		TextField
 		{
 			id:									anovaGaugeNestedReportedBy
@@ -235,7 +235,7 @@ Form
 			placeholderText:					qsTr("Name")
 			fieldWidth:							100
 		}
-		
+
 		TextField
 		{
 			id:									anovaGaugeNestedMisc
@@ -244,7 +244,7 @@ Form
 			placeholderText:					qsTr("Miscellaneous")
 			fieldWidth:							100
 		}
-		
+
 		CheckBox
 		{
 			name: 								"anovaGaugeNestedReport"

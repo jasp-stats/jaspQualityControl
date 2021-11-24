@@ -48,6 +48,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     # Actually remove missing values from the split factor
     splitFactor <- na.omit(splitFactor)
+  } else {
+    splitLevels <- ""
   }
 
   if (options[["pcDataFormat"]] == "PClongFormat" && ready){
@@ -83,7 +85,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if(options[["controlChartsType"]] == "xbarR"){
     .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups_ticks = splitLevels, subgroups = subgroups)
   } else{
-    .qcImRChart(options, dataset, ready, jaspResults, measurements)
+    .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitLevels)
   }
 
   # Distribution plot
@@ -1330,14 +1332,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 
-.qcImRChart<- function(options, dataset, ready, jaspResults, measurements){
+.qcImRChart<- function(options, dataset, ready, jaspResults, measurements, subgroups){
   if (!ready)
     return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
   Container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
   Container$position <- 1
   jaspResults[["ImR Charts"]] <- Container
-  Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, cowPlot = TRUE)$p
+  Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE)$p
 }
 
 .PClongTowide<- function(dataset, k, measurements, mode = c("manual", "subgroups")){

@@ -8,7 +8,7 @@ Both attribute and variable measurement data can be used in the analysis.
 ## Input
 ### Data Format
 -------
-Data can be in the form of all observations in one column ("Column" option) or across rows with a subgroup index ("Row" option).
+Data can be in the form of all observations in one column ("Single column") or across rows with a subgroup index ("Across rows").
 
 ### Assignment Box
 - Operators: the operators in the measurement system. 

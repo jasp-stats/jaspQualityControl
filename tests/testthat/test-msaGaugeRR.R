@@ -2,14 +2,13 @@ context("[Quality Control] Gauge r&R")
 
 # Long format
 options <- analysisOptions("msaGaugeRR")
-options$gaugeRRdataFormat <- "gaugeRRlongFormat"
-options$measurementsLong <- "Dm"
 options$operators <- "Operators"
 options$parts <- "Parts"
+options$measurementsLong <- "Dm"
 options$gaugeToleranceEnabled <- TRUE
 options$tolerance <- 15
 options$gaugeRchart <- TRUE
-options$gaugeXbarChart<- TRUE
+options$gaugeXbarChart <- TRUE
 options$gaugeScatterPlotOperators <- TRUE
 options$gaugeScatterPlotFitLine <- TRUE
 options$gaugeScatterPlotOriginLine <- TRUE
@@ -18,7 +17,8 @@ options$gaugeByPartAll <- TRUE
 options$gaugeByOperator <- TRUE
 options$gaugeByInteraction <- TRUE
 options$trafficPlot <- TRUE
-results <- runAnalysis("msaGaugeRR", "GageRandr_long.csv", options)
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "msaGageRandr_long.csv", options)
 
 test_that("Gauge r&R Variance Components table results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
@@ -104,20 +104,21 @@ test_that("Average Chart by Operator plot matches", {
   jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator")
 })
 
-test_that("trafficPlot matches", {
+test_that("titleless-plot-11 matches", {
   plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "trafficPlot")
+  jaspTools::expect_equal_plots(testPlot, "titleless-plot-11")
 })
 
-# Wide Format
+# Wide
 options$gaugeRRdataFormat <- "gaugeRRwideFormat"
 options$operators <- "Operator"
 options$parts <- "Part"
-options$measurements <- c("Measurement1","Measurement2","Measurement3")
-results <- runAnalysis("msaGaugeRR", "partOperatorData.csv", options)
+options$measurements <- c("Measurement1", "Measurement2", "Measurement3")
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "msaGageRandr_wide.csv", options)
 
-test_that("Gauge r&R Variance Components table results match wide", {
+test_that("Gauge r&R Variance Components table results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(22.56, "Total Gauge r&amp;R", 0.848225424491385, 22.54, "Repeatability",
@@ -126,7 +127,7 @@ test_that("Gauge r&R Variance Components table results match wide", {
                                       2.91190554000432, 100, "Total Variation", 3.7601309644957))
 })
 
-test_that("Gauge Evaluation table results match wide", {
+test_that("Gauge Evaluation table results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable2"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.920991544201892, 47.5, 36.84, "Total Gauge r&amp;R", 5.52594926521135,
@@ -138,13 +139,13 @@ test_that("Gauge Evaluation table results match wide", {
                                  ))
 })
 
-test_that("Components of Variation plot matches wide", {
+test_that("Components of Variation plot matches2", {
   plotName <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_VarCompGraph"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "components-of-variation-wide")
+  jaspTools::expect_equal_plots(testPlot, "components-of-variation2")
 })
 
-test_that("Two-way ANOVA Table with Interaction results match wide", {
+test_that("Two-way ANOVA Table with Interaction results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(9, 49.6115781426449, 27.0546720241459, 7.05242347812414e-11, 243.492048217314,
@@ -155,7 +156,7 @@ test_that("Two-way ANOVA Table with Interaction results match wide", {
                                       "Total"))
 })
 
-test_that("Two-way ANOVA Table without Interaction results match wide", {
+test_that("Two-way ANOVA Table without Interaction results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable2"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(9, 31.9220820055477, 27.0546720241459, 1.20668982102463e-22, 243.492048217314,
@@ -164,46 +165,121 @@ test_that("Two-way ANOVA Table without Interaction results match wide", {
                                       "Repeatability", 89, 311.336016968939, "Total"))
 })
 
-test_that("Parts by Operator Interaction plot matches wide", {
+test_that("Parts by Operator Interaction plot matches2", {
   plotName <- results[["results"]][["gaugeByInteraction"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "parts-by-operator-interaction-wide")
+  jaspTools::expect_equal_plots(testPlot, "parts-by-operator-interaction2")
 })
 
-test_that("Measurement by Operator plot matches wide", {
+test_that("Measurement by Operator plot matches2", {
   plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "measurement-by-operator-wide")
+  jaspTools::expect_equal_plots(testPlot, "measurement-by-operator2")
 })
 
-test_that("Measurements by Part plot matches-wide", {
+test_that("Measurements by Part plot matches2", {
   plotName <- results[["results"]][["gaugeByPart"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "measurements-by-part-wide")
+  jaspTools::expect_equal_plots(testPlot, "measurements-by-part2")
 })
 
-test_that("Range Chart by Operator plot matches-wide", {
+test_that("Range Chart by Operator plot matches2", {
   plotName <- results[["results"]][["gaugeRchart"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "range-chart-by-operator-wide")
+  jaspTools::expect_equal_plots(testPlot, "range-chart-by-operator2")
 })
 
-test_that("Matrix Plot for Operators matches-wide", {
+test_that("Matrix Plot for Operators matches2", {
   plotName <- results[["results"]][["gaugeScatterOperators"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "matrix-plot-for-operators")
+  jaspTools::expect_equal_plots(testPlot, "matrix-plot-for-operators2")
 })
 
-test_that("Average Chart by Operator plot matches-wide", {
+test_that("Average Chart by Operator plot matches2", {
   plotName <- results[["results"]][["gaugeXbarChart"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator-wide")
+  jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator2")
 })
 
-test_that("titleless-plot-11 matches wide", {
+test_that("titleless-plot-11 matches2", {
   plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "titleless-plot-11")
+  jaspTools::expect_equal_plots(testPlot, "titleless-plot-112")
 })
 
+# Type 3
+options$operators <- ""
+options$parts <- "Part"
+options$measurements <- c("Repeat.1", "Repeat.2", "Repeat.3")
+options$Type3 <- TRUE
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "msaGaugeRR_Type3_Wide.csv", options)
 
+test_that("Gauge r&R Variance Components table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.54, "Total Gauge r&amp;R", 0.0206666666666667, 0.54, "Repeatability",
+                                      0.0206666666666667, 99.46, "Reproducibility", 3.78242105263158,
+                                      100, "operators", 3.80308771929825, "Part-to-Part", "Total Variation"
+                                 ))
+})
+
+test_that("Gauge Evaluation table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.143759057685652, 7.37, 5.75, "Total Gauge r&amp;R", 0.862554346113913,
+                                      0.143759057685652, 7.37, 5.75, "Repeatability", 0.862554346113913,
+                                      1.94484473741005, 99.73, 77.79, "Part-to-Part", 11.6690684244603,
+                                      1.95015069143342, 100, 78.01, "Total Variation", 11.7009041486005
+                                 ))
+})
+
+test_that("Components of Variation plot matches3", {
+  plotName <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_VarCompGraph"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "components-of-variation3")
+})
+
+test_that("Two-way ANOVA Table with Interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(19, 550.061120543293, 11.3679298245614, 2.30160299992569e-42,
+                                      215.990666666667, "Part", 40, 0.0206666666666667, 0.826666666666667,
+                                      "Repeatability", 59, 223.064, "Total"))
+})
+
+test_that("Parts by Operator Interaction plot matches3", {
+  plotName <- results[["results"]][["gaugeByInteraction"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "parts-by-operator-interaction3")
+})
+
+test_that("Measurement by Operator plot matches3", {
+  plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "measurement-by-operator3")
+})
+
+test_that("Measurements by Part plot matches3", {
+  plotName <- results[["results"]][["gaugeByPart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "measurements-by-part3")
+})
+
+test_that("Range Chart by Operator plot matches3", {
+  plotName <- results[["results"]][["gaugeRchart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "range-chart-by-operator3")
+})
+
+test_that("Average Chart by Operator plot matches3", {
+  plotName <- results[["results"]][["gaugeXbarChart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator3")
+})
+
+test_that("titleless-plot-10 matches3", {
+  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "titleless-plot-103")
+})

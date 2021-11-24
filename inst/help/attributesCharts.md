@@ -5,20 +5,21 @@ Control charts are a set of tools used to model the variation of a process, ther
 Attribute charts are used for discrete data and model the stability of the process based on the sample size collected and the count of defectives\defects.
 
 ## Assumptions 
+-------
 The assumptions for attribute charts are:
 - np/c chart: the sample size used for data collection is equal.
 - p/u chart: the sample size used for data collection is inequal.
 - Laney p'/u': the data are overdispersed or underdispersed.
 
 ## Input
-### Assignment Box 
 -------
+### Assignment Box 
 - Defectives\Defects: the observations collected from a process.
 - Sample: sample size of each observation. 
 
 ## Output
-### Charts
 -------
+### Charts
 Defectives charts: Defectives charts are used in products that are either defective or not defective (binary).
 - np chart: plots the count of non-conforming (defective) products. 
 - p chart: displays changes in the proportion of non-conforming (defective) products, rejects or unacceptable outcomes. 
@@ -31,8 +32,10 @@ Defects charts: In the case of defectives charts the product may have multiple d
 
 X-mR chart: plots the process's values (Individual) and moving range (MR) over time.
 
-## References
-- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2019).*Statistical process control*. SKF group. 
+## References 
+-------
+- Chrysler Group LLC, Ford Motor Company, & General Motors Corporation. (2010). *Measurement Systems Analysis* (4th ed.). http://www.aiag.orgt. 
+- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbooks*. SKF group.
 
 ## R Packages
 -------

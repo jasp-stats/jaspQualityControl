@@ -70,7 +70,7 @@ Form
 			name:								"measurements"
 			title:								qsTr("Result")
 			visible:							aaadataFormat.currentValue == "AAAwideFormat"
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 
 		AssignedVariablesList
@@ -80,7 +80,7 @@ Form
 			title:								qsTr("Result")
 			singleVariable:						true
 			visible:							aaadataFormat.currentValue == "AAAlongFormat"
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 
 		AssignedVariablesList
@@ -88,34 +88,43 @@ Form
 			name:								"standard"
 			title:								qsTr("Standard")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 	}
 
 	Section
 	{
 		title:									qsTr("Kappa Stuides")
-		
+
 		Group
 		{
 			title: 								qsTr("Tables")
-			
+
+			TextField
+			{
+				name: 							"PositiveRef"
+				id:                 positiveRef
+				label: 							qsTr("Positive refernce:")
+				enabled:            !kendallTau.checked
+			}
+
 			CheckBox
 			{
 				name: 							"AAAcohensKappa"
+				id:                 cohenskappa
 				label: 							qsTr("Cohen's kappa (interrater kappa)")
+				enabled:            positiveRef.value != ""
+				checked:            !positiveRef.value == ""
 			}
 
 			CheckBox
 			{
 				name: 							"AAAfleissKappa"
+				id:                 fleisskappa
 				label: 							qsTr("Fleiss' kappa (multirater kappa)")
-			}
+				checked:            !positiveRef.value == ""
+				enabled:            !kendallTau.checked
 
-			TextField
-			{
-				name: 							"PositiveRef"
-				label: 							qsTr("Positive refernce:")
 			}
 		}
 	}
@@ -123,10 +132,11 @@ Form
 	Section
 	{
 		title: 									qsTr("Tau Stuides")
-		
+
 		CheckBox
 		{
 			name: 								"AAAkendallTau"
+			id:                   kendallTau
 			label: 								qsTr("Kendall's tau")
 		}
 	}
