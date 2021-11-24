@@ -1,5 +1,5 @@
 
-// Copyright (C) 2013-2018 University of Amsterdam
+// Copyright (C) 2013-2021 University of Amsterdam
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
 // published by the Free Software Foundation, either version 3 of the
@@ -21,11 +21,11 @@ import JASP.Widgets                             1.0
 Form
 {
 	usesJaspResults:                            true
-	columns:                                    2
+    columns:                                    1
 
 	GroupBox
 	{
-		title: 									qsTr("Design Information")
+        title: 									qsTr("Design Space")
 		name:									"designInfo"
 
 		IntegerField
@@ -33,7 +33,7 @@ Form
 			id:									numberOfFactors
 			name:								"numberOfFactors"
 			label:								qsTr("Number of factors")
-			defaultValue:						2
+            defaultValue:						3
 			min:								2
 			max:								256
 		}
@@ -45,26 +45,11 @@ Form
 			name:                               "numberOfFactorsForTable"
 			defaultValue:                       numberOfFactors.value
 		}
-
-//		DropDown
-//		{
-//            debug:                              true
-//            id:                                 numberOfLevels
-//            name:                               "numberOfLevels"
-//            label:                              qsTr("Number of factor levels")
-//            indexDefaultValue:                  0
-//			values:
-//				[
-//				{ value: "2", label: qsTr("2")}
-//				//            { value: "3", label: qsTr("3")},
-//				//            { value: "Mixed", label: qsTr("Mixed")}
-//			]
-//		}
 	}
 
 	RadioButtonGroup
 	{
-		title:                                  qsTr("Data Coding")
+        title:                                  qsTr("Unit Display")
 		name:                                   "dataCoding"
 
 		RadioButton
@@ -89,41 +74,40 @@ Form
 		title:                                  qsTr("Run Order")
 		enabled:                                !factorialTypeSplit.checked
 
+        RadioButton
+        {
+            name:                               "runOrderRandom"
+            label:                              qsTr("Random")
+            checked:                            true
+        }
+
 		RadioButton
 		{
 			name:                              "runOrderStandard"
 			label:                              qsTr("Standard")
-			checked:                            true
 		}
 
-		RadioButton
-		{
-			name:                               "runOrderRandom"
-			label:                              qsTr("Random")
-		}
 	}
 
 	ColumnLayout
 	{
 		spacing:                                0
 		Layout.preferredWidth:					parent.width
-		Layout.columnSpan:						2
+        Layout.columnSpan:						1
 
 		RowLayout
 		{
 			Label { text: qsTr("Factor");		Layout.leftMargin: 5 * preferencesModel.uiScale; Layout.preferredWidth: 42 * preferencesModel.uiScale}
 			Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
-			Label { text: qsTr("Level 1");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
-			Label { text: qsTr("Level 2");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
-//			Label { visible: 					numberOfLevels.currentIndex == 1;
-//                    text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
+            Label { text: qsTr("Level 1");		Layout.preferredWidth: 100 * preferencesModel.uiScale}
+            Label { text: qsTr("Level 2");		Layout.preferredWidth: 100 * preferencesModel.uiScale}
         }
 
 		ComponentsList
 		{
 			name:								"factors"
 			addItemManually:                    false
-            values:                             numberOfFactorsForTable.value // update only when numberOfFactors.value gets "entered"
+            values:                             numberOfFactorsForTable.value
 
 			rowComponent: 						RowLayout
 			{
@@ -136,7 +120,7 @@ Form
 						text: 					rowIndex + 1
 					}
 				}
-				Row //Factor
+                Row
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		100 * preferencesModel.uiScale
@@ -152,7 +136,7 @@ Form
 						showBorder:				true
 					}
 				}
-				Row //Level1
+                Row
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		100 * preferencesModel.uiScale
@@ -166,7 +150,7 @@ Form
 						showBorder:				true
 					}
 				}
-				Row //Level2
+                Row
 				{
 					spacing:					5 * preferencesModel.uiScale
 					Layout.preferredWidth:		100 * preferencesModel.uiScale
@@ -180,21 +164,6 @@ Form
 						showBorder:				true
 					}
 				}
-//				Row //Level3
-//				{
-//					visible:					[1].includes(numberOfLevels.currentIndex)
-//					spacing:					5 * preferencesModel.uiScale
-//					Layout.preferredWidth:		100 * preferencesModel.uiScale
-//					TextField
-//					{
-//						label: 					""
-//						name: 					"high2"
-//						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
-//						fieldWidth:				100 * preferencesModel.uiScale
-//						useExternalBorder:		false
-//						showBorder:				true
-//					}
-//				}
 			}
 		}
 	}
@@ -214,6 +183,7 @@ Form
 				id:                             factorialTypeDefault
 				name:							"factorialTypeDefault"
                 label:							qsTr("2-level factorial (default generator)")
+                checked:						true
 			}
 
 			RadioButton
@@ -256,7 +226,6 @@ Form
 				id:                             factorialTypeFull
 				name:							"factorialTypeFull"
 				label:							qsTr("General full factorial design")
-				checked:						true
 			}
 		}
 
@@ -265,7 +234,7 @@ Form
 
 			GroupBox
 			{
-				title: 							qsTr("Design by")
+                title: 							qsTr("Design Options")
 				enabled:                        factorialTypeDefault.checked | factorialTypeSpecify.checked | factorialTypeSplit.checked
 
 				RadioButtonGroup
@@ -285,18 +254,13 @@ Form
 							indexDefaultValue: 	0
 							values:
                             [
-								{ value: "4", 	label: qsTr("4") 	},
-								{ value: "8", 	label: qsTr("8") 	},
-								{ value: "16", 	label: qsTr("16") 	},
-								{ value: "32", 	label: qsTr("32") 	},
-								{ value: "64", 	label: qsTr("64") 	},
-								{ value: "128", label: qsTr("128")	},
-								{ value: "256", label: qsTr("256")	},
-								{ value: "512", label: qsTr("512")	},
-								{ value: "1024", label: qsTr("1024")},
-								{ value: "2048", label: qsTr("2048")},
-								{ value: "4096", label: qsTr("4096")}
+                                { value: 2**(1+Math.floor(Math.log2(numberOfFactors.value))), label: Number(2**(1+Math.floor(Math.log2(numberOfFactors.value))))},
+                                { value: 2**(2+Math.floor(Math.log2(numberOfFactors.value))), label: Number(2**(2+Math.floor(Math.log2(numberOfFactors.value))))},
+                                { value: 2**(3+Math.floor(Math.log2(numberOfFactors.value))), label: Number(2**(3+Math.floor(Math.log2(numberOfFactors.value))))},
+                                { value: 2**(4+Math.floor(Math.log2(numberOfFactors.value))), label: Number(2**(4+Math.floor(Math.log2(numberOfFactors.value))))},
+                                { value: 2**(5+Math.floor(Math.log2(numberOfFactors.value))), label: Number(2**(5+Math.floor(Math.log2(numberOfFactors.value))))},
 							]
+
 						}
 					}
 
@@ -311,55 +275,40 @@ Form
 						DropDown
 						{
 							name: 				"factorialResolution"
-                            indexDefaultValue: 	0
+                            indexDefaultValue: 	1
 							values:
                             [
-								{ value: "III", label: qsTr("III") 	},
+                                { value: "Full",label: qsTr("Full")},
+                                { value: "III", label: qsTr("III") 	},
 								{ value: "IV", 	label: qsTr("IV") 	},
 								{ value: "V", 	label: qsTr("V") 	},
 								{ value: "VI", 	label: qsTr("VI")	},
-								{ value: "VIII", label: qsTr("VIII")},
-								{ value: "Full", label: qsTr("Full")}
+                                { value: "VII", label: qsTr("VII")	},
+                                { value: "VIII",label: qsTr("VIII")}
 							]
 						}
-					}
+                    }
+
+                    RadioButton
+                    {
+                        name:                   "designByFraction"
+                        label:                  qsTr("Fraction")
+                        childrenOnSameRow:      true
+
+                        DropDown
+                        {
+                            name:               "factorialFraction"
+                            indexDefaultValue:  0
+                            values:
+                            [
+                                { value: "0.5", label: qsTr("1/2")  },
+                                { value: "0.25",label: qsTr("1/4")  },
+                                { value: "0.125",label: qsTr("1/8")  }
+                            ]
+                        }
+                    }
 				}
 			}
-
-			//			RadioButtonGroup
-			//			{
-			//				title:                          qsTr("Blocking options")
-			//              debug:                          true
-			//				name:                           "blocking"
-
-			//				RadioButton
-			//				{
-			//					name:                       "noBlocking"
-			//					label:                      qsTr("No blocking (1 block design)")
-			//					checked:                    true
-			//				}
-
-			//				RadioButton
-			//				{
-			//					id:                         autoBlocking
-			//					name:                       "autoBlocking"
-			//					label:                      qsTr("Automatic definition")
-
-			//					IntegerField
-			//					{
-			//						name:                   "numberOfBlocks"
-			//						visible:                autoBlocking.checked
-			//						label:                  qsTr("Number of blocks")
-			//					}
-			//				}
-
-			//				RadioButton
-			//				{
-			//					name:                       "manualBlocking"
-			//					label:                      qsTr("Manual definition")
-			//				}
-
-			//			}
 
 			GroupBox
 			{
@@ -383,7 +332,6 @@ Form
 					defaultValue:               1
 					min:						1
                     max:						8
-
 				}
 
 				CheckBox

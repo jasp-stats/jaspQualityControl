@@ -39,7 +39,7 @@ Form
 
     GroupBox
     {
-        title: 									qsTr("Design Information")
+        title: 									qsTr("Design Space")
         name:									"designInfo"
 
         IntegerField
@@ -98,7 +98,7 @@ Form
 
     RadioButtonGroup
     {
-        title:                                  qsTr("Data Coding")
+        title:                                  qsTr("Unit Display")
         name:                                   "dataCodingScreen"
 
         RadioButton
@@ -124,15 +124,15 @@ Form
 
         RadioButton
         {
-            name:                              "runOrderStandard"
-            label:                              qsTr("Standard")
+            name:                               "runOrderRandom"
+            label:                              qsTr("Random")
             checked:                            true
         }
 
         RadioButton
         {
-            name:                               "runOrderRandom"
-            label:                              qsTr("Random")
+            name:                              "runOrderStandard"
+            label:                              qsTr("Standard")
         }
     }
 
@@ -317,7 +317,7 @@ Form
         IntegerField
         {
             name:                               "screeningCenterPoints"
-            label:                              qsTr("Number of center points")
+            label:                              qsTr("Number of centre points")
             defaultValue:                       0
             min:                            	0
             max:                            	256
@@ -347,5 +347,33 @@ Form
     {
         name:                                   "displayScreeningDesign"
         label:                                  "Display selected design"
+    }
+
+    GroupBox
+    {
+        FileSelector
+        {
+            id:                                 fileScreening
+            name:                               "fileScreening"
+            label:                              qsTr("Save as:")
+            filter:                             "*.csv"
+            save:                               true
+        }
+
+        Button
+        {
+            id:                                 exportScreeningDesign
+            anchors.right:                      parent.right
+            anchors.bottom:                     parent.bottom
+            text:                               actualScreeningExporter.checked ? qsTr("<b>Sync Design: On</b>") : qsTr("<b>Sync Design: Off</b>")
+            onClicked:                          actualScreeningExporter.click()
+        }
+
+        CheckBox
+        {
+            id:                                 actualScreeningExporter
+            name:                               "actualExporter"
+            visible:                            false
+        }
     }
 }
