@@ -41,18 +41,29 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
     table$dependOn(options = "numberOfFactors")
 
-    # overtitle <- paste(c(options[["numberOfFactors"]], " Factors"), collapse = "")
-
-    table$addColumnInfo(name = 'res', title = "Resolution", type = 'string')
     table$addColumnInfo(name = "runs", title = "Runs", type = "integer")
+    table$addColumnInfo(name = 'res', title = "Resolution", type = 'string')
 
-    rows <- data.frame(res = c("III", "IV", "V", "Full"),
-                       runs = c(DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfFactors"]], resolution = 3))$nruns,
-                                DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfFactors"]], resolution = 4))$nruns,
-                                DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfFactors"]], resolution = 5))$nruns,
-                                2^options[["numberOfFactors"]]
-                                )
-                       )
+    runs <- 2^seq(floor(log2(options[["numberOfFactors"]]))+1, options[["numberOfFactors"]])
+    if(length(runs) > 5)
+      runs <- runs[1:5]
+    res <- numeric(length(runs))
+    for(i in 1:length(runs)){
+      if(log2(runs[i]) < options[["numberOfFactors"]]){
+        res[i] <- as.character(as.roman(DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+                                                                         nruns = runs[i]))$catlg.entry[[1]]$res))
+      } else {
+        res[i] <- "Full"
+      }
+    }
+    rows <- data.frame(runs, res)
+    equal <- numeric(0)
+    for(i in 1:(nrow(rows)-1)){
+      if(rows$res[i] == rows$res[i+1]){
+        equal <- append(equal, i+1)
+      }
+    }
+    rows <- rows[-equal,]
 
     jaspResults[["state"]] <- createJaspState(rows)
     jaspResults[["state"]]$dependOn("always_present")
