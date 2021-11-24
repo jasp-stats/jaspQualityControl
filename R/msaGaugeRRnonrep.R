@@ -38,6 +38,15 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
   }
+
+  if (ready && nrow(dataset[measurements]) == 0){
+    jaspResults[["plot"]] <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+    jaspResults[["plot"]]$setError(gettextf("No valid measurements in %s.", measurements))
+    jaspResults[["plot"]]$position <- 1
+    jaspResults[["plot"]]$dependOn(c("measurements", "measurementsWide"))
+    return()
+  }
+
   if (ready && options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepLongFormat"){
     datasetLong <- dataset
     datasetWide <- .reshapeToWide(dataset, measurements, parts, operators)

@@ -10,13 +10,18 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
   # Checking if the analysis is ready
   ready <- options$D != "" && options$total != ""
-  if (!ready)
-    return()
 
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues', "negativeValues"),
              all.target = c(options$variables, options$D),
              observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE)
+
+  if ((options$Attributes == "Defectives" | options$Attributes == "Defects" | options$Attributes == "ImR") && !ready) {
+    plot <- createJaspPlot(title = gettext("Attributes Control Charts"), width = 700, height = 400)
+    jaspResults[["plot"]] <- plot
+    plot$dependOn(c("Attributes", "variables"))
+    return()
+  }
 
   if (options$Attributes == "Defectives" && ready) {
 

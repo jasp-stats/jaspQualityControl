@@ -36,6 +36,13 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
              all.target = options$variables,
              observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE)
 
+  if (options$ImRchart && length(variables) == 0) {
+    plot <- createJaspPlot(title = gettext("Individuals Charts"), width = 700, height = 400)
+    jaspResults[["plot"]] <- plot
+    plot$dependOn(c("ImRchart", "variables", "subgroups"))
+    return()
+  }
+
   #ImR chart
   if (options$ImRchart) {
     if(is.null(jaspResults[["Ichart"]])){

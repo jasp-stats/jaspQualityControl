@@ -68,6 +68,14 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
+  if (ready && nrow(dataset[measurements]) == 0){
+    jaspResults[["plot"]] <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+    jaspResults[["plot"]]$setError(gettextf("No valid measurements in %s.", measurements))
+    jaspResults[["plot"]]$position <- 1
+    jaspResults[["plot"]]$dependOn(c("measurements", "measurementsLong"))
+    return()
+  }
+
   if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat" && ready) {
     dataset <- dataset[order(dataset[operators]),]
     nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))

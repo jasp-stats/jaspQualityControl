@@ -91,6 +91,14 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
              all.target = options$variables,
              observations.amount =  c('< 0'), exitAnalysisIfErrors = TRUE)
 
+  if (ready && nrow(dataset[measurements]) == 0){
+    jaspResults[["plot"]] <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
+    jaspResults[["plot"]]$setError(gettextf("No valid measurements in %s.", measurements))
+    jaspResults[["plot"]]$position <- 1
+    jaspResults[["plot"]]$dependOn(c("variables", "variablesLong"))
+    return()
+  }
+
   #X bar & R chart
   if (options$TypeChart == "Xbarchart" && is.null(jaspResults[["XbarPlot"]]) && ready) {
     jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
