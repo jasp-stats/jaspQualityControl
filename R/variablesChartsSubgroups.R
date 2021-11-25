@@ -66,7 +66,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     splitFactor <- na.omit(splitFactor)
 
     if(subgroups != "")
-      subgroups <- splitLevels
+      subgroups <- splitFactor
   }
 
   if (options[["CCDataFormat"]] == "CClongFormat" && ready){
@@ -219,12 +219,37 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw()
 
   if (manualXaxis != "") {
-    xLabels <- factor(manualXaxis, levels = manualXaxis)
-    p <- p + ggplot2::scale_x_continuous(breaks = 1:length(manualXaxis), labels = xLabels)
+    if (length(levels(manualXaxis)) == length(manualXaxis)){
+      xBreaks_Out <- levels(manualXaxis)
+      p <- p + ggplot2::scale_x_continuous(breaks = 1:length(manualXaxis), labels = levels(manualXaxis))
+    }
+    else{
+      data <- data1
+      xBreaks <- seq(1,nrow(data))
+      xLabels <- xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
+
+      if (length(xBreaks) > 20){
+        xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(xBreaks)[-1])
+        xLabels <- xLabels[xBreaks]
+      }
+
+      xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
+      dfLabel <- data.frame(
+        x = max(xLimits) * 0.95,
+        y = c(center, UCL, LCL),
+        l = c(
+          gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
+          gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
+          gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
+        )
+      )
+
+      p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels, limits = xLimits)
+    }
   }
 
   if (manualXaxis != "")
-    return(list(p = p, sixsigma = sixsigma, xLabels = levels(xLabels)))
+    return(list(p = p, sixsigma = sixsigma, xLabels = as.vector(xBreaks_Out)))
   else return(list(p = p, sixsigma = sixsigma))
 }
 .CCReport <- function(ImR = FALSE,p1 = "", p2 = "", ccTitle = "", ccName = "", ccDate = "", ccReportedBy = "", ccMisc = "" , ccSubTitle = "", ccChartName = ""){

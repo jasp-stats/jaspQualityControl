@@ -83,7 +83,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # X-bar and R Chart OR ImR Chart
   if(options[["controlChartsType"]] == "xbarR"){
-    .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups_ticks = splitLevels, subgroups = subgroups)
+    .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor)
   } else{
     .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitLevels)
   }
