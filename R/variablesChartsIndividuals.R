@@ -28,13 +28,14 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     splitFactor <- na.omit(splitFactor)
 
     if(subgroups != "")
-      subgroups <- splitLevels
+      subgroups <- splitFactor
   }
-  dataset <- na.omit(dataset)
-  #Checking for errors in the dataset
-  .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
-             all.target = options$variables,
-             observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE)
+
+#Checking for errors in the dataset
+
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             all.target = c(options$variables, options$subgroups),
+             exitAnalysisIfErrors = TRUE)
 
   if (options$ImRchart && length(variables) == 0) {
     plot <- createJaspPlot(title = gettext("Individuals Charts"), width = 700, height = 400)
@@ -43,6 +44,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     return()
   }
 
+  dataset <- na.omit(dataset)
   #ImR chart
   if (options$ImRchart) {
     if(is.null(jaspResults[["Ichart"]])){
@@ -113,7 +115,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol)
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
   } else{
-    data <- as.data.frame(dataset[, measurements])[,1]
+    data <- unlist(dataset[measurements])
     sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE)
     xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2)
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
@@ -184,10 +186,14 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw()
 
   if (manualXaxis != "") {
-    if (measurements != "")
-      xLabels <- factor(manualXaxis, levels = manualXaxis)
+    if (measurements != "") {
+      if (length(levels(manualXaxis)) == length(manualXaxis))
+        xLabels <- as.vector(sapply(1:length(manualXaxis), function(x) {rep(manualXaxis[x], ncol(dataset[measurements]))}))
+      else
+        xLabels <- manualXaxis
+    }
     else
-      xLabels <- dataset[[.v(options$subgroups)]]
+      xLabels <- manualXaxis
 
     if (length(subgroups) > 60)
       Xbreaks <- c(seq(1,length(xLabels),10), length(xLabels))

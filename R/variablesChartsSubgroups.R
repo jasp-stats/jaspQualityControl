@@ -83,13 +83,11 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     measurements <- colnames(dataset)
   }
 
-  dataset <- na.omit(dataset)
-
   #Checking for errors in the dataset
-
-  .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
-             all.target = options$variables,
-             observations.amount =  c('< 0'), exitAnalysisIfErrors = TRUE)
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             all.target = c(options$variables, options$subgroups, options$variablesLong),
+             missingValues.target = c(options$variables, options$subgroups, options$variablesLong),
+             exitAnalysisIfErrors = TRUE)
 
   if (ready && nrow(dataset[measurements]) == 0){
     jaspResults[["plot"]] <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
@@ -98,6 +96,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     jaspResults[["plot"]]$dependOn(c("variables", "variablesLong"))
     return()
   }
+  dataset <- na.omit(dataset)
 
   #X bar & R chart
   if (options$TypeChart == "Xbarchart" && is.null(jaspResults[["XbarPlot"]]) && ready) {
@@ -220,7 +219,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
   if (manualXaxis != "") {
     if (length(levels(manualXaxis)) == length(manualXaxis)){
-      xBreaks_Out <- levels(manualXaxis)
+      xBreaks_Out <- unique(manualXaxis)
       p <- p + ggplot2::scale_x_continuous(breaks = 1:length(manualXaxis), labels = levels(manualXaxis))
     }
     else{

@@ -13,7 +13,7 @@
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
 
-  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 1000, height = 550)
+  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 1200, height = 550)
   container[["plot"]] <- matrixPlot
 
   if (!ready)
@@ -135,7 +135,7 @@
 
   if (manualXaxis != "") {
     if (GaugeRR | length(levels(manualXaxis)) == length(manualXaxis)){
-      xBreaks_Out <- levels(manualXaxis)
+      xBreaks_Out <- unique(manualXaxis)
       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = levels(manualXaxis))
     }
     else{
@@ -257,7 +257,7 @@
 
   if (manualXaxis != "") {
     if (GaugeRR | length(levels(manualXaxis)) == length(manualXaxis)){
-      xBreaks_Out <- levels(manualXaxis)
+      xBreaks_Out <- unique(manualXaxis)
       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = levels(manualXaxis))
     }
     else{

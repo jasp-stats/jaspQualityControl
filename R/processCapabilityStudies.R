@@ -85,7 +85,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if(options[["controlChartsType"]] == "xbarR"){
     .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor)
   } else{
-    .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitLevels)
+    .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor)
   }
 
   # Distribution plot
@@ -1165,6 +1165,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
     yBreaks <- qnorm(ticks / 100)
 
+    xBreaks <- label_x <- jaspGraphs::getPrettyAxisBreaks(x)
+    xLimits <- range(xBreaks)
   } else if (options[["nullDistribution"]] == 'Lognormal') {
     fit <- fitdistrplus::fitdist(x, 'lnorm')
     meanlog <- as.numeric(fit$estimate[1])
@@ -1186,6 +1188,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileEstimate <- log(percentileEstimate)
     percentileLower <- log(percentileLower)
     percentileUpper <- log(percentileUpper)
+
+    labelFrame <- data.frame(labs = label_x, value = x)
+    index = c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
+    xBreaks <- labelFrame[index,2]
+    label_x <- round(labelFrame[index,2],1)
+    xLimits <- range(xBreaks)
   } else if (options[["nullDistribution"]] == 'Weibull') {
     fit <- fitdistrplus::fitdist(x, 'weibull')
     shape <- as.numeric(fit$estimate[1])
@@ -1207,12 +1215,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileEstimate <- log(percentileEstimate)
     percentileLower <- log(percentileLower)
     percentileUpper <- log(percentileUpper)
+
+    labelFrame <- data.frame(labs = label_x, value = x)
+    index = c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
+    xBreaks <- labelFrame[index,2]
+    label_x <- round(labelFrame[index,2],1)
+    xLimits <- range(xBreaks)
   }
   data1 <- data.frame(x = x, y = y)
   yLimits <- range(yBreaks)
-  xBreaks <- c(x[seq(1,length(x), 10)], x[length(x)])
-  label_x <- round(c(label_x[seq(1,length(label_x), 10)], label_x[length(label_x)]),2)
-  xLimits <- range(xBreaks)
 
 
   p <- ggplot2::ggplot() +
