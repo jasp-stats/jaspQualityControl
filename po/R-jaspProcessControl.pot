@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2021-10-30 03:36\n"
+"POT-Creation-Date: 2021-11-27 03:36\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "Subgroups"
 msgstr ""
 
-msgid "Standard Deviation"
+msgid "EWMA"
 msgstr ""
 
 msgid "Subgroup"
@@ -46,31 +46,31 @@ msgstr ""
 msgid "Counts"
 msgstr ""
 
-msgid "P Control Chart"
+msgid "Attributes Control Charts"
 msgstr ""
 
-msgid "NP Control Chart"
+msgid "p Chart"
 msgstr ""
 
-msgid "Laney P' Control Chart"
+msgid "np Chart"
 msgstr ""
 
-msgid "C Control Chart"
+msgid "Laney p' Chart"
 msgstr ""
 
-msgid "U Control Chart"
+msgid "c Chart"
 msgstr ""
 
-msgid "Laney U' Control Chart"
+msgid "u Chart"
 msgstr ""
 
-msgid "Individual and Moving Range Control Charts"
+msgid "Laney u' Chart"
 msgstr ""
 
-msgid "Indvidual"
+msgid "Individuals and Moving Range Chart"
 msgstr ""
 
-msgid "Range"
+msgid "Report for Attribute Control Charts"
 msgstr ""
 
 msgid "Proportion"
@@ -79,13 +79,40 @@ msgstr ""
 msgid "Sample"
 msgstr ""
 
+msgid "Number of defectives"
+msgstr ""
+
 msgid "D"
 msgstr ""
 
 msgid "Moving Range"
 msgstr ""
 
-msgid "Observation"
+msgid "Service name: %s"
+msgstr ""
+
+msgid "Operator: %s"
+msgstr ""
+
+msgid "Identification: %s"
+msgstr ""
+
+msgid "Appraiser: %s"
+msgstr ""
+
+msgid "Measurement system: %s"
+msgstr ""
+
+msgid "Name of Size: %s"
+msgstr ""
+
+msgid "Time: %s"
+msgstr ""
+
+msgid "Frequency: %s"
+msgstr ""
+
+msgid "Control Charts Report for %s"
 msgstr ""
 
 msgid "Control Chart"
@@ -94,7 +121,7 @@ msgstr ""
 msgid "Subgroup size must be > 1 to display X-bar & R Chart."
 msgstr ""
 
-msgid "Test result for %s chart"
+msgid "Test results for %s chart"
 msgstr ""
 
 msgid "Test 1: Beyond limit"
@@ -178,7 +205,7 @@ msgstr ""
 msgid "Resolution"
 msgstr ""
 
-msgid "Center points"
+msgid "Centre points"
 msgstr ""
 
 msgid "Replicates"
@@ -199,13 +226,118 @@ msgstr ""
 msgid "Alias Structure"
 msgstr ""
 
+msgid "Input Design"
+msgstr ""
+
+msgid "Desired Design"
+msgstr ""
+
+msgid "Missing Runs"
+msgstr ""
+
+msgid "Response Surface Methodology"
+msgstr ""
+
+msgid "Central Composite Design"
+msgstr ""
+
+msgid "Run Order"
+msgstr ""
+
+msgid "Standard Order"
+msgstr ""
+
+msgid "x"
+msgstr ""
+
+msgid "factors"
+msgstr ""
+
+msgid "factorName"
+msgstr ""
+
+msgid "generators"
+msgstr ""
+
+msgid "generatorName"
+msgstr ""
+
+msgid "The analysis will not run when the 'Specify Model for CCD' field is empty and the 'Use # of Variables instead of Model' is not ticked."
+msgstr ""
+
+msgid "<em>Warning: </em>"
+msgstr ""
+
+msgid "The analysis will not run when the 'Specify Blocks for CCD' field is empty and the Introduce Blocking is ticked."
+msgstr ""
+
+msgid "Central Composite Design with Star Points"
+msgstr ""
+
+msgid "The analysis will not run when the 'Number of Generators' > 0"
+msgstr ""
+
+msgid "This analysis does not take predictor variables with more than 5 unique values."
+msgstr ""
+
 msgid "Design Choice"
 msgstr ""
 
-msgid "RSM Coefficients"
+msgid "N Fac Points"
 msgstr ""
 
-msgid "ANOVA"
+msgid "N Centre Points/Block"
+msgstr ""
+
+msgid "N Cube Blocks/Cube Portion"
+msgstr ""
+
+msgid "N Design Star Points/Block"
+msgstr ""
+
+msgid "N Centre Points/Star Block"
+msgstr ""
+
+msgid "N Copies of Each Cube Block"
+msgstr ""
+
+msgid "N Replications of Each Star Point/Block"
+msgstr ""
+
+msgid "N Copies of Each Star Block"
+msgstr ""
+
+msgid "Total Experiment Size"
+msgstr ""
+
+msgid "Rotational Alpha"
+msgstr ""
+
+msgid "Orthogonal Alpha"
+msgstr ""
+
+msgid "RSM Coefficients for %s"
+msgstr ""
+
+msgid "Estimate"
+msgstr ""
+
+msgid "Multiple R-squared"
+msgstr ""
+
+msgid "Adjusted R-squared"
+msgstr ""
+
+msgid "DF1"
+msgstr ""
+
+msgid "DF2"
+msgstr ""
+
+msgid "F"
+msgstr ""
+
+msgid "ANOVA for %s"
 msgstr ""
 
 msgid "Stationary Points of Response Surface (Coded)"
@@ -217,7 +349,13 @@ msgstr ""
 msgid "Eigenvectors"
 msgstr ""
 
+msgid "Center points"
+msgstr ""
+
 msgid "Standard order"
+msgstr ""
+
+msgid "ANOVA"
 msgstr ""
 
 msgid "df"
@@ -229,13 +367,16 @@ msgstr ""
 msgid "MS"
 msgstr ""
 
-msgid "F"
+msgid "Reference Tables and Plots"
 msgstr ""
 
-msgid "Cohen's Kappa"
+msgid "Please insert a reference value before specifying a positive reference."
 msgstr ""
 
 msgid "Attributes Agreement Analysis"
+msgstr ""
+
+msgid "Cohen's Kappa"
 msgstr ""
 
 msgid "Kendall's Tau"
@@ -245,6 +386,12 @@ msgid "Cohen's Kappa for Appraiser vs Standard"
 msgstr ""
 
 msgid "Appraiser"
+msgstr ""
+
+msgid "Cohen's Kappa correlations summary"
+msgstr ""
+
+msgid "Please inseret a vaild Positive reference as used in the 'Results' variables."
 msgstr ""
 
 msgid "Fleiss' Kappa"
@@ -283,6 +430,9 @@ msgstr ""
 msgid "Upper"
 msgstr ""
 
+msgid "Invalid Reference and/or Results were inserted."
+msgstr ""
+
 msgid "More than 1 Measurement per Operator required."
 msgstr ""
 
@@ -310,16 +460,19 @@ msgstr ""
 msgid "Kendall's Tau is only available for numeric measurements."
 msgstr ""
 
+msgid "Kendall's Tau is only available for non-binary measurements."
+msgstr ""
+
 msgid "Operator"
 msgstr ""
 
-msgid "%f (Unacceptable)"
+msgid "%g (Unacceptable)"
 msgstr ""
 
-msgid "%f (Marginally acceptable)"
+msgid "%g (Marginally acceptable)"
 msgstr ""
 
-msgid "%f (Acceptable)"
+msgid "%g (Acceptable)"
 msgstr ""
 
 msgid "Linearity and Bias"
@@ -338,9 +491,6 @@ msgid "Mean per reference value"
 msgstr ""
 
 msgid "Bias per reference value"
-msgstr ""
-
-msgid "Percent bias per reference value"
 msgstr ""
 
 msgid "<i>p(t</i>-test of bias against 0)"
@@ -367,13 +517,13 @@ msgstr ""
 msgid "S"
 msgstr ""
 
-msgid "Linearity"
-msgstr ""
-
 msgid "R%1$s"
 msgstr ""
 
 msgid "% Linearity"
+msgstr ""
+
+msgid "Calculations are based on 6 times the historical standard variation unless specified otherwise."
 msgstr ""
 
 msgid "Bias and Linearity"
@@ -382,16 +532,31 @@ msgstr ""
 msgid "Percentage Process Variation Graph"
 msgstr ""
 
-msgid "Average"
+msgid "T-Test requires more than 1 measurement. %i valid measurement(s) detected in %s."
+msgstr ""
+
+msgid "Every unique part must have one corresponding reference value. %i reference values were found for %s unique parts."
 msgstr ""
 
 msgid "Reference"
+msgstr ""
+
+msgid "Percent bias per reference value"
+msgstr ""
+
+msgid "Linearity"
+msgstr ""
+
+msgid "Average"
 msgstr ""
 
 msgid "Gauge r&R"
 msgstr ""
 
 msgid "Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."
+msgstr ""
+
+msgid "No valid measurements in %s."
 msgstr ""
 
 msgid "Gauge r&R ANOVA Table"
@@ -476,9 +641,6 @@ msgid "Total Variation"
 msgstr ""
 
 msgid "Reproducibility"
-msgstr ""
-
-msgid "x"
 msgstr ""
 
 msgid "Number of distinct categories = %i"
@@ -697,25 +859,16 @@ msgstr ""
 msgid "<i>p<i/>-value"
 msgstr ""
 
-msgid "T-Test requires more than 1 measurement. %i valid measurement(s) detected in %s."
-msgstr ""
-
 msgid "Bias Histogram"
 msgstr ""
 
 msgid "Run Chart of %s"
 msgstr ""
 
-msgid "No valid measurements in %s."
-msgstr ""
-
 msgid "Parameter Estimates"
 msgstr ""
 
 msgid "Parameter"
-msgstr ""
-
-msgid "Estimate"
 msgstr ""
 
 msgid "Fitting the model failed with the following error message:\n%s"
@@ -940,13 +1093,22 @@ msgstr ""
 msgid "Process Capability Report for %s"
 msgstr ""
 
-msgid "%s for Individual"
+msgid "Individuals Charts"
 msgstr ""
 
-msgid "%s for R"
+msgid "%s for Individuals"
+msgstr ""
+
+msgid "%s for Range"
+msgstr ""
+
+msgid "Please insert more measurements and check the X-mR chart."
 msgstr ""
 
 msgid "%s"
+msgstr ""
+
+msgid "Observation"
 msgstr ""
 
 msgid "Autocorrelation"
@@ -958,9 +1120,6 @@ msgstr ""
 msgid "Control Charts"
 msgstr ""
 
-msgid "Please insert more measurements."
-msgstr ""
-
 msgid "Could not equally divide data points into groups of size %i."
 msgstr ""
 
@@ -970,7 +1129,10 @@ msgstr ""
 msgid "Out of-control Signals"
 msgstr ""
 
-msgid "Xbar & s Control Chart"
+msgid "X-bar & s Control Chart"
+msgstr ""
+
+msgid "Subgroup st dev"
 msgstr ""
 
 msgid "Name: %s"
@@ -979,5 +1141,8 @@ msgstr ""
 msgid "Date: %s"
 msgstr ""
 
-msgid "Control Charts Report for %s"
+msgid "Sub-title: %s"
+msgstr ""
+
+msgid "Name of chart: %s"
 msgstr ""

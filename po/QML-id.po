@@ -56,10 +56,6 @@ msgid "Variables Charts for Individuals"
 msgstr ""
 
 msgctxt "Description|"
-msgid "Attributes Charts"
-msgstr ""
-
-msgctxt "Description|"
 msgid "Time Weighted Charts"
 msgstr ""
 
@@ -73,10 +69,6 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "DOE"
-msgstr ""
-
-msgctxt "Description|"
-msgid "Screening"
 msgstr ""
 
 msgctxt "Description|"
@@ -192,15 +184,7 @@ msgid "Residuals vs run order"
 msgstr ""
 
 msgctxt "doeFactorial|"
-msgid "Design Information"
-msgstr ""
-
-msgctxt "doeFactorial|"
 msgid "Number of factors"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Data Coding"
 msgstr ""
 
 msgctxt "doeFactorial|"
@@ -284,55 +268,7 @@ msgid "General full factorial design"
 msgstr ""
 
 msgctxt "doeFactorial|"
-msgid "Design by"
-msgstr ""
-
-msgctxt "doeFactorial|"
 msgid "Number of runs"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "4"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "8"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "16"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "32"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "64"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "128"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "256"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "512"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "1024"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "2048"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "4096"
 msgstr ""
 
 msgctxt "doeFactorial|"
@@ -528,10 +464,6 @@ msgid "Definitive screening"
 msgstr ""
 
 msgctxt "doeScreening|"
-msgid "Design Information"
-msgstr ""
-
-msgctxt "doeScreening|"
 msgid "Number of 3-level factors"
 msgstr ""
 
@@ -541,10 +473,6 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Number of runs"
-msgstr ""
-
-msgctxt "doeScreening|"
-msgid "Data Coding"
 msgstr ""
 
 msgctxt "doeScreening|"
@@ -605,10 +533,6 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Additional Options"
-msgstr ""
-
-msgctxt "doeScreening|"
-msgid "Number of center points"
 msgstr ""
 
 msgctxt "doeScreening|"
@@ -789,10 +713,6 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Options"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Analysis Options"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
@@ -1125,10 +1045,6 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Regression line"
-msgstr ""
-
-msgctxt "msaTestRetest|"
-msgid "Add jitter"
 msgstr ""
 
 msgctxt "msaTestRetest|"
@@ -1735,10 +1651,546 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
 msgstr ""
 
+msgctxt "Description|"
+msgid "Control Charts for Attributes"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Screening Design"
+msgstr ""
+
+msgctxt "Description|"
+msgid "General Full Factorial Design"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Modify Existing Design"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Control Charts for Attributes Report"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Title"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Measurement"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Name"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Operator"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "ID"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Misc"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Miscellaneous"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Appraiser"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Measurement system"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Subgroups size"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Size"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Time"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Frequency"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Show Report"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design Space"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Unit Display"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design Options"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "VII"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Fraction"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "1/2"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "1/4"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "1/8"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Design Space"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Number of factors"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Run Order"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Random"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Standard"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Factor"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Name"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Levels"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Factor "
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Additional Options"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Number of replicates for corner points"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Number of random runs to repeat"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Save as:"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "<b>Sync Design: On</b>"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "<b>Sync Design: Off</b>"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Available factors"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Response variable"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Assigned factors"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Run order"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Unit Display"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Coded"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Uncoded"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Run Order"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Random"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Standard"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Desired Two-level Factorial Design Options"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Design Options"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Number of runs"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Resolution"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Full"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "III"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "IV"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "V"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "VI"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "VII"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "VIII"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Fraction"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "1/2"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "1/4"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "1/8"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Additional Options"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Number of center points"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Number of random runs to repeat"
+msgstr ""
+
+msgctxt "doeModifyDesign|"
+msgid "Show desired design"
+msgstr ""
+
 msgctxt "doeResponseSurfaceMethodology|"
 msgid ""
 msgstr ""
 
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design Specification"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design Information"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Central Composite Design (CCD)"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "+ Star Points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of Factors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of Cube Points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of Star Points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of Generators"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Randomize Design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Inscribed Design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Force One Block"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Use # of Variables instead of Model"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Introduce Blocking"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Coded Output"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Alpha Type"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Factor"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Name"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Centre"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Distance to |1|"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "x"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid " Centre"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid " Distance"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Formula"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Generator Name"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Generator Formula"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "<b>Build Design</b>"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Contour Plots"
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "Design Space"
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "Unit Display"
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "Number of centre points"
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "Save as:"
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "<b>Sync Design: On</b>"
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "<b>Sync Design: Off</b>"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Optional"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Type of model for F-statistic"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Random effects"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Fixed effects"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Jitter"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Analysis options"
+msgstr ""
+
 msgctxt "processCapabilityStudies|"
 msgid ""
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Center"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Within-group standard deviation"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Sigmas for computing control limits"
+msgstr ""
+
+msgctxt "TimeWeightedCharts|"
+msgid "Center"
+msgstr ""
+
+msgctxt "TimeWeightedCharts|"
+msgid "Within-group standard deviation"
+msgstr ""
+
+msgctxt "TimeWeightedCharts|"
+msgid "Sigmas for computing control limits"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Subgroups"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Variable Charts for Individuals Report"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Title"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Measurement"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Name"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Date"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Reported by"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Misc"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Miscellaneous"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Sub-title:"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Sub-title"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Chart name:"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Name of the chart"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Show Report"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Sub-title:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Sub-title"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Chart name:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Name of the chart"
 msgstr ""
