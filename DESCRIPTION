@@ -33,7 +33,8 @@ Imports:
   EnvStats,
   FAdist,
   daewr,
-  desirability
+  desirability,
+  weibullness
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,

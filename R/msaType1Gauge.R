@@ -81,7 +81,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   studyVarMultiplier <- as.numeric(options$BiasStudyVarMultiplier)
 
   table1 <- createJaspTable(title = gettext("Basic Statistics"))
-  table1$dependOn(c("biasReferenceValue", "biastable", "biasTolerance"))
+  table1$dependOn(c("biasReferenceValue", "biasTable", "biasTolerance"))
 
   table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
   table1$addColumnInfo(name = "observedMean", title = gettext("Mean"), type = "number")

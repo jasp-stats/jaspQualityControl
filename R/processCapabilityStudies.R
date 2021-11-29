@@ -73,12 +73,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-  dataset <- na.omit(dataset)
-
   # Error Handling
-  .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
-             all.target = c(options$variables, options$variablesLong),
-             observations.amount =  c('1'), exitAnalysisIfErrors = TRUE)
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             all.target = c(options$variables, options$variablesLong), exitAnalysisIfErrors = TRUE)
+
+
+  dataset <- na.omit(dataset)
 
 
   # X-bar and R Chart OR ImR Chart
