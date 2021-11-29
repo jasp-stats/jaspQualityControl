@@ -79,8 +79,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 
   dataset <- na.omit(dataset)
-
-
   # X-bar and R Chart OR ImR Chart
   if(options[["controlChartsType"]] == "xbarR"){
     .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor)
