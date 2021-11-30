@@ -517,7 +517,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   pq <- pq[!is.na(pq)]
   fo <- fo[!is.na(fo)]
-  start_le <- ifelse(length(fo) == 0, 0, 1) + ifelse(length(pq) == 0, 0 ,1)
+  start_le <- (length(fo) == 0) + (length(pq) == 0)
   formula_str <- character(start_le - length_rsmVariables + len_mo)
   if (length (fo) > 0){
     fo <- paste(fo, collapse = ",")
