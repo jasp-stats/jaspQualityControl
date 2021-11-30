@@ -843,7 +843,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   plot <- createJaspPlot(title = paste0("Residuals vs. Fitted Value for ", options[["rsmResponseVariables"]][[i]]),
                          width = 400, height = 400)
   jaspResults[[paste0("ResFitted", i)]] <- plot
-  plot$dependOn(c("resFitted","rsmBlocks",
+  plot$dependOn(c("ResFitted","rsmBlocks",
                 "rsmResponseVariables",
                 "rsmVariables","modelTerms"))
 
