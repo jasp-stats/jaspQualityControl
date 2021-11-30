@@ -16,10 +16,17 @@
 #
 
 doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
-
-  op1  <- length(options[["rsmVariables"]])
+  op1  <- length(options[["modelTerms"]])
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
+
+
+  ready <- (op1 > 0 && op2 > 0) && any(options[["contour"]], options[["coef"]], options[["anova"]],
+                                       options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
+                                       options[["buildDesignInv"]], options[["desirability"]],
+                                       options[["contour"]])
+
+
 
   placeholder <- createJaspTable(title = gettext("Response Surface Methodology"))
   jaspResults[["placeholder"]] <- placeholder
@@ -27,14 +34,14 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                    "resFitted","buildDesignInv","desirability","contour"))
   rsm <- list()
   #Placeholder table when the user inputs something. If an analysis gets picked, remove the table
-  if((op1 == 0 || op2 == 0)) {
+  if(!ready) {
 
-    if (((op1 > 0 && op2 == 0) | (op1 == 0 && op2 > 0)) & any(options[["contour"]], options[["coef"]], options[["anova"]],
+    if (any(options[["contour"]], options[["coef"]], options[["anova"]],
                                                                 options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
                                                                 options[["desirability"]],
                                                                 options[["contour"]])) {
 
-      text <- gettext("No analyses (except those under 'Design Specification') can be started until at least one predictor variable
+      text <- gettext("No analyses (except those under 'Design Specification') can be started until at least one model term
                       and one response variable are inputed.")
       placeholder$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
 
@@ -52,10 +59,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     .starDesign(jaspResults, options)
   }
 
-  if ((op1 > 0 && op2 > 0) && any(options[["contour"]], options[["coef"]], options[["anova"]],
-                              options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
-                              options[["buildDesignInv"]], options[["desirability"]],
-                              options[["contour"]])) {
+  if (ready) {
 
     for (i in 1:op2) {
       jaspResults[["placeholder"]] <- NULL
@@ -126,8 +130,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     } else {
       for (i in 1:(options[["numberOfFactors"]])) {
         if (!(is.na(as.numeric(options[["factors"]][[i]][["factorName"]])))) {
-          text <- gettext(paste0("Factor name '",options[["factors"]][[i]][["factorName"]],
-                                 "' is a number, and number factor names are not supported."))
+          text <- gettextf("Factor name '%s' is a number, and number factor names are not supported.",
+                                 options[["factors"]][[i]][["factorName"]])
           ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
           ready <- 0
           next
@@ -141,8 +145,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     if(options[["numberOfGenerators"]] > 0){
       for (i in 1:(options[["numberOfGenerators"]])) {
         if (!(is.na(as.numeric(options[["generators"]][[i]][["generatorName"]])))){
-          text <- gettext(paste0("Generator name '",options[["generators"]][[i]][["generatorName"]],
-                                 "' is a number, and number generator names are not supported."))
+          text <- gettextf("Generator name '%s' is a number, and number generator names are not supported.",
+                           options[["generators"]][[i]][["generatorName"]])
           ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
           ready <- 0
           next
@@ -215,8 +219,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
     for (i in seq_along(options[["factors"]]))
       if(!(is.na(as.numeric(options[["factors"]][[i]][["factorName"]])))) {
-        text <- gettext(paste0("Factor name '",options[["factors"]][[i]][["factorName"]],
-                               "' is a number, and number factor names are not supported"))
+        text <- gettextf("Factor name '%s' is a number, and number factor names are not supported",
+                               options[["factors"]][[i]][["factorName"]])
         star.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
         ready <- 0
     }
@@ -1008,12 +1012,12 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     AnovaTable$dependOn(      options = c("anova","modelTerms", "rsmBlocks",
                                           "rsmResponseVariables",
                                           "rsmVariables"))
-    AnovaTable$addColumnInfo( name = "names",     title = " ")
-    AnovaTable$addColumnInfo( name = "Df",       title = "DF")
-    AnovaTable$addColumnInfo( name = "Sum",      title = "Sum of Squares")
-    AnovaTable$addColumnInfo( name = "Mean",     title = "Mean of Squares")
-    AnovaTable$addColumnInfo( name = "FValue",   title = "F")
-    AnovaTable$addColumnInfo( name = "PValue",   title = "p")
+    AnovaTable$addColumnInfo( name = "names",    title = gettextf(" "))
+    AnovaTable$addColumnInfo( name = "Df",       title = gettextf("DF"))
+    AnovaTable$addColumnInfo( name = "Sum",      title = gettextf("Sum of Squares"))
+    AnovaTable$addColumnInfo( name = "Mean",     title = gettextf("Mean of Squares"))
+    AnovaTable$addColumnInfo( name = "FValue",   title = gettextf("F"))
+    AnovaTable$addColumnInfo( name = "PValue",   title = gettextf("p"))
 
 
 
