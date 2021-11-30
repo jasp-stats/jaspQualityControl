@@ -704,8 +704,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
           heli.rsm  <- rsm
-          # .responseSurfaceContourFill(jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]][[paste0("plotObject", col)]],
-          #                             heli.rsm, po, options, point_spec_r, counter_in_main_for_loop)
 
           opt2 <- options[["rsmResponseVariables"]][[counter_in_main_for_loop]]
 
@@ -910,15 +908,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
 
-.responseSurfaceContourFill <- function(contourPlot,heli.rsm,po, options, point_spec_r, counter_in_main_for_loop, dataset) {
 
-
-
-
-
-  return()
-
-}
 
 
 
