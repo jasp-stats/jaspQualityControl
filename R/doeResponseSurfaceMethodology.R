@@ -521,8 +521,13 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   pq <- pq[!is.na(pq)]
   fo <- fo[!is.na(fo)]
-  start_le <- (length(fo) == 0) + (length(pq) == 0)
-  formula_str <- character(start_le - length_rsmVariables + len_mo)
+  start_le <- (length(fo) != 0) + (length(pq) != 0)
+  if (len_mo > length_rsmVariables){
+    formula_str <- character(start_le - length_rsmVariables + len_mo)
+  }else{
+    formula_str <- character(start_le)
+  }
+
   if (length (fo) > 0){
     fo <- paste(fo, collapse = ",")
     formula_str[1] <- paste0("FO(",fo,")")
@@ -532,11 +537,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     formula_str[2] <- paste0("PQ(", pq, ")")
   }
 
-
-
-
-
   l_gen <- seq_along(options[["rsmVariables"]])
+
+
 
   for (i in seq_along(options[["modelTerms"]])) {
 
@@ -565,6 +568,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
           }
           jo_2 <- paste(jo, collapse = "")
           jo_3 <- paste0("TWI(",jo_2,")")
+
           formula_str[j] <- jo_3
           break()
         }
@@ -573,6 +577,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       }
     }
   }
+
+
+
 
   if (options[["rsmBlocks"]] != "") {
     if (length(unique(data[,(op1+2)])) > 1){
@@ -590,7 +597,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     form_3 <- as.formula(form_2)
 
   }
-
 
   rsm <- rsm::rsm(form_3 , data = var.code)
 
