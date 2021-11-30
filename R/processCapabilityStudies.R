@@ -227,6 +227,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   )
   table$addRows(rows)
 
+  N.Decimals <- decimalplaces(dataset[measurements][[1]][1])
   if(returnDataframe){
     sourceVector <- c('LSL', 'Target', 'USL', 'Sample size', 'Mean', "Std. Deviation (Total)", "Std. Deviation (Within)")
     lsl <- options[["lowerSpecification"]]
@@ -244,7 +245,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     sdw <- qccFit[["std.dev"]]
     valueVector <- c(lsl, target, usl, n, mean, sd, sdw)
     df <- data.frame(sources = sourceVector,
-                     values = valueVector)
+                     values = round(valueVector, N.Decimals))
     return(df)
   }
   container[["processSummaryTable"]] <- table
@@ -436,7 +437,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       cp <- NA
     valueVector <- na.omit(c(cp, cpl, cpu, cpk))
     df <- data.frame(sources = sourceVector,
-                     values = valueVector)
+                     values = round(valueVector,2))
     return(df)
   }
 
@@ -583,9 +584,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       pp <- NA
     if(!options[["targetValueField"]])
       cpm <- NA
-    valueVector1 <- na.omit(c(ppl, ppu, pp, ppk, cpm))
+    valueVector1 <- na.omit(c(pp, ppl, ppu, ppk, cpm))
     df <- data.frame(sources = sourceVector1,
-                     values = valueVector1)
+                     values = round(valueVector1,2))
     return(df)
   }
 
@@ -645,11 +646,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ewTOT <- sum(c(ewLSL, ewUSL), na.rm = T)
   expWithin <- c(ewLSL, ewUSL, ewTOT)
 
+  N.Decimals <- decimalplaces(dataset[measurements][[1]][1])
   if(returnPerformanceDataframe){
     df <- data.frame("Source" = rowNames,
                      "Observed" = observed,
-                     "Expected Overall" = expOverall,
-                     "Expected Within"  = expWithin)
+                     "Expected Overall" = round(expOverall, N.Decimals),
+                     "Expected Within"  = round(expWithin, N.Decimals))
     return(df)
 
   }
@@ -1429,7 +1431,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat <- matrix(list(), 3, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <- ggplotTable(processSummaryDF) #process summary
+    plotMat[[2, 1]] <- ggplotTable(round(processSummaryDF)) #process summary
     plotMat[[2, 2]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = options[["nonNormalDist"]])
     plotMat[[3, 1]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
     plotMat[[3, 2]] <- ggplotTable(overallCapDF)  #overall capability

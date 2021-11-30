@@ -86,7 +86,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspResults[["CCReport"]]$position <- 9
     Iplot <- jaspResults[["CCReport"]]
 
-
+    IMR <- .IMRchart(dataset = dataset, options = options, variable = variables, manualXaxis = subgroups)
     Iplot[["ccReport"]] <- .CCReport(p1 = IMR$p1, p2 = IMR$p2, ccTitle = options$ccTitle,
                                        ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
                                        ccChartName = options$ccChartName)
