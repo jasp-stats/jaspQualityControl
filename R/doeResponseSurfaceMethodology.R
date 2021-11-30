@@ -618,7 +618,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op3  <- length(options[["rsmBlocks"]])
 
   if (is.null(jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]])) {
-    contourPlot <- createJaspContainer(title = paste(options[["rsmResponseVariables"]][[counter_in_main_for_loop]],"Contour Plots", sep = " "))
+    contourPlot <- createJaspContainer(title = paste(options[["rsmResponseVariables"]][[counter_in_main_for_loop]],"Contour Plots"))
     jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]] <- contourPlot
     contourPlot$dependOn(c("rsmResponseVariables",
                "rsmBlocks",
