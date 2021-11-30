@@ -1012,7 +1012,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     AnovaTable$dependOn(      options = c("anova","modelTerms", "rsmBlocks",
                                           "rsmResponseVariables",
                                           "rsmVariables"))
-    AnovaTable$addColumnInfo( name = "names",    title = gettextf(" "))
+    AnovaTable$addColumnInfo( name = "names",    title = "")
     AnovaTable$addColumnInfo( name = "Df",       title = gettextf("DF"))
     AnovaTable$addColumnInfo( name = "Sum",      title = gettextf("Sum of Squares"))
     AnovaTable$addColumnInfo( name = "Mean",     title = gettextf("Mean of Squares"))
