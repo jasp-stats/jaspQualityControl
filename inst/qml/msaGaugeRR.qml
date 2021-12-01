@@ -134,7 +134,7 @@ Form
 				DoubleField
 				{
 					name: 						"tolerance"
-					defaultValue: 				1
+					defaultValue: 				10
 					min: 						0.001
 					decimals: 					3
 				}
@@ -273,7 +273,6 @@ Form
 	Section
 	{
 		title:									qsTr("ANOVA Method Report")
-		visible:								gaugeRRmethod.currentValue == "anovaMethod"
 
 		TextField
 		{

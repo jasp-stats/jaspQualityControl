@@ -73,19 +73,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-  dataset <- na.omit(dataset)
-
   # Error Handling
-  .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues'),
-             all.target = c(options$variables, options$variablesLong),
-             observations.amount =  c('1'), exitAnalysisIfErrors = TRUE)
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             all.target = c(options$variables, options$variablesLong), exitAnalysisIfErrors = TRUE)
 
 
+  dataset <- na.omit(dataset)
   # X-bar and R Chart OR ImR Chart
   if(options[["controlChartsType"]] == "xbarR"){
-    .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups_ticks = splitLevels, subgroups = subgroups)
+    .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor)
   } else{
-    .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitLevels)
+    .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor)
   }
 
   # Distribution plot
@@ -229,6 +227,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   )
   table$addRows(rows)
 
+  N.Decimals <- decimalplaces(dataset[measurements][[1]][1])
   if(returnDataframe){
     sourceVector <- c('LSL', 'Target', 'USL', 'Sample size', 'Mean', "Std. Deviation (Total)", "Std. Deviation (Within)")
     lsl <- options[["lowerSpecification"]]
@@ -246,7 +245,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     sdw <- qccFit[["std.dev"]]
     valueVector <- c(lsl, target, usl, n, mean, sd, sdw)
     df <- data.frame(sources = sourceVector,
-                     values = valueVector)
+                     values = round(valueVector, N.Decimals))
     return(df)
   }
   container[["processSummaryTable"]] <- table
@@ -438,7 +437,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       cp <- NA
     valueVector <- na.omit(c(cp, cpl, cpu, cpk))
     df <- data.frame(sources = sourceVector,
-                     values = valueVector)
+                     values = round(valueVector,2))
     return(df)
   }
 
@@ -585,9 +584,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       pp <- NA
     if(!options[["targetValueField"]])
       cpm <- NA
-    valueVector1 <- na.omit(c(ppl, ppu, pp, ppk, cpm))
+    valueVector1 <- na.omit(c(pp, ppl, ppu, ppk, cpm))
     df <- data.frame(sources = sourceVector1,
-                     values = valueVector1)
+                     values = round(valueVector1,2))
     return(df)
   }
 
@@ -647,11 +646,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ewTOT <- sum(c(ewLSL, ewUSL), na.rm = T)
   expWithin <- c(ewLSL, ewUSL, ewTOT)
 
+  N.Decimals <- decimalplaces(dataset[measurements][[1]][1])
   if(returnPerformanceDataframe){
     df <- data.frame("Source" = rowNames,
                      "Observed" = observed,
-                     "Expected Overall" = expOverall,
-                     "Expected Within"  = expWithin)
+                     "Expected Overall" = round(expOverall, N.Decimals),
+                     "Expected Within"  = round(expWithin, N.Decimals))
     return(df)
 
   }
@@ -1165,6 +1165,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
     yBreaks <- qnorm(ticks / 100)
 
+    xBreaks <- label_x <- jaspGraphs::getPrettyAxisBreaks(x)
+    xLimits <- range(xBreaks)
   } else if (options[["nullDistribution"]] == 'Lognormal') {
     fit <- fitdistrplus::fitdist(x, 'lnorm')
     meanlog <- as.numeric(fit$estimate[1])
@@ -1186,6 +1188,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileEstimate <- log(percentileEstimate)
     percentileLower <- log(percentileLower)
     percentileUpper <- log(percentileUpper)
+
+    labelFrame <- data.frame(labs = label_x, value = x)
+    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
+    xBreaks <- labelFrame[index,2]
+    label_x <- round(labelFrame[index,2],1)
+    xLimits <- range(xBreaks)
   } else if (options[["nullDistribution"]] == 'Weibull') {
     fit <- fitdistrplus::fitdist(x, 'weibull')
     shape <- as.numeric(fit$estimate[1])
@@ -1207,12 +1215,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileEstimate <- log(percentileEstimate)
     percentileLower <- log(percentileLower)
     percentileUpper <- log(percentileUpper)
+
+    labelFrame <- data.frame(labs = label_x, value = x)
+    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
+    xBreaks <- labelFrame[index,2]
+    label_x <- round(labelFrame[index,2],1)
+    xLimits <- range(xBreaks)
   }
   data1 <- data.frame(x = x, y = y)
   yLimits <- range(yBreaks)
-  xBreaks <- c(x[seq(1,length(x), 10)], x[length(x)])
-  label_x <- round(c(label_x[seq(1,length(label_x), 10)], label_x[length(label_x)]),2)
-  xLimits <- range(xBreaks)
 
 
   p <- ggplot2::ggplot() +
@@ -1420,7 +1431,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat <- matrix(list(), 3, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <- ggplotTable(processSummaryDF) #process summary
+    plotMat[[2, 1]] <- ggplotTable(round(processSummaryDF)) #process summary
     plotMat[[2, 2]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = options[["nonNormalDist"]])
     plotMat[[3, 1]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
     plotMat[[3, 2]] <- ggplotTable(overallCapDF)  #overall capability
@@ -1452,13 +1463,15 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
     beta <- fit_Weibull$estimate[[1]]
     theta <- fit_Weibull$estimate[[2]]
   }else if(distribution == "3lognormal"){
-    beta <- EnvStats::elnorm3(data)$parameters[[1]]
-    theta <- EnvStats::elnorm3(data)$parameters[[2]]
-    threshold <- EnvStats::elnorm3(data)$parameters[[3]]
+    temp <- EnvStats::elnorm3(data)
+    beta <- temp$parameters[[1]]
+    theta <- temp$parameters[[2]]
+    threshold <- temp$parameters[[3]]
   }else if(distribution == "3weibull"){
-    beta <- weibullness::weibull.mle(data)[[1]]
-    theta <- weibullness::weibull.mle(data)[[2]]
-    threshold <- as.vector(weibullness::weibull.mle(data)[[3]])
+    temp <- weibullness::weibull.mle(data)
+    beta <- temp[[1]]
+    theta <- temp[[2]]
+    threshold <- as.vector(temp[[3]])
   }
   list <- list(beta = beta,
                theta = theta)

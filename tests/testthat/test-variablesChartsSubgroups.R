@@ -33,18 +33,18 @@ options$variables <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 set.seed(1)
 results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Wide.csv", options)
 
-test_that("X-bar & R Control Chart plot matches2", {
-plotName <- results[["results"]][["XbarPlot"]][["data"]]
-testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart2")
+test_that("X-bar & R Control Chart2 plot matches", {
+  plotName <- results[["results"]][["XbarPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart2")
 })
 
 # S chart
 options$TypeChart <- "Schart"
 results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Wide.csv", options)
 
-test_that("X-bar & s Control Chart plot matches2", {
-plotName <- results[["results"]][["SPlot"]][["data"]]
-testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart2")
+test_that("X-bar & s Control Chart2 plot matches", {
+  plotName <- results[["results"]][["SPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart2")
 })

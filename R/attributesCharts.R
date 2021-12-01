@@ -1,27 +1,28 @@
 attributesCharts <- function(jaspResults, dataset, options) {
 
-  variables <- options$variables
   total <- options$total
   D <- options$D
-  numeric_variables <- c(variables, total, D)
+  numeric_variables <- c(total, D)
   numeric_variables  <- numeric_variables[numeric_variables != ""]
 
-  dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
+  dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables)
 
   # Checking if the analysis is ready
   ready <- options$D != "" && options$total != ""
 
   #Checking for errors in the dataset
-  .hasErrors(dataset, type = c('observations', 'infinity', 'missingValues', "negativeValues"),
-             all.target = c(options$variables, options$D),
-             observations.amount = c(' < 2'), exitAnalysisIfErrors = TRUE)
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             all.target = c(options$D,options$total),
+             exitAnalysisIfErrors = TRUE)
 
   if ((options$Attributes == "Defectives" | options$Attributes == "Defects" | options$Attributes == "ImR") && !ready) {
     plot <- createJaspPlot(title = gettext("Attributes Control Charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("Attributes", "variables"))
+    plot$dependOn(c("Attributes", "D", "total"))
     return()
   }
+
+  dataset <- na.omit(dataset)
 
   if (options$Attributes == "Defectives" && ready) {
 

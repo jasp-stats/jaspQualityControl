@@ -164,10 +164,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light graph"))
     jaspResults[["trafficPlot"]]$position <- 9
     jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "tolerance","gaugeToleranceEnabled", "gaugeRRmethod", "historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue"))
-    TrafficContainer <- jaspResults[["trafficPlot"]]
+    trafficContainer <- jaspResults[["trafficPlot"]]
 
     valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, returnTrafficValues = TRUE)
-    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceVar = valuesVec$tol, options = options, ready = ready)
+    trafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,ToleranceVar = valuesVec$tol, options = options, ready = ready)
 
   }
 
@@ -178,7 +178,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       jaspResults[["anovaGaugeReport"]]$position <- 9
     }
     jaspResults[["anovaGaugeReport"]] <- .anovaGaugeReport(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options = options)
-    jaspResults[["anovaGaugeReport"]]$dependOn("gaugeRRmethod")
+    jaspResults[["anovaGaugeReport"]]$dependOn(c("anovaGaugeReportedBy", "anovaGaugeTitle", "anovaGaugeName", "anovaGaugeDate",
+                                               "anovaGaugeMisc", "anovaGaugeReport"))
   }
 
 
@@ -584,26 +585,26 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     if (type == "Range"){
       if (i == 1){
         p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = FALSE,
-                          xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
+                          xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE, GaugeRR = TRUE)$p
       }else if(i == nOperators){
-        p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE,
+        p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, GaugeRR = TRUE,
                                 xAxisLab = parts, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }
       else{
-        p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
+        p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE, GaugeRR = TRUE,
                                 xAxisLab = parts, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }
     }else{
       if (i == 1){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
-                             warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = FALSE,
+                             warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = FALSE, GaugeRR = TRUE,
                              xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }else if(i == nOperators){
-        p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
+        p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, GaugeRR = TRUE,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
                              smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }else{
-        p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
+        p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, GaugeRR = TRUE,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
                              xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
                              smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
@@ -986,7 +987,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   return(TRUE)
 }
-.trafficplot <- function(StudyVar = "", ToleranceVar = "", options, ready, horizontal = FALSE, Xlab.StudySD = "", Xlab.Tol = ""){
+.trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE,ToleranceVar = "", options, ready, horizontal = FALSE, Xlab.StudySD = "", Xlab.Tol = ""){
 
   if (!ready)
     return()
@@ -998,6 +999,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     Yes = c(rep('A',3), rep("B",3)),
     fill = rep(c("G","R","Y"),2)
   )
+
+  if (StudyVar >= 100) {StudyVar = 100}
+  if (ToleranceVar >= 100) {ToleranceVar = 100}
 
   p1 <- ggplot2::ggplot(mat[c(1:3),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
     ggplot2::geom_bar(stat = "identity") +
@@ -1011,7 +1015,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     p1 <- p1 + ggplot2::scale_x_continuous(name = gettext(Xlab.StudySD))
 
 
-  if (ToleranceVar != ""){
+  if (ToleranceUsed){
     p2 <- ggplot2::ggplot(mat[c(4:6),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
       ggplot2::geom_bar(stat = "identity") +
       ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13')))+
@@ -1031,13 +1035,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       ggplot2::coord_flip() +
       ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "")
 
-    p2 <- p2 +
-      ggplot2::theme(legend.position="none",
-                     axis.text.x = ggplot2::element_blank(),
-                     axis.ticks.x = ggplot2::element_blank(),
-                     axis.title.x = ggplot2::element_blank()) +
-      ggplot2::coord_flip() +
-      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "")
+    if (ToleranceUsed == TRUE){
+      p2 <- p2 +
+        ggplot2::theme(legend.position="none",
+                       axis.text.x = ggplot2::element_blank(),
+                       axis.ticks.x = ggplot2::element_blank(),
+                       axis.title.x = ggplot2::element_blank()) +
+        ggplot2::coord_flip() +
+        ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "")
+    }
 
     Plot <- createJaspPlot(width = 250, height = 600)
   } else{
@@ -1046,17 +1052,19 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                      axis.text.y = ggplot2::element_blank(),
                      axis.ticks.y = ggplot2::element_blank(),
                      axis.title.y = ggplot2::element_blank()) +
-      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Precent of Process variation")
+      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent of Process variation")
 
-    p2 <- p2 +
-      ggplot2::theme(legend.position="none",
-                     axis.text.y = ggplot2::element_blank(),
-                     axis.ticks.y = ggplot2::element_blank(),
-                     axis.title.y = ggplot2::element_blank()) +
-      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Precent of the Tolerance")
+    if (ToleranceUsed == TRUE){
+      p2 <- p2 +
+        ggplot2::theme(legend.position="none",
+                       axis.text.y = ggplot2::element_blank(),
+                       axis.ticks.y = ggplot2::element_blank(),
+                       axis.title.y = ggplot2::element_blank()) +
+        ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent of the Tolerance")
+    }
   }
 
-  if (ToleranceVar != 0){
+  if (ToleranceUsed == TRUE){
     p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(2:1, ifelse(horizontal, 1,2)))
     Plot$plotObject <- p3
   } else {

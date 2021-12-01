@@ -47,7 +47,7 @@ Form
 				name:							"ncol"
 				label:							qsTr("Moving range length")
 				defaultValue:					2
-				min: 							2
+				min: 							    2
 			}
 		}
 
@@ -59,9 +59,10 @@ Form
 
 			DoubleField
 			{
-				name:							"nLag"
-				label:							qsTr("Number of lags")
+				name:						  	"nLag"
+				label:						  qsTr("Number of lags")
 				defaultValue:					25
+				min:			            1
 			}
 
 			DoubleField
@@ -69,6 +70,7 @@ Form
 				name:							"CI"
 				label:							qsTr("Confidence interval size")
 				defaultValue:					0.95
+				min:			            0.0001
 			}
 		}
 	}

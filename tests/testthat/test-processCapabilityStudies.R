@@ -14,10 +14,10 @@ options$upperSpecification <- 0
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Long.csv", options)
 
-test_that("ImR Charts matches", {
+test_that("ImR1", {
   plotName <- results[["results"]][["ImR Charts"]][["collection"]][["ImR Charts_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "ImR Charts-0")
+  jaspTools::expect_equal_plots(testPlot, "ImR1")
 })
 
 test_that("Histogram plot matches", {
@@ -45,10 +45,10 @@ options$variables <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Wide.csv", options)
 
-test_that("ImR Charts matches2", {
+test_that("ImR2 matches", {
   plotName <- results[["results"]][["ImR Charts"]][["collection"]][["ImR Charts_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "ImR Charts-2")
+  jaspTools::expect_equal_plots(testPlot, "ImR2")
 })
 
 test_that("Histogram plot matches", {
@@ -57,10 +57,10 @@ test_that("Histogram plot matches", {
   jaspTools::expect_equal_plots(testPlot, "histogram")
 })
 
-test_that("Probability Plot matches", {
+test_that("Probability Plot2 matches", {
   plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "probability-plot")
+  jaspTools::expect_equal_plots(testPlot, "probability-plot2")
 })
 
 test_that("Summary of test against the normal distribution table results match", {

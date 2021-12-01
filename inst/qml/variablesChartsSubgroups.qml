@@ -124,7 +124,7 @@ Form
   			{
   				name:							"SD"
   				label:							qsTr("Standard deviation")
-  				defaultValue:					0
+  				defaultValue:					3
   				fieldWidth:					  70
   				decimals:            10
   			}
