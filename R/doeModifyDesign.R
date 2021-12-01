@@ -126,9 +126,11 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
                                   ncenter = options[["MDcenterPoints"]])
     } else if(options[["designBy"]] == "byResolution"){
       desiredDesign <- FrF2::FrF2(nfactors = length(options[["MDassignedFactors"]]),
-                                  resolution = ifelse(options[["MDresolution"]] != "Full",
-                                                      as.numeric(as.roman(options[["MDresolution"]])),
-                                                      999),
+                                  resolution = if(options[["MDresolution"]] != "Full"){
+                                    as.numeric(as.roman(options[["MDresolution"]]))
+                                  } else {
+                                    999
+                                  },
                                   ncenter = options[["MDcenterPoints"]])
     } else {
       desiredDesign <- FrF2::FrF2(nfactors = length(options[["MDassignedFactors"]]),

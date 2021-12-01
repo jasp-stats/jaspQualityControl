@@ -224,9 +224,12 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                            blocks = options[["factorialBlocks"]])
       } else if(options[["designBy"]] == "designByResolution"){
         desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                           resolution = ifelse(options[["factorialResolution"]] != "Full",
-                                               as.numeric(as.roman(options[["factorialResolution"]])),
-                                               999),
+                           resolution =
+                             if(options[["factorialResolution"]] != "Full"){
+                               as.numeric(as.roman(options[["factorialResolution"]]))
+                             } else {
+                               999
+                               },
                            ncenter = options[["factorialCenterPoints"]],
                            replications = options[["factorialCornerReplicates"]],
                            repeat.only = rep)
@@ -248,9 +251,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
         gen[i] <- whichHow[[i]][length(whichHow[[i]])]
       }
       desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                         nruns = ifelse(options[["designBy"]] == "designByRuns",
-                                        as.numeric(options[["factorialRuns"]]),
-                                        2^options[["numberOfFactors"]] * as.numeric(options[["factorialFraction"]])),
+                         nruns = if(options[["designBy"]] == "designByRuns"){
+                           as.numeric(options[["factorialRuns"]])
+                         } else {
+                           2^options[["numberOfFactors"]] * as.numeric(options[["factorialFraction"]])
+                         },
                          generators = gen,
                          ncenter = options[["factorialCenterPoints"]],
                          replications = options[["factorialCornerReplicates"]],
@@ -264,9 +269,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                            repeat.only = rep)
       } else if(options[["designBy"]] == "designByResolution"){
         desx <- FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                           resolution = ifelse(options[["factorialResolution"]] != "Full",
-                                               as.numeric(as.roman(options[["factorialResolution"]])),
-                                               999),
+                           resolution = if(options[["factorialResolution"]] != "Full"){
+                             as.numeric(as.roman(options[["factorialResolution"]]))
+                           } else {
+                             999
+                           },
                            hard = options[["numberHTCFactors"]],
                            replications = options[["factorialCornerReplicates"]],
                            repeat.only = rep)
