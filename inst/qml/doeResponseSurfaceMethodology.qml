@@ -29,7 +29,7 @@ Form
 		{
 			name: "rsmVariables"
 			title: qsTr("Predictors [Location in coded format]")
-			suggestedColumns:   ["scale", "ordinal", "nominal"]
+			suggestedColumns:   ["scale", "ordinal"]
 
 			rowComponent: Row
 			{
@@ -38,8 +38,8 @@ Form
 
 
 		}
-		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal", "nominal"]}
-		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["scale", "ordinal", "nominal"]; singleVariable: true}
+		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal"]}
+		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["scale", "ordinal"]; singleVariable: true}
 	}
 
 
@@ -49,7 +49,7 @@ Form
 		AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
 		ModelTermsList
 		{
-			name					: "modelSpec"
+
 			listViewType			: JASP.Interaction
 			rowComponentTitle		: qsTr("Term Type")
 			rowComponent			: DropDown
@@ -108,7 +108,9 @@ Form
 		}
 	}
 	
+
 	Section 
+
 	{
 		title: qsTr("Design Specification")
 
@@ -217,6 +219,7 @@ Form
 				name:								"noModel"
 				label:								qsTr("Use # of Variables instead of Model")
 				visible:							cube.checked
+				checked:							true
 			}
 			
 			CheckBox 
@@ -312,7 +315,7 @@ Form
 							id:						factorName
 							label: 					""
 							name: 					"factorName"
-							placeholderText:		qsTr("x") + (rowIndex + 1)
+							placeholderText:		qsTr("Factor Name ") + (rowIndex + 1)
 							fieldWidth:				100 * preferencesModel.uiScale
 							useExternalBorder:		false
 							showBorder:				true
@@ -323,28 +326,25 @@ Form
 					{
 						spacing:					5 * preferencesModel.uiScale
 						Layout.preferredWidth:		100 * preferencesModel.uiScale
-						TextField
+						DoubleField 
 						{
-							label: 					""
-							name: 					"centre"
-							placeholderText:		qsTr("x") + (rowIndex + 1) + qsTr(" Centre")
+							label:					""
+							name:					"centre"
 							fieldWidth:				100 * preferencesModel.uiScale
-							useExternalBorder:		false
-							showBorder:				true
+							negativeValues:			true
 						}
+						
 					}
 					Row //Level2
 					{
 						spacing:					5 * preferencesModel.uiScale
 						Layout.preferredWidth:		100 * preferencesModel.uiScale
-						TextField
+						DoubleField 
 						{
-							label: 					""
-							name: 					"distance"
-							placeholderText:		qsTr("x") + (rowIndex + 1) + qsTr(" Distance")
+							label:					""
+							name:					"distance"
 							fieldWidth:				100 * preferencesModel.uiScale
-							useExternalBorder:		false
-							showBorder:				true
+							defaultValue:			1
 						}
 					}
 	//				Row //Level3
@@ -379,6 +379,8 @@ Form
 		
 		IntegerField
 		{
+
+
 			visible:                            false
 			id:                                 numberOfGeneratorsForTable
 			name:                               "numberOfGeneratorsForTable"
@@ -497,6 +499,7 @@ Form
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
 			AvailableVariablesList
 			{
+
 				name:  "rsmVariables2";	    source:"rsmVariables"
 
 			}
@@ -617,6 +620,7 @@ Form
 				rowComponent: Row
 				{
 					DoubleField {name: "Point_Min_2"; negativeValues: true}
+
 					DoubleField {name: "Point_Tar_2"; negativeValues: true; defaultValue: 1}
 					DoubleField {name: "Point_Max_2"; negativeValues: true; defaultValue: 2}
 				}
@@ -629,55 +633,6 @@ Form
 		
 	
 	
-	}
-		
-	
-
-	
-
-
-
-	Section
-	{
-		title: 							qsTr("Box designs")
-
-		CheckBox
-		{
-			name:                       "showDesign";label:            qsTr("Central composite design")
-			IntegerField
-			{
-				name:                       "factorResponse"
-				label:                      "Number of factors"
-				defaultValue:               2
-				min:                        2
-				max:                        50
-			}
-
-			IntegerField
-			{
-				name:						"responseSurfaceCentre"
-				label:						qsTr("Number of centre points")
-				defaultValue:				3
-				min:						1
-				max:						50
-			}
-
-
-			IntegerField
-			{
-				name:						"responseSurfaceReplicationStar"
-				label:						qsTr("Number of replicates")
-				defaultValue:				3
-				min:						1
-				max:						50
-			}
-
-
-
-		}
-
-
-
 	}
 
 

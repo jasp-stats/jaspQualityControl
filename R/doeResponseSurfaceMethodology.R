@@ -16,39 +16,66 @@
 #
 
 doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
-
-  op1  <- length(options[["rsmVariables"]])
+  op1  <- length(options[["modelTerms"]])
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
-  if (options[["designType"]] == "cube" && options[["buildDesignInv"]])
-    .cubeDesign(jaspResults, options, dataset)
-  if (options[["designType"]] == "star" && options[["buildDesignInv"]])
-    .starDesign(jaspResults, options)
 
-  if (op1 > 0 & op2 > 0) {
+  ready <- (op1 > 0 && op2 > 0) && any(options[["contour"]], options[["coef"]], options[["anova"]],
+                                       options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
+                                       options[["buildDesignInv"]], options[["desirability"]],
+                                       options[["contour"]])
 
-    rsm <- list()
-    #Placeholder table when the user inputs something. If an analysis gets picked, remove the table
-    if(!(any(options[["showDesign"]], options[["contour"]], options[["coef"]], options[["anova"]],
-             options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]]))) {
-      placeholder <- createJaspTable(title = gettext("Response Surface Methodology"))
-      jaspResults[["placeholder"]] <- placeholder
-    }else{
-      jaspResults[["placeholder"]] <- NULL
+
+
+  placeholder <- createJaspTable(title = gettext("Response Surface Methodology"))
+  jaspResults[["placeholder"]] <- placeholder
+  placeholder$dependOn(options = c("rsmVariables","rsmResponseVariables", "contour","coef","anova","res","pareto","resNorm",
+                                   "resFitted","buildDesignInv","desirability","contour"))
+  rsm <- list()
+  #Placeholder table when the user inputs something. If an analysis gets picked, remove the table
+  if(!ready) {
+
+    if (any(options[["contour"]], options[["coef"]], options[["anova"]],
+                                                                options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
+                                                                options[["desirability"]],
+                                                                options[["contour"]])) {
+
+      text <- gettext("No analyses (except those under 'Design Specification') can be started until at least one model term
+                      and one response variable are inputed.")
+      placeholder$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+
     }
+  }
+
+
+
+  if (options[["designType"]] == "cube" && options[["buildDesignInv"]]){
+    jaspResults[["placeholder"]] <- NULL
+    .cubeDesign(jaspResults, options, dataset)
+    }
+  if (options[["designType"]] == "star" && options[["buildDesignInv"]]){
+    jaspResults[["placeholder"]] <- NULL
+    .starDesign(jaspResults, options)
+  }
+
+  if (ready) {
 
     for (i in 1:op2) {
+      jaspResults[["placeholder"]] <- NULL
       data <- .readDataSet(jaspResults, options, dataset, i)
+
       #check for more than 5 unique
       .dataErrorCheck(data, options)
+
       rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
 
-      if (options[["showDesign"]])
-        .qualityControlDesignMainRSM(jaspResults,options, position = 1)
+      # if (options[["showDesign"]])
+      #   .qualityControlDesignMainRSM(jaspResults,options, position = 1)
 
       if (options[["contour"]])
-        .responseSurfaceContour(jaspResults, options, data, i, position = 2)
+        .responseSurfaceContour(jaspResults, options, data, rsm[[i]], i, position = 2)
+
 
       if(options[["coef"]])
         .responseSurfaceTableCall(jaspResults, options, rsm[[i]], i, position = 3)
@@ -71,23 +98,24 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       if(options[["ResFitted"]])
         .responsePlotResFitted(jaspResults, options, rsm[[i]],i, position = 9)
 
-      }
+    }
+    if(options[["desirability"]])
+      .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 10, dataset)
   }
-
-
-  if(options[["desirability"]])
-    .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 10, dataset)
 
 }
 
+
 .cubeDesign <- function(jaspResults, options, dataset) {
+  ready <- 1
   if(is.null(jaspResults[["ccd"]])) {
     ccd.table <- createJaspTable(title = gettext("Central Composite Design"))
     jaspResults[["ccd"]] <- ccd.table
     ccd.table$dependOn(options = c("noModel","designModel","randomize",
                                    "inscribed","block","designBlock",
                                    "numberOfCubes","numberOfGenerators","generators",
-                                   "factors","coded_out","numberOfFactors", "buildDesignInv"))
+                                   "factors","coded_out","numberOfFactors", "buildDesignInv",
+                                   "designType"))
 
 
 
@@ -101,6 +129,13 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       }
     } else {
       for (i in 1:(options[["numberOfFactors"]])) {
+        if (!(is.na(as.numeric(options[["factors"]][[i]][["factorName"]])))) {
+          text <- gettextf("Factor name '%s' is a number, and number factor names are not supported.",
+                                 options[["factors"]][[i]][["factorName"]])
+          ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+          ready <- 0
+          next
+        }
         ccd.table$addColumnInfo(name = options[["factors"]][[i]][["factorName"]], title = gettext(options[["factors"]][[i]][["factorName"]]),
                                 type = "number")
       }
@@ -109,6 +144,14 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
     if(options[["numberOfGenerators"]] > 0){
       for (i in 1:(options[["numberOfGenerators"]])) {
+        if (!(is.na(as.numeric(options[["generators"]][[i]][["generatorName"]])))){
+          text <- gettextf("Generator name '%s' is a number, and number generator names are not supported.",
+                           options[["generators"]][[i]][["generatorName"]])
+          ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+          ready <- 0
+          next
+        }
+
         ccd.table$addColumnInfo(name = options[["generators"]][[i]][["generatorName"]], title = gettext(options[["generators"]][[i]][["generatorName"]]),
                                 type = "number")
       }
@@ -131,14 +174,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
         ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
       }
 
-    }else {
-
-      ready <- 1
     }
-
     if (ready) {
 
-      ccd <- .designGenerate(options)
+      ccd <- .designGenerate(options, jaspResults)
 
       if(options[["coded_out"]]){
         ccd_true <- rsm::val2code(ccd, codings = rsm::codings(ccd))
@@ -158,22 +197,34 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 .starDesign <- function(jaspResults, options) {
+  ready <- 1
   if (is.null(jaspResults[["star"]])) {
     star.table <- createJaspTable(title = gettext("Central Composite Design with Star Points"))
     jaspResults[["star"]] <- star.table
 
     star.table$dependOn(options = c("randomize", "numberOfStars","alpha",
                                    "numberOfCubes","numberOfGenerators","generators",
-                                   "factors","numberOfFactors", "buildDesignInv"))
+                                   "factors","numberOfFactors", "buildDesignInv", "coded_out",
+                                   "designType"))
 
     star.table$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
     star.table$addColumnInfo(name = "std.order", title = gettext("Standard Order"), type = "integer")
 
-
-    for (i in 1:(options[["numberOfFactors"]])) {
-      star.table$addColumnInfo(name = paste0("x",i), title = gettext(paste0("x",i)),
-                              type = "number")
+    if (options[["coded_out"]]) {
+      for (i in 1:(options[["numberOfFactors"]])) {
+        star.table$addColumnInfo(name = paste0("x",i), title = gettext(paste0("x",i)),
+                                 type = "number")
+      }
     }
+
+    for (i in seq_along(options[["factors"]]))
+      if(!(is.na(as.numeric(options[["factors"]][[i]][["factorName"]])))) {
+        text <- gettextf("Factor name '%s' is a number, and number factor names are not supported",
+                               options[["factors"]][[i]][["factorName"]])
+        star.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+        ready <- 0
+    }
+
 
 
     generatorError <- options[["numberOfGenerators"]] > 0
@@ -183,18 +234,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       text  <- gettext("The analysis will not run when the 'Number of Generators' > 0")
       star.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
 
-    } else{
-      ready <- 1
     }
 
     if (ready) {
       alpha <- tolower(options[["alpha"]])
-      ccd   <- .designGenerate(options)
+      ccd   <- .designGenerate(options,jaspResults)
 
       n0    <- options[["numberOfStars"]]
       randomize <- options[["randomize"]]
 
       star.ccd <- rsm::star(basis = ccd, n0 = n0, alpha = alpha)
+      if(options[["coded_out"]]) {
+        star.ccd <- rsm::val2code(star.ccd, codings = rsm::codings(star.ccd))
+      } else {
+        star.ccd <- rsm::code2val(star.ccd, codings = rsm::codings(star.ccd))
+      }
       star.ccd <- lapply(star.ccd, round, 3)
       star.table$setData(star.ccd)
     }
@@ -205,7 +259,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 
-.designGenerate <- function(options) {
+.designGenerate <- function(options, jaspResults) {
   if (options[["noModel"]])
     formula <- as.integer(options[["numberOfFactors"]])
   else {
@@ -232,6 +286,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     for (i in seq_along(options[["generators"]])) {
       if (!(options[["generators"]][[i]][["generatorName"]] == "" ||
             options[["generators"]][[i]][["generatorFormula"]] == "")){
+        if (!(is.na(as.numeric(options[["generators"]][[i]][["generatorName"]]))))
+          next
+
         generators <- c(generators, as.formula(paste0(options[["generators"]][[i]][["generatorName"]],
                                                       "~", options[["generators"]][[i]][["generatorFormula"]])))
       }
@@ -244,6 +301,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     if (!(options[["factors"]][[i]][["factorName"]] == "" |
           options[["factors"]][[i]][["centre"]] == ""     |
           options[["factors"]][[i]][["distance"]] == ""))  {
+
+      if(!(is.na(as.numeric(options[["factors"]][[i]][["factorName"]]))))
+        next
 
       coding_list <- c(coding_list, as.formula(paste0("x", i, "~(",options[["factors"]][[i]][["factorName"]],
                                                       "-",options[["factors"]][[i]][["centre"]], ")/",
@@ -271,7 +331,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }else if(length(generators) == 0 & length(block_formula) == 0){
     ccd <- rsm::cube(basis = formula, n0 = n0, coding = coding_list,
                      inscribed = inscribed, randomize = randomize)
-    # print("4")
 
   }else if(length(coding_list) == 0) {
     ccd <- rsm::cube(basis = formula, n0 = n0, generators = generators,
@@ -300,10 +359,22 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 .dataErrorCheck <- function(data, options) {
-  .hasErrors(dataset = data,
+
+  .hasErrors(dataset = data, type = c("infinity","missingValues", "observations"),
+             infinity.target = c(options[["rsmVariables"]],options[["rsmResponseVariables"]],
+                            options[["rsmBlocks"]]),
+             missingValues.target = c(options[["rsmVariables"]],options[["rsmResponseVariables"]],
+                                      options[["rsmBlocks"]]),
+             observations.target = c(options[["rsmVariables"]],options[["rsmResponseVariables"]]),
+             observations.amount = c("< 2"),
              custom = function() {
-               if(any(rapply(data[,seq_along(options[["rsmVariables"]])], function(x)length(unique(x)) > 5)))
-                 return(gettext("This analysis does not take predictor variables with more than 5 unique values."))
+               if (length(options[["rsmVariables"]]) == 1) {
+                 if (length(unique(data[,1])) > 5)
+                   return(gettext("This analysis does not take predictor variables with more than 5 unique values."))
+               }else {
+                 if(any(rapply(data[,seq_along(options[["rsmVariables"]])], function(x)length(unique(x)) > 5)))
+                   return(gettext("This analysis does not take predictor variables with more than 5 unique values."))
+               }
              },
              exitAnalysisIfErrors = T)
 }
@@ -405,19 +476,27 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
+
+
   name <- vector()
 
+
   mean.col <- colMeans(data)
+
 
   optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
   data.list <- list()
 
 
+
   opt1 <- colnames(data)[1:length_rsmVariables]
+
   opt2 <- colnames(data)[(length_rsmVariables+1)]
   if (options[["rsmBlocks"]] != "") {
     opt3 <- colnames(data)[(length_rsmVariables+2)]
   }
+
+
 
 
   var.code <- rsm::coded.data(data)
@@ -442,9 +521,13 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   pq <- pq[!is.na(pq)]
   fo <- fo[!is.na(fo)]
+  start_le <- (length(fo) != 0) + (length(pq) != 0)
+  if (len_mo > length_rsmVariables){
+    formula_str <- character(start_le - length_rsmVariables + len_mo)
+  }else{
+    formula_str <- character(start_le)
+  }
 
-  start <- ifelse(length(fo) == 0, 0, 1) + ifelse(length(pq) == 0, 0 ,1)
-  formula_str <- rep("", times = start + len_mo - length_rsmVariables)
   if (length (fo) > 0){
     fo <- paste(fo, collapse = ",")
     formula_str[1] <- paste0("FO(",fo,")")
@@ -454,10 +537,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     formula_str[2] <- paste0("PQ(", pq, ")")
   }
 
-
-
-
   l_gen <- seq_along(options[["rsmVariables"]])
+
+
 
   for (i in seq_along(options[["modelTerms"]])) {
 
@@ -486,6 +568,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
           }
           jo_2 <- paste(jo, collapse = "")
           jo_3 <- paste0("TWI(",jo_2,")")
+
           formula_str[j] <- jo_3
           break()
         }
@@ -495,11 +578,16 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }
   }
 
+
+
+
   if (options[["rsmBlocks"]] != "") {
     if (length(unique(data[,(op1+2)])) > 1){
       form <- paste(formula_str, collapse = "+")
 
+
       form_2 <- paste0(opt2, "~", options[["rsmBlocks"]], "+", form)
+
 
       form_3 <- as.formula(form_2)
     }
@@ -510,19 +598,20 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   }
 
-
   rsm <- rsm::rsm(form_3 , data = var.code)
 
 
 }
 
 
-.responseSurfaceContour <- function(jaspResults, options, data, i, position, dataset) {
+.responseSurfaceContour <- function(jaspResults, options, data, rsm, i, position, dataset) {
   ready <- 1
 
 
-  if (is.null(jaspResults[[paste0("contourPlot", i)]]))
-    .responseSurfaceContourPlot(jaspResults, dataset, options, data, counter_in_main_for_loop = i)
+
+
+  .responseSurfaceContourPlot(jaspResults, dataset, options, data, rsm, counter_in_main_for_loop = i)
+
 
 }
 
@@ -531,21 +620,31 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   #Error 1: Does
 }
 
-.responseSurfaceContourPlot <- function(jaspResults, dataset, options, data, counter_in_main_for_loop) {
-  contourPlot <- createJaspContainer(title = paste(options[["rsmResponseVariables"]][[counter_in_main_for_loop]],"Contour Plots", sep = " "))
+
+.responseSurfaceContourPlot <- function(jaspResults, dataset, options, data, rsm, counter_in_main_for_loop) {
 
   op1  <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
 
-
+  if (is.null(jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]])) {
+    contourPlot <- createJaspContainer(title = paste(options[["rsmResponseVariables"]][[counter_in_main_for_loop]],"Contour Plots"))
+    jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]] <- contourPlot
+    contourPlot$dependOn(c("rsmResponseVariables",
+               "rsmBlocks",
+               "contour", "psi", "theta","pairs", "Component", "Point"))
+  }else {
+    contourPlot <- jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]]
+  }
 
   op_pair <- length(options[["pairs"]])
 
-  jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]] <- contourPlot
+
+
 
   if (op_pair == 0 & options[["contour"]]) {
     jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]][["1"]] <- createJaspPlot(width = 400, height = 400)
+
 
     return ()
   }else if(op2 >= 1) {
@@ -575,57 +674,111 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     for (i in pair){
 
       if (!(i[1] == "") & !(i[2] == "")) {
+        if (is.null(jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]][[paste0("plotObject", col)]])) {
+          plot <- createJaspPlot(
+            title = paste0(i[1], "-", i[2], " Plot"),
+            width = 400, height = 400)
+          plot$dependOn(c("rsmResponseVariables",
+                          "rsmBlocks",
+                          "contour", "psi", "theta","pairs", "Component", "Point"))
 
-        plot <- createJaspPlot(
-          title = paste0(i[1], "-", i[2], " Plot"),
-          width = 400, height = 400)
-        plot$dependOn(c("rsmResponseVariables",
-                        "rsmBlocks",
-                        "contour", "psi", "theta","pairs", "Component", "Point"))
-        jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]][[paste0("plotObject", col)]] <- plot
+          jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]][[paste0("plotObject", col)]] <- plot
 
 
 
-        po <- as.formula(paste0("~x", l_gen[optio %in% i[1]],
-                               "+", "x",
-                               l_gen[optio %in% i[2]]))
+          po <- as.formula(paste0("~x", l_gen[optio %in% i[1]],
 
-        point_spec_r <- c()
-        k <- 1
-        for (j in 1:op1) {
-          if (!(l_gen[optio %in% i[1]] == j || l_gen[optio %in% i[2]] == j)){
-            point_spec_r[k] <- point_vec[j]
-            names(point_spec_r)[k] <- paste0("x", j)
-            k <- k + 1
-          }
-        }
+                                  "+", "x",
+                                  l_gen[optio %in% i[2]]))
 
-        if (is.null(point_spec_r)) {
+          point_spec_r <- c()
+          k <- 1
           for (j in 1:op1) {
-            if (l_gen[optio %in% i[1]] == j || l_gen[optio %in% i[2]] == j){
+            if (!(l_gen[optio %in% i[1]] == j || l_gen[optio %in% i[2]] == j)){
               point_spec_r[k] <- point_vec[j]
               names(point_spec_r)[k] <- paste0("x", j)
               k <- k + 1
             }
           }
+
+          if (is.null(point_spec_r)) {
+            for (j in 1:op1) {
+              if (l_gen[optio %in% i[1]] == j || l_gen[optio %in% i[2]] == j){
+                point_spec_r[k] <- point_vec[j]
+                names(point_spec_r)[k] <- paste0("x", j)
+                k <- k + 1
+              }
+            }
+          }
+
+
+
+          heli.rsm  <- rsm
+
+          opt2 <- options[["rsmResponseVariables"]][[counter_in_main_for_loop]]
+
+
+
+
+          contour.fill <- function() {
+            plot <- persp(heli.rsm, po,
+                          at = point_spec_r, contours = "colors",
+                          col = rainbow(options["divide"]),
+                          zlab = opt2,
+                          box = T,
+                          decode = F,
+                          ticktype = "detailed",
+                          phi = options[["phi"]]*360,
+                          theta = (options[["theta"]]*360 + 330))
+            #mtext(plot[[1]][[4]][[5]])
+            if (options[["legend"]]){
+              #Divide the difference between the upper and lower z-axis boundary by number of colours
+              z_step <- (plot[[1]][[5]][[2]] - plot[[1]][[5]][[1]])/(length(rainbow(options["divide"])))
+              #Create a string of intervals corresponding to each colour
+              string <- c()
+              for (i in 1:length(rainbow(options["divide"]))) {
+                string[i] <- paste0(as.character(round(plot[[1]][[5]][[1]]+(i-1)*z_step,1)), "-",
+                                    as.character(round(plot[[1]][[5]][[1]]+i*z_step,1)))
+              }
+              legend(x = "topright", legend = string, fill = rainbow(options["divide"]), text.width = 0.1, cex = 0.9)
+            }
+
+          }
+
+
+          plot.contour <- function() {
+            contour(heli.rsm,
+                    po,
+                    image = T,
+                    at = point_spec_r,
+                    contours = terrain.colors(5),
+                    decode = ifelse(options[["coded"]], F,T),
+                    las = 1)
+          }
+
+          if (options[["cplot"]]) {
+            plot$plotObject <- plot.contour
+          }else {
+            plot$plotObject <- contour.fill
+          }
+
+          col <- col + 1
         }
 
-
-        heli.rsm  <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
-        .responseSurfaceContourFill(jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]][[paste0("plotObject", col)]],
-                                    heli.rsm, po, options, point_spec_r, counter_in_main_for_loop)
-        col <- col + 1
       }
 
     }
 
   }
 
+
   return()
 }
 
 .responsePlotResNorm <- function(jaspResults, options, rsm, i, position, dataset){
+
   if (!(is.null(jaspResults[[paste0("resNorm", i)]]))){
+
     return()
   }
   plot <- createJaspPlot(title = paste0("Normal Probability Plot of Residuals for ",
@@ -633,6 +786,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                        ),
                          width = 400, height = 400)
   jaspResults[[paste0("resNorm", i)]] <- plot
+
 
   plot$dependOn(c("resNorm", "rsmBlocks",
                   "rsmResponseVariables",
@@ -647,6 +801,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
 .responsePlotResidualCall <- function(jaspResults, options, rsm, i, position, dataset) {
+
   if (!(is.null(jaspResults[[paste0("Residual", i)]]))) {
     return()
   }
@@ -659,7 +814,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                   "res", "modelTerms"))
 
 
+
   jaspResults[[paste0("Residual", i)]] <- plot
+
+
 
   x <- resid(rsm)
 
@@ -683,6 +841,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responsePlotResFitted <- function(jaspResults, options, rsm, position, i, dataset){
 
+
   if (!(is.null(jaspResults[[paste0("ResFitted", i)]]))){
    return()
 
@@ -690,7 +849,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   plot <- createJaspPlot(title = paste0("Residuals vs. Fitted Value for ", options[["rsmResponseVariables"]][[i]]),
                          width = 400, height = 400)
   jaspResults[[paste0("ResFitted", i)]] <- plot
-  plot$dependOn(c("resFitted","rsmBlocks",
+  plot$dependOn(c("ResFitted","rsmBlocks",
                 "rsmResponseVariables",
                 "rsmVariables","modelTerms"))
 
@@ -702,8 +861,11 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   p <- ggplot2::ggplot(df, ggplot2::aes(x = x, y = y)) +
     ggplot2::geom_point() +
     ggplot2::geom_hline(yintercept = 0, color = "grey", linetype = "dashed") +
+
     ggplot2::scale_x_continuous(name = gettextf("Fitted values"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks) +
     ggplot2::scale_y_continuous(name = gettextf("Residuals"),     limits = c(min(yBreaks), max(yBreaks)), breaks = yBreaks)
+
+
 
   p <- jaspGraphs::themeJasp(p)
 
@@ -713,6 +875,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 .responsePlotPareto <- function(jaspResults, options, rsm, i, position, dataset) {
+
 
   if (!(is.null(jaspResults[[paste0("pareto", i)]]))) {
     return()
@@ -754,61 +917,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
 
-.responseSurfaceContourFill <- function(contourPlot,heli.rsm,po, options, point_spec_r, counter_in_main_for_loop, dataset) {
-
-  op1  <- length(options[["rsmVariables"]])
-  op2  <- length(options[["rsmResponseVariables"]])
-  op3  <- length(options[["rsmBlocks"]])
-
-  opt2 <- options[["rsmResponseVariables"]][[counter_in_main_for_loop]]
 
 
-  contour.fill <- function() {
-    plot <- persp(heli.rsm, po,
-                  at = point_spec_r, contours = "colors",
-                  col = rainbow(options["divide"]),
-                  zlab = opt2,
-                  box = T,
-                  decode = F,
-                  ticktype = "detailed",
-                  phi = options[["phi"]]*360,
-                  theta = (options[["theta"]]*360 + 330))
-    #mtext(plot[[1]][[4]][[5]])
-    if (options[["legend"]]){
-      #Divide the difference between the upper and lower z-axis boundary by number of colours
-      z_step <- (plot[[1]][[5]][[2]] - plot[[1]][[5]][[1]])/(length(rainbow(options["divide"])))
-      #Create a string of intervals corresponding to each colour
-      string <- c()
-      for (i in 1:length(rainbow(options["divide"]))) {
-        string[i] <- paste0(as.character(round(plot[[1]][[5]][[1]]+(i-1)*z_step,1)), "-",
-                           as.character(round(plot[[1]][[5]][[1]]+i*z_step,1)))
-      }
-      legend(x = "topright", legend = string, fill = rainbow(options["divide"]), text.width = 0.1, cex = 0.9)
-    }
-
-  }
-
-
-  plot.contour <- function() {
-    contour(heli.rsm,
-            po,
-            image = T,
-            at = point_spec_r,
-            contours = terrain.colors(5),
-            decode = ifelse(options[["coded"]], F,T),
-            las = 1)
-  }
-
-  if (options[["cplot"]]) {
-    contourPlot$plotObject <- plot.contour
-  }else {
-    contourPlot$plotObject <- contour.fill
-  }
-
-
-  return()
-
-}
 
 
 
@@ -827,6 +937,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceTable <- function(jaspResults, options, rsm, i, dataset) {
 
+
   if (is.null(jaspResults[[paste0("TableContainer", i)]])) {
     TableContainer <- createJaspContainer()
     jaspResults[[paste0("TableContainer", i)]] <- TableContainer
@@ -842,7 +953,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     CoefTable <- createJaspTable(gettextf("RSM Coefficients for %s",
                                                options[["rsmResponseVariables"]][[i]]))
     jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
-    CoefTable$addColumnInfo(name = "names",title = gettext(" "))
+    CoefTable$addColumnInfo(name = "names",title = "")
     CoefTable$addColumnInfo(name = "est",  title = gettext("Estimate"))
     CoefTable$addColumnInfo(name = "std",  title = gettext("Standard Error"))
     CoefTable$addColumnInfo(name = "tval", title = gettext("t"))
@@ -856,15 +967,18 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   }
 
+
   if (is.null(jaspResults[[paste0("TableContainer", i)]][["RSQTable"]])){
     RSQTable  <- createJaspTable()
     jaspResults[[paste0("TableContainer", i)]][["RSQTable"]] <- RSQTable
+
     RSQTable$addColumnInfo( name = "RSQ",   title = gettext("Multiple R-squared"))
     RSQTable$addColumnInfo( name = "ARSQ",  title = gettext("Adjusted R-squared"))
     RSQTable$addColumnInfo( name = "DF1",   title = gettext("DF1"))
     RSQTable$addColumnInfo( name = "DF2",   title = gettext("DF2"))
     RSQTable$addColumnInfo( name = "FStat", title = gettext("F"))
     RSQTable$addColumnInfo( name = "pval_2",title = gettext("p"))
+
 
     RSQTable$setData(list(RSQ    = round(rsm[[8]],3),
                                               ARSQ   = round(rsm[[9]],3),
@@ -879,6 +993,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   return()
 }
+
+
 
 
 .responseSurfaceTableAnovaCall <- function(jaspResults, options, rsm, i,  position, dataset) {
@@ -898,35 +1014,41 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                            options[["rsmResponseVariables"]][[i]]))
 
     jaspResults[[paste0("anova", i)]] <- AnovaTable
+
+    AnovaTable$dependOn(      options = c("anova","modelTerms", "rsmBlocks",
+                                          "rsmResponseVariables",
+                                          "rsmVariables"))
+
+    AnovaTable$addColumnInfo( name = "names",    title = gettext(" "))
+    AnovaTable$addColumnInfo( name = "Df",       title = gettext("DF"))
+    AnovaTable$addColumnInfo( name = "Sum",      title = gettext("Sum of Squares"))
+    AnovaTable$addColumnInfo( name = "Mean",     title = gettext("Mean of Squares"))
+    AnovaTable$addColumnInfo( name = "FValue",   title = gettext("F"))
+    AnovaTable$addColumnInfo( name = "PValue",   title = gettext("p"))
+
+
+
+
+
+
+
+
+    .responseSurfaceAnovaFill(AnovaTable, jaspResults, options,rsm, i)
   }else{
-    return()
+    AnovaTable <- jaspResults[[paste0("anova", i)]]
   }
-
-
-
-
-  AnovaTable$dependOn(      options = c("anova","modelTerms", "rsmBlocks",
-                                       "rsmResponseVariables",
-                                       "rsmVariables"))
-  AnovaTable$addColumnInfo( name = "names",     title = " ")
-  AnovaTable$addColumnInfo( name = "Df",       title = "DF")
-  AnovaTable$addColumnInfo( name = "Sum",      title = "Sum of Squares")
-  AnovaTable$addColumnInfo( name = "Mean",     title = "Mean of Squares")
-  AnovaTable$addColumnInfo( name = "FValue",   title = "F")
-  AnovaTable$addColumnInfo( name = "PValue",   title = "p")
-
-
-
-  .responseSurfaceAnovaFill(AnovaTable, jaspResults, options,rsm, i)
 
   return()
 }
 
 
 
+
 .responseSurfaceAnovaFill <- function(AnovaTable, jaspResults, options,rsm, i) {
 
+
  jaspResults[[paste0("anova", i)]]$setData(list(    names  = rownames(rsm[[13]]),
+
                                          Df     = round(rsm[[13]][[1]],3),
                                          Sum    = round(rsm[[13]][[2]],3),
                                          Mean   = round(rsm[[13]][[3]],3),
@@ -952,6 +1074,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   eigen      <- createJaspContainer()
   jaspResults[["eigen"]] <- eigen
 
+
   if (is.null(eigen[["XTable"]])){
     XTable <- createJaspTable(title = gettextf("Stationary Points of Response Surface (Coded)"))
     eigen[["XTable"]] <- XTable
@@ -965,6 +1088,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }else {
     return()
   }
+
 
   if (is.null(eigen[["EigenVectors"]])){
     EigenVector <- createJaspTable(title = gettextf("Eigenvectors"))
@@ -1013,114 +1137,124 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 }
 
 .responseSurfaceOptimize <- function(jaspResults, options, rsm, data, position, dataset) {
+  min_len <- length(options[["rsmMin"]])
+  max_len <- length(options[["rsmMax"]])
+  tar_len <- length(options[["rsmTar"]])
 
-  desire_list <- list()
-  k <- 1
-  if (length(options[["rsmMin"]]) > 0) {
-    for (i in 1:length(options[["rsmMin"]])) {
-      desire_list[[k]] <- desirability::dMin(options[["rsmMin"]][[i]][[2]], options[["rsmMin"]][[i]][[1]])
-      k <- k +1
+  if (length(rsm) == 0 || min_len + max_len + tar_len == 0) {
+    error_table <- createJaspTable(gettext("Desirability"))
+    jaspResults[["errorTable"]] <- error_table
+    error_table$dependOn(options = c("desirability", "rsmVariables","rsmResponseVariables"))
+
+    if (length(rsm) == 0){
+      text  <- gettext("At least one predictor and response variable need to be specified before running the analysis.")
+      error_table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
     }
-  }
-  if (length(options[["rsmMax"]]) > 0) {
-    for (i in 1:length(options[["rsmMax"]])) {
-      desire_list[[k]] <- desirability::dMin(options[["rsmMax"]][[i]][[2]], options[["rsmMax"]][[i]][[1]])
-      k <- k +1
+
+    if (min_len + max_len + tar_len == 0) {
+      text  <- gettext("At least one desirability function must be specified before running the analysis.")
+      error_table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
     }
-  }
-  if (length(options[["rsmTar"]]) > 0) {
-    for (i in 1:length(options[["rsmTar"]])) {
-      desire_list[[k]] <- desirability::dMin(options[["rsmTar"]][[i]][[2]],options[["rsmTar"]][[i]][[3]], options[["rsmTar"]][[i]][[1]])
-      k <- k +1
-    }
-  }
-
-  desire_final <- do.call(desirability::dOverall, desire_list)
-
-  if (length(options[["rsmMax"]]) + length(options[["rsmMin"]]) + length(options[["rsmTar"]]) == 1)
-    desire_final <- desire_final[[1]][[1]]
-
-  op  <- data.frame(x1 = seq(-1,1,0.25))
-  op1 <- length(options[["rsmVariables"]])
-
-  if (op1 > 1) {
-    for (i in 2:op1) {
-      op <- cbind(op, seq(-1,1,0.25))
-    }
-    names(op) <- paste0("x",1:op1)
-  }
 
 
-  possibleCodedCombinationsOfPredictors <- expand.grid(op)
-
-  rsmOpt_2 <- function(predictorCombinationFunction, rsm, dObject, space = "square") {
-    conv <- numeric(length(rsm))
-    for (j in seq_along(rsm)) {
-      conv[j] <- predict(rsm[[j]], newdata = possibleCodedCombinationsOfPredictors[i,])
-    }
-    out <- do.call(predict, list(object = dObject, newobject = conv))
-    #Value of 1.682 taken from https://rdrr.io/rforge/desirability/f/inst/doc/desirability.pdf , 5. Maximizing Desirability
-    if (space == "circular") {
-      if (sqrt(sum(possibleCodedCombinationsOfPredictors[i,]^2)) > 1.682)
-        out <- 0
-    }
-    else if (space == "square")
-      if (any(abs(possibleCodedCombinationsOfPredictors[i,]) > 1.682))
-        out <- 0
-    out
-  }
-
-  tmp <- vector("list", dim(possibleCodedCombinationsOfPredictors)[1])
-  for (i in seq_len(dim(possibleCodedCombinationsOfPredictors)[1])) {
-    tmp[[i]] <- optim(as.vector(possibleCodedCombinationsOfPredictors[i,]), rsmOpt_2, dObject = desire_final,
-                      rsm = rsm, space = "square", control = list(fnscale = -1))
-    if (i == 1) {
-      bestCombinedDesirability <- tmp[[i]]
-    }else {
-      if (tmp[[i]][["value"]] > bestCombinedDesirability[["value"]])
-        bestCombinedDesirability <- tmp[[i]]
-    }
-  }
-
-
-
-  if (is.null(jaspResults[["desirability_container"]])) {
-    desirability_container <- createJaspContainer()
-    jaspResults[["desirability_container"]] <- desirability_container
-    desirability_container$dependOn(options = c("rsmMin", "rsmMax", "rsmVariables", "rsmTar"))
   } else {
-     return()
+    jaspResults[["errorTable"]] <- NULL
+
+    desire_list <- list()
+    k <- 1
+    if (min_len > 0) {
+      for (i in 1:min_len) {
+        desire_list[[k]] <- desirability::dMin(options[["rsmMin"]][[i]][[2]], options[["rsmMin"]][[i]][[1]])
+        k <- k +1
+      }
+    }
+    if (max_len > 0) {
+      for (i in 1:max_len) {
+        desire_list[[k]] <- desirability::dMin(options[["rsmMax"]][[i]][[2]], options[["rsmMax"]][[i]][[1]])
+        k <- k +1
+      }
+
+    }
+    if (tar_len > 0) {
+      for (i in 1:tar_len) {
+        desire_list[[k]] <- desirability::dMin(options[["rsmTar"]][[i]][[2]],options[["rsmTar"]][[i]][[3]], options[["rsmTar"]][[i]][[1]])
+        k <- k +1
+      }
+    }
+
+    desire_final <- do.call(desirability::dOverall, desire_list)
+
+    if (max_len + min_len + tar_len == 1)
+      desire_final <- desire_final[[1]][[1]]
+
+    op  <- data.frame(x1 = seq(-1,1,0.25))
+    op1 <- length(options[["rsmVariables"]])
+
+    if (op1 > 1) {
+      for (i in 2:op1) {
+        op <- cbind(op, seq(-1,1,0.25))
+      }
+      names(op) <- paste0("x",1:op1)
+    }
+
+
+    possibleCodedCombinationsOfPredictors <- expand.grid(op)
+
+    rsmOpt_2 <- function(predictorCombinationFunction, rsm, dObject, space = "square") {
+      conv <- numeric(length(rsm))
+      for (j in seq_along(rsm)) {
+        conv[j] <- predict(rsm[[j]], newdata = possibleCodedCombinationsOfPredictors[i,])
+      }
+      out <- do.call(predict, list(object = dObject, newobject = conv))
+      #Value of 1.682 taken from https://rdrr.io/rforge/desirability/f/inst/doc/desirability.pdf , 5. Maximizing Desirability
+      if (space == "circular") {
+        if (sqrt(sum(possibleCodedCombinationsOfPredictors[i,]^2)) > 1.682)
+          out <- 0
+      }
+      else if (space == "square")
+        if (any(abs(possibleCodedCombinationsOfPredictors[i,]) > 1.682))
+          out <- 0
+      out
+    }
+
+    tmp <- vector("list", dim(possibleCodedCombinationsOfPredictors)[1])
+    for (i in seq_len(dim(possibleCodedCombinationsOfPredictors)[1])) {
+      tmp[[i]] <- optim(as.vector(possibleCodedCombinationsOfPredictors[i,]), rsmOpt_2, dObject = desire_final,
+                        rsm = rsm, space = "square", control = list(fnscale = -1))
+      if (i == 1) {
+        bestCombinedDesirability <- tmp[[i]]
+      }else {
+        if (tmp[[i]][["value"]] > bestCombinedDesirability[["value"]])
+          bestCombinedDesirability <- tmp[[i]]
+      }
+    }
+    if (is.null(jaspResults[["desirability_container"]])) {
+      desirability_container <- createJaspContainer()
+      jaspResults[["desirability_container"]] <- desirability_container
+      desirability_container$dependOn(options = c("rsmMin", "rsmMax", "rsmVariables", "rsmTar", "desirability"))
+    }else {
+      desirability_container <- jaspResults[["desirability_container"]]
+    }
+
+
+    if (is.null(desirability_container[["predictor_value"]])) {
+      predictor_value <- createJaspTable(title = "Predictor Values")
+      desirability_container[["predictor_value"]] <- predictor_value
+      desirability_container[["predictor_value"]]$setData(bestCombinedDesirability[["par"]])
+
+    }
+
+    if (is.null(desirability_container[["value"]])) {
+      value <- createJaspTable(title = "Overall Desirability")
+      value$addColumnInfo(name = "Value", title = "Value")
+      desirability_container[["value"]] <- value
+      desirability_container[["value"]]$setData(round(bestCombinedDesirability[["value"]],3))
+    }
   }
 
 
-  if (is.null(desirability_container[["predictor_value"]])) {
-    predictor_value <- createJaspTable(title = "Predictor Values")
-    desirability_container[["predictor_value"]] <- predictor_value
-  }else {
-    return()
-  }
-
-  if (is.null(desirability_container[["value"]])) {
-    value <- createJaspTable(title = "Overall Desirability")
-    value$addColumnInfo(name = "Value", title = "Value")
-    desirability_container[["value"]] <- value
-  }else {
-    return()
-  }
-
-  for (i in 1:op1) {
-    predictor_value$addColumnInfo(name = paste0("x",i), title = paste0("x",i))
-  }
-
-  .responseSurfaceOptimizeFill(predictor_value, value, desirability_container, bestCombinedDesirability, jaspResults, options, dataset)
 
   return()
 }
 
-.responseSurfaceOptimizeFill <- function(predictor_value, value, desirability_container, bestCombinedDesirability, jaspResults, options, dataset) {
 
-  desirability_container[["predictor_value"]]$addRows(bestCombinedDesirability[["par"]])
-  desirability_container[["value"]]$setData(round(bestCombinedDesirability[["value"]],3))
-
-  return()
-}
