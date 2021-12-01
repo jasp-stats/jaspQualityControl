@@ -20,13 +20,12 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   splitName <- options$subgroups
   makeSplit <- splitName != ""
 
-  if (options[["CCDataFormat"]] == "CCwideFormat"){
+  if (options[["CCDataFormat"]] == "CCwideFormat")
     measurements <- unlist(options$variables)
-    wideFormat <- TRUE
-  }else{
+  else
     measurements <- unlist(options$variablesLong)
-    wideFormat <- FALSE
-  }
+
+  wideFormat <- options[["CCDataFormat"]] == "CCwideFormat"
   measurements <- measurements[measurements != ""]
   subgroups <- unlist(options$subgroups)
 

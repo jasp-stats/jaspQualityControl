@@ -30,13 +30,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   dataset <- .readDataSetToEnd(columns.as.numeric = num.vars, columns.as.factor = fac.vars)
 
   # Check if the analysis is ready
-  if (options[["pcDataFormat"]] == "PCwideFormat"){
-    wideFormat <- TRUE
+  if (options[["pcDataFormat"]] == "PCwideFormat")
     ready <- length(measurements) > 0
-  }else{
-    wideFormat <- FALSE
+  else
     ready <- (measurements != "" && (options[["manualSubgroupSize"]] | subgroups != ""))
-  }
+  wideFormat <- options[["pcDataFormat"]] == "PCwideFormat"
 
   if (makeSplit && ready) {
     dataset.factors <- .readDataSetToEnd(columns=num.vars, columns.as.factor=splitName)
