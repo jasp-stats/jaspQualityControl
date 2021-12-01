@@ -31,8 +31,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Check if the analysis is ready
   if (options[["pcDataFormat"]] == "PCwideFormat"){
+    wideFormat <- TRUE
     ready <- length(measurements) > 0
   }else{
+    wideFormat <- FALSE
     ready <- (measurements != "" && (options[["manualSubgroupSize"]] | subgroups != ""))
   }
 
@@ -49,7 +51,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     # Actually remove missing values from the split factor
     splitFactor <- na.omit(splitFactor)
   } else {
-    splitLevels <- ""
+    splitFactor <- ""
   }
 
   if (options[["pcDataFormat"]] == "PClongFormat" && ready){
@@ -81,9 +83,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   dataset <- na.omit(dataset)
   # X-bar and R Chart OR ImR Chart
   if(options[["controlChartsType"]] == "xbarR"){
-    .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor)
+    .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
   } else{
-    .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor)
+    .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
   }
 
   # Distribution plot
@@ -1343,14 +1345,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 
-.qcImRChart<- function(options, dataset, ready, jaspResults, measurements, subgroups){
+.qcImRChart<- function(options, dataset, ready, jaspResults, measurements, subgroups, wideFormat){
   if (!ready)
     return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
   Container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
   Container$position <- 1
   jaspResults[["ImR Charts"]] <- Container
-  Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE)$p
+  Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE, Wide = wideFormat)$p
 }
 
 .PClongTowide<- function(dataset, k, measurements, mode = c("manual", "subgroups")){

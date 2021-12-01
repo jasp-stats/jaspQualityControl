@@ -105,7 +105,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
 }
 
-.IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "") {
+.IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE) {
 
   ppPlot <- createJaspPlot(width = 1000, height = 550)
 
@@ -190,7 +190,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
   if (manualXaxis != "") {
     if (measurements != "") {
-      if (length(levels(manualXaxis)) == length(manualXaxis))
+      if (Wide)
         xLabels <- as.vector(sapply(1:length(manualXaxis), function(x) {rep(manualXaxis[x], ncol(dataset[measurements]))}))
       else
         xLabels <- manualXaxis

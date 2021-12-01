@@ -3,7 +3,7 @@
 #############################################################
 
 # Function to create the x-bar and r-chart section
-.qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups) {
+.qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups, wideFormat) {
 
   if (!is.null(jaspResults[["controlCharts"]]))
     return()
@@ -25,8 +25,8 @@
     }
 
   plotMat <- matrix(list(), 2, 1)
-  plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
-  plotMat[[2,1]] <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE)$p
+  plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Wide = wideFormat)$p
+  plotMat[[2,1]] <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Wide = wideFormat)$p
   matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
 }
 
@@ -46,7 +46,7 @@
 
 # Function to create X-bar chart
 .XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Sample average", xAxisLab = "Subgroup",
-                           manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL, OnlyOutofLimit = FALSE, GaugeRR = FALSE) {
+                           manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   if(Phase2)
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
@@ -134,9 +134,9 @@
     p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
   if (manualXaxis != "") {
-    if (GaugeRR | length(levels(manualXaxis)) == length(manualXaxis)){
-      xBreaks_Out <- unique(manualXaxis)
-      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = levels(manualXaxis))
+    if (GaugeRR | Wide){
+      xBreaks_Out <- manualXaxis
+      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(xBreaks_Out), labels = xBreaks_Out)
     }
     else{
       xBreaks <- 1:nrow(data)
@@ -173,7 +173,7 @@
 
 # Function to create R chart
 .RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = "",
-                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE, GaugeRR = FALSE) {
+                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
@@ -255,9 +255,9 @@
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
 
   if (manualXaxis != "") {
-    if (GaugeRR | length(levels(manualXaxis)) == length(manualXaxis)){
-      xBreaks_Out <- unique(manualXaxis)
-      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = levels(manualXaxis))
+    if (GaugeRR | Wide){
+      xBreaks_Out <- manualXaxis
+      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(xBreaks_Out), labels = xBreaks_Out)
     }
     else{
       xBreaks <- 1:nrow(data)
