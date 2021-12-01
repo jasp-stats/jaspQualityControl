@@ -18,11 +18,6 @@
 factorialAnalysis <- function(jaspResults, dataset, options, ...){
 
   ready <- (length(options[["FAassignedFactors"]]) >= 2 && options[["FAresponse"]] != "" && !is.null(options[["FArunOrder"]]))
-  print(ready)
-  print(!is.null(options[["FAresponse"]]))
-  print(options[["FAresponse"]] == "")
-  print(length(options[["FAresponse"]]))
-  print(options[["FAresponse"]])
 
   if(ready)
     dataset <- .factorialAnalysisReadData(dataset, options)
