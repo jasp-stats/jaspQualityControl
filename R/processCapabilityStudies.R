@@ -1190,7 +1190,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileUpper <- log(percentileUpper)
 
     labelFrame <- data.frame(labs = label_x, value = x)
-    index = c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
+    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
     xBreaks <- labelFrame[index,2]
     label_x <- round(labelFrame[index,2],1)
     xLimits <- range(xBreaks)
@@ -1217,7 +1217,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileUpper <- log(percentileUpper)
 
     labelFrame <- data.frame(labs = label_x, value = x)
-    index = c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
+    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
     xBreaks <- labelFrame[index,2]
     label_x <- round(labelFrame[index,2],1)
     xLimits <- range(xBreaks)

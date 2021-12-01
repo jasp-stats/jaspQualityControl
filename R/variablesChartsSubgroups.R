@@ -169,8 +169,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 }
 #Functions for control charts
 .XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "") {
-  data1 <- dataset[, unlist(lapply(dataset, is.numeric))]
-  sixsigma <- qcc::qcc(data1, type ='S', plot = FALSE)
+  data <- dataset[, unlist(lapply(dataset, is.numeric))]
+  sixsigma <- qcc::qcc(data, type ='S', plot = FALSE)
   subgroups <- c(1:length(sixsigma$statistics))
   data_plot <- data.frame(subgroups = subgroups, Stdv = sixsigma$statistics)
 
@@ -197,9 +197,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     x = max(xLimits) * 0.95,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, decimalplaces(data1[1,1]) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(data1[1,1]) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(data1[1,1]) + 2))
+      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
     )
   )
 
@@ -222,8 +222,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       p <- p + ggplot2::scale_x_continuous(breaks = 1:length(manualXaxis), labels = levels(manualXaxis))
     }
     else{
-      data <- data1
-      xBreaks <- seq(1,nrow(data))
+      xBreaks <- 1:nrow(data)
       xLabels <- xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
 
       if (length(xBreaks) > 20){

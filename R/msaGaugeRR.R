@@ -164,10 +164,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light graph"))
     jaspResults[["trafficPlot"]]$position <- 9
     jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "tolerance","gaugeToleranceEnabled", "gaugeRRmethod", "historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue"))
-    TrafficContainer <- jaspResults[["trafficPlot"]]
+    trafficContainer <- jaspResults[["trafficPlot"]]
 
     valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, returnTrafficValues = TRUE)
-    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,ToleranceVar = valuesVec$tol, options = options, ready = ready)
+    trafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,ToleranceVar = valuesVec$tol, options = options, ready = ready)
 
   }
 
@@ -1015,7 +1015,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     p1 <- p1 + ggplot2::scale_x_continuous(name = gettext(Xlab.StudySD))
 
 
-  if (ToleranceUsed == TRUE){
+  if (ToleranceUsed){
     p2 <- ggplot2::ggplot(mat[c(4:6),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
       ggplot2::geom_bar(stat = "identity") +
       ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13')))+

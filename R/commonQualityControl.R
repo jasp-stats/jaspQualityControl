@@ -139,8 +139,7 @@
       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = levels(manualXaxis))
     }
     else{
-
-      xBreaks <- seq(1,nrow(data))
+      xBreaks <- 1:nrow(data)
       xLabels <- xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
 
       if (length(xBreaks) > 20){
@@ -261,8 +260,7 @@
       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(manualXaxis), labels = levels(manualXaxis))
     }
     else{
-
-      xBreaks <- seq(1,nrow(data))
+      xBreaks <- 1:nrow(data)
       xLabels <- xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
 
       if (length(xBreaks) > 20){
@@ -360,7 +358,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   table <- createJaspTable(title = gettextf("Test results for %s chart", name))
 
-  if (Phase2 == FALSE || type == "xbar.one") {
+  if (!Phase2 || type == "xbar.one") {
 
     Test <- NelsonLaws(data = sixsigma, allsix = TRUE, xLabels = xLabels)
 
