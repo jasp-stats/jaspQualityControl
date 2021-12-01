@@ -31,8 +31,8 @@ Form
         indexDefaultValue:                      0
         values:
         [
-            { value: "PBdes", 	label: qsTr("Plackett-Burman")       },
-            { value: "DSdes", 	label: qsTr("Definitive screening") 	}
+            { value: "PBdes", 	label: qsTr("Plackett-Burman")      },
+            { value: "DSdes", 	label: qsTr("Definitive screening") }
         ]
 
     }

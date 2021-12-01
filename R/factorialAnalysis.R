@@ -17,7 +17,7 @@
 
 factorialAnalysis <- function(jaspResults, dataset, options, ...){
 
-  ready <- (length(options[["FAassignedFactors"]]) >= 2 && !is.null(options[["FAresponse"]]) && !is.null(options[["FArunOrder"]]))
+  ready <- (length(options[["FAassignedFactors"]]) >= 2 && options[["FAresponse"]] != "" && !is.null(options[["FArunOrder"]]))
 
   if(ready)
     dataset <- .factorialAnalysisReadData(dataset, options)
@@ -232,7 +232,7 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   factorialRegressionANOVA <- createJaspTable(gettext("ANOVA"))
   factorialRegressionANOVA$position <- 1
 
-  factorialRegressionANOVA$dependOn(options = c("FAassginedFactors",
+  factorialRegressionANOVA$dependOn(options = c("FAassignedFactors",
                                                 "FAresponse",
                                                 "intOrder"))
 
@@ -275,7 +275,7 @@ factorialAnalysis <- function(jaspResults, dataset, options, ...){
   factorialRegressionCoefficients <- createJaspTable(gettext("Coefficients"))
   factorialRegressionCoefficients$position <- 2
 
-  factorialRegressionCoefficients$dependOn(options = c("FAassginedFactors",
+  factorialRegressionCoefficients$dependOn(options = c("FAassignedFactors",
                                                        "FAresponse",
                                                        "intOrder"))
 

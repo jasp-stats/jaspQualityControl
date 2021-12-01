@@ -198,14 +198,15 @@ Form
 					height:                     100 * preferencesModel.uiScale
 					width:                      250 * preferencesModel.uiScale
 					visible:                    factorialTypeSpecify.checked
-					title:                      qsTr("Design generators")
+                    title:                      qsTr("Design generator")
 					textType:                   JASP.TextTypeSource
 				}
 			}
 
 			RadioButton
 			{
-				id:                             factorialTypeSplit
+                id:                             factorialTypeSplit
+                visible:                        numberOfFactorsForTable.value > 3 | factorialRuns.currentIndex > 0
 				name:                           "factorialTypeSplit"
 				label:							qsTr("2-level split-plot (hard-to-change factors)")
 
@@ -213,19 +214,12 @@ Form
 				{
 					name:						"numberHTCFactors"
 					label:						qsTr("Number of hard-to-change factors")
-					visible:                    factorialTypeSplit.checked
+                    visible:                    factorialTypeSplit.checked
 					defaultValue:				1
 					min:						1
-					max:						numberOfFactors.value
+                    max:						numberOfFactors.value-1
 
 				}
-			}
-
-			RadioButton
-			{
-				id:                             factorialTypeFull
-				name:							"factorialTypeFull"
-				label:							qsTr("General full factorial design")
 			}
 		}
 
@@ -250,15 +244,16 @@ Form
 
 						DropDown
 						{
-							name: 				"factorialRuns"
+                            id:                 factorialRuns
+                            name: 				"factorialRuns"
 							indexDefaultValue: 	0
 							values:
                             [
-                                { value: 2**(1+Math.floor(Math.log2(numberOfFactors.value))), label: Number(2**(1+Math.floor(Math.log2(numberOfFactors.value))))},
-                                { value: 2**(2+Math.floor(Math.log2(numberOfFactors.value))), label: Number(2**(2+Math.floor(Math.log2(numberOfFactors.value))))},
-                                { value: 2**(3+Math.floor(Math.log2(numberOfFactors.value))), label: Number(2**(3+Math.floor(Math.log2(numberOfFactors.value))))},
-                                { value: 2**(4+Math.floor(Math.log2(numberOfFactors.value))), label: Number(2**(4+Math.floor(Math.log2(numberOfFactors.value))))},
-                                { value: 2**(5+Math.floor(Math.log2(numberOfFactors.value))), label: Number(2**(5+Math.floor(Math.log2(numberOfFactors.value))))},
+                                { value: 2**(1+Math.floor(Math.log2(numberOfFactorsForTable.value))), label: Number(2**(1+Math.floor(Math.log2(numberOfFactorsForTable.value))))},
+                                { value: 2**(2+Math.floor(Math.log2(numberOfFactorsForTable.value))), label: Number(2**(2+Math.floor(Math.log2(numberOfFactorsForTable.value))))},
+                                { value: 2**(3+Math.floor(Math.log2(numberOfFactorsForTable.value))), label: Number(2**(3+Math.floor(Math.log2(numberOfFactorsForTable.value))))},
+                                { value: 2**(4+Math.floor(Math.log2(numberOfFactorsForTable.value))), label: Number(2**(4+Math.floor(Math.log2(numberOfFactorsForTable.value))))},
+                                { value: 2**(5+Math.floor(Math.log2(numberOfFactorsForTable.value))), label: Number(2**(5+Math.floor(Math.log2(numberOfFactorsForTable.value))))},
 							]
 
 						}
@@ -301,9 +296,30 @@ Form
                             indexDefaultValue:  0
                             values:
                             [
-                                { value: "0.5", label: qsTr("1/2")  },
-                                { value: "0.25",label: qsTr("1/4")  },
-                                { value: "0.125",label: qsTr("1/8")  }
+                                {
+                                    value: "0.5",
+                                    label: qsTr("1/2")
+                                },
+                                {
+                                    value: numberOfFactorsForTable.value > 4
+                                           ? "0.25"
+                                           : "0.5",
+                                    label: numberOfFactorsForTable.value > 4
+                                           ? qsTr("1/4")
+                                           : qsTr("1/2")
+                                },
+                                {
+                                    value: numberOfFactorsForTable.value > 5
+                                           ? "0.125"
+                                           : numberOfFactorsForTable.value > 4
+                                             ? "0.25"
+                                             : "0.5",
+                                    label: numberOfFactorsForTable.value > 5
+                                           ? qsTr("1/8")
+                                           : numberOfFactorsForTable.value > 4
+                                             ? qsTr("1/4")
+                                             : qsTr("1/2")
+                                }
                             ]
                         }
                     }
@@ -346,9 +362,9 @@ Form
 					name:						"factorialBlocks"
                     enabled:                    !factorialTypeSplit.checked & !designByResolution.checked & !factorialTypeSpecify.checked
 					label:						qsTr("Number of blocks")
-					defaultValue:				1
+                    defaultValue:				1
 					min:						1
-                    max:						8
+                    max:						2**factorialRuns.currentIndex
 				}
 
                 IntegerField
@@ -383,7 +399,7 @@ Form
         {
             name:                               "showAliasStructure"
             label:                              "Show alias structure"
-            enabled:                            displayDesign.checked
+            enabled:                            displayDesign.checked & factorialTypeDefault.checked
         }
 
 		FileSelector
@@ -400,7 +416,7 @@ Form
 			id: 								exportDesign
 			anchors.right:						parent.right
 			anchors.bottom:						parent.bottom
-			text: 								qsTr("<b>Export Design</b>")
+            text: 								actualExporter.checked ? qsTr("<b>Sync Design: On</b>") : qsTr("<b>Sync Design: Off</b>")
 			onClicked: 							actualExporter.click()
 		}
 
