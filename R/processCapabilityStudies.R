@@ -1463,13 +1463,15 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
     beta <- fit_Weibull$estimate[[1]]
     theta <- fit_Weibull$estimate[[2]]
   }else if(distribution == "3lognormal"){
-    beta <- EnvStats::elnorm3(data)$parameters[[1]]
-    theta <- EnvStats::elnorm3(data)$parameters[[2]]
-    threshold <- EnvStats::elnorm3(data)$parameters[[3]]
+    temp <- EnvStats::elnorm3(data)
+    beta <- temp$parameters[[1]]
+    theta <- temp$parameters[[2]]
+    threshold <- temp$parameters[[3]]
   }else if(distribution == "3weibull"){
-    beta <- weibullness::weibull.mle(data)[[1]]
-    theta <- weibullness::weibull.mle(data)[[2]]
-    threshold <- as.vector(weibullness::weibull.mle(data)[[3]])
+    temp <- weibullness::weibull.mle(data)
+    beta <- temp[[1]]
+    theta <- temp[[2]]
+    threshold <- as.vector(temp[[3]])
   }
   list <- list(beta = beta,
                theta = theta)
