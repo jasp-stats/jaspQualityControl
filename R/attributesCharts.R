@@ -15,14 +15,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
              all.target = c(options$D,options$total),
              exitAnalysisIfErrors = TRUE)
 
-  if (ready && nrow(dataset[D]) == 0){
-    jaspResults[["plot"]] <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
-    jaspResults[["plot"]]$setError(gettextf("No valid measurements in %s.", D))
-    jaspResults[["plot"]]$position <- 1
-    jaspResults[["plot"]]$dependOn(c("D", "total"))
-    return()
-  }
-
   if ((options$Attributes == "Defectives" | options$Attributes == "Defects" | options$Attributes == "ImR") && !ready) {
     plot <- createJaspPlot(title = gettext("Attributes Control Charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot

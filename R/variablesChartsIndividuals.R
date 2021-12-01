@@ -33,8 +33,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
 #Checking for errors in the dataset
 
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = c(options$variables, options$subgroups),
+  .hasErrors(dataset, type = c('infinity', 'missingValues', "observations"),
+             infinity.target = c(options$variables, options$subgroups),
+             missingValues.target = c(options$variables, options$subgroups),
+             observations.amount = c("< 2"),
+             observations.target = c(options$variables),
              exitAnalysisIfErrors = TRUE)
 
   if (options$ImRchart && length(variables) == 0) {

@@ -85,17 +85,16 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = c(options$variables, options$subgroups, options$variablesLong),
-             missingValues.target = c(options$variables, options$subgroups, options$variablesLong),
+             all.target = c(options$variables, options$subgroups, measurements),
              exitAnalysisIfErrors = TRUE)
 
-  if (ready && nrow(dataset[measurements]) == 0){
-    jaspResults[["plot"]] <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
-    jaspResults[["plot"]]$setError(gettextf("No valid measurements in %s.", measurements))
-    jaspResults[["plot"]]$position <- 1
-    jaspResults[["plot"]]$dependOn(c("variables", "variablesLong"))
-    return()
-  }
+  .hasErrors(dataset, type = c('infinity', 'missingValues', "observations"),
+             infinity.target = c(measurements, options$subgroups),
+             missingValues.target = c(options$subgroups, measurements),
+             observations.amount = c("< 2"),
+             observations.target = c(measurements),
+             exitAnalysisIfErrors = TRUE)
+
   dataset <- na.omit(dataset)
 
   #X bar & R chart
