@@ -953,7 +953,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     CoefTable <- createJaspTable(gettextf("RSM Coefficients for %s",
                                                options[["rsmResponseVariables"]][[i]]))
     jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
-    CoefTable$addColumnInfo(name = "names",title = gettext(" "))
+    CoefTable$addColumnInfo(name = "names",title = "")
     CoefTable$addColumnInfo(name = "est",  title = gettext("Estimate"))
     CoefTable$addColumnInfo(name = "std",  title = gettext("Standard Error"))
     CoefTable$addColumnInfo(name = "tval", title = gettext("t"))
