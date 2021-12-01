@@ -173,11 +173,32 @@ Form
                         name:                   "MDfraction"
                         indexDefaultValue:      0
                         values:
-                        [
-                            { value: "0.5", label: qsTr("1/2")  },
-                            { value: "0.25", label: qsTr("1/4")  },
-                            { value: "0.125", label: qsTr("1/8")  }
-                        ]
+                            [
+                                {
+                                    value: "0.5",
+                                    label: qsTr("1/2")
+                                },
+                                {
+                                    value: nAssignedFactors.value > 5
+                                           ? "0.25"
+                                           : "0.5",
+                                    label: nAssignedFactors.value > 5
+                                           ? qsTr("1/4")
+                                           : qsTr("1/2")
+                                },
+                                {
+                                    value: nAssignedFactors.value > 6
+                                           ? "0.125"
+                                           : nAssignedFactors.value > 5
+                                             ? "0.25"
+                                             : "0.5",
+                                    label: nAssignedFactors.value > 6
+                                           ? qsTr("1/8")
+                                           : nAssignedFactors.value > 5
+                                             ? qsTr("1/4")
+                                             : qsTr("1/2")
+                                }
+                            ]
                     }
                 }
             }

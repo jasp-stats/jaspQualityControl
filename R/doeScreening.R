@@ -40,7 +40,7 @@ doeScreening <- function(jaspResults, dataset, options, ...){
     table$addColumnInfo(name = 'factors', title = gettext("Factors"), type = 'integer')
     table$addColumnInfo(name = 'runs', title = gettext("Runs"), type = 'integer')
     table$addColumnInfo(name = 'resolution', title = gettext("Resolution"), type = 'string')
-    table$addColumnInfo(name = 'centers', title = gettext("Center points"), type = 'integer')
+    table$addColumnInfo(name = 'centers', title = gettext("Centre points"), type = 'integer')
     if(options[["screeningType"]] == "PBdes")
       table$addColumnInfo(name = 'replicates', title = gettext("Replicates"), type = 'integer')
 
@@ -52,11 +52,22 @@ doeScreening <- function(jaspResults, dataset, options, ...){
                                      options[["PBruns"]],
                                      nrow(daewr::DefScreen(options[["numberOfFactorsScreen3"]],
                                                            options[["numberOfFactorsScreen2"]],
-                                                           options[["screeningCenterPoints"]]))),
+                                                           ifelse(options[["numberOfFactorsScreen2"]] == 0,
+                                                                  options[["screeningCenterPoints"]],
+                                                                  0)
+                                                           )
+                                          )
+                                     ),
                        resolution = ifelse(options[["screeningType"]] == "PBdes",
                                            "III",
                                            "IV"),
-                       centers = options[["screeningCenterPoints"]])
+                       centers = ifelse(options[["screeningType"]] == "PBdes",
+                                        options[["screeningCenterPoints"]],
+                                        ifelse(options[["numberOfFactorsScreen2"]] == 0,
+                                               options[["screeningCenterPoints"]],
+                                               0)
+                                        )
+                       )
     if(options[["screeningType"]] == "PBdes")
       rows <- cbind.data.frame(rows, replicates = options[["screeningCornerReplicates"]])
 
@@ -137,7 +148,9 @@ doeScreening <- function(jaspResults, dataset, options, ...){
     } else {
       daewr::DefScreen(m = options[["numberOfFactorsScreen3"]],
                        c = options[["numberOfFactorsScreen2"]],
-                       center = options[["screeningCenterPoints"]])
+                       center = ifelse(options[["numberOfFactorsScreen2"]] == 0,
+                                       options[["screeningCenterPoints"]],
+                                       0))
     }
 
     runOrder <- sample(nrow(desScreen), nrow(desScreen))

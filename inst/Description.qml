@@ -125,11 +125,11 @@ Description
 		title:			qsTr("Two-level Factorial Analysis")
 		func:			"factorialAnalysis"
 	}
-    Analysis
-    {
-        title:			qsTr("Definitive Screening Analysis")
-        func:			"definitiveScreeningAnalysis"
-    }
+//    Analysis
+//    {
+//        title:			qsTr("Definitive Screening Analysis")
+//        func:			"definitiveScreeningAnalysis"
+//    }
 
 	GroupTitle
 	{

@@ -34,6 +34,7 @@ Form
 		AssignedVariablesList
 		{
 			name:                               "FAresponse"
+            allowedColumns:                     ["scale"]
 			singleVariable:                     true
 			label:                              qsTr("Response variable")
 		}
@@ -41,6 +42,7 @@ Form
 		AssignedVariablesList
 		{
 			name:                               "FAassignedFactors"
+            allowedColumns:                     ["ordinal", "nominal"]
 			label:                              qsTr("Assigned factors")
 		}
 
@@ -56,6 +58,7 @@ Form
 		{
             id:                                 runOrder
             name:                               "FArunOrder"
+            allowedColumns:                     ["scale", "ordinal"]
 			singleVariable:                     true
 			label:                              qsTr("Run order")
 		}
