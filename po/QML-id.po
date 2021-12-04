@@ -84,10 +84,6 @@ msgid "Two-level Factorial Analysis"
 msgstr ""
 
 msgctxt "Description|"
-msgid "Definitive Screening Analysis"
-msgstr ""
-
-msgctxt "Description|"
 msgid "Probability of Detection"
 msgstr ""
 
@@ -252,19 +248,11 @@ msgid "2-level factorial (specify generator)"
 msgstr ""
 
 msgctxt "doeFactorial|"
-msgid "Design generators"
-msgstr ""
-
-msgctxt "doeFactorial|"
 msgid "2-level split-plot (hard-to-change factors)"
 msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Number of hard-to-change factors"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "General full factorial design"
 msgstr ""
 
 msgctxt "doeFactorial|"
@@ -321,10 +309,6 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Save as:"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "<b>Export Design</b>"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
@@ -433,22 +417,6 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Target [Min/Target/Max]"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Box designs"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Central composite design"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of centre points"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of replicates"
 msgstr ""
 
 msgctxt "doeScreening|"
@@ -1936,10 +1904,6 @@ msgid "Show desired design"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design Specification"
 msgstr ""
 
@@ -2020,14 +1984,6 @@ msgid "x"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid " Centre"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid " Distance"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Formula"
 msgstr ""
 
@@ -2093,10 +2049,6 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Analysis options"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid ""
 msgstr ""
 
 msgctxt "timeWeightedCharts|"
@@ -2193,4 +2145,24 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name of the chart"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design generator"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "<b>Sync Design: On</b>"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "<b>Sync Design: Off</b>"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid ""
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Factor Name "
 msgstr ""

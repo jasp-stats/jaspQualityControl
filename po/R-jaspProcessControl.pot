@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2021-11-27 03:36\n"
+"POT-Creation-Date: 2021-12-04 03:36\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -238,6 +238,12 @@ msgstr ""
 msgid "Response Surface Methodology"
 msgstr ""
 
+msgid "No analyses (except those under 'Design Specification') can be started until at least one model term\n                      and one response variable are inputed."
+msgstr ""
+
+msgid "<em>Warning: </em>"
+msgstr ""
+
 msgid "Central Composite Design"
 msgstr ""
 
@@ -250,10 +256,16 @@ msgstr ""
 msgid "x"
 msgstr ""
 
+msgid "Factor name '%s' is a number, and number factor names are not supported."
+msgstr ""
+
 msgid "factors"
 msgstr ""
 
 msgid "factorName"
+msgstr ""
+
+msgid "Generator name '%s' is a number, and number generator names are not supported."
 msgstr ""
 
 msgid "generators"
@@ -265,13 +277,13 @@ msgstr ""
 msgid "The analysis will not run when the 'Specify Model for CCD' field is empty and the 'Use # of Variables instead of Model' is not ticked."
 msgstr ""
 
-msgid "<em>Warning: </em>"
-msgstr ""
-
 msgid "The analysis will not run when the 'Specify Blocks for CCD' field is empty and the Introduce Blocking is ticked."
 msgstr ""
 
 msgid "Central Composite Design with Star Points"
+msgstr ""
+
+msgid "Factor name '%s' is a number, and number factor names are not supported"
 msgstr ""
 
 msgid "The analysis will not run when the 'Number of Generators' > 0"
@@ -340,6 +352,15 @@ msgstr ""
 msgid "ANOVA for %s"
 msgstr ""
 
+msgid "DF"
+msgstr ""
+
+msgid "Sum of Squares"
+msgstr ""
+
+msgid "Mean of Squares"
+msgstr ""
+
 msgid "Stationary Points of Response Surface (Coded)"
 msgstr ""
 
@@ -349,7 +370,13 @@ msgstr ""
 msgid "Eigenvectors"
 msgstr ""
 
-msgid "Center points"
+msgid "Desirability"
+msgstr ""
+
+msgid "At least one predictor and response variable need to be specified before running the analysis."
+msgstr ""
+
+msgid "At least one desirability function must be specified before running the analysis."
 msgstr ""
 
 msgid "Standard order"
@@ -593,9 +620,6 @@ msgid "Two-way ANOVA Table with Interaction"
 msgstr ""
 
 msgid "Source"
-msgstr ""
-
-msgid "Sum of Squares"
 msgstr ""
 
 msgid "Mean Squares"
