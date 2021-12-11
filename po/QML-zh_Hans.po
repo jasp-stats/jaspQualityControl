@@ -2160,9 +2160,9 @@ msgid "<b>Sync Design: Off</b>"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
+msgid "Factor Name "
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Factor Name "
+msgid ""
 msgstr ""
