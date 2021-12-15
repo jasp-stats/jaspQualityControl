@@ -11,9 +11,17 @@ attributesCharts <- function(jaspResults, dataset, options) {
   ready <- options$D != "" && options$total != ""
 
   #Checking for errors in the dataset
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+  .hasErrors(dataset, type = c('infinity', 'missingValues', 'negativeValues'),
              all.target = c(options$D,options$total),
              exitAnalysisIfErrors = TRUE)
+
+  if (options$TypeDefectives == "pchart" | options$TypeDefectives == "Laneyprimechart" | options$TypeDefects == "uchart" | options$TypeDefects == "Laneychart")
+    .hasErrors(dataset,
+               custom = function() {
+                 if (any(dataset[,D] > dataset[,total]))
+                   return(gettext("The number of Defectives/Defects is larger than the sample  size."))},
+               exitAnalysisIfErrors = TRUE)
+
 
   if ((options$Attributes == "Defectives" | options$Attributes == "Defects" | options$Attributes == "ImR") && !ready) {
     plot <- createJaspPlot(title = gettext("Attributes Control Charts"), width = 700, height = 400)
