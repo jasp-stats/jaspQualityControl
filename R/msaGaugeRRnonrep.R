@@ -382,7 +382,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
  .anovaGaugeNestedReport <- function(datasetWide, datasetLong, measurementsWide, measurementsLong, parts, operators, options){
 
    if (options[["anovaGaugeNestedTitle"]] == ""){
-     title <- "Measurement"
+     title <- "Gauge r&R Report"
    }else{
      title <- options[["anovaGaugeNestedTitle"]]
    }
@@ -410,7 +410,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
    plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Xbar", datasetWide, measurementsWide, parts, operators, options, smallLabels = TRUE)
    plotMat[[4, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
 
-   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Measurement systems analysis for %s", title), ""))
+   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
    matrixPlot$plotObject <- p
 
    return(matrixPlot)

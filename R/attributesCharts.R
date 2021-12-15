@@ -630,7 +630,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
   Report <- createJaspContainer("Report")
 
   if (ccTitle == ""){
-    title <- "Measurement"
+    title <- "Control Charts for Attributes Report"
   }else{
     title <- ccTitle
   }
@@ -656,7 +656,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
   plotMat[[2, 1]] <- .ggplotWithText(text3)
   plotMat[[2, 2]] <- .ggplotWithText(text4)
 
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Control Charts Report for %s", title), ""))
+  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf(title), ""))
   matrixPlot$plotObject <- p
 
   return(matrixPlot)

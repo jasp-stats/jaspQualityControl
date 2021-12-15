@@ -826,7 +826,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 .anovaGaugeReport <- function(dataset, measurements, parts, operators, options){
 
   if (options[["anovaGaugeTitle"]] == ""){
-    title <- "Measurement"
+    title <- "Gauge r&R Report"
   }else{
     title <- options[["anovaGaugeTitle"]]
   }
@@ -862,7 +862,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options)
   }
 
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Measurement systems analysis for %s", title), ""))
+  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
   matrixPlot$plotObject <- p
 
   return(matrixPlot)

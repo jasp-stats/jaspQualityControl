@@ -1386,7 +1386,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 .pcReport <- function(dataset, measurements, parts, operators, options, ready, container){
 
   if (options[["pcReportTitle"]] == ""){
-    title <- "Measurement"
+    title <- "Process Capability Report"
   }else{
     title <- options[["pcReportTitle"]]
   }
@@ -1437,7 +1437,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat[[3, 2]] <- ggplotTable(overallCapDF)  #overall capability
   }
 
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Process Capability Report for %s", title), ""))
+  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
   matrixPlot$plotObject <- p
 
   return(matrixPlot)
