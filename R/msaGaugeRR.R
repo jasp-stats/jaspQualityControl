@@ -29,7 +29,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat" && !options$Type3)
     ready <- (length(measurements) != 0 && operators != "" && parts != "")
   else if (options$Type3)
-    ready <- (measurements != "" && parts != "")
+    ready <- (measurements != "" && parts != "" & length(measurements) != 0)
   else
     ready <- (measurements != "" && operators != "" && parts != "")
 
@@ -648,7 +648,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeByOperatorGraph <- function(dataset, measurements, parts, operators, options, ready) {
 
-  plot <- createJaspPlot(title = gettext("Measurement by Operator"))
+  plot <- createJaspPlot(title = gettext("Measurement by Operator"), width = 500, height = 500)
 
   plot$dependOn(c("gaugeByOperator", "gaugeRRmethod"))
 
@@ -660,10 +660,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeByOperatorGraphPlotObject <- function(dataset, measurements, parts, operators, options){
   dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-  # yBreaks <- jaspGraphs::getPrettyAxisBreaks(dataset[measurements])
-  # yLimits <- range(yBreaks)
+  yBreaks <- dataset["Measurement"]
+  yLimits <- range(yBreaks)
   p <- ggplot2::ggplot() +
-    ggplot2::geom_boxplot(data = dataset, ggplot2::aes_string(x = operators, y = "Measurement"))  #+ ggplot2::scale_y_continuous(breaks = yBreaks, limits = yLimits)
+    ggplot2::geom_boxplot(data = dataset, ggplot2::aes_string(x = operators, y = "Measurement"))  +
+    ggplot2::scale_y_continuous(limits = yLimits)
   p <- jaspGraphs::themeJasp(p)
   return(p)
 }
