@@ -540,16 +540,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .xBarOrRangeChart <- function(type = c("Average", "Range"), dataset, measurements, parts, operators, options, ready) {
   if (!ready) {
-    plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 600, height = 300)
+    plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 900, height = 300)
     return(plot)
   }
   if (length(measurements) < 2) {
-    plot <- createJaspPlot(title = gettextf("%s Chart by Operator"), width = 600, height = 300)
+    plot <- createJaspPlot(title = gettextf("%s Chart by Operator"), width = 900, height = 300)
     plot$setError(gettext("More than 1 Measurement per Operator required."))
     return(plot)
   }
-  plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 1100, height = 400)
-  plot$plotObject <- .xBarOrRangeChartPlotFunction(type, dataset, measurements, parts, operators, options)
+  plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 2500, height = 300)
+  plot$plotObject <- .xBarOrRangeChartPlotFunction(type, dataset, measurements, parts, operators, options, smallLabels = TRUE)
   return(plot)
 }
 
