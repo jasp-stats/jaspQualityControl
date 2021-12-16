@@ -227,8 +227,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       xBreaks <- 1:nrow(data)
       xLabels <- xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
 
-      if (length(xBreaks) > 20){
-        xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(xBreaks)[-1])
+      if (length(xBreaks) > 15){
+        xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(xBreaks, 10)[c(-1,-2)])
         xLabels <- xLabels[xBreaks]
       }
 
