@@ -69,7 +69,7 @@ Form
 		{
 			id:									measurementsLong
 			name:								"measurementsLong"
-			title:								qsTr("Measurements")
+			title:								qsTr("Measurement")
 			singleVariable:						true
 			visible:							gaugeRRdataFormat.currentValue == "gaugeRRlongFormat"
 			allowedColumns:						["scale"]

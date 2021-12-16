@@ -35,7 +35,7 @@ Form
 		{
 			id:									variablesLong
 			name:								"variablesLong"
-			title:								qsTr("Measurements")
+			title:								qsTr("Measurement")
 			allowedColumns:						["scale"]
 			singleVariable:						true
 			visible:							pcDataFormat.currentValue == "CClongFormat"
@@ -65,7 +65,7 @@ Form
 		id:										pcSubgroupSize
 		name: 									"CCSubgroupSize"
 		label: 									qsTr("Subgroup size")
-		min: 									2
+		min: 									   2
 		defaultValue:							5
 		visible:								pcDataFormat.currentValue == "CClongFormat"
 	}

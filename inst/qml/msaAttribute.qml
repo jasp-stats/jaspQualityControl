@@ -68,7 +68,7 @@ Form
 		{
 			id:									measurements
 			name:								"measurements"
-			title:								qsTr("Result")
+			title:								qsTr("Results")
 			visible:							aaadataFormat.currentValue == "AAAwideFormat"
 			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
