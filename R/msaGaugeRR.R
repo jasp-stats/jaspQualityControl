@@ -843,7 +843,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     text2 <- c(reportedBy, misc)
   }
 
-  matrixPlot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
+  matrixPlot <- createJaspPlot(title = gettext("Report"), width = 3800, height = 1800)
   if (options$Type3){
     plotMat <- matrix(list(), 2, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)

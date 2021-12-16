@@ -107,16 +107,20 @@
   }
 
   if(smallLabels){
-    labelSize <- 2
+    labelSize <- 3.5
+    lineSize <- 0.5
+    pointsSize <- 3
   }else{
-    labelSize <- 4
+    labelSize <- 4.5
+    lineSize <- 1
+    pointsSize <- 4
   }
 
   if (plotLimitLabels)
-    p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5)
+    p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = labelSize)
 
   p <- p + ggplot2::scale_x_continuous(name = gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_line(color = "blue", size = lineSize) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
 
@@ -127,11 +131,11 @@
   }
 
   if (Phase2)
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
   else if (OnlyOutofLimit)
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "blue"))
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "blue"))
   else
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
   if (manualXaxis != "") {
     if (GaugeRR | Wide){
@@ -242,15 +246,19 @@
   }
 
   if(smallLabels){
-    labelSize <- 2
+    labelSize <- 3.5
+    lineSize <- 0.5
+    pointsSize <- 3
   }else{
-    labelSize <- 4
+    labelSize <- 4.5
+    lineSize <- 1
+    pointsSize <- 4
   }
   if (plotLimitLabels)
-    p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = 4.5)
+    p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = labelSize)
 
   p <- p + ggplot2::scale_x_continuous(name= gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_line(color = "blue", size = lineSize) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
 
@@ -284,9 +292,9 @@
   }
 
  if (OnlyOutofLimit)
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, "red", "blue"))
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, "red", "blue"))
   else
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
 
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
