@@ -93,7 +93,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
 
   #Measurement by part x operator plot
-  if (options[["NRpartOperatorGraph"]]) {
+  if (options[["NRpartOperatorGraph"]] & ready) {
     if (is.null(jaspResults[["NRpartOperatorGraph"]])) {
       jaspResults[["NRpartOperatorGraph"]] <- createJaspContainer(gettext("Measurement by part x operator plot"))
       jaspResults[["NRpartOperatorGraph"]]$position <- 4

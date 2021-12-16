@@ -134,7 +134,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   # Measurement by Part Graph
-  if (options[["gaugeByPart"]]) {
+  if (options[["gaugeByPart"]] & ready) {
     if (is.null(jaspResults[["gaugeByPart"]])) {
       jaspResults[["gaugeByPart"]] <- createJaspContainer(gettext("Measurement by Part Graph"))
       jaspResults[["gaugeByPart"]]$position <- 6
