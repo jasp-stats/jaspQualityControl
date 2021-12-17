@@ -190,8 +190,13 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
     }
 
     df3 <- data.frame(Source = c("Linearity", "Bias"), Percent = c(percentLin, (abs(averageBias) / options$linearityProcessVariation) * 100))
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(df3$Percent)
+    yLimits <- range(yBreaks)
 
-    p2 <- ggplot2::ggplot() + ggplot2::geom_col(data = df3, mapping = ggplot2::aes(x = Source, y = Percent)) + ggplot2::xlab(ggplot2::element_blank())
+    p2 <- ggplot2::ggplot() +
+      ggplot2::geom_col(data = df3, mapping = ggplot2::aes(x = Source, y = Percent)) +
+      ggplot2::scale_y_continuous(breaks = yBreaks, limits = yLimits) +
+      ggplot2::xlab(ggplot2::element_blank())
 
     p2 <- jaspGraphs::themeJasp(p2)
 
