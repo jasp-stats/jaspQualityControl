@@ -75,7 +75,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Error Handling
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = c(options$variables, options$variablesLong), exitAnalysisIfErrors = TRUE)
+             all.target = measurements, exitAnalysisIfErrors = TRUE)
+  if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis" & ready)
+    .hasErrors(dataset, type = 'negativeValues',
+               all.target = measurements, exitAnalysisIfErrors = TRUE)
 
 
   dataset <- na.omit(dataset)
