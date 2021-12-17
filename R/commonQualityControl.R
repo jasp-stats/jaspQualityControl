@@ -52,7 +52,12 @@
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
   else
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE)
-  subgroups = c(1:length(sixsigma$statistics))
+
+  if (manualSubgroups != ""){
+    subgroups <- manualSubgroups
+  }else{
+    subgroups = c(1:length(sixsigma$statistics))
+  }
   means = sixsigma$statistics
   data_plot <- data.frame(subgroups = subgroups, means = means)
   sd1 <- sixsigma$std.dev

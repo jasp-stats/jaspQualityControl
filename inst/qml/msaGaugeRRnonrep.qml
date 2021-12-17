@@ -179,7 +179,7 @@ Form
 			CheckBox
 			{
 				name: 							"NRpartOperatorGraph"
-				label: 							qsTr("Measurement by part x operator plot")
+				label: 							qsTr("Measurement by part plot")
 
 				CheckBox
 				{
