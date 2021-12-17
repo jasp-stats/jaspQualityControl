@@ -78,7 +78,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   }
 
   # Rchart Range method
-  if (options[["rangeRchart"]]) {
+  if (options[["rangeRchart"]] & ready) {
     if (is.null(jaspResults[["rangeRchart"]])) {
       jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
       jaspResults[["rangeRchart"]]$position <- 3
