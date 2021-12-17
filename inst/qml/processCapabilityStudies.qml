@@ -143,10 +143,66 @@ Form
 							indexDefaultValue: 		0
 							values:
 								[
-								{label: qsTr("Non-conformance method"),		value: "nonconformance"  },
-								{label: qsTr("Percentile method"),		value: "percentile"}
+								{label: qsTr("Non-conformance"),		value: "nonconformance"  },
+								{label: qsTr("Percentile"),		value: "percentile"}
 							]
 						}
+					}
+				}
+
+
+			Group
+			{
+				title: 							qsTr("Capability studies")
+
+				CheckBox
+				{
+				  id: checkedlower
+					name: 						"lowerSpecificationField"
+					label: 						qsTr("Lower specification limit")
+					childrenOnSameRow:			true
+
+					DoubleField
+					{
+						id:						lower
+						name: 					"lowerSpecification"
+						negativeValues:			true
+						defaultValue:			-1
+						decimals:				7
+					}
+				}
+
+				CheckBox
+				{
+				  id: checkedtarget
+					name: 						"targetValueField"
+					label: 						qsTr("Target value")
+					childrenOnSameRow:			true
+
+					DoubleField
+					{
+						id:						target
+						name: 					"targetValue"
+						negativeValues:			true
+						defaultValue:			0
+						decimals:				7
+					}
+				}
+
+				CheckBox
+				{
+				  id: checkedupper
+					name: 						"upperSpecificationField"
+					childrenOnSameRow:			true
+					label: 						qsTr("Upper specification limit")
+
+					DoubleField
+					{
+						id:						upper
+						name: 					"upperSpecification"
+						negativeValues:			true
+						defaultValue:			1
+						decimals:				7
 					}
 				}
 
@@ -155,6 +211,7 @@ Form
 					name: 						"CapabilityStudyPlot"
 					label: 						qsTr("Process capability plot")
 					checked: 					true
+					enabled:          checkedupper.checked | checkedtarget.checked | checkedlower.checked
 
 					DoubleField
 					{
@@ -172,6 +229,7 @@ Form
 					name: 						"CapabilityStudyTables"
 					label: 						qsTr("Process capability tables")
 					checked: 					true
+					enabled:          checkedupper.checked | checkedtarget.checked | checkedlower.checked
 
 					CheckBox
 					{
@@ -184,60 +242,8 @@ Form
 					}
 
 				}
-
 			}
 
-			Group
-			{
-				title: 							qsTr("Specification Limits")
-
-				CheckBox
-				{
-					name: 						"lowerSpecificationField"
-					label: 						qsTr("Lower specification limit")
-					childrenOnSameRow:			true
-
-					DoubleField
-					{
-						id:						lower
-						name: 					"lowerSpecification"
-						negativeValues:			true
-						defaultValue:			-1
-						decimals:				7
-					}
-				}
-
-				CheckBox
-				{
-					name: 						"targetValueField"
-					label: 						qsTr("Target value")
-					childrenOnSameRow:			true
-
-					DoubleField
-					{
-						id:						target
-						name: 					"targetValue"
-						negativeValues:			true
-						defaultValue:			0
-						decimals:				7
-					}
-				}
-
-				CheckBox
-				{
-					name: 						"upperSpecificationField"
-					childrenOnSameRow:			true
-					label: 						qsTr("Upper specification limit")
-
-					DoubleField
-					{
-						id:						upper
-						name: 					"upperSpecification"
-						negativeValues:			true
-						defaultValue:			1
-						decimals:				7
-					}
-				}
 			}
 		}
 
@@ -299,20 +305,6 @@ Form
 					name: 						"probabilityPlot"
 					label: 						qsTr("Probability table and plot")
 					checked: 					true
-
-					DropDown
-					{
-						name: 					"rank"
-						label: 					qsTr("Rank method")
-						indexDefaultValue: 		0
-						values:
-							[
-							{ value: "Bernard",    		label: qsTr("Median Rank (Benard)")         },
-							{ value: "Herd-Johnson",    label: qsTr("Mean Rank (Herd-Johnson)")     },
-							{ value: "Kaplan-Meier",    label: qsTr("Kaplan-Meier")                 },
-							{ value: "Hazen",   		label: qsTr("Modified Kaplan-Meier (Hazen)")}
-						]
-					}
 
 					DropDown
 					{
@@ -392,5 +384,23 @@ Form
 		{
 			name: "pcReportDisplay";		label: qsTr("Show Report")
 		}
+	}
+
+	Section{
+  title: qsTr("Advanced Options")
+
+					DropDown
+					{
+						name: 					"rank"
+						label: 					qsTr("Rank method for probability plot")
+						indexDefaultValue: 		0
+						values:
+							[
+							{ value: "Bernard",    		label: qsTr("Median Rank (Benard)")         },
+							{ value: "Herd-Johnson",    label: qsTr("Mean Rank (Herd-Johnson)")     },
+							{ value: "Kaplan-Meier",    label: qsTr("Kaplan-Meier")                 },
+							{ value: "Hazen",   		label: qsTr("Modified Kaplan-Meier (Hazen)")}
+						]
+					}
 	}
 }

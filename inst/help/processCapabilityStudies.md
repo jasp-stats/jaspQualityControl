@@ -15,26 +15,28 @@ Data can be in the form of all observations in one column ("Single column") or a
 #### Type of data distribution
 - Type of data distribution: indicate whether the data approximates a normal distribution or another distribution (Weibull, Lognormal, 3-parameter Weibull, and 3-parameter Lognormal)
  - Specify a distribution: the non-normal distribution to be used. 
- - Non-normal capability statistics: the method used to calculate the capability statistics for non-normally distributed data. 
-- Process capability plot: 
- - Number of bins: the number of bins to be plotted. 
- - Process capability tables:
- - Confidence interval: the percentage of confidence used for calculating the intervals of process capability's statistics (Cp, Cpk, Pp, Ppk, and Cpm). 
+ - Non-normal capability statistics: the method used to calculate the capability statistics for non-normally distributed data.
 
-#### Specification limits
+#### Capability studies
 - Specification limits:
  - Lower specification limit: the value used as the lower specification limit.
  - Target value: the value used as the target.
  - Upper specification limit: the value used as the upper specification limit.
+- Process capability plot: 
+ - Number of bins: the number of bins to be plotted. 
+ - Process capability tables:
+ - Confidence interval: the percentage of confidence used for calculating the intervals of process capability's statistics (Cp, Cpk, Pp, Ppk, and Cpm). 
 
 #### Distribution of the process
 - Histogram:
  - Fit distribution: display a line of the data's distribution.
  - Number of bins: number of bins to be used for the histogram.
 - Probability table and plot
- - Rank method: the method used to calculate the rank of the data, displayed in the probability plot. 
  - Null distribution: the distribution underlaying the data displayed in the probability plot. 
  - Display grid lines: add grid lines to the probability plot. 
+
+### Advanced Options 
+ - Rank method: the method used to calculate the rank of the data, displayed in the probability plot. 
 
 ## Output
 -------

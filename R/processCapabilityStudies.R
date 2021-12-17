@@ -121,6 +121,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                  "CapabilityStudyPlot", "CapabilityStudyTables", "manualSubgroupSize"))
   container$position <- 4
 
+  if (!ready)
+    return(container)
+
 
   if( sum(options[["upperSpecificationField"]], options[["lowerSpecificationField"]], options[["targetValueField"]]) >= 2){
     if (options[["lowerSpecificationField"]]){
