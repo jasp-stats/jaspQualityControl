@@ -863,7 +863,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options)
   }
 
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
+  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = title)
   matrixPlot$plotObject <- p
 
   return(matrixPlot)
