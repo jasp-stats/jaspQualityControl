@@ -211,7 +211,7 @@ Form
 					name: 						"CapabilityStudyPlot"
 					label: 						qsTr("Process capability plot")
 					checked: 					true
-					enabled:          checkedupper.checked | checkedtarget.checked | checkedlower.checked
+					enabled:          checkedupper.checked || checkedtarget.checked || checkedlower.checked
 
 					DoubleField
 					{
