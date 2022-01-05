@@ -15,7 +15,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
              all.target = c(options$D,options$total),
              exitAnalysisIfErrors = TRUE)
 
-  if (options$TypeDefectives == "pchart" | options$TypeDefectives == "Laneyprimechart" | options$TypeDefects == "uchart" | options$TypeDefects == "Laneychart")
+  if (options$TypeDefectives == "pchart" || options$TypeDefectives == "Laneyprimechart" || options$TypeDefects == "uchart" || options$TypeDefects == "Laneychart")
     .hasErrors(dataset,
                custom = function() {
                  if (any(dataset[,D] > dataset[,total]))
