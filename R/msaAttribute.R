@@ -561,7 +561,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       AAA[["AllVsStandard"]] <- tableAllVsStandard
     }
 
-    if (options$standard != "" & options$PositiveRef != "" & length(measurements) > 1)
+    if (options$standard != "" && options$PositiveRef != "" && length(measurements) > 1)
       AAA[["StudyEffectiveness"]] <- tableDecisions
   }
   return(AAA)
