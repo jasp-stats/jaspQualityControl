@@ -10,7 +10,7 @@ jobs:
   generate-translations:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
+      GITHUB_TOKEN: ${{ secrets.REPOS_KEY }}
       WEBLATE_KEY: ${{ secrets.WEBLATE_KEY }}
       QML_REPO: jaspprocesscontrol-qml
       R_REPO: jaspprocesscontrol-r
@@ -20,7 +20,7 @@ jobs:
       
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.REPO_KEY }}
+          token: ${{ secrets.REPOS_KEY }}
 
       - uses: r-lib/actions/setup-r@master
         with:
