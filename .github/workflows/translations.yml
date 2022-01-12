@@ -1,6 +1,6 @@
 on:
   schedule:
-    - cron:  '30 3 * * 6'
+    - cron:  '35 3 * * 6'
     
   workflow_dispatch:
 
@@ -9,8 +9,15 @@ name: generate-translations
 jobs:
   generate-translations:
     runs-on: ubuntu-latest
-
+    env:
+      GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
+      WEBLATE_KEY: ${{ secrets.WEBLATE_KEY }}
+      QML_REPO: jaspprocesscontrol-qml
+      R_REPO: jaspprocesscontrol-r
+      
     steps:
+      - uses: jasp-stats/jasp-actions/wlcLock@master
+      
       - uses: actions/checkout@v2
         with:
           token: ${{ secrets.REPO_KEY }}
@@ -20,5 +27,3 @@ jobs:
           r-version: "4.0.5"
 
       - uses: jasp-stats/jasp-actions/translations@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
