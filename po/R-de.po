@@ -2,13 +2,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2021-12-04 03:36\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-01-15 03:40+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-r/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 msgid "Cumulative sum chart"
 msgstr ""
@@ -35,13 +38,13 @@ msgid "Cumulative sum"
 msgstr ""
 
 msgid "Subgroups"
-msgstr ""
+msgstr "Untergruppen"
 
 msgid "EWMA"
 msgstr ""
 
 msgid "Subgroup"
-msgstr ""
+msgstr "Untergruppe"
 
 msgid "Counts"
 msgstr ""
@@ -149,10 +152,10 @@ msgid "Normal Probability Plot of Residuals"
 msgstr ""
 
 msgid "Histogram of Residuals"
-msgstr ""
+msgstr "Histogramm der Residuen"
 
 msgid "Residuals vs. Fitted Value"
-msgstr ""
+msgstr "Residuen vs. Angepasster Wert"
 
 msgid "Residuals vs. Run Order"
 msgstr ""
@@ -161,31 +164,31 @@ msgid "Pareto Plot of Standardized Effects"
 msgstr ""
 
 msgid "Fitted values"
-msgstr ""
+msgstr "Angepasste Werte"
 
 msgid "Residuals"
-msgstr ""
+msgstr "Residuen"
 
 msgid "Run order"
 msgstr ""
 
 msgid "Standardized Effect"
-msgstr ""
+msgstr "Standardisierter Effekt"
 
 msgid "Coefficients"
-msgstr ""
+msgstr "Koeffizienten"
 
 msgid "Coefficient"
-msgstr ""
+msgstr "Koeffizient"
 
 msgid "Standard Error"
-msgstr ""
+msgstr "Standardfehler"
 
 msgid "t"
-msgstr ""
+msgstr "t"
 
 msgid "p"
-msgstr ""
+msgstr "p"
 
 msgid "Available Factorial Designs"
 msgstr ""
