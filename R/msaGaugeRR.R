@@ -78,6 +78,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat" && ready) {
     dataset <- dataset[order(dataset[operators]),]
+    dataset <- dataset[order(dataset[parts]),]
     nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
     index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
     dataset <- cbind(dataset, data.frame(index = index))
