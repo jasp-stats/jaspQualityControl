@@ -54,7 +54,7 @@ Form
 			title:								qsTr("Operators")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
-			enabled: 							!type3.checked
+			visible: 							!type3.checked
 		}
 
 		AssignedVariablesList
@@ -89,7 +89,7 @@ Form
 		{
 			id:									type3
 			name:								"Type3"
-			label:								qsTr("Type 3 study")
+			label:								qsTr("Type 3 study (automatic equipment)")
 			onCheckedChanged:
 			{
 				operators.itemDoubleClicked(0)
@@ -128,7 +128,7 @@ Form
 			CheckBox
 			{
 				name: 							"gaugeToleranceEnabled"
-				label: 							qsTr("Tolerance")
+				label: 							qsTr("Tolerance width")
 				childrenOnSameRow: 				true
 
 				DoubleField
@@ -207,14 +207,12 @@ Form
 			{
 				name: 							"gaugeRchart"
 				label: 							qsTr("R charts by operator")
-				enabled:						!type3.checked
 			}
 
 			CheckBox
 			{
 				name:							"gaugeXbarChart"
 				label:							qsTr("X-bar charts by operator")
-				enabled:						!type3.checked
 			}
 
 			CheckBox
@@ -252,14 +250,12 @@ Form
 			{
 				name:							"gaugeByOperator"
 				label:							qsTr("Measurement by operators plot")
-				enabled:						!type3.checked
 			}
 
 			CheckBox
 			{
 				name: 							"gaugeByInteraction"
 				label: 							qsTr("Part x operator interaction plot")
-				enabled: 						!type3.checked
 			}
 
 			CheckBox
