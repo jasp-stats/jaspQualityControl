@@ -2,25 +2,28 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2021-12-04 03:36\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-01-15 03:40+0000\n"
+"Last-Translator: Wendy Zhao <wendy.zhao@skf.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"jasp/jaspprocesscontrol-r/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "累积和控制图"
 
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "指数加权移动平均控制图"
 
 msgid "G chart"
-msgstr ""
+msgstr "G 控制图"
 
 msgid "T chart"
-msgstr ""
+msgstr "T 控制图"
 
 msgid "CL = %g"
 msgstr ""
@@ -32,52 +35,52 @@ msgid "LCL = %g"
 msgstr ""
 
 msgid "Cumulative sum"
-msgstr ""
+msgstr "累积和"
 
 msgid "Subgroups"
-msgstr ""
+msgstr "子组"
 
 msgid "EWMA"
-msgstr ""
+msgstr "指数加权移动平均"
 
 msgid "Subgroup"
-msgstr ""
+msgstr "子组"
 
 msgid "Counts"
-msgstr ""
+msgstr "计数"
 
 msgid "Attributes Control Charts"
-msgstr ""
+msgstr "属性控制图"
 
 msgid "p Chart"
-msgstr ""
+msgstr "p 控制图"
 
 msgid "np Chart"
-msgstr ""
+msgstr "np 控制图"
 
 msgid "Laney p' Chart"
-msgstr ""
+msgstr "Laney p' 控制图"
 
 msgid "c Chart"
-msgstr ""
+msgstr "c 控制图"
 
 msgid "u Chart"
-msgstr ""
+msgstr "u 控制图"
 
 msgid "Laney u' Chart"
-msgstr ""
+msgstr "Laney u' 控制图"
 
 msgid "Individuals and Moving Range Chart"
-msgstr ""
+msgstr "单值移动极差控制图"
 
 msgid "Report for Attribute Control Charts"
-msgstr ""
+msgstr "属性控制图报告"
 
 msgid "Proportion"
-msgstr ""
+msgstr "比率"
 
 msgid "Sample"
-msgstr ""
+msgstr "样本"
 
 msgid "Number of defectives"
 msgstr ""
@@ -86,7 +89,7 @@ msgid "D"
 msgstr ""
 
 msgid "Moving Range"
-msgstr ""
+msgstr "移动极差"
 
 msgid "Service name: %s"
 msgstr ""
@@ -116,31 +119,31 @@ msgid "Control Charts Report for %s"
 msgstr ""
 
 msgid "Control Chart"
-msgstr ""
+msgstr "控制图"
 
 msgid "Subgroup size must be > 1 to display X-bar & R Chart."
-msgstr ""
+msgstr "显示X-bar & R控制图需要子组容量必须 >1"
 
 msgid "Test results for %s chart"
 msgstr ""
 
 msgid "Test 1: Beyond limit"
-msgstr ""
+msgstr "检验 1：超控制限"
 
 msgid "Test 2: Shift"
-msgstr ""
+msgstr "检验 2：偏移"
 
 msgid "Test 3: Trend"
-msgstr ""
+msgstr "检验 3：趋势"
 
 msgid "Test 4: Increasing variation"
-msgstr ""
+msgstr "检验 4：变异增加"
 
 msgid "Test 5: Reducing variation"
-msgstr ""
+msgstr "检验 5：变异降低"
 
 msgid "Test 6: Bimodal distribution"
-msgstr ""
+msgstr "检验 6：双峰分布"
 
 msgid "Numbers are data points where test violations occur."
 msgstr ""
@@ -149,7 +152,7 @@ msgid "Normal Probability Plot of Residuals"
 msgstr ""
 
 msgid "Histogram of Residuals"
-msgstr ""
+msgstr "残差直方图"
 
 msgid "Residuals vs. Fitted Value"
 msgstr ""
@@ -161,10 +164,10 @@ msgid "Pareto Plot of Standardized Effects"
 msgstr ""
 
 msgid "Fitted values"
-msgstr ""
+msgstr "拟合值"
 
 msgid "Residuals"
-msgstr ""
+msgstr "残差"
 
 msgid "Run order"
 msgstr ""
