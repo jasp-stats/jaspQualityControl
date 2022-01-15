@@ -48,33 +48,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
-  if(ready & !options$Type3){
-    crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
-    if(!crossed){
-      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-      jaspResults[["plot"]] <- plot
-      plot$setError(gettext("Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."))
-      return()
-    }
-  }
-
-  if(ready){
-    crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
-    if(!crossed){
-      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-      jaspResults[["plot"]] <- plot
-      plot$setError(gettext("Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."))
-      return()
-    }
-  }
-
-  if (ready && nrow(dataset[measurements]) == 0){
-    jaspResults[["plot"]] <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-    jaspResults[["plot"]]$setError(gettextf("No valid measurements in %s.", measurements))
-    jaspResults[["plot"]]$position <- 1
-    jaspResults[["plot"]]$dependOn(c("measurements", "measurementsLong"))
-    return()
-  }
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             infinity.target = measurements,
+             missingValues.target = measurements,
+             exitAnalysisIfErrors = TRUE)
 
   if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat" && ready) {
     dataset <- dataset[order(dataset[operators]),]
@@ -86,6 +63,18 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     measurements <- unique(index)
     dataset <- dataset[,c(operators, parts, measurements)]
   }
+
+  if(ready & !options$Type3){
+   crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
+    if(!crossed){
+     plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+      jaspResults[["plot"]] <- plot
+      plot$setError(gettext("Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."))
+      return()
+    }
+  }
+
+
   Type3 <- c(length(unique(dataset[[operators]])) == 1 || options$Type3)
 
   .msaCheckErrors(dataset, options)
@@ -307,11 +296,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     anovaTables[['anovaTable1']] <- anovaTable1
 
-    if(!singleOperator){
+    if(!singleOperator)
       interactionSignificant <- pInteraction < options$alphaForANOVA
-    }else{
-      interactionSignificant <- 'not applicable'
-    }
+    else
+      interactionSignificant <- FALSE
 
     if (singleOperator || interactionSignificant){
 
@@ -655,7 +643,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeByOperatorGraph <- function(dataset, measurements, parts, operators, options, ready, Type3 = FALSE) {
 
-  plot <- createJaspPlot(title = gettext("Measurement by Operator"), width = 500, height = 500)
+  plot <- createJaspPlot(title = gettext("Measurement by Operator"), width = 600, height = 600)
 
   plot$dependOn(c("gaugeByOperator", "gaugeRRmethod"))
 
@@ -669,6 +657,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
   yBreaks <- dataset["Measurement"]
   yLimits <- range(yBreaks)
+
   p <- ggplot2::ggplot() +
     ggplot2::geom_boxplot(data = dataset, ggplot2::aes_string(x = operators, y = "Measurement"))  +
     ggplot2::scale_y_continuous(limits = yLimits)
