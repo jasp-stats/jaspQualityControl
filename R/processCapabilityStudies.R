@@ -83,7 +83,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   dataset <- na.omit(dataset)
   # X-bar and R Chart OR ImR Chart
-  if(options[["controlChartsType"]] == "xbarR"){
+  if(options$xbarR){
     .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
   } else{
     .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
@@ -1353,7 +1353,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
-  Container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
+  Container$dependOn(options = c("xbarR", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
   Container$position <- 1
   jaspResults[["ImR Charts"]] <- Container
   Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE, Wide = wideFormat)$p

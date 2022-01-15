@@ -80,6 +80,7 @@ Form
 	CheckBox
 	{
 		name: 						"manualSubgroupSize"
+		id: 						manualSubgroupSize
 		label: 						qsTr("Specifiy subgroup size manually:")
 		checked: 					true
 		childrenOnSameRow:			true
@@ -87,8 +88,8 @@ Form
 
 		DoubleField
 		{
-			id:						pcSubgroupSize
 			name: 					"pcSubgroupSize"
+			id:						pcSubgroupSize
 			negativeValues:			false
 			min: 					1
 			max: 					dataSetModel.rowCount()
@@ -110,10 +111,12 @@ Form
 				RadioButtonGroup
 				{
 					name: 					"capabilityStudyType"
+					id: 					capabilityStudyType
 
 					RadioButton
 					{
 						name: 				"normalCapabilityAnalysis"
+						id : 				normalCapabilityAnalysis
 						label: 				qsTr("Normal distribution")
 						checked: 			true
 					}
@@ -121,10 +124,12 @@ Form
 					RadioButton
 					{
 						name: 				"nonnormalCapabilityAnalysis"
+						id : 				nonnormalCapabilityAnalysis
 						label: 				qsTr("Non-normal distribution")
 						DropDown
 						{
 							name: 					"nonNormalDist"
+							id: 					nonNormalDist
 							label: 					qsTr("Specify a distribution")
 							indexDefaultValue: 		0
 							values:
@@ -253,22 +258,20 @@ Form
 			{
 				title: 							qsTr("Stability of the process")
 
-				RadioButtonGroup
+				CheckBox
 				{
-					name: 					"controlChartsType"
+				  	name:                  		"xbarR"
+					label: 				   		qsTr("X-bar & R chart")
+					enabled:                    pcSubgroupSize.value > 1
+					checked: 					pcSubgroupSize.value > 1
+				}
 
-					RadioButton
-					{
-						name: 				"xbarR"
-						label: 				qsTr("X-bar & R chart")
-						checked: 			true
-					}
-
-					RadioButton
-					{
-						name: 				"IMR"
-						label: 				qsTr("X-mR chart")
-					}
+			    CheckBox
+				{
+					name: 						"IMR"
+					label: 						qsTr("X-mR chart")
+					enabled: 					pcSubgroupSize.value == 1
+					checked: 					pcSubgroupSize.value == 1
 				}
 			}
 
@@ -309,14 +312,18 @@ Form
 					DropDown
 					{
 						name: 					"nullDistribution"
+						id: 					nullDistribution
 						label: 					qsTr("Null distribution")
-						indexDefaultValue: 		0
-						values:
+						values: 
 							[
 							{ label: qsTr("Normal"),		value: "Normal"	   },
 							{ label: qsTr("Lognormal"),		value: "Lognormal" },
 							{ label: qsTr("Weibull"),		value: "Weibull"   }
 						]
+						indexDefaultValue: (capabilityStudyType.value == "nonnormalCapabilityAnalysis") ? 
+							(nonNormalDist.currentValue == "Lognormal" || nonNormalDist.currentValue == "3lognormal") ? 1 : 
+								(nonNormalDist.currentValue == "3weibull" || nonNormalDist.currentValue == "Weibull") ? 2 : 0 
+						: 0
 					}
 
 					CheckBox
