@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-16 17:32+0000\n"
+"PO-Revision-Date: 2022-01-16 20:34+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Galician <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/gl/>\n"
@@ -314,11 +314,11 @@ msgstr "Histograma dos erros"
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr "Erros vs valor axustado"
+msgstr "Erros vs Valor axustado"
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals vs run order"
-msgstr "Erros vs orde de execución"
+msgstr "Erros vs Orde de execución"
 
 msgctxt "msaAttribute|"
 msgid "Operators"
@@ -398,7 +398,7 @@ msgstr "Opcións do Método ANOVA"
 
 msgctxt "msaGaugeRR|"
 msgid "r&R table ANOVA method"
-msgstr "Método ANOVA da táboa r&R"
+msgstr "Método ANOVA táboa r&R"
 
 msgctxt "msaGaugeRR|"
 msgid "Study Var. multiplier type"
@@ -782,11 +782,11 @@ msgstr "Diagrama de media móbil ponderada exponencialmente"
 
 msgctxt "timeWeightedCharts|"
 msgid "g chart"
-msgstr "Gráfica g"
+msgstr "Diagrama g"
 
 msgctxt "timeWeightedCharts|"
 msgid "t chart"
-msgstr "Gráfica t"
+msgstr "Diagrama t"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Measurements"
@@ -802,11 +802,11 @@ msgstr "Diagrama de media móbil ponderada exponencialmente"
 
 msgctxt "TimeWeightedCharts|"
 msgid "g chart"
-msgstr "Gráfica g"
+msgstr "Diagrama g"
 
 msgctxt "TimeWeightedCharts|"
 msgid "t chart"
-msgstr "Gráfica t"
+msgstr "Diagrama t"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
@@ -970,7 +970,7 @@ msgstr "Subgrupos"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Gráficas das Variables para o Informe de Subgrupos"
+msgstr "Gráficas Variables para o Informe de Subgrupos"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
@@ -994,7 +994,7 @@ msgstr "Amosar o Informe"
 
 msgctxt "Description|"
 msgid "Gauge r&R (non-replicable measurements)"
-msgstr "Calibrar r&R (medidas non repicables)"
+msgstr "Calibre r&R (medidas non repicables)"
 
 msgctxt "Description|"
 msgid "Test-retest (Range method)"
@@ -1038,11 +1038,11 @@ msgstr "Histograma dos erros"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr "Erros vs valor axustado"
+msgstr "Erros vs Valor axustado"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs run order"
-msgstr "Erros vs orde de execución"
+msgstr "Erros vs Orde de execución"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (default generator)"
@@ -1230,11 +1230,11 @@ msgstr "A través de filas"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R Options"
-msgstr "Calibrar as opcións de r&R"
+msgstr "Opcións de calibre r&R"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R Report"
-msgstr "Calibrar o Informe de r&R"
+msgstr "Informe de calibre r&R"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement"
@@ -1322,7 +1322,7 @@ msgstr "Distribución Normal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal distribution"
-msgstr "Distribución Non Normal"
+msgstr "Distribución Non-Normal"
 
 msgctxt "processCapabilityStudies|"
 msgid "3-parameter lognormal"
@@ -1346,11 +1346,11 @@ msgstr "Distribución do proceso"
 
 msgctxt "processCapabilityStudies|"
 msgid "Fit distribution"
-msgstr "Axustar a distribución"
+msgstr "Axustar distribución"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Name:"
-msgstr "Nome do Proceso:"
+msgstr "Nome de Proceso:"
 
 msgctxt "Description|"
 msgid ""
@@ -1366,7 +1366,7 @@ msgstr "Capacidade do Instrumento de Tipo 1"
 
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
-msgstr "Calibrar r&R de tipo 2 e 3 (equipo manual/automático)"
+msgstr "Calibre r&R de tipo 2 e 3 (equipo manual/automático)"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Desirability"
@@ -1410,11 +1410,11 @@ msgstr "Estudos Kappa"
 
 msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
-msgstr "Kappa de Cohen (kappa entre avaliadores)"
+msgstr "Kappa de Cohen (kappa entre cualificadores)"
 
 msgctxt "msaAttribute|"
 msgid "Fleiss' kappa (multirater kappa)"
-msgstr "Kappa de Fleiss (kappa de avaliadores múltiples)"
+msgstr "Kappa de Fleiss (kappa de multicualificadores)"
 
 msgctxt "msaAttribute|"
 msgid "Positive refernce:"
@@ -1458,7 +1458,7 @@ msgstr "Título"
 
 msgctxt "msaGaugeRR|"
 msgid "Gauge name"
-msgstr "Nome do calibrador"
+msgstr "Nome de calibre"
 
 msgctxt "msaGaugeRR|"
 msgid "Reported by"
@@ -1546,7 +1546,7 @@ msgstr "Weibull de 3 parámetros"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal capability statistics:"
-msgstr "Estatísticos de capacidade Non Normais:"
+msgstr "Estatísticos de capacidade Non-Normal:"
 
 msgctxt "processCapabilityStudies|"
 msgid "X-mR chart"
