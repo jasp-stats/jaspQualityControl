@@ -111,7 +111,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
     # Nelson tests tables
     if (is.null(jaspResults[["NelsonTableX"]]) & is.null(jaspResults[["NelsonTableR"]]) & is.null(jaspResults[["NelsonTables"]])) {
-      jaspResults[["NelsonTables"]] <- createJaspContainer(title = gettext("Out of-control Signals"))
+      jaspResults[["NelsonTables"]] <- createJaspContainer(title = gettext("Out-of-control Signals"))
       jaspResults[["NelsonTables"]]$dependOn(c("TypeChart", "variables", "Phase2", "mean", "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong"))
       jaspResults[["NelsonTables"]]$position <- 2
       AllTables <- jaspResults[["NelsonTables"]]
@@ -133,7 +133,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
     # Nelson tests tables
     if (is.null(jaspResults[["NelsonTableS"]]) & is.null(jaspResults[["NelsonTableX"]]) & is.null(jaspResults[["NelsonTables"]])) {
-      jaspResults[["NelsonTables"]] <- createJaspContainer(title = gettext("Out of-control Signals"))
+      jaspResults[["NelsonTables"]] <- createJaspContainer(title = gettext("Out-of-control Signals"))
       jaspResults[["NelsonTables"]]$dependOn(c("TypeChart", "variables", "Phase2", "mean", "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "Wlimits"))
       jaspResults[["NelsonTables"]]$position <- 2
       AllTables <- jaspResults[["NelsonTables"]]
