@@ -94,7 +94,7 @@ Form
 
 	Section
 	{
-		title:									qsTr("Kappa Stuides")
+		title:									qsTr("Kappa Study")
 
 		Group
 		{
@@ -131,7 +131,7 @@ Form
 
 	Section
 	{
-		title: 									qsTr("Tau Stuides")
+		title: 									qsTr("Tau Study")
 
 		CheckBox
 		{
