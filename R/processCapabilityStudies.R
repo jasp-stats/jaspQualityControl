@@ -289,7 +289,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   sdo <- sd(allData, na.rm = TRUE)
 
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], options[["lowerSpecification"]], options[["upperSpecification"]]), min.n = 4)
-  xLimits <- range(options[["lowerSpecification"]], options[["upperSpecification"]])
+  xLimits <- range(xBreaks)
   binWidthType <- options$csNumberOfBins
 
   # } else if (binWidthType == "fd" && nclass.FD(variable) > 10000) { # FD-method will produce extreme number of bins and crash ggplot, mention this in footnote
@@ -299,8 +299,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   binWidth <- (h$breaks[2] - h$breaks[1])
 
   p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
-    ggplot2::scale_y_continuous(name = gettext("Density")) +
     ggplot2::geom_histogram(ggplot2::aes(y =..density..),closed = "left", fill = "grey", col = "black", size = .7, binwidth = binWidth, center = binWidth/2) +
+    ggplot2::scale_y_continuous(name = gettext("Density")) +
     ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits)
   if(distribution == 'normal'){
     p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)), color = "dodgerblue") +
@@ -326,13 +326,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   if (options[["targetValueField"]])
-    p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen")
+    p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen", size = 1)
   if (options[["lowerSpecificationField"]])
-    p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecification"]], linetype = "dotted", color = "darkred")
+    p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecification"]], linetype = "dotted", color = "darkred", size = 1)
   if (options[["upperSpecificationField"]])
-    p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecification"]], linetype = "dotted", color = "darkred")
+    p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecification"]], linetype = "dotted", color = "darkred", size = 1)
 
-  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
+  p <- jaspGraphs::themeJasp(p) +
+    ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
 
   if(returnPlotObject)
     return(p)
