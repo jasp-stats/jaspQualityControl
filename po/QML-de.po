@@ -1,13 +1,20 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2022-01-18 15:53+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/de/>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.11-dev\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
-msgstr ""
+msgstr "Qualitätskontrolle"
 
 msgctxt "Description|"
 msgid "Measurement Systems Analysis"
@@ -27,7 +34,7 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Anzahl Faktoren"
 
 msgctxt "doeFactorial|"
 msgid "Uncoded"
@@ -39,31 +46,31 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Factor"
-msgstr ""
+msgstr "Faktor"
 
 msgctxt "doeFactorial|"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgctxt "doeFactorial|"
 msgid "Level 1"
-msgstr ""
+msgstr "Stufe 1"
 
 msgctxt "doeFactorial|"
 msgid "Level 2"
-msgstr ""
+msgstr "Stufe 2"
 
 msgctxt "doeFactorial|"
 msgid "Factor "
-msgstr ""
+msgstr "Faktor "
 
 msgctxt "doeFactorial|"
 msgid " Level 1"
-msgstr ""
+msgstr " Stufe 1"
 
 msgctxt "doeFactorial|"
 msgid " Level 2"
-msgstr ""
+msgstr " Stufe 2"
 
 msgctxt "doeFactorial|"
 msgid "Factorial Design Options"
@@ -91,23 +98,23 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "III"
-msgstr ""
+msgstr "III"
 
 msgctxt "doeFactorial|"
 msgid "IV"
-msgstr ""
+msgstr "IV"
 
 msgctxt "doeFactorial|"
 msgid "V"
-msgstr ""
+msgstr "V"
 
 msgctxt "doeFactorial|"
 msgid "VI"
-msgstr ""
+msgstr "VI"
 
 msgctxt "doeFactorial|"
 msgid "VIII"
-msgstr ""
+msgstr "VIII"
 
 msgctxt "doeFactorial|"
 msgid "Full"
@@ -135,27 +142,27 @@ msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Parts"
-msgstr ""
+msgstr "Teile"
 
 msgctxt "msaAttribute|"
 msgid "Standard"
-msgstr ""
+msgstr "Standard"
 
 msgctxt "msaAttribute|"
 msgid "Tables"
-msgstr ""
+msgstr "Tabellen"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Parts"
-msgstr ""
+msgstr "Teile"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Measurements"
-msgstr ""
+msgstr "Messungen"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Standard"
-msgstr ""
+msgstr "Standard"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Analysis Options"
@@ -163,7 +170,7 @@ msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Plots"
-msgstr ""
+msgstr "Diagramme"
 
 msgctxt "msaGaugeRR|"
 msgid "Operators"
@@ -175,7 +182,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements"
-msgstr ""
+msgstr "Messungen"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Options"
@@ -183,35 +190,35 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
-msgstr ""
+msgstr "Std.-Abweichung"
 
 msgctxt "msaGaugeRR|"
 msgid "Percent"
-msgstr ""
+msgstr "Prozent"
 
 msgctxt "msaGaugeRR|"
 msgid "Plots"
-msgstr ""
+msgstr "Diagramme"
 
 msgctxt "msaType1Gauge|"
 msgid "Measurements"
-msgstr ""
+msgstr "Messungen"
 
 msgctxt "msaType1Gauge|"
 msgid "Plots"
-msgstr ""
+msgstr "Diagramme"
 
 msgctxt "msaType1Gauge|"
 msgid "Histogram"
-msgstr ""
+msgstr "Histogramm"
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurements"
-msgstr ""
+msgstr "Messungen"
 
 msgctxt "processCapabilityStudies|"
 msgid "Subgroups"
-msgstr ""
+msgstr "Untergruppen"
 
 msgctxt "processCapabilityStudies|"
 msgid "Lower specification limit"
@@ -219,7 +226,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Target value"
-msgstr ""
+msgstr "Zielwert"
 
 msgctxt "processCapabilityStudies|"
 msgid "Upper specification limit"
@@ -227,15 +234,15 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Specify a distribution"
-msgstr ""
+msgstr "Spezifizieren Sie eine Verteilung"
 
 msgctxt "processCapabilityStudies|"
 msgid "Weibull"
-msgstr ""
+msgstr "Weibull"
 
 msgctxt "processCapabilityStudies|"
 msgid "Lognormal"
-msgstr ""
+msgstr "Log-Normal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Rank method"
@@ -251,7 +258,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Kaplan-Meier"
-msgstr ""
+msgstr "Kaplan-Meier"
 
 msgctxt "processCapabilityStudies|"
 msgid "Modified Kaplan-Meier (Hazen)"
@@ -259,11 +266,11 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Null distribution"
-msgstr ""
+msgstr "Null-Verteilung"
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal"
-msgstr ""
+msgstr "Normal"
 
 msgctxt "Description|"
 msgid "Linearity Study"
@@ -283,7 +290,7 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Two-level Factorial Design"
-msgstr ""
+msgstr "Zweistufiges faktorielles Design"
 
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
@@ -291,7 +298,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Sample"
-msgstr ""
+msgstr "Stichprobe"
 
 msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
@@ -327,7 +334,7 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Standard"
-msgstr ""
+msgstr "Standard"
 
 msgctxt "doeFactorial|"
 msgid "Random"
@@ -335,7 +342,7 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Save as:"
-msgstr ""
+msgstr "Speichern als:"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Contour Plot Options"
@@ -347,7 +354,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Show legend next to graph"
-msgstr ""
+msgstr "Legende neben Diagramm anzeigen"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Divide response surface into N parts"
@@ -363,7 +370,7 @@ msgstr ""
 
 msgctxt "factorialAnalysis|"
 msgid "Available factors"
-msgstr ""
+msgstr "Verfügbare Faktoren"
 
 msgctxt "factorialAnalysis|"
 msgid "Response variable"
@@ -383,7 +390,7 @@ msgstr ""
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals plots"
-msgstr ""
+msgstr "Residuendiagramme"
 
 msgctxt "factorialAnalysis|"
 msgid "Normal probability plot of residuals"

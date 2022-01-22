@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-13 05:51+0000\n"
-"Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
+"PO-Revision-Date: 2022-01-22 03:38+0000\n"
+"Last-Translator: Wendy Zhao <wendy.zhao@skf.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "jasp/jaspprocesscontrol-qml/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -9,7 +9,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11-dev\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
@@ -26,839 +26,839 @@ msgstr "线性研究"
 
 msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
-msgstr ""
+msgstr "属性一致性分析"
 
 msgctxt "Description|"
 msgid "Control Charts"
-msgstr ""
+msgstr "控制图"
 
 msgctxt "Description|"
 msgid "Variables Charts for Subgroups"
-msgstr ""
+msgstr "子组的变量控制图"
 
 msgctxt "Description|"
 msgid "Time Weighted Charts"
-msgstr ""
+msgstr "时间加权控制图"
 
 msgctxt "Description|"
 msgid "Capability Study"
-msgstr ""
+msgstr "能力研究"
 
 msgctxt "Description|"
 msgid "Process Capability Study"
-msgstr ""
+msgstr "过程能力研究"
 
 msgctxt "Description|"
 msgid "DOE"
-msgstr ""
+msgstr "DOE"
 
 msgctxt "Description|"
 msgid "Two-level Factorial Design"
-msgstr ""
+msgstr "二水平因子设计"
 
 msgctxt "Description|"
 msgid "Response Surface"
-msgstr ""
+msgstr "响应曲面"
 
 msgctxt "Description|"
 msgid "Two-level Factorial Analysis"
-msgstr ""
+msgstr "分析二水平因子设计"
 
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
-msgstr ""
+msgstr "缺陷品/缺陷"
 
 msgctxt "attributesCharts|"
 msgid "Sample"
-msgstr ""
+msgstr "样本"
 
 msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
-msgstr ""
+msgstr "属性控制图"
 
 msgctxt "attributesCharts|"
 msgid "Defectives"
-msgstr ""
+msgstr "缺陷品"
 
 msgctxt "attributesCharts|"
 msgid "np chart"
-msgstr ""
+msgstr "np 控制图"
 
 msgctxt "attributesCharts|"
 msgid "p chart"
-msgstr ""
+msgstr "p 控制图"
 
 msgctxt "attributesCharts|"
 msgid "Laney p' (p-prime) chart"
-msgstr ""
+msgstr "Laney p' 控制图"
 
 msgctxt "attributesCharts|"
 msgid "Defects"
-msgstr ""
+msgstr "缺陷"
 
 msgctxt "attributesCharts|"
 msgid "c chart"
-msgstr ""
+msgstr "c 控制图"
 
 msgctxt "attributesCharts|"
 msgid "u chart"
-msgstr ""
+msgstr "u 控制图"
 
 msgctxt "attributesCharts|"
 msgid "Laney u' (u-prime) chart"
-msgstr ""
+msgstr "Laney u' 控制图"
 
 msgctxt "attributesCharts|"
 msgid "X-mR chart"
-msgstr ""
+msgstr "单值移动极差控制图"
 
 msgctxt "doeFactorial|"
 msgid "Number of factors"
-msgstr ""
+msgstr "因子数量"
 
 msgctxt "doeFactorial|"
 msgid "Coded"
-msgstr ""
+msgstr "已编码"
 
 msgctxt "doeFactorial|"
 msgid "Uncoded"
-msgstr ""
+msgstr "未编码"
 
 msgctxt "doeFactorial|"
 msgid "Run Order"
-msgstr ""
+msgstr "运行序"
 
 msgctxt "doeFactorial|"
 msgid "Standard"
-msgstr ""
+msgstr "标准"
 
 msgctxt "doeFactorial|"
 msgid "Random"
-msgstr ""
+msgstr "随机"
 
 msgctxt "doeFactorial|"
 msgid "Factor"
-msgstr ""
+msgstr "因子"
 
 msgctxt "doeFactorial|"
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 msgctxt "doeFactorial|"
 msgid "Level 1"
-msgstr ""
+msgstr "水平 1"
 
 msgctxt "doeFactorial|"
 msgid "Level 2"
-msgstr ""
+msgstr "水平 2"
 
 msgctxt "doeFactorial|"
 msgid "Factor "
-msgstr ""
+msgstr "因子 "
 
 msgctxt "doeFactorial|"
 msgid " Level 1"
-msgstr ""
+msgstr " 水平 1"
 
 msgctxt "doeFactorial|"
 msgid " Level 2"
-msgstr ""
+msgstr " 水平 2"
 
 msgctxt "doeFactorial|"
 msgid "Factorial Design Options"
-msgstr ""
+msgstr "因子设计选项"
 
 msgctxt "doeFactorial|"
 msgid "Type of Factorial Design"
-msgstr ""
+msgstr "因子设计类型"
 
 msgctxt "doeFactorial|"
 msgid "2-level split-plot (hard-to-change factors)"
-msgstr ""
+msgstr "二水平裂区设计（难改变因子）"
 
 msgctxt "doeFactorial|"
 msgid "Number of hard-to-change factors"
-msgstr ""
+msgstr "难改变因子数"
 
 msgctxt "doeFactorial|"
 msgid "Number of runs"
-msgstr ""
+msgstr "运行数"
 
 msgctxt "doeFactorial|"
 msgid "Resolution"
-msgstr ""
+msgstr "分辨度"
 
 msgctxt "doeFactorial|"
 msgid "III"
-msgstr ""
+msgstr "III"
 
 msgctxt "doeFactorial|"
 msgid "IV"
-msgstr ""
+msgstr "IV"
 
 msgctxt "doeFactorial|"
 msgid "V"
-msgstr ""
+msgstr "V"
 
 msgctxt "doeFactorial|"
 msgid "VI"
-msgstr ""
+msgstr "VI"
 
 msgctxt "doeFactorial|"
 msgid "VIII"
-msgstr ""
+msgstr "VIII"
 
 msgctxt "doeFactorial|"
 msgid "Full"
-msgstr ""
+msgstr "全因子"
 
 msgctxt "doeFactorial|"
 msgid "Additional Options"
-msgstr ""
+msgstr "附加选项"
 
 msgctxt "doeFactorial|"
 msgid "Number of center points per block"
-msgstr ""
+msgstr "每个区组的中心点数"
 
 msgctxt "doeFactorial|"
 msgid "Number of replicates for corner points"
-msgstr ""
+msgstr "角点的仿行数"
 
 msgctxt "doeFactorial|"
 msgid "Number of blocks"
-msgstr ""
+msgstr "区组数"
 
 msgctxt "doeFactorial|"
 msgid "Save as:"
-msgstr ""
+msgstr "保存为："
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Predictors [Location in coded format]"
-msgstr ""
+msgstr "预测变量 [编码格式的位置]"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Response"
-msgstr ""
+msgstr "响应"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Contour Plot Options"
-msgstr ""
+msgstr "等值线图选项"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Contour Surface"
-msgstr ""
+msgstr "等值曲面"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Only show 2D plot"
-msgstr ""
+msgstr "仅显示 2D 图形"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Show analysis and graphs in coded form"
-msgstr ""
+msgstr "以编码形式显示分析和图表"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Show legend next to graph"
-msgstr ""
+msgstr "在图形旁边显示图例"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Divide response surface into N parts"
-msgstr ""
+msgstr "将响应曲面分为 N 个部分"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Rotating angle (vertical plane)"
-msgstr ""
+msgstr "旋转角度(垂直方向）"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Rotating angle (horizontal plane)"
-msgstr ""
+msgstr "旋转角度(水平方向)"
 
 msgctxt "factorialAnalysis|"
 msgid "Available factors"
-msgstr ""
+msgstr "可用因子"
 
 msgctxt "factorialAnalysis|"
 msgid "Response variable"
-msgstr ""
+msgstr "响应变量"
 
 msgctxt "factorialAnalysis|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "指定因子"
 
 msgctxt "factorialAnalysis|"
 msgid "Blocks"
-msgstr ""
+msgstr "区组"
 
 msgctxt "factorialAnalysis|"
 msgid "Run order"
-msgstr ""
+msgstr "运行序"
 
 msgctxt "factorialAnalysis|"
 msgid "Highest order interaction term:"
-msgstr ""
+msgstr "最高阶交互作用项："
 
 msgctxt "factorialAnalysis|"
 msgid "Pareto plot of standardized effects"
-msgstr ""
+msgstr "标准化效应 Pareto 图"
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals plots"
-msgstr ""
+msgstr "残差图"
 
 msgctxt "factorialAnalysis|"
 msgid "Normal probability plot of residuals"
-msgstr ""
+msgstr "残差正态概率图"
 
 msgctxt "factorialAnalysis|"
 msgid "Histogram of residuals"
-msgstr ""
+msgstr "残差直方图"
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr ""
+msgstr "残差 vs 拟合图"
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals vs run order"
-msgstr ""
+msgstr "残差 vs 运行顺序图"
 
 msgctxt "msaAttribute|"
 msgid "Operators"
-msgstr ""
+msgstr "操作者"
 
 msgctxt "msaAttribute|"
 msgid "Parts"
-msgstr ""
+msgstr "零件"
 
 msgctxt "msaAttribute|"
 msgid "Standard"
-msgstr ""
+msgstr "标准"
 
 msgctxt "msaAttribute|"
 msgid "Tables"
-msgstr ""
+msgstr "表格"
 
 msgctxt "msaAttribute|"
 msgid "Kendall's tau"
-msgstr ""
+msgstr "Kendall's tau"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Parts"
-msgstr ""
+msgstr "零件"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Measurements"
-msgstr ""
+msgstr "测量值"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Standard"
-msgstr ""
+msgstr "标准"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "分析选项"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity table"
-msgstr ""
+msgstr "线性表"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Bias table"
-msgstr ""
+msgstr "偏倚表"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Plots"
-msgstr ""
+msgstr "图形"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity and bias graph"
-msgstr ""
+msgstr "线性和偏倚图"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Percent process variation graph"
-msgstr ""
+msgstr "过程变异百分比图"
 
 msgctxt "msaGaugeRR|"
 msgid "Data format"
-msgstr ""
+msgstr "数据格式"
 
 msgctxt "msaGaugeRR|"
 msgid "Operators"
-msgstr ""
+msgstr "操作者"
 
 msgctxt "msaGaugeRR|"
 msgid "Parts"
-msgstr ""
+msgstr "零件"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements"
-msgstr ""
+msgstr "测量值"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Options"
-msgstr ""
+msgstr "方差分析法选项"
 
 msgctxt "msaGaugeRR|"
 msgid "r&R table ANOVA method"
-msgstr ""
+msgstr "方差分析法 r&R 表"
 
 msgctxt "msaGaugeRR|"
 msgid "Study Var. multiplier type"
-msgstr ""
+msgstr "研究变异乘数类型"
 
 msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
-msgstr ""
+msgstr "标准差"
 
 msgctxt "msaGaugeRR|"
 msgid "Percent"
-msgstr ""
+msgstr "百分比"
 
 msgctxt "msaGaugeRR|"
 msgid "Plots"
-msgstr ""
+msgstr "绘图"
 
 msgctxt "msaGaugeRR|"
 msgid "R charts by operator"
-msgstr ""
+msgstr "极差图 (按操作者)"
 
 msgctxt "msaGaugeRR|"
 msgid "X-bar charts by operator"
-msgstr ""
+msgstr "均值图 (按操作者)"
 
 msgctxt "msaGaugeRR|"
 msgid "Scatter plots operators"
-msgstr ""
+msgstr "散点图 (按操作者)"
 
 msgctxt "msaGaugeRR|"
 msgid "Fit line"
-msgstr ""
+msgstr "拟合线"
 
 msgctxt "msaGaugeRR|"
 msgid "Show origin line"
-msgstr ""
+msgstr "显示初始线"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement by part plot"
-msgstr ""
+msgstr "测量值图 (按零件)"
 
 msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "显示所有测量值"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement by operators plot"
-msgstr ""
+msgstr "测量值图 (按操作者)"
 
 msgctxt "msaGaugeRR|"
 msgid "Part x operator interaction plot"
-msgstr ""
+msgstr "零件 x 操作者交互作用图"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Report"
-msgstr ""
+msgstr "方差分析法报告"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement"
-msgstr ""
+msgstr "测量值"
 
 msgctxt "msaGaugeRR|"
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 msgctxt "msaGaugeRR|"
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 msgctxt "msaGaugeRR|"
 msgid "Miscellaneous"
-msgstr ""
+msgstr "其它"
 
 msgctxt "msaGaugeRR|"
 msgid "Show Report"
-msgstr ""
+msgstr "显示报告"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Operators"
-msgstr ""
+msgstr "操作者"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Parts"
-msgstr ""
+msgstr "零件"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements"
-msgstr ""
+msgstr "测量值"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "分析选项"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation reference"
-msgstr ""
+msgstr "标准差参考值"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study Std. Deviation"
-msgstr ""
+msgstr "研究标准差"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Historical process Std. Deviation"
-msgstr ""
+msgstr "历史过程标准差"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "r&R tables"
-msgstr ""
+msgstr "r&R 表"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study Var. multiplier type"
-msgstr ""
+msgstr "研究变异乘数类型"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation"
-msgstr ""
+msgstr "标准差"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Percent"
-msgstr ""
+msgstr "百分比"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Graph variation components"
-msgstr ""
+msgstr "变异分量图"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Plots"
-msgstr ""
+msgstr "绘图"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "R charts by operator"
-msgstr ""
+msgstr "极差图 (按操作者）"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "X-bar charts by operator"
-msgstr ""
+msgstr "均值图 (按操作者)"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement by part x operator plot"
-msgstr ""
+msgstr "测量值 (按零件 x 操作者)"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "显示所有测量值"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement by operator plot"
-msgstr ""
+msgstr "测量值 (按操作者)"
 
 msgctxt "msaType1Gauge|"
 msgid "Measurements"
-msgstr ""
+msgstr "测量值"
 
 msgctxt "msaType1Gauge|"
 msgid "6"
-msgstr ""
+msgstr "6"
 
 msgctxt "msaType1Gauge|"
 msgid "4"
-msgstr ""
+msgstr "4"
 
 msgctxt "msaType1Gauge|"
 msgid "Plots"
-msgstr ""
+msgstr "绘图"
 
 msgctxt "msaType1Gauge|"
 msgid "Run chart"
-msgstr ""
+msgstr "运行图"
 
 msgctxt "msaType1Gauge|"
 msgid "Display individual measurements"
-msgstr ""
+msgstr "显示单个测量值"
 
 msgctxt "msaType1Gauge|"
 msgid "Display tolerance limits"
-msgstr ""
+msgstr "显示公差限值"
 
 msgctxt "msaType1Gauge|"
 msgid "One sample T-test"
-msgstr ""
+msgstr "单样本 T 检验"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for bias"
-msgstr ""
+msgstr "偏倚的置信区间"
 
 msgctxt "msaType1Gauge|"
 msgid "Histogram"
-msgstr ""
+msgstr "直方图"
 
 msgctxt "msaType1Gauge|"
 msgid "Bin width type"
-msgstr ""
+msgstr "长条形宽度类型"
 
 msgctxt "msaType1Gauge|"
 msgid "Sturges"
-msgstr ""
+msgstr "Sturges"
 
 msgctxt "msaType1Gauge|"
 msgid "Scott"
-msgstr ""
+msgstr "Scott"
 
 msgctxt "msaType1Gauge|"
 msgid "Doane"
-msgstr ""
+msgstr "Doane"
 
 msgctxt "msaType1Gauge|"
 msgid "Freedman-Diaconis"
-msgstr ""
+msgstr "Freedman-Diaconis"
 
 msgctxt "msaType1Gauge|"
 msgid "Manual"
-msgstr ""
+msgstr "手动"
 
 msgctxt "msaType1Gauge|"
 msgid "Number of bins"
-msgstr ""
+msgstr "长条形数量"
 
 msgctxt "msaType1Gauge|"
 msgid "Display mean"
-msgstr ""
+msgstr "显示均值"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for mean"
-msgstr ""
+msgstr "均值的置信区间"
 
 msgctxt "msaType1Gauge|"
 msgid "Display reference value"
-msgstr ""
+msgstr "显示参考值"
 
 msgctxt "processCapabilityStudies|"
 msgid "Data format"
-msgstr ""
+msgstr "数据格式"
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurements"
-msgstr ""
+msgstr "测量值"
 
 msgctxt "processCapabilityStudies|"
 msgid "Subgroups"
-msgstr ""
+msgstr "子组"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Capability Options"
-msgstr ""
+msgstr "过程能力选项"
 
 msgctxt "processCapabilityStudies|"
 msgid "Specify a distribution"
-msgstr ""
+msgstr "指定一个分布"
 
 msgctxt "processCapabilityStudies|"
 msgid "Weibull"
-msgstr ""
+msgstr "威布尔"
 
 msgctxt "processCapabilityStudies|"
 msgid "Lognormal"
-msgstr ""
+msgstr "对数正态"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process capability plot"
-msgstr ""
+msgstr "过程能力图"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
-msgstr ""
+msgstr "长条型数量"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process capability tables"
-msgstr ""
+msgstr "过程能力表"
 
 msgctxt "processCapabilityStudies|"
 msgid "Confidence intervals"
-msgstr ""
+msgstr "置信区间"
 
 msgctxt "processCapabilityStudies|"
 msgid "Specification Limits"
-msgstr ""
+msgstr "规格限"
 
 msgctxt "processCapabilityStudies|"
 msgid "Lower specification limit"
-msgstr ""
+msgstr "规格下限"
 
 msgctxt "processCapabilityStudies|"
 msgid "Target value"
-msgstr ""
+msgstr "目标值"
 
 msgctxt "processCapabilityStudies|"
 msgid "Upper specification limit"
-msgstr ""
+msgstr "规格上限"
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & R chart"
-msgstr ""
+msgstr "均值&极差控制图"
 
 msgctxt "processCapabilityStudies|"
 msgid "Histogram"
-msgstr ""
+msgstr "直方图"
 
 msgctxt "processCapabilityStudies|"
 msgid "Probability table and plot"
-msgstr ""
+msgstr "概率表和概率图"
 
 msgctxt "processCapabilityStudies|"
 msgid "Rank method"
-msgstr ""
+msgstr "秩法"
 
 msgctxt "processCapabilityStudies|"
 msgid "Median Rank (Benard)"
-msgstr ""
+msgstr "中位秩 (Benard)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Mean Rank (Herd-Johnson)"
-msgstr ""
+msgstr "平均秩(Herd-Johnson)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Kaplan-Meier"
-msgstr ""
+msgstr "Kaplan-Meier"
 
 msgctxt "processCapabilityStudies|"
 msgid "Modified Kaplan-Meier (Hazen)"
-msgstr ""
+msgstr "调整的 Kaplan-Meier (Hazen)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Null distribution"
-msgstr ""
+msgstr "零分布"
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal"
-msgstr ""
+msgstr "正态"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Capability Report"
-msgstr ""
+msgstr "过程能力报告"
 
 msgctxt "processCapabilityStudies|"
 msgid "Title:"
-msgstr ""
+msgstr "标题："
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurement"
-msgstr ""
+msgstr "测量"
 
 msgctxt "processCapabilityStudies|"
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 msgctxt "processCapabilityStudies|"
 msgid "Date:"
-msgstr ""
+msgstr "日期："
 
 msgctxt "processCapabilityStudies|"
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 msgctxt "processCapabilityStudies|"
 msgid "Reported by:"
-msgstr ""
+msgstr "报告人："
 
 msgctxt "processCapabilityStudies|"
 msgid "Misc:"
-msgstr ""
+msgstr "其它："
 
 msgctxt "processCapabilityStudies|"
 msgid "Miscellaneous"
-msgstr ""
+msgstr "其它"
 
 msgctxt "processCapabilityStudies|"
 msgid "Show Report"
-msgstr ""
+msgstr "显示报告"
 
 msgctxt "timeWeightedCharts|"
 msgid "Measurements"
-msgstr ""
+msgstr "测量值"
 
 msgctxt "timeWeightedCharts|"
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "累积和控制图"
 
 msgctxt "timeWeightedCharts|"
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "指数加权移动平均控制图"
 
 msgctxt "timeWeightedCharts|"
 msgid "g chart"
-msgstr ""
+msgstr "g 控制图"
 
 msgctxt "timeWeightedCharts|"
 msgid "t chart"
-msgstr ""
+msgstr "t 控制图"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Measurements"
-msgstr ""
+msgstr "测量值"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "累积和控制图"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "指数加权移动平均控制图"
 
 msgctxt "TimeWeightedCharts|"
 msgid "g chart"
-msgstr ""
+msgstr "g 控制图"
 
 msgctxt "TimeWeightedCharts|"
 msgid "t chart"
-msgstr ""
+msgstr "t 控制图"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
-msgstr ""
+msgstr "变量"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
-msgstr ""
+msgstr "单值的变量控制图"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "X-mR chart"
-msgstr ""
+msgstr "单值-移动极差控制图"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Control Charts"
-msgstr ""
+msgstr "控制图"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & R"
-msgstr ""
+msgstr "均值&极差控制图"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Warning limits"
-msgstr ""
+msgstr "警示限"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & s"
-msgstr ""
+msgstr "均值 & 标准差"
 
 msgctxt "Description|"
 msgid "Variables Charts for Individuals"
-msgstr ""
+msgstr "单值的变量控制图"
 
 msgctxt "Description|"
 msgid "Probability of Detection"
-msgstr ""
+msgstr "探测的概率"
 
 msgctxt "probabilityOfDetection|"
 msgid "Outcomes"
-msgstr ""
+msgstr "结果"
 
 msgctxt "probabilityOfDetection|"
 msgid "Covariates"
-msgstr ""
+msgstr "协变量"
 
 msgctxt "probabilityOfDetection|"
 msgid "Tables"
-msgstr ""
+msgstr "表格"
 
 msgctxt "probabilityOfDetection|"
 msgid "Model fit table"
-msgstr ""
+msgstr "模型拟合表"
 
 msgctxt "probabilityOfDetection|"
 msgid "Detection plot"
@@ -866,7 +866,7 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Show data"
-msgstr ""
+msgstr "显示数据"
 
 msgctxt "probabilityOfDetection|"
 msgid "Rugs"
@@ -886,7 +886,7 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Confidence interval"
-msgstr ""
+msgstr "置信区间"
 
 msgctxt "probabilityOfDetection|"
 msgid "Ticks x-axis"
@@ -894,11 +894,11 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data"
-msgstr ""
+msgstr "基于数据"
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data and model"
-msgstr ""
+msgstr "基于数据和模型"
 
 msgctxt "probabilityOfDetection|"
 msgid "Logarithmic x-axis"
@@ -906,7 +906,7 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Asymptotes"
-msgstr ""
+msgstr "渐近线"
 
 msgctxt "probabilityOfDetection|"
 msgid "Horizontal asymptotes"
@@ -918,7 +918,7 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "y-coordinate"
-msgstr ""
+msgstr "y 坐标"
 
 msgctxt "probabilityOfDetection|"
 msgid "Asymptote "
@@ -930,7 +930,7 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "x-coordinate"
-msgstr ""
+msgstr "x 坐标"
 
 msgctxt "probabilityOfDetection|"
 msgid "Fitting options"
@@ -954,457 +954,457 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Autocorrelation"
-msgstr ""
+msgstr "自相关"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Data format"
-msgstr ""
+msgstr "数据格式"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurements"
-msgstr ""
+msgstr "测量值"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroups"
-msgstr ""
+msgstr "子组"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
-msgstr ""
+msgstr "子组的变量控制图报告"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
-msgstr ""
+msgstr "测量"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Miscellaneous"
-msgstr ""
+msgstr "其它"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
-msgstr ""
+msgstr "显示报告"
 
 msgctxt "Description|"
 msgid "Gauge r&R (non-replicable measurements)"
-msgstr ""
+msgstr "量具 r&R（不可复制测量）"
 
 msgctxt "Description|"
 msgid "Test-retest (Range method)"
-msgstr ""
+msgstr "测试-重测（极差法）"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Available variables"
-msgstr ""
+msgstr "可用变量"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Response variable"
-msgstr ""
+msgstr "响应变量"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "指定因子"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Run order"
-msgstr ""
+msgstr "运行序"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Alpha level:"
-msgstr ""
+msgstr "Alpha水平:"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Pareto plot of standardized effects"
-msgstr ""
+msgstr "标准化效应Pareto图"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals plots"
-msgstr ""
+msgstr "残差图"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Normal probability plot of residuals"
-msgstr ""
+msgstr "残差正态概率图"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Histogram of residuals"
-msgstr ""
+msgstr "残差直方图"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr ""
+msgstr "残差 vs 拟合值"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs run order"
-msgstr ""
+msgstr "残差 vs 运行顺序"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (default generator)"
-msgstr ""
+msgstr "二水平因子（默认生成元）"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
-msgstr ""
+msgstr "二水平因子（指定生成元）"
 
 msgctxt "doeFactorial|"
 msgid "Number of random runs to repeat"
-msgstr ""
+msgstr "重复的随机运行数"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Blocks (optional)"
-msgstr ""
+msgstr "区组（可选）"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Components"
-msgstr ""
+msgstr "组成部分"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Term Type"
-msgstr ""
+msgstr "项类型"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "FO + PQ"
-msgstr ""
+msgstr "FO + PQ"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "FO"
-msgstr ""
+msgstr "FO"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Response Surface Summaries"
-msgstr ""
+msgstr "响应曲面汇总"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Coefficient Table"
-msgstr ""
+msgstr "系数表"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "ANOVA Table"
-msgstr ""
+msgstr "方差分析表"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Residual Histogram"
-msgstr ""
+msgstr "残差直方图"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Normal Residual Plot"
-msgstr ""
+msgstr "残差正态图"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Residual vs. Fitted Plot"
-msgstr ""
+msgstr "残差 vs. 拟合值"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Pareto Plot of Standardized Effects"
-msgstr ""
+msgstr "标准化效应 Pareto 图"
 
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
-msgstr ""
+msgstr "筛选设计类型"
 
 msgctxt "doeScreening|"
 msgid "Plackett-Burman"
-msgstr ""
+msgstr "Plackett-Burman"
 
 msgctxt "doeScreening|"
 msgid "Definitive screening"
-msgstr ""
+msgstr "自定义筛选"
 
 msgctxt "doeScreening|"
 msgid "Number of 3-level factors"
-msgstr ""
+msgstr "三水平因子数"
 
 msgctxt "doeScreening|"
 msgid "Number of 2-level factors"
-msgstr ""
+msgstr "二水平因子数"
 
 msgctxt "doeScreening|"
 msgid "Number of runs"
-msgstr ""
+msgstr "运行数"
 
 msgctxt "doeScreening|"
 msgid "Coded"
-msgstr ""
+msgstr "已编码"
 
 msgctxt "doeScreening|"
 msgid "Uncoded"
-msgstr ""
+msgstr "未编码"
 
 msgctxt "doeScreening|"
 msgid "Run Order"
-msgstr ""
+msgstr "运行序"
 
 msgctxt "doeScreening|"
 msgid "Standard"
-msgstr ""
+msgstr "标准"
 
 msgctxt "doeScreening|"
 msgid "Random"
-msgstr ""
+msgstr "随机"
 
 msgctxt "doeScreening|"
 msgid "Factor"
-msgstr ""
+msgstr "因子"
 
 msgctxt "doeScreening|"
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 msgctxt "doeScreening|"
 msgid "Level 1"
-msgstr ""
+msgstr "水平 1"
 
 msgctxt "doeScreening|"
 msgid "Level 2"
-msgstr ""
+msgstr "水平 2"
 
 msgctxt "doeScreening|"
 msgid "Level 3"
-msgstr ""
+msgstr "水平 3"
 
 msgctxt "doeScreening|"
 msgid "Factor "
-msgstr ""
+msgstr "因子 "
 
 msgctxt "doeScreening|"
 msgid " Level 1"
-msgstr ""
+msgstr " 水平 1"
 
 msgctxt "doeScreening|"
 msgid " Level 2"
-msgstr ""
+msgstr " 水平 2"
 
 msgctxt "doeScreening|"
 msgid " Level 3"
-msgstr ""
+msgstr " 水平 3"
 
 msgctxt "doeScreening|"
 msgid "Additional Options"
-msgstr ""
+msgstr "附加选项"
 
 msgctxt "doeScreening|"
 msgid "Number of replicates for corner points"
-msgstr ""
+msgstr "角点的仿行数"
 
 msgctxt "msaGaugeRR|"
 msgid "Single column"
-msgstr ""
+msgstr "单列"
 
 msgctxt "msaGaugeRR|"
 msgid "Across rows"
-msgstr ""
+msgstr "跨数行"
 
 msgctxt "msaGaugeRR|"
 msgid "Process variation based on"
-msgstr ""
+msgstr "过程变异基于"
 
 msgctxt "msaGaugeRR|"
 msgid "Study variation"
-msgstr ""
+msgstr "研究变异"
 
 msgctxt "msaGaugeRR|"
 msgid "Historical standard deviation"
-msgstr ""
+msgstr "历史标准差"
 
 msgctxt "msaGaugeRR|"
 msgid "Historical standard deviation:"
-msgstr ""
+msgstr "历史标准差:"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
-msgstr ""
+msgstr "数据格式"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Single column"
-msgstr ""
+msgstr "单列"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Across rows"
-msgstr ""
+msgstr "跨数行"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R Options"
-msgstr ""
+msgstr "量具 r&R 选项"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R Report"
-msgstr ""
+msgstr "量具 r&R 报告"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement"
-msgstr ""
+msgstr "测量"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Miscellaneous"
-msgstr ""
+msgstr "其它"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show Report"
-msgstr ""
+msgstr "显示报告"
 
 msgctxt "msaTestRetest|"
 msgid "Data format"
-msgstr ""
+msgstr "数据格式"
 
 msgctxt "msaTestRetest|"
 msgid "Single column"
-msgstr ""
+msgstr "单列"
 
 msgctxt "msaTestRetest|"
 msgid "Across rows"
-msgstr ""
+msgstr "跨数行"
 
 msgctxt "msaTestRetest|"
 msgid "Operator / Repetition"
-msgstr ""
+msgstr "操作者 / 重复"
 
 msgctxt "msaTestRetest|"
 msgid "Parts"
-msgstr ""
+msgstr "零件"
 
 msgctxt "msaTestRetest|"
 msgid "Measurements"
-msgstr ""
+msgstr "测量值"
 
 msgctxt "msaTestRetest|"
 msgid "Range Method Options"
-msgstr ""
+msgstr "极差法选项"
 
 msgctxt "msaTestRetest|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "分析选项"
 
 msgctxt "msaTestRetest|"
 msgid "r&R table"
-msgstr ""
+msgstr "r&R 表"
 
 msgctxt "msaTestRetest|"
 msgid "Plots"
-msgstr ""
+msgstr "绘图"
 
 msgctxt "msaTestRetest|"
 msgid "Regression line"
-msgstr ""
+msgstr "回归线"
 
 msgctxt "processCapabilityStudies|"
 msgid "Single column"
-msgstr ""
+msgstr "单列"
 
 msgctxt "processCapabilityStudies|"
 msgid "Across rows"
-msgstr ""
+msgstr "跨数行"
 
 msgctxt "processCapabilityStudies|"
 msgid "Specifiy subgroup size manually:"
-msgstr ""
+msgstr "手动指定子组容量:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Type of data distribution"
-msgstr ""
+msgstr "数据分布类型"
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal distribution"
-msgstr ""
+msgstr "正态分布"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal distribution"
-msgstr ""
+msgstr "非正态分布"
 
 msgctxt "processCapabilityStudies|"
 msgid "3-parameter lognormal"
-msgstr ""
+msgstr "3 参数对数正态"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-conformance method"
-msgstr ""
+msgstr "不符合的显示方法"
 
 msgctxt "processCapabilityStudies|"
 msgid "Percentile method"
-msgstr ""
+msgstr "百分位数法"
 
 msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
-msgstr ""
+msgstr "过程稳定性"
 
 msgctxt "processCapabilityStudies|"
 msgid "Distribution of the process"
-msgstr ""
+msgstr "过程分布"
 
 msgctxt "processCapabilityStudies|"
 msgid "Fit distribution"
-msgstr ""
+msgstr "拟合分布"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Name:"
-msgstr ""
+msgstr "过程名称："
 
 msgctxt "Description|"
 msgid ""
 "Investigate if a manufactured product adheres to a defined set of quality "
 "criteria"
-msgstr ""
+msgstr "调查制造的产品是否符合规定的质量标准"
 
 msgctxt "Description|"
 msgid "Type 1 Instrument Capability"
-msgstr ""
+msgstr "类型 1 量具能力"
 
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
-msgstr ""
+msgstr "类型 2 和 3 量具 r&R (手动/自动测量设备）"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Desirability"
-msgstr ""
+msgstr "合意度"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Response Variable List"
-msgstr ""
+msgstr "响应变量清单"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Minimum [Min/Max]"
-msgstr ""
+msgstr "望小 [最小/最大]"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Maximum [Min/Max]"
-msgstr ""
+msgstr "望大 [最小/最大]"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Target [Min/Target/Max]"
-msgstr ""
+msgstr "望目 [最小/目标/最大]"
 
 msgctxt "msaAttribute|"
 msgid "Data format"
-msgstr ""
+msgstr "数据格式"
 
 msgctxt "msaAttribute|"
 msgid "Single column"
-msgstr ""
+msgstr "单列"
 
 msgctxt "msaAttribute|"
 msgid "Across rows"
-msgstr ""
+msgstr "跨数行"
 
 msgctxt "msaAttribute|"
 msgid "Result"
-msgstr ""
+msgstr "结果"
 
 msgctxt "msaAttribute|"
 msgid "Kappa Stuides"
-msgstr ""
+msgstr "Kappa 研究"
 
 msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
