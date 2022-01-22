@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-18 15:53+0000\n"
+"PO-Revision-Date: 2022-01-23 12:52+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
@@ -586,11 +586,11 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Doane"
-msgstr ""
+msgstr "Doane"
 
 msgctxt "msaType1Gauge|"
 msgid "Freedman-Diaconis"
-msgstr ""
+msgstr "Freedman-Diaconis"
 
 msgctxt "msaType1Gauge|"
 msgid "Manual"
@@ -602,15 +602,15 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Display mean"
-msgstr ""
+msgstr "Mittelwert anzeigen"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for mean"
-msgstr ""
+msgstr "Konfidenzintervall für Mittelwert"
 
 msgctxt "msaType1Gauge|"
 msgid "Display reference value"
-msgstr ""
+msgstr "Referenzwert anzeigen"
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & R chart"
@@ -622,7 +622,7 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Measurements"
-msgstr ""
+msgstr "Messungen"
 
 msgctxt "timeWeightedCharts|"
 msgid "Cumulative sum chart"
@@ -642,7 +642,7 @@ msgstr ""
 
 msgctxt "TimeWeightedCharts|"
 msgid "Measurements"
-msgstr ""
+msgstr "Messungen"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Cumulative sum chart"
@@ -662,7 +662,7 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
-msgstr ""
+msgstr "Variablen"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Control Charts"
@@ -706,7 +706,7 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Weitere Optionen"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Predictors [Location in coded format]"
@@ -718,7 +718,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Only show 2D plot"
-msgstr ""
+msgstr "Nur 2D-Diagramm zeigen"
 
 msgctxt "factorialAnalysis|"
 msgid "Blocks"
@@ -730,7 +730,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Data format"
-msgstr ""
+msgstr "Datenformat"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Report"
@@ -738,27 +738,27 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement"
-msgstr ""
+msgstr "Messung"
 
 msgctxt "msaGaugeRR|"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgctxt "msaGaugeRR|"
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 msgctxt "msaGaugeRR|"
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "msaGaugeRR|"
 msgid "Show Report"
-msgstr ""
+msgstr "Bericht anzeigen"
 
 msgctxt "processCapabilityStudies|"
 msgid "Data format"
-msgstr ""
+msgstr "Datenformat"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Capability Options"
@@ -774,7 +774,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Confidence intervals"
-msgstr ""
+msgstr "Konfidenzintervalle"
 
 msgctxt "processCapabilityStudies|"
 msgid "Specification Limits"
@@ -782,7 +782,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Histogram"
-msgstr ""
+msgstr "Histogramm"
 
 msgctxt "processCapabilityStudies|"
 msgid "Probability table and plot"
@@ -794,23 +794,23 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Title:"
-msgstr ""
+msgstr "Titel:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurement"
-msgstr ""
+msgstr "Messung"
 
 msgctxt "processCapabilityStudies|"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgctxt "processCapabilityStudies|"
 msgid "Date:"
-msgstr ""
+msgstr "Datum:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 msgctxt "processCapabilityStudies|"
 msgid "Reported by:"
@@ -822,11 +822,11 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "processCapabilityStudies|"
 msgid "Show Report"
-msgstr ""
+msgstr "Bericht anzeigen"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
@@ -850,15 +850,15 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Covariates"
-msgstr ""
+msgstr "Kovariaten"
 
 msgctxt "probabilityOfDetection|"
 msgid "Tables"
-msgstr ""
+msgstr "Tabellen"
 
 msgctxt "probabilityOfDetection|"
 msgid "Model fit table"
-msgstr ""
+msgstr "Tabelle Modellanpassung"
 
 msgctxt "probabilityOfDetection|"
 msgid "Detection plot"
@@ -866,7 +866,7 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Show data"
-msgstr ""
+msgstr "Daten anzeigen"
 
 msgctxt "probabilityOfDetection|"
 msgid "Rugs"
@@ -882,11 +882,11 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Show density"
-msgstr ""
+msgstr "Dichte anzeigen"
 
 msgctxt "probabilityOfDetection|"
 msgid "Confidence interval"
-msgstr ""
+msgstr "Konfidenzintervall"
 
 msgctxt "probabilityOfDetection|"
 msgid "Ticks x-axis"
@@ -894,59 +894,59 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data"
-msgstr ""
+msgstr "basierend auf Daten"
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data and model"
-msgstr ""
+msgstr "basierend auf Daten und Modell"
 
 msgctxt "probabilityOfDetection|"
 msgid "Logarithmic x-axis"
-msgstr ""
+msgstr "Logarithmische X-Achse"
 
 msgctxt "probabilityOfDetection|"
 msgid "Asymptotes"
-msgstr ""
+msgstr "Asymptoten"
 
 msgctxt "probabilityOfDetection|"
 msgid "Horizontal asymptotes"
-msgstr ""
+msgstr "Horizontale Asymptoten"
 
 msgctxt "probabilityOfDetection|"
 msgid "Label"
-msgstr ""
+msgstr "Bezeichnung"
 
 msgctxt "probabilityOfDetection|"
 msgid "y-coordinate"
-msgstr ""
+msgstr "Y-Koordinate"
 
 msgctxt "probabilityOfDetection|"
 msgid "Asymptote "
-msgstr ""
+msgstr "Asymptote "
 
 msgctxt "probabilityOfDetection|"
 msgid "Vertical asymptotes"
-msgstr ""
+msgstr "Vertikale Asymptoten"
 
 msgctxt "probabilityOfDetection|"
 msgid "x-coordinate"
-msgstr ""
+msgstr "X-Koordinate"
 
 msgctxt "probabilityOfDetection|"
 msgid "Fitting options"
-msgstr ""
+msgstr "Anpassungsoptionen"
 
 msgctxt "probabilityOfDetection|"
 msgid "Link function"
-msgstr ""
+msgstr "Link-Funktion"
 
 msgctxt "probabilityOfDetection|"
 msgid "Logit"
-msgstr ""
+msgstr "Logit"
 
 msgctxt "probabilityOfDetection|"
 msgid "Probit"
-msgstr ""
+msgstr "Probit"
 
 msgctxt "probabilityOfDetection|"
 msgid "Log transform covariate"
@@ -954,19 +954,19 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Autocorrelation"
-msgstr ""
+msgstr "Autokorrelation"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Data format"
-msgstr ""
+msgstr "Datenformat"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurements"
-msgstr ""
+msgstr "Messungen"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroups"
-msgstr ""
+msgstr "Untergruppen"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
@@ -974,23 +974,23 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
-msgstr ""
+msgstr "Messung"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
-msgstr ""
+msgstr "Bericht anzeigen"
 
 msgctxt "Description|"
 msgid "Gauge r&R (non-replicable measurements)"
@@ -1002,7 +1002,7 @@ msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Available variables"
-msgstr ""
+msgstr "Verfügbare Variablen"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Response variable"
@@ -1018,7 +1018,7 @@ msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Alpha level:"
-msgstr ""
+msgstr "Alpha-Niveau:"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Pareto plot of standardized effects"
@@ -1026,7 +1026,7 @@ msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals plots"
-msgstr ""
+msgstr "Residuendiagramme"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Normal probability plot of residuals"
@@ -1034,11 +1034,11 @@ msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Histogram of residuals"
-msgstr ""
+msgstr "Histogramm der Residuen"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr ""
+msgstr "Residuen vs. angepasster Wert"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs run order"
@@ -1082,15 +1082,15 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Coefficient Table"
-msgstr ""
+msgstr "Koeffiziententabelle"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "ANOVA Table"
-msgstr ""
+msgstr "ANOVA-Tabelle"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Residual Histogram"
-msgstr ""
+msgstr "Residuenhistogramm"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Normal Residual Plot"
@@ -1098,7 +1098,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Residual vs. Fitted Plot"
-msgstr ""
+msgstr "Diagramm Residuen vs. Anpassung"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Pareto Plot of Standardized Effects"
@@ -1110,7 +1110,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Plackett-Burman"
-msgstr ""
+msgstr "Plackett-Burman"
 
 msgctxt "doeScreening|"
 msgid "Definitive screening"
@@ -1150,11 +1150,11 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Factor"
-msgstr ""
+msgstr "Faktor"
 
 msgctxt "doeScreening|"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgctxt "doeScreening|"
 msgid "Level 1"
@@ -1186,7 +1186,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Weitere Optionen"
 
 msgctxt "doeScreening|"
 msgid "Number of replicates for corner points"
@@ -1218,7 +1218,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
-msgstr ""
+msgstr "Datenformat"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Single column"
@@ -1388,7 +1388,7 @@ msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Data format"
-msgstr ""
+msgstr "Datenformat"
 
 msgctxt "msaAttribute|"
 msgid "Single column"
@@ -1400,7 +1400,7 @@ msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Result"
-msgstr ""
+msgstr "Ergebnis"
 
 msgctxt "msaAttribute|"
 msgid "Kappa Stuides"
@@ -1452,7 +1452,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "msaGaugeRR|"
 msgid "Gauge name"
