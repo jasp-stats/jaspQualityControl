@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-23 12:52+0000\n"
+"PO-Revision-Date: 2022-01-24 15:54+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
@@ -1258,7 +1258,7 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Data format"
-msgstr ""
+msgstr "Datenformat"
 
 msgctxt "msaTestRetest|"
 msgid "Single column"
@@ -1278,7 +1278,7 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Measurements"
-msgstr ""
+msgstr "Messungen"
 
 msgctxt "msaTestRetest|"
 msgid "Range Method Options"
@@ -1294,7 +1294,7 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Plots"
-msgstr ""
+msgstr "Diagramme"
 
 msgctxt "msaTestRetest|"
 msgid "Regression line"
@@ -1310,19 +1310,19 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Specifiy subgroup size manually:"
-msgstr ""
+msgstr "Untergruppengröße manuell angeben:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Type of data distribution"
-msgstr ""
+msgstr "Typ der Daten-Verteilung"
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal distribution"
-msgstr ""
+msgstr "Normalverteilung"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal distribution"
-msgstr ""
+msgstr "Nicht-normale Verteilung"
 
 msgctxt "processCapabilityStudies|"
 msgid "3-parameter lognormal"
@@ -1334,7 +1334,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Percentile method"
-msgstr ""
+msgstr "Perzentil-Methode"
 
 msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
@@ -1376,15 +1376,15 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Minimum [Min/Max]"
-msgstr ""
+msgstr "Minimum [Min/Max]"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Maximum [Min/Max]"
-msgstr ""
+msgstr "Maximum [Min/Max]"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Target [Min/Target/Max]"
-msgstr ""
+msgstr "Ziel [Min/Ziel/Max]"
 
 msgctxt "msaAttribute|"
 msgid "Data format"
@@ -1416,7 +1416,7 @@ msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Positive refernce:"
-msgstr ""
+msgstr "Positive Referenz:"
 
 msgctxt "msaAttribute|"
 msgid "Tau Stuides"
@@ -1468,11 +1468,11 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation value"
-msgstr ""
+msgstr "Std.-Abweichung Wert"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance"
-msgstr ""
+msgstr "Toleranz"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study Var. multiplier value"
@@ -1480,7 +1480,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge name"
@@ -1500,7 +1500,7 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Tolerance"
-msgstr ""
+msgstr "Toleranz"
 
 msgctxt "msaTestRetest|"
 msgid "Run chart of parts"
@@ -1508,7 +1508,7 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Scatter plot"
-msgstr ""
+msgstr "Streudiagramm"
 
 msgctxt "msaTestRetest|"
 msgid "Range chart"
@@ -1520,15 +1520,15 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Reference value"
-msgstr ""
+msgstr "Referenzwert"
 
 msgctxt "msaType1Gauge|"
 msgid "Tolerance range"
-msgstr ""
+msgstr "Toleranzbereich"
 
 msgctxt "msaType1Gauge|"
 msgid "Percent of tolerance for Cg"
-msgstr ""
+msgstr "Prozent der Toleranz für Cg"
 
 msgctxt "msaType1Gauge|"
 msgid "Study var. (number of std. deviations)"
@@ -1540,7 +1540,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "3-parameter Weibull"
-msgstr ""
+msgstr "3-Parameter Weibull"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal capability statistics:"
@@ -1564,7 +1564,7 @@ msgstr ""
 
 msgctxt "TimeWeightedCharts|"
 msgid "Lambda"
-msgstr ""
+msgstr "Lambda"
 
 msgctxt "timeWeightedCharts|"
 msgid "Number of standard deviations"
@@ -1576,7 +1576,7 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Lambda"
-msgstr ""
+msgstr "Lambda"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Moving range length"
@@ -1588,7 +1588,7 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Confidence interval size"
-msgstr ""
+msgstr "Konfidenzintervallbreite"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Single column"
@@ -1600,23 +1600,23 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroup size"
-msgstr ""
+msgstr "Untergruppengröße"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Known parameters"
-msgstr ""
+msgstr "Bekannte Parameter"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Mean"
-msgstr ""
+msgstr "Mittelwert"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Standard deviation"
-msgstr ""
+msgstr "Standardabweichung"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Reported by"
@@ -1648,15 +1648,15 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "attributesCharts|"
 msgid "Measurement"
-msgstr ""
+msgstr "Messung"
 
 msgctxt "attributesCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgctxt "attributesCharts|"
 msgid "Operator"
@@ -1672,7 +1672,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "attributesCharts|"
 msgid "Appraiser"
@@ -1692,7 +1692,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Time"
-msgstr ""
+msgstr "Zeit"
 
 msgctxt "attributesCharts|"
 msgid "Frequency"
@@ -1716,7 +1716,7 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "VII"
-msgstr ""
+msgstr "VII"
 
 msgctxt "doeFactorial|"
 msgid "Fraction"
@@ -1740,7 +1740,7 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Anzahl Faktoren"
 
 msgctxt "doeFull|"
 msgid "Run Order"
@@ -1756,11 +1756,11 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Factor"
-msgstr ""
+msgstr "Faktor"
 
 msgctxt "doeFull|"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgctxt "doeFull|"
 msgid "Levels"
@@ -1768,11 +1768,11 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Factor "
-msgstr ""
+msgstr "Faktor "
 
 msgctxt "doeFull|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Weitere Optionen"
 
 msgctxt "doeFull|"
 msgid "Number of replicates for corner points"
@@ -1784,7 +1784,7 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Save as:"
-msgstr ""
+msgstr "Speichern als:"
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: On</b>"
@@ -1796,7 +1796,7 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Available factors"
-msgstr ""
+msgstr "Verfügbare Faktoren"
 
 msgctxt "doeModifyDesign|"
 msgid "Response variable"
@@ -1840,7 +1840,7 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Design Options"
-msgstr ""
+msgstr "Design-Optionen"
 
 msgctxt "doeModifyDesign|"
 msgid "Number of runs"
@@ -1856,27 +1856,27 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "III"
-msgstr ""
+msgstr "III"
 
 msgctxt "doeModifyDesign|"
 msgid "IV"
-msgstr ""
+msgstr "IV"
 
 msgctxt "doeModifyDesign|"
 msgid "V"
-msgstr ""
+msgstr "V"
 
 msgctxt "doeModifyDesign|"
 msgid "VI"
-msgstr ""
+msgstr "VI"
 
 msgctxt "doeModifyDesign|"
 msgid "VII"
-msgstr ""
+msgstr "VII"
 
 msgctxt "doeModifyDesign|"
 msgid "VIII"
-msgstr ""
+msgstr "VIII"
 
 msgctxt "doeModifyDesign|"
 msgid "Fraction"
@@ -1884,19 +1884,19 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "1/2"
-msgstr ""
+msgstr "1/2"
 
 msgctxt "doeModifyDesign|"
 msgid "1/4"
-msgstr ""
+msgstr "1/4"
 
 msgctxt "doeModifyDesign|"
 msgid "1/8"
-msgstr ""
+msgstr "1/8"
 
 msgctxt "doeModifyDesign|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Weitere Optionen"
 
 msgctxt "doeModifyDesign|"
 msgid "Number of center points"
@@ -1928,7 +1928,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of Factors"
-msgstr ""
+msgstr "Anzahl Faktoren"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of Cube Points"
@@ -1972,11 +1972,11 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
-msgstr ""
+msgstr "Faktor"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Centre"
@@ -1992,7 +1992,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Formula"
-msgstr ""
+msgstr "Formel"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Generator Name"
@@ -2024,7 +2024,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Save as:"
-msgstr ""
+msgstr "Speichern als:"
 
 msgctxt "doeScreening|"
 msgid "<b>Sync Design: On</b>"
@@ -2044,11 +2044,11 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Random effects"
-msgstr ""
+msgstr "Zufällige Effekte"
 
 msgctxt "msaGaugeRR|"
 msgid "Fixed effects"
-msgstr ""
+msgstr "Feste Effekte"
 
 msgctxt "msaTestRetest|"
 msgid "Jitter"
@@ -2056,7 +2056,7 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Analysis options"
-msgstr ""
+msgstr "Analyseoptionen"
 
 msgctxt "timeWeightedCharts|"
 msgid "Center"
@@ -2084,7 +2084,7 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Subgroups"
-msgstr ""
+msgstr "Untergruppen"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Individuals Report"
@@ -2092,19 +2092,19 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Measurement"
-msgstr ""
+msgstr "Messung"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Reported by"
@@ -2120,11 +2120,11 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Sub-title:"
-msgstr ""
+msgstr "Untertitel:"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Sub-title"
-msgstr ""
+msgstr "Untertitel"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Chart name:"
@@ -2136,15 +2136,15 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show Report"
-msgstr ""
+msgstr "Bericht anzeigen"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Sub-title:"
-msgstr ""
+msgstr "Untertitel:"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Sub-title"
-msgstr ""
+msgstr "Untertitel"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Chart name:"
@@ -2168,7 +2168,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor Name "
-msgstr ""
+msgstr "Faktorname "
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid ""
