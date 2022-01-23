@@ -158,7 +158,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   table$addColumnInfo(name = "lci",             title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Bias", paste(ciLevelPercent, "%")))
   table$addColumnInfo(name = "uci",             title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Bias", paste(ciLevelPercent, "%")))
   table$addColumnInfo(name = "t",               title = gettext("<i>t</i>"), type = "number")
-  table$addColumnInfo(name = "p",               title = gettext("<i>p<i/>-value"), type = "pvalue")
+  table$addColumnInfo(name = "p",               title = gettext("<i>p</i>-value"), type = "pvalue")
 
 
   if (ready) {
