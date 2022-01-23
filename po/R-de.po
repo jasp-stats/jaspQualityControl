@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2021-12-04 03:36\n"
-"PO-Revision-Date: 2022-01-15 03:40+0000\n"
+"PO-Revision-Date: 2022-01-24 15:56+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr ""
@@ -80,13 +80,13 @@ msgid "Proportion"
 msgstr ""
 
 msgid "Sample"
-msgstr ""
+msgstr "Stichprobe"
 
 msgid "Number of defectives"
 msgstr ""
 
 msgid "D"
-msgstr ""
+msgstr "D"
 
 msgid "Moving Range"
 msgstr ""
@@ -104,13 +104,13 @@ msgid "Appraiser: %s"
 msgstr ""
 
 msgid "Measurement system: %s"
-msgstr ""
+msgstr "Messsystem: %s"
 
 msgid "Name of Size: %s"
 msgstr ""
 
 msgid "Time: %s"
-msgstr ""
+msgstr "Zeit: %s"
 
 msgid "Frequency: %s"
 msgstr ""
@@ -191,16 +191,16 @@ msgid "p"
 msgstr "p"
 
 msgid "Available Factorial Designs"
-msgstr ""
+msgstr "Verfügbare faktorielle Designs"
 
 msgid "Selected Design"
-msgstr ""
+msgstr "Ausgewähltes Design"
 
 msgid "Design"
-msgstr ""
+msgstr "Design"
 
 msgid "Factors"
-msgstr ""
+msgstr "Faktoren"
 
 msgid "Runs"
 msgstr ""
@@ -224,7 +224,7 @@ msgid "2-level factorial"
 msgstr ""
 
 msgid "Design Preview"
-msgstr ""
+msgstr "Design-Vorschau"
 
 msgid "Alias Structure"
 msgstr ""
@@ -233,7 +233,7 @@ msgid "Input Design"
 msgstr ""
 
 msgid "Desired Design"
-msgstr ""
+msgstr "Gewünschtes Design"
 
 msgid "Missing Runs"
 msgstr ""
@@ -245,7 +245,7 @@ msgid "No analyses (except those under 'Design Specification') can be started un
 msgstr ""
 
 msgid "<em>Warning: </em>"
-msgstr ""
+msgstr "<em>Warnung: </em>"
 
 msgid "Central Composite Design"
 msgstr ""
@@ -261,12 +261,14 @@ msgstr ""
 
 msgid "Factor name '%s' is a number, and number factor names are not supported."
 msgstr ""
+"Faktorname '%s' ist eine Zahl, und numerische Faktornamen sind nicht "
+"unterstützt."
 
 msgid "factors"
-msgstr ""
+msgstr "Faktoren"
 
 msgid "factorName"
-msgstr ""
+msgstr "Faktorname"
 
 msgid "Generator name '%s' is a number, and number generator names are not supported."
 msgstr ""
@@ -288,6 +290,8 @@ msgstr ""
 
 msgid "Factor name '%s' is a number, and number factor names are not supported"
 msgstr ""
+"Faktorname '%s' ist eine Zahl, und numerische Faktornamen sind nicht "
+"unterstützt"
 
 msgid "The analysis will not run when the 'Number of Generators' > 0"
 msgstr ""
@@ -350,16 +354,16 @@ msgid "DF2"
 msgstr ""
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "ANOVA for %s"
-msgstr ""
+msgstr "ANOVA für %s"
 
 msgid "DF"
-msgstr ""
+msgstr "DF"
 
 msgid "Sum of Squares"
-msgstr ""
+msgstr "Quadratsumme"
 
 msgid "Mean of Squares"
 msgstr ""
@@ -368,10 +372,10 @@ msgid "Stationary Points of Response Surface (Coded)"
 msgstr ""
 
 msgid "Eigenvalues"
-msgstr ""
+msgstr "Eigenwerte"
 
 msgid "Eigenvectors"
-msgstr ""
+msgstr "Eigenvektoren"
 
 msgid "Desirability"
 msgstr ""
@@ -386,10 +390,10 @@ msgid "Standard order"
 msgstr ""
 
 msgid "ANOVA"
-msgstr ""
+msgstr "ANOVA"
 
 msgid "df"
-msgstr ""
+msgstr "df"
 
 msgid "SS"
 msgstr ""
@@ -407,10 +411,10 @@ msgid "Attributes Agreement Analysis"
 msgstr ""
 
 msgid "Cohen's Kappa"
-msgstr ""
+msgstr "Cohens Kappa"
 
 msgid "Kendall's Tau"
-msgstr ""
+msgstr "Kendalls Tau"
 
 msgid "Cohen's Kappa for Appraiser vs Standard"
 msgstr ""
@@ -425,7 +429,7 @@ msgid "Please inseret a vaild Positive reference as used in the 'Results' variab
 msgstr ""
 
 msgid "Fleiss' Kappa"
-msgstr ""
+msgstr "Fleiss' Kappa"
 
 msgid "Within Appraisers"
 msgstr ""
@@ -449,16 +453,16 @@ msgid "Matched"
 msgstr ""
 
 msgid "Percent"
-msgstr ""
+msgstr "Prozent"
 
 msgid "Lower"
-msgstr ""
+msgstr "Untere"
 
 msgid "Confidence interval of 95%"
-msgstr ""
+msgstr "Konfidenzintervall von 95%"
 
 msgid "Upper"
-msgstr ""
+msgstr "Obere"
 
 msgid "Invalid Reference and/or Results were inserted."
 msgstr ""
@@ -488,10 +492,10 @@ msgid "Unacceptable: x < 80% (Effectiveness), x > 5% (Miss rate), x > 10% (False
 msgstr ""
 
 msgid "Kendall's Tau is only available for numeric measurements."
-msgstr ""
+msgstr "Kendalls Tau ist nur für numerische Messungen verfügbar."
 
 msgid "Kendall's Tau is only available for non-binary measurements."
-msgstr ""
+msgstr "Kendalls Tau ist nur für nicht-binäre Messungen verfügbar."
 
 msgid "Operator"
 msgstr ""
@@ -515,10 +519,10 @@ msgid "Part"
 msgstr ""
 
 msgid "Reference value"
-msgstr ""
+msgstr "Referenzwert"
 
 msgid "Mean per reference value"
-msgstr ""
+msgstr "Mittelwert pro Referenzwert"
 
 msgid "Bias per reference value"
 msgstr ""
@@ -527,19 +531,19 @@ msgid "<i>p(t</i>-test of bias against 0)"
 msgstr ""
 
 msgid "Regression Model"
-msgstr ""
+msgstr "Regressionsmodell"
 
 msgid "Predictor"
-msgstr ""
+msgstr "Prädiktor"
 
 msgid "<i>t</i>-statistic"
-msgstr ""
+msgstr "<i>t</i>-Statistik"
 
 msgid "Std. Error coefficients"
-msgstr ""
+msgstr "Std.-Fehler Koeffizienten"
 
 msgid "<i>p</i>"
-msgstr ""
+msgstr "<i>p</i>"
 
 msgid "Gauge Linearity"
 msgstr ""
@@ -569,7 +573,7 @@ msgid "Every unique part must have one corresponding reference value. %i referen
 msgstr ""
 
 msgid "Reference"
-msgstr ""
+msgstr "Referenz"
 
 msgid "Percent bias per reference value"
 msgstr ""
@@ -587,7 +591,7 @@ msgid "Design is not balanced: not every operator measured every part. Use non-r
 msgstr ""
 
 msgid "No valid measurements in %s."
-msgstr ""
+msgstr "Keine gültigen Messungen in %s."
 
 msgid "Gauge r&R ANOVA Table"
 msgstr ""
@@ -614,10 +618,10 @@ msgid "Traffic light graph"
 msgstr ""
 
 msgid "Report"
-msgstr ""
+msgstr "Bericht"
 
 msgid "ANOVA Table"
-msgstr ""
+msgstr "ANOVA-Tabelle"
 
 msgid "Two-way ANOVA Table with Interaction"
 msgstr ""
@@ -629,13 +633,13 @@ msgid "Mean Squares"
 msgstr ""
 
 msgid "<i>p</i>-value"
-msgstr ""
+msgstr "<i>p</i>-Wert"
 
 msgid "Gauge r&R Variance Components"
 msgstr ""
 
 msgid "Variance"
-msgstr ""
+msgstr "Varianz"
 
 msgid "% Contribution"
 msgstr ""
@@ -644,7 +648,7 @@ msgid "Gauge Evaluation"
 msgstr ""
 
 msgid "Std. Deviation"
-msgstr ""
+msgstr "Std.-Abweichung"
 
 msgid "Study Variation"
 msgstr ""
@@ -653,7 +657,7 @@ msgid "% Study Variation"
 msgstr ""
 
 msgid "% Tolerance"
-msgstr ""
+msgstr "% Toleranz"
 
 msgid "Total Gauge r&R"
 msgstr ""
@@ -668,7 +672,7 @@ msgid "Total Variation"
 msgstr ""
 
 msgid "Reproducibility"
-msgstr ""
+msgstr "Reproduzierbarzeit"
 
 msgid "Number of distinct categories = %i"
 msgstr ""
@@ -734,7 +738,7 @@ msgid "Gauge name: %s"
 msgstr ""
 
 msgid "Date of study: %s"
-msgstr ""
+msgstr "Studiendatum: %s"
 
 msgid "Reported by: %s"
 msgstr ""
@@ -743,7 +747,7 @@ msgid "Misc: %s"
 msgstr ""
 
 msgid "Tolerance: %s"
-msgstr ""
+msgstr "Toleranz: %s"
 
 msgid "Measurement systems analysis for %s"
 msgstr ""
@@ -809,7 +813,7 @@ msgid "Process Std. Dev."
 msgstr ""
 
 msgid "Tolerance"
-msgstr ""
+msgstr "Toleranz"
 
 msgid "GRR"
 msgstr ""
@@ -842,13 +846,13 @@ msgid "Basic Statistics"
 msgstr ""
 
 msgid "Mean"
-msgstr ""
+msgstr "Mittelwert"
 
 msgid "Bias"
 msgstr ""
 
 msgid "Std. Deviation (<i>s</i>)"
-msgstr ""
+msgstr "Std.-Abweichung (<i>s</i>)"
 
 msgid "Study variation"
 msgstr ""
@@ -881,10 +885,10 @@ msgid "%s CI for Bias"
 msgstr ""
 
 msgid "<i>t</i>"
-msgstr ""
+msgstr "<i>t</i>"
 
 msgid "<i>p<i/>-value"
-msgstr ""
+msgstr "<i>p</i>-Wert"
 
 msgid "Bias Histogram"
 msgstr ""
