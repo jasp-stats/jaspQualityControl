@@ -104,7 +104,7 @@ Form
 			{
 				name: 							"PositiveRef"
 				id:                 positiveRef
-				label: 							qsTr("Positive refernce:")
+				label: 							qsTr("Positive reference:")
 				enabled:            !kendallTau.checked
 			}
 
