@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2021-12-04 03:36\n"
-"PO-Revision-Date: 2022-01-23 13:56+0000\n"
-"Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
+"PO-Revision-Date: 2022-01-26 08:56+0000\n"
+"Last-Translator: Wendy Zhao <wendy.zhao@skf.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "jasp/jaspprocesscontrol-r/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -26,13 +26,13 @@ msgid "T chart"
 msgstr "T 控制图"
 
 msgid "CL = %g"
-msgstr ""
+msgstr "CL = %g"
 
 msgid "UCL = %g"
-msgstr ""
+msgstr "UCL = %g"
 
 msgid "LCL = %g"
-msgstr ""
+msgstr "LCL = %g"
 
 msgid "Cumulative sum"
 msgstr "累积和"
@@ -83,40 +83,40 @@ msgid "Sample"
 msgstr "样本"
 
 msgid "Number of defectives"
-msgstr ""
+msgstr "缺陷品数"
 
 msgid "D"
-msgstr ""
+msgstr "D"
 
 msgid "Moving Range"
 msgstr "移动极差"
 
 msgid "Service name: %s"
-msgstr ""
+msgstr "服务名称: %s"
 
 msgid "Operator: %s"
-msgstr ""
+msgstr "操作者: %s"
 
 msgid "Identification: %s"
 msgstr ""
 
 msgid "Appraiser: %s"
-msgstr ""
+msgstr "评估者: %s"
 
 msgid "Measurement system: %s"
-msgstr ""
+msgstr "测量系统: %s"
 
 msgid "Name of Size: %s"
 msgstr ""
 
 msgid "Time: %s"
-msgstr ""
+msgstr "时间: %s"
 
 msgid "Frequency: %s"
-msgstr ""
+msgstr "频度: %s"
 
 msgid "Control Charts Report for %s"
-msgstr ""
+msgstr "%s 控制图报告"
 
 msgid "Control Chart"
 msgstr "控制图"
@@ -125,7 +125,7 @@ msgid "Subgroup size must be > 1 to display X-bar & R Chart."
 msgstr "显示X-bar & R控制图需要子组容量必须 >1"
 
 msgid "Test results for %s chart"
-msgstr ""
+msgstr "%s 图检验结果"
 
 msgid "Test 1: Beyond limit"
 msgstr "检验 1：超控制限"
