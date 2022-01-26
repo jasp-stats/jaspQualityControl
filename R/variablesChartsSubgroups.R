@@ -101,10 +101,10 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   #X bar & R chart
   if (options$TypeChart == "Xbarchart" && is.null(jaspResults[["XbarPlot"]]) && ready) {
     jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
-    jaspResults[["XbarPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
+    jaspResults[["XbarPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "manualTicks", 'nTicks',"SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
 
-    Xchart <- .XbarchartNoId(dataset = dataset[measurements], options = options,  manualXaxis = subgroups ,warningLimits = options[["Wlimits"]], Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat)
-    Rchart <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat)
+    Xchart <- .Xbarchart(dataset = dataset[measurements], options = options,  manualXaxis = subgroups ,warningLimits = options[["Wlimits"]], Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
+    Rchart <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
     jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
     jaspResults[["XbarPlot"]]$position <- 1
 
@@ -123,10 +123,10 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   #S Chart
   if (options$TypeChart == "Schart" && is.null(jaspResults[["SPlot"]]) && ready) {
     jaspResults[["SPlot"]] <- createJaspPlot(title = gettext("X-bar & s Control Chart"), width = 1200, height = 500)
-    jaspResults[["SPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
+    jaspResults[["SPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "SD", "manualTicks", 'nTicks', "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
 
     Schart <- .XbarSchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups, Phase2 = options$Phase2, sd = options$SD, Wide = wideFormat)
-    Xchart <- .XbarchartNoId(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]], manualXaxis = subgroups, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat)
+    Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]], manualXaxis = subgroups, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
     jaspResults[["SPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Schart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
     jaspResults[["SPlot"]]$position <- 1
 
@@ -144,7 +144,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   # Report
   if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]]) && ready) {
     jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
-    jaspResults[["CCReport"]]$dependOn(c("CCReport", "CCSubgroupSize","TypeChart", "variables", "variablesLong", "CCDataFormat", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
+    jaspResults[["CCReport"]]$dependOn(c("CCReport", "CCSubgroupSize","TypeChart", "variables", "variablesLong", "manualTicks", 'nTicks',"CCDataFormat", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
     jaspResults[["CCReport"]]$position <- 9
     Iplot <- jaspResults[["CCReport"]]
 
@@ -156,16 +156,6 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       Iplot[["ccReport"]] <- .CCReport(p1 = Xchart$p, p2 = Rchart$p , ccTitle = options$ccTitle,
                                        ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
                                        ccChartName = options$ccChartName)
-
-    #Xchart_XR <- .XbarchartNoId(dataset = dataset[measurements], options = options,  manualXaxis = subgroups ,warningLimits = options[["Wlimits"]], Phase2 = options$Phase2, target = options$mean, sd = options$SD)
-    #Rchart    <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Phase2 = options$Phase2, target = options$mean, sd = options$SD)
-    #Schart    <- .XbarSchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups)
-    #Xchart_S  <- .XbarchartNoId(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]], manualXaxis = subgroups, Phase2 = options$Phase2, target = options$mean, sd = options$SD)
-
-    #Iplot[["ccTableXR"]] <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart_XR$sixsigma, Phase2 = options$Phase2, xLabels = Xchart_XR$xLabels, name = "X-bar (R)")
-    #Iplot[["ccTableR"]]  <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Rchart$sixsigma, name = "R", xLabels = Rchart$xLabels)
-    #Iplot[["ccTableXS"]] <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart_S$sixsigma, Phase2 = options$Phase2, xLabels = Xchart_S$xLabels, name = "X-bar (s)")
-    #Iplot[["ccTableS"]]  <- .NelsonTable(dataset = dataset[measurements], options = options, name = "s", sixsigma = Schart$sixsigma, xLabels = Schart$xLabels)
   }
 }
 #Functions for control charts
@@ -185,14 +175,11 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   LCL <- min(sixsigma$limits)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$Stdv, UCL))
   yLimits <- range(yBreaks)
-  if (length(subgroups) <= 10){
-    nxBreaks <- length(subgroups)
-  }else{
+  if (options$manualTicks)
+    nxBreaks <- options$nTicks
+  else
     nxBreaks <- 5
-  }
-  prettyxBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)
-  prettyxBreaks[prettyxBreaks == 0] <- 1
-  xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
@@ -203,7 +190,6 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
     )
   )
-
   xLimits <- range(c(xBreaks, dfLabel$x))
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
@@ -220,16 +206,11 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (manualXaxis != "") {
     if (Wide){
       xBreaks_Out <- manualXaxis
-      p <- p + ggplot2::scale_x_continuous(breaks = 1:length(xBreaks_Out), labels = xBreaks_Out)
+      p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xBreaks_Out[xBreaks])
     }
     else{
-      xBreaks <- 1:nrow(data)
-      xLabels <- xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
-
-      if (length(xBreaks) > 15){
-        xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(xBreaks, 10)[c(-1,-2)])
-        xLabels <- xLabels[xBreaks]
-      }
+      xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
+      xLabels <- xBreaks_Out[xBreaks]
 
       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
       dfLabel <- data.frame(

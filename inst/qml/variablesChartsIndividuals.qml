@@ -47,8 +47,20 @@ Form
 				name:							"ncol"
 				label:							qsTr("Moving range length")
 				defaultValue:					2
-				min: 							    2
+				min: 							2
 			}
+		CheckBox
+		{
+			name:                   			"manualTicks"
+			label: 								qsTr("Number of ticks on x-axis:")
+			childrenOnSameRow: true
+
+			DoubleField
+			{
+				name: 							"nTicks"
+				defaultValue:					5
+			}
+		}
 		}
 
 		CheckBox
@@ -60,9 +72,9 @@ Form
 			DoubleField
 			{
 				name:						  	"nLag"
-				label:						  qsTr("Number of lags")
+				label:						  	qsTr("Number of lags")
 				defaultValue:					25
-				min:			            1
+				min:			           	 	1
 			}
 
 			DoubleField
@@ -70,7 +82,7 @@ Form
 				name:							"CI"
 				label:							qsTr("Confidence interval size")
 				defaultValue:					0.95
-				min:			            0.0001
+				min:			            	0.0001
 			}
 		}
 	}
@@ -84,7 +96,7 @@ Form
 			id:									ccTitle
 			label: 								qsTr("Title")
 			name: 								"ccTitle"
-			placeholderText:			qsTr("Measurement")
+			placeholderText:					qsTr("Measurement")
 			fieldWidth:							100
 		}
 

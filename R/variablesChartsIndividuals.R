@@ -52,7 +52,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   if (options$ImRchart) {
     if(is.null(jaspResults[["Ichart"]])){
       jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
-      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "ncol", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport"))
+      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "ncol", "subgroups", "manualTicks", "nTicks", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport"))
       Iplot <- jaspResults[["Ichart"]]
 
       for (var in variables) {
@@ -85,7 +85,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   # Report
   if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]]) && options$ImRchart) {
     jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
-    jaspResults[["CCReport"]]$dependOn(c("CCReport", "ImRchart", "variables","ncol", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
+    jaspResults[["CCReport"]]$dependOn(c("CCReport", "ImRchart", "variables","ncol", "manualTicks", "nTicks", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
     jaspResults[["CCReport"]]$position <- 9
     Iplot <- jaspResults[["CCReport"]]
 
@@ -128,10 +128,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   center <- sixsigma_I$center
   UCL <- max(sixsigma_I$limits)
   LCL <- min(sixsigma_I$limits)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  if (options$manualTicks)
+    nxBreaks <- options$nTicks
   else
-    xBreaks <- c(subgroups)
+    nxBreaks <- 5
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
@@ -160,10 +161,6 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   center <- sixsigma_R$center
   UCL <- max(sixsigma_R$limits)
   LCL <- min(sixsigma_R$limits)
-  if (length(subgroups) > 60)
-    xBreaks <- c(seq(1,length(sixsigma_R$statistics), 5), length(sixsigma_R$statistics))
-  else
-    xBreaks <- c(seq(1,length(sixsigma_R$statistics), 2),  length(sixsigma_R$statistics))
   Xlabels <- xBreaks + 1
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
@@ -198,13 +195,8 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     else
       xLabels <- manualXaxis
 
-    if (length(subgroups) > 60)
-      Xbreaks <- c(seq(1,length(xLabels),10), length(xLabels))
-    else
-      Xbreaks <- c(seq(1,length(xLabels),5), length(xLabels))
-
-    p1 <- p1 + ggplot2::scale_x_continuous(breaks = Xbreaks, labels = xLabels[Xbreaks])
-    p2 <- p2 + ggplot2::scale_x_continuous(breaks = Xbreaks, labels = xLabels[Xbreaks])
+    p1 <- p1 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
+    p2 <- p2 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
   }
 
   plotMat <- matrix(list(), 2, 1)
