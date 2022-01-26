@@ -95,7 +95,7 @@
 <text x='231.85' y='539.15' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='16.69px' lengthAdjust='spacingAndGlyphs'>10</text>
 <text x='150.37' y='567.72' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='27.51px' lengthAdjust='spacingAndGlyphs'>Part</text>
 <text transform='translate(15.30,266.23) rotate(-90)' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='123.44px' lengthAdjust='spacingAndGlyphs'>Subgroup average</text>
-<text x='150.37' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='73.38px' lengthAdjust='spacingAndGlyphs'>Operator A</text>
+<text x='150.37' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='10.01px' lengthAdjust='spacingAndGlyphs'>A</text>
 </g>
 <defs>
   <clipPath id='cpMjQwLjAwfDQ4MC4wMHwwLjAwfDU3Ni4wMA=='>
@@ -155,7 +155,7 @@
 <text x='448.77' y='539.15' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='8.34px' lengthAdjust='spacingAndGlyphs'>9</text>
 <text x='470.31' y='539.15' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='16.69px' lengthAdjust='spacingAndGlyphs'>10</text>
 <text x='373.37' y='567.72' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='27.51px' lengthAdjust='spacingAndGlyphs'>Part</text>
-<text x='373.37' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='73.38px' lengthAdjust='spacingAndGlyphs'>Operator B</text>
+<text x='373.37' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='10.01px' lengthAdjust='spacingAndGlyphs'>B</text>
 </g>
 <defs>
   <clipPath id='cpNDgwLjAwfDcyMC4wMHwwLjAwfDU3Ni4wMA=='>
@@ -221,6 +221,6 @@
 <text x='672.71' y='539.15' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='8.34px' lengthAdjust='spacingAndGlyphs'>9</text>
 <text x='692.24' y='539.15' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='16.69px' lengthAdjust='spacingAndGlyphs'>10</text>
 <text x='613.37' y='567.72' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='27.51px' lengthAdjust='spacingAndGlyphs'>Part</text>
-<text x='613.37' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='74.20px' lengthAdjust='spacingAndGlyphs'>Operator C</text>
+<text x='613.37' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='10.84px' lengthAdjust='spacingAndGlyphs'>C</text>
 </g>
 </svg>

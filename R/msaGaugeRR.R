@@ -17,16 +17,18 @@
 
 msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
-
-  if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"){
+  # Reading the data in the correct format
+  wideFormat <- options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"
+  if (wideFormat)
     measurements <- unlist(options$measurements)
-  }else{
+  else
     measurements <- unlist(options$measurementsLong)
-  }
+
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
 
-  if (options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat" && !options$Type3)
+  #ready statement
+  if (wideFormat && !options$Type3)
     ready <- (length(measurements) != 0 && operators != "" && parts != "")
   else if (options$Type3)
     ready <- (measurements != "" && parts != "" & length(measurements) != 0)
@@ -48,20 +50,24 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
+  # Checking for infinity and missingValues
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              infinity.target = measurements,
              missingValues.target = measurements,
              exitAnalysisIfErrors = TRUE)
 
-  if (options[["gaugeRRdataFormat"]] == "gaugeRRlongFormat" && ready) {
-    dataset <- dataset[order(dataset[operators]),]
-    dataset <- dataset[order(dataset[parts]),]
+  #Conversting long to wide data
+  if (!wideFormat && ready) {
+    dataset <- dataset[order(dataset[[operators]]),]
+    dataset <- dataset[order(dataset[[parts]]),]
     nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
     index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
     dataset <- cbind(dataset, data.frame(index = index))
     dataset <- tidyr::spread(dataset, index, measurements)
     measurements <- unique(index)
     dataset <- dataset[,c(operators, parts, measurements)]
+  } else if (ready) {
+    dataset <- dataset[order(dataset[[parts]]),]
   }
 
   if(ready & !options$Type3){
@@ -74,13 +80,27 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
-
+  # Checking type 3
   Type3 <- c(length(unique(dataset[[operators]])) == 1 || options$Type3)
 
-  .msaCheckErrors(dataset, options)
-
-
-  #ANOVA method
+  # Errors #
+  # Checking whether type3 is used correctly
+  .hasErrors(dataset,
+             target = measurements,
+             custom = function() {
+               if (Type3 && !options$Type3)
+                 return("This dataset seems to have only a single unique operator. Please use the Type 3 study by checking the box below.")},
+             exitAnalysisIfErrors = TRUE)
+  # Checking whether the format wide is used correctly
+  .hasErrors(dataset,
+             target = measurements,
+             custom = function() {
+               dataToBeChecked <- dataset[dataset[[operators]] == dataset[[operators]][1],]
+               partsLevels <- length(levels(dataToBeChecked[[parts]]))
+               partsLength <- length(dataToBeChecked[[parts]])
+               if (wideFormat &&  partsLevels != partsLength)
+                 return(gettextf("The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times.", partsLength/partsLevels))},
+             exitAnalysisIfErrors = TRUE)
 
   # Gauge r&R ANOVA Table
   if (options[["gaugeANOVA"]]) {
@@ -171,8 +191,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     jaspResults[["anovaGaugeReport"]]$dependOn(c("anovaGaugeReportedBy", "anovaGaugeTitle", "anovaGaugeName", "anovaGaugeDate",
                                                "anovaGaugeMisc", "anovaGaugeReport"))
   }
-
-
 
   return()
 }
@@ -562,46 +580,52 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   for (i in 1:nOperators) {
     op <- as.character(operatorVector[i])
+    xAxisLab <- parts
 
-    if (Type3)
+    if (Type3) {
       dataPerOP <- dataset
-    else
+      title <- ""
+      manualSubgroups <- ""
+      manualXaxis <- ""
+      plotLimitLabels <- TRUE
+      } else {
       dataPerOP <- subset(dataset, dataset[operators] == op)
+      manualSubgroups <- as.numeric(dataPerOP[[parts]])
+      manualXaxis <- unique(dataset[[parts]])
+      plotLimitLabels <- FALSE
 
-    if (!is.na(as.numeric(op)) | nchar(op) == 1)
-      title <- gettextf("Operator %s", op)
-    else if (Type3)
-      title <- NULL
-    else
-      title <- op
+      if (!is.na(as.numeric(op)))
+        title <- gettextf("Operator %s", op)
+      else
+        title <- op
+      }
 
     titleVector <- c(titleVector, title)
-    manualSubgroups <- as.numeric(dataPerOP[[parts]])
     if (type == "Range"){
       if (i == 1){
-        p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = ifelse(Type3, TRUE, FALSE),
-                          xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE, GaugeRR = TRUE)$p
+        p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = plotLimitLabels,
+                          xAxisLab = xAxisLab, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE, GaugeRR = TRUE)$p
       }else if(i == nOperators){
         p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, GaugeRR = TRUE,
-                                xAxisLab = parts, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
+                                xAxisLab = xAxisLab, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }
       else{
         p1 <- p1 <- .RchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE, GaugeRR = TRUE,
-                                xAxisLab = parts, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
+                                xAxisLab = xAxisLab, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }
     }else{
       if (i == 1){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
-                             warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = ifelse(Type3, TRUE, FALSE), GaugeRR = TRUE,
-                             xAxisLab = parts, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
+                             warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = plotLimitLabels, GaugeRR = TRUE,
+                             xAxisLab = xAxisLab, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis =manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }else if(i == nOperators){
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, GaugeRR = TRUE,
-                             warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
+                             warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = xAxisLab, manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title,
                              smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }else{
         p1 <- .XbarchartNoId(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, GaugeRR = TRUE,
                              warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
-                             xAxisLab = parts, manualDataYaxis = dataset[measurements], manualXaxis = unique(dataset[[parts]]), title = title,
+                             xAxisLab = xAxisLab, manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title,
                              smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }
     }
@@ -785,16 +809,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   p <- jaspGraphs::themeJasp(p)
 
   return(p)
-}
-
-.msaCheckErrors <- function(dataset, options) {
-
-  #if (options[["gaugeScatterPlotOperators"]]) {
-  #  .hasErrors(dataset = dataset, type = "factorLevels",
-  #             factorLevels.target  = options$operators, factorLevels.amount  = "> 2",
-  #             exitAnalysisIfErrors = TRUE)
-  #}
-
 }
 
 .gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3) {
