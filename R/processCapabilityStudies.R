@@ -1115,6 +1115,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     p <- 1 - exp(-8.318 + (42.796 * adStar) - 59.938 * (adStar^2))
   }else if(adStar <= 0.2){
     p <- 1 - exp(-13.436 + (101.14 * adStar) - 223.73 * (adStar^2))      #Jaentschi & Bolboaca (2018)
+  } else {
+    p <- test$p.value
   }
 
   row <- list(mean = meanx, sd = sdx, n = n, ad = ad, p = p)
