@@ -17,8 +17,8 @@
 
 msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
-
-  if (options[["testRetestDataFormat"]] == "testRetestWideFormat"){
+  wideFormat <- options[["testRetestDataFormat"]] == "testRetestWideFormat"
+  if (wideFormat){
     measurements <- unlist(options$measurements)
   }else{
     measurements <- unlist(options$measurementsLong)
@@ -31,7 +31,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-  if (options[["testRetestDataFormat"]] == "testRetestWideFormat"){
+  if (wideFormat){
     ready <- (length(measurements) > 1 && parts != "")
   }else{
     ready <- (measurements != "" && operators != "" && parts != "")
@@ -50,18 +50,14 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     return()
   }
 
-  if (options[["testRetestDataFormat"]] == "testRetestLongFormat" && ready){
+  if (!wideFormat && ready){
     wideData <- tidyr::spread(dataset, operators, measurements)
     measurements <- colnames(wideData)
     measurements <- measurements[measurements != parts]
     dataset <- wideData
   }
 
-
-  .msaCheckErrors(dataset, options)
-
   # Range Method
-
   # Range Method r and R table
   if (options[["rangeRr"]]) {
     .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready,

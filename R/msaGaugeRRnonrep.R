@@ -17,7 +17,8 @@
 
 msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
-  if(options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepLongFormat"){
+  wideFormat <- options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepWideFormat"
+  if(!wideFormat){
   measurements <- unlist(options$measurements)
   }else{
     measurements <- unlist(options$measurementsWide)
@@ -29,7 +30,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-  if(options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepLongFormat"){
+  if(!wideFormat){
     ready <- (measurements != "" && operators != "" && parts != "")
   }else{
     ready <- (length(measurements) > 1 && operators != "" && parts != "")
@@ -47,14 +48,18 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     return()
   }
 
-  if (ready && options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepLongFormat"){
+  if (ready && !wideFormat){
+    dataset <- dataset[order(dataset[[operators]]),]
+    dataset <- dataset[order(dataset[[parts]]),]
     datasetLong <- dataset
     datasetWide <- .reshapeToWide(dataset, measurements, parts, operators)
     wideMeasurementCols <- colnames(datasetWide)[colnames(datasetWide) != c(parts, operators)]
     longMeasurementCols <- measurements
   }
 
-  if (ready && options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepWideFormat"){
+  if (ready && wideFormat){
+    dataset <- dataset[order(dataset[[operators]]),]
+    dataset <- dataset[order(dataset[[parts]]),]
     datasetWide <- dataset
     datasetLong <- .reshapeToLong(dataset, measurements, parts, operators)
     wideMeasurementCols <- measurements

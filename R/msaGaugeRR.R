@@ -550,7 +550,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     return(plot)
   }
   if (length(measurements) < 2) {
-    plot <- createJaspPlot(title = gettextf("%s Chart by Operator"), width = 900, height = 300)
+    plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 900, height = 300)
     plot$setError(gettext("More than 1 Measurement per Operator required."))
     return(plot)
   }
@@ -811,7 +811,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(p)
 }
 
-.gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3) {
+.gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE) {
   sources <- gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part'))
   if (!is.na(percentToleranceValues)){
     references <- gettext(c('% Contribution', '% Study Variation', '% Tolerance'))

@@ -17,7 +17,8 @@
 
 msaAttribute <- function(jaspResults, dataset, options, ...) {
 
-  if (options[["AAAdataFormat"]] == "AAAwideFormat"){
+  wideFormat <- options[["AAAdataFormat"]] == "AAAwideFormat"
+  if (wideFormat){
     measurements <- unlist(options$measurements)
   }else{
     measurements <- unlist(options$measurementsLong)
@@ -33,7 +34,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   factor.vars <- factor.vars[factor.vars != ""]
 
   # Ready
-  if (options[["AAAdataFormat"]] == "AAAwideFormat"){
+  if (wideFormat){
     ready <- (length(measurements) != 0 && operators != "" && parts != "")
   } else {
     ready <- (measurements != "" && operators != "" && parts != "")
@@ -45,7 +46,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
   }
 
-  if (options[["AAAdataFormat"]] == "AAAlongFormat" && ready){
+  if (!wideFormat && ready){
     dataset <- dataset[order(dataset[operators]),]
     nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
     index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)

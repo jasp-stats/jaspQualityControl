@@ -21,7 +21,6 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   makeSplit <- splitName != ""
 
   wideFormat <- options[["CCDataFormat"]] == "CCwideFormat"
-
   if (wideFormat)
     measurements <- unlist(options$variables)
   else
@@ -42,7 +41,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
 
   # Check if analysis is ready
-  if (options[["CCDataFormat"]] == "CCwideFormat"){
+  if (wideFormat){
     ready <- length(measurements) > 1
   }else{
     ready <- length(measurements) > 0
@@ -71,7 +70,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       subgroups <- splitFactor
   }
 
-  if (options[["CCDataFormat"]] == "CClongFormat" && ready){
+  if (!wideFormat && ready){
     k <- options[["CCSubgroupSize"]]
     n <- nrow(dataset)
     dataset <- .PClongTowide(dataset, k, measurements)
