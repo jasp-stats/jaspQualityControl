@@ -1,4 +1,21 @@
+#
+# Copyright (C) 2013-2018 University of Amsterdam
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 variablesChartsIndividuals <- function(jaspResults, dataset, options) {
+  # reading variables in from the GUI
   variables <- options$variables
   splitName <- options$subgroups
   subgroups <- unlist(options$subgroups)
@@ -31,8 +48,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       subgroups <- splitFactor
   }
 
-#Checking for errors in the dataset
-
+   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues', "observations"),
              infinity.target = c(options$variables, options$subgroups),
              missingValues.target = c(options$variables, options$subgroups),
@@ -56,15 +72,10 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       Iplot <- jaspResults[["Ichart"]]
 
       for (var in variables) {
-
         ALL <- createJaspContainer(gettextf("X-mR control chart"))
-
         IMR <- .IMRchart(dataset = dataset, options = options, variable = var, manualXaxis = subgroups)
-
         ALL[["Plot"]] <- IMR$p
-
         ALL[["Table1"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", name = gettextf("%s for Individuals", var), sixsigma = IMR$sixsigma_I, xLabels = IMR$xLabels)
-
         ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, name = gettextf("%s for Range", var), sixsigma = IMR$sixsigma_R, xLabels = IMR$xLabels, type = "Range")
         Iplot[[var]] <- ALL
       }
@@ -77,9 +88,8 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspResults[["CorPlot"]]$dependOn(c("CorPlot", "variables", "nLag"))
     Corplot <- jaspResults[["CorPlot"]]
 
-    for (var in variables) {
+    for (var in variables)
       Corplot[[var]] <- .CorPlot(dataset = dataset, options = options, variable = var, CI = options$CI, Lags = options$nLag)
-    }
   }
 
   # Report
@@ -96,7 +106,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
 
   # Error handling
-  if (options$CCReport && (!options$ImRchart | length(variables) < 1)){
+  if (options$CCReport && (!options$ImRchart || length(variables) < 1)){
     plot <- createJaspPlot(title = gettext("Report"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
     jaspResults[["plot"]]$setError(gettext("Please insert more measurements and check the X-mR chart."))
@@ -108,7 +118,6 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 .IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE) {
 
   ppPlot <- createJaspPlot(width = 1000, height = 550)
-
   #Individual chart
   #data
   if (measurements == "" & variable != ""){
