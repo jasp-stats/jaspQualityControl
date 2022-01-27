@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-24 15:54+0000\n"
-"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"PO-Revision-Date: 2022-01-27 16:20+0000\n"
+"Last-Translator: Thomas Langkamp <thomas.lassdiesonnerein@gmx.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
 "Language: de\n"
@@ -18,7 +18,7 @@ msgstr "Qualitätskontrolle"
 
 msgctxt "Description|"
 msgid "Measurement Systems Analysis"
-msgstr ""
+msgstr "Analyse von Messsystemen"
 
 msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
@@ -26,11 +26,11 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Control Charts"
-msgstr ""
+msgstr "Kontrolltabellen"
 
 msgctxt "Description|"
 msgid "Response Surface"
-msgstr ""
+msgstr "Reaktionsfläche"
 
 msgctxt "doeFactorial|"
 msgid "Number of factors"
@@ -38,11 +38,11 @@ msgstr "Anzahl Faktoren"
 
 msgctxt "doeFactorial|"
 msgid "Uncoded"
-msgstr ""
+msgstr "Uncodiert"
 
 msgctxt "doeFactorial|"
 msgid "Coded"
-msgstr ""
+msgstr "Codiert"
 
 msgctxt "doeFactorial|"
 msgid "Factor"
@@ -74,27 +74,27 @@ msgstr " Stufe 2"
 
 msgctxt "doeFactorial|"
 msgid "Factorial Design Options"
-msgstr ""
+msgstr "Optionen für Faktorielles Design"
 
 msgctxt "doeFactorial|"
 msgid "Type of Factorial Design"
-msgstr ""
+msgstr "Art des faktoriellen Versuchsplans"
 
 msgctxt "doeFactorial|"
 msgid "2-level split-plot (hard-to-change factors)"
-msgstr ""
+msgstr "2-stufiger Split-Plot (schwer veränderbare Faktoren)"
 
 msgctxt "doeFactorial|"
 msgid "Number of hard-to-change factors"
-msgstr ""
+msgstr "Anzahl der schwer zu ändernden Faktoren"
 
 msgctxt "doeFactorial|"
 msgid "Number of runs"
-msgstr ""
+msgstr "Anzahl der Läufe"
 
 msgctxt "doeFactorial|"
 msgid "Resolution"
-msgstr ""
+msgstr "Auflösung"
 
 msgctxt "doeFactorial|"
 msgid "III"
@@ -118,27 +118,27 @@ msgstr "VIII"
 
 msgctxt "doeFactorial|"
 msgid "Full"
-msgstr ""
+msgstr "Vollständig"
 
 msgctxt "doeFactorial|"
 msgid "Number of center points per block"
-msgstr ""
+msgstr "Anzahl der Zentroide pro Block"
 
 msgctxt "doeFactorial|"
 msgid "Number of replicates for corner points"
-msgstr ""
+msgstr "Anzahl der Wiederholungen für Eckpunkte"
 
 msgctxt "doeFactorial|"
 msgid "Number of blocks"
-msgstr ""
+msgstr "Anzahl der Blöcke"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Response"
-msgstr ""
+msgstr "Antwort"
 
 msgctxt "msaAttribute|"
 msgid "Operators"
-msgstr ""
+msgstr "Operatoren"
 
 msgctxt "msaAttribute|"
 msgid "Parts"
@@ -166,7 +166,7 @@ msgstr "Standard"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "Analyse-Optionen"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Plots"
@@ -174,11 +174,11 @@ msgstr "Diagramme"
 
 msgctxt "msaGaugeRR|"
 msgid "Operators"
-msgstr ""
+msgstr "Operatoren"
 
 msgctxt "msaGaugeRR|"
 msgid "Parts"
-msgstr ""
+msgstr "Teile"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements"
@@ -186,7 +186,7 @@ msgstr "Messungen"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Options"
-msgstr ""
+msgstr "Optionen für die ANOVA-Methode"
 
 msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
@@ -222,7 +222,7 @@ msgstr "Untergruppen"
 
 msgctxt "processCapabilityStudies|"
 msgid "Lower specification limit"
-msgstr ""
+msgstr "Untere Spezifikationsgrenze"
 
 msgctxt "processCapabilityStudies|"
 msgid "Target value"
@@ -230,7 +230,7 @@ msgstr "Zielwert"
 
 msgctxt "processCapabilityStudies|"
 msgid "Upper specification limit"
-msgstr ""
+msgstr "Obere Spezifikationsgrenze"
 
 msgctxt "processCapabilityStudies|"
 msgid "Specify a distribution"
@@ -246,11 +246,11 @@ msgstr "Log-Normal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Rank method"
-msgstr ""
+msgstr "Rangordnungsmethode"
 
 msgctxt "processCapabilityStudies|"
 msgid "Median Rank (Benard)"
-msgstr ""
+msgstr "Medianer Rang (Benard)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Mean Rank (Herd-Johnson)"
