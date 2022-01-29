@@ -1408,10 +1408,6 @@ msgid "Fleiss' kappa (multirater kappa)"
 msgstr ""
 
 msgctxt "msaAttribute|"
-msgid "Positive refernce:"
-msgstr ""
-
-msgctxt "msaAttribute|"
 msgid "Tau Stuides"
 msgstr ""
 
@@ -2165,4 +2161,8 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid ""
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Positive reference:"
 msgstr ""
