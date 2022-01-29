@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2021-12-04 03:36\n"
-"PO-Revision-Date: 2022-01-15 03:40+0000\n"
+"PO-Revision-Date: 2022-01-29 03:38+0000\n"
 "Last-Translator: Wendy Zhao <wendy.zhao@skf.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "jasp/jaspprocesscontrol-r/zh_Hans/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr "累积和控制图"
@@ -26,13 +26,13 @@ msgid "T chart"
 msgstr "T 控制图"
 
 msgid "CL = %g"
-msgstr ""
+msgstr "CL = %g"
 
 msgid "UCL = %g"
-msgstr ""
+msgstr "UCL = %g"
 
 msgid "LCL = %g"
-msgstr ""
+msgstr "LCL = %g"
 
 msgid "Cumulative sum"
 msgstr "累积和"
@@ -83,40 +83,40 @@ msgid "Sample"
 msgstr "样本"
 
 msgid "Number of defectives"
-msgstr ""
+msgstr "缺陷品数"
 
 msgid "D"
-msgstr ""
+msgstr "D"
 
 msgid "Moving Range"
 msgstr "移动极差"
 
 msgid "Service name: %s"
-msgstr ""
+msgstr "服务名称: %s"
 
 msgid "Operator: %s"
-msgstr ""
+msgstr "操作者: %s"
 
 msgid "Identification: %s"
 msgstr ""
 
 msgid "Appraiser: %s"
-msgstr ""
+msgstr "评估者: %s"
 
 msgid "Measurement system: %s"
-msgstr ""
+msgstr "测量系统: %s"
 
 msgid "Name of Size: %s"
 msgstr ""
 
 msgid "Time: %s"
-msgstr ""
+msgstr "时间: %s"
 
 msgid "Frequency: %s"
-msgstr ""
+msgstr "频度: %s"
 
 msgid "Control Charts Report for %s"
-msgstr ""
+msgstr "%s 控制图报告"
 
 msgid "Control Chart"
 msgstr "控制图"
@@ -125,7 +125,7 @@ msgid "Subgroup size must be > 1 to display X-bar & R Chart."
 msgstr "显示X-bar & R控制图需要子组容量必须 >1"
 
 msgid "Test results for %s chart"
-msgstr ""
+msgstr "%s 图检验结果"
 
 msgid "Test 1: Beyond limit"
 msgstr "检验 1：超控制限"
@@ -146,22 +146,22 @@ msgid "Test 6: Bimodal distribution"
 msgstr "检验 6：双峰分布"
 
 msgid "Numbers are data points where test violations occur."
-msgstr ""
+msgstr "数字表示发生违反检验准则的数据点。"
 
 msgid "Normal Probability Plot of Residuals"
-msgstr ""
+msgstr "残差的正态概率图"
 
 msgid "Histogram of Residuals"
 msgstr "残差直方图"
 
 msgid "Residuals vs. Fitted Value"
-msgstr ""
+msgstr "残差 vs.拟合值"
 
 msgid "Residuals vs. Run Order"
-msgstr ""
+msgstr "残差 vs. 运行顺序"
 
 msgid "Pareto Plot of Standardized Effects"
-msgstr ""
+msgstr "标准化效应 Pareto 图"
 
 msgid "Fitted values"
 msgstr "拟合值"
@@ -170,895 +170,901 @@ msgid "Residuals"
 msgstr "残差"
 
 msgid "Run order"
-msgstr ""
+msgstr "运行序"
 
 msgid "Standardized Effect"
-msgstr ""
+msgstr "标准化效应"
 
 msgid "Coefficients"
-msgstr ""
+msgstr "系数"
 
 msgid "Coefficient"
-msgstr ""
+msgstr "系数"
 
 msgid "Standard Error"
-msgstr ""
+msgstr "标准误"
 
 msgid "t"
-msgstr ""
+msgstr "t"
 
 msgid "p"
-msgstr ""
+msgstr "p"
 
 msgid "Available Factorial Designs"
-msgstr ""
+msgstr "可用因子设计"
 
 msgid "Selected Design"
-msgstr ""
+msgstr "选择的设计"
 
 msgid "Design"
-msgstr ""
+msgstr "设计"
 
 msgid "Factors"
-msgstr ""
+msgstr "因子"
 
 msgid "Runs"
-msgstr ""
+msgstr "运行"
 
 msgid "Resolution"
-msgstr ""
+msgstr "分辨度"
 
 msgid "Centre points"
-msgstr ""
+msgstr "中心点"
 
 msgid "Replicates"
-msgstr ""
+msgstr "复制"
 
 msgid "Blocks"
-msgstr ""
+msgstr "区组"
 
 msgid "Repeats"
-msgstr ""
+msgstr "重复"
 
 msgid "2-level factorial"
-msgstr ""
+msgstr "二水平因子"
 
 msgid "Design Preview"
-msgstr ""
+msgstr "设计预览"
 
 msgid "Alias Structure"
-msgstr ""
+msgstr "别名结构"
 
 msgid "Input Design"
-msgstr ""
+msgstr "设计输入"
 
 msgid "Desired Design"
-msgstr ""
+msgstr "期望设计"
 
 msgid "Missing Runs"
-msgstr ""
+msgstr "缺失的运行"
 
 msgid "Response Surface Methodology"
-msgstr ""
+msgstr "响应曲面法"
 
 msgid "No analyses (except those under 'Design Specification') can be started until at least one model term\n                      and one response variable are inputed."
 msgstr ""
+"在至少有一个模型项之前，不能开始任何分析（根据“设计规范”除外）\n"
+"                      已输入一项响应变量。"
 
 msgid "<em>Warning: </em>"
-msgstr ""
+msgstr "<em>警告: </em>"
 
 msgid "Central Composite Design"
-msgstr ""
+msgstr "中心复合设计"
 
 msgid "Run Order"
-msgstr ""
+msgstr "运行序"
 
 msgid "Standard Order"
-msgstr ""
+msgstr "标准序"
 
 msgid "x"
-msgstr ""
+msgstr "x"
 
 msgid "Factor name '%s' is a number, and number factor names are not supported."
-msgstr ""
+msgstr "因子名称 '%s' 是一个数字，不支持数字因子名称。"
 
 msgid "factors"
-msgstr ""
+msgstr "因子"
 
 msgid "factorName"
-msgstr ""
+msgstr "因子名称"
 
 msgid "Generator name '%s' is a number, and number generator names are not supported."
-msgstr ""
+msgstr "生成元名称 '%s' 是一个数字，不支持数字生成元名称。"
 
 msgid "generators"
-msgstr ""
+msgstr "生成元"
 
 msgid "generatorName"
-msgstr ""
+msgstr "生成元名称"
 
 msgid "The analysis will not run when the 'Specify Model for CCD' field is empty and the 'Use # of Variables instead of Model' is not ticked."
-msgstr ""
+msgstr "当 '指定 CCD 模型' 字段为空且未勾选 '使用变量数代替模型' 时，将不会运行分析。"
 
 msgid "The analysis will not run when the 'Specify Blocks for CCD' field is empty and the Introduce Blocking is ticked."
-msgstr ""
+msgstr "当 '指定 CCD 区组' 字段为空且勾选引入区组时，将不会运行分析。"
 
 msgid "Central Composite Design with Star Points"
-msgstr ""
+msgstr "中心复合设计带星号点"
 
 msgid "Factor name '%s' is a number, and number factor names are not supported"
-msgstr ""
+msgstr "因子名称 '%s' 是一个数字，不支持数字因子名称"
 
 msgid "The analysis will not run when the 'Number of Generators' > 0"
-msgstr ""
+msgstr "当 '生成元数' > 0时，将不会运行分析"
 
 msgid "This analysis does not take predictor variables with more than 5 unique values."
-msgstr ""
+msgstr "此分析不采用具有超过5个唯一值的预测变量。"
 
 msgid "Design Choice"
-msgstr ""
+msgstr "设计选项"
 
 msgid "N Fac Points"
 msgstr ""
 
 msgid "N Centre Points/Block"
-msgstr ""
+msgstr "中心点/区组数"
 
 msgid "N Cube Blocks/Cube Portion"
-msgstr ""
+msgstr "立方点区组/立方点部分数"
 
 msgid "N Design Star Points/Block"
-msgstr ""
+msgstr "设计星号点/区组数"
 
 msgid "N Centre Points/Star Block"
-msgstr ""
+msgstr "中心点/星号区组数"
 
 msgid "N Copies of Each Cube Block"
-msgstr ""
+msgstr "每个立方点区组的复制数"
 
 msgid "N Replications of Each Star Point/Block"
-msgstr ""
+msgstr "每个星号点/区组的复制数"
 
 msgid "N Copies of Each Star Block"
-msgstr ""
+msgstr "每个星号区组的复制数"
 
 msgid "Total Experiment Size"
-msgstr ""
+msgstr "总试验次数"
 
 msgid "Rotational Alpha"
-msgstr ""
+msgstr "旋转 Alpha"
 
 msgid "Orthogonal Alpha"
-msgstr ""
+msgstr "正交 Alpha"
 
 msgid "RSM Coefficients for %s"
-msgstr ""
+msgstr "%s 的 RSM 系数"
 
 msgid "Estimate"
-msgstr ""
+msgstr "估计"
 
 msgid "Multiple R-squared"
 msgstr ""
 
 msgid "Adjusted R-squared"
-msgstr ""
+msgstr "调整 R 平方"
 
 msgid "DF1"
-msgstr ""
+msgstr "DF1"
 
 msgid "DF2"
-msgstr ""
+msgstr "DF2"
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "ANOVA for %s"
-msgstr ""
+msgstr "%s 方差分析"
 
 msgid "DF"
-msgstr ""
+msgstr "DF"
 
 msgid "Sum of Squares"
-msgstr ""
+msgstr "平方和"
 
 msgid "Mean of Squares"
-msgstr ""
+msgstr "均方差"
 
 msgid "Stationary Points of Response Surface (Coded)"
-msgstr ""
+msgstr "响应曲面的固定点（已编码）"
 
 msgid "Eigenvalues"
-msgstr ""
+msgstr "特征值"
 
 msgid "Eigenvectors"
-msgstr ""
+msgstr "特征向量"
 
 msgid "Desirability"
-msgstr ""
+msgstr "合意度"
 
 msgid "At least one predictor and response variable need to be specified before running the analysis."
-msgstr ""
+msgstr "在运行分析之前，至少需要指定一个预测变量和响应变量。"
 
 msgid "At least one desirability function must be specified before running the analysis."
-msgstr ""
+msgstr "在运行分析之前，至少需要指定一个合意度函数。"
 
 msgid "Standard order"
-msgstr ""
+msgstr "标准序"
 
 msgid "ANOVA"
-msgstr ""
+msgstr "方差分析"
 
 msgid "df"
-msgstr ""
+msgstr "df"
 
 msgid "SS"
-msgstr ""
+msgstr "SS"
 
 msgid "MS"
-msgstr ""
+msgstr "MS"
 
 msgid "Reference Tables and Plots"
-msgstr ""
+msgstr "参考值表和图形"
 
 msgid "Please insert a reference value before specifying a positive reference."
-msgstr ""
+msgstr "在指定正参考值之前先插入参考值。"
 
 msgid "Attributes Agreement Analysis"
-msgstr ""
+msgstr "属性一致性分析"
 
 msgid "Cohen's Kappa"
-msgstr ""
+msgstr "Cohen's Kappa"
 
 msgid "Kendall's Tau"
-msgstr ""
+msgstr "Kendall's Tau"
 
 msgid "Cohen's Kappa for Appraiser vs Standard"
-msgstr ""
+msgstr "评估者 vs. 标准的Cohen's Kappa值"
 
 msgid "Appraiser"
-msgstr ""
+msgstr "评估者"
 
 msgid "Cohen's Kappa correlations summary"
-msgstr ""
+msgstr "Cohen's Kappa 相关汇总"
 
 msgid "Please inseret a vaild Positive reference as used in the 'Results' variables."
-msgstr ""
+msgstr "如同在 '结果' 变量中的应用，请插入有效的正参考值。"
 
 msgid "Fleiss' Kappa"
-msgstr ""
+msgstr "Fleiss' Kappa"
 
 msgid "Within Appraisers"
-msgstr ""
+msgstr "评估者内部"
 
 msgid "Appraiser vs Standard"
-msgstr ""
+msgstr "评估者 vs. 标准"
 
 msgid "Between Appraisers"
-msgstr ""
+msgstr "评估者之间"
 
 msgid "Each Appraiser vs Standard"
-msgstr ""
+msgstr "每个评估者 vs. 标准"
 
 msgid "All Appraisers vs Standard"
-msgstr ""
+msgstr "所有评估者 vs. 标准"
 
 msgid "Inspected"
-msgstr ""
+msgstr "检查的"
 
 msgid "Matched"
-msgstr ""
+msgstr "一致的"
 
 msgid "Percent"
-msgstr ""
+msgstr "百分比"
 
 msgid "Lower"
-msgstr ""
+msgstr "下限"
 
 msgid "Confidence interval of 95%"
-msgstr ""
+msgstr "95% 置信区间"
 
 msgid "Upper"
-msgstr ""
+msgstr "上限"
 
 msgid "Invalid Reference and/or Results were inserted."
-msgstr ""
+msgstr "插入无效参考值和/或结果。"
 
 msgid "More than 1 Measurement per Operator required."
-msgstr ""
+msgstr "每个操作者需要多于1次测量。"
 
 msgid "Study effectiveness summary"
-msgstr ""
+msgstr "研究有效性汇总"
 
 msgid "Effectiveness"
-msgstr ""
+msgstr "有效性"
 
 msgid "Miss rate"
-msgstr ""
+msgstr "漏报率"
 
 msgid "False alarm rate"
-msgstr ""
+msgstr "误报率"
 
 msgid "Acceptable: x >= 90% (Effectiveness), x =< 2% (Miss rate), x =< 5% (False alarm rate)"
-msgstr ""
+msgstr "可接受 : x >= 90% (有效性), x =< 2% (漏报率), x =< 5% (误报率)"
 
 msgid "Marginally acceptable: x >= 80% (Effectiveness), x =< 5% (Miss rate), x =< 10% (False alarm rate)"
-msgstr ""
+msgstr "勉强可接受 : x >= 80% (有效性), x =< 5% (漏报率), x =< 10% (误报率)"
 
 msgid "Unacceptable: x < 80% (Effectiveness), x > 5% (Miss rate), x > 10% (False alarm rate)"
-msgstr ""
+msgstr "不可接受 : x < 80% (有效性), x > 5% (漏报率), x > 10% (误报率)"
 
 msgid "Kendall's Tau is only available for numeric measurements."
-msgstr ""
+msgstr "Kendall's Tau仅用于数字测量。"
 
 msgid "Kendall's Tau is only available for non-binary measurements."
-msgstr ""
+msgstr "Kendall's Tau 仅用于非二元测量。"
 
 msgid "Operator"
-msgstr ""
+msgstr "操作者"
 
 msgid "%g (Unacceptable)"
-msgstr ""
+msgstr "%g (不可接受)"
 
 msgid "%g (Marginally acceptable)"
-msgstr ""
+msgstr "%g (勉强可接受)"
 
 msgid "%g (Acceptable)"
-msgstr ""
+msgstr "%g (可接受)"
 
 msgid "Linearity and Bias"
-msgstr ""
+msgstr "线性和偏倚"
 
 msgid "Gauge Bias"
-msgstr ""
+msgstr "量具偏倚"
 
 msgid "Part"
-msgstr ""
+msgstr "零件"
 
 msgid "Reference value"
-msgstr ""
+msgstr "参考值"
 
 msgid "Mean per reference value"
-msgstr ""
+msgstr "每个参考值的平均值"
 
 msgid "Bias per reference value"
-msgstr ""
+msgstr "每个参考值的偏倚"
 
 msgid "<i>p(t</i>-test of bias against 0)"
-msgstr ""
+msgstr "<i>p(t</i>- 检验偏倚值与 0)"
 
 msgid "Regression Model"
-msgstr ""
+msgstr "回归模型"
 
 msgid "Predictor"
-msgstr ""
+msgstr "预测变量"
 
 msgid "<i>t</i>-statistic"
-msgstr ""
+msgstr "<i>t</i>- 统计量"
 
 msgid "Std. Error coefficients"
-msgstr ""
+msgstr "系数标准误"
 
 msgid "<i>p</i>"
-msgstr ""
+msgstr "<i>p</i>"
 
 msgid "Gauge Linearity"
-msgstr ""
+msgstr "量具线性"
 
 msgid "S"
-msgstr ""
+msgstr "S"
 
 msgid "R%1$s"
-msgstr ""
+msgstr "R%1$s"
 
 msgid "% Linearity"
-msgstr ""
+msgstr "% 线性"
 
 msgid "Calculations are based on 6 times the historical standard variation unless specified otherwise."
-msgstr ""
+msgstr "除非另有规定，否则计算基于历史标准差的6倍。"
 
 msgid "Bias and Linearity"
-msgstr ""
+msgstr "偏倚和线性"
 
 msgid "Percentage Process Variation Graph"
-msgstr ""
+msgstr "过程变异百分比图"
 
 msgid "T-Test requires more than 1 measurement. %i valid measurement(s) detected in %s."
-msgstr ""
+msgstr "T 检验需要一次以上的测量。在 %s 中检测到 %i 有效测量值。"
 
 msgid "Every unique part must have one corresponding reference value. %i reference values were found for %s unique parts."
-msgstr ""
+msgstr "每一个零件必须有一个对应的参考值。找到了 %s 每一个零件的 %i 参考值。"
 
 msgid "Reference"
-msgstr ""
+msgstr "参考值"
 
 msgid "Percent bias per reference value"
-msgstr ""
+msgstr "每个参考值的偏倚百分比"
 
 msgid "Linearity"
-msgstr ""
+msgstr "线性"
 
 msgid "Average"
-msgstr ""
+msgstr "平均值"
 
 msgid "Gauge r&R"
-msgstr ""
+msgstr "量具 r&R"
 
 msgid "Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."
-msgstr ""
+msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不可重复量具 r&R。"
 
 msgid "No valid measurements in %s."
-msgstr ""
+msgstr "%s 中无有效测量值。"
 
 msgid "Gauge r&R ANOVA Table"
-msgstr ""
+msgstr "量具 r&R 方差分析表"
 
 msgid "Range Chart by Operator"
-msgstr ""
+msgstr "极差图（按操作者）"
 
 msgid "Xbar Chart by Operator"
-msgstr ""
+msgstr "均值图（按操作者）"
 
 msgid "Scatterplot Operators"
-msgstr ""
+msgstr "操作者散点图"
 
 msgid "Measurement by Part Graph"
-msgstr ""
+msgstr "按零件测量值图"
 
 msgid "Measurement by Operator Graph"
-msgstr ""
+msgstr "按操作者测量值图"
 
 msgid "Parts by Operator Interaction Graph"
-msgstr ""
+msgstr "零件和操作者交互作用图"
 
 msgid "Traffic light graph"
-msgstr ""
+msgstr "红绿灯图"
 
 msgid "Report"
-msgstr ""
+msgstr "报告"
 
 msgid "ANOVA Table"
-msgstr ""
+msgstr "方差分析表"
 
 msgid "Two-way ANOVA Table with Interaction"
-msgstr ""
+msgstr "双向方差分析表带交互作用"
 
 msgid "Source"
-msgstr ""
+msgstr "变异源"
 
 msgid "Mean Squares"
 msgstr ""
 
 msgid "<i>p</i>-value"
-msgstr ""
+msgstr "<i>p</i>- 值"
 
 msgid "Gauge r&R Variance Components"
-msgstr ""
+msgstr "量具 r&R 方差分量"
 
 msgid "Variance"
-msgstr ""
+msgstr "方差"
 
 msgid "% Contribution"
-msgstr ""
+msgstr "% 贡献"
 
 msgid "Gauge Evaluation"
-msgstr ""
+msgstr "量具评估"
 
 msgid "Std. Deviation"
-msgstr ""
+msgstr "标准差"
 
 msgid "Study Variation"
-msgstr ""
+msgstr "研究变异"
 
 msgid "% Study Variation"
-msgstr ""
+msgstr "% 研究变异"
 
 msgid "% Tolerance"
-msgstr ""
+msgstr "% 公差"
 
 msgid "Total Gauge r&R"
-msgstr ""
+msgstr "总量具 r&R"
 
 msgid "Repeatability"
-msgstr ""
+msgstr "重复性"
 
 msgid "Part-to-Part"
-msgstr ""
+msgstr "部件间"
 
 msgid "Total Variation"
-msgstr ""
+msgstr "总变异"
 
 msgid "Reproducibility"
-msgstr ""
+msgstr "再现性"
 
 msgid "Number of distinct categories = %i"
-msgstr ""
+msgstr "可区分类别数 = %i"
 
 msgid "Study Variation is calculated as Std. Deviation x %i"
-msgstr ""
+msgstr "研究变异的计算为标准差 x %i"
 
 msgid "Study Variation is calculated as Std. Deviation x %.2f"
-msgstr ""
+msgstr "研究变异的计算为标准差x %.2f"
 
 msgid "Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %Study Variation."
-msgstr ""
+msgstr "历史标准差用于计算标准差，研究变异和%研究变异的某些值。"
 
 msgid "Values for %Process Variation are not displayed because they are identical to values for %Study Variation."
-msgstr ""
+msgstr "由于与 %研究变异数值相同，所以没有显示 %过程变异。"
 
 msgid "Two-way ANOVA Table without Interaction"
-msgstr ""
+msgstr "双向方差分析表不带交互作用"
 
 msgid "Components of Variation"
-msgstr ""
+msgstr "方差分量"
 
 msgid "Number of observations is < 2 in %s after grouping on %s"
-msgstr ""
+msgstr "在 %s中分组后，%s 中观测值数量 < 2"
 
 msgid "%s Chart by Operator"
-msgstr ""
+msgstr "%s 图按操作者"
 
 msgid "Operator %s"
-msgstr ""
+msgstr "操作者 %s"
 
 msgid "Measurements by Part"
-msgstr ""
+msgstr "测量值按零件"
 
 msgid "Measurement by Operator"
-msgstr ""
+msgstr "测量值按操作者"
 
 msgid "Parts by Operator Interaction"
-msgstr ""
+msgstr "零件与操作者交互作用"
 
 msgid "Operators measured different number of parts."
-msgstr ""
+msgstr "操作者测量不同数量零件。"
 
 msgid "Scatterplot of Operator vs Operator"
-msgstr ""
+msgstr "操作者 vs. 操作者散点图"
 
 msgid "Cannot plot scatterplot for less than 2 operators."
-msgstr ""
+msgstr "少于 2 位操作者不能绘制散点图。"
 
 msgid "Scatterplot of Operator  %s vs Operator %s"
-msgstr ""
+msgstr "操作者  %s vs 操作者 %s 散点图"
 
 msgid "Matrix Plot for Operators"
-msgstr ""
+msgstr "操作者矩阵图"
 
 msgid "Repeat"
-msgstr ""
+msgstr "重复性"
 
 msgid "Reprod"
-msgstr ""
+msgstr "再现性"
 
 msgid "Gauge name: %s"
-msgstr ""
+msgstr "量具名称 : %s"
 
 msgid "Date of study: %s"
-msgstr ""
+msgstr "研究日期 : %s"
 
 msgid "Reported by: %s"
-msgstr ""
+msgstr "报告人 : %s"
 
 msgid "Misc: %s"
-msgstr ""
+msgstr "其它 : %s"
 
 msgid "Tolerance: %s"
-msgstr ""
+msgstr "公差 : %s"
 
 msgid "Measurement systems analysis for %s"
-msgstr ""
+msgstr "%s 测量系统分析"
 
 msgid "Gauge r&R Tables"
-msgstr ""
+msgstr "量具 r&R表"
 
 msgid "Measurement by part x operator plot"
-msgstr ""
+msgstr "测量值图（按零件x操作者）"
 
 msgid "Gauge r&R (Nested)"
-msgstr ""
+msgstr "量具 r&R（嵌套）"
 
 msgid "Mean Square"
 msgstr ""
 
 msgid "Variance Components"
-msgstr ""
+msgstr "方差分量"
 
 msgid "Variation"
-msgstr ""
+msgstr "方差"
 
 msgid "Total Gauge r & R"
-msgstr ""
+msgstr "总量具 r&R"
 
 msgid "Part-To-Part"
-msgstr ""
+msgstr "部件间"
 
 msgid "Study Variation is calculated as Std. Deviation * %i"
-msgstr ""
+msgstr "研究变异的计算为标准差* %i"
 
 msgid "Study Variation is calculated as Std. Deviation * %.2f"
-msgstr ""
+msgstr "研究变异的计算为标准差* %.2f"
 
 msgid "Measurements by part x operator"
-msgstr ""
+msgstr "测量值按零件 x 操作者"
 
 msgid "Scatterplot Operators vs Parts"
-msgstr ""
+msgstr "操作者 vs. 零件散点图"
 
 msgid "Range Method R Chart"
-msgstr ""
+msgstr "极差法极差图"
 
 msgid "Range chart by part"
-msgstr ""
+msgstr "极差图（按零件）"
 
 msgid "Run chart of parts"
-msgstr ""
+msgstr "零件运行图"
 
 msgid "Short gauge study"
-msgstr ""
+msgstr "快速量具研究"
 
 msgid "Sample size (n)"
-msgstr ""
+msgstr "样本容量 (n)"
 
 msgid "R-bar"
-msgstr ""
+msgstr "R 均值"
 
 msgid "d2"
-msgstr ""
+msgstr "d2"
 
 msgid "Process Std. Dev."
-msgstr ""
+msgstr "过程标准差"
 
 msgid "Tolerance"
-msgstr ""
+msgstr "公差"
 
 msgid "GRR"
-msgstr ""
+msgstr "GRR"
 
 msgid "%GRR of Process Std. Dev."
-msgstr ""
+msgstr "%GRR 过程标准差"
 
 msgid "%GRR of Tolerance"
-msgstr ""
+msgstr "%GRR 公差"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
-msgstr ""
+msgstr "第1次测量 vs. 第2次测量散点图"
 
 msgid "Run Chart"
-msgstr ""
+msgstr "运行图"
 
 msgid "Bias Table"
-msgstr ""
+msgstr "偏倚表"
 
 msgid "t-Test Bias"
-msgstr ""
+msgstr "偏倚的 t 检验"
 
 msgid "Histogram Bias"
-msgstr ""
+msgstr "偏倚直方图"
 
 msgid "Bias and Instrument Capability Table"
-msgstr ""
+msgstr "偏倚和量具能力表"
 
 msgid "Basic Statistics"
-msgstr ""
+msgstr "基本统计"
 
 msgid "Mean"
-msgstr ""
+msgstr "均值"
 
 msgid "Bias"
-msgstr ""
+msgstr "偏倚"
 
 msgid "Std. Deviation (<i>s</i>)"
-msgstr ""
+msgstr "标准差(<i>s</i>)"
 
 msgid "Study variation"
-msgstr ""
+msgstr "研究变异"
 
 msgid "% Bias"
-msgstr ""
+msgstr "% 偏倚"
 
 msgid "The study variation is calculated as %i * <i>s</i>."
-msgstr ""
+msgstr "研究变异的计算为%i * <i>s</i>."
 
 msgid "Capability"
-msgstr ""
+msgstr "能力"
 
 msgid "Cg"
-msgstr ""
+msgstr "Cg"
 
 msgid "Cgk"
-msgstr ""
+msgstr "Cgk"
 
 msgid "% Var(Repeatability)"
-msgstr ""
+msgstr "% 变异（重复性）"
 
 msgid "% Var(Repeatability and bias)"
-msgstr ""
+msgstr "% 变异（重复性和偏倚）"
 
 msgid "T-Test of Observed Bias Against 0"
-msgstr ""
+msgstr "观测的偏倚与0的 t 检验"
 
 msgid "%s CI for Bias"
-msgstr ""
+msgstr "偏倚的 %s 置信区间"
 
 msgid "<i>t</i>"
-msgstr ""
+msgstr "<i>t</i>"
 
 msgid "<i>p<i/>-value"
-msgstr ""
+msgstr "<i>p<i/>- 值"
 
 msgid "Bias Histogram"
-msgstr ""
+msgstr "偏倚直方图"
 
 msgid "Run Chart of %s"
-msgstr ""
+msgstr "%s 运行图"
 
 msgid "Parameter Estimates"
-msgstr ""
+msgstr "参数估计"
 
 msgid "Parameter"
-msgstr ""
+msgstr "参数"
 
 msgid "Fitting the model failed with the following error message:\n%s"
 msgstr ""
+"拟合模型失败，错误信息如下：\n"
+"%s"
 
 msgid "Intercept"
-msgstr ""
+msgstr "截距"
 
 msgid "The IWLS algorithm did not converge. Interpret the results with caution."
-msgstr ""
+msgstr "IWLS算法没有收敛。请谨慎地解释结果。"
 
 msgid "There is only observed category (%s). The results are likely meaningless."
-msgstr ""
+msgstr "只有观察到的类别 (%s)。结果可能毫无意义。"
 
 msgid "Fit Table"
-msgstr ""
+msgstr "拟合表"
 
 msgid "AIC"
-msgstr ""
+msgstr "AIC"
 
 msgid "Detection Plot"
 msgstr ""
 
 msgid "log(%s)"
-msgstr ""
+msgstr "log(%s)"
 
 msgid "The detection plot failed with the following error message:\n%s"
 msgstr ""
+"检测图失效，错误信息如下：\n"
+"%s"
 
 msgid "Asymptotes"
-msgstr ""
+msgstr "渐近线"
 
 msgid "covariate"
-msgstr ""
+msgstr "协变量"
 
 msgid "Horizontal asymptotes"
-msgstr ""
+msgstr "水平渐近线"
 
 msgid "Vertical asymptotes"
-msgstr ""
+msgstr "垂直渐近线"
 
 msgid "Label"
-msgstr ""
+msgstr "标签"
 
 msgid "<b><em>Warning.</em></b>"
-msgstr ""
+msgstr "<b><em>警告.</em></b>"
 
 msgid "Probability of detecting %s"
-msgstr ""
+msgstr "检测的概率 %s"
 
 msgid "Capability of the process"
-msgstr ""
+msgstr "过程的能力"
 
 msgid "Could not equally divide %i data points into groups of size %i."
-msgstr ""
+msgstr "无法将 %i 数据点平均分成大小为 %i 的组。"
 
 msgid "Capability Studies"
-msgstr ""
+msgstr "能力研究"
 
 msgid "Error: LSL > USL."
-msgstr ""
+msgstr "错误 : LSL > USL."
 
 msgid "Error: Target outside of specification limits."
-msgstr ""
+msgstr "错误：目标超出规格限。"
 
 msgid "Process Capability"
-msgstr ""
+msgstr "过程能力"
 
 msgid "Process Capability (Non-normal Capability Analysis)"
-msgstr ""
+msgstr "过程能力（非正态能力分析）"
 
 msgid "Process summary"
-msgstr ""
+msgstr "过程汇总"
 
 msgid "LSL"
-msgstr ""
+msgstr "LSL"
 
 msgid "Target"
-msgstr ""
+msgstr "目标"
 
 msgid "USL"
-msgstr ""
+msgstr "USL"
 
 msgid "Sample size"
-msgstr ""
+msgstr "样本量"
 
 msgid "Std. deviation (total)"
-msgstr ""
+msgstr "标准差（整体）"
 
 msgid "Std. deviation (within)"
-msgstr ""
+msgstr "标准差（组内）"
 
 msgid "The within standard deviation could not be calculated."
-msgstr ""
+msgstr "组内标准差无法计算。"
 
 msgid "No specification limits set."
-msgstr ""
+msgstr "未设定规格限。"
 
 msgid "Density"
-msgstr ""
+msgstr "密度"
 
 msgid "Measurement"
-msgstr ""
+msgstr "测量"
 
 msgid "Process capability (within)"
-msgstr ""
+msgstr "过程能力（组内）"
 
 msgid "Cp"
-msgstr ""
+msgstr "Cp"
 
 msgid "%s CI for Cp"
-msgstr ""
+msgstr "Cp 的 %s 置信区间"
 
 msgid "CpL"
-msgstr ""
+msgstr "CpL"
 
 msgid "CpU"
-msgstr ""
+msgstr "CpU"
 
 msgid "Cpk"
-msgstr ""
+msgstr "Cpk"
 
 msgid "%s CI for Cpk"
-msgstr ""
+msgstr "Cpk 的 %s 置信区间"
 
 msgid "Process performance (total)"
-msgstr ""
+msgstr "过程性能（整体）"
 
 msgid "Pp"
-msgstr ""
+msgstr "Pp"
 
 msgid "%s CI for Pp"
-msgstr ""
+msgstr "Pp 的 %s 置信区间"
 
 msgid "PpL"
-msgstr ""
+msgstr "PpL"
 
 msgid "PpU"
-msgstr ""
+msgstr "PpU"
 
 msgid "Ppk"
-msgstr ""
+msgstr "Ppk"
 
 msgid "%s CI for Ppk"
-msgstr ""
+msgstr "Ppk 的 %s 置信区间"
 
 msgid "Cpm"
-msgstr ""
+msgstr "Cpm"
 
 msgid "%s CI for Cpm"
-msgstr ""
+msgstr "Cpm 的 %s 置信区间"
 
 msgid "Non-conformance statistics"
-msgstr ""
+msgstr "不合格品统计"
 
 msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
-msgstr ""
+msgstr "数据集包含负数。与所选分布不兼容。"
 
 msgid "Std. deviation"
-msgstr ""
+msgstr "标准差"
 
 msgid "Log mean (mu)"
-msgstr ""
+msgstr "Log 均值 (mu)"
 
 msgid "Log std.dev (%1$s)"
 msgstr ""
