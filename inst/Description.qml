@@ -110,16 +110,16 @@ Description
         requiresData:   false
     }
     Analysis
+	  {
+		title:			qsTr("Response Surface")
+		func:			"doeResponseSurfaceMethodology"
+		requiresData:	false
+	  }
+    Analysis
     {
         title:          qsTr("Modify Existing Design")
         func:           "doeModifyDesign"
     }
-	Analysis
-	{
-		title:			qsTr("Response Surface")
-		func:			"doeResponseSurfaceMethodology"
-		requiresData:	false
-	}
 	Analysis
 	{
 		title:			qsTr("Two-level Factorial Analysis")

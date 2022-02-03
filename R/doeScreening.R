@@ -116,7 +116,7 @@ doeScreening <- function(jaspResults, dataset, options, ...){
         0
       }
       for(i in 1:length(twoLevels)){
-        factorNames2[i] <- paste0(twoLevels[[i]]$factorName2, " (", (i+threePlus), ")")
+        factorNames2[i] <- ifelse(twoLevels[[i]]$factorName2 == "", paste0(twoLevels[[i]]$factorName2, " (", (i+threePlus), ")"), twoLevels[[i]]$factorName2)
         factorLows2[i]  <- twoLevels[[i]]$low2
         factorHighs2[i] <- twoLevels[[i]]$high2
       }
@@ -126,7 +126,7 @@ doeScreening <- function(jaspResults, dataset, options, ...){
       threeLevels <- options[["factors3"]]
       factorNames3 <- factorLows3 <- factorCenters3 <- factorHighs3 <- character()
       for(i in 1:length(threeLevels)){
-        factorNames3[i]   <- paste0(threeLevels[[i]]$factorName3, " (", i, ")")
+        factorNames3[i]   <- ifelse(threeLevels[[i]]$factorName3 == "", paste0(threeLevels[[i]]$factorName3, " (", i, ")"), threeLevels[[i]]$factorName3)
         factorLows3[i]    <- threeLevels[[i]]$low3
         factorCenters3[i] <- threeLevels[[i]]$center3
         factorHighs3[i]   <- threeLevels[[i]]$high3
@@ -156,6 +156,7 @@ doeScreening <- function(jaspResults, dataset, options, ...){
                        )
     }
 
+    set.seed(5)
     runOrder <- sample(nrow(desScreen), nrow(desScreen))
     standard <- if(options[["screeningType"]] == "PBdes"){
       DoE.base::run.order(desScreen)[,1]
@@ -170,8 +171,13 @@ doeScreening <- function(jaspResults, dataset, options, ...){
       sapply(desScreen, as.numeric) * 2 - 3
     }
 
-    if(options[["dataCodingScreen"]] == "dataUncoded"){
-      if(options[["screeningType"]] == "PBdes"){
+    # Check for empty levels
+    allFactorLevels <- c(factorLows2, factorHighs2)
+    emptyLevelsCheck <- sapply(1:length(allFactorLevels), function (x) {
+        allFactorLevels[x] == ""
+      })
+
+    if(options[["dataCodingScreen"]] == "dataUncoded" && options[["screeningType"]] == "PBdes" && !any(emptyLevelsCheck)){
         for(i in 1:ncol(desScreen)){
           desScreen[,i][desScreen[,i] == 1] <- factorHighs2[i]
           if(options[["screeningCenterPoints"]] >= 1){
@@ -184,7 +190,6 @@ doeScreening <- function(jaspResults, dataset, options, ...){
           }
           desScreen[,i][desScreen[,i] == -1] <- factorLows2[i]
         }
-      }
     }
 
     rows <- cbind.data.frame(runOrder, standard, desScreen)
