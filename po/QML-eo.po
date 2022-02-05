@@ -2159,10 +2159,10 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor Name "
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
-msgstr ""
-
 msgctxt "msaAttribute|"
 msgid "Positive reference:"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid ""
 msgstr ""
