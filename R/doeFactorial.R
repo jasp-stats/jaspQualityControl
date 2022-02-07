@@ -376,7 +376,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   }
 }
 
-.doeFactorialShowAliasStructure <- function(options, jaspResults, factorialDesign, position){
+.doeFactorialShowAliasStructure <- function(options, jaspResults, factorialDesign, position, onlyTable = FALSE){
 
   if(!options[["showAliasStructure"]]){
     jaspResults[["showAliasStructure"]] <- NULL
@@ -396,6 +396,10 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     jaspResults[["state2"]]$dependOn("always_present")
 
     table$setData(rows)
-    jaspResults[["showAliasStructure"]] <- table
+
+    if (onlyTable)
+      return(table)
+    else
+      jaspResults[["showAliasStructure"]] <- table
   }
 }

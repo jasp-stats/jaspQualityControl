@@ -41,7 +41,7 @@ Form
 		AssignedVariablesList
 		{
 			name:                               "FAassignedFactors"
-            allowedColumns:                     ["ordinal", "nominal"]
+            allowedColumns:                     ["ordinal", "nominal", "scale"]
 			label:                              qsTr("Assigned factors")
 		}
 
@@ -73,9 +73,27 @@ Form
 	}
 
 	CheckBox
+  {
+    name:                               "showAliasStructure"
+    label:                              "Show alias structure"
+  }
+
+	CheckBox
+	{
+		name:                                   "NormalPlot"
+		label:                                  qsTr("Normal Plot of the Standardized Effect")
+
+		CheckBox
+		{
+		name:                                   "addGridlines"
+		label:                                  qsTr("Display grid lines")
+		}
+	}
+
+	CheckBox
 	{
 		name:                                   "paretoPlot"
-		label:                                  qsTr("Pareto plot of standardized effects")
+		label:                                  qsTr("Pareto Plot of Standardized Effects")
 	}
 
 	Group

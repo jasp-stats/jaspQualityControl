@@ -1126,7 +1126,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container[["probabilityTable"]] <- table
 }
 
-.qcProbabilityPlot <- function(dataset, options, measurements) {
+.qcProbabilityPlot <- function(dataset, options, measurements = NULL, fit = "") {
 
   plot <- createJaspPlot(width = 600, aspectRatio = 1, title = "Probability Plot")
   plot$dependOn(c("variablesLong", "pcSubgroupSize"))
@@ -1136,8 +1136,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return(plot)
   }
 
+  FactorialFit <- !is.null(fit)
+
   # Arrange data
-  x <- as.vector(unlist(dataset[measurements]))
+  if (FactorialFit){
+    x <- data.frame(summary(fit)$coefficients)$t.value[-1]
+    order1 <- order(x)
+    factorsNames <- rownames(summary(fit)$coefficients)[-1]
+    p.sig <- as.vector(summary(fit)$coefficients[,4][-1][order1] < 0.05)
+
+  } else {
+    x <- as.vector(unlist(dataset[measurements]))
+  }
   x <- x[order(x)]
   label_x <- x
   n <- length(x)
@@ -1146,13 +1156,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Method for rank
   Rank_funs <- matrix(list(.qcPpMedian, .qcPpMean, .qcPpKmModif, .qcPpKm), ncol = 1,
                       dimnames = list(c("Bernard", "Herd-Johnson", "Hazen", 'Kaplan-Meier'), c("p")), byrow = TRUE)
-  rankByUser <- options[["rank"]]
+  rankByUser <- if (FactorialFit) "Bernard" else options[["rank"]]
   p <- Rank_funs[[rankByUser, 'p']](x)
 
   # Functions for computing y
   y_funs <- matrix(list(qnorm,qnorm,.qcWeibull), ncol = 1,
                    dimnames = list(c('Normal', 'Lognormal', 'Weibull'), c('y')), byrow = TRUE)
-  DisByUser <- options[["nullDistribution"]]
+  DisByUser <- if (FactorialFit) "Normal" else options[["rank"]]
   y <- y_funs[[DisByUser, 'y']](p)
 
   # Quantities
@@ -1160,7 +1170,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
 
   # Computing according to the distribution
-  if (options[["nullDistribution"]] == 'Normal') {
+  if (options[["nullDistribution"]] == 'Normal' || FactorialFit) {
     lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
     matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("mu", "sigma"), mle = c(mean(x), sd(x)))
     varMu <- matrix$varcov[1, 1]
@@ -1229,7 +1239,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
     xBreaks <- labelFrame[index,2]
     label_x <- round(labelFrame[index,2],1)
-    xLimits <- range(xBreaks)
+    xLimits <- range(xBreaks) * 1.2
   }
   data1 <- data.frame(x = x, y = y)
   yLimits <- range(yBreaks)
@@ -1243,10 +1253,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     ggplot2::scale_x_continuous("Measurement", breaks = xBreaks, limits = xLimits, labels = label_x) +
     ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = yBreaks, limits = yLimits)
 
-  p <- jaspGraphs::themeJasp(p)
-
   if (options[["addGridlines"]])
     p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
+
+  p <- jaspGraphs::themeJasp(p)
+
+  if (FactorialFit) {
+    ordered.Factors <- factorsNames[order1]
+    p <- p + jaspGraphs::geom_point(ggplot2::aes(x = x, y = y, color = ifelse(as.vector(p.sig), "Significant", "Not significant"))) +
+      ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank())
+
+    for (i in 1:length(factorsNames))
+      p <- p + ggplot2::annotate("text", x = x[i] * 1.15, y = y[i] * 1.25, label = sprintf("%s", ordered.Factors[i]))
+  }
 
   plot$plotObject <- p
 
