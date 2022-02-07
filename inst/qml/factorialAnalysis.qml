@@ -13,10 +13,11 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-import QtQuick                                  2.8
-import QtQuick.Layouts                          1.3
-import JASP.Controls                            1.0
-import JASP.Widgets                             1.0
+import QtQuick			2.12
+import JASP.Controls	1.0
+import JASP.Widgets		1.0
+import JASP				1.0
+
 
 Form
 {
@@ -63,37 +64,51 @@ Form
 		}
 	}
 
-	IntegerField
+	Section
 	{
-		name:                                   "intOrder"
-		label:                                  qsTr("Highest order interaction term:")
-		defaultValue:                           1
-		min:                                    1
-		max:                                    5 // change this to number of items in FAassignedFactors
+		title: qsTr("Model")
+		
+		VariablesForm
+		{
+			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["FAassignedFactors"]}
+			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction }
+		}
+
 	}
 
-	CheckBox
-  {
-    name:                               "showAliasStructure"
-    label:                              "Show alias structure"
-  }
+Group
+{
+	columns: 2
+	title: qsTr("Plots")
 
-	CheckBox
+	Group 
 	{
-		name:                                   "NormalPlot"
-		label:                                  qsTr("Normal Plot of the Standardized Effect")
+		title: qsTr("Design plots")
 
 		CheckBox
 		{
-		name:                                   "addGridlines"
-		label:                                  qsTr("Display grid lines")
+			name:                               "showAliasStructure"
+			label:                              "Show alias structure"
 		}
-	}
 
-	CheckBox
-	{
-		name:                                   "paretoPlot"
-		label:                                  qsTr("Pareto Plot of Standardized Effects")
+		CheckBox
+		{
+			name:                                   "NormalPlot"
+			label:                                  qsTr("Normal Plot of the Standardized Effect")
+
+			CheckBox
+			{
+			name:                                   "addGridlines"
+			label:                                  qsTr("Display grid lines")
+			}
+		}
+
+		CheckBox
+		{
+			name:                                   "paretoPlot"
+			label:                                  qsTr("Pareto Plot of Standardized Effects")
+		}
 	}
 
 	Group
@@ -125,4 +140,6 @@ Form
 			label:                              qsTr("Residuals vs run order")
 		}
 	}
+}
+	
 }
