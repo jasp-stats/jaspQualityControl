@@ -42,7 +42,7 @@ Form
 		AssignedVariablesList
 		{
 			name:                               "FAassignedFactors"
-            allowedColumns:                     ["ordinal", "nominal", "scale"]
+            allowedColumns:                     ["ordinal", "nominal", "scale", "nominalText"]
 			label:                              qsTr("Assigned factors")
 		}
 
@@ -61,6 +61,20 @@ Form
             allowedColumns:                     ["scale", "ordinal"]
 			singleVariable:                     true
 			label:                              qsTr("Run order")
+		}
+	}
+	CheckBox 
+	{
+		name:                                   "enabledIntOrder"
+		childrenOnSameRow: true
+
+		IntegerField
+		{
+			name:                                   "intOrder"
+			label:                                  qsTr("Highest order interaction term:")
+			defaultValue:                           1
+			min:                                    1
+			max:                                    5 // change this to number of items in FAassignedFactors
 		}
 	}
 
@@ -138,6 +152,12 @@ Group
 		{
 			name:                               "resOrder"
 			label:                              qsTr("Residuals vs run order")
+		}
+
+	    CheckBox
+		{
+			name:                               "fourInOne"
+			label:                              qsTr("Matrix residuals plot")
 		}
 	}
 }

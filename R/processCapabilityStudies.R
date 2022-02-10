@@ -1142,12 +1142,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (FactorialFit){
     x <- data.frame(summary(fit)$coefficients)$t.value[-1]
     order1 <- order(x)
-    factorsNames <- rownames(summary(fit)$coefficients)[-1]
+    factorsNames <- rownames(summary(fit)$coefficients)[-1][order1]
     p.sig <- as.vector(summary(fit)$coefficients[,4][-1][order1] < 0.05)
 
   } else {
     x <- as.vector(unlist(dataset[measurements]))
   }
+
   x <- x[order(x)]
   label_x <- x
   n <- length(x)
@@ -1259,12 +1260,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   p <- jaspGraphs::themeJasp(p)
 
   if (FactorialFit) {
-    ordered.Factors <- factorsNames[order1]
+    ordered.Factors <- factorsNames[p.sig]
     p <- p + jaspGraphs::geom_point(ggplot2::aes(x = x, y = y, color = ifelse(as.vector(p.sig), "Significant", "Not significant"))) +
-      ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
+      ggplot2::scale_x_continuous("Standardized Effect", breaks = xBreaks, limits = xLimits * 1.2, labels = label_x)
 
-    for (i in 1:length(factorsNames))
-      p <- p + ggplot2::annotate("text", x = x[i] * 1.15, y = y[i] * 1.25, label = sprintf("%s", ordered.Factors[i]))
+    x.sig <- x[p.sig]
+    y.sig <- y[p.sig]
+    for (i in 1:length(ordered.Factors))
+      p <- p + ggplot2::annotate("text", x = x.sig[i] * 1.05, y = y.sig[i] * 1.05, label = sprintf("%s", ordered.Factors[i]))
   }
 
   plot$plotObject <- p
