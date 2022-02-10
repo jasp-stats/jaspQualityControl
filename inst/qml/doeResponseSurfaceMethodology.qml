@@ -22,104 +22,13 @@ Form
 {
 	columns:									2
 
-	VariablesForm
+
+
+	GroupBox
 	{
-		AvailableVariablesList { name: "rsmVariablesList" }
-		AssignedVariablesList
-		{
-			name: "rsmVariables"
-			title: qsTr("Predictors [Location in coded format]")
-			suggestedColumns:   ["scale", "ordinal"]
-
-			rowComponent: Row
-			{
-				DoubleField {name: "Point_P"; negativeValues: true}
-			}
-
-
-		}
-		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal"]}
-		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["scale", "ordinal"]; singleVariable: true}
-	}
-
-
-	VariablesForm
-	{
-		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-		AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
-		ModelTermsList
-		{
-
-			listViewType			: JASP.Interaction
-			rowComponentTitle		: qsTr("Term Type")
-			rowComponent			: DropDown
-			{
-				name: "TermType"
-				label: ""
-				values: [
-					{ label: qsTr("FO + PQ"), value: "fopq"},
-					{ label: qsTr(""), value: "nothing"},
-					{ label: qsTr("FO"), value: "fo"},
-					
-					
-				]
-			}
-		}
-	}
-	
-	Group 
-	{
-		title: qsTr("Response Surface Summaries")
-		columns: 3
-		
-		CheckBox 
-		{
-			name:                       "coef"; label:                  qsTr("Coefficient Table")
-			
-		}
-		
-		
-		CheckBox
-		{
-			name:                       "anova";label:                  qsTr("ANOVA Table")
-		}
-		
-		
-		
-		CheckBox
-		{
-			name:                       "res";  label:                  qsTr("Residual Histogram")
-		}
-		
-		CheckBox
-		{
-			name:                       "resNorm";label:                 qsTr("Normal Residual Plot")
-		}
-		
-		CheckBox
-		{
-			name:                       "ResFitted";label:                 qsTr("Residual vs. Fitted Plot")
-		}
-
-		
-		CheckBox
-		{
-			name:                       "pareto";label:                 qsTr("Pareto Plot of Standardized Effects")
-		}
-	}
-	
-
-	Section 
-
-	{
-		title: qsTr("Design Specification")
-
-		
-		GroupBox
-		{
-			title: 									qsTr("Design Information")
-			name:									"designInfo"
-			columns:								3
+		title: 									qsTr("Design Space")
+		name:									"designInfo"
+		columns:								3
 			
 			RadioButtonGroup
 			{
@@ -487,9 +396,98 @@ Form
 			id:									buildDesignInv	
 			name:								"buildDesignInv"
 			visible:							false
-		}
-	
 	}
+
+	Section 
+	{
+		title: qsTr("Design Analysis")
+
+	VariablesForm
+	{
+		AvailableVariablesList { name: "rsmVariablesList" }
+		AssignedVariablesList
+		{
+			name: "rsmVariables"
+			title: qsTr("Predictors [Location in coded format]")
+			suggestedColumns:   ["scale", "ordinal"]
+
+			rowComponent: Row
+			{
+				DoubleField {name: "Point_P"; negativeValues: true}
+			}
+
+
+		}
+		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal"]}
+		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["scale", "ordinal"]; singleVariable: true}
+	}
+
+
+	VariablesForm
+	{
+		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+		AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
+		ModelTermsList
+		{
+
+			listViewType			: JASP.Interaction
+			rowComponentTitle		: qsTr("Term Type")
+			rowComponent			: DropDown
+			{
+				name: "TermType"
+				label: ""
+				values: [
+					{ label: qsTr("FO + PQ"), value: "fopq"},
+					{ label: qsTr(""), value: "nothing"},
+					{ label: qsTr("FO"), value: "fo"},
+					
+					
+				]
+			}
+		}
+	}
+	
+	Group 
+	{
+		title: qsTr("Response Surface Summaries")
+		columns: 3
+		
+		CheckBox 
+		{
+			name:                       "coef"; label:                  qsTr("Coefficient Table")
+			
+		}
+		
+		
+		CheckBox
+		{
+			name:                       "anova";label:                  qsTr("ANOVA Table")
+		}
+		
+		
+		
+		CheckBox
+		{
+			name:                       "res";  label:                  qsTr("Residual Histogram")
+		}
+		
+		CheckBox
+		{
+			name:                       "resNorm";label:                 qsTr("Normal Residual Plot")
+		}
+		
+		CheckBox
+		{
+			name:                       "ResFitted";label:                 qsTr("Residual vs. Fitted Plot")
+		}
+
+		
+		CheckBox
+		{
+			name:                       "pareto";label:                 qsTr("Pareto Plot of Standardized Effects")
+		}
+	}	
+}
 	
 	Section 
 	{

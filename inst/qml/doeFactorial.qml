@@ -17,6 +17,7 @@ import QtQuick                                  2.8
 import QtQuick.Layouts                          1.3
 import JASP.Controls                            1.0
 import JASP.Widgets                             1.0
+import JASP				                        1.0
 
 Form
 {
@@ -425,5 +426,151 @@ Form
 			name:                               "actualExporter"
 			visible:                            false
 		}
+	}
+
+	Section 
+	{
+		title: qsTr("Design Analysis")
+		columns: 1
+
+	VariablesForm
+	{
+		AvailableVariablesList
+		{
+			name:                               "FAallVariables"
+			label:                              qsTr("Available factors")
+		}
+
+		AssignedVariablesList
+		{
+			name:                               "FAresponse"
+            allowedColumns:                     ["scale"]
+			singleVariable:                     true
+			label:                              qsTr("Response variable")
+		}
+
+		AssignedVariablesList
+		{
+			name:                               "FAassignedFactors"
+            allowedColumns:                     ["ordinal", "nominal", "scale", "nominalText"]
+			label:                              qsTr("Assigned factors")
+		}
+
+		AssignedVariablesList
+		{
+			debug:                              true
+			name:                               "FAblocks"
+			singleVariable:                     true
+			label:                              qsTr("Blocks")
+		}
+
+		AssignedVariablesList
+		{
+            id:                                 runOrder
+            name:                               "FArunOrder"
+            allowedColumns:                     ["scale", "ordinal"]
+			singleVariable:                     true
+			label:                              qsTr("Run order")
+		}
+	}
+	CheckBox 
+	{
+		name:                                   "enabledIntOrder"
+		childrenOnSameRow: true
+		checked: true
+
+		IntegerField
+		{
+			name:                                   "intOrder"
+			label:                                  qsTr("Highest order interaction term:")
+			defaultValue:                           1
+			min:                                    1
+			max:                                    5 // change this to number of items in FAassignedFactors
+		}
+	}
+
+	Section
+	{
+		title: qsTr("Model")
+		
+		VariablesForm
+		{
+			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["FAassignedFactors"]}
+			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction }
+		}
+
+	}
+
+Group
+{
+	columns: 2
+	title: qsTr("Plots")
+
+	Group 
+	{
+		title: qsTr("Design plots")
+
+		CheckBox
+		{
+			name:                               "showAliasStructure2"
+			label:                              "Show alias structure"
+		}
+
+		CheckBox
+		{
+			name:                                   "NormalPlot"
+			label:                                  qsTr("Normal Plot of the Standardized Effect")
+
+			CheckBox
+			{
+			name:                                   "addGridlines"
+			label:                                  qsTr("Display grid lines")
+			}
+		}
+
+		CheckBox
+		{
+			name:                                   "paretoPlot"
+			label:                                  qsTr("Pareto Plot of Standardized Effects")
+		}
+	}
+
+	Group
+	{
+		name:                                   "resPlots"
+		title:                                  qsTr("Residuals plots")
+
+		CheckBox
+		{
+			name:                               "resNorm"
+			label:                              qsTr("Normal probability plot of residuals")
+		}
+
+		CheckBox
+		{
+			name:                               "resHist"
+			label:                              qsTr("Histogram of residuals")
+		}
+
+		CheckBox
+		{
+			name:                               "resFitted"
+			label:                              qsTr("Residuals vs fitted value")
+		}
+
+		CheckBox
+		{
+			name:                               "resOrder"
+			label:                              qsTr("Residuals vs run order")
+		}
+
+	    CheckBox
+		{
+			name:                               "fourInOne"
+			label:                              qsTr("Matrix residuals plot")
+		}
+	}
+}
 	}
 }
