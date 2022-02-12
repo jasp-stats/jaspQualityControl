@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2022-01-29 03:40\n"
-"PO-Revision-Date: 2022-01-29 03:38+0000\n"
+"PO-Revision-Date: 2022-02-08 08:01+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -35,7 +35,7 @@ msgid "LCL = %g"
 msgstr ""
 
 msgid "Cumulative sum"
-msgstr ""
+msgstr "Kumulative Summe"
 
 msgid "Subgroups"
 msgstr "Untergruppen"
@@ -539,7 +539,7 @@ msgid "Gauge Bias"
 msgstr ""
 
 msgid "Part"
-msgstr ""
+msgstr "Teil"
 
 msgid "Reference value"
 msgstr "Referenzwert"
@@ -595,23 +595,26 @@ msgid ""
 "T-Test requires more than 1 measurement. %i valid measurement(s) detected in "
 "%s."
 msgstr ""
+"T-Test erfordert mehr als 1 Messung. %i gültige Messung(en) in %s erkannt."
 
 msgid ""
 "Every unique part must have one corresponding reference value. %i reference "
 "values were found for %s unique parts."
 msgstr ""
+"Jedes einzelne Teil muss einen entsprechenden Referenzwert haben. %i "
+"Referenzwerte wurden für %s einzelne Teile gefunden."
 
 msgid "Reference"
 msgstr "Referenz"
 
 msgid "Percent bias per reference value"
-msgstr ""
+msgstr "Prozentuale Verzerrung pro Referenzwert"
 
 msgid "Linearity"
-msgstr ""
+msgstr "Linearität"
 
 msgid "Average"
-msgstr ""
+msgstr "Durchschnitt"
 
 msgid "Gauge r&R"
 msgstr ""
@@ -655,7 +658,7 @@ msgid "ANOVA Table"
 msgstr "ANOVA-Tabelle"
 
 msgid "Two-way ANOVA Table with Interaction"
-msgstr ""
+msgstr "Zweifaktorielle ANOVA-Tabelle mit Interaktion"
 
 msgid "Source"
 msgstr "Quelle"
@@ -725,7 +728,7 @@ msgid ""
 msgstr ""
 
 msgid "Two-way ANOVA Table without Interaction"
-msgstr ""
+msgstr "Zweifaktorielle ANOVA-Tabelle ohne Interaktion"
 
 msgid "Components of Variation"
 msgstr ""
@@ -860,7 +863,7 @@ msgid "%GRR of Tolerance"
 msgstr ""
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
-msgstr ""
+msgstr "Streudiagramm der 1. Messung vs. 2. Messung"
 
 msgid "Run Chart"
 msgstr ""
@@ -1003,7 +1006,7 @@ msgid "Error: LSL > USL."
 msgstr ""
 
 msgid "Error: Target outside of specification limits."
-msgstr ""
+msgstr "Fehler: Ziel außerhalb der Spezifikationsgrenzen."
 
 msgid "Process Capability"
 msgstr ""
