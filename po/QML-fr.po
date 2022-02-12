@@ -632,10 +632,6 @@ msgid "FO + PQ"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "FO"
 msgstr ""
 
@@ -2165,4 +2161,8 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid ""
 msgstr ""
