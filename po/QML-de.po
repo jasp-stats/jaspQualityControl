@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-27 16:20+0000\n"
-"Last-Translator: Thomas Langkamp <thomas.lassdiesonnerein@gmx.de>\n"
+"PO-Revision-Date: 2022-02-05 16:58+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
 "Language: de\n"
@@ -254,7 +254,7 @@ msgstr "Medianer Rang (Benard)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Mean Rank (Herd-Johnson)"
-msgstr ""
+msgstr "Mittlerer Rang (Herd-Johnson)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Kaplan-Meier"
@@ -262,7 +262,7 @@ msgstr "Kaplan-Meier"
 
 msgctxt "processCapabilityStudies|"
 msgid "Modified Kaplan-Meier (Hazen)"
-msgstr ""
+msgstr "Modifiziertes Kaplan-Meier (Hazen)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Null distribution"
@@ -362,11 +362,11 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Rotating angle (vertical plane)"
-msgstr ""
+msgstr "Drehwinkel (vertikale Ebene)"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Rotating angle (horizontal plane)"
-msgstr ""
+msgstr "Drehwinkel (horizontale Ebene)"
 
 msgctxt "factorialAnalysis|"
 msgid "Available factors"
@@ -386,7 +386,7 @@ msgstr ""
 
 msgctxt "factorialAnalysis|"
 msgid "Highest order interaction term:"
-msgstr ""
+msgstr "Interaktionsterm höchster Ordnung:"
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals plots"
@@ -398,11 +398,11 @@ msgstr ""
 
 msgctxt "factorialAnalysis|"
 msgid "Histogram of residuals"
-msgstr ""
+msgstr "Histogramm der Residuen"
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr ""
+msgstr "Residuen vs angepasster Wert"
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals vs run order"
@@ -410,7 +410,7 @@ msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Kendall's tau"
-msgstr ""
+msgstr "Kendalls Tau"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity table"
@@ -454,7 +454,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show origin line"
-msgstr ""
+msgstr "Ursprungslinie anzeigen"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement by part plot"
@@ -478,15 +478,15 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Parts"
-msgstr ""
+msgstr "Teile"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements"
-msgstr ""
+msgstr "Messungen"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "Analyse-Optionen"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation reference"
@@ -510,11 +510,11 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation"
-msgstr ""
+msgstr "Std.-Abweichung"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Percent"
-msgstr ""
+msgstr "Prozent"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Graph variation components"
@@ -522,7 +522,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Plots"
-msgstr ""
+msgstr "Diagramme"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "R charts by operator"
@@ -538,7 +538,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "Alle Messungen anzeigen"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement by operator plot"
@@ -546,11 +546,11 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "6"
-msgstr ""
+msgstr "6"
 
 msgctxt "msaType1Gauge|"
 msgid "4"
-msgstr ""
+msgstr "4"
 
 msgctxt "msaType1Gauge|"
 msgid "Run chart"
@@ -558,15 +558,15 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Display individual measurements"
-msgstr ""
+msgstr "Einzelne Messungen anzeigen"
 
 msgctxt "msaType1Gauge|"
 msgid "Display tolerance limits"
-msgstr ""
+msgstr "Toleranzgrenzen anzeigen"
 
 msgctxt "msaType1Gauge|"
 msgid "One sample T-test"
-msgstr ""
+msgstr "T-Test für eine Stichprobe"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for bias"
@@ -578,11 +578,11 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Sturges"
-msgstr ""
+msgstr "Sturges"
 
 msgctxt "msaType1Gauge|"
 msgid "Scott"
-msgstr ""
+msgstr "Scott"
 
 msgctxt "msaType1Gauge|"
 msgid "Doane"
@@ -874,11 +874,11 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Points"
-msgstr ""
+msgstr "Punkte"
 
 msgctxt "probabilityOfDetection|"
 msgid "Add jitter"
-msgstr ""
+msgstr "Jitter hinzufügen"
 
 msgctxt "probabilityOfDetection|"
 msgid "Show density"
@@ -890,7 +890,7 @@ msgstr "Konfidenzintervall"
 
 msgctxt "probabilityOfDetection|"
 msgid "Ticks x-axis"
-msgstr ""
+msgstr "Teilstriche X-Achse"
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data"
