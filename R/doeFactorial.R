@@ -73,7 +73,6 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
     # Normal Plot of Standardized Effects
     if (is.null(jaspResults[["NormalPlot"]]) && options[["NormalPlot"]]) {
-
       NormalPlot <- createJaspContainer(gettext("Normal Plot of Standardized Effects"))
       NormalPlot$dependOn(c("FAassignedFactors", "modelTerms","NormalPlot","FAresponse", "intOrder", "FArunOrder", 'addGridlines', "enabledIntOrder"))
 
@@ -689,7 +688,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   return(list(jaspPlot = plot, ggPlot = p))
 }
 
-.factorialPareto <- function(jaspResults, options, fit){
+.factorialPareto <- function(jaspResults, options, fit, onlyPlot = FALSE){
 
   plot <- createJaspPlot(width = 400, height = 400)
   plot$dependOn("paretoPlot")
@@ -703,12 +702,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   fac_t <- cbind.data.frame(fac, t)
   fac_t <- cbind(fac_t[order(fac_t$t),], y = 1:length(t))
 
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(t)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(t, crit))
 
   p <- ggplot2::ggplot(fac_t, ggplot2::aes(y = t, x = y)) +
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +
-    ggplot2::labs(x = 'Standardized Effect') +
     ggplot2::scale_x_continuous(name = gettext("Term"), breaks = fac_t$y, labels = fac) +
     ggplot2::scale_y_continuous(name = yLab, breaks = xBreaks, limits = range(xBreaks)) +
     ggplot2::coord_flip()
@@ -717,7 +715,10 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
   plot$plotObject <- p
 
-  return(plot)
+  if (onlyPlot)
+    return(p)
+  else
+    return(plot)
 }
 
 .factorialRegressionANOVAcreateTable <- function(options, ready, fit, saturated){

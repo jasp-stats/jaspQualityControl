@@ -49,7 +49,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
 
 
-
   if (options[["designType"]] == "cube" && options[["buildDesignInv"]]){
     jaspResults[["placeholder"]] <- NULL
     .cubeDesign(jaspResults, options, dataset)
@@ -81,7 +80,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
         .responseSurfaceTableCall(jaspResults, options, rsm[[i]], i, position = 3)
 
       if(options[["anova"]])
-        .responseSurfaceTableAnovaCall(jaspResults, options, rsm[[i]], i, position = 4)
+        .responseSurfaceTableAnovaCall(jaspResults, options, rsm = rsm[[i]], i, position = 4)
 
       # if(options[["eigen"]])
       #   .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
@@ -89,18 +88,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       if(options[["res"]])
         .responsePlotResidualCall(jaspResults, options, rsm[[i]], i, position = 6)
 
+      if(options[["normalPlot"]])
+        .responseNomralProbabilityPlot(data, jaspResults, options, rsm[[i]], i, position = 7)
+
       if(options[["pareto"]])
-        .responsePlotPareto(jaspResults, options, rsm[[i]], i, position = 7)
+        .responsePlotPareto(jaspResults, options, rsm[[i]], i, position = 8)
 
       if(options[["resNorm"]])
-        .responsePlotResNorm(jaspResults, options, rsm[[i]], i, position = 8)
+        .responsePlotResNorm(jaspResults, options, rsm[[i]], i, position = 9)
 
       if(options[["ResFitted"]])
-        .responsePlotResFitted(jaspResults, options, rsm[[i]],i, position = 9)
+        .responsePlotResFitted(jaspResults, options, rsm[[i]],i, position = 10)
 
     }
     if(options[["desirability"]])
-      .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 10, dataset)
+      .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 11, dataset)
   }
 
 }
@@ -475,8 +477,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   length_rsmVariables <- length(options[["rsmVariables"]])
   op2  <- length(options[["rsmResponseVariables"]])
   op3  <- length(options[["rsmBlocks"]])
-
-
+  blocks <- unlist(options$rsmBlocks)
+  if (blocks != "")
+    data <- data[, -1]
 
   name <- vector()
 
@@ -487,17 +490,12 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
   data.list <- list()
 
-
-
   opt1 <- colnames(data)[1:length_rsmVariables]
 
   opt2 <- colnames(data)[(length_rsmVariables+1)]
   if (options[["rsmBlocks"]] != "") {
     opt3 <- colnames(data)[(length_rsmVariables+2)]
   }
-
-
-
 
   var.code <- rsm::coded.data(data)
 
@@ -572,23 +570,14 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
           formula_str[j] <- jo_3
           break()
         }
-
-
       }
     }
   }
 
-
-
-
   if (options[["rsmBlocks"]] != "") {
     if (length(unique(data[,(op1+2)])) > 1){
       form <- paste(formula_str, collapse = "+")
-
-
       form_2 <- paste0(opt2, "~", options[["rsmBlocks"]], "+", form)
-
-
       form_3 <- as.formula(form_2)
     }
   }else {
@@ -599,19 +588,13 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
 
   rsm <- rsm::rsm(form_3 , data = var.code)
-
-
 }
 
 
 .responseSurfaceContour <- function(jaspResults, options, data, rsm, i, position, dataset) {
+
   ready <- 1
-
-
-
-
   .responseSurfaceContourPlot(jaspResults, dataset, options, data, rsm, counter_in_main_for_loop = i)
-
 
 }
 
@@ -890,41 +873,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                   "rsmResponseVariables",
                   "rsmVariables", "modelTerms"))
 
-  t <- abs(data.frame(summary(rsm)[[4]][,4]))
-  name <- rownames(summary(rsm)[[4]])
-  par <- cbind.data.frame(name, t)
-  names(par)[2] <- "t"
-  par <- par[rev(order(par$t)),]
-
-  df <- summary(rsm)$df[2]
-  crit <- abs(qt(0.025, df))
-
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(abs(summary(rsm)[[4]][,4]))
-
-  p <- ggplot2::ggplot(par, ggplot2::aes(y = name)) +
-    ggplot2::geom_bar(ggplot2::aes(x = t), stat = "identity") +
-    ggplot2::geom_vline(xintercept = crit, linetype = "dashed", color = "red") +
-    ggplot2::labs(x = 'Standardized Effect', y ='Term') +
-    ggplot2::scale_x_continuous(name = gettextf("Standardized Effect"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks)
-
-  p <- jaspGraphs::themeJasp(p)
-
-  plot$plotObject <- p
+  plot$plotObject <- .factorialPareto(jaspResults, options, rsm, onlyPlot = TRUE)
 
   return()
-
 }
-
-
-
-
-
-
-
-
-
-
-
 
 .responseSurfaceTableCall <- function(jaspResults, options, rsm, i, dataset, position) {
 
@@ -950,14 +902,31 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
 
   if (is.null(jaspResults[[paste0("TableContainer", i)]][["coef"]])) {
-    CoefTable <- createJaspTable(gettextf("RSM Coefficients for %s",
+
+    # Index table
+    indexTable <- createJaspTable(gettextf("Index coefficients for %s",
+                                          options[["rsmResponseVariables"]][[i]]))
+    jaspResults[[paste0("TableContainer", i)]][["indexTable"]] <- indexTable
+    indexTable$addColumnInfo(name = "coded", title = gettext("Coded coefficients"), type = "string")
+    indexTable$addColumnInfo(name = "names",  title = gettext("Uncoded coefficients"), type ="string")
+
+    n.factors <- length(unlist(options$rsmVariables))/2 # Exclude P points
+    names <- sapply(1:n.factors, function(x) {unlist(options$rsmVariables[[x]][[2]])}) # index names
+    coded <- names(rsm[[4]][,1])[-1][1:n.factors] # Exclude the intercept and interaction terms
+
+    indexTable$setData(list(
+      coded = coded,
+      names = names
+    ))
+
+    CoefTable <- createJaspTable(gettextf("Coded coefficients for %s",
                                                options[["rsmResponseVariables"]][[i]]))
     jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
-    CoefTable$addColumnInfo(name = "names",title = "")
-    CoefTable$addColumnInfo(name = "est",  title = gettext("Estimate"))
-    CoefTable$addColumnInfo(name = "std",  title = gettext("Standard Error"))
-    CoefTable$addColumnInfo(name = "tval", title = gettext("t"))
-    CoefTable$addColumnInfo(name = "pval", title = gettext("p"))
+    CoefTable$addColumnInfo(name = "names", type = "string")
+    CoefTable$addColumnInfo(name = "est",  title = gettext("Coefficient"), "number")
+    CoefTable$addColumnInfo(name = "std",  title = gettext("Standard Error"), "number")
+    CoefTable$addColumnInfo(name = "tval", title = gettext("t"), "number")
+    CoefTable$addColumnInfo(name = "pval", title = gettext("<i>p</i>-value"), "pvalue")
 
     CoefTable$setData(list(names = rownames(rsm[[4]]),
                                           est  = round(rsm[[4]][,1],3),
@@ -965,14 +934,27 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                           tval = round(rsm[[4]][,3],3),
                                           pval = ifelse(rsm[[4]][,4] > 0.001,round(rsm[[4]][,4],3), "< .001")))
 
+    # Formula
+    rsmRegressionFormula <- createJaspTable(gettext("Regression equation in coded coefficients"))
+    jaspResults[[paste0("TableContainer", i)]][["formula"]] <- rsmRegressionFormula
+
+    reponseVar <- unlist(options$rsmResponseVariables)[i]
+    factors <- names(rsm[[4]][,1])
+    coefs <- as.vector(rsm[[4]][,1])
+    plusOrMin <- sapply(1:length(coefs), function(x) {if (coefs[x] > 0) "+" else "-"})
+
+    formula <- sprintf("y = %.5g%s %s %.5g%s", coefs[1], factors[1],plusOrMin[2], abs(coefs[2]), factors[2])
+    for (i in 3:length(coefs)) {
+      formula <- sprintf("%s %s %.5g%s", formula, plusOrMin[i], abs(coefs[i]), factors[i])
+    }
+    rsmRegressionFormula$setData(list(Formula = formula))
   }
 
-
   if (is.null(jaspResults[[paste0("TableContainer", i)]][["RSQTable"]])){
-    RSQTable  <- createJaspTable()
+    RSQTable  <- createJaspTable(title = "RSM model summary")
     jaspResults[[paste0("TableContainer", i)]][["RSQTable"]] <- RSQTable
 
-    RSQTable$addColumnInfo( name = "RSQ",   title = gettext("Multiple R-squared"))
+    RSQTable$addColumnInfo( name = "RSQ",   title = gettext("model sumple R-squared"))
     RSQTable$addColumnInfo( name = "ARSQ",  title = gettext("Adjusted R-squared"))
     RSQTable$addColumnInfo( name = "DF1",   title = gettext("DF1"))
     RSQTable$addColumnInfo( name = "DF2",   title = gettext("DF2"))
@@ -988,13 +970,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                               pval_2 = ifelse((1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]])) > 0.001,
                                                               round(1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]]),3),
                                                               "<.001")))
-
   }
 
   return()
 }
-
-
 
 
 .responseSurfaceTableAnovaCall <- function(jaspResults, options, rsm, i,  position, dataset) {
@@ -1015,23 +994,16 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
     jaspResults[[paste0("anova", i)]] <- AnovaTable
 
-    AnovaTable$dependOn(      options = c("anova","modelTerms", "rsmBlocks",
+    AnovaTable$dependOn(c("anova","modelTerms", "rsmBlocks",
                                           "rsmResponseVariables",
                                           "rsmVariables"))
 
-    AnovaTable$addColumnInfo( name = "names",    title = gettext(" "))
-    AnovaTable$addColumnInfo( name = "Df",       title = gettext("DF"))
-    AnovaTable$addColumnInfo( name = "Sum",      title = gettext("Sum of Squares"))
-    AnovaTable$addColumnInfo( name = "Mean",     title = gettext("Mean of Squares"))
-    AnovaTable$addColumnInfo( name = "FValue",   title = gettext("F"))
-    AnovaTable$addColumnInfo( name = "PValue",   title = gettext("p"))
-
-
-
-
-
-
-
+    AnovaTable$addColumnInfo( name = "names", "string")
+    AnovaTable$addColumnInfo( name = "Df",       title = gettext("df"), "number")
+    AnovaTable$addColumnInfo( name = "Sum",      title = gettext("SS"), "number")
+    AnovaTable$addColumnInfo( name = "Mean",     title = gettext("MS"), "number")
+    AnovaTable$addColumnInfo( name = "FValue",   title = gettext("F"), "number")
+    AnovaTable$addColumnInfo( name = "PValue",   title = gettext("p"), "pvalue")
 
     .responseSurfaceAnovaFill(AnovaTable, jaspResults, options,rsm, i)
   }else{
@@ -1046,16 +1018,33 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 .responseSurfaceAnovaFill <- function(AnovaTable, jaspResults, options,rsm, i) {
 
+  anova <- rsm[[13]]
+  names <- c("Model", rownames(anova), "Total"); names[names == "Residuals"] <- "Error"
 
- jaspResults[[paste0("anova", i)]]$setData(list(    names  = rownames(rsm[[13]]),
+  errorIndex <- which(rownames(anova) == "Residuals")
+  modelIndex <- errorIndex - 1
+  model.df <- sum(anova$`Df`[1:modelIndex])
+  model.SS <- sum(anova$`Sum Sq`[1:modelIndex])
+  model.MS <- model.SS / model.df
+  model.F <- model.MS / anova$`Mean Sq`[errorIndex]
+  model.Pval <- pf(model.F, model.df, anova$Df[errorIndex], lower.tail = F)
 
-                                         Df     = round(rsm[[13]][[1]],3),
-                                         Sum    = round(rsm[[13]][[2]],3),
-                                         Mean   = round(rsm[[13]][[3]],3),
-                                         FValue = round(rsm[[13]][[4]],3),
-                                         PValue = ifelse(rsm[[13]][[5]] > 0.001,
-                                                         round(rsm[[13]][[5]],3),
-                                                         "<.001")))
+  tota.df <- sum(anova$Df[errorIndex], model.df)
+  tota.SS <- sum(anova$`Sum Sq`[errorIndex], model.SS)
+
+  DF <- c(model.df, anova$`Df`, tota.df)
+  SS <- round(c(model.SS, anova[[2]], tota.SS),3);       SS[SS == "NaN"] <- NA
+  MS <- round(c(model.MS,anova[[3]]),3);        MS[MS == "NaN"] <- NA
+  FValue <- round(c(model.F, anova[[4]]),3);    FValue[FValue == "NaN"] <- NA
+  PValue <- round(c(model.Pval,anova[[5]]),3);  PValue[PValue == "NaN"] <- NA
+
+ jaspResults[[paste0("anova", i)]]$setData(list(
+  names  = names,
+  Df     = DF,
+  Sum    = SS,
+  Mean   = MS,
+  FValue = FValue,
+  PValue = PValue))
 
   return()
 }
@@ -1252,7 +1241,24 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }
   }
 
+  return()
+}
 
+.responseNomralProbabilityPlot <- function(data, jaspResults, options, rsm, i, position){
+
+
+  if (!(is.null(jaspResults[[paste0("NomralProbabilityPlot", i)]]))) {
+    return()
+  }
+
+  Container <- createJaspContainer(title = paste0("Normal Plot of Standardized Effects for ",
+                                        options[["rsmResponseVariables"]][[i]]))
+  jaspResults[[paste0("NomralProbabilityPlot", i)]] <- Container
+  Container$dependOn(c("pareto","rsmBlocks",
+                  "rsmResponseVariables",
+                  "rsmVariables", "modelTerms", "normalPlot", "addGridlines"))
+
+  Container[["plot"]] <- .qcProbabilityPlot(dataset = data, options = options, fit = rsm)
 
   return()
 }
