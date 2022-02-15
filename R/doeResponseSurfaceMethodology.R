@@ -901,12 +901,12 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     TableContainer <- jaspResults[[paste0("TableContainer", i)]]
   }
 
-  if (is.null(jaspResults[[paste0("TableContainer", i)]][["coef"]])) {
+  if (is.null(TableContainer[["coef"]])) {
 
     # Index table
     indexTable <- createJaspTable(gettextf("Index coefficients for %s",
                                           options[["rsmResponseVariables"]][[i]]))
-    jaspResults[[paste0("TableContainer", i)]][["indexTable"]] <- indexTable
+    TableContainer[["indexTable"]] <- indexTable
     indexTable$addColumnInfo(name = "coded", title = gettext("Coded coefficients"), type = "string")
     indexTable$addColumnInfo(name = "names",  title = gettext("Uncoded coefficients"), type ="string")
 
@@ -919,9 +919,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       names = names
     ))
 
+    # coefficients table
     CoefTable <- createJaspTable(gettextf("Coded coefficients for %s",
                                                options[["rsmResponseVariables"]][[i]]))
-    jaspResults[[paste0("TableContainer", i)]][["coef"]] <- CoefTable
+    TableContainer[["coef"]] <- CoefTable
     CoefTable$addColumnInfo(name = "names", type = "string")
     CoefTable$addColumnInfo(name = "est",  title = gettext("Coefficient"), "number")
     CoefTable$addColumnInfo(name = "std",  title = gettext("Standard Error"), "number")
@@ -934,42 +935,41 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                           tval = round(rsm[[4]][,3],3),
                                           pval = ifelse(rsm[[4]][,4] > 0.001,round(rsm[[4]][,4],3), "< .001")))
 
-    # Formula
+    # Formula table
     rsmRegressionFormula <- createJaspTable(gettext("Regression equation in coded coefficients"))
-    jaspResults[[paste0("TableContainer", i)]][["formula"]] <- rsmRegressionFormula
+    TableContainer[["formula"]] <- rsmRegressionFormula
 
-    reponseVar <- unlist(options$rsmResponseVariables)[i]
     factors <- names(rsm[[4]][,1])
     coefs <- as.vector(rsm[[4]][,1])
     plusOrMin <- sapply(1:length(coefs), function(x) {if (coefs[x] > 0) "+" else "-"})
 
     formula <- sprintf("y = %.5g%s %s %.5g%s", coefs[1], factors[1],plusOrMin[2], abs(coefs[2]), factors[2])
-    for (i in 3:length(coefs)) {
+    for (i in 3:length(coefs))
       formula <- sprintf("%s %s %.5g%s", formula, plusOrMin[i], abs(coefs[i]), factors[i])
-    }
+
     rsmRegressionFormula$setData(list(Formula = formula))
-  }
 
-  if (is.null(jaspResults[[paste0("TableContainer", i)]][["RSQTable"]])){
-    RSQTable  <- createJaspTable(title = "RSM model summary")
-    jaspResults[[paste0("TableContainer", i)]][["RSQTable"]] <- RSQTable
+    # RSM model summary
+    RSQTable  <- createJaspTable(title = "Model summary")
+    TableContainer[["RSQTable"]] <- RSQTable
 
-    RSQTable$addColumnInfo( name = "RSQ",   title = gettext("model sumple R-squared"))
+    RSQTable$addColumnInfo( name = "RSQ",   title = gettext("Model R-squared"))
     RSQTable$addColumnInfo( name = "ARSQ",  title = gettext("Adjusted R-squared"))
-    RSQTable$addColumnInfo( name = "DF1",   title = gettext("DF1"))
-    RSQTable$addColumnInfo( name = "DF2",   title = gettext("DF2"))
+    RSQTable$addColumnInfo( name = "DF1",   title = gettext("df1"))
+    RSQTable$addColumnInfo( name = "DF2",   title = gettext("df2"))
     RSQTable$addColumnInfo( name = "FStat", title = gettext("F"))
-    RSQTable$addColumnInfo( name = "pval_2",title = gettext("p"))
+    RSQTable$addColumnInfo( name = "pval_2",title = gettext("<i>p</i>-value"))
 
 
     RSQTable$setData(list(RSQ    = round(rsm[[8]],3),
-                                              ARSQ   = round(rsm[[9]],3),
-                                              DF1    = rsm[[10]][[2]],
-                                              DF2    = rsm[[10]][[3]],
-                                              FStat  = round(rsm[[10]][[1]],3),
-                                              pval_2 = ifelse((1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]])) > 0.001,
-                                                              round(1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]]),3),
-                                                              "<.001")))
+                          ARSQ   = round(rsm[[9]],3),
+                          DF1    = rsm[[10]][[2]],
+                          DF2    = rsm[[10]][[3]],
+                          FStat  = round(rsm[[10]][[1]],3),
+                          pval_2 = ifelse((1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]])) > 0.001,
+                                          round(1 - pf(rsm[[10]][[1]], rsm[[10]][[2]], rsm[[10]][[3]]),3),
+                                          "<.001")))
+
   }
 
   return()
@@ -1003,7 +1003,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     AnovaTable$addColumnInfo( name = "Sum",      title = gettext("SS"), "number")
     AnovaTable$addColumnInfo( name = "Mean",     title = gettext("MS"), "number")
     AnovaTable$addColumnInfo( name = "FValue",   title = gettext("F"), "number")
-    AnovaTable$addColumnInfo( name = "PValue",   title = gettext("p"), "pvalue")
+    AnovaTable$addColumnInfo( name = "PValue",   title = gettext("<i>p</i>-value"), "pvalue")
 
     .responseSurfaceAnovaFill(AnovaTable, jaspResults, options,rsm, i)
   }else{

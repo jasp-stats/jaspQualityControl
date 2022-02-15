@@ -737,8 +737,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   factorialRegressionANOVA$addColumnInfo(name = "p", title = gettext("<i>p</i>-value"), type = "pvalue")
 
   factorialRegressionSummaryFit$addColumnInfo(name = "S", title = "S", type = "number")
-  factorialRegressionSummaryFit$addColumnInfo(name = "R1", title = "R-sq", type = "number")
-  factorialRegressionSummaryFit$addColumnInfo(name = "R2", title = "R-sq (adj)", type = "number")
+  factorialRegressionSummaryFit$addColumnInfo(name = "R1", title = "Model R-squared", type = "number")
+  factorialRegressionSummaryFit$addColumnInfo(name = "R2", title = "Adjusted R-squared", type = "number")
 
 
   tableAnova <- factorialRegressionANOVA
