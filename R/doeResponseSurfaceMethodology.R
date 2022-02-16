@@ -100,6 +100,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
       if(options[["ResFitted"]])
         .responsePlotResFitted(jaspResults, options, rsm[[i]],i, position = 10)
 
+      if (options[["fourInOne"]])
+        .responseFourInOnePlot(jaspResults, options, rsm[[i]],i, position = 11)
+
+
     }
     if(options[["desirability"]])
       .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 11, dataset)
@@ -756,7 +760,35 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   return()
 }
 
-.responsePlotResNorm <- function(jaspResults, options, rsm, i, position, dataset){
+.responseFourInOnePlot <- function (jaspResults, options, rsm, i, position) {
+  if (!(is.null(jaspResults[[paste0("fourInOne", i)]]))){
+
+    return()
+  }
+
+  fourInOne <- createJaspContainer(gettextf("Matrix plot for %s",
+                                            options[["rsmResponseVariables"]][[i]]))
+
+  jaspResults[[paste0("fourInOne", i)]] <- fourInOne
+  fourInOne$dependOn(c("resNorm", "rsmBlocks",
+                       "rsmResponseVariables",
+                       "rsmVariables","modelTerms", "fourInOne"))
+
+  matrixPlot <- createJaspPlot(width = 1100, height = 800)
+  plotMat <- matrix(list(), 1, 3)
+
+  plotMat[[1, 1]] <- .responsePlotResidualCall(jaspResults, options, rsm, i, position = 1, ggPlot = TRUE)
+  plotMat[[1, 2]] <-.responsePlotResNorm(jaspResults, options, rsm, i, position = 2, ggPlot = TRUE)
+  plotMat[[1, 3]] <-.responsePlotResFitted(jaspResults, options, rsm, i, position = 3, ggPlot = TRUE)
+
+
+  matrixPlot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
+  fourInOne[["plot"]] <- matrixPlot
+
+  return()
+}
+
+.responsePlotResNorm <- function(jaspResults, options, rsm, i, position, dataset, ggPlot = FALSE){
 
   if (!(is.null(jaspResults[[paste0("resNorm", i)]]))){
 
@@ -766,7 +798,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                                        options[["rsmResponseVariables"]][[i]]
                                        ),
                          width = 400, height = 400)
-  jaspResults[[paste0("resNorm", i)]] <- plot
 
 
   plot$dependOn(c("resNorm", "rsmBlocks",
@@ -776,12 +807,15 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   plot$plotObject <- p
 
-  return()
+  if (!ggPlot)
+    jaspResults[[paste0("resNorm", i)]] <- plot
+  else
+    return(p)
 }
 
 
 
-.responsePlotResidualCall <- function(jaspResults, options, rsm, i, position, dataset) {
+.responsePlotResidualCall <- function(jaspResults, options, rsm, i, position, dataset, ggPlot = FALSE) {
 
   if (!(is.null(jaspResults[[paste0("Residual", i)]]))) {
     return()
@@ -794,17 +828,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
                   "rsmBlocks",
                   "res", "modelTerms"))
 
-
-
-  jaspResults[[paste0("Residual", i)]] <- plot
-
-
-
   x <- resid(rsm)
-
   h <- hist(x, plot = FALSE)
-
-
 
   p <- ggplot2::ggplot(data.frame(x), ggplot2::aes(x = x)) +
     ggplot2::geom_histogram(binwidth = abs(h$breaks[1] - h$breaks[2])) +
@@ -812,15 +837,15 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
   p <- jaspGraphs::themeJasp(p)
-
   plot$plotObject <- p
-  return()
 
-
-
+  if (!ggPlot)
+    jaspResults[[paste0("Residual", i)]] <- plot
+  else
+    return(p)
 }
 
-.responsePlotResFitted <- function(jaspResults, options, rsm, position, i, dataset){
+.responsePlotResFitted <- function(jaspResults, options, rsm, position, i, dataset, ggPlot = FALSE){
 
 
   if (!(is.null(jaspResults[[paste0("ResFitted", i)]]))){
@@ -829,7 +854,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
   plot <- createJaspPlot(title = paste0("Residuals vs. Fitted Value for ", options[["rsmResponseVariables"]][[i]]),
                          width = 400, height = 400)
-  jaspResults[[paste0("ResFitted", i)]] <- plot
   plot$dependOn(c("ResFitted","rsmBlocks",
                 "rsmResponseVariables",
                 "rsmVariables","modelTerms"))
@@ -852,7 +876,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
   plot$plotObject <- p
 
-  return()
+  if (!ggPlot)
+    jaspResults[[paste0("ResFitted", i)]] <- plot
+  else
+    return(p)
 }
 
 .responsePlotPareto <- function(jaspResults, options, rsm, i, position, dataset) {
@@ -918,8 +945,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     ))
 
     # coefficients table
-    CoefTable <- createJaspTable(gettextf("Coded coefficients for %s",
-                                               options[["rsmResponseVariables"]][[i]]))
+    CoefTable <- createJaspTable(gettextf("Index coefficients for %s",
+                                          options[["rsmResponseVariables"]][[i]]))
     TableContainer[["coef"]] <- CoefTable
     CoefTable$addColumnInfo(name = "names", type = "string")
     CoefTable$addColumnInfo(name = "est",  title = gettext("Coefficient"), "number")

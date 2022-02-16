@@ -450,7 +450,7 @@ Form
 	Group 
 	{
 		title: qsTr("Response surface analysis")
-		columns: 3
+		columns: 2
 		
 		CheckBox 
 		{
@@ -461,24 +461,18 @@ Form
 		
 		CheckBox
 		{
+			name:                       "res";  label:                  qsTr("Residual histogram")
+		}
+
+		CheckBox
+		{
 			name:                       "anova";label:                  qsTr("ANOVA table")
 		}
 		
 		
-		
-		CheckBox
-		{
-			name:                       "res";  label:                  qsTr("Residual histogram")
-		}
-		
 		CheckBox
 		{
 			name:                       "resNorm";label:                 qsTr("Normal residual plot")
-		}
-		
-		CheckBox
-		{
-			name:                       "ResFitted";label:                 qsTr("Residual vs. fitted plot")
 		}
 
 		CheckBox
@@ -494,7 +488,17 @@ Form
 		
 		CheckBox
 		{
+			name:                       "ResFitted";label:                 qsTr("Residual vs. fitted plot")
+		}
+		
+		CheckBox
+		{
 			name:                       "pareto";label:                 qsTr("Pareto plot of standardized effects")
+		}
+
+		CheckBox
+		{
+			name:                       "fourInOne";label:                 qsTr("Matrix residuals plot")
 		}
 	}	
 }
