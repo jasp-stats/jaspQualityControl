@@ -1,13 +1,19 @@
 context("DoE factorialAnalysis")
 
-data <- read.csv("DoEFactorialAnalysis.csv")
-options <- analysisOptions("factorialAnalysis")
-options$FAresponse <- "Cycle.time"
-options$FAassignedFactors <- c("Rough.feed", "Air.feed", "Grinding.length", "Fine.feed", "Stock.allowance")
+options <- analysisOptions("doeFactorial")
+options$FAresponse <- "Yield"
+options$FAassignedFactors <- c("Aperture.setting" ,"Exposure.time", "Develop.time" ,   "Mask.dimension",  "Etch.time")
 options$FArunOrder <- "RunOrder"
-options$intOrder <- 2
+options$modelTerms <- list(
+  list(components="Aperture.setting"),
+  list(components="Exposure.time"),
+  list(components="Develop.time"),
+  list(components="Mask.dimension"),
+  list(components="Etch.time"))
 
-results <- runAnalysis("factorialAnalysis", data, options)
+results <- runAnalysis("doeFactorial", read.csv("doeFactorialAnalysis.csv"), options)
+
+
 
 
 

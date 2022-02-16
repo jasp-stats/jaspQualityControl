@@ -479,25 +479,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   op3  <- length(options[["rsmBlocks"]])
   blocks <- unlist(options$rsmBlocks)
   if (blocks != "")
-    data <- data[, -1]
+    dat.blocks = data[,blocks] ;data <- data[, colnames(data) != blocks]
 
   name <- vector()
-
-
   mean.col <- colMeans(data)
-
-
   optio <- matrix(unlist(options[["rsmVariables"]]),ncol=2,byrow=TRUE)[,2]
   data.list <- list()
 
   opt1 <- colnames(data)[1:length_rsmVariables]
 
   opt2 <- colnames(data)[(length_rsmVariables+1)]
-  if (options[["rsmBlocks"]] != "") {
-    opt3 <- colnames(data)[(length_rsmVariables+2)]
-  }
 
-  var.code <- rsm::coded.data(data)
+  if (opt1[1] != "x1")
+    var.code <- rsm::coded.data(data)
+  else
+    var.code <- data
 
   vari <- matrix(unlist(options[["rsmVariables"]]),ncol = 2, byrow = T)[,2]
   len_mo <- length(options[["modelTerms"]])
@@ -575,10 +571,12 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
 
   if (options[["rsmBlocks"]] != "") {
-    if (length(unique(data[,(op1+2)])) > 1){
+    if (length(unique(dat.blocks)) > 1){
       form <- paste(formula_str, collapse = "+")
       form_2 <- paste0(opt2, "~", options[["rsmBlocks"]], "+", form)
       form_3 <- as.formula(form_2)
+      data.blcoks <- as.data.frame(dat.blocks); names(data.blcoks)[1] <- blocks
+      var.code <- cbind(var.code, data.blcoks)
     }
   }else {
     form <- paste(formula_str, collapse = "+")
@@ -953,6 +951,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     RSQTable  <- createJaspTable(title = "Model summary")
     TableContainer[["RSQTable"]] <- RSQTable
 
+    RSQTable$addColumnInfo( name = "S",   title = gettext("S"))
     RSQTable$addColumnInfo( name = "RSQ",   title = gettext("Model R-squared"))
     RSQTable$addColumnInfo( name = "ARSQ",  title = gettext("Adjusted R-squared"))
     RSQTable$addColumnInfo( name = "DF1",   title = gettext("df1"))
@@ -962,6 +961,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
 
 
     RSQTable$setData(list(RSQ    = round(rsm[[8]],3),
+                          S   = round(rsm$sigma,3),
                           ARSQ   = round(rsm[[9]],3),
                           DF1    = rsm[[10]][[2]],
                           DF2    = rsm[[10]][[3]],

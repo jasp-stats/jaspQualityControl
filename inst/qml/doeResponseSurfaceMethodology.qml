@@ -419,7 +419,7 @@ Form
 
 		}
 		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal"]}
-		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["scale", "ordinal"]; singleVariable: true}
+		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["ordinal", "nominal", "scale", "nominalText"]; singleVariable: true}
 	}
 
 

@@ -1,9 +1,17 @@
-﻿StdOrder,RunOrder,CenterPt,Blocks,Rough feed,Air feed,Grinding length,Fine feed,Stock allowance,Cycle time
-1,5,1,1,65,300,10,25,0.3,5.45
-2,2,1,1,75,300,10,20,0.2,4.89
-3,4,1,1,65,400,10,20,0.3,5.64
-4,3,1,1,75,400,10,25,0.2,4.79
-5,7,1,1,65,300,20,25,0.2,5.25
-6,6,1,1,75,300,20,20,0.3,5.69
-7,8,1,1,65,400,20,20,0.2,5.4
-8,1,1,1,75,400,20,25,0.3,5.44
+﻿StdOrder,RunOrder,CenterPt,Blocks,Aperture setting,Exposure time,Develop time,Mask dimension,Etch time,Yield,,
+1,2,1,1,small,below,30,small,15.5,8,,Douglas C. Montgomery
+2,9,1,1,large,below,30,small,14.5,9,,Design and Analysis of Experiments
+3,12,1,1,small,above,30,small,14.5,34,,5th Edition
+4,3,1,1,large,above,30,small,15.5,52,,Page 310
+5,11,1,1,small,below,45,small,14.5,16,,
+6,6,1,1,large,below,45,small,15.5,22,,Example 8-2
+7,13,1,1,small,above,45,small,15.5,45,,Five factors in a maufacturing process for an integrated circuit
+8,16,1,1,large,above,45,small,14.5,60,,were investigated in a 2^(5-1) design with the objective of 
+9,15,1,1,small,below,30,large,14.5,6,,improving the process yield.
+10,10,1,1,large,below,30,large,15.5,10,,E = ABCD
+11,7,1,1,small,above,30,large,15.5,30,,
+12,8,1,1,large,above,30,large,14.5,50,,
+13,4,1,1,small,below,45,large,15.5,15,,
+14,1,1,1,large,below,45,large,14.5,21,,
+15,14,1,1,small,above,45,large,14.5,44,,
+16,5,1,1,large,above,45,large,15.5,63,,
