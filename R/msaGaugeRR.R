@@ -182,7 +182,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   # Report
-  if (options[["anovaGaugeReport"]]) {
+  if (options[["anovaGaugeReport"]] && ready) {
     if (is.null(jaspResults[["anovaGaugeReport"]])) {
       jaspResults[["anovaGaugeReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["anovaGaugeReport"]]$position <- 9
@@ -867,8 +867,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     text2 <- c(reportedBy, misc)
   }
 
-  matrixPlot <- createJaspPlot(title = gettext("Report"), width = 3800, height = 1800)
-  plotMat <- matrix(list(), 4, 2)
+  matrixPlot <- createJaspPlot(title = gettext("Report"), width = 3200, height = 1200)
+  plotMat <- matrix(list(), 5, 2)
   plotMat[[1, 1]] <- .ggplotWithText(text1)
   plotMat[[1, 2]] <- .ggplotWithText(text2)
   plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE, Type3 = Type3)
@@ -878,6 +878,14 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Average", dataset, measurements, parts, operators, options, smallLabels = TRUE, Type3 = Type3)
   plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3)
 
+  valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = TRUE, returnTrafficValues = TRUE, Type3 = Type3)
+  if (options$gaugeToleranceEnabled){
+    plots <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,ToleranceVar = valuesVec$tol, options = options, ready = TRUE, ggPlot = TRUE)
+    plotMat[[5, 1]] <- plots$p1
+    plotMat[[5, 2]] <- plots$p2
+  }
+  else
+    plotMat[[5, 1]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,ToleranceVar = valuesVec$tol, options = options, ready = TRUE, ggPlot = TRUE)
 
   p <- jaspGraphs::ggMatrixPlot(plotMat)
   matrixPlot$plotObject <- p
@@ -1014,7 +1022,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   return(TRUE)
 }
-.trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE,ToleranceVar = "", options, ready, horizontal = FALSE, Xlab.StudySD = "", Xlab.Tol = ""){
+.trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE,ToleranceVar = "", options, ready, horizontal = FALSE, Xlab.StudySD = "", Xlab.Tol = "", ggPlot = FALSE){
 
   if (!ready)
     return()
@@ -1062,7 +1070,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       ggplot2::coord_flip() +
       ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "")
 
-    if (ToleranceUsed == TRUE){
+    if (ToleranceUsed){
       p2 <- p2 +
         ggplot2::theme(legend.position="none",
                        axis.text.x = ggplot2::element_blank(),
@@ -1081,7 +1089,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                      axis.title.y = ggplot2::element_blank()) +
       ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent of Process variation")
 
-    if (ToleranceUsed == TRUE){
+    if (ToleranceUsed){
       p2 <- p2 +
         ggplot2::theme(legend.position="none",
                        axis.text.y = ggplot2::element_blank(),
@@ -1091,11 +1099,20 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
-  if (ToleranceUsed == TRUE){
+  if (ToleranceUsed){
     p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(2:1, ifelse(horizontal, 1,2)))
     Plot$plotObject <- p3
+
+    if (!ggPlot)
+      return(Plot)
+    else
+      return(list(p1 = p1, p2 = p2))
   } else {
     Plot$plotObject <- p1
+
+    if (!ggPlot)
+      return(Plot)
+    else
+      return(p1)
   }
-  return(Plot)
 }
