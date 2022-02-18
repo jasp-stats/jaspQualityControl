@@ -723,47 +723,22 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
 .factorialRegressionANOVAcreateTable <- function(options, ready, fit, saturated){
 
-  factorialRegressionANOVA <- createJaspTable(gettext("Analysis of variance"))
-  factorialRegressionSummaryFit <- createJaspTable(gettext("Model Summary"))
-
-  factorialRegressionANOVA$dependOn(c("FAassignedFactors", "modelTerms","FAresponse", "intOrder", "FArunOrder", "enabledIntOrder"))
-  factorialRegressionSummaryFit$dependOn(c("FAassignedFactors", "modelTerms", "FAresponse", "intOrder", "FArunOrder", "enabledIntOrder"))
-
-  factorialRegressionANOVA$addColumnInfo(name = "terms", title = "", type = "string")
-  factorialRegressionANOVA$addColumnInfo(name = "df", title = gettext("df"), type = "integer")
-  factorialRegressionANOVA$addColumnInfo(name = "SS", title = gettext("SS"), type = "number")
-  factorialRegressionANOVA$addColumnInfo(name = "adjMS", title = gettext("MS"), type = "number")
-  factorialRegressionANOVA$addColumnInfo(name = "F", title = gettext("F"), type = "number")
-  factorialRegressionANOVA$addColumnInfo(name = "p", title = gettext("<i>p</i>-value"), type = "pvalue")
-
-  factorialRegressionSummaryFit$addColumnInfo(name = "S", title = "S", type = "number")
-  factorialRegressionSummaryFit$addColumnInfo(name = "R1", title = "Model R-squared", type = "number")
-  factorialRegressionSummaryFit$addColumnInfo(name = "R2", title = "Adjusted R-squared", type = "number")
-
-
-  tableAnova <- factorialRegressionANOVA
-  tableFit <- factorialRegressionSummaryFit
-
   if(!is.null(fit) && ready) {
-
-    if (!saturated) {
-      .factorialRegressionANOVAfillTable(factorialRegressionANOVA, factorialRegressionSummaryFit, options, fit, saturated)
-
-      tableAnova <- factorialRegressionANOVA
-      tableFit <- factorialRegressionSummaryFit
-    } else {
-      results <- .factorialRegressionANOVAfillTable(factorialRegressionANOVA, factorialRegressionSummaryFit, options, fit, saturated)
-
-      tableAnova <- results$ANOVA
-      tableFit <- results$SummaryFit
-    }
+    results <- .factorialRegressionANOVAfillTable(factorialRegressionANOVA, factorialRegressionSummaryFit, options, fit, saturated)
+    tableAnova <- results$ANOVA
+    tableFit <- results$SummaryFit
+  } else {
+    tableAnova <- createJaspTable(gettext("Analysis of variance"), position = 1)
+    tableFit <- createJaspTable(gettext("Model Summary"), position = 2)
   }
+
   return(list(tableAnova = tableAnova, tableFit = tableFit))
 }
 
 .factorialRegressionANOVAfillTable <- function(factorialRegressionANOVA, factorialRegressionSummaryFit, options, fit, saturated){
 
   facotrsName <- unlist(options$FAassignedFactors)
+  response <- unlist(options$FAresponse)
   n.factors <- length(facotrsName)
   errorIndex <- n.factors + 1
   anova <- summary(aov(fit))
@@ -777,16 +752,43 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   model.F <- model.MS/anova[[1]]$`Mean Sq`[errorIndex]
   model.Pval <- pf(model.F, sum(anova[[1]]$Df[-errorIndex]), anova[[1]]$Df[errorIndex], lower.tail = F)
 
+  # Pure error for replicates
+  fit.names <- names(fit$model)[-1]
+  formula.facotrsName <-  fit.names[1]
+  for (i in 2:length(facotrsName))
+    formula.facotrsName <- gettextf("%s,%s", formula.facotrsName, fit.names[i]) # create RSM model formula
+
+  formula.rsm <- gettextf("%s ~ FO(%s)", names(fit$model)[1], formula.facotrsName)
+  fit.rsm <- rsm::rsm(as.formula(formula.rsm), fit$model) # fit rsm model
+  rsm <- summary(fit.rsm)
+  anova.rsm <- rsm[[13]] # anova table
+
   if (!saturated) {
 
+    df     <- c(sum(anova[[1]]$Df[-errorIndex]),anova[[1]]$Df[-errorIndex], rep(NA, length(null.names)),anova[[1]]$Df[errorIndex],sum(anova[[1]]$Df))
+    SS     <- c(model.SS, anova[[1]]$`Sum Sq`[-errorIndex], rep(NA, length(null.names)), anova[[1]]$`Sum Sq`[errorIndex],sum(anova[[1]]$`Sum Sq`))
+    adjMS  <- c(model.MS, anova[[1]]$`Mean Sq`[-errorIndex], rep(NA, length(null.names)), anova[[1]]$`Mean Sq`[errorIndex],NA)
+    `F`    <- c(model.F, anova[[1]]$`F value`, rep(NA, length(null.names)),NA)
+    p      <- c(model.Pval, anova[[1]]$`Pr(>F)`,rep(NA, length(null.names)), NA)
+
     anovaFill <- data.frame(
-      terms = names,
-      df    = c(sum(anova[[1]]$Df[-errorIndex]),anova[[1]]$Df[-errorIndex], rep(NA, length(null.names)),anova[[1]]$Df[errorIndex],sum(anova[[1]]$Df)),
-      SS    = c(model.SS, anova[[1]]$`Sum Sq`[-errorIndex], rep(NA, length(null.names)), anova[[1]]$`Sum Sq`[errorIndex],sum(anova[[1]]$`Sum Sq`)),
-      adjMS = c(model.MS, anova[[1]]$`Mean Sq`[-errorIndex], rep(NA, length(null.names)), anova[[1]]$`Mean Sq`[errorIndex],NA),
-      `F`   = c(model.F, anova[[1]]$`F value`, rep(NA, length(null.names)),NA),
-      p     = c(model.Pval, anova[[1]]$`Pr(>F)`,rep(NA, length(null.names)), NA)
+      Terms = names,
+      df    = round(df,3),
+      SS    = round(SS,3),
+      adjMS = round(adjMS, 3),
+      `F`   = round(`F`, 3),
+      p     = round(p, 3)
     )
+
+    # If Pure error
+    if (anova.rsm[3,][1] != 0) {
+      LackFit <- t(as.data.frame(c(terms = "Lack of fit",unlist(anova.rsm[3,]))))
+      Pure.Error <-  t(as.data.frame(c(terms = "Pure error",unlist(anova.rsm[4,]))))
+      Total.index <- length(names)
+      colnames(LackFit) <- colnames(anovaFill); colnames(Pure.Error) <- colnames(anovaFill)
+      anovaFill.Total <- anovaFill[Total.index,]
+      anovaFill <- rbind(anovaFill[-Total.index,], LackFit, Pure.Error, anovaFill[Total.index,])
+    }
 
     modelSummaryFill <- data.frame(
       S = summary(fit)$sigma,
@@ -794,9 +796,6 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       R2 = summary(fit)$adj.r.squared
     )
 
-    factorialRegressionANOVA$setData(anovaFill)
-    factorialRegressionSummaryFit$setData(modelSummaryFill)
-    return()
   } else {
     model.SS <- sum(anova[[1]]$`Sum Sq`)
     model.MS <- model.SS / nrow(anova[[1]])
@@ -806,7 +805,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       Terms = names,
       df    = c(sum(anova[[1]]$Df[1:n.factors]), anova[[1]]$Df, 0,sum(anova[[1]]$Df)),
       SS    = c(round(c(model.SS, anova[[1]]$`Sum Sq`), 3), "*", round(sum(anova[[1]]$`Sum Sq`), 3)),
-      MS    =  c(round(c(model.MS, anova[[1]]$`Mean Sq`), 3), "*", "*"),
+      adjMS    =  c(round(c(model.MS, anova[[1]]$`Mean Sq`), 3), "*", "*"),
       `F`   = rep("*", length(names)),
       p     = rep("*", length(names))
     )
@@ -816,6 +815,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       R1 = NA,
       R2 = NA
     )
+  }
 
     factorialRegressionANOVA <- createJaspTable(gettext("Analysis of variance"), position = 1)
     factorialRegressionSummaryFit <- createJaspTable(gettext("Model Summary"), position = 2)
@@ -831,7 +831,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     factorialRegressionSummaryFit$setData(modelSummaryFill)
 
     return(list(ANOVA = factorialRegressionANOVA, SummaryFit = factorialRegressionSummaryFit))
-  }
+
 }
 
 .factorialRegressionCoefficientsCreateTable <- function(options, ready, fit, saturated){
@@ -860,7 +860,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   factorialRegressionCoefficients$addColumnInfo(name = "coef", title = gettext("Coefficient"), type = "number")
   factorialRegressionCoefficients$addColumnInfo(name = "se", title = gettext("Standard Error"), type = "number")
   factorialRegressionCoefficients$addColumnInfo(name = "t", title = gettext("t"), type = "number")
-  factorialRegressionCoefficients$addColumnInfo(name = "p", title = gettext("p"), type = "number")
+  factorialRegressionCoefficients$addColumnInfo(name = "p", title = gettext("<i>p</i>-value"), type = "pvalue")
 
   if(!is.null(fit))
     .factorialRegressionCoefficientsFillTable(factorialRegressionCoefficients, options, fit, saturated)

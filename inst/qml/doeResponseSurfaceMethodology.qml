@@ -181,6 +181,7 @@ Form
 	//			]
 //			}
 		}
+
 		ColumnLayout
 		{
 			spacing:                                0
@@ -381,7 +382,9 @@ Form
 			width:                      		250 * preferencesModel.uiScale
 			visible:							cube.checked && block.checked
 		}
-		
+
+		Group{
+
 		Button
 		{
 			id: 								buildDesign
@@ -396,7 +399,9 @@ Form
 			id:									buildDesignInv	
 			name:								"buildDesignInv"
 			visible:							false
-	}
+		}
+		
+		}
 
 	Section 
 	{

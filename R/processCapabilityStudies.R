@@ -1136,7 +1136,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return(plot)
   }
 
-  FactorialFit <- !is.null(fit)
+  FactorialFit <- fit != ""
 
   # Arrange data
   if (FactorialFit){
@@ -1157,13 +1157,20 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Method for rank
   Rank_funs <- matrix(list(.qcPpMedian, .qcPpMean, .qcPpKmModif, .qcPpKm), ncol = 1,
                       dimnames = list(c("Bernard", "Herd-Johnson", "Hazen", 'Kaplan-Meier'), c("p")), byrow = TRUE)
-  rankByUser <- if (FactorialFit) "Bernard" else options[["rank"]]
+  if (FactorialFit)
+    rankByUser <- "Bernard"
+  else
+    rankByUser <- options[["rank"]]
   p <- Rank_funs[[rankByUser, 'p']](x)
 
   # Functions for computing y
   y_funs <- matrix(list(qnorm,qnorm,.qcWeibull), ncol = 1,
                    dimnames = list(c('Normal', 'Lognormal', 'Weibull'), c('y')), byrow = TRUE)
-  DisByUser <- if (FactorialFit) "Normal" else options[["rank"]]
+  if (FactorialFit)
+    DisByUser <- "Normal"
+  else
+    DisByUser <- options[["nullDistribution"]]
+
   y <- y_funs[[DisByUser, 'y']](p)
 
   # Quantities
