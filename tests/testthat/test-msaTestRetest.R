@@ -12,7 +12,6 @@ options$rangeRr <- TRUE
 options$rangeScatterPlotOperatorParts <- TRUE
 options$rangeScatterPlotOperators <- TRUE
 options$rangeScatterPlotFitLine <- TRUE
-options$jitter <- TRUE
 options$rangeRchart <- TRUE
 options$trafficPlot <- TRUE
 

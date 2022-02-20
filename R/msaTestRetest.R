@@ -42,19 +42,19 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
   }
 
-  if (ready && nrow(dataset[measurements]) == 0){
-    jaspResults[["plot"]] <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-    jaspResults[["plot"]]$setError(gettextf("No valid measurements in %s.", measurements))
-    jaspResults[["plot"]]$position <- 1
-    jaspResults[["plot"]]$dependOn(c("measurements", "measurementsLong"))
-    return()
-  }
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             all.target = c(measurements, options$operators, options$parts),
+             exitAnalysisIfErrors = TRUE)
 
   if (!wideFormat && ready){
-    wideData <- tidyr::spread(dataset, operators, measurements)
-    measurements <- colnames(wideData)
-    measurements <- measurements[measurements != parts]
-    dataset <- wideData
+    dataset <- dataset[order(dataset[[operators]]),]
+    dataset <- dataset[order(dataset[[parts]]),]
+    nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
+    index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
+    dataset <- cbind(dataset, data.frame(index = index))
+    dataset <- tidyr::spread(dataset, index, measurements)
+    measurements <- unique(index)
+    dataset <- dataset[,c(operators, parts, measurements)]
   }
 
   # Range Method

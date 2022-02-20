@@ -92,15 +92,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                  return("This dataset seems to have only a single unique operator. Please use the Type 3 study by checking the box below.")},
              exitAnalysisIfErrors = TRUE)
   # Checking whether the format wide is used correctly
-  .hasErrors(dataset,
+  if (ready)
+    .hasErrors(dataset,
              target = measurements,
              custom = function() {
                dataToBeChecked <- dataset[dataset[[operators]] == dataset[[operators]][1],]
                partsLevels <- length(levels(dataToBeChecked[[parts]]))
                partsLength <- length(dataToBeChecked[[parts]])
-               if (wideFormat &&  partsLevels != partsLength)
+               if (wideFormat &&  partsLevels != partsLength && !Type3)
                  return(gettextf("The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times.", partsLength/partsLevels))},
-             exitAnalysisIfErrors = TRUE)
+             exitAnalysisIfErrors = FALSE)
 
   # Gauge r&R ANOVA Table
   if (options[["gaugeANOVA"]]) {
@@ -639,7 +640,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeByPartGraph <- function(dataset, measurements, parts, operators, options) {
   plot <- createJaspPlot(title = gettext("Measurements by Part"), width = 700, height = 300)
-  plot$dependOn('gaugeByPart')
+  plot$dependOn(c('gaugeByPart', "gaugeRRmethod"))
   p <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = options$gaugeByPartAll)
   plot$plotObject <- p
   options$gaugeByPartAll
@@ -677,7 +678,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(plot)
 }
 
-.gaugeByOperatorGraphPlotObject <- function(dataset, measurements, parts, operators, options, Type3){
+.gaugeByOperatorGraphPlotObject <- function(dataset, measurements, parts, operators, options, Type3 = FALSE){
   dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
   yBreaks <- dataset["Measurement"]
   yLimits <- range(yBreaks)
@@ -696,21 +697,26 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeByInteractionGraph <- function(dataset, measurements, parts, operators, options, ready, Type3 = FALSE) {
 
-  plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
-  plot$dependOn(c("gaugeByInteraction", "gaugeRRmethod"))
-
   if (ready) {
-    plot$plotObject <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3)
+    plot <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3)
+  } else {
+    plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
+    plot$dependOn(c("gaugeByInteraction", "gaugeRRmethod"))
   }
   return(plot)
 }
 
 .gaugeByInteractionGraphPlotFunction <- function(dataset, measurements, parts, operators, options, Type3 = FALSE) {
+
+  plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
+  plot$dependOn(c("gaugeByInteraction", "gaugeRRmethod"))
+
   byOperator <- split.data.frame(dataset, dataset[operators])
   partNames <- unique(dataset[[parts]])
 
   for (name in names(byOperator)) {
     if (nrow(byOperator[[name]][measurements]) != length(partNames)) {
+      plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
       plot$setError(gettext("Operators measured different number of parts."))
       return(plot)
     }
@@ -730,7 +736,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   if (!Type3)
     p <- p + ggplot2::theme(legend.position = 'right')
 
-  return(p)
+  plot$plotObject <- p
+
+  return(plot)
 }
 
 .gaugeScatterPlotOperators <- function(jaspResults, dataset, measurements, parts, operators, options, ready) {

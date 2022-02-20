@@ -217,9 +217,9 @@
     x = max(xLimits) * 0.95,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
+      gettextf("CL = %g", round(center, decimalplaces(sixsigma$data[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(sixsigma$data[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(sixsigma$data[1,1]) + 2))
     )
   )
 

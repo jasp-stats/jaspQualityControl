@@ -119,7 +119,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
 
   # Report
-  if (options[["anovaGaugeNestedReport"]]) {
+  if (options[["anovaGaugeNestedReport"]] && ready) {
     if (is.null(jaspResults[["anovaGaugeNestedReport"]])) {
       jaspResults[["anovaGaugeNestedReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["anovaGaugeNestedReport"]]$position <- 6
