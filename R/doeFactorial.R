@@ -18,14 +18,14 @@
 doeFactorial <- function(jaspResults, dataset, options, ...){
 
   ################### Design ###################
-  designContainer <- createJaspContainer("Design", position = 1)
+ # designContainer <- createJaspContainer("Design", position = 1)
 
-  designContainer[["ShowAvailableDesigns"]] <- .doeFactorialShowAvailableDesigns(options, jaspResults)
-  designContainer[["SummarySelectedDesign"]] <- .doeFactorialSummarySelectedDesign(options, jaspResults)
-  designContainer[["ShowSelectedDesign"]] <- .doeFactorialShowSelectedDesign(options, jaspResults)$table
-  designContainer[["aliasStructure"]] <- .doeFactorialShowSelectedDesign(options, jaspResults)$aliasStructure
+ # designContainer[["ShowAvailableDesigns"]] <- .doeFactorialShowAvailableDesigns(options, jaspResults)
+#  designContainer[["SummarySelectedDesign"]] <- .doeFactorialSummarySelectedDesign(options, jaspResults)
+ # designContainer[["ShowSelectedDesign"]] <- .doeFactorialShowSelectedDesign(options, jaspResults)$table
+  #designContainer[["aliasStructure"]] <- .doeFactorialShowSelectedDesign(options, jaspResults)$aliasStructure
 
-  jaspResults[["Design"]] <- designContainer
+  #jaspResults[["Design"]] <- designContainer
 
   ################### Analysis ###################
   factorVariables <- unlist(options$FAassignedFactors)
@@ -523,7 +523,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   }
 }
 
-.doeFactorialShowAliasStructure <- function(options, jaspResults, factorialDesign, onlyTable = FALSE){
+.doeFactorialShowAliasStructure <- function(options, jaspResults, factorialDesign, position, onlyTable = FALSE){
 
   if(!options[["showAliasStructure"]]){
     jaspResults[["showAliasStructure"]] <- NULL
@@ -531,7 +531,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   }
 
   if(is.null(jaspResults[["showAliasStructure"]])){
-    table <- createJaspTable(gettext("Alias Structure"))
+    table <- createJaspTable(gettext("Alias Structure"), position = position)
     table$dependOn(options = c("numberOfFactors",
                                "factorialRuns",
                                "factorialResolution"))
@@ -740,17 +740,25 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   facotrsName <- unlist(options$FAassignedFactors)
   response <- unlist(options$FAresponse)
   n.factors <- length(facotrsName)
-  errorIndex <- n.factors + 1
-  anova <- summary(aov(fit))
+
+  if (!saturated) {
+    anova <- car::Anova(fit)
+    anova$`Mean Sq` <- anova$`Sum Sq`/anova$Df
+  } else {
+    anova <- summary(aov(fit))
+    anova <- anova[[1]]
+  }
 
   names.64 <- names(coef(fit))
   null.names <- names(fit$coefficients)[is.na(fit$coefficients)]
-  names <- c("Model", gsub(" ", "", row.names(anova[[1]])[-length(row.names(anova[[1]]))], fixed = TRUE), null.names,"Error", "Total")
+  names <- c("Model", gsub(" ", "", row.names(anova)[-length(row.names(anova))], fixed = TRUE), null.names,"Error", "Total")
+  anovaNames <- gsub(" ", "", row.names(anova))
+  errorIndex <- which(anovaNames == "Residuals")
 
-  model.SS <- sum(anova[[1]]$`Sum Sq`[-errorIndex])
-  model.MS <- sum(anova[[1]]$`Sum Sq`[-errorIndex]) / sum(anova[[1]]$Df[-errorIndex])
-  model.F <- model.MS/anova[[1]]$`Mean Sq`[errorIndex]
-  model.Pval <- pf(model.F, sum(anova[[1]]$Df[-errorIndex]), anova[[1]]$Df[errorIndex], lower.tail = F)
+  model.SS <- sum(anova$`Sum Sq`[-errorIndex])
+  model.MS <- sum(anova$`Sum Sq`[-errorIndex]) / sum(anova$Df[-errorIndex])
+  model.F <- model.MS/anova$`Mean Sq`[errorIndex]
+  model.Pval <- pf(model.F, sum(anova$Df[-errorIndex]), anova$Df[errorIndex], lower.tail = F)
 
   # Pure error for replicates
   fit.names <- names(fit$model)[-1]
@@ -765,11 +773,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
   if (!saturated) {
 
-    df     <- c(sum(anova[[1]]$Df[-errorIndex]),anova[[1]]$Df[-errorIndex], rep(NA, length(null.names)),anova[[1]]$Df[errorIndex],sum(anova[[1]]$Df))
-    SS     <- c(model.SS, anova[[1]]$`Sum Sq`[-errorIndex], rep(NA, length(null.names)), anova[[1]]$`Sum Sq`[errorIndex],sum(anova[[1]]$`Sum Sq`))
-    adjMS  <- c(model.MS, anova[[1]]$`Mean Sq`[-errorIndex], rep(NA, length(null.names)), anova[[1]]$`Mean Sq`[errorIndex],NA)
-    `F`    <- c(model.F, anova[[1]]$`F value`, rep(NA, length(null.names)),NA)
-    p      <- c(model.Pval, anova[[1]]$`Pr(>F)`,rep(NA, length(null.names)), NA)
+    df     <- c(sum(anova$Df[-errorIndex]),anova$Df[-errorIndex], rep(NA, length(null.names)),anova$Df[errorIndex],sum(anova$Df))
+    SS     <- c(model.SS, anova$`Sum Sq`[-errorIndex], rep(NA, length(null.names)), anova$`Sum Sq`[errorIndex],sum(anova$`Sum Sq`))
+    adjMS  <- c(model.MS, anova$`Mean Sq`[-errorIndex], rep(NA, length(null.names)), anova$`Mean Sq`[errorIndex],NA)
+    `F`    <- c(model.F, anova$`F value`, rep(NA, length(null.names)),NA)
+    p      <- c(model.Pval, anova$`Pr(>F)`,rep(NA, length(null.names)), NA)
 
     anovaFill <- data.frame(
       Terms = names,
@@ -781,7 +789,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     )
 
     # If Pure error
-    if (anova.rsm[3,][1] != 0) {
+    if (anova.rsm[3,][1] != 0 && anova.rsm[4,][1] != 0) {
       LackFit <- t(as.data.frame(c(terms = "Lack of fit",unlist(anova.rsm[3,]))))
       Pure.Error <-  t(as.data.frame(c(terms = "Pure error",unlist(anova.rsm[4,]))))
       Total.index <- length(names)
@@ -797,15 +805,15 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     )
 
   } else {
-    model.SS <- sum(anova[[1]]$`Sum Sq`)
-    model.MS <- model.SS / nrow(anova[[1]])
+    model.SS <- sum(anova$`Sum Sq`)
+    model.MS <- model.SS / nrow(anova)
     names <- c("Model", names(coef(fit))[!is.na(coef(fit))][-1], "Error", "Total")
 
     anovaFill <- data.frame(
       Terms = names,
-      df    = c(sum(anova[[1]]$Df[1:n.factors]), anova[[1]]$Df, 0,sum(anova[[1]]$Df)),
-      SS    = c(round(c(model.SS, anova[[1]]$`Sum Sq`), 3), "*", round(sum(anova[[1]]$`Sum Sq`), 3)),
-      adjMS    =  c(round(c(model.MS, anova[[1]]$`Mean Sq`), 3), "*", "*"),
+      df    = c(sum(anova$Df[1:n.factors]), anova$Df, 0,sum(anova$Df)),
+      SS    = c(round(c(model.SS, anova$`Sum Sq`), 3), "*", round(sum(anova$`Sum Sq`), 3)),
+      adjMS    =  c(round(c(model.MS, anova$`Mean Sq`), 3), "*", "*"),
       `F`   = rep("*", length(names)),
       p     = rep("*", length(names))
     )
@@ -906,7 +914,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
   if (!ready)
     return()
-  else if (options$showAliasStructure) {
+  else if (options$showAliasStructure2) {
 
     aliasContainter <- createJaspContainer(gettext("Alias Structure"), position = 5)
     aliasContainter$dependOn(c("FAassignedFactors", "modelTerms","FAresponse", "intOrder", "FArunOrder", "showAliasStructure", "enabledIntOrder"))
@@ -924,15 +932,6 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     ))
 
     aliasContainter[["factorialAliasIndex"]] <- factorialAliasIndex
-
-    if (any(max(dataset[, unlist(options$FArunOrder)]) != 2^(1:100))) {
-      errorTable <- createJaspTable(gettext("Alias Structure Error"))
-      errorTable$dependOn(c("FAassignedFactors", "modelTerms","FAresponse", "intOrder", "FArunOrder", "showAliasStructure", "enabledIntOrder"))
-      errorTable$setError(gettext("The number of runs must be a power of 2."))
-
-      jaspResults[["aliasStructure"]] <- errorTable
-      return()
-    }
 
     aliasContainter[["factorialStructure"]] <- .doeFactorialShowAliasStructure(options = options, jaspResults = jaspResults,
                                                                                factorialDesign = FrF2::FrF2(nruns = max(dataset[, unlist(options$FArunOrder)]),
