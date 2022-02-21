@@ -476,8 +476,8 @@ Form
 	CheckBox 
 	{
 		name:                                   "enabledIntOrder"
+		id :                                    "enabledIntOrder"
 		childrenOnSameRow: true
-		checked: true
 
 		IntegerField
 		{
@@ -489,7 +489,7 @@ Form
 		}
 	}
 
-	Section
+	Group
 	{
 		title: qsTr("Model")
 		
@@ -497,7 +497,8 @@ Form
 		{
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
 			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["FAassignedFactors"]}
-			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction }
+			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction;
+			enabled: !enabledIntOrder.checked }
 		}
 
 	}
@@ -562,7 +563,26 @@ Group
 		CheckBox
 		{
 			name:                               "resOrder"
-			label:                              qsTr("Residuals vs run order")
+			label:                              qsTr("Residuals vs run/standard order")
+
+			RadioButtonGroup
+			{
+				name:                                   "runOrderPlot"
+
+				RadioButton
+				{
+					name:                               "runOrderRandomPlot"
+					label:                              qsTr("Run")
+					checked:                            true
+				}
+
+				RadioButton
+				{
+					name:                              "runOrderStandardPlot"
+					label:                              qsTr("Standard")				
+			}
+
+	}
 		}
 
 	    CheckBox

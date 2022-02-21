@@ -525,7 +525,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
 .doeFactorialShowAliasStructure <- function(options, jaspResults, factorialDesign, position, onlyTable = FALSE){
 
-  if(!options[["showAliasStructure"]]){
+  if(!options[["showAliasStructure"]] || !options[["showAliasStructure2"]]){
     jaspResults[["showAliasStructure"]] <- NULL
     return()
   }
@@ -669,7 +669,12 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   plot$dependOn("resOrder")
 
   runOrder <- unlist(dataset[,options[["FArunOrder"]]], use.names = FALSE)
+
   df <- data.frame(runOrder = runOrder, x = 1:length(runOrder),y = resid(fit))
+
+  if (options$runOrderPlot == "runOrderStandardPlot") {
+    df <- df[order(runOrder),]; df$x <- df$runOrder <- 1:nrow(df)
+  }
 
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(df$y)
   xBreaks <- df$x
