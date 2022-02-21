@@ -18,14 +18,14 @@
 doeFactorial <- function(jaspResults, dataset, options, ...){
 
   ################### Design ###################
- # designContainer <- createJaspContainer("Design", position = 1)
+  designContainer <- createJaspContainer("Design", position = 1)
 
- # designContainer[["ShowAvailableDesigns"]] <- .doeFactorialShowAvailableDesigns(options, jaspResults)
-#  designContainer[["SummarySelectedDesign"]] <- .doeFactorialSummarySelectedDesign(options, jaspResults)
- # designContainer[["ShowSelectedDesign"]] <- .doeFactorialShowSelectedDesign(options, jaspResults)$table
-  #designContainer[["aliasStructure"]] <- .doeFactorialShowSelectedDesign(options, jaspResults)$aliasStructure
+  designContainer[["ShowAvailableDesigns"]] <- .doeFactorialShowAvailableDesigns(options, jaspResults)
+  designContainer[["SummarySelectedDesign"]] <- .doeFactorialSummarySelectedDesign(options, jaspResults)
+  designContainer[["ShowSelectedDesign"]] <- .doeFactorialShowSelectedDesign(options, jaspResults)$table
+  designContainer[["aliasStructure"]] <- .doeFactorialShowSelectedDesign(options, jaspResults)$aliasStructure
 
-  #jaspResults[["Design"]] <- designContainer
+  jaspResults[["Design"]] <- designContainer
 
   ################### Analysis ###################
   factorVariables <- unlist(options$FAassignedFactors)
@@ -59,9 +59,6 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     analysisContainer[["tableFormula"]] <- .factorialRegressionCoefficientsCreateTable(options, ready, fit, saturated)$tableFormula
   }
 
-  if(is.null(jaspResults[["showAliasStructure"]]))
-    .factorialShowAliasStructure(jaspResults, options, dataset, ready, fit)
-
   if (ready) {
 
     # Create error plot for saturated designs
@@ -70,6 +67,15 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       errorPlot$setError(gettext("This plot is unavailable for saturated designs."))
       errorPlot$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder"))
     }
+
+    if(options[["showAliasStructure2"]]) {
+      # Error plot for saturated designs
+      if (saturated)
+        analysisContainer[["showAliasStructure2"]] <- errorPlot
+      else
+        analysisContainer[["showAliasStructure2"]] <- .factorialShowAliasStructure(jaspResults, options, dataset, fit)
+    }
+
 
     # Normal Plot of Standardized Effects
     if (is.null(jaspResults[["NormalPlot"]]) && options[["NormalPlot"]]) {
@@ -523,15 +529,15 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   }
 }
 
-.doeFactorialShowAliasStructure <- function(options, jaspResults, factorialDesign, position, onlyTable = FALSE){
+.doeFactorialShowAliasStructure <- function(options, jaspResults, factorialDesign, onlyTable = FALSE){
 
-  if(!options[["showAliasStructure"]] || !options[["showAliasStructure2"]]){
+  if(!options[["showAliasStructure"]]){
     jaspResults[["showAliasStructure"]] <- NULL
     return()
   }
 
   if(is.null(jaspResults[["showAliasStructure"]])){
-    table <- createJaspTable(gettext("Alias Structure"), position = position)
+    table <- createJaspTable(gettext("Alias Structure"))
     table$dependOn(options = c("numberOfFactors",
                                "factorialRuns",
                                "factorialResolution"))
@@ -562,6 +568,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
         .readDataSetToEnd(columns.as.numeric = c(options[["FAresponse"]],
                                                  options[["FAassignedFactors"]]))
       }
+
+    # Error check
+    .hasErrors(dataset, type = c('infinity', 'missingValues'),
+               all.target = c(options[["FAresponse"]], options[["FArunOrder"]], options[["FAassignedFactors"]]),
+               exitAnalysisIfErrors = TRUE)
     return(dataset)
   }
 
@@ -673,7 +684,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   df <- data.frame(runOrder = runOrder, x = 1:length(runOrder),y = resid(fit))
 
   if (options$runOrderPlot == "runOrderStandardPlot") {
-    df <- df[order(runOrder),]; df$x <- df$runOrder <- 1:nrow(df)
+    df <- df[order(runOrder),]
+    df$x <- df$runOrder <- 1:nrow(df)
   }
 
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(df$y)
@@ -915,37 +927,38 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   return()
 }
 
-.factorialShowAliasStructure <- function(jaspResults, options, dataset, ready, fit){
+.factorialShowAliasStructure <- function(jaspResults, options, dataset, fit){
 
-  if (!ready)
-    return()
-  else if (options$showAliasStructure2) {
-
-    aliasContainter <- createJaspContainer(gettext("Alias Structure"), position = 5)
-    aliasContainter$dependOn(c("FAassignedFactors", "modelTerms","FAresponse", "intOrder", "FArunOrder", "showAliasStructure", "enabledIntOrder"))
+    aliasContainter <- createJaspContainer(gettext("Alias Structure"))
+    aliasContainter$dependOn(c("FAassignedFactors", "modelTerms","FAresponse", "intOrder", "FArunOrder", "showAliasStructure2", "enabledIntOrder"))
 
     factorialAliasIndex <- createJaspTable(gettext("Index"))
     factorialAliasIndex$addColumnInfo(name = "Factor", title = gettext("Factor"), type = "string")
     factorialAliasIndex$addColumnInfo(name = "Name", title = gettext("Name"), type = "string")
 
 
+    # Index
     Name = names(coef(fit))[-1]
 
     factorialAliasIndex$setData(list(
       Factor = LETTERS[1:length(Name)],
       Name = Name
     ))
-
     aliasContainter[["factorialAliasIndex"]] <- factorialAliasIndex
 
-    aliasContainter[["factorialStructure"]] <- .doeFactorialShowAliasStructure(options = options, jaspResults = jaspResults,
-                                                                               factorialDesign = FrF2::FrF2(nruns = max(dataset[, unlist(options$FArunOrder)]),
-                                                                                                            nfactors = length(unlist(options$FAassignedFactors))),
-                                                                               position = 6,
-                                                                               onlyTable = TRUE)
+    # Structure
+    table <- createJaspTable(gettext("Alias Structure"))
+    table$dependOn(c("FAassignedFactors", "modelTerms","FAresponse", "intOrder", "FArunOrder", "showAliasStructure", "enabledIntOrder"))
 
-    jaspResults[["aliasStructure"]] <- aliasContainter
-  }
+    factorialDesign = FrF2::FrF2(nruns = max(dataset[, unlist(options$FArunOrder)]),
+                                 nfactors = length(unlist(options$FAassignedFactors)))
+    rows <- data.frame(Aliases = c(FrF2::aliasprint(factorialDesign)$main, FrF2::aliasprint(factorialDesign)$fi2))
+
+    table$setData(rows)
+
+    aliasContainter[["factorialAliasStructure"]] <- table
+
+    return(aliasContainter)
 }
 
 .modelFormula <- function(modelTerms, options) {

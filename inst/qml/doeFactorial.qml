@@ -453,7 +453,7 @@ Form
 		{
 			name:                               "FAassignedFactors"
             allowedColumns:                     ["ordinal", "nominal", "scale"]
-			label:                              qsTr("Coded assigned factors")
+			label:                              qsTr("Assigned factors")
 		}
 
 		AssignedVariablesList
