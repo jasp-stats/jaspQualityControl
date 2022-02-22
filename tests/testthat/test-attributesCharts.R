@@ -45,6 +45,7 @@ test_that("Laney p' Chart plot matches", {
 
 ## Defects
 # C
+options$TypeDefectives <- "npchart"
 options$Attributes <- "Defects"
 options$TypeDefects <- "cchart"
 results <- runAnalysis("attributesCharts", "SPC_NP.csv", options)

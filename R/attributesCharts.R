@@ -1,5 +1,21 @@
+#
+# Copyright (C) 2013-2018 University of Amsterdam
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 attributesCharts <- function(jaspResults, dataset, options) {
-
+  # reading variables in from the GUI
   total <- options$total
   D <- options$D
   numeric_variables <- c(total, D)
@@ -11,11 +27,19 @@ attributesCharts <- function(jaspResults, dataset, options) {
   ready <- options$D != "" && options$total != ""
 
   #Checking for errors in the dataset
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+  .hasErrors(dataset, type = c('infinity', 'missingValues', 'negativeValues'),
              all.target = c(options$D,options$total),
              exitAnalysisIfErrors = TRUE)
 
-  if ((options$Attributes == "Defectives" | options$Attributes == "Defects" | options$Attributes == "ImR") && !ready) {
+  if (options$TypeDefectives == "pchart" || options$TypeDefectives == "Laneyprimechart" || options$TypeDefects == "uchart" || options$TypeDefects == "Laneychart")
+    .hasErrors(dataset,
+               custom = function() {
+                 if (any(dataset[,D] > dataset[,total]))
+                   return(gettext("The number of Defectives/Defects is larger than the sample  size."))},
+               exitAnalysisIfErrors = TRUE)
+
+
+  if ((options$Attributes == "Defectives" || options$Attributes == "Defects" || options$Attributes == "ImR") && !ready) {
     plot <- createJaspPlot(title = gettext("Attributes Control Charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
     plot$dependOn(c("Attributes", "D", "total"))
@@ -33,8 +57,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
       jaspResults[["PchartPlot"]]$position <- 1
       Pchart <- .Pchart(dataset = dataset, options = options)
       jaspResults[["PchartPlot"]]$plotObject <- Pchart$p
-
-
 
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTable"]])) {
@@ -145,7 +167,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspResults[["AReport"]]$dependOn(c("AReport", "ATitle", "AName", "AOperator", "AID", "AMisc", "AAppraiser", "AMeasurement", "ASize", "ATime", "AFrequency",
                                         "D", "total", "Attributes", "TypeDefects", "TypeDefectives"))
     Report <- jaspResults[["AReport"]]
-
     Report[["Report"]] <- .AReport(ccTitle = options$ATitle, ccName = options$AName,
                                  ccOperator = options$AOperator, ccID = options$AID, ccMisc = options$AMisc, ccAppraiser = options$AAppraiser,
                                  ccMeasurement = options$AMeasurement, ccSize = options$ASize, ccTime = options$ATime, ccFrequency = options$AFrequency)
@@ -234,7 +255,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
       ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, color = "red"), size = 1.5, linetype = "F1") +
       ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], color = "red"), size = 1.5)+
       ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = LCL[n], color = "red"), size = 1.5)
-
   }
 
   return(list(p = p, sixsigma = sixsigma))
@@ -630,7 +650,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
   Report <- createJaspContainer("Report")
 
   if (ccTitle == ""){
-    title <- "Measurement"
+    title <- "Control Charts for Attributes Report"
   }else{
     title <- ccTitle
   }
@@ -656,7 +676,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
   plotMat[[2, 1]] <- .ggplotWithText(text3)
   plotMat[[2, 2]] <- .ggplotWithText(text4)
 
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Control Charts Report for %s", title), ""))
+  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = title)
   matrixPlot$plotObject <- p
 
   return(matrixPlot)

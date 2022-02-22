@@ -26,9 +26,6 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = measurements, exclude.na.listwise = measurements)
   }
 
-
-  .msaCheckErrors(dataset, options)
-
   # Bias Run Chart
   if (options[["biasRun"]]) {
     if (is.null(jaspResults[["biasRun"]])) {
@@ -288,12 +285,3 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
 }
 
-.msaCheckErrors <- function(dataset, options) {
-
-  #if (options[["gaugeScatterPlotOperators"]]) {
-  #  .hasErrors(dataset = dataset, type = "factorLevels",
-  #             factorLevels.target  = options$operators, factorLevels.amount  = "> 2",
-  #             exitAnalysisIfErrors = TRUE)
-  #}
-
-}

@@ -9,11 +9,11 @@
     return()
 
   container <- createJaspContainer(title = gettext("Control Chart"))
-  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize"))
+  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "manualTicks", 'nTicks', "xbarR", "IMR"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
 
-  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 1200, height = 550)
+  matrixPlot <- createJaspPlot(title = "X-bar & R control chart", width = 1200, height = 550)
   container[["plot"]] <- matrixPlot
 
   if (!ready)
@@ -25,8 +25,8 @@
     }
 
   plotMat <- matrix(list(), 2, 1)
-  plotMat[[1,1]] <- .XbarchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Wide = wideFormat)$p
-  plotMat[[2,1]] <- .RchartNoId(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Wide = wideFormat)$p
+  plotMat[[1,1]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
+  plotMat[[2,1]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
   matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
 }
 
@@ -45,14 +45,19 @@
 }
 
 # Function to create X-bar chart
-.XbarchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Sample average", xAxisLab = "Subgroup",
-                           manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE) {
+.Xbarchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Sample average", xAxisLab = "Subgroup",
+                           manualDataYaxis = "", manualXaxis = "", manualTicks = FALSE, title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   if(Phase2)
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
   else
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE)
-  subgroups = c(1:length(sixsigma$statistics))
+
+  if (manualSubgroups != ""){
+    subgroups <- manualSubgroups
+  }else{
+    subgroups = c(1:length(sixsigma$statistics))
+  }
   means = sixsigma$statistics
   data_plot <- data.frame(subgroups = subgroups, means = means)
   sd1 <- sixsigma$std.dev
@@ -72,14 +77,11 @@
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, means))
   }
   yLimits <- range(yBreaks)
-  if (length(subgroups) <= 10){
-    nxBreaks <- length(subgroups)
-  }else{
+  if (manualTicks)
+    nxBreaks <- options$nTicks
+  else
     nxBreaks <- 5
-  }
-  prettyxBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)
-  prettyxBreaks[prettyxBreaks == 0] <- 1
-  xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
   xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
@@ -107,16 +109,20 @@
   }
 
   if(smallLabels){
-    labelSize <- 2
+    labelSize <- 3.5
+    lineSize <- 0.5
+    pointsSize <- 3
   }else{
-    labelSize <- 4
+    labelSize <- 4.5
+    lineSize <- 1
+    pointsSize <- 4
   }
 
   if (plotLimitLabels)
-    p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5)
+    p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = labelSize)
 
   p <- p + ggplot2::scale_x_continuous(name = gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_line(color = "blue", size = lineSize) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
 
@@ -127,26 +133,20 @@
   }
 
   if (Phase2)
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
   else if (OnlyOutofLimit)
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "blue"))
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "blue"))
   else
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
 
   if (manualXaxis != "") {
     if (GaugeRR | Wide){
       xBreaks_Out <- manualXaxis
-      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(xBreaks_Out), labels = xBreaks_Out)
+      p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xBreaks_Out[xBreaks])
     }
     else{
-      xBreaks <- 1:nrow(data)
-      xLabels <- xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
-
-      if (length(xBreaks) > 20){
-        xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(xBreaks)[-1])
-        xLabels <- xLabels[xBreaks]
-      }
-
+      xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
+      xLabels <- xBreaks_Out[xBreaks]
       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
       dfLabel <- data.frame(
         x = max(xLimits) * 0.95,
@@ -172,8 +172,9 @@
 }
 
 # Function to create R chart
-.RchartNoId <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = "",
-                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE) {
+.Rchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,  plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = "",
+                        yAxisLab = "Sample range", xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE,
+                        manualTicks = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
@@ -206,22 +207,19 @@
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL - (0.10 * abs(LCL)), range, UCL + (0.1 * UCL)), min.n = 4)
   }
   yLimits <- range(yBreaks)
-  if (length(subgroups) <= 15){
-    nxBreaks <- length(subgroups)
-  }else{
+  if (manualTicks)
+    nxBreaks <- options$nTicks
+  else
     nxBreaks <- 5
-  }
-  prettyxBreaks <- jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)
-  prettyxBreaks[prettyxBreaks == 0] <- 1
-  xBreaks <- c(prettyxBreaks[1], prettyxBreaks[-1])
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
+      gettextf("CL = %g", round(center, decimalplaces(sixsigma$data[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(sixsigma$data[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(sixsigma$data[1,1]) + 2))
     )
   )
 
@@ -242,31 +240,30 @@
   }
 
   if(smallLabels){
-    labelSize <- 2
+    labelSize <- 3.5
+    lineSize <- 0.5
+    pointsSize <- 3
   }else{
-    labelSize <- 4
+    labelSize <- 4.5
+    lineSize <- 1
+    pointsSize <- 4
   }
   if (plotLimitLabels)
-    p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = 4.5)
+    p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = labelSize)
 
   p <- p + ggplot2::scale_x_continuous(name= gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_line(color = "blue", size = lineSize) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
 
   if (manualXaxis != "") {
     if (GaugeRR | Wide){
       xBreaks_Out <- manualXaxis
-      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = 1:length(xBreaks_Out), labels = xBreaks_Out)
+      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xBreaks_Out[xBreaks])
     }
     else{
-      xBreaks <- 1:nrow(data)
-      xLabels <- xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
-
-      if (length(xBreaks) > 20){
-        xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(xBreaks)[-1])
-        xLabels <- xLabels[xBreaks]
-      }
+      xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
+      xLabels <- xBreaks_Out[xBreaks]
 
       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
       dfLabel <- data.frame(
@@ -284,9 +281,9 @@
   }
 
  if (OnlyOutofLimit)
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, "red", "blue"))
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, "red", "blue"))
   else
-    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
 
   if (title != "")
     p <- p + ggplot2::ggtitle(title)

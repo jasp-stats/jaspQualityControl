@@ -22,104 +22,13 @@ Form
 {
 	columns:									2
 
-	VariablesForm
+
+
+	GroupBox
 	{
-		AvailableVariablesList { name: "rsmVariablesList" }
-		AssignedVariablesList
-		{
-			name: "rsmVariables"
-			title: qsTr("Predictors [Location in coded format]")
-			suggestedColumns:   ["scale", "ordinal"]
-
-			rowComponent: Row
-			{
-				DoubleField {name: "Point_P"; negativeValues: true}
-			}
-
-
-		}
-		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal"]}
-		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["scale", "ordinal"]; singleVariable: true}
-	}
-
-
-	VariablesForm
-	{
-		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-		AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
-		ModelTermsList
-		{
-
-			listViewType			: JASP.Interaction
-			rowComponentTitle		: qsTr("Term Type")
-			rowComponent			: DropDown
-			{
-				name: "TermType"
-				label: ""
-				values: [
-					{ label: qsTr("FO + PQ"), value: "fopq"},
-					{ label: qsTr(""), value: "nothing"},
-					{ label: qsTr("FO"), value: "fo"},
-					
-					
-				]
-			}
-		}
-	}
-	
-	Group 
-	{
-		title: qsTr("Response Surface Summaries")
-		columns: 3
-		
-		CheckBox 
-		{
-			name:                       "coef"; label:                  qsTr("Coefficient Table")
-			
-		}
-		
-		
-		CheckBox
-		{
-			name:                       "anova";label:                  qsTr("ANOVA Table")
-		}
-		
-		
-		
-		CheckBox
-		{
-			name:                       "res";  label:                  qsTr("Residual Histogram")
-		}
-		
-		CheckBox
-		{
-			name:                       "resNorm";label:                 qsTr("Normal Residual Plot")
-		}
-		
-		CheckBox
-		{
-			name:                       "ResFitted";label:                 qsTr("Residual vs. Fitted Plot")
-		}
-
-		
-		CheckBox
-		{
-			name:                       "pareto";label:                 qsTr("Pareto Plot of Standardized Effects")
-		}
-	}
-	
-
-	Section 
-
-	{
-		title: qsTr("Design Specification")
-
-		
-		GroupBox
-		{
-			title: 									qsTr("Design Information")
-			name:									"designInfo"
-			columns:								3
+		title: 									qsTr("Design Space")
+		name:									"designInfo"
+		columns:								3
 			
 			RadioButtonGroup
 			{
@@ -129,7 +38,7 @@ Form
 				{
 					id:								cube
 					name:							"cube"
-					label:							qsTr("Central Composite Design (CCD)")
+					label:							qsTr("Central composite design (CCD)")
 					checked:						true
 				}
 				
@@ -137,7 +46,7 @@ Form
 				{
 					id:								star
 					name:							"star"
-					label:							qsTr("+ Star Points")
+					label:							qsTr("+ Star points")
 				}
 			}
 
@@ -145,7 +54,7 @@ Form
 			{
 				id:									numberOfFactors
 				name:								"numberOfFactors"
-				label:								qsTr("Number of Factors")
+				label:								qsTr("Number of factors")
 				defaultValue:						2
 				min:								2
 				max:								256
@@ -155,7 +64,7 @@ Form
 			
 				id:									numberOfCubes
 				name:								"numberOfCubes"
-				label:								qsTr("Number of Cube Points")
+				label:								qsTr("Number of cube points")
 				defaultValue:						0
 				min:								0
 				max:								256
@@ -169,7 +78,7 @@ Form
 			
 				id:									numberOfStars
 				name:								"numberOfStars"
-				label:								qsTr("Number of Star Points")
+				label:								qsTr("Number of star points")
 				defaultValue:						0
 				min:								0
 				max:								256
@@ -182,7 +91,7 @@ Form
 			{
 				id:									numberOfGenerators
 				name:								"numberOfGenerators"
-				label:								qsTr("Number of Generators")
+				label:								qsTr("Number of generators")
 				defaultValue:						0
 				min:								0
 				max:								256
@@ -193,14 +102,14 @@ Form
 			{
 				id:									randomize
 				name:								"randomize"
-				label:								qsTr("Randomize Design")
+				label:								qsTr("Randomize design")
 			}
 			
 			CheckBox
 			{
 				id:									inscribed
 				name:								"inscribed"
-				label:								qsTr("Inscribed Design")
+				label:								qsTr("Inscribed design")
 				visible:							cube.checked
 			
 			}
@@ -209,7 +118,7 @@ Form
 			{
 				id:									oneBlock
 				name:								"oneBlock"
-				label:								qsTr("Force One Block")
+				label:								qsTr("Force one block")
 				visible:							false
 			}
 			
@@ -217,7 +126,7 @@ Form
 			{
 				id:									noModel
 				name:								"noModel"
-				label:								qsTr("Use # of Variables instead of Model")
+				label:								qsTr("Use # of variables instead of model")
 				visible:							cube.checked
 				checked:							true
 			}
@@ -226,7 +135,7 @@ Form
 			{
 				id:									block
 				name:								"block"
-				label:								qsTr("Introduce Blocking")
+				label:								qsTr("Introduce blocking")
 				visible:							cube.checked
 			}
 			
@@ -234,7 +143,7 @@ Form
 			{
 				id:									coded_out
 				name:								"coded_out"
-				label:								qsTr("Coded Output")
+				label:								qsTr("Coded output")
 			}
 			
 			
@@ -242,7 +151,7 @@ Form
 			{
 			  name: 								"alpha"
 			  indexDefaultValue: 					0
-			  label:								qsTr("Alpha Type")
+			  label:								qsTr("Alpha type")
 			  values: 								["Orthogonal", "Rotatable", "Spherical", "Faces"]
 			  visible:								star.checked
 			}
@@ -272,6 +181,7 @@ Form
 	//			]
 //			}
 		}
+
 		ColumnLayout
 		{
 			spacing:                                0
@@ -315,7 +225,7 @@ Form
 							id:						factorName
 							label: 					""
 							name: 					"factorName"
-							placeholderText:		qsTr("Factor Name ") + (rowIndex + 1)
+							placeholderText:		qsTr("Factor name ") + (rowIndex + 1)
 							fieldWidth:				100 * preferencesModel.uiScale
 							useExternalBorder:		false
 							showBorder:				true
@@ -371,7 +281,7 @@ Form
 		{
 			id:									designModel
 			name:								"designModel"
-			title:								"Specify Model for CCD"
+			title:								"Specify model for CCD"
 			height:                     		100 * preferencesModel.uiScale
 			width:                      		250 * preferencesModel.uiScale
 			visible:							cube.checked && !noModel.checked
@@ -422,7 +332,7 @@ Form
 						{
 							id:						generatorName
 							label: 					""
-							placeholderText:		qsTr("Generator Name")
+							placeholderText:		qsTr("Generator name")
 							name: 					"generatorName"
 							fieldWidth:				100 * preferencesModel.uiScale
 							useExternalBorder:		false
@@ -437,7 +347,7 @@ Form
 						{
 							label: 					""
 							name: 					"generatorFormula"
-							placeholderText:		qsTr("Generator Formula")
+							placeholderText:		qsTr("Generator formula")
 							fieldWidth:				100 * preferencesModel.uiScale
 							useExternalBorder:		false
 							showBorder:				true
@@ -467,12 +377,14 @@ Form
 		{
 			id:									designBlock
 			name:								"designBlock"
-			title:								"Specify Blocks for CCD"
+			title:								"Specify blocks for CCD"
 			height:                     		100 * preferencesModel.uiScale
 			width:                      		250 * preferencesModel.uiScale
 			visible:							cube.checked && block.checked
 		}
-		
+
+		Group{
+
 		Button
 		{
 			id: 								buildDesign
@@ -488,12 +400,117 @@ Form
 			name:								"buildDesignInv"
 			visible:							false
 		}
-	
+		
+		}
+
+	Section 
+	{
+		title: qsTr("Design Analysis")
+
+	VariablesForm
+	{
+		AvailableVariablesList { name: "rsmVariablesList" }
+		AssignedVariablesList
+		{
+			name: "rsmVariables"
+			title: qsTr("Predictors [Location in coded format]")
+			suggestedColumns:   ["scale", "ordinal"]
+
+			rowComponent: Row
+			{
+				DoubleField {name: "Point_P"; negativeValues: true}
+			}
+
+
+		}
+		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal"]}
+		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["ordinal", "nominal", "scale", "nominalText"]; singleVariable: true}
 	}
+
+
+	VariablesForm
+	{
+		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+		AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
+		ModelTermsList
+		{
+
+			listViewType			: JASP.Interaction
+			rowComponentTitle		: qsTr("Term Type")
+			rowComponent			: DropDown
+			{
+				name: "TermType"
+				label: ""
+				values: [
+					{ label: qsTr("FO + PQ"), value: "fopq"},
+					{ label: qsTr(""), value: "nothing"},
+					{ label: qsTr("FO"), value: "fo"},
+					
+					
+				]
+			}
+		}
+	}
+	
+	Group 
+	{
+		title: qsTr("Response surface analysis")
+		columns: 2
+		
+		CheckBox 
+		{
+			name:                       "coef"; label:                  qsTr("Coefficients table")
+			
+		}
+		
+		
+		CheckBox
+		{
+			name:                       "res";  label:                  qsTr("Residual histogram")
+		}
+
+		CheckBox
+		{
+			name:                       "anova";label:                  qsTr("ANOVA table")
+		}
+		
+		
+		CheckBox
+		{
+			name:                       "resNorm";label:                 qsTr("Normal residual plot")
+		}
+
+		CheckBox
+		{
+			name:                       "normalPlot";label:                 qsTr("Normal plot of standardized effects")
+
+			CheckBox
+			{
+				name:                       "addGridlines";label:                 qsTr("Add grid lines")
+			}
+			
+		}
+		
+		CheckBox
+		{
+			name:                       "ResFitted";label:                 qsTr("Residual vs. fitted plot")
+		}
+		
+		CheckBox
+		{
+			name:                       "pareto";label:                 qsTr("Pareto plot of standardized effects")
+		}
+
+		CheckBox
+		{
+			name:                       "fourInOne";label:                 qsTr("Matrix residuals plot")
+		}
+	}	
+}
 	
 	Section 
 	{
-		title: qsTr("Contour Plots")
+		title: qsTr("Contour plots")
 		VariablesForm
 		{
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
@@ -504,23 +521,18 @@ Form
 
 			}
 
-
-
-
 			AssignedPairsVariablesList
 			{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
-
-
-		} 
+			} 
 		
 
 		Group
 		{
-			title: qsTr("Contour Plot Options")
+			title: qsTr("Contour plot options")
 			
 			CheckBox
 			{
-				name:                      "contour";label:   qsTr("Contour Surface")
+				name:                      "contour";label:   qsTr("Contour surface")
 				columns: 2
 				CheckBox
 				{
@@ -584,14 +596,14 @@ Form
 		title: qsTr("Desirability")
 		CheckBox 
 		{
-			name: "desirability";label: "Calculate Desirability"
+			name: "desirability";label: "Calculate desirability"
 			
 		}
 		VariablesForm 
 		{
 			AvailableVariablesList 
 			{ 
-				name: "rsmDesirability";       label: qsTr("Response Variable List");    source: "rsmResponseVariables" 
+				name: "rsmDesirability";       label: qsTr("Response variable list");    source: "rsmResponseVariables" 
 				
 			}
 			AssignedVariablesList  
@@ -628,10 +640,6 @@ Form
 			}
 		
 		}
-		
-		
-		
-	
 	
 	}
 

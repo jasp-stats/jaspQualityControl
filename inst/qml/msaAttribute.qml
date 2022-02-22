@@ -68,7 +68,7 @@ Form
 		{
 			id:									measurements
 			name:								"measurements"
-			title:								qsTr("Result")
+			title:								qsTr("Results")
 			visible:							aaadataFormat.currentValue == "AAAwideFormat"
 			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
@@ -94,7 +94,7 @@ Form
 
 	Section
 	{
-		title:									qsTr("Kappa Stuides")
+		title:									qsTr("Kappa Study")
 
 		Group
 		{
@@ -131,7 +131,7 @@ Form
 
 	Section
 	{
-		title: 									qsTr("Tau Stuides")
+		title: 									qsTr("Tau Study")
 
 		CheckBox
 		{

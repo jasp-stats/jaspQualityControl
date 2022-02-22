@@ -53,7 +53,7 @@ Form
 		{
 			id:                 			variablesLong
 			name:               			"variablesLong"
-			title:              			qsTr("Measurements")
+			title:              			qsTr("Measurement")
 			allowedColumns:     			["scale"]
 			singleVariable:					true
 			visible:						pcDataFormat.currentValue == "PClongFormat"
@@ -80,6 +80,7 @@ Form
 	CheckBox
 	{
 		name: 						"manualSubgroupSize"
+		id: 						manualSubgroupSize
 		label: 						qsTr("Specifiy subgroup size manually:")
 		checked: 					true
 		childrenOnSameRow:			true
@@ -87,8 +88,8 @@ Form
 
 		DoubleField
 		{
-			id:						pcSubgroupSize
 			name: 					"pcSubgroupSize"
+			id:						pcSubgroupSize
 			negativeValues:			false
 			min: 					1
 			max: 					dataSetModel.rowCount()
@@ -110,10 +111,12 @@ Form
 				RadioButtonGroup
 				{
 					name: 					"capabilityStudyType"
+					id: 					capabilityStudyType
 
 					RadioButton
 					{
 						name: 				"normalCapabilityAnalysis"
+						id : 				normalCapabilityAnalysis
 						label: 				qsTr("Normal distribution")
 						checked: 			true
 					}
@@ -121,10 +124,12 @@ Form
 					RadioButton
 					{
 						name: 				"nonnormalCapabilityAnalysis"
+						id : 				nonnormalCapabilityAnalysis
 						label: 				qsTr("Non-normal distribution")
 						DropDown
 						{
 							name: 					"nonNormalDist"
+							id: 					nonNormalDist
 							label: 					qsTr("Specify a distribution")
 							indexDefaultValue: 		0
 							values:
@@ -143,10 +148,66 @@ Form
 							indexDefaultValue: 		0
 							values:
 								[
-								{label: qsTr("Non-conformance method"),		value: "nonconformance"  },
-								{label: qsTr("Percentile method"),		value: "percentile"}
+								{label: qsTr("Non-conformance"),		value: "nonconformance"  },
+								{label: qsTr("Percentile"),		value: "percentile"}
 							]
 						}
+					}
+				}
+
+
+			Group
+			{
+				title: 							qsTr("Capability studies")
+
+				CheckBox
+				{
+				  id: checkedlower
+					name: 						"lowerSpecificationField"
+					label: 						qsTr("Lower specification limit")
+					childrenOnSameRow:			true
+
+					DoubleField
+					{
+						id:						lower
+						name: 					"lowerSpecification"
+						negativeValues:			true
+						defaultValue:			-1
+						decimals:				7
+					}
+				}
+
+				CheckBox
+				{
+				  id: checkedtarget
+					name: 						"targetValueField"
+					label: 						qsTr("Target value")
+					childrenOnSameRow:			true
+
+					DoubleField
+					{
+						id:						target
+						name: 					"targetValue"
+						negativeValues:			true
+						defaultValue:			0
+						decimals:				7
+					}
+				}
+
+				CheckBox
+				{
+				  id: checkedupper
+					name: 						"upperSpecificationField"
+					childrenOnSameRow:			true
+					label: 						qsTr("Upper specification limit")
+
+					DoubleField
+					{
+						id:						upper
+						name: 					"upperSpecification"
+						negativeValues:			true
+						defaultValue:			1
+						decimals:				7
 					}
 				}
 
@@ -155,6 +216,7 @@ Form
 					name: 						"CapabilityStudyPlot"
 					label: 						qsTr("Process capability plot")
 					checked: 					true
+					enabled:          checkedupper.checked || checkedtarget.checked || checkedlower.checked
 
 					DoubleField
 					{
@@ -172,6 +234,7 @@ Form
 					name: 						"CapabilityStudyTables"
 					label: 						qsTr("Process capability tables")
 					checked: 					true
+					enabled:          checkedupper.checked | checkedtarget.checked | checkedlower.checked
 
 					CheckBox
 					{
@@ -184,60 +247,8 @@ Form
 					}
 
 				}
-
 			}
 
-			Group
-			{
-				title: 							qsTr("Specification Limits")
-
-				CheckBox
-				{
-					name: 						"lowerSpecificationField"
-					label: 						qsTr("Lower specification limit")
-					childrenOnSameRow:			true
-
-					DoubleField
-					{
-						id:						lower
-						name: 					"lowerSpecification"
-						negativeValues:			true
-						defaultValue:			-1
-						decimals:				7
-					}
-				}
-
-				CheckBox
-				{
-					name: 						"targetValueField"
-					label: 						qsTr("Target value")
-					childrenOnSameRow:			true
-
-					DoubleField
-					{
-						id:						target
-						name: 					"targetValue"
-						negativeValues:			true
-						defaultValue:			0
-						decimals:				7
-					}
-				}
-
-				CheckBox
-				{
-					name: 						"upperSpecificationField"
-					childrenOnSameRow:			true
-					label: 						qsTr("Upper specification limit")
-
-					DoubleField
-					{
-						id:						upper
-						name: 					"upperSpecification"
-						negativeValues:			true
-						defaultValue:			1
-						decimals:				7
-					}
-				}
 			}
 		}
 
@@ -247,22 +258,20 @@ Form
 			{
 				title: 							qsTr("Stability of the process")
 
-				RadioButtonGroup
+				CheckBox
 				{
-					name: 					"controlChartsType"
+				  	name:                  		"xbarR"
+					label: 				   		qsTr("X-bar & R chart")
+					enabled:                    pcSubgroupSize.value > 1
+					checked: 					pcSubgroupSize.value > 1
+				}
 
-					RadioButton
-					{
-						name: 				"xbarR"
-						label: 				qsTr("X-bar & R chart")
-						checked: 			true
-					}
-
-					RadioButton
-					{
-						name: 				"IMR"
-						label: 				qsTr("X-mR chart")
-					}
+			    CheckBox
+				{
+					name: 						"IMR"
+					label: 						qsTr("X-mR chart")
+					enabled: 					pcSubgroupSize.value == 1 || pcDataFormat.currentValue == "PCwideFormat"
+					checked: 					pcSubgroupSize.value == 1
 				}
 			}
 
@@ -302,29 +311,19 @@ Form
 
 					DropDown
 					{
-						name: 					"rank"
-						label: 					qsTr("Rank method")
-						indexDefaultValue: 		0
-						values:
-							[
-							{ value: "Bernard",    		label: qsTr("Median Rank (Benard)")         },
-							{ value: "Herd-Johnson",    label: qsTr("Mean Rank (Herd-Johnson)")     },
-							{ value: "Kaplan-Meier",    label: qsTr("Kaplan-Meier")                 },
-							{ value: "Hazen",   		label: qsTr("Modified Kaplan-Meier (Hazen)")}
-						]
-					}
-
-					DropDown
-					{
 						name: 					"nullDistribution"
+						id: 					nullDistribution
 						label: 					qsTr("Null distribution")
-						indexDefaultValue: 		0
-						values:
+						values: 
 							[
 							{ label: qsTr("Normal"),		value: "Normal"	   },
 							{ label: qsTr("Lognormal"),		value: "Lognormal" },
 							{ label: qsTr("Weibull"),		value: "Weibull"   }
 						]
+						indexDefaultValue: (capabilityStudyType.value == "nonnormalCapabilityAnalysis") ? 
+							(nonNormalDist.currentValue == "Lognormal" || nonNormalDist.currentValue == "3lognormal") ? 1 : 
+								(nonNormalDist.currentValue == "3weibull" || nonNormalDist.currentValue == "Weibull") ? 2 : 0 
+						: 0
 					}
 
 					CheckBox
@@ -392,5 +391,37 @@ Form
 		{
 			name: "pcReportDisplay";		label: qsTr("Show Report")
 		}
+	}
+
+	Section{
+  			title: qsTr("Advanced Options")
+			  Group{
+				  	DropDown
+					{
+						name: 					"rank"
+						label: 					qsTr("Rank method for probability plot")
+						indexDefaultValue: 		0
+						values:
+							[
+							{ value: "Bernard",    		label: qsTr("Median Rank (Benard)")         },
+							{ value: "Herd-Johnson",    label: qsTr("Mean Rank (Herd-Johnson)")     },
+							{ value: "Kaplan-Meier",    label: qsTr("Kaplan-Meier")                 },
+							{ value: "Hazen",   		label: qsTr("Modified Kaplan-Meier (Hazen)")}
+						]
+					}
+					
+					CheckBox
+					{
+						name:                   			"manualTicks"
+						label: 								qsTr("Number of ticks on x-axis for X-bar & R or X-mR chart:")
+						childrenOnSameRow: true
+
+						DoubleField
+						{
+							name: 							"nTicks"
+							defaultValue:					5
+						}
+					}
+			  }
 	}
 }

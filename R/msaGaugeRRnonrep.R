@@ -17,7 +17,8 @@
 
 msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
-  if(options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepLongFormat"){
+  wideFormat <- options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepWideFormat"
+  if(!wideFormat){
   measurements <- unlist(options$measurements)
   }else{
     measurements <- unlist(options$measurementsWide)
@@ -29,7 +30,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-  if(options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepLongFormat"){
+  if(!wideFormat){
     ready <- (measurements != "" && operators != "" && parts != "")
   }else{
     ready <- (length(measurements) > 1 && operators != "" && parts != "")
@@ -47,14 +48,18 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     return()
   }
 
-  if (ready && options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepLongFormat"){
+  if (ready && !wideFormat){
+    dataset <- dataset[order(dataset[[operators]]),]
+    dataset <- dataset[order(dataset[[parts]]),]
     datasetLong <- dataset
     datasetWide <- .reshapeToWide(dataset, measurements, parts, operators)
     wideMeasurementCols <- colnames(datasetWide)[colnames(datasetWide) != c(parts, operators)]
     longMeasurementCols <- measurements
   }
 
-  if (ready && options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepWideFormat"){
+  if (ready && wideFormat){
+    dataset <- dataset[order(dataset[[operators]]),]
+    dataset <- dataset[order(dataset[[parts]]),]
     datasetWide <- dataset
     datasetLong <- .reshapeToLong(dataset, measurements, parts, operators)
     wideMeasurementCols <- measurements
@@ -93,7 +98,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
 
   #Measurement by part x operator plot
-  if (options[["NRpartOperatorGraph"]]) {
+  if (options[["NRpartOperatorGraph"]] & ready) {
     if (is.null(jaspResults[["NRpartOperatorGraph"]])) {
       jaspResults[["NRpartOperatorGraph"]] <- createJaspContainer(gettext("Measurement by part x operator plot"))
       jaspResults[["NRpartOperatorGraph"]]$position <- 4
@@ -114,7 +119,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
 
   # Report
-  if (options[["anovaGaugeNestedReport"]]) {
+  if (options[["anovaGaugeNestedReport"]] && ready) {
     if (is.null(jaspResults[["anovaGaugeNestedReport"]])) {
       jaspResults[["anovaGaugeNestedReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["anovaGaugeNestedReport"]]$position <- 6
@@ -382,7 +387,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
  .anovaGaugeNestedReport <- function(datasetWide, datasetLong, measurementsWide, measurementsLong, parts, operators, options){
 
    if (options[["anovaGaugeNestedTitle"]] == ""){
-     title <- "Measurement"
+     title <- "Gauge r&R Report"
    }else{
      title <- options[["anovaGaugeNestedTitle"]]
    }
@@ -410,7 +415,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
    plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Xbar", datasetWide, measurementsWide, parts, operators, options, smallLabels = TRUE)
    plotMat[[4, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
 
-   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettextf("Measurement systems analysis for %s", title), ""))
+   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
    matrixPlot$plotObject <- p
 
    return(matrixPlot)

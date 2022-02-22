@@ -29,10 +29,6 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   factor.vars <- parts
   factor.vars <- factor.vars[factor.vars != ""]
 
-
-  #if (length(measurements) == 0)
-  #  return()
-
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
@@ -49,12 +45,6 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
   return()
 }
-
-#dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Dataset/MinitabExamples/BearingDiameter(LinearityAndBias).csv")
-#colnames(dataset) <- c("Part", "Master", "Response")
-#parts <- "Part"
-#measurements <- "Response"
-#standards <- "Master"
 
 .linearityAndBias <- function(ready, dataset, options, measurements, parts, standards) {
 
@@ -190,8 +180,13 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
     }
 
     df3 <- data.frame(Source = c("Linearity", "Bias"), Percent = c(percentLin, (abs(averageBias) / options$linearityProcessVariation) * 100))
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(df3$Percent)
+    yLimits <- range(yBreaks)
 
-    p2 <- ggplot2::ggplot() + ggplot2::geom_col(data = df3, mapping = ggplot2::aes(x = Source, y = Percent)) + ggplot2::xlab(ggplot2::element_blank())
+    p2 <- ggplot2::ggplot() +
+      ggplot2::geom_col(data = df3, mapping = ggplot2::aes(x = Source, y = Percent)) +
+      ggplot2::scale_y_continuous(breaks = yBreaks, limits = yLimits) +
+      ggplot2::xlab(ggplot2::element_blank())
 
     p2 <- jaspGraphs::themeJasp(p2)
 

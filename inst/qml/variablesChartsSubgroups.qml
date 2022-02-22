@@ -35,7 +35,7 @@ Form
 		{
 			id:									variablesLong
 			name:								"variablesLong"
-			title:								qsTr("Measurements")
+			title:								qsTr("Measurement")
 			allowedColumns:						["scale"]
 			singleVariable:						true
 			visible:							pcDataFormat.currentValue == "CClongFormat"
@@ -65,7 +65,7 @@ Form
 		id:										pcSubgroupSize
 		name: 									"CCSubgroupSize"
 		label: 									qsTr("Subgroup size")
-		min: 									2
+		min: 									   2
 		defaultValue:							5
 		visible:								pcDataFormat.currentValue == "CClongFormat"
 	}
@@ -78,7 +78,7 @@ Form
 		RadioButtonGroup
 		{
 			name:								"TypeChart"
-			id:                  typechart
+			id:                  				typechart
 
 			RadioButton
 			{
@@ -116,8 +116,8 @@ Form
   				label:							qsTr("Mean")
   				defaultValue:					0
   				negativeValues: 				true
-  				fieldWidth:					  70
-  				decimals:            10
+  				fieldWidth:					  	70
+  				decimals:            			10
   			}
 
   			DoubleField
@@ -125,12 +125,25 @@ Form
   				name:							"SD"
   				label:							qsTr("Standard deviation")
   				defaultValue:					3
-  				fieldWidth:					  70
-  				decimals:            10
+  				fieldWidth:					  	70
+  				decimals:            			10
   			}
 
 			}
 
+		}
+
+		CheckBox
+		{
+			name:                   			"manualTicks"
+			label: 								qsTr("Number of ticks on x-axis:")
+			childrenOnSameRow: true
+
+			DoubleField
+			{
+				name: 							"nTicks"
+				defaultValue:					5
+			}
 		}
 	}
 

@@ -97,7 +97,7 @@ Form
 
     RadioButtonGroup
     {
-        title:                                  qsTr("Unit Display")
+        title:                                  qsTr("Design Display")
         name:                                   "dataCodingScreen"
 
         RadioButton
@@ -123,15 +123,15 @@ Form
 
         RadioButton
         {
-            name:                               "runOrderRandom"
-            label:                              qsTr("Random")
+            name:                              "runOrderStandard"
+            label:                              qsTr("Standard")
             checked:                            true
         }
 
         RadioButton
         {
-            name:                              "runOrderStandard"
-            label:                              qsTr("Standard")
+            name:                               "runOrderRandom"
+            label:                              qsTr("Random")
         }
     }
 

@@ -17,8 +17,8 @@
 
 msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
-
-  if (options[["testRetestDataFormat"]] == "testRetestWideFormat"){
+  wideFormat <- options[["testRetestDataFormat"]] == "testRetestWideFormat"
+  if (wideFormat){
     measurements <- unlist(options$measurements)
   }else{
     measurements <- unlist(options$measurementsLong)
@@ -31,7 +31,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-  if (options[["testRetestDataFormat"]] == "testRetestWideFormat"){
+  if (wideFormat){
     ready <- (length(measurements) > 1 && parts != "")
   }else{
     ready <- (measurements != "" && operators != "" && parts != "")
@@ -42,26 +42,22 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
                                          exclude.na.listwise = c(numeric.vars, factor.vars))
   }
 
-  if (ready && nrow(dataset[measurements]) == 0){
-    jaspResults[["plot"]] <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-    jaspResults[["plot"]]$setError(gettextf("No valid measurements in %s.", measurements))
-    jaspResults[["plot"]]$position <- 1
-    jaspResults[["plot"]]$dependOn(c("measurements", "measurementsLong"))
-    return()
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             all.target = c(measurements, options$operators, options$parts),
+             exitAnalysisIfErrors = TRUE)
+
+  if (!wideFormat && ready){
+    dataset <- dataset[order(dataset[[operators]]),]
+    dataset <- dataset[order(dataset[[parts]]),]
+    nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
+    index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
+    dataset <- cbind(dataset, data.frame(index = index))
+    dataset <- tidyr::spread(dataset, index, measurements)
+    measurements <- unique(index)
+    dataset <- dataset[,c(operators, parts, measurements)]
   }
-
-  if (options[["testRetestDataFormat"]] == "testRetestLongFormat" && ready){
-    wideData <- tidyr::spread(dataset, operators, measurements)
-    measurements <- colnames(wideData)
-    measurements <- measurements[measurements != parts]
-    dataset <- wideData
-  }
-
-
-  .msaCheckErrors(dataset, options)
 
   # Range Method
-
   # Range Method r and R table
   if (options[["rangeRr"]]) {
     .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready,
@@ -78,14 +74,14 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   }
 
   # Rchart Range method
-  if (options[["rangeRchart"]]) {
+  if (options[["rangeRchart"]] & ready) {
     if (is.null(jaspResults[["rangeRchart"]])) {
       jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
       jaspResults[["rangeRchart"]]$position <- 3
     }
     plot <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
     plot$dependOn("rangeRchart")
-    p <- .RchartNoId(dataset = dataset[measurements], options = options, warningLimits = FALSE)$p
+    p <- .Rchart(dataset = dataset[measurements], options = options, warningLimits = FALSE)$p
     plot$plotObject <- p
     jaspResults[["rangeRchart"]] <- plot
   }

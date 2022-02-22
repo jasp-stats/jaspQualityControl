@@ -1,4 +1,21 @@
+#
+# Copyright (C) 2013-2018 University of Amsterdam
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 variablesChartsIndividuals <- function(jaspResults, dataset, options) {
+  # reading variables in from the GUI
   variables <- options$variables
   splitName <- options$subgroups
   subgroups <- unlist(options$subgroups)
@@ -31,8 +48,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       subgroups <- splitFactor
   }
 
-#Checking for errors in the dataset
-
+   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues', "observations"),
              infinity.target = c(options$variables, options$subgroups),
              missingValues.target = c(options$variables, options$subgroups),
@@ -52,19 +68,14 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   if (options$ImRchart) {
     if(is.null(jaspResults[["Ichart"]])){
       jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
-      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "ncol", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport"))
+      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "ncol", "subgroups", "manualTicks", "nTicks", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport"))
       Iplot <- jaspResults[["Ichart"]]
 
       for (var in variables) {
-
         ALL <- createJaspContainer(gettextf("X-mR control chart"))
-
         IMR <- .IMRchart(dataset = dataset, options = options, variable = var, manualXaxis = subgroups)
-
         ALL[["Plot"]] <- IMR$p
-
         ALL[["Table1"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", name = gettextf("%s for Individuals", var), sixsigma = IMR$sixsigma_I, xLabels = IMR$xLabels)
-
         ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, name = gettextf("%s for Range", var), sixsigma = IMR$sixsigma_R, xLabels = IMR$xLabels, type = "Range")
         Iplot[[var]] <- ALL
       }
@@ -77,15 +88,14 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspResults[["CorPlot"]]$dependOn(c("CorPlot", "variables", "nLag"))
     Corplot <- jaspResults[["CorPlot"]]
 
-    for (var in variables) {
+    for (var in variables)
       Corplot[[var]] <- .CorPlot(dataset = dataset, options = options, variable = var, CI = options$CI, Lags = options$nLag)
-    }
   }
 
   # Report
   if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]]) && options$ImRchart) {
     jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
-    jaspResults[["CCReport"]]$dependOn(c("CCReport", "ImRchart", "variables","ncol", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
+    jaspResults[["CCReport"]]$dependOn(c("CCReport", "ImRchart", "variables","ncol", "manualTicks", "nTicks", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
     jaspResults[["CCReport"]]$position <- 9
     Iplot <- jaspResults[["CCReport"]]
 
@@ -96,7 +106,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
 
   # Error handling
-  if (options$CCReport && (!options$ImRchart | length(variables) < 1)){
+  if (options$CCReport && (!options$ImRchart || length(variables) < 1)){
     plot <- createJaspPlot(title = gettext("Report"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
     jaspResults[["plot"]]$setError(gettext("Please insert more measurements and check the X-mR chart."))
@@ -108,7 +118,6 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 .IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE) {
 
   ppPlot <- createJaspPlot(width = 1000, height = 550)
-
   #Individual chart
   #data
   if (measurements == "" & variable != ""){
@@ -118,7 +127,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol)
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
   } else{
-    data <- unlist(dataset[measurements])
+    data <- as.vector((t(dataset[measurements])))
     sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE)
     xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2)
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
@@ -128,10 +137,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   center <- sixsigma_I$center
   UCL <- max(sixsigma_I$limits)
   LCL <- min(sixsigma_I$limits)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
+  if (options$manualTicks)
+    nxBreaks <- options$nTicks
   else
-    xBreaks <- c(subgroups)
+    nxBreaks <- 5
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
@@ -160,11 +170,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   center <- sixsigma_R$center
   UCL <- max(sixsigma_R$limits)
   LCL <- min(sixsigma_R$limits)
-  if (length(subgroups) > 60)
-    xBreaks <- c(seq(1,length(sixsigma_R$statistics), 5), length(sixsigma_R$statistics))
-  else
-    xBreaks <- c(seq(1,length(sixsigma_R$statistics), 2),  length(sixsigma_R$statistics))
-  Xlabels <- xBreaks + 1
+  Xlabels <- c(2, xBreaks[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
@@ -198,13 +204,8 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     else
       xLabels <- manualXaxis
 
-    if (length(subgroups) > 60)
-      Xbreaks <- c(seq(1,length(xLabels),10), length(xLabels))
-    else
-      Xbreaks <- c(seq(1,length(xLabels),5), length(xLabels))
-
-    p1 <- p1 + ggplot2::scale_x_continuous(breaks = Xbreaks, labels = xLabels[Xbreaks])
-    p2 <- p2 + ggplot2::scale_x_continuous(breaks = Xbreaks, labels = xLabels[Xbreaks])
+    p1 <- p1 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
+    p2 <- p2 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
   }
 
   plotMat <- matrix(list(), 2, 1)

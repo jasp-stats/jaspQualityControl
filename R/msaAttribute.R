@@ -17,7 +17,8 @@
 
 msaAttribute <- function(jaspResults, dataset, options, ...) {
 
-  if (options[["AAAdataFormat"]] == "AAAwideFormat"){
+  wideFormat <- options[["AAAdataFormat"]] == "AAAwideFormat"
+  if (wideFormat){
     measurements <- unlist(options$measurements)
   }else{
     measurements <- unlist(options$measurementsLong)
@@ -33,7 +34,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   factor.vars <- factor.vars[factor.vars != ""]
 
   # Ready
-  if (options[["AAAdataFormat"]] == "AAAwideFormat"){
+  if (wideFormat){
     ready <- (length(measurements) != 0 && operators != "" && parts != "")
   } else {
     ready <- (measurements != "" && operators != "" && parts != "")
@@ -41,12 +42,12 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
 
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns  = c(numeric.vars, factor.vars),
-                                         exclude.na.listwise = c(numeric.vars, factor.vars))
+    dataset         <- .readDataSetToEnd(c(numeric.vars, factor.vars))
   }
 
-  if (options[["AAAdataFormat"]] == "AAAlongFormat" && ready){
-    dataset <- dataset[order(dataset[operators]),]
+  if (!wideFormat && ready){
+    dataset <- dataset[order(dataset[[operators]]),]
+    dataset <- dataset[order(dataset[[parts]]),]
     nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
     index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
     dataset <- cbind(dataset, data.frame(index = index))
@@ -61,6 +62,11 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
 
   # Error handling
+  # Check for missing values and infinity
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             all.target = c(measurements, standards, operators, parts),
+             exitAnalysisIfErrors = TRUE)
+
   if (standards == "" && options$PositiveRef != "" && options[["AAAcohensKappa"]]) {
     jaspResults[["tableReference"]] <- createJaspContainer(title = gettext("Reference Tables and Plots"))
     jaspResults[["tableReference"]]$position <- 10
@@ -302,6 +308,11 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
       for (i in 1:length(appraiserVector)) {
         onlyAppraiser <- subset(dataset, dataset[operators] == appraiserVector[i])
+
+        if (any(is.na(onlyAppraiser[measurements]))) {
+          table$setError(gettextf("Invalid values (NA) found in appraiser %s.", appraiserVector[i]))
+          return(table)
+        }
         matchesWithin[i] <- .countRowMatches(onlyAppraiser[measurements])
       }
 
@@ -405,7 +416,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     if (ready) {
 
       if (length(measurements) > 1) {
-        plotWithin <- createJaspPlot(title = "Within Appraisers", width = 300, height = 400)
+        plotWithin <- createJaspPlot(title = "Within Appraisers", width = 500, height = 500)
 
         withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
 
@@ -424,7 +435,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
         AAA[["PlotWithin"]] <- plotWithin
       }
 
-      plotVs <- createJaspPlot(title = "Each Appraiser vs Standard", width = 300, height = 400)
+      plotVs <- createJaspPlot(title = "Each Appraiser vs Standard", width = 500, height = 500)
 
       vsDataframe <- data.frame(x = appraiserVector, y = percentEachVsStandard)
 
@@ -523,7 +534,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     if (ready) {
 
       if (length(measurements) > 1) {
-        plotWithin <- createJaspPlot(title = "Within Appraisers", width = 300, height = 400)
+        plotWithin <- createJaspPlot(title = "Within Appraisers", width = 500, height = 500)
 
         withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
 
@@ -561,7 +572,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       AAA[["AllVsStandard"]] <- tableAllVsStandard
     }
 
-    if (options$standard != "" & options$PositiveRef != "")
+    if (options$standard != "" && options$PositiveRef != "" && length(measurements) > 1)
       AAA[["StudyEffectiveness"]] <- tableDecisions
   }
   return(AAA)
@@ -612,13 +623,21 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
           corrVector <- c(corrVector, 1)
         }else{
           operator2 <- subset(dataset, dataset[operators] == operatorVector[j])
-          kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = operator2[[measurements]])
+
+          if (length(measurements) > 1) {
+            x  <- operator1[measurements]; y  <- operator2[measurements]
+          } else {
+            x  <- operator1[[measurements]]; y  <- operator2[[measurements]]
+          }
+
+          kt <- psych::corr.test(method = "kendall", x = x, y = y)
           corrVector <- c(corrVector, kt$r)
         }
       }
       tableColumns[[operatorVector[i]]] <- corrVector
 
       if (standards != ""){
+
         kt <- psych::corr.test(method = "kendall", x = operator1[[measurements]], y = as.numeric(operator1[[standards]]))
         standCorrVector <- c(standCorrVector, kt$r)
       }

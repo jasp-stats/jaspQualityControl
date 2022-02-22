@@ -63,7 +63,7 @@ Form
 		AssignedVariablesList
 		{
 			name:								"measurements"
-			title:								qsTr("Measurements")
+			title:								qsTr("Measurement")
 			singleVariable:						true
 			allowedColumns:						["scale"]
 			visible:							gaugeRRNonRepDataFormat.currentValue == "gaugeRRNonRepLongFormat"
@@ -103,7 +103,7 @@ Form
 			{
 				name:							"NRhistoricalStandardDeviationValue"
 				label:							qsTr("Std. Deviation value")
-				defaultValue:					0
+				defaultValue:					3
 				enabled:						variationReference.currentValue == "historicalStandardDeviation"
 			}
 
@@ -179,7 +179,7 @@ Form
 			CheckBox
 			{
 				name: 							"NRpartOperatorGraph"
-				label: 							qsTr("Measurement by part x operator plot")
+				label: 							qsTr("Measurement by part plot")
 
 				CheckBox
 				{
