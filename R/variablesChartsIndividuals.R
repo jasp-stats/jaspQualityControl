@@ -127,7 +127,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol)
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
   } else{
-    data <- unlist(dataset[measurements])
+    data <- as.vector((t(dataset[measurements])))
     sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE)
     xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2)
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
@@ -170,7 +170,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   center <- sixsigma_R$center
   UCL <- max(sixsigma_R$limits)
   LCL <- min(sixsigma_R$limits)
-  Xlabels <- xBreaks + 1
+  Xlabels <- c(2, xBreaks[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,

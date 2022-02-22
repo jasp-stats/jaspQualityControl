@@ -270,7 +270,7 @@ Form
 				{
 					name: 						"IMR"
 					label: 						qsTr("X-mR chart")
-					enabled: 					pcSubgroupSize.value == 1
+					enabled: 					pcSubgroupSize.value == 1 || pcDataFormat.currentValue == "PCwideFormat"
 					checked: 					pcSubgroupSize.value == 1
 				}
 			}

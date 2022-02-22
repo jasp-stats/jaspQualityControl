@@ -393,8 +393,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       if(options[["gaugeToleranceEnabled"]])
         RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options$tolerance * 100,2))))
       RRtable2$setData(RRtable2DataList)
-      nCategories <- .gaugeNumberDistinctCategories(sdParts, sdGauge)
-      RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
+
+      if (!is.na(sdParts)) {
+        nCategories <- .gaugeNumberDistinctCategories(sdParts, sdGauge)
+        RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
+      }
       if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
         RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation x %i", as.integer(studyVarMultiplier)))
       }else{

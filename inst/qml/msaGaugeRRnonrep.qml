@@ -103,7 +103,7 @@ Form
 			{
 				name:							"NRhistoricalStandardDeviationValue"
 				label:							qsTr("Std. Deviation value")
-				defaultValue:					0
+				defaultValue:					3
 				enabled:						variationReference.currentValue == "historicalStandardDeviation"
 			}
 
@@ -251,20 +251,4 @@ Form
 			label: 								qsTr("Show Report")
 		}
 	}
-	Section{
-  		title: qsTr("Advanced Options")
-					
-				CheckBox
-				{
-					name:                   			"manualTicks"
-					label: 								qsTr("Number of ticks on x-axis for X-bar & R or X-mR chart:")
-					childrenOnSameRow: true
-
-					DoubleField
-					{
-						name: 							"nTicks"
-						defaultValue:					5
-					}
-					}
-			    }
 }

@@ -9,11 +9,11 @@
     return()
 
   container <- createJaspContainer(title = gettext("Control Chart"))
-  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "manualTicks", 'nTicks'))
+  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "manualTicks", 'nTicks', "xbarR", "IMR"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
 
-  matrixPlot <- createJaspPlot(title = "X-bar & R Chart", width = 1200, height = 550)
+  matrixPlot <- createJaspPlot(title = "X-bar & R control chart", width = 1200, height = 550)
   container[["plot"]] <- matrixPlot
 
   if (!ready)

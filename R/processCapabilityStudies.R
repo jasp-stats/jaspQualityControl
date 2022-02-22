@@ -104,7 +104,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["pcReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["pcReport"]]$position <- 6
     }
-    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults)
+    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat)
     jaspResults[["pcReport"]]$dependOn(c('pcReportDisplay'))
   }
 }
@@ -478,7 +478,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   if (options[["upperSpecificationField"]]){
     table$addColumnInfo(name = "ppu", type = "integer", title = gettext("PpU"))
-    sourceVector1 <- c(sourceVector1, 'PPU')
+    sourceVector1 <- c(sourceVector1, 'PpU')
   }
   table$addColumnInfo(name = "ppk",   type = "integer", title = gettext("Ppk"))
   sourceVector1 <- c(sourceVector1, 'Ppk')
@@ -1126,7 +1126,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container[["probabilityTable"]] <- table
 }
 
-.qcProbabilityPlot <- function(dataset, options, measurements = NULL, fit = "") {
+.qcProbabilityPlot <- function(dataset, options, measurements = NULL, fit = "", ggPlot = FALSE) {
 
   plot <- createJaspPlot(width = 600, aspectRatio = 1, title = "Probability Plot")
   plot$dependOn(c("variablesLong", "pcSubgroupSize"))
@@ -1280,7 +1280,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   plot$plotObject <- p
 
-  return(plot)
+  if (ggPlot)
+    return(p)
+  else
+    return(plot)
 }
 
 .qcPpMedian <- function(x) {
@@ -1422,7 +1425,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 
-.pcReport <- function(dataset, measurements, parts, operators, options, ready, container){
+.pcReport <- function(dataset, measurements, parts, operators, options, ready, container, splitFactor, wideFormat){
 
   if (options[["pcReportTitle"]] == ""){
     title <- "Process Capability Report"
@@ -1447,33 +1450,49 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if(!ready)
     return(matrixPlot)
 
+  # X-bar and R Chart OR ImR Chart
+  if(options$xbarR){
+    p1 <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
+    p2 <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
+  } else{
+    IMRPlots <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = splitFactor, cowPlot = TRUE, Wide = wideFormat)
+    p1 <- IMRPlots$p1
+    p2 <- IMRPlots$p2
+  }
+
   if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis"){
     processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, returnDataframe = TRUE)
     potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, returnDataframe = TRUE)
     overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnOverallCapDataframe = TRUE)
     performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnPerformanceDataframe = TRUE)
 
-    plotMat <- matrix(list(), 4, 2)
+    plotMat <- matrix(list(), 6, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <- ggplotTable(processSummaryDF) #process summary
-    plotMat[[2, 2]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = 'normal')
-    plotMat[[3, 1]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
-    plotMat[[3, 2]] <- ggplotTable(potentialWithinDF)  #Potential within
-    plotMat[[4, 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
-    plotMat[[4, 2]] <- ggplotTable(overallCapDF) #overall capability
+    plotMat[[2, 1]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = 'normal')
+    plotMat[[2, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
+    plotMat[[3, 1]] <-  p1
+    plotMat[[3, 2]] <-  p2
+    plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
+    plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
+    plotMat[[5, 1]] <- ggplotTable(potentialWithinDF)  #Potential within
+    plotMat[[5, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
+    plotMat[[6, 1]] <- ggplotTable(overallCapDF) #overall capability
   }else{
     processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnSummaryDF = TRUE)
     overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnCapabilityDF = TRUE)
     performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnPerformanceDF = TRUE)
 
-    plotMat <- matrix(list(), 3, 2)
+    plotMat <- matrix(list(), 5, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <- ggplotTable(round(processSummaryDF)) #process summary
-    plotMat[[2, 2]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = options[["nonNormalDist"]])
-    plotMat[[3, 1]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
-    plotMat[[3, 2]] <- ggplotTable(overallCapDF)  #overall capability
+    plotMat[[2, 1]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = options[["nonNormalDist"]])
+    plotMat[[2, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
+    plotMat[[3, 1]] <-  p1
+    plotMat[[3, 2]] <-  p2
+    plotMat[[4, 1]] <- ggplotTable(round(processSummaryDF)) #process summary
+    plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
+    plotMat[[5, 1]] <- ggplotTable(overallCapDF)  #overall capability
   }
 
   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))

@@ -321,20 +321,4 @@ Form
 			label: qsTr("Show Report")
 		}
 	}
-		Section{
-  			title: qsTr("Advanced Options")
-					
-					CheckBox
-					{
-						name:                   			"manualTicks"
-						label: 								qsTr("Number of ticks on x-axis for X-bar & R or X-mR chart:")
-						childrenOnSameRow: true
-
-						DoubleField
-						{
-							name: 							"nTicks"
-							defaultValue:					5
-						}
-					}
-			  }
 }
