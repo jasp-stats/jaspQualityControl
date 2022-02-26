@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-01-29 03:40\n"
+"POT-Creation-Date: 2022-02-26 03:40\n"
 "PO-Revision-Date: 2022-01-30 07:56+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -48,6 +48,9 @@ msgstr "子组"
 
 msgid "Counts"
 msgstr "计数"
+
+msgid "The number of Defectives/Defects is larger than the sample  size."
+msgstr ""
 
 msgid "Attributes Control Charts"
 msgstr "属性控制图"
@@ -114,9 +117,6 @@ msgstr "时间: %s"
 
 msgid "Frequency: %s"
 msgstr "频度: %s"
-
-msgid "Control Charts Report for %s"
-msgstr "%s 控制图报告"
 
 msgid "Control Chart"
 msgstr "控制图"
@@ -190,6 +190,17 @@ msgstr "t"
 msgid "p"
 msgstr "p"
 
+msgid "This plot is unavailable for saturated designs."
+msgstr ""
+
+#, fuzzy
+msgid "Normal Plot of Standardized Effects"
+msgstr "标准化效应 Pareto 图"
+
+#, fuzzy
+msgid "Residual Plots for %s"
+msgstr "残差"
+
 msgid "Available Factorial Designs"
 msgstr "可用因子设计"
 
@@ -228,6 +239,38 @@ msgstr "设计预览"
 
 msgid "Alias Structure"
 msgstr "别名结构"
+
+msgid "Term"
+msgstr ""
+
+msgid "Analysis of variance"
+msgstr ""
+
+#, fuzzy
+msgid "Model Summary"
+msgstr "过程汇总"
+
+msgid "%s,%s"
+msgstr ""
+
+msgid "%s ~ FO(%s)"
+msgstr ""
+
+msgid "Regression equation in uncoded units"
+msgstr ""
+
+msgid "<i>p</i>-value"
+msgstr "<i>p</i>- 值"
+
+msgid "Index"
+msgstr ""
+
+#, fuzzy
+msgid "Factor"
+msgstr "因子"
+
+msgid "Name"
+msgstr ""
 
 msgid "Input Design"
 msgstr "设计输入"
@@ -346,23 +389,42 @@ msgstr "旋转 Alpha"
 msgid "Orthogonal Alpha"
 msgstr "正交 Alpha"
 
-msgid "RSM Coefficients for %s"
+#, fuzzy
+msgid "Matrix plot for %s"
+msgstr "操作者矩阵图"
+
+#, fuzzy
+msgid "Index coefficients for %s"
 msgstr "%s 的 RSM 系数"
 
-msgid "Estimate"
-msgstr "估计"
+#, fuzzy
+msgid "Coded coefficients"
+msgstr "系数"
 
-msgid "Multiple R-squared"
+#, fuzzy
+msgid "Uncoded coefficients"
+msgstr "系数"
+
+msgid "Regression equation in coded coefficients"
 msgstr ""
+
+msgid "S"
+msgstr "S"
+
+#, fuzzy
+msgid "Model R-squared"
+msgstr "调整 R 平方"
 
 msgid "Adjusted R-squared"
 msgstr "调整 R 平方"
 
-msgid "DF1"
-msgstr "DF1"
+#, fuzzy
+msgid "df1"
+msgstr "df"
 
-msgid "DF2"
-msgstr "DF2"
+#, fuzzy
+msgid "df2"
+msgstr "df"
 
 msgid "F"
 msgstr "F"
@@ -370,14 +432,14 @@ msgstr "F"
 msgid "ANOVA for %s"
 msgstr "%s 方差分析"
 
-msgid "DF"
-msgstr "DF"
+msgid "df"
+msgstr "df"
 
-msgid "Sum of Squares"
-msgstr "平方和"
+msgid "SS"
+msgstr "SS"
 
-msgid "Mean of Squares"
-msgstr "均方差"
+msgid "MS"
+msgstr "MS"
 
 msgid "Stationary Points of Response Surface (Coded)"
 msgstr "响应曲面的固定点（已编码）"
@@ -403,18 +465,6 @@ msgstr "在运行分析之前，至少需要指定一个合意度函数。"
 
 msgid "Standard order"
 msgstr "标准序"
-
-msgid "ANOVA"
-msgstr "方差分析"
-
-msgid "df"
-msgstr "df"
-
-msgid "SS"
-msgstr "SS"
-
-msgid "MS"
-msgstr "MS"
 
 msgid "Reference Tables and Plots"
 msgstr "参考值表和图形"
@@ -482,6 +532,9 @@ msgstr "上限"
 
 msgid "Invalid Reference and/or Results were inserted."
 msgstr "插入无效参考值和/或结果。"
+
+msgid "Invalid values (NA) found in appraiser %s."
+msgstr ""
 
 msgid "More than 1 Measurement per Operator required."
 msgstr "每个操作者需要多于1次测量。"
@@ -570,9 +623,6 @@ msgstr "<i>p</i>"
 msgid "Gauge Linearity"
 msgstr "量具线性"
 
-msgid "S"
-msgstr "S"
-
 msgid "R%1$s"
 msgstr "R%1$s"
 
@@ -620,8 +670,10 @@ msgid ""
 "replicable gauge r&R."
 msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不可重复量具 r&R。"
 
-msgid "No valid measurements in %s."
-msgstr "%s 中无有效测量值。"
+msgid ""
+"The measurements selected seem to be in a 'Single Column' format as every "
+"operator's part is measured %d times."
+msgstr ""
 
 msgid "Gauge r&R ANOVA Table"
 msgstr "量具 r&R 方差分析表"
@@ -653,20 +705,24 @@ msgstr "报告"
 msgid "ANOVA Table"
 msgstr "方差分析表"
 
+#, fuzzy
+msgid "Two-way ANOVA Table"
+msgstr "方差分析表"
+
 msgid "Two-way ANOVA Table with Interaction"
 msgstr "双向方差分析表带交互作用"
 
 msgid "Source"
 msgstr "变异源"
 
+msgid "Sum of Squares"
+msgstr "平方和"
+
 msgid "Mean Squares"
 msgstr ""
 
-msgid "<i>p</i>-value"
-msgstr "<i>p</i>- 值"
-
-msgid "Gauge r&R Variance Components"
-msgstr "量具 r&R 方差分量"
+msgid "Variance Components"
+msgstr "方差分量"
 
 msgid "Variance"
 msgstr "方差"
@@ -783,8 +839,8 @@ msgstr "其它 : %s"
 msgid "Tolerance: %s"
 msgstr "公差 : %s"
 
-msgid "Measurement systems analysis for %s"
-msgstr "%s 测量系统分析"
+msgid "No valid measurements in %s."
+msgstr "%s 中无有效测量值。"
 
 msgid "Gauge r&R Tables"
 msgstr "量具 r&R表"
@@ -797,9 +853,6 @@ msgstr "量具 r&R（嵌套）"
 
 msgid "Mean Square"
 msgstr "均方"
-
-msgid "Variance Components"
-msgstr "方差分量"
 
 msgid "Variation"
 msgstr "方差"
@@ -932,6 +985,9 @@ msgstr "参数估计"
 
 msgid "Parameter"
 msgstr "参数"
+
+msgid "Estimate"
+msgstr "估计"
 
 msgid ""
 "Fitting the model failed with the following error message:\n"
@@ -1166,9 +1222,6 @@ msgstr ""
 msgid "Process name: %s"
 msgstr ""
 
-msgid "Process Capability Report for %s"
-msgstr ""
-
 msgid "Individuals Charts"
 msgstr ""
 
@@ -1202,7 +1255,7 @@ msgstr ""
 msgid "X-bar & R Control Chart"
 msgstr ""
 
-msgid "Out of-control Signals"
+msgid "Out-of-control Signals"
 msgstr ""
 
 msgid "X-bar & s Control Chart"
@@ -1222,6 +1275,30 @@ msgstr ""
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "Control Charts Report for %s"
+#~ msgstr "%s 控制图报告"
+
+#~ msgid "DF1"
+#~ msgstr "DF1"
+
+#~ msgid "DF2"
+#~ msgstr "DF2"
+
+#~ msgid "DF"
+#~ msgstr "DF"
+
+#~ msgid "Mean of Squares"
+#~ msgstr "均方差"
+
+#~ msgid "ANOVA"
+#~ msgstr "方差分析"
+
+#~ msgid "Gauge r&R Variance Components"
+#~ msgstr "量具 r&R 方差分量"
+
+#~ msgid "Measurement systems analysis for %s"
+#~ msgstr "%s 测量系统分析"
 
 #~ msgid "<i>p<i/>-value"
 #~ msgstr "<i>p<i/>- 值"

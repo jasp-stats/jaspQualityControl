@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-01-29 03:40\n"
+"POT-Creation-Date: 2022-02-26 03:40\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,6 +44,9 @@ msgid "Subgroup"
 msgstr ""
 
 msgid "Counts"
+msgstr ""
+
+msgid "The number of Defectives/Defects is larger than the sample  size."
 msgstr ""
 
 msgid "Attributes Control Charts"
@@ -110,9 +113,6 @@ msgid "Time: %s"
 msgstr ""
 
 msgid "Frequency: %s"
-msgstr ""
-
-msgid "Control Charts Report for %s"
 msgstr ""
 
 msgid "Control Chart"
@@ -187,6 +187,15 @@ msgstr ""
 msgid "p"
 msgstr ""
 
+msgid "This plot is unavailable for saturated designs."
+msgstr ""
+
+msgid "Normal Plot of Standardized Effects"
+msgstr ""
+
+msgid "Residual Plots for %s"
+msgstr ""
+
 msgid "Available Factorial Designs"
 msgstr ""
 
@@ -224,6 +233,36 @@ msgid "Design Preview"
 msgstr ""
 
 msgid "Alias Structure"
+msgstr ""
+
+msgid "Term"
+msgstr ""
+
+msgid "Analysis of variance"
+msgstr ""
+
+msgid "Model Summary"
+msgstr ""
+
+msgid "%s,%s"
+msgstr ""
+
+msgid "%s ~ FO(%s)"
+msgstr ""
+
+msgid "Regression equation in uncoded units"
+msgstr ""
+
+msgid "<i>p</i>-value"
+msgstr ""
+
+msgid "Index"
+msgstr ""
+
+msgid "Factor"
+msgstr ""
+
+msgid "Name"
 msgstr ""
 
 msgid "Input Design"
@@ -328,22 +367,34 @@ msgstr ""
 msgid "Orthogonal Alpha"
 msgstr ""
 
-msgid "RSM Coefficients for %s"
+msgid "Matrix plot for %s"
 msgstr ""
 
-msgid "Estimate"
+msgid "Index coefficients for %s"
 msgstr ""
 
-msgid "Multiple R-squared"
+msgid "Coded coefficients"
+msgstr ""
+
+msgid "Uncoded coefficients"
+msgstr ""
+
+msgid "Regression equation in coded coefficients"
+msgstr ""
+
+msgid "S"
+msgstr ""
+
+msgid "Model R-squared"
 msgstr ""
 
 msgid "Adjusted R-squared"
 msgstr ""
 
-msgid "DF1"
+msgid "df1"
 msgstr ""
 
-msgid "DF2"
+msgid "df2"
 msgstr ""
 
 msgid "F"
@@ -352,13 +403,13 @@ msgstr ""
 msgid "ANOVA for %s"
 msgstr ""
 
-msgid "DF"
+msgid "df"
 msgstr ""
 
-msgid "Sum of Squares"
+msgid "SS"
 msgstr ""
 
-msgid "Mean of Squares"
+msgid "MS"
 msgstr ""
 
 msgid "Stationary Points of Response Surface (Coded)"
@@ -380,18 +431,6 @@ msgid "At least one desirability function must be specified before running the a
 msgstr ""
 
 msgid "Standard order"
-msgstr ""
-
-msgid "ANOVA"
-msgstr ""
-
-msgid "df"
-msgstr ""
-
-msgid "SS"
-msgstr ""
-
-msgid "MS"
 msgstr ""
 
 msgid "Reference Tables and Plots"
@@ -458,6 +497,9 @@ msgid "Upper"
 msgstr ""
 
 msgid "Invalid Reference and/or Results were inserted."
+msgstr ""
+
+msgid "Invalid values (NA) found in appraiser %s."
 msgstr ""
 
 msgid "More than 1 Measurement per Operator required."
@@ -541,9 +583,6 @@ msgstr ""
 msgid "Gauge Linearity"
 msgstr ""
 
-msgid "S"
-msgstr ""
-
 msgid "R%1$s"
 msgstr ""
 
@@ -583,7 +622,7 @@ msgstr ""
 msgid "Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."
 msgstr ""
 
-msgid "No valid measurements in %s."
+msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
 msgstr ""
 
 msgid "Gauge r&R ANOVA Table"
@@ -616,19 +655,22 @@ msgstr ""
 msgid "ANOVA Table"
 msgstr ""
 
+msgid "Two-way ANOVA Table"
+msgstr ""
+
 msgid "Two-way ANOVA Table with Interaction"
 msgstr ""
 
 msgid "Source"
 msgstr ""
 
+msgid "Sum of Squares"
+msgstr ""
+
 msgid "Mean Squares"
 msgstr ""
 
-msgid "<i>p</i>-value"
-msgstr ""
-
-msgid "Gauge r&R Variance Components"
+msgid "Variance Components"
 msgstr ""
 
 msgid "Variance"
@@ -742,7 +784,7 @@ msgstr ""
 msgid "Tolerance: %s"
 msgstr ""
 
-msgid "Measurement systems analysis for %s"
+msgid "No valid measurements in %s."
 msgstr ""
 
 msgid "Gauge r&R Tables"
@@ -755,9 +797,6 @@ msgid "Gauge r&R (Nested)"
 msgstr ""
 
 msgid "Mean Square"
-msgstr ""
-
-msgid "Variance Components"
 msgstr ""
 
 msgid "Variation"
@@ -890,6 +929,9 @@ msgid "Parameter Estimates"
 msgstr ""
 
 msgid "Parameter"
+msgstr ""
+
+msgid "Estimate"
 msgstr ""
 
 msgid "Fitting the model failed with the following error message:\n%s"
@@ -1111,9 +1153,6 @@ msgstr ""
 msgid "Process name: %s"
 msgstr ""
 
-msgid "Process Capability Report for %s"
-msgstr ""
-
 msgid "Individuals Charts"
 msgstr ""
 
@@ -1147,7 +1186,7 @@ msgstr ""
 msgid "X-bar & R Control Chart"
 msgstr ""
 
-msgid "Out of-control Signals"
+msgid "Out-of-control Signals"
 msgstr ""
 
 msgid "X-bar & s Control Chart"

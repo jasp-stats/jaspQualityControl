@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-01-29 03:40\n"
+"POT-Creation-Date: 2022-02-26 03:40\n"
 "PO-Revision-Date: 2022-02-20 10:56+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -47,6 +47,9 @@ msgid "Subgroup"
 msgstr "Untergruppe"
 
 msgid "Counts"
+msgstr ""
+
+msgid "The number of Defectives/Defects is larger than the sample  size."
 msgstr ""
 
 msgid "Attributes Control Charts"
@@ -113,9 +116,6 @@ msgid "Time: %s"
 msgstr "Zeit: %s"
 
 msgid "Frequency: %s"
-msgstr ""
-
-msgid "Control Charts Report for %s"
 msgstr ""
 
 msgid "Control Chart"
@@ -190,6 +190,17 @@ msgstr "t"
 msgid "p"
 msgstr "p"
 
+msgid "This plot is unavailable for saturated designs."
+msgstr ""
+
+#, fuzzy
+msgid "Normal Plot of Standardized Effects"
+msgstr "Standardisierter Effekt"
+
+#, fuzzy
+msgid "Residual Plots for %s"
+msgstr "Residuen"
+
 msgid "Available Factorial Designs"
 msgstr "Verfügbare faktorielle Designs"
 
@@ -228,6 +239,38 @@ msgstr "Design-Vorschau"
 
 msgid "Alias Structure"
 msgstr ""
+
+msgid "Term"
+msgstr ""
+
+msgid "Analysis of variance"
+msgstr ""
+
+msgid "Model Summary"
+msgstr ""
+
+msgid "%s,%s"
+msgstr ""
+
+msgid "%s ~ FO(%s)"
+msgstr ""
+
+msgid "Regression equation in uncoded units"
+msgstr ""
+
+msgid "<i>p</i>-value"
+msgstr "<i>p</i>-Wert"
+
+msgid "Index"
+msgstr ""
+
+#, fuzzy
+msgid "Factor"
+msgstr "Faktoren"
+
+#, fuzzy
+msgid "Name"
+msgstr "Name: %s"
 
 msgid "Input Design"
 msgstr ""
@@ -347,23 +390,40 @@ msgstr ""
 msgid "Orthogonal Alpha"
 msgstr ""
 
-msgid "RSM Coefficients for %s"
+msgid "Matrix plot for %s"
 msgstr ""
 
-msgid "Estimate"
+msgid "Index coefficients for %s"
 msgstr ""
 
-msgid "Multiple R-squared"
+#, fuzzy
+msgid "Coded coefficients"
+msgstr "Koeffizienten"
+
+#, fuzzy
+msgid "Uncoded coefficients"
+msgstr "Koeffizienten"
+
+msgid "Regression equation in coded coefficients"
 msgstr ""
+
+msgid "S"
+msgstr ""
+
+#, fuzzy
+msgid "Model R-squared"
+msgstr "Mittlere Quadratsumme"
 
 msgid "Adjusted R-squared"
 msgstr ""
 
-msgid "DF1"
-msgstr ""
+#, fuzzy
+msgid "df1"
+msgstr "df"
 
-msgid "DF2"
-msgstr ""
+#, fuzzy
+msgid "df2"
+msgstr "df"
 
 msgid "F"
 msgstr "F"
@@ -371,13 +431,13 @@ msgstr "F"
 msgid "ANOVA for %s"
 msgstr "ANOVA für %s"
 
-msgid "DF"
-msgstr "DF"
+msgid "df"
+msgstr "df"
 
-msgid "Sum of Squares"
-msgstr "Quadratsumme"
+msgid "SS"
+msgstr ""
 
-msgid "Mean of Squares"
+msgid "MS"
 msgstr ""
 
 msgid "Stationary Points of Response Surface (Coded)"
@@ -403,18 +463,6 @@ msgid ""
 msgstr ""
 
 msgid "Standard order"
-msgstr ""
-
-msgid "ANOVA"
-msgstr "ANOVA"
-
-msgid "df"
-msgstr "df"
-
-msgid "SS"
-msgstr ""
-
-msgid "MS"
 msgstr ""
 
 msgid "Reference Tables and Plots"
@@ -482,6 +530,9 @@ msgid "Upper"
 msgstr "Obere"
 
 msgid "Invalid Reference and/or Results were inserted."
+msgstr ""
+
+msgid "Invalid values (NA) found in appraiser %s."
 msgstr ""
 
 msgid "More than 1 Measurement per Operator required."
@@ -571,9 +622,6 @@ msgstr "<i>p</i>"
 msgid "Gauge Linearity"
 msgstr ""
 
-msgid "S"
-msgstr ""
-
 msgid "R%1$s"
 msgstr ""
 
@@ -624,8 +672,10 @@ msgid ""
 "replicable gauge r&R."
 msgstr ""
 
-msgid "No valid measurements in %s."
-msgstr "Keine gültigen Messungen in %s."
+msgid ""
+"The measurements selected seem to be in a 'Single Column' format as every "
+"operator's part is measured %d times."
+msgstr ""
 
 msgid "Gauge r&R ANOVA Table"
 msgstr ""
@@ -657,20 +707,24 @@ msgstr "Bericht"
 msgid "ANOVA Table"
 msgstr "ANOVA-Tabelle"
 
+#, fuzzy
+msgid "Two-way ANOVA Table"
+msgstr "ANOVA-Tabelle"
+
 msgid "Two-way ANOVA Table with Interaction"
 msgstr "Zweifaktorielle ANOVA-Tabelle mit Interaktion"
 
 msgid "Source"
 msgstr "Quelle"
 
+msgid "Sum of Squares"
+msgstr "Quadratsumme"
+
 msgid "Mean Squares"
 msgstr ""
 
-msgid "<i>p</i>-value"
-msgstr "<i>p</i>-Wert"
-
-msgid "Gauge r&R Variance Components"
-msgstr ""
+msgid "Variance Components"
+msgstr "Varianz-Komponenten"
 
 msgid "Variance"
 msgstr "Varianz"
@@ -787,8 +841,8 @@ msgstr ""
 msgid "Tolerance: %s"
 msgstr "Toleranz: %s"
 
-msgid "Measurement systems analysis for %s"
-msgstr ""
+msgid "No valid measurements in %s."
+msgstr "Keine gültigen Messungen in %s."
 
 msgid "Gauge r&R Tables"
 msgstr ""
@@ -801,9 +855,6 @@ msgstr ""
 
 msgid "Mean Square"
 msgstr "Mittlere Quadratsumme"
-
-msgid "Variance Components"
-msgstr "Varianz-Komponenten"
 
 msgid "Variation"
 msgstr ""
@@ -936,6 +987,9 @@ msgstr ""
 
 msgid "Parameter"
 msgstr "Parameter"
+
+msgid "Estimate"
+msgstr ""
 
 msgid ""
 "Fitting the model failed with the following error message:\n"
@@ -1169,9 +1223,6 @@ msgstr ""
 msgid "Process name: %s"
 msgstr ""
 
-msgid "Process Capability Report for %s"
-msgstr ""
-
 msgid "Individuals Charts"
 msgstr ""
 
@@ -1207,7 +1258,7 @@ msgstr ""
 msgid "X-bar & R Control Chart"
 msgstr ""
 
-msgid "Out of-control Signals"
+msgid "Out-of-control Signals"
 msgstr ""
 
 msgid "X-bar & s Control Chart"
@@ -1227,6 +1278,12 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "DF"
+#~ msgstr "DF"
+
+#~ msgid "ANOVA"
+#~ msgstr "ANOVA"
 
 #~ msgid "<i>p<i/>-value"
 #~ msgstr "<i>p</i>-Wert"
