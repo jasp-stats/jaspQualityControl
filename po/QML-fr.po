@@ -1,47 +1,58 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2022-02-24 22:58+0000\n"
+"Last-Translator: Arens Jean Ricardo Médéus <ricardomedeus@gmail.com>\n"
+"Language-Team: French <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/fr/>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.11-dev\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
-msgstr ""
+msgstr "Contrôle de qualité"
 
 msgctxt "Description|"
 msgid ""
 "Investigate if a manufactured product adheres to a defined set of quality "
 "criteria"
 msgstr ""
+"Vérifier si un produit fabriqué respecte un ensemble défini de critères de "
+"qualité"
 
 msgctxt "Description|"
 msgid "Measurement Systems Analysis"
-msgstr ""
+msgstr "Analyse des systèmes de mesure"
 
+#, fuzzy
 msgctxt "Description|"
 msgid "Type 1 Instrument Capability"
-msgstr ""
+msgstr "Capacité de l'instrument de type 1"
 
 msgctxt "Description|"
 msgid "Linearity Study"
-msgstr ""
+msgstr "Étude linéaire"
 
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
-msgstr ""
+msgstr "Type 2 et 3 Gauge r&R (équipement manuel/automatique)"
 
+#, fuzzy
 msgctxt "Description|"
 msgid "Gauge r&R (non-replicable measurements)"
-msgstr ""
+msgstr "Gauge r&R (mesures non reproductibles)"
 
 msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
-msgstr ""
+msgstr "Analyse de l'accord sur les attributs"
 
 msgctxt "Description|"
 msgid "Test-retest (Range method)"
-msgstr ""
+msgstr "Test-retest ( Méthode de la tranche)"
 
 msgctxt "Description|"
 msgid "Control Charts"
