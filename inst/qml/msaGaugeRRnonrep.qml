@@ -63,7 +63,7 @@ Form
 		AssignedVariablesList
 		{
 			name:								"measurements"
-			title:								qsTr("Measurement")
+			title:								qsTr("Measurements")
 			singleVariable:						true
 			allowedColumns:						["scale"]
 			visible:							gaugeRRNonRepDataFormat.currentValue == "gaugeRRNonRepLongFormat"
@@ -173,13 +173,13 @@ Form
 			CheckBox
 			{
 				name: 							"NRxbarCharts"
-				label: 							qsTr("X-bar charts by operator")
+				label: 							qsTr("Average charts by operator")
 			}
 
 			CheckBox
 			{
 				name: 							"NRpartOperatorGraph"
-				label: 							qsTr("Measurement by part plot")
+				label: 							qsTr("Measurements by part plot")
 
 				CheckBox
 				{
@@ -191,7 +191,7 @@ Form
 			CheckBox
 			{
 				name: 							"NRoperatorGraph"
-				label: 							qsTr("Measurement by operator plot")
+				label: 							qsTr("Measurements by operator plot")
 			}
 		}
 	}

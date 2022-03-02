@@ -156,7 +156,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   # Measurement by Operator Box Plot
   if (options[["gaugeByOperator"]]) {
     if (is.null(jaspResults[["gaugeByOperator"]])) {
-      jaspResults[["gaugeByOperator"]] <- createJaspContainer(gettext("Measurement by Operator Graph"))
+      jaspResults[["gaugeByOperator"]] <- createJaspContainer(gettext("Measurements by Operator Graph"))
       jaspResults[["gaugeByOperator"]]$position <- 7
     }
     jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
@@ -165,14 +165,14 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   # Parts by Operator Interaction Plot
   if (options[["gaugeByInteraction"]]) {
     if (is.null(jaspResults[["gaugeByInteraction"]])) {
-      jaspResults[["gaugeByInteraction"]] <- createJaspContainer(gettext("Parts by Operator Interaction Graph"))
+      jaspResults[["gaugeByInteraction"]] <- createJaspContainer(gettext("Part by Operator Interaction Graph"))
       jaspResults[["gaugeByInteraction"]]$position <- 8
     }
     jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
   }
   # Traffic light plot
   if(options[["trafficPlot"]] & is.null(jaspResults[["trafficPlot"]] )) {
-    jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light graph"))
+    jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
     jaspResults[["trafficPlot"]]$position <- 9
     jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "tolerance","gaugeToleranceEnabled", "gaugeRRmethod", "historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue"))
     trafficContainer <- jaspResults[["trafficPlot"]]
@@ -201,7 +201,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   anovaTables$dependOn(c("gaugeANOVA", "gaugeRRmethod"))
   anovaTables$position <- 1
 
-  anovaTable1 <- createJaspTable(title = ifelse(Type3, gettext("Two-way ANOVA Table"), gettext("Two-way ANOVA Table with Interaction")))
+  anovaTable1 <- createJaspTable(title = ifelse(Type3, gettext("One-way ANOVA Table"), gettext("Two-way ANOVA Table with Interaction")))
   anovaTable1$addColumnInfo(title = gettext("Source"),       name = "source",   type = "string" )
   anovaTable1$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
   anovaTable1$addColumnInfo(title = gettext("Sum of Squares"), name = "Sum Sq",  type = "number")
@@ -298,7 +298,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       fVector <- fPart
       pVector <- pPart
     }else{
-      sources <- c(parts, operators, paste(parts," x ", operators), "Repeatability", "Total")
+      sources <- c(parts, operators, paste(parts," * ", operators), "Repeatability", "Total")
       dfVector <- c(dfPart, dfOperators, dfInteraction, dfRepWithInteraction, dfTotal)
       ssVector <- c(ssPart, ssOperator, ssInteraction, ssRepWithInteraction, ssTotal)
       msVector <- c(msPart, msOperator, msInteraction, msRepWithInteraction)
@@ -323,7 +323,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     if (singleOperator || interactionSignificant){
 
       #r & R varcomps
-
       if(singleOperator){
         varCompList <- .gaugeCrossedVarCompsSingleOP(data, operators, parts, measurements, msPart, msRepWithInteraction)
         varCompRepeat <- varCompList$repeatability
@@ -342,17 +341,19 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         varCompTotalVar <- varCompList$totalVar
         varCompInteraction <- varCompList$interaction
         varCompVector <- c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator, varCompPart, varCompInteraction, varCompTotalVar)
-        sources <- gettext(c("Total Gauge r&R", "Repeatability", "Reproducibility", operators, "Part-to-Part", paste(parts," x ", operators), "Total Variation"))
+        sources <- gettext(c("Total Gauge r&R", "Repeatability", "Reproducibility", operators, "Part-to-Part", paste(parts," * ", operators), "Total Variation"))
       }
 
-      varCompPercent <- varCompVector / varCompTotalVar * 100
-
       if (options$standardDeviationReference == "historicalStandardDeviation"){
+        if (Type3)
+          varCompVector <- list(varCompTotalGauge = varCompTotalGauge, varCompRepeat = varCompRepeat, varCompPart = varCompPart, varCompTotalVar = varCompTotalVar)
         histSD <- options$historicalStandardDeviationValue
-        varCompVector$varCompTotalVar <- histSD^2
+        varCompVector$varCompTotalVar <- varCompTotalVar <- histSD^2
         varCompVector$varCompPart <- varCompVector$varCompTotalVar - varCompTotalGauge
       }
 
+
+      varCompPercent <- unlist(varCompVector) / varCompTotalVar * 100
 
       RRtable1$setData(list(      "Source"       = sources,
                                   "Variation"    = varCompVector,
@@ -383,8 +384,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         }
         sdParts <- SD[3]
         sdGauge <- SD[1]
-
       }
+      SD <- ifelse(SD == "NaN", 0, SD)
       studyVar <- SD * studyVarMultiplier
       RRtable2DataList <- list("source"       = sources,
                                "SD"           = SD,
@@ -396,12 +397,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       if (!is.na(sdParts)) {
         nCategories <- .gaugeNumberDistinctCategories(sdParts, sdGauge)
-        RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
+        RRtable2$addFootnote(gettextf("Number of distinct categories = %i", ifelse(SD[3] == 0, 1, nCategories)))
       }
       if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
-        RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation x %i", as.integer(studyVarMultiplier)))
+        RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i", as.integer(studyVarMultiplier)))
       }else{
-        RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation x %.2f", studyVarMultiplier))
+        RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f", studyVarMultiplier))
       }
 
       if(options$standardDeviationReference == "historicalStandardDeviation"){
@@ -480,6 +481,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         SD <- sqrt(varCompVector)
       }
 
+      SD <- ifelse(SD == "NaN", 0, SD)
       studyVar <- SD * studyVarMultiplier
       RRtable2DataList <- list("source"       = gettext(c("Total Gauge r&R", "Repeatability", "Reproducibility", operators, "Part-to-Part", "Total Variation")),
                                "SD"           = SD,
@@ -489,11 +491,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options$tolerance * 100,2))))
       RRtable2$setData(RRtable2DataList)
       nCategories <- .gaugeNumberDistinctCategories(SD[5], SD[1])
-      RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
+      RRtable2$addFootnote(gettextf("Number of distinct categories = %i", ifelse(SD[3] == 0, 1, nCategories)))
       if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
-        RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation x %i", as.integer(studyVarMultiplier)))
+        RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i", as.integer(studyVarMultiplier)))
       }else{
-        RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation x %.2f", studyVarMultiplier))
+        RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f", studyVarMultiplier))
       }
 
       if(options$standardDeviationReference == "historicalStandardDeviation"){
@@ -569,10 +571,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   data <- dataset[measurements]
   if (type == "Range") {
     ChartData <- qcc::qcc(data, type= 'R', plot = FALSE)
-    leftLabel <- "Subgroup range"
+    leftLabel <- "Sample range"
   }else{
     ChartData <- qcc::qcc(data, type= 'xbar', plot = FALSE)
-    leftLabel <- "Subgroup average"
+    leftLabel <- "Sample average"
   }
   center <- ChartData$center
   UCL <- max(ChartData$limits)
@@ -671,7 +673,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeByOperatorGraph <- function(dataset, measurements, parts, operators, options, ready, Type3 = FALSE) {
 
-  plot <- createJaspPlot(title = gettext("Measurement by Operator"), width = 600, height = 600)
+  plot <- createJaspPlot(title = gettext("Measurements by Operator"), width = 600, height = 600)
 
   plot$dependOn(c("gaugeByOperator", "gaugeRRmethod"))
 
@@ -703,15 +705,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   if (ready) {
     plot <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3)
   } else {
-    plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
+    plot <- createJaspPlot(title = gettext("Part by Operator Interaction"), width = 700, height = 400)
     plot$dependOn(c("gaugeByInteraction", "gaugeRRmethod"))
   }
   return(plot)
 }
 
-.gaugeByInteractionGraphPlotFunction <- function(dataset, measurements, parts, operators, options, Type3 = FALSE) {
+.gaugeByInteractionGraphPlotFunction <- function(dataset, measurements, parts, operators, options, Type3 = FALSE, ggPlot = FALSE) {
 
-  plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
+  plot <- createJaspPlot(title = gettext("Part by Operator Interaction"), width = 700, height = 400)
   plot$dependOn(c("gaugeByInteraction", "gaugeRRmethod"))
 
   byOperator <- split.data.frame(dataset, dataset[operators])
@@ -719,7 +721,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   for (name in names(byOperator)) {
     if (nrow(byOperator[[name]][measurements]) != length(partNames)) {
-      plot <- createJaspPlot(title = gettext("Parts by Operator Interaction"), width = 700, height = 400)
+      plot <- createJaspPlot(title = gettext("Part by Operator Interaction"), width = 700, height = 400)
       plot$setError(gettext("Operators measured different number of parts."))
       return(plot)
     }
@@ -732,7 +734,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   p <- ggplot2::ggplot(df, ggplot2::aes(x = Part, y = Means, col = Operator, group = Operator)) +
     jaspGraphs::geom_line() +
     jaspGraphs::geom_point() +
-    ggplot2::scale_y_continuous(name = "Measurement", breaks = yBreaks, limits = yLimits) +
+    ggplot2::scale_y_continuous(name = "Average", breaks = yBreaks, limits = yLimits) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -741,7 +743,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   plot$plotObject <- p
 
-  return(plot)
+  if (ggPlot)
+    return(p)
+  else
+    return(plot)
 }
 
 .gaugeScatterPlotOperators <- function(jaspResults, dataset, measurements, parts, operators, options, ready) {
@@ -861,7 +866,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 .anovaGaugeReport <- function(dataset, measurements, parts, operators, options, Type3 = FALSE){
 
   if (options[["anovaGaugeTitle"]] == ""){
-    title <- "Gauge r&R Report"
+    title <- gettextf("Measurement systems analysis")
   }else{
     title <- options[["anovaGaugeTitle"]]
   }
@@ -869,7 +874,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   date <- gettextf("Date of study: %s", options[["anovaGaugeDate"]])
   text1 <- c(name, date)
 
-  reportedBy <- gettextf("Reported by: %s", options[["anovaGaugeReportedBy"]])
+  reportedBy <- gettextf("Performed by: %s", options[["anovaGaugeReportedBy"]])
   misc <- gettextf("Misc: %s", options[["anovaGaugeMisc"]])
   if (options[["gaugeToleranceEnabled"]]){
     tolerance <- gettextf("Tolerance: %s", options[["tolerance"]])
@@ -878,7 +883,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     text2 <- c(reportedBy, misc)
   }
 
-  matrixPlot <- createJaspPlot(title = gettext("Report"), width = 3200, height = 1200)
+  matrixPlot <- createJaspPlot(title = title, width = 3200, height = 1200)
   plotMat <- matrix(list(), 5, 2)
   plotMat[[1, 1]] <- .ggplotWithText(text1)
   plotMat[[1, 2]] <- .ggplotWithText(text2)
@@ -887,7 +892,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   plotMat[[3, 1]] <- .xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options, smallLabels = TRUE, Type3 = Type3)
   plotMat[[3, 2]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options, Type3 = Type3)
   plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Average", dataset, measurements, parts, operators, options, smallLabels = TRUE, Type3 = Type3)
-  plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3)
+  plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3, ggPlot = TRUE)
 
   valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = TRUE, returnTrafficValues = TRUE, Type3 = Type3)
   if (options$gaugeToleranceEnabled){
@@ -1098,7 +1103,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                      axis.text.y = ggplot2::element_blank(),
                      axis.ticks.y = ggplot2::element_blank(),
                      axis.title.y = ggplot2::element_blank()) +
-      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent of Process variation")
+      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the process variation") +
+      ggplot2::annotate("text", x = StudyVar *1.25, y = 1.52, size = 5, label = paste0(gettextf("%.2f", StudyVar), "%"))
 
     if (ToleranceUsed){
       p2 <- p2 +
@@ -1106,18 +1112,19 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                        axis.text.y = ggplot2::element_blank(),
                        axis.ticks.y = ggplot2::element_blank(),
                        axis.title.y = ggplot2::element_blank()) +
-        ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent of the Tolerance")
+        ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the tolerance")
+      p2 <- p2 +  ggplot2::annotate("text", x = ToleranceVar *1.2, y = 1.51, size = 5, label = paste0(gettextf("%.2f", ToleranceVar), "%"))
     }
   }
 
   if (ToleranceUsed){
-    p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(2:1, ifelse(horizontal, 1,2)))
+    p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p2, p1), layout = matrix(2:1, ifelse(horizontal, 1,2)))
     Plot$plotObject <- p3
 
     if (!ggPlot)
       return(Plot)
     else
-      return(list(p1 = p1, p2 = p2))
+      return(list(p1 = p2, p2 = p1))
   } else {
     Plot$plotObject <- p1
 

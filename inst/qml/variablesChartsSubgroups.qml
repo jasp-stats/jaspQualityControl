@@ -35,7 +35,7 @@ Form
 		{
 			id:									variablesLong
 			name:								"variablesLong"
-			title:								qsTr("Measurement")
+			title:								qsTr("Measurements")
 			allowedColumns:						["scale"]
 			singleVariable:						true
 			visible:							pcDataFormat.currentValue == "CClongFormat"

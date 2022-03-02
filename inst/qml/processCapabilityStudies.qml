@@ -53,7 +53,7 @@ Form
 		{
 			id:                 			variablesLong
 			name:               			"variablesLong"
-			title:              			qsTr("Measurement")
+			title:              			qsTr("Measurements")
 			allowedColumns:     			["scale"]
 			singleVariable:					true
 			visible:						pcDataFormat.currentValue == "PClongFormat"
@@ -148,8 +148,8 @@ Form
 							indexDefaultValue: 		0
 							values:
 								[
-								{label: qsTr("Non-conformance"),		value: "nonconformance"  },
-								{label: qsTr("Percentile"),		value: "percentile"}
+								{label: qsTr("Percentile"),		value: "percentile"},
+								{label: qsTr("Non-conformance"),		value: "nonconformance"  }
 							]
 						}
 					}
@@ -419,6 +419,19 @@ Form
 						DoubleField
 						{
 							name: 							"nTicks"
+							defaultValue:					5
+						}
+					}
+
+					CheckBox
+					{
+						name:                   			"manualTicksProbabilityPlot"
+						label: 								qsTr("Number of ticks on x-axis for probability plot:")
+						childrenOnSameRow: true
+
+						DoubleField
+						{
+							name: 							"nTicksProbabilityPlot"
 							defaultValue:					5
 						}
 					}

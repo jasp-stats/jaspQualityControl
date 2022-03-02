@@ -1078,7 +1078,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "number")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
 
-  table$addFootnote(gettextf("The Anderson-Darling statistic AD is calculated against the %2$s distribution.", "\u00B2", tolower(options[["nullDistribution"]])))
+  table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution.", "\u00B2", tolower(options[["nullDistribution"]])))
 
   if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
@@ -1217,7 +1217,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileUpper <- log(percentileUpper)
 
     labelFrame <- data.frame(labs = label_x, value = x)
-    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
+    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
     xBreaks <- labelFrame[index,2]
     label_x <- round(labelFrame[index,2],1)
     xLimits <- range(xBreaks)
@@ -1244,7 +1244,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileUpper <- log(percentileUpper)
 
     labelFrame <- data.frame(labs = label_x, value = x)
-    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
+    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
     xBreaks <- labelFrame[index,2]
     label_x <- round(labelFrame[index,2],1)
     xLimits <- range(xBreaks) * 1.2
@@ -1258,8 +1258,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed") +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed") +
     jaspGraphs::geom_point(ggplot2::aes(x = x, y = y)) +
-    ggplot2::scale_x_continuous("Measurement", breaks = xBreaks, limits = xLimits, labels = label_x) +
-    ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = yBreaks, limits = yLimits)
+    ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xBreaks, limits = xLimits, labels = label_x) +
+    ggplot2::scale_y_continuous(gettext('Percent'), labels = ticks, breaks = yBreaks, limits = yLimits)
 
   if (options[["addGridlines"]])
     p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
@@ -1496,7 +1496,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat[[2, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
     plotMat[[3, 1]] <-  p1
     plotMat[[3, 2]] <-  p2
-    plotMat[[4, 1]] <- ggplotTable(round(processSummaryDF)) #process summary
+    plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
     plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
     plotMat[[5, 1]] <- ggplotTable(overallCapDF)  #overall capability
   }
