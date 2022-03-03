@@ -45,6 +45,11 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     dataset         <- .readDataSetToEnd(c(numeric.vars, factor.vars))
   }
 
+  # Check for missing values and infinity
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             all.target = c(measurements, standards, operators, parts),
+             exitAnalysisIfErrors = TRUE)
+
   if (!wideFormat && ready){
     dataset <- dataset[order(dataset[[operators]]),]
     dataset <- dataset[order(dataset[[parts]]),]
@@ -62,10 +67,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
 
   # Error handling
-  # Check for missing values and infinity
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = c(measurements, standards, operators, parts),
-             exitAnalysisIfErrors = TRUE)
 
   if (standards == "" && options$PositiveRef != "" && options[["AAAcohensKappa"]]) {
     jaspResults[["tableReference"]] <- createJaspContainer(title = gettext("Reference Tables and Plots"))

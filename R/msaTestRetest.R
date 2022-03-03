@@ -97,13 +97,15 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
   # Traffic light graph
   if(options[["trafficPlot"]] & is.null(jaspResults[["trafficPlot"]] )) {
-    jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light graph"))
+    jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
     jaspResults[["trafficPlot"]]$position <- 4
     jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "rangePSD", "EnableRangePSD", "rangeTolerance", "EnableRangeTolerance"))
     TrafficContainer <- jaspResults[["trafficPlot"]]
 
     valuesVec <- .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready, GRRpercent = TRUE)
-    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceUsed = options$EnableRangeTolerance,ToleranceVar = valuesVec[2],options = options, ready = ready, horizontal = TRUE, Xlab.StudySD = "SD Precent of GRR", Xlab.Tol = "Tolerance Percent of GRR")
+    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceUsed = options$EnableRangeTolerance,
+                                               ToleranceVar = valuesVec[2],options = options, ready = ready,
+                                               Xlab.StudySD = "Percent study variation of GRR", Xlab.Tol = "Percent tolerance of GRR")
 
   }
 

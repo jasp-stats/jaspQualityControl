@@ -164,12 +164,15 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspResults[["IPlotA"]]$dependOn(c("D", "total", "Attributes", "timeStamp"))
 
     # Nelson tests tables
-    if (is.null(jaspResults[["NelsonTableI"]]) & is.null(jaspResults[["NelsonTabeMR"]])) {
-      jaspResults[["NelsonTableI"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", sixsigma = IMRchart$sixsigma_I, name = "Individuals", xLabels = xLabs)
-      jaspResults[["NelsonTableMR"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = IMRchart$sixsigma_R, name = "Moving Range", xLabels = xLabs)
+    if (is.null(jaspResults[["NelsonTableIMR"]])) {
+      NelsonTables <- createJaspContainer(title =  gettext(""), position = 2)
+      NelsonTables$dependOn(c("D", "total", "Attributes", "timeStamp"))
 
-      jaspResults[["NelsonTableI"]]$dependOn(c("D", "total", "Attributes", "timeStamp"))
-      jaspResults[["NelsonTableMR"]]$dependOn(c("D", "total", "Attributes", "timeStamp"))
+
+      NelsonTables[["NelsonTableI"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", sixsigma = IMRchart$sixsigma_I, name = "Individuals", xLabels = xLabs)
+      NelsonTables[["NelsonTableMR"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = IMRchart$sixsigma_R, name = "Moving Range", xLabels = xLabs)
+
+      jaspResults[["NelsonTableIMR"]] <- NelsonTables
     }
   }
 

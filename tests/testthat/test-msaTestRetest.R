@@ -42,9 +42,9 @@ test_that("Range chart by part plot matches", {
   jaspTools::expect_equal_plots(testPlot, "range-chart-by-part")
 })
 
-test_that("titleless-plot-4 matches", {
+test_that("Traffic light chart matches", {
   plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "titleless-plot-4")
+  jaspTools::expect_equal_plots(testPlot, "Traffic-light-chart")
 })
 

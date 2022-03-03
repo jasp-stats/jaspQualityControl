@@ -1038,7 +1038,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   return(TRUE)
 }
-.trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE,ToleranceVar = "", options, ready, horizontal = FALSE, Xlab.StudySD = "", Xlab.Tol = "", ggPlot = FALSE){
+.trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE, ToleranceVar = "", options, ready, Xlab.StudySD = "", Xlab.Tol = "", ggPlot = FALSE){
 
   if (!ready)
     return()
@@ -1060,10 +1060,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     ggplot2::geom_vline(xintercept = StudyVar) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15)) +
-    ggplot2::scale_y_discrete(name = NULL)
+    ggplot2::scale_y_discrete(name = NULL) +
+    ggplot2::theme(legend.position="none",
+                   axis.text.y = ggplot2::element_blank(),
+                   axis.ticks.y = ggplot2::element_blank(),
+                   axis.title.y = ggplot2::element_blank()) +
+    ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the process variation") +
+    ggplot2::annotate("text", x = StudyVar + 2.5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", StudyVar), "%"))
 
   if (Xlab.StudySD != "")
-    p1 <- p1 + ggplot2::scale_x_continuous(name = gettext(Xlab.StudySD))
+    p1 <- p1 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.StudySD))
 
 
   if (ToleranceUsed){
@@ -1072,53 +1078,18 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13')))+
       ggplot2::geom_vline(xintercept = ToleranceVar) +
       jaspGraphs::geom_rangeframe() +
-      jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
-    if (Xlab.Tol != "")
-      p2 <- p2 + ggplot2::scale_x_continuous(name = gettext(Xlab.Tol))
-  }
-
-  if (horizontal) {
-    p1 <- p1 +
-      ggplot2::theme(legend.position="none",
-                     axis.text.x = ggplot2::element_blank(),
-                     axis.ticks.x = ggplot2::element_blank(),
-                     axis.title.x = ggplot2::element_blank()) +
-      ggplot2::coord_flip() +
-      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "")
-
-    if (ToleranceUsed){
-      p2 <- p2 +
-        ggplot2::theme(legend.position="none",
-                       axis.text.x = ggplot2::element_blank(),
-                       axis.ticks.x = ggplot2::element_blank(),
-                       axis.title.x = ggplot2::element_blank()) +
-        ggplot2::coord_flip() +
-        ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "")
-    }
-
-    Plot <- createJaspPlot(width = 250, height = 600)
-  } else{
-    p1 <- p1 +
+      jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15)) +
       ggplot2::theme(legend.position="none",
                      axis.text.y = ggplot2::element_blank(),
                      axis.ticks.y = ggplot2::element_blank(),
                      axis.title.y = ggplot2::element_blank()) +
-      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the process variation") +
-      ggplot2::annotate("text", x = StudyVar *1.25, y = 1.52, size = 5, label = paste0(gettextf("%.2f", StudyVar), "%"))
+      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the tolerance") +
+      ggplot2::annotate("text", x = ToleranceVar + 2.5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", ToleranceVar), "%"))
 
-    if (ToleranceUsed){
-      p2 <- p2 +
-        ggplot2::theme(legend.position="none",
-                       axis.text.y = ggplot2::element_blank(),
-                       axis.ticks.y = ggplot2::element_blank(),
-                       axis.title.y = ggplot2::element_blank()) +
-        ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the tolerance")
-      p2 <- p2 +  ggplot2::annotate("text", x = ToleranceVar *1.2, y = 1.51, size = 5, label = paste0(gettextf("%.2f", ToleranceVar), "%"))
-    }
-  }
+    if (Xlab.Tol != "")
+      p2 <- p2 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.Tol))
 
-  if (ToleranceUsed){
-    p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p2, p1), layout = matrix(2:1, ifelse(horizontal, 1,2)))
+    p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p2, p1), layout = matrix(2:1, 2))
     Plot$plotObject <- p3
 
     if (!ggPlot)
@@ -1126,6 +1097,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     else
       return(list(p1 = p2, p2 = p1))
   } else {
+
     Plot$plotObject <- p1
 
     if (!ggPlot)

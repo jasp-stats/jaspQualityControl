@@ -66,6 +66,6 @@
 <text x='596.86' y='536.84' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='10.84px' lengthAdjust='spacingAndGlyphs'>C</text>
 <text x='391.62' y='567.28' text-anchor='middle' style='font-size: 18.00px; font-family: sans;' textLength='71.04px' lengthAdjust='spacingAndGlyphs'>Operator</text>
 <text transform='translate(17.37,264.98) rotate(-90)' text-anchor='middle' style='font-size: 18.00px; font-family: sans;' textLength='110.07px' lengthAdjust='spacingAndGlyphs'>Measurement</text>
-<text x='391.62' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='173.44px' lengthAdjust='spacingAndGlyphs'>measurement-by-operator</text>
+<text x='391.62' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='180.94px' lengthAdjust='spacingAndGlyphs'>measurements-by-operator</text>
 </g>
 </svg>

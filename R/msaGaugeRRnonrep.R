@@ -19,7 +19,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
   wideFormat <- options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepWideFormat"
   if(!wideFormat){
-  measurements <- unlist(options$measurements)
+    measurements <- unlist(options$measurements)
   }else{
     measurements <- unlist(options$measurementsWide)
   }
@@ -36,17 +36,12 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     ready <- (length(measurements) > 1 && operators != "" && parts != "")
   }
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
-                                         exclude.na.listwise = c(numeric.vars, factor.vars))
+    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
   }
 
-  if (ready && nrow(dataset[measurements]) == 0){
-    jaspResults[["plot"]] <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-    jaspResults[["plot"]]$setError(gettextf("No valid measurements in %s.", measurements))
-    jaspResults[["plot"]]$position <- 1
-    jaspResults[["plot"]]$dependOn(c("measurements", "measurementsWide"))
-    return()
-  }
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             all.target = measurements,
+             exitAnalysisIfErrors = TRUE)
 
   if (ready && !wideFormat){
     dataset <- dataset[order(dataset[[operators]]),]
