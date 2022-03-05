@@ -2108,10 +2108,6 @@ msgid "Design Analysis"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Response surface analysis"
 msgstr ""
 
@@ -2233,4 +2229,8 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of ticks on x-axis:"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid ""
 msgstr ""
