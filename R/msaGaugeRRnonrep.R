@@ -116,10 +116,12 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   # Report
   if (options[["anovaGaugeNestedReport"]] && ready) {
     if (is.null(jaspResults[["anovaGaugeNestedReport"]])) {
-      jaspResults[["anovaGaugeNestedReport"]] <- createJaspContainer(gettext("Report"))
-      jaspResults[["anovaGaugeNestedReport"]]$position <- 6
+      anovaGaugeNestedReport <- createJaspContainer(gettext("Report"))
+      anovaGaugeNestedReport$position <- 6
+      anovaGaugeNestedReport$dependOn("anovaGaugeNestedReport")
     }
-    jaspResults[["anovaGaugeNestedReport"]] <- .anovaGaugeNestedReport(datasetWide, datasetLong, wideMeasurementCols, longMeasurementCols, parts = parts, operators = operators, options = options)
+    anovaGaugeNestedReport[["report"]] <- .anovaGaugeNestedReport(datasetWide, datasetLong, wideMeasurementCols, longMeasurementCols, parts = parts, operators = operators, options = options)
+    jaspResults[["anovaGaugeNestedReport"]] <- anovaGaugeNestedReport
   }
 
   return()
@@ -382,7 +384,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
  .anovaGaugeNestedReport <- function(datasetWide, datasetLong, measurementsWide, measurementsLong, parts, operators, options){
 
    if (options[["anovaGaugeNestedTitle"]] == ""){
-     title <- "Gauge r&R Report"
+     title <- gettext("Gauge r&R Report")
    }else{
      title <- options[["anovaGaugeNestedTitle"]]
    }
@@ -399,7 +401,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
      text2 <- c(reportedBy, misc)
    }
 
-   matrixPlot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
+   matrixPlot <- createJaspPlot(width = 1200, height = 1000)
    plotMat <- matrix(list(), 4, 2)
    plotMat[[1, 1]] <- .ggplotWithText(text1)
    plotMat[[1, 2]] <- .ggplotWithText(text2)

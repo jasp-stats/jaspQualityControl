@@ -76,9 +76,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Error Handling
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = measurements, exitAnalysisIfErrors = TRUE)
-  if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis" & ready)
-    .hasErrors(dataset, type = 'negativeValues',
-               all.target = measurements, exitAnalysisIfErrors = TRUE)
+  if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis" & ready) {
+    .hasErrors(dataset,
+               all.target = measurements,
+               custom = function () {
+                 if (any(unlist(dataset[measurements]) <= 0))
+                   return(gettext("Values must be positive to fit Weibull/Lognormal distribution."))},
+               exitAnalysisIfErrors = TRUE)
+  }
 
 
   dataset <- na.omit(dataset)
@@ -709,12 +714,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Average"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. deviation"))
   if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "Lognormal"){
-    table$addColumnInfo(name = "beta", type = "number", title = gettextf("Log mean (mu)"))
-    table$addColumnInfo(name = "theta", type = "number", title = gettextf("Log std.dev (%1$s)", "\u03B8"))
+    table$addColumnInfo(name = "beta", type = "number", title = gettextf("Log mean (%1$s)", "\u03BC"))
+    table$addColumnInfo(name = "theta", type = "number", title = gettextf("Log std.dev (%1$s)", "\u03C3"))
   }
   else{
-    table$addColumnInfo(name = "beta", type = "number", title = gettextf("Shape (%1$s)", "\u03B2"))
-    table$addColumnInfo(name = "theta", type = "number", title = gettextf("Scale (%1$s)", "\u03C3"))
+    table$addColumnInfo(name = "beta", type = "number", title = gettextf("Shape (%1$s)", "\u03BB"))
+    table$addColumnInfo(name = "theta", type = "number", title = gettext("Scale (<i>k</i>)"))
   }
   sourceVector1 <- c(sourceVector1, 'LSL', 'Target', 'USL', 'Sample size', 'Mean', 'Std. Deviation', "Beta", "Theta")
 
@@ -1059,7 +1064,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcProbabilityTable <- function(dataset, options, container, measurements) {
 
-  table <- createJaspTable(title = gettextf("Summary of test against the %1$s distribution", tolower(options[["nullDistribution"]])))
+  table <- createJaspTable(title = gettextf("Summary of test against the %1$s distribution", options[["nullDistribution"]]))
   table$position <- 1
 
   table$addColumnInfo(name = "n",      	title = gettext("N"),  		type = "integer")
@@ -1068,8 +1073,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "mean",  title = gettextf("Mean (%1$s)", "\u03BC"), 				type = "number")
     table$addColumnInfo(name = "sd",    title = gettextf("Std. deviation (%1$s)", "\u03C3"), 	type = "number")
   } else if (options[["nullDistribution"]] == 'Lognormal') {
-    table$addColumnInfo(name = "mean",  title = gettextf("Location (%1$s)", "\u03BC"),  		type = "number")
-    table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03C3"), 			type = "number")
+    table$addColumnInfo(name = "mean",  title = gettextf("Log mean (%1$s)", "\u03BC"),  		type = "number")
+    table$addColumnInfo(name = "sd",    title = gettextf("Log std.dev (%1$s)", "\u03C3"), 			type = "number")
   } else if (options[["nullDistribution"]] == 'Weibull') {
     table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03BB"), 			type = "number")
     table$addColumnInfo(name = "sd",    title = gettext("Scale (<i>k</i>)"),        			type = "number")
@@ -1078,7 +1083,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "number")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
 
-  table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution.", "\u00B2", tolower(options[["nullDistribution"]])))
+  table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution.", "\u00B2", options[["nullDistribution"]]))
 
   if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
@@ -1219,7 +1224,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     labelFrame <- data.frame(labs = label_x, value = x)
     index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
     xBreaks <- labelFrame[index,2]
-    label_x <- round(labelFrame[index,2],1)
+    label_x <- labelFrame[index,1]
     xLimits <- range(xBreaks)
   } else if (options[["nullDistribution"]] == 'Weibull') {
     fit <- fitdistrplus::fitdist(x, 'weibull')
@@ -1246,12 +1251,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     labelFrame <- data.frame(labs = label_x, value = x)
     index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
     xBreaks <- labelFrame[index,2]
-    label_x <- round(labelFrame[index,2],1)
+    label_x <- labelFrame[index,1]
     xLimits <- range(xBreaks) * 1.2
   }
   data1 <- data.frame(x = x, y = y)
   yLimits <- range(yBreaks)
-
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +

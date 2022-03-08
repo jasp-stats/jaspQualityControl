@@ -131,7 +131,6 @@ Form
 							name: 					"nonNormalDist"
 							id: 					nonNormalDist
 							label: 					qsTr("Specify a distribution")
-							indexDefaultValue: 		0
 							values:
 								[
 								{label: qsTr("Weibull"),		value: "Weibull"  },
@@ -139,6 +138,7 @@ Form
 								{label: qsTr("3-parameter lognormal"),		value: "3lognormal"},
 								{label: qsTr("3-parameter Weibull"),		value: "3weibull"}
 							]
+							indexDefaultValue: (nullDistribution.currentValue == "Weibull") ? 0 : 1
 						}
 
 						DropDown

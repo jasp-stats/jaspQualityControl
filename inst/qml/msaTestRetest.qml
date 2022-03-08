@@ -96,24 +96,24 @@ Form
 			CheckBox
 			{
 				name:							"EnableRangePSD"
+				label:						qsTr("Process Std. Deviation")
 				childrenOnSameRow:				true
 
 				DoubleField
 				{
 					name:						"rangePSD"
-					label:						qsTr("Process Std. Deviation")
 				}
 			}
 
 			CheckBox
 			{
 				name:							"EnableRangeTolerance"
+				label:						qsTr("Tolerance")
 				childrenOnSameRow: 				true
 
 				DoubleField
 				{
 					name:						"rangeTolerance"
-					label:						qsTr("Tolerance")
 				}
 			}
 
