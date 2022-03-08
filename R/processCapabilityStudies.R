@@ -89,8 +89,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
   }
 
-  # Distribution plot
-  .qcDistributionPlot(options, dataset, ready, jaspResults, measurements = measurements)
+  # Distribution plot - moved jaspResults ref here to avoid big files
+  if (!options[["histogram"]] || !is.null(jaspResults[["histogram"]]))
+    jaspResults[["histogram"]] <- .qcDistributionPlot(options, dataset, ready, measurements = measurements)
 
   # Probability plots section
   .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements = measurements)
@@ -152,33 +153,34 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") {
 
-    title <- gettext("Process Capability")
+    normalContainer <- createJaspContainer(gettext("Process Capability"))
+    normalContainer$position <- 1
+    container[["normalCapabilityAnalysis"]] <- normalContainer
 
-    childContainer <- createJaspContainer(title)
-    childContainer$position <- 1
-    container[["normalCapabilityAnalysis"]] <- childContainer
-
-    .qcProcessSummaryTable(options, dataset, ready, childContainer, measurements)
+    .qcProcessSummaryTable(options, dataset, ready, normalContainer, measurements)
 
     if (options[["CapabilityStudyPlot"]])
-      .qcProcessCapabilityPlot(options, dataset, ready, childContainer, measurements, distribution = 'normal')
+      .qcProcessCapabilityPlot(options, dataset, ready, normalContainer, measurements, distribution = 'normal')
+
     if (options[["CapabilityStudyTables"]]){
-      .qcProcessCapabilityTableWithin(options, dataset, ready, childContainer, measurements)
-      .qcProcessCapabilityTableOverall(options, dataset, ready, childContainer, measurements)
+      .qcProcessCapabilityTableWithin(options, dataset, ready, normalContainer, measurements)
+      .qcProcessCapabilityTableOverall(options, dataset, ready, normalContainer, measurements)
     }
 
   }
 
   if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis") {
 
-    childContainer2 <- createJaspContainer(gettext("Process Capability (Non-normal Capability Analysis)"))
-    childContainer2$position <- 2
+    nonNormalContainer <- createJaspContainer(gettext("Process Capability (Non-normal Capability Analysis)"))
+    nonNormalContainer$position <- 2
 
-    container[["nonNormalCapabilityAnalysis"]] <- childContainer2
+    container[["nonNormalCapabilityAnalysis"]] <- nonNormalContainer
+    
     if (options[["CapabilityStudyPlot"]])
-      .qcProcessCapabilityPlot(options, dataset, ready, childContainer2, measurements, distribution = options[["nonNormalDist"]])
+      .qcProcessCapabilityPlot(options, dataset, ready, nonNormalContainer, measurements, distribution = options[["nonNormalDist"]])
+
     if (options[["CapabilityStudyTables"]])
-      .qcProcessCapabilityTableNonNormal(options, dataset, ready, childContainer2, measurements)
+      .qcProcessCapabilityTableNonNormal(options, dataset, ready, nonNormalContainer, measurements)
   }
 }
 
@@ -257,22 +259,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container[["processSummaryTable"]] <- table
 }
 
-.qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements, returnPlotObject = FALSE, distribution = c('normal', 'Weibull',
-                                                                                                                                  'Lognormal', '3lognormal', '3weibull')) {
-
-  plot <- createJaspPlot(title = gettext("Capability of the process"), width = 700, height = 400)
-  plot$dependOn(c("csBinWidthType", "csNumberOfBins"))
-  plot$position <- 2
-
-
-  if(!options[["upperSpecificationField"]] && !options[["lowerSpecificationField"]]){
-    plot$setError(gettext("No specification limits set."))
-    return()
-  }
-
-  if (!ready){
-    return()
-  }
+.qcProcessCapabilityPlotObject <- function(options, dataset, measurements, distribution = c('normal', 'Weibull', 'Lognormal', '3lognormal', '3weibull')) {
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
@@ -335,12 +322,26 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   p <- jaspGraphs::themeJasp(p) +
     ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
 
-  if(returnPlotObject)
-    return(p)
+  return(p)
+}
 
-  plot$plotObject <- p
+.qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements, distribution = c('normal', 'Weibull', 'Lognormal', '3lognormal', '3weibull')) {
 
-  container[["capabilityPlot"]] <- plot
+  plot <- createJaspPlot(title = gettext("Capability of the process"), width = 700, height = 400)
+  plot$dependOn(c("csBinWidthType", "csNumberOfBins"))
+  plot$position <- 2
+
+
+  if(!options[["upperSpecificationField"]] && !options[["lowerSpecificationField"]]){
+    plot$setError(gettext("No specification limits set."))
+    return()
+  }
+
+  if (ready) plot$plotObject <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution)
+    
+  container[["capabilityPlot"]] <- plot;
+
+  return(plot)
 }
 
 .qcProcessCapabilityTableWithin <- function(options, dataset, ready, container, measurements, returnDataframe = FALSE) {
@@ -1326,19 +1327,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Functions for distribution plot section ##################
 #############################################################
 
-.qcDistributionPlot <- function(options, dataset, ready, jaspResults, measurements) {
-
-  if (!options[["histogram"]] || !is.null(jaspResults[["histogram"]]))
-    return()
+.qcDistributionPlot <- function(options, dataset, ready, measurements) {
 
   plot <- createJaspPlot(title = gettext("Histogram"), width = 400, height = 400)
   plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "subgroups", 'nullDistribution'))
   plot$position <- 2
 
-  jaspResults[["histogram"]] <- plot
-
   if (!ready)
-    return()
+    return(plot)
 
   data <- unlist(dataset[measurements])
   binWidthType <- options$pcNumberOfBins
@@ -1382,6 +1378,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   plot$plotObject <- p
+
+  return(plot)
 }
 
 
@@ -1469,7 +1467,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat <- matrix(list(), 6, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = 'normal')
+    plotMat[[2, 1]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = 'normal')
     plotMat[[2, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
     plotMat[[3, 1]] <-  p1
     plotMat[[3, 2]] <-  p2
@@ -1486,7 +1484,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat <- matrix(list(), 5, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <- .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = options[["nonNormalDist"]])
+    plotMat[[2, 1]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = options[["nonNormalDist"]])
     plotMat[[2, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
     plotMat[[3, 1]] <-  p1
     plotMat[[3, 2]] <-  p2
