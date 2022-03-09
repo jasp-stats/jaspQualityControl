@@ -80,13 +80,26 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     .hasErrors(dataset,
                all.target = measurements,
                custom = function () {
-                 if (any(unlist(dataset[measurements]) <= 0))
-                   return(gettext("Values must be positive to fit Weibull/Lognormal distribution."))},
+                 if (any(unlist(dataset[measurements]) < 0))
+                   return(gettext("Values must be positive to fit a Weibull/Lognormal distribution."))},
                exitAnalysisIfErrors = TRUE)
   }
 
-
   dataset <- na.omit(dataset)
+  # correction for zero values for non-normal capability
+  if (options$capabilityStudyType == "nonnormalCapabilityAnalysis") {
+    x <- unlist(dataset[measurements])
+    zeroCorrect <- any(x == 0)
+    dataset[measurements] <- ifelse(x == 0, min(x[x > 0])/2 , x)
+
+    if (zeroCorrect) {
+      jaspResults[["zeroWarning"]] <- createJaspHtml(text = gettext("All zero values have been replaced with a value equal to one-half of the smallest data point."), elementType = "p",
+                                                     title = "Zero values found in non-normal capability study:",
+                                                     position = 1)
+      jaspResults[["zeroWarning"]]$dependOn(c('variablesLong', 'variables', 'capabilityStudyType', 'nullDistribution'))
+    }
+  }
+
   # X-bar and R Chart OR ImR Chart
   if(options$xbarR){
     .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
@@ -1371,7 +1384,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits) +
     ggplot2::scale_y_continuous(name =  gettext("Counts"), labels = yLabels, breaks = yBreaks, limits = yLimits) +
     jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
-
 
   if (options[["displayDensity"]]) {
     if(options[['nullDistribution']]  == 'Normal'){
