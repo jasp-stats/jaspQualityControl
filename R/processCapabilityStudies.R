@@ -90,8 +90,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   # Distribution plot - moved jaspResults ref here to avoid big files
-  if (options[["histogram"]] && is.null(jaspResults[["histogram"]]))
-    jaspResults[["histogram"]] <- .qcDistributionPlot(options, dataset, ready, measurements = measurements)
+  .qcDistributionPlot(options, dataset, ready, jaspResults, measurements = measurements)
 
   # Probability plots section
   .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements = measurements)
@@ -1327,15 +1326,26 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Functions for distribution plot section ##################
 #############################################################
 
-.qcDistributionPlot <- function(options, dataset, ready, measurements) {
+.qcDistributionPlot <- function(options, dataset, ready, jaspResults, measurements) {
+
+  if(!options[["histogram"]] || !is.null(jaspResults[["histogram"]]))
+    return()
 
   plot <- createJaspPlot(title = gettext("Histogram"), width = 400, height = 400)
   plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "subgroups", 'nullDistribution'))
   plot$position <- 2
 
-  if (!ready)
-    return(plot)
+  jaspResults[["histogram"]] <- plot
 
+  if (!ready)
+    return()
+
+  plot$plotObject <- .qcDistributionPlotObject(options, dataset, measurements = measurements)
+
+}
+
+.qcDistributionPlotObject <- function(options, dataset, measurements) {
+  
   data <- unlist(dataset[measurements])
   binWidthType <- options$pcNumberOfBins
 
@@ -1377,9 +1387,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-  plot$plotObject <- p
-
-  return(plot)
+  return(p)
 }
 
 
