@@ -724,7 +724,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   p <- ggplot2::ggplot(fac_t, ggplot2::aes(y = t, x = y)) +
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +
-    ggplot2::scale_x_continuous(name = gettext("Term"), breaks = fac_t$y, labels = fac) +
+    ggplot2::scale_x_continuous(name = gettext("Term"), breaks = fac_t$y, labels = fac_t$fac) +
     ggplot2::scale_y_continuous(name = yLab, breaks = xBreaks, limits = range(xBreaks)) +
     ggplot2::coord_flip()
 

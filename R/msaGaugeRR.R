@@ -1018,7 +1018,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   nReplicates <- length(dataset[[measurements]]) / nParts
   repeatability <- msRep
   totalGauge <- repeatability
-  part <- (msPart - msRep) / (nOperators * nReplicates); if (part < 0) part <- 0
+  part <- (msPart - msRep) / (nOperators * nReplicates); if (part < 0) part <- 0 # correct for zero part-part variance.
   totalVar <- totalGauge + part
   varcompList <- list(repeatability = repeatability,
                       part          = part,
