@@ -90,7 +90,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   # Distribution plot - moved jaspResults ref here to avoid big files
-  if (!options[["histogram"]] || !is.null(jaspResults[["histogram"]]))
+  if (options[["histogram"]] && is.null(jaspResults[["histogram"]]))
     jaspResults[["histogram"]] <- .qcDistributionPlot(options, dataset, ready, measurements = measurements)
 
   # Probability plots section
