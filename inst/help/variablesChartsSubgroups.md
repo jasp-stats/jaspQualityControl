@@ -27,10 +27,22 @@ Data can be in the form of all observations in one column ("Single column") or a
 - X-bar & R chart: plots the process mean (x-bar) and process range (R) over time.
 - X-bar & s chart: plots the process mean (x-bar) and process standard deviation (s) over time.
 
+### Out-of-control Signals 
+-------
+_Statistical process control handbook page 23:_
+
+- Test 1: One point beyond the control limits (sporadic issue).
+- Test 2: Seven consecutive points above or below the central line (mean shift).
+- Test 3:  A run up or down of seven consecutive points (trend).
+- Test 4: Two out of three consecutive points beyond the warning (two sigma) limits (increasing variation).
+- Test 5:Hugging the central line, this is indicated when 15 consecutive points are within the one sigma limits (reducing variation).
+- Test 6: Eight consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
+
 ## References 
 -------
-- Chrysler Group LLC, Ford Motor Company, & General Motors Corporation. (2010). *Measurement Systems Analysis* (4th ed.). http://www.aiag.orgt. 
-- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbooks*. SKF group.
+- Duncan, A.J. (1986), Quality control and industrial statistics, Richard D. Irwin, Inc., and Automotive Industry Action Group (July 2005), Statistical process control (SPC) – Reference manual, AIAG
+- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbook*. SKF group.
+
 
 ## R Packages
 -------
