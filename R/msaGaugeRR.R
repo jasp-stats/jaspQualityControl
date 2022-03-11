@@ -42,8 +42,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   factor.vars <- factor.vars[factor.vars != ""]
 
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
-                                         exclude.na.listwise = c(numeric.vars, factor.vars))
+    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
     if (options$Type3){
       dataset$operators <- rep(1, nrow(dataset))
       operators <- "operators"
@@ -56,7 +55,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
              missingValues.target = measurements,
              exitAnalysisIfErrors = TRUE)
 
-  #Conversting long to wide data
+  #Converting long to wide data
   if (!wideFormat && ready) {
     dataset <- dataset[order(dataset[[operators]]),]
     dataset <- dataset[order(dataset[[parts]]),]

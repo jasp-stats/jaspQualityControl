@@ -444,7 +444,7 @@ Form
 		AssignedVariablesList
 		{
 			name:                               "FAresponse"
-            allowedColumns:                     ["scale"]
+            allowedColumns:                     ["scale", "ordinal", "nominal"]
 			singleVariable:                     true
 			label:                              qsTr("Response variable")
 		}
@@ -452,7 +452,7 @@ Form
 		AssignedVariablesList
 		{
 			name:                               "FAassignedFactors"
-            allowedColumns:                     ["ordinal", "nominal", "scale"]
+            allowedColumns:                     ["scale", "ordinal", "nominal"]
 			label:                              qsTr("Assigned factors")
 		}
 
@@ -468,7 +468,7 @@ Form
 		{
             id:                                 runOrder
             name:                               "FArunOrder"
-            allowedColumns:                     ["scale", "ordinal"]
+            allowedColumns:                     ["scale", "ordinal", "nominal"]
 			singleVariable:                     true
 			label:                              qsTr("Run order")
 		}
@@ -516,19 +516,20 @@ Group
 		{
 			name:                               "showAliasStructure2"
 			label:                              "Show alias structure"
+			enabled:							runOrder.count > 0
 		}
 
-		CheckBox
-		{
-			name:                                   "NormalPlot"
-			label:                                  qsTr("Normal Plot of the Standardized Effect")
+		//CheckBox
+		//{
+		//	name:                                   "NormalPlot"
+		//	label:                                  qsTr("Normal Plot of the Standardized Effect")
 
-			CheckBox
-			{
-			name:                                   "addGridlines"
-			label:                                  qsTr("Display grid lines")
-			}
-		}
+		//	CheckBox
+		//	{
+		//	name:                                   "addGridlines"
+		//	label:                                  qsTr("Display grid lines")
+		//	}
+		//}
 
 		CheckBox
 		{
@@ -564,24 +565,25 @@ Group
 		{
 			name:                               "resOrder"
 			label:                              qsTr("Residuals vs run/standard order")
+			enabled:							runOrder.count > 0
 
 			RadioButtonGroup
 			{
 				name:                                   "runOrderPlot"
 
+				
+				RadioButton
+				{
+					name:                              "runOrderStandardPlot"
+					label:                              qsTr("Standard")		
+					checked:                            true		
+			    }
+
 				RadioButton
 				{
 					name:                               "runOrderRandomPlot"
 					label:                              qsTr("Run")
-					checked:                            true
 				}
-
-				RadioButton
-				{
-					name:                              "runOrderStandardPlot"
-					label:                              qsTr("Standard")				
-			}
-
 	}
 		}
 
@@ -589,6 +591,7 @@ Group
 		{
 			name:                               "fourInOne"
 			label:                              qsTr("Matrix residuals plot")
+			enabled:							runOrder.count > 0
 		}
 	}
 }

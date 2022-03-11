@@ -36,11 +36,37 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   model <- .modelFormula(modelTerms, options)
 
   # Ready check: More than two factors, a response and order variables, and either model terms or interaction order specified.
-  ready <- (length(options[["FAassignedFactors"]]) >= 2 && options[["FAresponse"]] != "" && options[["FArunOrder"]] != ""
-            && (!is.null(unlist(options$modelTerms)) || options$enabledIntOrder))
-
-  if(ready)
+  ready <- (length(options[["FAassignedFactors"]]) >= 2 && options[["FAresponse"]] != "" && (!is.null(unlist(options$modelTerms)) || options$enabledIntOrder))
+  if(ready){
     dataset <- .factorialAnalysisReadData(dataset, options)
+
+    # Transform to coded
+    factors <- unlist(dataset[,options[["FAassignedFactors"]]], use.names = FALSE)
+    response <- unlist(dataset[,options[["FAresponse"]]], use.names = FALSE)
+
+    perF <- length(factors) / length(options[["FAassignedFactors"]])
+    factorsDF <- data.frame(split(factors, ceiling(seq_along(factors) / perF)))
+
+      for(i in 1:ncol(factorsDF)){
+      factorsDF[,i][factorsDF[,i] == min(factorsDF[,i])] <- -1
+      factorsDF[,i][factorsDF[,i] == max(factorsDF[,i])] <- 1
+      }
+
+    # Use original variables names
+
+    if (options[["FArunOrder"]] != "") {
+      runOrder <- dataset[, unlist(options$FArunOrder)]
+      names <- c(options$FArunOrder, options$FAassignedFactors, options$FAresponse)
+      datasetRow <- cbind.data.frame(runOrder, factorsDF, response)
+    } else {
+      names <- c(options$FAassignedFactors, options$FAresponse)
+      datasetRow <- cbind.data.frame(factorsDF, response)
+    }
+
+    names(datasetRow) <- names
+
+    dataset <- datasetRow
+  }
 
   model.fit <- .factorialRegression(jaspResults, dataset, options, model, ready)
   fit <- model.fit$fit
@@ -49,17 +75,18 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   analysisContainer <- createJaspContainer("Analysis", position = 2)
 
   if(is.null(jaspResults[["factorialRegressionANOVA"]])){
-    analysisContainer[["tableAnova"]] <- .factorialRegressionANOVAcreateTable(options, ready, fit, saturated)$tableAnova
-    analysisContainer[["tableFit"]] <- .factorialRegressionANOVAcreateTable(options, ready, fit, saturated)$tableFit
+    analysisContainer[["tableAnova"]] <- .factorialRegressionANOVAcreateTable(options, ready, fit, saturated, model)$tableAnova
+    analysisContainer[["tableFit"]] <- .factorialRegressionANOVAcreateTable(options, ready, fit, saturated, model)$tableFit
 
   }
 
   if(is.null(jaspResults[["factorialRegressionCoefficients"]])){
-    analysisContainer[["tableCoef"]] <- .factorialRegressionCoefficientsCreateTable(options, ready, fit, saturated)$tableCoef
-    analysisContainer[["tableFormula"]] <- .factorialRegressionCoefficientsCreateTable(options, ready, fit, saturated)$tableFormula
+    analysisContainer[["tableCoef"]] <- .factorialRegressionCoefficientsCreateTable(options, ready, fit, saturated, model)$tableCoef
+    analysisContainer[["tableFormula"]] <- .factorialRegressionCoefficientsCreateTable(options, ready, fit, saturated, model)$tableFormula
   }
 
   if (ready) {
+    jaspResults[["Design"]] <- NULL
 
     # Create error plot for saturated designs
     if (saturated){
@@ -77,9 +104,9 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     }
 
 
-    # Normal Plot of Standardized Effects
-    if (is.null(jaspResults[["NormalPlot"]]) && options[["NormalPlot"]]) {
-      NormalPlot <- createJaspContainer(gettext("Normal Plot of Standardized Effects"))
+    # Normal Probability Plot of Residuals
+    if (is.null(jaspResults[["resNorm"]]) && options[["resNorm"]]) {
+      NormalPlot <- createJaspContainer(gettext("Normal Probability Plot of Residuals"))
       NormalPlot$dependOn(c("FAassignedFactors", "modelTerms","NormalPlot","FAresponse", "intOrder", "FArunOrder", 'addGridlines', "enabledIntOrder"))
 
       # Error plot for saturated designs
@@ -88,20 +115,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       else
         NormalPlot[["plot"]] <- .qcProbabilityPlot(dataset, options, fit = fit)
 
-      analysisContainer[["NormalPlot"]] <- NormalPlot
-    }
-
-    # Normal Probability Plot of Residuals
-    if(options[["resNorm"]] && is.null(jaspResults[["resNorm"]])){
-      resNorm <- createJaspContainer(gettext("Normal Probability Plot of Residuals"))
-      resNorm$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder"))
-
-      if (saturated)
-        resNorm[["plot"]] <- errorPlot
-      else
-        resNorm[["plot"]] <- .factorialResNorm(jaspResults = jaspResults, options = options, fit = fit)$jaspPlot
-
-      analysisContainer[["resNorm"]] <- resNorm
+      analysisContainer[["resNorm"]] <- NormalPlot
     }
 
     #Histogram of Residuals
@@ -132,7 +146,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
     # Residuals vs. Run Order
     if(options[["resOrder"]] && is.null(jaspResults[["resOrder"]])){
-      resOrder <- createJaspContainer(gettext("Residuals vs. Run Order"))
+      if (options$runOrderPlot == "runOrderRandomPlot")
+        resOrder <- createJaspContainer(gettext("Residuals vs. Run Order"))
+      else
+        resOrder <- createJaspContainer(gettext("Residuals vs. Standard Order"))
+
       resOrder$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder"))
 
       if (saturated)
@@ -145,40 +163,34 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
     # Pareto Plot of Standardized Effects
     if(options[["paretoPlot"]] && is.null(jaspResults[["paretoPlot"]])){
-      paretoPlot <- createJaspContainer(gettext("Pareto Plot of Standardized Effects"))
-      paretoPlot$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder"))
 
       if (saturated)
-        paretoPlot[["plot"]] <- errorPlot
+        analysisContainer[["paretoPlot"]] <- errorPlot
       else
-        paretoPlot[["plot"]] <- .factorialPareto(jaspResults = jaspResults, options = options, fit = fit)
-
-      analysisContainer[["paretoPlot"]] <- paretoPlot
+        analysisContainer[["paretoPlot"]] <- .factorialPareto(jaspResults = jaspResults, options = options, fit = fit)
     }
 
     # Four in one plot
     if(options[["fourInOne"]] && is.null(jaspResults[["fourInOne"]])){
-      fourInOne <- createJaspContainer(gettextf("Residual Plots for %s", unlist(options$FAresponse)))
-      fourInOne$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder", "fourInOne"))
-
       if (saturated)
-        fourInOne[["plot"]] <- errorPlot
+        fourInOne[["fourInOne"]] <- errorPlot
       else {
-        matrixPlot <- createJaspPlot(width = 800, height = 800)
+        matrixPlot <- createJaspPlot(title = gettextf("Four in one for %s", unlist(options$FAresponse)), width = 1100, aspectRatio = 1)
+        matrixPlot$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder", "fourInOne"))
+
         plotMat <- matrix(list(), 2, 2)
-        plotMat[[1, 1]] <- .factorialResNorm(jaspResults = jaspResults, options = options, fit = fit)$ggPlot
+        plotMat[[1, 1]] <- .qcProbabilityPlot(dataset, options, fit = fit, ggPlot = TRUE)
         plotMat[[1, 2]] <- .factorialResFitted(jaspResults = jaspResults, options = options, fit = fit)$ggPlot
         plotMat[[2, 1]] <- .factorialResHist(jaspResults = jaspResults, options = options, fit = fit)$ggPlot
         plotMat[[2, 2]] <- .factorialResOrder(jaspResults = jaspResults, dataset = dataset ,options = options, fit = fit)$ggPlot
 
         matrixPlot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
-        fourInOne[["plot"]] <- matrixPlot
       }
 
-      analysisContainer[["fourInOne"]] <- fourInOne
+      analysisContainer[["fourInOne"]] <- matrixPlot
     }
+    jaspResults[["Analysis"]] <- analysisContainer
   }
-  jaspResults[["Analysis"]] <- analysisContainer
 }
 
 ################### Design ###################
@@ -198,30 +210,32 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     table$dependOn(options = "numberOfFactors")
 
     table$addColumnInfo(name = "runs", title = "Runs", type = "integer")
-    table$addColumnInfo(name = 'res', title = "Resolution", type = 'string')
+    #table$addColumnInfo(name = 'res', title = "Resolution", type = 'string')
 
     runs <- 2^seq(floor(log2(options[["numberOfFactors"]]))+1, 12)
     if(length(runs) > 5)
       runs <- runs[1:5]
     if(options[["numberOfFactors"]] > 32)
       runs <- runs[1:4]
-    res <- numeric(length(runs))
-    for(i in 1:length(runs)){
-      if(log2(runs[i]) < options[["numberOfFactors"]]){
-        res[i] <- as.character(as.roman(DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                                                                         nruns = runs[i]))$catlg.entry[[1]]$res))
-      } else {
-        res[i] <- "Full"
-      }
-    }
-    rows <- data.frame(runs, res)
-    equal <- numeric(0)
-    for(i in 1:(nrow(rows)-1)){
-      if(rows$res[i] == rows$res[i+1]){
-        equal <- append(equal, i+1)
-      }
-    }
-    rows <- rows[-equal,]
+
+   # res <- numeric(length(runs))
+    #for(i in 1:length(runs)){
+    #  if(log2(runs[i]) < options[["numberOfFactors"]]){
+    #    res[i] <- as.character(as.roman(DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+    #                                                                     nruns = runs[i]))$catlg.entry[[1]]$res))
+    #  } else {
+    #    res[i] <- "Full"
+    #  }
+    #}
+    rows <- runs
+
+    #equal <- numeric(0)
+    #for(i in 1:(nrow(rows)-1)){
+    #  if(rows$res[i] == rows$res[i+1]){
+    #    equal <- append(equal, i+1)
+    #  }
+    #}
+    #rows <- rows[-equal,]
 
     jaspResults[["state"]] <- createJaspState(rows)
     jaspResults[["state"]]$dependOn("always_present")
@@ -253,7 +267,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     table$addColumnInfo(name = 'type', title = gettext("Design"), type = 'string')
     table$addColumnInfo(name = 'factors', title = gettext("Factors"), type = 'integer')
     table$addColumnInfo(name = 'runs', title = gettext("Runs"), type = 'integer')
-    table$addColumnInfo(name = 'resolution', title = gettext("Resolution"), type = 'string')
+   # table$addColumnInfo(name = 'resolution', title = gettext("Resolution"), type = 'string')
     table$addColumnInfo(name = 'centers', title = gettext("Centre points"), type = 'integer')
     table$addColumnInfo(name = 'replicates', title = gettext("Replicates"), type = 'integer')
     table$addColumnInfo(name = 'blocks', title = gettext("Blocks"), type = 'integer')
@@ -267,15 +281,16 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                  options[["factorialBlocks"]]) *
         options[["factorialCornerReplicates"]] +
         options[["repeatRuns"]]
-      resolution <-
-        if(log2(as.numeric(options[["factorialRuns"]])) < options[["numberOfFactors"]]){
-          as.character(as.roman(DoE.base::design.info(
-            FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                       nruns = as.numeric(options[["factorialRuns"]]))
-            )$catlg.entry[[1]]$res))
-      } else {
-        "Full"
-      }
+
+      #resolution <-
+      #  if(log2(as.numeric(options[["factorialRuns"]])) < options[["numberOfFactors"]]){
+      #    as.character(as.roman(DoE.base::design.info(
+      #      FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+      #                 nruns = as.numeric(options[["factorialRuns"]]))
+      #      )$catlg.entry[[1]]$res))
+      #} else {
+      #  "Full"
+      #}
     } else if(options[["designBy"]] == "designByResolution"){
       resolution <- if(options[["factorialResolution"]] == "Full"){
         100
@@ -294,29 +309,29 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                  options[["factorialBlocks"]]) *
         options[["factorialCornerReplicates"]] +
         options[["repeatRuns"]]
-      resolution <- as.character(as.roman(DoE.base::design.info(
-        FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-                   nruns = (2^options[["numberOfFactors"]] * as.numeric(options[["factorialFraction"]])))
-        )$catlg.entry[[1]]$res))
+      #resolution <- as.character(as.roman(DoE.base::design.info(
+      #  FrF2::FrF2(nfactors = options[["numberOfFactors"]],
+       #            nruns = (2^options[["numberOfFactors"]] * as.numeric(options[["factorialFraction"]])))
+       # )$catlg.entry[[1]]$res))
     }
 
     design <- base::switch(options[["factorialType"]],
                            "factorialTypeDefault" = gettext("2-level factorial"))
 
-    if(options[["designBy"]] == "designByResolution"){
-      res <- if(resolution == 100){
-        "Full"
-      } else {
-        as.character(as.roman(options[["factorialResolution"]]))
-      }
-    } else {
-      res <- resolution
-    }
+   # if(options[["designBy"]] == "designByResolution"){
+   #  res <- if(resolution == 100){
+  #      "Full"
+   #   } else {
+    #    as.character(as.roman(options[["factorialResolution"]]))
+    #  }
+    #} else {
+    #  res <- resolution
+    #}
 
     rows <- data.frame(type = "Factorial",
                        factors = options[["numberOfFactors"]],
                        runs = runs,
-                       resolution = res,
+                       #resolution = res,
                        centers = options[["factorialCenterPoints"]],
                        replicates = options[["factorialCornerReplicates"]],
                        blocks = options[["factorialBlocks"]],
@@ -542,7 +557,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                                "factorialRuns",
                                "factorialResolution"))
 
-    rows <- data.frame(Aliases = c(FrF2::aliasprint(factorialDesign)$main, FrF2::aliasprint(factorialDesign)$fi2))
+    Aliases <- FrF2::aliasprint(factorialDesign)
+    rows <- data.frame(Aliases = c(Aliases$main, Aliases$fi2))
 
     jaspResults[["state2"]] <- createJaspState(rows)
     jaspResults[["state2"]]$dependOn("always_present")
@@ -636,13 +652,12 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   h <- hist(x, plot = FALSE)
 
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(h$breaks * 1.1)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(h$counts)
-  yLabs <- round((yBreaks / sum(yBreaks)) * 100, 0)
+  yBreaks <- c(0,jaspGraphs::getPrettyAxisBreaks(h$counts))
 
   p <- ggplot2::ggplot(data.frame(x), ggplot2::aes(x = x)) +
-    ggplot2::geom_histogram() +
+    ggplot2::geom_histogram(fill = "grey", col = "black") +
     ggplot2::scale_x_continuous(name = "Residuals", limits = range(xBreaks), breaks = xBreaks) +
-    ggplot2::scale_y_continuous(name = "Percent", limits = range(yBreaks), breaks = yBreaks, labels = yLabs)
+    ggplot2::scale_y_continuous(name = "Frequency", limits = range(yBreaks), breaks = yBreaks)
 
   p <- jaspGraphs::themeJasp(p)
 
@@ -686,8 +701,10 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   if (options$runOrderPlot == "runOrderStandardPlot") {
     df <- df[order(runOrder),]
     df$x <- df$runOrder <- 1:nrow(df)
+    xlabel <- gettext("Standard order")
   }
 
+  xlabel <- gettext("Run order")
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(df$y)
   xBreaks <- df$x
 
@@ -695,7 +712,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     ggplot2::geom_point() +
     ggplot2::geom_line() +
     ggplot2::geom_hline(yintercept = 0, color = "grey", linetype = "dashed") +
-    ggplot2::scale_x_continuous(name = gettext("Run order"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks, labels = df$runOrder) +
+    ggplot2::scale_x_continuous(name = xlabel, limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks, labels = df$runOrder) +
     ggplot2::scale_y_continuous(name = gettext("Residuals"), limits = c(min(yBreaks), max(yBreaks)), breaks = yBreaks)
 
   p <- jaspGraphs::themeJasp(p)
@@ -707,8 +724,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
 .factorialPareto <- function(jaspResults, options, fit, onlyPlot = FALSE){
 
-  plot <- createJaspPlot(width = 400, height = 400)
-  plot$dependOn("paretoPlot")
+  plot <- createJaspPlot(title = gettext("Pareto Chart of Standardized Effects"), width = 400, height = 400)
+  plot$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder", 'paretoPlot'))
 
   t <- abs(data.frame(summary(fit)$coefficients)$t.value[-1])
   fac <- names(coef(fit))[-1]
@@ -738,21 +755,21 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     return(plot)
 }
 
-.factorialRegressionANOVAcreateTable <- function(options, ready, fit, saturated){
+.factorialRegressionANOVAcreateTable <- function(options, ready, fit, saturated, model){
 
   if(!is.null(fit) && ready) {
-    results <- .factorialRegressionANOVAfillTable(factorialRegressionANOVA, factorialRegressionSummaryFit, options, fit, saturated)
+    results <- .factorialRegressionANOVAfillTable(factorialRegressionANOVA, factorialRegressionSummaryFit, options, fit, saturated, model)
     tableAnova <- results$ANOVA
     tableFit <- results$SummaryFit
   } else {
     tableAnova <- createJaspTable(gettext("Analysis of variance"), position = 1)
-    tableFit <- createJaspTable(gettext("Model Summary"), position = 2)
+    tableFit <- createJaspTable(gettext("Model summary"), position = 2)
   }
 
   return(list(tableAnova = tableAnova, tableFit = tableFit))
 }
 
-.factorialRegressionANOVAfillTable <- function(factorialRegressionANOVA, factorialRegressionSummaryFit, options, fit, saturated){
+.factorialRegressionANOVAfillTable <- function(factorialRegressionANOVA, factorialRegressionSummaryFit, options, fit, saturated, model){
 
   facotrsName <- unlist(options$FAassignedFactors)
   response <- unlist(options$FAresponse)
@@ -791,24 +808,24 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   if (!saturated) {
 
     df     <- c(sum(anova$Df[-errorIndex]),anova$Df[-errorIndex], rep(NA, length(null.names)),anova$Df[errorIndex],sum(anova$Df))
-    SS     <- c(model.SS, anova$`Sum Sq`[-errorIndex], rep(NA, length(null.names)), anova$`Sum Sq`[errorIndex],sum(anova$`Sum Sq`))
-    adjMS  <- c(model.MS, anova$`Mean Sq`[-errorIndex], rep(NA, length(null.names)), anova$`Mean Sq`[errorIndex],NA)
+    Adj.SS     <- c(model.SS, anova$`Sum Sq`[-errorIndex], rep(NA, length(null.names)), anova$`Sum Sq`[errorIndex],sum(anova$`Sum Sq`))
+    Adj.MS  <- c(model.MS, anova$`Mean Sq`[-errorIndex], rep(NA, length(null.names)), anova$`Mean Sq`[errorIndex],NA)
     `F`    <- c(model.F, anova$`F value`, rep(NA, length(null.names)),NA)
     p      <- c(model.Pval, anova$`Pr(>F)`,rep(NA, length(null.names)), NA)
 
     anovaFill <- data.frame(
       Terms = names,
       df    = round(df,3),
-      SS    = round(SS,3),
-      adjMS = round(adjMS, 3),
+      Adj.SS    = round(Adj.SS,3),
+      Adj.MS = round(Adj.MS, 3),
       `F`   = round(`F`, 3),
       p     = round(p, 3)
     )
 
     # If Pure error
     if (anova.rsm[3,][1] != 0 && anova.rsm[4,][1] != 0) {
-      LackFit <- t(as.data.frame(c(terms = "Lack of fit",unlist(anova.rsm[3,]))))
-      Pure.Error <-  t(as.data.frame(c(terms = "Pure error",unlist(anova.rsm[4,]))))
+      LackFit <- t(as.data.frame(c(terms = "Lack of fit", round(unlist(anova.rsm[3,]),3 ))))
+      Pure.Error <-  t(as.data.frame(c(terms = "Pure error", round(unlist(anova.rsm[4,]),3) )))
       Total.index <- length(names)
       colnames(LackFit) <- colnames(anovaFill); colnames(Pure.Error) <- colnames(anovaFill)
       anovaFill.Total <- anovaFill[Total.index,]
@@ -817,8 +834,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
     modelSummaryFill <- data.frame(
       S = summary(fit)$sigma,
-      R1 = summary(fit)$r.squared,
-      R2 = summary(fit)$adj.r.squared
+      R1 = summary(fit)$r.squared * 100,
+      R2 = summary(fit)$adj.r.squared * 100
     )
 
   } else {
@@ -829,8 +846,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     anovaFill <- data.frame(
       Terms = names,
       df    = c(sum(anova$Df[1:n.factors]), anova$Df, 0,sum(anova$Df)),
-      SS    = c(round(c(model.SS, anova$`Sum Sq`), 3), "*", round(sum(anova$`Sum Sq`), 3)),
-      adjMS    =  c(round(c(model.MS, anova$`Mean Sq`), 3), "*", "*"),
+      Adj.SS    = c(round(c(model.SS, anova$`Sum Sq`), 3), "*", round(sum(anova$`Sum Sq`), 3)),
+      Adj.MS    =  c(round(c(model.MS, anova$`Mean Sq`), 3), "*", "*"),
       `F`   = rep("*", length(names)),
       p     = rep("*", length(names))
     )
@@ -840,6 +857,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       R1 = NA,
       R2 = NA
     )
+  }
+
+  # Replace : by \u00d7
+  for (i in 1:length(anovaFill$Terms)) {
+    anovaFill$Terms[i] <- gsub(":", " \u00d7 ", anovaFill$Terms[i])
   }
 
     factorialRegressionANOVA <- createJaspTable(gettext("Analysis of variance"), position = 1)
@@ -859,7 +881,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
 }
 
-.factorialRegressionCoefficientsCreateTable <- function(options, ready, fit, saturated){
+.factorialRegressionCoefficientsCreateTable <- function(options, ready, fit, saturated, model){
 
   factorialRegressionCoefficients <- createJaspTable(gettext("Coefficients"))
   factorialRegressionFormula <- createJaspTable(gettext("Regression equation in uncoded units"))
@@ -873,9 +895,14 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     coefs <- as.vector(coef(fit))[!is.na(coef(fit))]
     plusOrMin <- sapply(1:length(coefs), function(x) {if (coefs[x] > 0) "+" else "-"})
 
-    formula <- sprintf("%s = %.5g%s %s %.5g%s", reponseVar, coefs[1], factors[1],plusOrMin[2], abs(coefs[2]), factors[2])
+    formula <- sprintf("%s = %.5g %s %s %.5g %s", reponseVar, coefs[1], factors[1],plusOrMin[2], abs(coefs[2]), factors[2])
     for (i in 3:length(coefs)) {
-      formula <- sprintf("%s %s %.5g%s", formula, plusOrMin[i], abs(coefs[i]), factors[i])
+      formula <- sprintf("%s %s %.5g %s", formula, plusOrMin[i], abs(coefs[i]), factors[i])
+    }
+
+    # Replace : by \u00d7
+    for (i in 1:length(formula)) {
+      formula[i] <- gsub(":", " \u00d7 ", formula[i])
     }
 
     factorialRegressionFormula$addRows(list(Formula = formula))
@@ -886,9 +913,10 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   factorialRegressionCoefficients$addColumnInfo(name = "se", title = gettext("Standard Error"), type = "number")
   factorialRegressionCoefficients$addColumnInfo(name = "t", title = gettext("t"), type = "number")
   factorialRegressionCoefficients$addColumnInfo(name = "p", title = gettext("<i>p</i>-value"), type = "pvalue")
+  factorialRegressionCoefficients$addColumnInfo(name = "vif", title = gettext("VIF"), type = "number")
 
   if(!is.null(fit))
-    .factorialRegressionCoefficientsFillTable(factorialRegressionCoefficients, options, fit, saturated)
+    .factorialRegressionCoefficientsFillTable(factorialRegressionCoefficients, options, fit, saturated, model)
 
   tableCoef <- factorialRegressionCoefficients
   tableFormula <- factorialRegressionFormula
@@ -896,19 +924,29 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   return(list(tableCoef = tableCoef, tableFormula = tableFormula))
 }
 
-.factorialRegressionCoefficientsFillTable <- function(factorialRegressionCoefficients, options, fit, saturated){
+.factorialRegressionCoefficientsFillTable <- function(factorialRegressionCoefficients, options, fit, saturated, model){
 
   if (!saturated) {
     coefs <- as.data.frame(summary(fit)$coefficients)
     names.64 <- names(coef(fit))
     null.names <- names(fit$coefficients)[is.na(fit$coefficients)]
 
+    vif <- try(car::vif(fit))
+
+    if (inherits(vif, "try-error")) {
+      errorMessage <- as.character(vif)
+      factorialRegressionCoefficients$setError(errorMessage)
+      return()
+    }
+
     coefsFill <- data.frame(
       terms = names.64,
       coef  = c(coefs$Estimate, rep(NA, length(null.names)) ),
       se    = c(coefs$`Std. Error`, rep(NA, length(null.names))),
       t     = c(coefs$`t value`, rep(NA, length(null.names))),
-      p     = c(coefs$`Pr(>|t|)`, rep(NA, length(null.names))))
+      p     = c(coefs$`Pr(>|t|)`, rep(NA, length(null.names))),
+      vif     = c(NA, vif, rep(NA, length(null.names)))
+      )
 
   } else {
     coefs <- as.vector(coef(fit))[!is.na(coef(fit))]
@@ -919,8 +957,14 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       coef  = coefs,
       se    = rep("*", length(names)),
       t     = rep("*", length(names)),
-      p     = rep("*", length(names))
+      p     = rep("*", length(names)),
+      vif     = rep("*", length(names))
     )
+  }
+
+  # Replace : by \u00d7
+  for (i in 1:length(coefsFill$terms)) {
+    coefsFill$terms[i] <- gsub(":", " \u00d7 ", coefsFill$terms[i])
   }
 
   factorialRegressionCoefficients$setData(coefsFill)
@@ -949,14 +993,20 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     # Structure
     table <- createJaspTable(gettext("Alias Structure"))
     table$dependOn(c("FAassignedFactors", "modelTerms","FAresponse", "intOrder", "FArunOrder", "showAliasStructure", "enabledIntOrder"))
+    aliasContainter[["factorialAliasStructure"]] <- table
 
-    factorialDesign = FrF2::FrF2(nruns = max(dataset[, unlist(options$FArunOrder)]),
-                                 nfactors = length(unlist(options$FAassignedFactors)))
+    factorialDesign <- try(FrF2::FrF2(nruns = max(dataset[, unlist(options$FArunOrder)]),
+                              nfactors = length(unlist(options$FAassignedFactors))))
+
+    if (inherits(factorialDesign, "try-error")) {
+      errorMessage <- as.character(factorialDesign)
+      table$setError(errorMessage)
+      return(aliasContainter)
+    }
+
     rows <- data.frame(Aliases = c(FrF2::aliasprint(factorialDesign)$main, FrF2::aliasprint(factorialDesign)$fi2))
 
     table$setData(rows)
-
-    aliasContainter[["factorialAliasStructure"]] <- table
 
     return(aliasContainter)
 }
@@ -975,7 +1025,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
     components <- unlist(term$components)
     term.base64 <- paste(.v(components), collapse=":", sep="")
-    term.normal <- paste(components, collapse=" \u273B ", sep="")
+    term.normal <- paste(components, collapse=" \u00d7 ", sep="")
 
     terms.base64 <- c(terms.base64, term.base64)
     terms.normal <- c(terms.normal, term.normal)

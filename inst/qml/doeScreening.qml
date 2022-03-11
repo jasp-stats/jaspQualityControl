@@ -64,8 +64,8 @@ Form
         {
             id:									numberOfFactorsScreen2
             name:								"numberOfFactorsScreen2"
-            label:								qsTr("Number of 2-level factors")
-            defaultValue:						screeningType.currentIndex == 0 ? 4 : 0
+            label:								qsTr("Number of factors")
+            defaultValue:						screeningType.currentIndex == 0 ? 5 : 0
             min:								screeningType.currentIndex == 0 ? 4 : 0
             max:								screeningType.currentIndex == 0 ? 256 : 4
         }
@@ -86,9 +86,9 @@ Form
             indexDefaultValue:                  0
             values:
             [
+                { value: (Math.floor(numberOfFactorsForTableScreen2.value/4)+3)*4, label: Number((Math.floor(numberOfFactorsForTableScreen2.value/4)+3)*4)},
                 { value: (Math.floor(numberOfFactorsForTableScreen2.value/4)+1)*4, label: Number((Math.floor(numberOfFactorsForTableScreen2.value/4)+1)*4)},
                 { value: (Math.floor(numberOfFactorsForTableScreen2.value/4)+2)*4, label: Number((Math.floor(numberOfFactorsForTableScreen2.value/4)+2)*4)},
-                { value: (Math.floor(numberOfFactorsForTableScreen2.value/4)+3)*4, label: Number((Math.floor(numberOfFactorsForTableScreen2.value/4)+3)*4)},
                 { value: (Math.floor(numberOfFactorsForTableScreen2.value/4)+4)*4, label: Number((Math.floor(numberOfFactorsForTableScreen2.value/4)+4)*4)},
                 { value: (Math.floor(numberOfFactorsForTableScreen2.value/4)+5)*4, label: Number((Math.floor(numberOfFactorsForTableScreen2.value/4)+5)*4)}
             ]
