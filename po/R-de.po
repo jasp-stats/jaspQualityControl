@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-02-26 03:40\n"
+"POT-Creation-Date: 2022-03-12 03:40\n"
 "PO-Revision-Date: 2022-02-20 10:56+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -1092,14 +1092,14 @@ msgstr ""
 msgid "The within standard deviation could not be calculated."
 msgstr ""
 
-msgid "No specification limits set."
-msgstr ""
-
 msgid "Density"
 msgstr "Dichte"
 
 msgid "Measurement"
 msgstr "Messung"
+
+msgid "No specification limits set."
+msgstr ""
 
 msgid "Process capability (within)"
 msgstr ""

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-02-26 03:40\n"
+"POT-Creation-Date: 2022-03-12 03:40\n"
 "PO-Revision-Date: 2022-01-30 07:56+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -1092,14 +1092,14 @@ msgstr "标准差（组内）"
 msgid "The within standard deviation could not be calculated."
 msgstr "组内标准差无法计算。"
 
-msgid "No specification limits set."
-msgstr "未设定规格限。"
-
 msgid "Density"
 msgstr "密度"
 
 msgid "Measurement"
 msgstr "测量"
+
+msgid "No specification limits set."
+msgstr "未设定规格限。"
 
 msgid "Process capability (within)"
 msgstr "过程能力（组内）"
