@@ -97,10 +97,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
     if(options[["showAliasStructure2"]]) {
       # Error plot for saturated designs
-      if (saturated)
-        analysisContainer[["showAliasStructure2"]] <- errorPlot
-      else
-        analysisContainer[["showAliasStructure2"]] <- .factorialShowAliasStructure(jaspResults, options, dataset, fit)
+      analysisContainer[["showAliasStructure2"]] <- .factorialShowAliasStructure(jaspResults, options, dataset, fit)
     }
 
 
@@ -267,7 +264,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     table$addColumnInfo(name = 'type', title = gettext("Design"), type = 'string')
     table$addColumnInfo(name = 'factors', title = gettext("Factors"), type = 'integer')
     table$addColumnInfo(name = 'runs', title = gettext("Runs"), type = 'integer')
-   # table$addColumnInfo(name = 'resolution', title = gettext("Resolution"), type = 'string')
+    table$addColumnInfo(name = 'resolution', title = gettext("Resolution"), type = 'string')
     table$addColumnInfo(name = 'centers', title = gettext("Centre points"), type = 'integer')
     table$addColumnInfo(name = 'replicates', title = gettext("Replicates"), type = 'integer')
     table$addColumnInfo(name = 'blocks', title = gettext("Blocks"), type = 'integer')
@@ -282,15 +279,29 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
         options[["factorialCornerReplicates"]] +
         options[["repeatRuns"]]
 
-      #resolution <-
-      #  if(log2(as.numeric(options[["factorialRuns"]])) < options[["numberOfFactors"]]){
-      #    as.character(as.roman(DoE.base::design.info(
-      #      FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-      #                 nruns = as.numeric(options[["factorialRuns"]]))
-      #      )$catlg.entry[[1]]$res))
-      #} else {
-      #  "Full"
-      #}
+      # Resolution based on SKF's diagram
+      sumResolution    <- runs + options[["numberOfFactors"]]
+      resolution.Full  <- c(6, 11, 20, 37, 70, 135)
+      resolution.six   <- c(38, 137)
+      resolution.Five  <- c(21, 72, 138, 139)
+      resolution.three <- c(7, 13, 14, 15, 25, 26, 27, 28, 29, 30, 31)
+
+
+      if (any(sumResolution == resolution.Full))
+        res <- "Full"
+      else if (any(sumResolution == resolution.six))
+        res <- "VI"
+      else if (any(sumResolution == resolution.Five))
+        res <- "V"
+      else if (any(sumResolution == resolution.three))
+        res <- "III"
+      else if (any(sumResolution == 137))
+        res <- "VIII"
+      else if (any(sumResolution == 71))
+        res <- "VII"
+      else
+        res <- "III"
+
     } else if(options[["designBy"]] == "designByResolution"){
       resolution <- if(options[["factorialResolution"]] == "Full"){
         100
@@ -309,29 +320,15 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
                  options[["factorialBlocks"]]) *
         options[["factorialCornerReplicates"]] +
         options[["repeatRuns"]]
-      #resolution <- as.character(as.roman(DoE.base::design.info(
-      #  FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-       #            nruns = (2^options[["numberOfFactors"]] * as.numeric(options[["factorialFraction"]])))
-       # )$catlg.entry[[1]]$res))
     }
 
     design <- base::switch(options[["factorialType"]],
                            "factorialTypeDefault" = gettext("2-level factorial"))
 
-   # if(options[["designBy"]] == "designByResolution"){
-   #  res <- if(resolution == 100){
-  #      "Full"
-   #   } else {
-    #    as.character(as.roman(options[["factorialResolution"]]))
-    #  }
-    #} else {
-    #  res <- resolution
-    #}
-
     rows <- data.frame(type = "Factorial",
                        factors = options[["numberOfFactors"]],
                        runs = runs,
-                       #resolution = res,
+                       resolution = res,
                        centers = options[["factorialCenterPoints"]],
                        replicates = options[["factorialCornerReplicates"]],
                        blocks = options[["factorialBlocks"]],
@@ -468,7 +465,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     tableTitle <- if(options[["factorialBlocks"]] > 1){
       "standard.block.perblock"
     } else {
-      "Standard run order"
+      "Standard order"
     }
 
     table$addColumnInfo(name = 'runOrderStandard', title = tableTitle, type = 'integer')
@@ -490,7 +487,12 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     }
     if(options[["dataCoding"]] == "dataUncoded"){
       for(i in 1:options[["numberOfFactors"]]){
-        rows[,i+2][rows[,i+2] == -1] <- factorLows[i]
+
+        if(any(factorLows[i] == "1"))
+          rows[,i+2][rows[,i+2] == -1] <- "1.0"
+        else
+          rows[,i+2][rows[,i+2] == -1] <- factorLows[i]
+
         if(options[["factorialCenterPoints"]] >= 1){
           rows[,i+2][rows[,i+2] == 0] <-
             if(!is.na(as.numeric(factorLows[i]) + as.numeric(factorHighs[i]))){
@@ -512,6 +514,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     }
 
     if(options[["runOrder"]] == "runOrderRandom"){
+      set.seed(1)
       rows <- rows[order(rows$runOrder),]
     } else {
       if(options[["factorialBlocks"]] > 1){

@@ -50,10 +50,10 @@ test_that("Xbar Chart by Operator plot matches", {
   jaspTools::expect_equal_plots(testPlot, "xbar-chart-by-operator")
 })
 
-test_that("Report plot matches", {
-  plotName <- results[["results"]][["anovaGaugeNestedReport"]][["data"]]
+test_that("Report matches", {
+  plotName <- results[["results"]][["anovaGaugeNestedReport"]][["collection"]][["anovaGaugeNestedReport_report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "report")
+  jaspTools::expect_equal_plots(testPlot, "Report")
 })
 
 test_that("Components of Variation plot matches", {

@@ -192,7 +192,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     nonNormalContainer$position <- 2
 
     container[["nonNormalCapabilityAnalysis"]] <- nonNormalContainer
-    
+
     if (options[["CapabilityStudyPlot"]])
       .qcProcessCapabilityPlot(options, dataset, ready, nonNormalContainer, measurements, distribution = options[["nonNormalDist"]])
 
@@ -355,7 +355,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   if (ready) plot$plotObject <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution)
-    
+
   container[["capabilityPlot"]] <- plot;
 
   return(plot)
@@ -1367,7 +1367,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .qcDistributionPlotObject <- function(options, dataset, measurements) {
-  
+
   data <- unlist(dataset[measurements])
   binWidthType <- options$pcNumberOfBins
 
@@ -1496,10 +1496,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat <- matrix(list(), 6, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = 'normal')
-    plotMat[[2, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
-    plotMat[[3, 1]] <-  p1
-    plotMat[[3, 2]] <-  p2
+    plotMat[[2, 1]] <-  p1
+    plotMat[[2, 2]] <-  .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = 'normal')
+    plotMat[[3, 1]] <-  p2
+    plotMat[[3, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
     plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
     plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
     plotMat[[5, 1]] <- ggplotTable(potentialWithinDF)  #Potential within
