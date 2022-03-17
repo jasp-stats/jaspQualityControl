@@ -28,29 +28,9 @@ Form
 	{
 		title: 									qsTr("Design Space")
 		name:									"designInfo"
-		columns:								3
-			
-			RadioButtonGroup
-			{
-				columns: 2
-				name:								"designType"
-				RadioButton
-				{
-					id:								cube
-					name:							"cube"
-					label:							qsTr("Central composite design (CCD)")
-					checked:						true
-				}
-				
-				RadioButton
-				{
-					id:								star
-					name:							"star"
-					label:							qsTr("+ Star points")
-				}
-			}
+		columns:								1
 
-			IntegerField
+		    IntegerField
 			{
 				id:									numberOfFactors
 				name:								"numberOfFactors"
@@ -59,58 +39,76 @@ Form
 				min:								2
 				max:								256
 			}
-			IntegerField
+			
+			RadioButtonGroup
 			{
+				columns: 							1
+				name:								"designType"
+				title:                              qsTr("Define levels")
+
+				RadioButton
+				{
+					id:								cube
+					name:							"cube"
+					label:							qsTr("Cube points")
+					checked:						true
+					childrenOnSameRow: 				true
+
+					IntegerField
+					{
 			
-				id:									numberOfCubes
-				name:								"numberOfCubes"
-				label:								qsTr("Number of cube points")
-				defaultValue:						0
-				min:								0
-				max:								256
-				visible:							cube.checked
+						id:									numberOfCubes
+						name:								"numberOfCubes"
+						defaultValue:						3
+						min:								0
+						max:								256
+					}
 			
-			
-			}
-			
-			IntegerField
-			{
-			
-				id:									numberOfStars
-				name:								"numberOfStars"
-				label:								qsTr("Number of star points")
-				defaultValue:						0
-				min:								0
-				max:								256
-				visible:							star.checked
+				}
 				
+				RadioButton
+				{
+					id:								star
+					name:							"star"
+					label:							qsTr("Axial points")
+					childrenOnSameRow: 				true
+				
+
+					IntegerField
+					{
+			
+						id:									numberOfStars
+						name:								"numberOfStars"
+						defaultValue:						numberOfFactors.value * 2
+						min:								0
+						max:								256
+					}
+				}
 			
 			}
+
+		//	IntegerField
+		//	{
+		//		id:									numberOfGenerators
+		//		name:								"numberOfGenerators"
+		//		label:								qsTr("Number of generators")
+		//		defaultValue:						0
+		//		min:								0
+		//		max:								256
+		//		visible: 							cube.checked
+		//	}
+
+		Group {
 			
-			IntegerField
-			{
-				id:									numberOfGenerators
-				name:								"numberOfGenerators"
-				label:								qsTr("Number of generators")
-				defaultValue:						0
-				min:								0
-				max:								256
-				visible: 							cube.checked
-			}
-			
-			CheckBox 
-			{
-				id:									randomize
-				name:								"randomize"
-				label:								qsTr("Randomize design")
-			}
-			
+			title:								qsTr("Design options")
+
 			CheckBox
 			{
 				id:									inscribed
 				name:								"inscribed"
 				label:								qsTr("Inscribed design")
-				visible:							cube.checked
+				enabled:							cube.checked
+				checked: 							(cube.checked) ? false : false
 			
 			}
 			
@@ -127,8 +125,9 @@ Form
 				id:									noModel
 				name:								"noModel"
 				label:								qsTr("Use # of variables instead of model")
-				visible:							cube.checked
-				checked:							true
+				enabled:							cube.checked
+				checked: 							true
+				visible: 							false
 			}
 			
 			CheckBox 
@@ -136,7 +135,8 @@ Form
 				id:									block
 				name:								"block"
 				label:								qsTr("Introduce blocking")
-				visible:							cube.checked
+				enabled:							cube.checked
+				checked: 							(cube.checked) ? false : false
 			}
 			
 			CheckBox 
@@ -153,7 +153,7 @@ Form
 			  indexDefaultValue: 					0
 			  label:								qsTr("Alpha type")
 			  values: 								["Orthogonal", "Rotatable", "Spherical", "Faces"]
-			  visible:								star.checked
+			  enabled:								star.checked
 			}
 
 			IntegerField
@@ -163,6 +163,28 @@ Form
 				name:                               "numberOfFactorsForTable"
 				defaultValue:                       numberOfFactors.value
 			}
+		}
+			
+
+			RadioButtonGroup
+			{
+				name:                                   "runOrder"
+				title:                                  qsTr("Run Order")
+
+				RadioButton
+				{
+					name:                               "runOrderRandom"
+					label:                              qsTr("Random")
+					checked:                            true
+				}
+
+				RadioButton
+				{
+					name:                              "runOrderStandard"
+					label:                              qsTr("Standard")
+				}
+
+	}
 			
 			
 
@@ -192,8 +214,8 @@ Form
 			{
 				Label { text: qsTr("Factor");			Layout.leftMargin: 5 * preferencesModel.uiScale;		Layout.preferredWidth: 42 * preferencesModel.uiScale}
 				Label { text: qsTr("Name");				Layout.preferredWidth: 150 * preferencesModel.uiScale}
-				Label { text: qsTr("Centre");			Layout.preferredWidth: 100 * preferencesModel.uiScale}
-				Label { text: qsTr("Distance to |1|");	Layout.preferredWidth: 100 * preferencesModel.uiScale}
+				Label { text: qsTr("Low");			Layout.preferredWidth: 100 * preferencesModel.uiScale}
+				Label { text: qsTr("High");	Layout.preferredWidth: 100 * preferencesModel.uiScale}
 	//			Label { visible: 					numberOfLevels.currentIndex == 1;
 	//                    text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
 			}
@@ -303,13 +325,13 @@ Form
 			Layout.preferredWidth:					parent.width
 			Layout.columnSpan:						2
 
-			RowLayout
-			{
+		//	RowLayout
+		//	{
 				
-				Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale; visible: cube.checked }
-				Label { text: qsTr("Formula");		Layout.preferredWidth: 100 * preferencesModel.uiScale; visible: cube.checked }
+		//		Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale; visible: cube.checked }
+		//		Label { text: qsTr("Formula");		Layout.preferredWidth: 100 * preferencesModel.uiScale; visible: cube.checked }
 
-			}
+		//	}
 
 			ComponentsList
 			{

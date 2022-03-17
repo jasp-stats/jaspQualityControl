@@ -104,12 +104,12 @@ Form
         {
             name:                               "dataCoded"
             label:                              qsTr("Coded")
-            checked:                            true
 
         }
 
         RadioButton
         {
+            checked:                             true
             name:                               "dataUncoded"
             label:                              qsTr("Uncoded")
 
@@ -125,13 +125,13 @@ Form
         {
             name:                              "runOrderStandard"
             label:                              qsTr("Standard")
-            checked:                            true
         }
 
         RadioButton
         {
             name:                               "runOrderRandom"
             label:                              qsTr("Random")
+            checked:                            true
         }
     }
 
