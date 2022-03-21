@@ -24,11 +24,11 @@ test_that("Test results for np chart table results match", {
 })
 
 # P
+options$timeStamp <- "ï..Month"
+options$TypeDefectives <- "pchart"
+results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
+
 test_that("p Chart plot matches", {
-  options$timeStamp <- "ï..Month"
-  options$TypeDefectives <- "pchart"
-  set.seed(1)
-  results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
   plotName <- results[["results"]][["PchartPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "p-chart")
