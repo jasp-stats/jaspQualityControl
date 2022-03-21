@@ -85,20 +85,7 @@ test_that("Laney u' Chart plot matches", {
 
 ## I MR
 options$Attributes <- "ImR"
-options$AReport <- TRUE
 results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
-
-test_that("Report", {
-  plotName <- results[["results"]][["AReport"]][["collection"]][["AReport_Plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Report-names")
-})
-
-test_that("Report", {
-  plotName <- results[["results"]][["AReport"]][["collection"]][["AReport_Report"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Report-plots")
-})
 
 test_that("Individuals and Moving Range Chart plot matches", {
   plotName <- results[["results"]][["IPlotA"]][["data"]]

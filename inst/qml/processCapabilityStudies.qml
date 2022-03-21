@@ -309,23 +309,6 @@ Form
 					label: 						qsTr("Probability table and plot")
 					checked: 					true
 
-					DropDown
-					{
-						name: 					"nullDistribution"
-						id: 					nullDistribution
-						label: 					qsTr("Null distribution")
-						values: 
-							[
-							{ label: qsTr("Normal"),		value: "Normal"	   },
-							{ label: qsTr("Lognormal"),		value: "Lognormal" },
-							{ label: qsTr("Weibull"),		value: "Weibull"   }
-						]
-						indexDefaultValue: (capabilityStudyType.value == "nonnormalCapabilityAnalysis") ? 
-							(nonNormalDist.currentValue == "Lognormal" || nonNormalDist.currentValue == "3lognormal") ? 1 : 
-								(nonNormalDist.currentValue == "3weibull" || nonNormalDist.currentValue == "Weibull") ? 2 : 0 
-						: 0
-					}
-
 					CheckBox
 					{
 						name:					"addGridlines"
@@ -434,6 +417,23 @@ Form
 							name: 							"nTicksProbabilityPlot"
 							defaultValue:					5
 						}
+					}
+
+				    DropDown
+					{
+						name: 					"nullDistribution"
+						id: 					nullDistribution
+						label: 					qsTr("Null distribution for probability plot")
+						values: 
+							[
+							{ label: qsTr("Normal"),		value: "Normal"	   },
+							{ label: qsTr("Lognormal"),		value: "Lognormal" },
+							{ label: qsTr("Weibull"),		value: "Weibull"   }
+						]
+						indexDefaultValue: (capabilityStudyType.value == "nonnormalCapabilityAnalysis") ? 
+							(nonNormalDist.currentValue == "Lognormal" || nonNormalDist.currentValue == "3lognormal") ? 1 : 
+								(nonNormalDist.currentValue == "3weibull" || nonNormalDist.currentValue == "Weibull") ? 2 : 0 
+						: 0
 					}
 			  }
 	}

@@ -94,6 +94,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
   # Report
   if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]]) && options$ImRchart) {
+
+    jaspResults[["CorPlot"]] <- NULL
+    jaspResults[["Ichart"]] <- NULL
+
+
     jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
     jaspResults[["CCReport"]]$dependOn(c("CCReport", "ImRchart", "variables","ncol", "manualTicks", "nTicks", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
     jaspResults[["CCReport"]]$position <- 9

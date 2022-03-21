@@ -100,22 +100,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-  # X-bar and R Chart OR ImR Chart
-  if(options$xbarR){
-    .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
-  } else{
-    .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
-  }
-
-  # Distribution plot - moved jaspResults ref here to avoid big files
-  .qcDistributionPlot(options, dataset, ready, jaspResults, measurements = measurements)
-
-  # Probability plots section
-  .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements = measurements)
-
-  # Perform capability analysis
-  .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements = measurements)
-
   # Report
   if (options[["pcReportDisplay"]]) {
     if (is.null(jaspResults[["pcReport"]])) {
@@ -124,6 +108,23 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
     jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat)
     jaspResults[["pcReport"]]$dependOn(c('pcReportDisplay'))
+  } else {
+
+    # X-bar and R Chart OR ImR Chart
+    if(options$xbarR){
+      .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
+    } else{
+      .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
+    }
+
+    # Distribution plot - moved jaspResults ref here to avoid big files
+    .qcDistributionPlot(options, dataset, ready, jaspResults, measurements = measurements)
+
+    # Probability plots section
+    .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements = measurements)
+
+    # Perform capability analysis
+    .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements = measurements)
   }
 }
 
@@ -139,7 +140,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   container <- createJaspContainer(gettext("Capability Studies"))
   container$dependOn(options = c("CapabilityStudyType", "variables", "subgroups", "lowerSpecification", "upperSpecification", "targetValue", "variablesLong", "pcSubgroupSize", "pcDataFormat",
-                                 "CapabilityStudyPlot", "CapabilityStudyTables", "manualSubgroupSize"))
+                                 "CapabilityStudyPlot", "CapabilityStudyTables", "manualSubgroupSize", "pcReportDisplay"))
   container$position <- 4
 
   if (!ready)
@@ -609,6 +610,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       pp <- NA
     if(!options[["targetValueField"]])
       cpm <- NA
+
     valueVector1 <- na.omit(c(pp, ppl, ppu, ppk, cpm))
     df <- data.frame(sources = sourceVector1,
                      values = round(valueVector1,2))
@@ -1057,7 +1059,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   container <- createJaspContainer(gettext("Probability Table and Plot"))
   container$dependOn(options = c("variables", "probabilityPlot", "rank", "nullDistribution", "addGridlines", "variablesLong", "pcSubgroupSize",
-                                 "manualSubgroupSize", "subgroups"))
+                                 "manualSubgroupSize", "subgroups", "pcReportDisplay"))
   container$position <- 3
 
   jaspResults[["probabilityContainer"]] <- container
@@ -1354,7 +1356,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   plot <- createJaspPlot(title = gettext("Histogram"), width = 400, height = 400)
-  plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "subgroups", 'nullDistribution'))
+  plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "pcReportDisplay", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "subgroups", 'nullDistribution'))
   plot$position <- 2
 
   jaspResults[["histogram"]] <- plot
@@ -1416,7 +1418,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
-  Container$dependOn(options = c("xbarR", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
+  Container$dependOn(options = c("xbarR", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "pcReportDisplay"))
   Container$position <- 1
   jaspResults[["ImR Charts"]] <- Container
   Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE, Wide = wideFormat)$p
@@ -1497,7 +1499,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
     plotMat[[2, 1]] <-  p1
-    plotMat[[2, 2]] <-  .qcProcessCapabilityPlot(options, dataset, ready, container, measurements, returnPlotObject = TRUE, distribution = 'normal')
+    plotMat[[2, 2]] <-  .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = "normal")
     plotMat[[3, 1]] <-  p2
     plotMat[[3, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
     plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
@@ -1513,10 +1515,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat <- matrix(list(), 5, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = options[["nonNormalDist"]])
-    plotMat[[2, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
-    plotMat[[3, 1]] <-  p1
-    plotMat[[3, 2]] <-  p2
+    plotMat[[2, 1]] <-  p1
+    plotMat[[2, 2]] <-  .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = options[["nonNormalDist"]])
+    plotMat[[3, 1]] <-  p2
+    plotMat[[3, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
     plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
     plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
     plotMat[[5, 1]] <- ggplotTable(overallCapDF)  #overall capability

@@ -9,7 +9,6 @@ options$NRxbarCharts <- TRUE
 options$NRpartOperatorGraph <- TRUE
 options$NRpartOperatorGraphAll <- TRUE
 options$NRoperatorGraph <- TRUE
-options$anovaGaugeNestedReport <- T
 set.seed(1)
 
 results <- runAnalysis("msaGaugeRRnonrep", "msaGaugeNN.csv", options)
@@ -48,12 +47,6 @@ test_that("Xbar Chart by Operator plot matches", {
   plotName <- results[["results"]][["NRxbarCharts"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "xbar-chart-by-operator")
-})
-
-test_that("Report matches", {
-  plotName <- results[["results"]][["anovaGaugeNestedReport"]][["collection"]][["anovaGaugeNestedReport_report"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Report")
 })
 
 test_that("Components of Variation plot matches", {

@@ -17,16 +17,8 @@ options$gaugeByPartAll <- TRUE
 options$gaugeByOperator <- TRUE
 options$gaugeByInteraction <- TRUE
 options$trafficPlot <- TRUE
-options$anovaGaugeReport <- TRUE
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "msaGageRandr_long.csv", options)
-
-
-test_that("Measurement systems analysis plot matches", {
-  plotName <- results[["results"]][["anovaGaugeReport"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "measurement-systems-analysis")
-})
 
 test_that("Variance Components table results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
@@ -112,12 +104,6 @@ test_that("Average Chart by Operator plot matches", {
   jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator")
 })
 
-test_that("Report matches", {
-  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Report")
-})
-
 # Wide
 options$gaugeRRdataFormat <- "gaugeRRwideFormat"
 options$operators <- "Operator"
@@ -125,12 +111,6 @@ options$parts <- "Part"
 options$measurements <- c("Measurement1", "Measurement2", "Measurement3")
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "msaGageRandr_wide.csv", options)
-
-test_that("Measurement systems analysis plot matches", {
-  plotName <- results[["results"]][["anovaGaugeReport"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "measurement-systems-analysis-Wide")
-})
 
 test_that("Variance Components table results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
@@ -215,12 +195,6 @@ test_that("Average Chart by Operator plot matches", {
   jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator-Wide")
 })
 
-test_that("Report matches", {
-  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Report-Wide")
-})
-
 # Long: Type 3
 data <- read.csv("msaGaugeRR_Type3_Long.csv")
 options$gaugeRRdataFormat <- "gaugeRRLongFormat"
@@ -235,12 +209,6 @@ options$gaugeScatterPlotOperators <- F
 options$gaugeScatterPlotFitLine <- F
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", data, options)
-
-test_that("Measurement systems analysis plot matches", {
-  plotName <- results[["results"]][["anovaGaugeReport"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "measurement-systems-analysis-LongType3")
-})
 
 test_that("Variance Components table results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
@@ -304,12 +272,6 @@ test_that("Average Chart by Operator plot matches", {
   jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator-LongType3")
 })
 
-test_that("Report matches", {
-  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "R3port-LongType3")
-})
-
 # Type 3 WIDE
 options$operators <- ""
 options$gaugeRRdataFormat <- "gaugeRRwideFormat"
@@ -321,12 +283,6 @@ options$gaugeScatterPlotOperators <- F
 options$gaugeScatterPlotFitLine <- F
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "msaGaugeRR_Type3_Wide.csv", options)
-
-test_that("Measurement systems analysis plot matches", {
-  plotName <- results[["results"]][["anovaGaugeReport"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "measurement-systems-analysis-WideType3")
-})
 
 test_that("Variance Components table results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
@@ -378,10 +334,4 @@ test_that("Average Chart by Operator plot matches", {
   plotName <- results[["results"]][["gaugeXbarChart"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator-WideType3")
-})
-
-test_that("Report matches", {
-  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "Report-WideType3")
 })

@@ -178,6 +178,17 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
   #Report
   if (options[["AReport"]] && is.null(jaspResults[["AReport"]]) && ready) {
+
+    jaspResults[["PchartPlot"]]     <- NULL
+    jaspResults[["NelsonTable"]]    <- NULL
+    jaspResults[["NPchartPlot"]]    <- NULL
+    jaspResults[["LaneyPPlot"]]     <- NULL
+    jaspResults[["CchartPlot"]]     <- NULL
+    jaspResults[["UchartPlot"]]     <- NULL
+    jaspResults[["LaneyUPlot"]]     <- NULL
+    jaspResults[["IPlotA"]]         <- NULL
+    jaspResults[["NelsonTableIMR"]] <- NULL
+
     jaspResults[["AReport"]] <- createJaspContainer(title = gettextf("Report for Attribute Control Charts"))
     jaspResults[["AReport"]]$dependOn(c("AReport", "ATitle", "AName", "AOperator", "AID", "AMisc", "AAppraiser", "AMeasurement", "ASize", "ATime", "AFrequency",
                                         "D", "total", "Attributes", "TypeDefects", "TypeDefectives", "timeStamp"))
@@ -713,7 +724,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
   text3 <- c(Measurement, Time)
   text4 <- c(Size, Frequency)
 
-  matrixPlot <- createJaspPlot(width = 1200, height = 1000, position = 1)
+  matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1, position = 1)
   plotMat <- matrix(list(), 2, 2, T)
   plotMat[[1, 1]] <- .ggplotWithText(text1)
   plotMat[[1, 2]] <- .ggplotWithText(text2)

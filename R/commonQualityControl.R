@@ -9,7 +9,7 @@
     return()
 
   container <- createJaspContainer(title = gettext("Control Chart"))
-  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "manualTicks", 'nTicks', "xbarR", "IMR"))
+  container$dependOn(options = c("controlChartsType", "pcReportDisplay", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "manualTicks", 'nTicks', "xbarR", "IMR"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
 
@@ -154,14 +154,13 @@
       xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
       xLabels <- xBreaks_Out[xBreaks]
       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-      nDecimal.Data <- data[1,1]
       dfLabel <- data.frame(
         x = max(xLimits) * 0.95,
         y = c(center, UCL, LCL),
         l = c(
-          gettextf("CL = %g", round(center, nDecimal.Data + 1)),
-          gettextf("UCL = %g",   round(UCL, nDecimal.Data + 2)),
-          gettextf("LCL = %g",   round(LCL, nDecimal.Data + 2))
+          gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
+          gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
+          gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
         )
       )
 
@@ -220,14 +219,13 @@
     nxBreaks <- 5
   xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
-  nDecimal.Data <- data[1,1]
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, nDecimal.Data + 1)),
-      gettextf("UCL = %g",   round(UCL, nDecimal.Data + 2)),
-      gettextf("LCL = %g",   round(LCL, nDecimal.Data + 2))
+      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
     )
   )
 

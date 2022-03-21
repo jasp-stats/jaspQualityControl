@@ -115,6 +115,12 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
   # Report
   if (options[["anovaGaugeNestedReport"]] && ready) {
+    jaspResults[["gaugeRRNonRep"]] <- NULL
+    jaspResults[["NRxbarCharts"]] <- NULL
+    jaspResults[["NRpartOperatorGraph"]] <- NULL
+    jaspResults[["NRoperatorGraph"]] <- NULL
+    jaspResults[["NRrCharts"]] <- NULL
+
     if (is.null(jaspResults[["anovaGaugeNestedReport"]])) {
       anovaGaugeNestedReport <- createJaspContainer(gettext("Report"))
       anovaGaugeNestedReport$position <- 6
@@ -401,7 +407,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
      text2 <- c(reportedBy, misc)
    }
 
-   matrixPlot <- createJaspPlot(width = 1200, height = 1000)
+   matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1)
    plotMat <- matrix(list(), 4, 2)
    plotMat[[1, 1]] <- .ggplotWithText(text1)
    plotMat[[1, 2]] <- .ggplotWithText(text2)

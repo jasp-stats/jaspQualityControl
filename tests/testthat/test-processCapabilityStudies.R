@@ -12,7 +12,6 @@ options$targetValueField <- TRUE
 options$lowerSpecification <- -16
 options$targetValue <- -8
 options$upperSpecification <- 0
-options$pcReportDisplay <- TRUE
 options$xbarR <- TRUE
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Long.csv", options)
@@ -60,12 +59,6 @@ test_that("Histogram plot matches", {
   plotName <- results[["results"]][["histogram"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "histogram")
-})
-
-test_that("Report plot matches", {
-  plotName <- results[["results"]][["pcReport"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "report")
 })
 
 test_that("Probability Plot matches", {
@@ -134,12 +127,6 @@ test_that("Histogram plot matches2", {
   jaspTools::expect_equal_plots(testPlot, "histogram2")
 })
 
-test_that("Report plot matches2", {
-  plotName <- results[["results"]][["pcReport"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "report2")
-})
-
 test_that("Probability Plot matches2", {
   plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
@@ -167,14 +154,13 @@ options$lowerSpecification <- 0
 options$targetValue <- 0
 options$upperSpecification <- 15
 options$nullDistribution <- "Weibull"
-options$pcReportDisplay <- T
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)
 
-test_that("titleless-plot-0 matches", {
+test_that("IMR plot matches", {
   plotName <- results[["results"]][["ImR Charts"]][["collection"]][["ImR Charts_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "titleless-plot-0")
+  jaspTools::expect_equal_plots(testPlot, "IMR-plot")
 })
 
 test_that("Non-conformance statistics table results match", {
@@ -207,12 +193,6 @@ test_that("Histogram plot matches3", {
   plotName <- results[["results"]][["histogram"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "histogram3")
-})
-
-test_that("Report plot matches3", {
-  plotName <- results[["results"]][["pcReport"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "report3")
 })
 
 test_that("Probability Plot matches3", {
@@ -271,12 +251,6 @@ test_that("Histogram plot matches4", {
   plotName <- results[["results"]][["histogram"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "histogram4")
-})
-
-test_that("Report plot matches4", {
-  plotName <- results[["results"]][["pcReport"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "report4")
 })
 
 test_that("Probability Plot matches4", {

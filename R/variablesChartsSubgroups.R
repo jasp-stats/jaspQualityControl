@@ -142,6 +142,11 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
     # Report
     if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]])) {
+
+      jaspResults[["SPlot"]] <- NULL
+      jaspResults[["XbarPlot"]] <- NULL
+      jaspResults[["NelsonTables"]] <- NULL
+
       jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["CCReport"]]$dependOn(c("CCReport", "CCSubgroupSize","TypeChart", "variables", "variablesLong", "manualTicks", 'nTicks',"CCDataFormat", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
       jaspResults[["CCReport"]]$position <- 9
@@ -243,7 +248,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   misc <- gettextf("Misc: %s", ccMisc)
   text2 <- c(reportedBy, misc)
 
-  matrixPlot <- createJaspPlot(width = 1800, height = 1300)
+  matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1)
   plotMat <- matrix(list(), 3, 2)
   plotMat[[1, 1]] <- .ggplotWithText(text1)
   plotMat[[1, 2]] <- .ggplotWithText(text2)
