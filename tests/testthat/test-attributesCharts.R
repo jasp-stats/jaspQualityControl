@@ -49,6 +49,7 @@ test_that("Laney p' Chart plot matches", {
 options$TypeDefectives <- "npchart"
 options$Attributes <- "Defects"
 options$TypeDefects <- "cchart"
+options$timeStamp <- ""
 results <- runAnalysis("attributesCharts", "SPC_NP.csv", options)
 
 test_that("c Chart plot matches", {
@@ -64,6 +65,7 @@ test_that("Test results for c chart table results match", {
 })
 
 # U
+options$timeStamp <- "ï..Month"
 options$TypeDefects <- "uchart"
 results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
