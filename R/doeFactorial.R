@@ -862,10 +862,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     )
   }
 
-  # Replace : by \u00d7
-  for (i in 1:length(anovaFill$Terms)) {
-    anovaFill$Terms[i] <- gsub(":", " \u00d7 ", anovaFill$Terms[i])
-  }
+  anovaFill$Terms <- jaspBase::gsubInteractionSymbol(anovaFill$Terms)
 
     factorialRegressionANOVA <- createJaspTable(gettext("Analysis of variance"), position = 1)
     factorialRegressionSummaryFit <- createJaspTable(gettext("Model Summary"), position = 2)
