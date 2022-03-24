@@ -287,13 +287,13 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
       resolution.three <- c(7, 13, 14, 15, 25, 26, 27, 28, 29, 30, 31)
 
 
-      if (any(sumResolution == resolution.Full))
+      if (sumResolution %in% resolution.Full)
         res <- "Full"
-      else if (any(sumResolution == resolution.six))
+      else if (sumResolution %in% resolution.six)
         res <- "VI"
-      else if (any(sumResolution == resolution.Five))
+      else if (sumResolution %in% resolution.Five)
         res <- "V"
-      else if (any(sumResolution == resolution.three))
+      else if (sumResolution %in% resolution.three)
         res <- "III"
       else if (any(sumResolution == 137))
         res <- "VIII"
@@ -901,9 +901,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     }
 
     # Replace : by \u00d7
-    for (i in 1:length(formula)) {
-      formula[i] <- gsub(":", " \u00d7 ", formula[i])
-    }
+    formula <- jaspBase::gsubInteractionSymbol(formula)
 
     factorialRegressionFormula$addRows(list(Formula = formula))
   }
@@ -963,9 +961,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   }
 
   # Replace : by \u00d7
-  for (i in 1:length(coefsFill$terms)) {
-    coefsFill$terms[i] <- gsub(":", " \u00d7 ", coefsFill$terms[i])
-  }
+  coefsFill$terms <- jaspBase::gsubInteractionSymbol(coefsFill$terms)
 
   factorialRegressionCoefficients$setData(coefsFill)
   return()
