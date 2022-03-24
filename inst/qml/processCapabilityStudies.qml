@@ -408,7 +408,7 @@ Form
 
 					CheckBox
 					{
-						name:                   			"manualTicksProbabilityPlot"
+						name:					"manualTicksProbabilityPlot"
 						label: 								qsTr("Number of ticks on x-axis for probability plot:")
 						childrenOnSameRow: true
 
