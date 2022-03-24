@@ -48,6 +48,11 @@ The method used in the analysis.
 - Gauge r&R Variance Components: variance and contribution in percentage of the input variables, repeatability, reproducibility, and total Gauge r&R.  
 - Gauge Evaluation: the standard deviations, study variations, and percent of study variation and tolerance for input variables, repeatability, reproducibility, and total Gauge r&R.  
 
+## References 
+-------
+- Duncan, A.J. (1986), Quality control and industrial statistics, Richard D. Irwin, Inc., and Automotive Industry Action Group (July 2005), Statistical process control (SPC) – Reference manual, AIAG.
+- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbook*. SKF group. 
+
 ## R Packages
 -------
 - jaspGraphs

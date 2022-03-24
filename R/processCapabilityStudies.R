@@ -76,27 +76,29 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Error Handling
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = measurements, exitAnalysisIfErrors = TRUE)
-  if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis" & ready)
-    .hasErrors(dataset, type = 'negativeValues',
-               all.target = measurements, exitAnalysisIfErrors = TRUE)
-
-
-  dataset <- na.omit(dataset)
-  # X-bar and R Chart OR ImR Chart
-  if(options$xbarR){
-    .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
-  } else{
-    .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
+  if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis" & ready) {
+    .hasErrors(dataset,
+               all.target = measurements,
+               custom = function () {
+                 if (any(unlist(dataset[measurements]) < 0))
+                   return(gettext("Values must be positive to fit a Weibull/Lognormal distribution."))},
+               exitAnalysisIfErrors = TRUE)
   }
 
-  # Distribution plot - moved jaspResults ref here to avoid big files
-  .qcDistributionPlot(options, dataset, ready, jaspResults, measurements = measurements)
+  dataset <- na.omit(dataset)
+  # correction for zero values for non-normal capability
+  if (options$capabilityStudyType == "nonnormalCapabilityAnalysis") {
+    x <- unlist(dataset[measurements])
+    zeroCorrect <- any(x == 0)
+    dataset[measurements] <- ifelse(x == 0, min(x[x > 0])/2 , x)
 
-  # Probability plots section
-  .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements = measurements)
-
-  # Perform capability analysis
-  .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements = measurements)
+    if (zeroCorrect) {
+      jaspResults[["zeroWarning"]] <- createJaspHtml(text = gettext("All zero values have been replaced with a value equal to one-half of the smallest data point."), elementType = "p",
+                                                     title = "Zero values found in non-normal capability study:",
+                                                     position = 1)
+      jaspResults[["zeroWarning"]]$dependOn(c('variablesLong', 'variables', 'capabilityStudyType', 'nullDistribution'))
+    }
+  }
 
   # Report
   if (options[["pcReportDisplay"]]) {
@@ -106,6 +108,23 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
     jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat)
     jaspResults[["pcReport"]]$dependOn(c('pcReportDisplay'))
+  } else {
+
+    # X-bar and R Chart OR ImR Chart
+    if(options$xbarR){
+      .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
+    } else{
+      .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
+    }
+
+    # Distribution plot - moved jaspResults ref here to avoid big files
+    .qcDistributionPlot(options, dataset, ready, jaspResults, measurements = measurements)
+
+    # Probability plots section
+    .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements = measurements)
+
+    # Perform capability analysis
+    .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements = measurements)
   }
 }
 
@@ -121,7 +140,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   container <- createJaspContainer(gettext("Capability Studies"))
   container$dependOn(options = c("CapabilityStudyType", "variables", "subgroups", "lowerSpecification", "upperSpecification", "targetValue", "variablesLong", "pcSubgroupSize", "pcDataFormat",
-                                 "CapabilityStudyPlot", "CapabilityStudyTables", "manualSubgroupSize"))
+                                 "CapabilityStudyPlot", "CapabilityStudyTables", "manualSubgroupSize", "pcReportDisplay"))
   container$position <- 4
 
   if (!ready)
@@ -174,7 +193,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     nonNormalContainer$position <- 2
 
     container[["nonNormalCapabilityAnalysis"]] <- nonNormalContainer
-    
+
     if (options[["CapabilityStudyPlot"]])
       .qcProcessCapabilityPlot(options, dataset, ready, nonNormalContainer, measurements, distribution = options[["nonNormalDist"]])
 
@@ -337,7 +356,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   if (ready) plot$plotObject <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution)
-    
+
   container[["capabilityPlot"]] <- plot;
 
   return(plot)
@@ -591,6 +610,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       pp <- NA
     if(!options[["targetValueField"]])
       cpm <- NA
+
     valueVector1 <- na.omit(c(pp, ppl, ppu, ppk, cpm))
     df <- data.frame(sources = sourceVector1,
                      values = round(valueVector1,2))
@@ -709,12 +729,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Average"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. deviation"))
   if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "Lognormal"){
-    table$addColumnInfo(name = "beta", type = "number", title = gettextf("Log mean (mu)"))
-    table$addColumnInfo(name = "theta", type = "number", title = gettextf("Log std.dev (%1$s)", "\u03B8"))
+    table$addColumnInfo(name = "beta", type = "number", title = gettextf("Log mean (%1$s)", "\u03BC"))
+    table$addColumnInfo(name = "theta", type = "number", title = gettextf("Log std.dev (%1$s)", "\u03C3"))
   }
   else{
-    table$addColumnInfo(name = "beta", type = "number", title = gettextf("Shape (%1$s)", "\u03B2"))
-    table$addColumnInfo(name = "theta", type = "number", title = gettextf("Scale (%1$s)", "\u03C3"))
+    table$addColumnInfo(name = "beta", type = "number", title = gettextf("Shape (%1$s)", "\u03BB"))
+    table$addColumnInfo(name = "theta", type = "number", title = gettext("Scale (<i>k</i>)"))
   }
   sourceVector1 <- c(sourceVector1, 'LSL', 'Target', 'USL', 'Sample size', 'Mean', 'Std. Deviation', "Beta", "Theta")
 
@@ -1039,7 +1059,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   container <- createJaspContainer(gettext("Probability Table and Plot"))
   container$dependOn(options = c("variables", "probabilityPlot", "rank", "nullDistribution", "addGridlines", "variablesLong", "pcSubgroupSize",
-                                 "manualSubgroupSize", "subgroups"))
+                                 "manualSubgroupSize", "subgroups", "pcReportDisplay"))
   container$position <- 3
 
   jaspResults[["probabilityContainer"]] <- container
@@ -1059,7 +1079,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcProbabilityTable <- function(dataset, options, container, measurements) {
 
-  table <- createJaspTable(title = gettextf("Summary of test against the %1$s distribution", tolower(options[["nullDistribution"]])))
+  table <- createJaspTable(title = gettextf("Summary of test against the %1$s distribution", options[["nullDistribution"]]))
   table$position <- 1
 
   table$addColumnInfo(name = "n",      	title = gettext("N"),  		type = "integer")
@@ -1068,8 +1088,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "mean",  title = gettextf("Mean (%1$s)", "\u03BC"), 				type = "number")
     table$addColumnInfo(name = "sd",    title = gettextf("Std. deviation (%1$s)", "\u03C3"), 	type = "number")
   } else if (options[["nullDistribution"]] == 'Lognormal') {
-    table$addColumnInfo(name = "mean",  title = gettextf("Location (%1$s)", "\u03BC"),  		type = "number")
-    table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03C3"), 			type = "number")
+    table$addColumnInfo(name = "mean",  title = gettextf("Log mean (%1$s)", "\u03BC"),  		type = "number")
+    table$addColumnInfo(name = "sd",    title = gettextf("Log std.dev (%1$s)", "\u03C3"), 			type = "number")
   } else if (options[["nullDistribution"]] == 'Weibull') {
     table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03BB"), 			type = "number")
     table$addColumnInfo(name = "sd",    title = gettext("Scale (<i>k</i>)"),        			type = "number")
@@ -1078,7 +1098,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "number")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
 
-  table$addFootnote(gettextf("The Anderson-Darling statistic AD is calculated against the %2$s distribution.", "\u00B2", tolower(options[["nullDistribution"]])))
+  table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution.", "\u00B2", options[["nullDistribution"]]))
 
   if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
@@ -1140,11 +1160,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Arrange data
   if (FactorialFit){
-    x <- data.frame(summary(fit)$coefficients)$t.value[-1]
+    x <- as.vector(resid(fit))
     order1 <- order(x)
-    factorsNames <- rownames(summary(fit)$coefficients)[-1][order1]
-    p.sig <- as.vector(summary(fit)$coefficients[,4][-1][order1] < 0.05)
-
+    options[["addGridlines"]] <- FALSE
+    #factorsNames <- rownames(summary(fit)$coefficients)[-1][order1]
+    #p.sig <- as.vector(summary(fit)$coefficients[,4][-1][order1] < 0.05)
   } else {
     x <- as.vector(unlist(dataset[measurements]))
   }
@@ -1217,9 +1237,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileUpper <- log(percentileUpper)
 
     labelFrame <- data.frame(labs = label_x, value = x)
-    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
+    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
     xBreaks <- labelFrame[index,2]
-    label_x <- round(labelFrame[index,2],1)
+    label_x <- labelFrame[index,1]
     xLimits <- range(xBreaks)
   } else if (options[["nullDistribution"]] == 'Weibull') {
     fit <- fitdistrplus::fitdist(x, 'weibull')
@@ -1244,40 +1264,44 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     percentileUpper <- log(percentileUpper)
 
     labelFrame <- data.frame(labs = label_x, value = x)
-    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 10)[-1])
+    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
     xBreaks <- labelFrame[index,2]
-    label_x <- round(labelFrame[index,2],1)
+    label_x <- labelFrame[index,1]
     xLimits <- range(xBreaks) * 1.2
   }
   data1 <- data.frame(x = x, y = y)
   yLimits <- range(yBreaks)
 
-
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
-    ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed") +
-    ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed") +
-    jaspGraphs::geom_point(ggplot2::aes(x = x, y = y)) +
-    ggplot2::scale_x_continuous("Measurement", breaks = xBreaks, limits = xLimits, labels = label_x) +
-    ggplot2::scale_y_continuous('Percent', labels = ticks, breaks = yBreaks, limits = yLimits)
+    jaspGraphs::geom_point(ggplot2::aes(x = x, y = y))
 
   if (options[["addGridlines"]])
     p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
 
-  p <- jaspGraphs::themeJasp(p)
-
   if (FactorialFit) {
-    ordered.Factors <- factorsNames[p.sig]
-    p <- p + jaspGraphs::geom_point(ggplot2::aes(x = x, y = y, color = ifelse(as.vector(p.sig), "Significant", "Not significant"))) +
-      ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
-      ggplot2::scale_x_continuous("Standardized Effect", breaks = xBreaks, limits = xLimits * 1.2, labels = label_x)
+    p <- p +
+      ggplot2::scale_x_continuous(gettext("Residuals"), breaks = xBreaks, limits = xLimits * 1.2, labels = label_x) +
+      ggplot2::scale_y_continuous(gettext('Percent'), labels = ticks, breaks = yBreaks, limits = yLimits)
 
-    x.sig <- x[p.sig]
-    y.sig <- y[p.sig]
-    for (i in 1:length(ordered.Factors))
-      p <- p + ggplot2::annotate("text", x = x.sig[i] * 1.05, y = y.sig[i] * 1.05, label = sprintf("%s", ordered.Factors[i]))
+
+    #ordered.Factors <- factorsNames[p.sig]
+    #p <- p + jaspGraphs::geom_point(ggplot2::aes(x = x, y = y, color = ifelse(as.vector(p.sig), "Significant", "Not significant"))) +
+    #  ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
+    #  ggplot2::scale_x_continuous("Standardized Effect", breaks = xBreaks, limits = xLimits * 1.2, labels = label_x)
+
+    #x.sig <- x[p.sig]
+    #y.sig <- y[p.sig]
+    #for (i in 1:length(ordered.Factors))
+    #  p <- p + ggplot2::annotate("text", x = x.sig[i] * 1.05, y = y.sig[i] * 1.05, label = sprintf("%s", ordered.Factors[i]))
+  } else {
+    p <- p + ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed") +
+      ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed") +
+      ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xBreaks, limits = xLimits, labels = label_x) +
+      ggplot2::scale_y_continuous(gettext('Percent'), labels = ticks, breaks = yBreaks, limits = yLimits)
   }
 
+  p <- jaspGraphs::themeJasp(p)
   plot$plotObject <- p
 
   if (ggPlot)
@@ -1332,7 +1356,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   plot <- createJaspPlot(title = gettext("Histogram"), width = 400, height = 400)
-  plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "subgroups", 'nullDistribution'))
+  plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "pcReportDisplay", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "subgroups", 'nullDistribution'))
   plot$position <- 2
 
   jaspResults[["histogram"]] <- plot
@@ -1345,7 +1369,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .qcDistributionPlotObject <- function(options, dataset, measurements) {
-  
+
   data <- unlist(dataset[measurements])
   binWidthType <- options$pcNumberOfBins
 
@@ -1367,7 +1391,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits) +
     ggplot2::scale_y_continuous(name =  gettext("Counts"), labels = yLabels, breaks = yBreaks, limits = yLimits) +
     jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
-
 
   if (options[["displayDensity"]]) {
     if(options[['nullDistribution']]  == 'Normal'){
@@ -1395,7 +1418,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
-  Container$dependOn(options = c("xbarR", "variables", "subgroups", "variablesLong", "pcSubgroupSize"))
+  Container$dependOn(options = c("xbarR", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "pcReportDisplay"))
   Container$position <- 1
   jaspResults[["ImR Charts"]] <- Container
   Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE, Wide = wideFormat)$p
@@ -1475,10 +1498,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat <- matrix(list(), 6, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = 'normal')
-    plotMat[[2, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
-    plotMat[[3, 1]] <-  p1
-    plotMat[[3, 2]] <-  p2
+    plotMat[[2, 1]] <-  p1
+    plotMat[[2, 2]] <-  .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = "normal")
+    plotMat[[3, 1]] <-  p2
+    plotMat[[3, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
     plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
     plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
     plotMat[[5, 1]] <- ggplotTable(potentialWithinDF)  #Potential within
@@ -1492,11 +1515,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotMat <- matrix(list(), 5, 2)
     plotMat[[1, 1]] <- .ggplotWithText(text1)
     plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = options[["nonNormalDist"]])
-    plotMat[[2, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
-    plotMat[[3, 1]] <-  p1
-    plotMat[[3, 2]] <-  p2
-    plotMat[[4, 1]] <- ggplotTable(round(processSummaryDF)) #process summary
+    plotMat[[2, 1]] <-  p1
+    plotMat[[2, 2]] <-  .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = options[["nonNormalDist"]])
+    plotMat[[3, 1]] <-  p2
+    plotMat[[3, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
+    plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
     plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
     plotMat[[5, 1]] <- ggplotTable(overallCapDF)  #overall capability
   }

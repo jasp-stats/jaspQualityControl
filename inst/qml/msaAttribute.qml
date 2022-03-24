@@ -77,7 +77,7 @@ Form
 		{
 			id:									measurementsLong
 			name:								"measurementsLong"
-			title:								qsTr("Result")
+			title:								qsTr("Results")
 			singleVariable:						true
 			visible:							aaadataFormat.currentValue == "AAAlongFormat"
 			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]

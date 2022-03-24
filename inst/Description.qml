@@ -99,7 +99,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Two-level Factorial")
+		title:			qsTr("Two-level Factorial Design")
 		func:			"doeFactorial"
 		requiresData:	false
 	}
@@ -111,13 +111,13 @@ Description
     }
     Analysis
 	  {
-		title:			qsTr("Response Surface")
+		title:			qsTr("Response Surface Design")
 		func:			"doeResponseSurfaceMethodology"
 		requiresData:	false
 	  }
     Analysis
     {
-        title:          qsTr("Modify Existing Design")
+        title:          qsTr("Define Custom Design")
         func:           "doeModifyDesign"
     }
 //    Analysis

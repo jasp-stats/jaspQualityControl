@@ -69,7 +69,7 @@ Form
 		{
 			id:									measurementsLong
 			name:								"measurementsLong"
-			title:								qsTr("Measurement")
+			title:								qsTr("Measurements")
 			singleVariable:						true
 			visible:							gaugeRRdataFormat.currentValue == "gaugeRRlongFormat"
 			allowedColumns:						["scale"]
@@ -151,9 +151,10 @@ Form
 					name: 						"TypeForFstat"
 					label: 						qsTr("Type of model for F-statistic")
 					values: [
-            				{ label: qsTr("Random effects"), value: "RandomEffects"},
-        						{ label: qsTr("Fixed effects"), value: "FixedEffects"}
+        					{ label: qsTr("Fixed effects"), value: "FixedEffects"},
+            				{ label: qsTr("Random effects"), value: "RandomEffects"}
         					]
+					indexDefaultValue: (type3.checked) ? 1 : 2
 					enabled:      !type3.checked
 				}
 
@@ -212,7 +213,7 @@ Form
 			CheckBox
 			{
 				name:							"gaugeXbarChart"
-				label:							qsTr("X-bar charts by operator")
+				label:							qsTr("Average charts by operator")
 			}
 
 			CheckBox
@@ -237,7 +238,7 @@ Form
 			CheckBox
 			{
 				name:							"gaugeByPart"
-				label:							qsTr("Measurement by part plot")
+				label:							qsTr("Measurements by part plot")
 
 				CheckBox
 				{
@@ -249,19 +250,19 @@ Form
 			CheckBox
 			{
 				name:							"gaugeByOperator"
-				label:							qsTr("Measurement by operators plot")
+				label:							qsTr("Measurements by operator plot")
 			}
 
 			CheckBox
 			{
 				name: 							"gaugeByInteraction"
-				label: 							qsTr("Part x operator interaction plot")
+				label: 							qsTr("Part × operator interaction plot")
 			}
 
 			CheckBox
 			{
 				name: 							"trafficPlot"
-				label: 							qsTr("Traffic light graph")
+				label: 							qsTr("Traffic light chart")
 			}
 		}
 	}

@@ -27,10 +27,19 @@ Form
     AssignedVariablesList
     {
       name:								"total"
-      title:								qsTr("Sample")
+      title:								qsTr("Samples")
       allowedColumns:						["scale"]
       singleVariable:						true
     }
+
+    AssignedVariablesList
+		{
+			id:									subgroups
+			name:								"timeStamp"
+			title:								qsTr("Time stamp (optional)")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
   }
 
   Group

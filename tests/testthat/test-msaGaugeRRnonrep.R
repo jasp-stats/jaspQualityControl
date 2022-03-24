@@ -13,10 +13,10 @@ set.seed(1)
 
 results <- runAnalysis("msaGaugeRRnonrep", "msaGaugeNN.csv", options)
 
-test_that("Measurement by Operator plot matches", {
+test_that("Measurements by Operator plot matches", {
   plotName <- results[["results"]][["NRoperatorGraph"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "measurement-by-operator")
+  jaspTools::expect_equal_plots(testPlot, "measurements-by-operator")
 })
 
 test_that("Operator A plot matches", {

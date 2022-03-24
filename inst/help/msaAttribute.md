@@ -35,12 +35,10 @@ Data can be in the form of all observations in one column ("Single column") or a
 ### Plots
 - Within Appraisers: plotting the matching's percentage within appraiser and its confidence intervals. 
 - Each Appraiser vs Standard: plotting the matching's percentage between the known standard and inspected items per operator and its confidence intervals. 
-
 ## References 
 -------
-- Chrysler Group LLC, Ford Motor Company, & General Motors Corporation. (2010). *Measurement Systems Analysis* (4th ed.). http://www.aiag.orgt. 
-- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbooks*. SKF group.
-
+- Duncan, A.J. (1986), Quality control and industrial statistics, Richard D. Irwin, Inc., and Automotive Industry Action Group (July 2005), Statistical process control (SPC) – Reference manual, AIAG.
+- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbook*. SKF group. 
 ## R Packages
 -------
 - jaspGraphs

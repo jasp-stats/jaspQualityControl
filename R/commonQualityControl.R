@@ -9,7 +9,7 @@
     return()
 
   container <- createJaspContainer(title = gettext("Control Chart"))
-  container$dependOn(options = c("controlChartsType", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "manualTicks", 'nTicks', "xbarR", "IMR"))
+  container$dependOn(options = c("controlChartsType", "pcReportDisplay", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "manualTicks", 'nTicks', "xbarR", "IMR"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
 
@@ -132,12 +132,18 @@
     p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
   }
 
+  # Out of control red dots marking
   if (Phase2)
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
   else if (OnlyOutofLimit)
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "blue"))
   else
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
+
+  # if more than half of the dots are violations, do not show red dots.
+  n.outOfLimits <- sum(data_plot$means > UCL , data_plot$means < LCL)
+  if ( n.outOfLimits > (nrow(data_plot) / 2) )
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = "blue")
 
   if (manualXaxis != "") {
     if (GaugeRR | Wide){
@@ -217,9 +223,9 @@
     x = max(xLimits) * 0.95,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, decimalplaces(sixsigma$data[1,1]) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(sixsigma$data[1,1]) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(sixsigma$data[1,1]) + 2))
+      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
+      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
+      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
     )
   )
 
@@ -284,6 +290,11 @@
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, "red", "blue"))
   else
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+
+  # if more than half of the dots are violations, do not show red dots.
+  n.outOfLimits <- sum(data_plot$range > UCL , data_plot$range < LCL)
+  if ( n.outOfLimits > (nrow(data_plot) / 2) )
+    p <- p + jaspGraphs::geom_point(size = pointsSize, fill = "blue")
 
   if (title != "")
     p <- p + ggplot2::ggtitle(title)

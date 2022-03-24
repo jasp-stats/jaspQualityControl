@@ -52,6 +52,16 @@
 <circle cx='196.87' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #FF0000;' />
 <circle cx='214.47' cy='103.97' r='3.56' style='stroke-width: 0.71; fill: #FF0000;' />
 <circle cx='232.08' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #FF0000;' />
+<circle cx='73.65' cy='60.29' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='91.25' cy='284.95' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='108.85' cy='110.21' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='126.46' cy='334.87' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='144.06' cy='185.10' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='161.66' cy='103.97' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='179.27' cy='453.44' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='196.87' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='214.47' cy='103.97' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='232.08' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
 <rect x='65.73' y='19.10' width='174.27' height='494.25' style='stroke-width: 0.00; stroke: none;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
@@ -84,7 +94,7 @@
 <text x='196.87' y='539.15' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='8.34px' lengthAdjust='spacingAndGlyphs'>8</text>
 <text x='232.08' y='539.15' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='16.69px' lengthAdjust='spacingAndGlyphs'>10</text>
 <text x='152.86' y='567.72' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='70.06px' lengthAdjust='spacingAndGlyphs'>subgroups</text>
-<text transform='translate(15.30,266.23) rotate(-90)' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='123.44px' lengthAdjust='spacingAndGlyphs'>Subgroup average</text>
+<text transform='translate(15.30,266.23) rotate(-90)' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='109.25px' lengthAdjust='spacingAndGlyphs'>Sample average</text>
 <text x='152.86' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='73.38px' lengthAdjust='spacingAndGlyphs'>Operator A</text>
 </g>
 <defs>
@@ -120,6 +130,16 @@
 <circle cx='427.23' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #FF0000;' />
 <circle cx='448.77' cy='116.45' r='3.56' style='stroke-width: 0.71; fill: #FF0000;' />
 <circle cx='470.31' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #FF0000;' />
+<circle cx='276.44' cy='60.29' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='297.98' cy='291.19' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='319.52' cy='91.49' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='341.06' cy='316.15' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='362.60' cy='178.86' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='384.14' cy='103.97' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='405.68' cy='453.44' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='427.23' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='448.77' cy='116.45' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='470.31' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
 <rect x='266.75' y='19.10' width='213.25' height='494.25' style='stroke-width: 0.00; stroke: none;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
@@ -178,6 +198,16 @@
 <circle cx='653.17' cy='241.26' r='3.56' style='stroke-width: 0.71; fill: #FF0000;' />
 <circle cx='672.71' cy='103.97' r='3.56' style='stroke-width: 0.71; fill: #FF0000;' />
 <circle cx='692.24' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #FF0000;' />
+<circle cx='516.44' cy='66.53' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='535.97' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='555.51' cy='103.97' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='575.04' cy='303.67' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='594.57' cy='178.86' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='614.11' cy='79.01' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='633.64' cy='440.96' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='653.17' cy='241.26' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='672.71' cy='103.97' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
+<circle cx='692.24' cy='266.23' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
 <rect x='506.75' y='19.10' width='213.25' height='494.25' style='stroke-width: 0.00; stroke: none;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
