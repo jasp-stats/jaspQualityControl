@@ -514,7 +514,6 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     }
 
     if(options[["runOrder"]] == "runOrderRandom"){
-      set.seed(1)
       rows <- rows[order(rows$runOrder),]
     } else {
       if(options[["factorialBlocks"]] > 1){

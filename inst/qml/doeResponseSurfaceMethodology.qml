@@ -173,6 +173,7 @@ Form
 
 				RadioButton
 				{
+					SetSeed{}
 					name:                               "runOrderRandom"
 					label:                              qsTr("Random")
 					checked:                            true

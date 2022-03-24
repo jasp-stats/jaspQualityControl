@@ -581,6 +581,7 @@ Group
 
 				RadioButton
 				{
+					SetSeed{}
 					name:                               "runOrderRandomPlot"
 					label:                              qsTr("Run")
 				}

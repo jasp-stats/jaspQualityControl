@@ -315,7 +315,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }
   }
 
-  set.seed(1)
   if(length(coding_list) == 0 & length(generators) == 0 & length(block_formula) == 0){
     ccd <- rsm::cube(basis = formula, n0 = n0, randomize = TRUE,
                      inscribed = inscribed)
