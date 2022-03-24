@@ -488,10 +488,10 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     if(options[["dataCoding"]] == "dataUncoded"){
       for(i in 1:options[["numberOfFactors"]]){
 
-        if(any(factorLows[i] == "1"))
-          rows[,i+2][rows[,i+2] == -1] <- "1.0"
+        rows[,i+2][rows[,i+2] == -1] <- if (any(factorLows[i] == "1"))
+          "1.0"
         else
-          rows[,i+2][rows[,i+2] == -1] <- factorLows[i]
+          factorLows[i]
 
         if(options[["factorialCenterPoints"]] >= 1){
           rows[,i+2][rows[,i+2] == 0] <-
