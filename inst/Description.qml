@@ -93,12 +93,6 @@ Description
 	}
 	Analysis
 	{
-        title:			qsTr("Screening Design")
-		func:			"doeScreening"
-		requiresData:	false
-	}
-	Analysis
-	{
 		title:			qsTr("Two-level Factorial Design")
 		func:			"doeFactorial"
 		requiresData:	false
