@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2022-03-12 03:40\n"
-"PO-Revision-Date: 2022-02-20 10:56+0000\n"
+"PO-Revision-Date: 2022-03-13 10:55+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.12-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr ""
@@ -146,7 +146,7 @@ msgid "Test 6: Bimodal distribution"
 msgstr ""
 
 msgid "Numbers are data points where test violations occur."
-msgstr ""
+msgstr "Zahlen sind Datenpunkte, an denen Testverstöße auftreten."
 
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
@@ -161,7 +161,7 @@ msgid "Residuals vs. Run Order"
 msgstr ""
 
 msgid "Pareto Plot of Standardized Effects"
-msgstr ""
+msgstr "Pareto-Diagramm Standardisierter Effekte"
 
 msgid "Fitted values"
 msgstr "Angepasste Werte"
@@ -191,15 +191,13 @@ msgid "p"
 msgstr "p"
 
 msgid "This plot is unavailable for saturated designs."
-msgstr ""
+msgstr "Dieses Diagramm ist für gesättigte Designs nicht verfügbar."
 
-#, fuzzy
 msgid "Normal Plot of Standardized Effects"
-msgstr "Standardisierter Effekt"
+msgstr "Normal-Diagramm Standardisierter Effekte"
 
-#, fuzzy
 msgid "Residual Plots for %s"
-msgstr "Residuen"
+msgstr "Residuen-Diagramme für %s"
 
 msgid "Available Factorial Designs"
 msgstr "Verfügbare faktorielle Designs"
@@ -244,33 +242,31 @@ msgid "Term"
 msgstr ""
 
 msgid "Analysis of variance"
-msgstr ""
+msgstr "Varianzanalyse"
 
 msgid "Model Summary"
-msgstr ""
+msgstr "Modell-Zusammenfassung"
 
 msgid "%s,%s"
-msgstr ""
+msgstr "%s,%s"
 
 msgid "%s ~ FO(%s)"
 msgstr ""
 
 msgid "Regression equation in uncoded units"
-msgstr ""
+msgstr "Regressionsgleichung in uncodierten Einheiten"
 
 msgid "<i>p</i>-value"
 msgstr "<i>p</i>-Wert"
 
 msgid "Index"
-msgstr ""
+msgstr "Index"
 
-#, fuzzy
 msgid "Factor"
-msgstr "Faktoren"
+msgstr "Faktor"
 
-#, fuzzy
 msgid "Name"
-msgstr "Name: %s"
+msgstr "Name"
 
 msgid "Input Design"
 msgstr ""
@@ -303,7 +299,7 @@ msgid "Standard Order"
 msgstr ""
 
 msgid "x"
-msgstr ""
+msgstr "x"
 
 msgid ""
 "Factor name '%s' is a number, and number factor names are not supported."
@@ -353,6 +349,8 @@ msgid ""
 "This analysis does not take predictor variables with more than 5 unique "
 "values."
 msgstr ""
+"Diese Analyse akzeptiert keine Prädiktorvariablen mit mehr als 5 eindeutigen "
+"Werten."
 
 msgid "Design Choice"
 msgstr ""
@@ -391,39 +389,34 @@ msgid "Orthogonal Alpha"
 msgstr ""
 
 msgid "Matrix plot for %s"
-msgstr ""
+msgstr "Matrix-Diagramm für %s"
 
 msgid "Index coefficients for %s"
-msgstr ""
+msgstr "Index-Koeffizienten für %s"
 
-#, fuzzy
 msgid "Coded coefficients"
-msgstr "Koeffizienten"
+msgstr "Codierte Koeffizienten"
 
-#, fuzzy
 msgid "Uncoded coefficients"
-msgstr "Koeffizienten"
+msgstr "Uncodierte Koeffizienten"
 
 msgid "Regression equation in coded coefficients"
-msgstr ""
+msgstr "Regressionsgleichung in codierten Koeffizienten"
 
 msgid "S"
-msgstr ""
+msgstr "S"
 
-#, fuzzy
 msgid "Model R-squared"
-msgstr "Mittlere Quadratsumme"
+msgstr "Modell R-Quadrat"
 
 msgid "Adjusted R-squared"
-msgstr ""
+msgstr "Bereinigtes R-Quadrat"
 
-#, fuzzy
 msgid "df1"
-msgstr "df"
+msgstr "df1"
 
-#, fuzzy
 msgid "df2"
-msgstr "df"
+msgstr "df2"
 
 msgid "F"
 msgstr "F"
@@ -707,9 +700,8 @@ msgstr "Bericht"
 msgid "ANOVA Table"
 msgstr "ANOVA-Tabelle"
 
-#, fuzzy
 msgid "Two-way ANOVA Table"
-msgstr "ANOVA-Tabelle"
+msgstr "Zweifaktorielle ANOVA-Tabelle"
 
 msgid "Two-way ANOVA Table with Interaction"
 msgstr "Zweifaktorielle ANOVA-Tabelle mit Interaktion"
