@@ -271,7 +271,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     sdw <- qccFit[["std.dev"]]
     valueVector <- c(lsl, target, usl, n, mean, sd, sdw)
     df <- data.frame(sources = sourceVector,
-                     values = round(valueVector, N.Decimals))
+                     values = round(as.numeric(valueVector), N.Decimals))
     return(df)
   }
   container[["processSummaryTable"]] <- table
