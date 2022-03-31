@@ -79,6 +79,7 @@ Form
             name:                               "runOrderRandom"
             label:                              qsTr("Random")
             checked:                            true
+			SetSeed{}
         }
 
 		RadioButton
@@ -581,7 +582,6 @@ Group
 
 				RadioButton
 				{
-					SetSeed{}
 					name:                               "runOrderRandomPlot"
 					label:                              qsTr("Run")
 				}

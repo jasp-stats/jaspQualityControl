@@ -23,6 +23,8 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
   numeric_variables  <- variables[variables != ""]
 
+  ready <- length(numeric_variables) == 1
+
   if (is.null(dataset)) {
     if (options[["subgroups"]] != "") {
       dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = splitName)
@@ -32,7 +34,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     }
   }
 
-  if (makeSplit) {
+  if (makeSplit & ready) {
     splitFactor      <- dataset[[.v(splitName)]]
     splitLevels      <- levels(splitFactor)
     # remove missing values from the grouping variable
@@ -64,8 +66,16 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
 
   dataset <- na.omit(dataset)
+
+  # default plot
+  if (!ready) {
+    plot <- createJaspPlot(title = gettext("Variables Charts for Individuals"), width = 700, height = 400)
+    jaspResults[["plot"]] <- plot
+    plot$dependOn(c("ImRchart", "CorPlot", "CCReport", "variables"))
+    return()
+  }
   #ImR chart
-  if (options$ImRchart) {
+  if (options$ImRchart && ready) {
     if(is.null(jaspResults[["Ichart"]])){
       jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
       jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "ncol", "subgroups", "manualTicks", "nTicks", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport"))
@@ -83,7 +93,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
 
   # Autocorrelation Plot
-  if(options$CorPlot){
+  if(options$CorPlot && ready){
     jaspResults[["CorPlot"]] <- createJaspContainer(position = 2, title = "Autocorrelation Function")
     jaspResults[["CorPlot"]]$dependOn(c("CorPlot", "variables", "nLag"))
     Corplot <- jaspResults[["CorPlot"]]

@@ -87,7 +87,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   dataset <- na.omit(dataset)
   # correction for zero values for non-normal capability
-  if (options$capabilityStudyType == "nonnormalCapabilityAnalysis") {
+  if (options$capabilityStudyType == "nonnormalCapabilityAnalysis" && ready) {
     x <- unlist(dataset[measurements])
     zeroCorrect <- any(x == 0)
     dataset[measurements] <- ifelse(x == 0, min(x[x > 0])/2 , x)
@@ -271,7 +271,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     sdw <- qccFit[["std.dev"]]
     valueVector <- c(lsl, target, usl, n, mean, sd, sdw)
     df <- data.frame(sources = sourceVector,
-                     values = round(valueVector, N.Decimals))
+                     values = round(as.numeric(valueVector), N.Decimals))
     return(df)
   }
   container[["processSummaryTable"]] <- table
@@ -1099,6 +1099,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
 
   table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution.", "\u00B2", options[["nullDistribution"]]))
+  table$addFootnote(gettext("Red dotted lines in the probability plot below represent a 95% confidence interval."))
 
   if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
