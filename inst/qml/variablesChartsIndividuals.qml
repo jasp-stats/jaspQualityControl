@@ -20,6 +20,7 @@ Form
 		{
 			name:								"variables"
 			title:								qsTr("Variables")
+			singleVariable:						true
 			allowedColumns:						["scale"]
 		}
 
