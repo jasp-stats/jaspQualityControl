@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2022-03-12 03:40\n"
-"PO-Revision-Date: 2022-01-30 07:56+0000\n"
-"Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
+"PO-Revision-Date: 2022-04-03 15:11+0000\n"
+"Last-Translator: Wendy Zhao <wendy.zhao@skf.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "jasp/jaspprocesscontrol-r/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.12-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr "累积和控制图"
@@ -50,7 +50,7 @@ msgid "Counts"
 msgstr "计数"
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr ""
+msgstr "不合格品/缺陷的数量大于样本量"
 
 msgid "Attributes Control Charts"
 msgstr "属性控制图"
@@ -101,7 +101,7 @@ msgid "Operator: %s"
 msgstr "操作者: %s"
 
 msgid "Identification: %s"
-msgstr ""
+msgstr "标识：%s"
 
 msgid "Appraiser: %s"
 msgstr "评估者: %s"
@@ -110,7 +110,7 @@ msgid "Measurement system: %s"
 msgstr "测量系统: %s"
 
 msgid "Name of Size: %s"
-msgstr ""
+msgstr "子组名称：%s"
 
 msgid "Time: %s"
 msgstr "时间: %s"
@@ -191,15 +191,13 @@ msgid "p"
 msgstr "p"
 
 msgid "This plot is unavailable for saturated designs."
-msgstr ""
+msgstr "此图不适用于饱和设计。"
 
-#, fuzzy
 msgid "Normal Plot of Standardized Effects"
-msgstr "标准化效应 Pareto 图"
+msgstr "标准化效应正态图"
 
-#, fuzzy
 msgid "Residual Plots for %s"
-msgstr "残差"
+msgstr "%s 残差图"
 
 msgid "Available Factorial Designs"
 msgstr "可用因子设计"
@@ -241,36 +239,34 @@ msgid "Alias Structure"
 msgstr "别名结构"
 
 msgid "Term"
-msgstr ""
+msgstr "项"
 
 msgid "Analysis of variance"
-msgstr ""
+msgstr "方差分析"
 
-#, fuzzy
 msgid "Model Summary"
-msgstr "过程汇总"
+msgstr "模型汇总"
 
 msgid "%s,%s"
-msgstr ""
+msgstr "%s,%s"
 
 msgid "%s ~ FO(%s)"
-msgstr ""
+msgstr "%s ~ FO(%s)"
 
 msgid "Regression equation in uncoded units"
-msgstr ""
+msgstr "以未编码单位表示的回归方程"
 
 msgid "<i>p</i>-value"
 msgstr "<i>p</i>- 值"
 
 msgid "Index"
-msgstr ""
+msgstr "指数"
 
-#, fuzzy
 msgid "Factor"
 msgstr "因子"
 
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 msgid "Input Design"
 msgstr "设计输入"
@@ -357,7 +353,7 @@ msgid "Design Choice"
 msgstr "设计选项"
 
 msgid "N Fac Points"
-msgstr ""
+msgstr "角点数"
 
 msgid "N Centre Points/Block"
 msgstr "中心点/区组数"
@@ -389,42 +385,35 @@ msgstr "旋转 Alpha"
 msgid "Orthogonal Alpha"
 msgstr "正交 Alpha"
 
-#, fuzzy
 msgid "Matrix plot for %s"
-msgstr "操作者矩阵图"
+msgstr "%s 矩阵图"
 
-#, fuzzy
 msgid "Index coefficients for %s"
-msgstr "%s 的 RSM 系数"
+msgstr "%s 系数"
 
-#, fuzzy
 msgid "Coded coefficients"
-msgstr "系数"
+msgstr "编码系数"
 
-#, fuzzy
 msgid "Uncoded coefficients"
-msgstr "系数"
+msgstr "未编码系数"
 
 msgid "Regression equation in coded coefficients"
-msgstr ""
+msgstr "已编码形式表示的回归方程"
 
 msgid "S"
 msgstr "S"
 
-#, fuzzy
 msgid "Model R-squared"
-msgstr "调整 R 平方"
+msgstr "模型 R 平方"
 
 msgid "Adjusted R-squared"
 msgstr "调整 R 平方"
 
-#, fuzzy
 msgid "df1"
-msgstr "df"
+msgstr "df1"
 
-#, fuzzy
 msgid "df2"
-msgstr "df"
+msgstr "df2"
 
 msgid "F"
 msgstr "F"
@@ -534,7 +523,7 @@ msgid "Invalid Reference and/or Results were inserted."
 msgstr "插入无效参考值和/或结果。"
 
 msgid "Invalid values (NA) found in appraiser %s."
-msgstr ""
+msgstr "评估者%s中发现无效值。"
 
 msgid "More than 1 Measurement per Operator required."
 msgstr "每个操作者需要多于1次测量。"
@@ -673,7 +662,7 @@ msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不
 msgid ""
 "The measurements selected seem to be in a 'Single Column' format as every "
 "operator's part is measured %d times."
-msgstr ""
+msgstr "选择的测量值是“单列”格式，而每个操作者的零件都被测量%d次。"
 
 msgid "Gauge r&R ANOVA Table"
 msgstr "量具 r&R 方差分析表"
@@ -705,9 +694,8 @@ msgstr "报告"
 msgid "ANOVA Table"
 msgstr "方差分析表"
 
-#, fuzzy
 msgid "Two-way ANOVA Table"
-msgstr "方差分析表"
+msgstr "双向方差分析表"
 
 msgid "Two-way ANOVA Table with Interaction"
 msgstr "双向方差分析表带交互作用"
@@ -719,7 +707,7 @@ msgid "Sum of Squares"
 msgstr "平方和"
 
 msgid "Mean Squares"
-msgstr ""
+msgstr "均方"
 
 msgid "Variance Components"
 msgstr "方差分量"
@@ -1014,7 +1002,7 @@ msgid "AIC"
 msgstr "AIC"
 
 msgid "Detection Plot"
-msgstr ""
+msgstr "检测图"
 
 msgid "log(%s)"
 msgstr "log(%s)"
@@ -1164,117 +1152,117 @@ msgid "Log mean (mu)"
 msgstr "Log 均值 (mu)"
 
 msgid "Log std.dev (%1$s)"
-msgstr ""
+msgstr "对数标准差 (%1$s)"
 
 msgid "Shape (%1$s)"
-msgstr ""
+msgstr "形状 (%1$s)"
 
 msgid "Scale (%1$s)"
-msgstr ""
+msgstr "尺度 (%1$s)"
 
 msgid "Threshold"
-msgstr ""
+msgstr "阈值"
 
 msgid "Observed"
-msgstr ""
+msgstr "观测值"
 
 msgid "Expected overall"
-msgstr ""
+msgstr "期望总体"
 
 msgid "Calculations based on %s distribution."
-msgstr ""
+msgstr "基于%s 分布的计算。"
 
 msgid "Probability Table and Plot"
-msgstr ""
+msgstr "概率表和概率图"
 
 msgid "Summary of test against the %1$s distribution"
-msgstr ""
+msgstr "针对 %1$s 分布的检验汇总"
 
 msgid "N"
 msgstr "N"
 
 msgid "Mean (%1$s)"
-msgstr ""
+msgstr "均值 (%1$s)"
 
 msgid "Std. deviation (%1$s)"
-msgstr ""
+msgstr "标准差 (%1$s)"
 
 msgid "Location (%1$s)"
-msgstr ""
+msgstr "位置 (%1$s)"
 
 msgid "Scale (<i>k</i>)"
-msgstr ""
+msgstr "尺度 (<i>k</i>)"
 
 msgid "AD"
-msgstr ""
+msgstr "AD"
 
 msgid ""
 "The Anderson-Darling statistic AD is calculated against the %2$s "
 "distribution."
-msgstr ""
+msgstr "Anderson-Darling 统计量 AD 是根据 %2$s 分布计算的。"
 
 msgid "Histogram"
-msgstr ""
+msgstr "直方图"
 
 msgid "X-mR control chart"
-msgstr ""
+msgstr "单值-移动极差控制图"
 
 msgid "Process name: %s"
-msgstr ""
+msgstr "过程名称：%s"
 
 msgid "Individuals Charts"
-msgstr ""
+msgstr "单值控制图"
 
 msgid "%s for Individuals"
-msgstr ""
+msgstr "单值图 %s"
 
 msgid "%s for Range"
-msgstr ""
+msgstr "极差图 %s"
 
 msgid "Please insert more measurements and check the X-mR chart."
-msgstr ""
+msgstr "请插入更多测量值并检查单值-移动极差控制图。"
 
 msgid "%s"
-msgstr ""
+msgstr "%s"
 
 msgid "Observation"
-msgstr ""
+msgstr "观测值"
 
 msgid "Autocorrelation"
-msgstr ""
+msgstr "自相关"
 
 msgid "Lag"
-msgstr ""
+msgstr "滞后"
 
 msgid "Control Charts"
-msgstr ""
+msgstr "控制图"
 
 msgid "Could not equally divide data points into groups of size %i."
-msgstr ""
+msgstr "无法将数据点平均划分为大小为 %i 的组。"
 
 msgid "X-bar & R Control Chart"
-msgstr ""
+msgstr "均值和极差控制图"
 
 msgid "Out-of-control Signals"
-msgstr ""
+msgstr "失控信号"
 
 msgid "X-bar & s Control Chart"
-msgstr ""
+msgstr "均值和标准差控制图"
 
 msgid "Subgroup st dev"
-msgstr ""
+msgstr "子组标准差"
 
 msgid "Name: %s"
-msgstr ""
+msgstr "名称：%s"
 
 msgid "Date: %s"
-msgstr ""
+msgstr "日期：%s"
 
 msgid "Sub-title: %s"
-msgstr ""
+msgstr "副标题：%s"
 
 msgid "Name of chart: %s"
-msgstr ""
+msgstr "图形名称：%s"
 
 #~ msgid "Control Charts Report for %s"
 #~ msgstr "%s 控制图报告"
