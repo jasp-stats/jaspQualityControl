@@ -372,9 +372,9 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
                                       "Effectiveness" = .decisionNote(percentEachVsStandard),
                                       "Miss" = .decisionNote(Misses, type = "Miss"),
                                       "False" = .decisionNote(Falses, type = "Falses")))
-          tableDecisions$addFootnote(gettext("Acceptable: x >= 90% (Effectiveness), x =< 2% (Miss rate), x =< 5% (False alarm rate)"))
-          tableDecisions$addFootnote(gettext("Marginally acceptable: x >= 80% (Effectiveness), x =< 5% (Miss rate), x =< 10% (False alarm rate)"))
-          tableDecisions$addFootnote(gettext("Unacceptable: x < 80% (Effectiveness), x > 5% (Miss rate), x > 10% (False alarm rate)"))
+          tableDecisions$addFootnote(gettextf("Acceptable: x >= 90%% (Effectiveness), x =< 2%% (Miss rate), x =< 5%% (False alarm rate)"))
+          tableDecisions$addFootnote(gettextf("Marginally acceptable: x >= 80%% (Effectiveness), x =< 5%% (Miss rate), x =< 10%% (False alarm rate)"))
+          tableDecisions$addFootnote(gettextf("Unacceptable: x < 80%% (Effectiveness), x > 5%% (Miss rate), x > 10%% (False alarm rate)"))
         }
 
         CIWithin <- .AAACI(matchesWithin, rep(numberInspected, length(appraiserVector)))
