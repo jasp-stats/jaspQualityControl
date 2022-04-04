@@ -5,206 +5,195 @@ import JASP.Widgets 							1.0
 
 Form
 {
-  columns:									1
+	columns:									1
 
-  VariablesForm
-  {
-    preferredHeight: 						jaspTheme.smallDefaultVariablesFormHeight
+	VariablesForm
+	{
+		preferredHeight: 						jaspTheme.smallDefaultVariablesFormHeight
 
-    AvailableVariablesList
-    {
-      name:								"variablesForm"
-    }
+		AvailableVariablesList
+		{
+			name:								"variablesForm"
+		}
 
-    AssignedVariablesList
-    {
-      name:								"D"
-      title:								qsTr("Defectives/Defects")
-      allowedColumns:						["scale"]
-      singleVariable:						true
-    }
+		AssignedVariablesList
+		{
+			id:									defects
+			name:								"defects"
+			title:								qsTr("Nonconformities")
+			allowedColumns:						["scale", "ordinal", "nominal"]
+			singleVariable:						true
+		}
 
-    AssignedVariablesList
-    {
-      name:								"total"
-      title:								qsTr("Samples")
-      allowedColumns:						["scale"]
-      singleVariable:						true
-    }
+		AssignedVariablesList
+		{
+			id:									samplesize
+			name:								"sampleSize"
+			title:								qsTr("Sample Size")
+			allowedColumns:						["scale"]
+			singleVariable:						true
+		}
 
-    AssignedVariablesList
+		AssignedVariablesList
 		{
 			id:									subgroups
 			name:								"timeStamp"
-			title:								qsTr("Time stamp (optional)")
+			title:								qsTr("Labels (Optional)")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
-  }
+	}
 
-  Group
-  {
-    RadioButtonGroup
-    {
-      name:								"Attributes"
-      title: 								qsTr("Charts for Attributes")
-      columns: 							3
+	DropDown
+	{
+		name: 									"palette"
+		indexDefaultValue: 						0
+		label:									qsTr("Color Palette")
+		values: 
+		[
+			{ value: "iso", label: qsTr("ISO 7870-1") },
+			{ value: "jasp", label: qsTr("JASP") },
+			{ value: "colorblind", label: qsTr("Colorblind") }
+		]
+	}
 
-      RadioButton
-      {
-        name: 							"Defectives"
-        label: 							qsTr("Defectives")
-        checked: 						true
+	Group
+	{
+		title:									qsTr("Plots")
 
-        RadioButtonGroup
-        {
-          name:						"TypeDefectives"
+	CheckBox
+	{
+		name:									"xmrchart"
+		label:									qsTr("X-mR - Proportion and moving range")
 
-          RadioButton
-          {
-            name: 					"npchart"
-            label: 					qsTr("np chart")
-            checked:		 		true
-          }
+	}
 
-          RadioButton
-          {
-            name: 					"pchart"
-            label: 					qsTr("p chart")
-          }
+		CheckBox
+		{
+			name: 								"npchart"
+			label: 								qsTr("NP - Number of nonconforming units")
+		}
 
-          RadioButton
-          {
-            name: 					"Laneyprimechart"
-            label: 					qsTr("Laney p' (p-prime) chart")
-          }
-        }
-      }
+		CheckBox
+		{
+			name: 								"pchart"
+			label: 								qsTr("P - Proportion of nonconforming units")
+		}
 
-      RadioButton
-      {
-        value: 							"Defects"
-        label: 							qsTr("Defects")
+		CheckBox
+		{
+			name: 								"lpchart"
+			label: 								qsTr("Laney p' (p-prime) - Proportion of nonconforming units")
+		}
 
-        RadioButtonGroup
-        {
-          name:						"TypeDefects"
+		CheckBox
+		{
+			name: 								"cchart"
+			label:								qsTr("C - Number of nonconformities per unit")
+		}
 
-          RadioButton
-          {
-            value: 					"cchart"
-            label: 					qsTr("c chart")
-            checked: 				true
-          }
+		CheckBox
+		{
+			name:								"uchart"
+			label:								qsTr("U - Average nonconformities per unit")
+		}
 
-          RadioButton
-          {
-            value:					"uchart"
-            label:					qsTr("u chart")
-          }
+		CheckBox
+		{
+			name:								"luchart"
+			label:								qsTr("Laney u' (u-prime) - Average nonconformities per unit")
+		}
+	}
 
-          RadioButton
-          {
-            value:					"Laneychart"
-            label:					qsTr("Laney u' (u-prime) chart")
-          }
-        }
-      }
+	CheckBox
+	{
+		id:										report
+		name: 									"report"
+		label: 									qsTr("Generate report")
+		enabled:								defects.count > 0
 
-      RadioButton
-      {
-        value:					"ImR"
-        label:					qsTr("X-mR chart")
-      }
-    }
-  }
+		Group
+		{
+			columns:							2
+			visible:							report.checked
 
-  Section
-  {
-    title: 									qsTr("Control Charts for Attributes Report")
+		TextField
+		{
+			label: 								qsTr("Title")
+			name: 								"ATitle"
+			placeholderText:					qsTr("Measurement")
+			fieldWidth:							100
+		}
 
-    TextField
-    {
-      label: 								qsTr("Title")
-      name: 								"ATitle"
-      placeholderText:					qsTr("Measurement")
-      fieldWidth:							100
-    }
+		TextField
+		{
+			label: 								qsTr("Name")
+			name: 								"AName"
+			placeholderText:					qsTr("Name")
+			fieldWidth:							100
+		}
 
-    TextField
-    {
-      label: 								qsTr("Name")
-      name: 								"AName"
-      placeholderText:					qsTr("Name")
-      fieldWidth:							100
-    }
+		TextField
+		{
+			label: 								qsTr("Operator")
+			name: 								"AOperator"
+			placeholderText:					qsTr("Operator")
+			fieldWidth:							100
+		}
 
-    TextField
-    {
-      label: 								qsTr("Operator")
-      name: 								"AOperator"
-      placeholderText:					qsTr("Operator")
-      fieldWidth:							100
-    }
+		TextField
+		{
+			label: 								qsTr("ID")
+			name: 								"AID"
+			placeholderText:					qsTr("ID")
+			fieldWidth:							100
+		}
 
-    TextField
-    {
-      label: 								qsTr("ID")
-      name: 								"AID"
-      placeholderText:					qsTr("ID")
-      fieldWidth:							100
-    }
+		TextField
+		{
+			label: 								qsTr("Misc")
+			name: 								"AMisc"
+			placeholderText:					qsTr("Miscellaneous")
+			fieldWidth:							100
+		}
 
-    TextField
-    {
-      label: 								qsTr("Misc")
-      name: 								"AMisc"
-      placeholderText:					qsTr("Miscellaneous")
-      fieldWidth:							100
-    }
+		TextField
+		{
+			label: 								qsTr("Appraiser")
+			name: 								"AAppraiser"
+			placeholderText:					qsTr("Appraiser")
+			fieldWidth:							100
+		}
 
-    TextField
-    {
-      label: 								qsTr("Appraiser")
-      name: 								"AAppraiser"
-      placeholderText:					qsTr("Appraiser")
-      fieldWidth:							100
-    }
+		TextField
+		{
+			label: 								qsTr("Measurement system")
+			name: 								"AMeasurement"
+			placeholderText:					qsTr("Measurement")
+			fieldWidth:							100
+		}
 
-    TextField
-    {
-      label: 								qsTr("Measurement system")
-      name: 								"AMeasurement"
-      placeholderText:					qsTr("Measurement")
-      fieldWidth:							100
-    }
-
-    TextField
-    {
-      label: 								qsTr("Subgroups size")
-      name: 								"ASize"
-      placeholderText:			qsTr("Size")
-      fieldWidth:							100
-    }
-    TextField
-    {
-      label: 								qsTr("Time")
-      name: 								"ATime"
-      placeholderText:					qsTr("Time")
-      fieldWidth:							100
-    }
-    TextField
-    {
-      label: 								qsTr("Frequency")
-      name: 								"AFrequency"
-      placeholderText:					qsTr("Frequency")
-      fieldWidth:							100
-    }
-
-    CheckBox
-    {
-      name: 								"AReport"
-      label: 								qsTr("Show Report")
-    }
-  }
+		TextField
+		{
+			label: 								qsTr("Subgroups size")
+			name: 								"ASize"
+			placeholderText:					qsTr("Size")
+			fieldWidth:							100
+		}
+		TextField
+		{
+			label: 								qsTr("Time")
+			name: 								"ATime"
+			placeholderText:					qsTr("Time")
+			fieldWidth:							100
+		}
+		TextField
+		{
+			label: 								qsTr("Frequency")
+			name: 								"AFrequency"
+			placeholderText:					qsTr("Frequency")
+			fieldWidth:							100
+		}
+		}
+	}
 }

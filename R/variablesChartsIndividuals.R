@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2018 University of Amsterdam
+# Copyright (C) 2013-2022 University of Amsterdam
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,256 +14,216 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 variablesChartsIndividuals <- function(jaspResults, dataset, options) {
-  # reading variables in from the GUI
-  variables <- options$variables
-  splitName <- options$subgroups
-  subgroups <- unlist(options$subgroups)
-  makeSplit <- splitName != ""
 
-  numeric_variables  <- variables[variables != ""]
-
-  ready <- length(numeric_variables) == 1
-
+  # Read data
   if (is.null(dataset)) {
-    if (options[["subgroups"]] != "") {
-      dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = splitName)
-      dataset.factors <- .readDataSetToEnd(columns=variables, columns.as.factor=splitName)
-    } else {
-      dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables)
-    }
+    dataset <- .readDataSetToEnd(columns.as.numeric = options[["variable"]][options[["variable"]] != ""], columns.as.factor = options[["subgroups"]][options[["subgroups"]] != ""])
+    dataset <- na.omit(dataset)
   }
 
-  if (makeSplit & ready) {
-    splitFactor      <- dataset[[.v(splitName)]]
-    splitLevels      <- levels(splitFactor)
-    # remove missing values from the grouping variable
-    dataset <- dataset[!is.na(splitFactor), ]
-    dataset.factors <- dataset.factors[!is.na(splitFactor), ]
+  # Check for errors
+  .hasErrors(dataset,
+    type = c("infinity", "missingValues", "observations"),
+    infinity.target = c(options$variable, options$subgroups),
+    missingValues.target = c(options$variable, options$subgroups),
+    observations.amount = c("< 2"),
+    observations.target = c(options$variable),
+    exitAnalysisIfErrors = TRUE
+  )
 
-    numberMissingSplitBy <- sum(is.na(splitFactor))
+  # Check if analysis is ready
+  ready <- options[["variable"]] != ""
 
-    # Actually remove missing values from the split factor
-    splitFactor <- na.omit(splitFactor)
+  # Summary table
+  .qcIndividualsChartsSummaryTable(jaspResults, dataset, options, ready, position = 1)
 
-    if(subgroups != "")
-      subgroups <- splitFactor
-  }
+  # Control charts
+  .qcIndividualsXmRChartsContainer(jaspResults, dataset, options, ready, position = 2)
+  .qcIndividualsAutocorrelationChart(jaspResults, dataset, options, ready, position = 3)
 
-   #Checking for errors in the dataset
-  .hasErrors(dataset, type = c('infinity', 'missingValues', "observations"),
-             infinity.target = c(options$variables, options$subgroups),
-             missingValues.target = c(options$variables, options$subgroups),
-             observations.amount = c("< 2"),
-             observations.target = c(options$variables),
-             exitAnalysisIfErrors = TRUE)
+  #   # Report
+  #   if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]]) && options[["xmr"]]) {
 
-  if (options$ImRchart && length(variables) == 0) {
-    plot <- createJaspPlot(title = gettext("Individuals Charts"), width = 700, height = 400)
-    jaspResults[["plot"]] <- plot
-    plot$dependOn(c("ImRchart", "variables", "subgroups"))
+  #     jaspResults[["CorPlot"]] <- NULL
+  #     jaspResults[["Ichart"]] <- NULL
+
+
+  #     jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
+  #     jaspResults[["CCReport"]]$dependOn(c("CCReport", "ImRchart", "variables","ncol", "manualTicks", "nTicks", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
+  #     jaspResults[["CCReport"]]$position <- 9
+  #     Iplot <- jaspResults[["CCReport"]]
+
+  #     IMR <- .IMRchart(dataset = dataset, options = options, variable = variables, manualXaxis = subgroups)
+  #     Iplot[["ccReport"]] <- .CCReport(p1 = IMR$p1, p2 = IMR$p2, ccTitle = options$ccTitle,
+  #                                        ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
+  #                                        ccChartName = options$ccChartName)
+  #   }
+}
+
+.qcIndividualsChartsSummaryTable <- function(jaspResults, dataset, options, ready, position) {
+  if (!is.null(jaspResults[["summaryTable"]])) {
     return()
   }
 
-  dataset <- na.omit(dataset)
+  table <- createJaspTable(gettext("Data Summary"))
+  table$position <- position
+  table$dependOn(options = c("variable", "subgroups"))
 
-  # default plot
+  table$addColumnInfo(name = "p", title = gettext("No. Measurements"), type = "integer")
+
+  jaspResults[["summaryTable"]] <- table
+
   if (!ready) {
-    plot <- createJaspPlot(title = gettext("Variables Charts for Individuals"), width = 700, height = 400)
-    jaspResults[["plot"]] <- plot
-    plot$dependOn(c("ImRchart", "CorPlot", "CCReport", "variables"))
     return()
   }
-  #ImR chart
-  if (options$ImRchart && ready) {
-    if(is.null(jaspResults[["Ichart"]])){
-      jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
-      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "ncol", "subgroups", "manualTicks", "nTicks", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport"))
-      Iplot <- jaspResults[["Ichart"]]
 
-      for (var in variables) {
-        ALL <- createJaspContainer(gettextf("X-mR control chart"))
-        IMR <- .IMRchart(dataset = dataset, options = options, variable = var, manualXaxis = subgroups)
-        ALL[["Plot"]] <- IMR$p
-        ALL[["Table1"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", name = gettextf("%s for Individuals", var), sixsigma = IMR$sixsigma_I, xLabels = IMR$xLabels)
-        ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, name = gettextf("%s for Range", var), sixsigma = IMR$sixsigma_R, xLabels = IMR$xLabels, type = "Range")
-        Iplot[[var]] <- ALL
-      }
+  row <- list(p = nrow(dataset))
+  table$addRows(row)
+}
+
+.qcIndividualsXmRChartsContainer <- function(jaspResults, dataset, options, ready, position) {
+  if (!options[["xmrchart"]]) {
+    return()
+  }
+
+  if (is.null(jaspResults[["xmrchart"]])) {
+    container <- createJaspContainer(title = gettext("X-mR Chart: Average and Moving Range"))
+    container$dependOn(c("variable", "subgroups", "xmr", "ncol"))
+    container$position <- position
+    jaspResults[["xmrchart"]] <- container
+  } else {
+    container <- jaspResults[["xmrchart"]]
+  }
+
+  .qcIndividualsXmrChart(container, dataset, options, ready, type = "xbar", positionInContainer = 1)
+  .qcIndividualsXmrChart(container, dataset, options, ready, type = "R", positionInContainer = 2)
+  # .qcAttributesChartsNelsonTable(container, dataset, options, ready, type = "xbar", positionInContainer = 3)
+  # .qcAttributesChartsNelsonTable(container, dataset, options, ready, type = "R", positionInContainer = 4)
+}
+
+.qcIndividualsXmrChart <- function(container, dataset, options, ready, type, positionInContainer) {
+  jaspTitle <- paste0(type, "plot")
+  if (!is.null(container[[jaspTitle]])) {
+    return()
+  }
+
+  plot <- createJaspPlot(title = gettextf("%s Chart", toupper(type)), width = options$plotWidth * 1.75, height = options$plotHeight)
+  plot$dependOn(c("palette", "ncol", "xmrchart"))
+  plot$position <- positionInContainer
+  container[[jaspTitle]] <- plot
+
+  if (!ready || container$getError()) {
+    return()
+  }
+
+  palette <- .qcColorPalette(options)
+
+  p_try <- try({
+    values <- dataset[[options[["variable"]]]]
+    if (type == "xbar") {
+	  plotTitle <- gettext("Value")
+      qccOutput <- qcc::qcc(data = values, type = "xbar.one", plot = FALSE)
+      center <- qccOutput[["center"]]
+      ucl <- qccOutput[["limits"]][, 2]
+      lcl <- qccOutput[["limits"]][, 1]
+      statistics <- qccOutput$statistics
+      fill <- ifelse(qccOutput$statistics > ucl | qccOutput$statistics < lcl, palette[3], palette[2])
+    } else {
+	  plotTitle <- gettext("Moving range")
+      qccOutput <- qcc::qcc(data = matrix(c(values[1:length(values) - 1], values[2:length(values)]), ncol = options[["ncol"]]), type = "R", plot = FALSE)
+      center <- qccOutput[["center"]]
+      ucl <- max(qccOutput[["limits"]])
+      lcl <- min(qccOutput[["limits"]])
+      statistics <- qccOutput[["statistics"]]
+      fill <- ifelse(statistics > ucl | statistics < lcl, palette[3], palette[2])
     }
-  }
 
-  # Autocorrelation Plot
-  if(options$CorPlot && ready){
-    jaspResults[["CorPlot"]] <- createJaspContainer(position = 2, title = "Autocorrelation Function")
-    jaspResults[["CorPlot"]]$dependOn(c("CorPlot", "variables", "nLag"))
-    Corplot <- jaspResults[["CorPlot"]]
+    plotData <- data.frame(group = 1:length(statistics), stat = statistics, fill = fill)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, lcl, plotData[["stat"]], ucl))
 
-    for (var in variables)
-      Corplot[[var]] <- .CorPlot(dataset = dataset, options = options, variable = var, CI = options$CI, Lags = options$nLag)
-  }
+    # TODO: Find a way to nicely display x-breaks
+    xBreaks <- floor(seq(1, nrow(plotData), length.out = min(20, nrow(plotData))))
 
-  # Report
-  if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]]) && options$ImRchart) {
+    p <- ggplot2::ggplot(data = plotData, ggplot2::aes(x = group, y = stat)) +
+      ggplot2::geom_segment(y = center, yend = center, x = 1, xend = nrow(plotData), color = palette[1])
 
-    jaspResults[["CorPlot"]] <- NULL
-    jaspResults[["Ichart"]] <- NULL
+    if (length(ucl) == 1) {
+      labelData <- data.frame(
+        x = rep(nrow(plotData) + 1, 3), y = c(center, ucl, lcl),
+        l = c(gettextf("CL = %g", round(center, 4)), gettextf("UCL = %g", round(ucl, 4)), gettextf("LCL = %g", round(lcl, 4)))
+      )
+      p <- p + ggplot2::geom_segment(y = ucl, yend = ucl, x = 1, xend = nrow(plotData), color = palette[3], linetype = "dashed") +
+        ggplot2::geom_segment(y = lcl, yend = lcl, x = 1, xend = nrow(plotData), color = palette[3], linetype = "dashed")
+    } else {
+      labelData <- data.frame(
+        x = nrow(plotData) + 1, y = center,
+        l = gettextf("CL = %g", round(center, 4))
+      )
+      ucl <- c(ucl, ucl[length(ucl)])
+      lcl <- c(lcl, lcl[length(lcl)])
+      p <- p + ggplot2::geom_step(data = data.frame(x = 1:length(ucl), y = ucl), mapping = ggplot2::aes(x = x, y = y), color = palette[3], size = 1.5, linetype = "F1", inherit.aes = FALSE) +
+        ggplot2::geom_step(data = data.frame(x = 1:length(lcl), y = lcl), mapping = ggplot2::aes(x = x, y = y), color = palette[3], size = 1.5, linetype = "F1", inherit.aes = FALSE)
+    }
 
+    p <- p + jaspGraphs::geom_line(color = palette[2]) +
+      jaspGraphs::geom_point(fill = plotData$fill, color = "black", size = 4) +
+      ggplot2::geom_label(data = labelData, mapping = ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = 4.5, hjust = 0) +
+      ggplot2::scale_y_continuous(name = plotTitle, breaks = yBreaks, limits = range(yBreaks)) +
+      ggplot2::scale_x_continuous(name = gettext("Sample"), breaks = xBreaks, limits = c(1, max(xBreaks) * 1.15)) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw(legend.position = "none")
+  })
 
-    jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
-    jaspResults[["CCReport"]]$dependOn(c("CCReport", "ImRchart", "variables","ncol", "manualTicks", "nTicks", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
-    jaspResults[["CCReport"]]$position <- 9
-    Iplot <- jaspResults[["CCReport"]]
-
-    IMR <- .IMRchart(dataset = dataset, options = options, variable = variables, manualXaxis = subgroups)
-    Iplot[["ccReport"]] <- .CCReport(p1 = IMR$p1, p2 = IMR$p2, ccTitle = options$ccTitle,
-                                       ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
-                                       ccChartName = options$ccChartName)
-  }
-
-  # Error handling
-  if (options$CCReport && (!options$ImRchart || length(variables) < 1)){
-    plot <- createJaspPlot(title = gettext("Report"), width = 700, height = 400)
-    jaspResults[["plot"]] <- plot
-    jaspResults[["plot"]]$setError(gettext("Please insert more measurements and check the X-mR chart."))
-    plot$dependOn(c("CCReport", "ImRchart", "variables"))
-    return()
+  if (isTryError(p_try)) {
+    plot$setError(gettextf("Plotting not possible: %s", jaspBase:::.extractErrorMessage(p_try)))
+  } else {
+    plot$plotObject <- p
   }
 }
 
-.IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE) {
-
-  ppPlot <- createJaspPlot(width = 1000, height = 550)
-  #Individual chart
-  #data
-  if (measurements == "" & variable != ""){
-    ppPlot$dependOn(optionContainsValue = list(variables = variable))
-    data <- data.frame(process = dataset[[variable]])
-    sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
-    xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol)
-    sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
-  } else{
-    data <- as.vector((t(dataset[measurements])))
-    sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE)
-    xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2)
-    sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
-  }
-  subgroups = c(1:length(sixsigma_I$statistics))
-  data_plot <- data.frame(subgroups = subgroups ,process = sixsigma_I$statistics)
-  center <- sixsigma_I$center
-  UCL <- max(sixsigma_I$limits)
-  LCL <- min(sixsigma_I$limits)
-  if (options$manualTicks)
-    nxBreaks <- options$nTicks
-  else
-    nxBreaks <- 5
-  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
-    l = c(
-      gettextf("CL = %g", round(center, decimalplaces(sample(sixsigma_I$data,1)) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(sample(sixsigma_I$data,1)) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(sample(sixsigma_I$data,1)) + 2))
-    )
-  )
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$process, UCL))
-
-  p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = process)) +
-    ggplot2::geom_hline(yintercept = center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = ifelse(variable != "" , gettextf("%s", variable), "Individual value"), breaks = yBreaks, limits = range(yBreaks)) +
-    ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
-    jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  #Moving range chart
-  data_plot <- data.frame(subgroups = c(1:length(sixsigma_R$statistics)), data2 = sixsigma_R$statistics)
-  center <- sixsigma_R$center
-  UCL <- max(sixsigma_R$limits)
-  LCL <- min(sixsigma_R$limits)
-  Xlabels <- c(2, xBreaks[-1])
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
-    l = c(
-      gettextf("CL = %g", round(center, decimalplaces(sample(sixsigma_I$data,1)) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(sample(sixsigma_I$data,1)) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(sample(sixsigma_I$data,1)) + 2))
-    )
-  )
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$data2, UCL))
-
-  p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data2)) +
-    ggplot2::geom_hline(yintercept = center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red",linetype = "dashed", size = 1.5) +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = gettext("Moving Range"), breaks = yBreaks, limits = range(yBreaks)) +
-    ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits, labels = Xlabels) +
-    jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_R)$red_points, 'red', 'blue')) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  if (manualXaxis != "") {
-    if (measurements != "") {
-      if (Wide)
-        xLabels <- as.vector(sapply(1:length(manualXaxis), function(x) {rep(manualXaxis[x], ncol(dataset[measurements]))}))
-      else
-        xLabels <- manualXaxis
-    }
-    else
-      xLabels <- manualXaxis
-
-    p1 <- p1 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
-    p2 <- p2 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
+.qcIndividualsAutocorrelationChart <- function(jaspResults, dataset, options, ready, position) {
+  if (!is.null(jaspResults[["autocorPlot"]]) || !options[["autocorrelation"]]) {
+    return()
   }
 
-  plotMat <- matrix(list(), 2, 1)
-  plotMat[[1,1]] <- p1
-  plotMat[[2,1]] <- p2
+  plot <- createJaspPlot(title = gettext("Autocorrelation Function"), width = options$plotWidth * 1.75, height = options$plotHeight)
+  plot$dependOn(c("variable", "subgroups", "palette", "nLag", "CI", "autocorrelation"))
+  plot$position <- position
+  jaspResults[["autocorPlot"]] <- plot
 
-  if(!cowPlot){
-    ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = plotMat, removeXYlabels= "x")
-  }else{
-    ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
+  if (!ready) {
+    return()
   }
 
-  if (manualXaxis != "")
-    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, xLabels = as.vector(xLabels), p1 = p1, p2 = p2))
-  else
-    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2))
-}
+  palette <- .qcColorPalette(options)
 
-.CorPlot <- function(dataset = dataset, options = options, variable = var, Lags = NULL, CI = 0.95){
-  ppPlot <- createJaspPlot(width = 1200, height = 500, title = gettextf("%s",variable))
-  ppPlot$dependOn(optionContainsValue = list(variables = variable))
+  p_try <- try({
+    list.acf <- stats::acf(dataset[[options[["variable"]]]], lag.max = options[["nLag"]], type = "correlation", ci.type = "ma", plot = FALSE, ci = options[["CI"]])
+    N <- as.numeric(list.acf$n.used)
+    plotData <- data.frame(lag = list.acf$lag, acf = list.acf$acf)
+    plotData$lag.acf <- dplyr::lag(plotData$acf, default = 0)
+    plotData$lag.acf[2] <- 0
+    plotData$lag.acf.cumsum <- cumsum((plotData$lag.acf)^2)
+    plotData$acfstd <- sqrt(1 / N * (1 + 2 * plotData$lag.acf.cumsum))
+    plotData$acfstd[1] <- 0
+    plotData <- dplyr::select(plotData, lag, acf, acfstd)
 
-  list.acf <- stats::acf(dataset[[variable]], lag.max = Lags, type = "correlation", ci.type = "ma", plot = FALSE, ci = CI)
-  N <- as.numeric(list.acf$n.used)
-  df1 <- data.frame(lag = list.acf$lag, acf = list.acf$acf)
-  df1$lag.acf <- dplyr::lag(df1$acf, default = 0)
-  df1$lag.acf[2] <- 0
-  df1$lag.acf.cumsum <- cumsum((df1$lag.acf)^2)
-  df1$acfstd <- sqrt(1/N * (1 + 2 * df1$lag.acf.cumsum))
-  df1$acfstd[1] <- 0
-  df1 <- dplyr::select(df1, lag, acf, acfstd)
+    p <- ggplot2::ggplot(data = plotData, ggplot2::aes(x = lag, y = acf)) +
+      ggplot2::geom_col(fill = palette[2], width = 0.2) +
+      jaspGraphs::geom_line(mapping = ggplot2::aes(x = lag, y = qnorm((1 + options[["CI"]]) / 2) * acfstd), color = palette[3]) +
+      jaspGraphs::geom_line(mapping = ggplot2::aes(x = lag, y = -qnorm((1 + options[["CI"]]) / 2) * acfstd), color = palette[3]) +
+      ggplot2::geom_segment(x = 0, xend = nrow(plotData), y = 0, yend = 0, color = palette[1]) +
+      ggplot2::scale_y_continuous(name = gettext("Autocorrelation"), limits = c(-1, 1), breaks = seq(-1, 1, 0.2)) +
+      ggplot2::scale_x_continuous(name = gettext("Lag"), breaks = seq(1, max(plotData$lag), 2)) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
+  })
 
-  p <- ggplot2::ggplot(data = df1, ggplot2::aes(x = lag, y = acf)) +
-    ggplot2::geom_col(fill = "#4373B6", width = 0.2) +
-    jaspGraphs::geom_line(ggplot2::aes(x = lag, y = qnorm((1+CI)/2)*acfstd), color = "red") +
-    jaspGraphs::geom_line(ggplot2::aes(x = lag, y = -qnorm((1+CI)/2)*acfstd), color = "red") +
-    ggplot2::geom_hline(yintercept = 0, color = 'green') +
-    ggplot2::scale_y_continuous(name = gettext("Autocorrelation"), limits = c(-1,1), breaks = seq(-1,1,0.2)) +
-    ggplot2::scale_x_continuous(name = gettext('Lag'), breaks = seq(1,max(df1$lag),2)) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  ppPlot$plotObject <- p
-
-  return(ppPlot)
+  if (isTryError(p_try)) {
+    plot$setError(gettextf("Plotting not possible: %s", jaspBase:::.extractErrorMessage(p_try)))
+  } else {
+    plot$plotObject <- p
+  }
 }

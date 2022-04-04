@@ -1,219 +1,205 @@
+#
+# Copyright (C) 2013-2022 University of Amsterdam
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 timeWeightedCharts <- function(jaspResults, dataset, options) {
-  variables <- options$variables
-  numeric_variables  <- variables[variables != ""]
-  dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
-  #Checking for errors in the dataset
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = options$variables, exitAnalysisIfErrors = TRUE)
 
-  if (length(variables) > 0) {
-    #Cusum chart
-    if (options$Cumulativechart && is.null(jaspResults[["CusumPlot"]])) {
-      jaspResults[["CusumPlot"]] <- createJaspPlot(title = gettext("Cumulative sum chart"), width = 1200, height = 500)
-      jaspResults[["CusumPlot"]]$dependOn(c("Cumulativechart", "variables"))
-      jaspResults[["CusumPlot"]]$plotObject <- .Cusumchart(dataset = dataset, options = options)
-    }
-    #EWMA chart
-    if (options$Exponentialchart && is.null(jaspResults[["EWMAPlot"]])) {
-      jaspResults[["EWMAPlot"]] <- createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 1200, height = 500)
-      jaspResults[["EWMAPlot"]]$dependOn(c("Exponentialchart", "variables"))
-      jaspResults[["EWMAPlot"]]$plotObject <- .EWMA(dataset = dataset, options = options)
-    }
-    #G chart
-    if (options$gchart && is.null(jaspResults[["GPlot"]])) {
-      jaspResults[["GPlot"]] <- createJaspPlot(title = gettext("G chart"), width = 1200, height = 500)
-      jaspResults[["GPlot"]]$dependOn(c("gchart", "variables"))
-      jaspResults[["GPlot"]]$plotObject <- .Gchart(dataset = dataset, options = options)$p
-    }
-    #T chart
-    if (options$tchart && is.null(jaspResults[["TPlot"]])) {
-      jaspResults[["TPlot"]] <- createJaspPlot(title = gettext("T chart"), width = 1200, height = 500)
-      jaspResults[["TPlot"]]$dependOn(c("tchart", "variables"))
-      jaspResults[["TPlot"]]$plotObject <- .Tchart(dataset = dataset, options = options)$p
-    }
+  # Read data
+  if (is.null(datset)) {
+    dataset <- .readDataSetToEnd(columns.as.numeric = options[["variables"]])
+    dataset <- na.omit(dataset)
   }
-}
-.Cusumchart <- function(dataset, options) {
-  ready <- options$variables != ""
-  if (!ready)
-    return()
 
-  data1 <- dataset[, options$variables]
-  sixsigma <- qcc::cusum(data1, decision.interval = options$h, se.shift = options$k, plot = FALSE)
-  subgroups <- c(1:length(sixsigma$pos))
-  data_plot <- data.frame(y_neg = sixsigma$neg , y_pos = sixsigma$pos, x = subgroups)
-
-  center <- 0
-  UCL <- sixsigma$decision.interval
-  LCL <- -UCL
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, data_plot$y_neg,  data_plot$y_pos))
-  yLimits <- range(yBreaks)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks) + 2.5)
-  dfLabel <- data.frame(
-    x = max(xLimits - 1),
-    y = c(center, UCL, LCL),
-    l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
-    )
+  # Check for errors
+  .hasErrors(dataset,
+    type = c("infinity", "missingValues"),
+    all.target = options$variables, exitAnalysisIfErrors = TRUE
   )
 
-  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x))  +
-    ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = gettext("Cumulative sum") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name = gettext('Subgroups'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line(ggplot2::aes(y = y_neg), col = "blue") +
-    jaspGraphs::geom_line(ggplot2::aes(y = y_pos), col = "blue")+
-    jaspGraphs::geom_point(ggplot2::aes(y = y_neg), size = 4, fill = ifelse(data_plot$y_neg < LCL, 'red', 'blue')) +
-    jaspGraphs::geom_point(ggplot2::aes(y = y_pos), size = 4, fill = ifelse(data_plot$y_pos > UCL, 'red', 'blue')) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
+  # Check if analysis is ready
+  ready <- length(unlist(options[["variables"]])) > 0 && unlist(options[["variables"]]) != ""
 
-  return(p)
+  # Summary table
+  .qcTimeWeightedChartsSummaryTable(jaspResults, dataset, options, ready, position = 1)
+
+  # Control Charts
+  .qcTimeWeightedChart(jaspResults, dataset, options, ready, type = "csc", position = 2)
+  .qcTimeWeightedChart(jaspResults, dataset, options, ready, type = "ewma", position = 3)
+  .qcTimeWeightedChart(jaspResults, dataset, options, ready, type = "g", position = 4)
+  .qcTimeWeightedChart(jaspResults, dataset, options, ready, type = "t", position = 5)
 }
-.EWMA <- function(dataset, options) {
-  ready <- options$variables != ""
-  if (!ready)
-    return()
 
-  data1 <- dataset[, options$variables]
-  sixsigma <- qcc::ewma(data1, center = options$EWMAcenter , lambda = options$EWMAlambda,
-                        std.dev = options$EWMAStd, nsigmas = options$EWMANsigma, plot = FALSE)
-  subgroups <- 1:length(sixsigma$sizes)
-  center <- sixsigma$center
-  UCL <-  sixsigma$limits[,2]
-  LCL <- sixsigma$limits[,1]
-  data_plot <- data.frame(y = sixsigma$y, x = subgroups, UCL = UCL, LCL = LCL)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, data_plot$y))
-  yLimits <- range(yBreaks)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks-0.5) * 1.15)
-  UCL.label <- center + options$EWMANsigma * sqrt(options$EWMAlambda/(2-options$EWMAlambda))*options$EWMAStd
-  LCL.label <- center - options$EWMANsigma * sqrt(options$EWMAlambda/(2-options$EWMAlambda))*options$EWMAStd
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center, UCL.label, LCL.label),
-    l = c(
-      gettextf("CL = %g", round(center, decimalplaces(data1[1]) + 1)),
-      gettextf("UCL = %g",   round(UCL.label, decimalplaces(data1[1]) + 2)),
-      gettextf("LCL = %g",   round(LCL.label, decimalplaces(data1[1]) + 2))
-    )
+.qcTimeWeightedChartsSummaryTable <- function(jaspResults, dataset, options, ready, position) {
+  if (!is.null(jaspResults[["summaryTable"]])) {
+    return()
+  }
+
+  table <- createJaspTable(gettext("Data Summary"))
+  table$position <- position
+  table$dependOn(options = "variables")
+
+  table$addColumnInfo(name = "p", title = gettext("No. Measurements"), type = "integer")
+  table$addColumnInfo(name = "n", title = gettext("No. Rows"), type = "integer")
+
+  jaspResults[["summaryTable"]] <- table
+
+  if (!ready) {
+    return()
+  }
+
+  row <- list(p = length(options[["variables"]]), n = nrow(dataset))
+  table$addRows(row)
+}
+
+.qcTimeWeightedChart <- function(jaspResults, dataset, options, ready, type, position) {
+  jaspTitle <- paste0(type, "plot")
+
+  if (!is.null(jaspResults[[jaspTitle]]) || !options[[type]]) {
+    return()
+  }
+
+  plotTitle <- switch(type,
+    "csc" = gettextf("CSC Chart"),
+    "ewma" = gettextf("EWMA Chart"),
+    "g" = gettextf("G Chart"),
+    "t" = gettextf("T Chart")
   )
 
-  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = x, y = y)) +
-    ggplot2::geom_step(ggplot2::aes(x = x, y = UCL, color = "red"),linetype = "dashed", size = 1.5) +
-    ggplot2::geom_step(ggplot2::aes(x = x, y = LCL, color = "red"), linetype = "dashed", size = 1.5) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("EWMA") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name =  gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
-    ggplot2::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$y > UCL | data_plot$y < LCL, 'red', 'blue')) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  return(p)
-}
-.Gchart <- function(dataset, options){
-  ready <- options$variables != ""
-  if (!ready)
-    return()
-
-  data1 <- dataset[, options$variables]
-  subgroups <- c(1:length(data1))
-  data_plot <- data.frame(x =  subgroups, y = data1)
-  center = mean(data1)
-  UCL = center+3*sqrt(center*(center + 1))
-  LCL = center-3*sqrt(center*(center + 1))
-  LCL <- ifelse(LCL < 0 , 0, LCL)
-  sixsigma <- list(statistics = data1, limits = data.frame(LCL, UCL), center = center)
-
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, data_plot$y))
-  yLimits <- range(yBreaks)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks) + 2.5)
-  dfLabel <- data.frame(
-    x = max(xLimits - 1),
-    y = c(center, UCL, LCL),
-    l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
-    )
+  depends <- switch(type,
+    "csc" = c("numsigma", "shift"),
+    "ewma" = c("lambda", "center", "sigma", "nsigma"),
+    "g" = NULL,
+    "t" = NULL
   )
 
-  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = x, y = y)) +
-    ggplot2::geom_line(ggplot2::aes(x = x, y = UCL, color = "red"),linetype = "dashed", size = 1.5) +
-    ggplot2::geom_line(ggplot2::aes(x = x, y = LCL, color = "red"), linetype = "dashed", size = 1.5) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Counts") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name =  gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
-    ggplot2::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$y > UCL | data_plot$y < LCL, 'red', 'blue')) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
+  plot <- createJaspPlot(title = plotTitle, width = options$plotWidth * 1.75, height = options$plotHeight)
+  plot$dependOn(c("variables", "palette", type, depends))
+  plot$position <- position
+  jaspResults[[jaspTitle]] <- plot
 
-  return(list(p = p, sixsigma = sixsigma))
-}
-.Tchart <- function(dataset, options){
-  ready <- options$variables != ""
-  if (!ready)
+  if (!ready) {
     return()
+  }
 
-  data1 <- dataset[, options$variables]
-  subgroups <- c(1:length(data1))
-  data_plot <- data.frame(x = subgroups , y = data1^0.2777)
-  data2 <- data.frame(process = data1)
-  MR_T <- qcc::qcc(matrix(cbind(data2$process[1:length(data2$process)-1], data2$process[2:length(data2$process)]), ncol=2)
-                   , type="R", plot = FALSE)$statistics
-  center = mean(data_plot$y)^3.6
-  UCL = (mean(data_plot$y) + 2.66 * mean(MR_T))^3.6
-  LCL = (mean(data_plot$y) - 2.66 * mean(MR_T))^3.6
-  LCL <- ifelse(LCL < 0 , 0, LCL)
-  sixsigma <- list(statistics = data1, limits = data.frame(LCL, UCL), center = center)
+  palette <- .qcColorPalette(options)
 
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, data_plot$y))
-  yLimits <- range(yBreaks)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks) + 2.5)
-  dfLabel <- data.frame(
-    x = max(xLimits - 1),
-    y = c(center, UCL, LCL),
-    l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
-    )
-  )
+  p_try <- try({
+    if (type == "csc") {
+      yTitle <- gettext("Cumulative sum")
+      qccOutput <- qcc::cusum(dataset, decision.interval = options[["numsigma"]], se.shift = options[["shift"]], plot = FALSE)
+      center <- 0
+      ucl <- qccOutput$decision.interval
+      lcl <- -ucl
+      plotData <- data.frame(x = 1:length(qccOutput$pos), lower = qccOutput$neg, upper = qccOutput$pos)
+      plotData$fill_upper <- ifelse(plotData$upper > ucl, palette[3], palette[2])
+      plotData$fill_lower <- ifelse(plotData$lower < lcl, palette[3], palette[2])
+      labelData <- data.frame(
+        x = rep(nrow(plotData) + 1, 3), y = c(center, ucl, lcl),
+        l = c(gettextf("CL = %g", round(center, 4)), gettextf("UCL = %g", round(ucl, 4)), gettextf("LCL = %g", round(lcl, 4)))
+      )
+      yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$lower, plotData$upper, ucl, lcl))
+    } else if (type == "ewma") {
+      yTitle <- gettext("Weighted average")
+      qccOutput <- qcc::ewma(dataset,
+        center = options[["center"]], lambda = options[["lambda"]],
+        std.dev = options[["sigma"]], nsigmas = options[["nsigma"]], plot = FALSE
+      )
+      center <- qccOutput$center
+      lcl <- qccOutput$limits[, 1]
+      ucl <- qccOutput$limits[, 2]
+      plotData <- data.frame(x = 1:length(qccOutput$y), y = qccOutput$y, ucl = ucl, lcl = lcl)
+      plotData$fill <- ifelse(plotData$y > ucl | plotData$y < lcl, palette[3], palette[2])
+      uclLabel <- center + options$nsigma * sqrt(options$lambda / (2 - options$lambda)) * options$sigma
+      lclLabel <- center - options$nsigma * sqrt(options$lambda / (2 - options$lambda)) * options$sigma
+      labelData <- data.frame(
+        x = rep(nrow(plotData) + 1, 3), y = c(center, uclLabel, lclLabel),
+        l = c(
+          gettextf("CL = %g", round(center, decimalplaces(dataset[1]) + 1)),
+          gettextf("UCL = %g", round(uclLabel, decimalplaces(dataset[1]) + 2)),
+          gettextf("LCL = %g", round(lclLabel, decimalplaces(dataset[1]) + 2))
+        )
+      )
+      yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$y, uclLabel, lclLabel))
+    } else if (type == "g") {
+      yTitle <- gettext("Time between events")
+      center <- mean(dataset[, options$variables])
+      ucl <- center + 3 * sqrt(center * (center + 1))
+      lcl <- center - 3 * sqrt(center * (center + 1))
+      lcl <- ifelse(lcl < 0, yes = 0, no = lcl)
+      qccOutput <- list(statistics = dataset[, options$variables], limits = data.frame(lcl, ucl), center = center)
+      plotData <- data.frame(x = 1:length(dataset[, options$variables]), y = dataset[, options$variables])
+      plotData$fill <- ifelse(plotData$y > ucl | plotData$y < lcl, palette[3], palette[2])
+      labelData <- data.frame(
+        x = rep(nrow(plotData) + 1, 3), y = c(center, ucl, lcl),
+        l = c(gettextf("CL = %g", round(center, 4)), gettextf("UCL = %g", round(ucl, 4)), gettextf("LCL = %g", round(lcl, 4)))
+      )
+      yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$y, lcl, ucl))
+    } else if (type == "t") {
+      yTitle <- gettext("Number between events")
+      plotData <- data.frame(x = 1:length(dataset[, options$variables]), y = dataset[, options$variables]^0.2777)
+      running <- dataset[, options$variables]
+      qccOutput <- qcc::qcc(matrix(c(running[1:length(running) - 1], running[2:length(running)]), ncol = 2), type = "R", plot = FALSE)$statistics
+      center <- mean(plotData$y)^3.6
+      ucl <- (mean(plotData$y) + 2.66 * mean(qccOutput))^3.6
+      lcl <- (mean(plotData$y) - 2.66 * mean(qccOutput))^3.6
+      lcl <- ifelse(lcl < 0, yes = 0, no = lcl)
+      plotData$fill <- ifelse(plotData$y > ucl | plotData$y < lcl, palette[3], palette[2])
+      labelData <- data.frame(
+        x = rep(nrow(plotData) + 1, 3), y = c(center, ucl, lcl),
+        l = c(gettextf("CL = %g", round(center, 4)), gettextf("UCL = %g", round(ucl, 4)), gettextf("LCL = %g", round(lcl, 4)))
+      )
+      yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$y, lcl, ucl))
+    }
 
-  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = x, y = y)) +
-    ggplot2::geom_line(ggplot2::aes(x = x, y = UCL, color = "red"),linetype = "dashed", size = 1.5) +
-    ggplot2::geom_line(ggplot2::aes(x = x, y = LCL, color = "red"), linetype = "dashed", size = 1.5) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Counts") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name =  gettext('Subgroup'), breaks = xBreaks, limits = range(xLimits)) +
-    ggplot2::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$y > UCL | data_plot$y < LCL, 'red', 'blue')) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
+    yLimits <- range(yBreaks)
+    # TODO: Find a way to nicely display x-breaks
+    xBreaks <- seq(1, nrow(plotData), length.out = min(20, nrow(plotData)))
 
-  return(list(p = p, sixsigma = sixsigma))
+    p <- ggplot2::ggplot(data = plotData, ggplot2::aes(x = x)) +
+      ggplot2::geom_segment(y = center, yend = center, x = 1, xend = nrow(plotData), color = palette[1])
+
+    if (length(ucl) == 1) {
+      p <- p + ggplot2::geom_segment(y = ucl, yend = ucl, x = 1, xend = nrow(plotData), color = palette[3], linetype = "dashed") +
+        ggplot2::geom_segment(y = lcl, yend = lcl, x = 1, xend = nrow(plotData), color = palette[3], linetype = "dashed")
+      if (type == "csc") {
+        p <- p + jaspGraphs::geom_line(mapping = ggplot2::aes(y = lower), color = palette[2]) +
+          jaspGraphs::geom_line(mapping = ggplot2::aes(y = upper), color = palette[2]) +
+          jaspGraphs::geom_point(mapping = ggplot2::aes(y = lower), fill = plotData$fill_lower, color = "black", size = 4) +
+          jaspGraphs::geom_point(mapping = ggplot2::aes(y = upper), fill = plotData$fill_upper, color = "black", size = 4)
+      } else {
+        p <- p + jaspGraphs::geom_line(mapping = ggplot2::aes(y = y), color = palette[2]) +
+          jaspGraphs::geom_point(mapping = ggplot2::aes(y = y), fill = plotData$fill, color = "black", size = 4)
+      }
+    } else {
+      p <- p + ggplot2::geom_step(mapping = ggplot2::aes(y = ucl), color = palette[3], linetype = "dashed", size = 1.5) +
+        ggplot2::geom_step(mapping = ggplot2::aes(y = lcl), color = palette[3], linetype = "dashed", size = 1.5) +
+        jaspGraphs::geom_line(mapping = ggplot2::aes(y = y), color = palette[2]) +
+        jaspGraphs::geom_point(mapping = ggplot2::aes(y = y), fill = plotData$fill, size = 4)
+    }
+
+    p <- p + ggplot2::geom_label(data = labelData, mapping = ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = 4.5, hjust = 0) +
+      ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = range(yBreaks)) +
+      ggplot2::scale_x_continuous(name = gettext("Subgroups"), breaks = xBreaks, limits = c(1, max(xBreaks) * 1.15)) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw(legend.position = "none")
+  })
+
+  if (isTryError(p_try)) {
+    plot$setError(gettextf("Plotting not possible: %s", jaspBase:::.extractErrorMessage(p_try)))
+  } else {
+    plot$plotObject <- p
+  }
 }

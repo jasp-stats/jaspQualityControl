@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2018 University of Amsterdam
+# Copyright (C) 2013-2022 University of Amsterdam
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,725 +14,440 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 attributesCharts <- function(jaspResults, dataset, options) {
-  # reading variables in from the GUI
-  total <- options$total
-  D <- options$D
-  timeStamp <- options$timeStamp
 
-  numeric_variables <- c(total, D)
-  numeric_variables  <- numeric_variables[numeric_variables != ""]
+  # Read data
+  dataset <- .qcAttributesChartsReadDataset(options)
 
-  # Data reading
-  if (is.null(dataset))
-    if (timeStamp != "") {
-      dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = timeStamp)
-      xLabs <- as.vector(dataset[, timeStamp])
-    } else {
-      dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables)
-      xLabs <- NULL
-    }
+  # Check for errors
+  .qcAttributesChartsCheckErrors(dataset, options)
 
-  # Checking if the analysis is ready
-  ready <- options$D != "" && options$total != ""
+  # Check if analysis is ready
+  ready <- options[["defects"]] != "" && options[["sampleSize"]] != ""
 
-  #Checking for errors in the dataset
-  .hasErrors(dataset, type = c('infinity', 'missingValues', 'negativeValues'),
-             all.target = c(options$D,options$total),
-             exitAnalysisIfErrors = TRUE)
+  # Make top table
+  .qcAttributesChartsSummaryTable(jaspResults, dataset, options, ready, position = 1)
 
-  if (options$TypeDefectives == "pchart" || options$TypeDefectives == "Laneyprimechart" || options$TypeDefects == "uchart" || options$TypeDefects == "Laneychart")
-    .hasErrors(dataset,
-               custom = function() {
-                 if (any(dataset[,D] > dataset[,total]))
-                   return(gettext("The number of Defectives/Defects is larger than the sample  size."))},
-               exitAnalysisIfErrors = TRUE)
+  # Control charts
+  .qcAttributesChartsContainer(jaspResults, dataset, options, ready, position = 2, type = "xmr")
+  .qcAttributesChartsContainer(jaspResults, dataset, options, ready, position = 3, type = "np")
+  .qcAttributesChartsContainer(jaspResults, dataset, options, ready, position = 4, type = "p")
+  .qcAttributesChartsContainer(jaspResults, dataset, options, ready, position = 5, type = "Laney p'")
+  .qcAttributesChartsContainer(jaspResults, dataset, options, ready, position = 6, type = "c")
+  .qcAttributesChartsContainer(jaspResults, dataset, options, ready, position = 7, type = "u")
+  .qcAttributesChartsContainer(jaspResults, dataset, options, ready, position = 8, type = "Laney u'")
 
+  # Report
+  #   if (options[["AReport"]] && is.null(jaspResults[["AReport"]]) && ready) {
+  #     jaspResults[["PchartPlot"]] <- NULL
+  #     jaspResults[["NelsonTable"]] <- NULL
+  #     jaspResults[["NPchartPlot"]] <- NULL
+  #     jaspResults[["LaneyPPlot"]] <- NULL
+  #     jaspResults[["CchartPlot"]] <- NULL
+  #     jaspResults[["UchartPlot"]] <- NULL
+  #     jaspResults[["LaneyUPlot"]] <- NULL
+  #     jaspResults[["IPlotA"]] <- NULL
+  #     jaspResults[["NelsonTableIMR"]] <- NULL
 
-  if ((options$Attributes == "Defectives" || options$Attributes == "Defects" || options$Attributes == "ImR") && !ready) {
-    plot <- createJaspPlot(title = gettext("Attributes Control Charts"), width = 700, height = 400)
-    jaspResults[["plot"]] <- plot
-    plot$dependOn(c("Attributes", "D", "total"))
-    return()
+  #     jaspResults[["AReport"]] <- createJaspContainer(title = gettextf("Report for Attribute Control Charts"))
+  #     jaspResults[["AReport"]]$dependOn(c(
+  #       "AReport", "ATitle", "AName", "AOperator", "AID", "AMisc", "AAppraiser", "AMeasurement", "ASize", "ATime", "AFrequency",
+  #       "defects", "samplesize", "Attributes", "TypeDefects", "TypeDefectives", "timeStamp"
+  #     ))
+  #     Report <- jaspResults[["AReport"]]
+  #     Report[["Report"]] <- .AReport(
+  #       ccTitle = options$ATitle, ccName = options$AName,
+  #       ccOperator = options$AOperator, ccID = options$AID, ccMisc = options$AMisc, ccAppraiser = options$AAppraiser,
+  #       ccMeasurement = options$AMeasurement, ccSize = options$ASize, ccTime = options$ATime, ccFrequency = options$AFrequency
+  #     )
+
+  #     Report[["Plot"]] <- createJaspPlot(width = 1000, height = 800, position = 2)
+  #     if (options$Attributes == "Defectives" & options$TypeDefectives == "pchart") {
+  #       PlotReport <- .Pchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
+  #     } else if (options$Attributes == "Defectives" & options$TypeDefectives == "npchart") {
+  #       PlotReport <- .NPchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
+  #     } else if (options$Attributes == "Defectives" & options$TypeDefectives == "Laneyprimechart") {
+  #       PlotReport <- .LanyP(dataset = dataset, options = options, timeStamp = timeStamp)$p
+  #     } else if (options$Attributes == "Defects" & options$TypeDefects == "cchart") {
+  #       PlotReport <- .Cchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
+  #     } else if (options$Attributes == "Defects" & options$TypeDefects == "uchart") {
+  #       PlotReport <- .Uchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
+  #     } else if (options$Attributes == "Defects" & options$TypeDefects == "Laneychart") {
+  #       PlotReport <- .LanyU(dataset = dataset, options = options, timeStamp = timeStamp)$p
+  #     } else if (options$Attributes == "ImR") {
+  #       PlotReport <- .Ichart_attributes(dataset = dataset, options = options, timeStamp = timeStamp)$p
+  #     }
+
+  #     Report[["Plot"]]$plotObject <- PlotReport
+  #   }
+}
+
+.qcColorPalette <- function(options) {
+  # 1st color is for average data, 2nd is for data points and lines, 3rd is for confidence limits
+  cols <- switch(options[["palette"]],
+    "iso" = c("#339d4c", "#0053a6", "#931313"),
+    "jasp" = c("black", "darkgray", "darkred"),
+    "colorblind" = jaspGraphs::JASPcolors(palette = "colorblind")[1:3]
+  )
+  return(cols)
+}
+
+.qcAttributesChartsReadDataset <- function(options) {
+  variables <- c(options[["sampleSize"]], options[["defects"]])
+  variables <- variables[variables != ""]
+  if (options[["timeStamp"]] == "") {
+    dataset <- .readDataSetToEnd(columns.as.numeric = variables)
+  } else {
+    dataset <- .readDataSetToEnd(columns.as.numeric = variables, columns.as.factor = options[["timeStamp"]])
   }
-
   dataset <- na.omit(dataset)
-
-  if (options$Attributes == "Defectives" && ready) {
-    dependedDefectives <- c("total", "D", "Attributes", "TypeDefectives", 'timeStamp')
-
-    #P chart
-    if (options$TypeDefectives == "pchart" && is.null(jaspResults[["PchartPlot"]])) {
-      jaspResults[["PchartPlot"]] <- createJaspPlot(title =  gettext("p Chart"), width = 1200, height = 500)
-      jaspResults[["PchartPlot"]]$dependOn(dependedDefectives)
-      jaspResults[["PchartPlot"]]$position <- 1
-      Pchart <- .Pchart(dataset = dataset, options = options, timeStamp = timeStamp)
-      jaspResults[["PchartPlot"]]$plotObject <- Pchart$p
-
-      # Nelson tests tables
-      if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
-        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Pchart$sixsigma, name = "P", xLabels = xLabs)
-        jaspResults[["NelsonTable"]]$dependOn(dependedDefectives)
-        jaspResults[["NelsonTable"]]$position <- 2
-      }
-    }
-    #NP chart
-    if (options$TypeDefectives == "npchart" && is.null(jaspResults[["NPchartPlot"]])) {
-      jaspResults[["NPchartPlot"]] <- createJaspPlot(title =  gettext("np Chart"), width = 1200, height = 500)
-      jaspResults[["NPchartPlot"]]$dependOn(dependedDefectives)
-      jaspResults[["NPchartPlot"]]$position <- 1
-      NPchart <- .NPchart(dataset = dataset, options = options, timeStamp = timeStamp)
-      jaspResults[["NPchartPlot"]]$plotObject <- NPchart$p
-
-      # Nelson tests tables
-      if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
-        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = NPchart$sixsigma, name = "np", xLabels = xLabs)
-        jaspResults[["NelsonTable"]]$position <- 2
-        jaspResults[["NelsonTable"]]$dependOn(dependedDefectives)
-      }
-    }
-
-    #Laney P chart
-    if (options$TypeDefectives == "Laneyprimechart" && is.null(jaspResults[["LaneyPPlot"]])) {
-      jaspResults[["LaneyPPlot"]] <- createJaspPlot(title =  gettext("Laney p' Chart"), width = 1200, height = 500, position = 1)
-      Lanychart <- .LanyP(dataset = dataset, options = options, timeStamp = timeStamp)
-      jaspResults[["LaneyPPlot"]]$plotObject <- Lanychart$p
-      jaspResults[["LaneyPPlot"]]$dependOn(dependedDefectives)
-
-      if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspPlot(title =  gettext(""), position = 2)
-        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Lanychart$sixsigma, name = "Laney p'", xLabels = xLabs)
-        jaspResults[["NelsonTable"]]$dependOn(dependedDefectives)
-      }
-    }
-  }
-
-  if (options$Attributes == "Defects" && ready) {
-    dependedDefects <- c("D", "Attributes", "TypeDefects","total", "timeStamp")
-    #Cchart
-    if (options$TypeDefects == "cchart" && is.null(jaspResults[["CchartPlot"]])) {
-      jaspResults[["CchartPlot"]] <- createJaspPlot(title =  gettext("c Chart"), width = 1200, height = 500)
-      jaspResults[["CchartPlot"]]$dependOn(dependedDefects)
-      jaspResults[["CchartPlot"]]$position <- 1
-      Cchart <- .Cchart(dataset = dataset, options = options, timeStamp = timeStamp)
-      jaspResults[["CchartPlot"]]$plotObject <- PlotReport <- Cchart$p
-
-      # Nelson tests tables
-      if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspContainer()
-        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Cchart$sixsigma, name = "c", xLabels = xLabs)
-        jaspResults[["NelsonTable"]]$dependOn(dependedDefects)
-        jaspResults[["NelsonTable"]]$position <- 2
-      }
-    }
-    #Uchart
-    if (options$TypeDefects == "uchart" && is.null(jaspResults[["UchartPlot"]])) {
-      jaspResults[["UchartPlot"]] <- createJaspPlot(title =  gettext("u Chart"), width = 1200, height = 500)
-      jaspResults[["UchartPlot"]]$dependOn(dependedDefects)
-      jaspResults[["UchartPlot"]]$position <- 1
-      Uchart <- .Uchart(dataset = dataset, options = options, timeStamp = timeStamp)
-      jaspResults[["UchartPlot"]]$plotObject <- Uchart$p
-        PlotReport <- Uchart$p
-
-      # Nelson tests tables
-      if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
-        jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Uchart$sixsigma, name = "u", xLabels = xLabs)
-        jaspResults[["NelsonTable"]]$dependOn(dependedDefects)
-        jaspResults[["NelsonTable"]]$position <- 2
-      }
-    }
-    #Laney U chart
-    if (options$TypeDefects == "Laneychart" && is.null(jaspResults[["LaneyUPlot"]])) {
-      jaspResults[["LaneyUPlot"]] <- createJaspPlot(title = gettext("Laney u' Chart"), width = 1200, height = 500, position = 1)
-      jaspResults[["LaneyUPlot"]]$dependOn(dependedDefects)
-      LanyUchart <- .LanyU(dataset = dataset, options = options, timeStamp = timeStamp)
-      jaspResults[["LaneyUPlot"]]$plotObject <- PlotReport <- LanyUchart$p
-
-      jaspResults[["NelsonTable"]] <- createJaspContainer(title =  gettext(""), position = 2)
-      jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = LanyUchart$sixsigma, name = "Laney u'", xLabels = xLabs)
-      jaspResults[["NelsonTable"]]$dependOn(dependedDefects)
-    }
-  }
-  #ImRchart for attributes
-  if (options$Attributes == "ImR" && D != "") {
-    jaspResults[["IPlotA"]] <- createJaspPlot(title = gettext("Individuals and Moving Range Chart"), width = 1200, height = 500, position = 1)
-    IMRchart <- .Ichart_attributes(dataset = dataset, options = options, timeStamp = timeStamp)
-    jaspResults[["IPlotA"]]$plotObject <- PlotReport <- IMRchart$p
-    jaspResults[["IPlotA"]]$dependOn(c("D", "total", "Attributes", "timeStamp"))
-
-    # Nelson tests tables
-    if (is.null(jaspResults[["NelsonTableIMR"]])) {
-      NelsonTables <- createJaspContainer(title =  gettext(""), position = 2)
-      NelsonTables$dependOn(c("D", "total", "Attributes", "timeStamp"))
-
-
-      NelsonTables[["NelsonTableI"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", sixsigma = IMRchart$sixsigma_I, name = "Individuals", xLabels = xLabs)
-      NelsonTables[["NelsonTableMR"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = IMRchart$sixsigma_R, name = "Moving Range", xLabels = xLabs)
-
-      jaspResults[["NelsonTableIMR"]] <- NelsonTables
-    }
-  }
-
-  #Report
-  if (options[["AReport"]] && is.null(jaspResults[["AReport"]]) && ready) {
-
-    jaspResults[["PchartPlot"]]     <- NULL
-    jaspResults[["NelsonTable"]]    <- NULL
-    jaspResults[["NPchartPlot"]]    <- NULL
-    jaspResults[["LaneyPPlot"]]     <- NULL
-    jaspResults[["CchartPlot"]]     <- NULL
-    jaspResults[["UchartPlot"]]     <- NULL
-    jaspResults[["LaneyUPlot"]]     <- NULL
-    jaspResults[["IPlotA"]]         <- NULL
-    jaspResults[["NelsonTableIMR"]] <- NULL
-
-    jaspResults[["AReport"]] <- createJaspContainer(title = gettextf("Report for Attribute Control Charts"))
-    jaspResults[["AReport"]]$dependOn(c("AReport", "ATitle", "AName", "AOperator", "AID", "AMisc", "AAppraiser", "AMeasurement", "ASize", "ATime", "AFrequency",
-                                        "D", "total", "Attributes", "TypeDefects", "TypeDefectives", "timeStamp"))
-    Report <- jaspResults[["AReport"]]
-    Report[["Report"]] <- .AReport(ccTitle = options$ATitle, ccName = options$AName,
-                                 ccOperator = options$AOperator, ccID = options$AID, ccMisc = options$AMisc, ccAppraiser = options$AAppraiser,
-                                 ccMeasurement = options$AMeasurement, ccSize = options$ASize, ccTime = options$ATime, ccFrequency = options$AFrequency)
-
-    Report[["Plot"]] <- createJaspPlot(width = 1000, height = 800, position = 2)
-    if (options$Attributes == "Defectives" & options$TypeDefectives == "pchart")
-      PlotReport <- .Pchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "Defectives" & options$TypeDefectives == "npchart")
-      PlotReport <- .NPchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "Defectives" & options$TypeDefectives == "Laneyprimechart")
-      PlotReport <- .LanyP(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "Defects" & options$TypeDefects == "cchart")
-      PlotReport <- .Cchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "Defects" & options$TypeDefects == "uchart")
-      PlotReport <- .Uchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "Defects" & options$TypeDefects == "Laneychart")
-      PlotReport <- .LanyU(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "ImR")
-      PlotReport <- .Ichart_attributes(dataset = dataset, options = options, timeStamp = timeStamp)$p
-
-    Report[["Plot"]]$plotObject <- PlotReport
-  }
 }
 
-.Pchart <- function(dataset, options, timeStamp) {
-  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
-  sixsigma <- with(data1, qcc::qcc(D, sample, type = "p", plot = FALSE))
-  sample <- data1$sample
-  D <- data1$D
-  subgroups = c(1:length(sixsigma$statistics))
-  data_plot <- data.frame(subgroups = subgroups, P = sixsigma$statistics)
-  center <- sixsigma$center
-  UCL <- sixsigma$limits[,2]
-  LCL <- sixsigma$limits[,1]
-  if (min(sample)/max(sample) >= 0.75){
-    p.hat <- mean(sixsigma$statistics)
-    n.mean <- mean(sample)
-    UCL <- p.hat + 3 * (sqrt(p.hat*(1 - p.hat))) / (sqrt(n.mean))
-    LCL <- p.hat - 3 * (sqrt(p.hat*(1 - p.hat))) / (sqrt(n.mean))
-  }
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
-  yLimits <- range(c(0,yBreaks * 1.2))
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1]) + 0.5
-  else
-    xBreaks <- c(subgroups) + 0.5
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center),
-    l = c(
-      gettextf("CL = %g", round(center, 4))
-    )
-  )
-
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_hline(yintercept = center, color = "green") +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  if (length(unique(UCL)) == 1){
-    dfLabel <- data.frame(
-      x = max(xLimits) * .95,
-      y = c(center, UCL, LCL),
-      l = c(
-        gettextf("CL = %g", round(center, 4)),
-        gettextf("UCL = %g",   round(UCL, 5)),
-        gettextf("LCL = %g",   round(LCL, 5))
-      )
-    )
-    xBreaks <- xBreaks -0.5
-
-    p <- p +
-      ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
-      jaspGraphs::geom_line(data = data_plot, ggplot2::aes(x = subgroups, y = P),color = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue'))
-  } else{
-    n <- length(UCL)
-    p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, color = "red"), size = 1.5, linetype = "F1") +
-      jaspGraphs::geom_line(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),color = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
-      ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, color = "red"), size = 1.5, linetype = "F1") +
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], color = "red"), size = 1.5)+
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = LCL[n], color = "red"), size = 1.5)
-  }
-
-  if (timeStamp != "")
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
-
-  return(list(p = p, sixsigma = sixsigma))
-}
-.NPchart <- function(dataset, options, timeStamp) {
-  .Check_equal_samples(dataset, options)
-
-  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
-  subgroups <- 1:nrow(data1)
-  data_plot <- data.frame(subgroups = subgroups, D = data1$D)
-
-  sixsigma <- with(data1, qcc::qcc(D, sample, type = "np", plot = FALSE))
-  center <- sixsigma$center
-  UCL <- max(sixsigma$limits)
-  LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$D ,UCL))
-  yLimits <- range(yBreaks * 1.2)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
-    l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
-    )
-  )
-
-  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = D)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Number of defectives"),limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, chart = "c")$red_points, 'red', 'blue')) +
-    jaspGraphs::themeJaspRaw()
-
-  if (timeStamp != "")
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
-
-  return(list(p = p, sixsigma = sixsigma))
-}
-.Cchart <- function(dataset, options, timeStamp) {
-
-  .Check_equal_samples(dataset, options)
-
-  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
-  subgroups <- 1:nrow(data1)
-  data_plot <- data.frame(subgroups = subgroups, D = data1$D)
-  sixsigma <- with(data1, qcc::qcc(D, sample, type = "c", plot = FALSE))
-  center <- sixsigma$center
-  UCL <- max(sixsigma$limits)
-  LCL <- min(sixsigma$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data1$D ,UCL))
-  yLimits <- range(yBreaks * 1.2)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
-    l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
-    )
-  )
-
-  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = D)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("D") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, chart = "c")$red_points, 'red', 'blue')) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  if (timeStamp != "")
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
-
-  return(list(p = p, sixsigma = sixsigma))
-}
-
-.Uchart <- function(dataset, options, timeStamp) {
-  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
-  data1$P <- data1$D/data1$sample
-  subgroups <- 1:nrow(data1)
-  data_plot <- data.frame(subgroups = subgroups, P = data1$P)
-
-  sixsigma <- with(data1, qcc::qcc(D, sample, type = "u", plot = FALSE))
-  center <- sixsigma$center
-  UCL <- sixsigma$limits[,2]
-  LCL <- sixsigma$limits[,1]
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
-  yLimits <- range(c(0,yBreaks * 1.2))
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1]) + 0.5
-  else
-    xBreaks <- c(subgroups) + 0.5
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center),
-    l = c(
-      gettextf("CL = %g", round(center, 4))
-    )
-  )
-
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_hline(yintercept = center, color = "green") +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  if (length(unique(UCL)) == 1){
-    dfLabel <- data.frame(
-      x = max(xLimits) * 0.95,
-      y = c(center, UCL, LCL),
-      l = c(
-        gettextf("CL = %g", round(center, 4)),
-        gettextf("UCL = %g",   round(UCL, 5)),
-        gettextf("LCL = %g",   round(LCL, 5))
-      )
-    )
-    xBreaks <- xBreaks -0.5
-
-    p <- p +
-      ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
-      jaspGraphs::geom_line(data = data_plot, ggplot2::aes(x = subgroups, y = P),color = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue'))
-  } else{
-
-    n <- length(UCL)
-    p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, color = "red"), size = 1.5, linetype = "F1") +
-      jaspGraphs::geom_line(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),color = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
-      ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, color = "red"), size = 1.5, linetype = "F1") +
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], color = "red"), size = 1.5)+
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = LCL[n], color = "red"), size = 1.5)
-
-  }
-
-  if (timeStamp != "")
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
-
-  return(list(p = p, sixsigma = sixsigma))
-}
-
-##Imr for attributes
-.Ichart_attributes <- function(dataset, options, timeStamp) {
-  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
-  data1$P <- data1$D/data1$sample
-  subgroups <- 1:nrow(data1)
-  data_plot <- data.frame(subgroups = subgroups, P = data1$P)
-
-  sixsigma_I <- qcc::qcc(data_plot$P, type ='xbar.one', plot=FALSE)
-  center <- sixsigma_I$center
-  UCL <- max(sixsigma_I$limits)
-  LCL <- min(sixsigma_I$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
-  yLimits <- range(yBreaks * 1.2)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
-    l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
-    )
-  )
-
-  p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = P)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_I, chart = "i")$red_points, 'red', 'blue')) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  if (timeStamp != "")
-    p1 <- p1 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp])[xBreaks])
-
-  #data
-  data <- data.frame(process = dataset[, options$D] / dataset[, options$total])
-  xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol=2)
-  sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
-  subgroups = c(1:length(sixsigma_R$statistics))
-  data_plot <- data.frame(subgroups = subgroups, data = sixsigma_R$statistics)
-  center <- sixsigma_R$center
-  UCL <- max(sixsigma_R$limits)
-  LCL <- min(sixsigma_R$limits)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL))
-  yLimits <- range(yBreaks * 1.2)
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1])
-  else
-    xBreaks <- c(subgroups)
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  Xlabels <- xBreaks + 1
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
-    l = c(
-      gettextf("CL = %g", round(center, 4)),
-      gettextf("UCL = %g",   round(UCL, 5)),
-      gettextf("LCL = %g",   round(LCL, 5))
-    )
-  )
-
-  p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Moving Range") ,limits = yLimits, breaks = yBreaks) +
-    ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = Xlabels) +
-    jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_R, chart = "c")$red_points, 'red', 'blue')) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  if (timeStamp != "")
-    p2 <- p2 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp])[xBreaks])
-
-  p3 <-  jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
-
-  return(list(p = p3, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R))
-}
-
-### Lany's charts
-.LanyU <- function(dataset, options, timeStamp) {
-  data1 <- data.frame(D = dataset[,options$D], sample = dataset[,options$total])
-  data1$P <- data1$D/data1$sample
-  subgroups <- c(1:nrow(data1))
-  data_plot <- data.frame(subgroups = subgroups, P = data1$P)
-
-  #Sixsigma
-  center = sum(data1$D)/sum(data1$sample)
-  z_scores <- (data1$P - center)/sqrt(center/data1$sample[1])
-  R <- vector()
-  for (i in c(1:length(z_scores) - 1))
-    R[i] <- abs(z_scores[i+1] - z_scores[i])
-
-  MR_mean <- sum(R)/ (length(data1$P) - 1)
-  sigma <- MR_mean/1.128
-  LCL <- ifelse(center - 3*sqrt(center/data1$sample) * sigma < 0, 0, center - 3*sqrt(center/data1$sample) * sigma)
-  UCL <- center + 3*sqrt(center/data1$sample) * sigma
-  sixsigma <- list(statistics = data1$P, limits = data.frame(LCL, UCL), center = center)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
-  yLimits <- range(c(0,yBreaks * 1.2))
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1]) + 0.5
-  else
-    xBreaks <- c(subgroups) + 0.5
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center),
-    l = c(
-      gettextf("CL = %g", round(center, 4))
-    )
-  )
-
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_hline(yintercept = center, color = "green") +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  if (length(UCL) == 1){
-    dfLabel <- data.frame(
-      x = max(xLimits) * .95,
-      y = c(center, UCL, LCL),
-      l = c(
-        gettextf("CL = %g", round(center, 4)),
-        gettextf("UCL = %g",   round(UCL, 5)),
-        gettextf("LCL = %g",   round(LCL, 5))
-      )
-    )
-    xBreaks <- xBreaks - 0.5
-
-    p <- p +
-      ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
-      jaspGraphs::geom_line(data = data_plot, ggplot2::aes(x = subgroups, y = P),color = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue'))
-  } else{
-    n <- length(UCL)
-    p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, color = "red"), size = 1.5, linetype = "F1") +
-      jaspGraphs::geom_line(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),color = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
-      ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, color = "red"), size = 1.5, linetype = "F1") +
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], color = "red"), size = 1.5)+
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = LCL[n], color = "red"), size = 1.5)
-
-  }
-
-  if (timeStamp != "")
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
-
-  return(list(p = p, sixsigma = sixsigma))
-}
-
-.LanyP <- function(dataset, options, timeStamp) {
-  data1 <- data.frame(D = dataset[,options$D], sample = dataset[,options$total])
-  data1$P <- data1$D/data1$sample
-  subgroups <- c(1:nrow(data1))
-  data_plot <- data.frame(subgroups = subgroups, P = data1$P)
-
-  #Sixsigma
-  center = sum(data1$D)/sum(data1$sample)
-  z_scores <- (data1$P - center)/sqrt(center*(1 - center)/data1$sample[1])
-  R <- vector()
-  for (i in c(1:length(z_scores) - 1))
-    R[i] <- abs(z_scores[i+1] - z_scores[i])
-
-  MR_mean <- sum(R)/ (length(data1$P) - 1)
-  sigma <- MR_mean/1.128
-  LCL <- ifelse(center - 3*sqrt(center*(1 - center)/data1$sample) * sigma < 0, 0, center - 3*sqrt(center*(1 - center)/data1$sample) * sigma)
-  UCL <- center + 3*sqrt(center*(1 - center)/data1$sample) * sigma
-  sixsigma <- list(statistics = data1$P, limits = data.frame(LCL, UCL), center = center)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL,data_plot$P ,UCL))
-  yLimits <- range(c(0,yBreaks * 1.2))
-  if (length(subgroups) > 60)
-    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups)[-1]) + 0.5
-  else
-    xBreaks <- c(subgroups) + 0.5
-  xLimits <- c(1,max(xBreaks) * 1.15)
-  dfLabel <- data.frame(
-    x = max(xLimits) * 0.95,
-    y = c(center),
-    l = c(
-      gettextf("CL = %g", round(center, 4))
-    )
-  )
-
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_hline(yintercept = center, color = "green") +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name =  gettext("Proportion") ,limits = yLimits, breaks = yBreaks) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  if (length(UCL) == 1){
-    dfLabel <- data.frame(
-      x = max(xLimits) * .95,
-      y = c(center, UCL, LCL),
-      l = c(
-        gettextf("CL = %g", round(center, 4)),
-        gettextf("UCL = %g",   round(UCL, 5)),
-        gettextf("LCL = %g",   round(LCL, 5))
-      )
-    )
-    xBreaks <- xBreaks -0.5
-
-    p <- p +
-      ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits)) +
-      jaspGraphs::geom_line(data = data_plot, ggplot2::aes(x = subgroups, y = P),color = "blue") +
-      jaspGraphs::geom_point(data = data_plot, ggplot2::aes(x = subgroups, y = P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue'))
-  } else{
-    n <- length(UCL)
-    p <- p + ggplot2::geom_step(ggplot2::aes(x = subgroups, y = UCL, color = "red"), size = 1.5, linetype = "F1") +
-      jaspGraphs::geom_line(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),color = "blue") +
-      jaspGraphs::geom_point(ggplot2::aes(x = subgroups  + 0.5, y = data_plot$P),size = 4, fill = ifelse(data_plot$P > UCL | data_plot$P < LCL, 'red', 'blue')) +
-      ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = xBreaks - 0.5) +
-      ggplot2::geom_step(ggplot2::aes(x = subgroups, y = LCL, color = "red"), size = 1.5, linetype = "F1") +
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = UCL[n], color = "red"), size = 1.5)+
-      ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = LCL[n], color = "red"), size = 1.5)
-
-  }
-
-  if (timeStamp != "")
-    p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = dataset[, options$timeStamp])
-
-  return(list(p = p, sixsigma = sixsigma))
-}
-.Check_equal_samples <- function(dataset,options) {
-  .hasErrors(
-    dataset,
-    all.target = options$total,
-    custom = function() {
-      if (length(unique(dataset[[options$total]])) > 1)
-        return("Samples must be equal in size")
-    },
+.qcAttributesChartsCheckErrors <- function(dataset, options) {
+  .hasErrors(dataset,
+    type = c("infinity", "missingValues", "negativeValues"),
+    all.target = c(options[["defects"]], options[["sampleSize"]]),
     exitAnalysisIfErrors = TRUE
   )
 }
 
-.AReport <- function(ccTitle = "", ccName = "", ccOperator = "", ccID = "", ccMisc = "" , ccAppraiser = "", ccMeasurement = "", ccSize = "",
-                     ccTime = "", ccFrequency = ""){
-
-  Report <- createJaspContainer(gettext("Report"))
-
-  if (ccTitle == ""){
-    title <- gettext("Control Charts for Attributes Report")
-  }else{
-    title <- ccTitle
+.qcAttributesChartsSummaryTable <- function(jaspResults, dataset, options, ready, position) {
+  if (!is.null(jaspResults[["summaryTable"]])) {
+    return()
   }
-  name <- gettextf("Service name: %s", ccName)
-  operator <- gettextf("Operator: %s", ccOperator)
-  ID <- gettextf("Identification: %s", ccID)
-  Appraiser <- gettextf("Appraiser: %s", ccAppraiser)
-  Measurement <- gettextf("Measurement system: %s", ccMeasurement)
-  Size <- gettextf("Name of Size: %s", ccSize)
-  Time <- gettextf("Time: %s", ccTime)
-  Frequency <- gettextf("Frequency: %s", ccFrequency)
 
+  table <- createJaspTable(gettext("Data Summary"))
+  table$position <- position
+  table$dependOn(options = c("defects", "sampleSize"))
 
-  text1 <- c(name, operator)
-  text2 <- c(ID, Appraiser)
-  text3 <- c(Measurement, Time)
-  text4 <- c(Size, Frequency)
+  table$addColumnInfo(name = "nrow", title = gettext("Samples"), type = "integer")
+  table$addColumnInfo(name = "n", title = gettext("Units"), type = "integer")
+  table$addColumnInfo(name = "k", title = gettext("Nonconforming units"), type = "integer")
 
-  matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1, position = 1)
-  plotMat <- matrix(list(), 2, 2, T)
-  plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- .ggplotWithText(text2)
-  plotMat[[2, 1]] <- .ggplotWithText(text3)
-  plotMat[[2, 2]] <- .ggplotWithText(text4)
+  jaspResults[["summaryTable"]] <- table
 
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(title, ""))
-  matrixPlot$plotObject <- p
+  if (!ready) {
+    return()
+  }
 
-  return(matrixPlot)
+  row <- list(nrow = nrow(dataset), n = sum(dataset[[options[["sampleSize"]]]]), k = sum(dataset[[options[["defects"]]]]))
+  table$addRows(row)
 }
+
+.qcAttributesChartsContainer <- function(jaspResults, dataset, options, ready, position, type) {
+  checked <- switch(type,
+    "np" = options[["npchart"]],
+    "p" = options[["pchart"]],
+    "Laney p'" = options[["lpchart"]],
+    "c" = options[["cchart"]],
+    "u" = options[["uchart"]],
+    "Laney u'" = options[["luchart"]],
+    "xmr" = options[["xmrchart"]]
+  )
+
+  if (!checked) {
+    return()
+  }
+
+  optionTitle <- switch(type,
+    "np" = "npchart",
+    "p" = "pchart",
+    "Laney p'" = "lpchart",
+    "c" = "cchart",
+    "u" = "uchart",
+    "Laney u'" = "luchart",
+    "xmr" = "xmrchart"
+  )
+
+  containerTitle <- switch(type,
+    "np" = gettext("NP Chart: Number of Nonconforming Units"),
+    "p" = gettext("P Chart: Proportion of Nonconforming Units"),
+    "Laney p'" = gettext("Laney p' Chart: Proportion of Nonconforming Units"),
+    "c" = gettext("C Chart: Number of Nonconformities per Unit"),
+    "u" = gettext("U Chart: Average Nonconformities per Unit"),
+    "Laney u'" = gettext("Laney u' Chart: Average Nonconformities per Unit"),
+    "xmr" = gettext("X-mR Chart: Proportion and Moving Range")
+  )
+
+  if (is.null(jaspResults[[optionTitle]])) {
+    container <- createJaspContainer(title = containerTitle)
+    container$dependOn(c("defects", "sampleSize", optionTitle))
+    container$position <- position
+    jaspResults[[optionTitle]] <- container
+  } else {
+    container <- jaspResults[[optionTitle]]
+  }
+
+  # These charts require equal sample sizes
+  if (type == "np" || type == "c") {
+    if (length(unique(dataset[[options[["sampleSize"]]]])) > 1) {
+      container$setError(gettext("Failed to create chart: Sample sizes must all be equal."))
+    }
+  }
+
+  if (type != "xmr") {
+    .qcAttributesChartsCreateChart(container, dataset, options, ready, type, positionInContainer = 1)
+    .qcAttributesChartsNelsonTable(container, dataset, options, ready, type, positionInContainer = 2)
+  } else {
+    .qcAttributesChartsCreateChart(container, dataset, options, ready, type = "xbar", positionInContainer = 1)
+    .qcAttributesChartsCreateChart(container, dataset, options, ready, type = "R", positionInContainer = 2)
+    .qcAttributesChartsNelsonTable(container, dataset, options, ready, type = "xbar", positionInContainer = 3)
+    .qcAttributesChartsNelsonTable(container, dataset, options, ready, type = "R", positionInContainer = 4)
+  }
+}
+
+.qcAttributesChartsCreateChart <- function(container, dataset, options, ready, type, positionInContainer) {
+  jaspTitle <- paste0(type, "plot")
+  if (!is.null(container[[jaspTitle]])) {
+    return()
+  }
+
+  plot <- createJaspPlot(title = gettextf("%s Chart", toupper(type)), width = options$plotWidth * 1.75, height = options$plotHeight)
+  plot$dependOn(c("timeStamp", "palette"))
+  plot$position <- positionInContainer
+  container[[jaspTitle]] <- plot
+
+  if (!ready || container$getError()) {
+    return()
+  }
+
+  if (type == "p" || type == "Laney p'" || type == "u" || type == "Laney u'") {
+    if (options[["defects"]] != "" && options[["sampleSize"]] != "") {
+      higher <- dataset[[options[["defects"]]]] > dataset[[options[["sampleSize"]]]]
+      if (any(higher)) {
+        plot$setError(gettextf("%1$s row(s) in the data contain more nonconformities than units.", length(which(higher))))
+        return()
+      }
+    }
+  }
+
+  palette <- .qcColorPalette(options)
+  defects <- dataset[[options[["defects"]]]]
+  totals <- dataset[[options[["sampleSize"]]]]
+  proportions <- defects / totals
+
+  plotTitle <- switch(type,
+    "np" = gettext("Frequency"),
+    "c" = gettext("Frequency"),
+    "u" = gettext("Average"),
+    "p" = gettext("Proportion"),
+    "Laney p'" = gettext("Proportion"),
+    "Laney u'" = gettext("Proportion"),
+    "xbar" = gettext("Proportion"),
+    "R" = gettext("Moving range")
+  )
+
+  p_try <- try({
+    if (type == "np" || type == "c" || type == "u") {
+      qccOutput <- qcc::qcc(data = defects, sizes = totals, type = type, plot = FALSE)
+      center <- qccOutput[["center"]]
+      ucl <- qccOutput[["limits"]][, 2]
+      lcl <- qccOutput[["limits"]][, 1]
+      statistics <- qccOutput$statistics
+      fill <- ifelse(NelsonLaws(qccOutput, chart = "c")$red_points, palette[3], palette[2])
+      plotTitle <- switch(type,
+        "np" = gettext("Frequency"),
+        "c" = gettext("Frequency"),
+        "u" = gettext("Average")
+      )
+    } else if (type == "p") {
+      qccOutput <- qcc::qcc(data = defects, sizes = totals, type = "p", plot = FALSE)
+      center <- qccOutput[["center"]]
+      ucl <- qccOutput[["limits"]][, 2]
+      lcl <- qccOutput[["limits"]][, 1]
+      if (min(totals) / max(totals) >= 0.75) {
+        p.hat <- mean(qccOutput[["statistics"]])
+        n.mean <- mean(totals)
+        ucl <- p.hat + 3 * (sqrt(p.hat * (1 - p.hat))) / (sqrt(n.mean))
+        lcl <- p.hat - 3 * (sqrt(p.hat * (1 - p.hat))) / (sqrt(n.mean))
+      }
+      statistics <- qccOutput$statistics
+      fill <- ifelse(qccOutput$statistics > ucl | qccOutput$statistics < lcl, palette[3], palette[2])
+    } else if (type == "Laney p'" || type == "Laney u'") {
+      center <- sum(defects) / sum(totals)
+      z_scores <- switch(type,
+        "Laney p'" = (proportions - center) / sqrt(center * (1 - center) / totals[1]),
+        "Laney u'" = (proportions - center) / sqrt(center / totals[1])
+      )
+      R <- numeric(length(z_scores) - 1)
+      for (i in 1:length(R)) {
+        R[i] <- abs(z_scores[i + 1] - z_scores[i])
+      }
+      MR_mean <- sum(R) / (length(proportions) - 1)
+      sigma <- MR_mean / 1.128
+      if (type == "Laney p'") {
+        lcl <- ifelse(center - 3 * sqrt(center * (1 - center) / totals) * sigma < 0, yes = 0, no = center - 3 * sqrt(center * (1 - center) / totals) * sigma)
+        ucl <- center + 3 * sqrt(center * (1 - center) / totals) * sigma
+      } else {
+        lcl <- ifelse(center - 3 * sqrt(center / totals) * sigma < 0, yes = 0, no = center - 3 * sqrt(center / totals) * sigma)
+        ucl <- center + 3 * sqrt(center / totals) * sigma
+      }
+      statistics <- proportions
+      fill <- ifelse(proportions > ucl | proportions < lcl, palette[3], palette[2])
+    } else if (type == "xbar") {
+      qccOutput <- qcc::qcc(data = proportions, type = "xbar.one", plot = FALSE)
+      center <- qccOutput[["center"]]
+      ucl <- qccOutput[["limits"]][, 2]
+      lcl <- qccOutput[["limits"]][, 1]
+      statistics <- qccOutput$statistics
+      fill <- ifelse(qccOutput$statistics > ucl | qccOutput$statistics < lcl, palette[3], palette[2])
+    } else if (type == "R") {
+      qccOutput <- qcc::qcc(data = matrix(c(proportions[1:length(proportions) - 1], proportions[2:length(proportions)]), ncol = 2), type = "R", plot = FALSE)
+      center <- qccOutput[["center"]]
+      ucl <- max(qccOutput[["limits"]])
+      lcl <- min(qccOutput[["limits"]])
+      statistics <- qccOutput[["statistics"]]
+      fill <- ifelse(statistics > ucl | statistics < lcl, palette[3], palette[2])
+    }
+
+    plotData <- data.frame(group = 1:length(statistics), stat = statistics, fill = fill)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, lcl, plotData[["stat"]], ucl))
+
+    # TODO: Find a way to nicely display x-breaks
+    xBreaks <- seq(1, nrow(plotData), length.out = min(20, nrow(plotData)))
+    if (options[["timeStamp"]] != "") {
+      xLabels <- dataset[[options[["timeStamp"]]]][xBreaks]
+    } else {
+      xLabels <- xBreaks
+    }
+
+    p <- ggplot2::ggplot(data = plotData, ggplot2::aes(x = group, y = stat)) +
+      ggplot2::geom_segment(y = center, yend = center, x = 1, xend = nrow(plotData), color = palette[1])
+
+    if (length(ucl) == 1) {
+      labelData <- data.frame(
+        x = rep(nrow(plotData) + 1, 3), y = c(center, ucl, lcl),
+        l = c(gettextf("CL = %g", round(center, 4)), gettextf("UCL = %g", round(ucl, 4)), gettextf("LCL = %g", round(lcl, 4)))
+      )
+      p <- p + ggplot2::geom_segment(y = ucl, yend = ucl, x = 1, xend = nrow(plotData), color = palette[3], linetype = "dashed") +
+        ggplot2::geom_segment(y = lcl, yend = lcl, x = 1, xend = nrow(plotData), color = palette[3], linetype = "dashed")
+    } else {
+      labelData <- data.frame(
+        x = nrow(plotData) + 1, y = center,
+        l = gettextf("CL = %g", round(center, 4))
+      )
+      ucl <- c(ucl, ucl[length(ucl)])
+      lcl <- c(lcl, lcl[length(lcl)])
+      p <- p + ggplot2::geom_step(data = data.frame(x = 1:length(ucl), y = ucl), mapping = ggplot2::aes(x = x, y = y), color = palette[3], size = 1.5, linetype = "F1", inherit.aes = FALSE) +
+        ggplot2::geom_step(data = data.frame(x = 1:length(lcl), y = lcl), mapping = ggplot2::aes(x = x, y = y), color = palette[3], size = 1.5, linetype = "F1", inherit.aes = FALSE)
+    }
+
+    p <- p + jaspGraphs::geom_line(color = palette[2]) +
+      jaspGraphs::geom_point(fill = plotData$fill, color = "black", size = 4) +
+      ggplot2::geom_label(data = labelData, mapping = ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = 4.5, hjust = 0) +
+      ggplot2::scale_y_continuous(name = plotTitle, breaks = yBreaks, limits = range(yBreaks)) +
+      ggplot2::scale_x_continuous(name = gettext("Sample"), breaks = xBreaks, limits = c(1, max(xBreaks) * 1.15), labels = xLabels) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw(legend.position = "none")
+
+    if (options[["timeStamp"]] != "") {
+      p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 0.5))
+    }
+  })
+
+  if (isTryError(p_try)) {
+    plot$setError(gettextf("Plotting not possible: %s", jaspBase:::.extractErrorMessage(p_try)))
+  } else {
+    plot$plotObject <- p
+  }
+}
+
+.qcAttributesChartsNelsonTable <- function(container, dataset, options, ready, type, positionInContainer) {
+  table <- createJaspTable(title = gettextf("Nelson Law Tests for %s Chart", type))
+  table$dependOn("timeStamp")
+  table$position <- positionInContainer
+
+  table$showSpecifiedColumnsOnly <- TRUE
+  table$addFootnote(message = gettext("Numbers are data points (rows) where test violations occur."))
+
+  jaspTitle <- paste0(type, "ChartTable")
+  container[[jaspTitle]] <- table
+
+  if (!ready || container$getError()) {
+    return()
+  }
+
+  defects <- dataset[[options[["defects"]]]]
+  totals <- dataset[[options[["sampleSize"]]]]
+  proportions <- defects / totals
+  if (type == "np" || type == "c" || type == "u" || type == "Laney p'" || type == "Laney u'" || type == "p") {
+    qccOutput <- qcc::qcc(data = defects, sizes = totals, type = "p", plot = FALSE)
+  } else if (type == "xbar") {
+    qccOutput <- qcc::qcc(data = proportions, type = "xbar.one", plot = FALSE)
+  } else if (type == "R") {
+    qccOutput <- qcc::qcc(data = matrix(c(proportions[1:length(proportions) - 1], proportions[2:length(proportions)]), ncol = 2), type = "R", plot = FALSE)
+  }
+  labels <- if (options[["timeStamp"]] != "") options[["timeStamp"]] else 1:nrow(dataset)
+
+  if (type == "np" || type == "c" || type == "u" || type == "Laney p'" || type == "Laney u'" || type == "R") {
+    test <- NelsonLaws(data = qccOutput, xLabels = labels, chart = "c")
+  } else if (type == "p") {
+    test <- NelsonLaws(data = qccOutput, xLabels = labels, chart = "p")
+  } else {
+    test <- NelsonLaws(data = qccOutput, xLabels = labels)
+  }
+
+  if (length(test$Rules$R1) > 0) {
+    table$addColumnInfo(name = "test1", title = gettextf("Test 1: Beyond limit"), type = "integer")
+  }
+
+  if (length(test$Rules$R2) > 0) {
+    table$addColumnInfo(name = "test2", title = gettextf("Test 2: Shift"), type = "integer")
+  }
+
+  if (length(test$Rules$R3) > 0) {
+    table$addColumnInfo(name = "test3", title = gettextf("Test 3: Trend"), type = "integer")
+  }
+
+  if (type == "Range" & length(labels) == 0) {
+    table$setData(list(
+      "test1" = c(test$Rules$R1 + 1),
+      "test2" = c(test$Rules$R2 + 1),
+      "test3" = c(test$Rules$R3 + 1)
+    ))
+  } else {
+    table$setData(list(
+      "test1" = c(test$Rules$R1),
+      "test2" = c(test$Rules$R2),
+      "test3" = c(test$Rules$R3)
+    ))
+  }
+}
+
+# .AReport <- function(ccTitle = "", ccName = "", ccOperator = "", ccID = "", ccMisc = "", ccAppraiser = "", ccMeasurement = "", ccSize = "",
+#                      ccTime = "", ccFrequency = "") {
+#   Report <- createJaspContainer(gettext("Report"))
+
+#   if (ccTitle == "") {
+#     title <- gettext("Control Charts for Attributes Report")
+#   } else {
+#     title <- ccTitle
+#   }
+#   name <- gettextf("Service name: %s", ccName)
+#   operator <- gettextf("Operator: %s", ccOperator)
+#   ID <- gettextf("Identification: %s", ccID)
+#   Appraiser <- gettextf("Appraiser: %s", ccAppraiser)
+#   Measurement <- gettextf("Measurement system: %s", ccMeasurement)
+#   Size <- gettextf("Name of Size: %s", ccSize)
+#   Time <- gettextf("Time: %s", ccTime)
+#   Frequency <- gettextf("Frequency: %s", ccFrequency)
+
+
+#   text1 <- c(name, operator)
+#   text2 <- c(ID, Appraiser)
+#   text3 <- c(Measurement, Time)
+#   text4 <- c(Size, Frequency)
+
+#   matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1, position = 1)
+#   plotMat <- matrix(list(), 2, 2, T)
+#   plotMat[[1, 1]] <- .ggplotWithText(text1)
+#   plotMat[[1, 2]] <- .ggplotWithText(text2)
+#   plotMat[[2, 1]] <- .ggplotWithText(text3)
+#   plotMat[[2, 2]] <- .ggplotWithText(text4)
+
+#   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(title, ""))
+#   matrixPlot$plotObject <- p
+
+#   return(matrixPlot)
+# }

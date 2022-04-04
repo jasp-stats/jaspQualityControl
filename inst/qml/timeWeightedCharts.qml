@@ -24,53 +24,65 @@ Form
 		}
 	}
 
+	DropDown
+	{
+		name: 									"palette"
+		indexDefaultValue: 						0
+		label:									qsTr("Color Palette")
+		values:
+			[
+			{ value: "iso", label: qsTr("ISO 7870-1") },
+			{ value: "jasp", label: qsTr("JASP") },
+			{ value: "colorblind", label: qsTr("Colorblind") }
+		]
+	}
+
 	Group
 	{
+		title:									qsTr("Plots")
 		columns: 								1
 
 		CheckBox
 		{
-			name: 								"Cumulativechart"
-			label: 								qsTr("Cumulative sum chart")
+			name: 								"csc"
+			label: 								qsTr("CSC - Cumulative sum")
 
 			DoubleField
 			{
-				name:							"h"
-				label:							qsTr("Number of standard deviations")
+				name:							"numsigma"
+				label:							qsTr("Std. error decision interval")
 				defaultValue:					4
-				enabled:						variationReference.currentValue != "studyVariation"
 			}
 
 			DoubleField
 			{
-				name:							"k"
-				label:							qsTr("Shift size")
+				name:							"shift"
+				label:							qsTr("Std. error shift detection")
 				defaultValue:					0.5
-				enabled:						variationReference.currentValue != "studyVariation"
 			}
 		}
 
 		CheckBox
 		{
-			name: 								"Exponentialchart"
-			label: 								qsTr("Exponentially weighted moving average chart")
+			name: 								"ewma"
+			label: 								qsTr("EWMA - Exponentially weighted moving average")
 
 			DoubleField
 			{
-				name:							"EWMAlambda"
-				label:							qsTr("Lambda")
+				name:							"lambda"
+				label:							qsTr("Smoothing parameter")
 				defaultValue:					0.3
 			}
 
 			DoubleField
 			{
-				name:							"EWMAcenter"
+				name:							"center"
 				label:							qsTr("Center")
 			}
 
 			DoubleField
 			{
-				name:							"EWMAStd"
+				name:							"sigma"
 				label:							qsTr("Within-group standard deviation")
 				defaultValue:					3
 				fieldWidth: 					50
@@ -78,22 +90,22 @@ Form
 
 			DoubleField
 			{
-				name:							"EWMANsigma"
-				label:							qsTr("Sigmas for computing control limits")
+				name:							"nsigma"
+				label:							qsTr("Std. error control limits")
 				defaultValue:					3
 			}
 		}
 
 		CheckBox
 		{
-			name: 								"gchart"
-			label: 								qsTr("g chart")
+			name: 								"g"
+			label: 								qsTr("G - Time between events")
 		}
 
 		CheckBox
 		{
-			name: 								"tchart"
-			label: 								qsTr("t chart")
+			name: 								"t"
+			label: 								qsTr("T - Number between events")
 		}
 	}
 }

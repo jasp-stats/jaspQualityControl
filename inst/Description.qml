@@ -122,8 +122,8 @@ Description
 
 	GroupTitle
 	{
-		title:			qsTr("Probability of Detection")
-//		icon:			"processControl-measurement.svg"
+		title:			qsTr("Other")
+		icon:			"processControl-other.svg"
 	}
 	Analysis
 	{

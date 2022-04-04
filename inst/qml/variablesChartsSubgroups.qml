@@ -60,6 +60,19 @@ Form
 		}
 	}
 
+	DropDown
+	{
+		name: 									"palette"
+		indexDefaultValue: 						0
+		label:									qsTr("Color Palette")
+		values: 
+		[
+			{ value: "iso", label: qsTr("ISO 7870-1") },
+			{ value: "jasp", label: qsTr("JASP") },
+			{ value: "colorblind", label: qsTr("Colorblind") }
+		]
+	}
+
 	DoubleField
 	{
 		id:										pcSubgroupSize

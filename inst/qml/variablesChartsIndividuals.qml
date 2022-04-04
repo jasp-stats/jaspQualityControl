@@ -1,5 +1,5 @@
-import QtQuick 								    2.8
-import QtQuick.Layouts 							1.3
+import QtQuick									2.8
+import QtQuick.Layouts							1.3
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
@@ -18,30 +18,43 @@ Form
 
 		AssignedVariablesList
 		{
-			name:								"variables"
-			title:								qsTr("Variables")
+			id:									variable
+			name:								"variable"
+			title:								qsTr("Variable")
 			singleVariable:						true
 			allowedColumns:						["scale"]
 		}
 
-	  AssignedVariablesList
+		AssignedVariablesList
 		{
 			name:								"subgroups"
-			title:								qsTr("Subgroups")
+			title:								qsTr("Labels (Optional)")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
+	}
+
+	DropDown
+	{
+		name: 									"palette"
+		indexDefaultValue: 						0
+		label:									qsTr("Color Palette")
+		values: 
+		[
+			{ value: "iso", label: qsTr("ISO 7870-1") },
+			{ value: "jasp", label: qsTr("JASP") },
+			{ value: "colorblind", label: qsTr("Colorblind") }
+		]
 	}
 
 	Group
 	{
-		title: 									qsTr("Variables Chart for Individuals")
+		title: 									qsTr("Plots")
 
 		CheckBox
 		{
-			name: 								"ImRchart"
-			label: 								qsTr("X-mR chart")
-			checked: 							true
+			name: 								"xmrchart"
+			label: 								qsTr("X-mR: Average and moving range")
 
 			DoubleField
 			{
@@ -50,25 +63,12 @@ Form
 				defaultValue:					2
 				min: 							2
 			}
-		CheckBox
-		{
-			name:                   			"manualTicks"
-			label: 								qsTr("Number of ticks on x-axis:")
-			childrenOnSameRow: true
-
-			DoubleField
-			{
-				name: 							"nTicks"
-				defaultValue:					5
-			}
-		}
 		}
 
 		CheckBox
 		{
-			name: 								"CorPlot"
-			label: 								qsTr("Autocorrelation")
-			checked: 							false
+			name: 								"autocorrelation"
+			label: 								qsTr("Autocorrelation plot")
 
 			DoubleField
 			{
@@ -78,85 +78,86 @@ Form
 				min:			           	 	1
 			}
 
-			DoubleField
+			CIField
 			{
 				name:							"CI"
-				label:							qsTr("Confidence interval size")
-				defaultValue:					0.95
-				min:			            	0.0001
+				label:							qsTr("Confidence interval")
 			}
 		}
 	}
 
-	Section
+	CheckBox
 	{
-		title: 									qsTr("Variable Charts for Individuals Report")
+		id:										report
+		name:									"report"
+		label: 									qsTr("Generate report")
+		enabled:								variable.count > 0
 
-		TextField
+		Group
 		{
-			id:									ccTitle
-			label: 								qsTr("Title")
-			name: 								"ccTitle"
-			placeholderText:					qsTr("Measurement")
-			fieldWidth:							100
-		}
+			columns:							2
+			visible:							report.checked
 
-		TextField
-		{
-			id:									ccName
-			label: 								qsTr("Name")
-			name: 								"ccName"
-			placeholderText:					qsTr("Name")
-			fieldWidth:							100
-		}
+			TextField
+			{
+				id:								ccTitle
+				label: 							qsTr("Title")
+				name: 							"ccTitle"
+				placeholderText:				qsTr("Measurement")
+				fieldWidth:						100
+			}
 
-		TextField
-		{
-			id:									ccDate
-			label: 								qsTr("Date")
-			name: 								"ccDate"
-			placeholderText:					qsTr("Date")
-			fieldWidth:							100
-		}
+			TextField
+			{
+				id:								ccName
+				label: 							qsTr("Name")
+				name: 							"ccName"
+				placeholderText:				qsTr("Name")
+				fieldWidth:						100
+			}
 
-		TextField
-		{
-			id:									ccReportedBy
-			label: 								qsTr("Reported by")
-			name: 								"ccReportedBy"
-			placeholderText:					qsTr("Name")
-			fieldWidth:							100
-		}
+			TextField
+			{
+				id:								ccDate
+				label: 							qsTr("Date")
+				name: 							"ccDate"
+				placeholderText:				qsTr("Date")
+				fieldWidth:						100
+			}
 
-		TextField
-		{
-			id:									ccMisc
-			label: 								qsTr("Misc")
-			name: 								"ccMisc"
-			placeholderText:					qsTr("Miscellaneous")
-			fieldWidth:							100
-		}
+			TextField
+			{
+				id:								ccReportedBy
+				label: 							qsTr("Reported by")
+				name: 							"ccReportedBy"
+				placeholderText:				qsTr("Name")
+				fieldWidth:						100
+			}
 
-		TextField
-		{
-			label: 								qsTr("Sub-title:")
-			name: 								"ccSubTitle"
-			placeholderText:					qsTr("Sub-title")
-			fieldWidth:							100
-		}
+			TextField
+			{
+				id:								ccMisc
+				label: 							qsTr("Misc")
+				name: 							"ccMisc"
+				placeholderText:				qsTr("Miscellaneous")
+				fieldWidth:						100
+			}
 
-		TextField
-		{
-			label: 								qsTr("Chart name:")
-			name: 								"ccChartName"
-			placeholderText:					qsTr("Name of the chart")
-			fieldWidth:							100
-		}
+			TextField
+			{
+				label: 							qsTr("Sub-title:")
+				name: 							"ccSubTitle"
+				placeholderText:				qsTr("Sub-title")
+				fieldWidth:						100
+			}
 
-		CheckBox
-		{
-			name: 								"CCReport"
-			label: 								qsTr("Show Report")
+			TextField
+			{
+				label: 							qsTr("Chart name:")
+				name: 							"ccChartName"
+				placeholderText:				qsTr("Name of the chart")
+				fieldWidth:						100
+			}
 		}
 	}
 }
