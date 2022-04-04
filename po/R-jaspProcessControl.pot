@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-03-12 03:40\n"
+"POT-Creation-Date: 2022-04-04 09:28\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -89,6 +89,12 @@ msgid "D"
 msgstr ""
 
 msgid "Moving Range"
+msgstr ""
+
+msgid "Report"
+msgstr ""
+
+msgid "Control Charts for Attributes Report"
 msgstr ""
 
 msgid "Service name: %s"
@@ -190,10 +196,10 @@ msgstr ""
 msgid "This plot is unavailable for saturated designs."
 msgstr ""
 
-msgid "Normal Plot of Standardized Effects"
+msgid "Residuals vs. Standard Order"
 msgstr ""
 
-msgid "Residual Plots for %s"
+msgid "Four in one for %s"
 msgstr ""
 
 msgid "Available Factorial Designs"
@@ -235,13 +241,19 @@ msgstr ""
 msgid "Alias Structure"
 msgstr ""
 
+msgid "Standard order"
+msgstr ""
+
+msgid "Pareto Chart of Standardized Effects"
+msgstr ""
+
 msgid "Term"
 msgstr ""
 
 msgid "Analysis of variance"
 msgstr ""
 
-msgid "Model Summary"
+msgid "Model summary"
 msgstr ""
 
 msgid "%s,%s"
@@ -250,10 +262,16 @@ msgstr ""
 msgid "%s ~ FO(%s)"
 msgstr ""
 
+msgid "Model Summary"
+msgstr ""
+
 msgid "Regression equation in uncoded units"
 msgstr ""
 
 msgid "<i>p</i>-value"
+msgstr ""
+
+msgid "VIF"
 msgstr ""
 
 msgid "Index"
@@ -428,9 +446,6 @@ msgid "At least one predictor and response variable need to be specified before 
 msgstr ""
 
 msgid "At least one desirability function must be specified before running the analysis."
-msgstr ""
-
-msgid "Standard order"
 msgstr ""
 
 msgid "Reference Tables and Plots"
@@ -640,22 +655,19 @@ msgstr ""
 msgid "Measurement by Part Graph"
 msgstr ""
 
-msgid "Measurement by Operator Graph"
+msgid "Measurements by Operator Graph"
 msgstr ""
 
-msgid "Parts by Operator Interaction Graph"
+msgid "Part by Operator Interaction Graph"
 msgstr ""
 
-msgid "Traffic light graph"
-msgstr ""
-
-msgid "Report"
+msgid "Traffic light chart"
 msgstr ""
 
 msgid "ANOVA Table"
 msgstr ""
 
-msgid "Two-way ANOVA Table"
+msgid "One-way ANOVA Table"
 msgstr ""
 
 msgid "Two-way ANOVA Table with Interaction"
@@ -709,13 +721,16 @@ msgstr ""
 msgid "Reproducibility"
 msgstr ""
 
+msgid "*"
+msgstr ""
+
 msgid "Number of distinct categories = %i"
 msgstr ""
 
-msgid "Study Variation is calculated as Std. Deviation x %i"
+msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i"
 msgstr ""
 
-msgid "Study Variation is calculated as Std. Deviation x %.2f"
+msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
 msgstr ""
 
 msgid "Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %Study Variation."
@@ -742,10 +757,10 @@ msgstr ""
 msgid "Measurements by Part"
 msgstr ""
 
-msgid "Measurement by Operator"
+msgid "Measurements by Operator"
 msgstr ""
 
-msgid "Parts by Operator Interaction"
+msgid "Part by Operator Interaction"
 msgstr ""
 
 msgid "Operators measured different number of parts."
@@ -769,13 +784,16 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
+msgid "Measurement systems analysis"
+msgstr ""
+
 msgid "Gauge name: %s"
 msgstr ""
 
 msgid "Date of study: %s"
 msgstr ""
 
-msgid "Reported by: %s"
+msgid "Performed by: %s"
 msgstr ""
 
 msgid "Misc: %s"
@@ -784,7 +802,7 @@ msgstr ""
 msgid "Tolerance: %s"
 msgstr ""
 
-msgid "No valid measurements in %s."
+msgid "%.2f"
 msgstr ""
 
 msgid "Gauge r&R Tables"
@@ -815,6 +833,12 @@ msgid "Study Variation is calculated as Std. Deviation * %.2f"
 msgstr ""
 
 msgid "Measurements by part x operator"
+msgstr ""
+
+msgid "Gauge r&R Report"
+msgstr ""
+
+msgid "Reported by: %s"
 msgstr ""
 
 msgid "Scatterplot Operators vs Parts"
@@ -925,6 +949,9 @@ msgstr ""
 msgid "Run Chart of %s"
 msgstr ""
 
+msgid "No valid measurements in %s."
+msgstr ""
+
 msgid "Parameter Estimates"
 msgstr ""
 
@@ -986,6 +1013,12 @@ msgid "Capability of the process"
 msgstr ""
 
 msgid "Could not equally divide %i data points into groups of size %i."
+msgstr ""
+
+msgid "Values must be positive to fit a Weibull/Lognormal distribution."
+msgstr ""
+
+msgid "All zero values have been replaced with a value equal to one-half of the smallest data point."
 msgstr ""
 
 msgid "Capability Studies"
@@ -1093,7 +1126,7 @@ msgstr ""
 msgid "Std. deviation"
 msgstr ""
 
-msgid "Log mean (mu)"
+msgid "Log mean (%1$s)"
 msgstr ""
 
 msgid "Log std.dev (%1$s)"
@@ -1102,7 +1135,7 @@ msgstr ""
 msgid "Shape (%1$s)"
 msgstr ""
 
-msgid "Scale (%1$s)"
+msgid "Scale (<i>k</i>)"
 msgstr ""
 
 msgid "Threshold"
@@ -1132,16 +1165,13 @@ msgstr ""
 msgid "Std. deviation (%1$s)"
 msgstr ""
 
-msgid "Location (%1$s)"
-msgstr ""
-
-msgid "Scale (<i>k</i>)"
-msgstr ""
-
 msgid "AD"
 msgstr ""
 
-msgid "The Anderson-Darling statistic AD is calculated against the %2$s distribution."
+msgid "The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution."
+msgstr ""
+
+msgid "Red dotted lines in the probability plot below represent a 95% confidence interval."
 msgstr ""
 
 msgid "Histogram"
@@ -1154,6 +1184,9 @@ msgid "Process name: %s"
 msgstr ""
 
 msgid "Individuals Charts"
+msgstr ""
+
+msgid "Variables Charts for Individuals"
 msgstr ""
 
 msgid "%s for Individuals"

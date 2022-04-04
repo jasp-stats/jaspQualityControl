@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-03-12 03:40\n"
+"POT-Creation-Date: 2022-04-04 09:28\n"
 "PO-Revision-Date: 2022-04-03 15:11+0000\n"
 "Last-Translator: Wendy Zhao <wendy.zhao@skf.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -93,6 +93,13 @@ msgstr "D"
 
 msgid "Moving Range"
 msgstr "移动极差"
+
+msgid "Report"
+msgstr "报告"
+
+#, fuzzy
+msgid "Control Charts for Attributes Report"
+msgstr "%s 控制图报告"
 
 msgid "Service name: %s"
 msgstr "服务名称: %s"
@@ -193,11 +200,13 @@ msgstr "p"
 msgid "This plot is unavailable for saturated designs."
 msgstr "此图不适用于饱和设计。"
 
-msgid "Normal Plot of Standardized Effects"
-msgstr "标准化效应正态图"
+#, fuzzy
+msgid "Residuals vs. Standard Order"
+msgstr "残差 vs. 运行顺序"
 
-msgid "Residual Plots for %s"
-msgstr "%s 残差图"
+#, fuzzy
+msgid "Four in one for %s"
+msgstr "%s 矩阵图"
 
 msgid "Available Factorial Designs"
 msgstr "可用因子设计"
@@ -238,13 +247,21 @@ msgstr "设计预览"
 msgid "Alias Structure"
 msgstr "别名结构"
 
+msgid "Standard order"
+msgstr "标准序"
+
+#, fuzzy
+msgid "Pareto Chart of Standardized Effects"
+msgstr "标准化效应 Pareto 图"
+
 msgid "Term"
 msgstr "项"
 
 msgid "Analysis of variance"
 msgstr "方差分析"
 
-msgid "Model Summary"
+#, fuzzy
+msgid "Model summary"
 msgstr "模型汇总"
 
 msgid "%s,%s"
@@ -253,11 +270,17 @@ msgstr "%s,%s"
 msgid "%s ~ FO(%s)"
 msgstr "%s ~ FO(%s)"
 
+msgid "Model Summary"
+msgstr "模型汇总"
+
 msgid "Regression equation in uncoded units"
 msgstr "以未编码单位表示的回归方程"
 
 msgid "<i>p</i>-value"
 msgstr "<i>p</i>- 值"
+
+msgid "VIF"
+msgstr ""
 
 msgid "Index"
 msgstr "指数"
@@ -451,9 +474,6 @@ msgid ""
 "At least one desirability function must be specified before running the "
 "analysis."
 msgstr "在运行分析之前，至少需要指定一个合意度函数。"
-
-msgid "Standard order"
-msgstr "标准序"
 
 msgid "Reference Tables and Plots"
 msgstr "参考值表和图形"
@@ -679,22 +699,23 @@ msgstr "操作者散点图"
 msgid "Measurement by Part Graph"
 msgstr "按零件测量值图"
 
-msgid "Measurement by Operator Graph"
+#, fuzzy
+msgid "Measurements by Operator Graph"
 msgstr "按操作者测量值图"
 
-msgid "Parts by Operator Interaction Graph"
+#, fuzzy
+msgid "Part by Operator Interaction Graph"
 msgstr "零件和操作者交互作用图"
 
-msgid "Traffic light graph"
+#, fuzzy
+msgid "Traffic light chart"
 msgstr "红绿灯图"
-
-msgid "Report"
-msgstr "报告"
 
 msgid "ANOVA Table"
 msgstr "方差分析表"
 
-msgid "Two-way ANOVA Table"
+#, fuzzy
+msgid "One-way ANOVA Table"
 msgstr "双向方差分析表"
 
 msgid "Two-way ANOVA Table with Interaction"
@@ -748,13 +769,19 @@ msgstr "总变异"
 msgid "Reproducibility"
 msgstr "再现性"
 
+msgid "*"
+msgstr ""
+
 msgid "Number of distinct categories = %i"
 msgstr "可区分类别数 = %i"
 
-msgid "Study Variation is calculated as Std. Deviation x %i"
+#, fuzzy
+msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i"
 msgstr "研究变异的计算为标准差 x %i"
 
-msgid "Study Variation is calculated as Std. Deviation x %.2f"
+#, fuzzy
+msgid ""
+"Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
 msgstr "研究变异的计算为标准差x %.2f"
 
 msgid ""
@@ -785,10 +812,12 @@ msgstr "操作者 %s"
 msgid "Measurements by Part"
 msgstr "测量值按零件"
 
-msgid "Measurement by Operator"
+#, fuzzy
+msgid "Measurements by Operator"
 msgstr "测量值按操作者"
 
-msgid "Parts by Operator Interaction"
+#, fuzzy
+msgid "Part by Operator Interaction"
 msgstr "零件与操作者交互作用"
 
 msgid "Operators measured different number of parts."
@@ -812,13 +841,18 @@ msgstr "重复性"
 msgid "Reprod"
 msgstr "再现性"
 
+#, fuzzy
+msgid "Measurement systems analysis"
+msgstr "%s 测量系统分析"
+
 msgid "Gauge name: %s"
 msgstr "量具名称 : %s"
 
 msgid "Date of study: %s"
 msgstr "研究日期 : %s"
 
-msgid "Reported by: %s"
+#, fuzzy
+msgid "Performed by: %s"
 msgstr "报告人 : %s"
 
 msgid "Misc: %s"
@@ -827,8 +861,8 @@ msgstr "其它 : %s"
 msgid "Tolerance: %s"
 msgstr "公差 : %s"
 
-msgid "No valid measurements in %s."
-msgstr "%s 中无有效测量值。"
+msgid "%.2f"
+msgstr ""
 
 msgid "Gauge r&R Tables"
 msgstr "量具 r&R表"
@@ -859,6 +893,13 @@ msgstr "研究变异的计算为标准差* %.2f"
 
 msgid "Measurements by part x operator"
 msgstr "测量值按零件 x 操作者"
+
+#, fuzzy
+msgid "Gauge r&R Report"
+msgstr "量具 r&R"
+
+msgid "Reported by: %s"
+msgstr "报告人 : %s"
 
 msgid "Scatterplot Operators vs Parts"
 msgstr "操作者 vs. 零件散点图"
@@ -968,6 +1009,9 @@ msgstr "偏倚直方图"
 msgid "Run Chart of %s"
 msgstr "%s 运行图"
 
+msgid "No valid measurements in %s."
+msgstr "%s 中无有效测量值。"
+
 msgid "Parameter Estimates"
 msgstr "参数估计"
 
@@ -1040,6 +1084,14 @@ msgstr "过程的能力"
 
 msgid "Could not equally divide %i data points into groups of size %i."
 msgstr "无法将 %i 数据点平均分成大小为 %i 的组。"
+
+msgid "Values must be positive to fit a Weibull/Lognormal distribution."
+msgstr ""
+
+msgid ""
+"All zero values have been replaced with a value equal to one-half of the "
+"smallest data point."
+msgstr ""
 
 msgid "Capability Studies"
 msgstr "能力研究"
@@ -1148,7 +1200,8 @@ msgstr "数据集包含负数。与所选分布不兼容。"
 msgid "Std. deviation"
 msgstr "标准差"
 
-msgid "Log mean (mu)"
+#, fuzzy
+msgid "Log mean (%1$s)"
 msgstr "Log 均值 (mu)"
 
 msgid "Log std.dev (%1$s)"
@@ -1157,8 +1210,8 @@ msgstr "对数标准差 (%1$s)"
 msgid "Shape (%1$s)"
 msgstr "形状 (%1$s)"
 
-msgid "Scale (%1$s)"
-msgstr "尺度 (%1$s)"
+msgid "Scale (<i>k</i>)"
+msgstr "尺度 (<i>k</i>)"
 
 msgid "Threshold"
 msgstr "阈值"
@@ -1187,19 +1240,19 @@ msgstr "均值 (%1$s)"
 msgid "Std. deviation (%1$s)"
 msgstr "标准差 (%1$s)"
 
-msgid "Location (%1$s)"
-msgstr "位置 (%1$s)"
-
-msgid "Scale (<i>k</i>)"
-msgstr "尺度 (<i>k</i>)"
-
 msgid "AD"
 msgstr "AD"
 
+#, fuzzy
 msgid ""
-"The Anderson-Darling statistic AD is calculated against the %2$s "
+"The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s "
 "distribution."
 msgstr "Anderson-Darling 统计量 AD 是根据 %2$s 分布计算的。"
+
+msgid ""
+"Red dotted lines in the probability plot below represent a 95% confidence "
+"interval."
+msgstr ""
 
 msgid "Histogram"
 msgstr "直方图"
@@ -1212,6 +1265,10 @@ msgstr "过程名称：%s"
 
 msgid "Individuals Charts"
 msgstr "单值控制图"
+
+#, fuzzy
+msgid "Variables Charts for Individuals"
+msgstr "单值图 %s"
 
 msgid "%s for Individuals"
 msgstr "单值图 %s"
@@ -1264,8 +1321,17 @@ msgstr "副标题：%s"
 msgid "Name of chart: %s"
 msgstr "图形名称：%s"
 
-#~ msgid "Control Charts Report for %s"
-#~ msgstr "%s 控制图报告"
+#~ msgid "Normal Plot of Standardized Effects"
+#~ msgstr "标准化效应正态图"
+
+#~ msgid "Residual Plots for %s"
+#~ msgstr "%s 残差图"
+
+#~ msgid "Scale (%1$s)"
+#~ msgstr "尺度 (%1$s)"
+
+#~ msgid "Location (%1$s)"
+#~ msgstr "位置 (%1$s)"
 
 #~ msgid "DF1"
 #~ msgstr "DF1"
@@ -1284,9 +1350,6 @@ msgstr "图形名称：%s"
 
 #~ msgid "Gauge r&R Variance Components"
 #~ msgstr "量具 r&R 方差分量"
-
-#~ msgid "Measurement systems analysis for %s"
-#~ msgstr "%s 测量系统分析"
 
 #~ msgid "<i>p<i/>-value"
 #~ msgstr "<i>p<i/>- 值"
