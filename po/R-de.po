@@ -563,17 +563,17 @@ msgid "False alarm rate"
 msgstr ""
 
 msgid ""
-"Acceptable: x >= 90% (Effectiveness), x =< 2% (Miss rate), x =< 5% (False "
+"Acceptable: x >= 90%% (Effectiveness), x =< 2%% (Miss rate), x =< 5%% (False "
 "alarm rate)"
 msgstr ""
 
 msgid ""
-"Marginally acceptable: x >= 80% (Effectiveness), x =< 5% (Miss rate), x =< "
-"10% (False alarm rate)"
+"Marginally acceptable: x >= 80%% (Effectiveness), x =< 5%% (Miss rate), x =< "
+"10%% (False alarm rate)"
 msgstr ""
 
 msgid ""
-"Unacceptable: x < 80% (Effectiveness), x > 5% (Miss rate), x > 10% (False "
+"Unacceptable: x < 80%% (Effectiveness), x > 5%% (Miss rate), x > 10%% (False "
 "alarm rate)"
 msgstr ""
 
