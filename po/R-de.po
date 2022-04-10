@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2022-04-04 09:28\n"
-"PO-Revision-Date: 2022-03-13 10:55+0000\n"
+"PO-Revision-Date: 2022-04-11 13:08+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -199,13 +199,12 @@ msgstr "p"
 msgid "This plot is unavailable for saturated designs."
 msgstr "Dieses Diagramm ist für gesättigte Designs nicht verfügbar."
 
-#, fuzzy
 msgid "Residuals vs. Standard Order"
-msgstr "Residuen vs. Angepasster Wert"
+msgstr "Residuen vs. Standard-Reihenfolge"
 
 #, fuzzy
 msgid "Four in one for %s"
-msgstr "Matrix-Diagramm für %s"
+msgstr "Vier-in-einem für %s"
 
 msgid "Available Factorial Designs"
 msgstr "Verfügbare faktorielle Designs"
@@ -247,9 +246,8 @@ msgid "Alias Structure"
 msgstr ""
 
 msgid "Standard order"
-msgstr ""
+msgstr "Standard-Reihenfolge"
 
-#, fuzzy
 msgid "Pareto Chart of Standardized Effects"
 msgstr "Pareto-Diagramm Standardisierter Effekte"
 
@@ -259,7 +257,6 @@ msgstr ""
 msgid "Analysis of variance"
 msgstr "Varianzanalyse"
 
-#, fuzzy
 msgid "Model summary"
 msgstr "Modell-Zusammenfassung"
 
@@ -307,6 +304,9 @@ msgid ""
 "at least one model term\n"
 "                      and one response variable are inputed."
 msgstr ""
+"Es können keine Analysen (außer denen unter 'Design-Spezifikation') "
+"gestartet werden, bis mindestens ein Modellterm\n"
+"                      und eine Antwortvariable eingegeben sind."
 
 msgid "<em>Warning: </em>"
 msgstr "<em>Warnung: </em>"
@@ -318,7 +318,7 @@ msgid "Run Order"
 msgstr ""
 
 msgid "Standard Order"
-msgstr ""
+msgstr "Standard-Reihenfolge"
 
 msgid "x"
 msgstr "x"
@@ -716,9 +716,8 @@ msgstr ""
 msgid "ANOVA Table"
 msgstr "ANOVA-Tabelle"
 
-#, fuzzy
 msgid "One-way ANOVA Table"
-msgstr "Zweifaktorielle ANOVA-Tabelle"
+msgstr "Einfache ANOVA-Tabelle"
 
 msgid "Two-way ANOVA Table with Interaction"
 msgstr "Zweifaktorielle ANOVA-Tabelle mit Interaktion"
@@ -814,7 +813,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Measurements by Operator"
-msgstr "Messung"
+msgstr "Messungen nach Bediener"
 
 msgid "Part by Operator Interaction"
 msgstr ""
@@ -842,7 +841,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Measurement systems analysis"
-msgstr "Messsystem: %s"
+msgstr "Messsystemanalyse"
 
 msgid "Gauge name: %s"
 msgstr ""
@@ -1195,9 +1194,8 @@ msgstr ""
 msgid "Std. deviation"
 msgstr "Std.-Abweichung"
 
-#, fuzzy
 msgid "Log mean (%1$s)"
-msgstr "Mittelwert (%1$s)"
+msgstr "Log-Mittelwert (%1$s)"
 
 msgid "Log std.dev (%1$s)"
 msgstr ""
@@ -1243,7 +1241,8 @@ msgid ""
 "The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s "
 "distribution."
 msgstr ""
-"Die Anderson-Darling-Statistik AD wird anhand der %2$s-Verteilung berechnet."
+"Die Anderson-Darling-Statistik A<i>D</i> wird anhand der %2$s-Verteilung "
+"berechnet."
 
 msgid ""
 "Red dotted lines in the probability plot below represent a 95% confidence "
