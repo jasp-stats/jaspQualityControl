@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2022-04-04 09:28\n"
-"PO-Revision-Date: 2022-04-11 13:08+0000\n"
+"PO-Revision-Date: 2022-04-16 03:43+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -110,7 +110,7 @@ msgid "Identification: %s"
 msgstr ""
 
 msgid "Appraiser: %s"
-msgstr ""
+msgstr "Prüfer: %s"
 
 msgid "Measurement system: %s"
 msgstr "Messsystem: %s"
@@ -270,7 +270,7 @@ msgid "Model Summary"
 msgstr "Modell-Zusammenfassung"
 
 msgid "Regression equation in uncoded units"
-msgstr "Regressionsgleichung in uncodierten Einheiten"
+msgstr "Regressionsgleichung in unkodierten Einheiten"
 
 msgid "<i>p</i>-value"
 msgstr "<i>p</i>-Wert"
@@ -297,7 +297,7 @@ msgid "Missing Runs"
 msgstr ""
 
 msgid "Response Surface Methodology"
-msgstr ""
+msgstr "Wirkungsflächen-Methodik"
 
 msgid ""
 "No analyses (except those under 'Design Specification') can be started until "
@@ -417,13 +417,13 @@ msgid "Index coefficients for %s"
 msgstr "Index-Koeffizienten für %s"
 
 msgid "Coded coefficients"
-msgstr "Codierte Koeffizienten"
+msgstr "Kodierte Koeffizienten"
 
 msgid "Uncoded coefficients"
-msgstr "Uncodierte Koeffizienten"
+msgstr "Unkodierte Koeffizienten"
 
 msgid "Regression equation in coded coefficients"
-msgstr "Regressionsgleichung in codierten Koeffizienten"
+msgstr "Regressionsgleichung in kodierten Koeffizienten"
 
 msgid "S"
 msgstr "S"
@@ -493,10 +493,10 @@ msgid "Kendall's Tau"
 msgstr "Kendalls Tau"
 
 msgid "Cohen's Kappa for Appraiser vs Standard"
-msgstr ""
+msgstr "Cohens Kappa für Prüfer vs Standard"
 
 msgid "Appraiser"
-msgstr ""
+msgstr "Prüfer"
 
 msgid "Cohen's Kappa correlations summary"
 msgstr ""
@@ -509,19 +509,19 @@ msgid "Fleiss' Kappa"
 msgstr "Fleiss' Kappa"
 
 msgid "Within Appraisers"
-msgstr ""
+msgstr "Innerhalb der Prüfer"
 
 msgid "Appraiser vs Standard"
-msgstr ""
+msgstr "Prüfer vs Standard"
 
 msgid "Between Appraisers"
-msgstr ""
+msgstr "Zwischen Prüfern"
 
 msgid "Each Appraiser vs Standard"
-msgstr ""
+msgstr "Jeder Prüfer vs Standard"
 
 msgid "All Appraisers vs Standard"
-msgstr ""
+msgstr "Alle Prüfer vs Standard"
 
 msgid "Inspected"
 msgstr ""
@@ -545,7 +545,7 @@ msgid "Invalid Reference and/or Results were inserted."
 msgstr ""
 
 msgid "Invalid values (NA) found in appraiser %s."
-msgstr ""
+msgstr "Ungültige Werte (NA) bei Prüfer %s gefunden."
 
 msgid "More than 1 Measurement per Operator required."
 msgstr ""
