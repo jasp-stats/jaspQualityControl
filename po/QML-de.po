@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-04-16 03:43+0000\n"
+"PO-Revision-Date: 2022-04-17 10:09+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
@@ -274,7 +274,7 @@ msgstr "Normal"
 
 msgctxt "Description|"
 msgid "Linearity Study"
-msgstr ""
+msgstr "Linearitäts-Untersuchung"
 
 msgctxt "Description|"
 msgid "Variables Charts for Subgroups"
@@ -414,15 +414,15 @@ msgstr "Kendalls Tau"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity table"
-msgstr ""
+msgstr "Linearitäts-Tabelle"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Bias table"
-msgstr ""
+msgstr "Tabelle Verzerrung"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity and bias graph"
-msgstr ""
+msgstr "Diagramm Linearität und Verzerrung"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Percent process variation graph"
@@ -570,7 +570,7 @@ msgstr "T-Test für eine Stichprobe"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for bias"
-msgstr ""
+msgstr "Konfidenzintervall für Verzerrung"
 
 msgctxt "msaType1Gauge|"
 msgid "Bin width type"
