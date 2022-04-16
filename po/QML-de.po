@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-02-05 16:58+0000\n"
+"PO-Revision-Date: 2022-04-16 03:43+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
@@ -9,7 +9,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.12-dev\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
@@ -22,7 +22,7 @@ msgstr "Analyse von Messsystemen"
 
 msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
-msgstr ""
+msgstr "Attribut-Übereinstimmungsanalyse"
 
 msgctxt "Description|"
 msgid "Control Charts"
@@ -30,7 +30,7 @@ msgstr "Kontrolltabellen"
 
 msgctxt "Description|"
 msgid "Response Surface"
-msgstr "Reaktionsfläche"
+msgstr "Wirkungsfläche"
 
 msgctxt "doeFactorial|"
 msgid "Number of factors"
@@ -38,11 +38,11 @@ msgstr "Anzahl Faktoren"
 
 msgctxt "doeFactorial|"
 msgid "Uncoded"
-msgstr "Uncodiert"
+msgstr "Unkodiert"
 
 msgctxt "doeFactorial|"
 msgid "Coded"
-msgstr "Codiert"
+msgstr "Kodiert"
 
 msgctxt "doeFactorial|"
 msgid "Factor"
@@ -302,7 +302,7 @@ msgstr "Stichprobe"
 
 msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
-msgstr ""
+msgstr "Diagramme für Attribute"
 
 msgctxt "attributesCharts|"
 msgid "Defectives"
@@ -346,11 +346,11 @@ msgstr "Speichern als:"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Contour Plot Options"
-msgstr ""
+msgstr "Konturdiagramm-Optionen"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Show analysis and graphs in coded form"
-msgstr ""
+msgstr "Analyse und Diagramme in kodierter Form anzeigen"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Show legend next to graph"
@@ -358,7 +358,7 @@ msgstr "Legende neben Diagramm anzeigen"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Divide response surface into N parts"
-msgstr ""
+msgstr "Wirkungsfläche in N Teile aufteilen"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Rotating angle (vertical plane)"
@@ -714,7 +714,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Contour Surface"
-msgstr ""
+msgstr "Konturfläche"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Only show 2D plot"
@@ -726,7 +726,7 @@ msgstr ""
 
 msgctxt "factorialAnalysis|"
 msgid "Pareto plot of standardized effects"
-msgstr ""
+msgstr "Pareto-Diagramm standardisierter Effekte"
 
 msgctxt "msaGaugeRR|"
 msgid "Data format"
@@ -1022,7 +1022,7 @@ msgstr "Alpha-Niveau:"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Pareto plot of standardized effects"
-msgstr ""
+msgstr "Pareto-Diagramm standardisierter Effekte"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals plots"
@@ -1078,7 +1078,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Response Surface Summaries"
-msgstr ""
+msgstr "Wirkungsfläche Zusammenfassungen"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Coefficient Table"
@@ -1102,7 +1102,7 @@ msgstr "Diagramm Residuen vs. Anpassung"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Pareto Plot of Standardized Effects"
-msgstr ""
+msgstr "Pareto-Diagramm Standardisierter Effekte"
 
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
@@ -1676,7 +1676,7 @@ msgstr "Sonstiges"
 
 msgctxt "attributesCharts|"
 msgid "Appraiser"
-msgstr ""
+msgstr "Prüfer"
 
 msgctxt "attributesCharts|"
 msgid "Measurement system"
