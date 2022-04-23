@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2022-04-04 09:28\n"
-"PO-Revision-Date: 2022-04-16 03:43+0000\n"
+"PO-Revision-Date: 2022-04-17 11:09+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -611,10 +611,10 @@ msgid "Mean per reference value"
 msgstr "Mittelwert pro Referenzwert"
 
 msgid "Bias per reference value"
-msgstr ""
+msgstr "Verzerrung pro Referenzwert"
 
 msgid "<i>p(t</i>-test of bias against 0)"
-msgstr ""
+msgstr "<i>p(t</i>-Test der Verzerrung gegen 0)"
 
 msgid "Regression Model"
 msgstr "Regressionsmodell"
@@ -646,7 +646,7 @@ msgid ""
 msgstr ""
 
 msgid "Bias and Linearity"
-msgstr ""
+msgstr "Verzerrung und Linearität"
 
 msgid "Percentage Process Variation Graph"
 msgstr ""
@@ -943,13 +943,13 @@ msgid "Run Chart"
 msgstr ""
 
 msgid "Bias Table"
-msgstr ""
+msgstr "Verzerrungstabelle"
 
 msgid "t-Test Bias"
-msgstr ""
+msgstr "t-Test Verzerrung"
 
 msgid "Histogram Bias"
-msgstr ""
+msgstr "Histogramm Verzerrung"
 
 msgid "Bias and Instrument Capability Table"
 msgstr ""
@@ -961,7 +961,7 @@ msgid "Mean"
 msgstr "Mittelwert"
 
 msgid "Bias"
-msgstr ""
+msgstr "Verzerrung"
 
 msgid "Std. Deviation (<i>s</i>)"
 msgstr "Std.-Abweichung (<i>s</i>)"
@@ -970,7 +970,7 @@ msgid "Study variation"
 msgstr ""
 
 msgid "% Bias"
-msgstr ""
+msgstr "% Verzerrung"
 
 msgid "The study variation is calculated as %i * <i>s</i>."
 msgstr ""
@@ -988,19 +988,19 @@ msgid "% Var(Repeatability)"
 msgstr ""
 
 msgid "% Var(Repeatability and bias)"
-msgstr ""
+msgstr "% Var(Wiederholbarkeit und Verzerrung)"
 
 msgid "T-Test of Observed Bias Against 0"
-msgstr ""
+msgstr "T-Test der beobachteten Verzerrung gegen 0"
 
 msgid "%s CI for Bias"
-msgstr ""
+msgstr "%s KI der Verzerrung"
 
 msgid "<i>t</i>"
 msgstr "<i>t</i>"
 
 msgid "Bias Histogram"
-msgstr ""
+msgstr "Histogramm Verzerrung"
 
 msgid "Run Chart of %s"
 msgstr ""
