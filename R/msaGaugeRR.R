@@ -878,9 +878,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .anovaGaugeReport <- function(dataset, measurements, parts, operators, options, Type3 = FALSE){
 
-  if (options[["anovaGaugeTitle"]] == ""){
+  if (options[["anovaGaugeTitle"]] == "") {
     title <- gettextf("Measurement systems analysis")
-  }else{
+  }else {
     title <- options[["anovaGaugeTitle"]]
   }
   name <- gettextf("Gauge name: %s", options[["anovaGaugeName"]])
@@ -898,20 +898,20 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   matrixPlot <- createJaspPlot(title = title, width = 1200, aspectRatio = 1)
   plotMat <- matrix(list(), 5, 2)
-  plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- .ggplotWithText(text2)
-  plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE, Type3 = Type3)
-  plotMat[[2, 2]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE)
-  plotMat[[3, 1]] <- .xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options, smallLabels = TRUE, Type3 = Type3)
-  plotMat[[3, 2]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options, Type3 = Type3)
-  plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Average", dataset, measurements, parts, operators, options, smallLabels = TRUE, Type3 = Type3)
-  plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3, ggPlot = TRUE)
+  plotMat[[1, 1]] <- .ggplotWithText(text1)   #Meta data plot, name and date
+  plotMat[[1, 2]] <- .ggplotWithText(text2)   #Meta data plot, operator, tolerance, misc
+  plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE, Type3 = Type3)   #var. comp. plot
+  plotMat[[2, 2]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE) #measuremnt by part plot
+  plotMat[[3, 1]] <- .xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options, smallLabels = TRUE, Type3 = Type3)  #R chart by operator
+  plotMat[[3, 2]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options, Type3 = Type3)   #Measurements by operator plot
+  plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Average", dataset, measurements, parts, operators, options, smallLabels = TRUE, Type3 = Type3)  #Average chart by operator
+  plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3, ggPlot = TRUE) # Part x Operator interaction plot
 
   valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = TRUE, returnTrafficValues = TRUE, Type3 = Type3)
   if (options$gaugeToleranceEnabled){
     plots <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,ToleranceVar = valuesVec$tol, options = options, ready = TRUE, ggPlot = TRUE)
-    plotMat[[5, 1]] <- plots$p1
-    plotMat[[5, 2]] <- plots$p2
+    plotMat[[5, 1]] <- plots$p1   #traffic plot tolerance
+    plotMat[[5, 2]] <- plots$p2   #traffic plot process var
   }
   else
     plotMat[[5, 1]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,ToleranceVar = valuesVec$tol, options = options, ready = TRUE, ggPlot = TRUE)
