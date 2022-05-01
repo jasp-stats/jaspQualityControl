@@ -898,10 +898,16 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   plotList <- list()
   indexCounter <- 0
   if (options[["reportMetaData"]]) {
     indexCounter <- indexCounter + 1
+=======
+  plotList <- list()
+  indexCounter <- 1
+  if (options[["reportMetaData"]]) {
+>>>>>>> 1e12206 (Option to select report output in GaugeRR)
     plotList[[indexCounter]] <- .ggplotWithText(text1)
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .ggplotWithText(text2)
@@ -933,6 +939,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options,
                                                                      Type3 = Type3, ggPlot = TRUE) # Part x Operator interaction plot
+<<<<<<< HEAD
 =======
   matrixPlot <- createJaspPlot(title = title, width = 1200, aspectRatio = 1)
   plotMat <- matrix(list(), 5, 2)
@@ -951,6 +958,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     plotMat[[5, 1]] <- plots$p1   #traffic plot tolerance
     plotMat[[5, 2]] <- plots$p2   #traffic plot process var
 >>>>>>> 5ceb5b8 (Interface to select report output and comment what is what in report)
+=======
+>>>>>>> 1e12206 (Option to select report output in GaugeRR)
   }
 
   if (options[["reportTrafficLightCHart"]]) {
@@ -969,11 +978,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
+<<<<<<< HEAD
   if (indexCounter == 0) {
     plot <- createJaspPlot(title = title, width = 400, height = 400)
     plot$setError(gettext("No report components selected."))
     return(plot)
   } else if (indexCounter %% 2 != 0){
+=======
+  if (indexCounter %% 2 != 0){
+>>>>>>> 1e12206 (Option to select report output in GaugeRR)
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- ggplot2::ggplot() + ggplot2::theme_void()
   }
