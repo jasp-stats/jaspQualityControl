@@ -199,56 +199,99 @@ Form
 	Section
 	{
 		title: 									qsTr("Gauge r&R Report")
-
-		TextField
-		{
-			id:									anovaGaugeNestedTitle
-			label: 								qsTr("Title")
-			name: 								"anovaGaugeNestedTitle"
-			placeholderText:					qsTr("Measurement")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			id:									anovaGaugeNestedName
-			label: 								qsTr("Gauge name")
-			name: 								"anovaGaugeNestedName"
-			placeholderText:					qsTr("Name")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			id:									anovaGaugeNestedDate
-			label: 								qsTr("Date")
-			name: 								"anovaGaugeNestedDate"
-			placeholderText:					qsTr("Date")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			id:									anovaGaugeNestedReportedBy
-			label: 								qsTr("Reported by")
-			name: 								"anovaGaugeNestedReportedBy"
-			placeholderText:					qsTr("Name")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			id:									anovaGaugeNestedMisc
-			label: 								qsTr("Misc")
-			name: 								"anovaGaugeNestedMisc"
-			placeholderText:					qsTr("Miscellaneous")
-			fieldWidth:							100
-		}
-
+		
 		CheckBox
 		{
-			name: 								"anovaGaugeNestedReport"
-			label: 								qsTr("Show Report")
+			name: "anovaGaugeNestedReport"
+			label: qsTr("Show report")
+			id:		anovaGaugeReport
+			columns: 2
+			
+			CheckBox
+			{
+				name:		"reportMetaData"
+				label:		qsTr("Show report metadata")
+				checked:	true
+				columns: 1
+
+				TextField
+				{
+					id:									anovaGaugeNestedTitle
+					label: 								qsTr("Title")
+					name: 								"anovaGaugeNestedTitle"
+					placeholderText:					qsTr("Measurement")
+					fieldWidth:							100
+				}
+
+				TextField
+				{
+					id:									anovaGaugeNestedName
+					label: 								qsTr("Gauge name")
+					name: 								"anovaGaugeNestedName"
+					placeholderText:					qsTr("Name")
+					fieldWidth:							100
+				}
+
+				TextField
+				{
+					id:									anovaGaugeNestedDate
+					label: 								qsTr("Date")
+					name: 								"anovaGaugeNestedDate"
+					placeholderText:					qsTr("Date")
+					fieldWidth:							100
+				}
+
+				TextField
+				{
+					id:									anovaGaugeNestedReportedBy
+					label: 								qsTr("Reported by")
+					name: 								"anovaGaugeNestedReportedBy"
+					placeholderText:					qsTr("Name")
+					fieldWidth:							100
+				}
+
+				TextField
+				{
+					id:									anovaGaugeNestedMisc
+					label: 								qsTr("Misc")
+					name: 								"anovaGaugeNestedMisc"
+					placeholderText:					qsTr("Miscellaneous")
+					fieldWidth:							100
+				}
+			}
+		
+			Group
+			{
+				title:			qsTr("Select Report Components")
+			
+				CheckBox
+				{
+					name:		"reportVariationComponents"
+					label:		qsTr("Show components of variation")
+					checked:	true
+				}
+				
+				CheckBox
+				{
+					name:		"reportRChartByOperator"
+					label:		qsTr("Show R chart by operator")
+					checked:	true
+				}
+				
+				CheckBox
+				{
+					name:		"reportMeasurementsByOperatorPlot"
+					label:		qsTr("Show measurements by operator")
+					checked:	true
+				}
+				
+				CheckBox
+				{
+					name:		"reportAverageChartByOperator"
+					label:		qsTr("Show average chart by operator")
+					checked:	true
+				}
+			}
 		}
 	}
 }
