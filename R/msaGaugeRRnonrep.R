@@ -412,9 +412,14 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
 
   plotList <- list()
+<<<<<<< HEAD
   indexCounter <- 0
   if (options[["reportMetaData"]]) {
     indexCounter <- indexCounter + 1
+=======
+  indexCounter <- 1
+  if (options[["reportMetaData"]]) {
+>>>>>>> 3116047 (Report output options for gaugeRRnonRep and fix container issues when reloading report)
     plotList[[indexCounter]] <- .ggplotWithText(text1)
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .ggplotWithText(text2)
@@ -439,11 +444,16 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
                                                               options, smallLabels = TRUE) #Average chart by operator
   }
 
+<<<<<<< HEAD
   if (indexCounter == 0) {
     plot <- createJaspPlot(title = title, width = 400, height = 400)
     plot$setError(gettext("No report components selected."))
     return(plot)
   } else if (indexCounter %% 2 != 0){
+=======
+
+  if (indexCounter %% 2 != 0){
+>>>>>>> 3116047 (Report output options for gaugeRRnonRep and fix container issues when reloading report)
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- ggplot2::ggplot() + ggplot2::theme_void()
   }
