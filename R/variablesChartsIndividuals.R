@@ -135,7 +135,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   ppPlot <- createJaspPlot(width = 1000, height = 550)
   #Individual chart
   #data
-  if (measurements == "" & variable != ""){
+  if (identical(measurements, "") && !identical(variable, "")) {
     ppPlot$dependOn(optionContainsValue = list(variables = variable))
     data <- data.frame(process = dataset[[variable]])
     sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
@@ -210,7 +210,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw()
 
   if (!identical(manualXaxis, "")) {
-    if (measurements != "") {
+    if (!identical(measurements, "")) {
       if (Wide)
         xLabels <- as.vector(sapply(1:length(manualXaxis), function(x) {rep(manualXaxis[x], ncol(dataset[measurements]))}))
       else

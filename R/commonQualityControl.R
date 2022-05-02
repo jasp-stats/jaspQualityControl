@@ -191,7 +191,7 @@
                      center = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$center)
 
   range <- sixsigma$statistics
-  if (manualSubgroups != ""){
+  if (!identical(manualSubgroups, "")) {
     subgroups <- manualSubgroups
   }else{
     subgroups = c(1:length(sixsigma$statistics))

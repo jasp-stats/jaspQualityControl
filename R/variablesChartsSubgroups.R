@@ -72,7 +72,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     k <- options[["CCSubgroupSize"]]
     n <- nrow(dataset)
     dataset <- .PClongTowide(dataset, k, measurements)
-    if (dataset == "error"){
+    if (identical(dataset, "error")) {
       plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
       jaspResults[["plot"]] <- plot
       plot$setError(gettextf("Could not equally divide data points into groups of size %i.", k))
