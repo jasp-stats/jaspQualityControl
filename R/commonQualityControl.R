@@ -53,7 +53,7 @@
   else
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE)
 
-  if (manualSubgroups != ""){
+  if (!identical(manualSubgroups, "")) {
     subgroups <- manualSubgroups
   }else{
     subgroups = c(1:length(sixsigma$statistics))
@@ -61,7 +61,7 @@
   means = sixsigma$statistics
   data_plot <- data.frame(subgroups = subgroups, means = means)
   sd1 <- sixsigma$std.dev
-  if (manualLimits != "") {
+  if (!identical(manualLimits, "")) {
     LCL <- manualLimits[1]
     center <- manualLimits[2]
     UCL <- manualLimits[3]
@@ -70,7 +70,7 @@
     UCL <- max(sixsigma$limits)
     LCL <- min(sixsigma$limits)
   }
-  if (manualDataYaxis != ""){
+  if (!identical(manualDataYaxis, "")) {
     manualMeans <- rowMeans(manualDataYaxis)
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, manualMeans))
   }else{
@@ -145,7 +145,7 @@
   if ( n.outOfLimits > (nrow(data_plot) / 2) )
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = "blue")
 
-  if (manualXaxis != "") {
+  if (!identical(manualXaxis, "")) {
     if (GaugeRR | Wide){
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xBreaks_Out[xBreaks])
@@ -172,7 +172,7 @@
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
 
-  if (manualXaxis != "")
+  if (!identical(manualXaxis, ""))
     return(list(p = p, sixsigma = sixsigma, xLabels = as.vector(xBreaks_Out)))
   else return(list(p = p, sixsigma = sixsigma))
 }
@@ -197,7 +197,7 @@
     subgroups = c(1:length(sixsigma$statistics))
   }
   data_plot <- data.frame(subgroups = subgroups, range = range)
-  if (manualLimits != "") {
+  if (!identical(manualLimits, "")) {
     LCL <- manualLimits[1]
     center <- manualLimits[2]
     UCL <- manualLimits[3]
@@ -206,7 +206,7 @@
     UCL <- max(sixsigma$limits)
     LCL <- min(sixsigma$limits)
   }
-  if (manualDataYaxis != ""){
+  if (!identical(manualDataYaxis, "")) {
     manualRange <- apply(manualDataYaxis, 1, function(x) max(x) - min(x))
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, manualRange))
   }else{
@@ -262,7 +262,7 @@
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
 
-  if (manualXaxis != "") {
+  if (!identical(manualXaxis, "")) {
     if (GaugeRR | Wide){
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xBreaks_Out[xBreaks])
@@ -299,7 +299,7 @@
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
 
-  if (manualXaxis != "")
+  if (!identical(manualXaxis, ""))
     return(list(p = p, sixsigma = sixsigma, xLabels = as.vector(xBreaks_Out)))
   else return(list(p = p, sixsigma = sixsigma))
 }

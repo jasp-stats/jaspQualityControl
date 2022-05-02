@@ -57,7 +57,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       k <- options[["pcSubgroupSize"]]
       n <- nrow(dataset)
       dataset <- .PClongTowide(dataset, k, measurements, mode = "manual")
-      if (dataset == "error"){
+      if (identical(dataset, "error")) {
         plot <- createJaspPlot(title = gettext("Capability of the process"), width = 700, height = 400)
         jaspResults[["plot"]] <- plot
         plot$setError(gettextf("Could not equally divide %i data points into groups of size %i.", n, k))
@@ -1426,7 +1426,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .PClongTowide<- function(dataset, k, measurements, mode = c("manual", "subgroups")){
-  if(mode == "manual"){
+  if(identical(mode, "manual")){
     dataset <- dataset[measurements]
     n <- nrow(dataset)
     nGroups <- n/k

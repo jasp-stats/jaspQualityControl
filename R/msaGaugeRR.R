@@ -841,7 +841,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE) {
   sources <- gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part'))
-  if (!is.na(percentToleranceValues)){
+  if (!all(is.na(percentToleranceValues))){
     references <- gettext(c('% Contribution', '% Study Variation', '% Tolerance'))
     values <- c(percentContributionValues, studyVariationValues, percentToleranceValues)
   }else{

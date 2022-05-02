@@ -207,7 +207,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (manualXaxis != "") {
+  if (!identical(manualXaxis, "")) {
     if (Wide){
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xBreaks_Out[xBreaks])
@@ -230,7 +230,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
   }
 
-  if (manualXaxis != "")
+  if (!identical(manualXaxis, ""))
     return(list(p = p, sixsigma = sixsigma, xLabels = as.vector(xBreaks_Out)))
   else return(list(p = p, sixsigma = sixsigma))
 }
