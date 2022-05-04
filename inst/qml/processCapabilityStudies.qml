@@ -324,6 +324,20 @@ Form
 	Section
 	{
 		title: qsTr("Process Capability Report")
+		
+				CheckBox
+		{
+			name: "pcReportDisplay"
+			label: qsTr("Show Report")
+			columns: 2
+			
+			
+						CheckBox
+			{
+				name:		"reportMetaData"
+				label:		qsTr("Show report metadata")
+				checked:	true
+				columns: 1
 
 		TextField
 		{
@@ -336,7 +350,7 @@ Form
 
 		TextField
 		{
-			id:						apcReportName
+			id:						pcReportName
 			label: 					qsTr("Process Name:")
 			name: 					"pcReportName"
 			placeholderText:		qsTr("Name")
@@ -369,10 +383,49 @@ Form
 			placeholderText:		qsTr("Miscellaneous")
 			fieldWidth:				100
 		}
+		
+		
+		}
+		
+		
+		
+					Group
+			{
+				title:			qsTr("Select Report Components")
+			
+				CheckBox
+				{
+					name:		"reportProcessStability"
+					label:		qsTr("Show stability of process charts")
+					checked:	true
+				}
+				
+								CheckBox
+				{
+					name:		"reportProcessCapabilityPlot"
+					label:		qsTr("Show process capability plot")
+					checked:	true
+				}
+				
+												CheckBox
+				{
+					name:		"reportProbabilityPlot"
+					label:		qsTr("Show probability plot")
+					checked:	true
+				}
+				
+																CheckBox
+				{
+					name:		"reportProcessCapabilityTables"
+					label:		qsTr("Show process capability tables")
+					checked:	true
+				}
 
-		CheckBox
-		{
-			name: "pcReportDisplay";		label: qsTr("Show Report")
+				
+				
+				
+				}
+
 		}
 	}
 
