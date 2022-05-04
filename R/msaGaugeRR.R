@@ -905,9 +905,13 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     indexCounter <- indexCounter + 1
 =======
   plotList <- list()
-  indexCounter <- 1
+  indexCounter <- 0
   if (options[["reportMetaData"]]) {
+<<<<<<< HEAD
 >>>>>>> 1e12206 (Option to select report output in GaugeRR)
+=======
+    indexCounter <- indexCounter + 1
+>>>>>>> c188686 (Report component selection for Process Capability and fix mistake in index counting for report components)
     plotList[[indexCounter]] <- .ggplotWithText(text1)
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .ggplotWithText(text2)
@@ -979,14 +983,20 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c188686 (Report component selection for Process Capability and fix mistake in index counting for report components)
   if (indexCounter == 0) {
     plot <- createJaspPlot(title = title, width = 400, height = 400)
     plot$setError(gettext("No report components selected."))
     return(plot)
   } else if (indexCounter %% 2 != 0){
+<<<<<<< HEAD
 =======
   if (indexCounter %% 2 != 0){
 >>>>>>> 1e12206 (Option to select report output in GaugeRR)
+=======
+>>>>>>> c188686 (Report component selection for Process Capability and fix mistake in index counting for report components)
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- ggplot2::ggplot() + ggplot2::theme_void()
   }
