@@ -122,6 +122,8 @@ Form
 				name:							"historicalStandardDeviationValue"
 				label:							qsTr("Historical standard deviation:")
 				defaultValue:					3
+				min: 						0.000001
+				decimals: 					6
 				enabled:						variationReference.currentValue == "historicalStandardDeviation"
 			}
 
@@ -135,8 +137,8 @@ Form
 				{
 					name: 						"tolerance"
 					defaultValue: 				10
-					min: 						0.001
-					decimals: 					3
+					min: 						0.000001
+					decimals: 					6
 				}
 			}
 
