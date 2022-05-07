@@ -54,6 +54,7 @@
 .Xbarchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE, plotLimitLabels = TRUE, yAxisLab = "Sample average", xAxisLab = "Subgroup",
                            manualDataYaxis = "", manualXaxis = "", manualTicks = FALSE, title = "", smallLabels = FALSE, Phase2 = FALSE, target = NULL, sd = NULL, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
+  decimals <- max(sapply(data, .decimalplaces))
   if(Phase2)
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
   else
@@ -93,9 +94,9 @@
     x = max(xLimits) * 0.95,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
+      gettextf("CL = %g", round(center, decimals + 1)),
+      gettextf("UCL = %g",   round(UCL, decimals + 2)),
+      gettextf("LCL = %g",   round(LCL, decimals + 2))
     )
   )
 
@@ -164,9 +165,9 @@
         x = max(xLimits) * 0.95,
         y = c(center, UCL, LCL),
         l = c(
-          gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
-          gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
-          gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
+          gettextf("CL = %g", round(center, decimals + 1)),
+          gettextf("UCL = %g",   round(UCL, decimals + 2)),
+          gettextf("LCL = %g",   round(LCL, decimals + 2))
         )
       )
 
@@ -189,6 +190,7 @@
                         manualTicks = FALSE) {
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
+  decimals <- max(sapply(data, .decimalplaces))
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
 
   if(Phase2 && sd != "")
@@ -229,9 +231,9 @@
     x = max(xLimits) * 0.95,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
+      gettextf("CL = %g", round(center, decimals + 1)),
+      gettextf("UCL = %g",   round(UCL, decimals + 2)),
+      gettextf("LCL = %g",   round(LCL, decimals + 2))
     )
   )
 
@@ -282,9 +284,9 @@
         x = max(xLimits) * 0.95,
         y = c(center, UCL, LCL),
         l = c(
-          gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
-          gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
-          gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
+          gettextf("CL = %g", round(center, decimals + 1)),
+          gettextf("UCL = %g",   round(UCL, decimals + 2)),
+          gettextf("LCL = %g",   round(LCL, decimals + 2))
         )
       )
 
@@ -444,13 +446,124 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(table)
 }
 
-decimalplaces <- function(x) {
+.decimalplaces <- function(x) {
   if ((x %% 1) != 0) {
     x <- format(x, scientific = FALSE)
     nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed=TRUE)[[1]][[2]])
   } else {
     return(0)
   }
+}
+
+
+.IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE) {
+
+  ppPlot <- createJaspPlot(width = 1000, height = 550)
+  #Individual chart
+  #data
+  if (measurements == "" & variable != ""){
+    ppPlot$dependOn(optionContainsValue = list(variables = variable))
+    data <- data.frame(process = dataset[[variable]])
+    sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
+    xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol)
+    sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
+  } else{
+    data <- as.vector((t(dataset[measurements])))
+    sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE)
+    xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2)
+    sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
+  }
+  subgroups = c(1:length(sixsigma_I$statistics))
+  data_plot <- data.frame(subgroups = subgroups ,process = sixsigma_I$statistics)
+  center <- sixsigma_I$center
+  UCL <- max(sixsigma_I$limits)
+  LCL <- min(sixsigma_I$limits)
+  if (options$manualTicks)
+    nxBreaks <- options$nTicks
+  else
+    nxBreaks <- 5
+  xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
+  xLimits <- c(1,max(xBreaks) * 1.15)
+  decimals <- max(sapply(sixsigma_I$data, .decimalplaces))
+  dfLabel <- data.frame(
+    x = max(xLimits) * 0.95,
+    y = c(center, UCL, LCL),
+    l = c(
+      gettextf("CL = %g",  round(center, decimals + 1)),
+      gettextf("UCL = %g", round(UCL, decimals + 2)),
+      gettextf("LCL = %g", round(LCL, decimals + 2))
+    )
+  )
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$process, UCL))
+
+  p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = process)) +
+    ggplot2::geom_hline(yintercept = center, color = 'green') +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
+    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
+    ggplot2::scale_y_continuous(name = ifelse(variable != "" , gettextf("%s", variable), "Individual value"), breaks = yBreaks, limits = range(yBreaks)) +
+    ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+
+  #Moving range chart
+  data_plot <- data.frame(subgroups = c(1:length(sixsigma_R$statistics)), data2 = sixsigma_R$statistics)
+  center <- sixsigma_R$center
+  UCL <- max(sixsigma_R$limits)
+  LCL <- min(sixsigma_R$limits)
+  Xlabels <- c(2, xBreaks[-1])
+  xLimits <- c(1,max(xBreaks) * 1.15)
+  dfLabel <- data.frame(
+    x = max(xLimits) * 0.95,
+    y = c(center, UCL, LCL),
+    l = c(
+      gettextf("CL = %g", round(center, decimals + 1)),
+      gettextf("UCL = %g",   round(UCL, decimals + 2)),
+      gettextf("LCL = %g",   round(LCL, decimals + 2))
+    )
+  )
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$data2, UCL))
+
+  p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data2)) +
+    ggplot2::geom_hline(yintercept = center, color = 'green') +
+    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red",linetype = "dashed", size = 1.5) +
+    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
+    ggplot2::scale_y_continuous(name = gettext("Moving Range"), breaks = yBreaks, limits = range(yBreaks)) +
+    ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits, labels = Xlabels) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_R)$red_points, 'red', 'blue')) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+
+  if (manualXaxis != "") {
+    if (measurements != "") {
+      if (Wide)
+        xLabels <- as.vector(sapply(1:length(manualXaxis), function(x) {rep(manualXaxis[x], ncol(dataset[measurements]))}))
+      else
+        xLabels <- manualXaxis
+    }
+    else
+      xLabels <- manualXaxis
+
+    p1 <- p1 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
+    p2 <- p2 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
+  }
+
+  plotMat <- matrix(list(), 2, 1)
+  plotMat[[1,1]] <- p1
+  plotMat[[2,1]] <- p2
+
+  if(!cowPlot){
+    ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = plotMat, removeXYlabels= "x")
+  }else{
+    ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
+  }
+
+  if (manualXaxis != "")
+    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, xLabels = as.vector(xLabels), p1 = p1, p2 = p2))
+  else
+    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2))
 }
 
 
