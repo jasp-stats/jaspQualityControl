@@ -114,7 +114,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     # X-bar and R Chart OR ImR Chart
     if(options$xbarR){
       .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
-    } else{
+    } else if(options[["IMR"]]){
       .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
     }
 
@@ -254,7 +254,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   )
   table$addRows(rows)
 
-  N.Decimals <- decimalplaces(dataset[measurements][[1]][1])
+  N.Decimals <- max(sapply(unlist(dataset[measurements]), .decimalplaces)) #.decimalplaces(dataset[measurements][[1]][1])
   if(returnDataframe){
     sourceVector <- c('LSL', 'Target', 'USL', 'Sample size', 'Mean', "Std. Deviation (Total)", "Std. Deviation (Within)")
     lsl <- options[["lowerSpecification"]]
@@ -431,7 +431,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     cpk <- cpu
   }
 
-  rows <- list("cp" = round(cp,2), "cpl" = round(cpl,2), "cpu" = round(cpu,2), "cpk" = round(cpk,2))
+  rows <- list("cp" = round(cp, 2), "cpl" = round(cpl, 2), "cpu" = round(cpu, 2), "cpk" = round(cpk, 2))
 
   if (options[["csConfidenceInterval"]]){
     ciAlpha <- 1 - ciLevel
@@ -448,10 +448,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     ciLbCpk <- cpk - (normCIrange * intervalCpk)
     ciUbCpk <- cpk + (normCIrange * intervalCpk)
 
-    rows[["cplci"]] <- round(ciLbCp,2)
-    rows[["cpuci"]] <- round(ciUbCp,2)
-    rows[["cpklci"]] <- round(ciLbCpk,2)
-    rows[["cpkuci"]] <- round(ciUbCpk,2)
+    rows[["cplci"]] <- round(ciLbCp, 2)
+    rows[["cpuci"]] <- round(ciUbCp, 2)
+    rows[["cpklci"]] <- round(ciLbCpk, 2)
+    rows[["cpkuci"]] <- round(ciUbCpk, 2)
   }
   table$addRows(rows)
 
@@ -674,7 +674,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ewTOT <- sum(c(ewLSL, ewUSL), na.rm = T)
   expWithin <- c(ewLSL, ewUSL, ewTOT)
 
-  N.Decimals <- decimalplaces(dataset[measurements][[1]][1])
+  N.Decimals <- max(sapply(unlist(dataset[measurements]), .decimalplaces)) #.decimalplaces(dataset[measurements][[1]][1])
   if(returnPerformanceDataframe){
     df <- data.frame("Source" = rowNames,
                      "Observed" = observed,
