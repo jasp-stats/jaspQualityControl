@@ -457,6 +457,9 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2964ac0 (Fix decimal place calculation across data)
 .IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE) {
 
   ppPlot <- createJaspPlot(width = 1000, height = 550)
@@ -475,7 +478,11 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
   }
   subgroups = c(1:length(sixsigma_I$statistics))
+<<<<<<< HEAD
   data_plot <- data.frame(subgroups = subgroups, process = sixsigma_I$statistics)
+=======
+  data_plot <- data.frame(subgroups = subgroups ,process = sixsigma_I$statistics)
+>>>>>>> 2964ac0 (Fix decimal place calculation across data)
   center <- sixsigma_I$center
   UCL <- max(sixsigma_I$limits)
   LCL <- min(sixsigma_I$limits)
@@ -509,11 +516,19 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     jaspGraphs::themeJaspRaw()
 
   #Moving range chart
+<<<<<<< HEAD
   data_plot <- data.frame(subgroups = seq_len(length(sixsigma_R$statistics) + 1), data2 = c(NA, sixsigma_R$statistics))
 
   center <- sixsigma_R$center
   UCL <- max(sixsigma_R$limits)
   LCL <- min(sixsigma_R$limits)
+=======
+  data_plot <- data.frame(subgroups = c(1:length(sixsigma_R$statistics)), data2 = sixsigma_R$statistics)
+  center <- sixsigma_R$center
+  UCL <- max(sixsigma_R$limits)
+  LCL <- min(sixsigma_R$limits)
+  Xlabels <- c(2, xBreaks[-1])
+>>>>>>> 2964ac0 (Fix decimal place calculation across data)
   xLimits <- c(1,max(xBreaks) * 1.15)
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
@@ -531,9 +546,15 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red",linetype = "dashed", size = 1.5) +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Moving Range"), breaks = yBreaks, limits = range(yBreaks)) +
+<<<<<<< HEAD
     ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
     jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_point(size = 4, fill = ifelse(c(NA, NelsonLaws(sixsigma_R)$red_points), 'red', 'blue')) +
+=======
+    ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits, labels = Xlabels) +
+    jaspGraphs::geom_line(color = "blue") +
+    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_R)$red_points, 'red', 'blue')) +
+>>>>>>> 2964ac0 (Fix decimal place calculation across data)
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
@@ -568,5 +589,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 
 
+<<<<<<< HEAD
 =======
 >>>>>>> f1e6aa8 (Issue with decimal counting function not working for exponential notation)
+=======
+>>>>>>> 2964ac0 (Fix decimal place calculation across data)
