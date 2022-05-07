@@ -456,6 +456,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 
 
+<<<<<<< HEAD
 .IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE) {
 
   ppPlot <- createJaspPlot(width = 1000, height = 550)
@@ -567,3 +568,5 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 
 
+=======
+>>>>>>> f1e6aa8 (Issue with decimal counting function not working for exponential notation)
