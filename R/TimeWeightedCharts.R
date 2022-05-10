@@ -85,6 +85,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
     return()
 
   data1 <- dataset[, options$variables]
+  decimals <- max(sapply(data1, .decimalplaces))
   sixsigma <- qcc::ewma(data1, center = options$EWMAcenter , lambda = options$EWMAlambda,
                         std.dev = options$EWMAStd, nsigmas = options$EWMANsigma, plot = FALSE)
   subgroups <- 1:length(sixsigma$sizes)
@@ -105,9 +106,9 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
     x = max(xLimits) * 0.95,
     y = c(center, UCL.label, LCL.label),
     l = c(
-      gettextf("CL = %g", round(center, decimalplaces(data1[1]) + 1)),
-      gettextf("UCL = %g",   round(UCL.label, decimalplaces(data1[1]) + 2)),
-      gettextf("LCL = %g",   round(LCL.label, decimalplaces(data1[1]) + 2))
+      gettextf("CL = %g", round(center, decimals + 1)),
+      gettextf("UCL = %g",   round(UCL.label, decimals + 2)),
+      gettextf("LCL = %g",   round(LCL.label, decimals + 2))
     )
   )
 

@@ -168,6 +168,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 #Functions for control charts
 .XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
+  decimals <- max(sapply(data, .decimalplaces))
   sixsigma <- qcc::qcc(data, type ='S', plot = FALSE)
   subgroups <- c(1:length(sixsigma$statistics))
   data_plot <- data.frame(subgroups = subgroups, Stdv = sixsigma$statistics)
@@ -191,9 +192,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     x = max(xLimits) * 0.95,
     y = c(center, UCL, LCL),
     l = c(
-      gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
-      gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
-      gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
+      gettextf("CL = %g", round(center, decimals + 1)),
+      gettextf("UCL = %g",   round(UCL, decimals + 2)),
+      gettextf("LCL = %g",   round(LCL, decimals + 2))
     )
   )
   xLimits <- range(c(xBreaks, dfLabel$x))
@@ -222,9 +223,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         x = max(xLimits) * 0.95,
         y = c(center, UCL, LCL),
         l = c(
-          gettextf("CL = %g", round(center, decimalplaces(data[1,1]) + 1)),
-          gettextf("UCL = %g",   round(UCL, decimalplaces(data[1,1]) + 2)),
-          gettextf("LCL = %g",   round(LCL, decimalplaces(data[1,1]) + 2))
+          gettextf("CL = %g", round(center, decimals + 1)),
+          gettextf("UCL = %g",   round(UCL, decimals + 2)),
+          gettextf("LCL = %g",   round(LCL, decimals + 2))
         )
       )
 

@@ -254,7 +254,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   )
   table$addRows(rows)
 
-  N.Decimals <- max(sapply(unlist(dataset[measurements]), .decimalplaces)) #.decimalplaces(dataset[measurements][[1]][1])
+  N.Decimals <- max(sapply(unlist(dataset[measurements]), .decimalplaces))
   if(returnDataframe){
     sourceVector <- c('LSL', 'Target', 'USL', 'Sample size', 'Mean', "Std. Deviation (Total)", "Std. Deviation (Within)")
     lsl <- options[["lowerSpecification"]]
@@ -674,7 +674,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ewTOT <- sum(c(ewLSL, ewUSL), na.rm = T)
   expWithin <- c(ewLSL, ewUSL, ewTOT)
 
-  N.Decimals <- max(sapply(unlist(dataset[measurements]), .decimalplaces)) #.decimalplaces(dataset[measurements][[1]][1])
+  N.Decimals <- max(sapply(unlist(dataset[measurements]), .decimalplaces))
   if(returnPerformanceDataframe){
     df <- data.frame("Source" = rowNames,
                      "Observed" = observed,
