@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-04-17 10:09+0000\n"
+"PO-Revision-Date: 2022-05-18 09:14+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
@@ -9,7 +9,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12-dev\n"
+"X-Generator: Weblate 4.13-dev\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
@@ -34,7 +34,7 @@ msgstr "Wirkungsfläche"
 
 msgctxt "doeFactorial|"
 msgid "Number of factors"
-msgstr "Anzahl Faktoren"
+msgstr "Anzahl der Faktoren"
 
 msgctxt "doeFactorial|"
 msgid "Uncoded"
@@ -86,11 +86,11 @@ msgstr "2-stufiger Split-Plot (schwer veränderbare Faktoren)"
 
 msgctxt "doeFactorial|"
 msgid "Number of hard-to-change factors"
-msgstr "Anzahl der schwer zu ändernden Faktoren"
+msgstr "Anzahl der schwer veränderbaren Faktoren"
 
 msgctxt "doeFactorial|"
 msgid "Number of runs"
-msgstr "Anzahl der Läufe"
+msgstr "Anzahl der Durchläufe"
 
 msgctxt "doeFactorial|"
 msgid "Resolution"
@@ -278,11 +278,11 @@ msgstr "Linearitäts-Untersuchung"
 
 msgctxt "Description|"
 msgid "Variables Charts for Subgroups"
-msgstr ""
+msgstr "Variablentabelle für Untergruppen"
 
 msgctxt "Description|"
 msgid "Time Weighted Charts"
-msgstr ""
+msgstr "Zeit-gewichtete Tabellen"
 
 msgctxt "Description|"
 msgid "DOE"
@@ -330,7 +330,7 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Run Order"
-msgstr ""
+msgstr "Ablaufreihenfolge"
 
 msgctxt "doeFactorial|"
 msgid "Standard"
@@ -338,7 +338,7 @@ msgstr "Standard"
 
 msgctxt "doeFactorial|"
 msgid "Random"
-msgstr ""
+msgstr "zufällig"
 
 msgctxt "doeFactorial|"
 msgid "Save as:"
@@ -374,15 +374,15 @@ msgstr "Verfügbare Faktoren"
 
 msgctxt "factorialAnalysis|"
 msgid "Response variable"
-msgstr ""
+msgstr "Wirkvariable"
 
 msgctxt "factorialAnalysis|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Zugewiesene Faktoren"
 
 msgctxt "factorialAnalysis|"
 msgid "Run order"
-msgstr ""
+msgstr "Ablaufreihenfolge"
 
 msgctxt "factorialAnalysis|"
 msgid "Highest order interaction term:"
@@ -394,7 +394,7 @@ msgstr "Residuendiagramme"
 
 msgctxt "factorialAnalysis|"
 msgid "Normal probability plot of residuals"
-msgstr ""
+msgstr "Wahrscheinlichkeitsverteilungsdiagramm der Residuen"
 
 msgctxt "factorialAnalysis|"
 msgid "Histogram of residuals"
@@ -406,7 +406,7 @@ msgstr "Residuen vs angepasster Wert"
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals vs run order"
-msgstr ""
+msgstr "Residuen versus Ablaufreihenfolge"
 
 msgctxt "msaAttribute|"
 msgid "Kendall's tau"
@@ -446,11 +446,11 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Scatter plots operators"
-msgstr ""
+msgstr "Streudiagrammoperatoren"
 
 msgctxt "msaGaugeRR|"
 msgid "Fit line"
-msgstr ""
+msgstr "Regressionslinie"
 
 msgctxt "msaGaugeRR|"
 msgid "Show origin line"
@@ -462,7 +462,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "Zeige alle Messungen an"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement by operators plot"
@@ -494,7 +494,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study Std. Deviation"
-msgstr ""
+msgstr "Standardabweichung der Studie"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Historical process Std. Deviation"
