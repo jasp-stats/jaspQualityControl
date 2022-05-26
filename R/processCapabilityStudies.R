@@ -294,7 +294,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   sdw <- qccFit[["std.dev"]]
   sdo <- sd(allData, na.rm = TRUE)
 
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], options[["lowerSpecification"]], options[["upperSpecification"]]), min.n = 4)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], min(plotData[["x"]]) - 1 * sdo, max(plotData[["x"]]) + 1 * sdo), min.n = 4)
   xLimits <- range(xBreaks)
   binWidthType <- options$csNumberOfBins
 
@@ -305,7 +305,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   binWidth <- (h$breaks[2] - h$breaks[1])
 
   p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
-    ggplot2::geom_histogram(ggplot2::aes(y =..density..),closed = "left", fill = "grey", col = "black", size = .7, binwidth = binWidth, center = binWidth/2) +
+    ggplot2::geom_histogram(ggplot2::aes(y =..density..), closed = "left", fill = "grey", col = "black", size = .7, binwidth = binWidth, center = binWidth/2) +
     ggplot2::scale_y_continuous(name = gettext("Density")) +
     ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits)
   if(distribution == 'normal'){
@@ -1561,49 +1561,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotMat <- matrix(plotList, matrixNRows, matrixNCols, byrow = TRUE)
   p <- jaspGraphs::ggMatrixPlot(plotMat)
   matrixPlot$plotObject <- p
-
-
-
-  #
-  #
-  #
-  # if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis"){
-  #   processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, returnDataframe = TRUE)
-  #   potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, returnDataframe = TRUE)
-  #   overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnOverallCapDataframe = TRUE)
-  #   performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnPerformanceDataframe = TRUE)
-  #
-  #   plotMat <- matrix(list(), 6, 2)
-  #   plotMat[[1, 1]] <- .ggplotWithText(text1)
-  #   plotMat[[1, 2]] <- .ggplotWithText(text2)
-  #   plotMat[[2, 1]] <-  p1
-  #   plotMat[[2, 2]] <-  .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = "normal")
-  #   plotMat[[3, 1]] <-  p2
-  #   plotMat[[3, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
-  #   plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
-  #   plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
-  #   plotMat[[5, 1]] <- ggplotTable(potentialWithinDF)  #Potential within
-  #   plotMat[[5, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
-  #   plotMat[[6, 1]] <- ggplotTable(overallCapDF) #overall capability
-  # }else{
-  #   processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnSummaryDF = TRUE)
-  #   overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnCapabilityDF = TRUE)
-  #   performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnPerformanceDF = TRUE)
-  #
-  #   plotMat <- matrix(list(), 5, 2)
-  #   plotMat[[1, 1]] <- .ggplotWithText(text1)
-  #   plotMat[[1, 2]] <- .ggplotWithText(text2)
-  #   plotMat[[2, 1]] <-  p1
-  #   plotMat[[2, 2]] <-  .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = options[["nonNormalDist"]])
-  #   plotMat[[3, 1]] <-  p2
-  #   plotMat[[3, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
-  #   plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
-  #   plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
-  #   plotMat[[5, 1]] <- ggplotTable(overallCapDF)  #overall capability
-  # }
-
-  # p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
-  # matrixPlot$plotObject <- p
 
   return(matrixPlot)
 }
