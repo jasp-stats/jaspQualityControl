@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-05-18 09:14+0000\n"
+"PO-Revision-Date: 2022-05-23 11:16+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
@@ -674,7 +674,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Warning limits"
-msgstr ""
+msgstr "Warngrenzen"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & s"
@@ -694,11 +694,11 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Laney p' (p-prime) chart"
-msgstr ""
+msgstr "p' (p-Strich)-Karte nach Laney"
 
 msgctxt "attributesCharts|"
 msgid "Laney u' (u-prime) chart"
-msgstr ""
+msgstr "u' (u-Strich)-Karte nach Laney"
 
 msgctxt "attributesCharts|"
 msgid "X-mR chart"
@@ -1556,7 +1556,7 @@ msgstr ""
 
 msgctxt "TimeWeightedCharts|"
 msgid "Number of standard deviations"
-msgstr ""
+msgstr "Anzahl Standardabweichungen"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Shift size"
@@ -1568,7 +1568,7 @@ msgstr "Lambda"
 
 msgctxt "timeWeightedCharts|"
 msgid "Number of standard deviations"
-msgstr ""
+msgstr "Anzahl Standardabweichungen"
 
 msgctxt "timeWeightedCharts|"
 msgid "Shift size"
@@ -1592,7 +1592,7 @@ msgstr "Konfidenzintervallbreite"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Single column"
-msgstr ""
+msgstr "Einzelne Spalte"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Across rows"
@@ -2068,7 +2068,7 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Sigmas for computing control limits"
-msgstr ""
+msgstr "Sigmas für Berechnung der Eingriffsgrenzen"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Center"
@@ -2080,7 +2080,7 @@ msgstr ""
 
 msgctxt "TimeWeightedCharts|"
 msgid "Sigmas for computing control limits"
-msgstr ""
+msgstr "Sigmas für Berechnung der Eingriffsgrenzen"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Subgroups"
