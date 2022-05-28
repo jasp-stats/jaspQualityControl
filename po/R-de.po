@@ -164,7 +164,7 @@ msgid "Residuals vs. Fitted Value"
 msgstr "Residuen vs. Angepasster Wert"
 
 msgid "Residuals vs. Run Order"
-msgstr ""
+msgstr "Residuen vs. Ablaufreihenfolge"
 
 msgid "Pareto Plot of Standardized Effects"
 msgstr "Pareto-Diagramm Standardisierter Effekte"
@@ -176,7 +176,7 @@ msgid "Residuals"
 msgstr "Residuen"
 
 msgid "Run order"
-msgstr ""
+msgstr "Ablaufreihenfolge"
 
 msgid "Standardized Effect"
 msgstr "Standardisierter Effekt"
@@ -219,7 +219,7 @@ msgid "Factors"
 msgstr "Faktoren"
 
 msgid "Runs"
-msgstr ""
+msgstr "Abläufe"
 
 msgid "Resolution"
 msgstr ""
@@ -294,7 +294,7 @@ msgid "Desired Design"
 msgstr "Gewünschtes Design"
 
 msgid "Missing Runs"
-msgstr ""
+msgstr "Fehlende Abläufe"
 
 msgid "Response Surface Methodology"
 msgstr "Wirkungsflächen-Methodik"
@@ -315,7 +315,7 @@ msgid "Central Composite Design"
 msgstr ""
 
 msgid "Run Order"
-msgstr ""
+msgstr "Ablaufreihenfolge"
 
 msgid "Standard Order"
 msgstr "Standard-Reihenfolge"
@@ -484,7 +484,7 @@ msgid "Please insert a reference value before specifying a positive reference."
 msgstr ""
 
 msgid "Attributes Agreement Analysis"
-msgstr ""
+msgstr "Attribut-Übereinstimmungsanalyse"
 
 msgid "Cohen's Kappa"
 msgstr "Cohens Kappa"
@@ -1315,6 +1315,42 @@ msgid "Sub-title: %s"
 msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
+msgstr ""
+
+msgid "% Linearity"
+msgstr ""
+
+msgid "% Contribution"
+msgstr ""
+
+msgid "% Study Variation"
+msgstr ""
+
+msgid "% Tolerance"
+msgstr "% Toleranz"
+
+msgid ""
+"Historical standard deviation is used to calculate some values for Std. "
+"Deviation, Study Variation, and %Study Variation."
+msgstr ""
+
+msgid ""
+"Values for %Process Variation are not displayed because they are identical "
+"to values for %Study Variation."
+msgstr ""
+
+msgid "% Bias"
+msgstr "% Verzerrung"
+
+msgid "% Var(Repeatability)"
+msgstr ""
+
+msgid "% Var(Repeatability and bias)"
+msgstr "% Var(Wiederholbarkeit und Verzerrung)"
+
+msgid ""
+"Red dotted lines in the probability plot below represent a 95% confidence "
+"interval."
 msgstr ""
 
 #~ msgid "Normal Plot of Standardized Effects"
