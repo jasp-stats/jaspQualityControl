@@ -27,7 +27,7 @@ Form
 	  AssignedVariablesList
 		{
 			name:								"subgroups"
-			title:								qsTr("Subgroups")
+			title:								qsTr("Axis labels")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
