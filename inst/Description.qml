@@ -123,7 +123,7 @@ Description
 	GroupTitle
 	{
 		title:			qsTr("Probability of Detection")
-//		icon:			"processControl-measurement.svg"
+		icon:			"processControl-probabilityofdetection.svg"
 	}
 	Analysis
 	{
