@@ -637,7 +637,7 @@ msgstr ""
 msgid "R%1$s"
 msgstr ""
 
-msgid "% Linearity"
+msgid "%% Linearity"
 msgstr ""
 
 msgid ""
@@ -737,7 +737,7 @@ msgstr "Varianz-Komponenten"
 msgid "Variance"
 msgstr "Varianz"
 
-msgid "% Contribution"
+msgid "%% Contribution"
 msgstr ""
 
 msgid "Gauge Evaluation"
@@ -749,11 +749,11 @@ msgstr "Std.-Abweichung"
 msgid "Study Variation"
 msgstr "Streuung von Studienergebnissen"
 
-msgid "% Study Variation"
+msgid "%% Study Variation"
 msgstr ""
 
-msgid "% Tolerance"
-msgstr "% Toleranz"
+msgid "%% Tolerance"
+msgstr "%% Toleranz"
 
 msgid "Total Gauge r&R"
 msgstr ""
@@ -785,12 +785,12 @@ msgstr ""
 
 msgid ""
 "Historical standard deviation is used to calculate some values for Std. "
-"Deviation, Study Variation, and %Study Variation."
+"Deviation, Study Variation, and %%Study Variation."
 msgstr ""
 
 msgid ""
 "Values for %Process Variation are not displayed because they are identical "
-"to values for %Study Variation."
+"to values for %%Study Variation."
 msgstr ""
 
 msgid "Two-way ANOVA Table without Interaction"
@@ -969,8 +969,8 @@ msgstr "Std.-Abweichung (<i>s</i>)"
 msgid "Study variation"
 msgstr ""
 
-msgid "% Bias"
-msgstr "% Verzerrung"
+msgid "%% Bias"
+msgstr "%% Verzerrung"
 
 msgid "The study variation is calculated as %i * <i>s</i>."
 msgstr ""
@@ -984,11 +984,11 @@ msgstr ""
 msgid "Cgk"
 msgstr ""
 
-msgid "% Var(Repeatability)"
+msgid "%% Var(Repeatability)"
 msgstr ""
 
-msgid "% Var(Repeatability and bias)"
-msgstr "% Var(Wiederholbarkeit und Verzerrung)"
+msgid "%% Var(Repeatability and bias)"
+msgstr "%% Var(Wiederholbarkeit und Verzerrung)"
 
 msgid "T-Test of Observed Bias Against 0"
 msgstr "T-Test der beobachteten Verzerrung gegen 0"
@@ -1245,7 +1245,7 @@ msgstr ""
 "berechnet."
 
 msgid ""
-"Red dotted lines in the probability plot below represent a 95% confidence "
+"Red dotted lines in the probability plot below represent a 95%% confidence "
 "interval."
 msgstr ""
 
