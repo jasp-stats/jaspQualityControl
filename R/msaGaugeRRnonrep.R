@@ -148,15 +148,15 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   gaugeRRNonRepTable2 <- createJaspTable(title = gettext("Variance Components"))
   gaugeRRNonRepTable2$addColumnInfo(title = gettext("Source"),       name = "sources",   type = "string" )
   gaugeRRNonRepTable2$addColumnInfo(title = gettext("Variation"), name = "Var",  type = "number")
-  gaugeRRNonRepTable2$addColumnInfo(title = gettext("% Contribution"),    name = "percentVar", type = "number")
+  gaugeRRNonRepTable2$addColumnInfo(title = gettextf("%% Contribution"),    name = "percentVar", type = "number")
 
   gaugeRRNonRepTable3 <- createJaspTable(title = gettext("Gauge Evaluation"))
   gaugeRRNonRepTable3$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
   gaugeRRNonRepTable3$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
   gaugeRRNonRepTable3$addColumnInfo(name = "studyVar", title = gettextf("Study Variation"), type = "number")
-  gaugeRRNonRepTable3$addColumnInfo(name = "percentStudyVar", title = gettext("% Study Variation"), type = "number")
+  gaugeRRNonRepTable3$addColumnInfo(name = "percentStudyVar", title = gettextf("%% Study Variation"), type = "number")
   if(options[["gaugeNRToleranceEnabled"]])
-    gaugeRRNonRepTable3$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "number")
+    gaugeRRNonRepTable3$addColumnInfo(name = "percentTolerance", title = gettextf("%% Tolerance"), type = "number")
 
   if (ready) {
     anovaTable <- .gaugeNestedANOVA(dataset, operators, parts, measurements)
