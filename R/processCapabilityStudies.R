@@ -1099,7 +1099,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
 
   table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution.", "\u00B2", options[["nullDistribution"]]))
-  table$addFootnote(gettext("Red dotted lines in the probability plot below represent a 95% confidence interval."))
+  table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
 
   if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
