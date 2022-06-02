@@ -71,7 +71,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
   table3$addColumnInfo(name = "S",  title = gettext("S"), type = "number")
   table3$addColumnInfo(name = "rsq",       title = gettextf("R%1$s", "\u00B2"), type = "number")
-  table3$addColumnInfo(name = "percentLin", title = gettext("% Linearity"), type = "number")
+  table3$addColumnInfo(name = "percentLin", title = gettextf("%% Linearity"), type = "number")
 
   Note <- gettext("Calculations are based on 6 times the historical standard variation unless specified otherwise.")
   table1$addFootnote(Note)
