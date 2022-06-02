@@ -225,7 +225,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   RRtable1$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
   RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
   RRtable1$addColumnInfo(name = "Variation", title = gettext("Variance"), type = "number")
-  RRtable1$addColumnInfo(name = "Percent", title = gettext("% Contribution"), type = "integer")
+  RRtable1$addColumnInfo(name = "Percent", title = gettextf("%% Contribution"), type = "integer")
 
   RRtable2 <- createJaspTable(title = gettext("Gauge Evaluation"))
   RRtable2$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
@@ -234,7 +234,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation"), type = "number")
   RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("% Study Variation"), type = "integer")
   if(options[["gaugeToleranceEnabled"]])
-    RRtable2$addColumnInfo(name = "percentTolerance", title = gettext("% Tolerance"), type = "integer")
+    RRtable2$addColumnInfo(name = "percentTolerance", title = gettextf("%% Tolerance"), type = "integer")
 
   for (measurement in measurements) {
     if (length(dataset[[measurement]]) <= 1)
