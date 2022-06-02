@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-05-23 11:16+0000\n"
+"PO-Revision-Date: 2022-05-29 15:15+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
@@ -186,7 +186,7 @@ msgstr "Messungen"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Options"
-msgstr "Optionen für die ANOVA-Methode"
+msgstr "ANOVA-Optionen"
 
 msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
@@ -286,7 +286,7 @@ msgstr "Zeit-gewichtete Tabellen"
 
 msgctxt "Description|"
 msgid "DOE"
-msgstr ""
+msgstr "DOE"
 
 msgctxt "Description|"
 msgid "Two-level Factorial Design"
@@ -406,7 +406,7 @@ msgstr "Residuen vs angepasster Wert"
 
 msgctxt "factorialAnalysis|"
 msgid "Residuals vs run order"
-msgstr "Residuen versus Ablaufreihenfolge"
+msgstr "Residuen vs Ablaufreihenfolge"
 
 msgctxt "msaAttribute|"
 msgid "Kendall's tau"
@@ -1014,7 +1014,7 @@ msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Run order"
-msgstr ""
+msgstr "Ablaufreihenfolge"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Alpha level:"
@@ -1042,7 +1042,7 @@ msgstr "Residuen vs. angepasster Wert"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs run order"
-msgstr ""
+msgstr "Residuen vs Ablaufreihenfolge"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (default generator)"
@@ -1126,7 +1126,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Number of runs"
-msgstr ""
+msgstr "Anzahl Durchläufe"
 
 msgctxt "doeScreening|"
 msgid "Coded"
@@ -1138,7 +1138,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Run Order"
-msgstr ""
+msgstr "Ablaufreihenfolge"
 
 msgctxt "doeScreening|"
 msgid "Standard"
@@ -1744,7 +1744,7 @@ msgstr "Anzahl Faktoren"
 
 msgctxt "doeFull|"
 msgid "Run Order"
-msgstr ""
+msgstr "Ablaufreihenfolge"
 
 msgctxt "doeFull|"
 msgid "Random"
@@ -1808,7 +1808,7 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Run order"
-msgstr ""
+msgstr "Ablaufreihenfolge"
 
 msgctxt "doeModifyDesign|"
 msgid "Unit Display"
@@ -1824,7 +1824,7 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Run Order"
-msgstr ""
+msgstr "Ablaufreihenfolge"
 
 msgctxt "doeModifyDesign|"
 msgid "Random"
@@ -1844,7 +1844,7 @@ msgstr "Design-Optionen"
 
 msgctxt "doeModifyDesign|"
 msgid "Number of runs"
-msgstr ""
+msgstr "Anzahl Durchläufe"
 
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
