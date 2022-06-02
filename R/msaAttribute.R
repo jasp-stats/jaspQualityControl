@@ -285,8 +285,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       table$addColumnInfo(name = "Inspected", title = gettext("Inspected"), type = "integer")
       table$addColumnInfo(name = "Matched", title = gettext("Matched"), type = "integer")
       table$addColumnInfo(name = "Percent", title = gettext("Percent"), type = "number")
-      table$addColumnInfo(name = "CIL", title = gettext("Lower"), type = "integer", overtitle = gettext("Confidence interval of 95%"))
-      table$addColumnInfo(name = "CIU", title = gettext("Upper"), type = "integer", overtitle = gettext("Confidence interval of 95%"))
+      table$addColumnInfo(name = "CIL", title = gettext("Lower"), type = "integer", overtitle = gettextf("Confidence interval of 95%%"))
+      table$addColumnInfo(name = "CIU", title = gettext("Upper"), type = "integer", overtitle = gettextf("Confidence interval of 95%%"))
     }
 
     if (ready) {
@@ -471,8 +471,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       table$addColumnInfo(name = "Inspected", title = gettext("Inspected"), type = "integer")
       table$addColumnInfo(name = "Matched", title = gettext("Matched"), type = "integer")
       table$addColumnInfo(name = "Percent", title = gettext("Percent"), type = "number")
-      table$addColumnInfo(name = "CIL", title = gettext("Lower"), type = "integer", overtitle = gettext("Confidence interval of 95%"))
-      table$addColumnInfo(name = "CIU", title = gettext("Upper"), type = "integer", overtitle = gettext("Confidence interval of 95%"))
+      table$addColumnInfo(name = "CIL", title = gettext("Lower"), type = "integer", overtitle = gettextf("Confidence interval of 95%%"))
+      table$addColumnInfo(name = "CIU", title = gettext("Upper"), type = "integer", overtitle = gettextf("Confidence interval of 95%%"))
 
     }
 
