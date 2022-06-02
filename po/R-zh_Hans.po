@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-04-04 09:28\n"
+"POT-Creation-Date: 2022-06-02 13:05\n"
 "PO-Revision-Date: 2022-04-03 15:11+0000\n"
 "Last-Translator: Wendy Zhao <wendy.zhao@skf.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -748,7 +748,8 @@ msgstr "标准差"
 msgid "Study Variation"
 msgstr "研究变异"
 
-msgid "%% Study Variation"
+#, fuzzy
+msgid "% Study Variation"
 msgstr "%% 研究变异"
 
 msgid "%% Tolerance"
@@ -784,14 +785,16 @@ msgid ""
 "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
 msgstr "研究变异的计算为标准差x %.2f"
 
+#, fuzzy
 msgid ""
 "Historical standard deviation is used to calculate some values for Std. "
-"Deviation, Study Variation, and %Study Variation."
+"Deviation, Study Variation, and %%Study Variation."
 msgstr "历史标准差用于计算标准差，研究变异和%研究变异的某些值。"
 
+#, fuzzy
 msgid ""
 "Values for %Process Variation are not displayed because they are identical "
-"to values for %Study Variation."
+"to values for %%Study Variation."
 msgstr "由于与 %研究变异数值相同，所以没有显示 %过程变异。"
 
 msgid "Two-way ANOVA Table without Interaction"
@@ -842,6 +845,14 @@ msgid "Reprod"
 msgstr "再现性"
 
 #, fuzzy
+msgid "% Contribution"
+msgstr "%% 贡献"
+
+#, fuzzy
+msgid "% Tolerance"
+msgstr "%% 公差"
+
+#, fuzzy
 msgid "Measurement systems analysis"
 msgstr "%s 测量系统分析"
 
@@ -878,6 +889,9 @@ msgstr "均方"
 
 msgid "Variation"
 msgstr "方差"
+
+msgid "%% Study Variation"
+msgstr "%% 研究变异"
 
 msgid "Total Gauge r & R"
 msgstr "总量具 r&R"

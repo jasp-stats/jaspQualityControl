@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-04-04 09:28\n"
+"POT-Creation-Date: 2022-06-02 13:05\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -505,7 +505,7 @@ msgstr ""
 msgid "Lower"
 msgstr ""
 
-msgid "Confidence interval of 95%"
+msgid "Confidence interval of 95%%"
 msgstr ""
 
 msgid "Upper"
@@ -601,7 +601,7 @@ msgstr ""
 msgid "R%1$s"
 msgstr ""
 
-msgid "% Linearity"
+msgid "%% Linearity"
 msgstr ""
 
 msgid "Calculations are based on 6 times the historical standard variation unless specified otherwise."
@@ -688,7 +688,7 @@ msgstr ""
 msgid "Variance"
 msgstr ""
 
-msgid "% Contribution"
+msgid "%% Contribution"
 msgstr ""
 
 msgid "Gauge Evaluation"
@@ -703,7 +703,7 @@ msgstr ""
 msgid "% Study Variation"
 msgstr ""
 
-msgid "% Tolerance"
+msgid "%% Tolerance"
 msgstr ""
 
 msgid "Total Gauge r&R"
@@ -733,10 +733,10 @@ msgstr ""
 msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
 msgstr ""
 
-msgid "Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %Study Variation."
+msgid "Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %%Study Variation."
 msgstr ""
 
-msgid "Values for %Process Variation are not displayed because they are identical to values for %Study Variation."
+msgid "Values for %Process Variation are not displayed because they are identical to values for %%Study Variation."
 msgstr ""
 
 msgid "Two-way ANOVA Table without Interaction"
@@ -784,6 +784,12 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
+msgid "% Contribution"
+msgstr ""
+
+msgid "% Tolerance"
+msgstr ""
+
 msgid "Measurement systems analysis"
 msgstr ""
 
@@ -818,6 +824,9 @@ msgid "Mean Square"
 msgstr ""
 
 msgid "Variation"
+msgstr ""
+
+msgid "%% Study Variation"
 msgstr ""
 
 msgid "Total Gauge r & R"
@@ -913,7 +922,7 @@ msgstr ""
 msgid "Study variation"
 msgstr ""
 
-msgid "% Bias"
+msgid "%% Bias"
 msgstr ""
 
 msgid "The study variation is calculated as %i * <i>s</i>."
@@ -928,10 +937,10 @@ msgstr ""
 msgid "Cgk"
 msgstr ""
 
-msgid "% Var(Repeatability)"
+msgid "%% Var(Repeatability)"
 msgstr ""
 
-msgid "% Var(Repeatability and bias)"
+msgid "%% Var(Repeatability and bias)"
 msgstr ""
 
 msgid "T-Test of Observed Bias Against 0"
@@ -1171,7 +1180,7 @@ msgstr ""
 msgid "The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution."
 msgstr ""
 
-msgid "Red dotted lines in the probability plot below represent a 95% confidence interval."
+msgid "Red dotted lines in the probability plot below represent a 95%% confidence interval."
 msgstr ""
 
 msgid "Histogram"

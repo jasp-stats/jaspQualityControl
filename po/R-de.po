@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-04-04 09:28\n"
+"POT-Creation-Date: 2022-06-02 13:05\n"
 "PO-Revision-Date: 2022-05-23 10:15+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -535,7 +535,8 @@ msgstr "Prozent"
 msgid "Lower"
 msgstr "Untere"
 
-msgid "Confidence interval of 95%"
+#, fuzzy
+msgid "Confidence interval of 95%%"
 msgstr "Konfidenzintervall von 95%"
 
 msgid "Upper"
@@ -749,7 +750,7 @@ msgstr "Std.-Abweichung"
 msgid "Study Variation"
 msgstr "Streuung von Studienergebnissen"
 
-msgid "%% Study Variation"
+msgid "% Study Variation"
 msgstr ""
 
 msgid "%% Tolerance"
@@ -839,6 +840,12 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
+msgid "% Contribution"
+msgstr ""
+
+msgid "% Tolerance"
+msgstr "% Toleranz"
+
 #, fuzzy
 msgid "Measurement systems analysis"
 msgstr "Messsystemanalyse"
@@ -874,6 +881,9 @@ msgid "Mean Square"
 msgstr "Mittlere Quadratsumme"
 
 msgid "Variation"
+msgstr ""
+
+msgid "%% Study Variation"
 msgstr ""
 
 msgid "Total Gauge r & R"
@@ -1317,41 +1327,11 @@ msgstr "Untertitel: %s"
 msgid "Name of chart: %s"
 msgstr ""
 
-msgid "% Linearity"
-msgstr ""
+#~ msgid "% Bias"
+#~ msgstr "% Verzerrung"
 
-msgid "% Contribution"
-msgstr ""
-
-msgid "% Study Variation"
-msgstr ""
-
-msgid "% Tolerance"
-msgstr "% Toleranz"
-
-msgid ""
-"Historical standard deviation is used to calculate some values for Std. "
-"Deviation, Study Variation, and %Study Variation."
-msgstr ""
-
-msgid ""
-"Values for %Process Variation are not displayed because they are identical "
-"to values for %Study Variation."
-msgstr ""
-
-msgid "% Bias"
-msgstr "% Verzerrung"
-
-msgid "% Var(Repeatability)"
-msgstr ""
-
-msgid "% Var(Repeatability and bias)"
-msgstr "% Var(Wiederholbarkeit und Verzerrung)"
-
-msgid ""
-"Red dotted lines in the probability plot below represent a 95% confidence "
-"interval."
-msgstr ""
+#~ msgid "% Var(Repeatability and bias)"
+#~ msgstr "% Var(Wiederholbarkeit und Verzerrung)"
 
 #~ msgid "Normal Plot of Standardized Effects"
 #~ msgstr "Normal-Diagramm Standardisierter Effekte"
