@@ -86,7 +86,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   table1$addColumnInfo(name = "sd",            title = gettext("Std. Deviation (<i>s</i>)"), type = "number")
   table1$addColumnInfo(name = "SV",            title = gettext("Study variation"), type = "number")
   table1$addColumnInfo(name = "tolerance",       title = gettext("Tolerance"), type = "number")
-  table1$addColumnInfo(name = "biasPercent",     title = gettext("% Bias"), type = "number")
+  table1$addColumnInfo(name = "biasPercent",     title = gettextf("%% Bias"), type = "number")
 
   table1$addFootnote(gettextf("The study variation is calculated as %i * <i>s</i>.", studyVarMultiplier))
 
@@ -96,8 +96,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   table2$addColumnInfo(name = "Cg",  title = gettext("Cg"), type = "string")
   table2$addColumnInfo(name = "Cgk",  title = gettext("Cgk"), type = "string")
-  table2$addColumnInfo(name = "percentRep",  title = gettext("% Var(Repeatability)"), type = "integer")
-  table2$addColumnInfo(name = "percentRepBias",  title = gettext("% Var(Repeatability and bias)"), type = "integer")
+  table2$addColumnInfo(name = "percentRep",  title = gettextf("%% Var(Repeatability)"), type = "integer")
+  table2$addColumnInfo(name = "percentRepBias",  title = gettextf("%% Var(Repeatability and bias)"), type = "integer")
 
   table1$setData(list(      "referenceValue"       = reference,
                             "tolerance"             = tolerance))
