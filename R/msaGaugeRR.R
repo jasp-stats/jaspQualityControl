@@ -418,8 +418,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       }
 
       if(options$standardDeviationReference == "historicalStandardDeviation"){
-        RRtable2$addFootnote(gettext("Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %Study Variation."))
-        RRtable2$addFootnote(gettext("Values for %Process Variation are not displayed because they are identical to values for %Study Variation."))
+        RRtable2$addFootnote(gettextf("Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %%Study Variation."))
+        RRtable2$addFootnote(gettextf("Values for %Process Variation are not displayed because they are identical to values for %%Study Variation."))
       }
 
 
@@ -511,8 +511,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       }
 
       if(options$standardDeviationReference == "historicalStandardDeviation"){
-        RRtable2$addFootnote(gettext("Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %Study Variation."))
-        RRtable2$addFootnote(gettext("Values for %Process Variation are not displayed because they are identical to values for %Study Variation."))
+        RRtable2$addFootnote(gettextf("Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %%Study Variation."))
+        RRtable2$addFootnote(gettextf("Values for %Process Variation are not displayed because they are identical to values for %%Study Variation."))
       }
       anovaTables[['RRtable2']] <- RRtable2
     }
