@@ -21,10 +21,6 @@ msgctxt "Description|"
 msgid "Control Charts"
 msgstr ""
 
-msgctxt "Description|"
-msgid "Response Surface"
-msgstr ""
-
 msgctxt "doeFactorial|"
 msgid "Number of factors"
 msgstr ""
@@ -246,10 +242,6 @@ msgid "Modified Kaplan-Meier (Hazen)"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
-msgid "Null distribution"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Normal"
 msgstr ""
 
@@ -271,10 +263,6 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
-msgstr ""
-
-msgctxt "attributesCharts|"
-msgid "Sample"
 msgstr ""
 
 msgctxt "attributesCharts|"
@@ -374,10 +362,6 @@ msgid "R charts by operator"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
-msgid "X-bar charts by operator"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
 msgid "Scatter plots operators"
 msgstr ""
 
@@ -390,19 +374,7 @@ msgid "Show origin line"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
-msgid "Measurement by part plot"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Measurement by operators plot"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Part x operator interaction plot"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
@@ -462,15 +434,7 @@ msgid "R charts by operator"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "X-bar charts by operator"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Measurement by operator plot"
 msgstr ""
 
 msgctxt "msaType1Gauge|"
@@ -1002,10 +966,6 @@ msgid "Number of 3-level factors"
 msgstr ""
 
 msgctxt "doeScreening|"
-msgid "Number of 2-level factors"
-msgstr ""
-
-msgctxt "doeScreening|"
 msgid "Number of runs"
 msgstr ""
 
@@ -1268,10 +1228,6 @@ msgid "Across rows"
 msgstr ""
 
 msgctxt "msaAttribute|"
-msgid "Result"
-msgstr ""
-
-msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
 msgstr ""
 
@@ -1293,10 +1249,6 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Components of variation"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Traffic light graph"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
@@ -1480,15 +1432,7 @@ msgid "Control Charts for Attributes"
 msgstr ""
 
 msgctxt "Description|"
-msgid "Screening Design"
-msgstr ""
-
-msgctxt "Description|"
 msgid "General Full Factorial Design"
-msgstr ""
-
-msgctxt "Description|"
-msgid "Modify Existing Design"
 msgstr ""
 
 msgctxt "attributesCharts|"
@@ -1768,19 +1712,7 @@ msgid "Name"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Centre"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Distance to |1|"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "x"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Formula"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
@@ -1943,10 +1875,6 @@ msgctxt "msaAttribute|"
 msgid "Positive reference:"
 msgstr ""
 
-msgctxt "Description|"
-msgid "Two-level Factorial"
-msgstr ""
-
 msgctxt "doeFactorial|"
 msgid "Design Analysis"
 msgstr ""
@@ -1996,14 +1924,6 @@ msgid "Design plots"
 msgstr ""
 
 msgctxt "doeFactorial|"
-msgid "Normal Plot of the Standardized Effect"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Display grid lines"
-msgstr ""
-
-msgctxt "doeFactorial|"
 msgid "Pareto Plot of Standardized Effects"
 msgstr ""
 
@@ -2040,31 +1960,7 @@ msgid "Design Space"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Central composite design (CCD)"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "+ Star points"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of factors"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of cube points"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of star points"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of generators"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Randomize design"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
@@ -2179,20 +2075,12 @@ msgctxt "msaAttribute|"
 msgid "Tau Study"
 msgstr ""
 
-msgctxt "msaGaugeLinearity|"
-msgid "Measurement"
-msgstr ""
-
 msgctxt "msaGaugeRR|"
 msgid "Type 3 study (automatic equipment)"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Tolerance width"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Measurement by part plot"
 msgstr ""
 
 msgctxt "msaType1Gauge|"
@@ -2231,6 +2119,110 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Number of ticks on x-axis:"
 msgstr ""
 
+msgctxt "Description|"
+msgid "Two-level Factorial Design"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Response Surface Design"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Define Custom Design"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Samples"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Time stamp (optional)"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Define levels"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Cube points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Axial points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design options"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Run Order"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Random"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Standard"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Low"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "High"
+msgstr ""
+
 msgctxt "doeResponseSurfaceMethodology|"
 msgid ""
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "Number of factors"
+msgstr ""
+
+msgctxt "msaGaugeLinearity|"
+msgid "Measurements"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Average charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurements by part plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurements by operator plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Part × operator interaction plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Traffic light chart"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Average charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Measurements by part plot"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Measurements by operator plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Number of ticks on x-axis for probability plot:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Null distribution for probability plot"
 msgstr ""
