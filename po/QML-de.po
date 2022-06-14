@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-05-29 15:15+0000\n"
+"PO-Revision-Date: 2022-06-13 08:16+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
@@ -26,7 +26,7 @@ msgstr "Attribut-Übereinstimmungsanalyse"
 
 msgctxt "Description|"
 msgid "Control Charts"
-msgstr "Kontrolltabellen"
+msgstr "Regelkarten"
 
 msgctxt "Description|"
 msgid "Response Surface"
@@ -778,7 +778,7 @@ msgstr "Konfidenzintervalle"
 
 msgctxt "processCapabilityStudies|"
 msgid "Specification Limits"
-msgstr ""
+msgstr "Spezifikationsgrenzen"
 
 msgctxt "processCapabilityStudies|"
 msgid "Histogram"
@@ -786,7 +786,7 @@ msgstr "Histogramm"
 
 msgctxt "processCapabilityStudies|"
 msgid "Probability table and plot"
-msgstr ""
+msgstr "Wahrscheinlichkeitstabelle und -diagramm"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Capability Report"
@@ -814,11 +814,11 @@ msgstr "Datum"
 
 msgctxt "processCapabilityStudies|"
 msgid "Reported by:"
-msgstr ""
+msgstr "Berichtet von:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Misc:"
-msgstr ""
+msgstr "Sonstiges:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Miscellaneous"
@@ -1010,7 +1010,7 @@ msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Zugewiesene Faktoren"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Run order"
@@ -1142,11 +1142,11 @@ msgstr "Ablaufreihenfolge"
 
 msgctxt "doeScreening|"
 msgid "Standard"
-msgstr ""
+msgstr "Standard"
 
 msgctxt "doeScreening|"
 msgid "Random"
-msgstr ""
+msgstr "Zufällig"
 
 msgctxt "doeScreening|"
 msgid "Factor"
@@ -1194,7 +1194,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Single column"
-msgstr ""
+msgstr "Einzelne Spalte"
 
 msgctxt "msaGaugeRR|"
 msgid "Across rows"
@@ -1222,7 +1222,7 @@ msgstr "Datenformat"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Single column"
-msgstr ""
+msgstr "Einzelne Spalte"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Across rows"
@@ -1242,19 +1242,19 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show Report"
-msgstr ""
+msgstr "Bericht anzeigen"
 
 msgctxt "msaTestRetest|"
 msgid "Data format"
@@ -1262,7 +1262,7 @@ msgstr "Datenformat"
 
 msgctxt "msaTestRetest|"
 msgid "Single column"
-msgstr ""
+msgstr "Einzelne Spalte"
 
 msgctxt "msaTestRetest|"
 msgid "Across rows"
@@ -1302,7 +1302,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Single column"
-msgstr ""
+msgstr "Einzelne Spalte"
 
 msgctxt "processCapabilityStudies|"
 msgid "Across rows"
@@ -1392,7 +1392,7 @@ msgstr "Datenformat"
 
 msgctxt "msaAttribute|"
 msgid "Single column"
-msgstr ""
+msgstr "Einzelne Spalte"
 
 msgctxt "msaAttribute|"
 msgid "Across rows"
@@ -1432,7 +1432,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Tolerance"
-msgstr ""
+msgstr "Toleranz"
 
 msgctxt "msaGaugeRR|"
 msgid "Alpha interaction removal"
@@ -1448,7 +1448,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Traffic light graph"
-msgstr ""
+msgstr "Ampeldiagramm"
 
 msgctxt "msaGaugeRR|"
 msgid "Title"
@@ -1464,7 +1464,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Misc"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation value"
@@ -1492,7 +1492,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Misc"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "msaTestRetest|"
 msgid "Process Std. Deviation"
@@ -1624,7 +1624,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Misc"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "Description|"
 msgid "Control Charts for Attributes"
@@ -1668,7 +1668,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Misc"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "attributesCharts|"
 msgid "Miscellaneous"
@@ -1700,7 +1700,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Show Report"
-msgstr ""
+msgstr "Bericht anzeigen"
 
 msgctxt "doeFactorial|"
 msgid "Design Space"
@@ -1712,7 +1712,7 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Design Options"
-msgstr ""
+msgstr "Design-Optionen"
 
 msgctxt "doeFactorial|"
 msgid "VII"
@@ -1720,19 +1720,19 @@ msgstr "VII"
 
 msgctxt "doeFactorial|"
 msgid "Fraction"
-msgstr ""
+msgstr "Bruchteil"
 
 msgctxt "doeFactorial|"
 msgid "1/2"
-msgstr ""
+msgstr "1/2"
 
 msgctxt "doeFactorial|"
 msgid "1/4"
-msgstr ""
+msgstr "1/4"
 
 msgctxt "doeFactorial|"
 msgid "1/8"
-msgstr ""
+msgstr "1/8"
 
 msgctxt "doeFull|"
 msgid "Design Space"
@@ -1740,7 +1740,7 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Number of factors"
-msgstr "Anzahl Faktoren"
+msgstr "Anzahl der Faktoren"
 
 msgctxt "doeFull|"
 msgid "Run Order"
@@ -1752,7 +1752,7 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Standard"
-msgstr ""
+msgstr "Standard"
 
 msgctxt "doeFull|"
 msgid "Factor"
@@ -1800,11 +1800,11 @@ msgstr "Verfügbare Faktoren"
 
 msgctxt "doeModifyDesign|"
 msgid "Response variable"
-msgstr ""
+msgstr "Wirkvariable"
 
 msgctxt "doeModifyDesign|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Zugewiesene Faktoren"
 
 msgctxt "doeModifyDesign|"
 msgid "Run order"
@@ -1828,11 +1828,11 @@ msgstr "Ablaufreihenfolge"
 
 msgctxt "doeModifyDesign|"
 msgid "Random"
-msgstr ""
+msgstr "Zufällig"
 
 msgctxt "doeModifyDesign|"
 msgid "Standard"
-msgstr ""
+msgstr "Standard"
 
 msgctxt "doeModifyDesign|"
 msgid "Desired Two-level Factorial Design Options"
@@ -1880,7 +1880,7 @@ msgstr "VIII"
 
 msgctxt "doeModifyDesign|"
 msgid "Fraction"
-msgstr ""
+msgstr "Bruchteil"
 
 msgctxt "doeModifyDesign|"
 msgid "1/2"
@@ -2112,11 +2112,11 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Misc"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Sonstiges"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Sub-title:"
