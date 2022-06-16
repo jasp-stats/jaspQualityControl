@@ -661,26 +661,6 @@ msgctxt "timeWeightedCharts|"
 msgid "t chart"
 msgstr ""
 
-msgctxt "TimeWeightedCharts|"
-msgid "Measurements"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Cumulative sum chart"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Exponentially weighted moving average chart"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "g chart"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "t chart"
-msgstr ""
-
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
 msgstr ""
@@ -1355,18 +1335,6 @@ msgctxt "processCapabilityStudies|"
 msgid "Display grid lines"
 msgstr ""
 
-msgctxt "TimeWeightedCharts|"
-msgid "Number of standard deviations"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Shift size"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Lambda"
-msgstr ""
-
 msgctxt "timeWeightedCharts|"
 msgid "Number of standard deviations"
 msgstr ""
@@ -1775,18 +1743,6 @@ msgctxt "timeWeightedCharts|"
 msgid "Sigmas for computing control limits"
 msgstr ""
 
-msgctxt "TimeWeightedCharts|"
-msgid "Center"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Within-group standard deviation"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Sigmas for computing control limits"
-msgstr ""
-
 msgctxt "variablesChartsIndividuals|"
 msgid "Subgroups"
 msgstr ""
@@ -2173,10 +2129,6 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "High"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
 msgstr ""
 
 msgctxt "doeScreening|"
