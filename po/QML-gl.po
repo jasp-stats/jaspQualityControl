@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-06-16 17:03+0000\n"
+"PO-Revision-Date: 2022-06-16 17:30+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Galician <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/gl/>\n"
@@ -2087,7 +2087,7 @@ msgstr "Número de factores"
 
 msgctxt "doeScreening|"
 msgid "Design Display"
-msgstr "Presentación do deseño"
+msgstr "Deseñar Presentación"
 
 msgctxt "msaAttribute|"
 msgid "Results"
@@ -2171,15 +2171,15 @@ msgstr "Método do rango para a gráfica de probabilidade"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of ticks on x-axis for X-bar & R or X-mR chart:"
-msgstr "Número de marcas no eixe x para a gráfica de X-bar & R ou X-mR:"
+msgstr "Número de marcas no eixe x para gráfica de X-bar & R ou X-mR:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of ticks on x-axis for probability plot:"
-msgstr "Número de marcas no eixe x para a gráfica de probabilidade:"
+msgstr "Número de marcas no eixe x para gráfica de probabilidade:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Null distribution for probability plot"
-msgstr "Distribución nula para a gráfica de probabilidade"
+msgstr "Distribución nula para gráfica de probabilidade"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Number of ticks on x-axis:"
