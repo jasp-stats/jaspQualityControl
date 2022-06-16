@@ -2220,150 +2220,46 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Number of ticks on x-axis:"
 msgstr ""
 
-#~ msgctxt "Description|"
-#~ msgid "Response Surface"
-#~ msgstr "Wirkungsfläche"
+msgctxt "TimeWeightedCharts|"
+msgid "Measurements"
+msgstr "Messungen"
 
-#~ msgctxt "msaType1Gauge|"
-#~ msgid "Measurements"
-#~ msgstr "Messungen"
+msgctxt "TimeWeightedCharts|"
+msgid "Number of standard deviations"
+msgstr "Anzahl Standardabweichungen"
 
-#~ msgctxt "processCapabilityStudies|"
-#~ msgid "Rank method"
-#~ msgstr "Rangordnungsmethode"
+msgctxt "TimeWeightedCharts|"
+msgid "Lambda"
+msgstr "Lambda"
 
-#~ msgctxt "processCapabilityStudies|"
-#~ msgid "Null distribution"
-#~ msgstr "Null-Verteilung"
+msgctxt "TimeWeightedCharts|"
+msgid "Sigmas for computing control limits"
+msgstr "Sigmas für Berechnung der Eingriffsgrenzen"
 
-#~ msgctxt "attributesCharts|"
-#~ msgid "Sample"
-#~ msgstr "Stichprobe"
+msgctxt "TimeWeightedCharts|"
+msgid "Cumulative sum chart"
+msgstr ""
 
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "Contour Plot Options"
-#~ msgstr "Konturdiagramm-Optionen"
+msgctxt "TimeWeightedCharts|"
+msgid "Shift size"
+msgstr ""
 
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Available factors"
-#~ msgstr "Verfügbare Faktoren"
+msgctxt "TimeWeightedCharts|"
+msgid "Exponentially weighted moving average chart"
+msgstr ""
 
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Response variable"
-#~ msgstr "Wirkvariable"
+msgctxt "TimeWeightedCharts|"
+msgid "Center"
+msgstr ""
 
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Assigned factors"
-#~ msgstr "Zugewiesene Faktoren"
+msgctxt "TimeWeightedCharts|"
+msgid "Within-group standard deviation"
+msgstr ""
 
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Run order"
-#~ msgstr "Ablaufreihenfolge"
+msgctxt "TimeWeightedCharts|"
+msgid "g chart"
+msgstr ""
 
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Highest order interaction term:"
-#~ msgstr "Interaktionsterm höchster Ordnung:"
-
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Residuals plots"
-#~ msgstr "Residuendiagramme"
-
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Normal probability plot of residuals"
-#~ msgstr "Wahrscheinlichkeitsverteilungsdiagramm der Residuen"
-
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Histogram of residuals"
-#~ msgstr "Histogramm der Residuen"
-
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Residuals vs fitted value"
-#~ msgstr "Residuen vs angepasster Wert"
-
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Residuals vs run order"
-#~ msgstr "Residuen vs Ablaufreihenfolge"
-
-#~ msgctxt "TimeWeightedCharts|"
-#~ msgid "Measurements"
-#~ msgstr "Messungen"
-
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "Contour Surface"
-#~ msgstr "Konturfläche"
-
-#~ msgctxt "factorialAnalysis|"
-#~ msgid "Pareto plot of standardized effects"
-#~ msgstr "Pareto-Diagramm standardisierter Effekte"
-
-#~ msgctxt "processCapabilityStudies|"
-#~ msgid "Specification Limits"
-#~ msgstr "Spezifikationsgrenzen"
-
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "Response Surface Summaries"
-#~ msgstr "Wirkungsfläche Zusammenfassungen"
-
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "Coefficient Table"
-#~ msgstr "Koeffiziententabelle"
-
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "ANOVA Table"
-#~ msgstr "ANOVA-Tabelle"
-
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "Residual Histogram"
-#~ msgstr "Residuenhistogramm"
-
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "Residual vs. Fitted Plot"
-#~ msgstr "Diagramm Residuen vs. Anpassung"
-
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "Pareto Plot of Standardized Effects"
-#~ msgstr "Pareto-Diagramm Standardisierter Effekte"
-
-#~ msgctxt "processCapabilityStudies|"
-#~ msgid "Percentile method"
-#~ msgstr "Perzentil-Methode"
-
-#~ msgctxt "msaAttribute|"
-#~ msgid "Result"
-#~ msgstr "Ergebnis"
-
-#~ msgctxt "msaAttribute|"
-#~ msgid "Positive refernce:"
-#~ msgstr "Positive Referenz:"
-
-#~ msgctxt "msaGaugeRR|"
-#~ msgid "Tolerance"
-#~ msgstr "Toleranz"
-
-#~ msgctxt "msaGaugeRR|"
-#~ msgid "Traffic light graph"
-#~ msgstr "Ampeldiagramm"
-
-#~ msgctxt "TimeWeightedCharts|"
-#~ msgid "Number of standard deviations"
-#~ msgstr "Anzahl Standardabweichungen"
-
-#~ msgctxt "TimeWeightedCharts|"
-#~ msgid "Lambda"
-#~ msgstr "Lambda"
-
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "Number of Factors"
-#~ msgstr "Anzahl Faktoren"
-
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "Formula"
-#~ msgstr "Formel"
-
-#~ msgctxt "TimeWeightedCharts|"
-#~ msgid "Sigmas for computing control limits"
-#~ msgstr "Sigmas für Berechnung der Eingriffsgrenzen"
-
-#~ msgctxt "doeResponseSurfaceMethodology|"
-#~ msgid "Factor Name "
-#~ msgstr "Faktorname "
+msgctxt "TimeWeightedCharts|"
+msgid "t chart"
+msgstr ""
