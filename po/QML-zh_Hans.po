@@ -1,15 +1,10 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-26 08:55+0000\n"
-"Last-Translator: Wendy Zhao <wendy.zhao@skf.com>\n"
-"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
-"jasp/jaspprocesscontrol-qml/zh_Hans/>\n"
-"Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Language: zh_Hans\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
@@ -56,21 +51,9 @@ msgctxt "Description|"
 msgid "Two-level Factorial Design"
 msgstr "二水平因子设计"
 
-msgctxt "Description|"
-msgid "Response Surface"
-msgstr "响应曲面"
-
-msgctxt "Description|"
-msgid "Two-level Factorial Analysis"
-msgstr "分析二水平因子设计"
-
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
 msgstr "缺陷品/缺陷"
-
-msgctxt "attributesCharts|"
-msgid "Sample"
-msgstr "样本"
 
 msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
@@ -241,14 +224,6 @@ msgid "Response"
 msgstr "响应"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour Plot Options"
-msgstr "等值线图选项"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour Surface"
-msgstr "等值曲面"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Only show 2D plot"
 msgstr "仅显示 2D 图形"
 
@@ -271,54 +246,6 @@ msgstr "旋转角度(垂直方向）"
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Rotating angle (horizontal plane)"
 msgstr "旋转角度(水平方向)"
-
-msgctxt "factorialAnalysis|"
-msgid "Available factors"
-msgstr "可用因子"
-
-msgctxt "factorialAnalysis|"
-msgid "Response variable"
-msgstr "响应变量"
-
-msgctxt "factorialAnalysis|"
-msgid "Assigned factors"
-msgstr "指定因子"
-
-msgctxt "factorialAnalysis|"
-msgid "Blocks"
-msgstr "区组"
-
-msgctxt "factorialAnalysis|"
-msgid "Run order"
-msgstr "运行序"
-
-msgctxt "factorialAnalysis|"
-msgid "Highest order interaction term:"
-msgstr "最高阶交互作用项："
-
-msgctxt "factorialAnalysis|"
-msgid "Pareto plot of standardized effects"
-msgstr "标准化效应 Pareto 图"
-
-msgctxt "factorialAnalysis|"
-msgid "Residuals plots"
-msgstr "残差图"
-
-msgctxt "factorialAnalysis|"
-msgid "Normal probability plot of residuals"
-msgstr "残差正态概率图"
-
-msgctxt "factorialAnalysis|"
-msgid "Histogram of residuals"
-msgstr "残差直方图"
-
-msgctxt "factorialAnalysis|"
-msgid "Residuals vs fitted value"
-msgstr "残差 vs 拟合图"
-
-msgctxt "factorialAnalysis|"
-msgid "Residuals vs run order"
-msgstr "残差 vs 运行顺序图"
 
 msgctxt "msaAttribute|"
 msgid "Operators"
@@ -421,10 +348,6 @@ msgid "R charts by operator"
 msgstr "极差图 (按操作者)"
 
 msgctxt "msaGaugeRR|"
-msgid "X-bar charts by operator"
-msgstr "均值图 (按操作者)"
-
-msgctxt "msaGaugeRR|"
 msgid "Scatter plots operators"
 msgstr "散点图 (按操作者)"
 
@@ -437,20 +360,8 @@ msgid "Show origin line"
 msgstr "显示初始线"
 
 msgctxt "msaGaugeRR|"
-msgid "Measurement by part plot"
-msgstr "测量值图 (按零件)"
-
-msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
 msgstr "显示所有测量值"
-
-msgctxt "msaGaugeRR|"
-msgid "Measurement by operators plot"
-msgstr "测量值图 (按操作者)"
-
-msgctxt "msaGaugeRR|"
-msgid "Part x operator interaction plot"
-msgstr "零件 x 操作者交互作用图"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Report"
@@ -533,24 +444,8 @@ msgid "R charts by operator"
 msgstr "极差图 (按操作者）"
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "X-bar charts by operator"
-msgstr "均值图 (按操作者)"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Measurement by part x operator plot"
-msgstr "测量值 (按零件 x 操作者)"
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
 msgstr "显示所有测量值"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Measurement by operator plot"
-msgstr "测量值 (按操作者)"
-
-msgctxt "msaType1Gauge|"
-msgid "Measurements"
-msgstr "测量值"
 
 msgctxt "msaType1Gauge|"
 msgid "6"
@@ -673,10 +568,6 @@ msgid "Confidence intervals"
 msgstr "置信区间"
 
 msgctxt "processCapabilityStudies|"
-msgid "Specification Limits"
-msgstr "规格限"
-
-msgctxt "processCapabilityStudies|"
 msgid "Lower specification limit"
 msgstr "规格下限"
 
@@ -701,10 +592,6 @@ msgid "Probability table and plot"
 msgstr "概率表和概率图"
 
 msgctxt "processCapabilityStudies|"
-msgid "Rank method"
-msgstr "秩法"
-
-msgctxt "processCapabilityStudies|"
 msgid "Median Rank (Benard)"
 msgstr "中位秩 (Benard)"
 
@@ -719,10 +606,6 @@ msgstr "Kaplan-Meier"
 msgctxt "processCapabilityStudies|"
 msgid "Modified Kaplan-Meier (Hazen)"
 msgstr "调整的 Kaplan-Meier (Hazen)"
-
-msgctxt "processCapabilityStudies|"
-msgid "Null distribution"
-msgstr "零分布"
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal"
@@ -785,26 +668,6 @@ msgid "g chart"
 msgstr "g 控制图"
 
 msgctxt "timeWeightedCharts|"
-msgid "t chart"
-msgstr "t 控制图"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Measurements"
-msgstr "测量值"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Cumulative sum chart"
-msgstr "累积和控制图"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Exponentially weighted moving average chart"
-msgstr "指数加权移动平均控制图"
-
-msgctxt "TimeWeightedCharts|"
-msgid "g chart"
-msgstr "g 控制图"
-
-msgctxt "TimeWeightedCharts|"
 msgid "t chart"
 msgstr "t 控制图"
 
@@ -1076,34 +939,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "FO"
 msgstr "FO"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response Surface Summaries"
-msgstr "响应曲面汇总"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Coefficient Table"
-msgstr "系数表"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "ANOVA Table"
-msgstr "方差分析表"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual Histogram"
-msgstr "残差直方图"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Normal Residual Plot"
-msgstr "残差正态图"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual vs. Fitted Plot"
-msgstr "残差 vs. 拟合值"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Pareto Plot of Standardized Effects"
-msgstr "标准化效应 Pareto 图"
-
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
 msgstr "筛选设计类型"
@@ -1119,10 +954,6 @@ msgstr "自定义筛选"
 msgctxt "doeScreening|"
 msgid "Number of 3-level factors"
 msgstr "三水平因子数"
-
-msgctxt "doeScreening|"
-msgid "Number of 2-level factors"
-msgstr "二水平因子数"
 
 msgctxt "doeScreening|"
 msgid "Number of runs"
@@ -1329,14 +1160,6 @@ msgid "3-parameter lognormal"
 msgstr "3 参数对数正态"
 
 msgctxt "processCapabilityStudies|"
-msgid "Non-conformance method"
-msgstr "不符合的显示方法"
-
-msgctxt "processCapabilityStudies|"
-msgid "Percentile method"
-msgstr "百分位数法"
-
-msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
 msgstr "过程稳定性"
 
@@ -1371,10 +1194,6 @@ msgid "Desirability"
 msgstr "合意度"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response Variable List"
-msgstr "响应变量清单"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Minimum [Min/Max]"
 msgstr "望小 [最小/最大]"
 
@@ -1399,14 +1218,6 @@ msgid "Across rows"
 msgstr "跨数行"
 
 msgctxt "msaAttribute|"
-msgid "Result"
-msgstr "结果"
-
-msgctxt "msaAttribute|"
-msgid "Kappa Stuides"
-msgstr "Kappa 研究"
-
-msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
 msgstr "Cohen's kappa (二个评估者 kappa)"
 
@@ -1414,25 +1225,9 @@ msgctxt "msaAttribute|"
 msgid "Fleiss' kappa (multirater kappa)"
 msgstr "Fleiss' kappa (多个评估者 kappa)"
 
-msgctxt "msaAttribute|"
-msgid "Positive refernce:"
-msgstr "正参考值:"
-
-msgctxt "msaAttribute|"
-msgid "Tau Stuides"
-msgstr "Tau 研究"
-
 msgctxt "msaGaugeLinearity|"
 msgid "Process variation"
 msgstr "过程变异"
-
-msgctxt "msaGaugeRR|"
-msgid "Type 3 study"
-msgstr "类型 3 研究"
-
-msgctxt "msaGaugeRR|"
-msgid "Tolerance"
-msgstr "公差"
 
 msgctxt "msaGaugeRR|"
 msgid "Alpha interaction removal"
@@ -1445,10 +1240,6 @@ msgstr "研究变异乘数"
 msgctxt "msaGaugeRR|"
 msgid "Components of variation"
 msgstr "方差分量"
-
-msgctxt "msaGaugeRR|"
-msgid "Traffic light graph"
-msgstr "红绿灯图"
 
 msgctxt "msaGaugeRR|"
 msgid "Title"
@@ -1554,18 +1345,6 @@ msgctxt "processCapabilityStudies|"
 msgid "Display grid lines"
 msgstr "显示网格线"
 
-msgctxt "TimeWeightedCharts|"
-msgid "Number of standard deviations"
-msgstr "标准差的倍数"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Shift size"
-msgstr "偏移量"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Lambda"
-msgstr "Lambda"
-
 msgctxt "timeWeightedCharts|"
 msgid "Number of standard deviations"
 msgstr "标准差倍数"
@@ -1631,16 +1410,8 @@ msgid "Control Charts for Attributes"
 msgstr "属性控制图"
 
 msgctxt "Description|"
-msgid "Screening Design"
-msgstr "筛选设计"
-
-msgctxt "Description|"
 msgid "General Full Factorial Design"
 msgstr "一般全因子设计"
-
-msgctxt "Description|"
-msgid "Modify Existing Design"
-msgstr "修改现有设计"
 
 msgctxt "attributesCharts|"
 msgid "Control Charts for Attributes Report"
@@ -1911,66 +1682,6 @@ msgid "Show desired design"
 msgstr "显示期望设计"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Specification"
-msgstr "设计规范"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Information"
-msgstr "设计信息"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Central Composite Design (CCD)"
-msgstr "中心复合设计(CCD)"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "+ Star Points"
-msgstr "+ 星号点"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of Factors"
-msgstr "因子数"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of Cube Points"
-msgstr "角点数"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of Star Points"
-msgstr "星号点数"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of Generators"
-msgstr "生成元数"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Randomize Design"
-msgstr "随机化设计"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Inscribed Design"
-msgstr "有界设计"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Force One Block"
-msgstr "强制单一区组"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Use # of Variables instead of Model"
-msgstr "使用变量数而非模型"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Introduce Blocking"
-msgstr "引入区组"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Coded Output"
-msgstr "已编码输出"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Alpha Type"
-msgstr "Alpha 类型"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
 msgstr "因子"
 
@@ -1979,44 +1690,16 @@ msgid "Name"
 msgstr "名称"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Centre"
-msgstr "中心"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Distance to |1|"
-msgstr "到 |1| 的距离"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "x"
 msgstr "x"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Formula"
-msgstr "公式"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Generator Name"
-msgstr "生成元名称"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Generator Formula"
-msgstr "生成元公式"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "<b>Build Design</b>"
 msgstr "<b>创建设计</b>"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour Plots"
-msgstr "等值线图"
-
 msgctxt "doeScreening|"
 msgid "Design Space"
 msgstr "设计空间"
-
-msgctxt "doeScreening|"
-msgid "Unit Display"
-msgstr "显示单位"
 
 msgctxt "doeScreening|"
 msgid "Number of centre points"
@@ -2067,18 +1750,6 @@ msgid "Within-group standard deviation"
 msgstr "组内标准差"
 
 msgctxt "timeWeightedCharts|"
-msgid "Sigmas for computing control limits"
-msgstr "计算控制限的标准差数"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Center"
-msgstr "中心"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Within-group standard deviation"
-msgstr "组内标准差"
-
-msgctxt "TimeWeightedCharts|"
 msgid "Sigmas for computing control limits"
 msgstr "计算控制限的标准差数"
 
@@ -2166,10 +1837,689 @@ msgctxt "doeFactorial|"
 msgid "<b>Sync Design: Off</b>"
 msgstr "<b>同步设计: Off</b>"
 
+msgctxt "Description|"
+msgid "Response Surface Design"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Define Custom Design"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Samples"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Time stamp (optional)"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design Analysis"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Available factors"
+msgstr "可用因子"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Response variable"
+msgstr "响应变量"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Assigned factors"
+msgstr "指定因子"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Blocks"
+msgstr "区组"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Run order"
+msgstr "运行序"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Highest order interaction term:"
+msgstr "最高阶交互作用项："
+
+msgctxt "doeFactorial|"
+msgid "Model"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Components"
+msgstr "组成部分"
+
+msgctxt "doeFactorial|"
+msgid "Model Terms"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Plots"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design plots"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Pareto Plot of Standardized Effects"
+msgstr "标准化效应 Pareto 图"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Residuals plots"
+msgstr "残差图"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Normal probability plot of residuals"
+msgstr "残差正态概率图"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Histogram of residuals"
+msgstr "残差直方图"
+
+msgctxt "doeFactorial|"
+msgid "Residuals vs fitted value"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Residuals vs run/standard order"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Run"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Matrix residuals plot"
+msgstr ""
+
+#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Factor Name "
-msgstr "因子名称 "
+msgid "Design Space"
+msgstr "设计空间"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
+msgid "Number of factors"
 msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Define levels"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Cube points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Axial points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design options"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Inscribed design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Force one block"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Use # of variables instead of model"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Introduce blocking"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Coded output"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Alpha type"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Run Order"
+msgstr "运行序"
+
+#, fuzzy
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Random"
+msgstr "随机"
+
+#, fuzzy
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Standard"
+msgstr "标准"
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Low"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "High"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Factor name "
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Generator name"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Generator formula"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design Analysis"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Response surface analysis"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Coefficients table"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Residual histogram"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "ANOVA table"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Normal residual plot"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Normal plot of standardized effects"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Add grid lines"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Residual vs. fitted plot"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Pareto plot of standardized effects"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Matrix residuals plot"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Contour plots"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Contour plot options"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Contour surface"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Response variable list"
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "Number of factors"
+msgstr ""
+
+msgctxt "doeScreening|"
+msgid "Design Display"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Results"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Kappa Study"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Positive reference:"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Tau Study"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Type 3 study (automatic equipment)"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Tolerance width"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Average charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurements by part plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurements by operator plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Part × operator interaction plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Traffic light chart"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Average charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Measurements by part plot"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Measurements by operator plot"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Measurement"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Percentile"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Non-conformance"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Capability studies"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Rank method for probability plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Number of ticks on x-axis for X-bar & R or X-mR chart:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Number of ticks on x-axis for probability plot:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Null distribution for probability plot"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Number of ticks on x-axis:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Number of ticks on x-axis:"
+msgstr ""
+
+#~ msgctxt "Description|"
+#~ msgid "Response Surface"
+#~ msgstr "响应曲面"
+
+#~ msgctxt "Description|"
+#~ msgid "Two-level Factorial Analysis"
+#~ msgstr "分析二水平因子设计"
+
+#~ msgctxt "attributesCharts|"
+#~ msgid "Sample"
+#~ msgstr "样本"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Contour Plot Options"
+#~ msgstr "等值线图选项"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Contour Surface"
+#~ msgstr "等值曲面"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Available factors"
+#~ msgstr "可用因子"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Response variable"
+#~ msgstr "响应变量"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Assigned factors"
+#~ msgstr "指定因子"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Blocks"
+#~ msgstr "区组"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Run order"
+#~ msgstr "运行序"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Highest order interaction term:"
+#~ msgstr "最高阶交互作用项："
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Pareto plot of standardized effects"
+#~ msgstr "标准化效应 Pareto 图"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Residuals plots"
+#~ msgstr "残差图"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Normal probability plot of residuals"
+#~ msgstr "残差正态概率图"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Histogram of residuals"
+#~ msgstr "残差直方图"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Residuals vs fitted value"
+#~ msgstr "残差 vs 拟合图"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Residuals vs run order"
+#~ msgstr "残差 vs 运行顺序图"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "X-bar charts by operator"
+#~ msgstr "均值图 (按操作者)"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Measurement by part plot"
+#~ msgstr "测量值图 (按零件)"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Measurement by operators plot"
+#~ msgstr "测量值图 (按操作者)"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Part x operator interaction plot"
+#~ msgstr "零件 x 操作者交互作用图"
+
+#~ msgctxt "msaGaugeRRnonrep|"
+#~ msgid "X-bar charts by operator"
+#~ msgstr "均值图 (按操作者)"
+
+#~ msgctxt "msaGaugeRRnonrep|"
+#~ msgid "Measurement by part x operator plot"
+#~ msgstr "测量值 (按零件 x 操作者)"
+
+#~ msgctxt "msaGaugeRRnonrep|"
+#~ msgid "Measurement by operator plot"
+#~ msgstr "测量值 (按操作者)"
+
+#~ msgctxt "msaType1Gauge|"
+#~ msgid "Measurements"
+#~ msgstr "测量值"
+
+#~ msgctxt "processCapabilityStudies|"
+#~ msgid "Specification Limits"
+#~ msgstr "规格限"
+
+#~ msgctxt "processCapabilityStudies|"
+#~ msgid "Rank method"
+#~ msgstr "秩法"
+
+#~ msgctxt "processCapabilityStudies|"
+#~ msgid "Null distribution"
+#~ msgstr "零分布"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Measurements"
+#~ msgstr "测量值"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Cumulative sum chart"
+#~ msgstr "累积和控制图"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Exponentially weighted moving average chart"
+#~ msgstr "指数加权移动平均控制图"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "g chart"
+#~ msgstr "g 控制图"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "t chart"
+#~ msgstr "t 控制图"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Response Surface Summaries"
+#~ msgstr "响应曲面汇总"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Coefficient Table"
+#~ msgstr "系数表"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "ANOVA Table"
+#~ msgstr "方差分析表"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Residual Histogram"
+#~ msgstr "残差直方图"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Normal Residual Plot"
+#~ msgstr "残差正态图"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Residual vs. Fitted Plot"
+#~ msgstr "残差 vs. 拟合值"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Pareto Plot of Standardized Effects"
+#~ msgstr "标准化效应 Pareto 图"
+
+#~ msgctxt "doeScreening|"
+#~ msgid "Number of 2-level factors"
+#~ msgstr "二水平因子数"
+
+#~ msgctxt "processCapabilityStudies|"
+#~ msgid "Non-conformance method"
+#~ msgstr "不符合的显示方法"
+
+#~ msgctxt "processCapabilityStudies|"
+#~ msgid "Percentile method"
+#~ msgstr "百分位数法"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Response Variable List"
+#~ msgstr "响应变量清单"
+
+#~ msgctxt "msaAttribute|"
+#~ msgid "Result"
+#~ msgstr "结果"
+
+#~ msgctxt "msaAttribute|"
+#~ msgid "Kappa Stuides"
+#~ msgstr "Kappa 研究"
+
+#~ msgctxt "msaAttribute|"
+#~ msgid "Positive refernce:"
+#~ msgstr "正参考值:"
+
+#~ msgctxt "msaAttribute|"
+#~ msgid "Tau Stuides"
+#~ msgstr "Tau 研究"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Type 3 study"
+#~ msgstr "类型 3 研究"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Tolerance"
+#~ msgstr "公差"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Traffic light graph"
+#~ msgstr "红绿灯图"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Number of standard deviations"
+#~ msgstr "标准差的倍数"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Shift size"
+#~ msgstr "偏移量"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Lambda"
+#~ msgstr "Lambda"
+
+#~ msgctxt "Description|"
+#~ msgid "Screening Design"
+#~ msgstr "筛选设计"
+
+#~ msgctxt "Description|"
+#~ msgid "Modify Existing Design"
+#~ msgstr "修改现有设计"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Design Specification"
+#~ msgstr "设计规范"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Design Information"
+#~ msgstr "设计信息"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Central Composite Design (CCD)"
+#~ msgstr "中心复合设计(CCD)"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "+ Star Points"
+#~ msgstr "+ 星号点"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Number of Factors"
+#~ msgstr "因子数"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Number of Cube Points"
+#~ msgstr "角点数"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Number of Star Points"
+#~ msgstr "星号点数"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Number of Generators"
+#~ msgstr "生成元数"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Randomize Design"
+#~ msgstr "随机化设计"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Inscribed Design"
+#~ msgstr "有界设计"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Force One Block"
+#~ msgstr "强制单一区组"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Use # of Variables instead of Model"
+#~ msgstr "使用变量数而非模型"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Introduce Blocking"
+#~ msgstr "引入区组"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Coded Output"
+#~ msgstr "已编码输出"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Alpha Type"
+#~ msgstr "Alpha 类型"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Centre"
+#~ msgstr "中心"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Distance to |1|"
+#~ msgstr "到 |1| 的距离"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Formula"
+#~ msgstr "公式"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Generator Name"
+#~ msgstr "生成元名称"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Generator Formula"
+#~ msgstr "生成元公式"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Contour Plots"
+#~ msgstr "等值线图"
+
+#~ msgctxt "doeScreening|"
+#~ msgid "Unit Display"
+#~ msgstr "显示单位"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Center"
+#~ msgstr "中心"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Within-group standard deviation"
+#~ msgstr "组内标准差"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Sigmas for computing control limits"
+#~ msgstr "计算控制限的标准差数"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Factor Name "
+#~ msgstr "因子名称 "

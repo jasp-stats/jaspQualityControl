@@ -1,15 +1,10 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-03-01 12:56+0000\n"
-"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
-"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/es/>\n"
-"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11.1-dev\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
@@ -27,10 +22,6 @@ msgstr "Análisis de Concordancia de Atributos"
 msgctxt "Description|"
 msgid "Control Charts"
 msgstr "Gráficos de Control"
-
-msgctxt "Description|"
-msgid "Response Surface"
-msgstr "Superficie de Respuesta"
 
 msgctxt "doeFactorial|"
 msgid "Number of factors"
@@ -201,10 +192,6 @@ msgid "Plots"
 msgstr "Gráficos"
 
 msgctxt "msaType1Gauge|"
-msgid "Measurements"
-msgstr "Medidas"
-
-msgctxt "msaType1Gauge|"
 msgid "Plots"
 msgstr "Gráficos"
 
@@ -245,10 +232,6 @@ msgid "Lognormal"
 msgstr "Log-Normal"
 
 msgctxt "processCapabilityStudies|"
-msgid "Rank method"
-msgstr "Método del rango"
-
-msgctxt "processCapabilityStudies|"
 msgid "Median Rank (Benard)"
 msgstr "Rango Mediano (Benard)"
 
@@ -263,10 +246,6 @@ msgstr "Kaplan-Meier"
 msgctxt "processCapabilityStudies|"
 msgid "Modified Kaplan-Meier (Hazen)"
 msgstr "Kaplan-Meier modificado (Hazen)"
-
-msgctxt "processCapabilityStudies|"
-msgid "Null distribution"
-msgstr "Distribución nula"
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal"
@@ -295,10 +274,6 @@ msgstr "Diseño Factorial de Dos Niveles"
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
 msgstr "Defectuosos/Defectos"
-
-msgctxt "attributesCharts|"
-msgid "Sample"
-msgstr "Muestra"
 
 msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
@@ -345,10 +320,6 @@ msgid "Save as:"
 msgstr "Guardar como:"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour Plot Options"
-msgstr "Opciones del Gráfico de Contorno"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Show analysis and graphs in coded form"
 msgstr "Mostrar análisis y gráficos de forma codificada"
 
@@ -367,46 +338,6 @@ msgstr "Ángulo de rotación (plano vertical)"
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Rotating angle (horizontal plane)"
 msgstr "Ángulo de rotación (plano horizontal)"
-
-msgctxt "factorialAnalysis|"
-msgid "Available factors"
-msgstr "Factores disponibles"
-
-msgctxt "factorialAnalysis|"
-msgid "Response variable"
-msgstr "Variable de respuesta"
-
-msgctxt "factorialAnalysis|"
-msgid "Assigned factors"
-msgstr "Factores asignados"
-
-msgctxt "factorialAnalysis|"
-msgid "Run order"
-msgstr "Orden de ejecución"
-
-msgctxt "factorialAnalysis|"
-msgid "Highest order interaction term:"
-msgstr "Término de interacción de mayor orden:"
-
-msgctxt "factorialAnalysis|"
-msgid "Residuals plots"
-msgstr "Gráficos de errores"
-
-msgctxt "factorialAnalysis|"
-msgid "Normal probability plot of residuals"
-msgstr "Gráfico de probabilidad Normal de errores"
-
-msgctxt "factorialAnalysis|"
-msgid "Histogram of residuals"
-msgstr "Histograma de errores"
-
-msgctxt "factorialAnalysis|"
-msgid "Residuals vs fitted value"
-msgstr "Errores vs Valor ajustado"
-
-msgctxt "factorialAnalysis|"
-msgid "Residuals vs run order"
-msgstr "Errores vs Orden de ejecución"
 
 msgctxt "msaAttribute|"
 msgid "Kendall's tau"
@@ -441,10 +372,6 @@ msgid "R charts by operator"
 msgstr "Gráficos R por operador"
 
 msgctxt "msaGaugeRR|"
-msgid "X-bar charts by operator"
-msgstr "Gráficos de barras X por operador"
-
-msgctxt "msaGaugeRR|"
 msgid "Scatter plots operators"
 msgstr "Operadores de gráficos de dispersión"
 
@@ -457,20 +384,8 @@ msgid "Show origin line"
 msgstr "Mostrar la línea del origen"
 
 msgctxt "msaGaugeRR|"
-msgid "Measurement by part plot"
-msgstr "Gráfico de medida por partes"
-
-msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
 msgstr "Mostrar todas las medidas"
-
-msgctxt "msaGaugeRR|"
-msgid "Measurement by operators plot"
-msgstr "Gráfico de medidas por operadores"
-
-msgctxt "msaGaugeRR|"
-msgid "Part x operator interaction plot"
-msgstr "Gráfico de interacción parte x operador"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Operators"
@@ -529,20 +444,8 @@ msgid "R charts by operator"
 msgstr "Gráficos R por operador"
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "X-bar charts by operator"
-msgstr "Gráficos de barras X por operador"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Measurement by part x operator plot"
-msgstr "Gráfico de medidas por parte x operador"
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
 msgstr "Mostrar todas las medidas"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Measurement by operator plot"
-msgstr "Gráfico de medida por operador"
 
 msgctxt "msaType1Gauge|"
 msgid "6"
@@ -640,26 +543,6 @@ msgctxt "timeWeightedCharts|"
 msgid "t chart"
 msgstr "Diagrama t"
 
-msgctxt "TimeWeightedCharts|"
-msgid "Measurements"
-msgstr "Medidas"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Cumulative sum chart"
-msgstr "Diagrama de suma acumulada"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Exponentially weighted moving average chart"
-msgstr "Diagrama de media móvil ponderada exponencialmente"
-
-msgctxt "TimeWeightedCharts|"
-msgid "g chart"
-msgstr "Diagrama g"
-
-msgctxt "TimeWeightedCharts|"
-msgid "t chart"
-msgstr "Diagrama t"
-
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
 msgstr "Variables"
@@ -688,10 +571,6 @@ msgctxt "Description|"
 msgid "Process Capability Study"
 msgstr "Estudio de Capacidad de Proceso"
 
-msgctxt "Description|"
-msgid "Two-level Factorial Analysis"
-msgstr "Análisis Factorial de Dos Niveles"
-
 msgctxt "attributesCharts|"
 msgid "Laney p' (p-prime) chart"
 msgstr "Gráfico P' (p prima) de Laney"
@@ -713,20 +592,8 @@ msgid "Predictors [Location in coded format]"
 msgstr "Predictores [Posición en formato codificado]"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour Surface"
-msgstr "Superficie de Contorno"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Only show 2D plot"
 msgstr "Mostrar solo gráfico en 2D"
-
-msgctxt "factorialAnalysis|"
-msgid "Blocks"
-msgstr "Bloques"
-
-msgctxt "factorialAnalysis|"
-msgid "Pareto plot of standardized effects"
-msgstr "Gráfica de Pareto de efectos tipificados"
 
 msgctxt "msaGaugeRR|"
 msgid "Data format"
@@ -775,10 +642,6 @@ msgstr "Tablas de capacidades de proceso"
 msgctxt "processCapabilityStudies|"
 msgid "Confidence intervals"
 msgstr "Intervalos de confianza"
-
-msgctxt "processCapabilityStudies|"
-msgid "Specification Limits"
-msgstr "Límites de especificación"
 
 msgctxt "processCapabilityStudies|"
 msgid "Histogram"
@@ -1076,34 +939,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "FO"
 msgstr "FO"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response Surface Summaries"
-msgstr "Resúmenes de la Superficie de Respuesta"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Coefficient Table"
-msgstr "Tabla de Coeficientes"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "ANOVA Table"
-msgstr "Tabla ANOVA"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual Histogram"
-msgstr "Histograma de los Errores"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Normal Residual Plot"
-msgstr "Gráfico de los Errores Normales"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual vs. Fitted Plot"
-msgstr "Gráfico de Errores vs. Ajustados"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Pareto Plot of Standardized Effects"
-msgstr "Gráfico de Pareto de Efectos Tipificados"
-
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
 msgstr "Tipo de Diseño del Escrutinio"
@@ -1119,10 +954,6 @@ msgstr "Escrutinio definitivo"
 msgctxt "doeScreening|"
 msgid "Number of 3-level factors"
 msgstr "Número de factores de nivel 3"
-
-msgctxt "doeScreening|"
-msgid "Number of 2-level factors"
-msgstr "Número de factores de nivel 2"
 
 msgctxt "doeScreening|"
 msgid "Number of runs"
@@ -1329,14 +1160,6 @@ msgid "3-parameter lognormal"
 msgstr "Log-Normal de 3 parámetros"
 
 msgctxt "processCapabilityStudies|"
-msgid "Non-conformance method"
-msgstr "Método de no conformidad"
-
-msgctxt "processCapabilityStudies|"
-msgid "Percentile method"
-msgstr "Método de percentiles"
-
-msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
 msgstr "Estabilidad del proceso"
 
@@ -1373,10 +1196,6 @@ msgid "Desirability"
 msgstr "Conveniencia"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response Variable List"
-msgstr "Lista de Variables de Respuesta"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Minimum [Min/Max]"
 msgstr "Mínimo [Mín/Máx]"
 
@@ -1401,14 +1220,6 @@ msgid "Across rows"
 msgstr "A través de filas"
 
 msgctxt "msaAttribute|"
-msgid "Result"
-msgstr "Resultado"
-
-msgctxt "msaAttribute|"
-msgid "Kappa Stuides"
-msgstr "Estudios Kappa"
-
-msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
 msgstr "Kappa de Cohen (kappa entre calificadores)"
 
@@ -1416,25 +1227,9 @@ msgctxt "msaAttribute|"
 msgid "Fleiss' kappa (multirater kappa)"
 msgstr "Kappa de Fleiss (kappa de multicalificadores)"
 
-msgctxt "msaAttribute|"
-msgid "Positive refernce:"
-msgstr "Referencia positiva:"
-
-msgctxt "msaAttribute|"
-msgid "Tau Stuides"
-msgstr "Estudios Tau"
-
 msgctxt "msaGaugeLinearity|"
 msgid "Process variation"
 msgstr "Variación de proceso"
-
-msgctxt "msaGaugeRR|"
-msgid "Type 3 study"
-msgstr "Estudio de tipo 3"
-
-msgctxt "msaGaugeRR|"
-msgid "Tolerance"
-msgstr "Tolerancia"
 
 msgctxt "msaGaugeRR|"
 msgid "Alpha interaction removal"
@@ -1447,10 +1242,6 @@ msgstr "Multiplicador de la variación de estudios"
 msgctxt "msaGaugeRR|"
 msgid "Components of variation"
 msgstr "Componentes de variación"
-
-msgctxt "msaGaugeRR|"
-msgid "Traffic light graph"
-msgstr "Gráfico de semáforos"
 
 msgctxt "msaGaugeRR|"
 msgid "Title"
@@ -1556,18 +1347,6 @@ msgctxt "processCapabilityStudies|"
 msgid "Display grid lines"
 msgstr "Mostrar líneas de cuadrícula"
 
-msgctxt "TimeWeightedCharts|"
-msgid "Number of standard deviations"
-msgstr "Número de desviaciones típicas"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Shift size"
-msgstr "Tamaño de paso"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Lambda"
-msgstr "Lambda"
-
 msgctxt "timeWeightedCharts|"
 msgid "Number of standard deviations"
 msgstr "Número de desviaciones típicas"
@@ -1633,16 +1412,8 @@ msgid "Control Charts for Attributes"
 msgstr "Gráficos de Control para Atributos"
 
 msgctxt "Description|"
-msgid "Screening Design"
-msgstr "Diseño de Escrutinio"
-
-msgctxt "Description|"
 msgid "General Full Factorial Design"
 msgstr "Diseño Factorial General Completo"
-
-msgctxt "Description|"
-msgid "Modify Existing Design"
-msgstr "Modificar un Diseño Existente"
 
 msgctxt "attributesCharts|"
 msgid "Control Charts for Attributes Report"
@@ -1913,66 +1684,6 @@ msgid "Show desired design"
 msgstr "Mostrar el diseño deseado"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Specification"
-msgstr "Especificación del Diseño"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Information"
-msgstr "Información del Diseño"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Central Composite Design (CCD)"
-msgstr "Diseño Compuesto Central (DCC, CCD)"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "+ Star Points"
-msgstr "+ Puntos Estrella"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of Factors"
-msgstr "Número de Factores"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of Cube Points"
-msgstr "Número de Puntos de Cubo"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of Star Points"
-msgstr "Número de Puntos de Estrella"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of Generators"
-msgstr "Número de Generadores"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Randomize Design"
-msgstr "Hacer Aleatorio el Diseño"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Inscribed Design"
-msgstr "Diseño Inscrito"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Force One Block"
-msgstr "Forzar Un Bloque"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Use # of Variables instead of Model"
-msgstr "Usar # de las Variables en lugar del Modelo"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Introduce Blocking"
-msgstr "Introducir Bloqueo"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Coded Output"
-msgstr "Resultado Codificado"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Alpha Type"
-msgstr "Tipo de Alfa"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
 msgstr "Factor"
 
@@ -1981,44 +1692,16 @@ msgid "Name"
 msgstr "Nombre"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Centre"
-msgstr "Centro"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Distance to |1|"
-msgstr "Distancia a |1|"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "x"
 msgstr "x"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Formula"
-msgstr "Fórmula"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Generator Name"
-msgstr "Nombre del Generador"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Generator Formula"
-msgstr "Fórmula del Generador"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "<b>Build Design</b>"
 msgstr "<b>Crear Diseño</b>"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour Plots"
-msgstr "Gráficos de Contorno"
-
 msgctxt "doeScreening|"
 msgid "Design Space"
 msgstr "Espacio de Diseño"
-
-msgctxt "doeScreening|"
-msgid "Unit Display"
-msgstr "Visualización de Unidades"
 
 msgctxt "doeScreening|"
 msgid "Number of centre points"
@@ -2069,18 +1752,6 @@ msgid "Within-group standard deviation"
 msgstr "Desviación típica dentro de grupo"
 
 msgctxt "timeWeightedCharts|"
-msgid "Sigmas for computing control limits"
-msgstr "Sigmas para calcular los límites de control"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Center"
-msgstr "Centro"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Within-group standard deviation"
-msgstr "Desviación típica dentro de grupo"
-
-msgctxt "TimeWeightedCharts|"
 msgid "Sigmas for computing control limits"
 msgstr "Sigmas para calcular los límites de control"
 
@@ -2168,10 +1839,694 @@ msgctxt "doeFactorial|"
 msgid "<b>Sync Design: Off</b>"
 msgstr "<b>Diseño Sincr: Apagado</b>"
 
+msgctxt "Description|"
+msgid "Response Surface Design"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Define Custom Design"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Samples"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Time stamp (optional)"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design Analysis"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Available factors"
+msgstr "Factores disponibles"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Response variable"
+msgstr "Variable de respuesta"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Assigned factors"
+msgstr "Factores asignados"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Blocks"
+msgstr "Bloques"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Run order"
+msgstr "Orden de ejecución"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Highest order interaction term:"
+msgstr "Término de interacción de mayor orden:"
+
+msgctxt "doeFactorial|"
+msgid "Model"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Components"
+msgstr "Componentes"
+
+msgctxt "doeFactorial|"
+msgid "Model Terms"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Plots"
+msgstr "Gráficos"
+
+msgctxt "doeFactorial|"
+msgid "Design plots"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Pareto Plot of Standardized Effects"
+msgstr "Gráfico de Pareto de Efectos Tipificados"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Residuals plots"
+msgstr "Gráficos de errores"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Normal probability plot of residuals"
+msgstr "Gráfico de probabilidad Normal de errores"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Histogram of residuals"
+msgstr "Histograma de errores"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Residuals vs fitted value"
+msgstr "Errores vs Valor ajustado"
+
+msgctxt "doeFactorial|"
+msgid "Residuals vs run/standard order"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Run"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Matrix residuals plot"
+msgstr ""
+
+#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Factor Name "
-msgstr "Nombre de Factor "
+msgid "Design Space"
+msgstr "Espacio de Diseño"
+
+#, fuzzy
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of factors"
+msgstr "Número de factores"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid ""
-msgstr "  "
+msgid "Define levels"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Cube points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Axial points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design options"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Inscribed design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Force one block"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Use # of variables instead of model"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Introduce blocking"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Coded output"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Alpha type"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Run Order"
+msgstr "Orden de Ejecución"
+
+#, fuzzy
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Random"
+msgstr "Aleatorio"
+
+#, fuzzy
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Standard"
+msgstr "Estándar"
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Low"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "High"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Factor name "
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Generator name"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Generator formula"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design Analysis"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Response surface analysis"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Coefficients table"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Residual histogram"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "ANOVA table"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Normal residual plot"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Normal plot of standardized effects"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Add grid lines"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Residual vs. fitted plot"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Pareto plot of standardized effects"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Matrix residuals plot"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Contour plots"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Contour plot options"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Contour surface"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Response variable list"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeScreening|"
+msgid "Number of factors"
+msgstr "Número de factores"
+
+msgctxt "doeScreening|"
+msgid "Design Display"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Results"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Kappa Study"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Positive reference:"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Tau Study"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Type 3 study (automatic equipment)"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Tolerance width"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Average charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurements by part plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Measurements by operator plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Part × operator interaction plot"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Traffic light chart"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Average charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Measurements by part plot"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Measurements by operator plot"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaType1Gauge|"
+msgid "Measurement"
+msgstr "Medida"
+
+msgctxt "processCapabilityStudies|"
+msgid "Percentile"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Non-conformance"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Capability studies"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Rank method for probability plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Number of ticks on x-axis for X-bar & R or X-mR chart:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Number of ticks on x-axis for probability plot:"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Null distribution for probability plot"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Number of ticks on x-axis:"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Number of ticks on x-axis:"
+msgstr ""
+
+#~ msgctxt "Description|"
+#~ msgid "Response Surface"
+#~ msgstr "Superficie de Respuesta"
+
+#~ msgctxt "msaType1Gauge|"
+#~ msgid "Measurements"
+#~ msgstr "Medidas"
+
+#~ msgctxt "processCapabilityStudies|"
+#~ msgid "Rank method"
+#~ msgstr "Método del rango"
+
+#~ msgctxt "processCapabilityStudies|"
+#~ msgid "Null distribution"
+#~ msgstr "Distribución nula"
+
+#~ msgctxt "attributesCharts|"
+#~ msgid "Sample"
+#~ msgstr "Muestra"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Contour Plot Options"
+#~ msgstr "Opciones del Gráfico de Contorno"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Available factors"
+#~ msgstr "Factores disponibles"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Response variable"
+#~ msgstr "Variable de respuesta"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Assigned factors"
+#~ msgstr "Factores asignados"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Run order"
+#~ msgstr "Orden de ejecución"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Highest order interaction term:"
+#~ msgstr "Término de interacción de mayor orden:"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Residuals plots"
+#~ msgstr "Gráficos de errores"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Normal probability plot of residuals"
+#~ msgstr "Gráfico de probabilidad Normal de errores"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Histogram of residuals"
+#~ msgstr "Histograma de errores"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Residuals vs fitted value"
+#~ msgstr "Errores vs Valor ajustado"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Residuals vs run order"
+#~ msgstr "Errores vs Orden de ejecución"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "X-bar charts by operator"
+#~ msgstr "Gráficos de barras X por operador"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Measurement by part plot"
+#~ msgstr "Gráfico de medida por partes"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Measurement by operators plot"
+#~ msgstr "Gráfico de medidas por operadores"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Part x operator interaction plot"
+#~ msgstr "Gráfico de interacción parte x operador"
+
+#~ msgctxt "msaGaugeRRnonrep|"
+#~ msgid "X-bar charts by operator"
+#~ msgstr "Gráficos de barras X por operador"
+
+#~ msgctxt "msaGaugeRRnonrep|"
+#~ msgid "Measurement by part x operator plot"
+#~ msgstr "Gráfico de medidas por parte x operador"
+
+#~ msgctxt "msaGaugeRRnonrep|"
+#~ msgid "Measurement by operator plot"
+#~ msgstr "Gráfico de medida por operador"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Measurements"
+#~ msgstr "Medidas"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Cumulative sum chart"
+#~ msgstr "Diagrama de suma acumulada"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Exponentially weighted moving average chart"
+#~ msgstr "Diagrama de media móvil ponderada exponencialmente"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "g chart"
+#~ msgstr "Diagrama g"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "t chart"
+#~ msgstr "Diagrama t"
+
+#~ msgctxt "Description|"
+#~ msgid "Two-level Factorial Analysis"
+#~ msgstr "Análisis Factorial de Dos Niveles"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Contour Surface"
+#~ msgstr "Superficie de Contorno"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Blocks"
+#~ msgstr "Bloques"
+
+#~ msgctxt "factorialAnalysis|"
+#~ msgid "Pareto plot of standardized effects"
+#~ msgstr "Gráfica de Pareto de efectos tipificados"
+
+#~ msgctxt "processCapabilityStudies|"
+#~ msgid "Specification Limits"
+#~ msgstr "Límites de especificación"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Response Surface Summaries"
+#~ msgstr "Resúmenes de la Superficie de Respuesta"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Coefficient Table"
+#~ msgstr "Tabla de Coeficientes"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "ANOVA Table"
+#~ msgstr "Tabla ANOVA"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Residual Histogram"
+#~ msgstr "Histograma de los Errores"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Normal Residual Plot"
+#~ msgstr "Gráfico de los Errores Normales"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Residual vs. Fitted Plot"
+#~ msgstr "Gráfico de Errores vs. Ajustados"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Pareto Plot of Standardized Effects"
+#~ msgstr "Gráfico de Pareto de Efectos Tipificados"
+
+#~ msgctxt "doeScreening|"
+#~ msgid "Number of 2-level factors"
+#~ msgstr "Número de factores de nivel 2"
+
+#~ msgctxt "processCapabilityStudies|"
+#~ msgid "Non-conformance method"
+#~ msgstr "Método de no conformidad"
+
+#~ msgctxt "processCapabilityStudies|"
+#~ msgid "Percentile method"
+#~ msgstr "Método de percentiles"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Response Variable List"
+#~ msgstr "Lista de Variables de Respuesta"
+
+#~ msgctxt "msaAttribute|"
+#~ msgid "Result"
+#~ msgstr "Resultado"
+
+#~ msgctxt "msaAttribute|"
+#~ msgid "Kappa Stuides"
+#~ msgstr "Estudios Kappa"
+
+#~ msgctxt "msaAttribute|"
+#~ msgid "Positive refernce:"
+#~ msgstr "Referencia positiva:"
+
+#~ msgctxt "msaAttribute|"
+#~ msgid "Tau Stuides"
+#~ msgstr "Estudios Tau"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Type 3 study"
+#~ msgstr "Estudio de tipo 3"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Tolerance"
+#~ msgstr "Tolerancia"
+
+#~ msgctxt "msaGaugeRR|"
+#~ msgid "Traffic light graph"
+#~ msgstr "Gráfico de semáforos"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Number of standard deviations"
+#~ msgstr "Número de desviaciones típicas"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Shift size"
+#~ msgstr "Tamaño de paso"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Lambda"
+#~ msgstr "Lambda"
+
+#~ msgctxt "Description|"
+#~ msgid "Screening Design"
+#~ msgstr "Diseño de Escrutinio"
+
+#~ msgctxt "Description|"
+#~ msgid "Modify Existing Design"
+#~ msgstr "Modificar un Diseño Existente"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Design Specification"
+#~ msgstr "Especificación del Diseño"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Design Information"
+#~ msgstr "Información del Diseño"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Central Composite Design (CCD)"
+#~ msgstr "Diseño Compuesto Central (DCC, CCD)"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "+ Star Points"
+#~ msgstr "+ Puntos Estrella"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Number of Factors"
+#~ msgstr "Número de Factores"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Number of Cube Points"
+#~ msgstr "Número de Puntos de Cubo"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Number of Star Points"
+#~ msgstr "Número de Puntos de Estrella"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Number of Generators"
+#~ msgstr "Número de Generadores"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Randomize Design"
+#~ msgstr "Hacer Aleatorio el Diseño"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Inscribed Design"
+#~ msgstr "Diseño Inscrito"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Force One Block"
+#~ msgstr "Forzar Un Bloque"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Use # of Variables instead of Model"
+#~ msgstr "Usar # de las Variables en lugar del Modelo"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Introduce Blocking"
+#~ msgstr "Introducir Bloqueo"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Coded Output"
+#~ msgstr "Resultado Codificado"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Alpha Type"
+#~ msgstr "Tipo de Alfa"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Centre"
+#~ msgstr "Centro"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Distance to |1|"
+#~ msgstr "Distancia a |1|"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Formula"
+#~ msgstr "Fórmula"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Generator Name"
+#~ msgstr "Nombre del Generador"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Generator Formula"
+#~ msgstr "Fórmula del Generador"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Contour Plots"
+#~ msgstr "Gráficos de Contorno"
+
+#~ msgctxt "doeScreening|"
+#~ msgid "Unit Display"
+#~ msgstr "Visualización de Unidades"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Center"
+#~ msgstr "Centro"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Within-group standard deviation"
+#~ msgstr "Desviación típica dentro de grupo"
+
+#~ msgctxt "TimeWeightedCharts|"
+#~ msgid "Sigmas for computing control limits"
+#~ msgstr "Sigmas para calcular los límites de control"
+
+#~ msgctxt "doeResponseSurfaceMethodology|"
+#~ msgid "Factor Name "
+#~ msgstr "Nombre de Factor "

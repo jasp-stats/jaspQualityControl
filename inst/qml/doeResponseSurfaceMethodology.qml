@@ -466,7 +466,7 @@ Form
 				label: ""
 				values: [
 					{ label: qsTr("FO + PQ"), value: "fopq"},
-					{ label: qsTr(""), value: "nothing"},
+					{ label: "", value: "nothing"},
 					{ label: qsTr("FO"), value: "fo"},
 					
 					
