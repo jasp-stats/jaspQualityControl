@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2022-06-19 15:14+0000\n"
+"Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"jasp/jaspprocesscontrol-qml/zh_Hans/>\n"
+"Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.13.1-dev\n"
 "X-Language: zh_Hans\n"
 "X-Qt-Contexts: true\n"
 
@@ -1843,92 +1849,80 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Define Custom Design"
-msgstr ""
+msgstr "自定义设计"
 
 msgctxt "attributesCharts|"
 msgid "Samples"
-msgstr ""
+msgstr "样本"
 
 msgctxt "attributesCharts|"
 msgid "Time stamp (optional)"
-msgstr ""
+msgstr "时间戳（可选）"
 
 msgctxt "doeFactorial|"
 msgid "Design Analysis"
-msgstr ""
+msgstr "设计分析"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Available factors"
 msgstr "可用因子"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Response variable"
 msgstr "响应变量"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Assigned factors"
 msgstr "指定因子"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Blocks"
 msgstr "区组"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Run order"
 msgstr "运行序"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Highest order interaction term:"
 msgstr "最高阶交互作用项："
 
 msgctxt "doeFactorial|"
 msgid "Model"
-msgstr ""
+msgstr "模型"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Components"
 msgstr "组成部分"
 
 msgctxt "doeFactorial|"
 msgid "Model Terms"
-msgstr ""
+msgstr "模型项"
 
 msgctxt "doeFactorial|"
 msgid "Plots"
-msgstr ""
+msgstr "绘图"
 
 msgctxt "doeFactorial|"
 msgid "Design plots"
-msgstr ""
+msgstr "设计图"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Pareto Plot of Standardized Effects"
 msgstr "标准化效应 Pareto 图"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Residuals plots"
 msgstr "残差图"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Normal probability plot of residuals"
 msgstr "残差正态概率图"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Histogram of residuals"
 msgstr "残差直方图"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Residuals vs fitted value"
 msgstr "残差 vs 拟合值"
@@ -1939,24 +1933,23 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Run"
-msgstr ""
+msgstr "运行"
 
 msgctxt "doeFactorial|"
 msgid "Matrix residuals plot"
-msgstr ""
+msgstr "矩阵残差图"
 
-#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design Space"
 msgstr "设计空间"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of factors"
-msgstr ""
+msgstr "因子数量"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Define levels"
-msgstr ""
+msgstr "定义水平"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Cube points"
