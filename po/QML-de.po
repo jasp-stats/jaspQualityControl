@@ -1950,9 +1950,10 @@ msgctxt "doeFactorial|"
 msgid "Histogram of residuals"
 msgstr "Histogramm der Residuen"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Residuals vs fitted value"
-msgstr ""
+msgstr "Residuen vs. angepasster Wert"
 
 msgctxt "doeFactorial|"
 msgid "Residuals vs run/standard order"

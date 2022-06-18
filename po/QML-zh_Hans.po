@@ -1928,9 +1928,10 @@ msgctxt "doeFactorial|"
 msgid "Histogram of residuals"
 msgstr "残差直方图"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Residuals vs fitted value"
-msgstr ""
+msgstr "残差 vs 拟合值"
 
 msgctxt "doeFactorial|"
 msgid "Residuals vs run/standard order"
@@ -2064,9 +2065,10 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Residual vs. fitted plot"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Pareto plot of standardized effects"
-msgstr ""
+msgstr "标准化效应Pareto图"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Matrix residuals plot"
