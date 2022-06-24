@@ -72,7 +72,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     k <- options[["CCSubgroupSize"]]
     n <- nrow(dataset)
     dataset <- .PClongTowide(dataset, k, measurements)
-    if (dataset == "error"){
+    if (identical(dataset, "error")) {
       plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
       jaspResults[["plot"]] <- plot
       plot$setError(gettextf("Could not equally divide data points into groups of size %i.", k))
@@ -207,7 +207,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (manualXaxis != "") {
+  if (!identical(manualXaxis, "")) {
     if (Wide){
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xBreaks_Out[xBreaks])
@@ -230,7 +230,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
   }
 
-  if (manualXaxis != "")
+  if (!identical(manualXaxis, ""))
     return(list(p = p, sixsigma = sixsigma, xLabels = as.vector(xBreaks_Out)))
   else return(list(p = p, sixsigma = sixsigma))
 }
