@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2022-06-29 08:59+0000\n"
+"Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"jasp/jaspprocesscontrol-qml/zh_Hans/>\n"
+"Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.13.1-dev\n"
 "X-Language: zh_Hans\n"
 "X-Qt-Contexts: true\n"
 
@@ -1839,7 +1845,7 @@ msgstr "<b>同步设计: Off</b>"
 
 msgctxt "Description|"
 msgid "Response Surface Design"
-msgstr ""
+msgstr "响应面设计"
 
 msgctxt "Description|"
 msgid "Define Custom Design"
@@ -1947,15 +1953,15 @@ msgstr "定义水平"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Cube points"
-msgstr ""
+msgstr "立方体点"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Axial points"
-msgstr ""
+msgstr "轴向点"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design options"
-msgstr ""
+msgstr "设计方案选项"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Inscribed design"
@@ -1967,7 +1973,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Use # of variables instead of model"
-msgstr ""
+msgstr "使用变量数而非模型"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Introduce blocking"
