@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2022-07-31 12:17+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/de/>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.14-dev\n"
 "X-Language: de\n"
 "X-Qt-Contexts: true\n"
 
@@ -285,11 +291,11 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "np chart"
-msgstr ""
+msgstr "np-Karte"
 
 msgctxt "attributesCharts|"
 msgid "p chart"
-msgstr ""
+msgstr "p-Karte"
 
 msgctxt "attributesCharts|"
 msgid "Defects"
@@ -297,11 +303,11 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "c chart"
-msgstr ""
+msgstr "c-Karte"
 
 msgctxt "attributesCharts|"
 msgid "u chart"
-msgstr ""
+msgstr "u-Karte"
 
 msgctxt "doeFactorial|"
 msgid "Run Order"
@@ -518,7 +524,7 @@ msgstr "Referenzwert anzeigen"
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & R chart"
-msgstr ""
+msgstr "X-quer & R-Karte"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
@@ -530,32 +536,31 @@ msgstr "Messungen"
 
 msgctxt "timeWeightedCharts|"
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "Kumulative-Summe-Karte"
 
 msgctxt "timeWeightedCharts|"
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "Exponentiell-gewichteter-gleitender-Mittelwert-Karte"
 
 msgctxt "timeWeightedCharts|"
 msgid "g chart"
-msgstr ""
+msgstr "g-Karte"
 
 msgctxt "timeWeightedCharts|"
 msgid "t chart"
-msgstr ""
+msgstr "t-Karte"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
 msgstr "Variablen"
 
-#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Control Charts"
 msgstr "Regelkarten"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & R"
-msgstr ""
+msgstr "X-quer & R"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Warning limits"
@@ -563,7 +568,7 @@ msgstr "Warngrenzen"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & s"
-msgstr ""
+msgstr "X-quer & s"
 
 msgctxt "Description|"
 msgid "Capability Study"
@@ -1473,11 +1478,11 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Subgroups size"
-msgstr ""
+msgstr "Untergruppengröße"
 
 msgctxt "attributesCharts|"
 msgid "Size"
-msgstr ""
+msgstr "Größe"
 
 msgctxt "attributesCharts|"
 msgid "Time"
@@ -1770,7 +1775,7 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Within-group standard deviation"
-msgstr ""
+msgstr "Standardabweichung innerhalb Gruppe"
 
 msgctxt "timeWeightedCharts|"
 msgid "Sigmas for computing control limits"
@@ -1822,11 +1827,11 @@ msgstr "Untertitel"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Chart name:"
-msgstr ""
+msgstr "Kartenname:"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Name of the chart"
-msgstr ""
+msgstr "Name der Karte"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show Report"
@@ -1842,11 +1847,11 @@ msgstr "Untertitel"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Chart name:"
-msgstr ""
+msgstr "Kartenname:"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name of the chart"
-msgstr ""
+msgstr "Name der Karte"
 
 msgctxt "doeFactorial|"
 msgid "Design generator"
@@ -1870,11 +1875,11 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Samples"
-msgstr ""
+msgstr "Stichprobe"
 
 msgctxt "attributesCharts|"
 msgid "Time stamp (optional)"
-msgstr ""
+msgstr "Zeitstempel (optional)"
 
 msgctxt "doeFactorial|"
 msgid "Design Analysis"
@@ -2203,11 +2208,11 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of ticks on x-axis for X-bar & R or X-mR chart:"
-msgstr ""
+msgstr "Anzahl Teilstriche auf X-Achse für X-quer & R- oder X-mR-Karte:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of ticks on x-axis for probability plot:"
-msgstr ""
+msgstr "Anzahl Teilstriche auf X-Achse für Wahrscheinlichkeitsdiagramm:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Null distribution for probability plot"
@@ -2215,11 +2220,11 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Number of ticks on x-axis:"
-msgstr ""
+msgstr "Anzahl Teilstriche auf X-Achse:"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of ticks on x-axis:"
-msgstr ""
+msgstr "Anzahl Teilstriche auf X-Achse:"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Measurements"
@@ -2239,7 +2244,7 @@ msgstr "Sigmas für Berechnung der Eingriffsgrenzen"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "Kumulative-Summe-Karte"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Shift size"
@@ -2255,12 +2260,12 @@ msgstr ""
 
 msgctxt "TimeWeightedCharts|"
 msgid "Within-group standard deviation"
-msgstr ""
+msgstr "Standardabweichung innerhalb Gruppe"
 
 msgctxt "TimeWeightedCharts|"
 msgid "g chart"
-msgstr ""
+msgstr "g-Karte"
 
 msgctxt "TimeWeightedCharts|"
 msgid "t chart"
-msgstr ""
+msgstr "t-Karte"
