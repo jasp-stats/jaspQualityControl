@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2022-06-02 13:05\n"
-"PO-Revision-Date: 2022-06-14 21:04+0000\n"
+"PO-Revision-Date: 2022-07-31 14:15+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,19 +11,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13-dev\n"
+"X-Generator: Weblate 4.14-dev\n"
 
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "Kumulative-Summe-Karte"
 
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "Exponentiell-gewichteter-gleitender-Mittelwert-Karte"
 
 msgid "G chart"
-msgstr ""
+msgstr "G-Karte"
 
 msgid "T chart"
-msgstr ""
+msgstr "T-Karte"
 
 msgid "CL = %g"
 msgstr ""
@@ -56,19 +56,19 @@ msgid "Attributes Control Charts"
 msgstr ""
 
 msgid "p Chart"
-msgstr ""
+msgstr "p-Karte"
 
 msgid "np Chart"
-msgstr ""
+msgstr "np-Karte"
 
 msgid "Laney p' Chart"
 msgstr "p'-Karte nach Laney"
 
 msgid "c Chart"
-msgstr ""
+msgstr "c-Karte"
 
 msgid "u Chart"
-msgstr ""
+msgstr "u-Karte"
 
 msgid "Laney u' Chart"
 msgstr "u'-Karte nach Laney"
@@ -125,13 +125,13 @@ msgid "Frequency: %s"
 msgstr ""
 
 msgid "Control Chart"
-msgstr ""
+msgstr "Regelkarte"
 
 msgid "Subgroup size must be > 1 to display X-bar & R Chart."
-msgstr ""
+msgstr "Untergruppengröße muss > 1 sein, um X-quer- und R-Karte anzuzeigen."
 
 msgid "Test results for %s chart"
-msgstr ""
+msgstr "Testergebnisse für %s-Karte"
 
 msgid "Test 1: Beyond limit"
 msgstr ""
@@ -712,7 +712,7 @@ msgid "Part by Operator Interaction Graph"
 msgstr ""
 
 msgid "Traffic light chart"
-msgstr ""
+msgstr "Ampel-Karte"
 
 msgid "ANOVA Table"
 msgstr "ANOVA-Tabelle"
@@ -923,7 +923,7 @@ msgid "Short gauge study"
 msgstr ""
 
 msgid "Sample size (n)"
-msgstr ""
+msgstr "Stichprobenumfang (n)"
 
 msgid "R-bar"
 msgstr ""
@@ -1304,13 +1304,13 @@ msgstr ""
 "werden."
 
 msgid "X-bar & R Control Chart"
-msgstr ""
+msgstr "X-quer & R-Kontrollkarte"
 
 msgid "Out-of-control Signals"
 msgstr ""
 
 msgid "X-bar & s Control Chart"
-msgstr ""
+msgstr "X-quer & s-Kontrollkarte"
 
 msgid "Subgroup st dev"
 msgstr ""
