@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2022-06-02 13:05\n"
-"PO-Revision-Date: 2022-04-03 15:11+0000\n"
-"Last-Translator: Wendy Zhao <wendy.zhao@skf.com>\n"
+"PO-Revision-Date: 2022-07-31 14:15+0000\n"
+"Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "jasp/jaspprocesscontrol-r/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.12-dev\n"
+"X-Generator: Weblate 4.14-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr "累积和控制图"
@@ -97,9 +97,8 @@ msgstr "移动极差"
 msgid "Report"
 msgstr "报告"
 
-#, fuzzy
 msgid "Control Charts for Attributes Report"
-msgstr "%s 控制图报告"
+msgstr "属性(Attributes)报告的控制图"
 
 msgid "Service name: %s"
 msgstr "服务名称: %s"
@@ -200,13 +199,11 @@ msgstr "p"
 msgid "This plot is unavailable for saturated designs."
 msgstr "此图不适用于饱和设计。"
 
-#, fuzzy
 msgid "Residuals vs. Standard Order"
-msgstr "残差 vs. 运行顺序"
+msgstr "残差 vs. 标准秩次"
 
-#, fuzzy
 msgid "Four in one for %s"
-msgstr "%s 矩阵图"
+msgstr "%s 四合一"
 
 msgid "Available Factorial Designs"
 msgstr "可用因子设计"
@@ -250,9 +247,8 @@ msgstr "别名结构"
 msgid "Standard order"
 msgstr "标准序"
 
-#, fuzzy
 msgid "Pareto Chart of Standardized Effects"
-msgstr "标准化效应 Pareto 图"
+msgstr "标准化效果的帕累托图"
 
 msgid "Term"
 msgstr "项"
@@ -260,9 +256,8 @@ msgstr "项"
 msgid "Analysis of variance"
 msgstr "方差分析"
 
-#, fuzzy
 msgid "Model summary"
-msgstr "模型汇总"
+msgstr "模型摘要"
 
 msgid "%s,%s"
 msgstr "%s,%s"
@@ -280,7 +275,7 @@ msgid "<i>p</i>-value"
 msgstr "<i>p</i>- 值"
 
 msgid "VIF"
-msgstr ""
+msgstr "VIF"
 
 msgid "Index"
 msgstr "指数"
@@ -699,24 +694,20 @@ msgstr "操作者散点图"
 msgid "Measurement by Part Graph"
 msgstr "按零件测量值图"
 
-#, fuzzy
 msgid "Measurements by Operator Graph"
 msgstr "按操作者测量值图"
 
-#, fuzzy
 msgid "Part by Operator Interaction Graph"
 msgstr "零件和操作者交互作用图"
 
-#, fuzzy
 msgid "Traffic light chart"
 msgstr "红绿灯图"
 
 msgid "ANOVA Table"
 msgstr "方差分析表"
 
-#, fuzzy
 msgid "One-way ANOVA Table"
-msgstr "双向方差分析表"
+msgstr "单向方差分析表"
 
 msgid "Two-way ANOVA Table with Interaction"
 msgstr "双向方差分析表带交互作用"
@@ -748,9 +739,8 @@ msgstr "标准差"
 msgid "Study Variation"
 msgstr "研究变异"
 
-#, fuzzy
 msgid "% Study Variation"
-msgstr "%% 研究变异"
+msgstr "% 研究变异"
 
 msgid "%% Tolerance"
 msgstr "%% 公差"
@@ -771,31 +761,27 @@ msgid "Reproducibility"
 msgstr "再现性"
 
 msgid "*"
-msgstr ""
+msgstr "*"
 
 msgid "Number of distinct categories = %i"
 msgstr "可区分类别数 = %i"
 
-#, fuzzy
 msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i"
-msgstr "研究变异的计算为标准差 x %i"
+msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %i"
 
-#, fuzzy
 msgid ""
 "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
-msgstr "研究变异的计算为标准差x %.2f"
+msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %.2f"
 
-#, fuzzy
 msgid ""
 "Historical standard deviation is used to calculate some values for Std. "
 "Deviation, Study Variation, and %%Study Variation."
-msgstr "历史标准差用于计算标准差，研究变异和%研究变异的某些值。"
+msgstr "历史标准差用于计算一些值：标准差、研究变异和 %% 研究变异。"
 
-#, fuzzy
 msgid ""
 "Values for %Process Variation are not displayed because they are identical "
 "to values for %%Study Variation."
-msgstr "由于与 %研究变异数值相同，所以没有显示 %过程变异。"
+msgstr "未显示 %过程偏差的值，因为它们与 %%研究偏差的值相同。"
 
 msgid "Two-way ANOVA Table without Interaction"
 msgstr "双向方差分析表不带交互作用"
@@ -815,11 +801,9 @@ msgstr "操作者 %s"
 msgid "Measurements by Part"
 msgstr "测量值按零件"
 
-#, fuzzy
 msgid "Measurements by Operator"
 msgstr "测量值按操作者"
 
-#, fuzzy
 msgid "Part by Operator Interaction"
 msgstr "零件与操作者交互作用"
 
@@ -844,17 +828,14 @@ msgstr "重复性"
 msgid "Reprod"
 msgstr "再现性"
 
-#, fuzzy
 msgid "% Contribution"
-msgstr "%% 贡献"
+msgstr "% 贡献"
 
-#, fuzzy
 msgid "% Tolerance"
-msgstr "%% 公差"
+msgstr "% 公差"
 
-#, fuzzy
 msgid "Measurement systems analysis"
-msgstr "%s 测量系统分析"
+msgstr "测量系统分析"
 
 msgid "Gauge name: %s"
 msgstr "量具名称 : %s"
@@ -862,9 +843,8 @@ msgstr "量具名称 : %s"
 msgid "Date of study: %s"
 msgstr "研究日期 : %s"
 
-#, fuzzy
 msgid "Performed by: %s"
-msgstr "报告人 : %s"
+msgstr "执行者 : %s"
 
 msgid "Misc: %s"
 msgstr "其它 : %s"
@@ -873,7 +853,7 @@ msgid "Tolerance: %s"
 msgstr "公差 : %s"
 
 msgid "%.2f"
-msgstr ""
+msgstr "%.2f"
 
 msgid "Gauge r&R Tables"
 msgstr "量具 r&R表"
@@ -908,9 +888,8 @@ msgstr "研究变异的计算为标准差* %.2f"
 msgid "Measurements by part x operator"
 msgstr "测量值按零件 x 操作者"
 
-#, fuzzy
 msgid "Gauge r&R Report"
-msgstr "量具 r&R"
+msgstr "量具 r&R 报告"
 
 msgid "Reported by: %s"
 msgstr "报告人 : %s"
@@ -1100,12 +1079,12 @@ msgid "Could not equally divide %i data points into groups of size %i."
 msgstr "无法将 %i 数据点平均分成大小为 %i 的组。"
 
 msgid "Values must be positive to fit a Weibull/Lognormal distribution."
-msgstr ""
+msgstr "值必须为正以拟合 Weibull/对数正态分布。"
 
 msgid ""
 "All zero values have been replaced with a value equal to one-half of the "
 "smallest data point."
-msgstr ""
+msgstr "所有零值都已替换为等于最小数据点的二分之一的值。"
 
 msgid "Capability Studies"
 msgstr "能力研究"
@@ -1214,9 +1193,8 @@ msgstr "数据集包含负数。与所选分布不兼容。"
 msgid "Std. deviation"
 msgstr "标准差"
 
-#, fuzzy
 msgid "Log mean (%1$s)"
-msgstr "Log 均值 (mu)"
+msgstr "Log 均值 (%1$s)"
 
 msgid "Log std.dev (%1$s)"
 msgstr "对数标准差 (%1$s)"
@@ -1257,16 +1235,15 @@ msgstr "标准差 (%1$s)"
 msgid "AD"
 msgstr "AD"
 
-#, fuzzy
 msgid ""
 "The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s "
 "distribution."
-msgstr "Anderson-Darling 统计量 AD 是根据 %2$s 分布计算的。"
+msgstr "Anderson-Darling 统计量 A<i>D</i> 是根据 %2$s 分布计算的。"
 
 msgid ""
 "Red dotted lines in the probability plot below represent a 95%% confidence "
 "interval."
-msgstr ""
+msgstr "下面概率图中的红色虚线表示 95%% 的置信区间。"
 
 msgid "Histogram"
 msgstr "直方图"
@@ -1280,9 +1257,8 @@ msgstr "过程名称：%s"
 msgid "Individuals Charts"
 msgstr "单值控制图"
 
-#, fuzzy
 msgid "Variables Charts for Individuals"
-msgstr "单值图 %s"
+msgstr "单值图"
 
 msgid "%s for Individuals"
 msgstr "单值图 %s"
