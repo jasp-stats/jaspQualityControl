@@ -73,7 +73,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (!wideFormat && ready){
     k <- options[["CCSubgroupSize"]]
     n <- nrow(dataset)
-    dataset <- .PClongTowide(dataset, k, measurements)
+    dataset <- .PClongTowide(dataset, k, measurements, mode = "manual")
     if (identical(dataset, "error")) {
       plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
       jaspResults[["plot"]] <- plot
