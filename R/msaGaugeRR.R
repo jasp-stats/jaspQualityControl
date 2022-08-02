@@ -328,10 +328,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     anovaTables[['anovaTable1']] <- anovaTable1
 
-    if(!singleOperator)
+    if(!singleOperator){
       interactionSignificant <- pInteraction < options$alphaForANOVA
-    else
+    }else {
       interactionSignificant <- FALSE
+    }
 
     if (singleOperator || interactionSignificant){
 
