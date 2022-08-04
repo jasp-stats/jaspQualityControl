@@ -1,8 +1,8 @@
 context("[Quality Control] MSA Gauge Linearity")
 
 options <- analysisOptions("msaGaugeLinearity")
-options$parts <- "Part"
-options$measurements <- "Measurement"
+options$part <- "Part"
+options$measurement <- "Measurement"
 options$standard <- "Reference"
 set.seed(1)
 results <- runAnalysis("msaGaugeLinearity", "msaLinearity.csv", options)

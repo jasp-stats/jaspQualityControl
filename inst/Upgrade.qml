@@ -4,7 +4,7 @@
 
 Upgrade
 	{
-		functionName:		"msaTypeGauge"
+		functionName:		"msaType1Gauge"
 		fromVersion:		"0.16.3"
 		toVersion:			"0.16.4"
 		
@@ -41,4 +41,27 @@ Upgrade
 		ChangeRename {from: "biasHistMeanConfidenceInterval";			to: "histogramMeanCi"}
 		ChangeRename {from: "biasHistMeanConfidenceIntervalPercent";	to: "histogramMeanCiLevel"}
 		ChangeRename {from: "biasHistRef";								to: "histogramReferenceValueLine"}
+	}
+
+// Linearity Study
+
+Upgrade
+	{
+		functionName:		"msaGaugeLinearity"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+		
+		// main analysis
+		ChangeRename {from: "parts";								to: "part"}
+		ChangeRename {from: "measurements";							to: "measurement"}
+		ChangeRename {from: "LBtableLinearity";						to: "linearityTable"}
+		ChangeRename {from: "LBtableBias";							to: "biasTable"}
+
+		// plots
+		ChangeRename {from: "LBgraph";								to: "linearityAndBiasPlot"}
+		ChangeRename {from: "LBpercentGraph";						to: "percentageOfProcessVariationPlot"}
+
+		// optional
+		ChangeRename {from: "EnablePV";								to: "manualProcessVariation"}
+		ChangeRename {from: "linearityProcessVariation";			to: "manualProcessVariationValue"}
 	}

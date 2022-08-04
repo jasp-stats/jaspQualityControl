@@ -1,4 +1,3 @@
-
 // Copyright (C) 2013-2018 University of Amsterdam
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -33,7 +32,7 @@ Form
 
 		AssignedVariablesList
 		{
-			name:								"parts"
+			name:								"part"
 			title:								qsTr("Parts")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
@@ -41,7 +40,7 @@ Form
 
 		AssignedVariablesList
 		{
-			name:								"measurements"
+			name:								"measurement"
 			title:								qsTr("Measurements")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
@@ -62,14 +61,14 @@ Form
 
 		CheckBox
 		{
-			name: 								"LBtableLinearity"
+			name: 								"linearityTable"
 			label: 								qsTr("Linearity table")
 			checked: 							true
 		}
 
 		CheckBox
 		{
-			name: 								"LBtableBias"
+			name: 								"biasTable"
 			label: 								qsTr("Bias table")
 			checked:							true
 		}
@@ -81,14 +80,14 @@ Form
 
 		CheckBox
 		{
-			name:								"LBgraph"
+			name:								"linearityAndBiasPlot"
 			label:								qsTr("Linearity and bias graph")
 			checked:							true
 		}
 
 		CheckBox
 		{
-			name: 								"LBpercentGraph"
+			name: 								"percentageOfProcessVariationPlot"
 			label: 								qsTr("Percent process variation graph")
 			checked: 							true
 		}
@@ -98,20 +97,20 @@ Form
 	{
 	title: qsTr("Optional")
 
-	    CheckBox
+	CheckBox
 		{
-			name: 								"EnablePV"
+			name: 								"manualProcessVariation"
 			label: 								qsTr("Process variation")
-			childrenOnSameRow: 				true
+			childrenOnSameRow: 					true
 
 			DoubleField
-		  {
-			  name: 								"linearityProcessVariation"
-		  	defaultValue:					6
-		  	negativeValues:				false
-			  decimals: 						5
-		  	fieldWidth: 					50
-		  }
+			{
+				name: 							"manualProcessVariationValue"
+				defaultValue:					6
+				negativeValues:				false
+				decimals: 						5
+				fieldWidth: 					50
+			}
 		}
 	}
 }
