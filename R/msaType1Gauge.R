@@ -18,7 +18,7 @@
 #' @export
 msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
-  measurements <- unlist(options$measurements)
+  measurements <- unlist(options[["measurement"]])
   measurements <- measurements[measurements != ""]
 
   ready <- (length(measurements) != 0)
@@ -28,7 +28,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   }
 
   # Bias Run Chart
-  if (options[["biasRun"]]) {
+  if (options[["runChart"]]) {
     if (is.null(jaspResults[["biasRun"]])) {
       jaspResults[["biasRun"]] <- createJaspContainer(gettext("Run Chart"))
     }
@@ -47,7 +47,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   }
 
   # Determine Bias t-Test
-  if (options[["biasTtest"]]) {
+  if (options[["tTest"]]) {
     if (is.null(jaspResults[["biasTtest"]])) {
       jaspResults[["biasTtest"]] <- createJaspContainer(gettext("t-Test Bias"))
     }
@@ -56,7 +56,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   }
 
   # Determine Bias Histogram
-  if (options[["biasHistogram"]]) {
+  if (options[["histogram"]]) {
     if (is.null(jaspResults[["biasHistogram"]])) {
       jaspResults[["biasHistogram"]] <- createJaspContainer(gettext("Histogram Bias"))
     }
@@ -73,13 +73,13 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   data <- dataset
 
-  tolerance <- options$biasTolerance
-  reference <- options$biasReferenceValue
+  tolerance <- options[["toleranceRange"]]
+  reference <- options[["referenceValue"]]
 
-  studyVarMultiplier <- as.numeric(options$BiasStudyVarMultiplier)
+  studyVarMultiplier <- as.numeric(options[["studyVarianceMultiplier"]])
 
   table1 <- createJaspTable(title = gettext("Basic Statistics"))
-  table1$dependOn(c("biasReferenceValue", "biasTable", "biasTolerance"))
+  table1$dependOn(c("referenceValue", "biasTable", "toleranceRange"))
 
   table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
   table1$addColumnInfo(name = "observedMean", title = gettext("Mean"), type = "number")
@@ -92,7 +92,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   table1$addFootnote(gettextf("The study variation is calculated as %i * <i>s</i>.", studyVarMultiplier))
 
   table2 <- createJaspTable(title = gettext("Capability"))
-  table2$dependOn(c("biasReferenceValue", "biastable", "biasTolerance"))
+  table2$dependOn(c("referenceValue", "biastable", "toleranceRange"))
 
 
   table2$addColumnInfo(name = "Cg",  title = gettext("Cg"), type = "string")
@@ -106,8 +106,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   if (ready) {
 
     observedAverage <- mean(dataset[[measurements]])
-    bias <- observedAverage - options$biasReferenceValue
-    biasPercent <- abs(bias) / options$biasTolerance * 100
+    bias <- observedAverage - options[["referenceValue"]]
+    biasPercent <- abs(bias) / tolerance * 100
     sd <- sd(unlist(data))
     sv <- sd * studyVarMultiplier
 
@@ -119,7 +119,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
                               "tolerance"             = tolerance,
                               "biasPercent"           = biasPercent))
 
-    k <- options$biasPercentCG
+    k <- options[["percentToleranceForCg"]]
     cg <- ((k / 100) * tolerance) / sv
     cgk <- (((k / 200) * tolerance) - abs(observedAverage - reference)) / (sv / 2)
     percentRep <-   k/cg
@@ -148,8 +148,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   table <- createJaspTable(title = gettext("T-Test of Observed Bias Against 0"))
 
-  table$dependOn(c("biasReferenceValue", "biasTtest", "biasTolerance"))
-  ciLevel <- options$biasTtestConfidenceIntervalPercent
+  table$dependOn(c("referenceValue", "tTest", "toleranceRange"))
+  ciLevel <- options[["tTestCiLevel"]]
   ciLevelPercent <- ciLevel * 100
   table$addColumnInfo(name = "df",              title = gettext("df"), type = "integer")
   table$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
@@ -166,7 +166,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
       return(table)
     }
 
-    bias <- data - options$biasReferenceValue
+    bias <- data - options[["referenceValue"]]
     tTest <- t.test(bias, mu = 0, conf.level = ciLevel)
 
     table$addRows(list(      "df"                   = tTest$parameter,
@@ -188,32 +188,32 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
     plot <- createJaspPlot(title = gettext("Bias Histogram"), width = 700, height = 400)
     dataForBreaks <- c(data)
-    p <- jaspDescriptives:::.plotMarginal(column = data, variableName = measurements, binWidthType = options$biasBinWidthType, numberOfBins = options$biasNumberOfBins)
+    p <- jaspDescriptives:::.plotMarginal(column = data, variableName = measurements, binWidthType = options[["histogramBinWidthType"]], numberOfBins = options[["histogramManualNumberOfBins"]])
 
-    if (options$biasHistMean) {
+    if (options[["histogramMeanLine"]]) {
       mean <- mean(data)
       p <- p + ggplot2::geom_vline(ggplot2::aes(xintercept = mean, color = "Mean"), lwd = 1.5) +
         ggplot2::scale_color_manual(name = "", values = c("Mean" = "red"))
       dataForBreaks <- c(dataForBreaks, mean)
-      if (options$biasHistMeanConfidenceInterval) {
-        CI <- t.test(data, mu = 0, conf.level = options$biasHistMeanConfidenceIntervalPercent)$conf.int
+      if (options[["histogramMeanCi"]]) {
+        CI <- t.test(data, mu = 0, conf.level = options[["histogramMeanCiLevel"]])$conf.int
         p <- p + ggplot2::geom_errorbarh(ggplot2::aes(y = .5, x = mean, xmin = CI[1], xmax = CI[2]), lwd = 1, color = "red")
         dataForBreaks <- c(dataForBreaks, CI)
       }
     }
-    if (options$biasHistRef) {
-      reference <- options$biasReferenceValue
+    if (options[["histogramReferenceValueLine"]]) {
+      reference <- options[["referenceValue"]]
       p <- p + ggplot2::geom_vline(ggplot2::aes(xintercept = reference, color = "Reference"), lwd = 1.5) +
         ggplot2::scale_color_manual(name = "", values = c("Reference" = "blue"))
       dataForBreaks <- c(dataForBreaks, reference)
     }
-    if (options$biasHistRef && options$biasHistMean)
+    if (options[["histogramReferenceValueLine"]] && options[["histogramMeanLine"]])
       p <- p + ggplot2::scale_color_manual(name = "", values = c("Mean" = "red", "Reference" = "blue"))
 
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(dataForBreaks)
     p <- p + ggplot2::theme(legend.position = "right") + ggplot2::scale_x_continuous(breaks = xBreaks)
 
-    plot$dependOn(c("biasHistogram"))
+    plot$dependOn(c("histogram"))
 
     plot$plotObject <- p
 
@@ -239,11 +239,11 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
     dataset <- cbind(dataset, Observation = Observation)
 
-    plot$dependOn(c("biasRun"))
-    datayBreaks <- c(dataset[["Measurement"]], options$biasReferenceValue)
+    plot$dependOn(c("runChart"))
+    datayBreaks <- c(dataset[["Measurement"]], options[["referenceValue"]])
     p <- ggplot2::ggplot()
-    if (options$biasRunTolLims) {
-      toleranceLines <- c(options$biasReferenceValue + 0.1 * options$biasTolerance, options$biasReferenceValue - 0.1 * options$biasTolerance)
+    if (options[["runChartToleranceLimitLines"]]) {
+      toleranceLines <- c(options[["referenceValue"]] + 0.1 * options[["toleranceRange"]], options[["referenceValue"]] - 0.1 * options[["toleranceRange"]])
       datayBreaks <- c(datayBreaks, toleranceLines)
       p <- p + ggplot2::geom_hline(yintercept = toleranceLines[1], data = dataset,
                                    mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
@@ -263,9 +263,9 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(x = Observation, n = nxBreaks)
     xBreaks[1] <- 1
     p <- p + jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1)) +
-      ggplot2::geom_hline(yintercept = options$biasReferenceValue, data = dataset,
+      ggplot2::geom_hline(yintercept = options[["referenceValue"]], data = dataset,
                           mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkgreen") +
-      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.1, y = options$biasReferenceValue, l = "Ref"),
+      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.1, y = options[["referenceValue"]], l = "Ref"),
                                 ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "darkgreen", size = 5) +
       ggplot2::scale_x_continuous(name = "Observation", breaks = xBreaks, limits = c(min(xBreaks), max(xBreaks) * 1.2)) +
       ggplot2::scale_y_continuous(name = measurements, breaks = yBreaks, limits = range(yBreaks)) +
@@ -273,7 +273,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
       jaspGraphs::themeJaspRaw() +
       ggplot2::theme(plot.margin = ggplot2::unit(c(.5, .5, .5, .5), "cm"))
 
-    if (options$biasRunDots)
+    if (options[["runChartIndividualMeasurementDots"]])
       p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = Observation, y = Measurement))
 
 

@@ -33,7 +33,7 @@ Form
 
 		AssignedVariablesList
 		{
-			name:								"measurements"
+			name:								"measurement"
 			title:								qsTr("Measurement")
 			singleVariable:						true
 			allowedColumns:						["scale"]
@@ -46,7 +46,7 @@ Form
 
 		DoubleField
 		{
-			name: 								"biasReferenceValue"
+			name: 								"referenceValue"
 			label: 								qsTr("Reference value")
 			defaultValue: 						0
 			negativeValues: 					true
@@ -56,7 +56,7 @@ Form
 
 		DoubleField
 		{
-			name: 								"biasTolerance"
+			name: 								"toleranceRange"
 			label: 								qsTr("Tolerance range")
 			defaultValue: 						1
 			negativeValues: 					false
@@ -66,7 +66,7 @@ Form
 
 		DoubleField
 		{
-			name: 								"biasPercentCG"
+			name: 								"percentToleranceForCg"
 			label: 								qsTr("Percent of tolerance for Cg")
 			defaultValue: 						20
 			negativeValues: 					false
@@ -76,11 +76,12 @@ Form
 
 		DropDown
 		{
-			id: 								studyVarMultiplier
-			name: 								"BiasStudyVarMultiplier"
+			name: 								"studyVarianceMultiplier"
 			label: 								qsTr("Study var. (number of std. deviations)")
+			id: 								studyVarMultiplier
 			indexDefaultValue: 					0
-			values: [
+			values: 
+			[
 				{ label: qsTr("6"), value: 6},
 				{ label: qsTr("4"), value: 4}
 			]
@@ -95,13 +96,13 @@ Form
 
 		CheckBox
 		{
-			name: 								"biasTtest"
+			name: 								"tTest"
 			label: 								qsTr("One sample T-test")
 			checked:							true
 
 			CIField
 			{
-				name: 							"biasTtestConfidenceIntervalPercent"
+				name: 							"tTestCiLevel"
 				label: 							qsTr("Confidence interval for bias")
 			}
 		}
@@ -113,20 +114,20 @@ Form
 
 		CheckBox
 		{
-			name: 								"biasRun"
+			name: 								"runChart"
 			label: 								qsTr("Run chart")
 			checked: 							true
 
 			CheckBox
 			{
-				name: 							"biasRunDots"
+				name: 							"runChartIndividualMeasurementDots"
 				label: 							qsTr("Display individual measurements")
 				checked: 						true
 			}
 
 			CheckBox
 			{
-				name: 							"biasRunTolLims"
+				name: 							"runChartToleranceLimitLines"
 				label: 							qsTr("Display tolerance limits")
 				checked: 						true
 			}
@@ -134,27 +135,27 @@ Form
 
 		CheckBox
 		{
-			name: 								"biasHistogram"
+			name: 								"histogram"
 			label: 								qsTr("Histogram")
 
 			DropDown
 			{
-				id: 							binWidthType
-				name:							"biasBinWidthType"
+				name:							"histogramBinWidthType"
 				label:							qsTr("Bin width type")
+				id: 							binWidthType
 				indexDefaultValue:				0
 				values: [
 					{ label: qsTr("Sturges"), value: "sturges"},
 					{ label: qsTr("Scott"), value: "scott"},
 					{ label: qsTr("Doane"), value: "doane"},
-					{ label: qsTr("Freedman-Diaconis"), value: "fd"},
+					{ label: qsTr("Freedman-Diaconis"), value: "freedman-diaconis"},
 					{ label: qsTr("Manual"), value: "manual"}
 				]
 			}
 
 			DoubleField
 			{
-				name:							"biasNumberOfBins"
+				name:							"histogramManualNumberOfBins"
 				label:							qsTr("Number of bins")
 				defaultValue:					30
 				min:							3
@@ -164,27 +165,27 @@ Form
 
 			CheckBox
 			{
-				name: 							"biasHistMean"
+				name: 							"histogramMeanLine"
 				label: 							qsTr("Display mean")
 				checked: 						true
 
 				CheckBox
 				{
-					name: 						"biasHistMeanConfidenceInterval"
+					name: 						"histogramMeanCi"
 					label: 						qsTr("Confidence interval for mean")
 					checked:					true
 					childrenOnSameRow:			true
 
 					CIField
 					{
-						name: 					"biasHistMeanConfidenceIntervalPercent"
+						name: 					"histogramMeanCiLevel"
 					}
 				}
 			}
 
 			CheckBox
 			{
-				name: 							"biasHistRef"
+				name: 							"histogramReferenceValueLine"
 				label: 							qsTr("Display reference value")
 				checked: 						true
 			}
