@@ -19,15 +19,15 @@
 msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # Reading the data in the correct format
-  wideFormat <- options[["gaugeRRdataFormat"]] == "gaugeRRwideFormat"
+  wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat)
-    measurements <- unlist(options$measurements)
+    measurements <- unlist(options[["measurementsWideFormat"]])
   else
-    measurements <- unlist(options$measurementsLong)
+    measurements <- unlist(options[["measurementLongFormat"]])
 
-  parts <- unlist(options$parts)
-  operators <- unlist(options$operators)
-  
+  parts <- unlist(options[["part"]])
+  operators <- unlist(options[["operator"]])
+
   #ready statement
   if (wideFormat && !options[["Type3"]]) {
     ready <- (length(measurements) > 1 && !identical(operators, "") && !identical(parts, ""))
@@ -127,7 +127,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                                                  "anovaGaugeMisc", "anovaGaugeReport"))
   } else {
     # Gauge r&R ANOVA Table
-    if (options[["gaugeANOVA"]]) {
+    if (options[["anova"]]) {
       if (is.null(jaspResults[["gaugeANOVA"]])) {
         jaspResults[["gaugeANOVA"]] <- createJaspContainer(gettext("Gauge r&R ANOVA Table"))
         jaspResults[["gaugeANOVA"]]$dependOn(c("historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue", "anovaGaugeReport"))
@@ -200,11 +200,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     if(options[["trafficPlot"]] & is.null(jaspResults[["trafficPlot"]] )) {
       jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
       jaspResults[["trafficPlot"]]$position <- 9
-      jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "tolerance","gaugeToleranceEnabled", "gaugeRRmethod", "historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue", "anovaGaugeReport"))
+      jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "toleranceValue", "tolerance", "gaugeRRmethod", "historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue", "anovaGaugeReport"))
       trafficContainer <- jaspResults[["trafficPlot"]]
 
       valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, returnTrafficValues = TRUE, Type3 = Type3)
-      trafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,ToleranceVar = valuesVec$tol, options = options, ready = ready)
+      trafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options[["tolerance"]],ToleranceVar = valuesVec$tol, options = options, ready = ready)
 
     }
   }
@@ -214,7 +214,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready, returnPlotOnly = FALSE, returnTrafficValues = FALSE, Type3 = FALSE) {
   anovaTables <- createJaspContainer(gettext("ANOVA Table"))
-  anovaTables$dependOn(c("gaugeANOVA", "gaugeRRmethod"))
+  anovaTables$dependOn(c("anova", "gaugeRRmethod"))
   anovaTables$position <- 1
 
   anovaTable1 <- createJaspTable(title = ifelse(Type3, gettext("One-way ANOVA Table"), gettext("Two-way ANOVA Table with Interaction")))
@@ -226,18 +226,18 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   anovaTable1$addColumnInfo(title = gettext("<i>p</i>-value"),              name = "Pr(>F)",  type = "pvalue")
 
   RRtable1 <- createJaspTable(title = gettext("Variance Components"))
-  RRtable1$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
+  RRtable1$dependOn(c("anova", "operator", "part", "measurementsWideFormat", "measurementLongFormat"))
   RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
   RRtable1$addColumnInfo(name = "Variation", title = gettext("Variance"), type = "number")
   RRtable1$addColumnInfo(name = "Percent", title = gettextf("%% Contribution"), type = "integer")
 
   RRtable2 <- createJaspTable(title = gettext("Gauge Evaluation"))
-  RRtable2$dependOn(c("gaugeANOVA", "operators", "parts", "measurements"))
+  RRtable2$dependOn(c("anova", "operator", "part", "measurementsWideFormat", "measurementLongFormat"))
   RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
   RRtable2$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
   RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation"), type = "number")
-  RRtable2$addColumnInfo(name = "percentStudyVar", title = gettextf("%% Study Variation"), type = "integer")
-  if(options[["gaugeToleranceEnabled"]])
+  RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("% Study Variation"), type = "integer")
+  if(options[["tolerance"]])
     RRtable2$addColumnInfo(name = "percentTolerance", title = gettextf("%% Tolerance"), type = "integer")
 
   for (measurement in measurements) {
@@ -252,10 +252,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     data <- tidyr::gather(data, repetition, measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
-    if (options$studyVarMultiplierType == "svmSD") {
-      studyVarMultiplier <- options$studyVarMultiplier
+    if (options[["studyVarianceMultiplierType"]] == "sd") {
+      studyVarMultiplier <- options[["studyVarianceMultiplierValue"]]
     }else{
-      percent <- options$studyVarMultiplier/100
+      percent <- options[["studyVarianceMultiplierValue"]] / 100
       q <- (1 - percent)/2
       studyVarMultiplier <- abs(2*qnorm(q))
     }
@@ -293,7 +293,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       fInteraction <- msInteraction / msRepWithInteraction
     }
 
-    if (options$TypeForFstat == 'FixedEffects'){
+    if (options[["anovaModelType"]] == "fixedEffect"){
       fPart <- msPart / msRepWithInteraction
       fOperator <- msOperator / msRepWithInteraction
     }
@@ -331,11 +331,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     anovaTables[['anovaTable1']] <- anovaTable1
 
-    if(!singleOperator){
-      interactionSignificant <- pInteraction < options$alphaForANOVA
-    }else {
+    if(!singleOperator)
+      interactionSignificant <- pInteraction < options[["anovaAlphaForInteractionRemoval"]]
+    else
       interactionSignificant <- FALSE
-    }
 
     if (singleOperator || interactionSignificant){
 
@@ -408,8 +407,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                                "SD"           = SD,
                                "studyVar"    = studyVar,
                                "percentStudyVar"    = c(round(studyVar/max(studyVar) * 100,2)))
-      if(options[["gaugeToleranceEnabled"]])
-        RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options$tolerance * 100,2))))
+      if(options[["tolerance"]])
+        RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options[["toleranceValue"]] * 100,2))))
       RRtable2$setData(RRtable2DataList)
 
       if (!is.na(sdParts)) {
@@ -504,8 +503,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                                "SD"           = SD,
                                "studyVar"    = studyVar,
                                "percentStudyVar"    = c(round(studyVar/max(studyVar) * 100,2)))
-      if(options[["gaugeToleranceEnabled"]])
-        RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options$tolerance * 100,2))))
+      if(options[["tolerance"]])
+        RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options[["toleranceValue"]] * 100,2))))
       RRtable2$setData(RRtable2DataList)
       nCategories <- .gaugeNumberDistinctCategories(SD[5], SD[1])
       RRtable2$addFootnote(gettextf("Number of distinct categories = %i", ifelse(SD[3] == 0, 1, nCategories)))
@@ -529,8 +528,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     SDs <- sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompPart))
     studyvars <- SDs * studyVarMultiplier
     studyVariationValues <- studyvars/max(studyVar) * 100
-    if(options[["gaugeToleranceEnabled"]]){
-      percentToleranceValues <- studyvars / options$tolerance * 100
+    if(options[["tolerance"]]){
+      percentToleranceValues <- studyvars / options[["toleranceValue"]] * 100
     }else{
       percentToleranceValues <- NA
     }
@@ -540,7 +539,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     if (returnPlotOnly)
       return(p)
     else if (returnTrafficValues)
-      return(list(study = c(round(studyVar/max(studyVar) * 100,2))[1], tol = c(round(studyVar / options$tolerance * 100,2))[1]))
+      return(list(study = c(round(studyVar/max(studyVar) * 100,2))[1], tol = c(round(studyVar / options[["toleranceValue"]] * 100,2))[1]))
 
     if (options[["gaugeVarCompGraph"]]) {
       plot <- createJaspPlot(title = gettext("Components of Variation"), width = 850, height = 500)
@@ -893,8 +892,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   reportedBy <- gettextf("Performed by: %s", options[["anovaGaugeReportedBy"]])
   misc <- gettextf("Misc: %s", options[["anovaGaugeMisc"]])
-  if (options[["gaugeToleranceEnabled"]]){
-    tolerance <- gettextf("Tolerance: %s", options[["tolerance"]])
+  if (options[["tolerance"]]){
+    tolerance <- gettextf("Tolerance: %s", options[["toleranceValue"]])
     text2 <- c(reportedBy, tolerance, misc)
   }else{
     text2 <- c(reportedBy, misc)

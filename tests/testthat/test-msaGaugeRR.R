@@ -2,11 +2,11 @@ context("[Quality Control] Gauge r&R")
 
 # Long format
 options <- analysisOptions("msaGaugeRR")
-options$operators <- "Operators"
-options$parts <- "Parts"
-options$measurementsLong <- "Dm"
-options$gaugeToleranceEnabled <- TRUE
-options$tolerance <- 15
+options$operator <- "Operators"
+options$part <- "Parts"
+options$measurementLongFormat <- "Dm"
+options$tolerance <- TRUE
+options$toleranceValue <- 15
 options$gaugeRchart <- TRUE
 options$gaugeXbarChart <- TRUE
 options$gaugeScatterPlotOperators <- TRUE
@@ -105,10 +105,10 @@ test_that("Average Chart by Operator plot matches", {
 })
 
 # Wide
-options$gaugeRRdataFormat <- "gaugeRRwideFormat"
-options$operators <- "Operator"
-options$parts <- "Part"
-options$measurements <- c("Measurement1", "Measurement2", "Measurement3")
+options$dataFormat <- "wideFormat"
+options$operator <- "Operator"
+options$part <- "Part"
+options$measurementsWideFormat <- c("Measurement1", "Measurement2", "Measurement3")
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "msaGageRandr_wide.csv", options)
 
@@ -197,14 +197,14 @@ test_that("Average Chart by Operator plot matches", {
 
 # Long: Type 3
 data <- read.csv("msaGaugeRR_Type3_Long.csv")
-options$gaugeRRdataFormat <- "gaugeRRLongFormat"
+options$dataFormat <- "longFormat"
 names(data)[1] <- "Parts"
-options$operators <- ""
-options$parts <- "Parts"
-options$measurementsLong <- "dm"
+options$operator <- ""
+options$part <- "Parts"
+options$measurementLongFormat <- "dm"
 options$Type3 <- TRUE
-options$tolerance <- 12
-options$TypeForFstat <- 'RandomEffects'
+options$toleranceValue <- 12
+options$anovaModelType <- "randomEffect"
 options$gaugeScatterPlotOperators <- F
 options$gaugeScatterPlotFitLine <- F
 set.seed(1)
@@ -273,12 +273,12 @@ test_that("Average Chart by Operator plot matches", {
 })
 
 # Type 3 WIDE
-options$operators <- ""
-options$gaugeRRdataFormat <- "gaugeRRwideFormat"
-options$parts <- "Part"
-options$measurements <- c("Repeat.1", "Repeat.2", "Repeat.3")
+options$operator <- ""
+options$dataFormat <- "wideFormat"
+options$part <- "Part"
+options$measurementsWideFormat <- c("Repeat.1", "Repeat.2", "Repeat.3")
 options$Type3 <- TRUE
-options$TypeForFstat <- 'RandomEffects'
+options$anovaModelType <- "randomEffect"
 options$gaugeScatterPlotOperators <- F
 options$gaugeScatterPlotFitLine <- F
 set.seed(1)

@@ -65,3 +65,84 @@ Upgrade
 		ChangeRename {from: "EnablePV";								to: "manualProcessVariation"}
 		ChangeRename {from: "linearityProcessVariation";			to: "manualProcessVariationValue"}
 	}
+
+// Type 2 and 3 Gauge r&R
+
+Upgrade
+	{
+		functionName:		"msaGaugeRR"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+		
+		// main analysis
+		ChangeRename {from: "gaugeRRdataFormat";								to: "dataFormat"}
+
+		ChangeJS
+		{
+			name:		"dataFormat"
+			jsFunction:	function(options)
+			{
+				switch(options["dataFormat"])
+				{
+					case "gaugeRRlongFormat":						return "longFormat";
+					case "gaugeRRwideFormat":						return "wideFormat";
+				}
+			}
+		}
+
+		ChangeRename {from: "operators";								to: "operator"}
+		ChangeRename {from: "parts";									to: "part"}
+		ChangeRename {from: "measurementsLong";							to: "measurementLongFormat"}
+		ChangeRename {from: "measurements";								to: "measurementsWideFormat"}
+		ChangeRename {from: "tolerance";								to: "toleranceValue"}
+		ChangeRename {from: "gaugeToleranceEnabled";					to: "tolerance"}
+		ChangeRename {from: "gaugeANOVA";								to: "anova"}
+		ChangeRename {from: "TypeForFstat";								to: "anovaModelType"}
+
+		ChangeJS
+		{
+			name:		"anovaModelType"
+			jsFunction:	function(options)
+			{
+				switch(options["anovaModelType"])
+				{
+					case "FixedEffects":							return "fixedEffect";
+					case "RandomEffects":							return "randomEffect";
+				}
+			}
+		}
+		
+		ChangeRename {from: "alphaForANOVA";							to: "anovaAlphaForInteractionRemoval"}
+		ChangeRename {from: "studyVarMultiplierType";					to: "studyVarianceMultiplierType"}
+
+		ChangeJS
+		{
+			name:		"studyVarMultiplierType"
+			jsFunction:	function(options)
+			{
+				switch(options["studyVarMultiplierType"])
+				{
+					case "svmSD":									return "sd";
+					case "svmPercent":								return "percent";
+				}
+			}
+		}
+
+		ChangeRename {from: "studyVarMultiplier";					to: "studyVarianceMultiplierValue"}
+
+
+
+		
+		
+		
+
+
+		
+		
+		
+		
+
+		// plots
+
+		// report
+	}
