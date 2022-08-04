@@ -49,13 +49,32 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     plot$dependOn(c("CCReport", "TypeChart", "variablesLong", "variables"))
     return()
   }
-  
-  # Data reading
-  if (is.null(dataset) && ready) {
-    if (subgroupVariableGiven) {
-      dataset <- .readDataSetToEnd(columns.as.numeric = measurements, columns.as.factor = subgroupVariable)
-    } else {
-      dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
+
+  if (makeSplit && ready) {
+    splitFactor      <- dataset[[.v(splitName)]]
+    splitLevels      <- levels(splitFactor)
+    # remove missing values from the grouping variable
+    dataset <- dataset[!is.na(splitFactor), ]
+    dataset.factors <- dataset.factors[!is.na(splitFactor), ]
+    numberMissingSplitBy <- sum(is.na(splitFactor))
+
+    # Actually remove missing values from the split factor
+    splitFactor <- na.omit(splitFactor)
+
+    if(subgroups != "")
+      subgroups <- splitFactor
+  }
+
+  if (!wideFormat && ready){
+    k <- options[["CCSubgroupSize"]]
+    n <- nrow(dataset)
+    dataset <- .PClongTowide(dataset, k, measurements, mode = "manual")
+    if (identical(dataset, "error")) {
+      plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
+      jaspResults[["plot"]] <- plot
+      plot$setError(gettextf("Could not equally divide data points into groups of size %i.", k))
+      plot$dependOn("CCSubgroupSize")
+      return()
     }
   }
   
