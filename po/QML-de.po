@@ -1,15 +1,9 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-07-31 12:17+0000\n"
-"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/de/>\n"
-"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14-dev\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Language: de\n"
 "X-Qt-Contexts: true\n"
 
@@ -2250,9 +2244,10 @@ msgctxt "TimeWeightedCharts|"
 msgid "Shift size"
 msgstr ""
 
+#, fuzzy
 msgctxt "TimeWeightedCharts|"
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "Exponentiell-gewichteter-gleitender-Mittelwert-Karte"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Center"
