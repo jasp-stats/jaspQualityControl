@@ -225,7 +225,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   if (options[["linearityAndBiasPlot"]])
     tablesAndGraphs[["plot1"]] <- plot1
 
-  if (options[["percentageOfProcessVariationPlot"]])
+  if (options[["percentProcessVariationPlot"]])
     tablesAndGraphs[["plot2"]] <- plot2
 
   return(tablesAndGraphs)

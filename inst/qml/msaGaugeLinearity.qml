@@ -87,7 +87,7 @@ Form
 
 		CheckBox
 		{
-			name: 								"percentageOfProcessVariationPlot"
+			name: 								"percentProcessVariationPlot"
 			label: 								qsTr("Percent process variation graph")
 			checked: 							true
 		}

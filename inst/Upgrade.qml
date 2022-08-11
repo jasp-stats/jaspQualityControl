@@ -31,7 +31,7 @@ Upgrade
 			{
 				switch(options["histogramBinWidthType"])
 				{
-					case "fd":						return "freedman-diaconis";
+					case "fd":						return "freedmanDiaconis";
 				}
 			}
 		}
@@ -59,7 +59,7 @@ Upgrade
 
 		// plots
 		ChangeRename {from: "LBgraph";								to: "linearityAndBiasPlot"}
-		ChangeRename {from: "LBpercentGraph";						to: "percentageOfProcessVariationPlot"}
+		ChangeRename {from: "LBpercentGraph";						to: "percentProcessVariationPlot"}
 
 		// optional
 		ChangeRename {from: "EnablePV";								to: "manualProcessVariation"}
@@ -166,16 +166,4 @@ Upgrade
 		ChangeRename {from: "anovaGaugeDate";							to: "reportDate"}
 		ChangeRename {from: "anovaGaugeReportedBy";						to: "reportReportedBy"}
 		ChangeRename {from: "anovaGaugeMisc";							to: "reportMiscellaneous"}
-
-		
-
-
-		
-
-
-		
-
-		
-
-		
 	}

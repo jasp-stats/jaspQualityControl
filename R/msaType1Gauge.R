@@ -188,7 +188,12 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
     plot <- createJaspPlot(title = gettext("Bias Histogram"), width = 700, height = 400)
     dataForBreaks <- c(data)
-    p <- jaspDescriptives:::.plotMarginal(column = data, variableName = measurements, binWidthType = options[["histogramBinWidthType"]], numberOfBins = options[["histogramManualNumberOfBins"]])
+    if (options[["histogramBinWidthType"]] == "freedmanDiaconis") {
+      binWidthType <- "fd"
+    } else {
+      binWidthType <- options[["histogramBinWidthType"]]
+    }
+    p <- jaspDescriptives:::.plotMarginal(column = data, variableName = measurements, binWidthType = binWidthType, numberOfBins = options[["histogramManualNumberOfBins"]])
 
     if (options[["histogramMeanLine"]]) {
       mean <- mean(data)
