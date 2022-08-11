@@ -94,6 +94,22 @@ Upgrade
 		ChangeRename {from: "parts";									to: "part"}
 		ChangeRename {from: "measurementsLong";							to: "measurementLongFormat"}
 		ChangeRename {from: "measurements";								to: "measurementsWideFormat"}
+		ChangeRename {from: "Type3";									to: "type3"}
+		ChangeRename {from: "standardDeviationReference";				to: "processVariationReference"}
+		ChangeJS
+		{
+			name:		"processVariationReference"
+			jsFunction:	function(options)
+			{
+				switch(options["processVariationReference"])
+				{
+					case "studyStandardDeviation":					return "studySd";
+					case "historicalStandardDeviation":				return "historicalSd";
+				}
+			}
+		}
+		
+		ChangeRename {from: "historicalStandardDeviationValue";			to: "historicalSdValue"}
 		ChangeRename {from: "tolerance";								to: "toleranceValue"}
 		ChangeRename {from: "gaugeToleranceEnabled";					to: "tolerance"}
 		ChangeRename {from: "gaugeANOVA";								to: "anova"}
@@ -130,19 +146,36 @@ Upgrade
 
 		ChangeRename {from: "studyVarMultiplier";					to: "studyVarianceMultiplierValue"}
 
-
-
-		
-		
-		
-
-
-		
-		
-		
-		
-
 		// plots
+		ChangeRename {from: "gaugeVarCompGraph";					to: "varianceComponentsGraph"}
+		ChangeRename {from: "gaugeRchart";							to: "rChart"}
+		ChangeRename {from: "gaugeXbarChart";						to: "xBarChart"}
+		ChangeRename {from: "gaugeScatterPlotOperators";			to: "scatterPlot"}
+		ChangeRename {from: "gaugeScatterPlotFitLine";				to: "scatterPlotFitLine"}
+		ChangeRename {from: "gaugeScatterPlotOriginLine";			to: "scatterPlotOriginLine"}
+		ChangeRename {from: "gaugeByPart";							to: "partMeasurementPlot"}
+		ChangeRename {from: "gaugeByPartAll";						to: "partMeasurementPlotAllValues"}
+		ChangeRename {from: "gaugeByOperator";						to: "operatorMeasurementPlot"}
+		ChangeRename {from: "gaugeByInteraction";					to: "partByOperatorMeasurementPlot"}
+		ChangeRename {from: "trafficPlot";							to: "trafficLightChart"}
 
 		// report
+		ChangeRename {from: "anovaGaugeReport";							to: "report"}
+		ChangeRename {from: "anovaGaugeTitle";							to: "reportTitle"}
+		ChangeRename {from: "anovaGaugeName";							to: "reportGaugeName"}
+		ChangeRename {from: "anovaGaugeDate";							to: "reportDate"}
+		ChangeRename {from: "anovaGaugeReportedBy";						to: "reportReportedBy"}
+		ChangeRename {from: "anovaGaugeMisc";							to: "reportMiscellaneous"}
+
+		
+
+
+		
+
+
+		
+
+		
+
+		
 	}

@@ -88,8 +88,8 @@ Form
 
 		CheckBox
 		{
+			name:								"type3"
 			id:									type3
-			name:								"Type3"
 			label:								qsTr("Type 3 study (automatic equipment)")
 			onCheckedChanged:
 			{
@@ -108,25 +108,25 @@ Form
 
 			DropDown
 			{
-				name: 							"standardDeviationReference"
+				name: 							"processVariationReference"
 				label: 							qsTr("Process variation based on")
 				id: 							variationReference
 				indexDefaultValue: 				0
 				values: 
 				[
-					{ label: qsTr("Study variation"), value: "studyStandardDeviation" },
-					{ label: qsTr("Historical standard deviation"), value: "historicalStandardDeviation" }
+					{ label: qsTr("Study variation"), value: "studySd" },
+					{ label: qsTr("Historical standard deviation"), value: "historicalSd" }
 				]
 			}
 
 			DoubleField
 			{
-				name:							"historicalStandardDeviationValue"
+				name:							"historicalSdValue"
 				label:							qsTr("Historical standard deviation:")
 				defaultValue:					3
 				min: 						0.000000001
 				decimals: 					9
-				enabled:						variationReference.currentValue == "historicalStandardDeviation"
+				enabled:						variationReference.currentValue == "historicalSd"
 			}
 
 			CheckBox
@@ -205,69 +205,69 @@ Form
 
 			CheckBox
 			{
-				name: 						"gaugeVarCompGraph"
+				name: 						"varianceComponentsGraph"
 				label: 						qsTr("Components of variation")
 				checked: 					true
 			}
 
 			CheckBox
 			{
-				name: 							"gaugeRchart"
+				name: 							"rChart"
 				label: 							qsTr("R charts by operator")
 			}
 
 			CheckBox
 			{
-				name:							"gaugeXbarChart"
+				name:							"xBarChart"
 				label:							qsTr("Average charts by operator")
 			}
 
 			CheckBox
 			{
-				name: 							"gaugeScatterPlotOperators"
+				name: 							"scatterPlot"
 				label:							qsTr("Scatter plots operators")
 				enabled:						!type3.checked
 
 				CheckBox
 				{
-					name:						"gaugeScatterPlotFitLine"
+					name:						"scatterPlotFitLine"
 					label:						qsTr("Fit line")
 				}
 
 				CheckBox
 				{
-					name:						"gaugeScatterPlotOriginLine"
+					name:						"scatterPlotOriginLine"
 					label:						qsTr("Show origin line")
 				}
 			}
 
 			CheckBox
 			{
-				name:							"gaugeByPart"
+				name:							"partMeasurementPlot"
 				label:							qsTr("Measurements by part plot")
 
 				CheckBox
 				{
-					name:						"gaugeByPartAll"
+					name:						"partMeasurementPlotAllValues"
 					label:						qsTr("Display all measurements")
 				}
 			}
 
 			CheckBox
 			{
-				name:							"gaugeByOperator"
+				name:							"operatorMeasurementPlot"
 				label:							qsTr("Measurements by operator plot")
 			}
 
 			CheckBox
 			{
-				name: 							"gaugeByInteraction"
+				name: 							"partByOperatorMeasurementPlot"
 				label: 							qsTr("Part × operator interaction plot")
 			}
 
 			CheckBox
 			{
-				name: 							"trafficPlot"
+				name: 							"trafficLightChart"
 				label: 							qsTr("Traffic light chart")
 			}
 		}
@@ -279,11 +279,10 @@ Form
 		
 		CheckBox
 		{
-			name: "anovaGaugeReport"
-			label: qsTr("Show report")
+			name: "report"
+			label: qsTr("Show Report")
 			id:		anovaGaugeReport
 			columns: 2
-				
 				
 			CheckBox
 			{
@@ -294,48 +293,48 @@ Form
 
 				TextField
 				{
-					id:									anovaGaugeTitle
+					name: 								"reportTitle"
 					label: 								qsTr("Title")
-					name: 								"anovaGaugeTitle"
+					id:									reportTitle
 					placeholderText:					qsTr("Measurement")
 					fieldWidth:							100
 				}
 
 				TextField
 				{
-					id:									anovaGaugeName
+					name: 								"reportGaugeName"
 					label: 								qsTr("Gauge name")
-					name: 								"anovaGaugeName"
+					id:									reportGaugeName
 					placeholderText:					qsTr("Name")
 					fieldWidth:							100
 				}
 
 				TextField
 				{
-					id:									anovaGaugeDate
+					name: 								"reportDate"
 					label: 								qsTr("Date")
-					name: 								"anovaGaugeDate"
+					id:									reportDate
 					placeholderText:					qsTr("Date")
 					fieldWidth:							100
 				}
 
 				TextField
 				{
-					id:									anovaGaugeReportedBy
+					name: 								"reportReportedBy"
 					label: 								qsTr("Reported by")
-					name: 								"anovaGaugeReportedBy"
+					id:									reportReportedBy
 					placeholderText:					qsTr("Name")
 					fieldWidth:							100
 				}
 
 				TextField
 				{
-					id:									anovaGaugeMisc
-					label: 								qsTr("Misc")
-					name: 								"anovaGaugeMisc"
+					name: 								"reportMiscellaneous"
+					label: 								qsTr("Misc.")
+					id:									reportMiscellaneous
 					placeholderText:					qsTr("Miscellaneous")
 					fieldWidth:							100
-				}
+				}	
 			}
 		
 			Group

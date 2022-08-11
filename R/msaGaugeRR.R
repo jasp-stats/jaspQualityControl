@@ -29,13 +29,13 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   operators <- unlist(options[["operator"]])
 
   #ready statement
-  if (wideFormat && !options[["Type3"]]) {
+  if (wideFormat && !options[["type3"]]) {
     ready <- (length(measurements) > 1 && !identical(operators, "") && !identical(parts, ""))
-  } else if (wideFormat && options[["Type3"]]) {
+  } else if (wideFormat && options[["type3"]]) {
     ready <- (length(measurements) > 1 && !identical(parts, "")) 
-  } else if (!wideFormat && !options[["Type3"]]) {
+  } else if (!wideFormat && !options[["type3"]]) {
     ready <- (measurements != "" && !identical(operators, "") && !identical(parts, ""))
-  }  else if (!wideFormat && options[["Type3"]]) {
+  }  else if (!wideFormat && options[["type3"]]) {
     ready <- (!identical(measurements, "") && !identical(parts, ""))
   }
   
@@ -47,7 +47,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
-    if (options$Type3){
+    if (options$type3){
       dataset$operators <- rep(1, nrow(dataset))
       operators <- "operators"
     }
@@ -73,7 +73,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     dataset <- dataset[order(dataset[[parts]]),]
   }
 
-  if(ready && !options$Type3){
+  if(ready && !options[["type3"]]){
    crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
     if(!crossed){
      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
@@ -84,14 +84,14 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   # Checking type 3
-  Type3 <- c(length(unique(dataset[[operators]])) == 1 || options$Type3)
+  Type3 <- c(length(unique(dataset[[operators]])) == 1 || options$type3)
 
   # Errors #
   # Checking whether type3 is used correctly
   .hasErrors(dataset,
              target = measurements,
              custom = function() {
-               if (Type3 && !options$Type3)
+               if (Type3 && !options$type3)
                  return("This dataset seems to have only a single unique operator. Please use the Type 3 study by checking the box below.")},
              exitAnalysisIfErrors = TRUE)
   # Checking whether the format wide is used correctly
@@ -107,7 +107,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
              exitAnalysisIfErrors = FALSE)
 
   # Report
-  if (options[["anovaGaugeReport"]] && ready) {
+  if (options[["report"]] && ready) {
     if (is.null(jaspResults[["anovaGaugeReport"]])) {
       jaspResults[["anovaGaugeReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["anovaGaugeReport"]]$position <- 9
@@ -123,14 +123,14 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     jaspResults[["trafficPlot"]] <- NULL
 
     jaspResults[["anovaGaugeReport"]] <- .anovaGaugeReport(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options = options, Type3 = Type3)
-    jaspResults[["anovaGaugeReport"]]$dependOn(c("anovaGaugeReportedBy", "anovaGaugeTitle", "anovaGaugeName", "anovaGaugeDate",
-                                                 "anovaGaugeMisc", "anovaGaugeReport"))
+    jaspResults[["anovaGaugeReport"]]$dependOn(c("reportReportedBy", "reportTitle", "reportGaugeName", "reportDate",
+                                                 "reportMiscellaneous", "report"))
   } else {
     # Gauge r&R ANOVA Table
     if (options[["anova"]]) {
       if (is.null(jaspResults[["gaugeANOVA"]])) {
         jaspResults[["gaugeANOVA"]] <- createJaspContainer(gettext("Gauge r&R ANOVA Table"))
-        jaspResults[["gaugeANOVA"]]$dependOn(c("historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue", "anovaGaugeReport"))
+        jaspResults[["gaugeANOVA"]]$dependOn(c("processVariationReference", "historicalSdValue", "report"))
         jaspResults[["gaugeANOVA"]]$position <- 1
       }
 
@@ -138,69 +138,69 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
 
     # R chart by operator
-    if (options[["gaugeRchart"]]) {
+    if (options[["rChart"]]) {
       if (is.null(jaspResults[["gaugeRchart"]])) {
         jaspResults[["gaugeRchart"]] <- createJaspContainer(gettext("Range Chart by Operator"))
         jaspResults[["gaugeRchart"]]$position <- 3
       }
       jaspResults[["gaugeRchart"]] <- .xBarOrRangeChart(type = "Range", dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
-      jaspResults[["gaugeRchart"]]$dependOn(c("gaugeRchart", "gaugeRRmethod", "anovaGaugeReport"))
+      jaspResults[["gaugeRchart"]]$dependOn(c("rChart", "gaugeRRmethod", "report"))
     }
 
     # Xbar chart by operator
-    if (options[["gaugeXbarChart"]]) {
+    if (options[["xBarChart"]]) {
       if (is.null(jaspResults[["gaugeXbarChart"]])) {
         jaspResults[["gaugeXbarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
         jaspResults[["gaugeXbarChart"]]$position <- 4
       }
-      jaspResults[["gaugeXbarChart"]] <- .xBarOrRangeChart(type = "Average", dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
-      jaspResults[["gaugeXbarChart"]]$dependOn(c("gaugeXbarChart", "gaugeRRmethod", "anovaGaugeReport"))
+      jaspResults[["gaugeXbarChart"]] <- .xBarOrRangeChart(type = "Average",dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
+      jaspResults[["gaugeXbarChart"]]$dependOn(c("xBarChart", "gaugeRRmethod", "report"))
     }
 
     # gauge Scatter Plot Operators
-    if (options[["gaugeScatterPlotOperators"]]) {
+    if (options[["scatterPlot"]]) {
       if (is.null(jaspResults[["gaugeScatterOperators"]])) {
         jaspResults[["gaugeScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
         jaspResults[["gaugeScatterOperators"]]$position <- 5
       }
       jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(jaspResults = jaspResults, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
-      jaspResults[["gaugeScatterOperators"]]$dependOn(c("gaugeRRmethod", "anovaGaugeReport"))
+      jaspResults[["gaugeScatterOperators"]]$dependOn(c("gaugeRRmethod", "report"))
     }
 
     # Measurement by Part Graph
-    if (options[["gaugeByPart"]] & ready) {
+    if (options[["partMeasurementPlot"]] & ready) {
       if (is.null(jaspResults[["gaugeByPart"]])) {
         jaspResults[["gaugeByPart"]] <- createJaspContainer(gettext("Measurement by Part Graph"))
-        jaspResults[["gaugeByPart"]]$dependOn("anovaGaugeReport")
+        jaspResults[["gaugeByPart"]]$dependOn("report")
         jaspResults[["gaugeByPart"]]$position <- 6
       }
       jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options = options)
     }
 
     # Measurement by Operator Box Plot
-    if (options[["gaugeByOperator"]]) {
+    if (options[["operatorMeasurementPlot"]]) {
       if (is.null(jaspResults[["gaugeByOperator"]])) {
         jaspResults[["gaugeByOperator"]] <- createJaspContainer(gettext("Measurements by Operator Graph"))
-        jaspResults[["gaugeByOperator"]]$dependOn("anovaGaugeReport")
+        jaspResults[["gaugeByOperator"]]$dependOn("report")
         jaspResults[["gaugeByOperator"]]$position <- 7
       }
       jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
     }
 
     # Parts by Operator Interaction Plot
-    if (options[["gaugeByInteraction"]]) {
+    if (options[["partByOperatorMeasurementPlot"]]) {
       if (is.null(jaspResults[["gaugeByInteraction"]])) {
         jaspResults[["gaugeByInteraction"]] <- createJaspContainer(gettext("Part by Operator Interaction Graph"))
-        jaspResults[["gaugeByInteraction"]]$dependOn("anovaGaugeReport")
+        jaspResults[["gaugeByInteraction"]]$dependOn("report")
         jaspResults[["gaugeByInteraction"]]$position <- 8
       }
       jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
     }
     # Traffic light plot
-    if(options[["trafficPlot"]] & is.null(jaspResults[["trafficPlot"]] )) {
+    if(options[["trafficLightChart"]] & is.null(jaspResults[["trafficPlot"]] )) {
       jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
       jaspResults[["trafficPlot"]]$position <- 9
-      jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "toleranceValue", "tolerance", "gaugeRRmethod", "historicalStandardDeviation", "studyStandardDeviation", "standardDeviationReference", "historicalStandardDeviationValue", "anovaGaugeReport"))
+      jaspResults[["trafficPlot"]]$dependOn(c("trafficLightChart", "toleranceValue", "tolerance", "gaugeRRmethod", "processVariationReference", "historicalSdValue", "report"))
       trafficContainer <- jaspResults[["trafficPlot"]]
 
       valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, returnTrafficValues = TRUE, Type3 = Type3)
@@ -360,10 +360,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         sources <- gettext(c("Total Gauge r&R", "Repeatability", "Reproducibility", operators, "Part-to-Part", paste(parts," * ", operators), "Total Variation"))
       }
 
-      if (options$standardDeviationReference == "historicalStandardDeviation"){
+      if (options[["processVariationReference"]] == "historicalSd"){
         if (Type3)
           varCompVector <- list(varCompTotalGauge = varCompTotalGauge, varCompRepeat = varCompRepeat, varCompPart = varCompPart, varCompTotalVar = varCompTotalVar)
-        histSD <- options$historicalStandardDeviationValue
+        histSD <- options[["historicalSdValue"]]
         varCompVector$varCompTotalVar <- varCompTotalVar <- histSD^2
         varCompVector$varCompPart <- varCompVector$varCompTotalVar - varCompTotalGauge
       }
@@ -379,10 +379,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       #Gauge evaluation
 
-      histSD <- options$historicalStandardDeviationValue
+      histSD <- options[["historicalSdValue"]]
 
       if(!singleOperator){
-        if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTotalGauge)) {
+        if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
           SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator)),
                   sqrt(histSD^2 - varCompTotalGauge),
                   sqrt(varCompInteraction), histSD)
@@ -393,7 +393,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         sdParts <- SD[5]
         sdGauge <- SD[1]
       }else{
-        if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTotalGauge)) {
+        if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
           SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat)), sqrt(histSD^2 - varCompTotalGauge), histSD)
         }else{
           SD <- sqrt(varCompVector)
@@ -421,7 +421,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f", studyVarMultiplier))
       }
 
-      if(options$standardDeviationReference == "historicalStandardDeviation"){
+      if(options[["processVariationReference"]] == "historicalSd"){
         RRtable2$addFootnote(gettextf("Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %%Study Variation."))
         RRtable2$addFootnote(gettextf("Values for %%Process Variation are not displayed because they are identical to values for %%Study Variation."))
       }
@@ -470,8 +470,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       varCompTotalGauge <- varCompList$totalGauge
       varCompTotalVar <- varCompList$totalVar
 
-      if (options$standardDeviationReference == "historicalStandardDeviation"){
-        histSD <- options$historicalStandardDeviationValue
+      if (options[["processVariationReference"]] == "historicalSd"){
+        histSD <- options[["historicalSdValue"]]
         varCompTotalVar <- histSD^2
         varCompPart <- varCompTotalVar - varCompTotalGauge
       }
@@ -488,9 +488,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       #Gauge evaluation
 
-      histSD <- options$historicalStandardDeviationValue
+      histSD <- options[["historicalSdValue"]]
 
-      if (options$standardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTotalGauge)) {
+      if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
         SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator)),
                 sqrt(histSD^2 - varCompTotalGauge), histSD)
       }else{
@@ -514,7 +514,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         RRtable2$addFootnote(gettextf("Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f", studyVarMultiplier))
       }
 
-      if(options$standardDeviationReference == "historicalStandardDeviation"){
+      if(options[["processVariationReference"]] == "historicalSd"){
         RRtable2$addFootnote(gettextf("Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %%Study Variation."))
         RRtable2$addFootnote(gettextf("Values for %%Process Variation are not displayed because they are identical to values for %%Study Variation."))
       }
@@ -541,9 +541,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     else if (returnTrafficValues)
       return(list(study = c(round(studyVar/max(studyVar) * 100,2))[1], tol = c(round(studyVar / options[["toleranceValue"]] * 100,2))[1]))
 
-    if (options[["gaugeVarCompGraph"]]) {
+    if (options[["varianceComponentsGraph"]]) {
       plot <- createJaspPlot(title = gettext("Components of Variation"), width = 850, height = 500)
-      plot$dependOn(c("gaugeVarCompGraph"))
+      plot$dependOn(c("varianceComponentsGraph"))
       plot$plotObject <- p
       anovaTables[['VarCompGraph']] <- plot
     }
@@ -661,10 +661,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeByPartGraph <- function(dataset, measurements, parts, operators, options) {
   plot <- createJaspPlot(title = gettext("Measurements by Part"), width = 700, height = 300)
-  plot$dependOn(c('gaugeByPart', "gaugeRRmethod"))
-  p <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = options$gaugeByPartAll)
+  plot$dependOn(c("partMeasurementPlot", "gaugeRRmethod"))
+  p <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = options[["partMeasurementPlotAllValues"]])
   plot$plotObject <- p
-  options$gaugeByPartAll
   return(plot)
 }
 
@@ -691,7 +690,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   plot <- createJaspPlot(title = gettext("Measurements by Operator"), width = 600, height = 600)
 
-  plot$dependOn(c("gaugeByOperator", "gaugeRRmethod"))
+  plot$dependOn(c("operatorMeasurementPlot", "gaugeRRmethod"))
 
   if (ready) {
     plot$plotObject <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options, Type3)
@@ -722,7 +721,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     plot <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3)
   } else {
     plot <- createJaspPlot(title = gettext("Part by Operator Interaction"), width = 700, height = 400)
-    plot$dependOn(c("gaugeByInteraction", "gaugeRRmethod"))
+    plot$dependOn(c("partByOperatorMeasurementPlot", "gaugeRRmethod"))
   }
   return(plot)
 }
@@ -730,7 +729,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 .gaugeByInteractionGraphPlotFunction <- function(dataset, measurements, parts, operators, options, Type3 = FALSE, ggPlot = FALSE) {
 
   plot <- createJaspPlot(title = gettext("Part by Operator Interaction"), width = 700, height = 400)
-  plot$dependOn(c("gaugeByInteraction", "gaugeRRmethod"))
+  plot$dependOn(c("partByOperatorMeasurementPlot", "gaugeRRmethod"))
 
   byOperator <- split.data.frame(dataset, dataset[operators])
   partNames <- unique(dataset[[parts]])
@@ -768,7 +767,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 .gaugeScatterPlotOperators <- function(jaspResults, dataset, measurements, parts, operators, options, ready) {
 
   singleEmptyPlot <- createJaspPlot(title = gettext("Scatterplot of Operator vs Operator"))
-  singleEmptyPlot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
+  singleEmptyPlot$dependOn(c("scatterPlot", "scatterPlotFitLine", "scatterPlotOriginLine", "gaugeRRmethod"))
 
   if (!ready)
     return(singleEmptyPlot)
@@ -781,7 +780,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     return(singleEmptyPlot)
   }else{
     singlePlot <- createJaspPlot(title = gettextf("Scatterplot of Operator  %1$s vs Operator %2$s", operatorVector[1], operatorVector[2]))
-    singlePlot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
+    singlePlot$dependOn(c("scatterPlot", "scatterPlotFitLine", "scatterPlotOriginLine", "gaugeRRmethod"))
     operatorSplit <- split.data.frame(dataset, dataset[operators])
     nparts <- length(unique(subset(dataset, dataset[operators] == operatorVector[1])[[parts]]))
     for (op in operatorVector) {
@@ -796,7 +795,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       return(singlePlot)
     }else{
       matrixPlot <- createJaspPlot(title = gettext("Matrix Plot for Operators"), width = 700, height = 700)
-      matrixPlot$dependOn('gaugeScatterPlotOperators')
+      matrixPlot$dependOn("scatterPlot")
       plotMat <- matrix(list(), len, len)
       for (row in 1:len) {
         for (col in 1:len) {
@@ -833,9 +832,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   p <- ggplot2::ggplot(data = df, ggplot2::aes(x = Operator2, y = Operator1)) +
     jaspGraphs::geom_point() + ggplot2::scale_x_continuous(name = xlab, breaks = xBreaks, limits = range(c(xBreaks, df$Operator2))) +
     ggplot2::scale_y_continuous(name = ylab, breaks = yBreaks, limits = range(c(yBreaks, df$Operator1)))
-  if (options[["gaugeScatterPlotFitLine"]])
+  if (options[["scatterPlotFitLine"]])
     p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
-  if (options[["gaugeScatterPlotOriginLine"]])
+  if (options[["scatterPlotOriginLine"]])
     p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
 
   p <- jaspGraphs::themeJasp(p)
@@ -881,17 +880,17 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .anovaGaugeReport <- function(dataset, measurements, parts, operators, options, Type3 = FALSE){
 
-  if (options[["anovaGaugeTitle"]] == "") {
+  if (options[["reportTitle"]] == ""){
     title <- gettextf("Measurement systems analysis")
-  }else {
-    title <- options[["anovaGaugeTitle"]]
+  }else{
+    title <- options[["reportTitle"]]
   }
-  name <- gettextf("Gauge name: %s", options[["anovaGaugeName"]])
-  date <- gettextf("Date of study: %s", options[["anovaGaugeDate"]])
+  name <- gettextf("Gauge name: %s", options[["reportGaugeName"]])
+  date <- gettextf("Date of study: %s", options[["reportDate"]])
   text1 <- c(name, date)
 
-  reportedBy <- gettextf("Performed by: %s", options[["anovaGaugeReportedBy"]])
-  misc <- gettextf("Misc: %s", options[["anovaGaugeMisc"]])
+  reportedBy <- gettextf("Performed by: %s", options[["reportReportedBy"]])
+  misc <- gettextf("Misc: %s", options[["reportMiscellaneous"]])
   if (options[["tolerance"]]){
     tolerance <- gettextf("Tolerance: %s", options[["toleranceValue"]])
     text2 <- c(reportedBy, tolerance, misc)

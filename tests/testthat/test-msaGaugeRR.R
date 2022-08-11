@@ -7,16 +7,16 @@ options$part <- "Parts"
 options$measurementLongFormat <- "Dm"
 options$tolerance <- TRUE
 options$toleranceValue <- 15
-options$gaugeRchart <- TRUE
-options$gaugeXbarChart <- TRUE
-options$gaugeScatterPlotOperators <- TRUE
-options$gaugeScatterPlotFitLine <- TRUE
-options$gaugeScatterPlotOriginLine <- TRUE
-options$gaugeByPart <- TRUE
-options$gaugeByPartAll <- TRUE
-options$gaugeByOperator <- TRUE
-options$gaugeByInteraction <- TRUE
-options$trafficPlot <- TRUE
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "msaGageRandr_long.csv", options)
 
@@ -202,11 +202,11 @@ names(data)[1] <- "Parts"
 options$operator <- ""
 options$part <- "Parts"
 options$measurementLongFormat <- "dm"
-options$Type3 <- TRUE
+options$type3 <- TRUE
 options$toleranceValue <- 12
 options$anovaModelType <- "randomEffect"
-options$gaugeScatterPlotOperators <- F
-options$gaugeScatterPlotFitLine <- F
+options$scatterPlot <- FALSE
+options$scatterPlotFitLine <- FALSE
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", data, options)
 
@@ -277,10 +277,10 @@ options$operator <- ""
 options$dataFormat <- "wideFormat"
 options$part <- "Part"
 options$measurementsWideFormat <- c("Repeat.1", "Repeat.2", "Repeat.3")
-options$Type3 <- TRUE
+options$type3 <- TRUE
 options$anovaModelType <- "randomEffect"
-options$gaugeScatterPlotOperators <- F
-options$gaugeScatterPlotFitLine <- F
+options$scatterPlot <- FALSE
+options$scatterPlotFitLine <- FALSE
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "msaGaugeRR_Type3_Wide.csv", options)
 
