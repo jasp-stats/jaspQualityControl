@@ -17,15 +17,15 @@
 
 #' @export
 msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
-  
-  wideFormat <- options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepWideFormat"
+
+  wideFormat <- options[["dataFormat"]] == "wideFormat"
   if(!wideFormat){
-    measurements <- unlist(options$measurements)
+    measurements <- unlist(options[["measurementLongFormat"]])
   }else{
-    measurements <- unlist(options$measurementsWide)
+    measurements <- unlist(options[["measurementsWideFormat"]])
   }
-  parts <- unlist(options$parts)
-  operators <- unlist(options$operators)
+  parts <- unlist(options[["part"]])
+  operators <- unlist(options[["operator"]])
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
   factor.vars <- c(parts, operators)
@@ -63,7 +63,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
 
   # Report
-  if (options[["anovaGaugeNestedReport"]] && ready) {
+  if (options[["report"]] && ready) {
     if (is.null(jaspResults[["anovaGaugeNestedReport"]])) {
       jaspResults[["anovaGaugeNestedReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["anovaGaugeNestedReport"]]$position <- 6
@@ -74,23 +74,21 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     jaspResults[["NRpartOperatorGraph"]] <- NULL
     jaspResults[["NRoperatorGraph"]] <- NULL
     jaspResults[["NRrCharts"]] <- NULL
-
     jaspResults[["anovaGaugeNestedReport"]] <- .anovaGaugeNestedReport(datasetWide, datasetLong, wideMeasurementCols, longMeasurementCols, parts = parts, operators = operators, options = options)
   } else {
-
     # Gauge r&R non replicable
-    if (options[["NRgaugeRR"]]) {
+    if (options[["anova"]]) {
       if (is.null(jaspResults[["gaugeRRNonRep"]])) {
         jaspResults[["gaugeRRNonRep"]] <- createJaspContainer(gettext("Gauge r&R Tables"))
         jaspResults[["gaugeRRNonRep"]]$position <- 1
       }
       jaspResults[["gaugeRRNonRep"]] <- .gaugeRRNonRep(dataset = datasetLong, measurements = longMeasurementCols, parts = parts, operators = operators, options =  options, ready = ready)
-      jaspResults[["gaugeRRNonRep"]]$dependOn(c("NRstandardDeviationReference", "NRhistoricalStandardDeviationValue", "NRtolerance", "NRstudyVarMultiplierType",
-                                                "NRstudyVarMultiplier", "NRgaugeVarCompGraph"))
+      jaspResults[["gaugeRRNonRep"]]$dependOn(c("processVariationReference", "historicalSdValue", "toleranceValue", "studyVarianceMultiplierType",
+                                                "studyVarianceMultiplierValue", "varianceComponentsGraph"))
     }
 
     # R chart by operator
-    if (options[["NRrCharts"]]) {
+    if (options[["rChart"]]) {
       if (is.null(jaspResults[["NRrCharts"]])) {
         jaspResults[["NRrCharts"]] <- createJaspContainer(gettext("Range Chart by Operator"))
         jaspResults[["NRrCharts"]]$position <- 2
@@ -100,7 +98,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     }
 
     # Xbar chart by operator
-    if (options[["NRxbarCharts"]]) {
+    if (options[["xBarChart"]]) {
       if (is.null(jaspResults[["NRxbarCharts"]])) {
         jaspResults[["NRxbarCharts"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
         jaspResults[["NRxbarCharts"]]$position <- 3
@@ -110,17 +108,17 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     }
 
     #Measurement by part x operator plot
-    if (options[["NRpartOperatorGraph"]] && ready) {
+    if (options[["partMeasurementPlot"]] & ready) {
       if (is.null(jaspResults[["NRpartOperatorGraph"]])) {
         jaspResults[["NRpartOperatorGraph"]] <- createJaspContainer(gettext("Measurement by part x operator plot"))
         jaspResults[["NRpartOperatorGraph"]]$position <- 4
       }
       jaspResults[["NRpartOperatorGraph"]] <- .gaugeMeasurmentsByPartXOperator(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options)
-      jaspResults[["NRpartOperatorGraph"]]$dependOn(c("NRpartOperatorGraph", "NRpartOperatorGraphAll"))
+      jaspResults[["NRpartOperatorGraph"]]$dependOn(c("partMeasurementPlot", "partMeasurementPlotAllValues"))
     }
 
     #Measurement by operator plot
-    if (options[["NRoperatorGraph"]]) {
+    if (options[["operatorMeasurementPlot"]]) {
       if (is.null(jaspResults[["NRoperatorGraph"]])) {
         jaspResults[["NRoperatorGraph"]] <- createJaspContainer(gettext("Gauge r&R Tables"))
         jaspResults[["NRoperatorGraph"]]$position <- 5
@@ -157,7 +155,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   gaugeRRNonRepTable3$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
   gaugeRRNonRepTable3$addColumnInfo(name = "studyVar", title = gettextf("Study Variation"), type = "number")
   gaugeRRNonRepTable3$addColumnInfo(name = "percentStudyVar", title = gettextf("%% Study Variation"), type = "number")
-  if(options[["gaugeNRToleranceEnabled"]])
+  if(options[["tolerance"]])
     gaugeRRNonRepTable3$addColumnInfo(name = "percentTolerance", title = gettextf("%% Tolerance"), type = "number")
 
   if (ready) {
@@ -194,17 +192,17 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     gaugeRRNonRepTable2$setData(list("sources" = varSources,
                                      "Var" = varComps,
                                      "percentVar" = percentVarComps))
-    histSD <- options$NRhistoricalStandardDeviationValue
-    if (options$NRstandardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTable$varGaugeTotal)) {
+    histSD <- options[["historicalSdValue"]]
+    if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTable$varGaugeTotal)) {
       stdDevs <- c(sqrt(c(varCompTable$varGaugeTotal, varCompTable$varRepeat, varCompTable$varReprod)),
                    sqrt(histSD^2 - varCompTable$varGaugeTotal), histSD)
     } else {
       stdDevs <- sqrt(varComps)
     }
-    if (options$NRstudyVarMultiplierType == "svmSD") {
-      studyVarMultiplier <- options$NRstudyVarMultiplier
-    } else {
-      percent <- options$NRstudyVarMultiplier/100
+    if (options[["studyVarianceMultiplierType"]] == "sd") {
+      studyVarMultiplier <- options[["studyVarianceMultiplierValue"]]
+    }else{
+      percent <- options[["studyVarianceMultiplierValue"]] / 100
       q <- (1 - percent)/2
       studyVarMultiplier <- abs(2*qnorm(q))
     }
@@ -214,8 +212,8 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
                                         "SD" = stdDevs,
                                         "studyVar" = studyVar,
                                         "percentStudyVar" = percentStudyVar)
-    if (options[["gaugeNRToleranceEnabled"]]){
-      percentTolerance <- studyVar / options$NRtolerance * 100
+    if(options[["tolerance"]]){
+      percentTolerance <- studyVar / options[["toleranceValue"]] * 100
       gaugeRRNonRepTable3DataList <- append(gaugeRRNonRepTable3DataList, list("percentTolerance" = percentTolerance))
     }
     gaugeRRNonRepTable3$setData(gaugeRRNonRepTable3DataList)
@@ -231,11 +229,11 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   gaugeRRNonRepTables[["Table2"]] <- gaugeRRNonRepTable2
   gaugeRRNonRepTables[["Table3"]] <- gaugeRRNonRepTable3
 
-  if (options[["NRgaugeVarCompGraph"]]) {
+  if (options[["varianceComponentsGraph"]]) {
     plot <- createJaspPlot(title = gettext("Components of Variation"), width = 850, height = 500)
-    plot$dependOn(c("NRgaugeVarCompGraph"))
-    if (ready) {
-      if (options[["gaugeNRToleranceEnabled"]]) {
+    plot$dependOn(c("varianceComponentsGraph"))
+    if (ready){
+      if(options[["tolerance"]]){
         percentToleranceForGraph <- percentTolerance[1:4]
       } else {
         percentToleranceForGraph <- NA
@@ -388,7 +386,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   for (op in operatorVector) {
     dataPerOP <- subset(dataset, dataset[operators] == op)
     plot <- createJaspPlot(title = gettextf("Operator %s", op), width = 600, height = 300)
-    plot$plotObject <- .gaugeByPartGraphPlotObject(dataset = dataPerOP, measurements = measurements, parts = parts, operators = operators, displayAll = options[["NRpartOperatorGraphAll"]])
+    plot$plotObject <- .gaugeByPartGraphPlotObject(dataset = dataPerOP, measurements = measurements, parts = parts, operators = operators, displayAll = options[["partMeasurementPlotAllValues"]])
     plotContainer[[op]] <- plot
   }
   return(plotContainer)
@@ -402,23 +400,23 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
 .anovaGaugeNestedReport <- function(datasetWide, datasetLong, measurementsWide, measurementsLong, parts, operators, options){
 
-  if (options[["anovaGaugeNestedTitle"]] == "") {
-    title <- gettext("Gauge r&R Report")
-  } else {
-    title <- options[["anovaGaugeNestedTitle"]]
-  }
-  name <- gettextf("Gauge name: %s", options[["anovaGaugeNestedName"]])
-  date <- gettextf("Date of study: %s", options[["anovaGaugeNestedDate"]])
-  text1 <- c(name, date)
+   if (options[["reportTitle"]] == ""){
+     title <- gettext("Gauge r&R Report")
+   }else{
+     title <- options[["reportTitle"]]
+   }
+   name <- gettextf("Gauge name: %s", options[["anovaGaugeNestedName"]])
+   date <- gettextf("Date of study: %s", options[["reportDate"]])
+   text1 <- c(name, date)
 
-  reportedBy <- gettextf("Reported by: %s", options[["anovaGaugeNestedReportedBy"]])
-  misc <- gettextf("Misc: %s", options[["anovaGaugeNestedMisc"]])
-  if (options[["gaugeNRToleranceEnabled"]]){
-    tolerance <- gettextf("Tolerance: %s", options[["NRtolerance"]])
-    text2 <- c(reportedBy, tolerance, misc)
-  }else{
-    text2 <- c(reportedBy, misc)
-  }
+   reportedBy <- gettextf("Reported by: %s", options[["reportReportedBy"]])
+   misc <- gettextf("Misc: %s", options[["reportMiscellaneous"]])
+   if (options[["tolerance"]]){
+     tolerance <- gettextf("Tolerance: %s", options[["toleranceValue"]])
+     text2 <- c(reportedBy, tolerance, misc)
+   }else{
+     text2 <- c(reportedBy, misc)
+   }
 
   plotList <- list()
   indexCounter <- 0
