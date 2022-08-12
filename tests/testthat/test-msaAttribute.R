@@ -1,14 +1,14 @@
 context("Attribute Agreement Analysis")
 
 options <- analysisOptions("msaAttribute")
-options$AAAdataFormat <- "AAAlongFormat"
-options$operators <- "Operator"
-options$parts <- "Part"
-options$measurementsLong <- c("Results")
+options$dataFormat <- "longFormat"
+options$operator <- "Operator"
+options$part <- "Part"
+options$measurementLongFormat <- c("Results")
 options$standard <- "Reference"
-options$AAAcohensKappa <- TRUE
-options$AAAfleissKappa <- TRUE
-options$PositiveRef <- "Yes"
+options$cohensKappa <- TRUE
+options$fleissKappa <- TRUE
+options$positiveReference <- "Yes"
 
 results <- runAnalysis("msaAttribute", "AAALong.csv", options)
 
@@ -82,10 +82,10 @@ test_that("Fleiss' Kappa table results match", {
 })
 
 # Wide
-options$AAAdataFormat <- "AAAwideFormat"
-options$operators <- "Operator"
-options$parts <- "Part"
-options$measurements <- c("Repeat.1", "Repeat.2", "Repeat.3")
+options$dataFormat <- "wideFormat"
+options$operator <- "Operator"
+options$part <- "Part"
+options$measurementsWideFormat <- c("Repeat.1", "Repeat.2", "Repeat.3")
 options$standard <- "Reference"
 results <- runAnalysis("msaAttribute", "AAARow.csv", options)
 
@@ -159,15 +159,15 @@ test_that("Fleiss' Kappa table results match", {
 })
 
 # Tau
-options$AAAdataFormat <- "AAAlongFormat"
-options$operators <- "Operator"
-options$parts <- "Sample"
-options$measurementsLong <- c("Rating")
+options$dataFormat <- "longFormat"
+options$operator <- "Operator"
+options$part <- "Sample"
+options$measurementLongFormat <- c("Rating")
 options$standard <- "Agreed"
-options$AAAfleissKappa <- F
-options$AAAcohensKappa <- F
-options$PositiveRef <- ""
-options$AAAkendallTau <- TRUE
+options$fleissKappa <- FALSE
+options$cohensKappa <- FALSE
+options$positiveReference <- ""
+options$kendallsTau <- TRUE
 results <- runAnalysis("msaAttribute", "msaTau.csv", options)
 
 test_that("All Appraisers vs Standard table results match", {

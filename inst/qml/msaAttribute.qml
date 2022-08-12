@@ -24,18 +24,19 @@ Form
 
 	DropDown
 	{
-		id: 									aaadataFormat
-		name: 									"AAAdataFormat"
+		name: 									"dataFormat"
 		label: 									qsTr("Data format")
+		id: 									dataFormat
 		indexDefaultValue: 						0
-		values: [
-			{ label: qsTr("Single column"), value: "AAAlongFormat"},
-			{ label: qsTr("Across rows"), value: "AAAwideFormat"},
+		values: 
+		[
+			{ label: qsTr("Single column"), value: "longFormat"},
+			{ label: qsTr("Across rows"), value: "wideFormat"},
 		]
 		onValueChanged:
 		{
-			measurements.itemDoubleClicked(0)
-			measurementsLong.itemDoubleClicked(0)
+			measurementsWideFormat.itemDoubleClicked(0)
+			measurementLongFormat.itemDoubleClicked(0)
 		}
 	}
 
@@ -50,36 +51,36 @@ Form
 
 		AssignedVariablesList
 		{
-			name:								"operators"
-			title:								qsTr("Operators")
+			name:								"operator"
+			title:								qsTr("Operator")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText"]
 		}
 
 		AssignedVariablesList
 		{
-			name:								"parts"
-			title:								qsTr("Parts")
+			name:								"part"
+			title:								qsTr("Part")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 
 		AssignedVariablesList
 		{
-			id:									measurements
-			name:								"measurements"
+			name:								"measurementsWideFormat"
 			title:								qsTr("Results")
-			visible:							aaadataFormat.currentValue == "AAAwideFormat"
+			id:									measurementsWideFormat
+			visible:							dataFormat.currentValue == "wideFormat"
 			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 
 		AssignedVariablesList
 		{
-			id:									measurementsLong
-			name:								"measurementsLong"
+			name:								"measurementLongFormat"
 			title:								qsTr("Results")
+			id:									measurementLongFormat
 			singleVariable:						true
-			visible:							aaadataFormat.currentValue == "AAAlongFormat"
+			visible:							dataFormat.currentValue == "longFormat"
 			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 
@@ -102,28 +103,28 @@ Form
 
 			TextField
 			{
-				name: 							"PositiveRef"
-				id:                 positiveRef
+				name: 							"positiveReference"
 				label: 							qsTr("Positive reference:")
-				enabled:            !kendallTau.checked
+				id:								positiveReference
+				enabled:						!kendallsTau.checked
 			}
 
 			CheckBox
 			{
-				name: 							"AAAcohensKappa"
-				id:                 cohenskappa
+				name:							"cohensKappa"
 				label: 							qsTr("Cohen's kappa (interrater kappa)")
-				enabled:            positiveRef.value != ""
-				checked:            !positiveRef.value == ""
+				id:								cohenskappa
+				enabled:						positiveReference.value != ""
+				checked:						!positiveReference.value == ""
 			}
 
 			CheckBox
 			{
-				name: 							"AAAfleissKappa"
-				id:                 fleisskappa
+				name: 							"fleissKappa"
 				label: 							qsTr("Fleiss' kappa (multirater kappa)")
-				checked:            !positiveRef.value == ""
-				enabled:            !kendallTau.checked
+				id:								fleisskappa
+				checked:						!positiveReference.value == ""
+				enabled:						!kendallsTau.checked
 
 			}
 		}
@@ -135,9 +136,9 @@ Form
 
 		CheckBox
 		{
-			name: 								"AAAkendallTau"
-			id:                   kendallTau
+			name: 								"kendallsTau"
 			label: 								qsTr("Kendall's tau")
+			id:									kendallsTau
 		}
 	}
 }

@@ -286,4 +286,42 @@ Upgrade
 		ChangeRename {from: "anovaGaugeNestedReportedBy";				to: "reportReportedBy"}
 		ChangeRename {from: "anovaGaugeNestedMisc";						to: "reportMiscellaneous"}
 	}
+
+	// Linearity Study
+
+	Upgrade
+	{
+		functionName:		"msaAttribute"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+		
+		// main analysis
+		ChangeRename {from: "AAAdataFormat";							to: "dataFormat"}
+
+		ChangeJS
+		{
+			name:		"dataFormat"
+			jsFunction:	function(options)
+			{
+				switch(options["dataFormat"])
+				{
+					case "AAAlongFormat":								return "longFormat";
+					case "AAAwideFormat":								return "wideFormat";
+				}
+			}
+		}
+
+		ChangeRename {from: "operators";							to: "operator"}
+		ChangeRename {from: "parts";								to: "part"}
+		ChangeRename {from: "measurements";							to: "measurementsWideFormat"}
+		ChangeRename {from: "measurementsLong";						to: "measurementLongFormat"}
+		ChangeRename {from: "PositiveRef";							to: "positiveReference"}
+		ChangeRename {from: "AAAcohensKappa";						to: "cohensKappa"}
+		ChangeRename {from: "AAAfleissKappa";						to: "fleissKappa"}
+		ChangeRename {from: "AAAkendallTau";						to: "kendallsTau"}
+
+		
+
+		
+	}
 }
