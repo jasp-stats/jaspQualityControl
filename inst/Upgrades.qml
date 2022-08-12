@@ -287,7 +287,7 @@ Upgrade
 		ChangeRename {from: "anovaGaugeNestedMisc";						to: "reportMiscellaneous"}
 	}
 
-	// Linearity Study
+	// Attribute Agreement Analysis
 
 	Upgrade
 	{
@@ -319,9 +319,66 @@ Upgrade
 		ChangeRename {from: "AAAcohensKappa";						to: "cohensKappa"}
 		ChangeRename {from: "AAAfleissKappa";						to: "fleissKappa"}
 		ChangeRename {from: "AAAkendallTau";						to: "kendallsTau"}
-
-		
-
-		
 	}
+
+	// Test Retest
+
+	Upgrade
+	{
+		functionName:		"msaTestRetest"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+		
+		// main analysis
+		ChangeRename {from: "testRetestDataFormat";					to: "dataFormat"}
+
+		ChangeJS
+		{
+			name:		"dataFormat"
+			jsFunction:	function(options)
+			{
+				switch(options["dataFormat"])
+				{
+					case "testRetestLongFormat":								return "longFormat";
+					case "testRetestWideFormat":								return "wideFormat";
+				}
+			}
+		}
+
+		ChangeRename {from: "operators";										to: "operator"}
+		ChangeRename {from: "parts";											to: "part"}
+		ChangeRename {from: "measurementsLong";									to: "measurementLongFormat"}
+		ChangeRename {from: "measurements";										to: "measurementsWideFormat"}
+		ChangeRename {from: "EnableRangePSD";									to: "manualProcessSd"}
+		ChangeRename {from: "rangePSD";											to: "manualProcessSdValue"}
+		ChangeRename {from: "EnableRangeTolerance";								to: "tolerance"}
+		ChangeRename {from: "rangeTolerance";									to: "toleranceValue"}
+		ChangeRename {from: "rangeRr";											to: "repeatabilityAndReproducibilityTable"}
+
+		// plots
+		ChangeRename {from: "rangeScatterPlotOperatorParts";					to: "runChartPart"}
+		ChangeRename {from: "rangeScatterPlotOperators";						to: "scatterPlotMeasurement"}
+		ChangeRename {from: "rangeScatterPlotFitLine";							to: "scatterPlotMeasurementFitLine"}
+		ChangeRename {from: "jitter";											to: "scatterPlotMeasurementAllValues"}
+		ChangeRename {from: "rangeRchart";										to: "rChart"}
+		ChangeRename {from: "trafficPlot";										to: "trafficLightChart"}
+
+		
+		
+
+
+				
+		
+		
+		
+
+		
+		
+
+
+		
+
+	}
+
+
 }

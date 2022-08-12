@@ -24,18 +24,18 @@ Form
 
 	DropDown
 	{
-		id: 									gaugeRRdataFormat
-		name: 									"testRetestDataFormat"
+		name: 									"dataFormat"
 		label: 									qsTr("Data format")
+		id: 									dataFormat
 		indexDefaultValue:						0
 		values: [
-			{ label: qsTr("Single column"), value: "testRetestLongFormat"},
-			{ label: qsTr("Across rows"), value: "testRetestWideFormat"}
+			{ label: qsTr("Single column"), value: "longFormat"},
+			{ label: qsTr("Across rows"), value: "wideFormat"}
 		]
 		onValueChanged:
 		{
-			measurements.itemDoubleClicked(0)
-			measurementsLong.itemDoubleClicked(0)
+			measurementsWideFormat.itemDoubleClicked(0)
+			measurementLongFormat.itemDoubleClicked(0)
 		}
 	}
 
@@ -50,37 +50,37 @@ Form
 
 		AssignedVariablesList
 		{
-			name:								"operators"
+			name:								"operator"
 			title:								qsTr("Operator / Repetition")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
-			visible:							gaugeRRdataFormat.currentValue == "testRetestLongFormat"
+			visible:							dataFormat.currentValue == "longFormat"
 		}
 
 		AssignedVariablesList
 		{
-			name:								"parts"
-			title:								qsTr("Parts")
+			name:								"part"
+			title:								qsTr("Part")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 
 		AssignedVariablesList
 		{
-			id:									measurementsLong
-			name:								"measurementsLong"
-			title:								qsTr("Measurements")
+			name:								"measurementLongFormat"
+			title:								qsTr("Measurement")
+			id:									measurementLongFormat
 			singleVariable:						true
-			visible:							gaugeRRdataFormat.currentValue == "testRetestLongFormat"
+			visible:							dataFormat.currentValue == "longFormat"
 			allowedColumns:						["scale"]
 		}
 
 		AssignedVariablesList
 		{
-			id:									measurements
-			name:								"measurements"
+			name:								"measurementsWideFormat"
 			title:								qsTr("Measurements")
-			visible:							gaugeRRdataFormat.currentValue == "testRetestWideFormat"
+			id:									measurementsWideFormat
+			visible:							dataFormat.currentValue == "wideFormat"
 			allowedColumns:						["scale"]
 		}
 	}
@@ -95,31 +95,31 @@ Form
 
 			CheckBox
 			{
-				name:							"EnableRangePSD"
-				label:						qsTr("Process Std. Deviation")
+				name:							"manualProcessSd"
+				label:							qsTr("Process Std. Deviation")
 				childrenOnSameRow:				true
 
 				DoubleField
 				{
-					name:						"rangePSD"
+					name:						"manualProcessSdValue"
 				}
 			}
 
 			CheckBox
 			{
-				name:							"EnableRangeTolerance"
-				label:						qsTr("Tolerance")
+				name:							"tolerance"
+				label:							qsTr("Tolerance")
 				childrenOnSameRow: 				true
 
 				DoubleField
 				{
-					name:						"rangeTolerance"
+					name:						"toleranceValue"
 				}
 			}
 
 			CheckBox
 			{
-				name: 							"rangeRr"
+				name: 							"repeatabilityAndReproducibilityTable"
 				label: 							qsTr("r&R table")
 				checked: 						true
 			}
@@ -131,40 +131,40 @@ Form
 
 			CheckBox
 			{
-				name: 							"rangeScatterPlotOperatorParts"
+				name: 							"runChartPart"
 				label:							qsTr("Run chart of parts")
 			}
 
 			CheckBox
 			{
-				name:							"rangeScatterPlotOperators"
-				label:							qsTr("Scatter plot")
+				name:							"scatterPlotMeasurement"
+				label:							qsTr("Scatter plot measurement")
 				checked:						true
 
 				CheckBox
 				{
-					name:						"rangeScatterPlotFitLine"
-					label:						qsTr("Regression line")
+					name:						"scatterPlotMeasurementFitLine"
+					label:						qsTr("Fit line")
 					checked:					true
 				}
 
 				CheckBox
 				{
-					name:						"jitter"
-					label:						qsTr("Jitter")
+					name:						"scatterPlotMeasurementAllValues"
+					label:						qsTr("Display all measurements")
 				}
 			}
 
 			CheckBox
 			{
-				name: 							"rangeRchart"
+				name: 							"rChart"
 				label: 							qsTr("Range chart")
 			}
 
 			CheckBox
 			{
-				name: 							"trafficPlot"
-				label: 							qsTr("Traffic light graph")
+				name: 							"trafficLightChart"
+				label: 							qsTr("Traffic light chart")
 			}
 		}
 	}
