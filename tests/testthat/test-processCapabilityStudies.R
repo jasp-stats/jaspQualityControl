@@ -4,7 +4,7 @@ context("[Quality Control] Process Capability Study")
 options <- analysisOptions("processCapabilityStudies")
 options$variablesLong <- "Diameter"
 options$capabilityStudyType <- "normalCapabilityAnalysis"
-options$subgroups <- "Time"
+options$subgroup <- "Time"
 options$rank <- "Bernard"
 options$lowerSpecificationField <- TRUE
 options$upperSpecificationField <- TRUE

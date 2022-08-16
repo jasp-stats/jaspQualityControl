@@ -22,10 +22,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }else{
     measurements <- unlist(options$variablesLong)
   }
-  subgroups <- unlist(options$subgroups)
+  subgroups <- unlist(options[["subgroup"]])
   num.vars <- measurements[measurements != ""]
   fac.vars <- subgroups[subgroups != ""]
-  splitName <- options$subgroups
+  splitName <- options[["subgroup"]]
   makeSplit <- splitName != ""
 
   dataset <- .readDataSetToEnd(columns.as.numeric = num.vars, columns.as.factor = fac.vars)
@@ -140,7 +140,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 .qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements) {
 
   container <- createJaspContainer(gettext("Capability Studies"))
-  container$dependOn(options = c("CapabilityStudyType", "variables", "subgroups", "lowerSpecification", "upperSpecification", "targetValue", "variablesLong", "pcSubgroupSize", "pcDataFormat",
+  container$dependOn(options = c("CapabilityStudyType", "variables", "subgroup", "lowerSpecification", "upperSpecification", "targetValue", "variablesLong", "pcSubgroupSize", "pcDataFormat",
                                  "CapabilityStudyPlot", "CapabilityStudyTables", "manualSubgroupSize", "pcReportDisplay"))
   container$position <- 4
 
@@ -1062,7 +1062,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   container <- createJaspContainer(gettext("Probability Table and Plot"))
   container$dependOn(options = c("variables", "probabilityPlot", "rank", "nullDistribution", "addGridlines", "variablesLong", "pcSubgroupSize",
-                                 "manualSubgroupSize", "subgroups", "pcReportDisplay"))
+                                 "manualSubgroupSize", "subgroup", "pcReportDisplay"))
   container$position <- 3
 
   jaspResults[["probabilityContainer"]] <- container
@@ -1360,7 +1360,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   plot <- createJaspPlot(title = gettext("Histogram"), width = 400, height = 400)
-  plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "pcReportDisplay", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "subgroups", 'nullDistribution'))
+  plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "pcReportDisplay", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "subgroup", 'nullDistribution'))
   plot$position <- 2
 
   jaspResults[["histogram"]] <- plot
@@ -1422,13 +1422,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
+<<<<<<< HEAD
   Container$dependOn(options = c("xbarR", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "pcReportDisplay", "movingRangeLength"))
+=======
+  Container$dependOn(options = c("xbarR", "variables", "subgroup", "variablesLong", "pcSubgroupSize", "pcReportDisplay"))
+>>>>>>> 5b6e001 (Renaming Variable Charts for Subgroups)
   Container$position <- 1
   jaspResults[["ImR Charts"]] <- Container
   Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE, Wide = wideFormat)$p
 }
 
-.PClongTowide<- function(dataset, k, measurements, mode = c("manual", "subgroups")){
+.PClongTowide<- function(dataset, k, measurements, mode = c("manual", "subgroup")){
   if(identical(mode, "manual")){
     dataset <- dataset[measurements]
     n <- nrow(dataset)
@@ -1483,6 +1487,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
     return(plot)
 
+<<<<<<< HEAD
+=======
+  # X-bar and R Chart OR ImR Chart
+  if(options$xbarR){
+    p1 <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
+    p2 <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
+  } else{
+    IMRPlots <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = splitFactor, cowPlot = TRUE, Wide = wideFormat)
+    p1 <- IMRPlots$p1
+    p2 <- IMRPlots$p2
+>>>>>>> 5b6e001 (Renaming Variable Charts for Subgroups)
   }
 
   plotList <- list()

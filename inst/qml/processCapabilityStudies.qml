@@ -70,9 +70,9 @@ Form
 
 		AssignedVariablesList
 		{
-			id:                 			subgroups
-			name:               			"subgroups"
-			title:             			 	qsTr("Subgroups")
+			name:               			"subgroup"
+			title:             			 	qsTr("Subgroup")
+			id:                 			subgroup
 			singleVariable:    	 			true
 			allowedColumns:     			["nominal", "nominalText", "ordinal"]
 		}
@@ -457,13 +457,13 @@ Form
 					
 					CheckBox
 					{
-						name:                   			"manualTicks"
+						name:                   			"manualTicksXAxis"
 						label: 								qsTr("Number of ticks on x-axis for X-bar & R or X-mR chart:")
 						childrenOnSameRow: true
 
 						DoubleField
 						{
-							name: 							"nTicks"
+							name: 							"manualTicksXAxisValue"
 							defaultValue:					5
 						}
 					}

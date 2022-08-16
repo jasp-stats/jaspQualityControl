@@ -61,13 +61,13 @@ Form
 			}
 		CheckBox
 		{
-			name:                   			"manualTicks"
+			name:								"manualTicksXAxis"
 			label: 								qsTr("Number of ticks on x-axis:")
 			childrenOnSameRow: true
 
 			DoubleField
 			{
-				name: 							"nTicks"
+				name: 							"manualTicksXAxisValue"
 				defaultValue:					5
 			}
 		}

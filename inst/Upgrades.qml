@@ -362,23 +362,99 @@ Upgrade
 		ChangeRename {from: "jitter";											to: "scatterPlotMeasurementAllValues"}
 		ChangeRename {from: "rangeRchart";										to: "rChart"}
 		ChangeRename {from: "trafficPlot";										to: "trafficLightChart"}
+	}
 
-		
-		
+	// Variables Charts Subgroups
 
+	Upgrade
+	{
+		functionName:		"variablesChartsSubgroups"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+		
+		// main analysis
+		ChangeRename {from: "CCDataFormat";										to: "dataFormat"}
+		
+		ChangeJS
+		{
+			name:		"dataFormat"
+			jsFunction:	function(options)
+			{
+				switch(options["dataFormat"])
+				{
+					case "CClongFormat":									return "longFormat";
+					case "CCwideFormat":									return "wideFormat";
+				}
+			}
+		}
 
-				
-		
-		
-		
+		ChangeRename {from: "variablesLong";								to: "measurementLongFormat"}
+		ChangeRename {from: "variables";									to: "measurementsWideFormat"}
+		ChangeRename {from: "subgroups";									to: "subgroup"}
+		ChangeRename {from: "CCSubgroupSize";								to: "manualSubgroupSizeValue"}
+		ChangeRename {from: "TypeChart";									to: "chartType"}
 
-		
-		
+		ChangeJS
+		{
+			name:		"chartType"
+			jsFunction:	function(options)
+			{
+				switch(options["chartType"])
+				{
+					case "Xbarchart":										return "xBarAndR";
+					case "Schart":											return "xBarAndS";
+				}
+			}
+		}
 
-
+		ChangeRename {from: "Wlimits";										to: "warningLimits"}
+		ChangeRename {from: "Phase2";										to: "knownParameters"}
+		ChangeRename {from: "mean";											to: "knownParametersMean"}
+		ChangeRename {from: "SD";											to: "knownParametersSd"}
+		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
+		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
 		
+		// report
+		ChangeRename {from: "CCReport";									to: "report"}
+		ChangeRename {from: "ccTitle";									to: "reportTitle"}
+		ChangeRename {from: "ccName";									to: "reportMeasurementName"}
+		ChangeRename {from: "ccDate";									to: "reportDate"}
+		ChangeRename {from: "ccReportedBy";								to: "reportReportedBy"}
+		ChangeRename {from: "ccMisc";									to: "reportMiscellaneous"}
+		ChangeRename {from: "ccSubTitle";								to: "reportSubtitle"}
+		ChangeRename {from: "ccChartName";								to: "reportChartName"}
+	}
+
+	// Variables Charts Individuals
+
+	Upgrade
+	{
+		functionName:		"variablesChartsIndividuals"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+		
+		// main analysis
+		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
+		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
 
 	}
+
+	// Process Capability Studies
+
+	Upgrade
+	{
+		functionName:		"processCapabilityStudies"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+		
+		// main analysis
+		ChangeRename {from: "subgroups";									to: "subgroup"}
+		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
+		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
+
+	}
+
+
 
 
 }

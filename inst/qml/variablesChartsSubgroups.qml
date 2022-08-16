@@ -9,18 +9,18 @@ Form
 
 	DropDown
 	{
-		id: 									pcDataFormat
-		name:									"CCDataFormat"
+		name:									"dataFormat"
 		label:									qsTr("Data format")
+		id: 									dataFormat
 		indexDefaultValue:						0
 		values: [
-			{ label: qsTr("Single column"), value: "CClongFormat"},
-			{ label: qsTr("Across rows"), value: "CCwideFormat"}
+			{ label: qsTr("Single column"), value: "longFormat"},
+			{ label: qsTr("Across rows"), value: "wideFormat"}
 		]
 		onValueChanged:
 		{
-			variables.itemDoubleClicked(0)
-			variablesLong.itemDoubleClicked(0)
+			measurementsWideFormat.itemDoubleClicked(0)
+			measurementLongFormat.itemDoubleClicked(0)
 		}
 	}
 
@@ -33,31 +33,31 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									variablesLong
-			name:								"variablesLong"
-			title:								qsTr("Measurements")
+			name:								"measurementLongFormat"
+			title:								qsTr("Measurement")
+			id:									measurementLongFormat
 			allowedColumns:						["scale"]
 			singleVariable:						true
-			visible:							pcDataFormat.currentValue == "CClongFormat"
+			visible:							dataFormat.currentValue == "longFormat"
 		}
 
 		AssignedVariablesList
 		{
-			id:									subgroups
-			name:								"subgroups"
+			id:									subgroup
+			name:								"subgroup"
 			title:								qsTr("Subgroups")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
-			visible: 							pcDataFormat.currentValue == "CClongFormat" & subgroupSizeType.value == "groupingVariable"
+			visible: 							dataFormat.currentValue == "longFormat" & subgroupSizeType.value == "groupingVariable"
 		}
 
 		AssignedVariablesList
 		{
-			id:									variables
-			name:								"variables"
+			name:								"measurementsWideFormat"
 			title:								qsTr("Measurements")
+			id:									measurementsWideFormat
 			allowedColumns:						["scale"]
-			visible:							pcDataFormat.currentValue == "CCwideFormat"
+			visible:							dataFormat.currentValue == "wideFormat"
 		}
 
 
@@ -81,29 +81,31 @@ Form
 			name:								"subgroupSizeType"
 			title: 								qsTr("Specify subgroups")
 			id:									subgroupSizeType
-			visible:							pcDataFormat.currentValue == "CClongFormat"							
+			visible:							dataFormat.currentValue == "longFormat"							
 
 			RadioButton
-				{
-					value: 							"groupingVariable"
-					label: 							qsTr("Through grouping variable")
-					checked:		 				true
-				}
+			{
+				value: 							"groupingVariable"
+				label: 							qsTr("Through grouping variable")
+				checked:		 				true
+			}
 
-				RadioButton
+			RadioButton
+			{
+				value: 							"manual"
+				label: 							qsTr("Manual subgroup size")
+				childrenOnSameRow:				true
+				
+				DoubleField
 				{
-					value: 							"manual"
-					label: 							qsTr("Manual subgroup size")
-					childrenOnSameRow:				true
-					
-					DoubleField
-					{
-						name: 									"CCSubgroupSize"
-						min: 									2
-						defaultValue:							5
-					}
+					name: 									"manualSubgroupSizeValue"
+					label: 									qsTr("Subgroup size")
+					id:										manualSubgroupSizeValue
+					min: 									2
+					defaultValue:							5
+					visible:								dataFormat.currentValue == "longFormat"
 				}
-
+			}
 		}
 
 
@@ -136,32 +138,32 @@ Form
 
 		RadioButtonGroup
 		{
-			name:								"TypeChart"
-			id:                  				typechart
+			name:								"chartType"
+			id:									chartType
 
 			RadioButton
 			{
-				value: 							"Xbarchart"
+				value: 							"xBarAndR"
 				label: 							qsTr("X-bar & R")
 				checked:		 				true
 			}
 
 			RadioButton
 			{
-				value: 							"Schart"
+				value: 							"xBarAndS"
 				label: 							qsTr("X-bar & s")
 			}
 		}
 
 		CheckBox
 		{
-			name: 								"Wlimits"
+			name: 								"warningLimits"
 			label: 								qsTr("Warning limits")
 		}
 
 		CheckBox
 		{
-			name: 								"Phase2"
+			name: 								"knownParameters"
 			label: 								qsTr("Known parameters")
 
 			Group
@@ -171,21 +173,21 @@ Form
 
   			DoubleField
   			{
-  				name:							"mean"
+  				name:							"knownParametersMean"
   				label:							qsTr("Mean")
   				defaultValue:					0
   				negativeValues: 				true
   				fieldWidth:					  	70
-  				decimals:            			10
+  				decimals:						10
   			}
 
   			DoubleField
   			{
-  				name:							"SD"
+  				name:							"knownParametersSd"
   				label:							qsTr("Standard deviation")
   				defaultValue:					3
   				fieldWidth:					  	70
-  				decimals:            			10
+  				decimals:						10
   			}
 
 			}
@@ -194,13 +196,13 @@ Form
 
 		CheckBox
 		{
-			name:                   			"manualTicks"
+			name:								"manualTicksXAxis"
 			label: 								qsTr("Number of ticks on x-axis:")
 			childrenOnSameRow: 					true
 
 			DoubleField
 			{
-				name: 							"nTicks"
+				name: 							"manualTicksXAxisValue"
 				defaultValue:					5
 			}
 		}
@@ -212,68 +214,68 @@ Form
 
 		TextField
 		{
-			id:									ccTitle
+			name: 								"reportTitle"
 			label: 								qsTr("Title")
-			name: 								"ccTitle"
+			id:									reportTitle
 			placeholderText:					qsTr("Measurement")
 			fieldWidth:							100
 		}
 
 		TextField
 		{
-			id:									ccName
+			name: 								"reportMeasurementName"
 			label: 								qsTr("Name")
-			name: 								"ccName"
+			id:									reportMeasurementName
 			placeholderText:					qsTr("Name")
 			fieldWidth:							100
 		}
 
 		TextField
 		{
-			id:									ccDate
+			name: 								"reportDate"
 			label: 								qsTr("Date")
-			name: 								"ccDate"
+			id:									reportDate
 			placeholderText:					qsTr("Date")
 			fieldWidth:							100
 		}
 
 		TextField
 		{
-			id:									ccReportedBy
+			name: 								"reportReportedBy"
 			label: 								qsTr("Reported by")
-			name: 								"ccReportedBy"
+			id:									reportReportedBy
 			placeholderText:					qsTr("Name")
 			fieldWidth:							100
 		}
 
 		TextField
 		{
-			id:									ccMisc
+			name: 								"reportMiscellaneous"
 			label: 								qsTr("Misc")
-			name: 								"ccMisc"
+			id:									reportMiscellaneous
 			placeholderText:					qsTr("Miscellaneous")
 			fieldWidth:							100
 		}
 
 		TextField
 		{
+			name: 								"reportSubtitle"
 			label: 								qsTr("Sub-title:")
-			name: 								"ccSubTitle"
 			placeholderText:					qsTr("Sub-title")
 			fieldWidth:							100
 		}
 
 		TextField
 		{
+			name: 								"reportChartName"
 			label: 								qsTr("Chart name:")
-			name: 								"ccChartName"
 			placeholderText:					qsTr("Name of the chart")
 			fieldWidth:							100
 		}
 
 		CheckBox
 		{
-			name: 								"CCReport"
+			name: 								"report"
 			label: 								qsTr("Show Report")
 		}
 	}
