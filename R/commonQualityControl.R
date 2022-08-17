@@ -15,12 +15,8 @@
     return()
   
   container <- createJaspContainer(title = gettext("Control Chart"))
-<<<<<<< HEAD
-  container$dependOn(options = c("controlChartsType", "pcReportDisplay", "variables", "subgroups", "variablesLong",
-                                 "pcSubgroupSize", "manualSubgroupSize", "manualTicks", 'nTicks', "xbarR", "IMR"))
-=======
-  container$dependOn(options = c("controlChartsType", "pcReportDisplay", "measurementsWideFormat", "subgroup", "measurementLongFormat", "pcSubgroupSize", "manualSubgroupSize", "manualTicksXAxis", "manualTicksXAxisValue", "xbarR", "IMR"))
->>>>>>> 5b6e001 (Renaming Variable Charts for Subgroups)
+  container$dependOn(options = c("controlChartsType", "pcReportDisplay", "measurementsWideFormat", "subgroup", "measurementLongFormat",
+                                  "pcSubgroupSize", "manualSubgroupSize", "manualTicksXAxis", "manualTicksXAxisValue", "xbarR", "IMR"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
   
@@ -36,15 +32,10 @@
   }
   
   plotMat <- matrix(list(), 2, 1)
-<<<<<<< HEAD
   plotMat[[1,1]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups,
-                               warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
+                               warningLimits = FALSE, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
   plotMat[[2,1]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups,
-                            Wide = wideFormat, manualTicks = options$manualTicks)$p
-=======
-  plotMat[[1,1]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
-  plotMat[[2,1]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
->>>>>>> 5b6e001 (Renaming Variable Charts for Subgroups)
+                            Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
   matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
 }
 
@@ -771,8 +762,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   # Calculations that apply to the whole plot
   yBreaks1 <- jaspGraphs::getPrettyAxisBreaks(c(dataPlotI$process, dataPlotI$LCL, dataPlotI$UCL, dataPlotI$center))
   yBreaks2 <- jaspGraphs::getPrettyAxisBreaks(c(dataPlotR$movingRange, dataPlotR$LCL, dataPlotR$UCL, dataPlotR$center))
-  if (options$manualTicks) {
-    nxBreaks <- options$nTicks
+  if (options[["manualTicksXAxis"]]) {
+    nxBreaks <- options[["manualTicksXAxisValue"]]
     xBreaks1 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(dataPlotI$subgroup, n = nxBreaks)))
     xBreaks2 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(dataPlotR$subgroup, n = nxBreaks)))
   } else {

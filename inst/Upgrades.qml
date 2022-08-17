@@ -436,11 +436,98 @@ Upgrade
 		// main analysis
 		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
 		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
+<<<<<<< HEAD
+=======
+		ChangeRename {from: "CorPlot";										to: "autocorrelationPlot"}
+		ChangeRename {from: "nLag";											to: "autocorrelationPlotLagsNumber"}
+		ChangeRename {from: "CI";											to: "autocorrelationPlotCiLevel"}
+		
 
+		// report
+		ChangeRename {from: "CCReport";										to: "report"}
+		ChangeRename {from: "ccTitle";										to: "reportTitle"}
+		ChangeRename {from: "ccName";										to: "reportMeasurementName"}
+		ChangeRename {from: "ccDate";										to: "reportDate"}
+		ChangeRename {from: "ccReportedBy";									to: "reportReportedBy"}
+		ChangeRename {from: "ccMisc";										to: "reportMiscellaneous"}
+		ChangeRename {from: "ccSubTitle";									to: "reportSubtitle"}
+		ChangeRename {from: "ccChartName";									to: "reportChartName"}
+	}
+>>>>>>> f416c4d (Renaming Control Charts for Attributes)
+
+	// Control Charts for Attributes
+
+	Upgrade
+	{
+		functionName:		"attributesCharts"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+		
+		// main analysis
+		ChangeRename {from: "D";											to: "defectiveOrDefect"}
+		ChangeRename {from: "Attributes";									to: "attributesChart"}
+		
+		ChangeJS
+		{
+			name:		"attributesChart"
+			jsFunction:	function(options)
+			{
+				switch(options["attributesChart"])
+				{
+					case "Defectives":										return "defectives";
+					case "Defects":											return "defects";
+					case "ImR":												return "xmr";
+				}
+			}
+		}
+
+		ChangeRename {from: "TypeDefectives";								to: "attributesChartDefectivesChartType"}
+
+		ChangeJS
+		{
+			name:		"attributesChartDefectivesChartType"
+			jsFunction:	function(options)
+			{
+				switch(options["attributesChartDefectivesChartType"])
+				{
+					case "npchart":											return "npChart";
+					case "pchart":											return "pChart";
+					case "Laneyprimechart":									return "laneyPPrimeChart";
+				}
+			}
+		}
+
+		ChangeRename {from: "TypeDefects";									to: "attributesChartDefectsChartType"}
+
+		ChangeJS
+		{
+			name:		"attributesChartDefectsChartType"
+			jsFunction:	function(options)
+			{
+				switch(options["attributesChartDefectsChartType"])
+				{
+					case "cchart":											return "cChart";
+					case "uchart":											return "uChart";
+					case "Laneychart":										return "laneyUPrimeChart";
+				}
+			}
+		}
+	
+		// report
+		ChangeRename {from: "AReport";											to: "report"}
+		ChangeRename {from: "ATitle";											to: "reportTitle"}
+		ChangeRename {from: "AName";											to: "reportMeasurementName"}
+		ChangeRename {from: "AOperator";										to: "reportReportedBy"}
+		ChangeRename {from: "AMisc";											to: "reportMiscellaneous"}
+		ChangeRename {from: "AID";												to: "reportId"}
+		ChangeRename {from: "AAppraiser";										to: "reportAppraiser"}
+		ChangeRename {from: "AMeasurement";										to: "reportMeasusrementSystemName"}
+		ChangeRename {from: "ASize";											to: "reportSubgroupSize"}
+		ChangeRename {from: "ATime";											to: "reportTime"}
+		ChangeRename {from: "AFrequency";										to: "reportFrequency"}
 	}
 
 	// Process Capability Studies
-
 	Upgrade
 	{
 		functionName:		"processCapabilityStudies"
@@ -450,11 +537,6 @@ Upgrade
 		// main analysis
 		ChangeRename {from: "subgroups";									to: "subgroup"}
 		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
-		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
-
+		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"
 	}
-
-
-
-
 }

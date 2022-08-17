@@ -1422,11 +1422,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
-<<<<<<< HEAD
-  Container$dependOn(options = c("xbarR", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "pcReportDisplay", "movingRangeLength"))
-=======
-  Container$dependOn(options = c("xbarR", "variables", "subgroup", "variablesLong", "pcSubgroupSize", "pcReportDisplay"))
->>>>>>> 5b6e001 (Renaming Variable Charts for Subgroups)
+  Container$dependOn(options = c("xbarR", "variables", "subgroup", "variablesLong", "pcSubgroupSize", "pcReportDisplay", "movingRangeLength"))
   Container$position <- 1
   jaspResults[["ImR Charts"]] <- Container
   Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE, Wide = wideFormat)$p
@@ -1486,18 +1482,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if(!ready) {
     plot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
     return(plot)
-
-<<<<<<< HEAD
-=======
-  # X-bar and R Chart OR ImR Chart
-  if(options$xbarR){
-    p1 <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
-    p2 <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
-  } else{
-    IMRPlots <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = splitFactor, cowPlot = TRUE, Wide = wideFormat)
-    p1 <- IMRPlots$p1
-    p2 <- IMRPlots$p2
->>>>>>> 5b6e001 (Renaming Variable Charts for Subgroups)
   }
 
   plotList <- list()
@@ -1513,9 +1497,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     # X-bar and R Chart OR ImR Chart
     if(options$xbarR){
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
+      plotList[[indexCounter]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, Wide = wideFormat, manualTicks = options$manualTicks)$p
+      plotList[[indexCounter]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
     } else {
       IMRPlots <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = splitFactor, cowPlot = TRUE, Wide = wideFormat)
 

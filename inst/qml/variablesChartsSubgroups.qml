@@ -69,7 +69,7 @@ Form
 			title:								qsTr("Axis labels")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
-			visible: 							pcDataFormat.currentValue == "CCwideFormat"
+			visible: 							dataFormat.currentValue == "wideFormat"
 		}
 	}
 
