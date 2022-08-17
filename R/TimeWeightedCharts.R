@@ -1,38 +1,42 @@
 #' @export
 timeWeightedCharts <- function(jaspResults, dataset, options) {
-  variables <- options$variables
+  variables <- options[["measurements"]]
   numeric_variables  <- variables[variables != ""]
   dataset         <- .readDataSetToEnd(columns.as.numeric = numeric_variables, exclude.na.listwise = numeric_variables)
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = options$variables, exitAnalysisIfErrors = TRUE)
+             all.target = options[["measurements"]], exitAnalysisIfErrors = TRUE)
+
   ready <- length(variables) > 0 
 
-  #Cusum chart
-  if (options$Cumulativechart && is.null(jaspResults[["CusumPlot"]])) {
-    jaspResults[["CusumPlot"]] <- createJaspPlot(title = gettext("Cumulative sum chart"), width = 1200, height = 500)
-    jaspResults[["CusumPlot"]]$dependOn(c("Cumulativechart", "variables"))
-    jaspResults[["CusumPlot"]]$plotObject <- .Cusumchart(dataset = dataset, options = options, ready = ready)
+  if (length(variables) > 0) {
+    #Cusum chart
+    if (options[["cumulativeSumChart"]] && is.null(jaspResults[["CusumPlot"]])) {
+      jaspResults[["CusumPlot"]] <- createJaspPlot(title = gettext("Cumulative sum chart"), width = 1200, height = 500)
+      jaspResults[["CusumPlot"]]$dependOn(c("cumulativeSumChart", "measurements"))
+      jaspResults[["CusumPlot"]]$plotObject <- .Cusumchart(dataset = dataset, options = options, ready = ready)
+    }
+    #EWMA chart
+    if (options[["ExponentiallyWeightedMovingAverageChart"]] && is.null(jaspResults[["EWMAPlot"]])) {
+      jaspResults[["EWMAPlot"]] <- createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 1200, height = 500)
+      jaspResults[["EWMAPlot"]]$dependOn(c("ExponentiallyWeightedMovingAverageChart", "measurements"))
+      jaspResults[["EWMAPlot"]]$plotObject <- .EWMA(dataset = dataset, options = options, ready = ready)
+    }
+    #G chart
+    if (options[["gChart"]] && is.null(jaspResults[["GPlot"]])) {
+      jaspResults[["GPlot"]] <- createJaspPlot(title = gettext("G chart"), width = 1200, height = 500)
+      jaspResults[["GPlot"]]$dependOn(c("gChart", "measurements"))
+      jaspResults[["GPlot"]]$plotObject <- .Gchart(dataset = dataset, options = options, ready = ready)$p
+    }
+    #T chart
+    # if (options[["tChart"]] && is.null(jaspResults[["TPlot"]])) {
+    #   jaspResults[["TPlot"]] <- createJaspPlot(title = gettext("T chart"), width = 1200, height = 500)
+    #   jaspResults[["TPlot"]]$dependOn(c("tChart", "measurements"))
+    #   jaspResults[["TPlot"]]$plotObject <- .Tchart(dataset = dataset, options = options, ready = ready)$p
+    # }
   }
-  #EWMA chart
-  if (options$Exponentialchart && is.null(jaspResults[["EWMAPlot"]])) {
-    jaspResults[["EWMAPlot"]] <- createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 1200, height = 500)
-    jaspResults[["EWMAPlot"]]$dependOn(c("Exponentialchart", "variables"))
-    jaspResults[["EWMAPlot"]]$plotObject <- .EWMA(dataset = dataset, options = options, ready = ready)
-  }
-  #G chart
-  if (options$gchart && is.null(jaspResults[["GPlot"]])) {
-    jaspResults[["GPlot"]] <- createJaspPlot(title = gettext("G chart"), width = 1200, height = 500)
-    jaspResults[["GPlot"]]$dependOn(c("gchart", "variables"))
-    jaspResults[["GPlot"]]$plotObject <- .Gchart(dataset = dataset, options = options, ready = ready)$p
-  }
-  # #T chart
-  # if (options$tchart && is.null(jaspResults[["TPlot"]])) {
-  #   jaspResults[["TPlot"]] <- createJaspPlot(title = gettext("T chart"), width = 1200, height = 500)
-  #   jaspResults[["TPlot"]]$dependOn(c("tchart", "variables"))
-  #   jaspResults[["TPlot"]]$plotObject <- .Tchart(dataset = dataset, options = options, ready = ready)$p
-  # }
 }
+
 .Cusumchart <- function(dataset, options, ready) {
   if (!ready)
     return()
@@ -79,11 +83,10 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
 .EWMA <- function(dataset, options, ready) {
   if (!ready)
     return()
-  
-  data1 <- dataset[, options$variables]
-  decimals <- max(.decimalplaces(data1))
-  sixsigma <- qcc::ewma(data1, center = options$EWMAcenter , lambda = options$EWMAlambda,
-                        std.dev = options$EWMAStd, nsigmas = options$EWMANsigma, plot = FALSE)
+
+  data1 <- dataset[, options[["measurements"]]]
+  sixsigma <- qcc::ewma(data1, center = options[["ExponentiallyWeightedMovingAverageChartCenter"]] , lambda = options[["ExponentiallyWeightedMovingAverageChartLambda"]],
+                        std.dev = options[["ExponentiallyWeightedMovingAverageChartSd"]], nsigmas = options[["ExponentiallyWeightedMovingAverageChartSigmaControlLimits"]], plot = FALSE)
   subgroups <- 1:length(sixsigma$sizes)
   center <- sixsigma$center
   UCL <-  sixsigma$limits[,2]
@@ -96,8 +99,8 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   else
     xBreaks <- c(subgroups)
   xLimits <- c(1,max(xBreaks-0.5) * 1.15)
-  UCL.label <- center + options$EWMANsigma * sqrt(options$EWMAlambda/(2-options$EWMAlambda))*options$EWMAStd
-  LCL.label <- center - options$EWMANsigma * sqrt(options$EWMAlambda/(2-options$EWMAlambda))*options$EWMAStd
+  UCL.label <- center + options[["ExponentiallyWeightedMovingAverageChartSigmaControlLimits"]] * sqrt(options[["ExponentiallyWeightedMovingAverageChartLambda"]] / (2-options[["ExponentiallyWeightedMovingAverageChartLambda"]])) * options[["ExponentiallyWeightedMovingAverageChartSd"]]
+  LCL.label <- center - options[["ExponentiallyWeightedMovingAverageChartSigmaControlLimits"]] * sqrt(options[["ExponentiallyWeightedMovingAverageChartLambda"]] / (2-options[["ExponentiallyWeightedMovingAverageChartLambda"]])) * options[["ExponentiallyWeightedMovingAverageChartSd"]]
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
     y = c(center, UCL.label, LCL.label),
@@ -122,11 +125,11 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   
   return(p)
 }
-.Gchart <- function(dataset, options, ready){
+.Gchart <- function(dataset, options){
   if (!ready)
     return()
-  
-  data1 <- dataset[, options$variables]
+
+  data1 <- dataset[, options[["measurements"]]]
   subgroups <- c(1:length(data1))
   data_plot <- data.frame(x =  subgroups, y = data1)
   center = mean(data1)
@@ -165,11 +168,11 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   
   return(list(p = p, sixsigma = sixsigma))
 }
-.Tchart <- function(dataset, options, ready){
+.Tchart <- function(dataset, options){
   if (!ready)
     return()
-  
-  data1 <- dataset[, options$variables]
+
+  data1 <- dataset[, options[["measurements"]]]
   subgroups <- c(1:length(data1))
   data_plot <- data.frame(x = subgroups , y = data1^0.2777)
   data2 <- data.frame(process = data1)

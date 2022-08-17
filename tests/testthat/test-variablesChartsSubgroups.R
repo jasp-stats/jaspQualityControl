@@ -53,9 +53,9 @@ test_that("X-bar & s Control Chart 2 plot matches", {
 
 ### Unequal subgroup sizes
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
+options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
-options$CCSubgroupSize <- 22
+options$manualSubgroupSizeValue <- 22
 options$subgroupSizeUnequal <- "actualSizes"
 results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Long.csv", options)
 
@@ -68,12 +68,12 @@ test_that("X-bar & R Control Chart3 plot matches", {
 
 ### Known parameters x-bar & r-chart
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
+options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
-options$CCSubgroupSize <- 22
+options$manualSubgroupSizeValue <- 22
 options$subgroupSizeUnequal <- "actualSizes"
-options$Phase2 <- TRUE
-options$mean <- -6
+options$knownParameters <- TRUE
+options$knownParametersMean <- -6
 results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Long.csv", options)
 
 test_that("Test results for R chart table results match", {
@@ -89,7 +89,7 @@ test_that("X-bar & R Control Chart 4 plot matches", {
 })
 
 ### Known parameters x-bar & s-chart
-options$TypeChart <- "Schart"
+options$chartType <- "xBarAndS"
 results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Long.csv", options)
 
 test_that("Test results for s chart table results match", {

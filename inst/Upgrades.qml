@@ -436,8 +436,6 @@ Upgrade
 		// main analysis
 		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
 		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
-<<<<<<< HEAD
-=======
 		ChangeRename {from: "CorPlot";										to: "autocorrelationPlot"}
 		ChangeRename {from: "nLag";											to: "autocorrelationPlotLagsNumber"}
 		ChangeRename {from: "CI";											to: "autocorrelationPlotCiLevel"}
@@ -453,7 +451,6 @@ Upgrade
 		ChangeRename {from: "ccSubTitle";									to: "reportSubtitle"}
 		ChangeRename {from: "ccChartName";									to: "reportChartName"}
 	}
->>>>>>> f416c4d (Renaming Control Charts for Attributes)
 
 	// Control Charts for Attributes
 
@@ -526,6 +523,28 @@ Upgrade
 		ChangeRename {from: "ATime";											to: "reportTime"}
 		ChangeRename {from: "AFrequency";										to: "reportFrequency"}
 	}
+
+	// Time Weighted Charts
+	Upgrade
+	{
+		functionName:		"timeWeightedCharts"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+		
+		ChangeRename {from: "variables";										to: "measurements"}
+		ChangeRename {from: "Cumulativechart";									to: "cumulativeSumChart"}
+		ChangeRename {from: "h";												to: "cumulativeSumChartNumberSd"}
+		ChangeRename {from: "k";												to: "cumulativeSumChartShiftSize"}
+		ChangeRename {from: "Exponentialchart";									to: "ExponentiallyWeightedMovingAverageChart"}
+		ChangeRename {from: "EWMAlambda";										to: "ExponentiallyWeightedMovingAverageChartLambda"}
+		ChangeRename {from: "EWMAcenter";										to: "ExponentiallyWeightedMovingAverageChartCenter"}
+		ChangeRename {from: "EWMAStd";											to: "ExponentiallyWeightedMovingAverageChartSd"}
+		ChangeRename {from: "EWMANsigma";										to: "ExponentiallyWeightedMovingAverageChartSigmaControlLimits"}
+		ChangeRename {from: "gchart";											to: "gChart"}
+		ChangeRename {from: "tchart";											to: "tChart"}
+
+	}
+
 
 	// Process Capability Studies
 	Upgrade
