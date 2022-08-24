@@ -40,7 +40,7 @@ Upgrades
 
 // Type 1 Gauge Study
 
-Upgrade
+	Upgrade
 	{
 		functionName:		"msaType1Gauge"
 		fromVersion:		"0.16.3"
@@ -83,7 +83,7 @@ Upgrade
 
 // Linearity Study
 
-Upgrade
+	Upgrade
 	{
 		functionName:		"msaGaugeLinearity"
 		fromVersion:		"0.16.3"
@@ -106,7 +106,7 @@ Upgrade
 
 // Type 2 and 3 Gauge r&R
 
-Upgrade
+	Upgrade
 	{
 		functionName:		"msaGaugeRR"
 		fromVersion:		"0.16.3"
@@ -554,8 +554,125 @@ Upgrade
 		toVersion:			"0.16.4"
 		
 		// main analysis
+		ChangeRename {from: "pcDataFormat";									to: "dataFormat"}
+
+		ChangeJS
+		{
+			name:		"dataFormat"
+			jsFunction:	function(options)
+			{
+				switch(options["dataFormat"])
+				{
+					case "PClongFormat":									return "longFormat";
+					case "PCwideFormat":									return "wideFormat";
+				}
+			}
+		}
+
+		ChangeRename {from: "variablesLong";								to: "measurementLongFormat"}
+		ChangeRename {from: "variables";									to: "measurementsWideFormat"}
 		ChangeRename {from: "subgroups";									to: "subgroup"}
+		ChangeRename {from: "pcSubgroupSize";								to: "manualSubgroupSizeValue"}
+
+		ChangeJS
+		{
+			name:		"capabilityStudyType"
+			jsFunction:	function(options)
+			{
+				switch(options["capabilityStudyType"])
+				{
+					case "nonnormalCapabilityAnalysis":						return "nonNormalCapabilityAnalysis";
+				}
+			}
+		}
+
+		ChangeRename {from: "nonNormalDist";								to: "nonNormalDistribution"}
+
+		ChangeJS
+		{
+			name:		"nonNormalDistribution"
+			jsFunction:	function(options)
+			{
+				switch(options["nonNormalDistribution"])
+				{
+					case "Weibull":											return "weibull";
+					case "Lognormal":										return "lognormal";
+					case "3lognormal":										return "3ParameterLognormal";
+					case "3weibull":										return "3ParameterWeibull";
+				}
+			}
+		}
+
+		ChangeJS
+		{
+			name:		"nonNormalMethod"
+			jsFunction:	function(options)
+			{
+				switch(options["nonNormalMethod"])
+				{
+					case "nonconformance":									return "nonConformance";
+				}
+			}
+		}
+
+		ChangeRename {from: "lowerSpecificationField";						to: "lowerSpecificationLimit"}
+		ChangeRename {from: "lowerSpecification";							to: "lowerSpecificationLimitValue"}
+		ChangeRename {from: "targetValueField";								to: "target"}
+		ChangeRename {from: "upperSpecificationField";						to: "upperSpecificationLimit"}
+		ChangeRename {from: "upperSpecification";							to: "upperSpecificationLimitValue"}
+		ChangeRename {from: "CapabilityStudyPlot";							to: "processCapabilityPlot"}
+		ChangeRename {from: "csNumberOfBins";								to: "processCapabilityPlotBinNumber"}
+		ChangeRename {from: "CapabilityStudyTables";						to: "processCapabilityTable"}
+		ChangeRename {from: "csConfidenceInterval";							to: "processCapabilityTableCi"}
+		ChangeRename {from: "csConfidenceIntervalPercent";					to: "processCapabilityTableCiLevel"}
+		ChangeRename {from: "xbarR";										to: "xBarAndRChart"}
+		ChangeRename {from: "IMR";											to: "xmrChart"}
+		ChangeRename {from: "displayDensity";								to: "histogramDensityLine"}
+		ChangeRename {from: "pcNumberOfBins";								to: "histogramBinNumber"}
+		ChangeRename {from: "addGridlines";									to: "probabilityPlotGridLines"}
+
+		// report
+		ChangeRename {from: "pcReportDisplay";								to: "report"}
+		ChangeRename {from: "pcReportTitle";								to: "reportTitle"}
+		ChangeRename {from: "pcReportName";									to: "reportProcessName"}
+		ChangeRename {from: "pcReportDate";									to: "reportDate"}
+		ChangeRename {from: "pcReportReportedBy";							to: "reportReportedBy"}
+		ChangeRename {from: "pcReportMisc";									to: "reportMiscellaneous"}
+
+		// advanced options
+		ChangeRename {from: "rank";											to: "probabilityPlotRankMethod"}
+
+		ChangeJS
+		{
+			name:		"probabilityPlotRankMethod"
+			jsFunction:	function(options)
+			{
+				switch(options["probabilityPlotRankMethod"])
+				{
+					case "Bernard":											return "bernard";
+					case "Herd-Johnson":									return "herdJohnson";
+					case "Kaplan-Meier":									return "kaplanMeier";
+					case "Hazen":											return "hazen";
+				}
+			}
+		}
+		
 		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
-		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"
+		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
+		ChangeRename {from: "nTicksProbabilityPlot";						to: "manualTicksProbabilityPlotValue"}
+		
+		ChangeJS
+		{
+			name:		"nullDistribution"
+			jsFunction:	function(options)
+			{
+				switch(options["nullDistribution"])
+				{
+					case "Normal":											return "normal";
+					case "Weibull":											return "weibull";
+					case "Lognormal":										return "lognormal";
+				}
+			}
+		}
 	}
 }

@@ -15,8 +15,8 @@
     return()
   
   container <- createJaspContainer(title = gettext("Control Chart"))
-  container$dependOn(options = c("controlChartsType", "pcReportDisplay", "measurementsWideFormat", "subgroup", "measurementLongFormat",
-                                  "pcSubgroupSize", "manualSubgroupSize", "manualTicksXAxis", "manualTicksXAxisValue", "xbarR", "IMR"))
+  container$dependOn(options = c("controlChartsType", "report", "measurementsWideFormat", "subgroup", "measurementLongFormat",
+                                "manualSubgroupSizeValue", "manualSubgroupSize", "manualTicksXAxis", "manualTicksXAxisValue", "xBarAndRChart", "xmrChart"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
   

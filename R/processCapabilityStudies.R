@@ -17,10 +17,10 @@
 
 #' @export
 processCapabilityStudies <- function(jaspResults, dataset, options) {
-  if (options[["pcDataFormat"]] == "PCwideFormat"){
-    measurements <- unlist(options$variables)
+  if (options[["dataFormat"]] == "wideFormat"){
+    measurements <- unlist(options[["measurementsWideFormat"]])
   }else{
-    measurements <- unlist(options$variablesLong)
+    measurements <- unlist(options[["measurementLongFormat"]])
   }
   subgroups <- unlist(options[["subgroup"]])
   num.vars <- measurements[measurements != ""]
@@ -31,7 +31,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   dataset <- .readDataSetToEnd(columns.as.numeric = num.vars, columns.as.factor = fac.vars)
 
   # Check if the analysis is ready
-  wideFormat <- options[["pcDataFormat"]] == "PCwideFormat"
+  wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat)
     ready <- length(measurements) > 0
   else
@@ -53,9 +53,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     splitFactor <- ""
   }
 
-  if (options[["pcDataFormat"]] == "PClongFormat" && ready){
+  if (options[["dataFormat"]] == "longFormat" && ready){
     if(options[["manualSubgroupSize"]]){
-      k <- options[["pcSubgroupSize"]]
+      k <- options[["manualSubgroupSizeValue"]]
       n <- nrow(dataset)
       dataset <- .PClongTowide(dataset, k, measurements, mode = "manual")
       if (identical(dataset, "error")) {
@@ -77,7 +77,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Error Handling
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = measurements, exitAnalysisIfErrors = TRUE)
-  if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis" && ready) {
+  if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready) {
     .hasErrors(dataset,
                all.target = measurements,
                custom = function () {
@@ -88,7 +88,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   dataset <- na.omit(dataset)
   # correction for zero values for non-normal capability
-  if (options$capabilityStudyType == "nonnormalCapabilityAnalysis" && ready) {
+  if (options$capabilityStudyType == "nonNormalCapabilityAnalysis" && ready) {
     x <- unlist(dataset[measurements])
     zeroCorrect <- any(x == 0)
     dataset[measurements] <- ifelse(x == 0, min(x[x > 0])/2 , x)
@@ -97,24 +97,24 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["zeroWarning"]] <- createJaspHtml(text = gettext("All zero values have been replaced with a value equal to one-half of the smallest data point."), elementType = "p",
                                                      title = "Zero values found in non-normal capability study:",
                                                      position = 1)
-      jaspResults[["zeroWarning"]]$dependOn(c('variablesLong', 'variables', 'capabilityStudyType', 'nullDistribution'))
+      jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", 'capabilityStudyType', 'nullDistribution'))
     }
   }
 
   # Report
-  if (options[["pcReportDisplay"]]) {
+  if (options[["report"]]) {
     if (is.null(jaspResults[["pcReport"]])) {
       jaspResults[["pcReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["pcReport"]]$position <- 6
     }
     jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat)
-    jaspResults[["pcReport"]]$dependOn(c('pcReportDisplay'))
+    jaspResults[["pcReport"]]$dependOn(c("report"))
   } else {
 
     # X-bar and R Chart OR ImR Chart
-    if(options$xbarR){
+    if(options[["xBarAndRChart"]]){
       .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
-    } else if(options[["IMR"]]){
+    } else if(options[["xmrChart"]]){
       .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
     }
 
@@ -140,24 +140,24 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 .qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements) {
 
   container <- createJaspContainer(gettext("Capability Studies"))
-  container$dependOn(options = c("CapabilityStudyType", "variables", "subgroup", "lowerSpecification", "upperSpecification", "targetValue", "variablesLong", "pcSubgroupSize", "pcDataFormat",
-                                 "CapabilityStudyPlot", "CapabilityStudyTables", "manualSubgroupSize", "pcReportDisplay"))
+  container$dependOn(options = c("CapabilityStudyType", "measurementsWideFormat", "subgroup", "lowerSpecificationLimitValue", "upperSpecificationLimitValue", "targetValue", "measurementLongFormat", "manualSubgroupSizeValue", "dataFormat",
+                                 "processCapabilityPlot", "processCapabilityTable", "manualSubgroupSize", "report"))
   container$position <- 4
 
   if (!ready)
     return(container)
 
 
-  if( sum(options[["upperSpecificationField"]], options[["lowerSpecificationField"]], options[["targetValueField"]]) >= 2){
-    if (options[["lowerSpecificationField"]]){
-      lowSpec <- options[["lowerSpecification"]]
-      if (options[["upperSpecificationField"]] && options[["upperSpecification"]] < lowSpec){
+  if( sum(options[["upperSpecificationLimit"]], options[["lowerSpecificationLimit"]], options[["target"]]) >= 2){
+    if (options[["lowerSpecificationLimit"]]){
+      lowSpec <- options[["lowerSpecificationLimitValue"]]
+      if (options[["upperSpecificationLimit"]] && options[["upperSpecificationLimitValue"]] < lowSpec){
         container$setError(gettext("Error: LSL > USL."))
       }
     }
-    if (options[["targetValueField"]]){
+    if (options[["target"]]){
       target <- options[["targetValue"]]
-      if ((options[["upperSpecificationField"]] && options[["upperSpecification"]] < target) || (options[["lowerSpecificationField"]] && options[["lowerSpecification"]] > target)){
+      if ((options[["upperSpecificationLimit"]] && options[["upperSpecificationLimitValue"]] < target) || (options[["lowerSpecificationLimit"]] && options[["lowerSpecificationLimitValue"]] > target)){
         container$setError(gettext("Error: Target outside of specification limits."))
       }
     }
@@ -166,7 +166,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 
 
-  ready <- (length(measurements) > 0 && (options[["lowerSpecificationField"]] | options[["upperSpecificationField"]]))
+  ready <- (length(measurements) > 0 && (options[["lowerSpecificationLimit"]] | options[["upperSpecificationLimit"]]))
 
   jaspResults[["capabilityAnalysis"]] <- container
 
@@ -178,27 +178,27 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     .qcProcessSummaryTable(options, dataset, ready, normalContainer, measurements)
 
-    if (options[["CapabilityStudyPlot"]])
+    if (options[["processCapabilityPlot"]])
       .qcProcessCapabilityPlot(options, dataset, ready, normalContainer, measurements, distribution = 'normal')
 
-    if (options[["CapabilityStudyTables"]]){
+    if (options[["processCapabilityTable"]]){
       .qcProcessCapabilityTableWithin(options, dataset, ready, normalContainer, measurements)
       .qcProcessCapabilityTableOverall(options, dataset, ready, normalContainer, measurements)
     }
 
   }
 
-  if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis") {
+  if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis") {
 
     nonNormalContainer <- createJaspContainer(gettext("Process Capability (Non-normal Capability Analysis)"))
     nonNormalContainer$position <- 2
 
     container[["nonNormalCapabilityAnalysis"]] <- nonNormalContainer
 
-    if (options[["CapabilityStudyPlot"]])
-      .qcProcessCapabilityPlot(options, dataset, ready, nonNormalContainer, measurements, distribution = options[["nonNormalDist"]])
+    if (options[["processCapabilityPlot"]])
+      .qcProcessCapabilityPlot(options, dataset, ready, nonNormalContainer, measurements, distribution = options[["nonNormalDistribution"]])
 
-    if (options[["CapabilityStudyTables"]])
+    if (options[["processCapabilityTable"]])
       .qcProcessCapabilityTableNonNormal(options, dataset, ready, nonNormalContainer, measurements)
   }
 }
@@ -212,12 +212,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table <- createJaspTable(title = gettext("Process summary"))
   table$position <- 1
 
-  if (options[["lowerSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]]){
     table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
   }
-  if (options[["targetValueField"]])
+  if (options[["target"]])
     table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
-  if (options[["upperSpecificationField"]])
+  if (options[["upperSpecificationLimit"]])
     table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
 
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
@@ -244,9 +244,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addFootnote(gettext("The within standard deviation could not be calculated."))
 
   rows <- list(
-    "lsl"    = options[["lowerSpecification"]],
+    "lsl"    = options[["lowerSpecificationLimitValue"]],
     "target" = options[["targetValue"]],
-    "usl"    = options[["upperSpecification"]],
+    "usl"    = options[["upperSpecificationLimitValue"]],
     "mean"   = mean(allData, na.rm = TRUE),
     "n"      = length(allData),
     "sd"     = sd(allData, na.rm = TRUE),
@@ -258,14 +258,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if(returnDataframe){
     sourceVector <- c('LSL', 'Target', 'USL', 'Sample size', 'Mean', "Std. Deviation (Total)", "Std. Deviation (Within)")
-    lsl <- options[["lowerSpecification"]]
+    lsl <- options[["lowerSpecificationLimitValue"]]
     target <- options[["targetValue"]]
-    usl <- options[["upperSpecification"]]
-    if (!options[["lowerSpecificationField"]])
+    usl <- options[["upperSpecificationLimitValue"]]
+    if (!options[["lowerSpecificationLimit"]])
       lsl <- '*'
-    if (!options[["targetValueField"]])
+    if (!options[["target"]])
       target <- '*'
-    if (!options[["upperSpecificationField"]])
+    if (!options[["upperSpecificationLimit"]])
       usl <- '*'
     mean <- mean(allData, na.rm = TRUE)
     n <- as.integer(length(allData))
@@ -279,7 +279,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container[["processSummaryTable"]] <- table
 }
 
-.qcProcessCapabilityPlotObject <- function(options, dataset, measurements, distribution = c('normal', 'Weibull', 'Lognormal', '3lognormal', '3weibull')) {
+.qcProcessCapabilityPlotObject <- function(options, dataset, measurements, distribution = c('normal', "weibull", "lognormal", "3ParameterLognormal", "3ParameterWeibull")) {
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
@@ -297,12 +297,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], min(plotData[["x"]]) - 1 * sdo, max(plotData[["x"]]) + 1 * sdo), min.n = 4)
   xLimits <- range(xBreaks)
-  binWidthType <- options$csNumberOfBins
+  nBins <- options[["processCapabilityPlotBinNumber"]]
 
-  # } else if (binWidthType == "fd" && nclass.FD(variable) > 10000) { # FD-method will produce extreme number of bins and crash ggplot, mention this in footnote
-  #   binWidthType <- 10000
 
-  h <- hist(allData, plot = F, breaks = binWidthType)
+  h <- hist(allData, plot = FALSE, breaks = nBins)
   binWidth <- (h$breaks[2] - h$breaks[1])
 
   p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
@@ -312,32 +310,32 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if(distribution == 'normal'){
     p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)), color = "dodgerblue") +
       ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw), color = "red")
-  }else if(distribution == 'Weibull'){
+  }else if(distribution == "weibull"){
     shape <- .distributionParameters(data = allData, distribution = distribution)$beta
     scale <- .distributionParameters(data = allData, distribution = distribution)$theta
     p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale), color = "red")
-  }else if(distribution == 'Lognormal'){
+  }else if(distribution == "lognormal"){
     shape <- .distributionParameters(data = allData, distribution = distribution)$beta
     scale <- .distributionParameters(data = allData, distribution = distribution)$theta
     p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale), color = "red")
-  }else if(distribution == '3lognormal'){
+  }else if(distribution == "3ParameterLognormal"){
     shape <- .distributionParameters(data = allData, distribution = distribution)$theta
     scale <- .distributionParameters(data = allData, distribution = distribution)$beta
     threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
     p <- p + ggplot2::stat_function(fun = FAdist::dlnorm3 , args = list(shape = shape, scale = scale, thres = threshold), color = "red")
-  }else if(distribution == '3weibull'){
+  }else if(distribution == "3ParameterWeibull"){
     shape <- .distributionParameters(data = allData, distribution = distribution)$beta
     scale <- .distributionParameters(data = allData, distribution = distribution)$theta
     threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
     p <- p + ggplot2::stat_function(fun = FAdist::dweibull3 , args = list(shape = shape, scale = scale, thres = threshold), color = "red")
   }
 
-  if (options[["targetValueField"]])
+  if (options[["target"]])
     p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen", size = 1)
-  if (options[["lowerSpecificationField"]])
-    p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecification"]], linetype = "dotted", color = "darkred", size = 1)
-  if (options[["upperSpecificationField"]])
-    p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecification"]], linetype = "dotted", color = "darkred", size = 1)
+  if (options[["lowerSpecificationLimit"]])
+    p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecificationLimitValue"]], linetype = "dotted", color = "darkred", size = 1)
+  if (options[["upperSpecificationLimit"]])
+    p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecificationLimitValue"]], linetype = "dotted", color = "darkred", size = 1)
 
   p <- jaspGraphs::themeJasp(p) +
     ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
@@ -345,14 +343,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(p)
 }
 
-.qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements, distribution = c('normal', 'Weibull', 'Lognormal', '3lognormal', '3weibull')) {
+.qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements, distribution = c('normal', "weibull", "lognormal", "3ParameterLognormal", "3ParameterWeibull")) {
 
   plot <- createJaspPlot(title = gettext("Capability of the process"), width = 700, height = 400)
-  plot$dependOn(c("csBinWidthType", "csNumberOfBins"))
+  plot$dependOn(c("csBinWidthType", "processCapabilityPlotBinNumber"))
   plot$position <- 2
 
 
-  if(!options[["upperSpecificationField"]] && !options[["lowerSpecificationField"]]){
+  if(!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]){
     plot$setError(gettext("No specification limits set."))
     return()
   }
@@ -366,7 +364,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcProcessCapabilityTableWithin <- function(options, dataset, ready, container, measurements, returnDataframe = FALSE) {
 
-  if (!options[["lowerSpecificationField"]] && !options[["upperSpecificationField"]])
+  if (!options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]])
     return()
 
   if (!ready)
@@ -375,29 +373,29 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table <- createJaspTable(title = gettext("Process capability (within)"))
   sourceVector <- vector()
 
-  ciLevel <- options[["csConfidenceIntervalPercent"]]
+  ciLevel <- options[["processCapabilityTableCiLevel"]]
   ciLevelPercent <- ciLevel * 100
 
-  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]) {
+  if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
     table$addColumnInfo(name = "cp", type = "integer", title = gettext("Cp"))
     sourceVector <- c(sourceVector, 'Cp')
-    if (options[["csConfidenceInterval"]]){
+    if (options[["processCapabilityTableCi"]]){
       table$addColumnInfo(name = "cplci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "cpuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
     }
   }
-  if (options[["lowerSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]]){
     table$addColumnInfo(name = "cpl",   type = "integer", title = gettext("CpL"))
     sourceVector <- c(sourceVector, 'CpL')
   }
-  if (options[["upperSpecificationField"]]){
+  if (options[["upperSpecificationLimit"]]){
     table$addColumnInfo(name = "cpu",   type = "integer", title = gettext("CpU"))
     sourceVector <- c(sourceVector, 'CpU')
   }
 
   table$addColumnInfo(name = "cpk",   type = "integer", title = gettext("Cpk"))
   sourceVector <- c(sourceVector, 'Cpk')
-  if (options[["csConfidenceInterval"]]){
+  if (options[["processCapabilityTableCi"]]){
     table$addColumnInfo(name = "cpklci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "cpkuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
   }
@@ -416,17 +414,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   allData <- unlist(dataset[, measurements])
 
   # Calculate capability indices
-  usl <- options[["upperSpecification"]]
-  lsl <- options[["lowerSpecification"]]
+  usl <- options[["upperSpecificationLimitValue"]]
+  lsl <- options[["lowerSpecificationLimitValue"]]
   n <- length(allData)
   k <- length(measurements)
   tolMultiplier <- 6
   cp <- (usl - lsl) / (tolMultiplier * qccFit[["std.dev"]])
   cpl <- (mean(allData) - lsl) / ((tolMultiplier/2) * qccFit[["std.dev"]])
   cpu <- (usl - mean(allData)) / ((tolMultiplier/2) * qccFit[["std.dev"]])
-  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
     cpk <- min(cpu, cpl)
-  }else if(options[["lowerSpecificationField"]] && !options[["upperSpecificationField"]]){
+  }else if(options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]){
     cpk <- cpl
   }else{
     cpk <- cpu
@@ -434,7 +432,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   rows <- list("cp" = round(cp, 2), "cpl" = round(cpl, 2), "cpu" = round(cpu, 2), "cpk" = round(cpk, 2))
 
-  if (options[["csConfidenceInterval"]]){
+  if (options[["processCapabilityTableCi"]]){
     ciAlpha <- 1 - ciLevel
 
     #CI for Cp
@@ -457,11 +455,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addRows(rows)
 
   if(returnDataframe){
-    if(!options[["upperSpecificationField"]])
+    if(!options[["upperSpecificationLimit"]])
       cpu <- NA
-    if(!options[["lowerSpecificationField"]])
+    if(!options[["lowerSpecificationLimit"]])
       cpl <- NA
-    if(!(options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]))
+    if(!(options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]))
       cp <- NA
     valueVector <- na.omit(c(cp, cpl, cpu, cpk))
     df <- data.frame(sources = sourceVector,
@@ -481,36 +479,36 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table <- createJaspTable(title = gettext("Process performance (total)"))
   sourceVector1 <- vector()
 
-  ciLevel <- options[["csConfidenceIntervalPercent"]]
+  ciLevel <- options[["processCapabilityTableCiLevel"]]
   ciLevelPercent <- ciLevel * 100
   ciAlpha <- 1 - ciLevel
 
-  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
     table$addColumnInfo(name = "pp",  type = "integer", title = gettext("Pp"))
     sourceVector1 <- c(sourceVector1, 'Pp')
-    if (options[["csConfidenceInterval"]]){
+    if (options[["processCapabilityTableCi"]]){
       table$addColumnInfo(name = "pplci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "ppuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
     }
   }
-  if (options[["lowerSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]]){
     table$addColumnInfo(name = "ppl", type = "integer", title = gettext("PpL"))
     sourceVector1 <- c(sourceVector1, 'PpL')
   }
-  if (options[["upperSpecificationField"]]){
+  if (options[["upperSpecificationLimit"]]){
     table$addColumnInfo(name = "ppu", type = "integer", title = gettext("PpU"))
     sourceVector1 <- c(sourceVector1, 'PpU')
   }
   table$addColumnInfo(name = "ppk",   type = "integer", title = gettext("Ppk"))
   sourceVector1 <- c(sourceVector1, 'Ppk')
-  if (options[["csConfidenceInterval"]]){
+  if (options[["processCapabilityTableCi"]]){
     table$addColumnInfo(name = "ppklci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "ppkuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
   }
-  if (options[["targetValueField"]]){
+  if (options[["target"]]){
     table$addColumnInfo(name = "cpm", type = "integer", title = gettext("Cpm"))
     sourceVector1 <- c(sourceVector1, 'Cpm')
-    if (options[["csConfidenceInterval"]]){
+    if (options[["processCapabilityTableCi"]]){
       table$addColumnInfo(name = "cpmlci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "cpmuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
     }
@@ -530,9 +528,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   sdo <- sd(allData)
   sdw <- qccFit[["std.dev"]]
   meanOverall <- mean(allData)
-  usl <- options[["upperSpecification"]]
-  lsl <- options[["lowerSpecification"]]
-  m <- (options[["upperSpecification"]] + options[["lowerSpecification"]])/2
+  usl <- options[["upperSpecificationLimitValue"]]
+  lsl <- options[["lowerSpecificationLimitValue"]]
+  m <- (options[["upperSpecificationLimitValue"]] + options[["lowerSpecificationLimitValue"]])/2
   n <- length(allData)
   t <- options[["targetValue"]]
   tolMultiplier <- 6
@@ -541,32 +539,32 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ppl <- (meanOverall - lsl) / ((tolMultiplier/2) * sdo)
   ppu <- (usl - mean(allData)) / ((tolMultiplier/2) * sdo)
 
-  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
     ppk <- min(ppu, ppl)
-  }else if(options[["lowerSpecificationField"]] && !options[["upperSpecificationField"]]){
+  }else if(options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]){
     ppk <- ppl
   }else{
     ppk <- ppu
   }
   cp <- (usl - lsl) / (tolMultiplier * qccFit[["std.dev"]])
 
-  if (options[["lowerSpecificationField"]] && options[["upperSpecificationField"]] && options[["targetValueField"]]){
+  if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]] && options[["target"]]){
     if (t == m){
       cpm <- (usl - lsl) / (tolMultiplier * sqrt((sum((allData - t)^2)) / n))
     }else{
       cpm <- min(c(t - lsl, usl - t)) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
     }
-  }else if (options[["upperSpecificationField"]] && options[["targetValueField"]]){
+  }else if (options[["upperSpecificationLimit"]] && options[["target"]]){
     cpm <- (usl - t) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
-  }else if (options[["lowerSpecificationField"]] && options[["targetValueField"]]){
+  }else if (options[["lowerSpecificationLimit"]] && options[["target"]]){
     cpm <- (t - lsl) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
   }
 
   rows <- list("pp" = round(pp,2), "ppl" = round(ppl,2), "ppu" = round(ppu,2), "ppk" = round(ppk,2))
-  if (options[["targetValueField"]])
+  if (options[["target"]])
     rows[["cpm"]] <- round(cpm,2)
 
-  if (options[["csConfidenceInterval"]]){
+  if (options[["processCapabilityTableCi"]]){
 
     #CI for Pp
     dfPp <- n - 1
@@ -587,7 +585,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     rows[["ppklci"]] <- round(ciLbPpk,2)
     rows[["ppkuci"]] <- round(ciUbPpk,2)
 
-    if (options[["targetValueField"]]){
+    if (options[["target"]]){
 
       #CI for Cpm
       a <- (meanOverall - t) / sdo
@@ -604,13 +602,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addRows(rows)
 
   if(returnOverallCapDataframe){
-    if(!options[["upperSpecificationField"]])
+    if(!options[["upperSpecificationLimit"]])
       ppu <- NA
-    if(!options[["lowerSpecificationField"]])
+    if(!options[["lowerSpecificationLimit"]])
       ppl <- NA
-    if(!(options[["lowerSpecificationField"]] && options[["upperSpecificationField"]]))
+    if(!(options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]))
       pp <- NA
-    if(!options[["targetValueField"]])
+    if(!options[["target"]])
       cpm <- NA
 
     valueVector1 <- na.omit(c(pp, ppl, ppu, ppk, cpm))
@@ -633,12 +631,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   rowNames <- c("ppm < LSL", "ppm > USL", "ppm total")
 
   #observed
-  if (options[["lowerSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]]){
     oLSL <- (1e6*length(allDataVector[allDataVector < lsl])) / n
   }else{
     oLSL <- NA
   }
-  if (options[["upperSpecificationField"]]){
+  if (options[["upperSpecificationLimit"]]){
     oUSL <- (1e6*length(allDataVector[allDataVector > usl])) / n
   }else{
     oUSL <- NA
@@ -647,12 +645,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   observed <- round(c(oLSL, oUSL, oTOT),2)
 
   # expected overall
-  if (options[["lowerSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]]){
     eoLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdo))
   }else{
     eoLSL <- NA
   }
-  if (options[["upperSpecificationField"]]){
+  if (options[["upperSpecificationLimit"]]){
     eoUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdo))
   }else{
     eoUSL <- NA
@@ -662,12 +660,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 
   # expected within
-  if (options[["lowerSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]]){
     ewLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdw))
   }else{
     ewLSL <- NA
   }
-  if (options[["upperSpecificationField"]]){
+  if (options[["upperSpecificationLimit"]]){
     ewUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdw))
   }else{
     ewUSL <- NA
@@ -705,13 +703,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table <- createJaspTable(title = gettextf("Process summary"))
 
-  if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
+  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") && any(dataset[measurements] < 0)){
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     container[["summaryTableNonNormal"]] <- table
     return()
   }
 
-  if(!options[["upperSpecificationField"]] && !options[["lowerSpecificationField"]]){
+  if(!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]){
     table$setError(gettext("No specification limits set."))
     container[["summaryTableNonNormal"]] <- table
     return()
@@ -719,19 +717,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   sourceVector1 <- vector()
 
-  if (options[["lowerSpecificationField"]])
+  if (options[["lowerSpecificationLimit"]])
     table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
 
-  if (options[["targetValueField"]])
+  if (options[["target"]])
     table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
 
-  if (options[["upperSpecificationField"]])
+  if (options[["upperSpecificationLimit"]])
     table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
 
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Average"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. deviation"))
-  if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "Lognormal"){
+  if(options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "lognormal"){
     table$addColumnInfo(name = "beta", type = "number", title = gettextf("Log mean (%1$s)", "\u03BC"))
     table$addColumnInfo(name = "theta", type = "number", title = gettextf("Log std.dev (%1$s)", "\u03C3"))
   }
@@ -741,7 +739,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   sourceVector1 <- c(sourceVector1, 'LSL', 'Target', 'USL', 'Sample size', 'Mean', 'Std. Deviation', "Beta", "Theta")
 
-  if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull"){
+  if(options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull"){
     table$addColumnInfo(name = "threshold", type = "number", title = gettext('Threshold'))
     sourceVector1 <- c(sourceVector1, 'Threshold')
   }
@@ -754,32 +752,32 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   allData <- unlist(dataset[, measurements])
   n <- length(allData)
-  lsl <- options[["lowerSpecification"]]
-  usl <- options[["upperSpecification"]]
+  lsl <- options[["lowerSpecificationLimitValue"]]
+  usl <- options[["upperSpecificationLimitValue"]]
   target <- options[["targetValue"]]
   sd <- sd(allData)
   mean <- mean(allData, na.rm = TRUE)
 
-  distParameters <- .distributionParameters(data = allData, distribution = options[["nonNormalDist"]])
+  distParameters <- .distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]])
   beta <- distParameters$beta
   theta <- distParameters$theta
 
   rows <- list("n" = n,"mean" = mean, "sd" = sd, "lsl" = lsl,
                "usl" = usl, "target" = target, "beta" = beta, "theta" = theta)
-  if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull"){
+  if(options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull"){
     threshold <- distParameters$threshold
     rows[['threshold']] <- threshold
   }
 
   if(returnSummaryDF){
-    if (!options[["lowerSpecificationField"]])
+    if (!options[["lowerSpecificationLimit"]])
       lsl <- '*'
-    if (!options[["targetValueField"]])
+    if (!options[["target"]])
       target <- '*'
-    if (!options[["upperSpecificationField"]])
+    if (!options[["upperSpecificationLimit"]])
       usl <- '*'
     valueVector <- c(lsl, target, usl, n, mean, sd, beta, theta)
-    if(options[["nonNormalDist"]] == "3lognormal" | options[["nonNormalDist"]] == "3weibull")
+    if(options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
       valueVector <- c(valueVector, threshold)
     df <- data.frame(sources = sourceVector1,
                      values = valueVector)
@@ -790,15 +788,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   sourceVector2 <- vector()
 
-  if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]]){
+  if (options[["upperSpecificationLimit"]] && options[["lowerSpecificationLimit"]]){
     table2$addColumnInfo(name = "pp", type = "integer", title = gettext("Pp"))
     sourceVector2 <- c(sourceVector2, 'Pp')
   }
-  if (options[["lowerSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]]){
     table2$addColumnInfo(name = "ppl", type = "integer", title = gettext("PpL"))
     sourceVector2 <- c(sourceVector2, 'PpL')
   }
-  if (options[["upperSpecificationField"]]){
+  if (options[["upperSpecificationLimit"]]){
     table2$addColumnInfo(name = "ppu", type = "integer", title = gettext("PpU"))
     sourceVector2 <- c(sourceVector2, 'PpU')
   }
@@ -807,9 +805,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table2data <- list()
 
-  if (options[["nonNormalDist"]] == "Lognormal") {
-    if (options[["lowerSpecificationField"]]){
-      if(options[['nonNormalMethod' ]] == "nonconformance"){
+  if (options[["nonNormalDistribution"]] == "lognormal") {
+    if (options[["lowerSpecificationLimit"]]){
+      if(options[['nonNormalMethod' ]] == "nonConformance"){
         p1 <- plnorm(q = lsl, meanlog = beta, sdlog = theta, lower.tail = T)
         zLSL <- qnorm(p1)
         ppl <- -zLSL/3
@@ -822,8 +820,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else{
       ppl <- NA
     }
-    if (options[["upperSpecificationField"]]){
-      if(options[['nonNormalMethod' ]] == "nonconformance"){
+    if (options[["upperSpecificationLimit"]]){
+      if(options[['nonNormalMethod' ]] == "nonConformance"){
         p2 <- plnorm(q = usl,  meanlog = beta, sdlog = theta)
         zUSL <- qnorm(p2)
         ppu <- zUSL/3
@@ -836,9 +834,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else{
       ppu <- NA
     }
-  }else if (options[["nonNormalDist"]] == "Weibull") {
-    if (options[["lowerSpecificationField"]]){
-      if(options[['nonNormalMethod' ]] == "nonconformance"){
+  }else if (options[["nonNormalDistribution"]] == "weibull") {
+    if (options[["lowerSpecificationLimit"]]){
+      if(options[['nonNormalMethod' ]] == "nonConformance"){
         p1 <- pweibull(q = lsl, shape = beta, scale = theta, lower.tail = T)
         zLSL <- qnorm(p1)
         ppl <- -zLSL/3
@@ -851,8 +849,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else{
       ppl <- NA
     }
-    if (options[["upperSpecificationField"]]){
-      if(options[['nonNormalMethod' ]] == "nonconformance"){
+    if (options[["upperSpecificationLimit"]]){
+      if(options[['nonNormalMethod' ]] == "nonConformance"){
         p2 <- pweibull(q = usl, shape = beta, scale = theta)
         zUSL <- qnorm(p2)
         ppu <- zUSL/3
@@ -865,9 +863,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else{
       ppu <- NA
     }
-  }else if (options[["nonNormalDist"]] == "3lognormal") {
-    if (options[["lowerSpecificationField"]]){
-      if(options[['nonNormalMethod' ]] == "nonconformance"){
+  }else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
+    if (options[["lowerSpecificationLimit"]]){
+      if(options[['nonNormalMethod' ]] == "nonConformance"){
         p1 <- FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = T)
         zLSL <- qnorm(p1)
         ppl <- -zLSL/3
@@ -880,8 +878,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else{
       ppl <- NA
     }
-    if (options[["upperSpecificationField"]]){
-      if(options[['nonNormalMethod' ]] == "nonconformance"){
+    if (options[["upperSpecificationLimit"]]){
+      if(options[['nonNormalMethod' ]] == "nonConformance"){
         p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)
         zUSL <- qnorm(p2)
         ppu <- zUSL/3
@@ -894,9 +892,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else{
       ppu <- NA
     }
-  }else if (options[["nonNormalDist"]] == "3weibull") {
-    if (options[["lowerSpecificationField"]]){
-      if(options[['nonNormalMethod' ]] == "nonconformance"){
+  }else if (options[["nonNormalDistribution"]] == "3ParameterWeibull") {
+    if (options[["lowerSpecificationLimit"]]){
+      if(options[['nonNormalMethod' ]] == "nonConformance"){
         p1 <- FAdist::pweibull3(q = lsl, shape = beta, scale = theta, thres = threshold, lower.tail = T)
         zLSL <- qnorm(p1)
         ppl <- -zLSL/3
@@ -909,8 +907,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else{
       ppl <- NA
     }
-    if (options[["upperSpecificationField"]]){
-      if(options[['nonNormalMethod' ]] == "nonconformance"){
+    if (options[["upperSpecificationLimit"]]){
+      if(options[['nonNormalMethod' ]] == "nonConformance"){
         p2 <- FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold)
         zUSL <- qnorm(p2)
         ppu <- zUSL/3
@@ -925,8 +923,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-  if (options[["upperSpecificationField"]] && options[["lowerSpecificationField"]]){
-    if(options[['nonNormalMethod' ]] == "nonconformance"){
+  if (options[["upperSpecificationLimit"]] && options[["lowerSpecificationLimit"]]){
+    if(options[['nonNormalMethod' ]] == "nonConformance"){
       pp <- (zUSL - zLSL)/6
     }else{
       pp <- (usl - lsl) / (x99 - x135)
@@ -956,12 +954,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   rowNames <- c("ppm < LSL", "ppm > USL", "Total ppm")
 
   #observed
-  if (options[["lowerSpecificationField"]]){
+  if (options[["lowerSpecificationLimit"]]){
     oLSL <- (1e6*length(allDataVector[allDataVector < lsl])) / n
   }else{
     oLSL <- NA
   }
-  if (options[["upperSpecificationField"]]){
+  if (options[["upperSpecificationLimit"]]){
     oUSL <- (1e6*length(allDataVector[allDataVector > usl])) / n
   }else{
     oUSL <- NA
@@ -971,50 +969,50 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # expected overall
 
-  if (options[["nonNormalDist"]] == "Lognormal") {
+  if (options[["nonNormalDistribution"]] == "lognormal") {
     distname <- "Lognormal"
-    if (options[["lowerSpecificationField"]]){
+    if (options[["lowerSpecificationLimit"]]){
       eoLSL <- 1e6 * plnorm(q = lsl, meanlog = beta, sdlog = theta, lower.tail = T)
     }else{
       eoLSL <- NA
     }
-    if (options[["upperSpecificationField"]]){
+    if (options[["upperSpecificationLimit"]]){
       eoUSL <- 1e6 * (1 - plnorm(q = usl, meanlog = beta, sdlog = theta))
     }else{
       eoUSL <- NA
     }
-  } else if (options[["nonNormalDist"]] == "Weibull") {
+  } else if (options[["nonNormalDistribution"]] == "weibull") {
     distname <- "Weibull"
-    if (options[["lowerSpecificationField"]]){
+    if (options[["lowerSpecificationLimit"]]){
       eoLSL <- 1e6 * pweibull(q = lsl, shape = beta, scale = theta, lower.tail = T)
     }else{
       eoLSL <- NA
     }
-    if (options[["upperSpecificationField"]]){
+    if (options[["upperSpecificationLimit"]]){
       eoUSL <- 1e6 * (1 - pweibull(q = usl, shape = beta, scale = theta))
     }else{
       eoUSL <- NA
     }
-  }else if (options[["nonNormalDist"]] == "3lognormal") {
+  }else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
     distname <- "3-parameter-lognormal"
-    if (options[["lowerSpecificationField"]]){
+    if (options[["lowerSpecificationLimit"]]){
       eoLSL <- 1e6 * FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold, lower.tail = T)
     }else{
       eoLSL <- NA
     }
-    if (options[["upperSpecificationField"]]){
+    if (options[["upperSpecificationLimit"]]){
       eoUSL <- 1e6 * (1 - FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold))
     }else{
       eoUSL <- NA
     }
-  }else if (options[["nonNormalDist"]] == "3weibull") {
+  }else if (options[["nonNormalDistribution"]] == "3ParameterWeibull") {
     distname <- "3-parameter-weibull"
-    if (options[["lowerSpecificationField"]]){
+    if (options[["lowerSpecificationLimit"]]){
       eoLSL <- 1e6 * FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold, lower.tail = T)
     }else{
       eoLSL <- NA
     }
-    if (options[["upperSpecificationField"]]){
+    if (options[["upperSpecificationLimit"]]){
       eoUSL <- 1e6 * (1 - FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold))
     }else{
       eoUSL <- NA
@@ -1061,8 +1059,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   container <- createJaspContainer(gettext("Probability Table and Plot"))
-  container$dependOn(options = c("variables", "probabilityPlot", "rank", "nullDistribution", "addGridlines", "variablesLong", "pcSubgroupSize",
-                                 "manualSubgroupSize", "subgroup", "pcReportDisplay"))
+  container$dependOn(options = c("measurementsWideFormat", "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution", "probabilityPlotGridLines", "measurementLongFormat", "manualSubgroupSizeValue",
+                                 "manualSubgroupSize", "subgroup", "report"))
   container$position <- 3
 
   jaspResults[["probabilityContainer"]] <- container
@@ -1087,13 +1085,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table$addColumnInfo(name = "n",      	title = gettext("N"),  		type = "integer")
 
-  if (options[["nullDistribution"]] == 'Normal') {
+  if (options[["nullDistribution"]] == "normal") {
     table$addColumnInfo(name = "mean",  title = gettextf("Mean (%1$s)", "\u03BC"), 				type = "number")
     table$addColumnInfo(name = "sd",    title = gettextf("Std. deviation (%1$s)", "\u03C3"), 	type = "number")
-  } else if (options[["nullDistribution"]] == 'Lognormal') {
+  } else if (options[["nullDistribution"]] == "lognormal") {
     table$addColumnInfo(name = "mean",  title = gettextf("Log mean (%1$s)", "\u03BC"),  		type = "number")
     table$addColumnInfo(name = "sd",    title = gettextf("Log std.dev (%1$s)", "\u03C3"), 			type = "number")
-  } else if (options[["nullDistribution"]] == 'Weibull') {
+  } else if (options[["nullDistribution"]] == "weibull") {
     table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03BB"), 			type = "number")
     table$addColumnInfo(name = "sd",    title = gettext("Scale (<i>k</i>)"),        			type = "number")
   }
@@ -1104,7 +1102,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution.", "\u00B2", options[["nullDistribution"]]))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
 
-  if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
+  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") && any(dataset[measurements] < 0)){
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     container[["probabilityTable"]] <- table
     return()
@@ -1112,16 +1110,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   values <- as.vector(unlist(dataset[measurements]))
 
-  if (options[["nullDistribution"]] == 'Normal') {
+  if (options[["nullDistribution"]] == "normal") {
     meanx   <- mean(values)
     sdx     <- sd(values)
     test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
-  } else if (options[["nullDistribution"]] == 'Lognormal') {
+  } else if (options[["nullDistribution"]] == "lognormal") {
     fit    <- fitdistrplus::fitdist(values, 'lnorm')
     meanx  <- fit$estimate[1]
     sdx    <- fit$estimate[2]
     test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
-  } else if (options[["nullDistribution"]] == 'Weibull') {
+  } else if (options[["nullDistribution"]] == "weibull") {
     fit    <- fitdistrplus::fitdist(values, 'weibull')
     meanx  <- fit$estimate[1]
     sdx    <- fit$estimate[2]
@@ -1153,9 +1151,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 .qcProbabilityPlot <- function(dataset, options, measurements = NULL, fit = "", ggPlot = FALSE) {
 
   plot <- createJaspPlot(width = 600, aspectRatio = 1, title = "Probability Plot")
-  plot$dependOn(c("variablesLong", "pcSubgroupSize"))
+  plot$dependOn(c("measurementLongFormat", "manualSubgroupSizeValue"))
 
-  if (((options[["nullDistribution"]] == 'Lognormal') || options[["nullDistribution"]] == 'Weibull') && any(dataset[measurements] < 0)){
+  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") && any(dataset[measurements] < 0)){
     plot$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     return(plot)
   }
@@ -1166,7 +1164,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (FactorialFit){
     x <- as.vector(resid(fit))
     order1 <- order(x)
-    options[["addGridlines"]] <- FALSE
+    options[["probabilityPlotGridLines"]] <- FALSE
     #factorsNames <- rownames(summary(fit)$coefficients)[-1][order1]
     #p.sig <- as.vector(summary(fit)$coefficients[,4][-1][order1] < 0.05)
   } else {
@@ -1180,18 +1178,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Method for rank
   Rank_funs <- matrix(list(.qcPpMedian, .qcPpMean, .qcPpKmModif, .qcPpKm), ncol = 1,
-                      dimnames = list(c("Bernard", "Herd-Johnson", "Hazen", 'Kaplan-Meier'), c("p")), byrow = TRUE)
+                      dimnames = list(c("bernard", "herdJohnson", "hazen", "kaplanMeier"), c("p")), byrow = TRUE)
   if (FactorialFit)
-    rankByUser <- "Bernard"
+    rankByUser <- "bernard"
   else
-    rankByUser <- options[["rank"]]
+    rankByUser <- options[["probabilityPlotRankMethod"]]
   p <- Rank_funs[[rankByUser, 'p']](x)
 
   # Functions for computing y
   y_funs <- matrix(list(qnorm,qnorm,.qcWeibull), ncol = 1,
-                   dimnames = list(c('Normal', 'Lognormal', 'Weibull'), c('y')), byrow = TRUE)
+                   dimnames = list(c("normal", "lognormal", "weibull"), c('y')), byrow = TRUE)
   if (FactorialFit)
-    DisByUser <- "Normal"
+    DisByUser <- "normal"
   else
     DisByUser <- options[["nullDistribution"]]
 
@@ -1202,7 +1200,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
 
   # Computing according to the distribution
-  if (options[["nullDistribution"]] == 'Normal' || FactorialFit) {
+  if (options[["nullDistribution"]] == "normal" || FactorialFit) {
     lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
     matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("mu", "sigma"), mle = c(mean(x), sd(x)))
     varMu <- matrix$varcov[1, 1]
@@ -1218,7 +1216,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     xBreaks <- label_x <- jaspGraphs::getPrettyAxisBreaks(x)
     xLimits <- range(xBreaks)
-  } else if (options[["nullDistribution"]] == 'Lognormal') {
+  } else if (options[["nullDistribution"]] == "lognormal") {
     fit <- fitdistrplus::fitdist(x, 'lnorm')
     meanlog <- as.numeric(fit$estimate[1])
     sdlog <- as.numeric(fit$estimate[2])
@@ -1245,7 +1243,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     xBreaks <- labelFrame[index,2]
     label_x <- labelFrame[index,1]
     xLimits <- range(xBreaks)
-  } else if (options[["nullDistribution"]] == 'Weibull') {
+  } else if (options[["nullDistribution"]] == "weibull") {
     fit <- fitdistrplus::fitdist(x, 'weibull')
     shape <- as.numeric(fit$estimate[1])
     scale <- as.numeric(fit$estimate[2])
@@ -1280,7 +1278,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
     jaspGraphs::geom_point(ggplot2::aes(x = x, y = y))
 
-  if (options[["addGridlines"]])
+  if (options[["probabilityPlotGridLines"]])
     p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
 
   if (FactorialFit) {
@@ -1360,7 +1358,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   plot <- createJaspPlot(title = gettext("Histogram"), width = 400, height = 400)
-  plot$dependOn(options = c("histogram", "displayDensity", "variables", "pcNumberOfBins", "pcBinWidthType", "pcReportDisplay", "variablesLong", "pcSubgroupSize", "manualSubgroupSize", "subgroup", 'nullDistribution'))
+  plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber", "pcBinWidthType", "report", "measurementLongFormat", "manualSubgroupSizeValue", "manualSubgroupSize", "subgroup", 'nullDistribution'))
   plot$position <- 2
 
   jaspResults[["histogram"]] <- plot
@@ -1375,14 +1373,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 .qcDistributionPlotObject <- function(options, dataset, measurements) {
 
   data <- unlist(dataset[measurements])
-  binWidthType <- options$pcNumberOfBins
-
-  # } else if (binWidthType == "fd" && nclass.FD(variable) > 10000) { # FD-method will produce extreme number of bins and crash ggplot, mention this in footnote
-  #   binWidthType <- 10000
+  nBins <- options[["histogramBinNumber"]]
 
   n <- length(data)
   df <- data.frame(measurements = data)
-  h <- hist(data, plot = F, breaks = binWidthType)
+  h <- hist(data, plot = F, breaks = nBins)
   binWidth <- (h$breaks[2] - h$breaks[1])
   freqs <- h$counts
   yLabels <- jaspGraphs::getPrettyAxisBreaks(c(0, freqs, max(freqs) + 5))
@@ -1396,16 +1391,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     ggplot2::scale_y_continuous(name =  gettext("Counts"), labels = yLabels, breaks = yBreaks, limits = yLimits) +
     jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
 
-  if (options[["displayDensity"]]) {
-    if(options[['nullDistribution']]  == 'Normal'){
+  if (options[["histogramDensityLine"]]) {
+    if(options[['nullDistribution']]  == "normal"){
       p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(data), sd = sd(data)), color = "dodgerblue")
-    }else if(options[['nullDistribution']]  == 'Weibull'){
+    }else if(options[['nullDistribution']]  == "weibull"){
       fit_Weibull <- fitdistrplus::fitdist(data, "weibull", method = "mle",
                                           control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
       shape <- fit_Weibull$estimate[[1]]
       scale <- fit_Weibull$estimate[[2]]
       p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale), color = "dodgerblue")
-    }else if(options[['nullDistribution']]  == 'Lognormal'){
+    }else if(options[['nullDistribution']]  == "lognormal"){
       fit_Lnorm <- fitdistrplus::fitdist(data, "lnorm", method = "mle",
                                            control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
       shape <- fit_Lnorm$estimate[[1]]
@@ -1422,7 +1417,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
-  Container$dependOn(options = c("xbarR", "variables", "subgroup", "variablesLong", "pcSubgroupSize", "pcReportDisplay", "movingRangeLength"))
+  Container$dependOn(options = c("xBarAndRChart", "measurementsWideFormat", "subgroup", "measurementLongFormat", "manualSubgroupSizeValue", "report", "movingRangeLength"))
   Container$position <- 1
   jaspResults[["ImR Charts"]] <- Container
   Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE, Wide = wideFormat)$p
@@ -1460,20 +1455,20 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .pcReport <- function(dataset, measurements, parts, operators, options, ready, container, splitFactor, wideFormat){
 
-  if (options[["pcReportTitle"]] == ""){
+  if (options[["reportTitle"]] == ""){
     title <- "Process Capability Report"
   }else{
-    title <- options[["pcReportTitle"]]
+    title <- options[["reportTitle"]]
   }
-  name <- gettextf("Process name: %s", options[["pcReportName"]])
-  date <- gettextf("Date of study: %s", options[["pcReportDate"]])
+  name <- gettextf("Process name: %s", options[["reportProcessName"]])
+  date <- gettextf("Date of study: %s", options[["reportDate"]])
   text1 <- c(name, date)
 
-  reportedBy <- gettextf("Reported by: %s", options[["pcReportReportedBy"]])
-  misc <- gettextf("Misc: %s", options[["pcReportMisc"]])
+  reportedBy <- gettextf("Reported by: %s", options[["reportReportedBy"]])
+  misc <- gettextf("Misc: %s", options[["reportMiscellaneous"]])
   text2 <- c(reportedBy, misc)
 
-  if(!options[["upperSpecificationField"]] && !options[["lowerSpecificationField"]]){
+  if(!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]){
     plot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
     plot$setError(gettext("No specification limits set."))
     return(plot)
@@ -1576,23 +1571,23 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
   return(p)
 }
 
-.distributionParameters <- function(data, distribution = c('Lognormal', 'Weibull', '3lognormal', '3weibull')){
-  if (distribution == "Lognormal") {
+.distributionParameters <- function(data, distribution = c("lognormal", "weibull", "3ParameterLognormal", "3ParameterWeibull")){
+  if (distribution == "lognormal") {
     fit_Lnorm <- fitdistrplus::fitdist(data, "lnorm", method = "mle",
                                        control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
     beta <- fit_Lnorm$estimate[[1]]
     theta <- fit_Lnorm$estimate[[2]]
-  } else if (distribution == "Weibull") {
+  } else if (distribution == "weibull") {
     fit_Weibull <- fitdistrplus::fitdist(data, "weibull", method = "mle",
                                          control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
     beta <- fit_Weibull$estimate[[1]]
     theta <- fit_Weibull$estimate[[2]]
-  }else if(distribution == "3lognormal"){
+  }else if(distribution == "3ParameterLognormal"){
     temp <- EnvStats::elnorm3(data)
     beta <- temp$parameters[[1]]
     theta <- temp$parameters[[2]]
     threshold <- temp$parameters[[3]]
-  }else if(distribution == "3weibull"){
+  }else if(distribution == "3ParameterWeibull"){
     temp <- weibullness::weibull.mle(data)
     beta <- temp[[1]]
     theta <- temp[[2]]
@@ -1600,7 +1595,7 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
   }
   list <- list(beta = beta,
                theta = theta)
-  if(distribution == '3weibull' | distribution == '3lognormal')
+  if(distribution == '3ParameterWeibull' | distribution == "3ParameterLognormal")
     list['threshold'] <- threshold
   return(list)
 }

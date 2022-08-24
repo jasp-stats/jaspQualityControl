@@ -12,10 +12,10 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-import QtQuick                  			  2.8
-import QtQuick.Layouts              		1.3
-import JASP.Controls              			1.0
-import JASP.Widgets               			1.0
+import QtQuick								2.8
+import QtQuick.Layouts						1.3
+import JASP.Controls						1.0
+import JASP.Widgets							1.0
 
 Form
 {
@@ -24,79 +24,81 @@ Form
 
 	DropDown
 	{
-		name: "pcDataFormat"
+		name: "dataFormat"
 		label: qsTr("Data format")
+		id: dataFormat
 		indexDefaultValue: 0
 		values:
-			[
-			{label: qsTr("Single column"),			value: "PClongFormat"},
-			{label: qsTr("Across rows"),				value: "PCwideFormat"},
+		[
+			{label: qsTr("Single column"),				value: "longFormat"},
+			{label: qsTr("Across rows"),				value: "wideFormat"},
 		]
-		id: pcDataFormat
 		onValueChanged:
 		{
-			variablesLong.itemDoubleClicked(0)
-			variables.itemDoubleClicked(0)
+			measurementLongFormat.itemDoubleClicked(0)
+			measurementsWideFormat.itemDoubleClicked(0)
 		}
 	}
 
 	VariablesForm
 	{
-		id:                   				variablesForm
+		id:									variablesForm
 
 		AvailableVariablesList
 		{
-			name:               			"variablesForm"
+			name:							"variablesForm"
 		}
 
 		AssignedVariablesList
 		{
-			id:                 			variablesLong
-			name:               			"variablesLong"
-			title:              			qsTr("Measurements")
-			allowedColumns:     			["scale"]
+			name:							"measurementLongFormat"
+			title:							qsTr("Measurement")
+			id:								measurementLongFormat
+			allowedColumns:					["scale"]
 			singleVariable:					true
-			visible:						pcDataFormat.currentValue == "PClongFormat"
+			visible:						dataFormat.currentValue == "longFormat"
 		}
 
 		AssignedVariablesList
 		{
-			id:                 			variables
-			name:               			"variables"
-			title:              			qsTr("Measurements")
-			allowedColumns:     			["scale"]
-			visible:						pcDataFormat.currentValue == "PCwideFormat"
+			name:							"measurementsWideFormat"
+			title:							qsTr("Measurements")
+			id:								measurementsWideFormat
+			allowedColumns:					["scale"]
+			visible:						dataFormat.currentValue == "wideFormat"
 		}
 
 		AssignedVariablesList
 		{
-			name:               			"subgroup"
-			title:             			 	qsTr("Subgroup")
-			id:                 			subgroup
-			singleVariable:    	 			true
-			allowedColumns:     			["nominal", "nominalText", "ordinal"]
+			name:							"subgroup"
+			title:						 	qsTr("Subgroup")
+			id:					 			subgroup
+			singleVariable:		 			true
+			allowedColumns:					["nominal", "nominalText", "ordinal"]
 		}
 	}
+
 	CheckBox
 	{
 		name: 						"manualSubgroupSize"
-		id: 						manualSubgroupSize
 		label: 						qsTr("Specifiy subgroup size manually:")
+		id: 						manualSubgroupSize
 		checked: 					true
 		childrenOnSameRow:			true
-		visible:						pcDataFormat.currentValue == "PClongFormat"
+		visible:					dataFormat.currentValue == "longFormat"
 
 		DoubleField
 		{
-			name: 					"pcSubgroupSize"
-			id:						pcSubgroupSize
+			name: 					"manualSubgroupSizeValue"
+			id:						manualSubgroupSizeValue
 			negativeValues:			false
 			min: 					1
 			max: 					dataSetModel.rowCount()
 			defaultValue:			5
-			visible:				pcDataFormat.currentValue == "PClongFormat"
+			visible:				dataFormat.currentValue == "longFormat"
 		}
 	}
+
 	Section
 	{
 		title: qsTr("Process Capability Options")
@@ -105,7 +107,7 @@ Form
 		{
 			Group
 			{
-				title:							qsTr("Type of data distribution")
+				title:					qsTr("Type of data distribution")
 
 
 				RadioButtonGroup
@@ -123,33 +125,34 @@ Form
 
 					RadioButton
 					{
-						name: 				"nonnormalCapabilityAnalysis"
-						id : 				nonnormalCapabilityAnalysis
-						label: 				qsTr("Non-normal distribution")
+						name:				"nonNormalCapabilityAnalysis"
+						id :				nonNormalCapabilityAnalysis
+						label:				qsTr("Non-normal distribution")
+
 						DropDown
 						{
-							name: 					"nonNormalDist"
-							id: 					nonNormalDist
-							label: 					qsTr("Specify a distribution")
+							name: 					"nonNormalDistribution"
+							id: 					nonNormalDistribution
+							label:					qsTr("Specify a distribution")
 							values:
-								[
-								{label: qsTr("Weibull"),		value: "Weibull"  },
-								{label: qsTr("Lognormal"),		value: "Lognormal"},
-								{label: qsTr("3-parameter lognormal"),		value: "3lognormal"},
-								{label: qsTr("3-parameter Weibull"),		value: "3weibull"}
+							[
+								{label: qsTr("Weibull"),					value: "weibull"},
+								{label: qsTr("Lognormal"),					value: "lognormal"},
+								{label: qsTr("3-parameter lognormal"),		value: "3ParameterLognormal"},
+								{label: qsTr("3-parameter Weibull"),		value: "3ParameterWeibull"}
 							]
-							indexDefaultValue: (nullDistribution.currentValue == "Weibull") ? 0 : 1
+							indexDefaultValue: (nullDistribution.currentValue == "weibull") ? 0 : 1
 						}
 
 						DropDown
 						{
-							name: 					"nonNormalMethod"
-							label: 					qsTr("Non-normal capability statistics:")
-							indexDefaultValue: 		0
+							name:					"nonNormalMethod"
+							label:					qsTr("Non-normal capability statistics:")
+							indexDefaultValue:		0
 							values:
 								[
-								{label: qsTr("Percentile"),		value: "percentile"},
-								{label: qsTr("Non-conformance"),		value: "nonconformance"  }
+								{label: qsTr("Percentile"),				value: "percentile"},
+								{label: qsTr("Non-conformance"),		value: "nonConformance"  }
 							]
 						}
 					}
@@ -162,15 +165,15 @@ Form
 
 				CheckBox
 				{
-				  id: checkedlower
-					name: 						"lowerSpecificationField"
+					name: 						"lowerSpecificationLimit"
 					label: 						qsTr("Lower specification limit")
+					id:							lowerSpecificationLimit
 					childrenOnSameRow:			true
 
 					DoubleField
 					{
-						id:						lower
-						name: 					"lowerSpecification"
+						name: 					"lowerSpecificationLimitValue"
+						id:						lowerSpecificationLimitValue
 						negativeValues:			true
 						defaultValue:			-1
 						decimals:				9
@@ -179,15 +182,15 @@ Form
 
 				CheckBox
 				{
-				  id: checkedtarget
-					name: 						"targetValueField"
+					name: 						"target"
 					label: 						qsTr("Target value")
+					id:							target
 					childrenOnSameRow:			true
 
 					DoubleField
 					{
-						id:						target
 						name: 					"targetValue"
+						id:						targetValue
 						negativeValues:			true
 						defaultValue:			0
 						decimals:				9
@@ -196,15 +199,15 @@ Form
 
 				CheckBox
 				{
-				  id: checkedupper
-					name: 						"upperSpecificationField"
-					childrenOnSameRow:			true
+					name: 						"upperSpecificationLimit"
 					label: 						qsTr("Upper specification limit")
+					id:							upperSpecificationLimit
+					childrenOnSameRow:			true
 
 					DoubleField
 					{
-						id:						upper
-						name: 					"upperSpecification"
+						name: 					"upperSpecificationLimitValue"
+						id:						upperSpecificationLimitValue
 						negativeValues:			true
 						defaultValue:			1
 						decimals:				9
@@ -213,42 +216,44 @@ Form
 
 				CheckBox
 				{
-					name: 						"CapabilityStudyPlot"
+					name: 						"processCapabilityPlot"
 					label: 						qsTr("Process capability plot")
 					checked: 					true
-					enabled:          checkedupper.checked || checkedtarget.checked || checkedlower.checked
+					enabled:					upperSpecificationLimit.checked || target.checked || lowerSpecificationLimit.checked
 
 					DoubleField
 					{
-						name:			"csNumberOfBins"
-						label:			qsTr("Number of bins")
-						defaultValue:	10
-						min:			3;
-						max:			10000;
-						enabled:		csBinWidthType.currentValue === "manual"
+						name:						"processCapabilityPlotBinNumber"
+						label:						qsTr("Number of bins")
+						defaultValue:				10
+						min:						3;
+						max:						10000;
+						enabled:					csBinWidthType.currentValue === "manual"
 					}
 				}
 
 				CheckBox
 				{
-					name: 						"CapabilityStudyTables"
-					label: 						qsTr("Process capability tables")
-					checked: 					true
-					enabled:          checkedupper.checked | checkedtarget.checked | checkedlower.checked
+					name: 							"processCapabilityTable"
+					label: 							qsTr("Process capability tables")
+					checked: 						true
+					enabled:						upperSpecificationLimit.checked | target.checked | lowerSpecificationLimit.checked
 
 					CheckBox
 					{
-						name: "csConfidenceInterval";	label: qsTr("Confidence intervals")
+						name: "processCapabilityTableCi";	
+						label: qsTr("Confidence intervals")
 						checked: true
 						childrenOnSameRow: true
-						CIField {
-							name: "csConfidenceIntervalPercent"
+
+						CIField 
+						{
+							name: "processCapabilityTableCiLevel"
 							defaultValue: 90}
+						}
+
 					}
-
 				}
-			}
-
 			}
 		}
 
@@ -256,22 +261,22 @@ Form
 		{
 			Group
 			{
-				title: 							qsTr("Stability of the process")
+				title:							qsTr("Stability of the process")
 
 				CheckBox
 				{
-				  	name:                  		"xbarR"
-					label: 				   		qsTr("X-bar & R chart")
-					enabled:                    pcSubgroupSize.value > 1
-					checked: 					pcSubgroupSize.value > 1
+					name:						"xBarAndRChart"
+					label: 						qsTr("X-bar & R chart")
+					enabled:					manualSubgroupSizeValue.value > 1
+					checked: 					manualSubgroupSizeValue.value > 1
 				}
 
-			    CheckBox
+				CheckBox
 				{
-					name: 						"IMR"
+					name: 						"xmrChart"
 					label: 						qsTr("X-mR chart")
-					enabled: 					pcSubgroupSize.value == 1 || pcDataFormat.currentValue == "PCwideFormat"
-					checked: 					pcSubgroupSize.value == 1
+					enabled: 					manualSubgroupSizeValue.value == 1 || dataFormat.currentValue == "wideFormat"
+					checked: 					manualSubgroupSizeValue.value == 1
 
 					DoubleField
 					{
@@ -296,31 +301,30 @@ Form
 
 					CheckBox
 					{
-						name:					"displayDensity"
+						name:					"histogramDensityLine"
 						label:					qsTr("Fit distribution")
 						checked:				true
 					}
 
 					DoubleField
 					{
-						name:			"pcNumberOfBins"
-						label:			qsTr("Number of bins")
-						defaultValue:	10
-						min:			3;
-						max:			10000;
-						enabled:		binWidthType.currentValue === "manual"
+						name:					"histogramBinNumber"
+						label:					qsTr("Number of bins")
+						defaultValue:			10
+						min:					3;
+						max:					10000;
 					}
 				}
 
 				CheckBox
 				{
-					name: 						"probabilityPlot"
-					label: 						qsTr("Probability table and plot")
+					name:						"probabilityPlot"
+					label:						qsTr("Probability table and plot")
 					checked: 					true
 
 					CheckBox
 					{
-						name:					"addGridlines"
+						name:					"probabilityPlotGridLines"
 						label:					qsTr("Display grid lines")
 					}
 				}
@@ -334,9 +338,9 @@ Form
 	{
 		title: qsTr("Process Capability Report")
 		
-				CheckBox
+		CheckBox
 		{
-			name: "pcReportDisplay"
+			name: "report"
 			label: qsTr("Show Report")
 			columns: 2
 			
@@ -350,45 +354,45 @@ Form
 
 		TextField
 		{
-			id:						pcReportTitle
-			label: 					qsTr("Title:")
-			name: 					"pcReportTitle"
+			name: 					"reportTitle"
+			label:					qsTr("Title")
+			id:						reportTitle
 			placeholderText:		qsTr("Measurement")
 			fieldWidth:				100
 		}
 
 		TextField
 		{
-			id:						pcReportName
-			label: 					qsTr("Process Name:")
-			name: 					"pcReportName"
+			name:					"reportProcessName"
+			label:					qsTr("Process Name")
+			id:						reportProcessName
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
 
 		TextField
 		{
-			id:						pcReportDate
-			label: 					qsTr("Date:")
-			name: 					"pcReportDate"
+			name:					"reportDate"
+			label:					qsTr("Date")
+			id:						reportDate
 			placeholderText:		qsTr("Date")
 			fieldWidth:				100
 		}
 
 		TextField
 		{
-			id:						pcReportReportedBy
-			label: 					qsTr("Reported by:")
-			name: 					"pcReportReportedBy"
+			name:					"reportReportedBy"
+			label:					qsTr("Reported by")
+			id:						reportReportedBy
 			placeholderText:		qsTr("Name")
 			fieldWidth:				100
 		}
 
 		TextField
 		{
-			id:						pcReportMisc
-			label: 					qsTr("Misc:")
-			name: 					"pcReportMisc"
+			name:					"reportMiscellaneous"
+			label:					qsTr("Misc")
+			id:						reportMiscellaneous
 			placeholderText:		qsTr("Miscellaneous")
 			fieldWidth:				100
 		}
@@ -438,65 +442,68 @@ Form
 		}
 	}
 
-	Section{
-  			title: qsTr("Advanced Options")
-			  Group{
-				  	DropDown
-					{
-						name: 					"rank"
-						label: 					qsTr("Rank method for probability plot")
-						indexDefaultValue: 		0
-						values:
-							[
-							{ value: "Bernard",    		label: qsTr("Median Rank (Benard)")         },
-							{ value: "Herd-Johnson",    label: qsTr("Mean Rank (Herd-Johnson)")     },
-							{ value: "Kaplan-Meier",    label: qsTr("Kaplan-Meier")                 },
-							{ value: "Hazen",   		label: qsTr("Modified Kaplan-Meier (Hazen)")}
-						]
-					}
+	Section
+	{
+		title: qsTr("Advanced Options")
+		
+		Group
+		{
+			DropDown
+			{
+				name:					"probabilityPlotRankMethod"
+				label:					qsTr("Rank method for probability plot")
+				indexDefaultValue:		0
+				values:
+				[
+					{ value: "bernard",			label: qsTr("Median Rank (Benard)")			},
+					{ value: "herdJohnson",		label: qsTr("Mean Rank (Herd-Johnson)")		},
+					{ value: "kaplanMeier",		label: qsTr("Kaplan-Meier")					},
+					{ value: "hazen",			label: qsTr("Modified Kaplan-Meier (Hazen)")}
+				]
+			}
 					
-					CheckBox
-					{
-						name:                   			"manualTicksXAxis"
-						label: 								qsTr("Number of ticks on x-axis for X-bar & R or X-mR chart:")
-						childrenOnSameRow: true
+			CheckBox
+			{
+				name:								"manualTicksXAxis"
+				label: 								qsTr("Number of ticks on x-axis for X-bar & R or X-mR chart:")
+				childrenOnSameRow: true
 
-						DoubleField
-						{
-							name: 							"manualTicksXAxisValue"
-							defaultValue:					5
-						}
-					}
+				DoubleField
+				{
+					name: 							"manualTicksXAxisValue"
+					defaultValue:					5
+				}
+			}
 
-					CheckBox
-					{
-						name:					"manualTicksProbabilityPlot"
-						label: 								qsTr("Number of ticks on x-axis for probability plot:")
-						childrenOnSameRow: true
+			CheckBox
+			{
+				name:								"manualTicksProbabilityPlot"
+				label: 								qsTr("Number of ticks on x-axis for probability plot:")
+				childrenOnSameRow: true
 
-						DoubleField
-						{
-							name: 							"nTicksProbabilityPlot"
-							defaultValue:					5
-						}
-					}
+				DoubleField
+				{
+					name: 							"manualTicksProbabilityPlotValue"
+					defaultValue:					5
+				}
+			}
 
-				    DropDown
-					{
-						name: 					"nullDistribution"
-						id: 					nullDistribution
-						label: 					qsTr("Null distribution for probability plot")
-						values: 
-							[
-							{ label: qsTr("Normal"),		value: "Normal"	   },
-							{ label: qsTr("Lognormal"),		value: "Lognormal" },
-							{ label: qsTr("Weibull"),		value: "Weibull"   }
-						]
-						indexDefaultValue: (capabilityStudyType.value == "nonnormalCapabilityAnalysis") ? 
-							(nonNormalDist.currentValue == "Lognormal" || nonNormalDist.currentValue == "3lognormal") ? 1 : 
-								(nonNormalDist.currentValue == "3weibull" || nonNormalDist.currentValue == "Weibull") ? 2 : 0 
-						: 0
-					}
-			  }
+			DropDown
+			{
+				name: 					"nullDistribution"
+				id: 					nullDistribution
+				label: 					qsTr("Null distribution for probability plot")
+				values: 
+				[
+					{ label: qsTr("Normal"),		value: "normal"		},
+					{ label: qsTr("Lognormal"),		value: "lognormal"	},
+					{ label: qsTr("Weibull"),		value: "weibull"	}
+				]
+				indexDefaultValue: (capabilityStudyType.value == "nonNormalCapabilityAnalysis") ? 
+				(nonNormalDistribution.currentValue == "lognormal" || nonNormalDistribution.currentValue == "3ParameterLognormal") ? 1 : 
+				(nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "weibull") ? 2 : 0 
+				: 0
+			}
+		}
 	}
 }
