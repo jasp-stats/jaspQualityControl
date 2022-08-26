@@ -675,4 +675,114 @@ Upgrades
 			}
 		}
 	}
+
+	// Two-level Factorial Design
+	Upgrade
+	{
+		functionName:		"doeFactorial"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+		
+		ChangeRename {from: "dataCoding";									to: "unitDisplay"}
+
+		ChangeJS
+		{
+			name:		"unitDisplay"
+			jsFunction:	function(options)
+			{
+				switch(options["unitDisplay"])
+				{
+					case "dataCoded":										return "coded";
+					case "dataUncoded":										return "uncoded";
+				}
+			}
+		}
+
+		ChangeJS
+		{
+			name:		"runOrder"
+			jsFunction:	function(options)
+			{
+				switch(options["runOrder"])
+				{
+					case "runOrderRandom":										return "random";
+					case "runOrderStandard":									return "standard";
+				}
+			}
+		}
+
+		ChangeRename {from: "factorialType";									to: "factorialDesignType"}
+
+
+		ChangeJS
+		{
+			name:		"factorialDesignType"
+			jsFunction:	function(options)
+			{
+				switch(options["factorialDesignType"])
+				{
+					case "factorialTypeDefault":								return "defaultGenerator";
+					case "factorialTypeSpecify":								return "customGenerator";
+					case "factorialTypeSplit":									return "splitPlot";	
+				}
+			}
+		}
+		
+		ChangeRename {from: "factorialTypeSpecifyGenerators";					to: "factorialDesignTypeCustomGeneratorSpecification"}
+		ChangeRename {from: "numberHTCFactors";									to: "factorialDesignTypeSplitPlotNumberHardToChangeFactors"}
+		ChangeRename {from: "designBy";											to: "designOptionsType"}
+
+		ChangeJS
+		{
+			name:		"designOptionsType"
+			jsFunction:	function(options)
+			{
+				switch(options["designOptionsType"])
+				{
+					case "designByRuns":										return "numberOfRuns";
+					case "designByResolution":									return "resolution";
+					case "designByFraction":									return "fraction";	
+				}
+			}
+		}
+
+		ChangeRename {from: "factorialRuns";									to: "designOptionsTypeNumberOfRunsValue"}
+		ChangeRename {from: "factorialResolution";								to: "designOptionsTypeFactorialResolutionValue"}
+		ChangeRename {from: "factorialFraction";								to: "designOptionsTypeFractionValue"}
+		ChangeRename {from: "factorialCenterPoints";							to: "numberCenterPoints"}
+		ChangeRename {from: "factorialCornerReplicates";						to: "numberReplicationsCornerPoints"}
+		ChangeRename {from: "factorialRepeats";									to: "numberReplicationsCornerPointsRepetitionsOnly"}
+		ChangeRename {from: "factorialBlocks";									to: "numberOfBlocks"}
+		ChangeRename {from: "repeatRuns";										to: "randomRunsNumberRepetitions"}
+		ChangeRename {from: "showAvailableDesigns";								to: "availableDesignsTable"}
+		ChangeRename {from: "displayDesign";									to: "designPreviewTable"}
+		ChangeRename {from: "showAliasStructure";								to: "aliasStructureTable"}
+		ChangeRename {from: "FAresponse";										to: "designAnalysisResponseVariable"}
+		ChangeRename {from: "FAassignedFactors";								to: "designAnalysisAssignedFactors"}
+		ChangeRename {from: "FArunOrder";										to: "designAnalysisRunOrder"}
+		ChangeRename {from: "enabledIntOrder";									to: "highestOrderInteractionTerm"}
+		ChangeRename {from: "intOrder";											to: "highestOrderInteractionTermValue"}
+		ChangeRename {from: "showAliasStructure2";								to: "aliasStructurePlots"}
+		ChangeRename {from: "resNorm";											to: "normalProbabilityResidualPlot"}
+		ChangeRename {from: "resHist";											to: "residualsHistogram"}
+		ChangeRename {from: "resFitted";										to: "residualsAgainstFittedValuesPlot"}
+		ChangeRename {from: "resOrder";											to: "residualsAgainstOrderPlot"}
+		ChangeRename {from: "runOrderPlot";										to: "residualsAgainstOrderPlotType"}
+
+		ChangeJS
+		{
+			name:		"residualsAgainstOrderPlotType"
+			jsFunction:	function(options)
+			{
+				switch(options["residualsAgainstOrderPlotType"])
+				{
+					case "runOrderStandardPlot":								return "standard";
+					case "runOrderRandomPlot":									return "run";
+				}
+			}
+		}
+
+		ChangeRename {from: "fourInOne";										to: "matrixResidualsPlot"}
+		
+	}
 }

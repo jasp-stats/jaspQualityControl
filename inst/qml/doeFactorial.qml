@@ -81,7 +81,7 @@ Form
 
 				IntegerField
 				{
-					name:						"numberHTCFactors"
+					name:						"factorialDesignTypeSplitPlotNumberHardToChangeFactors"
 					label:						qsTr("Number of hard-to-change factors")
 					visible:					factorialTypeSplit.checked
 					defaultValue:				1
