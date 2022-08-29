@@ -783,6 +783,35 @@ Upgrades
 		}
 
 		ChangeRename {from: "fourInOne";										to: "matrixResidualsPlot"}
+	}
+
+	// General Full Factorial Design
+	Upgrade
+	{
+		functionName:		"doeFull"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+
+		ChangeRename {from: "runOrderFull";										to: "runOrder"}
+
+		ChangeJS
+		{
+			name:		"runOrder"
+			jsFunction:	function(options)
+			{
+				switch(options["runOrder"])
+				{
+					case "runOrderRandom":										return "random";
+					case "runOrderStandard":									return "standard";
+				}
+			}
+		}
+
+		ChangeRename {from: "fullCornerReplicates";								to: "numberReplicationsCornerPoints"}
+		ChangeRename {from: "fullRepeatRuns";									to: "randomRunsNumberRepetitions"}
+		ChangeRename {from: "displayFullDesign";								to: "designPreviewTable"}
+		ChangeRename {from: "fileFull";											to: "file"}
+
 		
 	}
 }
