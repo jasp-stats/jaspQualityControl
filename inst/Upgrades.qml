@@ -809,6 +809,7 @@ Upgrades
 
 		ChangeRename {from: "fullCornerReplicates";								to: "numberReplicationsCornerPoints"}
 		ChangeRename {from: "fullRepeatRuns";									to: "randomRunsNumberRepetitions"}
+		ChangeRename {from: "fullRepeats";										to: "numberReplicationsCornerPointsRepetitionsOnly"}
 		ChangeRename {from: "displayFullDesign";								to: "designPreviewTable"}
 		ChangeRename {from: "fileFull";											to: "file"}
 
