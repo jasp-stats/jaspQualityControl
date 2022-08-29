@@ -661,7 +661,7 @@ doersmGenerateDesign <- function(options) {
     formula <- as.formula(paste0("~",  clean_designModel))
   }
 
-  inscribed <- options[["inscribed"]]
+  inscribed <- options[["inscribedDesign"]]
   oneblock  <- options[["oneBlock"]]
 
   # TODO: when is this not empty?
@@ -1032,7 +1032,7 @@ doersmGenerateDesign <- function(options) {
     jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]] <- contourPlot
     contourPlot$dependOn(c("rsmResponseVariables",
                "rsmBlocks",
-               "contour", "psi", "theta","pairs", "Component", "Point"))
+               "contourSurfacePlot", "contourSurfacePlotVerticalRotationAngle", "contourSurfacePlotHorizontalRotationAngle","pairs", "Component", "Point"))
   }else {
     contourPlot <- jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]]
   }
@@ -1042,7 +1042,7 @@ doersmGenerateDesign <- function(options) {
 
 
 
-  if (op_pair == 0 & options[["contour"]]) {
+  if (op_pair == 0 & options[["contourSurfacePlot"]]) {
     jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]][["1"]] <- createJaspPlot(width = 400, height = 400)
 
 
@@ -1080,7 +1080,7 @@ doersmGenerateDesign <- function(options) {
             width = 400, height = 400)
           plot$dependOn(c("rsmResponseVariables",
                           "rsmBlocks",
-                          "contour", "psi", "theta","pairs", "Component", "Point"))
+                          "contourSurfacePlot", "contourSurfacePlotVerticalRotationAngle", "contourSurfacePlotHorizontalRotationAngle","pairs", "Component", "Point"))
 
           jaspResults[[paste0("contourPlot", counter_in_main_for_loop)]][[paste0("plotObject", col)]] <- plot
 
@@ -1123,24 +1123,24 @@ doersmGenerateDesign <- function(options) {
           contour.fill <- function() {
             plot <- persp(heli.rsm, po,
                           at = point_spec_r, contours = "colors",
-                          col = rainbow(options["divide"]),
+                          col = rainbow(options["contourSurfacePlotNumberDivisions"]),
                           zlab = opt2,
                           box = T,
                           decode = F,
                           ticktype = "detailed",
-                          phi = options[["phi"]]*360,
-                          theta = (options[["theta"]]*360 + 330))
+                          phi = options[["contourSurfacePlotVerticalRotationAngle"]] * 360,
+                          theta = (options[["contourSurfacePlotHorizontalRotationAngle"]]*360 + 330))
             #mtext(plot[[1]][[4]][[5]])
-            if (options[["legend"]]){
+            if (options[["contourSurfacePlotLegend"]]){
               #Divide the difference between the upper and lower z-axis boundary by number of colours
-              z_step <- (plot[[1]][[5]][[2]] - plot[[1]][[5]][[1]])/(length(rainbow(options["divide"])))
+              z_step <- (plot[[1]][[5]][[2]] - plot[[1]][[5]][[1]])/(length(rainbow(options["contourSurfacePlotNumberDivisions"])))
               #Create a string of intervals corresponding to each colour
               string <- c()
-              for (i in 1:length(rainbow(options["divide"]))) {
+              for (i in 1:length(rainbow(options["contourSurfacePlotNumberDivisions"]))) {
                 string[i] <- paste0(as.character(round(plot[[1]][[5]][[1]]+(i-1)*z_step,1)), "-",
                                     as.character(round(plot[[1]][[5]][[1]]+i*z_step,1)))
               }
-              legend(x = "topright", legend = string, fill = rainbow(options["divide"]), text.width = 0.1, cex = 0.9)
+              legend(x = "topright", legend = string, fill = rainbow(options["contourSurfacePlotNumberDivisions"]), text.width = 0.1, cex = 0.9)
             }
 
           }
@@ -1152,11 +1152,11 @@ doersmGenerateDesign <- function(options) {
                     image = T,
                     at = point_spec_r,
                     contours = terrain.colors(5),
-                    decode = ifelse(options[["coded"]], F,T),
+                    decode = ifelse(options[["contourSurfacePlotCoded"]], FALSE, TRUE),
                     las = 1)
           }
 
-          if (options[["cplot"]]) {
+          if (options[["contourSurfacePlotTwoDimensional"]]) {
             plot$plotObject <- plot.contour
           }else {
             plot$plotObject <- contour.fill
@@ -1185,9 +1185,9 @@ doersmGenerateDesign <- function(options) {
                                             options[["rsmResponseVariables"]][[i]]))
 
   jaspResults[[paste0("fourInOne", i)]] <- fourInOne
-  fourInOne$dependOn(c("resNorm", "rsmBlocks",
+  fourInOne$dependOn(c("normalProbabilityResidualPlot", "rsmBlocks",
                        "rsmResponseVariables",
-                       "rsmVariables","modelTerms", "fourInOne"))
+                       "rsmVariables","modelTerms", "matrixResidualsPlot"))
 
   matrixPlot <- createJaspPlot(width = 1100, height = 800)
   plotMat <- matrix(list(), 1, 3)
@@ -1215,7 +1215,7 @@ doersmGenerateDesign <- function(options) {
                          width = 400, height = 400)
 
 
-  plot$dependOn(c("resNorm", "rsmBlocks",
+  plot$dependOn(c("normalProbabilityResidualPlot", "rsmBlocks",
                   "rsmResponseVariables",
                   "rsmVariables","modelTerms"))
   p <- jaspGraphs::plotQQnorm(resid(rsm))
@@ -1241,7 +1241,7 @@ doersmGenerateDesign <- function(options) {
     width = 400, height = 400)
   plot$dependOn(c("rsmResponseVariables",
                   "rsmBlocks",
-                  "res", "modelTerms"))
+                  "residualHistogram", "modelTerms"))
 
   x <- resid(rsm)
   h <- hist(x, plot = FALSE)
@@ -1269,7 +1269,7 @@ doersmGenerateDesign <- function(options) {
   }
   plot <- createJaspPlot(title = paste0("Residuals vs. Fitted Value for ", options[["rsmResponseVariables"]][[i]]),
                          width = 400, height = 400)
-  plot$dependOn(c("ResFitted","rsmBlocks",
+  plot$dependOn(c("residualsAgainstFittedValuesPlot","rsmBlocks",
                 "rsmResponseVariables",
                 "rsmVariables","modelTerms"))
 
@@ -1309,7 +1309,7 @@ doersmGenerateDesign <- function(options) {
                                        ),
                          width = 400, height = 400)
   jaspResults[[paste0("pareto", i)]] <- plot
-  plot$dependOn(c("pareto","rsmBlocks",
+  plot$dependOn(c("standardizedEffectParetoPlot","rsmBlocks",
                   "rsmResponseVariables",
                   "rsmVariables", "modelTerms"))
 
@@ -1334,7 +1334,7 @@ doersmGenerateDesign <- function(options) {
     TableContainer <- createJaspContainer()
     jaspResults[[paste0("TableContainer", i)]] <- TableContainer
 
-    TableContainer$dependOn(options = c("coef","modelTerms", "rsmBlocks",
+    TableContainer$dependOn(options = c("coefficientTable","modelTerms", "rsmBlocks",
                                              "rsmResponseVariables",
                                              "rsmVariables"))
   } else {
@@ -1696,9 +1696,9 @@ doersmGenerateDesign <- function(options) {
   Container <- createJaspContainer(title = paste0("Normal Plot of Standardized Effects for ",
                                         options[["rsmResponseVariables"]][[i]]))
   jaspResults[[paste0("NomralProbabilityPlot", i)]] <- Container
-  Container$dependOn(c("pareto","rsmBlocks",
+  Container$dependOn(c("standardizedEffectParetoPlot","rsmBlocks",
                   "rsmResponseVariables",
-                  "rsmVariables", "modelTerms", "normalPlot", "addGridlines"))
+                  "rsmVariables", "modelTerms", "standardizedEffectNormalPlot", "standardizedEffectNormalPlotGridLines"))
 
   Container[["plot"]] <- .qcProbabilityPlot(dataset = data, options = options, fit = rsm)
 
