@@ -18,7 +18,7 @@
 #' @export
 doeModifyDesign <- function(jaspResults, dataset, options, ...){
 
-  ready <- (length(options[["MDassignedFactors"]]) >= 2 && !is.null(options[["MDresponse"]]))
+  ready <- (length(options[["assignedFactors"]]) >= 2 && !is.null(options[["responseVariable"]]))
 
   if(ready){
 
@@ -37,13 +37,13 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
     return(dataset)
   } else {
     dataset <-
-      if(options[["MDrunOrder"]]!=""){
-        .readDataSetToEnd(columns.as.numeric = c(options[["MDresponse"]],
-                                                 options[["MDrunOrder"]],
-                                                 options[["MDassignedFactors"]]))
+      if(options[["runOrder"]]!=""){
+        .readDataSetToEnd(columns.as.numeric = c(options[["responseVariable"]],
+                                                 options[["runOrder"]],
+                                                 options[["assignedFactors"]]))
       } else {
-        .readDataSetToEnd(columns.as.numeric = c(options[["MDresponse"]],
-                                                 options[["MDassignedFactors"]]))
+        .readDataSetToEnd(columns.as.numeric = c(options[["responseVariable"]],
+                                                 options[["assignedFactors"]]))
       }
 
     return(dataset)
@@ -55,34 +55,34 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
   if(is.null(jaspResults[["showInputDesign"]])){
     table <- createJaspTable(gettext("Input Design"))
     table$position <- 1
-    table$dependOn(options = c("designBy",
-                               "MDassignedFactors",
-                               "MDresolution",
-                               "MDruns",
-                               "MDfraction",
-                               "MDrunOrder",
-                               "MDresponse",
-                               "MDcenterPoints",
+    table$dependOn(options = c("designOptionsType",
+                               "assignedFactors",
+                               "designOptionsTypeResolutionValue",
+                               "designOptionsTypeNumberOfRunsValue",
+                               "designOptionsTypeFractionValue",
+                               "runOrder",
+                               "responseVariable",
+                               "numberCenterPoints",
                                "MDrepeats",
-                               "dataCoding",
-                               "displayRunOrder",
-                               "repeatRuns",
-                               "showDesiredDesign"))
+                               "unitDisplay",
+                               "displayedRunOrder",
+                               "randomRunsNumberRepetitions",
+                               "desiredDesignTable"))
 
-    factors <- unlist(dataset[,options[["MDassignedFactors"]]], use.names = FALSE)
-    response <- unlist(dataset[,options[["MDresponse"]]], use.names = FALSE)
+    factors <- unlist(dataset[,options[["assignedFactors"]]], use.names = FALSE)
+    response <- unlist(dataset[,options[["responseVariable"]]], use.names = FALSE)
 
-    perF <- length(factors) / length(options[["MDassignedFactors"]])
+    perF <- length(factors) / length(options[["assignedFactors"]])
     factorsDF <- data.frame(split(factors, ceiling(seq_along(factors) / perF)))
 
     runOrder <-
-      if(!options[["MDrunOrder"]] == ""){
-        unlist(dataset[,options[["MDrunOrder"]]], use.names = FALSE)
+      if(!options[["runOrder"]] == ""){
+        unlist(dataset[,options[["runOrder"]]], use.names = FALSE)
       } else {
         1:nrow(factorsDF)
       }
 
-    if(options[["dataCoding"]] == "dataCoded"){
+    if(options[["unitDisplay"]] == "coded"){
       for(i in 1:ncol(factorsDF)){
         factorsDF[,i][factorsDF[,i] == min(factorsDF[,i])] <- -1
         factorsDF[,i][factorsDF[,i] == max(factorsDF[,i])] <- 1
@@ -101,7 +101,7 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
 
 .modifyDesignShowDesiredDesign <- function(jaspResults, dataset, options, inputDesign){
 
-  if(!options[["showDesiredDesign"]]){
+  if(!options[["desiredDesignTable"]]){
     jaspResults[["desiredDesign"]] <- NULL
     return()
   }
@@ -109,47 +109,47 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
   if(is.null(jaspResults[["desiredDesign"]])){
     table <- createJaspTable(gettext("Desired Design"))
     table$position <- 2
-    table$dependOn(options = c("designBy",
-                               "MDassignedFactors",
-                               "MDresolution",
-                               "MDruns",
-                               "MDfraction",
-                               "MDresponse",
-                               "MDcenterPoints",
+    table$dependOn(options = c("designOptionsType",
+                               "assignedFactors",
+                               "designOptionsTypeResolutionValue",
+                               "designOptionsTypeNumberOfRunsValue",
+                               "designOptionsTypeFractionValue",
+                               "responseVariable",
+                               "numberCenterPoints",
                                "MDrepeats",
-                               "dataCoding",
-                               "displayRunOrder",
-                               "showDesiredDesign"))
+                               "unitDisplay",
+                               "displayedRunOrder",
+                               "desiredDesignTable"))
 
-    if(options[["designBy"]] == "byRuns"){
-      desiredDesign <- FrF2::FrF2(nfactors = length(options[["MDassignedFactors"]]),
-                                  nruns = as.numeric(options[["MDruns"]]),
-                                  ncenter = options[["MDcenterPoints"]])
-    } else if(options[["designBy"]] == "byResolution"){
-      desiredDesign <- FrF2::FrF2(nfactors = length(options[["MDassignedFactors"]]),
-                                  resolution = if(options[["MDresolution"]] != "Full"){
-                                    as.numeric(as.roman(options[["MDresolution"]]))
+    if(options[["designOptionsType"]] == "numberOfRuns"){
+      desiredDesign <- FrF2::FrF2(nfactors = length(options[["assignedFactors"]]),
+                                  nruns = as.numeric(options[["designOptionsTypeNumberOfRunsValue"]]),
+                                  ncenter = options[["numberCenterPoints"]])
+    } else if(options[["designOptionsType"]] == "resolution"){
+      desiredDesign <- FrF2::FrF2(nfactors = length(options[["assignedFactors"]]),
+                                  resolution = if(options[["designOptionsTypeResolutionValue"]] != "Full"){
+                                    as.numeric(as.roman(options[["designOptionsTypeResolutionValue"]]))
                                   } else {
                                     999
                                   },
-                                  ncenter = options[["MDcenterPoints"]])
+                                  ncenter = options[["numberCenterPoints"]])
     } else {
-      desiredDesign <- FrF2::FrF2(nfactors = length(options[["MDassignedFactors"]]),
-                                  nruns = (2^length(options[["MDassignedFactors"]]) * as.numeric(options[["MDfraction"]])),
-                                  ncenter = options[["MDcenterPoints"]])
+      desiredDesign <- FrF2::FrF2(nfactors = length(options[["assignedFactors"]]),
+                                  nruns = (2^length(options[["assignedFactors"]]) * as.numeric(options[["designOptionsTypeFractionValue"]])),
+                                  ncenter = options[["numberCenterPoints"]])
     }
 
     desiredStdOrder <- DoE.base::run.order(desiredDesign)[,1]
     print(1:100)
     print(desiredStdOrder)
 
-    desiredDesign <- if(options[["MDcenterPoints"]] == 0){
+    desiredDesign <- if(options[["numberCenterPoints"]] == 0){
       sapply(desiredDesign, as.numeric)*2-3
     } else {
       sapply(desiredDesign, as.numeric)
     }
 
-    if(options[["dataCoding"]] == "dataUncoded"){
+    if(options[["unitDisplay"]] == "uncoded"){
       for(i in 1:ncol(desiredDesign)){
         desiredDesign[,i][desiredDesign[,i] == -1] <- min(inputDesign[,i])
         desiredDesign[,i][desiredDesign[,i] == 1] <- max(inputDesign[,i])
@@ -159,7 +159,7 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
     showDesiredDesign <- cbind.data.frame(1:nrow(desiredDesign), desiredStdOrder, desiredDesign)
     colnames(showDesiredDesign)[c(1,2)] <- c("Run order", "Standard order")
 
-    if(options[["displayRunOrder"]] == "runOrderStandard"){
+    if(options[["displayedRunOrder"]] == "standard"){
       showDesiredDesign <- showDesiredDesign[order(showDesiredDesign$`Standard order`),]
     }
 
@@ -175,13 +175,13 @@ doeModifyDesign <- function(jaspResults, dataset, options, ...){
   if(is.null(jaspResults[["showMissingRuns"]])){
     table <- createJaspTable(gettext("Missing Runs"))
     table$position <- 3
-    table$dependOn(options = c("designBy",
-                               "MDassignedFactors",
-                               "MDresolution",
-                               "MDruns",
-                               "MDfraction",
-                               "dataCoding",
-                               "showDesiredDesign"))
+    table$dependOn(options = c("designOptionsType",
+                               "assignedFactors",
+                               "designOptionsTypeResolutionValue",
+                               "designOptionsTypeNumberOfRunsValue",
+                               "designOptionsTypeFractionValue",
+                               "unitDisplay",
+                               "desiredDesignTable"))
 
     colnames(inputDesign) <- LETTERS[1:ncol(inputDesign)]
     colnames(desiredDesign) <- LETTERS[1:ncol(desiredDesign)]

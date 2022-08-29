@@ -812,7 +812,141 @@ Upgrades
 		ChangeRename {from: "fullRepeats";										to: "numberReplicationsCornerPointsRepetitionsOnly"}
 		ChangeRename {from: "displayFullDesign";								to: "designPreviewTable"}
 		ChangeRename {from: "fileFull";											to: "file"}
+	}
 
-		
+	// Response Surface Design
+	Upgrade
+	{
+		functionName:		"doeResponseSurfaceMethodology"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+
+		ChangeJS
+		{
+			name:		"designType"
+			jsFunction:	function(options)
+			{
+				switch(options["designType"])
+				{
+					case "cube":										return "cubePoints";
+					case "star":										return "axialPoints";
+				}
+			}
+		}
+
+		ChangeRename {from: "numberOfCubes";							to: "cubePointsNumber"}
+		ChangeRename {from: "numberOfStars";							to: "axialPointsNumber"}
+		ChangeRename {from: "inscribed";								to: "inscribedDesign"}
+		ChangeRename {from: "coded_out";								to: "codedOutput"}
+		ChangeRename {from: "alpha";									to: "alphaType"}
+
+		ChangeJS
+		{
+			name:		"alphaType"
+			jsFunction:	function(options)
+			{
+				switch(options["alphaType"])
+				{
+					case "Orthogonal":										return "orthogonal";
+					case "Rotatable":										return "rotatable";
+					case "Spherical":										return "spherical";
+					case "Faces":											return "faces";
+				}
+			}
+		}
+
+		ChangeJS
+		{
+			name:		"runOrder"
+			jsFunction:	function(options)
+			{
+				switch(options["runOrder"])
+				{
+					case "runOrderRandom":										return "random";
+					case "runOrderStandard":									return "standard";
+				}
+			}
+		}
+
+		ChangeRename {from: "designBlock";										to: "blockDesign"}
+		ChangeRename {from: "coef";												to: "coefficientTable"}
+		ChangeRename {from: "res";												to: "residualHistogram"}
+		ChangeRename {from: "resNorm";											to: "normalProbabilityResidualPlot"}
+		ChangeRename {from: "normalPlot";										to: "standardizedEffectNormalPlot"}
+		ChangeRename {from: "addGridlines";										to: "standardizedEffectNormalPlotGridLines"}
+		ChangeRename {from: "ResFitted";										to: "residualsAgainstFittedValuesPlot"}
+		ChangeRename {from: "pareto";											to: "standardizedEffectParetoPlot"}
+		ChangeRename {from: "fourInOne";										to: "matrixResidualsPlot"}
+		ChangeRename {from: "contour";											to: "contourSurfacePlot"}
+		ChangeRename {from: "cplot";											to: "contourSurfacePlotTwoDimensional"}
+		ChangeRename {from: "coded";											to: "contourSurfacePlotCoded"}
+		ChangeRename {from: "legend";											to: "contourSurfacePlotLegend"}
+		ChangeRename {from: "divide";											to: "contourSurfacePlotNumberDivisions"}
+		ChangeRename {from: "phi";												to: "contourSurfacePlotVerticalRotationAngle"}
+		ChangeRename {from: "theta";											to: "contourSurfacePlotHorizontalRotationAngle"}
+	}
+
+	// Define Custom Design
+	Upgrade
+	{
+		functionName:		"doeModifyDesign"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+
+		ChangeRename {from: "MDresponse";										to: "responseVariable"}
+		ChangeRename {from: "MDassignedFactors";								to: "assignedFactors"}
+		ChangeRename {from: "MDrunOrder";										to: "runOrder"}
+		ChangeRename {from: "dataCoding";										to: "unitDisplay"}
+
+		ChangeJS
+		{
+			name:		"unitDisplay"
+			jsFunction:	function(options)
+			{
+				switch(options["unitDisplay"])
+				{
+					case "dataCoded":										return "coded";
+					case "dataUncoded":										return "uncoded";
+				}
+			}
+		}
+
+		ChangeRename {from: "displayRunOrder";								to: "displayedRunOrder"}
+
+		ChangeJS
+		{
+			name:		"displayedRunOrder"
+			jsFunction:	function(options)
+			{
+				switch(options["displayedRunOrder"])
+				{
+					case "runOrderRandom":										return "random";
+					case "runOrderStandard":									return "standard";
+				}
+			}
+		}
+
+		ChangeRename {from: "designBy";											to: "designOptionsType"}
+
+		ChangeJS
+		{
+			name:		"designOptionsType"
+			jsFunction:	function(options)
+			{
+				switch(options["designOptionsType"])
+				{
+					case "byRuns":											return "numberOfRuns";
+					case "byResolution":									return "resolution";
+					case "byFraction":										return "fraction";	
+				}
+			}
+		}
+
+		ChangeRename {from: "MDresolution";									to: "designOptionsTypeResolutionValue"}
+		ChangeRename {from: "MDfraction";									to: "designOptionsTypeFractionValue"}
+		ChangeRename {from: "MDruns";										to: "designOptionsTypeNumberOfRunsValue"}
+		ChangeRename {from: "MDcenterPoints";								to: "numberCenterPoints"}
+		ChangeRename {from: "repeatRuns";									to: "randomRunsNumberRepetitions"}
+		ChangeRename {from: "showDesiredDesign";							to: "desiredDesignTable"}
 	}
 }
