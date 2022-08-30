@@ -949,4 +949,41 @@ Upgrades
 		ChangeRename {from: "repeatRuns";									to: "randomRunsNumberRepetitions"}
 		ChangeRename {from: "showDesiredDesign";							to: "desiredDesignTable"}
 	}
+
+	// Probability of Detection
+	Upgrade
+	{
+		functionName:		"probabilityOfDetection"
+		fromVersion:		"0.16.3"
+		toVersion:			"0.16.4"
+
+		ChangeRename {from: "covariates";									to: "covariate"}
+		ChangeRename {from: "wantsModelFitTable";							to: "modelFitTable"}
+		ChangeRename {from: "showData";										to: "detectionPlotDataDisplay"}
+		ChangeRename {from: "showDataGeom";									to: "detectionPlotDataDisplayType"}
+		ChangeRename {from: "addJitter";									to: "detectionPlotDataDisplayTypePointsJitter"}
+		ChangeRename {from: "showDensity";									to: "detectionPlotDensityDisplay"}
+		ChangeRename {from: "wantsConfidenceInterval";						to: "detectionPlotCi"}
+		ChangeRename {from: "confidenceIntervalValue";						to: "detectionPlotCiLevel"}
+		ChangeRename {from: "xTicks";										to: "xAxisTicksType"}
+
+		ChangeJS
+		{
+			name:		"xAxisTicksType"
+			jsFunction:	function(options)
+			{
+				switch(options["xAxisTicksType"])
+				{
+					case "data-based":										return "dataBased";
+					case "data + model-based":								return "dataAndModelBased";
+				}
+			}
+		}
+
+		ChangeRename {from: "logTransform";									to: "logTransformedCovariate"}
+
+
+
+
+	}
 }

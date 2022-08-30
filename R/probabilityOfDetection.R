@@ -34,7 +34,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
 .podReady <- function(options) {
   (!identical(options[["outcome"]], "")    && length(options[["outcome"]]) >= 1L) &&
-  (!identical(options[["covariates"]], "") && length(options[["covariates"]]) >= 1L)
+  (!identical(options[["covariate"]], "") && length(options[["covariate"]]) >= 1L)
 }
 
 .podReadData <- function(dataset, options, ready) {
@@ -46,9 +46,9 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     return(dataset)
 
   dataset <- .readDataSetToEnd(
-    columns.as.numeric  = options[["covariates"]],
+    columns.as.numeric  = options[["covariate"]],
     columns.as.factor   = unlist(options[["outcome"]]),
-    exclude.na.listwise = c(options[["covariates"]], unlist(options[["outcome"]]))
+    exclude.na.listwise = c(options[["covariate"]], unlist(options[["outcome"]]))
   )
 
   .podCheckErrors(dataset, options)
@@ -57,23 +57,23 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
     # poor man's reshaping (but not worth a package dependency)
     cnms <- colnames(dataset)
-    outcomeNms <- setdiff(cnms, options[["covariates"]])
+    outcomeNms <- setdiff(cnms, options[["covariate"]])
     dataset <- data.frame(
-      size    = dataset[[options[["covariates"]]]],
+      size    = dataset[[options[["covariate"]]]],
       outcome = unlist(dataset[outcomeNms], use.names = FALSE),
       id      = rep(outcomeNms, each = nrow(dataset))
     )
-    colnames(dataset)[1L] <- options[["covariates"]]
+    colnames(dataset)[1L] <- options[["covariate"]]
 
   } else {
     # call the outcome column outcome
     colnames(dataset)[colnames(dataset) == unlist(options[["outcome"]])] <- "outcome"
   }
 
-  if (options[["logTransform"]]) {
-    dataset[[options[["covariates"]]]] <- log(dataset[[options[["covariates"]]]])
+  if (options[["logTransformedCovariate"]]) {
+    dataset[[options[["covariate"]]]] <- log(dataset[[options[["covariate"]]]])
     # filter out any infinite values caused by the log transformation
-    dataset <- dataset[is.finite(dataset[[options[["covariates"]]]]), ]
+    dataset <- dataset[is.finite(dataset[[options[["covariate"]]]]), ]
   }
 
   return(na.omit(dataset))
@@ -82,7 +82,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
 .podCheckErrors <- function(dataset, options) {
 
-  allVariables <- c(options[["covariates"]], unlist(options[["outcome"]]))
+  allVariables <- c(options[["covariate"]], unlist(options[["outcome"]]))
   jaspBase::.hasErrors(
     dataset,
     type = c("infinity", "factorLevels", "variance", "observations"),
@@ -92,7 +92,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     factorLevels.amount  = " > 2",
     factorLevels.target  = unlist(options[["outcome"]]),
 
-    variance.target      = options[["covariates"]],
+    variance.target      = options[["covariate"]],
 
     observations.target  = allVariables,
     observations.amount  = " < 3",
@@ -100,8 +100,8 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     exitAnalysisIfErrors = TRUE
   )
 
-  if (options[["logarithmicXAxis"]] || options[["logTransform"]])
-    jaspBase::.hasErrors(dataset, type = "negativeValues", negativeValues.target = options[["covariates"]])
+  if (options[["logarithmicXAxis"]] || options[["logTransformedCovariate"]])
+    jaspBase::.hasErrors(dataset, type = "negativeValues", negativeValues.target = options[["covariate"]])
 
 }
 
@@ -111,7 +111,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     return(jaspResults[["mainContainer"]])
 
   container <- createJaspContainer()
-  container$dependOn(c("outcome", "covariates", "linkFunction", "logTransform"))
+  container$dependOn(c("outcome", "covariate", "linkFunction", "logTransformedCovariate"))
   jaspResults[["mainContainer"]] <- container
   return(container)
 
@@ -129,7 +129,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     return(NULL)
 
   model <- try(.podFitModel(
-    as.formula(paste("outcome ~", options[["covariates"]])),
+    as.formula(paste("outcome ~", options[["covariate"]])),
     dataset,
     options[["linkFunction"]]
   ))
@@ -141,7 +141,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
   } else {
 
-    mainTable[["parameters"]] <- c(gettext("Intercept"), unlist(options[["covariates"]]))
+    mainTable[["parameters"]] <- c(gettext("Intercept"), unlist(options[["covariate"]]))
     mainTable[["estimates"]]  <- coef(model)
 
     .podMainTableFootnotes(mainTable, model)
@@ -165,10 +165,10 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
 .podFitTable <- function(container, dataset, options, model, ready) {
 
-  if (!is.null(container[["fitTable"]]) || !options[["wantsModelFitTable"]])
+  if (!is.null(container[["fitTable"]]) || !options[["modelFitTable"]])
     return()
 
-  fitTable <- createJaspTable(gettext("Fit Table"), dependencies = "wantsModelFitTable", position = 2)
+  fitTable <- createJaspTable(gettext("Fit Table"), dependencies = "modelFitTable", position = 2)
   fitTable$addColumnInfo(name = "AIC",  title = gettext("AIC"), type = "number")
 
   container[["fitTable"]] <- fitTable
@@ -187,7 +187,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
   detectionPlot <- createJaspPlot(title = gettext("Detection Plot"), width = 600, height = 600, position = 3)
   detectionPlot$dependOn(c(
-    "showData", "showDataGeom", "wantsConfidenceInterval", "confidenceIntervalValue", "xTicks", "addJitter", "showDensity", "verticalAsymptotes",
+    "detectionPlotDataDisplay", "detectionPlotDataDisplayType", "detectionPlotCi", "detectionPlotCiLevel", "xAxisTicksType", "detectionPlotDataDisplayTypePointsJitter", "detectionPlotDensityDisplay", "verticalAsymptotes",
     "horizontalAsymptotes", "logarithmicXAxis"#, "logarithmicYAxis"
   ))
 
@@ -199,13 +199,13 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
     formula          = stats::formula(model),
     dataset          = dataset,
     model            = model,
-    xName            = if (options[["logTransform"]]) gettextf("log(%s)", options[["covariates"]]) else options[["covariates"]],
-    xBreaks          = options[["xTicks"]],
-    addJitter        = options[["addJitter"]],
-    geoms            = if (!options[["showData"]]) "none" else options[["showDataGeom"]],
-    showCI           = options[["wantsConfidenceInterval"]],
-    CIvalue          = options[["confidenceIntervalValue"]],
-    showDensity      = options[["showDensity"]],
+    xName            = if (options[["logTransformedCovariate"]]) gettextf("log(%s)", options[["covariate"]]) else options[["covariate"]],
+    xBreaks          = options[["xAxisTicksType"]],
+    addJitter        = options[["detectionPlotDataDisplayTypePointsJitter"]],
+    geoms            = if (!options[["detectionPlotDataDisplay"]]) "none" else options[["detectionPlotDataDisplayType"]],
+    showCI           = options[["detectionPlotCi"]],
+    CIvalue          = options[["detectionPlotCiLevel"]],
+    showDensity      = options[["detectionPlotDensityDisplay"]],
     xAsymptotes      = vapply(options[["verticalAsymptotes"]],   `[[`, FUN.VALUE = numeric(1), "verticalAsymptoteValue"),
     yAsymptotes      = vapply(options[["horizontalAsymptotes"]], `[[`, FUN.VALUE = numeric(1), "horizontalAsymptoteValue"),
     logarithmicXaxis = options[["logarithmicXAxis"]],
@@ -267,7 +267,7 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
   yName            = NULL,
   yBreaks          = ggplot2::waiver(),
   yLabels          = ggplot2::waiver(),
-  xBreaks          = c("data + model-based", "data-based"),
+  xBreaks          = c("dataAndModelBased", "dataBased"),
   dataColor        = "grey50",
   yAsymptoteColor  = "orange",
   xAsymptoteColor  = "green",
@@ -295,10 +295,10 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
 
   # determine the x-range here
   if (is.character(xBreaks)) {
-    if (xBreaks == "data-based") {
+    if (xBreaks == "dataBased") {
       xBreaks <- pretty(dataset[[xvar]])
       xLimits <- range(xBreaks)
-    } else if (xBreaks == "data + model-based") {
+    } else if (xBreaks == "dataAndModelBased") {
 
       xBreaks  <- jaspGraphs::getPrettyAxisBreaks(dataset[[xvar]])
       xLimits  <- range(xBreaks)
