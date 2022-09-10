@@ -19,25 +19,23 @@
 variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   # reading variables in from the GUI
   variables <- options$variables
-  splitName <- options$subgroups
-  subgroups <- unlist(options$subgroups)
-  makeSplit <- splitName != ""
+  stages <- options$split
+  subgroups <- options$subgroups
+  makeSplit <- subgroups != ""
 
   numeric_variables  <- variables[variables != ""]
+  factorVariables <- c(stages, subgroups)
+  factorVariables  <- factorVariables[factorVariables != ""]
 
   ready <- length(numeric_variables) == 1
 
   if (is.null(dataset)) {
-    if (options[["subgroups"]] != "") {
-      dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = splitName)
-      dataset.factors <- .readDataSetToEnd(columns=variables, columns.as.factor=splitName)
-    } else {
-      dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables)
-    }
+      dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = factorVariables)
+      dataset.factors <- .readDataSetToEnd(columns=variables, columns.as.factor = factorVariables)
   }
 
   if (makeSplit & ready) {
-    splitFactor      <- dataset[[.v(splitName)]]
+    splitFactor      <- dataset[[.v(subgroups)]]
     splitLevels      <- levels(splitFactor)
     # remove missing values from the grouping variable
     dataset <- dataset[!is.na(splitFactor), ]
@@ -85,7 +83,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
       for (var in variables) {
         ALL <- createJaspContainer(gettextf("X-mR control chart"))
-        IMR <- .IMRchart(dataset = dataset, options = options, variable = var, manualXaxis = subgroups)
+        IMR <- .IMRchart(dataset = dataset, options = options, variable = var, manualXaxis = subgroups, stages = stages)
         ALL[["Plot"]] <- IMR$p
         ALL[["Table1"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", name = gettextf("%s for Individuals", var), sixsigma = IMR$sixsigma_I, xLabels = IMR$xLabels)
         ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, name = gettextf("%s for Range", var), sixsigma = IMR$sixsigma_R, xLabels = IMR$xLabels, type = "Range")

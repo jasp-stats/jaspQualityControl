@@ -455,28 +455,29 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   }
 }
 
+# dataset <- read.csv("../../../../Google Drive/Dataset/AnalysisOfStages.csv")
+# variable <- "Bags"
+# stages <- "Split"
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> 2964ac0 (Fix decimal place calculation across data)
 .IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE) {
+=======
+.IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE,
+                      stages = "") {
+>>>>>>> 7fbe28a (Beginning analysis of stages)
 
   ppPlot <- createJaspPlot(width = 1000, height = 550)
-  #Individual chart
-  #data
-  if (measurements == "" & variable != ""){
-    ppPlot$dependOn(optionContainsValue = list(variables = variable))
-    data <- data.frame(process = dataset[[variable]])
-    sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
-    xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol)
-    sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
-  } else{
-    data <- as.vector((t(dataset[measurements])))
-    sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE)
-    xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2)
-    sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
+
+  if (stages == "") {
+    nStages <- 1
+  } else {
+    nStages <- length(unique(dataset[[stages]]))
   }
+<<<<<<< HEAD
   subgroups = c(1:length(sixsigma_I$statistics))
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -504,21 +505,67 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       gettextf("CL = %g",  round(center, decimals + 1)),
       gettextf("UCL = %g", round(UCL, decimals + 2)),
       gettextf("LCL = %g", round(LCL, decimals + 2))
+=======
+
+  plotMat <- matrix(list(), 2, nStages)
+
+  for (i in seq_len(nStages)) {
+    if (stages == "") {
+      dataForPlot <- dataset
+    } else {
+      dataForPlot <- subset(dataset, dataset[[stages]] == unique(dataset[[stages]])[i])
+    }
+
+    #Individual chart
+    #data
+    if (measurements == "" & variable != ""){
+      ppPlot$dependOn(optionContainsValue = list(variables = variable))
+      data <- data.frame(process = dataForPlot[[variable]])
+      sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE)
+      xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol)
+      sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
+    } else{
+      data <- as.vector((t(dataForPlot[measurements])))
+      sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE)
+      xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = 2)
+      sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
+    }
+    subgroups = c(1:length(sixsigma_I$statistics))
+    data_plot <- data.frame(subgroups = subgroups, process = sixsigma_I$statistics)
+    center <- sixsigma_I$center
+    UCL <- max(sixsigma_I$limits)
+    LCL <- min(sixsigma_I$limits)
+    if (options$manualTicks)
+      nxBreaks <- options$nTicks
+    else
+      nxBreaks <- 5
+    xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
+    xLimits <- c(1,max(xBreaks) * 1.15)
+    decimals <- max(sapply(sixsigma_I$data, .decimalplaces))
+    dfLabel <- data.frame(
+      x = max(xLimits) * 0.95,
+      y = c(center, UCL, LCL),
+      l = c(
+        gettextf("CL = %g",  round(center, decimals + 1)),
+        gettextf("UCL = %g", round(UCL, decimals + 2)),
+        gettextf("LCL = %g", round(LCL, decimals + 2))
+      )
+>>>>>>> 7fbe28a (Beginning analysis of stages)
     )
-  )
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$process, UCL))
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$process, UCL))
 
-  p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = process)) +
-    ggplot2::geom_hline(yintercept = center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-    ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-    ggplot2::scale_y_continuous(name = ifelse(variable != "" , gettextf("%s", variable), "Individual value"), breaks = yBreaks, limits = range(yBreaks)) +
-    ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
-    jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
+    p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = process)) +
+      ggplot2::geom_hline(yintercept = center, color = 'green') +
+      ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
+      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
+      ggplot2::scale_y_continuous(name = ifelse(variable != "" , gettextf("%s", variable), "Individual value"), breaks = yBreaks, limits = range(yBreaks)) +
+      ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
+      jaspGraphs::geom_line(color = "blue") +
+      jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
 
+<<<<<<< HEAD
   #Moving range chart
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -549,10 +596,27 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       gettextf("CL = %g", round(center, decimals + 1)),
       gettextf("UCL = %g",   round(UCL, decimals + 2)),
       gettextf("LCL = %g",   round(LCL, decimals + 2))
-    )
-  )
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$data2, UCL))
+=======
+    #Moving range chart
+    data_plot <- data.frame(subgroups = seq_len(length(sixsigma_R$statistics) + 1), data2 = c(NA, sixsigma_R$statistics))
 
+    center <- sixsigma_R$center
+    UCL <- max(sixsigma_R$limits)
+    LCL <- min(sixsigma_R$limits)
+    xLimits <- c(1,max(xBreaks) * 1.15)
+    dfLabel <- data.frame(
+      x = max(xLimits) * 0.95,
+      y = c(center, UCL, LCL),
+      l = c(
+        gettextf("CL = %g", round(center, decimals + 1)),
+        gettextf("UCL = %g",   round(UCL, decimals + 2)),
+        gettextf("LCL = %g",   round(LCL, decimals + 2))
+      )
+>>>>>>> 7fbe28a (Beginning analysis of stages)
+    )
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$data2, UCL))
+
+<<<<<<< HEAD
   p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data2)) +
     ggplot2::geom_hline(yintercept = center, color = 'green') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red",linetype = "dashed", size = 1.5) +
@@ -575,24 +639,36 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 >>>>>>> 175b396 (Helpfile for GaugeRRnonrep and fix xmr plot alignment of first observation)
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
+=======
+    p2 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = data2)) +
+      ggplot2::geom_hline(yintercept = center, color = 'green') +
+      ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red",linetype = "dashed", size = 1.5) +
+      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
+      ggplot2::scale_y_continuous(name = gettext("Moving Range"), breaks = yBreaks, limits = range(yBreaks)) +
+      ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
+      jaspGraphs::geom_line(color = "blue") +
+      jaspGraphs::geom_point(size = 4, fill = ifelse(c(NA, NelsonLaws(sixsigma_R)$red_points), 'red', 'blue')) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
+>>>>>>> 7fbe28a (Beginning analysis of stages)
 
-  if (manualXaxis != "") {
-    if (measurements != "") {
-      if (Wide)
-        xLabels <- as.vector(sapply(1:length(manualXaxis), function(x) {rep(manualXaxis[x], ncol(dataset[measurements]))}))
+    if (manualXaxis != "") {
+      if (measurements != "") {
+        if (Wide)
+          xLabels <- as.vector(sapply(1:length(manualXaxis), function(x) {rep(manualXaxis[x], ncol(dataForPlot[measurements]))}))
+        else
+          xLabels <- manualXaxis
+      }
       else
         xLabels <- manualXaxis
+
+      p1 <- p1 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
+      p2 <- p2 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
     }
-    else
-      xLabels <- manualXaxis
 
-    p1 <- p1 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
-    p2 <- p2 + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels[xBreaks])
+    plotMat[[1,i]] <- p1
+    plotMat[[2,i]] <- p2
   }
-
-  plotMat <- matrix(list(), 2, 1)
-  plotMat[[1,1]] <- p1
-  plotMat[[2,1]] <- p2
 
   if(!cowPlot){
     ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = plotMat, removeXYlabels= "x")

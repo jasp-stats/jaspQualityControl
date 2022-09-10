@@ -24,10 +24,18 @@ Form
 			allowedColumns:						["scale"]
 		}
 
-	  AssignedVariablesList
+		AssignedVariablesList
 		{
 			name:								"subgroups"
 			title:								qsTr("Axis labels")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
+		
+		AssignedVariablesList
+		{
+			name:								"split"
+			title:								qsTr("Split")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
