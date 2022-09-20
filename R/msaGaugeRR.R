@@ -232,7 +232,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
   RRtable2$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
   RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation"), type = "number")
-  RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("% Study Variation"), type = "integer")
+  RRtable2$addColumnInfo(name = "percentStudyVar", title = gettextf("%% Study Variation"), type = "integer")
   if(options[["gaugeToleranceEnabled"]])
     RRtable2$addColumnInfo(name = "percentTolerance", title = gettextf("%% Tolerance"), type = "integer")
 
@@ -842,10 +842,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 .gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE) {
   sources <- gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part'))
   if (!all(is.na(percentToleranceValues))){
-    references <- gettext(c('% Contribution', '% Study Variation', '% Tolerance'))
+    references <- gettextf(c('%% Contribution', '%% Study Variation', '%% Tolerance'))
     values <- c(percentContributionValues, studyVariationValues, percentToleranceValues)
   }else{
-    references <- gettext(c('% Contribution', '% Study Variation'))
+    references <- gettextf(c('%% Contribution', '%% Study Variation'))
     values <- c(percentContributionValues, studyVariationValues)
   }
   plotframe <- data.frame(source = rep(sources, length(references)),
