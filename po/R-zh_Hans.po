@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-06-02 13:05\n"
+"POT-Creation-Date: 2022-09-24 04:22\n"
 "PO-Revision-Date: 2022-09-21 16:15+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -652,7 +652,8 @@ msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效�
 msgid ""
 "Every unique part must have one corresponding reference value. %i reference "
 "values were found for %s unique parts."
-msgstr "每一个零件必须有一个对应的参考值。找到了 %2$s 每一个零件的 %1$i 参考值。"
+msgstr ""
+"每一个零件必须有一个对应的参考值。找到了 %2$s 每一个零件的 %1$i 参考值。"
 
 msgid "Reference"
 msgstr "参考值"
@@ -739,8 +740,8 @@ msgstr "标准差"
 msgid "Study Variation"
 msgstr "研究变异"
 
-msgid "% Study Variation"
-msgstr "% 研究变异"
+msgid "%% Study Variation"
+msgstr "%% 研究变异"
 
 msgid "%% Tolerance"
 msgstr "%% 公差"
@@ -828,12 +829,6 @@ msgstr "重复性"
 msgid "Reprod"
 msgstr "再现性"
 
-msgid "% Contribution"
-msgstr "% 贡献"
-
-msgid "% Tolerance"
-msgstr "% 公差"
-
 msgid "Measurement systems analysis"
 msgstr "测量系统分析"
 
@@ -869,9 +864,6 @@ msgstr "均方"
 
 msgid "Variation"
 msgstr "方差"
-
-msgid "%% Study Variation"
-msgstr "%% 研究变异"
 
 msgid "Total Gauge r & R"
 msgstr "总量具 r&R"
@@ -1310,6 +1302,15 @@ msgstr "副标题：%s"
 
 msgid "Name of chart: %s"
 msgstr "图形名称：%s"
+
+#~ msgid "% Study Variation"
+#~ msgstr "% 研究变异"
+
+#~ msgid "% Contribution"
+#~ msgstr "% 贡献"
+
+#~ msgid "% Tolerance"
+#~ msgstr "% 公差"
 
 #~ msgid "Normal Plot of Standardized Effects"
 #~ msgstr "标准化效应正态图"

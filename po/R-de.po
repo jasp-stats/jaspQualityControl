@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
-"POT-Creation-Date: 2022-06-02 13:05\n"
+"POT-Creation-Date: 2022-09-24 04:22\n"
 "PO-Revision-Date: 2022-09-15 08:21+0000\n"
 "Last-Translator: Thomas Langkamp <thomas.lassdiesonnerein@gmx.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -750,7 +750,7 @@ msgstr "Std.-Abweichung"
 msgid "Study Variation"
 msgstr "Streuung von Studienergebnissen"
 
-msgid "% Study Variation"
+msgid "%% Study Variation"
 msgstr ""
 
 msgid "%% Tolerance"
@@ -840,12 +840,6 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
-msgid "% Contribution"
-msgstr ""
-
-msgid "% Tolerance"
-msgstr "% Toleranz"
-
 #, fuzzy
 msgid "Measurement systems analysis"
 msgstr "Messsystemanalyse"
@@ -881,9 +875,6 @@ msgid "Mean Square"
 msgstr "Mittlere Quadratsumme"
 
 msgid "Variation"
-msgstr ""
-
-msgid "%% Study Variation"
 msgstr ""
 
 msgid "Total Gauge r & R"
@@ -1326,6 +1317,9 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "% Tolerance"
+#~ msgstr "% Toleranz"
 
 #~ msgid "% Bias"
 #~ msgstr "% Verzerrung"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16.4\n"
-"POT-Creation-Date: 2022-09-17 04:11\n"
+"POT-Creation-Date: 2022-09-24 04:22\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -700,7 +700,7 @@ msgstr ""
 msgid "Study Variation"
 msgstr ""
 
-msgid "% Study Variation"
+msgid "%% Study Variation"
 msgstr ""
 
 msgid "%% Tolerance"
@@ -784,12 +784,6 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
-msgid "% Contribution"
-msgstr ""
-
-msgid "% Tolerance"
-msgstr ""
-
 msgid "Measurement systems analysis"
 msgstr ""
 
@@ -824,9 +818,6 @@ msgid "Mean Square"
 msgstr ""
 
 msgid "Variation"
-msgstr ""
-
-msgid "%% Study Variation"
 msgstr ""
 
 msgid "Total Gauge r & R"
