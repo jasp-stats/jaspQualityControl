@@ -1,8 +1,8 @@
 Package: jaspProcessControl
 Type: Package
 Title: Quality Control Module for JASP
-Version: 0.16.4
-Date: 2022-09-12
+Version: 0.17.0
+Date: 2022-10-05
 Author: JASP Team
 Website: https://github.com/jasp-stats/jaspProcessControl
 Maintainer: JASP <info@jasp-stats.org>
