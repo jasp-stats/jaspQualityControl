@@ -944,7 +944,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table3 <- createJaspTable(title = gettextf("Non-conformance statistics"))
 
-  table3$addColumnInfo(name = "rowNames", type = "string", title = gettext(""))
+  table3$addColumnInfo(name = "rowNames", type = "string", title = "")
   table3$addColumnInfo(name = "observed", type = "number", title = gettext("Observed"))
   table3$addColumnInfo(name = "expOverall", type = "number", title = gettext("Expected overall"))
 
