@@ -71,7 +71,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
+        jaspResults[["NelsonTable"]] <- createJaspContainer("")
         jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Pchart$sixsigma, name = "P", xLabels = xLabs)
         jaspResults[["NelsonTable"]]$dependOn(dependedDefectives)
         jaspResults[["NelsonTable"]]$position <- 2
@@ -87,7 +87,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
+        jaspResults[["NelsonTable"]] <- createJaspContainer("")
         jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = NPchart$sixsigma, name = "np", xLabels = xLabs)
         jaspResults[["NelsonTable"]]$position <- 2
         jaspResults[["NelsonTable"]]$dependOn(dependedDefectives)
@@ -102,7 +102,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
       jaspResults[["LaneyPPlot"]]$dependOn(dependedDefectives)
 
       if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspPlot(title =  gettext(""), position = 2)
+        jaspResults[["NelsonTable"]] <- createJaspPlot(title =  "", position = 2)
         jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Lanychart$sixsigma, name = "Laney p'", xLabels = xLabs)
         jaspResults[["NelsonTable"]]$dependOn(dependedDefectives)
       }
@@ -138,7 +138,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTable"]])) {
-        jaspResults[["NelsonTable"]] <- createJaspContainer(gettext(""))
+        jaspResults[["NelsonTable"]] <- createJaspContainer("")
         jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = Uchart$sixsigma, name = "u", xLabels = xLabs)
         jaspResults[["NelsonTable"]]$dependOn(dependedDefects)
         jaspResults[["NelsonTable"]]$position <- 2
@@ -151,7 +151,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
       LanyUchart <- .LanyU(dataset = dataset, options = options, timeStamp = timeStamp)
       jaspResults[["LaneyUPlot"]]$plotObject <- PlotReport <- LanyUchart$p
 
-      jaspResults[["NelsonTable"]] <- createJaspContainer(title =  gettext(""), position = 2)
+      jaspResults[["NelsonTable"]] <- createJaspContainer(title = "", position = 2)
       jaspResults[["NelsonTable"]] <- .NelsonTable(dataset = dataset, options = options, sixsigma = LanyUchart$sixsigma, name = "Laney u'", xLabels = xLabs)
       jaspResults[["NelsonTable"]]$dependOn(dependedDefects)
     }
@@ -165,7 +165,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
     # Nelson tests tables
     if (is.null(jaspResults[["NelsonTableIMR"]])) {
-      NelsonTables <- createJaspContainer(title =  gettext(""), position = 2)
+      NelsonTables <- createJaspContainer(title =  "", position = 2)
       NelsonTables$dependOn(c("D", "total", "Attributes", "timeStamp"))
 
 
