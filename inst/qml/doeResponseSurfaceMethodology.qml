@@ -20,9 +20,7 @@ import JASP.Widgets 							1.0
 
 Form 
 {
-	columns:									2
-
-
+	columns: 2
 
 	GroupBox
 	{
@@ -30,62 +28,62 @@ Form
 		name:									"designInfo"
 		columns:								1
 
-		    IntegerField
+		IntegerField
+		{
+			id:									numberOfFactors
+			name:								"numberOfFactors"
+			label:								qsTr("Number of factors")
+			defaultValue:						2
+			min:								2
+			max:								256
+		}
+
+		RadioButtonGroup
+		{
+			columns: 							1
+			name:								"designType"
+			title:								qsTr("Define levels")
+
+			RadioButton
 			{
-				id:									numberOfFactors
-				name:								"numberOfFactors"
-				label:								qsTr("Number of factors")
-				defaultValue:						2
-				min:								2
-				max:								256
+				id:								cube
+				name:							"cube"
+				label:							qsTr("Cube points")
+				checked:						true
+				childrenOnSameRow: 				true
+
+				IntegerField
+				{
+
+					id:							numberOfCubes
+					name:						"numberOfCubes"
+					defaultValue:				3
+					min:						0
+					max:						256
+				}
+
+			}
+
+			RadioButton
+			{
+				id:								star
+				name:							"star"
+				label:							qsTr("Axial points")
+				childrenOnSameRow: 				true
+				
+
+				IntegerField
+				{
+
+					id:							numberOfStars
+					name:						"numberOfStars"
+					defaultValue:				numberOfFactors.value * 2
+					min:						0
+					max:						256
+				}
 			}
 			
-			RadioButtonGroup
-			{
-				columns: 							1
-				name:								"designType"
-				title:                              qsTr("Define levels")
-
-				RadioButton
-				{
-					id:								cube
-					name:							"cube"
-					label:							qsTr("Cube points")
-					checked:						true
-					childrenOnSameRow: 				true
-
-					IntegerField
-					{
-			
-						id:									numberOfCubes
-						name:								"numberOfCubes"
-						defaultValue:						3
-						min:								0
-						max:								256
-					}
-			
-				}
-				
-				RadioButton
-				{
-					id:								star
-					name:							"star"
-					label:							qsTr("Axial points")
-					childrenOnSameRow: 				true
-				
-
-					IntegerField
-					{
-			
-						id:									numberOfStars
-						name:								"numberOfStars"
-						defaultValue:						numberOfFactors.value * 2
-						min:								0
-						max:								256
-					}
-				}
-			
-			}
+		}
 
 		//	IntegerField
 		//	{
@@ -98,315 +96,309 @@ Form
 		//		visible: 							cube.checked
 		//	}
 
-		Group {
-			
+		Group
+		{
 			title:								qsTr("Design options")
 
 			CheckBox
 			{
-				id:									inscribed
-				name:								"inscribed"
-				label:								qsTr("Inscribed design")
-				enabled:							cube.checked
-				checked: 							(cube.checked) ? false : false
-			
+				id:								inscribed
+				name:							"inscribed"
+				label:							qsTr("Inscribed design")
+				enabled:						cube.checked
+				checked: 						(cube.checked) ? false : false
+
 			}
 			
 			CheckBox
 			{
-				id:									oneBlock
-				name:								"oneBlock"
-				label:								qsTr("Force one block")
-				visible:							false
+				id:								oneBlock
+				name:							"oneBlock"
+				label:							qsTr("Force one block")
+				visible:						false
 			}
 			
-			CheckBox 
+			CheckBox
 			{
-				id:									noModel
-				name:								"noModel"
-				label:								qsTr("Use # of variables instead of model")
-				enabled:							cube.checked
-				checked: 							true
-				visible: 							false
+				id:								noModel
+				name:							"noModel"
+				label:							qsTr("Use # of variables instead of model")
+				enabled:						cube.checked
+				checked: 						true
+				visible: 						false
 			}
 			
-			CheckBox 
+			CheckBox
 			{
-				id:									block
-				name:								"block"
-				label:								qsTr("Introduce blocking")
-				enabled:							cube.checked
-				checked: 							(cube.checked) ? false : false
+				id:								block
+				name:							"block"
+				label:							qsTr("Introduce blocking")
+				enabled:						cube.checked
+				checked: 						(cube.checked) ? false : false
 			}
 			
-			CheckBox 
+			CheckBox
 			{
-				id:									coded_out
-				name:								"coded_out"
-				label:								qsTr("Coded output")
+				id:								coded_out
+				name:							"coded_out"
+				label:							qsTr("Coded output")
 			}
 			
 			
 			DropDown
 			{
-			  name: 								"alpha"
-			  indexDefaultValue: 					0
-			  label:								qsTr("Alpha type")
-			  values: 								["Orthogonal", "Rotatable", "Spherical", "Faces"]
-			  enabled:								star.checked
+				name: 							"alpha"
+				indexDefaultValue: 				0
+				label:							qsTr("Alpha type")
+				values: 						["Orthogonal", "Rotatable", "Spherical", "Faces"]
+				enabled:						star.checked
 			}
 
 			IntegerField
 			{
-				visible:                            false
-				id:                                 numberOfFactorsForTable
-				name:                               "numberOfFactorsForTable"
-				defaultValue:                       numberOfFactors.value
+				visible:						false
+				id:								numberOfFactorsForTable
+				name:							"numberOfFactorsForTable"
+				defaultValue:					numberOfFactors.value
 			}
 		}
-			
 
-			RadioButtonGroup
+
+		RadioButtonGroup
+		{
+			name:								"runOrder"
+			title:								qsTr("Run Order")
+
+			RadioButton
 			{
-				name:                                   "runOrder"
-				title:                                  qsTr("Run Order")
+				SetSeed{}
+				name:							"runOrderRandom"
+				label:							qsTr("Random")
+				checked:						true
+			}
 
-				RadioButton
-				{
-					SetSeed{}
-					name:                               "runOrderRandom"
-					label:                              qsTr("Random")
-					checked:                            true
-				}
+			RadioButton
+			{
+				name:							"runOrderStandard"
+				label:							qsTr("Standard")
+			}
+		}
 
-				RadioButton
-				{
-					name:                              "runOrderStandard"
-					label:                              qsTr("Standard")
-				}
-
+		//		DropDown
+		//		{
+		//			debug:								true
+		//			id:									numberOfLevels
+		//			name:								"numberOfLevels"
+		//			label:								qsTr("Number of factor levels")
+		//			indexDefaultValue:					0
+		//			values:
+		//			[
+		//				{ value: "2",		label: qsTr("2")}
+		//				{ value: "3",		label: qsTr("3")},
+		//				{ value: "Mixed",	label: qsTr("Mixed")}
+		//			]
+		//		}
 	}
-			
-			
 
-	//		DropDown
-	//		{
-	//            debug:                              true
-	//            id:                                 numberOfLevels
-	//            name:                               "numberOfLevels"
-	//            label:                              qsTr("Number of factor levels")
-	//            indexDefaultValue:                  0
-	//			values:
-	//				[
-	//				{ value: "2", label: qsTr("2")}
-	//				//            { value: "3", label: qsTr("3")},
-	//				//            { value: "Mixed", label: qsTr("Mixed")}
-	//			]
-//			}
+	ColumnLayout
+	{
+		spacing:								0
+		Layout.preferredWidth:					parent.width
+		Layout.columnSpan:						2
+
+		RowLayout
+		{
+			Label { text: qsTr("Factor");		Layout.leftMargin: 5 * preferencesModel.uiScale;		Layout.preferredWidth: 42 * preferencesModel.uiScale}
+			Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
+			Label { text: qsTr("Low");			Layout.preferredWidth: 100 * preferencesModel.uiScale}
+			Label { text: qsTr("High");			Layout.preferredWidth: 100 * preferencesModel.uiScale}
 		}
 
-		ColumnLayout
+		ComponentsList
 		{
-			spacing:                                0
-			Layout.preferredWidth:					parent.width
-			Layout.columnSpan:						2
+			name:								"factors"
+			addItemManually:					false
+			values:								numberOfFactorsForTable.value // update only when numberOfFactors.value gets "entered"
 
-			RowLayout
+			rowComponent: 						RowLayout
 			{
-				Label { text: qsTr("Factor");			Layout.leftMargin: 5 * preferencesModel.uiScale;		Layout.preferredWidth: 42 * preferencesModel.uiScale}
-				Label { text: qsTr("Name");				Layout.preferredWidth: 150 * preferencesModel.uiScale}
-				Label { text: qsTr("Low");			Layout.preferredWidth: 100 * preferencesModel.uiScale}
-				Label { text: qsTr("High");	Layout.preferredWidth: 100 * preferencesModel.uiScale}
-	//			Label { visible: 					numberOfLevels.currentIndex == 1;
-	//                    text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
-			}
-
-			ComponentsList
-			{
-				name:								"factors"
-				addItemManually:                    false
-				values:                             numberOfFactorsForTable.value // update only when numberOfFactors.value gets "entered"
-
-				rowComponent: 						RowLayout
+				Row
 				{
-					Row
+					spacing:					5 * preferencesModel.uiScale
+					Layout.preferredWidth:		40 * preferencesModel.uiScale
+					Label
 					{
-						spacing:					5 * preferencesModel.uiScale
-						Layout.preferredWidth:		40 * preferencesModel.uiScale
-						Label
-						{
-							text: 					qsTr("x") + (rowIndex + 1)
-						}
+						text: 					qsTr("x") + (rowIndex + 1)
 					}
-					Row //Factor
-					{
-						spacing:					5 * preferencesModel.uiScale
-						Layout.preferredWidth:		100 * preferencesModel.uiScale
-
-						TextField
-						{
-							id:						factorName
-							label: 					""
-							name: 					"factorName"
-							placeholderText:		qsTr("Factor name ") + (rowIndex + 1)
-							fieldWidth:				100 * preferencesModel.uiScale
-							useExternalBorder:		false
-							showBorder:				true
-							
-						}
-					}
-					Row //Level1
-					{
-						spacing:					5 * preferencesModel.uiScale
-						Layout.preferredWidth:		100 * preferencesModel.uiScale
-						DoubleField 
-						{
-							label:					""
-							name:					"centre"
-							fieldWidth:				100 * preferencesModel.uiScale
-							negativeValues:			true
-						}
-						
-					}
-					Row //Level2
-					{
-						spacing:					5 * preferencesModel.uiScale
-						Layout.preferredWidth:		100 * preferencesModel.uiScale
-						DoubleField 
-						{
-							label:					""
-							name:					"distance"
-							fieldWidth:				100 * preferencesModel.uiScale
-							defaultValue:			1
-						}
-					}
-	//				Row //Level3
-	//				{
-	//					visible:					[1].includes(numberOfLevels.currentIndex)
-	//					spacing:					5 * preferencesModel.uiScale
-	//					Layout.preferredWidth:		100 * preferencesModel.uiScale
-	//					TextField
-	//					{
-	//						label: 					""
-	//						name: 					"high2"
-	//						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
-	//						fieldWidth:				100 * preferencesModel.uiScale
-	//						useExternalBorder:		false
-	//						showBorder:				true
-	//					}
-	//				}
 				}
+				Row //Factor
+				{
+					spacing:					5 * preferencesModel.uiScale
+					Layout.preferredWidth:		100 * preferencesModel.uiScale
+
+					TextField
+					{
+						id:						factorName
+						label: 					""
+						name: 					"factorName"
+						placeholderText:		qsTr("Factor name ") + (rowIndex + 1)
+						fieldWidth:				100 * preferencesModel.uiScale
+						useExternalBorder:		false
+						showBorder:				true
+
+					}
+				}
+				Row //Level1
+				{
+					spacing:					5 * preferencesModel.uiScale
+					Layout.preferredWidth:		100 * preferencesModel.uiScale
+					DoubleField
+					{
+						label:					""
+						name:					"centre"
+						fieldWidth:				100 * preferencesModel.uiScale
+						negativeValues:			true
+					}
+
+				}
+				Row //Level2
+				{
+					spacing:					5 * preferencesModel.uiScale
+					Layout.preferredWidth:		100 * preferencesModel.uiScale
+					DoubleField
+					{
+						label:					""
+						name:					"distance"
+						fieldWidth:				100 * preferencesModel.uiScale
+						defaultValue:			1
+					}
+				}
+				//				Row //Level3
+				//				{
+				//					visible:					[1].includes(numberOfLevels.currentIndex)
+				//					spacing:					5 * preferencesModel.uiScale
+				//					Layout.preferredWidth:		100 * preferencesModel.uiScale
+				//					TextField
+				//					{
+				//						label: 					""
+				//						name: 					"high2"
+				//						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
+				//						fieldWidth:				100 * preferencesModel.uiScale
+				//						useExternalBorder:		false
+				//						showBorder:				true
+				//					}
+				//				}
 			}
 		}
-		
+	}
+
 	
-		TextArea 
-		{
-			id:									designModel
-			name:								"designModel"
-			title:								"Specify model for CCD"
-			height:                     		100 * preferencesModel.uiScale
-			width:                      		250 * preferencesModel.uiScale
-			visible:							cube.checked && !noModel.checked
-		}
-		
-		IntegerField
-		{
+	TextArea
+	{
+		id:										designModel
+		name:									"designModel"
+		title:									qsTr("Specify model for CCD")
+		height:									100 * preferencesModel.uiScale
+		width:									250 * preferencesModel.uiScale
+		visible:								cube.checked && !noModel.checked
+	}
 
+	IntegerField
+	{
+		visible:								false
+		id:										numberOfGeneratorsForTable
+		name:									"numberOfGeneratorsForTable"
+		defaultValue:							numberOfGenerators.value
+	}
 
-			visible:                            false
-			id:                                 numberOfGeneratorsForTable
-			name:                               "numberOfGeneratorsForTable"
-			defaultValue:                       numberOfGenerators.value
-		}
-		
-		ColumnLayout
-		{
-			spacing:                                0
-			Layout.preferredWidth:					parent.width
-			Layout.columnSpan:						2
+	ColumnLayout
+	{
+		spacing:								0
+		Layout.preferredWidth:					parent.width
+		Layout.columnSpan:						2
 
 		//	RowLayout
 		//	{
-				
+
 		//		Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale; visible: cube.checked }
 		//		Label { text: qsTr("Formula");		Layout.preferredWidth: 100 * preferencesModel.uiScale; visible: cube.checked }
 
 		//	}
 
-			ComponentsList
+		ComponentsList
+		{
+			name:								"generators"
+			addItemManually:					false
+			values:								numberOfGeneratorsForTable.value //
+			visible:							cube.checked
+
+			rowComponent: 						RowLayout
 			{
-				name:								"generators"
-				addItemManually:                    false
-				values:                             numberOfGeneratorsForTable.value //
-				visible:							cube.checked 
 
-				rowComponent: 						RowLayout
+
+
+				Row
 				{
+					spacing:					5 * preferencesModel.uiScale
+					Layout.preferredWidth:		100 * preferencesModel.uiScale
 
-
-
-					Row 
+					TextField
 					{
-						spacing:					5 * preferencesModel.uiScale
-						Layout.preferredWidth:		100 * preferencesModel.uiScale
-
-						TextField
-						{
-							id:						generatorName
-							label: 					""
-							placeholderText:		qsTr("Generator name")
-							name: 					"generatorName"
-							fieldWidth:				100 * preferencesModel.uiScale
-							useExternalBorder:		false
-							showBorder:				true
-						}
+						id:						generatorName
+						label: 					""
+						placeholderText:		qsTr("Generator name")
+						name: 					"generatorName"
+						fieldWidth:				100 * preferencesModel.uiScale
+						useExternalBorder:		false
+						showBorder:				true
 					}
-					Row //Level1
-					{
-						spacing:					5 * preferencesModel.uiScale
-						Layout.preferredWidth:		100 * preferencesModel.uiScale
-						TextField
-						{
-							label: 					""
-							name: 					"generatorFormula"
-							placeholderText:		qsTr("Generator formula")
-							fieldWidth:				100 * preferencesModel.uiScale
-							useExternalBorder:		false
-							showBorder:				true
-						}
-					}
-
-	//				Row //Level3
-	//				{
-	//					visible:					[1].includes(numberOfLevels.currentIndex)
-	//					spacing:					5 * preferencesModel.uiScale
-	//					Layout.preferredWidth:		100 * preferencesModel.uiScale
-	//					TextField
-	//					{
-	//						label: 					""
-	//						name: 					"high2"
-	//						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
-	//						fieldWidth:				100 * preferencesModel.uiScale
-	//						useExternalBorder:		false
-	//						showBorder:				true
-	//					}
-	//				}
 				}
+				Row //Level1
+				{
+					spacing:					5 * preferencesModel.uiScale
+					Layout.preferredWidth:		100 * preferencesModel.uiScale
+					TextField
+					{
+						label: 					""
+						name: 					"generatorFormula"
+						placeholderText:		qsTr("Generator formula")
+						fieldWidth:				100 * preferencesModel.uiScale
+						useExternalBorder:		false
+						showBorder:				true
+					}
+				}
+
+				//				Row //Level3
+				//				{
+				//					visible:					[1].includes(numberOfLevels.currentIndex)
+				//					spacing:					5 * preferencesModel.uiScale
+				//					Layout.preferredWidth:		100 * preferencesModel.uiScale
+				//					TextField
+				//					{
+				//						label: 					""
+				//						name: 					"high2"
+				//						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
+				//						fieldWidth:				100 * preferencesModel.uiScale
+				//						useExternalBorder:		false
+				//						showBorder:				true
+				//					}
+				//				}
 			}
 		}
-		
-		TextArea 
-		{
-			id:									designBlock
-			name:								"designBlock"
-			title:								"Specify blocks for CCD"
-			height:                     		100 * preferencesModel.uiScale
-			width:                      		250 * preferencesModel.uiScale
-			visible:							cube.checked && block.checked
-		}
+	}
 
-		Group{
+	TextArea
+	{
+		id:									designBlock
+		name:								"designBlock"
+		title:								qsTr("Specify blocks for CCD")
+		height:								100 * preferencesModel.uiScale
+		width:								250 * preferencesModel.uiScale
+		visible:							cube.checked && block.checked
+	}
+
+	Group
+	{
 
 		Button
 		{
@@ -417,137 +409,93 @@ Form
 			onClicked: 							buildDesignInv.click()
 		}
 		
-		CheckBox 
+		CheckBox
 		{
-			id:									buildDesignInv	
+			id:									buildDesignInv
 			name:								"buildDesignInv"
 			visible:							false
 		}
 		
-		}
+	}
 
-	Section 
+	Section
 	{
 		title: qsTr("Design Analysis")
 
-	VariablesForm
-	{
-		AvailableVariablesList { name: "rsmVariablesList" }
-		AssignedVariablesList
+		VariablesForm
 		{
-			name: "rsmVariables"
-			title: qsTr("Predictors [Location in coded format]")
-			suggestedColumns:   ["scale", "ordinal"]
-
-			rowComponent: Row
+			AvailableVariablesList { name: "rsmVariablesList" }
+			AssignedVariablesList
 			{
-				DoubleField {name: "Point_P"; negativeValues: true}
+				name: "rsmVariables"
+				title: qsTr("Predictors [Location in coded format]")
+				suggestedColumns: ["scale", "ordinal"]
+
+				rowComponent: Row
+				{
+					DoubleField {name: "Point_P"; negativeValues: true}
+				}
+
+
 			}
-
-
+			AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");			suggestedColumns: ["scale", "ordinal"]}
+			AssignedVariablesList  { name: "rsmBlocks";				title: qsTr("Blocks (optional)");	suggestedColumns: ["ordinal", "nominal", "scale", "nominalText"];	singleVariable: true}
 		}
-		AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");  suggestedColumns:   ["scale", "ordinal"]}
-		AssignedVariablesList  { name: "rsmBlocks";	            title: qsTr("Blocks (optional)");    suggestedColumns:   ["ordinal", "nominal", "scale", "nominalText"]; singleVariable: true}
-	}
 
 
-	VariablesForm
-	{
-		preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-		AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
-		ModelTermsList
+		VariablesForm
 		{
-
-			listViewType			: JASP.Interaction
-			rowComponentTitle		: qsTr("Term Type")
-			rowComponent			: DropDown
+			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
+			ModelTermsList
 			{
-				name: "TermType"
-				label: ""
-				values: [
-					{ label: qsTr("FO + PQ"), value: "fopq"},
-					{ label: "", value: "nothing"},
-					{ label: qsTr("FO"), value: "fo"},
-					
-					
-				]
+
+				listViewType			: JASP.Interaction
+				rowComponentTitle		: qsTr("Term Type")
+				rowComponent			: DropDown
+				{
+					name: "TermType"
+					label: ""
+					values: [
+						{ label: qsTr("FO + PQ"),	value: "fopq"		},
+						{ label: "",				value: "nothing"	},
+						{ label: qsTr("FO"),		value: "fo"			},
+					]
+				}
 			}
 		}
-	}
-	
-	Group 
-	{
-		title: qsTr("Response surface analysis")
-		columns: 2
-		
-		CheckBox 
-		{
-			name:                       "coef"; label:                  qsTr("Coefficients table")
-			
-		}
-		
-		
-		CheckBox
-		{
-			name:                       "res";  label:                  qsTr("Residual histogram")
-		}
 
-		CheckBox
+		Group
 		{
-			name:                       "anova";label:                  qsTr("ANOVA table")
-		}
-		
-		
-		CheckBox
-		{
-			name:                       "resNorm";label:                 qsTr("Normal residual plot")
-		}
+			title: qsTr("Response surface analysis")
+			columns: 2
 
-		CheckBox
-		{
-			name:                       "normalPlot";label:                 qsTr("Normal plot of standardized effects")
+			CheckBox {		name: "coef";			label: qsTr("Coefficients table")	}
+			CheckBox {		name: "res";			label: qsTr("Residual histogram")	}
+			CheckBox {		name: "anova";			label: qsTr("ANOVA table")			}
+			CheckBox {		name: "resNorm";		label: qsTr("Normal residual plot")	}
 
 			CheckBox
 			{
-				name:                       "addGridlines";label:                 qsTr("Add grid lines")
+							name: "normalPlot";		label: qsTr("Normal plot of standardized effects")
+				CheckBox {	name: "addGridlines";	label: qsTr("Add grid lines") }
 			}
-			
-		}
-		
-		CheckBox
-		{
-			name:                       "ResFitted";label:                 qsTr("Residual vs. fitted plot")
-		}
-		
-		CheckBox
-		{
-			name:                       "pareto";label:                 qsTr("Pareto plot of standardized effects")
-		}
 
-		CheckBox
-		{
-			name:                       "fourInOne";label:                 qsTr("Matrix residuals plot")
+			CheckBox {		name: "ResFitted";		label: qsTr("Residual vs. fitted plot")				}
+			CheckBox {		name: "pareto";			label: qsTr("Pareto plot of standardized effects")	}
+			CheckBox {		name: "fourInOne";		label: qsTr("Matrix residuals plot")				}
 		}
-	}	
-}
+	}
 	
-	Section 
+	Section
 	{
 		title: qsTr("Contour plots")
 		VariablesForm
 		{
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList
-			{
-
-				name:  "rsmVariables2";	    source:"rsmVariables"
-
-			}
-
-			AssignedPairsVariablesList
-			{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
-			} 
-		
+			AvailableVariablesList		{ name: "rsmVariables2";		source:"rsmVariables"								}
+			AssignedPairsVariablesList	{ name: "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"]	}
+		}
 
 		Group
 		{
@@ -555,61 +503,54 @@ Form
 			
 			CheckBox
 			{
-				name:                      "contour";label:   qsTr("Contour surface")
+				name:							"contour"
+				label:							qsTr("Contour surface")
 				columns: 2
 				CheckBox
 				{
-					name:                       "cplot"
-					label:                      qsTr("Only show 2D plot")
-					id:                         cplot
+					name:						"cplot"
+					label:						qsTr("Only show 2D plot")
+					id:							cplot
 				}
 
 				CheckBox
 				{
-					name:                       "coded"
-					label:                      qsTr("Show analysis and graphs in coded form")
+					name:						"coded"
+					label:						qsTr("Show analysis and graphs in coded form")
 					enabled:					cplot.checked
 				}
 
 				CheckBox
 				{
-					name:                       "legend"
-					label:                      qsTr("Show legend next to graph")
+					name:						"legend"
+					label:						qsTr("Show legend next to graph")
 					enabled:					!cplot.checked
 				}
 				DropDown
 				{
-					name:                       "divide"
-					label:                      qsTr("Divide response surface into N parts")
-					values:                     [2,3,4,5,6,7]
+					name:						"divide"
+					label:						qsTr("Divide response surface into N parts")
+					values:						[2,3,4,5,6,7]
 					enabled:					!cplot.checked
 				}
 
 				Slider
 				{
-					name:                       "phi"
-					label:                      qsTr("Rotating angle (vertical plane)")
-					value:                      0
+					name:						"phi"
+					label:						qsTr("Rotating angle (vertical plane)")
+					value:						0
 					enabled:					!cplot.checked
-
-
 				}
 
 				Slider
 				{
-					name:                       "theta"
-					label:                      qsTr("Rotating angle (horizontal plane)")
-					value:                      0.5
-					vertical:                   false
+					name:						"theta"
+					label:						qsTr("Rotating angle (horizontal plane)")
+					value:						0.5
+					vertical:					false
 					enabled:					!cplot.checked
 				}
-
 			}
-			
-		
-			
-			
-			
 		}
 	}
 	
@@ -617,54 +558,38 @@ Form
 	Section
 	{
 		title: qsTr("Desirability")
-		CheckBox 
+		CheckBox { name: "desirability";	label: qsTr("Calculate desirability") }
+		VariablesForm
 		{
-			name: "desirability";label: "Calculate desirability"
-			
+			AvailableVariablesList	{ name: "rsmDesirability";		label: qsTr("Response variable list");	source: "rsmResponseVariables" }
+			AssignedVariablesList	{ name: "rsmMin";				title: qsTr("Minimum [Min/Max]");		suggestedColumns: ["scale", "ordinal", "nominal"]
+				rowComponent: Row
+				{
+					DoubleField {name: "Point_Min";		negativeValues: true}
+					DoubleField {name: "Point_Max";		negativeValues: true; defaultValue: 1}
+				}
+			}
+
+			AssignedVariablesList
+			{
+				name: "rsmMax";		title: qsTr("Maximum [Min/Max]");	suggestedColumns:	["scale", "ordinal", "nominal"]
+				rowComponent: Row
+				{
+					DoubleField {name: "Point_Min_1";	negativeValues: true}
+					DoubleField {name: "Point_Max_1";	negativeValues: true; defaultValue: 1}
+				}
+			}
+
+			AssignedVariablesList
+			{
+				name: "rsmTar";		title: qsTr("Target [Min/Target/Max]");	suggestedColumns: ["scale", "ordinal", "nominal"]
+				rowComponent: Row
+				{
+					DoubleField {name: "Point_Min_2";	negativeValues: true					}
+					DoubleField {name: "Point_Tar_2";	negativeValues: true;	defaultValue: 1	}
+					DoubleField {name: "Point_Max_2";	negativeValues: true;	defaultValue: 2	}
+				}
+			}
 		}
-		VariablesForm 
-		{
-			AvailableVariablesList 
-			{ 
-				name: "rsmDesirability";       label: qsTr("Response variable list");    source: "rsmResponseVariables" 
-				
-			}
-			AssignedVariablesList  
-			{
-				name: "rsmMin";	            title: qsTr("Minimum [Min/Max]");     suggestedColumns:   ["scale", "ordinal", "nominal"]
-				rowComponent: Row
-				{
-					DoubleField {name: "Point_Min"; negativeValues: true}
-					DoubleField {name: "Point_Max"; negativeValues: true; defaultValue: 1}
-				}
-
-			}
-			AssignedVariablesList  
-			{
-				name: "rsmMax";	            title: qsTr("Maximum [Min/Max]");     suggestedColumns:   ["scale", "ordinal", "nominal"]
-				rowComponent: Row
-				{
-					DoubleField {name: "Point_Min_1"; negativeValues: true}
-					DoubleField {name: "Point_Max_1"; negativeValues: true; defaultValue: 1}
-				}
-
-			}
-			AssignedVariablesList  
-			{
-				name: "rsmTar";	            title: qsTr("Target [Min/Target/Max]");suggestedColumns:   ["scale", "ordinal", "nominal"]
-				rowComponent: Row
-				{
-					DoubleField {name: "Point_Min_2"; negativeValues: true}
-
-					DoubleField {name: "Point_Tar_2"; negativeValues: true; defaultValue: 1}
-					DoubleField {name: "Point_Max_2"; negativeValues: true; defaultValue: 2}
-				}
-
-			}
-		
-		}
-	
 	}
-
-
 }
