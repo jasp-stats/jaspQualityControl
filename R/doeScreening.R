@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#' @export
 doeScreening <- function(jaspResults, dataset, options, ...){
 
   .doeScreeningSummarySelectedDesign(options, jaspResults, position = 1)
