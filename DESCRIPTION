@@ -39,3 +39,5 @@ Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
   jasp-stats/jaspGraphs
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1

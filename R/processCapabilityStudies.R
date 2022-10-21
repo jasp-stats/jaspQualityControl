@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#' @export
 processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (options[["pcDataFormat"]] == "PCwideFormat"){
     measurements <- unlist(options$variables)

@@ -1,3 +1,4 @@
+#' @export
 timeWeightedCharts <- function(jaspResults, dataset, options) {
   variables <- options$variables
   numeric_variables  <- variables[variables != ""]

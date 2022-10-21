@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#' @export
 doeModifyDesign <- function(jaspResults, dataset, options, ...){
 
   ready <- (length(options[["MDassignedFactors"]]) >= 2 && !is.null(options[["MDresponse"]]))

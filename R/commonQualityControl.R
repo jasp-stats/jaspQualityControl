@@ -1,3 +1,9 @@
+
+# imports from packages
+#' @importFrom jaspBase createJaspContainer createJaspPlot createJaspState createJaspTable createJaspHtml
+#' .extractErrorMessage .hasErrors isTryError .readDataSetToEnd
+
+
 #############################################################
 ## Common functions for plots ###############################
 #############################################################
