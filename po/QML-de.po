@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2022-10-23 10:00+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/de/>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.14.2-dev\n"
 "X-Language: de\n"
 "X-Qt-Contexts: true\n"
 
@@ -273,7 +279,7 @@ msgstr "Zweistufiges faktorielles Design"
 
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
-msgstr ""
+msgstr "Fehlerhafte Einheiten / Fehler"
 
 msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
@@ -281,7 +287,7 @@ msgstr "Diagramme für Attribute"
 
 msgctxt "attributesCharts|"
 msgid "Defectives"
-msgstr ""
+msgstr "Fehlerhafte Einheiten"
 
 msgctxt "attributesCharts|"
 msgid "np chart"
@@ -293,7 +299,7 @@ msgstr "p-Karte"
 
 msgctxt "attributesCharts|"
 msgid "Defects"
-msgstr ""
+msgstr "Fehler"
 
 msgctxt "attributesCharts|"
 msgid "c chart"
@@ -502,7 +508,7 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Number of bins"
-msgstr ""
+msgstr "Anzahl von Klassen"
 
 msgctxt "msaType1Gauge|"
 msgid "Display mean"
@@ -522,7 +528,7 @@ msgstr "X-quer & R-Karte"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
-msgstr ""
+msgstr "Anzahl von Klassen"
 
 msgctxt "timeWeightedCharts|"
 msgid "Measurements"
