@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspProcessControl 0.16\n"
 "POT-Creation-Date: 2022-09-24 04:22\n"
-"PO-Revision-Date: 2022-10-23 10:03+0000\n"
+"PO-Revision-Date: 2022-10-30 10:01+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -82,7 +82,7 @@ msgid "Report for Attribute Control Charts"
 msgstr ""
 
 msgid "Proportion"
-msgstr ""
+msgstr "Anteil"
 
 msgid "Sample"
 msgstr "Stichprobe"
@@ -816,7 +816,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Measurements by Operator"
-msgstr "Messungen nach Bediener"
+msgstr "Messungen nach Operator"
 
 msgid "Part by Operator Interaction"
 msgstr ""
