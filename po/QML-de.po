@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2022-10-30 10:01+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/de/>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.14.2-dev\n"
 "X-Language: de\n"
 "X-Qt-Contexts: true\n"
 
@@ -273,7 +279,7 @@ msgstr "Zweistufiges faktorielles Design"
 
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
-msgstr ""
+msgstr "Fehlerhafte Einheiten / Fehler"
 
 msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
@@ -281,7 +287,7 @@ msgstr "Diagramme für Attribute"
 
 msgctxt "attributesCharts|"
 msgid "Defectives"
-msgstr ""
+msgstr "Fehlerhafte Einheiten"
 
 msgctxt "attributesCharts|"
 msgid "np chart"
@@ -293,7 +299,7 @@ msgstr "p-Karte"
 
 msgctxt "attributesCharts|"
 msgid "Defects"
-msgstr ""
+msgstr "Fehler"
 
 msgctxt "attributesCharts|"
 msgid "c chart"
@@ -373,7 +379,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Scatter plots operators"
-msgstr "Streudiagrammoperatoren"
+msgstr "Streudiagramme Operatoren"
 
 msgctxt "msaGaugeRR|"
 msgid "Fit line"
@@ -385,9 +391,8 @@ msgstr "Ursprungslinie anzeigen"
 
 msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
-msgstr "Zeige alle Messungen an"
+msgstr "Alle Messungen anzeigen"
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Operators"
 msgstr "Operatoren"
@@ -502,7 +507,7 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Number of bins"
-msgstr ""
+msgstr "Anzahl von Klassen"
 
 msgctxt "msaType1Gauge|"
 msgid "Display mean"
@@ -522,7 +527,7 @@ msgstr "X-quer & R-Karte"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
-msgstr ""
+msgstr "Anzahl von Klassen"
 
 msgctxt "timeWeightedCharts|"
 msgid "Measurements"
@@ -962,12 +967,10 @@ msgctxt "doeScreening|"
 msgid "Number of runs"
 msgstr "Anzahl Durchläufe"
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid "Coded"
 msgstr "Kodiert"
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid "Uncoded"
 msgstr "Unkodiert"
@@ -992,37 +995,30 @@ msgctxt "doeScreening|"
 msgid "Name"
 msgstr "Name"
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid "Level 1"
 msgstr "Stufe 1"
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid "Level 2"
 msgstr "Stufe 2"
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid "Level 3"
 msgstr "Stufe 3"
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid "Factor "
 msgstr "Faktor "
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid " Level 1"
 msgstr " Stufe 1"
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid " Level 2"
 msgstr " Stufe 2"
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid " Level 3"
 msgstr " Stufe 3"
@@ -1080,7 +1076,6 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R Report"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement"
 msgstr "Messung"
@@ -1117,7 +1112,6 @@ msgctxt "msaTestRetest|"
 msgid "Operator / Repetition"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Parts"
 msgstr "Teile"
@@ -1130,7 +1124,6 @@ msgctxt "msaTestRetest|"
 msgid "Range Method Options"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Analysis Options"
 msgstr "Analyse-Optionen"
@@ -1321,7 +1314,6 @@ msgctxt "msaTestRetest|"
 msgid "Range chart"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Traffic light graph"
 msgstr "Ampeldiagramm"
@@ -1603,12 +1595,10 @@ msgctxt "doeModifyDesign|"
 msgid "Unit Display"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Coded"
 msgstr "Kodiert"
 
-#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Uncoded"
 msgstr "Unkodiert"
@@ -1637,7 +1627,6 @@ msgctxt "doeModifyDesign|"
 msgid "Number of runs"
 msgstr "Anzahl Durchläufe"
 
-#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
 msgstr "Auflösung"
@@ -1879,7 +1868,6 @@ msgctxt "doeFactorial|"
 msgid "Design Analysis"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Available factors"
 msgstr "Verfügbare Faktoren"
@@ -1903,7 +1891,6 @@ msgctxt "doeFactorial|"
 msgid "Run order"
 msgstr "Ablaufreihenfolge"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Highest order interaction term:"
 msgstr "Interaktionsterm höchster Ordnung:"
@@ -1920,7 +1907,6 @@ msgctxt "doeFactorial|"
 msgid "Model Terms"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Plots"
 msgstr "Diagramme"
@@ -1929,12 +1915,10 @@ msgctxt "doeFactorial|"
 msgid "Design plots"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Pareto Plot of Standardized Effects"
 msgstr "Pareto-Diagramm Standardisierter Effekte"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Residuals plots"
 msgstr "Residuendiagramme"
@@ -1944,12 +1928,10 @@ msgctxt "doeFactorial|"
 msgid "Normal probability plot of residuals"
 msgstr "Wahrscheinlichkeitsverteilungsdiagramm der Residuen"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Histogram of residuals"
 msgstr "Histogramm der Residuen"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Residuals vs fitted value"
 msgstr "Residuen vs. angepasster Wert"
@@ -1970,7 +1952,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design Space"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of factors"
 msgstr "Anzahl der Faktoren"
@@ -2024,7 +2005,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Random"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Standard"
 msgstr "Standard"
@@ -2085,7 +2065,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Residual vs. fitted plot"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Pareto plot of standardized effects"
 msgstr "Pareto-Diagramm standardisierter Effekte"
@@ -2110,7 +2089,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Response variable list"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid "Number of factors"
 msgstr "Anzahl der Faktoren"
@@ -2175,7 +2153,6 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements by operator plot"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaType1Gauge|"
 msgid "Measurement"
 msgstr "Messung"
