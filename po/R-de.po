@@ -792,7 +792,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Values for %Process Variation are not displayed because they are identical "
+"Values for %%Process Variation are not displayed because they are identical "
 "to values for %%Study Variation."
 msgstr ""
 

@@ -780,9 +780,9 @@ msgid ""
 msgstr "历史标准差用于计算一些值：标准差、研究变异和 %% 研究变异。"
 
 msgid ""
-"Values for %Process Variation are not displayed because they are identical "
+"Values for %%Process Variation are not displayed because they are identical "
 "to values for %%Study Variation."
-msgstr "未显示 %过程偏差的值，因为它们与 %%研究偏差的值相同。"
+msgstr "未显示 %%过程偏差的值，因为它们与 %%研究偏差的值相同。"
 
 msgid "Two-way ANOVA Table without Interaction"
 msgstr "双向方差分析表不带交互作用"
