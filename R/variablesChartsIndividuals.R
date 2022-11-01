@@ -18,12 +18,13 @@
 #' @export
 variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   # reading variables in from the GUI
-  variables <- options$variables
-  stages <- options$split
-  subgroups <- options$subgroups
+  variables <- unlist(options$variables)
+  stages <- unlist(options$split)
+  subgroups <- unlist(options$subgroups)
   makeSplit <- subgroups != ""
 
-  numeric_variables  <- variables[variables != ""]
+  numeric_variables  <- variables
+  numeric_variables  <- numeric_variables[numeric_variables != ""]
   factorVariables <- c(stages, subgroups)
   factorVariables  <- factorVariables[factorVariables != ""]
 
@@ -31,7 +32,6 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
   if (is.null(dataset)) {
       dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = factorVariables)
-      dataset.factors <- .readDataSetToEnd(columns=variables, columns.as.factor = factorVariables)
   }
 
   if (makeSplit & ready) {
@@ -39,7 +39,6 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     splitLevels      <- levels(splitFactor)
     # remove missing values from the grouping variable
     dataset <- dataset[!is.na(splitFactor), ]
-    dataset.factors <- dataset.factors[!is.na(splitFactor), ]
 
     numberMissingSplitBy <- sum(is.na(splitFactor))
 
@@ -61,7 +60,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   if (options$ImRchart && length(variables) == 0) {
     plot <- createJaspPlot(title = gettext("Individuals Charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("ImRchart", "variables", "subgroups"))
+    plot$dependOn(c("ImRchart", "variables", "subgroups", "split"))
     return()
   }
 
@@ -78,7 +77,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   if (options$ImRchart && ready) {
     if(is.null(jaspResults[["Ichart"]])){
       jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
-      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "ncol", "subgroups", "manualTicks", "nTicks", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport"))
+      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "ncol", "subgroups", "manualTicks", "nTicks", "ccTitle",
+                                         "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport",
+                                         "split"))
       Iplot <- jaspResults[["Ichart"]]
 
       for (var in variables) {
@@ -110,7 +111,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
 
     jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
-    jaspResults[["CCReport"]]$dependOn(c("CCReport", "ImRchart", "variables","ncol", "manualTicks", "nTicks", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
+    jaspResults[["CCReport"]]$dependOn(c("CCReport", "ImRchart", "variables","ncol", "manualTicks", "nTicks", "subgroups",
+                                         "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName",
+                                         "split"))
     jaspResults[["CCReport"]]$position <- 9
     Iplot <- jaspResults[["CCReport"]]
 
