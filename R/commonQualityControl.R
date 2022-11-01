@@ -470,8 +470,6 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                       stages = "") {
 >>>>>>> 7fbe28a (Beginning analysis of stages)
 
-  ppPlot <- createJaspPlot(width = 1000, height = 550)
-
   if (stages == "") {
     nStages <- 1
   } else {
@@ -506,6 +504,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       gettextf("UCL = %g", round(UCL, decimals + 2)),
       gettextf("LCL = %g", round(LCL, decimals + 2))
 =======
+
+  ppPlot <- createJaspPlot(width = 1000, height = 550)
 
   plotMat <- matrix(list(), 2, nStages)
 
@@ -552,13 +552,14 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       )
 >>>>>>> 7fbe28a (Beginning analysis of stages)
     )
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$process, UCL))
+    yBreaks1 <- jaspGraphs::getPrettyAxisBreaks(c(LCL, dataset[[measurements]], UCL))
 
     p1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = process)) +
       ggplot2::geom_hline(yintercept = center, color = 'green') +
       ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
       ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-      ggplot2::scale_y_continuous(name = ifelse(variable != "" , gettextf("%s", variable), "Individual value"), breaks = yBreaks, limits = range(yBreaks)) +
+      ggplot2::scale_y_continuous(name = ifelse(variable != "" , gettextf("%s", variable), "Individual value"),
+                                  breaks = yBreaks1, limits = range(yBreaks1)) +
       ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks, limits = xLimits) +
       jaspGraphs::geom_line(color = "blue") +
       jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')) +
