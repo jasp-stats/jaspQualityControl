@@ -3,20 +3,20 @@ import JASP.Module		1.0
 
 Description
 {
-	name:				"jaspProcessControl"
+	name:				"jaspQualityControl"
 	title:				qsTr("Quality Control")
 	description:		qsTr("Investigate if a manufactured product adheres to a defined set of quality criteria")
 	version:			"0.17.0"
 	author:				"JASP Team"
 	maintainer:			"JASP <info@jasp-stats.org>"
-	website:			"https://github.com/jasp-stats/jaspProcessControl"
+	website:			"https://github.com/jasp-stats/jaspQualityControl"
 	license:			"GPL (>= 2)"
-	icon:				"processControl-module.svg"
+	icon:				"qualityControl-module.svg"
 
 	GroupTitle
 	{
 		title:			qsTr("Measurement Systems Analysis")
-		icon:			"processControl-measurement.svg"
+		icon:			"qualityControl-measurement.svg"
 	}
 	Analysis
 	{
@@ -52,7 +52,7 @@ Description
 	GroupTitle
 	{
 		title:			qsTr("Control Charts")
-		icon:			"processControl-control.svg"
+		icon:			"qualityControl-control.svg"
 	}
 	Analysis
 	{
@@ -78,7 +78,7 @@ Description
 	GroupTitle
 	{
 		title:			qsTr("Capability Study")
-		icon:			"processControl-capability.svg"
+		icon:			"qualityControl-capability.svg"
 	}
 	Analysis
 	{
@@ -89,7 +89,7 @@ Description
 	GroupTitle
 	{
 		title:			qsTr("DOE")
-		icon:			"processControl-design.svg"
+		icon:			"qualityControl-design.svg"
 	}
 	Analysis
 	{
@@ -123,7 +123,7 @@ Description
 	GroupTitle
 	{
 		title:			qsTr("Probability of Detection")
-		icon:			"processControl-probabilityofdetection.svg"
+		icon:			"qualityControl-probabilityofdetection.svg"
 	}
 	Analysis
 	{

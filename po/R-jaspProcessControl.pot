@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspProcessControl 0.17.0\n"
+"Project-Id-Version: jaspQualityControl 0.17.0\n"
 "POT-Creation-Date: 2022-10-08 03:57\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
