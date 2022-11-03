@@ -12,8 +12,8 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.REPOS_KEY }}
       WEBLATE_KEY: ${{ secrets.WEBLATE_KEY }}
-      QML_REPO: jaspprocesscontrol-qml
-      R_REPO: jaspprocesscontrol-r
+      QML_REPO: jaspqualitycontrol-qml
+      R_REPO: jaspqualitycontrol-r
       
     steps:
       - uses: jasp-stats/jasp-actions/wlcLock@master
