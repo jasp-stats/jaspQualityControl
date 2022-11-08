@@ -117,8 +117,8 @@ Form
 				{
 					name: 						"NRtolerance"
 					defaultValue:				1
-					min:						0.001
-					decimals:					3
+					min:						0.000000001
+					decimals:					9
 				}
 			}
 

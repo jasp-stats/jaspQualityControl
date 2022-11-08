@@ -50,7 +50,7 @@ Form
 			label: 								qsTr("Reference value")
 			defaultValue: 						0
 			negativeValues: 					true
-			decimals: 							6
+			decimals: 							9
 			fieldWidth: 						60
 		}
 
@@ -60,7 +60,7 @@ Form
 			label: 								qsTr("Tolerance range")
 			defaultValue: 						1
 			negativeValues: 					false
-			decimals: 							6
+			decimals: 							9
 			fieldWidth: 						60
 		}
 

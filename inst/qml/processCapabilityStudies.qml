@@ -173,7 +173,7 @@ Form
 						name: 					"lowerSpecification"
 						negativeValues:			true
 						defaultValue:			-1
-						decimals:				7
+						decimals:				9
 					}
 				}
 
@@ -190,7 +190,7 @@ Form
 						name: 					"targetValue"
 						negativeValues:			true
 						defaultValue:			0
-						decimals:				7
+						decimals:				9
 					}
 				}
 
@@ -207,7 +207,7 @@ Form
 						name: 					"upperSpecification"
 						negativeValues:			true
 						defaultValue:			1
-						decimals:				7
+						decimals:				9
 					}
 				}
 
