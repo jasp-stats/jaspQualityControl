@@ -85,7 +85,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
     return()
 
   data1 <- dataset[, options$variables]
-  decimals <- max(sapply(data1, .decimalplaces))
+  decimals <- max(.decimalplaces(data1))
   sixsigma <- qcc::ewma(data1, center = options$EWMAcenter , lambda = options$EWMAlambda,
                         std.dev = options$EWMAStd, nsigmas = options$EWMANsigma, plot = FALSE)
   subgroups <- 1:length(sixsigma$sizes)
