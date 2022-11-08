@@ -932,6 +932,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options,
                                                                      Type3 = Type3, ggPlot = TRUE) # Part x Operator interaction plot
+  }
 
   if (options[["reportTrafficLightCHart"]]) {
     valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators,
