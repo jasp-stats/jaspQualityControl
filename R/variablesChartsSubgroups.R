@@ -17,20 +17,20 @@
 
 #' @export
 variablesChartsSubgroups <- function(jaspResults, dataset, options) {
-
+  
   variables <- unlist(options$variables)
   splitName <- options$subgroups
   makeSplit <- splitName != ""
-
+  
   wideFormat <- options[["CCDataFormat"]] == "CCwideFormat"
   if (wideFormat)
     measurements <- unlist(options$variables)
   else
     measurements <- unlist(options$variablesLong)
-
+  
   measurements <- measurements[measurements != ""]
   subgroups <- unlist(options$subgroups)
-
+  
   # Data reading
   if (is.null(dataset)) {
     if (splitName != "") {
@@ -40,13 +40,13 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
     }
   }
-
+  
   # Check if analysis is ready
   if (wideFormat)
     ready <- length(measurements) > 1
   else
     ready <- length(measurements) > 0
-
+  
   # Return an empty plot as default
   if ((options$CCReport || options$TypeChart == "Xbarchart" || options$TypeChart == "Schart") && !ready) {
     plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
@@ -54,7 +54,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     plot$dependOn(c("CCReport", "TypeChart", "variablesLong", "variables"))
     return()
   }
-
+  
   if (makeSplit && ready) {
     splitFactor      <- dataset[[.v(splitName)]]
     splitLevels      <- levels(splitFactor)
@@ -62,14 +62,14 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     dataset <- dataset[!is.na(splitFactor), ]
     dataset.factors <- dataset.factors[!is.na(splitFactor), ]
     numberMissingSplitBy <- sum(is.na(splitFactor))
-
+    
     # Actually remove missing values from the split factor
     splitFactor <- na.omit(splitFactor)
-
+    
     if(subgroups != "")
       subgroups <- splitFactor
   }
-
+  
   if (!wideFormat && ready){
     k <- options[["CCSubgroupSize"]]
     n <- nrow(dataset)
@@ -83,77 +83,77 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
     measurements <- colnames(dataset)
   }
-
+  
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = c(options$variables, options$subgroups, measurements),
              exitAnalysisIfErrors = TRUE)
-
+  
   .hasErrors(dataset, type = c('infinity', 'missingValues', "observations"),
              infinity.target = c(measurements, options$subgroups),
              missingValues.target = c(options$subgroups, measurements),
              observations.amount = c("< 2"),
              observations.target = c(measurements),
              exitAnalysisIfErrors = TRUE)
-
+  
   dataset <- na.omit(dataset)
-
+  
   #X bar & R chart
   if (ready){
     if (options$TypeChart == "Xbarchart" && is.null(jaspResults[["XbarPlot"]])) {
       jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
       jaspResults[["XbarPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "manualTicks", 'nTicks',"SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
-
+      
       Xchart <- .Xbarchart(dataset = dataset[measurements], options = options,  manualXaxis = subgroups ,warningLimits = options[["Wlimits"]], Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
       Rchart <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
       jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
       jaspResults[["XbarPlot"]]$position <- 1
-
+      
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTableX"]]) && is.null(jaspResults[["NelsonTableR"]]) && is.null(jaspResults[["NelsonTables"]])) {
         jaspResults[["NelsonTables"]] <- createJaspContainer(title = gettext("Out-of-control Signals"))
         jaspResults[["NelsonTables"]]$dependOn(c("TypeChart", "variables", "Phase2", "mean", "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong"))
         jaspResults[["NelsonTables"]]$position <- 2
         AllTables <- jaspResults[["NelsonTables"]]
-
+        
         AllTables[["NelsonTableX"]]  <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart$sixsigma, Phase2 = options$Phase2, xLabels = Xchart$xLabels)
         AllTables[["NelsonTableR"]] <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Rchart$sixsigma, name = "R", xLabels = Rchart$xLabels)
       }
     }
-
+    
     #S Chart
     if (options$TypeChart == "Schart" && is.null(jaspResults[["SPlot"]])) {
       jaspResults[["SPlot"]] <- createJaspPlot(title = gettext("X-bar & s Control Chart"), width = 1200, height = 500)
       jaspResults[["SPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "SD", "manualTicks", 'nTicks', "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
-
+      
       Schart <- .XbarSchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups, Phase2 = options$Phase2, sd = options$SD, Wide = wideFormat)
       Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]], manualXaxis = subgroups, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
       jaspResults[["SPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Schart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
       jaspResults[["SPlot"]]$position <- 1
-
+      
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTableS"]]) && is.null(jaspResults[["NelsonTableX"]]) && is.null(jaspResults[["NelsonTables"]])) {
         jaspResults[["NelsonTables"]] <- createJaspContainer(title = gettext("Out-of-control Signals"))
         jaspResults[["NelsonTables"]]$dependOn(c("TypeChart", "variables", "Phase2", "mean", "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "Wlimits"))
         jaspResults[["NelsonTables"]]$position <- 2
         AllTables <- jaspResults[["NelsonTables"]]
-
+        
         AllTables[["NelsonTableX"]] <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart$sixsigma, Phase2 = options$Phase2, xLabels = Xchart$xLabels)
         AllTables[["NelsonTableS"]] <- .NelsonTable(dataset = dataset[measurements], options = options, name = "s", sixsigma = Schart$sixsigma, xLabels = Schart$xLabels)
       }
     }
     # Report
     if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]])) {
-
+      
       jaspResults[["SPlot"]] <- NULL
       jaspResults[["XbarPlot"]] <- NULL
       jaspResults[["NelsonTables"]] <- NULL
-
+      
       jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["CCReport"]]$dependOn(c("CCReport", "CCSubgroupSize","TypeChart", "variables", "variablesLong", "manualTicks", 'nTicks',"CCDataFormat", "subgroups", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
       jaspResults[["CCReport"]]$position <- 9
       Iplot <- jaspResults[["CCReport"]]
-
+      
       if (options$TypeChart == "Schart")
         Iplot[["ccReport"]] <- .CCReport(p1 = Xchart$p, p2 = Schart$p, ccTitle = options$ccTitle,
                                          ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
@@ -165,6 +165,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
   }
 }
+
 #Functions for control charts
 .XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
@@ -176,7 +177,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     sixsigma <- list(statistics = sixsigma$statistics,
                      limits = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$limits,
                      center = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$center)
-
+  
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
@@ -194,11 +195,10 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     l = c(
       gettextf("CL = %g", round(center, decimals + 1)),
       gettextf("UCL = %g",   round(UCL, decimals + 2)),
-      gettextf("LCL = %g",   round(LCL, decimals + 2))
+      gettextf("LCL = %g",   round(LCL, decimals + 2)))
     )
-  )
   xLimits <- range(c(xBreaks, dfLabel$x))
-
+  
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
     ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
@@ -209,7 +209,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-
+  
   if (!identical(manualXaxis, "")) {
     if (Wide){
       xBreaks_Out <- manualXaxis
@@ -217,7 +217,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     } else{
       xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
       xLabels <- xBreaks_Out[xBreaks]
-
+      
       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
       dfLabel <- data.frame(
         x = max(xLimits) * 0.95,
@@ -225,20 +225,22 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         l = c(
           gettextf("CL = %g", round(center, decimals + 1)),
           gettextf("UCL = %g",   round(UCL, decimals + 2)),
-          gettextf("LCL = %g",   round(LCL, decimals + 2))
-        )
+          gettextf("LCL = %g",   round(LCL, decimals + 2)))
       )
-
+      
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels, limits = xLimits)
     }
   }
-
+  
   if (!identical(manualXaxis, ""))
     return(list(p = p, sixsigma = sixsigma, xLabels = as.vector(xBreaks_Out)))
-  else return(list(p = p, sixsigma = sixsigma))
+  else 
+    return(list(p = p, sixsigma = sixsigma))
 }
-.CCReport <- function(ImR = FALSE,p1 = "", p2 = "", ccTitle = "", ccName = "", ccDate = "", ccReportedBy = "", ccMisc = "" , ccSubTitle = "", ccChartName = ""){
 
+.CCReport <- function(ImR = FALSE,p1 = "", p2 = "", ccTitle = "", ccName = "", ccDate = "",
+                      ccReportedBy = "", ccMisc = "" , ccSubTitle = "", ccChartName = "") {
+  
   if (ccTitle == "")
     title <- "Report for Control Charts"
   else
@@ -246,11 +248,11 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   name <- gettextf("Name: %s", ccName)
   date <- gettextf("Date: %s", ccDate)
   text1 <- c(name, date)
-
+  
   reportedBy <- gettextf("Reported by: %s", ccReportedBy)
   misc <- gettextf("Misc: %s", ccMisc)
   text2 <- c(reportedBy, misc)
-
+  
   matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1)
   plotMat <- matrix(list(), 3, 2)
   plotMat[[1, 1]] <- .ggplotWithText(text1)
@@ -259,43 +261,42 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   plotMat[[2, 2]] <- .ggplotWithText(gettextf("Name of chart: %s", ccChartName))
   plotMat[[3, 1]] <- p1
   plotMat[[3, 2]] <- p2
-
+  
   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
   matrixPlot$plotObject <- p
-
+  
   return(matrixPlot)
 }
 
 KnownControlStats.RS <- function(N, sigma) {
-
+  
   Data.d3 <- data.frame(
     n = 2:25,
     d3 = c(0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
            0.7562, 0.7499, 0.7441, 0.7386, 0.7335, 0.7287, 0.7242, 0.7199, 0.7159, 0.7121, 0.7084))
-
+  
   Data.d2 <- data.frame(
     n = 2:50,
     d2 = c( 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
             3.588 ,3.640 ,3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931, 3.964, 3.997, 4.027, 4.057, 4.086, 4.113,
             4.139 ,4.165 ,4.189, 4.213, 4.236, 4.259, 4.280, 4.301, 4.322, 4.341, 4.361, 4.379, 4.398, 4.415, 4.433,
             4.450 ,4.466, 4.482, 4.498))
-
+  
   if (N > 25 && N <= 50){
     d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
     d2 <- Data.d2[N == Data.d2$n,2]
-  }
-  else if (N > 50){
+  } else if (N > 50) {
     d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
     d2 <- 2.88606 + 0.051313 * N - 0.00049243 * N^2 + 0.00000188 * N^3
-  } else{
+  } else {
     d2 <- Data.d2[N == Data.d2$n,2]
     d3 <- Data.d3[N == Data.d3$n,2]
   }
-
+  
   UCL <- d2 * sigma + 3 * d3 * sigma
   CL <- d2 * sigma
   LCL <- max(0, d2 * sigma - 3 * d3 * sigma)
-
+  
   return(list(constants = c(d2,d3), limits = data.frame(LCL,UCL), center = CL))
 }
 
