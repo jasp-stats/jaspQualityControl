@@ -169,7 +169,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 #Functions for control charts
 .XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
-  decimals <- max(sapply(data, .decimalplaces))
+  decimals <- max(.decimalplaces(data))
   sixsigma <- qcc::qcc(data, type ='S', plot = FALSE)
   subgroups <- c(1:length(sixsigma$statistics))
   data_plot <- data.frame(subgroups = subgroups, Stdv = sixsigma$statistics)
