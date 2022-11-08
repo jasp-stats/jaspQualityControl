@@ -188,10 +188,6 @@
   else return(list(p = p, sixsigma = sixsigma))
 }
 
-# csvFile <- read.csv("../../../../Google Drive/CSV Files/GaugeRRdata.csv")
-# measurements <- c("V1", "V2", "V3")
-# dataset <- csvFile[measurements]
-
 # Function to create R chart
 .Rchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,
                     plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = "", yAxisLab = "Sample range",
