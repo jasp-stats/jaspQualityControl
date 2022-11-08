@@ -39,7 +39,7 @@
 <line x1='64.90' y1='366.07' x2='240.00' y2='366.07' style='stroke-width: 2.13; stroke: #00FF00; stroke-linecap: butt;' />
 <line x1='64.90' y1='83.09' x2='240.00' y2='83.09' style='stroke-width: 3.20; stroke: #FF0000; stroke-dasharray: 17.07,17.07; stroke-linecap: butt;' />
 <line x1='64.90' y1='490.89' x2='240.00' y2='490.89' style='stroke-width: 3.20; stroke: #FF0000; stroke-dasharray: 17.07,17.07; stroke-linecap: butt;' />
-<polyline points='72.86,416.00 112.65,228.78 152.45,453.44 192.24,266.23 232.04,416.00 ' style='stroke-width: 1.07; stroke: #0000FF; stroke-linecap: butt;' />
+<polyline points='72.86,416.00 112.65,228.78 152.45,453.44 192.24,266.23 232.04,416.00 ' style='stroke-width: 2.13; stroke: #0000FF; stroke-linecap: butt;' />
 <line x1='72.54' y1='513.35' x2='232.36' y2='513.35' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <line x1='64.90' y1='491.20' x2='64.90' y2='41.25' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <circle cx='72.86' cy='416.00' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
@@ -100,7 +100,7 @@
 <line x1='266.75' y1='366.07' x2='480.00' y2='366.07' style='stroke-width: 2.13; stroke: #00FF00; stroke-linecap: butt;' />
 <line x1='266.75' y1='83.09' x2='480.00' y2='83.09' style='stroke-width: 3.20; stroke: #FF0000; stroke-dasharray: 17.07,17.07; stroke-linecap: butt;' />
 <line x1='266.75' y1='490.89' x2='480.00' y2='490.89' style='stroke-width: 3.20; stroke: #FF0000; stroke-dasharray: 17.07,17.07; stroke-linecap: butt;' />
-<polyline points='276.44,341.11 324.91,416.00 373.37,341.11 421.84,228.78 470.31,453.44 ' style='stroke-width: 1.07; stroke: #0000FF; stroke-linecap: butt;' />
+<polyline points='276.44,341.11 324.91,416.00 373.37,341.11 421.84,228.78 470.31,453.44 ' style='stroke-width: 2.13; stroke: #0000FF; stroke-linecap: butt;' />
 <line x1='324.59' y1='513.35' x2='470.63' y2='513.35' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <line x1='266.75' y1='491.20' x2='266.75' y2='41.25' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <circle cx='276.44' cy='341.11' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
@@ -149,7 +149,7 @@
 <text x='710.31' y='86.52' text-anchor='middle' style='font-size: 9.96px; font-family: sans;' textLength='56.20px' lengthAdjust='spacingAndGlyphs'>UCL = 1.089</text>
 <polygon points='691.29,497.91 729.33,497.91 729.24,497.91 729.59,497.90 729.93,497.83 730.25,497.70 730.56,497.53 730.82,497.31 731.06,497.05 731.24,496.76 731.38,496.44 731.46,496.10 731.49,495.75 731.49,495.75 731.49,486.02 731.49,486.02 731.46,485.67 731.38,485.33 731.24,485.01 731.06,484.72 730.82,484.46 730.56,484.24 730.25,484.07 729.93,483.94 729.59,483.87 729.33,483.86 691.29,483.86 691.55,483.87 691.20,483.86 690.85,483.90 690.52,484.00 690.21,484.15 689.92,484.35 689.67,484.59 689.46,484.86 689.30,485.17 689.19,485.50 689.13,485.84 689.13,486.02 689.13,495.75 689.13,495.58 689.13,495.93 689.19,496.27 689.30,496.60 689.46,496.91 689.67,497.18 689.92,497.42 690.21,497.62 690.52,497.77 690.85,497.87 691.20,497.91 ' style='stroke-width: 0.53; fill: #FFFFFF;' />
 <text x='710.31' y='494.31' text-anchor='middle' style='font-size: 9.96px; font-family: sans;' textLength='35.16px' lengthAdjust='spacingAndGlyphs'>LCL = 0</text>
-<polyline points='516.44,453.44 552.43,416.00 588.41,416.00 624.39,416.00 660.38,228.78 ' style='stroke-width: 1.07; stroke: #0000FF; stroke-linecap: butt;' />
+<polyline points='516.44,453.44 552.43,416.00 588.41,416.00 624.39,416.00 660.38,228.78 ' style='stroke-width: 2.13; stroke: #0000FF; stroke-linecap: butt;' />
 <line x1='552.11' y1='513.35' x2='660.70' y2='513.35' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <line x1='506.75' y1='491.20' x2='506.75' y2='41.25' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <circle cx='516.44' cy='453.44' r='3.56' style='stroke-width: 0.71; fill: #0000FF;' />
