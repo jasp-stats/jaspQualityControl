@@ -35,7 +35,7 @@ Form
 		AssignedVariablesList
 		{
 			name:								"split"
-			title:								qsTr("Split")
+			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
