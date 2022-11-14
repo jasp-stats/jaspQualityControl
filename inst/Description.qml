@@ -3,7 +3,7 @@ import JASP.Module		1.0
 
 Description
 {
-	name:				"jaspQualityControl"
+	name:				"jaspProcessControl"
 	title:				qsTr("Quality Control")
 	description:		qsTr("Investigate if a manufactured product adheres to a defined set of quality criteria")
 	version:			"0.17.0"

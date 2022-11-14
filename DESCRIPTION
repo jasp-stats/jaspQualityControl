@@ -1,4 +1,4 @@
-Package: jaspQualityControl
+Package: jaspProcessControl
 Type: Package
 Title: Quality Control Module for JASP
 Version: 0.17.0
