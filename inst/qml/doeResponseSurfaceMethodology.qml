@@ -98,6 +98,23 @@ Form
 		}
 	}
 
+	RadioButtonGroup
+	{
+		name:								"alphaType"
+		title:								qsTr("Alpha")
+
+		RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
+		RadioButton { name:	 "faceCentered";	label: qsTr("Face centred");					}
+		RadioButton { name:	 "custom";			label: qsTr("Custom");
+			DoubleField
+			{
+				name:	"customAlphaValue2"
+				min:	0
+			}
+		}
+	}
+
+
 		//	IntegerField
 		//	{
 		//		id:									numberOfGenerators
@@ -258,9 +275,9 @@ Form
 					DoubleField
 					{
 						label:					""
-						name:					"centre"
+						name:					"low"
 						fieldWidth:				100 * preferencesModel.uiScale
-						defaultValue:			0 // TODO: should this be -1?
+						defaultValue:			-1
 						negativeValues:			true
 					}
 
@@ -272,7 +289,7 @@ Form
 					DoubleField
 					{
 						label:					""
-						name:					"distance"
+						name:					"high"
 						fieldWidth:				100 * preferencesModel.uiScale
 						defaultValue:			1						
 					}

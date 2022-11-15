@@ -368,13 +368,8 @@ doersmGenerateDesign <- function(options) {
 
   }
 
-  ccd <- ccd[
-    if (options[["runOrder"]] == "runOrderStandard")
-      order(ccd[["std.order"]])
-    else
-      order(ccd[["run.order"]])
-    ,
-  ]
+  o <- order(if (options[["runOrder"]] == "runOrderStandard") ccd[["std.order"]] else ccd[["run.order"]])
+  ccd <- ccd[o, ]
 
   return(ccd)
 }
