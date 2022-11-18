@@ -13,8 +13,10 @@
 // <http://www.gnu.org/licenses/>.
 //
 
-import QtQuick 									2.8
+import QtQuick 									2.15
 import QtQuick.Layouts 							1.3
+import QtQuick.Controls	2.12
+import JASP                                     1.0
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
@@ -438,6 +440,68 @@ Form
 			visible:							false
 		}
 		
+	}
+
+
+	Group
+	{
+		IntegerField { id: numberOfContinuous; label: qsTr("Number of continuous factors"); name: "numberOfContinuous"; min: 0; defaultValue: 2; max: 20    }
+
+
+		TableView
+		{
+			JASPDoubleValidator			{ id: doubleValidator; decimals: 3	}
+			RegularExpressionValidator	{ id: stringValidator				}
+
+
+			id: continuousVariablesTable
+			modelType			: JASP.Simple
+
+			width				: implicitWidth
+			height				: implicitHeight
+
+			initialRowCount		: numberOfContinuous.value
+			initialColumnCount	: 3
+
+			rowCount			: numberOfContinuous.value
+			columnCount			: 3
+
+			name				: "continuousVariables"
+			cornerText			: qsTr("Factor")
+			columnNames			: [qsTr("Name"), qsTr("Low"), qsTr("High")]
+			isFirstColEditable	: true
+//			itemType			: JASP.Double
+			itemTypePerColumn	: [JASP.String].concat(Array(19).fill().map(JASP.Double)) // at most 20 items anyway
+
+			function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex);	}
+			function getDefaultValue(columnIndex, rowIndex)				{ return columnIndex === 0 ? String.fromCharCode(65 + rowIndex) : 2 * columnIndex - 3;	}
+			function getValidator(columnIndex, rowIndex)				{ return columnIndex === 0 ? stringValidator : doubleValidator							}
+		}
+
+		IntegerField { id: numberOfCategorical;		label: qsTr("Number of categorical factors");	name: "numberOfCategorical";	min: 0;	defaultValue: 0;	max: 20	}
+		IntegerField { id: numberOfLevels;			label: qsTr("Maximum levels");					name: "categoricalNoLevels";	min: 2;	defaultValue: 2;	max: 10	}
+
+		TableView
+		{
+			id: categoricalVariables
+			modelType			: JASP.Simple
+
+			isFirstColEditable	: true
+
+			initialRowCount		: numberOfCategorical.value
+			initialColumnCount	: 1 + parseInt(numberOfLevels.value)
+
+			rowCount			: numberOfCategorical.value
+			columnCount			: 1 + parseInt(numberOfLevels.value)
+			name				: "categoricalVariables"
+			cornerText			: qsTr("Factor")
+			itemType			: JASP.String
+
+			function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }
+			function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex + parseInt(numberOfContinuous.value)); }
+			function getDefaultValue(columnIndex, rowIndex)				{ return String.fromCharCode(columnIndex === 0 ? 65 + rowIndex + parseInt(numberOfContinuous.value) : 97 + columnIndex - 1); }
+		}
+
 	}
 
 	Section
