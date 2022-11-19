@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2022-09-24 04:22\n"
-"PO-Revision-Date: 2022-11-12 03:54+0000\n"
+"PO-Revision-Date: 2022-11-20 09:46+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -55,7 +55,7 @@ msgstr ""
 "Stichprobenumfang."
 
 msgid "Attributes Control Charts"
-msgstr ""
+msgstr "Attribut-Regelkarten"
 
 msgid "p Chart"
 msgstr "p-Karte"
@@ -79,7 +79,7 @@ msgid "Individuals and Moving Range Chart"
 msgstr ""
 
 msgid "Report for Attribute Control Charts"
-msgstr ""
+msgstr "Bericht für Attribut-Regelkarten"
 
 msgid "Proportion"
 msgstr "Anteil"
@@ -100,7 +100,7 @@ msgid "Report"
 msgstr "Bericht"
 
 msgid "Control Charts for Attributes Report"
-msgstr ""
+msgstr "Bericht Regelkarten für Attribute"
 
 msgid "Service name: %s"
 msgstr ""
@@ -233,7 +233,7 @@ msgid "Replicates"
 msgstr ""
 
 msgid "Blocks"
-msgstr ""
+msgstr "Blöcke"
 
 msgid "Repeats"
 msgstr ""
@@ -254,7 +254,7 @@ msgid "Pareto Chart of Standardized Effects"
 msgstr "Pareto-Diagramm Standardisierter Effekte"
 
 msgid "Term"
-msgstr ""
+msgstr "Term"
 
 msgid "Analysis of variance"
 msgstr "Varianzanalyse"
