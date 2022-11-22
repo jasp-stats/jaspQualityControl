@@ -15,433 +15,76 @@
 
 import QtQuick 									2.15
 import QtQuick.Layouts 							1.3
-import QtQuick.Controls	2.12
-import JASP                                     1.0
+import QtQuick.Controls							2.12
+import JASP										1.0
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
-Form 
+Form
 {
-	columns: 2
+	columns: 1
 
 	Group
 	{
-		title: 									qsTr("Design Space")
-
-		IntegerField
-		{
-			id:									numberOfFactors
-			name:								"numberOfFactors"
-			label:								qsTr("Number of factors")
-			defaultValue:						2
-			min:								2
-			max:								256
-		}
-	}
-
-	RadioButtonGroup
-	{
-		columns: 							1
-		name:								"designType"
-		title:								qsTr("Define levels")
-
-		RadioButton
-		{
-			id:								cube
-			name:							"cube"
-			label:							qsTr("Cube points")
-			checked:						true
-			childrenOnSameRow: 				true
-
-			IntegerField
-			{
-
-				id:							numberOfCubes
-				name:						"numberOfCubes"
-				defaultValue:				3
-				min:						0
-				max:						256
-			}
-
-		}
-
-		RadioButton
-		{
-			id:								star
-			name:							"star"
-			label:							qsTr("Axial points")
-			childrenOnSameRow: 				true
-
-
-			IntegerField
-			{
-
-				id:							numberOfStars
-				name:						"numberOfStars"
-				defaultValue:				numberOfFactors.value * 2
-				min:						0
-				max:						256
-			}
-
-			DropDown
-			{
-				name: 							"alphaType"
-				indexDefaultValue: 				0
-				label:							qsTr("Design type")
-				values: 						[
-					{ label: qsTr("Orthogonal"),	value: "orthogonal"		},
-					{ label: qsTr("Rotatable"),		value: "rotatable"		},
-					{ label: qsTr("Spherical"),		value: "spherical"		},
-					{ label: qsTr("Faces"),			value: "faces"			}
-				]
-			}
-
-			DoubleField	{ name: "alphaValue"; label: qsTr("Alpha"); defaultValue: 1.732; }
-		}
-	}
-
-	RadioButtonGroup
-	{
-		name:								"alphaType"
-		title:								qsTr("Alpha")
-
-		RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
-		RadioButton { name:	 "faceCentered";	label: qsTr("Face centred");					}
-		RadioButton { name:	 "custom";			label: qsTr("Custom");
-			DoubleField
-			{
-				name:	"customAlphaValue2"
-				min:	0
-			}
-		}
-	}
-
-
-		//	IntegerField
-		//	{
-		//		id:									numberOfGenerators
-		//		name:								"numberOfGenerators"
-		//		label:								qsTr("Number of generators")
-		//		defaultValue:						0
-		//		min:								0
-		//		max:								256
-		//		visible: 							cube.checked
-		//	}
-
-	Group
-	{
-		title:								qsTr("Design options")
-
-		CheckBox
-		{
-			id:								inscribed
-			name:							"inscribed"
-			label:							qsTr("Inscribed design")
-			enabled:						cube.checked
-			checked: 						(cube.checked) ? false : false
-
-		}
-
-		CheckBox
-		{
-			id:								oneBlock
-			name:							"oneBlock"
-			label:							qsTr("Force one block")
-			visible:						false
-		}
-
-		CheckBox
-		{
-			id:								noModel
-			name:							"noModel"
-			label:							qsTr("Use # of variables instead of model")
-			enabled:						cube.checked
-			checked: 						true
-			visible: 						false
-		}
-
-		CheckBox
-		{
-			id:								block
-			name:							"block"
-			label:							qsTr("Introduce blocking")
-			enabled:						cube.checked
-			checked: 						(cube.checked) ? false : false
-		}
-
-		CheckBox
-		{
-			id:								coded_out
-			name:							"coded_out"
-			label:							qsTr("Coded output")
-		}
-
-		IntegerField
-		{
-			visible:						false
-			id:								numberOfFactorsForTable
-			name:							"numberOfFactorsForTable"
-			defaultValue:					numberOfFactors.value
-		}
-	}
-
-
-	RadioButtonGroup
-	{
-		name:								"runOrder"
-		title:								qsTr("Run Order")
-
-		RadioButton
-		{
-			SetSeed{}
-			name:							"runOrderRandom"
-			label:							qsTr("Random")
-			checked:						true
-		}
-
-		RadioButton
-		{
-			name:							"runOrderStandard"
-			label:							qsTr("Standard")
-		}
-	}
-
-		//		DropDown
-		//		{
-		//			debug:								true
-		//			id:									numberOfLevels
-		//			name:								"numberOfLevels"
-		//			label:								qsTr("Number of factor levels")
-		//			indexDefaultValue:					0
-		//			values:
-		//			[
-		//				{ value: "2",		label: qsTr("2")}
-		//				{ value: "3",		label: qsTr("3")},
-		//				{ value: "Mixed",	label: qsTr("Mixed")}
-		//			]
-		//		}
-//	}
-
-	ColumnLayout
-	{
-		spacing:								0
-		Layout.preferredWidth:					parent.width
-		Layout.columnSpan:						2
-
+		// TODO: should probably come after specifying the variables variables
 		RowLayout
 		{
-			Label { text: qsTr("Factor");		Layout.leftMargin: 5 * preferencesModel.uiScale;		Layout.preferredWidth: 42 * preferencesModel.uiScale}
-			Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
-			Label { text: qsTr("Low");			Layout.preferredWidth: 100 * preferencesModel.uiScale}
-			Label { text: qsTr("High");			Layout.preferredWidth: 100 * preferencesModel.uiScale}
+			Label { text: qsTr("Design");	Layout.preferredWidth: 40 * preferencesModel.uiScale; Layout.leftMargin: 40 * preferencesModel.uiScale}
+			Label { text: qsTr("Runs");		Layout.preferredWidth: 30 * preferencesModel.uiScale }
+			Label { text: qsTr("Blocks");	Layout.preferredWidth: 30 * preferencesModel.uiScale }
+//			Label { text: qsTr("Center Points") }
+			Label { text: qsTr("Total");	Layout.preferredWidth: 30 * preferencesModel.uiScale }
+			Label { text: qsTr("Cube");		Layout.preferredWidth: 30 * preferencesModel.uiScale }
+			Label { text: qsTr("Axial");	Layout.preferredWidth: 30 * preferencesModel.uiScale }
+			Label { text: qsTr("Alpha");	Layout.preferredWidth: 30 * preferencesModel.uiScale }
 		}
 
 		ComponentsList
 		{
-			name:								"factors"
-			addItemManually:					false
-			values:								numberOfFactorsForTable.value // update only when numberOfFactors.value gets "entered"
+			id:						selectedDesign
+			name:					"selectedDesign"
+			optionKey:				"name"
+			addItemManually:		false
+//			showAddIcon:			false
+//			sgo
 
-			rowComponent: 						RowLayout
+			defaultValues: {
+				switch (numberOfContinuous.value)
+				{
+					case 2:
+						return [
+							{"design": "full", "runs": 13, "blocks": 1, "centerpoints" : 5, "cube": 0, "axial": 0, "alpha": Math.sqrt(2)},
+							{"design": "full", "runs": 14, "blocks": 2, "centerpoints" : 5, "cube": 3, "axial": 3, "alpha": Math.sqrt(2)}
+						];
+					default:
+//					case 3:
+						return [
+							{"design": "full", "runs": 20, "blocks": 1, "centerpoints" : 6, "cube": 0, "axial": 0, "alpha": 2**(3/4)},
+							{"design": "full", "runs": 20, "blocks": 2, "centerpoints" : 6, "cube": 4, "axial": 2, "alpha": 2**(3/4)},
+							{"design": "full", "runs": 20, "blocks": 3, "centerpoints" : 6, "cube": 4, "axial": 2, "alpha": 2**(3/4)}
+						];
+				}
+			}
+
+
+			ButtonGroup { id: radioGroup }
+
+			rowComponent: RowLayout
 			{
-				Row
-				{
-					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		40 * preferencesModel.uiScale
-					Label
-					{
-						text: 					qsTr("x") + (rowIndex + 1)
-					}
-				}
-				Row //Factor
-				{
-					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		100 * preferencesModel.uiScale
 
-					TextField
-					{
-						id:						factorName
-						label: 					""
-						name: 					"factorName"
-						placeholderText:		qsTr("Factor name ") + (rowIndex + 1)
-						fieldWidth:				100 * preferencesModel.uiScale
-						useExternalBorder:		false
-						showBorder:				true
+				RadioButtonGroup{ id: selected; name: "selected"; RadioButton { name: "selectedValue"; label: ""; checked: false; ButtonGroup.group: radioGroup } }
 
-					}
-				}
-				Row //Level1
-				{
-					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		100 * preferencesModel.uiScale
-					DoubleField
-					{
-						label:					""
-						name:					"low"
-						fieldWidth:				100 * preferencesModel.uiScale
-						defaultValue:			-1
-						negativeValues:			true
-					}
+				TextField		{ id: design;	name: "design";		editable: false;	fieldWidth: 40	} // could also be a dropdown?
+				IntegerField	{ id: runs;		name: "runs";		editable: false						}
+				IntegerField	{ id: blocks;	name: "blocks";		editable: false						}
+				IntegerField	{ id: total;	name: "total";		editable: false						}
+				IntegerField	{ id: cube;		name: "cube";		editable: false						}
+				IntegerField	{ id: axial;	name: "axial";		editable: false						}
+				DoubleField		{ id: alpha;	name: "alpha";		editable: false						}
 
-				}
-				Row //Level2
-				{
-					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		100 * preferencesModel.uiScale
-					DoubleField
-					{
-						label:					""
-						name:					"high"
-						fieldWidth:				100 * preferencesModel.uiScale
-						defaultValue:			1						
-					}
-				}
-				//				Row //Level3
-				//				{
-				//					visible:					[1].includes(numberOfLevels.currentIndex)
-				//					spacing:					5 * preferencesModel.uiScale
-				//					Layout.preferredWidth:		100 * preferencesModel.uiScale
-				//					TextField
-				//					{
-				//						label: 					""
-				//						name: 					"high2"
-				//						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
-				//						fieldWidth:				100 * preferencesModel.uiScale
-				//						useExternalBorder:		false
-				//						showBorder:				true
-				//					}
-				//				}
 			}
 		}
 	}
-
-	
-	TextArea
-	{
-		id:										designModel
-		name:									"designModel"
-		title:									qsTr("Specify model for CCD")
-		height:									100 * preferencesModel.uiScale
-		width:									250 * preferencesModel.uiScale
-		visible:								cube.checked && !noModel.checked
-	}
-
-	IntegerField
-	{
-		visible:								false
-		id:										numberOfGeneratorsForTable
-		name:									"numberOfGeneratorsForTable"
-		defaultValue:							numberOfGenerators.value
-	}
-
-//	TODO: what is the purpose of this?
-//	ColumnLayout
-//	{
-//		spacing:								0
-//		Layout.preferredWidth:					parent.width
-//		Layout.columnSpan:						2
-
-		//	RowLayout
-		//	{
-
-		//		Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale; visible: cube.checked }
-		//		Label { text: qsTr("Formula");		Layout.preferredWidth: 100 * preferencesModel.uiScale; visible: cube.checked }
-
-		//	}
-
-//		ComponentsList
-//		{
-//			name:								"generators"
-//			addItemManually:					false
-//			values:								numberOfGeneratorsForTable.value //
-//			visible:							cube.checked
-
-//			rowComponent: 						RowLayout
-//			{
-
-
-
-//				Row
-//				{
-//					spacing:					5 * preferencesModel.uiScale
-//					Layout.preferredWidth:		100 * preferencesModel.uiScale
-
-//					TextField
-//					{
-//						id:						generatorName
-//						label: 					""
-//						placeholderText:		qsTr("Generator name")
-//						name: 					"generatorName"
-//						fieldWidth:				100 * preferencesModel.uiScale
-//						useExternalBorder:		false
-//						showBorder:				true
-//					}
-//				}
-//				Row //Level1
-//				{
-//					spacing:					5 * preferencesModel.uiScale
-//					Layout.preferredWidth:		100 * preferencesModel.uiScale
-//					TextField
-//					{
-//						label: 					""
-//						name: 					"generatorFormula"
-//						placeholderText:		qsTr("Generator formula")
-//						fieldWidth:				100 * preferencesModel.uiScale
-//						useExternalBorder:		false
-//						showBorder:				true
-//					}
-//				}
-
-//				//				Row //Level3
-//				//				{
-//				//					visible:					[1].includes(numberOfLevels.currentIndex)
-//				//					spacing:					5 * preferencesModel.uiScale
-//				//					Layout.preferredWidth:		100 * preferencesModel.uiScale
-//				//					TextField
-//				//					{
-//				//						label: 					""
-//				//						name: 					"high2"
-//				//						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 3")
-//				//						fieldWidth:				100 * preferencesModel.uiScale
-//				//						useExternalBorder:		false
-//				//						showBorder:				true
-//				//					}
-//				//				}
-//			}
-//		}
-//	}
-
-	TextArea
-	{
-		id:									designBlock
-		name:								"designBlock"
-		title:								qsTr("Specify blocks for CCD")
-		height:								100 * preferencesModel.uiScale
-		width:								250 * preferencesModel.uiScale
-		visible:							cube.checked && block.checked
-	}
-
-	Group
-	{
-
-		Button
-		{
-			id: 								buildDesign
-			anchors.right:						parent.right
-			anchors.bottom:						parent.bottom
-			text: 								qsTr("<b>Build Design</b>")
-			onClicked: 							buildDesignInv.click()
-		}
-		
-		CheckBox
-		{
-			id:									buildDesignInv
-			name:								"buildDesignInv"
-			visible:							false
-		}
-		
-	}
-
 
 	Group
 	{
@@ -502,6 +145,97 @@ Form
 			function getDefaultValue(columnIndex, rowIndex)				{ return String.fromCharCode(columnIndex === 0 ? 65 + rowIndex + parseInt(numberOfContinuous.value) : 97 + columnIndex - 1); }
 		}
 
+	}
+
+	Group
+	{
+		columns: 2
+
+		RadioButtonGroup
+		{
+			name:								"alphaType"
+			title:								qsTr("Alpha")
+
+			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
+			RadioButton { name:	 "faceCentered";	label: qsTr("Face centred");					}
+			RadioButton { name:	 "custom";			label: qsTr("Custom");
+				DoubleField
+				{
+					name:	"customAlphaValue"
+					min:	0
+				}
+			}
+		}
+
+		RadioButtonGroup
+		{
+			name:								"centerPointType"
+			title:								qsTr("Center Points")
+
+			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
+			RadioButton { name:	 "custom";			label: qsTr("Custom");
+				DoubleField
+				{
+					label: qsTr("Cube block");
+					name:	"customCubeBlock"
+					min:	0
+				}
+				DoubleField
+				{
+					label: qsTr("Axial block");
+					name:	"customAxialBlock"
+					min:	0
+				}
+			}
+		}
+
+		RadioButtonGroup
+		{
+			name:								"runOrder"
+			title:								qsTr("Run Order")
+
+			RadioButton
+			{
+				SetSeed{}
+				name:							"runOrderRandom"
+				label:							qsTr("Random")
+				checked:						true
+			}
+
+			RadioButton
+			{
+				name:							"runOrderStandard"
+				label:							qsTr("Standard")
+			}
+		}
+
+		CheckBox
+		{
+			id:								coded_out
+			name:							"codedOutput"
+			label:							qsTr("Show coded output") // show user labels or just -1, 1?
+		}
+
+		Group
+		{
+
+			Button
+			{
+				id: 								buildDesign
+				anchors.right:						parent.right
+				anchors.bottom:						parent.bottom
+				text: 								qsTr("<b>Build Design</b>")
+				onClicked: 							buildDesignInv.click()
+			}
+
+			CheckBox
+			{
+				id:									buildDesignInv
+				name:								"buildDesignInv"
+				visible:							false
+			}
+
+		}
 	}
 
 	Section
@@ -572,7 +306,7 @@ Form
 			CheckBox {		name: "fourInOne";		label: qsTr("Matrix residuals plot")				}
 		}
 	}
-	
+
 	Section
 	{
 		title: qsTr("Contour plots")
@@ -586,7 +320,7 @@ Form
 		Group
 		{
 			title: qsTr("Contour plot options")
-			
+
 			CheckBox
 			{
 				name:							"contour"
@@ -639,8 +373,8 @@ Form
 			}
 		}
 	}
-	
-	
+
+
 	Section
 	{
 		title: qsTr("Desirability")

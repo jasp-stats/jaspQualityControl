@@ -15,8 +15,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#' @importFrom jaspBase %setOrRetrieve%
+
 #' @export
 doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
+
+
+  ready <- options[["buildDesignInv"]]
+
+  .doeRsmDesignSummaryTable(jaspResults, options)
+  if (ready)
+    .doeRsmGenerateDesign(jaspResults, options)
+
+  return()
 
   op1 <- length(options[["modelTerms"]])
   op2 <- length(options[["rsmResponseVariables"]])
@@ -111,6 +122,173 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
 }
 
+.doeRsmDesignSummaryTable <- function(jaspResults, options) {
+
+  if (!is.null(jaspResults[["doeRsmDesignSummaryTable"]]))
+    return()
+
+  tb <- createJaspTable(title = gettext("Design Summary"), position = 1L)
+  tb$addColumnInfo(name = "contFactors", title = gettext("Continuous factors"),  type = "integer")
+  tb$addColumnInfo(name = "catFactors",  title = gettext("Categorical factors"), type = "integer")
+
+  tb$addColumnInfo(name = "baseRuns",    title = gettext("Base runs"),           type = "integer")
+  tb$addColumnInfo(name = "replicates",  title = gettext("Replicates"),          type = "integer")
+  tb$addColumnInfo(name = "totalRuns",   title = gettext("Total runs"),          type = "integer")
+
+  tb$addColumnInfo(name = "baseBlocks",  title = gettext("Base blocks"),         type = "integer")
+  tb$addColumnInfo(name = "totalBlocks", title = gettext("Total blocks"),        type = "integer")
+
+  tb$addColumnInfo(name = "alpha",       title = "\U03B1",                       type = "number")
+
+  tb$transpose <- TRUE
+
+  tb[["contFactors"]] <- options[["numberOfContinuous"]]
+  tb[["catFactors"]]  <- options[["numberOfCategorical"]]
+
+  # tb[["baseRuns"]]    <-
+  # tb[["replicates"]]  <-
+  # tb[["totalRuns"]]   <-
+
+  # tb[["baseBlocks"]]  <-
+  # tb[["totalBlocks"]] <-
+
+  # tb[["alpha"]] <-
+
+  tb$dependOn(options = c("numberOfContinuous", "numberOfCategorical", "alphaType"))
+
+  jaspResults[["doeRsmDesignSummaryTable"]] <- tb
+
+  return()
+
+}
+
+.doeRsmContinuous2df <- function(tableView) {
+  if (length(tableView) == 0L) return(data.frame())
+  df <- as.data.frame(lapply(tableView, `[[`, "values"))
+  colnames(df) <- c("name", "low", "high")
+  df
+}
+
+.doeRsmCategorical2df <- function(tableView) {
+  if (length(tableView) == 0L) return(data.frame())
+  df <- do.call(cbind.data.frame, lapply(tableView, `[[`, "values"))
+  colnames(df) <- c("name", paste0("level", seq_len(ncol(df) - 1L)))
+  df
+}
+
+.doeRsmGenerateDesign <- function(jaspResults, options) {
+
+  # if (!is.null(jaspResults[["rsm"]]))
+  #   return()
+
+  design <- .doeRsmGenerateCentralCompositeDesign(
+    noContinuous         = options[["numberOfContinuous"]],
+    centerPointsCube     = 3,
+    centerPointsAxial    = 0,
+    alpha                = .doeRsmGetAlpha(options)
+  )
+
+  design <- .doeRsmReplicateDesignForCategoricalVariables(design, .doeRsmCategorical2df(options[["categoricalVariables"]]))
+
+  # if (options[["codedOutput"]])
+  #   design <- .doeRsmDecodeDesign(design, options)
+
+  tb <- createJaspTable(title = gettext("Response Surface Design"))
+  tb$addColumnInfo(name = "run.order", title = gettext("Run order"),      type = "integer")
+  tb$addColumnInfo(name = "std.order", title = gettext("Standard order"), type = "integer")
+
+  for (i in seq_len(options[["numberOfContinuous"]]))
+    tb$addColumnInfo(name = paste0("x", i), title = options[["continuousVariables"]][[1L]][["vaues"]][i],     type = "number", overtitle = gettext("Continuous factors"))
+
+  noCat <- options[["numberOfCategorical"]]
+  for (i in seq_len(noCat))
+    tb$addColumnInfo(name = paste0("x_cat", i), title = options[["continuousVariables"]][[1L]][["vaues"]][i], type = "number", overtitle = gettext("Categorical factors"))
+
+  # avoid any shenanigans with categorical factors having duplicate names
+  if (noCat > 0L)
+    colnames(design)[(ncol(design) - noCat + 1L):ncol(design)] <- paste0("x_cat", seq_len(noCat))
+
+  tb$setData(design)
+  jaspResults[["rsm"]] <- tb
+
+}
+
+.doeRsmGetAlpha <- function(options) {
+  if (options[["alphaType"]] == "default") {
+    alpha <- "rotatable"
+  } else if (options[["alphaType"]] == "faceCentered") {
+    alpha <- 1
+  } else { # custom
+    alpha <- options[["customAlphaValue"]]
+  }
+  return(alpha)
+}
+
+.doeRsmGenerateCentralCompositeDesign <- function(noContinuous, centerPointsCube, centerPointsAxial = 0, alpha = "rotatable",
+                  randomize = FALSE) {
+
+  design <- rsm::ccd(
+    basis      = noContinuous,
+    n0         = c(centerPointsCube, centerPointsAxial),
+    alpha      = alpha,
+    oneblock   = TRUE,
+    randomize  = randomize#,
+    # silences lintr check
+    # generators = rlang::missing_arg(),
+    # coding     = rlang::missing_arg()
+  )
+
+  return(design)
+
+}
+
+.doeRsmGenerateBoxBehnkenDesign <- function(noContinuous, centerPoints, randomize = FALSE) {
+
+  design <- rsm::bbd(
+    k         = noContinuous,
+    n0        = centerPoints,
+    block     = FALSE,
+    randomize = randomize#,
+    # silences lintr check
+    # coding    = rlang::missing_arg()
+  )
+
+  return(design)
+
+}
+
+.doeRsmReplicateDesignForCategoricalVariables <- function(design, categoricalVariables) {
+
+  if (length(categoricalVariables) <= 0L)
+    return(design)
+
+  categoricalVariablesList <- apply(categoricalVariables[-1L], 1L, \(x) {
+    x <- trimws(x)  # disallow " " as level name
+    x <- x[x != ""] # drop empty levels
+    unique(x)       # keep only unique levels
+  }, simplify = FALSE) # do NOT simplify because this will change the output if all variable have the same no. levels vs. when they do not
+  names(categoricalVariablesList) <- categoricalVariables[[1L]]
+  categoricalCombinations <- expand.grid(categoricalVariablesList)
+
+  unrowname <- function(x) {
+    rownames(x) <- NULL
+    x
+  }
+
+  nr <- nrow(design)
+  designCombined <- cbind(design, unrowname(categoricalCombinations[rep(1L, nr), , drop = FALSE]))
+
+  for (i in 2L:nrow(categoricalCombinations)) {
+    toAdd <- cbind(design, unrowname(categoricalCombinations[rep(i, nrow(design)), , drop = FALSE]))
+    toAdd[["run.order"]] <- toAdd[["run.order"]] + nr * (i - 1L)
+    toAdd[["std.order"]] <- toAdd[["std.order"]] + nr * (i - 1L)
+
+    designCombined <- rbind(designCombined, toAdd)
+  }
+
+  return(designCombined)
+
+}
 
 .cubeDesign <- function(jaspResults, options) {
 
