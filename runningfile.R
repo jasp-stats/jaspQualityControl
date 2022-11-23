@@ -6,7 +6,8 @@ setPkgOption("module.dirs", ".")
 setPkgOption("reinstall.modules", FALSE)
 
 # options <- analysisOptions("~/GitHub/jasp/deleteable/qualitycontrol/doeRSM2.jasp")
-options <- analysisOptions("~/GitHub/jasp/deleteable/qualitycontrol/doeRsmTests.jasp")
+# options <- analysisOptions("~/GitHub/jasp/deleteable/qualitycontrol/doeRsmTests.jasp")
+options <- analysisOptions("~/../Downloads/doe_debug.jasp")
 
 # options$designType <- "star"
 # for (i in seq_along(options$factors)) {
@@ -23,7 +24,7 @@ options <- analysisOptions("~/GitHub/jasp/deleteable/qualitycontrol/doeRsmTests.
 
 options$buildDesignInv <- TRUE
 
-# debugonce(jaspQualityControl:::doeResponseSurfaceMethodology)
+debugonce(jaspQualityControl:::doeResponseSurfaceMethodology)
 
 # debugonce(jaspQualityControl:::.doeRsmGenerateDesign)
 
@@ -70,80 +71,83 @@ result <- runAnalysis(data = "debug.csv", options = options)
 # # This function replicates minitab output using rsm
 # # perhaps it should call cube & start directly?
 # # also order should match minitab exactly
-# doCCD <- function(noContinuous, centerPointsCube, centerPointsAxial = 0, alpha = "rotatable",
-#                   categoricalVariables = list()) {
-#
-#   # totalLevels <- prod(noLevels)
-#   design <- rsm::ccd(
-#     basis = noContinuous,
-#     n0 = c(centerPointsCube, centerPointsAxial),# / totalLevels,
-#     alpha = "rotatable",
-#     oneblock = TRUE
-#   )
-#
-#   return(replicateDesignForCategoricalVariables(design, categoricalVariables))
-#
-# }
-#
-# doBBD <- function(noContinuous, centerPoints, categoricalVariables = list(), randomize = FALSE) {
-#
-#   # totalLevels <- prod(lengths(categoricalVariables))
-#   design <- rsm::bbd(
-#     k         = noContinuous,
-#     n0        = centerPoints,# / totalLevels,
-#     block     = FALSE,#block
-#     randomize = randomize
-#   )
-#
-#   return(replicateDesignForCategoricalVariables(design, categoricalVariables))
-#
-# }
-#
-# replicateDesignForCategoricalVariables <- function(design, categoricalVariables) {
-#
-#   if (length(categoricalVariables) <= 0L)
-#     return(design)
-#
-#   categoricalCombinations <- expand.grid(categoricalVariables)
-#
-#   unrowname <- function(x) {
-#     rownames(x) <- NULL
-#     x
-#   }
-#
-#   nr <- nrow(design)
-#   designCombined <- cbind(design, unrowname(categoricalCombinations[rep(1L, nr), , drop = FALSE]))
-#
-#   for (i in 2L:nrow(categoricalCombinations)) {
-#     toAdd <- cbind(design, unrowname(categoricalCombinations[rep(i, nrow(design)), , drop = FALSE]))
-#     toAdd[["run.order"]] <- toAdd[["run.order"]] + nr * (i - 1L)
-#     toAdd[["std.order"]] <- toAdd[["std.order"]] + nr * (i - 1L)
-#
-#     designCombined <- rbind(designCombined, toAdd)
-#   }
-#
-#   return(designCombined)
-#
-# }
-#
-# # TODO: continue here
-# summarizeDesign <- function() {
-#   # factors
-#   # baseRuns
-#   # totalRuns
-#   # alpha
-#   # baseBlocks
-#   # totalBlocks
-#   #
-#   # pointTypes
-#   # cubePoints
-#   # centerPointsInCube
-#   # axialPoints
-#   # centerPointsInAxial
-# }
+doCCD <- function(noContinuous, centerPointsCube, centerPointsAxial = 0, alpha = "rotatable",
+                  categoricalVariables = list()) {
+
+  # totalLevels <- prod(noLevels)
+  design <- rsm::ccd(
+    basis = noContinuous,
+    n0 = c(centerPointsCube, centerPointsAxial),# / totalLevels,
+    alpha = "rotatable",
+    oneblock = TRUE,
+    randomize = FALSE
+  )
+
+  return(replicateDesignForCategoricalVariables(design, categoricalVariables))
+
+}
+
+doBBD <- function(noContinuous, centerPoints, categoricalVariables = list(), randomize = FALSE) {
+
+  # totalLevels <- prod(lengths(categoricalVariables))
+  design <- rsm::bbd(
+    k         = noContinuous,
+    n0        = centerPoints,# / totalLevels,
+    block     = FALSE,#block
+    randomize = randomize
+  )
+
+  return(replicateDesignForCategoricalVariables(design, categoricalVariables))
+
+}
+
+replicateDesignForCategoricalVariables <- function(design, categoricalVariables) {
+
+  if (length(categoricalVariables) <= 0L)
+    return(design)
+
+  categoricalCombinations <- expand.grid(categoricalVariables)
+
+  unrowname <- function(x) {
+    rownames(x) <- NULL
+    x
+  }
+
+  nr <- nrow(design)
+  designCombined <- cbind(design, unrowname(categoricalCombinations[rep(1L, nr), , drop = FALSE]))
+
+  for (i in 2L:nrow(categoricalCombinations)) {
+    toAdd <- cbind(design, unrowname(categoricalCombinations[rep(i, nrow(design)), , drop = FALSE]))
+    toAdd[["run.order"]] <- toAdd[["run.order"]] + nr * (i - 1L)
+    toAdd[["std.order"]] <- toAdd[["std.order"]] + nr * (i - 1L)
+
+    designCombined <- rbind(designCombined, toAdd)
+  }
+
+  return(designCombined)
+
+}
+
+# TODO: continue here
+summarizeDesign <- function() {
+  # factors
+  # baseRuns
+  # totalRuns
+  # alpha
+  # baseBlocks
+  # totalBlocks
+  #
+  # pointTypes
+  # cubePoints
+  # centerPointsInCube
+  # axialPoints
+  # centerPointsInAxial
+}
 #
 #
 # # verified against minitab
+doCCD(2, 3, 3)
+
 # doCCD(3, centerPointsCube = 6)
 # doCCD(3, centerPointsCube = 6, categoricalVariables = list(A = c("a", "b")))
 # doCCD(3, centerPointsCube = 6, categoricalVariables = list(A = c("a", "b"), B = c("a", "b", "c")))

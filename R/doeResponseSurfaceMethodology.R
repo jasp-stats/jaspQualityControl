@@ -128,6 +128,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
     return()
 
   tb <- createJaspTable(title = gettext("Design Summary"), position = 1L)
+  tb$addColumnInfo(name = "title",       title = gettext("Variable"),            type = "string")
   tb$addColumnInfo(name = "contFactors", title = gettext("Continuous factors"),  type = "integer")
   tb$addColumnInfo(name = "catFactors",  title = gettext("Categorical factors"), type = "integer")
 
@@ -142,6 +143,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
   tb$transpose <- TRUE
 
+  tb[["title"]]       <- gettext("Value")
   tb[["contFactors"]] <- options[["numberOfContinuous"]]
   tb[["catFactors"]]  <- options[["numberOfCategorical"]]
 
@@ -154,7 +156,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
   # tb[["alpha"]] <-
 
-  tb$dependOn(options = c("numberOfContinuous", "numberOfCategorical", "alphaType"))
+  tb$dependOn(options = c("numberOfContinuous", "numberOfCategorical", "alphaType", "selected"))
 
   jaspResults[["doeRsmDesignSummaryTable"]] <- tb
 
@@ -162,18 +164,40 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
 }
 
+.doeRsmParseSelectedDesign <- function(options) {
+
+  selected <- options[["selected"]]
+  if (selected == "") {
+    newOptions <- list(
+      designIndex           = NA_integer_,
+      selectedDesignIndexed = list()
+    )
+  } else {
+    newOptions <- list(
+      designIndex           = as.integer(selected),
+      selectedDesignIndexed = options[["selectedDesign"]][[options[["designIndex"]]]]
+    )
+  }
+
+  if (any(names(newOptions) %in% options))
+    stop("You should not add designIndex or selectedDesignIndexed as name in QML!", domain = NA)
+
+  return(c(options, newOptions))
+
+}
+
 .doeRsmContinuous2df <- function(tableView) {
-  if (length(tableView) == 0L) return(data.frame())
   df <- as.data.frame(lapply(tableView, `[[`, "values"))
+  if (ncol(df) == 0L) return(df)
   colnames(df) <- c("name", "low", "high")
-  df
+  return(df)
 }
 
 .doeRsmCategorical2df <- function(tableView) {
-  if (length(tableView) == 0L) return(data.frame())
   df <- do.call(cbind.data.frame, lapply(tableView, `[[`, "values"))
+  if (ncol(df) == 0L) return(df)
   colnames(df) <- c("name", paste0("level", seq_len(ncol(df) - 1L)))
-  df
+  return(df)
 }
 
 .doeRsmGenerateDesign <- function(jaspResults, options) {
@@ -181,12 +205,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   # if (!is.null(jaspResults[["rsm"]]))
   #   return()
 
-  design <- .doeRsmGenerateCentralCompositeDesign(
-    noContinuous         = options[["numberOfContinuous"]],
-    centerPointsCube     = 3,
-    centerPointsAxial    = 0,
-    alpha                = .doeRsmGetAlpha(options)
-  )
+  design <- if (options[["designType"]] == "centralCompositeDesign") {
+    .doeRsmGenerateCentralCompositeDesign(
+      noContinuous         = options[["numberOfContinuous"]],
+      centerPointsCube     = 3,
+      centerPointsAxial    = 0,
+      alpha                = .doeRsmGetAlpha(options),
+      randomize            = FALSE
+    )
+  } else {
+    .doeRsmGenerateBoxBehnkenDesign(
+      noContinuous         = options[["numberOfContinuous"]],
+      centerPoints         = 3,
+      randomize            = FALSE
+    )
+  }
 
   design <- .doeRsmReplicateDesignForCategoricalVariables(design, .doeRsmCategorical2df(options[["categoricalVariables"]]))
 
@@ -209,6 +242,11 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
     colnames(design)[(ncol(design) - noCat + 1L):ncol(design)] <- paste0("x_cat", seq_len(noCat))
 
   tb$setData(design)
+
+  tb$dependOn(options = c("numberOfContinuous", "numberOfCategorical", "categoricalVariables"))
+  # if (option[["encoded"]])
+  #   tb$dependOn(options = "continuousVariables")
+
   jaspResults[["rsm"]] <- tb
 
 }

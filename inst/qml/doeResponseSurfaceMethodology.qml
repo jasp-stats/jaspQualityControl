@@ -1,5 +1,5 @@
 
-// Copyright (C) 2013-2018 University of Amsterdam
+// Copyright (C) 2013-2023 University of Amsterdam
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
 // published by the Free Software Foundation, either version 3 of the
@@ -22,65 +22,216 @@ import JASP.Widgets 							1.0
 
 Form
 {
+	id: form
 	columns: 1
 
 	Group
 	{
-		// TODO: should probably come after specifying the variables variables
+
+		RadioButtonGroup
+		{
+			name		: "designType"
+			title		: qsTr("Design Type")
+
+			RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central Composite Design");	checked: true	}
+			RadioButton { name:	 "boxBehnkenDesign ";			label: qsTr("Box-Behnken Design ");							}
+		}
+
+		TableView
+		{
+			property var designData:	parseInt(numberOfContinuous.value) === 2 ?
+
+											[
+												"full", 13, 1, 5, 0, 0, Math.round(Math.sqrt(2), 3),
+												"full", 14, 2, 6, 3, 3, Math.round(Math.sqrt(2), 3)
+											]
+								:
+											[
+												"full", 20, 1, 6, 0, 0, Math.round(2**(3/4), 3),
+												"full", 20, 2, 6, 4, 2, Math.round(2**(3/4), 3),
+												"full", 20, 3, 6, 4, 2, Math.round(2**(3/4), 3)
+											]
+
+			id					: selectedDesign2
+			implicitWidth		: form.implicitWidth
+
+			modelType			: JASP.Simple
+			name				: "selectedDesign2"
+
+			columnNames			: [qsTr("Runs"), qsTr("Blocks"), qsTr("Total"), qsTr("Cube"), qsTr("Axial"), qsTr("Alpha")]
+			cornerText			: qsTr("Design")
+			initialColumnCount	: 6
+			itemType			: JASP.String
+			rowCount			: numberOfContinuous.value
+			initialRowCount		: numberOfContinuous.value
+
+			itemDelegate: Item
+			{
+
+				Rectangle
+				{
+
+					color: rowIndex === tableView.rowSelected ? jaspTheme.grayLighter : jaspTheme.analysisBackgroundColor
+					anchors
+					{
+						fill:			parent
+						topMargin:		-selectedDesign2.view.itemVerticalPadding
+						bottomMargin:	-selectedDesign2.view.itemVerticalPadding
+					}
+
+					MouseArea
+					{
+						anchors.fill: parent
+						onClicked:
+						{
+							tableView.colSelected = columnIndex
+							tableView.rowSelected = rowIndex
+						}
+					}
+				}
+
+				Label
+				{
+					text						: tableView.getDefaultValue(columnIndex, rowIndex)
+					anchors.verticalCenter		: parent.verticalCenter
+					anchors.horizontalCenter	: parent.horizontalCenter
+				}
+			}
+
+			columnHeaderDelegate : Rectangle
+			{
+				// identical to the default definition in TableView, but this does not change color when the column is selected
+				color: jaspTheme.analysisBackgroundColor
+//				color: columnIndex === tableView.colSelected ? jaspTheme.grayLighter : jaspTheme.analysisBackgroundColor
+				Text { text: tableView.getColHeaderText(headerText, columnIndex); anchors.centerIn: parent; font: jaspTheme.font; color:	jaspTheme.textEnabled }
+				MouseArea
+				{
+					anchors.fill: parent
+					onClicked:
+					{
+						if (tableView.colSelected === columnIndex)
+							columnIndex = -1
+						tableView.colSelected = columnIndex;
+					}
+				}
+			}
+
+			function getRowHeaderText(headerText, rowIndex)	{
+//					console.log("7 * rowIndex: " +7 * rowIndex);
+//					console.log("designData[7 * rowIndex]: " + designData[7 * rowIndex]);
+					return designData[					7 * rowIndex];
+				}
+			function getDefaultValue(columnIndex, rowIndex)	{
+//				console.log("columnIndex + 1 +	7 * rowIndex: " + columnIndex + 1 +	7 * rowIndex);
+//				console.log("designData[columnIndex + 1 +	7 * rowIndex]: " + designData[columnIndex + 1 +	7 * rowIndex]);
+				return designData[columnIndex + 1 +	7 * rowIndex]
+			}
+		}
+
+		IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); value: selectedDesign2.rowSelected; negativeValues: true }
+		IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); value: selectedDesign2.colSelected; negativeValues: true }
+
+		// TODO: should probably come after specifying the variables
 		RowLayout
 		{
-			Label { text: qsTr("Design");	Layout.preferredWidth: 40 * preferencesModel.uiScale; Layout.leftMargin: 40 * preferencesModel.uiScale}
-			Label { text: qsTr("Runs");		Layout.preferredWidth: 30 * preferencesModel.uiScale }
-			Label { text: qsTr("Blocks");	Layout.preferredWidth: 30 * preferencesModel.uiScale }
-//			Label { text: qsTr("Center Points") }
-			Label { text: qsTr("Total");	Layout.preferredWidth: 30 * preferencesModel.uiScale }
-			Label { text: qsTr("Cube");		Layout.preferredWidth: 30 * preferencesModel.uiScale }
-			Label { text: qsTr("Axial");	Layout.preferredWidth: 30 * preferencesModel.uiScale }
-			Label { text: qsTr("Alpha");	Layout.preferredWidth: 30 * preferencesModel.uiScale }
+			id: textAbove
+			Label { text: qsTr("Design");	Layout.preferredWidth: 40 * preferencesModel.uiScale; Layout.leftMargin: 45 * preferencesModel.uiScale}
+			Label { text: qsTr("Runs");		Layout.preferredWidth: 40 * preferencesModel.uiScale }
+			Label { text: qsTr("Blocks");	Layout.preferredWidth: 40 * preferencesModel.uiScale }
+	//			Label { text: qsTr("Center Points") }
+			Label { text: qsTr("Total");	Layout.preferredWidth: 40 * preferencesModel.uiScale }
+			Label { text: qsTr("Cube");		Layout.preferredWidth: 40 * preferencesModel.uiScale }
+			Label { text: qsTr("Axial");	Layout.preferredWidth: 40 * preferencesModel.uiScale }
+			Label { text: qsTr("Alpha");	Layout.preferredWidth: 40 * preferencesModel.uiScale }
 		}
 
 		ComponentsList
 		{
+
+			width:					form.implicitWidth//textAbove.width
 			id:						selectedDesign
 			name:					"selectedDesign"
 			optionKey:				"name"
 			addItemManually:		false
-//			showAddIcon:			false
-//			sgo
 
-			defaultValues: {
-				switch (numberOfContinuous.value)
-				{
-					case 2:
-						return [
-							{"design": "full", "runs": 13, "blocks": 1, "centerpoints" : 5, "cube": 0, "axial": 0, "alpha": Math.sqrt(2)},
-							{"design": "full", "runs": 14, "blocks": 2, "centerpoints" : 5, "cube": 3, "axial": 3, "alpha": Math.sqrt(2)}
-						];
-					default:
-//					case 3:
-						return [
-							{"design": "full", "runs": 20, "blocks": 1, "centerpoints" : 6, "cube": 0, "axial": 0, "alpha": 2**(3/4)},
-							{"design": "full", "runs": 20, "blocks": 2, "centerpoints" : 6, "cube": 4, "axial": 2, "alpha": 2**(3/4)},
-							{"design": "full", "runs": 20, "blocks": 3, "centerpoints" : 6, "cube": 4, "axial": 2, "alpha": 2**(3/4)}
-						];
-				}
-			}
+//			values:		parseInt(numberOfContinuous.value) === 2 ?
+
+//							[
+//								{"design": "full", "runs": 13, "blocks": 1, "total" : 5, "cube": 0, "axial": 0, "alpha": Math.round(Math.sqrt(2), 3)},
+//								{"design": "full", "runs": 14, "blocks": 2, "total" : 6, "cube": 3, "axial": 3, "alpha": Math.round(Math.sqrt(2), 3)}
+//							]
+//				:
+//							[
+//								{"design": "full", "runs": 20, "blocks": 1, "total" : 6, "cube": 0, "axial": 0, "alpha": Math.round(2**(3/4), 3)},
+//								{"design": "full", "runs": 20, "blocks": 2, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)},
+//								{"design": "full", "runs": 20, "blocks": 3, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)}
+//							]
+
+			source:		{"values": parseInt(numberOfContinuous.value) === 2 ?
+
+							[
+								{"design": "full", "runs": 13, "blocks": 1, "total" : 5, "cube": 0, "axial": 0, "alpha": Math.round(Math.sqrt(2), 3)},
+								{"design": "full", "runs": 14, "blocks": 2, "total" : 6, "cube": 3, "axial": 3, "alpha": Math.round(Math.sqrt(2), 3)}
+							]
+				:
+							[
+								{"design": "full", "runs": 20, "blocks": 1, "total" : 6, "cube": 0, "axial": 0, "alpha": Math.round(2**(3/4), 3)},
+								{"design": "full", "runs": 20, "blocks": 2, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)},
+								{"design": "full", "runs": 20, "blocks": 3, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)}
+							]
+			};
 
 
-			ButtonGroup { id: radioGroup }
+//						})
+
+	//			showAddIcon:			false
+	//			sgo
+
+	//			values: {
+	////				switch (numberOfContinuous.value)
+	////				{
+	////					case 2:
+	//					if (numberOfContinuous.value)
+	//					{
+	//						return [
+	//							{"design": "full", "runs": 13, "blocks": 1, "total" : 5, "cube": 0, "axial": 0, "alpha": Math.round(Math.sqrt(2), 3)},
+	//							{"design": "full", "runs": 14, "blocks": 2, "total" : 6, "cube": 3, "axial": 3, "alpha": Math.round(Math.sqrt(2), 3)}
+	//						];
+	//					}
+	//					else
+	//					{
+	////					default:
+	////					case 3:
+	//						return [
+	//							{"design": "full", "runs": 20, "blocks": 1, "total" : 6, "cube": 0, "axial": 0, "alpha": Math.round(2**(3/4), 3)},
+	//							{"design": "full", "runs": 20, "blocks": 2, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)},
+	//							{"design": "full", "runs": 20, "blocks": 3, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)}
+	//						];
+	//					}
+	//				}
+	////			})
+
+
+
+
+	//			ButtonGroup { id: radioGroup }
+	//			RadioButtonGroup
+			RadioButtonGroup{ id: radioGroup; name: "selected" }
 
 			rowComponent: RowLayout
 			{
 
-				RadioButtonGroup{ id: selected; name: "selected"; RadioButton { name: "selectedValue"; label: ""; checked: false; ButtonGroup.group: radioGroup } }
+	//				RadioButtonGroup{ id: selected; name: "selected"; RadioButton { name: "selectedValue"; label: ""; checked: false; ButtonGroup.group: radioGroup } }
+				RadioButton { name: 1 + rowIndex; label: ""; checked: false; buttonGroup: radioGroup.buttonGroup }
 
-				TextField		{ id: design;	name: "design";		editable: false;	fieldWidth: 40	} // could also be a dropdown?
-				IntegerField	{ id: runs;		name: "runs";		editable: false						}
-				IntegerField	{ id: blocks;	name: "blocks";		editable: false						}
-				IntegerField	{ id: total;	name: "total";		editable: false						}
-				IntegerField	{ id: cube;		name: "cube";		editable: false						}
-				IntegerField	{ id: axial;	name: "axial";		editable: false						}
-				DoubleField		{ id: alpha;	name: "alpha";		editable: false						}
+				// TODO: use label!
+				TextField		{ id: design;	name: "design";		editable: false;	fieldWidth: 40				} // could also be a dropdown?
+				IntegerField	{ id: runs;		name: "runs";		editable: false									}
+				IntegerField	{ id: blocks;	name: "blocks";		editable: false									}
+				IntegerField	{ id: total;	name: "total";		editable: false									}
+				IntegerField	{ id: cube;		name: "cube";		editable: false;	negativeValues: true		}
+				IntegerField	{ id: axial;	name: "axial";		editable: false;	negativeValues: true		}
+				DoubleField		{ id: alpha;	name: "alpha";		editable: false									}
 
 			}
 		}
@@ -174,6 +325,7 @@ Form
 
 			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
 			RadioButton { name:	 "custom";			label: qsTr("Custom");
+				// TODO: these doublefields should only be enable if the selected element has a nonzero number of cube/ axial points
 				DoubleField
 				{
 					label: qsTr("Cube block");
@@ -216,6 +368,8 @@ Form
 			label:							qsTr("Show coded output") // show user labels or just -1, 1?
 		}
 
+//		TODO: remove this? can also do nothing until people select a design
+		// Show the design in the output (because people want a button...)
 		Group
 		{
 
@@ -235,6 +389,33 @@ Form
 				visible:							false
 			}
 
+		}
+
+		// Export the design to a csv
+		Group
+		{
+			FileSelector
+			{
+				name:		"exportDesignFile"
+				label:		qsTr("Export design:")
+				filter:		"*.csv"
+				save:		true
+			}
+
+			Button
+			{
+				anchors.right:		parent.right
+				anchors.bottom:		parent.bottom
+				text: 				actualExporter.checked ? qsTr("Sync Design: On") : qsTr("Sync Design: Off")
+				onClicked: 			actualExporter.click()
+			}
+
+			CheckBox
+			{
+				id:					actualExporter
+				name:				"actualExporter"
+				visible:			false
+			}
 		}
 	}
 
