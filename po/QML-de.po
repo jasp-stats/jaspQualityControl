@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-11-12 03:54+0000\n"
+"PO-Revision-Date: 2022-11-20 09:47+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/de/>\n"
@@ -1416,7 +1416,7 @@ msgstr "Sonstiges"
 
 msgctxt "Description|"
 msgid "Control Charts for Attributes"
-msgstr ""
+msgstr "Regelkarten für Attribute"
 
 msgctxt "Description|"
 msgid "General Full Factorial Design"
@@ -1424,7 +1424,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Control Charts for Attributes Report"
-msgstr ""
+msgstr "Bericht Regelkarten für Attribute"
 
 msgctxt "attributesCharts|"
 msgid "Title"
@@ -1440,11 +1440,11 @@ msgstr "Name"
 
 msgctxt "attributesCharts|"
 msgid "Operator"
-msgstr ""
+msgstr "Bediener"
 
 msgctxt "attributesCharts|"
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 msgctxt "attributesCharts|"
 msgid "Misc"
@@ -1460,7 +1460,7 @@ msgstr "Prüfer"
 
 msgctxt "attributesCharts|"
 msgid "Measurement system"
-msgstr ""
+msgstr "Messsystem"
 
 msgctxt "attributesCharts|"
 msgid "Subgroups size"
@@ -1872,7 +1872,6 @@ msgctxt "doeFactorial|"
 msgid "Available factors"
 msgstr "Verfügbare Faktoren"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Response variable"
 msgstr "Wirkvariable"
@@ -1884,9 +1883,8 @@ msgstr "Zugewiesene Faktoren"
 
 msgctxt "doeFactorial|"
 msgid "Blocks"
-msgstr ""
+msgstr "Blöcke"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Run order"
 msgstr "Ablaufreihenfolge"
@@ -1897,11 +1895,11 @@ msgstr "Interaktionsterm höchster Ordnung:"
 
 msgctxt "doeFactorial|"
 msgid "Model"
-msgstr ""
+msgstr "Modell"
 
 msgctxt "doeFactorial|"
 msgid "Components"
-msgstr ""
+msgstr "Komponenten"
 
 msgctxt "doeFactorial|"
 msgid "Model Terms"
