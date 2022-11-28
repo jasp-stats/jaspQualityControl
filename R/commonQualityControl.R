@@ -190,8 +190,8 @@
 
 # Function to create R chart
 .Rchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,
-                    plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = "", yAxisLab = "Sample range",
-                    xAxisLab = "Subgroup", manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE,
+                    plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = "", yAxisLab = gettext("Sample range"),
+                    xAxisLab = gettext("Subgroup"), manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE,
                     OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE, manualTicks = FALSE) {
 
   #Arrange data and compute
