@@ -54,7 +54,7 @@
 
 # Function to create X-bar chart
 .Xbarchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,
-                       plotLimitLabels = TRUE, yAxisLab = "Sample average", xAxisLab = "Subgroup", manualDataYaxis = "",
+                       plotLimitLabels = TRUE, yAxisLab = gettext("Sample average"), xAxisLab = gettext("Subgroup"), manualDataYaxis = "",
                        manualXaxis = "", manualTicks = FALSE, title = "", smallLabels = FALSE, Phase2 = FALSE,
                        target = NULL, sd = NULL, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
