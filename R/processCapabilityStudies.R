@@ -254,7 +254,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   )
   table$addRows(rows)
 
-  N.Decimals <- max(.decimalplaces(dataset[measurements]))
+  nDecimals <- max(.decimalplaces(dataset[measurements]))
 
   if(returnDataframe){
     sourceVector <- c('LSL', 'Target', 'USL', 'Sample size', 'Mean', "Std. Deviation (Total)", "Std. Deviation (Within)")
@@ -273,7 +273,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     sdw <- qccFit[["std.dev"]]
     valueVector <- c(lsl, target, usl, n, mean, sd, sdw)
     df <- data.frame(sources = sourceVector,
-                     values = round(as.numeric(valueVector), N.Decimals))
+                     values = round(as.numeric(valueVector), nDecimals))
     return(df)
   }
   container[["processSummaryTable"]] <- table
@@ -676,12 +676,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   expWithin <- c(ewLSL, ewUSL, ewTOT)
 
 
-  N.Decimals <- max(.decimalplaces(dataset[measurements]))
+  nDecimals <- max(.decimalplaces(dataset[measurements]))
   if(returnPerformanceDataframe){
     df <- data.frame("Source" = rowNames,
                      "Observed" = observed,
-                     "Expected Overall" = round(expOverall, N.Decimals),
-                     "Expected Within"  = round(expWithin, N.Decimals))
+                     "Expected Overall" = round(expOverall, nDecimals),
+                     "Expected Within"  = round(expWithin, nDecimals))
     return(df)
 
   }

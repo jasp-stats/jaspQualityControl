@@ -537,7 +537,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     } else {
       xBreaks1 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(subgroups)))
     }
-    if (min(xBreaks1) == 0)  # never start counting at 0 on x axis
+    if (xBreaks1[1] == 0)  # never start counting at 0 on x axis
       xBreaks1[1] <- 1
     
     xLimits <- c(min(xBreaks1), max(xBreaks1) * 1.15)
@@ -580,7 +580,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     } else {
       xBreaks2 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(subgroups)))
     }
-    if (min(xBreaks2) == 0) # never start counting at 0 on x axis
+    if (xBreaks2[1] == 0) # never start counting at 0 on x axis
       xBreaks2[1] <- 1
     xLimits <- c(min(xBreaks2),max(xBreaks2) * 1.15)
     dfLabel <- data.frame(
