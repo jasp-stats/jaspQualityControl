@@ -491,16 +491,26 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     if (identical(measurements, "") && !identical(variable, "")) {
       ppPlot$dependOn(optionContainsValue = list(variables = variable))
       data <- data.frame(process = dataForPlot[[variable]])
-      sd <- qcc::sd.xbar.one(data$process, k = options$ncol)
+      k <- options[["movingRangeLength"]]
+      sd <- qcc::sd.xbar.one(data$process, k = k)
       sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE, std.dev = sd)
-      xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol = options$ncol)
-      sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
+      # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
+      mrMatrix <- matrix(data$process[1:(length(data$process) - (k - 1))])   # remove last k - 1 elements
+      for (j in 2:k) {
+        mrMatrix <- cbind(mrMatrix, matrix(data$process[j:(length(data$process) - (k - j))]))   # remove first i and last (k - i) elements
+      }
+      sixsigma_R <- qcc::qcc(mrMatrix, type = "R", plot = FALSE)
     } else {
       data <- as.vector((t(dataForPlot[measurements])))
-      sd <- qcc::sd.xbar.one(data, k = options$ncol)
+      k <- options[["movingRangeLength"]]
+      sd <- qcc::sd.xbar.one(data, k = k)
       sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE, std.dev = sd)
-      xmr.raw.r <- matrix(cbind(data[1:length(data)-1],data[2:length(data)]), ncol = options$ncol)
-      sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
+      # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
+      mrMatrix <- matrix(data[1:(length(data) - (k - 1))])   # remove last k - 1 elements
+      for (j in 2:k) {
+        mrMatrix <- cbind(mrMatrix, matrix(data[j:(length(data) - (k - j))]))   # remove first i and last (k - i) elements
+      }
+      sixsigma_R <- qcc::qcc(mrMatrix, type = "R", plot = FALSE)
     }
     dataPlotI[[1]] <- c(unlist(dataPlotI[[1]]), unlist(sixsigma_I$statistics), min(sixsigma_I$limits), max(sixsigma_I$limits))  # all values and limits to calculate decimals and axes
     if (i != 1) {

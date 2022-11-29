@@ -32,3 +32,4 @@ test_that("Test results for Diameter for Range chart table results match", {
                                  list("10:10", "16:10", "16:10", "16:10", "16:10", "20:10", "20:10",
                                       "20:10", "21:00", "21:00", "21:00"))
 })
+

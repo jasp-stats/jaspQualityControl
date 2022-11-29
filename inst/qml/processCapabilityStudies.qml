@@ -272,6 +272,15 @@ Form
 					label: 						qsTr("X-mR chart")
 					enabled: 					pcSubgroupSize.value == 1 || pcDataFormat.currentValue == "PCwideFormat"
 					checked: 					pcSubgroupSize.value == 1
+
+					DoubleField
+					{
+						name:							"movingRangeLength"
+						label:							qsTr("Moving range length")
+						defaultValue:					2
+						min: 							2
+						max: 							dataSetModel.rowCount()
+					}
 				}
 			}
 

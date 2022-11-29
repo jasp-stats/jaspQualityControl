@@ -77,7 +77,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   if (options$ImRchart && ready) {
     if(is.null(jaspResults[["Ichart"]])){
       jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
-      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "ncol", "subgroups", "manualTicks", "nTicks", "ccTitle",
+      jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "movingRangeLength", "subgroups", "manualTicks", "nTicks", "ccTitle",
                                          "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport",
                                          "split"))
       Iplot <- jaspResults[["Ichart"]]

@@ -53,10 +53,11 @@ Form
 
 			DoubleField
 			{
-				name:							"ncol"
+				name:							"movingRangeLength"
 				label:							qsTr("Moving range length")
 				defaultValue:					2
 				min: 							2
+				max: 							dataSetModel.rowCount()
 			}
 		CheckBox
 		{
