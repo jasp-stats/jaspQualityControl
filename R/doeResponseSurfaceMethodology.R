@@ -21,11 +21,17 @@
 doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
 
-  ready <- options[["buildDesignInv"]]
+  ready <- options[["buildDesignInv"]] && options[["selectedRow"]] != -1L
 
   .doeRsmDesignSummaryTable(jaspResults, options)
-  if (ready)
-    .doeRsmGenerateDesign(jaspResults, options)
+  if (ready) {
+
+    design <- .doeRsmGenerateDesign(options)
+    .doeRsmGenerateDesignTable(jaspResults, options, design)
+
+    .doeRsmExportDesign(options, design)
+
+  }
 
   return()
 
@@ -133,10 +139,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   tb$addColumnInfo(name = "catFactors",  title = gettext("Categorical factors"), type = "integer")
 
   tb$addColumnInfo(name = "baseRuns",    title = gettext("Base runs"),           type = "integer")
+  tb$addColumnInfo(name = "baseBlocks",  title = gettext("Base blocks"),         type = "integer")
+
   tb$addColumnInfo(name = "replicates",  title = gettext("Replicates"),          type = "integer")
   tb$addColumnInfo(name = "totalRuns",   title = gettext("Total runs"),          type = "integer")
-
-  tb$addColumnInfo(name = "baseBlocks",  title = gettext("Base blocks"),         type = "integer")
   tb$addColumnInfo(name = "totalBlocks", title = gettext("Total blocks"),        type = "integer")
 
   tb$addColumnInfo(name = "alpha",       title = "\U03B1",                       type = "number")
@@ -147,42 +153,29 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   tb[["contFactors"]] <- options[["numberOfContinuous"]]
   tb[["catFactors"]]  <- options[["numberOfCategorical"]]
 
-  # tb[["baseRuns"]]    <-
-  # tb[["replicates"]]  <-
-  # tb[["totalRuns"]]   <-
+  designSpec <- .doeGetSelectedDesign(options)
 
-  # tb[["baseBlocks"]]  <-
-  # tb[["totalBlocks"]] <-
+  if (length(designSpec) == 0L) { # user did not select a design
+    tb$addFootnote(gettext("Please select a row in the design table."))
+  } else {
 
-  # tb[["alpha"]] <-
+    tb[["baseRuns"]]    <- designSpec[["runs"]]
+    tb[["baseBlocks"]]  <- designSpec[["blocks"]]
+    tb[["replicates"]]  <- designSpec[["replicates"]]
+    tb[["totalRuns"]]   <- designSpec[["runs"]]   * designSpec[["replicates"]]
+    tb[["totalBlocks"]] <- designSpec[["blocks"]] * designSpec[["replicates"]]
+    tb[["alpha"]]       <- designSpec[["alpha"]]
+  }
 
-  tb$dependOn(options = c("numberOfContinuous", "numberOfCategorical", "alphaType", "selected"))
+  tb$dependOn(options = c(
+    "numberOfContinuous", "numberOfCategorical", "selectedRow", "replicates", "selectedDesign2",
+    "alphaType", "customAlphaValue",
+    "centerPointType", "customCubeBlock", "customAxialBlock"
+  ))
 
   jaspResults[["doeRsmDesignSummaryTable"]] <- tb
 
   return()
-
-}
-
-.doeRsmParseSelectedDesign <- function(options) {
-
-  selected <- options[["selected"]]
-  if (selected == "") {
-    newOptions <- list(
-      designIndex           = NA_integer_,
-      selectedDesignIndexed = list()
-    )
-  } else {
-    newOptions <- list(
-      designIndex           = as.integer(selected),
-      selectedDesignIndexed = options[["selectedDesign"]][[options[["designIndex"]]]]
-    )
-  }
-
-  if (any(names(newOptions) %in% options))
-    stop("You should not add designIndex or selectedDesignIndexed as name in QML!", domain = NA)
-
-  return(c(options, newOptions))
 
 }
 
@@ -200,42 +193,26 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   return(df)
 }
 
-.doeRsmGenerateDesign <- function(jaspResults, options) {
+.doeRsmGenerateDesignTable <- function(jaspResults, options, design) {
 
-  # if (!is.null(jaspResults[["rsm"]]))
-  #   return()
+  if (!is.null(jaspResults[["designTable"]]))
+    return()
 
-  design <- if (options[["designType"]] == "centralCompositeDesign") {
-    .doeRsmGenerateCentralCompositeDesign(
-      noContinuous         = options[["numberOfContinuous"]],
-      centerPointsCube     = 3,
-      centerPointsAxial    = 0,
-      alpha                = .doeRsmGetAlpha(options),
-      randomize            = FALSE
-    )
+  tb <- createJaspTable(title = if (options[["designType"]] == "centralCompositeDesign") {
+    gettext("Response Surface Design - Central Composite Design")
   } else {
-    .doeRsmGenerateBoxBehnkenDesign(
-      noContinuous         = options[["numberOfContinuous"]],
-      centerPoints         = 3,
-      randomize            = FALSE
-    )
-  }
+    gettext("Response Surface Design - Box-Behnken design")
+  })
 
-  design <- .doeRsmReplicateDesignForCategoricalVariables(design, .doeRsmCategorical2df(options[["categoricalVariables"]]))
-
-  # if (options[["codedOutput"]])
-  #   design <- .doeRsmDecodeDesign(design, options)
-
-  tb <- createJaspTable(title = gettext("Response Surface Design"))
   tb$addColumnInfo(name = "run.order", title = gettext("Run order"),      type = "integer")
   tb$addColumnInfo(name = "std.order", title = gettext("Standard order"), type = "integer")
 
   for (i in seq_len(options[["numberOfContinuous"]]))
-    tb$addColumnInfo(name = paste0("x", i), title = options[["continuousVariables"]][[1L]][["vaues"]][i],     type = "number", overtitle = gettext("Continuous factors"))
+    tb$addColumnInfo(name = paste0("x", i), title = options[["continuousVariables"]][[1L]][["values"]][i],     type = "number", overtitle = gettext("Continuous factors"))
 
   noCat <- options[["numberOfCategorical"]]
   for (i in seq_len(noCat))
-    tb$addColumnInfo(name = paste0("x_cat", i), title = options[["continuousVariables"]][[1L]][["vaues"]][i], type = "number", overtitle = gettext("Categorical factors"))
+    tb$addColumnInfo(name = paste0("x_cat", i), title = options[["continuousVariables"]][[1L]][["values"]][i], type = "number", overtitle = gettext("Categorical factors"))
 
   # avoid any shenanigans with categorical factors having duplicate names
   if (noCat > 0L)
@@ -243,11 +220,60 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
   tb$setData(design)
 
-  tb$dependOn(options = c("numberOfContinuous", "numberOfCategorical", "categoricalVariables"))
-  # if (option[["encoded"]])
-  #   tb$dependOn(options = "continuousVariables")
+  tb$dependOn(options = c("numberOfContinuous", "numberOfCategorical", "categoricalVariables",
+                          "selectedRow", "replicates", "selectedDesign2",
+                          "alphaType", "customAlphaValue",
+                          "centerPointType", "customCubeBlock", "customAxialBlock", "codedOutput",
+                          "runOrder", "setSeed", "seed"))
 
-  jaspResults[["rsm"]] <- tb
+  if (!options[["codedOutput"]])
+    tb$dependOn(options = "continuousVariables")
+
+  jaspResults[["designTable"]] <- tb
+
+  return(design)
+
+}
+
+.doeRsmGenerateDesign <- function(options) {
+
+  designSpec <- .doeGetSelectedDesign(options)
+
+  # TODO: non-Full designs do not match minitab
+
+  design <- if (options[["designType"]] == "centralCompositeDesign") {
+    .doeRsmGenerateCentralCompositeDesign(
+      noContinuous         = options[["numberOfContinuous"]],
+      centerPointsCube     = designSpec[["cube"]],
+      centerPointsAxial    = designSpec[["axial"]],
+      alpha                = designSpec[["alpha"]],
+      replicates           = designSpec[["replicates"]],
+      randomize            = FALSE
+    )
+  } else {
+    .doeRsmGenerateBoxBehnkenDesign(
+      noContinuous         = options[["numberOfContinuous"]],
+      centerPoints         = design[["centerpoints"]],
+      randomize            = FALSE
+    )
+  }
+
+  # fix run.order and std.order
+  design[["run.order"]] <- seq_len(nrow(design))
+  design[["std.order"]] <- seq_len(nrow(design))
+
+  design <- .doeRsmReplicateDesignForCategoricalVariables(design, .doeRsmCategorical2df(options[["categoricalVariables"]]))
+
+  if (!options[["codedOutput"]])
+    design <- .doeRsmDecodeDesign(design, options)
+
+  if (options[["runOrder"]] == "runOrderRandom") {
+    jaspBase::.setSeedJASP(options)
+    design <- design[sample(nrow(design)), ]
+    design[["run.order"]] <- seq_len(nrow(design)) # run order is always from 1 - n
+  }
+
+  return(design)
 
 }
 
@@ -263,15 +289,16 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 }
 
 .doeRsmGenerateCentralCompositeDesign <- function(noContinuous, centerPointsCube, centerPointsAxial = 0, alpha = "rotatable",
-                  randomize = FALSE) {
+                                                  replicates = 1, randomize = FALSE) {
 
   design <- rsm::ccd(
     basis      = noContinuous,
     n0         = c(centerPointsCube, centerPointsAxial),
     alpha      = alpha,
     oneblock   = TRUE,
+    bbreps     = replicates,
     randomize  = randomize#,
-    # silences lintr check
+    # silences lintr check but sadly doesn't work
     # generators = rlang::missing_arg(),
     # coding     = rlang::missing_arg()
   )
@@ -325,6 +352,75 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   }
 
   return(designCombined)
+
+}
+
+.doeGetSelectedDesign <- function(options) {
+
+  idx <- options[["selectedRow"]] + 1L
+
+  if (idx <= 0L)
+    return(list())
+
+  # TODO: implement BBD!
+
+  designSpec <- unlist(lapply(options[["selectedDesign2"]], \(x) x[["values"]][idx]))
+  names(designSpec) <- c("runs", "blocks", "total", "cube", "axial", "alpha")
+
+  if (options[["centerPointType"]] != "default") {
+    designSpec[["cube"]]  <- options[["customCubeBlock"]]
+    designSpec[["axial"]] <- options[["customAxialBlock"]]
+  } else {
+    if (designSpec[["cube"]] == 0L && designSpec[["axial"]] == 0L)
+      designSpec[["cube"]] <- designSpec[["total"]]
+  }
+
+  # rsm provides a fourth option, spherical, which could be added (though SKF did not ask for it)
+  designSpec[["alpha"]] <- switch(options[["alphaType"]],
+    "default"      = designSpec[["alpha"]], # i.e., do nothing. Corresponds to orthogonal in rsm::ccd I think
+    "faceCentered" = 1L, # yes this is correct, see ?rsm::ccd + search for "faces"
+    "custom"       = options[["customAlphaValue"]]
+  )
+
+  designSpec <- c(designSpec, "replicates" = options[["replicates"]])
+
+  return(designSpec)
+
+}
+
+.doeGetCenterPoints <- function(options) {
+  if (options[["centerPointType"]] == "default")
+    return(c(
+      cube  = options[["selectedDesign2"]][[4]][[options[["selectedRow"]]]],
+      axial = options[["selectedDesign2"]][[5]][[options[["selectedRow"]]]],
+    ))
+
+}
+
+.doeRsmDecodeDesign <- function(design, options) {
+
+  continuousDf  <- .doeRsmContinuous2df(options[["continuousVariables"]])
+
+  if (nrow(continuousDf) > 0L) {
+    for (i in seq_len(nrow(continuousDf))) {
+      design[[i + 2L]] <- ifelse(design[[i + 2L]] <= 0, design[[i + 2L]] * abs(continuousDf[i, "low"]), design[[i + 2L]] * continuousDf[i, "high"])
+    }
+  }
+
+  return(design)
+
+}
+
+.doeRsmExportDesign <- function(options, design) {
+
+  outpath <- options[["exportDesignFile"]]
+  if (identical(outpath, "") || !options[["actualExporter"]])
+    return()
+
+  if (!dir.exists(dirname(outpath)))
+    return()
+
+  utils::write.csv(x = design, file = options[["exportDesignFile"]], row.names = FALSE)
 
 }
 

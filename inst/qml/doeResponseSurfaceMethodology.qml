@@ -25,234 +25,30 @@ Form
 	id: form
 	columns: 1
 
-	Group
+	RadioButtonGroup
 	{
+		name		: "designType"
+		title		: qsTr("Design Type")
 
-		RadioButtonGroup
-		{
-			name		: "designType"
-			title		: qsTr("Design Type")
-
-			RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central Composite Design");	checked: true	}
-			RadioButton { name:	 "boxBehnkenDesign ";			label: qsTr("Box-Behnken Design ");							}
-		}
-
-		TableView
-		{
-			property var designData:	parseInt(numberOfContinuous.value) === 2 ?
-
-											[
-												"full", 13, 1, 5, 0, 0, Math.round(Math.sqrt(2), 3),
-												"full", 14, 2, 6, 3, 3, Math.round(Math.sqrt(2), 3)
-											]
-								:
-											[
-												"full", 20, 1, 6, 0, 0, Math.round(2**(3/4), 3),
-												"full", 20, 2, 6, 4, 2, Math.round(2**(3/4), 3),
-												"full", 20, 3, 6, 4, 2, Math.round(2**(3/4), 3)
-											]
-
-			id					: selectedDesign2
-			implicitWidth		: form.implicitWidth
-
-			modelType			: JASP.Simple
-			name				: "selectedDesign2"
-
-			columnNames			: [qsTr("Runs"), qsTr("Blocks"), qsTr("Total"), qsTr("Cube"), qsTr("Axial"), qsTr("Alpha")]
-			cornerText			: qsTr("Design")
-			initialColumnCount	: 6
-			itemType			: JASP.String
-			rowCount			: numberOfContinuous.value
-			initialRowCount		: numberOfContinuous.value
-
-			itemDelegate: Item
-			{
-
-				Rectangle
-				{
-
-					color: rowIndex === tableView.rowSelected ? jaspTheme.grayLighter : jaspTheme.analysisBackgroundColor
-					anchors
-					{
-						fill:			parent
-						topMargin:		-selectedDesign2.view.itemVerticalPadding
-						bottomMargin:	-selectedDesign2.view.itemVerticalPadding
-					}
-
-					MouseArea
-					{
-						anchors.fill: parent
-						onClicked:
-						{
-							tableView.colSelected = columnIndex
-							tableView.rowSelected = rowIndex
-						}
-					}
-				}
-
-				Label
-				{
-					text						: tableView.getDefaultValue(columnIndex, rowIndex)
-					anchors.verticalCenter		: parent.verticalCenter
-					anchors.horizontalCenter	: parent.horizontalCenter
-				}
-			}
-
-			columnHeaderDelegate : Rectangle
-			{
-				// identical to the default definition in TableView, but this does not change color when the column is selected
-				color: jaspTheme.analysisBackgroundColor
-//				color: columnIndex === tableView.colSelected ? jaspTheme.grayLighter : jaspTheme.analysisBackgroundColor
-				Text { text: tableView.getColHeaderText(headerText, columnIndex); anchors.centerIn: parent; font: jaspTheme.font; color:	jaspTheme.textEnabled }
-				MouseArea
-				{
-					anchors.fill: parent
-					onClicked:
-					{
-						if (tableView.colSelected === columnIndex)
-							columnIndex = -1
-						tableView.colSelected = columnIndex;
-					}
-				}
-			}
-
-			function getRowHeaderText(headerText, rowIndex)	{
-//					console.log("7 * rowIndex: " +7 * rowIndex);
-//					console.log("designData[7 * rowIndex]: " + designData[7 * rowIndex]);
-					return designData[					7 * rowIndex];
-				}
-			function getDefaultValue(columnIndex, rowIndex)	{
-//				console.log("columnIndex + 1 +	7 * rowIndex: " + columnIndex + 1 +	7 * rowIndex);
-//				console.log("designData[columnIndex + 1 +	7 * rowIndex]: " + designData[columnIndex + 1 +	7 * rowIndex]);
-				return designData[columnIndex + 1 +	7 * rowIndex]
-			}
-		}
-
-		IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); value: selectedDesign2.rowSelected; negativeValues: true }
-		IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); value: selectedDesign2.colSelected; negativeValues: true }
-
-		// TODO: should probably come after specifying the variables
-		RowLayout
-		{
-			id: textAbove
-			Label { text: qsTr("Design");	Layout.preferredWidth: 40 * preferencesModel.uiScale; Layout.leftMargin: 45 * preferencesModel.uiScale}
-			Label { text: qsTr("Runs");		Layout.preferredWidth: 40 * preferencesModel.uiScale }
-			Label { text: qsTr("Blocks");	Layout.preferredWidth: 40 * preferencesModel.uiScale }
-	//			Label { text: qsTr("Center Points") }
-			Label { text: qsTr("Total");	Layout.preferredWidth: 40 * preferencesModel.uiScale }
-			Label { text: qsTr("Cube");		Layout.preferredWidth: 40 * preferencesModel.uiScale }
-			Label { text: qsTr("Axial");	Layout.preferredWidth: 40 * preferencesModel.uiScale }
-			Label { text: qsTr("Alpha");	Layout.preferredWidth: 40 * preferencesModel.uiScale }
-		}
-
-		ComponentsList
-		{
-
-			width:					form.implicitWidth//textAbove.width
-			id:						selectedDesign
-			name:					"selectedDesign"
-			optionKey:				"name"
-			addItemManually:		false
-
-//			values:		parseInt(numberOfContinuous.value) === 2 ?
-
-//							[
-//								{"design": "full", "runs": 13, "blocks": 1, "total" : 5, "cube": 0, "axial": 0, "alpha": Math.round(Math.sqrt(2), 3)},
-//								{"design": "full", "runs": 14, "blocks": 2, "total" : 6, "cube": 3, "axial": 3, "alpha": Math.round(Math.sqrt(2), 3)}
-//							]
-//				:
-//							[
-//								{"design": "full", "runs": 20, "blocks": 1, "total" : 6, "cube": 0, "axial": 0, "alpha": Math.round(2**(3/4), 3)},
-//								{"design": "full", "runs": 20, "blocks": 2, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)},
-//								{"design": "full", "runs": 20, "blocks": 3, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)}
-//							]
-
-			source:		{"values": parseInt(numberOfContinuous.value) === 2 ?
-
-							[
-								{"design": "full", "runs": 13, "blocks": 1, "total" : 5, "cube": 0, "axial": 0, "alpha": Math.round(Math.sqrt(2), 3)},
-								{"design": "full", "runs": 14, "blocks": 2, "total" : 6, "cube": 3, "axial": 3, "alpha": Math.round(Math.sqrt(2), 3)}
-							]
-				:
-							[
-								{"design": "full", "runs": 20, "blocks": 1, "total" : 6, "cube": 0, "axial": 0, "alpha": Math.round(2**(3/4), 3)},
-								{"design": "full", "runs": 20, "blocks": 2, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)},
-								{"design": "full", "runs": 20, "blocks": 3, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)}
-							]
-			};
-
-
-//						})
-
-	//			showAddIcon:			false
-	//			sgo
-
-	//			values: {
-	////				switch (numberOfContinuous.value)
-	////				{
-	////					case 2:
-	//					if (numberOfContinuous.value)
-	//					{
-	//						return [
-	//							{"design": "full", "runs": 13, "blocks": 1, "total" : 5, "cube": 0, "axial": 0, "alpha": Math.round(Math.sqrt(2), 3)},
-	//							{"design": "full", "runs": 14, "blocks": 2, "total" : 6, "cube": 3, "axial": 3, "alpha": Math.round(Math.sqrt(2), 3)}
-	//						];
-	//					}
-	//					else
-	//					{
-	////					default:
-	////					case 3:
-	//						return [
-	//							{"design": "full", "runs": 20, "blocks": 1, "total" : 6, "cube": 0, "axial": 0, "alpha": Math.round(2**(3/4), 3)},
-	//							{"design": "full", "runs": 20, "blocks": 2, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)},
-	//							{"design": "full", "runs": 20, "blocks": 3, "total" : 6, "cube": 4, "axial": 2, "alpha": Math.round(2**(3/4), 3)}
-	//						];
-	//					}
-	//				}
-	////			})
-
-
-
-
-	//			ButtonGroup { id: radioGroup }
-	//			RadioButtonGroup
-			RadioButtonGroup{ id: radioGroup; name: "selected" }
-
-			rowComponent: RowLayout
-			{
-
-	//				RadioButtonGroup{ id: selected; name: "selected"; RadioButton { name: "selectedValue"; label: ""; checked: false; ButtonGroup.group: radioGroup } }
-				RadioButton { name: 1 + rowIndex; label: ""; checked: false; buttonGroup: radioGroup.buttonGroup }
-
-				// TODO: use label!
-				TextField		{ id: design;	name: "design";		editable: false;	fieldWidth: 40				} // could also be a dropdown?
-				IntegerField	{ id: runs;		name: "runs";		editable: false									}
-				IntegerField	{ id: blocks;	name: "blocks";		editable: false									}
-				IntegerField	{ id: total;	name: "total";		editable: false									}
-				IntegerField	{ id: cube;		name: "cube";		editable: false;	negativeValues: true		}
-				IntegerField	{ id: axial;	name: "axial";		editable: false;	negativeValues: true		}
-				DoubleField		{ id: alpha;	name: "alpha";		editable: false									}
-
-			}
-		}
+		RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central Composite Design");	checked: true;		id: centralCompositeDesign	}
+		RadioButton { name:	 "boxBehnkenDesign ";			label: qsTr("Box-Behnken Design ");															}
 	}
 
 	Group
 	{
-		IntegerField { id: numberOfContinuous; label: qsTr("Number of continuous factors"); name: "numberOfContinuous"; min: 0; defaultValue: 2; max: 20    }
 
+		IntegerField { id: numberOfContinuous;		label: qsTr("Number of continuous factors");	name: "numberOfContinuous";		min: centralCompositeDesign.checked ? 2 : 3;	defaultValue: centralCompositeDesign.checked ? 2 : 3;	max: 10	}
+		IntegerField { id: numberOfCategorical;		label: qsTr("Number of categorical factors");	name: "numberOfCategorical";	min: 0;		defaultValue: 0;	max: 10		}
+		IntegerField { id: numberOfLevels;			label: qsTr("Maximum categorical levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 10		}
 
 		TableView
 		{
-			JASPDoubleValidator			{ id: doubleValidator; decimals: 3	}
-			RegularExpressionValidator	{ id: stringValidator				}
-
 
 			id: continuousVariablesTable
 			modelType			: JASP.Simple
 
-			width				: implicitWidth
-			height				: implicitHeight
+			implicitWidth		: form.implicitWidth
+			implicitHeight		: 140 // about 3 rows
 
 			initialRowCount		: numberOfContinuous.value
 			initialColumnCount	: 3
@@ -264,20 +60,24 @@ Form
 			cornerText			: qsTr("Factor")
 			columnNames			: [qsTr("Name"), qsTr("Low"), qsTr("High")]
 			isFirstColEditable	: true
-//			itemType			: JASP.Double
-			itemTypePerColumn	: [JASP.String].concat(Array(19).fill().map(JASP.Double)) // at most 20 items anyway
+			itemType			: JASP.Double
+			itemTypePerColumn	: [JASP.String]//.concat(Array(19).fill().map(JASP.Double)) // at most 20 items anyway
 
 			function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex);	}
 			function getDefaultValue(columnIndex, rowIndex)				{ return columnIndex === 0 ? String.fromCharCode(65 + rowIndex) : 2 * columnIndex - 3;	}
+
+			JASPDoubleValidator			{ id: doubleValidator; decimals: 3	}
+			RegularExpressionValidator	{ id: stringValidator				}
 			function getValidator(columnIndex, rowIndex)				{ return columnIndex === 0 ? stringValidator : doubleValidator							}
 		}
-
-		IntegerField { id: numberOfCategorical;		label: qsTr("Number of categorical factors");	name: "numberOfCategorical";	min: 0;	defaultValue: 0;	max: 20	}
-		IntegerField { id: numberOfLevels;			label: qsTr("Maximum levels");					name: "categoricalNoLevels";	min: 2;	defaultValue: 2;	max: 10	}
 
 		TableView
 		{
 			id: categoricalVariables
+
+			implicitWidth		: form.implicitWidth
+			implicitHeight		: 140 // about 3 rows
+
 			modelType			: JASP.Simple
 
 			isFirstColEditable	: true
@@ -300,6 +100,243 @@ Form
 
 	Group
 	{
+
+		TableView
+		{
+			property var designData: // it would be better to generate this...
+			{
+				const val = parseInt(numberOfContinuous.value)
+				if (centralCompositeDesign.checked) // CCD
+				{
+					switch(val)
+					{
+						case 2:
+							return	[
+								"Full", 13, 1, 5, 0, 0, 1.414,
+								"Full", 14, 2, 6, 3, 3, 1.414
+							];
+						case 3:	return	[
+								"Full", 14, 1, 6, 0, 0, 1.682,
+								"Full", 20, 2, 6, 4, 2, 1.633,
+								"Full", 20, 3, 6, 4, 2, 1.633
+							];
+						case 4:	return	[
+								"Full", 30, 2, 6, 4, 2, 2,
+								"Full", 30, 3, 6, 4, 2, 2,
+								"Full", 31, 1, 7, 0, 0, 2
+							];
+						case 5:	return	[
+								"Half", 32, 1, 6, 0, 0, 2,
+								"Half", 33, 2, 7, 6, 1, 2,
+								"Full", 52, 1, 10, 0, 0, 2.378,
+								"Full", 54, 2, 12, 8, 4, 2.366,
+								"Full", 54, 3, 12, 8, 4, 2.366
+							];
+						case 6:	return	[
+								"Half", 53, 1, 9, 0, 0, 2.378,
+								"Half", 54, 2, 10, 8, 2, 2.366,
+								"Half", 54, 3, 10, 8, 2, 2.366,
+								"Full", 90, 1, 14, 0, 0, 2.828,
+								"Full", 90, 2, 14, 8, 6, 2.828,
+								"Full", 90, 3, 14, 8, 6, 2.828,
+								"Full", 90, 5, 14, 8, 6, 2.828
+							];
+						case 7:	return	[
+								"Half", 88, 1, 10, 0, 0, 2.828,
+								"Half", 90, 2, 12, 8, 4, 2.828,
+								"Half", 90, 3, 12, 8, 4, 2.828,
+								"Half", 90, 5, 12, 8, 4, 2.828,
+								"Full", 152, 1, 10, 0, 0, 3.364,
+								"Full", 160, 2, 18, 8, 10, 3.364,
+								"Full", 160, 3, 18, 8, 10, 3.364,
+								"Full", 160, 5, 18, 8, 10, 3.364
+							];
+						case 8:	return	[
+								"Quarter", 90, 1, 10, 0, 0, 2.828,
+								"Quarter", 90, 2, 10, 8, 2, 2.828,
+								"Quarter", 90, 3, 10, 8, 2, 2.828,
+								"Quarter", 90, 5, 10, 8, 2, 2.828,
+								"Half", 154, 1, 10, 0, 0, 3.364,
+								"Half", 160, 2, 16, 8, 8, 3.364,
+								"Half", 160, 3, 16, 8, 8, 3.364,
+								"Half", 160, 5, 16, 8, 8, 3.364
+							];
+						case 9:	return	[
+								"Quarter", 156, 1, 10, 0, 0, 3.364,
+								"Quarter", 160, 2, 14, 8, 6, 3.364,
+								"Quarter", 160, 3, 14, 8, 6, 3.364,
+								"Quarter", 160, 5, 14, 8, 6, 3.364
+							];
+						case 10:	return	[
+								"Eighth", 158, 1, 10, 0, 0, 3.364,
+								"Eighth", 160, 2, 12, 8, 4, 3.364,
+								"Eighth", 160, 3, 12, 8, 4, 3.364,
+								"Eighth", 160, 5, 12, 8, 4, 3.364
+							];
+					}
+				}
+				else // BBD
+				{
+					switch(val)
+					{
+						case 3:
+							return	[
+								15, 1, 3
+							];
+						case 4:	return	[
+								27, 3, 3
+							];
+						case 5:	return	[
+								46, 2, 3
+							];
+						case 6:	return	[
+								54, 2, 6
+							];
+						case 7:	return	[
+								62, 2, 6
+							];
+						case 9:	return	[
+								130, "5 or 10", 10
+							];
+						case 10:	return	[
+								170, 2, 10
+							];
+					}
+				}
+			}
+//			{parseInt(numberOfContinuous.value) === 2 ?
+
+//											[
+//												"full", 13, 1, 5, 0, 0, Math.sqrt(2),
+//												"full", 14, 2, 6, 3, 3, Math.sqrt(2)
+//											]
+//								:
+//											[
+//												"full", 20, 1, 6, 0, 0, 2**(3/4),
+//												"full", 20, 2, 6, 4, 2, 2**(3/4),
+//												"full", 20, 3, 6, 4, 2, 2**(3/4)
+//											]
+
+			id					: selectedDesign2
+			implicitWidth		: form.implicitWidth
+			implicitHeight		: 250
+
+			modelType			: JASP.Simple
+			name				: "selectedDesign2"
+
+			columnNames			: centralCompositeDesign.checked ? [qsTr("Runs"), qsTr("Blocks"), qsTr("Total"), qsTr("Cube"), qsTr("Axial"), qsTr("Alpha")] : [qsTr("Runs"), qsTr("Blocks"), qsTr("Centre points")]
+			cornerText			: qsTr("Design")
+			initialColumnCount	: centralCompositeDesign.checked ? 6 : 3
+			columnCount			: centralCompositeDesign.checked ? 6 : 3
+
+			itemType			: JASP.Double
+			rowCount			: numberOfContinuous.value
+			initialRowCount		: numberOfContinuous.value
+
+			itemDelegate: Item
+			{
+
+				Rectangle
+				{
+
+					id: backgroundRect
+					color: rowIndex === tableView.rowSelected ? jaspTheme.grayLighter : jaspTheme.white
+					anchors
+					{
+						fill:			parent
+						topMargin:		-selectedDesign2.view.itemVerticalPadding
+						bottomMargin:	-selectedDesign2.view.itemVerticalPadding
+					}
+
+					MouseArea
+					{
+						anchors.fill: parent
+						onClicked:
+						{
+							tableView.colSelected = columnIndex
+							tableView.rowSelected = rowIndex
+						}
+					}
+				}
+
+				DoubleField
+				{
+					value						: tableView.getDefaultValue(columnIndex, rowIndex)
+					background					: backgroundRect
+					anchors.verticalCenter		: parent.verticalCenter
+					anchors.horizontalCenter	: parent.horizontalCenter
+					editable					: false
+					useExternalBorder			: false
+					showBorder					: false
+				}
+//				Label
+//				{
+//					text						: tableView.getDefaultValue(columnIndex, rowIndex)
+//					anchors.verticalCenter		: parent.verticalCenter
+//					anchors.horizontalCenter	: parent.horizontalCenter
+//				}
+			}
+
+			rowNumberDelegate: Rectangle
+			{
+				// identical to default but with changed colors
+				color: rowIndex === tableView.rowSelected ? jaspTheme.grayLighter : jaspTheme.white// : jaspTheme.analysisBackgroundColor
+				Text
+				{
+					text:					tableView.getRowHeaderText(headerText, rowIndex);
+					color:					jaspTheme.textEnabled
+					anchors.centerIn:		parent;
+					horizontalAlignment:	Text.AlignHCenter
+					verticalAlignment:		Text.AlignVCenter
+					leftPadding:			3 * preferencesModel.uiScale
+					elide:					Text.ElideRight;
+					width:					parent.width
+					height:					parent.width
+					font:					jaspTheme.font
+				}
+
+				MouseArea
+				{
+					anchors.fill: parent
+					onClicked:
+					{
+						if (tableView.rowSelected === rowIndex)
+							rowIndex = -1
+						tableView.rowSelected = rowIndex;
+					}
+				}
+			}
+
+			columnHeaderDelegate : Rectangle
+			{
+				// identical to the default definition in TableView, but this does not change color when the column is selected
+				color: jaspTheme.analysisBackgroundColor
+				Text { text: tableView.getColHeaderText(headerText, columnIndex); anchors.centerIn: parent; font: jaspTheme.font; color:	jaspTheme.textEnabled }
+				MouseArea
+				{
+					anchors.fill: parent
+					onClicked:
+					{
+						if (tableView.colSelected === columnIndex)
+							columnIndex = -1
+						tableView.colSelected = columnIndex;
+					}
+				}
+			}
+
+			function getRowHeaderText(headerText, rowIndex)	{ return designData ? designData[					7 * rowIndex] : ""; }
+			function getDefaultValue(columnIndex, rowIndex)	{ return designData ? designData[columnIndex + 1 +	7 * rowIndex] : "";	}
+
+		}
+
+		IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); defaultValue: selectedDesign2.rowSelected; negativeValues: true }
+		IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); defaultValue: selectedDesign2.colSelected; negativeValues: true }
+
+	}
+
+
+	Group
+	{
 		columns: 2
 
 		RadioButtonGroup
@@ -310,6 +347,7 @@ Form
 			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
 			RadioButton { name:	 "faceCentered";	label: qsTr("Face centred");					}
 			RadioButton { name:	 "custom";			label: qsTr("Custom");
+				childrenOnSameRow: true
 				DoubleField
 				{
 					name:	"customAlphaValue"
@@ -326,20 +364,23 @@ Form
 			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
 			RadioButton { name:	 "custom";			label: qsTr("Custom");
 				// TODO: these doublefields should only be enable if the selected element has a nonzero number of cube/ axial points
+				childrenOnSameRow: !centralCompositeDesign.checked
 				DoubleField
 				{
-					label: qsTr("Cube block");
-					name:	"customCubeBlock"
-					min:	0
+					label	: centralCompositeDesign.checked ? qsTr("Cube block") : "";
+					name	: "customCubeBlock"
+					min		: 0
 				}
 				DoubleField
 				{
-					label: qsTr("Axial block");
-					name:	"customAxialBlock"
-					min:	0
+					label		: qsTr("Axial block");
+					name		: "customAxialBlock"
+					min			: 0
+					visible		: centralCompositeDesign.checked
 				}
 			}
 		}
+
 
 		RadioButtonGroup
 		{
@@ -361,12 +402,9 @@ Form
 			}
 		}
 
-		CheckBox
-		{
-			id:								coded_out
-			name:							"codedOutput"
-			label:							qsTr("Show coded output") // show user labels or just -1, 1?
-		}
+		// show user labels or just -1, 1?
+		CheckBox		{ name: "codedOutput";	label: qsTr("Show coded output")										}
+		IntegerField	{ name: "replicates";	label: qsTr("Replicates");			defaultValue: 1; min: 1; max: 100	}
 
 //		TODO: remove this? can also do nothing until people select a design
 		// Show the design in the output (because people want a button...)
@@ -385,7 +423,7 @@ Form
 			CheckBox
 			{
 				id:									buildDesignInv
-				name:								"buildDesignInv"
+				name:								"buildDesignInv" // TODO: rename
 				visible:							false
 			}
 
@@ -419,6 +457,7 @@ Form
 		}
 	}
 
+	/*
 	Section
 	{
 		title: qsTr("Design Analysis")
@@ -593,4 +632,5 @@ Form
 			}
 		}
 	}
+	*/
 }
