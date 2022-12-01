@@ -457,7 +457,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   x <- unlist(x)
   nDecimals <- numeric(length(x))
   for(i in seq_along(x)) {
-    if (round(x[i] %% 1, 10) != 0) {   # never more than 10 decimals
+    if (round(x[i], 10) %% 1 != 0) {   # never more than 10 decimals
       formattedx <- format(x[i], scientific = FALSE)
       nDecimals[i] <- nchar(strsplit(sub('0+$', '', as.character(formattedx)), ".", fixed=TRUE)[[1]][[2]])
     } else {
