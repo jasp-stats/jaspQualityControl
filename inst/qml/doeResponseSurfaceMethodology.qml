@@ -20,6 +20,8 @@ import JASP										1.0
 import JASP.Controls 							1.0
 import JASP.Widgets 							1.0
 
+import "./common"	as Common
+
 Form
 {
 	id: form
@@ -111,6 +113,7 @@ Form
 	Group
 	{
 
+		Label	{ text : qsTr("Design Table")	}
 		TableView
 		{
 			property var designData: // it would be better to generate this...
@@ -242,16 +245,6 @@ Form
 					}
 				}
 
-//				DoubleField
-//				{
-//					value						: tableView.getDefaultValue(columnIndex, rowIndex)
-//					background					: backgroundRect
-//					anchors.verticalCenter		: parent.verticalCenter
-//					anchors.horizontalCenter	: parent.horizontalCenter
-//					editable					: false
-//					useExternalBorder			: false
-//					showBorder					: false
-//				}
 				Label
 				{
 					text						: tableView.getDefaultValue(columnIndex, rowIndex)
@@ -411,56 +404,58 @@ Form
 
 //		TODO: remove this? can also do nothing until people select a design
 		// Show the design in the output (because people want a button...)
-		Group
-		{
+//		Group
+//		{
 
-			Button
-			{
-				id: 								buildDesign
-				anchors.right:						parent.right
-				anchors.bottom:						parent.bottom
-				text: 								qsTr("<b>Build Design</b>")
-				onClicked: 							buildDesignInv.click()
-			}
+//			Button
+//			{
+//				id: 								buildDesign
+//				anchors.right:						parent.right
+//				anchors.bottom:						parent.bottom
+//				text: 								qsTr("<b>Build Design</b>")
+//				onClicked: 							buildDesignInv.click()
+//			}
 
-			CheckBox
-			{
-				id:									buildDesignInv
-				name:								"buildDesignInv" // TODO: rename
-				visible:							false
-			}
+//			CheckBox
+//			{
+//				id:									buildDesignInv
+//				name:								"buildDesignInv" // TODO: rename
+//				visible:							false
+//			}
 
-		}
+//		}
 
 		// Export the design to a csv
-		Group
-		{
-			FileSelector
-			{
-				name:		"exportDesignFile"
-				label:		qsTr("Export design:")
-				filter:		"*.csv"
-				save:		true
-			}
+//		Group
+//		{
+//			FileSelector
+//			{
+//				name:		"exportDesignFile"
+//				label:		qsTr("Export design:")
+//				filter:		"*.csv"
+//				save:		true
+//			}
 
-			Button
-			{
-				anchors.right:		parent.right
-				anchors.bottom:		parent.bottom
-				text: 				actualExporter.checked ? qsTr("Sync Design: On") : qsTr("Sync Design: Off")
-				onClicked: 			actualExporter.click()
-			}
+//			Button
+//			{
+//				anchors.right:		parent.right
+//				anchors.bottom:		parent.bottom
+//				text: 				actualExporter.checked ? qsTr("Sync Design: On") : qsTr("Sync Design: Off")
+//				onClicked: 			actualExporter.click()
+//			}
 
-			CheckBox
-			{
-				id:					actualExporter
-				name:				"actualExporter"
-				visible:			false
-			}
-		}
+//			CheckBox
+//			{
+//				id:					actualExporter
+//				name:				"actualExporter"
+//				visible:			false
+//			}
+//		}
 	}
 
-	/*
+	Common.ShowAndExportDesign {}
+
+
 	Section
 	{
 		title: qsTr("Design Analysis")
@@ -635,5 +630,5 @@ Form
 			}
 		}
 	}
-	*/
+
 }

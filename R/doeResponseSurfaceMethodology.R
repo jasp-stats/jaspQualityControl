@@ -20,8 +20,7 @@
 #' @export
 doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
-
-  ready <- options[["buildDesignInv"]] && options[["selectedRow"]] != -1L
+  ready <- options[["displayDesign"]] && options[["selectedRow"]] != -1L
 
   .doeRsmDesignSummaryTable(jaspResults, options)
   if (ready) {
@@ -31,99 +30,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
     .doeRsmExportDesign(options, design)
 
-  }
+    .doeRsmAnalysisThatMayBreak(jaspResults, dataset, options)
 
-  return()
-
-  op1 <- length(options[["modelTerms"]])
-  op2 <- length(options[["rsmResponseVariables"]])
-  op3 <- length(options[["rsmBlocks"]])
-
-  ready <- (op1 > 0 && op2 > 0) && any(options[["contour"]], options[["coef"]], options[["anova"]],
-                                       options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
-                                       options[["buildDesignInv"]], options[["desirability"]],
-                                       options[["contour"]])
-
-
-
-  placeholder <- createJaspTable(title = gettext("Response Surface Methodology"))
-  jaspResults[["placeholder"]] <- placeholder
-  placeholder$dependOn(options = c("rsmVariables","rsmResponseVariables", "contour","coef","anova","res","pareto","resNorm",
-                                   "resFitted","buildDesignInv","desirability","contour"))
-  rsm <- list()
-  #Placeholder table when the user inputs something. If an analysis gets picked, remove the table
-  if (!ready) {
-
-    if (any(options[["contour"]], options[["coef"]], options[["anova"]],
-                                                                options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
-                                                                options[["desirability"]],
-                                                                options[["contour"]])) {
-
-      text <- gettext("No analyses (except those under 'Design Specification') can be started until at least one model term and one response variable are inputed.")
-      placeholder$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
-
-    }
-  }
-
-
-  if (options[["designType"]] == "cube" && options[["buildDesignInv"]]) {
-    jaspResults[["placeholder"]] <- NULL
-    .cubeDesign(jaspResults, options)
-  }
-  if (options[["designType"]] == "star" && options[["buildDesignInv"]]) {
-    jaspResults[["placeholder"]] <- NULL
-    .starDesign(jaspResults, options)
-  }
-
-  if (ready) {
-
-    for (i in 1:op2) {
-      jaspResults[["placeholder"]] <- NULL
-      data <- .readDataSet(jaspResults, options, dataset, i)
-
-      #check for more than 5 unique
-      .dataErrorCheck(data, options)
-
-      rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
-
-      # if (options[["showDesign"]])
-      #   .qualityControlDesignMainRSM(jaspResults,options, position = 1)
-
-      if (options[["contour"]])
-        .responseSurfaceContour(jaspResults, options, data, rsm[[i]], i, position = 2)
-
-
-      if (options[["coef"]])
-        .responseSurfaceTableCall(jaspResults, options, rsm[[i]], i, position = 3)
-
-      if (options[["anova"]])
-        .responseSurfaceTableAnovaCall(jaspResults, options, rsm = rsm[[i]], i, position = 4)
-
-      # if(options[["eigen"]])
-      #   .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
-
-      if (options[["res"]])
-        .responsePlotResidualCall(jaspResults, options, rsm[[i]], i, position = 6)
-
-      if (options[["normalPlot"]])
-        .responseNomralProbabilityPlot(data, jaspResults, options, rsm[[i]], i, position = 7)
-
-      if (options[["pareto"]])
-        .responsePlotPareto(jaspResults, options, rsm[[i]], i, position = 8)
-
-      if (options[["resNorm"]])
-        .responsePlotResNorm(jaspResults, options, rsm[[i]], i, position = 9)
-
-      if (options[["ResFitted"]])
-        .responsePlotResFitted(jaspResults, options, rsm[[i]],i, position = 10)
-
-      if (options[["fourInOne"]])
-        .responseFourInOnePlot(jaspResults, options, rsm[[i]],i, position = 11)
-
-
-    }
-    if (options[["desirability"]])
-      .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 11, dataset)
   }
 
 }
@@ -134,18 +42,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
     return()
 
   tb <- createJaspTable(title = gettext("Design Summary"), position = 1L)
-  tb$addColumnInfo(name = "title",       title = gettext("Variable"),            type = "string")
-  tb$addColumnInfo(name = "contFactors", title = gettext("Continuous factors"),  type = "integer")
-  tb$addColumnInfo(name = "catFactors",  title = gettext("Categorical factors"), type = "integer")
+  tb$addColumnInfo(name = "title",       title = gettext("Variable"),               type = "string")
+  tb$addColumnInfo(name = "contFactors", title = gettext("Continuous factors"),     type = "integer")
+  tb$addColumnInfo(name = "catFactors",  title = gettext("Categorical factors"),    type = "integer")
 
-  tb$addColumnInfo(name = "baseRuns",    title = gettext("Base runs"),           type = "integer")
-  tb$addColumnInfo(name = "baseBlocks",  title = gettext("Base blocks"),         type = "integer")
+  tb$addColumnInfo(name = "baseRuns",    title = gettext("Base runs"),              type = "integer")
+  tb$addColumnInfo(name = "baseBlocks",  title = gettext("Base blocks"),            type = "integer")
 
-  tb$addColumnInfo(name = "replicates",  title = gettext("Replicates"),          type = "integer")
-  tb$addColumnInfo(name = "totalRuns",   title = gettext("Total runs"),          type = "integer")
-  tb$addColumnInfo(name = "totalBlocks", title = gettext("Total blocks"),        type = "integer")
+  tb$addColumnInfo(name = "replicates",  title = gettext("Replicates"),             type = "integer")
+  tb$addColumnInfo(name = "totalRuns",   title = gettext("Total runs"),             type = "integer")
+  tb$addColumnInfo(name = "totalBlocks", title = gettext("Total blocks"),           type = "integer")
 
-  tb$addColumnInfo(name = "alpha",       title = "\U03B1",                       type = "number")
+  tb$addColumnInfo(name = "cube",        title = gettext("Center points in cube"),  type = "integer")
+  tb$addColumnInfo(name = "axial",       title = gettext("Center points in axial"), type = "integer")
+
+  tb$addColumnInfo(name = "alpha",       title = "\U03B1",                          type = "number")
 
   tb$transpose <- TRUE
 
@@ -164,14 +75,19 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
     tb[["replicates"]]  <- designSpec[["replicates"]]
     tb[["totalRuns"]]   <- designSpec[["runs"]]   * designSpec[["replicates"]]
     tb[["totalBlocks"]] <- designSpec[["blocks"]] * designSpec[["replicates"]]
+    tb[["cube"]]        <- designSpec[["cube"]]
+    tb[["axial"]]       <- designSpec[["axial"]]
     tb[["alpha"]]       <- designSpec[["alpha"]]
   }
 
   tb$dependOn(options = c(
     "numberOfContinuous", "numberOfCategorical", "selectedRow", "replicates", "selectedDesign2",
-    "alphaType", "customAlphaValue",
-    "centerPointType", "customCubeBlock", "customAxialBlock"
+    "alphaType", "customAlphaValue", "centerPointType", "customCubeBlock", "customAxialBlock"
   ))
+
+  if (length(designSpec) != 0L && !options[["displayDesign"]]) {
+    tb$addFootnote(gettext("Click 'Generate design' to build the design."))
+  }
 
   jaspResults[["doeRsmDesignSummaryTable"]] <- tb
 
@@ -258,6 +174,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
     )
   }
 
+  #
+
   # fix run.order and std.order
   design[["run.order"]] <- seq_len(nrow(design))
   design[["std.order"]] <- seq_len(nrow(design))
@@ -277,17 +195,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
 }
 
-.doeRsmGetAlpha <- function(options) {
-  if (options[["alphaType"]] == "default") {
-    alpha <- "rotatable"
-  } else if (options[["alphaType"]] == "faceCentered") {
-    alpha <- 1
-  } else { # custom
-    alpha <- options[["customAlphaValue"]]
-  }
-  return(alpha)
-}
-
 .doeRsmGenerateCentralCompositeDesign <- function(noContinuous, centerPointsCube, centerPointsAxial = 0, alpha = "rotatable",
                                                   replicates = 1, randomize = FALSE) {
 
@@ -302,6 +209,29 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
     # generators = rlang::missing_arg(),
     # coding     = rlang::missing_arg()
   )
+
+  # rsm makes the design as
+  # | cube design   |
+  # | star design   |
+  # | center points |
+  # but Wikipedia and minitab do
+  # | cube design   |
+  # | center points | <-
+  # | star design   | <- flipped
+  #
+  # so we also flip the default order
+
+  cubeSize        <- 2^noContinuous
+  centerPointSize <- centerPointsCube
+  axialSize       <- 2 * noContinuous
+
+  newOrder <- c(
+    1:cubeSize,
+    (1 + cubeSize + centerPointSize):(axialSize + cubeSize + centerPointSize),
+    (1 + cubeSize) : (1 + cubeSize + centerPointSize)
+  )
+
+
 
   return(design)
 
@@ -402,13 +332,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
 }
 
-.doeGetCenterPoints <- function(options) {
-  if (options[["centerPointType"]] == "default")
-    return(c(
-      cube  = options[["selectedDesign2"]][[4]][[options[["selectedRow"]]]],
-      axial = options[["selectedDesign2"]][[5]][[options[["selectedRow"]]]],
-    ))
-
+.doeRsmSolveLowHigh <- function(low, high) {
+  # solves c(-1, 1) * y - x == c(low, high)
+  # matrix(c(-1, -1, -1, 1), 2, 2) %*% solveManually(low, high) == c(low, high)
+  c((-low - high) / 2, (high - low) / 2)
 }
 
 .doeRsmDecodeDesign <- function(design, options) {
@@ -417,7 +344,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
   if (nrow(continuousDf) > 0L) {
     for (i in seq_len(nrow(continuousDf))) {
-      design[[i + 2L]] <- ifelse(design[[i + 2L]] <= 0, design[[i + 2L]] * abs(continuousDf[i, "low"]), design[[i + 2L]] * continuousDf[i, "high"])
+      coefs <- .doeRsmSolveLowHigh(continuousDf[i, "low"], continuousDf[i, "high"])
+      design[[i + 2L]] <- design[[i + 2L]] * coefs[2L] - coefs[1L]
+      # design[[i + 2L]] <- ifelse(design[[i + 2L]] <= 0, design[[i + 2L]] * abs(continuousDf[i, "low"]), design[[i + 2L]] * continuousDf[i, "high"])
     }
   }
 
@@ -468,6 +397,22 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
     return(NULL)
   }
   return(defaultCcds[idx[row], ])
+
+}
+
+.doeRsmDesignIsRotatable <- function(k, ncf, na, nca) {
+
+  # nf <- 2^k
+
+  condition1 <- nc %% 2 == 0
+  if (!condition1)
+    return(FALSE)
+
+  # from is.integer
+  isWholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+  condition2 <- isWholenumber((2 * k + nca) - 16 * ncf)
+
+  return(condition2)
 
 }
 
@@ -523,7 +468,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   ccdTable$dependOn(options = c(
     "noModel", "designModel", "runOrder", "inscribed", "block", "designBlock",
     "numberOfCubes", "numberOfGenerators", "generators", "factors", "coded_out", "numberOfFactors",
-    "buildDesignInv", "designType"
+    "displayDesign", "designType"
   ))
 
   ccdTable$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
@@ -603,7 +548,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
   ccdTable$dependOn(options = c("runOrder", "numberOfStars","alpha",
                                   "numberOfCubes","numberOfGenerators","generators",
-                                  "factors","numberOfFactors", "buildDesignInv", "coded_out",
+                                  "factors","numberOfFactors", "displayDesign", "coded_out",
                                   "designType"))
 
   ccdTable$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
@@ -804,8 +749,6 @@ doersmGenerateDesign <- function(options) {
   }
 
 }
-
-
 
 .qualityControlDesignChoice <- function(jaspResults,options, dataset) {
 
@@ -1699,6 +1642,94 @@ doersmGenerateDesign <- function(options) {
   Container[["plot"]] <- .qcProbabilityPlot(dataset = data, options = options, fit = rsm)
 
   return()
+}
+
+.doeRsmAnalysisThatMayBreak <- function(jaspResults, options, dataset) {
+
+  op1 <- length(options[["modelTerms"]])
+  op2 <- length(options[["rsmResponseVariables"]])
+  op3 <- length(options[["rsmBlocks"]])
+
+  ready <- (op1 > 0 && op2 > 0) && any(options[["contour"]], options[["coef"]], options[["anova"]],
+                                       options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
+                                       options[["displayDesign"]], options[["desirability"]],
+                                       options[["contour"]])
+
+  for (i in 1:op2) {
+
+    err <- try({
+      data <- .readDataSet(jaspResults, options, dataset, i)
+    })
+
+    if (isTryError(err))
+      break
+
+    #check for more than 5 unique
+    .dataErrorCheck(data, options)
+
+    err <- try({
+      rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
+
+      # if (options[["showDesign"]])
+      #   .qualityControlDesignMainRSM(jaspResults,options, position = 1)
+
+      if (options[["contour"]])
+        .responseSurfaceContour(jaspResults, options, data, rsm[[i]], i, position = 2)
+
+
+      if (options[["coef"]])
+        .responseSurfaceTableCall(jaspResults, options, rsm[[i]], i, position = 3)
+
+      if (options[["anova"]])
+        .responseSurfaceTableAnovaCall(jaspResults, options, rsm = rsm[[i]], i, position = 4)
+
+      # if(options[["eigen"]])
+      #   .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
+
+      if (options[["res"]])
+        .responsePlotResidualCall(jaspResults, options, rsm[[i]], i, position = 6)
+
+      if (options[["normalPlot"]])
+        .responseNomralProbabilityPlot(data, jaspResults, options, rsm[[i]], i, position = 7)
+
+      if (options[["pareto"]])
+        .responsePlotPareto(jaspResults, options, rsm[[i]], i, position = 8)
+
+      if (options[["resNorm"]])
+        .responsePlotResNorm(jaspResults, options, rsm[[i]], i, position = 9)
+
+      if (options[["ResFitted"]])
+        .responsePlotResFitted(jaspResults, options, rsm[[i]],i, position = 10)
+
+      if (options[["fourInOne"]])
+        .responseFourInOnePlot(jaspResults, options, rsm[[i]],i, position = 11)
+
+    })
+    if (isTryError(err))
+      break
+
+  }
+
+  if (isTryError(err)) {
+    tb <- createJaspTable()
+    tb$setError(gettextf("The analysis failed with the following error message: %s", .extractErrorMessage(err)))
+    jaspResults[["errorTable"]] <- tb
+    return()
+  }
+
+  err <- try({
+    if (options[["desirability"]])
+      .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 11, dataset)
+  })
+
+  if (isTryError(err)) {
+    tb <- createJaspTable()
+    tb$setError(gettextf("The analysis failed with the following error message: %s", .extractErrorMessage(err)))
+    jaspResults[["errorTable"]] <- tb
+    return()
+  }
+
+
 }
 
 # helpers ----
