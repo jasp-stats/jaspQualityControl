@@ -18,6 +18,10 @@
 #' @export
 doeFactorial <- function(jaspResults, dataset, options, ...){
 
+  if (options[["setSeed"]]) {
+    set.seed(options[["seed"]])
+  }
+
   ################### Design ###################
   designContainer <- createJaspContainer("Design", position = 1)
 
@@ -73,7 +77,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
   fit <- model.fit$fit
   saturated <- model.fit$saturated
 
-  analysisContainer <- createJaspContainer("Analysis", position = 2)
+  analysisContainer <- createJaspContainer(title = gettext("Analysis"), position = 2)
 
   if(is.null(jaspResults[["factorialRegressionANOVA"]])){
     analysisContainer[["tableAnova"]] <- .factorialRegressionANOVAcreateTable(options, ready, fit, saturated, model)$tableAnova
@@ -104,7 +108,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
 
     # Normal Probability Plot of Residuals
     if (is.null(jaspResults[["resNorm"]]) && options[["resNorm"]]) {
-      NormalPlot <- createJaspContainer(gettext("Normal Probability Plot of Residuals"))
+      NormalPlot <- createJaspContainer(title = gettext("Normal Probability Plot of Residuals"))
       NormalPlot$dependOn(c("FAassignedFactors", "modelTerms","NormalPlot","FAresponse", "intOrder", "FArunOrder", 'addGridlines', "enabledIntOrder"))
 
       # Error plot for saturated designs
@@ -458,12 +462,12 @@ doeFactorial <- function(jaspResults, dataset, options, ...){
     rows <- cbind.data.frame(runOrder, desx)
 
     blocks <- rows$Blocks
-    rows <- rows[,!names(rows) %in% "Blocks"]
+    rows <- rows[, !names(rows) %in% "Blocks"]
 
     #filling in table
     table$addColumnInfo(name = 'runOrder', title = gettext("Run order"), type = 'string')
 
-    tableTitle <- if(options[["factorialBlocks"]] > 1){
+    tableTitle <- if (options[["factorialBlocks"]] > 1) {
       "standard.block.perblock"
     } else {
       "Standard order"

@@ -321,7 +321,7 @@ Form
 				{
 					id:							factorialCornerReplicates
 					name:						"factorialCornerReplicates"
-					label:						qsTr("Number of replicates for corner points")
+					label:						qsTr("Number of replications")
 					defaultValue:				1
 					min:						1
 					max:						8

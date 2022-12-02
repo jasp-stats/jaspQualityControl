@@ -97,28 +97,23 @@ Description
 		func:			"doeFactorial"
 		requiresData:	false
 	}
-    Analysis
-    {
-        title:          qsTr("General Full Factorial Design")
-        func:           "doeFull"
-        requiresData:   false
-    }
-    Analysis
-	  {
+	Analysis
+	{
+		title:			qsTr("General Linear Model")
+		func:			"doeFull"
+		requiresData:	false
+	}
+	Analysis
+	{
 		title:			qsTr("Response Surface Design")
 		func:			"doeResponseSurfaceMethodology"
 		requiresData:	false
-	  }
-    Analysis
-    {
-        title:          qsTr("Define Custom Design")
-        func:           "doeModifyDesign"
-    }
-//    Analysis
-//    {
-//        title:			qsTr("Definitive Screening Analysis")
-//        func:			"definitiveScreeningAnalysis"
-//    }
+	}
+	Analysis
+	{
+		title:			qsTr("Define Custom Design")
+		func:			"doeModifyDesign"
+	}
 
 	GroupTitle
 	{

@@ -18,6 +18,10 @@
 #' @export
 doeFull <- function(jaspResults, dataset, options, ...){
 
+  if (options[["setSeed"]]) {
+    set.seed(options[["seed"]])
+  }
+
   .doeFullSummaryDesign(options, jaspResults, position = 1)
 
   .doeFullShowDesign(options, jaspResults, position = 2)
@@ -95,7 +99,7 @@ doeFull <- function(jaspResults, dataset, options, ...){
     fullStandard <- DoE.base::run.order(fullDesign)[,1]
 
     rows <- cbind.data.frame(`Run order` = fullRunOrder, `Standard order` = fullStandard, fullDesign)
-    if(options[["runOrderFull"]] == "runOrderStandard"){
+    if(options[["runOrder"]] == "runOrderStandard"){
       rows <- rows[order(rows$`Standard order`),]
     } else {
       rows <- rows[order(rows$`Run order`),]
