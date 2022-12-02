@@ -365,7 +365,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   if (row <= 0L)
     return(list())
 
-
   k <- options[["numberOfContinuous"]]
   designSpec <- .doeRsmDefaultDesigns(k, row)
 
@@ -376,9 +375,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
   designSpec[["runs"]] <- .doeRsmComputeRuns(designSpec[["k"]], designSpec[["designType"]], designSpec[["cube"]], designSpec[["axial"]])
 
+  # rsm provides a fourth option, spherical, which could be added (though SKF did not ask for it)
   # TODO: need to figure out when a design is rotatable!
   designSpec[["alpha"]] <- switch(options[["alphaType"]],
-    # same as Minitab, but we need to compute this to obtain full precision
+    # same as Minitab, but we need to compute alpha to obtain full precision
     "default"      = .doeRsmComputeAlpha(designSpec[["k"]], designSpec[["designType"]], designSpec[["cube"]], designSpec[["axial"]], "rotatable"),
     "faceCentered" = 1, # yes this is correct, see ?rsm::ccd + search for "faces"
     "custom"       = options[["customAlphaValue"]]
@@ -395,13 +395,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   #   if (designSpec[["cube"]] == 0L && designSpec[["axial"]] == 0L)
   #     designSpec[["cube"]] <- designSpec[["total"]]
   # }
-
-  # rsm provides a fourth option, spherical, which could be added (though SKF did not ask for it)
-  # designSpec[["alpha"]] <- switch(options[["alphaType"]],
-  #   "default"      = designSpec[["alpha"]], # i.e., do nothing. Corresponds to orthogonal in rsm::ccd I think
-  #   "faceCentered" = 1L, # yes this is correct, see ?rsm::ccd + search for "faces"
-  #   "custom"       = options[["customAlphaValue"]]
-  # )
 
   designSpec <- c(designSpec, "replicates" = options[["replicates"]])
 
