@@ -504,7 +504,7 @@ Form
 				CheckBox
 				{
 					name:						"paretoPlot"
-					label:						qsTr("Pareto Plot of Standardized Effects")
+					label:						qsTr("Pareto plot of standardized effects")
 				}
 			}
 
@@ -528,13 +528,13 @@ Form
 				CheckBox
 				{
 					name:						"resFitted"
-					label:						qsTr("Residuals vs fitted value")
+					label:						qsTr("Residuals vs. fitted value")
 				}
 
 				CheckBox
 				{
 					name:						"resOrder"
-					label:						qsTr("Residuals vs run/standard order")
+					label:						qsTr("Residuals vs. run/standard order")
 					enabled:					runOrder.count > 0
 
 					RadioButtonGroup
