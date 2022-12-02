@@ -6,7 +6,8 @@ setPkgOption("module.dirs", ".")
 setPkgOption("reinstall.modules", FALSE)
 
 # options <- analysisOptions("~/GitHub/jasp/deleteable/qualitycontrol/doeRSM2.jasp")
-options <- analysisOptions("~/GitHub/jasp/deleteable/qualitycontrol/doeRsmTests2.jasp")
+# options <- analysisOptions("~/GitHub/jasp/deleteable/qualitycontrol/doeRsmTests2.jasp")
+options <- analysisOptions("~/jaspDeletable/qualitycontrol/doeRsmTests.jasp")
 options
 options$codedOutput
 # options <- analysisOptions("~/../Downloads/doe_debug.jasp")

@@ -37,9 +37,19 @@ Form
 	Group
 	{
 
-		IntegerField { id: numberOfContinuous;		label: qsTr("Number of continuous factors");	name: "numberOfContinuous";		min: centralCompositeDesign.checked ? 2 : 3;	defaultValue: centralCompositeDesign.checked ? 2 : 3;	max: 10	}
-		IntegerField { id: numberOfCategorical;		label: qsTr("Number of categorical factors");	name: "numberOfCategorical";	min: 0;		defaultValue: 0;	max: 10		}
-		IntegerField { id: numberOfLevels;			label: qsTr("Maximum categorical levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 10		}
+		// Could probably use a custom IntegerField type...
+		IntegerField { id: numberOfContinuous;		label: qsTr("Number of continuous factors");	name: "numberOfContinuous";		min: centralCompositeDesign.checked ? 2 : 3;	defaultValue: centralCompositeDesign.checked ? 2 : 3;	max: 10
+			property int intValue: defaultValue
+			onValueChanged : { intValue = value !== "" ? value : 0 }
+		}
+		IntegerField { id: numberOfCategorical;		label: qsTr("Number of categorical factors");	name: "numberOfCategorical";	min: 0;		defaultValue: 0;	max: 10
+			property int intValue: defaultValue
+			onValueChanged : { intValue = value !== "" ? value : 0 }
+		}
+		IntegerField { id: numberOfLevels;			label: qsTr("Maximum categorical levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 10
+			property int intValue: defaultValue
+			onValueChanged : { intValue = value !== "" ? value : 0 }
+		}
 
 		TableView
 		{
@@ -48,12 +58,12 @@ Form
 			modelType			: JASP.Simple
 
 			implicitWidth		: form.implicitWidth
-			implicitHeight		: 140 // about 3 rows
+			implicitHeight		: 140 * preferencesModel.uiScale // about 3 rows
 
-			initialRowCount		: numberOfContinuous.value
+			initialRowCount		: numberOfContinuous.intValue
 			initialColumnCount	: 3
 
-			rowCount			: numberOfContinuous.value
+			rowCount			: numberOfContinuous.intValue
 			columnCount			: 3
 
 			name				: "continuousVariables"
@@ -76,24 +86,24 @@ Form
 			id: categoricalVariables
 
 			implicitWidth		: form.implicitWidth
-			implicitHeight		: 140 // about 3 rows
+			implicitHeight		: 140 * preferencesModel.uiScale // about 3 rows
 
 			modelType			: JASP.Simple
 
 			isFirstColEditable	: true
 
-			initialRowCount		: numberOfCategorical.value
+			initialRowCount		: numberOfCategorical.intValue
 			initialColumnCount	: 1 + parseInt(numberOfLevels.value)
 
-			rowCount			: numberOfCategorical.value
+			rowCount			: numberOfCategorical.intValue
 			columnCount			: 1 + parseInt(numberOfLevels.value)
 			name				: "categoricalVariables"
 			cornerText			: qsTr("Factor")
 			itemType			: JASP.String
 
 			function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }
-			function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex + parseInt(numberOfContinuous.value)); }
-			function getDefaultValue(columnIndex, rowIndex)				{ return String.fromCharCode(columnIndex === 0 ? 65 + rowIndex + parseInt(numberOfContinuous.value) : 97 + columnIndex - 1); }
+			function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex + numberOfContinuous.intValue); }
+			function getDefaultValue(columnIndex, rowIndex)				{ return String.fromCharCode(columnIndex === 0 ? 65 + rowIndex + numberOfContinuous.intValue : 97 + columnIndex - 1); }
 		}
 
 	}
@@ -105,7 +115,7 @@ Form
 		{
 			property var designData: // it would be better to generate this...
 			{
-				const val = parseInt(numberOfContinuous.value)
+				const val = numberOfContinuous.intValue
 				if (centralCompositeDesign.checked) // CCD
 				{
 					switch(val)
@@ -116,14 +126,14 @@ Form
 								"Full", 14, 2, 6, 3, 3, 1.414
 							];
 						case 3:	return	[
-								"Full", 14, 1, 6, 0, 0, 1.682,
+								"Full", 20, 1, 6, 0, 0, 1.682, // fixed manually
 								"Full", 20, 2, 6, 4, 2, 1.633,
 								"Full", 20, 3, 6, 4, 2, 1.633
 							];
 						case 4:	return	[
+								"Full", 31, 1, 7, 0, 0, 2,
 								"Full", 30, 2, 6, 4, 2, 2,
-								"Full", 30, 3, 6, 4, 2, 2,
-								"Full", 31, 1, 7, 0, 0, 2
+								"Full", 30, 3, 6, 4, 2, 2
 							];
 						case 5:	return	[
 								"Half", 32, 1, 6, 0, 0, 2,
@@ -179,47 +189,20 @@ Form
 				{
 					switch(val)
 					{
-						case 3:
-							return	[
-								15, 1, 3
-							];
-						case 4:	return	[
-								27, 3, 3
-							];
-						case 5:	return	[
-								46, 2, 3
-							];
-						case 6:	return	[
-								54, 2, 6
-							];
-						case 7:	return	[
-								62, 2, 6
-							];
-						case 9:	return	[
-								130, "5 or 10", 10
-							];
-						case 10:	return	[
-								170, 2, 10
-							];
+						case 3:		return	[15, 1, 3];
+						case 4:		return	[27, 3, 3];
+						case 5:		return	[46, 2, 3];
+						case 6:		return	[54, 2, 6];
+						case 7:		return	[62, 2, 6];
+						case 9:		return	[130, "5 or 10", 10];
+						case 10:	return	[170, 2, 10];
 					}
 				}
 			}
-//			{parseInt(numberOfContinuous.value) === 2 ?
-
-//											[
-//												"full", 13, 1, 5, 0, 0, Math.sqrt(2),
-//												"full", 14, 2, 6, 3, 3, Math.sqrt(2)
-//											]
-//								:
-//											[
-//												"full", 20, 1, 6, 0, 0, 2**(3/4),
-//												"full", 20, 2, 6, 4, 2, 2**(3/4),
-//												"full", 20, 3, 6, 4, 2, 2**(3/4)
-//											]
 
 			id					: selectedDesign2
 			implicitWidth		: form.implicitWidth
-			implicitHeight		: 250
+			implicitHeight		: 250 * preferencesModel.uiScale
 
 			modelType			: JASP.Simple
 			name				: "selectedDesign2"
@@ -230,8 +213,8 @@ Form
 			columnCount			: centralCompositeDesign.checked ? 6 : 3
 
 			itemType			: JASP.Double
-			rowCount			: numberOfContinuous.value
-			initialRowCount		: numberOfContinuous.value
+			rowCount			: numberOfContinuous.intValue
+			initialRowCount		: numberOfContinuous.intValue
 
 			itemDelegate: Item
 			{
@@ -259,22 +242,27 @@ Form
 					}
 				}
 
-				DoubleField
-				{
-					value						: tableView.getDefaultValue(columnIndex, rowIndex)
-					background					: backgroundRect
-					anchors.verticalCenter		: parent.verticalCenter
-					anchors.horizontalCenter	: parent.horizontalCenter
-					editable					: false
-					useExternalBorder			: false
-					showBorder					: false
-				}
-//				Label
+//				DoubleField
 //				{
-//					text						: tableView.getDefaultValue(columnIndex, rowIndex)
+//					value						: tableView.getDefaultValue(columnIndex, rowIndex)
+//					background					: backgroundRect
 //					anchors.verticalCenter		: parent.verticalCenter
 //					anchors.horizontalCenter	: parent.horizontalCenter
+//					editable					: false
+//					useExternalBorder			: false
+//					showBorder					: false
 //				}
+				Label
+				{
+					text						: tableView.getDefaultValue(columnIndex, rowIndex)
+					anchors.verticalCenter		: parent.verticalCenter
+					anchors.horizontalCenter	: parent.horizontalCenter
+					onTextChanged:
+					{
+						selectedDesign2.itemChanged(columnIndex, rowIndex, value, inputType)
+//						tableView.setButtons()
+					}
+				}
 			}
 
 			rowNumberDelegate: Rectangle
@@ -324,8 +312,23 @@ Form
 				}
 			}
 
-			function getRowHeaderText(headerText, rowIndex)	{ return designData ? designData[					7 * rowIndex] : ""; }
-			function getDefaultValue(columnIndex, rowIndex)	{ return designData ? designData[columnIndex + 1 +	7 * rowIndex] : "";	}
+			function getRowHeaderText(headerText, rowIndex)
+			{
+//				console.log("getRowHeaderText(" + rowIndex + ")");
+//				console.log("designData == " + designData);
+//				console.log("returning " + designData !== undefined ? designData[					7 * rowIndex] : "");
+				return designData !== undefined ? designData[					7 * rowIndex] : "";
+			}
+			function getDefaultValue(columnIndex, rowIndex)
+			{
+				console.log("getDefaultValue(" + columnIndex + ", " + rowIndex + ")");
+				console.log("designData == " + designData);
+				console.log("typeof designData == " + (typeof designData));
+				console.log("designData !== undefined  == " + (designData !== undefined));
+				console.log("typeof designData === \"undefined\"  == " + (typeof designData === "undefined"));
+				console.log("returning " + designData !== undefined ? designData[					7 * rowIndex] : "");
+				return designData !== undefined ? designData[columnIndex + 1 +	7 * rowIndex] : "";
+			}
 
 		}
 

@@ -357,30 +357,51 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
 .doeGetSelectedDesign <- function(options) {
 
-  idx <- options[["selectedRow"]] + 1L
+  # TODO: implement BBD!
+  # NOTE: could be stored as int except for alpha. Probably not necessary though
 
-  if (idx <= 0L)
+  row <- options[["selectedRow"]] + 1L
+
+  if (row <= 0L)
     return(list())
 
-  # TODO: implement BBD!
 
-  designSpec <- unlist(lapply(options[["selectedDesign2"]], \(x) x[["values"]][idx]))
-  names(designSpec) <- c("runs", "blocks", "total", "cube", "axial", "alpha")
+  k <- options[["numberOfContinuous"]]
+  designSpec <- .doeRsmDefaultDesigns(k, row)
 
-  if (options[["centerPointType"]] != "default") {
+  if (options[["centerPointType"]] == "custom") {
     designSpec[["cube"]]  <- options[["customCubeBlock"]]
     designSpec[["axial"]] <- options[["customAxialBlock"]]
-  } else {
-    if (designSpec[["cube"]] == 0L && designSpec[["axial"]] == 0L)
-      designSpec[["cube"]] <- designSpec[["total"]]
   }
 
-  # rsm provides a fourth option, spherical, which could be added (though SKF did not ask for it)
+  designSpec[["runs"]] <- .doeRsmComputeRuns(designSpec[["k"]], designSpec[["designType"]], designSpec[["cube"]], designSpec[["axial"]])
+
+  # TODO: need to figure out when a design is rotatable!
   designSpec[["alpha"]] <- switch(options[["alphaType"]],
-    "default"      = designSpec[["alpha"]], # i.e., do nothing. Corresponds to orthogonal in rsm::ccd I think
-    "faceCentered" = 1L, # yes this is correct, see ?rsm::ccd + search for "faces"
+    # same as Minitab, but we need to compute this to obtain full precision
+    "default"      = .doeRsmComputeAlpha(designSpec[["k"]], designSpec[["designType"]], designSpec[["cube"]], designSpec[["axial"]], "rotatable"),
+    "faceCentered" = 1, # yes this is correct, see ?rsm::ccd + search for "faces"
     "custom"       = options[["customAlphaValue"]]
   )
+
+  # This would be better, but it does not work because the QML tableview values do not update properly
+  # designSpec <- unlist(lapply(options[["selectedDesign2"]], \(x) x[["values"]][idx]))
+  # names(designSpec) <- c("runs", "blocks", "total", "cube", "axial", "alpha")
+  #
+  # if (options[["centerPointType"]] != "default") {
+  #   designSpec[["cube"]]  <- options[["customCubeBlock"]]
+  #   designSpec[["axial"]] <- options[["customAxialBlock"]]
+  # } else {
+  #   if (designSpec[["cube"]] == 0L && designSpec[["axial"]] == 0L)
+  #     designSpec[["cube"]] <- designSpec[["total"]]
+  # }
+
+  # rsm provides a fourth option, spherical, which could be added (though SKF did not ask for it)
+  # designSpec[["alpha"]] <- switch(options[["alphaType"]],
+  #   "default"      = designSpec[["alpha"]], # i.e., do nothing. Corresponds to orthogonal in rsm::ccd I think
+  #   "faceCentered" = 1L, # yes this is correct, see ?rsm::ccd + search for "faces"
+  #   "custom"       = options[["customAlphaValue"]]
+  # )
 
   designSpec <- c(designSpec, "replicates" = options[["replicates"]])
 
@@ -423,6 +444,81 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   utils::write.csv(x = design, file = options[["exportDesignFile"]], row.names = FALSE)
 
 }
+
+.doeRsmDesignTypeFromInt <- function(i) {
+  c("Full", "Half", "Quarter", "Eighth")[i]
+}
+
+.doeRsmDefaultDesigns <- function(k, row) {
+
+  # Note designType is coded as follows: 0 => Full, 1 => Half, see .doeRsmDesignTypeFromInt
+  defaultCcds <- structure(
+    c(2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6,
+      6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9,
+      9, 9, 10, 10, 10, 10, 1, 2, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2,
+      1, 2, 3, 5, 1, 2, 3, 1, 2, 3, 5, 1, 2, 3, 5, 1, 2, 3, 5, 1, 2,
+      3, 5, 1, 2, 3, 5, 1, 2, 3, 5, 5, 3, 6, 4, 4, 7, 4, 4, 10, 8,
+      8, 6, 6, 14, 8, 8, 8, 9, 8, 8, 10, 8, 8, 8, 10, 8, 8, 8, 10,
+      8, 8, 8, 10, 8, 8, 8, 10, 8, 8, 8, 10, 8, 8, 8, 0, 3, 0, 2, 2,
+      0, 2, 2, 0, 4, 4, 0, 1, 0, 6, 6, 6, 0, 2, 2, 0, 10, 10, 10, 0,
+      4, 4, 4, 0, 8, 8, 8, 0, 2, 2, 2, 0, 6, 6, 6, 0, 4, 4, 4, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
+      0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3
+    ), dim = c(44, 5), dimnames = list(NULL, c("k", "blocks", "cube", "axial", "designType")))
+
+  if (row < 1)
+    return(NULL)
+
+  idx <- which(defaultCcds[, "k"] == k)
+  if (row > length(idx)) {
+    warning("rowindex outside of possible values!", domain = NA)
+    return(NULL)
+  }
+  return(defaultCcds[idx[row], ])
+
+}
+
+.doeRsmComputeAlphaRotational <- function(k) { 2^(k / 4) }
+.doeRsmComputeAlphaOrthogonal <- function(k, centerPointsInCube, centerPointsInStar) {
+  # based on rsm::star with reps set to 1
+  cubeSize <- 2^k + centerPointsInCube
+  # N <- 2 * k * reps + n0
+  N <- 2 * k + centerPointsInStar
+  ratio <- 2^k / cubeSize
+  # sqrt(N * ratio / (2 * reps))
+  sqrt(N * ratio / 2)
+}
+
+.doeRsmComputeAlpha <- function(k, designtype, centerPointsInCube, centerPointsInStar, alphaType = c("rotatable", "orthogonal")) {
+  alphaType <- match.arg(alphaType)
+  if (alphaType == "rotatable")
+    .doeRsmComputeAlphaRotational(k - designtype)
+  else
+    .doeRsmComputeAlphaOrthogonal(k - designtype, centerPointsInCube, centerPointsInStar)
+}
+
+.doeRsmComputeRuns <- function(k, designtype, centerPointsInCube, centerPointsInStar) {
+  cubeSize <- 2^(k - designtype) + centerPointsInCube
+  starSize <- 2*(k - designtype) + centerPointsInStar
+  # TODO: figure out why this is needed! and how it ends up in the design!
+  designTypeCorrection <- 2 * designtype
+  return(cubeSize + starSize + designTypeCorrection)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .cubeDesign <- function(jaspResults, options) {
 
