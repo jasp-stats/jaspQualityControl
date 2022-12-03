@@ -33,7 +33,8 @@ Form
 		title		: qsTr("Design Type")
 
 		RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central Composite Design");	checked: true;		id: centralCompositeDesign	}
-		RadioButton { name:	 "boxBehnkenDesign ";			label: qsTr("Box-Behnken Design ");															}
+		RadioButton { name:	 "boxBehnkenDesign";			label: qsTr("Box-Behnken Design");															}
+
 	}
 
 	Group
@@ -253,7 +254,6 @@ Form
 					onTextChanged:
 					{
 						selectedDesign2.itemChanged(columnIndex, rowIndex, value, inputType)
-//						tableView.setButtons()
 					}
 				}
 			}
@@ -307,19 +307,10 @@ Form
 
 			function getRowHeaderText(headerText, rowIndex)
 			{
-//				console.log("getRowHeaderText(" + rowIndex + ")");
-//				console.log("designData == " + designData);
-//				console.log("returning " + designData !== undefined ? designData[					7 * rowIndex] : "");
 				return designData !== undefined ? designData[					7 * rowIndex] : "";
 			}
 			function getDefaultValue(columnIndex, rowIndex)
 			{
-				console.log("getDefaultValue(" + columnIndex + ", " + rowIndex + ")");
-				console.log("designData == " + designData);
-				console.log("typeof designData == " + (typeof designData));
-				console.log("designData !== undefined  == " + (designData !== undefined));
-				console.log("typeof designData === \"undefined\"  == " + (typeof designData === "undefined"));
-				console.log("returning " + designData !== undefined ? designData[					7 * rowIndex] : "");
 				return designData !== undefined ? designData[columnIndex + 1 +	7 * rowIndex] : "";
 			}
 
@@ -402,55 +393,6 @@ Form
 		CheckBox		{ name: "codedOutput";	label: qsTr("Show coded output")										}
 		IntegerField	{ name: "replicates";	label: qsTr("Replicates");			defaultValue: 1; min: 1; max: 100	}
 
-//		TODO: remove this? can also do nothing until people select a design
-		// Show the design in the output (because people want a button...)
-//		Group
-//		{
-
-//			Button
-//			{
-//				id: 								buildDesign
-//				anchors.right:						parent.right
-//				anchors.bottom:						parent.bottom
-//				text: 								qsTr("<b>Build Design</b>")
-//				onClicked: 							buildDesignInv.click()
-//			}
-
-//			CheckBox
-//			{
-//				id:									buildDesignInv
-//				name:								"buildDesignInv" // TODO: rename
-//				visible:							false
-//			}
-
-//		}
-
-		// Export the design to a csv
-//		Group
-//		{
-//			FileSelector
-//			{
-//				name:		"exportDesignFile"
-//				label:		qsTr("Export design:")
-//				filter:		"*.csv"
-//				save:		true
-//			}
-
-//			Button
-//			{
-//				anchors.right:		parent.right
-//				anchors.bottom:		parent.bottom
-//				text: 				actualExporter.checked ? qsTr("Sync Design: On") : qsTr("Sync Design: Off")
-//				onClicked: 			actualExporter.click()
-//			}
-
-//			CheckBox
-//			{
-//				id:					actualExporter
-//				name:				"actualExporter"
-//				visible:			false
-//			}
-//		}
 	}
 
 	Common.ShowAndExportDesign {}
