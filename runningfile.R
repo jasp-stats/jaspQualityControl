@@ -7,9 +7,12 @@ setPkgOption("reinstall.modules", FALSE)
 
 # options <- analysisOptions("~/GitHub/jasp/deleteable/qualitycontrol/doeRSM2.jasp")
 # options <- analysisOptions("~/GitHub/jasp/deleteable/qualitycontrol/doeRsmTests2.jasp")
-options <- analysisOptions("~/jaspDeletable/qualitycontrol/doeRsmTests.jasp")
-options
-options$codedOutput
+
+# options <- analysisOptions("~/jaspDeletable/qualitycontrol/doeRsmTests2.jasp")
+options <- analysisOptions("~/jaspDeletable/qualitycontrol/doeRsmTestsBBD.jasp")
+
+# options
+# options$codedOutput
 # options <- analysisOptions("~/../Downloads/doe_debug.jasp")
 
 # options$designType <- "star"
@@ -25,7 +28,7 @@ options$codedOutput
 #
 # options$factors[[1]]$value
 
-options$buildDesignInv <- TRUE
+# options$buildDesignInv <- TRUE
 
 debugonce(jaspQualityControl:::doeResponseSurfaceMethodology)
 

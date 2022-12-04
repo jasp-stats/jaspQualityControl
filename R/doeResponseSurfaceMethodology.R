@@ -21,7 +21,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   ready <- options[["displayDesign"]] && options[["selectedRow"]] != -1L
 
   .doeRsmDesignSummaryTable(jaspResults, options)
-  if (ready) {
+
+  if (ready && !jaspResults$getError()) {
 
     design <- .doeRsmGenerateDesign(options)
     .doeRsmGenerateDesignTable(jaspResults, options, design)
@@ -52,17 +53,23 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   tb$addColumnInfo(name = "totalBlocks", title = gettext("Total blocks"),           type = "integer")
 
   if (options[["designType"]] == "centralCompositeDesign") {
-    tb$addColumnInfo(name = "cube",         title = gettext("Center points in cube"),  type = "integer")
-    tb$addColumnInfo(name = "axial",        title = gettext("Center points in axial"), type = "integer")
+    tb$addColumnInfo(name = "cube",         title = gettext("Centre points in cube"),  type = "integer")
+    tb$addColumnInfo(name = "axial",        title = gettext("Centre points in axial"), type = "integer")
     tb$addColumnInfo(name = "alpha",        title = "\U03B1",                          type = "number")
   } else {
-    tb$addColumnInfo(name = "centerpoints", title = gettext("Center points"),          type = "integer")
+    tb$addColumnInfo(name = "centerpoints", title = gettext("Centre points"),          type = "integer")
   }
   tb$transpose <- TRUE
 
   tb[["title"]]       <- gettext("Value")
   tb[["contFactors"]] <- options[["numberOfContinuous"]]
   tb[["catFactors"]]  <- options[["numberOfCategorical"]]
+
+  if (options[["designType"]] == "boxBehnkenDesign" && options[["numberOfContinuous"]] == 8L) {
+    # yes 8 variables is not possible, also not in Minitab. Ideally the GUI would forbid this but that's not possible.
+    jaspResults$setError(gettext("Box-BehnkenDesign are not supported for 8 variables."))
+    return()
+  }
 
   designSpec <- .doeGetSelectedDesign(options)
 
@@ -92,7 +99,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   ))
 
   if (length(designSpec) != 0L && !options[["displayDesign"]])
-    tb$addFootnote(gettext("Click 'Generate design' to build the design."))
+    tb$addFootnote(gettext("Click 'Display design' to show the design."))
 
   jaspResults[["doeRsmDesignSummaryTable"]] <- tb
 
@@ -174,7 +181,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   } else {
     .doeRsmGenerateBoxBehnkenDesign(
       noContinuous         = options[["numberOfContinuous"]],
-      centerPoints         = design[["centerpoints"]],
+      centerPoints         = designSpec[["centerpoints"]],
       randomize            = FALSE
     )
   }
@@ -445,7 +452,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   return(cubeSize + starSize + designTypeCorrection)
 }
 
-.doeRsmAnalysisThatMayBreak <- function(jaspResults, options, dataset) {
+.doeRsmAnalysisThatMayBreak <- function(jaspResults, dataset, options) {
 
   error <- try({
 
@@ -458,10 +465,12 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
                                          options[["displayDesign"]], options[["desirability"]],
                                          options[["contour"]])
 
+    if (!ready)
+      return()
+
     for (i in 1:op2) {
 
       data <- .readDataSet(jaspResults, options, dataset, i)
-
 
       #check for more than 5 unique
       .dataErrorCheck(data, options)

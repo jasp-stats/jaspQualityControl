@@ -74,7 +74,7 @@ Form
 			columnNames			: [qsTr("Name"), qsTr("Low"), qsTr("High")]
 			isFirstColEditable	: true
 			itemType			: JASP.Double
-			itemTypePerColumn	: [JASP.String]//.concat(Array(19).fill().map(JASP.Double)) // at most 20 items anyway
+			itemTypePerColumn	: [JASP.String] // first column is string, all others are double
 
 			function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex);	}
 			function getDefaultValue(columnIndex, rowIndex)				{ return columnIndex === 0 ? String.fromCharCode(65 + rowIndex) : 2 * columnIndex - 3;	}
@@ -117,6 +117,7 @@ Form
 		Label	{ text : qsTr("Design Table")	}
 		TableView
 		{
+			property int designDataColumns : centralCompositeDesign.checked ? 7 : 3
 			property var designData: // it would be better to generate this...
 			{
 				const val = numberOfContinuous.intValue
@@ -211,14 +212,14 @@ Form
 			modelType			: JASP.Simple
 			name				: "selectedDesign2"
 
-			columnNames			: centralCompositeDesign.checked ? [qsTr("Runs"), qsTr("Blocks"), qsTr("Total"), qsTr("Cube"), qsTr("Axial"), qsTr("Alpha")] : [qsTr("Runs"), qsTr("Blocks"), qsTr("Centre points")]
-			cornerText			: qsTr("Design")
-			initialColumnCount	: centralCompositeDesign.checked ? 6 : 3
-			columnCount			: centralCompositeDesign.checked ? 6 : 3
+			columnNames			: centralCompositeDesign.checked ? [qsTr("Runs"), qsTr("Blocks"), qsTr("Total"), qsTr("Cube"), qsTr("Axial"), qsTr("Alpha")] : [qsTr("Blocks"), qsTr("Centre points")]
+			cornerText			: centralCompositeDesign.checked ? qsTr("Design") : qsTr("Runs")
+			initialColumnCount	: designDataColumns - 1// -1 because the first "column" is not a column but the row header
+			columnCount			: designDataColumns - 1
 
 			itemType			: JASP.Double
-			rowCount			: numberOfContinuous.intValue
-			initialRowCount		: numberOfContinuous.intValue
+			rowCount			: designData.length / designDataColumns// numberOfContinuous.intValue
+			initialRowCount		: designData.length / designDataColumns// numberOfContinuous.intValue
 
 			itemDelegate: Item
 			{
@@ -305,14 +306,8 @@ Form
 				}
 			}
 
-			function getRowHeaderText(headerText, rowIndex)
-			{
-				return designData !== undefined ? designData[					7 * rowIndex] : "";
-			}
-			function getDefaultValue(columnIndex, rowIndex)
-			{
-				return designData !== undefined ? designData[columnIndex + 1 +	7 * rowIndex] : "";
-			}
+			function getRowHeaderText(headerText, rowIndex) { return designData !== undefined ? designData[					    selectedDesign2.designDataColumns * rowIndex] : ""; }
+			function getDefaultValue(columnIndex, rowIndex) { return designData !== undefined ? designData[columnIndex + 1 +	selectedDesign2.designDataColumns * rowIndex] : ""; }
 
 		}
 
@@ -328,8 +323,9 @@ Form
 
 		RadioButtonGroup
 		{
-			name:								"alphaType"
-			title:								qsTr("Alpha")
+			visible:			centralCompositeDesign.checked
+			name:				"alphaType"
+			title:				qsTr("Alpha")
 
 			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
 			RadioButton { name:	 "faceCentered";	label: qsTr("Face centred");					}
