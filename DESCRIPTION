@@ -34,7 +34,8 @@ Imports:
   FAdist,
   daewr,
   desirability,
-  weibullness
+  weibullness,
+  car
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,

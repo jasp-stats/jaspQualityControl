@@ -173,7 +173,7 @@ Form
 						name: 					"lowerSpecification"
 						negativeValues:			true
 						defaultValue:			-1
-						decimals:				7
+						decimals:				9
 					}
 				}
 
@@ -190,7 +190,7 @@ Form
 						name: 					"targetValue"
 						negativeValues:			true
 						defaultValue:			0
-						decimals:				7
+						decimals:				9
 					}
 				}
 
@@ -207,7 +207,7 @@ Form
 						name: 					"upperSpecification"
 						negativeValues:			true
 						defaultValue:			1
-						decimals:				7
+						decimals:				9
 					}
 				}
 
@@ -272,6 +272,15 @@ Form
 					label: 						qsTr("X-mR chart")
 					enabled: 					pcSubgroupSize.value == 1 || pcDataFormat.currentValue == "PCwideFormat"
 					checked: 					pcSubgroupSize.value == 1
+
+					DoubleField
+					{
+						name:							"movingRangeLength"
+						label:							qsTr("Moving range length")
+						defaultValue:					2
+						min: 							2
+						max: 							dataSetModel.rowCount()
+					}
 				}
 			}
 
@@ -324,6 +333,20 @@ Form
 	Section
 	{
 		title: qsTr("Process Capability Report")
+		
+				CheckBox
+		{
+			name: "pcReportDisplay"
+			label: qsTr("Show Report")
+			columns: 2
+			
+			
+						CheckBox
+			{
+				name:		"reportMetaData"
+				label:		qsTr("Show report metadata")
+				checked:	true
+				columns: 1
 
 		TextField
 		{
@@ -336,7 +359,7 @@ Form
 
 		TextField
 		{
-			id:						apcReportName
+			id:						pcReportName
 			label: 					qsTr("Process Name:")
 			name: 					"pcReportName"
 			placeholderText:		qsTr("Name")
@@ -369,10 +392,49 @@ Form
 			placeholderText:		qsTr("Miscellaneous")
 			fieldWidth:				100
 		}
+		
+		
+		}
+		
+		
+		
+					Group
+			{
+				title:			qsTr("Select Report Components")
+			
+				CheckBox
+				{
+					name:		"reportProcessStability"
+					label:		qsTr("Show stability of process charts")
+					checked:	true
+				}
+				
+								CheckBox
+				{
+					name:		"reportProcessCapabilityPlot"
+					label:		qsTr("Show process capability plot")
+					checked:	true
+				}
+				
+												CheckBox
+				{
+					name:		"reportProbabilityPlot"
+					label:		qsTr("Show probability plot")
+					checked:	true
+				}
+				
+																CheckBox
+				{
+					name:		"reportProcessCapabilityTables"
+					label:		qsTr("Show process capability tables")
+					checked:	true
+				}
 
-		CheckBox
-		{
-			name: "pcReportDisplay";		label: qsTr("Show Report")
+				
+				
+				
+				}
+
 		}
 	}
 

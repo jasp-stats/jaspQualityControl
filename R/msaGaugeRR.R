@@ -328,10 +328,11 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     anovaTables[['anovaTable1']] <- anovaTable1
 
-    if(!singleOperator)
+    if(!singleOperator){
       interactionSignificant <- pInteraction < options$alphaForANOVA
-    else
+    }else {
       interactionSignificant <- FALSE
+    }
 
     if (singleOperator || interactionSignificant){
 
@@ -878,9 +879,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .anovaGaugeReport <- function(dataset, measurements, parts, operators, options, Type3 = FALSE){
 
-  if (options[["anovaGaugeTitle"]] == ""){
+  if (options[["anovaGaugeTitle"]] == "") {
     title <- gettextf("Measurement systems analysis")
-  }else{
+  }else {
     title <- options[["anovaGaugeTitle"]]
   }
   name <- gettextf("Gauge name: %s", options[["anovaGaugeName"]])
@@ -896,26 +897,72 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     text2 <- c(reportedBy, misc)
   }
 
-  matrixPlot <- createJaspPlot(title = title, width = 1200, aspectRatio = 1)
-  plotMat <- matrix(list(), 5, 2)
-  plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- .ggplotWithText(text2)
-  plotMat[[2, 1]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE, returnPlotOnly = TRUE, Type3 = Type3)
-  plotMat[[2, 2]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE)
-  plotMat[[3, 1]] <- .xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options, smallLabels = TRUE, Type3 = Type3)
-  plotMat[[3, 2]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options, Type3 = Type3)
-  plotMat[[4, 1]] <- .xBarOrRangeChartPlotFunction("Average", dataset, measurements, parts, operators, options, smallLabels = TRUE, Type3 = Type3)
-  plotMat[[4, 2]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3, ggPlot = TRUE)
-
-  valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = TRUE, returnTrafficValues = TRUE, Type3 = Type3)
-  if (options$gaugeToleranceEnabled){
-    plots <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,ToleranceVar = valuesVec$tol, options = options, ready = TRUE, ggPlot = TRUE)
-    plotMat[[5, 1]] <- plots$p1
-    plotMat[[5, 2]] <- plots$p2
+  plotList <- list()
+  indexCounter <- 0
+  if (options[["reportMetaData"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .ggplotWithText(text1)
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .ggplotWithText(text2)
   }
-  else
-    plotMat[[5, 1]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,ToleranceVar = valuesVec$tol, options = options, ready = TRUE, ggPlot = TRUE)
+  if (options[["reportVariationComponents"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE,
+                                            returnPlotOnly = TRUE, Type3 = Type3)   #var. comp. plot
+  }
+  if (options[["reportMeasurementsByPartPlot"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE) #measurement by part plot
+  }
+  if (options[["reportRChartByOperator"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .xBarOrRangeChartPlotFunction("Range", dataset, measurements, parts, operators, options,
+                                                              smallLabels = TRUE, Type3 = Type3)  #R chart by operator
+  }
+  if (options[["reportMeasurementsByOperatorPlot"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options, Type3 = Type3)   #Measurements by operator plot
+  }
+  if (options[["reportAverageChartByOperator"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .xBarOrRangeChartPlotFunction("Average", dataset, measurements, parts, operators,
+                                                              options, smallLabels = TRUE, Type3 = Type3)  #Average chart by operator
+  }
+  if (options[["reportPartByOperatorPlot"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options,
+                                                                     Type3 = Type3, ggPlot = TRUE) # Part x Operator interaction plot
+  }
 
+  if (options[["reportTrafficLightCHart"]]) {
+    valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators,
+                             options =  options, ready = TRUE, returnTrafficValues = TRUE, Type3 = Type3)
+    plots <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,
+                          ToleranceVar = valuesVec$tol, options = options, ready = TRUE, ggPlot = TRUE)
+    if (options[["gaugeToleranceEnabled"]]) {
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- plots$p1
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- plots$p2
+    } else {
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- plots
+    }
+  }
+
+  if (indexCounter == 0) {
+    plot <- createJaspPlot(title = title, width = 400, height = 400)
+    plot$setError(gettext("No report components selected."))
+    return(plot)
+  } else if (indexCounter %% 2 != 0){
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  }
+
+  matrixNCols <- 2
+  matrixNRows <- indexCounter / matrixNCols
+  matrixPlot <- createJaspPlot(title = title, width = 1200, height = 400 * matrixNRows)
+  plotMat <- matrix(plotList, matrixNRows, matrixNCols, byrow = TRUE)
   p <- jaspGraphs::ggMatrixPlot(plotMat)
   matrixPlot$plotObject <- p
 

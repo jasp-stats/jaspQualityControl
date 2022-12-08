@@ -122,6 +122,8 @@ Form
 				name:							"historicalStandardDeviationValue"
 				label:							qsTr("Historical standard deviation:")
 				defaultValue:					3
+				min: 						0.000000001
+				decimals: 					9
 				enabled:						variationReference.currentValue == "historicalStandardDeviation"
 			}
 
@@ -135,8 +137,8 @@ Form
 				{
 					name: 						"tolerance"
 					defaultValue: 				10
-					min: 						0.001
-					decimals: 					3
+					min: 						0.000000001
+					decimals: 					9
 				}
 			}
 
@@ -269,57 +271,122 @@ Form
 
 	Section
 	{
-		title:									qsTr("ANOVA Method Report")
-
-		TextField
-		{
-			id:									anovaGaugeTitle
-			label: 								qsTr("Title")
-			name: 								"anovaGaugeTitle"
-			placeholderText:					qsTr("Measurement")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			id:									anovaGaugeName
-			label: 								qsTr("Gauge name")
-			name: 								"anovaGaugeName"
-			placeholderText:					qsTr("Name")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			id:									anovaGaugeDate
-			label: 								qsTr("Date")
-			name: 								"anovaGaugeDate"
-			placeholderText:					qsTr("Date")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			id:									anovaGaugeReportedBy
-			label: 								qsTr("Reported by")
-			name: 								"anovaGaugeReportedBy"
-			placeholderText:					qsTr("Name")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			id:									anovaGaugeMisc
-			label: 								qsTr("Misc")
-			name: 								"anovaGaugeMisc"
-			placeholderText:					qsTr("Miscellaneous")
-			fieldWidth:							100
-		}
-
+		title:	qsTr("ANOVA Method Report")
+		
 		CheckBox
 		{
 			name: "anovaGaugeReport"
-			label: qsTr("Show Report")
+			label: qsTr("Show report")
+			id:		anovaGaugeReport
+			columns: 2
+				
+				
+			CheckBox
+			{
+				name:		"reportMetaData"
+				label:		qsTr("Show report metadata")
+				checked:	true
+				columns: 1
+
+				TextField
+				{
+					id:									anovaGaugeTitle
+					label: 								qsTr("Title")
+					name: 								"anovaGaugeTitle"
+					placeholderText:					qsTr("Measurement")
+					fieldWidth:							100
+				}
+
+				TextField
+				{
+					id:									anovaGaugeName
+					label: 								qsTr("Gauge name")
+					name: 								"anovaGaugeName"
+					placeholderText:					qsTr("Name")
+					fieldWidth:							100
+				}
+
+				TextField
+				{
+					id:									anovaGaugeDate
+					label: 								qsTr("Date")
+					name: 								"anovaGaugeDate"
+					placeholderText:					qsTr("Date")
+					fieldWidth:							100
+				}
+
+				TextField
+				{
+					id:									anovaGaugeReportedBy
+					label: 								qsTr("Reported by")
+					name: 								"anovaGaugeReportedBy"
+					placeholderText:					qsTr("Name")
+					fieldWidth:							100
+				}
+
+				TextField
+				{
+					id:									anovaGaugeMisc
+					label: 								qsTr("Misc")
+					name: 								"anovaGaugeMisc"
+					placeholderText:					qsTr("Miscellaneous")
+					fieldWidth:							100
+				}
+			}
+		
+			Group
+			{
+				title:			qsTr("Select Report Components")
+			
+				CheckBox
+				{
+					name:		"reportVariationComponents"
+					label:		qsTr("Show components of variation")
+					checked:	true
+				}
+				
+				CheckBox
+				{
+					name:		"reportMeasurementsByPartPlot"
+					label:		qsTr("Show measurements by part")
+					checked:	true
+				}
+			
+				CheckBox
+				{
+					name:		"reportRChartByOperator"
+					label:		qsTr("Show R chart by operator")
+					checked:	true
+				}
+				
+				CheckBox
+				{
+					name:		"reportMeasurementsByOperatorPlot"
+					label:		qsTr("Show measurements by operator")
+					checked:	true
+				}
+				
+				CheckBox
+				{
+					name:		"reportAverageChartByOperator"
+					label:		qsTr("Show average chart by operator")
+					checked:	true
+				}
+				
+				CheckBox
+				{
+					name:		"reportPartByOperatorPlot"
+					label:		qsTr("Show part × operator interaction")
+					checked:	true
+				}
+				
+				CheckBox
+				{
+					name:		"reportTrafficLightCHart"
+					label:		qsTr("Show traffic light chart")
+					checked:	true
+				}
+			}
 		}
 	}
 }
