@@ -87,3 +87,18 @@ test_that("Test results for Diameter for Range chart table results match", {
 })
 
 
+# test analysis of stages plot
+
+test_that("titleless-plot-4 matches", {
+  options <- analysisOptions("variablesChartsIndividuals")
+  options$variables <- "Bags"
+  options$subgroups <- "Month"
+  options$split <- "Split"
+  set.seed(1)
+  results <- runAnalysis("variablesChartsIndividuals", "AnalysisOfStages.csv", options)
+  plotName <- results[["results"]][["Ichart"]][["collection"]][["Ichart_Bags"]][["collection"]][["Ichart_Bags_Plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "titleless-plot-4")
+})
+
+
