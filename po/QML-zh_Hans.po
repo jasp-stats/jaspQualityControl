@@ -383,10 +383,6 @@ msgctxt "msaGaugeRR|"
 msgid "Miscellaneous"
 msgstr "其它"
 
-msgctxt "msaGaugeRR|"
-msgid "Show Report"
-msgstr "显示报告"
-
 msgctxt "msaGaugeRRnonrep|"
 msgid "Operators"
 msgstr "操作者"
@@ -1083,10 +1079,6 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Miscellaneous"
 msgstr "其它"
 
-msgctxt "msaGaugeRRnonrep|"
-msgid "Show Report"
-msgstr "显示报告"
-
 msgctxt "msaTestRetest|"
 msgid "Data format"
 msgstr "数据格式"
@@ -1754,10 +1746,6 @@ msgid "Sigmas for computing control limits"
 msgstr "计算控制限的标准差数"
 
 msgctxt "variablesChartsIndividuals|"
-msgid "Subgroups"
-msgstr "子组"
-
-msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Individuals Report"
 msgstr "单值的变量控制图报告"
 
@@ -2230,3 +2218,108 @@ msgstr "组内标准差"
 msgctxt "TimeWeightedCharts|"
 msgid "Sigmas for computing control limits"
 msgstr "计算控制限的标准差数"
+
+msgctxt "msaGaugeRR|"
+msgid "Show report"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show report metadata"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Select Report Components"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show components of variation"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show measurements by part"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show R chart by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show measurements by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show average chart by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show part × operator interaction"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show traffic light chart"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show report"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show report metadata"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Select Report Components"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show components of variation"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show R chart by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show measurements by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show average chart by operator"
+msgstr ""
+
+#, fuzzy
+msgctxt "processCapabilityStudies|"
+msgid "Moving range length"
+msgstr "移动极差长度"
+
+msgctxt "processCapabilityStudies|"
+msgid "Show report metadata"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Select Report Components"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show stability of process charts"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show process capability plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show probability plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show process capability tables"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Axis labels"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Stages"
+msgstr ""

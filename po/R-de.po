@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2022-09-24 04:22\n"
+"POT-Creation-Date: 2022-12-10 03:40\n"
 "PO-Revision-Date: 2022-11-20 09:46+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -132,6 +132,14 @@ msgstr "Regelkarte"
 msgid "Subgroup size must be > 1 to display X-bar & R Chart."
 msgstr "Untergruppengröße muss > 1 sein, um X-quer- und R-Karte anzuzeigen."
 
+#, fuzzy
+msgid "Sample average"
+msgstr "Stichprobenumfang"
+
+#, fuzzy
+msgid "Sample range"
+msgstr "Stichprobenumfang"
+
 msgid "Test results for %s chart"
 msgstr "Testergebnisse für %s-Karte"
 
@@ -155,6 +163,12 @@ msgstr ""
 
 msgid "Numbers are data points where test violations occur."
 msgstr "Zahlen sind Datenpunkte, an denen Testverstöße auftreten."
+
+msgid "%s"
+msgstr "%s"
+
+msgid "Observation"
+msgstr "Beobachtung"
 
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
@@ -861,6 +875,9 @@ msgstr ""
 msgid "Tolerance: %s"
 msgstr "Toleranz: %s"
 
+msgid "No report components selected."
+msgstr ""
+
 msgid "%.2f"
 msgstr ""
 
@@ -1274,12 +1291,6 @@ msgstr ""
 
 msgid "Please insert more measurements and check the X-mR chart."
 msgstr ""
-
-msgid "%s"
-msgstr "%s"
-
-msgid "Observation"
-msgstr "Beobachtung"
 
 msgid "Autocorrelation"
 msgstr "Autokorrelation"

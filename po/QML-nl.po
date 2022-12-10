@@ -609,10 +609,6 @@ msgctxt "msaGaugeRR|"
 msgid "Miscellaneous"
 msgstr ""
 
-msgctxt "msaGaugeRR|"
-msgid "Show Report"
-msgstr ""
-
 msgctxt "processCapabilityStudies|"
 msgid "Data format"
 msgstr ""
@@ -1071,10 +1067,6 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Miscellaneous"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Show Report"
 msgstr ""
 
 msgctxt "msaTestRetest|"
@@ -1744,10 +1736,6 @@ msgid "Sigmas for computing control limits"
 msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
-msgid "Subgroups"
-msgstr ""
-
-msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Individuals Report"
 msgstr ""
 
@@ -2221,4 +2209,108 @@ msgstr ""
 
 msgctxt "TimeWeightedCharts|"
 msgid "t chart"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show report"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show report metadata"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Select Report Components"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show components of variation"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show measurements by part"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show R chart by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show measurements by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show average chart by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show part × operator interaction"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show traffic light chart"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show report"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show report metadata"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Select Report Components"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show components of variation"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show R chart by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show measurements by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show average chart by operator"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Moving range length"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show report metadata"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Select Report Components"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show stability of process charts"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show process capability plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show probability plot"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Show process capability tables"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Axis labels"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Stages"
 msgstr ""

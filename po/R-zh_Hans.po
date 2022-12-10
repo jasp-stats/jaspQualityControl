@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2022-09-24 04:22\n"
+"POT-Creation-Date: 2022-12-10 03:40\n"
 "PO-Revision-Date: 2022-11-07 09:03+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -130,6 +130,14 @@ msgstr "控制图"
 msgid "Subgroup size must be > 1 to display X-bar & R Chart."
 msgstr "显示X-bar & R控制图需要子组容量必须 >1"
 
+#, fuzzy
+msgid "Sample average"
+msgstr "样本量"
+
+#, fuzzy
+msgid "Sample range"
+msgstr "样本量"
+
 msgid "Test results for %s chart"
 msgstr "%s 图检验结果"
 
@@ -153,6 +161,12 @@ msgstr "检验 6：双峰分布"
 
 msgid "Numbers are data points where test violations occur."
 msgstr "数字表示发生违反检验准则的数据点。"
+
+msgid "%s"
+msgstr "%s"
+
+msgid "Observation"
+msgstr "观测值"
 
 msgid "Normal Probability Plot of Residuals"
 msgstr "残差的正态概率图"
@@ -847,6 +861,9 @@ msgstr "其它 : %s"
 msgid "Tolerance: %s"
 msgstr "公差 : %s"
 
+msgid "No report components selected."
+msgstr ""
+
 msgid "%.2f"
 msgstr "%.2f"
 
@@ -1260,12 +1277,6 @@ msgstr "极差图 %s"
 
 msgid "Please insert more measurements and check the X-mR chart."
 msgstr "请插入更多测量值并检查单值-移动极差控制图。"
-
-msgid "%s"
-msgstr "%s"
-
-msgid "Observation"
-msgstr "观测值"
 
 msgid "Autocorrelation"
 msgstr "自相关"
