@@ -43,6 +43,16 @@ Form
 
 		AssignedVariablesList
 		{
+			id:									subgroups
+			name:								"subgroups"
+			title:								qsTr("Subgroups")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			visible: 							pcDataFormat.currentValue == "CClongFormat" & subgroupSizeType.value == "groupingVariable"
+		}
+
+		AssignedVariablesList
+		{
 			id:									variables
 			name:								"variables"
 			title:								qsTr("Measurements")
@@ -50,14 +60,16 @@ Form
 			visible:							pcDataFormat.currentValue == "CCwideFormat"
 		}
 
+
+
 		AssignedVariablesList
 		{
-			id:									subgroups
-			name:								"subgroups"
-			title:								qsTr("Subgroups")
+			id:									axisLabels
+			name:								"axisLabels"
+			title:								qsTr("Axis labels")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
-			visible: 							pcDataFormat.currentValue == "CClongFormat" & subgroupSizeType.value == "groupingVariable"
+			visible: 							pcDataFormat.currentValue == "CCwideFormat"
 		}
 	}
 
