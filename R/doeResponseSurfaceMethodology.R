@@ -16,256 +16,660 @@
 #
 
 #' @export
-doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
-  op1  <- length(options[["modelTerms"]])
-  op2  <- length(options[["rsmResponseVariables"]])
-  op3  <- length(options[["rsmBlocks"]])
+doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
+  ready <- options[["displayDesign"]] && options[["selectedRow"]] != -1L
+
+  .doeRsmDesignSummaryTable(jaspResults, options)
+
+  if (ready && !jaspResults$getError()) {
+
+    design <- .doeRsmGenerateDesign(options)
+    .doeRsmGenerateDesignTable(jaspResults, options, design)
+
+    .doeRsmExportDesign(options, design)
+
+    error <- try({.doeRsmAnalysisThatMayBreak(jaspResults, dataset, options)})
+
+    if (isTryError(error)) {
+      if (inherits(attr(error, "condition"), "validationError")) {
+        # the error was thrown in .dataErrorCheck -> .hasErrors, so we rethrow it
+        stop(attr(error, "condition"))
+      } else {
+        # an unexpected error occured, so crash gracefully
+        tb <- createJaspTable()
+        tb$setError(gettextf("The analysis failed with the following error message: %s", .extractErrorMessage(error)))
+        jaspResults[["errorTable"]] <- tb
+      }
+    }
+
+  }
+
+}
+
+.doeRsmDesignSummaryTable <- function(jaspResults, options) {
+
+  if (!is.null(jaspResults[["doeRsmDesignSummaryTable"]]))
+    return()
+
+  tb <- createJaspTable(title = gettext("Design Summary"), position = 1L)
+  tb$addColumnInfo(name = "title",       title = gettext("Variable"),               type = "string")
+  tb$addColumnInfo(name = "contFactors", title = gettext("Continuous factors"),     type = "integer")
+  tb$addColumnInfo(name = "catFactors",  title = gettext("Categorical factors"),    type = "integer")
+
+  tb$addColumnInfo(name = "baseRuns",    title = gettext("Base runs"),              type = "integer")
+  tb$addColumnInfo(name = "baseBlocks",  title = gettext("Base blocks"),            type = "integer")
+
+  tb$addColumnInfo(name = "replicates",  title = gettext("Replicates"),             type = "integer")
+  tb$addColumnInfo(name = "totalRuns",   title = gettext("Total runs"),             type = "integer")
+  tb$addColumnInfo(name = "totalBlocks", title = gettext("Total blocks"),           type = "integer")
+
+  if (options[["designType"]] == "centralCompositeDesign") {
+    tb$addColumnInfo(name = "cube",         title = gettext("Centre points in cube"),  type = "integer")
+    tb$addColumnInfo(name = "axial",        title = gettext("Centre points in axial"), type = "integer")
+    tb$addColumnInfo(name = "alpha",        title = "\U03B1",                          type = "number")
+  } else {
+    tb$addColumnInfo(name = "centerpoints", title = gettext("Centre points"),          type = "integer")
+  }
+  tb$transpose <- TRUE
+
+  tb[["title"]]       <- gettext("Value")
+  tb[["contFactors"]] <- options[["numberOfContinuous"]]
+  tb[["catFactors"]]  <- options[["numberOfCategorical"]]
+
+  if (options[["designType"]] == "boxBehnkenDesign" && options[["numberOfContinuous"]] == 8L) {
+    # yes 8 variables is not possible, also not in Minitab. Ideally the GUI would forbid this but that's not possible.
+    jaspResults$setError(gettext("Box-BehnkenDesign are not supported for 8 variables."))
+    return()
+  }
+
+  designSpec <- .doeGetSelectedDesign(options)
+
+  if (length(designSpec) == 0L) { # user did not select a design
+    tb$addFootnote(gettext("Please select a row in the design table."))
+  } else {
+
+    tb[["baseRuns"]]    <- designSpec[["runs"]]
+    tb[["baseBlocks"]]  <- designSpec[["blocks"]]
+    tb[["replicates"]]  <- designSpec[["replicates"]]
+    tb[["totalRuns"]]   <- designSpec[["runs"]]   * designSpec[["replicates"]]
+    tb[["totalBlocks"]] <- designSpec[["blocks"]] * designSpec[["replicates"]]
+
+    if (options[["designType"]] == "centralCompositeDesign") {
+      tb[["cube"]]         <- designSpec[["cube"]]
+      tb[["axial"]]        <- designSpec[["axial"]]
+      tb[["alpha"]]        <- designSpec[["alpha"]]
+    } else {
+      tb[["centerpoints"]] <- designSpec[["centerpoints"]]
+    }
+  }
+
+  tb$dependOn(options = c(
+    "numberOfContinuous", "numberOfCategorical", "selectedRow", "replicates", "selectedDesign2",
+    "alphaType", "customAlphaValue", "centerPointType", "customCubeBlock", "customAxialBlock",
+    "designType"
+  ))
+
+  if (length(designSpec) != 0L && !options[["displayDesign"]])
+    tb$addFootnote(gettext("Click 'Display design' to show the design."))
+
+  jaspResults[["doeRsmDesignSummaryTable"]] <- tb
+
+  return()
+
+}
+
+.doeRsmContinuous2df <- function(tableView) {
+  df <- as.data.frame(lapply(tableView, `[[`, "values"))
+  if (ncol(df) == 0L) return(df)
+  colnames(df) <- c("name", "low", "high")
+  return(df)
+}
+
+.doeRsmCategorical2df <- function(tableView) {
+  df <- do.call(cbind.data.frame, lapply(tableView, `[[`, "values"))
+  if (ncol(df) == 0L) return(df)
+  colnames(df) <- c("name", paste0("level", seq_len(ncol(df) - 1L)))
+  return(df)
+}
+
+.doeRsmGenerateDesignTable <- function(jaspResults, options, design) {
+
+  if (!is.null(jaspResults[["designTable"]]))
+    return()
+
+  tb <- createJaspTable(title = if (options[["designType"]] == "centralCompositeDesign") {
+    gettext("Response Surface Design - Central Composite Design")
+  } else {
+    gettext("Response Surface Design - Box-Behnken design")
+  })
+
+  tb$addColumnInfo(name = "run.order", title = gettext("Run order"),      type = "integer")
+  tb$addColumnInfo(name = "std.order", title = gettext("Standard order"), type = "integer")
+
+  for (i in seq_len(options[["numberOfContinuous"]]))
+    tb$addColumnInfo(name = paste0("x", i), title = options[["continuousVariables"]][[1L]][["values"]][i],     type = "number", overtitle = gettext("Continuous factors"))
+
+  noCat <- options[["numberOfCategorical"]]
+  for (i in seq_len(noCat))
+    tb$addColumnInfo(name = paste0("x_cat", i), title = options[["continuousVariables"]][[1L]][["values"]][i], type = "number", overtitle = gettext("Categorical factors"))
+
+  # avoid any shenanigans with categorical factors having duplicate names
+  if (noCat > 0L)
+    colnames(design)[(ncol(design) - noCat + 1L):ncol(design)] <- paste0("x_cat", seq_len(noCat))
+
+  tb$setData(design)
+
+  tb$dependOn(options = c("numberOfContinuous", "numberOfCategorical", "categoricalVariables",
+                          "selectedRow", "replicates", "selectedDesign2",
+                          "alphaType", "customAlphaValue",
+                          "centerPointType", "customCubeBlock", "customAxialBlock", "codedOutput",
+                          "runOrder", "setSeed", "seed", "designType"))
+
+  if (!options[["codedOutput"]])
+    tb$dependOn(options = "continuousVariables")
+
+  jaspResults[["designTable"]] <- tb
+
+  return(design)
+
+}
+
+.doeRsmGenerateDesign <- function(options) {
+
+  designSpec <- .doeGetSelectedDesign(options)
+
+  # TODO: non-Full designs do not match minitab
+
+  design <- if (options[["designType"]] == "centralCompositeDesign") {
+    .doeRsmGenerateCentralCompositeDesign(
+      noContinuous         = options[["numberOfContinuous"]],
+      centerPointsCube     = designSpec[["cube"]],
+      centerPointsAxial    = designSpec[["axial"]],
+      alpha                = designSpec[["alpha"]],
+      replicates           = designSpec[["replicates"]],
+      randomize            = FALSE
+    )
+  } else {
+    .doeRsmGenerateBoxBehnkenDesign(
+      noContinuous         = options[["numberOfContinuous"]],
+      centerPoints         = designSpec[["centerpoints"]],
+      randomize            = FALSE
+    )
+  }
+
+  # fix run.order and std.order
+  design[["run.order"]] <- seq_len(nrow(design))
+  design[["std.order"]] <- seq_len(nrow(design))
+
+  if (options[["numberOfCategorical"]] > 0L)
+    design <- .doeRsmReplicateDesignForCategoricalVariables(design, .doeRsmCategorical2df(options[["categoricalVariables"]]))
+
+  if (!options[["codedOutput"]])
+    design <- .doeRsmDecodeDesign(design, options)
+
+  if (options[["runOrder"]] == "runOrderRandom") {
+    jaspBase::.setSeedJASP(options)
+    design <- design[sample(nrow(design)), ]
+    design[["run.order"]] <- seq_len(nrow(design)) # run order is always from 1 - n
+  }
+
+  return(design)
+
+}
+
+.doeRsmGenerateCentralCompositeDesign <- function(noContinuous, centerPointsCube, centerPointsAxial = 0, alpha = "rotatable",
+                                                  replicates = 1, randomize = FALSE) {
+
+  design <- rsm::ccd(
+    basis      = noContinuous,
+    n0         = c(centerPointsCube, centerPointsAxial),
+    alpha      = alpha,
+    oneblock   = TRUE,
+    bbreps     = replicates,
+    randomize  = randomize#,
+    # silences lintr check about missing arguments but sadly doesn't work
+    # generators = rlang::missing_arg(),
+    # coding     = rlang::missing_arg()
+  )
+
+  return(design)
+
+}
+
+.doeRsmGenerateBoxBehnkenDesign <- function(noContinuous, centerPoints, randomize = FALSE) {
+
+  design <- rsm::bbd(
+    k         = noContinuous,
+    n0        = centerPoints,
+    block     = FALSE,
+    randomize = randomize#,
+    # silences lintr check
+    # coding    = rlang::missing_arg()
+  )
+
+  return(design)
+
+}
+
+.doeRsmReplicateDesignForCategoricalVariables <- function(design, categoricalVariables) {
+
+  if (length(categoricalVariables) <= 0L)
+    return(design)
+
+  categoricalVariablesList <- apply(categoricalVariables[-1L], 1L, \(x) {
+    x <- trimws(x)  # disallow " " as level name
+    x <- x[x != ""] # drop empty levels
+    unique(x)       # keep only unique levels
+  }, simplify = FALSE) # do NOT simplify because this will change the output if all variable have the same no. levels vs. when they do not
+  names(categoricalVariablesList) <- categoricalVariables[[1L]]
+  categoricalCombinations <- expand.grid(categoricalVariablesList)
+
+  unrowname <- function(x) {
+    rownames(x) <- NULL
+    x
+  }
+
+  nr <- nrow(design)
+  designCombined <- cbind(design, unrowname(categoricalCombinations[rep(1L, nr), , drop = FALSE]))
+
+  for (i in 2L:nrow(categoricalCombinations)) {
+    toAdd <- cbind(design, unrowname(categoricalCombinations[rep(i, nrow(design)), , drop = FALSE]))
+    toAdd[["run.order"]] <- toAdd[["run.order"]] + nr * (i - 1L)
+    toAdd[["std.order"]] <- toAdd[["std.order"]] + nr * (i - 1L)
+
+    designCombined <- rbind(designCombined, toAdd)
+  }
+
+  return(designCombined)
+
+}
+
+.doeGetSelectedDesign <- function(options) {
+
+  # TODO: implement BBD!
+  # NOTE: could be stored as int except for alpha. Probably not necessary though
+
+  row <- options[["selectedRow"]] + 1L
+
+  if (row <= 0L)
+    return(list())
+
+  k <- options[["numberOfContinuous"]]
+  print(sprintf("designType = %s", options[["designType"]]))
+  designSpec <- .doeRsmDefaultDesigns(k, row, options[["designType"]])
+
+  if (options[["designType"]] == "centralCompositeDesign") {
+    if (options[["centerPointType"]] == "custom") {
+        designSpec[["cube"]]  <- options[["customCubeBlock"]]
+        designSpec[["axial"]] <- options[["customAxialBlock"]]
+    }
+    designSpec[["runs"]] <- .doeRsmComputeRuns(designSpec[["k"]], designSpec[["designType"]], designSpec[["cube"]], designSpec[["axial"]])
+
+    # rsm provides a fourth option, spherical, which could be added (though SKF did not ask for it)
+    # TODO: need to figure out when a design is rotatable!
+    designSpec[["alpha"]] <- switch(options[["alphaType"]],
+      # same as Minitab, but we need to compute alpha to obtain full precision
+      "default"      = .doeRsmComputeAlpha(k                  = designSpec[["k"]],
+                                           designtype         = designSpec[["designType"]],
+                                           centerPointsInCube = designSpec[["cube"]],
+                                           centerPointsInStar = designSpec[["axial"]],
+                                           alphaType          = if (designSpec[["rotatable"]] == 1L) "rotatable" else "orthogonal"),
+      "faceCentered" = 1, # yes this is correct, see ?rsm::ccd + search for "faces"
+      "custom"       = options[["customAlphaValue"]]
+    )
+  } else { # boxBehnkenDesign
+    designSpec[["centerpoints"]]  <- options[["customCubeBlock"]]
+  }
+
+  # This would be better, but it does not work because the QML tableview values do not update properly
+  # designSpec <- unlist(lapply(options[["selectedDesign2"]], \(x) x[["values"]][idx]))
+  # names(designSpec) <- c("runs", "blocks", "total", "cube", "axial", "alpha")
+  #
+  # if (options[["centerPointType"]] != "default") {
+  #   designSpec[["cube"]]  <- options[["customCubeBlock"]]
+  #   designSpec[["axial"]] <- options[["customAxialBlock"]]
+  # } else {
+  #   if (designSpec[["cube"]] == 0L && designSpec[["axial"]] == 0L)
+  #     designSpec[["cube"]] <- designSpec[["total"]]
+  # }
+
+  designSpec <- c(designSpec, "replicates" = options[["replicates"]])
+
+  return(designSpec)
+
+}
+
+.doeRsmSolveLowHigh <- function(low, high) {
+  # solves c(-1, 1) * y - x == c(low, high)
+  # matrix(c(-1, -1, -1, 1), 2, 2) %*% solveManually(low, high) == c(low, high)
+  c((-low - high) / 2, (high - low) / 2)
+}
+
+.doeRsmDecodeDesign <- function(design, options) {
+
+  continuousDf  <- .doeRsmContinuous2df(options[["continuousVariables"]])
+
+  if (nrow(continuousDf) > 0L) {
+    for (i in seq_len(nrow(continuousDf))) {
+      coefs <- .doeRsmSolveLowHigh(continuousDf[i, "low"], continuousDf[i, "high"])
+      design[[i + 2L]] <- design[[i + 2L]] * coefs[2L] - coefs[1L]
+      # design[[i + 2L]] <- ifelse(design[[i + 2L]] <= 0, design[[i + 2L]] * abs(continuousDf[i, "low"]), design[[i + 2L]] * continuousDf[i, "high"])
+    }
+  }
+
+  return(design)
+
+}
+
+.doeRsmExportDesign <- function(options, design) {
+
+  outpath <- options[["exportDesignFile"]]
+  if (identical(outpath, "") || !options[["actualExporter"]])
+    return()
+
+  if (!dir.exists(dirname(outpath)))
+    return()
+
+  utils::write.csv(x = design, file = options[["exportDesignFile"]], row.names = FALSE)
+
+}
+
+.doeRsmDesignTypeFromInt <- function(i) {
+  c("Full", "Half", "Quarter", "Eighth")[i]
+}
+
+.doeRsmDefaultDesigns <- function(k, row, type = c("centralCompositeDesign", "boxBehnkenDesign")) {
+
+  type <- match.arg(type)
+
+  if (type == "centralCompositeDesign") { # Central-composite design
+    # Note designType is coded as follows: 0 => Full, 1 => Half, see .doeRsmDesignTypeFromInt
+    defaultDesigns <- structure(
+      c(2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6,
+        6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9,
+        9, 9, 10, 10, 10, 10, 1, 2, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2,
+        1, 2, 3, 5, 1, 2, 3, 1, 2, 3, 5, 1, 2, 3, 5, 1, 2, 3, 5, 1, 2,
+        3, 5, 1, 2, 3, 5, 1, 2, 3, 5, 5, 3, 6, 4, 4, 7, 4, 4, 10, 8,
+        8, 6, 6, 14, 8, 8, 8, 9, 8, 8, 10, 8, 8, 8, 10, 8, 8, 8, 10,
+        8, 8, 8, 10, 8, 8, 8, 10, 8, 8, 8, 10, 8, 8, 8, 0, 3, 0, 2, 2,
+        0, 2, 2, 0, 4, 4, 0, 1, 0, 6, 6, 6, 0, 2, 2, 0, 10, 10, 10, 0,
+        4, 4, 4, 0, 8, 8, 8, 0, 2, 2, 2, 0, 6, 6, 6, 0, 4, 4, 4, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3,
+        1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1), dim = c(44, 6), dimnames = list(NULL, c("k", "blocks", "cube", "axial", "designType", "rotatable")))
+
+  } else {# boxBehnkenDesign
+
+    defaultDesigns <- structure(
+      c(3, 4, 5, 6, 7, 9, 10, 15, 27, 46, 54, 62, 130, 170, 1, 3, 2, 2, 2, 5, 2, 3, 3, 3, 6, 6, 10, 10),
+      dim = c(7L, 4L), dimnames = list(NULL, c("k", "runs", "blocks", "centerpoints")))
+  }
+
+  if (row < 1)
+    return(NULL)
+
+  idx <- which(defaultDesigns[, "k"] == k)
+  if (row > length(idx)) {
+    warning("rowindex outside of possible values!", domain = NA)
+    return(NULL)
+  }
+
+  return(defaultDesigns[idx[row], ])
+
+}
+
+.doeRsmDesignIsRotatable <- function(k, ncf, na, nca) {
+
+  # nf <- 2^k
+
+  condition1 <- nc %% 2 == 0
+  if (!condition1)
+    return(FALSE)
+
+  # from is.integer
+  isWholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+  condition2 <- isWholenumber((2 * k + nca) - 16 * ncf)
+
+  return(condition2)
+
+}
+
+.doeRsmComputeAlphaRotational <- function(k) { 2^(k / 4) }
+
+.doeRsmComputeAlphaOrthogonal <- function(k, centerPointsInCube, centerPointsInStar) {
+  # based on rsm::star with reps set to 1
+  cubeSize <- 2^k + centerPointsInCube
+  # N <- 2 * k * reps + n0
+  N <- 2 * k + centerPointsInStar
+  ratio <- 2^k / cubeSize
+  # sqrt(N * ratio / (2 * reps))
+  sqrt(N * ratio / 2)
+}
+
+.doeRsmComputeAlpha <- function(k, designtype, centerPointsInCube, centerPointsInStar, alphaType = c("rotatable", "orthogonal")) {
+  alphaType <- match.arg(alphaType)
+  if (alphaType == "rotatable")
+    .doeRsmComputeAlphaRotational(k - designtype)
+  else
+    .doeRsmComputeAlphaOrthogonal(k - designtype, centerPointsInCube, centerPointsInStar)
+}
+
+.doeRsmComputeRuns <- function(k, designtype, centerPointsInCube, centerPointsInStar) {
+  cubeSize <- 2^(k - designtype) + centerPointsInCube
+  starSize <- 2*(k - designtype) + centerPointsInStar
+  # TODO: figure out why this is needed! and how it ends up in the design!
+  designTypeCorrection <- 2 * designtype
+  return(cubeSize + starSize + designTypeCorrection)
+}
+
+.doeRsmAnalysisThatMayBreak <- function(jaspResults, dataset, options) {
+
+  op1 <- length(options[["modelTerms"]])
+  op2 <- length(options[["rsmResponseVariables"]])
+  op3 <- length(options[["rsmBlocks"]])
 
   ready <- (op1 > 0 && op2 > 0) && any(options[["contour"]], options[["coef"]], options[["anova"]],
                                        options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
-                                       options[["buildDesignInv"]], options[["desirability"]],
+                                       options[["displayDesign"]], options[["desirability"]],
                                        options[["contour"]])
 
+  if (!ready)
+    return()
+
+  for (i in 1:op2) {
+
+    data <- .readDataSet(jaspResults, options, dataset, i)
+
+    #check for more than 5 unique
+    .dataErrorCheck(data, options)
+
+    rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
+
+    # if (options[["showDesign"]])
+    #   .qualityControlDesignMainRSM(jaspResults,options, position = 1)
+
+    if (options[["contour"]])
+      .responseSurfaceContour(jaspResults, options, data, rsm[[i]], i, position = 2)
 
 
-  placeholder <- createJaspTable(title = gettext("Response Surface Methodology"))
-  jaspResults[["placeholder"]] <- placeholder
-  placeholder$dependOn(options = c("rsmVariables","rsmResponseVariables", "contour","coef","anova","res","pareto","resNorm",
-                                   "resFitted","buildDesignInv","desirability","contour"))
-  rsm <- list()
-  #Placeholder table when the user inputs something. If an analysis gets picked, remove the table
-  if(!ready) {
+    if (options[["coef"]])
+      .responseSurfaceTableCall(jaspResults, options, rsm[[i]], i, position = 3)
 
-    if (any(options[["contour"]], options[["coef"]], options[["anova"]],
-                                                                options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
-                                                                options[["desirability"]],
-                                                                options[["contour"]])) {
+    if (options[["anova"]])
+      .responseSurfaceTableAnovaCall(jaspResults, options, rsm = rsm[[i]], i, position = 4)
 
-      text <- gettext("No analyses (except those under 'Design Specification') can be started until at least one model term
-                      and one response variable are inputed.")
-      placeholder$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+    # if(options[["eigen"]])
+    #   .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
 
+    if (options[["res"]])
+      .responsePlotResidualCall(jaspResults, options, rsm[[i]], i, position = 6)
+
+    if (options[["normalPlot"]])
+      .responseNomralProbabilityPlot(data, jaspResults, options, rsm[[i]], i, position = 7)
+
+    if (options[["pareto"]])
+      .responsePlotPareto(jaspResults, options, rsm[[i]], i, position = 8)
+
+    if (options[["resNorm"]])
+      .responsePlotResNorm(jaspResults, options, rsm[[i]], i, position = 9)
+
+    if (options[["ResFitted"]])
+      .responsePlotResFitted(jaspResults, options, rsm[[i]],i, position = 10)
+
+    if (options[["fourInOne"]])
+      .responseFourInOnePlot(jaspResults, options, rsm[[i]],i, position = 11)
+
+  }
+
+  if (options[["desirability"]])
+    .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 11, dataset)
+
+}
+
+
+
+
+
+
+# old code ----
+.cubeDesign <- function(jaspResults, options) {
+
+  # TODO: rename "ccd" in jaspResults[["ccd"]] to "ccdTable"
+  if (!is.null(jaspResults[["ccd"]]))
+    return()
+
+  ccdTable <- createJaspTable(title = gettext("Central Composite Design"))
+  ccdTable$dependOn(options = c(
+    "noModel", "designModel", "runOrder", "inscribed", "block", "designBlock",
+    "numberOfCubes", "numberOfGenerators", "generators", "factors", "coded_out", "numberOfFactors",
+    "displayDesign", "designType"
+  ))
+
+  ccdTable$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
+  ccdTable$addColumnInfo(name = "std.order", title = gettext("Standard Order"), type = "integer")
+
+  factorNames <- doersmGetFactorNamesUncoded(options)
+  for (i in seq_along(factorNames))
+    ccdTable$addColumnInfo(name = paste0("x", i), title = factorNames[i], type = "number")
+
+  jaspResults[["ccd"]] <- ccdTable
+
+  ready <- TRUE
+
+  # FIXME: what should happen here?
+  if (FALSE && options[["numberOfGenerators"]] > 0) {
+    for (i in seq_len(options[["numberOfGenerators"]])) {
+      if (!(is.na(as.numeric(options[["generators"]][[i]][["generatorName"]])))) {
+
+        text <- gettextf("Generator name '%s' is a number, and number generator names are not supported.", options[["generators"]][[i]][["generatorName"]])
+        ccdTable$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+        ready <- FALSE
+        next
+      }
+
+      ccdTable$addColumnInfo(name = options[["generators"]][[i]][["generatorName"]], title = gettext(options[["generators"]][[i]][["generatorName"]]),
+                              type = "number")
     }
   }
 
 
-  if (options[["designType"]] == "cube" && options[["buildDesignInv"]]){
-    jaspResults[["placeholder"]] <- NULL
-    .cubeDesign(jaspResults, options, dataset)
+  modelError <- !(options[["noModel"]]) && options[["designModel"]] == ""
+  blockError <- options[["block"]] && options[["designBlock"]] == ""
+
+  if (modelError || blockError) {
+
+    ready <- FALSE
+
+    if (modelError) {
+      text <- gettext("The analysis will not run when the 'Specify Model for CCD' field is empty and the 'Use # of Variables instead of Model' is not ticked.")
+      ccdTable$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
     }
-  if (options[["designType"]] == "star" && options[["buildDesignInv"]]){
-    jaspResults[["placeholder"]] <- NULL
-    .starDesign(jaspResults, options)
+
+    if (blockError) {
+      text <- gettext("The analysis will not run when the 'Specify Blocks for CCD' field is empty and the Introduce Blocking is ticked.")
+      ccdTable$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+    }
+
   }
 
   if (ready) {
 
-    for (i in 1:op2) {
-      jaspResults[["placeholder"]] <- NULL
-      data <- .readDataSet(jaspResults, options, dataset, i)
+    ccd <- doersmGenerateDesign(options)
 
-      #check for more than 5 unique
-      .dataErrorCheck(data, options)
+    # convert between coded and uncoded form
+    tableData <- if (options[["coded_out"]])
+      rsm::code2val(ccd, rsm::codings(ccd))
+    else
+      rsm::val2code(ccd, rsm::codings(ccd))
 
-      rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
+    # assumes that that the order of colnames(tableData)[-(1:2)] matches that of options[["factors"]]
+    colnames(tableData)[-(1:2)] <- factorNames
 
-      # if (options[["showDesign"]])
-      #   .qualityControlDesignMainRSM(jaspResults,options, position = 1)
+    ccdTable$setData(tableData)
 
-      if (options[["contour"]])
-        .responseSurfaceContour(jaspResults, options, data, rsm[[i]], i, position = 2)
-
-
-      if(options[["coef"]])
-        .responseSurfaceTableCall(jaspResults, options, rsm[[i]], i, position = 3)
-
-      if(options[["anova"]])
-        .responseSurfaceTableAnovaCall(jaspResults, options, rsm = rsm[[i]], i, position = 4)
-
-      # if(options[["eigen"]])
-      #   .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
-
-      if(options[["res"]])
-        .responsePlotResidualCall(jaspResults, options, rsm[[i]], i, position = 6)
-
-      if(options[["normalPlot"]])
-        .responseNomralProbabilityPlot(data, jaspResults, options, rsm[[i]], i, position = 7)
-
-      if(options[["pareto"]])
-        .responsePlotPareto(jaspResults, options, rsm[[i]], i, position = 8)
-
-      if(options[["resNorm"]])
-        .responsePlotResNorm(jaspResults, options, rsm[[i]], i, position = 9)
-
-      if(options[["ResFitted"]])
-        .responsePlotResFitted(jaspResults, options, rsm[[i]],i, position = 10)
-
-      if (options[["fourInOne"]])
-        .responseFourInOnePlot(jaspResults, options, rsm[[i]],i, position = 11)
-
-
-    }
-    if(options[["desirability"]])
-      .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 11, dataset)
   }
-
-}
-
-
-.cubeDesign <- function(jaspResults, options, dataset) {
-  ready <- 1
-  if(is.null(jaspResults[["ccd"]])) {
-    ccd.table <- createJaspTable(title = gettext("Central Composite Design"))
-    jaspResults[["ccd"]] <- ccd.table
-    ccd.table$dependOn(options = c("noModel","designModel","runOrder",
-                                   "inscribed","block","designBlock",
-                                   "numberOfCubes","numberOfGenerators","generators",
-                                   "factors","coded_out","numberOfFactors", "buildDesignInv",
-                                   "designType"))
-
-
-
-    ccd.table$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
-    ccd.table$addColumnInfo(name = "std.order", title = gettext("Standard Order"), type = "integer")
-
-    if (options[["coded_out"]]) {
-      for (i in 1:(options[["numberOfFactors"]])) {
-        ccd.table$addColumnInfo(name = paste0("x",i), title = gettext(paste0("x",i)),
-                                type = "number")
-      }
-    } else {
-      for (i in 1:(options[["numberOfFactors"]])) {
-        if (!(is.na(as.numeric(options[["factors"]][[i]][["factorName"]])))) {
-          text <- gettextf("Factor name '%s' is a number, and number factor names are not supported.",
-                                 options[["factors"]][[i]][["factorName"]])
-          ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
-          ready <- 0
-          next
-        }
-        ccd.table$addColumnInfo(name = options[["factors"]][[i]][["factorName"]], title = gettext(options[["factors"]][[i]][["factorName"]]),
-                                type = "number")
-      }
-    }
-
-
-    if(options[["numberOfGenerators"]] > 0){
-      for (i in 1:(options[["numberOfGenerators"]])) {
-        if (!(is.na(as.numeric(options[["generators"]][[i]][["generatorName"]])))){
-          text <- gettextf("Generator name '%s' is a number, and number generator names are not supported.",
-                           options[["generators"]][[i]][["generatorName"]])
-          ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
-          ready <- 0
-          next
-        }
-
-        ccd.table$addColumnInfo(name = options[["generators"]][[i]][["generatorName"]], title = gettext(options[["generators"]][[i]][["generatorName"]]),
-                                type = "number")
-      }
-    }
-
-
-    model_error <- !(options[["noModel"]]) && options[["designModel"]] == ""
-    block_error <- options[["block"]] && options[["designBlock"]] == ""
-
-    if(model_error || block_error) {
-      ready <- 0
-
-      if(model_error) {
-        text <- gettext("The analysis will not run when the 'Specify Model for CCD' field is empty and the 'Use # of Variables instead of Model' is not ticked.")
-        ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
-      }
-
-      if(block_error) {
-        text <- gettext("The analysis will not run when the 'Specify Blocks for CCD' field is empty and the Introduce Blocking is ticked.")
-        ccd.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
-      }
-
-    }
-    if (ready) {
-
-      ccd <- .designGenerate(options, jaspResults)
-
-      if(options[["coded_out"]]){
-        ccd_true <- rsm::val2code(ccd, codings = rsm::codings(ccd))
-      }else {
-        ccd_true <- rsm::code2val(ccd, codings = rsm::codings(ccd))
-      }
-      ccd_true <- lapply(ccd_true, round , 3)
-      ccd.table$setData(ccd_true)
-
-    }
-
-  }else {
-    ccd.table <- jaspResults[["ccd"]]
-  }
-
-
 }
 
 .starDesign <- function(jaspResults, options) {
-  ready <- 1
-  if (is.null(jaspResults[["star"]])) {
-    star.table <- createJaspTable(title = gettext("Central Composite Design with Star Points"))
-    jaspResults[["star"]] <- star.table
 
-    star.table$dependOn(options = c("runOrder", "numberOfStars","alpha",
-                                   "numberOfCubes","numberOfGenerators","generators",
-                                   "factors","numberOfFactors", "buildDesignInv", "coded_out",
-                                   "designType"))
+  if (!is.null(jaspResults[["star"]]))
+    return()
 
-    star.table$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
-    star.table$addColumnInfo(name = "std.order", title = gettext("Standard Order"), type = "integer")
+  # TODO: merge this function with .cubeDesign
 
-    if (options[["coded_out"]]) {
-      for (i in 1:(options[["numberOfFactors"]])) {
-        star.table$addColumnInfo(name = paste0("x",i), title = gettext(paste0("x",i)),
-                                 type = "number")
-      }
-    }
+  ccdTable <- createJaspTable(title = gettext("Central Composite Design with Star Points"))
+  jaspResults[["star"]] <- ccdTable
 
-    for (i in seq_along(options[["factors"]]))
-      if(!(is.na(as.numeric(options[["factors"]][[i]][["factorName"]])))) {
-        text <- gettextf("Factor name '%s' is a number, and number factor names are not supported",
-                               options[["factors"]][[i]][["factorName"]])
-        star.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
-        ready <- 0
-    }
+  ccdTable$dependOn(options = c("runOrder", "numberOfStars","alpha",
+                                  "numberOfCubes","numberOfGenerators","generators",
+                                  "factors","numberOfFactors", "displayDesign", "coded_out",
+                                  "designType"))
+
+  ccdTable$addColumnInfo(name = "run.order", title = gettext("Run Order"),      type = "integer")
+  ccdTable$addColumnInfo(name = "std.order", title = gettext("Standard Order"), type = "integer")
+
+  factorNames <- doersmGetFactorNamesUncoded(options)
+  for (i in seq_along(factorNames))
+    ccdTable$addColumnInfo(name = paste0("x", i), title = factorNames[i], type = "number")
 
 
+  # FIXME: what to do here?
+  generatorError <- FALSE && options[["numberOfGenerators"]] > 0
+  ready <- TRUE
+  if (generatorError) {
+    ready <- FALSE
+    text  <- gettext("The analysis will not run when the 'Number of Generators' > 0")
+    ccdTable$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+  }
 
-    generatorError <- options[["numberOfGenerators"]] > 0
+  if (ready) {
 
-    if(generatorError) {
-      ready <- 0
-      text  <- gettext("The analysis will not run when the 'Number of Generators' > 0")
-      star.table$addFootnote(text, symbol = gettext("<em>Warning: </em>"))
+    alpha <- tolower(options[["alpha"]])
+    ccd   <- doersmGenerateDesign(options)
 
-    }
+    n0    <- options[["numberOfStars"]]
 
-    if (ready) {
-      alpha <- tolower(options[["alpha"]])
-      ccd   <- .designGenerate(options,jaspResults)
+    star.ccd <- rsm::star(basis = ccd, n0 = n0, alpha = alpha)
+    # convert between coded and uncoded form
+    tableData <- if (options[["coded_out"]])
+      rsm::code2val(ccd, rsm::codings(ccd))
+    else
+      rsm::val2code(ccd, rsm::codings(ccd))
 
-      n0    <- options[["numberOfStars"]]
+    # assumes that that the order of colnames(tableData)[-(1:2)] matches that of options[["factors"]]
+    colnames(tableData)[-(1:2)] <- factorNames
 
-      star.ccd <- rsm::star(basis = ccd, n0 = n0, alpha = alpha)
-      if(options[["coded_out"]]) {
-        star.ccd <- rsm::val2code(star.ccd, codings = rsm::codings(star.ccd))
-      } else {
-        star.ccd <- rsm::code2val(star.ccd, codings = rsm::codings(star.ccd))
-      }
-      star.ccd <- lapply(star.ccd, round, 3)
-      star.table$setData(star.ccd)
-    }
+    ccdTable$setData(tableData)
 
-  }else {
-    star.table <- jaspResults[["star"]]
   }
 }
 
 
-.designGenerate <- function(options, jaspResults) {
+doersmGenerateDesign <- function(options) {
+
   if (options[["noModel"]])
     formula <- as.integer(options[["numberOfFactors"]])
   else {
@@ -276,21 +680,21 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   inscribed <- options[["inscribed"]]
   oneblock  <- options[["oneBlock"]]
 
-
+  # TODO: when is this not empty?
   block_formula <- vector()
-  if (options[["block"]] && length(options[["designBlock"]]) > 0){
+  if (options[["block"]] && length(options[["designBlock"]]) > 0) {
     clean_Blocks  <- stringr::str_replace_all(options[["designBlock"]], " ", "")
     vector_blocks <- stringr::str_split(clean_Blocks, ",")
     block_formula <- as.formula(paste0("~", clean_Blocks))
   }
 
-
   n0 <- options[["numberOfCubes"]]
   generators <- vector()
-  if (options[["numberOfGenerators"]] > 0) {
+  # FIXME: what should happen here?
+  if (FALSE && options[["numberOfGenerators"]] > 0) {
     for (i in seq_along(options[["generators"]])) {
       if (!(options[["generators"]][[i]][["generatorName"]] == "" ||
-            options[["generators"]][[i]][["generatorFormula"]] == "")){
+            options[["generators"]][[i]][["generatorFormula"]] == "")) {
         if (!(is.na(as.numeric(options[["generators"]][[i]][["generatorName"]]))))
           next
 
@@ -300,71 +704,97 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
     }
   }
 
-  coding_list <- list()
+  # TODO: unclear whether this codingList is a good idea.
+  # it should also handle categorical levels and I don't think this supports that
+  # alternatively, just create the design in coded form and then recode?
+  # compare results to https://support.minitab.com/en-us/minitab/21/help-and-how-to/statistical-modeling/doe/supporting-topics/response-surface-designs/summary-of-central-composite-designs/
+  codingList <- vector("list", length = length(options[["factors"]]))
+  # rsm::cube does not allow e.g., x1 ~ (x1 - 0) / 1 so we add 1 at the end to get e.g., x1 ~ (x11 - 0) / 1
+  codedFactorNames <- paste0(doersmGetFactorNamesCoded(options), "1")
   for (i in seq_along(options[["factors"]])) {
 
-    if (!(options[["factors"]][[i]][["factorName"]] == "" |
-          options[["factors"]][[i]][["centre"]] == ""     |
-          options[["factors"]][[i]][["distance"]] == ""))  {
+    x <- options[["factors"]][[i]]
 
-      if(!(is.na(as.numeric(options[["factors"]][[i]][["factorName"]]))))
-        next
+    if (is.numeric(x[["low"]])) {
 
-      coding_list <- c(coding_list, as.formula(paste0("x", i, "~(",options[["factors"]][[i]][["factorName"]],
-                                                      "-",options[["factors"]][[i]][["centre"]], ")/",
-                                                      options[["factors"]][[i]][["distance"]])))
+      values    <- sort(c(x[["low"]], x[["high"]]))
+      center    <- mean(values)
+      distance  <- (values[2L] - values[1L]) / 2
+      newCoding <- as.formula(paste0("x", i, " ~ (", codedFactorNames[i], " - ", center, ") / ", distance))
+
+    } else {
+      # TODO:what
+      values <- c(x[["low"]], x[["high"]])
+      newCoding <- as.formula(paste0("x", i, " ~ (", codedFactorNames[i], " - ", center, ") / ", distance))
+
     }
+    codingList[[i]] <- newCoding
+
   }
 
-  if(length(coding_list) == 0 & length(generators) == 0 & length(block_formula) == 0){
+  ccd <- rsm::cube(basis = formula, n0 = n0, coding = codingList, randomize = TRUE,
+            inscribed = inscribed)
+  rsm::val2code(ccd, rsm::codings(ccd))
+
+  # TODO: reduce the long if chain to nested ifs to avoid repetition, or use do.call
+  # if (length(codingList) == 0L) {
+  #
+  #   if (length(generators) == 0 && length(block_formula) == 0) {
+  #
+  #   } else if ()
+  #
+  # } else if (length(generators) == 0L) {
+  #
+  # }
+
+  if (length(codingList) == 0 && length(generators) == 0 && length(block_formula) == 0) {
     ccd <- rsm::cube(basis = formula, n0 = n0, randomize = TRUE,
                      inscribed = inscribed)
 
 
-  }else if (length(coding_list) == 0 & length(generators) == 0){
+  } else if (length(codingList) == 0 && length(generators) == 0) {
     ccd <- rsm::cube(basis = formula, n0 = n0, blockgen = block_formula, randomize = TRUE,
                      inscribed = inscribed)
 
 
-  }else if(length(coding_list) == 0 & length(block_formula) == 0){
+  } else if (length(codingList) == 0 && length(block_formula) == 0) {
     ccd <- rsm::cube(basis = formula, n0 = n0, generators = generators, randomize = TRUE,
                      inscribed = inscribed,
                      oneblock = oneblock)
 
 
-  }else if(length(generators) == 0 & length(block_formula) == 0){
-    ccd <- rsm::cube(basis = formula, n0 = n0, coding = coding_list, randomize = TRUE,
+  } else if (length(generators) == 0 && length(block_formula) == 0) {
+    ccd <- rsm::cube(basis = formula, n0 = n0, coding = codingList, randomize = TRUE,
                      inscribed = inscribed)
 
-  }else if(length(coding_list) == 0) {
+  } else if (length(codingList) == 0) {
     ccd <- rsm::cube(basis = formula, n0 = n0, generators = generators, randomize = TRUE,
                      blockgen = block_formula, inscribed = inscribed)
 
 
-  }else if(length(generators) == 0) {
+  } else if (length(generators) == 0) {
     ccd <- rsm::cube(basis = formula, n0 = n0,
-                     blockgen = block_formula, coding = coding_list, randomize = TRUE,
+                     blockgen = block_formula, coding = codingList, randomize = TRUE,
                      inscribed = inscribed)
 
 
-  }else if(length(block_formula) == 0){
+  } else if (length(block_formula) == 0) {
     ccd <- rsm::cube(basis = formula, n0 = n0,
-                     generators = generators, coding = coding_list, randomize = TRUE,
+                     generators = generators, coding = codingList, randomize = TRUE,
                      inscribed = inscribed)
 
 
-  }else{
+  } else {
     ccd <- rsm::cube(basis = formula, n0 = n0,
                      blockgen = block_formula, generators = generators, randomize = TRUE,
-                     coding = coding_list, inscribed = inscribed)
+                     coding = codingList, inscribed = inscribed)
 
   }
 
-  if (options[["runOrder"]] == "runOrderStandard")
-    ccd <- ccd[order(ccd$std.order),]
-  else
-    ccd <- ccd[order(ccd$run.order),]
+  o <- order(if (options[["runOrder"]] == "runOrderStandard") ccd[["std.order"]] else ccd[["run.order"]])
+  ccd <- ccd[o, ]
 
+  return(ccd)
 }
 
 .dataErrorCheck <- function(data, options) {
@@ -396,8 +826,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   }
 
 }
-
-
 
 .qualityControlDesignChoice <- function(jaspResults,options, dataset) {
 
@@ -1293,4 +1721,14 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...){
   return()
 }
 
+# helpers ----
+doersmGetFactorNamesCoded <- function(options) {
+  return(paste0("x", seq_len(options[["numberOfFactors"]])))
+}
 
+doersmGetFactorNamesUncoded <- function(options) {
+  factorNames <- purrr::map_chr(options[["factors"]], `[[`, "factorName")
+  badNamesIdx <- which(factorNames == "")
+  factorNames[badNamesIdx] <- sprintf("x%d", badNamesIdx)
+  return(factorNames)
+}
