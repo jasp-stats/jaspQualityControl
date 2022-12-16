@@ -1,32 +1,29 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2022-09-24 04:22\n"
-"PO-Revision-Date: 2022-12-02 09:48+0000\n"
-"Last-Translator: Thomas Langkamp <thomas.lassdiesonnerein@gmx.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-r/de/>\n"
-"Language: de\n"
+"Project-Id-Version: jaspQualityControl 0.17.0\n"
+"POT-Creation-Date: 2022-11-30 10:38\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15-dev\n"
 
 msgid "Cumulative sum chart"
-msgstr "Kumulative-Summe-Karte"
+msgstr ""
 
 msgid "Exponentially weighted moving average chart"
-msgstr "Exponentiell-gewichteter-gleitender-Mittelwert-Karte"
+msgstr ""
 
 msgid "G chart"
-msgstr "G-Karte"
+msgstr ""
 
 msgid "T chart"
-msgstr "T-Karte"
+msgstr ""
 
 msgid "CL = %g"
-msgstr "CL = %g"
+msgstr ""
 
 msgid "UCL = %g"
 msgstr ""
@@ -35,72 +32,70 @@ msgid "LCL = %g"
 msgstr ""
 
 msgid "Cumulative sum"
-msgstr "Kumulative Summe"
+msgstr ""
 
 msgid "Subgroups"
-msgstr "Untergruppen"
+msgstr ""
 
 msgid "EWMA"
 msgstr ""
 
 msgid "Subgroup"
-msgstr "Untergruppe"
+msgstr ""
 
 msgid "Counts"
-msgstr "Häufigkeiten"
+msgstr ""
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
 msgstr ""
-"Die Anzahl Fehlerhafter Einheiten/Fehler ist größer als der "
-"Stichprobenumfang."
 
 msgid "Attributes Control Charts"
-msgstr "Attribut-Regelkarten"
+msgstr ""
 
 msgid "p Chart"
-msgstr "p-Karte"
+msgstr ""
 
 msgid "np Chart"
-msgstr "np-Karte"
+msgstr ""
 
 msgid "Laney p' Chart"
-msgstr "p'-Karte nach Laney"
+msgstr ""
 
 msgid "c Chart"
-msgstr "c-Karte"
+msgstr ""
 
 msgid "u Chart"
-msgstr "u-Karte"
+msgstr ""
 
 msgid "Laney u' Chart"
-msgstr "u'-Karte nach Laney"
+msgstr ""
 
 msgid "Individuals and Moving Range Chart"
 msgstr ""
 
 msgid "Report for Attribute Control Charts"
-msgstr "Bericht für Attribut-Regelkarten"
+msgstr ""
 
 msgid "Proportion"
-msgstr "Anteil"
+msgstr ""
 
 msgid "Sample"
-msgstr "Stichprobe"
+msgstr ""
 
 msgid "Number of defectives"
-msgstr "Anzahl fehlerhafter Einheiten"
+msgstr ""
 
 msgid "D"
-msgstr "D"
+msgstr ""
 
 msgid "Moving Range"
 msgstr ""
 
 msgid "Report"
-msgstr "Bericht"
+msgstr ""
 
 msgid "Control Charts for Attributes Report"
-msgstr "Bericht Regelkarten für Attribute"
+msgstr ""
 
 msgid "Service name: %s"
 msgstr ""
@@ -112,36 +107,28 @@ msgid "Identification: %s"
 msgstr ""
 
 msgid "Appraiser: %s"
-msgstr "Prüfer: %s"
+msgstr ""
 
 msgid "Measurement system: %s"
-msgstr "Messsystem: %s"
+msgstr ""
 
 msgid "Name of Size: %s"
 msgstr ""
 
 msgid "Time: %s"
-msgstr "Zeit: %s"
+msgstr ""
 
 msgid "Frequency: %s"
 msgstr ""
 
 msgid "Control Chart"
-msgstr "Regelkarte"
+msgstr ""
 
 msgid "Subgroup size must be > 1 to display X-bar & R Chart."
-msgstr "Untergruppengröße muss > 1 sein, um X-quer- und R-Karte anzuzeigen."
-
-#, fuzzy
-msgid "Sample average"
-msgstr "Stichprobenumfang"
-
-#, fuzzy
-msgid "Sample range"
-msgstr "Stichprobenumfang"
+msgstr ""
 
 msgid "Test results for %s chart"
-msgstr "Testergebnisse für %s-Karte"
+msgstr ""
 
 msgid "Test 1: Beyond limit"
 msgstr ""
@@ -162,80 +149,73 @@ msgid "Test 6: Bimodal distribution"
 msgstr ""
 
 msgid "Numbers are data points where test violations occur."
-msgstr "Zahlen sind Datenpunkte, an denen Testverstöße auftreten."
-
-msgid "%s"
-msgstr "%s"
-
-msgid "Observation"
-msgstr "Beobachtung"
+msgstr ""
 
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
 
 msgid "Histogram of Residuals"
-msgstr "Histogramm der Residuen"
+msgstr ""
 
 msgid "Residuals vs. Fitted Value"
-msgstr "Residuen vs. Angepasster Wert"
+msgstr ""
 
 msgid "Residuals vs. Run Order"
-msgstr "Residuen vs. Ablaufreihenfolge"
+msgstr ""
 
 msgid "Pareto Plot of Standardized Effects"
-msgstr "Pareto-Diagramm Standardisierter Effekte"
+msgstr ""
 
 msgid "Fitted values"
-msgstr "Angepasste Werte"
+msgstr ""
 
 msgid "Residuals"
-msgstr "Residuen"
+msgstr ""
 
 msgid "Run order"
-msgstr "Ablaufreihenfolge"
+msgstr ""
 
 msgid "Standardized Effect"
-msgstr "Standardisierter Effekt"
+msgstr ""
 
 msgid "Coefficients"
-msgstr "Koeffizienten"
+msgstr ""
 
 msgid "Coefficient"
-msgstr "Koeffizient"
+msgstr ""
 
 msgid "Standard Error"
-msgstr "Standardfehler"
+msgstr ""
 
 msgid "t"
-msgstr "t"
+msgstr ""
 
 msgid "p"
-msgstr "p"
+msgstr ""
 
 msgid "This plot is unavailable for saturated designs."
-msgstr "Dieses Diagramm ist für gesättigte Designs nicht verfügbar."
+msgstr ""
 
 msgid "Residuals vs. Standard Order"
-msgstr "Residuen vs. Standard-Reihenfolge"
+msgstr ""
 
-#, fuzzy
 msgid "Four in one for %s"
-msgstr "Vier-in-einem für %s"
+msgstr ""
 
 msgid "Available Factorial Designs"
-msgstr "Verfügbare faktorielle Designs"
+msgstr ""
 
 msgid "Selected Design"
-msgstr "Ausgewähltes Design"
+msgstr ""
 
 msgid "Design"
-msgstr "Design"
+msgstr ""
 
 msgid "Factors"
-msgstr "Faktoren"
+msgstr ""
 
 msgid "Runs"
-msgstr "Abläufe"
+msgstr ""
 
 msgid "Resolution"
 msgstr ""
@@ -247,113 +227,102 @@ msgid "Replicates"
 msgstr ""
 
 msgid "Blocks"
-msgstr "Blöcke"
+msgstr ""
 
 msgid "Repeats"
 msgstr ""
 
 msgid "2-level factorial"
-msgstr "dichotom"
+msgstr ""
 
 msgid "Design Preview"
-msgstr "Design-Vorschau"
+msgstr ""
 
 msgid "Alias Structure"
-msgstr "Aliasstruktur"
+msgstr ""
 
 msgid "Standard order"
-msgstr "Standard-Reihenfolge"
+msgstr ""
 
 msgid "Pareto Chart of Standardized Effects"
-msgstr "Pareto-Diagramm Standardisierter Effekte"
+msgstr ""
 
 msgid "Term"
-msgstr "Term"
+msgstr ""
 
 msgid "Analysis of variance"
-msgstr "Varianzanalyse"
+msgstr ""
 
 msgid "Model summary"
-msgstr "Modell-Zusammenfassung"
+msgstr ""
 
 msgid "%s,%s"
-msgstr "%s,%s"
+msgstr ""
 
 msgid "%s ~ FO(%s)"
 msgstr ""
 
 msgid "Model Summary"
-msgstr "Modellzusammenfassung"
+msgstr ""
 
 msgid "Regression equation in uncoded units"
-msgstr "Regressionsgleichung in unkodierten Einheiten"
+msgstr ""
 
 msgid "<i>p</i>-value"
-msgstr "<i>p</i>-Wert"
+msgstr ""
 
 msgid "VIF"
 msgstr ""
 
 msgid "Index"
-msgstr "Index"
+msgstr ""
 
 msgid "Factor"
-msgstr "Faktor"
+msgstr ""
 
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 msgid "Input Design"
 msgstr ""
 
 msgid "Desired Design"
-msgstr "Gewünschtes Design"
+msgstr ""
 
 msgid "Missing Runs"
-msgstr "Fehlende Abläufe"
+msgstr ""
 
 msgid "Response Surface Methodology"
-msgstr "Wirkungsflächen-Methodik"
-
-msgid ""
-"No analyses (except those under 'Design Specification') can be started until "
-"at least one model term\n"
-"                      and one response variable are inputed."
 msgstr ""
-"Es können keine Analysen (außer denen unter 'Design-Spezifikation') "
-"gestartet werden, bis mindestens ein Modellterm\n"
-"                      und eine Antwortvariable eingegeben sind."
+
+msgid "No analyses (except those under 'Design Specification') can be started until at least one model term\n                      and one response variable are inputed."
+msgstr ""
 
 msgid "<em>Warning: </em>"
-msgstr "<em>Warnung: </em>"
+msgstr ""
 
 msgid "Central Composite Design"
 msgstr ""
 
 msgid "Run Order"
-msgstr "Ablaufreihenfolge"
+msgstr ""
 
 msgid "Standard Order"
-msgstr "Standard-Reihenfolge"
+msgstr ""
 
 msgid "x"
-msgstr "x"
-
-msgid ""
-"Factor name '%s' is a number, and number factor names are not supported."
 msgstr ""
-"Faktorname '%s' ist eine Zahl, und numerische Faktornamen sind nicht "
-"unterstützt."
+
+msgid "Factor name '%s' is a number, and number factor names are not supported."
+msgstr ""
 
 msgid "factors"
-msgstr "Faktoren"
+msgstr ""
 
 msgid "factorName"
-msgstr "Faktorname"
+msgstr ""
 
-msgid ""
-"Generator name '%s' is a number, and number generator names are not "
-"supported."
+msgid "Generator name '%s' is a number, and number generator names are not supported."
 msgstr ""
 
 msgid "generators"
@@ -362,14 +331,10 @@ msgstr ""
 msgid "generatorName"
 msgstr ""
 
-msgid ""
-"The analysis will not run when the 'Specify Model for CCD' field is empty "
-"and the 'Use # of Variables instead of Model' is not ticked."
+msgid "The analysis will not run when the 'Specify Model for CCD' field is empty and the 'Use # of Variables instead of Model' is not ticked."
 msgstr ""
 
-msgid ""
-"The analysis will not run when the 'Specify Blocks for CCD' field is empty "
-"and the Introduce Blocking is ticked."
+msgid "The analysis will not run when the 'Specify Blocks for CCD' field is empty and the Introduce Blocking is ticked."
 msgstr ""
 
 msgid "Central Composite Design with Star Points"
@@ -377,18 +342,12 @@ msgstr ""
 
 msgid "Factor name '%s' is a number, and number factor names are not supported"
 msgstr ""
-"Faktorname '%s' ist eine Zahl, und numerische Faktornamen sind nicht "
-"unterstützt"
 
 msgid "The analysis will not run when the 'Number of Generators' > 0"
 msgstr ""
 
-msgid ""
-"This analysis does not take predictor variables with more than 5 unique "
-"values."
+msgid "This analysis does not take predictor variables with more than 5 unique values."
 msgstr ""
-"Diese Analyse akzeptiert keine Prädiktorvariablen mit mehr als 5 eindeutigen "
-"Werten."
 
 msgid "Design Choice"
 msgstr ""
@@ -427,43 +386,43 @@ msgid "Orthogonal Alpha"
 msgstr ""
 
 msgid "Matrix plot for %s"
-msgstr "Matrix-Diagramm für %s"
+msgstr ""
 
 msgid "Index coefficients for %s"
-msgstr "Index-Koeffizienten für %s"
+msgstr ""
 
 msgid "Coded coefficients"
-msgstr "Kodierte Koeffizienten"
+msgstr ""
 
 msgid "Uncoded coefficients"
-msgstr "Unkodierte Koeffizienten"
+msgstr ""
 
 msgid "Regression equation in coded coefficients"
-msgstr "Regressionsgleichung in kodierten Koeffizienten"
+msgstr ""
 
 msgid "S"
-msgstr "S"
+msgstr ""
 
 msgid "Model R-squared"
-msgstr "Modell R-Quadrat"
+msgstr ""
 
 msgid "Adjusted R-squared"
-msgstr "Bereinigtes R-Quadrat"
+msgstr ""
 
 msgid "df1"
-msgstr "df1"
+msgstr ""
 
 msgid "df2"
-msgstr "df2"
+msgstr ""
 
 msgid "F"
-msgstr "F"
+msgstr ""
 
 msgid "ANOVA for %s"
-msgstr "ANOVA für %s"
+msgstr ""
 
 msgid "df"
-msgstr "degree of freedom"
+msgstr ""
 
 msgid "SS"
 msgstr ""
@@ -475,22 +434,18 @@ msgid "Stationary Points of Response Surface (Coded)"
 msgstr ""
 
 msgid "Eigenvalues"
-msgstr "Eigenwerte"
+msgstr ""
 
 msgid "Eigenvectors"
-msgstr "Eigenvektoren"
+msgstr ""
 
 msgid "Desirability"
 msgstr ""
 
-msgid ""
-"At least one predictor and response variable need to be specified before "
-"running the analysis."
+msgid "At least one predictor and response variable need to be specified before running the analysis."
 msgstr ""
 
-msgid ""
-"At least one desirability function must be specified before running the "
-"analysis."
+msgid "At least one desirability function must be specified before running the analysis."
 msgstr ""
 
 msgid "Reference Tables and Plots"
@@ -500,44 +455,43 @@ msgid "Please insert a reference value before specifying a positive reference."
 msgstr ""
 
 msgid "Attributes Agreement Analysis"
-msgstr "Attribut-Übereinstimmungsanalyse"
+msgstr ""
 
 msgid "Cohen's Kappa"
-msgstr "Cohens Kappa"
+msgstr ""
 
 msgid "Kendall's Tau"
-msgstr "Kendalls Tau"
+msgstr ""
 
 msgid "Cohen's Kappa for Appraiser vs Standard"
-msgstr "Cohens Kappa für Prüfer vs Standard"
+msgstr ""
 
 msgid "Appraiser"
-msgstr "Prüfer"
+msgstr ""
 
 msgid "Cohen's Kappa correlations summary"
 msgstr ""
 
-msgid ""
-"Please inseret a vaild Positive reference as used in the 'Results' variables."
+msgid "Please inseret a vaild Positive reference as used in the 'Results' variables."
 msgstr ""
 
 msgid "Fleiss' Kappa"
-msgstr "Fleiss' Kappa"
+msgstr ""
 
 msgid "Within Appraisers"
-msgstr "Innerhalb der Prüfer"
+msgstr ""
 
 msgid "Appraiser vs Standard"
-msgstr "Prüfer vs Standard"
+msgstr ""
 
 msgid "Between Appraisers"
-msgstr "Zwischen Prüfern"
+msgstr ""
 
 msgid "Each Appraiser vs Standard"
-msgstr "Jeder Prüfer vs Standard"
+msgstr ""
 
 msgid "All Appraisers vs Standard"
-msgstr "Alle Prüfer vs Standard"
+msgstr ""
 
 msgid "Inspected"
 msgstr ""
@@ -546,23 +500,22 @@ msgid "Matched"
 msgstr ""
 
 msgid "Percent"
-msgstr "Prozent"
+msgstr ""
 
 msgid "Lower"
-msgstr "Untere"
+msgstr ""
 
-#, fuzzy
 msgid "Confidence interval of 95%%"
-msgstr "Konfidenzintervall von 95%"
+msgstr ""
 
 msgid "Upper"
-msgstr "Obere"
+msgstr ""
 
 msgid "Invalid Reference and/or Results were inserted."
 msgstr ""
 
 msgid "Invalid values (NA) found in appraiser %s."
-msgstr "Ungültige Werte (NA) bei Prüfer %s gefunden."
+msgstr ""
 
 msgid "More than 1 Measurement per Operator required."
 msgstr ""
@@ -579,26 +532,20 @@ msgstr ""
 msgid "False alarm rate"
 msgstr ""
 
-msgid ""
-"Acceptable: x >= 90%% (Effectiveness), x =< 2%% (Miss rate), x =< 5%% (False "
-"alarm rate)"
+msgid "Acceptable: x >= 90%% (Effectiveness), x =< 2%% (Miss rate), x =< 5%% (False alarm rate)"
 msgstr ""
 
-msgid ""
-"Marginally acceptable: x >= 80%% (Effectiveness), x =< 5%% (Miss rate), x =< "
-"10%% (False alarm rate)"
+msgid "Marginally acceptable: x >= 80%% (Effectiveness), x =< 5%% (Miss rate), x =< 10%% (False alarm rate)"
 msgstr ""
 
-msgid ""
-"Unacceptable: x < 80%% (Effectiveness), x > 5%% (Miss rate), x > 10%% (False "
-"alarm rate)"
+msgid "Unacceptable: x < 80%% (Effectiveness), x > 5%% (Miss rate), x > 10%% (False alarm rate)"
 msgstr ""
 
 msgid "Kendall's Tau is only available for numeric measurements."
-msgstr "Kendalls Tau ist nur für numerische Messungen verfügbar."
+msgstr ""
 
 msgid "Kendall's Tau is only available for non-binary measurements."
-msgstr "Kendalls Tau ist nur für nicht-binäre Messungen verfügbar."
+msgstr ""
 
 msgid "Operator"
 msgstr ""
@@ -613,40 +560,40 @@ msgid "%g (Acceptable)"
 msgstr ""
 
 msgid "Linearity and Bias"
-msgstr "Linearität und Verzerrung"
+msgstr ""
 
 msgid "Gauge Bias"
 msgstr ""
 
 msgid "Part"
-msgstr "Teil"
+msgstr ""
 
 msgid "Reference value"
-msgstr "Referenzwert"
+msgstr ""
 
 msgid "Mean per reference value"
-msgstr "Mittelwert pro Referenzwert"
+msgstr ""
 
 msgid "Bias per reference value"
-msgstr "Verzerrung pro Referenzwert"
+msgstr ""
 
 msgid "<i>p(t</i>-test of bias against 0)"
-msgstr "<i>p(t</i>-Test der Verzerrung gegen 0)"
+msgstr ""
 
 msgid "Regression Model"
-msgstr "Regressionsmodell"
+msgstr ""
 
 msgid "Predictor"
-msgstr "Prädiktor"
+msgstr ""
 
 msgid "<i>t</i>-statistic"
-msgstr "<i>t</i>-Statistik"
+msgstr ""
 
 msgid "Std. Error coefficients"
-msgstr "Std.-Fehler Koeffizienten"
+msgstr ""
 
 msgid "<i>p</i>"
-msgstr "<i>p</i>"
+msgstr ""
 
 msgid "Gauge Linearity"
 msgstr ""
@@ -657,53 +604,40 @@ msgstr ""
 msgid "%% Linearity"
 msgstr ""
 
-msgid ""
-"Calculations are based on 6 times the historical standard variation unless "
-"specified otherwise."
+msgid "Calculations are based on 6 times the historical standard variation unless specified otherwise."
 msgstr ""
 
 msgid "Bias and Linearity"
-msgstr "Verzerrung und Linearität"
+msgstr ""
 
 msgid "Percentage Process Variation Graph"
 msgstr ""
 
-msgid ""
-"T-Test requires more than 1 measurement. %i valid measurement(s) detected in "
-"%s."
+msgid "T-Test requires more than 1 measurement. %i valid measurement(s) detected in %s."
 msgstr ""
-"T-Test erfordert mehr als 1 Messung. %i gültige Messung(en) in %s erkannt."
 
-msgid ""
-"Every unique part must have one corresponding reference value. %i reference "
-"values were found for %s unique parts."
+msgid "Every unique part must have one corresponding reference value. %i reference values were found for %s unique parts."
 msgstr ""
-"Jedes einzelne Teil muss einen entsprechenden Referenzwert haben. %i "
-"Referenzwerte wurden für %s einzelne Teile gefunden."
 
 msgid "Reference"
-msgstr "Referenz"
+msgstr ""
 
 msgid "Percent bias per reference value"
-msgstr "Prozentuale Verzerrung pro Referenzwert"
+msgstr ""
 
 msgid "Linearity"
-msgstr "Linearität"
+msgstr ""
 
 msgid "Average"
-msgstr "Durchschnitt"
+msgstr ""
 
 msgid "Gauge r&R"
 msgstr ""
 
-msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+msgid "Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."
 msgstr ""
 
-msgid ""
-"The measurements selected seem to be in a 'Single Column' format as every "
-"operator's part is measured %d times."
+msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
 msgstr ""
 
 msgid "Gauge r&R ANOVA Table"
@@ -728,31 +662,31 @@ msgid "Part by Operator Interaction Graph"
 msgstr ""
 
 msgid "Traffic light chart"
-msgstr "Ampel-Karte"
+msgstr ""
 
 msgid "ANOVA Table"
-msgstr "ANOVA-Tabelle"
+msgstr ""
 
 msgid "One-way ANOVA Table"
-msgstr "Einfache ANOVA-Tabelle"
+msgstr ""
 
 msgid "Two-way ANOVA Table with Interaction"
-msgstr "Zweifaktorielle ANOVA-Tabelle mit Interaktion"
+msgstr ""
 
 msgid "Source"
-msgstr "Quelle"
+msgstr ""
 
 msgid "Sum of Squares"
-msgstr "Quadratsumme"
+msgstr ""
 
 msgid "Mean Squares"
 msgstr ""
 
 msgid "Variance Components"
-msgstr "Varianz-Komponenten"
+msgstr ""
 
 msgid "Variance"
-msgstr "Varianz"
+msgstr ""
 
 msgid "%% Contribution"
 msgstr ""
@@ -761,22 +695,22 @@ msgid "Gauge Evaluation"
 msgstr ""
 
 msgid "Std. Deviation"
-msgstr "Std.-Abweichung"
+msgstr ""
 
 msgid "Study Variation"
-msgstr "Streuung von Studienergebnissen"
+msgstr ""
 
 msgid "%% Study Variation"
 msgstr ""
 
 msgid "%% Tolerance"
-msgstr "%% Toleranz"
+msgstr ""
 
 msgid "Total Gauge r&R"
 msgstr ""
 
 msgid "Repeatability"
-msgstr "Wiederholbarkeit"
+msgstr ""
 
 msgid "Part-to-Part"
 msgstr ""
@@ -785,33 +719,28 @@ msgid "Total Variation"
 msgstr ""
 
 msgid "Reproducibility"
-msgstr "Reproduzierbarkeit"
+msgstr ""
 
 msgid "*"
 msgstr ""
 
 msgid "Number of distinct categories = %i"
-msgstr "Anzahl verschiedener Kategorien = %i"
+msgstr ""
 
 msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i"
 msgstr ""
 
-msgid ""
-"Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
+msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
 msgstr ""
 
-msgid ""
-"Historical standard deviation is used to calculate some values for Std. "
-"Deviation, Study Variation, and %%Study Variation."
+msgid "Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %%Study Variation."
 msgstr ""
 
-msgid ""
-"Values for %%Process Variation are not displayed because they are identical "
-"to values for %%Study Variation."
+msgid "Values for %%Process Variation are not displayed because they are identical to values for %%Study Variation."
 msgstr ""
 
 msgid "Two-way ANOVA Table without Interaction"
-msgstr "Zweifaktorielle ANOVA-Tabelle ohne Interaktion"
+msgstr ""
 
 msgid "Components of Variation"
 msgstr ""
@@ -828,9 +757,8 @@ msgstr ""
 msgid "Measurements by Part"
 msgstr ""
 
-#, fuzzy
 msgid "Measurements by Operator"
-msgstr "Messungen nach Operator"
+msgstr ""
 
 msgid "Part by Operator Interaction"
 msgstr ""
@@ -856,15 +784,14 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
-#, fuzzy
 msgid "Measurement systems analysis"
-msgstr "Messsystemanalyse"
+msgstr ""
 
 msgid "Gauge name: %s"
 msgstr ""
 
 msgid "Date of study: %s"
-msgstr "Studiendatum: %s"
+msgstr ""
 
 msgid "Performed by: %s"
 msgstr ""
@@ -873,9 +800,6 @@ msgid "Misc: %s"
 msgstr ""
 
 msgid "Tolerance: %s"
-msgstr "Toleranz: %s"
-
-msgid "No report components selected."
 msgstr ""
 
 msgid "%.2f"
@@ -891,7 +815,7 @@ msgid "Gauge r&R (Nested)"
 msgstr ""
 
 msgid "Mean Square"
-msgstr "Mittlere Quadratsumme"
+msgstr ""
 
 msgid "Variation"
 msgstr ""
@@ -933,7 +857,7 @@ msgid "Short gauge study"
 msgstr ""
 
 msgid "Sample size (n)"
-msgstr "Stichprobenumfang (n)"
+msgstr ""
 
 msgid "R-bar"
 msgstr ""
@@ -945,7 +869,7 @@ msgid "Process Std. Dev."
 msgstr ""
 
 msgid "Tolerance"
-msgstr "Toleranz"
+msgstr ""
 
 msgid "GRR"
 msgstr ""
@@ -957,40 +881,40 @@ msgid "%GRR of Tolerance"
 msgstr ""
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
-msgstr "Streudiagramm der 1. Messung vs. 2. Messung"
+msgstr ""
 
 msgid "Run Chart"
 msgstr ""
 
 msgid "Bias Table"
-msgstr "Verzerrungstabelle"
+msgstr ""
 
 msgid "t-Test Bias"
-msgstr "t-Test Verzerrung"
+msgstr ""
 
 msgid "Histogram Bias"
-msgstr "Histogramm Verzerrung"
+msgstr ""
 
 msgid "Bias and Instrument Capability Table"
 msgstr ""
 
 msgid "Basic Statistics"
-msgstr "Grundlegende Statistiken"
+msgstr ""
 
 msgid "Mean"
-msgstr "Mittelwert"
+msgstr ""
 
 msgid "Bias"
-msgstr "Verzerrung"
+msgstr ""
 
 msgid "Std. Deviation (<i>s</i>)"
-msgstr "Std.-Abweichung (<i>s</i>)"
+msgstr ""
 
 msgid "Study variation"
 msgstr ""
 
 msgid "%% Bias"
-msgstr "%% Verzerrung"
+msgstr ""
 
 msgid "The study variation is calculated as %i * <i>s</i>."
 msgstr ""
@@ -1008,51 +932,45 @@ msgid "%% Var(Repeatability)"
 msgstr ""
 
 msgid "%% Var(Repeatability and bias)"
-msgstr "%% Var(Wiederholbarkeit und Verzerrung)"
+msgstr ""
 
 msgid "T-Test of Observed Bias Against 0"
-msgstr "T-Test der beobachteten Verzerrung gegen 0"
+msgstr ""
 
 msgid "%s CI for Bias"
-msgstr "%s KI der Verzerrung"
+msgstr ""
 
 msgid "<i>t</i>"
-msgstr "<i>t</i>"
+msgstr ""
 
 msgid "Bias Histogram"
-msgstr "Histogramm Verzerrung"
+msgstr ""
 
 msgid "Run Chart of %s"
 msgstr ""
 
 msgid "No valid measurements in %s."
-msgstr "Keine gültigen Messungen in %s."
+msgstr ""
 
 msgid "Parameter Estimates"
-msgstr "Parameter-Schätzungen"
+msgstr ""
 
 msgid "Parameter"
-msgstr "Parameter"
+msgstr ""
 
 msgid "Estimate"
 msgstr ""
 
-msgid ""
-"Fitting the model failed with the following error message:\n"
-"%s"
+msgid "Fitting the model failed with the following error message:\n%s"
 msgstr ""
-"Modellanpassung ist mit folgender Fehlermeldung gescheitert:\n"
-"%s"
 
 msgid "Intercept"
-msgstr "Konstante"
-
-msgid ""
-"The IWLS algorithm did not converge. Interpret the results with caution."
 msgstr ""
 
-msgid ""
-"There is only observed category (%s). The results are likely meaningless."
+msgid "The IWLS algorithm did not converge. Interpret the results with caution."
+msgstr ""
+
+msgid "There is only observed category (%s). The results are likely meaningless."
 msgstr ""
 
 msgid "Fit Table"
@@ -1065,30 +983,28 @@ msgid "Detection Plot"
 msgstr ""
 
 msgid "log(%s)"
-msgstr "Log(%s)"
+msgstr ""
 
-msgid ""
-"The detection plot failed with the following error message:\n"
-"%s"
+msgid "The detection plot failed with the following error message:\n%s"
 msgstr ""
 
 msgid "Asymptotes"
-msgstr "Asymptoten"
+msgstr ""
 
 msgid "covariate"
-msgstr "Kovariate"
+msgstr ""
 
 msgid "Horizontal asymptotes"
-msgstr "Horizontale Asymptoten"
+msgstr ""
 
 msgid "Vertical asymptotes"
-msgstr "Vertikale Asymptoten"
+msgstr ""
 
 msgid "Label"
-msgstr "Bezeichnung"
+msgstr ""
 
 msgid "<b><em>Warning.</em></b>"
-msgstr "<b><em>Warnung.</em></b>"
+msgstr ""
 
 msgid "Probability of detecting %s"
 msgstr ""
@@ -1102,9 +1018,7 @@ msgstr ""
 msgid "Values must be positive to fit a Weibull/Lognormal distribution."
 msgstr ""
 
-msgid ""
-"All zero values have been replaced with a value equal to one-half of the "
-"smallest data point."
+msgid "All zero values have been replaced with a value equal to one-half of the smallest data point."
 msgstr ""
 
 msgid "Capability Studies"
@@ -1114,7 +1028,7 @@ msgid "Error: LSL > USL."
 msgstr ""
 
 msgid "Error: Target outside of specification limits."
-msgstr "Fehler: Ziel außerhalb der Spezifikationsgrenzen."
+msgstr ""
 
 msgid "Process Capability"
 msgstr ""
@@ -1129,13 +1043,13 @@ msgid "LSL"
 msgstr ""
 
 msgid "Target"
-msgstr "Ziel"
+msgstr ""
 
 msgid "USL"
 msgstr ""
 
 msgid "Sample size"
-msgstr "Stichprobenumfang"
+msgstr ""
 
 msgid "Std. deviation (total)"
 msgstr ""
@@ -1147,10 +1061,10 @@ msgid "The within standard deviation could not be calculated."
 msgstr ""
 
 msgid "Density"
-msgstr "Dichte"
+msgstr ""
 
 msgid "Measurement"
-msgstr "Messung"
+msgstr ""
 
 msgid "No specification limits set."
 msgstr ""
@@ -1206,16 +1120,14 @@ msgstr ""
 msgid "Non-conformance statistics"
 msgstr ""
 
-msgid ""
-"Dataset contains negative numbers. Not compatible with the selected "
-"distribution."
+msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
 msgstr ""
 
 msgid "Std. deviation"
-msgstr "Std.-Abweichung"
+msgstr ""
 
 msgid "Log mean (%1$s)"
-msgstr "Log-Mittelwert (%1$s)"
+msgstr ""
 
 msgid "Log std.dev (%1$s)"
 msgstr ""
@@ -1224,13 +1136,13 @@ msgid "Shape (%1$s)"
 msgstr ""
 
 msgid "Scale (<i>k</i>)"
-msgstr "Skalenparameter (<i>k</i>)"
+msgstr ""
 
 msgid "Threshold"
 msgstr ""
 
 msgid "Observed"
-msgstr "Beobachtet"
+msgstr ""
 
 msgid "Expected overall"
 msgstr ""
@@ -1245,31 +1157,25 @@ msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
 msgid "N"
-msgstr "N"
+msgstr ""
 
 msgid "Mean (%1$s)"
-msgstr "Mittelwert (%1$s)"
+msgstr ""
 
 msgid "Std. deviation (%1$s)"
-msgstr "Std.-Abweichung (%1$s)"
+msgstr ""
 
 msgid "AD"
-msgstr "AD"
-
-msgid ""
-"The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s "
-"distribution."
 msgstr ""
-"Die Anderson-Darling-Statistik A<i>D</i> wird anhand der %2$s-Verteilung "
-"berechnet."
 
-msgid ""
-"Red dotted lines in the probability plot below represent a 95%% confidence "
-"interval."
+msgid "The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution."
+msgstr ""
+
+msgid "Red dotted lines in the probability plot below represent a 95%% confidence interval."
 msgstr ""
 
 msgid "Histogram"
-msgstr "Histogramm"
+msgstr ""
 
 msgid "X-mR control chart"
 msgstr ""
@@ -1292,67 +1198,44 @@ msgstr ""
 msgid "Please insert more measurements and check the X-mR chart."
 msgstr ""
 
+msgid "%s"
+msgstr ""
+
+msgid "Observation"
+msgstr ""
+
 msgid "Autocorrelation"
-msgstr "Autokorrelation"
+msgstr ""
 
 msgid "Lag"
-msgstr "Verzögerung"
+msgstr ""
 
 msgid "Control Charts"
-msgstr "Kontrolldiagramm"
+msgstr ""
 
 msgid "Could not equally divide data points into groups of size %i."
 msgstr ""
-"Datenpunkte konnten nicht gleichmäßig in Gruppen mit Größe %i aufgeteilt "
-"werden."
 
 msgid "X-bar & R Control Chart"
-msgstr "X-quer & R-Kontrollkarte"
+msgstr ""
 
 msgid "Out-of-control Signals"
 msgstr ""
 
 msgid "X-bar & s Control Chart"
-msgstr "X-quer & s-Kontrollkarte"
+msgstr ""
 
 msgid "Subgroup st dev"
 msgstr ""
 
 msgid "Name: %s"
-msgstr "Name: %s"
+msgstr ""
 
 msgid "Date: %s"
-msgstr "Datum: %s"
+msgstr ""
 
 msgid "Sub-title: %s"
-msgstr "Untertitel: %s"
+msgstr ""
 
 msgid "Name of chart: %s"
 msgstr ""
-
-#~ msgid "% Tolerance"
-#~ msgstr "% Toleranz"
-
-#~ msgid "% Bias"
-#~ msgstr "% Verzerrung"
-
-#~ msgid "% Var(Repeatability and bias)"
-#~ msgstr "% Var(Wiederholbarkeit und Verzerrung)"
-
-#~ msgid "Normal Plot of Standardized Effects"
-#~ msgstr "Normal-Diagramm Standardisierter Effekte"
-
-#~ msgid "Residual Plots for %s"
-#~ msgstr "Residuen-Diagramme für %s"
-
-#~ msgid "Location (%1$s)"
-#~ msgstr "Lage (%1$s)"
-
-#~ msgid "DF"
-#~ msgstr "DF"
-
-#~ msgid "ANOVA"
-#~ msgstr "ANOVA"
-
-#~ msgid "<i>p<i/>-value"
-#~ msgstr "<i>p</i>-Wert"
