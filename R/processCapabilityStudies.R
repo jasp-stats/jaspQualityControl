@@ -114,7 +114,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     # X-bar and R Chart OR ImR Chart
     if(options$xbarR){
       .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
-    } else{
+    } else if(options[["IMR"]]){
       .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
     }
 
@@ -254,7 +254,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   )
   table$addRows(rows)
 
-  N.Decimals <- decimalplaces(dataset[measurements][[1]][1])
+  nDecimals <- max(.decimalplaces(dataset[measurements]))
+
   if(returnDataframe){
     sourceVector <- c('LSL', 'Target', 'USL', 'Sample size', 'Mean', "Std. Deviation (Total)", "Std. Deviation (Within)")
     lsl <- options[["lowerSpecification"]]
@@ -272,7 +273,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     sdw <- qccFit[["std.dev"]]
     valueVector <- c(lsl, target, usl, n, mean, sd, sdw)
     df <- data.frame(sources = sourceVector,
-                     values = round(as.numeric(valueVector), N.Decimals))
+                     values = round(as.numeric(valueVector), nDecimals))
     return(df)
   }
   container[["processSummaryTable"]] <- table
@@ -294,7 +295,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   sdw <- qccFit[["std.dev"]]
   sdo <- sd(allData, na.rm = TRUE)
 
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], options[["lowerSpecification"]], options[["upperSpecification"]]), min.n = 4)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], min(plotData[["x"]]) - 1 * sdo, max(plotData[["x"]]) + 1 * sdo), min.n = 4)
   xLimits <- range(xBreaks)
   binWidthType <- options$csNumberOfBins
 
@@ -305,7 +306,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   binWidth <- (h$breaks[2] - h$breaks[1])
 
   p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
-    ggplot2::geom_histogram(ggplot2::aes(y =..density..),closed = "left", fill = "grey", col = "black", size = .7, binwidth = binWidth, center = binWidth/2) +
+    ggplot2::geom_histogram(ggplot2::aes(y =..density..), closed = "left", fill = "grey", col = "black", size = .7, binwidth = binWidth, center = binWidth/2) +
     ggplot2::scale_y_continuous(name = gettext("Density")) +
     ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits)
   if(distribution == 'normal'){
@@ -431,7 +432,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     cpk <- cpu
   }
 
-  rows <- list("cp" = round(cp,2), "cpl" = round(cpl,2), "cpu" = round(cpu,2), "cpk" = round(cpk,2))
+  rows <- list("cp" = round(cp, 2), "cpl" = round(cpl, 2), "cpu" = round(cpu, 2), "cpk" = round(cpk, 2))
 
   if (options[["csConfidenceInterval"]]){
     ciAlpha <- 1 - ciLevel
@@ -448,10 +449,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     ciLbCpk <- cpk - (normCIrange * intervalCpk)
     ciUbCpk <- cpk + (normCIrange * intervalCpk)
 
-    rows[["cplci"]] <- round(ciLbCp,2)
-    rows[["cpuci"]] <- round(ciUbCp,2)
-    rows[["cpklci"]] <- round(ciLbCpk,2)
-    rows[["cpkuci"]] <- round(ciUbCpk,2)
+    rows[["cplci"]] <- round(ciLbCp, 2)
+    rows[["cpuci"]] <- round(ciUbCp, 2)
+    rows[["cpklci"]] <- round(ciLbCpk, 2)
+    rows[["cpkuci"]] <- round(ciUbCpk, 2)
   }
   table$addRows(rows)
 
@@ -674,12 +675,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   ewTOT <- sum(c(ewLSL, ewUSL), na.rm = T)
   expWithin <- c(ewLSL, ewUSL, ewTOT)
 
-  N.Decimals <- decimalplaces(dataset[measurements][[1]][1])
+
+  nDecimals <- max(.decimalplaces(dataset[measurements]))
   if(returnPerformanceDataframe){
     df <- data.frame("Source" = rowNames,
                      "Observed" = observed,
-                     "Expected Overall" = round(expOverall, N.Decimals),
-                     "Expected Within"  = round(expWithin, N.Decimals))
+                     "Expected Overall" = round(expOverall, nDecimals),
+                     "Expected Within"  = round(expWithin, nDecimals))
     return(df)
 
   }
@@ -1420,7 +1422,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
-  Container$dependOn(options = c("xbarR", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "pcReportDisplay"))
+  Container$dependOn(options = c("xbarR", "variables", "subgroups", "variablesLong", "pcSubgroupSize", "pcReportDisplay", "movingRangeLength"))
   Container$position <- 1
   jaspResults[["ImR Charts"]] <- Container
   Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE, Wide = wideFormat)$p
@@ -1471,62 +1473,95 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   misc <- gettextf("Misc: %s", options[["pcReportMisc"]])
   text2 <- c(reportedBy, misc)
 
-  matrixPlot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
-
   if(!options[["upperSpecificationField"]] && !options[["lowerSpecificationField"]]){
-    matrixPlot$setError(gettext("No specification limits set."))
-    return(matrixPlot)
+    plot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
+    plot$setError(gettext("No specification limits set."))
+    return(plot)
   }
 
-  if(!ready)
-    return(matrixPlot)
+  if(!ready) {
+    plot <- createJaspPlot(title = gettext("Report"), width = 1200, height = 1000)
+    return(plot)
 
-  # X-bar and R Chart OR ImR Chart
-  if(options$xbarR){
-    p1 <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
-    p2 <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
-  } else{
-    IMRPlots <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = splitFactor, cowPlot = TRUE, Wide = wideFormat)
-    p1 <- IMRPlots$p1
-    p2 <- IMRPlots$p2
   }
 
-  if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis"){
-    processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, returnDataframe = TRUE)
-    potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, returnDataframe = TRUE)
-    overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnOverallCapDataframe = TRUE)
-    performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnPerformanceDataframe = TRUE)
+  plotList <- list()
+  indexCounter <- 0
 
-    plotMat <- matrix(list(), 6, 2)
-    plotMat[[1, 1]] <- .ggplotWithText(text1)
-    plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <-  p1
-    plotMat[[2, 2]] <-  .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = "normal")
-    plotMat[[3, 1]] <-  p2
-    plotMat[[3, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
-    plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
-    plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
-    plotMat[[5, 1]] <- ggplotTable(potentialWithinDF)  #Potential within
-    plotMat[[5, 2]] <- ggplot2::ggplot() + ggplot2::theme_void()
-    plotMat[[6, 1]] <- ggplotTable(overallCapDF) #overall capability
-  }else{
-    processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnSummaryDF = TRUE)
-    overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnCapabilityDF = TRUE)
-    performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnPerformanceDF = TRUE)
+  if (options[["reportMetaData"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .ggplotWithText(text1)
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .ggplotWithText(text2)
+  }
+  if (options[["reportProcessStability"]]) {
+    # X-bar and R Chart OR ImR Chart
+    if(options$xbarR){
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
+    } else {
+      IMRPlots <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = splitFactor, cowPlot = TRUE, Wide = wideFormat)
 
-    plotMat <- matrix(list(), 5, 2)
-    plotMat[[1, 1]] <- .ggplotWithText(text1)
-    plotMat[[1, 2]] <- .ggplotWithText(text2)
-    plotMat[[2, 1]] <-  p1
-    plotMat[[2, 2]] <-  .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = options[["nonNormalDist"]])
-    plotMat[[3, 1]] <-  p2
-    plotMat[[3, 2]] <-  .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
-    plotMat[[4, 1]] <- ggplotTable(processSummaryDF) #process summary
-    plotMat[[4, 2]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
-    plotMat[[5, 1]] <- ggplotTable(overallCapDF)  #overall capability
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- IMRPlots$p1
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- IMRPlots$p2
+    }
+  }
+  if (options[["reportProcessCapabilityPlot"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = "normal")
+  }
+  if (options[["reportProbabilityPlot"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
+  }
+  if (options[["reportProcessCapabilityTables"]]) {
+    if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis"){
+      processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, returnDataframe = TRUE)
+      potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, returnDataframe = TRUE)
+      overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnOverallCapDataframe = TRUE)
+      performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnPerformanceDataframe = TRUE)
+
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- ggplotTable(processSummaryDF) #process summary
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- ggplotTable(potentialWithinDF)  #Potential within
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- ggplotTable(overallCapDF) #overall capability
+    } else {
+      processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnSummaryDF = TRUE)
+      overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnCapabilityDF = TRUE)
+      performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnPerformanceDF = TRUE)
+
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- ggplotTable(processSummaryDF) #process summary
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- ggplotTable(performanceDF, displayColNames = TRUE)   # performance
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- ggplotTable(overallCapDF)  #overall capability
+    }
   }
 
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
+  if (indexCounter == 0) {
+    plot <- createJaspPlot(title = title, width = 400, height = 400)
+    plot$setError(gettext("No report components selected."))
+    return(plot)
+  } else if (indexCounter %% 2 != 0){
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  }
+
+
+  matrixNCols <- 2
+  matrixNRows <- indexCounter / matrixNCols
+  matrixPlot <- createJaspPlot(title = title, width = 1200, height = 400 * matrixNRows)
+  plotMat <- matrix(plotList, matrixNRows, matrixNCols, byrow = TRUE)
+  p <- jaspGraphs::ggMatrixPlot(plotMat)
   matrixPlot$plotObject <- p
 
   return(matrixPlot)
@@ -1534,7 +1569,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 ggplotTable <- function(dataframe, displayColNames = FALSE){
   df <- tibble::tibble(dataframe)
-  p <- ggplot2::ggplot() + ggplot2::theme_void() + ggpp::geom_table(data = data.frame(x = 1, y = 1), ggplot2::aes(x = x, y = y), label = list(df),
+  p <- ggplot2::ggplot() +
+    ggplot2::theme_void() +
+    ggpp::geom_table(data = data.frame(x = 1, y = 1), ggplot2::aes(x = x, y = y), label = list(df),
                                                                     table.colnames = displayColNames, size = 7)
 
   return(p)

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2022-11-30 10:38\n"
+"POT-Creation-Date: 2022-12-10 03:40\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -127,6 +127,12 @@ msgstr ""
 msgid "Subgroup size must be > 1 to display X-bar & R Chart."
 msgstr ""
 
+msgid "Sample average"
+msgstr ""
+
+msgid "Sample range"
+msgstr ""
+
 msgid "Test results for %s chart"
 msgstr ""
 
@@ -149,6 +155,12 @@ msgid "Test 6: Bimodal distribution"
 msgstr ""
 
 msgid "Numbers are data points where test violations occur."
+msgstr ""
+
+msgid "%s"
+msgstr ""
+
+msgid "Observation"
 msgstr ""
 
 msgid "Normal Probability Plot of Residuals"
@@ -802,6 +814,9 @@ msgstr ""
 msgid "Tolerance: %s"
 msgstr ""
 
+msgid "No report components selected."
+msgstr ""
+
 msgid "%.2f"
 msgstr ""
 
@@ -1196,12 +1211,6 @@ msgid "%s for Range"
 msgstr ""
 
 msgid "Please insert more measurements and check the X-mR chart."
-msgstr ""
-
-msgid "%s"
-msgstr ""
-
-msgid "Observation"
 msgstr ""
 
 msgid "Autocorrelation"

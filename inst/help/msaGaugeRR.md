@@ -1,6 +1,6 @@
 Gauge r&R
 ==========================
-Gage Repeatability and Reproducibility (Gage R & R) is an analysis aimed at defining the amount of variation in measurements given a measurement system. 
+Gauge Repeatability and Reproducibility (Gauge R & R) is an analysis aimed at defining the amount of variation in measurements given a measurement system. 
 The variation detected in the measurement is sourced in two factors, repeatability (equipment variation) and reproducibility (operator variation).
 <br>
 Both attribute and variable measurement data can be used in the analysis. 

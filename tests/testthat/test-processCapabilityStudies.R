@@ -154,6 +154,7 @@ options$lowerSpecification <- 0
 options$targetValue <- 0
 options$upperSpecification <- 15
 options$nullDistribution <- "Weibull"
+options$IMR <- TRUE
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)
 

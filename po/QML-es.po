@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2022-12-10 12:02+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.15-dev\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -619,10 +625,6 @@ msgctxt "msaGaugeRR|"
 msgid "Miscellaneous"
 msgstr "Miscelánea"
 
-msgctxt "msaGaugeRR|"
-msgid "Show Report"
-msgstr "Mostrar Informe"
-
 msgctxt "processCapabilityStudies|"
 msgid "Data format"
 msgstr "Formato de datos"
@@ -1083,10 +1085,6 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Miscellaneous"
 msgstr "Miscelánea"
 
-msgctxt "msaGaugeRRnonrep|"
-msgid "Show Report"
-msgstr "Mostrar Informe"
-
 msgctxt "msaTestRetest|"
 msgid "Data format"
 msgstr "Formato de datos"
@@ -1361,7 +1359,7 @@ msgstr "Lambda"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Moving range length"
-msgstr "Largo del rango de movimiento"
+msgstr "Longitud del rango de movimiento"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Number of lags"
@@ -1754,10 +1752,6 @@ msgstr "Desviación típica dentro de grupo"
 msgctxt "timeWeightedCharts|"
 msgid "Sigmas for computing control limits"
 msgstr "Sigmas para calcular los límites de control"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Subgroups"
-msgstr "Subgrupos"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Individuals Report"
@@ -2226,3 +2220,107 @@ msgstr "Desviación típica dentro de grupo"
 msgctxt "TimeWeightedCharts|"
 msgid "Sigmas for computing control limits"
 msgstr "Sigmas para calcular los límites de control"
+
+msgctxt "msaGaugeRR|"
+msgid "Show report"
+msgstr "Mostrar el informe"
+
+msgctxt "msaGaugeRR|"
+msgid "Show report metadata"
+msgstr "Mostrar los metadatos del informe"
+
+msgctxt "msaGaugeRR|"
+msgid "Select Report Components"
+msgstr "Escoger los Elementos del Informe"
+
+msgctxt "msaGaugeRR|"
+msgid "Show components of variation"
+msgstr "Mostrar las componentes de la variación"
+
+msgctxt "msaGaugeRR|"
+msgid "Show measurements by part"
+msgstr "Mostrar las medidas por parte"
+
+msgctxt "msaGaugeRR|"
+msgid "Show R chart by operator"
+msgstr "Mostrar el gráfico R por operador"
+
+msgctxt "msaGaugeRR|"
+msgid "Show measurements by operator"
+msgstr "Mostrar las medidas por operador"
+
+msgctxt "msaGaugeRR|"
+msgid "Show average chart by operator"
+msgstr "Mostrar el gráfico medio por operador"
+
+msgctxt "msaGaugeRR|"
+msgid "Show part × operator interaction"
+msgstr "Mostrar la interacción parte x operador"
+
+msgctxt "msaGaugeRR|"
+msgid "Show traffic light chart"
+msgstr "Mostrar el gráfico de semáforo"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show report"
+msgstr "Mostrar el informe"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show report metadata"
+msgstr "Mostrar los metadatos del informe"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Select Report Components"
+msgstr "Escoger los Elementos del Informe"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show components of variation"
+msgstr "Mostrar las componentes de la variación"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show R chart by operator"
+msgstr "Mostrar el gráfico R por operador"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show measurements by operator"
+msgstr "Mostrar las medidas por operador"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show average chart by operator"
+msgstr "Mostrar el gráfico medio por operador"
+
+msgctxt "processCapabilityStudies|"
+msgid "Moving range length"
+msgstr "Longitud del rango de movimiento"
+
+msgctxt "processCapabilityStudies|"
+msgid "Show report metadata"
+msgstr "Mostrar los metadatos del informe"
+
+msgctxt "processCapabilityStudies|"
+msgid "Select Report Components"
+msgstr "Escoger los Elementos del Informe"
+
+msgctxt "processCapabilityStudies|"
+msgid "Show stability of process charts"
+msgstr "Mostrar los gráficos de estabilidad del proceso"
+
+msgctxt "processCapabilityStudies|"
+msgid "Show process capability plot"
+msgstr "Mostrar el gráfico de la capacidad de proceso"
+
+msgctxt "processCapabilityStudies|"
+msgid "Show probability plot"
+msgstr "Mostrar el gráfico de probabilidad"
+
+msgctxt "processCapabilityStudies|"
+msgid "Show process capability tables"
+msgstr "Mostrar las tablas de la capacidad de proceso"
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Axis labels"
+msgstr "Etiquetas de los ejes"
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Stages"
+msgstr "Etapas"

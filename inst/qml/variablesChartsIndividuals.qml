@@ -24,10 +24,18 @@ Form
 			allowedColumns:						["scale"]
 		}
 
-	  AssignedVariablesList
+		AssignedVariablesList
 		{
 			name:								"subgroups"
-			title:								qsTr("Subgroups")
+			title:								qsTr("Axis labels")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
+		
+		AssignedVariablesList
+		{
+			name:								"split"
+			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
@@ -45,10 +53,11 @@ Form
 
 			DoubleField
 			{
-				name:							"ncol"
+				name:							"movingRangeLength"
 				label:							qsTr("Moving range length")
 				defaultValue:					2
 				min: 							2
+				max: 							dataSetModel.rowCount()
 			}
 		CheckBox
 		{
