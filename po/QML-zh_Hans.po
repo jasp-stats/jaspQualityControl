@@ -1681,14 +1681,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
 msgstr "名称"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "x"
-msgstr "x"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "<b>Build Design</b>"
-msgstr "<b>创建设计</b>"
-
 msgctxt "doeScreening|"
 msgid "Design Space"
 msgstr "设计空间"
@@ -1921,54 +1913,6 @@ msgctxt "doeFactorial|"
 msgid "Matrix residuals plot"
 msgstr "矩阵残差图"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Space"
-msgstr "设计空间"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of factors"
-msgstr "因子数量"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Define levels"
-msgstr "定义水平"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Cube points"
-msgstr "立方体点"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Axial points"
-msgstr "轴向点"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design options"
-msgstr "设计方案选项"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Inscribed design"
-msgstr "有界设计"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Force one block"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Use # of variables instead of model"
-msgstr "使用变量数而非模型"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Introduce blocking"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Coded output"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Alpha type"
-msgstr ""
-
 #, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Run Order"
@@ -1990,18 +1934,6 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "High"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Factor name "
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Generator name"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Generator formula"
 msgstr ""
 
 #, fuzzy
@@ -2322,4 +2254,132 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Stages"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Display design"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Export design:"
+msgstr ""
+
+#, fuzzy
+msgctxt "ShowAndExportDesign|"
+msgid "<b>Sync Design: On</b>"
+msgstr "<b>同步设计: On</b>"
+
+#, fuzzy
+msgctxt "ShowAndExportDesign|"
+msgid "<b>Sync Design: Off</b>"
+msgstr "<b>同步设计: Off</b>"
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design Type"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Central Composite Design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Box-Behnken Design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of continuous factors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of categorical factors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Maximum categorical levels"
+msgstr ""
+
+#, qt-format
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Level %1"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design Table"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Runs"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Blocks"
+msgstr "区组"
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Total"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Cube"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Axial"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Alpha"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Centre points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "debug selected row"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "debug selected col"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Default"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Face centred"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Custom"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Center Points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Cube block"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Axial block"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Show coded output"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Replicates"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Calculate desirability"
 msgstr ""

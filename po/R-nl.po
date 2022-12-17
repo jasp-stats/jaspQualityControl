@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2022-12-10 03:40\n"
+"POT-Creation-Date: 2022-12-17 03:40\n"
 "PO-Revision-Date: 2022-06-02 13:04+0000\n"
 "Last-Translator: Don van den Bergh <donvdbergh@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -307,16 +307,56 @@ msgstr ""
 msgid "Missing Runs"
 msgstr ""
 
-msgid "Response Surface Methodology"
+msgid "The analysis failed with the following error message: %s"
 msgstr ""
 
-msgid ""
-"No analyses (except those under 'Design Specification') can be started until "
-"at least one model term\n"
-"                      and one response variable are inputed."
+#, fuzzy
+msgid "Design Summary"
+msgstr "Model Samenvatting"
+
+msgid "Variable"
 msgstr ""
 
-msgid "<em>Warning: </em>"
+msgid "Continuous factors"
+msgstr ""
+
+msgid "Categorical factors"
+msgstr ""
+
+msgid "Base runs"
+msgstr ""
+
+msgid "Base blocks"
+msgstr ""
+
+msgid "Total runs"
+msgstr ""
+
+msgid "Total blocks"
+msgstr ""
+
+msgid "Centre points in cube"
+msgstr ""
+
+msgid "Centre points in axial"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Box-BehnkenDesign are not supported for 8 variables."
+msgstr ""
+
+msgid "Please select a row in the design table."
+msgstr ""
+
+msgid "Click 'Display design' to show the design."
+msgstr ""
+
+msgid "Response Surface Design - Central Composite Design"
+msgstr ""
+
+msgid "Response Surface Design - Box-Behnken design"
 msgstr ""
 
 msgid "Central Composite Design"
@@ -328,22 +368,12 @@ msgstr ""
 msgid "Standard Order"
 msgstr ""
 
-msgid "x"
-msgstr ""
-
-msgid ""
-"Factor name '%s' is a number, and number factor names are not supported."
-msgstr ""
-
-msgid "factors"
-msgstr ""
-
-msgid "factorName"
-msgstr ""
-
 msgid ""
 "Generator name '%s' is a number, and number generator names are not "
 "supported."
+msgstr ""
+
+msgid "<em>Warning: </em>"
 msgstr ""
 
 msgid "generators"
@@ -363,9 +393,6 @@ msgid ""
 msgstr ""
 
 msgid "Central Composite Design with Star Points"
-msgstr ""
-
-msgid "Factor name '%s' is a number, and number factor names are not supported"
 msgstr ""
 
 msgid "The analysis will not run when the 'Number of Generators' > 0"

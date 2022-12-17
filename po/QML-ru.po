@@ -684,54 +684,6 @@ msgid "Show desired design"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Space"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of factors"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Define levels"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Cube points"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Axial points"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design options"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Inscribed design"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Force one block"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Use # of variables instead of model"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Introduce blocking"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Coded output"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Alpha type"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Run Order"
 msgstr ""
 
@@ -757,26 +709,6 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "High"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "x"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Factor name "
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Generator name"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Generator formula"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "<b>Build Design</b>"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
@@ -2313,4 +2245,129 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Stages"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Display design"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Export design:"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "<b>Sync Design: On</b>"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "<b>Sync Design: Off</b>"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design Type"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Central Composite Design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Box-Behnken Design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of continuous factors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of categorical factors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Maximum categorical levels"
+msgstr ""
+
+#, qt-format
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Level %1"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design Table"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Runs"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Blocks"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Total"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Cube"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Axial"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Alpha"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Centre points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "debug selected row"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "debug selected col"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Default"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Face centred"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Custom"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Center Points"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Cube block"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Axial block"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Show coded output"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Replicates"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Calculate desirability"
 msgstr ""

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2022-12-10 03:40\n"
+"POT-Creation-Date: 2022-12-17 03:40\n"
 "PO-Revision-Date: 2022-11-07 09:03+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -309,19 +309,66 @@ msgstr "期望设计"
 msgid "Missing Runs"
 msgstr "缺失的运行"
 
-msgid "Response Surface Methodology"
-msgstr "响应曲面法"
-
-msgid ""
-"No analyses (except those under 'Design Specification') can be started until "
-"at least one model term\n"
-"                      and one response variable are inputed."
+#, fuzzy
+msgid "The analysis failed with the following error message: %s"
 msgstr ""
-"在至少有一个模型项之前，不能开始任何分析（根据“设计规范”除外）\n"
-"                      已输入一项响应变量。"
+"检测图失效，错误信息如下：\n"
+"%s"
 
-msgid "<em>Warning: </em>"
-msgstr "<em>警告: </em>"
+#, fuzzy
+msgid "Design Summary"
+msgstr "模型摘要"
+
+#, fuzzy
+msgid "Variable"
+msgstr "方差"
+
+msgid "Continuous factors"
+msgstr ""
+
+msgid "Categorical factors"
+msgstr ""
+
+msgid "Base runs"
+msgstr ""
+
+#, fuzzy
+msgid "Base blocks"
+msgstr "区组"
+
+#, fuzzy
+msgid "Total runs"
+msgstr "总变异"
+
+msgid "Total blocks"
+msgstr ""
+
+#, fuzzy
+msgid "Centre points in cube"
+msgstr "中心点"
+
+#, fuzzy
+msgid "Centre points in axial"
+msgstr "中心点"
+
+msgid "Value"
+msgstr ""
+
+msgid "Box-BehnkenDesign are not supported for 8 variables."
+msgstr ""
+
+msgid "Please select a row in the design table."
+msgstr ""
+
+msgid "Click 'Display design' to show the design."
+msgstr ""
+
+#, fuzzy
+msgid "Response Surface Design - Central Composite Design"
+msgstr "中心复合设计"
+
+msgid "Response Surface Design - Box-Behnken design"
+msgstr ""
 
 msgid "Central Composite Design"
 msgstr "中心复合设计"
@@ -332,23 +379,13 @@ msgstr "运行序"
 msgid "Standard Order"
 msgstr "标准序"
 
-msgid "x"
-msgstr "x"
-
-msgid ""
-"Factor name '%s' is a number, and number factor names are not supported."
-msgstr "因子名称 '%s' 是一个数字，不支持数字因子名称。"
-
-msgid "factors"
-msgstr "因子"
-
-msgid "factorName"
-msgstr "因子名称"
-
 msgid ""
 "Generator name '%s' is a number, and number generator names are not "
 "supported."
 msgstr "生成元名称 '%s' 是一个数字，不支持数字生成元名称。"
+
+msgid "<em>Warning: </em>"
+msgstr "<em>警告: </em>"
 
 msgid "generators"
 msgstr "生成元"
@@ -369,9 +406,6 @@ msgstr "当 '指定 CCD 区组' 字段为空且勾选引入区组时，将不会
 
 msgid "Central Composite Design with Star Points"
 msgstr "中心复合设计带星号点"
-
-msgid "Factor name '%s' is a number, and number factor names are not supported"
-msgstr "因子名称 '%s' 是一个数字，不支持数字因子名称"
 
 msgid "The analysis will not run when the 'Number of Generators' > 0"
 msgstr "当 '生成元数' > 0时，将不会运行分析"
@@ -1313,6 +1347,34 @@ msgstr "副标题：%s"
 
 msgid "Name of chart: %s"
 msgstr "图形名称：%s"
+
+#~ msgid "Response Surface Methodology"
+#~ msgstr "响应曲面法"
+
+#~ msgid ""
+#~ "No analyses (except those under 'Design Specification') can be started "
+#~ "until at least one model term\n"
+#~ "                      and one response variable are inputed."
+#~ msgstr ""
+#~ "在至少有一个模型项之前，不能开始任何分析（根据“设计规范”除外）\n"
+#~ "                      已输入一项响应变量。"
+
+#~ msgid "x"
+#~ msgstr "x"
+
+#~ msgid ""
+#~ "Factor name '%s' is a number, and number factor names are not supported."
+#~ msgstr "因子名称 '%s' 是一个数字，不支持数字因子名称。"
+
+#~ msgid "factors"
+#~ msgstr "因子"
+
+#~ msgid "factorName"
+#~ msgstr "因子名称"
+
+#~ msgid ""
+#~ "Factor name '%s' is a number, and number factor names are not supported"
+#~ msgstr "因子名称 '%s' 是一个数字，不支持数字因子名称"
 
 #~ msgid "% Study Variation"
 #~ msgstr "% 研究变异"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2022-09-24 04:22\n"
+"POT-Creation-Date: 2022-12-17 03:40\n"
 "PO-Revision-Date: 2022-12-02 09:48+0000\n"
 "Last-Translator: Thomas Langkamp <thomas.lassdiesonnerein@gmx.de>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -312,20 +312,62 @@ msgstr "Gewünschtes Design"
 msgid "Missing Runs"
 msgstr "Fehlende Abläufe"
 
-msgid "Response Surface Methodology"
-msgstr "Wirkungsflächen-Methodik"
-
-msgid ""
-"No analyses (except those under 'Design Specification') can be started until "
-"at least one model term\n"
-"                      and one response variable are inputed."
+#, fuzzy
+msgid "The analysis failed with the following error message: %s"
 msgstr ""
-"Es können keine Analysen (außer denen unter 'Design-Spezifikation') "
-"gestartet werden, bis mindestens ein Modellterm\n"
-"                      und eine Antwortvariable eingegeben sind."
+"Modellanpassung ist mit folgender Fehlermeldung gescheitert:\n"
+"%s"
 
-msgid "<em>Warning: </em>"
-msgstr "<em>Warnung: </em>"
+#, fuzzy
+msgid "Design Summary"
+msgstr "Modellzusammenfassung"
+
+#, fuzzy
+msgid "Variable"
+msgstr "Varianz"
+
+msgid "Continuous factors"
+msgstr ""
+
+msgid "Categorical factors"
+msgstr ""
+
+msgid "Base runs"
+msgstr ""
+
+#, fuzzy
+msgid "Base blocks"
+msgstr "Blöcke"
+
+msgid "Total runs"
+msgstr ""
+
+msgid "Total blocks"
+msgstr ""
+
+msgid "Centre points in cube"
+msgstr ""
+
+msgid "Centre points in axial"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Box-BehnkenDesign are not supported for 8 variables."
+msgstr ""
+
+msgid "Please select a row in the design table."
+msgstr ""
+
+msgid "Click 'Display design' to show the design."
+msgstr ""
+
+msgid "Response Surface Design - Central Composite Design"
+msgstr ""
+
+msgid "Response Surface Design - Box-Behnken design"
+msgstr ""
 
 msgid "Central Composite Design"
 msgstr ""
@@ -336,25 +378,13 @@ msgstr "Ablaufreihenfolge"
 msgid "Standard Order"
 msgstr "Standard-Reihenfolge"
 
-msgid "x"
-msgstr "x"
-
-msgid ""
-"Factor name '%s' is a number, and number factor names are not supported."
-msgstr ""
-"Faktorname '%s' ist eine Zahl, und numerische Faktornamen sind nicht "
-"unterstützt."
-
-msgid "factors"
-msgstr "Faktoren"
-
-msgid "factorName"
-msgstr "Faktorname"
-
 msgid ""
 "Generator name '%s' is a number, and number generator names are not "
 "supported."
 msgstr ""
+
+msgid "<em>Warning: </em>"
+msgstr "<em>Warnung: </em>"
 
 msgid "generators"
 msgstr ""
@@ -374,11 +404,6 @@ msgstr ""
 
 msgid "Central Composite Design with Star Points"
 msgstr ""
-
-msgid "Factor name '%s' is a number, and number factor names are not supported"
-msgstr ""
-"Faktorname '%s' ist eine Zahl, und numerische Faktornamen sind nicht "
-"unterstützt"
 
 msgid "The analysis will not run when the 'Number of Generators' > 0"
 msgstr ""
@@ -1329,6 +1354,39 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "Response Surface Methodology"
+#~ msgstr "Wirkungsflächen-Methodik"
+
+#~ msgid ""
+#~ "No analyses (except those under 'Design Specification') can be started "
+#~ "until at least one model term\n"
+#~ "                      and one response variable are inputed."
+#~ msgstr ""
+#~ "Es können keine Analysen (außer denen unter 'Design-Spezifikation') "
+#~ "gestartet werden, bis mindestens ein Modellterm\n"
+#~ "                      und eine Antwortvariable eingegeben sind."
+
+#~ msgid "x"
+#~ msgstr "x"
+
+#~ msgid ""
+#~ "Factor name '%s' is a number, and number factor names are not supported."
+#~ msgstr ""
+#~ "Faktorname '%s' ist eine Zahl, und numerische Faktornamen sind nicht "
+#~ "unterstützt."
+
+#~ msgid "factors"
+#~ msgstr "Faktoren"
+
+#~ msgid "factorName"
+#~ msgstr "Faktorname"
+
+#~ msgid ""
+#~ "Factor name '%s' is a number, and number factor names are not supported"
+#~ msgstr ""
+#~ "Faktorname '%s' ist eine Zahl, und numerische Faktornamen sind nicht "
+#~ "unterstützt"
 
 #~ msgid "% Tolerance"
 #~ msgstr "% Toleranz"
