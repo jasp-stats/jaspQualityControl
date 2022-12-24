@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2022-12-17 03:40\n"
-"PO-Revision-Date: 2022-12-02 09:48+0000\n"
-"Last-Translator: Thomas Langkamp <thomas.lassdiesonnerein@gmx.de>\n"
+"PO-Revision-Date: 2022-12-25 17:49+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
 "Language: de\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15-dev\n"
+"X-Generator: Weblate 4.15.1-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr "Kumulative-Summe-Karte"
@@ -312,19 +312,14 @@ msgstr "Gewünschtes Design"
 msgid "Missing Runs"
 msgstr "Fehlende Abläufe"
 
-#, fuzzy
 msgid "The analysis failed with the following error message: %s"
-msgstr ""
-"Modellanpassung ist mit folgender Fehlermeldung gescheitert:\n"
-"%s"
+msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %s"
 
-#, fuzzy
 msgid "Design Summary"
-msgstr "Modellzusammenfassung"
+msgstr "Design-Zusammenfassung"
 
-#, fuzzy
 msgid "Variable"
-msgstr "Varianz"
+msgstr "Variable"
 
 msgid "Continuous factors"
 msgstr ""
