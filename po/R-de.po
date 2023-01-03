@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2022-12-17 03:40\n"
-"PO-Revision-Date: 2022-12-25 17:49+0000\n"
+"PO-Revision-Date: 2023-01-05 22:51+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -347,7 +347,7 @@ msgid "Centre points in axial"
 msgstr ""
 
 msgid "Value"
-msgstr ""
+msgstr "Wert"
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
 msgstr ""
@@ -569,14 +569,14 @@ msgid "Percent"
 msgstr "Prozent"
 
 msgid "Lower"
-msgstr "Untere"
+msgstr "Untergrenze"
 
 #, fuzzy
 msgid "Confidence interval of 95%%"
 msgstr "Konfidenzintervall von 95%"
 
 msgid "Upper"
-msgstr "Obere"
+msgstr "Obergrenze"
 
 msgid "Invalid Reference and/or Results were inserted."
 msgstr ""
