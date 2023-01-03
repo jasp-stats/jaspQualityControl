@@ -32,7 +32,7 @@ Form
         Group
         {
 
-            IntegerField { id: numberOfCategorical;		label: qsTr("Number of factors");	name: "numberOfCategorical";	min: 2;		defaultValue: 2;	max: 256
+            IntegerField { id: numberOfCategorical;		label: qsTr("Number of factors");	name: "numberOfCategorical";	min: 2;		defaultValue: 3;	max: 256
                 property int intValue: defaultValue
                 onValueChanged : { intValue = value !== "" ? value : 0 }
             }
@@ -126,7 +126,7 @@ Form
             property var designData: // it would be better to generate this...
             {
                 if (numberOfLevels.value > 2) {
-                    return["Full factorial", numberOfCategorical.value * numberOfLevels.value * factorialCornerReplicates.value, "Full"]
+                    return["Full factorial", "Unknown", "Full"]
                 } else {
                     const val = numberOfCategorical.intValue
                     if (val == 2) {
@@ -140,7 +140,7 @@ Form
                                 ];
                     } else if (val == 4) {
                         return	[
-                                    "1/2 fraction", "IV", 8,
+                                    "1/2 fraction", 8, "IV",
                                     "Full factorial", 16, "Full"
                                 ];
                     } else if (val == 5) {
@@ -369,7 +369,7 @@ Form
             {
                 enabled:					!factorialTypeSplit.checked & numberOfLevels.value == 2
                 name:						"factorialCenterPoints"
-                label:						qsTr("Center points per block")
+                label:						qsTr("Centre points (per block)")
                 defaultValue:				0
                 min:						0
                 max:						2**(numberOfCategorical.value - 1)

@@ -18,12 +18,16 @@
 #' @export
 doeFactorial <- function(jaspResults, dataset, options, ...) {
   ready <- options[["selectedRow"]] != -1L
+
   .doeFactorialDesignSummaryTable(jaspResults, options)
-  if (ready) {
+
+  if (ready && !jaspResults$getError()) {
     design <- .doeFactorialGenerateDesign(options)
     .doeFactorialGenerateDesignTable(jaspResults, options, design)
-    .doeFactorialShowAliasStructure(jaspResults, options, design)
-    .doeRsmExportDesign(options, jaspResults[["design"]]$object)
+
+    .doeFactorialAliasTable(jaspResults, options, design)
+
+    .doeRsmExportDesign(options, design[["display"]])
   }
 }
 
@@ -41,7 +45,9 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     "selectedDesign2",
     "factorialRepeats",
     "setSeed",
-    "seed"
+    "seed",
+    "runOrder",
+    "repeatRuns"
   ))
 }
 
@@ -57,6 +63,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     table$addColumnInfo(name = "baseBlocks", title = gettext("Base blocks"), type = "integer")
   }
   table$addColumnInfo(name = "replicates", title = gettext("Replicates"), type = "integer")
+  table$addColumnInfo(name = "random", title = gettext("Random runs"), type = "integer")
   table$addColumnInfo(name = "totalRuns", title = gettext("Total runs"), type = "integer")
   if (options[["categoricalNoLevels"]] == 2) {
     table$addColumnInfo(name = "totalBlocks", title = gettext("Total blocks"), type = "integer")
@@ -76,6 +83,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
       table[["baseBlocks"]] <- designSpec[["blocks"]]
     }
     table[["replicates"]] <- designSpec[["replicates"]]
+    table[["random"]] <- designSpec[["randomruns"]]
     table[["totalRuns"]] <- designSpec[["runs"]] * designSpec[["replicates"]] + designSpec[["randomruns"]]
     if (options[["categoricalNoLevels"]] == 2) {
       table[["totalBlocks"]] <- designSpec[["blocks"]] * designSpec[["replicates"]]
@@ -97,22 +105,72 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
 }
 
 .doeFactorialDefaultDesigns <- function(options, row) {
-  nvars <- options[["numberOfCategorical"]]
-  if (options[["categoricalNoLevels"]] > 2) {
-    designs <- data.frame(name = "Full factorial", runs = nvars * options[["categoricalNoLevels"]] * options[["factorialCornerReplicates"]], resolution = "Full")
+  nFactors <- options[["numberOfCategorical"]]
+  twoLevelDesign <- options[["categoricalNoLevels"]] == 2
+  if (!twoLevelDesign) {
+    designs <- data.frame(name = "Full factorial", runs = options[["categoricalNoLevels"]]^nFactors, resolution = "Full")
   } else {
-    if (nvars == 2) {
+    if (nFactors == 2) {
       designs <- data.frame(name = "Full factorial", runs = 4, resolution = "Full")
-    } else if (nvars == 3) {
+    } else if (nFactors == 3) {
       designs <- data.frame(
         name = c("1/2 fraction", "Full factorial"),
         runs = c(4, 8),
         resolution = c("III", "Full")
       )
+    } else if (nFactors == 4) {
+      designs <- data.frame(
+        name = c("1/2 fraction", "Full factorial"),
+        runs = c(8, 16),
+        resolution = c("IV", "Full")
+      )
+    } else if (nFactors == 5) {
+      designs <- data.frame(
+        name = c("1/4 fraction", "1/2 fraction", "Full factorial"),
+        runs = c(8, 16, 32),
+        resolution = c("III", "V", "Full")
+      )
+    } else if (nFactors == 6) {
+      designs <- data.frame(
+        name = c("1/8 fraction", "1/4 fraction", "1/2 fraction", "Full factorial"),
+        runs = c(8, 16, 32, 64),
+        resolution = c("III", "IV", "VI", "Full")
+      )
+    } else if (nFactors == 7) {
+      designs <- data.frame(
+        name = c("1/16 fraction", "1/8 fraction", "1/4 fraction", "1/2 fraction", "Full factorial"),
+        runs = c(8, 16, 32, 64, 128),
+        resolution = c("III", "IV", "IV", "VII", "Full")
+      )
+    } else if (nFactors == 8) {
+      designs <- data.frame(
+        name = c("no fraction", "no fraction", "no fraction", "no fraction"),
+        runs = c(16, 32, 64, 128),
+        resolution = c("IV", "IV", "V", "VIII")
+      )
+    } else if (nFactors == 9) {
+      designs <- data.frame(
+        name = c("no fraction", "no fraction", "no fraction", "no fraction"),
+        runs = c(16, 32, 64, 128),
+        resolution = c("III", "IV", "IV", "VI")
+      )
+    } else if (nFactors == 10 || nFactors == 11) {
+      designs <- data.frame(
+        name = c("no fraction", "no fraction", "no fraction", "no fraction"),
+        runs = c(16, 32, 64, 128),
+        resolution = c("III", "IV", "IV", "V")
+      )
+    } else if (nFactors >= 12) {
+      designs <- data.frame(
+        name = c("no fraction", "no fraction", "no fraction", "no fraction"),
+        runs = c(16, 32, 64, 128),
+        resolution = c("III", "IV", "IV", "IV")
+      )
     }
   }
   design <- designs[row, , drop = FALSE]
-  design[["factors"]] <- nvars
+  design[["type"]] <- if (twoLevelDesign) "twoLevel" else "full"
+  design[["factors"]] <- nFactors
   design[["replicates"]] <- options[["factorialCornerReplicates"]]
   design[["randomruns"]] <- options[["repeatRuns"]]
   if (options[["categoricalNoLevels"]] == 2) {
@@ -123,8 +181,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
 }
 
 .doeFactorialGenerateDesign <- function(options) {
+  df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
   designSpec <- .doeFactorialGetSelectedDesign(options)
-  if (options[["categoricalNoLevels"]] == 2) {
+  twoLevelDesign <- options[["categoricalNoLevels"]] == 2
+  seed <- if (options[["setSeed"]]) options[["seed"]] else NULL
+  if (twoLevelDesign) {
     if (options[["factorialType"]] == "factorialTypeDefault") {
       design <- FrF2::FrF2(
         nfactors = designSpec[["factors"]],
@@ -133,7 +194,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
         replications = designSpec[["replicates"]],
         repeat.only = options[["factorialRepeats"]],
         blocks = designSpec[["blocks"]],
-        seed = options[["seed"]]
+        seed = seed
       )
     } else if (options[["factorialType"]] == "factorialTypeSpecify") {
       whichHow <- strsplit(gsub(" ", "", strsplit(options[["factorialTypeSpecifyGenerators"]], ",")[[1]], fixed = TRUE), "=")
@@ -151,7 +212,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
         ncenter = designSpec[["centerpoints"]],
         replications = designSpec[["replicates"]],
         repeat.only = options[["factorialRepeats"]],
-        seed = options[["seed"]]
+        seed = seed
       )
     } else if (options[["factorialType"]] == "factorialTypeSplit") {
       design <- FrF2::FrF2(
@@ -160,151 +221,147 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
         hard = options[["numberHTCFactors"]],
         replications = designSpec[["replicates"]],
         repeat.only = options[["factorialRepeats"]],
-        seed = options[["seed"]]
+        seed = seed
       )
     }
   } else {
-    df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
+    nLevels <- apply(df, MARGIN = 1, FUN = function(x) length(which(x[-1] != ".")))
     design <- DoE.base::fac.design(
       nfactors = designSpec[["factors"]],
-      nlevels = apply(df, MARGIN = 1, FUN = function(x) length(which(!is.na(x[-1])))),
+      nlevels = nLevels,
       factor.names = df[["name"]],
       replications = designSpec[["replicates"]],
       repeat.only = options[["factorialRepeats"]],
-      seed = options[["seed"]]
+      seed = seed
     )
   }
-  return(design)
+  result <- list()
+  result[["type"]] <- if (twoLevelDesign) "twoLevel" else "full"
+  result[["design"]] <- design
+  if (twoLevelDesign) {
+    aliases <- FrF2::aliasprint(design)
+    result[["aliases"]] <- data.frame(Aliases = c(aliases[["main"]], aliases[["fi2"]]))
+  }
+  display <- cbind(ro = 1:nrow(design), sro = DoE.base::run.order(design)[, 1], as.data.frame(design))
+  colnames(display) <- c("ro", "sro", df[["name"]])
+  if (twoLevelDesign) {
+    display <- display[, !names(display) %in% "Blocks"]
+    display <- .doeFactorialAddCenterPoints(options, display)
+  }
+  display <- .doeFactorialAddRepeatRuns(options, display)
+  display <- .doeFactorialCodeDesign(options, display)
+  display <- .doeFactorialSetRunOrder(options, display, as.data.frame(design))
+  result[["display"]] <- display
+  return(result)
+}
+
+.doeFactorialAddCenterPoints <- function(options, display) {
+  indices <- (1 + 2):ncol(display)
+  if (options[["factorialCenterPoints"]] > 0) {
+    display[, indices] <- sapply(display[, indices], as.numeric)
+  } else {
+    display[, indices] <- sapply(display[, indices], as.numeric) * 2 - 3
+  }
+  return(display)
+}
+
+.doeFactorialAddRepeatRuns <- function(options, display) {
+  if (options[["repeatRuns"]] > 0) {
+    replace <- options[["repeatRuns"]] > nrow(display)
+    rep_rows <- sample(seq_len(nrow(display)), options[["repeatRuns"]], replace)
+    for (i in rep_rows) {
+      display <- rbind(display[1:i, ], display[i, ], display[-(1:i), ])
+    }
+    display[["ro"]] <- seq_len(nrow(display))
+  }
+  return(display)
+}
+
+.doeFactorialCodeDesign <- function(options, display) {
+  df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
+  twoLevelDesign <- options[["categoricalNoLevels"]] == 2
+  if (!options[["codedOutput"]]) {
+    if (twoLevelDesign) {
+      for (i in 1:options[["numberOfCategorical"]]) {
+        if (df[i, 2] == "1") {
+          display[, i + 2][display[, i + 2] == -1] <- "1.0"
+        } else {
+          display[, i + 2][display[, i + 2] == -1] <- df[i, 2]
+        }
+        if (options[["factorialCenterPoints"]] >= 1) {
+          if (!is.na(as.numeric(df[i, 2]) + as.numeric(df[i, 3]))) {
+            display[, i + 2][display[, i + 2] == 0] <- (as.numeric(df[i, 2]) + as.numeric(df[i, 3])) / 2
+          } else {
+            display[, i + 2][display[, i + 2] == 0] <- "center"
+          }
+        }
+        display[, i + 2][display[, i + 2] == 1] <- df[i, 3]
+      }
+    } else {
+      display <- as.data.frame(apply(display, 2, as.numeric))
+      for (i in 1:options[["numberOfCategorical"]]) {
+        column <- display[, 2 + i]
+        for (j in 1:options[["categoricalNoLevels"]]) {
+          column[which(column == j)] <- df[i, 1 + j]
+        }
+        display[, 2 + i] <- column
+      }
+    }
+  }
+  return(display)
+}
+
+.doeFactorialSetRunOrder <- function(options, display, design) {
+  twoLevelDesign <- options[["categoricalNoLevels"]] == 2
+  if (options[["runOrder"]] == "runOrderStandard") {
+    if (twoLevelDesign) {
+      if (options[["factorialBlocks"]] > 1) {
+        hmm <- DoE.base::run.order(design)
+        hmmRunDF <- as.data.frame(strsplit(as.character(hmm[, 1]), ".", fixed = TRUE))
+        k <- 0
+        actualOrder <- numeric(0)
+        for (i in 1:options[["factorialBlocks"]]) {
+          actualOrder <- append(x = actualOrder, values = (order(as.numeric(hmmRunDF[, hmmRunDF[2, ] == i][1, ])) + k))
+          k <- k + length(hmmRunDF[, hmmRunDF[2, ] == i][1, ])
+        }
+        display <- display[actualOrder, ]
+      } else {
+        display <- display[order(display[["sro"]]), ]
+      }
+    }
+  } else {
+    display <- display[order(display[["ro"]]), ]
+  }
+  return(display)
 }
 
 .doeFactorialGenerateDesignTable <- function(jaspResults, options, design) {
   if (!is.null(jaspResults[["displayDesign"]]) || !options[["displayDesign"]]) {
     return()
   }
-
   df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
-  factorNames <- df[["name"]]
-
   table <- createJaspTable(title = gettext("Factorial Design"), position = 3L)
   table$addColumnInfo(name = "ro", title = gettext("Run Order"), type = "string")
   table$addColumnInfo(name = "sro", title = if (options[["factorialBlocks"]] == 1) "Standard Order" else "standard.block.perblock", type = "integer")
   for (i in 1:options[["numberOfCategorical"]]) {
     table$addColumnInfo(name = df[["name"]][i], title = df[["name"]][i], type = "string")
   }
+  table$dependOn(options = c("displayDesign", "codedOutput", .doeFactorialDependencies()))
   if (options[["factorialType"]] == "factorialTypeSplit") {
-    table$addFootnote(paste("Hard-to-change factors: ", paste(factorNames[1:options[["numberHTCFactors"]]], collapse = ", "), sep = ""))
+    table$addFootnote(paste("Hard-to-change factors: ", paste(df[["name"]][1:options[["numberHTCFactors"]]], collapse = ", "), sep = ""))
   }
-  table$dependOn(options = c("displayDesign", "codedOutput", "runOrder", "repeatRuns", .doeFactorialDependencies()))
   jaspResults[["displayDesign"]] <- table
-
-  twoLevelDesign <- options[["categoricalNoLevels"]] == 2
-  rows <- cbind(ro = 1:nrow(design), sro = DoE.base::run.order(design)[, 1], as.data.frame(design))
-  if (twoLevelDesign) {
-    rows <- rows[, !names(rows) %in% "Blocks"]
-    rows <- .doeFactorialAddCenterPoints(options, rows)
-    rows <- .doeFactorialCodeDesign(options, rows, df, twoLevelDesign)
-    rows <- .doeFactorialAddRepeatRuns(options, rows)
-    rows <- .doeFactorialMakeRunOrder(options, rows, as.data.frame(design))
-  } else {
-    rows <- .doeFactorialCodeDesign(options, rows, df, twoLevelDesign)
-    if (options[["runOrder"]] == "runOrderStandard") {
-      rows <- rows[order(rows[["sro"]]), ]
-    } else {
-      rows <- rows[order(rows[["ro"]]), ]
-    }
-  }
-  colnames(rows)[-(1:2)] <- factorNames
-
-  jaspResults[["design"]] <- createJaspState(rows)
-  table$setData(rows)
+  table$setData(design[["display"]])
 }
 
-.doeFactorialShowAliasStructure <- function(jaspResults, options, design) {
+.doeFactorialAliasTable <- function(jaspResults, options, design) {
   if (!is.null(jaspResults[["showAliasStructure"]]) || !options[["showAliasStructure"]]) {
     return()
   }
   table <- createJaspTable(title = gettext("Alias Structure"), position = 4L)
   table$dependOn(options = c("showAliasStructure", .doeFactorialDependencies()))
   jaspResults[["showAliasStructure"]] <- table
-  aliases <- FrF2::aliasprint(design)
-  rows <- data.frame(Aliases = c(aliases[["main"]], aliases[["fi2"]]))
-  table$setData(rows)
-}
-
-.doeFactorialAddCenterPoints <- function(options, rows) {
-  if (options[["factorialCenterPoints"]] >= 1) {
-    rows[, (1 + 2):ncol(rows)] <- sapply(rows[, (1 + 2):ncol(rows)], as.numeric)
-  } else {
-    rows[, (1 + 2):ncol(rows)] <- sapply(rows[, (1 + 2):ncol(rows)], as.numeric) * 2 - 3
-  }
-  return(rows)
-}
-
-.doeFactorialCodeDesign <- function(options, rows, df, twoLevelDesign) {
-  if (!options[["codedOutput"]]) {
-    if (twoLevelDesign) {
-      factorLows <- df[, 2]
-      factorHighs <- df[, 3]
-      for (i in 1:options[["numberOfCategorical"]]) {
-        if (any(factorLows[i] == "1")) {
-          rows[, i + 2][rows[, i + 2] == -1] <- "1.0"
-        } else {
-          rows[, i + 2][rows[, i + 2] == -1] <- factorLows[i]
-        }
-        if (options[["factorialCenterPoints"]] >= 1) {
-          if (!is.na(as.numeric(factorLows[i]) + as.numeric(factorHighs[i]))) {
-            rows[, i + 2][rows[, i + 2] == 0] <- (as.numeric(factorLows[i]) + as.numeric(factorHighs[i])) / 2
-          } else {
-            rows[, i + 2][rows[, i + 2] == 0] <- "center"
-          }
-        }
-        rows[, i + 2][rows[, i + 2] == 1] <- factorHighs[i]
-      }
-    } else {
-      rows <- as.data.frame(apply(rows, 2, as.numeric))
-      for (i in 1:options[["numberOfCategorical"]]) {
-        column <- rows[, 2 + i]
-        for (j in 1:options[["categoricalNoLevels"]]) {
-          column[which(column == j)] <- df[i, 1 + j]
-        }
-        rows[, 2 + i] <- column
-      }
-    }
-  }
-  return(rows)
-}
-
-.doeFactorialAddRepeatRuns <- function(options, rows) {
-  if (options[["repeatRuns"]] > 0) {
-    replace <- options[["repeatRuns"]] > nrow(rows)
-    repeat_rows <- sample(x = 1:nrow(rows), size = options[["repeatRuns"]], replace = replace)
-    for (i in repeat_rows) {
-      rows <- rbind(rows[1:i, ], rows[i, ], rows[-(1:i), ])
-    }
-    rows[, 1] <- 1:nrow(rows)
-  }
-  return(rows)
-}
-
-.doeFactorialMakeRunOrder <- function(options, rows, design) {
-  if (options[["runOrder"]] == "runOrderRandom") {
-    rows <- rows[order(rows$ro), ]
-  } else {
-    if (options[["factorialBlocks"]] > 1) {
-      hmm <- DoE.base::run.order(design)
-      hmmRunDF <- as.data.frame(strsplit(as.character(hmm[, 1]), ".", fixed = T))
-      k <- 0
-      actualOrder <- numeric(0)
-      for (i in 1:options[["factorialBlocks"]]) {
-        actualOrder <- append(x = actualOrder, values = (order(as.numeric(hmmRunDF[, hmmRunDF[2, ] == i][1, ])) + k))
-        k <- k + length(hmmRunDF[, hmmRunDF[2, ] == i][1, ])
-      }
-      rows <- rows[actualOrder, ]
-    } else {
-      rows <- rows[order(rows$sro), ]
-    }
-  }
-  return(rows)
+  table$setData(design[["aliases"]])
 }
 
 ## NOT USED ###
