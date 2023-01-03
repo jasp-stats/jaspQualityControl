@@ -23,267 +23,380 @@ import "./common"	as Common
 
 Form
 {
-	columns:									1
+    columns:									1
 
-	Group
-	{
-		columns: 2
-		width: parent.Width
+    Group
+    {
+        columns: 2
 
-		Group
-		{
+        Group
+        {
 
-		IntegerField { id: numberOfCategorical;		label: qsTr("Number of factors");	name: "numberOfCategorical";	min: 2;		defaultValue: 2;	max: 256
-			property int intValue: defaultValue
-			onValueChanged : { intValue = value !== "" ? value : 0 }
-		}
-		IntegerField { id: numberOfLevels;			label: qsTr("Maximum levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 16
-			property int intValue: defaultValue
-			onValueChanged : { intValue = value !== "" ? value : 0 }
-		}
+            IntegerField { id: numberOfCategorical;		label: qsTr("Number of factors");	name: "numberOfCategorical";	min: 2;		defaultValue: 2;	max: 256
+                property int intValue: defaultValue
+                onValueChanged : { intValue = value !== "" ? value : 0 }
+            }
+            IntegerField { id: numberOfLevels;			label: qsTr("Maximum levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 16
+                property int intValue: defaultValue
+                onValueChanged : { intValue = value !== "" ? value : 0 }
+            }
+        }
 
-					RadioButtonGroup
-				{
-					name:						"designBy"
-					enabled:						factorialTypeDefault.checked | factorialTypeSpecify.checked | factorialTypeSplit.checked
+        RadioButtonGroup
+        {
+            name: 								"factorialType"
+            enabled:							numberOfLevels.value == 2
 
-					RadioButton
-					{
-						name:					"designByRuns"
-						label: 					qsTr("Number of runs")
-						childrenOnSameRow:		true
-						checked:				true
+            RadioButton
+            {
+                id:								factorialTypeDefault
+                name:							"factorialTypeDefault"
+                label:							qsTr("2-level factorial (default generator)")
+                checked:						true
+            }
 
-						DropDown
-						{
-							id:					factorialRuns
-							name: 				"factorialRuns"
-							indexDefaultValue: 	0
-							values:
-							[
-								{ value: 2**(1+Math.floor(Math.log2(numberOfCategorical.value))), label: Number(2**(1+Math.floor(Math.log2(numberOfCategorical.value))))},
-								{ value: 2**(2+Math.floor(Math.log2(numberOfCategorical.value))), label: Number(2**(2+Math.floor(Math.log2(numberOfCategorical.value))))},
-								{ value: 2**(3+Math.floor(Math.log2(numberOfCategorical.value))), label: Number(2**(3+Math.floor(Math.log2(numberOfCategorical.value))))},
-								{ value: 2**(4+Math.floor(Math.log2(numberOfCategorical.value))), label: Number(2**(4+Math.floor(Math.log2(numberOfCategorical.value))))},
-								{ value: 2**(5+Math.floor(Math.log2(numberOfCategorical.value))), label: Number(2**(5+Math.floor(Math.log2(numberOfCategorical.value))))},
-							]
-						}
-					}
+            RadioButton
+            {
+                id:								factorialTypeSpecify
+                name:							"factorialTypeSpecify"
+                label:							qsTr("2-level factorial (specify generator)")
 
-					RadioButton
-					{
-						id:						designByResolution
-						name:					"designByResolution"
-						enabled:				factorialTypeDefault.checked | factorialTypeSplit.checked
-						label: 					qsTr("Resolution")
-						childrenOnSameRow:		true
+                TextArea
+                {
+                    name:						"factorialTypeSpecifyGenerators"
+                    height:						100 * preferencesModel.uiScale
+                    width:						250 * preferencesModel.uiScale
+                    visible:					factorialTypeSpecify.checked
+                    title:						qsTr("Design generator")
+                    textType:					JASP.TextTypeSource
+                }
+            }
 
-						DropDown
-						{
-							name: 				"factorialResolution"
-							indexDefaultValue: 	1
-							values:
-							[
-								{ value: "Full",label: qsTr("Full")},
-								{ value: "III", label: qsTr("III") 	},
-								{ value: "IV", 	label: qsTr("IV") 	},
-								{ value: "V", 	label: qsTr("V") 	},
-								{ value: "VI", 	label: qsTr("VI")	},
-								{ value: "VII", label: qsTr("VII")	},
-								{ value: "VIII",label: qsTr("VIII")}
-							]
-						}
-					}
+            RadioButton
+            {
+                id:								factorialTypeSplit
+                visible:						numberOfCategorical.value > 3 | factorialRuns.currentIndex > 0
+                name:							"factorialTypeSplit"
+                label:							qsTr("2-level split-plot (hard-to-change factors)")
 
-					RadioButton
-					{
-						name:					"designByFraction"
-						label:					qsTr("Fraction")
-						childrenOnSameRow:		true
+                IntegerField
+                {
+                    name:						"numberHTCFactors"
+                    label:						qsTr("Number of hard-to-change factors")
+                    visible:					factorialTypeSplit.checked
+                    defaultValue:				1
+                    min:						1
+                    max:						numberOfCategorical.value-1
+                }
+            }
+        }
+    }
 
-						DropDown
-						{
-							name:				"factorialFraction"
-							indexDefaultValue:	0
-							values:
-							[
-								{ value: "0.5", label: qsTr("1/2")},
-								{ value: numberOfCategorical.value > 4 ? "0.25" : "0.5", label: numberOfCategorical.value > 4 ? qsTr("1/4") : qsTr("1/2")},
-								{ value: numberOfCategorical.value > 5 ? "0.125" : numberOfCategorical.value > 4 ? "0.25" : "0.5", label: numberOfCategorical.value > 5 ? qsTr("1/8") : numberOfCategorical.value > 4 ? qsTr("1/4") : qsTr("1/2")}
-							]
-						}
-					}
-				}
-	}
+    TableView
+    {
+        id: categoricalVariables
 
+        implicitWidth		: form.implicitWidth
+        implicitHeight		: 140 * preferencesModel.uiScale // about 3 rows
 
-			Group
-			{
-				IntegerField
-				{
-					enabled:					!factorialTypeSplit.checked
-					name:						"factorialCenterPoints"
-					label:						qsTr("Number of center points per block")
-					defaultValue:				0
-					min:						0
-					max:						2**(numberOfCategorical.value - 1)
-				}
+        modelType			: JASP.Simple
 
-				IntegerField
-				{
-					id:							factorialCornerReplicates
-					name:						"factorialCornerReplicates"
-					label:						qsTr("Number of replications")
-					defaultValue:				1
-					min:						1
-					max:						8
-				}
+        isFirstColEditable	: true
 
-				CheckBox
-				{
-					visible:					factorialCornerReplicates.value > 1
-					name:						"factorialRepeats"
-					label:						"Repeats only"
-				}
+        initialRowCount		: numberOfCategorical.intValue
+        initialColumnCount	: 1 + parseInt(numberOfLevels.value)
 
-				IntegerField
-				{
-					name:						"factorialBlocks"
-					enabled:					!factorialTypeSplit.checked & !designByResolution.checked & !factorialTypeSpecify.checked
-					label:						qsTr("Number of blocks")
-					defaultValue:				1
-					min:						1
-					max:						2**factorialRuns.currentIndex
-				}
+        rowCount			: numberOfCategorical.intValue
+        columnCount			: 1 + parseInt(numberOfLevels.value)
+        name				: "categoricalVariables"
+        cornerText			: qsTr("Factor")
+        itemType			: JASP.String
 
-				IntegerField
-				{
-					name:						"repeatRuns"
-					label:						qsTr("Number of random runs to repeat")
-					defaultValue:				0
-					min:						0
-					max:						10
-				}
-			}
-		}
+        function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }
+        function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex); }
+        function getDefaultValue(columnIndex, rowIndex)				{ return String.fromCharCode(columnIndex === 0 ? 65 + rowIndex : 97 + columnIndex - 1); }
+    }
 
-		TableView
-		{
-			id: categoricalVariables
+    Group
+    {
+        Label	{ text : qsTr("Design Table")	}
+        TableView
+        {
+            property int designDataColumns : 3
+            property var designData: // it would be better to generate this...
+            {
+                if (numberOfLevels.value > 2) {
+                    return["Full factorial", numberOfCategorical.value * numberOfLevels.value * factorialCornerReplicates.value, "Full"]
+                } else {
+                    const val = numberOfCategorical.intValue
+                    if (val == 2) {
+                        return	[
+                                    "Full factorial", 4, "Full"
+                                ];
+                    } else if (val == 3) {
+                        return	[
+                                    "1/2 fraction", 4, "III",
+                                    "Full factorial", 8, "Full"
+                                ];
+                    } else if (val == 4) {
+                        return	[
+                                    "1/2 fraction", "IV", 8,
+                                    "Full factorial", 16, "Full"
+                                ];
+                    } else if (val == 5) {
+                        return	[
+                                    "1/4 fraction", 8, "III",
+                                    "1/2 fraction", 16, "V",
+                                    "Full factorial", 32, "Full",
+                                ];
+                    } else if (val == 6) {
+                        return	[
+                                    "1/8 fraction", 8, "III",
+                                    "1/4 fraction", 16, "IV",
+                                    "1/2 fraction", 32, "VI",
+                                    "Full factorial", 64, "Full",
+                                ];
+                    } else if (val == 7) {
+                        return	[
+                                    "1/16 fraction", 8, "III",
+                                    "1/8 fraction", 16, "IV",
+                                    "1/4 fraction", 32, "IV",
+                                    "1/2 fraction", 64, "VII",
+                                    "Full factorial", 128, "Full",
+                                ];
+                    } else if (val == 8) {
+                        return	[
+                                    "no fraction", 16, "IV",
+                                    "no fraction", 32, "IV",
+                                    "no fraction", 64, "V",
+                                    "no fraction", 128, "VIII"
+                                ];
+                    } else if (val == 9) {
+                        return	[
+                                    "no fraction", 16, "III",
+                                    "no fraction", 32, "IV",
+                                    "no fraction", 64, "IV",
+                                    "no fractiopn", 128, "VI"
+                                ];
+                    } else if (val == 10 || val == 11) {
+                        return	[
+                                    "no fraction", 16, "III",
+                                    "no fraction", 32, "IV",
+                                    "no fraction", 64, "IV",
+                                    "no fraction", 128, "V",
+                                ];
+                    } else if (val >= 12) {
+                        return	[
+                                    "no fraction", 16, "III",
+                                    "no fraction", 32, "IV",
+                                    "no fraction", 64, "IV",
+                                    "no fraction", 128,  "IV",
+                                ];
+                    }
+                }
+            }
 
-			implicitWidth		: form.implicitWidth
-			implicitHeight		: 140 * preferencesModel.uiScale // about 3 rows
+            id					: selectedDesign2
+            implicitWidth		: form.implicitWidth
+            implicitHeight		: 150 * preferencesModel.uiScale
 
-			modelType			: JASP.Simple
+            modelType			: JASP.Simple
+            name				: "selectedDesign2"
 
-			isFirstColEditable	: true
+            columnNames			: [qsTr("Runs"), qsTr("Resolution")]
+            cornerText			: qsTr("Design")
+            initialColumnCount	: designDataColumns - 1// -1 because the first "column" is not a column but the row header
+            columnCount			: designDataColumns - 1
 
-			initialRowCount		: numberOfCategorical.intValue
-			initialColumnCount	: 1 + parseInt(numberOfLevels.value)
+            itemType			: JASP.Double
+            rowCount			: designData.length / designDataColumns// numberOfContinuous.intValue
+            initialRowCount		: designData.length / designDataColumns// numberOfContinuous.intValue
 
-			rowCount			: numberOfCategorical.intValue
-			columnCount			: 1 + parseInt(numberOfLevels.value)
-			name				: "categoricalVariables"
-			cornerText			: qsTr("Factor")
-			itemType			: JASP.String
+            itemDelegate: Item
+            {
 
-			function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }
-			function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex); }
-			function getDefaultValue(columnIndex, rowIndex)				{ return String.fromCharCode(columnIndex === 0 ? 65 + rowIndex : 97 + columnIndex - 1); }
-		}
+                Rectangle
+                {
 
-	Group
-	{
-		columns: 2
+                    id: backgroundRect
+                    color: rowIndex === tableView.rowSelected ? jaspTheme.grayLighter : jaspTheme.white
+                    anchors
+                    {
+                        fill:			parent
+                        topMargin:		-selectedDesign2.view.itemVerticalPadding
+                        bottomMargin:	-selectedDesign2.view.itemVerticalPadding
+                    }
 
-		RadioButtonGroup
-		{
-			name:								"runOrder"
-			title:								qsTr("Run Order")
+                    MouseArea
+                    {
+                        anchors.fill: parent
+                        onClicked:
+                        {
+                            tableView.colSelected = columnIndex
+                            tableView.rowSelected = rowIndex
+                        }
+                    }
+                }
 
-			RadioButton
-			{
-				SetSeed{}
-				name:							"runOrderRandom"
-				label:							qsTr("Random")
-				checked:						true
-			}
+                Label
+                {
+                    text						: tableView.getDefaultValue(columnIndex, rowIndex)
+                    anchors.verticalCenter		: parent.verticalCenter
+                    anchors.horizontalCenter	: parent.horizontalCenter
+                    onTextChanged:
+                    {
+                        selectedDesign2.itemChanged(columnIndex, rowIndex, value, inputType)
+                    }
+                }
+            }
 
-			RadioButton
-			{
-				name:							"runOrderStandard"
-				label:							qsTr("Standard")
-			}
-		}
+            rowNumberDelegate: Rectangle
+            {
+                // identical to default but with changed colors
+                color: rowIndex === tableView.rowSelected ? jaspTheme.grayLighter : jaspTheme.white// : jaspTheme.analysisBackgroundColor
+                Text
+                {
+                    text:					tableView.getRowHeaderText(headerText, rowIndex);
+                    color:					jaspTheme.textEnabled
+                    anchors.centerIn:		parent;
+                    horizontalAlignment:	Text.AlignHCenter
+                    verticalAlignment:		Text.AlignVCenter
+                    leftPadding:			3 * preferencesModel.uiScale
+                    elide:					Text.ElideRight;
+                    width:					parent.width
+                    height:					parent.width
+                    font:					jaspTheme.font
+                }
 
-		RadioButtonGroup
-		{
-			name: 								"factorialType"
-			title:								qsTr("Type of Factorial Design")
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onClicked:
+                    {
+                        if (tableView.rowSelected === rowIndex)
+                            rowIndex = -1
+                        tableView.rowSelected = rowIndex;
+                    }
+                }
+            }
 
-			RadioButton
-			{
-				id:								factorialTypeDefault
-				name:							"factorialTypeDefault"
-				label:							qsTr("2-level factorial (default generator)")
-				checked:						true
-			}
+            columnHeaderDelegate : Rectangle
+            {
+                // identical to the default definition in TableView, but this does not change color when the column is selected
+                color: jaspTheme.analysisBackgroundColor
+                Text { text: tableView.getColHeaderText(headerText, columnIndex); anchors.centerIn: parent; font: jaspTheme.font; color:	jaspTheme.textEnabled }
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onClicked:
+                    {
+                        if (tableView.colSelected === columnIndex)
+                            columnIndex = -1
+                        tableView.colSelected = columnIndex;
+                    }
+                }
+            }
 
-			RadioButton
-			{
-				id:								factorialTypeSpecify
-				name:							"factorialTypeSpecify"
-				label:							qsTr("2-level factorial (specify generator)")
+            function getRowHeaderText(headerText, rowIndex) { return designData !== undefined ? designData[					    selectedDesign2.designDataColumns * rowIndex] : ""; }
+            function getDefaultValue(columnIndex, rowIndex) { return designData !== undefined ? designData[columnIndex + 1 +	selectedDesign2.designDataColumns * rowIndex] : ""; }
 
-				TextArea
-				{
-					name:						"factorialTypeSpecifyGenerators"
-					height:						100 * preferencesModel.uiScale
-					width:						250 * preferencesModel.uiScale
-					visible:					factorialTypeSpecify.checked
-					title:						qsTr("Design generator")
-					textType:					JASP.TextTypeSource
-				}
-			}
+        }
 
-			RadioButton
-			{
-				id:								factorialTypeSplit
-				visible:						numberOfCategorical.value > 3 | factorialRuns.currentIndex > 0
-				name:							"factorialTypeSplit"
-				label:							qsTr("2-level split-plot (hard-to-change factors)")
+        IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); defaultValue: selectedDesign2.rowSelected; negativeValues: true; visible: false }
+        IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); defaultValue: selectedDesign2.colSelected; negativeValues: true; visible: false }
 
-				IntegerField
-				{
-					name:						"numberHTCFactors"
-					label:						qsTr("Number of hard-to-change factors")
-					visible:					factorialTypeSplit.checked
-					defaultValue:				1
-					min:						1
-					max:						numberOfCategorical.value-1
-				}
-			}
-		}
-	}
+    }
 
-	Group
-	{
-		CheckBox
-		{
-			name:								"showAvailableDesigns"
-			label:								qsTr("Show available designs")
-			checked:							true
-		}
+    Group
+    {
+        columns: 2
 
-		CheckBox
-		{
-			name:								"showAliasStructure"
-			label:								qsTr("Show alias structure")
-			enabled:							displayDesign.checked & factorialTypeDefault.checked
-		}
-		
-		CheckBox		{ name: "codedOutput";	label: qsTr("Show coded output")										}
+        Group
+        {
 
-		Common.ShowAndExportDesign {}
-	}
+            RadioButtonGroup
+            {
+                name:								"runOrder"
+                title:								qsTr("Run Order")
+
+                RadioButton
+                {
+                    SetSeed{}
+                    name:							"runOrderRandom"
+                    label:							qsTr("Random")
+                    checked:						true
+                }
+
+                RadioButton
+                {
+                    name:							"runOrderStandard"
+                    label:							qsTr("Standard")
+                }
+            }
+
+            IntegerField
+            {
+                id:							factorialCornerReplicates
+                name:						"factorialCornerReplicates"
+                label:						qsTr("Replicates")
+                defaultValue:				1
+                min:						1
+                max:						8
+            }
+
+            CheckBox
+            {
+                enabled:					factorialCornerReplicates.value > 1
+                name:						"factorialRepeats"
+                label:						"Repeats only"
+                Layout.leftMargin:			10 * preferencesModel.uiScale
+            }
+        }
+
+        Group
+        {
+            IntegerField
+            {
+                name:						"factorialBlocks"
+                enabled:					!factorialTypeSplit.checked & !factorialTypeSpecify.checked & numberOfLevels.value == 2
+                label:						qsTr("Blocks")
+                defaultValue:				1
+                min:						1
+                max:						2**factorialRuns.currentIndex
+            }
+
+            IntegerField
+            {
+                enabled:					!factorialTypeSplit.checked & numberOfLevels.value == 2
+                name:						"factorialCenterPoints"
+                label:						qsTr("Center points per block")
+                defaultValue:				0
+                min:						0
+                max:						2**(numberOfCategorical.value - 1)
+            }
+
+            IntegerField
+            {
+                name:						"repeatRuns"
+                label:						qsTr("Random runs to repeat")
+                defaultValue:				0
+                min:						0
+                max:						10
+            }
+        }
+    }
+
+    Group
+    {
+        CheckBox
+        {
+            name:								"showAliasStructure"
+            label:								qsTr("Show alias structure")
+            enabled:							factorialTypeDefault.checked & numberOfLevels.value == 2
+        }
+
+        CheckBox{ name: "codedOutput";	label: qsTr("Show coded output")}
+
+        Common.ShowAndExportDesign {}
+    }
 }
