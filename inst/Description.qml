@@ -93,14 +93,8 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Two-level Factorial Design")
+		title:			qsTr("Factorial Design")
 		func:			"doeFactorial"
-		requiresData:	false
-	}
-	Analysis
-	{
-		title:			qsTr("General Linear Model")
-		func:			"doeFull"
 		requiresData:	false
 	}
 	Analysis
@@ -111,8 +105,9 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Define Custom Design")
-		func:			"doeModifyDesign"
+		title:			qsTr("Analyze Design")
+		func:			"doeAnalysis"
+		requiresData:	false
 	}
 
 	GroupTitle

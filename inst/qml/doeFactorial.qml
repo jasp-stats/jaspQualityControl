@@ -19,220 +19,33 @@ import JASP.Controls							1.0
 import JASP.Widgets								1.0
 import JASP										1.0
 
+import "./common"	as Common
+
 Form
 {
 	columns:									1
 
-	GroupBox
+	Group
 	{
-		title: 									qsTr("Design Space")
-		name:									"designInfo"
+		columns: 2
+		width: parent.Width
 
-		IntegerField
+		Group
 		{
-			id:									numberOfFactors
-			name:								"numberOfFactors"
-			label:								qsTr("Number of factors")
-			defaultValue:						3
-			min:								2
-			max:								256
+
+		IntegerField { id: numberOfCategorical;		label: qsTr("Number of factors");	name: "numberOfCategorical";	min: 2;		defaultValue: 2;	max: 256
+			property int intValue: defaultValue
+			onValueChanged : { intValue = value !== "" ? value : 0 }
+		}
+		IntegerField { id: numberOfLevels;			label: qsTr("Maximum levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 16
+			property int intValue: defaultValue
+			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
 
-		IntegerField
-		{
-			visible:							false
-			id:									numberOfFactorsForTable
-			name:								"numberOfFactorsForTable"
-			defaultValue:						numberOfFactors.value
-		}
-	}
-
-	RadioButtonGroup
-	{
-		title:									qsTr("Unit Display")
-		name:									"dataCoding"
-
-		RadioButton
-		{
-			name:								"dataCoded"
-			label:								qsTr("Coded")
-			checked:							true
-		}
-
-		RadioButton
-		{
-			name:								"dataUncoded"
-			label:								qsTr("Uncoded")
-		}
-	}
-
-	RadioButtonGroup
-	{
-		name:									"runOrder"
-		title:									qsTr("Run Order")
-		enabled:								!factorialTypeSplit.checked
-
-		RadioButton
-		{
-			name:								"runOrderStandard"
-			label:								qsTr("Standard")
-		}
-
-		RadioButton
-		{
-			name:								"runOrderRandom"
-			label:								qsTr("Random")
-			checked:							true
-			SetSeed								{ }
-		}
-	}
-
-	ColumnLayout
-	{
-		spacing:								0
-		Layout.preferredWidth:					parent.width
-		Layout.columnSpan:						1
-
-		RowLayout
-		{
-			Label { text: qsTr("Factor");		Layout.leftMargin: 5 * preferencesModel.uiScale; Layout.preferredWidth: 42 * preferencesModel.uiScale}
-			Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale}
-			Label { text: qsTr("Level 1");		Layout.preferredWidth: 100 * preferencesModel.uiScale}
-			Label { text: qsTr("Level 2");		Layout.preferredWidth: 100 * preferencesModel.uiScale}
-		}
-
-		ComponentsList
-		{
-			name:								"factors"
-			addItemManually:                    false
-			values:                             numberOfFactorsForTable.value
-
-			rowComponent: 						RowLayout
-			{
-				Row
-				{
-					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		40 * preferencesModel.uiScale
-					Label
-					{
-						text: 					rowIndex + 1
-					}
-				}
-
-				Row
-				{
-					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		100 * preferencesModel.uiScale
-
-					TextField
-					{
-						id:						factorName
-						label: 					""
-						name: 					"factorName"
-						placeholderText:		qsTr("Factor ") + (rowIndex + 1)
-						fieldWidth:				100 * preferencesModel.uiScale
-						useExternalBorder:		false
-						showBorder:				true
-					}
-				}
-
-				Row
-				{
-					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		100 * preferencesModel.uiScale
-					TextField
-					{
-						label: 					""
-						name: 					"low"
-						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 1")
-						fieldWidth:				100 * preferencesModel.uiScale
-						useExternalBorder:		false
-						showBorder:				true
-					}
-				}
-
-				Row
-				{
-					spacing:					5 * preferencesModel.uiScale
-					Layout.preferredWidth:		100 * preferencesModel.uiScale
-					TextField
-					{
-						label: 					""
-						name: 					"high1"
-						placeholderText:		qsTr("Factor ") + (rowIndex + 1) + qsTr(" Level 2")
-						fieldWidth:				100 * preferencesModel.uiScale
-						useExternalBorder:		false
-						showBorder:				true
-					}
-				}
-			}
-		}
-	}
-
-	Section
-	{
-		title: 									qsTr("Factorial Design Options")
-		columns:								2
-
-		RadioButtonGroup
-		{
-			name: 								"factorialType"
-			title:								qsTr("Type of Factorial Design")
-
-			RadioButton
-			{
-				id:								factorialTypeDefault
-				name:							"factorialTypeDefault"
-				label:							qsTr("2-level factorial (default generator)")
-				checked:						true
-			}
-
-			RadioButton
-			{
-				id:								factorialTypeSpecify
-				name:							"factorialTypeSpecify"
-				label:							qsTr("2-level factorial (specify generator)")
-
-				TextArea
-				{
-					name:						"factorialTypeSpecifyGenerators"
-					height:						100 * preferencesModel.uiScale
-					width:						250 * preferencesModel.uiScale
-					visible:					factorialTypeSpecify.checked
-					title:						qsTr("Design generator")
-					textType:					JASP.TextTypeSource
-				}
-			}
-
-			RadioButton
-			{
-				id:								factorialTypeSplit
-				visible:						numberOfFactorsForTable.value > 3 | factorialRuns.currentIndex > 0
-				name:							"factorialTypeSplit"
-				label:							qsTr("2-level split-plot (hard-to-change factors)")
-
-				IntegerField
-				{
-					name:						"numberHTCFactors"
-					label:						qsTr("Number of hard-to-change factors")
-					visible:					factorialTypeSplit.checked
-					defaultValue:				1
-					min:						1
-					max:						numberOfFactors.value-1
-				}
-			}
-		}
-
-		ColumnLayout
-		{
-			GroupBox
-			{
-				title: 							qsTr("Design Options")
-				enabled:						factorialTypeDefault.checked | factorialTypeSpecify.checked | factorialTypeSplit.checked
-
-				RadioButtonGroup
+					RadioButtonGroup
 				{
 					name:						"designBy"
+					enabled:						factorialTypeDefault.checked | factorialTypeSpecify.checked | factorialTypeSplit.checked
 
 					RadioButton
 					{
@@ -248,11 +61,11 @@ Form
 							indexDefaultValue: 	0
 							values:
 							[
-								{ value: 2**(1+Math.floor(Math.log2(numberOfFactorsForTable.value))), label: Number(2**(1+Math.floor(Math.log2(numberOfFactorsForTable.value))))},
-								{ value: 2**(2+Math.floor(Math.log2(numberOfFactorsForTable.value))), label: Number(2**(2+Math.floor(Math.log2(numberOfFactorsForTable.value))))},
-								{ value: 2**(3+Math.floor(Math.log2(numberOfFactorsForTable.value))), label: Number(2**(3+Math.floor(Math.log2(numberOfFactorsForTable.value))))},
-								{ value: 2**(4+Math.floor(Math.log2(numberOfFactorsForTable.value))), label: Number(2**(4+Math.floor(Math.log2(numberOfFactorsForTable.value))))},
-								{ value: 2**(5+Math.floor(Math.log2(numberOfFactorsForTable.value))), label: Number(2**(5+Math.floor(Math.log2(numberOfFactorsForTable.value))))},
+								{ value: 2**(1+Math.floor(Math.log2(numberOfCategorical.value))), label: Number(2**(1+Math.floor(Math.log2(numberOfCategorical.value))))},
+								{ value: 2**(2+Math.floor(Math.log2(numberOfCategorical.value))), label: Number(2**(2+Math.floor(Math.log2(numberOfCategorical.value))))},
+								{ value: 2**(3+Math.floor(Math.log2(numberOfCategorical.value))), label: Number(2**(3+Math.floor(Math.log2(numberOfCategorical.value))))},
+								{ value: 2**(4+Math.floor(Math.log2(numberOfCategorical.value))), label: Number(2**(4+Math.floor(Math.log2(numberOfCategorical.value))))},
+								{ value: 2**(5+Math.floor(Math.log2(numberOfCategorical.value))), label: Number(2**(5+Math.floor(Math.log2(numberOfCategorical.value))))},
 							]
 						}
 					}
@@ -295,18 +108,17 @@ Form
 							values:
 							[
 								{ value: "0.5", label: qsTr("1/2")},
-								{ value: numberOfFactorsForTable.value > 4 ? "0.25" : "0.5", label: numberOfFactorsForTable.value > 4 ? qsTr("1/4") : qsTr("1/2")},
-								{ value: numberOfFactorsForTable.value > 5 ? "0.125" : numberOfFactorsForTable.value > 4 ? "0.25" : "0.5", label: numberOfFactorsForTable.value > 5 ? qsTr("1/8") : numberOfFactorsForTable.value > 4 ? qsTr("1/4") : qsTr("1/2")}
+								{ value: numberOfCategorical.value > 4 ? "0.25" : "0.5", label: numberOfCategorical.value > 4 ? qsTr("1/4") : qsTr("1/2")},
+								{ value: numberOfCategorical.value > 5 ? "0.125" : numberOfCategorical.value > 4 ? "0.25" : "0.5", label: numberOfCategorical.value > 5 ? qsTr("1/8") : numberOfCategorical.value > 4 ? qsTr("1/4") : qsTr("1/2")}
 							]
 						}
 					}
 				}
-			}
+	}
 
-			GroupBox
+
+			Group
 			{
-				title:							qsTr("Additional Options")
-
 				IntegerField
 				{
 					enabled:					!factorialTypeSplit.checked
@@ -314,7 +126,7 @@ Form
 					label:						qsTr("Number of center points per block")
 					defaultValue:				0
 					min:						0
-					max:						2**(numberOfFactorsForTable.value - 1)
+					max:						2**(numberOfCategorical.value - 1)
 				}
 
 				IntegerField
@@ -354,21 +166,113 @@ Form
 				}
 			}
 		}
+
+		TableView
+		{
+			id: categoricalVariables
+
+			implicitWidth		: form.implicitWidth
+			implicitHeight		: 140 * preferencesModel.uiScale // about 3 rows
+
+			modelType			: JASP.Simple
+
+			isFirstColEditable	: true
+
+			initialRowCount		: numberOfCategorical.intValue
+			initialColumnCount	: 1 + parseInt(numberOfLevels.value)
+
+			rowCount			: numberOfCategorical.intValue
+			columnCount			: 1 + parseInt(numberOfLevels.value)
+			name				: "categoricalVariables"
+			cornerText			: qsTr("Factor")
+			itemType			: JASP.String
+
+			function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }
+			function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex); }
+			function getDefaultValue(columnIndex, rowIndex)				{ return String.fromCharCode(columnIndex === 0 ? 65 + rowIndex : 97 + columnIndex - 1); }
+		}
+
+	Group
+	{
+		columns: 2
+
+		RadioButtonGroup
+		{
+			name:								"runOrder"
+			title:								qsTr("Run Order")
+
+			RadioButton
+			{
+				SetSeed{}
+				name:							"runOrderRandom"
+				label:							qsTr("Random")
+				checked:						true
+			}
+
+			RadioButton
+			{
+				name:							"runOrderStandard"
+				label:							qsTr("Standard")
+			}
+		}
+
+		RadioButtonGroup
+		{
+			name: 								"factorialType"
+			title:								qsTr("Type of Factorial Design")
+
+			RadioButton
+			{
+				id:								factorialTypeDefault
+				name:							"factorialTypeDefault"
+				label:							qsTr("2-level factorial (default generator)")
+				checked:						true
+			}
+
+			RadioButton
+			{
+				id:								factorialTypeSpecify
+				name:							"factorialTypeSpecify"
+				label:							qsTr("2-level factorial (specify generator)")
+
+				TextArea
+				{
+					name:						"factorialTypeSpecifyGenerators"
+					height:						100 * preferencesModel.uiScale
+					width:						250 * preferencesModel.uiScale
+					visible:					factorialTypeSpecify.checked
+					title:						qsTr("Design generator")
+					textType:					JASP.TextTypeSource
+				}
+			}
+
+			RadioButton
+			{
+				id:								factorialTypeSplit
+				visible:						numberOfCategorical.value > 3 | factorialRuns.currentIndex > 0
+				name:							"factorialTypeSplit"
+				label:							qsTr("2-level split-plot (hard-to-change factors)")
+
+				IntegerField
+				{
+					name:						"numberHTCFactors"
+					label:						qsTr("Number of hard-to-change factors")
+					visible:					factorialTypeSplit.checked
+					defaultValue:				1
+					min:						1
+					max:						numberOfCategorical.value-1
+				}
+			}
+		}
 	}
 
-	GroupBox
+	Group
 	{
 		CheckBox
 		{
 			name:								"showAvailableDesigns"
 			label:								qsTr("Show available designs")
-		}
-
-		CheckBox
-		{
-			id:									displayDesign
-			name:								"displayDesign"
-			label:								qsTr("Display selected design")
+			checked:							true
 		}
 
 		CheckBox
@@ -377,192 +281,9 @@ Form
 			label:								qsTr("Show alias structure")
 			enabled:							displayDesign.checked & factorialTypeDefault.checked
 		}
+		
+		CheckBox		{ name: "codedOutput";	label: qsTr("Show coded output")										}
 
-		FileSelector
-		{
-			id:									file
-			name:								"file"
-			label:								qsTr("Save as:")
-			filter:								"*.csv"
-			save:								true
-		}
-
-		Button
-		{
-			id: 								exportDesign
-			anchors.right:						parent.right
-			anchors.bottom:						parent.bottom
-			text: 								actualExporter.checked ? qsTr("<b>Sync Design: On</b>") : qsTr("<b>Sync Design: Off</b>")
-			onClicked: 							actualExporter.click()
-		}
-
-		CheckBox
-		{
-			id:									actualExporter
-			name:								"actualExporter"
-			visible:							false
-		}
-	}
-
-	Section
-	{
-		title: 									qsTr("Design Analysis")
-		columns: 								1
-
-		VariablesForm
-		{
-			AvailableVariablesList
-			{
-				name:							"FAallVariables"
-				label:							qsTr("Available factors")
-				}
-
-			AssignedVariablesList
-			{
-				name:							"FAresponse"
-				allowedColumns:					["scale", "ordinal", "nominal"]
-				singleVariable:					true
-				label:							qsTr("Response variable")
-			}
-
-			AssignedVariablesList
-			{
-				id:								faaf
-				name:							"FAassignedFactors"
-				allowedColumns:					["scale", "ordinal", "nominal"]
-				label:							qsTr("Assigned factors")
-			}
-
-			AssignedVariablesList
-			{
-				id:								runOrder
-				name:							"FArunOrder"
-				allowedColumns:					["scale", "ordinal", "nominal"]
-				singleVariable:					true
-				label:							qsTr("Run order")
-			}
-		}
-
-		CheckBox
-		{
-			name:								"enabledIntOrder"
-			id:									enabledIntOrder
-			childrenOnSameRow:					true
-
-			IntegerField
-			{
-				name:							"intOrder"
-				label:							qsTr("Highest order interaction term:")
-				defaultValue:					1
-				min:							1
-				max:							faaf.count > 0 ? faaf.count : 5
-			}
-		}
-
-		Group
-		{
-			title:								qsTr("Model")
-
-			VariablesForm
-			{
-				preferredHeight: 				jaspTheme.smallDefaultVariablesFormHeight
-
-				AvailableVariablesList
-				{
-					name: 						"components"
-					title: 						qsTr("Components")
-					source:						["FAassignedFactors"]
-				}
-
-				AssignedVariablesList
-				{
-					name: 						"modelTerms"
-					id:							modelTerms
-					title:						qsTr("Model Terms")
-					listViewType:				JASP.Interaction
-					enabled:					!enabledIntOrder.checked
-				}
-			}
-		}
-
-		Group
-		{
-			columns: 							2
-			title:								qsTr("Plots")
-
-			Group
-			{
-				title: 							qsTr("Design plots")
-
-				CheckBox
-				{
-					name:						"showAliasStructure2"
-					label:						qsTr("Show alias structure")
-					enabled:					runOrder.count > 0
-				}
-
-				CheckBox
-				{
-					name:						"paretoPlot"
-					label:						qsTr("Pareto plot of standardized effects")
-				}
-			}
-
-			Group
-			{
-				name:							"resPlots"
-				title:							qsTr("Residuals plots")
-
-				CheckBox
-				{
-					name:						"resNorm"
-					label:						qsTr("Normal probability plot of residuals")
-				}
-
-				CheckBox
-				{
-					name:						"resHist"
-					label:						qsTr("Histogram of residuals")
-				}
-
-				CheckBox
-				{
-					name:						"resFitted"
-					label:						qsTr("Residuals vs. fitted value")
-				}
-
-				CheckBox
-				{
-					name:						"resOrder"
-					label:						qsTr("Residuals vs. run/standard order")
-					enabled:					runOrder.count > 0
-
-					RadioButtonGroup
-					{
-						name:					"runOrderPlot"
-
-						RadioButton
-						{
-							name:				"runOrderStandardPlot"
-							label:				qsTr("Standard")
-							checked:			true
-						}
-
-						RadioButton
-						{
-							name:				"runOrderRandomPlot"
-							label:				qsTr("Run")
-						}
-					}
-				}
-
-				CheckBox
-				{
-					name:						"fourInOne"
-					label:						qsTr("Matrix residuals plot")
-					enabled:					runOrder.count > 0
-				}
-			}
-		}
+		Common.ShowAndExportDesign {}
 	}
 }

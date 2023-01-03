@@ -17,587 +17,338 @@
 
 #' @export
 doeFactorial <- function(jaspResults, dataset, options, ...) {
-  if (options[["setSeed"]]) {
-    set.seed(options[["seed"]])
-  }
-
-  ################### Design ###################
-  designContainer <- createJaspContainer("Design", position = 1)
-
-  designContainer[["ShowAvailableDesigns"]] <- .doeFactorialShowAvailableDesigns(options, jaspResults)
-  designContainer[["SummarySelectedDesign"]] <- .doeFactorialSummarySelectedDesign(options, jaspResults)
-  designContainer[["ShowSelectedDesign"]] <- .doeFactorialShowSelectedDesign(options, jaspResults)$table
-  designContainer[["aliasStructure"]] <- .doeFactorialShowSelectedDesign(options, jaspResults)$aliasStructure
-
-  jaspResults[["Design"]] <- designContainer
-
-  ################### Analysis ###################
-  factorVariables <- unlist(options$FAassignedFactors)
-  factorVariables <- factorVariables[factorVariables != ""]
-
-  reorderModelTerms <- .reorderModelTerms(options)
-  modelTerms <- reorderModelTerms$modelTerms
-  model <- .modelFormula(modelTerms, options)
-
-  # Ready check: More than two factors, a response and order variables, and either model terms or interaction order specified.
-  ready <- (length(options[["FAassignedFactors"]]) >= 2 && options[["FAresponse"]] != "" && (!is.null(unlist(options$modelTerms)) || options$enabledIntOrder))
+  ready <- options[["numberOfCategorical"]] != "" && options[["categoricalNoLevels"]] != ""
+  .doeFactorialShowAvailableDesigns(jaspResults, options)
   if (ready) {
-    dataset <- .factorialAnalysisReadData(dataset, options)
-
-    # Transform to coded
-    factors <- unlist(dataset[, options[["FAassignedFactors"]]], use.names = FALSE)
-    response <- unlist(dataset[, options[["FAresponse"]]], use.names = FALSE)
-
-    perF <- length(factors) / length(options[["FAassignedFactors"]])
-    factorsDF <- data.frame(split(factors, ceiling(seq_along(factors) / perF)))
-
-    for (i in 1:ncol(factorsDF)) {
-      factorsDF[, i][factorsDF[, i] == min(factorsDF[, i])] <- -1
-      factorsDF[, i][factorsDF[, i] == max(factorsDF[, i])] <- 1
-    }
-
-    # Use original variables names
-
-    if (options[["FArunOrder"]] != "") {
-      runOrder <- dataset[, unlist(options$FArunOrder)]
-      names <- c(options$FArunOrder, options$FAassignedFactors, options$FAresponse)
-      datasetRow <- cbind.data.frame(runOrder, factorsDF, response)
-    } else {
-      names <- c(options$FAassignedFactors, options$FAresponse)
-      datasetRow <- cbind.data.frame(factorsDF, response)
-    }
-
-    names(datasetRow) <- names
-
-    dataset <- datasetRow
-  }
-
-  model.fit <- .factorialRegression(jaspResults, dataset, options, model, ready)
-  fit <- model.fit$fit
-  saturated <- model.fit$saturated
-
-  analysisContainer <- createJaspContainer(title = gettext("Analysis"), position = 2)
-
-  if (is.null(jaspResults[["factorialRegressionANOVA"]])) {
-    analysisContainer[["tableAnova"]] <- .factorialRegressionANOVAcreateTable(options, ready, fit, saturated, model)$tableAnova
-    analysisContainer[["tableFit"]] <- .factorialRegressionANOVAcreateTable(options, ready, fit, saturated, model)$tableFit
-  }
-
-  if (is.null(jaspResults[["factorialRegressionCoefficients"]])) {
-    analysisContainer[["tableCoef"]] <- .factorialRegressionCoefficientsCreateTable(options, ready, fit, saturated, model)$tableCoef
-    analysisContainer[["tableFormula"]] <- .factorialRegressionCoefficientsCreateTable(options, ready, fit, saturated, model)$tableFormula
-  }
-
-  if (ready) {
-    jaspResults[["Design"]] <- NULL
-
-    # Create error plot for saturated designs
-    if (saturated) {
-      errorPlot <- createJaspPlot()
-      errorPlot$setError(gettext("This plot is unavailable for saturated designs."))
-      errorPlot$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder"))
-    }
-
-    if (options[["showAliasStructure2"]]) {
-      # Error plot for saturated designs
-      analysisContainer[["showAliasStructure2"]] <- .factorialShowAliasStructure(jaspResults, options, dataset, fit)
-    }
-
-
-    # Normal Probability Plot of Residuals
-    if (is.null(jaspResults[["resNorm"]]) && options[["resNorm"]]) {
-      NormalPlot <- createJaspContainer(title = gettext("Normal Probability Plot of Residuals"))
-      NormalPlot$dependOn(c("FAassignedFactors", "modelTerms", "NormalPlot", "FAresponse", "intOrder", "FArunOrder", "addGridlines", "enabledIntOrder"))
-
-      # Error plot for saturated designs
-      if (saturated) {
-        NormalPlot[["plot"]] <- errorPlot
-      } else {
-        NormalPlot[["plot"]] <- .qcProbabilityPlot(dataset, options, fit = fit)
-      }
-
-      analysisContainer[["resNorm"]] <- NormalPlot
-    }
-
-    # Histogram of Residuals
-    if (options[["resHist"]] && is.null(jaspResults[["resHist"]])) {
-      resHist <- createJaspContainer(gettext("Histogram of Residuals"))
-      resHist$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder"))
-
-      if (saturated) {
-        resHist[["plot"]] <- errorPlot
-      } else {
-        resHist[["plot"]] <- .factorialResHist(jaspResults = jaspResults, options = options, fit = fit)$jaspPlot
-      }
-
-      analysisContainer[["resHist"]] <- resHist
-    }
-
-    # Residuals vs. Fitted Value
-    if (options[["resFitted"]] && is.null(jaspResults[["resFitted"]])) {
-      resFitted <- createJaspContainer(gettext("Residuals vs. Fitted Value"))
-      resFitted$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder"))
-
-      if (saturated) {
-        resFitted[["plot"]] <- errorPlot
-      } else {
-        resFitted[["plot"]] <- .factorialResFitted(jaspResults = jaspResults, options = options, fit = fit)$jaspPlot
-      }
-
-      analysisContainer[["resFitted"]] <- resFitted
-    }
-
-    # Residuals vs. Run Order
-    if (options[["resOrder"]] && is.null(jaspResults[["resOrder"]])) {
-      if (options$runOrderPlot == "runOrderRandomPlot") {
-        resOrder <- createJaspContainer(gettext("Residuals vs. Run Order"))
-      } else {
-        resOrder <- createJaspContainer(gettext("Residuals vs. Standard Order"))
-      }
-
-      resOrder$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder"))
-
-      if (saturated) {
-        resOrder[["plot"]] <- errorPlot
-      } else {
-        resOrder[["plot"]] <- .factorialResOrder(jaspResults = jaspResults, dataset = dataset, options = options, fit = fit)$jaspPlot
-      }
-
-      analysisContainer[["resOrder"]] <- resOrder
-    }
-
-    # Pareto Plot of Standardized Effects
-    if (options[["paretoPlot"]] && is.null(jaspResults[["paretoPlot"]])) {
-      if (saturated) {
-        analysisContainer[["paretoPlot"]] <- errorPlot
-      } else {
-        analysisContainer[["paretoPlot"]] <- .factorialPareto(jaspResults = jaspResults, options = options, fit = fit)
-      }
-    }
-
-    # Four in one plot
-    if (options[["fourInOne"]] && is.null(jaspResults[["fourInOne"]])) {
-      if (saturated) {
-        fourInOne[["fourInOne"]] <- errorPlot
-      } else {
-        matrixPlot <- createJaspPlot(title = gettextf("Four in one for %s", unlist(options$FAresponse)), width = 1100, aspectRatio = 1)
-        matrixPlot$dependOn(c("FAassignedFactors", "modelTerms", "intOrder", "FArunOrder", "enabledIntOrder", "fourInOne"))
-
-        plotMat <- matrix(list(), 2, 2)
-        plotMat[[1, 1]] <- .qcProbabilityPlot(dataset, options, fit = fit, ggPlot = TRUE)
-        plotMat[[1, 2]] <- .factorialResFitted(jaspResults = jaspResults, options = options, fit = fit)$ggPlot
-        plotMat[[2, 1]] <- .factorialResHist(jaspResults = jaspResults, options = options, fit = fit)$ggPlot
-        plotMat[[2, 2]] <- .factorialResOrder(jaspResults = jaspResults, dataset = dataset, options = options, fit = fit)$ggPlot
-
-        matrixPlot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
-      }
-
-      analysisContainer[["fourInOne"]] <- matrixPlot
-    }
-    jaspResults[["Analysis"]] <- analysisContainer
+    .doeFactorialSummarySelectedDesign(jaspResults, options)
+    design <- .doeFactorialGenerateDesign(options)
+    .doeFactorialShowSelectedDesign(jaspResults, options, design)
+    .doeFactorialShowAliasStructure(jaspResults, options, design)
+    .doeRsmExportDesign(options, design)
   }
 }
 
 ################### Design ###################
-.doeFactorialShowAvailableDesigns <- function(options, jaspResults) {
-  if (!options[["showAvailableDesigns"]]) {
-    jaspResults[["displayDesigns"]] <- NULL
+.doeFactorialShowAvailableDesigns <- function(jaspResults, options) {
+  if (!is.null(jaspResults[["showAvailableDesigns"]]) || !options[["showAvailableDesigns"]]) {
     return()
   }
 
-  if (is.null(jaspResults[["displayDesigns"]])) {
-    tableTitle <- gettext("Available Factorial Designs")
+  table <- createJaspTable(title = gettext("Available Designs"), position = 1L)
+  table$dependOn(options = c("showAvailableDesigns", "numberOfCategorical", "fullCornerReplicates"))
+  table$addColumnInfo(name = "runs", title = "Runs", type = "integer")
+  jaspResults[["showAvailableDesigns"]] <- table
 
-    table <- createJaspTable(tableTitle)
-
-    table$dependOn(options = "numberOfFactors")
-
-    table$addColumnInfo(name = "runs", title = "Runs", type = "integer")
-    # table$addColumnInfo(name = 'res', title = "Resolution", type = 'string')
-
-    runs <- 2^seq(floor(log2(options[["numberOfFactors"]])) + 1, 12)
+  if (options[["categoricalNoLevels"]] == 2) {
+    runs <- 2^seq(floor(log2(options[["numberOfCategorical"]])) + 1, 12)
     if (length(runs) > 5) {
       runs <- runs[1:5]
     }
-    if (options[["numberOfFactors"]] > 32) {
+    if (options[["numberOfCategorical"]] > 32) {
       runs <- runs[1:4]
     }
-
-    # res <- numeric(length(runs))
-    # for(i in 1:length(runs)){
-    #  if(log2(runs[i]) < options[["numberOfFactors"]]){
-    #    res[i] <- as.character(as.roman(DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfFactors"]],
-    #                                                                     nruns = runs[i]))$catlg.entry[[1]]$res))
-    #  } else {
-    #    res[i] <- "Full"
-    #  }
-    # }
-    rows <- runs
-
-    # equal <- numeric(0)
-    # for(i in 1:(nrow(rows)-1)){
-    #  if(rows$res[i] == rows$res[i+1]){
-    #    equal <- append(equal, i+1)
-    #  }
-    # }
-    # rows <- rows[-equal,]
-
-    jaspResults[["state"]] <- createJaspState(rows)
-    jaspResults[["state"]]$dependOn("always_present")
-
-    table$setData(rows)
-
-    return(table)
+  } else {
+    runs <- prod(options[["categoricalNoLevels"]]) * options[["fullCornerReplicates"]]
   }
+  table$setData(runs)
 }
 
-.doeFactorialSummarySelectedDesign <- function(options, jaspResults) {
-  if (is.null(jaspResults[["selectedDesign"]])) {
-    table <- createJaspTable(gettext("Selected Design"))
+.doeFactorialDependencies <- function() {
+	return(c("factorialRuns", "factorialCenterPoints", "factorialCornerReplicates", "factorialBlocks",
+    "factorialType", "designBy", "factorialResolution", "factorialFraction", "numberOfCategorical",
+	"repeatRuns", "categoricalNoLevels"))
+}
 
-    table$dependOn(options = c(
-      "factors",
-      "factorialRuns",
-      "factorialCenterPoints",
-      "factorialCornerReplicates",
-      "factorialBlocks",
-      "factorialType",
-      "designBy",
-      "factorialResolution",
-      "factorialFraction",
-      "numberOfFactors",
-      "repeatRuns"
-    ))
-
-    table$addColumnInfo(name = "type", title = gettext("Design"), type = "string")
-    table$addColumnInfo(name = "factors", title = gettext("Factors"), type = "integer")
-    table$addColumnInfo(name = "runs", title = gettext("Runs"), type = "integer")
-    table$addColumnInfo(name = "resolution", title = gettext("Resolution"), type = "string")
-    table$addColumnInfo(name = "centers", title = gettext("Centre points"), type = "integer")
-    table$addColumnInfo(name = "replicates", title = gettext("Replicates"), type = "integer")
-    table$addColumnInfo(name = "blocks", title = gettext("Blocks"), type = "integer")
-    table$addColumnInfo(name = "repeats", title = gettext("Repeats"), type = "integer")
-
-    designs <- jaspResults[["state"]]$object
-
-    if (options[["designBy"]] == "designByRuns") {
-      runs <- (as.numeric(options[["factorialRuns"]]) +
-        options[["factorialCenterPoints"]] *
-          options[["factorialBlocks"]]) *
-        options[["factorialCornerReplicates"]] +
-        options[["repeatRuns"]]
-
+.doeFactorialGetResolution <- function(options, runs) {
       # Resolution based on SKF's diagram
-      sumResolution <- runs + options[["numberOfFactors"]]
+      sumResolution <- runs + options[["numberOfCategorical"]]
       resolution.Full <- c(6, 11, 20, 37, 70, 135)
       resolution.six <- c(38, 137)
       resolution.Five <- c(21, 72, 138, 139)
       resolution.three <- c(7, 13, 14, 15, 25, 26, 27, 28, 29, 30, 31)
 
-
       if (sumResolution %in% resolution.Full) {
-        res <- "Full"
+        resolution <- "Full"
       } else if (sumResolution %in% resolution.six) {
-        res <- "VI"
+        resolution <- "VI"
       } else if (sumResolution %in% resolution.Five) {
-        res <- "V"
+        resolution <- "V"
       } else if (sumResolution %in% resolution.three) {
-        res <- "III"
+        resolution <- "III"
       } else if (any(sumResolution == 137)) {
-        res <- "VIII"
+        resolution <- "VIII"
       } else if (any(sumResolution == 71)) {
-        res <- "VII"
+        resolution <- "VII"
       } else {
-        res <- "III"
+        resolution <- "III"
       }
-    } else if (options[["designBy"]] == "designByResolution") {
-      resolution <- if (options[["factorialResolution"]] == "Full") {
-        100
-      } else {
-        as.numeric(as.roman(options[["factorialResolution"]]))
-      }
-      runs <- (DoE.base::design.info(FrF2::FrF2(
-        nfactors = options[["numberOfFactors"]],
-        resolution = resolution
-      ))$nruns +
-        options[["factorialCenterPoints"]] *
-          options[["factorialBlocks"]]) *
-        options[["factorialCornerReplicates"]] +
-        options[["repeatRuns"]]
-    } else {
-      runs <- ((2^options[["numberOfFactors"]] * as.numeric(options[["factorialFraction"]])) +
-        options[["factorialCenterPoints"]] *
-          options[["factorialBlocks"]]) *
-        options[["factorialCornerReplicates"]] +
-        options[["repeatRuns"]]
-    }
-
-    design <- base::switch(options[["factorialType"]],
-      "factorialTypeDefault" = gettext("2-level factorial")
-    )
-
-    rows <- data.frame(
-      type = "Factorial",
-      factors = options[["numberOfFactors"]],
-      runs = runs,
-      resolution = res,
-      centers = options[["factorialCenterPoints"]],
-      replicates = options[["factorialCornerReplicates"]],
-      blocks = options[["factorialBlocks"]],
-      repeats = options[["repeatRuns"]]
-    )
-
-    table$setData(rows)
-    return(table)
-  }
+	  return(resolution)
 }
 
-.doeFactorialShowSelectedDesign <- function(options, jaspResults) {
-  if (!options[["displayDesign"]]) {
+.doeFactorialSummarySelectedDesign <- function(jaspResults, options) {
+  if (!is.null(jaspResults[["selectedDesign"]])) {
     return()
   }
 
-  if (is.null(jaspResults[["displayDesign"]])) {
-    table <- createJaspTable(gettext("Design Preview"))
+  rowNames <- c("Categorical factors", "Base runs", "Resolution", "Replicates")
+  if (options[["categoricalNoLevels"]] == 2) {
+    rowNames <- c(rowNames, "Base blocks", "Centre points", "Repeats")
+  }
 
-    table$dependOn(options = c(
-      "displayDesign",
-      "dataCoding",
-      "factors",
-      "factorialType",
-      "factorialRuns",
-      "factorialCenterPoints",
-      "factorialCornerReplicates",
-      "factorialBlocks",
-      "factorialRepeats",
-      "factorialResolution",
-      "factorialFraction",
-      "numberOfFactors",
-      "showAliasStructure",
-      "factorialTypeSpecifyGenerators",
-      "numberHTCFactors",
-      "runOrder",
-      "repeatRuns",
-      "file",
-      "actualExporter"
-    ))
+  table <- createJaspTable(title = gettext("Design Summary"), position = 2L)
+  table$addColumnInfo(name = "variable", title = "Variable", type = "string")
+  table$addColumnInfo(name = "value", title = "Value", type = "string")
+  table$dependOn(options = .doeFactorialDependencies())
+  jaspResults[["selectedDesign"]] <- table
 
-    results <- options[["factors"]]
+  constant <- options[["factorialCornerReplicates"]] + options[["repeatRuns"]]
 
-    factorNames <- factorLows <- factorHighs <- character()
-
-    for (i in 1:length(results)) {
-      factorNames[i] <- paste0(results[[i]]$factorName, " (", i, ")")
-      factorLows[i] <- results[[i]]$low
-      factorHighs[i] <- results[[i]]$high1
-    }
-
-    rep <- options[["factorialRepeats"]] > 0
-
-    if (options[["factorialType"]] == "factorialTypeDefault") {
-      if (options[["designBy"]] == "designByRuns") {
-        desx <- FrF2::FrF2(
-          nfactors = options[["numberOfFactors"]],
-          nruns = as.numeric(options[["factorialRuns"]]),
-          ncenter = options[["factorialCenterPoints"]],
-          replications = options[["factorialCornerReplicates"]],
-          repeat.only = rep,
-          blocks = options[["factorialBlocks"]]
-        )
-      } else if (options[["designBy"]] == "designByResolution") {
-        desx <- FrF2::FrF2(
-          nfactors = options[["numberOfFactors"]],
-          resolution =
-            if (options[["factorialResolution"]] != "Full") {
-              as.numeric(as.roman(options[["factorialResolution"]]))
-            } else {
-              999
-            },
-          ncenter = options[["factorialCenterPoints"]],
-          replications = options[["factorialCornerReplicates"]],
-          repeat.only = rep
-        )
+  if (options[["categoricalNoLevels"]] == 2) {
+    if (options[["designBy"]] == "designByRuns") {
+      runs <- (as.numeric(options[["factorialRuns"]]) + options[["factorialCenterPoints"]] * options[["factorialBlocks"]]) * constant
+      resolution <- .doeFactorialGetResolution(options, runs)
+    } else if (options[["designBy"]] == "designByResolution") {
+      if (options[["factorialResolution"]] == "Full") {
+        resolution <- 100
       } else {
-        desx <- FrF2::FrF2(
-          nfactors = options[["numberOfFactors"]],
-          nruns = (2^options[["numberOfFactors"]]) * as.numeric(options[["factorialFraction"]]),
-          ncenter = options[["factorialCenterPoints"]],
-          replications = options[["factorialCornerReplicates"]],
-          repeat.only = rep,
-          blocks = options[["factorialBlocks"]]
-        )
+        resolution <- as.numeric(as.roman(options[["factorialResolution"]]))
       }
-    } else if (options[["factorialType"]] == "factorialTypeSpecify") {
-      whichHow <- strsplit(gsub(" ", "", strsplit(options[["factorialTypeSpecifyGenerators"]], ",")[[1]], fixed = TRUE), "=")
-      if (length(whichHow) == 0) {
-        return()
-      }
-      gen <- character(length(whichHow))
-      for (i in 1:length(whichHow)) {
-        gen[i] <- whichHow[[i]][length(whichHow[[i]])]
-      }
-      desx <- FrF2::FrF2(
-        nfactors = options[["numberOfFactors"]],
-        nruns = if (options[["designBy"]] == "designByRuns") {
-          as.numeric(options[["factorialRuns"]])
-        } else {
-          2^options[["numberOfFactors"]] * as.numeric(options[["factorialFraction"]])
-        },
-        generators = gen,
+      runs <- (DoE.base::design.info(FrF2::FrF2(nfactors = options[["numberOfCategorical"]], resolution = resolution))$nruns + options[["factorialCenterPoints"]] * options[["factorialBlocks"]]) * constant
+    } else {
+      runs <- ((2^options[["numberOfCategorical"]] * as.numeric(options[["factorialFraction"]])) + options[["factorialCenterPoints"]] * options[["factorialBlocks"]]) * constant
+    }
+    value <- c(options[["numberOfCategorical"]], runs, resolution, options[["factorialCenterPoints"]], options[["factorialCornerReplicates"]], options[["factorialBlocks"]], options[["repeatRuns"]])
+  } else {
+    df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
+    levels <- apply(df, MARGIN = 1, FUN = function(x) length(which(!is.na(x[-1]))))
+    value <- c(options[["numberOfCategorical"]], prod(levels) * options[["fullCornerReplicates"]], "Full", options[["fullCornerReplicates"]])
+  }
+  rows <- data.frame(variable = rowNames, value = value)
+  table$setData(rows)
+}
+
+.doeFactorialGenerateDesign <- function(options) {
+  jaspBase::.setSeedJASP(options)
+  rep <- options[["factorialRepeats"]] > 0
+
+  if (options[["factorialType"]] == "factorialTypeDefault") {
+    if (options[["designBy"]] == "designByRuns") {
+      design <- FrF2::FrF2(
+        nfactors = options[["numberOfCategorical"]],
+        nruns = as.numeric(options[["factorialRuns"]]),
         ncenter = options[["factorialCenterPoints"]],
         replications = options[["factorialCornerReplicates"]],
-        repeat.only = rep
+        repeat.only = rep,
+        blocks = options[["factorialBlocks"]]
       )
-    } else if (options[["factorialType"]] == "factorialTypeSplit") {
-      if (options[["designBy"]] == "designByRuns") {
-        desx <- FrF2::FrF2(
-          nfactors = options[["numberOfFactors"]],
-          nruns = as.numeric(options[["factorialRuns"]]),
-          hard = options[["numberHTCFactors"]],
-          replications = options[["factorialCornerReplicates"]],
-          repeat.only = rep
-        )
-      } else if (options[["designBy"]] == "designByResolution") {
-        desx <- FrF2::FrF2(
-          nfactors = options[["numberOfFactors"]],
-          resolution = if (options[["factorialResolution"]] != "Full") {
+    } else if (options[["designBy"]] == "designByResolution") {
+      design <- FrF2::FrF2(
+        nfactors = options[["numberOfCategorical"]],
+        resolution =
+          if (options[["factorialResolution"]] != "Full") {
             as.numeric(as.roman(options[["factorialResolution"]]))
           } else {
             999
           },
-          hard = options[["numberHTCFactors"]],
-          replications = options[["factorialCornerReplicates"]],
-          repeat.only = rep
-        )
+        ncenter = options[["factorialCenterPoints"]],
+        replications = options[["factorialCornerReplicates"]],
+        repeat.only = rep
+      )
+    } else {
+      design <- FrF2::FrF2(
+        nfactors = options[["numberOfCategorical"]],
+        nruns = (2^options[["numberOfCategorical"]]) * as.numeric(options[["factorialFraction"]]),
+        ncenter = options[["factorialCenterPoints"]],
+        replications = options[["factorialCornerReplicates"]],
+        repeat.only = rep,
+        blocks = options[["factorialBlocks"]]
+      )
+    }
+  } else if (options[["factorialType"]] == "factorialTypeSpecify") {
+    whichHow <- strsplit(gsub(" ", "", strsplit(options[["factorialTypeSpecifyGenerators"]], ",")[[1]], fixed = TRUE), "=")
+    if (length(whichHow) == 0) {
+      return()
+    }
+    gen <- character(length(whichHow))
+    for (i in 1:length(whichHow)) {
+      gen[i] <- whichHow[[i]][length(whichHow[[i]])]
+    }
+    design <- FrF2::FrF2(
+      nfactors = options[["numberOfCategorical"]],
+      nruns = if (options[["designBy"]] == "designByRuns") {
+        as.numeric(options[["factorialRuns"]])
       } else {
-        desx <- FrF2::FrF2(
-          nfactors = options[["numberOfFactors"]],
-          nruns = (2^options[["numberOfFactors"]]) * as.numeric(options[["factorialFraction"]]),
-          hard = options[["numberHTCFactors"]],
-          replications = options[["factorialCornerReplicates"]],
-          repeat.only = rep
-        )
-      }
-      table$addFootnote(paste("Hard-to-change factors: ", paste(factorNames[1:options[["numberHTCFactors"]]], collapse = ", "), sep = ""))
-    }
-
-    runOrder <- 1:nrow(desx)
-    rows <- cbind.data.frame(runOrder, desx)
-
-    blocks <- rows$Blocks
-    rows <- rows[, !names(rows) %in% "Blocks"]
-
-    # filling in table
-    table$addColumnInfo(name = "runOrder", title = gettext("Run order"), type = "string")
-
-    tableTitle <- if (options[["factorialBlocks"]] > 1) {
-      "standard.block.perblock"
-    } else {
-      "Standard order"
-    }
-
-    table$addColumnInfo(name = "runOrderStandard", title = tableTitle, type = "integer")
-    runOrderStandard <- DoE.base::run.order(desx)[, 1]
-    rows <- cbind.data.frame(runOrder = runOrder, runOrderStandard = runOrderStandard, desx)
-
-    rows <- rows[, !names(rows) %in% "Blocks"]
-
-    for (i in 1:options[["numberOfFactors"]]) {
-      colnames(rows)[i + 2] <- factorNames[i]
-      table$addColumnInfo(name = factorNames[i], title = factorNames[i], type = "string")
-    }
-
-    # DATA CODING
-    if (options[["factorialCenterPoints"]] >= 1) {
-      rows[, (1 + 2):ncol(rows)] <- sapply(rows[, (1 + 2):ncol(rows)], as.numeric)
-    } else {
-      rows[, (1 + 2):ncol(rows)] <- sapply(rows[, (1 + 2):ncol(rows)], as.numeric) * 2 - 3
-    }
-    if (options[["dataCoding"]] == "dataUncoded") {
-      for (i in 1:options[["numberOfFactors"]]) {
-        rows[, i + 2][rows[, i + 2] == -1] <- if (any(factorLows[i] == "1")) {
-          "1.0"
+        2^options[["numberOfCategorical"]] * as.numeric(options[["factorialFraction"]])
+      },
+      generators = gen,
+      ncenter = options[["factorialCenterPoints"]],
+      replications = options[["factorialCornerReplicates"]],
+      repeat.only = rep
+    )
+  } else if (options[["factorialType"]] == "factorialTypeSplit") {
+    if (options[["designBy"]] == "designByRuns") {
+      design <- FrF2::FrF2(
+        nfactors = options[["numberOfCategorical"]],
+        nruns = as.numeric(options[["factorialRuns"]]),
+        hard = options[["numberHTCFactors"]],
+        replications = options[["factorialCornerReplicates"]],
+        repeat.only = rep
+      )
+    } else if (options[["designBy"]] == "designByResolution") {
+      design <- FrF2::FrF2(
+        nfactors = options[["numberOfCategorical"]],
+        resolution = if (options[["factorialResolution"]] != "Full") {
+          as.numeric(as.roman(options[["factorialResolution"]]))
         } else {
-          factorLows[i]
-        }
-
-        if (options[["factorialCenterPoints"]] >= 1) {
-          rows[, i + 2][rows[, i + 2] == 0] <-
-            if (!is.na(as.numeric(factorLows[i]) + as.numeric(factorHighs[i]))) {
-              (as.numeric(factorLows[i]) + as.numeric(factorHighs[i])) / 2
-            } else {
-              "center"
-            }
-        }
-        rows[, i + 2][rows[, i + 2] == 1] <- factorHighs[i]
-      }
-    }
-
-    if (options[["repeatRuns"]] > 0) {
-      repeats <- sample(1:nrow(rows), options[["repeatRuns"]])
-      for (i in repeats) {
-        rows <- rbind(rows[1:i, ], rows[i, ], rows[-(1:i), ])
-      }
-      rows[, 1] <- 1:nrow(rows)
-    }
-
-    if (options[["runOrder"]] == "runOrderRandom") {
-      rows <- rows[order(rows$runOrder), ]
+          999
+        },
+        hard = options[["numberHTCFactors"]],
+        replications = options[["factorialCornerReplicates"]],
+        repeat.only = rep
+      )
     } else {
-      if (options[["factorialBlocks"]] > 1) {
-        hmm <- DoE.base::run.order(desx)
-        hmmRunDF <- as.data.frame(strsplit(as.character(hmm[, 1]), ".", fixed = T))
-        k <- 0
-        actualOrder <- numeric(0)
-        for (i in 1:options[["factorialBlocks"]]) {
-          actualOrder <- append(x = actualOrder, values = (order(as.numeric(hmmRunDF[, hmmRunDF[2, ] == i][1, ])) + k))
-          k <- k + length(hmmRunDF[, hmmRunDF[2, ] == i][1, ])
-        }
-        rows <- rows[actualOrder, ]
-      } else {
-        rows <- rows[order(rows$runOrderStandard), ]
-      }
+      design <- FrF2::FrF2(
+        nfactors = options[["numberOfCategorical"]],
+        nruns = (2^options[["numberOfCategorical"]]) * as.numeric(options[["factorialFraction"]]),
+        hard = options[["numberHTCFactors"]],
+        replications = options[["factorialCornerReplicates"]],
+        repeat.only = rep
+      )
     }
-
-    table$setData(rows)
-    aliasStructure <- .doeFactorialShowAliasStructure(options, jaspResults, factorialDesign = desx)
-
-    # export design
-    if (options[["actualExporter"]] && options[["file"]] != "") {
-      exportDesign <- data.frame(rows)
-      exportDesign <- cbind(exportDesign, rep(NA, nrow(exportDesign)))
-      colnames(exportDesign)[ncol(exportDesign)] <- "Response"
-      utils::write.csv(x = exportDesign, file = options[["file"]], row.names = FALSE, na = "", quote = FALSE)
-    }
-
-    return(list(table = table, aliasStructure = aliasStructure))
   }
+
+  return(design)
 }
 
-.doeFactorialShowAliasStructure <- function(options, jaspResults, factorialDesign, onlyTable = FALSE) {
-  if (!options[["showAliasStructure"]]) {
-    jaspResults[["showAliasStructure"]] <- NULL
+.doeFactorialShowSelectedDesign <- function(jaspResults, options, design) {
+  if (!is.null(jaspResults[["displayDesign"]]) || !options[["displayDesign"]]) {
     return()
   }
 
-  if (is.null(jaspResults[["showAliasStructure"]])) {
-    table <- createJaspTable(gettext("Alias Structure"))
-    table$dependOn(options = c(
-      "numberOfFactors",
-      "factorialRuns",
-      "factorialResolution"
-    ))
+  df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
+  factorNames <- df[["name"]]
+  factorLows <- df[, 2]
+  factorHighs <- df[, 3]
 
-    Aliases <- FrF2::aliasprint(factorialDesign)
-    rows <- data.frame(Aliases = c(Aliases$main, Aliases$fi2))
-
-    jaspResults[["state2"]] <- createJaspState(rows)
-    jaspResults[["state2"]]$dependOn("always_present")
-
-    table$setData(rows)
-
-    return(table)
+  table <- createJaspTable(title = gettext("Factorial Design"), position = 3L)
+  table$addColumnInfo(name = "runOrder", title = gettext("Run order"), type = "string")
+  table$addColumnInfo(name = "runOrderStandard", title = if (options[["factorialBlocks"]] == 1) "Standard order" else "standard.block.perblock", type = "integer")
+  for (i in 1:options[["numberOfCategorical"]]) {
+    table$addColumnInfo(name = df[["name"]][i], title = df[["name"]][i], type = "string")
   }
+  if (options[["factorialType"]] == "factorialTypeSplit" && options[["designBy"]] == "designByFraction") {
+    table$addFootnote(paste("Hard-to-change factors: ", paste(factorNames[1:options[["numberHTCFactors"]]], collapse = ", "), sep = ""))
+  }
+  table$dependOn(options = c("displayDesign", "codedOutput", "runOrder", "repeatRuns", .doeFactorialDependencies()))
+  jaspResults[["displayDesign"]] <- table
+
+  if (options[["categoricalNoLevels"]] == 2) {
+
+  runOrder <- 1:nrow(design)
+  rows <- cbind.data.frame(runOrder, design)
+
+  blocks <- rows$Blocks
+  rows <- rows[, !names(rows) %in% "Blocks"]
+
+  runOrderStandard <- DoE.base::run.order(design)[, 1]
+  rows <- cbind.data.frame(runOrder = runOrder, runOrderStandard = runOrderStandard, design)
+
+  rows <- rows[, !names(rows) %in% "Blocks"]
+
+
+  # DATA CODING
+  if (options[["factorialCenterPoints"]] >= 1) {
+    rows[, (1 + 2):ncol(rows)] <- sapply(rows[, (1 + 2):ncol(rows)], as.numeric)
+  } else {
+    rows[, (1 + 2):ncol(rows)] <- sapply(rows[, (1 + 2):ncol(rows)], as.numeric) * 2 - 3
+  }
+  if (!options[["codedOutput"]]) {
+    for (i in 1:options[["numberOfCategorical"]]) {
+      rows[, i + 2][rows[, i + 2] == -1] <- if (any(factorLows[i] == "1")) {
+        "1.0"
+      } else {
+        factorLows[i]
+      }
+
+      if (options[["factorialCenterPoints"]] >= 1) {
+        rows[, i + 2][rows[, i + 2] == 0] <-
+          if (!is.na(as.numeric(factorLows[i]) + as.numeric(factorHighs[i]))) {
+            (as.numeric(factorLows[i]) + as.numeric(factorHighs[i])) / 2
+          } else {
+            "center"
+          }
+      }
+      rows[, i + 2][rows[, i + 2] == 1] <- factorHighs[i]
+    }
+  }
+
+  if (options[["repeatRuns"]] > 0) {
+    repeats <- sample(1:nrow(rows), options[["repeatRuns"]])
+    for (i in repeats) {
+      rows <- rbind(rows[1:i, ], rows[i, ], rows[-(1:i), ])
+    }
+    rows[, 1] <- 1:nrow(rows)
+  }
+
+  if (options[["runOrder"]] == "runOrderRandom") {
+    rows <- rows[order(rows$runOrder), ]
+  } else {
+    if (options[["factorialBlocks"]] > 1) {
+      hmm <- DoE.base::run.order(design)
+      hmmRunDF <- as.data.frame(strsplit(as.character(hmm[, 1]), ".", fixed = T))
+      k <- 0
+      actualOrder <- numeric(0)
+      for (i in 1:options[["factorialBlocks"]]) {
+        actualOrder <- append(x = actualOrder, values = (order(as.numeric(hmmRunDF[, hmmRunDF[2, ] == i][1, ])) + k))
+        k <- k + length(hmmRunDF[, hmmRunDF[2, ] == i][1, ])
+      }
+      rows <- rows[actualOrder, ]
+    } else {
+      rows <- rows[order(rows$runOrderStandard), ]
+    }
+  }
+  } else {
+    levels <- numeric(options[["numberOfFactors"]])
+    factorNames <- character(options[["numberOfFactors"]])
+    for (i in 1:length(levels)) {
+      levels[i] <- options[["factors"]][[i]]$numberOfLevels
+      factorNames[i] <- options[["factors"]][[i]]$factorName
+    }
+
+    rep <- options[["fullRepeats"]] > 0
+
+    fullDesign <- DoE.base::fac.design(
+      nlevels = levels,
+      factor.names = factorNames,
+      replications = options[["fullCornerReplicates"]],
+      repeat.only = rep
+    )
+
+    fullRunOrder <- 1:nrow(fullDesign)
+    fullStandard <- DoE.base::run.order(fullDesign)[, 1]
+
+    rows <- cbind.data.frame("Run order" = fullRunOrder, "Standard order" = fullStandard, fullDesign)
+    if (options[["runOrder"]] == "runOrderStandard") {
+      rows <- rows[order(rows$`Standard order`), ]
+    } else {
+      rows <- rows[order(rows$`Run order`), ]
+    }
+  }
+  colnames(rows)[-(1:2)] <- factorNames
+
+  table$setData(rows)
+}
+
+.doeFactorialShowAliasStructure <- function(jaspResults, options, design) {
+  if (!is.null(jaspResults[["showAliasStructure"]]) || !options[["showAliasStructure"]]) {
+    return()
+  }
+  table <- createJaspTable(title = gettext("Alias Structure"), position = 4L)
+  table$dependOn(options = c("displayDesign", "codedOutput", "runOrder", "repeatRuns", .doeFactorialDependencies()))
+  jaspResults[["showAliasStructure"]] <- table
+  aliases <- FrF2::aliasprint(design)
+  rows <- data.frame(Aliases = c(aliases[["main"]], aliases[["fi2"]]))
+  table$setData(rows)
 }
 
 ################### Analysis ###################
