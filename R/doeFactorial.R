@@ -55,20 +55,18 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   if (!is.null(jaspResults[["doeFactorialDesignSummaryTable"]])) {
     return()
   }
+  twoLevelDesign <- options[["categoricalNoLevels"]] == 2
   table <- createJaspTable(title = gettext("Design Summary"), position = 1L)
   table$addColumnInfo(name = "title", title = gettext("Variable"), type = "string")
   table$addColumnInfo(name = "catFactors", title = gettext("Factors"), type = "integer")
   table$addColumnInfo(name = "baseRuns", title = gettext("Base runs"), type = "integer")
   if (options[["categoricalNoLevels"]] == 2) {
-    table$addColumnInfo(name = "baseBlocks", title = gettext("Base blocks"), type = "integer")
+    table$addColumnInfo(name = "baseBlocks", title = gettext("Blocks"), type = "integer")
+    table$addColumnInfo(name = "centerpoints", title = gettext("Centre points"), type = "integer")
   }
   table$addColumnInfo(name = "replicates", title = gettext("Replicates"), type = "integer")
   table$addColumnInfo(name = "random", title = gettext("Random runs"), type = "integer")
   table$addColumnInfo(name = "totalRuns", title = gettext("Total runs"), type = "integer")
-  if (options[["categoricalNoLevels"]] == 2) {
-    table$addColumnInfo(name = "totalBlocks", title = gettext("Total blocks"), type = "integer")
-    table$addColumnInfo(name = "centerpoints", title = gettext("Centre points"), type = "integer")
-  }
   table$transpose <- TRUE
   table$dependOn(options = .doeFactorialDependencies())
   jaspResults[["doeFactorialDesignSummaryTable"]] <- table
@@ -81,13 +79,14 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     table[["baseRuns"]] <- designSpec[["runs"]]
     if (options[["categoricalNoLevels"]] == 2) {
       table[["baseBlocks"]] <- designSpec[["blocks"]]
+      table[["centerpoints"]] <- designSpec[["centerpoints"]]
     }
     table[["replicates"]] <- designSpec[["replicates"]]
     table[["random"]] <- designSpec[["randomruns"]]
-    table[["totalRuns"]] <- designSpec[["runs"]] * designSpec[["replicates"]] + designSpec[["randomruns"]]
-    if (options[["categoricalNoLevels"]] == 2) {
-      table[["totalBlocks"]] <- designSpec[["blocks"]] * designSpec[["replicates"]]
-      table[["centerpoints"]] <- designSpec[["centerpoints"]]
+    if (twoLevelDesign) {
+      table[["totalRuns"]] <- (designSpec[["runs"]] * designSpec[["replicates"]] * designSpec[["blocks"]]) + (designSpec[["blocks"]] * designSpec[["centerpoints"]] * designSpec[["replicates"]]) + designSpec[["randomruns"]]
+    } else {
+      table[["totalRuns"]] <- designSpec[["runs"]] * designSpec[["replicates"]] + designSpec[["randomruns"]] # TODO
     }
   }
   if (length(designSpec) != 0L && !options[["displayDesign"]]) {
@@ -250,7 +249,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   }
   display <- .doeFactorialAddRepeatRuns(options, display)
   display <- .doeFactorialCodeDesign(options, display)
-  display <- .doeFactorialSetRunOrder(options, display, as.data.frame(design))
+  display <- .doeFactorialSetRunOrder(options, display)
   result[["display"]] <- display
   return(result)
 }
@@ -311,26 +310,11 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   return(display)
 }
 
-.doeFactorialSetRunOrder <- function(options, display, design) {
-  twoLevelDesign <- options[["categoricalNoLevels"]] == 2
-  if (options[["runOrder"]] == "runOrderStandard") {
-    if (twoLevelDesign) {
-      if (options[["factorialBlocks"]] > 1) {
-        hmm <- DoE.base::run.order(design)
-        hmmRunDF <- as.data.frame(strsplit(as.character(hmm[, 1]), ".", fixed = TRUE))
-        k <- 0
-        actualOrder <- numeric(0)
-        for (i in 1:options[["factorialBlocks"]]) {
-          actualOrder <- append(x = actualOrder, values = (order(as.numeric(hmmRunDF[, hmmRunDF[2, ] == i][1, ])) + k))
-          k <- k + length(hmmRunDF[, hmmRunDF[2, ] == i][1, ])
-        }
-        display <- display[actualOrder, ]
-      } else {
-        display <- display[order(display[["sro"]]), ]
-      }
-    }
-  } else {
+.doeFactorialSetRunOrder <- function(options, display) {
+  if (options[["runOrder"]] == "runOrderRandom") {
     display <- display[order(display[["ro"]]), ]
+  } else {
+    display <- display[order(display[["sro"]]), ]
   }
   return(display)
 }

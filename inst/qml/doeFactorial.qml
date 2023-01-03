@@ -369,7 +369,7 @@ Form
             {
                 enabled:					!factorialTypeSplit.checked & numberOfLevels.value == 2
                 name:						"factorialCenterPoints"
-                label:						qsTr("Centre points (per block)")
+                label:						qsTr("Block centre points")
                 defaultValue:				0
                 min:						0
                 max:						2**(numberOfCategorical.value - 1)
