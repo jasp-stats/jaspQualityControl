@@ -364,29 +364,8 @@ Form
 			}
 		}
 
-
-		RadioButtonGroup
-		{
-			name:								"runOrder"
-			title:								qsTr("Run Order")
-
-			RadioButton
-			{
-				SetSeed{}
-				name:							"runOrderRandom"
-				label:							qsTr("Random")
-				checked:						true
-			}
-
-			RadioButton
-			{
-				name:							"runOrderStandard"
-				label:							qsTr("Standard")
-			}
-		}
-
 		// show user labels or just -1, 1?
-		//CheckBox		{ name: "codedOutput";	label: qsTr("Show coded output")										}
+		SetSeed{}
 		IntegerField	{ name: "replicates";	label: qsTr("Replicates");			defaultValue: 1; min: 1; max: 100	}
 
 	}

@@ -24,14 +24,33 @@ Group
 
 	columns : 1
 	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: false 
-		CheckBox{ name: "codedOutput";	label: qsTr("Show coded output")}}
+		CheckBox{ name: "codedOutput";	label: qsTr("Coded units")}
+		RadioButtonGroup
+		{
+			name:								"runOrder"
+
+			RadioButton
+			{
+				name:							"runOrderRandom"
+				label:							qsTr("Sort by run order")
+				checked:						true
+			}
+
+			RadioButton
+			{
+				name:							"runOrderStandard"
+				label:							qsTr("Sort by standard order")
+			}
+		}
+	}
 	// Export the design to a csv
 	Group
 	{
 		FileSelector
 		{
+			id:			exportDesignFile
 			name:		"exportDesignFile"
-			label:		qsTr("Export design:")
+			label:		qsTr("Save as:")
 			placeholderText: qsTr("e.g. design.csv")
 			filter:		"*.csv"
 			save:		true
@@ -41,8 +60,9 @@ Group
 		{
 			id:					actualExporter
 			name:				"actualExporter"
-			label:				qsTr("Synch Design")
-			Layout.leftMargin:  20 * preferencesModel.uiScale
+			label:				qsTr("Export design")
+			Layout.leftMargin:  25 * preferencesModel.uiScale
+			enabled: 			exportDesignFile.value != ""
 		}
 	}
 

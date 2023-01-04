@@ -311,46 +311,14 @@ Form
 
         IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); defaultValue: selectedDesign2.rowSelected; negativeValues: true; visible: false }
         IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); defaultValue: selectedDesign2.colSelected; negativeValues: true; visible: false }
-		CheckBox { name: "showAliasStructure"; label: qsTr("Show alias structure"); enabled: numberOfLevels.value == 2 & factorialTypeDefault.checked}
+		CheckBox { name: "showAliasStructure"; label: qsTr("Alias structure"); enabled: numberOfLevels.value == 2 & factorialTypeDefault.checked}
+		SetSeed{}
 
     }
 
     Group
     {
-        columns: 2
-
-        Group
-        {
-
-            RadioButtonGroup
-            {
-                name:								"runOrder"
-                title:								qsTr("Order Display")
-
-                RadioButton
-                {
-                    SetSeed{}
-                    name:							"runOrderRandom"
-                    label:							qsTr("Random")
-                    checked:						true
-                }
-
-                RadioButton
-                {
-                    name:							"runOrderStandard"
-                    label:							qsTr("Standard")
-                }
-            }
-
-            IntegerField
-            {
-                name:						"replications"
-                label:						qsTr("Replications")
-                defaultValue:				1
-                min:						1
-                max:						8
-            }
-        }
+        columns: 1
 
         Group
         {
@@ -368,7 +336,7 @@ Form
             {
                 enabled:					!factorialTypeSplit.checked & numberOfLevels.value == 2
                 name:						"centerpoints"
-                label:						qsTr("Block centre points")
+                label:						qsTr("Centre points per block")
                 defaultValue:				0
                 min:						0
                 max:						2**(numberOfCategorical.value - 1)
@@ -376,8 +344,17 @@ Form
 
             IntegerField
             {
+                name:						"replications"
+                label:						qsTr("Replications")
+                defaultValue:				1
+                min:						1
+                max:						8
+            }
+
+            IntegerField
+            {
                 name:						"repetitions"
-                label:						qsTr("Random runs to repeat")
+                label:						qsTr("Repetitions")
                 defaultValue:				0
                 min:						0
                 max:						10
