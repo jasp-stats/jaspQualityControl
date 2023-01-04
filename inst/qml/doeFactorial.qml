@@ -126,7 +126,7 @@ Form
             property var designData: // it would be better to generate this...
             {
                 if (numberOfLevels.value > 2) {
-                    return["Full factorial", "Unknown", "Full"]
+                    return["Full factorial", numberOfLevels.intValue**numberOfCategorical.intValue, "Full"]
                 } else {
                     const val = numberOfCategorical.intValue
                     if (val == 2) {
