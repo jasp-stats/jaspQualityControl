@@ -311,8 +311,8 @@ Form
 
         IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); defaultValue: selectedDesign2.rowSelected; negativeValues: true; visible: false }
         IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); defaultValue: selectedDesign2.colSelected; negativeValues: true; visible: false }
-		CheckBox { name: "showAliasStructure"; label: qsTr("Alias structure"); enabled: numberOfLevels.value == 2 & factorialTypeDefault.checked}
-		SetSeed{}
+        CheckBox { name: "showAliasStructure"; label: qsTr("Alias structure"); enabled: numberOfLevels.value == 2 & factorialTypeDefault.checked}
+        SetSeed{}
 
     }
 
@@ -362,5 +362,5 @@ Form
         }
     }
 
-	Common.ShowAndExportDesign {}
+    Common.ShowAndExportDesign {}
 }

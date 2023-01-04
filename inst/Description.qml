@@ -107,7 +107,7 @@ Description
 	{
 		title:			qsTr("Analyze Design")
 		func:			"doeAnalysis"
-		requiresData:	false
+		requiresData:	true
 	}
 
 	GroupTitle
