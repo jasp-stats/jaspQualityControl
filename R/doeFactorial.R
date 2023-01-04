@@ -152,25 +152,31 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
       )
     } else if (nFactors == 8) {
       designs <- data.frame(
-        name = c("no fraction", "no fraction", "no fraction", "no fraction"),
+        name = c("1/16 fraction", "1/8 fraction", "1/4 fraction", "1/2 fraction"),
         runs = c(16, 32, 64, 128),
         resolution = c("IV", "IV", "V", "VIII")
       )
     } else if (nFactors == 9) {
       designs <- data.frame(
-        name = c("no fraction", "no fraction", "no fraction", "no fraction"),
+        name = c("1/32 fraction", "1/16 fraction", "1/8 fraction", "1/4 fraction"),
         runs = c(16, 32, 64, 128),
         resolution = c("III", "IV", "IV", "VI")
       )
-    } else if (nFactors == 10 || nFactors == 11) {
+    } else if (nFactors == 10) {
       designs <- data.frame(
-        name = c("no fraction", "no fraction", "no fraction", "no fraction"),
+        name = c("1/64 fraction", "1/32 fraction", "1/16 fraction", "1/8 fraction"),
+        runs = c(16, 32, 64, 128),
+        resolution = c("III", "IV", "IV", "V")
+      )
+    } else if (nFactors == 11) {
+      designs <- data.frame(
+        name = c("1/128 fraction", "1/64 fraction", "1/32 fraction", "1/16 fraction"),
         runs = c(16, 32, 64, 128),
         resolution = c("III", "IV", "IV", "V")
       )
     } else if (nFactors >= 12) {
       designs <- data.frame(
-        name = c("no fraction", "no fraction", "no fraction", "no fraction"),
+        name = c("1/256 fraction", "1/128 fraction", "1/64 fraction", "1/32 fraction"),
         runs = c(16, 32, 64, 128),
         resolution = c("III", "IV", "IV", "IV")
       )
@@ -331,7 +337,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
 }
 
 .doeFactorialAliasTable <- function(jaspResults, options, design) {
-  if (!is.null(jaspResults[["showAliasStructure"]]) || !options[["showAliasStructure"]]) {
+  if (!is.null(jaspResults[["showAliasStructure"]]) || !options[["showAliasStructure"]] || !options[["factorialType"]] == "factorialTypeDefault") {
     return()
   }
   tb <- createJaspTable(title = gettext("Alias Structure"), position = 2L)

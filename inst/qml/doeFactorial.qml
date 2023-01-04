@@ -166,31 +166,38 @@ Form
                                 ];
                     } else if (val == 8) {
                         return	[
-                                    "no fraction", 16, "IV",
-                                    "no fraction", 32, "IV",
-                                    "no fraction", 64, "V",
-                                    "no fraction", 128, "VIII"
+                                    "1/16 fraction", 16, "IV",
+                                    "1/8 fraction", 32, "IV",
+                                    "1/4 fraction", 64, "V",
+                                    "1/2 fraction", 128, "VIII"
                                 ];
                     } else if (val == 9) {
                         return	[
-                                    "no fraction", 16, "III",
-                                    "no fraction", 32, "IV",
-                                    "no fraction", 64, "IV",
-                                    "no fractiopn", 128, "VI"
+                                    "1/32 fraction", 16, "III",
+                                    "1/16 fraction", 32, "IV",
+                                    "1/8 fraction", 64, "IV",
+                                    "1/4 fraction", 128, "VI"
                                 ];
-                    } else if (val == 10 || val == 11) {
+                    } else if (val == 10) {
                         return	[
-                                    "no fraction", 16, "III",
-                                    "no fraction", 32, "IV",
-                                    "no fraction", 64, "IV",
-                                    "no fraction", 128, "V",
+                                    "1/64 fraction", 16, "III",
+                                    "1/32 fraction", 32, "IV",
+                                    "1/16 fraction", 64, "IV",
+                                    "1/8 fraction", 128, "V",
+                                ];
+                    } else if (val == 11) {
+                        return	[
+                                    "1/128 fraction", 16, "III",
+                                    "1/64 fraction", 32, "IV",
+                                    "1/32 fraction", 64, "IV",
+                                    "1/16 fraction", 128, "V",
                                 ];
                     } else if (val >= 12) {
                         return	[
-                                    "no fraction", 16, "III",
-                                    "no fraction", 32, "IV",
-                                    "no fraction", 64, "IV",
-                                    "no fraction", 128,  "IV",
+                                    "1/256 fraction", 16, "III",
+                                    "1/128 fraction", 32, "IV",
+                                    "1/64 fraction", 64, "IV",
+                                    "1/32 fraction", 128,  "IV",
                                 ];
                     }
                 }
