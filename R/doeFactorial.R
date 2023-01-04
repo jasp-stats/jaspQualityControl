@@ -86,34 +86,32 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   designSpec <- .doeFactorialGetSelectedDesign(jaspResults, options)
   if (length(designSpec) == 0L) { # user did not select a design
     tb$addFootnote(gettext("Please select a row in the design table."))
-  } else {
-    tb[["baseRuns"]] <- designSpec[["runs"]]
-    if (options[["categoricalNoLevels"]] == 2) {
-      tb[["baseBlocks"]] <- designSpec[["blocks"]]
-      tb[["centerpoints"]] <- designSpec[["centerpoints"]]
-    }
-    tb[["replications"]] <- designSpec[["replications"]]
-    tb[["repetitions"]] <- designSpec[["repetitions"]]
-    if (twoLevelDesign) {
-      tb[["totalRuns"]] <- (designSpec[["runs"]] * designSpec[["replications"]]) + (designSpec[["blocks"]] * designSpec[["centerpoints"]] * designSpec[["replications"]]) + designSpec[["repetitions"]]
-      tb[["totalBlocks"]] <- designSpec[["replications"]] * designSpec[["blocks"]]
-    } else {
-      df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
-      nLevels <- apply(df, 1, function(x) length(which(x[-1] != ".")))
-      tb[["totalRuns"]] <- prod(nLevels) * designSpec[["replications"]] + designSpec[["repetitions"]]
-      tb[["totalBlocks"]] <- designSpec[["replications"]]
-    }
+    return()
   }
-  if (length(designSpec) != 0L) {
-    if (!options[["displayDesign"]]) {
-      tb$addFootnote(gettext("Click 'Display design' to show the design."))
-    }
-    if (options[["exportDesignFile"]] != "") {
-      if (!options[["actualExporter"]]) {
-        tb$addFootnote(gettext("The design is not exported until 'Export design' is checked."))
-      } else {
-        tb$addFootnote(gettextf("The design is exported as '%1$s'.", basename(options[["exportDesignFile"]])))
-      }
+  tb[["baseRuns"]] <- designSpec[["runs"]]
+  if (options[["categoricalNoLevels"]] == 2) {
+    tb[["baseBlocks"]] <- designSpec[["blocks"]]
+    tb[["centerpoints"]] <- designSpec[["centerpoints"]]
+  }
+  tb[["replications"]] <- designSpec[["replications"]]
+  tb[["repetitions"]] <- designSpec[["repetitions"]]
+  if (twoLevelDesign) {
+    tb[["totalRuns"]] <- (designSpec[["runs"]] * designSpec[["replications"]]) + (designSpec[["blocks"]] * designSpec[["centerpoints"]] * designSpec[["replications"]]) + designSpec[["repetitions"]]
+    tb[["totalBlocks"]] <- designSpec[["replications"]] * designSpec[["blocks"]]
+  } else {
+    df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
+    nLevels <- apply(df, 1, function(x) length(which(x[-1] != ".")))
+    tb[["totalRuns"]] <- prod(nLevels) * designSpec[["replications"]] + designSpec[["repetitions"]]
+    tb[["totalBlocks"]] <- designSpec[["replications"]]
+  }
+  if (!options[["displayDesign"]]) {
+    tb$addFootnote(gettext("Click 'Display design' to show the design."))
+  }
+  if (options[["exportDesignFile"]] != "") {
+    if (!options[["actualExporter"]]) {
+      tb$addFootnote(gettext("The design is not exported until 'Export design' is checked."))
+    } else {
+      tb$addFootnote(gettextf("The design is exported as '%1$s'.", basename(options[["exportDesignFile"]])))
     }
   }
 }
@@ -225,6 +223,9 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   if (length(designSpec) == 0) {
     return()
   }
+  if (length(unique(df[["name"]])) != options[["numberOfCategorical"]]) {
+    stop("Duplicate factor names are not allowed.")
+  }
   if (twoLevelDesign) {
     if (options[["factorialType"]] == "factorialTypeDefault") {
       design <- FrF2::FrF2(
@@ -286,6 +287,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     }
   }
   runOrder <- 1:nrow(design)
+  # TODO: Fix for blocks and repetitions
   standardOrder <- as.numeric(DoE.base::run.order(design)[["run.no.in.std.order"]])
   dfDesign <- as.data.frame(design)
   if (!twoLevelDesign) {
