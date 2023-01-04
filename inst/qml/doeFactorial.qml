@@ -304,6 +304,7 @@ Form
 
         IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); defaultValue: selectedDesign2.rowSelected; negativeValues: true; visible: false }
         IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); defaultValue: selectedDesign2.colSelected; negativeValues: true; visible: false }
+		CheckBox { name: "showAliasStructure"; label: qsTr("Show alias structure"); enabled: numberOfLevels.value == 2 & factorialTypeDefault.checked}
 
     }
 
@@ -317,7 +318,7 @@ Form
             RadioButtonGroup
             {
                 name:								"runOrder"
-                title:								qsTr("Run Order")
+                title:								qsTr("Order Display")
 
                 RadioButton
                 {
@@ -336,20 +337,11 @@ Form
 
             IntegerField
             {
-                id:							factorialCornerReplicates
-                name:						"factorialCornerReplicates"
-                label:						qsTr("Replicates")
+                name:						"replications"
+                label:						qsTr("Replications")
                 defaultValue:				1
                 min:						1
                 max:						8
-            }
-
-            CheckBox
-            {
-                enabled:					factorialCornerReplicates.value > 1
-                name:						"factorialRepeats"
-                label:						"Repeats only"
-                Layout.leftMargin:			10 * preferencesModel.uiScale
             }
         }
 
@@ -357,7 +349,7 @@ Form
         {
             IntegerField
             {
-                name:						"factorialBlocks"
+                name:						"blocks"
                 enabled:					!factorialTypeSplit.checked & !factorialTypeSpecify.checked & numberOfLevels.value == 2
                 label:						qsTr("Blocks")
                 defaultValue:				1
@@ -368,7 +360,7 @@ Form
             IntegerField
             {
                 enabled:					!factorialTypeSplit.checked & numberOfLevels.value == 2
-                name:						"factorialCenterPoints"
+                name:						"centerpoints"
                 label:						qsTr("Block centre points")
                 defaultValue:				0
                 min:						0
@@ -377,7 +369,7 @@ Form
 
             IntegerField
             {
-                name:						"repeatRuns"
+                name:						"repetitions"
                 label:						qsTr("Random runs to repeat")
                 defaultValue:				0
                 min:						0
@@ -386,17 +378,5 @@ Form
         }
     }
 
-    Group
-    {
-        CheckBox
-        {
-            name:								"showAliasStructure"
-            label:								qsTr("Show alias structure")
-            enabled:							factorialTypeDefault.checked & numberOfLevels.value == 2
-        }
-
-        CheckBox{ name: "codedOutput";	label: qsTr("Show coded output")}
-
-        Common.ShowAndExportDesign {}
-    }
+	Common.ShowAndExportDesign {}
 }

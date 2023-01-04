@@ -386,7 +386,7 @@ Form
 		}
 
 		// show user labels or just -1, 1?
-		CheckBox		{ name: "codedOutput";	label: qsTr("Show coded output")										}
+		//CheckBox		{ name: "codedOutput";	label: qsTr("Show coded output")										}
 		IntegerField	{ name: "replicates";	label: qsTr("Replicates");			defaultValue: 1; min: 1; max: 100	}
 
 	}

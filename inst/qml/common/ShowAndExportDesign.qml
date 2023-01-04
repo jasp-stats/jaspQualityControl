@@ -23,7 +23,8 @@ Group
 {
 
 	columns : 1
-	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: false }
+	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: false 
+		CheckBox{ name: "codedOutput";	label: qsTr("Show coded output")}}
 	// Export the design to a csv
 	Group
 	{
@@ -31,26 +32,17 @@ Group
 		{
 			name:		"exportDesignFile"
 			label:		qsTr("Export design:")
+			placeholderText: qsTr("e.g. design.csv")
 			filter:		"*.csv"
 			save:		true
-		}
-
-		Button
-		{
-			// this would be better but jasp doesn't support it
-//			Layout.alignment:	Qt.AlignRight
-			// let's ignore the warning
-			anchors.right:		parent.right
-			anchors.bottom:		parent.bottom
-			text:				actualExporter.checked ? qsTr("<b>Sync Design: On</b>") : qsTr("<b>Sync Design: Off</b>")
-			onClicked: 			actualExporter.click()
 		}
 
 		CheckBox
 		{
 			id:					actualExporter
 			name:				"actualExporter"
-			visible:			false
+			label:				qsTr("Synch Design")
+			Layout.leftMargin:  20 * preferencesModel.uiScale
 		}
 	}
 
