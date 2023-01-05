@@ -371,7 +371,11 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   if (!dir.exists(dirname(outpath)))
     return()
 
-  utils::write.csv(x = design, file = options[["exportDesignFile"]], row.names = FALSE)
+  out_design <- design
+  colnames(out_design)[1:2] <- c("RunOrder", "StandardOrder")
+  out_design[["Response"]] <- ""
+
+  utils::write.csv(x = out_design, file = options[["exportDesignFile"]], row.names = FALSE, quote = FALSE)
 
 }
 

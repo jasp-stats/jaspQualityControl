@@ -23,34 +23,46 @@ Group
 {
 
 	columns : 1
-	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: false }
+	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: false 
+		CheckBox{ name: "codedOutput";	label: qsTr("Coded units")}
+		RadioButtonGroup
+		{
+			name:								"runOrder"
+
+			RadioButton
+			{
+				name:							"runOrderRandom"
+				label:							qsTr("Sort by run order")
+				checked:						true
+			}
+
+			RadioButton
+			{
+				name:							"runOrderStandard"
+				label:							qsTr("Sort by standard order")
+			}
+		}
+	}
 	// Export the design to a csv
 	Group
 	{
 		FileSelector
 		{
+			id:			exportDesignFile
 			name:		"exportDesignFile"
-			label:		qsTr("Export design:")
+			label:		qsTr("Save as:")
+			placeholderText: qsTr("e.g. design.csv")
 			filter:		"*.csv"
 			save:		true
-		}
-
-		Button
-		{
-			// this would be better but jasp doesn't support it
-//			Layout.alignment:	Qt.AlignRight
-			// let's ignore the warning
-			anchors.right:		parent.right
-			anchors.bottom:		parent.bottom
-			text:				actualExporter.checked ? qsTr("<b>Sync Design: On</b>") : qsTr("<b>Sync Design: Off</b>")
-			onClicked: 			actualExporter.click()
 		}
 
 		CheckBox
 		{
 			id:					actualExporter
 			name:				"actualExporter"
-			visible:			false
+			label:				qsTr("Export design")
+			Layout.leftMargin:  25 * preferencesModel.uiScale
+			enabled: 			exportDesignFile.value != ""
 		}
 	}
 

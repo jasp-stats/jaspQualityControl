@@ -93,32 +93,22 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Two-level Factorial Design")
+		title:			qsTr("Factorial Design")
 		func:			"doeFactorial"
 		requiresData:	false
 	}
-    Analysis
-    {
-        title:          qsTr("General Full Factorial Design")
-        func:           "doeFull"
-        requiresData:   false
-    }
-    Analysis
-	  {
+	Analysis
+	{
 		title:			qsTr("Response Surface Design")
 		func:			"doeResponseSurfaceMethodology"
 		requiresData:	false
-	  }
-    Analysis
-    {
-        title:          qsTr("Define Custom Design")
-        func:           "doeModifyDesign"
-    }
-//    Analysis
-//    {
-//        title:			qsTr("Definitive Screening Analysis")
-//        func:			"definitiveScreeningAnalysis"
-//    }
+	}
+	Analysis
+	{
+		title:			qsTr("Analyze Design")
+		func:			"doeAnalysis"
+		requiresData:	true
+	}
 
 	GroupTitle
 	{
