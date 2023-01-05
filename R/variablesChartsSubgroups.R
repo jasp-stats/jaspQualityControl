@@ -20,7 +20,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   
   wideFormat <- options[["CCDataFormat"]] == "CCwideFormat"
   
-  # In wide format we have one subgroup per column, else we need a either a grouping variable or later specify subgroup size manually
+  # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
   if (wideFormat) {
     measurements <- unlist(options$variables)
     subgroupVariableGiven <- FALSE
@@ -58,6 +58,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
   }
   
+  # Rearrange data if not already one group per row
   if (!wideFormat && ready){
     # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
     if (options[["subgroupSizeType"]] == "manual") {
