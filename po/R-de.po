@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2022-12-17 03:40\n"
+"POT-Creation-Date: 2023-01-07 03:41\n"
 "PO-Revision-Date: 2023-01-05 22:51+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -222,45 +222,6 @@ msgstr "Residuen vs. Standard-Reihenfolge"
 msgid "Four in one for %s"
 msgstr "Vier-in-einem für %s"
 
-msgid "Available Factorial Designs"
-msgstr "Verfügbare faktorielle Designs"
-
-msgid "Selected Design"
-msgstr "Ausgewähltes Design"
-
-msgid "Design"
-msgstr "Design"
-
-msgid "Factors"
-msgstr "Faktoren"
-
-msgid "Runs"
-msgstr "Abläufe"
-
-msgid "Resolution"
-msgstr ""
-
-msgid "Centre points"
-msgstr ""
-
-msgid "Replicates"
-msgstr ""
-
-msgid "Blocks"
-msgstr "Blöcke"
-
-msgid "Repeats"
-msgstr ""
-
-msgid "2-level factorial"
-msgstr "dichotom"
-
-msgid "Design Preview"
-msgstr "Design-Vorschau"
-
-msgid "Alias Structure"
-msgstr "Aliasstruktur"
-
 msgid "Standard order"
 msgstr "Standard-Reihenfolge"
 
@@ -294,6 +255,9 @@ msgstr "<i>p</i>-Wert"
 msgid "VIF"
 msgstr ""
 
+msgid "Alias Structure"
+msgstr "Aliasstruktur"
+
 msgid "Index"
 msgstr "Index"
 
@@ -302,15 +266,6 @@ msgstr "Faktor"
 
 msgid "Name"
 msgstr "Name"
-
-msgid "Input Design"
-msgstr ""
-
-msgid "Desired Design"
-msgstr "Gewünschtes Design"
-
-msgid "Missing Runs"
-msgstr "Fehlende Abläufe"
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %s"
@@ -321,10 +276,7 @@ msgstr "Design-Zusammenfassung"
 msgid "Variable"
 msgstr "Variable"
 
-msgid "Continuous factors"
-msgstr ""
-
-msgid "Categorical factors"
+msgid "Categorial factors"
 msgstr ""
 
 msgid "Base runs"
@@ -334,10 +286,83 @@ msgstr ""
 msgid "Base blocks"
 msgstr "Blöcke"
 
+msgid "Centre points per block"
+msgstr ""
+
+msgid "Replications"
+msgstr ""
+
+msgid "Repetitions"
+msgstr ""
+
 msgid "Total runs"
 msgstr ""
 
 msgid "Total blocks"
+msgstr ""
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Please select a row in the design table."
+msgstr ""
+
+msgid "Click 'Display design' to show the design."
+msgstr ""
+
+msgid "The design is not exported until 'Export design' is checked."
+msgstr ""
+
+msgid "The design is exported as '%1$s'."
+msgstr ""
+
+msgid "No aliasing among main effects and 2-factor interactions."
+msgstr ""
+
+#, fuzzy
+msgid "Factorial Design"
+msgstr "Verfügbare faktorielle Designs"
+
+msgid "Run Order"
+msgstr "Ablaufreihenfolge"
+
+msgid "Standard Order"
+msgstr "Standard-Reihenfolge"
+
+msgid "Hard-to-change factors: %1$s"
+msgstr ""
+
+msgid "Selected Design"
+msgstr "Ausgewähltes Design"
+
+msgid "Factors"
+msgstr "Faktoren"
+
+msgid "Runs"
+msgstr "Abläufe"
+
+msgid "Resolution"
+msgstr ""
+
+msgid "Replicates"
+msgstr ""
+
+msgid "Design Preview"
+msgstr "Design-Vorschau"
+
+msgid "Input Design"
+msgstr ""
+
+msgid "Desired Design"
+msgstr "Gewünschtes Design"
+
+msgid "Missing Runs"
+msgstr "Fehlende Abläufe"
+
+msgid "Continuous factors"
+msgstr ""
+
+msgid "Categorical factors"
 msgstr ""
 
 msgid "Centre points in cube"
@@ -346,16 +371,10 @@ msgstr ""
 msgid "Centre points in axial"
 msgstr ""
 
-msgid "Value"
-msgstr "Wert"
+msgid "Centre points"
+msgstr ""
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
-msgstr ""
-
-msgid "Please select a row in the design table."
-msgstr ""
-
-msgid "Click 'Display design' to show the design."
 msgstr ""
 
 msgid "Response Surface Design - Central Composite Design"
@@ -366,12 +385,6 @@ msgstr ""
 
 msgid "Central Composite Design"
 msgstr ""
-
-msgid "Run Order"
-msgstr "Ablaufreihenfolge"
-
-msgid "Standard Order"
-msgstr "Standard-Reihenfolge"
 
 msgid ""
 "Generator name '%s' is a number, and number generator names are not "
@@ -1349,6 +1362,15 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "Design"
+#~ msgstr "Design"
+
+#~ msgid "Blocks"
+#~ msgstr "Blöcke"
+
+#~ msgid "2-level factorial"
+#~ msgstr "dichotom"
 
 #~ msgid "Response Surface Methodology"
 #~ msgstr "Wirkungsflächen-Methodik"

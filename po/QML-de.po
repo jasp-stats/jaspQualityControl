@@ -28,48 +28,12 @@ msgid "Number of factors"
 msgstr "Anzahl der Faktoren"
 
 msgctxt "doeFactorial|"
-msgid "Uncoded"
-msgstr "Unkodiert"
-
-msgctxt "doeFactorial|"
-msgid "Coded"
-msgstr "Kodiert"
-
-msgctxt "doeFactorial|"
 msgid "Factor"
 msgstr "Faktor"
 
 msgctxt "doeFactorial|"
 msgid "Name"
 msgstr "Name"
-
-msgctxt "doeFactorial|"
-msgid "Level 1"
-msgstr "Stufe 1"
-
-msgctxt "doeFactorial|"
-msgid "Level 2"
-msgstr "Stufe 2"
-
-msgctxt "doeFactorial|"
-msgid "Factor "
-msgstr "Faktor "
-
-msgctxt "doeFactorial|"
-msgid " Level 1"
-msgstr " Stufe 1"
-
-msgctxt "doeFactorial|"
-msgid " Level 2"
-msgstr " Stufe 2"
-
-msgctxt "doeFactorial|"
-msgid "Factorial Design Options"
-msgstr "Optionen für Faktorielles Design"
-
-msgctxt "doeFactorial|"
-msgid "Type of Factorial Design"
-msgstr "Art des faktoriellen Versuchsplans"
 
 msgctxt "doeFactorial|"
 msgid "2-level split-plot (hard-to-change factors)"
@@ -80,48 +44,8 @@ msgid "Number of hard-to-change factors"
 msgstr "Anzahl der schwer veränderbaren Faktoren"
 
 msgctxt "doeFactorial|"
-msgid "Number of runs"
-msgstr "Anzahl der Durchläufe"
-
-msgctxt "doeFactorial|"
 msgid "Resolution"
 msgstr "Auflösung"
-
-msgctxt "doeFactorial|"
-msgid "III"
-msgstr "III"
-
-msgctxt "doeFactorial|"
-msgid "IV"
-msgstr "IV"
-
-msgctxt "doeFactorial|"
-msgid "V"
-msgstr "V"
-
-msgctxt "doeFactorial|"
-msgid "VI"
-msgstr "VI"
-
-msgctxt "doeFactorial|"
-msgid "VIII"
-msgstr "VIII"
-
-msgctxt "doeFactorial|"
-msgid "Full"
-msgstr "Vollständig"
-
-msgctxt "doeFactorial|"
-msgid "Number of center points per block"
-msgstr "Anzahl der Zentroide pro Block"
-
-msgctxt "doeFactorial|"
-msgid "Number of replicates for corner points"
-msgstr "Anzahl der Wiederholungen für Eckpunkte"
-
-msgctxt "doeFactorial|"
-msgid "Number of blocks"
-msgstr "Anzahl der Blöcke"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Response"
@@ -267,10 +191,6 @@ msgctxt "Description|"
 msgid "DOE"
 msgstr "DOE"
 
-msgctxt "Description|"
-msgid "Two-level Factorial Design"
-msgstr "Zweistufiges faktorielles Design"
-
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
 msgstr "Fehlerhafte Einheiten / Fehler"
@@ -302,22 +222,6 @@ msgstr "c-Karte"
 msgctxt "attributesCharts|"
 msgid "u chart"
 msgstr "u-Karte"
-
-msgctxt "doeFactorial|"
-msgid "Run Order"
-msgstr "Ablaufreihenfolge"
-
-msgctxt "doeFactorial|"
-msgid "Standard"
-msgstr "Standard"
-
-msgctxt "doeFactorial|"
-msgid "Random"
-msgstr "zufällig"
-
-msgctxt "doeFactorial|"
-msgid "Save as:"
-msgstr "Speichern als:"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Show analysis and graphs in coded form"
@@ -582,10 +486,6 @@ msgstr "u' (u-Strich)-Karte nach Laney"
 msgctxt "attributesCharts|"
 msgid "X-mR chart"
 msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Additional Options"
-msgstr "Weitere Optionen"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Predictors [Location in coded format]"
@@ -911,10 +811,6 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Number of random runs to repeat"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
@@ -1405,10 +1301,6 @@ msgctxt "Description|"
 msgid "Control Charts for Attributes"
 msgstr "Regelkarten für Attribute"
 
-msgctxt "Description|"
-msgid "General Full Factorial Design"
-msgstr ""
-
 msgctxt "attributesCharts|"
 msgid "Control Charts for Attributes Report"
 msgstr "Bericht Regelkarten für Attribute"
@@ -1469,38 +1361,6 @@ msgctxt "attributesCharts|"
 msgid "Show Report"
 msgstr "Bericht anzeigen"
 
-msgctxt "doeFactorial|"
-msgid "Design Space"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Unit Display"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Design Options"
-msgstr "Design-Optionen"
-
-msgctxt "doeFactorial|"
-msgid "VII"
-msgstr "VII"
-
-msgctxt "doeFactorial|"
-msgid "Fraction"
-msgstr "Bruchteil"
-
-msgctxt "doeFactorial|"
-msgid "1/2"
-msgstr "1/2"
-
-msgctxt "doeFactorial|"
-msgid "1/4"
-msgstr "1/4"
-
-msgctxt "doeFactorial|"
-msgid "1/8"
-msgstr "1/8"
-
 msgctxt "doeFull|"
 msgid "Design Space"
 msgstr ""
@@ -1540,11 +1400,6 @@ msgstr "Faktor "
 msgctxt "doeFull|"
 msgid "Additional Options"
 msgstr "Weitere Optionen"
-
-#, fuzzy
-msgctxt "doeFull|"
-msgid "Number of replicates for corner points"
-msgstr "Anzahl der Wiederholungen für Eckpunkte"
 
 msgctxt "doeFull|"
 msgid "Number of random runs to repeat"
@@ -1815,20 +1670,8 @@ msgctxt "doeFactorial|"
 msgid "Design generator"
 msgstr ""
 
-msgctxt "doeFactorial|"
-msgid "<b>Sync Design: On</b>"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "<b>Sync Design: Off</b>"
-msgstr ""
-
 msgctxt "Description|"
 msgid "Response Surface Design"
-msgstr ""
-
-msgctxt "Description|"
-msgid "Define Custom Design"
 msgstr ""
 
 msgctxt "attributesCharts|"
@@ -1840,99 +1683,8 @@ msgid "Time stamp (optional)"
 msgstr "Zeitstempel (optional)"
 
 msgctxt "doeFactorial|"
-msgid "Design Analysis"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Available factors"
-msgstr "Verfügbare Faktoren"
-
-msgctxt "doeFactorial|"
-msgid "Response variable"
-msgstr "Wirkvariable"
-
-#, fuzzy
-msgctxt "doeFactorial|"
-msgid "Assigned factors"
-msgstr "Zugewiesene Faktoren"
-
-msgctxt "doeFactorial|"
 msgid "Blocks"
 msgstr "Blöcke"
-
-msgctxt "doeFactorial|"
-msgid "Run order"
-msgstr "Ablaufreihenfolge"
-
-msgctxt "doeFactorial|"
-msgid "Highest order interaction term:"
-msgstr "Interaktionsterm höchster Ordnung:"
-
-msgctxt "doeFactorial|"
-msgid "Model"
-msgstr "Modell"
-
-msgctxt "doeFactorial|"
-msgid "Components"
-msgstr "Komponenten"
-
-msgctxt "doeFactorial|"
-msgid "Model Terms"
-msgstr "Modellterme"
-
-msgctxt "doeFactorial|"
-msgid "Plots"
-msgstr "Diagramme"
-
-msgctxt "doeFactorial|"
-msgid "Design plots"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Pareto Plot of Standardized Effects"
-msgstr "Pareto-Diagramm Standardisierter Effekte"
-
-msgctxt "doeFactorial|"
-msgid "Residuals plots"
-msgstr "Residuendiagramme"
-
-#, fuzzy
-msgctxt "doeFactorial|"
-msgid "Normal probability plot of residuals"
-msgstr "Wahrscheinlichkeitsverteilungsdiagramm der Residuen"
-
-msgctxt "doeFactorial|"
-msgid "Histogram of residuals"
-msgstr "Histogramm der Residuen"
-
-msgctxt "doeFactorial|"
-msgid "Residuals vs fitted value"
-msgstr "Residuen vs. angepasster Wert"
-
-msgctxt "doeFactorial|"
-msgid "Residuals vs run/standard order"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Run"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Matrix residuals plot"
-msgstr ""
-
-#, fuzzy
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Run Order"
-msgstr "Ablaufreihenfolge"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Random"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Standard"
-msgstr "Standard"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Low"
@@ -2263,18 +2015,6 @@ msgctxt "ShowAndExportDesign|"
 msgid "Display design"
 msgstr ""
 
-msgctxt "ShowAndExportDesign|"
-msgid "Export design:"
-msgstr ""
-
-msgctxt "ShowAndExportDesign|"
-msgid "<b>Sync Design: On</b>"
-msgstr ""
-
-msgctxt "ShowAndExportDesign|"
-msgid "<b>Sync Design: Off</b>"
-msgstr ""
-
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design Type"
 msgstr ""
@@ -2374,13 +2114,195 @@ msgid "Axial block"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Show coded output"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Calculate desirability"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Factorial Design"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Analyze Design"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Coded units"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Sort by run order"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Sort by standard order"
+msgstr ""
+
+#, fuzzy
+msgctxt "ShowAndExportDesign|"
+msgid "Save as:"
+msgstr "Speichern als:"
+
+msgctxt "ShowAndExportDesign|"
+msgid "e.g. design.csv"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Export design"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Available factors"
+msgstr "Verfügbare Faktoren"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Response variable"
+msgstr "Wirkvariable"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Assigned factors"
+msgstr "Zugewiesene Faktoren"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Blocks"
+msgstr "Blöcke"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Run order"
+msgstr "Ablaufreihenfolge"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Highest order interaction term:"
+msgstr "Interaktionsterm höchster Ordnung:"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Model"
+msgstr "Modell"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Components"
+msgstr "Komponenten"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Model Terms"
+msgstr "Modellterme"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Plots"
+msgstr "Diagramme"
+
+msgctxt "doeAnalysis|"
+msgid "Design plots"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Pareto Plot of Standardized Effects"
+msgstr "Pareto-Diagramm Standardisierter Effekte"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Residuals plots"
+msgstr "Residuendiagramme"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Normal probability plot of residuals"
+msgstr "Wahrscheinlichkeitsverteilungsdiagramm der Residuen"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Histogram of residuals"
+msgstr "Histogramm der Residuen"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Residuals vs fitted value"
+msgstr "Residuen vs. angepasster Wert"
+
+msgctxt "doeAnalysis|"
+msgid "Residuals vs run/standard order"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Standard"
+msgstr "Standard"
+
+msgctxt "doeAnalysis|"
+msgid "Run"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Matrix residuals plot"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Maximum levels"
+msgstr ""
+
+#, qt-format
+msgctxt "doeFactorial|"
+msgid "Level %1"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design Table"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Runs"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "debug selected row"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "debug selected col"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Alias structure"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Centre points per block"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Replications"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Repetitions"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Number of replications"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Repeats only"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Display selected design"
 msgstr ""

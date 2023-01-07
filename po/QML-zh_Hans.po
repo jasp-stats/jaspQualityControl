@@ -47,10 +47,6 @@ msgctxt "Description|"
 msgid "DOE"
 msgstr "DOE"
 
-msgctxt "Description|"
-msgid "Two-level Factorial Design"
-msgstr "二水平因子设计"
-
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
 msgstr "缺陷品/缺陷"
@@ -100,60 +96,12 @@ msgid "Number of factors"
 msgstr "因子数量"
 
 msgctxt "doeFactorial|"
-msgid "Coded"
-msgstr "已编码"
-
-msgctxt "doeFactorial|"
-msgid "Uncoded"
-msgstr "未编码"
-
-msgctxt "doeFactorial|"
-msgid "Run Order"
-msgstr "运行序"
-
-msgctxt "doeFactorial|"
-msgid "Standard"
-msgstr "标准"
-
-msgctxt "doeFactorial|"
-msgid "Random"
-msgstr "随机"
-
-msgctxt "doeFactorial|"
 msgid "Factor"
 msgstr "因子"
 
 msgctxt "doeFactorial|"
 msgid "Name"
 msgstr "名称"
-
-msgctxt "doeFactorial|"
-msgid "Level 1"
-msgstr "水平 1"
-
-msgctxt "doeFactorial|"
-msgid "Level 2"
-msgstr "水平 2"
-
-msgctxt "doeFactorial|"
-msgid "Factor "
-msgstr "因子 "
-
-msgctxt "doeFactorial|"
-msgid " Level 1"
-msgstr " 水平 1"
-
-msgctxt "doeFactorial|"
-msgid " Level 2"
-msgstr " 水平 2"
-
-msgctxt "doeFactorial|"
-msgid "Factorial Design Options"
-msgstr "因子设计选项"
-
-msgctxt "doeFactorial|"
-msgid "Type of Factorial Design"
-msgstr "因子设计类型"
 
 msgctxt "doeFactorial|"
 msgid "2-level split-plot (hard-to-change factors)"
@@ -164,56 +112,8 @@ msgid "Number of hard-to-change factors"
 msgstr "难改变因子数"
 
 msgctxt "doeFactorial|"
-msgid "Number of runs"
-msgstr "运行数"
-
-msgctxt "doeFactorial|"
 msgid "Resolution"
 msgstr "分辨度"
-
-msgctxt "doeFactorial|"
-msgid "III"
-msgstr "III"
-
-msgctxt "doeFactorial|"
-msgid "IV"
-msgstr "IV"
-
-msgctxt "doeFactorial|"
-msgid "V"
-msgstr "V"
-
-msgctxt "doeFactorial|"
-msgid "VI"
-msgstr "VI"
-
-msgctxt "doeFactorial|"
-msgid "VIII"
-msgstr "VIII"
-
-msgctxt "doeFactorial|"
-msgid "Full"
-msgstr "全因子"
-
-msgctxt "doeFactorial|"
-msgid "Additional Options"
-msgstr "附加选项"
-
-msgctxt "doeFactorial|"
-msgid "Number of center points per block"
-msgstr "每个区组的中心点数"
-
-msgctxt "doeFactorial|"
-msgid "Number of replicates for corner points"
-msgstr "角点的仿行数"
-
-msgctxt "doeFactorial|"
-msgid "Number of blocks"
-msgstr "区组数"
-
-msgctxt "doeFactorial|"
-msgid "Save as:"
-msgstr "保存为："
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Predictors [Location in coded format]"
@@ -911,10 +811,6 @@ msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
 msgstr "二水平因子（指定生成元）"
 
-msgctxt "doeFactorial|"
-msgid "Number of random runs to repeat"
-msgstr "重复的随机运行数"
-
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Blocks (optional)"
 msgstr "区组（可选）"
@@ -1401,10 +1297,6 @@ msgctxt "Description|"
 msgid "Control Charts for Attributes"
 msgstr "属性控制图"
 
-msgctxt "Description|"
-msgid "General Full Factorial Design"
-msgstr "一般全因子设计"
-
 msgctxt "attributesCharts|"
 msgid "Control Charts for Attributes Report"
 msgstr "属性控制图报告"
@@ -1465,38 +1357,6 @@ msgctxt "attributesCharts|"
 msgid "Show Report"
 msgstr "显示报告"
 
-msgctxt "doeFactorial|"
-msgid "Design Space"
-msgstr "设计空间"
-
-msgctxt "doeFactorial|"
-msgid "Unit Display"
-msgstr "显示单位"
-
-msgctxt "doeFactorial|"
-msgid "Design Options"
-msgstr "设计选项"
-
-msgctxt "doeFactorial|"
-msgid "VII"
-msgstr "VII"
-
-msgctxt "doeFactorial|"
-msgid "Fraction"
-msgstr "部分"
-
-msgctxt "doeFactorial|"
-msgid "1/2"
-msgstr "1/2"
-
-msgctxt "doeFactorial|"
-msgid "1/4"
-msgstr "1/4"
-
-msgctxt "doeFactorial|"
-msgid "1/8"
-msgstr "1/8"
-
 msgctxt "doeFull|"
 msgid "Design Space"
 msgstr "设计空间"
@@ -1536,10 +1396,6 @@ msgstr "因子 "
 msgctxt "doeFull|"
 msgid "Additional Options"
 msgstr "附加选项"
-
-msgctxt "doeFull|"
-msgid "Number of replicates for corner points"
-msgstr "角点仿行数"
 
 msgctxt "doeFull|"
 msgid "Number of random runs to repeat"
@@ -1809,21 +1665,9 @@ msgctxt "doeFactorial|"
 msgid "Design generator"
 msgstr "设计生成元"
 
-msgctxt "doeFactorial|"
-msgid "<b>Sync Design: On</b>"
-msgstr "<b>同步设计: On</b>"
-
-msgctxt "doeFactorial|"
-msgid "<b>Sync Design: Off</b>"
-msgstr "<b>同步设计: Off</b>"
-
 msgctxt "Description|"
 msgid "Response Surface Design"
 msgstr "响应面设计"
-
-msgctxt "Description|"
-msgid "Define Custom Design"
-msgstr "自定义设计"
 
 msgctxt "attributesCharts|"
 msgid "Samples"
@@ -1834,99 +1678,8 @@ msgid "Time stamp (optional)"
 msgstr "时间戳（可选）"
 
 msgctxt "doeFactorial|"
-msgid "Design Analysis"
-msgstr "设计分析"
-
-msgctxt "doeFactorial|"
-msgid "Available factors"
-msgstr "可用因子"
-
-msgctxt "doeFactorial|"
-msgid "Response variable"
-msgstr "响应变量"
-
-msgctxt "doeFactorial|"
-msgid "Assigned factors"
-msgstr "指定因子"
-
-msgctxt "doeFactorial|"
 msgid "Blocks"
 msgstr "区组"
-
-msgctxt "doeFactorial|"
-msgid "Run order"
-msgstr "运行序"
-
-msgctxt "doeFactorial|"
-msgid "Highest order interaction term:"
-msgstr "最高阶交互作用项："
-
-msgctxt "doeFactorial|"
-msgid "Model"
-msgstr "模型"
-
-msgctxt "doeFactorial|"
-msgid "Components"
-msgstr "组成部分"
-
-msgctxt "doeFactorial|"
-msgid "Model Terms"
-msgstr "模型项"
-
-msgctxt "doeFactorial|"
-msgid "Plots"
-msgstr "绘图"
-
-msgctxt "doeFactorial|"
-msgid "Design plots"
-msgstr "设计图"
-
-msgctxt "doeFactorial|"
-msgid "Pareto Plot of Standardized Effects"
-msgstr "标准化效应 Pareto 图"
-
-msgctxt "doeFactorial|"
-msgid "Residuals plots"
-msgstr "残差图"
-
-msgctxt "doeFactorial|"
-msgid "Normal probability plot of residuals"
-msgstr "残差正态概率图"
-
-msgctxt "doeFactorial|"
-msgid "Histogram of residuals"
-msgstr "残差直方图"
-
-msgctxt "doeFactorial|"
-msgid "Residuals vs fitted value"
-msgstr "残差 vs 拟合值"
-
-msgctxt "doeFactorial|"
-msgid "Residuals vs run/standard order"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Run"
-msgstr "运行"
-
-msgctxt "doeFactorial|"
-msgid "Matrix residuals plot"
-msgstr "矩阵残差图"
-
-#, fuzzy
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Run Order"
-msgstr "运行序"
-
-#, fuzzy
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Random"
-msgstr "随机"
-
-#, fuzzy
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Standard"
-msgstr "标准"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Low"
@@ -2260,20 +2013,6 @@ msgctxt "ShowAndExportDesign|"
 msgid "Display design"
 msgstr ""
 
-msgctxt "ShowAndExportDesign|"
-msgid "Export design:"
-msgstr ""
-
-#, fuzzy
-msgctxt "ShowAndExportDesign|"
-msgid "<b>Sync Design: On</b>"
-msgstr "<b>同步设计: On</b>"
-
-#, fuzzy
-msgctxt "ShowAndExportDesign|"
-msgid "<b>Sync Design: Off</b>"
-msgstr "<b>同步设计: Off</b>"
-
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design Type"
 msgstr ""
@@ -2373,13 +2112,197 @@ msgid "Axial block"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Show coded output"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Calculate desirability"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Factorial Design"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Analyze Design"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Coded units"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Sort by run order"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Sort by standard order"
+msgstr ""
+
+#, fuzzy
+msgctxt "ShowAndExportDesign|"
+msgid "Save as:"
+msgstr "保存为："
+
+msgctxt "ShowAndExportDesign|"
+msgid "e.g. design.csv"
+msgstr ""
+
+msgctxt "ShowAndExportDesign|"
+msgid "Export design"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Available factors"
+msgstr "可用因子"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Response variable"
+msgstr "响应变量"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Assigned factors"
+msgstr "指定因子"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Blocks"
+msgstr "区组"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Run order"
+msgstr "运行序"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Highest order interaction term:"
+msgstr "最高阶交互作用项："
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Model"
+msgstr "模型"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Components"
+msgstr "组成部分"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Model Terms"
+msgstr "模型项"
+
+msgctxt "doeAnalysis|"
+msgid "Plots"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Design plots"
+msgstr "设计图"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Pareto Plot of Standardized Effects"
+msgstr "标准化效应 Pareto 图"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Residuals plots"
+msgstr "残差图"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Normal probability plot of residuals"
+msgstr "残差正态概率图"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Histogram of residuals"
+msgstr "残差直方图"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Residuals vs fitted value"
+msgstr "残差 vs 拟合值"
+
+msgctxt "doeAnalysis|"
+msgid "Residuals vs run/standard order"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Standard"
+msgstr "标准"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Run"
+msgstr "运行"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Matrix residuals plot"
+msgstr "矩阵残差图"
+
+msgctxt "doeFactorial|"
+msgid "Maximum levels"
+msgstr ""
+
+#, qt-format
+msgctxt "doeFactorial|"
+msgid "Level %1"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design Table"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Runs"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Design"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "debug selected row"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "debug selected col"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Alias structure"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Centre points per block"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Replications"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Repetitions"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Number of replications"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Repeats only"
+msgstr ""
+
+msgctxt "doeFull|"
+msgid "Display selected design"
 msgstr ""

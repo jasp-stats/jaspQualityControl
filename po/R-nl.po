@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2022-12-17 03:40\n"
+"POT-Creation-Date: 2023-01-07 03:41\n"
 "PO-Revision-Date: 2022-06-02 13:04+0000\n"
 "Last-Translator: Don van den Bergh <donvdbergh@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -217,45 +217,6 @@ msgstr ""
 msgid "Four in one for %s"
 msgstr ""
 
-msgid "Available Factorial Designs"
-msgstr ""
-
-msgid "Selected Design"
-msgstr ""
-
-msgid "Design"
-msgstr ""
-
-msgid "Factors"
-msgstr ""
-
-msgid "Runs"
-msgstr ""
-
-msgid "Resolution"
-msgstr ""
-
-msgid "Centre points"
-msgstr ""
-
-msgid "Replicates"
-msgstr ""
-
-msgid "Blocks"
-msgstr ""
-
-msgid "Repeats"
-msgstr ""
-
-msgid "2-level factorial"
-msgstr ""
-
-msgid "Design Preview"
-msgstr ""
-
-msgid "Alias Structure"
-msgstr ""
-
 msgid "Standard order"
 msgstr ""
 
@@ -289,6 +250,9 @@ msgstr ""
 msgid "VIF"
 msgstr ""
 
+msgid "Alias Structure"
+msgstr ""
+
 msgid "Index"
 msgstr ""
 
@@ -296,15 +260,6 @@ msgid "Factor"
 msgstr ""
 
 msgid "Name"
-msgstr ""
-
-msgid "Input Design"
-msgstr ""
-
-msgid "Desired Design"
-msgstr ""
-
-msgid "Missing Runs"
 msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
@@ -317,10 +272,7 @@ msgstr "Model Samenvatting"
 msgid "Variable"
 msgstr ""
 
-msgid "Continuous factors"
-msgstr ""
-
-msgid "Categorical factors"
+msgid "Categorial factors"
 msgstr ""
 
 msgid "Base runs"
@@ -329,10 +281,82 @@ msgstr ""
 msgid "Base blocks"
 msgstr ""
 
+msgid "Centre points per block"
+msgstr ""
+
+msgid "Replications"
+msgstr ""
+
+msgid "Repetitions"
+msgstr ""
+
 msgid "Total runs"
 msgstr ""
 
 msgid "Total blocks"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Please select a row in the design table."
+msgstr ""
+
+msgid "Click 'Display design' to show the design."
+msgstr ""
+
+msgid "The design is not exported until 'Export design' is checked."
+msgstr ""
+
+msgid "The design is exported as '%1$s'."
+msgstr ""
+
+msgid "No aliasing among main effects and 2-factor interactions."
+msgstr ""
+
+msgid "Factorial Design"
+msgstr ""
+
+msgid "Run Order"
+msgstr ""
+
+msgid "Standard Order"
+msgstr ""
+
+msgid "Hard-to-change factors: %1$s"
+msgstr ""
+
+msgid "Selected Design"
+msgstr ""
+
+msgid "Factors"
+msgstr ""
+
+msgid "Runs"
+msgstr ""
+
+msgid "Resolution"
+msgstr ""
+
+msgid "Replicates"
+msgstr ""
+
+msgid "Design Preview"
+msgstr ""
+
+msgid "Input Design"
+msgstr ""
+
+msgid "Desired Design"
+msgstr ""
+
+msgid "Missing Runs"
+msgstr ""
+
+msgid "Continuous factors"
+msgstr ""
+
+msgid "Categorical factors"
 msgstr ""
 
 msgid "Centre points in cube"
@@ -341,16 +365,10 @@ msgstr ""
 msgid "Centre points in axial"
 msgstr ""
 
-msgid "Value"
+msgid "Centre points"
 msgstr ""
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
-msgstr ""
-
-msgid "Please select a row in the design table."
-msgstr ""
-
-msgid "Click 'Display design' to show the design."
 msgstr ""
 
 msgid "Response Surface Design - Central Composite Design"
@@ -360,12 +378,6 @@ msgid "Response Surface Design - Box-Behnken design"
 msgstr ""
 
 msgid "Central Composite Design"
-msgstr ""
-
-msgid "Run Order"
-msgstr ""
-
-msgid "Standard Order"
 msgstr ""
 
 msgid ""
