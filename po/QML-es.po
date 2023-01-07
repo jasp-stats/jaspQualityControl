@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-01-07 10:08+0000\n"
+"PO-Revision-Date: 2023-01-07 10:35+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/es/>\n"
@@ -2178,134 +2178,115 @@ msgctxt "doeAnalysis|"
 msgid "Highest order interaction term:"
 msgstr "Término de interacción de mayor orden:"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Model"
 msgstr "Modelo"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Components"
 msgstr "Componentes"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Model Terms"
 msgstr "Elementos del Modelo"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Plots"
 msgstr "Gráficos"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Design plots"
 msgstr "Gráficos del diseño"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Pareto Plot of Standardized Effects"
 msgstr "Gráfico de Pareto de Efectos Tipificados"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Residuals plots"
 msgstr "Gráficos de errores"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Normal probability plot of residuals"
 msgstr "Gráfico de probabilidad Normal de errores"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Histogram of residuals"
 msgstr "Histograma de errores"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Residuals vs fitted value"
 msgstr "Errores vs Valor ajustado"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Residuals vs run/standard order"
 msgstr "Errores vs Orden de ejecución/típica"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Standard"
 msgstr "Estándar"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Run"
 msgstr "Ejecutar"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Matrix residuals plot"
 msgstr "Gráfico de los errores de la matriz"
 
 msgctxt "doeFactorial|"
 msgid "Maximum levels"
-msgstr ""
+msgstr "Niveles máximos"
 
-#, fuzzy, qt-format
+#, qt-format
 msgctxt "doeFactorial|"
 msgid "Level %1"
 msgstr "Nivel %1"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Design Table"
 msgstr "Diseñar Tabla"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Runs"
 msgstr "Ejecuciones"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Design"
 msgstr "Diseño"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "debug selected row"
 msgstr "Depurar la fila elegida"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "debug selected col"
 msgstr "Depurar la columna elegida"
 
 msgctxt "doeFactorial|"
 msgid "Alias structure"
-msgstr ""
+msgstr "Estructura de alias"
 
 msgctxt "doeFactorial|"
 msgid "Centre points per block"
-msgstr ""
+msgstr "Centrar puntos por bloque"
 
 msgctxt "doeFactorial|"
 msgid "Replications"
-msgstr ""
+msgstr "Réplicas"
 
 msgctxt "doeFactorial|"
 msgid "Repetitions"
-msgstr ""
+msgstr "Repeticiones"
 
 msgctxt "doeFull|"
 msgid "Number of replications"
-msgstr ""
+msgstr "Número de réplicas"
 
 msgctxt "doeFull|"
 msgid "Repeats only"
-msgstr ""
+msgstr "Solo repeticiones"
 
 msgctxt "doeFull|"
 msgid "Display selected design"
-msgstr ""
+msgstr "Presentar el diseño elegido"
