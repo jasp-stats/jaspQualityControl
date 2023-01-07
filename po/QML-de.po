@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-01-08 12:48+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/de/>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.15.1-dev\n"
 "X-Language: de\n"
 "X-Qt-Contexts: true\n"
 
@@ -381,7 +387,7 @@ msgstr "Konfidenzintervall für Verzerrung"
 
 msgctxt "msaType1Gauge|"
 msgid "Bin width type"
-msgstr ""
+msgstr "Typ Klassenbreite"
 
 msgctxt "msaType1Gauge|"
 msgid "Sturges"
@@ -401,7 +407,7 @@ msgstr "Freedman-Diaconis"
 
 msgctxt "msaType1Gauge|"
 msgid "Manual"
-msgstr ""
+msgstr "Manuell"
 
 msgctxt "msaType1Gauge|"
 msgid "Number of bins"
@@ -605,7 +611,7 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Outcomes"
-msgstr ""
+msgstr "Ergebnisse"
 
 msgctxt "probabilityOfDetection|"
 msgid "Covariates"
