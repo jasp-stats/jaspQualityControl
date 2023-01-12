@@ -63,35 +63,50 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
     if (options[["subgroupSizeType"]] == "manual") {
       k <- options[["CCSubgroupSize"]]
+      # fill up with NA to allow all subgroup sizes
+      if(length(dataset[[measurements]]) %% k != 0) {
+        rest <- length(dataset[[measurements]]) %% k
+        dataset_expanded <- c(dataset[[measurements]], rep(NA, k - rest))
+        dataset <- as.data.frame(matrix(dataset_expanded, ncol = k, byrow = TRUE))
+      } else {
+        dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
+      }
+      
+      measurements <- colnames(dataset)
     } else{
       subgroups <- dataset[[subgroupVariable]]
       subgroups <- na.omit(subgroups)
-      k <- max(table(subgroups))
+      
+      # add sequence of occurence to allow pivot_wider
+      dataset$occurence <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
+      # transform into one group per row
+      dataset <- tidyr::pivot_wider(data = dataset, values_from = measurements, names_from = occurence)
+      # arrange into dataframe 
+      dataset <- as.data.frame(dataset)
+      measurements <- colnames(dataset)[-1]
     }
-    dataset <- .PClongTowide(dataset, k, measurements, mode = "manual")
-    if (identical(dataset, "error")) {
-      plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
-      jaspResults[["plot"]] <- plot
-      plot$setError(gettextf("Could not equally divide data points into groups of size %i.", k))
-      plot$dependOn("CCSubgroupSize")
-      return()
-    }
-    measurements <- colnames(dataset)
+
+    
+    
+    # if (identical(dataset, "error")) {
+    #   plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
+    #   jaspResults[["plot"]] <- plot
+    #   plot$setError(gettextf("Could not equally divide data points into groups of size %i.", k))
+    #   plot$dependOn("CCSubgroupSize")
+    #   return()
+    # }
+    
   }
   
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = c(options$variables, options$subgroups, measurements),
+             all.target = c(options$variables, options$subgroups),
              exitAnalysisIfErrors = TRUE)
   
-  .hasErrors(dataset, type = c('infinity', 'missingValues', "observations"),
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
              infinity.target = c(measurements, options$subgroups),
-             missingValues.target = c(options$subgroups, measurements),
-             observations.amount = c("< 2"),
-             observations.target = c(measurements),
+             missingValues.target = c(options$subgroups),
              exitAnalysisIfErrors = TRUE)
-  
-  dataset <- na.omit(dataset)
   
   #X bar & R chart
   if (ready){
@@ -294,4 +309,3 @@ KnownControlStats.RS <- function(N, sigma) {
   
   return(list(constants = c(d2,d3), limits = data.frame(LCL,UCL), center = CL))
 }
-
