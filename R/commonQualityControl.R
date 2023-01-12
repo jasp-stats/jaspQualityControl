@@ -61,15 +61,19 @@
   decimals <- max(.decimalplaces(data))
   if(Phase2)
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
-  else
-    sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE)
+  else {
+    #hand calculate mean and sd as the package messes up with NAs
+    mu <- mean(unlist(data), na.rm = TRUE)
+    sigma <- "notyet"
+    sixsigma <- qcc::qcc(data, type ='xbar', plot = FALSE, center = mu, sizes = ncol(data))
+  }
 
   if (!identical(manualSubgroups, "")) {
     subgroups <- manualSubgroups
   } else {
-    subgroups = c(1:length(sixsigma$statistics))
+    subgroups <- c(1:length(sixsigma$statistics))
   }
-  means = sixsigma$statistics
+  means <- sixsigma$statistics
   data_plot <- data.frame(subgroups = subgroups, means = means)
   sd1 <- sixsigma$std.dev
   if (!identical(manualLimits, "")) {
@@ -113,7 +117,7 @@
     p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
   }
   if (yAxis) {
-    p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab) ,limits = yLimits, breaks = yBreaks)
+    p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab), limits = yLimits, breaks = yBreaks)
   } else {
     p <- p + ggplot2::scale_y_continuous(name = ggplot2::element_blank(), limits = yLimits, breaks = yBreaks, labels = NULL) +
       ggplot2::theme(axis.line.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
@@ -319,7 +323,7 @@
 }
 
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
-
+  
   # Adjust Rules to SKF
   pars <- Rspc::SetParameters()
   pars$Rule2$nPoints = 7
@@ -454,7 +458,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 
 .decimalplaces <- function(x) {
-  x <- unlist(x)
+  x <- na.omit(unlist(x))
   nDecimals <- numeric(length(x))
   for(i in seq_along(x)) {
     if (round(x[i], 10) %% 1 != 0) {   # never more than 10 decimals
@@ -652,3 +656,11 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   else
     return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2))
 }
+
+.sdXbar <- function(df, k) {
+  d2 <- KnownControlStats.RS(k, 0)$constants[1]
+  
+  # write function that takes the range per row as single value but NA when only 1 value
+  #take mean of ranges
+  # divide by d2
+} 
