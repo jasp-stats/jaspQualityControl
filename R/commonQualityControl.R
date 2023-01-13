@@ -62,10 +62,10 @@
   if(Phase2)
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
   else {
-    #hand calculate mean and sd as the package messes up with NAs
+    #hand calculate mean and sd as the package gives wrong results with NAs
     mu <- mean(unlist(data), na.rm = TRUE)
-    sigma <- "notyet"
-    sixsigma <- qcc::qcc(data, type ='xbar', plot = FALSE, center = mu, sizes = ncol(data))
+    sigma <- .sdXbar(df = data, k = ncol(data))
+    sixsigma <- qcc::qcc(data, type ='xbar', plot = FALSE, center = mu, sizes = ncol(data), std.dev = sigma)
   }
 
   if (!identical(manualSubgroups, "")) {
@@ -201,7 +201,10 @@
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
-  sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
+  #hand calculate mean and sd as the package gives wrong results with NAs
+  mu <- mean(.rowRanges(data))
+  sigma <- .sdXbar(df = data, k = ncol(data))
+  sixsigma <- qcc::qcc(data, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(data))
 
   if(Phase2 && sd != "")
     sixsigma <- list(statistics = sixsigma$statistics,
@@ -659,8 +662,52 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
 .sdXbar <- function(df, k) {
   d2 <- KnownControlStats.RS(k, 0)$constants[1]
+  rowRanges <- .rowRanges(df)
+  sdWithin <- mean(rowRanges) / d2
   
-  # write function that takes the range per row as single value but NA when only 1 value
-  #take mean of ranges
-  # divide by d2
+  return(sdWithin)
 } 
+
+.rowRanges <- function(df) {
+  nrow <- nrow(df)
+  ranges <- c()
+  for (i in seq_len(nrow)) {
+    rowVector <- df[i,]
+    if (sum((!is.na(rowVector))) < 2) # we need at least 2 values that are not NA to calculate range
+      next
+    ranges <- c(ranges, max(rowVector, na.rm = TRUE) - min(rowVector, na.rm = TRUE))
+  }
+  return(ranges)
+}
+
+KnownControlStats.RS <- function(N, sigma) {
+  
+  Data.d3 <- data.frame(
+    n = 2:25,
+    d3 = c(0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
+           0.7562, 0.7499, 0.7441, 0.7386, 0.7335, 0.7287, 0.7242, 0.7199, 0.7159, 0.7121, 0.7084))
+  
+  Data.d2 <- data.frame(
+    n = 2:50,
+    d2 = c( 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
+            3.588 ,3.640 ,3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931, 3.964, 3.997, 4.027, 4.057, 4.086, 4.113,
+            4.139 ,4.165 ,4.189, 4.213, 4.236, 4.259, 4.280, 4.301, 4.322, 4.341, 4.361, 4.379, 4.398, 4.415, 4.433,
+            4.450 ,4.466, 4.482, 4.498))
+  
+  if (N > 25 && N <= 50){
+    d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
+    d2 <- Data.d2[N == Data.d2$n,2]
+  } else if (N > 50) {
+    d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
+    d2 <- 2.88606 + 0.051313 * N - 0.00049243 * N^2 + 0.00000188 * N^3
+  } else {
+    d2 <- Data.d2[N == Data.d2$n,2]
+    d3 <- Data.d3[N == Data.d3$n,2]
+  }
+  
+  UCL <- d2 * sigma + 3 * d3 * sigma
+  CL <- d2 * sigma
+  LCL <- max(0, d2 * sigma - 3 * d3 * sigma)
+  
+  return(list(constants = c(d2,d3), limits = data.frame(LCL,UCL), center = CL))
+}
