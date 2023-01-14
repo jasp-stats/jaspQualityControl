@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
 "POT-Creation-Date: 2023-01-07 03:41\n"
-"PO-Revision-Date: 2022-12-31 03:38+0000\n"
+"PO-Revision-Date: 2023-01-13 12:30+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pl/>\n"
@@ -48,7 +48,7 @@ msgid "Subgroup"
 msgstr ""
 
 msgid "Counts"
-msgstr ""
+msgstr "Liczebność"
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
 msgstr ""
@@ -782,7 +782,7 @@ msgid "Gauge Evaluation"
 msgstr ""
 
 msgid "Std. Deviation"
-msgstr ""
+msgstr "Odchylenie std."
 
 msgid "Study Variation"
 msgstr ""
@@ -952,7 +952,7 @@ msgid "Short gauge study"
 msgstr ""
 
 msgid "Sample size (n)"
-msgstr ""
+msgstr "Wielkość próby (n)"
 
 msgid "R-bar"
 msgstr ""
@@ -1003,7 +1003,7 @@ msgid "Bias"
 msgstr ""
 
 msgid "Std. Deviation (<i>s</i>)"
-msgstr ""
+msgstr "Odchylenie std. (<i>s</i>)"
 
 msgid "Study variation"
 msgstr ""
@@ -1152,7 +1152,7 @@ msgid "USL"
 msgstr ""
 
 msgid "Sample size"
-msgstr ""
+msgstr "Wielkość próby"
 
 msgid "Std. deviation (total)"
 msgstr ""
@@ -1229,7 +1229,7 @@ msgid ""
 msgstr ""
 
 msgid "Std. deviation"
-msgstr ""
+msgstr "Odchylenie std."
 
 msgid "Log mean (%1$s)"
 msgstr ""
@@ -1268,7 +1268,7 @@ msgid "Mean (%1$s)"
 msgstr ""
 
 msgid "Std. deviation (%1$s)"
-msgstr ""
+msgstr "Odchylenie std. (%1$s)"
 
 msgid "AD"
 msgstr ""

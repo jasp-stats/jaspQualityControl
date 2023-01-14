@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2023-01-07 03:41\n"
-"PO-Revision-Date: 2023-01-05 22:51+0000\n"
+"PO-Revision-Date: 2023-01-08 12:49+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -132,13 +132,11 @@ msgstr "Regelkarte"
 msgid "Subgroup size must be > 1 to display X-bar & R Chart."
 msgstr "Untergruppengröße muss > 1 sein, um X-quer- und R-Karte anzuzeigen."
 
-#, fuzzy
 msgid "Sample average"
-msgstr "Stichprobenumfang"
+msgstr "Stichprobenmittelwert"
 
-#, fuzzy
 msgid "Sample range"
-msgstr "Stichprobenumfang"
+msgstr "Stichproben-Wertebereich"
 
 msgid "Test results for %s chart"
 msgstr "Testergebnisse für %s-Karte"
