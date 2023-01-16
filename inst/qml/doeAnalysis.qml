@@ -17,7 +17,7 @@ Form
 
 		AssignedVariablesList
 		{
-			name:                               "response"
+			name:                               "dependent"
 			allowedColumns:                     ["scale", "ordinal", "nominal"]
 			singleVariable:                     true
 			label:                              qsTr("Response")
@@ -26,15 +26,22 @@ Form
 		AssignedVariablesList
 		{
 			id:									factors
-			name:                               "factors"
+			name:                               "fixedFactors"
 			allowedColumns:                     ["scale", "ordinal", "nominal", "nominalText"]
 			label:                              qsTr("Factors")
 		}
 
 		AssignedVariablesList
 		{
+			name:                               "blocks"
+			singleVariable:                     true
+			label:                              qsTr("Blocks")
+		}
+
+		AssignedVariablesList
+		{
 			id:                                 runOrder
-			name:                               "runorder"
+			name:                               "runOrder"
 			allowedColumns:                     ["scale", "ordinal"]
 			singleVariable:                     true
 			label:                              qsTr("Run Order")
@@ -42,10 +49,16 @@ Form
 
 		AssignedVariablesList
 		{
-			debug:                              true
-			name:                               "blocks"
+			name:                               "covariates"
+			allowedColumns:                     ["scale"]
+			label:                              qsTr("Covariates")
+		}
+
+		AssignedVariablesList
+		{
+			visible:                            false
+			name:                               "wlsWeights"
 			singleVariable:                     true
-			label:                              qsTr("Blocks")
 		}
 	}
 
@@ -71,9 +84,8 @@ Form
 		VariablesForm
 		{
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["factors"]}
-			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction;
-				enabled: !enabledIntOrder.checked }
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["fixedFactors"]}
+			AssignedVariablesList {  name: "modelTerms"; title: qsTr("Model Terms"); listViewType: JASP.Interaction; enabled: !enabledIntOrder.checked }
 		}
 
 	}

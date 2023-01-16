@@ -18,21 +18,23 @@
 #' @export
 doeAnalysis <- function(jaspResults, dataset, options, ...) {
   dataset <- .doeAnalysisReadData(dataset, options)
-  .doeAnalysisCheckErrors(dataset, options)
 
-  .doeAnalysisMakeState(dataset, options)
+  ready <- length(options[["fixedFactors"]]) >= 2 && options[["dependent"]] != ""
+  .anovaCheckErrors(dataset, options, ready)
 
-  .doeAnalysisSummaryTable(jaspResults, options)
-  .doeAnalysisAnovaTable(jaspResults, options)
-  .doeAnalysisCoefficientsTable(jaspResults, options)
-  .doeAnalysisEquationTable(jaspResults, options)
-  .doeAnalysisAliasTable(jaspResults, options)
+  .doeAnalysisMakeState(jaspResults, dataset, options, ready)
 
-  .doeAnalysisPlotPareto(jaspResults, options)
-  .doeAnalysisPlotQQResiduals(jaspResults, options)
-  .doeAnalysisPlotHistResiduals(jaspResults, options)
-  .doeAnalysisPlotFittedVsResiduals(jaspResults, options)
-  .doeAnalysisPlotResidualsVsOrder(jaspResults, dataset, options)
+  .doeAnalysisSummaryTable(jaspResults, options, ready)
+  .doeAnalysisAnovaTable(jaspResults, options, ready)
+  .doeAnalysisCoefficientsTable(jaspResults, options, ready)
+  .doeAnalysisEquationTable(jaspResults, options, ready)
+  .doeAnalysisAliasTable(jaspResults, options, ready)
+
+  .doeAnalysisPlotPareto(jaspResults, options, ready)
+  .doeAnalysisPlotQQResiduals(jaspResults, options, ready)
+  .doeAnalysisPlotHistResiduals(jaspResults, options, ready)
+  .doeAnalysisPlotFittedVsResiduals(jaspResults, options, ready)
+  .doeAnalysisPlotResidualsVsOrder(jaspResults, dataset, options, ready)
 }
 
 .doeAnalysisReadData <- function(dataset, options) {
@@ -41,17 +43,20 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   factorVars <- NULL
   numericVars <- NULL
-  if (length(options[["factors"]]) > 0 && options[["factors"]] != "") {
-    factorVars <- c(factorVars, unlist(options[["factors"]]))
+  if (length(options[["fixedFactors"]]) > 0 && options[["fixedFactors"]] != "") {
+    factorVars <- c(factorVars, unlist(options[["fixedFactors"]]))
   }
-  if (options[["response"]] != "") {
-    numericVars <- c(numericVars, options[["response"]])
+  if (options[["dependent"]] != "") {
+    numericVars <- c(numericVars, options[["dependent"]])
   }
-  if (options[["runorder"]] != "") {
-    numericVars <- c(numericVars, options[["runorder"]])
+  if (options[["runOrder"]] != "") {
+    numericVars <- c(numericVars, options[["runOrder"]])
   }
   if (options[["blocks"]] != "") {
     factorVars <- c(factorVars, options[["blocks"]])
+  }
+  if (length(options[["covariates"]]) > 0 && options[["covariates"]] != "") {
+    numericVars <- c(numericVars, unlist(options[["covariates"]]))
   }
   dataset <- .readDataSetToEnd(columns.as.numeric = numericVars, columns.as.factor = factorVars)
   return(dataset)
@@ -63,75 +68,45 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   .hasErrors(dataset,
     type = c("infinity", "missingValues"),
-    all.target = c(options[["response"]], options[["runorder"]], options[["factors"]]),
+    all.target = c(options[["dependent"]], options[["runOrder"]], options[["fixedFactors"]]),
     exitAnalysisIfErrors = TRUE
   )
 }
 
-.doeAnalysisReorderModelTerms <- function(options) {
-  modelTerms <- list()
-  modelTerms[["interactions"]] <- FALSE
-  terms <- list()
-  for (i in seq_len(length(options[["modelTerms"]]))) {
-    terms[[length(terms) + 1]] <- options[["modelTerms"]][[i]]
-  }
-  terms <- terms[match(terms, options[["modelTerms"]])]
-  return(modelTerms)
-}
-
-.modelFormula <- function(options, terms) {
-  dependent <- options[["response"]]
-  terms.base64 <- c()
-  terms.normal <- c()
-
-  for (term in terms) {
-    components <- unlist(term$components)
-    term.base64 <- paste(.v(components), collapse = ":", sep = "")
-    term.normal <- paste(components, collapse = " \u00d7 ", sep = "")
-
-    terms.base64 <- c(terms.base64, term.base64)
-    terms.normal <- c(terms.normal, term.normal)
-  }
-
-  model.def <- paste(dependent.base64, "~", paste(terms.base64, collapse = "+"))
-
-  list(model.def = model.def, terms.base64 = terms.base64, terms.normal = terms.normal)
-}
-
-.doeAnalysisMakeState <- function(jaspResults, dataset, options, model, terms) {
-  terms <- .doeAnalysisReorderModelTerms(options)
-  model <- .modelFormula(terms, options)
-  ready <- ready <- (length(options[["factors"]]) >= 2 && options[["response"]] != "" && (!is.null(unlist(options[["modelTerms"]])) || options[["enabledIntOrder"]]))
+.doeAnalysisMakeState <- function(jaspResults, dataset, options, ready) {
   if (!ready || jaspResults$getError()) {
     return()
   }
+  reorderModelTerms <- jaspAnova::.reorderModelTerms(options)
+  modelTerms <- reorderModelTerms$modelTerms
+  modelDef <- jaspAnova::.modelFormula(modelTerms, options)
+  formula <- as.formula(modelDef$model.def)
 
   result <- list()
   result[["regression"]] <- list()
   result[["anova"]] <- list()
 
   if (!options[["enabledIntOrder"]]) {
-    formula <- as.formula(model[["model.def"]])
     regressionFit <- lm(formula, data = dataset)
   } else {
     # reponseName <- unlist(options$FAresponse)
     # factorsNames <- unlist(options$FAassignedFactors)
     # runOrderName <- unlist(options$FArunOrder)
 
-    # factors <- unlist(dataset[, options[["factors"]]], use.names = FALSE)
-    # response <- unlist(dataset[, options[["response"]]], use.names = FALSE)
+    # factors <- unlist(dataset[, options[["fixedFactors"]]], use.names = FALSE)
+    # response <- unlist(dataset[, options[["dependent"]]], use.names = FALSE)
 
-    # perF <- length(factors) / length(options[["factors"]])
+    # perF <- length(factors) / length(options[["fixedFactors"]])
     # factorsDF <- data.frame(split(factors, ceiling(seq_along(factors) / perF)))
     # forFit <- cbind.data.frame(factorsDF, response)
     # names <- factorsNames
-    # colnames(forFit) <- c(names, "response")
+    # colnames(forFit) <- c(names, "dependent")
     # order <- options[["intOrder"]]
 
     # if (order == 1) {
-    #   regressionFit <- lm(response ~ ., forFit)
+    #   regressionFit <- lm(dependent ~ ., forFit)
     # } else {
-    #   regressionFit <- lm(paste0("response ~ (.)^", order), forFit)
+    #   regressionFit <- lm(paste0("dependent ~ (.)^", order), forFit)
     # }
   }
   result[["regression"]][["formula"]] <- formula
@@ -260,17 +235,17 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   jaspResults[["doeResult"]]$dependOn(options = "none")
 }
 
-.doeAnalysisSummaryTable <- function(jaspResults, options) {
+.doeAnalysisSummaryTable <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["tableSummary"]])) {
     return()
   }
-  tb <- createJaspTable(gettext("Model summary"))
+  tb <- createJaspTable(gettext("Model Summary"))
   tb$addColumnInfo(name = "s", title = "S", type = "number")
   tb$addColumnInfo(name = "rsq", title = "R\u00B2", type = "number")
   tb$addColumnInfo(name = "adjrsq", title = "Adjusted R\u00B2", type = "number")
   tb$position <- 1
   jaspResults[["tableSummary"]] <- tb
-  if (is.null(jaspResults[["doeResult"]])) {
+  if (!ready || is.null(jaspResults[["doeResult"]])) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
@@ -278,11 +253,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$addRows(row)
 }
 
-.doeAnalysisAnovaTable <- function(jaspResults, options) {
+.doeAnalysisAnovaTable <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["tableAnova"]])) {
     return()
   }
-  tb <- createJaspTable(gettext("Analysis of variance"))
+  tb <- createJaspTable(gettext("Analysis of Variance"))
   tb$addColumnInfo(name = "terms", title = "", type = "string")
   tb$addColumnInfo(name = "df", title = "df", type = "integer")
   tb$addColumnInfo(name = "adjss", title = "Adj.SS", type = "number")
@@ -291,17 +266,17 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$addColumnInfo(name = "pval", title = "p", type = "pvalue")
   tb$position <- 2
   jaspResults[["tableAnova"]] <- tb
-  if (is.null(jaspResults[["doeResult"]])) {
+  if (!ready || is.null(jaspResults[["doeResult"]])) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["anova"]]
 }
 
-.doeAnalysisCoefficientsTable <- function(jaspResults, options) {
+.doeAnalysisCoefficientsTable <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["tableCoefficients"]])) {
     return()
   }
-  tb <- createJaspTable(gettext("Analysis of variance"))
+  tb <- createJaspTable(gettext("Coefficients"))
   tb$addColumnInfo(name = "terms", title = "", type = "string")
   tb$addColumnInfo(name = "coef", title = gettext("Coefficient"), type = "number")
   tb$addColumnInfo(name = "se", title = gettext("Standard Error"), type = "number")
@@ -310,13 +285,13 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$addColumnInfo(name = "vif", title = "VIF", type = "number")
   tb$position <- 3
   jaspResults[["tableCoefficients"]] <- tb
-  if (is.null(jaspResults[["doeResult"]])) {
+  if (!ready || is.null(jaspResults[["doeResult"]])) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["anova"]]
 }
 
-.doeAnalysisEquationTable <- function(jaspResults, options) {
+.doeAnalysisEquationTable <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["tableEquation"]])) {
     return()
   }
@@ -324,13 +299,13 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$addColumnInfo(name = "formula", title = "", type = "string")
   tb$position <- 4
   jaspResults[["tableEquation"]] <- tb
-  if (is.null(jaspResults[["doeResult"]])) {
+  if (!ready || is.null(jaspResults[["doeResult"]])) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
 }
 
-.doeAnalysisAliasTable <- function(jaspResults, options) {
+.doeAnalysisAliasTable <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["tableAlias"]]) || !options[["tableAlias"]]) {
     return()
   }
@@ -339,7 +314,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$dependOn(options = "tableAlias")
   tb$position <- 5
   jaspResults[["tableAlias"]] <- tb
-  if (is.null(jaspResults[["doeResult"]])) {
+  if (!ready || is.null(jaspResults[["doeResult"]])) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["anova"]]
@@ -349,8 +324,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   #   rows <- data.frame(Aliases = c(FrF2::aliasprint(factorialDesign)$main, FrF2::aliasprint(factorialDesign)$fi2))
 }
 
-
-.doeAnalysisPlotPareto <- function(jaspResults, options) {
+.doeAnalysisPlotPareto <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["plotPareto"]]) || !options[["plotPareto"]]) {
     return()
   }
@@ -358,7 +332,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$dependOn(options = "plotPareto")
   plot$possition <- 6
   jaspResults[["plotPareto"]] <- plot
-  if (is.null(jaspResults[["doeResult"]])) {
+  if (!ready || is.null(jaspResults[["doeResult"]])) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
@@ -384,7 +358,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$plotObject <- p
 }
 
-.doeAnalysisPlotQQResiduals <- function(jaspResults, options) {
+.doeAnalysisPlotQQResiduals <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["plotNorm"]]) || !options[["plotNorm"]]) {
     return()
   }
@@ -392,7 +366,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$dependOn(options = "plotNorm")
   plot$possition <- 7
   jaspResults[["plotNorm"]] <- plot
-  if (is.null(jaspResults[["doeResult"]])) {
+  if (!ready || is.null(jaspResults[["doeResult"]])) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
@@ -403,7 +377,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$plotObject <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
 }
 
-.doeAnalysisPlotHistResiduals <- function(jaspResults, options) {
+.doeAnalysisPlotHistResiduals <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["plotHist"]]) || !options[["plotHist"]]) {
     return()
   }
@@ -411,14 +385,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$dependOn(options = "plotHist")
   plot$possition <- 8
   jaspResults[["plotHist"]] <- plot
-  if (is.null(jaspResults[["doeResult"]])) {
+  if (!ready || is.null(jaspResults[["doeResult"]])) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
   plot$plotObject <- jaspDescriptives::.plotMarginal(resid(result[["object"]]))
 }
 
-.doeAnalysisPlotFittedVsResiduals <- function(jaspResults, options) {
+.doeAnalysisPlotFittedVsResiduals <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["plotFitted"]]) || !options[["plotFitted"]]) {
     return()
   }
@@ -426,7 +400,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$dependOn(options = "plotFitted")
   plot$possition <- 9
   jaspResults[["plotFitted"]] <- plot
-  if (is.null(jaspResults[["doeResult"]])) {
+  if (!ready || is.null(jaspResults[["doeResult"]])) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
@@ -447,7 +421,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$plotObject <- p
 }
 
-.doeAnalysisPlotResidualsVsOrder <- function(jaspResults, dataset, options) {
+.doeAnalysisPlotResidualsVsOrder <- function(jaspResults, dataset, options, ready) {
   if (!is.null(jaspResults[["plotRunOrder"]]) || !options[["plotRunOrder"]]) {
     return()
   }
@@ -460,7 +434,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$dependOn(options = "plotRunOrder")
   plot$possition <- 10
   jaspResults[["plotRunOrder"]] <- plot
-  if (is.null(jaspResults[["doeResult"]])) {
+  if (!ready || is.null(jaspResults[["doeResult"]])) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
@@ -468,8 +442,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     plot$setError(gettext("Plot unavailable for saturated designs."))
     return()
   }
-  runOrder <- dataset[[options[["runorder"]]]]
-  df <- data.frame(order = dataset[[options[["runorder"]]]])
+  df <- data.frame(order = dataset[[options[["runOrder"]]]])
   df[["x"]] <- 1:nrow(df)
   df[["y"]] <- resid(result[["object"]])
   if (options[["plotOrder"]] == "plotOrderStandard") {
@@ -494,20 +467,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 .factorialRegressionANOVAfillTable <- function(factorialRegressionANOVA, factorialRegressionSummaryFit, options, fit, saturated, model) {
   anovaFill$Terms <- jaspBase::gsubInteractionSymbol(anovaFill$Terms)
 
-  factorialRegressionANOVA <- createJaspTable(gettext("Analysis of variance"), position = 1)
-  factorialRegressionSummaryFit <- createJaspTable(gettext("Model Summary"), position = 2)
-
-  factorialRegressionANOVA$dependOn(c("FAassignedFactors", "modelTerms", "FAresponse", "intOrder", "FArunOrder", "enabledIntOrder"))
-  factorialRegressionSummaryFit$dependOn(c("FAassignedFactors", "modelTerms", "FAresponse", "intOrder", "FArunOrder", "enabledIntOrder"))
-
-  factorialRegressionSummaryFit$addColumnInfo(name = "S", title = "S", type = "number")
-  factorialRegressionSummaryFit$addColumnInfo(name = "R1", title = "R-sq", type = "number")
-  factorialRegressionSummaryFit$addColumnInfo(name = "R2", title = "R-sq (adj)", type = "number")
-
   factorialRegressionANOVA$setData(anovaFill)
   factorialRegressionSummaryFit$setData(modelSummaryFill)
-
-  return(list(ANOVA = factorialRegressionANOVA, SummaryFit = factorialRegressionSummaryFit))
 }
 
 .factorialRegressionCoefficientsCreateTable <- function(options, ready, fit, saturated, model) {
@@ -544,7 +505,45 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   factorialRegressionCoefficients$addColumnInfo(name = "vif", title = gettext("VIF"), type = "number")
 
   if (!is.null(fit)) {
-    .factorialRegressionCoefficientsFillTable(factorialRegressionCoefficients, options, fit, saturated, model)
+    if (!saturated) {
+      coefs <- as.data.frame(summary(fit)$coefficients)
+      names.64 <- names(coef(fit))
+      null.names <- names(fit$coefficients)[is.na(fit$coefficients)]
+
+      vif <- try(car::vif(fit))
+
+      if (inherits(vif, "try-error")) {
+        errorMessage <- as.character(vif)
+        factorialRegressionCoefficients$setError(errorMessage)
+        return()
+      }
+
+      coefsFill <- data.frame(
+        terms = names.64,
+        coef = c(coefs$Estimate, rep(NA, length(null.names))),
+        se = c(coefs$`Std. Error`, rep(NA, length(null.names))),
+        t = c(coefs$`t value`, rep(NA, length(null.names))),
+        p = c(coefs$`Pr(>|t|)`, rep(NA, length(null.names))),
+        vif = c(NA, vif, rep(NA, length(null.names)))
+      )
+    } else {
+      coefs <- as.vector(coef(fit))[!is.na(coef(fit))]
+      names <- names(coef(fit))[!is.na(coef(fit))]
+
+      coefsFill <- data.frame(
+        terms = names,
+        coef = coefs,
+        se = rep("*", length(names)),
+        t = rep("*", length(names)),
+        p = rep("*", length(names)),
+        vif = rep("*", length(names))
+      )
+    }
+
+    # Replace : by \u00d7
+    coefsFill$terms <- jaspBase::gsubInteractionSymbol(coefsFill$terms)
+
+    factorialRegressionCoefficients$setData(coefsFill)
   }
 
   tableCoef <- factorialRegressionCoefficients
@@ -553,45 +552,69 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   return(list(tableCoef = tableCoef, tableFormula = tableFormula))
 }
 
-.factorialRegressionCoefficientsFillTable <- function(factorialRegressionCoefficients, options, fit, saturated, model) {
-  if (!saturated) {
-    coefs <- as.data.frame(summary(fit)$coefficients)
-    names.64 <- names(coef(fit))
-    null.names <- names(fit$coefficients)[is.na(fit$coefficients)]
+# Duplicates from jaspAnova
 
-    vif <- try(car::vif(fit))
+.anovaCheckErrors <- function(dataset, options, ready) {
+  if (!ready) {
+    return()
+  }
 
-    if (inherits(vif, "try-error")) {
-      errorMessage <- as.character(vif)
-      factorialRegressionCoefficients$setError(errorMessage)
-      return()
+  modelTerms <- unlist(options$modelTerms, recursive = FALSE)
+  factorModelTerms <- options$modelTerms[sapply(modelTerms, function(x) !any(x %in% options$covariates))]
+  allComponents <- unique(unlist(lapply(factorModelTerms, `[[`, "components"), use.names = FALSE))
+
+  .hasErrors(
+    dataset              = dataset,
+    type                 = c("infinity", "factorLevels"),
+    infinity.target      = c(options$dependent, options$covariates, allComponents, options$wlsWeights),
+    factorLevels.target  = options[["fixedFactors"]],
+    factorLevels.amount  = "< 2",
+    exitAnalysisIfErrors = TRUE
+  )
+
+  nWayInteractions <- unlist(lapply(factorModelTerms, lengths), use.names = FALSE)
+  if (any(nWayInteractions > 1L)) {
+    # ensure that the largest n-way interaction effects come last
+    factorModelTerms <- factorModelTerms[order(nWayInteractions)]
+
+    # For each model term, check if it is a strict subset of another term.
+    # For example, if grouping on a three-way interaction doesn't violate any error checks
+    # then all the two-way interactions composed of variables from the three-way interaction will pass.
+    idxToRemove <- integer()
+    for (i in 1:(length(factorModelTerms) - 1)) {
+      for (j in length(factorModelTerms):(i + 1)) {
+        if (all(factorModelTerms[[i]][["components"]] %in% factorModelTerms[[j]][["components"]])) {
+          idxToRemove <- c(idxToRemove, i)
+          break
+        }
+      }
     }
-
-    coefsFill <- data.frame(
-      terms = names.64,
-      coef = c(coefs$Estimate, rep(NA, length(null.names))),
-      se = c(coefs$`Std. Error`, rep(NA, length(null.names))),
-      t = c(coefs$`t value`, rep(NA, length(null.names))),
-      p = c(coefs$`Pr(>|t|)`, rep(NA, length(null.names))),
-      vif = c(NA, vif, rep(NA, length(null.names)))
-    )
+    componentsToGroupOn <- factorModelTerms[-idxToRemove]
   } else {
-    coefs <- as.vector(coef(fit))[!is.na(coef(fit))]
-    names <- names(coef(fit))[!is.na(coef(fit))]
+    componentsToGroupOn <- factorModelTerms
+  }
 
-    coefsFill <- data.frame(
-      terms = names,
-      coef = coefs,
-      se = rep("*", length(names)),
-      t = rep("*", length(names)),
-      p = rep("*", length(names)),
-      vif = rep("*", length(names))
+  observations.amount <- paste("<", length(options[["dependent"]]) + 1L)
+  for (i in rev(seq_along(componentsToGroupOn))) {
+    componentsToGroupBy <- componentsToGroupOn[[i]][["components"]]
+
+    .hasErrors(
+      dataset = dataset,
+      type = c("observations", "variance"),
+      all.target = c(options$dependent, options$covariates),
+      observations.grouping = componentsToGroupBy,
+      observations.amount = observations.amount,
+      exitAnalysisIfErrors = TRUE
     )
   }
 
-  # Replace : by \u00d7
-  coefsFill$terms <- jaspBase::gsubInteractionSymbol(coefsFill$terms)
-
-  factorialRegressionCoefficients$setData(coefsFill)
-  return()
+  .hasErrors(
+    dataset = dataset,
+    custom = function() {
+      if (any(dataset[[.v(options$wlsWeights)]] <= 0)) {
+        return(gettext("The WLS weights contain negative and/or zero values.<br><br>(only positive WLS weights allowed)."))
+      }
+    },
+    exitAnalysisIfErrors = TRUE
+  )
 }

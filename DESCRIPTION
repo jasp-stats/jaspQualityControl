@@ -17,6 +17,7 @@ Imports:
   ggrepel,
   goftest,
   irr,
+  jaspAnova,
   jaspBase,
   jaspDescriptives,
   jaspGraphs,
@@ -37,6 +38,7 @@ Imports:
   weibullness,
   car
 Remotes:
+  jasp-stats/jaspAnova,
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
   jasp-stats/jaspGraphs
