@@ -7,73 +7,71 @@ import JASP.Widgets 							1.0
 
 Form
 {
-	columns:                                    1
-
 	VariablesForm
 	{
 		AvailableVariablesList
 		{
-			name:                               "FAallVariables"
+			name:                               "allVariables"
 			label:                              qsTr("Available factors")
 		}
 
 		AssignedVariablesList
 		{
-			name:                               "FAresponse"
+			name:                               "response"
 			allowedColumns:                     ["scale", "ordinal", "nominal"]
 			singleVariable:                     true
-			label:                              qsTr("Response variable")
+			label:                              qsTr("Response")
 		}
 
 		AssignedVariablesList
 		{
-			name:                               "FAassignedFactors"
+			id:									factors
+			name:                               "factors"
 			allowedColumns:                     ["scale", "ordinal", "nominal", "nominalText"]
-			label:                              qsTr("Assigned factors")
-		}
-
-		AssignedVariablesList
-		{
-			debug:                              true
-			name:                               "FAblocks"
-			singleVariable:                     true
-			label:                              qsTr("Blocks")
+			label:                              qsTr("Factors")
 		}
 
 		AssignedVariablesList
 		{
 			id:                                 runOrder
-			name:                               "FArunOrder"
-			allowedColumns:                     ["scale", "ordinal", "nominal"]
+			name:                               "runorder"
+			allowedColumns:                     ["scale", "ordinal"]
 			singleVariable:                     true
-			label:                              qsTr("Run order")
+			label:                              qsTr("Run Order")
+		}
+
+		AssignedVariablesList
+		{
+			debug:                              true
+			name:                               "blocks"
+			singleVariable:                     true
+			label:                              qsTr("Blocks")
 		}
 	}
 
 	CheckBox
 	{
 		name:                                   "enabledIntOrder"
-		id :                                    "enabledIntOrder"
-		childrenOnSameRow: true
+		childrenOnSameRow: 						true
 
 		IntegerField
 		{
-			name:                                   "intOrder"
-			label:                                  qsTr("Highest order interaction term:")
+			name:                               "intOrder"
+			label:                              qsTr("Highest order interaction term")
 			defaultValue:                           1
 			min:                                    1
-			max:                                    5 // change this to number of items in FAassignedFactors
+			max:                                    factors.count > 0 ? factors.count : 999
 		}
 	}
 
-	Group
+	Section
 	{
 		title: qsTr("Model")
 
 		VariablesForm
 		{
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["FAassignedFactors"]}
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["factors"]}
 			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction;
 				enabled: !enabledIntOrder.checked }
 		}
@@ -82,83 +80,75 @@ Form
 
 	Group
 	{
-		columns: 2
-		title: qsTr("Plots")
+		title: qsTr("Design")
 
-		Group
+		CheckBox
 		{
-			title: qsTr("Design plots")
-
-			CheckBox
-			{
-				name:                               "showAliasStructure2"
-				label:                              "Show alias structure"
-				enabled:							runOrder.count > 0
-			}
-
-			CheckBox
-			{
-				name:                                   "paretoPlot"
-				label:                                  qsTr("Pareto Plot of Standardized Effects")
-			}
+			name:                               "tableAlias"
+			label:                              "Show alias structure"
+			enabled:							runOrder.count > 0
 		}
 
-		Group
+		CheckBox
 		{
-			name:                                   "resPlots"
-			title:                                  qsTr("Residuals plots")
-
-			CheckBox
-			{
-				name:                               "resNorm"
-				label:                              qsTr("Normal probability plot of residuals")
-			}
-
-			CheckBox
-			{
-				name:                               "resHist"
-				label:                              qsTr("Histogram of residuals")
-			}
-
-			CheckBox
-			{
-				name:                               "resFitted"
-				label:                              qsTr("Residuals vs fitted value")
-			}
-
-			CheckBox
-			{
-				name:                               "resOrder"
-				label:                              qsTr("Residuals vs run/standard order")
-				enabled:							runOrder.count > 0
-
-				RadioButtonGroup
-				{
-					name:                                   "runOrderPlot"
-
-
-					RadioButton
-					{
-						name:                              "runOrderStandardPlot"
-						label:                              qsTr("Standard")
-						checked:                            true
-					}
-
-					RadioButton
-					{
-						name:                               "runOrderRandomPlot"
-						label:                              qsTr("Run")
-					}
-				}
-			}
-
-			CheckBox
-			{
-				name:                               "fourInOne"
-				label:                              qsTr("Matrix residuals plot")
-				enabled:							runOrder.count > 0
-			}
+			name:                                   "plotPareto"
+			label:                                  qsTr("Pareto Plot of Standardized Effects")
 		}
 	}
 
+	Group
+	{
+		title:                                  qsTr("Residuals")
+
+		CheckBox
+		{
+			name:                               "plotNorm"
+			label:                              qsTr("Normal probability plot of residuals")
+		}
+
+		CheckBox
+		{
+			name:                               "plotHist"
+			label:                              qsTr("Histogram of residuals")
+		}
+
+		CheckBox
+		{
+			name:                               "plotFitted"
+			label:                              qsTr("Residuals vs fitted value")
+		}
+
+		CheckBox
+		{
+			name:                               "plotRunOrder"
+			label:                              qsTr("Residuals vs run/standard order")
+			enabled:							runOrder.count > 0
+
+			RadioButtonGroup
+			{
+				name:                                   "plotOrder"
+
+
+				RadioButton
+				{
+					name:                              "plotOrderStandard"
+					label:                              qsTr("Standard")
+					checked:                            true
+				}
+
+				RadioButton
+				{
+					name:                               "plotOrderRun"
+					label:                              qsTr("Run")
+				}
+			}
+		}
+
+		// CheckBox
+		// {
+		// 	name:                               "fourInOne"
+		// 	label:                              qsTr("Matrix residuals plot")
+		// 	enabled:							runOrder.count > 0
+		// }
+	}
 }
