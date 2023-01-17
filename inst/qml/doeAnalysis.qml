@@ -43,18 +43,21 @@ Form
 			visible:							false
 			name:                               "covariates"
 		}
-
-		AssignedVariablesList
-		{
-			visible:                            false
-			name:                               "wlsWeights"
-		}
 	}
 
-	CheckBox
+	Group
 	{
-		name:                               "tableAlias"
-		label:                              "Show alias structure"
+		CheckBox
+		{
+			name:                               "tableAlias"
+			label:                              "Show alias structure"
+		}
+
+		CheckBox
+		{
+			name:                               "tableEquation"
+			label:                              "Show regression equation"
+		}
 	}
 
 	Section
