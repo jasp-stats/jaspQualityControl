@@ -1,12 +1,11 @@
-import QtQuick 2.0
-
-import QtQuick 									2.8
-import QtQuick.Layouts 							1.3
-import JASP.Controls 							1.0
-import JASP.Widgets 							1.0
+import QtQuick
+import JASP
+import JASP.Controls
+import JASP.Widgets
 
 Form
 {
+
 	VariablesForm
 	{
 		AvailableVariablesList
@@ -64,16 +63,17 @@ Form
 
 	CheckBox
 	{
-		name:                                   "enabledIntOrder"
+		id:										highestOrder
+		name:                                   "highestOrder"
 		childrenOnSameRow: 						true
+		label:                              	qsTr("Highest order interaction term")
 
 		IntegerField
 		{
-			name:                               "intOrder"
-			label:                              qsTr("Highest order interaction term")
-			defaultValue:                           1
-			min:                                    1
-			max:                                    factors.count > 0 ? factors.count : 999
+			name:                               "order"
+			defaultValue:                        1
+			min:                                 1
+			max:                                 factors.count > 0 ? factors.count : 999
 		}
 	}
 
@@ -84,8 +84,9 @@ Form
 		VariablesForm
 		{
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["fixedFactors"]}
-			AssignedVariablesList {  name: "modelTerms"; title: qsTr("Model Terms"); listViewType: JASP.Interaction; enabled: !enabledIntOrder.checked }
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["fixedFactors", "covariates"]}
+			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction;
+				enabled: !highestOrder.checked }
 		}
 
 	}
@@ -127,33 +128,13 @@ Form
 		CheckBox
 		{
 			name:                               "plotFitted"
-			label:                              qsTr("Residuals vs fitted value")
+			label:                              qsTr("Residuals vs. fitted value")
 		}
 
 		CheckBox
 		{
 			name:                               "plotRunOrder"
-			label:                              qsTr("Residuals vs run/standard order")
-			enabled:							runOrder.count > 0
-
-			RadioButtonGroup
-			{
-				name:                                   "plotOrder"
-
-
-				RadioButton
-				{
-					name:                              "plotOrderStandard"
-					label:                              qsTr("Standard")
-					checked:                            true
-				}
-
-				RadioButton
-				{
-					name:                               "plotOrderRun"
-					label:                              qsTr("Run")
-				}
-			}
+			label:                              qsTr("Residuals vs. run order")
 		}
 
 		// CheckBox
