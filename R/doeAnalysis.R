@@ -201,7 +201,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["anova"]][["p"]] <- pval
 
   # Regression coefficients
-browser()
   result[["regression"]][["coefficients"]] <- list()
   coefs <- as.data.frame(summary(regressionFit)[["coefficients"]])
   valid_coefs <- which(!is.na(coefs[["Estimate"]]))
