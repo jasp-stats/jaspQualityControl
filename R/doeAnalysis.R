@@ -19,7 +19,7 @@
 doeAnalysis <- function(jaspResults, dataset, options, ...) {
   dataset <- .doeAnalysisReadData(dataset, options)
 
-  ready <- length(options[["fixedFactors"]]) >= 2 && options[["dependent"]] != ""
+  ready <- length(options[["fixedFactors"]]) >= 2 && options[["dependent"]] != "" && !is.null(unlist(options[["modelTerms"]]))
   .anovaCheckErrors(dataset, options, ready)
 
   .doeAnalysisMakeState(jaspResults, dataset, options, ready)
@@ -52,9 +52,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (options[["blocks"]] != "") {
     factorVars <- c(factorVars, options[["blocks"]])
   }
-  if (options[["runOrder"]] != "") {
-    numericVars <- c(numericVars, options[["runOrder"]])
-  }
   if (length(options[["covariates"]]) > 0 && options[["covariates"]] != "") {
     numericVars <- c(numericVars, unlist(options[["covariates"]]))
   }
@@ -68,7 +65,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   .hasErrors(dataset,
     type = c("infinity", "missingValues"),
-    all.target = c(options[["dependent"]], options[["runOrder"]], options[["fixedFactors"]]),
+    all.target = c(options[["dependent"]], options[["fixedFactors"]]),
     exitAnalysisIfErrors = TRUE
   )
 }
@@ -160,19 +157,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     names <- c("Model", names(coef(regressionFit))[!is.na(coef(regressionFit))][-1], "Error", "Total")
   }
 
-  #   # Pure error for replicates
-  # lhs <- names(regressionFit$model)[1]
-  # rhs <- names(regressionFit$model)[-1]
-  # formula <- rhs[1]
-  # for (i in 2:length(rhs)) {
-  #   formula <- paste0(c(formula, rhs[i]), collapse = ",")
-  # } # create RSM model formula
-  #   	browser()
-  # rsmFormula <- as.formula(paste0(lhs, " ~ FO(", formula, ")"))
-  # rsmFit <- rsm::rsm(rsmFormula, regressionFit$model)
-  # rsm <- summary(fit.rsm)
-  # anova.rsm <- rsm[[13]] # anova table
-
   if (!result[["regression"]][["saturated"]]) {
     df <- c(sum(anovaFit[["Df"]][-errorIndex]), anovaFit[["Df"]][-errorIndex], rep(NA, length(null.names)), anovaFit[["Df"]][errorIndex], sum(anovaFit[["Df"]]))
     adjss <- c(ssm, anovaFit[["Sum Sq"]][-errorIndex], rep(NA, length(null.names)), anovaFit[["Sum Sq"]][errorIndex], sum(anovaFit[["Sum Sq"]]))
@@ -180,6 +164,17 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     fval <- c(fval, anovaFit[["F value"]], rep(NA, length(null.names)), NA)
     pval <- c(pval, anovaFit[["Pr(>F)"]], rep(NA, length(null.names)), NA)
 
+    #   # Pure error for replicates
+    # lhs <- names(regressionFit$model)[1]
+    # rhs <- names(regressionFit$model)[-1]
+    # formula <- rhs[1]
+    # for (i in 2:length(rhs)) {
+    #   formula <- paste0(c(formula, rhs[i]), collapse = ",")
+    # } # create RSM model formula
+    # rsmFormula <- as.formula(paste0(lhs, " ~ FO(", formula, ")"))
+    # rsmFit <- rsm::rsm(rsmFormula, regressionFit$model)
+    # rsm <- summary(fit.rsm)
+    # anova.rsm <- rsm[[13]] # anova table
     #   # If Pure error
     #   if (anova.rsm[3, ][1] != 0 && anova.rsm[4, ][1] != 0) {
     #     LackFit <- t(as.data.frame(c(terms = "Lack of fit", round(unlist(anova.rsm[3, ]), 3))))
@@ -363,7 +358,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
   if (result[["saturated"]]) {
-    plot$setError(gettext("Plot unavailable for saturated designs."))
+    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
     return()
   }
   t <- abs(data.frame(summary(result[["object"]])$coefficients)$t.value[-1])
@@ -397,7 +392,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
   if (result[["saturated"]]) {
-    plot$setError(gettext("Plot unavailable for saturated designs."))
+    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
     return()
   }
   plot$plotObject <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
@@ -416,7 +411,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
   if (result[["saturated"]]) {
-    plot$setError(gettext("Plot unavailable for saturated designs."))
+    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
     return()
   }
   plot$plotObject <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
@@ -435,7 +430,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
   if (result[["saturated"]]) {
-    plot$setError(gettext("Plot unavailable for saturated designs."))
+    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
     return()
   }
   plotData <- data.frame(x = fitted(result[["object"]]), y = resid(result[["object"]]))
@@ -464,14 +459,10 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
   if (result[["saturated"]]) {
-    plot$setError(gettext("Plot unavailable for saturated designs."))
+    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
     return()
   }
-  if (options[["runOrder"]] != "") {
-    runOrder <- dataset[[options[["runOrder"]]]]
-  } else {
-    runOrder <- seq_len(nrow(dataset))
-  }
+  runOrder <- seq_len(nrow(dataset))
   plotData <- data.frame(x = runOrder, y = resid(result[["object"]]))
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData$x)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData$y)

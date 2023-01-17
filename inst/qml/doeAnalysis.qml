@@ -28,6 +28,7 @@ Form
 			name:                               "fixedFactors"
 			allowedColumns:                     ["scale", "ordinal", "nominal", "nominalText"]
 			label:                              qsTr("Factors")
+			height:								250 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -39,96 +40,73 @@ Form
 
 		AssignedVariablesList
 		{
-			id:                                 runOrder
-			name:                               "runOrder"
-			allowedColumns:                     ["scale", "ordinal"]
-			singleVariable:                     true
-			label:                              qsTr("Run Order")
-		}
-
-		AssignedVariablesList
-		{
+			visible:							false
 			name:                               "covariates"
-			allowedColumns:                     ["scale"]
-			label:                              qsTr("Covariates")
 		}
 
 		AssignedVariablesList
 		{
 			visible:                            false
 			name:                               "wlsWeights"
-			singleVariable:                     true
 		}
 	}
 
 	CheckBox
 	{
-		id:										highestOrder
-		name:                                   "highestOrder"
-		childrenOnSameRow: 						true
-		label:                              	qsTr("Highest order interaction term")
-
-		IntegerField
-		{
-			name:                               "order"
-			defaultValue:                        1
-			min:                                 1
-			max:                                 factors.count > 0 ? factors.count : 999
-		}
+		name:                               "tableAlias"
+		label:                              "Show alias structure"
 	}
 
 	Section
 	{
 		title: qsTr("Model")
 
+		CheckBox
+		{
+			id:										highestOrder
+			name:                                   "highestOrder"
+			label:                              	qsTr("Define by highest order interaction term")
+
+			IntegerField
+			{
+				name:                               "order"
+				defaultValue:                        1
+				min:                                 1
+				max:                                 factors.count > 0 ? factors.count : 999
+				label:								  qsTr("Highest order interaction term")
+			}
+		}
+
 		VariablesForm
 		{
+			enabled: !highestOrder.checked
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["fixedFactors", "covariates"]}
-			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction;
-				enabled: !highestOrder.checked }
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["fixedFactors"]}
+			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction}
 		}
 
 	}
 
 	Group
 	{
-		title: qsTr("Design")
-
-		CheckBox
-		{
-			name:                               "tableAlias"
-			label:                              "Show alias structure"
-			enabled:							runOrder.count > 0
-		}
-
-		CheckBox
-		{
-			name:                                   "plotPareto"
-			label:                                  qsTr("Pareto Plot of Standardized Effects")
-		}
-	}
-
-	Group
-	{
-		title:                                  qsTr("Residuals")
+		title:                                  qsTr("Residuals Plots")
 
 		CheckBox
 		{
 			name:                               "plotNorm"
-			label:                              qsTr("Normal probability plot of residuals")
+			label:                              qsTr("Normal probability plot")
 		}
 
 		CheckBox
 		{
 			name:                               "plotHist"
-			label:                              qsTr("Histogram of residuals")
+			label:                              qsTr("Histogram")
 		}
 
 		CheckBox
 		{
 			name:                               "plotFitted"
-			label:                              qsTr("Residuals vs. fitted value")
+			label:                              qsTr("Residuals vs. fitted values")
 		}
 
 		CheckBox
@@ -143,5 +121,16 @@ Form
 		// 	label:                              qsTr("Matrix residuals plot")
 		// 	enabled:							runOrder.count > 0
 		// }
+	}
+
+	Group
+	{
+		title: qsTr("Other Plots")
+
+		CheckBox
+		{
+			name:                                   "plotPareto"
+			label:                                  qsTr("Pareto Plot of Standardized Effects")
+		}
 	}
 }
