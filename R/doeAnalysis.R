@@ -179,7 +179,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     result[["regression"]][["s"]] <- NA
     result[["regression"]][["rsq"]] <- 1
     result[["regression"]][["adjrsq"]] <- NA
-	result[["regression"]][["predrsq"]] <- NA
+    result[["regression"]][["predrsq"]] <- NA
 
     anovaFit <- summary(aov(regressionFit))[[1]]
     ssm <- sum(anovaFit[["Sum Sq"]])
@@ -205,7 +205,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   coefs <- as.data.frame(summary(regressionFit)[["coefficients"]])
   valid_coefs <- which(!is.na(coefs[["Estimate"]]))
   result[["regression"]][["coefficients"]][["terms"]] <- jaspBase::gsubInteractionSymbol(rownames(coefs)[valid_coefs])
-  result[["regression"]][["coefficients"]][["est"]] <- coefs[["Estimate"]][valid_coefs]
+
+  result[["regression"]][["coefficients"]][["effects"]] <- effects(regressionFit, set.sign = TRUE)[valid_coefs] / 2
+  result[["regression"]][["coefficients"]][["est"]] <- result[["regression"]][["coefficients"]][["effects"]] / 2
+  result[["regression"]][["coefficients"]][["effects"]][1] <- NA
+
   if (!result[["regression"]][["saturated"]]) {
     result[["regression"]][["coefficients"]][["se"]] <- coefs[["Std. Error"]][valid_coefs]
     result[["regression"]][["coefficients"]][["t"]] <- coefs[["t value"]][valid_coefs]
@@ -260,7 +264,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   tb <- createJaspTable(gettext("ANOVA"))
-  tb$addColumnInfo(name = "terms", title = "", type = "string")
+  tb$addColumnInfo(name = "terms", title = "Source", type = "string")
   tb$addColumnInfo(name = "adjss", title = "Sum of Squares", type = "number")
   tb$addColumnInfo(name = "df", title = "df", type = "integer")
   tb$addColumnInfo(name = "adjms", title = "Mean Square", type = "number")
@@ -285,11 +289,13 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   tb <- createJaspTable(gettext("Coefficients"))
-  tb$addColumnInfo(name = "terms", title = "", type = "string")
+  tb$addColumnInfo(name = "terms", title = gettext("Term"), type = "string")
+  tb$addColumnInfo(name = "effects", title = gettext("Effect"), type = "number")
   tb$addColumnInfo(name = "coef", title = gettext("Coefficient"), type = "number")
   tb$addColumnInfo(name = "se", title = gettext("Standard Error"), type = "number")
   tb$addColumnInfo(name = "tval", title = "t", type = "number")
   tb$addColumnInfo(name = "pval", title = "p", type = "pvalue")
+  tb$addColumnInfo(name = "vif", title = "VIF", type = "number")
   tb$dependOn(options = c("tableEquation", .doeAnalysisBaseDependencies()))
   tb$position <- 3
   jaspResults[["tableCoefficients"]] <- tb
@@ -298,8 +304,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]][["coefficients"]]
   rows <- data.frame(
-    terms = result[["terms"]], coef = result[["est"]], se = result[["se"]],
-    tval = result[["t"]], pval = result[["p"]]
+    terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
+    se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = NA
   )
   tb$addRows(rows)
 }
@@ -326,18 +332,28 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   tb <- createJaspTable(gettext("Alias Structure"))
-  tb$addColumnInfo(name = "formula", title = "", type = "string")
+  tb$addColumnInfo(name = "alias", title = "", type = "string")
   tb$dependOn(options = c("tableAlias", .doeAnalysisBaseDependencies()))
   tb$position <- 5
   jaspResults[["tableAlias"]] <- tb
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
     return()
   }
-  result <- jaspResults[["doeResult"]]$object[["anova"]]
-  name <- names(coef(result[["object"]]))[-1]
-  note <- paste(LETTERS[seq_len(length(name))], name, collapse = ";", sep = " = ")
-  tb$addFootnote(note)
-  #   rows <- data.frame(Aliases = c(FrF2::aliasprint(factorialDesign)$main, FrF2::aliasprint(factorialDesign)$fi2))
+  result <- jaspResults[["doeResult"]]$object
+
+  p <- try({
+    aliases <- FrF2::aliases(result[["regression"]][["object"]])
+  })
+  if (isTryError(p)) {
+    tb$setError(gettextf("An error occurred: %1$s", .extractErrorMessage(p)))
+    return()
+  }
+  if (!is.null(aliases[["aliases"]])) {
+    rows <- data.frame(alias = unlist(aliases[["aliases"]]))
+    tb$addRows(rows)
+  } else {
+    tb$addFootnote(gettext("No aliasing in the model."))
+  }
 }
 
 .doeAnalysisPlotPareto <- function(jaspResults, options, ready) {
@@ -495,10 +511,10 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 .PRESS <- function(linear.model) {
   #' calculate the predictive residuals
-  pr <- residuals(linear.model)/(1-lm.influence(linear.model)$hat)
+  pr <- residuals(linear.model) / (1 - lm.influence(linear.model)$hat)
   #' calculate the PRESS
   PRESS <- sum(pr^2)
-  
+
   return(PRESS)
 }
 
@@ -506,10 +522,10 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   #' Use anova() to get the sum of squares for the linear model
   lm.anova <- anova(linear.model)
   #' Calculate the total sum of squares
-  tss <- sum(lm.anova$'Sum Sq')
+  tss <- sum(lm.anova$"Sum Sq")
   # Calculate the predictive R^2
-  pred.r.squared <- 1-.PRESS(linear.model)/(tss)
-  
+  pred.r.squared <- 1 - .PRESS(linear.model) / (tss)
+
   return(pred.r.squared)
 }
 
