@@ -71,31 +71,18 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       } else {
         dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
       }
-      
       measurements <- colnames(dataset)
     } else{
       subgroups <- dataset[[subgroupVariable]]
       subgroups <- na.omit(subgroups)
-      
       # add sequence of occurence to allow pivot_wider
       dataset$occurence <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
       # transform into one group per row
       dataset <- tidyr::pivot_wider(data = dataset, values_from = measurements, names_from = occurence)
       # arrange into dataframe 
       dataset <- as.data.frame(dataset)
-      measurements <- colnames(dataset)[-1]
+      measurements <- colnames(dataset)
     }
-
-    
-    
-    # if (identical(dataset, "error")) {
-    #   plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
-    #   jaspResults[["plot"]] <- plot
-    #   plot$setError(gettextf("Could not equally divide data points into groups of size %i.", k))
-    #   plot$dependOn("CCSubgroupSize")
-    #   return()
-    # }
-    
   }
   
   #Checking for errors in the dataset
@@ -113,11 +100,16 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     if (options$TypeChart == "Xbarchart" && is.null(jaspResults[["XbarPlot"]])) {
       jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
       jaspResults[["XbarPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "manualTicks", 'nTicks',"SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
-      
-      Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]], Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
-      Rchart <- .Rchart(dataset = dataset[measurements], options = options, warningLimits = FALSE, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
-      jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
       jaspResults[["XbarPlot"]]$position <- 1
+      
+      if (length(measurements) > 50){ # if the subgroup size is above 50, the R package cannot calculate R charts.
+        jaspResults[["XbarPlot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use s-chart instead."))
+        return()
+      } else { 
+        Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]], Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
+        Rchart <- .Rchart(dataset = dataset[measurements], options = options, warningLimits = FALSE, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
+        jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
+      }
       
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTableX"]]) && is.null(jaspResults[["NelsonTableR"]]) && is.null(jaspResults[["NelsonTables"]])) {
@@ -128,6 +120,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         
         AllTables[["NelsonTableX"]]  <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart$sixsigma, Phase2 = options$Phase2, xLabels = Xchart$xLabels)
         AllTables[["NelsonTableR"]] <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Rchart$sixsigma, name = "R", xLabels = Rchart$xLabels)
+        
+        if (length(measurements) > 5) # if the subgroup size is above 5, R chart is not recommended
+          AllTables[["NelsonTableR"]]$addFootnote(gettextf("Subgroup size is >5, results may be biased. S-chart is recommended."))
       }
     }
     
@@ -177,12 +172,16 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 }
 
 #Functions for control charts
-.XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE) {
+.XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE, OnlyOutofLimit = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
   sixsigma <- qcc::qcc(data, type ='S', plot = FALSE)
   subgroups <- c(1:length(sixsigma$statistics))
   data_plot <- data.frame(subgroups = subgroups, Stdv = sixsigma$statistics)
+  
+  if (length(sixsigma$statistics) == 1)
+    OnlyOutofLimit <- TRUE  # other rules don't apply if only 1 group
+  
   if(Phase2 && sd != "")
     sixsigma <- list(statistics = sixsigma$statistics,
                      limits = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$limits,
@@ -206,7 +205,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       gettextf("CL = %g", round(center, decimals + 1)),
       gettextf("UCL = %g",   round(UCL, decimals + 2)),
       gettextf("LCL = %g",   round(LCL, decimals + 2)))
-    )
+  )
   xLimits <- range(c(xBreaks, dfLabel$x))
   
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
@@ -216,9 +215,14 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     ggplot2::scale_y_continuous(name =  gettext("Subgroup st dev"), breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks) +
     jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
+  
+  if (OnlyOutofLimit)
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$Stdv > UCL | data_plot$Stdv < LCL, "red", "blue"))
+  else
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+  
   
   if (!identical(manualXaxis, "")) {
     if (Wide){

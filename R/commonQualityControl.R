@@ -67,6 +67,9 @@
     sigma <- .sdXbar(df = data, k = ncol(data))
     sixsigma <- qcc::qcc(data, type ='xbar', plot = FALSE, center = mu, sizes = ncol(data), std.dev = sigma)
   }
+  
+  if (length(sixsigma$statistics) == 1)
+    OnlyOutofLimit <- TRUE  # other rules don't apply if only 1 group
 
   if (!identical(manualSubgroups, "")) {
     subgroups <- manualSubgroups
@@ -205,6 +208,9 @@
   mu <- mean(.rowRanges(data))
   sigma <- .sdXbar(df = data, k = ncol(data))
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(data))
+  
+  if (length(sixsigma$statistics) == 1)
+    OnlyOutofLimit <- TRUE  # other rules don't apply if only 1 group
 
   if(Phase2 && sd != "")
     sixsigma <- list(statistics = sixsigma$statistics,
@@ -387,6 +393,9 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 .NelsonTable <- function(dataset, options, sixsigma, type = "xbar", Phase2 = TRUE, name = "X-bar", xLabels = NULL) {
 
   table <- createJaspTable(title = gettextf("Test results for %s chart", name))
+  
+  if (length(sixsigma$statistics) == 1) # no need for table with only 1 group
+    return(table)
 
   if (!Phase2 || type == "xbar.one") {
 
