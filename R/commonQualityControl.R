@@ -64,7 +64,7 @@
   else {
     #hand calculate mean and sd as the package gives wrong results with NAs
     mu <- mean(unlist(data), na.rm = TRUE)
-    sigma <- .sdXbar(df = data, k = ncol(data))
+    sigma <- .sdXbar(df = data, k = ncol(data), type = "s")
     sixsigma <- qcc::qcc(data, type ='xbar', plot = FALSE, center = mu, sizes = ncol(data), std.dev = sigma)
   }
   
@@ -206,7 +206,7 @@
   decimals <- max(.decimalplaces(data))
   #hand calculate mean and sd as the package gives wrong results with NAs
   mu <- mean(.rowRanges(data))
-  sigma <- .sdXbar(df = data, k = ncol(data))
+  sigma <- .sdXbar(df = data, k = ncol(data), type = "r")
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(data))
   
   if (length(sixsigma$statistics) == 1)
@@ -669,11 +669,15 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2))
 }
 
-.sdXbar <- function(df, k) {
-  d2 <- KnownControlStats.RS(k, 0)$constants[1]
-  rowRanges <- .rowRanges(df)
-  sdWithin <- mean(rowRanges) / d2
-  
+.sdXbar <- function(df, k, type = c("s", "r")) {
+  if (type == "r"){
+    d2 <- KnownControlStats.RS(k, 0)$constants[1]
+    rowRanges <- .rowRanges(df)
+    sdWithin <- mean(rowRanges) / d2
+  } else if (type == "s") {
+    rowSd <- apply(df, 1, sd, na.rm = TRUE)
+    sdWithin <- mean(rowSd)
+  }
   return(sdWithin)
 } 
 
