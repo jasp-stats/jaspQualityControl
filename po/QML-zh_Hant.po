@@ -1905,10 +1905,6 @@ msgctxt "Description|"
 msgid "Factorial Design"
 msgstr ""
 
-msgctxt "Description|"
-msgid "Analyze Design"
-msgstr ""
-
 msgctxt "ShowAndExportDesign|"
 msgid "Display design"
 msgstr ""

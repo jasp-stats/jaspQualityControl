@@ -2120,10 +2120,6 @@ msgctxt "Description|"
 msgid "Factorial Design"
 msgstr "Diseño Factorial"
 
-msgctxt "Description|"
-msgid "Analyze Design"
-msgstr "Analizar Diseño"
-
 msgctxt "ShowAndExportDesign|"
 msgid "Coded units"
 msgstr "Unidades codificadas"
