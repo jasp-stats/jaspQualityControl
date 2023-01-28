@@ -72,7 +72,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
       }
       measurements <- colnames(dataset)
-    } else{
+    } else {
       subgroups <- dataset[[subgroupVariable]]
       subgroups <- na.omit(subgroups)
       # add sequence of occurence to allow pivot_wider
@@ -106,7 +106,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         jaspResults[["XbarPlot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use s-chart instead."))
         return()
       } else { 
-        Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]], Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
+        Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
+                             Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
+                             manualTicks = options$manualTicks, sdType = "r")
         Rchart <- .Rchart(dataset = dataset[measurements], options = options, warningLimits = FALSE, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
         jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
       }
@@ -132,7 +134,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       jaspResults[["SPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "SD", "manualTicks", 'nTicks', "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
       
       Schart <- .XbarSchart(dataset = dataset[measurements], options = options, Phase2 = options$Phase2, sd = options$SD, Wide = wideFormat)
-      Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]], Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
+      Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
+                           Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
+                           manualTicks = options$manualTicks, sdType = "s")
       jaspResults[["SPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Schart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
       jaspResults[["SPlot"]]$position <- 1
       
@@ -175,18 +179,21 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 .XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE, OnlyOutofLimit = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
-  sixsigma <- qcc::qcc(data, type ='S', plot = FALSE)
-  subgroups <- c(1:length(sixsigma$statistics))
-  data_plot <- data.frame(subgroups = subgroups, Stdv = sixsigma$statistics)
+  
+  if(Phase2 && sd != ""){
+    sixsigma <- list(statistics = sixsigma$statistics,
+                     limits = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$limits,
+                     center = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$center)
+  } else {
+    mu <- .sdXbar(data, type = "s")
+    sixsigma <- qcc::qcc(data, type ='S', plot = FALSE, center = mu, sizes = ncol(data))
+  }
   
   if (length(sixsigma$statistics) == 1)
     OnlyOutofLimit <- TRUE  # other rules don't apply if only 1 group
   
-  if(Phase2 && sd != "")
-    sixsigma <- list(statistics = sixsigma$statistics,
-                     limits = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$limits,
-                     center = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$center)
-  
+  subgroups <- c(1:length(sixsigma$statistics))
+  data_plot <- data.frame(subgroups = subgroups, Stdv = sixsigma$statistics)
   center <- sixsigma$center
   UCL <- max(sixsigma$limits)
   LCL <- min(sixsigma$limits)
