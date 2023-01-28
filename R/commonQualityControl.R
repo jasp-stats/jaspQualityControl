@@ -56,15 +56,16 @@
 .Xbarchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,
                        plotLimitLabels = TRUE, yAxisLab = gettext("Sample average"), xAxisLab = gettext("Subgroup"), manualDataYaxis = "",
                        manualXaxis = "", manualTicks = FALSE, title = "", smallLabels = FALSE, Phase2 = FALSE,
-                       target = NULL, sd = NULL, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE) {
+                       target = NULL, sd = NULL, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE, sdType = c("r", "s")) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
+  sdType <- match.arg(sdType) 
   if(Phase2)
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
   else {
     #hand calculate mean and sd as the package gives wrong results with NAs
     mu <- mean(unlist(data), na.rm = TRUE)
-    sigma <- .sdXbar(df = data, k = ncol(data), type = "s")
+    sigma <- .sdXbar(df = data, k = ncol(data), type = sdType)
     sixsigma <- qcc::qcc(data, type ='xbar', plot = FALSE, center = mu, sizes = ncol(data), std.dev = sigma)
   }
   
@@ -659,7 +660,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   if(!cowPlot){
     ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = plotMat, removeXYlabels= "x")
-  }else{
+  } else {
     ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = nStages, nrow = 2, byrow = FALSE)
   }
 
@@ -669,14 +670,14 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2))
 }
 
-.sdXbar <- function(df, k, type = c("s", "r")) {
+.sdXbar <- function(df, k = NA, type = c("s", "r")) {
   if (type == "r"){
     d2 <- KnownControlStats.RS(k, 0)$constants[1]
     rowRanges <- .rowRanges(df)
     sdWithin <- mean(rowRanges) / d2
   } else if (type == "s") {
     rowSd <- apply(df, 1, sd, na.rm = TRUE)
-    sdWithin <- mean(rowSd)
+    sdWithin <- mean(rowSd, na.rm = TRUE)
   }
   return(sdWithin)
 } 
