@@ -206,8 +206,9 @@
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
   #hand calculate mean and sd as the package gives wrong results with NAs
-  mu <- mean(.rowRanges(data))
   sigma <- .sdXbar(df = data, k = ncol(data), type = "r")
+  d2 <- KnownControlStats.RS(ncol(data), 0)$constants[1]
+  mu <- sigma * d2
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(data))
   
   if (length(sixsigma$statistics) == 1)
@@ -670,11 +671,26 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2))
 }
 
+# .sdXbar <- function(df, k = NA, type = c("s", "r")) {
+#   if (type == "r"){
+#     d2 <- KnownControlStats.RS(k, 0)$constants[1]
+#     rowRanges <- .rowRanges(df)
+#     sdWithin <- mean(rowRanges) / d2
+#   } else if (type == "s") {
+#     rowSd <- apply(df, 1, sd, na.rm = TRUE)
+#     sdWithin <- mean(rowSd, na.rm = TRUE)
+#   }
+#   return(sdWithin)
+# } 
+
+
 .sdXbar <- function(df, k = NA, type = c("s", "r")) {
   if (type == "r"){
-    d2 <- KnownControlStats.RS(k, 0)$constants[1]
-    rowRanges <- .rowRanges(df)
-    sdWithin <- mean(rowRanges) / d2
+    #d2 <- KnownControlStats.RS(k, 0)$constants[1]
+    rowRanges <- .rowRanges(df)$ranges
+    n <- .rowRanges(df)$n
+    d2s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[1]))
+    sdWithin <- sum((n - 1) * rowRanges / d2s) / sum(n - 1) # Burr (1969), equation 11
   } else if (type == "s") {
     rowSd <- apply(df, 1, sd, na.rm = TRUE)
     sdWithin <- mean(rowSd, na.rm = TRUE)
@@ -682,16 +698,31 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(sdWithin)
 } 
 
+# .rowRanges <- function(df) {
+#   nrow <- nrow(df)
+#   ranges <- c()
+#   for (i in seq_len(nrow)) {
+#     rowVector <- df[i,]
+#     if (sum((!is.na(rowVector))) < 2) # we need at least 2 values that are not NA to calculate range
+#       next
+#     ranges <- c(ranges, max(rowVector, na.rm = TRUE) - min(rowVector, na.rm = TRUE))
+#   }
+#   return(ranges)
+# }
+
+
 .rowRanges <- function(df) {
   nrow <- nrow(df)
   ranges <- c()
+  n <- c()
   for (i in seq_len(nrow)) {
     rowVector <- df[i,]
     if (sum((!is.na(rowVector))) < 2) # we need at least 2 values that are not NA to calculate range
       next
     ranges <- c(ranges, max(rowVector, na.rm = TRUE) - min(rowVector, na.rm = TRUE))
+    n <- c(n, sum(!is.na(rowVector)))
   }
-  return(ranges)
+  return(list(ranges = ranges, n = n))
 }
 
 KnownControlStats.RS <- function(N, sigma) {
