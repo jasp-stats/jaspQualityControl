@@ -108,7 +108,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       } else { 
         Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
                              Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
-                             manualTicks = options$manualTicks, sdType = "r")
+                             manualTicks = options$manualTicks, sdType = "r",
+                             controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"))
         Rchart <- .Rchart(dataset = dataset[measurements], options = options, warningLimits = FALSE, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
         jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
       }
@@ -136,7 +137,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       Schart <- .XbarSchart(dataset = dataset[measurements], options = options, Phase2 = options$Phase2, sd = options$SD, Wide = wideFormat)
       Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
                            Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
-                           manualTicks = options$manualTicks, sdType = "s")
+                           manualTicks = options$manualTicks, sdType = "s",
+                           controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"))
       jaspResults[["SPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Schart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
       jaspResults[["SPlot"]]$position <- 1
       
