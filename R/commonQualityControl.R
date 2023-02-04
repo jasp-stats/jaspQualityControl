@@ -143,9 +143,6 @@
                        size = 1.5, linetype = "dashed") +
     ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1)
     
-  # p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
-  #   ggplot2::geom_hline(yintercept =  center, color = 'green', size = 1) +
-  #   ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5)
   if (warningLimits) {
     warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
@@ -204,15 +201,6 @@
       xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
       xLabels <- xBreaks_Out[xBreaks]
       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-      dfLabel <- data.frame(
-        x = max(xLimits) * 0.95,
-        y = c(center, UCL, LCL),
-        l = c(
-          gettextf("CL = %g", round(center, decimals + 1)),
-          gettextf("UCL = %g",   round(UCL, decimals + 2)),
-          gettextf("LCL = %g",   round(LCL, decimals + 2))
-        )
-      )
 
       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
     }
@@ -231,14 +219,19 @@
 .Rchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,
                     plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = "", yAxisLab = gettext("Sample range"),
                     xAxisLab = gettext("Subgroup"), manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE,
-                    OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE, manualTicks = FALSE) {
+                    OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE, manualTicks = FALSE,
+                    controlLimitsPerGroup = FALSE) {
 
   #Arrange data and compute
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
+  
+  n <- apply(data, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+  if (!controlLimitsPerGroup) # if control limits are not calculated per group they are based on largest group size
+    n <- max(n)
   #hand calculate mean and sd as the package gives wrong results with NAs
   sigma <- .sdXbar(df = data, type = "r")
-  d2 <- KnownControlStats.RS(ncol(data), 0)$constants[1]
+  d2 <- sapply(n, function(x) KnownControlStats.RS(x, 0)$constants[1])
   mu <- sigma * d2
   sixsigma <- qcc::qcc(data, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(data))
   
@@ -261,11 +254,22 @@
     LCL <- manualLimits[1]
     center <- manualLimits[2]
     UCL <- manualLimits[3]
-  }else{
-    center <- sixsigma$center
-    UCL <- max(sixsigma$limits)
-    LCL <- min(sixsigma$limits)
+  }else{  
+    limits <- .controlLimits(mu, sigma, n = n, type = "r")
+    center <- mu
+    UCL <- limits$UCL
+    LCL <- limits$LCL
   }
+  # arrange data for CL in df
+  cl_plot <- data.frame(LCL = LCL, UCL = UCL, center = center, subgroups = subgroups)
+  # repeat last observation and offset all but first subgroup by -.5 to align on x-axis
+  cl_plot <- rbind(cl_plot, data.frame(LCL = cl_plot$LCL[nrow(cl_plot)],
+                                       UCL = cl_plot$UCL[nrow(cl_plot)],
+                                       center = cl_plot$center[nrow(cl_plot)],
+                                       subgroups = cl_plot$subgroups[nrow(cl_plot)] + 1))
+  cl_plot$subgroups[-1] <- cl_plot$subgroups[-1] - .5
+  
+  
   if (!identical(manualDataYaxis, "")) {
     manualRange <- apply(manualDataYaxis, 1, function(x) max(x) - min(x))
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, manualRange))
@@ -279,19 +283,28 @@
     nxBreaks <- 5
   xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
+  # get (one of) the most frequent centers, LCL and UCL to display them
+  centerDisplay <- as.numeric(names(sort(-table(center)))[1])
+  LCLDisplay <- as.numeric(names(sort(-table(LCL)))[1])
+  UCLDisplay <- as.numeric(names(sort(-table(UCL)))[1])
+  
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
+    y = c(centerDisplay, UCLDisplay, LCLDisplay),
     l = c(
-      gettextf("CL = %g", round(center, decimals + 1)),
-      gettextf("UCL = %g",   round(UCL, decimals + 2)),
-      gettextf("LCL = %g",   round(LCL, decimals + 2))
+      gettextf("CL = %g", round(centerDisplay, decimals + 1)),
+      gettextf("UCL = %g",   round(UCLDisplay, decimals + 2)),
+      gettextf("LCL = %g",   round(LCLDisplay, decimals + 2))
     )
   )
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
-    ggplot2::geom_hline(yintercept = center,  color = 'green', size = 1) +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", , linetype = "dashed", size = 1.5)
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1)
+  
   if (warningLimits) {
     warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
                      qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
@@ -332,15 +345,6 @@
       xLabels <- xBreaks_Out[xBreaks]
 
       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-      dfLabel <- data.frame(
-        x = max(xLimits) * 0.95,
-        y = c(center, UCL, LCL),
-        l = c(
-          gettextf("CL = %g", round(center, decimals + 1)),
-          gettextf("UCL = %g",   round(UCL, decimals + 2)),
-          gettextf("LCL = %g",   round(LCL, decimals + 2))
-        )
-      )
 
       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
     }
@@ -383,7 +387,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       warnings[i,] <- warningsRaw
     }
   } else{
-    warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = data$limits[1,1], ucl = data$limits[1,2], cl = data$center, parRules = pars,
+    warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = data$limits[1,1], ucl = data$limits[1,2], cl = data$center[1], parRules = pars,
                                     whichRules = c(1:3,5,7:8))
   }
 
@@ -764,7 +768,7 @@ KnownControlStats.RS <- function(N, sigma) {
   return(list(constants = c(d2, d3, c4, c5), limits = data.frame(LCL,UCL), center = CL))
 }
 
-.controlLimits <- function(mu, sigma, n, k = 3, type = c("xbar", "r", "s"), unbiasingConstantUsed = FALSE) {
+.controlLimits <- function(mu = NA, sigma, n, k = 3, type = c("xbar", "r", "s"), unbiasingConstantUsed = FALSE) {
   type = match.arg(type)
   UCLvector <- c()
   LCLvector <- c()

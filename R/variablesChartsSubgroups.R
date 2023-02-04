@@ -110,7 +110,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                              Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
                              manualTicks = options$manualTicks, sdType = "r",
                              controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"))
-        Rchart <- .Rchart(dataset = dataset[measurements], options = options, warningLimits = FALSE, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
+        Rchart <- .Rchart(dataset = dataset[measurements], options = options, warningLimits = FALSE, Phase2 = options$Phase2,
+                          target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks,
+                          controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"))
         jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
       }
       
@@ -178,7 +180,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 }
 
 #Functions for control charts
-.XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE, OnlyOutofLimit = FALSE) {
+.XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE, OnlyOutofLimit = FALSE,
+                        controlLimitsPerGroup = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
   
@@ -187,18 +190,33 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                      limits = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$limits,
                      center = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$center)
   } else {
-    mu <- .sdXbar(data, type = "s")
-    sixsigma <- qcc::qcc(data, type ='S', plot = FALSE, center = mu, sizes = ncol(data))
+    sigma <- .sdXbar(data, type = "s")
+    sixsigma <- qcc::qcc(data, type ='S', plot = FALSE, center = sigma, sizes = ncol(data))
   }
+  
+  n <- apply(data, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+  if (!controlLimitsPerGroup) # if control limits are not calculated per group they are based on largest group size
+    n <- max(n)
   
   if (length(sixsigma$statistics) == 1)
     OnlyOutofLimit <- TRUE  # other rules don't apply if only 1 group
   
   subgroups <- c(1:length(sixsigma$statistics))
   data_plot <- data.frame(subgroups = subgroups, Stdv = sixsigma$statistics)
-  center <- sixsigma$center
-  UCL <- max(sixsigma$limits)
-  LCL <- min(sixsigma$limits)
+  
+  limits <- .controlLimits(sigma = sigma, n = n, type = "s")
+  center <- sigma
+  UCL <- limits$UCL
+  LCL <- limits$LCL
+  # arrange data for CL in df
+  cl_plot <- data.frame(LCL = LCL, UCL = UCL, center = center, subgroups = subgroups)
+  # repeat last observation and offset all but first subgroup by -.5 to align on x-axis
+  cl_plot <- rbind(cl_plot, data.frame(LCL = cl_plot$LCL[nrow(cl_plot)],
+                                       UCL = cl_plot$UCL[nrow(cl_plot)],
+                                       center = cl_plot$center[nrow(cl_plot)],
+                                       subgroups = cl_plot$subgroups[nrow(cl_plot)] + 1))
+  cl_plot$subgroups[-1] <- cl_plot$subgroups[-1] - .5
+  
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$Stdv, UCL))
   yLimits <- range(yBreaks)
   if (options$manualTicks)
@@ -207,20 +225,38 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     nxBreaks <- 5
   xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
+  
+  # get (one of) the most frequent centers, LCL and UCL to display them
+  centerDisplay <- as.numeric(names(sort(-table(center)))[1])
+  LCLDisplay <- as.numeric(names(sort(-table(LCL)))[1])
+  UCLDisplay <- as.numeric(names(sort(-table(UCL)))[1])
+  
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
+    y = c(centerDisplay, UCLDisplay, LCLDisplay),
     l = c(
-      gettextf("CL = %g", round(center, decimals + 1)),
-      gettextf("UCL = %g",   round(UCL, decimals + 2)),
-      gettextf("LCL = %g",   round(LCL, decimals + 2)))
+      gettextf("CL = %g", round(centerDisplay, decimals + 1)),
+      gettextf("UCL = %g",   round(UCLDisplay, decimals + 2)),
+      gettextf("LCL = %g",   round(LCLDisplay, decimals + 2))
+    )
   )
   xLimits <- range(c(xBreaks, dfLabel$x))
   
+  
+  ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1)
+  
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-    ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), direction = "both", size = 4) +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1) +
+    ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), size = 4) +
     ggplot2::scale_y_continuous(name =  gettext("Subgroup st dev"), breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks) +
     jaspGraphs::geom_line(color = "blue") +
@@ -242,14 +278,6 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       xLabels <- xBreaks_Out[xBreaks]
       
       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-      dfLabel <- data.frame(
-        x = max(xLimits) * 0.95,
-        y = c(center, UCL, LCL),
-        l = c(
-          gettextf("CL = %g", round(center, decimals + 1)),
-          gettextf("UCL = %g",   round(UCL, decimals + 2)),
-          gettextf("LCL = %g",   round(LCL, decimals + 2)))
-      )
       
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels, limits = xLimits)
     }
