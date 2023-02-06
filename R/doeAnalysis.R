@@ -368,7 +368,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (result[["saturated"]]) {
+  if (!result[["saturated"]]) {
     plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
     return()
   }
@@ -402,7 +402,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (result[["saturated"]]) {
+  if (!result[["saturated"]]) {
     plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
     return()
   }
@@ -421,7 +421,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (result[["saturated"]]) {
+  if (!result[["saturated"]]) {
     plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
     return()
   }
@@ -440,7 +440,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (result[["saturated"]]) {
+  if (!result[["saturated"]]) {
     plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
     return()
   }
@@ -469,7 +469,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (result[["saturated"]]) {
+  if (!result[["saturated"]]) {
     plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
     return()
   }
