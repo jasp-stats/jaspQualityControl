@@ -182,6 +182,12 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 #Functions for control charts
 .XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE, OnlyOutofLimit = FALSE,
                         controlLimitsPerGroup = FALSE) {
+  
+  #remove rows with single observation as no meaningful sd and no CL can be computed
+  rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
+  if (length(rowRemovalIndex) != 0)
+    dataset <- dataset[-rowRemovalIndex, ]
+  
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
   

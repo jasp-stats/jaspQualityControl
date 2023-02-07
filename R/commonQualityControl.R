@@ -222,7 +222,12 @@
                     OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE, manualTicks = FALSE,
                     controlLimitsPerGroup = FALSE) {
 
-  #Arrange data and compute
+  #remove rows with single observation as no meaningful range and no CL can be computed
+  rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
+  if (length(rowRemovalIndex) != 0)
+    dataset <- dataset[-rowRemovalIndex, ]
+  
+  #Arrange data and compute decimals
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
   
