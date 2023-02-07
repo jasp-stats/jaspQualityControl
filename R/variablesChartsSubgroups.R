@@ -99,11 +99,14 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (ready){
     if (options$TypeChart == "Xbarchart" && is.null(jaspResults[["XbarPlot"]])) {
       jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
-      jaspResults[["XbarPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "manualTicks", 'nTicks',"SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
+      jaspResults[["XbarPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "manualTicks", 'nTicks',
+                                           "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong",
+                                           "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle",
+                                           "ccChartName", "subgroupSizeUnequal"))
       jaspResults[["XbarPlot"]]$position <- 1
       
       if (length(measurements) > 50){ # if the subgroup size is above 50, the R package cannot calculate R charts.
-        jaspResults[["XbarPlot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use s-chart instead."))
+        jaspResults[["XbarPlot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
         return()
       } else { 
         Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
@@ -134,9 +137,13 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     #S Chart
     if (options$TypeChart == "Schart" && is.null(jaspResults[["SPlot"]])) {
       jaspResults[["SPlot"]] <- createJaspPlot(title = gettext("X-bar & s Control Chart"), width = 1200, height = 500)
-      jaspResults[["SPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "SD", "manualTicks", 'nTicks', "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
+      jaspResults[["SPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "SD", "manualTicks",
+                                        'nTicks', "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong",
+                                        "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle",
+                                        "ccChartName", "subgroupSizeUnequal"))
       
-      Schart <- .XbarSchart(dataset = dataset[measurements], options = options, Phase2 = options$Phase2, sd = options$SD, Wide = wideFormat)
+      Schart <- .XbarSchart(dataset = dataset[measurements], options = options, Phase2 = options$Phase2, sd = options$SD,
+                            Wide = wideFormat, controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"))
       Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
                            Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
                            manualTicks = options$manualTicks, sdType = "s",
