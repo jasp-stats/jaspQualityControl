@@ -10,12 +10,19 @@ Description: Investigate if a manufactured product adheres to a defined set of q
 License: GPL (>= 2)
 Encoding: UTF-8
 Imports:
+  car,
+  cowplot,
+  daewr,
+  desirability,
   DoE.base,
+  EnvStats,
+  FAdist,
   fitdistrplus,
   FrF2,
   ggplot2,
   ggrepel,
   goftest,
+  ggpp,
   irr,
   jaspBase,
   jaspDescriptives,
@@ -26,16 +33,9 @@ Imports:
   rsm,
   Rspc,
   tidyr,
-  cowplot,
-  vipor,
-  ggpp,
   tibble,
-  EnvStats,
-  FAdist,
-  daewr,
-  desirability,
-  weibullness,
-  car
+  vipor,
+  weibullness
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
