@@ -2148,23 +2148,7 @@ msgid "Available factors"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Response variable"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Assigned factors"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Blocks"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Run order"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Highest order interaction term:"
 msgstr ""
 
 msgctxt "doeAnalysis|"
@@ -2180,47 +2164,7 @@ msgid "Model Terms"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Plots"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Design plots"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Pareto Plot of Standardized Effects"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Residuals plots"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Normal probability plot of residuals"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Histogram of residuals"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Residuals vs fitted value"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Residuals vs run/standard order"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Standard"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Run"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Matrix residuals plot"
 msgstr ""
 
 msgctxt "doeFactorial|"
@@ -2278,4 +2222,44 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Display selected design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Response"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Define by highest order interaction term"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Highest order interaction term"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals Plots"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Normal probability plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Histogram"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals vs. fitted values"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals vs. run order"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Other Plots"
 msgstr ""

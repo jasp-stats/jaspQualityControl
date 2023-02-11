@@ -2149,24 +2149,8 @@ msgid "Available factors"
 msgstr "Factores dispoñibles"
 
 msgctxt "doeAnalysis|"
-msgid "Response variable"
-msgstr "Variable de resposta"
-
-msgctxt "doeAnalysis|"
-msgid "Assigned factors"
-msgstr "Factores asignados"
-
-msgctxt "doeAnalysis|"
 msgid "Blocks"
 msgstr "Bloques"
-
-msgctxt "doeAnalysis|"
-msgid "Run order"
-msgstr "Orde de execución"
-
-msgctxt "doeAnalysis|"
-msgid "Highest order interaction term:"
-msgstr "Termo de interacción de maior orde:"
 
 msgctxt "doeAnalysis|"
 msgid "Model"
@@ -2181,48 +2165,8 @@ msgid "Model Terms"
 msgstr "Elementos do Modelo"
 
 msgctxt "doeAnalysis|"
-msgid "Plots"
-msgstr "Gráficas"
-
-msgctxt "doeAnalysis|"
-msgid "Design plots"
-msgstr "Gráficas do deseño"
-
-msgctxt "doeAnalysis|"
 msgid "Pareto Plot of Standardized Effects"
 msgstr "Gráfica de Pareto de Efectos Tipificados"
-
-msgctxt "doeAnalysis|"
-msgid "Residuals plots"
-msgstr "Gráficas dos erros"
-
-msgctxt "doeAnalysis|"
-msgid "Normal probability plot of residuals"
-msgstr "Gráfica de probabilidade Normal dos erros"
-
-msgctxt "doeAnalysis|"
-msgid "Histogram of residuals"
-msgstr "Histograma dos erros"
-
-msgctxt "doeAnalysis|"
-msgid "Residuals vs fitted value"
-msgstr "Erros vs Valor axustado"
-
-msgctxt "doeAnalysis|"
-msgid "Residuals vs run/standard order"
-msgstr "Erros vs Orde de execución/típica"
-
-msgctxt "doeAnalysis|"
-msgid "Standard"
-msgstr "Típico"
-
-msgctxt "doeAnalysis|"
-msgid "Run"
-msgstr "Executar"
-
-msgctxt "doeAnalysis|"
-msgid "Matrix residuals plot"
-msgstr "Gráfica dos erros da matriz"
 
 msgctxt "doeFactorial|"
 msgid "Maximum levels"
@@ -2280,3 +2224,45 @@ msgstr "Só repeticións"
 msgctxt "doeFull|"
 msgid "Display selected design"
 msgstr "Presentar o deseño elixido"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Response"
+msgstr "Resposta"
+
+msgctxt "doeAnalysis|"
+msgid "Factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Define by highest order interaction term"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Highest order interaction term"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals Plots"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Normal probability plot"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Histogram"
+msgstr "Histograma"
+
+msgctxt "doeAnalysis|"
+msgid "Residuals vs. fitted values"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals vs. run order"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Other Plots"
+msgstr ""

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-01-07 03:41\n"
+"POT-Creation-Date: 2023-02-11 03:40\n"
 "PO-Revision-Date: 2023-01-28 03:38+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -210,60 +210,48 @@ msgstr "t"
 msgid "p"
 msgstr "p"
 
-msgid "This plot is unavailable for saturated designs."
-msgstr "Dieses Diagramm ist für gesättigte Designs nicht verfügbar."
-
-msgid "Residuals vs. Standard Order"
-msgstr "Residuen vs. Standard-Reihenfolge"
-
 #, fuzzy
-msgid "Four in one for %s"
-msgstr "Vier-in-einem für %s"
-
-msgid "Standard order"
-msgstr "Standard-Reihenfolge"
-
-msgid "Pareto Chart of Standardized Effects"
-msgstr "Pareto-Diagramm Standardisierter Effekte"
-
-msgid "Term"
-msgstr "Term"
-
-msgid "Analysis of variance"
-msgstr "Varianzanalyse"
-
-msgid "Model summary"
-msgstr "Modell-Zusammenfassung"
-
-msgid "%s,%s"
-msgstr "%s,%s"
-
-msgid "%s ~ FO(%s)"
-msgstr ""
+msgid "The analysis crashed with the following error message: %1$s"
+msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %s"
 
 msgid "Model Summary"
 msgstr "Modellzusammenfassung"
 
-msgid "Regression equation in uncoded units"
-msgstr "Regressionsgleichung in unkodierten Einheiten"
+msgid "ANOVA"
+msgstr "ANOVA"
 
-msgid "<i>p</i>-value"
-msgstr "<i>p</i>-Wert"
+msgid "Term"
+msgstr "Term"
 
-msgid "VIF"
+msgid "Effect"
 msgstr ""
+
+#, fuzzy
+msgid "Regression Equation in Uncoded Units"
+msgstr "Regressionsgleichung in unkodierten Einheiten"
 
 msgid "Alias Structure"
 msgstr "Aliasstruktur"
 
-msgid "Index"
-msgstr "Index"
+msgid "An error occurred: %1$s"
+msgstr ""
 
-msgid "Factor"
-msgstr "Faktor"
+msgid "No aliasing in the model."
+msgstr ""
 
-msgid "Name"
-msgstr "Name"
+msgid "Pareto Chart of Standardized Effects"
+msgstr "Pareto-Diagramm Standardisierter Effekte"
+
+msgid "Plotting not possible: The experiment is not a full factorial design."
+msgstr ""
+
+#, fuzzy
+msgid "Residuals versus Fitted Values"
+msgstr "Residuen vs. Angepasster Wert"
+
+#, fuzzy
+msgid "Residuals versus Run Order"
+msgstr "Residuen vs. Ablaufreihenfolge"
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %s"
@@ -381,6 +369,9 @@ msgstr ""
 msgid "Response Surface Design - Box-Behnken design"
 msgstr ""
 
+msgid "Standard order"
+msgstr "Standard-Reihenfolge"
+
 msgid "Central Composite Design"
 msgstr ""
 
@@ -468,6 +459,9 @@ msgstr "Kodierte Koeffizienten"
 
 msgid "Uncoded coefficients"
 msgstr "Unkodierte Koeffizienten"
+
+msgid "<i>p</i>-value"
+msgstr "<i>p</i>-Wert"
 
 msgid "Regression equation in coded coefficients"
 msgstr "Regressionsgleichung in kodierten Koeffizienten"
@@ -1369,6 +1363,34 @@ msgstr "Untertitel: %s"
 msgid "Name of chart: %s"
 msgstr ""
 
+#~ msgid "This plot is unavailable for saturated designs."
+#~ msgstr "Dieses Diagramm ist für gesättigte Designs nicht verfügbar."
+
+#~ msgid "Residuals vs. Standard Order"
+#~ msgstr "Residuen vs. Standard-Reihenfolge"
+
+#, fuzzy
+#~ msgid "Four in one for %s"
+#~ msgstr "Vier-in-einem für %s"
+
+#~ msgid "Analysis of variance"
+#~ msgstr "Varianzanalyse"
+
+#~ msgid "Model summary"
+#~ msgstr "Modell-Zusammenfassung"
+
+#~ msgid "%s,%s"
+#~ msgstr "%s,%s"
+
+#~ msgid "Index"
+#~ msgstr "Index"
+
+#~ msgid "Factor"
+#~ msgstr "Faktor"
+
+#~ msgid "Name"
+#~ msgstr "Name"
+
 #~ msgid "Design"
 #~ msgstr "Design"
 
@@ -1431,9 +1453,6 @@ msgstr ""
 
 #~ msgid "DF"
 #~ msgstr "DF"
-
-#~ msgid "ANOVA"
-#~ msgstr "ANOVA"
 
 #~ msgid "<i>p<i/>-value"
 #~ msgstr "<i>p</i>-Wert"
