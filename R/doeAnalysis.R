@@ -22,9 +22,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   ready <- length(options[["fixedFactors"]]) >= 2 && options[["dependent"]] != "" && !is.null(unlist(options[["modelTerms"]]))
   .doeAnalysisCheckErrors(dataset, options, ready)
 
-  p <- try({
-    .doeAnalysisMakeState(jaspResults, dataset, options, ready)
-  })
+  # p <- try({
+  #   .doeAnalysisMakeState(jaspResults, dataset, options, ready)
+  # })
+  p <- .doeAnalysisMakeState(jaspResults, dataset, options, ready)
+  
   if (isTryError(p)) {
     jaspResults$setError(gettextf("The analysis crashed with the following error message: %1$s", .extractErrorMessage(p)))
   }
@@ -116,16 +118,29 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result <- list()
   result[["regression"]] <- list()
   result[["anova"]] <- list()
-
-  if (!options[["highestOrder"]] || (options[["highestOrder"]] && options[["order"]] == 1)) {
+  
+  
+  if ((!options[["highestOrder"]] && !options[["rsmPredefinedModel"]]) || 
+      (options[["highestOrder"]] && options[["order"]] == 1 && options[["designType"]] == "factorialDesign") ||
+      (options[["rsmPredefinedModel"]] && options[["rsmPredefinedTerms"]] == "linear" && options[["designType"]] == "responseSurfaceDesign")) {
     reorderModelTerms <- .reorderModelTerms(options)
     modelTerms <- reorderModelTerms$modelTerms
     modelDef <- .modelFormula(modelTerms, options)
     formula <- as.formula(modelDef$model.def)
-  } else {
+  } else if (options[["highestOrder"]] && options[["designType"]] == "factorialDesign") {
     formula <- as.formula(paste0(options[["dependent"]], " ~ (.)^", options[["order"]]))
+  } else if (options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") {
+    modelTerms <- options[["rsmPredefinedTerms"]]
+    predictors <- c(options[["fixedFactors"]], options[["continuousFactors"]])
+    predictors <- paste(predictors[predictors!= ""], collapse = ", ")
+    formula <- as.formula(paste0(options[["dependent"]], " ~ HotBarT * HotBarP"))
+    # formula <- switch(modelTerms,
+    #                  "linearAndInteractions" = formula(paste0(options[["dependent"]], " ~ rsm::FO(", predictors, ") + rsm::TWI(" , predictors, ")")),
+    #                  "linearAndSquared" = formula(paste0(options[["dependent"]], " ~ rsm::FO(", predictors, ") + rsm::PQ(" , predictors, ")")),
+    #                  "fullQuadratic" = formula(paste0(options[["dependent"]], " ~ rsm::SO(", predictors, ")")))
   }
-
+  
+  
   regressionFit <- lm(formula, data = dataset)
   result[["regression"]][["formula"]] <- formula
   result[["regression"]][["object"]] <- regressionFit
