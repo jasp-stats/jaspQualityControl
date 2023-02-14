@@ -53,6 +53,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (options[["dependent"]] != "") {
     numericVars <- c(numericVars, options[["dependent"]])
   }
+  if (length(options[["continuousFactors"]]) > 0 && options[["continuousFactors"]] != "") {
+    numericVars <- c(numericVars, unlist(options[["continuousFactors"]]))
+  }
   if (length(options[["fixedFactors"]]) > 0 && options[["fixedFactors"]] != "") {
     factorVars <- c(factorVars, unlist(options[["fixedFactors"]]))
   }
@@ -131,13 +134,24 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     formula <- as.formula(paste0(options[["dependent"]], " ~ (.)^", options[["order"]]))
   } else if (options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") {
     modelTerms <- options[["rsmPredefinedTerms"]]
-    predictors <- c(options[["fixedFactors"]], options[["continuousFactors"]])
-    predictors <- paste(predictors[predictors!= ""], collapse = ", ")
-    formula <- as.formula(paste0(options[["dependent"]], " ~ HotBarT * HotBarP"))
-    # formula <- switch(modelTerms,
-    #                  "linearAndInteractions" = formula(paste0(options[["dependent"]], " ~ rsm::FO(", predictors, ") + rsm::TWI(" , predictors, ")")),
-    #                  "linearAndSquared" = formula(paste0(options[["dependent"]], " ~ rsm::FO(", predictors, ") + rsm::PQ(" , predictors, ")")),
-    #                  "fullQuadratic" = formula(paste0(options[["dependent"]], " ~ rsm::SO(", predictors, ")")))
+    predictors <- c(unlist(options[["fixedFactors"]]), unlist(options[["continuousFactors"]]))
+    predictors <- predictors[predictors != ""]
+    modelVariablesList <- list()
+    for (i in seq_along(predictors)){
+      env <- new.env()
+      env$var <- predictors[i]
+      modelVariablesList[[i]] <- substitute(dataset[[var]], env = env)
+    }
+    ### You cannot square factor variables // rsm package will square factor variables by index // need at least one continuous predictor
+
+    linearTerms <- do.call(rsm::FO, modelVariablesList)
+    interactionTerms <- do.call(rsm::TWI, modelVariablesList)
+    squaredTerms <- do.call(rsm::PQ, modelVariablesList)
+    terms <- switch(modelTerms,
+                     "linearAndInteractions" = cbind(linearTerms, interactionTerms),
+                     "linearAndSquared" = cbind(linearTerms, squaredTerms),
+                     "fullQuadratic" = cbind(linearTerms, interactionTerms, squaredTerms))
+    formula <- as.formula(paste0(options[["dependent"]], " ~ terms"))
   }
   
   
