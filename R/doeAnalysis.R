@@ -134,28 +134,50 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     formula <- as.formula(paste0(options[["dependent"]], " ~ (.)^", options[["order"]]))
   } else if (options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") {
     modelTerms <- options[["rsmPredefinedTerms"]]
-    predictors <- c(unlist(options[["fixedFactors"]]), unlist(options[["continuousFactors"]]))
-    predictors <- predictors[predictors != ""]
-    modelVariablesList <- list()
-    for (i in seq_along(predictors)){
-      env <- new.env()
-      env$var <- predictors[i]
-      modelVariablesList[[i]] <- substitute(dataset[[var]], env = env)
+    numPred <- unlist(options[["continuousFactors"]])
+    catPred <- unlist(options[["fixedFactors"]])
+    numPredString <- paste0(numPred, collapse = ", ")
+    formulaString <- switch(modelTerms,
+                            "linearAndInteractions" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ") + rsm::TWI(", numPredString, ")"),
+                            "linearAndSquared" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ") + rsm::PQ(", numPredString, ")"),
+                            "fullQuadratic" = paste0(options[["dependent"]], " ~ rsm::SO(", numPredString, ")")
+                            )
+    for (i in seq_along(catPred)) {
+      formulaString <- paste0(formulaString, " + ", catPred[i])
+      
     }
-    ### You cannot square factor variables // rsm package will square factor variables by index // need at least one continuous predictor
-
-    linearTerms <- do.call(rsm::FO, modelVariablesList)
-    interactionTerms <- do.call(rsm::TWI, modelVariablesList)
-    squaredTerms <- do.call(rsm::PQ, modelVariablesList)
-    terms <- switch(modelTerms,
-                     "linearAndInteractions" = cbind(linearTerms, interactionTerms),
-                     "linearAndSquared" = cbind(linearTerms, squaredTerms),
-                     "fullQuadratic" = cbind(linearTerms, interactionTerms, squaredTerms))
-    formula <- as.formula(paste0(options[["dependent"]], " ~ terms"))
+    formula <- as.formula(formulaString)
+    ### TODO: Why does the anova table crash?
+    
+    
+    
+    # predictors <- c(unlist(options[["fixedFactors"]]), unlist(options[["continuousFactors"]]))
+    # predictors <- predictors[predictors != ""]
+    # modelVariablesList <- list()
+    # for (i in seq_along(predictors)){
+    #   env <- new.env()
+    #   env$var <- predictors[i]
+    #   modelVariablesList[[i]] <- substitute(dataset[[var]], env = env)
+    # }
+    # ### You cannot square factor variables // rsm package will square factor variables by index // need at least one continuous predictor
+    # 
+    # linearTerms <- do.call(rsm::FO, modelVariablesList)
+    # interactionTerms <- do.call(rsm::TWI, modelVariablesList)
+    # squaredTerms <- do.call(rsm::PQ, modelVariablesList)
+    # terms <- switch(modelTerms,
+    #                  "linearAndInteractions" = cbind(linearTerms, interactionTerms),
+    #                  "linearAndSquared" = cbind(linearTerms, squaredTerms),
+    #                  "fullQuadratic" = cbind(linearTerms, interactionTerms, squaredTerms))
+    # formula <- as.formula(paste0(options[["dependent"]], " ~ terms"))
   }
-  
-  
   regressionFit <- lm(formula, data = dataset)
+  # if(options[["designType"]] == "factorialDesign") {
+  #   
+  # } else if (options[["designType"]] == "responseSurfaceDesign") {
+  #   regressionFit <- rsm::rsm(formula, data = dataset)
+  #   summary <- summary(regressionFit)
+  #   summary$lof
+  # }
   result[["regression"]][["formula"]] <- formula
   result[["regression"]][["object"]] <- regressionFit
   result[["regression"]][["saturated"]] <- summary(regressionFit)$df[2] == 0
