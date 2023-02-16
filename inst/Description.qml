@@ -103,12 +103,12 @@ Description
 		func:			"doeResponseSurfaceMethodology"
 		requiresData:	false
 	}
-	//Analysis
-	//{
-	//	title:			qsTr("Analyze Design")
-	//	func:			"doeAnalysis"
-	//	requiresData:	true
-	//}
+	Analysis
+	{
+		title:			qsTr("Analyze Design")
+		func:			"doeAnalysis"
+		requiresData:	true
+	}
 
 	GroupTitle
 	{
