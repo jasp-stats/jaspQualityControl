@@ -144,8 +144,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     numPred <- unlist(options[["continuousFactors"]])
     catPred <- unlist(options[["fixedFactors"]])
     numPredString <- paste0(numPred, collapse = ", ")
-    if (catPred != "")
+    if (!is.null(catPred)){
       catPredString <- paste0(" + ", catPred, collapse = "")
+    } else {
+      catPredString <- ""
+    }
     formulaString <- switch(modelTerms,
                             "linear" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ")", catPredString),
                             "linearAndInteractions" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ")", catPredString, " + rsm::TWI(", numPredString, ")"),
