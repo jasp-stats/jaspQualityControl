@@ -136,10 +136,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   } else if (options[["highestOrder"]] && options[["designType"]] == "factorialDesign") {
     formula <- as.formula(paste0(options[["dependent"]], " ~ (.)^", options[["order"]]))
   } else if (options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") {
-    if (length(options[["continuousFactors"]]) == 1) {
+    modelTerms <- options[["rsmPredefinedTerms"]]
+    if (length(options[["continuousFactors"]]) == 1 && modelTerms == "linearAndInteractions") {
       modelTerms <- "linear"
-    } else {
-      modelTerms <- options[["rsmPredefinedTerms"]]
+    } else if (length(options[["continuousFactors"]]) == 1 && modelTerms == "fullQuadratic") {
+      modelTerms <- "linearAndSquared"
     }
     numPred <- unlist(options[["continuousFactors"]])
     catPred <- unlist(options[["fixedFactors"]])
@@ -177,7 +178,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     if (options[["designType"]] == "factorialDesign") {
       anovaFit <- car::Anova(regressionFit) 
     } else if (options[["designType"]] == "responseSurfaceDesign") {
-        anovaFit <- summary(regressionFit)$lof
+      anovaFit <- summary(regressionFit)$lof
       # store lof and pure error, remove them for now and add back in later to not interfere with other calculations
       pureError <- anovaFit["Pure error", ]
       lackOfFit <- anovaFit["Lack of fit", ]
@@ -262,6 +263,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   
   coefs <- coef(regressionFit)[!is.na(coef(regressionFit))]
   coefNames <- names(coefs)
+  # remove rsm package names when rsm model
+  if (options[["designType"]] == "responseSurfaceDesign") {
+    rsmNames <- row.names(anovaFit[1:(nrow(anovaFit)-1),])
+    coefNames <- .renameRsmCoeffs(coefNames, rsmNames)
+  }
+  
   plusOrMin <- sapply(seq_len(length(coefs)), function(x) {
     if (coefs[x] > 0) "+" else "-"
   })
@@ -273,6 +280,38 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   
   jaspResults[["doeResult"]] <- createJaspState(result)
   jaspResults[["doeResult"]]$dependOn(options = .doeAnalysisBaseDependencies())
+}
+
+.renameRsmCoeffs <- function(coefNames, rsmNames){
+  # escape brackets to match string later
+  rsmNames <- gsub("\\(", "\\\\(", rsmNames)
+  rsmNames <- gsub("\\)", "\\\\)", rsmNames)
+  coefNamesIncludingFO <- grep("rsm::FO", coefNames)
+  coefNamesIncludingPQ <- grep("rsm::PQ", coefNames)
+  coefNamesIncludingTWI <- grep("rsm::TWI", coefNames)
+  rsmNamesIncludingFO <- grep("rsm::FO", rsmNames)
+  rsmNamesIncludingPQ <- grep("rsm::PQ", rsmNames)
+  rsmNamesIncludingTWI <- grep("rsm::TWI", rsmNames)
+  if (length(coefNamesIncludingFO) >= 2) { 
+    coefNames[coefNamesIncludingFO] <- gsub(rsmNames[rsmNamesIncludingFO], "", coefNames[coefNamesIncludingFO])
+  } else if (length(coefNamesIncludingFO) == 1) {
+    coefNames[coefNamesIncludingFO] <- gsub("rsm::FO\\(", "", coefNames[coefNamesIncludingFO])
+    coefNames[coefNamesIncludingFO] <- gsub("\\)", "", coefNames[coefNamesIncludingFO])
+  } 
+  if (length(coefNamesIncludingPQ) >= 2) { 
+    coefNames[coefNamesIncludingPQ] <- gsub(rsmNames[rsmNamesIncludingPQ], "", coefNames[coefNamesIncludingPQ])
+  } else if (length(coefNamesIncludingPQ) == 1) {
+    coefNames[coefNamesIncludingPQ] <- gsub("rsm::PQ\\(", "", coefNames[coefNamesIncludingPQ])
+    coefNames[coefNamesIncludingPQ] <- gsub("\\)", "^2", coefNames[coefNamesIncludingPQ])
+  }
+  if (length(coefNamesIncludingTWI) >= 2) {
+    coefNames[coefNamesIncludingTWI] <- gsub(rsmNames[rsmNamesIncludingTWI], "", coefNames[coefNamesIncludingTWI])
+  } else if (length(coefNamesIncludingTWI) == 1) {
+    coefNames[coefNamesIncludingTWI] <- gsub("rsm::TWI\\(", "", coefNames[coefNamesIncludingTWI])
+    coefNames[coefNamesIncludingTWI] <- gsub("\\)", "", coefNames[coefNamesIncludingTWI])
+    coefNames[coefNamesIncludingTWI] <- gsub(",", " *", coefNames[coefNamesIncludingTWI])
+  }
+  return(coefNames)
 }
 
 .doeAnalysisSummaryTable <- function(jaspResults, options, ready) {
