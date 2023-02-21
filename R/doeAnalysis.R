@@ -143,7 +143,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       modelTerms <- "linearAndSquared"
     }
     numPred <- unlist(options[["continuousFactors"]])
-    catPred <- unlist(options[["fixedFactors"]])
+    catPred <- c(unlist(options[["fixedFactors"]]), options[["blocks"]])
     numPredString <- paste0(numPred, collapse = ", ")
     if (!is.null(catPred)){
       catPredString <- paste0(" + ", catPred, collapse = "")
@@ -243,10 +243,10 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["regression"]][["coefficients"]] <- list()
   coefs <- as.data.frame(summary(regressionFit)[["coefficients"]])
   valid_coefs <- which(!is.na(coefs[["Estimate"]]))
-  result[["regression"]][["coefficients"]][["terms"]] <- jaspBase::gsubInteractionSymbol(rownames(coefs)[valid_coefs])
-  
-  result[["regression"]][["coefficients"]][["effects"]] <- effects(regressionFit, set.sign = TRUE)[valid_coefs] / 2
-  result[["regression"]][["coefficients"]][["est"]] <- result[["regression"]][["coefficients"]][["effects"]] / 2
+  termNames <- jaspBase::gsubInteractionSymbol(rownames(coefs)[valid_coefs])
+  result[["regression"]][["coefficients"]][["terms"]] <- termNames
+  result[["regression"]][["coefficients"]][["effects"]] <- effects(regressionFit, set.sign = TRUE)[valid_coefs]
+  result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
   result[["regression"]][["coefficients"]][["effects"]][1] <- NA
   
   if (!result[["regression"]][["saturated"]]) {
@@ -262,12 +262,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   ## Model formula
   
   coefs <- coef(regressionFit)[!is.na(coef(regressionFit))]
-  coefNames <- names(coefs)
-  # remove rsm package names when rsm model
-  if (options[["designType"]] == "responseSurfaceDesign") {
-    rsmNames <- row.names(anovaFit[1:(nrow(anovaFit)-1),])
-    coefNames <- .renameRsmCoeffs(coefNames, rsmNames)
-  }
+  coefNames <- termNames
+  
+  # # remove rsm package names when rsm model
+  # if (options[["designType"]] == "responseSurfaceDesign") {
+  #   rsmNames <- row.names(anovaFit[1:(nrow(anovaFit)-1),])
+  #   coefNames <- .renameRsmCoeffs(coefNames, rsmNames)
+  #   regressionFit$terms
+  # }
   
   plusOrMin <- sapply(seq_len(length(coefs)), function(x) {
     if (coefs[x] > 0) "+" else "-"
@@ -282,37 +284,37 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   jaspResults[["doeResult"]]$dependOn(options = .doeAnalysisBaseDependencies())
 }
 
-.renameRsmCoeffs <- function(coefNames, rsmNames){
-  # escape brackets to match string later
-  rsmNames <- gsub("\\(", "\\\\(", rsmNames)
-  rsmNames <- gsub("\\)", "\\\\)", rsmNames)
-  coefNamesIncludingFO <- grep("rsm::FO", coefNames)
-  coefNamesIncludingPQ <- grep("rsm::PQ", coefNames)
-  coefNamesIncludingTWI <- grep("rsm::TWI", coefNames)
-  rsmNamesIncludingFO <- grep("rsm::FO", rsmNames)
-  rsmNamesIncludingPQ <- grep("rsm::PQ", rsmNames)
-  rsmNamesIncludingTWI <- grep("rsm::TWI", rsmNames)
-  if (length(coefNamesIncludingFO) >= 2) { 
-    coefNames[coefNamesIncludingFO] <- gsub(rsmNames[rsmNamesIncludingFO], "", coefNames[coefNamesIncludingFO])
-  } else if (length(coefNamesIncludingFO) == 1) {
-    coefNames[coefNamesIncludingFO] <- gsub("rsm::FO\\(", "", coefNames[coefNamesIncludingFO])
-    coefNames[coefNamesIncludingFO] <- gsub("\\)", "", coefNames[coefNamesIncludingFO])
-  } 
-  if (length(coefNamesIncludingPQ) >= 2) { 
-    coefNames[coefNamesIncludingPQ] <- gsub(rsmNames[rsmNamesIncludingPQ], "", coefNames[coefNamesIncludingPQ])
-  } else if (length(coefNamesIncludingPQ) == 1) {
-    coefNames[coefNamesIncludingPQ] <- gsub("rsm::PQ\\(", "", coefNames[coefNamesIncludingPQ])
-    coefNames[coefNamesIncludingPQ] <- gsub("\\)", "^2", coefNames[coefNamesIncludingPQ])
-  }
-  if (length(coefNamesIncludingTWI) >= 2) {
-    coefNames[coefNamesIncludingTWI] <- gsub(rsmNames[rsmNamesIncludingTWI], "", coefNames[coefNamesIncludingTWI])
-  } else if (length(coefNamesIncludingTWI) == 1) {
-    coefNames[coefNamesIncludingTWI] <- gsub("rsm::TWI\\(", "", coefNames[coefNamesIncludingTWI])
-    coefNames[coefNamesIncludingTWI] <- gsub("\\)", "", coefNames[coefNamesIncludingTWI])
-    coefNames[coefNamesIncludingTWI] <- gsub(",", " *", coefNames[coefNamesIncludingTWI])
-  }
-  return(coefNames)
-}
+# .renameRsmCoeffs <- function(coefNames, rsmNames){
+#   # escape brackets to match string later
+#   rsmNames <- gsub("\\(", "\\\\(", rsmNames)
+#   rsmNames <- gsub("\\)", "\\\\)", rsmNames)
+#   coefNamesIncludingFO <- grep("rsm::FO", coefNames)
+#   coefNamesIncludingPQ <- grep("rsm::PQ", coefNames)
+#   coefNamesIncludingTWI <- grep("rsm::TWI", coefNames)
+#   rsmNamesIncludingFO <- grep("rsm::FO", rsmNames)
+#   rsmNamesIncludingPQ <- grep("rsm::PQ", rsmNames)
+#   rsmNamesIncludingTWI <- grep("rsm::TWI", rsmNames)
+#   if (length(coefNamesIncludingFO) >= 2) { 
+#     coefNames[coefNamesIncludingFO] <- gsub(rsmNames[rsmNamesIncludingFO], "", coefNames[coefNamesIncludingFO])
+#   } else if (length(coefNamesIncludingFO) == 1) {
+#     coefNames[coefNamesIncludingFO] <- gsub("rsm::FO\\(", "", coefNames[coefNamesIncludingFO])
+#     coefNames[coefNamesIncludingFO] <- gsub("\\)", "", coefNames[coefNamesIncludingFO])
+#   } 
+#   if (length(coefNamesIncludingPQ) >= 2) { 
+#     coefNames[coefNamesIncludingPQ] <- gsub(rsmNames[rsmNamesIncludingPQ], "", coefNames[coefNamesIncludingPQ])
+#   } else if (length(coefNamesIncludingPQ) == 1) {
+#     coefNames[coefNamesIncludingPQ] <- gsub("rsm::PQ\\(", "", coefNames[coefNamesIncludingPQ])
+#     coefNames[coefNamesIncludingPQ] <- gsub("\\)", "^2", coefNames[coefNamesIncludingPQ])
+#   }
+#   if (length(coefNamesIncludingTWI) >= 2) {
+#     coefNames[coefNamesIncludingTWI] <- gsub(rsmNames[rsmNamesIncludingTWI], "", coefNames[coefNamesIncludingTWI])
+#   } else if (length(coefNamesIncludingTWI) == 1) {
+#     coefNames[coefNamesIncludingTWI] <- gsub("rsm::TWI\\(", "", coefNames[coefNamesIncludingTWI])
+#     coefNames[coefNamesIncludingTWI] <- gsub("\\)", "", coefNames[coefNamesIncludingTWI])
+#     coefNames[coefNamesIncludingTWI] <- gsub(",", " *", coefNames[coefNamesIncludingTWI])
+#   }
+#   return(coefNames)
+# }
 
 .doeAnalysisSummaryTable <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["tableSummary"]])) {

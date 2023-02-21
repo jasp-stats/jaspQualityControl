@@ -58,6 +58,7 @@ Form
 			name:                               "blocks"
 			singleVariable:                     true
 			label:                              qsTr("Blocks")
+			allowedColumns:                     ["ordinal", "nominal", "nominalText"]
 		}
 
 		AssignedVariablesList
@@ -79,6 +80,12 @@ Form
 		{
 			name:                               "tableEquation"
 			label:                              "Show regression equation"
+		}
+
+		CheckBox
+		{
+			name:                               "codeFactors"
+			label:                              "Automatically code factors"
 		}
 	}
 
