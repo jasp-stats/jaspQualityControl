@@ -50,7 +50,6 @@ Form
 			allowedColumns:                     ["scale"]
 			label:                              qsTr("Continuous Factors")
 			height:								125 * preferencesModel.uiScale
-			enabled:							designType.currentValue == "responseSurfaceDesign"
 		}
 
 		AssignedVariablesList
