@@ -20,7 +20,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   dataset <- .doeAnalysisReadData(dataset, options)
   
   if (options[["designType"]] == "factorialDesign") {
-    ready <- length(options[["fixedFactors"]]) >= 2 && options[["dependent"]] != "" && !is.null(unlist(options[["modelTerms"]]))
+    ready <- sum(length(options[["fixedFactors"]]), length(options[["continuousFactors"]])) >= 2 && options[["dependent"]] != "" && !is.null(unlist(options[["modelTerms"]]))
   } else if (options[["designType"]] == "responseSurfaceDesign") {
     ready <- length(options[["continuousFactors"]]) >= 1 && options[["dependent"]] != ""
   }
@@ -96,7 +96,21 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!ready || jaspResults$getError()) {
     return()
   }
-  #   # Transform to coded
+  
+  # Transform to coded
+  if (options[["codeFactors"]]) {
+    numVars <- unlist(options[["continuousFactors"]])
+    for (i in seq_along(numVars)){
+      dataset[numVars[i]] <- scale(dataset[numVars[i]])
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
   #   factors <- unlist(dataset[, options[["fixedFactors"]]], use.names = FALSE)
   #   response <- unlist(dataset[, options[["dependent"]]], use.names = FALSE)
   
@@ -157,7 +171,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
                             "fullQuadratic" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ")", catPredString, " + rsm::TWI(", numPredString, ") +  rsm::PQ(", numPredString, ")")
     )
     formula <- as.formula(formulaString)
-    
   }
   
   if (options[["designType"]] == "factorialDesign") {
@@ -367,7 +380,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!is.null(jaspResults[["tableCoefficients"]])) {
     return()
   }
-  tb <- createJaspTable(gettext("Coefficients"))
+  codedString <- ifelse(options[["codeFactors"]], gettext("Coded"), gettext("Uncoded"))
+  tb <- createJaspTable(gettextf("%s Coefficients", codedString))
   tb$addColumnInfo(name = "terms", title = gettext("Term"), type = "string")
   tb$addColumnInfo(name = "effects", title = gettext("Effect"), type = "number")
   tb$addColumnInfo(name = "coef", title = gettext("Coefficient"), type = "number")
@@ -393,7 +407,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!is.null(jaspResults[["tableEquation"]]) || !options[["tableEquation"]]) {
     return()
   }
-  tb <- createJaspTable(gettext("Regression Equation in Uncoded Units"))
+  codedString <- ifelse(options[["codeFactors"]], gettext("coded"), gettext("uncoded"))
+  tb <- createJaspTable(gettextf("Regression Equation in %s Units", codedString))
   tb$addColumnInfo(name = "formula", title = "", type = "string")
   tb$dependOn(options = .doeAnalysisBaseDependencies())
   tb$position <- 4
