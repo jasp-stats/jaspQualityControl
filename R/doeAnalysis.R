@@ -97,19 +97,25 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   
-  # Transform to coded
+  # Transform to coded, -1 to 1 coding.
   if (options[["codeFactors"]]) {
-    numVars <- unlist(options[["continuousFactors"]])
-    for (i in seq_along(numVars)){
-      dataset[numVars[i]] <- scale(dataset[numVars[i]])
+    allVars <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]))
+    allVars <- allVars[allVars != ""]
+    for (i in seq_along(allVars)) {
+        var <- allVars[i]
+        varData <- dataset[[var]]
+        levels <- sort(unique(varData)) # get levels before transforming to char to preserve possible order
+        varData <- as.character(varData) # otherwise you cannot add coding levels to this variable as "factor level does not exist"
+        nLevels <- length(unique(varData))
+        steps <- 2/(nLevels-1)
+        codes <- seq(-1, 1, steps)
+        for (j in seq_along(varData)) {
+          codeIndex <- which(varData[j] == levels)
+          varData[j] <- codes[codeIndex]
+        }
+        dataset[[var]] <- as.numeric(varData)
+      }
     }
-  }
-  
-  
-  
-  
-  
-  
   
   #   factors <- unlist(dataset[, options[["fixedFactors"]]], use.names = FALSE)
   #   response <- unlist(dataset[, options[["dependent"]]], use.names = FALSE)
