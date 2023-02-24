@@ -29,7 +29,7 @@ Form
 		AssignedVariablesList
 		{
 			name:                               "dependent"
-			allowedColumns:                     ["scale", "ordinal", "nominal"]
+			allowedColumns:                     ["scale", "ordinal"]
 			singleVariable:                     true
 			label:                              qsTr("Response")
 		}
@@ -57,7 +57,7 @@ Form
 			name:                               "blocks"
 			singleVariable:                     true
 			label:                              qsTr("Blocks")
-			allowedColumns:                     ["ordinal", "nominal", "nominalText"]
+			allowedColumns:                     ["ordinal", "scale", "nominal", "nominalText"]
 		}
 
 		AssignedVariablesList

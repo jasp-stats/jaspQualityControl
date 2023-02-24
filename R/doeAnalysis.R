@@ -87,7 +87,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 .doeAnalysisBaseDependencies <- function() {
   deps <- c(
     "dependent", "fixedFactors", "blocks", "runOrder",
-    "highestOrder", "order", "covariates", "modelTerms"
+    "highestOrder", "order", "covariates", "modelTerms",
+    "designType", "continuousFactors", "codeFactors", "rsmPredefinedModel",
+    "rsmPredefinedTerms"
   )
   return(deps)
 }
@@ -99,15 +101,15 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   
   # Transform to coded, -1 to 1 coding.
   if (options[["codeFactors"]]) {
-    allVars <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]))
+    allVars <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]), options[["blocks"]])
     allVars <- allVars[allVars != ""]
     for (i in seq_along(allVars)) {
         var <- allVars[i]
         varData <- dataset[[var]]
         levels <- sort(unique(varData)) # get levels before transforming to char to preserve possible order
-        varData <- as.character(varData) # otherwise you cannot add coding levels to this variable as "factor level does not exist"
+        varData <- as.character(varData) # transform to char, otherwise you cannot add coded values to this variable as "factor level does not exist"
         nLevels <- length(unique(varData))
-        steps <- 2/(nLevels-1)
+        steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces, always including 0
         codes <- seq(-1, 1, steps)
         for (j in seq_along(varData)) {
           codeIndex <- which(varData[j] == levels)
@@ -116,32 +118,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
         dataset[[var]] <- as.numeric(varData)
       }
     }
-  
-  #   factors <- unlist(dataset[, options[["fixedFactors"]]], use.names = FALSE)
-  #   response <- unlist(dataset[, options[["dependent"]]], use.names = FALSE)
-  
-  #   perF <- length(factors) / length(options[["fixedFactors"]])
-  #   factorsDF <- data.frame(split(factors, ceiling(seq_along(factors) / perF)))
-  
-  # #   for (i in 1:ncol(factorsDF)) {
-  # #     factorsDF[, i][factorsDF[, i] == min(factorsDF[, i])] <- -1
-  # #     factorsDF[, i][factorsDF[, i] == max(factorsDF[, i])] <- 1
-  # #   }
-  
-  #   # Use original variables names
-  
-  #   if (options[["runOrder"]] != "") {
-  #     runOrder <- dataset[, unlist(options$runOrder)]
-  #     names <- c(options[["runOrder"]], options[["fixedFactors"]], options[["dependent"]])
-  #     datasetRow <- cbind.data.frame(runOrder, factorsDF, response)
-  #   } else {
-  #     names <- c(options[["fixedFactors"]], options[["dependent"]])
-  #     datasetRow <- cbind.data.frame(factorsDF, response)
-  #   }
-  
-  #   names(datasetRow) <- names
-  #   dataset <- datasetRow
-  
+
   result <- list()
   result[["regression"]] <- list()
   result[["anova"]] <- list()
@@ -152,9 +129,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     reorderModelTerms <- .reorderModelTerms(options)
     modelTerms <- reorderModelTerms$modelTerms
     modelDef <- .modelFormula(modelTerms, options)
-    formula <- as.formula(modelDef$model.def)
+    formulaString <- modelDef$model.def
   } else if (options[["highestOrder"]] && options[["designType"]] == "factorialDesign") {
-    formula <- as.formula(paste0(options[["dependent"]], " ~ (.)^", options[["order"]]))
+    formulaString <- paste0(options[["dependent"]], " ~ (.)^", options[["order"]])
   } else if (options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") {
     modelTerms <- options[["rsmPredefinedTerms"]]
     if (length(options[["continuousFactors"]]) == 1 && modelTerms == "linearAndInteractions") {
@@ -176,8 +153,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
                             "linearAndSquared" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ") ", catPredString, " +  rsm::PQ(", numPredString, ")"),
                             "fullQuadratic" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ")", catPredString, " + rsm::TWI(", numPredString, ") +  rsm::PQ(", numPredString, ")")
     )
-    formula <- as.formula(formulaString)
   }
+  if (options[["blocks"]] != "") {
+    formulaString <- paste0(formulaString, " + ", options[["blocks"]])
+  }
+  formula <- as.formula(formulaString)
   
   if (options[["designType"]] == "factorialDesign") {
     regressionFit <- lm(formula, data = dataset)
@@ -282,14 +262,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   
   coefs <- coef(regressionFit)[!is.na(coef(regressionFit))]
   coefNames <- termNames
-  
-  # # remove rsm package names when rsm model
-  # if (options[["designType"]] == "responseSurfaceDesign") {
-  #   rsmNames <- row.names(anovaFit[1:(nrow(anovaFit)-1),])
-  #   coefNames <- .renameRsmCoeffs(coefNames, rsmNames)
-  #   regressionFit$terms
-  # }
-  
   plusOrMin <- sapply(seq_len(length(coefs)), function(x) {
     if (coefs[x] > 0) "+" else "-"
   })
@@ -302,38 +274,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   jaspResults[["doeResult"]] <- createJaspState(result)
   jaspResults[["doeResult"]]$dependOn(options = .doeAnalysisBaseDependencies())
 }
-
-# .renameRsmCoeffs <- function(coefNames, rsmNames){
-#   # escape brackets to match string later
-#   rsmNames <- gsub("\\(", "\\\\(", rsmNames)
-#   rsmNames <- gsub("\\)", "\\\\)", rsmNames)
-#   coefNamesIncludingFO <- grep("rsm::FO", coefNames)
-#   coefNamesIncludingPQ <- grep("rsm::PQ", coefNames)
-#   coefNamesIncludingTWI <- grep("rsm::TWI", coefNames)
-#   rsmNamesIncludingFO <- grep("rsm::FO", rsmNames)
-#   rsmNamesIncludingPQ <- grep("rsm::PQ", rsmNames)
-#   rsmNamesIncludingTWI <- grep("rsm::TWI", rsmNames)
-#   if (length(coefNamesIncludingFO) >= 2) { 
-#     coefNames[coefNamesIncludingFO] <- gsub(rsmNames[rsmNamesIncludingFO], "", coefNames[coefNamesIncludingFO])
-#   } else if (length(coefNamesIncludingFO) == 1) {
-#     coefNames[coefNamesIncludingFO] <- gsub("rsm::FO\\(", "", coefNames[coefNamesIncludingFO])
-#     coefNames[coefNamesIncludingFO] <- gsub("\\)", "", coefNames[coefNamesIncludingFO])
-#   } 
-#   if (length(coefNamesIncludingPQ) >= 2) { 
-#     coefNames[coefNamesIncludingPQ] <- gsub(rsmNames[rsmNamesIncludingPQ], "", coefNames[coefNamesIncludingPQ])
-#   } else if (length(coefNamesIncludingPQ) == 1) {
-#     coefNames[coefNamesIncludingPQ] <- gsub("rsm::PQ\\(", "", coefNames[coefNamesIncludingPQ])
-#     coefNames[coefNamesIncludingPQ] <- gsub("\\)", "^2", coefNames[coefNamesIncludingPQ])
-#   }
-#   if (length(coefNamesIncludingTWI) >= 2) {
-#     coefNames[coefNamesIncludingTWI] <- gsub(rsmNames[rsmNamesIncludingTWI], "", coefNames[coefNamesIncludingTWI])
-#   } else if (length(coefNamesIncludingTWI) == 1) {
-#     coefNames[coefNamesIncludingTWI] <- gsub("rsm::TWI\\(", "", coefNames[coefNamesIncludingTWI])
-#     coefNames[coefNamesIncludingTWI] <- gsub("\\)", "", coefNames[coefNamesIncludingTWI])
-#     coefNames[coefNamesIncludingTWI] <- gsub(",", " *", coefNames[coefNamesIncludingTWI])
-#   }
-#   return(coefNames)
-# }
 
 .doeAnalysisSummaryTable <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["tableSummary"]])) {
