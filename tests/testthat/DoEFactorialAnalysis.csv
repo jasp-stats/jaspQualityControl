@@ -1,4 +1,4 @@
-﻿StdOrder,RunOrder,CenterPt,Blocks,Aperture setting,Exposure time,Develop time,Mask dimension,Etch time,Yield,,
+﻿StdOrder,RunOrder,CenterPt,Blocks,Aperture_setting,Exposure_time,Develop_time,Mask_dimension,Etch time,Yield,,
 1,2,1,1,small,below,30,small,15.5,8,,Douglas C. Montgomery
 2,9,1,1,large,below,30,small,14.5,9,,Design and Analysis of Experiments
 3,12,1,1,small,above,30,small,14.5,34,,5th Edition
