@@ -26,10 +26,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   .doeAnalysisCheckErrors(dataset, options, ready)
   
-  # p <- try({
-  #   .doeAnalysisMakeState(jaspResults, dataset, options, ready)
-  # })
-  p <- .doeAnalysisMakeState(jaspResults, dataset, options, ready)
+  p <- try({
+     .doeAnalysisMakeState(jaspResults, dataset, options, ready)
+  })
   
   if (isTryError(p)) {
     jaspResults$setError(gettextf("The analysis crashed with the following error message: %1$s", .extractErrorMessage(p)))
@@ -70,6 +69,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     numericVars <- c(numericVars, unlist(options[["covariates"]]))
   }
   dataset <- .readDataSetToEnd(columns.as.numeric = numericVars, columns.as.factor = factorVars)
+  dataset <- na.omit(dataset)
   return(dataset)
 }
 
