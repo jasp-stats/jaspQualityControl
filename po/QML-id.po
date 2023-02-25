@@ -2266,3 +2266,7 @@ msgstr ""
 msgctxt "doeAnalysis|"
 msgid "Other Plots"
 msgstr ""
+
+msgctxt "Description|"
+msgid "Analyze Design"
+msgstr ""
