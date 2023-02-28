@@ -78,11 +78,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   .hasErrors(dataset,
-             type = c("infinity", "missingValues"),
-             all.target = c(options[["dependent"]], options[["fixedFactors"]]),
+             type = c("infinity", "missingValues", "factorLevels"),
+             all.target = c(options[["dependent"]], options[["fixedFactors"]], options[["blocks"]], options[["continuousFactors"]]),
+             factorLevels.amount  = "< 2",
              exitAnalysisIfErrors = TRUE
   )
 }
+
+
 
 .doeAnalysisBaseDependencies <- function() {
   deps <- c(

@@ -78,7 +78,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
 set.seed(1)
-results <- runAnalysis("doeAnalysis", "QT 9 p17 - RSM (15+6) Ovality Vdk (1).csv", options)
+results <- runAnalysis("doeAnalysis", "QT 9 p17 - RSM (15+6) Ovality Vdk.csv", options)
 
 test_that("ANOVA table results match", {
   table <- results[["results"]][["tableAnova"]][["data"]]

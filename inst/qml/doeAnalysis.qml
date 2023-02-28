@@ -73,6 +73,7 @@ Form
 		{
 			name:                               "tableAlias"
 			label:                              "Show alias structure"
+			visible:							false
 		}
 
 		CheckBox
