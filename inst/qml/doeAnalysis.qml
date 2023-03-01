@@ -3,8 +3,20 @@ import JASP
 import JASP.Controls
 import JASP.Widgets
 
+
 Form
 {
+	DropDown
+	{
+		id: 									designType
+		name:									"designType"
+		label:									qsTr("Design type")
+		indexDefaultValue:						0
+		values: [
+				{ label: qsTr("Factorial design"), value: "factorialDesign"},
+				{ label: qsTr("Response surface design"), value: "responseSurfaceDesign"}
+				]
+	}
 
 	VariablesForm
 	{
@@ -17,7 +29,7 @@ Form
 		AssignedVariablesList
 		{
 			name:                               "dependent"
-			allowedColumns:                     ["scale", "ordinal", "nominal"]
+			allowedColumns:                     ["scale", "ordinal"]
 			singleVariable:                     true
 			label:                              qsTr("Response")
 		}
@@ -26,9 +38,18 @@ Form
 		{
 			id:									factors
 			name:                               "fixedFactors"
-			allowedColumns:                     ["scale", "ordinal", "nominal", "nominalText"]
-			label:                              qsTr("Factors")
-			height:								250 * preferencesModel.uiScale
+			allowedColumns:                     ["ordinal", "nominal", "nominalText"]
+			label:                              qsTr("Categorical Factors")
+			height:								125 * preferencesModel.uiScale
+		}
+
+		AssignedVariablesList
+		{
+			id:									continuousFactors
+			name:                               "continuousFactors"
+			allowedColumns:                     ["scale"]
+			label:                              qsTr("Continuous Factors")
+			height:								125 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -36,6 +57,7 @@ Form
 			name:                               "blocks"
 			singleVariable:                     true
 			label:                              qsTr("Blocks")
+			allowedColumns:                     ["ordinal", "scale", "nominal", "nominalText"]
 		}
 
 		AssignedVariablesList
@@ -51,12 +73,19 @@ Form
 		{
 			name:                               "tableAlias"
 			label:                              "Show alias structure"
+			visible:							false
 		}
 
 		CheckBox
 		{
 			name:                               "tableEquation"
 			label:                              "Show regression equation"
+		}
+
+		CheckBox
+		{
+			name:                               "codeFactors"
+			label:                              "Automatically code factors"
 		}
 	}
 
@@ -69,6 +98,7 @@ Form
 			id:										highestOrder
 			name:                                   "highestOrder"
 			label:                              	qsTr("Define by highest order interaction term")
+			visible:								designType.currentValue == "factorialDesign"
 
 			IntegerField
 			{
@@ -80,11 +110,34 @@ Form
 			}
 		}
 
+		CheckBox
+		{
+			id:										rsmPredefinedModel
+			name:                                   "rsmPredefinedModel"
+			label:                              	qsTr("Select predefined model")
+			visible:								designType.currentValue == "responseSurfaceDesign"
+			checked: 								designType.currentValue == "responseSurfaceDesign"								
+
+			DropDown
+					{
+					id: 									rsmPredefinedTerms
+					name:									"rsmPredefinedTerms"
+					label:									qsTr("Include following terms")
+					indexDefaultValue:						3
+					values: [
+							{ label: qsTr("Linear"), value: "linear"},
+							{ label: qsTr("Linear and interaction terms"), value: "linearAndInteractions"},
+							{ label: qsTr("Linear and squared terms"), value: "linearAndSquared"},
+							{ label: qsTr("Full quadratic"), value: "fullQuadratic"}
+							]
+					}
+		}
+
 		VariablesForm
 		{
-			enabled: !highestOrder.checked
+			enabled: !highestOrder.checked & !rsmPredefinedModel.checked
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["fixedFactors"]}
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["fixedFactors", "continuousFactors"]}
 			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction}
 		}
 
