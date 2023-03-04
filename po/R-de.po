@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-02-11 03:40\n"
+"POT-Creation-Date: 2023-03-04 03:41\n"
 "PO-Revision-Date: 2023-02-19 10:50+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -219,13 +219,30 @@ msgstr "Modellzusammenfassung"
 msgid "ANOVA"
 msgstr "ANOVA"
 
+msgid "Coded"
+msgstr ""
+
+msgid "Uncoded"
+msgstr ""
+
+#, fuzzy
+msgid "%s Coefficients"
+msgstr "Koeffizienten"
+
 msgid "Term"
 msgstr "Term"
 
 msgid "Effect"
 msgstr "Effekt"
 
-msgid "Regression Equation in Uncoded Units"
+msgid "coded"
+msgstr ""
+
+msgid "uncoded"
+msgstr ""
+
+#, fuzzy
+msgid "Regression Equation in %s Units"
 msgstr "Regressionsgleichung in unkodierten Einheiten"
 
 msgid "Alias Structure"

@@ -2232,10 +2232,6 @@ msgid "Response"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Factors"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Define by highest order interaction term"
 msgstr ""
 
@@ -2269,4 +2265,48 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Analyze Design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Design type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Factorial design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Response surface design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Categorical Factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Continuous Factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Select predefined model"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Include following terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear and interaction terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear and squared terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Full quadratic"
 msgstr ""
