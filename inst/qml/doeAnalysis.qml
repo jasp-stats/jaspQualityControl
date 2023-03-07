@@ -143,50 +143,123 @@ Form
 
 	}
 
-	Group
+		Section
 	{
-		title:                                  qsTr("Residuals Plots")
+		title: qsTr("Plots")
+		columns: 	1
 
-		CheckBox
+		Group
 		{
-			name:                               "plotNorm"
-			label:                              qsTr("Normal probability plot")
+			title:                                  qsTr("Residuals Plots")
+
+			CheckBox
+			{
+				name:                               "plotNorm"
+				label:                              qsTr("Normal probability plot")
+			}
+
+			CheckBox
+			{
+				name:                               "plotHist"
+				label:                              qsTr("Histogram")
+			}
+
+			CheckBox
+			{
+				name:                               "plotFitted"
+				label:                              qsTr("Residuals vs. fitted values")
+			}
+
+			CheckBox
+			{
+				name:                               "plotRunOrder"
+				label:                              qsTr("Residuals vs. run order")
+			}
+
+			// CheckBox
+			// {
+			// 	name:                               "fourInOne"
+			// 	label:                              qsTr("Matrix residuals plot")
+			// 	enabled:							runOrder.count > 0
+			// }
 		}
 
-		CheckBox
+		Group
 		{
-			name:                               "plotHist"
-			label:                              qsTr("Histogram")
+			title: qsTr("Other Plots")
+
+			CheckBox
+			{
+				name:                                   "plotPareto"
+				label:                                  qsTr("Pareto Plot of Standardized Effects")
+			}
 		}
 
-		CheckBox
+		Group
 		{
-			name:                               "plotFitted"
-			label:                              qsTr("Residuals vs. fitted values")
-		}
+			title: qsTr("Contour plots")
+			VariablesForm
+			{
+				preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+				AvailableVariablesList		{ name: "conintuousPredictors";	source:"continuousFactors"; title: qsTr("Available continuous predictors")}
+				AssignedVariablesList	{ name: "contourPlotVariables";	suggestedColumns: ["scale"]; title: qsTr("Plotting variables")}
+			}
 
-		CheckBox
-		{
-			name:                               "plotRunOrder"
-			label:                              qsTr("Residuals vs. run order")
-		}
+			Group
+			{
+				title: qsTr("Contour plot options")
 
-		// CheckBox
-		// {
-		// 	name:                               "fourInOne"
-		// 	label:                              qsTr("Matrix residuals plot")
-		// 	enabled:							runOrder.count > 0
-		// }
-	}
+				CheckBox
+				{
+					name:							"contour"
+					label:							qsTr("Contour surface")
+					columns: 2
+					CheckBox
+					{
+						name:						"cplot"
+						label:						qsTr("Only show 2D plot")
+						id:							cplot
+					}
 
-	Group
-	{
-		title: qsTr("Other Plots")
+					CheckBox
+					{
+						name:						"coded"
+						label:						qsTr("Show analysis and graphs in coded form")
+						enabled:					cplot.checked
+					}
 
-		CheckBox
-		{
-			name:                                   "plotPareto"
-			label:                                  qsTr("Pareto Plot of Standardized Effects")
+					CheckBox
+					{
+						name:						"legend"
+						label:						qsTr("Show legend next to graph")
+						enabled:					!cplot.checked
+					}
+					DropDown
+					{
+						name:						"divide"
+						label:						qsTr("Divide response surface into N parts")
+						values:						[2,3,4,5,6,7]
+						enabled:					!cplot.checked
+					}
+
+					Slider
+					{
+						name:						"phi"
+						label:						qsTr("Rotating angle (vertical plane)")
+						value:						0
+						enabled:					!cplot.checked
+					}
+
+					Slider
+					{
+						name:						"theta"
+						label:						qsTr("Rotating angle (horizontal plane)")
+						value:						0.5
+						vertical:					false
+						enabled:					!cplot.checked
+					}
+				}
+			}
 		}
 	}
 }

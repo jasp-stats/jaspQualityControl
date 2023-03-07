@@ -372,180 +372,42 @@ Form
 
 	Common.ShowAndExportDesign {}
 
+	// Section
+	// {
+	// 	title: qsTr("Desirability")
+	// 	CheckBox { name: "desirability";	label: qsTr("Calculate desirability") }
+	// 	VariablesForm
+	// 	{
+	// 		AvailableVariablesList	{ name: "rsmDesirability";		label: qsTr("Response variable list");	source: "rsmResponseVariables" }
+	// 		AssignedVariablesList	{ name: "rsmMin";				title: qsTr("Minimum [Min/Max]");		suggestedColumns: ["scale", "ordinal", "nominal"]
+	// 			rowComponent: Row
+	// 			{
+	// 				DoubleField {name: "Point_Min";		negativeValues: true}
+	// 				DoubleField {name: "Point_Max";		negativeValues: true; defaultValue: 1}
+	// 			}
+	// 		}
 
-	Section
-	{
-		title: qsTr("Design Analysis")
+	// 		AssignedVariablesList
+	// 		{
+	// 			name: "rsmMax";		title: qsTr("Maximum [Min/Max]");	suggestedColumns:	["scale", "ordinal", "nominal"]
+	// 			rowComponent: Row
+	// 			{
+	// 				DoubleField {name: "Point_Min_1";	negativeValues: true}
+	// 				DoubleField {name: "Point_Max_1";	negativeValues: true; defaultValue: 1}
+	// 			}
+	// 		}
 
-		VariablesForm
-		{
-			AvailableVariablesList { name: "rsmVariablesList" }
-			AssignedVariablesList
-			{
-				name: "rsmVariables"
-				title: qsTr("Predictors [Location in coded format]")
-				suggestedColumns: ["scale", "ordinal"]
-
-				rowComponent: Row
-				{
-					DoubleField {name: "Point_P"; negativeValues: true}
-				}
-
-
-			}
-			AssignedVariablesList  { name: "rsmResponseVariables";	title: qsTr("Response");			suggestedColumns: ["scale", "ordinal"]}
-			AssignedVariablesList  { name: "rsmBlocks";				title: qsTr("Blocks (optional)");	suggestedColumns: ["ordinal", "nominal", "scale", "nominalText"];	singleVariable: true}
-		}
-
-
-		VariablesForm
-		{
-			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: "rsmVariables" }
-			ModelTermsList
-			{
-
-				listViewType			: JASP.Interaction
-				rowComponentTitle		: qsTr("Term Type")
-				rowComponent			: DropDown
-				{
-					name: "TermType"
-					label: ""
-					values: [
-						{ label: qsTr("FO + PQ"),	value: "fopq"		},
-						{ label: "",				value: "nothing"	},// TODO: what is this empty value?
-						{ label: qsTr("FO"),		value: "fo"			},
-					]
-				}
-			}
-		}
-
-		Group
-		{
-			title: qsTr("Response surface analysis")
-			columns: 2
-
-			CheckBox {		name: "coef";			label: qsTr("Coefficients table")	}
-			CheckBox {		name: "res";			label: qsTr("Residual histogram")	}
-			CheckBox {		name: "anova";			label: qsTr("ANOVA table")			}
-			CheckBox {		name: "resNorm";		label: qsTr("Normal residual plot")	}
-
-			CheckBox
-			{
-							name: "normalPlot";		label: qsTr("Normal plot of standardized effects")
-				CheckBox {	name: "addGridlines";	label: qsTr("Add grid lines") }
-			}
-
-			CheckBox {		name: "ResFitted";		label: qsTr("Residual vs. fitted plot")				}
-			CheckBox {		name: "pareto";			label: qsTr("Pareto plot of standardized effects")	}
-			CheckBox {		name: "fourInOne";		label: qsTr("Matrix residuals plot")				}
-		}
-	}
-
-	Section
-	{
-		title: qsTr("Contour plots")
-		VariablesForm
-		{
-			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList		{ name: "rsmVariables2";		source:"rsmVariables"								}
-			AssignedPairsVariablesList	{ name: "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"]	}
-		}
-
-		Group
-		{
-			title: qsTr("Contour plot options")
-
-			CheckBox
-			{
-				name:							"contour"
-				label:							qsTr("Contour surface")
-				columns: 2
-				CheckBox
-				{
-					name:						"cplot"
-					label:						qsTr("Only show 2D plot")
-					id:							cplot
-				}
-
-				CheckBox
-				{
-					name:						"coded"
-					label:						qsTr("Show analysis and graphs in coded form")
-					enabled:					cplot.checked
-				}
-
-				CheckBox
-				{
-					name:						"legend"
-					label:						qsTr("Show legend next to graph")
-					enabled:					!cplot.checked
-				}
-				DropDown
-				{
-					name:						"divide"
-					label:						qsTr("Divide response surface into N parts")
-					values:						[2,3,4,5,6,7]
-					enabled:					!cplot.checked
-				}
-
-				Slider
-				{
-					name:						"phi"
-					label:						qsTr("Rotating angle (vertical plane)")
-					value:						0
-					enabled:					!cplot.checked
-				}
-
-				Slider
-				{
-					name:						"theta"
-					label:						qsTr("Rotating angle (horizontal plane)")
-					value:						0.5
-					vertical:					false
-					enabled:					!cplot.checked
-				}
-			}
-		}
-	}
-
-
-	Section
-	{
-		title: qsTr("Desirability")
-		CheckBox { name: "desirability";	label: qsTr("Calculate desirability") }
-		VariablesForm
-		{
-			AvailableVariablesList	{ name: "rsmDesirability";		label: qsTr("Response variable list");	source: "rsmResponseVariables" }
-			AssignedVariablesList	{ name: "rsmMin";				title: qsTr("Minimum [Min/Max]");		suggestedColumns: ["scale", "ordinal", "nominal"]
-				rowComponent: Row
-				{
-					DoubleField {name: "Point_Min";		negativeValues: true}
-					DoubleField {name: "Point_Max";		negativeValues: true; defaultValue: 1}
-				}
-			}
-
-			AssignedVariablesList
-			{
-				name: "rsmMax";		title: qsTr("Maximum [Min/Max]");	suggestedColumns:	["scale", "ordinal", "nominal"]
-				rowComponent: Row
-				{
-					DoubleField {name: "Point_Min_1";	negativeValues: true}
-					DoubleField {name: "Point_Max_1";	negativeValues: true; defaultValue: 1}
-				}
-			}
-
-			AssignedVariablesList
-			{
-				name: "rsmTar";		title: qsTr("Target [Min/Target/Max]");	suggestedColumns: ["scale", "ordinal", "nominal"]
-				rowComponent: Row
-				{
-					DoubleField {name: "Point_Min_2";	negativeValues: true					}
-					DoubleField {name: "Point_Tar_2";	negativeValues: true;	defaultValue: 1	}
-					DoubleField {name: "Point_Max_2";	negativeValues: true;	defaultValue: 2	}
-				}
-			}
-		}
-	}
+	// 		AssignedVariablesList
+	// 		{
+	// 			name: "rsmTar";		title: qsTr("Target [Min/Target/Max]");	suggestedColumns: ["scale", "ordinal", "nominal"]
+	// 			rowComponent: Row
+	// 			{
+	// 				DoubleField {name: "Point_Min_2";	negativeValues: true					}
+	// 				DoubleField {name: "Point_Tar_2";	negativeValues: true;	defaultValue: 1	}
+	// 				DoubleField {name: "Point_Max_2";	negativeValues: true;	defaultValue: 2	}
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 }
