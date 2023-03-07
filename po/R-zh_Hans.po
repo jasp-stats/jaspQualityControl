@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-02-11 03:40\n"
+"POT-Creation-Date: 2023-03-04 03:41\n"
 "PO-Revision-Date: 2022-11-07 09:03+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -222,6 +222,16 @@ msgstr "模型摘要"
 msgid "ANOVA"
 msgstr "方差分析"
 
+msgid "Coded"
+msgstr ""
+
+msgid "Uncoded"
+msgstr ""
+
+#, fuzzy
+msgid "%s Coefficients"
+msgstr "系数"
+
 msgid "Term"
 msgstr "项"
 
@@ -229,8 +239,14 @@ msgstr "项"
 msgid "Effect"
 msgstr "有效性"
 
+msgid "coded"
+msgstr ""
+
+msgid "uncoded"
+msgstr ""
+
 #, fuzzy
-msgid "Regression Equation in Uncoded Units"
+msgid "Regression Equation in %s Units"
 msgstr "以未编码单位表示的回归方程"
 
 msgid "Alias Structure"

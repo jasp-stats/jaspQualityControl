@@ -361,7 +361,7 @@ msgstr "4"
 
 msgctxt "msaType1Gauge|"
 msgid "Run chart"
-msgstr ""
+msgstr "Verlaufsdiagramm"
 
 msgctxt "msaType1Gauge|"
 msgid "Display individual measurements"
@@ -501,7 +501,7 @@ msgstr "Datenformat"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Report"
-msgstr ""
+msgstr "ANOVA Methodenbericht"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement"
@@ -807,24 +807,23 @@ msgstr "Residuen vs Ablaufreihenfolge"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (default generator)"
-msgstr ""
+msgstr "2-stufig faktoriell (Standard-Generator)"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
-msgstr ""
+msgstr "2-stufig faktoriell (Generator angeben)"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Blocks (optional)"
-msgstr ""
+msgstr "Blöcke (optional)"
 
-#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Components"
 msgstr "Komponenten"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Term Type"
-msgstr ""
+msgstr "Termtyp"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "FO + PQ"
@@ -1460,7 +1459,7 @@ msgstr "Standard"
 
 msgctxt "doeModifyDesign|"
 msgid "Desired Two-level Factorial Design Options"
-msgstr ""
+msgstr "Optionen gewünschtes zweistufiges faktorielles Design"
 
 msgctxt "doeModifyDesign|"
 msgid "Design Options"
@@ -1565,11 +1564,11 @@ msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Optional"
-msgstr ""
+msgstr "Optional"
 
 msgctxt "msaGaugeRR|"
 msgid "Type of model for F-statistic"
-msgstr ""
+msgstr "Modelltyp für F-Statistik"
 
 msgctxt "msaGaugeRR|"
 msgid "Random effects"
@@ -1581,7 +1580,7 @@ msgstr "Feste Effekte"
 
 msgctxt "msaTestRetest|"
 msgid "Jitter"
-msgstr ""
+msgstr "Streuung"
 
 msgctxt "msaType1Gauge|"
 msgid "Analysis options"
@@ -1709,11 +1708,11 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Residual histogram"
-msgstr ""
+msgstr "Residuen-Histogramm"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "ANOVA table"
-msgstr ""
+msgstr "ANOVA-Tabelle"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Normal residual plot"
@@ -1721,15 +1720,16 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Normal plot of standardized effects"
-msgstr ""
+msgstr "Normal-Diagramm standardisierter Effekte"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Add grid lines"
-msgstr ""
+msgstr "Rasterlinien hinzufügen"
 
+#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Residual vs. fitted plot"
-msgstr ""
+msgstr "Diagramm Residuen vs. Anpassung"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Pareto plot of standardized effects"
@@ -1765,7 +1765,7 @@ msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Results"
-msgstr ""
+msgstr "Ergebnisse"
 
 msgctxt "msaAttribute|"
 msgid "Kappa Study"
@@ -1825,7 +1825,7 @@ msgstr "Messung"
 
 msgctxt "processCapabilityStudies|"
 msgid "Percentile"
-msgstr ""
+msgstr "Perzentil"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-conformance"
@@ -1837,7 +1837,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Advanced Options"
-msgstr ""
+msgstr "Weitere Optionen"
 
 msgctxt "processCapabilityStudies|"
 msgid "Rank method for probability plot"
@@ -2053,7 +2053,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Runs"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Blocks"
 msgstr "Blöcke"
@@ -2138,7 +2137,6 @@ msgctxt "ShowAndExportDesign|"
 msgid "Sort by standard order"
 msgstr ""
 
-#, fuzzy
 msgctxt "ShowAndExportDesign|"
 msgid "Save as:"
 msgstr "Speichern als:"
@@ -2151,32 +2149,26 @@ msgctxt "ShowAndExportDesign|"
 msgid "Export design"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Available factors"
 msgstr "Verfügbare Faktoren"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Blocks"
 msgstr "Blöcke"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Model"
 msgstr "Modell"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Components"
 msgstr "Komponenten"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Model Terms"
 msgstr "Modellterme"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Pareto Plot of Standardized Effects"
 msgstr "Pareto-Diagramm Standardisierter Effekte"
@@ -2244,10 +2236,6 @@ msgid "Response"
 msgstr "Antwort"
 
 msgctxt "doeAnalysis|"
-msgid "Factors"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Define by highest order interaction term"
 msgstr ""
 
@@ -2263,7 +2251,6 @@ msgctxt "doeAnalysis|"
 msgid "Normal probability plot"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Histogram"
 msgstr "Histogramm"
@@ -2278,4 +2265,52 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Other Plots"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Analyze Design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Design type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Factorial design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Response surface design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Categorical Factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Continuous Factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Select predefined model"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Include following terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear and interaction terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear and squared terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Full quadratic"
 msgstr ""

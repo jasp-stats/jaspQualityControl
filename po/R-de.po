@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-02-11 03:40\n"
-"PO-Revision-Date: 2023-01-28 03:38+0000\n"
+"POT-Creation-Date: 2023-03-04 03:41\n"
+"PO-Revision-Date: 2023-02-19 10:50+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -210,9 +210,8 @@ msgstr "t"
 msgid "p"
 msgstr "p"
 
-#, fuzzy
 msgid "The analysis crashed with the following error message: %1$s"
-msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %s"
+msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %1$s"
 
 msgid "Model Summary"
 msgstr "Modellzusammenfassung"
@@ -220,21 +219,37 @@ msgstr "Modellzusammenfassung"
 msgid "ANOVA"
 msgstr "ANOVA"
 
+msgid "Coded"
+msgstr ""
+
+msgid "Uncoded"
+msgstr ""
+
+#, fuzzy
+msgid "%s Coefficients"
+msgstr "Koeffizienten"
+
 msgid "Term"
 msgstr "Term"
 
 msgid "Effect"
+msgstr "Effekt"
+
+msgid "coded"
+msgstr ""
+
+msgid "uncoded"
 msgstr ""
 
 #, fuzzy
-msgid "Regression Equation in Uncoded Units"
+msgid "Regression Equation in %s Units"
 msgstr "Regressionsgleichung in unkodierten Einheiten"
 
 msgid "Alias Structure"
 msgstr "Aliasstruktur"
 
 msgid "An error occurred: %1$s"
-msgstr ""
+msgstr "Ein Fehler ist aufgetreten: %1$s"
 
 msgid "No aliasing in the model."
 msgstr ""
@@ -244,12 +259,12 @@ msgstr "Pareto-Diagramm Standardisierter Effekte"
 
 msgid "Plotting not possible: The experiment is not a full factorial design."
 msgstr ""
+"Diagramm unmöglich: Das Experiment ist kein vollständiges faktorielles "
+"Design."
 
-#, fuzzy
 msgid "Residuals versus Fitted Values"
-msgstr "Residuen vs. Angepasster Wert"
+msgstr "Residuen vs. angepasste Werte"
 
-#, fuzzy
 msgid "Residuals versus Run Order"
 msgstr "Residuen vs. Ablaufreihenfolge"
 
@@ -268,9 +283,8 @@ msgstr ""
 msgid "Base runs"
 msgstr ""
 
-#, fuzzy
 msgid "Base blocks"
-msgstr "Blöcke"
+msgstr "Basis-Blöcke"
 
 msgid "Centre points per block"
 msgstr ""
@@ -291,7 +305,7 @@ msgid "Value"
 msgstr "Wert"
 
 msgid "Please select a row in the design table."
-msgstr ""
+msgstr "Bitte eine Zeile in der Design-Tabelle auswählen."
 
 msgid "Click 'Display design' to show the design."
 msgstr "Klicken Sie auf 'Design anzeigen', um das Design anzuzeigen."
@@ -576,9 +590,8 @@ msgstr "Prozent"
 msgid "Lower"
 msgstr "Untergrenze"
 
-#, fuzzy
 msgid "Confidence interval of 95%%"
-msgstr "Konfidenzintervall von 95%"
+msgstr "Konfidenzintervall von 95%%"
 
 msgid "Upper"
 msgstr "Obergrenze"
@@ -853,7 +866,6 @@ msgstr ""
 msgid "Measurements by Part"
 msgstr ""
 
-#, fuzzy
 msgid "Measurements by Operator"
 msgstr "Messungen nach Operator"
 
@@ -881,7 +893,6 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
-#, fuzzy
 msgid "Measurement systems analysis"
 msgstr "Messsystemanalyse"
 

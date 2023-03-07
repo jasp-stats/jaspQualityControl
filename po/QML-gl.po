@@ -2225,44 +2225,86 @@ msgctxt "doeFull|"
 msgid "Display selected design"
 msgstr "Presentar o deseño elixido"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Response"
 msgstr "Resposta"
 
 msgctxt "doeAnalysis|"
-msgid "Factors"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Define by highest order interaction term"
-msgstr ""
+msgstr "Definir segundo o temo de interacción de maior orde"
 
 msgctxt "doeAnalysis|"
 msgid "Highest order interaction term"
-msgstr ""
+msgstr "Temo de interacción de maior orde"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals Plots"
-msgstr ""
+msgstr "Gráficas dos Erros"
 
 msgctxt "doeAnalysis|"
 msgid "Normal probability plot"
-msgstr ""
+msgstr "Gráfica de probabilidade Normal"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Histogram"
 msgstr "Histograma"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals vs. fitted values"
-msgstr ""
+msgstr "Erros vs. Valores axustados"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals vs. run order"
-msgstr ""
+msgstr "Erros vs. Orde de execución"
 
 msgctxt "doeAnalysis|"
 msgid "Other Plots"
+msgstr "Outras Gráficas"
+
+msgctxt "Description|"
+msgid "Analyze Design"
+msgstr "Analizar o Deseño"
+
+msgctxt "doeAnalysis|"
+msgid "Design type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Factorial design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Response surface design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Categorical Factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Continuous Factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Select predefined model"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Include following terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear and interaction terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear and squared terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Full quadratic"
 msgstr ""

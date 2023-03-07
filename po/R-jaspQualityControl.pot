@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.1\n"
-"POT-Creation-Date: 2023-02-11 03:40\n"
+"POT-Creation-Date: 2023-03-04 03:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -214,13 +214,28 @@ msgstr ""
 msgid "ANOVA"
 msgstr ""
 
+msgid "Coded"
+msgstr ""
+
+msgid "Uncoded"
+msgstr ""
+
+msgid "%s Coefficients"
+msgstr ""
+
 msgid "Term"
 msgstr ""
 
 msgid "Effect"
 msgstr ""
 
-msgid "Regression Equation in Uncoded Units"
+msgid "coded"
+msgstr ""
+
+msgid "uncoded"
+msgstr ""
+
+msgid "Regression Equation in %s Units"
 msgstr ""
 
 msgid "Alias Structure"
