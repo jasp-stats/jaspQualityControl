@@ -45,6 +45,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisPlotHistResiduals(jaspResults, options, ready)
   .doeAnalysisPlotFittedVsResiduals(jaspResults, options, ready)
   .doeAnalysisPlotResidualsVsOrder(jaspResults, dataset, options, ready)
+  .doeAnalysisPlotContourSurface(jaspResults, dataset, options, ready)
 }
 
 .doeAnalysisReadData <- function(dataset, options) {
@@ -548,6 +549,65 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     factorLevels.amount  = "< 2",
     exitAnalysisIfErrors = TRUE
   )
+}
+
+.doeAnalysisPlotContourSurface <- function(jaspResults, dataset, options, ready) {
+  if (!is.null(jaspResults[["contourSurfacePlot"]]) ||
+      !options[["contourSurfacePlot"]]) {
+    return()
+  }
+  plotType <- options[["contourSurfacePlotType"]]
+  plotTypeString <- ifelse(plotType == "contourPlot", gettext("Contour plot"), gettext("Surface plot"))
+  containerTitle <- ifelse(plotType == "contourPlot", gettext("Contour plots"), gettext("Surface plots"))
+  container <- createJaspContainer(title = containerTitle)
+  container$dependOn(options = c("contourSurfacePlot", "contourSurfacePlotType",
+                                                            "contourSurfacePlotVariables", "contourSurfacePlotLegend",
+                                                            "contourSurfacePlotResponseDivision", "surfacePlotVerticalRotation",
+                                                            "surfacePlotHorizontalRotation", .doeAnalysisBaseDependencies()))
+  container$position <- 11
+  jaspResults[["contourSurfacePlot"]] <- container
+  
+  if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError() ||
+      length(options[["contourSurfacePlotVariables"]]) < 2) {
+    plot <- createJaspPlot(title = plotTypeString)
+    jaspResults[["contourSurfacePlot"]][["plot"]] <- plot
+    return()
+  }
+  
+  variables <- unlist(options[["contourSurfacePlotVariables"]])
+  variablePairs <- t(utils::combn(variables, 2))
+  nPlots <- nrow(variablePairs)
+  
+  for (i in seq_len(nPlots)) {
+    variablePair <- variablePairs[i, ]
+    variablePairString <- paste(variablePair, collapse = gettext(" and "))
+    plotTitle <- gettextf("%s of %s vs %s", plotTypeString, options[["dependent"]], variablePairString)
+    plot <- createJaspPlot(title = plotTitle)
+    if(plotType == "contourPlot") {
+      plot$plotObject <- .doeContourPlotObject(jaspResults, options, variablePair)
+    } else if (plotType == "surfacePlot") {
+      plot$plotObject <- .doeSurfacePlotObject(jaspResults, options, variablePair)
+    }
+    jaspResults[["contourSurfacePlot"]][[plotTitle]] <- plot
+  }
+  
+  # result <- jaspResults[["doeResult"]]$object[["regression"]]
+  # if (!result[["saturated"]]) {
+  #   plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
+  #   return()
+  # }
+}
+
+.doeContourPlotObject <- function(jaspResults, options, variablePair) {
+  result <- jaspResults[["doeResult"]]$object[["regression"]]
+  regressionFit <- result[["object"]]
+  formula <- as.formula(paste0("~", paste0(variablePair, collapse = " * ")))
+  rsm::contour.lm(regressionFit, formula, image = TRUE)
+}
+
+.doeSurfacePlotObject <- function() {
+  plotObject <- ggplot2::ggplot() + ggplot2::ggtitle("this is a surface plot")
+  return(plotObject)
 }
 
 # the two functions below are taken from https://rpubs.com/RatherBit/102428

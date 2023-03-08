@@ -195,69 +195,74 @@ Form
 			}
 		}
 
-		Group
+		CheckBox
 		{
-			title: qsTr("Contour plots")
+			name:	"contourSurfacePlot"	
+			label:	qsTr("Contour/surface plots")
+
+			RadioButtonGroup
+			{
+				name: 					"contourSurfacePlotType"
+				id: 					contourSurfacePlotType
+				title:                 	qsTr("Plot type")
+
+				RadioButton
+				{
+					name: 				"contourPlot"
+					id : 				contourPlot
+					label: 				qsTr("Contour plot")
+					checked: 			true
+				}
+
+				RadioButton
+				{
+					name: 				"surfacePlot"
+					id : 				surfacePlot
+					label: 				qsTr("Surface plot")
+				}
+			}
+
 			VariablesForm
 			{
 				preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-				AvailableVariablesList		{ name: "conintuousPredictors";	source:"continuousFactors"; title: qsTr("Available continuous predictors")}
-				AssignedVariablesList	{ name: "contourPlotVariables";	suggestedColumns: ["scale"]; title: qsTr("Plotting variables")}
+				AvailableVariablesList		{ name: "continuousPredictors";	source:"continuousFactors"; title: qsTr("Available continuous predictors")}
+				AssignedVariablesList	{ name: "contourSurfacePlotVariables";	suggestedColumns: ["scale"]; title: qsTr("Plotting variables")}
 			}
 
 			Group
 			{
-				title: qsTr("Contour plot options")
+				title: 		qsTr("Contour/surface plot options")
+				columns:	2
 
 				CheckBox
 				{
-					name:							"contour"
-					label:							qsTr("Contour surface")
-					columns: 2
-					CheckBox
-					{
-						name:						"cplot"
-						label:						qsTr("Only show 2D plot")
-						id:							cplot
-					}
+					name:						"contourSurfacePlotLegend"
+					label:						qsTr("Show legend next to graph")
+				}
 
-					CheckBox
-					{
-						name:						"coded"
-						label:						qsTr("Show analysis and graphs in coded form")
-						enabled:					cplot.checked
-					}
+				DropDown
+				{
+					name:						"contourSurfacePlotResponseDivision"
+					label:						qsTr("Divide response surface into N parts")
+					values:						[2,3,4,5,6,7]
+					indexDefaultValue:			3
+				}
 
-					CheckBox
-					{
-						name:						"legend"
-						label:						qsTr("Show legend next to graph")
-						enabled:					!cplot.checked
-					}
-					DropDown
-					{
-						name:						"divide"
-						label:						qsTr("Divide response surface into N parts")
-						values:						[2,3,4,5,6,7]
-						enabled:					!cplot.checked
-					}
+				Slider
+				{
+					name:						"surfacePlotVerticalRotation"
+					label:						qsTr("Rotating angle (vertical plane)")
+					value:						0
+					visible:					contourSurfacePlotType.value == "surfacePlot"
+				}
 
-					Slider
-					{
-						name:						"phi"
-						label:						qsTr("Rotating angle (vertical plane)")
-						value:						0
-						enabled:					!cplot.checked
-					}
-
-					Slider
-					{
-						name:						"theta"
-						label:						qsTr("Rotating angle (horizontal plane)")
-						value:						0.5
-						vertical:					false
-						enabled:					!cplot.checked
-					}
+				Slider
+				{
+					name:						"surfacePlotHorizontalRotation"
+					label:						qsTr("Rotating angle (horizontal plane)")
+					value:						0.5
+					vertical:					false
+					visible:					contourSurfacePlotType.value == "surfacePlot"
 				}
 			}
 		}

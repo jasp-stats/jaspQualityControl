@@ -35,7 +35,8 @@ Imports:
   tidyr,
   tibble,
   vipor,
-  weibullness
+  weibullness,
+  utils
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
