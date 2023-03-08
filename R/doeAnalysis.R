@@ -601,11 +601,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 .doeContourPlotObject <- function(jaspResults, options, variablePair) {
   result <- jaspResults[["doeResult"]]$object[["regression"]]
   regressionFit <- result[["object"]]
-  formula <- as.formula(paste0("~", paste0(variablePair, collapse = " * ")))
-  rsm::contour.lm(regressionFit, formula, image = TRUE)
+  formula <- as.formula(paste0("~", paste0(variablePair, collapse = " + ")))
+  plotObject <- ggplotify::as.ggplot(function() contour(regressionFit, formula, image = TRUE, las = 1))
+  return(plotObject)
 }
 
-.doeSurfacePlotObject <- function() {
+.doeSurfacePlotObject <- function(jaspResults, options, variablePair) {
   plotObject <- ggplot2::ggplot() + ggplot2::ggtitle("this is a surface plot")
   return(plotObject)
 }
