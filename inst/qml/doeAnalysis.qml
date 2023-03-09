@@ -226,13 +226,13 @@ Form
 			{
 				preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
 				AvailableVariablesList		{ name: "continuousPredictors";	source:"continuousFactors"; title: qsTr("Available continuous predictors")}
-				AssignedVariablesList	{ name: "contourSurfacePlotVariables";	suggestedColumns: ["scale"]; title: qsTr("Plotting variables")}
+				AssignedVariablesList	{ name: "contourSurfacePlotVariables"; suggestedColumns: ["scale"]; title: qsTr("Plotting variables")}
 			}
 
 			Group
 			{
 				title: 		qsTr("Contour/surface plot options")
-				columns:	2
+				columns:	1
 
 				CheckBox
 				{
@@ -240,29 +240,41 @@ Form
 					label:						qsTr("Show legend next to graph")
 				}
 
-				DropDown
+				IntegerField
 				{
 					name:						"contourSurfacePlotResponseDivision"
 					label:						qsTr("Divide response surface into N parts")
-					values:						[2,3,4,5,6,7]
-					indexDefaultValue:			3
+					value:						5
+					min:						2
+					max:						10
 				}
 
-				Slider
+				Group
 				{
-					name:						"surfacePlotVerticalRotation"
-					label:						qsTr("Rotating angle (vertical plane)")
-					value:						0
-					visible:					contourSurfacePlotType.value == "surfacePlot"
-				}
+					columns:	2
 
-				Slider
-				{
-					name:						"surfacePlotHorizontalRotation"
-					label:						qsTr("Rotating angle (horizontal plane)")
-					value:						0.5
-					vertical:					false
-					visible:					contourSurfacePlotType.value == "surfacePlot"
+					Slider
+					{
+						name:						"surfacePlotVerticalRotation"
+						label:						qsTr("Rotating angle (vertical plane)")
+						value:						20
+						min:						0
+						max:						360
+						decimals:					0
+						visible:					contourSurfacePlotType.value == "surfacePlot"
+					}
+
+					Slider
+					{
+						name:						"surfacePlotHorizontalRotation"
+						label:						qsTr("Rotating angle (horizontal plane)")
+						value:						330
+						min:						0
+						max:						360
+						decimals:					0
+						vertical:					false
+						visible:					contourSurfacePlotType.value == "surfacePlot"
+					}
 				}
 			}
 		}

@@ -582,11 +582,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     variablePair <- variablePairs[i, ]
     variablePairString <- paste(variablePair, collapse = gettext(" and "))
     plotTitle <- gettextf("%s of %s vs %s", plotTypeString, options[["dependent"]], variablePairString)
-    plot <- createJaspPlot(title = plotTitle)
+    plot <- createJaspPlot(title = plotTitle, width = 500, height = 500)
     if(plotType == "contourPlot") {
-      plot$plotObject <- .doeContourPlotObject(jaspResults, options, variablePair)
+      plot$plotObject <- function(){.doeContourSurfacePlotObject(jaspResults, options, variablePair, type = "contour")}
     } else if (plotType == "surfacePlot") {
-      plot$plotObject <- .doeSurfacePlotObject(jaspResults, options, variablePair)
+      plot$plotObject <- function(){.doeContourSurfacePlotObject(jaspResults, options, variablePair, type = "surface")}
     }
     jaspResults[["contourSurfacePlot"]][[plotTitle]] <- plot
   }
@@ -598,17 +598,22 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   # }
 }
 
-.doeContourPlotObject <- function(jaspResults, options, variablePair) {
+.doeContourSurfacePlotObject <- function(jaspResults, options, variablePair, type = c("contour", "surface")) {
+  type <- match.arg(type)
   result <- jaspResults[["doeResult"]]$object[["regression"]]
   regressionFit <- result[["object"]]
   formula <- as.formula(paste0("~", paste0(variablePair, collapse = " + ")))
-  plotObject <- ggplotify::as.ggplot(function() contour(regressionFit, formula, image = TRUE, las = 1))
-  return(plotObject)
-}
-
-.doeSurfacePlotObject <- function(jaspResults, options, variablePair) {
-  plotObject <- ggplot2::ggplot() + ggplot2::ggtitle("this is a surface plot")
-  return(plotObject)
+  nResponsePartitions <- options[["contourSurfacePlotResponseDivision"]]
+  if (type == "contour"){
+    po <- rsm::contour.lm(regressionFit, formula, image = TRUE, las = 1, img.col = heat.colors(nResponsePartitions), lty = 0)
+  } else if (type == "surface") {
+    theta <- options[["surfacePlotHorizontalRotation"]]
+    phi <- options[["surfacePlotVerticalRotation"]]
+    po <- rsm::persp.lm(regressionFit, formula, theta = theta, phi = phi, zlab = options[["dependent"]],
+                  col = heat.colors(nResponsePartitions))
+  }
+  if (options[["contourSurfacePlotLegend"]])
+    legend(x = "topright", legend = paste0("a", 1:nResponsePartitions), fill = heat.colors(nResponsePartitions))
 }
 
 # the two functions below are taken from https://rpubs.com/RatherBit/102428
