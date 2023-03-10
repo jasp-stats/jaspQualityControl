@@ -431,7 +431,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$plotObject <- p
 }
 
-.doeAnalysisPlotQQResiduals <- function(jaspResults, options, ready, plot = TRUE) {
+.doeAnalysisPlotQQResiduals <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["plotNorm"]]) || !options[["plotNorm"]]) {
     return()
   }
@@ -446,7 +446,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$plotObject <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
 }
 
-.doeAnalysisPlotHistResiduals <- function(jaspResults, options, ready, plot = TRUE) {
+.doeAnalysisPlotHistResiduals <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["plotHist"]]) || !options[["plotHist"]]) {
     return()
   }
@@ -461,7 +461,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$plotObject <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
 }
 
-.doeAnalysisPlotFittedVsResiduals <- function(jaspResults, options, ready, plot = TRUE) {
+.doeAnalysisPlotFittedVsResiduals <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["plotFitted"]]) || !options[["plotFitted"]]) {
     return()
   }

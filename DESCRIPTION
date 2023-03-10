@@ -36,8 +36,7 @@ Imports:
   tibble,
   vipor,
   weibullness,
-  utils,
-  ggplotify
+  utils
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
