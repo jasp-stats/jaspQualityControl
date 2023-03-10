@@ -1,12 +1,16 @@
 context("DoE Analysis")
 
-# Testing factorial analysis (coded, without blocks) (verified with other software)
+# Testing factorial analysis (coded, without blocks) and residual plots (verified with other software)
 
 options <- analysisOptions("doeAnalysis")
 options$dependent <- "Yield"
 options$fixedFactors <- c("Exposure_time", "Develop_time", "Mask_dimension")
 options$codeFactors <- TRUE
 options$tableEquation <- TRUE
+options$plotNorm <- TRUE
+options$plotHist <- TRUE
+options$plotFitted <- TRUE
+options$plotRunOrder <- TRUE
 options$modelTerms <- list(list(components = "Exposure_time"), list(components = "Develop_time"), 
     list(components = "Mask_dimension"), list(components = c("Exposure_time", 
     "Develop_time")), list(components = c("Develop_time", "Mask_dimension"
@@ -15,6 +19,30 @@ options$modelTerms <- list(list(components = "Exposure_time"), list(components =
     )))
 set.seed(1)
 results <- runAnalysis("doeAnalysis", "DoEFactorialAnalysis.csv", options)
+
+test_that("Residuals versus Fitted Values plot matches", {
+  plotName <- results[["results"]][["plotFitted"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "residuals-versus-fitted-values")
+})
+
+test_that("Histogram of Residuals plot matches", {
+  plotName <- results[["results"]][["plotHist"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogram-of-residuals")
+})
+
+test_that("Normal Probability Plot of Residuals matches", {
+  plotName <- results[["results"]][["plotNorm"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "normal-probability-plot-of-residuals")
+})
+
+test_that("Residuals versus Run Order plot matches", {
+  plotName <- results[["results"]][["plotRunOrder"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "residuals-versus-run-order")
+})
 
 test_that("ANOVA table results match", {
   table <- results[["results"]][["tableAnova"]][["data"]]
@@ -67,16 +95,21 @@ test_that("Model Summary table results match", {
 
 
 
-# Testing RSM analysis (coded, without block) (verified with other software)
-
+# Testing RSM analysis (coded, without block) and contour plots (verified with other software)
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
 options$dependent <- "Vdk"
 options$continuousFactors <- c("Inlet_feeding", "Time", "Oil_temperature")
-options$fixedFactors <- NULL
-options$designType <- "responseSurfaceDesign"
 options$codeFactors <- TRUE
 options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+options$contourSurfacePlot <- TRUE
+options$contourSurfacePlotType <- "contourPlot"
+options$contourSurfacePlotVariables <- c("Inlet_feeding", "Time", "Oil_temperature")
+options$contourSurfacePlotResponseDivision <- 5
+options$fourInOneResidualPlot <- TRUE
 set.seed(1)
 results <- runAnalysis("doeAnalysis", "QT 9 p17 - RSM (15+6) Ovality Vdk.csv", options)
 
@@ -94,6 +127,24 @@ test_that("ANOVA table results match", {
                                       5, 0.633232583015919, 0.633232583015919, "Lack of fit", 0.603786111111109,
                                       3.62271666666665, 6, "", "", "Pure error", "", 294.169380952381,
                                       20, "", "", "Total"))
+})
+
+test_that("Contour plot of Vdk vs Inlet_feeding and Oil_temperature matches", {
+  plotName <- results[["results"]][["contourSurfacePlot"]][["collection"]][["contourSurfacePlot_Contour plot of Vdk vs Inlet_feeding and Oil_temperature"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "contour-plot-of-vdk-vs-inlet_feeding-and-oil_temperature")
+})
+
+test_that("Contour plot of Vdk vs Inlet_feeding and Time matches", {
+  plotName <- results[["results"]][["contourSurfacePlot"]][["collection"]][["contourSurfacePlot_Contour plot of Vdk vs Inlet_feeding and Time"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "contour-plot-of-vdk-vs-inlet_feeding-and-time")
+})
+
+test_that("Contour plot of Vdk vs Time and Oil_temperature matches", {
+  plotName <- results[["results"]][["contourSurfacePlot"]][["collection"]][["contourSurfacePlot_Contour plot of Vdk vs Time and Oil_temperature"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "contour-plot-of-vdk-vs-time-and-oil_temperature")
 })
 
 test_that("Coded Coefficients table results match", {
@@ -131,4 +182,38 @@ test_that("Model Summary table results match", {
   jaspTools::expect_equal_tables(table,
                                  list(0.965793350741183, 0.937924676228648, 0.981186342907651, 0.709314769228775
                                  ))
+})
+
+
+# Testing RSM surface plot
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependent <- "Vdk"
+options$continuousFactors <- c("Inlet_feeding", "Time", "Oil_temperature")
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+options$contourSurfacePlot <- TRUE
+options$contourSurfacePlotType <- "surfacePlot"
+options$contourSurfacePlotVariables <- c("Inlet_feeding", "Time", "Oil_temperature")
+options$contourSurfacePlotResponseDivision <- 5
+set.seed(1)
+results <- runAnalysis("doeAnalysis", "QT 9 p17 - RSM (15+6) Ovality Vdk.csv", options)
+
+test_that("Surface plot of Vdk vs Inlet_feeding and Oil_temperature matches", {
+  plotName <- results[["results"]][["contourSurfacePlot"]][["collection"]][["contourSurfacePlot_Surface plot of Vdk vs Inlet_feeding and Oil_temperature"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "surface-plot-of-vdk-vs-inlet_feeding-and-oil_temperature")
+})
+
+test_that("Surface plot of Vdk vs Inlet_feeding and Time matches", {
+  plotName <- results[["results"]][["contourSurfacePlot"]][["collection"]][["contourSurfacePlot_Surface plot of Vdk vs Inlet_feeding and Time"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "surface-plot-of-vdk-vs-inlet_feeding-and-time")
+})
+
+test_that("Surface plot of Vdk vs Time and Oil_temperature matches", {
+  plotName <- results[["results"]][["contourSurfacePlot"]][["collection"]][["contourSurfacePlot_Surface plot of Vdk vs Time and Oil_temperature"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "surface-plot-of-vdk-vs-time-and-oil_temperature")
 })

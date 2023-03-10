@@ -69,6 +69,29 @@ Form
 
 	Group
 	{
+
+		RadioButtonGroup
+		{
+			name: 					"runOrderSource"
+			id: 					runOrderSource
+			title:                 	qsTr("Run order")
+
+			RadioButton
+			{
+				name: 				"runOrderSourceRowNumber"
+				id : 				runOrderSourceRowNumber
+				label: 				qsTr("Equal to row number")
+				checked: 			true
+			}
+
+			// RadioButton
+			// {
+			// 	name: 				"runOrderSourceVariable"
+			// 	id : 				runOrderSourceVariable
+			// 	label: 				qsTr("Specified as variable")
+			// }
+		}
+
 		CheckBox
 		{
 			name:                               "tableAlias"
@@ -176,12 +199,11 @@ Form
 				label:                              qsTr("Residuals vs. run order")
 			}
 
-			// CheckBox
-			// {
-			// 	name:                               "fourInOne"
-			// 	label:                              qsTr("Matrix residuals plot")
-			// 	enabled:							runOrder.count > 0
-			// }
+			CheckBox
+			{
+				name: 								"fourInOneResidualPlot"
+				label: 								qsTr("Residuals matrix plot")
+			}
 		}
 
 		Group
@@ -238,6 +260,7 @@ Form
 				{
 					name:						"contourSurfacePlotLegend"
 					label:						qsTr("Show legend next to graph")
+					checked:					true
 				}
 
 				IntegerField

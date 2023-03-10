@@ -45,6 +45,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisPlotHistResiduals(jaspResults, options, ready)
   .doeAnalysisPlotFittedVsResiduals(jaspResults, options, ready)
   .doeAnalysisPlotResidualsVsOrder(jaspResults, dataset, options, ready)
+  .doeAnalysisPlotMatrixResidualPlot(jaspResults, dataset, options, ready)
   .doeAnalysisPlotContourSurface(jaspResults, dataset, options, ready)
 }
 
@@ -412,10 +413,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (!result[["saturated"]]) {
-    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-    return()
-  }
   t <- abs(data.frame(summary(result[["object"]])$coefficients)$t.value[-1])
   fac <- names(coef(result[["object"]]))[-1]
   df <- summary(result[["object"]])$df[2]
@@ -434,11 +431,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$plotObject <- p
 }
 
-.doeAnalysisPlotQQResiduals <- function(jaspResults, options, ready) {
+.doeAnalysisPlotQQResiduals <- function(jaspResults, options, ready, plot = TRUE) {
   if (!is.null(jaspResults[["plotNorm"]]) || !options[["plotNorm"]]) {
     return()
   }
-  plot <- createJaspPlot(title = gettext("Normal Probability Plot of Residuals"))
+  plot <- createJaspPlot(title = gettext("Normal Probability Plot of Residuals"), width = 500, height = 500)
   plot$dependOn(options = c("plotNorm", .doeAnalysisBaseDependencies()))
   plot$position <- 7
   jaspResults[["plotNorm"]] <- plot
@@ -446,18 +443,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (!result[["saturated"]]) {
-    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-    return()
-  }
   plot$plotObject <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
 }
 
-.doeAnalysisPlotHistResiduals <- function(jaspResults, options, ready) {
+.doeAnalysisPlotHistResiduals <- function(jaspResults, options, ready, plot = TRUE) {
   if (!is.null(jaspResults[["plotHist"]]) || !options[["plotHist"]]) {
     return()
   }
-  plot <- createJaspPlot(title = gettext("Histogram of Residuals"))
+  plot <- createJaspPlot(title = gettext("Histogram of Residuals"), width = 500, height = 500)
   plot$dependOn(options = c("plotHist", .doeAnalysisBaseDependencies()))
   plot$position <- 8
   jaspResults[["plotHist"]] <- plot
@@ -465,29 +458,25 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (!result[["saturated"]]) {
-    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-    return()
-  }
   plot$plotObject <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
 }
 
-.doeAnalysisPlotFittedVsResiduals <- function(jaspResults, options, ready) {
+.doeAnalysisPlotFittedVsResiduals <- function(jaspResults, options, ready, plot = TRUE) {
   if (!is.null(jaspResults[["plotFitted"]]) || !options[["plotFitted"]]) {
     return()
   }
-  plot <- createJaspPlot(title = gettext("Residuals versus Fitted Values"))
+  plot <- createJaspPlot(title = gettext("Residuals versus Fitted Values"), width = 500, height = 500)
   plot$dependOn(options = c("plotFitted", .doeAnalysisBaseDependencies()))
   plot$position <- 9
   jaspResults[["plotFitted"]] <- plot
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
     return()
   }
+  plot$plotObject <- .doeAnalysisPlotFittedVsResidualsPlotObject(jaspResults, options)
+}
+
+.doeAnalysisPlotFittedVsResidualsPlotObject <- function(jaspResults, options) {
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (!result[["saturated"]]) {
-    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-    return()
-  }
   plotData <- data.frame(x = fitted(result[["object"]]), y = resid(result[["object"]]))
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData[["x"]])
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData[["y"]])
@@ -498,25 +487,26 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     ggplot2::scale_y_continuous(name = gettext("Residuals"), breaks = yBreaks, limits = range(yBreaks)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-  plot$plotObject <- p
+  return(p)
 }
 
 .doeAnalysisPlotResidualsVsOrder <- function(jaspResults, dataset, options, ready) {
   if (!is.null(jaspResults[["plotRunOrder"]]) || !options[["plotRunOrder"]]) {
     return()
   }
-  plot <- createJaspPlot(title = gettext("Residuals versus Run Order"))
+  plot <- createJaspPlot(title = gettext("Residuals versus Run Order"), width = 500, height = 500)
   plot$dependOn(options = c("plotRunOrder", .doeAnalysisBaseDependencies()))
   plot$position <- 10
   jaspResults[["plotRunOrder"]] <- plot
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
     return()
   }
+  p <- .doeAnalysisPlotResidualsVsOrderPlotObject(jaspResults, dataset, options)
+  plot$plotObject <- p
+}
+
+.doeAnalysisPlotResidualsVsOrderPlotObject <- function(jaspResults, dataset, options) {
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (!result[["saturated"]]) {
-    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-    return()
-  }
   runOrder <- seq_len(nrow(dataset))
   plotData <- data.frame(x = runOrder, y = resid(result[["object"]]))
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData$x)
@@ -529,7 +519,28 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     ggplot2::scale_y_continuous(name = gettext("Residuals"), breaks = yBreaks, limits = range(yBreaks)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-  plot$plotObject <- p
+  return(p)
+}
+
+.doeAnalysisPlotMatrixResidualPlot <- function(jaspResults, dataset, options, ready) {
+  if (!is.null(jaspResults[["fourInOneResidualPlot"]]) || !options[["fourInOneResidualPlot"]]) {
+    return()
+  }
+  plot <- createJaspPlot(title = gettext("Matrix residual plot"), width = 1000, height = 1000)
+  plot$dependOn(options = c("fourInOneResidualPlot", .doeAnalysisBaseDependencies()))
+  plot$position <- 11
+  jaspResults[["fourInOneResidualPlot"]] <- plot
+  if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
+    return()
+  }
+  result <- jaspResults[["doeResult"]]$object[["regression"]]
+  plotList <- list()
+  plotList[[1]] <- .doeAnalysisPlotResidualsVsOrderPlotObject(jaspResults, dataset, options)
+  plotList[[2]] <- .doeAnalysisPlotFittedVsResidualsPlotObject(jaspResults, options)
+  plotList[[3]] <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
+  plotList[[4]] <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
+  plotMat <- matrix(plotList, 2, 2)
+  plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
 }
 
 .doeAnalysisCheckErrors <- function(dataset, options, ready) {
@@ -552,8 +563,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 }
 
 .doeAnalysisPlotContourSurface <- function(jaspResults, dataset, options, ready) {
-  if (!is.null(jaspResults[["contourSurfacePlot"]]) ||
-      !options[["contourSurfacePlot"]]) {
+  if (!is.null(jaspResults[["contourSurfacePlot"]]) || !options[["contourSurfacePlot"]]) {
     return()
   }
   plotType <- options[["contourSurfacePlotType"]]
@@ -564,7 +574,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
                                                             "contourSurfacePlotVariables", "contourSurfacePlotLegend",
                                                             "contourSurfacePlotResponseDivision", "surfacePlotVerticalRotation",
                                                             "surfacePlotHorizontalRotation", .doeAnalysisBaseDependencies()))
-  container$position <- 11
+  container$position <- 12
   jaspResults[["contourSurfacePlot"]] <- container
   
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError() ||
@@ -590,12 +600,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     }
     jaspResults[["contourSurfacePlot"]][[plotTitle]] <- plot
   }
-  
-  # result <- jaspResults[["doeResult"]]$object[["regression"]]
-  # if (!result[["saturated"]]) {
-  #   plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-  #   return()
-  # }
 }
 
 .doeContourSurfacePlotObject <- function(jaspResults, options, variablePair, type = c("contour", "surface")) {
@@ -604,16 +608,22 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   regressionFit <- result[["object"]]
   formula <- as.formula(paste0("~", paste0(variablePair, collapse = " + ")))
   nResponsePartitions <- options[["contourSurfacePlotResponseDivision"]]
+  colorSet <- heat.colors(nResponsePartitions)
   if (type == "contour"){
-    po <- rsm::contour.lm(regressionFit, formula, image = TRUE, las = 1, img.col = heat.colors(nResponsePartitions), lty = 0)
+    po <- rsm::image.lm(regressionFit, formula, las = 1, col = colorSet)
   } else if (type == "surface") {
     theta <- options[["surfacePlotHorizontalRotation"]]
     phi <- options[["surfacePlotVerticalRotation"]]
     po <- rsm::persp.lm(regressionFit, formula, theta = theta, phi = phi, zlab = options[["dependent"]],
-                  col = heat.colors(nResponsePartitions))
+                  col = colorSet)
   }
-  if (options[["contourSurfacePlotLegend"]])
-    legend(x = "topright", legend = paste0("a", 1:nResponsePartitions), fill = heat.colors(nResponsePartitions))
+  if (options[["contourSurfacePlotLegend"]]){
+    partitionRanges <- levels(cut(po[[1]]$z, breaks = nResponsePartitions))
+    partitionRanges <- gsub(",", " \U2013 ", partitionRanges)
+    partitionRanges <- gsub("\\(", "", partitionRanges)
+    partitionRanges <- gsub("\\]", "", partitionRanges)
+    legend(x = "topright", legend = partitionRanges, fill = colorSet)
+  }
 }
 
 # the two functions below are taken from https://rpubs.com/RatherBit/102428
