@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2023-03-04 03:41\n"
-"PO-Revision-Date: 2023-02-19 10:50+0000\n"
+"PO-Revision-Date: 2023-03-12 20:08+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr "Kumulative-Summe-Karte"
@@ -220,14 +220,13 @@ msgid "ANOVA"
 msgstr "ANOVA"
 
 msgid "Coded"
-msgstr ""
+msgstr "Kodierte"
 
 msgid "Uncoded"
-msgstr ""
+msgstr "Unkodierte"
 
-#, fuzzy
 msgid "%s Coefficients"
-msgstr "Koeffizienten"
+msgstr "%s Koeffizienten"
 
 msgid "Term"
 msgstr "Term"
@@ -236,14 +235,13 @@ msgid "Effect"
 msgstr "Effekt"
 
 msgid "coded"
-msgstr ""
+msgstr "kodierten"
 
 msgid "uncoded"
-msgstr ""
+msgstr "unkodierten"
 
-#, fuzzy
 msgid "Regression Equation in %s Units"
-msgstr "Regressionsgleichung in unkodierten Einheiten"
+msgstr "Regressionsgleichung in %s Einheiten"
 
 msgid "Alias Structure"
 msgstr "Aliasstruktur"
