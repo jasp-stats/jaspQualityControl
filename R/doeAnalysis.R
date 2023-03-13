@@ -534,12 +534,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  plotList <- list()
-  plotList[[1]] <- .doeAnalysisPlotResidualsVsOrderPlotObject(jaspResults, dataset, options)
-  plotList[[2]] <- .doeAnalysisPlotFittedVsResidualsPlotObject(jaspResults, options)
-  plotList[[3]] <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
-  plotList[[4]] <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
-  plotMat <- matrix(plotList, 2, 2)
+  plotMat <- matrix(list(), 2, 2)
+  plotMat[[1, 1]] <- .doeAnalysisPlotResidualsVsOrderPlotObject(jaspResults, dataset, options)
+  plotMat[[2, 1]] <- .doeAnalysisPlotFittedVsResidualsPlotObject(jaspResults, options)
+  plotMat[[1, 2]] <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
+  plotMat[[2, 2]] <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
   plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
 }
 
