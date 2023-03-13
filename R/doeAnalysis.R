@@ -590,7 +590,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   for (i in seq_len(nPlots)) {
     variablePair <- variablePairs[i, ]
     variablePairString <- paste(variablePair, collapse = gettext(" and "))
-    plotTitle <- gettextf("%s of %s vs %s", plotTypeString, options[["dependent"]], variablePairString)
+    plotTitle <- gettextf("%1$s of %2$s vs %3$s", plotTypeString, options[["dependent"]], variablePairString)
     plot <- createJaspPlot(title = plotTitle, width = 500, height = 500)
     if(plotType == "contourPlot") {
       plot$plotObject <- function(){.doeContourSurfacePlotObject(jaspResults, options, variablePair, type = "contour")}
