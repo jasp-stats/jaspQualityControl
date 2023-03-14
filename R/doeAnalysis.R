@@ -405,7 +405,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!is.null(jaspResults[["plotPareto"]]) || !options[["plotPareto"]]) {
     return()
   }
-  plot <- createJaspPlot(title = gettext("Pareto Chart of Standardized Effects"))
+  standardizedString <- ifelse(options[["codeFactors"]], gettext("Standardized"), gettext("Unstandardized"))
+  plot <- createJaspPlot(title = gettextf("Pareto Chart of %s Effects", standardizedString), width = 600, height = 400)
   plot$dependOn(options = c("plotPareto", .doeAnalysisBaseDependencies()))
   plot$position <- 6
   jaspResults[["plotPareto"]] <- plot
@@ -424,7 +425,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +
     ggplot2::scale_x_continuous(name = gettext("Term"), breaks = fac_t$y, labels = fac_t$fac) +
-    ggplot2::scale_y_continuous(name = gettext("Standardized Effect"), breaks = xBreaks, limits = range(xBreaks)) +
+    ggplot2::scale_y_continuous(name = gettextf("%s Effect", standardizedString), breaks = xBreaks, limits = range(xBreaks)) +
     ggplot2::coord_flip() +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()

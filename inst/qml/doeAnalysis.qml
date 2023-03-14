@@ -102,13 +102,13 @@ Form
 		CheckBox
 		{
 			name:                               "tableEquation"
-			label:                              "Show regression equation"
+			label:                              qsTr("Show regression equation")
 		}
 
 		CheckBox
 		{
 			name:                               "codeFactors"
-			label:                              "Automatically code factors"
+			label:                              qsTr("Automatically code/standardize factors")
 		}
 	}
 
@@ -213,7 +213,7 @@ Form
 			CheckBox
 			{
 				name:                                   "plotPareto"
-				label:                                  qsTr("Pareto Plot of Standardized Effects")
+				label:                                  qsTr("Pareto Plot of Effects")
 			}
 		}
 
