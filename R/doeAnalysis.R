@@ -38,8 +38,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisAnovaTable(jaspResults, options, ready)
   .doeAnalysisCoefficientsTable(jaspResults, options, ready)
   .doeAnalysisEquationTable(jaspResults, options, ready)
-  .doeAnalysisAliasTable(jaspResults, options, ready)
-  
   .doeAnalysisPlotPareto(jaspResults, options, ready)
   .doeAnalysisPlotQQResiduals(jaspResults, options, ready)
   .doeAnalysisPlotHistResiduals(jaspResults, options, ready)
@@ -253,6 +251,26 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
   result[["regression"]][["coefficients"]][["effects"]][1] <- NA
   
+  # Aliasing
+  if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
+      (options[["highestOrder"]] && options[["designType"]] == "factorialDesign")) {
+    allPredictors <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]))
+  } else {
+    allPredictors <- unique(unlist(options[["modelTerms"]]))
+  }
+  termNamesAliased <- termNames
+    #simplify term names to remove possible appended factor levels
+  regexExpression <- paste0("(", paste(allPredictors, collapse = "|"), ")((\\^2)?)([^^✻]+)(✻?)")
+  for (term_i in seq_along(termNamesAliased)) {
+    termNamesAliased[term_i] <- gsub(regexExpression, "\\1\\2", termNamesAliased[term_i], perl=TRUE)
+    termNamesAliased[term_i] <- gsub("\\s", "", termNamesAliased[term_i])
+  }
+  allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
+  for (pred_i in seq_along(allPredictors)) {
+    termNamesAliased <- gsub(allPredictors[pred_i], allPredictorsAliases[pred_i], termNamesAliased)
+  }
+  result[["regression"]][["coefficients"]][["termsAliased"]] <- termNamesAliased
+  
   if (!result[["regression"]][["saturated"]]) {
     result[["regression"]][["coefficients"]][["se"]] <- coefs[["Std. Error"]][valid_coefs]
     result[["regression"]][["coefficients"]][["t"]] <- coefs[["t value"]][valid_coefs]
@@ -264,9 +282,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   
   ## Model formula
-  
   coefs <- coef(regressionFit)[!is.na(coef(regressionFit))]
-  coefNames <- termNames
+  coefNames <- if (options[["tableAlias"]]) termNamesAliased else termNames
   plusOrMin <- sapply(seq_len(length(coefs)), function(x) {
     if (coefs[x] > 0) "+" else "-"
   })
@@ -333,6 +350,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   codedString <- ifelse(options[["codeFactors"]], gettext("Coded"), gettext("Uncoded"))
   tb <- createJaspTable(gettextf("%s Coefficients", codedString))
+  if (options[["tableAlias"]])
+    tb$addColumnInfo(name = "alias", title = gettext("Alias"), type = "string")
   tb$addColumnInfo(name = "terms", title = gettext("Term"), type = "string")
   tb$addColumnInfo(name = "effects", title = gettext("Effect"), type = "number")
   tb$addColumnInfo(name = "coef", title = gettext("Coefficient"), type = "number")
@@ -340,7 +359,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$addColumnInfo(name = "tval", title = "t", type = "number")
   tb$addColumnInfo(name = "pval", title = "p", type = "pvalue")
   tb$addColumnInfo(name = "vif", title = "VIF", type = "number")
-  tb$dependOn(options = c("tableEquation", .doeAnalysisBaseDependencies()))
+  tb$dependOn(options = c("tableEquation", "tableAlias", .doeAnalysisBaseDependencies()))
   tb$position <- 3
   jaspResults[["tableCoefficients"]] <- tb
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
@@ -351,6 +370,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
     se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = NA
   )
+  if (options[["tableAlias"]])
+    rows["alias"] <- result[["termsAliased"]]
   tb$addRows(rows)
 }
 
@@ -372,41 +393,15 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$addRows(row)
 }
 
-.doeAnalysisAliasTable <- function(jaspResults, options, ready) {
-  if (!is.null(jaspResults[["tableAlias"]]) || !options[["tableAlias"]]) {
-    return()
-  }
-  tb <- createJaspTable(gettext("Alias Structure"))
-  tb$addColumnInfo(name = "alias", title = "", type = "string")
-  tb$dependOn(options = c("tableAlias", .doeAnalysisBaseDependencies()))
-  tb$position <- 5
-  jaspResults[["tableAlias"]] <- tb
-  if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
-    return()
-  }
-  result <- jaspResults[["doeResult"]]$object
-  
-  p <- try({
-    aliases <- FrF2::aliases(result[["regression"]][["object"]])
-  })
-  if (isTryError(p)) {
-    tb$setError(gettextf("An error occurred: %1$s", .extractErrorMessage(p)))
-    return()
-  }
-  if (!is.null(aliases[["aliases"]])) {
-    rows <- data.frame(alias = unlist(aliases[["aliases"]]))
-    tb$addRows(rows)
-  } else {
-    tb$addFootnote(gettext("No aliasing in the model."))
-  }
-}
-
 .doeAnalysisPlotPareto <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["plotPareto"]]) || !options[["plotPareto"]]) {
     return()
   }
-  standardizedString <- ifelse(options[["codeFactors"]], gettext("Standardized"), gettext("Unstandardized"))
-  plot <- createJaspPlot(title = gettextf("Pareto Chart of %s Effects", standardizedString), width = 600, height = 400)
+  plot <- createJaspPlot(title = if (options[["codeFactors"]]) {
+    gettext("Pareto Chart of Standardized Effects")
+  } else {
+    gettext("Pareto Chart of Unstandardized Effects")
+  }, width = 600, height = 400)
   plot$dependOn(options = c("plotPareto", .doeAnalysisBaseDependencies()))
   plot$position <- 6
   jaspResults[["plotPareto"]] <- plot
@@ -415,7 +410,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
   t <- abs(data.frame(summary(result[["object"]])$coefficients)$t.value[-1])
-  fac <- names(coef(result[["object"]]))[-1]
+  fac <- if (options[["tableAlias"]]) result[["coefficients"]][["termsAliased"]][-1] else result[["coefficients"]][["terms"]][-1]
   df <- summary(result[["object"]])$df[2]
   crit <- abs(qt(0.025, df))
   fac_t <- cbind.data.frame(fac, t)
@@ -425,7 +420,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +
     ggplot2::scale_x_continuous(name = gettext("Term"), breaks = fac_t$y, labels = fac_t$fac) +
-    ggplot2::scale_y_continuous(name = gettextf("%s Effect", standardizedString), breaks = xBreaks, limits = range(xBreaks)) +
+    ggplot2::scale_y_continuous(name = if (options[["codeFactors"]]) {
+      gettext("Standardized Effect")
+    } else {
+      gettext("Unstandardized Effect")
+    }, breaks = xBreaks, limits = range(xBreaks)) +
     ggplot2::coord_flip() +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()

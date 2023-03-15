@@ -95,8 +95,8 @@ Form
 		CheckBox
 		{
 			name:                               "tableAlias"
-			label:                              "Show alias structure"
-			visible:							false
+			label:                              "Use alias names"
+			checked:							true
 		}
 
 		CheckBox
