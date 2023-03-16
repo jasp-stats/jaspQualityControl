@@ -69,23 +69,46 @@ Form
 
 	Group
 	{
+
+		RadioButtonGroup
+		{
+			name: 					"runOrderSource"
+			id: 					runOrderSource
+			title:                 	qsTr("Run order")
+
+			RadioButton
+			{
+				name: 				"runOrderSourceRowNumber"
+				id : 				runOrderSourceRowNumber
+				label: 				qsTr("Equal to row number")
+				checked: 			true
+			}
+
+			// RadioButton
+			// {
+			// 	name: 				"runOrderSourceVariable"
+			// 	id : 				runOrderSourceVariable
+			// 	label: 				qsTr("Specified as variable")
+			// }
+		}
+
 		CheckBox
 		{
 			name:                               "tableAlias"
-			label:                              "Show alias structure"
-			visible:							false
+			label:                              "Use alias names"
+			checked:							true
 		}
 
 		CheckBox
 		{
 			name:                               "tableEquation"
-			label:                              "Show regression equation"
+			label:                              qsTr("Show regression equation")
 		}
 
 		CheckBox
 		{
 			name:                               "codeFactors"
-			label:                              "Automatically code factors"
+			label:                              qsTr("Automatically code/standardize factors")
 		}
 	}
 
@@ -143,50 +166,140 @@ Form
 
 	}
 
-	Group
+		Section
 	{
-		title:                                  qsTr("Residuals Plots")
+		title: qsTr("Plots")
+		columns: 	1
 
-		CheckBox
+		Group
 		{
-			name:                               "plotNorm"
-			label:                              qsTr("Normal probability plot")
+			title:                                  qsTr("Residuals Plots")
+
+			CheckBox
+			{
+				name:                               "plotNorm"
+				label:                              qsTr("Normal probability plot")
+			}
+
+			CheckBox
+			{
+				name:                               "plotHist"
+				label:                              qsTr("Histogram")
+			}
+
+			CheckBox
+			{
+				name:                               "plotFitted"
+				label:                              qsTr("Residuals vs. fitted values")
+			}
+
+			CheckBox
+			{
+				name:                               "plotRunOrder"
+				label:                              qsTr("Residuals vs. run order")
+			}
+
+			CheckBox
+			{
+				name: 								"fourInOneResidualPlot"
+				label: 								qsTr("Residuals matrix plot")
+			}
+		}
+
+		Group
+		{
+			title: qsTr("Other Plots")
+
+			CheckBox
+			{
+				name:                                   "plotPareto"
+				label:                                  qsTr("Pareto Plot of Effects")
+			}
 		}
 
 		CheckBox
 		{
-			name:                               "plotHist"
-			label:                              qsTr("Histogram")
-		}
+			name:	"contourSurfacePlot"	
+			label:	qsTr("Contour/surface plots")
 
-		CheckBox
-		{
-			name:                               "plotFitted"
-			label:                              qsTr("Residuals vs. fitted values")
-		}
+			RadioButtonGroup
+			{
+				name: 					"contourSurfacePlotType"
+				id: 					contourSurfacePlotType
+				title:                 	qsTr("Plot type")
 
-		CheckBox
-		{
-			name:                               "plotRunOrder"
-			label:                              qsTr("Residuals vs. run order")
-		}
+				RadioButton
+				{
+					name: 				"contourPlot"
+					id : 				contourPlot
+					label: 				qsTr("Contour plot")
+					checked: 			true
+				}
 
-		// CheckBox
-		// {
-		// 	name:                               "fourInOne"
-		// 	label:                              qsTr("Matrix residuals plot")
-		// 	enabled:							runOrder.count > 0
-		// }
-	}
+				RadioButton
+				{
+					name: 				"surfacePlot"
+					id : 				surfacePlot
+					label: 				qsTr("Surface plot")
+				}
+			}
 
-	Group
-	{
-		title: qsTr("Other Plots")
+			VariablesForm
+			{
+				preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
+				AvailableVariablesList		{ name: "continuousPredictors";	source:"continuousFactors"; title: qsTr("Available continuous predictors")}
+				AssignedVariablesList	{ name: "contourSurfacePlotVariables"; suggestedColumns: ["scale"]; title: qsTr("Plotting variables")}
+			}
 
-		CheckBox
-		{
-			name:                                   "plotPareto"
-			label:                                  qsTr("Pareto Plot of Standardized Effects")
+			Group
+			{
+				title: 		qsTr("Contour/surface plot options")
+				columns:	1
+
+				CheckBox
+				{
+					name:						"contourSurfacePlotLegend"
+					label:						qsTr("Show legend next to graph")
+					checked:					true
+				}
+
+				IntegerField
+				{
+					name:						"contourSurfacePlotResponseDivision"
+					label:						qsTr("Divide response surface into N parts")
+					value:						5
+					min:						2
+					max:						10
+				}
+
+				Group
+				{
+					columns:	2
+
+					Slider
+					{
+						name:						"surfacePlotVerticalRotation"
+						label:						qsTr("Rotating angle (vertical plane)")
+						value:						20
+						min:						0
+						max:						360
+						decimals:					0
+						visible:					contourSurfacePlotType.value == "surfacePlot"
+					}
+
+					Slider
+					{
+						name:						"surfacePlotHorizontalRotation"
+						label:						qsTr("Rotating angle (horizontal plane)")
+						value:						330
+						min:						0
+						max:						360
+						decimals:					0
+						vertical:					false
+						visible:					contourSurfacePlotType.value == "surfacePlot"
+					}
+				}
+			}
 		}
 	}
 }

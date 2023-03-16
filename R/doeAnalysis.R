@@ -38,13 +38,13 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisAnovaTable(jaspResults, options, ready)
   .doeAnalysisCoefficientsTable(jaspResults, options, ready)
   .doeAnalysisEquationTable(jaspResults, options, ready)
-  .doeAnalysisAliasTable(jaspResults, options, ready)
-  
   .doeAnalysisPlotPareto(jaspResults, options, ready)
   .doeAnalysisPlotQQResiduals(jaspResults, options, ready)
   .doeAnalysisPlotHistResiduals(jaspResults, options, ready)
   .doeAnalysisPlotFittedVsResiduals(jaspResults, options, ready)
   .doeAnalysisPlotResidualsVsOrder(jaspResults, dataset, options, ready)
+  .doeAnalysisPlotMatrixResidualPlot(jaspResults, dataset, options, ready)
+  .doeAnalysisPlotContourSurface(jaspResults, dataset, options, ready)
 }
 
 .doeAnalysisReadData <- function(dataset, options) {
@@ -251,6 +251,26 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
   result[["regression"]][["coefficients"]][["effects"]][1] <- NA
   
+  # Aliasing
+  if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
+      (options[["highestOrder"]] && options[["designType"]] == "factorialDesign")) {
+    allPredictors <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]))
+  } else {
+    allPredictors <- unique(unlist(options[["modelTerms"]]))
+  }
+  termNamesAliased <- termNames
+    #simplify term names to remove possible appended factor levels
+  regexExpression <- paste0("(", paste(allPredictors, collapse = "|"), ")((\\^2)?)([^^✻]+)(✻?)")
+  for (term_i in seq_along(termNamesAliased)) {
+    termNamesAliased[term_i] <- gsub(regexExpression, "\\1\\2", termNamesAliased[term_i], perl=TRUE)
+    termNamesAliased[term_i] <- gsub("\\s", "", termNamesAliased[term_i])
+  }
+  allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
+  for (pred_i in seq_along(allPredictors)) {
+    termNamesAliased <- gsub(allPredictors[pred_i], allPredictorsAliases[pred_i], termNamesAliased)
+  }
+  result[["regression"]][["coefficients"]][["termsAliased"]] <- termNamesAliased
+  
   if (!result[["regression"]][["saturated"]]) {
     result[["regression"]][["coefficients"]][["se"]] <- coefs[["Std. Error"]][valid_coefs]
     result[["regression"]][["coefficients"]][["t"]] <- coefs[["t value"]][valid_coefs]
@@ -262,9 +282,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   
   ## Model formula
-  
   coefs <- coef(regressionFit)[!is.na(coef(regressionFit))]
-  coefNames <- termNames
+  coefNames <- if (options[["tableAlias"]]) termNamesAliased else termNames
   plusOrMin <- sapply(seq_len(length(coefs)), function(x) {
     if (coefs[x] > 0) "+" else "-"
   })
@@ -331,6 +350,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   codedString <- ifelse(options[["codeFactors"]], gettext("Coded"), gettext("Uncoded"))
   tb <- createJaspTable(gettextf("%s Coefficients", codedString))
+  if (options[["tableAlias"]])
+    tb$addColumnInfo(name = "alias", title = gettext("Alias"), type = "string")
   tb$addColumnInfo(name = "terms", title = gettext("Term"), type = "string")
   tb$addColumnInfo(name = "effects", title = gettext("Effect"), type = "number")
   tb$addColumnInfo(name = "coef", title = gettext("Coefficient"), type = "number")
@@ -338,7 +359,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$addColumnInfo(name = "tval", title = "t", type = "number")
   tb$addColumnInfo(name = "pval", title = "p", type = "pvalue")
   tb$addColumnInfo(name = "vif", title = "VIF", type = "number")
-  tb$dependOn(options = c("tableEquation", .doeAnalysisBaseDependencies()))
+  tb$dependOn(options = c("tableEquation", "tableAlias", .doeAnalysisBaseDependencies()))
   tb$position <- 3
   jaspResults[["tableCoefficients"]] <- tb
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
@@ -349,6 +370,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
     se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = NA
   )
+  if (options[["tableAlias"]])
+    rows["alias"] <- result[["termsAliased"]]
   tb$addRows(rows)
 }
 
@@ -370,40 +393,15 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$addRows(row)
 }
 
-.doeAnalysisAliasTable <- function(jaspResults, options, ready) {
-  if (!is.null(jaspResults[["tableAlias"]]) || !options[["tableAlias"]]) {
-    return()
-  }
-  tb <- createJaspTable(gettext("Alias Structure"))
-  tb$addColumnInfo(name = "alias", title = "", type = "string")
-  tb$dependOn(options = c("tableAlias", .doeAnalysisBaseDependencies()))
-  tb$position <- 5
-  jaspResults[["tableAlias"]] <- tb
-  if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
-    return()
-  }
-  result <- jaspResults[["doeResult"]]$object
-  
-  p <- try({
-    aliases <- FrF2::aliases(result[["regression"]][["object"]])
-  })
-  if (isTryError(p)) {
-    tb$setError(gettextf("An error occurred: %1$s", .extractErrorMessage(p)))
-    return()
-  }
-  if (!is.null(aliases[["aliases"]])) {
-    rows <- data.frame(alias = unlist(aliases[["aliases"]]))
-    tb$addRows(rows)
-  } else {
-    tb$addFootnote(gettext("No aliasing in the model."))
-  }
-}
-
 .doeAnalysisPlotPareto <- function(jaspResults, options, ready) {
   if (!is.null(jaspResults[["plotPareto"]]) || !options[["plotPareto"]]) {
     return()
   }
-  plot <- createJaspPlot(title = gettext("Pareto Chart of Standardized Effects"))
+  plot <- createJaspPlot(title = if (options[["codeFactors"]]) {
+    gettext("Pareto Chart of Standardized Effects")
+  } else {
+    gettext("Pareto Chart of Unstandardized Effects")
+  }, width = 600, height = 400)
   plot$dependOn(options = c("plotPareto", .doeAnalysisBaseDependencies()))
   plot$position <- 6
   jaspResults[["plotPareto"]] <- plot
@@ -411,12 +409,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (!result[["saturated"]]) {
-    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-    return()
-  }
   t <- abs(data.frame(summary(result[["object"]])$coefficients)$t.value[-1])
-  fac <- names(coef(result[["object"]]))[-1]
+  fac <- if (options[["tableAlias"]]) result[["coefficients"]][["termsAliased"]][-1] else result[["coefficients"]][["terms"]][-1]
   df <- summary(result[["object"]])$df[2]
   crit <- abs(qt(0.025, df))
   fac_t <- cbind.data.frame(fac, t)
@@ -426,7 +420,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +
     ggplot2::scale_x_continuous(name = gettext("Term"), breaks = fac_t$y, labels = fac_t$fac) +
-    ggplot2::scale_y_continuous(name = gettext("Standardized Effect"), breaks = xBreaks, limits = range(xBreaks)) +
+    ggplot2::scale_y_continuous(name = if (options[["codeFactors"]]) {
+      gettext("Standardized Effect")
+    } else {
+      gettext("Unstandardized Effect")
+    }, breaks = xBreaks, limits = range(xBreaks)) +
     ggplot2::coord_flip() +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
@@ -437,7 +435,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!is.null(jaspResults[["plotNorm"]]) || !options[["plotNorm"]]) {
     return()
   }
-  plot <- createJaspPlot(title = gettext("Normal Probability Plot of Residuals"))
+  plot <- createJaspPlot(title = gettext("Normal Probability Plot of Residuals"), width = 500, height = 500)
   plot$dependOn(options = c("plotNorm", .doeAnalysisBaseDependencies()))
   plot$position <- 7
   jaspResults[["plotNorm"]] <- plot
@@ -445,10 +443,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (!result[["saturated"]]) {
-    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-    return()
-  }
   plot$plotObject <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
 }
 
@@ -456,7 +450,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!is.null(jaspResults[["plotHist"]]) || !options[["plotHist"]]) {
     return()
   }
-  plot <- createJaspPlot(title = gettext("Histogram of Residuals"))
+  plot <- createJaspPlot(title = gettext("Histogram of Residuals"), width = 500, height = 500)
   plot$dependOn(options = c("plotHist", .doeAnalysisBaseDependencies()))
   plot$position <- 8
   jaspResults[["plotHist"]] <- plot
@@ -464,10 +458,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (!result[["saturated"]]) {
-    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-    return()
-  }
   plot$plotObject <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
 }
 
@@ -475,18 +465,18 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!is.null(jaspResults[["plotFitted"]]) || !options[["plotFitted"]]) {
     return()
   }
-  plot <- createJaspPlot(title = gettext("Residuals versus Fitted Values"))
+  plot <- createJaspPlot(title = gettext("Residuals versus Fitted Values"), width = 500, height = 500)
   plot$dependOn(options = c("plotFitted", .doeAnalysisBaseDependencies()))
   plot$position <- 9
   jaspResults[["plotFitted"]] <- plot
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
     return()
   }
+  plot$plotObject <- .doeAnalysisPlotFittedVsResidualsPlotObject(jaspResults, options)
+}
+
+.doeAnalysisPlotFittedVsResidualsPlotObject <- function(jaspResults, options) {
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (!result[["saturated"]]) {
-    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-    return()
-  }
   plotData <- data.frame(x = fitted(result[["object"]]), y = resid(result[["object"]]))
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData[["x"]])
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData[["y"]])
@@ -497,25 +487,26 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     ggplot2::scale_y_continuous(name = gettext("Residuals"), breaks = yBreaks, limits = range(yBreaks)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-  plot$plotObject <- p
+  return(p)
 }
 
 .doeAnalysisPlotResidualsVsOrder <- function(jaspResults, dataset, options, ready) {
   if (!is.null(jaspResults[["plotRunOrder"]]) || !options[["plotRunOrder"]]) {
     return()
   }
-  plot <- createJaspPlot(title = gettext("Residuals versus Run Order"))
+  plot <- createJaspPlot(title = gettext("Residuals versus Run Order"), width = 500, height = 500)
   plot$dependOn(options = c("plotRunOrder", .doeAnalysisBaseDependencies()))
   plot$position <- 10
   jaspResults[["plotRunOrder"]] <- plot
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
     return()
   }
+  p <- .doeAnalysisPlotResidualsVsOrderPlotObject(jaspResults, dataset, options)
+  plot$plotObject <- p
+}
+
+.doeAnalysisPlotResidualsVsOrderPlotObject <- function(jaspResults, dataset, options) {
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  if (!result[["saturated"]]) {
-    plot$setError(gettext("Plotting not possible: The experiment is not a full factorial design."))
-    return()
-  }
   runOrder <- seq_len(nrow(dataset))
   plotData <- data.frame(x = runOrder, y = resid(result[["object"]]))
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData$x)
@@ -528,7 +519,27 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     ggplot2::scale_y_continuous(name = gettext("Residuals"), breaks = yBreaks, limits = range(yBreaks)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-  plot$plotObject <- p
+  return(p)
+}
+
+.doeAnalysisPlotMatrixResidualPlot <- function(jaspResults, dataset, options, ready) {
+  if (!is.null(jaspResults[["fourInOneResidualPlot"]]) || !options[["fourInOneResidualPlot"]]) {
+    return()
+  }
+  plot <- createJaspPlot(title = gettext("Matrix residual plot"), width = 1000, height = 1000)
+  plot$dependOn(options = c("fourInOneResidualPlot", .doeAnalysisBaseDependencies()))
+  plot$position <- 11
+  jaspResults[["fourInOneResidualPlot"]] <- plot
+  if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
+    return()
+  }
+  result <- jaspResults[["doeResult"]]$object[["regression"]]
+  plotMat <- matrix(list(), 2, 2)
+  plotMat[[1, 1]] <- .doeAnalysisPlotResidualsVsOrderPlotObject(jaspResults, dataset, options)
+  plotMat[[2, 1]] <- .doeAnalysisPlotFittedVsResidualsPlotObject(jaspResults, options)
+  plotMat[[1, 2]] <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
+  plotMat[[2, 2]] <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
+  plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
 }
 
 .doeAnalysisCheckErrors <- function(dataset, options, ready) {
@@ -548,6 +559,70 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     factorLevels.amount  = "< 2",
     exitAnalysisIfErrors = TRUE
   )
+}
+
+.doeAnalysisPlotContourSurface <- function(jaspResults, dataset, options, ready) {
+  if (!is.null(jaspResults[["contourSurfacePlot"]]) || !options[["contourSurfacePlot"]]) {
+    return()
+  }
+  plotType <- options[["contourSurfacePlotType"]]
+  plotTypeString <- ifelse(plotType == "contourPlot", gettext("Contour plot"), gettext("Surface plot"))
+  containerTitle <- ifelse(plotType == "contourPlot", gettext("Contour plots"), gettext("Surface plots"))
+  container <- createJaspContainer(title = containerTitle)
+  container$dependOn(options = c("contourSurfacePlot", "contourSurfacePlotType",
+                                                            "contourSurfacePlotVariables", "contourSurfacePlotLegend",
+                                                            "contourSurfacePlotResponseDivision", "surfacePlotVerticalRotation",
+                                                            "surfacePlotHorizontalRotation", .doeAnalysisBaseDependencies()))
+  container$position <- 12
+  jaspResults[["contourSurfacePlot"]] <- container
+  
+  if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError() ||
+      length(options[["contourSurfacePlotVariables"]]) < 2) {
+    plot <- createJaspPlot(title = plotTypeString)
+    jaspResults[["contourSurfacePlot"]][["plot"]] <- plot
+    return()
+  }
+  
+  variables <- unlist(options[["contourSurfacePlotVariables"]])
+  variablePairs <- t(utils::combn(variables, 2))
+  nPlots <- nrow(variablePairs)
+  
+  for (i in seq_len(nPlots)) {
+    variablePair <- variablePairs[i, ]
+    variablePairString <- paste(variablePair, collapse = gettext(" and "))
+    plotTitle <- gettextf("%1$s of %2$s vs %3$s", plotTypeString, options[["dependent"]], variablePairString)
+    plot <- createJaspPlot(title = plotTitle, width = 500, height = 500)
+    if(plotType == "contourPlot") {
+      plot$plotObject <- function(){.doeContourSurfacePlotObject(jaspResults, options, variablePair, type = "contour")}
+    } else if (plotType == "surfacePlot") {
+      plot$plotObject <- function(){.doeContourSurfacePlotObject(jaspResults, options, variablePair, type = "surface")}
+    }
+    jaspResults[["contourSurfacePlot"]][[plotTitle]] <- plot
+  }
+}
+
+.doeContourSurfacePlotObject <- function(jaspResults, options, variablePair, type = c("contour", "surface")) {
+  type <- match.arg(type)
+  result <- jaspResults[["doeResult"]]$object[["regression"]]
+  regressionFit <- result[["object"]]
+  formula <- as.formula(paste0("~", paste0(variablePair, collapse = " + ")))
+  nResponsePartitions <- options[["contourSurfacePlotResponseDivision"]]
+  colorSet <- heat.colors(nResponsePartitions)
+  if (type == "contour"){
+    po <- rsm::image.lm(regressionFit, formula, las = 1, col = colorSet)
+  } else if (type == "surface") {
+    theta <- options[["surfacePlotHorizontalRotation"]]
+    phi <- options[["surfacePlotVerticalRotation"]]
+    po <- rsm::persp.lm(regressionFit, formula, theta = theta, phi = phi, zlab = options[["dependent"]],
+                  col = colorSet)
+  }
+  if (options[["contourSurfacePlotLegend"]]){
+    partitionRanges <- levels(cut(po[[1]]$z, breaks = nResponsePartitions))
+    partitionRanges <- gsub(",", " \U2013 ", partitionRanges)
+    partitionRanges <- gsub("\\(", "", partitionRanges)
+    partitionRanges <- gsub("\\]", "", partitionRanges)
+    legend(x = "topright", legend = partitionRanges, fill = colorSet)
+  }
 }
 
 # the two functions below are taken from https://rpubs.com/RatherBit/102428
