@@ -19,7 +19,7 @@ options$modelTerms <- list(list(components = "Exposure_time"), list(components =
     list(components = c("Exposure_time", "Develop_time", "Mask_dimension"
     )))
 set.seed(1)
-results <- runAnalysis("doeAnalysis", "DoEFactorialAnalysis.csv", options, makeTests = TRUE)
+results <- runAnalysis("doeAnalysis", "DoEFactorialAnalysis.csv", options)
 
 test_that("Residuals versus Fitted Values plot matches", {
   plotName <- results[["results"]][["plotFitted"]][["data"]]
