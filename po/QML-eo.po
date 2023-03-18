@@ -113,38 +113,6 @@ msgctxt "doeFactorial|"
 msgid "Resolution"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Predictors [Location in coded format]"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Only show 2D plot"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Show analysis and graphs in coded form"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Show legend next to graph"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Divide response surface into N parts"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Rotating angle (vertical plane)"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Rotating angle (horizontal plane)"
-msgstr ""
-
 msgctxt "msaAttribute|"
 msgid "Operators"
 msgstr ""
@@ -805,26 +773,6 @@ msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Blocks (optional)"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Components"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Term Type"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "FO + PQ"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "FO"
-msgstr ""
-
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
 msgstr ""
@@ -1069,22 +1017,6 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Desirability"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Minimum [Min/Max]"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Maximum [Min/Max]"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Target [Min/Target/Max]"
 msgstr ""
 
 msgctxt "msaAttribute|"
@@ -1667,66 +1599,6 @@ msgctxt "doeFactorial|"
 msgid "Blocks"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Analysis"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response surface analysis"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Coefficients table"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual histogram"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "ANOVA table"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Normal residual plot"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Normal plot of standardized effects"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Add grid lines"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual vs. fitted plot"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Pareto plot of standardized effects"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Matrix residuals plot"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour plots"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour plot options"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour surface"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response variable list"
-msgstr ""
-
 msgctxt "doeScreening|"
 msgid "Design Display"
 msgstr ""
@@ -2108,10 +1980,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Calculate desirability"
-msgstr ""
-
 msgctxt "Description|"
 msgid "Factorial Design"
 msgstr ""
@@ -2158,10 +2026,6 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Model Terms"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Pareto Plot of Standardized Effects"
 msgstr ""
 
 msgctxt "doeFactorial|"
@@ -2303,4 +2167,76 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Full quadratic"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Run order"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Equal to row number"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show regression equation"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Automatically code/standardize factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Plots"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals matrix plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Pareto Plot of Effects"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour/surface plots"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Plot type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Surface plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Available continuous predictors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Plotting variables"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour/surface plot options"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show legend next to graph"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Divide response surface into N parts"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Rotating angle (vertical plane)"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Rotating angle (horizontal plane)"
 msgstr ""

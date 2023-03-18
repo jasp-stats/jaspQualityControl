@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-03-04 03:41\n"
+"POT-Creation-Date: 2023-03-18 03:41\n"
 "PO-Revision-Date: 2022-11-07 09:03+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -232,6 +232,9 @@ msgstr ""
 msgid "%s Coefficients"
 msgstr "系数"
 
+msgid "Alias"
+msgstr ""
+
 msgid "Term"
 msgstr "项"
 
@@ -249,20 +252,16 @@ msgstr ""
 msgid "Regression Equation in %s Units"
 msgstr "以未编码单位表示的回归方程"
 
-msgid "Alias Structure"
-msgstr "别名结构"
-
-msgid "An error occurred: %1$s"
-msgstr ""
-
-msgid "No aliasing in the model."
-msgstr ""
-
 msgid "Pareto Chart of Standardized Effects"
 msgstr "标准化效果的帕累托图"
 
-msgid "Plotting not possible: The experiment is not a full factorial design."
-msgstr ""
+#, fuzzy
+msgid "Pareto Chart of Unstandardized Effects"
+msgstr "标准化效果的帕累托图"
+
+#, fuzzy
+msgid "Unstandardized Effect"
+msgstr "标准化效应"
 
 #, fuzzy
 msgid "Residuals versus Fitted Values"
@@ -271,6 +270,27 @@ msgstr "残差 vs.拟合值"
 #, fuzzy
 msgid "Residuals versus Run Order"
 msgstr "残差 vs. 运行顺序"
+
+msgid "Matrix residual plot"
+msgstr ""
+
+msgid "Contour plot"
+msgstr ""
+
+msgid "Surface plot"
+msgstr ""
+
+msgid "Contour plots"
+msgstr ""
+
+msgid "Surface plots"
+msgstr ""
+
+msgid "and"
+msgstr ""
+
+msgid "%1$s of %2$s vs %3$s"
+msgstr ""
 
 #, fuzzy
 msgid "The analysis failed with the following error message: %s"
@@ -332,6 +352,9 @@ msgstr ""
 
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr ""
+
+msgid "Alias Structure"
+msgstr "别名结构"
 
 #, fuzzy
 msgid "Factorial Design"

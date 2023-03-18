@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-03-04 03:41\n"
+"POT-Creation-Date: 2023-03-18 03:41\n"
 "PO-Revision-Date: 2023-03-12 20:08+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -228,6 +228,9 @@ msgstr "Unkodierte"
 msgid "%s Coefficients"
 msgstr "%s Koeffizienten"
 
+msgid "Alias"
+msgstr ""
+
 msgid "Term"
 msgstr "Term"
 
@@ -243,28 +246,43 @@ msgstr "unkodierten"
 msgid "Regression Equation in %s Units"
 msgstr "Regressionsgleichung in %s Einheiten"
 
-msgid "Alias Structure"
-msgstr "Aliasstruktur"
-
-msgid "An error occurred: %1$s"
-msgstr "Ein Fehler ist aufgetreten: %1$s"
-
-msgid "No aliasing in the model."
-msgstr ""
-
 msgid "Pareto Chart of Standardized Effects"
 msgstr "Pareto-Diagramm Standardisierter Effekte"
 
-msgid "Plotting not possible: The experiment is not a full factorial design."
-msgstr ""
-"Diagramm unmöglich: Das Experiment ist kein vollständiges faktorielles "
-"Design."
+#, fuzzy
+msgid "Pareto Chart of Unstandardized Effects"
+msgstr "Pareto-Diagramm Standardisierter Effekte"
+
+#, fuzzy
+msgid "Unstandardized Effect"
+msgstr "Standardisierter Effekt"
 
 msgid "Residuals versus Fitted Values"
 msgstr "Residuen vs. angepasste Werte"
 
 msgid "Residuals versus Run Order"
 msgstr "Residuen vs. Ablaufreihenfolge"
+
+msgid "Matrix residual plot"
+msgstr ""
+
+msgid "Contour plot"
+msgstr ""
+
+msgid "Surface plot"
+msgstr ""
+
+msgid "Contour plots"
+msgstr ""
+
+msgid "Surface plots"
+msgstr ""
+
+msgid "and"
+msgstr ""
+
+msgid "%1$s of %2$s vs %3$s"
+msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %s"
@@ -317,6 +335,9 @@ msgstr "Das Design ist exportiert als '%1$s'."
 
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr ""
+
+msgid "Alias Structure"
+msgstr "Aliasstruktur"
 
 msgid "Factorial Design"
 msgstr "Faktorielles Design"
@@ -1371,6 +1392,15 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "An error occurred: %1$s"
+#~ msgstr "Ein Fehler ist aufgetreten: %1$s"
+
+#~ msgid ""
+#~ "Plotting not possible: The experiment is not a full factorial design."
+#~ msgstr ""
+#~ "Diagramm unmöglich: Das Experiment ist kein vollständiges faktorielles "
+#~ "Design."
 
 #~ msgid "This plot is unavailable for saturated designs."
 #~ msgstr "Dieses Diagramm ist für gesättigte Designs nicht verfügbar."
