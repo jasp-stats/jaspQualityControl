@@ -35,7 +35,7 @@
   plotMat[[1,1]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups,
                                warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
   plotMat[[2,1]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups,
-                            warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
+                            Wide = wideFormat, manualTicks = options$manualTicks)$p
   matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
 }
 
@@ -96,14 +96,27 @@
     UCL <- limits$UCL
     LCL <- limits$LCL
   }
-  
-  # arrange data for CL in df
-  cl_plot <- data.frame(LCL = LCL, UCL = UCL, center = center, subgroups = subgroups)
-  # repeat last observation and offset all but first subgroup by -.5 to align on x-axis
-  cl_plot <- rbind(cl_plot, data.frame(LCL = cl_plot$LCL[nrow(cl_plot)],
-                                       UCL = cl_plot$UCL[nrow(cl_plot)],
-                                       center = cl_plot$center[nrow(cl_plot)],
-                                       subgroups = cl_plot$subgroups[nrow(cl_plot)] + 1))
+  # upper and lower warning limits at 1 sd and 2sd
+    WL1 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 1)
+    WL2 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 2)
+    UWL1 <- WL1$UCL
+    LWL1 <- WL1$LCL
+    UWL2 <- WL2$UCL
+    LWL2 <- WL2$LCL
+    
+    # arrange data for CL in df
+    cl_plot <- data.frame(LCL = LCL, UCL = UCL, center = center, subgroups = subgroups,
+                          UWL1 = UWL1, LWL1 = LWL1, UWL2 = UWL2, LWL2 = LWL2)
+    # repeat last observation and offset all but first subgroup by -.5 to align on x-axis
+    cl_plot <- rbind(cl_plot, data.frame(LCL = cl_plot$LCL[nrow(cl_plot)],
+                                         UCL = cl_plot$UCL[nrow(cl_plot)],
+                                         center = cl_plot$center[nrow(cl_plot)],
+                                         subgroups = cl_plot$subgroups[nrow(cl_plot)] + 1,
+                                         UWL1 = cl_plot$UWL1[nrow(cl_plot)],
+                                         LWL1 = cl_plot$LWL1[nrow(cl_plot)],
+                                         UWL2 = cl_plot$UWL2[nrow(cl_plot)],
+                                         LWL2 = cl_plot$LWL2[nrow(cl_plot)]
+    ))
   cl_plot$subgroups[-1] <- cl_plot$subgroups[-1] - .5
   
   
@@ -119,7 +132,7 @@
   else
     nxBreaks <- 5
   xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
-  xLimits <- c(range(cl_plot$subgroups))
+  xLimits <- c(1, max(xBreaks) * 1.15)
   
   # get (one of) the most frequent centers, LCL and UCL to display them
   centerDisplay <- as.numeric(names(sort(-table(center)))[1])
@@ -144,9 +157,14 @@
     ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1)
     
   if (warningLimits) {
-    warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
+    p <- p + ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UWL1), col = "orange",
+                                size = 1, linetype = "dashed") +
+      ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LWL1), col = "orange",
+                         size = 1, linetype = "dashed") +
+      ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UWL2), col = "orange",
+                         size = 1, linetype = "dashed") +
+      ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LWL2), col = "orange",
+                         size = 1, linetype = "dashed")
   }
   if (yAxis) {
     p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab), limits = yLimits, breaks = yBreaks)
@@ -172,12 +190,6 @@
     jaspGraphs::geom_line(color = "blue", size = lineSize) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
-
-  if (warningLimits) {
-    warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
-  }
 
   # Out of control red dots marking
   if (Phase2)
@@ -216,7 +228,7 @@
 }
 
 # Function to create R chart
-.Rchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,
+.Rchart <- function(dataset, options, manualLimits = "", manualSubgroups = "", yAxis = TRUE,
                     plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = "", yAxisLab = gettext("Sample range"),
                     xAxisLab = gettext("Subgroup"), manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE,
                     OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE, manualTicks = FALSE,
@@ -310,11 +322,6 @@
                        size = 1.5, linetype = "dashed") +
     ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1)
   
-  if (warningLimits) {
-    warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
-  }
   if (yAxis){
     p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab) ,limits = yLimits, breaks = yBreaks)
   }else{

@@ -115,7 +115,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                              manualTicks = options$manualTicks, sdType = "r",
                              controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
                              manualXaxis = subgroups)
-        Rchart <- .Rchart(dataset = dataset[measurements], options = options, warningLimits = FALSE, Phase2 = options$Phase2,
+        Rchart <- .Rchart(dataset = dataset[measurements], options = options, Phase2 = options$Phase2,
                           target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks,
                           controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"), manualXaxis = subgroups)
         jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
