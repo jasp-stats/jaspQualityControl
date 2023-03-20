@@ -8,7 +8,7 @@ options$Wlimits <- TRUE
 set.seed(1)
 results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Long.csv", options)
 
-# R cahrt
+# R chart
 test_that("X-bar & R Control Chart plot matches", {
   skip("This test is broken and needs to be revisited. .PClongTowide is called with incorrect arguments.")
   plotName <- results[["results"]][["XbarPlot"]][["data"]]

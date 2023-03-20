@@ -82,7 +82,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     }
     plot <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
     plot$dependOn("rangeRchart")
-    p <- .Rchart(dataset = dataset[measurements], options = options, warningLimits = FALSE)$p
+    p <- .Rchart(dataset = dataset[measurements], options = options)$p
     plot$plotObject <- p
     jaspResults[["rangeRchart"]] <- plot
   }
