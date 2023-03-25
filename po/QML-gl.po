@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-03-18 10:38+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Galician <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/gl/>\n"
+"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 "X-Language: gl\n"
 "X-Qt-Contexts: true\n"
 
@@ -2173,80 +2179,74 @@ msgctxt "doeAnalysis|"
 msgid "Full quadratic"
 msgstr "Cuadrática completa"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Run order"
 msgstr "Orde de execución"
 
 msgctxt "doeAnalysis|"
 msgid "Equal to row number"
-msgstr ""
+msgstr "Igual ao número de filas"
 
 msgctxt "doeAnalysis|"
 msgid "Show regression equation"
-msgstr ""
+msgstr "Amosar a ecuación da regresión"
 
 msgctxt "doeAnalysis|"
 msgid "Automatically code/standardize factors"
-msgstr ""
+msgstr "Codificar/tipificar automaticamente os factores"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Plots"
 msgstr "Gráficas"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals matrix plot"
-msgstr ""
+msgstr "Gráfica de matriz dos erros"
 
 msgctxt "doeAnalysis|"
 msgid "Pareto Plot of Effects"
-msgstr ""
+msgstr "Gráfica dos Efectos de Pareto"
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plots"
-msgstr ""
+msgstr "Gráficas de superficie/contorno"
 
 msgctxt "doeAnalysis|"
 msgid "Plot type"
-msgstr ""
+msgstr "Tipo de gráfica"
 
 msgctxt "doeAnalysis|"
 msgid "Contour plot"
-msgstr ""
+msgstr "Gráfica de contorno"
 
 msgctxt "doeAnalysis|"
 msgid "Surface plot"
-msgstr ""
+msgstr "Gráfica de superficie"
 
 msgctxt "doeAnalysis|"
 msgid "Available continuous predictors"
-msgstr ""
+msgstr "Preditores continuos dispoñibles"
 
 msgctxt "doeAnalysis|"
 msgid "Plotting variables"
-msgstr ""
+msgstr "Variables da representación"
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plot options"
-msgstr ""
+msgstr "Opcións da gráfica de superficie/contorno"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Show legend next to graph"
 msgstr "Amosar a lenda a carón da gráfica"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Divide response surface into N parts"
 msgstr "Dividir a superficie de resposta en N partes"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Rotating angle (vertical plane)"
 msgstr "Ángulo de rotación (plano vertical)"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Rotating angle (horizontal plane)"
 msgstr "Ángulo de rotación (plano horizontal)"
