@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-03-04 03:41\n"
+"POT-Creation-Date: 2023-03-18 03:41\n"
 "PO-Revision-Date: 2023-01-11 15:53+0000\n"
 "Last-Translator: Don van den Bergh <donvdbergh@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -227,6 +227,9 @@ msgstr ""
 msgid "%s Coefficients"
 msgstr "Coëfficiënten"
 
+msgid "Alias"
+msgstr ""
+
 msgid "Term"
 msgstr ""
 
@@ -242,25 +245,40 @@ msgstr ""
 msgid "Regression Equation in %s Units"
 msgstr ""
 
-msgid "Alias Structure"
-msgstr ""
-
-msgid "An error occurred: %1$s"
-msgstr ""
-
-msgid "No aliasing in the model."
-msgstr ""
-
 msgid "Pareto Chart of Standardized Effects"
 msgstr ""
 
-msgid "Plotting not possible: The experiment is not a full factorial design."
+msgid "Pareto Chart of Unstandardized Effects"
+msgstr ""
+
+msgid "Unstandardized Effect"
 msgstr ""
 
 msgid "Residuals versus Fitted Values"
 msgstr ""
 
 msgid "Residuals versus Run Order"
+msgstr ""
+
+msgid "Matrix residual plot"
+msgstr ""
+
+msgid "Contour plot"
+msgstr ""
+
+msgid "Surface plot"
+msgstr ""
+
+msgid "Contour plots"
+msgstr ""
+
+msgid "Surface plots"
+msgstr ""
+
+msgid "and"
+msgstr ""
+
+msgid "%1$s of %2$s vs %3$s"
 msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
@@ -313,6 +331,9 @@ msgid "The design is exported as '%1$s'."
 msgstr ""
 
 msgid "No aliasing among main effects and 2-factor interactions."
+msgstr ""
+
+msgid "Alias Structure"
 msgstr ""
 
 msgid "Factorial Design"

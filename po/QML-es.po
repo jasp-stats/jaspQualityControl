@@ -47,10 +47,6 @@ msgctxt "doeFactorial|"
 msgid "Resolution"
 msgstr "Resolución"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response"
-msgstr "Respuesta"
-
 msgctxt "msaAttribute|"
 msgid "Operators"
 msgstr "Operadores"
@@ -222,26 +218,6 @@ msgstr "Gráfico C"
 msgctxt "attributesCharts|"
 msgid "u chart"
 msgstr "Gráfico U"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Show analysis and graphs in coded form"
-msgstr "Mostrar análisis y gráficos de forma codificada"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Show legend next to graph"
-msgstr "Mostrar la leyenda al lado del gráfico"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Divide response surface into N parts"
-msgstr "Dividir la superficie de respuesta en N partes"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Rotating angle (vertical plane)"
-msgstr "Ángulo de rotación (plano vertical)"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Rotating angle (horizontal plane)"
-msgstr "Ángulo de rotación (plano horizontal)"
 
 msgctxt "msaAttribute|"
 msgid "Kendall's tau"
@@ -486,14 +462,6 @@ msgstr "Gráfico U' (u prima) de Laney"
 msgctxt "attributesCharts|"
 msgid "X-mR chart"
 msgstr "Gráfico X-mR"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Predictors [Location in coded format]"
-msgstr "Predictores [Posición en formato codificado]"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Only show 2D plot"
-msgstr "Mostrar solo gráfico en 2D"
 
 msgctxt "msaGaugeRR|"
 msgid "Data format"
@@ -811,26 +779,6 @@ msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
 msgstr "Factorial de 2 niveles (especificar el generador)"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Blocks (optional)"
-msgstr "Bloques (opcional)"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Components"
-msgstr "Componentes"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Term Type"
-msgstr "Tipo de Elemento"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "FO + PQ"
-msgstr "FO + PQ"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "FO"
-msgstr "FO"
-
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
 msgstr "Tipo de Diseño del Escrutinio"
@@ -1078,22 +1026,6 @@ msgstr "Capacidad del Instrumento de Tipo 1"
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
 msgstr "Calibre r&R de tipo 2 y 3 (equipo manual/automático)"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Desirability"
-msgstr "Conveniencia"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Minimum [Min/Max]"
-msgstr "Mínimo [Mín/Máx]"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Maximum [Min/Max]"
-msgstr "Máximo [Mín/Máx]"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Target [Min/Target/Max]"
-msgstr "Objetivo [Mín/Objetivo/Máx]"
 
 msgctxt "msaAttribute|"
 msgid "Data format"
@@ -1691,66 +1623,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "High"
 msgstr "Alto"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Analysis"
-msgstr "Análisis del Diseño"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response surface analysis"
-msgstr "Análisis de la superficie de respuesta"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Coefficients table"
-msgstr "Tabla de coeficientes"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual histogram"
-msgstr "Histograma dos errores"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "ANOVA table"
-msgstr "Tabla ANOVA"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Normal residual plot"
-msgstr "Gráfico de errores normales"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Normal plot of standardized effects"
-msgstr "Gráfico normal de efectos tipificados"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Add grid lines"
-msgstr "Añadir las líneas de la cuadrícula"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual vs. fitted plot"
-msgstr "Gráfico de Errores vs. Ajustados"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Pareto plot of standardized effects"
-msgstr "Gráfico de Pareto de efectos tipificados"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Matrix residuals plot"
-msgstr "Gráfico de los errores de la matriz"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour plots"
-msgstr "Gráficos de contorno"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour plot options"
-msgstr "Opciones del gráfico de contorno"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour surface"
-msgstr "Superficie de contorno"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response variable list"
-msgstr "Lista de variables de respuesta"
-
 msgctxt "doeScreening|"
 msgid "Number of factors"
 msgstr "Número de factores"
@@ -2112,10 +1984,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
 msgstr "Repeticiones"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Calculate desirability"
-msgstr "Calcular la conveniencia"
-
 msgctxt "Description|"
 msgid "Factorial Design"
 msgstr "Diseño Factorial"
@@ -2163,10 +2031,6 @@ msgstr "Componentes"
 msgctxt "doeAnalysis|"
 msgid "Model Terms"
 msgstr "Elementos del Modelo"
-
-msgctxt "doeAnalysis|"
-msgid "Pareto Plot of Standardized Effects"
-msgstr "Gráfico de Pareto de Efectos Tipificados"
 
 msgctxt "doeFactorial|"
 msgid "Maximum levels"
@@ -2308,3 +2172,81 @@ msgstr "Términos lineales y al cuadrado"
 msgctxt "doeAnalysis|"
 msgid "Full quadratic"
 msgstr "Cuadrática total"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Run order"
+msgstr "Orden de ejecución"
+
+msgctxt "doeAnalysis|"
+msgid "Equal to row number"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show regression equation"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Automatically code/standardize factors"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Plots"
+msgstr "Gráficos"
+
+msgctxt "doeAnalysis|"
+msgid "Residuals matrix plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Pareto Plot of Effects"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour/surface plots"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Plot type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Surface plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Available continuous predictors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Plotting variables"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour/surface plot options"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Show legend next to graph"
+msgstr "Mostrar la leyenda al lado del gráfico"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Divide response surface into N parts"
+msgstr "Dividir la superficie de respuesta en N partes"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Rotating angle (vertical plane)"
+msgstr "Ángulo de rotación (plano vertical)"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Rotating angle (horizontal plane)"
+msgstr "Ángulo de rotación (plano horizontal)"

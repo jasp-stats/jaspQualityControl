@@ -21,7 +21,6 @@ options$TypeChart <- "Schart"
 results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Long.csv", options)
 
 test_that("X-bar & s Control Chart plot matches", {
-  results <- runAnalysis("variablesChartsSubgroups", "SPCSubgroups_Long.csv", options)
   plotName <- results[["results"]][["SPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart")

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-03-04 03:41\n"
-"PO-Revision-Date: 2023-02-19 10:50+0000\n"
+"POT-Creation-Date: 2023-03-18 03:41\n"
+"PO-Revision-Date: 2023-03-12 20:08+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr "Kumulative-Summe-Karte"
@@ -220,14 +220,16 @@ msgid "ANOVA"
 msgstr "ANOVA"
 
 msgid "Coded"
-msgstr ""
+msgstr "Kodierte"
 
 msgid "Uncoded"
-msgstr ""
+msgstr "Unkodierte"
 
-#, fuzzy
 msgid "%s Coefficients"
-msgstr "Koeffizienten"
+msgstr "%s Koeffizienten"
+
+msgid "Alias"
+msgstr ""
 
 msgid "Term"
 msgstr "Term"
@@ -236,37 +238,51 @@ msgid "Effect"
 msgstr "Effekt"
 
 msgid "coded"
-msgstr ""
+msgstr "kodierten"
 
 msgid "uncoded"
-msgstr ""
+msgstr "unkodierten"
 
-#, fuzzy
 msgid "Regression Equation in %s Units"
-msgstr "Regressionsgleichung in unkodierten Einheiten"
-
-msgid "Alias Structure"
-msgstr "Aliasstruktur"
-
-msgid "An error occurred: %1$s"
-msgstr "Ein Fehler ist aufgetreten: %1$s"
-
-msgid "No aliasing in the model."
-msgstr ""
+msgstr "Regressionsgleichung in %s Einheiten"
 
 msgid "Pareto Chart of Standardized Effects"
 msgstr "Pareto-Diagramm Standardisierter Effekte"
 
-msgid "Plotting not possible: The experiment is not a full factorial design."
-msgstr ""
-"Diagramm unmöglich: Das Experiment ist kein vollständiges faktorielles "
-"Design."
+#, fuzzy
+msgid "Pareto Chart of Unstandardized Effects"
+msgstr "Pareto-Diagramm Standardisierter Effekte"
+
+#, fuzzy
+msgid "Unstandardized Effect"
+msgstr "Standardisierter Effekt"
 
 msgid "Residuals versus Fitted Values"
 msgstr "Residuen vs. angepasste Werte"
 
 msgid "Residuals versus Run Order"
 msgstr "Residuen vs. Ablaufreihenfolge"
+
+msgid "Matrix residual plot"
+msgstr ""
+
+msgid "Contour plot"
+msgstr ""
+
+msgid "Surface plot"
+msgstr ""
+
+msgid "Contour plots"
+msgstr ""
+
+msgid "Surface plots"
+msgstr ""
+
+msgid "and"
+msgstr ""
+
+msgid "%1$s of %2$s vs %3$s"
+msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %s"
@@ -319,6 +335,9 @@ msgstr "Das Design ist exportiert als '%1$s'."
 
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr ""
+
+msgid "Alias Structure"
+msgstr "Aliasstruktur"
 
 msgid "Factorial Design"
 msgstr "Faktorielles Design"
@@ -1373,6 +1392,15 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "An error occurred: %1$s"
+#~ msgstr "Ein Fehler ist aufgetreten: %1$s"
+
+#~ msgid ""
+#~ "Plotting not possible: The experiment is not a full factorial design."
+#~ msgstr ""
+#~ "Diagramm unmöglich: Das Experiment ist kein vollständiges faktorielles "
+#~ "Design."
 
 #~ msgid "This plot is unavailable for saturated designs."
 #~ msgstr "Dieses Diagramm ist für gesättigte Designs nicht verfügbar."

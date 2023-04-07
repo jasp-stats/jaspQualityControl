@@ -115,38 +115,6 @@ msgctxt "doeFactorial|"
 msgid "Resolution"
 msgstr "分辨度"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Predictors [Location in coded format]"
-msgstr "预测变量 [编码格式的位置]"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response"
-msgstr "响应"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Only show 2D plot"
-msgstr "仅显示 2D 图形"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Show analysis and graphs in coded form"
-msgstr "以编码形式显示分析和图表"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Show legend next to graph"
-msgstr "在图形旁边显示图例"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Divide response surface into N parts"
-msgstr "将响应曲面分为 N 个部分"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Rotating angle (vertical plane)"
-msgstr "旋转角度(垂直方向）"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Rotating angle (horizontal plane)"
-msgstr "旋转角度(水平方向)"
-
 msgctxt "msaAttribute|"
 msgid "Operators"
 msgstr "操作者"
@@ -811,26 +779,6 @@ msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
 msgstr "二水平因子（指定生成元）"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Blocks (optional)"
-msgstr "区组（可选）"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Components"
-msgstr "组成部分"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Term Type"
-msgstr "项类型"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "FO + PQ"
-msgstr "FO + PQ"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "FO"
-msgstr "FO"
-
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
 msgstr "筛选设计类型"
@@ -1076,22 +1024,6 @@ msgstr "类型 1 量具能力"
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
 msgstr "类型 2 和 3 量具 r&R (手动/自动测量设备）"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Desirability"
-msgstr "合意度"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Minimum [Min/Max]"
-msgstr "望小 [最小/最大]"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Maximum [Min/Max]"
-msgstr "望大 [最小/最大]"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Target [Min/Target/Max]"
-msgstr "望目 [最小/目标/最大]"
 
 msgctxt "msaAttribute|"
 msgid "Data format"
@@ -1689,69 +1621,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "High"
 msgstr ""
 
-#, fuzzy
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Analysis"
-msgstr "设计分析"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response surface analysis"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Coefficients table"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual histogram"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "ANOVA table"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Normal residual plot"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Normal plot of standardized effects"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Add grid lines"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual vs. fitted plot"
-msgstr ""
-
-#, fuzzy
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Pareto plot of standardized effects"
-msgstr "标准化效应Pareto图"
-
-#, fuzzy
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Matrix residuals plot"
-msgstr "矩阵残差图"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour plots"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour plot options"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour surface"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response variable list"
-msgstr ""
-
 msgctxt "doeScreening|"
 msgid "Number of factors"
 msgstr ""
@@ -2115,10 +1984,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Calculate desirability"
-msgstr ""
-
 msgctxt "Description|"
 msgid "Factorial Design"
 msgstr ""
@@ -2172,11 +2037,6 @@ msgstr "组成部分"
 msgctxt "doeAnalysis|"
 msgid "Model Terms"
 msgstr "模型项"
-
-#, fuzzy
-msgctxt "doeAnalysis|"
-msgid "Pareto Plot of Standardized Effects"
-msgstr "标准化效应 Pareto 图"
 
 msgctxt "doeFactorial|"
 msgid "Maximum levels"
@@ -2320,3 +2180,80 @@ msgstr ""
 msgctxt "doeAnalysis|"
 msgid "Full quadratic"
 msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Run order"
+msgstr "运行序"
+
+msgctxt "doeAnalysis|"
+msgid "Equal to row number"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show regression equation"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Automatically code/standardize factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Plots"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals matrix plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Pareto Plot of Effects"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour/surface plots"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Plot type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Surface plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Available continuous predictors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Plotting variables"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour/surface plot options"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Show legend next to graph"
+msgstr "在图形旁边显示图例"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Divide response surface into N parts"
+msgstr "将响应曲面分为 N 个部分"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Rotating angle (vertical plane)"
+msgstr "旋转角度(垂直方向）"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Rotating angle (horizontal plane)"
+msgstr "旋转角度(水平方向)"
