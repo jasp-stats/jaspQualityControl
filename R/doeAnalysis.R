@@ -102,6 +102,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   
+  
+  # set the contrasts for all categorical variables, add option to choose later
+  for (fac in unlist(options[["fixedFactors"]])) {
+    contrasts(dataset[[fac]]) <- "contr.sum"
+  }
+  
   # Transform to coded, -1 to 1 coding.
   if (options[["codeFactors"]]) {
     allVars <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]), options[["blocks"]])
