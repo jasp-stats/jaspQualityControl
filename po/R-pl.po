@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
 "POT-Creation-Date: 2023-03-18 03:41\n"
-"PO-Revision-Date: 2023-04-13 17:11+0000\n"
+"PO-Revision-Date: 2023-04-14 22:52+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pl/>\n"
@@ -231,10 +231,10 @@ msgid "Alias"
 msgstr ""
 
 msgid "Term"
-msgstr ""
+msgstr "Składniki"
 
 msgid "Effect"
-msgstr ""
+msgstr "Efekt"
 
 msgid "coded"
 msgstr ""
@@ -315,7 +315,7 @@ msgid "Total blocks"
 msgstr ""
 
 msgid "Value"
-msgstr ""
+msgstr "Wartość"
 
 msgid "Please select a row in the design table."
 msgstr ""
@@ -509,7 +509,7 @@ msgid "df2"
 msgstr ""
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "ANOVA for %s"
 msgstr ""
@@ -1081,7 +1081,7 @@ msgid "Parameter"
 msgstr ""
 
 msgid "Estimate"
-msgstr ""
+msgstr "Oszacowanie"
 
 msgid ""
 "Fitting the model failed with the following error message:\n"
@@ -1089,7 +1089,7 @@ msgid ""
 msgstr ""
 
 msgid "Intercept"
-msgstr ""
+msgstr "Wyraz wolny"
 
 msgid ""
 "The IWLS algorithm did not converge. Interpret the results with caution."
@@ -1103,7 +1103,7 @@ msgid "Fit Table"
 msgstr ""
 
 msgid "AIC"
-msgstr ""
+msgstr "AIC"
 
 msgid "Detection Plot"
 msgstr ""
