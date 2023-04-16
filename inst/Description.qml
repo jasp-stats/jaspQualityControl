@@ -6,7 +6,7 @@ Description
 	name:				"jaspQualityControl"
 	title:				qsTr("Quality Control")
 	description:		qsTr("Investigate if a manufactured product adheres to a defined set of quality criteria")
-	version:			"0.17.1"
+	version:			"0.17.2"
 	author:				"JASP Team"
 	maintainer:			"JASP <info@jasp-stats.org>"
 	website:			"https://github.com/jasp-stats/jaspQualityControl"
