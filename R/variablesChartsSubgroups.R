@@ -297,7 +297,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xBreaks_Out[xBreaks])
     } else{
-      xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
+      xBreaks_Out <- unique(manualXaxis) # use unique to preserve original order unlike levels
       xLabels <- xBreaks_Out[xBreaks]
       
       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
