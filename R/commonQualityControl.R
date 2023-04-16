@@ -208,14 +208,13 @@
     if (GaugeRR | Wide){
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xBreaks_Out[xBreaks])
-    }
-    else{
-      xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
-      xLabels <- xBreaks_Out[xBreaks]
-      xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-
-      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
-    }
+    } else {
+      
+       xBreaks_Out <- unique(manualXaxis) # use unique to preserve original order unlike levels
+       xLabels <- xBreaks_Out[xBreaks]
+       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
+       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
+     }
   }
 
 
@@ -352,14 +351,12 @@
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xBreaks_Out[xBreaks])
     }
-    else{
-      xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
-      xLabels <- xBreaks_Out[xBreaks]
-
-      xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-
-      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
-    }
+     else{
+       xBreaks_Out <- unique(manualXaxis)  # use unique to preserve original order unlike levels
+       xLabels <- xBreaks_Out[xBreaks]
+       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
+       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
+     }
   }
 
   if (OnlyOutofLimit)
