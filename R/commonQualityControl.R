@@ -35,7 +35,7 @@
   plotMat[[1,1]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups,
                                warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
   plotMat[[2,1]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups,
-                            warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
+                            Wide = wideFormat, manualTicks = options$manualTicks)$p
   matrixPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = 1, nrow = 2)
 }
 
@@ -56,20 +56,34 @@
 .Xbarchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,
                        plotLimitLabels = TRUE, yAxisLab = gettext("Sample average"), xAxisLab = gettext("Subgroup"), manualDataYaxis = "",
                        manualXaxis = "", manualTicks = FALSE, title = "", smallLabels = FALSE, Phase2 = FALSE,
-                       target = NULL, sd = NULL, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE) {
+                       target = NULL, sd = NULL, OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE, sdType = c("r", "s"),
+                       controlLimitsPerGroup = FALSE) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
+  sdType <- match.arg(sdType) 
   if(Phase2)
     sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
-  else
-    sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE)
+  else {
+    #hand calculate mean and sd as the package gives wrong results with NAs
+    mu <- mean(unlist(data), na.rm = TRUE)
+    sigma <- .sdXbar(df = data, type = sdType)
+    sixsigma <- qcc::qcc(data, type ='xbar', plot = FALSE, center = mu, sizes = ncol(data), std.dev = sigma)
+  }
+  
+  #calculate group sizes
+  n <- apply(data, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+  if (!controlLimitsPerGroup) # if control limits are not calculated per group they are based on largest group size
+    n <- max(n)
+  
+  if (length(sixsigma$statistics) == 1)
+    OnlyOutofLimit <- TRUE  # other rules don't apply if only 1 group
 
   if (!identical(manualSubgroups, "")) {
     subgroups <- manualSubgroups
   } else {
-    subgroups = c(1:length(sixsigma$statistics))
+    subgroups <- c(1:length(sixsigma$statistics))
   }
-  means = sixsigma$statistics
+  means <- sixsigma$statistics
   data_plot <- data.frame(subgroups = subgroups, means = means)
   sd1 <- sixsigma$std.dev
   if (!identical(manualLimits, "")) {
@@ -77,10 +91,35 @@
     center <- manualLimits[2]
     UCL <- manualLimits[3]
   } else {
-    center <- sixsigma$center
-    UCL <- max(sixsigma$limits)
-    LCL <- min(sixsigma$limits)
+    limits <- .controlLimits(mu, sigma, n = n, type = "xbar")
+    center <- mu
+    UCL <- limits$UCL
+    LCL <- limits$LCL
   }
+  # upper and lower warning limits at 1 sd and 2sd
+    WL1 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 1)
+    WL2 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 2)
+    UWL1 <- WL1$UCL
+    LWL1 <- WL1$LCL
+    UWL2 <- WL2$UCL
+    LWL2 <- WL2$LCL
+    
+    # arrange data for CL in df
+    cl_plot <- data.frame(LCL = LCL, UCL = UCL, center = center, subgroups = subgroups,
+                          UWL1 = UWL1, LWL1 = LWL1, UWL2 = UWL2, LWL2 = LWL2)
+    # repeat last observation and offset all but first subgroup by -.5 to align on x-axis
+    cl_plot <- rbind(cl_plot, data.frame(LCL = cl_plot$LCL[nrow(cl_plot)],
+                                         UCL = cl_plot$UCL[nrow(cl_plot)],
+                                         center = cl_plot$center[nrow(cl_plot)],
+                                         subgroups = cl_plot$subgroups[nrow(cl_plot)] + 1,
+                                         UWL1 = cl_plot$UWL1[nrow(cl_plot)],
+                                         LWL1 = cl_plot$LWL1[nrow(cl_plot)],
+                                         UWL2 = cl_plot$UWL2[nrow(cl_plot)],
+                                         LWL2 = cl_plot$LWL2[nrow(cl_plot)]
+    ))
+  cl_plot$subgroups[-1] <- cl_plot$subgroups[-1] - .5
+  
+  
   if (!identical(manualDataYaxis, "")) {
     manualMeans <- rowMeans(manualDataYaxis)
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, manualMeans))
@@ -93,27 +132,42 @@
   else
     nxBreaks <- 5
   xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
-  xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
+  xLimits <- c(1, max(xBreaks) * 1.15)
+  
+  # get (one of) the most frequent centers, LCL and UCL to display them
+  centerDisplay <- as.numeric(names(sort(-table(center)))[1])
+  LCLDisplay <- as.numeric(names(sort(-table(LCL)))[1])
+  UCLDisplay <- as.numeric(names(sort(-table(UCL)))[1])
+  
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
+    y = c(centerDisplay, UCLDisplay, LCLDisplay),
     l = c(
-      gettextf("CL = %g", round(center, decimals + 1)),
-      gettextf("UCL = %g",   round(UCL, decimals + 2)),
-      gettextf("LCL = %g",   round(LCL, decimals + 2))
+      gettextf("CL = %g", round(centerDisplay, decimals + 1)),
+      gettextf("UCL = %g",   round(UCLDisplay, decimals + 2)),
+      gettextf("LCL = %g",   round(LCLDisplay, decimals + 2))
     )
   )
-
-  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green', size = 1) +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5)
+  
+    p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1)
+    
   if (warningLimits) {
-    warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
+    p <- p + ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UWL1), col = "orange",
+                                size = 1, linetype = "dashed") +
+      ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LWL1), col = "orange",
+                         size = 1, linetype = "dashed") +
+      ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UWL2), col = "orange",
+                         size = 1, linetype = "dashed") +
+      ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LWL2), col = "orange",
+                         size = 1, linetype = "dashed")
   }
   if (yAxis) {
-    p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab) ,limits = yLimits, breaks = yBreaks)
+    p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab), limits = yLimits, breaks = yBreaks)
   } else {
     p <- p + ggplot2::scale_y_continuous(name = ggplot2::element_blank(), limits = yLimits, breaks = yBreaks, labels = NULL) +
       ggplot2::theme(axis.line.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
@@ -137,12 +191,6 @@
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
 
-  if (warningLimits) {
-    warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
-  }
-
   # Out of control red dots marking
   if (Phase2)
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
@@ -160,23 +208,13 @@
     if (GaugeRR | Wide){
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xBreaks_Out[xBreaks])
-    }
-    else{
-      xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
-      xLabels <- xBreaks_Out[xBreaks]
-      xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-      dfLabel <- data.frame(
-        x = max(xLimits) * 0.95,
-        y = c(center, UCL, LCL),
-        l = c(
-          gettextf("CL = %g", round(center, decimals + 1)),
-          gettextf("UCL = %g",   round(UCL, decimals + 2)),
-          gettextf("LCL = %g",   round(LCL, decimals + 2))
-        )
-      )
-
-      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
-    }
+    } else {
+      
+       xBreaks_Out <- unique(manualXaxis) # use unique to preserve original order unlike levels
+       xLabels <- xBreaks_Out[xBreaks]
+       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
+       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
+     }
   }
 
 
@@ -189,15 +227,32 @@
 }
 
 # Function to create R chart
-.Rchart <- function(dataset, options, manualLimits = "", warningLimits = TRUE, manualSubgroups = "", yAxis = TRUE,
+.Rchart <- function(dataset, options, manualLimits = "", manualSubgroups = "", yAxis = TRUE,
                     plotLimitLabels = TRUE, Phase2 = FALSE, target = NULL, sd = "", yAxisLab = gettext("Sample range"),
                     xAxisLab = gettext("Subgroup"), manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE,
-                    OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE, manualTicks = FALSE) {
+                    OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE, manualTicks = FALSE,
+                    controlLimitsPerGroup = FALSE) {
 
-  #Arrange data and compute
+  #remove rows with single observation as no meaningful range and no CL can be computed
+  rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
+  if (length(rowRemovalIndex) != 0)
+    dataset <- dataset[-rowRemovalIndex, ]
+  
+  #Arrange data and compute decimals
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
-  sixsigma <- qcc::qcc(data, type ='R', plot = FALSE)
+  
+  n <- apply(data, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+  if (!controlLimitsPerGroup) # if control limits are not calculated per group they are based on largest group size
+    n <- max(n)
+  #hand calculate mean and sd as the package gives wrong results with NAs
+  sigma <- .sdXbar(df = data, type = "r")
+  d2 <- sapply(n, function(x) KnownControlStats.RS(x, 0)$constants[1])
+  mu <- sigma * d2
+  sixsigma <- qcc::qcc(data, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(data))
+  
+  if (length(sixsigma$statistics) == 1)
+    OnlyOutofLimit <- TRUE  # other rules don't apply if only 1 group
 
   if(Phase2 && sd != "")
     sixsigma <- list(statistics = sixsigma$statistics,
@@ -215,11 +270,22 @@
     LCL <- manualLimits[1]
     center <- manualLimits[2]
     UCL <- manualLimits[3]
-  }else{
-    center <- sixsigma$center
-    UCL <- max(sixsigma$limits)
-    LCL <- min(sixsigma$limits)
+  }else{  
+    limits <- .controlLimits(mu, sigma, n = n, type = "r")
+    center <- mu
+    UCL <- limits$UCL
+    LCL <- limits$LCL
   }
+  # arrange data for CL in df
+  cl_plot <- data.frame(LCL = LCL, UCL = UCL, center = center, subgroups = subgroups)
+  # repeat last observation and offset all but first subgroup by -.5 to align on x-axis
+  cl_plot <- rbind(cl_plot, data.frame(LCL = cl_plot$LCL[nrow(cl_plot)],
+                                       UCL = cl_plot$UCL[nrow(cl_plot)],
+                                       center = cl_plot$center[nrow(cl_plot)],
+                                       subgroups = cl_plot$subgroups[nrow(cl_plot)] + 1))
+  cl_plot$subgroups[-1] <- cl_plot$subgroups[-1] - .5
+  
+  
   if (!identical(manualDataYaxis, "")) {
     manualRange <- apply(manualDataYaxis, 1, function(x) max(x) - min(x))
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, manualRange))
@@ -233,24 +299,28 @@
     nxBreaks <- 5
   xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
+  # get (one of) the most frequent centers, LCL and UCL to display them
+  centerDisplay <- as.numeric(names(sort(-table(center)))[1])
+  LCLDisplay <- as.numeric(names(sort(-table(LCL)))[1])
+  UCLDisplay <- as.numeric(names(sort(-table(UCL)))[1])
+  
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
+    y = c(centerDisplay, UCLDisplay, LCLDisplay),
     l = c(
-      gettextf("CL = %g", round(center, decimals + 1)),
-      gettextf("UCL = %g",   round(UCL, decimals + 2)),
-      gettextf("LCL = %g",   round(LCL, decimals + 2))
+      gettextf("CL = %g", round(centerDisplay, decimals + 1)),
+      gettextf("UCL = %g",   round(UCLDisplay, decimals + 2)),
+      gettextf("LCL = %g",   round(LCLDisplay, decimals + 2))
     )
   )
 
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
-    ggplot2::geom_hline(yintercept = center,  color = 'green', size = 1) +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", , linetype = "dashed", size = 1.5)
-  if (warningLimits) {
-    warn.limits <- c(qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 1),
-                     qcc::limits.xbar(sixsigma$center, sixsigma$std.dev, sixsigma$sizes, 2))
-    p <- p + ggplot2::geom_hline(yintercept = warn.limits, color = "orange", linetype = "dashed", size = 1)
-  }
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1)
+  
   if (yAxis){
     p <- p + ggplot2::scale_y_continuous(name = gettext(yAxisLab) ,limits = yLimits, breaks = yBreaks)
   }else{
@@ -281,23 +351,12 @@
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xBreaks_Out[xBreaks])
     }
-    else{
-      xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
-      xLabels <- xBreaks_Out[xBreaks]
-
-      xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-      dfLabel <- data.frame(
-        x = max(xLimits) * 0.95,
-        y = c(center, UCL, LCL),
-        l = c(
-          gettextf("CL = %g", round(center, decimals + 1)),
-          gettextf("UCL = %g",   round(UCL, decimals + 2)),
-          gettextf("LCL = %g",   round(LCL, decimals + 2))
-        )
-      )
-
-      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
-    }
+     else{
+       xBreaks_Out <- unique(manualXaxis)  # use unique to preserve original order unlike levels
+       xLabels <- xBreaks_Out[xBreaks]
+       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
+       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
+     }
   }
 
   if (OnlyOutofLimit)
@@ -319,7 +378,7 @@
 }
 
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
-
+  
   # Adjust Rules to SKF
   pars <- Rspc::SetParameters()
   pars$Rule2$nPoints = 7
@@ -337,7 +396,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       warnings[i,] <- warningsRaw
     }
   } else{
-    warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = data$limits[1,1], ucl = data$limits[1,2], cl = data$center, parRules = pars,
+    warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = data$limits[1,1], ucl = data$limits[1,2], cl = data$center[1], parRules = pars,
                                     whichRules = c(1:3,5,7:8))
   }
 
@@ -380,6 +439,9 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 .NelsonTable <- function(dataset, options, sixsigma, type = "xbar", Phase2 = TRUE, name = "X-bar", xLabels = NULL) {
 
   table <- createJaspTable(title = gettextf("Test results for %s chart", name))
+  
+  if (length(sixsigma$statistics) == 1) # no need for table with only 1 group
+    return(table)
 
   if (!Phase2 || type == "xbar.one") {
 
@@ -454,7 +516,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 
 .decimalplaces <- function(x) {
-  x <- unlist(x)
+  x <- na.omit(unlist(x))
   nDecimals <- numeric(length(x))
   for(i in seq_along(x)) {
     if (round(x[i], 10) %% 1 != 0) {   # never more than 10 decimals
@@ -643,7 +705,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   if(!cowPlot){
     ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = plotMat, removeXYlabels= "x")
-  }else{
+  } else {
     ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = nStages, nrow = 2, byrow = FALSE)
   }
 
@@ -652,3 +714,98 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   else
     return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2))
 }
+
+.sdXbar <- function(df, type = c("s", "r")) {
+  if (type == "r"){
+    rowRanges <- .rowRanges(df)$ranges
+    n <- .rowRanges(df)$n
+    d2s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[1]))
+    sdWithin <- sum((n - 1) * rowRanges / d2s) / sum(n - 1) # Burr (1969), equation 11
+  } else if (type == "s") {
+    rowSd <- apply(df, 1, sd, na.rm = TRUE)
+    sdWithin <- mean(rowSd, na.rm = TRUE)
+  }
+  return(sdWithin)
+} 
+
+.rowRanges <- function(df) {
+  nrow <- nrow(df)
+  ranges <- c()
+  n <- c()
+  for (i in seq_len(nrow)) {
+    rowVector <- df[i,]
+    if (sum((!is.na(rowVector))) < 2) # we need at least 2 values that are not NA to calculate range
+      next
+    ranges <- c(ranges, max(rowVector, na.rm = TRUE) - min(rowVector, na.rm = TRUE))
+    n <- c(n, sum(!is.na(rowVector)))
+  }
+  return(list(ranges = ranges, n = n))
+}
+
+KnownControlStats.RS <- function(N, sigma) {
+  
+  Data.d3 <- data.frame(
+    n = 2:25,
+    d3 = c(0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
+           0.7562, 0.7499, 0.7441, 0.7386, 0.7335, 0.7287, 0.7242, 0.7199, 0.7159, 0.7121, 0.7084))
+  
+  Data.d2 <- data.frame(
+    n = 2:50,
+    d2 = c( 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
+            3.588 ,3.640 ,3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931, 3.964, 3.997, 4.027, 4.057, 4.086, 4.113,
+            4.139 ,4.165 ,4.189, 4.213, 4.236, 4.259, 4.280, 4.301, 4.322, 4.341, 4.361, 4.379, 4.398, 4.415, 4.433,
+            4.450 ,4.466, 4.482, 4.498))
+  
+  if (N > 25 && N <= 50){
+    d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
+    d2 <- Data.d2[N == Data.d2$n,2]
+  } else if (N > 50) {
+    d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
+    d2 <- 2.88606 + 0.051313 * N - 0.00049243 * N^2 + 0.00000188 * N^3
+  } else {
+    d2 <- Data.d2[N == Data.d2$n,2]
+    d3 <- Data.d3[N == Data.d3$n,2]
+  }
+  
+  c4 <- sqrt(2/(N-1)) * gamma(N/2) / gamma((N-1)/2)
+  c5 <- sqrt(1 - c4^2)
+  
+  UCL <- d2 * sigma + 3 * d3 * sigma
+  CL <- d2 * sigma
+  LCL <- max(0, d2 * sigma - 3 * d3 * sigma)
+  
+  return(list(constants = c(d2, d3, c4, c5), limits = data.frame(LCL,UCL), center = CL))
+}
+
+.controlLimits <- function(mu = NA, sigma, n, k = 3, type = c("xbar", "r", "s"), unbiasingConstantUsed = FALSE) {
+  type = match.arg(type)
+  UCLvector <- c()
+  LCLvector <- c()
+  for (i in seq_along(n)) {
+    if (type == "xbar") {
+      UCL <- mu + (k * sigma) / sqrt(n[i])
+      LCL <- mu - (k * sigma) / sqrt(n[i])
+    } else  if (type == "r") {
+      d2 <- KnownControlStats.RS(n[i], 0)$constants[1]
+      d3 <- KnownControlStats.RS(n[i], 0)$constants[2]
+      UCL <- d2 * sigma + k * d3 * sigma
+      LCL <- d2 * sigma - k * d3 * sigma
+      LCL <- max(0, LCL) # LCL in R-chart must be >= 0
+    } else  if (type == "s") {
+      c4 <- KnownControlStats.RS(n[i], 0)$constants[3]
+      c5 <- KnownControlStats.RS(n[i], 0)$constants[4]
+      if (unbiasingConstantUsed) {
+        UCL <- c4 * sigma + k * sigma * c5
+        LCL <- c4 * sigma - k * sigma * c5
+      } else {
+        UCL <- sigma + k * (c5 / c4) * sigma
+        LCL <- sigma - k * (c5 / c4) * sigma
+      }
+      LCL <- max(0, LCL) # LCL in S-chart must be >= 0
+    }
+    UCLvector <- c(UCLvector, UCL)
+    LCLvector <- c(LCLvector, LCL)
+  }
+  return(list(LCL = LCLvector, UCL = UCLvector))
+}
+

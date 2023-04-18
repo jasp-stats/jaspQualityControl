@@ -623,14 +623,14 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     titleVector <- c(titleVector, title)
     if (type == "Range"){
       if (i == 1){
-        p1 <- .Rchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = plotLimitLabels,
+        p1 <- .Rchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, manualSubgroups = manualSubgroups, plotLimitLabels = plotLimitLabels,
                           xAxisLab = xAxisLab, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE, GaugeRR = TRUE)$p
       }else if(i == nOperators){
-        p1 <- p1 <- .Rchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, GaugeRR = TRUE,
+        p1 <- p1 <- .Rchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, manualSubgroups = manualSubgroups, yAxis = FALSE, GaugeRR = TRUE,
                                 xAxisLab = xAxisLab, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }
       else{
-        p1 <- p1 <- .Rchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE, GaugeRR = TRUE,
+        p1 <- p1 <- .Rchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE, GaugeRR = TRUE,
                                 xAxisLab = xAxisLab, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
       }
     }else{

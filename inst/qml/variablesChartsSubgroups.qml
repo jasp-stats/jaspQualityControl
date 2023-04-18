@@ -43,6 +43,16 @@ Form
 
 		AssignedVariablesList
 		{
+			id:									subgroups
+			name:								"subgroups"
+			title:								qsTr("Subgroups")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			visible: 							pcDataFormat.currentValue == "CClongFormat" & subgroupSizeType.value == "groupingVariable"
+		}
+
+		AssignedVariablesList
+		{
 			id:									variables
 			name:								"variables"
 			title:								qsTr("Measurements")
@@ -50,24 +60,73 @@ Form
 			visible:							pcDataFormat.currentValue == "CCwideFormat"
 		}
 
+
+
 		AssignedVariablesList
 		{
-			id:									subgroups
-			name:								"subgroups"
-			title:								qsTr("Subgroups")
+			id:									axisLabels
+			name:								"axisLabels"
+			title:								qsTr("Axis labels")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			visible: 							pcDataFormat.currentValue == "CCwideFormat"
 		}
 	}
 
-	DoubleField
+	Group
 	{
-		id:										pcSubgroupSize
-		name: 									"CCSubgroupSize"
-		label: 									qsTr("Subgroup size")
-		min: 									   2
-		defaultValue:							5
-		visible:								pcDataFormat.currentValue == "CClongFormat"
+
+		RadioButtonGroup
+		{
+			name:								"subgroupSizeType"
+			title: 								qsTr("Specify subgroups")
+			id:									subgroupSizeType
+			visible:							pcDataFormat.currentValue == "CClongFormat"							
+
+			RadioButton
+				{
+					value: 							"groupingVariable"
+					label: 							qsTr("Through grouping variable")
+					checked:		 				true
+				}
+
+				RadioButton
+				{
+					value: 							"manual"
+					label: 							qsTr("Manual subgroup size")
+					childrenOnSameRow:				true
+					
+					DoubleField
+					{
+						name: 									"CCSubgroupSize"
+						min: 									2
+						defaultValue:							5
+					}
+				}
+
+		}
+
+
+
+		RadioButtonGroup
+		{
+			name:								"subgroupSizeUnequal"
+			title: 								qsTr("For unequal subgroup sizes")
+			id:									subgroupSizeUnequal
+			
+			RadioButton
+			{
+				value: 							"assumeEqualSize"
+				label: 							qsTr("Assume equal subgroup sizes (largest subgroup)")
+				checked:		 				true
+			}
+
+			RadioButton
+			{
+				value: 							"actualSizes"
+				label: 							qsTr("Calculate with actual sizes")
+			}
+		}
 	}
 
 	Group
@@ -137,7 +196,7 @@ Form
 		{
 			name:                   			"manualTicks"
 			label: 								qsTr("Number of ticks on x-axis:")
-			childrenOnSameRow: true
+			childrenOnSameRow: 					true
 
 			DoubleField
 			{

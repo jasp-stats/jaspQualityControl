@@ -102,6 +102,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   
+  
+  # set the contrasts for all categorical variables, add option to choose later
+  for (fac in unlist(options[["fixedFactors"]])) {
+    contrasts(dataset[[fac]]) <- "contr.sum"
+  }
+  
   # Transform to coded, -1 to 1 coding.
   if (options[["codeFactors"]]) {
     allVars <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]), options[["blocks"]])
@@ -259,7 +265,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     allPredictors <- unique(unlist(options[["modelTerms"]]))
   }
   termNamesAliased <- termNames
-    #simplify term names to remove possible appended factor levels
+  # remove possible appended factor levels
   regexExpression <- paste0("(", paste(allPredictors, collapse = "|"), ")((\\^2)?)([^^✻]+)(✻?)")
   for (term_i in seq_along(termNamesAliased)) {
     termNamesAliased[term_i] <- gsub(regexExpression, "\\1\\2", termNamesAliased[term_i], perl=TRUE)
@@ -269,6 +275,15 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   for (pred_i in seq_along(allPredictors)) {
     termNamesAliased <- gsub(allPredictors[pred_i], allPredictorsAliases[pred_i], termNamesAliased)
   }
+  # append number if duplicated
+  for(term_j in seq_along(termNamesAliased)){
+    n_occurences <- sum(termNamesAliased == termNamesAliased[term_j])
+    if (n_occurences > 1) {
+      term_indices <- which(termNamesAliased == termNamesAliased[term_j])
+      termNamesAliased[term_indices] <- paste0(termNamesAliased[term_j], seq_len(n_occurences))
+    }
+  }
+  termNamesAliased[1] <- ""  # no alias for intercept
   result[["regression"]][["coefficients"]][["termsAliased"]] <- termNamesAliased
   
   if (!result[["regression"]][["saturated"]]) {
@@ -402,7 +417,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   } else {
     gettext("Pareto Chart of Unstandardized Effects")
   }, width = 600, height = 400)
-  plot$dependOn(options = c("plotPareto", .doeAnalysisBaseDependencies()))
+  plot$dependOn(options = c("plotPareto", "tableAlias", .doeAnalysisBaseDependencies()))
   plot$position <- 6
   jaspResults[["plotPareto"]] <- plot
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
@@ -415,7 +430,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   crit <- abs(qt(0.025, df))
   fac_t <- cbind.data.frame(fac, t)
   fac_t <- cbind(fac_t[order(fac_t$t), ], y = seq_len(length(t)))
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(t, crit))
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, t, crit))
   p <- ggplot2::ggplot(data = fac_t, mapping = ggplot2::aes(y = t, x = y)) +
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +

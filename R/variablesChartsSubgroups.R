@@ -18,34 +18,29 @@
 #' @export
 variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   
-  variables <- unlist(options$variables)
-  splitName <- options$subgroups
-  makeSplit <- splitName != ""
+  wideFormat <- (options[["CCDataFormat"]] == "CCwideFormat")
   
-  wideFormat <- options[["CCDataFormat"]] == "CCwideFormat"
-  if (wideFormat)
+  # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
+  if (wideFormat) {
     measurements <- unlist(options$variables)
-  else
-    measurements <- unlist(options$variablesLong)
-  
-  measurements <- measurements[measurements != ""]
-  subgroups <- unlist(options$subgroups)
-  
-  # Data reading
-  if (is.null(dataset)) {
-    if (splitName != "") {
-      dataset <- .readDataSetToEnd(columns.as.numeric = measurements, columns.as.factor = splitName)
-      dataset.factors <- .readDataSetToEnd(columns=variables, columns.as.factor=splitName)
-    } else {
-      dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
-    }
+    subgroupVariable <- options[["axisLabels"]]  # in wide format these are not actually the groups but only the axis labels
+    subgroupVariableGiven <- (subgroupVariable != "")
+  } else {
+    measurements <- options$variablesLong
+    subgroupVariable <- options$subgroups
+    subgroupVariableGiven <- (subgroupVariable != "")
   }
   
+  measurements <- measurements[measurements != ""]
+  
   # Check if analysis is ready
-  if (wideFormat)
+  if (wideFormat) {
     ready <- length(measurements) > 1
-  else
-    ready <- length(measurements) > 0
+  } else if (!wideFormat && options[["subgroupSizeType"]] == "manual"){
+    ready <- length(measurements) == 1
+  } else if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable") {
+    ready <- length(measurements) == 1 && subgroupVariableGiven
+  }
   
   # Return an empty plot as default
   if ((options$CCReport || options$TypeChart == "Xbarchart" || options$TypeChart == "Schart") && !ready) {
@@ -55,59 +50,82 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     return()
   }
   
-  if (makeSplit && ready) {
-    splitFactor      <- dataset[[.v(splitName)]]
-    splitLevels      <- levels(splitFactor)
-    # remove missing values from the grouping variable
-    dataset <- dataset[!is.na(splitFactor), ]
-    dataset.factors <- dataset.factors[!is.na(splitFactor), ]
-    numberMissingSplitBy <- sum(is.na(splitFactor))
-    
-    # Actually remove missing values from the split factor
-    splitFactor <- na.omit(splitFactor)
-    
-    if(subgroups != "")
-      subgroups <- splitFactor
+  # Data reading
+  if (is.null(dataset) && ready) {
+    if (subgroupVariableGiven) {
+      dataset <- .readDataSetToEnd(columns.as.numeric = measurements, columns.as.factor = subgroupVariable)
+    } else {
+      dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
+    }
   }
   
-  if (!wideFormat && ready){
-    k <- options[["CCSubgroupSize"]]
-    n <- nrow(dataset)
-    dataset <- .PClongTowide(dataset, k, measurements, mode = "manual")
-    if (identical(dataset, "error")) {
-      plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
-      jaspResults[["plot"]] <- plot
-      plot$setError(gettextf("Could not equally divide data points into groups of size %i.", k))
-      plot$dependOn("CCSubgroupSize")
-      return()
+  # Rearrange data if not already one group per row
+  if (!wideFormat && ready) {
+    # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
+    if (options[["subgroupSizeType"]] == "manual") {
+      k <- options[["CCSubgroupSize"]]
+      subgroups <- ""  # for plotting manual axis, remove when code rewritten
+      # fill up with NA to allow all subgroup sizes
+      if(length(dataset[[measurements]]) %% k != 0) {
+        rest <- length(dataset[[measurements]]) %% k
+        dataset_expanded <- c(dataset[[measurements]], rep(NA, k - rest))
+        dataset <- as.data.frame(matrix(dataset_expanded, ncol = k, byrow = TRUE))
+      } else {
+        dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
+      }
+      measurements <- colnames(dataset)
+    } else {
+      subgroups <- dataset[[subgroupVariable]]
+      subgroups <- na.omit(subgroups)
+      # add sequence of occurence to allow pivot_wider
+      dataset$occurence <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
+      # transform into one group per row
+      dataset <- tidyr::pivot_wider(data = dataset, values_from = measurements, names_from = occurence)
+      # arrange into dataframe 
+      dataset <- as.data.frame(dataset)
+      measurements <- colnames(dataset)
     }
-    measurements <- colnames(dataset)
+  } else if (wideFormat && ready) {
+    if (subgroupVariableGiven)
+      subgroups <- dataset[[subgroupVariable]]
+    else
+      subgroups <- ""
   }
   
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = c(options$variables, options$subgroups, measurements),
+             all.target = c(options$variables, options$subgroups),
              exitAnalysisIfErrors = TRUE)
   
-  .hasErrors(dataset, type = c('infinity', 'missingValues', "observations"),
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
              infinity.target = c(measurements, options$subgroups),
-             missingValues.target = c(options$subgroups, measurements),
-             observations.amount = c("< 2"),
-             observations.target = c(measurements),
+             missingValues.target = c(options$subgroups),
              exitAnalysisIfErrors = TRUE)
-  
-  dataset <- na.omit(dataset)
   
   #X bar & R chart
   if (ready){
     if (options$TypeChart == "Xbarchart" && is.null(jaspResults[["XbarPlot"]])) {
       jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
-      jaspResults[["XbarPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "manualTicks", 'nTicks',"SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
-      
-      Xchart <- .Xbarchart(dataset = dataset[measurements], options = options,  manualXaxis = subgroups ,warningLimits = options[["Wlimits"]], Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
-      Rchart <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups, warningLimits = FALSE, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
-      jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
+      jaspResults[["XbarPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "manualTicks", 'nTicks',
+                                           "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong",
+                                           "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle",
+                                           "ccChartName", "subgroupSizeUnequal", "axisLabels"))
       jaspResults[["XbarPlot"]]$position <- 1
+      
+      if (length(measurements) > 50){ # if the subgroup size is above 50, the R package cannot calculate R charts.
+        jaspResults[["XbarPlot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
+        return()
+      } else { 
+        Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
+                             Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
+                             manualTicks = options$manualTicks, sdType = "r",
+                             controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+                             manualXaxis = subgroups)
+        Rchart <- .Rchart(dataset = dataset[measurements], options = options, Phase2 = options$Phase2,
+                          target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks,
+                          controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"), manualXaxis = subgroups)
+        jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
+      }
       
       # Nelson tests tables
       if (is.null(jaspResults[["NelsonTableX"]]) && is.null(jaspResults[["NelsonTableR"]]) && is.null(jaspResults[["NelsonTables"]])) {
@@ -118,16 +136,28 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         
         AllTables[["NelsonTableX"]]  <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart$sixsigma, Phase2 = options$Phase2, xLabels = Xchart$xLabels)
         AllTables[["NelsonTableR"]] <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Rchart$sixsigma, name = "R", xLabels = Rchart$xLabels)
+        
+        if (length(measurements) > 5) # if the subgroup size is above 5, R chart is not recommended
+          AllTables[["NelsonTableR"]]$addFootnote(gettextf("Subgroup size is >5, results may be biased. S-chart is recommended."))
       }
     }
     
     #S Chart
     if (options$TypeChart == "Schart" && is.null(jaspResults[["SPlot"]])) {
       jaspResults[["SPlot"]] <- createJaspPlot(title = gettext("X-bar & s Control Chart"), width = 1200, height = 500)
-      jaspResults[["SPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "SD", "manualTicks", 'nTicks', "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong", "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName"))
+      jaspResults[["SPlot"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "SD", "manualTicks",
+                                        'nTicks', "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong",
+                                        "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle",
+                                        "ccChartName", "subgroupSizeUnequal", "axisLabels"))
       
-      Schart <- .XbarSchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups, Phase2 = options$Phase2, sd = options$SD, Wide = wideFormat)
-      Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]], manualXaxis = subgroups, Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks)
+      Schart <- .XbarSchart(dataset = dataset[measurements], options = options, Phase2 = options$Phase2, sd = options$SD,
+                            Wide = wideFormat, controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+                            manualXaxis = subgroups)
+      Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
+                           Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
+                           manualTicks = options$manualTicks, sdType = "s",
+                           controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+                           manualXaxis = subgroups)
       jaspResults[["SPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Schart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
       jaspResults[["SPlot"]]$position <- 1
       
@@ -167,20 +197,49 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 }
 
 #Functions for control charts
-.XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE) {
+.XbarSchart <- function(dataset, options, manualXaxis = "", Phase2 = options$Phase2, sd = "", Wide = FALSE, OnlyOutofLimit = FALSE,
+                        controlLimitsPerGroup = FALSE) {
+  
+  #remove rows with single observation as no meaningful sd and no CL can be computed
+  rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
+  if (length(rowRemovalIndex) != 0)
+    dataset <- dataset[-rowRemovalIndex, ]
+  
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
-  sixsigma <- qcc::qcc(data, type ='S', plot = FALSE)
-  subgroups <- c(1:length(sixsigma$statistics))
-  data_plot <- data.frame(subgroups = subgroups, Stdv = sixsigma$statistics)
-  if(Phase2 && sd != "")
+  
+  if(Phase2 && sd != ""){
     sixsigma <- list(statistics = sixsigma$statistics,
                      limits = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$limits,
                      center = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$center)
+  } else {
+    sigma <- .sdXbar(data, type = "s")
+    sixsigma <- qcc::qcc(data, type ='S', plot = FALSE, center = sigma, sizes = ncol(data))
+  }
   
-  center <- sixsigma$center
-  UCL <- max(sixsigma$limits)
-  LCL <- min(sixsigma$limits)
+  n <- apply(data, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+  if (!controlLimitsPerGroup) # if control limits are not calculated per group they are based on largest group size
+    n <- max(n)
+  
+  if (length(sixsigma$statistics) == 1)
+    OnlyOutofLimit <- TRUE  # other rules don't apply if only 1 group
+  
+  subgroups <- c(1:length(sixsigma$statistics))
+  data_plot <- data.frame(subgroups = subgroups, Stdv = sixsigma$statistics)
+  
+  limits <- .controlLimits(sigma = sigma, n = n, type = "s")
+  center <- sigma
+  UCL <- limits$UCL
+  LCL <- limits$LCL
+  # arrange data for CL in df
+  cl_plot <- data.frame(LCL = LCL, UCL = UCL, center = center, subgroups = subgroups)
+  # repeat last observation and offset all but first subgroup by -.5 to align on x-axis
+  cl_plot <- rbind(cl_plot, data.frame(LCL = cl_plot$LCL[nrow(cl_plot)],
+                                       UCL = cl_plot$UCL[nrow(cl_plot)],
+                                       center = cl_plot$center[nrow(cl_plot)],
+                                       subgroups = cl_plot$subgroups[nrow(cl_plot)] + 1))
+  cl_plot$subgroups[-1] <- cl_plot$subgroups[-1] - .5
+  
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, data_plot$Stdv, UCL))
   yLimits <- range(yBreaks)
   if (options$manualTicks)
@@ -189,44 +248,59 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     nxBreaks <- 5
   xBreaks <- c(1,jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)[-1])
   xLimits <- c(1,max(xBreaks) * 1.15)
+  
+  # get (one of) the most frequent centers, LCL and UCL to display them
+  centerDisplay <- as.numeric(names(sort(-table(center)))[1])
+  LCLDisplay <- as.numeric(names(sort(-table(LCL)))[1])
+  UCLDisplay <- as.numeric(names(sort(-table(UCL)))[1])
+  
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
-    y = c(center, UCL, LCL),
+    y = c(centerDisplay, UCLDisplay, LCLDisplay),
     l = c(
-      gettextf("CL = %g", round(center, decimals + 1)),
-      gettextf("UCL = %g",   round(UCL, decimals + 2)),
-      gettextf("LCL = %g",   round(LCL, decimals + 2)))
+      gettextf("CL = %g", round(centerDisplay, decimals + 1)),
+      gettextf("UCL = %g",   round(UCLDisplay, decimals + 2)),
+      gettextf("LCL = %g",   round(LCLDisplay, decimals + 2))
     )
+  )
   xLimits <- range(c(xBreaks, dfLabel$x))
   
+  
+  ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1)
+  
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = Stdv)) +
-    ggplot2::geom_hline(yintercept =  center, color = 'green') +
-    ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-    ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), direction = "both", size = 4) +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LCL), col = "red",
+                       size = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1) +
+    ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), size = 4) +
     ggplot2::scale_y_continuous(name =  gettext("Subgroup st dev"), breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext('Subgroup'), breaks = xBreaks) +
     jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, 'red', 'blue')) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
+  
+  if (OnlyOutofLimit)
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(data_plot$Stdv > UCL | data_plot$Stdv < LCL, "red", "blue"))
+  else
+    p <- p + jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
+  
   
   if (!identical(manualXaxis, "")) {
     if (Wide){
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xBreaks_Out[xBreaks])
     } else{
-      xBreaks_Out <- manualXaxis[seq(1,length(manualXaxis), ncol(data))]
+      xBreaks_Out <- unique(manualXaxis) # use unique to preserve original order unlike levels
       xLabels <- xBreaks_Out[xBreaks]
       
       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-      dfLabel <- data.frame(
-        x = max(xLimits) * 0.95,
-        y = c(center, UCL, LCL),
-        l = c(
-          gettextf("CL = %g", round(center, decimals + 1)),
-          gettextf("UCL = %g",   round(UCL, decimals + 2)),
-          gettextf("LCL = %g",   round(LCL, decimals + 2)))
-      )
       
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xLabels, limits = xLimits)
     }
@@ -267,36 +341,3 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   
   return(matrixPlot)
 }
-
-KnownControlStats.RS <- function(N, sigma) {
-  
-  Data.d3 <- data.frame(
-    n = 2:25,
-    d3 = c(0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
-           0.7562, 0.7499, 0.7441, 0.7386, 0.7335, 0.7287, 0.7242, 0.7199, 0.7159, 0.7121, 0.7084))
-  
-  Data.d2 <- data.frame(
-    n = 2:50,
-    d2 = c( 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
-            3.588 ,3.640 ,3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931, 3.964, 3.997, 4.027, 4.057, 4.086, 4.113,
-            4.139 ,4.165 ,4.189, 4.213, 4.236, 4.259, 4.280, 4.301, 4.322, 4.341, 4.361, 4.379, 4.398, 4.415, 4.433,
-            4.450 ,4.466, 4.482, 4.498))
-  
-  if (N > 25 && N <= 50){
-    d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
-    d2 <- Data.d2[N == Data.d2$n,2]
-  } else if (N > 50) {
-    d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
-    d2 <- 2.88606 + 0.051313 * N - 0.00049243 * N^2 + 0.00000188 * N^3
-  } else {
-    d2 <- Data.d2[N == Data.d2$n,2]
-    d3 <- Data.d3[N == Data.d3$n,2]
-  }
-  
-  UCL <- d2 * sigma + 3 * d3 * sigma
-  CL <- d2 * sigma
-  LCL <- max(0, d2 * sigma - 3 * d3 * sigma)
-  
-  return(list(constants = c(d2,d3), limits = data.frame(LCL,UCL), center = CL))
-}
-

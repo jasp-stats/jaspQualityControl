@@ -65,7 +65,7 @@ test_that("ANOVA table results match", {
 test_that("Coded Coefficients table results match", {
   table <- results[["results"]][["tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("(Intercept)", 30.3125, "", 1.18536689121333e-06, 2.33770052615813,
+                                 list("", 30.3125, "", 1.18536689121333e-06, 2.33770052615813,
                                       "(Intercept)", 12.9668020607485, "", "A", -16.9375, -67.75,
                                       8.84512701642711e-05, 2.33770052615813, "Exposure_time", -7.2453677494079,
                                       "", "B", 5.4375, 21.75, 0.0484630885931658, 2.33770052615813,
@@ -85,7 +85,7 @@ test_that("Coded Coefficients table results match", {
 test_that("Regression Equation in coded Units table results match", {
   table <- results[["results"]][["tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Yield = 30.312 (Intercept) - 16.938 A + 5.4375 B + 0.4375 C - 0.3125 AB - 0.4375 BC - 0.0625 AC + 0.5625 ABC"
+                                 list("Yield = 30.312  - 16.938 A + 5.4375 B + 0.4375 C - 0.3125 AB - 0.4375 BC - 0.0625 AC + 0.5625 ABC"
                                  ))
 })
 

@@ -1500,7 +1500,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
+      plotList[[indexCounter]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, Wide = wideFormat, manualTicks = options$manualTicks)$p
     } else {
       IMRPlots <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = splitFactor, cowPlot = TRUE, Wide = wideFormat)
 
