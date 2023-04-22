@@ -1201,10 +1201,6 @@ msgid "Across rows"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Subgroup size"
-msgstr "Untergruppengröße"
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Known parameters"
 msgstr "Bekannte Parameter"
 
@@ -2255,3 +2251,31 @@ msgstr "Drehwinkel (vertikale Ebene)"
 msgctxt "doeAnalysis|"
 msgid "Rotating angle (horizontal plane)"
 msgstr "Drehwinkel (horizontale Ebene)"
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Axis labels"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Specify subgroups"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Through grouping variable"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Manual subgroup size"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "For unequal subgroup sizes"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Assume equal subgroup sizes (largest subgroup)"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Calculate with actual sizes"
+msgstr ""

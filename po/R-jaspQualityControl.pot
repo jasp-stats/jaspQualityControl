@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.17.1\n"
-"POT-Creation-Date: 2023-03-18 03:41\n"
+"Project-Id-Version: jaspQualityControl 0.17.2\n"
+"POT-Creation-Date: 2023-04-22 03:39\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1291,13 +1291,16 @@ msgstr ""
 msgid "Control Charts"
 msgstr ""
 
-msgid "Could not equally divide data points into groups of size %i."
-msgstr ""
-
 msgid "X-bar & R Control Chart"
 msgstr ""
 
+msgid "Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."
+msgstr ""
+
 msgid "Out-of-control Signals"
+msgstr ""
+
+msgid "Subgroup size is >5, results may be biased. S-chart is recommended."
 msgstr ""
 
 msgid "X-bar & s Control Chart"

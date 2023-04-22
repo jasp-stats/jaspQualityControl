@@ -1200,10 +1200,6 @@ msgid "Across rows"
 msgstr "A través de filas"
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Subgroup size"
-msgstr "Tamaño de subgrupo"
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Known parameters"
 msgstr "Parámetros conocidos"
 
@@ -2244,3 +2240,32 @@ msgstr "Ángulo de rotación (plano vertical)"
 msgctxt "doeAnalysis|"
 msgid "Rotating angle (horizontal plane)"
 msgstr "Ángulo de rotación (plano horizontal)"
+
+#, fuzzy
+msgctxt "variablesChartsSubgroups|"
+msgid "Axis labels"
+msgstr "Etiquetas de los ejes"
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Specify subgroups"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Through grouping variable"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Manual subgroup size"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "For unequal subgroup sizes"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Assume equal subgroup sizes (largest subgroup)"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Calculate with actual sizes"
+msgstr ""

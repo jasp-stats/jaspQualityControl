@@ -1198,10 +1198,6 @@ msgid "Across rows"
 msgstr "跨数行"
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Subgroup size"
-msgstr "子组容量"
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Known parameters"
 msgstr "已知参数"
 
@@ -2257,3 +2253,31 @@ msgstr "旋转角度(垂直方向）"
 msgctxt "doeAnalysis|"
 msgid "Rotating angle (horizontal plane)"
 msgstr "旋转角度(水平方向)"
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Axis labels"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Specify subgroups"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Through grouping variable"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Manual subgroup size"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "For unequal subgroup sizes"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Assume equal subgroup sizes (largest subgroup)"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Calculate with actual sizes"
+msgstr ""

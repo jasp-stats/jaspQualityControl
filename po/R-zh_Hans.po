@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-03-18 03:41\n"
+"POT-Creation-Date: 2023-04-22 03:39\n"
 "PO-Revision-Date: 2022-11-07 09:03+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -1374,14 +1374,19 @@ msgstr "滞后"
 msgid "Control Charts"
 msgstr "控制图"
 
-msgid "Could not equally divide data points into groups of size %i."
-msgstr "无法将数据点平均划分为大小为 %i 的组。"
-
 msgid "X-bar & R Control Chart"
 msgstr "均值和极差控制图"
 
+msgid ""
+"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
+"instead."
+msgstr ""
+
 msgid "Out-of-control Signals"
 msgstr "失控信号"
+
+msgid "Subgroup size is >5, results may be biased. S-chart is recommended."
+msgstr ""
 
 msgid "X-bar & s Control Chart"
 msgstr "均值和标准差控制图"
@@ -1400,6 +1405,9 @@ msgstr "副标题：%s"
 
 msgid "Name of chart: %s"
 msgstr "图形名称：%s"
+
+#~ msgid "Could not equally divide data points into groups of size %i."
+#~ msgstr "无法将数据点平均划分为大小为 %i 的组。"
 
 #~ msgid "This plot is unavailable for saturated designs."
 #~ msgstr "此图不适用于饱和设计。"

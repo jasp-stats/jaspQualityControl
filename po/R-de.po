@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-03-18 03:41\n"
+"POT-Creation-Date: 2023-04-22 03:39\n"
 "PO-Revision-Date: 2023-03-18 10:38+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -1364,15 +1364,18 @@ msgstr "Verzögerung"
 msgid "Control Charts"
 msgstr "Kontrolldiagramm"
 
-msgid "Could not equally divide data points into groups of size %i."
-msgstr ""
-"Datenpunkte konnten nicht gleichmäßig in Gruppen mit Größe %i aufgeteilt "
-"werden."
-
 msgid "X-bar & R Control Chart"
 msgstr "X-quer & R-Kontrollkarte"
 
+msgid ""
+"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
+"instead."
+msgstr ""
+
 msgid "Out-of-control Signals"
+msgstr ""
+
+msgid "Subgroup size is >5, results may be biased. S-chart is recommended."
 msgstr ""
 
 msgid "X-bar & s Control Chart"
@@ -1392,6 +1395,11 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "Could not equally divide data points into groups of size %i."
+#~ msgstr ""
+#~ "Datenpunkte konnten nicht gleichmäßig in Gruppen mit Größe %i aufgeteilt "
+#~ "werden."
 
 #~ msgid "An error occurred: %1$s"
 #~ msgstr "Ein Fehler ist aufgetreten: %1$s"

@@ -1686,10 +1686,6 @@ msgid "Subgroups"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Subgroup size"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Control Charts"
 msgstr ""
 
@@ -2241,4 +2237,32 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Rotating angle (horizontal plane)"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Axis labels"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Specify subgroups"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Through grouping variable"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Manual subgroup size"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "For unequal subgroup sizes"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Assume equal subgroup sizes (largest subgroup)"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Calculate with actual sizes"
 msgstr ""
