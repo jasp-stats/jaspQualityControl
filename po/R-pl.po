@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
 "POT-Creation-Date: 2023-04-22 03:39\n"
-"PO-Revision-Date: 2023-04-29 03:38+0000\n"
+"PO-Revision-Date: 2023-05-04 19:40+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pl/>\n"
@@ -198,7 +198,7 @@ msgid "Coefficients"
 msgstr ""
 
 msgid "Coefficient"
-msgstr ""
+msgstr "Współczynnik"
 
 msgid "Standard Error"
 msgstr ""
@@ -207,7 +207,7 @@ msgid "t"
 msgstr ""
 
 msgid "p"
-msgstr "p"
+msgstr "<em>p</em>"
 
 msgid "The analysis crashed with the following error message: %1$s"
 msgstr ""
@@ -216,7 +216,7 @@ msgid "Model Summary"
 msgstr "Podsumowanie modelu"
 
 msgid "ANOVA"
-msgstr ""
+msgstr "ANOVA"
 
 msgid "Coded"
 msgstr ""
@@ -285,7 +285,7 @@ msgid "The analysis failed with the following error message: %s"
 msgstr ""
 
 msgid "Design Summary"
-msgstr ""
+msgstr "Podsumowanie schematu"
 
 msgid "Variable"
 msgstr "Zmienna"
@@ -318,16 +318,16 @@ msgid "Value"
 msgstr "Wartość"
 
 msgid "Please select a row in the design table."
-msgstr ""
+msgstr "Proszę wybrać wiersz w tabeli schematu."
 
 msgid "Click 'Display design' to show the design."
-msgstr ""
+msgstr "Kliknij \"Pokaż schemat\", aby wyświetlić schemat."
 
 msgid "The design is not exported until 'Export design' is checked."
 msgstr ""
 
 msgid "The design is exported as '%1$s'."
-msgstr ""
+msgstr "Schemat jest eksportowany jako \"%1$s\"."
 
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr ""
@@ -336,7 +336,7 @@ msgid "Alias Structure"
 msgstr ""
 
 msgid "Factorial Design"
-msgstr ""
+msgstr "Plan czynnikowy"
 
 msgid "Run Order"
 msgstr ""
@@ -348,7 +348,7 @@ msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
 msgid "Selected Design"
-msgstr ""
+msgstr "Wybrany schemat"
 
 msgid "Factors"
 msgstr ""
@@ -363,13 +363,13 @@ msgid "Replicates"
 msgstr ""
 
 msgid "Design Preview"
-msgstr ""
+msgstr "Podgląd schematu"
 
 msgid "Input Design"
-msgstr ""
+msgstr "Schemat wejściowy"
 
 msgid "Desired Design"
-msgstr ""
+msgstr "Schemat docelowy"
 
 msgid "Missing Runs"
 msgstr ""
@@ -390,7 +390,7 @@ msgid "Centre points"
 msgstr ""
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
-msgstr ""
+msgstr "Schemat Boxa-Behnkena nie jest obsługiwany dla 8 zmiennych."
 
 msgid "Response Surface Design - Central Composite Design"
 msgstr ""
@@ -527,7 +527,7 @@ msgid "Stationary Points of Response Surface (Coded)"
 msgstr ""
 
 msgid "Eigenvalues"
-msgstr ""
+msgstr "Wartości własne"
 
 msgid "Eigenvectors"
 msgstr ""
@@ -607,7 +607,7 @@ msgid "Confidence interval of 95%%"
 msgstr ""
 
 msgid "Upper"
-msgstr ""
+msgstr "Górna granica"
 
 msgid "Invalid Reference and/or Results were inserted."
 msgstr ""
@@ -1256,7 +1256,7 @@ msgid ""
 msgstr ""
 
 msgid "Std. deviation"
-msgstr "Odchylenie std."
+msgstr "Odchylenie stand."
 
 msgid "Log mean (%1$s)"
 msgstr ""
