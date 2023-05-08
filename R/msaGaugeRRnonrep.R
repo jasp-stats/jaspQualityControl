@@ -411,7 +411,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
 
   plotList <- list()
-
+  indexCounter <- 0
   if (options[["reportMetaData"]]) {
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .ggplotWithText(text1)
@@ -450,6 +450,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   matrixNCols <- 2
   matrixNRows <- indexCounter / matrixNCols
   matrixPlot <- createJaspPlot(title = title, width = 1200, height = 400 * matrixNRows)
+  matrixPlot$dependOn(c("anovaGaugeNestedReport"))
   plotMat <- matrix(plotList, matrixNRows, matrixNCols, byrow = TRUE)
   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
   matrixPlot$plotObject <- p
