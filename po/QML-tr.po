@@ -1,15 +1,9 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-02-01 03:03+0000\n"
-"Last-Translator: Ünal Halit ÖZDEN <uozden@ticaret.edu.tr>\n"
-"Language-Team: Turkish <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/tr/>\n"
-"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Language: tr\n"
 "X-Qt-Contexts: true\n"
 
@@ -53,21 +47,19 @@ msgctxt "doeFactorial|"
 msgid "Resolution"
 msgstr "Çözünürlük"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response"
-msgstr ""
-
+#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Operators"
-msgstr ""
+msgstr "Operatörler"
 
 msgctxt "msaAttribute|"
 msgid "Parts"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Standard"
-msgstr ""
+msgstr "Standart"
 
 msgctxt "msaAttribute|"
 msgid "Tables"
@@ -225,26 +217,6 @@ msgctxt "attributesCharts|"
 msgid "u chart"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Show analysis and graphs in coded form"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Show legend next to graph"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Divide response surface into N parts"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Rotating angle (vertical plane)"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Rotating angle (horizontal plane)"
-msgstr ""
-
 msgctxt "msaAttribute|"
 msgid "Kendall's tau"
 msgstr ""
@@ -293,9 +265,10 @@ msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Operators"
-msgstr ""
+msgstr "Operatörler"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Parts"
@@ -305,9 +278,10 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "Analiz Seçenekleri"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation reference"
@@ -333,17 +307,19 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Percent"
-msgstr ""
+msgstr "Yüzde"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Graph variation components"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Plots"
-msgstr ""
+msgstr "Grafikler"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "R charts by operator"
@@ -453,9 +429,10 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Control Charts"
-msgstr ""
+msgstr "Kontrol grafiği"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & R"
@@ -489,14 +466,6 @@ msgctxt "attributesCharts|"
 msgid "X-mR chart"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Predictors [Location in coded format]"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Only show 2D plot"
-msgstr ""
-
 msgctxt "msaGaugeRR|"
 msgid "Data format"
 msgstr ""
@@ -509,9 +478,10 @@ msgctxt "msaGaugeRR|"
 msgid "Measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 msgctxt "msaGaugeRR|"
 msgid "Date"
@@ -541,9 +511,10 @@ msgctxt "processCapabilityStudies|"
 msgid "Confidence intervals"
 msgstr ""
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Histogram"
-msgstr ""
+msgstr "Histogram"
 
 msgctxt "processCapabilityStudies|"
 msgid "Probability table and plot"
@@ -561,9 +532,10 @@ msgctxt "processCapabilityStudies|"
 msgid "Measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 msgctxt "processCapabilityStudies|"
 msgid "Date:"
@@ -737,9 +709,10 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date"
@@ -813,26 +786,6 @@ msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Blocks (optional)"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Components"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Term Type"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "FO + PQ"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "FO"
-msgstr ""
-
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
 msgstr ""
@@ -865,21 +818,24 @@ msgctxt "doeScreening|"
 msgid "Run Order"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Standard"
-msgstr ""
+msgstr "Standart"
 
 msgctxt "doeScreening|"
 msgid "Random"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Factor"
-msgstr ""
+msgstr "faktör"
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 msgctxt "doeScreening|"
 msgid "Level 1"
@@ -965,9 +921,10 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
@@ -1005,17 +962,19 @@ msgctxt "msaTestRetest|"
 msgid "Range Method Options"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "Analiz Seçenekleri"
 
 msgctxt "msaTestRetest|"
 msgid "r&R table"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Plots"
-msgstr ""
+msgstr "Grafikler"
 
 msgctxt "msaTestRetest|"
 msgid "Regression line"
@@ -1077,22 +1036,6 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Desirability"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Minimum [Min/Max]"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Maximum [Min/Max]"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Target [Min/Target/Max]"
 msgstr ""
 
 msgctxt "msaAttribute|"
@@ -1268,10 +1211,6 @@ msgid "Across rows"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Subgroup size"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Known parameters"
 msgstr ""
 
@@ -1311,9 +1250,10 @@ msgctxt "attributesCharts|"
 msgid "Measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 msgctxt "attributesCharts|"
 msgid "Operator"
@@ -1363,9 +1303,10 @@ msgctxt "doeFull|"
 msgid "Design Space"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Number of factors"
-msgstr ""
+msgstr "faktör sayısı"
 
 msgctxt "doeFull|"
 msgid "Run Order"
@@ -1375,17 +1316,20 @@ msgctxt "doeFull|"
 msgid "Random"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Standard"
-msgstr ""
+msgstr "Standart"
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Factor"
-msgstr ""
+msgstr "faktör"
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 msgctxt "doeFull|"
 msgid "Levels"
@@ -1451,9 +1395,10 @@ msgctxt "doeModifyDesign|"
 msgid "Random"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Standard"
-msgstr ""
+msgstr "Standart"
 
 msgctxt "doeModifyDesign|"
 msgid "Desired Two-level Factorial Design Options"
@@ -1467,9 +1412,10 @@ msgctxt "doeModifyDesign|"
 msgid "Number of runs"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
-msgstr ""
+msgstr "Çözünürlük"
 
 msgctxt "doeModifyDesign|"
 msgid "Full"
@@ -1531,13 +1477,15 @@ msgctxt "doeModifyDesign|"
 msgid "Show desired design"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
-msgstr ""
+msgstr "faktör"
 
+#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 msgctxt "doeScreening|"
 msgid "Design Space"
@@ -1607,9 +1555,10 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Name"
-msgstr ""
+msgstr "İsim"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Date"
@@ -1673,66 +1622,6 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Blocks"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Analysis"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response surface analysis"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Coefficients table"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual histogram"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "ANOVA table"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Normal residual plot"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Normal plot of standardized effects"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Add grid lines"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Residual vs. fitted plot"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Pareto plot of standardized effects"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Matrix residuals plot"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour plots"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour plot options"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Contour surface"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Response variable list"
 msgstr ""
 
 msgctxt "doeScreening|"
@@ -1815,9 +1704,10 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "High"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Number of factors"
-msgstr ""
+msgstr "faktör sayısı"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Measurements"
@@ -2116,10 +2006,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Calculate desirability"
-msgstr ""
-
 msgctxt "Description|"
 msgid "Factorial Design"
 msgstr ""
@@ -2153,23 +2039,11 @@ msgid "Available factors"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Response variable"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Assigned factors"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Blocks"
 msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Run order"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Highest order interaction term:"
 msgstr ""
 
 msgctxt "doeAnalysis|"
@@ -2184,49 +2058,10 @@ msgctxt "doeAnalysis|"
 msgid "Model Terms"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Plots"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Design plots"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Pareto Plot of Standardized Effects"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Residuals plots"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Normal probability plot of residuals"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Histogram of residuals"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Residuals vs fitted value"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Residuals vs run/standard order"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Standard"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Run"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Matrix residuals plot"
-msgstr ""
+msgstr "Grafikler"
 
 msgctxt "doeFactorial|"
 msgid "Maximum levels"
@@ -2283,4 +2118,181 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Display selected design"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Analyze Design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Design type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Factorial design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Response surface design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Response"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Categorical Factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Continuous Factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Equal to row number"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show regression equation"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Automatically code/standardize factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Define by highest order interaction term"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Highest order interaction term"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Select predefined model"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Include following terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear and interaction terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Linear and squared terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Full quadratic"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals Plots"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Normal probability plot"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Histogram"
+msgstr "Histogram"
+
+msgctxt "doeAnalysis|"
+msgid "Residuals vs. fitted values"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals vs. run order"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals matrix plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Other Plots"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Pareto Plot of Effects"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour/surface plots"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Plot type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Surface plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Available continuous predictors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Plotting variables"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Contour/surface plot options"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show legend next to graph"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Divide response surface into N parts"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Rotating angle (vertical plane)"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Rotating angle (horizontal plane)"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Axis labels"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Specify subgroups"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Through grouping variable"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Manual subgroup size"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "For unequal subgroup sizes"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Assume equal subgroup sizes (largest subgroup)"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Calculate with actual sizes"
 msgstr ""
