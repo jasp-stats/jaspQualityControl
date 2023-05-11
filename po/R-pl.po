@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
 "POT-Creation-Date: 2023-04-22 03:39\n"
-"PO-Revision-Date: 2023-05-04 19:40+0000\n"
+"PO-Revision-Date: 2023-05-12 15:54+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pl/>\n"
@@ -48,7 +48,7 @@ msgid "Subgroup"
 msgstr ""
 
 msgid "Counts"
-msgstr "Liczebność"
+msgstr "Liczebności"
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
 msgstr ""
@@ -84,7 +84,7 @@ msgid "Proportion"
 msgstr "Proporcja"
 
 msgid "Sample"
-msgstr ""
+msgstr "Próba"
 
 msgid "Number of defectives"
 msgstr ""
@@ -601,7 +601,7 @@ msgid "Percent"
 msgstr ""
 
 msgid "Lower"
-msgstr ""
+msgstr "Dolna granica"
 
 msgid "Confidence interval of 95%%"
 msgstr ""
@@ -809,7 +809,7 @@ msgid "Gauge Evaluation"
 msgstr ""
 
 msgid "Std. Deviation"
-msgstr "Odchylenie stand."
+msgstr "Odch. stand."
 
 msgid "Study Variation"
 msgstr ""
@@ -1256,7 +1256,7 @@ msgid ""
 msgstr ""
 
 msgid "Std. deviation"
-msgstr "Odchylenie stand."
+msgstr "Odch. stand."
 
 msgid "Log mean (%1$s)"
 msgstr ""
