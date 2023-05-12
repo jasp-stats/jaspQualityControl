@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2023-04-22 03:39\n"
-"PO-Revision-Date: 2023-04-26 20:33+0000\n"
+"PO-Revision-Date: 2023-05-13 03:38+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -267,22 +267,22 @@ msgid "Matrix residual plot"
 msgstr ""
 
 msgid "Contour plot"
-msgstr ""
+msgstr "Konturdiagramm"
 
 msgid "Surface plot"
 msgstr ""
 
 msgid "Contour plots"
-msgstr ""
+msgstr "Konturdiagramme"
 
 msgid "Surface plots"
 msgstr ""
 
 msgid "and"
-msgstr ""
+msgstr "und"
 
 msgid "%1$s of %2$s vs %3$s"
-msgstr ""
+msgstr "%1$s of %2$s vs %3$s"
 
 msgid "The analysis failed with the following error message: %s"
 msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %s"
@@ -294,7 +294,7 @@ msgid "Variable"
 msgstr "Variable"
 
 msgid "Categorial factors"
-msgstr ""
+msgstr "Kategoriale Faktoren"
 
 msgid "Base runs"
 msgstr ""
@@ -394,7 +394,7 @@ msgid "Centre points"
 msgstr ""
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
-msgstr ""
+msgstr "Box-BehnkenDesign wird für 8 Variablen nicht unterstützt."
 
 msgid "Response Surface Design - Central Composite Design"
 msgstr ""
