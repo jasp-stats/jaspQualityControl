@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-05-25 04:05+0000\n"
+"Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"jasp/jaspprocesscontrol-qml/zh_Hans/>\n"
+"Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.18-dev\n"
 "X-Language: zh_Hans\n"
 "X-Qt-Contexts: true\n"
 
@@ -1659,7 +1665,7 @@ msgstr "按零件图测量值"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements by operator plot"
-msgstr "按操作者测量值"
+msgstr "按操作者测量值图"
 
 msgctxt "msaGaugeRR|"
 msgid "Part × operator interaction plot"
@@ -1719,11 +1725,11 @@ msgstr "概率图的零分布"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Number of ticks on x-axis:"
-msgstr ""
+msgstr "x轴上的刻度数："
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of ticks on x-axis:"
-msgstr ""
+msgstr "x轴上的刻度数："
 
 msgctxt "TimeWeightedCharts|"
 msgid "Measurements"
@@ -1771,513 +1777,498 @@ msgstr "计算控制限的标准差数"
 
 msgctxt "msaGaugeRR|"
 msgid "Show report"
-msgstr ""
+msgstr "显示报告"
 
 msgctxt "msaGaugeRR|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "显示报告元数据"
 
 msgctxt "msaGaugeRR|"
 msgid "Select Report Components"
-msgstr ""
+msgstr "选择报告组成部分"
 
 msgctxt "msaGaugeRR|"
 msgid "Show components of variation"
-msgstr ""
+msgstr "显示变差分量"
 
 msgctxt "msaGaugeRR|"
 msgid "Show measurements by part"
-msgstr ""
+msgstr "显示按零件的测量值"
 
 msgctxt "msaGaugeRR|"
 msgid "Show R chart by operator"
-msgstr ""
+msgstr "显示按操作者的极差图"
 
 msgctxt "msaGaugeRR|"
 msgid "Show measurements by operator"
-msgstr ""
+msgstr "显示按操作者的测量值"
 
 msgctxt "msaGaugeRR|"
 msgid "Show average chart by operator"
-msgstr ""
+msgstr "显示按操作者的平均值"
 
 msgctxt "msaGaugeRR|"
 msgid "Show part × operator interaction"
-msgstr ""
+msgstr "显示零件 × 操作者交互作用"
 
 msgctxt "msaGaugeRR|"
 msgid "Show traffic light chart"
-msgstr ""
+msgstr "显示红绿灯图"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show report"
-msgstr ""
+msgstr "显示报告"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "显示报告元数据"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Select Report Components"
-msgstr ""
+msgstr "显示报告组成部分"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show components of variation"
-msgstr ""
+msgstr "显示变差分量"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show R chart by operator"
-msgstr ""
+msgstr "显示按操作者的极差图"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show measurements by operator"
-msgstr ""
+msgstr "显示按操作者的测量值"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show average chart by operator"
-msgstr ""
+msgstr "显示按操作者的平均值"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Moving range length"
 msgstr "移动极差长度"
 
 msgctxt "processCapabilityStudies|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "显示报告元数据"
 
 msgctxt "processCapabilityStudies|"
 msgid "Select Report Components"
-msgstr ""
+msgstr "选择报告构成部分"
 
 msgctxt "processCapabilityStudies|"
 msgid "Show stability of process charts"
-msgstr ""
+msgstr "显示过程稳定性图表"
 
 msgctxt "processCapabilityStudies|"
 msgid "Show process capability plot"
-msgstr ""
+msgstr "显示过程能力图"
 
 msgctxt "processCapabilityStudies|"
 msgid "Show probability plot"
-msgstr ""
+msgstr "显示概率图"
 
 msgctxt "processCapabilityStudies|"
 msgid "Show process capability tables"
-msgstr ""
+msgstr "显示过程能力表"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Axis labels"
-msgstr ""
+msgstr "轴标签"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Stages"
-msgstr ""
+msgstr "阶段"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Display design"
-msgstr ""
+msgstr "显示设计"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design Type"
-msgstr ""
+msgstr "设计类型"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Central Composite Design"
-msgstr ""
+msgstr "中心复合设计"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Box-Behnken Design"
-msgstr ""
+msgstr "Box-Behnken 设计"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of continuous factors"
-msgstr ""
+msgstr "连续因子数量"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of categorical factors"
-msgstr ""
+msgstr "类别因子数量"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Maximum categorical levels"
-msgstr ""
+msgstr "最大类别水平"
 
 #, qt-format
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Level %1"
-msgstr ""
+msgstr "水平 %1"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design Table"
-msgstr ""
+msgstr "设计表"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Runs"
-msgstr ""
+msgstr "运行"
 
-#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Blocks"
 msgstr "区组"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Total"
-msgstr ""
+msgstr "总合"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Cube"
-msgstr ""
+msgstr "立方点"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Axial"
-msgstr ""
+msgstr "轴点"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Alpha"
-msgstr ""
+msgstr "Alpha"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Centre points"
-msgstr ""
+msgstr "中心点"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design"
-msgstr ""
+msgstr "设计"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "debug selected row"
-msgstr ""
+msgstr "调试所选行"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "debug selected col"
-msgstr ""
+msgstr "调试所选列"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Default"
-msgstr ""
+msgstr "默认"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Face centred"
-msgstr ""
+msgstr "面心"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Custom"
-msgstr ""
+msgstr "定制"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Center Points"
-msgstr ""
+msgstr "中心点"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Cube block"
-msgstr ""
+msgstr "立方块"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Axial block"
-msgstr ""
+msgstr "轴向块"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
-msgstr ""
+msgstr "复制"
 
 msgctxt "Description|"
 msgid "Factorial Design"
-msgstr ""
+msgstr "析因设计"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Coded units"
-msgstr ""
+msgstr "代码值"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Sort by run order"
-msgstr ""
+msgstr "按运行顺序排序"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Sort by standard order"
-msgstr ""
+msgstr "按标准顺序排序"
 
-#, fuzzy
 msgctxt "ShowAndExportDesign|"
 msgid "Save as:"
 msgstr "保存为："
 
 msgctxt "ShowAndExportDesign|"
 msgid "e.g. design.csv"
-msgstr ""
+msgstr "例如：设计.csv"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Export design"
-msgstr ""
+msgstr "导出设计"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Available factors"
 msgstr "可用因子"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Blocks"
 msgstr "区组"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Model"
 msgstr "模型"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Components"
 msgstr "组成部分"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Model Terms"
 msgstr "模型项"
 
 msgctxt "doeFactorial|"
 msgid "Maximum levels"
-msgstr ""
+msgstr "最大水平数"
 
 #, qt-format
 msgctxt "doeFactorial|"
 msgid "Level %1"
-msgstr ""
+msgstr "水平%1"
 
 msgctxt "doeFactorial|"
 msgid "Design Table"
-msgstr ""
+msgstr "设计表"
 
 msgctxt "doeFactorial|"
 msgid "Runs"
-msgstr ""
+msgstr "运行"
 
 msgctxt "doeFactorial|"
 msgid "Design"
-msgstr ""
+msgstr "设计"
 
 msgctxt "doeFactorial|"
 msgid "debug selected row"
-msgstr ""
+msgstr "调试所选行"
 
 msgctxt "doeFactorial|"
 msgid "debug selected col"
-msgstr ""
+msgstr "调试所选列"
 
 msgctxt "doeFactorial|"
 msgid "Alias structure"
-msgstr ""
+msgstr "别名结构"
 
 msgctxt "doeFactorial|"
 msgid "Centre points per block"
-msgstr ""
+msgstr "每个区组的中心点"
 
 msgctxt "doeFactorial|"
 msgid "Replications"
-msgstr ""
+msgstr "复制"
 
 msgctxt "doeFactorial|"
 msgid "Repetitions"
-msgstr ""
+msgstr "重复"
 
 msgctxt "doeFull|"
 msgid "Number of replications"
-msgstr ""
+msgstr "复制数量"
 
 msgctxt "doeFull|"
 msgid "Repeats only"
-msgstr ""
+msgstr "仅重复"
 
 msgctxt "doeFull|"
 msgid "Display selected design"
-msgstr ""
+msgstr "显示所选设计"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Response"
 msgstr "响应"
 
 msgctxt "doeAnalysis|"
 msgid "Define by highest order interaction term"
-msgstr ""
+msgstr "按最高阶交互作用项定义"
 
 msgctxt "doeAnalysis|"
 msgid "Highest order interaction term"
-msgstr ""
+msgstr "最高阶交互作用项"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals Plots"
-msgstr ""
+msgstr "残差图"
 
 msgctxt "doeAnalysis|"
 msgid "Normal probability plot"
-msgstr ""
+msgstr "正态概率图"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Histogram"
 msgstr "直方图"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals vs. fitted values"
-msgstr ""
+msgstr "残差 vs. 拟合值"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals vs. run order"
-msgstr ""
+msgstr "残差 vs. 运行顺序"
 
 msgctxt "doeAnalysis|"
 msgid "Other Plots"
-msgstr ""
+msgstr "其它图形"
 
 msgctxt "Description|"
 msgid "Analyze Design"
-msgstr ""
+msgstr "分析设计"
 
 msgctxt "doeAnalysis|"
 msgid "Design type"
-msgstr ""
+msgstr "设计类型"
 
 msgctxt "doeAnalysis|"
 msgid "Factorial design"
-msgstr ""
+msgstr "析因设计"
 
 msgctxt "doeAnalysis|"
 msgid "Response surface design"
-msgstr ""
+msgstr "响应曲面设计"
 
 msgctxt "doeAnalysis|"
 msgid "Categorical Factors"
-msgstr ""
+msgstr "类别因子"
 
 msgctxt "doeAnalysis|"
 msgid "Continuous Factors"
-msgstr ""
+msgstr "连续因子"
 
 msgctxt "doeAnalysis|"
 msgid "Select predefined model"
-msgstr ""
+msgstr "选择预定义模型"
 
 msgctxt "doeAnalysis|"
 msgid "Include following terms"
-msgstr ""
+msgstr "包括如下模型项"
 
 msgctxt "doeAnalysis|"
 msgid "Linear"
-msgstr ""
+msgstr "线性"
 
 msgctxt "doeAnalysis|"
 msgid "Linear and interaction terms"
-msgstr ""
+msgstr "线性和交互作用项"
 
 msgctxt "doeAnalysis|"
 msgid "Linear and squared terms"
-msgstr ""
+msgstr "线性和平方项"
 
 msgctxt "doeAnalysis|"
 msgid "Full quadratic"
-msgstr ""
+msgstr "完全二次型"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Run order"
 msgstr "运行序"
 
 msgctxt "doeAnalysis|"
 msgid "Equal to row number"
-msgstr ""
+msgstr "等于行号"
 
 msgctxt "doeAnalysis|"
 msgid "Show regression equation"
-msgstr ""
+msgstr "显示回归公式"
 
 msgctxt "doeAnalysis|"
 msgid "Automatically code/standardize factors"
-msgstr ""
+msgstr "自动编码/标准化因子"
 
 msgctxt "doeAnalysis|"
 msgid "Plots"
-msgstr ""
+msgstr "图形"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals matrix plot"
-msgstr ""
+msgstr "残差矩阵图"
 
 msgctxt "doeAnalysis|"
 msgid "Pareto Plot of Effects"
-msgstr ""
+msgstr "效应的帕累托图"
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plots"
-msgstr ""
+msgstr "等高线/曲面图"
 
 msgctxt "doeAnalysis|"
 msgid "Plot type"
-msgstr ""
+msgstr "绘图类型"
 
 msgctxt "doeAnalysis|"
 msgid "Contour plot"
-msgstr ""
+msgstr "等高线图"
 
 msgctxt "doeAnalysis|"
 msgid "Surface plot"
-msgstr ""
+msgstr "曲面图"
 
 msgctxt "doeAnalysis|"
 msgid "Available continuous predictors"
-msgstr ""
+msgstr "可用的连续型预测因子"
 
 msgctxt "doeAnalysis|"
 msgid "Plotting variables"
-msgstr ""
+msgstr "绘制变量图"
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plot options"
-msgstr ""
+msgstr "等高线/曲面图选项"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Show legend next to graph"
 msgstr "在图形旁边显示图例"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Divide response surface into N parts"
 msgstr "将响应曲面分为 N 个部分"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Rotating angle (vertical plane)"
 msgstr "旋转角度(垂直方向）"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Rotating angle (horizontal plane)"
 msgstr "旋转角度(水平方向)"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Axis labels"
-msgstr ""
+msgstr "轴标签"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Specify subgroups"
-msgstr ""
+msgstr "指定子组"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Through grouping variable"
-msgstr ""
+msgstr "通过分组变量"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Manual subgroup size"
-msgstr ""
+msgstr "手动子组大小"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "For unequal subgroup sizes"
-msgstr ""
+msgstr "对于不相等的子组大小"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Assume equal subgroup sizes (largest subgroup)"
-msgstr ""
+msgstr "假设子组大小相等（最大子组）"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Calculate with actual sizes"
-msgstr ""
+msgstr "按实际大小计算"
