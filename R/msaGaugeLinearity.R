@@ -114,7 +114,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
       table2$setError(gettextf("T-Test not possible. No variance detected in Part(s) %s.", noVarParts))
       return(table2)
     }
-    
+
     ReferenceValues <- unique(dataset[[standards]])
     df <- data.frame()
     biases <- vector()
