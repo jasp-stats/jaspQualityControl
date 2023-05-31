@@ -531,14 +531,22 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
 .IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE,
                       stages = "") {
+  
+  ppPlot <- createJaspPlot(width = 900, height = 650)
 
   if (identical(stages, "")) {
     nStages <- 1
   } else {
     nStages <- length(unique(dataset[[stages]]))
+    
+    # Error conditions for stages
+    if(any(table(dataset[[stages]]) < options[["movingRangeLength"]])) {
+      ppPlot$setError(gettext("Moving range length is larger than one of the stages."))
+      return(list(p = ppPlot))
+    }
   }
   
-  ppPlot <- createJaspPlot(width = 900 + nStages * 100, height = 650)
+  ppPlot$width <- 900 + nStages * 100
   
   # Calculate values
   dataPlotI <- list(allValues = list())
