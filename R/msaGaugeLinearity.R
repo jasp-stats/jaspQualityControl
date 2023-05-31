@@ -85,6 +85,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
   if (ready) {
 
+    # Error conditions
     if (length(dataset[[measurements]]) < 2){
       table2$setError(gettextf("T-Test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", length(dataset[[measurements]]), measurements))
       return(table2)
@@ -92,9 +93,21 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
     else if (length(unique(dataset[[standards]])) != length(unique(dataset[[parts]]))) {
       table2$setError(gettextf("Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts.", length(unique(dataset[[standards]])), length(unique(dataset[[parts]]))))
       return(table2)
+    } else if(any(table(dataset[[parts]]) < 2)) {
+      singleMeasurementParts <- paste(names(which(table(dataset[[parts]]) < 2)), collapse = ", ")
+      table2$setError(gettextf("T-Test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
+      return(table2)
+    } 
+    variancePerPart <- tapply(dataset[[measurements]], dataset[[parts]], var)
+    if(any(variancePerPart == 0)) {
+      noVarParts <- paste(names(which(variancePerPart == 0)), collapse = ", ")
+      table2$setError(gettextf("T-Test not possible. No variance detected in Part(s) %s.", noVarParts))
+      return(table2)
     }
-
-
+    
+    
+    
+    df <- data.frame("Part" = rep(1:5, 5), "Measurement" = rnorm(25))
 
     ReferenceValues <- unique(dataset[[standards]])
     df <- data.frame()
