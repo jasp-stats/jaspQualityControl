@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
 "POT-Creation-Date: 2023-04-22 03:39\n"
-"PO-Revision-Date: 2023-05-30 19:49+0000\n"
+"PO-Revision-Date: 2023-06-02 20:48+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pl/>\n"
@@ -165,13 +165,13 @@ msgid "%s"
 msgstr ""
 
 msgid "Observation"
-msgstr ""
+msgstr "Obserwacje"
 
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
 
 msgid "Histogram of Residuals"
-msgstr ""
+msgstr "Histogram reszt"
 
 msgid "Residuals vs. Fitted Value"
 msgstr ""
@@ -180,28 +180,28 @@ msgid "Residuals vs. Run Order"
 msgstr ""
 
 msgid "Pareto Plot of Standardized Effects"
-msgstr ""
+msgstr "Wykres Pareto dla efektów standaryzowanych"
 
 msgid "Fitted values"
 msgstr ""
 
 msgid "Residuals"
-msgstr ""
+msgstr "Reszty"
 
 msgid "Run order"
 msgstr ""
 
 msgid "Standardized Effect"
-msgstr ""
+msgstr "Efekt standaryzowany"
 
 msgid "Coefficients"
-msgstr ""
+msgstr "Współczynniki"
 
 msgid "Coefficient"
 msgstr "Współczynnik"
 
 msgid "Standard Error"
-msgstr ""
+msgstr "Błąd standardowy"
 
 msgid "t"
 msgstr "t"
@@ -219,13 +219,13 @@ msgid "ANOVA"
 msgstr "ANOVA"
 
 msgid "Coded"
-msgstr ""
+msgstr "Zakodowane"
 
 msgid "Uncoded"
 msgstr ""
 
 msgid "%s Coefficients"
-msgstr ""
+msgstr "%s współczynniki"
 
 msgid "Alias"
 msgstr ""
@@ -246,13 +246,13 @@ msgid "Regression Equation in %s Units"
 msgstr ""
 
 msgid "Pareto Chart of Standardized Effects"
-msgstr ""
+msgstr "Wykres Pareto dla efektów standaryzowanych"
 
 msgid "Pareto Chart of Unstandardized Effects"
-msgstr ""
+msgstr "Wykres Pareto dla efektów niestandaryzowanych"
 
 msgid "Unstandardized Effect"
-msgstr ""
+msgstr "Efekt niestandaryzowany"
 
 msgid "Residuals versus Fitted Values"
 msgstr ""
@@ -276,10 +276,10 @@ msgid "Surface plots"
 msgstr ""
 
 msgid "and"
-msgstr ""
+msgstr "oraz"
 
 msgid "%1$s of %2$s vs %3$s"
-msgstr ""
+msgstr "%1$s z%2$s vs %3$s"
 
 msgid "The analysis failed with the following error message: %s"
 msgstr ""
@@ -303,7 +303,7 @@ msgid "Centre points per block"
 msgstr ""
 
 msgid "Replications"
-msgstr ""
+msgstr "Powtórzenia"
 
 msgid "Repetitions"
 msgstr ""
@@ -351,13 +351,13 @@ msgid "Selected Design"
 msgstr "Wybrany schemat"
 
 msgid "Factors"
-msgstr ""
+msgstr "Czynniki"
 
 msgid "Runs"
-msgstr ""
+msgstr "Przebiegi"
 
 msgid "Resolution"
-msgstr ""
+msgstr "Rozdzielczość"
 
 msgid "Replicates"
 msgstr ""
@@ -410,13 +410,13 @@ msgid ""
 msgstr ""
 
 msgid "<em>Warning: </em>"
-msgstr ""
+msgstr "<em>Ostrzeżenie: </em>"
 
 msgid "generators"
 msgstr ""
 
 msgid "generatorName"
-msgstr ""
+msgstr "generatorName"
 
 msgid ""
 "The analysis will not run when the 'Specify Model for CCD' field is empty "
@@ -598,7 +598,7 @@ msgid "Matched"
 msgstr ""
 
 msgid "Percent"
-msgstr ""
+msgstr "Procent"
 
 msgid "Lower"
 msgstr "Dolna granica"
@@ -1271,7 +1271,7 @@ msgid "Scale (<i>k</i>)"
 msgstr ""
 
 msgid "Threshold"
-msgstr ""
+msgstr "Próg"
 
 msgid "Observed"
 msgstr "Obserwowane"
@@ -1289,7 +1289,7 @@ msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
 msgid "N"
-msgstr ""
+msgstr "N"
 
 msgid "Mean (%1$s)"
 msgstr ""
@@ -1335,7 +1335,7 @@ msgid "Please insert more measurements and check the X-mR chart."
 msgstr ""
 
 msgid "Autocorrelation"
-msgstr ""
+msgstr "Autokorelacja"
 
 msgid "Lag"
 msgstr ""
