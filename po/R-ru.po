@@ -1,18 +1,14 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2023-04-22 03:39\n"
-"PO-Revision-Date: 2023-06-02 20:48+0000\n"
-"Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
-"Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-r/pl/>\n"
-"Language: pl\n"
+"Project-Id-Version: jaspQualityControl 0.17.2.1\n"
+"POT-Creation-Date: 2023-05-20 03:40\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.18-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr ""
@@ -27,19 +23,19 @@ msgid "T chart"
 msgstr ""
 
 msgid "CL = %g"
-msgstr "CL = %g"
+msgstr ""
 
 msgid "UCL = %g"
-msgstr "UCL = %g"
+msgstr ""
 
 msgid "LCL = %g"
-msgstr "LCL = %g"
+msgstr ""
 
 msgid "Cumulative sum"
-msgstr "Suma skumulowana"
+msgstr ""
 
 msgid "Subgroups"
-msgstr "Podgrupys"
+msgstr ""
 
 msgid "EWMA"
 msgstr ""
@@ -48,7 +44,7 @@ msgid "Subgroup"
 msgstr ""
 
 msgid "Counts"
-msgstr "Liczebności"
+msgstr ""
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
 msgstr ""
@@ -81,10 +77,10 @@ msgid "Report for Attribute Control Charts"
 msgstr ""
 
 msgid "Proportion"
-msgstr "Proporcja"
+msgstr ""
 
 msgid "Sample"
-msgstr "Próba"
+msgstr ""
 
 msgid "Number of defectives"
 msgstr ""
@@ -165,13 +161,13 @@ msgid "%s"
 msgstr ""
 
 msgid "Observation"
-msgstr "Obserwacje"
+msgstr ""
 
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
 
 msgid "Histogram of Residuals"
-msgstr "Histogram reszt"
+msgstr ""
 
 msgid "Residuals vs. Fitted Value"
 msgstr ""
@@ -180,61 +176,61 @@ msgid "Residuals vs. Run Order"
 msgstr ""
 
 msgid "Pareto Plot of Standardized Effects"
-msgstr "Wykres Pareto dla efektów standaryzowanych"
+msgstr ""
 
 msgid "Fitted values"
 msgstr ""
 
 msgid "Residuals"
-msgstr "Reszty"
+msgstr ""
 
 msgid "Run order"
 msgstr ""
 
 msgid "Standardized Effect"
-msgstr "Efekt standaryzowany"
+msgstr ""
 
 msgid "Coefficients"
-msgstr "Współczynniki"
+msgstr ""
 
 msgid "Coefficient"
-msgstr "Współczynnik"
+msgstr ""
 
 msgid "Standard Error"
-msgstr "Błąd standardowy"
+msgstr ""
 
 msgid "t"
-msgstr "t"
+msgstr ""
 
 msgid "p"
-msgstr "<em>p</em>"
+msgstr ""
 
 msgid "The analysis crashed with the following error message: %1$s"
 msgstr ""
 
 msgid "Model Summary"
-msgstr "Podsumowanie modelu"
+msgstr ""
 
 msgid "ANOVA"
-msgstr "ANOVA"
+msgstr ""
 
 msgid "Coded"
-msgstr "Zakodowane"
+msgstr ""
 
 msgid "Uncoded"
 msgstr ""
 
 msgid "%s Coefficients"
-msgstr "%s współczynniki"
+msgstr ""
 
 msgid "Alias"
 msgstr ""
 
 msgid "Term"
-msgstr "Składniki"
+msgstr ""
 
 msgid "Effect"
-msgstr "Efekt"
+msgstr ""
 
 msgid "coded"
 msgstr ""
@@ -246,13 +242,13 @@ msgid "Regression Equation in %s Units"
 msgstr ""
 
 msgid "Pareto Chart of Standardized Effects"
-msgstr "Wykres Pareto dla efektów standaryzowanych"
+msgstr ""
 
 msgid "Pareto Chart of Unstandardized Effects"
-msgstr "Wykres Pareto dla efektów niestandaryzowanych"
+msgstr ""
 
 msgid "Unstandardized Effect"
-msgstr "Efekt niestandaryzowany"
+msgstr ""
 
 msgid "Residuals versus Fitted Values"
 msgstr ""
@@ -276,19 +272,19 @@ msgid "Surface plots"
 msgstr ""
 
 msgid "and"
-msgstr "oraz"
+msgstr ""
 
 msgid "%1$s of %2$s vs %3$s"
-msgstr "%1$s z%2$s vs %3$s"
+msgstr ""
 
 msgid "The analysis failed with the following error message: %s"
 msgstr ""
 
 msgid "Design Summary"
-msgstr "Podsumowanie schematu"
+msgstr ""
 
 msgid "Variable"
-msgstr "Zmienna"
+msgstr ""
 
 msgid "Categorial factors"
 msgstr ""
@@ -303,7 +299,7 @@ msgid "Centre points per block"
 msgstr ""
 
 msgid "Replications"
-msgstr "Powtórzenia"
+msgstr ""
 
 msgid "Repetitions"
 msgstr ""
@@ -315,19 +311,19 @@ msgid "Total blocks"
 msgstr ""
 
 msgid "Value"
-msgstr "Wartość"
+msgstr ""
 
 msgid "Please select a row in the design table."
-msgstr "Proszę wybrać wiersz w tabeli schematu."
+msgstr ""
 
 msgid "Click 'Display design' to show the design."
-msgstr "Kliknij \"Pokaż schemat\", aby wyświetlić schemat."
+msgstr ""
 
 msgid "The design is not exported until 'Export design' is checked."
 msgstr ""
 
 msgid "The design is exported as '%1$s'."
-msgstr "Schemat jest eksportowany jako \"%1$s\"."
+msgstr ""
 
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr ""
@@ -336,7 +332,7 @@ msgid "Alias Structure"
 msgstr ""
 
 msgid "Factorial Design"
-msgstr "Plan czynnikowy"
+msgstr ""
 
 msgid "Run Order"
 msgstr ""
@@ -348,28 +344,28 @@ msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
 msgid "Selected Design"
-msgstr "Wybrany schemat"
+msgstr ""
 
 msgid "Factors"
-msgstr "Czynniki"
+msgstr ""
 
 msgid "Runs"
-msgstr "Przebiegi"
+msgstr ""
 
 msgid "Resolution"
-msgstr "Rozdzielczość"
+msgstr ""
 
 msgid "Replicates"
 msgstr ""
 
 msgid "Design Preview"
-msgstr "Podgląd schematu"
+msgstr ""
 
 msgid "Input Design"
-msgstr "Schemat wejściowy"
+msgstr ""
 
 msgid "Desired Design"
-msgstr "Schemat docelowy"
+msgstr ""
 
 msgid "Missing Runs"
 msgstr ""
@@ -390,7 +386,7 @@ msgid "Centre points"
 msgstr ""
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
-msgstr "Schemat Boxa-Behnkena nie jest obsługiwany dla 8 zmiennych."
+msgstr ""
 
 msgid "Response Surface Design - Central Composite Design"
 msgstr ""
@@ -404,28 +400,22 @@ msgstr ""
 msgid "Central Composite Design"
 msgstr ""
 
-msgid ""
-"Generator name '%s' is a number, and number generator names are not "
-"supported."
+msgid "Generator name '%s' is a number, and number generator names are not supported."
 msgstr ""
 
 msgid "<em>Warning: </em>"
-msgstr "<em>Ostrzeżenie: </em>"
+msgstr ""
 
 msgid "generators"
 msgstr ""
 
 msgid "generatorName"
-msgstr "generatorName"
-
-msgid ""
-"The analysis will not run when the 'Specify Model for CCD' field is empty "
-"and the 'Use # of Variables instead of Model' is not ticked."
 msgstr ""
 
-msgid ""
-"The analysis will not run when the 'Specify Blocks for CCD' field is empty "
-"and the Introduce Blocking is ticked."
+msgid "The analysis will not run when the 'Specify Model for CCD' field is empty and the 'Use # of Variables instead of Model' is not ticked."
+msgstr ""
+
+msgid "The analysis will not run when the 'Specify Blocks for CCD' field is empty and the Introduce Blocking is ticked."
 msgstr ""
 
 msgid "Central Composite Design with Star Points"
@@ -434,9 +424,7 @@ msgstr ""
 msgid "The analysis will not run when the 'Number of Generators' > 0"
 msgstr ""
 
-msgid ""
-"This analysis does not take predictor variables with more than 5 unique "
-"values."
+msgid "This analysis does not take predictor variables with more than 5 unique values."
 msgstr ""
 
 msgid "Design Choice"
@@ -503,19 +491,19 @@ msgid "Adjusted R-squared"
 msgstr ""
 
 msgid "df1"
-msgstr "df1"
+msgstr ""
 
 msgid "df2"
 msgstr ""
 
 msgid "F"
-msgstr "F"
+msgstr ""
 
 msgid "ANOVA for %s"
 msgstr ""
 
 msgid "df"
-msgstr "df"
+msgstr ""
 
 msgid "SS"
 msgstr ""
@@ -527,7 +515,7 @@ msgid "Stationary Points of Response Surface (Coded)"
 msgstr ""
 
 msgid "Eigenvalues"
-msgstr "Wartości własne"
+msgstr ""
 
 msgid "Eigenvectors"
 msgstr ""
@@ -535,14 +523,10 @@ msgstr ""
 msgid "Desirability"
 msgstr ""
 
-msgid ""
-"At least one predictor and response variable need to be specified before "
-"running the analysis."
+msgid "At least one predictor and response variable need to be specified before running the analysis."
 msgstr ""
 
-msgid ""
-"At least one desirability function must be specified before running the "
-"analysis."
+msgid "At least one desirability function must be specified before running the analysis."
 msgstr ""
 
 msgid "Reference Tables and Plots"
@@ -569,8 +553,7 @@ msgstr ""
 msgid "Cohen's Kappa correlations summary"
 msgstr ""
 
-msgid ""
-"Please inseret a vaild Positive reference as used in the 'Results' variables."
+msgid "Please inseret a vaild Positive reference as used in the 'Results' variables."
 msgstr ""
 
 msgid "Fleiss' Kappa"
@@ -598,16 +581,16 @@ msgid "Matched"
 msgstr ""
 
 msgid "Percent"
-msgstr "Procent"
+msgstr ""
 
 msgid "Lower"
-msgstr "Dolna granica"
+msgstr ""
 
 msgid "Confidence interval of 95%%"
 msgstr ""
 
 msgid "Upper"
-msgstr "Górna granica"
+msgstr ""
 
 msgid "Invalid Reference and/or Results were inserted."
 msgstr ""
@@ -630,19 +613,13 @@ msgstr ""
 msgid "False alarm rate"
 msgstr ""
 
-msgid ""
-"Acceptable: x >= 90%% (Effectiveness), x =< 2%% (Miss rate), x =< 5%% (False "
-"alarm rate)"
+msgid "Acceptable: x >= 90%% (Effectiveness), x =< 2%% (Miss rate), x =< 5%% (False alarm rate)"
 msgstr ""
 
-msgid ""
-"Marginally acceptable: x >= 80%% (Effectiveness), x =< 5%% (Miss rate), x =< "
-"10%% (False alarm rate)"
+msgid "Marginally acceptable: x >= 80%% (Effectiveness), x =< 5%% (Miss rate), x =< 10%% (False alarm rate)"
 msgstr ""
 
-msgid ""
-"Unacceptable: x < 80%% (Effectiveness), x > 5%% (Miss rate), x > 10%% (False "
-"alarm rate)"
+msgid "Unacceptable: x < 80%% (Effectiveness), x > 5%% (Miss rate), x > 10%% (False alarm rate)"
 msgstr ""
 
 msgid "Kendall's Tau is only available for numeric measurements."
@@ -688,7 +665,7 @@ msgid "Regression Model"
 msgstr ""
 
 msgid "Predictor"
-msgstr "Predyktor"
+msgstr ""
 
 msgid "<i>t</i>-statistic"
 msgstr ""
@@ -708,9 +685,7 @@ msgstr ""
 msgid "%% Linearity"
 msgstr ""
 
-msgid ""
-"Calculations are based on 6 times the historical standard variation unless "
-"specified otherwise."
+msgid "Calculations are based on 6 times the historical standard variation unless specified otherwise."
 msgstr ""
 
 msgid "Bias and Linearity"
@@ -719,14 +694,10 @@ msgstr ""
 msgid "Percentage Process Variation Graph"
 msgstr ""
 
-msgid ""
-"T-Test requires more than 1 measurement. %i valid measurement(s) detected in "
-"%s."
+msgid "T-Test requires more than 1 measurement. %i valid measurement(s) detected in %s."
 msgstr ""
 
-msgid ""
-"Every unique part must have one corresponding reference value. %i reference "
-"values were found for %s unique parts."
+msgid "Every unique part must have one corresponding reference value. %i reference values were found for %s unique parts."
 msgstr ""
 
 msgid "Reference"
@@ -744,14 +715,10 @@ msgstr ""
 msgid "Gauge r&R"
 msgstr ""
 
-msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+msgid "Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."
 msgstr ""
 
-msgid ""
-"The measurements selected seem to be in a 'Single Column' format as every "
-"operator's part is measured %d times."
+msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
 msgstr ""
 
 msgid "Gauge r&R ANOVA Table"
@@ -791,7 +758,7 @@ msgid "Source"
 msgstr ""
 
 msgid "Sum of Squares"
-msgstr "Suma kwadratów"
+msgstr ""
 
 msgid "Mean Squares"
 msgstr ""
@@ -800,7 +767,7 @@ msgid "Variance Components"
 msgstr ""
 
 msgid "Variance"
-msgstr "Wariancja"
+msgstr ""
 
 msgid "%% Contribution"
 msgstr ""
@@ -809,10 +776,10 @@ msgid "Gauge Evaluation"
 msgstr ""
 
 msgid "Std. Deviation"
-msgstr "Odch. stand."
+msgstr ""
 
 msgid "Study Variation"
-msgstr "Zbadaj zróżnicowanie"
+msgstr ""
 
 msgid "%% Study Variation"
 msgstr ""
@@ -844,18 +811,13 @@ msgstr ""
 msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i"
 msgstr ""
 
-msgid ""
-"Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
+msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
 msgstr ""
 
-msgid ""
-"Historical standard deviation is used to calculate some values for Std. "
-"Deviation, Study Variation, and %%Study Variation."
+msgid "Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %%Study Variation."
 msgstr ""
 
-msgid ""
-"Values for %%Process Variation are not displayed because they are identical "
-"to values for %%Study Variation."
+msgid "Values for %%Process Variation are not displayed because they are identical to values for %%Study Variation."
 msgstr ""
 
 msgid "Two-way ANOVA Table without Interaction"
@@ -979,7 +941,7 @@ msgid "Short gauge study"
 msgstr ""
 
 msgid "Sample size (n)"
-msgstr "Wielkość próby (n)"
+msgstr ""
 
 msgid "R-bar"
 msgstr ""
@@ -1024,13 +986,13 @@ msgid "Basic Statistics"
 msgstr ""
 
 msgid "Mean"
-msgstr "Średnia"
+msgstr ""
 
 msgid "Bias"
 msgstr ""
 
 msgid "Std. Deviation (<i>s</i>)"
-msgstr "Odchylenie std. (<i>s</i>)"
+msgstr ""
 
 msgid "Study variation"
 msgstr ""
@@ -1078,32 +1040,28 @@ msgid "Parameter Estimates"
 msgstr ""
 
 msgid "Parameter"
-msgstr "Parametr"
+msgstr ""
 
 msgid "Estimate"
-msgstr "Oszacowanie"
+msgstr ""
 
-msgid ""
-"Fitting the model failed with the following error message:\n"
-"%s"
+msgid "Fitting the model failed with the following error message:\n%s"
 msgstr ""
 
 msgid "Intercept"
-msgstr "Wyraz wolny"
-
-msgid ""
-"The IWLS algorithm did not converge. Interpret the results with caution."
 msgstr ""
 
-msgid ""
-"There is only observed category (%s). The results are likely meaningless."
+msgid "The IWLS algorithm did not converge. Interpret the results with caution."
+msgstr ""
+
+msgid "There is only observed category (%s). The results are likely meaningless."
 msgstr ""
 
 msgid "Fit Table"
 msgstr ""
 
 msgid "AIC"
-msgstr "AIC"
+msgstr ""
 
 msgid "Detection Plot"
 msgstr ""
@@ -1111,9 +1069,7 @@ msgstr ""
 msgid "log(%s)"
 msgstr ""
 
-msgid ""
-"The detection plot failed with the following error message:\n"
-"%s"
+msgid "The detection plot failed with the following error message:\n%s"
 msgstr ""
 
 msgid "Asymptotes"
@@ -1146,9 +1102,7 @@ msgstr ""
 msgid "Values must be positive to fit a Weibull/Lognormal distribution."
 msgstr ""
 
-msgid ""
-"All zero values have been replaced with a value equal to one-half of the "
-"smallest data point."
+msgid "All zero values have been replaced with a value equal to one-half of the smallest data point."
 msgstr ""
 
 msgid "Capability Studies"
@@ -1179,7 +1133,7 @@ msgid "USL"
 msgstr ""
 
 msgid "Sample size"
-msgstr "Wielkość próby"
+msgstr ""
 
 msgid "Std. deviation (total)"
 msgstr ""
@@ -1191,7 +1145,7 @@ msgid "The within standard deviation could not be calculated."
 msgstr ""
 
 msgid "Density"
-msgstr "Gęstość"
+msgstr ""
 
 msgid "Measurement"
 msgstr ""
@@ -1250,13 +1204,11 @@ msgstr ""
 msgid "Non-conformance statistics"
 msgstr ""
 
-msgid ""
-"Dataset contains negative numbers. Not compatible with the selected "
-"distribution."
+msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
 msgstr ""
 
 msgid "Std. deviation"
-msgstr "Odch. stand."
+msgstr ""
 
 msgid "Log mean (%1$s)"
 msgstr ""
@@ -1271,10 +1223,10 @@ msgid "Scale (<i>k</i>)"
 msgstr ""
 
 msgid "Threshold"
-msgstr "Próg"
+msgstr ""
 
 msgid "Observed"
-msgstr "Obserwowane"
+msgstr ""
 
 msgid "Expected overall"
 msgstr ""
@@ -1289,29 +1241,25 @@ msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
 msgid "N"
-msgstr "N"
+msgstr ""
 
 msgid "Mean (%1$s)"
 msgstr ""
 
 msgid "Std. deviation (%1$s)"
-msgstr "Odchylenie std. (%1$s)"
+msgstr ""
 
 msgid "AD"
 msgstr ""
 
-msgid ""
-"The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s "
-"distribution."
+msgid "The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution."
 msgstr ""
 
-msgid ""
-"Red dotted lines in the probability plot below represent a 95%% confidence "
-"interval."
+msgid "Red dotted lines in the probability plot below represent a 95%% confidence interval."
 msgstr ""
 
 msgid "Histogram"
-msgstr "Histogram"
+msgstr ""
 
 msgid "X-mR control chart"
 msgstr ""
@@ -1335,7 +1283,7 @@ msgid "Please insert more measurements and check the X-mR chart."
 msgstr ""
 
 msgid "Autocorrelation"
-msgstr "Autokorelacja"
+msgstr ""
 
 msgid "Lag"
 msgstr ""
@@ -1346,9 +1294,7 @@ msgstr ""
 msgid "X-bar & R Control Chart"
 msgstr ""
 
-msgid ""
-"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
-"instead."
+msgid "Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."
 msgstr ""
 
 msgid "Out-of-control Signals"
