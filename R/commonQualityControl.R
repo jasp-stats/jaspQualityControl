@@ -634,6 +634,12 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     )
     
     df1 <- data.frame(process = dataPlotI[[i]]$process, subgroups = subgroups)
+    
+    if (length(dataPlotI[[i]]$sixsigma_I$statistics) > 1) {
+      dotColor1 <- ifelse(NelsonLaws(dataPlotI[[i]]$sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')
+    } else {
+      dotColor1 <- 'blue'
+    }
 
     p1 <- ggplot2::ggplot(df1, ggplot2::aes(x = subgroups, y = process)) +
       ggplot2::geom_hline(yintercept = center, color = 'green') +
@@ -643,15 +649,9 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                                   breaks = yBreaks1, limits = range(yBreaks1)) +
       ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks1, limits = xLimits) +
       jaspGraphs::geom_line(color = "blue") +
+      jaspGraphs::geom_point(size = 4, fill = dotColor1, inherit.aes = TRUE) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
-    
-    if (length(dataPlotI[[i]]$sixsigma_I$statistics) > 1) {
-      p1 <- p1 + ggplot2::geom_point(size = 4, color = ifelse(NelsonLaws(dataPlotI[[i]]$sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue'),
-                                        inherit.aes = TRUE)
-    } else {
-      p1 <- p1 + ggplot2::geom_point(size = 4, color = 'blue')
-    }
     
     if(i != 1)
       p1 <- p1 + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(),
@@ -682,6 +682,12 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     )
     
     df2 <- data.frame(subgroups = subgroups, movingRange = dataPlotR[[i]]$movingRange)
+    
+    if (length(dataPlotR[[i]]$sixsigma_R$statistics) > 1) {
+      dotColor2 <- ifelse(c(NA, NelsonLaws(dataPlotR[[i]]$sixsigma_R)$red_points), 'red', 'blue')
+    } else {
+      dotColor2 <- 'blue'
+    }
 
     p2 <- ggplot2::ggplot(df2, ggplot2::aes(x = subgroups, y = movingRange)) +
       ggplot2::geom_hline(yintercept = center, color = 'green') +
@@ -690,16 +696,9 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       ggplot2::scale_y_continuous(name = gettext("Moving Range"), breaks = yBreaks2, limits = range(yBreaks2)) +
       ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks2, limits = xLimits) +
       jaspGraphs::geom_line(color = "blue") +
+      jaspGraphs::geom_point(size = 4, fill = dotColor2, inherit.aes = TRUE) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
-    
-    
-    if (length(dataPlotR[[i]]$sixsigma_R$statistics) > 1) {
-      p2 <- p2 + ggplot2::geom_point(size = 4, color = ifelse(c(NA, NelsonLaws(dataPlotR[[i]]$sixsigma_R)$red_points), 'red', 'blue'),
-                                        inherit.aes = TRUE)
-    } else {
-      p2 <- p2 + ggplot2::geom_point(size = 4, color = 'blue')
-    }
     
     if(i != 1)
       p2 <- p2 + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(),
