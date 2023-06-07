@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2023-04-22 03:39\n"
-"PO-Revision-Date: 2023-05-25 04:05+0000\n"
+"PO-Revision-Date: 2023-06-07 01:39+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "jasp/jaspprocesscontrol-r/zh_Hans/>\n"
@@ -50,7 +50,7 @@ msgid "Counts"
 msgstr "计数"
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr "不合格品/缺陷的数量大于样本量"
+msgstr "不合格品/缺陷的数量大于样本量。"
 
 msgid "Attributes Control Charts"
 msgstr "属性控制图"
@@ -210,11 +210,8 @@ msgstr "t"
 msgid "p"
 msgstr "p"
 
-#, fuzzy
 msgid "The analysis crashed with the following error message: %1$s"
-msgstr ""
-"检测图失效，错误信息如下：\n"
-"%s"
+msgstr "检测图失效，错误信息如下: %1$s"
 
 msgid "Model Summary"
 msgstr "模型摘要"
@@ -292,19 +289,15 @@ msgstr ""
 msgid "%1$s of %2$s vs %3$s"
 msgstr ""
 
-#, fuzzy
 msgid "The analysis failed with the following error message: %s"
-msgstr ""
-"检测图失效，错误信息如下：\n"
-"%s"
+msgstr "分析失败，出现以下错误消息：%s"
 
 #, fuzzy
 msgid "Design Summary"
 msgstr "模型摘要"
 
-#, fuzzy
 msgid "Variable"
-msgstr "方差"
+msgstr "变量"
 
 msgid "Categorial factors"
 msgstr ""
