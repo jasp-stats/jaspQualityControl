@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
 "POT-Creation-Date: 2023-04-22 03:39\n"
-"PO-Revision-Date: 2023-06-02 20:48+0000\n"
+"PO-Revision-Date: 2023-06-08 04:26+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pl/>\n"
@@ -1167,22 +1167,22 @@ msgid "Process Capability (Non-normal Capability Analysis)"
 msgstr ""
 
 msgid "Process summary"
-msgstr ""
+msgstr "Podsumowanie procesu"
 
 msgid "LSL"
-msgstr ""
+msgstr "LSL"
 
 msgid "Target"
-msgstr ""
+msgstr "Cel"
 
 msgid "USL"
-msgstr ""
+msgstr "USL"
 
 msgid "Sample size"
 msgstr "Wielkość próby"
 
 msgid "Std. deviation (total)"
-msgstr ""
+msgstr "Odch. stand. (całkowite)"
 
 msgid "Std. deviation (within)"
 msgstr ""
@@ -1194,7 +1194,7 @@ msgid "Density"
 msgstr "Gęstość"
 
 msgid "Measurement"
-msgstr ""
+msgstr "Pomiar"
 
 msgid "No specification limits set."
 msgstr ""
@@ -1212,40 +1212,40 @@ msgid "CpL"
 msgstr ""
 
 msgid "CpU"
-msgstr ""
+msgstr "CpU"
 
 msgid "Cpk"
-msgstr ""
+msgstr "Cpk"
 
 msgid "%s CI for Cpk"
-msgstr ""
+msgstr "%s PU dla Cpk"
 
 msgid "Process performance (total)"
 msgstr ""
 
 msgid "Pp"
-msgstr ""
+msgstr "Pp"
 
 msgid "%s CI for Pp"
-msgstr ""
+msgstr "%s PU dla Pp"
 
 msgid "PpL"
-msgstr ""
+msgstr "PpL"
 
 msgid "PpU"
-msgstr ""
+msgstr "PpU"
 
 msgid "Ppk"
-msgstr ""
+msgstr "Ppk"
 
 msgid "%s CI for Ppk"
-msgstr ""
+msgstr "%s PU dla Ppk"
 
 msgid "Cpm"
-msgstr ""
+msgstr "Cpm"
 
 msgid "%s CI for Cpm"
-msgstr ""
+msgstr "%s PU dla Cpm"
 
 msgid "Non-conformance statistics"
 msgstr ""
@@ -1262,13 +1262,13 @@ msgid "Log mean (%1$s)"
 msgstr ""
 
 msgid "Log std.dev (%1$s)"
-msgstr ""
+msgstr "Log odch. stand. (%1$s)"
 
 msgid "Shape (%1$s)"
 msgstr ""
 
 msgid "Scale (<i>k</i>)"
-msgstr ""
+msgstr "Skala (<i>k</i>)"
 
 msgid "Threshold"
 msgstr "Próg"
@@ -1364,13 +1364,13 @@ msgid "Subgroup st dev"
 msgstr ""
 
 msgid "Name: %s"
-msgstr ""
+msgstr "Nazwa: %s"
 
 msgid "Date: %s"
-msgstr ""
+msgstr "Dane: %s"
 
 msgid "Sub-title: %s"
-msgstr ""
+msgstr "Podtytuł: %s"
 
 msgid "Name of chart: %s"
-msgstr ""
+msgstr "Nazwa wykresu: %s"
