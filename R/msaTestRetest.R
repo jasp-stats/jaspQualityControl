@@ -17,11 +17,10 @@
 
 #' @export
 msaTestRetest <- function(jaspResults, dataset, options, ...) {
-
   wideFormat <- options[["testRetestDataFormat"]] == "testRetestWideFormat"
   if (wideFormat){
     measurements <- unlist(options$measurements)
-  }else{
+  }else {
     measurements <- unlist(options$measurementsLong)
   }
   parts <- unlist(options$parts)
@@ -47,15 +46,9 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
              all.target = c(measurements, options$operators, options$parts),
              exitAnalysisIfErrors = TRUE)
 
-  if (!wideFormat && ready){
-    dataset <- dataset[order(dataset[[operators]]),]
-    dataset <- dataset[order(dataset[[parts]]),]
-    nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
-    index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
-    dataset <- cbind(dataset, data.frame(index = index))
-    dataset <- tidyr::spread(dataset, index, measurements)
-    measurements <- unique(index)
-    dataset <- dataset[,c(operators, parts, measurements)]
+  if (!wideFormat && ready) {
+    dataset <- as.data.frame(tidyr::pivot_wider(dataset, values_from = measurements, names_from = operators))
+    measurements <- names(dataset[-1])
   }
 
   # Range Method
