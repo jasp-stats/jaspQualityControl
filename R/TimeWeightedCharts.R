@@ -41,7 +41,6 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   sixsigma <- qcc::cusum(data1, decision.interval = options$h, se.shift = options$k, plot = FALSE)
   subgroups <- c(1:length(sixsigma$pos))
   data_plot <- data.frame(y_neg = sixsigma$neg , y_pos = sixsigma$pos, x = subgroups)
-  
   center <- 0
   UCL <- sixsigma$decision.interval
   LCL <- -UCL
@@ -135,7 +134,6 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   LCL = center-3*sqrt(center*(center + 1))
   LCL <- ifelse(LCL < 0 , 0, LCL)
   sixsigma <- list(statistics = data1, limits = data.frame(LCL, UCL), center = center)
-  
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, data_plot$y))
   yLimits <- range(yBreaks)
   if (length(subgroups) > 60)
@@ -182,7 +180,6 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   LCL = (mean(data_plot$y, na.rm = TRUE) - 2.66 * mean(MR_T, na.rm =))^3.6
   LCL <- ifelse(LCL < 0 , 0, LCL)
   sixsigma <- list(statistics = data1, limits = data.frame(LCL, UCL), center = center)
-  
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(LCL, UCL, data_plot$y))
   yLimits <- range(yBreaks)
   if (length(subgroups) > 60)
