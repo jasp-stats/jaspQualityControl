@@ -557,8 +557,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
     if (length(measurements) >= 1 && operators != "" && parts != "" && ready) {
-      RRtable1$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
-      RRtable2$setError(gettextf("Number of observations is < 2 in %s after grouping on %s", parts, operators))
+      RRtable1$setError(gettextf("Number of observations is < 2 in %1$s after grouping on %2$s", parts, operators))
+      RRtable2$setError(gettextf("Number of observations is < 2 in %1$s after grouping on %2$s", parts, operators))
     }
   }
   return(anovaTables)
@@ -778,7 +778,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     singleEmptyPlot$setError(gettext("Cannot plot scatterplot for less than 2 operators."))
     return(singleEmptyPlot)
   }else{
-    singlePlot <- createJaspPlot(title = gettextf("Scatterplot of Operator  %s vs Operator %s", operatorVector[1], operatorVector[2]))
+    singlePlot <- createJaspPlot(title = gettextf("Scatterplot of Operator  %1$s vs Operator %2$s", operatorVector[1], operatorVector[2]))
     singlePlot$dependOn(c("gaugeScatterPlotOperators", "gaugeScatterPlotFitLine", "gaugeScatterPlotOriginLine", "gaugeRRmethod"))
     operatorSplit <- split.data.frame(dataset, dataset[operators])
     nparts <- length(unique(subset(dataset, dataset[operators] == operatorVector[1])[[parts]]))
