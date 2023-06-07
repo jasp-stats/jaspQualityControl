@@ -32,6 +32,7 @@ Form
 		{
 			name: 								"Cumulativechart"
 			label: 								qsTr("Cumulative sum chart")
+			checked:							true
 
 			DoubleField
 			{
@@ -90,10 +91,10 @@ Form
 			label: 								qsTr("g chart")
 		}
 
-		CheckBox
-		{
-			name: 								"tchart"
-			label: 								qsTr("t chart")
-		}
+		// CheckBox
+		// {
+		// 	name: 								"tchart"
+		// 	label: 								qsTr("t chart")
+		// }
 	}
 }
