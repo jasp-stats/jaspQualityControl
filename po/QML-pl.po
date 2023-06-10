@@ -1,16 +1,10 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-06-08 04:26+0000\n"
-"Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
-"Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/pl/>\n"
-"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.18-dev\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
 "X-Language: pl\n"
 "X-Qt-Contexts: true\n"
 
@@ -757,9 +751,10 @@ msgctxt "msaGaugeLinearity|"
 msgid "Parts"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeLinearity|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pomiary"
 
 #, fuzzy
 msgctxt "msaGaugeLinearity|"
@@ -818,9 +813,10 @@ msgctxt "msaGaugeRR|"
 msgid "Parts"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pomiary"
 
 msgctxt "msaGaugeRR|"
 msgid "Type 3 study (automatic equipment)"
@@ -1031,9 +1027,10 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Parts"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pomiary"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R Options"
@@ -1195,9 +1192,10 @@ msgctxt "msaTestRetest|"
 msgid "Parts"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pomiary"
 
 msgctxt "msaTestRetest|"
 msgid "Range Method Options"
@@ -1471,9 +1469,10 @@ msgctxt "processCapabilityStudies|"
 msgid "Across rows"
 msgstr ""
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pomiary"
 
 msgctxt "processCapabilityStudies|"
 msgid "Subgroups"
@@ -1707,17 +1706,19 @@ msgctxt "processCapabilityStudies|"
 msgid "Normal"
 msgstr "Normalny"
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pomiary"
 
 msgctxt "timeWeightedCharts|"
 msgid "Cumulative sum chart"
 msgstr ""
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Number of standard deviations"
-msgstr ""
+msgstr "Liczba odchyleń standardowych"
 
 msgctxt "timeWeightedCharts|"
 msgid "Shift size"
@@ -1735,9 +1736,10 @@ msgctxt "timeWeightedCharts|"
 msgid "Center"
 msgstr ""
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Within-group standard deviation"
-msgstr ""
+msgstr "Wewnątrzgrupowe odchylenie standardowe"
 
 msgctxt "timeWeightedCharts|"
 msgid "Sigmas for computing control limits"
@@ -1875,9 +1877,10 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Sub-title"
 msgstr "Podtytuł"
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Chart name:"
-msgstr ""
+msgstr "Nazwa wykresu:"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Name of the chart"
@@ -1899,9 +1902,10 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Across rows"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pomiary"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroups"
