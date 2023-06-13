@@ -173,7 +173,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
                         "pvalue" = pvalues))
 
     if (options$EnablePV) {
-      table1$addColumnInfo(name = "percentBias",            title = gettext("Percent bias per reference value"), type = "number")
+      table1$addColumnInfo(name = "percentBias", title = gettext("Percent bias per reference value"), type = "number")
       table3$addColumnInfo(name = "linearity", title = gettext("Linearity"), type = "number")
 
       table1$setData(list("part" = c(df$Part,gettext("Average")),

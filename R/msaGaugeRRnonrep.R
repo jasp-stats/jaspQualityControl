@@ -363,7 +363,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
 .reshapeToWide <- function(dataset, measurements, parts, operators) {
   dataset <- dataset[order(dataset[parts]),]
-  index <- sequence(plyr::count(dataset, vars = c(parts, operators))$freq)
+  index <- sequence(dplyr::count(dataset, dplyr::across(dplyr::all_of(c(parts, operators))))$n)
   dataset$index <- index
   dataset <- tidyr::spread(dataset, index, measurements)
   measurementColNames <- paste("M", 1:max(index), sep = "")
