@@ -737,9 +737,8 @@ msgid "Percentage Process Variation Graph"
 msgstr "过程变异百分比图"
 
 msgid ""
-"T-Test requires more than 1 measurement. %i valid measurement(s) detected in "
-"%s."
-msgstr "T 检验需要一次以上的测量。在 %s 中检测到 %i 有效测量值。"
+"T-Test requires more than 1 measurement. $1%i valid measurement(s) detected in $2%s."
+msgstr "T 检验需要一次以上的测量。在 $1%s 中检测到 $2%i 有效测量值。"
 
 msgid ""
 "Every unique part must have one corresponding reference value. %i reference "
