@@ -1,18 +1,11 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-06-08 04:26+0000\n"
-"Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
-"br>\n"
-"Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/pt/>\n"
-"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.18-dev\n"
-"X-Qt-Contexts: true\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Language: pt\n"
+"X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
@@ -78,9 +71,10 @@ msgctxt "msaGaugeLinearity|"
 msgid "Standard"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeLinearity|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "Opções de análise"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Plots"
@@ -94,9 +88,10 @@ msgctxt "msaGaugeRR|"
 msgid "Parts"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Measurements"
-msgstr ""
+msgstr "Medidas"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Options"
@@ -270,9 +265,10 @@ msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Operators"
-msgstr ""
+msgstr "Operadores"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Parts"
@@ -406,9 +402,10 @@ msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
 msgstr ""
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Measurements"
-msgstr ""
+msgstr "Medidas"
 
 msgctxt "timeWeightedCharts|"
 msgid "Cumulative sum chart"
@@ -510,9 +507,10 @@ msgctxt "processCapabilityStudies|"
 msgid "Confidence intervals"
 msgstr "Intervalo de confiança"
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Histogram"
-msgstr ""
+msgstr "Histograma"
 
 msgctxt "processCapabilityStudies|"
 msgid "Probability table and plot"
@@ -690,13 +688,15 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Data format"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurements"
-msgstr ""
+msgstr "Medidas"
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroups"
-msgstr ""
+msgstr "Subgrupos"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
@@ -706,13 +706,15 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Miscellaneous"
@@ -822,13 +824,15 @@ msgctxt "doeScreening|"
 msgid "Random"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Factor"
-msgstr ""
+msgstr "Fator"
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 msgctxt "doeScreening|"
 msgid "Level 1"
@@ -914,13 +918,15 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Miscellaneous"
@@ -946,17 +952,19 @@ msgctxt "msaTestRetest|"
 msgid "Parts"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Measurements"
-msgstr ""
+msgstr "Medidas"
 
 msgctxt "msaTestRetest|"
 msgid "Range Method Options"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "Opções de análise"
 
 msgctxt "msaTestRetest|"
 msgid "r&R table"
@@ -1240,9 +1248,10 @@ msgctxt "attributesCharts|"
 msgid "Measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 msgctxt "attributesCharts|"
 msgid "Operator"
@@ -1292,9 +1301,10 @@ msgctxt "doeFull|"
 msgid "Design Space"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Número de fatores"
 
 msgctxt "doeFull|"
 msgid "Run Order"
@@ -1308,13 +1318,15 @@ msgctxt "doeFull|"
 msgid "Standard"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Factor"
-msgstr ""
+msgstr "Fator"
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 msgctxt "doeFull|"
 msgid "Levels"
@@ -1396,9 +1408,10 @@ msgctxt "doeModifyDesign|"
 msgid "Number of runs"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
-msgstr ""
+msgstr "Resolução"
 
 msgctxt "doeModifyDesign|"
 msgid "Full"
@@ -1460,13 +1473,15 @@ msgctxt "doeModifyDesign|"
 msgid "Show desired design"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
-msgstr ""
+msgstr "Fator"
 
+#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 msgctxt "doeScreening|"
 msgid "Design Space"
@@ -1536,13 +1551,15 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Reported by"
@@ -1684,13 +1701,15 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "High"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Número de fatores"
 
+#, fuzzy
 msgctxt "msaGaugeLinearity|"
 msgid "Measurements"
-msgstr ""
+msgstr "Medidas"
 
 msgctxt "msaGaugeRR|"
 msgid "Average charts by operator"
@@ -1732,9 +1751,10 @@ msgctxt "processCapabilityStudies|"
 msgid "Null distribution for probability plot"
 msgstr ""
 
+#, fuzzy
 msgctxt "TimeWeightedCharts|"
 msgid "Measurements"
-msgstr ""
+msgstr "Medidas"
 
 msgctxt "TimeWeightedCharts|"
 msgid "Cumulative sum chart"
@@ -2110,9 +2130,10 @@ msgctxt "doeAnalysis|"
 msgid "Normal probability plot"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Histogram"
-msgstr ""
+msgstr "Histograma"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals vs. fitted values"
