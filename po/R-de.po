@@ -726,10 +726,9 @@ msgid "Percentage Process Variation Graph"
 msgstr ""
 
 msgid ""
-"T-Test requires more than 1 measurement. %i valid measurement(s) detected in "
-"%s."
+"T-Test requires more than 1 measurement. $1%i valid measurement(s) detected in $2%s."
 msgstr ""
-"T-Test erfordert mehr als 1 Messung. %i gültige Messung(en) in %s erkannt."
+"T-Test erfordert mehr als 1 Messung. $1%i gültige Messung(en) in $2%s erkannt."
 
 msgid ""
 "Every unique part must have one corresponding reference value. %i reference "
