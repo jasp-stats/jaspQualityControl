@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-04-22 03:39\n"
+"POT-Creation-Date: 2023-06-16 12:20\n"
 "PO-Revision-Date: 2023-05-13 03:38+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -725,6 +725,7 @@ msgstr "Verzerrung und Linearität"
 msgid "Percentage Process Variation Graph"
 msgstr ""
 
+#, fuzzy
 msgid ""
 "T-Test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
 msgstr ""
@@ -1072,6 +1073,13 @@ msgstr "%s KI der Verzerrung"
 
 msgid "<i>t</i>"
 msgstr "<i>t</i>"
+
+msgid ""
+"T-Test requires more than 1 measurement. %1$i valid measurement(s) detected "
+"in %2$s."
+msgstr ""
+"T-Test erfordert mehr als 1 Messung. %1$i gültige Messung(en) in %2$s "
+"erkannt."
 
 msgid "Bias Histogram"
 msgstr "Histogramm Verzerrung"

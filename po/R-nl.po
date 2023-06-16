@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-05-20 03:40\n"
+"POT-Creation-Date: 2023-06-16 12:20\n"
 "PO-Revision-Date: 2023-05-09 13:24+0000\n"
 "Last-Translator: Johnny van Doorn <j.b.vandoorn@uva.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -1064,6 +1064,11 @@ msgid "%s CI for Bias"
 msgstr ""
 
 msgid "<i>t</i>"
+msgstr ""
+
+msgid ""
+"T-Test requires more than 1 measurement. %1$i valid measurement(s) detected "
+"in %2$s."
 msgstr ""
 
 msgid "Bias Histogram"
