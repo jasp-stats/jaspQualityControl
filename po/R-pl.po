@@ -720,8 +720,8 @@ msgid "Percentage Process Variation Graph"
 msgstr ""
 
 msgid ""
-"T-Test requires more than 1 measurement. $1%i valid measurement(s) detected "
-"in $2%s."
+"T-Test requires more than 1 measurement. %1$i valid measurement(s) detected "
+"in %2$s."
 msgstr ""
 
 msgid ""
