@@ -721,13 +721,8 @@ msgid "Percentage Process Variation Graph"
 msgstr ""
 
 msgid ""
-"T-Test requires more than 1 measurement. %1$i valid measurement(s) detected "
-"in $2%s."
-msgstr ""
-
-msgid ""
-"Every unique part must have one corresponding reference value. %i reference "
-"values were found for %s unique parts."
+"Every unique part must have one corresponding reference value. %1$i reference "
+"values were found for %2$s unique parts."
 msgstr ""
 
 msgid "Reference"

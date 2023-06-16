@@ -739,13 +739,13 @@ msgstr "过程变异百分比图"
 #, fuzzy
 msgid ""
 "T-Test requires more than 1 measurement. %1$i valid measurement(s) detected "
-"in $2%s."
+"in %2$s."
 msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
 
 msgid ""
-"Every unique part must have one corresponding reference value. %i reference "
-"values were found for %s unique parts."
-msgstr "每一个零件必须有一个对应的参考值。找到了 %s 每一个零件的 %i 参考值。"
+"Every unique part must have one corresponding reference value. %1$i reference "
+"values were found for %1$s unique parts."
+msgstr "每一个零件必须有一个对应的参考值。找到了 %2$s 每一个零件的 %1$i 参考值。"
 
 msgid "Reference"
 msgstr "参考值"
@@ -1082,11 +1082,6 @@ msgstr "偏倚的 %s 置信区间"
 
 msgid "<i>t</i>"
 msgstr "<i>t</i>"
-
-msgid ""
-"T-Test requires more than 1 measurement. %1$i valid measurement(s) detected "
-"in %2$s."
-msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
 
 msgid "Bias Histogram"
 msgstr "偏倚直方图"
