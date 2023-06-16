@@ -742,10 +742,12 @@ msgid ""
 "in %2$s."
 msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
 
+#, fuzzy
 msgid ""
-"Every unique part must have one corresponding reference value. %1$i reference "
-"values were found for %1$s unique parts."
-msgstr "每一个零件必须有一个对应的参考值。找到了 %2$s 每一个零件的 %1$i 参考值。"
+"Every unique part must have one corresponding reference value. %1$i "
+"reference values were found for %2$s unique parts."
+msgstr ""
+"每一个零件必须有一个对应的参考值。找到了 %2$s 每一个零件的 %1$i 参考值。"
 
 msgid "Reference"
 msgstr "参考值"
