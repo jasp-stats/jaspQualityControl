@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-04-22 03:39\n"
+"POT-Creation-Date: 2023-06-16 12:20\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -736,8 +736,10 @@ msgstr "偏倚和线性"
 msgid "Percentage Process Variation Graph"
 msgstr "过程变异百分比图"
 
+#, fuzzy
 msgid ""
-"T-Test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
+"T-Test requires more than 1 measurement. %1$i valid measurement(s) detected "
+"in $2%s."
 msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
 
 msgid ""
@@ -1080,6 +1082,11 @@ msgstr "偏倚的 %s 置信区间"
 
 msgid "<i>t</i>"
 msgstr "<i>t</i>"
+
+msgid ""
+"T-Test requires more than 1 measurement. %1$i valid measurement(s) detected "
+"in %2$s."
+msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
 
 msgid "Bias Histogram"
 msgstr "偏倚直方图"
