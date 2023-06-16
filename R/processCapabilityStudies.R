@@ -61,7 +61,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       if (identical(dataset, "error")) {
         plot <- createJaspPlot(title = gettext("Capability of the process"), width = 700, height = 400)
         jaspResults[["plot"]] <- plot
-        plot$setError(gettextf("Could not equally divide %i data points into groups of size %i.", n, k))
+        plot$setError(gettextf("Could not equally divide %1$i data points into groups of size %2$i.", n, k))
         return()
       }
       measurements <- colnames(dataset)

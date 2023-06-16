@@ -826,7 +826,7 @@ msgstr ""
 msgid "Components of Variation"
 msgstr ""
 
-msgid "Number of observations is < 2 in %s after grouping on %s"
+msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
 msgstr ""
 
 msgid "%s Chart by Operator"
@@ -853,7 +853,7 @@ msgstr ""
 msgid "Cannot plot scatterplot for less than 2 operators."
 msgstr ""
 
-msgid "Scatterplot of Operator  %s vs Operator %s"
+msgid "Scatterplot of Operator  %1$s vs Operator %2$s"
 msgstr ""
 
 msgid "Matrix Plot for Operators"
@@ -1096,7 +1096,7 @@ msgstr ""
 msgid "Capability of the process"
 msgstr ""
 
-msgid "Could not equally divide %i data points into groups of size %i."
+msgid "Could not equally divide %1$i data points into groups of size %2$i."
 msgstr ""
 
 msgid "Values must be positive to fit a Weibull/Lognormal distribution."

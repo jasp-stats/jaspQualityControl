@@ -880,8 +880,8 @@ msgstr "双向方差分析表不带交互作用"
 msgid "Components of Variation"
 msgstr "方差分量"
 
-msgid "Number of observations is < 2 in %s after grouping on %s"
-msgstr ""
+msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
+msgstr "在 %2$s中分组后，%1$s 中观测值数量 < 2"
 
 msgid "%s Chart by Operator"
 msgstr "%s 图按操作者"
@@ -907,8 +907,8 @@ msgstr "操作者 vs. 操作者散点图"
 msgid "Cannot plot scatterplot for less than 2 operators."
 msgstr "少于 2 位操作者不能绘制散点图。"
 
-msgid "Scatterplot of Operator  %s vs Operator %s"
-msgstr "操作者  %s vs 操作者 %s 散点图"
+msgid "Scatterplot of Operator  %1$s vs Operator %2$s"
+msgstr "操作者  %1$s vs 操作者 %2$s 散点图"
 
 msgid "Matrix Plot for Operators"
 msgstr "操作者矩阵图"
@@ -1160,7 +1160,7 @@ msgstr "检测的概率 %s"
 msgid "Capability of the process"
 msgstr "过程的能力"
 
-msgid "Could not equally divide %i data points into groups of size %i."
+msgid "Could not equally divide %1$i data points into groups of size %2$i."
 msgstr "无法将 %i 数据点平均分成大小为 %i 的组。"
 
 msgid "Values must be positive to fit a Weibull/Lognormal distribution."
