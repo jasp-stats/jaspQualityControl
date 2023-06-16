@@ -150,7 +150,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         jaspResults[["gaugeXbarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
         jaspResults[["gaugeXbarChart"]]$position <- 4
       }
-      jaspResults[["gaugeXbarChart"]] <- .xBarOrRangeChart(type = "Average",dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
+      jaspResults[["gaugeXbarChart"]] <- .xBarOrRangeChart(type = "Average", dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
       jaspResults[["gaugeXbarChart"]]$dependOn(c("gaugeXbarChart", "gaugeRRmethod", "anovaGaugeReport"))
     }
 

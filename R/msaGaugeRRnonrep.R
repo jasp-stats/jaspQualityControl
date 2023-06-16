@@ -362,12 +362,11 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 }
 
 .reshapeToWide <- function(dataset, measurements, parts, operators) {
-  nreplicates       <- as.vector(table(dataset[parts])[1])
-  nparts <- length(unique(dataset[[parts]]))
   dataset <- dataset[order(dataset[parts]),]
-  dataset <- cbind(dataset, data.frame(index = rep(1:nreplicates, nparts)))
+  index <- sequence(dplyr::count(dataset, dplyr::across(dplyr::all_of(c(parts, operators))))$n)
+  dataset$index <- index
   dataset <- tidyr::spread(dataset, index, measurements)
-  measurementColNames <- paste("M", 1:nreplicates, sep = "")
+  measurementColNames <- paste("M", 1:max(index), sep = "")
   colnames(dataset) <- c(parts, operators, measurementColNames)
   return(dataset)
 }
