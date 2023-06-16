@@ -86,11 +86,11 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   if (ready) {
 
     if (length(dataset[[measurements]]) < 2){
-      table2$setError(gettextf("T-Test requires more than 1 measurement. $1%i valid measurement(s) detected in $2%s.", length(dataset[[measurements]]), measurements))
+      table2$setError(gettextf("T-Test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", length(dataset[[measurements]]), measurements))
       return(table2)
     }
     else if (length(unique(dataset[[standards]])) != length(unique(dataset[[parts]]))) {
-      table2$setError(gettextf("Every unique part must have one corresponding reference value. %i reference values were found for %s unique parts.", length(unique(dataset[[standards]])), length(unique(dataset[[parts]]))))
+      table2$setError(gettextf("Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts.", length(unique(dataset[[standards]])), length(unique(dataset[[parts]]))))
       return(table2)
     }
 

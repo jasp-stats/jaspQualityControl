@@ -162,7 +162,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   if (ready) {
 
     if (nrow(dataset[measurements]) < 2){
-      table$setError(gettextf("T-Test requires more than 1 measurement. $1%i valid measurement(s) detected in $2%s.", nrow(dataset[measurements]), measurements))
+      table$setError(gettextf("T-Test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", nrow(dataset[measurements]), measurements))
       return(table)
     }
 
