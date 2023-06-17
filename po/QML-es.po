@@ -419,10 +419,6 @@ msgctxt "timeWeightedCharts|"
 msgid "g chart"
 msgstr "Diagrama g"
 
-msgctxt "timeWeightedCharts|"
-msgid "t chart"
-msgstr "Diagrama t"
-
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
 msgstr "Variables"
@@ -1726,50 +1722,6 @@ msgstr "Número de marcas en el eje x:"
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of ticks on x-axis:"
 msgstr "Número de marcas en el eje x:"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Measurements"
-msgstr "Medidas"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Cumulative sum chart"
-msgstr "Diagrama de suma acumulada"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Exponentially weighted moving average chart"
-msgstr "Diagrama de media móvil ponderada exponencialmente"
-
-msgctxt "TimeWeightedCharts|"
-msgid "g chart"
-msgstr "Diagrama g"
-
-msgctxt "TimeWeightedCharts|"
-msgid "t chart"
-msgstr "Diagrama t"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Number of standard deviations"
-msgstr "Número de desviaciones típicas"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Shift size"
-msgstr "Tamaño de paso"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Lambda"
-msgstr "Lambda"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Center"
-msgstr "Centro"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Within-group standard deviation"
-msgstr "Desviación típica dentro de grupo"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Sigmas for computing control limits"
-msgstr "Sigmas para calcular los límites de control"
 
 msgctxt "msaGaugeRR|"
 msgid "Show report"

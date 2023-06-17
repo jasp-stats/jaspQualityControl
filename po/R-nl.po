@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-06-16 12:20\n"
+"POT-Creation-Date: 2023-06-17 03:40\n"
 "PO-Revision-Date: 2023-05-09 13:24+0000\n"
 "Last-Translator: Johnny van Doorn <j.b.vandoorn@uva.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -20,9 +20,6 @@ msgid "Exponentially weighted moving average chart"
 msgstr ""
 
 msgid "G chart"
-msgstr ""
-
-msgid "T chart"
 msgstr ""
 
 msgid "CL = %g"
@@ -158,6 +155,9 @@ msgid "Test 6: Bimodal distribution"
 msgstr ""
 
 msgid "Numbers are data points where test violations occur."
+msgstr ""
+
+msgid "Moving range length is larger than one of the stages."
 msgstr ""
 
 msgid "%s"
@@ -728,6 +728,14 @@ msgstr ""
 msgid ""
 "Every unique part must have one corresponding reference value. %1$i "
 "reference values were found for %2$s unique parts."
+msgstr ""
+
+msgid ""
+"T-Test requires more than 1 measurement per part. Less than 2 valid "
+"measurement(s) detected in Part(s) %s."
+msgstr ""
+
+msgid "T-Test not possible. No variance detected in Part(s) %s."
 msgstr ""
 
 msgid "Reference"

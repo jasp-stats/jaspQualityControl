@@ -1491,50 +1491,6 @@ msgctxt "processCapabilityStudies|"
 msgid "Normal"
 msgstr ""
 
-msgctxt "TimeWeightedCharts|"
-msgid "Measurements"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Cumulative sum chart"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Number of standard deviations"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Shift size"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Exponentially weighted moving average chart"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Lambda"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Center"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Within-group standard deviation"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Sigmas for computing control limits"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "g chart"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "t chart"
-msgstr ""
-
 msgctxt "timeWeightedCharts|"
 msgid "Measurements"
 msgstr ""
@@ -1573,10 +1529,6 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "g chart"
-msgstr ""
-
-msgctxt "timeWeightedCharts|"
-msgid "t chart"
 msgstr ""
 
 msgctxt "variablesChartsIndividuals|"

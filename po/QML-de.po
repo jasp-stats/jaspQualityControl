@@ -419,10 +419,6 @@ msgctxt "timeWeightedCharts|"
 msgid "g chart"
 msgstr "g-Karte"
 
-msgctxt "timeWeightedCharts|"
-msgid "t chart"
-msgstr "t-Karte"
-
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
 msgstr "Variablen"
@@ -1729,51 +1725,6 @@ msgstr "Anzahl Teilstriche auf X-Achse:"
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of ticks on x-axis:"
 msgstr "Anzahl Teilstriche auf X-Achse:"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Measurements"
-msgstr "Messungen"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Number of standard deviations"
-msgstr "Anzahl Standardabweichungen"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Lambda"
-msgstr "Lambda"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Sigmas for computing control limits"
-msgstr "Sigmas für Berechnung der Eingriffsgrenzen"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Cumulative sum chart"
-msgstr "Kumulative-Summe-Karte"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Shift size"
-msgstr ""
-
-#, fuzzy
-msgctxt "TimeWeightedCharts|"
-msgid "Exponentially weighted moving average chart"
-msgstr "Exponentiell-gewichteter-gleitender-Mittelwert-Karte"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Center"
-msgstr ""
-
-msgctxt "TimeWeightedCharts|"
-msgid "Within-group standard deviation"
-msgstr "Standardabweichung innerhalb Gruppe"
-
-msgctxt "TimeWeightedCharts|"
-msgid "g chart"
-msgstr "g-Karte"
-
-msgctxt "TimeWeightedCharts|"
-msgid "t chart"
-msgstr "t-Karte"
 
 msgctxt "msaGaugeRR|"
 msgid "Show report"

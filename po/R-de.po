@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-06-16 12:20\n"
+"POT-Creation-Date: 2023-06-17 03:40\n"
 "PO-Revision-Date: 2023-05-13 03:38+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -21,9 +21,6 @@ msgstr "Exponentiell-gewichteter-gleitender-Mittelwert-Karte"
 
 msgid "G chart"
 msgstr "G-Karte"
-
-msgid "T chart"
-msgstr "T-Karte"
 
 msgid "CL = %g"
 msgstr "CL = %g"
@@ -161,6 +158,9 @@ msgstr ""
 
 msgid "Numbers are data points where test violations occur."
 msgstr "Zahlen sind Datenpunkte, an denen Testverstöße auftreten."
+
+msgid "Moving range length is larger than one of the stages."
+msgstr ""
 
 msgid "%s"
 msgstr "%s"
@@ -738,6 +738,17 @@ msgid ""
 msgstr ""
 "Jedes einzelne Teil muss einen entsprechenden Referenzwert haben. %1$i "
 "Referenzwerte wurden für %2$s einzelne Teile gefunden."
+
+#, fuzzy
+msgid ""
+"T-Test requires more than 1 measurement per part. Less than 2 valid "
+"measurement(s) detected in Part(s) %s."
+msgstr ""
+"T-Test erfordert mehr als 1 Messung. %1$i gültige Messung(en) in %2$s "
+"erkannt."
+
+msgid "T-Test not possible. No variance detected in Part(s) %s."
+msgstr ""
 
 msgid "Reference"
 msgstr "Referenz"
@@ -1396,6 +1407,9 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "T chart"
+#~ msgstr "T-Karte"
 
 #~ msgid "Could not equally divide data points into groups of size %i."
 #~ msgstr ""

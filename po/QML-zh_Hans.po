@@ -531,10 +531,6 @@ msgctxt "timeWeightedCharts|"
 msgid "g chart"
 msgstr "g 控制图"
 
-msgctxt "timeWeightedCharts|"
-msgid "t chart"
-msgstr "t 控制图"
-
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables"
 msgstr "变量"
@@ -1724,50 +1720,6 @@ msgstr "x轴上的刻度数："
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of ticks on x-axis:"
 msgstr "x轴上的刻度数："
-
-msgctxt "TimeWeightedCharts|"
-msgid "Measurements"
-msgstr "测量值"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Cumulative sum chart"
-msgstr "累积和控制图"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Exponentially weighted moving average chart"
-msgstr "指数加权移动平均控制图"
-
-msgctxt "TimeWeightedCharts|"
-msgid "g chart"
-msgstr "g 控制图"
-
-msgctxt "TimeWeightedCharts|"
-msgid "t chart"
-msgstr "t 控制图"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Number of standard deviations"
-msgstr "标准差的倍数"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Shift size"
-msgstr "偏移量"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Lambda"
-msgstr "Lambda"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Center"
-msgstr "中心"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Within-group standard deviation"
-msgstr "组内标准差"
-
-msgctxt "TimeWeightedCharts|"
-msgid "Sigmas for computing control limits"
-msgstr "计算控制限的标准差数"
 
 msgctxt "msaGaugeRR|"
 msgid "Show report"

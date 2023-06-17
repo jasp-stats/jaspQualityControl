@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-06-16 12:20\n"
+"POT-Creation-Date: 2023-06-17 03:40\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -21,9 +21,6 @@ msgstr "指数加权移动平均控制图"
 
 msgid "G chart"
 msgstr "G 控制图"
-
-msgid "T chart"
-msgstr "T 控制图"
 
 msgid "CL = %g"
 msgstr "CL = %g"
@@ -161,6 +158,9 @@ msgstr "检验 6：双峰分布"
 
 msgid "Numbers are data points where test violations occur."
 msgstr "数字表示发生违反检验准则的数据点。"
+
+msgid "Moving range length is larger than one of the stages."
+msgstr ""
 
 msgid "%s"
 msgstr "%s"
@@ -748,6 +748,15 @@ msgid ""
 "reference values were found for %2$s unique parts."
 msgstr ""
 "每一个零件必须有一个对应的参考值。找到了 %2$s 每一个零件的 %1$i 参考值。"
+
+#, fuzzy
+msgid ""
+"T-Test requires more than 1 measurement per part. Less than 2 valid "
+"measurement(s) detected in Part(s) %s."
+msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
+
+msgid "T-Test not possible. No variance detected in Part(s) %s."
+msgstr ""
 
 msgid "Reference"
 msgstr "参考值"
@@ -1398,6 +1407,9 @@ msgstr "副标题：%s"
 
 msgid "Name of chart: %s"
 msgstr "图形名称：%s"
+
+#~ msgid "T chart"
+#~ msgstr "T 控制图"
 
 #~ msgid "Could not equally divide data points into groups of size %i."
 #~ msgstr "无法将数据点平均划分为大小为 %i 的组。"
