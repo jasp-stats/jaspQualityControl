@@ -534,7 +534,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                           stages = "") {
   
   ppPlot <- createJaspPlot(width = 900, height = 650)
-  
+
   if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
     
@@ -551,20 +551,22 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   
   ppPlot$width <- 900 + nStages * 100
   
-  # Calculate values
+  # Calculate values per subplot/stage
+  
+  
+  ### TODO: Why does it crash if k = subgroup length?
   dataPlotI <- data.frame(matrix(ncol = 7, nrow = 0))
   dataPlotR <- data.frame(matrix(ncol = 7, nrow = 0))
   colnames(dataPlotI) <- c("process", "subgroup", "stage", "LCL", "UCL", "center", "dotColor")
   colnames(dataPlotR) <- c("movingRange", "subgroup", "stage", "LCL", "UCL", "center", "dotColor")
+  dfLabelI <- data.frame(matrix(ncol = 3, nrow = 0))
+  dfLabelR <- data.frame(matrix(ncol = 3, nrow = 0))
+  colnames(dfLabelI) <- colnames(dfLabelR) <- c("x", "y", "label")
+  seperationLinesI <- c()
+  seperationLinesR <- c()
   for (i in seq_len(nStages)) {
-      dataForPlot <- subset(dataset, dataset[[stages]] == unique(dataset[[stages]])[i])
-    
-    
-    ### 
-    # How should the IMR chart look when multiple variables are given? Then make it such that it works with one as well as multiple variables
-    #
-    ###
-    
+    stage <- unique(dataset[[stages]])[i]
+    dataForPlot <- subset(dataset, dataset[[stages]] == stage)
     if (identical(measurements, "") && !identical(variable, "")) {
       #ppPlot$dependOn(optionContainsValue = list(variables = variable))
       data <- data.frame(process = dataForPlot[[variable]])
@@ -592,6 +594,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       if (i != 1) {
         subgroupsI <- seq(max(dataPlotI$subgroup) + 1, max(dataPlotI$subgroup) + length(sixsigma_I$statistics))  # to keep counting across groups
         subgroupsR <- seq(max(dataPlotR$subgroup) + 1, max(dataPlotR$subgroup) + length(sixsigma_R$statistics) + 1)
+        seperationLinesI <- c(seperationLinesI, max(dataPlotI$subgroup) + .5)
+        seperationLinesR <- c(seperationLinesR, max(dataPlotR$subgroup) + .5)
       } else {
         subgroupsI <- c(1:length(sixsigma_I$statistics))
         subgroupsR <- seq_len(length(sixsigma_R$statistics) + 1)
@@ -606,40 +610,55 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       } else {
         dotColorR <- 'blue'
       }
-    dataPlotI <- rbind(dataPlotI, data.frame("process" = sixsigma_I$statistics,
+    processI <- sixsigma_I$statistics
+    LCLI <- min(sixsigma_I$limits)
+    UCLI <- max(sixsigma_I$limits)
+    centerI <- sixsigma_I$center
+    dataPlotI <- rbind(dataPlotI, data.frame("process" = processI,
                                              "subgroup" = subgroupsI,
-                                             "stage" = dataForPlot[[stages]],
-                                             "LCL" = min(sixsigma_I$limits),
-                                             "UCL" = max(sixsigma_I$limits),
-                                             "center" = sixsigma_I$center,
+                                             "stage" = stage,
+                                             "LCL" = LCLI,
+                                             "UCL" = UCLI,
+                                             "center" = centerI,
                                              "dotColor" = dotColorI))
-    dataPlotR <- rbind(dataPlotR, data.frame("movingRange" = c(NA, sixsigma_R$statistics),
+    movingRange <- c(NA, sixsigma_R$statistics)
+    LCLR <- min(sixsigma_R$limits)
+    UCLR <- max(sixsigma_R$limits)
+    centerR <- sixsigma_R$center
+    dataPlotR <- rbind(dataPlotR, data.frame("movingRange" = movingRange,
                                              "subgroup" = subgroupsR,
-                                             "stage" = dataForPlot[[stages]],
-                                             "LCL" = min(sixsigma_R$limits),
-                                             "UCL" = max(sixsigma_R$limits),
-                                             "center" = sixsigma_R$center,
+                                             "stage" = stage,
+                                             "LCL" = LCLR,
+                                             "UCL" = UCLR,
+                                             "center" = centerR,
                                              "dotColor" = dotColorR))
+    allStageValuesI <- c(processI, LCLI, UCLI, centerI)
+    allStageValuesR <- c(movingRange, LCLR, UCLR, centerR)
+    decimals1 <- max(.decimalplaces(allStageValuesI))
+    decimals2 <- max(.decimalplaces(allStageValuesR))
+    dfLabelI <- rbind(dfLabelI, data.frame(x = max(subgroupsI) + .5,
+                                           y = c(centerI, UCLI, LCLI),
+                                           label = c(
+                                             gettextf("CL = %g",  round(centerI, decimals1 + 1)),
+                                             gettextf("UCL = %g", round(UCLI, decimals1 + 2)),
+                                             gettextf("LCL = %g", round(LCLI, decimals1 + 2))
+                                           )))
+    dfLabelR <- rbind(dfLabelR, data.frame(x = max(subgroupsR) + .5,
+                                           y = c(centerR, UCLR, LCLR),
+                                           label = c(
+                                             gettextf("CL = %g",  round(centerR, decimals1 + 1)),
+                                             gettextf("UCL = %g", round(UCLR, decimals1 + 2)),
+                                             gettextf("LCL = %g", round(LCLR, decimals1 + 2))
+                                           )))
   }
   
-  allValuesI <- c(dataPlotI$process, dataPlotI$LCL, dataPlotI$UCL, dataPlotI$center)
-  allValuesR <- c(dataPlotR$movingRange, dataPlotR$LCL, dataPlotR$UCL, dataPlotR$center)
-  decimals1 <- max(.decimalplaces(allValuesI))
-  decimals2 <- max(.decimalplaces(allValuesR))
-  yBreaks1 <- jaspGraphs::getPrettyAxisBreaks(allValuesI)
-  yBreaks2 <- jaspGraphs::getPrettyAxisBreaks(allValuesR)
-
-  # Create plots
-  if (length(sixsigma_I$statistics) > 1) {
-    dotColor1 <- ifelse(NelsonLaws(sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')
-  } else {
-    dotColor1 <- 'blue'
-  }
-  
+  # Calculations that apply to the whole plot
+  yBreaks1 <- jaspGraphs::getPrettyAxisBreaks(c(dataPlotI$process, dataPlotI$LCL, dataPlotI$UCL, dataPlotI$center))
+  yBreaks2 <- jaspGraphs::getPrettyAxisBreaks(c(dataPlotR$movingRange, dataPlotR$LCL, dataPlotR$UCL, dataPlotR$center))
   if (options$manualTicks) {
     nxBreaks <- options$nTicks
     xBreaks1 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(dataPlotI$subgroup, n = nxBreaks)))
-    xBreaks2 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)))
+    xBreaks2 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(dataPlotR$subgroup, n = nxBreaks)))
   } else {
     xBreaks1 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(dataPlotI$subgroup)))
     xBreaks2 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(dataPlotR$subgroup)))
@@ -648,29 +667,15 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     xBreaks1[1] <- 1
   if (xBreaks2[1] == 0)
     xBreaks2[1] <- 1
-  
   xLimits <- c(min(xBreaks1), max(xBreaks1) * 1.15)
   
-  
-  
-  ### THESE NEED TO BE CHANGED!! Probably need to be calculated in data loop
-  # dfLabel <- data.frame(
-  #   x = max(xLimits) * 0.95,
-  #   y = c(center, UCL, LCL),
-  #   l = c(
-  #     gettextf("CL = %g",  round(center, decimals1 + 1)),
-  #     gettextf("UCL = %g", round(UCL, decimals1 + 2)),
-  #     gettextf("LCL = %g", round(LCL, decimals1 + 2))
-  #   )
-  # )
-  
+  # Create plots
   p1 <- ggplot2::ggplot(dataPlotI, ggplot2::aes(x = subgroup, y = process, group = stage)) +
+    ggplot2::geom_vline(xintercept = seperationLinesI) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
-    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red",
-                       linewidth = 1.5, linetype = "dashed") +
-    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red",
-                       linewidth = 1.5, linetype = "dashed") +
-    # ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
+    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = "dashed") +
+    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = "dashed") +
+    ggplot2::geom_label(data = dfLabelI, mapping = ggplot2::aes(x = x, y = y, label = label),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = ifelse(variable != "" , gettextf("%s", variable), "Individual value"),
                                 breaks = yBreaks1, limits = range(yBreaks1)) +
     ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks1, limits = xLimits) +
@@ -679,14 +684,14 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
-  
   p2 <- ggplot2::ggplot(dataPlotR, ggplot2::aes(x = subgroup, y = movingRange, group = stage)) +
+    ggplot2::geom_vline(xintercept = seperationLinesR) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red",
                        linewidth = 1.5, linetype = "dashed") +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red",
                        linewidth = 1.5, linetype = "dashed") +
-    # ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
+    ggplot2::geom_label(data = dfLabelR, mapping = ggplot2::aes(x = x, y = y, label = label),inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = gettext("Moving Range"), breaks = yBreaks2, limits = range(yBreaks2)) +
     ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks2, limits = xLimits) +
     jaspGraphs::geom_line(color = "blue") +
@@ -694,21 +699,29 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
-  ### TODO: add the seperation lines and rethink the x axis, use na.omit already on df instead of letting ggplot remove them?
-  
-    if (!identical(manualXaxis, "")) {
-      if (!identical(measurements, "")) {
-        if (Wide)
-          xLabels <- as.vector(sapply(1:length(manualXaxis), function(x) {rep(manualXaxis[x], ncol(dataForPlot[measurements]))}))
-        else
-          xLabels <- manualXaxis
-      }
+  if (!identical(manualXaxis, "")) {
+    if (!identical(measurements, "")) {
+      if (Wide)
+        xLabels <- as.vector(sapply(1:length(manualXaxis), function(x) {rep(manualXaxis[x], ncol(dataForPlot[measurements]))}))
       else
         xLabels <- manualXaxis
-      
-      p1 <- p1 + ggplot2::scale_x_continuous(breaks = xBreaks1, labels = xLabels[xBreaks1])
-      p2 <- p2 + ggplot2::scale_x_continuous(breaks = xBreaks2, labels = xLabels[xBreaks2])
     }
+    else
+      xLabels <- manualXaxis
+    
+    p1 <- p1 + ggplot2::scale_x_continuous(breaks = xBreaks1, labels = xLabels[xBreaks1])
+    p2 <- p2 + ggplot2::scale_x_continuous(breaks = xBreaks2, labels = xLabels[xBreaks2])
+  }
+  
+  plotMat <- matrix(data = list(), nrow = 2, ncol = 1)
+  plotMat[[1,1]] <- p1
+  plotMat[[2,1]] <- p2
+  
+  if(!cowPlot){
+    ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = plotMat, removeXYlabels= "x")
+  } else {
+    ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, nrow = 2)
+  }
   
   if (!identical(manualXaxis, ""))
     return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, xLabels = as.vector(xLabels), p1 = p1, p2 = p2))
