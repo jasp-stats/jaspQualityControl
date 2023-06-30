@@ -176,7 +176,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
           jaspGraphs::geom_rangeframe()
         return(p)
       } else {
-        gaugeRRNonRepTable1$setError(gettextf("No degrees of freedom for %s.", anovaSources[which(df < 1)]))
+        gaugeRRNonRepTable1$setError(gettextf("No degrees of freedom for %s.", paste(anovaSources[which(df < 1)], collapse = ", ")))
         gaugeRRNonRepTables[["Table1"]] <- gaugeRRNonRepTable1
         return(gaugeRRNonRepTables)
       }
