@@ -516,6 +516,52 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(table)
 }
 
+.NelsonTableList <- function(dataset, options, sixsigma, type = "xbar", Phase2 = TRUE, name = "X-bar", xLabels = NULL) {
+  
+  violationsList <- list()
+  
+  if (length(sixsigma$statistics) == 1) # no need for table with only 1 group
+    return(list())
+  
+  if (!Phase2 || type == "xbar.one") {
+    Test <- NelsonLaws(data = sixsigma, allsix = TRUE, xLabels = xLabels)
+    
+    if (length(Test$Rules$R1) > 0)
+      violationsList[["test1"]] <- Test$Rules$R1
+    if (length(Test$Rules$R2) > 0)
+      violationsList[["test2"]] <- Test$Rules$R2
+    if (length(Test$Rules$R3) > 0)
+      violationsList[["test3"]] <- Test$Rules$R3
+    if (length(Test$Rules$R4) > 0)
+      violationsList[["test4"]] <- Test$Rules$R4
+    if (length(Test$Rules$R5) > 0)
+      violationsList[["test5"]] <- Test$Rules$R5
+    if (length(Test$Rules$R6) > 0)
+      violationsList[["test6"]] <- Test$Rules$R6
+  } else {
+    if (name == "np" || name == "c" || name == "u" || name == "Laney p'" || name == "Laney u'")
+      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "c")
+    else if (name == "P")
+      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "p")
+    else
+      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels)
+    
+    if (type == "Range" & length(xLabels) == 0) {
+      Test$Rules$R1 <- Test$Rules$R1 + 1  
+      Test$Rules$R2 <- Test$Rules$R2 + 1
+      Test$Rules$R3 <- Test$Rules$R3 + 1
+    }
+    
+    if (length(Test$Rules$R1) > 0)
+      violationsList[["test1"]] <- Test$Rules$R1
+    if (length(Test$Rules$R2) > 0)
+      violationsList[["test2"]] <- Test$Rules$R2
+    if (length(Test$Rules$R3) > 0)
+      violationsList[["test3"]] <- Test$Rules$R3
+  }
+  return(violationsList)
+}
+
 .decimalplaces <- function(x) {
   x <- na.omit(unlist(x))
   nDecimals <- numeric(length(x))
@@ -534,6 +580,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                           stages = "") {
   
   ppPlot <- createJaspPlot(width = 900, height = 650)
+  tableI <- createJaspTable(title = gettextf("Test results for Individuals chart"))
+  tableR <- createJaspTable(title = gettextf("Test results for Range chart"))
 
   if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
@@ -557,6 +605,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   ### TODO: Why does it crash if k = subgroup length?
   dataPlotI <- data.frame(matrix(ncol = 7, nrow = 0))
   dataPlotR <- data.frame(matrix(ncol = 7, nrow = 0))
+  tableIList <- list()
+  tableRList <- list()
   colnames(dataPlotI) <- c("process", "subgroup", "stage", "LCL", "UCL", "center", "dotColor")
   colnames(dataPlotR) <- c("movingRange", "subgroup", "stage", "LCL", "UCL", "center", "dotColor")
   dfLabelI <- data.frame(matrix(ncol = 3, nrow = 0))
@@ -572,7 +622,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       data <- data.frame(process = dataForPlot[[variable]])
       k <- options[["movingRangeLength"]]
       sd <- qcc::sd.xbar.one(data$process, k = k)
-      sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE, std.dev = sd)
+      sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot = FALSE, std.dev = sd)
       # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
       mrMatrix <- matrix(data$process[1:(length(data$process) - (k - 1))])   # remove last k - 1 elements
       for (j in 2:k) {
@@ -589,7 +639,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       for (j in 2:k) {
         mrMatrix <- cbind(mrMatrix, matrix(data[j:(length(data) - (k - j))]))   # remove first i and last (k - i) elements
       }
-      sixsigma_R <- qcc::qcc(mrMatrix, type = "R", plot = TRUE)
+      sixsigma_R <- qcc::qcc(mrMatrix, type = "R", plot = FALSE)
     }
       if (i != 1) {
         subgroupsI <- seq(max(dataPlotI$subgroup) + 1, max(dataPlotI$subgroup) + length(sixsigma_I$statistics))  # to keep counting across groups
@@ -650,7 +700,33 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                                              gettextf("UCL = %g", round(UCLR, decimals1 + 2)),
                                              gettextf("LCL = %g", round(LCLR, decimals1 + 2))
                                            )))
+    tableIList[[i]] <- .NelsonTableList(dataset = dataset, options = options, type = "xbar.one", sixsigma = sixsigma_I, xLabels = subgroupsI)
+    if (length(tableIList[[i]]) > 0)
+      tableIList[[i]][["stage"]] <- c(stage, rep(NA, max(sapply(tableIList[[i]], length)) - 1))
+    #ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, type = "Range", sixsigma = sixsigma_R, xLabels = manualXaxis, )
   }
+  
+  tableIListVectorized <- unlist(tableIList, recursive = FALSE)
+  if (length(tableIListVectorized > 0)) {
+    tableIListCombined <- tapply(tableIListVectorized, names(tableIListVectorized), function(x) unlist(x, FALSE, FALSE))
+  } else {
+    tableIListCombined <- list()
+  }
+  
+  if(!is.null(tableIListCombined$test1))
+    tableI$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
+  if(!is.null(tableIListCombined$test2))
+    tableI$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
+  if(!is.null(tableIListCombined$test3))
+    tableI$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
+  if(!is.null(tableIListCombined$test4))
+    tableI$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
+  if(!is.null(tableIListCombined$test5))
+    tableI$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
+  if(!is.null(tableIListCombined$test6))
+    tableI$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
+  tableI$setData(tableIListCombined)
+  
   
   # Calculations that apply to the whole plot
   yBreaks1 <- jaspGraphs::getPrettyAxisBreaks(c(dataPlotI$process, dataPlotI$LCL, dataPlotI$UCL, dataPlotI$center))
@@ -724,9 +800,9 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   }
   
   if (!identical(manualXaxis, ""))
-    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, xLabels = as.vector(xLabels), p1 = p1, p2 = p2))
+    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, xLabels = as.vector(xLabels), p1 = p1, p2 = p2, tableI = tableI))
   else
-    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2))
+    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2, tableI = tableI))
 }
 
 .IMRchart_old <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE,
