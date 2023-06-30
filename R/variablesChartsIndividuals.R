@@ -87,10 +87,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
         IMR <- .IMRchart(dataset = dataset, options = options, variable = var, manualXaxis = subgroups, stages = stages)
         ALL[["Plot"]] <- IMR$p
         ALL[["Table1"]] <- IMR$tableI
-        if (!is.null(IMR$sixsigma_R) && !is.null(IMR$sixsigma_I) &&
-            length(IMR$sixsigma_I$statistics) > 1 && length(IMR$sixsigma_R$statistics) > 1) {
-          ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, name = gettextf("%s for Range", var), sixsigma = IMR$sixsigma_R, xLabels = IMR$xLabels, type = "Range")
-        }
+        ALL[["Table2"]] <- IMR$tableR
         Iplot[[var]] <- ALL
       }
     }

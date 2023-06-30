@@ -702,31 +702,50 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                                            )))
     tableIList[[i]] <- .NelsonTableList(dataset = dataset, options = options, type = "xbar.one", sixsigma = sixsigma_I, xLabels = subgroupsI)
     if (length(tableIList[[i]]) > 0)
-      tableIList[[i]][["stage"]] <- c(stage, rep(NA, max(sapply(tableIList[[i]], length)) - 1))
-    #ALL[["Table2"]] <- .NelsonTable(dataset = dataset, options = options, type = "Range", sixsigma = sixsigma_R, xLabels = manualXaxis, )
+      tableIList[[i]][["stage"]] <- c(as.character(stage), rep("", max(sapply(tableIList[[i]], length)) - 1))
+    tableRList[[i]] <- .NelsonTableList(dataset = dataset, options = options, type = "Range", sixsigma = sixsigma_R, xLabels = subgroupsR)
+    if (length(tableRList[[i]]) > 0)
+      tableRList[[i]][["stage"]] <- c(as.character(stage), rep("", max(sapply(tableRList[[i]], length)) - 1))
   }
   
   tableIListVectorized <- unlist(tableIList, recursive = FALSE)
-  if (length(tableIListVectorized > 0)) {
+  if (length(tableIListVectorized) > 0) {
     tableIListCombined <- tapply(tableIListVectorized, names(tableIListVectorized), function(x) unlist(x, FALSE, FALSE))
-  } else {
-    tableIListCombined <- list()
+    tableIListCombined <- as.list(tableIListCombined)
+    tableI$addColumnInfo(name = "stage",              title = gettextf("Stage")               , type = "string")
+    if("test1" %in% names(tableIListCombined))
+      tableI$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
+    if("test2" %in% names(tableIListCombined))
+      tableI$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
+    if("test3" %in% names(tableIListCombined))
+      tableI$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
+    if("test4" %in% names(tableIListCombined))
+      tableI$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
+    if("test5" %in% names(tableIListCombined))
+      tableI$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
+    if("test6" %in% names(tableIListCombined))
+      tableI$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
+    tableI$setData(tableIListCombined)
   }
-  
-  if(!is.null(tableIListCombined$test1))
-    tableI$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
-  if(!is.null(tableIListCombined$test2))
-    tableI$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
-  if(!is.null(tableIListCombined$test3))
-    tableI$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
-  if(!is.null(tableIListCombined$test4))
-    tableI$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
-  if(!is.null(tableIListCombined$test5))
-    tableI$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
-  if(!is.null(tableIListCombined$test6))
-    tableI$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
-  tableI$setData(tableIListCombined)
-  
+  tableRListVectorized <- unlist(tableRList, recursive = FALSE)
+  if (length(tableRListVectorized) > 0) {
+    tableRListCombined <- tapply(tableRListVectorized, names(tableRListVectorized), function(x) unlist(x, FALSE, FALSE))
+    tableRListCombined <- as.list(tableRListCombined)
+    tableR$addColumnInfo(name = "stage",              title = gettextf("Stage")               , type = "string")
+    if("test1" %in% names(tableRListCombined))
+      tableR$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
+    if("test2" %in% names(tableRListCombined))
+      tableR$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
+    if("test3" %in% names(tableRListCombined))
+      tableR$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
+    if("test4" %in% names(tableRListCombined))
+      tableR$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
+    if("test5" %in% names(tableRListCombined))
+      tableR$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
+    if("test6" %in% names(tableRListCombined))
+      tableR$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
+    #tableR$setData(tableRListCombined)
+  }
   
   # Calculations that apply to the whole plot
   yBreaks1 <- jaspGraphs::getPrettyAxisBreaks(c(dataPlotI$process, dataPlotI$LCL, dataPlotI$UCL, dataPlotI$center))
@@ -800,9 +819,9 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   }
   
   if (!identical(manualXaxis, ""))
-    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, xLabels = as.vector(xLabels), p1 = p1, p2 = p2, tableI = tableI))
+    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, xLabels = as.vector(xLabels), p1 = p1, p2 = p2, tableI = tableI, tableR = tableR))
   else
-    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2, tableI = tableI))
+    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2, tableI = tableI, tableR = tableR))
 }
 
 .IMRchart_old <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE,
