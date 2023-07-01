@@ -388,7 +388,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   pars$Rule4$convention = "minitab"
   
   #Evaluate all rules
-  if (chart == "p"){
+  if (chart == "p") {
     n = length(data$statistics)
     warnings <- data.frame(x = rep(1,n), Rule1 = rep(1,n), Rule2 = rep(1,n), Rule3 = rep(1,n))
     for( i in 1:length(data$statistics)){
@@ -396,7 +396,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                                          whichRules = c(1:3,5,7:8))[1,]
       warnings[i,] <- warningsRaw
     }
-  } else{
+  } else {
     warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = data$limits[1,1], ucl = data$limits[1,2], cl = data$center[1], parRules = pars,
                                     whichRules = c(1:3,5,7:8))
   }
@@ -517,27 +517,19 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 
 .NelsonTableList <- function(dataset, options, sixsigma, type = "xbar", Phase2 = TRUE, name = "X-bar", xLabels = NULL) {
-  
   violationsList <- list()
-  
+
   if (length(sixsigma$statistics) == 1) # no need for table with only 1 group
-    return(list())
+    return(violationsList)
   
   if (!Phase2 || type == "xbar.one") {
     Test <- NelsonLaws(data = sixsigma, allsix = TRUE, xLabels = xLabels)
-    
-    if (length(Test$Rules$R1) > 0)
-      violationsList[["test1"]] <- Test$Rules$R1
-    if (length(Test$Rules$R2) > 0)
-      violationsList[["test2"]] <- Test$Rules$R2
-    if (length(Test$Rules$R3) > 0)
-      violationsList[["test3"]] <- Test$Rules$R3
-    if (length(Test$Rules$R4) > 0)
-      violationsList[["test4"]] <- Test$Rules$R4
-    if (length(Test$Rules$R5) > 0)
-      violationsList[["test5"]] <- Test$Rules$R5
-    if (length(Test$Rules$R6) > 0)
-      violationsList[["test6"]] <- Test$Rules$R6
+    violationsList[["test1"]] <- Test$Rules$R1
+    violationsList[["test2"]] <- Test$Rules$R2
+    violationsList[["test3"]] <- Test$Rules$R3
+    violationsList[["test4"]] <- Test$Rules$R4
+    violationsList[["test5"]] <- Test$Rules$R5
+    violationsList[["test6"]] <- Test$Rules$R6
   } else {
     if (name == "np" || name == "c" || name == "u" || name == "Laney p'" || name == "Laney u'")
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "c")
@@ -546,18 +538,14 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     else
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels)
     
-    if (type == "Range" & length(xLabels) == 0) {
+    if (type == "Range") {
       Test$Rules$R1 <- Test$Rules$R1 + 1  
       Test$Rules$R2 <- Test$Rules$R2 + 1
       Test$Rules$R3 <- Test$Rules$R3 + 1
     }
-    
-    if (length(Test$Rules$R1) > 0)
-      violationsList[["test1"]] <- Test$Rules$R1
-    if (length(Test$Rules$R2) > 0)
-      violationsList[["test2"]] <- Test$Rules$R2
-    if (length(Test$Rules$R3) > 0)
-      violationsList[["test3"]] <- Test$Rules$R3
+    violationsList[["test1"]] <- Test$Rules$R1
+    violationsList[["test2"]] <- Test$Rules$R2
+    violationsList[["test3"]] <- Test$Rules$R3
   }
   return(violationsList)
 }
@@ -701,50 +689,79 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                                              gettextf("LCL = %g", round(LCLR, decimals1 + 2))
                                            )))
     tableIList[[i]] <- .NelsonTableList(dataset = dataset, options = options, type = "xbar.one", sixsigma = sixsigma_I, xLabels = subgroupsI)
-    if (length(tableIList[[i]]) > 0)
-      tableIList[[i]][["stage"]] <- c(as.character(stage), rep("", max(sapply(tableIList[[i]], length)) - 1))
+    tableIListLengths <- sapply(tableIList[[i]], length)
+    if (any(tableIListLengths > 0)) {
+      tableIList[[i]] <- tableIList[[i]][tableIListLengths > 0]
+      tableIList[[i]][["stage"]] <- as.character(stage)
+      tableIList[[i]] <- lapply(tableIList[[i]], "length<-", max(lengths(tableIList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
+    }
     tableRList[[i]] <- .NelsonTableList(dataset = dataset, options = options, type = "Range", sixsigma = sixsigma_R, xLabels = subgroupsR)
-    if (length(tableRList[[i]]) > 0)
-      tableRList[[i]][["stage"]] <- c(as.character(stage), rep("", max(sapply(tableRList[[i]], length)) - 1))
+    tableRListLengths <- sapply(tableRList[[i]], length)
+    if (any(tableRListLengths > 0)) {
+      tableRList[[i]] <- tableRList[[i]][tableRListLengths > 0]
+      tableRList[[i]][["stage"]] <- as.character(stage)
+      tableRList[[i]] <- lapply(tableRList[[i]], "length<-", max(lengths(tableRList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
+    }
   }
   
+  # filling up tables for individuals and moving range charts
   tableIListVectorized <- unlist(tableIList, recursive = FALSE)
-  if (length(tableIListVectorized) > 0) {
+  tableILongestVector <- max(sapply(tableIListVectorized, length))
+  if (tableILongestVector > 0) {
     tableIListCombined <- tapply(tableIListVectorized, names(tableIListVectorized), function(x) unlist(x, FALSE, FALSE))
-    tableIListCombined <- as.list(tableIListCombined)
-    tableI$addColumnInfo(name = "stage",              title = gettextf("Stage")               , type = "string")
-    if("test1" %in% names(tableIListCombined))
+    if (nStages > 1)
+      tableI$addColumnInfo(name = "stage",              title = gettextf("Stage")               , type = "string")
+    if (length(tableIListCombined[["test1"]]) > 0)
       tableI$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
-    if("test2" %in% names(tableIListCombined))
+    if (length(tableIListCombined[["test2"]]) > 0)
       tableI$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
-    if("test3" %in% names(tableIListCombined))
+    if (length(tableIListCombined[["test3"]]) > 0)
       tableI$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
-    if("test4" %in% names(tableIListCombined))
+    if (length(tableIListCombined[["test4"]]) > 0)
       tableI$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
-    if("test5" %in% names(tableIListCombined))
+    if (length(tableIListCombined[["test5"]]) > 0)
       tableI$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
-    if("test6" %in% names(tableIListCombined))
+    if (length(tableIListCombined[["test6"]]) > 0)
       tableI$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
-    tableI$setData(tableIListCombined)
+    tableI$setData(list(
+      "stage" = tableIListCombined[["stage"]],
+      "test1" = tableIListCombined[["test1"]],
+      "test2" = tableIListCombined[["test2"]],
+      "test3" = tableIListCombined[["test3"]],
+      "test4" = tableIListCombined[["test4"]],
+      "test5" = tableIListCombined[["test5"]],
+      "test6" = tableIListCombined[["test6"]]
+    ))
+    tableI$showSpecifiedColumnsOnly <- TRUE
   }
   tableRListVectorized <- unlist(tableRList, recursive = FALSE)
-  if (length(tableRListVectorized) > 0) {
+  tableRLongestVector <- max(sapply(tableRListVectorized, length))
+  if (tableRLongestVector > 0) {
     tableRListCombined <- tapply(tableRListVectorized, names(tableRListVectorized), function(x) unlist(x, FALSE, FALSE))
-    tableRListCombined <- as.list(tableRListCombined)
-    tableR$addColumnInfo(name = "stage",              title = gettextf("Stage")               , type = "string")
-    if("test1" %in% names(tableRListCombined))
+    if (nStages > 1)
+      tableR$addColumnInfo(name = "stage",              title = gettextf("Stage")               , type = "string")
+    if (length(tableRListCombined[["test1"]]) > 0)
       tableR$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
-    if("test2" %in% names(tableRListCombined))
+    if (length(tableRListCombined[["test2"]]) > 0)
       tableR$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
-    if("test3" %in% names(tableRListCombined))
+    if (length(tableRListCombined[["test3"]]) > 0)
       tableR$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
-    if("test4" %in% names(tableRListCombined))
+    if (length(tableRListCombined[["test4"]]) > 0)
       tableR$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
-    if("test5" %in% names(tableRListCombined))
+    if (length(tableRListCombined[["test5"]]) > 0)
       tableR$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
-    if("test6" %in% names(tableRListCombined))
+    if (length(tableRListCombined[["test6"]]) > 0)
       tableR$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
-    #tableR$setData(tableRListCombined)
+    tableR$setData(list(
+      "stage" = tableRListCombined[["stage"]],
+      "test1" = tableRListCombined[["test1"]],
+      "test2" = tableRListCombined[["test2"]],
+      "test3" = tableRListCombined[["test3"]],
+      "test4" = tableRListCombined[["test4"]],
+      "test5" = tableRListCombined[["test5"]],
+      "test6" = tableRListCombined[["test6"]]
+    ))
+    tableR$showSpecifiedColumnsOnly <- TRUE
   }
   
   # Calculations that apply to the whole plot
@@ -765,6 +782,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   xLimits <- c(min(xBreaks1), max(xBreaks1) * 1.15)
   
   # Create plots
+  ## individual plots
   p1 <- ggplot2::ggplot(dataPlotI, ggplot2::aes(x = subgroup, y = process, group = stage)) +
     ggplot2::geom_vline(xintercept = seperationLinesI) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
@@ -779,6 +797,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
+  ## moving range plots
   p2 <- ggplot2::ggplot(dataPlotR, ggplot2::aes(x = subgroup, y = movingRange, group = stage)) +
     ggplot2::geom_vline(xintercept = seperationLinesR) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
