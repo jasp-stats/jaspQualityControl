@@ -568,8 +568,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                           stages = "") {
   
   ppPlot <- createJaspPlot(width = 900, height = 650)
-  tableI <- createJaspTable(title = gettextf("Test results for Individuals chart"))
-  tableR <- createJaspTable(title = gettextf("Test results for Range chart"))
+  tableI <- createJaspTable(title = gettextf("Test results for individuals chart"))
+  tableR <- createJaspTable(title = gettextf("Test results for range chart"))
 
   if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
@@ -588,9 +588,6 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   ppPlot$width <- 900 + nStages * 100
   
   # Calculate values per subplot/stage
-  
-  
-  ### TODO: Why does it crash if k = subgroup length?
   dataPlotI <- data.frame(matrix(ncol = 7, nrow = 0))
   dataPlotR <- data.frame(matrix(ncol = 7, nrow = 0))
   tableIList <- list()
@@ -606,22 +603,24 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     stage <- unique(dataset[[stages]])[i]
     dataForPlot <- subset(dataset, dataset[[stages]] == stage)
     if (identical(measurements, "") && !identical(variable, "")) {
-      #ppPlot$dependOn(optionContainsValue = list(variables = variable))
+      ppPlot$dependOn(optionContainsValue = list(variables = variable))
       data <- data.frame(process = dataForPlot[[variable]])
       k <- options[["movingRangeLength"]]
-      sd <- qcc::sd.xbar.one(data$process, k = k)
-      sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot = FALSE, std.dev = sd)
       # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
       mrMatrix <- matrix(data$process[1:(length(data$process) - (k - 1))])   # remove last k - 1 elements
       for (j in 2:k) {
         mrMatrix <- cbind(mrMatrix, matrix(data$process[j:(length(data$process) - (k - j))]))   # remove first i and last (k - i) elements
       }
-      sixsigma_R <- qcc::qcc(mrMatrix, type = "R", plot = FALSE)
+      meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges)
+      d2 <- KnownControlStats.RS(k, 3)[[1]][1]
+      sd <- meanMovingRange/d2
+      sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot = FALSE, std.dev = sd)
+      sixsigma_R <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sd)
     } else {
       data <- as.vector((t(dataForPlot[measurements])))
       k <- options[["movingRangeLength"]]
       sd <- qcc::sd.xbar.one(data, k = k)
-      sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE, std.dev = sd)
+      sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot = FALSE, std.dev = sd)
       # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
       mrMatrix <- matrix(data[1:(length(data) - (k - 1))])   # remove last k - 1 elements
       for (j in 2:k) {
@@ -841,212 +840,6 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, xLabels = as.vector(xLabels), p1 = p1, p2 = p2, tableI = tableI, tableR = tableR))
   else
     return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2, tableI = tableI, tableR = tableR))
-}
-
-.IMRchart_old <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE,
-                      stages = "") {
-  
-  ppPlot <- createJaspPlot(width = 900, height = 650)
-
-  if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
-    
-    # Error conditions for stages
-    if(any(table(dataset[[stages]]) < options[["movingRangeLength"]])) {
-      ppPlot$setError(gettext("Moving range length is larger than one of the stages."))
-      return(list(p = ppPlot))
-    } 
-  } else {
-    nStages <- 1
-  }
-  
-  ppPlot$width <- 900 + nStages * 100
-  
-  # Calculate values
-  dataPlotI <- list(allValues = list())
-  dataPlotR <- list(allValues = list())
-  for (i in seq_len(nStages)) {
-    if (identical(stages, "")) {
-      dataForPlot <- dataset
-    } else {
-      dataForPlot <- subset(dataset, dataset[[stages]] == unique(dataset[[stages]])[i])
-    }
-    
-    if (identical(measurements, "") && !identical(variable, "")) {
-      ppPlot$dependOn(optionContainsValue = list(variables = variable))
-      data <- data.frame(process = dataForPlot[[variable]])
-      k <- options[["movingRangeLength"]]
-      sd <- qcc::sd.xbar.one(data$process, k = k)
-      sixsigma_I <- qcc::qcc(data$process, type ='xbar.one', plot=FALSE, std.dev = sd)
-      # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
-      mrMatrix <- matrix(data$process[1:(length(data$process) - (k - 1))])   # remove last k - 1 elements
-      for (j in 2:k) {
-        mrMatrix <- cbind(mrMatrix, matrix(data$process[j:(length(data$process) - (k - j))]))   # remove first i and last (k - i) elements
-      }
-      sixsigma_R <- qcc::qcc(mrMatrix, type = "R", plot = FALSE)
-    } else {
-      data <- as.vector((t(dataForPlot[measurements])))
-      k <- options[["movingRangeLength"]]
-      sd <- qcc::sd.xbar.one(data, k = k)
-      sixsigma_I <- qcc::qcc(data, type ='xbar.one', plot=FALSE, std.dev = sd)
-      # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
-      mrMatrix <- matrix(data[1:(length(data) - (k - 1))])   # remove last k - 1 elements
-      for (j in 2:k) {
-        mrMatrix <- cbind(mrMatrix, matrix(data[j:(length(data) - (k - j))]))   # remove first i and last (k - i) elements
-      }
-      sixsigma_R <- qcc::qcc(mrMatrix, type = "R", plot = FALSE)
-    }
-    dataPlotI[[1]] <- c(unlist(dataPlotI[[1]]), unlist(sixsigma_I$statistics), min(sixsigma_I$limits), max(sixsigma_I$limits))  # all values and limits to calculate decimals and axes
-    if (i != 1) {
-      subgroupsI <- seq(max(dataPlotI[[i]]$subgroups) + 1, max(dataPlotI[[i]]$subgroups) + length(sixsigma_I$statistics))  # to keep counting across groups
-      subgroupsR <- seq(max(dataPlotR[[i]]$subgroups) + 1, max(dataPlotR[[i]]$subgroups) + length(sixsigma_R$statistics) + 1)
-    } else {
-      subgroupsI <- c(1:length(sixsigma_I$statistics))
-      subgroupsR <- seq_len(length(sixsigma_R$statistics) + 1)
-    }
-    dataPlotI[[i + 1]] <- list(subgroups = subgroupsI, process = sixsigma_I$statistics, center = sixsigma_I$center,
-                               UCL = max(sixsigma_I$limits), LCL = min(sixsigma_I$limits), sixsigma_I = sixsigma_I)
-    dataPlotR[[1]] <- c(unlist(dataPlotR[[1]]), unlist(sixsigma_R$statistics), max(sixsigma_R$limits, min(sixsigma_R$limits)))
-    dataPlotR[[i + 1]] <- list(subgroups = subgroupsR, movingRange = c(NA, sixsigma_R$statistics),
-                               center = sixsigma_R$center, UCL = max(sixsigma_R$limits), LCL = min(sixsigma_R$limits), sixsigma_R = sixsigma_R)
-  }
-  decimals1 <- max(.decimalplaces(unlist(dataPlotI$allValues)))
-  decimals2 <- max(.decimalplaces(dataPlotR$allValues))
-  yBreaks1 <- jaspGraphs::getPrettyAxisBreaks(dataPlotI$allValues)
-  yBreaks2 <- jaspGraphs::getPrettyAxisBreaks(dataPlotR$allValues)
-  
-  # remove all values list, to allow looping over other lists
-  dataPlotI <- dataPlotI[-1]
-  dataPlotR <- dataPlotR[-1]
-  
-  plotMat <- matrix(list(), 2, nStages)
-  
-  # Create plots
-  for (i in seq_len(nStages)) {
-    subgroups = dataPlotI[[i]]$subgroups
-    center <- dataPlotI[[i]]$center
-    UCL <- dataPlotI[[i]]$UCL
-    LCL <- dataPlotI[[i]]$LCL
-    if (options$manualTicks){
-      nxBreaks <- options$nTicks
-      xBreaks1 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)))
-    } else {
-      xBreaks1 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(subgroups)))
-    }
-    if (xBreaks1[1] == 0)  # never start counting at 0 on x axis
-      xBreaks1[1] <- 1
-    
-    xLimits <- c(min(xBreaks1), max(xBreaks1) * 1.15)
-    dfLabel <- data.frame(
-      x = max(xLimits) * 0.95,
-      y = c(center, UCL, LCL),
-      l = c(
-        gettextf("CL = %g",  round(center, decimals1 + 1)),
-        gettextf("UCL = %g", round(UCL, decimals1 + 2)),
-        gettextf("LCL = %g", round(LCL, decimals1 + 2))
-      )
-    )
-    
-    df1 <- data.frame(process = dataPlotI[[i]]$process, subgroups = subgroups)
-    
-    if (length(dataPlotI[[i]]$sixsigma_I$statistics) > 1) {
-      dotColor1 <- ifelse(NelsonLaws(dataPlotI[[i]]$sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')
-    } else {
-      dotColor1 <- 'blue'
-    }
-    
-    p1 <- ggplot2::ggplot(df1, ggplot2::aes(x = subgroups, y = process)) +
-      ggplot2::geom_hline(yintercept = center, color = 'green') +
-      ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
-      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-      ggplot2::scale_y_continuous(name = ifelse(variable != "" , gettextf("%s", variable), "Individual value"),
-                                  breaks = yBreaks1, limits = range(yBreaks1)) +
-      ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks1, limits = xLimits) +
-      jaspGraphs::geom_line(color = "blue") +
-      jaspGraphs::geom_point(size = 4, fill = dotColor1, inherit.aes = TRUE) +
-      jaspGraphs::geom_rangeframe() +
-      jaspGraphs::themeJaspRaw()
-    
-    if(i != 1)
-      p1 <- p1 + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(),
-                                axis.title.y = ggplot2::element_blank())
-    
-    #Moving range chart
-    subgroups <- dataPlotR[[i]]$subgroups
-    center <- dataPlotR[[i]]$center
-    UCL <- dataPlotR[[i]]$UCL
-    LCL <- dataPlotR[[i]]$LCL
-    if (options$manualTicks){
-      nxBreaks <- options$nTicks
-      xBreaks2 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(subgroups, n = nxBreaks)))
-    } else {
-      xBreaks2 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(subgroups)))
-    }
-    if (xBreaks2[1] == 0) # never start counting at 0 on x axis
-      xBreaks2[1] <- 1
-    xLimits <- c(min(xBreaks2),max(xBreaks2) * 1.15)
-    dfLabel <- data.frame(
-      x = max(xLimits) * 0.95,
-      y = c(center, UCL, LCL),
-      l = c(
-        gettextf("CL = %g", round(center, decimals2 + 1)),
-        gettextf("UCL = %g",   round(UCL, decimals2 + 2)),
-        gettextf("LCL = %g",   round(LCL, decimals2 + 2))
-      )
-    )
-    
-    df2 <- data.frame(subgroups = subgroups, movingRange = dataPlotR[[i]]$movingRange)
-    
-    if (length(dataPlotR[[i]]$sixsigma_R$statistics) > 1) {
-      dotColor2 <- ifelse(c(NA, NelsonLaws(dataPlotR[[i]]$sixsigma_R)$red_points), 'red', 'blue')
-    } else {
-      dotColor2 <- 'blue'
-    }
-    
-    p2 <- ggplot2::ggplot(df2, ggplot2::aes(x = subgroups, y = movingRange)) +
-      ggplot2::geom_hline(yintercept = center, color = 'green') +
-      ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red",linetype = "dashed", size = 1.5) +
-      ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = 4.5) +
-      ggplot2::scale_y_continuous(name = gettext("Moving Range"), breaks = yBreaks2, limits = range(yBreaks2)) +
-      ggplot2::scale_x_continuous(name = gettext('Observation'), breaks = xBreaks2, limits = xLimits) +
-      jaspGraphs::geom_line(color = "blue") +
-      jaspGraphs::geom_point(size = 4, fill = dotColor2, inherit.aes = TRUE) +
-      jaspGraphs::geom_rangeframe() +
-      jaspGraphs::themeJaspRaw()
-    
-    if(i != 1)
-      p2 <- p2 + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(),
-                                axis.title.y = ggplot2::element_blank())
-    
-    
-    if (!identical(manualXaxis, "")) {
-      if (!identical(measurements, "")) {
-        if (Wide)
-          xLabels <- as.vector(sapply(1:length(manualXaxis), function(x) {rep(manualXaxis[x], ncol(dataForPlot[measurements]))}))
-        else
-          xLabels <- manualXaxis
-      }
-      else
-        xLabels <- manualXaxis
-      
-      p1 <- p1 + ggplot2::scale_x_continuous(breaks = xBreaks1, labels = xLabels[xBreaks1])
-      p2 <- p2 + ggplot2::scale_x_continuous(breaks = xBreaks2, labels = xLabels[xBreaks2])
-    }
-    
-    plotMat[[1,i]] <- p1
-    plotMat[[2,i]] <- p2
-  }
-  
-  if(!cowPlot){
-    ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = plotMat, removeXYlabels= "x")
-  } else {
-    ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = nStages, nrow = 2, byrow = FALSE)
-  }
-  
-  if (!identical(manualXaxis, ""))
-    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, xLabels = as.vector(xLabels), p1 = p1, p2 = p2))
-  else
-    return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2))
 }
 
 .sdXbar <- function(df, type = c("s", "r")) {

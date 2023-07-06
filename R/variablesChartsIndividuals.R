@@ -70,7 +70,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Variables Charts for Individuals"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("ImRchart", "CorPlot", "CCReport", "variables"))
+    plot$dependOn(c("ImRchart", "CorPlot", "variableChartIndividualsReport", "variables"))
     return()
   }
   #ImR chart
@@ -82,14 +82,12 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
                                          "split"))
       Iplot <- jaspResults[["Ichart"]]
       
-      for (var in variables) {
         ALL <- createJaspContainer(gettextf("X-mR control chart"))
-        IMR <- .IMRchart(dataset = dataset, options = options, variable = var, manualXaxis = subgroups, stages = stages)
+        IMR <- .IMRchart(dataset = dataset, options = options, variable = variables, manualXaxis = subgroups, stages = stages)
         ALL[["Plot"]] <- IMR$p
         ALL[["Table1"]] <- IMR$tableI
         ALL[["Table2"]] <- IMR$tableR
-        Iplot[[var]] <- ALL
-      }
+        Iplot[[variables]] <- ALL
     }
   }
 
@@ -99,36 +97,35 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspResults[["CorPlot"]]$dependOn(c("CorPlot", "variables", "nLag"))
     Corplot <- jaspResults[["CorPlot"]]
 
-    for (var in variables)
-      Corplot[[var]] <- .CorPlot(dataset = dataset, options = options, variable = var, CI = options$CI, Lags = options$nLag)
+      Corplot[[variables]] <- .CorPlot(dataset = dataset, options = options, variable = variables, CI = options$CI, Lags = options$nLag)
   }
 
   # Report
-  if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]]) && options$ImRchart) {
+  if (options[["variableChartIndividualsReport"]] && is.null(jaspResults[["CCReport"]]) && options$ImRchart) {
 
     jaspResults[["CorPlot"]] <- NULL
     jaspResults[["Ichart"]] <- NULL
 
 
     jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
-    jaspResults[["CCReport"]]$dependOn(c("CCReport", "ImRchart", "variables","ncol", "manualTicks", "nTicks", "subgroups",
+    jaspResults[["CCReport"]]$dependOn(c("variableChartIndividualsReport", "ImRchart", "variables","ncol", "manualTicks", "nTicks", "subgroups",
                                          "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName",
                                          "split"))
     jaspResults[["CCReport"]]$position <- 9
     Iplot <- jaspResults[["CCReport"]]
 
-    IMR <- .IMRchart(dataset = dataset, options = options, variable = variables, manualXaxis = subgroups)
+    IMR <- .IMRchart(dataset = dataset, options = options, variable = variables, manualXaxis = subgroups, stages = stages)
     Iplot[["ccReport"]] <- .CCReport(p1 = IMR$p1, p2 = IMR$p2, ccTitle = options$ccTitle,
                                        ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
                                        ccChartName = options$ccChartName)
   }
 
   # Error handling
-  if (options$CCReport && (!options$ImRchart || length(variables) < 1)){
+  if (options[["variableChartIndividualsReport"]] && (!options$ImRchart || length(variables) < 1)){
     plot <- createJaspPlot(title = gettext("Report"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
     jaspResults[["plot"]]$setError(gettext("Please insert more measurements and check the X-mR chart."))
-    plot$dependOn(c("CCReport", "ImRchart", "variables"))
+    plot$dependOn(c("variableChartIndividualsReport", "ImRchart", "variables"))
     return()
   }
 }
