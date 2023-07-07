@@ -136,7 +136,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready, plotOnly = F) {
+.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE) {
   gaugeRRNonRepTables <- createJaspContainer(gettext("Gauge r&R Tables"))
   gaugeRRNonRepTables$position <- 1
 
@@ -169,6 +169,18 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     ms <- anovaTable$MS
     f <- anovaTable$F.value
     p <- anovaTable$p.value
+    if (any(df < 1)) {
+      if (plotOnly) {
+        p <- ggplot2::ggplot() +
+          jaspGraphs::themeJaspRaw() +
+          jaspGraphs::geom_rangeframe()
+        return(p)
+      } else {
+        gaugeRRNonRepTable1$setError(gettextf("No degrees of freedom for %s.", paste(anovaSources[which(df < 1)], collapse = ", ")))
+        gaugeRRNonRepTables[["Table1"]] <- gaugeRRNonRepTable1
+        return(gaugeRRNonRepTables)
+      }
+    }
     gaugeRRNonRepTable1$setData(list("sources" = anovaSources,
                                      "DF" = df,
                                      "SS" = ss,
@@ -187,12 +199,12 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     if (options$NRstandardDeviationReference == "historicalStandardDeviation" && histSD >= sqrt(varCompTable$varGaugeTotal)) {
       stdDevs <- c(sqrt(c(varCompTable$varGaugeTotal, varCompTable$varRepeat, varCompTable$varReprod)),
                    sqrt(histSD^2 - varCompTable$varGaugeTotal), histSD)
-    }else{
+    } else {
       stdDevs <- sqrt(varComps)
     }
     if (options$NRstudyVarMultiplierType == "svmSD") {
       studyVarMultiplier <- options$NRstudyVarMultiplier
-    }else{
+    } else {
       percent <- options$NRstudyVarMultiplier/100
       q <- (1 - percent)/2
       studyVarMultiplier <- abs(2*qnorm(q))
@@ -203,14 +215,14 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
                                         "SD" = stdDevs,
                                         "studyVar" = studyVar,
                                         "percentStudyVar" = percentStudyVar)
-    if(options[["gaugeNRToleranceEnabled"]]){
+    if (options[["gaugeNRToleranceEnabled"]]){
       percentTolerance <- studyVar / options$NRtolerance * 100
       gaugeRRNonRepTable3DataList <- append(gaugeRRNonRepTable3DataList, list("percentTolerance" = percentTolerance))
     }
     gaugeRRNonRepTable3$setData(gaugeRRNonRepTable3DataList)
     if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
       gaugeRRNonRepTable3$addFootnote(gettextf("Study Variation is calculated as Std. Deviation * %i", as.integer(studyVarMultiplier)))
-    }else{
+    } else {
       gaugeRRNonRepTable3$addFootnote(gettextf("Study Variation is calculated as Std. Deviation * %.2f", studyVarMultiplier))
     }
     nCategories <- .gaugeNumberDistinctCategories(stdDevs[4], stdDevs[1])
@@ -223,16 +235,16 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   if (options[["NRgaugeVarCompGraph"]]) {
     plot <- createJaspPlot(title = gettext("Components of Variation"), width = 850, height = 500)
     plot$dependOn(c("NRgaugeVarCompGraph"))
-    if (ready){
-      if(options[["gaugeNRToleranceEnabled"]]){
+    if (ready) {
+      if (options[["gaugeNRToleranceEnabled"]]) {
         percentToleranceForGraph <- percentTolerance[1:4]
-      }else{
+      } else {
         percentToleranceForGraph <- NA
       }
       p <- .gaugeVarCompGraph(percentVarComps[1:4], percentStudyVar[1:4], percentToleranceForGraph)
       plot$plotObject <- p
     }
-    if(plotOnly)
+    if (plotOnly)
       return(p)
     gaugeRRNonRepTables[["Plot"]] <- plot
   }
@@ -391,9 +403,9 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
 .anovaGaugeNestedReport <- function(datasetWide, datasetLong, measurementsWide, measurementsLong, parts, operators, options){
 
-  if (options[["anovaGaugeNestedTitle"]] == ""){
+  if (options[["anovaGaugeNestedTitle"]] == "") {
     title <- gettext("Gauge r&R Report")
-  }else{
+  } else {
     title <- options[["anovaGaugeNestedTitle"]]
   }
   name <- gettextf("Gauge name: %s", options[["anovaGaugeNestedName"]])
@@ -424,8 +436,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
   if (options[["reportRChartByOperator"]]) {
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .xBarOrRangeChartPlotFunction("Range", datasetWide, measurementsWide, parts, operators,
-                                                              options, smallLabels = TRUE) #R chart by operator
+    plotList[[indexCounter]] <- .xBarOrRangeChart("Range", datasetWide, measurementsWide, parts, operators, options, ready = TRUE)$plotObject #R chart by operator
   }
   if (options[["reportMeasurementsByOperatorPlot"]]) {
     indexCounter <- indexCounter + 1
@@ -433,8 +444,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
   if (options[["reportAverageChartByOperator"]]) {
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .xBarOrRangeChartPlotFunction("Xbar", datasetWide, measurementsWide, parts, operators,
-                                                              options, smallLabels = TRUE) #Average chart by operator
+    plotList[[indexCounter]] <- .xBarOrRangeChart("Xbar", datasetWide, measurementsWide, parts, operators, options, ready = TRUE)$plotObject #Average chart by operator
   }
 
   if (indexCounter == 0) {

@@ -10,27 +10,27 @@
 
 # Function to create the x-bar and r-chart section
 .qcXbarAndRContainer <- function(options, dataset, ready, jaspResults, measurements, subgroups, wideFormat) {
-
+  
   if (!is.null(jaspResults[["controlCharts"]]))
     return()
-
+  
   container <- createJaspContainer(title = gettext("Control Chart"))
   container$dependOn(options = c("controlChartsType", "pcReportDisplay", "variables", "subgroups", "variablesLong",
                                  "pcSubgroupSize", "manualSubgroupSize", "manualTicks", 'nTicks', "xbarR", "IMR"))
   container$position <- 1
   jaspResults[["controlCharts"]] <- container
-
+  
   matrixPlot <- createJaspPlot(title = "X-bar & R control chart", width = 1200, height = 550)
   container[["plot"]] <- matrixPlot
-
+  
   if (!ready)
     return()
-
+  
   if (length(measurements) < 2) {
     matrixPlot$setError(gettext("Subgroup size must be > 1 to display X-bar & R Chart."))
     return()
   }
-
+  
   plotMat <- matrix(list(), 2, 1)
   plotMat[[1,1]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = subgroups,
                                warningLimits = FALSE, Wide = wideFormat, manualTicks = options$manualTicks)$p
@@ -61,14 +61,15 @@
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
   sdType <- match.arg(sdType) 
-  if(Phase2)
-    sixsigma <- qcc::qcc(data, type ='xbar', plot=FALSE, center = as.numeric(target), std.dev = as.numeric(sd))
-  else {
+  if(Phase2) {
+    mu <- as.numeric(target)
+    sigma <- as.numeric(sd)
+  } else {
     #hand calculate mean and sd as the package gives wrong results with NAs
     mu <- mean(unlist(data), na.rm = TRUE)
     sigma <- .sdXbar(df = data, type = sdType)
-    sixsigma <- qcc::qcc(data, type ='xbar', plot = FALSE, center = mu, sizes = ncol(data), std.dev = sigma)
   }
+  sixsigma <- qcc::qcc(data, type ='xbar', plot = FALSE, center = mu, sizes = ncol(data), std.dev = sigma)
   
   #calculate group sizes
   n <- apply(data, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
@@ -77,7 +78,7 @@
   
   if (length(sixsigma$statistics) == 1)
     OnlyOutofLimit <- TRUE  # other rules don't apply if only 1 group
-
+  
   if (!identical(manualSubgroups, "")) {
     subgroups <- manualSubgroups
   } else {
@@ -97,26 +98,26 @@
     LCL <- limits$LCL
   }
   # upper and lower warning limits at 1 sd and 2sd
-    WL1 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 1)
-    WL2 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 2)
-    UWL1 <- WL1$UCL
-    LWL1 <- WL1$LCL
-    UWL2 <- WL2$UCL
-    LWL2 <- WL2$LCL
-    
-    # arrange data for CL in df
-    cl_plot <- data.frame(LCL = LCL, UCL = UCL, center = center, subgroups = subgroups,
-                          UWL1 = UWL1, LWL1 = LWL1, UWL2 = UWL2, LWL2 = LWL2)
-    # repeat last observation and offset all but first subgroup by -.5 to align on x-axis
-    cl_plot <- rbind(cl_plot, data.frame(LCL = cl_plot$LCL[nrow(cl_plot)],
-                                         UCL = cl_plot$UCL[nrow(cl_plot)],
-                                         center = cl_plot$center[nrow(cl_plot)],
-                                         subgroups = cl_plot$subgroups[nrow(cl_plot)] + 1,
-                                         UWL1 = cl_plot$UWL1[nrow(cl_plot)],
-                                         LWL1 = cl_plot$LWL1[nrow(cl_plot)],
-                                         UWL2 = cl_plot$UWL2[nrow(cl_plot)],
-                                         LWL2 = cl_plot$LWL2[nrow(cl_plot)]
-    ))
+  WL1 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 1)
+  WL2 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 2)
+  UWL1 <- WL1$UCL
+  LWL1 <- WL1$LCL
+  UWL2 <- WL2$UCL
+  LWL2 <- WL2$LCL
+  
+  # arrange data for CL in df
+  cl_plot <- data.frame(LCL = LCL, UCL = UCL, center = center, subgroups = subgroups,
+                        UWL1 = UWL1, LWL1 = LWL1, UWL2 = UWL2, LWL2 = LWL2)
+  # repeat last observation and offset all but first subgroup by -.5 to align on x-axis
+  cl_plot <- rbind(cl_plot, data.frame(LCL = cl_plot$LCL[nrow(cl_plot)],
+                                       UCL = cl_plot$UCL[nrow(cl_plot)],
+                                       center = cl_plot$center[nrow(cl_plot)],
+                                       subgroups = cl_plot$subgroups[nrow(cl_plot)] + 1,
+                                       UWL1 = cl_plot$UWL1[nrow(cl_plot)],
+                                       LWL1 = cl_plot$LWL1[nrow(cl_plot)],
+                                       UWL2 = cl_plot$UWL2[nrow(cl_plot)],
+                                       LWL2 = cl_plot$LWL2[nrow(cl_plot)]
+  ))
   cl_plot$subgroups[-1] <- cl_plot$subgroups[-1] - .5
   
   
@@ -149,13 +150,13 @@
     )
   )
   
-    p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
+  p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = means)) +
     ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UCL), col = "red",
                        size = 1.5, linetype = "dashed") +
     ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = LCL), col = "red",
                        size = 1.5, linetype = "dashed") +
     ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = center), col = "green", size = 1)
-    
+  
   if (warningLimits) {
     p <- p + ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UWL1), col = "orange",
                                 size = 1, linetype = "dashed") +
@@ -172,7 +173,7 @@
     p <- p + ggplot2::scale_y_continuous(name = ggplot2::element_blank(), limits = yLimits, breaks = yBreaks, labels = NULL) +
       ggplot2::theme(axis.line.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
   }
-
+  
   if(smallLabels){
     labelSize <- 3.5
     lineSize <- 0.5
@@ -182,15 +183,15 @@
     lineSize <- 1
     pointsSize <- 4
   }
-
+  
   if (plotLimitLabels)
     p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = labelSize)
-
+  
   p <- p + ggplot2::scale_x_continuous(name = gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(color = "blue", size = lineSize) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
-
+  
   # Out of control red dots marking
   if (Phase2)
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
@@ -198,29 +199,29 @@
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(data_plot$means > UCL | data_plot$means < LCL, "red", "blue"))
   else
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma, allsix = TRUE)$red_points, "red", "blue"))
-
+  
   # if more than half of the dots are violations, do not show red dots.
   n.outOfLimits <- sum(data_plot$means > UCL , data_plot$means < LCL)
   if ( n.outOfLimits > (nrow(data_plot) / 2) )
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = "blue")
-
+  
   if (!identical(manualXaxis, "")) {
     if (GaugeRR | Wide){
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(breaks = xBreaks, labels = xBreaks_Out[xBreaks])
     } else {
       
-       xBreaks_Out <- unique(manualXaxis) # use unique to preserve original order unlike levels
-       xLabels <- xBreaks_Out[xBreaks]
-       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
-     }
+      xBreaks_Out <- unique(manualXaxis) # use unique to preserve original order unlike levels
+      xLabels <- xBreaks_Out[xBreaks]
+      xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
+      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
+    }
   }
-
-
+  
+  
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
-
+  
   if (!identical(manualXaxis, ""))
     return(list(p = p, sixsigma = sixsigma, xLabels = as.vector(xBreaks_Out)))
   else return(list(p = p, sixsigma = sixsigma))
@@ -232,7 +233,7 @@
                     xAxisLab = gettext("Subgroup"), manualDataYaxis = "", manualXaxis = "", title = "", smallLabels = FALSE,
                     OnlyOutofLimit = FALSE, GaugeRR = FALSE, Wide = FALSE, manualTicks = FALSE,
                     controlLimitsPerGroup = FALSE) {
-
+  
   #remove rows with single observation as no meaningful range and no CL can be computed
   rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
   if (length(rowRemovalIndex) != 0)
@@ -253,12 +254,12 @@
   
   if (length(sixsigma$statistics) == 1)
     OnlyOutofLimit <- TRUE  # other rules don't apply if only 1 group
-
+  
   if(Phase2 && sd != "")
     sixsigma <- list(statistics = sixsigma$statistics,
                      limits = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$limits,
                      center = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$center)
-
+  
   range <- sixsigma$statistics
   if (!identical(manualSubgroups, "")) {
     subgroups <- manualSubgroups
@@ -313,7 +314,7 @@
       gettextf("LCL = %g",   round(LCLDisplay, decimals + 2))
     )
   )
-
+  
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = subgroups, y = range)) +
     ggplot2::geom_step(data = cl_plot, mapping = ggplot2::aes(x = subgroups, y = UCL), col = "red",
                        size = 1.5, linetype = "dashed") +
@@ -328,7 +329,7 @@
       ggplot2::scale_y_continuous(name = ggplot2::element_blank() ,limits = yLimits, breaks = yBreaks, labels = NULL) +
       ggplot2::theme(axis.line.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
   }
-
+  
   if(smallLabels){
     labelSize <- 3.5
     lineSize <- 0.5
@@ -340,38 +341,38 @@
   }
   if (plotLimitLabels)
     p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = labelSize)
-
+  
   p <- p + ggplot2::scale_x_continuous(name= gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
     jaspGraphs::geom_line(color = "blue", size = lineSize) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
-
+  
   if (!identical(manualXaxis, "")) {
     if (GaugeRR | Wide){
       xBreaks_Out <- manualXaxis
       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xBreaks_Out[xBreaks])
     }
-     else{
-       xBreaks_Out <- unique(manualXaxis)  # use unique to preserve original order unlike levels
-       xLabels <- xBreaks_Out[xBreaks]
-       xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
-       p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
-     }
+    else{
+      xBreaks_Out <- unique(manualXaxis)  # use unique to preserve original order unlike levels
+      xLabels <- xBreaks_Out[xBreaks]
+      xLimits <- c(range(xBreaks)[1], range(xBreaks)[2] * 1.15)
+      p <- p + ggplot2::scale_x_continuous(name = xAxisLab, breaks = xBreaks, labels = xLabels, limits = xLimits)
+    }
   }
-
+  
   if (OnlyOutofLimit)
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(data_plot$range > UCL | data_plot$range < LCL, "red", "blue"))
   else
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = ifelse(NelsonLaws(sixsigma)$red_points, "red", "blue"))
-
+  
   # if more than half of the dots are violations, do not show red dots.
   n.outOfLimits <- sum(data_plot$range > UCL , data_plot$range < LCL)
   if ( n.outOfLimits > (nrow(data_plot) / 2) )
     p <- p + jaspGraphs::geom_point(size = pointsSize, fill = "blue")
-
+  
   if (title != "")
     p <- p + ggplot2::ggtitle(title)
-
+  
   if (!identical(manualXaxis, ""))
     return(list(p = p, sixsigma = sixsigma, xLabels = as.vector(xBreaks_Out)))
   else return(list(p = p, sixsigma = sixsigma))
@@ -385,7 +386,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   pars$Rule3$nPoints = 7
   pars$Rule3$convention = "minitab"
   pars$Rule4$convention = "minitab"
-
+  
   #Evaluate all rules
   if (chart == "p"){
     n = length(data$statistics)
@@ -399,7 +400,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = data$limits[1,1], ucl = data$limits[1,2], cl = data$center[1], parRules = pars,
                                     whichRules = c(1:3,5,7:8))
   }
-
+  
   if (allsix) {
     if (length(xLabels) == 0) {
       Rules <- list(R1 = which(warnings[,2] == 1),
@@ -432,41 +433,41 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     }
     red_points = apply(warnings[,c(2,3,4)], 1, sum) > 0
   }
-
+  
   return(list(red_points = red_points, Rules = Rules))
 }
 
 .NelsonTable <- function(dataset, options, sixsigma, type = "xbar", Phase2 = TRUE, name = "X-bar", xLabels = NULL) {
-
+  
   table <- createJaspTable(title = gettextf("Test results for %s chart", name))
   
   if (length(sixsigma$statistics) == 1) # no need for table with only 1 group
     return(table)
-
+  
   if (!Phase2 || type == "xbar.one") {
-
+    
     Test <- NelsonLaws(data = sixsigma, allsix = TRUE, xLabels = xLabels)
-
+    
     if (length(Test$Rules$R1) > 0)
       table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
-
+    
     if (length(Test$Rules$R2) > 0)
       table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
-
+    
     if (length(Test$Rules$R3) > 0)
       table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
-
+    
     if (length(Test$Rules$R4) > 0)
       table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
-
+    
     if (length(Test$Rules$R5) > 0)
       table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
-
+    
     if (length(Test$Rules$R6) > 0)
       table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
-
-
-
+    
+    
+    
     table$setData(list(
       "test1" = c(Test$Rules$R1),
       "test2" = c(Test$Rules$R2),
@@ -475,26 +476,26 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       "test5" = c(Test$Rules$R5),
       "test6" = c(Test$Rules$R6)
     ))
-
+    
   }
   else {
-
+    
     if (name == "np" || name == "c" || name == "u" || name == "Laney p'" || name == "Laney u'")
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "c")
     else if (name == "P")
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "p")
     else
       Test <- NelsonLaws(data = sixsigma, xLabels = xLabels)
-
+    
     if (length(Test$Rules$R1) > 0)
       table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
-
+    
     if (length(Test$Rules$R2) > 0)
       table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
-
+    
     if (length(Test$Rules$R3) > 0)
       table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
-
+    
     if (type == "Range" & length(xLabels) == 0){
       table$setData(list(
         "test1" = c(Test$Rules$R1 + 1),
@@ -509,7 +510,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       ))
     }
   }
-
+  
   table$showSpecifiedColumnsOnly <- TRUE
   table$addFootnote(message = gettext("Numbers are data points where test violations occur."))
   return(table)
@@ -533,7 +534,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                       stages = "") {
   
   ppPlot <- createJaspPlot(width = 900, height = 650)
-
+  
   if (identical(stages, "")) {
     nStages <- 1
   } else {
@@ -586,7 +587,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     if (i != 1) {
       subgroupsI <- seq(max(dataPlotI[[i]]$subgroups) + 1, max(dataPlotI[[i]]$subgroups) + length(sixsigma_I$statistics))  # to keep counting across groups
       subgroupsR <- seq(max(dataPlotR[[i]]$subgroups) + 1, max(dataPlotR[[i]]$subgroups) + length(sixsigma_R$statistics) + 1)
-      } else {
+    } else {
       subgroupsI <- c(1:length(sixsigma_I$statistics))
       subgroupsR <- seq_len(length(sixsigma_R$statistics) + 1)
     }
@@ -594,19 +595,19 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                                UCL = max(sixsigma_I$limits), LCL = min(sixsigma_I$limits), sixsigma_I = sixsigma_I)
     dataPlotR[[1]] <- c(unlist(dataPlotR[[1]]), unlist(sixsigma_R$statistics), max(sixsigma_R$limits, min(sixsigma_R$limits)))
     dataPlotR[[i + 1]] <- list(subgroups = subgroupsR, movingRange = c(NA, sixsigma_R$statistics),
-                            center = sixsigma_R$center, UCL = max(sixsigma_R$limits), LCL = min(sixsigma_R$limits), sixsigma_R = sixsigma_R)
+                               center = sixsigma_R$center, UCL = max(sixsigma_R$limits), LCL = min(sixsigma_R$limits), sixsigma_R = sixsigma_R)
   }
   decimals1 <- max(.decimalplaces(unlist(dataPlotI$allValues)))
   decimals2 <- max(.decimalplaces(dataPlotR$allValues))
   yBreaks1 <- jaspGraphs::getPrettyAxisBreaks(dataPlotI$allValues)
   yBreaks2 <- jaspGraphs::getPrettyAxisBreaks(dataPlotR$allValues)
-
+  
   # remove all values list, to allow looping over other lists
   dataPlotI <- dataPlotI[-1]
   dataPlotR <- dataPlotR[-1]
   
   plotMat <- matrix(list(), 2, nStages)
-
+  
   # Create plots
   for (i in seq_len(nStages)) {
     subgroups = dataPlotI[[i]]$subgroups
@@ -640,7 +641,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     } else {
       dotColor1 <- 'blue'
     }
-
+    
     p1 <- ggplot2::ggplot(df1, ggplot2::aes(x = subgroups, y = process)) +
       ggplot2::geom_hline(yintercept = center, color = 'green') +
       ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red", linetype = "dashed", size = 1.5) +
@@ -655,8 +656,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     
     if(i != 1)
       p1 <- p1 + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(),
-                     axis.title.y = ggplot2::element_blank())
-
+                                axis.title.y = ggplot2::element_blank())
+    
     #Moving range chart
     subgroups <- dataPlotR[[i]]$subgroups
     center <- dataPlotR[[i]]$center
@@ -688,7 +689,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     } else {
       dotColor2 <- 'blue'
     }
-
+    
     p2 <- ggplot2::ggplot(df2, ggplot2::aes(x = subgroups, y = movingRange)) +
       ggplot2::geom_hline(yintercept = center, color = 'green') +
       ggplot2::geom_hline(yintercept = c(UCL, LCL), color = "red",linetype = "dashed", size = 1.5) +
@@ -704,7 +705,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       p2 <- p2 + ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(),
                                 axis.title.y = ggplot2::element_blank())
     
-
+    
     if (!identical(manualXaxis, "")) {
       if (!identical(measurements, "")) {
         if (Wide)
@@ -714,21 +715,21 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       }
       else
         xLabels <- manualXaxis
-
+      
       p1 <- p1 + ggplot2::scale_x_continuous(breaks = xBreaks1, labels = xLabels[xBreaks1])
       p2 <- p2 + ggplot2::scale_x_continuous(breaks = xBreaks2, labels = xLabels[xBreaks2])
     }
-
+    
     plotMat[[1,i]] <- p1
     plotMat[[2,i]] <- p2
   }
-
+  
   if(!cowPlot){
     ppPlot$plotObject <-  jaspGraphs::ggMatrixPlot(plotList = plotMat, removeXYlabels= "x")
   } else {
     ppPlot$plotObject <- cowplot::plot_grid(plotlist = plotMat, ncol = nStages, nrow = 2, byrow = FALSE)
   }
-
+  
   if (!identical(manualXaxis, ""))
     return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, xLabels = as.vector(xLabels), p1 = p1, p2 = p2))
   else

@@ -208,14 +208,15 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   data <- dataset[, unlist(lapply(dataset, is.numeric))]
   decimals <- max(.decimalplaces(data))
   
+  sigma <- .sdXbar(data, type = "s")
+  sixsigma <- qcc::qcc(data, type ='S', plot = FALSE, center = sigma, sizes = ncol(data))
+  
   if(Phase2 && sd != ""){
     sixsigma <- list(statistics = sixsigma$statistics,
                      limits = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$limits,
                      center = KnownControlStats.RS(sixsigma$sizes[1], as.numeric(sd))$center)
-  } else {
-    sigma <- .sdXbar(data, type = "s")
-    sixsigma <- qcc::qcc(data, type ='S', plot = FALSE, center = sigma, sizes = ncol(data))
   }
+  
   
   n <- apply(data, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
   if (!controlLimitsPerGroup) # if control limits are not calculated per group they are based on largest group size
