@@ -97,11 +97,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspResults[["CorPlot"]]$dependOn(c("CorPlot", "variables", "nLag"))
     Corplot <- jaspResults[["CorPlot"]]
 
-      Corplot[[variables]] <- .CorPlot(dataset = dataset, options = options, variable = variables, CI = options$CI, Lags = options$nLag)
+      Corplot[[variables]] <- .CorPlot(dataset = dataset, options = options, variable = variables, CI = options$CI, lags = options$nLag)
   }
 
   # Report
-  if (options[["variableChartIndividualsReport"]] && is.null(jaspResults[["CCReport"]]) && options$ImRchart) {
+  if (options[["variableChartIndividualsReport"]] && is.null(jaspResults[["CCReport"]])) {
 
     jaspResults[["CorPlot"]] <- NULL
     jaspResults[["Ichart"]] <- NULL
@@ -110,14 +110,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
     jaspResults[["CCReport"]]$dependOn(c("variableChartIndividualsReport", "ImRchart", "variables","ncol", "manualTicks", "nTicks", "subgroups",
                                          "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName",
-                                         "split"))
+                                         "split", "reportAutocorrelationChart", "reportIMRChart", "reportMetaData"))
     jaspResults[["CCReport"]]$position <- 9
     Iplot <- jaspResults[["CCReport"]]
-
-    IMR <- .IMRchart(dataset = dataset, options = options, variable = variables, manualXaxis = subgroups, stages = stages)
-    Iplot[["ccReport"]] <- .CCReport(p1 = IMR$p1, p2 = IMR$p2, ccTitle = options$ccTitle,
-                                       ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
-                                       ccChartName = options$ccChartName)
+    
+    Iplot[["ccReport"]] <- .individualChartReport(dataset, variables, subgroups, stages, options)
   }
 
   # Error handling
@@ -130,11 +127,19 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
 }
 
-.CorPlot <- function(dataset = dataset, options = options, variable = var, Lags = NULL, CI = 0.95){
+.CorPlot <- function(dataset = dataset, options = options, variable = var, lags = NULL, CI = 0.95) {
   ppPlot <- createJaspPlot(width = 1200, height = 500, title = gettextf("%s",variable))
   ppPlot$dependOn(optionContainsValue = list(variables = variable))
 
-  list.acf <- stats::acf(dataset[[variable]], lag.max = Lags, type = "correlation", ci.type = "ma", plot = FALSE, ci = CI)
+  p <- .CorPlotObject(dataset, options, variable, lags, CI)
+
+  ppPlot$plotObject <- p
+
+  return(ppPlot)
+}
+
+.CorPlotObject <- function(dataset = dataset, options = options, variable = var, lags = NULL, CI = 0.95) {
+  list.acf <- stats::acf(dataset[[variable]], lag.max = lags, type = "correlation", ci.type = "ma", plot = FALSE, ci = CI)
   N <- as.numeric(list.acf$n.used)
   df1 <- data.frame(lag = list.acf$lag, acf = list.acf$acf)
   df1$lag.acf <- dplyr::lag(df1$acf, default = 0)
@@ -143,7 +148,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   df1$acfstd <- sqrt(1/N * (1 + 2 * df1$lag.acf.cumsum))
   df1$acfstd[1] <- 0
   df1 <- dplyr::select(df1, lag, acf, acfstd)
-
+  
   p <- ggplot2::ggplot(data = df1, ggplot2::aes(x = lag, y = acf)) +
     ggplot2::geom_col(fill = "#4373B6", width = 0.2) +
     jaspGraphs::geom_line(ggplot2::aes(x = lag, y = qnorm((1+CI)/2)*acfstd), color = "red") +
@@ -153,8 +158,60 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     ggplot2::scale_x_continuous(name = gettext('Lag'), breaks = seq(1,max(df1$lag),2)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
+  
+  return(p)
+}
 
-  ppPlot$plotObject <- p
-
-  return(ppPlot)
+.individualChartReport <- function(dataset, variables, subgroups, stages, options){
+  
+  if (options[["ccTitle"]] == "") {
+    title <- gettextf("Individual charts report")
+  }else {
+    title <- options[["ccTitle"]]
+  }
+  name <- gettextf("Name: %s", options[["ccName"]])
+  date <- gettextf("Date of study: %s", options[["ccDate"]])
+  text1 <- c(name, date)
+  
+  reportedBy <- gettextf("Performed by: %s", options[["ccReportedBy"]])
+  misc <- gettextf("Misc: %s", options[["ccMisc"]])
+  text2 <- c(reportedBy, misc)
+  
+  plotList <- list()
+  indexCounter <- 0
+  if (options[["reportMetaData"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .ggplotWithText(text1)
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .ggplotWithText(text2)
+  }
+  if (options[["reportIMRChart"]]) {
+    indexCounter <- indexCounter + 1
+    IMR <- .IMRchart(dataset = dataset, options = options, variable = variables, manualXaxis = subgroups, stages = stages)
+    plotList[[indexCounter]] <- IMR$p1
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- IMR$p2
+  }
+  if (options[["reportAutocorrelationChart"]]) {
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- .CorPlotObject(dataset = dataset, options = options, variable = variables, CI = options$CI, lags = options$nLag)
+  }
+  
+  if (indexCounter == 0) {
+    plot <- createJaspPlot(title = title, width = 400, height = 400)
+    plot$setError(gettext("No report components selected."))
+    return(plot)
+  } else if (indexCounter %% 2 != 0){
+    indexCounter <- indexCounter + 1
+    plotList[[indexCounter]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  }
+  
+  matrixNCols <- 2
+  matrixNRows <- indexCounter / matrixNCols
+  matrixPlot <- createJaspPlot(title = title, width = 1200, height = 400 * matrixNRows)
+  plotMat <- matrix(plotList, matrixNRows, matrixNCols, byrow = TRUE)
+  p <- jaspGraphs::ggMatrixPlot(plotMat)
+  matrixPlot$plotObject <- p
+  
+  return(matrixPlot)
 }

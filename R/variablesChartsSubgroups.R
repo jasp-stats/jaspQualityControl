@@ -313,7 +313,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     return(list(p = p, sixsigma = sixsigma))
 }
 
-.CCReport <- function(ImR = FALSE,p1 = "", p2 = "", ccTitle = "", ccName = "", ccDate = "",
+.CCReport <- function(p1 = "", p2 = "", ccTitle = "", ccName = "", ccDate = "",
                       ccReportedBy = "", ccMisc = "" , ccSubTitle = "", ccChartName = "") {
   
   if (ccTitle == "")
