@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2023-06-17 03:40\n"
+"POT-Creation-Date: 2023-07-08 03:44\n"
 "PO-Revision-Date: 2023-06-24 03:41+0000\n"
 "Last-Translator: Borisov Igor Borisovich <borisov_i@pimunn.net>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
@@ -948,6 +948,9 @@ msgid "Mean Square"
 msgstr ""
 
 msgid "Variation"
+msgstr ""
+
+msgid "No degrees of freedom for %s."
 msgstr ""
 
 msgid "Total Gauge r & R"

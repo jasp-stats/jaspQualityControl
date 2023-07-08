@@ -1,16 +1,9 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-07-08 03:41+0000\n"
-"Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
-"br>\n"
-"Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/pt/>\n"
-"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.0-dev\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Language: pt\n"
 "X-Qt-Contexts: true\n"
 
@@ -563,9 +556,10 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
 msgstr "Valores individuais (I-MR)"
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "X-mR chart"
-msgstr ""
+msgstr "Carta I-MR"
 
 msgctxt "Description|"
 msgid "Variables Charts for Individuals"
@@ -901,9 +895,10 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Single column"
-msgstr ""
+msgstr "Coluna única"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Across rows"
@@ -981,9 +976,10 @@ msgctxt "msaTestRetest|"
 msgid "Regression line"
 msgstr ""
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Single column"
-msgstr ""
+msgstr "Coluna única"
 
 msgctxt "processCapabilityStudies|"
 msgid "Across rows"
@@ -1043,9 +1039,10 @@ msgctxt "msaAttribute|"
 msgid "Data format"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Single column"
-msgstr ""
+msgstr "Coluna única"
 
 msgctxt "msaAttribute|"
 msgid "Across rows"
@@ -1123,9 +1120,10 @@ msgctxt "msaTestRetest|"
 msgid "Process Std. Deviation"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Tolerance"
-msgstr ""
+msgstr "Tolerância"
 
 msgctxt "msaTestRetest|"
 msgid "Run chart of parts"
@@ -1203,9 +1201,10 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Confidence interval size"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Single column"
-msgstr ""
+msgstr "Coluna única"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Across rows"
@@ -1545,9 +1544,10 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Individuals Report"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Measurement"

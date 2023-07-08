@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2023-06-17 03:40\n"
+"POT-Creation-Date: 2023-07-08 03:44\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -908,6 +908,9 @@ msgid "Mean Square"
 msgstr ""
 
 msgid "Variation"
+msgstr ""
+
+msgid "No degrees of freedom for %s."
 msgstr ""
 
 msgid "Total Gauge r & R"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-06-17 03:40\n"
+"POT-Creation-Date: 2023-07-08 03:44\n"
 "PO-Revision-Date: 2023-05-13 03:38+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -961,6 +961,9 @@ msgid "Mean Square"
 msgstr "Mittlere Quadratsumme"
 
 msgid "Variation"
+msgstr ""
+
+msgid "No degrees of freedom for %s."
 msgstr ""
 
 msgid "Total Gauge r & R"

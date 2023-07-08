@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-06-17 03:40\n"
+"POT-Creation-Date: 2023-07-08 03:44\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -970,6 +970,9 @@ msgstr "均方"
 
 msgid "Variation"
 msgstr "方差"
+
+msgid "No degrees of freedom for %s."
+msgstr ""
 
 msgid "Total Gauge r & R"
 msgstr "总量具 r&R"
