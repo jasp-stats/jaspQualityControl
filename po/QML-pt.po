@@ -1,9 +1,16 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-07-08 03:41+0000\n"
+"Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
+"br>\n"
+"Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/pt/>\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.0-dev\n"
 "X-Language: pt\n"
 "X-Qt-Contexts: true\n"
 
@@ -175,7 +182,7 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Variables Charts for Subgroups"
-msgstr ""
+msgstr "Variáveis para Subgrupos (XBar-R / XBar-S)"
 
 msgctxt "Description|"
 msgid "Time Weighted Charts"
@@ -187,15 +194,15 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
-msgstr ""
+msgstr "Defeituosos/Defeitos"
 
 msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
-msgstr ""
+msgstr "Cartas para Atributos"
 
 msgctxt "attributesCharts|"
 msgid "Defectives"
-msgstr ""
+msgstr "Defeituosos"
 
 msgctxt "attributesCharts|"
 msgid "np chart"
@@ -396,7 +403,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & R chart"
-msgstr ""
+msgstr "Carta XBarra-R"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
@@ -429,7 +436,7 @@ msgstr "Cartas de controle"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & R"
-msgstr ""
+msgstr "XBarra-R"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Warning limits"
@@ -437,7 +444,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & s"
-msgstr ""
+msgstr "XBarra-S"
 
 msgctxt "Description|"
 msgid "Capability Study"
@@ -457,7 +464,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "X-mR chart"
-msgstr ""
+msgstr "Carta I-MR"
 
 msgctxt "msaGaugeRR|"
 msgid "Data format"
@@ -832,15 +839,15 @@ msgstr "Nome"
 
 msgctxt "doeScreening|"
 msgid "Level 1"
-msgstr ""
+msgstr "Nível 1"
 
 msgctxt "doeScreening|"
 msgid "Level 2"
-msgstr ""
+msgstr "Nível 2"
 
 msgctxt "doeScreening|"
 msgid "Level 3"
-msgstr ""
+msgstr "Nível 3"
 
 msgctxt "doeScreening|"
 msgid "Factor "
@@ -868,7 +875,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Single column"
-msgstr ""
+msgstr "Coluna única"
 
 msgctxt "msaGaugeRR|"
 msgid "Across rows"
@@ -880,7 +887,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Study variation"
-msgstr ""
+msgstr "Estudo de Variação"
 
 msgctxt "msaGaugeRR|"
 msgid "Historical standard deviation"
@@ -934,7 +941,7 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Single column"
-msgstr ""
+msgstr "Coluna única"
 
 msgctxt "msaTestRetest|"
 msgid "Across rows"
@@ -992,11 +999,11 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal distribution"
-msgstr ""
+msgstr "Distribuição Normal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal distribution"
-msgstr ""
+msgstr "Distribuição não normal"
 
 msgctxt "processCapabilityStudies|"
 msgid "3-parameter lognormal"
@@ -1054,7 +1061,7 @@ msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Process variation"
-msgstr ""
+msgstr "Variação do processo"
 
 msgctxt "msaGaugeRR|"
 msgid "Alpha interaction removal"
@@ -1070,7 +1077,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 msgctxt "msaGaugeRR|"
 msgid "Gauge name"
@@ -1090,7 +1097,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance"
-msgstr ""
+msgstr "Tolerância"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study Var. multiplier value"
@@ -1098,7 +1105,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge name"
@@ -1138,7 +1145,7 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Reference value"
-msgstr ""
+msgstr "Valor de referência"
 
 msgctxt "msaType1Gauge|"
 msgid "Tolerance range"
@@ -1166,7 +1173,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "X-mR chart"
-msgstr ""
+msgstr "Carta I-MR"
 
 msgctxt "processCapabilityStudies|"
 msgid "Display grid lines"
@@ -1218,7 +1225,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Reported by"
@@ -1238,13 +1245,12 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 msgctxt "attributesCharts|"
 msgid "Measurement"
 msgstr ""
 
-#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Name"
 msgstr "Nome"
@@ -1255,7 +1261,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 msgctxt "attributesCharts|"
 msgid "Misc"
@@ -2228,7 +2234,7 @@ msgstr "Especificar subgrupos"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Through grouping variable"
-msgstr ""
+msgstr "Através do agrupamento variável"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Manual subgroup size"
@@ -2236,7 +2242,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "For unequal subgroup sizes"
-msgstr ""
+msgstr "Para tamanhos de subgrupos desiguais"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Assume equal subgroup sizes (largest subgroup)"
