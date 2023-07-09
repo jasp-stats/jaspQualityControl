@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
 "POT-Creation-Date: 2023-07-08 03:44\n"
-"PO-Revision-Date: 2023-07-09 00:53+0000\n"
+"PO-Revision-Date: 2023-07-10 02:27+0000\n"
 "Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
 "br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -585,7 +585,7 @@ msgid "Matched"
 msgstr ""
 
 msgid "Percent"
-msgstr ""
+msgstr "Percentual"
 
 msgid "Lower"
 msgstr ""
@@ -696,7 +696,7 @@ msgid "Bias and Linearity"
 msgstr ""
 
 msgid "Percentage Process Variation Graph"
-msgstr ""
+msgstr "Gráfico de variação do processo percentual"
 
 msgid "T-Test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
 msgstr ""
@@ -714,7 +714,7 @@ msgid "Reference"
 msgstr ""
 
 msgid "Percent bias per reference value"
-msgstr ""
+msgstr "Porcentagem de viés por valor de referência"
 
 msgid "Linearity"
 msgstr ""
@@ -774,10 +774,10 @@ msgid "Mean Squares"
 msgstr "Quadrados médios"
 
 msgid "Variance Components"
-msgstr ""
+msgstr "Componentes de variância"
 
 msgid "Variance"
-msgstr ""
+msgstr "Variância"
 
 msgid "%% Contribution"
 msgstr ""
@@ -786,25 +786,25 @@ msgid "Gauge Evaluation"
 msgstr ""
 
 msgid "Std. Deviation"
-msgstr ""
+msgstr "Desv.Padrão"
 
 msgid "Study Variation"
-msgstr ""
+msgstr "Estudo de variação"
 
 msgid "%% Study Variation"
-msgstr ""
+msgstr "%% Estudo de variação"
 
 msgid "%% Tolerance"
-msgstr ""
+msgstr "%% Tolerância"
 
 msgid "Total Gauge r&R"
 msgstr ""
 
 msgid "Repeatability"
-msgstr ""
+msgstr "Repetibilidade"
 
 msgid "Part-to-Part"
-msgstr ""
+msgstr "Peça a Peça"
 
 msgid "Total Variation"
 msgstr ""
@@ -870,19 +870,19 @@ msgid "Matrix Plot for Operators"
 msgstr ""
 
 msgid "Repeat"
-msgstr ""
+msgstr "Repetib"
 
 msgid "Reprod"
 msgstr ""
 
 msgid "Measurement systems analysis"
-msgstr ""
+msgstr "Análise do sistema de medição"
 
 msgid "Gauge name: %s"
 msgstr ""
 
 msgid "Date of study: %s"
-msgstr ""
+msgstr "Data do Estudo: %s"
 
 msgid "Performed by: %s"
 msgstr ""
@@ -891,7 +891,7 @@ msgid "Misc: %s"
 msgstr ""
 
 msgid "Tolerance: %s"
-msgstr ""
+msgstr "Tolerância: %s"
 
 msgid "No report components selected."
 msgstr ""
@@ -966,7 +966,7 @@ msgid "Process Std. Dev."
 msgstr ""
 
 msgid "Tolerance"
-msgstr ""
+msgstr "Tolerância"
 
 msgid "GRR"
 msgstr ""
@@ -975,7 +975,7 @@ msgid "%GRR of Process Std. Dev."
 msgstr ""
 
 msgid "%GRR of Tolerance"
-msgstr ""
+msgstr "%GRR da Tolerância"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
 msgstr ""
@@ -1005,10 +1005,10 @@ msgid "Bias"
 msgstr ""
 
 msgid "Std. Deviation (<i>s</i>)"
-msgstr ""
+msgstr "Desv.Padrão (<i>s</i>)"
 
 msgid "Study variation"
-msgstr ""
+msgstr "Estudo de variação"
 
 msgid "%% Bias"
 msgstr ""
@@ -1026,10 +1026,10 @@ msgid "Cgk"
 msgstr ""
 
 msgid "%% Var(Repeatability)"
-msgstr ""
+msgstr "%% Var(Repetibilidade)"
 
 msgid "%% Var(Repeatability and bias)"
-msgstr ""
+msgstr "%% var (Repetibilidade e Viés)"
 
 msgid "T-Test of Observed Bias Against 0"
 msgstr ""
@@ -1149,7 +1149,7 @@ msgid "Sample size"
 msgstr ""
 
 msgid "Std. deviation (total)"
-msgstr ""
+msgstr "Desv.padrão (total)"
 
 msgid "Std. deviation (within)"
 msgstr ""
@@ -1221,7 +1221,7 @@ msgid "Dataset contains negative numbers. Not compatible with the selected distr
 msgstr ""
 
 msgid "Std. deviation"
-msgstr ""
+msgstr "Desv.Padrão"
 
 msgid "Log mean (%1$s)"
 msgstr ""
@@ -1260,7 +1260,7 @@ msgid "Mean (%1$s)"
 msgstr ""
 
 msgid "Std. deviation (%1$s)"
-msgstr ""
+msgstr "Desv.Padrão (%1$s)"
 
 msgid "AD"
 msgstr ""
