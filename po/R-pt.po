@@ -2,13 +2,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
 "POT-Creation-Date: 2023-07-08 03:44\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2023-07-09 00:53+0000\n"
+"Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
+"br>\n"
+"Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-r/pt/>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.0-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr ""
@@ -653,7 +657,7 @@ msgid "Reference value"
 msgstr ""
 
 msgid "Mean per reference value"
-msgstr ""
+msgstr "Valor médio por referência"
 
 msgid "Bias per reference value"
 msgstr ""
@@ -758,16 +762,16 @@ msgid "One-way ANOVA Table"
 msgstr ""
 
 msgid "Two-way ANOVA Table with Interaction"
-msgstr ""
+msgstr "Tabela ANOVA de duas vias com interação"
 
 msgid "Source"
 msgstr ""
 
 msgid "Sum of Squares"
-msgstr ""
+msgstr "Soma dos quadrados"
 
 msgid "Mean Squares"
-msgstr ""
+msgstr "Quadrados médios"
 
 msgid "Variance Components"
 msgstr ""
@@ -827,7 +831,7 @@ msgid "Values for %%Process Variation are not displayed because they are identic
 msgstr ""
 
 msgid "Two-way ANOVA Table without Interaction"
-msgstr ""
+msgstr "Tabela ANOVA de duas vias sem interação"
 
 msgid "Components of Variation"
 msgstr ""
@@ -905,7 +909,7 @@ msgid "Gauge r&R (Nested)"
 msgstr ""
 
 msgid "Mean Square"
-msgstr ""
+msgstr "Quadrado médio"
 
 msgid "Variation"
 msgstr ""
@@ -995,7 +999,7 @@ msgid "Basic Statistics"
 msgstr ""
 
 msgid "Mean"
-msgstr ""
+msgstr "Média"
 
 msgid "Bias"
 msgstr ""
