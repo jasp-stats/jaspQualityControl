@@ -198,8 +198,8 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   )
   
   p <- ggplot2::ggplot(data_plot, ggplot2::aes(x = x, y = y)) +
-    ggplot2::geom_line(ggplot2::aes(x = x, y = UCL, color = "red"),linetype = "dashed", size = 1.5) +
-    ggplot2::geom_line(ggplot2::aes(x = x, y = LCL, color = "red"), linetype = "dashed", size = 1.5) +
+    ggplot2::geom_line(ggplot2::aes(x = x, y = UCL, color = "red"),linetype = "dashed", linewidth = 1.5) +
+    ggplot2::geom_line(ggplot2::aes(x = x, y = LCL, color = "red"), linetype = "dashed", linewidth = 1.5) +
     ggplot2::geom_hline(yintercept =  center, color = 'green') +
     ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name =  gettext("Counts") ,limits = yLimits, breaks = yBreaks) +

@@ -176,11 +176,9 @@
   
   if(smallLabels){
     labelSize <- 3.5
-    lineSize <- 0.5
     pointsSize <- 3
   }else{
     labelSize <- 4.5
-    lineSize <- 1
     pointsSize <- 4
   }
   
@@ -188,7 +186,7 @@
     p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l),inherit.aes = FALSE, size = labelSize)
   
   p <- p + ggplot2::scale_x_continuous(name = gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line(color = "blue", size = lineSize) +
+    jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
   
@@ -332,18 +330,16 @@
   
   if(smallLabels){
     labelSize <- 3.5
-    lineSize <- 0.5
     pointsSize <- 3
   }else{
     labelSize <- 4.5
-    lineSize <- 1
     pointsSize <- 4
   }
   if (plotLimitLabels)
     p <- p + ggplot2::geom_label(data = dfLabel, ggplot2::aes(x = x, y = y, label = l), inherit.aes = FALSE, size = labelSize)
   
   p <- p + ggplot2::scale_x_continuous(name= gettext(xAxisLab), breaks = xBreaks, limits = range(xLimits)) +
-    jaspGraphs::geom_line(color = "blue", size = lineSize) +
+    jaspGraphs::geom_line(color = "blue") +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15))
   
