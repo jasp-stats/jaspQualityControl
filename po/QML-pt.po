@@ -1,9 +1,16 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-07-10 00:53+0000\n"
+"Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
+"br>\n"
+"Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/pt/>\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.0-dev\n"
 "X-Language: pt\n"
 "X-Qt-Contexts: true\n"
 
@@ -53,7 +60,7 @@ msgstr "Operadores"
 
 msgctxt "msaAttribute|"
 msgid "Parts"
-msgstr ""
+msgstr "Peças"
 
 msgctxt "msaAttribute|"
 msgid "Standard"
@@ -65,7 +72,7 @@ msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Parts"
-msgstr ""
+msgstr "Partes"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Standard"
@@ -78,7 +85,7 @@ msgstr "Opções de análise"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Plots"
-msgstr ""
+msgstr "Gráficos"
 
 msgctxt "msaGaugeRR|"
 msgid "Operators"
@@ -86,7 +93,7 @@ msgstr "Operadores"
 
 msgctxt "msaGaugeRR|"
 msgid "Parts"
-msgstr ""
+msgstr "Partes"
 
 #, fuzzy
 msgctxt "msaGaugeRR|"
@@ -107,11 +114,11 @@ msgstr "Percentual"
 
 msgctxt "msaGaugeRR|"
 msgid "Plots"
-msgstr ""
+msgstr "Gráficos"
 
 msgctxt "msaType1Gauge|"
 msgid "Plots"
-msgstr ""
+msgstr "Graficos"
 
 msgctxt "msaType1Gauge|"
 msgid "Histogram"
@@ -235,7 +242,7 @@ msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Percent process variation graph"
-msgstr ""
+msgstr "Gráfico percentual de variação do processo"
 
 msgctxt "msaGaugeRR|"
 msgid "r&R table ANOVA method"
@@ -263,7 +270,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "Mostra todas as medições"
 
 #, fuzzy
 msgctxt "msaGaugeRRnonrep|"
@@ -272,7 +279,7 @@ msgstr "Operadores"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Parts"
-msgstr ""
+msgstr "Partes"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements"
@@ -292,7 +299,7 @@ msgstr "Estudo do desvio padrão"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Historical process Std. Deviation"
-msgstr ""
+msgstr "Desvio padrão histórico do processo"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "r&R tables"
@@ -316,7 +323,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Plots"
-msgstr ""
+msgstr "Gráficos"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "R charts by operator"
@@ -324,7 +331,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "Mostra todas as medições"
 
 msgctxt "msaType1Gauge|"
 msgid "6"
@@ -550,7 +557,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Show Report"
-msgstr ""
+msgstr "Mostrar relatório"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
@@ -719,7 +726,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
-msgstr ""
+msgstr "Mostrar relatório"
 
 msgctxt "Description|"
 msgid "Gauge r&R (non-replicable measurements)"
@@ -877,7 +884,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Process variation based on"
-msgstr ""
+msgstr "Variação do processo com base em"
 
 msgctxt "msaGaugeRR|"
 msgid "Study variation"
@@ -885,11 +892,11 @@ msgstr "Estudo de Variação"
 
 msgctxt "msaGaugeRR|"
 msgid "Historical standard deviation"
-msgstr ""
+msgstr "Desvio padrão histórico"
 
 msgctxt "msaGaugeRR|"
 msgid "Historical standard deviation:"
-msgstr ""
+msgstr "Desvio padrão histórico:"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
@@ -948,7 +955,7 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Parts"
-msgstr ""
+msgstr "Partes"
 
 #, fuzzy
 msgctxt "msaTestRetest|"
@@ -970,13 +977,12 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Plots"
-msgstr ""
+msgstr "Gráficos"
 
 msgctxt "msaTestRetest|"
 msgid "Regression line"
 msgstr ""
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Single column"
 msgstr "Coluna única"
@@ -1039,7 +1045,6 @@ msgctxt "msaAttribute|"
 msgid "Data format"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Single column"
 msgstr "Coluna única"
@@ -1062,7 +1067,7 @@ msgstr "Variação do processo"
 
 msgctxt "msaGaugeRR|"
 msgid "Alpha interaction removal"
-msgstr ""
+msgstr "Remoção de interação alfa"
 
 msgctxt "msaGaugeRR|"
 msgid "Study variation multiplier"
@@ -1201,7 +1206,6 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Confidence interval size"
 msgstr ""
 
-#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Single column"
 msgstr "Coluna única"
@@ -1296,7 +1300,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Show Report"
-msgstr ""
+msgstr "Mostrar relatório"
 
 msgctxt "doeFull|"
 msgid "Design Space"
@@ -1593,7 +1597,7 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show Report"
-msgstr ""
+msgstr "Mostrar relatório"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Sub-title:"
@@ -1641,11 +1645,11 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Type 3 study (automatic equipment)"
-msgstr ""
+msgstr "Estudo do tipo 3 (Equipamento automático)"
 
 msgctxt "msaGaugeRR|"
 msgid "Tolerance width"
-msgstr ""
+msgstr "Tolerância de largura"
 
 msgctxt "msaType1Gauge|"
 msgid "Measurement"
@@ -1719,11 +1723,11 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements by part plot"
-msgstr ""
+msgstr "Gráfico de medição por peça"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements by operator plot"
-msgstr ""
+msgstr "Gráfico de medição por operador"
 
 msgctxt "msaGaugeRR|"
 msgid "Part × operator interaction plot"
@@ -1739,11 +1743,11 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements by part plot"
-msgstr ""
+msgstr "Gráfico de medição por peça"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements by operator plot"
-msgstr ""
+msgstr "Gráfico de medição por operador"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of ticks on x-axis for probability plot:"
@@ -1755,11 +1759,11 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show report"
-msgstr ""
+msgstr "Mostrar relatório"
 
 msgctxt "msaGaugeRR|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "Mostrar metadados no relatório"
 
 msgctxt "msaGaugeRR|"
 msgid "Select Report Components"
@@ -1771,7 +1775,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show measurements by part"
-msgstr ""
+msgstr "Exibe medição por peça"
 
 msgctxt "msaGaugeRR|"
 msgid "Show R chart by operator"
@@ -1779,7 +1783,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Show measurements by operator"
-msgstr ""
+msgstr "Exibe medição por operador"
 
 msgctxt "msaGaugeRR|"
 msgid "Show average chart by operator"
@@ -1795,11 +1799,11 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show report"
-msgstr ""
+msgstr "Mostrar relatório"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "Mostrar metadados no relatório"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Select Report Components"
@@ -1815,7 +1819,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show measurements by operator"
-msgstr ""
+msgstr "Exibe medição por operador"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show average chart by operator"
@@ -1827,7 +1831,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "Mostrar metadados  no relatório"
 
 msgctxt "processCapabilityStudies|"
 msgid "Select Report Components"
@@ -1916,7 +1920,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Alpha"
-msgstr ""
+msgstr "Alfa"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Centre points"
@@ -2170,7 +2174,7 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Plots"
-msgstr ""
+msgstr "Gráficos"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals matrix plot"
