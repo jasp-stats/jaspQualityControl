@@ -839,6 +839,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 
 .sdXbar <- function(df, type = c("s", "r")) {
+  type <- match.arg(type)
   if (type == "r"){
     rowRanges <- .rowRanges(df)$ranges
     n <- .rowRanges(df)$n
@@ -933,187 +934,205 @@ KnownControlStats.RS <- function(N, sigma) {
 }
 
 
-.controlChartPlotFunction <- function(dataset, options, cowPlot = FALSE, manualXaxis = "", stages = "", type = c("xBar", "R", "I", "MR", "S")) {
+
+
+###################
+### FOR TESTING ###
+###   |    |    ###
+###   V    V    ###
+###################
+
+
+# Xbar
+dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
+dataset <- dataset[2:6]
+options <- list()
+
+
+
+
+
+###################
+###################
+###################
+
+
+.controlChartPlotFunction <- function(dataset, options, cowPlot = FALSE, manualXAxis = "", stages = "", plotType = c("xBar", "R", "I", "MR", "S"),
+                                    xBarSdType = c("r", "s"), phase2 = FALSE, phase2Mu = "", phase2Sd = "", limitsPerSubgroup = FALSE) {
+  
+   # TODO Modify name according to selected chart
     table <- createJaspTable(title = gettextf("Test results for individuals chart"))
 
     if (!identical(stages, "")) {
       nStages <- length(unique(dataset[[stages]]))
       
       # Error conditions for stages
-      if(type = "MR" && any(table(dataset[[stages]]) < options[["movingRangeLength"]])) {
+      if(plotType == "MR" && any(table(dataset[[stages]]) < options[["movingRangeLength"]])) {
         ppPlot$setError(gettext("Moving range length is larger than one of the stages."))
         return(list(p = ppPlot))
       } 
     } else {
       nStages <- 1
-      dataset$stage <- 1
+      dataset[["stage"]] <- 1
       stages <- "stage"
     }
     
     # Calculate values per subplot/stage
-    dataPlot <- data.frame(matrix(ncol = 7, nrow = 0))
+    plotData <- data.frame(matrix(ncol = 7, nrow = 0))
     tableList <- list()
-    colnames(dataPlot) <- c("value", "subgroup", "stage", "LCL", "UCL", "center", "dotColor")
+    colnames(plotData) <- c("plotStatistic", "subgroup", "stage", "LCL", "UCL", "center", "dotColor")
+    # TODO include warning limits in calculations if selected
     dfLabel <- data.frame(matrix(ncol = 3, nrow = 0))
     colnames(dfLabel) <- c("x", "y", "label")
     seperationLines <- c()
     for (i in seq_len(nStages)) {
       stage <- unique(dataset[[stages]])[i]
-      dataForPlot <- subset(dataset, dataset[[stages]] == stage)
-      if (type == "I" | type == "MR" ) {
+      dataCurrentStage <- subset(dataset, dataset[[stages]] == stage)[names(dataset) != stages]
+      if (plotType == "I" | plotType == "MR" ) {
         k <- options[["movingRangeLength"]]
         # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
-        mrMatrix <- matrix(dataForPlot[1:(length(dataForPlot) - (k - 1))])   # remove last k - 1 elements
+        mrMatrix <- matrix(dataCurrentStage[1:(length(dataCurrentStage) - (k - 1))])   # remove last k - 1 elements
         for (j in 2:k) {
-          mrMatrix <- cbind(mrMatrix, matrix(dataForPlot[j:(length(dataForPlot) - (k - j))]))   # remove first i and last (k - i) elements
+          mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStage[j:(length(dataCurrentStage) - (k - j))]))   # remove first i and last (k - i) elements
         }
         meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges)
         d2 <- KnownControlStats.RS(k, 3)[[1]][1]
         sd <- meanMovingRange/d2
         if (type == "I") {
-          qccObject <- qcc::qcc(data$process, type ='xbar.one', plot = FALSE, std.dev = sd)
-        } else if (type = "MR") {
+          
+          ### TODO: Does this work in wide format? Is there a wide format for I chart?
+          qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sd)
+        } else if (plotType == "MR") {
           qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sd)
+          plotStatistic <- c(NA, qccObject$statistics)
         }
+      } else if (plotType == "xBar") {
+        #xBarSdType <- match.arg(xBarSdType)
+        if (phase2) {
+          mu <- as.numeric(phase2mu)
+          sigma <- as.numeric(phase2sd)
+        } else {
+          #hand calculate mean and sd as the package gives wrong results with NAs
+          mu <- mean(unlist(dataCurrentStage), na.rm = TRUE)
+          sigma <- .sdXbar(df = dataCurrentStage, type = xBarSdType)
+        }
+        qccObject <- qcc::qcc(dataCurrentStage, type ='xbar', plot = FALSE, center = mu, sizes = ncol(dataCurrentStage), std.dev = sigma)
+        plotStatistic <- qccObject$statistics
+        
+        #calculate group sizes
+        n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+        if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
+          n <- max(n)
+        
+        limits <- .controlLimits(mu, sigma, n = n, type = "xbar")
+        center <- mu
+        UCL <- limits$UCL
+        LCL <- limits$LCL
+        
+        # upper and lower warning limits at 1 sd and 2sd
+        WL1 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 1)
+        WL2 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 2)
+        UWL1 <- WL1$UCL
+        LWL1 <- WL1$LCL
+        UWL2 <- WL2$UCL
+        LWL2 <- WL2$LCL
       }
       if (i != 1) {
-        subgroupsI <- seq(max(dataPlotI$subgroup) + 1, max(dataPlotI$subgroup) + length(sixsigma_I$statistics))  # to keep counting across groups
-        subgroupsR <- seq(max(dataPlotR$subgroup) + 1, max(dataPlotR$subgroup) + length(sixsigma_R$statistics) + 1)
-        seperationLinesI <- c(seperationLinesI, max(dataPlotI$subgroup) + .5)
-        seperationLinesR <- c(seperationLinesR, max(dataPlotR$subgroup) + .5)
+        if (plotType == "MR" | plotType == "R") {
+          subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(qccObject$statistics) + 1)
+        } else {
+          subgroups <- seq(max(plotData$subgroup), max(plotData$subgroup) + length(qccObject$statistics))
+        }
+        seperationLines <- c(seperationLines, max(dataPlotI$subgroup) + .5)
       } else {
-        subgroupsI <- c(1:length(sixsigma_I$statistics))
-        subgroupsR <- seq_len(length(sixsigma_R$statistics) + 1)
+        if (plotType == "MR" | plotType == "R") {
+          subgroups <- c(1:length(qccObject$statistics) + 1)
+        } else {
+          subgroups <- seq_len(length(qccObject$statistics))
+        }
       }
-      if (length(sixsigma_I$statistics) > 1) {
-        dotColorI <- ifelse(NelsonLaws(sixsigma_I, allsix = TRUE)$red_points, 'red', 'blue')
+      
+      #TODO: This should not just turn default blue, but only apply to out of bounds rule.
+      if (length(qccObject$statistics) > 1) {
+        if (plotType == "MR" | plotType == "R") {
+          dotColor <- ifelse(c(NA, NelsonLaws(qccObject)$red_points), 'red', 'blue')
+        } else {
+          dotColor <- ifelse(NelsonLaws(qccObject, allsix = TRUE)$red_points, 'red', 'blue')
+        }
       } else {
-        dotColorI <- 'blue'
+        dotColor <- 'blue'
       }
-      if (length(sixsigma_R$statistics) > 1) {
-        dotColorR <- ifelse(c(NA, NelsonLaws(sixsigma_R)$red_points), 'red', 'blue')
-      } else {
-        dotColorR <- 'blue'
-      }
-      processI <- sixsigma_I$statistics
-      LCLI <- min(sixsigma_I$limits)
-      UCLI <- max(sixsigma_I$limits)
-      centerI <- sixsigma_I$center
-      dataPlotI <- rbind(dataPlotI, data.frame("process" = processI,
-                                               "subgroup" = subgroupsI,
-                                               "stage" = stage,
-                                               "LCL" = LCLI,
-                                               "UCL" = UCLI,
-                                               "center" = centerI,
-                                               "dotColor" = dotColorI))
-      movingRange <- c(NA, sixsigma_R$statistics)
-      LCLR <- min(sixsigma_R$limits)
-      UCLR <- max(sixsigma_R$limits)
-      centerR <- sixsigma_R$center
-      dataPlotR <- rbind(dataPlotR, data.frame("movingRange" = movingRange,
-                                               "subgroup" = subgroupsR,
-                                               "stage" = stage,
-                                               "LCL" = LCLR,
-                                               "UCL" = UCLR,
-                                               "center" = centerR,
-                                               "dotColor" = dotColorR))
-      allStageValuesI <- c(processI, LCLI, UCLI, centerI)
-      allStageValuesR <- c(movingRange, LCLR, UCLR, centerR)
-      decimals1 <- max(.decimalplaces(allStageValuesI))
-      decimals2 <- max(.decimalplaces(allStageValuesR))
-      dfLabelI <- rbind(dfLabelI, data.frame(x = max(subgroupsI) + .5,
-                                             y = c(centerI, UCLI, LCLI),
+      
+      plotData <- rbind(plotData, data.frame("plotStatistic" = plotStatistic,
+                                             "subgroup" = subgroups,
+                                             "stage" = stage,
+                                             "LCL" = LCL,
+                                             "UCL" = UCL,
+                                             "center" = center,
+                                             "dotColor" = dotColor))
+      allStageValues <- c(plotStatistic, LCL, UCL, center)
+      decimals <- max(.decimalplaces(allStageValues))
+      # even if there are multiple different centers, LCL and UCL, only the last one is shown on the label
+      lastCenter <- center[length(center)]
+      lastLCL <- UCL[length(LCL)]
+      lastUCL <- UCL[length(UCL)]
+      dfLabel <- rbind(dfLabel, data.frame(x = max(subgroups) + .5,
+                                             y = c(lastCenter, lastLCL, lastUCL),
                                              label = c(
-                                               gettextf("CL = %g",  round(centerI, decimals1 + 1)),
-                                               gettextf("UCL = %g", round(UCLI, decimals1 + 2)),
-                                               gettextf("LCL = %g", round(LCLI, decimals1 + 2))
+                                               gettextf("CL = %g",  round(lastCenter, decimals + 1)),
+                                               gettextf("UCL = %g", round(lastLCL, decimals + 2)),
+                                               gettextf("LCL = %g", round(lastUCL, decimals + 2))
                                              )))
-      dfLabelR <- rbind(dfLabelR, data.frame(x = max(subgroupsR) + .5,
-                                             y = c(centerR, UCLR, LCLR),
-                                             label = c(
-                                               gettextf("CL = %g",  round(centerR, decimals1 + 1)),
-                                               gettextf("UCL = %g", round(UCLR, decimals1 + 2)),
-                                               gettextf("LCL = %g", round(LCLR, decimals1 + 2))
-                                             )))
-      tableIList[[i]] <- .NelsonTableList(dataset = dataset, options = options, type = "xbar.one", sixsigma = sixsigma_I, xLabels = subgroupsI)
-      tableIListLengths <- sapply(tableIList[[i]], length)
-      if (any(tableIListLengths > 0)) {
-        tableIList[[i]] <- tableIList[[i]][tableIListLengths > 0]
-        tableIList[[i]][["stage"]] <- as.character(stage)
-        tableIList[[i]] <- lapply(tableIList[[i]], "length<-", max(lengths(tableIList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
-      }
-      tableRList[[i]] <- .NelsonTableList(dataset = dataset, options = options, type = "Range", sixsigma = sixsigma_R, xLabels = subgroupsR)
-      tableRListLengths <- sapply(tableRList[[i]], length)
-      if (any(tableRListLengths > 0)) {
-        tableRList[[i]] <- tableRList[[i]][tableRListLengths > 0]
-        tableRList[[i]][["stage"]] <- as.character(stage)
-        tableRList[[i]] <- lapply(tableRList[[i]], "length<-", max(lengths(tableRList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
+      tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, subgroups = subgroups)
+      tableListLengths <- sapply(tableList[[i]], length)
+      if (any(tableListLengths > 0)) {
+        tableList[[i]] <- tableList[[i]][tableListLengths > 0]
+        tableList[[i]][["stage"]] <- as.character(stage)
+        tableList[[i]] <- lapply(tableList[[i]], "length<-", max(lengths(tableList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
       }
     }
     
-    # filling up tables for individuals and moving range charts
-    tableIListVectorized <- unlist(tableIList, recursive = FALSE)
-    tableILongestVector <- max(sapply(tableIListVectorized, length))
+    # filling up JASP table
+    tableListVectorized <- unlist(tableList, recursive = FALSE)
+    tableLongestVector <- max(sapply(tableListVectorized, length))
     if (tableILongestVector > 0) {
-      tableIListCombined <- tapply(tableIListVectorized, names(tableIListVectorized), function(x) unlist(x, FALSE, FALSE))
+      tableListCombined <- tapply(tableListVectorized, names(tableListVectorized), function(x) unlist(x, FALSE, FALSE))
       if (nStages > 1)
-        tableI$addColumnInfo(name = "stage",              title = gettextf("Stage")               , type = "string")
-      if (length(tableIListCombined[["test1"]]) > 0)
-        tableI$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
-      if (length(tableIListCombined[["test2"]]) > 0)
-        tableI$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
-      if (length(tableIListCombined[["test3"]]) > 0)
-        tableI$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
-      if (length(tableIListCombined[["test4"]]) > 0)
-        tableI$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
-      if (length(tableIListCombined[["test5"]]) > 0)
-        tableI$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
-      if (length(tableIListCombined[["test6"]]) > 0)
-        tableI$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
-      tableI$setData(list(
-        "stage" = tableIListCombined[["stage"]],
-        "test1" = tableIListCombined[["test1"]],
-        "test2" = tableIListCombined[["test2"]],
-        "test3" = tableIListCombined[["test3"]],
-        "test4" = tableIListCombined[["test4"]],
-        "test5" = tableIListCombined[["test5"]],
-        "test6" = tableIListCombined[["test6"]]
+        table$addColumnInfo(name = "stage",              title = gettextf("Stage"),                          type = "string")
+      if (length(tableListCombined[["test1"]]) > 0)
+        table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit"),           type = "integer")
+      if (length(tableListCombined[["test2"]]) > 0)
+        table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift"),                  type = "integer")
+      if (length(tableListCombined[["test3"]]) > 0)
+        table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend"),                  type = "integer")
+      if (length(tableListCombined[["test4"]]) > 0)
+        table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation"),   type = "integer")
+      if (length(tableListCombined[["test5"]]) > 0)
+        table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation"),     type = "integer")
+      if (length(tableListCombined[["test6"]]) > 0)
+        table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution"),   type = "integer")
+      table$setData(list(
+        "stage" = tableListCombined[["stage"]],
+        "test1" = tableListCombined[["test1"]],
+        "test2" = tableListCombined[["test2"]],
+        "test3" = tableListCombined[["test3"]],
+        "test4" = tableListCombined[["test4"]],
+        "test5" = tableListCombined[["test5"]],
+        "test6" = tableListCombined[["test6"]]
       ))
-      tableI$showSpecifiedColumnsOnly <- TRUE
+      table$showSpecifiedColumnsOnly <- TRUE
     }
-    tableRListVectorized <- unlist(tableRList, recursive = FALSE)
-    tableRLongestVector <- max(sapply(tableRListVectorized, length))
-    if (tableRLongestVector > 0) {
-      tableRListCombined <- tapply(tableRListVectorized, names(tableRListVectorized), function(x) unlist(x, FALSE, FALSE))
-      if (nStages > 1)
-        tableR$addColumnInfo(name = "stage",              title = gettextf("Stage")               , type = "string")
-      if (length(tableRListCombined[["test1"]]) > 0)
-        tableR$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
-      if (length(tableRListCombined[["test2"]]) > 0)
-        tableR$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
-      if (length(tableRListCombined[["test3"]]) > 0)
-        tableR$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
-      if (length(tableRListCombined[["test4"]]) > 0)
-        tableR$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
-      if (length(tableRListCombined[["test5"]]) > 0)
-        tableR$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
-      if (length(tableRListCombined[["test6"]]) > 0)
-        tableR$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
-      tableR$setData(list(
-        "stage" = tableRListCombined[["stage"]],
-        "test1" = tableRListCombined[["test1"]],
-        "test2" = tableRListCombined[["test2"]],
-        "test3" = tableRListCombined[["test3"]],
-        "test4" = tableRListCombined[["test4"]],
-        "test5" = tableRListCombined[["test5"]],
-        "test6" = tableRListCombined[["test6"]]
-      ))
-      tableR$showSpecifiedColumnsOnly <- TRUE
-    }
+    
+    
+    
+    ################################
+    ###############################
+    ### CONTINUE HERE
+    ###############################
+    ################################
     
     # Calculations that apply to the whole plot
-    yBreaks1 <- jaspGraphs::getPrettyAxisBreaks(c(dataPlotI$process, dataPlotI$LCL, dataPlotI$UCL, dataPlotI$center))
-    yBreaks2 <- jaspGraphs::getPrettyAxisBreaks(c(dataPlotR$movingRange, dataPlotR$LCL, dataPlotR$UCL, dataPlotR$center))
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$plotStatistic, plotData$LCL, plotData$UCL, plotData$center))
     if (options$manualTicks) {
       nxBreaks <- options$nTicks
       xBreaks1 <- as.integer(c(jaspGraphs::getPrettyAxisBreaks(dataPlotI$subgroup, n = nxBreaks)))
@@ -1190,3 +1209,34 @@ KnownControlStats.RS <- function(N, sigma) {
       return(list(p = ppPlot, sixsigma_I = sixsigma_I, sixsigma_R = sixsigma_R, p1 = p1, p2 = p2, tableI = tableI, tableR = tableR))
   }
 
+
+.NelsonTableList <- function(qccObject, type = "xBar", phase2 = TRUE, subgroups = NULL) {
+  violationsList <- list()
+  
+  if (length(qccObject$statistics) == 1) # no need for table with only 1 group
+    return(violationsList)
+  
+  if (!phase2 || type == "I") {
+    Test <- NelsonLaws(data = qccObject, allsix = TRUE, xLabels = subgroups)
+    violationsList[["test4"]] <- Test$Rules$R4
+    violationsList[["test5"]] <- Test$Rules$R5
+    violationsList[["test6"]] <- Test$Rules$R6
+  } else if (type == "np" || type == "c" || type == "u" || type == "Laney p'" || type == "Laney u'") {
+    Test <- NelsonLaws(data = qccObject, xLabels = subgroups, chart = "c")
+  } else if (type == "P") {
+    Test <- NelsonLaws(data = qccObject, xLabels = subgroups, chart = "p")
+  } else {
+    Test <- NelsonLaws(data = qccObject, xLabels = subgroups)
+  }
+  
+  if (type == "R") {
+    Test$Rules$R1 <- Test$Rules$R1 + 1  
+    Test$Rules$R2 <- Test$Rules$R2 + 1
+    Test$Rules$R3 <- Test$Rules$R3 + 1
+  }
+  violationsList[["test1"]] <- Test$Rules$R1
+  violationsList[["test2"]] <- Test$Rules$R2
+  violationsList[["test3"]] <- Test$Rules$R3
+  
+  return(violationsList)
+}
