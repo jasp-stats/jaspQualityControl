@@ -944,12 +944,12 @@ KnownControlStats.RS <- function(N, sigma) {
 
 
 # Xbar
-dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
-dataset <- dataset[2:6]
-options <- list()
-
-.controlChartPlotFunction(dataset, plotType = "xBar", phase2 = TRUE, phase2Sd = 10, phase2Mu = 2)
-
+#  dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
+#  dataset <- dataset[2:6]
+#  options <- list()
+# 
+# .controlChartPlotFunction(dataset, plotType = "S")
+# 
 
 
 
@@ -984,7 +984,7 @@ options <- list()
     stages <- "stage"
   }
   
-  # Calculate values per subplot/stage
+  ### Calculate plot values per stage and combine into single dataframe ###
   plotData <- data.frame(matrix(ncol = 7, nrow = 0))
   tableList <- list()
   colnames(plotData) <- c("plotStatistic", "subgroup", "stage", "LCL", "UCL", "center", "dotColor")
@@ -1024,7 +1024,7 @@ options <- list()
       n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
         n <- max(n)
-      #hand calculate mean and sd as the package gives wrong results with NAs
+      # manually calculate mean and sd as the package gives wrong results with NAs
       if(phase2) {
         sigma <- phase2Sd
       } else {
@@ -1045,7 +1045,7 @@ options <- list()
           mu <- as.numeric(phase2Mu)
           sigma <- as.numeric(phase2Sd)
       } else {
-        #hand calculate mean and sd as the package gives wrong results with NAs
+        # manually calculate mean and sd as the package gives wrong results with NAs
         mu <- mean(unlist(dataCurrentStage), na.rm = TRUE)
         sigma <- .sdXbar(df = dataCurrentStage, type = xBarSdType)
       }
@@ -1070,19 +1070,27 @@ options <- list()
       UWL2 <- WL2$UCL
       LWL2 <- WL2$LCL
     } else if (plotType == "S") { 
+      #remove rows with single observation as no meaningful sd and no CL can be computed
+      rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
+      if (length(rowRemovalIndex) != 0)
+        dataCurrentStage <- dataCurrentStage[-rowRemovalIndex, ]
       
+      if(phase2) {
+        sigma <- phase2Sd
+      } else {
+        sigma <- .sdXbar(df = dataCurrentStage, type = "s")
+      }
+      qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage))
+      plotStatistic <- qccObject$statistics
       
+      n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+      if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
+        n <- max(n)
       
-      
-    ################################
-    ##### CODE FOR S CHART HERE ####
-    ################################
-      
-      
-      
-      
-      
-      
+      limits <- .controlLimits(sigma = sigma, n = n, type = "s")
+      center <- sigma
+      UCL <- limits$UCL
+      LCL <- limits$LCL
     }
     if (i != 1) {
       if (plotType == "MR") {
@@ -1188,7 +1196,9 @@ options <- list()
   xLimits <- c(min(xBreaks), max(xBreaks) * 1.15)
   
   if (!identical(xAxisLabels, "")) {
-    xLabels <- xAxisLabels
+    xLabels <- xAxisLabels[xBreaks]
+    # sometimes pretty makes an axis that goes beyond the labels that are given, then it should not display an NA
+    xLabels[is.na(xLabels)] <- ""
   } else {
     xLabels <- xBreaks
   }
