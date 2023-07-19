@@ -115,16 +115,23 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       if (length(measurements) > 50){ # if the subgroup size is above 50, the R package cannot calculate R charts.
         jaspResults[["XbarPlot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
         return()
-      } else {
-        Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["warningLimits"]],
-                             Phase2 = options[["knownParameters"]], target = options[["knownParametersMean"]], sd = options[["knownParametersSd"]], Wide = wideFormat,
-                             manualTicks = options[["manualTicksXAxis"]], sdType = "r",
-                             controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
-                             manualXaxis = subgroups)
-        Rchart <- .Rchart(dataset = dataset[measurements], options = options, Phase2 = options[["knownParameters"]],
-                          sd = options[["knownParametersSd"]], Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]],
-                          controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"), manualXaxis = subgroups)
-        jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Rchart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
+      } else { 
+        xBarChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
+                                            phase2 = options$Phase2, phase2Mu = options$mean, phase2Sd = options$SD,
+                                            limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+                                            warningLimits = options[["Wlimits"]], xAxisLabels = subgroups)
+        rChart <- .controlChartPlotFunction(dataset[measurements], plotType = "R", phase2 = options$Phase2, phase2Sd = options$SD,
+                                            limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+                                                         xAxisLabels = subgroups)
+        # Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
+        #                      Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
+        #                      manualTicks = options$manualTicks, sdType = "r",
+        #                      controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+        #                      manualXaxis = subgroups)
+        # Rchart <- .Rchart(dataset = dataset[measurements], options = options, Phase2 = options$Phase2,
+        #                   target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks,
+        #                   controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"), manualXaxis = subgroups)
+        jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(rChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
       }
 
       # Nelson tests tables
@@ -133,10 +140,12 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         jaspResults[["NelsonTables"]]$dependOn(c("chartType", "measurementsWideFormat", "knownParameters", "knownParametersMean", "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat"))
         jaspResults[["NelsonTables"]]$position <- 2
         AllTables <- jaspResults[["NelsonTables"]]
-
-        AllTables[["NelsonTableX"]]  <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart$sixsigma, Phase2 = options[["knownParameters"]], xLabels = Xchart$xLabels)
-        AllTables[["NelsonTableR"]] <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Rchart$sixsigma, name = "R", xLabels = Rchart$xLabels)
-
+        
+        AllTables[["NelsonTableX"]]  <- xBarChart$table
+          #.NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart$sixsigma, Phase2 = options$Phase2, xLabels = Xchart$xLabels)
+        AllTables[["NelsonTableR"]] <- rChart$table
+          #.NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Rchart$sixsigma, name = "R", xLabels = Rchart$xLabels)
+        
         if (length(measurements) > 5) # if the subgroup size is above 5, R chart is not recommended
           AllTables[["NelsonTableR"]]$addFootnote(gettextf("Subgroup size is >5, results may be biased. S-chart is recommended."))
       }
