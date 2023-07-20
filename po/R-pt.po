@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
 "POT-Creation-Date: 2023-07-08 03:44\n"
-"PO-Revision-Date: 2023-07-10 02:27+0000\n"
+"PO-Revision-Date: 2023-07-22 03:07+0000\n"
 "Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
 "br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -36,7 +36,7 @@ msgid "Cumulative sum"
 msgstr ""
 
 msgid "Subgroups"
-msgstr ""
+msgstr "Subgrupos"
 
 msgid "EWMA"
 msgstr ""
@@ -54,19 +54,19 @@ msgid "Attributes Control Charts"
 msgstr ""
 
 msgid "p Chart"
-msgstr ""
+msgstr "Carta P"
 
 msgid "np Chart"
-msgstr ""
+msgstr "Carta NP"
 
 msgid "Laney p' Chart"
 msgstr ""
 
 msgid "c Chart"
-msgstr ""
+msgstr "Carta C"
 
 msgid "u Chart"
-msgstr ""
+msgstr "Carta U"
 
 msgid "Laney u' Chart"
 msgstr ""
@@ -102,13 +102,13 @@ msgid "Service name: %s"
 msgstr ""
 
 msgid "Operator: %s"
-msgstr ""
+msgstr "Operador: %s"
 
 msgid "Identification: %s"
 msgstr ""
 
 msgid "Appraiser: %s"
-msgstr ""
+msgstr "Avaliador: %s"
 
 msgid "Measurement system: %s"
 msgstr ""
@@ -540,7 +540,7 @@ msgid "Please insert a reference value before specifying a positive reference."
 msgstr ""
 
 msgid "Attributes Agreement Analysis"
-msgstr ""
+msgstr "Análise de Concordância por Atributos (Kappa/Tao)"
 
 msgid "Cohen's Kappa"
 msgstr ""
@@ -552,7 +552,7 @@ msgid "Cohen's Kappa for Appraiser vs Standard"
 msgstr ""
 
 msgid "Appraiser"
-msgstr ""
+msgstr "Avaliador"
 
 msgid "Cohen's Kappa correlations summary"
 msgstr ""
@@ -564,46 +564,46 @@ msgid "Fleiss' Kappa"
 msgstr ""
 
 msgid "Within Appraisers"
-msgstr ""
+msgstr "Entre Avaliadores"
 
 msgid "Appraiser vs Standard"
-msgstr ""
+msgstr "Avaliador vs Padrão"
 
 msgid "Between Appraisers"
-msgstr ""
+msgstr "Entre Avaliadores"
 
 msgid "Each Appraiser vs Standard"
-msgstr ""
+msgstr "Cada Avaliador vs Padrão"
 
 msgid "All Appraisers vs Standard"
-msgstr ""
+msgstr "Todos os Avaliadores vs Padrão"
 
 msgid "Inspected"
-msgstr ""
+msgstr "Inspecionado"
 
 msgid "Matched"
-msgstr ""
+msgstr "Coincide"
 
 msgid "Percent"
 msgstr "Percentual"
 
 msgid "Lower"
-msgstr ""
+msgstr "Inferior"
 
 msgid "Confidence interval of 95%%"
-msgstr ""
+msgstr "Intervalo de confiança de 95%%"
 
 msgid "Upper"
-msgstr ""
+msgstr "Superior"
 
 msgid "Invalid Reference and/or Results were inserted."
 msgstr ""
 
 msgid "Invalid values (NA) found in appraiser %s."
-msgstr ""
+msgstr "Valores inválidos (NA) encontrados entre avaliadores %s."
 
 msgid "More than 1 Measurement per Operator required."
-msgstr ""
+msgstr "Necessário mais de 1 medição por operador."
 
 msgid "Study effectiveness summary"
 msgstr ""
@@ -633,7 +633,7 @@ msgid "Kendall's Tau is only available for non-binary measurements."
 msgstr ""
 
 msgid "Operator"
-msgstr ""
+msgstr "Operador"
 
 msgid "%g (Unacceptable)"
 msgstr ""
@@ -727,9 +727,13 @@ msgstr ""
 
 msgid "Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."
 msgstr ""
+"O design não é equilibrado: nem todo operador meensura todas as partes. Use "
+"R&R do medidor não replicável (R&R Aninhado)."
 
 msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
 msgstr ""
+"As medidas selecionadas parecem estar em um formato de 'coluna única', pois "
+"a parte de cada operador é medida %d vezes."
 
 msgid "Gauge r&R ANOVA Table"
 msgstr ""
@@ -756,7 +760,7 @@ msgid "Traffic light chart"
 msgstr ""
 
 msgid "ANOVA Table"
-msgstr ""
+msgstr "Tabela ANOVA"
 
 msgid "One-way ANOVA Table"
 msgstr ""
@@ -765,7 +769,7 @@ msgid "Two-way ANOVA Table with Interaction"
 msgstr "Tabela ANOVA de duas vias com interação"
 
 msgid "Source"
-msgstr ""
+msgstr "Fonte"
 
 msgid "Sum of Squares"
 msgstr "Soma dos quadrados"
@@ -780,10 +784,10 @@ msgid "Variance"
 msgstr "Variância"
 
 msgid "%% Contribution"
-msgstr ""
+msgstr "%% Contribuição"
 
 msgid "Gauge Evaluation"
-msgstr ""
+msgstr "Avaliação de medidores"
 
 msgid "Std. Deviation"
 msgstr "Desv.Padrão"
@@ -807,16 +811,16 @@ msgid "Part-to-Part"
 msgstr "Peça a Peça"
 
 msgid "Total Variation"
-msgstr ""
+msgstr "Variação Total"
 
 msgid "Reproducibility"
-msgstr ""
+msgstr "Reproducibilidade"
 
 msgid "*"
 msgstr ""
 
 msgid "Number of distinct categories = %i"
-msgstr ""
+msgstr "Número de categorias distintas = %i"
 
 msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i"
 msgstr ""
@@ -843,13 +847,13 @@ msgid "%s Chart by Operator"
 msgstr ""
 
 msgid "Operator %s"
-msgstr ""
+msgstr "Operador %s"
 
 msgid "Measurements by Part"
 msgstr ""
 
 msgid "Measurements by Operator"
-msgstr ""
+msgstr "Medições por operador"
 
 msgid "Part by Operator Interaction"
 msgstr ""
@@ -873,7 +877,7 @@ msgid "Repeat"
 msgstr "Repetib"
 
 msgid "Reprod"
-msgstr ""
+msgstr "Reprod"
 
 msgid "Measurement systems analysis"
 msgstr "Análise do sistema de medição"
@@ -912,7 +916,7 @@ msgid "Mean Square"
 msgstr "Quadrado médio"
 
 msgid "Variation"
-msgstr ""
+msgstr "Variação"
 
 msgid "No degrees of freedom for %s."
 msgstr ""
