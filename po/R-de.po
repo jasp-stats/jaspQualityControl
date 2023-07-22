@@ -608,14 +608,12 @@ msgstr ""
 msgid "Percent"
 msgstr "Prozent"
 
-#, fuzzy
 msgid "Lower"
 msgstr "Untergrenze"
 
 msgid "Confidence interval of 95%%"
 msgstr "Konfidenzintervall von 95%%"
 
-#, fuzzy
 msgid "Upper"
 msgstr "Obergrenze"
 
