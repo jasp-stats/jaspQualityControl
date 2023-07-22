@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2023-07-08 03:44\n"
-"PO-Revision-Date: 2023-05-13 03:38+0000\n"
+"PO-Revision-Date: 2023-07-22 18:10+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.18-dev\n"
+"X-Generator: Weblate 5.0-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr "Kumulative-Summe-Karte"
@@ -90,8 +90,9 @@ msgstr "Anzahl fehlerhafter Einheiten"
 msgid "D"
 msgstr "D"
 
+#, fuzzy
 msgid "Moving Range"
-msgstr ""
+msgstr "Gleitender Wertebereich"
 
 msgid "Report"
 msgstr "Bericht"
@@ -249,9 +250,8 @@ msgstr "Regressionsgleichung in %s Einheiten"
 msgid "Pareto Chart of Standardized Effects"
 msgstr "Pareto-Diagramm Standardisierter Effekte"
 
-#, fuzzy
 msgid "Pareto Chart of Unstandardized Effects"
-msgstr "Pareto-Diagramm Standardisierter Effekte"
+msgstr "Pareto-Diagramm Unstandardisierter Effekte"
 
 #, fuzzy
 msgid "Unstandardized Effect"
@@ -384,29 +384,31 @@ msgstr ""
 msgid "Categorical factors"
 msgstr ""
 
+#, fuzzy
 msgid "Centre points in cube"
-msgstr ""
+msgstr "Zentralpunkte in Würfel"
 
+#, fuzzy
 msgid "Centre points in axial"
-msgstr ""
+msgstr "Zentralpunkte in Achse"
 
 msgid "Centre points"
-msgstr ""
+msgstr "Zentralpunkte"
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
 msgstr "Box-BehnkenDesign wird für 8 Variablen nicht unterstützt."
 
 msgid "Response Surface Design - Central Composite Design"
-msgstr ""
+msgstr "Wirkungsflächenversuchsplan - zentral zusammengesetzter Versuchsplan"
 
 msgid "Response Surface Design - Box-Behnken design"
-msgstr ""
+msgstr "Wirkungsflächenversuchsplan - Box-Behnken-Versuchsplan"
 
 msgid "Standard order"
 msgstr "Standard-Reihenfolge"
 
 msgid "Central Composite Design"
-msgstr ""
+msgstr "Zentral zusammengesetzter Versuchsplan"
 
 msgid ""
 "Generator name '%s' is a number, and number generator names are not "
