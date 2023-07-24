@@ -1098,7 +1098,7 @@ KnownControlStats.RS <- function(N, sigma) {
       } else {
         subgroups <- seq(max(plotData$subgroup), max(plotData$subgroup) + length(qccObject$statistics))
       }
-      seperationLines <- c(seperationLines, max(dataPlotI$subgroup) + .5)
+      seperationLines <- c(seperationLines, max(plotData$subgroup) + .5)
     } else {
       if (plotType == "MR") {
         subgroups <- c(1:length(qccObject$statistics) + 1)

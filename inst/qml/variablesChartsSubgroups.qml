@@ -71,6 +71,15 @@ Form
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 			visible: 							dataFormat.currentValue == "wideFormat"
 		}
+
+		AssignedVariablesList
+		{
+			id:									stages
+			name:								"stages"
+			title:								qsTr("Stages")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
 	}
 
 	Group

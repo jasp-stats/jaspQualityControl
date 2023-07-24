@@ -17,29 +17,34 @@
 
 #' @export
 variablesChartsSubgroups <- function(jaspResults, dataset, options) {
-
-  wideFormat <- options[["dataFormat"]] == "wideFormat"
-
+  
+  #dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormatStages.csv")
+  
+  wideFormat <- (options[["CCDataFormat"]] == "CCwideFormat")
+  
   # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
   if (wideFormat) {
-    measurements <- unlist(options[["measurementsWideFormat"]])
-    subgroupVariable <- options[["axisLabels"]]  # in wide format these are not actually the groups but only the axis labels
-    subgroupVariableGiven <- (subgroupVariable != "")
+    measurements <- unlist(options$variables)
+    axisLabels <- options[["axisLabels"]]
+    factorVariables <- axisLabels
   } else {
-    measurements <- options[["measurementLongFormat"]]
-    subgroupVariable <- options[["subgroup"]]
-    subgroupVariableGiven <- (subgroupVariable != "")
+    measurements <- options$variablesLong
+    subgroupVariable <- options$subgroups
+    factorVariables <- subgroupVariable
   }
-
+  
+  stages <- options[["stages"]]
+  factorVariables <- c(factorVariables, stages)
   measurements <- measurements[measurements != ""]
-
+  factorVariables <- factorVariables[factorVariables != ""]
+  
   # Check if analysis is ready
   if (wideFormat) {
     ready <- length(measurements) > 1
   } else if (!wideFormat && options[["subgroupSizeType"]] == "manual"){
     ready <- length(measurements) == 1
   } else if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable") {
-    ready <- length(measurements) == 1 && subgroupVariableGiven
+    ready <- length(measurements) == 1 && subgroupVariable != ""
   }
 
   # Return an empty plot as default
@@ -52,19 +57,18 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
   # Data reading
   if (is.null(dataset) && ready) {
-    if (subgroupVariableGiven) {
-      dataset <- .readDataSetToEnd(columns.as.numeric = measurements, columns.as.factor = subgroupVariable)
+    if (length(factorVariables) >= 1) {
+      dataset <- .readDataSetToEnd(columns.as.numeric = measurements, columns.as.factor = factorVariables)
     } else {
       dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
     }
   }
-
-  # Rearrange data if not already one group per row
+  
+  # Rearrange data if not already wide format (one group per row)
   if (!wideFormat && ready) {
     # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
     if (options[["subgroupSizeType"]] == "manual") {
-      k <- options[["manualSubgroupSizeValue"]]
-      subgroups <- ""  # for plotting manual axis, remove when code rewritten
+      k <- options[["CCSubgroupSize"]]
       # fill up with NA to allow all subgroup sizes
       if(length(dataset[[measurements]]) %% k != 0) {
         rest <- length(dataset[[measurements]]) %% k
@@ -74,24 +78,22 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
       }
       measurements <- colnames(dataset)
+      axisLabels <- ""
     } else {
       subgroups <- dataset[[subgroupVariable]]
       subgroups <- na.omit(subgroups)
       # add sequence of occurence to allow pivot_wider
-      dataset$occurence <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
+      occurenceVector <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
+      dataset$occurence <- occurenceVector
       # transform into one group per row
       dataset <- tidyr::pivot_wider(data = dataset, values_from = measurements, names_from = occurence)
       # arrange into dataframe
       dataset <- as.data.frame(dataset)
-      measurements <- colnames(dataset)
+      measurements <- as.character(unique(occurenceVector))
+      axisLabels <- dataset[[subgroupVariable]]
     }
-  } else if (wideFormat && ready) {
-    if (subgroupVariableGiven)
-      subgroups <- dataset[[subgroupVariable]]
-    else
-      subgroups <- ""
-  }
-
+  } 
+  
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = c(options[["measurementsWideFormat"]], options[["subgroup"]]),
@@ -103,8 +105,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
              exitAnalysisIfErrors = TRUE)
 
   #X bar & R chart
-  if (ready){
-    if (options[["chartType"]] == "xBarAndR" && is.null(jaspResults[["XbarPlot"]])) {
+  if (ready) {
+    if (options$TypeChart == "Xbarchart" && is.null(jaspResults[["XbarPlot"]])) {
       jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
       jaspResults[["XbarPlot"]]$dependOn(c("chartType", "measurementsWideFormat", "warningLimits", "knownParameters", "knownParametersMean",
                                             "manualTicksXAxis", 'manualTicksXAxisValue',"knownParametersSd", "manualSubgroupSizeValue", "dataFormat",
@@ -115,14 +117,16 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       if (length(measurements) > 50){ # if the subgroup size is above 50, the R package cannot calculate R charts.
         jaspResults[["XbarPlot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
         return()
-      } else { 
-        xBarChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
-                                            phase2 = options$Phase2, phase2Mu = options$mean, phase2Sd = options$SD,
-                                            limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
-                                            warningLimits = options[["Wlimits"]], xAxisLabels = subgroups)
-        rChart <- .controlChartPlotFunction(dataset[measurements], plotType = "R", phase2 = options$Phase2, phase2Sd = options$SD,
-                                            limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
-                                                         xAxisLabels = subgroups)
+      } else {
+        datasetColumnsToPass <- c(measurements, stages)
+        datasetColumnsToPass <- datasetColumnsToPass[datasetColumnsToPass != ""]
+        xBarChart <- .controlChartPlotFunction(dataset = dataset[datasetColumnsToPass], plotType = "xBar", stages = stages, xBarSdType = "r",
+                                               phase2 = options$Phase2, phase2Mu = options$mean, phase2Sd = options$SD,
+                                               limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+                                               warningLimits = options[["Wlimits"]], xAxisLabels = axisLabels)
+        rChart <- .controlChartPlotFunction(dataset[datasetColumnsToPass], plotType = "R", , stages = stages, phase2 = options$Phase2,
+                                            phase2Sd = options$SD, limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+                                            xAxisLabels = axisLabels)
         # Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
         #                      Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
         #                      manualTicks = options$manualTicks, sdType = "r",
@@ -142,9 +146,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         AllTables <- jaspResults[["NelsonTables"]]
         
         AllTables[["NelsonTableX"]]  <- xBarChart$table
-          #.NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart$sixsigma, Phase2 = options$Phase2, xLabels = Xchart$xLabels)
+        #.NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart$sixsigma, Phase2 = options$Phase2, xLabels = Xchart$xLabels)
         AllTables[["NelsonTableR"]] <- rChart$table
-          #.NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Rchart$sixsigma, name = "R", xLabels = Rchart$xLabels)
+        #.NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Rchart$sixsigma, name = "R", xLabels = Rchart$xLabels)
         
         if (length(measurements) > 5) # if the subgroup size is above 5, R chart is not recommended
           AllTables[["NelsonTableR"]]$addFootnote(gettextf("Subgroup size is >5, results may be biased. S-chart is recommended."))
