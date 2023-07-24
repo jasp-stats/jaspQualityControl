@@ -948,7 +948,7 @@ KnownControlStats.RS <- function(N, sigma) {
 #  dataset <- dataset[2:6]
 #  options <- list()
 # 
-# .controlChartPlotFunction(dataset, plotType = "S")
+# .controlChartPlotFunction(dataset, plotType = "s")
 # 
 
 
@@ -959,15 +959,15 @@ KnownControlStats.RS <- function(N, sigma) {
 ###################
 
 
-.controlChartPlotFunction <- function(dataset, plotType = c("xBar", "R", "I", "MR", "S"), stages = "",
+.controlChartPlotFunction <- function(dataset, plotType = c("xBar", "R", "I", "MR", "s"), stages = "",
                                       xBarSdType = c("r", "s"), phase2 = FALSE, phase2Mu = "", phase2Sd = "", limitsPerSubgroup = FALSE,
                                       warningLimits = FALSE, xAxisLabels = "", movingRangeLength = "") {
   tableTitle <- switch (plotType,
-    "xBar" = "X-bar",
+    "xBar" = "x-bar",
     "R" = "range",
     "I" = "individuals",
     "MR" = "moving range",
-    "S" = "S"
+    "s" = "s"
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
   
@@ -1069,7 +1069,7 @@ KnownControlStats.RS <- function(N, sigma) {
       LWL1 <- WL1$LCL
       UWL2 <- WL2$UCL
       LWL2 <- WL2$LCL
-    } else if (plotType == "S") { 
+    } else if (plotType == "s") { 
       #remove rows with single observation as no meaningful sd and no CL can be computed
       rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
       if (length(rowRemovalIndex) != 0)
@@ -1096,7 +1096,7 @@ KnownControlStats.RS <- function(N, sigma) {
       if (plotType == "MR") {
         subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(qccObject$statistics) + 1)
       } else {
-        subgroups <- seq(max(plotData$subgroup), max(plotData$subgroup) + length(qccObject$statistics))
+        subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(qccObject$statistics))
       }
       seperationLines <- c(seperationLines, max(plotData$subgroup) + .5)
     } else {
@@ -1107,12 +1107,12 @@ KnownControlStats.RS <- function(N, sigma) {
       }
     }
     
-    #TODO: This should not just turn default blue, but only apply to out of bounds rule. Also add all the other rules such as more than half points red = all blue
+    #TODO: This should not just turn default blue, but only apply the out of bounds rule. Also add all the other rules such as more than half points red = all blue
     if (length(qccObject$statistics) > 1) {
       if (plotType == "MR") {
         dotColor <- ifelse(c(NA, NelsonLaws(qccObject)$red_points), 'red', 'blue')
       } else {
-        dotColor <- ifelse(NelsonLaws(qccObject, allsix = TRUE)$red_points, 'red', 'blue')
+        dotColor <- ifelse(NelsonLaws(qccObject, allsix = plotType == "I")$red_points, 'red', 'blue')
       }
     } else {
       dotColor <- 'blue'
@@ -1150,7 +1150,6 @@ KnownControlStats.RS <- function(N, sigma) {
     tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, subgroups = subgroups)
     tableListLengths <- sapply(tableList[[i]], length)
     if (any(tableListLengths > 0)) {
-      tableList[[i]] <- tableList[[i]][tableListLengths > 0]
       tableList[[i]][["stage"]] <- as.character(stage)
       tableList[[i]] <- lapply(tableList[[i]], "length<-", max(lengths(tableList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
     }
@@ -1163,17 +1162,17 @@ KnownControlStats.RS <- function(N, sigma) {
     tableListCombined <- tapply(tableListVectorized, names(tableListVectorized), function(x) unlist(x, FALSE, FALSE))
     if (nStages > 1)
       table$addColumnInfo(name = "stage",              title = gettextf("Stage"),                          type = "string")
-    if (length(tableListCombined[["test1"]]) > 0)
+    if (length(tableListCombined[["test1"]][!is.na(tableListCombined[["test1"]])]) > 0)
       table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit"),           type = "integer")
-    if (length(tableListCombined[["test2"]]) > 0)
+    if (length(tableListCombined[["test2"]][!is.na(tableListCombined[["test2"]])]) > 0)
       table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift"),                  type = "integer")
-    if (length(tableListCombined[["test3"]]) > 0)
+    if (length(tableListCombined[["test3"]][!is.na(tableListCombined[["test3"]])]) > 0)
       table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend"),                  type = "integer")
-    if (length(tableListCombined[["test4"]]) > 0)
+    if (length(tableListCombined[["test4"]][!is.na(tableListCombined[["test4"]])]) > 0)
       table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation"),   type = "integer")
-    if (length(tableListCombined[["test5"]]) > 0)
+    if (length(tableListCombined[["test5"]][!is.na(tableListCombined[["test5"]])]) > 0)
       table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation"),     type = "integer")
-    if (length(tableListCombined[["test6"]]) > 0)
+    if (length(tableListCombined[["test6"]][!is.na(tableListCombined[["test6"]])]) > 0)
       table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution"),   type = "integer")
     table$setData(list(
       "stage" = tableListCombined[["stage"]],
@@ -1208,7 +1207,7 @@ KnownControlStats.RS <- function(N, sigma) {
                     "R" = "Sample range",
                     "I" = "Individual value",
                     "MR" = "Moving range",
-                    "S" = "Sample std. dev."
+                    "s" = "Sample std. dev."
   )
   
   # Create plot

@@ -18,7 +18,7 @@
 #' @export
 variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   
-  #dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormatStages.csv")
+  #dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartLongFormatStages.csv")
   
   wideFormat <- (options[["CCDataFormat"]] == "CCwideFormat")
   
@@ -48,10 +48,10 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   }
 
   # Return an empty plot as default
-  if ((options[["report"]] || options[["chartType"]] == "xBarAndR" || options[["chartType"]] == "xBarAndS") && !ready) {
+  if (!ready) {
     plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("report", "chartType", "measurementLongFormat", "measurementsWideFormat"))
+    plot$dependOn(c("CCReport", "TypeChart", "variablesLong", "variables", "stages"))
     return()
   }
 
@@ -75,10 +75,18 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         dataset_expanded <- c(dataset[[measurements]], rep(NA, k - rest))
         dataset <- as.data.frame(matrix(dataset_expanded, ncol = k, byrow = TRUE))
       } else {
+        if (stages != "") {
+          # Only take the first stage of each subgroup, to avoid multiple stages being defined
+          stagesPerSubgroup <- dataset[[stages]][seq(1, length(dataset[[stages]]), k)]
+        }
         dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
       }
       measurements <- colnames(dataset)
       axisLabels <- ""
+      if (stages != "") {
+        dataset[["stage"]] <- stagesPerSubgroup
+        stages <- "stage"
+      }
     } else {
       subgroups <- dataset[[subgroupVariable]]
       subgroups <- na.omit(subgroups)
@@ -86,13 +94,15 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       occurenceVector <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
       dataset$occurence <- occurenceVector
       # transform into one group per row
-      dataset <- tidyr::pivot_wider(data = dataset, values_from = measurements, names_from = occurence)
-      # arrange into dataframe
+      dataset <- tidyr::pivot_wider(data = dataset, values_from = tidyr::all_of(measurements), names_from = occurence)
+      # arrange into dataframe 
       dataset <- as.data.frame(dataset)
       measurements <- as.character(unique(occurenceVector))
       axisLabels <- dataset[[subgroupVariable]]
     }
-  } 
+  }  else if (wideFormat && ready && axisLabels != "") {
+    axisLabels <- dataset[[axisLabels]]
+  }
   
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
@@ -103,86 +113,50 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
              infinity.target = c(measurements, options[["subgroup"]]),
              missingValues.target = c(options[["subgroup"]]),
              exitAnalysisIfErrors = TRUE)
-
-  #X bar & R chart
+  
+  #X bar & R/s chart
   if (ready) {
-    if (options$TypeChart == "Xbarchart" && is.null(jaspResults[["XbarPlot"]])) {
-      jaspResults[["XbarPlot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
-      jaspResults[["XbarPlot"]]$dependOn(c("chartType", "measurementsWideFormat", "warningLimits", "knownParameters", "knownParametersMean",
-                                            "manualTicksXAxis", 'manualTicksXAxisValue',"knownParametersSd", "manualSubgroupSizeValue", "dataFormat",
-                                             "subgroup", "measurementLongFormat", "report", "reportTitle", "reportMeasurementName", "reportMiscellaneous",
-                                             "reportReportedBy","reportDate", "reportSubtitle", "reportChartName"))
-      jaspResults[["XbarPlot"]]$position <- 1
-
-      if (length(measurements) > 50){ # if the subgroup size is above 50, the R package cannot calculate R charts.
-        jaspResults[["XbarPlot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
+    if (is.null(jaspResults[["controlCharts"]])) {
+      secondPlotType <- ifelse(options[["TypeChart"]] == "xBarRchart", "R", "s")
+      jaspResults[["controlCharts"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s Control Chart", secondPlotType), width = 1200, height = 500)
+      jaspResults[["controlCharts"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "manualTicks", 'nTicks',
+                                                "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong",
+                                                "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle",
+                                                "ccChartName", "subgroupSizeUnequal", "axisLabels", "stages"))
+      jaspResults[["controlCharts"]]$position <- 1
+      
+      if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
+        jaspResults[["controlCharts"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
         return()
       } else {
-        datasetColumnsToPass <- c(measurements, stages)
-        datasetColumnsToPass <- datasetColumnsToPass[datasetColumnsToPass != ""]
-        xBarChart <- .controlChartPlotFunction(dataset = dataset[datasetColumnsToPass], plotType = "xBar", stages = stages, xBarSdType = "r",
+        columnsToPass <- c(measurements, stages)
+        columnsToPass <- columnsToPass[columnsToPass != ""]
+        xBarSdType <- tolower(secondPlotType)
+        
+        # first chart is always xBar-chart, second is either R- or s-chart
+        xBarChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
                                                phase2 = options$Phase2, phase2Mu = options$mean, phase2Sd = options$SD,
                                                limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
                                                warningLimits = options[["Wlimits"]], xAxisLabels = axisLabels)
-        rChart <- .controlChartPlotFunction(dataset[datasetColumnsToPass], plotType = "R", , stages = stages, phase2 = options$Phase2,
-                                            phase2Sd = options$SD, limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
-                                            xAxisLabels = axisLabels)
-        # Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["Wlimits"]],
-        #                      Phase2 = options$Phase2, target = options$mean, sd = options$SD, Wide = wideFormat,
-        #                      manualTicks = options$manualTicks, sdType = "r",
-        #                      controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
-        #                      manualXaxis = subgroups)
-        # Rchart <- .Rchart(dataset = dataset[measurements], options = options, Phase2 = options$Phase2,
-        #                   target = options$mean, sd = options$SD, Wide = wideFormat, manualTicks = options$manualTicks,
-        #                   controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"), manualXaxis = subgroups)
-        jaspResults[["XbarPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(rChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+        secondChart <- .controlChartPlotFunction(dataset[columnsToPass], plotType = secondPlotType, , stages = stages, phase2 = options$Phase2,
+                                                 phase2Sd = options$SD, limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+                                                 xAxisLabels = axisLabels)
+        jaspResults[["controlCharts"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
       }
 
       # Nelson tests tables
-      if (is.null(jaspResults[["NelsonTableX"]]) && is.null(jaspResults[["NelsonTableR"]]) && is.null(jaspResults[["NelsonTables"]])) {
+      if (is.null(jaspResults[["NelsonTables"]])) {
         jaspResults[["NelsonTables"]] <- createJaspContainer(title = gettext("Out-of-control Signals"))
-        jaspResults[["NelsonTables"]]$dependOn(c("chartType", "measurementsWideFormat", "knownParameters", "knownParametersMean", "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat"))
+        jaspResults[["NelsonTables"]]$dependOn(c("TypeChart", "variables", "Phase2", "mean", "SD", "CCSubgroupSize",
+                                                 "CCDataFormat", "subgroups", "variablesLong", "stages"))
         jaspResults[["NelsonTables"]]$position <- 2
-        AllTables <- jaspResults[["NelsonTables"]]
+        allTables <- jaspResults[["NelsonTables"]]
         
-        AllTables[["NelsonTableX"]]  <- xBarChart$table
-        #.NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart$sixsigma, Phase2 = options$Phase2, xLabels = Xchart$xLabels)
-        AllTables[["NelsonTableR"]] <- rChart$table
-        #.NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Rchart$sixsigma, name = "R", xLabels = Rchart$xLabels)
+        allTables[["xBarTable"]]  <- xBarChart$table
+        allTables[["secondTable"]] <- secondChart$table
         
-        if (length(measurements) > 5) # if the subgroup size is above 5, R chart is not recommended
-          AllTables[["NelsonTableR"]]$addFootnote(gettextf("Subgroup size is >5, results may be biased. S-chart is recommended."))
-      }
-    }
-
-    #S Chart
-    if (options[["chartType"]] == "xBarAndS" && is.null(jaspResults[["SPlot"]])) {
-      jaspResults[["SPlot"]] <- createJaspPlot(title = gettext("X-bar & s Control Chart"), width = 1200, height = 500)
-      jaspResults[["SPlot"]]$dependOn(c("chartType", "measurementsWideFormat", "warningLimits", "knownParameters", "knownParametersMean",
-                                         "knownParametersSd", "manualTicksXAxis", 'manualTicksXAxisValue', "manualSubgroupSizeValue",
-                                          "dataFormat", "subgroup", "measurementLongFormat", "report", "reportTitle", "reportMeasurementName",
-                                           "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle", "reportChartName"))
-
-      Schart <- .XbarSchart(dataset = dataset[measurements], options = options, Phase2 = options[["knownParameters"]], sd = options[["knownParametersSd"]],
-                            Wide = wideFormat, controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
-                            manualXaxis = subgroups)
-      Xchart <- .Xbarchart(dataset = dataset[measurements], options = options, warningLimits = options[["warningLimits"]],
-                           Phase2 = options[["knownParameters"]], target = options[["knownParametersMean"]], sd = options[["knownParametersSd"]], Wide = wideFormat,
-                           manualTicks = options[["manualTicksXAxis"]], sdType = "s",
-                           controlLimitsPerGroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
-                           manualXaxis = subgroups)
-      jaspResults[["SPlot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(Schart$p, Xchart$p), layout = matrix(2:1, 2), removeXYlabels= "x")
-      jaspResults[["SPlot"]]$position <- 1
-
-      # Nelson tests tables
-      if (is.null(jaspResults[["NelsonTableS"]]) && is.null(jaspResults[["NelsonTableX"]]) && is.null(jaspResults[["NelsonTables"]])) {
-        jaspResults[["NelsonTables"]] <- createJaspContainer(title = gettext("Out-of-control Signals"))
-        jaspResults[["NelsonTables"]]$dependOn(c("chartType", "measurementsWideFormat", "knownParameters", "knownParametersMean", "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat", "warningLimits"))
-        jaspResults[["NelsonTables"]]$position <- 2
-        AllTables <- jaspResults[["NelsonTables"]]
-
-        AllTables[["NelsonTableX"]] <- .NelsonTable(dataset = dataset[measurements], options = options, sixsigma = Xchart$sixsigma, Phase2 = options[["knownParameters"]], xLabels = Xchart$xLabels)
-        AllTables[["NelsonTableS"]] <- .NelsonTable(dataset = dataset[measurements], options = options, name = "s", sixsigma = Schart$sixsigma, xLabels = Schart$xLabels)
+        if (length(measurements) > 5 && secondPlotType == "R") # if the subgroup size is above 5, R chart is not recommended
+          AllTables[["secondTable"]]$addFootnote(gettextf("Subgroup size is >5, results may be biased. S-chart is recommended."))
       }
     }
     # Report
@@ -193,14 +167,16 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       jaspResults[["NelsonTables"]] <- NULL
 
       jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
-      jaspResults[["CCReport"]]$dependOn(c("report", "manualSubgroupSizeValue","chartType", "measurementsWideFormat", "measurementLongFormat", "manualTicksXAxis", 'manualTicksXAxisValue',"dataFormat", "subgroup", "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle", "reportChartName"))
+      jaspResults[["CCReport"]]$dependOn(c("CCReport", "CCSubgroupSize","TypeChart", "variables", "variablesLong",
+                                           "manualTicks", 'nTicks',"CCDataFormat", "subgroups", "ccTitle", "ccName",
+                                           "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "stages"))
       jaspResults[["CCReport"]]$position <- 9
       Iplot <- jaspResults[["CCReport"]]
-
-      if (options[["chartType"]] == "xBarAndS")
-        Iplot[["ccReport"]] <- .CCReport(p1 = Xchart$p, p2 = Schart$p, ccTitle = options[["reportTitle"]],
-                                         ccName = options[["reportMeasurementName"]], ccDate = options[["reportDate"]], ccReportedBy = options[["reportReportedBy"]], ccSubTitle = options[["reportSubtitle"]],
-                                         ccChartName = options[["reportChartName"]], ccMisc = options[["reportMiscellaneous"]])
+      
+      if (options$TypeChart == "xBarSchart")
+        Iplot[["ccReport"]] <- .CCReport(p1 = Xchart$p, p2 = Schart$p, ccTitle = options$ccTitle,
+                                         ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
+                                         ccChartName = options$ccChartName)
       else
         Iplot[["ccReport"]] <- .CCReport(p1 = Xchart$p, p2 = Rchart$p , ccTitle = options[["reportTitle"]],
                                          ccName = options[["reportMeasurementName"]], ccDate = options[["reportDate"]], ccReportedBy = options[["reportReportedBy"]], ccSubTitle = options[["reportSubtitle"]],
