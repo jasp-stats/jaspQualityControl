@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2023-07-08 03:44\n"
-"PO-Revision-Date: 2023-07-22 18:10+0000\n"
+"PO-Revision-Date: 2023-07-26 07:07+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -197,7 +197,7 @@ msgid "Standardized Effect"
 msgstr "Standardisierter Effekt"
 
 msgid "Coefficients"
-msgstr "Koeffzienten"
+msgstr "Koeffizienten"
 
 msgid "Coefficient"
 msgstr "Koeffizient"
@@ -608,12 +608,14 @@ msgstr ""
 msgid "Percent"
 msgstr "Prozent"
 
+#, fuzzy
 msgid "Lower"
 msgstr "Untergrenze"
 
 msgid "Confidence interval of 95%%"
 msgstr "Konfidenzintervall von 95%%"
 
+#, fuzzy
 msgid "Upper"
 msgstr "Obergrenze"
 
