@@ -998,7 +998,7 @@ KnownControlStats.RS <- function(N, sigma) {
   seperationLines <- c()
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
-    dataCurrentStage <- subset(dataset, dataset[[stages]] == stage)[names(dataset) != stages]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     if (plotType == "I" || plotType == "MR" ) {
       k <- movingRangeLength
       # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
@@ -1168,21 +1168,26 @@ KnownControlStats.RS <- function(N, sigma) {
       table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift"),                  type = "integer")
     if (length(tableListCombined[["test3"]][!is.na(tableListCombined[["test3"]])]) > 0)
       table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend"),                  type = "integer")
+    if (plotType == "I") {
     if (length(tableListCombined[["test4"]][!is.na(tableListCombined[["test4"]])]) > 0)
       table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation"),   type = "integer")
     if (length(tableListCombined[["test5"]][!is.na(tableListCombined[["test5"]])]) > 0)
       table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation"),     type = "integer")
     if (length(tableListCombined[["test6"]][!is.na(tableListCombined[["test6"]])]) > 0)
       table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution"),   type = "integer")
-    table$setData(list(
+    }
+    tableData <- list(
       "stage" = tableListCombined[["stage"]],
       "test1" = tableListCombined[["test1"]],
       "test2" = tableListCombined[["test2"]],
-      "test3" = tableListCombined[["test3"]],
-      "test4" = tableListCombined[["test4"]],
-      "test5" = tableListCombined[["test5"]],
-      "test6" = tableListCombined[["test6"]]
-    ))
+      "test3" = tableListCombined[["test3"]]
+    )
+    if (plotType == "I") {
+      tableData[["test4"]] <- tableListCombined[["test4"]]
+      tableData[["test5"]] <- tableListCombined[["test5"]]
+      tableData[["test6"]] <- tableListCombined[["test6"]]
+    }
+    table$setData(tableData)
     table$showSpecifiedColumnsOnly <- TRUE
   }
   
@@ -1266,6 +1271,6 @@ KnownControlStats.RS <- function(N, sigma) {
   violationsList[["test1"]] <- Test$Rules$R1
   violationsList[["test2"]] <- Test$Rules$R2
   violationsList[["test3"]] <- Test$Rules$R3
-  
+
   return(violationsList)
 }

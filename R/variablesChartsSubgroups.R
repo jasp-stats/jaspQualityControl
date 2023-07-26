@@ -24,12 +24,12 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   
   # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
   if (wideFormat) {
-    measurements <- unlist(options$variables)
+    measurements <- unlist(options[["variables"]])
     axisLabels <- options[["axisLabels"]]
     factorVariables <- axisLabels
   } else {
-    measurements <- options$variablesLong
-    subgroupVariable <- options$subgroups
+    measurements <- options[["variablesLong"]]
+    subgroupVariable <- options[["subgroups"]]
     factorVariables <- subgroupVariable
   }
   
@@ -69,16 +69,18 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
     if (options[["subgroupSizeType"]] == "manual") {
       k <- options[["CCSubgroupSize"]]
+      if (stages != "") {
+        # Only take the first stage of each subgroup, to avoid multiple stages being defined
+        stagesPerSubgroup <- dataset[[stages]][seq(1, length(dataset[[stages]]), k)]
+        # this function checks whether there are any subgroups with more than one stage assigned, so we can display a message later that only the first stage is used
+        multipleStagesPerSubgroupDefined <- any(lapply(split(dataset[[stages]], ceiling(seq_along(dataset[[stages]])/k)), FUN = function(x)length(unique(x))) > 1)
+      }
       # fill up with NA to allow all subgroup sizes
       if(length(dataset[[measurements]]) %% k != 0) {
         rest <- length(dataset[[measurements]]) %% k
         dataset_expanded <- c(dataset[[measurements]], rep(NA, k - rest))
         dataset <- as.data.frame(matrix(dataset_expanded, ncol = k, byrow = TRUE))
       } else {
-        if (stages != "") {
-          # Only take the first stage of each subgroup, to avoid multiple stages being defined
-          stagesPerSubgroup <- dataset[[stages]][seq(1, length(dataset[[stages]]), k)]
-        }
         dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
       }
       measurements <- colnames(dataset)
@@ -135,7 +137,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         
         # first chart is always xBar-chart, second is either R- or s-chart
         xBarChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
-                                               phase2 = options$Phase2, phase2Mu = options$mean, phase2Sd = options$SD,
+                                               phase2 = options[["Phase2"]], phase2Mu = options$mean, phase2Sd = options$SD,
                                                limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
                                                warningLimits = options[["Wlimits"]], xAxisLabels = axisLabels)
         secondChart <- .controlChartPlotFunction(dataset[columnsToPass], plotType = secondPlotType, , stages = stages, phase2 = options$Phase2,
@@ -155,8 +157,12 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         allTables[["xBarTable"]]  <- xBarChart$table
         allTables[["secondTable"]] <- secondChart$table
         
+        if (stages != "" ) {
+          if (multipleStagesPerSubgroupDefined)
+          allTables[["xBarTable"]]$addFootnote(gettext("One or more subgroups are assigned to more than one stage. Only first stage is considered."))
+        }
         if (length(measurements) > 5 && secondPlotType == "R") # if the subgroup size is above 5, R chart is not recommended
-          AllTables[["secondTable"]]$addFootnote(gettextf("Subgroup size is >5, results may be biased. S-chart is recommended."))
+          AllTables[["secondTable"]]$addFootnote(gettext("Subgroup size is >5, results may be biased. S-chart is recommended."))
       }
     }
     # Report
