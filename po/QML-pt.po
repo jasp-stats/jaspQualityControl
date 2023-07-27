@@ -1,9 +1,16 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-07-26 01:04+0000\n"
+"Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
+"br>\n"
+"Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/pt/>\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.0-dev\n"
 "X-Language: pt\n"
 "X-Qt-Contexts: true\n"
 
@@ -69,7 +76,7 @@ msgstr "Partes"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Standard"
-msgstr ""
+msgstr "Padrão"
 
 #, fuzzy
 msgctxt "msaGaugeLinearity|"
@@ -171,7 +178,7 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Linearity Study"
-msgstr ""
+msgstr "Estudo de Linearidade"
 
 msgctxt "Description|"
 msgid "Variables Charts for Subgroups"
@@ -223,15 +230,15 @@ msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity table"
-msgstr ""
+msgstr "Tabela de linearidade"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Bias table"
-msgstr ""
+msgstr "Tabela de viés"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity and bias graph"
-msgstr ""
+msgstr "Gráfico de Viés e Linearidade"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Percent process variation graph"
@@ -1491,7 +1498,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Save as:"
-msgstr ""
+msgstr "Salvar como:"
 
 msgctxt "doeScreening|"
 msgid "<b>Sync Design: On</b>"
@@ -1503,7 +1510,7 @@ msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Optional"
-msgstr ""
+msgstr "Opcional"
 
 msgctxt "msaGaugeRR|"
 msgid "Type of model for F-statistic"
@@ -1527,7 +1534,7 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Center"
-msgstr ""
+msgstr "Centro"
 
 msgctxt "timeWeightedCharts|"
 msgid "Within-group standard deviation"
@@ -1548,7 +1555,7 @@ msgstr "Título"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Measurement"
-msgstr ""
+msgstr "Medição"
 
 #, fuzzy
 msgctxt "variablesChartsIndividuals|"
@@ -1562,7 +1569,7 @@ msgstr "Data"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Reported by"
-msgstr ""
+msgstr "Reportado por"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Misc"
@@ -1630,11 +1637,11 @@ msgstr ""
 
 msgctxt "msaAttribute|"
 msgid "Kappa Study"
-msgstr ""
+msgstr "Estudo Kappa"
 
 msgctxt "msaAttribute|"
 msgid "Tau Study"
-msgstr ""
+msgstr "Estudo Tau"
 
 msgctxt "msaGaugeRR|"
 msgid "Type 3 study (automatic equipment)"
@@ -1658,7 +1665,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Capability studies"
-msgstr ""
+msgstr "Estudo de capabilidade"
 
 msgctxt "processCapabilityStudies|"
 msgid "Advanced Options"
