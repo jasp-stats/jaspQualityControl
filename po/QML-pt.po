@@ -1,16 +1,9 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-07-26 01:04+0000\n"
-"Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
-"br>\n"
-"Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/pt/>\n"
-"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.0-dev\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Language: pt\n"
 "X-Qt-Contexts: true\n"
 
@@ -62,9 +55,10 @@ msgctxt "msaAttribute|"
 msgid "Parts"
 msgstr "Peças"
 
+#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Standard"
-msgstr ""
+msgstr "Padrão"
 
 msgctxt "msaAttribute|"
 msgid "Tables"
@@ -474,9 +468,10 @@ msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Report"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Measurement"
-msgstr ""
+msgstr "Medição"
 
 msgctxt "msaGaugeRR|"
 msgid "Name"
@@ -527,9 +522,10 @@ msgctxt "processCapabilityStudies|"
 msgid "Title:"
 msgstr "Título:"
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Measurement"
-msgstr ""
+msgstr "Medição"
 
 msgctxt "processCapabilityStudies|"
 msgid "Name"
@@ -706,9 +702,10 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
-msgstr ""
+msgstr "Medição"
 
 #, fuzzy
 msgctxt "variablesChartsSubgroups|"
@@ -820,9 +817,10 @@ msgctxt "doeScreening|"
 msgid "Run Order"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Standard"
-msgstr ""
+msgstr "Padrão"
 
 msgctxt "doeScreening|"
 msgid "Random"
@@ -919,9 +917,10 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R Report"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement"
-msgstr ""
+msgstr "Medição"
 
 #, fuzzy
 msgctxt "msaGaugeRRnonrep|"
@@ -1085,9 +1084,10 @@ msgctxt "msaGaugeRR|"
 msgid "Gauge name"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Reported by"
-msgstr ""
+msgstr "Reportado por"
 
 msgctxt "msaGaugeRR|"
 msgid "Misc"
@@ -1113,9 +1113,10 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge name"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Reported by"
-msgstr ""
+msgstr "Reportado por"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Misc"
@@ -1230,9 +1231,10 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Title"
 msgstr "Título"
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Reported by"
-msgstr ""
+msgstr "Reportado por"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Misc"
@@ -1250,9 +1252,10 @@ msgctxt "attributesCharts|"
 msgid "Title"
 msgstr "Título"
 
+#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Measurement"
-msgstr ""
+msgstr "Medição"
 
 msgctxt "attributesCharts|"
 msgid "Name"
@@ -1319,9 +1322,10 @@ msgctxt "doeFull|"
 msgid "Random"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Standard"
-msgstr ""
+msgstr "Padrão"
 
 #, fuzzy
 msgctxt "doeFull|"
@@ -1349,9 +1353,10 @@ msgctxt "doeFull|"
 msgid "Number of random runs to repeat"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Save as:"
-msgstr ""
+msgstr "Salvar como:"
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: On</b>"
@@ -1397,9 +1402,10 @@ msgctxt "doeModifyDesign|"
 msgid "Random"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Standard"
-msgstr ""
+msgstr "Padrão"
 
 msgctxt "doeModifyDesign|"
 msgid "Desired Two-level Factorial Design Options"
@@ -1651,9 +1657,10 @@ msgctxt "msaGaugeRR|"
 msgid "Tolerance width"
 msgstr "Tolerância de largura"
 
+#, fuzzy
 msgctxt "msaType1Gauge|"
 msgid "Measurement"
-msgstr ""
+msgstr "Medição"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-conformance"
@@ -1982,9 +1989,10 @@ msgctxt "ShowAndExportDesign|"
 msgid "Sort by standard order"
 msgstr ""
 
+#, fuzzy
 msgctxt "ShowAndExportDesign|"
 msgid "Save as:"
-msgstr ""
+msgstr "Salvar como:"
 
 msgctxt "ShowAndExportDesign|"
 msgid "e.g. design.csv"
