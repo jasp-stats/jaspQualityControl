@@ -18,7 +18,7 @@
 #' @export
 variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   
-  #dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartLongFormatStages.csv")
+  #dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartLongFormatStagesMultiDefined.csv")
   
   wideFormat <- (options[["CCDataFormat"]] == "CCwideFormat")
   
@@ -72,7 +72,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       if (stages != "") {
         # Only take the first stage of each subgroup, to avoid multiple stages being defined
         stagesPerSubgroup <- dataset[[stages]][seq(1, length(dataset[[stages]]), k)]
-        # this function checks whether there are any subgroups with more than one stage assigned, so we can display a message later that only the first stage is used
+        # this line checks whether there are any subgroups with more than one stage assigned, so we can display a message later that only the first stage is used
         multipleStagesPerSubgroupDefined <- any(lapply(split(dataset[[stages]], ceiling(seq_along(dataset[[stages]])/k)), FUN = function(x)length(unique(x))) > 1)
       }
       # fill up with NA to allow all subgroup sizes
@@ -86,13 +86,19 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       measurements <- colnames(dataset)
       axisLabels <- ""
       if (stages != "") {
-        dataset[["stage"]] <- stagesPerSubgroup
-        stages <- "stage"
+        dataset[[stages]] <- stagesPerSubgroup
       }
     } else {
       subgroups <- dataset[[subgroupVariable]]
       subgroups <- na.omit(subgroups)
       # add sequence of occurence to allow pivot_wider
+      if (stages != "") {
+        # this line checks whether there are any subgroups with more than one stage assigned, so we can display a message later that only the first stage is used
+        multipleStagesPerSubgroupDefined <- any(table(dplyr::count_(dataset, vars = c(stages, subgroupVariable))[subgroupVariable]) > 1)
+        # Only take the first stage of each subgroup, to avoid multiple stages being defined
+        stagesPerSubgroup <- dataset[[stages]][as.vector(cumsum(table(subgroups)) + 1 - table(subgroups))]
+        dataset[[stages]] <- stagesPerSubgroup
+      }
       occurenceVector <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
       dataset$occurence <- occurenceVector
       # transform into one group per row
