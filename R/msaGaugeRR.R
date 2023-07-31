@@ -853,7 +853,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   plotframe <- data.frame(source = rep(sources, length(references)),
                           reference = rep(references, each = 4),
                           value = values)
-  plotframe$source <- factor(plotframe$source, levels = c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part'))
+  plotframe$source <- factor(plotframe$source, levels = sources)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(plotframe$value)
 
 
