@@ -143,7 +143,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         
         # first chart is always xBar-chart, second is either R- or s-chart
         xBarChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
-                                               phase2 = options[["Phase2"]], phase2Mu = options$mean, phase2Sd = options$SD,
+                                               phase2 = options[["Phase2"]], phase2Mu = options[["mean"]], phase2Sd = options[["SD"]],
                                                limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
                                                warningLimits = options[["Wlimits"]], xAxisLabels = axisLabels)
         secondChart <- .controlChartPlotFunction(dataset[columnsToPass], plotType = secondPlotType, , stages = stages, phase2 = options$Phase2,
@@ -168,7 +168,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
           allTables[["xBarTable"]]$addFootnote(gettext("One or more subgroups are assigned to more than one stage. Only first stage is considered."))
         }
         if (length(measurements) > 5 && secondPlotType == "R") # if the subgroup size is above 5, R chart is not recommended
-          AllTables[["secondTable"]]$addFootnote(gettext("Subgroup size is >5, results may be biased. S-chart is recommended."))
+          allTables[["secondTable"]]$addFootnote(gettext("Subgroup size is >5, results may be biased. S-chart is recommended."))
       }
     }
     # Report

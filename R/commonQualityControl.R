@@ -547,16 +547,16 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 
 .decimalplaces <- function(x) {
-  x <- na.omit(unlist(x))
-  nDecimals <- numeric(length(x))
-  for(i in seq_along(x)) {
-    if (round(x[i], 10) %% 1 != 0) {   # never more than 10 decimals
-      formattedx <- format(x[i], scientific = FALSE)
-      nDecimals[i] <- nchar(strsplit(sub('0+$', '', as.character(formattedx)), ".", fixed=TRUE)[[1]][[2]])
-    } else {
-      nDecimals[i] <- 0
-    }
-  }
+  #x <- na.omit(unlist(x))
+  nDecimals <- .numDecimals # numeric(length(x))
+  # for(i in seq_along(x)) {
+  #   if (round(x[i], 10) %% 1 != 0) {   # never more than 10 decimals
+  #     formattedx <- format(x[i], scientific = FALSE)
+  #     nDecimals[i] <- nchar(strsplit(sub('0+$', '', as.character(formattedx)), ".", fixed=TRUE)[[1]][[2]])
+  #   } else {
+  #     nDecimals[i] <- 0
+  #   }
+  # }
   return(nDecimals)
 }
 
@@ -869,13 +869,13 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 KnownControlStats.RS <- function(N, sigma) {
 
   Data.d3 <- data.frame(
-    n = 2:25,
-    d3 = c(0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
+    n = 1:25,
+    d3 = c(0, 0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
            0.7562, 0.7499, 0.7441, 0.7386, 0.7335, 0.7287, 0.7242, 0.7199, 0.7159, 0.7121, 0.7084))
 
   Data.d2 <- data.frame(
-    n = 2:50,
-    d2 = c( 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
+    n = 1:50,
+    d2 = c(0, 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
             3.588 ,3.640 ,3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931, 3.964, 3.997, 4.027, 4.057, 4.086, 4.113,
             4.139 ,4.165 ,4.189, 4.213, 4.236, 4.259, 4.280, 4.301, 4.322, 4.341, 4.361, 4.379, 4.398, 4.415, 4.433,
             4.450 ,4.466, 4.482, 4.498))
@@ -890,10 +890,10 @@ KnownControlStats.RS <- function(N, sigma) {
     d2 <- Data.d2[N == Data.d2$n,2]
     d3 <- Data.d3[N == Data.d3$n,2]
   }
-
-  c4 <- sqrt(2/(N-1)) * gamma(N/2) / gamma((N-1)/2)
-  c5 <- sqrt(1 - c4^2)
-
+  
+    c4 <- sqrt(2/(N-1)) * gamma(N/2) / gamma((N-1)/2)
+    c5 <- sqrt(1 - c4^2)
+  
   UCL <- d2 * sigma + 3 * d3 * sigma
   CL <- d2 * sigma
   LCL <- max(0, d2 * sigma - 3 * d3 * sigma)
@@ -916,16 +916,21 @@ KnownControlStats.RS <- function(N, sigma) {
       LCL <- d2 * sigma - k * d3 * sigma
       LCL <- max(0, LCL) # LCL in R-chart must be >= 0
     } else  if (type == "s") {
-      c4 <- KnownControlStats.RS(n[i], 0)$constants[3]
-      c5 <- KnownControlStats.RS(n[i], 0)$constants[4]
-      if (unbiasingConstantUsed) {
-        UCL <- c4 * sigma + k * sigma * c5
-        LCL <- c4 * sigma - k * sigma * c5
+      if (n[i] > 1) {
+        c4 <- KnownControlStats.RS(n[i], 0)$constants[3]
+        c5 <- KnownControlStats.RS(n[i], 0)$constants[4]
+        if (unbiasingConstantUsed) {
+          UCL <- c4 * sigma + k * sigma * c5
+          LCL <- c4 * sigma - k * sigma * c5
+        } else {
+          UCL <- sigma + k * (c5 / c4) * sigma
+          LCL <- sigma - k * (c5 / c4) * sigma
+        }
+        LCL <- max(0, LCL) # LCL in S-chart must be >= 0
       } else {
-        UCL <- sigma + k * (c5 / c4) * sigma
-        LCL <- sigma - k * (c5 / c4) * sigma
+        LCL <- 0
+        UCL <- 0
       }
-      LCL <- max(0, LCL) # LCL in S-chart must be >= 0
     }
     UCLvector <- c(UCLvector, UCL)
     LCLvector <- c(LCLvector, LCL)
@@ -1016,11 +1021,6 @@ KnownControlStats.RS <- function(N, sigma) {
         plotStatistic <- c(NA, qccObject$statistics)
       }
     } else if (plotType == "R") { 
-      #remove rows with single observation as no meaningful range and no CL can be computed
-      rowRemovalIndex <- which(apply(dataCurrentStage, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
-      if (length(rowRemovalIndex) != 0)
-        dataCurrentStage <- dataCurrentStage[-rowRemovalIndex,]
-      
       n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
         n <- max(n)
@@ -1071,9 +1071,9 @@ KnownControlStats.RS <- function(N, sigma) {
       LWL2 <- WL2$LCL
     } else if (plotType == "s") { 
       #remove rows with single observation as no meaningful sd and no CL can be computed
-      rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
-      if (length(rowRemovalIndex) != 0)
-        dataCurrentStage <- dataCurrentStage[-rowRemovalIndex, ]
+      # rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
+      # if (length(rowRemovalIndex) != 0)
+      #   dataCurrentStage <- dataCurrentStage[-rowRemovalIndex, ]
       
       if(phase2) {
         sigma <- phase2Sd
@@ -1081,7 +1081,9 @@ KnownControlStats.RS <- function(N, sigma) {
         sigma <- .sdXbar(df = dataCurrentStage, type = "s")
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage))
+      qccObject$statistics[is.na(qccObject$statistics)] <- 0 # if n = 1, the qcc package gives out NA, but we want to plot a 0 
       plotStatistic <- qccObject$statistics
+     
       
       n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
@@ -1135,7 +1137,7 @@ KnownControlStats.RS <- function(N, sigma) {
     
     plotData <- rbind(plotData, stageData)
     allStageValues <- c(plotStatistic, LCL, UCL, center)
-    decimals <- max(.decimalplaces(allStageValues))
+    decimals <- .numDecimals #max(.decimalplaces(allStageValues))
     # even if there are multiple different centers, LCL and UCL, only the last one is shown on the label
     lastCenter <- center[length(center)]
     lastLCL <- LCL[length(LCL)]
@@ -1143,9 +1145,9 @@ KnownControlStats.RS <- function(N, sigma) {
     dfLabel <- rbind(dfLabel, data.frame(x = max(subgroups) + .5,
                                          y = c(lastCenter, lastLCL, lastUCL),
                                          label = c(
-                                           gettextf("CL = %g",  round(lastCenter, decimals + 1)),
-                                           gettextf("UCL = %g", round(lastLCL, decimals + 2)),
-                                           gettextf("LCL = %g", round(lastUCL, decimals + 2))
+                                           gettextf("CL = %g",  round(lastCenter, decimals)),
+                                           gettextf("UCL = %g", round(lastLCL, decimals)),
+                                           gettextf("LCL = %g", round(lastUCL, decimals))
                                          )))
     tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, subgroups = subgroups)
     tableListLengths <- sapply(tableList[[i]], length)
