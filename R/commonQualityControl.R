@@ -1040,7 +1040,7 @@ KnownControlStats.RS <- function(N, sigma) {
       UCL <- limits$UCL
       LCL <- limits$LCL
     } else if (plotType == "xBar") {
-      xBarSdType <- match.arg(xBarSdType)
+      #xBarSdType <- match.arg(xBarSdType)
       if (phase2) {
           mu <- as.numeric(phase2Mu)
           sigma <- as.numeric(phase2Sd)
@@ -1247,7 +1247,7 @@ KnownControlStats.RS <- function(N, sigma) {
 
 
 .NelsonTableList <- function(qccObject, type = "xBar", phase2 = TRUE, subgroups = NULL) {
-  violationsList <- list()
+  violationsList <- list("test1" = NULL, "test2" = NULL, "test3" = NULL)
   
   if (length(qccObject$statistics) == 1) # no need for table with only 1 group
     return(violationsList)

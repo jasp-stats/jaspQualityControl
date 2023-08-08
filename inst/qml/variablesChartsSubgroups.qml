@@ -195,19 +195,6 @@ Form
   			}
 
 		}
-
-		CheckBox
-		{
-			name:								"manualTicksXAxis"
-			label: 								qsTr("Number of ticks on x-axis:")
-			childrenOnSameRow: 					true
-
-			DoubleField
-			{
-				name: 							"manualTicksXAxisValue"
-				defaultValue:					5
-			}
-		}
 	}
 
 	Section
