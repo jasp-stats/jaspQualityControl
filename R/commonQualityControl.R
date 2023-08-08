@@ -955,10 +955,11 @@ KnownControlStats.RS <- function(N, sigma) {
 # 
 # .controlChartPlotFunction(dataset, plotType = "s")
 # 
-
-
-
-
+# 
+# dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Datasets/ControlChartError2.csv")
+# dataset <- dataset[c(3,8)]
+# 
+# 
 ###################
 ###################
 ###################
@@ -1202,9 +1203,9 @@ KnownControlStats.RS <- function(N, sigma) {
   xLimits <- c(min(xBreaks), max(xBreaks) * 1.15)
   
   if (!identical(xAxisLabels, "")) {
+    if (max(xBreaks) > length(xAxisLabels)) # sometimes pretty makes an axis that goes beyond the labels that are given, this must be avoided else it will display an NA on this tick
+      xBreaks[length(xBreaks)] <- length(xAxisLabels)
     xLabels <- xAxisLabels[xBreaks]
-    # sometimes pretty makes an axis that goes beyond the labels that are given, then it should not display an NA
-    xLabels[is.na(xLabels)] <- ""
   } else {
     xLabels <- xBreaks
   }
