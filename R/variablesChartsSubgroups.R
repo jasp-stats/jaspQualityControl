@@ -19,6 +19,7 @@
 variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   
   #dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartLongFormatStagesMultiDefined.csv")
+  #dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Datasets/ControlChartError.csv")
   
   wideFormat <- (options[["CCDataFormat"]] == "CCwideFormat")
   
@@ -84,9 +85,10 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
       }
       measurements <- colnames(dataset)
-      axisLabels <- ""
+      axisLabels <- as.character(seq_len(nrow(dataset)))
       if (stages != "") {
         dataset[[stages]] <- stagesPerSubgroup
+        axisLabels <- axisLabels[order(dataset[[stages]])]
       }
     } else {
       subgroups <- dataset[[subgroupVariable]]
@@ -95,18 +97,22 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       if (stages != "") {
         # this line checks whether there are any subgroups with more than one stage assigned, so we can display a message later that only the first stage is used
         multipleStagesPerSubgroupDefined <- any(table(dplyr::count_(dataset, vars = c(stages, subgroupVariable))[subgroupVariable]) > 1)
-        # Only take the first stage of each subgroup, to avoid multiple stages being defined
-        stagesPerSubgroup <- dataset[[stages]][as.vector(cumsum(table(subgroups)) + 1 - table(subgroups))]
-        dataset[[stages]] <- stagesPerSubgroup
+        # Only take the first defined stage of each subgroup, to avoid multiple stages being defined
+        stagesPerSubgroup <- dataset[[stages]][match(unique(subgroups), subgroups)]
       }
       occurenceVector <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
       dataset$occurence <- occurenceVector
       # transform into one group per row
-      dataset <- tidyr::pivot_wider(data = dataset, values_from = tidyr::all_of(measurements), names_from = occurence)
+      dataset <- tidyr::pivot_wider(data = dataset[c(measurements, subgroupVariable, "occurence")],
+                                    values_from = tidyr::all_of(measurements), names_from = occurence)
       # arrange into dataframe 
       dataset <- as.data.frame(dataset)
       measurements <- as.character(unique(occurenceVector))
       axisLabels <- dataset[[subgroupVariable]]
+      if (stages != ""){
+        dataset[[stages]] <- stagesPerSubgroup
+        axisLabels <- axisLabels[order(dataset[[stages]])]
+      }
     }
   }  else if (wideFormat && ready && axisLabels != "") {
     axisLabels <- dataset[[axisLabels]]
