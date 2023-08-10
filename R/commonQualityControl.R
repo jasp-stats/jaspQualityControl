@@ -843,11 +843,19 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   if (type == "r"){
     rowRanges <- .rowRanges(df)$ranges
     n <- .rowRanges(df)$n
-    d2s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[1]))
-    sdWithin <- sum((n - 1) * rowRanges / d2s) / sum(n - 1) # Burr (1969), equation 11
+    if (sum(n) < 2) {
+      sdWithin <- 0
+    } else {
+      d2s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[1]))
+      sdWithin <- sum((n - 1) * rowRanges / d2s) / sum(n - 1) # Burr (1969), equation 11
+    }
   } else if (type == "s") {
     rowSd <- apply(df, 1, sd, na.rm = TRUE)
+    if (sum(!is.na(rowSd)) == 0) {
+      sdWithin <- 0
+    } else {
     sdWithin <- mean(rowSd, na.rm = TRUE)
+    }
   }
   return(sdWithin)
 }
@@ -858,8 +866,6 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   n <- c()
   for (i in seq_len(nrow)) {
     rowVector <- df[i,]
-    if (sum((!is.na(rowVector))) < 2) # we need at least 2 values that are not NA to calculate range
-      next
     ranges <- c(ranges, max(rowVector, na.rm = TRUE) - min(rowVector, na.rm = TRUE))
     n <- c(n, sum(!is.na(rowVector)))
   }
@@ -891,8 +897,13 @@ KnownControlStats.RS <- function(N, sigma) {
     d3 <- Data.d3[N == Data.d3$n,2]
   }
   
+  if (N > 1) {
     c4 <- sqrt(2/(N-1)) * gamma(N/2) / gamma((N-1)/2)
     c5 <- sqrt(1 - c4^2)
+  } else {
+    c4 <- 0
+    c5 <- 0
+  }
   
   UCL <- d2 * sigma + 3 * d3 * sigma
   CL <- d2 * sigma
@@ -1196,14 +1207,14 @@ KnownControlStats.RS <- function(N, sigma) {
   
   # Calculations that apply to the whole plot
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$plotStatistic, plotData$LCL, plotData$UCL, plotData$center))
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(plotData$subgroup)
+  xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(plotData$subgroup))) # we only want integers on the x-axis
   
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis
     xBreaks[1] <- 1
   xLimits <- c(min(xBreaks), max(xBreaks) * 1.15)
   
   if (!identical(xAxisLabels, "")) {
-    if (max(xBreaks) > length(xAxisLabels)) # sometimes pretty makes an axis that goes beyond the labels that are given, this must be avoided else it will display an NA on this tick
+    if (max(xBreaks) > length(xAxisLabels)) # sometimes pretty creates breaks that go beyond the labels that are given, this must be avoided else it will display an NA on this tick
       xBreaks[length(xBreaks)] <- length(xAxisLabels)
     xLabels <- xAxisLabels[xBreaks]
   } else {
