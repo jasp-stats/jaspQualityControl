@@ -387,14 +387,19 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   if (chart == "p") {
     n = length(data$statistics)
     warnings <- data.frame(x = rep(1,n), Rule1 = rep(1,n), Rule2 = rep(1,n), Rule3 = rep(1,n))
-    for( i in 1:length(data$statistics)){
+    for( i in 1:length(data$statistics)) {
       warningsRaw <- Rspc::EvaluateRules(x = c(data$statistics[i],0), type = "c", lcl = data$limits[i,1], ucl = data$limits[i,2], cl = data$center, parRules = pars,
                                          whichRules = c(1:3,5,7:8))[1,]
       warnings[i,] <- warningsRaw
     }
   } else {
-    warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = data$limits[1,1], ucl = data$limits[1,2], cl = data$center[1], parRules = pars,
-                                    whichRules = c(1:3,5,7:8))
+      lcl <- ifelse(is.nan(data$limits[1,1]), NA, data$limits[1,1])
+      ucl <- ifelse(is.nan(data$limits[1,2]), NA, data$limits[1,2])
+    
+      warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = lcl, ucl = ucl, cl = data$center[1], parRules = pars,
+                        whichRules = c(1:3,5,7:8))
+    # warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = data$limits[1,1], ucl = data$limits[1,2], cl = data$center[1], parRules = pars,
+    #                                 whichRules = c(1:3,5,7:8))
   }
 
   if (allsix) {
@@ -840,6 +845,12 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
 .sdXbar <- function(df, type = c("s", "r")) {
   type <- match.arg(type)
+  
+  # exclude groups with single observation from calculation
+  rowRemovalIndex <- which(apply(df, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
+   if (length(rowRemovalIndex) != 0)
+    df <- df[-rowRemovalIndex, ]
+  
   if (type == "r"){
     rowRanges <- .rowRanges(df)$ranges
     n <- .rowRanges(df)$n
@@ -1082,7 +1093,7 @@ KnownControlStats.RS <- function(N, sigma) {
       UWL2 <- WL2$UCL
       LWL2 <- WL2$LCL
     } else if (plotType == "s") { 
-      #remove rows with single observation as no meaningful sd and no CL can be computed
+      # remove rows with single observation as no meaningful sd and no CL can be computed
       # rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
       # if (length(rowRemovalIndex) != 0)
       #   dataCurrentStage <- dataCurrentStage[-rowRemovalIndex, ]
