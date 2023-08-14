@@ -393,13 +393,10 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       warnings[i,] <- warningsRaw
     }
   } else {
-      lcl <- ifelse(is.nan(data$limits[1,1]), NA, data$limits[1,1])
-      ucl <- ifelse(is.nan(data$limits[1,2]), NA, data$limits[1,2])
-    
+      lcl <- ifelse(is.nan(data$limits[1,1]) || is.na(data$limits[1,1]), NA, data$limits[1,1])
+      ucl <- ifelse(is.nan(data$limits[1,2])  || is.na(data$limits[1,2]), NA, data$limits[1,2])
       warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = lcl, ucl = ucl, cl = data$center[1], parRules = pars,
                         whichRules = c(1:3,5,7:8))
-    # warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = data$limits[1,1], ucl = data$limits[1,2], cl = data$center[1], parRules = pars,
-    #                                 whichRules = c(1:3,5,7:8))
   }
 
   if (allsix) {
@@ -887,12 +884,12 @@ KnownControlStats.RS <- function(N, sigma) {
 
   Data.d3 <- data.frame(
     n = 1:25,
-    d3 = c(0, 0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
+    d3 = c(NA, 0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
            0.7562, 0.7499, 0.7441, 0.7386, 0.7335, 0.7287, 0.7242, 0.7199, 0.7159, 0.7121, 0.7084))
 
   Data.d2 <- data.frame(
     n = 1:50,
-    d2 = c(0, 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
+    d2 = c(NA, 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
             3.588 ,3.640 ,3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931, 3.964, 3.997, 4.027, 4.057, 4.086, 4.113,
             4.139 ,4.165 ,4.189, 4.213, 4.236, 4.259, 4.280, 4.301, 4.322, 4.341, 4.361, 4.379, 4.398, 4.415, 4.433,
             4.450 ,4.466, 4.482, 4.498))
@@ -950,8 +947,8 @@ KnownControlStats.RS <- function(N, sigma) {
         }
         LCL <- max(0, LCL) # LCL in S-chart must be >= 0
       } else {
-        LCL <- 0
-        UCL <- 0
+        LCL <- NA
+        UCL <- NA
       }
     }
     UCLvector <- c(UCLvector, UCL)
@@ -1013,13 +1010,15 @@ KnownControlStats.RS <- function(N, sigma) {
   }
   
   ### Calculate plot values per stage and combine into single dataframe ###
-  plotData <- data.frame(matrix(ncol = 7, nrow = 0))
+  plotData <- data.frame(matrix(ncol = 4, nrow = 0))
+  clData <- data.frame(matrix(ncol = 5, nrow = 0))
   tableList <- list()
-  colnames(plotData) <- c("plotStatistic", "subgroup", "stage", "LCL", "UCL", "center", "dotColor")
+  colnames(plotData) <- c("plotStatistic", "subgroup", "stage", "dotColor")
+  colnames(clData) <- c("subgroup", "stage", "LCL", "UCL", "center")
   if (warningLimits) {
     warningLimitsDf <- data.frame(matrix(ncol = 4, nrow = 0))
     colnames(warningLimitsDf) <- c("UWL1", "LWL1", "UWL2", "LWL2")
-    plotData <- cbind(plotData, warningLimitsDf) 
+    clData <- cbind(clData, warningLimitsDf) 
   }
   dfLabel <- data.frame(matrix(ncol = 3, nrow = 0))
   colnames(dfLabel) <- c("x", "y", "label")
@@ -1093,18 +1092,12 @@ KnownControlStats.RS <- function(N, sigma) {
       UWL2 <- WL2$UCL
       LWL2 <- WL2$LCL
     } else if (plotType == "s") { 
-      # remove rows with single observation as no meaningful sd and no CL can be computed
-      # rowRemovalIndex <- which(apply(dataset, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
-      # if (length(rowRemovalIndex) != 0)
-      #   dataCurrentStage <- dataCurrentStage[-rowRemovalIndex, ]
-      
       if(phase2) {
         sigma <- phase2Sd
       } else {
         sigma <- .sdXbar(df = dataCurrentStage, type = "s")
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage))
-      qccObject$statistics[is.na(qccObject$statistics)] <- 0 # if n = 1, the qcc package gives out NA, but we want to plot a 0 
       plotStatistic <- qccObject$statistics
      
       
@@ -1143,24 +1136,33 @@ KnownControlStats.RS <- function(N, sigma) {
       dotColor <- 'blue'
     }
     
-    stageData <- data.frame("plotStatistic" = plotStatistic,
+    stagePlotData <- data.frame("plotStatistic" = plotStatistic,
                             "subgroup" = subgroups,
                             "stage" = stage,
-                            "LCL" = LCL,
-                            "UCL" = UCL,
-                            "center" = center,
                             "dotColor" = dotColor)
+    stageClData <- data.frame("subgroup" = subgroups,
+                              "stage" = stage,
+                              "LCL" = LCL,
+                              "UCL" = UCL,
+                              "center" = center)
+    
     if (warningLimits) {
-      stageData <- cbind(stageData,
+      stageClData <- cbind(stageClData,
                          data.frame("UWL1" = UWL1,
                                     "LWL1" = LWL1,
                                     "UWL2" = UWL2,
                                     "LWL2" = LWL2))
     }
     
-    plotData <- rbind(plotData, stageData)
-    allStageValues <- c(plotStatistic, LCL, UCL, center)
-    decimals <- .numDecimals #max(.decimalplaces(allStageValues))
+    # offset to align geom_step lines with observations
+    stageClData <- rbind(stageClData, stageClData[nrow(stageClData),])
+    stageClData[["subgroup"]][nrow(stageClData)] <- stageClData[["subgroup"]][nrow(stageClData)] + 1
+    stageClData[["subgroup"]][-1] <- stageClData[["subgroup"]][-1] - 0.5
+    
+    
+    plotData <- rbind(plotData, stagePlotData)
+    clData <- rbind(clData, stageClData)
+    decimals <- .numDecimals
     # even if there are multiple different centers, LCL and UCL, only the last one is shown on the label
     lastCenter <- center[length(center)]
     lastLCL <- LCL[length(LCL)]
@@ -1217,7 +1219,7 @@ KnownControlStats.RS <- function(N, sigma) {
   }
   
   # Calculations that apply to the whole plot
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$plotStatistic, plotData$LCL, plotData$UCL, plotData$center))
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$plotStatistic, clData$LCL, clData$UCL, clData$center))
   xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(plotData$subgroup))) # we only want integers on the x-axis
   
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis
@@ -1241,27 +1243,28 @@ KnownControlStats.RS <- function(N, sigma) {
   )
   
   # Create plot
-  plotObject <- ggplot2::ggplot(plotData, ggplot2::aes(x = subgroup, y = plotStatistic, group = stage)) +
+  plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, y = plotStatistic, group = stage)) +
     ggplot2::geom_vline(xintercept = seperationLines) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = "dashed") +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = "dashed")
   if (warningLimits) {
-    plotObject <- plotObject + ggplot2::geom_step(data = plotData, mapping = ggplot2::aes(x = subgroup, y = UWL1), col = "orange",
+    plotObject <- plotObject + ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = UWL1), col = "orange",
                                                   linewidth = 1, linetype = "dashed") +
-      ggplot2::geom_step(data = plotData, mapping = ggplot2::aes(x = subgroup, y = LWL1), col = "orange",
+      ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = LWL1), col = "orange",
                          linewidth = 1, linetype = "dashed") +
-      ggplot2::geom_step(data = plotData, mapping = ggplot2::aes(x = subgroup, y = UWL2), col = "orange",
+      ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = UWL2), col = "orange",
                          linewidth = 1, linetype = "dashed") +
-      ggplot2::geom_step(data = plotData, mapping = ggplot2::aes(x = subgroup, y = LWL2), col = "orange",
+      ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = LWL2), col = "orange",
                          linewidth = 1, linetype = "dashed")
   }
   plotObject <- plotObject + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = label),
                                                  inherit.aes = FALSE, size = 4.5) +
     ggplot2::scale_y_continuous(name = xTitle, breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext("Subgroup"), breaks = xBreaks, limits = xLimits, labels = xLabels) +
-    jaspGraphs::geom_line(color = "blue") +
-    jaspGraphs::geom_point(size = 4, fill = plotData$dotColor, inherit.aes = TRUE) +
+    jaspGraphs::geom_line(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue") +
+    jaspGraphs::geom_point(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), 
+                           size = 4, fill = plotData$dotColor, inherit.aes = TRUE) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
   
