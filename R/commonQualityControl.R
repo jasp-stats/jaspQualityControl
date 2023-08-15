@@ -968,15 +968,15 @@ KnownControlStats.RS <- function(N, sigma) {
 
 
 # Xbar
-#  dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
-#  dataset <- dataset[2:6]
+#dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
+#dataset <- dataset[2:6]
 #  options <- list()
 # 
 # .controlChartPlotFunction(dataset, plotType = "s")
 # 
 # 
-# dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Datasets/ControlChartError2.csv")
-# dataset <- dataset[c(3,8)]
+# dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Datasets/ControlChartError.csv")
+#dataset <- dataset[c(3,7,8)]
 # 
 # 
 ###################
@@ -1023,6 +1023,8 @@ KnownControlStats.RS <- function(N, sigma) {
   dfLabel <- data.frame(matrix(ncol = 3, nrow = 0))
   colnames(dfLabel) <- c("x", "y", "label")
   seperationLines <- c()
+  dfStageLabels <- data.frame(matrix(ncol = 3, nrow = 0))
+  colnames(dfStageLabels) <- c("x", "y", "label")
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
@@ -1117,24 +1119,32 @@ KnownControlStats.RS <- function(N, sigma) {
         subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(qccObject$statistics))
       }
       seperationLines <- c(seperationLines, max(plotData$subgroup) + .5)
+      dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + 1, y = NA, label = stage))  # the y value will be filled in later
     } else {
       if (plotType == "MR") {
         subgroups <- c(1:length(qccObject$statistics) + 1)
       } else {
         subgroups <- seq_len(length(qccObject$statistics))
       }
+      if (nStages > 1)
+        dfStageLabels <- rbind(dfStageLabels, data.frame(x = 1, y = NA, label = stage))  # the y value will be filled in later
     }
     
-    #TODO: This should not just turn default blue, but only apply the out of bounds rule. Also add all the other rules such as more than half points red = all blue
-    if (length(qccObject$statistics) > 1) {
+    if (length(plotStatistic) > 1) {
       if (plotType == "MR") {
         dotColor <- ifelse(c(NA, NelsonLaws(qccObject)$red_points), 'red', 'blue')
       } else {
         dotColor <- ifelse(NelsonLaws(qccObject, allsix = plotType == "I")$red_points, 'red', 'blue')
       }
     } else {
-      dotColor <- 'blue'
+      dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue")
     }
+    # if more than half of the dots are violations, do not show red dots.
+    nOutOfLimits <- sum(dotColor == "red")
+    if (nOutOfLimits > length(qccObject$statistics)/2)
+      dotColor <- "blue"
+    
+    
     
     stagePlotData <- data.frame("plotStatistic" = plotStatistic,
                             "subgroup" = subgroups,
@@ -1241,6 +1251,8 @@ KnownControlStats.RS <- function(N, sigma) {
                     "MR" = "Moving range",
                     "s" = "Sample std. dev."
   )
+  if (nStages > 1)
+    dfStageLabels$y <- max(yBreaks)
   
   # Create plot
   plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, y = plotStatistic, group = stage)) +
@@ -1248,6 +1260,8 @@ KnownControlStats.RS <- function(N, sigma) {
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = "dashed") +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = "dashed")
+  if (nStages > 1)
+    plotObject <- plotObject + ggplot2::geom_text(data = dfStageLabels, mapping = ggplot2::aes(x = x, y = y, label = label), size = 6, fontface="bold")
   if (warningLimits) {
     plotObject <- plotObject + ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = UWL1), col = "orange",
                                                   linewidth = 1, linetype = "dashed") +
@@ -1291,11 +1305,6 @@ KnownControlStats.RS <- function(N, sigma) {
     Test <- NelsonLaws(data = qccObject, xLabels = subgroups)
   }
   
-  if (type == "R") {
-    Test$Rules$R1 <- Test$Rules$R1 + 1  
-    Test$Rules$R2 <- Test$Rules$R2 + 1
-    Test$Rules$R3 <- Test$Rules$R3 + 1
-  }
   violationsList[["test1"]] <- Test$Rules$R1
   violationsList[["test2"]] <- Test$Rules$R2
   violationsList[["test3"]] <- Test$Rules$R3

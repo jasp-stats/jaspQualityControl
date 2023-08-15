@@ -114,8 +114,10 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         axisLabels <- axisLabels[order(dataset[[stages]])]
       }
     }
-  }  else if (wideFormat && ready && axisLabels != "") {
-    axisLabels <- dataset[[axisLabels]]
+  }  else if (wideFormat && ready) {
+    multipleStagesPerSubgroupDefined <- FALSE # not possible in this format
+    if (axisLabels != "")
+      axisLabels <- dataset[[axisLabels]]
   }
   
   #Checking for errors in the dataset
@@ -152,8 +154,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                                                phase2 = options[["Phase2"]], phase2Mu = options[["mean"]], phase2Sd = options[["SD"]],
                                                limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
                                                warningLimits = options[["Wlimits"]], xAxisLabels = axisLabels)
-        secondChart <- .controlChartPlotFunction(dataset[columnsToPass], plotType = secondPlotType, , stages = stages, phase2 = options$Phase2,
-                                                 phase2Sd = options$SD, limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+        secondChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = secondPlotType, , stages = stages, phase2 = options[["Phase2"]],
+                                                 phase2Sd = options[["SD"]], limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
                                                  xAxisLabels = axisLabels)
         jaspResults[["controlCharts"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
       }
