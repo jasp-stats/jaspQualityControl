@@ -1138,12 +1138,12 @@ KnownControlStats.RS <- function(N, sigma) {
       }
     } else {
       dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue")
+      dotColor[is.na(dotColor)] <- "blue"
     }
     # if more than half of the dots are violations, do not show red dots.
     nOutOfLimits <- sum(dotColor == "red")
     if (nOutOfLimits > length(qccObject$statistics)/2)
       dotColor <- "blue"
-    
     
     
     stagePlotData <- data.frame("plotStatistic" = plotStatistic,
@@ -1167,7 +1167,7 @@ KnownControlStats.RS <- function(N, sigma) {
     # offset to align geom_step lines with observations
     stageClData <- rbind(stageClData, stageClData[nrow(stageClData),])
     stageClData[["subgroup"]][nrow(stageClData)] <- stageClData[["subgroup"]][nrow(stageClData)] + 1
-    stageClData[["subgroup"]][-1] <- stageClData[["subgroup"]][-1] - 0.5
+    stageClData[["subgroup"]] <- stageClData[["subgroup"]] - 0.5
     
     
     plotData <- rbind(plotData, stagePlotData)
@@ -1234,7 +1234,7 @@ KnownControlStats.RS <- function(N, sigma) {
   
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis
     xBreaks[1] <- 1
-  xLimits <- c(min(xBreaks), max(xBreaks) * 1.15)
+  xLimits <- c(0.5, max(xBreaks) * 1.15)
   
   if (!identical(xAxisLabels, "")) {
     if (max(xBreaks) > length(xAxisLabels)) # sometimes pretty creates breaks that go beyond the labels that are given, this must be avoided else it will display an NA on this tick
