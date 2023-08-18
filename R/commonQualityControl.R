@@ -978,7 +978,13 @@ KnownControlStats.RS <- function(N, sigma) {
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Datasets/ControlChartError.csv")
 #dataset <- dataset[c(3,7,8)]
 # 
-# 
+
+# dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_2_VariablesChartsForIndividuals/IndividualChartStages.csv")
+# xLabels <- dataset$Month
+# dataset <- dataset[c(1,3)]
+# .controlChartPlotFunction(dataset, plotType = "I", stages = "Stage", xAxisLabels = xLabels)
+# .controlChartPlotFunction(dataset, plotType = "MR", stages = "Stage", xAxisLabels = xLabels)
+
 ###################
 ###################
 ###################
@@ -986,7 +992,7 @@ KnownControlStats.RS <- function(N, sigma) {
 
 .controlChartPlotFunction <- function(dataset, plotType = c("xBar", "R", "I", "MR", "s"), stages = "",
                                       xBarSdType = c("r", "s"), phase2 = FALSE, phase2Mu = "", phase2Sd = "", limitsPerSubgroup = FALSE,
-                                      warningLimits = FALSE, xAxisLabels = "", movingRangeLength = "") {
+                                      warningLimits = FALSE, xAxisLabels = "", movingRangeLength = 2) {
   tableTitle <- switch (plotType,
     "xBar" = "x-bar",
     "R" = "range",
@@ -1031,19 +1037,25 @@ KnownControlStats.RS <- function(N, sigma) {
     if (plotType == "I" || plotType == "MR" ) {
       k <- movingRangeLength
       # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
-      mrMatrix <- matrix(dataCurrentStage[1:(length(dataCurrentStage) - (k - 1))])   # remove last k - 1 elements
+      dataCurrentStageVector <- unlist(dataCurrentStage)
+      mrMatrix <- matrix(dataCurrentStageVector[1:(length(dataCurrentStageVector) - (k - 1))])   # remove last k - 1 elements
       for (j in 2:k) {
-        mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStage[j:(length(dataCurrentStage) - (k - j))]))   # remove first i and last (k - i) elements
+        mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[j:(length(dataCurrentStageVector) - (k - j))]))   # remove first i and last (k - i) elements
       }
       meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges)
       d2 <- KnownControlStats.RS(k, 3)[[1]][1]
       sd <- meanMovingRange/d2
-      if (type == "I") {
+      if (plotType == "I") {
         qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sd)
+        plotStatistic <- qccObject$statistics
       } else if (plotType == "MR") {
         qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sd)
         plotStatistic <- c(NA, qccObject$statistics)
       }
+      limits <- qccObject$limits
+      LCL <- limits[1]
+      UCL <- limits[2]
+      center <- qccObject$center
     } else if (plotType == "R") { 
       n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
@@ -1122,7 +1134,7 @@ KnownControlStats.RS <- function(N, sigma) {
       dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + 1, y = NA, label = stage))  # the y value will be filled in later
     } else {
       if (plotType == "MR") {
-        subgroups <- c(1:length(qccObject$statistics) + 1)
+        subgroups <- seq_len(length(qccObject$statistics) + 1)
       } else {
         subgroups <- seq_len(length(qccObject$statistics))
       }
@@ -1141,7 +1153,7 @@ KnownControlStats.RS <- function(N, sigma) {
       dotColor[is.na(dotColor)] <- "blue"
     }
     # if more than half of the dots are violations, do not show red dots.
-    nOutOfLimits <- sum(dotColor == "red")
+    nOutOfLimits <- sum(dotColor[!is.na(dotColor)] == "red")
     if (nOutOfLimits > length(qccObject$statistics)/2)
       dotColor <- "blue"
     
