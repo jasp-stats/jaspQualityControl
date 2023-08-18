@@ -49,7 +49,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       subgroups <- splitFactor
   }
 
-   #Checking for errors in the dataset
+   # Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues', "observations"),
              infinity.target = c(options[["measurement"]], options[["axisLabels"]]),
              missingValues.target = c(options[["measurement"]], options[["axisLabels"]]),
