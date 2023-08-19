@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2023-07-08 03:44\n"
-"PO-Revision-Date: 2023-07-26 07:07+0000\n"
+"PO-Revision-Date: 2023-08-14 10:52+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -253,9 +253,8 @@ msgstr "Pareto-Diagramm Standardisierter Effekte"
 msgid "Pareto Chart of Unstandardized Effects"
 msgstr "Pareto-Diagramm Unstandardisierter Effekte"
 
-#, fuzzy
 msgid "Unstandardized Effect"
-msgstr "Standardisierter Effekt"
+msgstr "Unstandardisierter Effekt"
 
 msgid "Residuals versus Fitted Values"
 msgstr "Residuen vs. angepasste Werte"
@@ -379,10 +378,10 @@ msgid "Missing Runs"
 msgstr "Fehlende Abläufe"
 
 msgid "Continuous factors"
-msgstr ""
+msgstr "Kontinuierliche Faktoren"
 
 msgid "Categorical factors"
-msgstr ""
+msgstr "Kategorielle Faktoren"
 
 #, fuzzy
 msgid "Centre points in cube"
@@ -396,7 +395,7 @@ msgid "Centre points"
 msgstr "Zentralpunkte"
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
-msgstr "Box-BehnkenDesign wird für 8 Variablen nicht unterstützt."
+msgstr "Box-Behnken-Versuchsplan wird für 8 Variablen nicht unterstützt."
 
 msgid "Response Surface Design - Central Composite Design"
 msgstr "Wirkungsflächenversuchsplan - zentral zusammengesetzter Versuchsplan"
@@ -741,13 +740,12 @@ msgstr ""
 "Jedes einzelne Teil muss einen entsprechenden Referenzwert haben. %1$i "
 "Referenzwerte wurden für %2$s einzelne Teile gefunden."
 
-#, fuzzy
 msgid ""
 "T-Test requires more than 1 measurement per part. Less than 2 valid "
 "measurement(s) detected in Part(s) %s."
 msgstr ""
-"T-Test erfordert mehr als 1 Messung. %1$i gültige Messung(en) in %2$s "
-"erkannt."
+"T-Test erfordert mehr als 1 Messung pro Teil. Weniger als 2 gültige "
+"Messungen in Teilen erkannt %s."
 
 msgid "T-Test not possible. No variance detected in Part(s) %s."
 msgstr ""
