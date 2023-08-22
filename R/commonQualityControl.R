@@ -1131,7 +1131,7 @@ KnownControlStats.RS <- function(N, sigma) {
         subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(qccObject$statistics))
       }
       seperationLines <- c(seperationLines, max(plotData$subgroup) + .5)
-      dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + 1, y = NA, label = stage))  # the y value will be filled in later
+      dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + length(subgroups)/2, y = NA, label = stage))  # the y value will be filled in later
     } else {
       if (plotType == "MR") {
         subgroups <- seq_len(length(qccObject$statistics) + 1)
@@ -1139,7 +1139,7 @@ KnownControlStats.RS <- function(N, sigma) {
         subgroups <- seq_len(length(qccObject$statistics))
       }
       if (nStages > 1)
-        dfStageLabels <- rbind(dfStageLabels, data.frame(x = 1, y = NA, label = stage))  # the y value will be filled in later
+        dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(subgroups)/2, y = NA, label = stage))  # the y value will be filled in later
     }
     
     if (length(plotStatistic) > 1) {
