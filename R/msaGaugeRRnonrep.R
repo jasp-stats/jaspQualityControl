@@ -17,7 +17,6 @@
 
 #' @export
 msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
-
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   if(!wideFormat){
     measurements <- unlist(options[["measurementLongFormat"]])
@@ -86,27 +85,39 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       jaspResults[["gaugeRRNonRep"]]$dependOn(c("processVariationReference", "historicalSdValue", "toleranceValue", "studyVarianceMultiplierType",
                                                 "studyVarianceMultiplierValue", "varianceComponentsGraph"))
     }
-
+    
     # R chart by operator
-    if (options[["rChart"]]) {
-      if (is.null(jaspResults[["NRrCharts"]])) {
-        jaspResults[["NRrCharts"]] <- createJaspContainer(gettext("Range Chart by Operator"))
-        jaspResults[["NRrCharts"]]$position <- 2
-      }
-      jaspResults[["NRrCharts"]] <- .xBarOrRangeChart(type = "Range", dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options =  options, ready = ready)
-      jaspResults[["NRrCharts"]]$dependOn("NRrCharts")
+    if (options[["NRrCharts"]] && is.null(jaspResults[["NRrCharts"]])) {
+      jaspResults[["NRrCharts"]] <- createJaspContainer(gettext("Range Chart by Operator"))
+      jaspResults[["NRrCharts"]]$position <- 2
+      jaspResults[["NRrCharts"]]$dependOn(c("NRrCharts", "measurements", "measurementsWide"))
+      jaspResults[["NRrCharts"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
+      
+      if (ready) {
+        rChart <- .controlChartPlotFunction(dataset = datasetWide[c(wideMeasurementCols, operators)],
+                                            plotType = "R", stages = operators,
+                                            xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])])
+        jaspResults[["NRrCharts"]][["plot"]]$plotObject <- rChart$plotObject
+        jaspResults[["NRrCharts"]][["table"]] <- rChart$table
+      } 
     }
 
     # Xbar chart by operator
-    if (options[["xBarChart"]]) {
-      if (is.null(jaspResults[["NRxbarCharts"]])) {
+    if (options[["NRxbarCharts"]] && is.null(jaspResults[["NRxbarCharts"]])) {
         jaspResults[["NRxbarCharts"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
         jaspResults[["NRxbarCharts"]]$position <- 3
-      }
-      jaspResults[["NRxbarCharts"]] <- .xBarOrRangeChart(type = "Xbar", dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options =  options, ready = ready)
-      jaspResults[["NRxbarCharts"]]$dependOn("NRxbarCharts")
+        jaspResults[["NRxbarCharts"]]$dependOn(c("NRxbarCharts", "measurements", "measurementsWide"))
+        jaspResults[["NRxbarCharts"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
+        if (ready) {
+          xBarChart <- .controlChartPlotFunction(dataset = datasetWide[c(wideMeasurementCols, operators)],
+                                                 plotType = "xBar", xBarSdType = "r", stages = operators,
+                                                 xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])])
+          jaspResults[["NRxbarCharts"]][["plot"]]$plotObject <- xBarChart$plotObject
+          jaspResults[["NRxbarCharts"]][["table"]] <- xBarChart$table
+          
+        }
     }
-
+    
     #Measurement by part x operator plot
     if (options[["partMeasurementPlot"]] & ready) {
       if (is.null(jaspResults[["NRpartOperatorGraph"]])) {
@@ -433,7 +444,9 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
   if (options[["reportRChartByOperator"]]) {
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .xBarOrRangeChart("Range", datasetWide, measurementsWide, parts, operators, options, ready = TRUE)$plotObject #R chart by operator
+    plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = datasetWide[c(measurementsWide, operators)],
+                                                          plotType = "R", stages = operators,
+                                                          xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])])$plotObject #R chart by operator
   }
   if (options[["reportMeasurementsByOperatorPlot"]]) {
     indexCounter <- indexCounter + 1
@@ -441,7 +454,9 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
   if (options[["reportAverageChartByOperator"]]) {
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .xBarOrRangeChart("Xbar", datasetWide, measurementsWide, parts, operators, options, ready = TRUE)$plotObject #Average chart by operator
+    plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = datasetWide[c(measurementsWide, operators)],
+                                                          plotType = "xBar", xBarSdType = "r", stages = operators,
+                                                          xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])])$plotObject #Average chart by operator
   }
 
   if (indexCounter == 0) {

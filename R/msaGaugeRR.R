@@ -17,7 +17,6 @@
 
 #' @export
 msaGaugeRR <- function(jaspResults, dataset, options, ...) {
-#dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/1_3_Type2and3GaugerR/GaugerRWideFormat.csv")
   # Reading the data in the correct format
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat)
@@ -123,8 +122,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     jaspResults[["trafficPlot"]] <- NULL
 
     jaspResults[["anovaGaugeReport"]] <- .anovaGaugeReport(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options = options, Type3 = Type3)
-    jaspResults[["anovaGaugeReport"]]$dependOn(c("reportReportedBy", "reportTitle", "reportGaugeName", "reportDate",
-                                                 "reportMiscellaneous", "report"))
+    jaspResults[["anovaGaugeReport"]]$dependOn(c("anovaGaugeReportedBy", "anovaGaugeTitle", "anovaGaugeName", "anovaGaugeDate",
+                                                 "anovaGaugeMisc", "anovaGaugeReport", "measurements", "measurementsLong"))
   } else {
     # Gauge r&R ANOVA Table
     if (options[["anova"]]) {
@@ -141,27 +140,31 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     if (options[["gaugeRchart"]] && is.null(jaspResults[["gaugeRchart"]])) {
       jaspResults[["gaugeRchart"]] <- createJaspContainer(gettext("Range chart by operator"))
       jaspResults[["gaugeRchart"]]$position <- 3
-      jaspResults[["gaugeRchart"]]$dependOn(c("gaugeRchart", "gaugeRRmethod", "anovaGaugeReport"))
-      rChart <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
-                                          plotType = "R", stages = operators,
-                                          xAxisLabels = dataset[[parts]][order(dataset[[operators]])])
+      jaspResults[["gaugeRchart"]]$dependOn(c("gaugeRchart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
       jaspResults[["gaugeRchart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
-      jaspResults[["gaugeRchart"]][["plot"]]$plotObject <- rChart$plotObject
-      jaspResults[["gaugeRchart"]][["table"]] <- rChart$table
-      
+      if (ready) {
+        rChart <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
+                                            plotType = "R", stages = operators,
+                                            xAxisLabels = dataset[[parts]][order(dataset[[operators]])])
+        
+        jaspResults[["gaugeRchart"]][["plot"]]$plotObject <- rChart$plotObject
+        jaspResults[["gaugeRchart"]][["table"]] <- rChart$table
+      }
     }
     
     # Xbar chart by operator
     if (options[["gaugeXbarChart"]] && is.null(jaspResults[["gaugeXbarChart"]])) {
       jaspResults[["gaugeXbarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
       jaspResults[["gaugeXbarChart"]]$position <- 4
-      jaspResults[["gaugeXbarChart"]]$dependOn(c("gaugeXbarChart", "gaugeRRmethod", "anovaGaugeReport"))
-      xBarChart <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
-                                             plotType = "xBar", xBarSdType = "r", stages = operators,
-                                             xAxisLabels = dataset[[parts]][order(dataset[[operators]])])
+      jaspResults[["gaugeXbarChart"]]$dependOn(c("gaugeXbarChart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
       jaspResults[["gaugeXbarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
-      jaspResults[["gaugeXbarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
-      jaspResults[["gaugeXbarChart"]][["table"]] <- xBarChart$table
+      if (ready) {
+        xBarChart <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
+                                               plotType = "xBar", xBarSdType = "r", stages = operators,
+                                               xAxisLabels = dataset[[parts]][order(dataset[[operators]])])
+        jaspResults[["gaugeXbarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
+        jaspResults[["gaugeXbarChart"]][["table"]] <- xBarChart$table
+      }
     }
 
     # gauge Scatter Plot Operators
@@ -571,99 +574,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
   return(anovaTables)
-}
-
-.xBarOrRangeChart <- function(type = c("Average", "Range"), dataset, measurements, parts, operators, options, ready, Type3 = FALSE) {
-  if (!ready) {
-    plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 900, height = 300)
-    return(plot)
-  }
-  if (length(measurements) < 2) {
-    plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 900, height = 300)
-    plot$setError(gettext("More than 1 Measurement per Operator required."))
-    return(plot)
-  }
-  plot <- createJaspPlot(title = gettextf("%s Chart by Operator", type), width = 2500, height = 300)
-  plot$plotObject <- .xBarOrRangeChartPlotFunction(type, dataset, measurements, parts, operators, options, smallLabels = TRUE, Type3)
-  return(plot)
-}
-
-.xBarOrRangeChartPlotFunction <- function(type = c("Average", "Range"), dataset, measurements, parts, operators, options, smallLabels = FALSE, Type3 = FALSE){
-  operatorVector <- unique(dataset[[operators]])
-  nOperators <- length(operatorVector)
-  data <- dataset[measurements]
-  if (type == "Range") {
-    ChartData <- qcc::qcc(data, type= 'R', plot = FALSE)
-    leftLabel <- "Sample range"
-  }else{
-    ChartData <- qcc::qcc(data, type= 'xbar', plot = FALSE)
-    leftLabel <- "Sample average"
-  }
-  center <- ChartData$center
-  UCL <- max(ChartData$limits)
-  LCL <- min(ChartData$limits)
-  manualLimits <- c(LCL, center, UCL)
-
-  plotMat <- list()
-  titleVector <- vector(mode = "character")
-
-  for (i in 1:nOperators) {
-    op <- as.character(operatorVector[i])
-    xAxisLab <- parts
-
-    if (Type3) {
-      dataPerOP <- dataset
-      title <- ""
-      manualSubgroups <- ""
-      manualXaxis <- ""
-      plotLimitLabels <- TRUE
-      } else {
-      dataPerOP <- subset(dataset, dataset[operators] == op)
-      manualSubgroups <- as.numeric(dataPerOP[[parts]])
-      manualXaxis <- unique(dataset[[parts]])
-      plotLimitLabels <- FALSE
-
-      if (!is.na(as.numeric(op)))
-        title <- gettextf("Operator %s", op)
-      else
-        title <- op
-      }
-
-    titleVector <- c(titleVector, title)
-    if (type == "Range"){
-      if (i == 1){
-        p1 <- .Rchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, manualSubgroups = manualSubgroups, plotLimitLabels = plotLimitLabels,
-                          xAxisLab = xAxisLab, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE, GaugeRR = TRUE)$p
-      }else if(i == nOperators){
-        p1 <- p1 <- .Rchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, manualSubgroups = manualSubgroups, yAxis = FALSE, GaugeRR = TRUE,
-                                xAxisLab = xAxisLab, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
-      }
-      else{
-        p1 <- p1 <- .Rchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE, GaugeRR = TRUE,
-                                xAxisLab = xAxisLab, yAxisLab = ggplot2::element_blank(), manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
-      }
-    }else{
-      if (i == 1){
-        p1 <- .Xbarchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits,
-                             warningLimits = FALSE, manualSubgroups = manualSubgroups, plotLimitLabels = plotLimitLabels, GaugeRR = TRUE,
-                             xAxisLab = xAxisLab, yAxisLab = leftLabel, manualDataYaxis = dataset[measurements], manualXaxis =manualXaxis, title = title, smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
-      }else if(i == nOperators){
-        p1 <- .Xbarchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, GaugeRR = TRUE,
-                             warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, xAxisLab = xAxisLab, manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title,
-                             smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
-      }else{
-        p1 <- .Xbarchart(dataset = dataPerOP[measurements], options = options, manualLimits = manualLimits, GaugeRR = TRUE,
-                             warningLimits = FALSE, manualSubgroups = manualSubgroups, yAxis = FALSE, plotLimitLabels = FALSE,
-                             xAxisLab = xAxisLab, manualDataYaxis = dataset[measurements], manualXaxis = manualXaxis, title = title,
-                             smallLabels = smallLabels, OnlyOutofLimit = TRUE)$p
-      }
-    }
-    plotMat[[i]] <- p1
-
-  }
-  p2 <- cowplot::plot_grid(plotlist = plotMat, ncol = nOperators, nrow = 1)
-
-  return(p2)
 }
 
 .gaugeByPartGraph <- function(dataset, measurements, parts, operators, options) {
