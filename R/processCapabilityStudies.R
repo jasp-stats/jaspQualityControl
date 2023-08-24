@@ -113,14 +113,31 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["pcReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["pcReport"]]$position <- 6
     }
-    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat)
-    jaspResults[["pcReport"]]$dependOn(c("report"))
+    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat, subgroups)
+    jaspResults[["pcReport"]]$dependOn(c('pcReportDisplay'))
   } else {
-
+    
     # X-bar and R Chart OR ImR Chart
-    if(options[["xBarAndRChart"]]){
-      .qcXbarAndRContainer(options, dataset, ready, jaspResults, measurements = measurements, subgroups = splitFactor, wideFormat = wideFormat)
-    } else if(options[["xmrChart"]]){
+    if(options[["xbarR"]]) {
+      jaspResults[["xbarR"]] <- createJaspContainer(gettext("X-bar and R Control Chart"))
+      jaspResults[["xbarR"]][["plot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
+      jaspResults[["xbarR"]]$dependOn(c("variables", "variablesLong", "subgroups", "xbarR"))
+      jaspResults[["xbarR"]]$position <- 1
+      
+      if (nrow(dataset[measurements]) > 50) { # if the subgroup size is above 50, the R package cannot calculate R charts.
+        jaspResults[["xbarR"]][["plot"]]$setError(gettext("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
+        return()
+      }
+      
+      # first chart is always xBar-chart, second is either R- or s-chart
+      #TODO: Implement option to choose betwen r and s chart
+      xBarChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
+                                             xAxisLabels = dataset[[subgroups]])
+      rChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "R", xAxisLabels = dataset[[subgroups]])
+      jaspResults[["xbarR"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(rChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+      jaspResults[["xbarR"]][["tableXBar"]] <- xBarChart$table
+      jaspResults[["xbarR"]][["tableR"]] <- rChart$table
+    } else if(options[["IMR"]]) {
       .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
     }
 
@@ -1459,7 +1476,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 
-.pcReport <- function(dataset, measurements, parts, operators, options, ready, container, splitFactor, wideFormat){
+.pcReport <- function(dataset, measurements, parts, operators, options, ready, container, splitFactor, wideFormat, subgroups){
 
   if (options[["reportTitle"]] == ""){
     title <- "Process Capability Report"
@@ -1498,9 +1515,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     # X-bar and R Chart OR ImR Chart
     if(options$xBarAndRChart){
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
+      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
+                                                            xAxisLabels = dataset[[subgroups]])$plotObject
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .Rchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
+      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "R", xAxisLabels = dataset[[subgroups]])$plotObject
     } else {
       IMRPlots <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = splitFactor, cowPlot = TRUE, Wide = wideFormat)
 

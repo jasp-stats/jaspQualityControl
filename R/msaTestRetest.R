@@ -69,16 +69,16 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   }
 
   # Rchart Range method
-  if (options[["rChart"]] && ready) {
-    if (is.null(jaspResults[["rangeRchart"]])) {
-      jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
-      jaspResults[["rangeRchart"]]$position <- 3
+  if (options[["rangeRchart"]] && is.null(jaspResults[["rangeRchart"]])) {
+    jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
+    jaspResults[["rangeRchart"]]$position <- 3
+    jaspResults[["rangeRchart"]]$dependOn(c("rangeRchart", "measurements", "measurementsLong", "parts"))
+    jaspResults[["rangeRchart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
+    if (ready) {
+      rChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "R", xAxisLabels = dataset[[parts]])
+      jaspResults[["rangeRchart"]][["plot"]]$plotObject <- rChart$plotObject
+      jaspResults[["rangeRchart"]][["table"]] <- rChart$table
     }
-    plot <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
-    plot$dependOn("rChart")
-    p <- .Rchart(dataset = dataset[measurements], options = options)$p
-    plot$plotObject <- p
-    jaspResults[["rangeRchart"]] <- plot
   }
 
   # Scatter Plot Operators
@@ -103,7 +103,6 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
                                                Xlab.StudySD = "Percent study variation of GRR", Xlab.Tol = "Percent tolerance of GRR")
 
   }
-
   return()
 }
 
