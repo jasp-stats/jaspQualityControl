@@ -118,27 +118,56 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   } else {
     
     # X-bar and R Chart OR ImR Chart
-    if(options[["xbarR"]]) {
+    if (subgroups == "") {
+      axisLabels <- ""
+    } else {
+      axisLabels <- dataset[[subgroups]]
+    }
+    
+    
+    if(options[["xbarR"]] && is.null(jaspResults[["xbarR"]])) {
       jaspResults[["xbarR"]] <- createJaspContainer(gettext("X-bar and R Control Chart"))
       jaspResults[["xbarR"]][["plot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
       jaspResults[["xbarR"]]$dependOn(c("variables", "variablesLong", "subgroups", "xbarR"))
       jaspResults[["xbarR"]]$position <- 1
       
-      if (nrow(dataset[measurements]) > 50) { # if the subgroup size is above 50, the R package cannot calculate R charts.
-        jaspResults[["xbarR"]][["plot"]]$setError(gettext("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
-        return()
+      if (ready) {
+        if (nrow(dataset[measurements]) > 50) { # if the subgroup size is above 50, the R package cannot calculate R charts.
+          jaspResults[["xbarR"]][["plot"]]$setError(gettext("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
+          return()
+        }
+        
+        # first chart is always xBar-chart, second is either R- or s-chart
+        #TODO: Implement option to choose betwen r and s chart
+        xBarChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
+                                               xAxisLabels = axisLabels)
+        rChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "R", xAxisLabels = axisLabels)
+        jaspResults[["xbarR"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(rChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+        jaspResults[["xbarR"]][["tableXBar"]] <- xBarChart$table
+        jaspResults[["xbarR"]][["tableR"]] <- rChart$table
+      }
+    } else if(options[["IMR"]] && is.null(jaspResults[["IMR"]])) {
+      jaspResults[["IMR"]] <- createJaspContainer(gettext("X-mR Control Chart"))
+      jaspResults[["IMR"]]$dependOn(c("variables", "variablesLong", "subgroups", "IMR"))
+      jaspResults[["IMR"]]$position <- 1
+      # We need to loop here because in the wide format there might be multiple vars and then we need a chart for each variable
+      if (ready) {
+        for (var in measurements) {
+          plotName <- paste0(var, "plot")
+          jaspResults[["IMR"]][[plotName]] <- createJaspPlot(title =  gettextf("X-mR Control Chart for %s", var), width = 1200, height = 500)
+          individualChart <- .controlChartPlotFunction(dataset = dataset[var], plotType = "I",
+                                                       xAxisLabels = axisLabels)
+          mrChart <- .controlChartPlotFunction(dataset = dataset[var], plotType = "MR", xAxisLabels = axisLabels, 
+                                               movingRangeLength = options[["movingRangeLength"]])
+          jaspResults[["IMR"]][[plotName]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+          individualTableName <- paste0(var, "iTable")
+          mrTableName <- paste0(var, "mrTable")
+          jaspResults[["IMR"]][[individualTableName]] <- individualChart$table
+          jaspResults[["IMR"]][[mrTableName]] <- mrChart$table
+        }
       }
       
-      # first chart is always xBar-chart, second is either R- or s-chart
-      #TODO: Implement option to choose betwen r and s chart
-      xBarChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
-                                             xAxisLabels = dataset[[subgroups]])
-      rChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "R", xAxisLabels = dataset[[subgroups]])
-      jaspResults[["xbarR"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(rChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
-      jaspResults[["xbarR"]][["tableXBar"]] <- xBarChart$table
-      jaspResults[["xbarR"]][["tableR"]] <- rChart$table
-    } else if(options[["IMR"]]) {
-      .qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
+      #.qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
     }
 
     # Distribution plot - moved jaspResults ref here to avoid big files
@@ -277,7 +306,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   )
   table$addRows(rows)
 
-  nDecimals <- max(.decimalplaces(dataset[measurements]))
+  nDecimals <- .numDecimals
 
   if(returnDataframe){
     sourceVector <- c('LSL', 'Target', 'USL', 'Sample size', 'Mean', "Std. Deviation (Total)", "Std. Deviation (Within)")
@@ -697,7 +726,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   expWithin <- c(ewLSL, ewUSL, ewTOT)
 
 
-  nDecimals <- max(.decimalplaces(dataset[measurements]))
+  nDecimals <- .numDecimals
   if(returnPerformanceDataframe){
     df <- data.frame("Source" = rowNames,
                      "Observed" = observed,

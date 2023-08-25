@@ -194,20 +194,6 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(violationsList)
 }
 
-.decimalplaces <- function(x) {
-  #x <- na.omit(unlist(x))
-  nDecimals <- .numDecimals # numeric(length(x))
-  # for(i in seq_along(x)) {
-  #   if (round(x[i], 10) %% 1 != 0) {   # never more than 10 decimals
-  #     formattedx <- format(x[i], scientific = FALSE)
-  #     nDecimals[i] <- nchar(strsplit(sub('0+$', '', as.character(formattedx)), ".", fixed=TRUE)[[1]][[2]])
-  #   } else {
-  #     nDecimals[i] <- 0
-  #   }
-  # }
-  return(nDecimals)
-}
-
 .IMRchart <- function(dataset, options, variable = "", measurements = "", cowPlot = FALSE, manualXaxis = "", Wide = FALSE,
                           stages = "") {
 
@@ -315,8 +301,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
                                              "dotColor" = dotColorR))
     allStageValuesI <- c(processI, LCLI, UCLI, centerI)
     allStageValuesR <- c(movingRange, LCLR, UCLR, centerR)
-    decimals1 <- max(.decimalplaces(allStageValuesI))
-    decimals2 <- max(.decimalplaces(allStageValuesR))
+    decimals1 <- .numDecimals
+    decimals2 <- .numDecimals
     dfLabelI <- rbind(dfLabelI, data.frame(x = max(subgroupsI) + .5,
                                            y = c(centerI, UCLI, LCLI),
                                            label = c(

@@ -22,34 +22,24 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   stages <- unlist(options[["stage"]])
   subgroups <- unlist(options[["axisLabels"]])
   makeSplit <- subgroups != ""
-
+  
   numeric_variables  <- variables
   numeric_variables  <- numeric_variables[numeric_variables != ""]
   factorVariables <- c(stages, subgroups)
   factorVariables  <- factorVariables[factorVariables != ""]
-
+  
   ready <- length(numeric_variables) == 1
-
+  
   if (is.null(dataset)) {
-      dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = factorVariables)
+    dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = factorVariables)
   }
-
-  if (makeSplit && ready) {
-    splitFactor      <- dataset[[.v(subgroups)]]
-    splitLevels      <- levels(splitFactor)
-    # remove missing values from the grouping variable
-    dataset <- dataset[!is.na(splitFactor), ]
-
-    numberMissingSplitBy <- sum(is.na(splitFactor))
-
-    # Actually remove missing values from the split factor
-    splitFactor <- na.omit(splitFactor)
-
-    if(subgroups != "")
-      subgroups <- splitFactor
+  
+  axisLabels <- dataset[[subgroups]]
+  if (stages != "") {
+    axisLabels <- axisLabels[order(dataset[[stages]])]
   }
-
-   # Checking for errors in the dataset
+  
+  # Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues', "observations"),
              infinity.target = c(options[["measurement"]], options[["axisLabels"]]),
              missingValues.target = c(options[["measurement"]], options[["axisLabels"]]),
@@ -63,9 +53,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     plot$dependOn(c("xmrChart", "measurement", "axisLabels", "stage"))
     return()
   }
-
+  
   dataset <- na.omit(dataset)
-
+  
   # default plot
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Variables Charts for Individuals"), width = 700, height = 400)
@@ -73,47 +63,47 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     plot$dependOn(c("xmrChart", "autocorrelationPlot", "report", "measurement"))
     return()
   }
-  #ImR chart
-  if (options[["xmrChart"]] && ready) {
-    if(is.null(jaspResults[["Ichart"]])){
-      jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
-      jaspResults[["Ichart"]]$dependOn(c("xmrChart", "measurement", "ncol", "axisLabels", "manualTicksXAxis", "manualTicksXAxisValue", "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedBy","reportDate", "ccSubTitle", "ccChartName", "report"))
-      Iplot <- jaspResults[["Ichart"]]
-
-        ALL <- createJaspContainer(gettextf("X-mR control chart"))
-        IMR <- .IMRchart(dataset = dataset, options = options, variable = variables, manualXaxis = subgroups, stages = stages)
-        ALL[["Plot"]] <- IMR$p
-        ALL[["Table1"]] <- IMR$tableI
-        ALL[["Table2"]] <- IMR$tableR
-        Iplot[[variables]] <- ALL
+  # ImR chart
+  if (options$ImRchart && is.null(jaspResults[["Ichart"]])) {
+    jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
+    jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "movingRangeLength", "subgroups", "manualTicks", "nTicks", "ccTitle",
+                                       "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport",
+                                       "split"))
+    jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
+    if (ready) {
+      individualChart <- .controlChartPlotFunction(dataset = dataset[c(variables, stages)], plotType = "I", stages = stages,
+                                                   xAxisLabels = axisLabels)
+      mrChart <- .controlChartPlotFunction(dataset = dataset[c(variables, stages)], plotType = "MR", stages = stages,
+                                           xAxisLabels = axisLabels, movingRangeLength = options[["movingRangeLength"]])
     }
+    jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+    jaspResults[["Ichart"]][["tableI"]] <- individualChart$table
+    jaspResults[["Ichart"]][["tableMR"]] <- mrChart$table
   }
-
+  
   # Autocorrelation Plot
   if(options[["autocorrelationPlot"]] && ready){
     jaspResults[["CorPlot"]] <- createJaspContainer(position = 2, title = "Autocorrelation Function")
     jaspResults[["CorPlot"]]$dependOn(c("autocorrelationPlot", "measurement", "autocorrelationPlotLagsNumber"))
     Corplot <- jaspResults[["CorPlot"]]
-
-      Corplot[[variables]] <- .CorPlot(dataset = dataset, options = options, variable = variables,
+    Corplot[[variables]] <- .CorPlot(dataset = dataset, options = options, variable = variables,
                                        CI = options[["autocorrelationPlotCiLevel"]], lags = options[["autocorrelationPlotLagsNumber"]])
   }
-
+  
   # Report
   if (options[["report"]] && is.null(jaspResults[["CCReport"]])) {
 
     jaspResults[["CorPlot"]] <- NULL
     jaspResults[["Ichart"]] <- NULL
-
-
+    
+    
     jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
     jaspResults[["CCReport"]]$dependOn(c("report", "xmrChart", "measurement","ncol", "manualTicksXAxis", "manualTicksXAxisValue", "axisLabels", "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedBy","reportDate", "ccSubTitle", "ccChartName"))
     jaspResults[["CCReport"]]$position <- 9
-    Iplot <- jaspResults[["CCReport"]]
-
-    Iplot[["ccReport"]] <- .individualChartReport(dataset, variables, subgroups, stages, options)
+    Iplot <- jaspResults[["CCReport"]] 
+    Iplot[["ccReport"]] <- .individualChartReport(dataset, variables, axisLabels, stages, options)
   }
-
+  
   # Error handling
   if (options[["report"]] && (!options[["xmrChart"]] || length(variables) < 1)){
     plot <- createJaspPlot(title = gettext("Report"), width = 700, height = 400)
@@ -127,11 +117,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 .CorPlot <- function(dataset = dataset, options = options, variable = var, lags = NULL, CI = 0.95) {
   ppPlot <- createJaspPlot(width = 1200, height = 500, title = gettextf("%s",variable))
   ppPlot$dependOn(optionContainsValue = list(variables = variable))
-
+  
   p <- .CorPlotObject(dataset, options, variable, lags, CI)
-
+  
   ppPlot$plotObject <- p
-
+  
   return(ppPlot)
 }
 
@@ -159,7 +149,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   return(p)
 }
 
-.individualChartReport <- function(dataset, variables, subgroups, stages, options){
+.individualChartReport <- function(dataset, variables, subgroups, stages, options) {
 
   if (options[["reportTitle"]] == "") {
     title <- gettextf("Individual charts report")
@@ -184,10 +174,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
   if (options[["reportIMRChart"]]) {
     indexCounter <- indexCounter + 1
-    IMR <- .IMRchart(dataset = dataset, options = options, variable = variables, manualXaxis = subgroups, stages = stages)
-    plotList[[indexCounter]] <- IMR$p1
+    plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[c(variables, stages)], plotType = "I", stages = stages,
+                                                          xAxisLabels = axisLabels)$plotObject
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- IMR$p2
+    plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[c(variables, stages)], plotType = "MR", stages = stages,
+                                                          xAxisLabels = axisLabels, movingRangeLength = options[["movingRangeLength"]])$plotObject
   }
   if (options[["reportAutocorrelationChart"]]) {
     indexCounter <- indexCounter + 1
