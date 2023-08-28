@@ -1554,26 +1554,6 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Miscellaneous"
 msgstr "Sonstiges"
 
-msgctxt "variablesChartsIndividuals|"
-msgid "Sub-title:"
-msgstr "Untertitel:"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Sub-title"
-msgstr "Untertitel"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Chart name:"
-msgstr "Kartenname:"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Name of the chart"
-msgstr "Name der Karte"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Show Report"
-msgstr "Bericht anzeigen"
-
 msgctxt "variablesChartsSubgroups|"
 msgid "Sub-title:"
 msgstr "Untertitel:"
@@ -2229,4 +2209,24 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Calculate with actual sizes"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Show report"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Show report metadata"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Select Report Components"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Show X-mR chart"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Show autocorrelation chart"
 msgstr ""

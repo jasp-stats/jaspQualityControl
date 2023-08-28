@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-07-08 03:44\n"
+"POT-Creation-Date: 2023-08-28 08:21\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -159,7 +159,18 @@ msgstr "检验 6：双峰分布"
 msgid "Numbers are data points where test violations occur."
 msgstr "数字表示发生违反检验准则的数据点。"
 
+#, fuzzy
+msgid "Test results for individuals chart"
+msgstr "%s 图检验结果"
+
+#, fuzzy
+msgid "Test results for range chart"
+msgstr "%s 图检验结果"
+
 msgid "Moving range length is larger than one of the stages."
+msgstr ""
+
+msgid "Stage"
 msgstr ""
 
 msgid "%s"
@@ -1361,12 +1372,6 @@ msgstr "单值控制图"
 msgid "Variables Charts for Individuals"
 msgstr "单值图"
 
-msgid "%s for Individuals"
-msgstr "单值图 %s"
-
-msgid "%s for Range"
-msgstr "极差图 %s"
-
 msgid "Please insert more measurements and check the X-mR chart."
 msgstr "请插入更多测量值并检查单值-移动极差控制图。"
 
@@ -1375,6 +1380,13 @@ msgstr "自相关"
 
 msgid "Lag"
 msgstr "滞后"
+
+#, fuzzy
+msgid "Individual charts report"
+msgstr "单值控制图"
+
+msgid "Name: %s"
+msgstr "名称：%s"
 
 msgid "Control Charts"
 msgstr "控制图"
@@ -1399,9 +1411,6 @@ msgstr "均值和标准差控制图"
 msgid "Subgroup st dev"
 msgstr "子组标准差"
 
-msgid "Name: %s"
-msgstr "名称：%s"
-
 msgid "Date: %s"
 msgstr "日期：%s"
 
@@ -1410,6 +1419,12 @@ msgstr "副标题：%s"
 
 msgid "Name of chart: %s"
 msgstr "图形名称：%s"
+
+#~ msgid "%s for Individuals"
+#~ msgstr "单值图 %s"
+
+#~ msgid "%s for Range"
+#~ msgstr "极差图 %s"
 
 #~ msgid "T chart"
 #~ msgstr "T 控制图"

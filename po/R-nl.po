@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-07-08 03:44\n"
+"POT-Creation-Date: 2023-08-28 08:21\n"
 "PO-Revision-Date: 2023-08-25 13:53+0000\n"
 "Last-Translator: JASP Stats <b.boutin@uva.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -157,7 +157,16 @@ msgstr ""
 msgid "Numbers are data points where test violations occur."
 msgstr ""
 
+msgid "Test results for individuals chart"
+msgstr ""
+
+msgid "Test results for range chart"
+msgstr ""
+
 msgid "Moving range length is larger than one of the stages."
+msgstr ""
+
+msgid "Stage"
 msgstr ""
 
 msgid "%s"
@@ -1337,12 +1346,6 @@ msgstr ""
 msgid "Variables Charts for Individuals"
 msgstr ""
 
-msgid "%s for Individuals"
-msgstr ""
-
-msgid "%s for Range"
-msgstr ""
-
 msgid "Please insert more measurements and check the X-mR chart."
 msgstr ""
 
@@ -1350,6 +1353,12 @@ msgid "Autocorrelation"
 msgstr ""
 
 msgid "Lag"
+msgstr ""
+
+msgid "Individual charts report"
+msgstr ""
+
+msgid "Name: %s"
 msgstr ""
 
 msgid "Control Charts"
@@ -1373,9 +1382,6 @@ msgid "X-bar & s Control Chart"
 msgstr ""
 
 msgid "Subgroup st dev"
-msgstr ""
-
-msgid "Name: %s"
 msgstr ""
 
 msgid "Date: %s"

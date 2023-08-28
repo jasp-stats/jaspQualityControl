@@ -1551,26 +1551,6 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Miscellaneous"
 msgstr "Miscelánea"
 
-msgctxt "variablesChartsIndividuals|"
-msgid "Sub-title:"
-msgstr "Subtítulo:"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Sub-title"
-msgstr "Subtítulo"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Chart name:"
-msgstr "Nombre del gráfico:"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Name of the chart"
-msgstr "Nombre del gráfico"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Show Report"
-msgstr "Mostrar Informe"
-
 msgctxt "variablesChartsSubgroups|"
 msgid "Sub-title:"
 msgstr "Subtítulo:"
@@ -2220,3 +2200,26 @@ msgstr "Asumir tamaños de subgrupos iguales (subgrupo más largo)"
 msgctxt "variablesChartsSubgroups|"
 msgid "Calculate with actual sizes"
 msgstr "Calcular con los tamaños actuales"
+
+#, fuzzy
+msgctxt "variablesChartsIndividuals|"
+msgid "Show report"
+msgstr "Mostrar el informe"
+
+#, fuzzy
+msgctxt "variablesChartsIndividuals|"
+msgid "Show report metadata"
+msgstr "Mostrar los metadatos del informe"
+
+#, fuzzy
+msgctxt "variablesChartsIndividuals|"
+msgid "Select Report Components"
+msgstr "Escoger los Elementos del Informe"
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Show X-mR chart"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Show autocorrelation chart"
+msgstr ""

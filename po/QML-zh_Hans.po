@@ -1549,26 +1549,6 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Miscellaneous"
 msgstr "其它"
 
-msgctxt "variablesChartsIndividuals|"
-msgid "Sub-title:"
-msgstr "副标题："
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Sub-title"
-msgstr "副标题"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Chart name:"
-msgstr "图表名称："
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Name of the chart"
-msgstr "图表名称"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Show Report"
-msgstr "显示报告"
-
 msgctxt "variablesChartsSubgroups|"
 msgid "Sub-title:"
 msgstr "副标题："
@@ -2218,3 +2198,25 @@ msgstr "假设子组大小相等（最大子组）"
 msgctxt "variablesChartsSubgroups|"
 msgid "Calculate with actual sizes"
 msgstr "按实际大小计算"
+
+#, fuzzy
+msgctxt "variablesChartsIndividuals|"
+msgid "Show report"
+msgstr "显示报告"
+
+#, fuzzy
+msgctxt "variablesChartsIndividuals|"
+msgid "Show report metadata"
+msgstr "显示报告元数据"
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Select Report Components"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Show X-mR chart"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Show autocorrelation chart"
+msgstr ""
