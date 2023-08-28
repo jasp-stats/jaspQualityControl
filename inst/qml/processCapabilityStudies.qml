@@ -259,32 +259,35 @@ Form
 
 		ColumnLayout
 		{
-			Group
-			{
-				title:							qsTr("Stability of the process")
 
-				CheckBox
+			RadioButtonGroup
+			{
+				title: 					qsTr("Stability of the process")
+				name:					"controlChartType"
+
+				RadioButton
 				{
-					name:						"xBarAndRChart"
-					label: 						qsTr("X-bar & R chart")
-					enabled:					manualSubgroupSizeValue.value > 1
-					checked: 					manualSubgroupSizeValue.value > 1
+					name: 				"xBarR"
+					id : 				xbarR
+					label: 				qsTr("X-bar & R chart")
+					checked: 			(pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value > 1) | (pcDataFormat.currentValue == "PCwideFormat" && variables.count > 1)
+					enabled:			(pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value > 1) | (pcDataFormat.currentValue == "PCwideFormat" && variables.count > 1)
 				}
 
-				CheckBox
+				RadioButton
 				{
-					name: 						"xmrChart"
-					label: 						qsTr("X-mR chart")
-					enabled: 					manualSubgroupSizeValue.value == 1 || dataFormat.currentValue == "wideFormat"
-					checked: 					manualSubgroupSizeValue.value == 1
+					name: 				"IMR"
+					id : 				imr
+					label: 				qsTr("X-mR chart")
+					checked:			(pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value == 1) | (pcDataFormat.currentValue == "PCwideFormat" && variables.count < 2)
 
 					DoubleField
 					{
-						name:							"xmrChartMovingRangeLength"
-						label:							qsTr("Moving range length")
-						defaultValue:					2
-						min: 							2
-						max: 							dataSetModel.rowCount()
+					name:							"movingRangeLength"
+					label:							qsTr("Moving range length")
+					defaultValue:					2
+					min: 							2
+					max: 							dataSetModel.rowCount()
 					}
 				}
 			}
