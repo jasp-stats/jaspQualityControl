@@ -125,7 +125,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
     
     
-    if(options[["xbarR"]] && is.null(jaspResults[["xbarR"]])) {
+    if(options[["controlChartType"]] == "xBarR" && is.null(jaspResults[["xbarR"]])) {
       jaspResults[["xbarR"]] <- createJaspContainer(gettext("X-bar and R Control Chart"))
       jaspResults[["xbarR"]][["plot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
       jaspResults[["xbarR"]]$dependOn(c("variables", "variablesLong", "subgroups", "xbarR"))
@@ -146,7 +146,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         jaspResults[["xbarR"]][["tableXBar"]] <- xBarChart$table
         jaspResults[["xbarR"]][["tableR"]] <- rChart$table
       }
-    } else if(options[["IMR"]] && is.null(jaspResults[["IMR"]])) {
+    } else if(options[["controlChartType"]] == "IMR" && is.null(jaspResults[["IMR"]])) {
       jaspResults[["IMR"]] <- createJaspContainer(gettext("X-mR Control Chart"))
       jaspResults[["IMR"]]$dependOn(c("variables", "variablesLong", "subgroups", "IMR"))
       jaspResults[["IMR"]]$position <- 1
@@ -1542,7 +1542,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   if (options[["reportProcessStability"]]) {
     # X-bar and R Chart OR ImR Chart
-    if(options$xBarAndRChart){
+    if (options[["controlChartType"]] == "xBarR") {
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
                                                             xAxisLabels = dataset[[subgroups]])$plotObject
