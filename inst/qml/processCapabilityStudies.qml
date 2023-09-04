@@ -270,8 +270,26 @@ Form
 					name: 				"xBarR"
 					id : 				xbarR
 					label: 				qsTr("X-bar & R chart")
-					checked: 			(pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value > 1) | (pcDataFormat.currentValue == "PCwideFormat" && variables.count > 1)
-					enabled:			(pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value > 1) | (pcDataFormat.currentValue == "PCwideFormat" && variables.count > 1)
+					enabled:			(pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value > 1) | pcDataFormat.currentValue == "PCwideFormat"
+					checked:			pcDataFormat.currentValue == "PCwideFormat" | (pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value > 1) // When an option is selected that is not available in both data formats, and the data format is changed, no option becomes checked. 
+				}																																																// This is a workaround to set this option to true every time the data format is changed.
+
+				RadioButton
+				{
+					name: 				"xBarMR"
+					id : 				xbarMR
+					label: 				qsTr("X-bar & mR chart")
+					enabled:			pcDataFormat.currentValue == "PCwideFormat"
+					visible:			pcDataFormat.currentValue == "PCwideFormat"
+
+					DoubleField
+					{
+					name:							"xBarmovingRangeLength"
+					label:							qsTr("Moving range length")
+					defaultValue:					2
+					min: 							2
+					max: 							dataSetModel.rowCount()
+					}
 				}
 
 				RadioButton
@@ -279,7 +297,9 @@ Form
 					name: 				"IMR"
 					id : 				imr
 					label: 				qsTr("X-mR chart")
-					checked:			(pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value == 1) | (pcDataFormat.currentValue == "PCwideFormat" && variables.count < 2)
+					enabled:			pcDataFormat.currentValue == "PClongFormat"
+					visible:			pcDataFormat.currentValue == "PClongFormat"
+					checked:			pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value == 1
 
 					DoubleField
 					{
