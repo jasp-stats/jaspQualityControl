@@ -106,6 +106,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", 'capabilityStudyType', 'nullDistribution'))
     }
   }
+  
+ # the axis labels for the control charts
+  if (subgroups == "") {
+    axisLabels <- ""
+  } else {
+    axisLabels <- dataset[[subgroups]]
+  }
 
   # Report
   if (options[["report"]]) {
@@ -113,20 +120,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["pcReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["pcReport"]]$position <- 6
     }
-    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat, subgroups)
+    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat, subgroups, axisLabels)
     jaspResults[["pcReport"]]$dependOn(c('pcReportDisplay'))
   } else {
-    
     # X-bar and R Chart OR ImR Chart
-    if (subgroups == "") {
-      axisLabels <- ""
-    } else {
-      axisLabels <- dataset[[subgroups]]
-    }
-    
-    
     if(options[["controlChartType"]] == "xBarR" && is.null(jaspResults[["xbarR"]])) {
-      jaspResults[["xbarR"]] <- createJaspContainer(gettext("X-bar and R Control Chart"))
+      jaspResults[["xbarR"]] <- createJaspContainer(gettext("X-bar & R Control Chart"))
       jaspResults[["xbarR"]][["plot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
       jaspResults[["xbarR"]]$dependOn(c("variables", "variablesLong", "subgroups", "xbarR"))
       jaspResults[["xbarR"]]$position <- 1
@@ -152,22 +151,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["IMR"]]$position <- 1
       # We need to loop here because in the wide format there might be multiple vars and then we need a chart for each variable
       if (ready) {
-        for (var in measurements) {
-          plotName <- paste0(var, "plot")
-          jaspResults[["IMR"]][[plotName]] <- createJaspPlot(title =  gettextf("X-mR Control Chart for %s", var), width = 1200, height = 500)
-          individualChart <- .controlChartPlotFunction(dataset = dataset[var], plotType = "I",
+          jaspResults[["IMR"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
+          individualChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "I",
                                                        xAxisLabels = axisLabels)
-          mrChart <- .controlChartPlotFunction(dataset = dataset[var], plotType = "MR", xAxisLabels = axisLabels, 
+          mrChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels, 
                                                movingRangeLength = options[["movingRangeLength"]])
-          jaspResults[["IMR"]][[plotName]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
-          individualTableName <- paste0(var, "iTable")
-          mrTableName <- paste0(var, "mrTable")
-          jaspResults[["IMR"]][[individualTableName]] <- individualChart$table
-          jaspResults[["IMR"]][[mrTableName]] <- mrChart$table
+          jaspResults[["IMR"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
+                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
+          jaspResults[["IMR"]][["tableIndividual"]] <- individualChart$table
+          jaspResults[["IMR"]][["tableMR"]] <- mrChart$table
         }
-      }
-      
-      #.qcImRChart(options, dataset, ready, jaspResults, measurements, subgroups = splitFactor, wideFormat = wideFormat)
     }
 
     # Distribution plot - moved jaspResults ref here to avoid big files
@@ -1464,18 +1457,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(p)
 }
 
-
-.qcImRChart<- function(options, dataset, ready, jaspResults, measurements, subgroups, wideFormat){
-  if (!ready)
-    return()
-  Container <- createJaspContainer(gettextf("X-mR control chart"))
-  Container$dependOn(options = c("xBarAndRChart", "measurementsWideFormat", "subgroup", "measurementLongFormat", "manualSubgroupSizeValue", "report", "xmrChartMovingRangeLength"))
-  Container$position <- 1
-  jaspResults[["ImR Charts"]] <- Container
-  Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE, Wide = wideFormat)$p
-}
-
-.PClongTowide<- function(dataset, k, measurements, mode = c("manual", "subgroup")){
+.PClongTowide<- function(dataset, k, measurements, mode = c("manual", "subgroups")){
   if(identical(mode, "manual")){
     dataset <- dataset[measurements]
     n <- nrow(dataset)
@@ -1505,7 +1487,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 
-.pcReport <- function(dataset, measurements, parts, operators, options, ready, container, splitFactor, wideFormat, subgroups){
+.pcReport <- function(dataset, measurements, parts, operators, options, ready, container, splitFactor, wideFormat, subgroups, axisLabels) {
 
   if (options[["reportTitle"]] == ""){
     title <- "Process Capability Report"
@@ -1545,16 +1527,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["controlChartType"]] == "xBarR") {
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
-                                                            xAxisLabels = dataset[[subgroups]])$plotObject
+                                                            xAxisLabels = axisLabels)$plotObject
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "R", xAxisLabels = dataset[[subgroups]])$plotObject
-    } else {
-      IMRPlots <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = splitFactor, cowPlot = TRUE, Wide = wideFormat)
-
+      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "R",
+                                                            xAxisLabels = axisLabels)$plotObject
+    } else if (options[["controlChartType"]] == "IMR"){
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- IMRPlots$p1
+      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "I",
+                                                            xAxisLabels = axisLabels)$plotObject
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- IMRPlots$p2
+      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels, 
+                                                            movingRangeLength = options[["movingRangeLength"]])$plotObject
     }
   }
   if (options[["reportProcessCapabilityPlot"]]) {

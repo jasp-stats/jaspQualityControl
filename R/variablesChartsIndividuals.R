@@ -34,7 +34,12 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = factorVariables)
   }
   
-  axisLabels <- dataset[[subgroups]]
+  if (subgroups != ""){
+    axisLabels <- dataset[[subgroups]]
+  } else {
+    axisLabels <- ""
+  }
+  
   if (stages != "") {
     axisLabels <- axisLabels[order(dataset[[stages]])]
   }
@@ -71,9 +76,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
                                        "split"))
     jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
     if (ready) {
-      individualChart <- .controlChartPlotFunction(dataset = dataset[c(variables, stages)], plotType = "I", stages = stages,
+      columnsToPass <- c(variables, stages)
+      columnsToPass <- columnsToPass[columnsToPass != ""]
+      individualChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
                                                    xAxisLabels = axisLabels)
-      mrChart <- .controlChartPlotFunction(dataset = dataset[c(variables, stages)], plotType = "MR", stages = stages,
+      mrChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
                                            xAxisLabels = axisLabels, movingRangeLength = options[["movingRangeLength"]])
     }
     jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
