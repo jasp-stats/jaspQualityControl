@@ -32,167 +32,10 @@ Form
 		name		: "designType"
 		title		: qsTr("Design Type")
 
-<<<<<<< HEAD
 		RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central Composite Design");	checked: true;		id: centralCompositeDesign	}
 		RadioButton { name:	 "boxBehnkenDesign";			label: qsTr("Box-Behnken Design");															}
 
 	}
-=======
-			IntegerField
-			{
-				id:									numberOfFactors
-				name:								"numberOfFactors"
-				label:								qsTr("Number of factors")
-				defaultValue:						2
-				min:								2
-				max:								256
-			}
-			
-			RadioButtonGroup
-			{
-				columns: 							1
-				name:								"designType"
-				title:								qsTr("Define levels")
-
-				RadioButton
-				{
-					id:								cubePoints
-					name:							"cubePoints"
-					label:							qsTr("Cube points")
-					checked:						true
-					childrenOnSameRow: 				true
-
-					IntegerField
-					{
-			
-						id:									cubePointsNumber
-						name:								"cubePointsNumber"
-						defaultValue:						3
-						min:								0
-						max:								256
-					}
-			
-				}
-				
-				RadioButton
-				{
-					id:								axialPoints
-					name:							"axialPoints"
-					label:							qsTr("Axial points")
-					childrenOnSameRow: 				true
-				
-
-					IntegerField
-					{
-			
-						id:									axialPointsNumber
-						name:								"axialPointsNumber"
-						defaultValue:						numberOfFactors.value * 2
-						min:								0
-						max:								256
-					}
-				}
-			}
-
-		//	IntegerField
-		//	{
-		//		id:									numberOfGenerators
-		//		name:								"numberOfGenerators"
-		//		label:								qsTr("Number of generators")
-		//		defaultValue:						0
-		//		min:								0
-		//		max:								256
-		//		visible: 							cubePoints.checked
-		//	}
-
-			Group 
-			{
-			
-				title:								qsTr("Design options")
-
-				CheckBox
-				{
-					id:									inscribedDesign
-					name:								"inscribedDesign"
-					label:								qsTr("Inscribed design")
-					enabled:							cubePoints.checked
-					checked: 							(cubePoints.checked) ? false : false
-			
-				}
-			
-				CheckBox
-				{
-					id:									oneBlock
-					name:								"oneBlock"
-					label:								qsTr("Force one block")
-					visible:							false
-				}
-			
-				CheckBox 
-				{
-					id:									noModel
-					name:								"noModel"
-					label:								qsTr("Use # of variables instead of model")
-					enabled:							cubePoints.checked
-					checked: 							true
-					visible: 							false
-				}
-			
-				CheckBox 
-				{
-					id:									block
-					name:								"block"
-					label:								qsTr("Introduce blocking")
-					enabled:							cubePoints.checked
-					checked: 							(cubePoints.checked) ? false : false
-				}
-			
-				CheckBox 
-				{
-					id:									codedOutput
-					name:								"codedOutput"
-					label:								qsTr("Coded output")
-				}
-			
-			
-				DropDown
-				{
-				  name: 								"alphaType"
-				  indexDefaultValue: 					0
-				  label:								qsTr("Alpha type")
-				  values: 								["orthogonal", "rotatable", "spherical", "faces"]
-				  enabled:								axialPoints.checked
-				}
-
-				IntegerField
-				{
-					visible:							false
-					id:									numberOfFactorsForTable
-					name:								"numberOfFactorsForTable"
-					defaultValue:						numberOfFactors.value
-				}
-			}
-			
-			RadioButtonGroup
-			{
-				name:									"runOrder"
-				title:									qsTr("Run Order")
-
-				RadioButton
-				{
-					SetSeed{}
-					name:								"random"
-					label:								qsTr("Random")
-					checked:							true
-				}
-
-				RadioButton
-				{
-					name:								"standard"
-					label:								qsTr("Standard")
-				}
-			}
->>>>>>> 2781b38 (Renaming Response Surface Design)
 
 	Group
 	{
@@ -211,7 +54,6 @@ Form
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
 
-<<<<<<< HEAD
 		TableView
 		{
 
@@ -280,31 +122,6 @@ Form
 			{
 				const val = numberOfContinuous.intValue
 				if (centralCompositeDesign.checked) // CCD
-=======
-			ColumnLayout
-			{
-				spacing:                                0
-				Layout.preferredWidth:					parent.width
-				Layout.columnSpan:						2
-
-				RowLayout
-				{
-					Label { text: qsTr("Factor");			Layout.leftMargin: 5 * preferencesModel.uiScale;		Layout.preferredWidth: 42 * preferencesModel.uiScale}
-					Label { text: qsTr("Name");				Layout.preferredWidth: 150 * preferencesModel.uiScale}
-					Label { text: qsTr("Low");			Layout.preferredWidth: 100 * preferencesModel.uiScale}
-					Label { text: qsTr("High");	Layout.preferredWidth: 100 * preferencesModel.uiScale}
-	//			Label { visible: 					numberOfLevels.currentIndex == 1;
-	//                    text: qsTr("Level 3");		Layout.preferredWidth: 100 * preferencesModel.uiScale	}
-			}
-
-			ComponentsList
-			{
-				name:								"factors"
-				addItemManually:					false
-				values:								numberOfFactorsForTable.value // update only when numberOfFactors.value gets "entered"
-
-				rowComponent: 						RowLayout
->>>>>>> 2781b38 (Renaming Response Surface Design)
 				{
 					switch(val)
 					{
@@ -387,30 +204,11 @@ Form
 					}
 				}
 			}
-<<<<<<< HEAD
-=======
-		}
-		
-	
-		TextArea 
-		{
-			id:									designModel
-			name:								"designModel"
-			title:								"Specify model for CCD"
-			height:								100 * preferencesModel.uiScale
-			width:								250 * preferencesModel.uiScale
-			visible:							cubePoints.checked && !noModel.checked
-		}
-		
-		IntegerField
-		{
->>>>>>> 2781b38 (Renaming Response Surface Design)
 
 			id					: selectedDesign2
 			implicitWidth		: form.implicitWidth
 			implicitHeight		: 250 * preferencesModel.uiScale
 
-<<<<<<< HEAD
 			modelType			: JASP.Simple
 			name				: "selectedDesign2"
 
@@ -418,25 +216,6 @@ Form
 			cornerText			: centralCompositeDesign.checked ? qsTr("Design") : qsTr("Runs")
 			initialColumnCount	: designDataColumns - 1// -1 because the first "column" is not a column but the row header
 			columnCount			: designDataColumns - 1
-=======
-			visible:							false
-			id:									numberOfGeneratorsForTable
-			name:								"numberOfGeneratorsForTable"
-			defaultValue:						numberOfGenerators.value
-		}
-		
-		ColumnLayout
-		{
-			spacing:								0
-			Layout.preferredWidth:					parent.width
-			Layout.columnSpan:						2
-
-		//	RowLayout
-		//	{
-				
-		//		Label { text: qsTr("Name");			Layout.preferredWidth: 150 * preferencesModel.uiScale; visible: cubePoints.checked }
-		//		Label { text: qsTr("Formula");		Layout.preferredWidth: 100 * preferencesModel.uiScale; visible: cubePoints.checked }
->>>>>>> 2781b38 (Renaming Response Surface Design)
 
 			itemType			: JASP.Double
 			rowCount			: designData.length / designDataColumns// numberOfContinuous.intValue
@@ -444,13 +223,6 @@ Form
 
 			itemDelegate: Item
 			{
-<<<<<<< HEAD
-=======
-				name:								"generators"
-				addItemManually:					false
-				values:								numberOfGeneratorsForTable.value //
-				visible:							cubePoints.checked 
->>>>>>> 2781b38 (Renaming Response Surface Design)
 
 				Rectangle
 				{
@@ -486,57 +258,8 @@ Form
 					}
 				}
 			}
-<<<<<<< HEAD
 
 			rowNumberDelegate: Rectangle
-=======
-		}
-		
-		TextArea 
-		{
-			id:									blockDesign
-			name:								"blockDesign"
-			title:								"Specify blocks for CCD"
-			height:								100 * preferencesModel.uiScale
-			width:								250 * preferencesModel.uiScale
-			visible:							cubePoints.checked && block.checked
-		}
-
-		Group{
-
-		Button
-		{
-			id: 								buildDesign
-			anchors.right:						parent.right
-			anchors.bottom:						parent.bottom
-			text: 								qsTr("<b>Build Design</b>")
-			onClicked: 							buildDesignInv.click()
-		}
-		
-		CheckBox 
-		{
-			id:									buildDesignInv	
-			name:								"buildDesignInv"
-			visible:							false
-		}
-		
-		}
-
-	Section 
-	{
-		title: qsTr("Design Analysis")
-
-	VariablesForm
-	{
-		AvailableVariablesList { name: "rsmVariablesList" }
-		AssignedVariablesList
-		{
-			name: "rsmVariables"
-			title: qsTr("Predictors [Location in coded format]")
-			suggestedColumns:	["scale", "ordinal"]
-
-			rowComponent: Row
->>>>>>> 2781b38 (Renaming Response Surface Design)
 			{
 				// identical to default but with changed colors
 				color: rowIndex === tableView.rowSelected ? jaspTheme.grayLighter : jaspTheme.white// : jaspTheme.analysisBackgroundColor
@@ -597,27 +320,9 @@ Form
 	Group
 	{
 		columns: 2
-<<<<<<< HEAD
-=======
-		
-		CheckBox 
-		{
-			name:						"coefficientTable"
-			label:						qsTr("Coefficients table")
-			
-		}
-		
-		
-		CheckBox
-		{
-			name:						"residualHistogram"
-			label:						qsTr("Residual histogram")
-		}
->>>>>>> 2781b38 (Renaming Response Surface Design)
 
 		RadioButtonGroup
 		{
-<<<<<<< HEAD
 			visible:			centralCompositeDesign.checked
 			name:				"alphaType"
 			title:				qsTr("Alpha")
@@ -632,66 +337,12 @@ Form
 					min:	0
 				}
 			}
-=======
-			name:						"anova"
-			label:						qsTr("ANOVA table")
-		}
-		
-		
-		CheckBox
-		{
-			name:						"normalProbabilityResidualPlot"
-			label:						qsTr("Normal residual plot")
-		}
-
-		CheckBox
-		{
-			name:						"standardizedEffectNormalPlot"
-			label:						qsTr("Normal plot of standardized effects")
-
-			CheckBox
-			{
-				name:					"standardizedEffectNormalPlotGridLines"
-				label:					qsTr("Add grid lines")
-			}
-		}
-		
-		CheckBox
-		{
-			name:						"residualsAgainstFittedValuesPlot"
-			label:						qsTr("Residual vs. fitted plot")
-		}
-		
-		CheckBox
-		{
-			name:						"standardizedEffectParetoPlot"
-			label:						qsTr("Pareto plot of standardized effects")
->>>>>>> 2781b38 (Renaming Response Surface Design)
 		}
 
 		RadioButtonGroup
 		{
-<<<<<<< HEAD
 			name:								"centerPointType"
 			title:								qsTr("Center Points")
-=======
-			name:						"matrixResidualsPlot"
-			label:						qsTr("Matrix residuals plot")
-		}
-	}	
-}
-	
-	Section 
-	{
-		title: qsTr("Contour plots")
-		VariablesForm
-		{
-			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList
-			{
-
-				name:  "rsmVariables2";		source:"rsmVariables"
->>>>>>> 2781b38 (Renaming Response Surface Design)
 
 			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
 			RadioButton { name:	 "custom";			label: qsTr("Custom");
@@ -711,7 +362,6 @@ Form
 					visible		: centralCompositeDesign.checked
 				}
 			}
-<<<<<<< HEAD
 		}
 
 		// show user labels or just -1, 1?
@@ -760,129 +410,4 @@ Form
 	// 	}
 	// }
 
-=======
-
-			AssignedPairsVariablesList
-			{	name:  "pairs";				suggestedColumns: ["scale", "ordinal", "nominal"] }
-			} 
-		
-
-		Group
-		{
-			title: qsTr("Contour plot options")
-			
-			CheckBox
-			{
-				name:							"contourSurfacePlot"
-				label:							qsTr("Contour surface")
-				columns: 2
-
-				CheckBox
-				{
-					name:						"contourSurfacePlotTwoDimensional"
-					label:						qsTr("Only show 2D plot")
-					id:							contourSurfacePlotTwoDimensional
-				}
-
-				CheckBox
-				{
-					name:						"contourSurfacePlotCoded"
-					label:						qsTr("Show analysis and graphs in coded form")
-					enabled:					contourSurfacePlotTwoDimensional.checked
-				}
-
-				CheckBox
-				{
-					name:						"contourSurfacePlotLegend"
-					label:						qsTr("Show legend next to graph")
-					enabled:					!contourSurfacePlotTwoDimensional.checked
-				}
-
-				DropDown
-				{
-					name:						"contourSurfacePlotNumberDivisions"
-					label:						qsTr("Divide response surface into N parts")
-					values:						[2,3,4,5,6,7]
-					enabled:					!contourSurfacePlotTwoDimensional.checked
-				}
-
-				Slider
-				{
-					name:						"contourSurfacePlotVerticalRotationAngle"
-					label:						qsTr("Rotating angle (vertical plane)")
-					value:						0
-					enabled:					!contourSurfacePlotTwoDimensional.checked
-				}
-
-				Slider
-				{
-					name:						"contourSurfacePlotHorizontalRotationAngle"
-					label:						qsTr("Rotating angle (horizontal plane)")
-					value:						0.5
-					vertical:					false
-					enabled:					!contourSurfacePlotTwoDimensional.checked
-				}
-			}
-		}
-	}
-	
-	Section
-	{
-		title: qsTr("Desirability")
-
-		CheckBox 
-		{
-			name: "desirability"
-			label: qsTr("Calculate desirability")
-		}
-
-		VariablesForm 
-		{
-			AvailableVariablesList 
-			{ 
-				name: "rsmDesirability"
-				label: qsTr("Response variable list")
-				source: "rsmResponseVariables" 
-				
-			}
-
-			AssignedVariablesList  
-			{
-				name:					"rsmMin"
-				title:					qsTr("Minimum [Min/Max]")
-				suggestedColumns:		["scale", "ordinal", "nominal"]
-				rowComponent: Row
-				{
-					DoubleField {name: "Point_Min"; negativeValues: true}
-					DoubleField {name: "Point_Max"; negativeValues: true; defaultValue: 1}
-				}
-			}
-
-			AssignedVariablesList  
-			{
-				name:					"rsmMax"
-				title:					qsTr("Maximum [Min/Max]")
-				suggestedColumns:		["scale", "ordinal", "nominal"]
-				rowComponent: Row
-				{
-					DoubleField {name: "Point_Min_1"; negativeValues: true}
-					DoubleField {name: "Point_Max_1"; negativeValues: true; defaultValue: 1}
-				}
-			}
-
-			AssignedVariablesList  
-			{
-				name:					"rsmTar"
-				title:					qsTr("Target [Min/Target/Max]")
-				suggestedColumns:		["scale", "ordinal", "nominal"]
-				rowComponent: Row
-				{
-					DoubleField {name: "Point_Min_2"; negativeValues: true}
-					DoubleField {name: "Point_Tar_2"; negativeValues: true; defaultValue: 1}
-					DoubleField {name: "Point_Max_2"; negativeValues: true; defaultValue: 2}
-				}
-			}
-		}
-	}
->>>>>>> 2781b38 (Renaming Response Surface Design)
 }

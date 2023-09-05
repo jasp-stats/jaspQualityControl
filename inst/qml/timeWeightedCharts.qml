@@ -18,7 +18,7 @@ Form
 
 		AssignedVariablesList
 		{
-			name:								"measurements"
+			name:								"variables"
 			title:								qsTr("Measurements")
 			allowedColumns:						["scale"]
 		}
@@ -30,13 +30,13 @@ Form
 
 		CheckBox
 		{
-			name: 								"cumulativeSumChart"
+			name: 								"Cumulativechart"
 			label: 								qsTr("Cumulative sum chart")
 			checked:							true
 
 			DoubleField
 			{
-				name:							"cumulativeSumChartNumberSd"
+				name:							"h"
 				label:							qsTr("Number of standard deviations")
 				defaultValue:					4
 				enabled:						variationReference.currentValue != "studyVariation"
@@ -44,7 +44,7 @@ Form
 
 			DoubleField
 			{
-				name:							"cumulativeSumChartShiftSize"
+				name:							"k"
 				label:							qsTr("Shift size")
 				defaultValue:					0.5
 				enabled:						variationReference.currentValue != "studyVariation"
@@ -53,25 +53,25 @@ Form
 
 		CheckBox
 		{
-			name: 								"ExponentiallyWeightedMovingAverageChart"
+			name: 								"Exponentialchart"
 			label: 								qsTr("Exponentially weighted moving average chart")
 
 			DoubleField
 			{
-				name:							"ExponentiallyWeightedMovingAverageChartLambda"
+				name:							"EWMAlambda"
 				label:							qsTr("Lambda")
 				defaultValue:					0.3
 			}
 
 			DoubleField
 			{
-				name:							"ExponentiallyWeightedMovingAverageChartCenter"
+				name:							"EWMAcenter"
 				label:							qsTr("Center")
 			}
 
 			DoubleField
 			{
-				name:							"ExponentiallyWeightedMovingAverageChartSd"
+				name:							"EWMAStd"
 				label:							qsTr("Within-group standard deviation")
 				defaultValue:					3
 				fieldWidth: 					50
@@ -79,7 +79,7 @@ Form
 
 			DoubleField
 			{
-				name:							"ExponentiallyWeightedMovingAverageChartSigmaControlLimits"
+				name:							"EWMANsigma"
 				label:							qsTr("Sigmas for computing control limits")
 				defaultValue:					3
 			}
@@ -87,7 +87,7 @@ Form
 
 		CheckBox
 		{
-			name: 								"gChart"
+			name: 								"gchart"
 			label: 								qsTr("g chart")
 		}
 
