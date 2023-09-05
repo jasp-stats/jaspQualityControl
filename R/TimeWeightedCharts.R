@@ -17,7 +17,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
       jaspResults[["CusumPlot"]]$plotObject <- .Cusumchart(dataset = dataset, options = options, ready = ready)
     }
     #EWMA chart
-    if (options[["ExponentiallyWeightedMovingAverageChart"]] && is.null(jaspResults[["EWMAPlot"]])) {
+    if (options[["exponentiallyWeightedMovingAverageChart"]] && is.null(jaspResults[["EWMAPlot"]])) {
       jaspResults[["EWMAPlot"]] <- createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 1200, height = 500)
       jaspResults[["EWMAPlot"]]$dependOn(c("ExponentiallyWeightedMovingAverageChart", "measurements"))
       jaspResults[["EWMAPlot"]]$plotObject <- .EWMA(dataset = dataset, options = options, ready = ready)
@@ -41,8 +41,8 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
   
-  data1 <- dataset[, options$variables]
-  sixsigma <- qcc::cusum(data1, decision.interval = options$h, se.shift = options$k, plot = FALSE)
+  data1 <- dataset[, options[["measurements"]]]
+  sixsigma <- qcc::cusum(data1, decision.interval = options[["cumulativeSumChartNumberSd"]], se.shift = options[["cumulativeSumChartShiftSize"]], plot = FALSE)
   subgroups <- c(1:length(sixsigma$pos))
   data_plot <- data.frame(y_neg = sixsigma$neg , y_pos = sixsigma$pos, x = subgroups)
   center <- 0
@@ -83,10 +83,10 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
 .EWMA <- function(dataset, options, ready) {
   if (!ready)
     return()
-
+  decimals <- .numDecimals
   data1 <- dataset[, options[["measurements"]]]
-  sixsigma <- qcc::ewma(data1, center = options[["ExponentiallyWeightedMovingAverageChartCenter"]] , lambda = options[["ExponentiallyWeightedMovingAverageChartLambda"]],
-                        std.dev = options[["ExponentiallyWeightedMovingAverageChartSd"]], nsigmas = options[["ExponentiallyWeightedMovingAverageChartSigmaControlLimits"]], plot = FALSE)
+  sixsigma <- qcc::ewma(data1, center = options[["exponentiallyWeightedMovingAverageChartCenter"]] , lambda = options[["exponentiallyWeightedMovingAverageChartLambda"]],
+                        std.dev = options[["exponentiallyWeightedMovingAverageChartSd"]], nsigmas = options[["exponentiallyWeightedMovingAverageChartSigmaControlLimits"]], plot = FALSE)
   subgroups <- 1:length(sixsigma$sizes)
   center <- sixsigma$center
   UCL <-  sixsigma$limits[,2]
@@ -99,8 +99,8 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   else
     xBreaks <- c(subgroups)
   xLimits <- c(1,max(xBreaks-0.5) * 1.15)
-  UCL.label <- center + options[["ExponentiallyWeightedMovingAverageChartSigmaControlLimits"]] * sqrt(options[["ExponentiallyWeightedMovingAverageChartLambda"]] / (2-options[["ExponentiallyWeightedMovingAverageChartLambda"]])) * options[["ExponentiallyWeightedMovingAverageChartSd"]]
-  LCL.label <- center - options[["ExponentiallyWeightedMovingAverageChartSigmaControlLimits"]] * sqrt(options[["ExponentiallyWeightedMovingAverageChartLambda"]] / (2-options[["ExponentiallyWeightedMovingAverageChartLambda"]])) * options[["ExponentiallyWeightedMovingAverageChartSd"]]
+  UCL.label <- center + options[["exponentiallyWeightedMovingAverageChartSigmaControlLimits"]] * sqrt(options[["exponentiallyWeightedMovingAverageChartLambda"]] / (2-options[["exponentiallyWeightedMovingAverageChartLambda"]])) * options[["exponentiallyWeightedMovingAverageChartSd"]]
+  LCL.label <- center - options[["exponentiallyWeightedMovingAverageChartSigmaControlLimits"]] * sqrt(options[["exponentiallyWeightedMovingAverageChartLambda"]] / (2-options[["exponentiallyWeightedMovingAverageChartLambda"]])) * options[["exponentiallyWeightedMovingAverageChartSd"]]
   dfLabel <- data.frame(
     x = max(xLimits) * 0.95,
     y = c(center, UCL.label, LCL.label),
@@ -125,7 +125,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   
   return(p)
 }
-.Gchart <- function(dataset, options){
+.Gchart <- function(dataset, options, ready){
   if (!ready)
     return()
 

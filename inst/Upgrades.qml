@@ -434,6 +434,10 @@ Upgrades
 		toVersion:			"0.16.4"
 		
 		// main analysis
+		ChangeRename {from: "variables";									to: "measurement"}
+		ChangeRename {from: "subgroups";									to: "subgroup"}
+		ChangeRename {from: "ImRchart";										to: "xmrChart"}
+		ChangeRename {from: "ncol";											to: "xmrChartMovingRangeLength"}
 		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
 		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
 		ChangeRename {from: "CorPlot";										to: "autocorrelationPlot"}
@@ -535,11 +539,11 @@ Upgrades
 		ChangeRename {from: "Cumulativechart";									to: "cumulativeSumChart"}
 		ChangeRename {from: "h";												to: "cumulativeSumChartNumberSd"}
 		ChangeRename {from: "k";												to: "cumulativeSumChartShiftSize"}
-		ChangeRename {from: "Exponentialchart";									to: "ExponentiallyWeightedMovingAverageChart"}
-		ChangeRename {from: "EWMAlambda";										to: "ExponentiallyWeightedMovingAverageChartLambda"}
-		ChangeRename {from: "EWMAcenter";										to: "ExponentiallyWeightedMovingAverageChartCenter"}
-		ChangeRename {from: "EWMAStd";											to: "ExponentiallyWeightedMovingAverageChartSd"}
-		ChangeRename {from: "EWMANsigma";										to: "ExponentiallyWeightedMovingAverageChartSigmaControlLimits"}
+		ChangeRename {from: "Exponentialchart";									to: "exponentiallyWeightedMovingAverageChart"}
+		ChangeRename {from: "EWMAlambda";										to: "exponentiallyWeightedMovingAverageChartLambda"}
+		ChangeRename {from: "EWMAcenter";										to: "exponentiallyWeightedMovingAverageChartCenter"}
+		ChangeRename {from: "EWMAStd";											to: "exponentiallyWeightedMovingAverageChartSd"}
+		ChangeRename {from: "EWMANsigma";										to: "exponentiallyWeightedMovingAverageChartSigmaControlLimits"}
 		ChangeRename {from: "gchart";											to: "gChart"}
 		ChangeRename {from: "tchart";											to: "tChart"}
 
