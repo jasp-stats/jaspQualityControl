@@ -270,9 +270,9 @@ Form
 					name: 				"xBarR"
 					id : 				xbarR
 					label: 				qsTr("X-bar & R chart")
-					enabled:			(pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value > 1) | pcDataFormat.currentValue == "PCwideFormat"
-					checked:			pcDataFormat.currentValue == "PCwideFormat" | (pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value > 1) // When an option is selected that is not available in both data formats, and the data format is changed, no option becomes checked. 
-				}																																																// This is a workaround to set this option to true every time the data format is changed.
+					enabled:			(pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value > 1) | pcDataFormat.currentValue == "PCwideFormat"
+					checked:			pcDataFormat.currentValue == "PCwideFormat"
+				} 
 
 				RadioButton
 				{
@@ -299,7 +299,7 @@ Form
 					label: 				qsTr("X-mR chart")
 					enabled:			pcDataFormat.currentValue == "PClongFormat"
 					visible:			pcDataFormat.currentValue == "PClongFormat"
-					checked:			pcDataFormat.currentValue == "PClongFormat" && pcSubgroupSize.value == 1
+					checked:			pcDataFormat.currentValue == "PClongFormat" | (pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value == 1)
 
 					DoubleField
 					{

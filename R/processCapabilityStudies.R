@@ -121,16 +121,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["pcReport"]]$position <- 6
     }
     jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat, subgroups, axisLabels)
-    jaspResults[["pcReport"]]$dependOn(c('pcReportDisplay'))
+    jaspResults[["pcReport"]]$dependOn(c("pcReportDisplay", "variables", "variablesLong", "subgroups", "controlChartType"))
   } else {
     # X-bar and R Chart OR ImR Chart
-    if(options[["controlChartType"]] == "xBarR" && is.null(jaspResults[["xbarR"]])) {
+    if(options[["controlChartType"]] == "xBarR") {
       jaspResults[["xbarR"]] <- createJaspContainer(gettext("X-bar & R Control Chart"))
-      jaspResults[["xbarR"]][["plot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
-      jaspResults[["xbarR"]]$dependOn(c("variables", "variablesLong", "subgroups", "xbarR"))
+      jaspResults[["xbarR"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "pcReportDisplay"))
       jaspResults[["xbarR"]]$position <- 1
       
-      if (ready) {
+      if (ready && is.null(jaspResults[["xbarR"]][["plot"]])) {
+        jaspResults[["xbarR"]][["plot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
         if (nrow(dataset[measurements]) > 50) { # if the subgroup size is above 50, the R package cannot calculate R charts.
           jaspResults[["xbarR"]][["plot"]]$setError(gettext("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
           return()
@@ -145,12 +145,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         jaspResults[["xbarR"]][["tableXBar"]] <- xBarChart$table
         jaspResults[["xbarR"]][["tableR"]] <- rChart$table
       }
-    } else if(options[["controlChartType"]] == "IMR" && is.null(jaspResults[["IMR"]])) {
+    } else if(options[["controlChartType"]] == "IMR") {
       jaspResults[["IMR"]] <- createJaspContainer(gettext("X-mR Control Chart"))
-      jaspResults[["IMR"]]$dependOn(c("variables", "variablesLong", "subgroups", "IMR"))
+      jaspResults[["IMR"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "pcReportDisplay"))
       jaspResults[["IMR"]]$position <- 1
       # We need to loop here because in the wide format there might be multiple vars and then we need a chart for each variable
-      if (ready) {
+      if (ready && is.null(jaspResults[["IMR"]][["plot"]])) {
           jaspResults[["IMR"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
           individualChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "I",
                                                        xAxisLabels = axisLabels)
