@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-08-28 09:54+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.0.1-dev\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -2201,25 +2207,22 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Calculate with actual sizes"
 msgstr "Calcular con los tamaños actuales"
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report"
 msgstr "Mostrar el informe"
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report metadata"
 msgstr "Mostrar los metadatos del informe"
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Select Report Components"
 msgstr "Escoger los Elementos del Informe"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show X-mR chart"
-msgstr ""
+msgstr "Mostrar el gráfico X-mR"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show autocorrelation chart"
-msgstr ""
+msgstr "Mostrar el gráfico de Autocorrelación"
