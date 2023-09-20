@@ -17,7 +17,7 @@
 
 #' @export
 msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
-
+  
   wideFormat <- options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepWideFormat"
   if(!wideFormat){
     measurements <- unlist(options$measurements)
@@ -61,7 +61,6 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     wideMeasurementCols <- measurements
     longMeasurementCols <- "Measurement"
   }
-
 
   # Report
   if (options[["anovaGaugeNestedReport"]] && ready) {
@@ -374,7 +373,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 }
 
 .reshapeToWide <- function(dataset, measurements, parts, operators) {
-  dataset <- dataset[order(dataset[parts]),]
+  dataset <- dataset[order(dataset[[parts]]),]
   index <- sequence(dplyr::count(dataset, dplyr::across(dplyr::all_of(c(parts, operators))))$n)
   dataset$index <- index
   dataset <- tidyr::spread(dataset, index, measurements)
