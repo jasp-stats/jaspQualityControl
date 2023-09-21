@@ -30,13 +30,13 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   
   #ready statement
   if (wideFormat && !options[["Type3"]]) {
-    ready <- (length(measurements) > 1 && operators != "" && parts != "")
+    ready <- (length(measurements) > 1 && !identical(operators, "") && !identical(parts, ""))
   } else if (wideFormat && options[["Type3"]]) {
-    ready <- (length(measurements) > 1 && parts != "") 
+    ready <- (length(measurements) > 1 && !identical(parts, "")) 
   } else if (!wideFormat && !options[["Type3"]]) {
-    ready <- (measurements != "" && operators != "" && parts != "")
+    ready <- (measurements != "" && !identical(operators, "") && !identical(parts, ""))
   }  else if (!wideFormat && options[["Type3"]]) {
-    ready <- (measurements != "" && parts != "")
+    ready <- (!identical(measurements, "") && !identical(parts, ""))
   }
   
     
@@ -559,7 +559,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     anovaTables[['plot']] <- plot
 
 
-    if (length(measurements) >= 1 && operators != "" && parts != "" && ready) {
+    if (length(measurements) >= 1 && !identical(operators, "") && !identical(parts, "") && ready) {
       RRtable1$setError(gettextf("Number of observations is < 2 in %1$s after grouping on %2$s", parts, operators))
       RRtable2$setError(gettextf("Number of observations is < 2 in %1$s after grouping on %2$s", parts, operators))
     }

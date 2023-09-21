@@ -27,7 +27,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
   # Data reading
   if (is.null(dataset))
-    if (timeStamp != "") {
+    if (!identical(timeStamp, "")) {
       dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = timeStamp)
       xLabs <- as.vector(dataset[, timeStamp])
     } else {
@@ -159,7 +159,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     }
   }
   #ImRchart for attributes
-  if (options$Attributes == "ImR" && D != "") {
+  if (options$Attributes == "ImR" &&  !identical(D, "")) {
     jaspResults[["IPlotA"]] <- createJaspPlot(title = gettext("Individuals and Moving Range Chart"), width = 1200, height = 500, position = 1)
     IMRchart <- .Ichart_attributes(dataset = dataset, options = options, timeStamp = timeStamp)
     jaspResults[["IPlotA"]]$plotObject <- PlotReport <- IMRchart$p
@@ -286,7 +286,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
       ggplot2::geom_step(ggplot2::aes(x = c(n, n + 1), y = LCL[n], color = "red"), size = 1.5)
   }
 
-  if (timeStamp != "")
+  if (!identical(timeStamp, ""))
     p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
 
   return(list(p = p, sixsigma = sixsigma))
@@ -330,7 +330,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_point(size = 4, fill = ifelse(NelsonLaws(sixsigma, chart = "c")$red_points, 'red', 'blue')) +
     jaspGraphs::themeJaspRaw()
 
-  if (timeStamp != "")
+  if (!identical(timeStamp, ""))
     p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
 
   return(list(p = p, sixsigma = sixsigma))
@@ -374,7 +374,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (timeStamp != "")
+  if (!identical(timeStamp, ""))
     p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
 
   return(list(p = p, sixsigma = sixsigma))
@@ -443,7 +443,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
   }
 
-  if (timeStamp != "")
+  if (!identical(timeStamp, ""))
     p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
 
   return(list(p = p, sixsigma = sixsigma))
@@ -488,7 +488,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (timeStamp != "")
+  if (!identical(timeStamp, ""))
     p1 <- p1 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp])[xBreaks])
 
   #data
@@ -529,7 +529,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  if (timeStamp != "")
+  if (!identical(timeStamp, ""))
     p2 <- p2 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp])[xBreaks])
 
   p3 <-  jaspGraphs::ggMatrixPlot(plotList = list(p1, p2), layout = matrix(1:2, 2), removeXYlabels= "x")
@@ -608,7 +608,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
   }
 
-  if (timeStamp != "")
+  if (!identical(timeStamp, ""))
     p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp]))
 
   return(list(p = p, sixsigma = sixsigma))
@@ -684,7 +684,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
   }
 
-  if (timeStamp != "")
+  if (!identical(timeStamp, ""))
     p <- p + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = dataset[, options$timeStamp])
 
   return(list(p = p, sixsigma = sixsigma))
@@ -706,7 +706,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
   Report <- createJaspContainer(gettext("Report"))
 
-  if (ccTitle == ""){
+  if (identical(ccTitle, "")) {
     title <- gettext("Control Charts for Attributes Report")
   }else{
     title <- ccTitle

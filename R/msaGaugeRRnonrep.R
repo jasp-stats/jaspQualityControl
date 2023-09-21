@@ -32,9 +32,9 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   factor.vars <- factor.vars[factor.vars != ""]
 
   if(!wideFormat){
-    ready <- (measurements != "" && operators != "" && parts != "")
+    ready <- (!identical(measurements, "") && !identical(operators, "") && !identical(parts, ""))
   }else{
-    ready <- (length(measurements) > 1 && operators != "" && parts != "")
+    ready <- (length(measurements) > 1 && !identical(operators, "") && !identical(parts, ""))
   }
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
@@ -110,7 +110,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     }
 
     #Measurement by part x operator plot
-    if (options[["NRpartOperatorGraph"]] & ready) {
+    if (options[["NRpartOperatorGraph"]] && ready) {
       if (is.null(jaspResults[["NRpartOperatorGraph"]])) {
         jaspResults[["NRpartOperatorGraph"]] <- createJaspContainer(gettext("Measurement by part x operator plot"))
         jaspResults[["NRpartOperatorGraph"]]$position <- 4

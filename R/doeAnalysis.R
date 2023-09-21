@@ -53,7 +53,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   factorVars <- NULL
   numericVars <- NULL
-  if (options[["dependent"]] != "") {
+  if (!identical(options[["dependent"]], "")) {
     numericVars <- c(numericVars, options[["dependent"]])
   }
   if (length(options[["continuousFactors"]]) > 0 && !identical(options[["continuousFactors"]], "")) {
