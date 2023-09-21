@@ -38,7 +38,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   if (wideFormat){
     ready <- (length(measurements) != 0 && !identical(operators, "") && !identical(parts, ""))
   } else {
-    ready <- (measurements != "" && !identical(operators, "") && !identical(parts, ""))
+    ready <- (!identical(measurements, "") && !identical(operators, "") && !identical(parts, ""))
   }
 
 
