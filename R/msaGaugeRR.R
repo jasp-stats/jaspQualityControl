@@ -38,8 +38,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }  else if (!wideFormat && options[["type3"]]) {
     ready <- (!identical(measurements, "") && !identical(parts, ""))
   }
-  
-    
+
+
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
   factor.vars <- c(parts, operators)
@@ -844,10 +844,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE) {
   sources <- gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-Part'))
-  if (!all(is.na(percentToleranceValues))){
+  if (!all(is.na(percentToleranceValues))) {
     references <- gettextf(c('%% Contribution', '%% Study Variation', '%% Tolerance'))
     values <- c(percentContributionValues, studyVariationValues, percentToleranceValues)
-  }else{
+  } else {
     references <- gettextf(c('%% Contribution', '%% Study Variation'))
     values <- c(percentContributionValues, studyVariationValues)
   }
@@ -855,19 +855,21 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                           reference = rep(references, each = 4),
                           value = values)
   plotframe$source <- factor(plotframe$source, levels = sources)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(plotframe$value)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, plotframe$value))
 
 
   if (Type3)
     plotframe <- subset(plotframe, source != "Reprod")
 
-  p <- ggplot2::ggplot() + ggplot2::geom_bar(data = plotframe,
-                                             mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
-                                             position="dodge", stat = "identity")
-  p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
-    ggplot2::xlab("") + ggplot2::scale_y_continuous(name = "Percent", breaks = yBreaks, limits = range(c(yBreaks, plotframe$value)))
+  p <- ggplot2::ggplot() +
+    ggplot2::geom_bar(data = plotframe, mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
+                      position="dodge", stat = "identity") +
+    jaspGraphs::themeJaspRaw() +
+    jaspGraphs::geom_rangeframe() +
+    ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
+    ggplot2::xlab("") +
+    ggplot2::scale_y_continuous(name = "Percent", breaks = yBreaks, limits = range(c(yBreaks, plotframe$value)))
   return(p)
-
 }
 
 .gaugeNumberDistinctCategories <- function(sdPart, sdGauge) {

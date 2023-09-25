@@ -97,7 +97,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
       singleMeasurementParts <- paste(names(which(table(dataset[[parts]]) < 2)), collapse = ", ")
       table2$setError(gettextf("T-Test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
       return(table2)
-    } 
+    }
     variancePerPart <- tapply(dataset[[measurements]], dataset[[parts]], var)
     if(any(variancePerPart == 0)) {
       noVarParts <- paste(names(which(variancePerPart == 0)), collapse = ", ")
@@ -107,7 +107,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
       singleMeasurementParts <- paste(names(which(table(dataset[[parts]]) < 2)), collapse = ", ")
       table2$setError(gettextf("T-Test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
       return(table2)
-    } 
+    }
     variancePerPart <- tapply(dataset[[measurements]], dataset[[parts]], var)
     if(any(variancePerPart == 0)) {
       noVarParts <- paste(names(which(variancePerPart == 0)), collapse = ", ")
@@ -160,11 +160,11 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
       jaspGraphs::geom_point(data = df, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "red",size = 4) +
       ggplot2::scale_y_continuous(limits = c(min(df2$Bias), max(df2$Bias) * 2)) +
       ggplot2::annotate("text", x = mean(df2$Ref), y = max(df2$Bias)*1.25, size = 5.5,
-                        label = sprintf("y = %.2f %s %.2fx", coefficientConstant, plusOrMin, abs(coefficientSlope)))
+                        label = sprintf("y = %.2f %s %.2fx", coefficientConstant, plusOrMin, abs(coefficientSlope))) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
 
-
-    p1 <- jaspGraphs::themeJasp(p1)
-    plot1$plotObject <- jaspGraphs::themeJasp(p1)
+    plot1$plotObject <- p1
 
     table2$setData(list("predictor" = c("Intercept", "Slope"),
                         "coefficient" = coefficients,
@@ -200,15 +200,15 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
     }
 
     df3 <- data.frame(Source = c("Linearity", "Bias"), Percent = c(percentLin, (abs(averageBias) / options[["manualProcessVariationValue"]]) * 100))
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(df3$Percent)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, df3$Percent))
     yLimits <- range(yBreaks)
 
     p2 <- ggplot2::ggplot() +
       ggplot2::geom_col(data = df3, mapping = ggplot2::aes(x = Source, y = Percent)) +
       ggplot2::scale_y_continuous(breaks = yBreaks, limits = yLimits) +
-      ggplot2::xlab(ggplot2::element_blank())
-
-    p2 <- jaspGraphs::themeJasp(p2)
+      ggplot2::xlab(ggplot2::element_blank()) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
 
     plot2$plotObject <- p2
   }
