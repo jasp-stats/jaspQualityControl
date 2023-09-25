@@ -134,7 +134,8 @@ Form
 					label:						qsTr("Study Var. multiplier type")
 					id: 						studyVarMultiplierType
 					indexDefaultValue:			0
-					values: [
+					values: 
+					[
 						{ label: qsTr("Std. Deviation"), value: "sd"},
 						{ label: qsTr("Percent"), value: "percent"}
 					]

@@ -34,7 +34,6 @@ Upgrades
 
 		ChangeRename { from: "ncol";												to: "movingRangeLength"				}
 	}
-}
 
 // option renaming for syntax
 
@@ -43,8 +42,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"msaType1Gauge"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		// main analysis
 		ChangeRename {from: "measurements";								to: "measurement"}
@@ -86,8 +85,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"msaGaugeLinearity"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		// main analysis
 		ChangeRename {from: "parts";									to: "part"}
@@ -109,8 +108,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"msaGaugeRR"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		// main analysis
 		ChangeRename {from: "gaugeRRdataFormat";						to: "dataFormat"}
@@ -212,8 +211,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"msaGaugeRRnonrep"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		// main analysis
 		ChangeRename {from: "gaugeRRNonRepDataFormat";					to: "dataFormat"}
@@ -292,8 +291,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"msaAttribute"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		// main analysis
 		ChangeRename {from: "AAAdataFormat";							to: "dataFormat"}
@@ -326,8 +325,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"msaTestRetest"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		// main analysis
 		ChangeRename {from: "testRetestDataFormat";					to: "dataFormat"}
@@ -369,8 +368,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"variablesChartsSubgroups"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		// main analysis
 		ChangeRename {from: "CCDataFormat";										to: "dataFormat"}
@@ -430,8 +429,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"variablesChartsIndividuals"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		// main analysis
 		ChangeRename {from: "variables";									to: "measurement"}
@@ -461,8 +460,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"attributesCharts"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		// main analysis
 		ChangeRename {from: "D";											to: "defectiveOrDefect"}
@@ -532,8 +531,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"timeWeightedCharts"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		ChangeRename {from: "variables";										to: "measurements"}
 		ChangeRename {from: "Cumulativechart";									to: "cumulativeSumChart"}
@@ -554,8 +553,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"processCapabilityStudies"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		// main analysis
 		ChangeRename {from: "pcDataFormat";									to: "dataFormat"}
@@ -684,8 +683,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"doeFactorial"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 		
 		ChangeRename {from: "dataCoding";									to: "unitDisplay"}
 
@@ -793,8 +792,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"doeFull"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 
 		ChangeRename {from: "runOrderFull";										to: "runOrder"}
 
@@ -822,8 +821,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"doeResponseSurfaceMethodology"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 
 		ChangeJS
 		{
@@ -894,8 +893,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"doeModifyDesign"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 
 		ChangeRename {from: "MDresponse";										to: "responseVariable"}
 		ChangeRename {from: "MDassignedFactors";								to: "assignedFactors"}
@@ -958,8 +957,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:		"probabilityOfDetection"
-		fromVersion:		"0.16.3"
-		toVersion:			"0.16.4"
+		fromVersion:		"0.18.0"
+		toVersion:			"0.18.1"
 
 		ChangeRename {from: "covariates";									to: "covariate"}
 		ChangeRename {from: "wantsModelFitTable";							to: "modelFitTable"}
