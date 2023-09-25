@@ -51,7 +51,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
              all.target = c(measurements, standards, operators, parts),
              exitAnalysisIfErrors = TRUE)
 
-  if (!wideFormat && ready){
+  if (!wideFormat && ready) {
     dataset <- dataset[order(dataset[[operators]]),]
     dataset <- dataset[order(dataset[[parts]]),]
     nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
@@ -91,7 +91,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       jaspResults[["AAAtableGraphs"]] <- createJaspContainer(gettext("Attributes Agreement Analysis"))
       jaspResults[["AAAtableGraphs"]]$position <- 16
     }
-    jaspResults[["AAAtableGraphs"]] <- .aaaTableGraphs(ready = ready, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, standards = standards)
+    jaspResults[["AAAtableGraphs"]] <- .aaaTableGraphs(ready = ready, dataset = dataset, measurements = measurements,
+                                                       parts = parts, operators = operators, options =  options, standards = standards)
   }else{
     if (is.null(jaspResults[["AAAtableGraphs"]])) {
       jaspResults[["AAAtableGraphs"]] <- createJaspContainer(gettext("Attributes Agreement Analysis"))
@@ -300,10 +301,10 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       }
 
       for (measurement in measurements) {
-        if (is.numeric(dataset[[measurement]])) {
-          dataset[measurement] <- as.character(dataset[[measurement]])
-          dataset[standards] <- as.character(dataset[[standards]])
-        }
+        # if (is.numeric(dataset[[measurement]])) {
+        dataset[measurement] <- as.character(dataset[[measurement]])
+        dataset[standards] <- as.character(dataset[[standards]])
+        # }
       }
 
       matchesWithin <- vector(mode = "numeric")
@@ -481,9 +482,9 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       numberInspected <- length(unique(dataset[[parts]]))
 
       for (measurement in measurements) {
-        if (is.numeric(dataset[[measurement]])) {
+        # if (is.numeric(dataset[[measurement]])) {
           dataset[measurement] <- as.character(dataset[[measurement]])
-        }
+        # }
       }
 
       matchesWithin <- vector(mode = "numeric")
