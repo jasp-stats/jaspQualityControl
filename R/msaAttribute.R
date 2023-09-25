@@ -301,10 +301,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       }
 
       for (measurement in measurements) {
-        # if (is.numeric(dataset[[measurement]])) {
         dataset[measurement] <- as.character(dataset[[measurement]])
         dataset[standards] <- as.character(dataset[[standards]])
-        # }
       }
 
       matchesWithin <- vector(mode = "numeric")
@@ -482,9 +480,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       numberInspected <- length(unique(dataset[[parts]]))
 
       for (measurement in measurements) {
-        # if (is.numeric(dataset[[measurement]])) {
           dataset[measurement] <- as.character(dataset[[measurement]])
-        # }
       }
 
       matchesWithin <- vector(mode = "numeric")
