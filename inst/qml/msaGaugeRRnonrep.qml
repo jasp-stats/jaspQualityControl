@@ -226,9 +226,9 @@ Form
 
 				TextField
 				{
-					name: 								"anovaGaugeNestedName"
+					name: 								"reportGaugeName"
 					label: 								qsTr("Gauge name")
-					id:									anovaGaugeNestedName
+					id:									reportGaugeName
 					placeholderText:					qsTr("Name")
 					fieldWidth:							100
 				}

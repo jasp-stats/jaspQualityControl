@@ -281,7 +281,7 @@ Upgrades
 		// report
 		ChangeRename {from: "anovaGaugeNestedReport";					to: "report"}
 		ChangeRename {from: "anovaGaugeNestedTitle";					to: "reportTitle"}
-		ChangeRename {from: "anovaGaugeNestedName";						to: "reportName"}
+		ChangeRename {from: "anovaGaugeNestedName";						to: "reportGaugeName"}
 		ChangeRename {from: "anovaGaugeNestedDate";						to: "reportDate"}
 		ChangeRename {from: "anovaGaugeNestedReportedBy";				to: "reportReportedBy"}
 		ChangeRename {from: "anovaGaugeNestedMisc";						to: "reportMiscellaneous"}

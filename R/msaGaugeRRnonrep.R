@@ -405,7 +405,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
    }else{
      title <- options[["reportTitle"]]
    }
-   name <- gettextf("Gauge name: %s", options[["anovaGaugeNestedName"]])
+   name <- gettextf("Gauge name: %s", options[["reportGaugeName"]])
    date <- gettextf("Date of study: %s", options[["reportDate"]])
    text1 <- c(name, date)
 
