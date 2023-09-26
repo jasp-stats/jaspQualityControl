@@ -34,7 +34,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = factorVariables)
   }
 
-  if (makeSplit & ready) {
+  if (makeSplit && ready) {
     splitFactor      <- dataset[[.v(subgroups)]]
     splitLevels      <- levels(splitFactor)
     # remove missing values from the grouping variable

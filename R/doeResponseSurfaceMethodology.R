@@ -28,21 +28,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
     .doeRsmGenerateDesignTable(jaspResults, options, design)
 
     .doeRsmExportDesign(options, design)
-
-    error <- try({.doeRsmAnalysisThatMayBreak(jaspResults, dataset, options)})
-
-    if (isTryError(error)) {
-      if (inherits(attr(error, "condition"), "validationError")) {
-        # the error was thrown in .dataErrorCheck -> .hasErrors, so we rethrow it
-        stop(attr(error, "condition"))
-      } else {
-        # an unexpected error occured, so crash gracefully
-        tb <- createJaspTable()
-        tb$setError(gettextf("The analysis failed with the following error message: %s", .extractErrorMessage(error)))
-        jaspResults[["errorTable"]] <- tb
-      }
-    }
-
   }
 
 }
@@ -469,76 +454,71 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   return(cubeSize + starSize + designTypeCorrection)
 }
 
-.doeRsmAnalysisThatMayBreak <- function(jaspResults, dataset, options) {
+# old code ----
 
+.doeRsmAnalysisThatMayBreak <- function(jaspResults, dataset, options) {
+  
   op1 <- length(options[["modelTerms"]])
   op2 <- length(options[["rsmResponseVariables"]])
   op3 <- length(options[["rsmBlocks"]])
-
+  
   ready <- (op1 > 0 && op2 > 0) && any(options[["contour"]], options[["coef"]], options[["anova"]],
                                        options[["res"]], options[["pareto"]], options[["resNorm"]], options[["ResFitted"]],
                                        options[["displayDesign"]], options[["desirability"]],
                                        options[["contour"]])
-
+  
   if (!ready)
     return()
-
+  
   for (i in 1:op2) {
-
+    
     data <- .readDataSet(jaspResults, options, dataset, i)
-
+    
     #check for more than 5 unique
     .dataErrorCheck(data, options)
-
+    
     rsm[[i]] <- .responseSurfaceCalculate(jaspResults, options, dataset, data)
-
+    
     # if (options[["showDesign"]])
     #   .qualityControlDesignMainRSM(jaspResults,options, position = 1)
-
+    
     if (options[["contour"]])
       .responseSurfaceContour(jaspResults, options, data, rsm[[i]], i, position = 2)
-
-
+    
+    
     if (options[["coef"]])
       .responseSurfaceTableCall(jaspResults, options, rsm[[i]], i, position = 3)
-
+    
     if (options[["anova"]])
       .responseSurfaceTableAnovaCall(jaspResults, options, rsm = rsm[[i]], i, position = 4)
-
+    
     # if(options[["eigen"]])
     #   .responseSurfaceTableEigenCall(jaspResults, options, rsm, position = 5)
-
+    
     if (options[["res"]])
       .responsePlotResidualCall(jaspResults, options, rsm[[i]], i, position = 6)
-
+    
     if (options[["normalPlot"]])
       .responseNomralProbabilityPlot(data, jaspResults, options, rsm[[i]], i, position = 7)
-
+    
     if (options[["pareto"]])
       .responsePlotPareto(jaspResults, options, rsm[[i]], i, position = 8)
-
+    
     if (options[["resNorm"]])
       .responsePlotResNorm(jaspResults, options, rsm[[i]], i, position = 9)
-
+    
     if (options[["ResFitted"]])
       .responsePlotResFitted(jaspResults, options, rsm[[i]],i, position = 10)
-
+    
     if (options[["fourInOne"]])
       .responseFourInOnePlot(jaspResults, options, rsm[[i]],i, position = 11)
-
+    
   }
-
+  
   if (options[["desirability"]])
     .responseSurfaceOptimize(jaspResults, options, rsm, data, position = 11, dataset)
-
 }
 
-
-
-
-
-
-# old code ----
 .cubeDesign <- function(jaspResults, options) {
 
   # TODO: rename "ccd" in jaspResults[["ccd"]] to "ccdTable"

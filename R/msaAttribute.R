@@ -36,9 +36,9 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
   # Ready
   if (wideFormat){
-    ready <- (length(measurements) != 0 && operators != "" && parts != "")
+    ready <- (length(measurements) != 0 && !identical(operators, "") && !identical(parts, ""))
   } else {
-    ready <- (measurements != "" && operators != "" && parts != "")
+    ready <- (!identical(measurements, "") && !identical(operators, "") && !identical(parts, ""))
   }
 
 
@@ -68,8 +68,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
 
   # Error handling
-
-  if (standards == "" && options$PositiveRef != "" && options[["AAAcohensKappa"]]) {
+  
+  if (identical(standards, "") && !identical(options[["PositiveRef"]], "") && options[["AAAcohensKappa"]]) {
     jaspResults[["tableReference"]] <- createJaspContainer(title = gettext("Reference Tables and Plots"))
     jaspResults[["tableReference"]]$position <- 10
     jaspResults[["tableReference"]]$dependOn(c("PositiveRef", "standard"))
@@ -195,7 +195,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   }
   cors <- cbind(appraiserVector, round(cor(as.data.frame(listCor)), 2))
 
-  if (!any(options$PositiveRef == as.character(unique(unlist(dataset[measurements])))) && options$PositiveRef != "" && !options$AAAkendallTau)
+  if (!any(options$PositiveRef == as.character(unique(unlist(dataset[measurements])))) && !identical(options[["PositiveRef"]], "") && !options$AAAkendallTau)
     table$setError(gettext("Please inseret a vaild Positive reference as used in the 'Results' variables."))
 
 
@@ -294,7 +294,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       appraiserVector <- as.character(unique(dataset[[operators]]))
       numberInspected <- length(unique(dataset[[parts]]))
 
-      if ((length(unique(unlist(dataset[measurements]))) != 2 | length(unique(dataset[[standards]])) != 2) && !options$AAAkendallTau && options$PositiveRef != "") {
+      if ((length(unique(unlist(dataset[measurements]))) != 2 | length(unique(dataset[[standards]])) != 2) && !options$AAAkendallTau && !identical(options[["PositiveRef"]], "")) {
         table$setError(gettext("Invalid Reference and/or Results were inserted."))
         return(table)
       }
@@ -351,10 +351,10 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
         tableDecisions$addColumnInfo(name = "Miss", title = gettext("Miss rate"), type = "string")
         tableDecisions$addColumnInfo(name = "False", title = gettext("False alarm rate"), type = "string")
 
-        if (!any(options$PositiveRef == as.character(unique(unlist(dataset[measurements])))) && options$PositiveRef != "" && !options$AAAkendallTau)
+        if (!any(options$PositiveRef == as.character(unique(unlist(dataset[measurements])))) && !identical(options[["PositiveRef"]], "") && !options$AAAkendallTau)
           tableDecisions$setError(gettext("Please inseret a vaild Positive reference as used in the 'Results' variables."))
 
-        if (!options$AAAkendallTau && standards != "" && options$PositiveRef != "" && any(options$PositiveRef == dataset[measurements]))
+        if (!options$AAAkendallTau && !identical(standards, "") && !identical(options[["PositiveRef"]], "") && any(options$PositiveRef == dataset[measurements]))
         {
           PositiveRef <- options$PositiveRef
           Misses <- vector()
@@ -574,7 +574,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
       AAA[["AllVsStandard"]] <- tableAllVsStandard
     }
 
-    if (options$standard != "" && options$PositiveRef != "" && length(measurements) > 1)
+    if (!identical(options[["standard"]], "") && !identical(options[["PositiveRef"]], "") && length(measurements) > 1)
       AAA[["StudyEffectiveness"]] <- tableDecisions
   }
   return(AAA)

@@ -32,9 +32,9 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   factor.vars <- factor.vars[factor.vars != ""]
 
   if (wideFormat){
-    ready <- (length(measurements) > 1 && parts != "")
+    ready <- (length(measurements) > 1 && !identical(parts, ""))
   }else{
-    ready <- (measurements != "" && operators != "" && parts != "")
+    ready <- (!identical(measurements, "") && !identical(operators, "") && !identical(parts, ""))
   }
 
   if (is.null(dataset)) {
@@ -68,7 +68,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   }
 
   # Rchart Range method
-  if (options[["rangeRchart"]] & ready) {
+  if (options[["rangeRchart"]] && ready) {
     if (is.null(jaspResults[["rangeRchart"]])) {
       jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
       jaspResults[["rangeRchart"]]$position <- 3
@@ -90,7 +90,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   }
 
   # Traffic light graph
-  if(options[["trafficPlot"]] & is.null(jaspResults[["trafficPlot"]] )) {
+  if(options[["trafficPlot"]] && is.null(jaspResults[["trafficPlot"]] )) {
     jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
     jaspResults[["trafficPlot"]]$position <- 4
     jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "rangePSD", "EnableRangePSD", "rangeTolerance", "EnableRangeTolerance"))

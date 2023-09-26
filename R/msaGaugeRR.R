@@ -27,16 +27,19 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   parts <- unlist(options$parts)
   operators <- unlist(options$operators)
-
+  
   #ready statement
-  if (wideFormat && !options$Type3)
-    ready <- (length(measurements) != 0 && operators != "" && parts != "")
-  else if (options$Type3)
-    ready <- (measurements != "" && parts != "" & length(measurements) != 0)
-  else
-    ready <- (measurements != "" && operators != "" && parts != "")
-
-
+  if (wideFormat && !options[["Type3"]]) {
+    ready <- (length(measurements) > 1 && !identical(operators, "") && !identical(parts, ""))
+  } else if (wideFormat && options[["Type3"]]) {
+    ready <- (length(measurements) > 1 && !identical(parts, "")) 
+  } else if (!wideFormat && !options[["Type3"]]) {
+    ready <- (measurements != "" && !identical(operators, "") && !identical(parts, ""))
+  }  else if (!wideFormat && options[["Type3"]]) {
+    ready <- (!identical(measurements, "") && !identical(parts, ""))
+  }
+  
+    
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
   factor.vars <- c(parts, operators)
@@ -70,7 +73,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     dataset <- dataset[order(dataset[[parts]]),]
   }
 
-  if(ready & !options$Type3){
+  if(ready && !options$Type3){
    crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
     if(!crossed){
      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
@@ -556,7 +559,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     anovaTables[['plot']] <- plot
 
 
-    if (length(measurements) >= 1 && operators != "" && parts != "" && ready) {
+    if (length(measurements) >= 1 && !identical(operators, "") && !identical(parts, "") && ready) {
       RRtable1$setError(gettextf("Number of observations is < 2 in %1$s after grouping on %2$s", parts, operators))
       RRtable2$setError(gettextf("Number of observations is < 2 in %1$s after grouping on %2$s", parts, operators))
     }

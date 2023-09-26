@@ -35,7 +35,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (wideFormat)
     ready <- length(measurements) > 0
   else
-    ready <- (measurements != "" && (options[["manualSubgroupSize"]] | subgroups != ""))
+    ready <- (!identical(measurements, "") && (options[["manualSubgroupSize"]] | !identical(subgroups, "")))
 
   if (makeSplit && ready) {
     dataset.factors <- .readDataSetToEnd(columns=num.vars, columns.as.factor=splitName)
@@ -77,7 +77,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Error Handling
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = measurements, exitAnalysisIfErrors = TRUE)
-  if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis" & ready) {
+  if (options[["capabilityStudyType"]] == "nonnormalCapabilityAnalysis" && ready) {
     .hasErrors(dataset,
                all.target = measurements,
                custom = function () {

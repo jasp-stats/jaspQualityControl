@@ -17,7 +17,7 @@
 
 #' @export
 msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
-
+  
   wideFormat <- options[["gaugeRRNonRepDataFormat"]] == "gaugeRRNonRepWideFormat"
   if(!wideFormat){
     measurements <- unlist(options$measurements)
@@ -32,9 +32,9 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   factor.vars <- factor.vars[factor.vars != ""]
 
   if(!wideFormat){
-    ready <- (measurements != "" && operators != "" && parts != "")
+    ready <- (!identical(measurements, "") && !identical(operators, "") && !identical(parts, ""))
   }else{
-    ready <- (length(measurements) > 1 && operators != "" && parts != "")
+    ready <- (length(measurements) > 1 && !identical(operators, "") && !identical(parts, ""))
   }
   if (is.null(dataset)) {
     dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
@@ -61,7 +61,6 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     wideMeasurementCols <- measurements
     longMeasurementCols <- "Measurement"
   }
-
 
   # Report
   if (options[["anovaGaugeNestedReport"]] && ready) {
@@ -111,7 +110,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     }
 
     #Measurement by part x operator plot
-    if (options[["NRpartOperatorGraph"]] & ready) {
+    if (options[["NRpartOperatorGraph"]] && ready) {
       if (is.null(jaspResults[["NRpartOperatorGraph"]])) {
         jaspResults[["NRpartOperatorGraph"]] <- createJaspContainer(gettext("Measurement by part x operator plot"))
         jaspResults[["NRpartOperatorGraph"]]$position <- 4
@@ -374,7 +373,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 }
 
 .reshapeToWide <- function(dataset, measurements, parts, operators) {
-  dataset <- dataset[order(dataset[parts]),]
+  dataset <- dataset[order(dataset[[parts]]),]
   index <- sequence(dplyr::count(dataset, dplyr::across(dplyr::all_of(c(parts, operators))))$n)
   dataset$index <- index
   dataset <- tidyr::spread(dataset, index, measurements)

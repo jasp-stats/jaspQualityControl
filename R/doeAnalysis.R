@@ -53,19 +53,19 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   factorVars <- NULL
   numericVars <- NULL
-  if (options[["dependent"]] != "") {
+  if (!identical(options[["dependent"]], "")) {
     numericVars <- c(numericVars, options[["dependent"]])
   }
-  if (length(options[["continuousFactors"]]) > 0 && options[["continuousFactors"]] != "") {
+  if (length(options[["continuousFactors"]]) > 0 && !identical(options[["continuousFactors"]], "")) {
     numericVars <- c(numericVars, unlist(options[["continuousFactors"]]))
   }
-  if (length(options[["fixedFactors"]]) > 0 && options[["fixedFactors"]] != "") {
+  if (length(options[["fixedFactors"]]) > 0 && !identical(options[["fixedFactors"]], "")) {
     factorVars <- c(factorVars, unlist(options[["fixedFactors"]]))
   }
-  if (options[["blocks"]] != "") {
+  if (length(options[["blocks"]]) > 0 && !identical(options[["blocks"]], "")) {
     factorVars <- c(factorVars, options[["blocks"]])
   }
-  if (length(options[["covariates"]]) > 0 && options[["covariates"]] != "") {
+  if (length(options[["covariates"]]) > 0 && !identical(options[["covariates"]], "")) {
     numericVars <- c(numericVars, unlist(options[["covariates"]]))
   }
   dataset <- .readDataSetToEnd(columns.as.numeric = numericVars, columns.as.factor = factorVars)
@@ -163,7 +163,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
                             "fullQuadratic" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ")", catPredString, " + rsm::TWI(", numPredString, ") +  rsm::PQ(", numPredString, ")")
     )
   }
-  if (options[["blocks"]] != "") {
+  if (length(options[["blocks"]]) > 0 && !identical(options[["blocks"]], "")) {
     formulaString <- paste0(formulaString, " + ", options[["blocks"]])
   }
   formula <- as.formula(formulaString)

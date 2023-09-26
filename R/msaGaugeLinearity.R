@@ -22,7 +22,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   parts <- unlist(options$parts)
   standards <- unlist(options$standard)
 
-  ready <- (measurements != "" && parts != "" && standards != "")
+  ready <- (!identical(measurements, "") && !identical(parts, "") && !identical(standards, ""))
 
   numeric.vars <- c(measurements, standards)
   numeric.vars <- numeric.vars[numeric.vars != ""]
