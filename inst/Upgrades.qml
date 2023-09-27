@@ -35,6 +35,16 @@ Upgrades
 		ChangeRename { from: "ncol";												to: "movingRangeLength"				}
 	}
 
+		Upgrade
+	{
+		functionName:	"variablesChartsIndividuals"
+		fromVersion:	"0.17.3"
+		toVersion:		"0.18.0"
+
+		ChangeRename { from: "CCReport";											to: "variableChartIndividualsReport" }
+	}
+
+
 // option renaming for syntax
 
 // Type 1 Gauge Study
@@ -434,9 +444,10 @@ Upgrades
 		
 		// main analysis
 		ChangeRename {from: "variables";									to: "measurement"}
-		ChangeRename {from: "subgroups";									to: "subgroup"}
+		ChangeRename {from: "subgroups";									to: "axisLabels"}
+		ChangeRename {from: "split";										to: "stage"}
 		ChangeRename {from: "ImRchart";										to: "xmrChart"}
-		ChangeRename {from: "ncol";											to: "xmrChartMovingRangeLength"}
+		ChangeRename {from: "movingRangeLength";							to: "xmrChartMovingRangeLength"}
 		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
 		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
 		ChangeRename {from: "CorPlot";										to: "autocorrelationPlot"}
@@ -445,14 +456,12 @@ Upgrades
 		
 
 		// report
-		ChangeRename {from: "CCReport";										to: "report"}
+		ChangeRename {from: "variableChartIndividualsReport";				to: "report"}
 		ChangeRename {from: "ccTitle";										to: "reportTitle"}
 		ChangeRename {from: "ccName";										to: "reportMeasurementName"}
 		ChangeRename {from: "ccDate";										to: "reportDate"}
 		ChangeRename {from: "ccReportedBy";									to: "reportReportedBy"}
 		ChangeRename {from: "ccMisc";										to: "reportMiscellaneous"}
-		ChangeRename {from: "ccSubTitle";									to: "reportSubtitle"}
-		ChangeRename {from: "ccChartName";									to: "reportChartName"}
 	}
 
 	// Control Charts for Attributes
@@ -630,6 +639,7 @@ Upgrades
 		ChangeRename {from: "csConfidenceIntervalPercent";					to: "processCapabilityTableCiLevel"}
 		ChangeRename {from: "xbarR";										to: "xBarAndRChart"}
 		ChangeRename {from: "IMR";											to: "xmrChart"}
+		ChangeRename {from: "movingRangeLength";							to: "xmrChartMovingRangeLength"}
 		ChangeRename {from: "displayDensity";								to: "histogramDensityLine"}
 		ChangeRename {from: "pcNumberOfBins";								to: "histogramBinNumber"}
 		ChangeRename {from: "addGridlines";									to: "probabilityPlotGridLines"}

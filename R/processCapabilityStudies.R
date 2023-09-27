@@ -1417,7 +1417,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
   Container <- createJaspContainer(gettextf("X-mR control chart"))
-  Container$dependOn(options = c("xBarAndRChart", "measurementsWideFormat", "subgroup", "measurementLongFormat", "manualSubgroupSizeValue", "report", "movingRangeLength"))
+  Container$dependOn(options = c("xBarAndRChart", "measurementsWideFormat", "subgroup", "measurementLongFormat", "manualSubgroupSizeValue", "report", "xmrChartMovingRangeLength"))
   Container$position <- 1
   jaspResults[["ImR Charts"]] <- Container
   Container[["plot"]] <- .IMRchart(dataset = dataset, measurements = measurements, options = options, manualXaxis = subgroups, cowPlot = TRUE, Wide = wideFormat)$p

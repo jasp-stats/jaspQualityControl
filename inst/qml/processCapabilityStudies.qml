@@ -280,7 +280,7 @@ Form
 
 					DoubleField
 					{
-						name:							"movingRangeLength"
+						name:							"xmrChartMovingRangeLength"
 						label:							qsTr("Moving range length")
 						defaultValue:					2
 						min: 							2
