@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-08-28 08:21\n"
+"POT-Creation-Date: 2023-09-30 03:40\n"
 "PO-Revision-Date: 2023-09-20 11:21+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -180,48 +180,6 @@ msgstr "%s"
 msgid "Observation"
 msgstr "Beobachtung"
 
-msgid "Normal Probability Plot of Residuals"
-msgstr ""
-
-msgid "Histogram of Residuals"
-msgstr "Histogramm der Residuen"
-
-msgid "Residuals vs. Fitted Value"
-msgstr "Residuen vs. Angepasster Wert"
-
-msgid "Residuals vs. Run Order"
-msgstr "Residuen vs. Ablaufreihenfolge"
-
-msgid "Pareto Plot of Standardized Effects"
-msgstr "Pareto-Diagramm Standardisierter Effekte"
-
-msgid "Fitted values"
-msgstr "Angepasste Werte"
-
-msgid "Residuals"
-msgstr "Residuen"
-
-msgid "Run order"
-msgstr "Ablaufreihenfolge"
-
-msgid "Standardized Effect"
-msgstr "Standardisierter Effekt"
-
-msgid "Coefficients"
-msgstr "Koeffizienten"
-
-msgid "Coefficient"
-msgstr "Koeffizient"
-
-msgid "Standard Error"
-msgstr "Standardfehler"
-
-msgid "t"
-msgstr "t"
-
-msgid "p"
-msgstr "p"
-
 msgid "The analysis crashed with the following error message: %1$s"
 msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %1$s"
 
@@ -249,6 +207,12 @@ msgstr "Term"
 msgid "Effect"
 msgstr "Effekt"
 
+msgid "Coefficient"
+msgstr "Koeffizient"
+
+msgid "Standard Error"
+msgstr "Standardfehler"
+
 msgid "coded"
 msgstr "kodierten"
 
@@ -264,14 +228,32 @@ msgstr "Pareto-Diagramm Standardisierter Effekte"
 msgid "Pareto Chart of Unstandardized Effects"
 msgstr "Pareto-Diagramm Unstandardisierter Effekte"
 
+msgid "Standardized Effect"
+msgstr "Standardisierter Effekt"
+
 msgid "Unstandardized Effect"
 msgstr "Unstandardisierter Effekt"
+
+msgid "Normal Probability Plot of Residuals"
+msgstr ""
+
+msgid "Histogram of Residuals"
+msgstr "Histogramm der Residuen"
 
 msgid "Residuals versus Fitted Values"
 msgstr "Residuen vs. angepasste Werte"
 
+msgid "Fitted values"
+msgstr "Angepasste Werte"
+
+msgid "Residuals"
+msgstr "Residuen"
+
 msgid "Residuals versus Run Order"
 msgstr "Residuen vs. Ablaufreihenfolge"
+
+msgid "Run order"
+msgstr "Ablaufreihenfolge"
 
 msgid "Matrix residual plot"
 msgstr ""
@@ -361,38 +343,14 @@ msgstr "Standard-Reihenfolge"
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Selected Design"
-msgstr "Ausgewähltes Design"
-
-msgid "Factors"
-msgstr "Faktoren"
-
-msgid "Runs"
-msgstr "Abläufe"
-
-msgid "Resolution"
-msgstr "Auflösung"
-
-msgid "Replicates"
-msgstr ""
-
-msgid "Design Preview"
-msgstr "Design-Vorschau"
-
-msgid "Input Design"
-msgstr ""
-
-msgid "Desired Design"
-msgstr "Gewünschtes Design"
-
-msgid "Missing Runs"
-msgstr "Fehlende Abläufe"
-
 msgid "Continuous factors"
 msgstr "Kontinuierliche Faktoren"
 
 msgid "Categorical factors"
 msgstr "Kategorielle Faktoren"
+
+msgid "Replicates"
+msgstr ""
 
 #, fuzzy
 msgid "Centre points in cube"
@@ -504,6 +462,9 @@ msgstr "Kodierte Koeffizienten"
 
 msgid "Uncoded coefficients"
 msgstr "Unkodierte Koeffizienten"
+
+msgid "t"
+msgstr "t"
 
 msgid "<i>p</i>-value"
 msgstr "<i>p</i>-Wert"
@@ -971,6 +932,9 @@ msgstr ""
 msgid "Mean Square"
 msgstr "Mittlere Quadratsumme"
 
+msgid "p"
+msgstr "p"
+
 msgid "Variation"
 msgstr ""
 
@@ -1418,6 +1382,39 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "Residuals vs. Fitted Value"
+#~ msgstr "Residuen vs. Angepasster Wert"
+
+#~ msgid "Residuals vs. Run Order"
+#~ msgstr "Residuen vs. Ablaufreihenfolge"
+
+#~ msgid "Pareto Plot of Standardized Effects"
+#~ msgstr "Pareto-Diagramm Standardisierter Effekte"
+
+#~ msgid "Coefficients"
+#~ msgstr "Koeffizienten"
+
+#~ msgid "Selected Design"
+#~ msgstr "Ausgewähltes Design"
+
+#~ msgid "Factors"
+#~ msgstr "Faktoren"
+
+#~ msgid "Runs"
+#~ msgstr "Abläufe"
+
+#~ msgid "Resolution"
+#~ msgstr "Auflösung"
+
+#~ msgid "Design Preview"
+#~ msgstr "Design-Vorschau"
+
+#~ msgid "Desired Design"
+#~ msgstr "Gewünschtes Design"
+
+#~ msgid "Missing Runs"
+#~ msgstr "Fehlende Abläufe"
 
 #~ msgid "T chart"
 #~ msgstr "T-Karte"

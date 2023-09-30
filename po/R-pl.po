@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2023-08-28 08:21\n"
+"POT-Creation-Date: 2023-09-30 03:40\n"
 "PO-Revision-Date: 2023-09-20 11:21+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
@@ -176,48 +176,6 @@ msgstr ""
 msgid "Observation"
 msgstr "Obserwacje"
 
-msgid "Normal Probability Plot of Residuals"
-msgstr ""
-
-msgid "Histogram of Residuals"
-msgstr "Histogram reszt"
-
-msgid "Residuals vs. Fitted Value"
-msgstr ""
-
-msgid "Residuals vs. Run Order"
-msgstr ""
-
-msgid "Pareto Plot of Standardized Effects"
-msgstr "Wykres Pareto dla efektów standaryzowanych"
-
-msgid "Fitted values"
-msgstr ""
-
-msgid "Residuals"
-msgstr "Reszty"
-
-msgid "Run order"
-msgstr ""
-
-msgid "Standardized Effect"
-msgstr "Efekt standaryzowany"
-
-msgid "Coefficients"
-msgstr "Współczyniki"
-
-msgid "Coefficient"
-msgstr "Współczynnik"
-
-msgid "Standard Error"
-msgstr "Błąd standardowy"
-
-msgid "t"
-msgstr "t"
-
-msgid "p"
-msgstr "p"
-
 msgid "The analysis crashed with the following error message: %1$s"
 msgstr ""
 
@@ -245,6 +203,12 @@ msgstr "Składniki"
 msgid "Effect"
 msgstr "Efekt"
 
+msgid "Coefficient"
+msgstr "Współczynnik"
+
+msgid "Standard Error"
+msgstr "Błąd standardowy"
+
 msgid "coded"
 msgstr ""
 
@@ -260,13 +224,31 @@ msgstr "Wykres Pareto dla efektów standaryzowanych"
 msgid "Pareto Chart of Unstandardized Effects"
 msgstr "Wykres Pareto dla efektów niestandaryzowanych"
 
+msgid "Standardized Effect"
+msgstr "Efekt standaryzowany"
+
 msgid "Unstandardized Effect"
 msgstr "Efekt niestandaryzowany"
+
+msgid "Normal Probability Plot of Residuals"
+msgstr ""
+
+msgid "Histogram of Residuals"
+msgstr "Histogram reszt"
 
 msgid "Residuals versus Fitted Values"
 msgstr ""
 
+msgid "Fitted values"
+msgstr ""
+
+msgid "Residuals"
+msgstr "Reszty"
+
 msgid "Residuals versus Run Order"
+msgstr ""
+
+msgid "Run order"
 msgstr ""
 
 msgid "Matrix residual plot"
@@ -356,37 +338,13 @@ msgstr ""
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Selected Design"
-msgstr "Wybrany schemat"
-
-msgid "Factors"
-msgstr "Czynniki"
-
-msgid "Runs"
-msgstr "Przebiegi"
-
-msgid "Resolution"
-msgstr "Rozdzielczość"
-
-msgid "Replicates"
-msgstr ""
-
-msgid "Design Preview"
-msgstr "Podgląd schematu"
-
-msgid "Input Design"
-msgstr "Schemat wejściowy"
-
-msgid "Desired Design"
-msgstr "Schemat docelowy"
-
-msgid "Missing Runs"
-msgstr ""
-
 msgid "Continuous factors"
 msgstr ""
 
 msgid "Categorical factors"
+msgstr ""
+
+msgid "Replicates"
 msgstr ""
 
 msgid "Centre points in cube"
@@ -495,6 +453,9 @@ msgstr ""
 
 msgid "Uncoded coefficients"
 msgstr ""
+
+msgid "t"
+msgstr "t"
 
 msgid "<i>p</i>-value"
 msgstr ""
@@ -956,6 +917,9 @@ msgstr ""
 msgid "Mean Square"
 msgstr ""
 
+msgid "p"
+msgstr "p"
+
 msgid "Variation"
 msgstr ""
 
@@ -1391,3 +1355,30 @@ msgstr "Podtytuł: %s"
 
 msgid "Name of chart: %s"
 msgstr "Nazwa wykresu: %s"
+
+#~ msgid "Pareto Plot of Standardized Effects"
+#~ msgstr "Wykres Pareto dla efektów standaryzowanych"
+
+#~ msgid "Coefficients"
+#~ msgstr "Współczyniki"
+
+#~ msgid "Selected Design"
+#~ msgstr "Wybrany schemat"
+
+#~ msgid "Factors"
+#~ msgstr "Czynniki"
+
+#~ msgid "Runs"
+#~ msgstr "Przebiegi"
+
+#~ msgid "Resolution"
+#~ msgstr "Rozdzielczość"
+
+#~ msgid "Design Preview"
+#~ msgstr "Podgląd schematu"
+
+#~ msgid "Input Design"
+#~ msgstr "Schemat wejściowy"
+
+#~ msgid "Desired Design"
+#~ msgstr "Schemat docelowy"

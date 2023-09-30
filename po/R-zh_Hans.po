@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-08-28 08:21\n"
+"POT-Creation-Date: 2023-09-30 03:40\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -179,48 +179,6 @@ msgstr "%s"
 msgid "Observation"
 msgstr "观测值"
 
-msgid "Normal Probability Plot of Residuals"
-msgstr "残差的正态概率图"
-
-msgid "Histogram of Residuals"
-msgstr "残差直方图"
-
-msgid "Residuals vs. Fitted Value"
-msgstr "残差 vs.拟合值"
-
-msgid "Residuals vs. Run Order"
-msgstr "残差 vs. 运行顺序"
-
-msgid "Pareto Plot of Standardized Effects"
-msgstr "标准化效应 Pareto 图"
-
-msgid "Fitted values"
-msgstr "拟合值"
-
-msgid "Residuals"
-msgstr "残差"
-
-msgid "Run order"
-msgstr "运行序"
-
-msgid "Standardized Effect"
-msgstr "标准化效应"
-
-msgid "Coefficients"
-msgstr "系数"
-
-msgid "Coefficient"
-msgstr "系数"
-
-msgid "Standard Error"
-msgstr "标准误"
-
-msgid "t"
-msgstr "t"
-
-msgid "p"
-msgstr "p"
-
 msgid "The analysis crashed with the following error message: %1$s"
 msgstr "检测图失效，错误信息如下: %1$s"
 
@@ -249,6 +207,12 @@ msgstr "项"
 msgid "Effect"
 msgstr "有效性"
 
+msgid "Coefficient"
+msgstr "系数"
+
+msgid "Standard Error"
+msgstr "标准误"
+
 msgid "coded"
 msgstr ""
 
@@ -265,17 +229,35 @@ msgstr "标准化效果的帕累托图"
 msgid "Pareto Chart of Unstandardized Effects"
 msgstr "标准化效果的帕累托图"
 
+msgid "Standardized Effect"
+msgstr "标准化效应"
+
 #, fuzzy
 msgid "Unstandardized Effect"
 msgstr "标准化效应"
+
+msgid "Normal Probability Plot of Residuals"
+msgstr "残差的正态概率图"
+
+msgid "Histogram of Residuals"
+msgstr "残差直方图"
 
 #, fuzzy
 msgid "Residuals versus Fitted Values"
 msgstr "残差 vs.拟合值"
 
+msgid "Fitted values"
+msgstr "拟合值"
+
+msgid "Residuals"
+msgstr "残差"
+
 #, fuzzy
 msgid "Residuals versus Run Order"
 msgstr "残差 vs. 运行顺序"
+
+msgid "Run order"
+msgstr "运行序"
 
 msgid "Matrix residual plot"
 msgstr ""
@@ -371,38 +353,14 @@ msgstr "标准序"
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Selected Design"
-msgstr "选择的设计"
-
-msgid "Factors"
-msgstr "因子"
-
-msgid "Runs"
-msgstr "运行"
-
-msgid "Resolution"
-msgstr "分辨度"
-
-msgid "Replicates"
-msgstr "复制"
-
-msgid "Design Preview"
-msgstr "设计预览"
-
-msgid "Input Design"
-msgstr "设计输入"
-
-msgid "Desired Design"
-msgstr "期望设计"
-
-msgid "Missing Runs"
-msgstr "缺失的运行"
-
 msgid "Continuous factors"
 msgstr ""
 
 msgid "Categorical factors"
 msgstr ""
+
+msgid "Replicates"
+msgstr "复制"
 
 #, fuzzy
 msgid "Centre points in cube"
@@ -514,6 +472,9 @@ msgstr "编码系数"
 
 msgid "Uncoded coefficients"
 msgstr "未编码系数"
+
+msgid "t"
+msgstr "t"
 
 msgid "<i>p</i>-value"
 msgstr "<i>p</i>- 值"
@@ -979,6 +940,9 @@ msgstr "量具 r&R（嵌套）"
 msgid "Mean Square"
 msgstr "均方"
 
+msgid "p"
+msgstr "p"
+
 msgid "Variation"
 msgstr "方差"
 
@@ -1419,6 +1383,42 @@ msgstr "副标题：%s"
 
 msgid "Name of chart: %s"
 msgstr "图形名称：%s"
+
+#~ msgid "Residuals vs. Fitted Value"
+#~ msgstr "残差 vs.拟合值"
+
+#~ msgid "Residuals vs. Run Order"
+#~ msgstr "残差 vs. 运行顺序"
+
+#~ msgid "Pareto Plot of Standardized Effects"
+#~ msgstr "标准化效应 Pareto 图"
+
+#~ msgid "Coefficients"
+#~ msgstr "系数"
+
+#~ msgid "Selected Design"
+#~ msgstr "选择的设计"
+
+#~ msgid "Factors"
+#~ msgstr "因子"
+
+#~ msgid "Runs"
+#~ msgstr "运行"
+
+#~ msgid "Resolution"
+#~ msgstr "分辨度"
+
+#~ msgid "Design Preview"
+#~ msgstr "设计预览"
+
+#~ msgid "Input Design"
+#~ msgstr "设计输入"
+
+#~ msgid "Desired Design"
+#~ msgstr "期望设计"
+
+#~ msgid "Missing Runs"
+#~ msgstr "缺失的运行"
 
 #~ msgid "%s for Individuals"
 #~ msgstr "单值图 %s"

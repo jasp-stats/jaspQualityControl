@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.18.0\n"
-"POT-Creation-Date: 2023-08-28 08:21\n"
+"Project-Id-Version: jaspQualityControl 0.18.1\n"
+"POT-Creation-Date: 2023-09-30 03:40\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -172,48 +172,6 @@ msgstr ""
 msgid "Observation"
 msgstr ""
 
-msgid "Normal Probability Plot of Residuals"
-msgstr ""
-
-msgid "Histogram of Residuals"
-msgstr ""
-
-msgid "Residuals vs. Fitted Value"
-msgstr ""
-
-msgid "Residuals vs. Run Order"
-msgstr ""
-
-msgid "Pareto Plot of Standardized Effects"
-msgstr ""
-
-msgid "Fitted values"
-msgstr ""
-
-msgid "Residuals"
-msgstr ""
-
-msgid "Run order"
-msgstr ""
-
-msgid "Standardized Effect"
-msgstr ""
-
-msgid "Coefficients"
-msgstr ""
-
-msgid "Coefficient"
-msgstr ""
-
-msgid "Standard Error"
-msgstr ""
-
-msgid "t"
-msgstr ""
-
-msgid "p"
-msgstr ""
-
 msgid "The analysis crashed with the following error message: %1$s"
 msgstr ""
 
@@ -241,6 +199,12 @@ msgstr ""
 msgid "Effect"
 msgstr ""
 
+msgid "Coefficient"
+msgstr ""
+
+msgid "Standard Error"
+msgstr ""
+
 msgid "coded"
 msgstr ""
 
@@ -256,13 +220,31 @@ msgstr ""
 msgid "Pareto Chart of Unstandardized Effects"
 msgstr ""
 
+msgid "Standardized Effect"
+msgstr ""
+
 msgid "Unstandardized Effect"
+msgstr ""
+
+msgid "Normal Probability Plot of Residuals"
+msgstr ""
+
+msgid "Histogram of Residuals"
 msgstr ""
 
 msgid "Residuals versus Fitted Values"
 msgstr ""
 
+msgid "Fitted values"
+msgstr ""
+
+msgid "Residuals"
+msgstr ""
+
 msgid "Residuals versus Run Order"
+msgstr ""
+
+msgid "Run order"
 msgstr ""
 
 msgid "Matrix residual plot"
@@ -352,37 +334,13 @@ msgstr ""
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Selected Design"
-msgstr ""
-
-msgid "Factors"
-msgstr ""
-
-msgid "Runs"
-msgstr ""
-
-msgid "Resolution"
-msgstr ""
-
-msgid "Replicates"
-msgstr ""
-
-msgid "Design Preview"
-msgstr ""
-
-msgid "Input Design"
-msgstr ""
-
-msgid "Desired Design"
-msgstr ""
-
-msgid "Missing Runs"
-msgstr ""
-
 msgid "Continuous factors"
 msgstr ""
 
 msgid "Categorical factors"
+msgstr ""
+
+msgid "Replicates"
 msgstr ""
 
 msgid "Centre points in cube"
@@ -482,6 +440,9 @@ msgid "Coded coefficients"
 msgstr ""
 
 msgid "Uncoded coefficients"
+msgstr ""
+
+msgid "t"
 msgstr ""
 
 msgid "<i>p</i>-value"
@@ -914,6 +875,9 @@ msgid "Gauge r&R (Nested)"
 msgstr ""
 
 msgid "Mean Square"
+msgstr ""
+
+msgid "p"
 msgstr ""
 
 msgid "Variation"
