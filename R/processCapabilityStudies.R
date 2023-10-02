@@ -67,10 +67,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       measurements <- colnames(dataset)
       subgroups <- ""
     }else{
-      k <- subgroups
-      dataset <- .PClongTowide(dataset, k, measurements, mode = "subgroups")
-      measurements <- colnames(dataset)
-      measurements <- measurements[measurements != k]
+      k <- dataset[[subgroups]]
+      k <- na.omit(k)
+      # add sequence of occurence to allow pivot_wider
+      occurenceVector <- with(dataset, ave(seq_along(k), k, FUN = seq_along))
+      dataset$occurence <- occurenceVector
+      # transform into one group per row
+      dataset <- tidyr::pivot_wider(data = dataset, values_from = tidyr::all_of(measurements), names_from = occurence)
+      # arrange into dataframe
+      dataset <- as.data.frame(dataset)
+      measurements <- as.character(unique(occurenceVector))
     }
   }
 
