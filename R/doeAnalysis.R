@@ -26,13 +26,13 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   .doeAnalysisCheckErrors(dataset, options, ready)
 
-  # p <- try({
+  p <- try({
      .doeAnalysisMakeState(jaspResults, dataset, options, ready)
-  # })
-#
-#   if (isTryError(p)) {
-#     jaspResults$setError(gettextf("The analysis crashed with the following error message: %1$s", .extractErrorMessage(p)))
-#   }
+  })
+
+  if (isTryError(p)) {
+    jaspResults$setError(gettextf("The analysis crashed with the following error message: %1$s", .extractErrorMessage(p)))
+  }
 
   .doeAnalysisSummaryTable(jaspResults, options, ready)
   .doeAnalysisAnovaTable(jaspResults, options, ready)
