@@ -271,7 +271,15 @@ Form
 					id : 				xbarR
 					label: 				qsTr("X-bar & R chart")
 					enabled:			(pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value > 1) | pcDataFormat.currentValue == "PCwideFormat"
-					checked:			pcDataFormat.currentValue == "PCwideFormat"
+					checked:			pcDataFormat.currentValue == "PCwideFormat" | (pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value > 1)
+				}
+
+				RadioButton
+				{
+					name: 				"xBarS"
+					id : 				xbarS
+					label: 				qsTr("X-bar & s chart")
+					enabled:			(pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value > 1) | pcDataFormat.currentValue == "PCwideFormat"
 				} 
 
 				RadioButton
@@ -299,7 +307,7 @@ Form
 					label: 				qsTr("X-mR chart")
 					enabled:			pcDataFormat.currentValue == "PClongFormat"
 					visible:			pcDataFormat.currentValue == "PClongFormat"
-					checked:			pcDataFormat.currentValue == "PClongFormat" | (pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value == 1)
+					checked:			(pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value == 1)
 
 					DoubleField
 					{
