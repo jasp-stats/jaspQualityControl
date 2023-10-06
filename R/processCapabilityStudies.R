@@ -106,7 +106,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", 'capabilityStudyType', 'nullDistribution'))
     }
   }
-  
+
  # the axis labels for the control charts
   if (subgroups == "") {
     axisLabels <- ""
@@ -123,44 +123,61 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat, subgroups, axisLabels)
     jaspResults[["pcReport"]]$dependOn(c("pcReportDisplay", "variables", "variablesLong", "subgroups", "controlChartType"))
   } else {
-    # X-bar and R Chart OR ImR Chart
-    if(options[["controlChartType"]] == "xBarR") {
-      jaspResults[["xbarR"]] <- createJaspContainer(gettext("X-bar & R Control Chart"))
-      jaspResults[["xbarR"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "pcReportDisplay"))
-      jaspResults[["xbarR"]]$position <- 1
-      
-      if (ready && is.null(jaspResults[["xbarR"]][["plot"]])) {
-        jaspResults[["xbarR"]][["plot"]] <- createJaspPlot(title =  gettext("X-bar & R Control Chart"), width = 1200, height = 500)
-        if (nrow(dataset[measurements]) > 50) { # if the subgroup size is above 50, the R package cannot calculate R charts.
-          jaspResults[["xbarR"]][["plot"]]$setError(gettext("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
+    # X-bar and R Chart OR ImR OR X-bar and mR Chart
+    if(options[["controlChartType"]] == "xBarR" | options[["controlChartType"]] == "xBarMR"  | options[["controlChartType"]] == "xBarS") {
+      secondPlotType <- switch(options[["controlChartType"]],
+                               "xBarR" = "R",
+                               "xBarS" = "s",
+                               "xBarMR" = "MMR")
+      sdType <- switch(options[["controlChartType"]],
+                       "xBarR" = "r",
+                       "xBarS" = "s",
+                       "xBarMR" = "r")
+      secondPlotTitle <- switch(options[["controlChartType"]],
+                                "xBarR" = "R",
+                                "xBarS" = "s",
+                                "xBarMR" = "mR")
+      # first chart is always xBar-chart, second is either R-, mR-, or s-chart
+      jaspResults[["xBar"]] <- createJaspContainer(gettextf("X-bar & %s Control Chart", secondPlotTitle))
+      jaspResults[["xBar"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "pcReportDisplay"))
+      jaspResults[["xBar"]]$position <- 1
+
+
+      if (ready && is.null(jaspResults[["xBar"]][["plot"]])) {
+        jaspResults[["xBar"]][["plot"]] <- createJaspPlot(title = gettextf("X-bar & %s Control Chart", secondPlotTitle),
+                                                          width = 1200, height = 500)
+        # Error conditions
+        if (secondPlotType == "R" && nrow(dataset[measurements]) > 50) { # if the subgroup size is above 50, the R package cannot calculate R charts.
+          jaspResults[["xBar"]][["plot"]]$setError(gettext("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
+          return()
+        } else if(wideFormat && length(measurements) < 2) {
+          jaspResults[["xBar"]][["plot"]]$setError(gettext("Subgroup size is 1, calculation of control charts not possible."))
           return()
         }
-        
-        # first chart is always xBar-chart, second is either R- or s-chart
-        #TODO: Implement option to choose betwen r and s chart
-        xBarChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
+
+        xBarChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
                                                xAxisLabels = axisLabels)
-        rChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "R", xAxisLabels = axisLabels)
-        jaspResults[["xbarR"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(rChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
-        jaspResults[["xbarR"]][["tableXBar"]] <- xBarChart$table
-        jaspResults[["xbarR"]][["tableR"]] <- rChart$table
+        secondPlot <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels)
+        jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
+                                                                               layout = matrix(2:1, 2), removeXYlabels= "x")
+        jaspResults[["xBar"]][["tableXBar"]] <- xBarChart$table
+        jaspResults[["xBar"]][["tableSecondPlot"]] <- secondPlot$table
       }
     } else if(options[["controlChartType"]] == "IMR") {
       jaspResults[["IMR"]] <- createJaspContainer(gettext("X-mR Control Chart"))
       jaspResults[["IMR"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "pcReportDisplay"))
       jaspResults[["IMR"]]$position <- 1
-      # We need to loop here because in the wide format there might be multiple vars and then we need a chart for each variable
       if (ready && is.null(jaspResults[["IMR"]][["plot"]])) {
-          jaspResults[["IMR"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
-          individualChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "I",
-                                                       xAxisLabels = axisLabels)
-          mrChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels, 
-                                               movingRangeLength = options[["movingRangeLength"]])
-          jaspResults[["IMR"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
-                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
-          jaspResults[["IMR"]][["tableIndividual"]] <- individualChart$table
-          jaspResults[["IMR"]][["tableMR"]] <- mrChart$table
-        }
+        jaspResults[["IMR"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
+        individualChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "I",
+                                                     xAxisLabels = axisLabels)
+        mrChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels,
+                                             movingRangeLength = options[["movingRangeLength"]])
+        jaspResults[["IMR"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
+                                                                              layout = matrix(2:1, 2), removeXYlabels= "x")
+        jaspResults[["IMR"]][["tableIndividual"]] <- individualChart$table
+        jaspResults[["IMR"]][["tableMR"]] <- mrChart$table
+      }
     }
 
     # Distribution plot - moved jaspResults ref here to avoid big files
@@ -1536,7 +1553,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "I",
                                                             xAxisLabels = axisLabels)$plotObject
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels, 
+      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels,
                                                             movingRangeLength = options[["movingRangeLength"]])$plotObject
     }
   }

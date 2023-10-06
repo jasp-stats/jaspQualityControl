@@ -739,3 +739,82 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
   return(matrixPlot)
 }
+
+.NelsonTable <- function(dataset, options, sixsigma, type = "xbar", Phase2 = TRUE, name = "X-bar", xLabels = NULL) {
+
+  table <- createJaspTable(title = gettextf("Test results for %s chart", name))
+
+  if (length(sixsigma$statistics) == 1) # no need for table with only 1 group
+    return(table)
+
+  if (!Phase2 || type == "xbar.one") {
+
+    Test <- NelsonLaws(data = sixsigma, allsix = TRUE, xLabels = xLabels)
+
+    if (length(Test$Rules$R1) > 0)
+      table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
+
+    if (length(Test$Rules$R2) > 0)
+      table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
+
+    if (length(Test$Rules$R3) > 0)
+      table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
+
+    if (length(Test$Rules$R4) > 0)
+      table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
+
+    if (length(Test$Rules$R5) > 0)
+      table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
+
+    if (length(Test$Rules$R6) > 0)
+      table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
+
+
+
+    table$setData(list(
+      "test1" = c(Test$Rules$R1),
+      "test2" = c(Test$Rules$R2),
+      "test3" = c(Test$Rules$R3),
+      "test4" = c(Test$Rules$R4),
+      "test5" = c(Test$Rules$R5),
+      "test6" = c(Test$Rules$R6)
+    ))
+
+  }
+  else {
+
+    if (name == "np" || name == "c" || name == "u" || name == "Laney p'" || name == "Laney u'")
+      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "c")
+    else if (name == "P")
+      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "p")
+    else
+      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels)
+
+    if (length(Test$Rules$R1) > 0)
+      table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
+
+    if (length(Test$Rules$R2) > 0)
+      table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
+
+    if (length(Test$Rules$R3) > 0)
+      table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
+
+    if (type == "Range" & length(xLabels) == 0){
+      table$setData(list(
+        "test1" = c(Test$Rules$R1 + 1),
+        "test2" = c(Test$Rules$R2 + 1),
+        "test3" = c(Test$Rules$R3 + 1)
+      ))
+    } else{
+      table$setData(list(
+        "test1" = c(Test$Rules$R1),
+        "test2" = c(Test$Rules$R2),
+        "test3" = c(Test$Rules$R3)
+      ))
+    }
+  }
+
+  table$showSpecifiedColumnsOnly <- TRUE
+  table$addFootnote(message = gettext("Numbers are data points where test violations occur."))
+  return(table)
+}

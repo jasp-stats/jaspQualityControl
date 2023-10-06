@@ -81,127 +81,14 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(list(red_points = red_points, Rules = Rules))
 }
 
-.NelsonTable <- function(dataset, options, sixsigma, type = "xbar", Phase2 = TRUE, name = "X-bar", xLabels = NULL) {
-
-  table <- createJaspTable(title = gettextf("Test results for %s chart", name))
-
-  if (length(sixsigma$statistics) == 1) # no need for table with only 1 group
-    return(table)
-
-  if (!Phase2 || type == "xbar.one") {
-
-    Test <- NelsonLaws(data = sixsigma, allsix = TRUE, xLabels = xLabels)
-
-    if (length(Test$Rules$R1) > 0)
-      table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
-
-    if (length(Test$Rules$R2) > 0)
-      table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
-
-    if (length(Test$Rules$R3) > 0)
-      table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
-
-    if (length(Test$Rules$R4) > 0)
-      table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation")         , type = "integer")
-
-    if (length(Test$Rules$R5) > 0)
-      table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation")           , type = "integer")
-
-    if (length(Test$Rules$R6) > 0)
-      table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution")         , type = "integer")
-
-
-
-    table$setData(list(
-      "test1" = c(Test$Rules$R1),
-      "test2" = c(Test$Rules$R2),
-      "test3" = c(Test$Rules$R3),
-      "test4" = c(Test$Rules$R4),
-      "test5" = c(Test$Rules$R5),
-      "test6" = c(Test$Rules$R6)
-    ))
-
-  }
-  else {
-
-    if (name == "np" || name == "c" || name == "u" || name == "Laney p'" || name == "Laney u'")
-      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "c")
-    else if (name == "P")
-      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "p")
-    else
-      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels)
-
-    if (length(Test$Rules$R1) > 0)
-      table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit")               , type = "integer")
-
-    if (length(Test$Rules$R2) > 0)
-      table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift")                   , type = "integer")
-
-    if (length(Test$Rules$R3) > 0)
-      table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend")                        , type = "integer")
-
-    if (type == "Range" & length(xLabels) == 0){
-      table$setData(list(
-        "test1" = c(Test$Rules$R1 + 1),
-        "test2" = c(Test$Rules$R2 + 1),
-        "test3" = c(Test$Rules$R3 + 1)
-      ))
-    } else{
-      table$setData(list(
-        "test1" = c(Test$Rules$R1),
-        "test2" = c(Test$Rules$R2),
-        "test3" = c(Test$Rules$R3)
-      ))
-    }
-  }
-
-  table$showSpecifiedColumnsOnly <- TRUE
-  table$addFootnote(message = gettext("Numbers are data points where test violations occur."))
-  return(table)
-}
-
-.NelsonTableList <- function(dataset, options, sixsigma, type = "xbar", Phase2 = TRUE, name = "X-bar", xLabels = NULL) {
-  violationsList <- list()
-
-  if (length(sixsigma$statistics) == 1) # no need for table with only 1 group
-    return(violationsList)
-
-  if (!Phase2 || type == "xbar.one") {
-    Test <- NelsonLaws(data = sixsigma, allsix = TRUE, xLabels = xLabels)
-    violationsList[["test1"]] <- Test$Rules$R1
-    violationsList[["test2"]] <- Test$Rules$R2
-    violationsList[["test3"]] <- Test$Rules$R3
-    violationsList[["test4"]] <- Test$Rules$R4
-    violationsList[["test5"]] <- Test$Rules$R5
-    violationsList[["test6"]] <- Test$Rules$R6
-  } else {
-    if (name == "np" || name == "c" || name == "u" || name == "Laney p'" || name == "Laney u'")
-      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "c")
-    else if (name == "P")
-      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels, chart = "p")
-    else
-      Test <- NelsonLaws(data = sixsigma, xLabels = xLabels)
-
-    if (type == "Range") {
-      Test$Rules$R1 <- Test$Rules$R1 + 1
-      Test$Rules$R2 <- Test$Rules$R2 + 1
-      Test$Rules$R3 <- Test$Rules$R3 + 1
-    }
-    violationsList[["test1"]] <- Test$Rules$R1
-    violationsList[["test2"]] <- Test$Rules$R2
-    violationsList[["test3"]] <- Test$Rules$R3
-  }
-  return(violationsList)
-}
-
 .sdXbar <- function(df, type = c("s", "r")) {
   type <- match.arg(type)
-  
+
   # exclude groups with single observation from calculation
-  rowRemovalIndex <- which(apply(df, 1, function(x) sum(!is.na(x)) < 2)) #get index of rows with less than 2 obs.
+  rowRemovalIndex <- which(apply(df, 1, function(x) sum(!is.na(x)) < 2)) # get index of rows with less than 2 obs.
    if (length(rowRemovalIndex) != 0)
     df <- df[-rowRemovalIndex, ]
-  
+
   if (type == "r"){
     rowRanges <- .rowRanges(df)$ranges
     n <- .rowRanges(df)$n
@@ -258,7 +145,7 @@ KnownControlStats.RS <- function(N, sigma) {
     d2 <- Data.d2[N == Data.d2$n,2]
     d3 <- Data.d3[N == Data.d3$n,2]
   }
-  
+
   if (N > 1) {
     c4 <- sqrt(2/(N-1)) * gamma(N/2) / gamma((N-1)/2)
     c5 <- sqrt(1 - c4^2)
@@ -266,7 +153,7 @@ KnownControlStats.RS <- function(N, sigma) {
     c4 <- 0
     c5 <- 0
   }
-  
+
   UCL <- d2 * sigma + 3 * d3 * sigma
   CL <- d2 * sigma
   LCL <- max(0, d2 * sigma - 3 * d3 * sigma)
@@ -322,17 +209,22 @@ KnownControlStats.RS <- function(N, sigma) {
 
 
 # Xbar
-#dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
-#dataset <- dataset[2:6]
+# dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
+# dataset <- dataset[2:6]
+# xAxisLabels <- dataset[[1]]
 #  options <- list()
-# 
+#
+#  dataset[1:4] <- NA
+#  dataset[2:20, 5] <- NA
+#  .controlChartPlotFunction(dataset, plotType = "xBar", xBarSdType = "r")
+#
 # .controlChartPlotFunction(dataset, plotType = "s")
-# 
-# 
+#
+#
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Datasets/ControlChartError.csv")
-#dataset <- dataset[c(3,7,8)]
-# 
-
+# dataset <- dataset[c(3,7,8)]
+#
+#
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_2_VariablesChartsForIndividuals/IndividualChartStages.csv")
 # xLabels <- dataset$Month
 # dataset <- dataset[c(1,3)]
@@ -344,7 +236,7 @@ KnownControlStats.RS <- function(N, sigma) {
 ###################
 
 
-.controlChartPlotFunction <- function(dataset, plotType = c("xBar", "R", "I", "MR", "s"), stages = "",
+.controlChartPlotFunction <- function(dataset, plotType = c("xBar", "R", "I", "MR", "MMR", "s"), stages = "",
                                       xBarSdType = c("r", "s"), phase2 = FALSE, phase2Mu = "", phase2Sd = "", limitsPerSubgroup = FALSE,
                                       warningLimits = FALSE, xAxisLabels = "", movingRangeLength = 2) {
   tableTitle <- switch (plotType,
@@ -352,23 +244,24 @@ KnownControlStats.RS <- function(N, sigma) {
     "R" = "range",
     "I" = "individuals",
     "MR" = "moving range",
+    "MMR" = "moving range",
     "s" = "s"
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
-  
+
   if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
     # Error conditions for stages
-    if(plotType == "MR" && any(table(dataset[[stages]]) < movingRangeLength)) {
+    if((plotType == "MR" || plotType == "MMR") && any(table(dataset[[stages]]) < movingRangeLength)) {
       ppPlot$setError(gettext("Moving range length is larger than one of the stages."))
       return(list(p = ppPlot))
-    } 
+    }
   } else {
     nStages <- 1
     dataset[["stage"]] <- 1
     stages <- "stage"
   }
-  
+
   ### Calculate plot values per stage and combine into single dataframe ###
   plotData <- data.frame(matrix(ncol = 4, nrow = 0))
   clData <- data.frame(matrix(ncol = 5, nrow = 0))
@@ -378,7 +271,7 @@ KnownControlStats.RS <- function(N, sigma) {
   if (warningLimits) {
     warningLimitsDf <- data.frame(matrix(ncol = 4, nrow = 0))
     colnames(warningLimitsDf) <- c("UWL1", "LWL1", "UWL2", "LWL2")
-    clData <- cbind(clData, warningLimitsDf) 
+    clData <- cbind(clData, warningLimitsDf)
   }
   dfLabel <- data.frame(matrix(ncol = 3, nrow = 0))
   colnames(dfLabel) <- c("x", "y", "label")
@@ -388,7 +281,11 @@ KnownControlStats.RS <- function(N, sigma) {
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
-    if (plotType == "I" || plotType == "MR" ) {
+    if (plotType == "I" || plotType == "MR" || plotType == "MMR") {
+      if (plotType == "MMR") {
+        subgroupMeans <- apply(dataCurrentStage, 1, mean, na.rm = TRUE)
+        dataCurrentStage <- data.frame("subgroupMeans" = subgroupMeans)
+      }
       k <- movingRangeLength
       # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
       dataCurrentStageVector <- unlist(dataCurrentStage)
@@ -402,7 +299,7 @@ KnownControlStats.RS <- function(N, sigma) {
       if (plotType == "I") {
         qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sd)
         plotStatistic <- qccObject$statistics
-      } else if (plotType == "MR") {
+      } else if (plotType == "MR" || plotType == "MMR" ) {
         qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sd)
         plotStatistic <- c(NA, qccObject$statistics)
       }
@@ -410,7 +307,7 @@ KnownControlStats.RS <- function(N, sigma) {
       LCL <- limits[1]
       UCL <- limits[2]
       center <- qccObject$center
-    } else if (plotType == "R") { 
+    } else if (plotType == "R") {
       n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
         n <- max(n)
@@ -424,7 +321,7 @@ KnownControlStats.RS <- function(N, sigma) {
       mu <- sigma * d2
       qccObject <- qcc::qcc(dataCurrentStage, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(dataCurrentStage))
       plotStatistic <- qccObject$statistics
-      
+
       limits <- .controlLimits(mu, sigma, n = n, type = "r")
       center <- mu
       UCL <- limits$UCL
@@ -441,17 +338,17 @@ KnownControlStats.RS <- function(N, sigma) {
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='xbar', plot = FALSE, center = mu, sizes = ncol(dataCurrentStage), std.dev = sigma)
       plotStatistic <- qccObject$statistics
-      
+
       #calculate group sizes
       n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
         n <- max(n)
-      
+
       limits <- .controlLimits(mu, sigma, n = n, type = "xbar")
       center <- mu
       UCL <- limits$UCL
       LCL <- limits$LCL
-      
+
       # upper and lower warning limits at 1 sd and 2 sd
       WL1 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 1)
       WL2 <- .controlLimits(mu, sigma, n = n, type = "xbar", k = 2)
@@ -459,7 +356,7 @@ KnownControlStats.RS <- function(N, sigma) {
       LWL1 <- WL1$LCL
       UWL2 <- WL2$UCL
       LWL2 <- WL2$LCL
-    } else if (plotType == "s") { 
+    } else if (plotType == "s") {
       if(phase2) {
         sigma <- phase2Sd
       } else {
@@ -467,19 +364,19 @@ KnownControlStats.RS <- function(N, sigma) {
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage))
       plotStatistic <- qccObject$statistics
-     
-      
+
+
       n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
         n <- max(n)
-      
+
       limits <- .controlLimits(sigma = sigma, n = n, type = "s")
       center <- sigma
       UCL <- limits$UCL
       LCL <- limits$LCL
     }
     if (i != 1) {
-      if (plotType == "MR") {
+      if (plotType == "MR" || plotType == "MMR") {
         subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(qccObject$statistics) + 1)
       } else {
         subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(qccObject$statistics))
@@ -487,7 +384,7 @@ KnownControlStats.RS <- function(N, sigma) {
       seperationLines <- c(seperationLines, max(plotData$subgroup) + .5)
       dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + length(subgroups)/2, y = NA, label = stage))  # the y value will be filled in later
     } else {
-      if (plotType == "MR") {
+      if (plotType == "MR" || plotType == "MMR") {
         subgroups <- seq_len(length(qccObject$statistics) + 1)
       } else {
         subgroups <- seq_len(length(qccObject$statistics))
@@ -495,9 +392,9 @@ KnownControlStats.RS <- function(N, sigma) {
       if (nStages > 1)
         dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(subgroups)/2, y = NA, label = stage))  # the y value will be filled in later
     }
-    
-    if (length(plotStatistic) > 1) {
-      if (plotType == "MR") {
+
+    if (length(na.omit(plotStatistic)) > 1) {
+      if (plotType == "MR" || plotType == "MMR") {
         dotColor <- ifelse(c(NA, NelsonLaws(qccObject)$red_points), 'red', 'blue')
       } else {
         dotColor <- ifelse(NelsonLaws(qccObject, allsix = plotType == "I")$red_points, 'red', 'blue')
@@ -510,8 +407,8 @@ KnownControlStats.RS <- function(N, sigma) {
     nOutOfLimits <- sum(dotColor[!is.na(dotColor)] == "red")
     if (nOutOfLimits > length(qccObject$statistics)/2)
       dotColor <- "blue"
-    
-    
+
+
     stagePlotData <- data.frame("plotStatistic" = plotStatistic,
                             "subgroup" = subgroups,
                             "stage" = stage,
@@ -521,7 +418,7 @@ KnownControlStats.RS <- function(N, sigma) {
                               "LCL" = LCL,
                               "UCL" = UCL,
                               "center" = center)
-    
+
     if (warningLimits) {
       stageClData <- cbind(stageClData,
                          data.frame("UWL1" = UWL1,
@@ -529,13 +426,13 @@ KnownControlStats.RS <- function(N, sigma) {
                                     "UWL2" = UWL2,
                                     "LWL2" = LWL2))
     }
-    
+
     # offset to align geom_step lines with observations
     stageClData <- rbind(stageClData, stageClData[nrow(stageClData),])
     stageClData[["subgroup"]][nrow(stageClData)] <- stageClData[["subgroup"]][nrow(stageClData)] + 1
     stageClData[["subgroup"]] <- stageClData[["subgroup"]] - 0.5
-    
-    
+
+
     plotData <- rbind(plotData, stagePlotData)
     clData <- rbind(clData, stageClData)
     decimals <- .numDecimals
@@ -550,14 +447,15 @@ KnownControlStats.RS <- function(N, sigma) {
                                            gettextf("UCL = %g", round(lastLCL, decimals)),
                                            gettextf("LCL = %g", round(lastUCL, decimals))
                                          )))
-    tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, subgroups = subgroups)
+    tableLabels <- if (identical(xAxisLabels, "")) subgroups else as.character(xAxisLabels)
+    tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabels)
     tableListLengths <- sapply(tableList[[i]], length)
     if (any(tableListLengths > 0)) {
       tableList[[i]][["stage"]] <- as.character(stage)
       tableList[[i]] <- lapply(tableList[[i]], "length<-", max(lengths(tableList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
     }
   }
-  
+
   # filling up JASP table
   tableListVectorized <- unlist(tableList, recursive = FALSE)
   tableLongestVector <- max(sapply(tableListVectorized, length))
@@ -566,18 +464,18 @@ KnownControlStats.RS <- function(N, sigma) {
     if (nStages > 1)
       table$addColumnInfo(name = "stage",              title = gettextf("Stage"),                          type = "string")
     if (length(tableListCombined[["test1"]][!is.na(tableListCombined[["test1"]])]) > 0)
-      table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit"),           type = "integer")
+      table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit"),           type = "string")
     if (length(tableListCombined[["test2"]][!is.na(tableListCombined[["test2"]])]) > 0)
-      table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift"),                  type = "integer")
+      table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift"),                  type = "string")
     if (length(tableListCombined[["test3"]][!is.na(tableListCombined[["test3"]])]) > 0)
-      table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend"),                  type = "integer")
+      table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend"),                  type = "string")
     if (plotType == "I") {
-    if (length(tableListCombined[["test4"]][!is.na(tableListCombined[["test4"]])]) > 0)
-      table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation"),   type = "integer")
-    if (length(tableListCombined[["test5"]][!is.na(tableListCombined[["test5"]])]) > 0)
-      table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation"),     type = "integer")
-    if (length(tableListCombined[["test6"]][!is.na(tableListCombined[["test6"]])]) > 0)
-      table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution"),   type = "integer")
+      if (length(tableListCombined[["test4"]][!is.na(tableListCombined[["test4"]])]) > 0)
+        table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation"),   type = "string")
+      if (length(tableListCombined[["test5"]][!is.na(tableListCombined[["test5"]])]) > 0)
+        table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation"),     type = "string")
+      if (length(tableListCombined[["test6"]][!is.na(tableListCombined[["test6"]])]) > 0)
+        table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution"),   type = "string")
     }
     tableData <- list(
       "stage" = tableListCombined[["stage"]],
@@ -593,15 +491,15 @@ KnownControlStats.RS <- function(N, sigma) {
     table$setData(tableData)
     table$showSpecifiedColumnsOnly <- TRUE
   }
-  
+
   # Calculations that apply to the whole plot
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$plotStatistic, clData$LCL, clData$UCL, clData$center))
   xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(plotData$subgroup))) # we only want integers on the x-axis
-  
+
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis
     xBreaks[1] <- 1
-  xLimits <- c(0.5, max(xBreaks) * 1.15)
-  
+  xLimits <- c(0.5, max(xBreaks) * 1.15 + 0.5) # add some buffer, but at least .5
+
   if (!identical(xAxisLabels, "")) {
     if (max(xBreaks) > length(xAxisLabels)) # sometimes pretty creates breaks that go beyond the labels that are given, this must be avoided else it will display an NA on this tick
       xBreaks[length(xBreaks)] <- length(xAxisLabels)
@@ -609,17 +507,18 @@ KnownControlStats.RS <- function(N, sigma) {
   } else {
     xLabels <- xBreaks
   }
-  
+
   xTitle <- switch (plotType,
                     "xBar" = "Sample average",
                     "R" = "Sample range",
                     "I" = "Individual value",
                     "MR" = "Moving range",
+                    "MMR" = "Moving range of subgroup mean",
                     "s" = "Sample std. dev."
   )
   if (nStages > 1)
     dfStageLabels$y <- max(yBreaks)
-  
+
   # Create plot
   plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, y = plotStatistic, group = stage)) +
     ggplot2::geom_vline(xintercept = seperationLines) +
@@ -643,34 +542,34 @@ KnownControlStats.RS <- function(N, sigma) {
     ggplot2::scale_y_continuous(name = xTitle, breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext("Subgroup"), breaks = xBreaks, limits = xLimits, labels = xLabels) +
     jaspGraphs::geom_line(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue") +
-    jaspGraphs::geom_point(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), 
+    jaspGraphs::geom_point(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),
                            size = 4, fill = plotData$dotColor, inherit.aes = TRUE) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-  
+
   return(list(plotObject = plotObject, table = table, qccObject = qccObject, plotData = plotData))
 }
 
 
-.NelsonTableList <- function(qccObject, type = "xBar", phase2 = TRUE, subgroups = NULL) {
+.NelsonTableList <- function(qccObject, type = "xBar", phase2 = TRUE, labels = NULL) {
   violationsList <- list("test1" = NULL, "test2" = NULL, "test3" = NULL)
-  
-  if (length(qccObject$statistics) == 1) # no need for table with only 1 group
+
+  if (length(na.omit(qccObject$statistics)) <= 1) # no need for table with only 1 group
     return(violationsList)
-  
+
   if (!phase2 || type == "I") {
-    Test <- NelsonLaws(data = qccObject, allsix = TRUE, xLabels = subgroups)
+    Test <- NelsonLaws(data = qccObject, allsix = TRUE, xLabels = labels)
     violationsList[["test4"]] <- Test$Rules$R4
     violationsList[["test5"]] <- Test$Rules$R5
     violationsList[["test6"]] <- Test$Rules$R6
   } else if (type == "np" || type == "c" || type == "u" || type == "Laney p'" || type == "Laney u'") {
-    Test <- NelsonLaws(data = qccObject, xLabels = subgroups, chart = "c")
+    Test <- NelsonLaws(data = qccObject, xLabels = labels, chart = "c")
   } else if (type == "P") {
-    Test <- NelsonLaws(data = qccObject, xLabels = subgroups, chart = "p")
+    Test <- NelsonLaws(data = qccObject, xLabels = labels, chart = "p")
   } else {
-    Test <- NelsonLaws(data = qccObject, xLabels = subgroups)
+    Test <- NelsonLaws(data = qccObject, xLabels = labels)
   }
-  
+
   violationsList[["test1"]] <- Test$Rules$R1
   violationsList[["test2"]] <- Test$Rules$R2
   violationsList[["test3"]] <- Test$Rules$R3
