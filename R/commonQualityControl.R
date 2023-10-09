@@ -210,9 +210,10 @@ KnownControlStats.RS <- function(N, sigma) {
 
 # Xbar
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
-# dataset <- dataset[2:6]
 # xAxisLabels <- dataset[[1]]
-#  options <- list()
+# dataset <- dataset[2:6]
+# dataset$stages <- 1:2
+# options <- list()
 #
 #  dataset[1:4] <- NA
 #  dataset[2:20, 5] <- NA
@@ -228,6 +229,8 @@ KnownControlStats.RS <- function(N, sigma) {
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_2_VariablesChartsForIndividuals/IndividualChartStages.csv")
 # xLabels <- dataset$Month
 # dataset <- dataset[c(1,3)]
+# .controlChartPlotFunction(dataset, plotType = "I", stages = "Stage")
+# .controlChartPlotFunction(dataset, plotType = "MR", stages = "Stage", movingRangeLength = 4)
 # .controlChartPlotFunction(dataset, plotType = "I", stages = "Stage", xAxisLabels = xLabels)
 # .controlChartPlotFunction(dataset, plotType = "MR", stages = "Stage", xAxisLabels = xLabels)
 
@@ -238,7 +241,7 @@ KnownControlStats.RS <- function(N, sigma) {
 
 .controlChartPlotFunction <- function(dataset, plotType = c("xBar", "R", "I", "MR", "MMR", "s"), stages = "",
                                       xBarSdType = c("r", "s"), phase2 = FALSE, phase2Mu = "", phase2Sd = "", limitsPerSubgroup = FALSE,
-                                      warningLimits = FALSE, xAxisLabels = "", movingRangeLength = 2) {
+                                      warningLimits = FALSE, xAxisLabels = "", movingRangeLength = 2, clLabelSize = 4.5) {
   tableTitle <- switch (plotType,
     "xBar" = "x-bar",
     "R" = "range",
@@ -251,11 +254,6 @@ KnownControlStats.RS <- function(N, sigma) {
 
   if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
-    # Error conditions for stages
-    if((plotType == "MR" || plotType == "MMR") && any(table(dataset[[stages]]) < movingRangeLength)) {
-      ppPlot$setError(gettext("Moving range length is larger than one of the stages."))
-      return(list(p = ppPlot))
-    }
   } else {
     nStages <- 1
     dataset[["stage"]] <- 1
@@ -327,7 +325,7 @@ KnownControlStats.RS <- function(N, sigma) {
       UCL <- limits$UCL
       LCL <- limits$LCL
     } else if (plotType == "xBar") {
-      #xBarSdType <- match.arg(xBarSdType)
+      xBarSdType <- match.arg(xBarSdType)
       if (phase2) {
           mu <- as.numeric(phase2Mu)
           sigma <- as.numeric(phase2Sd)
@@ -436,18 +434,29 @@ KnownControlStats.RS <- function(N, sigma) {
     plotData <- rbind(plotData, stagePlotData)
     clData <- rbind(clData, stageClData)
     decimals <- .numDecimals
-    # even if there are multiple different centers, LCL and UCL, only the last one is shown on the label
+    # even if there are multiple different centers, LCL and UCL within a stage, only the last one is shown on the label
     lastCenter <- center[length(center)]
     lastLCL <- LCL[length(LCL)]
     lastUCL <- UCL[length(UCL)]
-    dfLabel <- rbind(dfLabel, data.frame(x = max(subgroups) + .5,
+    if (i == nStages) { # the last label has more space available and hence can be longer
+      labelXPos <- max(subgroups) * 1.1
+      labelText <- c(
+        gettextf("CL = %g",  round(lastCenter, decimals)),
+        gettextf("LCL = %g", round(lastLCL, decimals)),
+        gettextf("UCL = %g", round(lastUCL, decimals)))
+    } else {
+      labelXPos <- max(subgroups) + .5
+      labelText <- c(
+        round(lastCenter, decimals),
+        round(lastLCL, decimals),
+        round(lastUCL, decimals))
+    }
+    dfLabel <- rbind(dfLabel, data.frame(x = labelXPos,
                                          y = c(lastCenter, lastLCL, lastUCL),
-                                         label = c(
-                                           gettextf("CL = %g",  round(lastCenter, decimals)),
-                                           gettextf("UCL = %g", round(lastLCL, decimals)),
-                                           gettextf("LCL = %g", round(lastUCL, decimals))
-                                         )))
-    tableLabels <- if (identical(xAxisLabels, "")) subgroups else as.character(xAxisLabels)
+                                         label = labelText))
+    tableLabels <- if (identical(xAxisLabels, "")) subgroups else as.character(xAxisLabels)[subgroups]
+    if (plotType == "MR" || plotType == "MMR")
+      tableLabels <- tableLabels[-1]
     tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabels)
     tableListLengths <- sapply(tableList[[i]], length)
     if (any(tableListLengths > 0)) {
@@ -498,7 +507,7 @@ KnownControlStats.RS <- function(N, sigma) {
 
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis
     xBreaks[1] <- 1
-  xLimits <- c(0.5, max(xBreaks) * 1.15 + 0.5) # add some buffer, but at least .5
+  xLimits <- c(0.5, max(xBreaks) * 1.2 + 0.5) # add some buffer, but at least .5
 
   if (!identical(xAxisLabels, "")) {
     if (max(xBreaks) > length(xAxisLabels)) # sometimes pretty creates breaks that go beyond the labels that are given, this must be avoided else it will display an NA on this tick
@@ -538,7 +547,7 @@ KnownControlStats.RS <- function(N, sigma) {
                          linewidth = 1, linetype = "dashed")
   }
   plotObject <- plotObject + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = label),
-                                                 inherit.aes = FALSE, size = 4.5) +
+                                                 inherit.aes = FALSE, size = clLabelSize) +
     ggplot2::scale_y_continuous(name = xTitle, breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext("Subgroup"), breaks = xBreaks, limits = xLimits, labels = xLabels) +
     jaspGraphs::geom_line(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue") +
@@ -549,7 +558,6 @@ KnownControlStats.RS <- function(N, sigma) {
 
   return(list(plotObject = plotObject, table = table, qccObject = qccObject, plotData = plotData))
 }
-
 
 .NelsonTableList <- function(qccObject, type = "xBar", phase2 = TRUE, labels = NULL) {
   violationsList <- list("test1" = NULL, "test2" = NULL, "test3" = NULL)
