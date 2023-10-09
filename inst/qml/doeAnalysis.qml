@@ -47,7 +47,7 @@ Form
 		{
 			id:									continuousFactors
 			name:                               "continuousFactors"
-			allowedColumns:                     ["scale"]
+			allowedColumns:                     ["scale", "ordinal"]
 			label:                              qsTr("Continuous Factors")
 			height:								125 * preferencesModel.uiScale
 		}
@@ -58,6 +58,7 @@ Form
 			singleVariable:                     true
 			label:                              qsTr("Blocks")
 			allowedColumns:                     ["ordinal", "scale", "nominal", "nominalText"]
+			visible:							false
 		}
 
 		AssignedVariablesList
@@ -139,7 +140,7 @@ Form
 			name:                                   "rsmPredefinedModel"
 			label:                              	qsTr("Select predefined model")
 			visible:								designType.currentValue == "responseSurfaceDesign"
-			checked: 								designType.currentValue == "responseSurfaceDesign"								
+			checked: 								designType.currentValue == "responseSurfaceDesign"
 
 			DropDown
 					{
@@ -158,7 +159,7 @@ Form
 
 		VariablesForm
 		{
-			enabled: !highestOrder.checked & !rsmPredefinedModel.checked
+			enabled: !highestOrder.checked & designType.currentValue == "factorialDesign"
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
 			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["fixedFactors", "continuousFactors"]}
 			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction}
