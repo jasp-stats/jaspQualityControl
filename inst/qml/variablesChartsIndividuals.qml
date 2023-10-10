@@ -21,7 +21,7 @@ Form
 			name:								"measurement"
 			title:								qsTr("Measurement")
 			singleVariable:						true
-			allowedColumns:						["scale"]
+			allowedColumns:						["scale", "ordinal"]
 		}
 
 		AssignedVariablesList
@@ -59,18 +59,6 @@ Form
 				min: 							2
 				max: 							dataSetModel.rowCount()
 			}
-		CheckBox
-		{
-			name:								"manualTicksXAxis"
-			label: 								qsTr("Number of ticks on x-axis:")
-			childrenOnSameRow: true
-
-			DoubleField
-			{
-				name: 							"manualTicksXAxisValue"
-				defaultValue:					5
-			}
-		}
 		}
 
 		CheckBox

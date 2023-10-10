@@ -86,11 +86,11 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   # exclude groups with single observation from calculation
   rowRemovalIndex <- which(apply(df, 1, function(x) sum(!is.na(x)) < 2)) # get index of rows with less than 2 obs.
-   if (length(rowRemovalIndex) != 0)
+   if (length(rowRemovalIndex) > 0)
     df <- df[-rowRemovalIndex, ]
 
   if (type == "r"){
-    rowRanges <- .rowRanges(df)$ranges
+    rowRanges <- .rowRanges(df, na.rm = TRUE)$ranges
     n <- .rowRanges(df)$n
     if (sum(n) < 2) {
       sdWithin <- 0
@@ -109,13 +109,13 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(sdWithin)
 }
 
-.rowRanges <- function(df) {
+.rowRanges <- function(df, na.rm = FALSE) {
   nrow <- nrow(df)
   ranges <- c()
   n <- c()
   for (i in seq_len(nrow)) {
     rowVector <- df[i,]
-    ranges <- c(ranges, max(rowVector, na.rm = TRUE) - min(rowVector, na.rm = TRUE))
+    ranges <- c(ranges, max(rowVector, na.rm = na.rm) - min(rowVector, na.rm = na.rm))
     n <- c(n, sum(!is.na(rowVector)))
   }
   return(list(ranges = ranges, n = n))
@@ -217,9 +217,9 @@ KnownControlStats.RS <- function(N, sigma) {
 #
 #  dataset[1:4] <- NA
 #  dataset[2:20, 5] <- NA
-#  .controlChartPlotFunction(dataset, plotType = "xBar", xBarSdType = "r")
-#
-# .controlChartPlotFunction(dataset, plotType = "s")
+ # .controlChartPlotFunction(dataset, plotType = "xBar", xBarSdType = "r")
+
+#.controlChartPlotFunction(dataset, plotType = "R")
 #
 #
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Datasets/ControlChartError.csv")
@@ -291,17 +291,21 @@ KnownControlStats.RS <- function(N, sigma) {
       for (j in 2:k) {
         mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[j:(length(dataCurrentStageVector) - (k - j))]))   # remove first i and last (k - i) elements
       }
-      meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges)
+      meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
       d2 <- KnownControlStats.RS(k, 3)[[1]][1]
       sd <- meanMovingRange/d2
       if (plotType == "I") {
-        qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sd)
+        processMean <- mean(dataCurrentStageVector, na.rm = TRUE) # manually calculate mean as package does not remove NAs
+        qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sd, center = processMean)
         plotStatistic <- qccObject$statistics
+        limits <- qccObject$limits
       } else if (plotType == "MR" || plotType == "MMR" ) {
-        qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sd)
+        qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sd, center = meanMovingRange)
+        limits <- unlist(.controlLimits(meanMovingRange, sd, n = k, type = "r"))
+        # the qcc package calculates the ranges ignoring the NAs, but for the MR chart we want the range to be NA if there are any NAs in the moving range
+        qccObject$statistics[which(!complete.cases(mrMatrix))] <- NA
         plotStatistic <- c(NA, qccObject$statistics)
       }
-      limits <- qccObject$limits
       LCL <- limits[1]
       UCL <- limits[2]
       center <- qccObject$center
@@ -318,6 +322,8 @@ KnownControlStats.RS <- function(N, sigma) {
       d2 <- sapply(n, function(x) KnownControlStats.RS(x, 0)$constants[1])
       mu <- sigma * d2
       qccObject <- qcc::qcc(dataCurrentStage, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(dataCurrentStage))
+      # the qcc package returns -Inf when all values are NA, which does not look good in ggplot. So we replace it with NA.
+      qccObject$statistics[is.infinite(qccObject$statistics)] <- NA
       plotStatistic <- qccObject$statistics
 
       limits <- .controlLimits(mu, sigma, n = n, type = "r")

@@ -17,7 +17,8 @@ The assumptions associated with the I-mR chart are:
 - the data must be approximately normally distributed. 
 
 The assumptions associated with the Autocorrelation chart are:
-- the data points are dependent on one another- a given data point is related to the next. 
+- the data points are dependent on one another
+- a given data point is related to the next. 
 
 ## Input
 -------
