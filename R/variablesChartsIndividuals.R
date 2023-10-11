@@ -18,10 +18,11 @@
 #' @export
 variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 #
-# dataset <- read.csv("C:/Users/Jonee/Desktop/Temporary Files/IndividualChartStagesWithNA.csv")
-# variables <- "Yield"
-# stages <- "Stage"
-# subgroups <- "Month"
+ # dataset <- read.csv("C:/Users/Jonee/Desktop/Temporary Files/IndividualChartStagesWithNA.csv")
+ # dataset$Stage[2] <- NA
+ # variables <- "Yield"
+ # stages <- "Stage"
+ # subgroups <- "Month"
 
   # reading variables in from the GUI
   variables <- unlist(options[["measurement"]])
@@ -56,6 +57,14 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
              observations.target = c(options[["measurement"]]),
              exitAnalysisIfErrors = TRUE)
 
+  if (!identical(stages, "") && anyNA(dataset[[stages]])) {
+    nDroppedRows <- sum(is.na(dataset[[stages]]))
+    dataset <- dataset[!is.na(dataset[[stages]]),]
+    droppedStagesNote <- gettextf("<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage.", nDroppedRows)
+  } else if (!identical(stages, "") && !anyNA(dataset[[stages]])) {
+    nDroppedRows <- 0
+  }
+
   # default plot
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Variables Charts for Individuals"), width = 700, height = 400)
@@ -85,6 +94,8 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
                                            xAxisLabels = axisLabels, movingRangeLength = options[["movingRangeLength"]])
     }
     jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+    if (!identical(stages, "") && nDroppedRows > 0)
+      jaspResults[["Ichart"]][["plotNote"]] <- createJaspHtml(droppedStagesNote)
     jaspResults[["Ichart"]][["tableI"]] <- individualChart$table
     jaspResults[["Ichart"]][["tableMR"]] <- mrChart$table
   }

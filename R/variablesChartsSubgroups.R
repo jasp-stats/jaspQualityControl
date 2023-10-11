@@ -52,7 +52,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("CCReport", "TypeChart", "variablesLong", "variables", "stages"))
+    plot$dependOn(c("CCReport", "TypeChart", "variablesLong", "variables", "stages", "subgroups", "subgroupSizeType"))
     return()
   }
 
@@ -65,6 +65,34 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
   }
 
+  # error handling
+  .hasErrors(dataset, type = c('infinity'),
+             infinity.target = c(measurements, options$subgroups),
+             exitAnalysisIfErrors = TRUE)
+
+  plotNotes <- ""
+  if (!identical(stages, "")) {
+    if ((!wideFormat && options[["subgroupSizeType"]] == "manual" &&
+         any(lapply(split(dataset[[stages]], ceiling(seq_along(dataset[[stages]])/options[["CCSubgroupSize"]])), FUN = function(x)length(unique(x))) > 1)) ||
+        (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" &&
+         any(table(dplyr::count_(dataset, vars = c(stages, subgroupVariable))[subgroupVariable]) > 1))) {
+      plotNotes <- paste0(plotNotes, gettext("One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"))
+    }
+    if (anyNA(dataset[[stages]])) {
+      nDroppedStageRows <- sum(is.na(dataset[[stages]]))
+      dataset <- dataset[!is.na(dataset[[stages]]),]
+      removalType <- if (wideFormat) "subgroup(s)" else "observation(s)"
+      plotNotes <- paste0(plotNotes, gettextf("Removed %i %s that were not assigned to any stage.<br>", nDroppedStageRows, removalType))
+    }
+  }
+
+  if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" && anyNA(dataset[[subgroupVariable]])) {
+    nDroppedSubgroupRows <- sum(is.na(dataset[[subgroupVariable]]))
+    dataset <- dataset[!is.na(dataset[[subgroupVariable]]),]
+    removalType <- if (wideFormat) "subgroup(s)" else "observation(s)"
+    plotNotes <- paste0(plotNotes, gettextf("Removed %i observation(s) that were not assigned to any subgroups.<br>", nDroppedSubgroupRows))
+  }
+
   # Rearrange data if not already wide format (one group per row)
   if (!wideFormat && ready) {
     # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
@@ -73,8 +101,6 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       if (stages != "") {
         # Only take the first stage of each subgroup, to avoid multiple stages being defined
         stagesPerSubgroup <- dataset[[stages]][seq(1, length(dataset[[stages]]), k)]
-        # this line checks whether there are any subgroups with more than one stage assigned, so we can display a message later that only the first stage is used
-        multipleStagesPerSubgroupDefined <- any(lapply(split(dataset[[stages]], ceiling(seq_along(dataset[[stages]])/k)), FUN = function(x)length(unique(x))) > 1)
       }
       # fill up with NA to allow all subgroup sizes
       if(length(dataset[[measurements]]) %% k != 0) {
@@ -95,8 +121,6 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       subgroups <- na.omit(subgroups)
       # add sequence of occurence to allow pivot_wider
       if (stages != "") {
-        # this line checks whether there are any subgroups with more than one stage assigned, so we can display a message later that only the first stage is used
-        multipleStagesPerSubgroupDefined <- any(table(dplyr::count_(dataset, vars = c(stages, subgroupVariable))[subgroupVariable]) > 1)
         # Only take the first defined stage of each subgroup, to avoid multiple stages being defined
         stagesPerSubgroup <- dataset[[stages]][match(unique(subgroups), subgroups)]
       }
@@ -120,29 +144,23 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       axisLabels <- dataset[[axisLabels]]
   }
 
-  #Checking for errors in the dataset
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = c(options[["measurementsWideFormat"]], options[["subgroup"]]),
-             exitAnalysisIfErrors = TRUE)
+  # Plot note about R/S chart recommendation
+  if (length(measurements) > 5 && options[["TypeChart"]] == "xBarRchart") # if the subgroup size is above 5, R chart is not recommended
+    plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. S-chart is recommended."))
 
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             infinity.target = c(measurements, options[["subgroup"]]),
-             missingValues.target = c(options[["subgroup"]]),
-             exitAnalysisIfErrors = TRUE)
 
   #X bar & R/s chart
   if (ready) {
     if (is.null(jaspResults[["controlCharts"]])) {
-      secondPlotType <- ifelse(options[["TypeChart"]] == "xBarRchart", "R", "s")
-      jaspResults[["controlCharts"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s Control Chart", secondPlotType), width = 1200, height = 500)
+      jaspResults[["controlCharts"]] <- createJaspContainer(position = 1)
       jaspResults[["controlCharts"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "manualTicks", 'nTicks',
                                                 "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong",
                                                 "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle",
-                                                "ccChartName", "subgroupSizeUnequal", "axisLabels", "stages"))
-      jaspResults[["controlCharts"]]$position <- 1
-
+                                                "ccChartName", "subgroupSizeUnequal", "axisLabels", "stages", "subgroupSizeType"))
+      secondPlotType <- ifelse(options[["TypeChart"]] == "xBarRchart", "R", "s")
+      jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s Control Chart", secondPlotType), width = 1200, height = 500)
       if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
-        jaspResults[["controlCharts"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
+        jaspResults[["controlCharts"]][["plot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
         return()
       }
 
@@ -159,43 +177,30 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       secondChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = secondPlotType, , stages = stages, phase2 = options[["Phase2"]],
                                                phase2Sd = options[["SD"]], limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
                                                xAxisLabels = axisLabels, clLabelSize = clLabelSize)
-      jaspResults[["controlCharts"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
-
+      jaspResults[["controlCharts"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
+      if (!identical(plotNotes, ""))
+        jaspResults[["controlCharts"]][["plotNote"]] <- createJaspHtml(paste0("<i>Note.</i> ", plotNotes))
 
       # Nelson tests tables
-      if (is.null(jaspResults[["NelsonTables"]])) {
-        jaspResults[["NelsonTables"]] <- createJaspContainer(title = gettext("Out-of-control Signals"))
-        jaspResults[["NelsonTables"]]$dependOn(c("TypeChart", "variables", "Phase2", "mean", "SD", "CCSubgroupSize",
-                                                 "CCDataFormat", "subgroups", "variablesLong", "stages"))
-        jaspResults[["NelsonTables"]]$position <- 2
-        allTables <- jaspResults[["NelsonTables"]]
+        jaspResults[["controlCharts"]][["xBarTable"]]  <- xBarChart$table
+        jaspResults[["controlCharts"]][["secondTable"]] <- secondChart$table
 
-        allTables[["xBarTable"]]  <- xBarChart$table
-        allTables[["secondTable"]] <- secondChart$table
+      # Report
+      if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]])) {
 
-        if (stages != "" ) {
-          if (multipleStagesPerSubgroupDefined)
-            allTables[["xBarTable"]]$addFootnote(gettext("One or more subgroups are assigned to more than one stage. Only first stage is considered."))
-        }
-        if (length(measurements) > 5 && secondPlotType == "R") # if the subgroup size is above 5, R chart is not recommended
-          allTables[["secondTable"]]$addFootnote(gettext("Subgroup size is >5, results may be biased. S-chart is recommended."))
+        jaspResults[["controlCharts"]] <- NULL
+        jaspResults[["NelsonTables"]] <- NULL
+
+        jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
+        jaspResults[["CCReport"]]$dependOn(c("CCReport", "CCSubgroupSize","TypeChart", "variables", "variablesLong",
+                                             "manualTicks", 'nTicks',"CCDataFormat", "subgroups", "ccTitle", "ccName",
+                                             "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "stages"))
+        jaspResults[["CCReport"]]$position <- 9
+        Iplot <- jaspResults[["CCReport"]]
+        Iplot[["ccReport"]] <- .CCReport(p1 = xBarChart$plotObject, p2 = secondChart$plotObject, ccTitle = options$ccTitle,
+                                         ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
+                                         ccChartName = options$ccChartName)
       }
-    }
-    # Report
-    if (options[["CCReport"]] && is.null(jaspResults[["CCReport"]])) {
-
-      jaspResults[["controlCharts"]] <- NULL
-      jaspResults[["NelsonTables"]] <- NULL
-
-      jaspResults[["CCReport"]] <- createJaspContainer(gettext("Report"))
-      jaspResults[["CCReport"]]$dependOn(c("CCReport", "CCSubgroupSize","TypeChart", "variables", "variablesLong",
-                                           "manualTicks", 'nTicks',"CCDataFormat", "subgroups", "ccTitle", "ccName",
-                                           "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "stages"))
-      jaspResults[["CCReport"]]$position <- 9
-      Iplot <- jaspResults[["CCReport"]]
-      Iplot[["ccReport"]] <- .CCReport(p1 = xBarChart$plotObject, p2 = secondChart$plotObject, ccTitle = options$ccTitle,
-                                       ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
-                                       ccChartName = options$ccChartName)
     }
   }
 }
