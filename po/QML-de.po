@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-10-13 19:33+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/de/>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.1-dev\n"
 "X-Language: de\n"
 "X-Qt-Contexts: true\n"
 
@@ -2055,7 +2061,7 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Other Plots"
-msgstr ""
+msgstr "Andere Diagramme"
 
 msgctxt "Description|"
 msgid "Analyze Design"
@@ -2075,35 +2081,36 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Categorical Factors"
-msgstr ""
+msgstr "Kategorische Faktoren"
 
 msgctxt "doeAnalysis|"
 msgid "Continuous Factors"
-msgstr ""
+msgstr "Kontinuierliche Faktoren"
 
 msgctxt "doeAnalysis|"
 msgid "Select predefined model"
-msgstr ""
+msgstr "Vordefiniertes Modell auswählen"
 
 msgctxt "doeAnalysis|"
 msgid "Include following terms"
-msgstr ""
+msgstr "Folgende Terme einschließen"
 
 msgctxt "doeAnalysis|"
 msgid "Linear"
-msgstr ""
+msgstr "Linear"
 
 msgctxt "doeAnalysis|"
 msgid "Linear and interaction terms"
-msgstr ""
+msgstr "Lineare und Interaktions-Terme"
 
 msgctxt "doeAnalysis|"
 msgid "Linear and squared terms"
-msgstr ""
+msgstr "Lineare und quadrierte Terme"
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Full quadratic"
-msgstr ""
+msgstr "Komplett quadratisch"
 
 #, fuzzy
 msgctxt "doeAnalysis|"
@@ -2112,11 +2119,11 @@ msgstr "Ablaufreihenfolge"
 
 msgctxt "doeAnalysis|"
 msgid "Equal to row number"
-msgstr ""
+msgstr "Identisch mit Zeilennummer"
 
 msgctxt "doeAnalysis|"
 msgid "Show regression equation"
-msgstr ""
+msgstr "Regressionsgleichung anzeigen"
 
 msgctxt "doeAnalysis|"
 msgid "Automatically code/standardize factors"
