@@ -135,7 +135,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       jaspResults[["gaugeANOVA"]] <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
     }
-    
+
     # R chart by operator
     if (options[["gaugeRchart"]] && is.null(jaspResults[["gaugeRchart"]])) {
       jaspResults[["gaugeRchart"]] <- createJaspContainer(gettext("Range chart by operator"))
@@ -143,15 +143,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       jaspResults[["gaugeRchart"]]$dependOn(c("gaugeRchart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
       jaspResults[["gaugeRchart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
       if (ready) {
-        rChart <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
-                                            plotType = "R", stages = operators,
-                                            xAxisLabels = dataset[[parts]][order(dataset[[operators]])])
-        
+        rChart <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)], plotType = "R",
+                                            stages = operators, xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
+                                            stagesSeparateCalculation = FALSE)
+
         jaspResults[["gaugeRchart"]][["plot"]]$plotObject <- rChart$plotObject
         jaspResults[["gaugeRchart"]][["table"]] <- rChart$table
       }
     }
-    
+
     # Xbar chart by operator
     if (options[["gaugeXbarChart"]] && is.null(jaspResults[["gaugeXbarChart"]])) {
       jaspResults[["gaugeXbarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
@@ -161,7 +161,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       if (ready) {
         xBarChart <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
                                                plotType = "xBar", xBarSdType = "r", stages = operators,
-                                               xAxisLabels = dataset[[parts]][order(dataset[[operators]])])
+                                               xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
+                                               stagesSeparateCalculation = FALSE)
         jaspResults[["gaugeXbarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
         jaspResults[["gaugeXbarChart"]][["table"]] <- xBarChart$table
       }
@@ -838,7 +839,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
                                                           plotType = "R", stages = operators,
-                                                          xAxisLabels = dataset[[parts]][order(dataset[[operators]])])$plotObject
+                                                          xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
+                                                          stagesSeparateCalculation = FALSE)$plotObject
   }
   if (options[["reportMeasurementsByOperatorPlot"]]) {
     indexCounter <- indexCounter + 1
@@ -848,7 +850,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
                                                           plotType = "xBar", xBarSdType = "r", stages = operators,
-                                                          xAxisLabels = dataset[[parts]][order(dataset[[operators]])])$plotObject
+                                                          xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
+                                                          stagesSeparateCalculation = FALSE)$plotObject
   }
   if (options[["reportPartByOperatorPlot"]]) {
     indexCounter <- indexCounter + 1

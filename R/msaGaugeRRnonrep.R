@@ -85,21 +85,22 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       jaspResults[["gaugeRRNonRep"]]$dependOn(c("processVariationReference", "historicalSdValue", "toleranceValue", "studyVarianceMultiplierType",
                                                 "studyVarianceMultiplierValue", "varianceComponentsGraph"))
     }
-    
+
     # R chart by operator
     if (options[["NRrCharts"]] && is.null(jaspResults[["NRrCharts"]])) {
       jaspResults[["NRrCharts"]] <- createJaspContainer(gettext("Range Chart by Operator"))
       jaspResults[["NRrCharts"]]$position <- 2
       jaspResults[["NRrCharts"]]$dependOn(c("NRrCharts", "measurements", "measurementsWide"))
       jaspResults[["NRrCharts"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
-      
+
       if (ready) {
         rChart <- .controlChartPlotFunction(dataset = datasetWide[c(wideMeasurementCols, operators)],
                                             plotType = "R", stages = operators,
-                                            xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])])
+                                            xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                            stagesSeparateCalculation = FALSE)
         jaspResults[["NRrCharts"]][["plot"]]$plotObject <- rChart$plotObject
         jaspResults[["NRrCharts"]][["table"]] <- rChart$table
-      } 
+      }
     }
 
     # Xbar chart by operator
@@ -111,13 +112,14 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
         if (ready) {
           xBarChart <- .controlChartPlotFunction(dataset = datasetWide[c(wideMeasurementCols, operators)],
                                                  plotType = "xBar", xBarSdType = "r", stages = operators,
-                                                 xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])])
+                                                 xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                                 stagesSeparateCalculation = FALSE)
           jaspResults[["NRxbarCharts"]][["plot"]]$plotObject <- xBarChart$plotObject
           jaspResults[["NRxbarCharts"]][["table"]] <- xBarChart$table
-          
+
         }
     }
-    
+
     #Measurement by part x operator plot
     if (options[["partMeasurementPlot"]] & ready) {
       if (is.null(jaspResults[["NRpartOperatorGraph"]])) {
@@ -446,7 +448,8 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = datasetWide[c(measurementsWide, operators)],
                                                           plotType = "R", stages = operators,
-                                                          xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])])$plotObject #R chart by operator
+                                                          xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                                          stagesSeparateCalculation = FALSE)$plotObject #R chart by operator
   }
   if (options[["reportMeasurementsByOperatorPlot"]]) {
     indexCounter <- indexCounter + 1
@@ -456,7 +459,8 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = datasetWide[c(measurementsWide, operators)],
                                                           plotType = "xBar", xBarSdType = "r", stages = operators,
-                                                          xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])])$plotObject #Average chart by operator
+                                                          xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                                          stagesSeparateCalculation = FALSE)$plotObject #Average chart by operator
   }
 
   if (indexCounter == 0) {
