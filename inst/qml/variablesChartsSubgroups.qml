@@ -93,28 +93,28 @@ Form
 			visible:							dataFormat.currentValue == "longFormat"							
 
 			RadioButton
-			{
-				value: 							"groupingVariable"
-				label: 							qsTr("Through grouping variable")
-				checked:		 				true
-			}
-
-			RadioButton
-			{
-				value: 							"manual"
-				label: 							qsTr("Manual subgroup size")
-				childrenOnSameRow:				true
-				
-				DoubleField
 				{
-					name: 									"manualSubgroupSizeValue"
-					label: 									qsTr("Subgroup size")
-					id:										manualSubgroupSizeValue
-					min: 									2
-					defaultValue:							5
-					visible:								dataFormat.currentValue == "longFormat"
+					value: 							"manual"
+					label: 							qsTr("Subgroup size")
+					checked:		 				true
+					childrenOnSameRow:				true
+					
+					DoubleField
+					{
+						name: 									"manualSubgrouSizeValue"
+						min: 									2
+						defaultValue:							5
+					}
 				}
-			}
+			
+			RadioButton
+				{
+					value: 							"groupingVariable"
+					label: 							qsTr("Through grouping variable")
+				}
+
+				
+
 		}
 
 
@@ -122,7 +122,7 @@ Form
 		RadioButtonGroup
 		{
 			name:								"subgroupSizeUnequal"
-			title: 								qsTr("For unequal subgroup sizes")
+			title: 								qsTr("Unequal subgroup sizes")
 			id:									subgroupSizeUnequal
 			
 			RadioButton
