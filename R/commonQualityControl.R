@@ -241,7 +241,8 @@ KnownControlStats.RS <- function(N, sigma) {
 
 .controlChartPlotFunction <- function(dataset, plotType = c("xBar", "R", "I", "MR", "MMR", "s"), stages = "",
                                       xBarSdType = c("r", "s"), phase2 = FALSE, phase2Mu = "", phase2Sd = "", limitsPerSubgroup = FALSE,
-                                      warningLimits = FALSE, xAxisLabels = "", movingRangeLength = 2, clLabelSize = 4.5) {
+                                      warningLimits = FALSE, xAxisLabels = "", movingRangeLength = 2, clLabelSize = 4.5,
+                                      stagesSeparateCalculation = TRUE) {
   tableTitle <- switch (plotType,
     "xBar" = "x-bar",
     "R" = "range",
@@ -252,12 +253,12 @@ KnownControlStats.RS <- function(N, sigma) {
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
 
-  if (!identical(stages, "")) {
-    nStages <- length(unique(dataset[[stages]]))
-  } else {
+  if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
     stages <- "stage"
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
   }
 
   ### Calculate plot values per stage and combine into single dataframe ###
@@ -271,8 +272,8 @@ KnownControlStats.RS <- function(N, sigma) {
     colnames(warningLimitsDf) <- c("UWL1", "LWL1", "UWL2", "LWL2")
     clData <- cbind(clData, warningLimitsDf)
   }
-  dfLabel <- data.frame(matrix(ncol = 3, nrow = 0))
-  colnames(dfLabel) <- c("x", "y", "label")
+  dfLimitLabel <- data.frame(matrix(ncol = 3, nrow = 0))
+  colnames(dfLimitLabel) <- c("x", "y", "label")
   seperationLines <- c()
   dfStageLabels <- data.frame(matrix(ncol = 3, nrow = 0))
   colnames(dfStageLabels) <- c("x", "y", "label")
@@ -316,8 +317,11 @@ KnownControlStats.RS <- function(N, sigma) {
       # manually calculate mean and sd as the package gives wrong results with NAs
       if(phase2) {
         sigma <- phase2Sd
-      } else {
+      } else if (stagesSeparateCalculation) {
         sigma <- .sdXbar(df = dataCurrentStage, type = "r")
+      } else if (!stagesSeparateCalculation) {
+        # use the whole dataset for calculation
+        sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = "r")
       }
       d2 <- sapply(n, function(x) KnownControlStats.RS(x, 0)$constants[1])
       mu <- sigma * d2
@@ -335,10 +339,14 @@ KnownControlStats.RS <- function(N, sigma) {
       if (phase2) {
           mu <- as.numeric(phase2Mu)
           sigma <- as.numeric(phase2Sd)
-      } else {
+      } else if (stagesSeparateCalculation) {
         # manually calculate mean and sd as the package gives wrong results with NAs
         mu <- mean(unlist(dataCurrentStage), na.rm = TRUE)
         sigma <- .sdXbar(df = dataCurrentStage, type = xBarSdType)
+      } else if (!stagesSeparateCalculation) {
+        # use the whole dataset for calculation
+        mu <- mean(unlist(dataset[!names(dataset) %in% stages]), na.rm = TRUE)
+        sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = xBarSdType)
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='xbar', plot = FALSE, center = mu, sizes = ncol(dataCurrentStage), std.dev = sigma)
       plotStatistic <- qccObject$statistics
@@ -363,8 +371,11 @@ KnownControlStats.RS <- function(N, sigma) {
     } else if (plotType == "s") {
       if(phase2) {
         sigma <- phase2Sd
-      } else {
+      } else if (stagesSeparateCalculation) {
         sigma <- .sdXbar(df = dataCurrentStage, type = "s")
+      } else if (!stagesSeparateCalculation) {
+        # use the whole dataset for calculation
+        sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = "s")
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage))
       plotStatistic <- qccObject$statistics
@@ -394,7 +405,7 @@ KnownControlStats.RS <- function(N, sigma) {
         subgroups <- seq_len(length(qccObject$statistics))
       }
       if (nStages > 1)
-        dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(subgroups)/2, y = NA, label = stage))  # the y value will be filled in later
+        dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(subgroups)/2 + 0.5, y = NA, label = stage))  # the y value will be filled in later
     }
 
     if (length(na.omit(plotStatistic)) > 1) {
@@ -457,7 +468,8 @@ KnownControlStats.RS <- function(N, sigma) {
         round(lastLCL, decimals),
         round(lastUCL, decimals))
     }
-    dfLabel <- rbind(dfLabel, data.frame(x = labelXPos,
+    if (stagesSeparateCalculation || (!stagesSeparateCalculation && i == nStages))
+      dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                          y = c(lastCenter, lastLCL, lastUCL),
                                          label = labelText))
     tableLabels <- if (identical(xAxisLabels, "")) subgroups else as.character(xAxisLabels)[subgroups]
@@ -507,7 +519,6 @@ KnownControlStats.RS <- function(N, sigma) {
     table$showSpecifiedColumnsOnly <- TRUE
   }
 
-  # Calculations that apply to the whole plot
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$plotStatistic, clData$LCL, clData$UCL, clData$center))
   xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(plotData$subgroup))) # we only want integers on the x-axis
 
@@ -552,7 +563,7 @@ KnownControlStats.RS <- function(N, sigma) {
       ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = LWL2), col = "orange",
                          linewidth = 1, linetype = "dashed")
   }
-  plotObject <- plotObject + ggplot2::geom_label(data = dfLabel, mapping = ggplot2::aes(x = x, y = y, label = label),
+  plotObject <- plotObject + ggplot2::geom_label(data = dfLimitLabel, mapping = ggplot2::aes(x = x, y = y, label = label),
                                                  inherit.aes = FALSE, size = clLabelSize) +
     ggplot2::scale_y_continuous(name = xTitle, breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext("Subgroup"), breaks = xBreaks, limits = xLimits, labels = xLabels) +
