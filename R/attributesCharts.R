@@ -815,6 +815,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
   }
 
   table$showSpecifiedColumnsOnly <- TRUE
-  table$addFootnote(message = gettext("Numbers are data points where test violations occur."))
+  table$addFootnote(message = gettext("Points where a test failed."))
   return(table)
 }

@@ -78,7 +78,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspResults[["Ichart"]]$dependOn(c("ImRchart", "variables", "movingRangeLength", "subgroups", "ccTitle",
                                        "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName", "ccReport",
                                        "split"))
-    jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
+    jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
     if (ready) {
       # Error conditions for stages
       if(!identical(stages, "") && any(table(dataset[[stages]]) < options[["movingRangeLength"]])) {
@@ -102,7 +102,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
   # Autocorrelation Plot
   if(options[["autocorrelationPlot"]] && ready){
-    jaspResults[["CorPlot"]] <- createJaspContainer(position = 2, title = "Autocorrelation Function")
+    jaspResults[["CorPlot"]] <- createJaspContainer(position = 2, title = "Autocorrelation function")
     jaspResults[["CorPlot"]]$dependOn(c("autocorrelationPlot", "measurement", "autocorrelationPlotLagsNumber"))
     Corplot <- jaspResults[["CorPlot"]]
     Corplot[[variables]] <- .CorPlot(dataset = dataset, options = options, variable = variables,

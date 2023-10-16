@@ -517,6 +517,7 @@ KnownControlStats.RS <- function(N, sigma) {
     }
     table$setData(tableData)
     table$showSpecifiedColumnsOnly <- TRUE
+    table$addFootnote(message = gettext("Points where a test failed."))
   }
 
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$plotStatistic, clData$LCL, clData$UCL, clData$center))
@@ -534,7 +535,7 @@ KnownControlStats.RS <- function(N, sigma) {
     xLabels <- xBreaks
   }
 
-  xTitle <- switch (plotType,
+  yTitle <- switch (plotType,
                     "xBar" = "Sample average",
                     "R" = "Sample range",
                     "I" = "Individual value",
@@ -565,7 +566,7 @@ KnownControlStats.RS <- function(N, sigma) {
   }
   plotObject <- plotObject + ggplot2::geom_label(data = dfLimitLabel, mapping = ggplot2::aes(x = x, y = y, label = label),
                                                  inherit.aes = FALSE, size = clLabelSize) +
-    ggplot2::scale_y_continuous(name = xTitle, breaks = yBreaks, limits = range(yBreaks)) +
+    ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = gettext("Subgroup"), breaks = xBreaks, limits = xLimits, labels = xLabels) +
     jaspGraphs::geom_line(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue") +
     jaspGraphs::geom_point(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),

@@ -1,6 +1,6 @@
 Variable Charts Indviduals
 ==========================
-Control charts are a set of tools used to model the variation of a process, thereby indicating its stability and establishing a state of statistical control. 
+A control chart is also called a Shewhart control chart.  A control chart is a graph used to study how a process changes over time. The data are plotted in time order. Each chart always has a central line for the average, an upper line for the upper control limit, and a lower line for the lower control limit. These lines are determined based on historical data. By comparing current data to these lines, conclusions can be drawn about whether the process variation is consistent (in control) or is unpredictable (out of control, and affected by special causes of variation). Control charts for variables data are always used in pairs. The top chart monitors the average, or the centring of the data from the process. The bottom chart monitors the range, or the spread of the distribution.
 
 For low volume production runs the best alternative for X-bar & R and X-bar & s control charts is an individual moving Range (X-mR) chart. 
 An X-mR chart is also useful when there is no obvious source of variation related to a rational subgroup or when there is no practical subgroup.
@@ -52,8 +52,11 @@ _Statistical process control handbook page 23:_
 
 ## References 
 -------
-- Duncan, A.J. (1986), Quality control and industrial statistics, Richard D. Irwin, Inc., and Automotive Industry Action Group (July 2005), Statistical process control (SPC) – Reference manual, AIAG.
-- Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009).*Statistical process control handbooks*. SKF group.
+- Duncan, A.J. (1986), *Quality control and industrial statistics*, Richard D. Irwin, Inc.
+- Automotive Industry Action Group, *Statistical Process Control – Reference Manual* (July 2005, 2nd Edition)
+-	SKF Quality Techniques, Klerx, R., Dodson, B., and Dumont, D., *QT 1 – Process capability studies*, (PUB GQ/P9 10347/1 EN – December 2021)
+-	SKF Quality Techniques, Dodson, B., Lynch, D., Weidenbacher, M., & and Klerx, R. (2009).), *QT 2 – Statistical process control*, (PUB GQS/P9 18343 EN – April 2019)
+
 
 ## R Packages
 -------

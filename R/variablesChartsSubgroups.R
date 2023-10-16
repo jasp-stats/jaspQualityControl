@@ -50,7 +50,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
   # Return an empty plot as default
   if (!ready) {
-    plot <- createJaspPlot(title = gettext("Control Charts"), width = 700, height = 400)
+    plot <- createJaspPlot(title = gettext("Control charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
     plot$dependOn(c("CCReport", "TypeChart", "variablesLong", "variables", "stages", "subgroups", "subgroupSizeType"))
     return()
@@ -158,7 +158,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                                                 "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle",
                                                 "ccChartName", "subgroupSizeUnequal", "axisLabels", "stages", "subgroupSizeType"))
       secondPlotType <- ifelse(options[["TypeChart"]] == "xBarRchart", "R", "s")
-      jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s Control Chart", secondPlotType), width = 1200, height = 500)
+      jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s control chart", secondPlotType), width = 1200, height = 500)
       if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
         jaspResults[["controlCharts"]][["plot"]]$setError(gettextf("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
         return()
