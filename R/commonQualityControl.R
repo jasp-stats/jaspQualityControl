@@ -241,8 +241,8 @@ KnownControlStats.RS <- function(N, sigma) {
 
 .controlChartPlotFunction <- function(dataset, plotType = c("xBar", "R", "I", "MR", "MMR", "s"), stages = "",
                                       xBarSdType = c("r", "s"), phase2 = FALSE, phase2Mu = "", phase2Sd = "", limitsPerSubgroup = FALSE,
-                                      warningLimits = FALSE, xAxisLabels = "", movingRangeLength = 2, clLabelSize = 4.5,
-                                      stagesSeparateCalculation = TRUE) {
+                                      warningLimits = FALSE, xAxisLabels = "", xAxisTitle = gettext("Sample"),
+                                      movingRangeLength = 2, clLabelSize = 4.5, stagesSeparateCalculation = TRUE) {
   tableTitle <- switch (plotType,
     "xBar" = "x-bar",
     "R" = "range",
@@ -567,7 +567,7 @@ KnownControlStats.RS <- function(N, sigma) {
   plotObject <- plotObject + ggplot2::geom_label(data = dfLimitLabel, mapping = ggplot2::aes(x = x, y = y, label = label),
                                                  inherit.aes = FALSE, size = clLabelSize) +
     ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = range(yBreaks)) +
-    ggplot2::scale_x_continuous(name = gettext("Subgroup"), breaks = xBreaks, limits = xLimits, labels = xLabels) +
+    ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels) +
     jaspGraphs::geom_line(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue") +
     jaspGraphs::geom_point(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),
                            size = 4, fill = plotData$dotColor, inherit.aes = TRUE) +
