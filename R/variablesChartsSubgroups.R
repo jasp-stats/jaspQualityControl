@@ -112,6 +112,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       }
       measurements <- colnames(dataset)
       axisLabels <- as.character(seq_len(nrow(dataset)))
+      xAxisTitle <- gettext("Sample")
       if (stages != "") {
         dataset[[stages]] <- stagesPerSubgroup
         axisLabels <- axisLabels[order(dataset[[stages]])]
@@ -133,6 +134,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       dataset <- as.data.frame(dataset)
       measurements <- as.character(unique(occurenceVector))
       axisLabels <- dataset[[subgroupVariable]]
+      xAxisTitle <- subgroupVariable
       if (stages != ""){
         dataset[[stages]] <- stagesPerSubgroup
         axisLabels <- axisLabels[order(dataset[[stages]])]
@@ -140,8 +142,12 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
   }  else if (wideFormat && ready) {
     multipleStagesPerSubgroupDefined <- FALSE # not possible in this format
-    if (axisLabels != "")
+    if (axisLabels != "") {
+      xAxisTitle <- options[["axisLabels"]]
       axisLabels <- dataset[[axisLabels]]
+    } else {
+      xAxisTitle <- gettext("Sample")
+    }
   }
 
   # Plot note about R/S chart recommendation
@@ -173,10 +179,11 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       xBarChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
                                              phase2 = options[["Phase2"]], phase2Mu = options[["mean"]], phase2Sd = options[["SD"]],
                                              limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
-                                             warningLimits = options[["Wlimits"]], xAxisLabels = axisLabels, clLabelSize = clLabelSize)
-      secondChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = secondPlotType, , stages = stages, phase2 = options[["Phase2"]],
+                                             warningLimits = options[["Wlimits"]], xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
+                                             clLabelSize = clLabelSize)
+      secondChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = secondPlotType, stages = stages, phase2 = options[["Phase2"]],
                                                phase2Sd = options[["SD"]], limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
-                                               xAxisLabels = axisLabels, clLabelSize = clLabelSize)
+                                               xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize)
       jaspResults[["controlCharts"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
       if (!identical(plotNotes, ""))
         jaspResults[["controlCharts"]][["plotNote"]] <- createJaspHtml(paste0("<i>Note.</i> ", plotNotes))

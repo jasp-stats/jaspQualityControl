@@ -43,11 +43,13 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
   if (subgroups != ""){
     axisLabels <- dataset[[subgroups]]
+    xAxisTitle <- subgroups
     if (stages != "") {
       axisLabels <- axisLabels[order(dataset[[stages]])]
     }
   } else {
     axisLabels <- ""
+    xAxisTitle <- gettext("Sample")
   }
 
   # Checking for errors in the dataset
@@ -89,9 +91,10 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       columnsToPass <- c(variables, stages)
       columnsToPass <- columnsToPass[columnsToPass != ""]
       individualChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
-                                                   xAxisLabels = axisLabels)
+                                                   xAxisLabels = axisLabels, xAxisTitle = xAxisTitle)
       mrChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
-                                           xAxisLabels = axisLabels, movingRangeLength = options[["movingRangeLength"]])
+                                           xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
+                                           movingRangeLength = options[["movingRangeLength"]])
     }
     jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
     if (!identical(stages, "") && nDroppedRows > 0)
@@ -202,11 +205,12 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     columnsToPass <- c(variables, stages)
     columnsToPass <- columnsToPass[columnsToPass != ""]
     plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
-                                                          xAxisLabels = axisLabels, clLabelSize = 3.5)$plotObject
+                                                          xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
+                                                          clLabelSize = 3.5)$plotObject
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
-                                                          xAxisLabels = axisLabels, movingRangeLength = options[["movingRangeLength"]],
-                                                          clLabelSize = 3.5)$plotObject
+                                                          xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
+                                                          movingRangeLength = options[["movingRangeLength"]], clLabelSize = 3.5)$plotObject
   }
   if (options[["reportAutocorrelationChart"]]) {
     if (anyNA(dataset[[variables]])) {
