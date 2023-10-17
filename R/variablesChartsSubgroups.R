@@ -206,19 +206,20 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         Iplot <- jaspResults[["CCReport"]]
         Iplot[["ccReport"]] <- .CCReport(p1 = xBarChart$plotObject, p2 = secondChart$plotObject, ccTitle = options$ccTitle,
                                          ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
-                                         ccChartName = options$ccChartName)
+                                         ccChartName = options$ccChartName, options = options)
       }
     }
   }
 }
 
 .CCReport <- function(p1 = "", p2 = "", ccTitle = "", ccName = "", ccDate = "",
-                      ccReportedBy = "", ccMisc = "" , ccSubTitle = "", ccChartName = "") {
+                      ccReportedBy = "", ccMisc = "" , ccSubTitle = "", ccChartName = "", options) {
 
-  if (ccTitle == "")
-    title <- "Report for Control Charts"
-  else
+  if (identical(ccTitle, "")) {
+    title <- if (options[["TypeChart"]] == "xBarRchart") gettext("Report for X-bar & R control chart") else gettext("Report for X-bar & s control chart")
+  } else {
     title <- ccTitle
+  }
   name <- gettextf("Name: %s", ccName)
   date <- gettextf("Date: %s", ccDate)
   text1 <- c(name, date)
