@@ -545,13 +545,13 @@ KnownControlStats.RS <- function(N, sigma) {
   )
   if (nStages > 1)
     dfStageLabels$y <- max(yBreaks)
-
+  lineType <- if (phase2) "solid" else "dashed"
   # Create plot
   plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, y = plotStatistic, group = stage)) +
     ggplot2::geom_vline(xintercept = seperationLines) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
-    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = "dashed") +
-    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = "dashed")
+    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = lineType) +
+    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = lineType)
   if (nStages > 1)
     plotObject <- plotObject + ggplot2::geom_text(data = dfStageLabels, mapping = ggplot2::aes(x = x, y = y, label = label), size = 6, fontface="bold")
   if (warningLimits) {
