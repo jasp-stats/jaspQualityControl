@@ -205,8 +205,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         jaspResults[["CCReport"]]$position <- 9
         Iplot <- jaspResults[["CCReport"]]
         Iplot[["ccReport"]] <- .CCReport(p1 = xBarChart$plotObject, p2 = secondChart$plotObject, ccTitle = options$ccTitle,
-                                         ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy, ccSubTitle = options$ccSubTitle,
-                                         ccChartName = options$ccChartName, options = options)
+                                         ccName = options$ccName, ccDate = options$ccDate, ccReportedBy = options$ccReportedBy,
+                                         ccMisc = options$ccMisc, ccSubTitle = options$ccSubTitle, ccChartName = options$ccChartName,
+                                         options = options)
       }
     }
   }
@@ -222,20 +223,22 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   }
   name <- gettextf("Name: %s", ccName)
   date <- gettextf("Date: %s", ccDate)
-  text1 <- c(name, date)
+  subtitle <- gettextf("Sub-title: %s", ccSubTitle)
+  text1 <- c(name, date, subtitle)
 
   reportedBy <- gettextf("Reported by: %s", ccReportedBy)
   misc <- gettextf("Misc: %s", ccMisc)
-  text2 <- c(reportedBy, misc)
+  chartName <- gettextf("Name of chart: %s", ccChartName)
+  text2 <- c(reportedBy, misc, chartName)
 
   matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1)
   plotMat <- matrix(list(), 3, 2)
   plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- .ggplotWithText(text2)
-  plotMat[[2, 1]] <- .ggplotWithText(gettextf("Sub-title: %s", ccSubTitle))
-  plotMat[[2, 2]] <- .ggplotWithText(gettextf("Name of chart: %s", ccChartName))
-  plotMat[[3, 1]] <- p1
-  plotMat[[3, 2]] <- p2
+  plotMat[[1, 2]] <- p1
+  plotMat[[2, 1]] <- .ggplotWithText(text2)
+  plotMat[[2, 2]] <- p2
+  # plotMat[[3, 1]] <-
+  # plotMat[[3, 2]] <- p2
 
   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
   matrixPlot$plotObject <- p
