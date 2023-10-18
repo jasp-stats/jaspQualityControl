@@ -240,7 +240,7 @@ KnownControlStats.RS <- function(N, sigma) {
 
 
 .controlChartPlotFunction <- function(dataset, plotType = c("xBar", "R", "I", "MR", "MMR", "s"), stages = "",
-                                      xBarSdType = c("r", "s"), phase2 = FALSE, phase2Mu = "", phase2Sd = "", limitsPerSubgroup = FALSE,
+                                      xBarSdType = c("r", "s"), phase2 = FALSE, phase2Mu = "", phase2Sd = "", fixedSubgroupSize = "",
                                       warningLimits = FALSE, xAxisLabels = "", xAxisTitle = gettext("Sample"),
                                       movingRangeLength = 2, clLabelSize = 4.5, stagesSeparateCalculation = TRUE) {
   tableTitle <- switch (plotType,
@@ -311,9 +311,7 @@ KnownControlStats.RS <- function(N, sigma) {
       UCL <- limits[2]
       center <- qccObject$center
     } else if (plotType == "R") {
-      n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
-      if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
-        n <- max(n)
+      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       # manually calculate mean and sd as the package gives wrong results with NAs
       if(phase2) {
         sigma <- phase2Sd
@@ -350,12 +348,7 @@ KnownControlStats.RS <- function(N, sigma) {
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='xbar', plot = FALSE, center = mu, sizes = ncol(dataCurrentStage), std.dev = sigma)
       plotStatistic <- qccObject$statistics
-
-      #calculate group sizes
-      n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
-      if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
-        n <- max(n)
-
+      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       limits <- .controlLimits(mu, sigma, n = n, type = "xbar")
       center <- mu
       UCL <- limits$UCL
@@ -379,12 +372,7 @@ KnownControlStats.RS <- function(N, sigma) {
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage))
       plotStatistic <- qccObject$statistics
-
-
-      n <- apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
-      if (!limitsPerSubgroup) # if control limits are not calculated per group they are based on largest group size
-        n <- max(n)
-
+      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       limits <- .controlLimits(sigma = sigma, n = n, type = "s")
       center <- sigma
       UCL <- limits$UCL
