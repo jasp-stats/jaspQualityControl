@@ -75,7 +75,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     jaspResults[["rangeRchart"]]$dependOn(c("rangeRchart", "measurements", "measurementsLong", "parts"))
     jaspResults[["rangeRchart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
     if (ready) {
-      rChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "R", xAxisLabels = dataset[[parts]])
+      rChart <- .controlChart(dataset = dataset[measurements], plotType = "R", xAxisLabels = dataset[[parts]])
       jaspResults[["rangeRchart"]][["plot"]]$plotObject <- rChart$plotObject
       jaspResults[["rangeRchart"]][["table"]] <- rChart$table
     }

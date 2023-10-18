@@ -209,17 +209,17 @@ KnownControlStats.RS <- function(N, sigma) {
 
 
 # Xbar
-# dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
-# xAxisLabels <- dataset[[1]]
-# dataset <- dataset[2:6]
-# dataset$stages <- 1:2
-# options <- list()
-#
-#  dataset[1:4] <- NA
-#  dataset[2:20, 5] <- NA
- # .controlChartPlotFunction(dataset, plotType = "xBar", xBarSdType = "r")
+dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
+xAxisLabels <- dataset[[1]]
+dataset <- dataset[2:7]
+dataset$stages <- 1:2
+options <- list()
 
-#.controlChartPlotFunction(dataset, plotType = "R")
+ dataset[1:4] <- NA
+ dataset[2:20, 5] <- NA
+.controlChart(dataset, plotType = "xBar", xBarSdType = "r")
+
+#.controlChart(dataset, plotType = "R")
 #
 #
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Datasets/ControlChartError.csv")
@@ -229,30 +229,63 @@ KnownControlStats.RS <- function(N, sigma) {
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_2_VariablesChartsForIndividuals/IndividualChartStages.csv")
 # xLabels <- dataset$Month
 # dataset <- dataset[c(1,3)]
-# .controlChartPlotFunction(dataset, plotType = "I", stages = "Stage")
-# .controlChartPlotFunction(dataset, plotType = "MR", stages = "Stage", movingRangeLength = 4)
-# .controlChartPlotFunction(dataset, plotType = "I", stages = "Stage", xAxisLabels = xLabels)
-# .controlChartPlotFunction(dataset, plotType = "MR", stages = "Stage", xAxisLabels = xLabels)
+# .controlChart(dataset, plotType = "I", stages = "Stage")
+# .controlChart(dataset, plotType = "MR", stages = "Stage", movingRangeLength = 4)
+# .controlChart(dataset, plotType = "I", stages = "Stage", xAxisLabels = xLabels)
+# .controlChart(dataset, plotType = "MR", stages = "Stage", xAxisLabels = xLabels)
 
 ###################
 ###################
 ###################
 
 
-.controlChartPlotFunction <- function(dataset, plotType = c("xBar", "R", "I", "MR", "MMR", "s"), stages = "",
-                                      xBarSdType = c("r", "s"), phase2 = FALSE, phase2Mu = "", phase2Sd = "", fixedSubgroupSize = "",
-                                      warningLimits = FALSE, xAxisLabels = "", xAxisTitle = gettext("Sample"),
-                                      movingRangeLength = 2, clLabelSize = 4.5, stagesSeparateCalculation = TRUE) {
-  tableTitle <- switch (plotType,
-    "xBar" = "x-bar",
-    "R" = "range",
-    "I" = "individuals",
-    "MR" = "moving range",
-    "MMR" = "moving range",
-    "s" = "s"
-  )
-  table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
+.controlChart <- function(dataset,  plotType                  = c("xBar", "R", "I", "MR", "MMR", "s"),
+                                    stages                    = "",
+                                    xBarSdType                = c("r", "s"),
+                                    phase2                    = FALSE,
+                                    phase2Mu                  = "",
+                                    phase2Sd                  = "",
+                                    fixedSubgroupSize         = "",
+                                    warningLimits             = FALSE,
+                                    xAxisLabels               = "",
+                                    xAxisTitle                = gettext("Sample"),
+                                    movingRangeLength         = 2,
+                                    clLabelSize               = 4.5,
+                                    stagesSeparateCalculation = TRUE
+                          ) {
+  # This function returns all the needed data for the plot and table: data for the points, the limits, the labels and a list of point violations for the table
+  controlChartData <- .controlChart_calculations(dataset, plotType = plotType, stages = stages, xBarSdType = xBarSdType,
+                                                 phase2 = phase2, phase2Mu = phase2Mu, phase2Sd = phase2Sd,
+                                                 fixedSubgroupSize = fixedSubgroupSize, warningLimits = warningLimits,
+                                                 movingRangeLength = movingRangeLength, stagesSeparateCalculation = stagesSeparateCalculation,
+                                                 tableLabels = xAxisLabels)
 
+
+  # This function turns the point violation list into a JASP table
+  table <- .controlChart_table(controlChartData$violationTable, plotType = plotType, stages = stages)
+
+
+  # This function turns the plot data into a ggPlot
+  plotObject <- .controlChart_plotting(pointData = controlChartData$pointData, clData = controlChartData$clData,
+                                       stageLabels = controlChartData$stageLabels, clLabels = controlChartData$clLabels,
+                                       plotType = plotType, stages = stages, phase2 = phase2, xAxisLabels = xAxisLabels,
+                                       xAxisTitle = xAxisTitle)
+
+
+  return(list(plotObject = plotObject, table = table, controlChartData = controlChartData))
+}
+
+.controlChart_calculations <- function(dataset, plotType                  = c("xBar", "R", "I", "MR", "MMR", "s"),
+                                                stages                    = "",
+                                                xBarSdType                = c("r", "s"),
+                                                phase2                    = FALSE,
+                                                phase2Mu                  = "",
+                                                phase2Sd                  = "",
+                                                fixedSubgroupSize         = "",
+                                                warningLimits             = FALSE,
+                                                movingRangeLength         = 2,
+                                                stagesSeparateCalculation = TRUE,
+                                                tableLabels               = "") {
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
@@ -274,9 +307,8 @@ KnownControlStats.RS <- function(N, sigma) {
   }
   dfLimitLabel <- data.frame(matrix(ncol = 3, nrow = 0))
   colnames(dfLimitLabel) <- c("x", "y", "label")
-  seperationLines <- c()
-  dfStageLabels <- data.frame(matrix(ncol = 3, nrow = 0))
-  colnames(dfStageLabels) <- c("x", "y", "label")
+  dfStageLabels <- data.frame(matrix(ncol = 4, nrow = 0))
+  colnames(dfStageLabels) <- c("x", "y", "label", "separationLine")
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
@@ -335,8 +367,8 @@ KnownControlStats.RS <- function(N, sigma) {
     } else if (plotType == "xBar") {
       xBarSdType <- match.arg(xBarSdType)
       if (phase2) {
-          mu <- as.numeric(phase2Mu)
-          sigma <- as.numeric(phase2Sd)
+        mu <- as.numeric(phase2Mu)
+        sigma <- as.numeric(phase2Sd)
       } else if (stagesSeparateCalculation) {
         # manually calculate mean and sd as the package gives wrong results with NAs
         mu <- mean(unlist(dataCurrentStage), na.rm = TRUE)
@@ -384,16 +416,22 @@ KnownControlStats.RS <- function(N, sigma) {
       } else {
         subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(qccObject$statistics))
       }
-      seperationLines <- c(seperationLines, max(plotData$subgroup) + .5)
-      dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + length(subgroups)/2, y = NA, label = stage))  # the y value will be filled in later
+      dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + length(subgroups)/2,
+                                                       y = NA,  # the y value will be filled in later
+                                                       label = stage,
+                                                       separationLine = max(plotData$subgroup) + .5))
     } else {
       if (plotType == "MR" || plotType == "MMR") {
         subgroups <- seq_len(length(qccObject$statistics) + 1)
       } else {
         subgroups <- seq_len(length(qccObject$statistics))
       }
-      if (nStages > 1)
-        dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(subgroups)/2 + 0.5, y = NA, label = stage))  # the y value will be filled in later
+      if (nStages > 1) {
+        dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(subgroups)/2 + 0.5,
+                                                         y = NA, # the y value will be filled in later
+                                                         label = stage,
+                                                         separationLine = NA))
+      }
     }
 
     if (length(na.omit(plotStatistic)) > 1) {
@@ -413,9 +451,9 @@ KnownControlStats.RS <- function(N, sigma) {
 
 
     stagePlotData <- data.frame("plotStatistic" = plotStatistic,
-                            "subgroup" = subgroups,
-                            "stage" = stage,
-                            "dotColor" = dotColor)
+                                "subgroup" = subgroups,
+                                "stage" = stage,
+                                "dotColor" = dotColor)
     stageClData <- data.frame("subgroup" = subgroups,
                               "stage" = stage,
                               "LCL" = LCL,
@@ -424,10 +462,10 @@ KnownControlStats.RS <- function(N, sigma) {
 
     if (warningLimits) {
       stageClData <- cbind(stageClData,
-                         data.frame("UWL1" = UWL1,
-                                    "LWL1" = LWL1,
-                                    "UWL2" = UWL2,
-                                    "LWL2" = LWL2))
+                           data.frame("UWL1" = UWL1,
+                                      "LWL1" = LWL1,
+                                      "UWL2" = UWL2,
+                                      "LWL2" = LWL2))
     }
 
     # offset to align geom_step lines with observations
@@ -458,9 +496,9 @@ KnownControlStats.RS <- function(N, sigma) {
     }
     if (stagesSeparateCalculation || (!stagesSeparateCalculation && i == nStages))
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
-                                         y = c(lastCenter, lastLCL, lastUCL),
-                                         label = labelText))
-    tableLabels <- if (identical(xAxisLabels, "")) subgroups else as.character(xAxisLabels)[subgroups]
+                                                     y = c(lastCenter, lastLCL, lastUCL),
+                                                     label = labelText))
+    tableLabels <- if (identical(tableLabels, "")) subgroups else as.character(tableLabels)[subgroups]
     if (plotType == "MR" || plotType == "MMR")
       tableLabels <- tableLabels[-1]
     tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabels)
@@ -470,14 +508,31 @@ KnownControlStats.RS <- function(N, sigma) {
       tableList[[i]] <- lapply(tableList[[i]], "length<-", max(lengths(tableList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
     }
   }
+  return(list("pointData"      = plotData,
+              "clData"         = clData,
+              "clLabels"       = dfLimitLabel,
+              "stageLabels"    = dfStageLabels,
+              "violationTable" = tableList
+              ))
+}
 
-  # filling up JASP table
+.controlChart_table <- function(tableList, plotType = c("xBar", "R", "I", "MR", "MMR", "s"),
+                                           stages   = "") {
+  tableTitle <- switch (plotType,
+                        "xBar" = "x-bar",
+                        "R" = "range",
+                        "I" = "individuals",
+                        "MR" = "moving range",
+                        "MMR" = "moving range",
+                        "s" = "s"
+  )
+  table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
   tableListVectorized <- unlist(tableList, recursive = FALSE)
   tableLongestVector <- max(sapply(tableListVectorized, length))
   if (tableLongestVector > 0) {
     tableListCombined <- tapply(tableListVectorized, names(tableListVectorized), function(x) unlist(x, FALSE, FALSE))
-    if (nStages > 1)
-      table$addColumnInfo(name = "stage",              title = gettextf("Stage"),                          type = "string")
+    if (!identical(stages, ""))
+      table$addColumnInfo(name = "stage",              title = stages,                                     type = "string")
     if (length(tableListCombined[["test1"]][!is.na(tableListCombined[["test1"]])]) > 0)
       table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit"),           type = "string")
     if (length(tableListCombined[["test2"]][!is.na(tableListCombined[["test2"]])]) > 0)
@@ -507,9 +562,17 @@ KnownControlStats.RS <- function(N, sigma) {
     table$showSpecifiedColumnsOnly <- TRUE
     table$addFootnote(message = gettext("Points where a test failed."))
   }
+  return(table)
+}
 
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData$plotStatistic, clData$LCL, clData$UCL, clData$center))
-  xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(plotData$subgroup))) # we only want integers on the x-axis
+.controlChart_plotting <- function(pointData, clData, stageLabels, clLabels,
+                                   plotType = c("xBar", "R", "I", "MR", "MMR", "s"),
+                                   stages = "",
+                                   phase2 = FALSE,
+                                   xAxisLabels = "",
+                                   xAxisTitle = "") {
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(pointData$plotStatistic, clData$LCL, clData$UCL, clData$center))
+  xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(pointData$subgroup))) # we only want integers on the x-axis
 
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis
     xBreaks[1] <- 1
@@ -525,23 +588,25 @@ KnownControlStats.RS <- function(N, sigma) {
 
   yTitle <- switch (plotType,
                     "xBar" = "Sample average",
-                    "R" = "Sample range",
-                    "I" = "Individual value",
-                    "MR" = "Moving range",
-                    "MMR" = "Moving range of subgroup mean",
-                    "s" = "Sample std. dev."
-  )
-  if (nStages > 1)
-    dfStageLabels$y <- max(yBreaks)
+                    "R"    = "Sample range",
+                    "I"    = "Individual value",
+                    "MR"   = "Moving range",
+                    "MMR"  = "Moving range of subgroup mean",
+                    "s"    = "Sample std. dev.")
+  if (!identical(stages, ""))
+    stageLabels$y <- max(yBreaks)
   lineType <- if (phase2) "solid" else "dashed"
+
   # Create plot
   plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, y = plotStatistic, group = stage)) +
-    ggplot2::geom_vline(xintercept = seperationLines) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = lineType) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = lineType)
-  if (nStages > 1)
-    plotObject <- plotObject + ggplot2::geom_text(data = dfStageLabels, mapping = ggplot2::aes(x = x, y = y, label = label), size = 6, fontface="bold")
+  if (!identical(stages, "")) {
+    plotObject <- plotObject + ggplot2::geom_vline(xintercept = na.omit(stageLabels[["separationLine"]])) +
+      ggplot2::geom_text(data = stageLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
+                                                  size = 6, fontface = "bold", inherit.aes = FALSE)
+  }
   if (warningLimits) {
     plotObject <- plotObject + ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = UWL1), col = "orange",
                                                   linewidth = 1, linetype = "dashed") +
@@ -552,17 +617,17 @@ KnownControlStats.RS <- function(N, sigma) {
       ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = LWL2), col = "orange",
                          linewidth = 1, linetype = "dashed")
   }
-  plotObject <- plotObject + ggplot2::geom_label(data = dfLimitLabel, mapping = ggplot2::aes(x = x, y = y, label = label),
+  plotObject <- plotObject + ggplot2::geom_label(data = clLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
                                                  inherit.aes = FALSE, size = clLabelSize) +
     ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = range(yBreaks)) +
     ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels) +
-    jaspGraphs::geom_line(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue") +
-    jaspGraphs::geom_point(plotData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),
-                           size = 4, fill = plotData$dotColor, inherit.aes = TRUE) +
+    jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue") +
+    jaspGraphs::geom_point(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),
+                           size = 4, fill = pointData$dotColor, inherit.aes = TRUE) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  return(list(plotObject = plotObject, table = table, qccObject = qccObject, plotData = plotData))
+  return(plotObject)
 }
 
 .NelsonTableList <- function(qccObject, type = "xBar", phase2 = TRUE, labels = NULL) {

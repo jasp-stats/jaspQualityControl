@@ -155,9 +155,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           return()
         }
 
-        xBarChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
+        xBarChart <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
                                                xAxisLabels = axisLabels)
-        secondPlot <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels)
+        secondPlot <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels)
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
         jaspResults[["xBar"]][["tableXBar"]] <- xBarChart$table
@@ -169,9 +169,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["IMR"]]$position <- 1
       if (ready && is.null(jaspResults[["IMR"]][["plot"]])) {
         jaspResults[["IMR"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
-        individualChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "I",
+        individualChart <- .controlChart(dataset = dataset[measurements], plotType = "I",
                                                      xAxisLabels = axisLabels)
-        mrChart <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels,
+        mrChart <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels,
                                              movingRangeLength = options[["movingRangeLength"]])
         jaspResults[["IMR"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
                                                                               layout = matrix(2:1, 2), removeXYlabels= "x")
@@ -1543,17 +1543,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     # X-bar and R Chart OR ImR Chart
     if (options[["controlChartType"]] == "xBarR") {
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
+      plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
                                                             xAxisLabels = axisLabels)$plotObject
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "R",
+      plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "R",
                                                             xAxisLabels = axisLabels)$plotObject
     } else if (options[["controlChartType"]] == "IMR"){
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "I",
+      plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "I",
                                                             xAxisLabels = axisLabels)$plotObject
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels,
+      plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels,
                                                             movingRangeLength = options[["movingRangeLength"]])$plotObject
     }
   }

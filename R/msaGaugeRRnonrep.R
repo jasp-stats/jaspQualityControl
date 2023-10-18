@@ -94,7 +94,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       jaspResults[["NRrCharts"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
 
       if (ready) {
-        rChart <- .controlChartPlotFunction(dataset = datasetWide[c(wideMeasurementCols, operators)],
+        rChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
                                             plotType = "R", stages = operators,
                                             xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
                                             stagesSeparateCalculation = FALSE)
@@ -110,7 +110,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
         jaspResults[["NRxbarCharts"]]$dependOn(c("NRxbarCharts", "measurements", "measurementsWide"))
         jaspResults[["NRxbarCharts"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
         if (ready) {
-          xBarChart <- .controlChartPlotFunction(dataset = datasetWide[c(wideMeasurementCols, operators)],
+          xBarChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
                                                  plotType = "xBar", xBarSdType = "r", stages = operators,
                                                  xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
                                                  stagesSeparateCalculation = FALSE)
@@ -446,7 +446,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
   if (options[["reportRChartByOperator"]]) {
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = datasetWide[c(measurementsWide, operators)],
+    plotList[[indexCounter]] <- .controlChart(dataset = datasetWide[c(measurementsWide, operators)],
                                                           plotType = "R", stages = operators,
                                                           xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
                                                           stagesSeparateCalculation = FALSE)$plotObject #R chart by operator
@@ -457,7 +457,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
   if (options[["reportAverageChartByOperator"]]) {
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = datasetWide[c(measurementsWide, operators)],
+    plotList[[indexCounter]] <- .controlChart(dataset = datasetWide[c(measurementsWide, operators)],
                                                           plotType = "xBar", xBarSdType = "r", stages = operators,
                                                           xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
                                                           stagesSeparateCalculation = FALSE)$plotObject #Average chart by operator
