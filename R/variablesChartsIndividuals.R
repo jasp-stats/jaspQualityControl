@@ -90,9 +90,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       }
       columnsToPass <- c(variables, stages)
       columnsToPass <- columnsToPass[columnsToPass != ""]
-      individualChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
+      individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
                                                    xAxisLabels = axisLabels, xAxisTitle = xAxisTitle)
-      mrChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
+      mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
                                            xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
                                            movingRangeLength = options[["movingRangeLength"]])
     }
@@ -218,11 +218,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
     columnsToPass <- c(variables, stages)
     columnsToPass <- columnsToPass[columnsToPass != ""]
-    plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
+    plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
                                                           xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
                                                           clLabelSize = 3.5)$plotObject
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
+    plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
                                                           xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
                                                           movingRangeLength = options[["movingRangeLength"]], clLabelSize = 3.5)$plotObject
   }

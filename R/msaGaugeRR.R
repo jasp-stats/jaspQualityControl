@@ -143,7 +143,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       jaspResults[["gaugeRchart"]]$dependOn(c("gaugeRchart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
       jaspResults[["gaugeRchart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
       if (ready) {
-        rChart <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)], plotType = "R",
+        rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R",
                                             stages = operators, xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                             stagesSeparateCalculation = FALSE)
 
@@ -159,7 +159,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       jaspResults[["gaugeXbarChart"]]$dependOn(c("gaugeXbarChart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
       jaspResults[["gaugeXbarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
       if (ready) {
-        xBarChart <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
+        xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)],
                                                plotType = "xBar", xBarSdType = "r", stages = operators,
                                                xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                                stagesSeparateCalculation = FALSE)
@@ -837,7 +837,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   if (options[["reportRChartByOperator"]]) {
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
+    plotList[[indexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)],
                                                           plotType = "R", stages = operators,
                                                           xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                                           stagesSeparateCalculation = FALSE)$plotObject
@@ -848,7 +848,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   if (options[["reportAverageChartByOperator"]]) {
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .controlChartPlotFunction(dataset = dataset[c(measurements, operators)],
+    plotList[[indexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)],
                                                           plotType = "xBar", xBarSdType = "r", stages = operators,
                                                           xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                                           stagesSeparateCalculation = FALSE)$plotObject

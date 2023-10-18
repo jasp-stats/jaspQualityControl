@@ -178,11 +178,11 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
 
       # first chart is always xBar-chart, second is either R- or s-chart
-      xBarChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
+      xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
                                              phase2 = options[["Phase2"]], phase2Mu = options[["mean"]], phase2Sd = options[["SD"]],
                                              fixedSubgroupSize = fixedSubgroupSize, warningLimits = options[["Wlimits"]],
                                              xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize)
-      secondChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = secondPlotType, stages = stages, phase2 = options[["Phase2"]],
+      secondChart <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType, stages = stages, phase2 = options[["Phase2"]],
                                                phase2Sd = options[["SD"]], fixedSubgroupSize = fixedSubgroupSize,
                                                xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize)
       jaspResults[["controlCharts"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
