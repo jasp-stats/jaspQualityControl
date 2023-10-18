@@ -124,8 +124,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
                                          "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle", "ccChartName",
                                          "split", "reportAutocorrelationChart", "reportIMRChart", "reportMetaData"))
     jaspResults[["CCReport"]]$position <- 9
-    Iplot <- jaspResults[["CCReport"]] 
-    Iplot[["ccReport"]] <- .individualChartReport(dataset, variables, axisLabels, stages, options)
+    Iplot <- jaspResults[["CCReport"]]
+
+    Iplot[["ccReport"]] <- .individualChartReport(dataset, variables, axisLabels, xAxisTitle, stages, options)
   }
 
   # Error handling
@@ -176,11 +177,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   return(p)
 }
 
-.individualChartReport <- function(dataset, variables, subgroups, stages, options) {
+.individualChartReport <- function(dataset, variables, axisLabels, xAxisTitle, stages, options){
 
   if (options[["reportTitle"]] == "") {
     title <- gettextf("Individual charts report")
-  }else {
+  } else {
     title <- options[["reportTitle"]]
   }
   name <- gettextf("Name: %s", options[["reportMeasurementName"]])
@@ -199,6 +200,19 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .ggplotWithText(text2)
   }
+  if (options[["reportAutocorrelationChart"]]) {
+    if (anyNA(dataset[[variables]])) {
+      plot <- createJaspPlot(title = title, width = 400, height = 400)
+      plot$setError(gettextf("Autocorrelation plot requires uninterrupted series of values. Missing values detected in %s.", variables))
+      return(plot)
+    } else {
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- .CorPlotObject(dataset = dataset, options = options, variable = variables, CI = options$CI, lags = options$nLag)
+      # add an empty plot after the autocorrelation chart, so all report elements appear in blocks of 2 and don't get split up
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- ggplot2::ggplot() + ggplot2::theme_void()
+    }
+  }
   if (options[["reportIMRChart"]]) {
     indexCounter <- indexCounter + 1
 
@@ -212,30 +226,22 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
                                                           xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
                                                           movingRangeLength = options[["movingRangeLength"]], clLabelSize = 3.5)$plotObject
   }
-  if (options[["reportAutocorrelationChart"]]) {
-    if (anyNA(dataset[[variables]])) {
-      plot <- createJaspPlot(title = title, width = 400, height = 400)
-      plot$setError(gettextf("Autocorrelation plot requires uninterrupted series of values. Missing values detected in %s.", variables))
-      return(plot)
-    } else {
-      indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .CorPlotObject(dataset = dataset, options = options, variable = variables, CI = options$CI, lags = options$nLag)
-    }
-  }
 
   if (indexCounter == 0) {
     plot <- createJaspPlot(title = title, width = 400, height = 400)
     plot$setError(gettext("No report components selected."))
     return(plot)
-  } else if (indexCounter %% 2 != 0){
-    indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- ggplot2::ggplot() + ggplot2::theme_void()
   }
 
-  matrixNCols <- 2
-  matrixNRows <- indexCounter / matrixNCols
+  if (indexCounter == 2) {
+    matrixNCols <- 1
+    matrixNRows <- 2
+  } else {
+    matrixNCols <- 2
+    matrixNRows <- indexCounter / matrixNCols
+  }
   matrixPlot <- createJaspPlot(title = title, width = 1200, height = 400 * matrixNRows)
-  plotMat <- matrix(plotList, matrixNRows, matrixNCols, byrow = TRUE)
+  plotMat <- matrix(plotList, matrixNRows, matrixNCols, byrow = FALSE)
   p <- jaspGraphs::ggMatrixPlot(plotMat)
   matrixPlot$plotObject <- p
 
