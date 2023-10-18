@@ -124,18 +124,27 @@ Form
 			name:								"subgroupSizeUnequal"
 			title: 								qsTr("Unequal subgroup sizes")
 			id:									subgroupSizeUnequal
-			
-			RadioButton
-			{
-				value: 							"assumeEqualSize"
-				label: 							qsTr("Assume equal subgroup sizes (largest subgroup)")
-				checked:		 				true
-			}
 
 			RadioButton
 			{
-				value: 							"actualSizes"
-				label: 							qsTr("Calculate with actual sizes")
+				value: 								"actualSizes"
+				label: 								qsTr("Use actual sizes")
+				checked: 							true
+			}
+			
+			RadioButton
+			{
+				value: 								"fixedSubgroupSize"
+				label: 								qsTr("Use fixed subgroup size")
+				childrenOnSameRow:		 			true
+
+				IntegerField 
+				{
+					name: 								"fixedSubgroupSizeValue"
+					fieldWidth: 						30
+					defaultValue: 						5
+					min:								2
+				}
 			}
 		}
 	}
@@ -181,7 +190,7 @@ Form
   				label:							qsTr("Mean")
   				defaultValue:					0
   				negativeValues: 				true
-  				fieldWidth:					  	70
+  				fieldWidth:						30
   				decimals:						10
   			}
 
@@ -190,7 +199,7 @@ Form
   				name:							"knownParametersSd"
   				label:							qsTr("Standard deviation")
   				defaultValue:					3
-  				fieldWidth:					  	70
+  				fieldWidth:					  	30
   				decimals:						10
   			}
 

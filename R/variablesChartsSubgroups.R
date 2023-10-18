@@ -162,7 +162,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       jaspResults[["controlCharts"]]$dependOn(c("TypeChart", "variables", "Wlimits", "Phase2", "mean", "manualTicks", 'nTicks',
                                                 "SD", "CCSubgroupSize", "CCDataFormat", "subgroups", "variablesLong",
                                                 "CCReport", "ccTitle", "ccName", "ccMisc","ccReportedBy","ccDate", "ccSubTitle",
-                                                "ccChartName", "subgroupSizeUnequal", "axisLabels", "stages", "subgroupSizeType"))
+                                                "ccChartName", "subgroupSizeUnequal", "axisLabels", "stages", "subgroupSizeType",
+                                                "fixedSubgroupSizeValue"))
       secondPlotType <- ifelse(options[["TypeChart"]] == "xBarRchart", "R", "s")
       jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s control chart", secondPlotType), width = 1200, height = 500)
       if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
@@ -174,15 +175,15 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       columnsToPass <- columnsToPass[columnsToPass != ""]
       xBarSdType <- tolower(secondPlotType)
       clLabelSize <- if (options[["CCReport"]]) 3.5 else 4.5
+      fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
 
       # first chart is always xBar-chart, second is either R- or s-chart
       xBarChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
                                              phase2 = options[["Phase2"]], phase2Mu = options[["mean"]], phase2Sd = options[["SD"]],
-                                             limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
-                                             warningLimits = options[["Wlimits"]], xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
-                                             clLabelSize = clLabelSize)
+                                             fixedSubgroupSize = fixedSubgroupSize, warningLimits = options[["Wlimits"]],
+                                             xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize)
       secondChart <- .controlChartPlotFunction(dataset = dataset[columnsToPass], plotType = secondPlotType, stages = stages, phase2 = options[["Phase2"]],
-                                               phase2Sd = options[["SD"]], limitsPerSubgroup = (options[["subgroupSizeUnequal"]] == "actualSizes"),
+                                               phase2Sd = options[["SD"]], fixedSubgroupSize = fixedSubgroupSize,
                                                xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize)
       jaspResults[["controlCharts"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
       if (!identical(plotNotes, ""))
