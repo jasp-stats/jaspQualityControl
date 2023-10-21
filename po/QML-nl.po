@@ -1,8 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-10-17 19:07+0000\n"
+"Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
+"Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/nl/>\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.1\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
@@ -1805,7 +1812,7 @@ msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "Display design"
-msgstr ""
+msgstr "Laat design zien"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design Type"
@@ -1914,27 +1921,27 @@ msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "Coded units"
-msgstr ""
+msgstr "Gecodeerde units"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Sort by run order"
-msgstr ""
+msgstr "Sorteer run order"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Sort by standard order"
-msgstr ""
+msgstr "Sorteer standard order"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Save as:"
-msgstr ""
+msgstr "Sla op als:"
 
 msgctxt "ShowAndExportDesign|"
 msgid "e.g. design.csv"
-msgstr ""
+msgstr "e.g., design.csv"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Export design"
-msgstr ""
+msgstr "Exporteer design"
 
 msgctxt "doeAnalysis|"
 msgid "Available factors"
