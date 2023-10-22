@@ -1,4 +1,60 @@
 context("[Quality Control] Variables Charts for Individuals")
+.numDecimals <- 2
+set.seed(1)
+
+# Basic tests
+
+## X-mR chart
+
+## Autocorrelation plot
+
+## X-mR chart with stages
+
+## X-mR chart with large moving range length
+
+## X-mR chart with stages and large moving range length
+
+## Autocorrelation plot with large number of lags
+
+## Report including everything
+
+## Report including only x-mR chart
+
+
+# Missing values
+
+## Missing values in measurement
+
+### Single missing value
+
+### All but one missing
+
+### All missing
+
+### All of one axis label missing
+
+## Missing value in axis label
+
+## Missing value in stages
+
+
+# Edge cases
+
+## Moving range length larger than one of the stages
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # basic test for IMR chart & table (verified with Minitab) and autocorrelation plot
 options <- analysisOptions("variablesChartsIndividuals")
