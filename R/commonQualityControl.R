@@ -209,15 +209,15 @@ KnownControlStats.RS <- function(N, sigma) {
 
 
 # Xbar
-dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
-xAxisLabels <- dataset[[1]]
-dataset <- dataset[2:7]
-dataset$stages <- 1:2
-options <- list()
-
- dataset[1:4] <- NA
- dataset[2:20, 5] <- NA
-.controlChart(dataset, plotType = "xBar", xBarSdType = "r")
+# dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
+# xAxisLabels <- dataset[[1]]
+# dataset <- dataset[2:7]
+# dataset$stages <- 1:2
+# options <- list()
+#
+#  dataset[1:4] <- NA
+#  dataset[2:20, 5] <- NA
+# .controlChart(dataset, plotType = "xBar", xBarSdType = "r")
 
 #.controlChart(dataset, plotType = "R")
 #
@@ -253,6 +253,8 @@ options <- list()
                                     clLabelSize               = 4.5,
                                     stagesSeparateCalculation = TRUE
                           ) {
+  plotType <- match.arg(plotType)
+
   # This function returns all the needed data for the plot and table: data for the points, the limits, the labels and a list of point violations for the table
   controlChartData <- .controlChart_calculations(dataset, plotType = plotType, stages = stages, xBarSdType = xBarSdType,
                                                  phase2 = phase2, phase2Mu = phase2Mu, phase2Sd = phase2Sd,
@@ -265,11 +267,11 @@ options <- list()
   table <- .controlChart_table(controlChartData$violationTable, plotType = plotType, stages = stages)
 
 
-  # This function turns the plot data into a ggPlot
+  # This function turns the raw plot data into a ggPlot
   plotObject <- .controlChart_plotting(pointData = controlChartData$pointData, clData = controlChartData$clData,
                                        stageLabels = controlChartData$stageLabels, clLabels = controlChartData$clLabels,
-                                       plotType = plotType, stages = stages, phase2 = phase2, xAxisLabels = xAxisLabels,
-                                       xAxisTitle = xAxisTitle)
+                                       plotType = plotType, stages = stages, phase2 = phase2, warningLimits = warningLimits,
+                                       xAxisLabels = xAxisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize)
 
 
   return(list(plotObject = plotObject, table = table, controlChartData = controlChartData))
@@ -286,6 +288,7 @@ options <- list()
                                                 movingRangeLength         = 2,
                                                 stagesSeparateCalculation = TRUE,
                                                 tableLabels               = "") {
+  plotType <- match.arg(plotType)
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
@@ -309,9 +312,15 @@ options <- list()
   colnames(dfLimitLabel) <- c("x", "y", "label")
   dfStageLabels <- data.frame(matrix(ncol = 4, nrow = 0))
   colnames(dfStageLabels) <- c("x", "y", "label", "separationLine")
+  ###
+  ### Beginning of loop over all stages to calculate all values
+  ###
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    ###
+    ### Calculations for I, MR and MMR chart
+    ###
     if (plotType == "I" || plotType == "MR" || plotType == "MMR") {
       if (plotType == "MMR") {
         subgroupMeans <- apply(dataCurrentStage, 1, mean, na.rm = TRUE)
@@ -342,6 +351,9 @@ options <- list()
       LCL <- limits[1]
       UCL <- limits[2]
       center <- qccObject$center
+    ###
+    ### Calculations for R chart
+    ###
     } else if (plotType == "R") {
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       # manually calculate mean and sd as the package gives wrong results with NAs
@@ -364,6 +376,9 @@ options <- list()
       center <- mu
       UCL <- limits$UCL
       LCL <- limits$LCL
+    ###
+    ### Calculations for X-bar chart
+    ###
     } else if (plotType == "xBar") {
       xBarSdType <- match.arg(xBarSdType)
       if (phase2) {
@@ -393,6 +408,9 @@ options <- list()
       LWL1 <- WL1$LCL
       UWL2 <- WL2$UCL
       LWL2 <- WL2$LCL
+    ###
+    ### Calculations for S chart
+    ###
     } else if (plotType == "s") {
       if(phase2) {
         sigma <- phase2Sd
@@ -518,6 +536,7 @@ options <- list()
 
 .controlChart_table <- function(tableList, plotType = c("xBar", "R", "I", "MR", "MMR", "s"),
                                            stages   = "") {
+  plotType <- match.arg(plotType)
   tableTitle <- switch (plotType,
                         "xBar" = "x-bar",
                         "R" = "range",
@@ -569,8 +588,11 @@ options <- list()
                                    plotType = c("xBar", "R", "I", "MR", "MMR", "s"),
                                    stages = "",
                                    phase2 = FALSE,
+                                   warningLimits = FALSE,
                                    xAxisLabels = "",
-                                   xAxisTitle = "") {
+                                   xAxisTitle = "",
+                                   clLabelSize = 4.5) {
+  plotType <- match.arg(plotType)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(pointData$plotStatistic, clData$LCL, clData$UCL, clData$center))
   xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(pointData$subgroup))) # we only want integers on the x-axis
 
