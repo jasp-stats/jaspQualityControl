@@ -27,12 +27,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   # reading variables in from the GUI
   variables <- unlist(options[["measurement"]])
   stages <- unlist(options[["stage"]])
-  subgroups <- unlist(options[["axisLabels"]])
-  makeSplit <- subgroups != ""
+  axisLabelVariable <- unlist(options[["axisLabels"]])
 
   numeric_variables  <- variables
   numeric_variables  <- numeric_variables[numeric_variables != ""]
-  factorVariables <- c(stages, subgroups)
+  factorVariables <- c(stages, axisLabelVariable)
   factorVariables  <- factorVariables[factorVariables != ""]
 
   ready <- length(numeric_variables) == 1
@@ -41,9 +40,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = factorVariables)
   }
 
-  if (subgroups != ""){
-    axisLabels <- dataset[[subgroups]]
-    xAxisTitle <- subgroups
+  if (axisLabelVariable != ""){
+    axisLabels <- dataset[[axisLabelVariable]]
+    xAxisTitle <- axisLabelVariable
     if (stages != "") {
       axisLabels <- axisLabels[order(dataset[[stages]])]
     }
