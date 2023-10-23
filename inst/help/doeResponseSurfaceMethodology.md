@@ -22,7 +22,7 @@ Part a) is simply a 2<sup>k</sup> factorial design or a fractional factorial des
 
 Part b) consists of pairs of experimental points on the coordinate axes all at a distance α from the origin. The quantity α is often a value between 1.4 and 2 but is dependent on the number of variables and the properties of the design under study. This part is often referred to as "star" or "axial".
 
-![rsmDesignShapes](rsmDesignShapes.JPG)
+![An image of the rsm design shapes: cube, star, and cube + star](%HELP_FOLDER%/images/doeResponseSurfaceMethodology/rsmDesignShapes.JPG)
  
 There are three general types of central composite designs:
 
@@ -35,13 +35,14 @@ In the CCF design the star points are located at the centre of each face, i.e. a
 ### Central composite inscribed (CCI)
 For those situations in which the limits specified for factor settings are truly limits, the CCI design uses star (or axial) points which are set at the minimum and maximum levels. If augmenting a screening design, the levels of the screening design will be within the absolute limits to allow the expanded settings for the star (or axial) points. This design also requires five levels of each factor.
 
+![An image of the CCD types: circumscribed, face-centered, and inscribed.](%HELP_FOLDER%/images/doeResponseSurfaceMethodology/rsmCCDTypes.JPG)
 
 ## Box-Behnken design
 -------
 
 A *Box-Behnken design* (BBD) is an independent quadratic design in that it does not contain an embedded factorial (or fractional factorial) design i.e., all factors are never set at their high levels simultaneously. In this design the treatment combinations are at the midpoints of edges of the process space and at the centre. These designs are rotatable (or near rotatable) and require three levels of each factor. The designs have limited capability for orthogonal blocking compared to the central composite designs.
 
-Geometry Box-Behnken design for three variables
+![An image of the BBD.](%HELP_FOLDER%/images/doeResponseSurfaceMethodology/rsmBBD.JPG)
 
 The Box-Behnken set-up consists of twelve "edge" points (shown as red dots) all lying on a single sphere about the centre of the experimental region (shown as a blue dot), plus a few replicates of the centre point, e.g., three (blue) centre points.
 
