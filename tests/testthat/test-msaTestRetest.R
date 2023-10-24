@@ -37,7 +37,7 @@ test_that("Short gauge study table results match", {
 })
 
 test_that("Range chart by part plot matches", {
-  plotName <- results[["results"]][["rangeRchart"]][["data"]]
+  plotName <- results[["results"]][["rangeRchart"]][["collection"]][["rangeRchart_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "range-chart-by-part")
 })

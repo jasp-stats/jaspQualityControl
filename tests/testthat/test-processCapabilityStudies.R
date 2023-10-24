@@ -11,8 +11,8 @@ options$upperSpecificationLimit <- TRUE
 options$target <- TRUE
 options$lowerSpecificationLimitValue <- -16
 options$targetValue <- -8
-options$upperSpecificationLimitValue <- 0
-options$xBarAndRChart <- TRUE
+options$upperSpecification <- 0
+options$controlChartType <- "xBarR"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Long.csv", options)
 
@@ -49,8 +49,8 @@ test_that("Process summary table results match", {
                                  list(-16, -7.08, 100, 1.85635681000733, 1.76268271711092, -8, 0))
 })
 
-test_that("X-bar & R control chart plot matches", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+test_that("X-bar & R Control Chart plot matches", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart")
 })
@@ -75,9 +75,9 @@ test_that("Summary of test against the normal distribution table results match",
 })
 
 # Wide format
-options$dataFormat <- "wideFormat"
-options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
-options$xmrChart <- TRUE
+options$pcDataFormat <- "PCwideFormat"
+options$variables <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$controlChartType <- "xBarMR"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Wide.csv", options)
 
@@ -115,10 +115,10 @@ test_that("Process summary table results match", {
                                  list(-16, -7.08, 100, 1.85635681000733, 1.76268271711092, -8, 0))
 })
 
-test_that("X-bar & R control chart plot matches2", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+test_that("X-bar & mR Control Chart plot matches", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart2")
+  jaspTools::expect_equal_plots(testPlot, "x-bar-mr-control-chart")
 })
 
 test_that("Histogram plot matches2", {
@@ -152,16 +152,28 @@ options$upperSpecificationLimit <- TRUE
 options$target <- FALSE
 options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 0
-options$upperSpecificationLimitValue <- 15
-options$nullDistribution <- "weibull"
-options$xmrChart <- TRUE
+options$upperSpecification <- 15
+options$nullDistribution <- "Weibull"
+options$controlChartType <- "IMR"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)
 
-test_that("IMR plot matches", {
-  plotName <- results[["results"]][["ImR Charts"]][["collection"]][["ImR Charts_plot"]][["data"]]
+test_that("X-mR Control Chart plot matches", {
+  plotName <- results[["results"]][["IMR"]][["collection"]][["IMR_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "IMR-plot")
+  jaspTools::expect_equal_plots(testPlot, "x-mr-control-chart")
+})
+
+test_that("Test results for individuals chart table results match", {
+  table <- results[["results"]][["IMR"]][["collection"]][["IMR_tableIndividual"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3, 11, 42, 12, 100, ""))
+})
+
+test_that("Test results for moving range chart table results match", {
+  table <- results[["results"]][["IMR"]][["collection"]][["IMR_tableMR"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3, 11, 42, 29, 43, 50, "", 51))
 })
 
 test_that("Non-conformance statistics table results match", {
@@ -210,9 +222,9 @@ test_that("Summary of test against the weibull distribution table results match"
 })
 
 # Long format- Weibull
-options$nonNormalDistribution <- "lognormal"
-options$nullDistribution <- "lognormal"
-options$xBarAndRChart <- TRUE
+options$nonNormalDist <- "Lognormal"
+options$nullDistribution <- "Lognormal"
+options$controlChartType <- "xBarS"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)
 
@@ -242,10 +254,16 @@ test_that("Process summary table results match", {
                                       15))
 })
 
-test_that("X-bar & R control chart plot matches4", {
-  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+test_that("X-bar & s Control Chart plot matches", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart4")
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart")
+})
+
+test_that("Test results for s chart table results match", {
+  table <- results[["results"]][["xBar"]][["collection"]][["xBar_tableSecondPlot"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2))
 })
 
 test_that("Histogram plot matches4", {

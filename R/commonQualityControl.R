@@ -516,10 +516,10 @@ KnownControlStats.RS <- function(N, sigma) {
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                                      y = c(lastCenter, lastLCL, lastUCL),
                                                      label = labelText))
-    tableLabels <- if (identical(tableLabels, "")) subgroups else as.character(tableLabels)[subgroups]
+    tableLabelsCurrentStage <- if (identical(tableLabels, "")) subgroups else as.character(tableLabels)[subgroups]
     if (plotType == "MR" || plotType == "MMR")
-      tableLabels <- tableLabels[-1]
-    tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabels)
+      tableLabelsCurrentStage <- tableLabelsCurrentStage[-1]
+    tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabelsCurrentStage)
     tableListLengths <- sapply(tableList[[i]], length)
     if (any(tableListLengths > 0)) {
       tableList[[i]][["stage"]] <- as.character(stage)

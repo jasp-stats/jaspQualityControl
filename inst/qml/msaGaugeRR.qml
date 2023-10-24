@@ -214,12 +214,14 @@ Form
 			{
 				name: 							"rChart"
 				label: 							qsTr("R charts by operator")
+				enabled:						!type3.checked
 			}
 
 			CheckBox
 			{
 				name:							"xBarChart"
 				label:							qsTr("Average charts by operator")
+				enabled:						!type3.checked
 			}
 
 			CheckBox
@@ -257,12 +259,14 @@ Form
 			{
 				name:							"operatorMeasurementPlot"
 				label:							qsTr("Measurements by operator plot")
+				enabled:						!type3.checked
 			}
 
 			CheckBox
 			{
 				name: 							"partByOperatorMeasurementPlot"
 				label: 							qsTr("Part × operator interaction plot")
+				enabled:						!type3.checked
 			}
 
 			CheckBox
