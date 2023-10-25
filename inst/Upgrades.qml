@@ -79,6 +79,7 @@ Upgrades
 				switch(options["histogramBinWidthType"])
 				{
 					case "fd":											return "freedmanDiaconis";
+					default:											return options["histogramBinWidthType"];
 				}
 			}
 		}
@@ -133,6 +134,7 @@ Upgrades
 				{
 					case "gaugeRRlongFormat":							return "longFormat";
 					case "gaugeRRwideFormat":							return "wideFormat";
+					default: 											return options["dataFormat"];
 				}
 			}
 		}
@@ -153,6 +155,7 @@ Upgrades
 				{
 					case "studyStandardDeviation":						return "studySd";
 					case "historicalStandardDeviation":					return "historicalSd";
+					default:											return options["processVariationReference"];
 				}
 			}
 		}
@@ -172,6 +175,7 @@ Upgrades
 				{
 					case "FixedEffects":								return "fixedEffect";
 					case "RandomEffects":								return "randomEffect";
+					default:											return options["anovaModelType"];
 				}
 			}
 		}
@@ -188,6 +192,7 @@ Upgrades
 				{
 					case "svmSD":										return "sd";
 					case "svmPercent":									return "percent";
+					default:											return options["studyVarianceMultiplierType"];
 				}
 			}
 		}
@@ -236,6 +241,7 @@ Upgrades
 				{
 					case "gaugeRRNonRepLongFormat":						return "longFormat";
 					case "gaugeRRNonRepWideFormat":						return "wideFormat";
+					default:											return options["dataFormat"];
 				}
 			}
 		}
@@ -254,6 +260,7 @@ Upgrades
 				{
 					case "studyStandardDeviation":						return "studySd";
 					case "historicalStandardDeviation":					return "historicalSd";
+					default:											return options["processVariationReference"];
 				}
 			}
 		}
@@ -273,6 +280,7 @@ Upgrades
 				{
 					case "svmSD":										return "sd";
 					case "svmPercent":									return "percent";
+					default:											return options["studyVarianceMultiplierType"];
 				}
 			}
 		}
@@ -316,6 +324,7 @@ Upgrades
 				{
 					case "AAAlongFormat":								return "longFormat";
 					case "AAAwideFormat":								return "wideFormat";
+					default:											return options["dataFormat"];
 				}
 			}
 		}
@@ -350,6 +359,7 @@ Upgrades
 				{
 					case "testRetestLongFormat":								return "longFormat";
 					case "testRetestWideFormat":								return "wideFormat";
+					default:													return options["dataFormat"];
 				}
 			}
 		}
@@ -393,6 +403,7 @@ Upgrades
 				{
 					case "CClongFormat":									return "longFormat";
 					case "CCwideFormat":									return "wideFormat";
+					default:												return options["dataFormat"];
 				}
 			}
 		}
@@ -412,6 +423,7 @@ Upgrades
 				{
 					case "Xbarchart":										return "xBarAndR";
 					case "Schart":											return "xBarAndS";
+					default:												return options["chartType"];
 				}
 			}
 		}
@@ -486,6 +498,7 @@ Upgrades
 					case "Defectives":										return "defectives";
 					case "Defects":											return "defects";
 					case "ImR":												return "xmr";
+					default:												return options["attributesChart"];
 				}
 			}
 		}
@@ -502,6 +515,7 @@ Upgrades
 					case "npchart":											return "npChart";
 					case "pchart":											return "pChart";
 					case "Laneyprimechart":									return "laneyPPrimeChart";
+					default:												return options["attributesChartDefectivesChartType"];
 				}
 			}
 		}
@@ -518,6 +532,7 @@ Upgrades
 					case "cchart":											return "cChart";
 					case "uchart":											return "uChart";
 					case "Laneychart":										return "laneyUPrimeChart";
+					default:												return options["attributesChartDefectsChartType"];
 				}
 			}
 		}
@@ -577,6 +592,7 @@ Upgrades
 				{
 					case "PClongFormat":									return "longFormat";
 					case "PCwideFormat":									return "wideFormat";
+					default:												return options["dataFormat"];
 				}
 			}
 		}
@@ -594,6 +610,7 @@ Upgrades
 				switch(options["capabilityStudyType"])
 				{
 					case "nonnormalCapabilityAnalysis":						return "nonNormalCapabilityAnalysis";
+					default:												return options["capabilityStudyType"];
 				}
 			}
 		}
@@ -611,6 +628,7 @@ Upgrades
 					case "Lognormal":										return "lognormal";
 					case "3lognormal":										return "3ParameterLognormal";
 					case "3weibull":										return "3ParameterWeibull";
+					default:												return options["nonNormalDistribution"];
 				}
 			}
 		}
@@ -623,6 +641,7 @@ Upgrades
 				switch(options["nonNormalMethod"])
 				{
 					case "nonconformance":									return "nonConformance";
+					default:												return options["nonNormalMethod"];
 				}
 			}
 		}
@@ -666,6 +685,7 @@ Upgrades
 					case "Herd-Johnson":									return "herdJohnson";
 					case "Kaplan-Meier":									return "kaplanMeier";
 					case "Hazen":											return "hazen";
+					default:												return options["probabilityPlotRankMethod"];
 				}
 			}
 		}
@@ -684,6 +704,7 @@ Upgrades
 					case "Normal":											return "normal";
 					case "Weibull":											return "weibull";
 					case "Lognormal":										return "lognormal";
+					default:												return options["nullDistribution"];
 				}
 			}
 		}
@@ -707,6 +728,7 @@ Upgrades
 				{
 					case "dataCoded":										return "coded";
 					case "dataUncoded":										return "uncoded";
+					default:												return options["unitDisplay"];
 				}
 			}
 		}
@@ -720,6 +742,7 @@ Upgrades
 				{
 					case "runOrderRandom":										return "random";
 					case "runOrderStandard":									return "standard";
+					default:													return options["runOrder"];
 				}
 			}
 		}
@@ -737,6 +760,7 @@ Upgrades
 					case "factorialTypeDefault":								return "defaultGenerator";
 					case "factorialTypeSpecify":								return "customGenerator";
 					case "factorialTypeSplit":									return "splitPlot";	
+					default:													return options["factorialDesignType"];
 				}
 			}
 		}
@@ -755,6 +779,7 @@ Upgrades
 					case "designByRuns":										return "numberOfRuns";
 					case "designByResolution":									return "resolution";
 					case "designByFraction":									return "fraction";	
+					default:													return options["designOptionsType"];
 				}
 			}
 		}
@@ -791,6 +816,7 @@ Upgrades
 				{
 					case "runOrderStandardPlot":								return "standard";
 					case "runOrderRandomPlot":									return "run";
+					default:													return options["residualsAgainstOrderPlotType"];
 				}
 			}
 		}
@@ -816,6 +842,7 @@ Upgrades
 				{
 					case "runOrderRandom":										return "random";
 					case "runOrderStandard":									return "standard";
+					default:													return options["runOrder"];
 				}
 			}
 		}
@@ -843,6 +870,7 @@ Upgrades
 				{
 					case "cube":										return "cubePoints";
 					case "star":										return "axialPoints";
+					default:											return options["designType"];
 				}
 			}
 		}
@@ -864,6 +892,7 @@ Upgrades
 					case "Rotatable":										return "rotatable";
 					case "Spherical":										return "spherical";
 					case "Faces":											return "faces";
+					default:												return options["alphaType"];
 				}
 			}
 		}
@@ -877,6 +906,7 @@ Upgrades
 				{
 					case "runOrderRandom":										return "random";
 					case "runOrderStandard":									return "standard";
+					default:													return options["runOrder"];
 				}
 			}
 		}
@@ -920,6 +950,7 @@ Upgrades
 				{
 					case "dataCoded":										return "coded";
 					case "dataUncoded":										return "uncoded";
+					default:												return options["unitDisplay"];
 				}
 			}
 		}
@@ -935,6 +966,7 @@ Upgrades
 				{
 					case "runOrderRandom":										return "random";
 					case "runOrderStandard":									return "standard";
+					default:													return options["displayedRunOrder"];
 				}
 			}
 		}
@@ -951,6 +983,7 @@ Upgrades
 					case "byRuns":											return "numberOfRuns";
 					case "byResolution":									return "resolution";
 					case "byFraction":										return "fraction";	
+					default:												return options["designOptionsType"];
 				}
 			}
 		}
@@ -989,6 +1022,7 @@ Upgrades
 				{
 					case "data-based":										return "dataBased";
 					case "data + model-based":								return "dataAndModelBased";
+					default:												return options["xAxisTicksType"];
 				}
 			}
 		}

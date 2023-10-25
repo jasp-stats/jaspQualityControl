@@ -1490,7 +1490,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   if (options[["reportProcessStability"]]) {
     # X-bar and R Chart OR ImR Chart
-    if(options$xbarR){
+    if(options$xBarAndRChart){
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .Xbarchart(dataset = dataset[measurements], options = options, manualXaxis = splitFactor, warningLimits = FALSE, Wide = wideFormat, manualTicks = options[["manualTicksXAxis"]])$p
       indexCounter <- indexCounter + 1

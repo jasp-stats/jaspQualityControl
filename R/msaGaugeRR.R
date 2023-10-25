@@ -938,9 +938,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   if (options[["reportTrafficLightCHart"]]) {
     valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators,
                              options =  options, ready = TRUE, returnTrafficValues = TRUE, Type3 = Type3)
-    plots <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$gaugeToleranceEnabled,
+    plots <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$tolerance,
                           ToleranceVar = valuesVec$tol, options = options, ready = TRUE, ggPlot = TRUE)
-    if (options[["gaugeToleranceEnabled"]]) {
+    if (options[["tolerance"]]) {
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- plots$p1
       indexCounter <- indexCounter + 1

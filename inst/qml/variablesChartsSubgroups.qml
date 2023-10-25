@@ -166,11 +166,6 @@ Form
 			name: 								"knownParameters"
 			label: 								qsTr("Known parameters")
 
-			Group
-			{
-
-			columns: 2
-
   			DoubleField
   			{
   				name:							"knownParametersMean"
@@ -189,8 +184,6 @@ Form
   				fieldWidth:					  	70
   				decimals:						10
   			}
-
-			}
 
 		}
 
