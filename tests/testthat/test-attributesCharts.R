@@ -3,10 +3,10 @@ context("[Quality Control] Attributes Charts")
 ## Defectives
 # NP
 options <- analysisOptions("attributesCharts")
-options$D <- "D"
+options$defectiveOrDefect <- "D"
 options$total <- "Size"
-options$Attributes <- "Defectives"
-options$TypeDefectives <- "npchart"
+options$attributesChart <- "defectives"
+options$attributesChartDefectivesChartType <- "npChart"
 set.seed(1)
 results <- runAnalysis("attributesCharts", "SPC_NP.csv", options)
 
@@ -24,7 +24,7 @@ test_that("Test results for np chart table results match", {
 })
 
 # P
-options$TypeDefectives <- "pchart"
+options$attributesChartDefectivesChartType <- "pChart"
 results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
 test_that("p Chart plot matches", {
@@ -34,7 +34,7 @@ test_that("p Chart plot matches", {
 })
 
 # Laney's P
-options$TypeDefectives <- "Laneyprimechart"
+options$attributesChartDefectivesChartType <- "laneyPPrimeChart"
 results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
 test_that("Laney p' Chart plot matches", {
@@ -45,9 +45,9 @@ test_that("Laney p' Chart plot matches", {
 
 ## Defects
 # C
-options$TypeDefectives <- "npchart"
-options$Attributes <- "Defects"
-options$TypeDefects <- "cchart"
+options$attributesChartDefectivesChartType <- "npChart"
+options$attributesChart <- "defects"
+options$attributesChartDefectsChartType <- "cChart"
 results <- runAnalysis("attributesCharts", "SPC_NP.csv", options)
 
 test_that("c Chart plot matches", {
@@ -63,7 +63,7 @@ test_that("Test results for c chart table results match", {
 })
 
 # U
-options$TypeDefects <- "uchart"
+options$attributesChartDefectsChartType <- "uChart"
 results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
 test_that("u Chart plot matches", {
@@ -73,7 +73,7 @@ test_that("u Chart plot matches", {
 })
 
 # Laneys U
-options$TypeDefects <- "Laneychart"
+options$attributesChartDefectsChartType <- "laneyUPrimeChart"
 results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
 test_that("Laney u' Chart plot matches", {
@@ -83,7 +83,7 @@ test_that("Laney u' Chart plot matches", {
 })
 
 ## I MR
-options$Attributes <- "ImR"
+options$attributesChart <- "xmr"
 results <- runAnalysis("attributesCharts", "SPC_P.csv", options)
 
 test_that("Individuals and Moving Range Chart plot matches", {

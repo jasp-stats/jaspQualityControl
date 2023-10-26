@@ -19,7 +19,7 @@
 attributesCharts <- function(jaspResults, dataset, options) {
   # reading variables in from the GUI
   total <- options$total
-  D <- options$D
+  D <- options[["defectiveOrDefect"]]
   timeStamp <- options$timeStamp
 
   numeric_variables <- c(total, D)
@@ -36,14 +36,14 @@ attributesCharts <- function(jaspResults, dataset, options) {
     }
 
   # Checking if the analysis is ready
-  ready <- options$D != "" && options$total != ""
+  ready <- options[["defectiveOrDefect"]] != "" && options$total != ""
 
   #Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity', 'missingValues', 'negativeValues'),
-             all.target = c(options$D,options$total),
+             all.target = c(options[["defectiveOrDefect"]],options$total),
              exitAnalysisIfErrors = TRUE)
 
-  if (options$TypeDefectives == "pchart" || options$TypeDefectives == "Laneyprimechart" || options$TypeDefects == "uchart" || options$TypeDefects == "Laneychart")
+  if (options[["attributesChartDefectivesChartType"]] == "pChart" || options[["attributesChartDefectivesChartType"]] == "laneyPPrimeChart" || options[["attributesChartDefectsChartType"]] == "uChart" || options[["attributesChartDefectsChartType"]] == "laneyUPrimeChart")
     .hasErrors(dataset,
                custom = function() {
                  if (any(dataset[,D] > dataset[,total]))
@@ -51,20 +51,20 @@ attributesCharts <- function(jaspResults, dataset, options) {
                exitAnalysisIfErrors = TRUE)
 
 
-  if ((options$Attributes == "Defectives" || options$Attributes == "Defects" || options$Attributes == "ImR") && !ready) {
+  if ((options[["attributesChart"]] == "defectives" || options[["attributesChart"]] == "defects" || options[["attributesChart"]] == "xmr") && !ready) {
     plot <- createJaspPlot(title = gettext("Attributes Control Charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("Attributes", "D", "total"))
+    plot$dependOn(c("attributesChart", "defectiveOrDefect", "total"))
     return()
   }
 
   dataset <- na.omit(dataset)
 
-  if (options$Attributes == "Defectives" && ready) {
-    dependedDefectives <- c("total", "D", "Attributes", "TypeDefectives", 'timeStamp')
+  if (options[["attributesChart"]] == "defectives" && ready) {
+    dependedDefectives <- c("total", "defectiveOrDefect", "attributesChart", "attributesChartDefectivesChartType", 'timeStamp')
 
     #P chart
-    if (options$TypeDefectives == "pchart" && is.null(jaspResults[["PchartPlot"]])) {
+    if (options[["attributesChartDefectivesChartType"]] == "pChart" && is.null(jaspResults[["PchartPlot"]])) {
       jaspResults[["PchartPlot"]] <- createJaspPlot(title =  gettext("p Chart"), width = 1200, height = 500)
       jaspResults[["PchartPlot"]]$dependOn(dependedDefectives)
       jaspResults[["PchartPlot"]]$position <- 1
@@ -80,7 +80,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
       }
     }
     #NP chart
-    if (options$TypeDefectives == "npchart" && is.null(jaspResults[["NPchartPlot"]])) {
+    if (options[["attributesChartDefectivesChartType"]] == "npChart" && is.null(jaspResults[["NPchartPlot"]])) {
       jaspResults[["NPchartPlot"]] <- createJaspPlot(title =  gettext("np Chart"), width = 1200, height = 500)
       jaspResults[["NPchartPlot"]]$dependOn(dependedDefectives)
       jaspResults[["NPchartPlot"]]$position <- 1
@@ -97,7 +97,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     }
 
     #Laney P chart
-    if (options$TypeDefectives == "Laneyprimechart" && is.null(jaspResults[["LaneyPPlot"]])) {
+    if (options[["attributesChartDefectivesChartType"]] == "laneyPPrimeChart" && is.null(jaspResults[["LaneyPPlot"]])) {
       jaspResults[["LaneyPPlot"]] <- createJaspPlot(title =  gettext("Laney p' Chart"), width = 1200, height = 500, position = 1)
       Lanychart <- .LanyP(dataset = dataset, options = options, timeStamp = timeStamp)
       jaspResults[["LaneyPPlot"]]$plotObject <- Lanychart$p
@@ -111,10 +111,10 @@ attributesCharts <- function(jaspResults, dataset, options) {
     }
   }
 
-  if (options$Attributes == "Defects" && ready) {
-    dependedDefects <- c("D", "Attributes", "TypeDefects","total", "timeStamp")
+  if (options[["attributesChart"]] == "defects" && ready) {
+    dependedDefects <- c("defectiveOrDefect", "attributesChart", "attributesChartDefectsChartType","total", "timeStamp")
     #Cchart
-    if (options$TypeDefects == "cchart" && is.null(jaspResults[["CchartPlot"]])) {
+    if (options[["attributesChartDefectsChartType"]] == "cChart" && is.null(jaspResults[["CchartPlot"]])) {
       jaspResults[["CchartPlot"]] <- createJaspPlot(title =  gettext("c Chart"), width = 1200, height = 500)
       jaspResults[["CchartPlot"]]$dependOn(dependedDefects)
       jaspResults[["CchartPlot"]]$position <- 1
@@ -130,7 +130,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
       }
     }
     #Uchart
-    if (options$TypeDefects == "uchart" && is.null(jaspResults[["UchartPlot"]])) {
+    if (options[["attributesChartDefectsChartType"]] == "uChart" && is.null(jaspResults[["UchartPlot"]])) {
       jaspResults[["UchartPlot"]] <- createJaspPlot(title =  gettext("u Chart"), width = 1200, height = 500)
       jaspResults[["UchartPlot"]]$dependOn(dependedDefects)
       jaspResults[["UchartPlot"]]$position <- 1
@@ -147,7 +147,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
       }
     }
     #Laney U chart
-    if (options$TypeDefects == "Laneychart" && is.null(jaspResults[["LaneyUPlot"]])) {
+    if (options[["attributesChartDefectsChartType"]] == "laneyUPrimeChart" && is.null(jaspResults[["LaneyUPlot"]])) {
       jaspResults[["LaneyUPlot"]] <- createJaspPlot(title = gettext("Laney u' Chart"), width = 1200, height = 500, position = 1)
       jaspResults[["LaneyUPlot"]]$dependOn(dependedDefects)
       LanyUchart <- .LanyU(dataset = dataset, options = options, timeStamp = timeStamp)
@@ -159,16 +159,16 @@ attributesCharts <- function(jaspResults, dataset, options) {
     }
   }
   #ImRchart for attributes
-  if (options$Attributes == "ImR" &&  !identical(D, "")) {
+  if (options[["attributesChart"]] == "xmr" && !identical(D, "")) {
     jaspResults[["IPlotA"]] <- createJaspPlot(title = gettext("Individuals and Moving Range Chart"), width = 1200, height = 500, position = 1)
     IMRchart <- .Ichart_attributes(dataset = dataset, options = options, timeStamp = timeStamp)
     jaspResults[["IPlotA"]]$plotObject <- PlotReport <- IMRchart$p
-    jaspResults[["IPlotA"]]$dependOn(c("D", "total", "Attributes", "timeStamp"))
+    jaspResults[["IPlotA"]]$dependOn(c("defectiveOrDefect", "total", "attributesChart", "timeStamp"))
 
     # Nelson tests tables
     if (is.null(jaspResults[["NelsonTableIMR"]])) {
       NelsonTables <- createJaspContainer(title =  "", position = 2)
-      NelsonTables$dependOn(c("D", "total", "Attributes", "timeStamp"))
+      NelsonTables$dependOn(c("defectiveOrDefect", "total", "attributesChart", "timeStamp"))
 
 
       NelsonTables[["NelsonTableI"]] <- .NelsonTable(dataset = dataset, options = options, type = "xbar.one", sixsigma = IMRchart$sixsigma_I, name = "Individuals", xLabels = xLabs)
@@ -179,7 +179,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
   }
 
   #Report
-  if (options[["AReport"]] && is.null(jaspResults[["AReport"]]) && ready) {
+  if (options[["report"]] && is.null(jaspResults[["AReport"]]) && ready) {
 
     jaspResults[["PchartPlot"]]     <- NULL
     jaspResults[["NelsonTable"]]    <- NULL
@@ -192,27 +192,27 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspResults[["NelsonTableIMR"]] <- NULL
 
     jaspResults[["AReport"]] <- createJaspContainer(title = gettextf("Report for Attribute Control Charts"))
-    jaspResults[["AReport"]]$dependOn(c("AReport", "ATitle", "AName", "AOperator", "AID", "AMisc", "AAppraiser", "AMeasurement", "ASize", "ATime", "AFrequency",
-                                        "D", "total", "Attributes", "TypeDefects", "TypeDefectives", "timeStamp"))
+    jaspResults[["AReport"]]$dependOn(c("report", "reportTitle", "reportMeasurementName", "reportReportedBy", "reportId", "reportMiscellaneous", "reportAppraiser", "reportMeasusrementSystemName", "reportSubgroupSize", "reportTime", "reportFrequency",
+                                        "defectiveOrDefect", "total", "attributesChart", "attributesChartDefectsChartType", "attributesChartDefectivesChartType", "timeStamp"))
     Report <- jaspResults[["AReport"]]
-    Report[["Report"]] <- .AReport(ccTitle = options$ATitle, ccName = options$AName,
-                                 ccOperator = options$AOperator, ccID = options$AID, ccMisc = options$AMisc, ccAppraiser = options$AAppraiser,
-                                 ccMeasurement = options$AMeasurement, ccSize = options$ASize, ccTime = options$ATime, ccFrequency = options$AFrequency)
+    Report[["Report"]] <- .AReport(ccTitle = options[["reportTitle"]], ccName = options[["reportMeasurementName"]],
+                                 ccOperator = options[["reportReportedBy"]], ccID = options[["reportId"]], ccMisc = options[["reportMiscellaneous"]], ccAppraiser = options[["reportAppraiser"]],
+                                 ccMeasurement = options[["reportMeasusrementSystemName"]], ccSize = options[["reportSubgroupSize"]], ccTime = options[["reportTime"]], ccFrequency = options[["reportFrequency"]])
 
     Report[["Plot"]] <- createJaspPlot(width = 1000, height = 800, position = 2)
-    if (options$Attributes == "Defectives" & options$TypeDefectives == "pchart")
+    if (options[["attributesChart"]] == "defectives" & options[["attributesChartDefectivesChartType"]] == "pChart")
       PlotReport <- .Pchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "Defectives" & options$TypeDefectives == "npchart")
+    else if (options[["attributesChart"]] == "defectives" & options[["attributesChartDefectivesChartType"]] == "npChart")
       PlotReport <- .NPchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "Defectives" & options$TypeDefectives == "Laneyprimechart")
+    else if (options[["attributesChart"]] == "defectives" & options[["attributesChartDefectivesChartType"]] == "laneyPPrimeChart")
       PlotReport <- .LanyP(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "Defects" & options$TypeDefects == "cchart")
+    else if (options[["attributesChart"]] == "defects" & options[["attributesChartDefectsChartType"]] == "cChart")
       PlotReport <- .Cchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "Defects" & options$TypeDefects == "uchart")
+    else if (options[["attributesChart"]] == "defects" & options[["attributesChartDefectsChartType"]] == "uChart")
       PlotReport <- .Uchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "Defects" & options$TypeDefects == "Laneychart")
+    else if (options[["attributesChart"]] == "defects" & options[["attributesChartDefectsChartType"]] == "laneyUPrimeChart")
       PlotReport <- .LanyU(dataset = dataset, options = options, timeStamp = timeStamp)$p
-    else if (options$Attributes == "ImR")
+    else if (options[["attributesChart"]] == "xmr")
       PlotReport <- .Ichart_attributes(dataset = dataset, options = options, timeStamp = timeStamp)$p
 
     Report[["Plot"]]$plotObject <- PlotReport
@@ -220,7 +220,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 }
 
 .Pchart <- function(dataset, options, timeStamp) {
-  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
+  data1 <- data.frame(D = dataset[, options[["defectiveOrDefect"]]], sample = dataset[, options$total])
   sixsigma <- with(data1, qcc::qcc(D, sample, type = "p", plot = FALSE))
   sample <- data1$sample
   D <- data1$D
@@ -294,7 +294,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 .NPchart <- function(dataset, options, timeStamp) {
   .Check_equal_samples(dataset, options)
 
-  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
+  data1 <- data.frame(D = dataset[, options[["defectiveOrDefect"]]], sample = dataset[, options$total])
   subgroups <- 1:nrow(data1)
   data_plot <- data.frame(subgroups = subgroups, D = data1$D)
 
@@ -339,7 +339,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
   .Check_equal_samples(dataset, options)
 
-  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
+  data1 <- data.frame(D = dataset[, options[["defectiveOrDefect"]]], sample = dataset[, options$total])
   subgroups <- 1:nrow(data1)
   data_plot <- data.frame(subgroups = subgroups, D = data1$D)
   sixsigma <- with(data1, qcc::qcc(D, sample, type = "c", plot = FALSE))
@@ -381,7 +381,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 }
 
 .Uchart <- function(dataset, options, timeStamp) {
-  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
+  data1 <- data.frame(D = dataset[, options[["defectiveOrDefect"]]], sample = dataset[, options$total])
   data1$P <- data1$D/data1$sample
   subgroups <- 1:nrow(data1)
   data_plot <- data.frame(subgroups = subgroups, P = data1$P)
@@ -451,7 +451,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
 ##Imr for attributes
 .Ichart_attributes <- function(dataset, options, timeStamp) {
-  data1 <- data.frame(D = dataset[, options$D], sample = dataset[, options$total])
+  data1 <- data.frame(D = dataset[, options[["defectiveOrDefect"]]], sample = dataset[, options$total])
   data1$P <- data1$D/data1$sample
   subgroups <- 1:nrow(data1)
   data_plot <- data.frame(subgroups = subgroups, P = data1$P)
@@ -492,7 +492,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
     p1 <- p1 + ggplot2::scale_x_continuous(name =  gettext('Sample'), breaks = xBreaks, limits = range(xLimits), labels = as.vector(dataset[, timeStamp])[xBreaks])
 
   #data
-  data <- data.frame(process = dataset[, options$D] / dataset[, options$total])
+  data <- data.frame(process = dataset[, options[["defectiveOrDefect"]]] / dataset[, options$total])
   xmr.raw.r <- matrix(cbind(data$process[1:length(data$process)-1], data$process[2:length(data$process)]), ncol=2)
   sixsigma_R <- qcc::qcc(xmr.raw.r, type="R", plot = FALSE)
   subgroups = c(1:length(sixsigma_R$statistics))
@@ -539,7 +539,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 
 ### Lany's charts
 .LanyU <- function(dataset, options, timeStamp) {
-  data1 <- data.frame(D = dataset[,options$D], sample = dataset[,options$total])
+  data1 <- data.frame(D = dataset[,options[["defectiveOrDefect"]]], sample = dataset[,options$total])
   data1$P <- data1$D/data1$sample
   subgroups <- c(1:nrow(data1))
   data_plot <- data.frame(subgroups = subgroups, P = data1$P)
@@ -615,7 +615,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
 }
 
 .LanyP <- function(dataset, options, timeStamp) {
-  data1 <- data.frame(D = dataset[,options$D], sample = dataset[,options$total])
+  data1 <- data.frame(D = dataset[,options[["defectiveOrDefect"]]], sample = dataset[,options$total])
   data1$P <- data1$D/data1$sample
   subgroups <- c(1:nrow(data1))
   data_plot <- data.frame(subgroups = subgroups, P = data1$P)

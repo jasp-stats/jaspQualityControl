@@ -29,7 +29,7 @@ Form
 	{
 		AvailableVariablesList	{ name: "allVariablesList"																				}
 		AssignedVariablesList	{ name: "outcome";			title: qsTr("Outcomes");	suggestedColumns: ["ordinal", "nominal"]		}
-		AssignedVariablesList	{ name: "covariates";		title: qsTr("Covariates");	singleVariable: true							}
+		AssignedVariablesList	{ name: "covariate";		title: qsTr("Covariates");	singleVariable: true							}
 	}
 
 	Group
@@ -37,7 +37,7 @@ Form
 		title: qsTr("Tables")
 		CheckBox
 		{
-			name:			"wantsModelFitTable"
+			name:			"modelFitTable"
 			label:			qsTr("Model fit table")
 		}
 	}
@@ -49,37 +49,38 @@ Form
 		title: qsTr("Detection plot")
 		CheckBox
 		{
-			name: "showData"
+			name: "detectionPlotDataDisplay"
 			label: qsTr("Show data")
 			checked: true
+
 			RadioButtonGroup
 			{
-				name: "showDataGeom"
+				name: "detectionPlotDataDisplayType"
 
 				RadioButton	{	label: qsTr("Rugs");			value: "rug"							}
 				RadioButton	{
 					label: qsTr("Points");			value: "points"
 					childrenOnSameRow: true
-					CheckBox { name: "addJitter"; label: qsTr("Add jitter"); checked: true	}
+					CheckBox { name: "detectionPlotDataDisplayTypePointsJitter"; label: qsTr("Add jitter"); checked: true	}
 				}
 			}
 		}
 
-		CheckBox	{	name: "showDensity"; label: qsTr("Show density"); checked: true	}
+		CheckBox	{	name: "detectionPlotDensityDisplay"; label: qsTr("Show density"); checked: true	}
 
 		CheckBox
 		{
-			name: "wantsConfidenceInterval"; label: qsTr("Confidence interval")
+			name: "detectionPlotCi"; label: qsTr("Confidence interval")
 			childrenOnSameRow: true
-			CIField { name: "confidenceIntervalValue" }
+			CIField { name: "detectionPlotCiLevel" }
 		}
 
 		RadioButtonGroup
 		{
-			name: "xTicks"
+			name: "xAxisTicksType"
 			title: qsTr("Ticks x-axis")
-			RadioButton	{	label: qsTr("based on data");					value: "data-based"				}
-			RadioButton	{	label: qsTr("based on data and model");			value: "data + model-based"		}
+			RadioButton	{	label: qsTr("based on data");					value: "dataBased"				}
+			RadioButton	{	label: qsTr("based on data and model");			value: "dataAndModelBased"		}
 		}
 
 		Group
@@ -219,8 +220,6 @@ Form
 			RadioButton	{	label: qsTr("Probit");		value: "probit"							}
 		}
 
-		CheckBox	{	name: "logTransform"; label: qsTr("Log transform covariate"); checked: false	}
-
+		CheckBox	{	name: "logTransformedCovariate"; label: qsTr("Log transform covariate"); checked: false	}
 	}
-
 }

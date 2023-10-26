@@ -17,14 +17,15 @@
 
 #' @export
 msaTestRetest <- function(jaspResults, dataset, options, ...) {
-  wideFormat <- options[["testRetestDataFormat"]] == "testRetestWideFormat"
+
+  wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat){
-    measurements <- unlist(options$measurements)
-  }else {
-    measurements <- unlist(options$measurementsLong)
+    measurements <- unlist(options[["measurementsWideFormat"]])
+  }else{
+    measurements <- unlist(options[["measurementLongFormat"]])
   }
-  parts <- unlist(options$parts)
-  operators <- unlist(options$operators)
+  parts <- unlist(options[["part"]])
+  operators <- unlist(options[["operator"]])
 
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
@@ -43,7 +44,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   }
 
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = c(measurements, options$operators, options$parts),
+             all.target = c(measurements, options[["operator"]], options[["part"]]),
              exitAnalysisIfErrors = TRUE)
 
   if (!wideFormat && ready) {
@@ -53,13 +54,13 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
   # Range Method
   # Range Method r and R table
-  if (options[["rangeRr"]]) {
+  if (options[["repeatabilityAndReproducibilityTable"]]) {
     .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready,
-                     EnableSD = options$EnableRangePSD, EnableTol = options$EnableRangeTolerance)
+                     EnableSD = options[["manualProcessSd"]], EnableTol = options[["tolerance"]])
   }
 
   # Scatter Plot Operators vs Parts
-  if (options[["rangeScatterPlotOperatorParts"]]) {
+  if (options[["runChartPart"]]) {
     if (is.null(jaspResults[["ScatterOperatorParts"]])) {
       jaspResults[["ScatterOperatorParts"]] <- createJaspContainer(gettext("Scatterplot Operators vs Parts"))
       jaspResults[["ScatterOperatorParts"]]$position <- 2
@@ -68,20 +69,20 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   }
 
   # Rchart Range method
-  if (options[["rangeRchart"]] && ready) {
+  if (options[["rChart"]] && ready) {
     if (is.null(jaspResults[["rangeRchart"]])) {
       jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
       jaspResults[["rangeRchart"]]$position <- 3
     }
     plot <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
-    plot$dependOn("rangeRchart")
+    plot$dependOn("rChart")
     p <- .Rchart(dataset = dataset[measurements], options = options)$p
     plot$plotObject <- p
     jaspResults[["rangeRchart"]] <- plot
   }
 
   # Scatter Plot Operators
-  if (options[["rangeScatterPlotOperators"]]) {
+  if (options[["scatterPlotMeasurement"]]) {
     if (is.null(jaspResults[["ScatterOperators"]])) {
       jaspResults[["ScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
       jaspResults[["ScatterOperators"]]$position <- 2
@@ -90,14 +91,14 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   }
 
   # Traffic light graph
-  if(options[["trafficPlot"]] && is.null(jaspResults[["trafficPlot"]] )) {
+  if(options[["trafficLightChart"]] && is.null(jaspResults[["trafficPlot"]] )) {
     jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
     jaspResults[["trafficPlot"]]$position <- 4
-    jaspResults[["trafficPlot"]]$dependOn(c("trafficPlot", "rangePSD", "EnableRangePSD", "rangeTolerance", "EnableRangeTolerance"))
+    jaspResults[["trafficPlot"]]$dependOn(c("trafficLightChart", "manualProcessSdValue", "manualProcessSd", "toleranceValue", "tolerance"))
     TrafficContainer <- jaspResults[["trafficPlot"]]
 
     valuesVec <- .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready, GRRpercent = TRUE)
-    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceUsed = options$EnableRangeTolerance,
+    TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceUsed = options[["tolerance"]],
                                                ToleranceVar = valuesVec[2],options = options, ready = ready,
                                                Xlab.StudySD = "Percent study variation of GRR", Xlab.Tol = "Percent tolerance of GRR")
 
@@ -111,7 +112,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
 
   plot <- createJaspPlot(title = gettext("Run chart of parts"), width = 500, height = 320)
-  plot$dependOn(c("rangeScatterPlotOperatorParts"))
+  plot$dependOn(c("runChartPart"))
 
   if (ready) {
     partIndex <- 1:length(dataset[[measurements[1]]])
@@ -143,15 +144,15 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / n)
   d2 <- .d2Value(n)
   GRR <- Rbar/d2
-  GRRpercent.PSD <- GRR/options$rangePSD*100
-  GRRpercent.Tol <- GRR/(options$rangeTolerance/6)
+  GRRpercent.PSD <- GRR/options[["manualProcessSdValue"]] * 100
+  GRRpercent.Tol <- GRR/(options[["toleranceValue"]] / 6)
 
   if (GRRpercent)
     return(c(GRRpercent.PSD, GRRpercent.Tol))
   else {
     table <- createJaspTable(title = gettext("Short gauge study"))
     table$position <- 1
-    table$dependOn(c("rangeRr", "rangeTolerance", "rangePSD", "EnableRangeTolerance", "EnableRangePSD"))
+    table$dependOn(c("repeatabilityAndReproducibilityTable", "toleranceValue", "manualProcessSdValue", "tolerance", "manualProcessSd"))
 
     table$addColumnInfo(name = "n", title = gettext("Sample size (n)"), type = "integer")
     table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
@@ -169,12 +170,12 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     rows[["GRR"]] = GRR
 
     if (EnableSD) {
-      rows[["PSD"]] = options$rangePSD
+      rows[["PSD"]] = options[["manualProcessSdValue"]]
       rows[["GRRpercent.PSD"]] = GRRpercent.PSD
     }
 
     if (EnableTol){
-      rows[["tolerance"]] = options$rangeTolerance
+      rows[["tolerance"]] = options[["toleranceValue"]]
       rows[["GRRpercent.Tol"]] = GRRpercent.Tol
     }
 
@@ -187,7 +188,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 .ScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready) {
 
   plot <- createJaspPlot(title = gettext("Scatterplot of 1st measurement vs 2nd measurement"))
-  plot$dependOn(c("rangeScatterPlotOperators", "rangeScatterPlotFitLine", "rangeScatterPlotOriginLine", "gaugeRRmethod"))
+  plot$dependOn(c("scatterPlotMeasurement", "scatterPlotMeasurementFitLine", "rangeScatterPlotOriginLine", "gaugeRRmethod"))
 
   if (ready) {
 
@@ -195,10 +196,10 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
       jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
       ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
 
-    if (options[["rangeScatterPlotFitLine"]])
+    if (options[["scatterPlotMeasurementFitLine"]])
       p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
 
-    if (options$jitter)
+    if (options[["scatterPlotMeasurementAllValues"]])
       p <- p + ggplot2::geom_jitter(size = 2)
 
     p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")

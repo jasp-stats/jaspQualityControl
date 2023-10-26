@@ -20,225 +20,224 @@ import JASP.Widgets 							1.0
 
 Form
 {
-    columns:                                    1
+	columns:									1
 
-    VariablesForm
-    {
-        AvailableVariablesList
-        {
-            name:                               "MDallVariables"
-            label:                              qsTr("Available factors")
-        }
+	VariablesForm
+	{
+		AvailableVariablesList
+		{
+			name:								"MDallVariables"
+			label:								qsTr("Available factors")
+		}
 
-        AssignedVariablesList
-        {
-            name:                               "MDresponse"
-            singleVariable:                     true
-            label:                              qsTr("Response variable")
-        }
+		AssignedVariablesList
+		{
+			name:								"responseVariable"
+			singleVariable:						true
+			label:								qsTr("Response variable")
+		}
 
-        AssignedVariablesList
-        {
-            name:                               "MDassignedFactors"
-            id:                                 mdAssignedFactors
-            label:                              qsTr("Assigned factors")
-        }
+		AssignedVariablesList
+		{
+			name:								"assignedFactors"
+			label:								qsTr("Assigned factors")
+			id:									assignedFactors
+		}
 
 //		AssignedVariablesList
 //		{
-//			debug:                              true
-//			name:                               "FAblocks"
-//			singleVariable:                     true
-//			label:                              qsTr("Blocks")
+//			debug:								true
+//			name:								"FAblocks"
+//			singleVariable:						true
+//			label:							  qsTr("Blocks")
 //		}
 
-        AssignedVariablesList
-        {
-            id:                                 runOrder
-            name:                               "MDrunOrder"
-            singleVariable:                     true
-            label:                              qsTr("Run order")
-        }
-    }
+		AssignedVariablesList
+		{
+			name:								"runOrder"
+			label:								qsTr("Run order")
+			id:									runOrder
+			singleVariable:						true
+		}
+	}
 
-    RadioButtonGroup
-    {
-        title:                                  qsTr("Unit Display")
-        name:                                   "dataCoding"
+	RadioButtonGroup
+	{
+		name:									"unitDisplay"
+		title:									qsTr("Unit Display")
 
-        RadioButton
-        {
-            name:                               "dataCoded"
-            label:                              qsTr("Coded")
-            checked:                            true
+		RadioButton
+		{
+			name:								"coded"
+			label:								qsTr("Coded")
+			checked:							true
 
-        }
+		}
 
-        RadioButton
-        {
-            name:                               "dataUncoded"
-            label:                              qsTr("Uncoded")
+		RadioButton
+		{
+			name:								"uncoded"
+			label:								qsTr("Uncoded")
 
-        }
-    }
+		}
+	}
 
-    RadioButtonGroup
-    {
-        name:                                   "displayRunOrder"
-        title:                                  qsTr("Run Order")
-        enabled:                                !factorialTypeSplit.checked
+	RadioButtonGroup
+	{
+		name:									"displayedRunOrder"
+		title:									qsTr("Run Order")
+		enabled:								!factorialTypeSplit.checked
 
-        RadioButton
-        {
-            name:                               "runOrderRandom"
-            label:                              qsTr("Random")
-            checked:                            true
-        }
+		RadioButton
+		{
+			name:								"random"
+			label:								qsTr("Random")
+			checked:							true
+		}
 
-        RadioButton
-        {
-            name:                              "runOrderStandard"
-            label:                              qsTr("Standard")
-        }
-    }
+		RadioButton
+		{
+			name:								"standard"
+			label:								qsTr("Standard")
+		}
+	}
 
-    Section
-    {
-        title: 									qsTr("Desired Two-level Factorial Design Options")
-        columns:								2
+	Section
+	{
+		title: 									qsTr("Desired Two-level Factorial Design Options")
+		columns:								2
 
-        GroupBox
-        {
-            title:                              qsTr("Design Options")
+		GroupBox
+		{
+			title:								qsTr("Design Options")
 
-            RadioButtonGroup
-            {
-                name:                           "designBy"
+			RadioButtonGroup
+			{
+				name:							"designOptionsType"
 
-                RadioButton
-                {
-                    name:                       "byRuns"
-                    label:                      qsTr("Number of runs")
-                    childrenOnSameRow:          true
-                    checked:                    true
+				RadioButton
+				{
+					name:						"numberOfRuns"
+					label:						qsTr("Number of runs")
+					childrenOnSameRow:			true
+					checked:					true
 
-                    DropDown
-                    {
-                        name:                   "MDruns"
-                        indexDefaultValue:      0
-                        values:
-                        [
-                            { value: 2**(1+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(1+Math.floor(Math.log2(nAssignedFactors.value))))},
-                            { value: 2**(2+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(2+Math.floor(Math.log2(nAssignedFactors.value))))},
-                            { value: 2**(3+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(3+Math.floor(Math.log2(nAssignedFactors.value))))},
-                            { value: 2**(4+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(4+Math.floor(Math.log2(nAssignedFactors.value))))},
-                            { value: 2**(5+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(5+Math.floor(Math.log2(nAssignedFactors.value))))}
-                        ]
-                    }
-                }
+					DropDown
+					{
+						name:					"designOptionsTypeNumberOfRunsValue"
+						indexDefaultValue:		0
+						values:
+						[
+							{ value: 2**(1+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(1+Math.floor(Math.log2(nAssignedFactors.value))))},
+							{ value: 2**(2+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(2+Math.floor(Math.log2(nAssignedFactors.value))))},
+							{ value: 2**(3+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(3+Math.floor(Math.log2(nAssignedFactors.value))))},
+							{ value: 2**(4+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(4+Math.floor(Math.log2(nAssignedFactors.value))))},
+							{ value: 2**(5+Math.floor(Math.log2(nAssignedFactors.value))), label: Number(2**(5+Math.floor(Math.log2(nAssignedFactors.value))))}
+						]
+					}
+				}
 
-                RadioButton
-                {
-                    id:                         byResolution
-                    name:                       "byResolution"
-                    label:                      qsTr("Resolution")
-                    childrenOnSameRow:          true
+				RadioButton
+				{
+					name:						"resolution"
+					label:						qsTr("Resolution")
+					id:							resolution
+					childrenOnSameRow:			true
 
-                    DropDown
-                    {
-                        name:                   "MDresolution"
-                        indexDefaultValue:      1
-                        values:
-                        [
-                            { value: "Full", label: qsTr("Full")},
-                            { value: "III", label: qsTr("III") 	},
-                            { value: "IV", 	label: qsTr("IV") 	},
-                            { value: "V", 	label: qsTr("V") 	},
-                            { value: "VI", 	label: qsTr("VI")	},
-                            { value: "VII", label: qsTr("VII")	},
-                            { value: "VIII", label: qsTr("VIII")}
-                        ]
-                    }
-                }
+					DropDown
+					{
+						name:					"designOptionsTypeResolutionValue"
+						indexDefaultValue:		1
+						values:
+						[
+							{ value: "Full", label: qsTr("Full")},
+							{ value: "III", label: qsTr("III") 	},
+							{ value: "IV", 	label: qsTr("IV") 	},
+							{ value: "V", 	label: qsTr("V") 	},
+							{ value: "VI", 	label: qsTr("VI")	},
+							{ value: "VII", label: qsTr("VII")	},
+							{ value: "VIII", label: qsTr("VIII")}
+						]
+					}
+				}
 
-                RadioButton
-                {
-                    name:                       "byFraction"
-                    label:                      qsTr("Fraction")
-                    childrenOnSameRow:          true
+				RadioButton
+				{
+					name:						"fraction"
+					label:						qsTr("Fraction")
+					childrenOnSameRow:			true
 
-                    DropDown
-                    {
-                        name:                   "MDfraction"
-                        indexDefaultValue:      0
-                        values:
-                            [
-                                {
-                                    value: "0.5",
-                                    label: qsTr("1/2")
-                                },
-                                {
-                                    value: nAssignedFactors.value > 5
-                                           ? "0.25"
-                                           : "0.5",
-                                    label: nAssignedFactors.value > 5
-                                           ? qsTr("1/4")
-                                           : qsTr("1/2")
-                                },
-                                {
-                                    value: nAssignedFactors.value > 6
-                                           ? "0.125"
-                                           : nAssignedFactors.value > 5
-                                             ? "0.25"
-                                             : "0.5",
-                                    label: nAssignedFactors.value > 6
-                                           ? qsTr("1/8")
-                                           : nAssignedFactors.value > 5
-                                             ? qsTr("1/4")
-                                             : qsTr("1/2")
-                                }
-                            ]
-                    }
-                }
-            }
-        }
+					DropDown
+					{
+						name:					"designOptionsTypeFractionValue"
+						indexDefaultValue:		0
+						values:
+							[
+								{
+									value: "0.5",
+									label: qsTr("1/2")
+								},
+								{
+									value: nAssignedFactors.value > 5
+										   ? "0.25"
+										   : "0.5",
+									label: nAssignedFactors.value > 5
+										   ? qsTr("1/4")
+										   : qsTr("1/2")
+								},
+								{
+									value: nAssignedFactors.value > 6
+										   ? "0.125"
+										   : nAssignedFactors.value > 5
+											 ? "0.25"
+											 : "0.5",
+									label: nAssignedFactors.value > 6
+										   ? qsTr("1/8")
+										   : nAssignedFactors.value > 5
+											 ? qsTr("1/4")
+											 : qsTr("1/2")
+								}
+							]
+					}
+				}
+			}
+		}
 
+		GroupBox
+		{
+			title:								qsTr("Additional Options")
 
-        GroupBox
-        {
-            title:                              qsTr("Additional Options")
+			IntegerField
+			{
+				name:							"numberCenterPoints"
+				label:							qsTr("Number of center points")
+				defaultValue:					0
+				min:							0
+				max:							2**(numberOfFactorsForTable.value - 1)
+			}
 
-            IntegerField
-            {
-                name:                           "MDcenterPoints"
-                label:                          qsTr("Number of center points")
-                defaultValue:                   0
-                min:                            0
-                max:                            2**(numberOfFactorsForTable.value - 1)
-            }
+			IntegerField
+			{
+				name:							"randomRunsNumberRepetitions"
+				label:							qsTr("Number of random runs to repeat")
+				defaultValue:					0
+				min:							0
+				max:							10
+			}
+		}
+	}
 
-            IntegerField
-            {
-                name:                           "repeatRuns"
-                label:                          qsTr("Number of random runs to repeat")
-                defaultValue:                   0
-                min:                            0
-                max:                            10
-            }
-        }
-    }
+	CheckBox
+	{
+		name:									"desiredDesignTable"
+		label:									qsTr("Show desired design")
+	}
 
-    CheckBox
-    {
-        name:                                   "showDesiredDesign"
-        label:                                  qsTr("Show desired design")
-    }
-
-    IntegerField
-    {
-        name:                                   "nAssignedFactors"
-        visible:                                false
-        id:                                     nAssignedFactors
-        defaultValue:                           mdAssignedFactors.count
-    }
+	IntegerField
+	{
+		name:									"nAssignedFactors"
+		visible:								false
+		id:										nAssignedFactors
+		defaultValue:							assignedFactors.count
+	}
 }

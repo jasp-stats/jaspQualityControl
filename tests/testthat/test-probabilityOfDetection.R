@@ -1,20 +1,20 @@
 options <- analysisOptions("probabilityOfDetection")
-options$covariates <- "target.size"
+options$covariate <- "target.size"
 options$horizontalAsymptotes <- list(
   list(horizontalAsymptoteName = "Asymptote 1", horizontalAsymptoteValue = 0.5, value = "#"),
   list(horizontalAsymptoteName = "Asymptote 2", horizontalAsymptoteValue = 0.25, value = "#2"),
   list(horizontalAsymptoteName = "Asymptote 3", horizontalAsymptoteValue = 0.75, value = "#3")
 )
 options$outcome <- c("test1", "test2")
-options$showDataGeom <- "points"
+options$detectionPlotDataDisplayType <- "points"
 options$verticalAsymptotes <- list(
   list(value = "#", verticalAsymptoteValue = 0.1, verticallAsymptoteName = "Asymptote 1"),
   list(value = "#2", verticalAsymptoteValue = 0.2, verticallAsymptoteName = "Asymptote 2"),
   list(value = "#3", verticalAsymptoteValue = 0.3, verticallAsymptoteName = "Asymptote 3")
 )
-options$wantsConfidenceInterval <- TRUE
-options$wantsModelFitTable <- TRUE
-options$xTicks <- "data + model-based"
+options$detectionPlotCi <- TRUE
+options$modelFitTable <- TRUE
+options$xAxisTicksType <- "dataAndModelBased"
 set.seed(1)
 results <- runAnalysis("probabilityOfDetection", "EXAMPLE 8 hit miss repeated measures 24.csv", options)
 
@@ -52,14 +52,14 @@ test_that("Parameter estimates table results match", {
 })
 
 options <- analysisOptions("probabilityOfDetection")
-options$covariates <- "depth.inch"
+options$covariate <- "depth.inch"
 options$horizontalAsymptotes <- list()
-options$logTransform <- TRUE
+options$logTransformedCovariate <- TRUE
 options$outcome <- "hit.miss"
-options$showDataGeom <- "points"
+options$detectionPlotDataDisplayType <- "points"
 options$verticalAsymptotes <- list()
-options$wantsConfidenceInterval <- TRUE
-options$xTicks <- "data + model-based"
+options$detectionPlotCi <- TRUE
+options$xAxisTicksType <- "dataAndModelBased"
 set.seed(1)
 results <- runAnalysis("probabilityOfDetection", "EXAMPLE 3 hm.csv", options)
 

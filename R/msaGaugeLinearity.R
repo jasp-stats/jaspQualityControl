@@ -18,8 +18,8 @@
 #' @export
 msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
-  measurements <- unlist(options$measurements)
-  parts <- unlist(options$parts)
+  measurements <- unlist(options[["measurement"]])
+  parts <- unlist(options[["part"]])
   standards <- unlist(options$standard)
 
   ready <- (!identical(measurements, "") && !identical(parts, "") && !identical(standards, ""))
@@ -148,8 +148,8 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
     pvalues <- lm$coefficients[c(7,8)]
     S <- lm$sigma
     rsq <- lm$r.squared
-    linearity <- abs(coefficientSlope) * options$linearityProcessVariation
-    percentLin <- (linearity / options$linearityProcessVariation) * 100
+    linearity <- abs(coefficientSlope) * options[["manualProcessVariationValue"]]
+    percentLin <- (linearity / options[["manualProcessVariationValue"]]) * 100
     plusOrMin <- if (coefficientSlope > 0) "+" else "-"
 
     p1 <- ggplot2::ggplot(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias)) +
@@ -172,15 +172,15 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
                         "SEcoefficient" = SEcoefficients,
                         "pvalue" = pvalues))
 
-    if (options$EnablePV) {
-      table1$addColumnInfo(name = "percentBias", title = gettext("Percent bias per reference value"), type = "number")
+    if (options[["manualProcessVariation"]]) {
+      table1$addColumnInfo(name = "percentBias",            title = gettext("Percent bias per reference value"), type = "number")
       table3$addColumnInfo(name = "linearity", title = gettext("Linearity"), type = "number")
 
       table1$setData(list("part" = c(df$Part,gettext("Average")),
                           "referenceValue" = df$Ref,
                           "observedMean" = df$ObservedMean,
                           "bias" = c(df$Bias, averageBias),
-                          "percentBias" = (abs(c(df$Bias, averageBias))/options$linearityProcessVariation) * 100,
+                          "percentBias" = (abs(c(df$Bias, averageBias)) / options[["manualProcessVariationValue"]]) * 100,
                           "pvalue" = c(df$pvalue, averagePvalue)))
 
       table3$setData(list("S" = S,
@@ -199,7 +199,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
                           "percentLin" = percentLin))
     }
 
-    df3 <- data.frame(Source = c("Linearity", "Bias"), Percent = c(percentLin, (abs(averageBias) / options$linearityProcessVariation) * 100))
+    df3 <- data.frame(Source = c("Linearity", "Bias"), Percent = c(percentLin, (abs(averageBias) / options[["manualProcessVariationValue"]]) * 100))
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(df3$Percent)
     yLimits <- range(yBreaks)
 
@@ -213,19 +213,19 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
     plot2$plotObject <- p2
   }
 
-  if (options$LBtableBias)
+  if (options[["biasTable"]])
     tablesAndGraphs[["table1"]] <- table1
 
 
-  if (options$LBtableLinearity) {
+  if (options[["linearityTable"]]) {
     tablesAndGraphs[["table2"]] <- table2
     tablesAndGraphs[["table3"]] <- table3
   }
 
-  if (options$LBgraph)
+  if (options[["linearityAndBiasPlot"]])
     tablesAndGraphs[["plot1"]] <- plot1
 
-  if (options$LBpercentGraph)
+  if (options[["percentProcessVariationPlot"]])
     tablesAndGraphs[["plot2"]] <- plot2
 
   return(tablesAndGraphs)

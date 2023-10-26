@@ -18,15 +18,15 @@ Form
 
 		AssignedVariablesList
 		{
-			name:								"variables"
-			title:								qsTr("Variables")
+			name:								"measurement"
+			title:								qsTr("Measurement")
 			singleVariable:						true
 			allowedColumns:						["scale"]
 		}
 
 		AssignedVariablesList
 		{
-			name:								"subgroups"
+			name:								"axisLabels"
 			title:								qsTr("Axis labels")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
@@ -34,8 +34,8 @@ Form
 		
 		AssignedVariablesList
 		{
-			name:								"split"
-			title:								qsTr("Stages")
+			name:								"stage"
+			title:								qsTr("Stage")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
@@ -47,13 +47,13 @@ Form
 
 		CheckBox
 		{
-			name: 								"ImRchart"
+			name: 								"xmrChart"
 			label: 								qsTr("X-mR chart")
 			checked: 							true
 
 			DoubleField
 			{
-				name:							"movingRangeLength"
+				name:							"xmrChartMovingRangeLength"
 				label:							qsTr("Moving range length")
 				defaultValue:					2
 				min: 							2
@@ -61,13 +61,13 @@ Form
 			}
 		CheckBox
 		{
-			name:                   			"manualTicks"
+			name:								"manualTicksXAxis"
 			label: 								qsTr("Number of ticks on x-axis:")
 			childrenOnSameRow: true
 
 			DoubleField
 			{
-				name: 							"nTicks"
+				name: 							"manualTicksXAxisValue"
 				defaultValue:					5
 			}
 		}
@@ -75,13 +75,13 @@ Form
 
 		CheckBox
 		{
-			name: 								"CorPlot"
+			name: 								"autocorrelationPlot"
 			label: 								qsTr("Autocorrelation")
 			checked: 							false
 
 			DoubleField
 			{
-				name:						  	"nLag"
+				name:						  	"autocorrelationPlotLagsNumber"
 				label:						  	qsTr("Number of lags")
 				defaultValue:					25
 				min:			           	 	1
@@ -89,10 +89,10 @@ Form
 
 			DoubleField
 			{
-				name:							"CI"
+				name:							"autocorrelationPlotCiLevel"
 				label:							qsTr("Confidence interval size")
 				defaultValue:					0.95
-				min:			            	0.0001
+				min:							0.0001
 			}
 		}
 	}
@@ -103,7 +103,7 @@ Form
 
 		CheckBox
 		{
-			name: "variableChartIndividualsReport"
+			name: "report"
 			label: qsTr("Show report")
 			id:		variableChartIndividualsReport
 			columns: 2
@@ -116,45 +116,45 @@ Form
 
 				TextField
 				{
-					id:									ccTitle
+					id:									reportTitle
 					label: 								qsTr("Title")
-					name: 								"ccTitle"
+					name: 								"reportTitle"
 					placeholderText:					qsTr("Measurement")
 					fieldWidth:							100
 				}
 
 				TextField
 				{
-					id:									ccName
+					id:									reportMeasurementName
 					label: 								qsTr("Name")
-					name: 								"ccName"
+					name: 								"reportMeasurementName"
 					placeholderText:					qsTr("Name")
 					fieldWidth:							100
 				}
 
 				TextField
 				{
-					id:									ccDate
+					id:									reportDate
 					label: 								qsTr("Date")
-					name: 								"ccDate"
+					name: 								"reportDate"
 					placeholderText:					qsTr("Date")
 					fieldWidth:							100
 				}
 
 				TextField
 				{
-					id:									ccReportedBy
+					id:									reportReportedBy
 					label: 								qsTr("Reported by")
-					name: 								"ccReportedBy"
+					name: 								"reportReportedBy"
 					placeholderText:					qsTr("Name")
 					fieldWidth:							100
 				}
 
 				TextField
 				{
-					id:									ccMisc
+					id:									reportMiscellaneous
 					label: 								qsTr("Misc")
-					name: 								"ccMisc"
+					name: 								"reportMiscellaneous"
 					placeholderText:					qsTr("Miscellaneous")
 					fieldWidth:							100
 				}

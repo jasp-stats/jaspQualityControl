@@ -1,14 +1,14 @@
 context("[Quality Control] MSA Gauge non-replicabe")
 
 options <- analysisOptions("msaGaugeRRnonrep")
-options$parts <- "Batch"
-options$operators <- "Operator"
-options$measurements <- "Result"
-options$NRrCharts <- TRUE
-options$NRxbarCharts <- TRUE
-options$NRpartOperatorGraph <- TRUE
-options$NRpartOperatorGraphAll <- TRUE
-options$NRoperatorGraph <- TRUE
+options$part <- "Batch"
+options$operator <- "Operator"
+options$measurementLongFormat <- "Result"
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
 set.seed(1)
 
 results <- runAnalysis("msaGaugeRRnonrep", "msaGaugeNN.csv", options)

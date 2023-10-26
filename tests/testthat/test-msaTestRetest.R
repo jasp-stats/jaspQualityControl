@@ -1,19 +1,19 @@
 context("[Quality Control] MSA Test Retest")
 
 options <- analysisOptions("msaTestRetest")
-options$testRetestDataFormat <- "testRetestWideFormat"
-options$parts <- "Part"
-options$measurements <- c("X1", "X2")
-options$EnableRangePSD <- TRUE
-options$rangePSD <- 2
-options$EnableRangeTolerance <- TRUE
-options$rangeTolerance <- 0.5
-options$rangeRr <- TRUE
-options$rangeScatterPlotOperatorParts <- TRUE
-options$rangeScatterPlotOperators <- TRUE
-options$rangeScatterPlotFitLine <- TRUE
-options$rangeRchart <- TRUE
-options$trafficPlot <- TRUE
+options$dataFormat <- "wideFormat"
+options$part <- "Part"
+options$measurementsWideFormat <- c("X1", "X2")
+options$manualProcessSd <- TRUE
+options$manualProcessSdValue <- 2
+options$tolerance <- TRUE
+options$toleranceValue <- 0.5
+options$repeatabilityAndReproducibilityTable <- TRUE
+options$runChartPart <- TRUE
+options$scatterPlotMeasurement <- TRUE
+options$scatterPlotMeasurementFitLine <- TRUE
+options$rChart <- TRUE
+options$trafficLightChart <- TRUE
 
 results <- runAnalysis("msaTestRetest", "msaTestRetest.csv", options)
 

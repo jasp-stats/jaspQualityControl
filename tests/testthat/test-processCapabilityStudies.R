@@ -2,17 +2,17 @@ context("[Quality Control] Process Capability Study")
 
 #Long format
 options <- analysisOptions("processCapabilityStudies")
-options$variablesLong <- "Diameter"
+options$measurementLongFormat <- "Diameter"
 options$capabilityStudyType <- "normalCapabilityAnalysis"
-options$subgroups <- "Time"
-options$rank <- "Bernard"
-options$lowerSpecificationField <- TRUE
-options$upperSpecificationField <- TRUE
-options$targetValueField <- TRUE
-options$lowerSpecification <- -16
+options$subgroup <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$lowerSpecificationLimit <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$target <- TRUE
+options$lowerSpecificationLimitValue <- -16
 options$targetValue <- -8
-options$upperSpecification <- 0
-options$xbarR <- TRUE
+options$upperSpecificationLimitValue <- 0
+options$xBarAndRChart <- TRUE
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Long.csv", options)
 
@@ -75,9 +75,9 @@ test_that("Summary of test against the normal distribution table results match",
 })
 
 # Wide format
-options$pcDataFormat <- "PCwideFormat"
-options$variables <- c("dm1", "dm2", "dm3", "dm4", "dm5")
-options$IMR <- TRUE
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$xmrChart <- TRUE
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Wide.csv", options)
 
@@ -142,19 +142,19 @@ test_that("Summary of test against the normal distribution table results match",
 
 # Long format- Weibull
 options <- analysisOptions("processCapabilityStudies")
-options$pcDataFormat <- "PClongFormat"
-options$variablesLong <- "Ovality"
-options$capabilityStudyType <- "nonnormalCapabilityAnalysis"
-options$nonNormalDist <- "Weibull"
-options$rank <- "Bernard"
-options$lowerSpecificationField <- TRUE
-options$upperSpecificationField <- TRUE
-options$targetValueField <- FALSE
-options$lowerSpecification <- 0
+options$dataFormat <- "longFormat"
+options$measurementLongFormat <- "Ovality"
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "weibull"
+options$probabilityPlotRankMethod <- "bernard"
+options$lowerSpecificationLimit <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$target <- FALSE
+options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 0
-options$upperSpecification <- 15
-options$nullDistribution <- "Weibull"
-options$IMR <- TRUE
+options$upperSpecificationLimitValue <- 15
+options$nullDistribution <- "weibull"
+options$xmrChart <- TRUE
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)
 
@@ -210,9 +210,9 @@ test_that("Summary of test against the weibull distribution table results match"
 })
 
 # Long format- Weibull
-options$nonNormalDist <- "Lognormal"
-options$nullDistribution <- "Lognormal"
-options$xbarR <- T
+options$nonNormalDistribution <- "lognormal"
+options$nullDistribution <- "lognormal"
+options$xBarAndRChart <- TRUE
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)
 

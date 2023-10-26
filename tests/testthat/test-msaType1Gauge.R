@@ -1,10 +1,10 @@
 context("[Quality Control] MSA Type 1 Gauge")
 
 options <- analysisOptions("msaType1Gauge")
-options$measurements <- "dm"
-options$biasReferenceValue <- -4
-options$biasTolerance <- 15
-options$biasHistogram <- TRUE
+options$measurement <- "dm"
+options$referenceValue <- -4
+options$toleranceRange <- 15
+options$histogram <- TRUE
 set.seed(1)
 results <- runAnalysis("msaType1Gauge", "msaType1.csv", options)
 

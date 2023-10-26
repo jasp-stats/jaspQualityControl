@@ -2,10 +2,10 @@ context("[Quality Control] Variables Charts for Individuals")
 
 # basic test for IMR chart & table (verified with Minitab) and autocorrelation plot
 options <- analysisOptions("variablesChartsIndividuals")
-options$variables <- "Yield"
-options$subgroups <- "Month"
-options$CorPlot <- TRUE
-options$movingRangeLength <- 2
+options$measurement <- "Yield"
+options$axisLabels <- "Month"
+options$autocorrelationPlot <- TRUE
+options$xmrChartMovingRangeLength <- 2
 set.seed(1)
 results <- runAnalysis("variablesChartsIndividuals", "IndividualChartStages.csv", options)
 
@@ -37,8 +37,8 @@ test_that("Test results for range chart table results match", {
 })
 
 # test for different moving range lengths (verified with Minitab)
-options$CorPlot <- FALSE
-options$movingRangeLength <- 5
+options$autocorrelationPlot <- FALSE
+options$xmrChartMovingRangeLength <- 5
 results <- runAnalysis("variablesChartsIndividuals", "IndividualChartStages.csv", options)
 
 
@@ -64,7 +64,7 @@ test_that("Test results for range chart table results match", {
 })
 
 # test for more extreme moving range length (verified with Minitab)
-options$movingRangeLength <- 30
+options$xmrChartMovingRangeLength <- 30
 results <- runAnalysis("variablesChartsIndividuals", "IndividualChartStages.csv", options)
 test_that("titleless-plot-3 matches", {
   plotName <- results[["results"]][["Ichart"]][["collection"]][["Ichart_Yield"]][["collection"]][["Ichart_Yield_Plot"]][["data"]]
@@ -82,8 +82,8 @@ test_that("Test results for individuals chart table results match", {
 })
 
 # test analysis of stages plot (verified with Minitab)
-options$split <- "Stage"
-options$movingRangeLength <- 2
+options$stage <- "Stage"
+options$xmrChartMovingRangeLength <- 2
 results <- runAnalysis("variablesChartsIndividuals", "IndividualChartStages.csv", options)
 
 
