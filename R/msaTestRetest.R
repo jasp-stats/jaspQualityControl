@@ -69,15 +69,15 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   }
 
   # Rchart Range method
-  if (options[["rangeRchart"]] && is.null(jaspResults[["rangeRchart"]])) {
-    jaspResults[["rangeRchart"]] <- createJaspContainer(gettext("Range Method R Chart"))
-    jaspResults[["rangeRchart"]]$position <- 3
-    jaspResults[["rangeRchart"]]$dependOn(c("rangeRchart", "measurements", "measurementsLong", "parts"))
-    jaspResults[["rangeRchart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
+  if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
+    jaspResults[["rChart"]] <- createJaspContainer(gettext("Range Method R Chart"))
+    jaspResults[["rChart"]]$position <- 3
+    jaspResults[["rChart"]]$dependOn(c("rChart", "measurements", "measurementsLong", "parts"))
+    jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
     if (ready) {
       rChart <- .controlChart(dataset = dataset[measurements], plotType = "R", xAxisLabels = dataset[[parts]])
-      jaspResults[["rangeRchart"]][["plot"]]$plotObject <- rChart$plotObject
-      jaspResults[["rangeRchart"]][["table"]] <- rChart$table
+      jaspResults[["rChart"]][["plot"]]$plotObject <- rChart$plotObject
+      jaspResults[["rChart"]][["table"]] <- rChart$table
     }
   }
 

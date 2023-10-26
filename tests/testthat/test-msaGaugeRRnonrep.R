@@ -39,19 +39,19 @@ test_that("Operator C plot matches", {
 
 
 test_that("Range chart by operator plot matches", {
-  plotName <- results[["results"]][["NRrCharts"]][["collection"]][["NRrCharts_plot"]][["data"]]
+  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "range-chart-by-operator")
 })
 
 test_that("Average chart by operator plot matches", {
-  plotName <- results[["results"]][["NRxbarCharts"]][["collection"]][["NRxbarCharts_plot"]][["data"]]
+  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator")
 })
 
 test_that("Test results for x-bar chart table results match", {
-  table <- results[["results"]][["NRxbarCharts"]][["collection"]][["NRxbarCharts_table"]][["data"]]
+  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("A", 2, "", 3, "", 4, "", 5, "B", 6, "", 7, "", 8, "", 10, "C",
                                       11, "", 12, "", 13, "", 15))

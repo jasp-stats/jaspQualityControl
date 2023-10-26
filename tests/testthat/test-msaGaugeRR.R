@@ -88,7 +88,7 @@ test_that("Measurements by Part plot matches", {
 })
 
 test_that("Range chart by operator plot matches", {
-  plotName <- results[["results"]][["gaugeRchart"]][["collection"]][["gaugeRchart_plot"]][["data"]]
+  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "range-chart-by-operator")
 })
@@ -100,13 +100,13 @@ test_that("Matrix Plot for Operators matches", {
 })
 
 test_that("Average chart by operator plot matches", {
-  plotName <- results[["results"]][["gaugeXbarChart"]][["collection"]][["gaugeXbarChart_plot"]][["data"]]
+  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator")
 })
 
 test_that("Test results for x-bar chart table results match", {
-  table <- results[["results"]][["gaugeXbarChart"]][["collection"]][["gaugeXbarChart_table"]][["data"]]
+  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Operator A", 1, "", 2, "", 3, "", 4, "", 5, "", 6, "", 7, "",
                                       8, "", 9, "", 10, "Operator B", 1, "", 2, "", 3, "", 4, "",
@@ -189,13 +189,13 @@ test_that("Measurements by Part plot matches", {
 })
 
 test_that("Range chart by operator plot matches", {
-  plotName <- results[["results"]][["gaugeRchart"]][["collection"]][["gaugeRchart_plot"]][["data"]]
+  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "range-chart-by-operator-Wide")
 })
 
 test_that("Test results for range chart table results match", {
-  table <- results[["results"]][["gaugeRchart"]][["collection"]][["gaugeRchart_table"]][["data"]]
+  table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("C", 10))
 })
@@ -207,13 +207,13 @@ test_that("Matrix Plot for Operators matches", {
 })
 
 test_that("Average chart by operator plot matches", {
-  plotName <- results[["results"]][["gaugeXbarChart"]][["collection"]][["gaugeXbarChart_plot"]][["data"]]
+  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "average-chart-by-operator-Wide")
 })
 
 test_that("Test results for x-bar chart table results match", {
-  table <- results[["results"]][["gaugeXbarChart"]][["collection"]][["gaugeXbarChart_table"]][["data"]]
+  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("A", 1, "", 5, "", 8, "", 10, "B", 1, "", 5, "", 8, "", 10, "C",
                                       1, "", 3, "", 5, "", 10))

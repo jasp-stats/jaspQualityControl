@@ -8,7 +8,7 @@ set.seed(1)
 
 ### x-bar & r chart with manual subgroup size (verified with Minitab)
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
+options$measurementLongFormat <- "Diameter"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
                        options)
@@ -21,8 +21,8 @@ test_that("Basic test to create X-bar & R control chart with manual subgroups", 
 
 ### x-bar & s chart with manual subgroup size (verified with Minitab) Note: JASP does not use the unbiasing constant.
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
-options$TypeChart <- "xBarSchart"
+options$measurementLongFormat <- "Diameter"
+options$chartType <- "xBarAndS"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
                        options)
@@ -35,7 +35,7 @@ plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCha
 
 ### x-bar & r chart with manual subgroup size and stages (verified with Minitab)
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
+options$measurementLongFormat <- "Diameter"
 options$stages <- "Stage"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatStages.csv",
@@ -50,8 +50,8 @@ test_that("Basic test to create X-bar & R control chart with manual subgroups an
 
 ### x-bar & s chart with manual subgroup size and stages (verified with Minitab) Note: JASP does not use the unbiasing constant.
 options <- analysisOptions("variablesChartsSubgroups")
-options$TypeChart <- "xBarSchart"
-options$variablesLong <- "Diameter"
+options$chartType <- "xBarAndS"
+options$measurementLongFormat <- "Diameter"
 options$stages <- "Stage"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatStages.csv",
@@ -65,8 +65,8 @@ test_that("Basic test to create X-bar & s control chart with manual subgroups an
 
 ### x-bar & r chart with subgroup variable (verfied with Minitab)
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
-options$subgroups <- "Time"
+options$measurementLongFormat <- "Diameter"
+options$subgroup <- "Time"
 options$subgroupSizeType <- "groupingVariable"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
@@ -80,9 +80,9 @@ test_that("Basic test to create X-bar & R control chart with subgroup variable",
 
 ### x-bar & s chart with subgroup variable (verified with Minitab) Note: JASP does not use the unbiasing constant.
 options <- analysisOptions("variablesChartsSubgroups")
-options$TypeChart <- "xBarSchart"
-options$variablesLong <- "Diameter"
-options$subgroups <- "Time"
+options$chartType <- "xBarAndS"
+options$measurementLongFormat <- "Diameter"
+options$subgroup <- "Time"
 options$subgroupSizeType <- "groupingVariable"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
@@ -96,9 +96,9 @@ test_that("Basic test to create X-bar & s control chart with subgroup variable",
 
 ### x-bar & r chart with subgroup variable and stages (verified with Minitab)
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
+options$measurementLongFormat <- "Diameter"
 options$stages <- "Stage"
-options$subgroups <- "Time"
+options$subgroup <- "Time"
 options$subgroupSizeType <- "groupingVariable"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatStages.csv",
@@ -112,10 +112,10 @@ test_that("Basic test to create X-bar & R control chart with subgroup variable a
 
 ### x-bar & s chart with subgroup variable and stages (verified with Minitab) Note: JASP does not use the unbiasing constant.
 options <- analysisOptions("variablesChartsSubgroups")
-options$TypeChart <- "xBarSchart"
-options$variablesLong <- "Diameter"
+options$chartType <- "xBarAndS"
+options$measurementLongFormat <- "Diameter"
 options$stages <- "Stage"
-options$subgroups <- "Time"
+options$subgroup <- "Time"
 options$subgroupSizeType <- "groupingVariable"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatStages.csv",
@@ -129,8 +129,8 @@ test_that("Basic test to create X-bar & R control chart with subgroup variable a
 
 ### x-bar & r chart with warning limits (verified with Minitab)
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
-options$Wlimits <- TRUE
+options$measurementLongFormat <- "Diameter"
+options$warningLimits <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
                        options)
@@ -143,9 +143,9 @@ test_that("Basic test of adding warning limits to X-bar & R control chart", {
 
 ### x-bar & s chart with warning limits Note: JASP does not use the unbiasing constant.
 options <- analysisOptions("variablesChartsSubgroups")
-options$TypeChart <- "xBarSchart"
-options$variablesLong <- "Diameter"
-options$Wlimits <- TRUE
+options$chartType <- "xBarAndS"
+options$measurementLongFormat <- "Diameter"
+options$warningLimits <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
                        options)
@@ -158,10 +158,10 @@ test_that("Basic test of adding warning limits to X-bar & s control chart", {
 
 ### x-bar & r chart with known parameters (verified with Minitab)
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
-options$Phase2 <- TRUE
-options$mean <- 0
-options$SD <- 3
+options$measurementLongFormat <- "Diameter"
+options$knownParameters <- TRUE
+options$knownParametersMean <- 0
+options$knownParametersSd <- 3
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
                        options)
@@ -188,11 +188,11 @@ test_that("Basic test of adding known parameters to X-bar & r control chart - R 
 
 ### x-bar & s chart with known parameters (verified with Minitab) Note: JASP does not use the unbiasing constant
 options <- analysisOptions("variablesChartsSubgroups")
-options$TypeChart <- "xBarSchart"
-options$variablesLong <- "Diameter"
-options$Phase2 <- TRUE
-options$mean <- 0
-options$SD <- 3
+options$chartType <- "xBarAndS"
+options$measurementLongFormat <- "Diameter"
+options$knownParameters <- TRUE
+options$knownParametersMean <- 0
+options$knownParametersSd <- 3
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
                        options)
@@ -220,8 +220,8 @@ test_that("Basic test of adding known parameters to X-bar & s control chart - s 
 
 ### x-bar & r chart with changed manual subgroup size value (verified with Minitab)
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
-options$CCSubgroupSize <- 10
+options$measurementLongFormat <- "Diameter"
+options$manualSubgroupSizeValue <- 10
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
                        options)
@@ -234,9 +234,9 @@ test_that("Basic test of changing manual subgroup size with X-bar & R control ch
 
 ### x-bar & s chart with changed manual subgroup size value (verified with Minitab) Note: JASP does not use the unbiasing constant
 options <- analysisOptions("variablesChartsSubgroups")
-options$TypeChart <- "xBarSchart"
-options$variablesLong <- "Diameter"
-options$CCSubgroupSize <- 10
+options$chartType <- "xBarAndS"
+options$measurementLongFormat <- "Diameter"
+options$manualSubgroupSizeValue <- 10
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
                        options)
@@ -249,32 +249,32 @@ test_that("Basic test of changing manual subgroup size with X-bar & s control ch
 
 ### Report function with x-bar & r chart (verified with Minitab)
 options <- analysisOptions("variablesChartsSubgroups")
-options$variablesLong <- "Diameter"
-options$ccName <- "Report name"
-options$ccDate <- "01.01.2000"
-options$ccSubTitle <- "Your report sub-title"
-options$ccReportedBy <- "Operator name"
-options$ccMisc <- "Various comments"
-options$CCReport <- TRUE
+options$measurementLongFormat <- "Diameter"
+options$reportMeasurementName <- "Report name"
+options$reportDate <- "01.01.2000"
+options$reportSubtitle <- "Your report sub-title"
+options$reportReportedBy <- "Operator name"
+options$reportMiscellaneous <- "Various comments"
+options$report <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
                        options)
 
 test_that("Basic test to create report of X-bar & R control chart", {
-  plotName <- results[["results"]][["CCReport"]][["collection"]][["CCReport_ccReport"]][["data"]]
+  plotName <- results[["results"]][["report"]][["collection"]][["report_report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-r-report1")
 })
 
 ### Report function with x-bar & s chart (verified with Minitab) Note: JASP does not use the unbiasing constant
 options <- analysisOptions("variablesChartsSubgroups")
-options$TypeChart <- "xBarSchart"
-options$variablesLong <- "Diameter"
-options$ccName <- "Report name"
-options$ccDate <- "01.01.2000"
-options$ccSubTitle <- "Your report sub-title"
-options$ccReportedBy <- "Operator name"
-options$ccMisc <- "Various comments"
+options$chartType <- "xBarAndS"
+options$measurementLongFormat <- "Diameter"
+options$reportMeasurementName <- "Report name"
+options$reportDate <- "01.01.2000"
+options$reportSubtitle <- "Your report sub-title"
+options$reportReportedBy <- "Operator name"
+options$reportMiscellaneous <- "Various comments"
 options$CCReport <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",

@@ -112,8 +112,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       jaspResults[["anovaGaugeReport"]]$position <- 9
     }
     jaspResults[["gaugeANOVA"]]  <- NULL
-    jaspResults[["gaugeRchart"]] <- NULL
-    jaspResults[["gaugeXbarChart"]] <- NULL
+    jaspResults[["rChart"]] <- NULL
+    jaspResults[["xBarChart"]] <- NULL
     jaspResults[["gaugeScatterOperators"]] <- NULL
     jaspResults[["gaugeByPart"]] <- NULL
     jaspResults[["gaugeScatterOperators"]] <- NULL
@@ -137,34 +137,34 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
 
     # R chart by operator
-    if (options[["gaugeRchart"]] && is.null(jaspResults[["gaugeRchart"]])) {
-      jaspResults[["gaugeRchart"]] <- createJaspContainer(gettext("Range chart by operator"))
-      jaspResults[["gaugeRchart"]]$position <- 3
-      jaspResults[["gaugeRchart"]]$dependOn(c("gaugeRchart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
-      jaspResults[["gaugeRchart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
+    if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
+      jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
+      jaspResults[["rChart"]]$position <- 3
+      jaspResults[["rChart"]]$dependOn(c("rChart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
+      jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
       if (ready) {
         rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R",
                                             stages = operators, xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                             stagesSeparateCalculation = FALSE)
 
-        jaspResults[["gaugeRchart"]][["plot"]]$plotObject <- rChart$plotObject
-        jaspResults[["gaugeRchart"]][["table"]] <- rChart$table
+        jaspResults[["rChart"]][["plot"]]$plotObject <- rChart$plotObject
+        jaspResults[["rChart"]][["table"]] <- rChart$table
       }
     }
 
     # Xbar chart by operator
-    if (options[["gaugeXbarChart"]] && is.null(jaspResults[["gaugeXbarChart"]])) {
-      jaspResults[["gaugeXbarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
-      jaspResults[["gaugeXbarChart"]]$position <- 4
-      jaspResults[["gaugeXbarChart"]]$dependOn(c("gaugeXbarChart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
-      jaspResults[["gaugeXbarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
+    if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
+      jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
+      jaspResults[["xBarChart"]]$position <- 4
+      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
+      jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
       if (ready) {
         xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)],
                                                plotType = "xBar", xBarSdType = "r", stages = operators,
                                                xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                                stagesSeparateCalculation = FALSE)
-        jaspResults[["gaugeXbarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
-        jaspResults[["gaugeXbarChart"]][["table"]] <- xBarChart$table
+        jaspResults[["xBarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
+        jaspResults[["xBarChart"]][["table"]] <- xBarChart$table
       }
     }
 
