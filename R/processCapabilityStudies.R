@@ -121,7 +121,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["pcReport"]]$position <- 6
     }
     jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat, subgroups, axisLabels)
-    jaspResults[["pcReport"]]$dependOn(c("pcReportDisplay", "variables", "variablesLong", "subgroups", "controlChartType"))
+    jaspResults[["pcReport"]]$dependOn(c("report", "variables", "variablesLong", "subgroups", "controlChartType"))
   } else {
     # X-bar and R Chart OR ImR OR X-bar and mR Chart
     if(options[["controlChartType"]] == "xBarR" | options[["controlChartType"]] == "xBarMR"  | options[["controlChartType"]] == "xBarS") {
@@ -139,7 +139,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                 "xBarMR" = "mR")
       # first chart is always xBar-chart, second is either R-, mR-, or s-chart
       jaspResults[["xBar"]] <- createJaspContainer(gettextf("X-bar & %s Control Chart", secondPlotTitle))
-      jaspResults[["xBar"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "pcReportDisplay"))
+      jaspResults[["xBar"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "report"))
       jaspResults[["xBar"]]$position <- 1
 
 
@@ -163,20 +163,20 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         jaspResults[["xBar"]][["tableXBar"]] <- xBarChart$table
         jaspResults[["xBar"]][["tableSecondPlot"]] <- secondPlot$table
       }
-    } else if(options[["controlChartType"]] == "IMR") {
-      jaspResults[["IMR"]] <- createJaspContainer(gettext("X-mR Control Chart"))
-      jaspResults[["IMR"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "pcReportDisplay"))
-      jaspResults[["IMR"]]$position <- 1
-      if (ready && is.null(jaspResults[["IMR"]][["plot"]])) {
-        jaspResults[["IMR"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
+    } else if(options[["controlChartType"]] == "xmr") {
+      jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR Control Chart"))
+      jaspResults[["xmr"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "report"))
+      jaspResults[["xmr"]]$position <- 1
+      if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
+        jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
         individualChart <- .controlChart(dataset = dataset[measurements], plotType = "I",
                                                      xAxisLabels = axisLabels)
         mrChart <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels,
-                                             movingRangeLength = options[["movingRangeLength"]])
-        jaspResults[["IMR"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
+                                             movingRangeLength = options[["xmrChartMovingRangeLength"]])
+        jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
                                                                               layout = matrix(2:1, 2), removeXYlabels= "x")
-        jaspResults[["IMR"]][["tableIndividual"]] <- individualChart$table
-        jaspResults[["IMR"]][["tableMR"]] <- mrChart$table
+        jaspResults[["xmr"]][["tableIndividual"]] <- individualChart$table
+        jaspResults[["xmr"]][["tableMR"]] <- mrChart$table
       }
     }
 
@@ -1548,13 +1548,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "R",
                                                             xAxisLabels = axisLabels)$plotObject
-    } else if (options[["controlChartType"]] == "IMR"){
+    } else if (options[["controlChartType"]] == "xmr"){
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "I",
                                                             xAxisLabels = axisLabels)$plotObject
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels,
-                                                            movingRangeLength = options[["movingRangeLength"]])$plotObject
+                                                            movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
     }
   }
   if (options[["reportProcessCapabilityPlot"]]) {

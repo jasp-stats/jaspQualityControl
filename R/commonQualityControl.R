@@ -7,19 +7,6 @@
 #############################################################
 ## Common functions for plots ###############################
 #############################################################
-.qcReadData <- function(dataset, options, type) {
-  if (type == "capabilityStudy") {
-    if (is.null(dataset)) {
-      if (options[["subgroup"]] != "") {
-        dataset <- .readDataSetToEnd(columns.as.numeric = options[["measurementsWideFormat"]], columns.as.factor = options[["subgroup"]])
-      } else {
-        dataset <- .readDataSetToEnd(columns.as.numeric = options[["measurementsWideFormat"]])
-      }
-    }
-  }
-  return(dataset)
-}
-
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   # Adjust Rules to SKF

@@ -302,8 +302,8 @@ Form
 
 				RadioButton
 				{
-					name: 				"IMR"
-					id : 				imr
+					name: 				"xmr"
+					id : 				xmr
 					label: 				qsTr("X-mR chart")
 					enabled:			pcDataFormat.currentValue == "PClongFormat"
 					visible:			pcDataFormat.currentValue == "PClongFormat"

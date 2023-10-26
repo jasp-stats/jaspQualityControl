@@ -69,10 +69,10 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       jaspResults[["anovaGaugeNestedReport"]]$dependOn("anovaGaugeNestedReport")
     }
     jaspResults[["gaugeRRNonRep"]] <- NULL
-    jaspResults[["NRxbarCharts"]] <- NULL
+    jaspResults[["xBarChart"]] <- NULL
     jaspResults[["NRpartOperatorGraph"]] <- NULL
     jaspResults[["NRoperatorGraph"]] <- NULL
-    jaspResults[["NRrCharts"]] <- NULL
+    jaspResults[["rChart"]] <- NULL
     jaspResults[["anovaGaugeNestedReport"]] <- .anovaGaugeNestedReport(datasetWide, datasetLong, wideMeasurementCols, longMeasurementCols, parts = parts, operators = operators, options = options)
   } else {
     # Gauge r&R non replicable
@@ -87,35 +87,35 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     }
 
     # R chart by operator
-    if (options[["NRrCharts"]] && is.null(jaspResults[["NRrCharts"]])) {
-      jaspResults[["NRrCharts"]] <- createJaspContainer(gettext("Range Chart by Operator"))
-      jaspResults[["NRrCharts"]]$position <- 2
-      jaspResults[["NRrCharts"]]$dependOn(c("NRrCharts", "measurements", "measurementsWide"))
-      jaspResults[["NRrCharts"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
+    if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
+      jaspResults[["rChart"]] <- createJaspContainer(gettext("Range Chart by Operator"))
+      jaspResults[["rChart"]]$position <- 2
+      jaspResults[["rChart"]]$dependOn(c("rChart", "measurements", "measurementsWide"))
+      jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
 
       if (ready) {
         rChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
                                             plotType = "R", stages = operators,
                                             xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
                                             stagesSeparateCalculation = FALSE)
-        jaspResults[["NRrCharts"]][["plot"]]$plotObject <- rChart$plotObject
-        jaspResults[["NRrCharts"]][["table"]] <- rChart$table
+        jaspResults[["rChart"]][["plot"]]$plotObject <- rChart$plotObject
+        jaspResults[["rChart"]][["table"]] <- rChart$table
       }
     }
 
     # Xbar chart by operator
-    if (options[["NRxbarCharts"]] && is.null(jaspResults[["NRxbarCharts"]])) {
-        jaspResults[["NRxbarCharts"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
-        jaspResults[["NRxbarCharts"]]$position <- 3
-        jaspResults[["NRxbarCharts"]]$dependOn(c("NRxbarCharts", "measurements", "measurementsWide"))
-        jaspResults[["NRxbarCharts"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
+    if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
+        jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
+        jaspResults[["xBarChart"]]$position <- 3
+        jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurements", "measurementsWide"))
+        jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
         if (ready) {
           xBarChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
                                                  plotType = "xBar", xBarSdType = "r", stages = operators,
                                                  xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
                                                  stagesSeparateCalculation = FALSE)
-          jaspResults[["NRxbarCharts"]][["plot"]]$plotObject <- xBarChart$plotObject
-          jaspResults[["NRxbarCharts"]][["table"]] <- xBarChart$table
+          jaspResults[["xBarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
+          jaspResults[["xBarChart"]][["table"]] <- xBarChart$table
 
         }
     }

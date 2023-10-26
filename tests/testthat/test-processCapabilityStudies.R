@@ -154,24 +154,24 @@ options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 0
 options$upperSpecification <- 15
 options$nullDistribution <- "Weibull"
-options$controlChartType <- "IMR"
+options$controlChartType <- "xmr"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)
 
 test_that("X-mR Control Chart plot matches", {
-  plotName <- results[["results"]][["IMR"]][["collection"]][["IMR_plot"]][["data"]]
+  plotName <- results[["results"]][["xmr"]][["collection"]][["xmr_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-mr-control-chart")
 })
 
 test_that("Test results for individuals chart table results match", {
-  table <- results[["results"]][["IMR"]][["collection"]][["IMR_tableIndividual"]][["data"]]
+  table <- results[["results"]][["xmr"]][["collection"]][["xmr_tableIndividual"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(3, 11, 42, 12, 100, ""))
 })
 
 test_that("Test results for moving range chart table results match", {
-  table <- results[["results"]][["IMR"]][["collection"]][["IMR_tableMR"]][["data"]]
+  table <- results[["results"]][["xmr"]][["collection"]][["xmr_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(3, 11, 42, 29, 43, 50, "", 51))
 })

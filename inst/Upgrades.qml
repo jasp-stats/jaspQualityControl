@@ -432,8 +432,6 @@ Upgrades
 		ChangeRename {from: "Phase2";										to: "knownParameters"}
 		ChangeRename {from: "mean";											to: "knownParametersMean"}
 		ChangeRename {from: "SD";											to: "knownParametersSd"}
-		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
-		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
 		
 		// report
 		ChangeRename {from: "CCReport";									to: "report"}
@@ -460,8 +458,6 @@ Upgrades
 		ChangeRename {from: "split";										to: "stage"}
 		ChangeRename {from: "ImRchart";										to: "xmrChart"}
 		ChangeRename {from: "movingRangeLength";							to: "xmrChartMovingRangeLength"}
-		ChangeRename {from: "manualTicks";									to: "manualTicksXAxis"}
-		ChangeRename {from: "nTicks";										to: "manualTicksXAxisValue"}
 		ChangeRename {from: "CorPlot";										to: "autocorrelationPlot"}
 		ChangeRename {from: "nLag";											to: "autocorrelationPlotLagsNumber"}
 		ChangeRename {from: "CI";											to: "autocorrelationPlotCiLevel"}
@@ -656,8 +652,6 @@ Upgrades
 		ChangeRename {from: "CapabilityStudyTables";						to: "processCapabilityTable"}
 		ChangeRename {from: "csConfidenceInterval";							to: "processCapabilityTableCi"}
 		ChangeRename {from: "csConfidenceIntervalPercent";					to: "processCapabilityTableCiLevel"}
-		ChangeRename {from: "xbarR";										to: "xBarAndRChart"}
-		ChangeRename {from: "IMR";											to: "xmrChart"}
 		ChangeRename {from: "movingRangeLength";							to: "xmrChartMovingRangeLength"}
 		ChangeRename {from: "displayDensity";								to: "histogramDensityLine"}
 		ChangeRename {from: "pcNumberOfBins";								to: "histogramBinNumber"}
