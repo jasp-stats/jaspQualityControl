@@ -1,4 +1,5 @@
 context("[Quality Control] MSA Test Retest")
+.numDecimals <-2
 
 options <- analysisOptions("msaTestRetest")
 options$dataFormat <- "wideFormat"
@@ -37,9 +38,9 @@ test_that("Short gauge study table results match", {
 })
 
 test_that("Range chart by part plot matches", {
-  plotName <- results[["results"]][["rangeRchart"]][["collection"]][["rangeRchart_plot"]][["data"]]
-  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "range-chart-by-part")
+	plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
+	testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+	jaspTools::expect_equal_plots(testPlot, "range-chart-by-part")
 })
 
 test_that("Traffic light chart matches", {

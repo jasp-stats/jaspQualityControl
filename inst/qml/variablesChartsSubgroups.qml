@@ -101,7 +101,7 @@ Form
 					
 					DoubleField
 					{
-						name: 									"manualSubgrouSizeValue"
+						name: 									"manualSubgroupSizeValue"
 						min: 									2
 						defaultValue:							5
 					}

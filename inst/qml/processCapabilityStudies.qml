@@ -270,8 +270,8 @@ Form
 					name: 				"xBarR"
 					id : 				xbarR
 					label: 				qsTr("X-bar & R chart")
-					enabled:			(pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value > 1) | pcDataFormat.currentValue == "PCwideFormat"
-					checked:			pcDataFormat.currentValue == "PCwideFormat" | (pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value > 1)
+					enabled:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
+					checked:			dataFormat.currentValue == "wideFormat" | (dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1)
 				}
 
 				RadioButton
@@ -279,7 +279,7 @@ Form
 					name: 				"xBarS"
 					id : 				xbarS
 					label: 				qsTr("X-bar & s chart")
-					enabled:			(pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value > 1) | pcDataFormat.currentValue == "PCwideFormat"
+					enabled:			(dataFormat.currentValue == "PClongFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
 				} 
 
 				RadioButton
@@ -287,12 +287,12 @@ Form
 					name: 				"xBarMR"
 					id : 				xbarMR
 					label: 				qsTr("X-bar & mR chart")
-					enabled:			pcDataFormat.currentValue == "PCwideFormat"
-					visible:			pcDataFormat.currentValue == "PCwideFormat"
+					enabled:			dataFormat.currentValue == "wideFormat"
+					visible:			dataFormat.currentValue == "wideFormat"
 
 					DoubleField
 					{
-					name:							"xBarmovingRangeLength"
+					name:							"xBarMovingRangeLength"
 					label:							qsTr("Moving range length")
 					defaultValue:					2
 					min: 							2
@@ -305,13 +305,13 @@ Form
 					name: 				"xmr"
 					id : 				xmr
 					label: 				qsTr("X-mR chart")
-					enabled:			pcDataFormat.currentValue == "PClongFormat"
-					visible:			pcDataFormat.currentValue == "PClongFormat"
-					checked:			(pcDataFormat.currentValue == "PClongFormat" & pcSubgroupSize.value == 1)
+					enabled:			dataFormat.currentValue == "longFormat"
+					visible:			dataFormat.currentValue == "longFormat"
+					checked:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value == 1)
 
 					DoubleField
 					{
-					name:							"movingRangeLength"
+					name:							"xmrChartMovingRangeLength"
 					label:							qsTr("Moving range length")
 					defaultValue:					2
 					min: 							2

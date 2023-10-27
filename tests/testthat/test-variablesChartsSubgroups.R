@@ -255,6 +255,7 @@ options$reportDate <- "01.01.2000"
 options$reportSubtitle <- "Your report sub-title"
 options$reportReportedBy <- "Operator name"
 options$reportMiscellaneous <- "Various comments"
+options$reportChartName <- "Name of chart"
 options$report <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
@@ -275,13 +276,14 @@ options$reportDate <- "01.01.2000"
 options$reportSubtitle <- "Your report sub-title"
 options$reportReportedBy <- "Operator name"
 options$reportMiscellaneous <- "Various comments"
-options$CCReport <- TRUE
+options$reportChartName <- "Name of chart"
+options$report <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormat.csv",
                        options)
 
 test_that("Basic test to create report of X-bar & s control chart", {
-  plotName <- results[["results"]][["CCReport"]][["collection"]][["CCReport_ccReport"]][["data"]]
+  plotName <- results[["results"]][["report"]][["collection"]][["report_report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-s-report1")
 })

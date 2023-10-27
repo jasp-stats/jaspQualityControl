@@ -18,14 +18,14 @@
 #' @export
 variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
-  #dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartLongFormatStagesMultiDefined.csv")
-  #dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Datasets/ControlChartError.csv")
+  #dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartLongFormatStagesMultiDefined.csv")
+  #dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/Datasets/ControlChartError.csv")
 
   wideFormat <- (options[["dataFormat"]] == "wideFormat")
 
   # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
   if (wideFormat) {
-    measurements <- unlist(measurementsWideFormat"]])
+    measurements <- unlist(options[["measurementsWideFormat"]])
     axisLabels <- options[["axisLabels"]]
     factorVariables <- axisLabels
   } else {

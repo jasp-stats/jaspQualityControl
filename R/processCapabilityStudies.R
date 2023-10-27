@@ -157,7 +157,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
         xBarChart <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
                                                xAxisLabels = axisLabels)
-        secondPlot <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels)
+        secondPlot <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels, movingRangeLength = options[["xBarMovingRangeLength"]])
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
         jaspResults[["xBar"]][["tableXBar"]] <- xBarChart$table
