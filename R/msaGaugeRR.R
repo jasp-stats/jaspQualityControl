@@ -236,7 +236,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
   RRtable2$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
   RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation"), type = "number")
-  RRtable2$addColumnInfo(name = "percentStudyVar", title = gettext("% Study Variation"), type = "integer")
+  RRtable2$addColumnInfo(name = "percentStudyVar", title = gettextf("%% Study Variation"), type = "integer")
   if(options[["tolerance"]])
     RRtable2$addColumnInfo(name = "percentTolerance", title = gettextf("%% Tolerance"), type = "integer")
 
