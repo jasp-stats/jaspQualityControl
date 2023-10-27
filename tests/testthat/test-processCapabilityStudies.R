@@ -1,4 +1,5 @@
 context("[Quality Control] Process Capability Study")
+.numDecimals <- 2
 
 #Long format
 options <- analysisOptions("processCapabilityStudies")
@@ -11,7 +12,7 @@ options$upperSpecificationLimit <- TRUE
 options$target <- TRUE
 options$lowerSpecificationLimitValue <- -16
 options$targetValue <- -8
-options$upperSpecification <- 0
+options$upperSpecificationLimitValue <- 0
 options$controlChartType <- "xBarR"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Long.csv", options)
@@ -75,8 +76,8 @@ test_that("Summary of test against the normal distribution table results match",
 })
 
 # Wide format
-options$pcDataFormat <- "PCwideFormat"
-options$variables <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$controlChartType <- "xBarMR"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Wide.csv", options)
@@ -146,14 +147,14 @@ options$dataFormat <- "longFormat"
 options$measurementLongFormat <- "Ovality"
 options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
 options$nonNormalDistribution <- "weibull"
+options$nullDistribution <- "weibull"
 options$probabilityPlotRankMethod <- "bernard"
 options$lowerSpecificationLimit <- TRUE
 options$upperSpecificationLimit <- TRUE
 options$target <- FALSE
 options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 0
-options$upperSpecification <- 15
-options$nullDistribution <- "Weibull"
+options$upperSpecificationLimitValue <- 15
 options$controlChartType <- "xmr"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)
@@ -222,8 +223,9 @@ test_that("Summary of test against the weibull distribution table results match"
 })
 
 # Long format- Weibull
-options$nonNormalDist <- "Lognormal"
-options$nullDistribution <- "Lognormal"
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "lognormal"
+options$nullDistribution <- "lognormal"
 options$controlChartType <- "xBarS"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)

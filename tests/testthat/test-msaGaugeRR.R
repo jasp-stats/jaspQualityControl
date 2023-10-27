@@ -224,14 +224,14 @@ options <- analysisOptions("msaGaugeRR")
 data <- read.csv("msaGaugeRR_Type3_Long.csv")
 options$dataFormat <- "longFormat"
 names(data)[1] <- "Parts"
-options$operators <- ""
-options$parts <- "Parts"
-options$measurementsLong <- "dm"
-options$Type3 <- TRUE
-options$gaugeToleranceEnabled <- TRUE
-options$tolerance <- 12
-options$TypeForFstat <- 'RandomEffects'
-options$gaugeByPart <- TRUE
+options$operator <- ""
+options$part <- "Parts"
+options$measurementLongFormat <- "dm"
+options$type3 <- TRUE
+options$tolerance <- TRUE
+options$toleranceValue <- 12
+options$anovaModelType <- 'RandomEffects'
+options$partMeasurementPlot <- TRUE
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", data, options)
 
@@ -312,3 +312,4 @@ test_that("Measurements by Part plot matches", {
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "measurements-by-part-WideType3")
 })
+
