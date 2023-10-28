@@ -68,10 +68,6 @@ msgid "p chart"
 msgstr "p 控制图"
 
 msgctxt "attributesCharts|"
-msgid "Laney p' (p-prime) chart"
-msgstr "Laney p' 控制图"
-
-msgctxt "attributesCharts|"
 msgid "Defects"
 msgstr "缺陷"
 
@@ -82,10 +78,6 @@ msgstr "c 控制图"
 msgctxt "attributesCharts|"
 msgid "u chart"
 msgstr "u 控制图"
-
-msgctxt "attributesCharts|"
-msgid "Laney u' (u-prime) chart"
-msgstr "Laney u' 控制图"
 
 msgctxt "attributesCharts|"
 msgid "X-mR chart"
@@ -114,14 +106,6 @@ msgstr "难改变因子数"
 msgctxt "doeFactorial|"
 msgid "Resolution"
 msgstr "分辨度"
-
-msgctxt "msaAttribute|"
-msgid "Operators"
-msgstr "操作者"
-
-msgctxt "msaAttribute|"
-msgid "Parts"
-msgstr "零件"
 
 msgctxt "msaAttribute|"
 msgid "Standard"
@@ -174,14 +158,6 @@ msgstr "过程变异百分比图"
 msgctxt "msaGaugeRR|"
 msgid "Data format"
 msgstr "数据格式"
-
-msgctxt "msaGaugeRR|"
-msgid "Operators"
-msgstr "操作者"
-
-msgctxt "msaGaugeRR|"
-msgid "Parts"
-msgstr "零件"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements"
@@ -278,10 +254,6 @@ msgstr "研究标准差"
 msgctxt "msaGaugeRRnonrep|"
 msgid "Historical process Std. Deviation"
 msgstr "历史过程标准差"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "r&R tables"
-msgstr "r&R 表"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study Var. multiplier type"
@@ -396,10 +368,6 @@ msgid "Measurements"
 msgstr "测量值"
 
 msgctxt "processCapabilityStudies|"
-msgid "Subgroups"
-msgstr "子组"
-
-msgctxt "processCapabilityStudies|"
 msgid "Process Capability Options"
 msgstr "过程能力选项"
 
@@ -480,10 +448,6 @@ msgid "Process Capability Report"
 msgstr "过程能力报告"
 
 msgctxt "processCapabilityStudies|"
-msgid "Title:"
-msgstr "标题："
-
-msgctxt "processCapabilityStudies|"
 msgid "Measurement"
 msgstr "测量"
 
@@ -492,20 +456,8 @@ msgid "Name"
 msgstr "名称"
 
 msgctxt "processCapabilityStudies|"
-msgid "Date:"
-msgstr "日期："
-
-msgctxt "processCapabilityStudies|"
 msgid "Date"
 msgstr "日期"
-
-msgctxt "processCapabilityStudies|"
-msgid "Reported by:"
-msgstr "报告人："
-
-msgctxt "processCapabilityStudies|"
-msgid "Misc:"
-msgstr "其它："
 
 msgctxt "processCapabilityStudies|"
 msgid "Miscellaneous"
@@ -530,10 +482,6 @@ msgstr "指数加权移动平均控制图"
 msgctxt "timeWeightedCharts|"
 msgid "g chart"
 msgstr "g 控制图"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Variables"
-msgstr "变量"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
@@ -936,10 +884,6 @@ msgid "Operator / Repetition"
 msgstr "操作者 / 重复"
 
 msgctxt "msaTestRetest|"
-msgid "Parts"
-msgstr "零件"
-
-msgctxt "msaTestRetest|"
 msgid "Measurements"
 msgstr "测量值"
 
@@ -958,10 +902,6 @@ msgstr "r&R 表"
 msgctxt "msaTestRetest|"
 msgid "Plots"
 msgstr "绘图"
-
-msgctxt "msaTestRetest|"
-msgid "Regression line"
-msgstr "回归线"
 
 msgctxt "processCapabilityStudies|"
 msgid "Single column"
@@ -1002,10 +942,6 @@ msgstr "过程分布"
 msgctxt "processCapabilityStudies|"
 msgid "Fit distribution"
 msgstr "拟合分布"
-
-msgctxt "processCapabilityStudies|"
-msgid "Process Name:"
-msgstr "过程名称："
 
 msgctxt "Description|"
 msgid ""
@@ -1069,10 +1005,6 @@ msgctxt "msaGaugeRR|"
 msgid "Reported by"
 msgstr "报告人"
 
-msgctxt "msaGaugeRR|"
-msgid "Misc"
-msgstr "其它"
-
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation value"
 msgstr "标准差值"
@@ -1097,10 +1029,6 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Reported by"
 msgstr "报告人"
 
-msgctxt "msaGaugeRRnonrep|"
-msgid "Misc"
-msgstr "其它"
-
 msgctxt "msaTestRetest|"
 msgid "Process Std. Deviation"
 msgstr "过程标准差"
@@ -1114,16 +1042,8 @@ msgid "Run chart of parts"
 msgstr "零件运行图"
 
 msgctxt "msaTestRetest|"
-msgid "Scatter plot"
-msgstr "散点图"
-
-msgctxt "msaTestRetest|"
 msgid "Range chart"
 msgstr "极差图"
-
-msgctxt "msaTestRetest|"
-msgid "Traffic light graph"
-msgstr "红绿灯图"
 
 msgctxt "msaType1Gauge|"
 msgid "Reference value"
@@ -1497,10 +1417,6 @@ msgctxt "msaGaugeRR|"
 msgid "Fixed effects"
 msgstr "固定效应"
 
-msgctxt "msaTestRetest|"
-msgid "Jitter"
-msgstr "Jitter"
-
 msgctxt "msaType1Gauge|"
 msgid "Analysis options"
 msgstr "分析选项"
@@ -1572,10 +1488,6 @@ msgstr "设计生成元"
 msgctxt "Description|"
 msgid "Response Surface Design"
 msgstr "响应面设计"
-
-msgctxt "attributesCharts|"
-msgid "Samples"
-msgstr "样本"
 
 msgctxt "attributesCharts|"
 msgid "Time stamp (optional)"
@@ -1702,10 +1614,6 @@ msgid "Number of ticks on x-axis:"
 msgstr "x轴上的刻度数："
 
 msgctxt "msaGaugeRR|"
-msgid "Show report"
-msgstr "显示报告"
-
-msgctxt "msaGaugeRR|"
 msgid "Show report metadata"
 msgstr "显示报告元数据"
 
@@ -1800,10 +1708,6 @@ msgstr "显示过程能力表"
 msgctxt "variablesChartsIndividuals|"
 msgid "Axis labels"
 msgstr "轴标签"
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Stages"
-msgstr "阶段"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Display design"
@@ -2219,4 +2123,111 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show autocorrelation chart"
+msgstr ""
+
+#, fuzzy
+msgctxt "attributesCharts|"
+msgid "Total"
+msgstr "总合"
+
+msgctxt "attributesCharts|"
+msgid "Laney p'(p-prime) chart"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Laney u'(u-prime) chart"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaAttribute|"
+msgid "Operator"
+msgstr "操作者"
+
+msgctxt "msaAttribute|"
+msgid "Part"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRR|"
+msgid "Operator"
+msgstr "操作者"
+
+msgctxt "msaGaugeRR|"
+msgid "Part"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRR|"
+msgid "Show Report"
+msgstr "显示报告"
+
+msgctxt "msaGaugeRR|"
+msgid "Misc."
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRRnonrep|"
+msgid "r&R table ANOVA method"
+msgstr "方差分析法 r&R 表"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Misc."
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Part"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Measurement"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Scatter plot measurement"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaTestRetest|"
+msgid "Fit line"
+msgstr "拟合线"
+
+#, fuzzy
+msgctxt "msaTestRetest|"
+msgid "Display all measurements"
+msgstr "显示所有测量值"
+
+#, fuzzy
+msgctxt "msaTestRetest|"
+msgid "Traffic light chart"
+msgstr "红绿灯图"
+
+msgctxt "processCapabilityStudies|"
+msgid "Subgroup"
+msgstr ""
+
+#, fuzzy
+msgctxt "processCapabilityStudies|"
+msgid "Title"
+msgstr "标题"
+
+msgctxt "processCapabilityStudies|"
+msgid "Process Name"
+msgstr ""
+
+#, fuzzy
+msgctxt "processCapabilityStudies|"
+msgid "Reported by"
+msgstr "报告人"
+
+#, fuzzy
+msgctxt "processCapabilityStudies|"
+msgid "Misc"
+msgstr "其它"
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Stage"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Subgroup size"
 msgstr ""

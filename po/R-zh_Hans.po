@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-09-30 03:40\n"
+"POT-Creation-Date: 2023-10-28 03:39\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -815,8 +815,8 @@ msgstr "标准差"
 msgid "Study Variation"
 msgstr "研究变异"
 
-msgid "%% Study Variation"
-msgstr "%% 研究变异"
+msgid "% Study Variation"
+msgstr "% 研究变异"
 
 msgid "%% Tolerance"
 msgstr "%% 公差"
@@ -903,6 +903,9 @@ msgstr "重复性"
 
 msgid "Reprod"
 msgstr "再现性"
+
+msgid "%% Study Variation"
+msgstr "%% 研究变异"
 
 msgid "Measurement systems analysis"
 msgstr "测量系统分析"
@@ -1501,9 +1504,6 @@ msgstr "图形名称：%s"
 #~ msgid ""
 #~ "Factor name '%s' is a number, and number factor names are not supported"
 #~ msgstr "因子名称 '%s' 是一个数字，不支持数字因子名称"
-
-#~ msgid "% Study Variation"
-#~ msgstr "% 研究变异"
 
 #~ msgid "% Contribution"
 #~ msgstr "% 贡献"

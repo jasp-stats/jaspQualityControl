@@ -47,14 +47,6 @@ msgctxt "doeFactorial|"
 msgid "Resolution"
 msgstr "Resolução"
 
-msgctxt "msaAttribute|"
-msgid "Operators"
-msgstr "Operadores"
-
-msgctxt "msaAttribute|"
-msgid "Parts"
-msgstr "Peças"
-
 #, fuzzy
 msgctxt "msaAttribute|"
 msgid "Standard"
@@ -80,14 +72,6 @@ msgstr "Opções de análise"
 msgctxt "msaGaugeLinearity|"
 msgid "Plots"
 msgstr "Gráficos"
-
-msgctxt "msaGaugeRR|"
-msgid "Operators"
-msgstr "Operadores"
-
-msgctxt "msaGaugeRR|"
-msgid "Parts"
-msgstr "Partes"
 
 #, fuzzy
 msgctxt "msaGaugeRR|"
@@ -121,10 +105,6 @@ msgstr "Histograma"
 msgctxt "processCapabilityStudies|"
 msgid "Measurements"
 msgstr "Medidas"
-
-msgctxt "processCapabilityStudies|"
-msgid "Subgroups"
-msgstr "Subgrupos"
 
 msgctxt "processCapabilityStudies|"
 msgid "Lower specification limit"
@@ -296,10 +276,6 @@ msgid "Historical process Std. Deviation"
 msgstr "Desvio padrão histórico do processo"
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "r&R tables"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Study Var. multiplier type"
 msgstr ""
 
@@ -420,10 +396,6 @@ msgctxt "timeWeightedCharts|"
 msgid "g chart"
 msgstr ""
 
-msgctxt "variablesChartsIndividuals|"
-msgid "Variables"
-msgstr ""
-
 msgctxt "variablesChartsSubgroups|"
 msgid "Control Charts"
 msgstr "Cartas de controle"
@@ -446,14 +418,6 @@ msgstr "Estudo de capabilidade"
 
 msgctxt "Description|"
 msgid "Process Capability Study"
-msgstr ""
-
-msgctxt "attributesCharts|"
-msgid "Laney p' (p-prime) chart"
-msgstr ""
-
-msgctxt "attributesCharts|"
-msgid "Laney u' (u-prime) chart"
 msgstr ""
 
 msgctxt "attributesCharts|"
@@ -518,10 +482,6 @@ msgctxt "processCapabilityStudies|"
 msgid "Process Capability Report"
 msgstr ""
 
-msgctxt "processCapabilityStudies|"
-msgid "Title:"
-msgstr "Título:"
-
 #, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Measurement"
@@ -532,20 +492,8 @@ msgid "Name"
 msgstr "Nome"
 
 msgctxt "processCapabilityStudies|"
-msgid "Date:"
-msgstr "Data:"
-
-msgctxt "processCapabilityStudies|"
 msgid "Date"
 msgstr "Data"
-
-msgctxt "processCapabilityStudies|"
-msgid "Reported by:"
-msgstr "Reportado por:"
-
-msgctxt "processCapabilityStudies|"
-msgid "Misc:"
-msgstr "Diversos:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Miscellaneous"
@@ -952,10 +900,6 @@ msgctxt "msaTestRetest|"
 msgid "Operator / Repetition"
 msgstr ""
 
-msgctxt "msaTestRetest|"
-msgid "Parts"
-msgstr "Partes"
-
 #, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Measurements"
@@ -977,10 +921,6 @@ msgstr ""
 msgctxt "msaTestRetest|"
 msgid "Plots"
 msgstr "Gráficos"
-
-msgctxt "msaTestRetest|"
-msgid "Regression line"
-msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Single column"
@@ -1020,10 +960,6 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Fit distribution"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Process Name:"
 msgstr ""
 
 msgctxt "Description|"
@@ -1089,10 +1025,6 @@ msgctxt "msaGaugeRR|"
 msgid "Reported by"
 msgstr "Reportado por"
 
-msgctxt "msaGaugeRR|"
-msgid "Misc"
-msgstr ""
-
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation value"
 msgstr ""
@@ -1118,10 +1050,6 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Reported by"
 msgstr "Reportado por"
 
-msgctxt "msaGaugeRRnonrep|"
-msgid "Misc"
-msgstr ""
-
 msgctxt "msaTestRetest|"
 msgid "Process Std. Deviation"
 msgstr ""
@@ -1136,15 +1064,7 @@ msgid "Run chart of parts"
 msgstr ""
 
 msgctxt "msaTestRetest|"
-msgid "Scatter plot"
-msgstr ""
-
-msgctxt "msaTestRetest|"
 msgid "Range chart"
-msgstr ""
-
-msgctxt "msaTestRetest|"
-msgid "Traffic light graph"
 msgstr ""
 
 msgctxt "msaType1Gauge|"
@@ -1530,10 +1450,6 @@ msgctxt "msaGaugeRR|"
 msgid "Fixed effects"
 msgstr ""
 
-msgctxt "msaTestRetest|"
-msgid "Jitter"
-msgstr ""
-
 msgctxt "msaType1Gauge|"
 msgid "Analysis options"
 msgstr ""
@@ -1679,10 +1595,6 @@ msgid "Response Surface Design"
 msgstr ""
 
 msgctxt "attributesCharts|"
-msgid "Samples"
-msgstr ""
-
-msgctxt "attributesCharts|"
 msgid "Time stamp (optional)"
 msgstr ""
 
@@ -1743,10 +1655,6 @@ msgstr ""
 msgctxt "processCapabilityStudies|"
 msgid "Null distribution for probability plot"
 msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Show report"
-msgstr "Mostrar relatório"
 
 msgctxt "msaGaugeRR|"
 msgid "Show report metadata"
@@ -1842,10 +1750,6 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Axis labels"
-msgstr ""
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Stages"
 msgstr ""
 
 msgctxt "ShowAndExportDesign|"
@@ -2263,4 +2167,105 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show autocorrelation chart"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Total"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Laney p'(p-prime) chart"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Laney u'(u-prime) chart"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Operator"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Part"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Part"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRR|"
+msgid "Show Report"
+msgstr "Mostrar relatório"
+
+msgctxt "msaGaugeRR|"
+msgid "Misc."
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "r&R table ANOVA method"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Misc."
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Part"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaTestRetest|"
+msgid "Measurement"
+msgstr "Medição"
+
+msgctxt "msaTestRetest|"
+msgid "Scatter plot measurement"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Fit line"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaTestRetest|"
+msgid "Display all measurements"
+msgstr "Mostra todas as medições"
+
+msgctxt "msaTestRetest|"
+msgid "Traffic light chart"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Subgroup"
+msgstr ""
+
+#, fuzzy
+msgctxt "processCapabilityStudies|"
+msgid "Title"
+msgstr "Título"
+
+msgctxt "processCapabilityStudies|"
+msgid "Process Name"
+msgstr ""
+
+#, fuzzy
+msgctxt "processCapabilityStudies|"
+msgid "Reported by"
+msgstr "Reportado por"
+
+msgctxt "processCapabilityStudies|"
+msgid "Misc"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Stage"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Subgroup size"
 msgstr ""

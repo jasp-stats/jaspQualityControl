@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2023-09-30 03:40\n"
+"POT-Creation-Date: 2023-10-28 03:39\n"
 "PO-Revision-Date: 2023-06-24 03:41+0000\n"
 "Last-Translator: Borisov Igor Borisovich <borisov_i@pimunn.net>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
@@ -792,8 +792,9 @@ msgstr "Стандартное отклонение"
 msgid "Study Variation"
 msgstr ""
 
-msgid "%% Study Variation"
-msgstr ""
+#, fuzzy
+msgid "% Study Variation"
+msgstr "Стандартное отклонение"
 
 msgid "%% Tolerance"
 msgstr ""
@@ -879,6 +880,9 @@ msgid "Repeat"
 msgstr ""
 
 msgid "Reprod"
+msgstr ""
+
+msgid "%% Study Variation"
 msgstr ""
 
 msgid "Measurement systems analysis"

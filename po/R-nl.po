@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-09-30 03:40\n"
+"POT-Creation-Date: 2023-10-28 03:39\n"
 "PO-Revision-Date: 2023-08-28 15:52+0000\n"
 "Last-Translator: JASP Stats <b.boutin@uva.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -793,7 +793,7 @@ msgstr ""
 msgid "Study Variation"
 msgstr ""
 
-msgid "%% Study Variation"
+msgid "% Study Variation"
 msgstr ""
 
 msgid "%% Tolerance"
@@ -880,6 +880,9 @@ msgid "Repeat"
 msgstr ""
 
 msgid "Reprod"
+msgstr ""
+
+msgid "%% Study Variation"
 msgstr ""
 
 msgid "Measurement systems analysis"
