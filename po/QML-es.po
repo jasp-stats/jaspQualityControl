@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-10-28 17:30+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.2-dev\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -497,7 +503,7 @@ msgstr "Miscelánea"
 
 msgctxt "processCapabilityStudies|"
 msgid "Show Report"
-msgstr "Mostrar Informe"
+msgstr "Mostrar informe"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
@@ -661,7 +667,7 @@ msgstr "Miscelánea"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
-msgstr "Mostrar Informe"
+msgstr "Mostrar informe"
 
 msgctxt "Description|"
 msgid "Gauge r&R (non-replicable measurements)"
@@ -1201,7 +1207,7 @@ msgstr "Frecuencia"
 
 msgctxt "attributesCharts|"
 msgid "Show Report"
-msgstr "Mostrar Informe"
+msgstr "Mostrar informe"
 
 msgctxt "doeFull|"
 msgid "Design Space"
@@ -1653,7 +1659,7 @@ msgstr "Mostrar el gráfico de semáforo"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show report"
-msgstr "Mostrar el informe"
+msgstr "Mostrar informe"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show report metadata"
@@ -2107,7 +2113,7 @@ msgstr "Calcular con los tamaños actuales"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report"
-msgstr "Mostrar el informe"
+msgstr "Mostrar informe"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report metadata"
@@ -2125,110 +2131,98 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Show autocorrelation chart"
 msgstr "Mostrar el gráfico de Autocorrelación"
 
-#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Total"
 msgstr "Total"
 
 msgctxt "attributesCharts|"
 msgid "Laney p'(p-prime) chart"
-msgstr ""
+msgstr "Gráfico p'(p-prima) de Laney"
 
 msgctxt "attributesCharts|"
 msgid "Laney u'(u-prime) chart"
-msgstr ""
+msgstr "Gráfico u'(u-prima) de Laney"
 
-#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Operator"
 msgstr "Operador"
 
 msgctxt "msaAttribute|"
 msgid "Part"
-msgstr ""
+msgstr "Parte"
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Operator"
 msgstr "Operador"
 
 msgctxt "msaGaugeRR|"
 msgid "Part"
-msgstr ""
+msgstr "Parte"
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Show Report"
-msgstr "Mostrar Informe"
+msgstr "Mostrar informe"
 
 msgctxt "msaGaugeRR|"
 msgid "Misc."
-msgstr ""
+msgstr "Misc."
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "r&R table ANOVA method"
 msgstr "Método ANOVA tabla r&R"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Misc."
-msgstr ""
+msgstr "Misc."
 
 msgctxt "msaTestRetest|"
 msgid "Part"
-msgstr ""
+msgstr "Parte"
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Measurement"
 msgstr "Medida"
 
 msgctxt "msaTestRetest|"
 msgid "Scatter plot measurement"
-msgstr ""
+msgstr "Medida del gráfico de dispersión"
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Fit line"
 msgstr "Línea de ajuste"
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Display all measurements"
 msgstr "Mostrar todas las medidas"
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Traffic light chart"
 msgstr "Gráfico de semáforo"
 
 msgctxt "processCapabilityStudies|"
 msgid "Subgroup"
-msgstr ""
+msgstr "Subgrupo"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Title"
 msgstr "Título"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Name"
-msgstr ""
+msgstr "Nombre del proceso"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Reported by"
 msgstr "Informado por"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Misc"
 msgstr "Misc"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Stage"
-msgstr ""
+msgstr "Etapa"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroup size"
-msgstr ""
+msgstr "Tamaño del subgrupo"
