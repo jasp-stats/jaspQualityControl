@@ -68,7 +68,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(list(red_points = red_points, Rules = Rules))
 }
 
-.sdXbar <- function(df, type = c("s", "r")) {
+.sdXbar <- function(df, type = c("s", "r"), unbiasingConstantUsed = TRUE) {
   type <- match.arg(type)
 
   # exclude groups with single observation from calculation
@@ -76,7 +76,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
    if (length(rowRemovalIndex) > 0)
     df <- df[-rowRemovalIndex, ]
 
-  if (type == "r"){
+  if (type == "r") {
     rowRanges <- .rowRanges(df, na.rm = TRUE)$ranges
     n <- .rowRanges(df)$n
     if (sum(n) < 2) {
@@ -89,8 +89,13 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     rowSd <- apply(df, 1, sd, na.rm = TRUE)
     if (sum(!is.na(rowSd)) == 0) {
       sdWithin <- 0
-    } else {
-    sdWithin <- mean(rowSd, na.rm = TRUE)
+    } else if (!unbiasingConstantUsed) {
+      sdWithin <- mean(rowSd, na.rm = TRUE)
+    } else if (unbiasingConstantUsed) {
+      n <- apply(df, 1, function(x) return(sum(!is.na(x))))
+      c4s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[3]))
+      hs <- c4s^2/(1-c4s^2)
+      sdWithin <- sum((hs*rowSd)/c4s)/sum(hs)
     }
   }
   return(sdWithin)
@@ -108,7 +113,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(list(ranges = ranges, n = n))
 }
 
-KnownControlStats.RS <- function(N, sigma) {
+KnownControlStats.RS <- function(N, sigma = 3) {
 
   Data.d3 <- data.frame(
     n = 1:25,
@@ -148,7 +153,7 @@ KnownControlStats.RS <- function(N, sigma) {
   return(list(constants = c(d2, d3, c4, c5), limits = data.frame(LCL,UCL), center = CL))
 }
 
-.controlLimits <- function(mu = NA, sigma, n, k = 3, type = c("xbar", "r", "s"), unbiasingConstantUsed = FALSE) {
+.controlLimits <- function(mu = NA, sigma, n, k = 3, type = c("xbar", "r", "s"), unbiasingConstantUsed = TRUE) {
   type = match.arg(type)
   UCLvector <- c()
   LCLvector <- c()
@@ -238,7 +243,8 @@ KnownControlStats.RS <- function(N, sigma) {
                                     xAxisTitle                = gettext("Sample"),
                                     movingRangeLength         = 2,
                                     clLabelSize               = 4.5,
-                                    stagesSeparateCalculation = TRUE
+                                    stagesSeparateCalculation = TRUE,
+                                    unbiasingConstantUsed     = TRUE
                           ) {
   plotType <- match.arg(plotType)
 
@@ -247,7 +253,7 @@ KnownControlStats.RS <- function(N, sigma) {
                                                  phase2 = phase2, phase2Mu = phase2Mu, phase2Sd = phase2Sd,
                                                  fixedSubgroupSize = fixedSubgroupSize, warningLimits = warningLimits,
                                                  movingRangeLength = movingRangeLength, stagesSeparateCalculation = stagesSeparateCalculation,
-                                                 tableLabels = xAxisLabels)
+                                                 tableLabels = xAxisLabels, unbiasingConstantUsed = unbiasingConstantUsed)
 
 
   # This function turns the point violation list into a JASP table
@@ -274,7 +280,9 @@ KnownControlStats.RS <- function(N, sigma) {
                                                 warningLimits             = FALSE,
                                                 movingRangeLength         = 2,
                                                 stagesSeparateCalculation = TRUE,
-                                                tableLabels               = "") {
+                                                tableLabels               = "",
+                                                unbiasingConstantUsed     = TRUE
+                                       ) {
   plotType <- match.arg(plotType)
   if (identical(stages, "")) {
     nStages <- 1
@@ -374,11 +382,11 @@ KnownControlStats.RS <- function(N, sigma) {
       } else if (stagesSeparateCalculation) {
         # manually calculate mean and sd as the package gives wrong results with NAs
         mu <- mean(unlist(dataCurrentStage), na.rm = TRUE)
-        sigma <- .sdXbar(df = dataCurrentStage, type = xBarSdType)
+        sigma <- .sdXbar(df = dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
       } else if (!stagesSeparateCalculation) {
         # use the whole dataset for calculation
         mu <- mean(unlist(dataset[!names(dataset) %in% stages]), na.rm = TRUE)
-        sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = xBarSdType)
+        sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='xbar', plot = FALSE, center = mu, sizes = ncol(dataCurrentStage), std.dev = sigma)
       plotStatistic <- qccObject$statistics
@@ -402,16 +410,21 @@ KnownControlStats.RS <- function(N, sigma) {
       if(phase2) {
         sigma <- phase2Sd
       } else if (stagesSeparateCalculation) {
-        sigma <- .sdXbar(df = dataCurrentStage, type = "s")
+        sigma <- .sdXbar(df = dataCurrentStage, type = "s", unbiasingConstantUsed = unbiasingConstantUsed)
       } else if (!stagesSeparateCalculation) {
         # use the whole dataset for calculation
-        sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = "s")
+        sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = "s", unbiasingConstantUsed = unbiasingConstantUsed)
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage))
       plotStatistic <- qccObject$statistics
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
-      limits <- .controlLimits(sigma = sigma, n = n, type = "s")
-      center <- sigma
+      limits <- .controlLimits(sigma = sigma, n = n, type = "s", unbiasingConstantUsed = unbiasingConstantUsed)
+      if (unbiasingConstantUsed) {
+        c4s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[3]))
+        center <- sigma * c4s
+      } else {
+        center <- sigma
+      }
       UCL <- limits$UCL
       LCL <- limits$LCL
     }

@@ -277,4 +277,16 @@ Form
 			label: 								qsTr("Show Report")
 		}
 	}
+
+	Section
+	{
+		title: 									qsTr("Advanced Options")
+		
+		CheckBox
+		{
+			name: 								"xBarAndSUnbiasingConstant"
+			label: 								qsTr("Use unbiasing constant for X-bar & s chart")
+			checked:							true
+		}
+	}
 }
