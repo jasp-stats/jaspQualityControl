@@ -88,7 +88,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   } else if (type == "s") {
     rowSd <- apply(df, 1, sd, na.rm = TRUE)
     if (sum(!is.na(rowSd)) == 0) {
-      sdWithin <- 0
+      sdWithin <- NaN
     } else if (!unbiasingConstantUsed) {
       sdWithin <- mean(rowSd, na.rm = TRUE)
     } else if (unbiasingConstantUsed) {
@@ -116,13 +116,13 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 KnownControlStats.RS <- function(N, sigma = 3) {
 
   Data.d3 <- data.frame(
-    n = 1:25,
-    d3 = c(NA, 0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
+    n = 0:25,
+    d3 = c(NA, NA, 0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
            0.7562, 0.7499, 0.7441, 0.7386, 0.7335, 0.7287, 0.7242, 0.7199, 0.7159, 0.7121, 0.7084))
 
   Data.d2 <- data.frame(
-    n = 1:50,
-    d2 = c(NA, 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
+    n = 0:50,
+    d2 = c(NA, NA, 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
             3.588 ,3.640 ,3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931, 3.964, 3.997, 4.027, 4.057, 4.086, 4.113,
             4.139 ,4.165 ,4.189, 4.213, 4.236, 4.259, 4.280, 4.301, 4.322, 4.341, 4.361, 4.379, 4.398, 4.415, 4.433,
             4.450 ,4.466, 4.482, 4.498))
@@ -180,8 +180,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         }
         LCL <- max(0, LCL) # LCL in S-chart must be >= 0
       } else {
-        LCL <- NA
-        UCL <- NA
+        LCL <- NaN
+        UCL <- NaN
       }
     }
     UCLvector <- c(UCLvector, UCL)
@@ -620,7 +620,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   lineType <- if (phase2) "solid" else "dashed"
 
   # Create plot
-  plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, y = plotStatistic, group = stage)) +
+  plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, group = stage)) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = lineType) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = lineType)
