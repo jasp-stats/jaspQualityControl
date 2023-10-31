@@ -17,10 +17,6 @@
 
 #' @export
 variablesChartsSubgroups <- function(jaspResults, dataset, options) {
-
-  #dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartLongFormatStagesMultiDefined.csv")
-  #dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/Datasets/ControlChartError.csv")
-
   wideFormat <- (options[["dataFormat"]] == "wideFormat")
 
   # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
@@ -64,6 +60,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
     }
   }
+  if (!identical(subgroupVariable, "")) # empty strings should also be treated as NA
+    dataset[,subgroupVariable][dataset[[subgroupVariable]] == ""] <- NA
 
   # error handling
   .hasErrors(dataset, type = c('infinity'),
@@ -89,7 +87,6 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" && anyNA(dataset[[subgroupVariable]])) {
     nDroppedSubgroupRows <- sum(is.na(dataset[[subgroupVariable]]))
     dataset <- dataset[!is.na(dataset[[subgroupVariable]]),]
-    removalType <- if (wideFormat) "subgroup(s)" else "observation(s)"
     plotNotes <- paste0(plotNotes, gettextf("Removed %i observation(s) that were not assigned to any subgroups.<br>", nDroppedSubgroupRows))
   }
 
