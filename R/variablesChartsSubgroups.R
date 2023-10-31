@@ -60,7 +60,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
     }
   }
-  if (!identical(subgroupVariable, "")) # empty strings should also be treated as NA
+  if (!wideFormat && !identical(subgroupVariable, "")) # empty strings should also be treated as NA
     dataset[,subgroupVariable][dataset[[subgroupVariable]] == ""] <- NA
 
   # error handling
