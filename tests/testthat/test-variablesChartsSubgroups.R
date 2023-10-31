@@ -905,35 +905,214 @@ test_that("WF14. Basic test to create report of X-bar & s control chart", {
 
 #### Single missing value
 
-##### x-bar & r chart
+##### x-bar & r chart (verified with Minitab)
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1Missing1", "dm2", "dm3", "dm4", "dm5")
+options$chartType <- "xBarAndR"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
 
-##### x-bar & s chart
+test_that("WF15. X-bar & R control chart with single missing value in measurement", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart23")
+})
+
+##### x-bar & s chart (verified with Minitab)
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1Missing1", "dm2", "dm3", "dm4", "dm5")
+options$chartType <- "xBarAndS"
+options$xBarAndSUnbiasingConstant <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("WF16. X-bar & s control chart with single missing value in measurement", {
+  options <- analysisOptions("variablesChartsSubgroups")
+  options$dataFormat <- "wideFormat"
+  options$measurementsWideFormat <- list("dm1Missing1", "dm2", "dm3", "dm4", "dm5")
+  options$chartType <- "xBarAndS"
+  set.seed(1)
+  results <- runAnalysis("variablesChartsSubgroups", "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv", options)
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart23")
+})
 
 #### All but one value missing
 
 ##### x-bar & r chart
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1Missing19", "dm2MissingAll", "dm3MissingAll",
+                                       "dm4MissingAll", "dm5MissingAll")
+options$chartType <- "xBarAndR"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("WF17. X-bar & R control chart with all but one missing value in measurement", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart24")
+})
 
 ##### x-bar & s chart
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1Missing19", "dm2MissingAll", "dm3MissingAll",
+                                       "dm4MissingAll", "dm5MissingAll")
+options$chartType <- "xBarAndS"
+options$xBarAndSUnbiasingConstant <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("WF18. X-bar & s control chart with all but one missing value in measurement", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart24")
+})
 
 #### All values missing
 
 ##### x-bar & r chart
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1MissingAll", "dm2MissingAll", "dm3MissingAll",
+                                       "dm4MissingAll", "dm5MissingAll")
+options$chartType <- "xBarAndR"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("WF19. X-bar & R control chart with all values missing in measurement", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart25")
+})
 
 ##### x-bar & s chart
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1MissingAll", "dm2MissingAll", "dm3MissingAll",
+                                       "dm4MissingAll", "dm5MissingAll")
+options$chartType <- "xBarAndS"
+options$xBarAndSUnbiasingConstant <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("WF20. X-bar & s control chart with all values missing in measurement", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart25")
+})
 
 ### Missing values in stages variable
 
 #### x-bar & r chart
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
+options$stages <- "StageMissing7"
+options$chartType <- "xBarAndR"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("WF21. X-bar & R control chart with missing values in stages variable", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart26")
+})
 
 #### x-bar & s chart
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
+options$stages <- "StageMissing7"
+options$chartType <- "xBarAndS"
+options$xBarAndSUnbiasingConstant <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
 
+test_that("WF22. X-bar & s control chart with missing values in stages variable", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart26")
+})
 
 ## Unequal subgroup sizes
 
-### x-bar & r chart with actual sizes
+### x-bar & r chart with actual sizes (verified with Minitab)
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1Missing7", "dm2", "dm3", "dm4", "dm5")
+options$subgroupSizeUnequal <- "actualSizes"
+options$chartType <- "xBarAndR"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
 
-### x-bar & s chart with actual sizes
+test_that("WF23. X-bar & R control chart with unequal subgroups and actual sizes", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart27")
+})
 
-### x-bar & r chart with fixed group calculation
+### x-bar & s chart with actual sizes (verified with Minitab)
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1Missing7", "dm2", "dm3", "dm4", "dm5")
+options$chartType <- "xBarAndS"
+options$subgroupSizeUnequal <- "actualSizes"
+options$xBarAndSUnbiasingConstant <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
 
-### x-bar & s chart with fixed group calculation
+test_that("WF24. X-bar & s control chart with unequal subgroups and actual sizes", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart27")
+})
+
+### x-bar & r chart with fixed group calculation (verified with Minitab)
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1Missing7", "dm2", "dm3", "dm4", "dm5")
+options$subgroupSizeUnequal <- "fixedSubgroupSize"
+options$fixedSubgroupSizeValue <- 7
+options$chartType <- "xBarAndR"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("WF25. X-bar & R control chart with unequal subgroups and fixed sizes", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart28")
+})
+
+### x-bar & s chart with fixed group calculation (verified with Minitab)
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1Missing7", "dm2", "dm3", "dm4", "dm5")
+options$chartType <- "xBarAndS"
+options$subgroupSizeUnequal <- "fixedSubgroupSize"
+options$fixedSubgroupSizeValue <- 7
+options$xBarAndSUnbiasingConstant <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("WF26. X-bar & s control chart with unequal subgroups and fixed sizes", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart28")
+})
