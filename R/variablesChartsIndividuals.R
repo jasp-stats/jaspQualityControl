@@ -90,7 +90,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       columnsToPass <- c(variables, stages)
       columnsToPass <- columnsToPass[columnsToPass != ""]
       individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
-                                                   xAxisLabels = axisLabels, xAxisTitle = xAxisTitle)
+                                                   xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, movingRangeLength = options[["xmrChartMovingRangeLength"]])
       mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
                                            xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
                                            movingRangeLength = options[["xmrChartMovingRangeLength"]])
@@ -138,12 +138,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
 }
 
-.autocorrelationPlot <- function(dataset = dataset, options = options, variable = var, lags = NULL, CI = 0.95) {
-  ppPlot <- createJaspPlot(width = 1200, height = 500, title = gettextf("%s",variable))
+.autocorrelationPlot <- function(dataset = dataset, options = options, variable, lags = NULL, CI = 0.95) {
+  ppPlot <- createJaspPlot(width = 1200, height = 500, title = gettext("Autocorrelation plot"))
   ppPlot$dependOn(optionContainsValue = list(variables = variable))
 
   if (anyNA(dataset[[variable]])) {
-    plot <- createJaspPlot(title = title, width = 400, height = 400)
     ppPlot$setError(gettextf("Autocorrelation plot requires uninterrupted series of values. Missing values detected in %s.", variable))
   } else {
     p <- .autocorrelationPlotObject(dataset, options, variable, lags, CI)
@@ -219,7 +218,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     columnsToPass <- columnsToPass[columnsToPass != ""]
     plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
                                                           xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
-                                                          clLabelSize = 3.5)$plotObject
+                                                          clLabelSize = 3.5, movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
                                                           xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,

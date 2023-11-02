@@ -324,12 +324,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       k <- movingRangeLength
       # qcc has no moving range plot, so we need to arrange data in a matrix with the observation + k future observation per row and calculate the range chart
       dataCurrentStageVector <- unlist(dataCurrentStage)
-      mrMatrix <- matrix(dataCurrentStageVector[1:(length(dataCurrentStageVector) - (k - 1))])   # remove last k - 1 elements
-      for (j in 2:k) {
-        mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[j:(length(dataCurrentStageVector) - (k - j))]))   # remove first i and last (k - i) elements
+      mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
+      for (j in seq(1, k-1)) {
+        mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[seq(k-j, length(dataCurrentStageVector)-j)]))
       }
       meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
-      d2 <- KnownControlStats.RS(k, 3)[[1]][1]
+      d2 <- KnownControlStats.RS(k)$constants[1]
       sd <- meanMovingRange/d2
       if (plotType == "I") {
         processMean <- mean(dataCurrentStageVector, na.rm = TRUE) # manually calculate mean as package does not remove NAs
@@ -341,7 +341,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         limits <- unlist(.controlLimits(meanMovingRange, sd, n = k, type = "r"))
         # the qcc package calculates the ranges ignoring the NAs, but for the MR chart we want the range to be NA if there are any NAs in the moving range
         qccObject$statistics[which(!complete.cases(mrMatrix))] <- NA
-        plotStatistic <- c(NA, qccObject$statistics)
+        plotStatistic <- c(rep(NA, k-1), qccObject$statistics)
       }
       LCL <- limits[1]
       UCL <- limits[2]
@@ -429,32 +429,22 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       LCL <- limits$LCL
     }
     if (i != 1) {
-      if (plotType == "MR" || plotType == "MMR") {
-        subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(qccObject$statistics) + 1)
-      } else {
-        subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(qccObject$statistics))
-      }
+        subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(plotStatistic))
       dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + length(subgroups)/2,
                                                        y = NA,  # the y value will be filled in later
                                                        label = stage,
                                                        separationLine = max(plotData$subgroup) + .5))
     } else {
-      if (plotType == "MR" || plotType == "MMR") {
-        subgroups <- seq_len(length(qccObject$statistics) + 1)
-      } else {
-        subgroups <- seq_len(length(qccObject$statistics))
-      }
-      if (nStages > 1) {
-        dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(subgroups)/2 + 0.5,
-                                                         y = NA, # the y value will be filled in later
-                                                         label = stage,
-                                                         separationLine = NA))
-      }
+      subgroups <- seq_along(plotStatistic)
+      dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(subgroups)/2 + 0.5,
+                                                       y = NA, # the y value will be filled in later
+                                                       label = stage,
+                                                       separationLine = NA))
     }
 
     if (length(na.omit(plotStatistic)) > 1) {
       if (plotType == "MR" || plotType == "MMR") {
-        dotColor <- ifelse(c(NA, NelsonLaws(qccObject)$red_points), 'red', 'blue')
+        dotColor <- ifelse(c(rep(NA, k-1), NelsonLaws(qccObject)$red_points), 'red', 'blue')
       } else {
         dotColor <- ifelse(NelsonLaws(qccObject, allsix = plotType == "I")$red_points, 'red', 'blue')
       }
@@ -466,7 +456,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     nOutOfLimits <- sum(dotColor[!is.na(dotColor)] == "red")
     if (nOutOfLimits > length(qccObject$statistics)/2)
       dotColor <- "blue"
-
 
     stagePlotData <- data.frame("plotStatistic" = plotStatistic,
                                 "subgroup" = subgroups,
@@ -518,7 +507,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                      label = labelText))
     tableLabelsCurrentStage <- if (identical(tableLabels, "")) subgroups else as.character(tableLabels)[subgroups]
     if (plotType == "MR" || plotType == "MMR")
-      tableLabelsCurrentStage <- tableLabelsCurrentStage[-1]
+      tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
     tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabelsCurrentStage)
     tableListLengths <- sapply(tableList[[i]], length)
     if (any(tableListLengths > 0)) {
