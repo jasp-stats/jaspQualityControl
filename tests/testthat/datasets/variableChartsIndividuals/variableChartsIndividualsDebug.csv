@@ -1,0 +1,37 @@
+﻿Yield,Month,Stage,YieldMissing1,YieldMissing35,YieldMissingAll,MonthMissing5,StageMissing5
+1400,Jan Year 1,Zero,,,,Jan Year 1,Zero
+1300,Feb Year 1,Zero,1300,,,Feb Year 1,Zero
+7000,Mar Year 1,Zero,7000,,,Mar Year 1,Zero
+7000,Apr Year 1,Zero,7000,,,Apr Year 1,
+2000,May Year 1,Zero,2000,,,May Year 1,Zero
+1900,Jun Year 1,Zero,1900,,,Jun Year 1,Zero
+1900,Jul Year 1,Zero,1900,,,,Zero
+1900,Aug Year 1,Zero,1900,,,Aug Year 1,
+1900,Sep Year 1,Zero,1900,,,Sep Year 1,Zero
+2000,Oct Year 1,Zero,2000,,,Oct Year 1,Zero
+1900,Nov Year 1,Zero,1900,,,Nov Year 1,Zero
+1900,Dec Year 1,Zero,1900,,,Dec Year 1,Zero
+1900,Jan Year 2,One,1900,,,,One
+1900,Feb Year 2,One,1900,,,Feb Year 2,One
+2100,Mar Year 2,One,2100,,,Mar Year 2,One
+1300,Apr Year 2,One,1300,,,Apr Year 2,One
+2200,May Year 2,One,2200,,,May Year 2,
+1400,Jun Year 2,One,1400,,,Jun Year 2,One
+1100,Jul Year 2,One,1100,,,Jul Year 2,One
+1900,Aug Year 2,One,1900,,,Aug Year 2,One
+1400,Sep Year 2,One,1400,,,Sep Year 2,One
+1300,Oct Year 2,One,1300,,,,One
+7000,Nov Year 2,One,7000,,,Nov Year 2,One
+7000,Dec Year 2,One,7000,,,Dec Year 2,One
+2000,Jan Year 3,Two,2000,,,Jan Year 3,Two
+1900,Feb Year 3,Two,1900,,,Feb Year 3,Two
+1900,Mar Year 3,Two,1900,,,,Two
+1900,Apr Year 3,Two,1900,,,Apr Year 3,
+1900,May Year 3,Two,1900,,,May Year 3,Two
+2000,Jun Year 3,Two,2000,,,Jun Year 3,Two
+1900,Jul Year 3,Two,1900,,,Jul Year 3,Two
+1900,Aug Year 3,Two,1900,,,,
+1900,Sep Year 3,Two,1900,,,Sep Year 3,Two
+1800,Oct Year 3,Two,1800,,,Oct Year 3,Two
+2000,Nov Year 3,Two,2000,,,Nov Year 3,Two
+1800,Dec Year 3,Two,1800,1800,,Dec Year 3,Two
