@@ -416,6 +416,19 @@ Upgrades
 
 		ChangeJS
 		{
+			name:		"subgroupSizeUnequal"
+			jsFunction:	function(options)
+			{
+				switch(options["subgroupSizeUnequal"])
+				{
+					case "assumeEqualSize":									return "fixedSubgroupSize";
+					default:												return options["subgroupSizeUnequal"];
+				}
+			}
+		}
+
+		ChangeJS
+		{
 			name:		"chartType"
 			jsFunction:	function(options)
 			{
