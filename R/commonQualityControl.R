@@ -190,47 +190,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(LCL = LCLvector, UCL = UCLvector))
 }
 
-
-
-
-###################
-### FOR TESTING ###
-###   |    |    ###
-###   V    V    ###
-###################
-
-
-# Xbar
-# dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/2_1_VariablesChartsForSubgroups/SubgroupChartWideFormat.csv")
-# xAxisLabels <- dataset[[1]]
-# dataset <- dataset[2:7]
-# dataset$stages <- 1:2
-# options <- list()
-#
-#  dataset[1:4] <- NA
-#  dataset[2:20, 5] <- NA
-# .controlChart(dataset, plotType = "xBar", xBarSdType = "r")
-
-#.controlChart(dataset, plotType = "R")
-#
-#
-# dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/Datasets/ControlChartError.csv")
-# dataset <- dataset[c(3,7,8)]
-#
-#
-# dataset <- read.csv("C:/Users/Jonee/Google Drive/SKF Six Sigma/JASP Data Library/2_2_VariablesChartsForIndividuals/IndividualChartStages.csv")
-# xLabels <- dataset$Month
-# dataset <- dataset[c(1,3)]
-# .controlChart(dataset, plotType = "I", stages = "Stage")
-# .controlChart(dataset, plotType = "MR", stages = "Stage", movingRangeLength = 4)
-# .controlChart(dataset, plotType = "I", stages = "Stage", xAxisLabels = xLabels)
-# .controlChart(dataset, plotType = "MR", stages = "Stage", xAxisLabels = xLabels)
-
-###################
-###################
-###################
-
-
 .controlChart <- function(dataset,  plotType                  = c("xBar", "R", "I", "MR", "MMR", "s"),
                                     stages                    = "",
                                     xBarSdType                = c("r", "s"),

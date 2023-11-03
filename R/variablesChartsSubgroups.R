@@ -238,8 +238,6 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   plotMat[[1, 2]] <- p1
   plotMat[[2, 1]] <- .ggplotWithText(text2)
   plotMat[[2, 2]] <- p2
-  # plotMat[[3, 1]] <-
-  # plotMat[[3, 2]] <- p2
 
   p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
   matrixPlot$plotObject <- p

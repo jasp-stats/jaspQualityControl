@@ -17,13 +17,6 @@
 
 #' @export
 variablesChartsIndividuals <- function(jaspResults, dataset, options) {
-#
- # dataset <- read.csv("C:/Users/Jonee/Desktop/Temporary Files/IndividualChartStagesWithNA.csv")
- # dataset$Stage[2] <- NA
- # variables <- "Yield"
- # stages <- "Stage"
- # axisLabels <- "Month"
-
   # reading variables in from the GUI
   variables <- unlist(options[["measurement"]])
   stages <- unlist(options[["stage"]])
