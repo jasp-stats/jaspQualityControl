@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-10-28 03:39\n"
+"POT-Creation-Date: 2023-11-04 03:40\n"
 "PO-Revision-Date: 2023-09-20 11:21+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -807,9 +807,8 @@ msgstr "Std.-Abweichung"
 msgid "Study Variation"
 msgstr "Streuung von Studienergebnissen"
 
-#, fuzzy
-msgid "% Study Variation"
-msgstr "Streuung von Studienergebnissen"
+msgid "%% Study Variation"
+msgstr ""
 
 msgid "%% Tolerance"
 msgstr "%% Toleranz"
@@ -895,9 +894,6 @@ msgid "Repeat"
 msgstr ""
 
 msgid "Reprod"
-msgstr ""
-
-msgid "%% Study Variation"
 msgstr ""
 
 msgid "Measurement systems analysis"
@@ -1386,6 +1382,10 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#, fuzzy
+#~ msgid "% Study Variation"
+#~ msgstr "Streuung von Studienergebnissen"
 
 #~ msgid "Residuals vs. Fitted Value"
 #~ msgstr "Residuen vs. Angepasster Wert"

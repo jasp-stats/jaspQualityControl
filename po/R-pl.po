@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2023-10-28 03:39\n"
+"POT-Creation-Date: 2023-11-04 03:40\n"
 "PO-Revision-Date: 2023-09-20 11:21+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
@@ -792,9 +792,8 @@ msgstr "Odch. stand."
 msgid "Study Variation"
 msgstr "Zbadaj zróżnicowanie"
 
-#, fuzzy
-msgid "% Study Variation"
-msgstr "Zbadaj zróżnicowanie"
+msgid "%% Study Variation"
+msgstr ""
 
 msgid "%% Tolerance"
 msgstr ""
@@ -880,9 +879,6 @@ msgid "Repeat"
 msgstr ""
 
 msgid "Reprod"
-msgstr ""
-
-msgid "%% Study Variation"
 msgstr ""
 
 msgid "Measurement systems analysis"
@@ -1359,6 +1355,10 @@ msgstr "Podtytuł: %s"
 
 msgid "Name of chart: %s"
 msgstr "Nazwa wykresu: %s"
+
+#, fuzzy
+#~ msgid "% Study Variation"
+#~ msgstr "Zbadaj zróżnicowanie"
 
 #~ msgid "Pareto Plot of Standardized Effects"
 #~ msgstr "Wykres Pareto dla efektów standaryzowanych"

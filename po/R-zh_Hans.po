@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-10-28 03:39\n"
+"POT-Creation-Date: 2023-11-04 03:40\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -815,8 +815,8 @@ msgstr "标准差"
 msgid "Study Variation"
 msgstr "研究变异"
 
-msgid "% Study Variation"
-msgstr "% 研究变异"
+msgid "%% Study Variation"
+msgstr "%% 研究变异"
 
 msgid "%% Tolerance"
 msgstr "%% 公差"
@@ -903,9 +903,6 @@ msgstr "重复性"
 
 msgid "Reprod"
 msgstr "再现性"
-
-msgid "%% Study Variation"
-msgstr "%% 研究变异"
 
 msgid "Measurement systems analysis"
 msgstr "测量系统分析"
@@ -1386,6 +1383,9 @@ msgstr "副标题：%s"
 
 msgid "Name of chart: %s"
 msgstr "图形名称：%s"
+
+#~ msgid "% Study Variation"
+#~ msgstr "% 研究变异"
 
 #~ msgid "Residuals vs. Fitted Value"
 #~ msgstr "残差 vs.拟合值"

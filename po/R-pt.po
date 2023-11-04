@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2023-10-28 03:39\n"
+"POT-Creation-Date: 2023-11-04 03:40\n"
 "PO-Revision-Date: 2023-07-22 03:07+0000\n"
 "Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
 "br>\n"
@@ -796,8 +796,7 @@ msgstr "Desv.Padrão"
 msgid "Study Variation"
 msgstr "Estudo de variação"
 
-#, fuzzy
-msgid "% Study Variation"
+msgid "%% Study Variation"
 msgstr "%% Estudo de variação"
 
 msgid "%% Tolerance"
@@ -885,9 +884,6 @@ msgstr "Repetib"
 
 msgid "Reprod"
 msgstr "Reprod"
-
-msgid "%% Study Variation"
-msgstr "%% Estudo de variação"
 
 msgid "Measurement systems analysis"
 msgstr "Análise do sistema de medição"
@@ -1363,3 +1359,7 @@ msgstr ""
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#, fuzzy
+#~ msgid "% Study Variation"
+#~ msgstr "%% Estudo de variação"
