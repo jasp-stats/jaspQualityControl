@@ -80,7 +80,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       nDroppedStageRows <- sum(is.na(dataset[[stages]]))
       dataset <- dataset[!is.na(dataset[[stages]]),]
       removalType <- if (wideFormat) "subgroup(s)" else "observation(s)"
-      plotNotes <- paste0(plotNotes, gettextf("Removed %i %s that were not assigned to any stage.<br>", nDroppedStageRows, removalType))
+      plotNotes <- paste0(plotNotes, gettextf("Removed %1$i %2$s that were not assigned to any stage.<br>", nDroppedStageRows, removalType))
     }
   }
 
