@@ -17,66 +17,96 @@
 
 #' @export
 processCapabilityStudies <- function(jaspResults, dataset, options) {
-  if (options[["dataFormat"]] == "wideFormat"){
-    measurements <- unlist(options[["measurementsWideFormat"]])
-  }else{
-    measurements <- unlist(options[["measurementLongFormat"]])
-  }
-  subgroups <- unlist(options[["subgroup"]])
-  num.vars <- measurements[measurements != ""]
-  fac.vars <- subgroups[subgroups != ""]
-  splitName <- options[["subgroup"]]
-  makeSplit <- splitName != ""
-
-  dataset <- .readDataSetToEnd(columns.as.numeric = num.vars, columns.as.factor = fac.vars)
-
-  # Check if the analysis is ready
   wideFormat <- options[["dataFormat"]] == "wideFormat"
-  if (wideFormat)
-    ready <- length(measurements) > 0
-  else
-    ready <- (!identical(measurements, "") && (options[["manualSubgroupSize"]] | !identical(subgroups, "")))
 
-  if (makeSplit && ready) {
-    dataset.factors <- .readDataSetToEnd(columns=num.vars, columns.as.factor=splitName)
-    splitFactor      <- dataset[[.v(splitName)]]
-    splitLevels      <- levels(splitFactor)
-    # remove missing values from the grouping variable
-    dataset <- dataset[!is.na(splitFactor), ]
-    dataset.factors <- dataset.factors[!is.na(splitFactor), ]
-
-    numberMissingSplitBy <- sum(is.na(splitFactor))
-
-    # Actually remove missing values from the split factor
-    splitFactor <- na.omit(splitFactor)
+  # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
+  if (wideFormat) {
+    measurements <- unlist(options[["measurementsWideFormat"]])
+    axisLabels <- options[["axisLabels"]]
+    stages <- options[["stagesWideFormat"]]
+    factorVariables <- c(axisLabels, stages)
   } else {
-    splitFactor <- ""
+    measurements <- options[["measurementLongFormat"]]
+    subgroupVariable <- options[["subgroup"]]
+    stages <- options[["stagesLongFormat"]]
+    factorVariables <- c(subgroupVariable, stages)
   }
 
-  if (options[["dataFormat"]] == "longFormat" && ready){
-    if(options[["manualSubgroupSize"]]){
+  measurements <- measurements[measurements != ""]
+  factorVariables <- factorVariables[factorVariables != ""]
+
+  # Check if analysis is ready
+  if (wideFormat) {
+    ready <- length(measurements) > 0
+  } else if (!wideFormat && options[["subgroupSizeType"]] == "manual"){
+    ready <- length(measurements) == 1
+  } else if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable") {
+    ready <- length(measurements) == 1 && !identical(subgroupVariable, "")
+  }
+
+  # Data reading
+  if (is.null(dataset) && ready) {
+    if (length(factorVariables) >= 1) {
+      dataset <- .readDataSetToEnd(columns.as.numeric = measurements, columns.as.factor = factorVariables)
+    } else {
+      dataset <- .readDataSetToEnd(columns.as.numeric = measurements)
+    }
+  }
+
+  # Rearrange data if not already wide format (one group per row)
+  if (!wideFormat && ready) {
+    # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
+    if (options[["subgroupSizeType"]] == "manual") {
       k <- options[["manualSubgroupSizeValue"]]
-      n <- nrow(dataset)
-      dataset <- .PClongTowide(dataset, k, measurements, mode = "manual")
-      if (identical(dataset, "error")) {
-        plot <- createJaspPlot(title = gettext("Capability of the process"), width = 700, height = 400)
-        jaspResults[["plot"]] <- plot
-        plot$setError(gettextf("Could not equally divide %1$i data points into groups of size %2$i.", n, k))
-        return()
+      if (stages != "") {
+        # Only take the first stage of each subgroup, to avoid multiple stages being defined
+        stagesPerSubgroup <- dataset[[stages]][seq(1, length(dataset[[stages]]), k)]
+      }
+      # fill up with NA to allow all subgroup sizes
+      if(length(dataset[[measurements]]) %% k != 0) {
+        rest <- length(dataset[[measurements]]) %% k
+        dataset_expanded <- c(dataset[[measurements]], rep(NA, k - rest))
+        dataset <- as.data.frame(matrix(dataset_expanded, ncol = k, byrow = TRUE))
+      } else {
+        dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
       }
       measurements <- colnames(dataset)
-      subgroups <- ""
-    }else{
-      k <- dataset[[subgroups]]
-      k <- na.omit(k)
+      axisLabels <- as.character(seq_len(nrow(dataset)))
+      xAxisTitle <- gettext("Sample")
+      if (stages != "") {
+        dataset[[stages]] <- stagesPerSubgroup
+        axisLabels <- axisLabels[order(dataset[[stages]])]
+      }
+    } else {
+      subgroups <- dataset[[subgroupVariable]]
+      subgroups <- na.omit(subgroups)
       # add sequence of occurence to allow pivot_wider
-      occurenceVector <- with(dataset, ave(seq_along(k), k, FUN = seq_along))
+      if (stages != "") {
+        # Only take the first defined stage of each subgroup, to avoid multiple stages being defined
+        stagesPerSubgroup <- dataset[[stages]][match(unique(subgroups), subgroups)]
+      }
+      occurenceVector <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
       dataset$occurence <- occurenceVector
       # transform into one group per row
-      dataset <- tidyr::pivot_wider(data = dataset, values_from = tidyr::all_of(measurements), names_from = occurence)
+      dataset <- tidyr::pivot_wider(data = dataset[c(measurements, subgroupVariable, "occurence")],
+                                    values_from = tidyr::all_of(measurements), names_from = occurence)
       # arrange into dataframe
       dataset <- as.data.frame(dataset)
       measurements <- as.character(unique(occurenceVector))
+      axisLabels <- dataset[[subgroupVariable]]
+      xAxisTitle <- subgroupVariable
+      if (stages != ""){
+        dataset[[stages]] <- stagesPerSubgroup
+        axisLabels <- axisLabels[order(dataset[[stages]])]
+      }
+    }
+  }  else if (wideFormat && ready) {
+    multipleStagesPerSubgroupDefined <- FALSE # not possible in this format
+    if (axisLabels != "") {
+      xAxisTitle <- options[["axisLabels"]]
+      axisLabels <- dataset[[axisLabels]]
+    } else {
+      xAxisTitle <- gettext("Sample")
     }
   }
 
@@ -92,7 +122,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                exitAnalysisIfErrors = TRUE)
   }
 
-  dataset <- na.omit(dataset)
   # correction for zero values for non-normal capability
   if (options$capabilityStudyType == "nonNormalCapabilityAnalysis" && ready) {
     x <- unlist(dataset[measurements])
@@ -107,20 +136,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
- # the axis labels for the control charts
-  if (subgroups == "") {
-    axisLabels <- ""
-  } else {
-    axisLabels <- dataset[[subgroups]]
-  }
-
   # Report
   if (options[["report"]]) {
     if (is.null(jaspResults[["pcReport"]])) {
       jaspResults[["pcReport"]] <- createJaspContainer(gettext("Report"))
       jaspResults[["pcReport"]]$position <- 6
     }
-    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, splitFactor, wideFormat, subgroups, axisLabels)
+    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, wideFormat, subgroups, axisLabels)
     jaspResults[["pcReport"]]$dependOn(c("report", "variables", "variablesLong", "subgroups", "controlChartType"))
   } else {
     # X-bar and R Chart OR ImR OR X-bar and mR Chart
@@ -163,7 +185,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         jaspResults[["xBar"]][["tableXBar"]] <- xBarChart$table
         jaspResults[["xBar"]][["tableSecondPlot"]] <- secondPlot$table
       }
-    } else if(options[["controlChartType"]] == "xmr") {
+    } else if (options[["controlChartType"]] == "xmr") {
       jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR Control Chart"))
       jaspResults[["xmr"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "report"))
       jaspResults[["xmr"]]$position <- 1
@@ -1504,7 +1526,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 
-.pcReport <- function(dataset, measurements, parts, operators, options, ready, container, splitFactor, wideFormat, subgroups, axisLabels) {
+.pcReport <- function(dataset, measurements, parts, operators, options, ready, container, wideFormat, subgroups, axisLabels) {
 
   if (options[["reportTitle"]] == ""){
     title <- "Process Capability Report"
