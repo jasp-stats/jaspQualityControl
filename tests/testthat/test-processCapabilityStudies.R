@@ -5,6 +5,7 @@ context("[Quality Control] Process Capability Study")
 options <- analysisOptions("processCapabilityStudies")
 options$measurementLongFormat <- "Diameter"
 options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$subgroupSizeType <- "groupingVariable"
 options$subgroup <- "Time"
 options$probabilityPlotRankMethod <- "bernard"
 options$lowerSpecificationLimit <- TRUE
@@ -78,6 +79,7 @@ test_that("Summary of test against the normal distribution table results match",
 # Wide format
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
 options$controlChartType <- "xBarMR"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Wide.csv", options)

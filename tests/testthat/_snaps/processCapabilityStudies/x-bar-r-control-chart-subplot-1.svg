@@ -83,11 +83,11 @@
 <polyline points='329.71,530.13 329.71,521.63 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <polyline points='454.01,530.13 454.01,521.63 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <polyline points='578.30,530.13 578.30,521.63 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
-<text x='105.98' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='9.46px' lengthAdjust='spacingAndGlyphs'>1</text>
-<text x='205.42' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='9.46px' lengthAdjust='spacingAndGlyphs'>5</text>
-<text x='329.71' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='18.91px' lengthAdjust='spacingAndGlyphs'>10</text>
-<text x='454.01' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='18.91px' lengthAdjust='spacingAndGlyphs'>15</text>
-<text x='578.30' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='18.91px' lengthAdjust='spacingAndGlyphs'>20</text>
+<text x='105.98' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='42.54px' lengthAdjust='spacingAndGlyphs'>06:15</text>
+<text x='205.42' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='42.54px' lengthAdjust='spacingAndGlyphs'>10:10</text>
+<text x='329.71' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='42.54px' lengthAdjust='spacingAndGlyphs'>15:05</text>
+<text x='454.01' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='42.54px' lengthAdjust='spacingAndGlyphs'>20:10</text>
+<text x='578.30' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='42.54px' lengthAdjust='spacingAndGlyphs'>01:05</text>
 <text x='391.86' y='572.82' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='51.89px' lengthAdjust='spacingAndGlyphs'>Sample</text>
 <text transform='translate(10.53,271.17) rotate(-90)' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='111.44px' lengthAdjust='spacingAndGlyphs'>Sample average</text>
 <text x='391.86' y='11.70' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='225.82px' lengthAdjust='spacingAndGlyphs'>x-bar-r-control-chart-subplot-1</text>

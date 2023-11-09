@@ -42,11 +42,12 @@ Form
 
 	VariablesForm
 	{
-		id:									variablesForm
+		id:									variablesFormLongFormat
+		visible:							dataFormat.currentValue == "longFormat"
 
 		AvailableVariablesList
 		{
-			name:							"variablesForm"
+			name:							"variablesFormLongFormat"
 		}
 
 		AssignedVariablesList
@@ -56,16 +57,6 @@ Form
 			id:								measurementLongFormat
 			allowedColumns:					["scale"]
 			singleVariable:					true
-			visible:						dataFormat.currentValue == "longFormat"
-		}
-
-		AssignedVariablesList
-		{
-			name:							"measurementsWideFormat"
-			title:							qsTr("Measurements")
-			id:								measurementsWideFormat
-			allowedColumns:					["scale"]
-			visible:						dataFormat.currentValue == "wideFormat"
 		}
 
 		AssignedVariablesList
@@ -75,29 +66,146 @@ Form
 			id:					 			subgroup
 			singleVariable:		 			true
 			allowedColumns:					["nominal", "nominalText", "ordinal"]
+			enabled: 						subgroupSizeType.value == "groupingVariable"
 		}
-	}
 
-	CheckBox
-	{
-		name: 						"manualSubgroupSize"
-		label: 						qsTr("Specifiy subgroup size manually:")
-		id: 						manualSubgroupSize
-		checked: 					true
-		childrenOnSameRow:			true
-		visible:					dataFormat.currentValue == "longFormat"
-
-		DoubleField
+		AssignedVariablesList
 		{
-			name: 					"manualSubgroupSizeValue"
-			id:						manualSubgroupSizeValue
-			negativeValues:			false
-			min: 					1
-			max: 					dataSetInfo.rowCount
-			defaultValue:			5
-			visible:				dataFormat.currentValue == "longFormat"
+			id:									stagesLongFormat
+			name:								"stagesLongFormat"
+			title:								qsTr("Stages")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
 	}
+
+	VariablesForm
+	{
+		id:									variablesFormWideFormat
+		visible:							dataFormat.currentValue == "wideFormat"
+
+		AvailableVariablesList
+		{
+			name:							"variablesFormWideFormat"
+		}
+
+		AssignedVariablesList
+		{
+			name:							"measurementsWideFormat"
+			title:							qsTr("Measurements")
+			id:								measurementsWideFormat
+			allowedColumns:					["scale"]
+		}
+
+		AssignedVariablesList
+		{
+			id:									axisLabels
+			name:								"axisLabels"
+			title:								qsTr("Axis labels")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
+
+		AssignedVariablesList
+		{
+			id:									stagesWideFormat
+			name:								"stagesWideFormat"
+			title:								qsTr("Stages")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
+	}
+
+	Group
+	{
+		columns:							2
+
+		RadioButtonGroup
+		{
+			name:								"subgroupSizeType"
+			title: 								qsTr("Specify subgroups")
+			id:									subgroupSizeType
+			visible:							dataFormat.currentValue == "longFormat"							
+
+			RadioButton
+				{
+					value: 							"manual"
+					label: 							qsTr("Subgroup size")
+					checked:		 				true
+					childrenOnSameRow:				true
+					
+					DoubleField
+					{
+						name: 									"manualSubgroupSizeValue"
+						id:										manualSubgroupSizeValue
+						min: 									1
+						max:									dataSetModel.rowCount()
+						negativeValues:							false
+						defaultValue:							5
+						
+					}
+				}
+			
+			RadioButton
+				{
+					value: 							"groupingVariable"
+					label: 							qsTr("Through grouping variable")
+				}
+
+				
+
+		}
+
+		RadioButtonGroup
+		{
+			name:								"subgroupSizeUnequal"
+			title: 								qsTr("Unequal subgroup sizes")
+			id:									subgroupSizeUnequal
+
+			RadioButton
+			{
+				value: 								"actualSizes"
+				label: 								qsTr("Use actual sizes")
+				checked: 							true
+			}
+			
+			RadioButton
+			{
+				value: 								"fixedSubgroupSize"
+				label: 								qsTr("Use fixed subgroup size")
+				childrenOnSameRow:		 			true
+
+				IntegerField 
+				{
+					name: 								"fixedSubgroupSizeValue"
+					fieldWidth: 						30
+					defaultValue: 						5
+					min:								2
+				}
+			}
+		}
+	}
+
+	// CheckBox
+	// {
+	// 	name: 						"manualSubgroupSize"
+	// 	label: 						qsTr("Specifiy subgroup size manually:")
+	// 	id: 						manualSubgroupSize
+	// 	checked: 					true
+	// 	childrenOnSameRow:			true
+	// 	visible:					dataFormat.currentValue == "longFormat"
+
+	// 	DoubleField
+	// 	{
+	// 		name: 					"manualSubgroupSizeValue"
+	// 		id:						manualSubgroupSizeValue
+	// 		negativeValues:			false
+	// 		min: 					1
+	// 		max: 					dataSetModel.rowCount()
+	// 		defaultValue:			5
+	// 		visible:				dataFormat.currentValue == "longFormat"
+	// 	}
+	// }
 
 	Section
 	{
@@ -287,8 +395,8 @@ Form
 					name: 				"xBarMR"
 					id : 				xbarMR
 					label: 				qsTr("X-bar & mR chart")
-					enabled:			dataFormat.currentValue == "wideFormat"
 					visible:			dataFormat.currentValue == "wideFormat"
+					checked:			false
 
 					DoubleField
 					{
