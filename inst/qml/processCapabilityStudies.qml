@@ -279,7 +279,7 @@ Form
 					name: 				"xBarS"
 					id : 				xbarS
 					label: 				qsTr("X-bar & s chart")
-					enabled:			(dataFormat.currentValue == "PClongFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
+					enabled:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
 				} 
 
 				RadioButton
