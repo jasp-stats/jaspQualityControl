@@ -867,7 +867,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     jaspGraphs::themeJaspRaw() +
     jaspGraphs::geom_rangeframe() +
     ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
-    ggplot2::xlab("") +
+    ggplot2::xlab(NULL) +
     ggplot2::scale_y_continuous(name = "Percent", breaks = yBreaks, limits = range(c(yBreaks, plotframe$value)))
   return(p)
 }
