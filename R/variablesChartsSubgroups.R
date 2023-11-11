@@ -147,6 +147,15 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
   }
 
+  # Check if all subgroups are of size 1 and return error if yes
+  if (all(apply(dataset[measurements], 1, function(x) sum(!is.na(x))) == 1)) {
+    plot <- createJaspPlot(title = gettext("Control charts"), width = 700, height = 400)
+    plot$setError(gettext("All subgroups are of size 1. Variables charts for subgroups cannot be calculated. Use variables charts for individuals."))
+    jaspResults[["plot"]] <- plot
+    plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "stages", "subgroup", "subgroupSizeType"))
+    return()
+  }
+
   # Plot note about R/S chart recommendation
   if (length(measurements) > 5 && options[["chartType"]] == "xBarAndR") # if the subgroup size is above 5, R chart is not recommended
     plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. S-chart is recommended."))
