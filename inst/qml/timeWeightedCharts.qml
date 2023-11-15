@@ -33,6 +33,7 @@ Form
 			name: 								"cumulativeSumChart"
 			label: 								qsTr("Cumulative sum chart")
 			checked:							true
+			debug:								true
 
 			DoubleField
 			{
