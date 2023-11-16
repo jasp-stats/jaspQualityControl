@@ -250,9 +250,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-
-
-
   ready <- (length(measurements) > 0 && (options[["lowerSpecificationLimit"]] | options[["upperSpecificationLimit"]]))
 
   jaspResults[["capabilityAnalysis"]] <- container
@@ -320,14 +317,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
   if(length(measurements) < 2){
-    type <- 'xbar.one'
+    sdw <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'xbar.one', plot = FALSE)[["std.dev"]]
   }else{
-    type <- 'R'
+    sdw <- .sdXbar(dataset[measurements], "r")
   }
-  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
-  allData <- unlist(dataset[, measurements])
+  allData <- na.omit(unlist(dataset[, measurements]))
 
-  if (is.na(qccFit[["std.dev"]]))
+  if (is.na(sdw))
     table$addFootnote(gettext("The within standard deviation could not be calculated."))
 
   rows <- list(
@@ -337,7 +333,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     "mean"   = mean(allData, na.rm = TRUE),
     "n"      = length(allData),
     "sd"     = sd(allData, na.rm = TRUE),
-    "sdw"    = qccFit[["std.dev"]]
+    "sdw"    = sdw
   )
   table$addRows(rows)
 
@@ -357,7 +353,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     mean <- mean(allData, na.rm = TRUE)
     n <- as.integer(length(allData))
     sd <- sd(allData, na.rm = TRUE)
-    sdw <- qccFit[["std.dev"]]
     valueVector <- c(lsl, target, usl, n, mean, sd, sdw)
     df <- data.frame(sources = sourceVector,
                      values = round(as.numeric(valueVector), nDecimals))
@@ -479,26 +474,22 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "cpu",   type = "integer", title = gettext("CpU"))
     sourceVector <- c(sourceVector, 'CpU')
   }
-
   table$addColumnInfo(name = "cpk",   type = "integer", title = gettext("Cpk"))
   sourceVector <- c(sourceVector, 'Cpk')
   if (options[["processCapabilityTableCi"]]){
     table$addColumnInfo(name = "cpklci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "cpkuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
   }
-
-
   table$showSpecifiedColumnsOnly <- TRUE
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
-  if(length(measurements) < 2){
-    type <- 'xbar.one'
+  if (length(measurements) < 2) {
+    sdw <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'xbar.one', plot = FALSE)[["std.dev"]]
   }else{
-    type <- 'R'
+    sdw <- .sdXbar(dataset[measurements], "r")
   }
-  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
-  allData <- unlist(dataset[, measurements])
+  allData <- na.omit(unlist(dataset[, measurements]))
 
   # Calculate capability indices
   usl <- options[["upperSpecificationLimitValue"]]
@@ -506,9 +497,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   n <- length(allData)
   k <- length(measurements)
   tolMultiplier <- 6
-  cp <- (usl - lsl) / (tolMultiplier * qccFit[["std.dev"]])
-  cpl <- (mean(allData) - lsl) / ((tolMultiplier/2) * qccFit[["std.dev"]])
-  cpu <- (usl - mean(allData)) / ((tolMultiplier/2) * qccFit[["std.dev"]])
+  cp <- (usl - lsl) / (tolMultiplier * sdw)
+  cpl <- (mean(allData) - lsl) / ((tolMultiplier/2) * sdw)
+  cpu <- (usl - mean(allData)) / ((tolMultiplier/2) * sdw)
   if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
     cpk <- min(cpu, cpl)
   }else if(options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]){
@@ -605,15 +596,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
-  if(length(measurements) < 2){
-    type <- 'xbar.one'
+  if (length(measurements) < 2) {
+    sdw <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'xbar.one', plot = FALSE)[["std.dev"]]
   }else{
-    type <- 'R'
+    sdw <- .sdXbar(dataset[measurements], "r")
   }
-  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
-  allData <- unlist(dataset[, measurements])
+  allData <- na.omit(unlist(dataset[, measurements]))
   sdo <- sd(allData)
-  sdw <- qccFit[["std.dev"]]
   meanOverall <- mean(allData)
   usl <- options[["upperSpecificationLimitValue"]]
   lsl <- options[["lowerSpecificationLimitValue"]]
@@ -633,7 +622,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }else{
     ppk <- ppu
   }
-  cp <- (usl - lsl) / (tolMultiplier * qccFit[["std.dev"]])
+  cp <- (usl - lsl) / (tolMultiplier * sdw)
 
   if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]] && options[["target"]]){
     if (t == m){
