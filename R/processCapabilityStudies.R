@@ -111,8 +111,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   # Error Handling
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+  if (ready) {
+  .hasErrors(dataset, type = c('infinity'),
              all.target = measurements, exitAnalysisIfErrors = TRUE)
+  }
   if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready) {
     .hasErrors(dataset,
                all.target = measurements,
@@ -176,10 +178,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           jaspResults[["xBar"]][["plot"]]$setError(gettext("Subgroup size is 1, calculation of control charts not possible."))
           return()
         }
-
+        fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
         xBarChart <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
-                                               xAxisLabels = axisLabels)
-        secondPlot <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels, movingRangeLength = options[["xBarMovingRangeLength"]])
+                                               xAxisLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize)
+        secondPlot <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels,
+                                    movingRangeLength = options[["xBarMovingRangeLength"]], fixedSubgroupSize = fixedSubgroupSize)
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
         jaspResults[["xBar"]][["tableXBar"]] <- xBarChart$table
@@ -1193,6 +1196,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   values <- as.vector(unlist(dataset[measurements]))
+  values <- na.omit(values)
 
   if (options[["nullDistribution"]] == "normal") {
     meanx   <- mean(values)
@@ -1245,7 +1249,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   FactorialFit <- fit != ""
 
   # Arrange data
-  if (FactorialFit){
+  if (FactorialFit) {
     x <- as.vector(resid(fit))
     order1 <- order(x)
     options[["probabilityPlotGridLines"]] <- FALSE
@@ -1253,6 +1257,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     #p.sig <- as.vector(summary(fit)$coefficients[,4][-1][order1] < 0.05)
   } else {
     x <- as.vector(unlist(dataset[measurements]))
+    x <- na.omit(x)
   }
 
   x <- x[order(x)]
@@ -1563,20 +1568,29 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   if (options[["reportProcessStability"]]) {
     # X-bar and R Chart OR ImR Chart
-    if (options[["controlChartType"]] == "xBarR") {
-      indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = "r",
-                                                            xAxisLabels = axisLabels)$plotObject
-      indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "R",
-                                                            xAxisLabels = axisLabels)$plotObject
-    } else if (options[["controlChartType"]] == "xmr"){
+    if (options[["controlChartType"]] == "xmr"){
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "I",
-                                                            xAxisLabels = seq_along(unlist(dataset[measurements])))$plotObject
+                                                xAxisLabels = seq_along(unlist(dataset[measurements])))$plotObject
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = seq_along(unlist(dataset[measurements])),
-                                                            movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
+                                                movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
+    } else {
+      secondPlotType <- switch(options[["controlChartType"]],
+                               "xBarR" = "R",
+                               "xBarS" = "s",
+                               "xBarMR" = "MMR")
+      sdType <- switch(options[["controlChartType"]],
+                       "xBarR" = "r",
+                       "xBarS" = "s",
+                       "xBarMR" = "r")
+      fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
+                                                xAxisLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize)$plotObject
+      indexCounter <- indexCounter + 1
+      plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels,
+                                                movingRangeLength = options[["xBarMovingRangeLength"]], fixedSubgroupSize = fixedSubgroupSize)$plotObject
     }
   }
   if (options[["reportProcessCapabilityPlot"]]) {
