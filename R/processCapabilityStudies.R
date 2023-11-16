@@ -126,11 +126,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # correction for zero values for non-normal capability
   if (options$capabilityStudyType == "nonNormalCapabilityAnalysis" && ready) {
-    x <- unlist(dataset[measurements])
+    x <- na.omit(unlist(dataset[measurements]))
     zeroCorrect <- any(x == 0)
-    dataset[measurements] <- ifelse(x == 0, min(x[x > 0])/2 , x)
 
     if (zeroCorrect) {
+      zeroCorrectionIndicies <- which(dataset[[measurements]] == 0)
+      dataset[[measurements]][zeroCorrectionIndicies] <- min(x[x > 0])/2
       jaspResults[["zeroWarning"]] <- createJaspHtml(text = gettext("All zero values have been replaced with a value equal to one-half of the smallest data point."), elementType = "p",
                                                      title = "Zero values found in non-normal capability study:",
                                                      position = 1)
@@ -371,7 +372,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     type <- 'R'
   }
   qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
-  allData <- unlist(dataset[, measurements])
+  allData <- as.vector(na.omit(unlist(dataset[, measurements])))
   plotData <- data.frame(x = allData)
 
   sdw <- qccFit[["std.dev"]]
@@ -779,7 +780,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table <- createJaspTable(title = gettextf("Process summary"))
 
-  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") && any(dataset[measurements] < 0)){
+  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
+      any(na.omit(unlist(dataset[measurements])) < 0)) {
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     container[["summaryTableNonNormal"]] <- table
     return()
@@ -819,14 +821,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "threshold", type = "number", title = gettext('Threshold'))
     sourceVector1 <- c(sourceVector1, 'Threshold')
   }
-
-
   table$showSpecifiedColumnsOnly <- TRUE
 
   if (!ready)
     return()
 
-  allData <- unlist(dataset[, measurements])
+  allData <- as.vector(na.omit(unlist(dataset[, measurements])))
   n <- length(allData)
   lsl <- options[["lowerSpecificationLimitValue"]]
   usl <- options[["upperSpecificationLimitValue"]]
@@ -1178,14 +1178,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution.", "\u00B2", options[["nullDistribution"]]))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
 
-  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") && any(dataset[measurements] < 0)){
+  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
+      any(na.omit(unlist(dataset[measurements])) < 0)){
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     container[["probabilityTable"]] <- table
     return()
   }
 
-  values <- as.vector(unlist(dataset[measurements]))
-  values <- na.omit(values)
+  values <- as.vector(na.omit(unlist(dataset[measurements]))) # distribution fitting function complains if this is not explicitly a vector
 
   if (options[["nullDistribution"]] == "normal") {
     meanx   <- mean(values)
@@ -1230,7 +1230,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plot <- createJaspPlot(width = 600, aspectRatio = 1, title = "Probability Plot")
   plot$dependOn(c("measurementLongFormat", "manualSubgroupSizeValue"))
 
-  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") && any(dataset[measurements] < 0)){
+  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
+      any(na.omit(unlist(dataset[measurements])) < 0)) {
     plot$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     return(plot)
   }
@@ -1245,8 +1246,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     #factorsNames <- rownames(summary(fit)$coefficients)[-1][order1]
     #p.sig <- as.vector(summary(fit)$coefficients[,4][-1][order1] < 0.05)
   } else {
-    x <- as.vector(unlist(dataset[measurements]))
-    x <- na.omit(x)
+    x <- as.vector(na.omit(unlist(dataset[measurements])))
   }
 
   x <- x[order(x)]
@@ -1450,7 +1450,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcDistributionPlotObject <- function(options, dataset, measurements) {
 
-  data <- unlist(dataset[measurements])
+  data <- as.vector(na.omit(unlist(dataset[measurements]))) # the distribution fitting functions complain if this is not explicitly a vector
   nBins <- options[["histogramBinNumber"]]
 
   n <- length(data)
