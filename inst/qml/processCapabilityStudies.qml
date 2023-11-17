@@ -186,27 +186,6 @@ Form
 		}
 	}
 
-	// CheckBox
-	// {
-	// 	name: 						"manualSubgroupSize"
-	// 	label: 						qsTr("Specifiy subgroup size manually:")
-	// 	id: 						manualSubgroupSize
-	// 	checked: 					true
-	// 	childrenOnSameRow:			true
-	// 	visible:					dataFormat.currentValue == "longFormat"
-
-	// 	DoubleField
-	// 	{
-	// 		name: 					"manualSubgroupSizeValue"
-	// 		id:						manualSubgroupSizeValue
-	// 		negativeValues:			false
-	// 		min: 					1
-	// 		max: 					dataSetModel.rowCount()
-	// 		defaultValue:			5
-	// 		visible:				dataFormat.currentValue == "longFormat"
-	// 	}
-	// }
-
 	Section
 	{
 		title: qsTr("Process Capability Options")
@@ -286,6 +265,13 @@ Form
 						defaultValue:			-1
 						decimals:				9
 					}
+
+					CheckBox
+					{
+					name: 						"lowerSpecificationLimitBoundary"
+					label: 						qsTr("Boundary")
+					id:							lowerSpecificationLimitBoundary
+					}
 				}
 
 				CheckBox
@@ -319,6 +305,13 @@ Form
 						negativeValues:			true
 						defaultValue:			1
 						decimals:				9
+					}
+
+					CheckBox
+					{
+					name: 						"upperSpecificationLimitBoundary"
+					label: 						qsTr("Boundary")
+					id:							upperSpecificationLimitBoundary
 					}
 				}
 
