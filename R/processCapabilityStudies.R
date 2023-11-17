@@ -53,6 +53,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
+  # Some error handling and messages
+  plotNotes <- ""
+  if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" && anyNA(dataset[[subgroupVariable]])) {
+    nDroppedSubgroupRows <- sum(is.na(dataset[[subgroupVariable]]))
+    dataset <- dataset[!is.na(dataset[[subgroupVariable]]),]
+    plotNotes <- paste0(plotNotes, gettextf("Removed %i observation(s) that were not assigned to any subgroups.<br>", nDroppedSubgroupRows))
+  }
+
   # Rearrange data if not already wide format (one group per row)
   if (!wideFormat && ready) {
     # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
@@ -124,14 +132,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                exitAnalysisIfErrors = TRUE)
   }
 
+  # Plot note about R/S chart recommendation
+  if (length(measurements) > 5 && options[["controlChartType"]] == "xBarR") # if the subgroup size is above 5, R chart is not recommended
+    plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. S-chart is recommended."))
+
+
   # correction for zero values for non-normal capability
   if (options$capabilityStudyType == "nonNormalCapabilityAnalysis" && ready) {
     x <- na.omit(unlist(dataset[measurements]))
     zeroCorrect <- any(x == 0)
-
     if (zeroCorrect) {
-      zeroCorrectionIndicies <- which(dataset[[measurements]] == 0)
-      dataset[[measurements]][zeroCorrectionIndicies] <- min(x[x > 0])/2
+      zeroCorrectionIndices <- which(dataset[measurements] == 0, arr.ind = TRUE)
+      dataset[measurements][zeroCorrectionIndices] <- min(x[x > 0])/2
       jaspResults[["zeroWarning"]] <- createJaspHtml(text = gettext("All zero values have been replaced with a value equal to one-half of the smallest data point."), elementType = "p",
                                                      title = "Zero values found in non-normal capability study:",
                                                      position = 1)
@@ -186,6 +198,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                     movingRangeLength = options[["xBarMovingRangeLength"]], fixedSubgroupSize = fixedSubgroupSize)
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
+        if (!identical(plotNotes, ""))
+          jaspResults[["xBar"]][["plotNote"]] <- createJaspHtml(paste0("<i>Note.</i> ", plotNotes))
         jaspResults[["xBar"]][["tableXBar"]] <- xBarChart$table
         jaspResults[["xBar"]][["tableSecondPlot"]] <- secondPlot$table
       }
@@ -565,7 +579,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
     table$addColumnInfo(name = "pp",  type = "integer", title = gettext("Pp"))
     sourceVector1 <- c(sourceVector1, 'Pp')
-    if (options[["processCapabilityTableCi"]]){
+    if (options[["processCapabilityTableCi"]] &&
+        !(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
       table$addColumnInfo(name = "pplci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "ppuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
     }
@@ -580,14 +595,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   table$addColumnInfo(name = "ppk",   type = "integer", title = gettext("Ppk"))
   sourceVector1 <- c(sourceVector1, 'Ppk')
-  if (options[["processCapabilityTableCi"]]){
+  if (options[["processCapabilityTableCi"]] &&
+      !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
     table$addColumnInfo(name = "ppklci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "ppkuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
   }
   if (options[["target"]]){
     table$addColumnInfo(name = "cpm", type = "integer", title = gettext("Cpm"))
     sourceVector1 <- c(sourceVector1, 'Cpm')
-    if (options[["processCapabilityTableCi"]]){
+    if (options[["processCapabilityTableCi"]] &&
+        !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
       table$addColumnInfo(name = "cpmlci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "cpmuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
     }
@@ -612,12 +629,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   t <- options[["targetValue"]]
   tolMultiplier <- 6
 
-  pp <- (usl - lsl) / (tolMultiplier * sdo)
-  ppl <- (meanOverall - lsl) / ((tolMultiplier/2) * sdo)
-  ppu <- (usl - mean(allData)) / ((tolMultiplier/2) * sdo)
+  pp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdo)
+  ppl <- if (options[["lowerSpecificationLimitBoundary"]]) NA else (meanOverall - lsl) / ((tolMultiplier/2) * sdo)
+  ppu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - mean(allData)) / ((tolMultiplier/2) * sdo)
 
   if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
-    ppk <- min(ppu, ppl)
+    ppk <- if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(ppu, ppl, na.rm = TRUE)
   }else if(options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]){
     ppk <- ppl
   }else{
@@ -636,46 +653,56 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }else if (options[["lowerSpecificationLimit"]] && options[["target"]]){
     cpm <- (t - lsl) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
   }
+  if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])
+    cpm <- NA
 
-  rows <- list("pp" = round(pp,2), "ppl" = round(ppl,2), "ppu" = round(ppu,2), "ppk" = round(ppk,2))
-  if (options[["target"]])
-    rows[["cpm"]] <- round(cpm,2)
+  if (options[["processCapabilityTableCi"]]) {
+    if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
+      #CI for Pp
+      dfPp <- n - 1
+      ciLbPp <- pp * sqrt( qchisq(p = ciAlpha/2, df = dfPp) /dfPp)
+      ciUbPp <- pp * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfPp) / dfPp)
+    }
 
-  if (options[["processCapabilityTableCi"]]){
+    if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
+      #CI for Ppk
+      dfPpk <- n - 1
+      normCIrange <- qnorm(1 - (ciAlpha / 2))
+      intervalPpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((ppk^2)/ (2 * dfPpk)))
+      ciLbPpk <- ppk - (normCIrange * intervalPpk)
+      ciUbPpk <- ppk + (normCIrange * intervalPpk)
+    }
 
-    #CI for Pp
-    dfPp <- n - 1
-    ciLbPp <- pp * sqrt( qchisq(p = ciAlpha/2, df = dfPp) /dfPp)
-    ciUbPp <- pp * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfPp) / dfPp)
-
-    #CI for Ppk
-    dfPpk <- n - 1
-    normCIrange <- qnorm(1 - (ciAlpha / 2))
-    intervalPpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((ppk^2)/ (2 * dfPpk)))
-    ciLbPpk <- ppk - (normCIrange * intervalPpk)
-    ciUbPpk <- ppk + (normCIrange * intervalPpk)
-
-
-
-    rows[["pplci"]] <- round(ciLbPp,2)
-    rows[["ppuci"]] <- round(ciUbPp,2)
-    rows[["ppklci"]] <- round(ciLbPpk,2)
-    rows[["ppkuci"]] <- round(ciUbPpk,2)
-
-    if (options[["target"]]){
-
+    if (options[["target"]] &&
+        !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])){
       #CI for Cpm
       a <- (meanOverall - t) / sdo
       dfCpm <- (n * ((1 + (a^2))^2)) / (1 + (2 * (a^2)))
       ciLbCpm <- cpm * sqrt( qchisq(p = ciAlpha/2, df = dfCpm) /dfCpm)
       ciUbCpm <- cpm * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfCpm) / dfCpm)
-
-
-      rows[["cpmlci"]] <- round(ciLbCpm,2)
-      rows[["cpmuci"]] <- round(ciUbCpm,2)
-
     }
   }
+
+  rows <- list("pp" = round(pp,2), "ppl" = round(ppl,2), "ppu" = round(ppu,2), "ppk" = round(ppk,2))
+  if (options[["target"]])
+    rows[["cpm"]] <- round(cpm,2)
+
+  if (options[["processCapabilityTableCi"]]) {
+    if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
+      rows[["pplci"]] <- round(ciLbPp,2)
+      rows[["ppuci"]] <- round(ciUbPp,2)
+    }
+    if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
+      rows[["ppklci"]] <- round(ciLbPpk,2)
+      rows[["ppkuci"]] <- round(ciUbPpk,2)
+      if (options[["target"]]) {
+        rows[["cpmlci"]] <- round(ciLbCpm,2)
+        rows[["cpmuci"]] <- round(ciUbCpm,2)
+      }
+    }
+  }
+
+  rows[is.na(rows)] <- "*" # This looks better in the table and makes clearer that there is not an error
   table$addRows(rows)
 
   if(returnOverallCapDataframe){
