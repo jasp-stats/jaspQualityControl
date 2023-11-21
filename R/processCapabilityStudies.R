@@ -311,13 +311,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table <- createJaspTable(title = gettext("Process summary"))
   table$position <- 1
 
-  if (options[["lowerSpecificationLimit"]]){
-    table$addColumnInfo(name = "lsl", type = "number", title = gettext("LSL"))
+  if (options[["lowerSpecificationLimit"]]) {
+    lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
+    table$addColumnInfo(name = "lsl", type = "number", title = lslTitle)
   }
   if (options[["target"]])
     table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
-  if (options[["upperSpecificationLimit"]])
-    table$addColumnInfo(name = "usl", type = "number", title = gettext("USL"))
+  if (options[["upperSpecificationLimit"]]) {
+    uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
+    table$addColumnInfo(name = "usl", type = "number", title = uslTitle)
+  }
 
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Average"))
@@ -429,11 +432,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (options[["target"]])
     p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen", size = 1)
-  if (options[["lowerSpecificationLimit"]])
-    p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecificationLimitValue"]], linetype = "dotted", color = "darkred", size = 1)
-  if (options[["upperSpecificationLimit"]])
-    p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecificationLimitValue"]], linetype = "dotted", color = "darkred", size = 1)
-
+  if (options[["lowerSpecificationLimit"]]) {
+    lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
+    p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecificationLimitValue"]], linetype = lslLty, color = "darkred", size = 1)
+  }
+  if (options[["upperSpecificationLimit"]]) {
+    uslLty <- if (options[["upperSpecificationLimitBoundary"]]) "solid" else "dotted"
+    p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecificationLimitValue"]], linetype = uslLty, color = "darkred", size = 1)
+  }
   p <- jaspGraphs::themeJasp(p) +
     ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
 
@@ -476,7 +482,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
     table$addColumnInfo(name = "cp", type = "integer", title = gettext("Cp"))
     sourceVector <- c(sourceVector, 'Cp')
-    if (options[["processCapabilityTableCi"]]){
+    if (options[["processCapabilityTableCi"]] &&
+        !(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])){
       table$addColumnInfo(name = "cplci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "cpuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
     }
@@ -491,11 +498,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   table$addColumnInfo(name = "cpk",   type = "integer", title = gettext("Cpk"))
   sourceVector <- c(sourceVector, 'Cpk')
-  if (options[["processCapabilityTableCi"]]){
+  if (options[["processCapabilityTableCi"]] &&
+      !(options[["upperSpecificationLimitBoundary"]] && options[["lowerSpecificationLimitBoundary"]])) {
     table$addColumnInfo(name = "cpklci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "cpkuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
   }
   table$showSpecifiedColumnsOnly <- TRUE
+  if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
+    table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is set as boundary."))
+
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
@@ -512,40 +523,48 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   n <- length(allData)
   k <- length(measurements)
   tolMultiplier <- 6
-  cp <- (usl - lsl) / (tolMultiplier * sdw)
-  cpl <- (mean(allData) - lsl) / ((tolMultiplier/2) * sdw)
-  cpu <- (usl - mean(allData)) / ((tolMultiplier/2) * sdw)
+  cp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdw)
+  cpl <-if (options[["lowerSpecificationLimitBoundary"]]) NA else (mean(allData) - lsl) / ((tolMultiplier/2) * sdw)
+  cpu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - mean(allData)) / ((tolMultiplier/2) * sdw)
   if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
-    cpk <- min(cpu, cpl)
+    cpk <-if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(cpu, cpl, na.rm = TRUE)
   }else if(options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]){
     cpk <- cpl
   }else{
     cpk <- cpu
   }
 
-  rows <- list("cp" = round(cp, 2), "cpl" = round(cpl, 2), "cpu" = round(cpu, 2), "cpk" = round(cpk, 2))
-
   if (options[["processCapabilityTableCi"]]){
     ciAlpha <- 1 - ciLevel
 
-    #CI for Cp
-    dfCp <- 0.9 * k * ((n/k) - 1)
-    ciLbCp <- cp * sqrt( qchisq(p = ciAlpha/2, df = dfCp) /dfCp)
-    ciUbCp <- cp * sqrt( qchisq(p = 1 - (ciAlpha/2), df = dfCp) /dfCp)
-
-    #CI for Cpk
-    dfCpk <- 0.9 * k * ((n/k) - 1)
-    normCIrange <- qnorm(1 - (ciAlpha / 2))
-    intervalCpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((cpk^2)/ (2 * dfCpk)))
-    ciLbCpk <- cpk - (normCIrange * intervalCpk)
-    ciUbCpk <- cpk + (normCIrange * intervalCpk)
-
-    rows[["cplci"]] <- round(ciLbCp, 2)
-    rows[["cpuci"]] <- round(ciUbCp, 2)
-    rows[["cpklci"]] <- round(ciLbCpk, 2)
-    rows[["cpkuci"]] <- round(ciUbCpk, 2)
+    if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
+      #CI for Cp
+      dfCp <- 0.9 * k * ((n/k) - 1)
+      ciLbCp <- cp * sqrt( qchisq(p = ciAlpha/2, df = dfCp) /dfCp)
+      ciUbCp <- cp * sqrt( qchisq(p = 1 - (ciAlpha/2), df = dfCp) /dfCp)
+    }
+    if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
+      #CI for Cpk
+      dfCpk <- 0.9 * k * ((n/k) - 1)
+      normCIrange <- qnorm(1 - (ciAlpha / 2))
+      intervalCpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((cpk^2)/ (2 * dfCpk)))
+      ciLbCpk <- cpk - (normCIrange * intervalCpk)
+      ciUbCpk <- cpk + (normCIrange * intervalCpk)
+    }
   }
-  table$addRows(rows)
+
+  rows <- list("cp" = round(cp, 2), "cpl" = round(cpl, 2), "cpu" = round(cpu, 2), "cpk" = round(cpk, 2))
+
+  if (options[["processCapabilityTableCi"]]) {
+    if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
+      rows[["cplci"]] <- round(ciLbCp, 2)
+      rows[["cpuci"]] <- round(ciUbCp, 2)
+    }
+    if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
+      rows[["cpklci"]] <- round(ciLbCpk, 2)
+      rows[["cpkuci"]] <- round(ciUbCpk, 2)
+    }
+  }
 
   if(returnDataframe){
     if(!options[["upperSpecificationLimit"]])
@@ -559,6 +578,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                      values = round(valueVector,2))
     return(df)
   }
+
+  rows[is.na(rows)] <- "*" # This looks better in the table and makes clearer that there is not an error
+  table$addRows(rows)
+
+
 
   container[["capabilityTableWithin"]] <- table
 }
@@ -609,8 +633,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       table$addColumnInfo(name = "cpmuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
     }
   }
-
   table$showSpecifiedColumnsOnly <- TRUE
+  if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
+    table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is set as boundary."))
+
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
@@ -724,59 +750,60 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table2 <- createJaspTable(title = gettext("Non-conformance statistics"))
   table2$addColumnInfo(name = "rowNames", type = "string", title = "")
   table2$addColumnInfo(name = "observed", type = "integer", title = "Observed")
-  table2$addColumnInfo(name = "expOverall", type = "number", title = "Expected overall")
-  table2$addColumnInfo(name = "expWithin", type = "number", title = "Expected within")
-
+  table2$addColumnInfo(name = "expOverall", type = "integer", title = "Expected overall")
+  table2$addColumnInfo(name = "expWithin", type = "integer", title = "Expected within")
   table2$showSpecifiedColumnsOnly <- TRUE
+  if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
+    table2$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is set as boundary."))
 
 
   #Calculate performance
   allDataVector <- as.vector(allData)
-  rowNames <- c("ppm < LSL", "ppm > USL", "ppm total")
+  lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
+  uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
+  rowNames <- c(sprintf("ppm < %s", lslTitle), sprintf("ppm > %s", uslTitle), "ppm total")
 
   #observed
-  if (options[["lowerSpecificationLimit"]]){
+  if (options[["lowerSpecificationLimit"]]) {
     oLSL <- (1e6*length(allDataVector[allDataVector < lsl])) / n
-  }else{
+  } else {
     oLSL <- NA
   }
-  if (options[["upperSpecificationLimit"]]){
+  if (options[["upperSpecificationLimit"]]) {
     oUSL <- (1e6*length(allDataVector[allDataVector > usl])) / n
-  }else{
+  } else {
     oUSL <- NA
   }
-  oTOT <- sum(c(oLSL, oUSL), na.rm = T)
-  observed <- round(c(oLSL, oUSL, oTOT),2)
+  oTOT <- if (all(is.na(c(oLSL, oUSL)))) NA else sum(c(oLSL, oUSL), na.rm = TRUE)
+  observed <- c(oLSL, oUSL, oTOT)
 
   # expected overall
-  if (options[["lowerSpecificationLimit"]]){
+  if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
     eoLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdo))
   }else{
     eoLSL <- NA
   }
-  if (options[["upperSpecificationLimit"]]){
+  if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
     eoUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdo))
   }else{
     eoUSL <- NA
   }
-  eoTOT <- sum(c(eoLSL, eoUSL), na.rm = T)
+  eoTOT <- if (all(is.na(c(eoLSL, eoUSL)))) NA else sum(c(eoLSL, eoUSL), na.rm = TRUE)
   expOverall <- c(eoLSL, eoUSL, eoTOT)
 
-
   # expected within
-  if (options[["lowerSpecificationLimit"]]){
+  if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
     ewLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdw))
   }else{
     ewLSL <- NA
   }
-  if (options[["upperSpecificationLimit"]]){
+  if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
     ewUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdw))
   }else{
     ewUSL <- NA
   }
-  ewTOT <- sum(c(ewLSL, ewUSL), na.rm = T)
+  ewTOT <- if (all(is.na(c(ewLSL, ewUSL)))) NA else sum(c(ewLSL, ewUSL), na.rm = TRUE)
   expWithin <- c(ewLSL, ewUSL, ewTOT)
-
 
   nDecimals <- .numDecimals
   if(returnPerformanceDataframe){
@@ -788,13 +815,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   }
 
-
-
   table2List <- list("rowNames" = rowNames,
                      "observed" = observed,
-                     "expOverall" = expOverall,
-                     "expWithin" = expWithin)
-
+                     "expOverall" = round(expOverall, nDecimals),
+                     "expWithin" = round(expWithin, nDecimals))
+  table2List$expOverall[is.na(table2List$expOverall)] <- "*" # This looks better in the table and makes clearer that there is not an error
+  table2List$expWithin[is.na(table2List$expWithin)] <- "*"
   table2$setData(table2List)
 
   container[["capabilityTableOverall"]] <- table
