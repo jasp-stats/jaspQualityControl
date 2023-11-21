@@ -289,15 +289,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
       d2 <- KnownControlStats.RS(k)$constants[1]
-      sd <- meanMovingRange/d2
+      sigma <- meanMovingRange/d2
       if (plotType == "I") {
         processMean <- mean(dataCurrentStageVector, na.rm = TRUE) # manually calculate mean as package does not remove NAs
-        qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sd, center = processMean)
+        qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sigma, center = processMean)
         plotStatistic <- qccObject$statistics
         limits <- qccObject$limits
       } else if (plotType == "MR" || plotType == "MMR" ) {
-        qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sd, center = meanMovingRange)
-        limits <- unlist(.controlLimits(meanMovingRange, sd, n = k, type = "r"))
+        qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sigma, center = meanMovingRange)
+        limits <- unlist(.controlLimits(meanMovingRange, sigma, n = k, type = "r"))
         # the qcc package calculates the ranges ignoring the NAs, but for the MR chart we want the range to be NA if there are any NAs in the moving range
         qccObject$statistics[which(!complete.cases(mrMatrix))] <- NA
         plotStatistic <- c(rep(NA, k-1), qccObject$statistics)
@@ -478,7 +478,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
               "clData"         = clData,
               "clLabels"       = dfLimitLabel,
               "stageLabels"    = dfStageLabels,
-              "violationTable" = tableList
+              "violationTable" = tableList,
+              "sd"             = sigma
               ))
 }
 
