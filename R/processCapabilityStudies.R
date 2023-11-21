@@ -184,11 +184,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         jaspResults[["xBar"]][["plot"]] <- createJaspPlot(title = gettextf("X-bar & %s Control Chart", secondPlotTitle),
                                                           width = 1200, height = 500)
         # Error conditions
-        if (secondPlotType == "R" && nrow(dataset[measurements]) > 50) { # if the subgroup size is above 50, the R package cannot calculate R charts.
+        if (secondPlotType == "R" && length(measurements) > 50) { # if the subgroup size is above 50, the R package cannot calculate R charts.
           jaspResults[["xBar"]][["plot"]]$setError(gettext("Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."))
           return()
         } else if(wideFormat && length(measurements) < 2) {
-          jaspResults[["xBar"]][["plot"]]$setError(gettext("Subgroup size is 1, calculation of control charts not possible."))
+          jaspResults[["xBar"]][["plot"]]$setError(gettext("Subgroup size is 1, calculation of selected control charts not possible."))
           return()
         }
         fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
