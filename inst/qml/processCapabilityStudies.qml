@@ -372,7 +372,7 @@ Form
 					id : 				xbarR
 					label: 				qsTr("X-bar & R chart")
 					enabled:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
-					checked:			dataFormat.currentValue == "wideFormat" | (dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1)
+					checked:			(dataFormat.currentValue == "wideFormat" || (dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1)) ? true : false
 				}
 
 				RadioButton
@@ -380,7 +380,7 @@ Form
 					name: 				"xBarS"
 					id : 				xbarS
 					label: 				qsTr("X-bar & s chart")
-					enabled:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
+					enabled:			(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1) || dataFormat.currentValue == "wideFormat"
 				} 
 
 				RadioButton
@@ -389,7 +389,6 @@ Form
 					id : 				xbarMR
 					label: 				qsTr("X-bar & mR chart")
 					visible:			dataFormat.currentValue == "wideFormat"
-					checked:			false
 
 					DoubleField
 					{
@@ -408,7 +407,7 @@ Form
 					label: 				qsTr("X-mR chart")
 					enabled:			dataFormat.currentValue == "longFormat"
 					visible:			dataFormat.currentValue == "longFormat"
-					checked:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value == 1)
+					checked:			(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? true : false
 
 					DoubleField
 					{
@@ -640,11 +639,12 @@ Form
 			Group
 			{
 				title:			""
+				columns:		2
 
 				DropDown
 				{
 					name: 					"controlChartSdEstimationMethodGroupSize"
-					id: 					controlChartSdEstimationMethod
+					id: 					controlChartSdEstimationMethodGroupSize
 					label: 					qsTr("Method for estimating within subgroup std. dev. for subgroup size")
 					values: 
 					[
@@ -653,56 +653,43 @@ Form
 					]
 						indexDefaultValue: 			0
 				}
-				
-				RadioButtonGroup
+
+				DropDown
 				{
-					title: 					qsTr("")
-					name:					"controlChartSdEstimationMethodGroupSizeLargerThanOne"
-					visible:				controlChartSdEstimationMethod.currentValue == "largerThanOne"
-
-					RadioButton
-					{
-						name: 				"rBar"
-						label: 				qsTr("R-bar")
-						checked:			controlChartType.currentValue == "xBarR"
-					}
-
-					RadioButton
-					{
-						name: 				"sBar"
-						label: 				qsTr("S-bar")
-						checked:			controlChartType.currentValue == "xBarS"
-					}
-
-					CheckBox
-					{
-						name:								"controlChartSdUnbiasingConstant"
-						label: 								qsTr("Use unbiasing constant")
-						checked:							true
-					}
+					name: 					"controlChartSdEstimationMethodGroupSizeLargerThanOne"
+					id: 					controlChartSdEstimationMethodGroupSizeLargerThanOne
+					visible:				controlChartSdEstimationMethodGroupSize.currentValue == "largerThanOne"
+					label: 					""
+					values: 
+					[
+						{ label: qsTr("R-bar"),			value: "rBar"},
+						{ label: qsTr("S-bar"),			value: "sBar"}
+					]
+					indexDefaultValue:
+					(controlChartType.currentValue == "xBarR" || controlChartType.currentValue == "xBarMR") ? 0 : 
+					(controlChartType.currentValue == "xBarS") ? 1 : 0
 				}
 
-				RadioButtonGroup
+				DropDown
 				{
-					title: 					qsTr("")
-					name:					"controlChartSdEstimationMethodGroupSizeEqualOne"
-					visible:				controlChartSdEstimationMethod.currentValue == "equalOne"
+					name: 					"controlChartSdEstimationMethodGroupSizeEqualOne"
+					id: 					controlChartSdEstimationMethodGroupSizeEqualOne
+					visible:				controlChartSdEstimationMethodGroupSize.currentValue == "equalOne"
+					label: 					""
+					values: 
+					[
+						{ label: qsTr("Mean moving range"),			value: "meanMovingRange"}
+					]
+				}
 
-					RadioButton
-					{
-						name: 				"meanMovingRange"
-						label: 				qsTr("Mean moving range")
-						checked:			true
-
-						DoubleField
-						{
-						name:							"controlChartSdEstimationMethodMeanMovingRangeLength"
-						label:							qsTr("Moving range length")
-						defaultValue:					2
-						min: 							2
-						max: 							dataSetModel.rowCount()
-						}
-					}
+				DoubleField
+				{
+				name:							"controlChartSdEstimationMethodMeanMovingRangeLength"
+				visible:						controlChartSdEstimationMethodGroupSize.currentIndex == 1
+				label:							qsTr("Moving range length")
+				defaultValue:					2
+				min: 							2
+				max: 							dataSetModel.rowCount()
 				}
 			}
 		}
