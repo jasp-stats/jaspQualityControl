@@ -334,10 +334,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
-  if(length(measurements) < 2){
-    sdw <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'xbar.one', plot = FALSE)[["std.dev"]]
-  }else{
-    sdw <- .sdXbar(dataset[measurements], "r")
+  if (length(measurements) < 2) {
+    k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+    sdw <- .controlChart_calculations(dataset[measurements], plotType = "MR", movingRangeLength = k)$sd
+  } else {
+    sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+    unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+    sdw <- .sdXbar(dataset[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
   }
   allData <- na.omit(unlist(dataset[, measurements]))
 
@@ -383,16 +386,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
-  if(length(measurements) < 2){
-    type <- 'xbar.one'
-  }else{
-    type <- 'R'
+  if (length(measurements) < 2) {
+    k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+    sdw <- .controlChart_calculations(dataset[measurements], plotType = "MR", movingRangeLength = k)$sd
+  } else {
+    sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+    unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+    sdw <- .sdXbar(dataset[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
   }
-  qccFit <- qcc::qcc(as.data.frame(dataset[, measurements]), type = type, plot = FALSE)
   allData <- as.vector(na.omit(unlist(dataset[, measurements])))
   plotData <- data.frame(x = allData)
-
-  sdw <- qccFit[["std.dev"]]
   sdo <- sd(allData, na.rm = TRUE)
 
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], min(plotData[["x"]]) - 1 * sdo, max(plotData[["x"]]) + 1 * sdo), min.n = 4)
@@ -511,9 +514,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
   if (length(measurements) < 2) {
-    sdw <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'xbar.one', plot = FALSE)[["std.dev"]]
-  }else{
-    sdw <- .sdXbar(dataset[measurements], "r")
+    k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+    sdw <- .controlChart_calculations(dataset[measurements], plotType = "MR", movingRangeLength = k)$sd
+  } else {
+    sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+    unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+    sdw <- .sdXbar(dataset[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
   }
   allData <- na.omit(unlist(dataset[, measurements]))
 
@@ -641,9 +647,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
   # Transposed gives NA often as std.dev
   if (length(measurements) < 2) {
-    sdw <- qcc::qcc(as.data.frame(dataset[, measurements]), type = 'xbar.one', plot = FALSE)[["std.dev"]]
-  }else{
-    sdw <- .sdXbar(dataset[measurements], "r")
+    k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+    sdw <- .controlChart_calculations(dataset[measurements], plotType = "MR", movingRangeLength = k)$sd
+  } else {
+    sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+    unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+    sdw <- .sdXbar(dataset[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
   }
   allData <- na.omit(unlist(dataset[, measurements]))
   sdo <- sd(allData)

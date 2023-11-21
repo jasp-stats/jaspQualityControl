@@ -15,6 +15,7 @@ options$lowerSpecificationLimitValue <- -16
 options$targetValue <- -8
 options$upperSpecificationLimitValue <- 0
 options$controlChartType <- "xBarR"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "rBar"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Long.csv", options)
 
@@ -34,9 +35,8 @@ test_that("Process performance (total) table results match", {
 test_that("Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.773329467129713, 0.209114003668631, 0, "ppm &lt; LSL", 68.3893384010315,
-                                      29.5212971422876, 0, "ppm &gt; USL", 69.1626678681612, 29.7304111459562,
-                                      0, "ppm total"))
+                                 list(0.77, 0.21, 0, "ppm &lt; LSL", 68.39, 29.52, 0, "ppm &gt; USL",
+                                      69.16, 29.73, 0, "ppm total"))
 })
 
 test_that("Process capability (within) table results match", {
@@ -81,6 +81,7 @@ options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
 options$controlChartType <- "xBarMR"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "rBar"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Wide.csv", options)
 
@@ -101,9 +102,8 @@ test_that("Process performance (total) table results match", {
 test_that("Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.773329467129713, 0.209114003668631, 0, "ppm &lt; LSL", 68.3893384010315,
-                                      29.5212971422876, 0, "ppm &gt; USL", 69.1626678681612, 29.7304111459562,
-                                      0, "ppm total"))
+                                 list(0.77, 0.21, 0, "ppm &lt; LSL", 68.39, 29.52, 0, "ppm &gt; USL",
+                                      69.16, 29.73, 0, "ppm total"))
 })
 
 test_that("Process capability (within) table results match", {

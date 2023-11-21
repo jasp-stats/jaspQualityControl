@@ -534,7 +534,7 @@ Form
 		
 		
 		
-					Group
+			Group
 			{
 				title:			qsTr("Select Report Components")
 			
@@ -635,6 +635,75 @@ Form
 				(nonNormalDistribution.currentValue == "lognormal" || nonNormalDistribution.currentValue == "3ParameterLognormal") ? 1 : 
 				(nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "weibull") ? 2 : 0 
 				: 0
+			}
+
+			Group
+			{
+				title:			""
+
+				DropDown
+				{
+					name: 					"controlChartSdEstimationMethodGroupSize"
+					id: 					controlChartSdEstimationMethod
+					label: 					qsTr("Method for estimating within subgroup std. dev. for subgroup size")
+					values: 
+					[
+						{ label: qsTr(" > 1"),		value: "largerThanOne"},
+						{ label: qsTr("= 1"),		value: "equalOne"}
+					]
+						indexDefaultValue: 			0
+				}
+				
+				RadioButtonGroup
+				{
+					title: 					qsTr("")
+					name:					"controlChartSdEstimationMethodGroupSizeLargerThanOne"
+					visible:				controlChartSdEstimationMethod.currentValue == "largerThanOne"
+
+					RadioButton
+					{
+						name: 				"rBar"
+						label: 				qsTr("R-bar")
+						checked:			controlChartType.currentValue == "xBarR"
+					}
+
+					RadioButton
+					{
+						name: 				"sBar"
+						label: 				qsTr("S-bar")
+						checked:			controlChartType.currentValue == "xBarS"
+					}
+
+					CheckBox
+					{
+						name:								"controlChartSdUnbiasingConstant"
+						label: 								qsTr("Use unbiasing constant")
+						checked:							true
+					}
+				}
+
+				RadioButtonGroup
+				{
+					title: 					qsTr("")
+					name:					"controlChartSdEstimationMethodGroupSizeEqualOne"
+					visible:				controlChartSdEstimationMethod.currentValue == "equalOne"
+
+					RadioButton
+					{
+						name: 				"meanMovingRange"
+						label: 				qsTr("Mean moving range")
+						checked:			true
+
+						DoubleField
+						{
+						name:							"controlChartSdEstimationMethodMeanMovingRangeLength"
+						label:							qsTr("Moving range length")
+						defaultValue:					2
+						min: 							2
+						max: 							dataSetModel.rowCount()
+						}
+					}
+				}
 			}
 		}
 	}
