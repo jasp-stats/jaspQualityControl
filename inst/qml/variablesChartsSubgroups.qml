@@ -66,7 +66,7 @@ Form
 		{
 			id:									axisLabels
 			name:								"axisLabels"
-			title:								qsTr("Axis labels")
+			title:								qsTr("Timestamp (optional)")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 			visible: 							dataFormat.currentValue == "wideFormat"
