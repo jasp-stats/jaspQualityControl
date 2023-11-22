@@ -1291,8 +1291,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .qcProbabilityPlot <- function(dataset, options, measurements = NULL, fit = "", ggPlot = FALSE) {
-
-  plot <- createJaspPlot(width = 600, aspectRatio = 1, title = "Probability Plot")
+  distributionTitle <- switch (options[["nullDistribution"]],
+                               "weibull" = "Weibull",
+                               "lognormal" = "lognormal",
+                               "normal" = "normal")
+  plot <- createJaspPlot(width = 600, aspectRatio = 1, title = gettextf("Probability plot against %1$s distribution", distributionTitle))
   plot$dependOn(c("measurementLongFormat", "manualSubgroupSizeValue"))
 
   if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
