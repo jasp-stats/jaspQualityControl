@@ -410,66 +410,6 @@ Form
 				}
 			}
 
-			// RadioButtonGroup
-			// {
-			// 	title: 					qsTr("Stability of the process")
-			// 	name:					"controlChartType"
-			// 	id:						controlChartType
-
-			// 	RadioButton
-			// 	{
-			// 		name: 				"xBarR"
-			// 		id : 				xbarR
-			// 		label: 				qsTr("X-bar & R control chart")
-			// 		enabled:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
-			// 		checked:			(dataFormat.currentValue == "wideFormat" || (dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1)) ? true : false
-			// 	}
-
-			// 	RadioButton
-			// 	{
-			// 		name: 				"xBarS"
-			// 		id : 				xbarS
-			// 		label: 				qsTr("X-bar & s control chart")
-			// 		enabled:			(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1) || dataFormat.currentValue == "wideFormat"
-			// 	} 
-
-			// 	RadioButton
-			// 	{
-			// 		name: 				"xBarMR"
-			// 		id : 				xbarMR
-			// 		label: 				qsTr("X-bar & mR control chart")
-			// 		visible:			dataFormat.currentValue == "wideFormat"
-
-			// 		DoubleField
-			// 		{
-			// 		name:							"xBarMovingRangeLength"
-			// 		label:							qsTr("Moving range length")
-			// 		defaultValue:					2
-			// 		min: 							2
-			// 		max: 							dataSetModel.rowCount()
-			// 		}
-			// 	}
-
-			// 	RadioButton
-			// 	{
-			// 		name: 				"xmr"
-			// 		id : 				xmr
-			// 		label: 				qsTr("X-mR control chart")
-			// 		enabled:			dataFormat.currentValue == "longFormat"
-			// 		visible:			dataFormat.currentValue == "longFormat"
-			// 		checked:			(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? true : false
-
-			// 		DoubleField
-			// 		{
-			// 		name:							"xmrChartMovingRangeLength"
-			// 		label:							qsTr("Moving range length")
-			// 		defaultValue:					2
-			// 		min: 							2
-			// 		max: 							dataSetModel.rowCount()
-			// 		}
-			// 	}
-			// }
-
 			Group
 			{
 				title: 							qsTr("Distribution of the process")
