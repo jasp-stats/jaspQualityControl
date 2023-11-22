@@ -27,7 +27,7 @@ Form
 		AssignedVariablesList
 		{
 			name:								"axisLabels"
-			title:								qsTr("Axis labels")
+			title:								qsTr("Timestamp (optional)")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}

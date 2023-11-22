@@ -101,7 +101,7 @@ Form
 		{
 			id:									axisLabels
 			name:								"axisLabels"
-			title:								qsTr("Axis labels")
+			title:								qsTr("Timestamp (optional)")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
@@ -473,55 +473,51 @@ Form
 				checked:	true
 				columns: 1
 
-		TextField
-		{
-			name: 					"reportTitle"
-			label:					qsTr("Title")
-			id:						reportTitle
-			placeholderText:		qsTr("Measurement")
-			fieldWidth:				100
-		}
+				TextField
+				{
+					name: 					"reportTitle"
+					label:					qsTr("Title")
+					id:						reportTitle
+					placeholderText:		qsTr("Measurement")
+					fieldWidth:				100
+				}
 
-		TextField
-		{
-			name:					"reportProcessName"
-			label:					qsTr("Process Name")
-			id:						reportProcessName
-			placeholderText:		qsTr("Name")
-			fieldWidth:				100
-		}
+				TextField
+				{
+					name:					"reportProcessName"
+					label:					qsTr("Process Name")
+					id:						reportProcessName
+					placeholderText:		qsTr("Name")
+					fieldWidth:				100
+				}
 
-		TextField
-		{
-			name:					"reportDate"
-			label:					qsTr("Date")
-			id:						reportDate
-			placeholderText:		qsTr("Date")
-			fieldWidth:				100
-		}
+				TextField
+				{
+					name:					"reportDate"
+					label:					qsTr("Date")
+					id:						reportDate
+					placeholderText:		qsTr("Date")
+					fieldWidth:				100
+				}
 
-		TextField
-		{
-			name:					"reportReportedBy"
-			label:					qsTr("Reported by")
-			id:						reportReportedBy
-			placeholderText:		qsTr("Name")
-			fieldWidth:				100
-		}
+				TextField
+				{
+					name:					"reportReportedBy"
+					label:					qsTr("Reported by")
+					id:						reportReportedBy
+					placeholderText:		qsTr("Name")
+					fieldWidth:				100
+				}
 
-		TextField
-		{
-			name:					"reportMiscellaneous"
-			label:					qsTr("Misc")
-			id:						reportMiscellaneous
-			placeholderText:		qsTr("Miscellaneous")
-			fieldWidth:				100
-		}
-		
-		
-		}
-		
-		
+				TextField
+				{
+					name:					"reportMiscellaneous"
+					label:					qsTr("Misc")
+					id:						reportMiscellaneous
+					placeholderText:		qsTr("Miscellaneous")
+					fieldWidth:				100
+				}
+			}
 		
 			Group
 			{
