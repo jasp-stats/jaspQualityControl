@@ -128,29 +128,29 @@ Form
 			visible:							dataFormat.currentValue == "longFormat"							
 
 			RadioButton
+			{
+				value: 							"manual"
+				label: 							qsTr("Subgroup size")
+				checked:		 				true
+				childrenOnSameRow:				true
+				
+				DoubleField
 				{
-					value: 							"manual"
-					label: 							qsTr("Subgroup size")
-					checked:		 				true
-					childrenOnSameRow:				true
+					name: 									"manualSubgroupSizeValue"
+					id:										manualSubgroupSizeValue
+					min: 									1
+					max:									dataSetModel.rowCount()
+					negativeValues:							false
+					defaultValue:							5
 					
-					DoubleField
-					{
-						name: 									"manualSubgroupSizeValue"
-						id:										manualSubgroupSizeValue
-						min: 									1
-						max:									dataSetModel.rowCount()
-						negativeValues:							false
-						defaultValue:							5
-						
-					}
 				}
+			}
 			
 			RadioButton
-				{
-					value: 							"groupingVariable"
-					label: 							qsTr("Through grouping variable")
-				}
+			{
+				value: 							"groupingVariable"
+				label: 							qsTr("Through grouping variable")
+			}
 
 				
 
@@ -361,64 +361,114 @@ Form
 		ColumnLayout
 		{
 
-			RadioButtonGroup
+			Group
 			{
-				title: 					qsTr("Stability of the process")
-				name:					"controlChartType"
+				title:			qsTr("Stability of the process")
 
-				RadioButton
+
+				DropDown
 				{
-					name: 				"xBarR"
-					id : 				xbarR
-					label: 				qsTr("X-bar & R chart")
-					enabled:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
-					checked:			(dataFormat.currentValue == "wideFormat" || (dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1)) ? true : false
+					name: 					"controlChartType"
+					id: 					controlChartType
+					label: 					""
+					values: dataFormat.currentValue == "longFormat" ?
+					[
+						{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
+						{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
+						{ label: qsTr("X-mR control chart"),				value: "xmr"}
+					] :
+					[
+						{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
+						{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
+						{ label: qsTr("X-bar & mR control chart"),			value: "xBarMR"}
+					]
+					indexDefaultValue: 
+					(dataFormat.currentValue == "wideFormat" || (dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1)) ? 0 :
+					(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? 2 : 0
 				}
 
-				RadioButton
+				DoubleField
 				{
-					name: 				"xBarS"
-					id : 				xbarS
-					label: 				qsTr("X-bar & s chart")
-					enabled:			(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1) || dataFormat.currentValue == "wideFormat"
-				} 
-
-				RadioButton
-				{
-					name: 				"xBarMR"
-					id : 				xbarMR
-					label: 				qsTr("X-bar & mR chart")
-					visible:			dataFormat.currentValue == "wideFormat"
-
-					DoubleField
-					{
 					name:							"xBarMovingRangeLength"
 					label:							qsTr("Moving range length")
+					visible:						controlChartType.currentIndex == 2
 					defaultValue:					2
 					min: 							2
 					max: 							dataSetInfo.rowCount
 					}
 				}
 
-				RadioButton
+				DoubleField
 				{
-					name: 				"xmr"
-					id : 				xmr
-					label: 				qsTr("X-mR chart")
-					enabled:			dataFormat.currentValue == "longFormat"
-					visible:			dataFormat.currentValue == "longFormat"
-					checked:			(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? true : false
-
-					DoubleField
-					{
 					name:							"xmrChartMovingRangeLength"
 					label:							qsTr("Moving range length")
+					visible:						controlChartType.currentIndex == 3
 					defaultValue:					2
 					min: 							2
 					max: 							dataSetInfo.rowCount
 					}
 				}
 			}
+
+			// RadioButtonGroup
+			// {
+			// 	title: 					qsTr("Stability of the process")
+			// 	name:					"controlChartType"
+			// 	id:						controlChartType
+
+			// 	RadioButton
+			// 	{
+			// 		name: 				"xBarR"
+			// 		id : 				xbarR
+			// 		label: 				qsTr("X-bar & R control chart")
+			// 		enabled:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
+			// 		checked:			(dataFormat.currentValue == "wideFormat" || (dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1)) ? true : false
+			// 	}
+
+			// 	RadioButton
+			// 	{
+			// 		name: 				"xBarS"
+			// 		id : 				xbarS
+			// 		label: 				qsTr("X-bar & s control chart")
+			// 		enabled:			(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1) || dataFormat.currentValue == "wideFormat"
+			// 	} 
+
+			// 	RadioButton
+			// 	{
+			// 		name: 				"xBarMR"
+			// 		id : 				xbarMR
+			// 		label: 				qsTr("X-bar & mR control chart")
+			// 		visible:			dataFormat.currentValue == "wideFormat"
+
+			// 		DoubleField
+			// 		{
+			// 		name:							"xBarMovingRangeLength"
+			// 		label:							qsTr("Moving range length")
+			// 		defaultValue:					2
+			// 		min: 							2
+			// 		max: 							dataSetModel.rowCount()
+			// 		}
+			// 	}
+
+			// 	RadioButton
+			// 	{
+			// 		name: 				"xmr"
+			// 		id : 				xmr
+			// 		label: 				qsTr("X-mR control chart")
+			// 		enabled:			dataFormat.currentValue == "longFormat"
+			// 		visible:			dataFormat.currentValue == "longFormat"
+			// 		checked:			(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? true : false
+
+			// 		DoubleField
+			// 		{
+			// 		name:							"xmrChartMovingRangeLength"
+			// 		label:							qsTr("Moving range length")
+			// 		defaultValue:					2
+			// 		min: 							2
+			// 		max: 							dataSetModel.rowCount()
+			// 		}
+			// 	}
+			// }
 
 			Group
 			{
@@ -651,7 +701,8 @@ Form
 						{ label: qsTr(" > 1"),		value: "largerThanOne"},
 						{ label: qsTr("= 1"),		value: "equalOne"}
 					]
-						indexDefaultValue: 			0
+						indexDefaultValue:
+						(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? 1 : 0
 				}
 
 				DropDown
