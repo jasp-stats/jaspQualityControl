@@ -128,7 +128,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                all.target = measurements,
                custom = function () {
                  if (any(unlist(dataset[measurements]) < 0))
-                   return(gettext("Values must be positive to fit a Weibull/Lognormal distribution."))},
+                   return(gettext("Values must be positive to fit a Weibull/lognormal distribution."))},
                exitAnalysisIfErrors = TRUE)
   }
 
@@ -175,13 +175,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                 "xBarS" = "s",
                                 "xBarMR" = "mR")
       # first chart is always xBar-chart, second is either R-, mR-, or s-chart
-      jaspResults[["xBar"]] <- createJaspContainer(gettextf("X-bar & %s Control Chart", secondPlotTitle))
+      jaspResults[["xBar"]] <- createJaspContainer(gettextf("X-bar & %s control chart", secondPlotTitle))
       jaspResults[["xBar"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "report"))
       jaspResults[["xBar"]]$position <- 1
 
 
       if (ready && is.null(jaspResults[["xBar"]][["plot"]])) {
-        jaspResults[["xBar"]][["plot"]] <- createJaspPlot(title = gettextf("X-bar & %s Control Chart", secondPlotTitle),
+        jaspResults[["xBar"]][["plot"]] <- createJaspPlot(title = gettextf("X-bar & %s control chart", secondPlotTitle),
                                                           width = 1200, height = 500)
         # Error conditions
         if (secondPlotType == "R" && length(measurements) > 50) { # if the subgroup size is above 50, the R package cannot calculate R charts.
@@ -192,10 +192,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           return()
         }
         fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
+        unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
         xBarChart <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
-                                               xAxisLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize)
+                                   xAxisLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)
         secondPlot <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels,
-                                    movingRangeLength = options[["xBarMovingRangeLength"]], fixedSubgroupSize = fixedSubgroupSize)
+                                    movingRangeLength = options[["xBarMovingRangeLength"]], fixedSubgroupSize = fixedSubgroupSize,
+                                    unbiasingConstantUsed = unbiasingConstantUsed)
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
         if (!identical(plotNotes, ""))
@@ -204,11 +206,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         jaspResults[["xBar"]][["tableSecondPlot"]] <- secondPlot$table
       }
     } else if (options[["controlChartType"]] == "xmr") {
-      jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR Control Chart"))
+      jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR control chart"))
       jaspResults[["xmr"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "report"))
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
-        jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
+        jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
         individualChart <- .controlChart(dataset = dataset[measurements], plotType = "I",
                                                      xAxisLabels = seq_along(unlist(dataset[measurements])))
         mrChart <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = seq_along(unlist(dataset[measurements])),
@@ -241,7 +243,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements) {
 
-  container <- createJaspContainer(gettext("Capability Studies"))
+  container <- createJaspContainer(gettext("Capability study"))
   container$dependOn(options = c("CapabilityStudyType", "measurementsWideFormat", "subgroup", "lowerSpecificationLimitValue", "upperSpecificationLimitValue", "targetValue", "measurementLongFormat", "manualSubgroupSizeValue", "dataFormat",
                                  "processCapabilityPlot", "processCapabilityTable", "manualSubgroupSize", "report"))
   container$position <- 4
@@ -271,7 +273,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") {
 
-    normalContainer <- createJaspContainer(gettext("Process Capability"))
+    normalContainer <- createJaspContainer(gettext("Process capability"))
     normalContainer$position <- 1
     container[["normalCapabilityAnalysis"]] <- normalContainer
 
@@ -289,7 +291,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis") {
 
-    nonNormalContainer <- createJaspContainer(gettext("Process Capability (Non-normal Capability Analysis)"))
+    nonNormalContainer <- createJaspContainer(gettext("Process capability (non-normal capability analysis)"))
     nonNormalContainer$position <- 2
 
     container[["nonNormalCapabilityAnalysis"]] <- nonNormalContainer
@@ -324,8 +326,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Average"))
-  table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. deviation (total)"))
-  table$addColumnInfo(name = "sdw", type = "number", title = gettext("Std. deviation (within)"))
+  table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. dev. (total)"))
+  table$addColumnInfo(name = "sdw", type = "number", title = gettext("Std. dev. (within)"))
 
   table$showSpecifiedColumnsOnly <- TRUE
 
@@ -360,8 +362,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   nDecimals <- .numDecimals
 
-  if(returnDataframe){
-    sourceVector <- c('LSL', 'Target', 'USL', 'Sample size', 'Mean', "Std. Deviation (Total)", "Std. Deviation (Within)")
+  if (returnDataframe) {
+    lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
+    uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
+    sourceVector <- c(lslTitle, 'Target', uslTitle, 'Sample size', 'Mean', "Std. dev. (total)", "Std. dev. (within)")
     lsl <- options[["lowerSpecificationLimitValue"]]
     target <- options[["targetValue"]]
     usl <- options[["upperSpecificationLimitValue"]]
@@ -508,7 +512,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   table$showSpecifiedColumnsOnly <- TRUE
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
-    table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is set as boundary."))
+    table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
 
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
@@ -572,14 +576,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-  if(returnDataframe){
-    if(!options[["upperSpecificationLimit"]])
-      cpu <- NA
-    if(!options[["lowerSpecificationLimit"]])
-      cpl <- NA
-    if(!(options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]))
-      cp <- NA
-    valueVector <- na.omit(c(cp, cpl, cpu, cpk))
+  if(returnDataframe) {
+    valueVector <- c()
+    if(options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
+      valueVector <- c(cp)
+    if(options[["lowerSpecificationLimit"]])
+      valueVector <- c(valueVector, cpl)
+    if(options[["upperSpecificationLimit"]])
+      valueVector <- c(valueVector, cpu)
+    valueVector <- c(valueVector, cpk)
     df <- data.frame(sources = sourceVector,
                      values = round(valueVector,2))
     return(df)
@@ -641,7 +646,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   table$showSpecifiedColumnsOnly <- TRUE
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
-    table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is set as boundary."))
+    table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
 
 
   # Take a look at this input! Is is supposed to be like this or must it be transposed?
@@ -740,17 +745,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   rows[is.na(rows)] <- "*" # This looks better in the table and makes clearer that there is not an error
   table$addRows(rows)
 
-  if(returnOverallCapDataframe){
-    if(!options[["upperSpecificationLimit"]])
-      ppu <- NA
-    if(!options[["lowerSpecificationLimit"]])
-      ppl <- NA
-    if(!(options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]))
-      pp <- NA
-    if(!options[["target"]])
-      cpm <- NA
-
-    valueVector1 <- na.omit(c(pp, ppl, ppu, ppk, cpm))
+  if (returnOverallCapDataframe) {
+    valueVector1 <- c()
+    if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
+      valueVector1 <- c(valueVector1, pp)
+    if (options[["lowerSpecificationLimit"]])
+      valueVector1 <- c(valueVector1, ppl)
+    if (options[["upperSpecificationLimit"]])
+      valueVector1 <- c(valueVector1, ppu)
+    valueVector1 <- c(valueVector1, ppk)
+    if (options[["target"]])
+      valueVector1 <- c(valueVector1, cpm)
     df <- data.frame(sources = sourceVector1,
                      values = round(valueVector1,2))
     return(df)
@@ -759,11 +764,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table2 <- createJaspTable(title = gettext("Non-conformance statistics"))
   table2$addColumnInfo(name = "rowNames", type = "string", title = "")
   table2$addColumnInfo(name = "observed", type = "integer", title = "Observed")
-  table2$addColumnInfo(name = "expOverall", type = "integer", title = "Expected overall")
+  table2$addColumnInfo(name = "expOverall", type = "integer", title = "Expected total")
   table2$addColumnInfo(name = "expWithin", type = "integer", title = "Expected within")
   table2$showSpecifiedColumnsOnly <- TRUE
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
-    table2$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is set as boundary."))
+    table2$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
 
 
   #Calculate performance
@@ -786,7 +791,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   oTOT <- if (all(is.na(c(oLSL, oUSL)))) NA else sum(c(oLSL, oUSL), na.rm = TRUE)
   observed <- c(oLSL, oUSL, oTOT)
 
-  # expected overall
+  # expected total
   if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
     eoLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdo))
   }else{
@@ -868,16 +873,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Average"))
-  table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. deviation"))
+  table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. dev."))
   if(options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "lognormal"){
     table$addColumnInfo(name = "beta", type = "number", title = gettextf("Log mean (%1$s)", "\u03BC"))
     table$addColumnInfo(name = "theta", type = "number", title = gettextf("Log std.dev (%1$s)", "\u03C3"))
   }
   else{
-    table$addColumnInfo(name = "beta", type = "number", title = gettextf("Shape (%1$s)", "\u03BB"))
-    table$addColumnInfo(name = "theta", type = "number", title = gettext("Scale (<i>k</i>)"))
+    table$addColumnInfo(name = "beta", type = "number", title = gettextf("Shape (%1$s)", "\u03B2"))
+    table$addColumnInfo(name = "theta", type = "number", title = gettext("Scale (%1$s)", "\u03B8"))
   }
-  sourceVector1 <- c(sourceVector1, 'LSL', 'Target', 'USL', 'Sample size', 'Mean', 'Std. Deviation', "Beta", "Theta")
+  sourceVector1 <- c(sourceVector1, 'LSL', 'Target', 'USL', 'Sample size', 'Mean', 'Std. dev.', "Beta", "Theta")
 
   if(options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull"){
     table$addColumnInfo(name = "threshold", type = "number", title = gettext('Threshold'))
@@ -1085,7 +1090,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table3$addColumnInfo(name = "rowNames", type = "string", title = "")
   table3$addColumnInfo(name = "observed", type = "number", title = gettext("Observed"))
-  table3$addColumnInfo(name = "expOverall", type = "number", title = gettext("Expected overall"))
+  table3$addColumnInfo(name = "expOverall", type = "number", title = gettext("Expected total"))
 
 
   allDataVector <- as.vector(allData)
@@ -1105,10 +1110,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   oTOT <- sum(c(oLSL, oUSL), na.rm = T)
   observed <- c(oLSL, oUSL, oTOT)
 
-  # expected overall
+  # expected total
 
   if (options[["nonNormalDistribution"]] == "lognormal") {
-    distname <- "Lognormal"
+    distname <- "lognormal"
     if (options[["lowerSpecificationLimit"]]){
       eoLSL <- 1e6 * plnorm(q = lsl, meanlog = beta, sdlog = theta, lower.tail = T)
     }else{
@@ -1144,7 +1149,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       eoUSL <- NA
     }
   }else if (options[["nonNormalDistribution"]] == "3ParameterWeibull") {
-    distname <- "3-parameter-weibull"
+    distname <- "3-parameter-Weibull"
     if (options[["lowerSpecificationLimit"]]){
       eoLSL <- 1e6 * FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold, lower.tail = T)
     }else{
@@ -1181,8 +1186,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 }
 
-
-
 #############################################################
 ## Functions for probability plot section ###################
 #############################################################
@@ -1196,7 +1199,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
     return()
 
-  container <- createJaspContainer(gettext("Probability Table and Plot"))
+  container <- createJaspContainer(gettext("Probability table and plot"))
   container$dependOn(options = c("measurementsWideFormat", "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution", "probabilityPlotGridLines", "measurementLongFormat", "manualSubgroupSizeValue",
                                  "manualSubgroupSize", "subgroup", "report"))
   container$position <- 3
@@ -1225,13 +1228,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (options[["nullDistribution"]] == "normal") {
     table$addColumnInfo(name = "mean",  title = gettextf("Mean (%1$s)", "\u03BC"), 				type = "number")
-    table$addColumnInfo(name = "sd",    title = gettextf("Std. deviation (%1$s)", "\u03C3"), 	type = "number")
+    table$addColumnInfo(name = "sd",    title = gettextf("Std. dev. (%1$s)", "\u03C3"), 	type = "number")
   } else if (options[["nullDistribution"]] == "lognormal") {
     table$addColumnInfo(name = "mean",  title = gettextf("Log mean (%1$s)", "\u03BC"),  		type = "number")
-    table$addColumnInfo(name = "sd",    title = gettextf("Log std.dev (%1$s)", "\u03C3"), 			type = "number")
+    table$addColumnInfo(name = "sd",    title = gettextf("Log std.dev (%1$s)", "\u03C3"), 	type = "number")
   } else if (options[["nullDistribution"]] == "weibull") {
-    table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03BB"), 			type = "number")
-    table$addColumnInfo(name = "sd",    title = gettext("Scale (<i>k</i>)"),        			type = "number")
+    table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03B2"), 			type = "number")
+    table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s", "\u03B8"),        type = "number")
   }
 
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "number")
@@ -1618,7 +1621,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotList[[indexCounter]] <- .ggplotWithText(text2)
   }
   if (options[["reportProcessStability"]]) {
-    # X-bar and R Chart OR ImR Chart
+    # X-bar and second chart OR ImR Chart
     if (options[["controlChartType"]] == "xmr"){
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "I",
@@ -1637,11 +1640,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                        "xBarMR" = "r")
       fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
       indexCounter <- indexCounter + 1
+      unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
-                                                xAxisLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize)$plotObject
+                                                xAxisLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
+                                                unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels,
-                                                movingRangeLength = options[["xBarMovingRangeLength"]], fixedSubgroupSize = fixedSubgroupSize)$plotObject
+                                                movingRangeLength = options[["xBarMovingRangeLength"]], fixedSubgroupSize = fixedSubgroupSize,
+                                                unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
     }
   }
   if (options[["reportProcessCapabilityPlot"]]) {

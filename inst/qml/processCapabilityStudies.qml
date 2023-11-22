@@ -188,7 +188,7 @@ Form
 
 	Section
 	{
-		title: qsTr("Process Capability Options")
+		title: qsTr("Process capability options")
 
 		ColumnLayout
 		{
@@ -225,16 +225,16 @@ Form
 							[
 								{label: qsTr("Weibull"),					value: "weibull"},
 								{label: qsTr("Lognormal"),					value: "lognormal"},
-								{label: qsTr("3-parameter lognormal"),		value: "3ParameterLognormal"},
-								{label: qsTr("3-parameter Weibull"),		value: "3ParameterWeibull"}
+								{label: qsTr("3-parameter Weibull"),		value: "3ParameterWeibull"},
+								{label: qsTr("3-parameter lognormal"),		value: "3ParameterLognormal"}
 							]
-							indexDefaultValue: (nullDistribution.currentValue == "weibull") ? 0 : 1
+							indexDefaultValue: 0
 						}
 
 						DropDown
 						{
 							name:					"nonNormalMethod"
-							label:					qsTr("Non-normal capability statistics:")
+							label:					qsTr("Non-normal capability statistics")
 							indexDefaultValue:		0
 							values:
 								[
@@ -248,7 +248,7 @@ Form
 
 			Group
 			{
-				title: 							qsTr("Capability studies")
+				title: 							qsTr("Capability study")
 
 				CheckBox
 				{
@@ -320,7 +320,7 @@ Form
 					name: 						"processCapabilityPlot"
 					label: 						qsTr("Process capability plot")
 					checked: 					true
-					enabled:					upperSpecificationLimit.checked || target.checked || lowerSpecificationLimit.checked
+					enabled:					upperSpecificationLimit.checked || lowerSpecificationLimit.checked
 
 					DoubleField
 					{
@@ -338,7 +338,7 @@ Form
 					name: 							"processCapabilityTable"
 					label: 							qsTr("Process capability tables")
 					checked: 						true
-					enabled:						upperSpecificationLimit.checked | target.checked | lowerSpecificationLimit.checked
+					enabled:						upperSpecificationLimit.checked || lowerSpecificationLimit.checked
 
 					CheckBox
 					{
@@ -457,7 +457,7 @@ Form
 
 	Section
 	{
-		title: qsTr("Process Capability Report")
+		title: qsTr("Process capability report")
 		
 		CheckBox
 		{
@@ -525,7 +525,7 @@ Form
 		
 			Group
 			{
-				title:			qsTr("Select Report Components")
+				title:			qsTr("Select report components")
 			
 				CheckBox
 				{
@@ -565,7 +565,7 @@ Form
 
 	Section
 	{
-		title: qsTr("Advanced Options")
+		title: qsTr("Advanced options")
 		
 		Group
 		{
@@ -675,12 +675,20 @@ Form
 
 				DoubleField
 				{
-				name:							"controlChartSdEstimationMethodMeanMovingRangeLength"
-				visible:						controlChartSdEstimationMethodGroupSize.currentIndex == 1
-				label:							qsTr("Moving range length")
-				defaultValue:					2
-				min: 							2
-				max: 							dataSetModel.rowCount()
+					name:							"controlChartSdEstimationMethodMeanMovingRangeLength"
+					visible:						controlChartSdEstimationMethodGroupSize.currentIndex == 1
+					label:							qsTr("Moving range length")
+					defaultValue:					2
+					min: 							2
+					max: 							dataSetModel.rowCount()
+				}
+
+				CheckBox
+				{
+					name:								"controlChartSdUnbiasingConstant"
+					label: 								qsTr("Use unbiasing constant")
+					visible:							controlChartSdEstimationMethodGroupSize.currentIndex == 1 ? false : true
+					checked:							true
 				}
 			}
 		}
