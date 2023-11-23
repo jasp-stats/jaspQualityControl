@@ -331,6 +331,20 @@ Form
 						max:						10000;
 						enabled:					csBinWidthType.currentValue === "manual"
 					}
+
+					CheckBox
+					{
+						name: 								"processCapabilityPlotDistributions"
+						label: 								qsTr("Display distributions")
+						checked: 							true
+					}
+
+					CheckBox
+					{
+						name: 								"processCapabilityPlotSpecificationLimits"
+						label: 								qsTr("Display specification limits")
+						checked: 							true
+					}
 				}
 
 				CheckBox
