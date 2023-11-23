@@ -411,44 +411,54 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   binWidth <- (h$breaks[2] - h$breaks[1])
 
   p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
-    ggplot2::geom_histogram(ggplot2::aes(y =..density..), closed = "left", fill = "grey", col = "black", size = .7, binwidth = binWidth, center = binWidth/2) +
+    ggplot2::geom_histogram(ggplot2::aes(y =..density..), closed = "left", fill = "grey", col = "black", size = .7,
+                            binwidth = binWidth, center = binWidth/2) +
     ggplot2::scale_y_continuous(name = gettext("Density")) +
     ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits)
-  if(distribution == 'normal'){
-    p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)), color = "dodgerblue") +
-      ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw), color = "red")
-  }else if(distribution == "weibull"){
-    shape <- .distributionParameters(data = allData, distribution = distribution)$beta
-    scale <- .distributionParameters(data = allData, distribution = distribution)$theta
-    p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale), color = "red")
-  }else if(distribution == "lognormal"){
-    shape <- .distributionParameters(data = allData, distribution = distribution)$beta
-    scale <- .distributionParameters(data = allData, distribution = distribution)$theta
-    p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale), color = "red")
-  }else if(distribution == "3ParameterLognormal"){
-    shape <- .distributionParameters(data = allData, distribution = distribution)$theta
-    scale <- .distributionParameters(data = allData, distribution = distribution)$beta
-    threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
-    p <- p + ggplot2::stat_function(fun = FAdist::dlnorm3 , args = list(shape = shape, scale = scale, thres = threshold), color = "red")
-  }else if(distribution == "3ParameterWeibull"){
-    shape <- .distributionParameters(data = allData, distribution = distribution)$beta
-    scale <- .distributionParameters(data = allData, distribution = distribution)$theta
-    threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
-    p <- p + ggplot2::stat_function(fun = FAdist::dweibull3 , args = list(shape = shape, scale = scale, thres = threshold), color = "red")
+  if (options[["processCapabilityPlotDistributions"]]) {
+    if(distribution == "normal"){
+      p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)),
+                                      mapping = ggplot2::aes(color = "dodgerblue")) +
+        ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw), mapping = ggplot2::aes(color = "red")) +
+        ggplot2::scale_color_manual(name = "", values=c('dodgerblue'='dodgerblue', 'red'='red'),
+                                        labels = c("x", "y"))
+
+    }else if(distribution == "weibull"){
+      shape <- .distributionParameters(data = allData, distribution = distribution)$beta
+      scale <- .distributionParameters(data = allData, distribution = distribution)$theta
+      p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale), color = "red")
+    }else if(distribution == "lognormal"){
+      shape <- .distributionParameters(data = allData, distribution = distribution)$beta
+      scale <- .distributionParameters(data = allData, distribution = distribution)$theta
+      p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale), color = "red")
+    }else if(distribution == "3ParameterLognormal"){
+      shape <- .distributionParameters(data = allData, distribution = distribution)$theta
+      scale <- .distributionParameters(data = allData, distribution = distribution)$beta
+      threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
+      p <- p + ggplot2::stat_function(fun = FAdist::dlnorm3 , args = list(shape = shape, scale = scale, thres = threshold), color = "red")
+    }else if(distribution == "3ParameterWeibull"){
+      shape <- .distributionParameters(data = allData, distribution = distribution)$beta
+      scale <- .distributionParameters(data = allData, distribution = distribution)$theta
+      threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
+      p <- p + ggplot2::stat_function(fun = FAdist::dweibull3 , args = list(shape = shape, scale = scale, thres = threshold), color = "red")
+    }
   }
 
-  if (options[["target"]])
-    p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen", size = 1)
-  if (options[["lowerSpecificationLimit"]]) {
-    lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
-    p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecificationLimitValue"]], linetype = lslLty, color = "darkred", size = 1)
+  if (options[["processCapabilityPlotSpecificationLimits"]]) {
+    if (options[["target"]])
+      p <- p + ggplot2::geom_vline(xintercept = options[["targetValue"]], linetype = "dotted", color = "darkgreen", size = 1)
+    if (options[["lowerSpecificationLimit"]]) {
+      lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
+      p <- p + ggplot2::geom_vline(xintercept = options[["lowerSpecificationLimitValue"]], linetype = lslLty, color = "darkred", size = 1)
+    }
+    if (options[["upperSpecificationLimit"]]) {
+      uslLty <- if (options[["upperSpecificationLimitBoundary"]]) "solid" else "dotted"
+      p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecificationLimitValue"]], linetype = uslLty, color = "darkred", size = 1)
+    }
   }
-  if (options[["upperSpecificationLimit"]]) {
-    uslLty <- if (options[["upperSpecificationLimitBoundary"]]) "solid" else "dotted"
-    p <- p + ggplot2::geom_vline(xintercept = options[["upperSpecificationLimitValue"]], linetype = uslLty, color = "darkred", size = 1)
-  }
-  p <- jaspGraphs::themeJasp(p) +
-    ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())
+  p <- p + jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw() +
+    ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(), legend.position = "right")
 
   return(p)
 }
