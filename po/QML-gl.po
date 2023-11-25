@@ -1607,14 +1607,6 @@ msgctxt "processCapabilityStudies|"
 msgid "Null distribution for probability plot"
 msgstr "Distribución nula para gráfica de probabilidade"
 
-msgctxt "variablesChartsIndividuals|"
-msgid "Number of ticks on x-axis:"
-msgstr "Número de marcas no eixe x:"
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Number of ticks on x-axis:"
-msgstr "Número de marcas no eixe x:"
-
 msgctxt "msaGaugeRR|"
 msgid "Show report metadata"
 msgstr "Amosar os metadatos do informe"
@@ -2089,22 +2081,6 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Through grouping variable"
 msgstr "A través da variable de agrupamento"
 
-msgctxt "variablesChartsSubgroups|"
-msgid "Manual subgroup size"
-msgstr "Tamaño de subgrupo manual"
-
-msgctxt "variablesChartsSubgroups|"
-msgid "For unequal subgroup sizes"
-msgstr "Para tamaños de subgrupos desiguais"
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Assume equal subgroup sizes (largest subgroup)"
-msgstr "Asumir tamaños de subgrupos iguais (subgrupo máis longo)"
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Calculate with actual sizes"
-msgstr "Calcular cos tamaños actuais"
-
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report"
 msgstr "Amosar informe"
@@ -2220,3 +2196,36 @@ msgstr "Etapa"
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroup size"
 msgstr "Tamaño do subgrupo"
+
+msgctxt "processCapabilityStudies|"
+msgid "X-bar & s chart"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "X-bar & mR chart"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Stages"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Unequal subgroup sizes"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Use actual sizes"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Use fixed subgroup size"
+msgstr ""
+
+#, fuzzy
+msgctxt "variablesChartsSubgroups|"
+msgid "Advanced Options"
+msgstr "Opcións Avanzadas"
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Use unbiasing constant for X-bar & s chart"
+msgstr ""

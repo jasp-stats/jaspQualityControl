@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2023-11-04 03:40\n"
+"POT-Creation-Date: 2023-11-25 03:40\n"
 "PO-Revision-Date: 2023-06-24 03:41+0000\n"
 "Last-Translator: Borisov Igor Borisovich <borisov_i@pimunn.net>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
@@ -122,18 +122,6 @@ msgstr ""
 msgid "Frequency: %s"
 msgstr ""
 
-msgid "Control Chart"
-msgstr ""
-
-msgid "Subgroup size must be > 1 to display X-bar & R Chart."
-msgstr ""
-
-msgid "Sample average"
-msgstr ""
-
-msgid "Sample range"
-msgstr ""
-
 msgid "Test results for %s chart"
 msgstr ""
 
@@ -155,25 +143,10 @@ msgstr ""
 msgid "Test 6: Bimodal distribution"
 msgstr ""
 
-msgid "Numbers are data points where test violations occur."
+msgid "Points where a test failed."
 msgstr ""
 
-msgid "Test results for individuals chart"
-msgstr ""
-
-msgid "Test results for range chart"
-msgstr ""
-
-msgid "Moving range length is larger than one of the stages."
-msgstr ""
-
-msgid "Stage"
-msgstr ""
-
-msgid "%s"
-msgstr ""
-
-msgid "Observation"
+msgid "Test results for %1$s chart"
 msgstr ""
 
 msgid "The analysis crashed with the following error message: %1$s"
@@ -735,10 +708,13 @@ msgstr ""
 msgid "Gauge r&R ANOVA Table"
 msgstr ""
 
-msgid "Range Chart by Operator"
+msgid "Range chart by operator"
 msgstr ""
 
 msgid "Xbar Chart by Operator"
+msgstr ""
+
+msgid "Average chart by operator"
 msgstr ""
 
 msgid "Scatterplot Operators"
@@ -845,12 +821,6 @@ msgstr ""
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
 msgstr ""
 
-msgid "%s Chart by Operator"
-msgstr ""
-
-msgid "Operator %s"
-msgstr ""
-
 msgid "Measurements by Part"
 msgstr ""
 
@@ -908,6 +878,9 @@ msgstr ""
 msgid "Gauge r&R Tables"
 msgstr ""
 
+msgid "Range Chart by Operator"
+msgstr ""
+
 msgid "Measurement by part x operator plot"
 msgstr ""
 
@@ -939,6 +912,9 @@ msgid "Study Variation is calculated as Std. Deviation * %.2f"
 msgstr ""
 
 msgid "Measurements by part x operator"
+msgstr ""
+
+msgid "Operator %s"
 msgstr ""
 
 msgid "Gauge r&R Report"
@@ -1135,6 +1111,20 @@ msgid ""
 "smallest data point."
 msgstr ""
 
+msgid "X-bar & %s Control Chart"
+msgstr ""
+
+msgid ""
+"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
+"instead."
+msgstr ""
+
+msgid "Subgroup size is 1, calculation of control charts not possible."
+msgstr ""
+
+msgid "X-mR Control Chart"
+msgstr ""
+
 msgid "Capability Studies"
 msgstr ""
 
@@ -1297,19 +1287,34 @@ msgstr ""
 msgid "Histogram"
 msgstr ""
 
-msgid "X-mR control chart"
-msgstr ""
-
 msgid "Process name: %s"
 msgstr ""
 
-msgid "Individuals Charts"
+msgid ""
+"<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
 msgstr ""
 
 msgid "Variables Charts for Individuals"
 msgstr ""
 
+msgid "X-mR control chart"
+msgstr ""
+
+msgid ""
+"Moving range length is larger than the number of observations\n"
+"                                                           in one of the "
+"stages."
+msgstr ""
+
 msgid "Please insert more measurements and check the X-mR chart."
+msgstr ""
+
+msgid "Autocorrelation plot"
+msgstr ""
+
+msgid ""
+"Autocorrelation plot requires uninterrupted series of values. Missing values "
+"detected in %s."
 msgstr ""
 
 msgid "Autocorrelation"
@@ -1324,27 +1329,35 @@ msgstr ""
 msgid "Name: %s"
 msgstr ""
 
-msgid "Control Charts"
-msgstr ""
-
-msgid "X-bar & R Control Chart"
+msgid "Control charts"
 msgstr ""
 
 msgid ""
-"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
-"instead."
+"One or more subgroups are assigned to more than one stage, only first stage "
+"is considered.<br>"
 msgstr ""
 
-msgid "Out-of-control Signals"
+msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
+msgstr ""
+
+msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
+msgstr ""
+
+msgid ""
+"All subgroups are of size 1. Variables charts for subgroups cannot be "
+"calculated. Use variables charts for individuals."
 msgstr ""
 
 msgid "Subgroup size is >5, results may be biased. S-chart is recommended."
 msgstr ""
 
-msgid "X-bar & s Control Chart"
+msgid "X-bar & %1$s control chart"
 msgstr ""
 
-msgid "Subgroup st dev"
+msgid "Report for X-bar & R control chart"
+msgstr ""
+
+msgid "Report for X-bar & s control chart"
 msgstr ""
 
 msgid "Date: %s"

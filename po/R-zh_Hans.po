@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-11-04 03:40\n"
+"POT-Creation-Date: 2023-11-25 03:40\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -121,20 +121,6 @@ msgstr "时间: %s"
 msgid "Frequency: %s"
 msgstr "频度: %s"
 
-msgid "Control Chart"
-msgstr "控制图"
-
-msgid "Subgroup size must be > 1 to display X-bar & R Chart."
-msgstr "显示X-bar & R控制图需要子组容量必须 >1"
-
-#, fuzzy
-msgid "Sample average"
-msgstr "样本量"
-
-#, fuzzy
-msgid "Sample range"
-msgstr "样本量"
-
 msgid "Test results for %s chart"
 msgstr "%s 图检验结果"
 
@@ -156,28 +142,12 @@ msgstr "检验 5：变异降低"
 msgid "Test 6: Bimodal distribution"
 msgstr "检验 6：双峰分布"
 
-msgid "Numbers are data points where test violations occur."
-msgstr "数字表示发生违反检验准则的数据点。"
-
-#, fuzzy
-msgid "Test results for individuals chart"
-msgstr "%s 图检验结果"
-
-#, fuzzy
-msgid "Test results for range chart"
-msgstr "%s 图检验结果"
-
-msgid "Moving range length is larger than one of the stages."
+msgid "Points where a test failed."
 msgstr ""
 
-msgid "Stage"
-msgstr ""
-
-msgid "%s"
-msgstr "%s"
-
-msgid "Observation"
-msgstr "观测值"
+#, fuzzy
+msgid "Test results for %1$s chart"
+msgstr "%s 图检验结果"
 
 msgid "The analysis crashed with the following error message: %1$s"
 msgstr "检测图失效，错误信息如下: %1$s"
@@ -758,11 +728,16 @@ msgstr "选择的测量值是“单列”格式，而每个操作者的零件都
 msgid "Gauge r&R ANOVA Table"
 msgstr "量具 r&R 方差分析表"
 
-msgid "Range Chart by Operator"
+#, fuzzy
+msgid "Range chart by operator"
 msgstr "极差图（按操作者）"
 
 msgid "Xbar Chart by Operator"
 msgstr "均值图（按操作者）"
+
+#, fuzzy
+msgid "Average chart by operator"
+msgstr "极差图（按操作者）"
 
 msgid "Scatterplot Operators"
 msgstr "操作者散点图"
@@ -868,12 +843,6 @@ msgstr "方差分量"
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
 msgstr "在 %2$s中分组后，%1$s 中观测值数量 < 2"
 
-msgid "%s Chart by Operator"
-msgstr "%s 图按操作者"
-
-msgid "Operator %s"
-msgstr "操作者 %s"
-
 msgid "Measurements by Part"
 msgstr "测量值按零件"
 
@@ -931,6 +900,9 @@ msgstr "%.2f"
 msgid "Gauge r&R Tables"
 msgstr "量具 r&R表"
 
+msgid "Range Chart by Operator"
+msgstr "极差图（按操作者）"
+
 msgid "Measurement by part x operator plot"
 msgstr "测量值图（按零件x操作者）"
 
@@ -963,6 +935,9 @@ msgstr "研究变异的计算为标准差* %.2f"
 
 msgid "Measurements by part x operator"
 msgstr "测量值按零件 x 操作者"
+
+msgid "Operator %s"
+msgstr "操作者 %s"
 
 msgid "Gauge r&R Report"
 msgstr "量具 r&R 报告"
@@ -1162,6 +1137,22 @@ msgid ""
 "smallest data point."
 msgstr "所有零值都已替换为等于最小数据点的二分之一的值。"
 
+#, fuzzy
+msgid "X-bar & %s Control Chart"
+msgstr "均值和标准差控制图"
+
+msgid ""
+"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
+"instead."
+msgstr ""
+
+msgid "Subgroup size is 1, calculation of control charts not possible."
+msgstr ""
+
+#, fuzzy
+msgid "X-mR Control Chart"
+msgstr "单值-移动极差控制图"
+
 msgid "Capability Studies"
 msgstr "能力研究"
 
@@ -1324,20 +1315,36 @@ msgstr "下面概率图中的红色虚线表示 95%% 的置信区间。"
 msgid "Histogram"
 msgstr "直方图"
 
-msgid "X-mR control chart"
-msgstr "单值-移动极差控制图"
-
 msgid "Process name: %s"
 msgstr "过程名称：%s"
 
-msgid "Individuals Charts"
-msgstr "单值控制图"
+msgid ""
+"<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
+msgstr ""
 
 msgid "Variables Charts for Individuals"
 msgstr "单值图"
 
+msgid "X-mR control chart"
+msgstr "单值-移动极差控制图"
+
+msgid ""
+"Moving range length is larger than the number of observations\n"
+"                                                           in one of the "
+"stages."
+msgstr ""
+
 msgid "Please insert more measurements and check the X-mR chart."
 msgstr "请插入更多测量值并检查单值-移动极差控制图。"
+
+#, fuzzy
+msgid "Autocorrelation plot"
+msgstr "自相关"
+
+msgid ""
+"Autocorrelation plot requires uninterrupted series of values. Missing values "
+"detected in %s."
+msgstr ""
 
 msgid "Autocorrelation"
 msgstr "自相关"
@@ -1352,28 +1359,40 @@ msgstr "单值控制图"
 msgid "Name: %s"
 msgstr "名称：%s"
 
-msgid "Control Charts"
+#, fuzzy
+msgid "Control charts"
 msgstr "控制图"
 
-msgid "X-bar & R Control Chart"
-msgstr "均值和极差控制图"
-
 msgid ""
-"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
-"instead."
+"One or more subgroups are assigned to more than one stage, only first stage "
+"is considered.<br>"
 msgstr ""
 
-msgid "Out-of-control Signals"
-msgstr "失控信号"
+msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
+msgstr ""
+
+msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
+msgstr ""
+
+msgid ""
+"All subgroups are of size 1. Variables charts for subgroups cannot be "
+"calculated. Use variables charts for individuals."
+msgstr ""
 
 msgid "Subgroup size is >5, results may be biased. S-chart is recommended."
 msgstr ""
 
-msgid "X-bar & s Control Chart"
+#, fuzzy
+msgid "X-bar & %1$s control chart"
 msgstr "均值和标准差控制图"
 
-msgid "Subgroup st dev"
-msgstr "子组标准差"
+#, fuzzy
+msgid "Report for X-bar & R control chart"
+msgstr "均值和极差控制图"
+
+#, fuzzy
+msgid "Report for X-bar & s control chart"
+msgstr "均值和标准差控制图"
 
 msgid "Date: %s"
 msgstr "日期：%s"
@@ -1383,6 +1402,49 @@ msgstr "副标题：%s"
 
 msgid "Name of chart: %s"
 msgstr "图形名称：%s"
+
+#~ msgid "Control Chart"
+#~ msgstr "控制图"
+
+#~ msgid "Subgroup size must be > 1 to display X-bar & R Chart."
+#~ msgstr "显示X-bar & R控制图需要子组容量必须 >1"
+
+#, fuzzy
+#~ msgid "Sample average"
+#~ msgstr "样本量"
+
+#, fuzzy
+#~ msgid "Sample range"
+#~ msgstr "样本量"
+
+#~ msgid "Numbers are data points where test violations occur."
+#~ msgstr "数字表示发生违反检验准则的数据点。"
+
+#, fuzzy
+#~ msgid "Test results for individuals chart"
+#~ msgstr "%s 图检验结果"
+
+#, fuzzy
+#~ msgid "Test results for range chart"
+#~ msgstr "%s 图检验结果"
+
+#~ msgid "%s"
+#~ msgstr "%s"
+
+#~ msgid "Observation"
+#~ msgstr "观测值"
+
+#~ msgid "%s Chart by Operator"
+#~ msgstr "%s 图按操作者"
+
+#~ msgid "Individuals Charts"
+#~ msgstr "单值控制图"
+
+#~ msgid "Out-of-control Signals"
+#~ msgstr "失控信号"
+
+#~ msgid "Subgroup st dev"
+#~ msgstr "子组标准差"
 
 #~ msgid "% Study Variation"
 #~ msgstr "% 研究变异"

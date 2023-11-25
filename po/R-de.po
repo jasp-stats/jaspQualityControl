@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-11-04 03:40\n"
+"POT-Creation-Date: 2023-11-25 03:40\n"
 "PO-Revision-Date: 2023-09-20 11:21+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -124,18 +124,6 @@ msgstr "Zeit: %s"
 msgid "Frequency: %s"
 msgstr ""
 
-msgid "Control Chart"
-msgstr "Regelkarte"
-
-msgid "Subgroup size must be > 1 to display X-bar & R Chart."
-msgstr "Untergruppengröße muss > 1 sein, um X-quer- und R-Karte anzuzeigen."
-
-msgid "Sample average"
-msgstr "Stichprobenmittelwert"
-
-msgid "Sample range"
-msgstr "Stichproben-Wertebereich"
-
 msgid "Test results for %s chart"
 msgstr "Testergebnisse für %s-Karte"
 
@@ -157,28 +145,12 @@ msgstr ""
 msgid "Test 6: Bimodal distribution"
 msgstr ""
 
-msgid "Numbers are data points where test violations occur."
-msgstr "Zahlen sind Datenpunkte, an denen Testverstöße auftreten."
-
-#, fuzzy
-msgid "Test results for individuals chart"
-msgstr "Testergebnisse für %s-Karte"
-
-#, fuzzy
-msgid "Test results for range chart"
-msgstr "Testergebnisse für %s-Karte"
-
-msgid "Moving range length is larger than one of the stages."
+msgid "Points where a test failed."
 msgstr ""
 
-msgid "Stage"
-msgstr ""
-
-msgid "%s"
-msgstr "%s"
-
-msgid "Observation"
-msgstr "Beobachtung"
+#, fuzzy
+msgid "Test results for %1$s chart"
+msgstr "Testergebnisse für %s-Karte"
 
 msgid "The analysis crashed with the following error message: %1$s"
 msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %1$s"
@@ -750,11 +722,16 @@ msgstr ""
 msgid "Gauge r&R ANOVA Table"
 msgstr ""
 
-msgid "Range Chart by Operator"
-msgstr ""
+#, fuzzy
+msgid "Range chart by operator"
+msgstr "Messungen nach Operator"
 
 msgid "Xbar Chart by Operator"
 msgstr ""
+
+#, fuzzy
+msgid "Average chart by operator"
+msgstr "Messungen nach Operator"
 
 msgid "Scatterplot Operators"
 msgstr ""
@@ -860,12 +837,6 @@ msgstr ""
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
 msgstr ""
 
-msgid "%s Chart by Operator"
-msgstr ""
-
-msgid "Operator %s"
-msgstr ""
-
 msgid "Measurements by Part"
 msgstr ""
 
@@ -923,6 +894,9 @@ msgstr ""
 msgid "Gauge r&R Tables"
 msgstr ""
 
+msgid "Range Chart by Operator"
+msgstr ""
+
 msgid "Measurement by part x operator plot"
 msgstr ""
 
@@ -954,6 +928,9 @@ msgid "Study Variation is calculated as Std. Deviation * %.2f"
 msgstr ""
 
 msgid "Measurements by part x operator"
+msgstr ""
+
+msgid "Operator %s"
 msgstr ""
 
 msgid "Gauge r&R Report"
@@ -1156,6 +1133,22 @@ msgstr ""
 "Alle Nullwerte wurden durch einen Wert ersetzt, der der Hälfte des kleinsten "
 "Datenpunkts entspricht."
 
+#, fuzzy
+msgid "X-bar & %s Control Chart"
+msgstr "X-quer & s-Kontrollkarte"
+
+msgid ""
+"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
+"instead."
+msgstr ""
+
+msgid "Subgroup size is 1, calculation of control charts not possible."
+msgstr ""
+
+#, fuzzy
+msgid "X-mR Control Chart"
+msgstr "Regelkarte"
+
 msgid "Capability Studies"
 msgstr ""
 
@@ -1324,19 +1317,35 @@ msgstr ""
 msgid "Histogram"
 msgstr "Histogramm"
 
-msgid "X-mR control chart"
-msgstr ""
-
 msgid "Process name: %s"
 msgstr ""
 
-msgid "Individuals Charts"
+msgid ""
+"<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
 msgstr ""
 
 msgid "Variables Charts for Individuals"
 msgstr ""
 
+msgid "X-mR control chart"
+msgstr ""
+
+msgid ""
+"Moving range length is larger than the number of observations\n"
+"                                                           in one of the "
+"stages."
+msgstr ""
+
 msgid "Please insert more measurements and check the X-mR chart."
+msgstr ""
+
+#, fuzzy
+msgid "Autocorrelation plot"
+msgstr "Autokorrelation"
+
+msgid ""
+"Autocorrelation plot requires uninterrupted series of values. Missing values "
+"detected in %s."
 msgstr ""
 
 msgid "Autocorrelation"
@@ -1351,28 +1360,40 @@ msgstr ""
 msgid "Name: %s"
 msgstr "Name: %s"
 
-msgid "Control Charts"
+#, fuzzy
+msgid "Control charts"
 msgstr "Kontrolldiagramm"
 
-msgid "X-bar & R Control Chart"
-msgstr "X-quer & R-Kontrollkarte"
-
 msgid ""
-"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
-"instead."
+"One or more subgroups are assigned to more than one stage, only first stage "
+"is considered.<br>"
 msgstr ""
 
-msgid "Out-of-control Signals"
+msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
+msgstr ""
+
+msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
+msgstr ""
+
+msgid ""
+"All subgroups are of size 1. Variables charts for subgroups cannot be "
+"calculated. Use variables charts for individuals."
 msgstr ""
 
 msgid "Subgroup size is >5, results may be biased. S-chart is recommended."
 msgstr ""
 
-msgid "X-bar & s Control Chart"
+#, fuzzy
+msgid "X-bar & %1$s control chart"
 msgstr "X-quer & s-Kontrollkarte"
 
-msgid "Subgroup st dev"
-msgstr ""
+#, fuzzy
+msgid "Report for X-bar & R control chart"
+msgstr "X-quer & R-Kontrollkarte"
+
+#, fuzzy
+msgid "Report for X-bar & s control chart"
+msgstr "X-quer & s-Kontrollkarte"
 
 msgid "Date: %s"
 msgstr "Datum: %s"
@@ -1382,6 +1403,32 @@ msgstr "Untertitel: %s"
 
 msgid "Name of chart: %s"
 msgstr ""
+
+#~ msgid "Subgroup size must be > 1 to display X-bar & R Chart."
+#~ msgstr "Untergruppengröße muss > 1 sein, um X-quer- und R-Karte anzuzeigen."
+
+#~ msgid "Sample average"
+#~ msgstr "Stichprobenmittelwert"
+
+#~ msgid "Sample range"
+#~ msgstr "Stichproben-Wertebereich"
+
+#~ msgid "Numbers are data points where test violations occur."
+#~ msgstr "Zahlen sind Datenpunkte, an denen Testverstöße auftreten."
+
+#, fuzzy
+#~ msgid "Test results for individuals chart"
+#~ msgstr "Testergebnisse für %s-Karte"
+
+#, fuzzy
+#~ msgid "Test results for range chart"
+#~ msgstr "Testergebnisse für %s-Karte"
+
+#~ msgid "%s"
+#~ msgstr "%s"
+
+#~ msgid "Observation"
+#~ msgstr "Beobachtung"
 
 #, fuzzy
 #~ msgid "% Study Variation"

@@ -1567,14 +1567,6 @@ msgctxt "processCapabilityStudies|"
 msgid "Number of ticks on x-axis for X-bar & R or X-mR chart:"
 msgstr ""
 
-msgctxt "variablesChartsIndividuals|"
-msgid "Number of ticks on x-axis:"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Number of ticks on x-axis:"
-msgstr ""
-
 msgctxt "Description|"
 msgid "Response Surface Design"
 msgstr ""
@@ -2116,22 +2108,6 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Through grouping variable"
 msgstr ""
 
-msgctxt "variablesChartsSubgroups|"
-msgid "Manual subgroup size"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "For unequal subgroup sizes"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Assume equal subgroup sizes (largest subgroup)"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Calculate with actual sizes"
-msgstr ""
-
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report"
 msgstr ""
@@ -2246,4 +2222,36 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroup size"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "X-bar & s chart"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "X-bar & mR chart"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Stages"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Unequal subgroup sizes"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Use actual sizes"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Use fixed subgroup size"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Use unbiasing constant for X-bar & s chart"
 msgstr ""
