@@ -335,7 +335,7 @@ Form
 					CheckBox
 					{
 						name: 								"processCapabilityPlotDistributions"
-						label: 								qsTr("Display distributions")
+						label: 								qsTr("Overlay distribution")
 						checked: 							true
 					}
 
