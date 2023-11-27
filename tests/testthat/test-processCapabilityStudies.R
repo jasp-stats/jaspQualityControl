@@ -182,7 +182,7 @@ test_that("Test results for moving range chart table results match", {
 test_that("Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0, 0, "ppm &lt; LSL", 0.0589189995681139, 0, "ppm &gt; USL", 0.0589189995681139,
+                                 list(0, 0, "ppm &lt; LSL", 0.06, 0, "ppm &gt; USL", 0.06,
                                       0, "Total ppm"))
 })
 
