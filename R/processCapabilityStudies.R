@@ -191,11 +191,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           jaspResults[["xBar"]][["plot"]]$setError(gettext("Subgroup size is 1, calculation of selected control charts not possible."))
           return()
         }
+        columnsToPass <- c(measurements, stages)
+        columnsToPass <- columnsToPass[columnsToPass != ""]
         fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
         unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-        xBarChart <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
+        xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType, stages = stages,
                                    xAxisLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)
-        secondPlot <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels,
+        secondPlot <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType, xAxisLabels = axisLabels, stages = stages,
                                     movingRangeLength = options[["xBarMovingRangeLength"]], fixedSubgroupSize = fixedSubgroupSize,
                                     unbiasingConstantUsed = unbiasingConstantUsed)
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
@@ -211,10 +213,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
-        individualChart <- .controlChart(dataset = dataset[measurements], plotType = "I",
+        columnsToPass <- c(measurements, stages)
+        columnsToPass <- columnsToPass[columnsToPass != ""]
+        individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
                                                      xAxisLabels = seq_along(unlist(dataset[measurements])))
-        mrChart <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = seq_along(unlist(dataset[measurements])),
-                                             movingRangeLength = options[["xmrChartMovingRangeLength"]])
+        mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
+                                 xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]])
         jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
                                                                               layout = matrix(2:1, 2), removeXYlabels= "x")
         jaspResults[["xmr"]][["tableIndividual"]] <- individualChart$table
@@ -1307,7 +1311,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "sd",    title = gettextf("Log std.dev (%1$s)", "\u03C3"), 	type = "number")
   } else if (options[["nullDistribution"]] == "weibull") {
     table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03B2"), 			type = "number")
-    table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s", "\u03B8"),        type = "number")
+    table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03B8"),        type = "number")
   }
 
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "number")
