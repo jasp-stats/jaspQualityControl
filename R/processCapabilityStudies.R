@@ -628,24 +628,22 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-  if(returnDataframe) {
-    valueVector <- c()
-    if(options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
-      valueVector <- c(cp)
-    if(options[["lowerSpecificationLimit"]])
-      valueVector <- c(valueVector, cpl)
-    if(options[["upperSpecificationLimit"]])
-      valueVector <- c(valueVector, cpu)
-    valueVector <- c(valueVector, cpk)
-    df <- data.frame(sources = sourceVector,
-                     values = round(valueVector,2))
-    return(df)
-  }
-
   rows[is.na(rows)] <- "*" # This looks better in the table and makes clearer that there is not an error
   table$addRows(rows)
 
-
+  if(returnDataframe) {
+    valueVector <- c()
+    if(options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
+      valueVector <- c(valueVector, rows[["cp"]])
+    if(options[["lowerSpecificationLimit"]])
+      valueVector <- c(valueVector, rows[["cpl"]])
+    if(options[["upperSpecificationLimit"]])
+      valueVector <- c(valueVector, rows[["cpu"]])
+    valueVector <- c(valueVector, rows[["cpk"]])
+    df <- data.frame(sources = sourceVector,
+                     values = valueVector)
+    return(df)
+  }
 
   container[["capabilityTableWithin"]] <- table
 }
@@ -800,16 +798,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (returnOverallCapDataframe) {
     valueVector1 <- c()
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
-      valueVector1 <- c(valueVector1, pp)
+      valueVector1 <- c(valueVector1, rows[["pp"]])
     if (options[["lowerSpecificationLimit"]])
-      valueVector1 <- c(valueVector1, ppl)
+      valueVector1 <- c(valueVector1, rows[["ppl"]])
     if (options[["upperSpecificationLimit"]])
-      valueVector1 <- c(valueVector1, ppu)
-    valueVector1 <- c(valueVector1, ppk)
+      valueVector1 <- c(valueVector1, rows[["ppu"]])
+    valueVector1 <- c(valueVector1, rows[["ppk"]])
     if (options[["target"]])
-      valueVector1 <- c(valueVector1, cpm)
+      valueVector1 <- c(valueVector1, rows[["cpm"]])
     df <- data.frame(sources = sourceVector1,
-                     values = round(valueVector1,2))
+                     values = valueVector1)
     return(df)
   }
 
@@ -872,13 +870,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   expWithin <- c(ewLSL, ewUSL, ewTOT)
 
   nDecimals <- .numDecimals
-  if(returnPerformanceDataframe){
+  if (returnPerformanceDataframe) {
     df <- data.frame("Source" = rowNames,
                      "Observed" = observed,
                      "Expected Overall" = round(expOverall, nDecimals),
                      "Expected Within"  = round(expWithin, nDecimals))
+    df$Expected.Overall[is.na(df$Expected.Overall)] <- "*" # This looks better in the table and makes clearer that there is not an error
+    df$Expected.Within[is.na(df$Expected.Within)] <- "*"
+    df$Observed[is.na(df$Observed)] <- "*"
     return(df)
-
   }
 
   table2List <- list("rowNames" = rowNames,
@@ -887,6 +887,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                      "expWithin" = round(expWithin, nDecimals))
   table2List$expOverall[is.na(table2List$expOverall)] <- "*" # This looks better in the table and makes clearer that there is not an error
   table2List$expWithin[is.na(table2List$expWithin)] <- "*"
+  table2List$observed[is.na(table2List$observed)] <- "*"
   table2$setData(table2List)
 
   container[["capabilityTableOverall"]] <- table
@@ -1131,20 +1132,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     pp <- NA
   }
   table2data[["pp"]] <- round(pp,2)
-
-  ppk <- if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) min(c(ppl, ppu), na.rm = T) else NA
+  ppk <- if (all(is.na(c(ppl, ppu)))) NA else min(c(ppl, ppu), na.rm = T)
   table2data[["ppk"]] <- round(ppk,2)
   table2data[is.na(table2data)] <- "*" # This looks better in the table and makes clearer that there is not an error
 
   if(returnCapabilityDF) {
     valueVector <- c()
     if(options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
-      valueVector <- c(pp)
+      valueVector <- c(table2data[["pp"]])
     if(options[["lowerSpecificationLimit"]])
-      valueVector <- c(valueVector, ppl)
+      valueVector <- c(valueVector, table2data[["ppl"]])
     if(options[["upperSpecificationLimit"]])
-      valueVector <- c(valueVector, ppu)
-    valueVector <- c(valueVector, ppk)
+      valueVector <- c(valueVector, table2data[["ppu"]])
+    valueVector <- c(valueVector, table2data[["ppk"]])
     df <- data.frame(source = sourceVector2,
                      values = valueVector)
     return(df)
@@ -1175,6 +1175,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   oTOT <- sum(c(oLSL, oUSL), na.rm = TRUE)
   observed <- round(c(oLSL, oUSL, oTOT), nDecimals)
+  observed[is.na(observed)] <- "*" # This looks better in the table and makes clearer that there is not an error
 
   # expected total
   if (options[["nonNormalDistribution"]] == "lognormal") {
