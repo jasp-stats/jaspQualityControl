@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2023-11-25 03:40\n"
-"PO-Revision-Date: 2023-09-20 11:21+0000\n"
+"PO-Revision-Date: 2023-12-03 20:02+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.1-dev\n"
+"X-Generator: Weblate 5.3-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr "Kumulative-Summe-Karte"
@@ -273,7 +273,7 @@ msgid "Replications"
 msgstr ""
 
 msgid "Repetitions"
-msgstr ""
+msgstr "Wiederholungen"
 
 msgid "Total runs"
 msgstr ""
@@ -324,11 +324,9 @@ msgstr "Kategorielle Faktoren"
 msgid "Replicates"
 msgstr ""
 
-#, fuzzy
 msgid "Centre points in cube"
 msgstr "Zentralpunkte in Würfel"
 
-#, fuzzy
 msgid "Centre points in axial"
 msgstr "Zentralpunkte in Achse"
 
@@ -354,15 +352,17 @@ msgid ""
 "Generator name '%s' is a number, and number generator names are not "
 "supported."
 msgstr ""
+"Generatorname '%s' ist eine Zahl, und numerische Generatornamen sind nicht "
+"unterstützt."
 
 msgid "<em>Warning: </em>"
 msgstr "<em>Warnung: </em>"
 
 msgid "generators"
-msgstr ""
+msgstr "Generatoren"
 
 msgid "generatorName"
-msgstr ""
+msgstr "generatorName"
 
 msgid ""
 "The analysis will not run when the 'Specify Model for CCD' field is empty "
@@ -379,6 +379,7 @@ msgstr ""
 
 msgid "The analysis will not run when the 'Number of Generators' > 0"
 msgstr ""
+"Die Analyse wird nicht durchgeführt, wenn die 'Anzahl der Generatoren' > 0"
 
 msgid ""
 "This analysis does not take predictor variables with more than 5 unique "
