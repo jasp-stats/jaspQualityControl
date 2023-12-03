@@ -230,7 +230,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     .qcDistributionPlot(options, dataset, ready, jaspResults, measurements, stages)
 
     # Probability plots section
-    .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements)
+    .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements, stages)
 
     # Perform capability analysis
     .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements = measurements)
@@ -1271,7 +1271,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Containers ##
 ################
 
-.qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults, measurements) {
+.qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults, measurements, stages) {
 
   if (!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
     return()
@@ -1289,7 +1289,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   .qcProbabilityTable(dataset, options, container, measurements)
 
   if (is.null(container[["ProbabilityPlot"]]))
-    container[["ProbabilityPlot"]]  <- .qcProbabilityPlot(dataset, options, measurements)
+    container[["ProbabilityPlot"]]  <- .qcProbabilityPlot(dataset, options, measurements, stages)
 }
 
 ################
@@ -1367,12 +1367,23 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container[["probabilityTable"]] <- table
 }
 
-.qcProbabilityPlot <- function(dataset, options, measurements = NULL, fit = "", ggPlot = FALSE) {
+.qcProbabilityPlot <- function(dataset, options, measurements = NULL, stages, ggPlot = FALSE) {
   distributionTitle <- switch (options[["nullDistribution"]],
                                "weibull" = "Weibull",
                                "lognormal" = "lognormal",
                                "normal" = "normal")
-  plot <- createJaspPlot(width = 600, aspectRatio = 1, title = gettextf("Probability plot against %1$s distribution", distributionTitle))
+  # calculating plot dimensions based on number of stages
+  if (identical(stages, "")) {
+    nStages <- 1
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
+  }
+  nCol <- if (nStages > 1) 2 else 1
+  nRow <- ceiling(nStages/2)
+  plotWidth <- nCol * 600
+  plotHeight <- nRow * 600
+  plot <- createJaspPlot(width = plotWidth, height = plotHeight,
+                         title = gettextf("Probability plot against %1$s distribution", distributionTitle))
   plot$dependOn(c("measurementLongFormat", "manualSubgroupSizeValue"))
 
   if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
@@ -1381,158 +1392,145 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return(plot)
   }
 
-  FactorialFit <- fit != ""
+  plotList <- .qcProbabilityPlotObject(options, dataset, measurements, stages)
+  # if number of plots is odd, add an empty plot at the end
+  if (nStages > 1 && nStages %% 2 != 0)
+    plotList[[nStages + 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  plotMat <- matrix(plotList, ncol = nCol, nrow = nRow, byrow = TRUE)
+  plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
+  return(plot)
+}
 
-  # Arrange data
-  if (FactorialFit) {
-    x <- as.vector(resid(fit))
-    order1 <- order(x)
-    options[["probabilityPlotGridLines"]] <- FALSE
-    #factorsNames <- rownames(summary(fit)$coefficients)[-1][order1]
-    #p.sig <- as.vector(summary(fit)$coefficients[,4][-1][order1] < 0.05)
-  } else {
-    x <- as.vector(na.omit(unlist(dataset[measurements])))
+.qcProbabilityPlotObject <- function(options, dataset, measurements, stages) {
+  if (identical(stages, "")) {
+    nStages <- 1
+    dataset[["stage"]] <- 1
+    stages <- "stage"
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
   }
 
-  x <- x[order(x)]
-  label_x <- x
-  n <- length(x)
-  i <- rank(x)
+  plotList <- list()
+  for (i in seq_len(nStages)) {
+    stage <- unique(dataset[[stages]])[i]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    dataCurrentStage <- as.vector(na.omit(unlist(dataCurrentStage[measurements])))
+    dataCurrentStage <- dataCurrentStage[order(dataCurrentStage)]
+    label_x <- dataCurrentStage
+    n <- length(dataCurrentStage)
 
-  # Method for rank
-  Rank_funs <- matrix(list(.qcPpMedian, .qcPpMean, .qcPpKmModif, .qcPpKm), ncol = 1,
-                      dimnames = list(c("bernard", "herdJohnson", "hazen", "kaplanMeier"), c("p")), byrow = TRUE)
-  if (FactorialFit)
-    rankByUser <- "bernard"
-  else
+    # Method for rank
+    Rank_funs <- matrix(list(.qcPpMedian, .qcPpMean, .qcPpKmModif, .qcPpKm), ncol = 1,
+                        dimnames = list(c("bernard", "herdJohnson", "hazen", "kaplanMeier"), c("p")), byrow = TRUE)
+
     rankByUser <- options[["probabilityPlotRankMethod"]]
-  p <- Rank_funs[[rankByUser, 'p']](x)
+    p <- Rank_funs[[rankByUser, 'p']](dataCurrentStage)
 
-  # Functions for computing y
-  y_funs <- matrix(list(qnorm,qnorm,.qcWeibull), ncol = 1,
-                   dimnames = list(c("normal", "lognormal", "weibull"), c('y')), byrow = TRUE)
-  if (FactorialFit)
-    DisByUser <- "normal"
-  else
+    # Functions for computing y
+    y_funs <- matrix(list(qnorm,qnorm,.qcWeibull), ncol = 1,
+                     dimnames = list(c("normal", "lognormal", "weibull"), c('y')), byrow = TRUE)
+
     DisByUser <- options[["nullDistribution"]]
 
-  y <- y_funs[[DisByUser, 'y']](p)
+    y <- y_funs[[DisByUser, 'y']](p)
 
-  # Quantities
-  pSeq <- seq(0.001, 0.999, 0.001)
-  ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
+    # Quantities
+    pSeq <- seq(0.001, 0.999, 0.001)
+    ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
 
-  # Computing according to the distribution
-  if (options[["nullDistribution"]] == "normal" || FactorialFit) {
-    lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
-    matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("mu", "sigma"), mle = c(mean(x), sd(x)))
-    varMu <- matrix$varcov[1, 1]
-    varSigma <- matrix$varcov[2,2]
-    covarMuSigma <- matrix$varcov[1, 2]
-    zp <- qnorm(p = pSeq)
-    zalpha <- qnorm(0.975)
-    percentileEstimate <- mean(x) + zp * sd(x)
-    varPercentile <- varMu + zp^2 * varSigma + 2*zp * covarMuSigma
-    percentileLower <- percentileEstimate - zalpha * sqrt(varPercentile)
-    percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
-    yBreaks <- qnorm(ticks / 100)
+    # Computing according to the distribution
+    if (options[["nullDistribution"]] == "normal") {
+      lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (X - mu) ^ 2)
+      matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("mu", "sigma"),
+                                           mle = c(mean(dataCurrentStage), sd(dataCurrentStage)))
+      varMu <- matrix$varcov[1, 1]
+      varSigma <- matrix$varcov[2,2]
+      covarMuSigma <- matrix$varcov[1, 2]
+      zp <- qnorm(p = pSeq)
+      zalpha <- qnorm(0.975)
+      percentileEstimate <- mean(dataCurrentStage) + zp * sd(dataCurrentStage)
+      varPercentile <- varMu + zp^2 * varSigma + 2*zp * covarMuSigma
+      percentileLower <- percentileEstimate - zalpha * sqrt(varPercentile)
+      percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
+      yBreaks <- qnorm(ticks / 100)
 
-    xBreaks <- label_x <- jaspGraphs::getPrettyAxisBreaks(x)
-    xLimits <- range(xBreaks)
-  } else if (options[["nullDistribution"]] == "lognormal") {
-    fit <- fitdistrplus::fitdist(x, 'lnorm')
-    meanlog <- as.numeric(fit$estimate[1])
-    sdlog <- as.numeric(fit$estimate[2])
-    lpdf <- quote(log(1/(sqrt(2*pi)*x*sdlog) * exp(-(log(x)- meanlog)^2/(2*sdlog^2))))
-    matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("meanlog", "sdlog"), mle = fit$estimate)
-    varmeanlog <- matrix$varcov[1, 1]
-    varsdlog <- matrix$varcov[2,2]
-    covarSS <- matrix$varcov[1, 2]
-    zp <- qnorm(p = pSeq)
-    zalpha <- qnorm(0.975)
-    percentileEstimate <- exp(meanlog + zp*sdlog)
-    varPercentile <- percentileEstimate^2*( varmeanlog+zp^2*varsdlog + 2*zp * covarSS)
-    percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
-    percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
+      xBreaks <- label_x <- jaspGraphs::getPrettyAxisBreaks(dataCurrentStage)
+      xLimits <- range(xBreaks)
+    } else if (options[["nullDistribution"]] == "lognormal") {
+      fit <- fitdistrplus::fitdist(dataCurrentStage, 'lnorm')
+      meanlog <- as.numeric(fit$estimate[1])
+      sdlog <- as.numeric(fit$estimate[2])
+      lpdf <- quote(log(1/(sqrt(2*pi)*X*sdlog) * exp(-(log(X)- meanlog)^2/(2*sdlog^2))))
+      matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("meanlog", "sdlog"), mle = fit$estimate)
+      varmeanlog <- matrix$varcov[1, 1]
+      varsdlog <- matrix$varcov[2,2]
+      covarSS <- matrix$varcov[1, 2]
+      zp <- qnorm(p = pSeq)
+      zalpha <- qnorm(0.975)
+      percentileEstimate <- exp(meanlog + zp*sdlog)
+      varPercentile <- percentileEstimate^2*( varmeanlog+zp^2*varsdlog + 2*zp * covarSS)
+      percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
+      percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
 
-    yBreaks <- qnorm(ticks / 100)
-    x <- log(label_x)
-    percentileEstimate <- log(percentileEstimate)
-    percentileLower <- log(percentileLower)
-    percentileUpper <- log(percentileUpper)
+      yBreaks <- qnorm(ticks / 100)
+      logLabels <- log(label_x)
+      percentileEstimate <- log(percentileEstimate)
+      percentileLower <- log(percentileLower)
+      percentileUpper <- log(percentileUpper)
 
-    labelFrame <- data.frame(labs = label_x, value = x)
-    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
-    xBreaks <- labelFrame[index,2]
-    label_x <- labelFrame[index,1]
-    xLimits <- range(xBreaks)
-  } else if (options[["nullDistribution"]] == "weibull") {
-    fit <- fitdistrplus::fitdist(x, 'weibull')
-    shape <- as.numeric(fit$estimate[1])
-    scale <- as.numeric(fit$estimate[2])
-    lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x / scale)^ shape )
-    matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("shape", "scale"), mle = fit$estimate)
-    varShape <- matrix$varcov[1,1]
-    varScale <- matrix$varcov[2,2]
-    covarSS <- matrix$varcov[1,2]
-    zp <- log(-1*log(1-pSeq))
-    zalpha <- log(-1*log(1-0.975))
-    percentileEstimate <- scale * (- log(1 - pSeq))^(1/shape)
-    varPercentile <- (percentileEstimate^2 / scale^2) * varScale + (percentileEstimate^2/shape^4)*zp^2*varShape - 2*((zp*percentileEstimate^2) / (scale * shape^2))*covarSS
-    percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
-    percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
+      labelFrame <- data.frame(labs = label_x, value = logLabels)
+      index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
+      xBreaks <- labelFrame[index,2]
+      label_x <- labelFrame[index,1]
+      xLimits <- range(xBreaks)
+    } else if (options[["nullDistribution"]] == "weibull") {
+      fit <- fitdistrplus::fitdist(dataCurrentStage, 'weibull')
+      shape <- as.numeric(fit$estimate[1])
+      scale <- as.numeric(fit$estimate[2])
+      lpdf <- quote(log(shape) - shape * log(scale) + shape * log(X) - (X / scale)^ shape )
+      matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = fit$estimate)
+      varShape <- matrix$varcov[1,1]
+      varScale <- matrix$varcov[2,2]
+      covarSS <- matrix$varcov[1,2]
+      zp <- log(-1*log(1-pSeq))
+      zalpha <- log(-1*log(1-0.975))
+      percentileEstimate <- scale * (- log(1 - pSeq))^(1/shape)
+      varPercentile <- (percentileEstimate^2 / scale^2) * varScale + (percentileEstimate^2/shape^4)*zp^2*varShape - 2*((zp*percentileEstimate^2) / (scale * shape^2))*covarSS
+      percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
+      percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
 
-    yBreaks <- log(-1*log(1-(ticks / 100)))
-    x <- log(label_x)
-    percentileEstimate <- log(percentileEstimate)
-    percentileLower <- log(percentileLower)
-    percentileUpper <- log(percentileUpper)
+      yBreaks <- log(-1*log(1-(ticks / 100)))
+      logLabels <- log(label_x)
+      percentileEstimate <- log(percentileEstimate)
+      percentileLower <- log(percentileLower)
+      percentileUpper <- log(percentileUpper)
 
-    labelFrame <- data.frame(labs = label_x, value = x)
-    index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
-    xBreaks <- labelFrame[index,2]
-    label_x <- labelFrame[index,1]
-    xLimits <- range(xBreaks) * 1.2
-  }
-  data1 <- data.frame(x = x, y = y)
-  yLimits <- range(yBreaks)
+      labelFrame <- data.frame(labs = label_x, value = logLabels)
+      index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
+      xBreaks <- labelFrame[index,2]
+      label_x <- labelFrame[index,1]
+      xLimits <- range(xBreaks) * 1.2
+    }
+    data1 <- data.frame(x = dataCurrentStage, y = y)
+    yLimits <- range(yBreaks)
+    p <- ggplot2::ggplot() +
+      ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
+      jaspGraphs::geom_point(ggplot2::aes(x = dataCurrentStage, y = y))
 
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
-    jaspGraphs::geom_point(ggplot2::aes(x = x, y = y))
+    if (options[["probabilityPlotGridLines"]])
+      p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
+    if (nStages > 1)
+      p <- p + ggplot2::ggtitle(stage) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
 
-  if (options[["probabilityPlotGridLines"]])
-    p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
-
-  if (FactorialFit) {
-    p <- p +
-      ggplot2::scale_x_continuous(gettext("Residuals"), breaks = xBreaks, limits = xLimits * 1.2, labels = label_x) +
-      ggplot2::scale_y_continuous(gettext('Percent'), labels = ticks, breaks = yBreaks, limits = yLimits)
-
-
-    #ordered.Factors <- factorsNames[p.sig]
-    #p <- p + jaspGraphs::geom_point(ggplot2::aes(x = x, y = y, color = ifelse(as.vector(p.sig), "Significant", "Not significant"))) +
-    #  ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
-    #  ggplot2::scale_x_continuous("Standardized Effect", breaks = xBreaks, limits = xLimits * 1.2, labels = label_x)
-
-    #x.sig <- x[p.sig]
-    #y.sig <- y[p.sig]
-    #for (i in 1:length(ordered.Factors))
-    #  p <- p + ggplot2::annotate("text", x = x.sig[i] * 1.05, y = y.sig[i] * 1.05, label = sprintf("%s", ordered.Factors[i]))
-  } else {
     p <- p + ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed") +
       ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xBreaks, limits = xLimits, labels = label_x) +
-      ggplot2::scale_y_continuous(gettext('Percent'), labels = ticks, breaks = yBreaks, limits = yLimits)
+      ggplot2::scale_y_continuous(gettext('Percent'), labels = ticks, breaks = yBreaks, limits = yLimits) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
+    plotList[[i]] <- p
   }
-
-  p <- jaspGraphs::themeJasp(p)
-  plot$plotObject <- p
-
-  if (ggPlot)
-    return(p)
-  else
-    return(plot)
+  return(plotList)
 }
 
 .qcPpMedian <- function(x) {
