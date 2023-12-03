@@ -227,10 +227,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
 
     # Distribution plot - moved jaspResults ref here to avoid big files
-    .qcDistributionPlot(options, dataset, ready, jaspResults, measurements = measurements)
+    .qcDistributionPlot(options, dataset, ready, jaspResults, measurements, stages)
 
     # Probability plots section
-    .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements = measurements)
+    .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements)
 
     # Perform capability analysis
     .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements = measurements)
@@ -1575,64 +1575,93 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Functions for distribution plot section ##################
 #############################################################
 
-.qcDistributionPlot <- function(options, dataset, ready, jaspResults, measurements) {
+.qcDistributionPlot <- function(options, dataset, ready, jaspResults, measurements, stages) {
 
   if(!options[["histogram"]] || !is.null(jaspResults[["histogram"]]))
     return()
 
-  plot <- createJaspPlot(title = gettext("Histogram"), width = 400, height = 400)
+  # calculating plot dimensions based on number of stages
+  if (identical(stages, "")) {
+    nStages <- 1
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
+  }
+  nCol <- if (nStages > 1) 2 else 1
+  nRow <- ceiling(nStages/2)
+  plotWidth <- nCol * 400
+  plotHeight <- nRow * 400
+  plot <- createJaspPlot(title = gettext("Histogram"), width = plotWidth, height = plotHeight)
   plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber", "pcBinWidthType", "report", "measurementLongFormat", "manualSubgroupSizeValue", "manualSubgroupSize", "subgroup", 'nullDistribution'))
   plot$position <- 2
-
   jaspResults[["histogram"]] <- plot
 
   if (!ready)
     return()
 
-  plot$plotObject <- .qcDistributionPlotObject(options, dataset, measurements = measurements)
-
+  plotList <- .qcDistributionPlotObject(options, dataset, measurements, stages)
+  # if number of plots is odd, add an empty plot at the end
+  if (nStages > 1 && nStages %% 2 != 0)
+    plotList[[nStages + 1]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  plotMat <- matrix(plotList, ncol = nCol, nrow = nRow, byrow = TRUE)
+  plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
 }
 
-.qcDistributionPlotObject <- function(options, dataset, measurements) {
-
-  data <- as.vector(na.omit(unlist(dataset[measurements]))) # the distribution fitting functions complain if this is not explicitly a vector
-  nBins <- options[["histogramBinNumber"]]
-
-  n <- length(data)
-  df <- data.frame(measurements = data)
-  h <- hist(data, plot = F, breaks = nBins)
-  binWidth <- (h$breaks[2] - h$breaks[1])
-  freqs <- h$counts
-  yLabels <- jaspGraphs::getPrettyAxisBreaks(c(0, freqs, max(freqs) + 5))
-  yBreaks <- yLabels / (n * binWidth)
-  yLimits <- range(yBreaks)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(h$breaks, data), min.n = 4)
-  xLimits <- range(xBreaks)
-
-  p <- ggplot2::ggplot() + ggplot2::geom_histogram(data = df, mapping = ggplot2::aes(y =..density.., x = measurements), closed = "left", fill = "grey", col = "black", size = .7, binwidth = binWidth, center = binWidth/2) +
-    ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits) +
-    ggplot2::scale_y_continuous(name =  gettext("Counts"), labels = yLabels, breaks = yBreaks, limits = yLimits) +
-    jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
-
-  if (options[["histogramDensityLine"]]) {
-    if(options[['nullDistribution']]  == "normal"){
-      p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(data), sd = sd(data)), color = "dodgerblue")
-    }else if(options[['nullDistribution']]  == "weibull"){
-      fit_Weibull <- fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                          control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
-      shape <- fit_Weibull$estimate[[1]]
-      scale <- fit_Weibull$estimate[[2]]
-      p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale), color = "dodgerblue")
-    }else if(options[['nullDistribution']]  == "lognormal"){
-      fit_Lnorm <- fitdistrplus::fitdist(data, "lnorm", method = "mle",
-                                           control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
-      shape <- fit_Lnorm$estimate[[1]]
-      scale <- fit_Lnorm$estimate[[2]]
-      p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale), color = "dodgerblue")
-    }
+.qcDistributionPlotObject <- function(options, dataset, measurements, stages) {
+  if (identical(stages, "")) {
+    nStages <- 1
+    dataset[["stage"]] <- 1
+    stages <- "stage"
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
   }
 
-  return(p)
+  plotList <- list()
+  for (i in seq_len(nStages)) {
+    stage <- unique(dataset[[stages]])[i]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    dataCurrentStage <- as.vector(na.omit(unlist(dataCurrentStage))) # the distribution fitting functions complain if this is not explicitly a vector
+    nBins <- options[["histogramBinNumber"]]
+    n <- length(dataCurrentStage)
+    df <- data.frame(measurements = dataCurrentStage)
+    h <- hist(dataCurrentStage, plot = FALSE, breaks = nBins)
+    binWidth <- (h$breaks[2] - h$breaks[1])
+    freqs <- h$counts
+    yLabels <- jaspGraphs::getPrettyAxisBreaks(c(0, freqs, max(freqs) + 5))
+    yBreaks <- yLabels / (n * binWidth)
+    yLimits <- range(yBreaks)
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(h$breaks, dataCurrentStage), min.n = 4)
+    xLimits <- range(xBreaks)
+
+    p <- ggplot2::ggplot() +
+      ggplot2::geom_histogram(data = df, mapping = ggplot2::aes(y =..density.., x = measurements), closed = "left",
+                              fill = "grey", col = "black", linewidth = .7, binwidth = binWidth, center = binWidth/2) +
+      ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits) +
+      ggplot2::scale_y_continuous(name =  gettext("Counts"), labels = yLabels, breaks = yBreaks, limits = yLimits) +
+      jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
+    if (nStages > 1)
+      p <- p + ggplot2::ggtitle(stage) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
+
+    if (options[["histogramDensityLine"]]) {
+      if (options[['nullDistribution']]  == "normal") {
+        p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(dataCurrentStage), sd = sd(dataCurrentStage)),
+                                        color = "dodgerblue")
+      } else if (options[['nullDistribution']]  == "weibull") {
+        fit_Weibull <- fitdistrplus::fitdist(dataCurrentStage, "weibull", method = "mle",
+                                             control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
+        shape <- fit_Weibull$estimate[[1]]
+        scale <- fit_Weibull$estimate[[2]]
+        p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale), color = "dodgerblue")
+      } else if(options[['nullDistribution']]  == "lognormal") {
+        fit_Lnorm <- fitdistrplus::fitdist(dataCurrentStage, "lnorm", method = "mle",
+                                           control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
+        shape <- fit_Lnorm$estimate[[1]]
+        scale <- fit_Lnorm$estimate[[2]]
+        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale), color = "dodgerblue")
+      }
+    }
+    plotList[[i]] <- p
+  }
+  return(plotList)
 }
 
 .PClongTowide<- function(dataset, k, measurements, mode = c("manual", "subgroups")){
