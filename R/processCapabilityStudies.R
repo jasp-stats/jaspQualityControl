@@ -233,7 +233,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     .qcProbabilityPlotContainer(options, dataset, ready, jaspResults, measurements, stages)
 
     # Perform capability analysis
-    .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements = measurements)
+    .qcCapabilityAnalysis(options, dataset, ready, jaspResults, measurements, stages)
   }
 }
 
@@ -245,7 +245,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Containers ##
 ################
 
-.qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements) {
+.qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements, stages) {
 
   container <- createJaspContainer(gettext("Capability study"))
   container$dependOn(options = c("CapabilityStudyType", "measurementsWideFormat", "subgroup", "lowerSpecificationLimitValue", "upperSpecificationLimitValue", "targetValue", "measurementLongFormat", "manualSubgroupSizeValue", "dataFormat",
@@ -284,13 +284,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     .qcProcessSummaryTable(options, dataset, ready, normalContainer, measurements)
 
     if (options[["processCapabilityPlot"]])
-      .qcProcessCapabilityPlot(options, dataset, ready, normalContainer, measurements, distribution = 'normal')
+      .qcProcessCapabilityPlot(options, dataset, ready, normalContainer, measurements, stages, "normal")
 
     if (options[["processCapabilityTable"]]){
       .qcProcessCapabilityTableWithin(options, dataset, ready, normalContainer, measurements)
       .qcProcessCapabilityTableOverall(options, dataset, ready, normalContainer, measurements)
     }
-
   }
 
   if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis") {
@@ -301,7 +300,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     container[["nonNormalCapabilityAnalysis"]] <- nonNormalContainer
 
     if (options[["processCapabilityPlot"]])
-      .qcProcessCapabilityPlot(options, dataset, ready, nonNormalContainer, measurements, distribution = options[["nonNormalDistribution"]])
+      .qcProcessCapabilityPlot(options, dataset, ready, nonNormalContainer, measurements, stages, options[["nonNormalDistribution"]])
 
     if (options[["processCapabilityTable"]])
       .qcProcessCapabilityTableNonNormal(options, dataset, ready, nonNormalContainer, measurements)
@@ -390,142 +389,168 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container[["processSummaryTable"]] <- table
 }
 
-.qcProcessCapabilityPlotObject <- function(options, dataset, measurements, distribution = c('normal', "weibull", "lognormal", "3ParameterLognormal", "3ParameterWeibull")) {
-
-  # Take a look at this input! Is is supposed to be like this or must it be transposed?
-  # Transposed gives NA often as std.dev
-  if (length(measurements) < 2) {
-    k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-    sdw <- .controlChart_calculations(dataset[measurements], plotType = "MR", movingRangeLength = k)$sd
-  } else {
-    sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
-    unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-    sdw <- .sdXbar(dataset[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+.qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements, stages,
+                                     distribution = c('normal', "weibull", "lognormal", "3ParameterLognormal", "3ParameterWeibull")) {
+  # calculating plot dimensions based on number of stages
+  if (identical(stages, "")) {
+    nStages <- 1
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
   }
-  allData <- as.vector(na.omit(unlist(dataset[, measurements])))
-  plotData <- data.frame(x = allData)
-  sdo <- sd(allData, na.rm = TRUE)
-
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], min(plotData[["x"]]) - 1 * sdo, max(plotData[["x"]]) + 1 * sdo), min.n = 4)
-  xLimits <- range(xBreaks)
-  nBins <- options[["processCapabilityPlotBinNumber"]]
-
-
-  h <- hist(allData, plot = FALSE, breaks = nBins)
-  binWidth <- (h$breaks[2] - h$breaks[1])
-
-  p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
-    ggplot2::geom_histogram(ggplot2::aes(y =..density..), closed = "left", fill = "grey", col = "black", linewidth = .7,
-                            binwidth = binWidth, center = binWidth/2) +
-    ggplot2::scale_y_continuous(name = gettext("Density")) +
-    ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits)
-
-  legendColors <- c()
-  legendLty <- c()
-  legendLabels <- c()
-  if (options[["processCapabilityPlotDistributions"]]) {
-    if(distribution == "normal") {
-      p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)),
-                                      mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist")) +
-        ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw),
-                               mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
-      legendColors <- c(legendColors, "dodgerblue", "red")
-      legendLty <- c(legendLty, "solid", "solid")
-      legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
-                        gettext("Normal dist.\n(std. dev. within)"))
-
-    } else if (distribution == "weibull") {
-      shape <- .distributionParameters(data = allData, distribution = distribution)$beta
-      scale <- .distributionParameters(data = allData, distribution = distribution)$theta
-      p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
-                                      mapping = ggplot2::aes(color = "weibull", linetype = "weibull"))
-      legendColors <- c(legendColors, "red")
-      legendLty <- c(legendLty, "solid")
-      legendLabels <- c(legendLabels, gettext("Weibull dist."))
-    } else if (distribution == "lognormal") {
-      shape <- .distributionParameters(data = allData, distribution = distribution)$beta
-      scale <- .distributionParameters(data = allData, distribution = distribution)$theta
-      p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale),
-                                      mapping = ggplot2::aes(color = "lognormal", linetype = "lognormal"))
-      legendColors <- c(legendColors, "red")
-      legendLty <- c(legendLty, "solid")
-      legendLabels <- c(legendLabels, "Lognormal dist.")
-    } else if (distribution == "3ParameterLognormal") {
-      shape <- .distributionParameters(data = allData, distribution = distribution)$theta
-      scale <- .distributionParameters(data = allData, distribution = distribution)$beta
-      threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
-      p <- p + ggplot2::stat_function(fun = FAdist::dlnorm3 , args = list(shape = shape, scale = scale, thres = threshold),
-                                      mapping = ggplot2::aes(color = "lognormal3", linetype = "lognormal3"))
-      legendColors <- c(legendColors, "red")
-      legendLty <- c(legendLty, "solid")
-      legendLabels <- c(legendLabels, gettext("3-parameter\nlognormal dist."))
-    } else if (distribution == "3ParameterWeibull") {
-      shape <- .distributionParameters(data = allData, distribution = distribution)$beta
-      scale <- .distributionParameters(data = allData, distribution = distribution)$theta
-      threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
-      p <- p + ggplot2::stat_function(fun = FAdist::dweibull3 , args = list(shape = shape, scale = scale, thres = threshold),
-                                      mapping = ggplot2::aes(color = "weibull3", linetype = "weibull3"))
-      legendColors <- c(legendColors, "red")
-      legendLty <- c(legendLty, "solid")
-      legendLabels <- c(legendLabels, gettext("3-parameter Weibull dist."))
-    }
-  }
-
-  if (options[["processCapabilityPlotSpecificationLimits"]]) {
-    specLimitsDf <- data.frame(matrix(ncol = 5, nrow = 0))
-    colnames(specLimitsDf) <- c("label", "xIntercept", "lty", "yPosLabel", "color")
-    yPosLabel <- max(ggplot2::layer_scales(p)$y$range$range)
-    if (options[["target"]]) {
-      specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettext("Target"), xIntercept = options[["targetValue"]],
-                                                     lty = "dotted", yPosLabel = yPosLabel, color = "darkgreen"))
-    }
-    if (options[["lowerSpecificationLimit"]]) {
-      lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
-      lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) "LB" else "LSL"
-      specLimitsDf <- rbind(specLimitsDf, data.frame(label = lslLabel, xIntercept = options[["lowerSpecificationLimitValue"]],
-                                                     lty = lslLty, yPosLabel = yPosLabel, color = "darkred"))
-    }
-    if (options[["upperSpecificationLimit"]]) {
-      uslLty <- if (options[["upperSpecificationLimitBoundary"]]) "solid" else "dotted"
-      uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) "UB" else "USL"
-      specLimitsDf <- rbind(specLimitsDf, data.frame(label = uslLabel, xIntercept = options[["upperSpecificationLimitValue"]],
-                                                     lty = uslLty, yPosLabel = yPosLabel, color = "darkred"))
-    }
-    p <- p + ggplot2::geom_vline(data = specLimitsDf,
-                                 mapping = ggplot2::aes(xintercept = xIntercept), color = specLimitsDf$color,
-                                 linetype = specLimitsDf$lty, linewidth = 1) +
-      ggplot2::geom_label(specLimitsDf, mapping = ggplot2::aes(x = xIntercept, y = yPosLabel, label = label), inherit.aes = FALSE,
-                          size = 4.5)
-  }
-  if (options[["processCapabilityPlotDistributions"]] || options[["processCapabilityPlotSpecificationLimits"]]) {
-    p <- p + ggplot2::scale_color_manual("", values = legendColors, labels = legendLabels) +
-      ggplot2::scale_linetype_manual("", values = legendLty, labels = legendLabels)
-
-  }
-  p <- p + jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw() +
-    ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(), legend.position = "right")
-
-  return(p)
-}
-
-.qcProcessCapabilityPlot <- function(options, dataset, ready, container, measurements, distribution = c('normal', "weibull", "lognormal", "3ParameterLognormal", "3ParameterWeibull")) {
-
-  plot <- createJaspPlot(title = gettext("Capability of the process"), width = 800, height = 500)
+  # making this explicit in case we want to change it at some point
+  nCol <- 1
+  nRow <- nStages
+  plotWidth <- nCol * 800
+  plotHeight <- nRow * 500
+  plot <- createJaspPlot(title = gettext("Capability of the process"), width = plotWidth, height = plotHeight)
   plot$dependOn(c("csBinWidthType", "processCapabilityPlotBinNumber"))
   plot$position <- 2
+  container[["capabilityPlot"]] <- plot
 
-
-  if(!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]){
+  if (!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]) {
     plot$setError(gettext("No specification limits set."))
     return()
   }
+  if (!ready)
+    return()
 
-  if (ready) plot$plotObject <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution)
+  plotList <- .qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution)
+  plotMat <- matrix(plotList, ncol = nCol, nrow = nRow, byrow = TRUE)
+  plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
+}
 
-  container[["capabilityPlot"]] <- plot;
+.qcProcessCapabilityPlotObject <- function(options, dataset, measurements, stages, distribution = c('normal', "weibull", "lognormal", "3ParameterLognormal", "3ParameterWeibull")) {
+  if (identical(stages, "")) {
+    nStages <- 1
+    dataset[["stage"]] <- 1
+    stages <- "stage"
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
+  }
+  plotList <- list()
+  for (i in seq_len(nStages)) {
+    stage <- unique(dataset[[stages]])[i]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    # Take a look at this input! Is is supposed to be like this or must it be transposed?
+    # Transposed gives NA often as std.dev
+    if (length(measurements) < 2) {
+      k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+    } else {
+      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+      unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+    }
+    allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
+    plotData <- data.frame(x = allData)
+    sdo <- sd(allData, na.rm = TRUE)
 
-  return(plot)
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], min(plotData[["x"]]) - 1 * sdo, max(plotData[["x"]]) + 1 * sdo), min.n = 4)
+    xLimits <- range(xBreaks)
+    nBins <- options[["processCapabilityPlotBinNumber"]]
+    h <- hist(allData, plot = FALSE, breaks = nBins)
+    binWidth <- (h$breaks[2] - h$breaks[1])
+
+    p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
+      ggplot2::geom_histogram(ggplot2::aes(y =..density..), closed = "left", fill = "grey", col = "black", linewidth = .7,
+                              binwidth = binWidth, center = binWidth/2) +
+      ggplot2::scale_y_continuous(name = gettext("Density")) +
+      ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits)
+
+    legendColors <- c()
+    legendLty <- c()
+    legendLabels <- c()
+
+    # Overlay distribution
+    if (options[["processCapabilityPlotDistributions"]]) {
+      if(distribution == "normal") {
+        p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)),
+                                        mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist")) +
+          ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw),
+                                 mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
+        legendColors <- c(legendColors, "dodgerblue", "red")
+        legendLty <- c(legendLty, "solid", "solid")
+        legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
+                          gettext("Normal dist.\n(std. dev. within)"))
+
+      } else if (distribution == "weibull") {
+        shape <- .distributionParameters(data = allData, distribution = distribution)$beta
+        scale <- .distributionParameters(data = allData, distribution = distribution)$theta
+        p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
+                                        mapping = ggplot2::aes(color = "weibull", linetype = "weibull"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Weibull dist."))
+      } else if (distribution == "lognormal") {
+        shape <- .distributionParameters(data = allData, distribution = distribution)$beta
+        scale <- .distributionParameters(data = allData, distribution = distribution)$theta
+        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale),
+                                        mapping = ggplot2::aes(color = "lognormal", linetype = "lognormal"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, "Lognormal dist.")
+      } else if (distribution == "3ParameterLognormal") {
+        shape <- .distributionParameters(data = allData, distribution = distribution)$theta
+        scale <- .distributionParameters(data = allData, distribution = distribution)$beta
+        threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
+        p <- p + ggplot2::stat_function(fun = FAdist::dlnorm3 , args = list(shape = shape, scale = scale, thres = threshold),
+                                        mapping = ggplot2::aes(color = "lognormal3", linetype = "lognormal3"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("3-parameter\nlognormal dist."))
+      } else if (distribution == "3ParameterWeibull") {
+        shape <- .distributionParameters(data = allData, distribution = distribution)$beta
+        scale <- .distributionParameters(data = allData, distribution = distribution)$theta
+        threshold <- .distributionParameters(data = allData, distribution = distribution)$threshold
+        p <- p + ggplot2::stat_function(fun = FAdist::dweibull3 , args = list(shape = shape, scale = scale, thres = threshold),
+                                        mapping = ggplot2::aes(color = "weibull3", linetype = "weibull3"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("3-parameter Weibull dist."))
+      }
+    }
+
+    # Display specification limits
+    if (options[["processCapabilityPlotSpecificationLimits"]]) {
+      specLimitsDf <- data.frame(matrix(ncol = 5, nrow = 0))
+      colnames(specLimitsDf) <- c("label", "xIntercept", "lty", "yPosLabel", "color")
+      yPosLabel <- max(ggplot2::layer_scales(p)$y$range$range)
+      if (options[["target"]]) {
+        specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettext("Target"), xIntercept = options[["targetValue"]],
+                                                       lty = "dotted", yPosLabel = yPosLabel, color = "darkgreen"))
+      }
+      if (options[["lowerSpecificationLimit"]]) {
+        lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
+        lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) "LB" else "LSL"
+        specLimitsDf <- rbind(specLimitsDf, data.frame(label = lslLabel, xIntercept = options[["lowerSpecificationLimitValue"]],
+                                                       lty = lslLty, yPosLabel = yPosLabel, color = "darkred"))
+      }
+      if (options[["upperSpecificationLimit"]]) {
+        uslLty <- if (options[["upperSpecificationLimitBoundary"]]) "solid" else "dotted"
+        uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) "UB" else "USL"
+        specLimitsDf <- rbind(specLimitsDf, data.frame(label = uslLabel, xIntercept = options[["upperSpecificationLimitValue"]],
+                                                       lty = uslLty, yPosLabel = yPosLabel, color = "darkred"))
+      }
+      p <- p + ggplot2::geom_vline(data = specLimitsDf,
+                                   mapping = ggplot2::aes(xintercept = xIntercept), color = specLimitsDf$color,
+                                   linetype = specLimitsDf$lty, linewidth = 1) +
+        ggplot2::geom_label(specLimitsDf, mapping = ggplot2::aes(x = xIntercept, y = yPosLabel, label = label), inherit.aes = FALSE,
+                            size = 4.5)
+    }
+
+    # Add a legend if needed
+    if (options[["processCapabilityPlotDistributions"]] || options[["processCapabilityPlotSpecificationLimits"]]) {
+      p <- p + ggplot2::scale_color_manual("", values = legendColors, labels = legendLabels) +
+        ggplot2::scale_linetype_manual("", values = legendLty, labels = legendLabels)
+    }
+    if (nStages > 1)
+      p <- p + ggplot2::ggtitle(stage) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
+    p <- p + jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw() +
+      ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(), legend.position = "right")
+    plotList[[i]] <- p
+  }
+  return(plotList)
 }
 
 .qcProcessCapabilityTableWithin <- function(options, dataset, ready, container, measurements, returnDataframe = FALSE) {
