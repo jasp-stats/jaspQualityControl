@@ -1311,7 +1311,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
 
-  .qcProbabilityTable(dataset, options, container, measurements)
+  .qcProbabilityTable(dataset, options, container, measurements, stages)
 
   if (is.null(container[["ProbabilityPlot"]]))
     container[["ProbabilityPlot"]]  <- .qcProbabilityPlot(dataset, options, measurements, stages)
@@ -1321,13 +1321,22 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Output ######
 ################
 
-.qcProbabilityTable <- function(dataset, options, container, measurements) {
-
+.qcProbabilityTable <- function(dataset, options, container, measurements, stages) {
+  # Get number of stages to decide if to transpose or not
+  if (identical(stages, "")) {
+    nStages <- 1
+    dataset[["stage"]] <- 1
+    stages <- "stage"
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
+  }
   table <- createJaspTable(title = gettextf("Summary of test against the %1$s distribution", options[["nullDistribution"]]))
   table$position <- 1
-
+  if (nStages > 1) {
+    table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
+    table$transpose <- TRUE
+  }
   table$addColumnInfo(name = "n",      	title = gettext("N"),  		type = "integer")
-
   if (options[["nullDistribution"]] == "normal") {
     table$addColumnInfo(name = "mean",  title = gettextf("Mean (%1$s)", "\u03BC"), 				type = "number")
     table$addColumnInfo(name = "sd",    title = gettextf("Std. dev. (%1$s)", "\u03C3"), 	type = "number")
@@ -1338,12 +1347,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03B2"), 			type = "number")
     table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03B8"),        type = "number")
   }
-
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "number")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
-
-  table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution.", "\u00B2", options[["nullDistribution"]]))
+  table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution.", options[["nullDistribution"]]))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
+  if (nStages > 1)
+    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline."))
 
   if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
       any(na.omit(unlist(dataset[measurements])) < 0)){
@@ -1352,43 +1361,61 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
   }
 
-  values <- as.vector(na.omit(unlist(dataset[measurements]))) # distribution fitting function complains if this is not explicitly a vector
+  tableColNames <- c("mean", "sd", "n", "ad", "p")
+  if (nStages > 1)
+    tableColNames <- c("stage", tableColNames)
+  tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
+  colnames(tableDf) <- tableColNames
+  for (i in seq_len(nStages)) {
+    stage <- unique(dataset[[stages]])[i]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    values <- as.vector(na.omit(unlist(dataCurrentStage[measurements]))) # distribution fitting function complains if this is not explicitly a vector
 
-  if (options[["nullDistribution"]] == "normal") {
-    meanx   <- mean(values)
-    sdx     <- sd(values)
-    test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
-  } else if (options[["nullDistribution"]] == "lognormal") {
-    fit    <- fitdistrplus::fitdist(values, 'lnorm')
-    meanx  <- fit$estimate[1]
-    sdx    <- fit$estimate[2]
-    test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
-  } else if (options[["nullDistribution"]] == "weibull") {
-    fit    <- fitdistrplus::fitdist(values, 'weibull')
-    meanx  <- fit$estimate[1]
-    sdx    <- fit$estimate[2]
-    test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
+    if (options[["nullDistribution"]] == "normal") {
+      meanx   <- mean(values)
+      sdx     <- sd(values)
+      test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
+    } else if (options[["nullDistribution"]] == "lognormal") {
+      fit    <- fitdistrplus::fitdist(values, 'lnorm')
+      meanx  <- fit$estimate[1]
+      sdx    <- fit$estimate[2]
+      test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
+    } else if (options[["nullDistribution"]] == "weibull") {
+      fit    <- fitdistrplus::fitdist(values, 'weibull')
+      meanx  <- fit$estimate[1]
+      sdx    <- fit$estimate[2]
+      test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
+    }
+    n      <- length(values)
+    ad     <- test$statistic
+    adStar <- ad*(1 + (0.75/n) + (2.25/(n^2)))
+    if(ad >= 0.6){
+      p <- exp(1.2937 - (5.709 * adStar) + 0.0186 * (adStar^2))
+    }else if(adStar < 0.6 && adStar > 0.34){
+      p <- exp(0.9177 - (4.279 * adStar) - 1.38 * (adStar^2))
+    }else if(adStar < 0.34 && adStar > 0.2){
+      p <- 1 - exp(-8.318 + (42.796 * adStar) - 59.938 * (adStar^2))
+    }else if(adStar <= 0.2){
+      p <- 1 - exp(-13.436 + (101.14 * adStar) - 223.73 * (adStar^2))      #Jaentschi & Bolboaca (2018)
+    } else {
+      p <- test$p.value
+    }
+    tableDfCurrentStage <- data.frame(mean = meanx, sd = sdx, n = n, ad = ad, p = p)
+    if (i == 1 && nStages > 1)
+      baseLineDf <- tableDfCurrentStage
+    if (i > 1) {
+      changeDf <- tableDfCurrentStage - baseLineDf
+      changeDf$stage <- gettextf("Change (%s)", stage)
+      changeDf$p <- NA
+    }
+    if(nStages > 1)
+      tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (Baseline)", stage) else as.character(stage)
+    tableDf <- rbind(tableDf, tableDfCurrentStage)
+    if (i > 1)
+      tableDf <- rbind(tableDf, changeDf)
   }
-
-  n      <- length(values)
-  ad     <- test$statistic
-  adStar <- ad*(1 + (0.75/n) + (2.25/(n^2)))
-  if(ad >= 0.6){
-    p <- exp(1.2937 - (5.709 * adStar) + 0.0186 * (adStar^2))
-  }else if(adStar < 0.6 && adStar > 0.34){
-    p <- exp(0.9177 - (4.279 * adStar) - 1.38 * (adStar^2))
-  }else if(adStar < 0.34 && adStar > 0.2){
-    p <- 1 - exp(-8.318 + (42.796 * adStar) - 59.938 * (adStar^2))
-  }else if(adStar <= 0.2){
-    p <- 1 - exp(-13.436 + (101.14 * adStar) - 223.73 * (adStar^2))      #Jaentschi & Bolboaca (2018)
-  } else {
-    p <- test$p.value
-  }
-
-  row <- list(mean = meanx, sd = sdx, n = n, ad = ad, p = p)
-  table$addRows(row)
-
-
+  tableList <- as.list(tableDf)
+  table$setData(tableList)
   container[["probabilityTable"]] <- table
 }
 
