@@ -409,7 +409,6 @@ Form
 					defaultValue:					2
 					min: 							2
 					max: 							dataSetInfo.rowCount
-					}
 				}
 
 				DoubleField
@@ -420,7 +419,6 @@ Form
 					defaultValue:					2
 					min: 							2
 					max: 							dataSetInfo.rowCount
-					}
 				}
 			}
 
