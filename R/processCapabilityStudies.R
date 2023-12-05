@@ -170,8 +170,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR Control Chart"), width = 1200, height = 500)
         individualChart <- .controlChart(dataset = dataset[measurements], plotType = "I",
-                                                     xAxisLabels = axisLabels)
-        mrChart <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels,
+                                                     xAxisLabels = seq_along(unlist(dataset[measurements])))
+        mrChart <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = seq_along(unlist(dataset[measurements])),
                                              movingRangeLength = options[["xmrChartMovingRangeLength"]])
         jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
                                                                               layout = matrix(2:1, 2), removeXYlabels= "x")
@@ -1551,9 +1551,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else if (options[["controlChartType"]] == "xmr"){
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "I",
-                                                            xAxisLabels = axisLabels)$plotObject
+                                                            xAxisLabels = seq_along(unlist(dataset[measurements])))$plotObject
       indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = axisLabels,
+      plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "MR", xAxisLabels = seq_along(unlist(dataset[measurements])),
                                                             movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
     }
   }
