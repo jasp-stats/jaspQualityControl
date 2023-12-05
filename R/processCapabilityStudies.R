@@ -281,14 +281,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     normalContainer$position <- 1
     container[["normalCapabilityAnalysis"]] <- normalContainer
 
-    .qcProcessSummaryTable(options, dataset, ready, normalContainer, measurements)
+    .qcProcessSummaryTable(options, dataset, ready, normalContainer, measurements, stages)
 
     if (options[["processCapabilityPlot"]])
       .qcProcessCapabilityPlot(options, dataset, ready, normalContainer, measurements, stages, "normal")
 
     if (options[["processCapabilityTable"]]){
-      .qcProcessCapabilityTableWithin(options, dataset, ready, normalContainer, measurements)
-      .qcProcessCapabilityTableOverall(options, dataset, ready, normalContainer, measurements)
+      .qcProcessCapabilityTableWithin(options, dataset, ready, normalContainer, measurements, stages)
+      .qcProcessCapabilityTableOverall(options, dataset, ready, normalContainer, measurements, stages)
     }
   }
 
@@ -311,11 +311,20 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Output ######
 ################
 
-.qcProcessSummaryTable <- function(options, dataset, ready, container, measurements, returnDataframe = FALSE) {
-
+.qcProcessSummaryTable <- function(options, dataset, ready, container, measurements, stages, returnDataframe = FALSE) {
+  if (identical(stages, "")) {
+    nStages <- 1
+    dataset[["stage"]] <- 1
+    stages <- "stage"
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
+  }
   table <- createJaspTable(title = gettext("Process summary"))
   table$position <- 1
-
+  if (nStages > 1) {
+    table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
+    table$transpose <- TRUE
+  }
   if (options[["lowerSpecificationLimit"]]) {
     lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
     table$addColumnInfo(name = "lsl", type = "number", title = lslTitle)
@@ -328,40 +337,63 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
-  table$addColumnInfo(name = "mean", type = "number", title = gettext("Average"))
+  table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. dev. (total)"))
   table$addColumnInfo(name = "sdw", type = "number", title = gettext("Std. dev. (within)"))
-
   table$showSpecifiedColumnsOnly <- TRUE
+  if (nStages > 1)
+    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
 
   if (!ready)
     return()
 
-  # Take a look at this input! Is is supposed to be like this or must it be transposed?
-  # Transposed gives NA often as std.dev
-  if (length(measurements) < 2) {
-    k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-    sdw <- .controlChart_calculations(dataset[measurements], plotType = "MR", movingRangeLength = k)$sd
-  } else {
-    sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
-    unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-    sdw <- .sdXbar(dataset[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+  tableColNames <- c("lsl", "target", "usl", "mean", "n", "sd", "sdw")
+  if (nStages > 1)
+    tableColNames <- c("stage", tableColNames)
+  tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
+  colnames(tableDf) <- tableColNames
+  for (i in seq_len(nStages)) {
+    stage <- unique(dataset[[stages]])[i]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+
+    if (length(measurements) < 2) {
+      k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+    } else {
+      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+      unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+    }
+    allData <- na.omit(unlist(dataCurrentStage[, measurements]))
+
+    if (is.na(sdw))
+      table$addFootnote(gettext("The within standard deviation could not be calculated."))
+
+    tableDfCurrentStage <- data.frame(lsl = options[["lowerSpecificationLimitValue"]],
+                                      target = options[["targetValue"]],
+                                      usl    = options[["upperSpecificationLimitValue"]],
+                                      mean   = mean(allData, na.rm = TRUE),
+                                      n      = length(allData),
+                                      sd     = sd(allData, na.rm = TRUE),
+                                      sdw    = sdw)
+    if (i == 1 && nStages > 1)
+      baseLineDf <- tableDfCurrentStage
+    if (i > 1) {
+      changeDf <- tableDfCurrentStage - baseLineDf
+      changeDf$stage <- gettextf("Change (%s vs. BL)", stage)
+      # Differences in specification limits are not relevant
+      changeDf$lsl <- NA
+      changeDf$target <- NA
+      changeDf$usl <- NA
+    }
+    if(nStages > 1)
+      tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
+    tableDf <- rbind(tableDf, tableDfCurrentStage)
+    if (i > 1)
+      tableDf <- rbind(tableDf, changeDf)
   }
-  allData <- na.omit(unlist(dataset[, measurements]))
-
-  if (is.na(sdw))
-    table$addFootnote(gettext("The within standard deviation could not be calculated."))
-
-  rows <- list(
-    "lsl"    = options[["lowerSpecificationLimitValue"]],
-    "target" = options[["targetValue"]],
-    "usl"    = options[["upperSpecificationLimitValue"]],
-    "mean"   = mean(allData, na.rm = TRUE),
-    "n"      = length(allData),
-    "sd"     = sd(allData, na.rm = TRUE),
-    "sdw"    = sdw
-  )
-  table$addRows(rows)
+  tableList <- as.list(tableDf)
+  table$setData(tableList)
 
   nDecimals <- .numDecimals
 
@@ -553,122 +585,168 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(plotList)
 }
 
-.qcProcessCapabilityTableWithin <- function(options, dataset, ready, container, measurements, returnDataframe = FALSE) {
-
+.qcProcessCapabilityTableWithin <- function(options, dataset, ready, container, measurements, stages, returnDataframe = FALSE) {
   if (!options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]])
     return()
 
   if (!ready)
     return()
 
+  if (identical(stages, "")) {
+    nStages <- 1
+    dataset[["stage"]] <- 1
+    stages <- "stage"
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
+  }
   table <- createJaspTable(title = gettext("Process capability (within)"))
-  sourceVector <- vector()
-
+  if (nStages > 1) {
+    table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
+    table$transpose <- TRUE
+  }
+  sourceVector <- c()
+  tableColNames <- c()
   ciLevel <- options[["processCapabilityTableCiLevel"]]
   ciLevelPercent <- ciLevel * 100
 
   if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
     table$addColumnInfo(name = "cp", type = "integer", title = gettext("Cp"))
     sourceVector <- c(sourceVector, 'Cp')
+    tableColNames <- c(tableColNames, "cp")
     if (options[["processCapabilityTableCi"]] &&
         !(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])){
       table$addColumnInfo(name = "cplci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "cpuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
+      tableColNames <- c(tableColNames, "cplci", "cpuci")
     }
   }
   if (options[["lowerSpecificationLimit"]]){
     table$addColumnInfo(name = "cpl",   type = "integer", title = gettext("CpL"))
     sourceVector <- c(sourceVector, 'CpL')
+    tableColNames <- c(tableColNames, "cpl")
   }
   if (options[["upperSpecificationLimit"]]){
     table$addColumnInfo(name = "cpu",   type = "integer", title = gettext("CpU"))
     sourceVector <- c(sourceVector, 'CpU')
+    tableColNames <- c(tableColNames, "cpu")
   }
   table$addColumnInfo(name = "cpk",   type = "integer", title = gettext("Cpk"))
   sourceVector <- c(sourceVector, 'Cpk')
+  tableColNames <- c(tableColNames, "cpk")
   if (options[["processCapabilityTableCi"]] &&
       !(options[["upperSpecificationLimitBoundary"]] && options[["lowerSpecificationLimitBoundary"]])) {
     table$addColumnInfo(name = "cpklci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "cpkuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
+    tableColNames <- c(tableColNames, "cpklci", "cpkuci")
   }
   table$showSpecifiedColumnsOnly <- TRUE
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
     table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
 
+  if (nStages > 1)
+    tableColNames <- c("stage", tableColNames)
+  tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
+  colnames(tableDf) <- tableColNames
+  for (i in seq_len(nStages)) {
+    stage <- unique(dataset[[stages]])[i]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
 
-  # Take a look at this input! Is is supposed to be like this or must it be transposed?
-  # Transposed gives NA often as std.dev
-  if (length(measurements) < 2) {
-    k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-    sdw <- .controlChart_calculations(dataset[measurements], plotType = "MR", movingRangeLength = k)$sd
-  } else {
-    sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
-    unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-    sdw <- .sdXbar(dataset[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
-  }
-  allData <- na.omit(unlist(dataset[, measurements]))
-
-  # Calculate capability indices
-  usl <- options[["upperSpecificationLimitValue"]]
-  lsl <- options[["lowerSpecificationLimitValue"]]
-  n <- length(allData)
-  k <- length(measurements)
-  tolMultiplier <- 6
-  cp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdw)
-  cpl <-if (options[["lowerSpecificationLimitBoundary"]]) NA else (mean(allData) - lsl) / ((tolMultiplier/2) * sdw)
-  cpu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - mean(allData)) / ((tolMultiplier/2) * sdw)
-  if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
-    cpk <-if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(cpu, cpl, na.rm = TRUE)
-  }else if(options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]){
-    cpk <- cpl
-  }else{
-    cpk <- cpu
-  }
-
-  if (options[["processCapabilityTableCi"]]){
-    ciAlpha <- 1 - ciLevel
-
-    if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
-      #CI for Cp
-      dfCp <- 0.9 * k * ((n/k) - 1)
-      ciLbCp <- cp * sqrt( qchisq(p = ciAlpha/2, df = dfCp) /dfCp)
-      ciUbCp <- cp * sqrt( qchisq(p = 1 - (ciAlpha/2), df = dfCp) /dfCp)
+    if (length(measurements) < 2) {
+      k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+    } else {
+      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+      unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
-    if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
-      #CI for Cpk
-      dfCpk <- 0.9 * k * ((n/k) - 1)
-      normCIrange <- qnorm(1 - (ciAlpha / 2))
-      intervalCpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((cpk^2)/ (2 * dfCpk)))
-      ciLbCpk <- cpk - (normCIrange * intervalCpk)
-      ciUbCpk <- cpk + (normCIrange * intervalCpk)
+    allData <- na.omit(unlist(dataCurrentStage[, measurements]))
+
+    # Calculate capability indices
+    usl <- options[["upperSpecificationLimitValue"]]
+    lsl <- options[["lowerSpecificationLimitValue"]]
+    n <- length(allData)
+    k <- length(measurements)
+    tolMultiplier <- 6
+    cp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdw)
+    cpl <-if (options[["lowerSpecificationLimitBoundary"]]) NA else (mean(allData) - lsl) / ((tolMultiplier/2) * sdw)
+    cpu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - mean(allData)) / ((tolMultiplier/2) * sdw)
+    if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
+      cpk <-if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(cpu, cpl, na.rm = TRUE)
+    }else if(options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]){
+      cpk <- cpl
+    }else{
+      cpk <- cpu
     }
+
+    if (options[["processCapabilityTableCi"]]){
+      ciAlpha <- 1 - ciLevel
+      if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
+        #CI for Cp
+        dfCp <- 0.9 * k * ((n/k) - 1)
+        ciLbCp <- cp * sqrt( qchisq(p = ciAlpha/2, df = dfCp) /dfCp)
+        ciUbCp <- cp * sqrt( qchisq(p = 1 - (ciAlpha/2), df = dfCp) /dfCp)
+      }
+      if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
+        #CI for Cpk
+        dfCpk <- 0.9 * k * ((n/k) - 1)
+        normCIrange <- qnorm(1 - (ciAlpha / 2))
+        intervalCpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((cpk^2)/ (2 * dfCpk)))
+        ciLbCpk <- cpk - (normCIrange * intervalCpk)
+        ciUbCpk <- cpk + (normCIrange * intervalCpk)
+      }
+    }
+
+    tableDfCurrentStage <- data.frame(cp = round(cp, 2),
+                                      cpl = round(cpl, 2),
+                                      cpu = round(cpu, 2),
+                                      cpk = round(cpk, 2))
+
+    if (options[["processCapabilityTableCi"]]) {
+      if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
+        tableDfCurrentStage[["cplci"]] <- round(ciLbCp, 2)
+        tableDfCurrentStage[["cpuci"]] <- round(ciUbCp, 2)
+      }
+      if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
+        tableDfCurrentStage[["cpklci"]] <- round(ciLbCpk, 2)
+        tableDfCurrentStage[["cpkuci"]] <- round(ciUbCpk, 2)
+      }
+    }
+    if (i == 1 && nStages > 1)
+      baseLineDf <- tableDfCurrentStage
+    if (i > 1) {
+      changeDf <- tableDfCurrentStage - baseLineDf
+      changeDf <- round(changeDf, 2)
+      changeDf$stage <- gettextf("Change (%s vs. BL)", stage)
+      if (options[["processCapabilityTableCi"]]) {
+        if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
+          changeDf[["cplci"]] <- NA
+          changeDf[["cpuci"]] <- NA
+        }
+        if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
+          changeDf[["cpklci"]] <- NA
+          changeDf[["cpkuci"]] <- NA
+        }
+      }
+    }
+    if(nStages > 1)
+      tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
+    tableDf <- rbind(tableDf, tableDfCurrentStage)
+    if (i > 1)
+      tableDf <- rbind(tableDf, changeDf)
   }
-
-  rows <- list("cp" = round(cp, 2), "cpl" = round(cpl, 2), "cpu" = round(cpu, 2), "cpk" = round(cpk, 2))
-
-  if (options[["processCapabilityTableCi"]]) {
-    if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
-      rows[["cplci"]] <- round(ciLbCp, 2)
-      rows[["cpuci"]] <- round(ciUbCp, 2)
-    }
-    if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
-      rows[["cpklci"]] <- round(ciLbCpk, 2)
-      rows[["cpkuci"]] <- round(ciUbCpk, 2)
-    }
-  }
-
-  rows[is.na(rows)] <- "*" # This looks better in the table and makes clearer that there is not an error
-  table$addRows(rows)
+  tableList <- as.list(tableDf)
+  tableList[is.na(tableList)] <- "*" # This looks better in the table and makes clearer that there is not an error
+  table$setData(tableList)
 
   if(returnDataframe) {
     valueVector <- c()
     if(options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
-      valueVector <- c(valueVector, rows[["cp"]])
+      valueVector <- c(valueVector, tableList[["cp"]])
     if(options[["lowerSpecificationLimit"]])
-      valueVector <- c(valueVector, rows[["cpl"]])
+      valueVector <- c(valueVector, tableList[["cpl"]])
     if(options[["upperSpecificationLimit"]])
-      valueVector <- c(valueVector, rows[["cpu"]])
-    valueVector <- c(valueVector, rows[["cpk"]])
+      valueVector <- c(valueVector, tableList[["cpu"]])
+    valueVector <- c(valueVector, tableList[["cpk"]])
     df <- data.frame(sources = sourceVector,
                      values = valueVector)
     return(df)
@@ -677,7 +755,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container[["capabilityTableWithin"]] <- table
 }
 
-.qcProcessCapabilityTableOverall <- function(options, dataset, ready, container, measurements, returnOverallCapDataframe = FALSE,
+.qcProcessCapabilityTableOverall <- function(options, dataset, ready, container, measurements, stages, returnOverallCapDataframe = FALSE,
                                              returnPerformanceDataframe = FALSE) {
 
   if (!ready)
@@ -1322,7 +1400,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ################
 
 .qcProbabilityTable <- function(dataset, options, container, measurements, stages) {
-  # Get number of stages to decide if to transpose or not
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
@@ -1352,7 +1429,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution.", options[["nullDistribution"]]))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
   if (nStages > 1)
-    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline."))
+    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
 
   if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
       any(na.omit(unlist(dataset[measurements])) < 0)){
@@ -1405,11 +1482,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       baseLineDf <- tableDfCurrentStage
     if (i > 1) {
       changeDf <- tableDfCurrentStage - baseLineDf
-      changeDf$stage <- gettextf("Change (%s)", stage)
+      changeDf$stage <- gettextf("Change (%s vs. BL)", stage)
+      # Differences in p-value or AD are not interesting
       changeDf$p <- NA
+      changeDf$ad <- NA
     }
     if(nStages > 1)
-      tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (Baseline)", stage) else as.character(stage)
+      tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
     tableDf <- rbind(tableDf, tableDfCurrentStage)
     if (i > 1)
       tableDf <- rbind(tableDf, changeDf)
