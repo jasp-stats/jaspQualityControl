@@ -120,8 +120,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Error Handling
   if (ready) {
-  .hasErrors(dataset, type = c('infinity'),
-             all.target = measurements, exitAnalysisIfErrors = TRUE)
+    .hasErrors(dataset, type = c('infinity'),
+               all.target = measurements, exitAnalysisIfErrors = TRUE)
   }
   if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready) {
     .hasErrors(dataset,
@@ -216,7 +216,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         columnsToPass <- c(measurements, stages)
         columnsToPass <- columnsToPass[columnsToPass != ""]
         individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
-                                                     xAxisLabels = seq_along(unlist(dataset[measurements])))
+                                         xAxisLabels = seq_along(unlist(dataset[measurements])))
         mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
                                  xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]])
         jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
@@ -341,15 +341,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. dev. (total)"))
   table$addColumnInfo(name = "sdw", type = "number", title = gettext("Std. dev. (within)"))
   table$showSpecifiedColumnsOnly <- TRUE
-  if (nStages > 1)
-    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
 
   if (!ready)
     return()
 
   tableColNames <- c("lsl", "target", "usl", "mean", "n", "sd", "sdw")
-  if (nStages > 1)
+  if (nStages > 1) {
     tableColNames <- c("stage", tableColNames)
+    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+  }
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
   colnames(tableDf) <- tableColNames
   for (i in seq_len(nStages)) {
@@ -603,6 +603,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
     table$transpose <- TRUE
+    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
   }
   sourceVector <- c()
   tableColNames <- c()
@@ -719,12 +720,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       changeDf$stage <- gettextf("Change (%s vs. BL)", stage)
       if (options[["processCapabilityTableCi"]]) {
         if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
-          changeDf[["cplci"]] <- NA
-          changeDf[["cpuci"]] <- NA
+          changeDf[["cplci"]] <- "-"
+          changeDf[["cpuci"]] <- "-"
         }
         if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
-          changeDf[["cpklci"]] <- NA
-          changeDf[["cpkuci"]] <- NA
+          changeDf[["cpklci"]] <- "-"
+          changeDf[["cpkuci"]] <- "-"
         }
       }
     }
@@ -735,7 +736,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       tableDf <- rbind(tableDf, changeDf)
   }
   tableList <- as.list(tableDf)
-  tableList[is.na(tableList)] <- "*" # This looks better in the table and makes clearer that there is not an error
+  tableListAllNAIndices <- sapply(tableList, function(x)all(is.na(x)))
+  tableListAllNANames <- names(tableListAllNAIndices)[tableListAllNAIndices]
+  nStars <- if (nStages > 1) length(tableList[["stage"]]) else 1
+  for (name in tableListAllNANames)
+    tableList[[name]] <- rep("*", nStars) # This looks better in the table and makes clearer that there is not an error
   table$setData(tableList)
 
   if(returnDataframe) {
@@ -757,13 +762,25 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcProcessCapabilityTableOverall <- function(options, dataset, ready, container, measurements, stages, returnOverallCapDataframe = FALSE,
                                              returnPerformanceDataframe = FALSE) {
-
   if (!ready)
     return()
 
+  if (identical(stages, "")) {
+    nStages <- 1
+    dataset[["stage"]] <- 1
+    stages <- "stage"
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
+  }
   table <- createJaspTable(title = gettext("Process performance (total)"))
-  sourceVector1 <- vector()
+  if (nStages > 1) {
+    table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
+    table$transpose <- TRUE
+    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+  }
 
+  sourceVector1 <- vector()
+  tableColNames <- c()
   ciLevel <- options[["processCapabilityTableCiLevel"]]
   ciLevelPercent <- ciLevel * 100
   ciAlpha <- 1 - ciLevel
@@ -771,148 +788,196 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
     table$addColumnInfo(name = "pp",  type = "integer", title = gettext("Pp"))
     sourceVector1 <- c(sourceVector1, 'Pp')
+    tableColNames <- c(tableColNames, "pp")
     if (options[["processCapabilityTableCi"]] &&
         !(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
       table$addColumnInfo(name = "pplci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "ppuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
+      tableColNames <- c(tableColNames, "pplci", "ppuci")
     }
   }
   if (options[["lowerSpecificationLimit"]]){
     table$addColumnInfo(name = "ppl", type = "integer", title = gettext("PpL"))
     sourceVector1 <- c(sourceVector1, 'PpL')
+    tableColNames <- c(tableColNames, "ppl")
   }
   if (options[["upperSpecificationLimit"]]){
     table$addColumnInfo(name = "ppu", type = "integer", title = gettext("PpU"))
     sourceVector1 <- c(sourceVector1, 'PpU')
+    tableColNames <- c(tableColNames, "ppu")
   }
   table$addColumnInfo(name = "ppk",   type = "integer", title = gettext("Ppk"))
   sourceVector1 <- c(sourceVector1, 'Ppk')
+  tableColNames <- c(tableColNames, "ppk")
   if (options[["processCapabilityTableCi"]] &&
       !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
     table$addColumnInfo(name = "ppklci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "ppkuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
+    tableColNames <- c(tableColNames, "ppklci", "ppkuci")
   }
   if (options[["target"]]){
     table$addColumnInfo(name = "cpm", type = "integer", title = gettext("Cpm"))
     sourceVector1 <- c(sourceVector1, 'Cpm')
+    tableColNames <- c(tableColNames, "cpm")
     if (options[["processCapabilityTableCi"]] &&
         !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
       table$addColumnInfo(name = "cpmlci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "cpmuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
+      tableColNames <- c(tableColNames, "cpmlci", "cpmuci")
     }
   }
   table$showSpecifiedColumnsOnly <- TRUE
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
     table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
 
+  if (nStages > 1)
+    tableColNames <- c("stage", tableColNames)
+  tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
+  colnames(tableDf) <- tableColNames
+  for (i in seq_len(nStages)) {
+    stage <- unique(dataset[[stages]])[i]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
 
-  # Take a look at this input! Is is supposed to be like this or must it be transposed?
-  # Transposed gives NA often as std.dev
-  if (length(measurements) < 2) {
-    k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-    sdw <- .controlChart_calculations(dataset[measurements], plotType = "MR", movingRangeLength = k)$sd
-  } else {
-    sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
-    unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-    sdw <- .sdXbar(dataset[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
-  }
-  allData <- na.omit(unlist(dataset[, measurements]))
-  sdo <- sd(allData)
-  meanOverall <- mean(allData)
-  usl <- options[["upperSpecificationLimitValue"]]
-  lsl <- options[["lowerSpecificationLimitValue"]]
-  m <- (options[["upperSpecificationLimitValue"]] + options[["lowerSpecificationLimitValue"]])/2
-  n <- length(allData)
-  t <- options[["targetValue"]]
-  tolMultiplier <- 6
+    if (length(measurements) < 2) {
+      k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+    } else {
+      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+      unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+    }
+    allData <- na.omit(unlist(dataCurrentStage[, measurements]))
+    sdo <- sd(allData)
+    meanOverall <- mean(allData)
+    usl <- options[["upperSpecificationLimitValue"]]
+    lsl <- options[["lowerSpecificationLimitValue"]]
+    m <- (options[["upperSpecificationLimitValue"]] + options[["lowerSpecificationLimitValue"]])/2
+    n <- length(allData)
+    t <- options[["targetValue"]]
+    tolMultiplier <- 6
 
-  pp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdo)
-  ppl <- if (options[["lowerSpecificationLimitBoundary"]]) NA else (meanOverall - lsl) / ((tolMultiplier/2) * sdo)
-  ppu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - mean(allData)) / ((tolMultiplier/2) * sdo)
+    pp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdo)
+    ppl <- if (options[["lowerSpecificationLimitBoundary"]]) NA else (meanOverall - lsl) / ((tolMultiplier/2) * sdo)
+    ppu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - mean(allData)) / ((tolMultiplier/2) * sdo)
 
-  if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
-    ppk <- if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(ppu, ppl, na.rm = TRUE)
-  }else if(options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]){
-    ppk <- ppl
-  }else{
-    ppk <- ppu
-  }
-  cp <- (usl - lsl) / (tolMultiplier * sdw)
-
-  if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]] && options[["target"]]){
-    if (t == m){
-      cpm <- (usl - lsl) / (tolMultiplier * sqrt((sum((allData - t)^2)) / n))
+    if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]){
+      ppk <- if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(ppu, ppl, na.rm = TRUE)
+    }else if(options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]){
+      ppk <- ppl
     }else{
-      cpm <- min(c(t - lsl, usl - t)) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
+      ppk <- ppu
     }
-  }else if (options[["upperSpecificationLimit"]] && options[["target"]]){
-    cpm <- (usl - t) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
-  }else if (options[["lowerSpecificationLimit"]] && options[["target"]]){
-    cpm <- (t - lsl) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
-  }
-  if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])
-    cpm <- NA
+    cp <- (usl - lsl) / (tolMultiplier * sdw)
 
-  if (options[["processCapabilityTableCi"]]) {
-    if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
-      #CI for Pp
-      dfPp <- n - 1
-      ciLbPp <- pp * sqrt( qchisq(p = ciAlpha/2, df = dfPp) /dfPp)
-      ciUbPp <- pp * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfPp) / dfPp)
+    if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]] && options[["target"]]){
+      if (t == m){
+        cpm <- (usl - lsl) / (tolMultiplier * sqrt((sum((allData - t)^2)) / n))
+      }else{
+        cpm <- min(c(t - lsl, usl - t)) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
+      }
+    }else if (options[["upperSpecificationLimit"]] && options[["target"]]){
+      cpm <- (usl - t) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
+    }else if (options[["lowerSpecificationLimit"]] && options[["target"]]){
+      cpm <- (t - lsl) / ((tolMultiplier / 2) * sqrt((sum((allData - t)^2)) / n))
     }
+    if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])
+      cpm <- NA
 
-    if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
-      #CI for Ppk
-      dfPpk <- n - 1
-      normCIrange <- qnorm(1 - (ciAlpha / 2))
-      intervalPpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((ppk^2)/ (2 * dfPpk)))
-      ciLbPpk <- ppk - (normCIrange * intervalPpk)
-      ciUbPpk <- ppk + (normCIrange * intervalPpk)
-    }
+    if (options[["processCapabilityTableCi"]]) {
+      if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
+        #CI for Pp
+        dfPp <- n - 1
+        ciLbPp <- pp * sqrt( qchisq(p = ciAlpha/2, df = dfPp) /dfPp)
+        ciUbPp <- pp * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfPp) / dfPp)
+      }
 
-    if (options[["target"]] &&
-        !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])){
-      #CI for Cpm
-      a <- (meanOverall - t) / sdo
-      dfCpm <- (n * ((1 + (a^2))^2)) / (1 + (2 * (a^2)))
-      ciLbCpm <- cpm * sqrt( qchisq(p = ciAlpha/2, df = dfCpm) /dfCpm)
-      ciUbCpm <- cpm * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfCpm) / dfCpm)
-    }
-  }
+      if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
+        #CI for Ppk
+        dfPpk <- n - 1
+        normCIrange <- qnorm(1 - (ciAlpha / 2))
+        intervalPpk <- sqrt(1 / (((tolMultiplier / 2)^2) * n)  +  ((ppk^2)/ (2 * dfPpk)))
+        ciLbPpk <- ppk - (normCIrange * intervalPpk)
+        ciUbPpk <- ppk + (normCIrange * intervalPpk)
+      }
 
-  rows <- list("pp" = round(pp,2), "ppl" = round(ppl,2), "ppu" = round(ppu,2), "ppk" = round(ppk,2))
-  if (options[["target"]])
-    rows[["cpm"]] <- round(cpm,2)
-
-  if (options[["processCapabilityTableCi"]]) {
-    if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
-      rows[["pplci"]] <- round(ciLbPp,2)
-      rows[["ppuci"]] <- round(ciUbPp,2)
-    }
-    if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
-      rows[["ppklci"]] <- round(ciLbPpk,2)
-      rows[["ppkuci"]] <- round(ciUbPpk,2)
-      if (options[["target"]]) {
-        rows[["cpmlci"]] <- round(ciLbCpm,2)
-        rows[["cpmuci"]] <- round(ciUbCpm,2)
+      if (options[["target"]] &&
+          !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])){
+        #CI for Cpm
+        a <- (meanOverall - t) / sdo
+        dfCpm <- (n * ((1 + (a^2))^2)) / (1 + (2 * (a^2)))
+        ciLbCpm <- cpm * sqrt( qchisq(p = ciAlpha/2, df = dfCpm) /dfCpm)
+        ciUbCpm <- cpm * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfCpm) / dfCpm)
       }
     }
-  }
 
-  rows[is.na(rows)] <- "*" # This looks better in the table and makes clearer that there is not an error
-  table$addRows(rows)
+    tableDfCurrentStage <- data.frame(pp = round(pp,2),
+                                      ppl = round(ppl,2),
+                                      ppu = round(ppu,2),
+                                      ppk = round(ppk,2))
+    if (options[["target"]])
+      tableDfCurrentStage[["cpm"]] <- round(cpm,2)
+
+    if (options[["processCapabilityTableCi"]]) {
+      if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
+        tableDfCurrentStage[["pplci"]] <- round(ciLbPp,2)
+        tableDfCurrentStage[["ppuci"]] <- round(ciUbPp,2)
+      }
+      if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
+        tableDfCurrentStage[["ppklci"]] <- round(ciLbPpk,2)
+        tableDfCurrentStage[["ppkuci"]] <- round(ciUbPpk,2)
+        if (options[["target"]]) {
+          tableDfCurrentStage[["cpmlci"]] <- round(ciLbCpm,2)
+          tableDfCurrentStage[["cpmuci"]] <- round(ciUbCpm,2)
+        }
+      }
+    }
+
+    if (i == 1 && nStages > 1)
+      baseLineDf <- tableDfCurrentStage
+    if (i > 1) {
+      changeDf <- tableDfCurrentStage - baseLineDf
+      changeDf <- round(changeDf, 2)
+      changeDf$stage <- gettextf("Change (%s vs. BL)", stage)
+      if (options[["processCapabilityTableCi"]]) {
+        if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
+          changeDf[["pplci"]] <- "-"
+          changeDf[["ppuci"]] <- "-"
+        }
+        if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
+          changeDf[["ppklci"]] <- "-"
+          changeDf[["ppkuci"]] <- "-"
+          if (options[["target"]]) {
+            tableDfCurrentStage[["cpmlci"]] <- "-"
+            tableDfCurrentStage[["cpmuci"]] <- "-"
+          }
+        }
+      }
+    }
+    if(nStages > 1)
+      tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
+    tableDf <- rbind(tableDf, tableDfCurrentStage)
+    if (i > 1)
+      tableDf <- rbind(tableDf, changeDf)
+  }
+  tableList <- as.list(tableDf)
+  tableListAllNAIndices <- sapply(tableList, function(x)all(is.na(x)))
+  tableListAllNANames <- names(tableListAllNAIndices)[tableListAllNAIndices]
+  nStars <- if (nStages > 1) length(tableList[["stage"]]) else 1
+  for (name in tableListAllNANames)
+    tableList[[name]] <- rep("*", nStars) # This looks better in the table and makes clearer that there is not an error
+  table$setData(tableList)
 
   if (returnOverallCapDataframe) {
     valueVector1 <- c()
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
-      valueVector1 <- c(valueVector1, rows[["pp"]])
+      valueVector1 <- c(valueVector1, tableList[["pp"]])
     if (options[["lowerSpecificationLimit"]])
-      valueVector1 <- c(valueVector1, rows[["ppl"]])
+      valueVector1 <- c(valueVector1, tableList[["ppl"]])
     if (options[["upperSpecificationLimit"]])
-      valueVector1 <- c(valueVector1, rows[["ppu"]])
-    valueVector1 <- c(valueVector1, rows[["ppk"]])
+      valueVector1 <- c(valueVector1, tableList[["ppu"]])
+    valueVector1 <- c(valueVector1, tableList[["ppk"]])
     if (options[["target"]])
-      valueVector1 <- c(valueVector1, rows[["cpm"]])
+      valueVector1 <- c(valueVector1, tableList[["cpm"]])
     df <- data.frame(sources = sourceVector1,
                      values = valueVector1)
     return(df)
@@ -920,63 +985,124 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   table2 <- createJaspTable(title = gettext("Non-conformance statistics"))
   table2$addColumnInfo(name = "rowNames", type = "string", title = "")
-  table2$addColumnInfo(name = "observed", type = "integer", title = "Observed")
-  table2$addColumnInfo(name = "expOverall", type = "integer", title = "Expected total")
-  table2$addColumnInfo(name = "expWithin", type = "integer", title = "Expected within")
   table2$showSpecifiedColumnsOnly <- TRUE
+  if (nStages > 1) {
+    table2$transpose <- TRUE
+    table2$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+  }
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
     table2$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
 
-
-  #Calculate performance
-  allDataVector <- as.vector(allData)
-  lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
-  uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
-  rowNames <- c(sprintf("ppm < %s", lslTitle), sprintf("ppm > %s", uslTitle), "ppm total")
-
-  #observed
-  if (options[["lowerSpecificationLimit"]]) {
-    oLSL <- (1e6*length(allDataVector[allDataVector < lsl])) / n
-  } else {
-    oLSL <- NA
-  }
-  if (options[["upperSpecificationLimit"]]) {
-    oUSL <- (1e6*length(allDataVector[allDataVector > usl])) / n
-  } else {
-    oUSL <- NA
-  }
-  oTOT <- if (all(is.na(c(oLSL, oUSL)))) NA else sum(c(oLSL, oUSL), na.rm = TRUE)
-  observed <- c(oLSL, oUSL, oTOT)
-
-  # expected total
-  if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
-    eoLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdo))
-  }else{
-    eoLSL <- NA
-  }
-  if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-    eoUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdo))
-  }else{
-    eoUSL <- NA
-  }
-  eoTOT <- if (all(is.na(c(eoLSL, eoUSL)))) NA else sum(c(eoLSL, eoUSL), na.rm = TRUE)
-  expOverall <- c(eoLSL, eoUSL, eoTOT)
-
-  # expected within
-  if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
-    ewLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdw))
-  }else{
-    ewLSL <- NA
-  }
-  if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-    ewUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdw))
-  }else{
-    ewUSL <- NA
-  }
-  ewTOT <- if (all(is.na(c(ewLSL, ewUSL)))) NA else sum(c(ewLSL, ewUSL), na.rm = TRUE)
-  expWithin <- c(ewLSL, ewUSL, ewTOT)
-
   nDecimals <- .numDecimals
+  tableList2 <- list()
+  for (i in seq_len(nStages)) {
+    stage <- unique(dataset[[stages]])[i]
+    stageTitle <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
+    colOvertitle <- if (nStages == 1) "" else stageTitle
+    observedColName <- paste0("observed", stage)
+    expOverallColName <- paste0("expOverall", stage)
+    expWithinColName <- paste0("expWithin", stage)
+    table2$addColumnInfo(name = observedColName, type = "integer", title = "Observed", overtitle = colOvertitle)
+    table2$addColumnInfo(name = expOverallColName, type = "integer", title = "Expected total", overtitle = colOvertitle)
+    table2$addColumnInfo(name = expWithinColName, type = "integer", title = "Expected within", overtitle = colOvertitle)
+
+    # Table columns for comparison
+    if (i > 1) {
+      colOvertitle <- gettextf("Change (%s vs. BL)", stage)
+      observedComparisonColName <- paste0("observedComparison", stage)
+      expOverallComparisonColName <- paste0("expOverallComparison", stage)
+      expWithinComparisonColName <- paste0("expWithinComparison", stage)
+      table2$addColumnInfo(name = observedComparisonColName, type = "integer", title = "Observed", overtitle = colOvertitle)
+      table2$addColumnInfo(name = expOverallComparisonColName, type = "integer", title = "Expected total", overtitle = colOvertitle)
+      table2$addColumnInfo(name = expWithinComparisonColName, type = "integer", title = "Expected within", overtitle = colOvertitle)
+    }
+
+    #Calculate performance
+    stage <- unique(dataset[[stages]])[i]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    allData <- na.omit(unlist(dataCurrentStage[, measurements]))
+    allDataVector <- as.vector(allData)
+    lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
+    uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
+    rowNames <- c(sprintf("ppm < %s", lslTitle), sprintf("ppm > %s", uslTitle), "ppm total")
+    sdo <- sd(allData)
+    meanOverall <- mean(allData)
+    if (length(measurements) < 2) {
+      k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+    } else {
+      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+      unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+    }
+
+    #observed
+    if (options[["lowerSpecificationLimit"]]) {
+      oLSL <- (1e6*length(allDataVector[allDataVector < lsl])) / n
+    } else {
+      oLSL <- NA
+    }
+    if (options[["upperSpecificationLimit"]]) {
+      oUSL <- (1e6*length(allDataVector[allDataVector > usl])) / n
+    } else {
+      oUSL <- NA
+    }
+    oTOT <- if (all(is.na(c(oLSL, oUSL)))) NA else sum(c(oLSL, oUSL), na.rm = TRUE)
+    observed <- c(oLSL, oUSL, oTOT)
+
+    # expected total
+    if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
+      eoLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdo))
+    }else{
+      eoLSL <- NA
+    }
+    if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
+      eoUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdo))
+    }else{
+      eoUSL <- NA
+    }
+    eoTOT <- if (all(is.na(c(eoLSL, eoUSL)))) NA else sum(c(eoLSL, eoUSL), na.rm = TRUE)
+    expOverall <- c(eoLSL, eoUSL, eoTOT)
+
+    # expected within
+    if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
+      ewLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdw))
+    }else{
+      ewLSL <- NA
+    }
+    if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
+      ewUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdw))
+    }else{
+      ewUSL <- NA
+    }
+    ewTOT <- if (all(is.na(c(ewLSL, ewUSL)))) NA else sum(c(ewLSL, ewUSL), na.rm = TRUE)
+    expWithin <- c(ewLSL, ewUSL, ewTOT)
+
+    if (i == 1 && nStages > 1) {
+      observedBaseline <- observed
+      expOverallBaseline <- expOverall
+      expWithinBaseline <- expWithin
+    }
+    if (i > 1) {
+      observedComparison <- observed - observedBaseline
+      expOverallComparison <- expOverall - expOverallBaseline
+      expWithinComparison <- expWithin - expWithinBaseline
+      tableList2[[observedComparisonColName]] <- round(observedComparison, nDecimals)
+      tableList2[[expOverallComparisonColName]] <- round(expOverallComparison, nDecimals)
+      tableList2[[expWithinComparisonColName]] <- round(expWithinComparison, nDecimals)
+      tableList2[[expOverallComparisonColName]][is.na(tableList2[[expOverallComparisonColName]])] <- "*" # This looks better in the table and makes clearer that there is not an error
+      tableList2[[expWithinComparisonColName]][is.na(tableList2[[expWithinComparisonColName]])] <- "*"
+      tableList2[[observedComparisonColName]][is.na(tableList2[[observedComparisonColName]])] <- "*"
+    }
+    tableList2[[observedColName]] <- round(observed, nDecimals)
+    tableList2[[expOverallColName]] <- round(expOverall, nDecimals)
+    tableList2[[expWithinColName]] <- round(expWithin, nDecimals)
+    tableList2[[expOverallColName]][is.na(tableList2[[expOverallColName]])] <- "*" # This looks better in the table and makes clearer that there is not an error
+    tableList2[[expWithinColName]][is.na(tableList2[[expWithinColName]])] <- "*"
+    tableList2[[observedColName]][is.na(tableList2[[observedColName]])] <- "*"
+  }
+
+
   if (returnPerformanceDataframe) {
     df <- data.frame("Source" = rowNames,
                      "Observed" = observed,
@@ -988,18 +1114,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return(df)
   }
 
-  table2List <- list("rowNames" = rowNames,
-                     "observed" = observed,
-                     "expOverall" = round(expOverall, nDecimals),
-                     "expWithin" = round(expWithin, nDecimals))
-  table2List$expOverall[is.na(table2List$expOverall)] <- "*" # This looks better in the table and makes clearer that there is not an error
-  table2List$expWithin[is.na(table2List$expWithin)] <- "*"
-  table2List$observed[is.na(table2List$observed)] <- "*"
-  table2$setData(table2List)
+  tableList2[["rowNames"]] <- rowNames
+  table2$setData(tableList2)
 
   container[["capabilityTableOverall"]] <- table
   container[["capabilityTablePerformance"]] <- table2
-
 }
 
 .qcProcessCapabilityTableNonNormal <- function(options, dataset, ready, container, measurements, returnSummaryDF = FALSE, returnCapabilityDF = FALSE,
@@ -1950,7 +2069,7 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
   p <- ggplot2::ggplot() +
     ggplot2::theme_void() +
     ggpp::geom_table(data = data.frame(x = 1, y = 1), ggplot2::aes(x = x, y = y), label = list(df),
-                                                                    table.colnames = displayColNames, size = 7)
+                     table.colnames = displayColNames, size = 7)
 
   return(p)
 }
