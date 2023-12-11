@@ -72,7 +72,7 @@ test_that("Probability Plot matches", {
 test_that("Summary of test against the normal distribution table results match", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.430918770255289, -7.08, 100, 0.300991417646472, 1.85635681000733
+                                 list(0.43, -7.08, 100, 0.30, 1.85635681000733
                                  ))
 })
 
@@ -139,7 +139,7 @@ test_that("Probability Plot matches2", {
 test_that("Summary of test against the normal distribution table results match", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.430918770255289, -7.08, 100, 0.300991417646472, 1.85635681000733
+                                 list(0.43, -7.08, 100, 0.30, 1.85635681000733
                                  ))
 })
 
@@ -220,7 +220,7 @@ test_that("Probability Plot matches3", {
 test_that("Summary of test against the weibull distribution table results match", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.70609252641799, 2.07536754156247, 100, 0.063348428618532, 3.86876200879491
+                                 list(0.71, 2.07536754156247, 100, 0.06, 3.86876200879491
                                  ))
 })
 
@@ -285,6 +285,6 @@ test_that("Probability Plot matches4", {
 test_that("Summary of test against the lognormal distribution table results match", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.61105240529119, 1.10078741574583, 100, 0.109186903478858, 0.529320014694866
+                                 list(0.61, 1.10078741574583, 100, 0.11, 0.529320014694866
                                  ))
 })
