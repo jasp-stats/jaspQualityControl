@@ -147,7 +147,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["zeroWarning"]] <- createJaspHtml(text = gettext("All zero values have been replaced with a value equal to one-half of the smallest data point."), elementType = "p",
                                                      title = "Zero values found in non-normal capability study:",
                                                      position = 1)
-      jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", 'capabilityStudyType', 'nullDistribution'))
+      jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", 'capabilityStudyType',
+                                              'nullDistribution'))
     }
   }
 
@@ -158,7 +159,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["pcReport"]]$position <- 6
     }
     jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, wideFormat, subgroups, axisLabels)
-    jaspResults[["pcReport"]]$dependOn(c("report", "variables", "variablesLong", "subgroups", "controlChartType"))
+    jaspResults[["pcReport"]]$dependOn(c("report", "measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
+                                         "stagesLongFormat", "stagesWideFormat"))
   } else {
     # X-bar and R Chart OR ImR OR X-bar and mR Chart
     if(options[["controlChartType"]] == "xBarR" | options[["controlChartType"]] == "xBarMR"  | options[["controlChartType"]] == "xBarS") {
@@ -176,7 +178,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                 "xBarMR" = "mR")
       # first chart is always xBar-chart, second is either R-, mR-, or s-chart
       jaspResults[["xBar"]] <- createJaspContainer(gettextf("X-bar & %s control chart", secondPlotTitle))
-      jaspResults[["xBar"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "report"))
+      jaspResults[["xBar"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
+                                       "report", "stagesLongFormat", "stagesWideFormat"))
       jaspResults[["xBar"]]$position <- 1
 
 
@@ -209,7 +212,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       }
     } else if (options[["controlChartType"]] == "xmr") {
       jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR control chart"))
-      jaspResults[["xmr"]]$dependOn(c("variables", "variablesLong", "subgroups", "controlChartType", "report"))
+      jaspResults[["xmr"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
+                                      "report", "stagesLongFormat", "stagesWideFormat"))
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
@@ -237,19 +241,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 }
 
-#############################################################
-## Functions for capability analysis section ################
-#############################################################
+# Functions for capability analysis section ####
 
-################
-## Containers ##
-################
+## Containers ####
+
 
 .qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements, stages) {
 
   container <- createJaspContainer(gettext("Capability study"))
-  container$dependOn(options = c("CapabilityStudyType", "measurementsWideFormat", "subgroup", "lowerSpecificationLimitValue", "upperSpecificationLimitValue", "targetValue", "measurementLongFormat", "manualSubgroupSizeValue", "dataFormat",
-                                 "processCapabilityPlot", "processCapabilityTable", "manualSubgroupSize", "report"))
+  container$dependOn(options = c("CapabilityStudyType", "measurementsWideFormat", "subgroup", "lowerSpecificationLimitValue",
+                                 "upperSpecificationLimitValue", "targetValue", "measurementLongFormat", "manualSubgroupSizeValue",
+                                 "dataFormat", "processCapabilityPlot", "processCapabilityTable", "manualSubgroupSize", "report",
+                                 "stagesLongFormat", "stagesWideFormat"))
   container$position <- 4
 
   if (!ready)
@@ -307,9 +310,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 }
 
-################
-## Output ######
-################
+## Output ####
 
 .qcProcessSummaryTable <- function(options, dataset, ready, container, measurements, stages, returnDataframe = FALSE) {
   if (identical(stages, "")) {
@@ -322,18 +323,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table <- createJaspTable(title = gettext("Process summary"))
   table$position <- 1
   if (nStages > 1) {
-    table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
+    table$addColumnInfo(name = "stage", title = gettext("Stage"), type = "string")
     table$transpose <- TRUE
   }
   if (options[["lowerSpecificationLimit"]]) {
     lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
-    table$addColumnInfo(name = "lsl", type = "number", title = lslTitle)
+    table$addColumnInfo(name = "lsl", type = "integer", title = lslTitle)
   }
   if (options[["target"]])
-    table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
+    table$addColumnInfo(name = "target", type = "integer", title = gettext("Target"))
   if (options[["upperSpecificationLimit"]]) {
     uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
-    table$addColumnInfo(name = "usl", type = "number", title = uslTitle)
+    table$addColumnInfo(name = "usl", type = "integer", title = uslTitle)
   }
 
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
@@ -369,9 +370,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (is.na(sdw))
       table$addFootnote(gettext("The within standard deviation could not be calculated."))
 
-    tableDfCurrentStage <- data.frame(lsl = options[["lowerSpecificationLimitValue"]],
-                                      target = options[["targetValue"]],
-                                      usl    = options[["upperSpecificationLimitValue"]],
+    tableDfCurrentStage <- data.frame(lsl = round(options[["lowerSpecificationLimitValue"]], .numDecimals),
+                                      target = round(options[["targetValue"]], .numDecimals),
+                                      usl    = round(options[["upperSpecificationLimitValue"]], .numDecimals),
                                       mean   = mean(allData, na.rm = TRUE),
                                       n      = length(allData),
                                       sd     = sd(allData, na.rm = TRUE),
@@ -382,9 +383,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       changeDf <- tableDfCurrentStage - baseLineDf
       changeDf$stage <- gettextf("Change (%s vs. BL)", stage)
       # Differences in specification limits are not relevant
-      changeDf$lsl <- NA
-      changeDf$target <- NA
-      changeDf$usl <- NA
+      changeDf$lsl <- "-"
+      changeDf$target <- "-"
+      changeDf$usl <- "-"
     }
     if(nStages > 1)
       tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
@@ -463,8 +464,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
-    # Take a look at this input! Is is supposed to be like this or must it be transposed?
-    # Transposed gives NA often as std.dev
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
       sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
@@ -1126,6 +1125,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
 
+  nDecimals <- .numDecimals
+
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
@@ -1157,14 +1158,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
   if (options[["lowerSpecificationLimit"]])
-    table$addColumnInfo(name = "lsl", type = "number", title = lslTitle)
+    table$addColumnInfo(name = "lsl", type = "integer", title = lslTitle)
 
   if (options[["target"]])
-    table$addColumnInfo(name = "target", type = "number", title = gettext("Target"))
+    table$addColumnInfo(name = "target", type = "integer", title = gettext("Target"))
 
   uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
   if (options[["upperSpecificationLimit"]])
-    table$addColumnInfo(name = "usl", type = "number", title = uslTitle)
+    table$addColumnInfo(name = "usl", type = "integer", title = uslTitle)
 
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Average"))
@@ -1199,9 +1200,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
     n <- length(allData)
-    lsl <- options[["lowerSpecificationLimitValue"]]
-    usl <- options[["upperSpecificationLimitValue"]]
-    target <- options[["targetValue"]]
+    lsl <- round(options[["lowerSpecificationLimitValue"]], .numDecimals)
+    usl <- round(options[["upperSpecificationLimitValue"]], .numDecimals)
+    target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
     mean <- mean(allData, na.rm = TRUE)
 
@@ -1228,9 +1229,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       changeDf <- tableDfCurrentStage - baseLineDf
       changeDf$stage <- gettextf("Change (%s vs. BL)", stage)
       # Differences in specification limits are not relevant
-      changeDf$lsl <- NA
-      changeDf$target <- NA
-      changeDf$usl <- NA
+      changeDf$lsl <- "-"
+      changeDf$target <- "-"
+      changeDf$usl <- "-"
     }
     if(nStages > 1)
       tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
@@ -1465,7 +1466,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return(df)
   }
 
-  nDecimals <- .numDecimals
   table3 <- createJaspTable(title = gettextf("Non-conformance statistics"))
   table3$addColumnInfo(name = "rowNames", type = "string", title = "")
   if (nStages > 1) {
@@ -1609,13 +1609,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 }
 
-#############################################################
-## Functions for probability plot section ###################
-#############################################################
+# Functions for probability plot section ####
 
-################
-## Containers ##
-################
+## Containers ####
 
 .qcProbabilityPlotContainer <- function(options, dataset, ready, jaspResults, measurements, stages) {
 
@@ -1624,7 +1620,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   container <- createJaspContainer(gettext("Probability table and plot"))
   container$dependOn(options = c("measurementsWideFormat", "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution", "probabilityPlotGridLines", "measurementLongFormat", "manualSubgroupSizeValue",
-                                 "manualSubgroupSize", "subgroup", "report"))
+                                 "manualSubgroupSize", "subgroup", "report", "stagesLongFormat", "stagesWideFormat"))
   container$position <- 3
 
   jaspResults[["probabilityContainer"]] <- container
@@ -1638,9 +1634,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     container[["ProbabilityPlot"]]  <- .qcProbabilityPlot(dataset, options, measurements, stages)
 }
 
-################
-## Output ######
-################
+## Output ####
 
 .qcProbabilityTable <- function(dataset, options, container, measurements, stages) {
   if (identical(stages, "")) {
@@ -1667,8 +1661,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03B2"), 			type = "number")
     table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03B8"),        type = "number")
   }
-  table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "number")
-  table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
+  table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "integer")
+  table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "integer")
   table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution.", options[["nullDistribution"]]))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
   if (nStages > 1)
@@ -1720,15 +1714,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else {
       p <- test$p.value
     }
-    tableDfCurrentStage <- data.frame(mean = meanx, sd = sdx, n = n, ad = ad, p = p)
+    tableDfCurrentStage <- data.frame(mean = meanx, sd = sdx, n = n, ad = round(ad, .numDecimals), p = round(p, .numDecimals))
     if (i == 1 && nStages > 1)
       baseLineDf <- tableDfCurrentStage
     if (i > 1) {
       changeDf <- tableDfCurrentStage - baseLineDf
       changeDf$stage <- gettextf("Change (%s vs. BL)", stage)
       # Differences in p-value or AD are not interesting
-      changeDf$p <- NA
-      changeDf$ad <- NA
+      changeDf$p <- "-"
+      changeDf$ad <- "-"
     }
     if(nStages > 1)
       tableDfCurrentStage$stage <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
@@ -1741,7 +1735,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container[["probabilityTable"]] <- table
 }
 
-.qcProbabilityPlot <- function(dataset, options, measurements = NULL, stages, ggPlot = FALSE) {
+.qcProbabilityPlot <- function(dataset, options, measurements = NULL, stages) {
   distributionTitle <- switch (options[["nullDistribution"]],
                                "weibull" = "Weibull",
                                "lognormal" = "lognormal",
@@ -1758,7 +1752,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotHeight <- nRow * 600
   plot <- createJaspPlot(width = plotWidth, height = plotHeight,
                          title = gettextf("Probability plot against %1$s distribution", distributionTitle))
-  plot$dependOn(c("measurementLongFormat", "manualSubgroupSizeValue"))
 
   if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
       any(na.omit(unlist(dataset[measurements])) < 0)) {
@@ -1783,7 +1776,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   } else if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
   }
-
   plotList <- list()
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
@@ -1943,9 +1935,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(log(-log(1 - p)))
 }
 
-#############################################################
-## Functions for distribution plot section ##################
-#############################################################
+# Functions for distribution plot section ####
 
 .qcDistributionPlot <- function(options, dataset, ready, jaspResults, measurements, stages) {
 
@@ -1963,7 +1953,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotWidth <- nCol * 400
   plotHeight <- nRow * 400
   plot <- createJaspPlot(title = gettext("Histogram"), width = plotWidth, height = plotHeight)
-  plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber", "pcBinWidthType", "report", "measurementLongFormat", "manualSubgroupSizeValue", "manualSubgroupSize", "subgroup", 'nullDistribution'))
+  plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
+                            "pcBinWidthType", "report", "measurementLongFormat", "manualSubgroupSizeValue", "manualSubgroupSize",
+                            "subgroup", 'nullDistribution', "stagesLongFormat", "stagesWideFormat"))
   plot$position <- 2
   jaspResults[["histogram"]] <- plot
 
@@ -2065,8 +2057,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 }
 
-
-.pcReport <- function(dataset, measurements, parts, operators, options, ready, container, wideFormat, subgroups, axisLabels) {
+.pcReport <- function(dataset, measurements, parts, operators, options, ready, container, wideFormat, subgroups, axisLabels, stages = "") {
 
   if (options[["reportTitle"]] == ""){
     title <- "Process Capability Report"
@@ -2133,18 +2124,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   if (options[["reportProcessCapabilityPlot"]]) {
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, distribution = "normal")
+    plotList[[indexCounter]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = "normal")[[1]]
   }
   if (options[["reportProbabilityPlot"]]) {
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .qcProbabilityPlot(dataset, options, measurements, ggPlot = TRUE)
+    plotList[[indexCounter]] <- .qcProbabilityPlotObject(options, dataset, measurements, stages)[[1]]
   }
   if (options[["reportProcessCapabilityTables"]]) {
     if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis"){
-      processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, returnDataframe = TRUE)
-      potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, returnDataframe = TRUE)
-      overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnOverallCapDataframe = TRUE)
-      performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, returnPerformanceDataframe = TRUE)
+      processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
+      potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
+      overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, stages, returnOverallCapDataframe = TRUE)
+      performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, stages, returnPerformanceDataframe = TRUE)
 
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- ggplotTable(processSummaryDF) #process summary
@@ -2155,9 +2146,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- ggplotTable(overallCapDF) #overall capability
     } else {
-      processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnSummaryDF = TRUE)
-      overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnCapabilityDF = TRUE)
-      performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, returnPerformanceDF = TRUE)
+      processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE)
+      overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnCapabilityDF = TRUE)
+      performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnPerformanceDF = TRUE)
 
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- ggplotTable(processSummaryDF) #process summary
