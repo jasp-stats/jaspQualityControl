@@ -163,7 +163,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                          "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue"))
   } else {
     # X-bar and R Chart OR ImR OR X-bar and mR Chart
-    if(options[["controlChartType"]] == "xBarR" | options[["controlChartType"]] == "xBarMR"  | options[["controlChartType"]] == "xBarS") {
+    if((options[["controlChartType"]] == "xBarR" | options[["controlChartType"]] == "xBarMR"  | options[["controlChartType"]] == "xBarS") &&
+      options[["controlChart"]]) {
       secondPlotType <- switch(options[["controlChartType"]],
                                "xBarR" = "R",
                                "xBarS" = "s",
@@ -180,7 +181,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["xBar"]] <- createJaspContainer(gettextf("X-bar & %s control chart", secondPlotTitle))
       jaspResults[["xBar"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
                                        "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                       "subgroupSizeUnequal", "controlChartSdUnbiasingConstant"))
+                                       "subgroupSizeUnequal", "controlChartSdUnbiasingConstant", "controlChart"))
       jaspResults[["xBar"]]$position <- 1
 
 
@@ -211,11 +212,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         jaspResults[["xBar"]][["tableXBar"]] <- xBarChart$table
         jaspResults[["xBar"]][["tableSecondPlot"]] <- secondPlot$table
       }
-    } else if (options[["controlChartType"]] == "xmr") {
+    } else if (options[["controlChartType"]] == "xmr" && options[["controlChart"]]) {
       jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR control chart"))
       jaspResults[["xmr"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
                                       "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                      "subgroupSizeUnequal"))
+                                      "subgroupSizeUnequal", "controlChart"))
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)

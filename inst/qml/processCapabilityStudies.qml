@@ -379,47 +379,68 @@ Form
 			{
 				title:			qsTr("Stability of the process")
 
-
-				DropDown
+				CheckBox
 				{
-					name: 					"controlChartType"
-					id: 					controlChartType
-					label: 					""
-					values: dataFormat.currentValue == "longFormat" ?
-					[
-						{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
-						{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
-						{ label: qsTr("X-mR control chart"),				value: "xmr"}
-					] :
-					[
-						{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
-						{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
-						{ label: qsTr("X-bar & mR control chart"),			value: "xBarMR"}
-					]
-					indexDefaultValue: 
-					(dataFormat.currentValue == "wideFormat" || (dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1)) ? 0 :
-					(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? 2 : 0
-				}
+					name: 						"controlChart"
+					label: 						qsTr("")
+					checked: 					true
+					childrenOnSameRow:			true
+					columns:					1
+					
 
-				DoubleField
-				{
-					name:							"xBarMovingRangeLength"
-					label:							qsTr("Moving range length")
-					visible:						controlChartType.currentIndex == 2
-					defaultValue:					2
-					min: 							2
-					max: 							dataSetInfo.rowCount
-				}
+					DropDown
+					{
+						name: 					"controlChartType"
+						id: 					controlChartType
+						label: 					""
+						values: dataFormat.currentValue == "longFormat" ?
+						[
+							{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
+							{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
+							{ label: qsTr("X-mR control chart"),				value: "xmr"}
+						] :
+						[
+							{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
+							{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
+							{ label: qsTr("X-bar & mR control chart"),			value: "xBarMR"}
+						]
+						indexDefaultValue: 
+						(dataFormat.currentValue == "wideFormat" || (dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1)) ? 0 :
+						(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? 2 : 0
+					}
+				
 
-				DoubleField
-				{
-					name:							"xmrChartMovingRangeLength"
-					label:							qsTr("Moving range length")
-					visible:						controlChartType.currentIndex == 3
-					defaultValue:					2
-					min: 							2
-					max: 							dataSetInfo.rowCount
-				}
+					DoubleField
+					{
+						name:							"xBarMovingRangeLength"
+						label:							qsTr("Moving range length")
+						visible:						controlChartType.currentIndex == 2 && dataFormat.currentValue == "wideFormat"
+						defaultValue:					2
+						min: 							2
+						max: 							dataSetInfo.rowCount
+					}
+
+					Group 
+					{
+						visible:						controlChartType.currentIndex == 2 && dataFormat.currentValue == "longFormat"
+
+						DoubleField
+						{
+							name:							"xmrChartMovingRangeLength"
+							label:							qsTr("Moving range length")
+							defaultValue:					2
+							min: 							2
+							max: 							dataSetInfo.rowCount
+						}
+
+						CheckBox
+						{
+							name: 							"xmrChartSpecificationLimits"
+							label: 							qsTr("Display specification limits")
+							checked: 						true
+						}
+					}
+				}			
 			}
 
 			Group
