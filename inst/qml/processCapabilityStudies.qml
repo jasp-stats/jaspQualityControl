@@ -591,31 +591,18 @@ Form
 				]
 			}
 					
-			CheckBox
-			{
-				name:								"manualTicksXAxis"
-				label: 								qsTr("Number of ticks on x-axis for X-bar & R or X-mR chart:")
-				childrenOnSameRow: true
-
-				DoubleField
+			DropDown
 				{
-					name: 							"manualTicksXAxisValue"
-					defaultValue:					5
+					name: 					"histogramBinBoundaryDirection"
+					id: 					histogramBinBoundaryDirection
+					label: 					qsTr("Histogram bin boundaries")
+					values: 
+					[
+						{ label: qsTr("Left open"),		value: "left"},
+						{ label: qsTr("Right open"),	value: "right"}
+						
+					]
 				}
-			}
-
-			CheckBox
-			{
-				name:								"manualTicksProbabilityPlot"
-				label: 								qsTr("Number of ticks on x-axis for probability plot:")
-				childrenOnSameRow: true
-
-				DoubleField
-				{
-					name: 							"manualTicksProbabilityPlotValue"
-					defaultValue:					5
-				}
-			}
 
 			DropDown
 			{

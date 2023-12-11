@@ -147,8 +147,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["zeroWarning"]] <- createJaspHtml(text = gettext("All zero values have been replaced with a value equal to one-half of the smallest data point."), elementType = "p",
                                                      title = "Zero values found in non-normal capability study:",
                                                      position = 1)
-      jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", 'capabilityStudyType',
-                                              'nullDistribution'))
+      jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "capabilityStudyType",
+                                              "nullDistribution"))
     }
   }
 
@@ -160,7 +160,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
     jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, wideFormat, subgroups, axisLabels)
     jaspResults[["pcReport"]]$dependOn(c("report", "measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
-                                         "stagesLongFormat", "stagesWideFormat"))
+                                         "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue"))
   } else {
     # X-bar and R Chart OR ImR OR X-bar and mR Chart
     if(options[["controlChartType"]] == "xBarR" | options[["controlChartType"]] == "xBarMR"  | options[["controlChartType"]] == "xBarS") {
@@ -179,7 +179,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       # first chart is always xBar-chart, second is either R-, mR-, or s-chart
       jaspResults[["xBar"]] <- createJaspContainer(gettextf("X-bar & %s control chart", secondPlotTitle))
       jaspResults[["xBar"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
-                                       "report", "stagesLongFormat", "stagesWideFormat"))
+                                       "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
+                                       "subgroupSizeUnequal", "controlChartSdUnbiasingConstant"))
       jaspResults[["xBar"]]$position <- 1
 
 
@@ -213,7 +214,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else if (options[["controlChartType"]] == "xmr") {
       jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR control chart"))
       jaspResults[["xmr"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
-                                      "report", "stagesLongFormat", "stagesWideFormat"))
+                                      "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
+                                      "subgroupSizeUnequal"))
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
@@ -252,7 +254,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container$dependOn(options = c("CapabilityStudyType", "measurementsWideFormat", "subgroup", "lowerSpecificationLimitValue",
                                  "upperSpecificationLimitValue", "targetValue", "measurementLongFormat", "manualSubgroupSizeValue",
                                  "dataFormat", "processCapabilityPlot", "processCapabilityTable", "manualSubgroupSize", "report",
-                                 "stagesLongFormat", "stagesWideFormat"))
+                                 "stagesLongFormat", "stagesWideFormat","controlChartSdUnbiasingConstant", "lowerSpecificationLimitBoundary",
+                                 "upperSpecificationLimitBoundary", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
+                                 "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdEstimationMethodMeanMovingRangeLength"))
   container$position <- 4
 
   if (!ready)
@@ -436,7 +440,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotWidth <- nCol * 800
   plotHeight <- nRow * 500
   plot <- createJaspPlot(title = gettext("Capability of the process"), width = plotWidth, height = plotHeight)
-  plot$dependOn(c("csBinWidthType", "processCapabilityPlotBinNumber"))
+  plot$dependOn(c("processCapabilityPlotBinNumber", "histogramBinBoundaryDirection"))
   plot$position <- 2
   container[["capabilityPlot"]] <- plot
 
@@ -483,8 +487,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     binWidth <- (h$breaks[2] - h$breaks[1])
 
     p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
-      ggplot2::geom_histogram(ggplot2::aes(y =..density..), closed = "left", fill = "grey", col = "black", linewidth = .7,
-                              binwidth = binWidth, center = binWidth/2) +
+      ggplot2::geom_histogram(ggplot2::aes(y =..density..), closed = options[["histogramBinBoundaryDirection"]],
+                              fill = "grey", col = "black", linewidth = .7, binwidth = binWidth, center = binWidth/2) +
       ggplot2::scale_y_continuous(name = gettext("Density")) +
       ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits)
 
@@ -1619,8 +1623,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   container <- createJaspContainer(gettext("Probability table and plot"))
-  container$dependOn(options = c("measurementsWideFormat", "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution", "probabilityPlotGridLines", "measurementLongFormat", "manualSubgroupSizeValue",
-                                 "manualSubgroupSize", "subgroup", "report", "stagesLongFormat", "stagesWideFormat"))
+  container$dependOn(options = c("measurementsWideFormat", "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution",
+                                 "probabilityPlotGridLines", "measurementLongFormat","subgroup", "report", "stagesLongFormat",
+                                 "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue"))
   container$position <- 3
 
   jaspResults[["probabilityContainer"]] <- container
@@ -1637,6 +1642,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 ## Output ####
 
 .qcProbabilityTable <- function(dataset, options, container, measurements, stages) {
+  distributionTitle <- switch (options[["nullDistribution"]],
+                               "weibull" = "Weibull",
+                               "lognormal" = "lognormal",
+                               "normal" = "normal")
   if (identical(stages, "")) {
     nStages <- 1
     dataset[["stage"]] <- 1
@@ -1663,7 +1672,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "integer")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "integer")
-  table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution.", options[["nullDistribution"]]))
+  table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution.", distributionTitle))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
   if (nStages > 1)
     table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
@@ -1954,8 +1963,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotHeight <- nRow * 400
   plot <- createJaspPlot(title = gettext("Histogram"), width = plotWidth, height = plotHeight)
   plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
-                            "pcBinWidthType", "report", "measurementLongFormat", "manualSubgroupSizeValue", "manualSubgroupSize",
-                            "subgroup", 'nullDistribution', "stagesLongFormat", "stagesWideFormat"))
+                            "report", "measurementLongFormat", "manualSubgroupSizeValue", "subgroup", 'nullDistribution',
+                            "stagesLongFormat", "stagesWideFormat", "histogramBinBoundaryDirection", "subgroupSizeType",
+                            "manualSubgroupSizeValue"))
   plot$position <- 2
   jaspResults[["histogram"]] <- plot
 
@@ -1997,7 +2007,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     xLimits <- range(xBreaks)
 
     p <- ggplot2::ggplot() +
-      ggplot2::geom_histogram(data = df, mapping = ggplot2::aes(y =..density.., x = measurements), closed = "left",
+      ggplot2::geom_histogram(data = df, mapping = ggplot2::aes(y =..density.., x = measurements), closed = options[["histogramBinBoundaryDirection"]],
                               fill = "grey", col = "black", linewidth = .7, binwidth = binWidth, center = binWidth/2) +
       ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits) +
       ggplot2::scale_y_continuous(name =  gettext("Counts"), labels = yLabels, breaks = yBreaks, limits = yLimits) +
