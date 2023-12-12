@@ -437,7 +437,7 @@ Form
 						{
 							name: 							"xmrChartSpecificationLimits"
 							label: 							qsTr("Display specification limits")
-							checked: 						true
+							checked: 						false
 						}
 					}
 				}			

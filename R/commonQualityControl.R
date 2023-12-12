@@ -198,6 +198,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                     phase2Sd                  = "",
                                     fixedSubgroupSize         = "",
                                     warningLimits             = FALSE,
+                                    specificationLimits       = NA,
                                     xAxisLabels               = "",
                                     xAxisTitle                = gettext("Sample"),
                                     movingRangeLength         = 2,
@@ -223,7 +224,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   plotObject <- .controlChart_plotting(pointData = controlChartData$pointData, clData = controlChartData$clData,
                                        stageLabels = controlChartData$stageLabels, clLabels = controlChartData$clLabels,
                                        plotType = plotType, stages = stages, phase2 = phase2, warningLimits = warningLimits,
-                                       xAxisLabels = xAxisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize)
+                                       xAxisLabels = xAxisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
+                                       specificationLimits = specificationLimits)
 
 
   return(list(plotObject = plotObject, table = table, controlChartData = controlChartData))
@@ -448,7 +450,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     lastLCL <- LCL[length(LCL)]
     lastUCL <- UCL[length(UCL)]
     if (i == nStages) { # the last label has more space available and hence can be longer
-      labelXPos <- max(subgroups) * 1.1
+      labelXPos <- max(subgroups) * 1.06
       labelText <- c(
         gettextf("CL = %g",  round(lastCenter, decimals)),
         gettextf("LCL = %g", round(lastLCL, decimals)),
@@ -538,13 +540,14 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                    stages = "",
                                    phase2 = FALSE,
                                    warningLimits = FALSE,
+                                   specificationLimits = NA,
                                    xAxisLabels = "",
                                    xAxisTitle = "",
                                    clLabelSize = 4.5) {
   plotType <- match.arg(plotType)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(pointData$plotStatistic, clData$LCL, clData$UCL, clData$center))
+  yLimits <- range(yBreaks)
   xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(pointData$subgroup))) # we only want integers on the x-axis
-
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis
     xBreaks[1] <- 1
   xLimits <- c(0.5, max(xBreaks) * 1.2 + 0.5) # add some buffer, but at least .5
@@ -564,19 +567,45 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                     "MR"   = "Moving range",
                     "MMR"  = "Moving range of subgroup mean",
                     "s"    = "Sample std. dev.")
-  if (!identical(stages, ""))
-    stageLabels$y <- max(yBreaks)
   lineType <- if (phase2) "solid" else "dashed"
-
   # Create plot
   plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, group = stage)) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = lineType) +
     ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = lineType)
-  if (!identical(stages, "")) {
-    plotObject <- plotObject + ggplot2::geom_vline(xintercept = na.omit(stageLabels[["separationLine"]])) +
-      ggplot2::geom_text(data = stageLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
-                                                  size = 6, fontface = "bold", inherit.aes = FALSE)
+  if (!all(is.na(specificationLimits))) {
+    length(specificationLimits) <- 3
+    xPosLabel <- 1 - max(xLimits) * 0.06
+    xLimits[1] <- xPosLabel
+    xRange <- range(clData$subgroup)
+    lslYPos <- specificationLimits[1]
+    targetYPos <- specificationLimits[2]
+    uslYPos <- specificationLimits[3]
+    yLimits <- range(c(yLimits, lslYPos, targetYPos, uslYPos), na.rm = TRUE)
+    if (!is.na(lslYPos)) {
+      lslLineDf <- data.frame(xPos = xRange, yPos = rep(lslYPos, each = 2))
+      lslLabelDf <- data.frame(xPos = xPosLabel, yPos = lslYPos, label = gettextf("LSL = %g", round(lslYPos, .numDecimals)))
+      plotObject <- plotObject + ggplot2::geom_line(data = lslLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
+                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkred") +
+        ggplot2::geom_label(data = lslLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
+                              inherit.aes = FALSE, size = clLabelSize, hjust = "inward")
+    }
+    if (!is.na(targetYPos)) {
+      targetLineDf <- data.frame(xPos = xRange, yPos = rep(targetYPos, each = 2))
+      targetLabelDf <- data.frame(xPos = xPosLabel, yPos = targetYPos, label = gettextf("Tar. = %g", round(targetYPos, .numDecimals)))
+      plotObject <- plotObject + ggplot2::geom_line(data = targetLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
+                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkgreen") +
+        ggplot2::geom_label(data = targetLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
+                            inherit.aes = FALSE, size = clLabelSize, hjust = "inward")
+    }
+    if (!is.na(uslYPos)) {
+      uslLineDf <- data.frame(xPos = xRange, yPos = rep(uslYPos, each = 2))
+      uslLabelDf <- data.frame(xPos = xPosLabel, yPos = uslYPos, label = gettextf("USL = %g", round(uslYPos, .numDecimals)))
+      plotObject <- plotObject + ggplot2::geom_line(data = uslLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
+                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkred") +
+        ggplot2::geom_label(data = uslLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
+                            inherit.aes = FALSE, size = clLabelSize, hjust = "inward")
+    }
   }
   if (warningLimits) {
     plotObject <- plotObject + ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = UWL1), col = "orange",
@@ -588,9 +617,16 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = LWL2), col = "orange",
                          linewidth = 1, linetype = "dashed")
   }
+  if (!identical(stages, "")) {
+    stageLabels$y <- max(yLimits)
+  # if (!identical(stages, "")) {
+    plotObject <- plotObject + ggplot2::geom_vline(xintercept = na.omit(stageLabels[["separationLine"]])) +
+      ggplot2::geom_text(data = stageLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
+                         size = 6, fontface = "bold", inherit.aes = FALSE)
+  }
   plotObject <- plotObject + ggplot2::geom_label(data = clLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
                                                  inherit.aes = FALSE, size = clLabelSize) +
-    ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = range(yBreaks)) +
+    ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = yLimits) +
     ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels) +
     jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue") +
     jaspGraphs::geom_point(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),

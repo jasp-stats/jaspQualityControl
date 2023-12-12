@@ -222,8 +222,20 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
         columnsToPass <- c(measurements, stages)
         columnsToPass <- columnsToPass[columnsToPass != ""]
+        if (options[["xmrChartSpecificationLimits"]]) {
+          specificationLimitsControlChart <- c()
+          specificationLimitsControlChart <- if (options[["lowerSpecificationLimit"]]) c(specificationLimitsControlChart,
+                                                                                         options[["lowerSpecificationLimitValue"]]) else c(specificationLimitsControlChart, NA)
+          specificationLimitsControlChart <- if (options[["target"]]) c(specificationLimitsControlChart,
+                                                                        options[["targetValue"]]) else c(specificationLimitsControlChart, NA)
+          specificationLimitsControlChart <- if (options[["upperSpecificationLimit"]]) c(specificationLimitsControlChart,
+                                                                                         options[["upperSpecificationLimitValue"]]) else c(specificationLimitsControlChart, NA)
+        } else {
+          specificationLimitsControlChart <- NA
+        }
         individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
-                                         xAxisLabels = seq_along(unlist(dataset[measurements])))
+                                         xAxisLabels = seq_along(unlist(dataset[measurements])),
+                                         specificationLimits = specificationLimitsControlChart)
         mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
                                  xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]])
         jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
