@@ -164,7 +164,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   } else {
     # X-bar and R Chart OR ImR OR X-bar and mR Chart
     if((options[["controlChartType"]] == "xBarR" | options[["controlChartType"]] == "xBarMR"  | options[["controlChartType"]] == "xBarS") &&
-      options[["controlChart"]]) {
+       options[["controlChart"]]) {
       secondPlotType <- switch(options[["controlChartType"]],
                                "xBarR" = "R",
                                "xBarS" = "s",
@@ -565,7 +565,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       yPosLabel <- max(ggplot2::layer_scales(p)$y$range$range)
       if (options[["target"]]) {
         specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettext("Target"), xIntercept = options[["targetValue"]],
-                                                       lty = "dotted", yPosLabel = yPosLabel, color = "darkgreen"))
+                                                       lty = "solid", yPosLabel = yPosLabel, color = "darkgreen"))
       }
       if (options[["lowerSpecificationLimit"]]) {
         lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
@@ -1972,7 +1972,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   nCol <- if (nStages > 1) 2 else 1
   nRow <- ceiling(nStages/2)
-  plotWidth <- nCol * 400
+  plotWidth <- nCol * 600
   plotHeight <- nRow * 400
   plot <- createJaspPlot(title = gettext("Histogram"), width = plotWidth, height = plotHeight)
   plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
@@ -2031,20 +2031,27 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["histogramDensityLine"]]) {
       if (options[['nullDistribution']]  == "normal") {
         p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(dataCurrentStage), sd = sd(dataCurrentStage)),
-                                        color = "dodgerblue")
+                                        mapping = ggplot2::aes(color = "normalDist"))
+        legendLabel <- gettext("Normal dist.")
       } else if (options[['nullDistribution']]  == "weibull") {
         fit_Weibull <- fitdistrplus::fitdist(dataCurrentStage, "weibull", method = "mle",
                                              control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
         shape <- fit_Weibull$estimate[[1]]
         scale <- fit_Weibull$estimate[[2]]
-        p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale), color = "dodgerblue")
+        p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
+                                        mapping = ggplot2::aes(color = "weibullDist"))
+        legendLabel <- gettext("Weibull dist.")
       } else if(options[['nullDistribution']]  == "lognormal") {
         fit_Lnorm <- fitdistrplus::fitdist(dataCurrentStage, "lnorm", method = "mle",
                                            control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
         shape <- fit_Lnorm$estimate[[1]]
         scale <- fit_Lnorm$estimate[[2]]
-        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale), color = "dodgerblue")
+        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale),
+                                        mapping = ggplot2::aes(color = "lognormallDist"))
+        legendLabel <- gettext("Lognormal dist.")
       }
+      p <- p + ggplot2::scale_color_manual("", values = "dodgerblue", labels = legendLabel) +
+        ggplot2::theme(legend.position = "right")
     }
     plotList[[i]] <- p
   }
