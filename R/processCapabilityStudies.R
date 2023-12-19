@@ -1848,6 +1848,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(plot)
 }
 
+
+
+### Debug
+# dataset <- read.csv("tests/testthat/datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv")
+# dataset <- dataset[2]
+# measurements <- "Diameter"
+# stages <- ""
+
 .qcProbabilityPlotObject <- function(options, dataset, measurements, stages) {
   if (identical(stages, "")) {
     nStages <- 1
@@ -1910,7 +1918,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       fit <- fitdistrplus::fitdist(dataCurrentStage, 'lnorm')
       meanlog <- as.numeric(fit$estimate[1])
       sdlog <- as.numeric(fit$estimate[2])
-      lpdf <- quote(log(1/(sqrt(2*pi)*X*sdlog) * exp(-(log(X)- meanlog)^2/(2*sdlog^2))))
+      lpdf <- quote(log(1/(sqrt(2*pi)*x*sdlog) * exp(-(log(x)- meanlog)^2/(2*sdlog^2))))
       matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("meanlog", "sdlog"), mle = fit$estimate))
       if (jaspBase::isTryError(matrix)) {
         stop(gettext("Fitting distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
@@ -1936,13 +1944,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
       xBreaks <- labelFrame[index,2]
       label_x <- labelFrame[index,1]
-      xLimits <- range(xBreaks)
+      xLimits <- c(min(xBreaks) * 0.8, max(xBreaks) * 1.2)
     } else if (options[["nullDistribution"]] == "weibull") {
       fit <- fitdistrplus::fitdist(dataCurrentStage, 'weibull')
       shape <- as.numeric(fit$estimate[1])
       scale <- as.numeric(fit$estimate[2])
-      lpdf <- quote(log(shape) - shape * log(scale) + shape * log(X) - (X / scale)^ shape )
-      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = fit$estimate))
+      x <- dataCurrentStage
+      lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x / scale)^ shape)
+      matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("shape", "scale"), mle = fit$estimate)
+      #matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("shape", "scale"), mle = fit$estimate))
       if (jaspBase::isTryError(matrix)) {
         stop(gettext("Fitting distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
         return()
@@ -1954,7 +1964,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       zalpha <- log(-1*log(1-0.975))
       percentileEstimate <- scale * (- log(1 - pSeq))^(1/shape)
       varPercentile <- (percentileEstimate^2 / scale^2) * varScale + (percentileEstimate^2/shape^4)*zp^2*varShape - 2*((zp*percentileEstimate^2) / (scale * shape^2))*covarSS
-      percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
+      percentileLower <- exp(log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
       percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
 
       yBreaks <- log(-1*log(1-(ticks / 100)))
@@ -1967,13 +1977,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
       xBreaks <- labelFrame[index,2]
       label_x <- labelFrame[index,1]
-      xLimits <- range(xBreaks) * 1.2
+      xLimits <- c(min(xBreaks) * 0.8, max(xBreaks) * 1.2)
     }
-    data1 <- data.frame(x = dataCurrentStage, y = y)
+    data1 <- data.frame(x = x, y = y)
     yLimits <- range(yBreaks)
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
-      jaspGraphs::geom_point(ggplot2::aes(x = dataCurrentStage, y = y))
+      jaspGraphs::geom_point(ggplot2::aes(x = x, y = y))
 
     if (options[["probabilityPlotGridLines"]])
       p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
@@ -2085,7 +2095,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
-    dataCurrentStage <- as.vector(na.omit(unlist(dataCurrentStage))) # the distribution fitting functions complain if this is not explicitly a vector
+    dataCurrentStage <- as.vector(na.omit(unlist(dataCurrentStage[, measurements]))) # the distribution fitting functions complain if this is not explicitly a vector
     nBins <- options[["histogramBinNumber"]]
     n <- length(dataCurrentStage)
     df <- data.frame(measurements = dataCurrentStage)
