@@ -54,25 +54,29 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   # Some error handling and messages
-  plotNotes <- ""
-  if (!identical(stages, "")) {
-    if ((!wideFormat && options[["subgroupSizeType"]] == "manual" &&
-         any(lapply(split(dataset[[stages]], ceiling(seq_along(dataset[[stages]])/options[["manualSubgroupSizeValue"]])), FUN = function(x)length(unique(x))) > 1)) ||
-        (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" &&
-         any(table(dplyr::count_(dataset, vars = c(stages, subgroupVariable))[subgroupVariable]) > 1))) {
-      plotNotes <- paste0(plotNotes, gettext("One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"))
+  if (ready) {
+    plotNotes <- ""
+    if (!identical(stages, "")) {
+      if ((!wideFormat && options[["subgroupSizeType"]] == "manual" &&
+           any(lapply(split(dataset[[stages]], ceiling(seq_along(dataset[[stages]])/options[["manualSubgroupSizeValue"]])), FUN = function(x)length(unique(x))) > 1)) ||
+          (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" &&
+           any(table(dplyr::count_(dataset, vars = c(stages, subgroupVariable))[subgroupVariable]) > 1))) {
+        plotNotes <- paste0(plotNotes, gettext("One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"))
+      }
+      if (anyNA(dataset[[stages]])) {
+        nDroppedStageRows <- sum(is.na(dataset[[stages]]))
+        dataset <- dataset[!is.na(dataset[[stages]]),]
+        removalType <- if (wideFormat) "subgroup(s)" else "observation(s)"
+        plotNotes <- paste0(plotNotes, gettextf("Removed %1$i %2$s that were not assigned to any stage.<br>", nDroppedStageRows, removalType))
+      }
     }
-    if (anyNA(dataset[[stages]])) {
-      nDroppedStageRows <- sum(is.na(dataset[[stages]]))
-      dataset <- dataset[!is.na(dataset[[stages]]),]
-      removalType <- if (wideFormat) "subgroup(s)" else "observation(s)"
-      plotNotes <- paste0(plotNotes, gettextf("Removed %1$i %2$s that were not assigned to any stage.<br>", nDroppedStageRows, removalType))
+    if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" && (anyNA(dataset[[subgroupVariable]]) ||
+                                                                               any(dataset[[subgroupVariable]] == ""))) {
+      nDroppedSubgroupRows <- sum(c(is.na(dataset[[subgroupVariable]]), dataset[[subgroupVariable]] == ""))
+      dataset <- dataset[!is.na(dataset[[subgroupVariable]]),]
+      dataset <- dataset[dataset[[subgroupVariable]] != "",]
+      plotNotes <- paste0(plotNotes, gettextf("Removed %i observation(s) that were not assigned to any subgroups.<br>", nDroppedSubgroupRows))
     }
-  }
-  if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" && anyNA(dataset[[subgroupVariable]])) {
-    nDroppedSubgroupRows <- sum(is.na(dataset[[subgroupVariable]]))
-    dataset <- dataset[!is.na(dataset[[subgroupVariable]]),]
-    plotNotes <- paste0(plotNotes, gettextf("Removed %i observation(s) that were not assigned to any subgroups.<br>", nDroppedSubgroupRows))
   }
 
   # Rearrange data if not already wide format (one group per row)
@@ -306,7 +310,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   ready <- (length(measurements) > 0 && (options[["lowerSpecificationLimit"]] | options[["upperSpecificationLimit"]]))
 
-  if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready && (any(unlist(dataset[measurements]) < 0))) {
+  if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready && (any(na.omit(unlist(dataset[measurements])) < 0))) {
     p <- createJaspPlot(title = gettext("Process capability study"), width = 400, height = 400)
     p$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     container[["p"]] <- p
@@ -482,6 +486,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
   if (sum(!is.na(dataset[measurements])) < 1) {
     plot$setError(gettext("No valid measurements detected."))
+    return()
+  }
+  if (sum(!is.na(dataset[measurements])) < 2 && options[["processCapabilityPlotDistributions"]]) {
+    plot$setError(gettextf("Need at least 2 measurements to fit distribution. %1$i measurement(s) detected.",
+                           sum(!is.na(dataset[measurements]))))
+    return()
+  }
+  if (nStages > 1 && (length(unique(na.omit(dataset)[[stages]])) < nStages)) {
+    plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
 
@@ -1561,6 +1574,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
     allDataVector <- as.vector(allData)
 
+    distParameters <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
+    if (jaspBase::isTryError(distParameters)) {
+      table3$setError(distParameters[1])
+      return()
+    }
+    beta <- distParameters$beta
+    theta <- distParameters$theta
+    if(options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
+      threshold <- distParameters$threshold
+
     #observed
     if (options[["lowerSpecificationLimit"]]){
       oLSL <- (1e6*length(allDataVector[allDataVector < lsl])) / n
@@ -1603,7 +1626,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
       distname <- "3-parameter-lognormal"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]){
-        eoLSL <- 1e6 * FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold, lower.tail = T)
+        eoLSL <- 1e6 * FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = T)
       }else{
         eoLSL <- NA
       }
@@ -1615,7 +1638,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }else if (options[["nonNormalDistribution"]] == "3ParameterWeibull") {
       distname <- "3-parameter-Weibull"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
-        eoLSL <- 1e6 * FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold, lower.tail = T)
+        eoLSL <- 1e6 * FAdist::pweibull3(q = lsl, shape = beta, scale = theta, thres = threshold, lower.tail = T)
       }else{
         eoLSL <- NA
       }
@@ -1690,13 +1713,24 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (!ready)
     return()
-
+  if (identical(stages, "")) {
+    nStages <- 1
+  } else if (!identical(stages, "")) {
+    nStages <- length(unique(dataset[[stages]]))
+  }
   if (sum(!is.na(dataset[measurements])) < 2) {
-    p <- createJaspPlot(width = 400, height = 400,
+    plot <- createJaspPlot(width = 400, height = 400,
                         title = gettext("Probability plot"))
-    container[["plot"]] <- p
-    p$setError(gettextf("Need at least 2 measurements to calculate probability table/plot. %1$i measurement(s) detected.",
+    container[["plot"]] <- plot
+    plot$setError(gettextf("Need at least 2 measurements to calculate probability table/plot. %1$i measurement(s) detected.",
                        sum(!is.na(dataset[measurements]))))
+    return()
+  }
+  if (nStages > 1 && (length(unique(na.omit(dataset)[[stages]])) < nStages)) {
+    plot <- createJaspPlot(width = 400, height = 400,
+                           title = gettext("Probability plot"))
+    container[["plot"]] <- plot
+    plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
 
@@ -1720,7 +1754,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   } else if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
   }
-  table <- createJaspTable(title = gettextf("Summary of test against the %1$s distribution", options[["nullDistribution"]]))
+  table <- createJaspTable(title = gettextf("Summary of test against the %1$s distribution", distributionTitle))
   table$position <- 1
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
@@ -1766,9 +1800,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       sdx     <- sd(values)
       test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
     } else if (options[["nullDistribution"]] == "lognormal") {
-      fit    <- fitdistrplus::fitdist(values, 'lnorm')
-      meanx  <- fit$estimate[1]
-      sdx    <- fit$estimate[2]
+      fit    <- EnvStats::elnorm(values)
+      meanx  <- fit$parameters[1]
+      sdx    <- fit$parameters[2]
       test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
     } else if (options[["nullDistribution"]] == "weibull") {
       fit    <- fitdistrplus::fitdist(values, 'weibull')
@@ -1907,11 +1941,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       xBreaks <- label_x <- jaspGraphs::getPrettyAxisBreaks(dataCurrentStage)
       xLimits <- range(xBreaks)
     } else if (options[["nullDistribution"]] == "lognormal") {
-      fit <- fitdistrplus::fitdist(dataCurrentStage, 'lnorm')
-      meanlog <- as.numeric(fit$estimate[1])
-      sdlog <- as.numeric(fit$estimate[2])
+      fit    <- EnvStats::elnorm(dataCurrentStage)
+      meanlog <- as.numeric(fit$parameters[1])
+      sdlog <- as.numeric(fit$parameters[2])
       lpdf <- quote(log(1/(sqrt(2*pi)*x*sdlog) * exp(-(log(x)- meanlog)^2/(2*sdlog^2))))
-      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("meanlog", "sdlog"), mle = fit$estimate))
+      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("meanlog", "sdlog"), mle = fit$parameters))
       if (jaspBase::isTryError(matrix)) {
         stop(gettext("Fitting distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
         return()
@@ -1973,7 +2007,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     yLimits <- range(yBreaks)
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
-      jaspGraphs::geom_point(ggplot2::aes(x = dataCurrentStage, y = y))
+      jaspGraphs::geom_point(data = data1, ggplot2::aes(x = x, y = y))
 
     if (options[["probabilityPlotGridLines"]])
       p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
@@ -2058,9 +2092,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plot$setError(gettext("No valid measurements detected."))
     return()
   }
+  if (sum(!is.na(dataset[measurements])) < 2 && options[["histogramDensityLine"]]) {
+    plot$setError(gettextf("Need at least 2 measurements to fit distribution. %1$i measurement(s) detected.",
+                        sum(!is.na(dataset[measurements]))))
+    return()
+  }
   if (options[["histogramDensityLine"]] && (options[['nullDistribution']]  == "weibull" || options[['nullDistribution']]  == "lognormal") &&
-      (any(unlist(dataset[measurements]) < 0))) {
+      (any(na.omit(unlist(dataset[measurements])) < 0))) {
     plot$setError(gettext("Dataset contains negative numbers. Could not overlay the selected distribution."))
+    return()
+  }
+  if (nStages > 1 && (length(unique(na.omit(dataset)[[stages]])) < nStages)) {
+    plot$setError(gettext("At least one of the stages contains no valid measurements."))
     return()
   }
 
@@ -2121,10 +2164,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                         mapping = ggplot2::aes(color = "weibullDist"))
         legendLabel <- gettext("Weibull dist.")
       } else if(options[['nullDistribution']]  == "lognormal") {
-        fit_Lnorm <- fitdistrplus::fitdist(dataCurrentStage, "lnorm", method = "mle",
-                                           control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
-        shape <- fit_Lnorm$estimate[[1]]
-        scale <- fit_Lnorm$estimate[[2]]
+        fit_Lnorm    <- EnvStats::elnorm(dataCurrentStage)
+        shape  <- fit_Lnorm$parameters[1]
+        scale    <- fit_Lnorm$parameters[2]
         p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale),
                                         mapping = ggplot2::aes(color = "lognormallDist"))
         legendLabel <- gettext("Lognormal dist.")
@@ -2300,12 +2342,11 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
 
 .distributionParameters <- function(data, distribution = c("lognormal", "weibull", "3ParameterLognormal", "3ParameterWeibull")){
   if (distribution == "lognormal") {
-    fit_Lnorm <- try(fitdistrplus::fitdist(data, "lnorm", method = "mle",
-                                       control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps)))
+    fit_Lnorm <- try(EnvStats::elnorm(data))
     if (jaspBase::isTryError(fit_Lnorm))
       stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- fit_Lnorm$estimate[[1]]
-    theta <- fit_Lnorm$estimate[[2]]
+    beta <- fit_Lnorm$parameters[1]
+    theta <- fit_Lnorm$parameters[2]
   } else if (distribution == "weibull") {
     fit_Weibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
                                          control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps)))
@@ -2321,12 +2362,13 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
     theta <- temp$parameters[[2]]
     threshold <- temp$parameters[[3]]
   } else if(distribution == "3ParameterWeibull") {
-    temp <- try(weibullness::weibull.mle(data))
+    temp <- try(MASS::fitdistr(data, function(x, shape, scale, thres)
+      dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0)))
     if (jaspBase::isTryError(temp))
       stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- temp[[1]]
-    theta <- temp[[2]]
-    threshold <- as.vector(temp[[3]])
+    beta <- temp$estimate[1]
+    theta <- temp$estimate[2]
+    threshold <- temp$estimate[3]
   }
   list <- list(beta = beta,
                theta = theta)
