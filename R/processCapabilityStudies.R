@@ -1848,14 +1848,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(plot)
 }
 
-
-
-### Debug
-# dataset <- read.csv("tests/testthat/datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv")
-# dataset <- dataset[2]
-# measurements <- "Diameter"
-# stages <- ""
-
 .qcProbabilityPlotObject <- function(options, dataset, measurements, stages) {
   if (identical(stages, "")) {
     nStages <- 1
@@ -1894,7 +1886,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     # Computing according to the distribution
     if (options[["nullDistribution"]] == "normal") {
-      lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (X - mu) ^ 2)
+      lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
       matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("mu", "sigma"),
                                                mle = c(mean(dataCurrentStage), sd(dataCurrentStage))))
       if (jaspBase::isTryError(matrix)) {
@@ -1935,12 +1927,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
 
       yBreaks <- qnorm(ticks / 100)
-      logLabels <- log(label_x)
+      dataCurrentStage <- log(label_x)
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
 
-      labelFrame <- data.frame(labs = label_x, value = logLabels)
+      labelFrame <- data.frame(labs = label_x, value = dataCurrentStage)
       index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
       xBreaks <- labelFrame[index,2]
       label_x <- labelFrame[index,1]
@@ -1949,10 +1941,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       fit <- fitdistrplus::fitdist(dataCurrentStage, 'weibull')
       shape <- as.numeric(fit$estimate[1])
       scale <- as.numeric(fit$estimate[2])
-      x <- dataCurrentStage
-      lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x / scale)^ shape)
-      matrix <- mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("shape", "scale"), mle = fit$estimate)
-      #matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = x, parms = c("shape", "scale"), mle = fit$estimate))
+      lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
+      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = fit$estimate))
       if (jaspBase::isTryError(matrix)) {
         stop(gettext("Fitting distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
         return()
@@ -1968,22 +1958,22 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
 
       yBreaks <- log(-1*log(1-(ticks / 100)))
-      logLabels <- log(label_x)
+      dataCurrentStage <- log(label_x)
       percentileEstimate <- log(percentileEstimate)
       percentileLower <- log(percentileLower)
       percentileUpper <- log(percentileUpper)
 
-      labelFrame <- data.frame(labs = label_x, value = logLabels)
+      labelFrame <- data.frame(labs = label_x, value = dataCurrentStage)
       index <- c(1,jaspGraphs::getPrettyAxisBreaks(1:nrow(labelFrame), 4)[-1])
       xBreaks <- labelFrame[index,2]
       label_x <- labelFrame[index,1]
       xLimits <- c(min(xBreaks) * 0.8, max(xBreaks) * 1.2)
     }
-    data1 <- data.frame(x = x, y = y)
+    data1 <- data.frame(x = dataCurrentStage, y = y)
     yLimits <- range(yBreaks)
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
-      jaspGraphs::geom_point(ggplot2::aes(x = x, y = y))
+      jaspGraphs::geom_point(ggplot2::aes(x = dataCurrentStage, y = y))
 
     if (options[["probabilityPlotGridLines"]])
       p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
