@@ -625,9 +625,11 @@ test_that("LF8.6 (3-parameter-lognormal) Basic tests of X-bar & R control chart 
   jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart8")
 })
 
-## Missing values
+## Missing values ####
 
 ### Missing values in measurements ####
+
+#### Single missing value ####
 options <- analysisOptions("processCapabilityStudies")
 options$measurementLongFormat <- "DiameterMissing1"
 options$subgroupSizeType <- "groupingVariable"
@@ -1120,7 +1122,7 @@ test_that("LF15.1 (Normal) Option test of X-bar & R control chart with fixed sub
 
 ### All checkboxes / All control charts ####
 
-#### S-bar (verified with Minitab)
+#### S-bar (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
@@ -1197,7 +1199,7 @@ test_that("LF16.9 (Normal) Option test of X-bar & s control chart with s-bar cal
   jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart16")
 })
 
-#### x-mR (verified with Minitab)
+#### x-mR (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
@@ -1286,9 +1288,85 @@ test_that("LF17.11 (Normal) Option test of Test results for moving range chart t
                                  list(23, 52, 53, 54, 55, 74, 75, 76, 77, 78, 79))
 })
 
+#### Boundaries (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$subgroup <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$lowerSpecificationLimitBoundary <- TRUE
+options$upperSpecificationLimitBoundary <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF18.1 (Normal) Option test of Capability of the process plot with boundaries", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-process18")
+})
+
+test_that("LF18.2 (Normal) Option test of Process performance (total) table with boundaries", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("*", "*", "*", "*", "*"))
+})
+
+test_that("LF18.3 (Normal) Option test of Non-conformance statistics table with boundaries", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("*", "*", 0, "ppm &lt; LB", "*", "*", 10000, "ppm &gt; UB", "*",
+                                      "*", 10000, "ppm total"))
+})
+
+test_that("LF18.4 (Normal) Option test of Process capability (within) table with boundaries", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("*", "*", "*", "*"))
+})
+
+test_that("LF18.5 (Normal) Option test of Process summary table with boundaries", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 7.08, 100, 1.85635681000733, 1.76268271711092, 6, 12))
+})
+
+test_that("LF18.6 (Normal) Option test of distribution histogram with boundaries", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogram18")
+})
+
+test_that("LF18.7 (Normal) Option test of Probability plot against normal distribution with boundaries", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distribution18")
+})
+
+test_that("LF18.8 (Normal) Option test of Summary of test against the normal distribution table with boundaries", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.43, 7.08, 100, 0.3, 1.85635681000733))
+})
+
+test_that("LF18.9 (Normal) Option test of X-bar & R control chart with boundaries", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart18")
+})
+
 ### Advanced options ####
 
-#### Unbiasing constant for s-bar (verified with Minitab)
+#### Unbiasing constant for s-bar (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
@@ -1310,60 +1388,60 @@ set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
 
-test_that("LF18.1 (Normal) Option test of Capability of the process plot with s-bar calculation method without unbiasing constant", {
+test_that("LF19.1 (Normal) Option test of Capability of the process plot with s-bar calculation method without unbiasing constant", {
   plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "capability-of-the-process18")
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-process19")
 })
 
-test_that("LF18.2 (Normal) Option test of Process performance (total) table with s-bar calculation method without unbiasing constant", {
+test_that("LF19.2 (Normal) Option test of Process performance (total) table with s-bar calculation method without unbiasing constant", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.93, 0.83, 1.04, 1.08, 0.88, 0.77, 1, 1.27, 0.95, 0.88, 1.2
                                  ))
 })
 
-test_that("LF18.3 (Normal) Option test of Non-conformance statistics table with s-bar calculation method without unbiasing constant", {
+test_that("LF19.3 (Normal) Option test of Non-conformance statistics table with s-bar calculation method without unbiasing constant", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(68.39, 23.11, 0, "ppm &lt; LSL", 4020.39, 2319.55, 10000, "ppm &gt; USL",
                                       4088.78, 2342.65, 10000, "ppm total"))
 })
 
-test_that("LF18.4 (Normal) Option test of Process capability (within) table with s-bar calculation method without unbiasing constant", {
+test_that("LF19.4 (Normal) Option test of Process capability (within) table with s-bar calculation method without unbiasing constant", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1.15, 0.94, 0.81, 1.07, 1.36, 1, 0.94, 1.29))
 })
 
-test_that("LF18.5 (Normal) Option test of Process summary table with s-bar calculation method without unbiasing constant", {
+test_that("LF19.5 (Normal) Option test of Process summary table with s-bar calculation method without unbiasing constant", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 7.08, 100, 1.85635681000733, 1.73785203372984, 6, 12))
 })
 
-test_that("LF18.6 (Normal) Option test of distribution histogram with s-bar calculation method without unbiasing constant", {
+test_that("LF19.6 (Normal) Option test of distribution histogram with s-bar calculation method without unbiasing constant", {
   plotName <- results[["results"]][["histogram"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "histogram18")
+  jaspTools::expect_equal_plots(testPlot, "histogram19")
 })
 
-test_that("LF18.7 (Normal) Option test of Probability plot against normal distribution with s-bar calculation method without unbiasing constant", {
+test_that("LF19.7 (Normal) Option test of Probability plot against normal distribution with s-bar calculation method without unbiasing constant", {
   plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distribution18")
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distribution19")
 })
 
-test_that("LF18.8 (Normal) Option test of Summary of test against the normal distribution table with s-bar calculation method without unbiasing constant", {
+test_that("LF19.8 (Normal) Option test of Summary of test against the normal distribution table with s-bar calculation method without unbiasing constant", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.43, 7.08, 100, 0.3, 1.85635681000733))
 })
 
-test_that("LF18.9 (Normal) Option test of X-bar & s control chart with s-bar calculation method without unbiasing constant", {
+test_that("LF19.9 (Normal) Option test of X-bar & s control chart with s-bar calculation method without unbiasing constant", {
   plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart18")
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart19")
 })
 
 ## Edge cases ####
@@ -1387,13 +1465,13 @@ set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
 
-test_that("LF19.1 (Normal) Edge case test of Capability of the process plot with multiple stages assigned per subgroup", {
+test_that("LF20.1 (Normal) Edge case test of Capability of the process plot with multiple stages assigned per subgroup", {
   plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "capability-of-the-process19")
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-process20")
 })
 
-test_that("LF19.2 (Normal) Edge case test of Process performance (total) table with multiple stages assigned per subgroup", {
+test_that("LF20.2 (Normal) Edge case test of Process performance (total) table with multiple stages assigned per subgroup", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.73, 0.54, 0.91, 0.82, 0.64, 0.43, 0.84, 1.01, 0.6, 0.64, 1.04,
@@ -1404,7 +1482,7 @@ test_that("LF19.2 (Normal) Edge case test of Process performance (total) table w
                                       0.25, "-", "-", 0.3, "-", 0.25, "-", "Change (3 vs. BL)"))
 })
 
-test_that("LF19.3 (Normal) Edge case test of Non-conformance statistics table with multiple stages assigned per subgroup", {
+test_that("LF20.3 (Normal) Edge case test of Non-conformance statistics table with multiple stages assigned per subgroup", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1168.95, 4.13, 43.51, -1164.82, -1125.43, 1356.97, 0.65, 17.53,
@@ -1416,7 +1494,7 @@ test_that("LF19.3 (Normal) Edge case test of Non-conformance statistics table wi
                                       "ppm total"))
 })
 
-test_that("LF19.4 (Normal) Edge case test of Process capability (within) table with multiple stages assigned per subgroup", {
+test_that("LF20.4 (Normal) Edge case test of Process capability (within) table with multiple stages assigned per subgroup", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.81, 0.63, 0.39, 0.86, 1, 0.55, 0.63, 1.06, "1 (BL)", 1.42, 1.22,
@@ -1426,7 +1504,7 @@ test_that("LF19.4 (Normal) Edge case test of Process capability (within) table w
                                       "-", 0.31, "-", "Change (3 vs. BL)"))
 })
 
-test_that("LF19.5 (Normal) Edge case test of Process summary table with multiple stages assigned per subgroup", {
+test_that("LF20.5 (Normal) Edge case test of Process summary table with multiple stages assigned per subgroup", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 7.38, 20, 2.42478430945279, 2.46130696474635, "1 (BL)", 6,
@@ -1437,19 +1515,19 @@ test_that("LF19.5 (Normal) Edge case test of Process summary table with multiple
                                       -0.736839591095825, "Change (3 vs. BL)", "-", "-"))
 })
 
-test_that("LF19.6 (Normal) Edge case test of distribution histogram with multiple stages assigned per subgroup", {
+test_that("LF20.6 (Normal) Edge case test of distribution histogram with multiple stages assigned per subgroup", {
   plotName <- results[["results"]][["histogram"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "histogram19")
+  jaspTools::expect_equal_plots(testPlot, "histogram20")
 })
 
-test_that("LF19.7 (Normal) Edge case test of Probability plot against normal distribution with multiple stages assigned per subgroup", {
+test_that("LF20.7 (Normal) Edge case test of Probability plot against normal distribution with multiple stages assigned per subgroup", {
   plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distribution19")
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distribution20")
 })
 
-test_that("LF19.8 (Normal) Edge case test of Summary of test against the normal distribution table with multiple stages assigned per subgroup", {
+test_that("LF20.8 (Normal) Edge case test of Summary of test against the normal distribution table with multiple stages assigned per subgroup", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.41, 7.38, 20, 0.31, 2.42478430945279, "1 (BL)", 0.21, 6.83714285714286,
@@ -1459,10 +1537,10 @@ test_that("LF19.8 (Normal) Edge case test of Summary of test against the normal 
                                       "-", -0.606423964682161, "Change (3 vs. BL)"))
 })
 
-test_that("LF19.9 (Normal) Edge case test of X-bar & R control chart with multiple stages assigned per subgroup", {
+test_that("LF20.9 (Normal) Edge case test of X-bar & R control chart with multiple stages assigned per subgroup", {
   plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart19")
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart20")
 })
 
 ## Report (verified with Minitab) ####
@@ -1489,10 +1567,10 @@ set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
 
-test_that("LF20 (Normal) Basic test of report functionality", {
+test_that("LF21 (Normal) Basic test of report functionality", {
   plotName <- results[["results"]][["pcReport"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "title20")
+  jaspTools::expect_equal_plots(testPlot, "title21")
 })
 
 # Wide / Row format ####
@@ -1501,360 +1579,1036 @@ test_that("LF20 (Normal) Basic test of report functionality", {
 
 ### Normal capability analysis ####
 
-#### Subgroup Variable ####
+#### Without stages (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
 
-##### Without stages ####
+test_that("WF1.1 (Normal) Basic tests of process capability plot without stages", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW1")
+})
 
-##### With stages ####
+test_that("WF1.2 (Normal) Basic tests of Process performance (total) table without stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.93, 0.83, 1.04, 1.08, 0.88, 0.77, 1, 1.27, 0.95, 0.88, 1.2
+                                 ))
+})
 
-#### Manual subgroups ####
+test_that("WF1.3 (Normal) Basic tests of Non-conformance statistics table without stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(68.39, 29.52, 0, "ppm &lt; LSL", 4020.39, 2625.65, 10000, "ppm &gt; USL",
+                                      4088.78, 2655.17, 10000, "ppm total"))
+})
 
-##### Without stages ####
+test_that("WF1.4 (Normal) Basic tests of Process capability (within) table without stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.13, 0.93, 0.8, 1.06, 1.34, 0.99, 0.93, 1.28))
+})
 
-##### With stages ####
+test_that("WF1.5 (Normal) Basic tests of Process summary table without stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 7.08, 100, 1.85635681000733, 1.76268271711092, 6, 12))
+})
+
+test_that("WF1.6 (Normal) Basic tests of distribution histogram without stages", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW1")
+})
+
+test_that("WF1.7 (Normal) Basic tests of Probability plot against normal distribution without stages", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distributionW1")
+})
+
+test_that("WF1.8 (Normal) Basic tests of Summary of test against the normal distribution table without stages", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.43, 7.08, 100, 0.3, 1.85635681000733))
+})
+
+test_that("WF1.9 (Normal) Basic tests of X-bar & R control chart without stages", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW1")
+})
+
+#### With stages (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$stagesWideFormat <- "Stage"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF2.1 (Normal) Basic tests of process capability plot with stages", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW2")
+})
+
+test_that("WF2.2 (Normal) Basic tests of Process performance (total) table with stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.9, 0.75, 1.04, 1.02, 0.83, 0.67, 0.99, 1.21, 0.85, 0.83, 1.19,
+                                      "1 (BL)", 0.98, "-", "-", 1.13, 0.93, 0.76, 1.11, 1.33, 0.94,
+                                      0.93, 1.31, 2, 0.08, 0.07, 0.09, 0.11, 0.1, "-", "-", 0.12,
+                                      "-", 0.1, "-", "Change (2 vs. BL)"))
+})
+
+test_that("WF2.3 (Normal) Basic tests of Non-conformance statistics table with stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(137.75, 34.52, -103.23, 63.98, 12, -51.98, 0, 0, 0, "ppm &lt; LSL",
+                                      6242, 2570.76, -3671.24, 4259.85, 1489.74, -2770.1, 0, 20000,
+                                      20000, "ppm &gt; USL", 6379.75, 2605.28, -3774.48, 4323.82,
+                                      1501.75, -2822.08, 0, 20000, 20000, "ppm total"))
+})
+
+test_that("WF2.4 (Normal) Basic tests of Process capability (within) table with stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.08, 0.88, 0.7, 1.05, 1.28, 0.88, 0.88, 1.27, "1 (BL)", 1.2,
+                                      0.99, 0.79, 1.19, 1.41, 0.98, 0.99, 1.41, 2, 0.12, 0.11, "-",
+                                      "-", 0.13, "-", 0.11, "-", "Change (2 vs. BL)"))
+})
+
+test_that("WF2.5 (Normal) Basic tests of Process summary table with stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 7.114, 50, 1.9558400251763, 1.85726569217541, "1 (BL)", 6,
+                                      12, 0, 7.046, 50, 1.77053087853241, 1.66809974204643, 2, 6,
+                                      12, "-", -0.0679999999999996, 0, -0.185309146643895, -0.189165950128977,
+                                      "Change (2 vs. BL)", "-", "-"))
+})
+
+test_that("WF2.6 (Normal) Basic tests of distribution histogram with stages", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW2")
+})
+
+test_that("WF2.7 (Normal) Basic tests of Probability plot against normal distribution with stages", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distributionW2")
+})
+
+test_that("WF2.8 (Normal) Basic tests of Summary of test against the normal distribution table with stages", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.24, 7.114, 50, 0.77, 1.9558400251763, "1 (BL)", 0.64, 7.046,
+                                      50, 0.09, 1.77053087853241, 2, "-", -0.0679999999999996, 0,
+                                      "-", -0.185309146643895, "Change (2 vs. BL)"))
+})
+
+test_that("WF2.9 (Normal) Basic tests of X-bar & R control chart with stages", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW2")
+})
 
 ### Non-normal capability analysis with all distribution ####
 
-#### Subgroup Variable ####
+#### Weibull (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "weibull"
+options$nullDistribution <- "weibull"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
 
-##### Without stages ####
+test_that("WF3.1 (Weibull) Basic tests of Non-conformance statistics table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 2555.7, 10000, "ppm &gt; USL", 2555.7, 10000,
+                                      "Total ppm"))
+})
 
-##### With stages ####
+test_that("WF3.2 (Weibull) Basic tests of Capability of the process plot", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW3")
+})
 
-#### Manual subgroups ####
+test_that("WF3.3 (Weibull) Basic tests of Process performance (total) table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.12, 0.94, 1.28, 0.94))
+})
 
-##### Without stages ####
+test_that("WF3.4 (Weibull) Basic tests of Process summary table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(4.13179160447975, 0, 7.08, 100, 1.85635681000733, 6, 7.78727470049078,
+                                      12))
+})
 
-##### With stages ####
+test_that("WF3.5 (Weibull) Basic tests of distribution histogram", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW3")
+})
 
-## Missing values in measurements ####
+test_that("WF3.6 (Weibull) Basic tests of Probability plot against Weibull distribution", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-weibull-distributionW3")
+})
 
-### All but one missing ####
+test_that("WF3.7 (Weibull) Basic tests of Summary of test against the Weibull distribution table", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.6, 4.13213439552013, 100, 0.12, 7.78757547787008))
+})
 
-### Whole subgroup missing ####
+test_that("WF3.8 (Weibull) Basic tests of X-bar & R control chart", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW3")
+})
 
-### All missing ####
+#### Lognormal (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "lognormal"
+options$nullDistribution <- "lognormal"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
 
-## Missing values in stages ####
 
-## Missing values in subgroup variable ####
+test_that("WF4.1 (Lognormal) Basic tests of Non-conformance statistics table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 19568.07, 10000, "ppm &gt; USL", 19568.07,
+                                      10000, "Total ppm"))
+})
+
+test_that("WF4.2 (Lognormal) Basic tests of Capability of the process plot", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW4")
+})
+
+test_that("WF4.3 (Lognormal) Basic tests of Process performance (total) table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.96, 0.6, 1.79, 0.6))
+})
+
+test_that("WF4.4 (Lognormal) Basic tests of Process summary table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.92172832782915, 0, 7.08, 100, 1.85635681000733, 6, 0.273022707246043,
+                                      12))
+})
+
+test_that("WF4.5 (Lognormal) Basic tests of distribution histogram", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW4")
+})
+
+test_that("WF4.6 (Lognormal) Basic tests of Probability plot against lognormal distribution", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-lognormal-distributionW4")
+})
+
+test_that("WF4.7 (Lognormal) Basic tests of Summary of test against the lognormal distribution table", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.56, 1.92172832782915, 100, 0.14, 0.273022707246043))
+})
+
+test_that("WF4.8 (Lognormal) Basic tests of X-bar & R control chart", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW4")
+})
+
+#### 3-parameter-Weibull (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "3ParameterWeibull"
+options$nullDistribution <- "weibull"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF5.1 (3-parameter-Weibull) Basic tests of Non-conformance statistics table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 6112.64, 10000, "ppm &gt; USL", 6112.64,
+                                      10000, "Total ppm"))
+})
+
+test_that("WF5.2 (3-parameter-Weibull) Basic tests of Capability of the process plot", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW5")
+})
+
+test_that("WF5.3 (3-parameter-Weibull) Basic tests of Process performance (total) table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.2, 0.84, 1.73, 0.84))
+})
+
+test_that("WF5.4 (3-parameter-Weibull) Basic tests of Process summary table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2.64846838111814, 0, 7.08, 100, 1.85635681000733, 6, 5.1219561122954,
+                                      2.5264194646292, 12))
+})
+
+test_that("WF5.5 (3-parameter-Weibull) Basic tests of distribution histogram", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW5")
+})
+
+test_that("WF5.6 (3-parameter-Weibull) Basic tests of Probability plot against Weibull distribution", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-weibull-distributionW5")
+})
+
+test_that("WF5.7 (3-parameter-Weibull) Basic tests of Summary of test against the Weibull distribution table", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.6, 4.13213439552013, 100, 0.12, 7.78757547787008))
+})
+
+test_that("WF5.8 (3-parameter-Weibull) Basic tests of X-bar & R control chart", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW5")
+})
+
+#### 3-parameter-lognormal (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "3ParameterLognormal"
+options$nullDistribution <- "lognormal"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF6.1 (3-parameter-lognormal) Basic tests of Non-conformance statistics table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.16, 0, "ppm &lt; LSL", 8869.72, 10000, "ppm &gt; USL", 8869.88,
+                                      10000, "Total ppm"))
+})
+
+test_that("WF6.2 (3-parameter-lognormal) Basic tests of Capability of the process plot", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW6")
+})
+
+test_that("WF6.3 (3-parameter-lognormal) Basic tests of Process performance (total) table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.07, 0.76, 1.52, 0.76))
+})
+
+test_that("WF6.4 (3-parameter-lognormal) Basic tests of Process summary table", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2.70930280255199, 0, 7.08, 100, 1.85635681000733, 6, 0.121871527001624,
+                                      -8.0506521367885, 12))
+})
+
+test_that("WF6.5 (3-parameter-lognormal) Basic tests of distribution histogram", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW6")
+})
+
+test_that("WF6.6 (3-parameter-lognormal) Basic tests of Probability plot against lognormal distribution", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-lognormal-distributionW6")
+})
+
+test_that("WF6.7 (3-parameter-lognormal) Basic tests of Summary of test against the lognormal distribution table", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.56, 1.92172832782915, 100, 0.14, 0.273022707246043))
+})
+
+test_that("WF6.8 (3-parameter-lognormal) Basic tests of X-bar & R control chart", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW6")
+})
+
+## Missing values ####
+
+### Missing values in measurements ####
+
+#### Single missing value ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1Missing1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF7.1 (Normal) Missing value test of Capability of the process plot with single missing value in measurement", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW7")
+})
+
+test_that("WF7.2 (Normal) Missing value test of Process performance (total) table with single missing value in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.96, 0.85, 1.06, 1.1, 0.91, 0.79, 1.03, 1.29, 0.97, 0.91, 1.22
+                                 ))
+})
+
+test_that("WF7.3 (Normal) Missing value test of Non-conformance statistics table with single missing value in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(57.11, 29.97, 0, "ppm &lt; LSL", 3294.28, 2356.83, 10101.01, "ppm &gt; USL",
+                                      3351.4, 2386.8, 10101.01, "ppm total"))
+})
+
+test_that("WF7.4 (Normal) Missing value test of Process capability (within) table with single missing value in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.14, 0.94, 0.81, 1.07, 1.34, 0.99, 0.94, 1.28))
+})
+
+test_that("WF7.5 (Normal) Missing value test of Process summary table with single missing value in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 7.04141414141414, 99, 1.82505298223401, 1.7546443818877, 6,
+                                      12))
+})
+
+test_that("WF7.6 (Normal) Missing value test of distribution histogram with single missing value in measurement", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW7")
+})
+
+test_that("WF7.7 (Normal) Missing value test of Probability plot against normal distribution with single missing value in measurement", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distributionW7")
+})
+
+test_that("WF7.8 (Normal) Missing value test of Summary of test against the normal distribution table with single missing value in measurement", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.4, 7.04141414141414, 99, 0.36, 1.82505298223401))
+})
+
+test_that("WF7.9 (Normal) Missing value test of X-bar & R control chart with single missing value in measurement", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW7")
+})
+
+#### All but one missing ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1Missing19", "dm2MissingAll", "dm3MissingAll", "dm4MissingAll", "dm5MissingAll")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF8.1 (Normal) Missing value test of Process performance (total) table with all but one missing value in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "*", "*", "*", "<unicode>", "*", "<unicode>", "*", "*", "*",
+                                      "*"))
+})
+
+test_that("WF8.2 (Normal) Missing value test of Non-conformance statistics table with all but one missing value in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("*", 0, 0, "ppm &lt; LSL", "*", 0, 0, "ppm &gt; USL", "*", 0,
+                                      0, "ppm total"))
+})
+
+test_that("WF8.3 (Normal) Missing value test of Process capability (within) table with all but one missing value in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", "<unicode>", "*", "*", "<unicode>", "*", "<unicode>",
+                                      "*"))
+})
+
+test_that("WF8.4 (Normal) Missing value test of Process summary table with all but one missing value in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 8, 1, "", 0, 6, 12))
+})
+
+test_that("WF8.5 (Normal) Missing value test of X-bar & R control chart with all but one missing value in measurement", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW8")
+})
+
+#### All missing ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1MissingAll", "dm2MissingAll", "dm3MissingAll", "dm4MissingAll", "dm5MissingAll")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF9.1 (Normal) Missing value test of Process performance (total) table with all missing values in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("*", "*", "*", "*", "<unicode>", "*", "*", "*", "*", "*", "*"
+                                 ))
+})
+
+test_that("WF9.2 (Normal) Missing value test of Non-conformance statistics table with all missing values in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("*", "*", "*", "ppm &lt; LSL", "*", "*", "*", "ppm &gt; USL",
+                                      "*", "*", "*", "ppm total"))
+})
+
+test_that("WF9.3 (Normal) Missing value test of Process capability (within) table with all missing values in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", "<unicode>", "*", "*", "*", "*", "*", "*"))
+})
+
+test_that("WF9.4 (Normal) Missing value test of Process summary table with all missing values in measurement", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, "NaN", 0, "", 0, 6, 12))
+})
+
+test_that("WF9.5 (Normal) Missing value test of X-bar & R control chart with all missing values in measurement", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW9")
+})
+
+### Missing values in stages ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$stagesWideFormat <- "StageMissing7"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF10.1 (Normal) Missing value test of Capability of the process plot with missing values in stages", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW10")
+})
+
+test_that("WF10.2 (Normal) Missing value test of Process performance (total) table with missing values in stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.77, 0.6, 0.93, 0.98, 0.71, 0.51, 0.91, 1.25, 0.74, 0.71, 1.21,
+                                      "1 (BL)", 0.87, "-", "-", 0.97, 0.79, 0.54, 1.03, 1.16, 0.71,
+                                      0.79, 1.23, 2, 0.1, 0.04, 0.15, -0.01, 0.08, "-", "-", -0.09,
+                                      "-", 0.08, "-", "Change (2 vs. BL)", 1.18, "-", "-", 1.3, 1.13,
+                                      0.81, 1.46, 1.46, 0.95, 1.13, 1.63, 3, 0.41, 0.28, 0.55, 0.32,
+                                      0.42, "-", "-", 0.21, "-", 0.42, "-", "Change (3 vs. BL)"))
+})
+
+test_that("WF10.3 (Normal) Missing value test of Non-conformance statistics table with missing values in stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(89.06, 241.46, 5.61, 152.41, -83.44, 55.04, 170.79, 0.23, 115.75,
+                                      -54.81, 0, 0, 0, 0, 0, "ppm &lt; LSL", 16467.96, 9157.29, 345.62,
+                                      -7310.67, -16122.34, 13882.24, 7738.07, 49.55, -6144.17, -13832.69,
+                                      0, 0, 0, 0, 0, "ppm &gt; USL", 16557.02, 9398.75, 351.23, -7158.26,
+                                      -16205.79, 13937.28, 7908.86, 49.78, -6028.42, -13887.5, 0,
+                                      0, 0, 0, 0, "ppm total"))
+})
+
+test_that("WF10.4 (Normal) Missing value test of Process capability (within) table with missing values in stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.01, 0.73, 0.5, 0.96, 1.29, 0.73, 0.73, 1.28, "1 (BL)", 1, 0.81,
+                                      0.52, 1.09, 1.19, 0.68, 0.81, 1.31, 2, -0.01, 0.08, "-", "-",
+                                      -0.1, "-", 0.08, "-", "Change (2 vs. BL)", 1.49, 1.3, 0.87,
+                                      1.73, 1.68, 1.01, 1.3, 1.94, 3, 0.48, 0.57, "-", "-", 0.39,
+                                      "-", 0.57, "-", "Change (3 vs. BL)"))
+})
+
+test_that("WF10.5 (Normal) Missing value test of Process summary table with missing values in stages", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 7.648, 25, 2.04044929692784, 1.97764402407567, "1 (BL)", 6,
+                                      12, 0, 7.16, 20, 2.05154627178213, 1.99914015477214, 2, 6, 12,
+                                      "-", -0.488, -5, 0.011096974854286, 0.0214961306964743, "Change (2 vs. BL)",
+                                      "-", "-", 0, 6.77, 20, 1.5413937643711, 1.34350816852966, 3,
+                                      6, 12, "-", -0.878, -5, -0.499055532556746, -0.634135855546002,
+                                      "Change (3 vs. BL)", "-", "-"))
+})
+
+test_that("WF10.6 (Normal) Missing value test of distribution histogram with missing values in stages", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW10")
+})
+
+test_that("WF10.7 (Normal) Missing value test of Probability plot against normal distribution with missing values in stages", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distributionW10")
+})
+
+test_that("WF10.8 (Normal) Missing value test of Summary of test against the normal distribution table with missing values in stages", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.31, 7.648, 25, 0.54, 2.04044929692784, "1 (BL)", 0.67, 7.16,
+                                      20, 0.07, 2.05154627178213, 2, "-", -0.488, -5, "-", 0.011096974854286,
+                                      "Change (2 vs. BL)", 0.52, 6.77, 20, 0.16, 1.5413937643711,
+                                      3, "-", -0.878, -5, "-", -0.499055532556746, "Change (3 vs. BL)"
+                                 ))
+})
+
+test_that("WF10.9 (Normal) Missing value test of X-bar & R control chart with missing values in stages", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW10")
+})
 
 ## Changed options ####
 
-### Set different manual subgroup sizes ####
+### Fixed subgroup sizes (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1Missing1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$subgroupSizeUnequal <- "fixedSubgroupSize"
+options$fixedSubgroupSizeValue <- 4
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
 
-### Fixed vs actual sizes with unequal subgroup sizes ####
+test_that("WF11 (Normal) Options test of X-bar & R control chart with fixed subgroup size", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW11")
+})
 
-### All checkboxes / - All control charts ####
+### All checkboxes / All control charts ####
+
+#### S-bar (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarS"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF12.1 (Normal) Option test of Capability of the process plot with s-bar calculation method", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW12")
+})
+
+test_that("WF12.2 (Normal) Option test of Process performance (total) table with s-bar calculation method", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.93, 0.83, 1.04, 1.08, 0.88, 0.77, 1, 1.27, 0.95, 0.88, 1.2
+                                 ))
+})
+
+test_that("WF12.3 (Normal) Option test of Non-conformance statistics table with s-bar calculation method", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(68.39, 64.2, 0, "ppm &lt; LSL", 4020.39, 3893.42, 10000, "ppm &gt; USL",
+                                      4088.78, 3957.62, 10000, "ppm total"))
+})
+
+test_that("WF12.4 (Normal) Option test of Process capability (within) table with s-bar calculation method", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.08, 0.89, 0.76, 1.01, 1.28, 0.94, 0.89, 1.22))
+})
+
+test_that("WF12.5 (Normal) Option test of Process summary table with s-bar calculation method", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 7.08, 100, 1.85635681000733, 1.84880707556386, 6, 12))
+})
+
+test_that("WF12.6 (Normal) Option test of distribution histogram with s-bar calculation method", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW12")
+})
+
+test_that("WF12.7 (Normal) Option test of Probability plot against normal distribution with s-bar calculation method", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distributionW12")
+})
+
+test_that("WF12.8 (Normal) Option test of Summary of test against the normal distribution table with s-bar calculation method", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.43, 7.08, 100, 0.3, 1.85635681000733))
+})
+
+test_that("WF12.9 (Normal) Option test of X-bar & s control chart with s-bar calculation method", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chartW12")
+})
+
+
+#### xbar-mR ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarMR"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "rBar"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF13 (Normal) Option test of X-bar & mR control chart", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-mr-control-chartW13")
+})
+
+#### Boundaries (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$lowerSpecificationLimitBoundary <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$upperSpecificationLimitBoundary <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+
+test_that("WF14.1 (Normal) Option test of Capability of the process plot with boundaries", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW14")
+})
+
+test_that("WF14.2 (Normal) Option test of Process performance (total) table with boundaries", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("*", "*", "*", "*", "*"))
+})
+
+test_that("WF14.3 (Normal) Option test of Non-conformance statistics table with boundaries", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("*", "*", 0, "ppm &lt; LB", "*", "*", 10000, "ppm &gt; UB", "*",
+                                      "*", 10000, "ppm total"))
+})
+
+test_that("WF14.4 (Normal) Option test of Process capability (within) table with boundaries", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("*", "*", "*", "*"))
+})
+
+test_that("WF14.5 (Normal) Option test of Process summary table with boundaries", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 7.08, 100, 1.85635681000733, 1.76268271711092, 6, 12))
+})
+
+test_that("WF14.6 (Normal) Option test of distribution histogram with boundaries", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW14")
+})
+
+test_that("WF14.7 (Normal) Option test of Probability plot against normal distribution with boundaries", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distributionW14")
+})
+
+test_that("WF14.8 (Normal) Option test of Summary of test against the normal distribution table with boundaries", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.43, 7.08, 100, 0.3, 1.85635681000733))
+})
+
+test_that("WF14.9 (Normal) Option test of X-bar & R control chart with boundaries", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW14")
+})
 
 ### Advanced options ####
 
+#### Unbiasing constant for s-bar (verified with Minitab) ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarS"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChartSdUnbiasingConstant <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF15.1 (Normal) Option test of Capability of the process plot with s-bar method and no unbiasing constant", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processW15")
+})
+
+test_that("WF15.2 (Normal) Option test of Process performance (total) table with s-bar method and no unbiasing constant", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.93, 0.83, 1.04, 1.08, 0.88, 0.77, 1, 1.27, 0.95, 0.88, 1.2
+                                 ))
+})
+
+test_that("WF15.3 (Normal) Option test of Non-conformance statistics table with s-bar method and no unbiasing constant", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(68.39, 23.11, 0, "ppm &lt; LSL", 4020.39, 2319.55, 10000, "ppm &gt; USL",
+                                      4088.78, 2342.65, 10000, "ppm total"))
+})
+
+test_that("WF15.4 (Normal) Option test of Process capability (within) table with s-bar method and no unbiasing constant", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.15, 0.94, 0.81, 1.07, 1.36, 1, 0.94, 1.29))
+})
+
+test_that("WF15.5 (Normal) Option test of Process summary table with s-bar method and no unbiasing constant", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 7.08, 100, 1.85635681000733, 1.73785203372984, 6, 12))
+})
+
+test_that("WF15.6 (Normal) Option test of distribution histogram with s-bar method and no unbiasing constant", {
+  plotName <- results[["results"]][["histogram"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogramW15")
+})
+
+test_that("WF15.7 (Normal) Option test of Probability plot against normal distribution with s-bar method and no unbiasing constant", {
+  plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "probability-plot-against-normal-distributionW15")
+})
+
+test_that("WF15.8 (Normal) Option test of Summary of test against the normal distribution table with s-bar method and no unbiasing constant", {
+  table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.43, 7.08, 100, 0.3, 1.85635681000733))
+})
+
+test_that("WF15.9 (Normal) Option test of X-bar & s control chart with s-bar method and no unbiasing constant", {
+  plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chartW15")
+})
+
 ## Report ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$report <- TRUE
+options$reportDate <- "01.01.2020"
+options$reportMiscellaneous <- "Comment"
+options$reportProcessName <- "Process name"
+options$reportReportedBy <- "Mrs. Doe"
+options$reportTitle <- "Title"
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#Long format
-# options <- analysisOptions("processCapabilityStudies")
-# options$measurementLongFormat <- "Diameter"
-# options$capabilityStudyType <- "normalCapabilityAnalysis"
-# options$subgroupSizeType <- "groupingVariable"
-# options$subgroup <- "Time"
-# options$probabilityPlotRankMethod <- "bernard"
-# options$lowerSpecificationLimit <- TRUE
-# options$upperSpecificationLimit <- TRUE
-# options$target <- TRUE
-# options$lowerSpecificationLimitValue <- -16
-# options$targetValue <- -8
-# options$upperSpecificationLimitValue <- 0
-# options$controlChartType <- "xBarR"
-# options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "rBar"
-# set.seed(1)
-# results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Long.csv", options)
-#
-# test_that("Capability of the process plot matches", {
-#   plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "capability-of-the-process")
-# })
-#
-# test_that("Process performance (total) table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(1.29, 1.14, 1.44, 1.44, 1.27, 1.11, 1.43, 1.6, 1.27, 1.27, 1.6
-#                                  ))
-# })
-#
-# test_that("Non-conformance statistics table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(0.77, 0.21, 0, "ppm &lt; LSL", 68.39, 29.52, 0, "ppm &gt; USL",
-#                                       69.16, 29.73, 0, "ppm total"))
-# })
-#
-# test_that("Process capability (within) table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(1.51, 1.34, 1.16, 1.52, 1.69, 1.32, 1.34, 1.7))
-# })
-#
-# test_that("Process summary table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(-16, -7.08, 100, 1.85635681000733, 1.76268271711092, -8, 0))
-# })
-#
-# test_that("X-bar & R Control Chart plot matches", {
-#   plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart")
-# })
-#
-# test_that("Histogram plot matches", {
-#   plotName <- results[["results"]][["histogram"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "histogram")
-# })
-#
-# test_that("Probability Plot matches", {
-#   plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "probability-plot")
-# })
-#
-# test_that("Summary of test against the normal distribution table results match", {
-#   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(0.43, -7.08, 100, 0.30, 1.85635681000733
-#                                  ))
-# })
-#
-# # Wide format
-# options$dataFormat <- "wideFormat"
-# options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
-# options$axisLabels <- "Time"
-# options$controlChartType <- "xBarMR"
-# options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "rBar"
-# set.seed(1)
-# results <- runAnalysis("processCapabilityStudies", "SPCSubgroups_Wide.csv", options)
-#
-#
-# test_that("Capability of the process plot matches2", {
-#   plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "capability-of-the-process2")
-# })
-#
-# test_that("Process performance (total) table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(1.29, 1.14, 1.44, 1.44, 1.27, 1.11, 1.43, 1.6, 1.27, 1.27, 1.6
-#                                  ))
-# })
-#
-# test_that("Non-conformance statistics table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(0.77, 0.21, 0, "ppm &lt; LSL", 68.39, 29.52, 0, "ppm &gt; USL",
-#                                       69.16, 29.73, 0, "ppm total"))
-# })
-#
-# test_that("Process capability (within) table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(1.51, 1.34, 1.16, 1.52, 1.69, 1.32, 1.34, 1.7))
-# })
-#
-# test_that("Process summary table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(-16, -7.08, 100, 1.85635681000733, 1.76268271711092, -8, 0))
-# })
-#
-# test_that("X-bar & mR Control Chart plot matches", {
-#   plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "x-bar-mr-control-chart")
-# })
-#
-# test_that("Histogram plot matches2", {
-#   plotName <- results[["results"]][["histogram"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "histogram2")
-# })
-#
-# test_that("Probability Plot matches2", {
-#   plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "probability-plot2")
-# })
-#
-# test_that("Summary of test against the normal distribution table results match", {
-#   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(0.43, -7.08, 100, 0.30, 1.85635681000733
-#                                  ))
-# })
-#
-# # Long format- Weibull
-# options <- analysisOptions("processCapabilityStudies")
-# options$dataFormat <- "longFormat"
-# options$measurementLongFormat <- "Ovality"
-# options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
-# options$nonNormalDistribution <- "weibull"
-# options$nullDistribution <- "weibull"
-# options$probabilityPlotRankMethod <- "bernard"
-# options$lowerSpecificationLimit <- TRUE
-# options$upperSpecificationLimit <- TRUE
-# options$target <- FALSE
-# options$lowerSpecificationLimitValue <- 0
-# options$targetValue <- 0
-# options$upperSpecificationLimitValue <- 15
-# options$controlChartType <- "xmr"
-# set.seed(1)
-# results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)
-#
-# test_that("X-mR Control Chart plot matches", {
-#   plotName <- results[["results"]][["xmr"]][["collection"]][["xmr_plot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "x-mr-control-chart")
-# })
-#
-# test_that("Test results for individuals chart table results match", {
-#   table <- results[["results"]][["xmr"]][["collection"]][["xmr_tableIndividual"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(3, 11, 42, 12, 100, ""))
-# })
-#
-# test_that("Test results for moving range chart table results match", {
-#   table <- results[["results"]][["xmr"]][["collection"]][["xmr_tableMR"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(3, 11, 42, 29, 43, 50, "", 51))
-# })
-#
-# test_that("Non-conformance statistics table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(0, 0, "ppm &lt; LSL", 0.06, 0, "ppm &gt; USL", 0.06,
-#                                       0, "Total ppm"))
-# })
-#
-# test_that("Capability of the process plot matches3", {
-#   plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "capability-of-the-process3")
-# })
-#
-# test_that("Process performance (total) table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(1.59, 1.05, 1.05, 1.85))
-# })
-#
-# test_that("Process summary table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(2.07532784402308, 0, 3.42, 100, 1.74772579501061, 3.86889820358025,
-#                                       15))
-# })
-#
-# test_that("Histogram plot matches3", {
-#   plotName <- results[["results"]][["histogram"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "histogram3")
-# })
-#
-# test_that("Probability Plot matches3", {
-#   plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "probability-plot3")
-# })
-#
-# test_that("Summary of test against the weibull distribution table results match", {
-#   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(0.71, 2.07536754156247, 100, 0.06, 3.86876200879491
-#                                  ))
-# })
-#
-# # Long format- Weibull
-# options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
-# options$nonNormalDistribution <- "lognormal"
-# options$nullDistribution <- "lognormal"
-# options$controlChartType <- "xBarS"
-# set.seed(1)
-# results <- runAnalysis("processCapabilityStudies", "msaPCS_Weibull.csv", options)
-#
-# test_that("Non-conformance statistics table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(0, 0, "ppm &lt; LSL", 1196.84133284115, 0, "ppm &gt; USL", 1196.84133284115,
-#                                       0, "Total ppm"))
-# })
-#
-# test_that("Capability of the process plot matches4", {
-#   plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "capability-of-the-process4")
-# })
-#
-# test_that("Process performance (total) table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(1.06, 1.02, 1.26, 1.02))
-# })
-#
-# test_that("Process summary table results match", {
-#   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(1.10078741574583, 0, 3.42, 100, 1.74772579501061, 0.529320014694866,
-#                                       15))
-# })
-#
-# test_that("X-bar & s Control Chart plot matches", {
-#   plotName <- results[["results"]][["xBar"]][["collection"]][["xBar_plot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart")
-# })
-#
-# test_that("Test results for s chart table results match", {
-#   table <- results[["results"]][["xBar"]][["collection"]][["xBar_tableSecondPlot"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(2))
-# })
-#
-# test_that("Histogram plot matches4", {
-#   plotName <- results[["results"]][["histogram"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "histogram4")
-# })
-#
-# test_that("Probability Plot matches4", {
-#   plotName <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_ProbabilityPlot"]][["data"]]
-#   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-#   jaspTools::expect_equal_plots(testPlot, "probability-plot4")
-# })
-#
-# test_that("Summary of test against the lognormal distribution table results match", {
-#   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
-#   jaspTools::expect_equal_tables(table,
-#                                  list(0.61, 1.10078741574583, 100, 0.11, 0.529320014694866
-#                                  ))
-# })
+test_that("WF16 (Normal) Basic test of report functionality", {
+  plotName <- results[["results"]][["pcReport"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "titleW16")
+})
