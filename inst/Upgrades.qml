@@ -1035,9 +1035,14 @@ Upgrades
 		}
 
 		ChangeRename {from: "logTransform";									to: "logTransformedCovariate"}
+	}
 
+	Upgrade
+	{
+		functionName:		"processCapabilityStudies"
+		fromVersion:		"0.18.2"
+		toVersion:			"0.18.3"
 
-
-
+		ChangeRename {from: "manualSubgroupSize";										to: "subgroupSizeType"}
 	}
 }
