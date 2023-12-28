@@ -382,7 +382,7 @@ Form
 				CheckBox
 				{
 					name: 						"controlChart"
-					label: 						qsTr("")
+					label: 						""
 					checked: 					true
 					childrenOnSameRow:			true
 					columns:					1
