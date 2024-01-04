@@ -539,7 +539,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
       ggplot2::geom_histogram(ggplot2::aes(y =..density..), closed = options[["histogramBinBoundaryDirection"]],
-                              fill = "grey", col = "black", linewidth = .7, binwidth = binWidth, center = binWidth/2) +
+                              fill = "grey", col = "black", linewidth = .7, binwidth = binWidth, center = binWidth/2, na.rm = TRUE) +
       ggplot2::scale_y_continuous(name = gettext("Density")) +
       ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits)
 
@@ -631,9 +631,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       }
       p <- p + ggplot2::geom_vline(data = specLimitsDf,
                                    mapping = ggplot2::aes(xintercept = xIntercept), color = specLimitsDf$color,
-                                   linetype = specLimitsDf$lty, linewidth = 1) +
+                                   linetype = specLimitsDf$lty, linewidth = 1, na.rm = TRUE) +
         ggplot2::geom_label(specLimitsDf, mapping = ggplot2::aes(x = xIntercept, y = yPosLabel, label = label), inherit.aes = FALSE,
-                            size = 4.5)
+                            size = 4.5, na.rm = TRUE)
     }
 
     # Add a legend if needed
@@ -2006,16 +2006,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     data1 <- data.frame(x = dataCurrentStage, y = y)
     yLimits <- range(yBreaks)
     p <- ggplot2::ggplot() +
-      ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate)) +
-      jaspGraphs::geom_point(data = data1, ggplot2::aes(x = x, y = y))
+      ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
+      jaspGraphs::geom_point(data = data1, ggplot2::aes(x = x, y = y), na.rm = TRUE)
 
     if (options[["probabilityPlotGridLines"]])
       p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
     if (nStages > 1)
       p <- p + ggplot2::ggtitle(stage) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
 
-    p <- p + ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed") +
+    p <- p + ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed", na.rm = TRUE) +
+      ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed", na.rm = TRUE) +
       ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xBreaks, limits = xLimits, labels = label_x) +
       ggplot2::scale_y_continuous(gettext('Percent'), labels = ticks, breaks = yBreaks, limits = yLimits) +
       jaspGraphs::geom_rangeframe() +
@@ -2143,7 +2143,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     p <- ggplot2::ggplot() +
       ggplot2::geom_histogram(data = df, mapping = ggplot2::aes(y =..density.., x = measurements), closed = options[["histogramBinBoundaryDirection"]],
-                              fill = "grey", col = "black", linewidth = .7, binwidth = binWidth, center = binWidth/2) +
+                              fill = "grey", col = "black", linewidth = .7, binwidth = binWidth, center = binWidth/2, na.rm = TRUE) +
       ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits) +
       ggplot2::scale_y_continuous(name =  gettext("Counts"), labels = yLabels, breaks = yBreaks, limits = yLimits) +
       jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
