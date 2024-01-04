@@ -570,9 +570,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   lineType <- if (phase2) "solid" else "dashed"
   # Create plot
   plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, group = stage)) +
-    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
-    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = lineType) +
-    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = lineType)
+    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1, na.rm = TRUE) +
+    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = lineType, na.rm = TRUE) +
+    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = lineType, na.rm = TRUE)
   if (!all(is.na(specificationLimits))) {
     length(specificationLimits) <- 3
     xPosLabel <- 1 - max(xLimits) * 0.06
@@ -586,51 +586,51 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       lslLineDf <- data.frame(xPos = xRange, yPos = rep(lslYPos, each = 2))
       lslLabelDf <- data.frame(xPos = xPosLabel, yPos = lslYPos, label = gettextf("LSL = %g", round(lslYPos, .numDecimals)))
       plotObject <- plotObject + ggplot2::geom_line(data = lslLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
-                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkred") +
+                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkred", na.rm = TRUE) +
         ggplot2::geom_label(data = lslLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
-                              inherit.aes = FALSE, size = clLabelSize, hjust = "inward")
+                              inherit.aes = FALSE, size = clLabelSize, hjust = "inward", na.rm = TRUE)
     }
     if (!is.na(targetYPos)) {
       targetLineDf <- data.frame(xPos = xRange, yPos = rep(targetYPos, each = 2))
       targetLabelDf <- data.frame(xPos = xPosLabel, yPos = targetYPos, label = gettextf("Tar. = %g", round(targetYPos, .numDecimals)))
       plotObject <- plotObject + ggplot2::geom_line(data = targetLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
-                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkgreen") +
+                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkgreen", na.rm = TRUE) +
         ggplot2::geom_label(data = targetLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
-                            inherit.aes = FALSE, size = clLabelSize, hjust = "inward")
+                            inherit.aes = FALSE, size = clLabelSize, hjust = "inward", na.rm = TRUE)
     }
     if (!is.na(uslYPos)) {
       uslLineDf <- data.frame(xPos = xRange, yPos = rep(uslYPos, each = 2))
       uslLabelDf <- data.frame(xPos = xPosLabel, yPos = uslYPos, label = gettextf("USL = %g", round(uslYPos, .numDecimals)))
       plotObject <- plotObject + ggplot2::geom_line(data = uslLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
-                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkred") +
+                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkred", na.rm = TRUE) +
         ggplot2::geom_label(data = uslLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
-                            inherit.aes = FALSE, size = clLabelSize, hjust = "inward")
+                            inherit.aes = FALSE, size = clLabelSize, hjust = "inward", na.rm = TRUE)
     }
   }
   if (warningLimits) {
     plotObject <- plotObject + ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = UWL1), col = "orange",
-                                                  linewidth = 1, linetype = "dashed") +
+                                                  linewidth = 1, linetype = "dashed", na.rm = TRUE) +
       ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = LWL1), col = "orange",
-                         linewidth = 1, linetype = "dashed") +
+                         linewidth = 1, linetype = "dashed", na.rm = TRUE) +
       ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = UWL2), col = "orange",
-                         linewidth = 1, linetype = "dashed") +
+                         linewidth = 1, linetype = "dashed", na.rm = TRUE) +
       ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = LWL2), col = "orange",
-                         linewidth = 1, linetype = "dashed")
+                         linewidth = 1, linetype = "dashed", na.rm = TRUE)
   }
   if (!identical(stages, "")) {
     stageLabels$y <- max(yLimits)
-  # if (!identical(stages, "")) {
     plotObject <- plotObject + ggplot2::geom_vline(xintercept = na.omit(stageLabels[["separationLine"]])) +
-      ggplot2::geom_text(data = stageLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
+      ggplot2::geom_text(data = stageLabels, mapping = ggplot2::aes(x = x, y = y, label = label, na.rm = TRUE),
                          size = 6, fontface = "bold", inherit.aes = FALSE)
   }
   plotObject <- plotObject + ggplot2::geom_label(data = clLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
-                                                 inherit.aes = FALSE, size = clLabelSize) +
+                                                 inherit.aes = FALSE, size = clLabelSize, na.rm = TRUE) +
     ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = yLimits) +
     ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels) +
-    jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue") +
+    jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+                          na.rm = TRUE) +
     jaspGraphs::geom_point(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),
-                           size = 4, fill = pointData$dotColor, inherit.aes = TRUE) +
+                           size = 4, fill = pointData$dotColor, inherit.aes = TRUE, na.rm = TRUE) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
