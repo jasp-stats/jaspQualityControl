@@ -7,6 +7,65 @@
 #############################################################
 ## Common functions for plots ###############################
 #############################################################
+.reshapeSubgroupDataLongToWide <- function(dataset,
+                                           measurements,
+                                           stages = "",
+                                           subgroupVariable = "",
+                                           subgroupSizeType = "manual",
+                                           manualSubgroupSizeValue = 5) {
+  # Rearrange data if not already wide format (one group per row)
+  # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
+  if (subgroupSizeType == "manual") {
+    k <- manualSubgroupSizeValue
+    if (stages != "") {
+      # Only take the first stage of each subgroup, to avoid multiple stages being defined
+      stagesPerSubgroup <- dataset[[stages]][seq(1, length(dataset[[stages]]), k)]
+    }
+    # fill up with NA to allow all subgroup sizes
+    if(length(dataset[[measurements]]) %% k != 0) {
+      rest <- length(dataset[[measurements]]) %% k
+      dataset_expanded <- c(dataset[[measurements]], rep(NA, k - rest))
+      dataset <- as.data.frame(matrix(dataset_expanded, ncol = k, byrow = TRUE))
+    } else {
+      dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
+    }
+    measurements <- colnames(dataset)
+    axisLabels <- as.character(seq_len(nrow(dataset)))
+    xAxisTitle <- gettext("Sample")
+    if (stages != "") {
+      dataset[[stages]] <- stagesPerSubgroup
+      axisLabels <- axisLabels[order(dataset[[stages]])]
+    }
+  } else {
+    subgroups <- dataset[[subgroupVariable]]
+    subgroups <- na.omit(subgroups)
+    # add sequence of occurence to allow pivot_wider
+    if (stages != "") {
+      # Only take the first defined stage of each subgroup, to avoid multiple stages being defined
+      stagesPerSubgroup <- dataset[[stages]][match(unique(subgroups), subgroups)]
+    }
+    occurenceVector <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
+    dataset$occurence <- occurenceVector
+    # transform into one group per row
+    dataset <- tidyr::pivot_wider(data = dataset[c(measurements, subgroupVariable, "occurence")],
+                                  values_from = tidyr::all_of(measurements), names_from = occurence)
+    # arrange into dataframe
+    dataset <- as.data.frame(dataset)
+    measurements <- as.character(unique(occurenceVector))
+    axisLabels <- dataset[[subgroupVariable]]
+    xAxisTitle <- subgroupVariable
+    if (stages != ""){
+      dataset[[stages]] <- stagesPerSubgroup
+      axisLabels <- axisLabels[order(dataset[[stages]])]
+    }
+  }
+  return(list(dataset = dataset,
+              measurements = measurements,
+              axisLabels = axisLabels,
+              xAxisTitle = xAxisTitle))
+}
+
+
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   # Adjust Rules to SKF
