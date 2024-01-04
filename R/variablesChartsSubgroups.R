@@ -48,7 +48,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Control charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "stages", "subgroup", "subgroupSizeType"))
+    plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "stages", "subgroup", "subgroupSizeType",
+                    "measurementsWideFormat", "dataFormat"))
     return()
   }
 
