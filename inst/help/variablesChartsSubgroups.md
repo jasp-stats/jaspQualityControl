@@ -14,13 +14,8 @@ Data can be in the form of all observations in one column ("Single column") or a
 -------
 - Measurements: the observations collected from a process.
 - Subgroups ("Column" option): the subgroup that each observation is assigned to, if all observations are in the same column.
-- Axis labels ("Row" option): optinal subgroup names for each row of observations, that are used as x-axis labels. 
+- Timestamp ("Row" option): optinal subgroup names for each row of observations, that are used as x-axis labels. 
 - Stages: a column to split the analysis into multiple parts by assigning a stage to each subgroup. In "row" format, only one stage per subgroup is possible. In "column" format, only the first specified stage for each subgroup is considered.
-
-### Plotting Options
--------
-- Warning limits: plots limits one and two standard deviations from the central line. 
-- Known parameters: enables the use of historic parameter values (Phase 2). 
 
 ### Specifying Subgroups in "Column" Format
 -------
@@ -33,6 +28,10 @@ The size of the subgroups is relevant for the calculation of the process varianc
 - Assume equal subgroup sizes: the control limits are calculated with the assumption that all subgroups have the same size, and the same control limits are calculated for all groups. In this case, the size of the largest subgroup is used for the calculation.
 - Calculate with actual size: the control limits are calculated per subgroup and the actual subgroup sizes are used for the calculation.
 
+### Plotting Options
+-------
+- Warning limits: plots limits one and two standard deviations from the central line. 
+- Known parameters: enables the use of historic parameter values (Phase 2). 
 
 ## Output
 ### Charts
