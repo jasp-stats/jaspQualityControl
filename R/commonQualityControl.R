@@ -556,6 +556,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                         "s" = "s"
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
+  table$addColumnInfo(name = "noViolations", title = gettext("Tests"), type = "string")
   tableListVectorized <- unlist(tableList, recursive = FALSE)
   tableLongestVector <- max(sapply(tableListVectorized, length))
   if (tableLongestVector > 0) {
@@ -587,10 +588,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       tableData[["test5"]] <- tableListCombined[["test5"]]
       tableData[["test6"]] <- tableListCombined[["test6"]]
     }
-    table$setData(tableData)
-    table$showSpecifiedColumnsOnly <- TRUE
     table$addFootnote(message = gettext("Points where a test failed."))
+  } else {
+    tableData <- list("noViolations" = gettext("No test violations occurred."))
   }
+  table$setData(tableData)
+  table$showSpecifiedColumnsOnly <- TRUE
   return(table)
 }
 
