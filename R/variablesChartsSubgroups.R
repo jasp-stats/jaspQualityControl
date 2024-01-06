@@ -149,11 +149,11 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
                                  phase2 = options[["knownParameters"]], phase2Mu = options[["knownParametersMean"]], phase2Sd = options[["knownParametersSd"]],
                                  fixedSubgroupSize = fixedSubgroupSize, warningLimits = options[["warningLimits"]],
-                                 xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
+                                 xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                  unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
       secondChart <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType, stages = stages, phase2 = options[["knownParameters"]],
                                    phase2Sd = options[["knownParametersSd"]], fixedSubgroupSize = fixedSubgroupSize,
-                                   xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
+                                   xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                    unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
       jaspResults[["controlCharts"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
       if (!identical(plotNotes, ""))

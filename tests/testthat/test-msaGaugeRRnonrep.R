@@ -53,8 +53,9 @@ test_that("Average chart by operator plot matches", {
 test_that("Test results for x-bar chart table results match", {
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("A", 2, "", 3, "", 4, "", 5, "B", 6, "", 7, "", 8, "", 10, "C",
-                                      11, "", 12, "", 13, "", 15))
+                                 list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5",
+                                 "B", "Point 6", "", "Point 7", "", "Point 8", "", "Point 10", "C",
+                                 "Point 11", "", "Point 12", "", "Point 13", "", "Point 15"))
 })
 
 test_that("Components of Variation plot matches", {
