@@ -33,45 +33,16 @@ Form
 			{ label: qsTr("Single column"), value: "longFormat"},
 			{ label: qsTr("Across rows"), value: "wideFormat"},
 		]
-		onValueChanged:
-		{
-			measurementsWideFormat.itemDoubleClicked(0)
-			measurementLongFormat.itemDoubleClicked(0)
-		}
 	}
 
 	VariablesForm
 	{
-		id:										variablesForm
+		id:										variablesFormLongFormat
+		visible:								dataFormat.currentValue == "longFormat"
 
 		AvailableVariablesList
 		{
-			name:								"variablesForm"
-		}
-
-		AssignedVariablesList
-		{
-			name:								"operator"
-			title:								qsTr("Operator")
-			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText"]
-		}
-
-		AssignedVariablesList
-		{
-			name:								"part"
-			title:								qsTr("Part")
-			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
-		}
-
-		AssignedVariablesList
-		{
-			name:								"measurementsWideFormat"
-			title:								qsTr("Results")
-			id:									measurementsWideFormat
-			visible:							dataFormat.currentValue == "wideFormat"
-			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
+			name:								"variablesFormLongFormat"
 		}
 
 		AssignedVariablesList
@@ -80,17 +51,76 @@ Form
 			title:								qsTr("Results")
 			id:									measurementLongFormat
 			singleVariable:						true
-			visible:							dataFormat.currentValue == "longFormat"
 			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
 
 		AssignedVariablesList
 		{
-			name:								"standard"
+			name:								"operatorLongFormat"
+			title:								qsTr("Operator")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText"]
+		}
+
+		AssignedVariablesList
+		{
+			name:								"partLongFormat"
+			title:								qsTr("Part")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+		}
+
+		AssignedVariablesList
+		{
+			name:								"standardLongFormat"
 			title:								qsTr("Standard")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
 		}
+	}
+
+	VariablesForm
+	{
+		id:										variablesFormWideFormat
+		visible:								dataFormat.currentValue == "wideFormat"
+
+		AvailableVariablesList
+		{
+			name:								"variablesFormwideFormat"
+		}
+
+		AssignedVariablesList
+		{
+			name:								"measurementsWideFormat"
+			title:								qsTr("Results")
+			id:									measurementsWideFormat
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
+		}
+
+		AssignedVariablesList
+		{
+			name:								"operatorWideFormat"
+			title:								qsTr("Operator")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText"]
+		}
+
+		AssignedVariablesList
+		{
+			name:								"partWideFormat"
+			title:								qsTr("Part")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+		}
+
+		AssignedVariablesList
+		{
+			name:								"standardWideFormat"
+			title:								qsTr("Standard")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
+		}
+
 	}
 
 	Section
