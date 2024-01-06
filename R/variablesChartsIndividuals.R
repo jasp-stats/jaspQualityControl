@@ -83,10 +83,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       columnsToPass <- c(variables, stages)
       columnsToPass <- columnsToPass[columnsToPass != ""]
       individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
-                                                   xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, movingRangeLength = options[["xmrChartMovingRangeLength"]])
+                                       xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle,
+                                       movingRangeLength = options[["xmrChartMovingRangeLength"]])
       mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
-                                           xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
-                                           movingRangeLength = options[["xmrChartMovingRangeLength"]])
+                               xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle,
+                               movingRangeLength = options[["xmrChartMovingRangeLength"]])
     }
     jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
     if (!identical(stages, "") && nDroppedRows > 0)
@@ -210,11 +211,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     columnsToPass <- c(variables, stages)
     columnsToPass <- columnsToPass[columnsToPass != ""]
     plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
-                                                          xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
+                                                          xAxisLabels = axisLabels, tableLabels = axisLabels,  xAxisTitle = xAxisTitle,
                                                           clLabelSize = 3.5, movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
     indexCounter <- indexCounter + 1
     plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
-                                                          xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
+                                                          xAxisLabels = axisLabels, tableLabels = axisLabels,  xAxisTitle = xAxisTitle,
                                                           movingRangeLength = options[["xmrChartMovingRangeLength"]], clLabelSize = 3.5)$plotObject
   }
 

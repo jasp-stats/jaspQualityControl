@@ -171,10 +171,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
         unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
         xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType, stages = stages,
-                                   xAxisLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)
-        secondPlot <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType, xAxisLabels = axisLabels, stages = stages,
-                                    movingRangeLength = options[["xBarMovingRangeLength"]], fixedSubgroupSize = fixedSubgroupSize,
-                                    unbiasingConstantUsed = unbiasingConstantUsed)
+                                   xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
+                                   unbiasingConstantUsed = unbiasingConstantUsed)
+        secondPlot <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType, xAxisLabels = axisLabels,
+                                    tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
+                                    fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
         if (!identical(plotNotes, ""))
@@ -2151,12 +2152,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       indexCounter <- indexCounter + 1
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
-                                                xAxisLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
+                                                xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
                                                 unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
       indexCounter <- indexCounter + 1
       plotList[[indexCounter]] <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels,
-                                                movingRangeLength = options[["xBarMovingRangeLength"]], fixedSubgroupSize = fixedSubgroupSize,
-                                                unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
+                                                tableLabels = axisLabels, movingRangeLength = options[["xBarMovingRangeLength"]],
+                                                fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
     }
   }
   if (options[["reportProcessCapabilityPlot"]]) {
