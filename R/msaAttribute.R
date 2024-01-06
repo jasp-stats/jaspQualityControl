@@ -21,13 +21,15 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat){
     measurements <- unlist(options[["measurementsWideFormat"]])
-  }else{
+    parts <- unlist(options[["partWideFormat"]])
+    operators <- unlist(options[["operatorWideFormat"]])
+    standards <- unlist(options[["standardWideFormat"]])
+  } else {
     measurements <- unlist(options[["measurementLongFormat"]])
+    parts <- unlist(options[["partLongFormat"]])
+    operators <- unlist(options[["operatorLongFormat"]])
+    standards <- unlist(options[["standardLongFormat"]])
   }
-
-  parts <- unlist(options[["part"]])
-  operators <- unlist(options[["operator"]])
-  standards <- unlist(options[["standard"]])
 
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
@@ -68,7 +70,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
 
   # Error handling
-  
+
   if (identical(standards, "") && !identical(options[["positiveReference"]], "") && options[["cohensKappa"]]) {
     jaspResults[["tableReference"]] <- createJaspContainer(title = gettext("Reference Tables and Plots"))
     jaspResults[["tableReference"]]$position <- 10
@@ -556,7 +558,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     AAA[["Within"]] <- NULL
     AAA[["Between"]] <- tableBetween
 
-    if (options$standard != ""){
+    if (standards != ""){
       AAA[["EachVsStandard"]] <- tableEachVsStandard
       AAA[["AllVsStandard"]] <- tableAllVsStandard
     }
@@ -565,7 +567,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     AAA[["Within"]] <- tableWithin
     AAA[["Between"]] <- tableBetween
 
-    if (options$standard != ""){
+    if (standards != ""){
       AAA[["EachVsStandard"]] <- tableEachVsStandard
       AAA[["AllVsStandard"]] <- tableAllVsStandard
     }

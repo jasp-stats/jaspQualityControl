@@ -17,14 +17,17 @@
 
 #' @export
 msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
+  # Reading the data in the correct format
   wideFormat <- options[["dataFormat"]] == "wideFormat"
-  if(!wideFormat){
-    measurements <- unlist(options[["measurementLongFormat"]])
-  }else{
+  if (wideFormat) {
     measurements <- unlist(options[["measurementsWideFormat"]])
+    parts <- unlist(options[["partWideFormat"]])
+    operators <- unlist(options[["operatorWideFormat"]])
+  } else {
+    measurements <- unlist(options[["measurementLongFormat"]])
+    parts <- unlist(options[["partLongFormat"]])
+    operators <- unlist(options[["operatorLongFormat"]])
   }
-  parts <- unlist(options[["part"]])
-  operators <- unlist(options[["operator"]])
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
   factor.vars <- c(parts, operators)

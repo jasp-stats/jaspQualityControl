@@ -3,8 +3,8 @@ context("[Quality Control] Gauge r&R")
 
 # Long format
 options <- analysisOptions("msaGaugeRR")
-options$operator <- "Operators"
-options$part <- "Parts"
+options$operatorLongFormat <- "Operators"
+options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
 options$tolerance <- TRUE
 options$toleranceValue <- 15
@@ -121,8 +121,8 @@ test_that("Test results for x-bar chart table results match", {
 
 # Wide
 options$dataFormat <- "wideFormat"
-options$operator <- "Operator"
-options$part <- "Part"
+options$operatorWideFormat <- "Operator"
+options$partWideFormat <- "Part"
 options$measurementsWideFormat <- c("Measurement1", "Measurement2", "Measurement3")
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "msaGageRandr_wide.csv", options)
@@ -230,8 +230,8 @@ options <- analysisOptions("msaGaugeRR")
 data <- read.csv("msaGaugeRR_Type3_Long.csv")
 options$dataFormat <- "longFormat"
 names(data)[1] <- "Parts"
-options$operator <- ""
-options$part <- "Parts"
+options$operatorLongFormat <- ""
+options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "dm"
 options$type3 <- TRUE
 options$tolerance <- TRUE
@@ -280,9 +280,9 @@ test_that("Measurements by Part plot matches", {
 })
 
 # Type 3 WIDE
-options$operator <- ""
+options$operatorWideFormat <- ""
 options$dataFormat <- "wideFormat"
-options$part <- "Part"
+options$partWideFormat <- "Part"
 options$measurementsWideFormat <- c("Repeat.1", "Repeat.2", "Repeat.3")
 options$type3 <- TRUE
 options$anovaModelType <- "randomEffect"

@@ -41,29 +41,12 @@ Form
 
 	VariablesForm
 	{
-		id:										variablesForm
+		id:										variablesFormLongFormat
+		visible:								dataFormat.currentValue == "longFormat"
 
 		AvailableVariablesList
 		{
-			name:								"variablesForm"
-		}
-
-		AssignedVariablesList
-		{
-			name:								"operator"
-			title:								qsTr("Operator")
-			id:									operator
-			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
-			visible: 							!type3.checked
-		}
-
-		AssignedVariablesList
-		{
-			name:								"part"
-			title:								qsTr("Part")
-			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			name:								"variablesFormLongFormat"
 		}
 
 		AssignedVariablesList
@@ -72,8 +55,36 @@ Form
 			title:								qsTr("Measurement")
 			id:									measurementLongFormat
 			singleVariable:						true
-			visible:							dataFormat.currentValue == "longFormat"
 			allowedColumns:						["scale"]
+		}
+
+		AssignedVariablesList
+		{
+			name:								"operatorLongFormat"
+			title:								qsTr("Operator")
+			id:									operatorLongFormat
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			enabled: 							!type3.checked
+		}
+
+		AssignedVariablesList
+		{
+			name:								"partLongFormat"
+			title:								qsTr("Part")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+		}
+	}
+
+	VariablesForm
+	{
+		id:										variablesFormWideFormat
+		visible:								dataFormat.currentValue == "wideFormat"
+
+		AvailableVariablesList
+		{
+			name:								"variablesFormWideFormat"
 		}
 
 		AssignedVariablesList
@@ -82,19 +93,37 @@ Form
 			title:								qsTr("Measurements")
 			id:									measurementsWideFormat
 			singleVariable:						false
-			visible:							dataFormat.currentValue == "wideFormat"
 			allowedColumns:						["scale"]
 		}
 
-		CheckBox
+		AssignedVariablesList
 		{
-			name:								"type3"
-			id:									type3
-			label:								qsTr("Type 3 study (automatic equipment)")
-			onCheckedChanged:
-			{
-				operator.itemDoubleClicked(0)
-			}
+			name:								"operatorWideFormat"
+			title:								qsTr("Operator")
+			id:									operatorWideFormat
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			enabled: 							!type3.checked
+		}
+
+		AssignedVariablesList
+		{
+			name:								"partWideFormat"
+			title:								qsTr("Part")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+		}
+	}
+
+	CheckBox
+	{
+		name:								"type3"
+		id:									type3
+		label:								qsTr("Type 3 study (automatic equipment)")
+		onCheckedChanged:
+		{
+			operatorLongFormat.itemDoubleClicked(0)
+			operatorWideFormat.itemDoubleClicked(0)
 		}
 	}
 

@@ -19,19 +19,21 @@
 msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   # Reading the data in the correct format
   wideFormat <- options[["dataFormat"]] == "wideFormat"
-  if (wideFormat)
+  if (wideFormat) {
     measurements <- unlist(options[["measurementsWideFormat"]])
-  else
+    parts <- unlist(options[["partWideFormat"]])
+    operators <- unlist(options[["operatorWideFormat"]])
+  } else {
     measurements <- unlist(options[["measurementLongFormat"]])
-
-  parts <- unlist(options[["part"]])
-  operators <- unlist(options[["operator"]])
+    parts <- unlist(options[["partLongFormat"]])
+    operators <- unlist(options[["operatorLongFormat"]])
+  }
 
   #ready statement
   if (wideFormat && !options[["type3"]]) {
     ready <- (length(measurements) > 1 && !identical(operators, "") && !identical(parts, ""))
   } else if (wideFormat && options[["type3"]]) {
-    ready <- (length(measurements) > 1 && !identical(parts, "")) 
+    ready <- (length(measurements) > 1 && !identical(parts, ""))
   } else if (!wideFormat && !options[["type3"]]) {
     ready <- (measurements != "" && !identical(operators, "") && !identical(parts, ""))
   }  else if (!wideFormat && options[["type3"]]) {
