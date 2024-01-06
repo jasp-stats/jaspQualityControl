@@ -37,27 +37,12 @@ Form
 
 	VariablesForm
 	{
-		id:										variablesForm
+		id:										variablesFormLongFormat
+		visible:								dataFormat.currentValue == "longFormat"
 
 		AvailableVariablesList
 		{
-			name:								"variablesForm"
-		}
-
-		AssignedVariablesList
-		{
-			name:								"operator"
-			title:								qsTr("Operators")
-			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
-		}
-
-		AssignedVariablesList
-		{
-			name:								"part"
-			title:								qsTr("Parts")
-			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			name:								"variablesFormLongFormat"
 		}
 
 		AssignedVariablesList
@@ -66,7 +51,33 @@ Form
 			title:								qsTr("Measurements")
 			singleVariable:						true
 			allowedColumns:						["scale"]
-			visible:							dataFormat.currentValue == "longFormat"
+		}
+
+		AssignedVariablesList
+		{
+			name:								"operatorLongFormat"
+			title:								qsTr("Operators")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
+
+		AssignedVariablesList
+		{
+			name:								"partLongFormat"
+			title:								qsTr("Parts")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+		}
+	}
+
+		VariablesForm
+	{
+		id:										variablesFormWideFormat
+		visible:								dataFormat.currentValue == "wideFormat"
+
+		AvailableVariablesList
+		{
+			name:								"variablesFormWideFormat"
 		}
 
 		AssignedVariablesList
@@ -75,7 +86,22 @@ Form
 			title:								qsTr("Measurements")
 			singleVariable:						false
 			allowedColumns:						["scale"]
-			visible:							dataFormat.currentValue == "wideFormat"
+		}
+
+		AssignedVariablesList
+		{
+			name:								"operatorWideFormat"
+			title:								qsTr("Operators")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
+
+		AssignedVariablesList
+		{
+			name:								"partWideFormat"
+			title:								qsTr("Parts")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 	}
 

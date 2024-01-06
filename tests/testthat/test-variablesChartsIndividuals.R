@@ -56,7 +56,7 @@ options <- analysisOptions("variablesChartsIndividuals")
 options$measurement <- "Yield"
 options$xmrChartMovingRangeLength <- 4
 results <- runAnalysis("variablesChartsIndividuals",
-                       "datasets/variableChartsIndividuals/variableChartsIndividualsDebug.csv", options, makeTests = T)
+                       "datasets/variableChartsIndividuals/variableChartsIndividualsDebug.csv", options)
 
 test_that("3.1 Basic test to create x-mR control chart with changed MR length - plot", {
   plotName <- results[["results"]][["Ichart"]][["collection"]][["Ichart_plot"]][["data"]]

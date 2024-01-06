@@ -1,8 +1,8 @@
 context("[Quality Control] MSA Gauge non-replicabe")
 
 options <- analysisOptions("msaGaugeRRnonrep")
-options$part <- "Batch"
-options$operator <- "Operator"
+options$partLongFormat <- "Batch"
+options$operatorLongFormat <- "Operator"
 options$measurementLongFormat <- "Result"
 options$rChart <- TRUE
 options$xBarChart <- TRUE
