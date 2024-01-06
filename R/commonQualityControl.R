@@ -30,11 +30,10 @@
       dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
     }
     measurements <- colnames(dataset)
-    axisLabels <- as.character(seq_len(nrow(dataset)))
+    axisLabels <- ""
     xAxisTitle <- gettext("Sample")
     if (stages != "") {
       dataset[[stages]] <- stagesPerSubgroup
-      axisLabels <- axisLabels[order(dataset[[stages]])]
     }
   } else {
     subgroups <- dataset[[subgroupVariable]]
@@ -259,6 +258,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                     warningLimits             = FALSE,
                                     specificationLimits       = NA,
                                     xAxisLabels               = "",
+                                    tableLabels               = "",
                                     xAxisTitle                = gettext("Sample"),
                                     movingRangeLength         = 2,
                                     clLabelSize               = 4.5,
@@ -272,11 +272,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                  phase2 = phase2, phase2Mu = phase2Mu, phase2Sd = phase2Sd,
                                                  fixedSubgroupSize = fixedSubgroupSize, warningLimits = warningLimits,
                                                  movingRangeLength = movingRangeLength, stagesSeparateCalculation = stagesSeparateCalculation,
-                                                 tableLabels = xAxisLabels, unbiasingConstantUsed = unbiasingConstantUsed)
+                                                 unbiasingConstantUsed = unbiasingConstantUsed)
 
 
   # This function turns the point violation list into a JASP table
-  table <- .controlChart_table(controlChartData$violationTable, plotType = plotType, stages = stages)
+  table <- .controlChart_table(controlChartData$violationTable, plotType = plotType, stages = stages, tableLabels = tableLabels)
 
 
   # This function turns the raw plot data into a ggPlot
@@ -300,7 +300,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                 warningLimits             = FALSE,
                                                 movingRangeLength         = 2,
                                                 stagesSeparateCalculation = TRUE,
-                                                tableLabels               = "",
                                                 unbiasingConstantUsed     = TRUE
                                        ) {
   plotType <- match.arg(plotType)
@@ -525,7 +524,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                                      y = c(lastCenter, lastLCL, lastUCL),
                                                      label = labelText))
-    tableLabelsCurrentStage <- if (identical(tableLabels, "")) subgroups else as.character(tableLabels)[subgroups]
+    tableLabelsCurrentStage <- subgroups
     if (plotType == "MR" || plotType == "MMR")
       tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
     tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabelsCurrentStage)
@@ -544,8 +543,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
               ))
 }
 
-.controlChart_table <- function(tableList, plotType = c("xBar", "R", "I", "MR", "MMR", "s"),
-                                           stages   = "") {
+.controlChart_table <- function(tableList,
+                                plotType = c("xBar", "R", "I", "MR", "MMR", "s"),
+                                stages   = "",
+                                tableLabels = "") {
   plotType <- match.arg(plotType)
   tableTitle <- switch (plotType,
                         "xBar" = "x-bar",
@@ -556,11 +557,26 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                         "s" = "s"
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
-  table$addColumnInfo(name = "noViolations", title = gettext("Tests"), type = "string")
+  table$showSpecifiedColumnsOnly <- TRUE
   tableListVectorized <- unlist(tableList, recursive = FALSE)
   tableLongestVector <- max(sapply(tableListVectorized, length))
   if (tableLongestVector > 0) {
+    # combine the tests for different stages in same column
     tableListCombined <- tapply(tableListVectorized, names(tableListVectorized), function(x) unlist(x, FALSE, FALSE))
+    # format
+    for (test in names(tableListCombined)[names(tableListCombined) != "stage"]) {
+      points <- as.numeric(tableListCombined[[test]])
+      if (all(is.na(points)))
+        next()
+      formattedPoints <- c()
+      for (point in points) {
+        formattedPoint <- if (is.na(point)) NA else paste(gettext("Point"), point)
+        if (!identical(tableLabels, ""))
+          formattedPoint <- if (is.na(point)) NA else paste0(formattedPoint, " (", tableLabels[point], ")")
+        formattedPoints <- c(formattedPoints, formattedPoint)
+      }
+      tableListCombined[[test]] <- formattedPoints
+    }
     if (!identical(stages, ""))
       table$addColumnInfo(name = "stage",              title = stages,                                     type = "string")
     if (length(tableListCombined[["test1"]][!is.na(tableListCombined[["test1"]])]) > 0)
@@ -590,10 +606,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     }
     table$addFootnote(message = gettext("Points where a test failed."))
   } else {
+    table$addColumnInfo(name = "noViolations", title = gettext("Tests"), type = "string")
     tableData <- list("noViolations" = gettext("No test violations occurred."))
   }
   table$setData(tableData)
-  table$showSpecifiedColumnsOnly <- TRUE
   return(table)
 }
 
