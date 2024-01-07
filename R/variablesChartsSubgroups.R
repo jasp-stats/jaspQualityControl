@@ -22,16 +22,16 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
   if (wideFormat) {
     measurements <- unlist(options[["measurementsWideFormat"]])
+    stages <- options[["stagesWideFormat"]]
     axisLabels <- options[["axisLabels"]]
-    factorVariables <- axisLabels
+    factorVariables <- c(axisLabels, stages)
   } else {
     measurements <- options[["measurementLongFormat"]]
+    stages <- options[["stagesLongFormat"]]
     subgroupVariable <- options[["subgroup"]]
-    factorVariables <- subgroupVariable
+    factorVariables <- c(subgroupVariable, stages)
   }
 
-  stages <- options[["stages"]]
-  factorVariables <- c(factorVariables, stages)
   measurements <- measurements[measurements != ""]
   factorVariables <- factorVariables[factorVariables != ""]
 

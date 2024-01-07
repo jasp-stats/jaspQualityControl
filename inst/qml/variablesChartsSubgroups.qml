@@ -17,18 +17,16 @@ Form
 			{ label: qsTr("Single column"), value: "longFormat"},
 			{ label: qsTr("Across rows"), value: "wideFormat"}
 		]
-		onValueChanged:
-		{
-			measurementsWideFormat.itemDoubleClicked(0)
-			measurementLongFormat.itemDoubleClicked(0)
-		}
 	}
 
 	VariablesForm
 	{
+		id:										variablesFormLongFormat
+		visible:								dataFormat.currentValue == "longFormat"
+
 		AvailableVariablesList
 		{
-			name:								"variablesForm"
+			name:								"variablesFormLongFormat"
 		}
 
 		AssignedVariablesList
@@ -38,7 +36,6 @@ Form
 			id:									measurementLongFormat
 			allowedColumns:						["scale"]
 			singleVariable:						true
-			visible:							dataFormat.currentValue == "longFormat"
 		}
 
 		AssignedVariablesList
@@ -48,16 +45,36 @@ Form
 			title:								qsTr("Subgroups")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
-			visible: 							dataFormat.currentValue == "longFormat" & subgroupSizeType.value == "groupingVariable"
+			enabled: 							subgroupSizeType.value == "groupingVariable"
 		}
 
 		AssignedVariablesList
+		{
+			name:								"stagesLongFormat"
+			id:									stagesLongFormat
+			title:								qsTr("Stages")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
+	}
+
+	VariablesForm
+	{
+		id:										variablesFormWideFormat
+		visible:								dataFormat.currentValue == "wideFormat"
+
+		AvailableVariablesList
+		{
+			name:								"variablesFormWideFormat"
+		}
+
+
+			AssignedVariablesList
 		{
 			name:								"measurementsWideFormat"
 			title:								qsTr("Measurements")
 			id:									measurementsWideFormat
 			allowedColumns:						["scale"]
-			visible:							dataFormat.currentValue == "wideFormat"
 		}
 
 
@@ -69,13 +86,12 @@ Form
 			title:								qsTr("Timestamp (optional)")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
-			visible: 							dataFormat.currentValue == "wideFormat"
 		}
 
 		AssignedVariablesList
 		{
-			id:									stages
-			name:								"stages"
+			name:								"stagesWideFormat"
+			id:									stagesWideFormat
 			title:								qsTr("Stages")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
