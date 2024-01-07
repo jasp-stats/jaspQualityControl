@@ -74,7 +74,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   if (identical(standards, "") && !identical(options[["positiveReference"]], "") && options[["cohensKappa"]]) {
     jaspResults[["tableReference"]] <- createJaspContainer(title = gettext("Reference Tables and Plots"))
     jaspResults[["tableReference"]]$position <- 10
-    jaspResults[["tableReference"]]$dependOn(c("positiveReference", "standard"))
+    jaspResults[["tableReference"]]$dependOn(c("positiveReference", "standardLongFormat", "standardWideFormat"))
 
     Container <- jaspResults[["tableReference"]]
 
@@ -270,7 +270,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 .aaaTableGraphs <- function(ready, dataset, measurements, parts, operators, standards, options) {
 
   AAA <- createJaspContainer(gettext("Attributes Agreement Analysis"))
-  AAA$dependOn(c("measurementsWideFormat", "part", "operator", "standard"))
+  AAA$dependOn(c("measurementsWideFormat", "measurementLongFormat", "partWideFormat", "partLongFormat", "operatorWideFormat",
+                 "operatorLongFormat", "standardLongFormat", "standardWideFormat"))
 
   if (standards != "") {
     tableWithin <- createJaspTable(title = gettext("Within Appraisers"))
@@ -526,7 +527,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
     AAA <- createJaspContainer(gettext("Attributes Agreement Analysis"))
 
-    AAA$dependOn(c("measurementsWideFormat", "part", "operator"))
+    AAA$dependOn(c("measurementsWideFormat", "measurementLongFormat", "partWideFormat", "partLongFormat", "operatorWideFormat",
+                   "operatorLongFormat", "standardLongFormat", "standardWideFormat"))
 
     AAA[["Within"]] <- tableWithin
     AAA[["Between"]] <- tableBetween
@@ -595,7 +597,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
   table <- createJaspTable(title = gettext("Kendall's Tau"))
 
-  table$dependOn(c("kendallsTau", "measurementsWideFormat", "part", "operator", "standard"))
+  table$dependOn(c("kendallsTau", "measurementsWideFormat", "measurementLongFormat", "partWideFormat", "partLongFormat",
+                   "operatorWideFormat", "operatorLongFormat", "standardLongFormat", "standardWideFormat"))
 
   if (!ready & options[["kendallsTau"]])
     return(table)
