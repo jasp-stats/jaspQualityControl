@@ -38,7 +38,7 @@ plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCha
 ### x-bar & r chart with manual subgroup size and stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
 options$measurementLongFormat <- "Diameter"
-options$stages <- "Stage"
+options$stagesLongFormat <- "Stage"
 options$chartType <- "xBarAndR"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
@@ -55,7 +55,7 @@ test_that("LF3. Basic test to create X-bar & R control chart with manual subgrou
 options <- analysisOptions("variablesChartsSubgroups")
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
-options$stages <- "Stage"
+options$stagesLongFormat <- "Stage"
 options$xBarAndSUnbiasingConstant <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
@@ -103,7 +103,7 @@ test_that("LF6. Basic test to create X-bar & s control chart with subgroup varia
 ### x-bar & r chart with subgroup variable and stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
 options$measurementLongFormat <- "Diameter"
-options$stages <- "Stage"
+options$stagesLongFormat <- "Stage"
 options$subgroup <- "Time"
 options$subgroupSizeType <- "groupingVariable"
 options$chartType <- "xBarAndR"
@@ -121,7 +121,7 @@ test_that("LF7. Basic test to create X-bar & R control chart with subgroup varia
 options <- analysisOptions("variablesChartsSubgroups")
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
-options$stages <- "Stage"
+options$stagesLongFormat <- "Stage"
 options$subgroup <- "Time"
 options$subgroupSizeType <- "groupingVariable"
 options$xBarAndSUnbiasingConstant <- TRUE
@@ -456,7 +456,7 @@ test_that("LF24. X-bar & s control chart  with missing values in subgroup variab
 #### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
 options$measurementLongFormat <- "Diameter"
-options$stages <- "StageMissing15"
+options$stagesLongFormat <- "StageMissing15"
 options$subgroup <- "Time"
 options$subgroupSizeType <- "groupingVariable"
 options$chartType <- "xBarAndR"
@@ -473,7 +473,7 @@ test_that("LF25. X-bar & R control with missing values in stages variable", {
 #### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
 options$measurementLongFormat <- "Diameter"
-options$stages <- "StageMissing15"
+options$stagesLongFormat <- "StageMissing15"
 options$subgroup <- "Time"
 options$subgroupSizeType <- "groupingVariable"
 options$chartType <- "xBarAndS"
@@ -569,7 +569,7 @@ test_that("LF30. X-bar & s control chart with unequal subgroups and fixed size c
 #### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
 options$measurementLongFormat <- "Diameter"
-options$stages <- "Stage"
+options$stagesLongFormat <- "Stage"
 options$chartType <- "xBarAndR"
 options$manualSubgroupSizeValue <- 44
 results <- runAnalysis("variablesChartsSubgroups",
@@ -585,7 +585,7 @@ test_that("LF31. Edge case of X-bar & R control chart with very large subgroup s
 #### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
 options$measurementLongFormat <- "Diameter"
-options$stages <- "Stage"
+options$stagesLongFormat <- "Stage"
 options$chartType <- "xBarAndS"
 options$manualSubgroupSizeValue <- 44
 options$xBarAndSUnbiasingConstant <- TRUE
@@ -593,7 +593,7 @@ results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
                        options)
 
-test_that("LF32. Edge case of X-bar & R control chart with very large subgroup size", {
+test_that("LF32. Edge case of X-bar & s control chart with very large subgroup size", {
   plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart15")
@@ -604,7 +604,7 @@ test_that("LF32. Edge case of X-bar & R control chart with very large subgroup s
 #### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
 options$measurementLongFormat <- "Diameter"
-options$stages <- "StageMultiAssigned"
+options$stagesLongFormat <- "StageMultiAssigned"
 options$chartType <- "xBarAndR"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
@@ -619,7 +619,7 @@ test_that("LF33. Edge case of X-bar & R control chart with multiple assigned sta
 #### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
 options$measurementLongFormat <- "Diameter"
-options$stages <- "StageMultiAssigned"
+options$stagesLongFormat <- "StageMultiAssigned"
 options$chartType <- "xBarAndS"
 options$xBarAndSUnbiasingConstant <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
@@ -671,7 +671,7 @@ test_that("WF2. Basic test to create X-bar & s control chart", {
 options <- analysisOptions("variablesChartsSubgroups")
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
-options$stages <- "Stage"
+options$stagesWideFormat <- "Stage"
 options$chartType <- "xBarAndR"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
@@ -687,7 +687,7 @@ test_that("WF3. Basic test to create X-bar & R control chart with stages", {
 options <- analysisOptions("variablesChartsSubgroups")
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
-options$stages <- "Stage"
+options$stagesWideFormat <- "Stage"
 options$chartType <- "xBarAndS"
 options$xBarAndSUnbiasingConstant <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
@@ -738,7 +738,7 @@ options <- analysisOptions("variablesChartsSubgroups")
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
-options$stages <- "Stage"
+options$stagesWideFormat <- "Stage"
 options$chartType <- "xBarAndR"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
@@ -755,7 +755,7 @@ options <- analysisOptions("variablesChartsSubgroups")
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
-options$stages <- "Stage"
+options$stagesWideFormat <- "Stage"
 options$chartType <- "xBarAndS"
 options$xBarAndSUnbiasingConstant <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
@@ -1045,7 +1045,7 @@ test_that("WF20. X-bar & s control chart with all values missing in measurement"
 options <- analysisOptions("variablesChartsSubgroups")
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
-options$stages <- "StageMissing7"
+options$stagesWideFormat <- "StageMissing7"
 options$chartType <- "xBarAndR"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
@@ -1061,7 +1061,7 @@ test_that("WF21. X-bar & R control chart with missing values in stages variable"
 options <- analysisOptions("variablesChartsSubgroups")
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
-options$stages <- "StageMissing7"
+options$stagesWideFormat <- "StageMissing7"
 options$chartType <- "xBarAndS"
 options$xBarAndSUnbiasingConstant <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
