@@ -707,6 +707,15 @@ Form
 					checked:							true
 				}
 			}
+
+			DoubleField
+			{
+				name: 								"controlLimitsNumberOfSigmas"
+				label: 								qsTr("Number of std. dev. for calculation of control limits")
+				fieldWidth: 						30
+				defaultValue: 						3
+				min:								.000001
+			}
 		}
 	}
 }

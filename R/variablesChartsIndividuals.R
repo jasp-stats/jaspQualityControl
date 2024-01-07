@@ -71,7 +71,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
     jaspResults[["Ichart"]]$dependOn(c("xmrChart", "variables", "xmrChartMovingRangeLength", "axisLabels", "reportTitle",
                                        "reportMeasurementName", "reportMiscellaneous","reportReportedByBy","reportDate", "report",
-                                       "stage"))
+                                       "stage", "controlLimitsNumberOfSigmas"))
     jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
     if (ready) {
       # Error conditions for stages
@@ -82,10 +82,10 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       }
       columnsToPass <- c(variables, stages)
       columnsToPass <- columnsToPass[columnsToPass != ""]
-      individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
+      individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                        xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle,
                                        movingRangeLength = options[["xmrChartMovingRangeLength"]])
-      mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
+      mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle,
                                movingRangeLength = options[["xmrChartMovingRangeLength"]])
     }
@@ -113,7 +113,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
 
     jaspResults[["report"]] <- createJaspContainer(gettext("Report"))
-    jaspResults[["report"]]$dependOn(c("report", "xmrChart", "variables","ncol", "axisLabels",
+    jaspResults[["report"]]$dependOn(c("report", "xmrChart", "variables","ncol", "axisLabels", "controlLimitsNumberOfSigmas",
                                          "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedByBy","reportDate",
                                          "stage", "reportAutocorrelationChart", "reportIMRChart", "reportMetaData"))
     jaspResults[["report"]]$position <- 9
@@ -210,11 +210,11 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
     columnsToPass <- c(variables, stages)
     columnsToPass <- columnsToPass[columnsToPass != ""]
-    plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
+    plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                                           xAxisLabels = axisLabels, tableLabels = axisLabels,  xAxisTitle = xAxisTitle,
                                                           clLabelSize = 3.5, movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
     indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
+    plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                                           xAxisLabels = axisLabels, tableLabels = axisLabels,  xAxisTitle = xAxisTitle,
                                                           movingRangeLength = options[["xmrChartMovingRangeLength"]], clLabelSize = 3.5)$plotObject
   }
