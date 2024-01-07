@@ -125,7 +125,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     jaspResults[["anovaGaugeReport"]] <- .anovaGaugeReport(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options = options, Type3 = Type3)
     jaspResults[["anovaGaugeReport"]]$dependOn(c("anovaGaugeReportedBy", "anovaGaugeTitle", "anovaGaugeName", "anovaGaugeDate",
-                                                 "anovaGaugeMisc", "anovaGaugeReport", "measurements", "measurementsLong"))
+                                                 "anovaGaugeMisc", "anovaGaugeReport", "measurementsWideFormat", "measurementLongFormat"))
   } else {
     # Gauge r&R ANOVA Table
     if (options[["anova"]]) {
@@ -142,7 +142,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
       jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
       jaspResults[["rChart"]]$position <- 3
-      jaspResults[["rChart"]]$dependOn(c("rChart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
+      jaspResults[["rChart"]]$dependOn(c("rChart", "gaugeRRmethod", "anovaGaugeReport", "measurementLongFormat",
+                                         "measurementsWideFormat"))
       jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
       if (ready) {
         rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R",
@@ -158,7 +159,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
       jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
       jaspResults[["xBarChart"]]$position <- 4
-      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "gaugeRRmethod", "anovaGaugeReport", "measurementsLong", "measurements"))
+      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "gaugeRRmethod", "anovaGaugeReport", "measurementLongFormat",
+                                            "measurementsWideFormat"))
       jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
       if (ready) {
         xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)],
@@ -239,13 +241,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   anovaTable1$addColumnInfo(title = gettext("<i>p</i>-value"),              name = "Pr(>F)",  type = "pvalue")
 
   RRtable1 <- createJaspTable(title = gettext("Variance Components"))
-  RRtable1$dependOn(c("anova", "operator", "part", "measurementsWideFormat", "measurementLongFormat"))
+  RRtable1$dependOn(c("anova", "operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
+                      "measurementLongFormat"))
   RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
   RRtable1$addColumnInfo(name = "Variation", title = gettext("Variance"), type = "number")
   RRtable1$addColumnInfo(name = "Percent", title = gettextf("%% Contribution"), type = "integer")
 
   RRtable2 <- createJaspTable(title = gettext("Gauge Evaluation"))
-  RRtable2$dependOn(c("anova", "operator", "part", "measurementsWideFormat", "measurementLongFormat"))
+  RRtable2$dependOn(c("anova", "operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat",
+                      "measurementsWideFormat", "measurementLongFormat"))
   RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
   RRtable2$addColumnInfo(name = "SD", title = gettext("Std. Deviation"), type = "number")
   RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study Variation"), type = "number")

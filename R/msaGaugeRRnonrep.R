@@ -93,7 +93,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
       jaspResults[["rChart"]] <- createJaspContainer(gettext("Range Chart by Operator"))
       jaspResults[["rChart"]]$position <- 2
-      jaspResults[["rChart"]]$dependOn(c("rChart", "measurements", "measurementsWide"))
+      jaspResults[["rChart"]]$dependOn(c("rChart", "measurementLongFormat", "measurementsWideFormat"))
       jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
 
       if (ready) {
@@ -110,7 +110,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
         jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar Chart by Operator"))
         jaspResults[["xBarChart"]]$position <- 3
-        jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurements", "measurementsWide"))
+        jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat", "measurementsWideFormat"))
         jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
         if (ready) {
           xBarChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
