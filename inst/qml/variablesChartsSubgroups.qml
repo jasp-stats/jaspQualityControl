@@ -177,15 +177,15 @@ Form
 
 			RadioButton
 			{
-				value: 							"xBarAndR"
-				label: 							qsTr("X-bar & R")
+				value: 							"xBarAndS"
+				label: 							qsTr("X-bar & s")
 				checked:		 				true
 			}
 
 			RadioButton
 			{
-				value: 							"xBarAndS"
-				label: 							qsTr("X-bar & s")
+				value: 							"xBarAndR"
+				label: 							qsTr("X-bar & R")
 			}
 		}
 
