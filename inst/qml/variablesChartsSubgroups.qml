@@ -297,12 +297,22 @@ Form
 	Section
 	{
 		title: 									qsTr("Advanced Options")
+		columns:								1
 		
 		CheckBox
 		{
 			name: 								"xBarAndSUnbiasingConstant"
 			label: 								qsTr("Use unbiasing constant for X-bar & s chart")
 			checked:							true
+		}
+
+		DoubleField
+		{
+			name: 								"controlLimitsNumberOfSigmas"
+			label: 								qsTr("Number of std. dev. for calculation of control limits")
+			fieldWidth: 						30
+			defaultValue: 						3
+			min:								.000001
 		}
 	}
 }

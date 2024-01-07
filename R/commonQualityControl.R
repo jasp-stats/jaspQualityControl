@@ -251,6 +251,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 .controlChart <- function(dataset,  plotType                  = c("xBar", "R", "I", "MR", "MMR", "s"),
                                     stages                    = "",
                                     xBarSdType                = c("r", "s"),
+                                    nSigmasControlLimits      = 3,
                                     phase2                    = FALSE,
                                     phase2Mu                  = "",
                                     phase2Sd                  = "",
@@ -269,10 +270,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
   # This function returns all the needed data for the plot and table: data for the points, the limits, the labels and a list of point violations for the table
   controlChartData <- .controlChart_calculations(dataset, plotType = plotType, stages = stages, xBarSdType = xBarSdType,
-                                                 phase2 = phase2, phase2Mu = phase2Mu, phase2Sd = phase2Sd,
-                                                 fixedSubgroupSize = fixedSubgroupSize, warningLimits = warningLimits,
-                                                 movingRangeLength = movingRangeLength, stagesSeparateCalculation = stagesSeparateCalculation,
-                                                 unbiasingConstantUsed = unbiasingConstantUsed)
+                                                 nSigmasControlLimits = nSigmasControlLimits, phase2 = phase2,
+                                                 phase2Mu = phase2Mu, phase2Sd = phase2Sd, fixedSubgroupSize = fixedSubgroupSize,
+                                                 warningLimits = warningLimits, movingRangeLength = movingRangeLength,
+                                                 stagesSeparateCalculation = stagesSeparateCalculation, unbiasingConstantUsed = unbiasingConstantUsed)
 
 
   # This function turns the point violation list into a JASP table
@@ -293,6 +294,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 .controlChart_calculations <- function(dataset, plotType                  = c("xBar", "R", "I", "MR", "MMR", "s"),
                                                 stages                    = "",
                                                 xBarSdType                = c("r", "s"),
+                                                nSigmasControlLimits      = 3,
                                                 phase2                    = FALSE,
                                                 phase2Mu                  = "",
                                                 phase2Sd                  = "",
@@ -352,12 +354,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       sigma <- meanMovingRange/d2
       if (plotType == "I") {
         processMean <- mean(dataCurrentStageVector, na.rm = TRUE) # manually calculate mean as package does not remove NAs
-        qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sigma, center = processMean)
+        qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sigma, center = processMean, nsigmas = nSigmasControlLimits)
         plotStatistic <- qccObject$statistics
         limits <- qccObject$limits
       } else if (plotType == "MR" || plotType == "MMR" ) {
-        qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sigma, center = meanMovingRange)
-        limits <- unlist(.controlLimits(meanMovingRange, sigma, n = k, type = "r"))
+        qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sigma, center = meanMovingRange, nsigmas = nSigmasControlLimits)
+        limits <- unlist(.controlLimits(meanMovingRange, sigma, n = k, k = nSigmasControlLimits, type = "r"))
         # the qcc package calculates the ranges ignoring the NAs, but for the MR chart we want the range to be NA if there are any NAs in the moving range
         qccObject$statistics[which(!complete.cases(mrMatrix))] <- NA
         plotStatistic <- c(rep(NA, k-1), qccObject$statistics)
@@ -381,12 +383,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       d2 <- sapply(n, function(x) KnownControlStats.RS(x, 0)$constants[1])
       mu <- sigma * d2
-      qccObject <- qcc::qcc(dataCurrentStage, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(dataCurrentStage))
+      qccObject <- qcc::qcc(dataCurrentStage, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(dataCurrentStage), nsigmas = nSigmasControlLimits)
       # the qcc package returns -Inf when all values are NA, which does not look good in ggplot. So we replace it with NA.
       qccObject$statistics[is.infinite(qccObject$statistics)] <- NA
       plotStatistic <- qccObject$statistics
-
-      limits <- .controlLimits(mu, sigma, n = n, type = "r")
+      limits <- .controlLimits(mu, sigma, n = n, type = "r", k = nSigmasControlLimits)
       center <- mu
       UCL <- limits$UCL
       LCL <- limits$LCL
@@ -407,10 +408,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         mu <- mean(unlist(dataset[!names(dataset) %in% stages]), na.rm = TRUE)
         sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
       }
-      qccObject <- qcc::qcc(dataCurrentStage, type ='xbar', plot = FALSE, center = mu, sizes = ncol(dataCurrentStage), std.dev = sigma)
+      qccObject <- qcc::qcc(dataCurrentStage, type ='xbar', plot = FALSE, center = mu, sizes = ncol(dataCurrentStage), std.dev = sigma, nsigmas = nSigmasControlLimits)
       plotStatistic <- qccObject$statistics
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
-      limits <- .controlLimits(mu, sigma, n = n, type = "xbar")
+      limits <- .controlLimits(mu, sigma, n = n, type = "xbar", k = nSigmasControlLimits)
       center <- mu
       UCL <- limits$UCL
       LCL <- limits$LCL
@@ -434,10 +435,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         # use the whole dataset for calculation
         sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = "s", unbiasingConstantUsed = unbiasingConstantUsed)
       }
-      qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage))
+      qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage), nsigmas = nSigmasControlLimits)
       plotStatistic <- qccObject$statistics
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
-      limits <- .controlLimits(sigma = sigma, n = n, type = "s", unbiasingConstantUsed = unbiasingConstantUsed)
+      limits <- .controlLimits(sigma = sigma, n = n, type = "s", unbiasingConstantUsed = unbiasingConstantUsed, k = nSigmasControlLimits)
       if (unbiasingConstantUsed) {
         c4s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[3]))
         center <- sigma * c4s

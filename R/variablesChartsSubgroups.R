@@ -132,7 +132,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                                                 "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat",
                                                 "report", "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle",
                                                 "reportChartName", "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
-                                                "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant"))
+                                                "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas"))
       secondPlotType <- ifelse(options[["chartType"]] == "xBarAndR", "R", "s")
       jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s control chart", secondPlotType), width = 1200, height = 500)
       if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
@@ -148,11 +148,13 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
       # first chart is always xBar-chart, second is either R- or s-chart
       xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
-                                 phase2 = options[["knownParameters"]], phase2Mu = options[["knownParametersMean"]], phase2Sd = options[["knownParametersSd"]],
+                                 nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], phase2 = options[["knownParameters"]],
+                                 phase2Mu = options[["knownParametersMean"]], phase2Sd = options[["knownParametersSd"]],
                                  fixedSubgroupSize = fixedSubgroupSize, warningLimits = options[["warningLimits"]],
                                  xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                  unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
-      secondChart <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType, stages = stages, phase2 = options[["knownParameters"]],
+      secondChart <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,  stages = stages,
+                                   phase2 = options[["knownParameters"]], nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                    phase2Sd = options[["knownParametersSd"]], fixedSubgroupSize = fixedSubgroupSize,
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                    unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
@@ -174,7 +176,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         jaspResults[["report"]]$dependOn(c("report", "manualSubgroupSizeValue","chartType", "variables", "measurementLongFormat",
                                            "manualTicks", 'nTicks',"dataFormat", "subgroup", "reportTitle", "reportMeasurementName",
                                            "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle", "reportChartName",
-                                           "stagesWideFormat", "stagesLongFormat", "xBarAndSUnbiasingConstant"))
+                                           "stagesWideFormat", "stagesLongFormat", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas"))
         jaspResults[["report"]]$position <- 9
         Iplot <- jaspResults[["report"]]
         Iplot[["report"]] <- .CCReport(p1 = xBarChart$plotObject, p2 = secondChart$plotObject, reportTitle = options$reportTitle,
