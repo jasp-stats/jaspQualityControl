@@ -1248,10 +1248,10 @@ doersmGenerateDesign <- function(options) {
 
   p <- ggplot2::ggplot(data.frame(x), ggplot2::aes(x = x)) +
     ggplot2::geom_histogram(binwidth = abs(h$breaks[1] - h$breaks[2])) +
-    ggplot2::labs(y = "Count", x = "Residuals")
+    ggplot2::labs(y = "Count", x = "Residuals") +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
 
-
-  p <- jaspGraphs::themeJasp(p)
   plot$plotObject <- p
 
   if (!ggPlot)
@@ -1283,11 +1283,9 @@ doersmGenerateDesign <- function(options) {
     ggplot2::geom_hline(yintercept = 0, color = "grey", linetype = "dashed") +
 
     ggplot2::scale_x_continuous(name = gettextf("Fitted values"), limits = c(min(xBreaks), max(xBreaks)), breaks = xBreaks) +
-    ggplot2::scale_y_continuous(name = gettextf("Residuals"),     limits = c(min(yBreaks), max(yBreaks)), breaks = yBreaks)
-
-
-
-  p <- jaspGraphs::themeJasp(p)
+    ggplot2::scale_y_continuous(name = gettextf("Residuals"),     limits = c(min(yBreaks), max(yBreaks)), breaks = yBreaks) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
 
   plot$plotObject <- p
 

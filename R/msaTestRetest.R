@@ -124,9 +124,10 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     p <- ggplot2::ggplot() +
       jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[1], group = 1), fill = "red",  size = 4) +
       jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[2], group = 2),fill = "green", shape = 22, size = 4) +
-      ggplot2::scale_y_continuous(name = "Measurements", limits = yLimits, breaks = yBreaks)
-
-    p <- jaspGraphs::themeJasp(p) + ggplot2::theme(legend.position = "right")
+      ggplot2::scale_y_continuous(name = "Measurements", limits = yLimits, breaks = yBreaks) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw() + 
+      ggplot2::theme(legend.position = "right")
 
     plot$plotObject <- p
   }
@@ -193,17 +194,16 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
     p <- ggplot2::ggplot(data = dataset, ggplot2::aes_string(x = measurements[1], y = measurements[2])) +
       jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
-      ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1))
+      ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
+      ggplot2::geom_abline(col = "gray", linetype = "dashed") +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
 
     if (options[["scatterPlotMeasurementFitLine"]])
       p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
 
     if (options[["scatterPlotMeasurementAllValues"]])
       p <- p + ggplot2::geom_jitter(size = 2)
-
-    p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
-
-    p <- jaspGraphs::themeJasp(p)
 
     plot$plotObject <- p
 
