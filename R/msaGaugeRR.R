@@ -629,8 +629,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_boxplot(data = dataset, ggplot2::aes_string(x = operators, y = "Measurement"))  +
-    ggplot2::scale_y_continuous(limits = yLimits)
-  p <- jaspGraphs::themeJasp(p)
+    ggplot2::scale_y_continuous(limits = yLimits) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
 
   if (Type3)
     p <- p + ggplot2::theme(axis.ticks.x = ggplot2::element_blank(), axis.text.x = ggplot2::element_blank()) +
@@ -755,13 +756,13 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(df$Operator2)
   p <- ggplot2::ggplot(data = df, ggplot2::aes(x = Operator2, y = Operator1)) +
     jaspGraphs::geom_point() + ggplot2::scale_x_continuous(name = xlab, breaks = xBreaks, limits = range(c(xBreaks, df$Operator2))) +
-    ggplot2::scale_y_continuous(name = ylab, breaks = yBreaks, limits = range(c(yBreaks, df$Operator1)))
+    ggplot2::scale_y_continuous(name = ylab, breaks = yBreaks, limits = range(c(yBreaks, df$Operator1))) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
   if (options[["scatterPlotFitLine"]])
     p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
   if (options[["scatterPlotOriginLine"]])
     p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
-
-  p <- jaspGraphs::themeJasp(p)
 
   return(p)
 }

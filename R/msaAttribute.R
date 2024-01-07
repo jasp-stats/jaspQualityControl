@@ -427,10 +427,9 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
           jaspGraphs::geom_point() +
           ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10))+
           ggplot2::geom_errorbar(ggplot2::aes(ymin = c(CIWithin$lower),
-                                              ymax = c(CIWithin$upper)))
-
-
-        pw <- jaspGraphs::themeJasp(pw) +
+                                              ymax = c(CIWithin$upper))) +
+          jaspGraphs::geom_rangeframe() +
+          jaspGraphs::themeJaspRaw() +
           ggplot2::ylab("Percent") +
           ggplot2::xlab("Appraiser")
         plotWithin$plotObject <- pw
@@ -446,10 +445,9 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
         jaspGraphs::geom_point() +
         ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10)) +
         ggplot2::geom_errorbar(ggplot2::aes(ymin = c(CIEachVsStandard$lower),
-                                            ymax = c(CIEachVsStandard$upper)))
-
-
-      pvs <- jaspGraphs::themeJasp(pvs) +
+                                            ymax = c(CIEachVsStandard$upper))) +
+        jaspGraphs::geom_rangeframe() +
+        jaspGraphs::themeJaspRaw() +
         ggplot2::ylab("Percent") +
         ggplot2::xlab("Appraiser")
 
@@ -541,8 +539,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
         withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
 
         pw <- ggplot2::ggplot(withinDataframe, ggplot2::aes(x = x, y = y)) + jaspGraphs::geom_point()
-
-        pw <- jaspGraphs::themeJasp(pw) +
           ggplot2::ylab("Percent") +
           ggplot2::xlab("Appraiser") +
           ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10)) +
