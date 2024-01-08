@@ -49,7 +49,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     plot <- createJaspPlot(title = gettext("Control charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
     plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "stagesWideFormat", "stagesLongFormat",
-                    "subgroup", "subgroupSizeType", "measurementsWideFormat", "dataFormat"))
+                    "subgroup", "subgroupSizeType", "measurementsWideFormat", "dataFormat", "groupingVariableMethod"))
     return()
   }
 
@@ -95,7 +95,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (!wideFormat && ready) {
     reshapeOutputList <- .reshapeSubgroupDataLongToWide(dataset, measurements, stages = stages, subgroupVariable = subgroupVariable,
                                                         subgroupSizeType = options[["subgroupSizeType"]],
-                                                        manualSubgroupSizeValue = options[["manualSubgroupSizeValue"]])
+                                                        manualSubgroupSizeValue = options[["manualSubgroupSizeValue"]],
+                                                        subgroupVariableMethod = options[["groupingVariableMethod"]])
     dataset <- reshapeOutputList$dataset
     measurements <- reshapeOutputList$measurements
     axisLabels <- reshapeOutputList$axisLabels
@@ -115,7 +116,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     plot$setError(gettext("All subgroups are of size 1. Variables charts for subgroups cannot be calculated. Use variables charts for individuals."))
     jaspResults[["plot"]] <- plot
     plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "subgroup", "stagesWideFormat", "stagesLongFormat",
-                    "subgroupSizeType"))
+                    "subgroupSizeType", "groupingVariableMethod"))
     return()
   }
 
@@ -132,7 +133,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                                                 "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat",
                                                 "report", "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle",
                                                 "reportChartName", "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
-                                                "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas"))
+                                                "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
+                                                "groupingVariableMethod"))
       secondPlotType <- ifelse(options[["chartType"]] == "xBarAndR", "R", "s")
       jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s control chart", secondPlotType), width = 1200, height = 500)
       if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
@@ -176,7 +178,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         jaspResults[["report"]]$dependOn(c("report", "manualSubgroupSizeValue","chartType", "variables", "measurementLongFormat",
                                            "manualTicks", 'nTicks',"dataFormat", "subgroup", "reportTitle", "reportMeasurementName",
                                            "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle", "reportChartName",
-                                           "stagesWideFormat", "stagesLongFormat", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas"))
+                                           "stagesWideFormat", "stagesLongFormat", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
+                                           "groupingVariableMethod"))
         jaspResults[["report"]]$position <- 9
         Iplot <- jaspResults[["report"]]
         Iplot[["report"]] <- .CCReport(p1 = xBarChart$plotObject, p2 = secondChart$plotObject, reportTitle = options$reportTitle,

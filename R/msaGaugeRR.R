@@ -901,16 +901,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(matrixPlot)
 }
 
-.ggplotWithText <- function(text){
-  nText <- length(text)
-  annotation <- data.frame(x = rep(1, nText), y = nText:1, label = text)
-  p <- ggplot2::ggplot() + ggplot2::theme_void() +
-    ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 5) +
-    ggplot2::scale_y_continuous(breaks = 0:nText, limits = c(0, nText))
-  return(p)
-}
-
-
 .ssPart <- function(dataset, operators, parts, measurements){
   nOperator <- length(unique(dataset[[operators]]))
   nReplicates <- table(dataset[parts])[1] / nOperator

@@ -125,7 +125,7 @@ Form
 			name:								"subgroupSizeType"
 			title: 								qsTr("Specify subgroups")
 			id:									subgroupSizeType
-			visible:							dataFormat.currentValue == "longFormat"							
+			visible:							dataFormat.currentValue == "longFormat"
 
 			RadioButton
 			{
@@ -150,10 +150,20 @@ Form
 			{
 				value: 							"groupingVariable"
 				label: 							qsTr("Through grouping variable")
+
+				DropDown
+				{
+					name: 					"groupingVariableMethod"
+					id: 					groupingVariable
+					label: 					"Grouping method"
+					values: 
+					[
+						{ label: qsTr("Subgroup value change"),			value: "newLabel"},
+						{ label: qsTr("Same subgroup value"),			value: "sameLabel"}
+					]
+					indexDefaultValue: 0
+				}
 			}
-
-				
-
 		}
 
 		RadioButtonGroup

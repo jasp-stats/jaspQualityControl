@@ -20,6 +20,7 @@ Data can be in the form of all observations in one column ("Single column") or a
 ### Specifying Subgroups in "Column" Format
 -------
 - Through grouping variable: a single-column subgroup variable is specified that assigns each observation to a subgroup.
+    - Grouping method:  if identical values of the subgroup variable are not adjacent in the dataset (top to bottom), there are two methods to handle this. If the grouping method is "Subgroup value change", only series of identical and adjacent subgroup values form a group. If the grouping method is "Same subgroup value", all identical subgroup values form a group, regardless of their adjacency. For instance, if the values of the subgroup variable are [A, A, B, B, A], the method "Subgroup value change" would yield three groups: [A, A], [B, B] and [A]. The method "Same subgroup value" would yield two groups, [A, A, A] and [B, B].
 - Manual subgroup size: the observations are assigned in the order of appearence (from top to bottom) to subgroups of the specified size. If the number of observations cannot be equally divided into subgroups of the specified size, the last subgroup has the size of the remaining observations.
 
 ### Handling Unequal Subgroup Sizes
