@@ -11,8 +11,10 @@
                                            measurements,
                                            stages = "",
                                            subgroupVariable = "",
-                                           subgroupSizeType = "manual",
-                                           manualSubgroupSizeValue = 5) {
+                                           subgroupSizeType = c("manual", "groupingVariable"),
+                                           manualSubgroupSizeValue = 5,
+                                           subgroupVariableMethod = c("sameLabel", "newLabel")) {
+  subgroupSizeType <- match.arg(subgroupSizeType)
   # Rearrange data if not already wide format (one group per row)
   # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
   if (subgroupSizeType == "manual") {
@@ -35,19 +37,39 @@
     if (stages != "") {
       dataset[[stages]] <- stagesPerSubgroup
     }
-  } else {
+  } else if (subgroupSizeType == "groupingVariable") {
+    subgroupVariableMethod <- match.arg(subgroupVariableMethod)
     subgroups <- dataset[[subgroupVariable]]
     subgroups <- na.omit(subgroups)
-    # add sequence of occurence to allow pivot_wider
-    if (stages != "") {
-      # Only take the first defined stage of each subgroup, to avoid multiple stages being defined
-      stagesPerSubgroup <- dataset[[stages]][match(unique(subgroups), subgroups)]
+    if (subgroupVariableMethod == "sameLabel") {
+      if (stages != "") {
+        # Only take the first defined stage of each subgroup, to avoid multiple stages being defined
+        stagesPerSubgroup <- dataset[[stages]][match(unique(subgroups), subgroups)]
+      }
+      # add sequence of occurence to allow pivot_wider
+      occurenceVector <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
+      dataset$occurence <- occurenceVector
+      # transform into one group per row
+      dataset <- tidyr::pivot_wider(data = dataset[c(measurements, subgroupVariable, "occurence")],
+                                    values_from = tidyr::all_of(measurements), names_from = occurence)
+    } else if (subgroupVariableMethod == "newLabel") {
+      runLengthVector <- rle(as.character(subgroups))
+      occurenceVector <- c(unlist(sapply(runLengthVector$lengths, seq_len)))
+      idVector <- seq_len(length(runLengthVector$lengths))
+      newSubgroupsPosition <- cumsum(runLengthVector$lengths) - (runLengthVector$lengths - 1)
+      subgroupVector <- subgroups[newSubgroupsPosition]
+      if (stages != "") {
+        # Only take the first defined stage of each subgroup, to avoid multiple stages being defined
+        stagesPerSubgroup <- dataset[[stages]][newSubgroupsPosition]
+      }
+
+      dataset$occurence <- occurenceVector
+      dataset$identifier <- c(unlist(sapply(idVector, function(x) rep(idVector[x], runLengthVector$lengths[x]))))
+      dataset <- tidyr::pivot_wider(data = dataset[c(measurements, "identifier", "occurence")],
+                                    values_from = tidyr::all_of(measurements), names_from = occurence)
+      dataset <- dataset[ ,colnames(dataset) != "identifier"]
+      dataset[[subgroupVariable]] <- subgroupVector
     }
-    occurenceVector <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
-    dataset$occurence <- occurenceVector
-    # transform into one group per row
-    dataset <- tidyr::pivot_wider(data = dataset[c(measurements, subgroupVariable, "occurence")],
-                                  values_from = tidyr::all_of(measurements), names_from = occurence)
     # arrange into dataframe
     dataset <- as.data.frame(dataset)
     measurements <- as.character(unique(occurenceVector))
@@ -64,6 +86,28 @@
               xAxisTitle = xAxisTitle))
 }
 
+
+#### TESTING CODE
+#bunchOfText <- c("Date: 12.02.2000", "Misc: A comment", "Name: John Doe", "Reported by: Also by John DoE", "Title: The Report")
+
+
+######
+
+# .qcReport <- function(text, plots, tables) {
+#   .ggplotWithText(text = bunchOfText)
+#
+#   ?jaspGraphs::ggMatrixPlot()
+# }
+
+.ggplotWithText <- function(text){
+  nText <- length(text)
+  annotation <- data.frame(x = rep(0, nText), y = nText:1, label = text)
+  p <- ggplot2::ggplot() + ggplot2::theme_void() +
+    ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 5) +
+    ggplot2::scale_x_continuous(limits = c(0)) +
+    ggplot2::scale_y_continuous(limits = c(0, nText))
+  return(p)
+}
 
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
