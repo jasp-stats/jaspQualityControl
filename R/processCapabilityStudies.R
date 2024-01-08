@@ -82,7 +82,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!wideFormat && ready) {
     reshapeOutputList <- .reshapeSubgroupDataLongToWide(dataset, measurements, stages = stages, subgroupVariable = subgroupVariable,
                                                         subgroupSizeType = options[["subgroupSizeType"]],
-                                                        manualSubgroupSizeValue = options[["manualSubgroupSizeValue"]])
+                                                        manualSubgroupSizeValue = options[["manualSubgroupSizeValue"]],
+                                                        subgroupVariableMethod = options[["groupingVariableMethod"]])
     dataset <- reshapeOutputList$dataset
     measurements <- reshapeOutputList$measurements
     axisLabels <- reshapeOutputList$axisLabels
@@ -131,7 +132,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                            na.omit(dataset[[subgroupVariable]]), axisLabels)
     jaspResults[["pcReport"]]$dependOn(c("report", "measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
                                          "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                         "controlLimitsNumberOfSigmas"))
+                                         "controlLimitsNumberOfSigmas", "groupingVariableMethod"))
   } else {
     # X-bar and R Chart OR ImR OR X-bar and mR Chart
     if((options[["controlChartType"]] == "xBarR" | options[["controlChartType"]] == "xBarMR"  | options[["controlChartType"]] == "xBarS") &&
@@ -153,7 +154,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["xBar"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
                                        "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
                                        "subgroupSizeUnequal", "controlChartSdUnbiasingConstant", "controlChart",
-                                       "controlLimitsNumberOfSigmas"))
+                                       "controlLimitsNumberOfSigmas", "groupingVariableMethod"))
       jaspResults[["xBar"]]$position <- 1
 
 
@@ -191,7 +192,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR control chart"))
       jaspResults[["xmr"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
                                       "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                      "subgroupSizeUnequal", "controlChart", "controlLimitsNumberOfSigmas"))
+                                      "subgroupSizeUnequal", "controlChart", "controlLimitsNumberOfSigmas", "groupingVariableMethod"))
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
@@ -247,7 +248,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                  "dataFormat", "processCapabilityPlot", "processCapabilityTable", "manualSubgroupSize", "report",
                                  "stagesLongFormat", "stagesWideFormat","controlChartSdUnbiasingConstant", "lowerSpecificationLimitBoundary",
                                  "upperSpecificationLimitBoundary", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
-                                 "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdEstimationMethodMeanMovingRangeLength"))
+                                 "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdEstimationMethodMeanMovingRangeLength",
+                                 "groupingVariableMethod"))
   container$position <- 4
   jaspResults[["capabilityAnalysis"]] <- container
 
@@ -1643,7 +1645,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container <- createJaspContainer(gettext("Probability table and plot"))
   container$dependOn(options = c("measurementsWideFormat", "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution",
                                  "probabilityPlotGridLines", "measurementLongFormat","subgroup", "report", "stagesLongFormat",
-                                 "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue"))
+                                 "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue", "groupingVariableMethod"))
   container$position <- 3
   jaspResults[["probabilityContainer"]] <- container
 
@@ -2008,7 +2010,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
                             "report", "measurementLongFormat", "manualSubgroupSizeValue", "subgroup", 'nullDistribution',
                             "stagesLongFormat", "stagesWideFormat", "histogramBinBoundaryDirection", "subgroupSizeType",
-                            "manualSubgroupSizeValue"))
+                            "manualSubgroupSizeValue", "groupingVariableMethod"))
   plot$position <- 2
   jaspResults[["histogram"]] <- plot
   if (!ready)
