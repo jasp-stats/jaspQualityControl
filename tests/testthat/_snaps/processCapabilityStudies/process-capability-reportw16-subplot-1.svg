@@ -18,6 +18,7 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<rect x='0.00' y='0.00' width='720.00' height='576.00' style='stroke-width: 0.75; stroke: none;' />
 </g>
 <defs>
   <clipPath id='cpMC4wMHw3MjAuMDB8MTcuMzB8NTc2LjAw'>
@@ -25,10 +26,8 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MTcuMzB8NTc2LjAw)'>
-<text x='360.00' y='47.59' text-anchor='middle' style='font-size: 14.23px; font-family: sans;' textLength='189.82px' lengthAdjust='spacingAndGlyphs'>Process name: Process name</text>
-<text x='360.00' y='301.55' text-anchor='middle' style='font-size: 14.23px; font-family: sans;' textLength='162.95px' lengthAdjust='spacingAndGlyphs'>Date of study: 01.01.2020</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-<text x='0.00' y='14.56' style='font-size: 13.20px; font-family: sans;' textLength='93.92px' lengthAdjust='spacingAndGlyphs'>title21-subplot-1</text>
+<text x='0.00' y='14.56' style='font-size: 13.20px; font-family: sans;' textLength='230.39px' lengthAdjust='spacingAndGlyphs'>process-capability-reportW16-subplot-1</text>
 </g>
 </svg>

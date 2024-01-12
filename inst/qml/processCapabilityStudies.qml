@@ -506,59 +506,158 @@ Form
 		{
 			name: "report"
 			label: qsTr("Show Report")
-			columns: 2
+			columns: 1
 			
 			
-						CheckBox
+			CheckBox
 			{
 				name:		"reportMetaData"
 				label:		qsTr("Show report metadata")
 				checked:	true
-				columns: 1
+				columns: 2
 
-				TextField
+				CheckBox
 				{
-					name: 					"reportTitle"
-					label:					qsTr("Title")
-					id:						reportTitle
-					placeholderText:		qsTr("Measurement")
-					fieldWidth:				100
+					name:					"reportTitle"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name: 					"reportTitleText"
+						label:					qsTr("Title")
+						id:						reportTitleText
+						placeholderText:		qsTr("Process Capability Report")
+						fieldWidth:				100
+					}
 				}
 
-				TextField
+				CheckBox
 				{
-					name:					"reportProcessName"
-					label:					qsTr("Process Name")
-					id:						reportProcessName
-					placeholderText:		qsTr("Name")
-					fieldWidth:				100
+					name:					"reportLocation"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name:					"reportLocationText"
+						label:					qsTr("Location")
+						id:						reportLocationText
+						placeholderText:		qsTr("Location")
+						fieldWidth:				100
+					}
 				}
 
-				TextField
+				CheckBox
+				{
+					name:					"reportLine"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name:					"reportLineText"
+						label:					qsTr("Line")
+						id:						reportLineText
+						placeholderText:		qsTr("Line")
+						fieldWidth:				100
+					}
+				}
+
+				CheckBox
+				{
+					name:					"reportMachine"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name:					"reportMachineText"
+						label:					qsTr("Machine")
+						id:						reportMachineText
+						placeholderText:		qsTr("Machine")
+						fieldWidth:				100
+					}
+				}
+
+				CheckBox
+				{
+					name:					"reportVariable"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name:					"reportVariableText"
+						label:					qsTr("Variable")
+						id:						reportVariableText
+						placeholderText:		qsTr("Variable")
+						fieldWidth:				100
+					}
+				}
+
+				CheckBox
+				{
+					name:					"reportProcess"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name:					"reportProcessText"
+						label:					qsTr("Process")
+						id:						reportProcessText
+						placeholderText:		qsTr("Name")
+						fieldWidth:				100
+					}
+				}
+
+				CheckBox
 				{
 					name:					"reportDate"
-					label:					qsTr("Date")
-					id:						reportDate
-					placeholderText:		qsTr("Date")
-					fieldWidth:				100
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name:					"reportDateText"
+						label:					qsTr("Date")
+						id:						reportDateText
+						placeholderText:		qsTr("Date")
+						fieldWidth:				100
+					}
 				}
 
-				TextField
+				CheckBox
 				{
 					name:					"reportReportedBy"
-					label:					qsTr("Reported by")
-					id:						reportReportedBy
-					placeholderText:		qsTr("Name")
-					fieldWidth:				100
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name:					"reportReportedByText"
+						label:					qsTr("Reported by")
+						id:						reportReportedByText
+						placeholderText:		qsTr("Name")
+						fieldWidth:				100
+					}
 				}
 
-				TextField
+				CheckBox
 				{
-					name:					"reportMiscellaneous"
-					label:					qsTr("Misc")
-					id:						reportMiscellaneous
-					placeholderText:		qsTr("Miscellaneous")
-					fieldWidth:				100
+					name:					"reportConclusion"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name:					"reportConclusionText"
+						label:					qsTr("Conclusion")
+						id:						reportConclusionText
+						placeholderText:		qsTr("Conclusion")
+						fieldWidth:				100
+					}
 				}
 			}
 		
