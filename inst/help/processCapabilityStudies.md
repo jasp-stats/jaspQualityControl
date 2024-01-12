@@ -56,7 +56,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
     - Display grid lines: add grid lines to the probability plot. 
 
 ### Advanced Options 
-    - Rank method: the method used to calculate the rank of the data, displayed in the probability plot (Benard's median rank method is the most commonly used method, and is very close to the exact method).
+- Rank method: the method used to calculate the rank of the data, displayed in the probability plot (Benard's median rank method is the most commonly used method, and is very close to the exact method).
 
 ## Output
 -------

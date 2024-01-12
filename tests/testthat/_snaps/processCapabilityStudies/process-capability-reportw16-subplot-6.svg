@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' data-engine-version='2.0' width='720.00pt' height='576.00pt' viewBox='0 0 720.00 576.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA='>
+    <rect x='0.00' y='0.00' width='720.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+</g>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MTcuMzB8NTc2LjAw'>
+    <rect x='0.00' y='17.30' width='720.00' height='558.70' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MTcuMzB8NTc2LjAw)'>
+<rect x='32.73' y='42.70' width='654.55' height='507.91' style='stroke-width: 1.49; stroke-linecap: butt; stroke-linejoin: miter; fill: #D3D3D3;' />
+<text x='62.48' y='80.32' style='font-size: 17.07px; font-family: sans;' textLength='74.04px' lengthAdjust='spacingAndGlyphs'>Location: </text>
+<text x='62.48' y='143.81' style='font-size: 17.07px; font-family: sans;' textLength='41.76px' lengthAdjust='spacingAndGlyphs'>Line: </text>
+<text x='62.48' y='207.29' style='font-size: 17.07px; font-family: sans;' textLength='74.03px' lengthAdjust='spacingAndGlyphs'>Machine: </text>
+<text x='62.48' y='270.78' style='font-size: 17.07px; font-family: sans;' textLength='72.12px' lengthAdjust='spacingAndGlyphs'>Variable: </text>
+<text x='62.48' y='334.27' style='font-size: 17.07px; font-family: sans;' textLength='180.33px' lengthAdjust='spacingAndGlyphs'>Process: Process name</text>
+<text x='62.48' y='397.76' style='font-size: 17.07px; font-family: sans;' textLength='131.00px' lengthAdjust='spacingAndGlyphs'>Date: 01.01.2020</text>
+<text x='62.48' y='461.25' style='font-size: 17.07px; font-family: sans;' textLength='171.76px' lengthAdjust='spacingAndGlyphs'>Reported by: Mrs. Doe</text>
+<text x='62.48' y='524.73' style='font-size: 17.07px; font-family: sans;' textLength='167.97px' lengthAdjust='spacingAndGlyphs'>Conclusion: Comment</text>
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<text x='0.00' y='14.56' style='font-size: 13.20px; font-family: sans;' textLength='230.39px' lengthAdjust='spacingAndGlyphs'>process-capability-reportW16-subplot-6</text>
+</g>
+</svg>

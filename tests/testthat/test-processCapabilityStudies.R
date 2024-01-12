@@ -1563,19 +1563,19 @@ options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 6
 options$upperSpecificationLimitValue <- 12
 options$report <- TRUE
-options$reportDate <- "01.01.2020"
-options$reportMiscellaneous <- "Comment"
-options$reportProcessName <- "Process name"
-options$reportReportedBy <- "Mrs. Doe"
-options$reportTitle <- "Title"
+options$reportDateText <- "01.01.2020"
+options$reportConclusionText <- "Comment"
+options$reportProcessText <- "Process name"
+options$reportReportedByText <- "Mrs. Doe"
+options$reportTitleText <- "Title"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
 
 test_that("LF21 (Normal) Basic test of report functionality", {
-  plotName <- results[["results"]][["pcReport"]][["data"]]
+  plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "title21")
+  jaspTools::expect_equal_plots(testPlot, "process-capability-report21")
 })
 
 # Wide / Row format ####
@@ -2603,17 +2603,17 @@ options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 6
 options$upperSpecificationLimitValue <- 12
 options$report <- TRUE
-options$reportDate <- "01.01.2020"
-options$reportMiscellaneous <- "Comment"
-options$reportProcessName <- "Process name"
-options$reportReportedBy <- "Mrs. Doe"
-options$reportTitle <- "Title"
+options$reportDateText <- "01.01.2020"
+options$reportConclusionText <- "Comment"
+options$reportProcessText <- "Process name"
+options$reportReportedByText <- "Mrs. Doe"
+options$reportTitleText <- "Title"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
 
 test_that("WF16 (Normal) Basic test of report functionality", {
-  plotName <- results[["results"]][["pcReport"]][["data"]]
+  plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "titleW16")
+  jaspTools::expect_equal_plots(testPlot, "process-capability-reportW16")
 })
