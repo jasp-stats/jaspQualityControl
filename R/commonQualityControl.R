@@ -88,26 +88,162 @@
 
 
 #### TESTING CODE
-#bunchOfText <- c("Date: 12.02.2000", "Misc: A comment", "Name: John Doe", "Reported by: Also by John DoE", "Title: The Report")
+# bunchOfText <- c("Date: 12.02.2000", "Misc: A comment", "Name: John Doe", "Reported by: Also by John Doe", "Title: The Report")
+# nText <- length(bunchOfText)
+# sapply(bunchOfText, strsplit, "(?<=:)", perl = TRUE)
+#
+# annotation <- data.frame(x = rep(0, nText), y = (5:1)[1:nText], label = bunchOfText)
 
-
+# ggplot2::ggplot() + ggplot2::theme_void() +
+#   ggplot2::annotate("rect", xmin = -.05, xmax = 1.05, ymin = 1 - .5, ymax = 5 + .5, fill = 'gray') +
+#   ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 5, hjust = 0) +
+#   ggplot2::scale_x_continuous(limits = c(-.05, 1.05)) +
+#   ggplot2::scale_y_continuous(limits = c(1 - .5,  5 + .5))
+#
+#
+# text <- c("Date: 12.02.2000", "Misc: A comment", "Name: John Doe", "Reported by: Also by John Doe", "Title: The Report")
+#
+# plots <- list()
+# plots[[1]] <- ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "1", size = 10)
+# plots[[2]] <- ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "2", size = 10)
+# plots[[3]] <- ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "3", size = 10)
+# plots[[4]] <- ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "4", size = 10)
+# plots[[5]] <- ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "5", size = 10)
+# plots[[6]] <- list(ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "6", size = 10),
+#                    ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "7", size = 10))
+#
+#
+# tables <- list(list(data.frame(x1 = 1:3, x2 = 1:3), data.frame(x1 = 1:3, x2 = 1:3)), data.frame(x1 = 1:3, x2 = 1:3))
+#
+#
+#
+# .qcReport(text, plots, tables)
 ######
 
-# .qcReport <- function(text, plots, tables) {
-#   .ggplotWithText(text = bunchOfText)
-#
-#   ?jaspGraphs::ggMatrixPlot()
-# }
+.qcReport <- function(text = NULL, # a string or vector of strings,
+                      plots, # a list of ggplots. If the plots should stay on top of each other, use a nested list.
+                      tables = NULL, # a list of dataframes. If tables should be in the same plot, use a nested list.
+                      textMaxRows = 5,
+                      tableTitles = "", # a list with the same layout as the tables list
+                      reportTitle = "") {
+  lengthAllElements <- length(plots) + length(tables) + (!is.null(text)) + sum(!sapply(plots, ggplot2::is.ggplot)) # length of plots, tables, one for the text and addition tables of nested plots
+  lengthAllElements <- if (lengthAllElements %% 2 != 0) lengthAllElements + 1 else lengthAllElements # always need even number
+  plotList <- list()
+  plotList[1:lengthAllElements] <- NA
+  if (!is.null(text))
+    plotList[[2]] <- .ggplotWithText(text = text, maxRows = textMaxRows)
+  for (i in seq_along(plots)) {
+    currentPlot <- plots[[i]]
+    if (ggplot2::is.ggplot(currentPlot)) {
+      plotPos <- min(.indicesOfNAinList(plotList)) # smallest empty index
+      plotList[[plotPos]] <- currentPlot
+    } else { # it should be a list of ggplots
+      plot1pos <- min(.indicesOfNAinList(plotList)) # smallest empty index
+      plotList[[plot1pos]] <- currentPlot[[1]]
+      plotList[[plot1pos + 2]] <- currentPlot[[2]] # plus two, so it's always below plot 1
+    }
+  }
+  for (j in seq_along(tables)) {
+    currentTable <- tables[[j]]
+    currentTitle <- if (!identical(tableTitles, "")) tableTitles[[j]] else ""
+    tablePlot <- .ggplotTable(currentTable, currentTitle)
+    tablePos <- min(.indicesOfNAinList(plotList)) # smallest empty index
+    plotList[[tablePos]] <- tablePlot
+  }
 
-.ggplotWithText <- function(text){
+  # If there are still NA in the list, fill them with empty plots
+  indicesRemainingNA <- .indicesOfNAinList(plotList)
+  if (!is.null(indicesRemainingNA)) {
+    for (k in indicesRemainingNA)
+      plotList[[k]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  }
+
+  plotList <- matrix(plotList, ncol = 2, byrow = TRUE)
+  topLabel <- if (!identical(reportTitle, "")) c("", reportTitle) else NULL
+  plot <- jaspGraphs::ggMatrixPlot(plotList = plotList, topLabels = topLabel)
+  return(plot)
+}
+
+.indicesOfNAinList <- function(list) {
+  nElements <- length(list)
+  indices <- c()
+  for (i in seq_len(nElements)) {
+    currentElement <- list[i]
+    if (is.na(currentElement))
+      indices <- c(indices, i)
+  }
+  return(indices)
+}
+
+.ggplotWithText <- function(text, maxRows = 5) {
   nText <- length(text)
-  annotation <- data.frame(x = rep(0, nText), y = nText:1, label = text)
+  annotation <- data.frame(x = rep(0, nText), y = (maxRows:1)[1:nText], label = text)
   p <- ggplot2::ggplot() + ggplot2::theme_void() +
-    ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 5) +
-    ggplot2::scale_x_continuous(limits = c(0)) +
-    ggplot2::scale_y_continuous(limits = c(0, nText))
+    ggplot2::annotate("rect", xmin = -.05, xmax = 1.05, ymin = 1 - .5, ymax = maxRows + .5, fill = 'lightgray', color = "black", linewidth = .7) +
+    ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 6, hjust = 0) +
+    ggplot2::scale_x_continuous(limits = c(-.05, 1.05)) +
+    ggplot2::scale_y_continuous(limits = c(1 - .5,  maxRows + .5))
   return(p)
 }
+
+.ggplotTable <- function(tableObject, titles = "") {
+  if (!is.data.frame(tableObject)) { # then it should be a list
+    nTables <- length(tableObject)
+    df <- data.frame(matrix(ncol = 3, nrow = 0))
+    colnames(df) <- c("x", "y", "tb")
+    tibble <- tibble::as_tibble(df)
+    titleDf <- data.frame(matrix(ncol = 3, nrow = 0))
+    colnames(titleDf) <- c("x", "y", "label")
+    for (i in seq_along(tableObject)) {
+      yPosTable <- if (i == 1) 1 else as.numeric(tibble[i-1,2]) - .06 - nrow(tableObject[[i - 1]]) * .06
+      if (!identical(titles, "")) {
+        yPosTitle <- yPosTable
+        yPosTable <- yPosTable - .05 # distance between table and title
+        titleDf <- rbind(titleDf, data.frame(x = 0, y = yPosTitle, label = titles[[i]]))
+      }
+      tibble <- rbind(tibble, tibble::tibble("x" = 0, "y" = yPosTable, tb = tableObject[i]))
+    }
+  } else {
+    yPosTitle <- 1
+    if (!identical(titles, "")) {
+      titleDf <- data.frame(x = 0, y = 1 , label = titles)
+      yPosTitle <- yPosTitle - .05
+    }
+    tibble <- tibble::tibble(x = 0, y = yPosTitle, tb = list(tableObject))
+
+  }
+  p <- ggplot2::ggplot() +
+    ggplot2::theme_void() +
+    ggpp::geom_table(data = tibble, ggplot2::aes(x = x, y = y, label = tb),
+                     table.colnames = TRUE, size = 6, hjust = 0, vjust = 1) +
+    ggplot2::scale_x_continuous(limits = c(0, 1)) +
+    ggplot2::scale_y_continuous(limits = c(0, 1))
+  if (!identical(titles, ""))
+    p <- p + ggplot2::geom_text(titleDf, mapping = ggplot2::aes(x = x, y = y, label = label), hjust = 0, size = 7, vjust = 1)
+  return(p)
+}
+
+
+ggplotTable <- function(dataframe, displayColNames = FALSE){
+  df <- tibble::tibble(dataframe)
+  p <- ggplot2::ggplot() +
+    ggplot2::theme_void() +
+    ggpp::geom_table(data = data.frame(x = 1, y = 1), ggplot2::aes(x = x, y = y), label = list(df),
+                     table.colnames = displayColNames, size = 7)
+
+  return(p)
+}
+
+
+# .ggplotWithText <- function(text){
+#   nText <- length(text)
+#   annotation <- data.frame(x = rep(0, nText), y = nText:1, label = text)
+#   p <- ggplot2::ggplot() + ggplot2::theme_void() +
+#     ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 5) +
+#     ggplot2::scale_x_continuous(limits = c(0)) +
+#     ggplot2::scale_y_continuous(limits = c(0, nText))
+#   return(p)
+# }
 
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 

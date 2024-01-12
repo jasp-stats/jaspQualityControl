@@ -122,17 +122,130 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-  # Report
   if (options[["report"]]) {
-    if (is.null(jaspResults[["pcReport"]])) {
-      jaspResults[["pcReport"]] <- createJaspContainer(gettext("Report"))
-      jaspResults[["pcReport"]]$position <- 6
+    nElements <- sum(options[["reportProcessStability"]]*2, options[["reportProcessCapabilityPlot"]], options[["reportProbabilityPlot"]],
+      options[["reportProcessCapabilityTables"]], options[["reportMetaData"]])
+    plotHeight <- ceiling(nElements/2) * 500
+    reportPlot <- createJaspPlot(title = gettext("Process Capability Report"), width = 1250, height = plotHeight)
+    jaspResults[["report"]] <- reportPlot
+    jaspResults[["report"]]$dependOn(c("report", "measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
+                                       "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
+                                       "controlLimitsNumberOfSigmas", "groupingVariableMethod", "reportProcessStability",
+                                       "reportProcessCapabilityPlot", "reportProbabilityPlot", "reportProcessCapabilityTables",
+                                       "upperSpecificationLimit", "lowerSpecificationLimit", "subgroupSizeUnequal", "fixedSubgroupSizeValue",
+                                       "capabilityStudyType", "nonNormalDistribution", "nonNormalMethod", "lowerSpecificationLimitValue",
+                                       "lowerSpecificationLimitBoundary", "target", "targetValue", "reportMetaData",
+                                       "upperSpecificationLimitValue", "upperSpecificationLimitBoundary", "processCapabilityPlotBinNumber",
+                                       "processCapabilityPlotDistributions", "processCapabilityPlotSpecificationLimits", "xBarMovingRangeLength",
+                                       "xmrChartMovingRangeLength", "xmrChartSpecificationLimits","probabilityPlotRankMethod",
+                                       "histogramBinBoundaryDirection", "nullDistribution", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
+                                       "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdUnbiasingConstant",
+                                       "subgroup", "reportTitle", "reportTitleText", "reportLocation", "reportLocationText",
+                                       "reportLine", "reportLineText", "reportMachine", "reportMachineText", "reportVariable",
+                                       "reportVariableText", "reportProcess", "reportProcessText", "reportDate", "reportDateText",
+                                       "reportReportedBy", "reportReportedByText", "reportConclusion", "reportConclusionText"))
+
+    if((!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]) && options[["reportProcessCapabilityTables"]]) {
+      reportPlot$setError(gettext("No specification limits set."))
+      return()
     }
-    jaspResults[["pcReport"]] <- .pcReport(dataset, measurements, parts, operators, options, ready, jaspResults, wideFormat,
-                                           na.omit(dataset[[subgroupVariable]]), axisLabels)
-    jaspResults[["pcReport"]]$dependOn(c("report", "measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
-                                         "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                         "controlLimitsNumberOfSigmas", "groupingVariableMethod"))
+
+    if (!options[["reportProcessStability"]] && !options[["reportProcessCapabilityPlot"]] && !options[["reportProbabilityPlot"]] &&
+        !options[["reportProcessCapabilityTables"]]) {
+      reportPlot$setError(gettext("No report components selected."))
+      return()
+    }
+
+    if(!ready)
+      return()
+
+
+    # Plot meta data
+    if (options[["reportTitle"]] ) {
+      title <- if (options[["reportTitleText"]] == "") gettext("Process Capability Report") else options[["reportTitleText"]]
+    } else {
+      title <- ""
+    }
+
+    if (options[["reportMetaData"]]) {
+      text <- c()
+      text <- if (options[["reportLocation"]]) c(text, gettextf("Location: %s", options[["reportLocationText"]])) else text
+      text <- if (options[["reportLine"]]) c(text, gettextf("Line: %s", options[["reportLineText"]])) else text
+      text <- if (options[["reportMachine"]]) c(text, gettextf("Machine: %s", options[["reportMachineText"]])) else text
+      text <- if (options[["reportVariable"]]) c(text, gettextf("Variable: %s", options[["reportVariableText"]])) else text
+      text <- if (options[["reportProcess"]]) c(text, gettextf("Process: %s", options[["reportProcessText"]])) else text
+      text <- if (options[["reportDate"]]) c(text, gettextf("Date: %s", options[["reportDateText"]])) else text
+      text <- if (options[["reportReportedBy"]]) c(text, gettextf("Reported by: %s", options[["reportReportedByText"]])) else text
+      text <- if (options[["reportConclusion"]]) c(text, gettextf("Conclusion: %s", options[["reportConclusionText"]])) else text
+    } else {
+      text <- NULL
+    }
+
+    plots <- list()
+    tables <- list()
+    plotIndexCounter <- 1
+    if (options[["reportProcessStability"]]) {
+      controlCharts <- list()
+      # X-bar and second chart OR ImR Chart
+      if (options[["controlChartType"]] == "xmr") {
+        controlCharts[[1]] <- .controlChart(dataset = dataset[measurements], plotType = "I",
+                                            nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                                            xAxisLabels = seq_along(unlist(dataset[measurements])))$plotObject
+        controlCharts[[2]] <- .controlChart(dataset = dataset[measurements], plotType = "MR",
+                                            xAxisLabels = seq_along(unlist(dataset[measurements])),
+                                            nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                                            movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
+      } else {
+        secondPlotType <- switch(options[["controlChartType"]],
+                                 "xBarR" = "R",
+                                 "xBarS" = "s",
+                                 "xBarMR" = "MMR")
+        sdType <- switch(options[["controlChartType"]],
+                         "xBarR" = "r",
+                         "xBarS" = "s",
+                         "xBarMR" = "r")
+        fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
+        unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+        controlCharts[[1]] <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
+                                            nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                                            xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
+                                            unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
+        controlCharts[[2]] <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels,
+                                            nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                                            tableLabels = axisLabels, movingRangeLength = options[["xBarMovingRangeLength"]],
+                                            fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
+      }
+      plots[[plotIndexCounter]] <- controlCharts
+      plotIndexCounter <- plotIndexCounter + 1
+    }
+    if (options[["reportProcessCapabilityPlot"]]) {
+      distribution <- if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") "normal" else options[["nonNormalDistribution"]]
+      plots[[plotIndexCounter]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution)[[1]]
+      plotIndexCounter <- plotIndexCounter + 1
+    }
+    if (options[["reportProbabilityPlot"]]) {
+      plots[[plotIndexCounter]] <- .qcProbabilityPlotObject(options, dataset, measurements, stages)[[1]]
+      plotIndexCounter <- plotIndexCounter + 1
+    }
+    if (options[["reportProcessCapabilityTables"]]) {
+      if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") {
+        processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
+        potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
+        overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, stages, returnOverallCapDataframe = TRUE)
+        performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, stages, returnPerformanceDataframe = TRUE)
+        tables[[1]] <- list(potentialWithinDF, overallCapDF, performanceDF, processSummaryDF)
+        tableTitles <- list(list("Process capability (within)", "Process performance (total)", "Non-conformance statistics", "Process summary"))
+      } else {
+        processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE)
+        overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnCapabilityDF = TRUE)
+        performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnPerformanceDF = TRUE)
+        tables[[1]] <- list(overallCapDF, performanceDF, processSummaryDF)
+        tableTitles <- list(list("Process performance (total)", "Non-conformance statistics", "Process summary"))
+      }
+    }
+    reportPlotObject <- .qcReport(text = text, plots = plots, tables = tables, textMaxRows = 8, tableTitles = tableTitles,
+                                  reportTitle = title)
+    reportPlot$plotObject <- reportPlotObject
   } else {
     # X-bar and R Chart OR ImR OR X-bar and mR Chart
     if((options[["controlChartType"]] == "xBarR" | options[["controlChartType"]] == "xBarMR"  | options[["controlChartType"]] == "xBarS") &&
@@ -412,9 +525,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     n <- as.integer(length(allData))
     sd <- sd(allData, na.rm = TRUE)
     valueVector <- c(lsl, target, usl, n, mean, sd, sdw)
-    df <- data.frame(sources = sourceVector,
-                     values = round(as.numeric(valueVector), nDecimals))
-    return(df)
+    df <- t(data.frame(round(as.numeric(valueVector), nDecimals)))
+    colnames(df) <- sourceVector
+    return(as.data.frame(df))
   }
   container[["processSummaryTable"]] <- table
 }
@@ -773,9 +886,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["upperSpecificationLimit"]])
       valueVector <- c(valueVector, tableList[["cpu"]])
     valueVector <- c(valueVector, tableList[["cpk"]])
-    df <- data.frame(sources = sourceVector,
-                     values = valueVector)
-    return(df)
+    df <- t(data.frame(valueVector))
+    colnames(df) <- sourceVector
+    return(as.data.frame(df))
   }
   container[["capabilityTableWithin"]] <- table
 }
@@ -993,9 +1106,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     valueVector1 <- c(valueVector1, tableList[["ppk"]])
     if (options[["target"]])
       valueVector1 <- c(valueVector1, tableList[["cpm"]])
-    df <- data.frame(sources = sourceVector1,
-                     values = valueVector1)
-    return(df)
+    df <- t(data.frame(valueVector1))
+    colnames(df) <- sourceVector1
+    return(as.data.frame(df))
   }
 
   table2 <- createJaspTable(title = gettext("Non-conformance statistics"))
@@ -1119,12 +1232,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 
   if (returnPerformanceDataframe) {
-    df <- data.frame("Source" = rowNames,
-                     "Observed" = observed,
-                     "Expected Overall" = round(expOverall, nDecimals),
-                     "Expected Within"  = round(expWithin, nDecimals))
-    df$Expected.Overall[is.na(df$Expected.Overall)] <- "*" # This looks better in the table and makes clearer that there is not an error
-    df$Expected.Within[is.na(df$Expected.Within)] <- "*"
+    df <- data.frame(rowNames,
+                     observed,
+                     round(expOverall, nDecimals),
+                     round(expWithin, nDecimals))
+    colnames(df) <- c("Source", "Observed", "Expected Overall", "Expected Within")
+    df$`Expected Overall`[is.na(df$`Expected Overall`)] <- "*" # This looks better in the table and makes clearer that there is not an error
+    df$`Expected Within`[is.na(df$`Expected Within`)] <- "*"
     df$Observed[is.na(df$Observed)] <- "*"
     return(df)
   }
@@ -1267,10 +1381,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     valueVector <- c(lsl, target, usl, n, mean, sd, beta, theta)
     if(options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
       valueVector <- c(valueVector, threshold)
-    df <- data.frame(sources = sourceVector1,
-                     values = valueVector)
-    return(df)
-  }
+    df <- t(data.frame(round(as.numeric(valueVector), nDecimals)))
+    colnames(df) <- sourceVector1
+    return(as.data.frame(df))
+    }
 
   table2 <- createJaspTable(title = gettextf("Process performance (total)"))
   table2$showSpecifiedColumnsOnly <- TRUE
@@ -1309,10 +1423,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
     distParameters <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
-      if (jaspBase::isTryError(distParameters)) {
-        table2$setError(distParameters[1])
-        return()
-      }
+    if (jaspBase::isTryError(distParameters)) {
+      table2$setError(distParameters[1])
+      return()
+    }
     beta <- distParameters$beta
     theta <- distParameters$theta
     if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
@@ -1480,9 +1594,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["upperSpecificationLimit"]])
       valueVector <- c(valueVector, tableList2[["ppu"]])
     valueVector <- c(valueVector, tableList2[["ppk"]])
-    df <- data.frame(source = sourceVector2,
-                     values = valueVector)
-    return(df)
+    df <- t(data.frame(valueVector))
+    colnames(df) <- sourceVector2
+    return(as.data.frame(df))
   }
 
   table3 <- createJaspTable(title = gettextf("Non-conformance statistics"))
@@ -1617,9 +1731,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   tableList3[["rowNames"]] <- rowNames
 
   if(returnPerformanceDF){
-    df <- data.frame("Source" = rowNames,
-                     "Observed" = observed,
-                     "Expected Overall" = expOverall)
+    df <- data.frame(rowNames,
+                     observed,
+                     expOverall)
+    colnames(df) <- c("Source", "Observed", "Expected Overall")
     return(df)
   }
 
@@ -1658,10 +1773,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   if (sum(!is.na(dataset[measurements])) < 2) {
     plot <- createJaspPlot(width = 400, height = 400,
-                        title = gettext("Probability plot"))
+                           title = gettext("Probability plot"))
     container[["plot"]] <- plot
     plot$setError(gettextf("Need at least 2 measurements to calculate probability table/plot. %1$i measurement(s) detected.",
-                       sum(!is.na(dataset[measurements]))))
+                           sum(!is.na(dataset[measurements]))))
     return()
   }
   if (nStages > 1 && (length(unique(na.omit(dataset)[[stages]])) < nStages)) {
@@ -2021,7 +2136,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   if (sum(!is.na(dataset[measurements])) < 2 && options[["histogramDensityLine"]]) {
     plot$setError(gettextf("Need at least 2 measurements to fit distribution. %1$i measurement(s) detected.",
-                        sum(!is.na(dataset[measurements]))))
+                           sum(!is.na(dataset[measurements]))))
     return()
   }
   if (options[["histogramDensityLine"]] && (options[['nullDistribution']]  == "weibull" || options[['nullDistribution']]  == "lognormal") &&
@@ -2230,16 +2345,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(matrixPlot)
 }
 
-ggplotTable <- function(dataframe, displayColNames = FALSE){
-  df <- tibble::tibble(dataframe)
-  p <- ggplot2::ggplot() +
-    ggplot2::theme_void() +
-    ggpp::geom_table(data = data.frame(x = 1, y = 1), ggplot2::aes(x = x, y = y), label = list(df),
-                     table.colnames = displayColNames, size = 7)
-
-  return(p)
-}
-
 .distributionParameters <- function(data, distribution = c("lognormal", "weibull", "3ParameterLognormal", "3ParameterWeibull")){
   if (distribution == "lognormal") {
     fit_Lnorm <- try(EnvStats::elnorm(data))
@@ -2249,7 +2354,7 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
     theta <- fit_Lnorm$parameters[2]
   } else if (distribution == "weibull") {
     fit_Weibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                         control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps)))
+                                             control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps)))
     if (jaspBase::isTryError(fit_Weibull))
       stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
     beta <- fit_Weibull$estimate[[1]]

@@ -25,9 +25,10 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MTcuMzB8NTc2LjAw)'>
-<text x='360.00' y='47.59' text-anchor='middle' style='font-size: 14.23px; font-family: sans;' textLength='128.11px' lengthAdjust='spacingAndGlyphs'>Name: Report name</text>
-<text x='360.00' y='216.90' text-anchor='middle' style='font-size: 14.23px; font-family: sans;' textLength='109.16px' lengthAdjust='spacingAndGlyphs'>Date: 01.01.2000</text>
-<text x='360.00' y='386.20' text-anchor='middle' style='font-size: 14.23px; font-family: sans;' textLength='185.03px' lengthAdjust='spacingAndGlyphs'>Sub-title: Your report sub-title</text>
+<rect x='32.73' y='42.70' width='654.55' height='507.91' style='stroke-width: 1.49; stroke-linecap: butt; stroke-linejoin: miter; fill: #D3D3D3;' />
+<text x='62.48' y='99.36' style='font-size: 17.07px; font-family: sans;' textLength='153.74px' lengthAdjust='spacingAndGlyphs'>Name: Report name</text>
+<text x='62.48' y='200.95' style='font-size: 17.07px; font-family: sans;' textLength='131.00px' lengthAdjust='spacingAndGlyphs'>Date: 01.01.2000</text>
+<text x='62.48' y='302.53' style='font-size: 17.07px; font-family: sans;' textLength='222.04px' lengthAdjust='spacingAndGlyphs'>Sub-title: Your report sub-title</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <text x='0.00' y='14.56' style='font-size: 13.20px; font-family: sans;' textLength='146.01px' lengthAdjust='spacingAndGlyphs'>x-bar-s-report1-subplot-2</text>

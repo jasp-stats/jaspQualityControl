@@ -25,8 +25,9 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MTcuMzB8NTc2LjAw)'>
-<text x='360.00' y='47.59' text-anchor='middle' style='font-size: 14.23px; font-family: sans;' textLength='172.41px' lengthAdjust='spacingAndGlyphs'>Name: Measurement name</text>
-<text x='360.00' y='301.55' text-anchor='middle' style='font-size: 14.23px; font-family: sans;' textLength='162.95px' lengthAdjust='spacingAndGlyphs'>Date of study: 01.01.2000</text>
+<rect x='32.73' y='42.70' width='654.55' height='507.91' style='stroke-width: 1.49; stroke-linecap: butt; stroke-linejoin: miter; fill: #D3D3D3;' />
+<text x='62.48' y='99.36' style='font-size: 17.07px; font-family: sans;' textLength='206.89px' lengthAdjust='spacingAndGlyphs'>Name: Measurement name</text>
+<text x='62.48' y='200.95' style='font-size: 17.07px; font-family: sans;' textLength='195.54px' lengthAdjust='spacingAndGlyphs'>Date of study: 01.01.2000</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <text x='0.00' y='14.56' style='font-size: 13.20px; font-family: sans;' textLength='100.53px' lengthAdjust='spacingAndGlyphs'>report2-subplot-1</text>
