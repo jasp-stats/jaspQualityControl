@@ -280,19 +280,18 @@ test_that("LF14. Basic test of changing manual subgroup size with X-bar & s cont
 options <- analysisOptions("variablesChartsSubgroups")
 options$chartType <- "xBarAndR"
 options$measurementLongFormat <- "Diameter"
-options$reportMeasurementName <- "Report name"
-options$reportDate <- "01.01.2000"
-options$reportSubtitle <- "Your report sub-title"
-options$reportReportedBy <- "Operator name"
-options$reportMiscellaneous <- "Various comments"
-options$reportChartName <- "Name of chart"
+options$reportMeasurementNameText <- "Report name"
+options$reportDateText <- "01.01.2000"
+options$reportSubtitleText <- "Your report sub-title"
+options$reportPerformedByText <- "Operator name"
+options$reportChartNameText <- "Name of chart"
 options$report <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
                        options)
 
 test_that("LF15. Basic test to create report of X-bar & R control chart", {
-  plotName <- results[["results"]][["report"]][["collection"]][["report_report"]][["data"]]
+  plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-r-report1")
 })
@@ -301,19 +300,18 @@ test_that("LF15. Basic test to create report of X-bar & R control chart", {
 options <- analysisOptions("variablesChartsSubgroups")
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
-options$reportMeasurementName <- "Report name"
-options$reportDate <- "01.01.2000"
-options$reportSubtitle <- "Your report sub-title"
-options$reportReportedBy <- "Operator name"
-options$reportMiscellaneous <- "Various comments"
-options$reportChartName <- "Name of chart"
+options$reportMeasurementNameText <- "Report name"
+options$reportDateText <- "01.01.2000"
+options$reportSubtitleText <- "Your report sub-title"
+options$reportPerformedByText <- "Operator name"
+options$reportChartNameText <- "Name of chart"
 options$report <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
                        options)
 
 test_that("LF16. Basic test to create report of X-bar & s control chart", {
-  plotName <- results[["results"]][["report"]][["collection"]][["report_report"]][["data"]]
+  plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-s-report1")
 })
@@ -885,19 +883,18 @@ options <- analysisOptions("variablesChartsSubgroups")
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndR"
-options$reportMeasurementName <- "Report name"
-options$reportDate <- "01.01.2000"
-options$reportSubtitle <- "Your report sub-title"
-options$reportReportedBy <- "Operator name"
-options$reportMiscellaneous <- "Various comments"
-options$reportChartName <- "Name of chart"
+options$reportMeasurementNameText <- "Report name"
+options$reportDateText <- "01.01.2000"
+options$reportSubtitleText <- "Your report sub-title"
+options$reportPerformedByText <- "Operator name"
+options$reportChartNameText <- "Name of chart"
 options$report <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
                        options)
 
 test_that("WF13. Basic test to create report of X-bar & R control chart", {
-  plotName <- results[["results"]][["report"]][["collection"]][["report_report"]][["data"]]
+  plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-r-report2")
 })
@@ -908,19 +905,18 @@ options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndS"
 options$xBarAndSUnbiasingConstant <- TRUE
-options$reportMeasurementName <- "Report name"
-options$reportDate <- "01.01.2000"
-options$reportSubtitle <- "Your report sub-title"
-options$reportReportedBy <- "Operator name"
-options$reportMiscellaneous <- "Various comments"
-options$reportChartName <- "Name of chart"
+options$reportMeasurementNameText <- "Report name"
+options$reportDateText <- "01.01.2000"
+options$reportSubtitleText <- "Your report sub-title"
+options$reportPerformedByText <- "Operator name"
+options$reportChartNameText <- "Name of chart"
 options$report <- TRUE
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
                        options)
 
 test_that("WF14. Basic test to create report of X-bar & s control chart", {
-  plotName <- results[["results"]][["report"]][["collection"]][["report_report"]][["data"]]
+  plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-s-report2")
 })

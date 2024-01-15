@@ -169,23 +169,47 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         jaspResults[["controlCharts"]][["secondTable"]] <- secondChart$table
 
       # Report
-      if (options[["report"]] && is.null(jaspResults[["report"]])) {
-
+      if (options[["report"]]) {
         jaspResults[["controlCharts"]] <- NULL
         jaspResults[["NelsonTables"]] <- NULL
+        reportPlot <- createJaspPlot(title = gettext("Variables Chart for Subgroups Report"), width = 1250, height = 1000)
+        jaspResults[["report"]] <- reportPlot
+        jaspResults[["report"]]$dependOn(c("chartType", "variables", "warningLimits", "knownParameters", "knownParametersMean", "manualTicks", 'nTicks',
+                                           "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat",
+                                           "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
+                                           "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
+                                           "groupingVariableMethod", "report", "reportMetaData", "reportTitle", "reportTitleText",
+                                           "reportChartName", "reportChartNameText", "reportSubtitle", "reportSubtitleText",
+                                           "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
+                                           "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
+                                           "reportDateText", "reportPerformedBy", "reportPerformedByText", "reportPrintDate",
+                                           "reportPrintDateText"))
 
-        jaspResults[["report"]] <- createJaspContainer(gettext("Report"))
-        jaspResults[["report"]]$dependOn(c("report", "manualSubgroupSizeValue","chartType", "variables", "measurementLongFormat",
-                                           "manualTicks", 'nTicks',"dataFormat", "subgroup", "reportTitle", "reportMeasurementName",
-                                           "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle", "reportChartName",
-                                           "stagesWideFormat", "stagesLongFormat", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
-                                           "groupingVariableMethod"))
-        jaspResults[["report"]]$position <- 9
-        Iplot <- jaspResults[["report"]]
-        Iplot[["report"]] <- .CCReport(p1 = xBarChart$plotObject, p2 = secondChart$plotObject, reportTitle = options$reportTitle,
-                                         reportMeasurementName = options$reportMeasurementName, reportDate = options$reportDate, reportReportedBy = options$reportReportedBy,
-                                         reportMiscellaneous = options$reportMiscellaneous, reportSubtitle = options$reportSubtitle, reportChartName = options$reportChartName,
-                                         options = options)
+        # Plot meta data
+        if (options[["reportTitle"]] ) {
+          title <- if (options[["reportTitleText"]] == "") gettext("Variables Chart for Subgroups Report") else options[["reportTitleText"]]
+        } else {
+          title <- ""
+        }
+
+        if (options[["reportMetaData"]]) {
+          text <- c()
+          text <- if (options[["reportChartName"]]) c(text, gettextf("Chart name: %s", options[["reportChartNameText"]])) else text
+          text <- if (options[["reportSubtitle"]]) c(text, gettextf("Sub-title: %s", options[["reportSubtitleText"]])) else text
+          text <- if (options[["reportMeasurementName"]]) c(text, gettextf("Measurement name: %s", options[["reportMeasurementNameText"]])) else text
+          text <- if (options[["reportFootnote"]]) c(text, gettextf("Footnote: %s", options[["reportFootnoteText"]])) else text
+          text <- if (options[["reportLocation"]]) c(text, gettextf("Location: %s", options[["reportLocationText"]])) else text
+          text <- if (options[["reportDate"]]) c(text, gettextf("Date: %s", options[["reportDateText"]])) else text
+          text <- if (options[["reportPerformedBy"]]) c(text, gettextf("Performed by: %s", options[["reportPerformedByText"]])) else text
+          text <- if (options[["reportPrintDate"]]) c(text, gettextf("Print date: %s", options[["reportPrintDateText"]])) else text
+        } else {
+          text <- NULL
+        }
+
+        plots <- list(list(xBarChart$plotObject, secondChart$plotObject))
+        reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
+                                      reportTitle = title)
+        reportPlot$plotObject <- reportPlotObject
       }
     }
   }

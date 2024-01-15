@@ -128,6 +128,7 @@
                       reportTitle = "") {
   lengthAllElements <- length(plots) + length(tables) + (!is.null(text)) + sum(!sapply(plots, ggplot2::is.ggplot)) # length of plots, tables, one for the text and addition tables of nested plots
   lengthAllElements <- if (lengthAllElements %% 2 != 0) lengthAllElements + 1 else lengthAllElements # always need even number
+  lengthAllElements <- if (any(!sapply(plots, ggplot2::is.ggplot)) && lengthAllElements < 3) 4 else lengthAllElements # edge case if only a nested plot is given
   plotList <- list()
   plotList[1:lengthAllElements] <- NA
   if (!is.null(text))
@@ -151,6 +152,11 @@
     plotList[[tablePos]] <- tablePlot
   }
 
+  plotList <- matrix(plotList, ncol = 2, byrow = TRUE)
+  topLabel <- if (!identical(reportTitle, "")) c("", reportTitle) else NULL
+  if (!identical(reportTitle, "") && all(is.na(plotList[,2])))
+    topLabel <- c(reportTitle, "")
+
   # If there are still NA in the list, fill them with empty plots
   indicesRemainingNA <- .indicesOfNAinList(plotList)
   if (!is.null(indicesRemainingNA)) {
@@ -158,8 +164,6 @@
       plotList[[k]] <- ggplot2::ggplot() + ggplot2::theme_void()
   }
 
-  plotList <- matrix(plotList, ncol = 2, byrow = TRUE)
-  topLabel <- if (!identical(reportTitle, "")) c("", reportTitle) else NULL
   plot <- jaspGraphs::ggMatrixPlot(plotList = plotList, topLabels = topLabel)
   return(plot)
 }
