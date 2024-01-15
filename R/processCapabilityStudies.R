@@ -122,6 +122,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
+  # Report
   if (options[["report"]]) {
     nElements <- sum(options[["reportProcessStability"]]*2, options[["reportProcessCapabilityPlot"]], options[["reportProbabilityPlot"]],
       options[["reportProcessCapabilityTables"]], options[["reportMetaData"]])
@@ -755,6 +756,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       table$addColumnInfo(name = "cplci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "cpuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cp", paste(ciLevelPercent, "%")))
       tableColNames <- c(tableColNames, "cplci", "cpuci")
+      sourceVector <- c(sourceVector, paste0(ciLevelPercent, "% CI Cp"))
     }
   }
   if (options[["lowerSpecificationLimit"]]) {
@@ -775,6 +777,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "cpklci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "cpkuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cpk", paste(ciLevelPercent, "%")))
     tableColNames <- c(tableColNames, "cpklci", "cpkuci")
+    sourceVector <- c(sourceVector, paste0(ciLevelPercent, "% CI Cpk"))
   }
   table$showSpecifiedColumnsOnly <- TRUE
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
@@ -879,13 +882,20 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (returnDataframe) {
     valueVector <- c()
-    if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
+    if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
       valueVector <- c(valueVector, tableList[["cp"]])
+      if (options[["processCapabilityTableCi"]] &&
+          !(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]))
+        valueVector <- c(valueVector, paste0("[", tableList[["cplci"]], ", ", tableList[["cpuci"]], "]"))
+    }
     if (options[["lowerSpecificationLimit"]])
       valueVector <- c(valueVector, tableList[["cpl"]])
     if (options[["upperSpecificationLimit"]])
       valueVector <- c(valueVector, tableList[["cpu"]])
     valueVector <- c(valueVector, tableList[["cpk"]])
+    if (options[["processCapabilityTableCi"]] &&
+        !(options[["upperSpecificationLimitBoundary"]] && options[["lowerSpecificationLimitBoundary"]]))
+      valueVector <- c(valueVector, paste0("[", tableList[["cpklci"]], ", ", tableList[["cpkuci"]], "]"))
     df <- t(data.frame(valueVector))
     colnames(df) <- sourceVector
     return(as.data.frame(df))
@@ -926,6 +936,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       table$addColumnInfo(name = "pplci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "ppuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Pp", paste(ciLevelPercent, "%")))
       tableColNames <- c(tableColNames, "pplci", "ppuci")
+      sourceVector1 <- c(sourceVector1, paste0(ciLevelPercent, "% CI Pp"))
     }
   }
   if (options[["lowerSpecificationLimit"]]) {
@@ -946,6 +957,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "ppklci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
     table$addColumnInfo(name = "ppkuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Ppk", paste(ciLevelPercent, "%")))
     tableColNames <- c(tableColNames, "ppklci", "ppkuci")
+    sourceVector1 <- c(sourceVector1,  paste0(ciLevelPercent, "% CI Ppk"))
   }
   if (options[["target"]]) {
     table$addColumnInfo(name = "cpm", type = "integer", title = gettext("Cpm"))
@@ -956,6 +968,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       table$addColumnInfo(name = "cpmlci", title = gettext("Lower"), type = "integer", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
       table$addColumnInfo(name = "cpmuci", title = gettext("Upper"), type = "integer", overtitle = gettextf("%s CI for Cpm", paste(ciLevelPercent, "%")))
       tableColNames <- c(tableColNames, "cpmlci", "cpmuci")
+      sourceVector1 <- c(sourceVector1,  paste0(ciLevelPercent, "% CI Cpm"))
     }
   }
   table$showSpecifiedColumnsOnly <- TRUE
@@ -1018,7 +1031,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
         #CI for Pp
         dfPp <- n - 1
-        ciLbPp <- pp * sqrt( qchisq(p = ciAlpha/2, df = dfPp) /dfPp)
+        ciLbPp <- pp * sqrt(qchisq(p = ciAlpha/2, df = dfPp) /dfPp)
         ciUbPp <- pp * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfPp) / dfPp)
       }
       if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
@@ -1097,15 +1110,26 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (returnOverallCapDataframe) {
     valueVector1 <- c()
-    if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
+    if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
       valueVector1 <- c(valueVector1, tableList[["pp"]])
+      if (options[["processCapabilityTableCi"]] &&
+          !(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]))
+        valueVector1 <- c(valueVector1, paste0("[", tableList[["pplci"]], ", ",tableList[["ppuci"]], "]"))
+    }
     if (options[["lowerSpecificationLimit"]])
       valueVector1 <- c(valueVector1, tableList[["ppl"]])
     if (options[["upperSpecificationLimit"]])
       valueVector1 <- c(valueVector1, tableList[["ppu"]])
     valueVector1 <- c(valueVector1, tableList[["ppk"]])
-    if (options[["target"]])
+    if (options[["processCapabilityTableCi"]] &&
+        !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]))
+      valueVector1 <- c(valueVector1, paste0("[", tableList[["ppklci"]], ", ",tableList[["ppkuci"]], "]"))
+    if (options[["target"]]) {
       valueVector1 <- c(valueVector1, tableList[["cpm"]])
+      if (options[["processCapabilityTableCi"]] &&
+          !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]))
+        valueVector1 <- c(valueVector1, paste0("[", tableList[["cpmlci"]], ", ",tableList[["cpmuci"]], "]"))
+    }
     df <- t(data.frame(valueVector1))
     colnames(df) <- sourceVector1
     return(as.data.frame(df))
