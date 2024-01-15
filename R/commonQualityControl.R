@@ -234,17 +234,6 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
   return(p)
 }
 
-
-# .ggplotWithText <- function(text){
-#   nText <- length(text)
-#   annotation <- data.frame(x = rep(0, nText), y = nText:1, label = text)
-#   p <- ggplot2::ggplot() + ggplot2::theme_void() +
-#     ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 5) +
-#     ggplot2::scale_x_continuous(limits = c(0)) +
-#     ggplot2::scale_y_continuous(limits = c(0, nText))
-#   return(p)
-# }
-
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   # Adjust Rules to SKF

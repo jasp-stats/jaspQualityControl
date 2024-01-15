@@ -233,58 +233,158 @@ Form
 			name: 								"report"
 			label: 								qsTr("Show report")
 			id:		anovaGaugeReport
-			columns: 2
+			columns: 1
 			
 			CheckBox
 			{
 				name:		"reportMetaData"
 				label:		qsTr("Show report metadata")
 				checked:	true
-				columns: 1
+				columns: 2
 
-				TextField
+				CheckBox
 				{
-					name: 								"reportTitle"
-					label: 								qsTr("Title")
-					id:									reportTitle
-					placeholderText:					qsTr("Measurement")
-					fieldWidth:							100
+					name:					"reportTitle"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name: 								"reportTitleText"
+						label: 								qsTr("Title")
+						id:									reportTitleText
+						placeholderText:					qsTr("Gauge r&R Report")
+						fieldWidth:							100
+					}
 				}
 
-				TextField
+				CheckBox
 				{
-					name: 								"reportGaugeName"
-					label: 								qsTr("Gauge name")
-					id:									reportGaugeName
-					placeholderText:					qsTr("Name")
-					fieldWidth:							100
+					name:					"reportPartName"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name: 								"reportPartNameText"
+						label: 								qsTr("Part name")
+						id:									reportPartNameText
+						placeholderText:					qsTr("Name")
+						fieldWidth:							100
+					}
 				}
 
-				TextField
+
+				CheckBox
 				{
-					name: 								"reportDate"
-					label: 								qsTr("Date")
-					id:									reportDate
-					placeholderText:					qsTr("Date")
-					fieldWidth:							100
+					name:					"reportGaugeName"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name: 								"reportGaugeNameText"
+						label: 								qsTr("Gauge name")
+						id:									reportGaugeNameText
+						placeholderText:					qsTr("Name")
+						fieldWidth:							100
+					}
 				}
 
-				TextField
+				CheckBox
 				{
-					name: 								"reportReportedBy"
-					label: 								qsTr("Reported by")
-					id:									reportReportedBy
-					placeholderText:					qsTr("Name")
-					fieldWidth:							100
+					name:					"reportCharacteristic"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name: 								"reportCharacteristicText"
+						label: 								qsTr("Characteristic")
+						id:									reportCharacteristicText
+						placeholderText:					qsTr("Characteristic")
+						fieldWidth:							100
+					}
 				}
 
-				TextField
+				CheckBox
 				{
-					name: 								"reportMiscellaneous"
-					label: 								qsTr("Misc.")
-					id:									reportMiscellaneous
-					placeholderText:					qsTr("Miscellaneous")
-					fieldWidth:							100
+					name:					"reportGaugeNumber"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name: 								"reportGaugeNumberText"
+						label: 								qsTr("Gauge number")
+						id:									reportGaugeNumberText
+						placeholderText:					qsTr("Number")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:					"reportTolerance"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name: 								"reportToleranceText"
+						label: 								qsTr("Tolerance")
+						id:									reportToleranceText
+						placeholderText:					qsTr("Tolerance")
+						fieldWidth:							100
+					}
+				}
+				
+				CheckBox
+				{
+					name:					"reportLocation"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name: 								"reportLocationText"
+						label: 								qsTr("Location")
+						id:									reportLocationText
+						placeholderText:					qsTr("Location")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:					"reportPerformedBy"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name: 								"reportPerformedByText"
+						label: 								qsTr("Performed by")
+						id:									reportPerformedByText
+						placeholderText:					qsTr("Analyst")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:					"reportDate"
+					checked:				true
+					childrenOnSameRow:		true
+
+					TextField
+					{
+						name: 								"reportDateText"
+						label: 								qsTr("Date")
+						id:									reportDate
+						placeholderText:					qsTr("Date")
+						fieldWidth:							100
+					}
 				}
 			}
 		
