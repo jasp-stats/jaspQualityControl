@@ -205,15 +205,14 @@ options$report <- TRUE
 options$reportAutocorrelationChart <- TRUE
 options$reportMetaData <- TRUE
 options$reportIMRChart <- TRUE
-options$reportDate <- "01.01.2000"
-options$reportMeasurementName <- "Measurement name"
-options$reportMiscellaneous <- "Various comments"
-options$reportReportedBy <- "Your name"
-options$reportTitle <- "Report title"
+options$reportDateText <- "01.01.2000"
+options$reportMeasurementNameText <- "Measurement name"
+options$reportPerformedByText <- "Your name"
+options$reportTitleText <- "Report title"
 results <- runAnalysis("variablesChartsIndividuals", "datasets/variableChartsIndividuals/variableChartsIndividualsDebug.csv", options)
 
 test_that("8. Basic test to create a report with all components", {
-  plotName <- results[["results"]][["report"]][["collection"]][["report_report"]][["data"]]
+  plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "report1")
 })
@@ -227,15 +226,14 @@ options$report <- TRUE
 options$reportAutocorrelationChart <- FALSE
 options$reportMetaData <- TRUE
 options$reportIMRChart <- TRUE
-options$reportDate <- "01.01.2000"
-options$reportMeasurementName <- "Measurement name"
-options$reportMiscellaneous <- "Various comments"
-options$reportReportedBy <- "Your name"
-options$reportTitle <- "Report title"
+options$reportDateText <- "01.01.2000"
+options$reportMeasurementNameText <- "Measurement name"
+options$reportPerformedByText <- "Your name"
+options$reportTitleText <- "Report title"
 results <- runAnalysis("variablesChartsIndividuals", "datasets/variableChartsIndividuals/variableChartsIndividualsDebug.csv", options)
 
 test_that("9. Basic test to create a report with only an IMR chart", {
-  plotName <- results[["results"]][["report"]][["collection"]][["report_report"]][["data"]]
+  plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "report2")
 })
