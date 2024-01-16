@@ -124,90 +124,156 @@ Form
 	{
 		title:									qsTr("Control Charts for Attributes Report")
 
-		TextField
-		{
-			label:								qsTr("Title")
-			name:								"reportTitle"
-			placeholderText:					qsTr("Measurement")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			label:								qsTr("Name")
-			name:								"reportMeasurementName"
-			placeholderText:					qsTr("Name")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			label:								qsTr("Operator")
-			name:								"reportReportedBy"
-			placeholderText:					qsTr("Operator")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			label:								qsTr("ID")
-			name:								"reportId"
-			placeholderText:					qsTr("ID")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			label:								qsTr("Misc")
-			name:								"reportMiscellaneous"
-			placeholderText:					qsTr("Miscellaneous")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			label:								qsTr("Appraiser")
-			name:								"reportAppraiser"
-			placeholderText:					qsTr("Appraiser")
-			fieldWidth:							100
-		}
-	
-		TextField
-		{
-			label:								qsTr("Measurement system")
-			name:								"reportMeasusrementSystemName"
-			placeholderText:					qsTr("Measurement")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			label:								qsTr("Subgroups size")
-			name:								"reportSubgroupSize"
-			placeholderText:					qsTr("Size")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			label:								qsTr("Time")
-			name:								"reportTime"
-			placeholderText:					qsTr("Time")
-			fieldWidth:							100
-		}
-
-		TextField
-		{
-			label:								qsTr("Frequency")
-			name:								"reportFrequency"
-			placeholderText:					qsTr("Frequency")
-			fieldWidth:							100
-		}
-
 		CheckBox
 		{
 			name:								"report"
 			label:								qsTr("Show Report")
+			columns:							1
+
+			CheckBox
+			{
+				name:								"reportMetaData"
+				label:								qsTr("Show report metadata")
+				checked:							true
+				columns:							2
+
+				CheckBox
+				{
+					name:								"reportTitle"
+					checked:							true
+					childrenOnSameRow:					true
+
+					TextField
+					{
+						label:								qsTr("Title")
+						name:								"reportTitleText"
+						placeholderText:					qsTr("Report for Attribute Control Charts")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:								"reportMeasurementName"
+					checked:							true
+					childrenOnSameRow:					true
+
+					TextField
+					{
+						label:								qsTr("Name")
+						name:								"reportMeasurementNameText"
+						placeholderText:					qsTr("Name")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:								"reportPerformedBy"
+					checked:							true
+					childrenOnSameRow:					true
+
+					TextField
+					{
+						label:								qsTr("Performed by")
+						name:								"reportPerformedByText"
+						placeholderText:					qsTr("Analyst")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:								"reportId"
+					checked:							true
+					childrenOnSameRow:					true
+
+					TextField
+					{
+						label:								qsTr("ID")
+						name:								"reportIdText"
+						placeholderText:					qsTr("ID")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:								"reportAppraiser"
+					checked:							true
+					childrenOnSameRow:					true
+
+					TextField
+					{
+						label:								qsTr("Appraiser")
+						name:								"reportAppraiserText"
+						placeholderText:					qsTr("Appraiser")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:								"reportMeasusrementSystemName"
+					checked:							true
+					childrenOnSameRow:					true
+
+					TextField
+					{
+						label:								qsTr("Measurement system")
+						name:								"reportMeasusrementSystemNameText"
+						placeholderText:					qsTr("Measurement")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:								"reportSubgroupSize"
+					checked:							true
+					childrenOnSameRow:					true
+
+					TextField
+					{
+						label:								qsTr("Subgroups size")
+						name:								"reportSubgroupSizeText"
+						placeholderText:					qsTr("Size")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:								"reportTime"
+					checked:							true
+					childrenOnSameRow:					true
+
+					TextField
+					{
+						label:								qsTr("Time")
+						name:								"reportTimeText"
+						placeholderText:					qsTr("Time")
+						fieldWidth:							100
+					}
+				}
+
+				CheckBox
+				{
+					name:								"reportFrequency"
+					checked:							true
+					childrenOnSameRow:					true
+
+					TextField
+					{
+						label:								qsTr("Frequency")
+						name:								"reportFrequencyText"
+						placeholderText:					qsTr("Frequency")
+						fieldWidth:							100
+					}
+				}
+			}
 		}
+
+
 	}
 }
