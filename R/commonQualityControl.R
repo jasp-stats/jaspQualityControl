@@ -125,7 +125,8 @@
                       tables = NULL, # a list of dataframes. If tables should be in the same plot, use a nested list.
                       textMaxRows = 5,
                       tableTitles = "", # a list with the same layout as the tables list
-                      reportTitle = "") {
+                      reportTitle = "",
+                      tableSize = 6) {
   lengthAllElements <- length(plots) + length(tables) + (!is.null(text)) + sum(!sapply(plots, ggplot2::is.ggplot)) # length of plots, tables, one for the text and addition tables of nested plots
   lengthAllElements <- if (lengthAllElements %% 2 != 0) lengthAllElements + 1 else lengthAllElements # always need even number
   lengthAllElements <- if (any(!sapply(plots, ggplot2::is.ggplot)) && lengthAllElements < 3) 4 else lengthAllElements # edge case if only a nested plot is given
@@ -147,7 +148,7 @@
   for (j in seq_along(tables)) {
     currentTable <- tables[[j]]
     currentTitle <- if (!identical(tableTitles, "")) tableTitles[[j]] else ""
-    tablePlot <- .ggplotTable(currentTable, currentTitle)
+    tablePlot <- .ggplotTable(currentTable, currentTitle, tableSize)
     tablePos <- min(.indicesOfNAinList(plotList)) # smallest empty index
     plotList[[tablePos]] <- tablePlot
   }
@@ -190,7 +191,7 @@
   return(p)
 }
 
-.ggplotTable <- function(tableObject, titles = "") {
+.ggplotTable <- function(tableObject, titles = "", tableSize = 6) {
   if (!is.data.frame(tableObject)) { # then it should be a list
     nTables <- length(tableObject)
     df <- data.frame(matrix(ncol = 3, nrow = 0))
@@ -199,10 +200,10 @@
     titleDf <- data.frame(matrix(ncol = 3, nrow = 0))
     colnames(titleDf) <- c("x", "y", "label")
     for (i in seq_along(tableObject)) {
-      yPosTable <- if (i == 1) 1 else as.numeric(tibble[i-1,2]) - .06 - nrow(tableObject[[i - 1]]) * .06
+      yPosTable <- if (i == 1) 1 else as.numeric(tibble[i-1,2]) - .08 - nrow(tableObject[[i - 1]]) * .08
       if (!identical(titles, "")) {
         yPosTitle <- yPosTable
-        yPosTable <- yPosTable - .05 # distance between table and title
+        yPosTable <- yPosTable - .08 # distance between table and title
         titleDf <- rbind(titleDf, data.frame(x = 0, y = yPosTitle, label = titles[[i]]))
       }
       tibble <- rbind(tibble, tibble::tibble("x" = 0, "y" = yPosTable, tb = tableObject[i]))
@@ -211,7 +212,7 @@
     yPosTitle <- 1
     if (!identical(titles, "")) {
       titleDf <- data.frame(x = 0, y = 1 , label = titles)
-      yPosTitle <- yPosTitle - .05
+      yPosTitle <- yPosTitle - .08
     }
     tibble <- tibble::tibble(x = 0, y = yPosTitle, tb = list(tableObject))
 
@@ -219,7 +220,7 @@
   p <- ggplot2::ggplot() +
     ggplot2::theme_void() +
     ggpp::geom_table(data = tibble, ggplot2::aes(x = x, y = y, label = tb),
-                     table.colnames = TRUE, size = 6, hjust = 0, vjust = 1) +
+                     table.colnames = TRUE, size = tableSize, hjust = 0, vjust = 1) +
     ggplot2::scale_x_continuous(limits = c(0, 1)) +
     ggplot2::scale_y_continuous(limits = c(0, 1))
   if (!identical(titles, ""))
