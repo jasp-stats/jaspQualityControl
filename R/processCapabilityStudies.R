@@ -205,15 +205,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                          "xBarR" = "r",
                          "xBarS" = "s",
                          "xBarMR" = "r")
+        columnsToPass <- c(measurements, stages)
+        columnsToPass <- columnsToPass[columnsToPass != ""]
         fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
         unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-        controlCharts[[1]] <- .controlChart(dataset = dataset[measurements], plotType = "xBar", xBarSdType = sdType,
-                                            nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+        controlCharts[[1]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
+                                            nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                             xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
                                             unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
-        controlCharts[[2]] <- .controlChart(dataset = dataset[measurements], plotType = secondPlotType, xAxisLabels = axisLabels,
-                                            nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                            tableLabels = axisLabels, movingRangeLength = options[["xBarMovingRangeLength"]],
+        controlCharts[[2]] <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
+                                            nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
+                                            tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
                                             fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
       }
       plots[[plotIndexCounter]] <- controlCharts
@@ -221,11 +223,27 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
     if (options[["reportProcessCapabilityPlot"]]) {
       distribution <- if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") "normal" else options[["nonNormalDistribution"]]
-      plots[[plotIndexCounter]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution)[[1]]
-      plotIndexCounter <- plotIndexCounter + 1
+      if (identical(stages, "")) {
+        plots[[plotIndexCounter]] <- .qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution)[[1]]
+        plotIndexCounter <- plotIndexCounter + 1
+      } else {
+        processCapabilityPlots <- .qcProcessCapabilityPlotObject(options, dataset, measurements, stages, distribution = distribution)
+        for (i in seq_along(processCapabilityPlots)) {
+          plots[[plotIndexCounter]] <- processCapabilityPlots[[i]]
+          plotIndexCounter <- plotIndexCounter + 1
+        }
+      }
     }
     if (options[["reportProbabilityPlot"]]) {
-      plots[[plotIndexCounter]] <- .qcProbabilityPlotObject(options, dataset, measurements, stages)[[1]]
+      if (identical(stages, "")) {
+        plots[[plotIndexCounter]] <- .qcProbabilityPlotObject(options, dataset, measurements, stages)[[1]]
+      } else {
+        probabilityPlots <- .qcProbabilityPlotObject(options, dataset, measurements, stages)
+        for (j in seq_along(probabilityPlots)) {
+          plots[[plotIndexCounter]] <- probabilityPlots[[j]]
+          plotIndexCounter <- plotIndexCounter + 1
+        }
+      }
       plotIndexCounter <- plotIndexCounter + 1
     }
     if (options[["reportProcessCapabilityTables"]]) {
@@ -234,18 +252,34 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
         overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, stages, returnOverallCapDataframe = TRUE)
         performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, stages, returnPerformanceDataframe = TRUE)
-        tables[[1]] <- list(potentialWithinDF, overallCapDF, performanceDF, processSummaryDF)
-        tableTitles <- list(list("Process capability (within)", "Process performance (total)", "Non-conformance statistics", "Process summary"))
+        if (identical(stages, "")) {
+          tables[[1]] <- list(potentialWithinDF, overallCapDF, performanceDF, processSummaryDF)
+          tableTitles <- list(list("Process capability (within)", "Process performance (total)", "Non-conformance statistics", "Process summary"))
+          tableSize <- 6
+        } else {
+          tables[[1]] <- list(potentialWithinDF, overallCapDF)
+          tables[[2]] <- processSummaryDF
+          tables[[3]] <- performanceDF
+          tableTitles <- list(list("Process capability (within)", "Process performance (total)"), "Process summary", "Non-conformance statistics")
+          tableSize <- 5
+        }
       } else {
         processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE)
         overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnCapabilityDF = TRUE)
         performanceDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnPerformanceDF = TRUE)
-        tables[[1]] <- list(overallCapDF, performanceDF, processSummaryDF)
-        tableTitles <- list(list("Process performance (total)", "Non-conformance statistics", "Process summary"))
+        tableSize <- 6
+        if (identical(stages, "")) {
+          tables[[1]] <- list(overallCapDF, performanceDF, processSummaryDF)
+          tableTitles <- list(list("Process performance (total)", "Non-conformance statistics", "Process summary"))
+        } else {
+          tables[[1]] <- list(overallCapDF, processSummaryDF)
+          tables[[2]] <- performanceDF
+          tableTitles <- list(list("Process performance (total)", "Process summary"), "Non-conformance statistics")
+        }
       }
     }
     reportPlotObject <- .qcReport(text = text, plots = plots, tables = tables, textMaxRows = 8, tableTitles = tableTitles,
-                                  reportTitle = title)
+                                  reportTitle = title, tableSize = tableSize)
     reportPlot$plotObject <- reportPlotObject
   } else {
     # X-bar and R Chart OR ImR OR X-bar and mR Chart
@@ -512,7 +546,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (returnDataframe) {
     lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
     uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
-    sourceVector <- c(lslTitle, 'Target', uslTitle, 'Sample size', 'Mean', "Std. dev. (total)", "Std. dev. (within)")
+    sourceVector <- c(lslTitle, "Target", uslTitle, "N", "Mean", "SD (total)", "SD (within)")
+    if (nStages > 1)
+      sourceVector <- c("Stage", sourceVector)
+    tableNRows <- if (nStages > 1) nStages * 2 - 1 else 1
+    formattedTableDf <- data.frame(matrix(nrow = tableNRows, ncol = 0))
+    if (nStages > 1) {
+      formattedStages <- tableList[["stage"]]
+      changeNames <- formattedStages[grep("Change", formattedStages)]
+      formattedChangeNames <- unlist(sapply(changeNames, function(x) strsplit(unlist(strsplit(x, "\\("))[2], "\\)"))) # removing the word "Change" and the brackets because it makes the table too big in the report
+      formattedStages[grep("Change", formattedStages)] <- formattedChangeNames
+      formattedTableDf[["stage"]] <- formattedStages
+    }
     lsl <- options[["lowerSpecificationLimitValue"]]
     target <- options[["targetValue"]]
     usl <- options[["upperSpecificationLimitValue"]]
@@ -525,10 +570,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     mean <- mean(allData, na.rm = TRUE)
     n <- as.integer(length(allData))
     sd <- sd(allData, na.rm = TRUE)
-    valueVector <- c(lsl, target, usl, n, mean, sd, sdw)
-    df <- t(data.frame(round(as.numeric(valueVector), nDecimals)))
-    colnames(df) <- sourceVector
-    return(as.data.frame(df))
+    formattedTableDf[["lsl"]] <- tableList[["lsl"]]
+    formattedTableDf[["target"]] <- tableList[["target"]]
+    formattedTableDf[["usl"]] <- tableList[["usl"]]
+    formattedTableDf[["n"]] <- tableList[["n"]]
+    formattedTableDf[["mean"]] <- round(tableList[["mean"]], nDecimals)
+    formattedTableDf[["sd"]] <- round(tableList[["sd"]], nDecimals)
+    formattedTableDf[["sdw"]] <- round(tableList[["sdw"]], nDecimals)
+    colnames(formattedTableDf) <- sourceVector
+    return(formattedTableDf)
   }
   container[["processSummaryTable"]] <- table
 }
@@ -737,12 +787,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettext("Process capability (within)"))
+  sourceVector <- c()
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
     table$transpose <- TRUE
     table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+    sourceVector <- c(sourceVector, "Stage")
   }
-  sourceVector <- c()
   tableColNames <- c()
   ciLevel <- options[["processCapabilityTableCiLevel"]]
   ciLevelPercent <- ciLevel * 100
@@ -881,24 +932,31 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$setData(tableList)
 
   if (returnDataframe) {
-    valueVector <- c()
+    tableNRows <- if (nStages > 1) nStages * 2 - 1 else 1
+    formattedTableDf <- data.frame(matrix(nrow = tableNRows, ncol = 0))
+    if (nStages > 1) {
+      formattedStages <- tableList[["stage"]]
+      changeNames <- formattedStages[grep("Change", formattedStages)]
+      formattedChangeNames <- unlist(sapply(changeNames, function(x) strsplit(unlist(strsplit(x, "\\("))[2], "\\)"))) # removing the word "Change" and the brackets because it makes the table too big in the report
+      formattedStages[grep("Change", formattedStages)] <- formattedChangeNames
+      formattedTableDf[["stage"]] <- formattedStages
+    }
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
-      valueVector <- c(valueVector, tableList[["cp"]])
+      formattedTableDf[["cp"]] <- tableList[["cp"]]
       if (options[["processCapabilityTableCi"]] &&
           !(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]))
-        valueVector <- c(valueVector, paste0("[", tableList[["cplci"]], ", ", tableList[["cpuci"]], "]"))
+        formattedTableDf[["cpci"]] <- paste0("[", tableList[["cplci"]], ", ", tableList[["cpuci"]], "]")
     }
     if (options[["lowerSpecificationLimit"]])
-      valueVector <- c(valueVector, tableList[["cpl"]])
+      formattedTableDf[["cpl"]] <- tableList[["cpl"]]
     if (options[["upperSpecificationLimit"]])
-      valueVector <- c(valueVector, tableList[["cpu"]])
-    valueVector <- c(valueVector, tableList[["cpk"]])
+      formattedTableDf[["cpu"]] <- tableList[["cpu"]]
+    formattedTableDf[["cpk"]] <- tableList[["cpk"]]
     if (options[["processCapabilityTableCi"]] &&
-        !(options[["upperSpecificationLimitBoundary"]] && options[["lowerSpecificationLimitBoundary"]]))
-      valueVector <- c(valueVector, paste0("[", tableList[["cpklci"]], ", ", tableList[["cpkuci"]], "]"))
-    df <- t(data.frame(valueVector))
-    colnames(df) <- sourceVector
-    return(as.data.frame(df))
+                !(options[["upperSpecificationLimitBoundary"]] && options[["lowerSpecificationLimitBoundary"]]))
+        formattedTableDf[["cpkci"]] <- paste0("[", tableList[["cpklci"]], ", ", tableList[["cpkuci"]], "]")
+    colnames(formattedTableDf) <- sourceVector
+    return(formattedTableDf)
   }
   container[["capabilityTableWithin"]] <- table
 }
@@ -916,12 +974,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettext("Process performance (total)"))
+  sourceVector1 <- c()
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
     table$transpose <- TRUE
     table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+    sourceVector1 <- c(sourceVector1, "Stage")
   }
-  sourceVector1 <- c()
   tableColNames <- c()
   ciLevel <- options[["processCapabilityTableCiLevel"]]
   ciLevelPercent <- ciLevel * 100
@@ -1109,30 +1168,37 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$setData(tableList)
 
   if (returnOverallCapDataframe) {
-    valueVector1 <- c()
+    tableNRows <- if (nStages > 1) nStages * 2 - 1 else 1
+    formattedTableDf <- data.frame(matrix(nrow = tableNRows, ncol = 0))
+    if (nStages > 1) {
+      formattedStages <- tableList[["stage"]]
+      changeNames <- formattedStages[grep("Change", formattedStages)]
+      formattedChangeNames <- unlist(sapply(changeNames, function(x) strsplit(unlist(strsplit(x, "\\("))[2], "\\)"))) # removing the word "Change" and the brackets because it makes the table too big in the report
+      formattedStages[grep("Change", formattedStages)] <- formattedChangeNames
+      formattedTableDf[["stage"]] <- formattedStages
+    }
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
-      valueVector1 <- c(valueVector1, tableList[["pp"]])
+      formattedTableDf[["pp"]] <- tableList[["pp"]]
       if (options[["processCapabilityTableCi"]] &&
           !(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]))
-        valueVector1 <- c(valueVector1, paste0("[", tableList[["pplci"]], ", ",tableList[["ppuci"]], "]"))
+        formattedTableDf[["ppci"]] <- paste0("[", tableList[["pplci"]], ", ",tableList[["ppuci"]], "]")
     }
     if (options[["lowerSpecificationLimit"]])
-      valueVector1 <- c(valueVector1, tableList[["ppl"]])
+      formattedTableDf[["ppl"]] <- tableList[["ppl"]]
     if (options[["upperSpecificationLimit"]])
-      valueVector1 <- c(valueVector1, tableList[["ppu"]])
-    valueVector1 <- c(valueVector1, tableList[["ppk"]])
+      formattedTableDf[["ppu"]] <- tableList[["ppu"]]
+    formattedTableDf[["ppk"]] <- tableList[["ppk"]]
     if (options[["processCapabilityTableCi"]] &&
         !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]))
-      valueVector1 <- c(valueVector1, paste0("[", tableList[["ppklci"]], ", ",tableList[["ppkuci"]], "]"))
+      formattedTableDf[["ppkci"]] <- paste0("[", tableList[["ppklci"]], ", ",tableList[["ppkuci"]], "]")
     if (options[["target"]]) {
-      valueVector1 <- c(valueVector1, tableList[["cpm"]])
+      formattedTableDf[["cpm"]] <- tableList[["cpm"]]
       if (options[["processCapabilityTableCi"]] &&
           !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]))
-        valueVector1 <- c(valueVector1, paste0("[", tableList[["cpmlci"]], ", ",tableList[["cpmuci"]], "]"))
+        formattedTableDf[["cpmci"]] <- paste0("[", tableList[["cpmlci"]], ", ",tableList[["cpmuci"]], "]")
     }
-    df <- t(data.frame(valueVector1))
-    colnames(df) <- sourceVector1
-    return(as.data.frame(df))
+    colnames(formattedTableDf) <- sourceVector1
+    return(formattedTableDf)
   }
 
   table2 <- createJaspTable(title = gettext("Non-conformance statistics"))
@@ -1147,6 +1213,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   nDecimals <- .numDecimals
   tableList2 <- list()
+  tableNCols <- if (nStages > 1) 5 else 4
+  tableDf2 <- data.frame(matrix(nrow = 0, ncol = tableNCols))
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     stageTitle <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
@@ -1160,13 +1228,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     # Table columns for comparison
     if (i > 1) {
-      colOvertitle <- gettextf("Change (%s vs. BL)", stage)
+      colOvertitle2 <- gettextf("Change (%s vs. BL)", stage)
       observedComparisonColName <- paste0("observedComparison", stage)
       expOverallComparisonColName <- paste0("expOverallComparison", stage)
       expWithinComparisonColName <- paste0("expWithinComparison", stage)
-      table2$addColumnInfo(name = observedComparisonColName, type = "integer", title = "Observed", overtitle = colOvertitle)
-      table2$addColumnInfo(name = expOverallComparisonColName, type = "integer", title = "Expected total", overtitle = colOvertitle)
-      table2$addColumnInfo(name = expWithinComparisonColName, type = "integer", title = "Expected within", overtitle = colOvertitle)
+      table2$addColumnInfo(name = observedComparisonColName, type = "integer", title = "Observed", overtitle = colOvertitle2)
+      table2$addColumnInfo(name = expOverallComparisonColName, type = "integer", title = "Expected total", overtitle = colOvertitle2)
+      table2$addColumnInfo(name = expWithinComparisonColName, type = "integer", title = "Expected within", overtitle = colOvertitle2)
     }
 
     #Calculate performance
@@ -1235,6 +1303,23 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       expOverallBaseline <- expOverall
       expWithinBaseline <- expWithin
     }
+
+    if (nStages > 1) {
+      currentTableDf1 <- data.frame("Stage" = c(stageTitle, "", ""),
+                                    "Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
+                                    "Observed" = round(observed, nDecimals),
+                                    "Expected Overall" = round(expOverall, nDecimals),
+                                    "Expected Within" = round(expWithin, nDecimals))
+
+    } else {
+      currentTableDf1 <- data.frame("Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
+                                    "Observed" = round(observed, nDecimals),
+                                    "Expected Overall" = round(expOverall, nDecimals),
+                                    "Expected Within" = round(expWithin, nDecimals))
+    }
+
+    tableDf2 <- rbind(tableDf2, currentTableDf1)
+
     if (i > 1) {
       observedComparison <- observed - observedBaseline
       expOverallComparison <- expOverall - expOverallBaseline
@@ -1245,6 +1330,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       tableList2[[expOverallComparisonColName]][is.na(tableList2[[expOverallComparisonColName]])] <- "*" # This looks better in the table and makes clearer that there is not an error
       tableList2[[expWithinComparisonColName]][is.na(tableList2[[expWithinComparisonColName]])] <- "*"
       tableList2[[observedComparisonColName]][is.na(tableList2[[observedComparisonColName]])] <- "*"
+
+      currentTableDf2 <- data.frame("Stage" = c(gettextf("%s vs. BL", stage),"", "") ,
+                                    "Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
+                                    "Observed" = round(observedComparison, nDecimals),
+                                    "Expected Overall" = round(expOverallComparison, nDecimals),
+                                    "Expected Within" = round(expWithinComparison, nDecimals))
+      tableDf2 <- rbind(tableDf2, currentTableDf2)
+
     }
     tableList2[[observedColName]] <- round(observed, nDecimals)
     tableList2[[expOverallColName]] <- round(expOverall, nDecimals)
@@ -1256,15 +1349,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 
   if (returnPerformanceDataframe) {
-    df <- data.frame(rowNames,
-                     observed,
-                     round(expOverall, nDecimals),
-                     round(expWithin, nDecimals))
-    colnames(df) <- c("Source", "Observed", "Expected Overall", "Expected Within")
-    df$`Expected Overall`[is.na(df$`Expected Overall`)] <- "*" # This looks better in the table and makes clearer that there is not an error
-    df$`Expected Within`[is.na(df$`Expected Within`)] <- "*"
-    df$Observed[is.na(df$Observed)] <- "*"
-    return(df)
+    tableDf2ColNames <- if (nStages > 1) c("Stage", "Source", "Observed", "Expected Overall", "Expected Within") else c("Source", "Observed", "Expected Overall", "Expected Within")
+    colnames(tableDf2) <- tableDf2ColNames
+    tableDf2$`Expected Overall`[is.na(tableDf2$`Expected Overall`)] <- "*" # This looks better in the table and makes clearer that there is not an error
+    tableDf2$`Expected Within`[is.na(tableDf2$`Expected Within`)] <- "*"
+    tableDf2$Observed[is.na(tableDf2$Observed)] <- "*"
+    return(tableDf2)
   }
 
   tableList2[["rowNames"]] <- rowNames
@@ -1327,7 +1417,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "beta", type = "number", title = gettextf("Shape (%1$s)", "\u03B2"))
     table$addColumnInfo(name = "theta", type = "number", title = gettextf("Scale (%1$s)", "\u03B8"))
   }
-  sourceVector1 <- c(sourceVector1, lslTitle, 'Target', uslTitle, 'Sample size', 'Mean', 'Std. dev.', "Beta", "Theta")
+  sourceVector1 <- c(sourceVector1, lslTitle, "Target", uslTitle, "N", "Mean", "Std. dev.", "Beta", "Theta")
 
   if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull") {
     table$addColumnInfo(name = "threshold", type = "number", title = gettext('Threshold'))
@@ -1396,29 +1486,46 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$setData(tableList)
 
   if (returnSummaryDF) {
+    if (nStages > 1)
+      sourceVector1 <- c("Stage", sourceVector1)
+    tableNRows <- if (nStages > 1) nStages * 2 - 1 else 1
+    formattedTableDf1 <- data.frame(matrix(nrow = tableNRows, ncol = 0))
+    if (nStages > 1) {
+      formattedStages <- tableList[["stage"]]
+      changeNames <- formattedStages[grep("Change", formattedStages)]
+      formattedChangeNames <- unlist(sapply(changeNames, function(x) strsplit(unlist(strsplit(x, "\\("))[2], "\\)"))) # removing the word "Change" and the brackets because it makes the table too big in the report
+      formattedStages[grep("Change", formattedStages)] <- formattedChangeNames
+      formattedTableDf1[["stage"]] <- formattedStages
+    }
     if (!options[["lowerSpecificationLimit"]])
       lsl <- '*'
     if (!options[["target"]])
       target <- '*'
     if (!options[["upperSpecificationLimit"]])
       usl <- '*'
-    valueVector <- c(lsl, target, usl, n, mean, sd, beta, theta)
+    formattedTableDf1[["lsl"]] <- tableList[["lsl"]]
+    formattedTableDf1[["target"]] <- tableList[["target"]]
+    formattedTableDf1[["usl"]] <- tableList[["usl"]]
+    formattedTableDf1[["n"]] <- tableList[["n"]]
+    formattedTableDf1[["mean"]] <- round(tableList[["mean"]], nDecimals)
+    formattedTableDf1[["sd"]] <- round(tableList[["sd"]], nDecimals)
+    formattedTableDf1[["beta"]] <- round(tableList[["beta"]], nDecimals)
+    formattedTableDf1[["theta"]] <- round(tableList[["theta"]], nDecimals)
     if(options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
-      valueVector <- c(valueVector, threshold)
-    df <- t(data.frame(round(as.numeric(valueVector), nDecimals)))
-    colnames(df) <- sourceVector1
-    return(as.data.frame(df))
-    }
+      formattedTableDf1[["threshold"]] <- round(tableList[["threshold"]], nDecimals)
+    colnames(formattedTableDf1) <- sourceVector1
+    return(formattedTableDf1)
+  }
 
   table2 <- createJaspTable(title = gettextf("Process performance (total)"))
   table2$showSpecifiedColumnsOnly <- TRUE
+  sourceVector2 <- c()
   if (nStages > 1) {
     table2$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
     table2$transpose <- TRUE
     table2$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+    sourceVector2 <- c("Stage")
   }
-
-  sourceVector2 <- c()
 
   if (options[["upperSpecificationLimit"]] && options[["lowerSpecificationLimit"]]) {
     table2$addColumnInfo(name = "pp", type = "integer", title = gettext("Pp"))
@@ -1610,17 +1717,24 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table2$setData(tableList2)
 
   if (returnCapabilityDF) {
-    valueVector <- c()
+    tableNRows <- if (nStages > 1) nStages * 2 - 1 else 1
+    formattedTableDf2 <- data.frame(matrix(nrow = tableNRows, ncol = 0))
+    if (nStages > 1) {
+      formattedStages <- tableList2[["stage"]]
+      changeNames <- formattedStages[grep("Change", formattedStages)]
+      formattedChangeNames <- unlist(sapply(changeNames, function(x) strsplit(unlist(strsplit(x, "\\("))[2], "\\)"))) # removing the word "Change" and the brackets because it makes the table too big in the report
+      formattedStages[grep("Change", formattedStages)] <- formattedChangeNames
+      formattedTableDf2[["stage"]] <- formattedStages
+    }
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]])
-      valueVector <- c(tableList2[["pp"]])
+      formattedTableDf2[["pp"]] <- tableList2[["pp"]]
     if (options[["lowerSpecificationLimit"]])
-      valueVector <- c(valueVector, tableList2[["ppl"]])
+      formattedTableDf2[["ppl"]] <- tableList2[["ppl"]]
     if (options[["upperSpecificationLimit"]])
-      valueVector <- c(valueVector, tableList2[["ppu"]])
-    valueVector <- c(valueVector, tableList2[["ppk"]])
-    df <- t(data.frame(valueVector))
-    colnames(df) <- sourceVector2
-    return(as.data.frame(df))
+      formattedTableDf2[["ppu"]] <- tableList2[["ppu"]]
+    formattedTableDf2[["ppk"]] <- tableList2[["ppk"]]
+    colnames(formattedTableDf2) <- sourceVector2
+    return(formattedTableDf2)
   }
 
   table3 <- createJaspTable(title = gettextf("Non-conformance statistics"))
@@ -1631,6 +1745,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   tableList3 <- list()
   rowNames <- c(paste0("ppm < ", lslTitle), paste0("ppm > ", uslTitle), "Total ppm")
+  tableNCols <- if (nStages > 1) 4 else 3
+  tableDf3 <- data.frame(matrix(nrow = 0, ncol = tableNCols))
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     stageTitle <- if (i == 1) gettextf("%s (BL)", stage) else as.character(stage)
@@ -1645,7 +1761,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       colOvertitle <- gettextf("Change (%s vs. BL)", stage)
       observedComparisonColName <- paste0("observedComparison", stage)
       expOverallComparisonColName <- paste0("expOverallComparison", stage)
-      expWithinComparisonColName <- paste0("expWithinComparison", stage)
       table3$addColumnInfo(name = observedComparisonColName, type = "integer", title = "Observed", overtitle = colOvertitle)
       table3$addColumnInfo(name = expOverallComparisonColName, type = "integer", title = "Expected total", overtitle = colOvertitle)
     }
@@ -1738,6 +1853,21 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       observedBaseline <- observed
       expOverallBaseline <- expOverall
     }
+    if (nStages > 1) {
+      currentTableDf1 <- data.frame("Stage" = c(stageTitle, "", ""),
+                                    "Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
+                                    "Observed" = round(observed, nDecimals),
+                                    "Expected Overall" = round(expOverall, nDecimals))
+
+    } else {
+      currentTableDf1 <- data.frame("Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
+                                    "Observed" = round(observed, nDecimals),
+                                    "Expected Overall" = round(expOverall, nDecimals))
+    }
+
+    tableDf3 <- rbind(tableDf3, currentTableDf1)
+
+
     if (i > 1) {
       observedComparison <- observed - observedBaseline
       expOverallComparison <- expOverall - expOverallBaseline
@@ -1745,6 +1875,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       tableList3[[expOverallComparisonColName]] <- round(expOverallComparison, nDecimals)
       tableList3[[expOverallComparisonColName]][is.na(tableList3[[expOverallComparisonColName]])] <- "*" # This looks better in the table and makes clearer that there is not an error
       tableList3[[observedComparisonColName]][is.na(tableList3[[observedComparisonColName]])] <- "*"
+
+      currentTableDf2 <- data.frame("Stage" = c(gettextf("%s vs. BL", stage),"", "") ,
+                                    "Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
+                                    "Observed" = round(observedComparison, nDecimals),
+                                    "Expected Overall" = round(expOverallComparison, nDecimals))
+      tableDf3 <- rbind(tableDf3, currentTableDf2)
     }
     tableList3[[observedColName]] <- round(observed, nDecimals)
     tableList3[[expOverallColName]] <- round(expOverall, nDecimals)
@@ -1755,11 +1891,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   tableList3[["rowNames"]] <- rowNames
 
   if(returnPerformanceDF){
-    df <- data.frame(rowNames,
-                     observed,
-                     expOverall)
-    colnames(df) <- c("Source", "Observed", "Expected Overall")
-    return(df)
+    tableDf3ColNames <- if (nStages > 1) c("Stage", "Source", "Observed", "Expected Overall") else c("Source", "Observed", "Expected Overall")
+    colnames(tableDf3) <- tableDf3ColNames
+    tableDf3$`Expected Overall`[is.na(tableDf3$`Expected Overall`)] <- "*" # This looks better in the table and makes clearer that there is not an error
+    tableDf3$Observed[is.na(tableDf3$Observed)] <- "*"
+    return(tableDf3)
   }
 
   table$addFootnote(gettextf("Calculations based on %s distribution.", distname))
