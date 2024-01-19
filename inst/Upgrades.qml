@@ -221,6 +221,16 @@ Upgrades
 		ChangeRename {from: "anovaGaugeMisc";							to: "reportMiscellaneous"}
 	}
 
+	// 	Upgrade
+	// {
+	// 	functionName:		"msaGaugeRR"
+	// 	fromVersion:		"0.18.3"
+	// 	toVersion:			"0.18.3.1"
+		
+	// 	// main analysis
+	// 	ChangeRename {from: "gaugeRRdataFormat";						to: "dataFormat"}
+	// }
+
 	// Gauge r&R (non-replicable)
 
 	Upgrade
@@ -1036,4 +1046,5 @@ Upgrades
 
 		ChangeRename {from: "logTransform";									to: "logTransformedCovariate"}
 	}
+
 }

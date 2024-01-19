@@ -3,7 +3,7 @@ context("[Quality Control] MSA Test Retest")
 
 options <- analysisOptions("msaTestRetest")
 options$dataFormat <- "wideFormat"
-options$part <- "Part"
+options$partWideFormat <- "Part"
 options$measurementsWideFormat <- c("X1", "X2")
 options$manualProcessSd <- TRUE
 options$manualProcessSdValue <- 2
