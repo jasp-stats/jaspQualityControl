@@ -122,7 +122,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
   # Plot note about R/S chart recommendation
   if (length(measurements) > 5 && options[["chartType"]] == "xBarAndR") # if the subgroup size is above 5, R chart is not recommended
-    plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. S-chart is recommended."))
+    plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. An s-chart is recommended."))
 
 
   #X bar & R/s chart

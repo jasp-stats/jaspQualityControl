@@ -177,7 +177,7 @@ Form
 
 	Group
 	{
-		title: 									qsTr("Control Charts")
+		title: 									qsTr("Control charts")
 		columns: 								1
 
 		RadioButtonGroup
@@ -216,7 +216,7 @@ Form
   				label:							qsTr("Mean")
   				defaultValue:					0
   				negativeValues: 				true
-  				fieldWidth:						30
+  				fieldWidth:						70
   				decimals:						10
   			}
 
@@ -225,7 +225,7 @@ Form
   				name:							"knownParametersSd"
   				label:							qsTr("Standard deviation")
   				defaultValue:					3
-  				fieldWidth:					  	30
+  				fieldWidth:					  	70
   				decimals:						10
   			}
 
@@ -402,7 +402,7 @@ Form
 		CheckBox
 		{
 			name: 								"xBarAndSUnbiasingConstant"
-			label: 								qsTr("Use unbiasing constant for X-bar & s chart")
+			label: 								qsTr("Use unbiasing constant for X-bar & s contorl chart")
 			checked:							true
 		}
 
