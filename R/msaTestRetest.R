@@ -19,17 +19,19 @@
 msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
   wideFormat <- options[["dataFormat"]] == "wideFormat"
-  if (wideFormat){
+  if (wideFormat) {
     measurements <- unlist(options[["measurementsWideFormat"]])
-  }else{
+    parts <- unlist(options[["partWideFormat"]])
+    factor.vars <- parts
+  } else {
     measurements <- unlist(options[["measurementLongFormat"]])
+    parts <- unlist(options[["partLongFormat"]])
+    operators <- unlist(options[["operator"]])
+    factor.vars <- c(parts, operators)
   }
-  parts <- unlist(options[["part"]])
-  operators <- unlist(options[["operator"]])
 
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
-  factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
   if (wideFormat){
@@ -126,7 +128,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
       jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[2], group = 2),fill = "green", shape = 22, size = 4) +
       ggplot2::scale_y_continuous(name = "Measurements", limits = yLimits, breaks = yBreaks) +
       jaspGraphs::geom_rangeframe() +
-      jaspGraphs::themeJaspRaw() + 
+      jaspGraphs::themeJaspRaw() +
       ggplot2::theme(legend.position = "right")
 
     plot$plotObject <- p
