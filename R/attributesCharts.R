@@ -727,44 +727,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
   )
 }
 
-.AReport <- function(ccTitle = "", ccName = "", ccOperator = "", ccID = "", ccMisc = "" , ccAppraiser = "", ccMeasurement = "", ccSize = "",
-                     ccTime = "", ccFrequency = ""){
-
-  Report <- createJaspContainer(gettext("Report"))
-
-  if (identical(ccTitle, "")) {
-    title <- gettext("Control Charts for Attributes Report")
-  }else{
-    title <- ccTitle
-  }
-  name <- gettextf("Service name: %s", ccName)
-  operator <- gettextf("Operator: %s", ccOperator)
-  ID <- gettextf("Identification: %s", ccID)
-  Appraiser <- gettextf("Appraiser: %s", ccAppraiser)
-  Measurement <- gettextf("Measurement system: %s", ccMeasurement)
-  Size <- gettextf("Name of Size: %s", ccSize)
-  Time <- gettextf("Time: %s", ccTime)
-  Frequency <- gettextf("Frequency: %s", ccFrequency)
-
-
-  text1 <- c(name, operator)
-  text2 <- c(ID, Appraiser)
-  text3 <- c(Measurement, Time)
-  text4 <- c(Size, Frequency)
-
-  matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1, position = 1)
-  plotMat <- matrix(list(), 2, 2, T)
-  plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- .ggplotWithText(text2)
-  plotMat[[2, 1]] <- .ggplotWithText(text3)
-  plotMat[[2, 2]] <- .ggplotWithText(text4)
-
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(title, ""))
-  matrixPlot$plotObject <- p
-
-  return(matrixPlot)
-}
-
 .NelsonTable <- function(dataset, options, sixsigma, type = "xbar", Phase2 = TRUE, name = "X-bar", xLabels = NULL) {
 
   table <- createJaspTable(title = gettextf("Test results for %s chart", name))

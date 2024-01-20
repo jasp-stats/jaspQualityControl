@@ -203,12 +203,16 @@ options$axisLabels <- "Month"
 options$xmrChartMovingRangeLength <- 2
 options$report <- TRUE
 options$reportAutocorrelationChart <- TRUE
-options$reportMetaData <- TRUE
 options$reportIMRChart <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitleText <- "new title test"
+options$reportChartNameText <- "chart name test"
+options$reportSubtitleText <- "subtitle test"
+options$reportMeasurementNameText <- "measurement name test"
+options$reportFootnoteText <- "footnote test"
+options$reportLocationText <- "location test"
 options$reportDateText <- "01.01.2000"
-options$reportMeasurementNameText <- "Measurement name"
 options$reportPerformedByText <- "Your name"
-options$reportTitleText <- "Report title"
 results <- runAnalysis("variablesChartsIndividuals", "datasets/variableChartsIndividuals/variableChartsIndividualsDebug.csv", options)
 
 test_that("8. Basic test to create a report with all components", {
@@ -221,15 +225,13 @@ test_that("8. Basic test to create a report with all components", {
 options <- analysisOptions("variablesChartsIndividuals")
 options$measurement <- "Yield"
 options$axisLabels <- "Month"
+options$stage <- "Stage"
 options$xmrChartMovingRangeLength <- 2
 options$report <- TRUE
 options$reportAutocorrelationChart <- FALSE
-options$reportMetaData <- TRUE
 options$reportIMRChart <- TRUE
-options$reportDateText <- "01.01.2000"
-options$reportMeasurementNameText <- "Measurement name"
-options$reportPerformedByText <- "Your name"
-options$reportTitleText <- "Report title"
+options$reportMetaData <- FALSE
+options$reportTitle <- TRUE
 results <- runAnalysis("variablesChartsIndividuals", "datasets/variableChartsIndividuals/variableChartsIndividualsDebug.csv", options)
 
 test_that("9. Basic test to create a report with only an IMR chart", {

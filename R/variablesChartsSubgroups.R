@@ -214,34 +214,3 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     }
   }
 }
-
-.CCReport <- function(p1 = "", p2 = "", reportTitle = "", reportMeasurementName = "", reportDate = "",
-                      reportReportedBy = "", reportMiscellaneous = "" , reportSubtitle = "", reportChartName = "", options) {
-
-  if (identical(reportTitle, "")) {
-    title <- if (options[["chartType"]] == "xBarAndR") gettext("Report for X-bar & R control chart") else gettext("Report for X-bar & s control chart")
-  } else {
-    title <- reportTitle
-  }
-  name <- gettextf("Name: %s", reportMeasurementName)
-  date <- gettextf("Date: %s", reportDate)
-  subtitle <- gettextf("Sub-title: %s", reportSubtitle)
-  text1 <- c(name, date, subtitle)
-
-  reportedBy <- gettextf("Reported by: %s", reportReportedBy)
-  misc <- gettextf("Misc: %s", reportMiscellaneous)
-  chartName <- gettextf("Name of chart: %s", reportChartName)
-  text2 <- c(reportedBy, misc, chartName)
-
-  matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1)
-  plotMat <- matrix(list(), 3, 2)
-  plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- p1
-  plotMat[[2, 1]] <- .ggplotWithText(text2)
-  plotMat[[2, 2]] <- p2
-
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
-  matrixPlot$plotObject <- p
-
-  return(matrixPlot)
-}
