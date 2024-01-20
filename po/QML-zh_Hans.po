@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2024-01-21 16:01+0000\n"
+"Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"jasp/jaspprocesscontrol-qml/zh_Hans/>\n"
+"Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.4-dev\n"
 "X-Language: zh_Hans\n"
 "X-Qt-Contexts: true\n"
 
@@ -2079,84 +2085,77 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Through grouping variable"
 msgstr "通过分组变量"
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report"
 msgstr "显示报告"
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report metadata"
 msgstr "显示报告元数据"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Select Report Components"
-msgstr ""
+msgstr "选择报告内容"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show X-mR chart"
-msgstr ""
+msgstr "显示 X-mR 图"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show autocorrelation chart"
-msgstr ""
+msgstr "显示自相关图"
 
-#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Total"
 msgstr "总合"
 
 msgctxt "attributesCharts|"
 msgid "Laney p'(p-prime) chart"
-msgstr ""
+msgstr "Laney p'(p-prime) 图"
 
 msgctxt "attributesCharts|"
 msgid "Laney u'(u-prime) chart"
-msgstr ""
+msgstr "Laney u'(u-prime) 图"
 
-#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Operator"
 msgstr "操作者"
 
 msgctxt "msaAttribute|"
 msgid "Part"
-msgstr ""
+msgstr "零件"
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Operator"
 msgstr "操作者"
 
 msgctxt "msaGaugeRR|"
 msgid "Part"
-msgstr ""
+msgstr "零件"
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Show Report"
 msgstr "显示报告"
 
 msgctxt "msaGaugeRR|"
 msgid "Misc."
-msgstr ""
+msgstr "杂项"
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "r&R table ANOVA method"
 msgstr "方差分析法 r&R 表"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Misc."
-msgstr ""
+msgstr "杂项"
 
 msgctxt "msaTestRetest|"
 msgid "Part"
-msgstr ""
+msgstr "零件"
 
 msgctxt "msaTestRetest|"
 msgid "Measurement"
-msgstr ""
+msgstr "测量"
 
 msgctxt "msaTestRetest|"
 msgid "Scatter plot measurement"
