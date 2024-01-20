@@ -28,14 +28,14 @@
 <rect x='32.73' y='42.70' width='654.55' height='507.91' style='stroke-width: 1.49; stroke-linecap: butt; stroke-linejoin: miter; fill: #D3D3D3;' />
 <text x='62.48' y='80.32' style='font-size: 17.07px; font-family: sans;' textLength='205.93px' lengthAdjust='spacingAndGlyphs'>Chart name: Name of chart</text>
 <text x='62.48' y='143.81' style='font-size: 17.07px; font-family: sans;' textLength='222.04px' lengthAdjust='spacingAndGlyphs'>Sub-title: Your report sub-title</text>
-<text x='62.48' y='207.29' style='font-size: 17.07px; font-family: sans;' textLength='260.04px' lengthAdjust='spacingAndGlyphs'>Measurement name: Report name</text>
-<text x='62.48' y='270.78' style='font-size: 17.07px; font-family: sans;' textLength='76.87px' lengthAdjust='spacingAndGlyphs'>Footnote: </text>
-<text x='62.48' y='334.27' style='font-size: 17.07px; font-family: sans;' textLength='74.04px' lengthAdjust='spacingAndGlyphs'>Location: </text>
+<text x='62.48' y='207.29' style='font-size: 17.07px; font-family: sans;' textLength='345.46px' lengthAdjust='spacingAndGlyphs'>Measurement name: Measurement name test</text>
+<text x='62.48' y='270.78' style='font-size: 17.07px; font-family: sans;' textLength='176.53px' lengthAdjust='spacingAndGlyphs'>Footnote: Footnote test</text>
+<text x='62.48' y='334.27' style='font-size: 17.07px; font-family: sans;' textLength='149.02px' lengthAdjust='spacingAndGlyphs'>Location: Place test</text>
 <text x='62.48' y='397.76' style='font-size: 17.07px; font-family: sans;' textLength='131.00px' lengthAdjust='spacingAndGlyphs'>Date: 01.01.2000</text>
 <text x='62.48' y='461.25' style='font-size: 17.07px; font-family: sans;' textLength='226.81px' lengthAdjust='spacingAndGlyphs'>Performed by: Operator name</text>
-<text x='62.48' y='524.73' style='font-size: 17.07px; font-family: sans;' textLength='82.56px' lengthAdjust='spacingAndGlyphs'>Print date: </text>
+<text x='62.48' y='524.73' style='font-size: 17.07px; font-family: sans;' textLength='168.01px' lengthAdjust='spacingAndGlyphs'>Print date: 02.02.2002</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-<text x='0.00' y='14.56' style='font-size: 13.20px; font-family: sans;' textLength='143.80px' lengthAdjust='spacingAndGlyphs'>x-bar-r-report2-subplot-5</text>
+<text x='0.00' y='14.56' style='font-size: 13.20px; font-family: sans;' textLength='156.25px' lengthAdjust='spacingAndGlyphs'>x-bar-r-reportW1-subplot-5</text>
 </g>
 </svg>

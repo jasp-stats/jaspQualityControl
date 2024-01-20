@@ -1549,6 +1549,8 @@ test_that("LF20.9 (Normal) Edge case test of X-bar & R control chart with multip
 })
 
 ## Report (verified with Minitab) ####
+
+### Basic report test ####
 options <- analysisOptions("processCapabilityStudies")
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
@@ -1563,11 +1565,16 @@ options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 6
 options$upperSpecificationLimitValue <- 12
 options$report <- TRUE
-options$reportDateText <- "01.01.2020"
-options$reportConclusionText <- "Comment"
-options$reportProcessText <- "Process name"
-options$reportReportedByText <- "Mrs. Doe"
-options$reportTitleText <- "Title"
+options$reportMetaData <- TRUE
+options$reportTitleText <- "new title test"
+options$reportLocationText <- "location test"
+options$reportLineText <- "line test"
+options$reportMachineText <- "machine test"
+options$reportVariableText <- "variable name test"
+options$reportProcessText <- "process name test"
+options$reportDateText <- "today"
+options$reportReportedByText <- "Name test"
+options$reportConclusionText <- "comments test"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
@@ -1576,6 +1583,105 @@ test_that("LF21 (Normal) Basic test of report functionality", {
   plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "process-capability-report21")
+})
+
+### (Normal) Stages report test ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$stagesLongFormat <- "Stage"
+options$manualSubgroupSizeValue <- 5
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitleText <- "new title test"
+options$reportLocationText <- "location test"
+options$reportLineText <- "line test"
+options$reportMachineText <- "machine test"
+options$reportVariableText <- "variable name test"
+options$reportProcessText <- "process name test"
+options$reportDateText <- "today"
+options$reportReportedByText <- "Name test"
+options$reportConclusionText <- "comments test"
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF22 (Normal) Option test of report functionality with stages", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "process-capability-report22")
+})
+
+### (Non-Normal) Stages report test ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$stagesLongFormat <- "Stage"
+options$manualSubgroupSizeValue <- 5
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitleText <- "new title test"
+options$reportLocationText <- "location test"
+options$reportLineText <- "line test"
+options$reportMachineText <- "machine test"
+options$reportVariableText <- "variable name test"
+options$reportProcessText <- "process name test"
+options$reportDateText <- "today"
+options$reportReportedByText <- "Name test"
+options$reportConclusionText <- "comments test"
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF23 (Non-Normal) Option test of report functionality with stages", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "process-capability-report23")
+})
+
+### Basic report test with removed elements ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$report <- TRUE
+options$reportMetaData <- FALSE
+options$reportProbabilityPlot <- FALSE
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF24 (Normal) Basic test of report functionality with removed elements", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "process-capability-report24")
 })
 
 # Wide / Row format ####
@@ -2589,6 +2695,7 @@ test_that("WF15.9 (Normal) Option test of X-bar & s control chart with s-bar met
 })
 
 ## Report ####
+### Basic report test ####
 options <- analysisOptions("processCapabilityStudies")
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
@@ -2603,11 +2710,16 @@ options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 6
 options$upperSpecificationLimitValue <- 12
 options$report <- TRUE
-options$reportDateText <- "01.01.2020"
-options$reportConclusionText <- "Comment"
-options$reportProcessText <- "Process name"
-options$reportReportedByText <- "Mrs. Doe"
-options$reportTitleText <- "Title"
+options$reportMetaData <- TRUE
+options$reportTitleText <- "new title test"
+options$reportLocationText <- "location test"
+options$reportLineText <- "line test"
+options$reportMachineText <- "machine test"
+options$reportVariableText <- "variable name test"
+options$reportProcessText <- "process name test"
+options$reportDateText <- "today"
+options$reportReportedByText <- "Name test"
+options$reportConclusionText <- "comments test"
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
@@ -2617,3 +2729,104 @@ test_that("WF16 (Normal) Basic test of report functionality", {
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "process-capability-reportW16")
 })
+
+
+### (Normal) Stages report test ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$stagesWideFormat <- "Stage"
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitleText <- "new title test"
+options$reportLocationText <- "location test"
+options$reportLineText <- "line test"
+options$reportMachineText <- "machine test"
+options$reportVariableText <- "variable name test"
+options$reportProcessText <- "process name test"
+options$reportDateText <- "today"
+options$reportReportedByText <- "Name test"
+options$reportConclusionText <- "comments test"
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF17 (Normal) Option test of report functionality with stages", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "process-capability-reportW17")
+})
+
+### (Non-Normal) Stages report test ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$stagesWideFormat <- "Stage"
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitleText <- "new title test"
+options$reportLocationText <- "location test"
+options$reportLineText <- "line test"
+options$reportMachineText <- "machine test"
+options$reportVariableText <- "variable name test"
+options$reportProcessText <- "process name test"
+options$reportDateText <- "today"
+options$reportReportedByText <- "Name test"
+options$reportConclusionText <- "comments test"
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF18 (Non-Normal) Option test of report functionality with stages", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "process-capability-reportW18")
+})
+
+### Basic report test with removed elements ####
+options <- analysisOptions("processCapabilityStudies")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
+options$axisLabels <- "Time"
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$report <- TRUE
+options$reportMetaData <- FALSE
+options$reportProbabilityPlot <- FALSE
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisWideFormatDebug.csv", options)
+
+test_that("WF19 (Normal) Basic test of report functionality with removed elements", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "process-capability-reportW19")
+})
+
