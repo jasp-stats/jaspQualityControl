@@ -280,12 +280,19 @@ test_that("LF14. Basic test of changing manual subgroup size with X-bar & s cont
 options <- analysisOptions("variablesChartsSubgroups")
 options$chartType <- "xBarAndR"
 options$measurementLongFormat <- "Diameter"
-options$reportMeasurementNameText <- "Report name"
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitleText <- "newTitle"
+options$reportChartNameText <- "Chart name test"
+options$reportSubtitleText <- "Sub title test"
+options$reportMeasurementNameText <- "Measurement name test"
+options$reportFootnoteText <- "Footnote test"
+options$reportLocationText <- "Place test"
 options$reportDateText <- "01.01.2000"
 options$reportSubtitleText <- "Your report sub-title"
 options$reportPerformedByText <- "Operator name"
 options$reportChartNameText <- "Name of chart"
-options$report <- TRUE
+options$reportPrintDateText <- "02.02.2002"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
                        options)
@@ -300,12 +307,19 @@ test_that("LF15. Basic test to create report of X-bar & R control chart", {
 options <- analysisOptions("variablesChartsSubgroups")
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
-options$reportMeasurementNameText <- "Report name"
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitleText <- "newTitle"
+options$reportChartNameText <- "Chart name test"
+options$reportSubtitleText <- "Sub title test"
+options$reportMeasurementNameText <- "Measurement name test"
+options$reportFootnoteText <- "Footnote test"
+options$reportLocationText <- "Place test"
 options$reportDateText <- "01.01.2000"
 options$reportSubtitleText <- "Your report sub-title"
 options$reportPerformedByText <- "Operator name"
 options$reportChartNameText <- "Name of chart"
-options$report <- TRUE
+options$reportPrintDateText <- "02.02.2002"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
                        options)
@@ -630,6 +644,54 @@ test_that("LF34. Edge case of X-bar & s control chart with multiple assigned sta
   jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart16")
 })
 
+## Options tests ####
+
+### Report of x-bar & r chart with stages and some deselected meta data ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$chartType <- "xBarAndR"
+options$measurementLongFormat <- "Diameter"
+options$stagesLongFormat <- "Stage"
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitle <- FALSE
+options$reportChartNameText <- "Chart name test"
+options$reportSubtitleText <- "Sub title test"
+options$reportMeasurementNameText <- "Measurement name test"
+options$reportFootnote <- FALSE
+options$reportLocationText <- "Place test"
+options$reportDateText <- "01.01.2000"
+options$reportSubtitle <- FALSE
+options$reportPerformedByText <- "Operator name"
+options$reportChartNameText <- "Name of chart"
+options$reportPrintDateText <- "02.02.2002"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
+                       options)
+
+test_that("LF35. Option test of creating a report with stages and less meta data", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-report2")
+})
+
+### Report of x-bar & r chart with no meta data ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$chartType <- "xBarAndR"
+options$measurementLongFormat <- "Diameter"
+options$stagesLongFormat <- "Stage"
+options$report <- TRUE
+options$reportMetaData <- FALSE
+options$reportTitle <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsLongFormatDebug.csv",
+                       options)
+
+test_that("LF36. Option test of creating a report with no meta data", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-report3")
+})
+
 # Wide / Row format ####
 
 ## Basic tests ####
@@ -883,12 +945,19 @@ options <- analysisOptions("variablesChartsSubgroups")
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndR"
-options$reportMeasurementNameText <- "Report name"
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitleText <- "newTitle"
+options$reportChartNameText <- "Chart name test"
+options$reportSubtitleText <- "Sub title test"
+options$reportMeasurementNameText <- "Measurement name test"
+options$reportFootnoteText <- "Footnote test"
+options$reportLocationText <- "Place test"
 options$reportDateText <- "01.01.2000"
 options$reportSubtitleText <- "Your report sub-title"
 options$reportPerformedByText <- "Operator name"
 options$reportChartNameText <- "Name of chart"
-options$report <- TRUE
+options$reportPrintDateText <- "02.02.2002"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
                        options)
@@ -896,7 +965,7 @@ results <- runAnalysis("variablesChartsSubgroups",
 test_that("WF13. Basic test to create report of X-bar & R control chart", {
   plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-r-report2")
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-reportW1")
 })
 
 ### Report function with x-bar & s chart (verified with Minitab) ####
@@ -905,12 +974,19 @@ options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndS"
 options$xBarAndSUnbiasingConstant <- TRUE
-options$reportMeasurementNameText <- "Report name"
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitleText <- "newTitle"
+options$reportChartNameText <- "Chart name test"
+options$reportSubtitleText <- "Sub title test"
+options$reportMeasurementNameText <- "Measurement name test"
+options$reportFootnoteText <- "Footnote test"
+options$reportLocationText <- "Place test"
 options$reportDateText <- "01.01.2000"
 options$reportSubtitleText <- "Your report sub-title"
 options$reportPerformedByText <- "Operator name"
 options$reportChartNameText <- "Name of chart"
-options$report <- TRUE
+options$reportPrintDateText <- "02.02.2002"
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
                        options)
@@ -918,7 +994,7 @@ results <- runAnalysis("variablesChartsSubgroups",
 test_that("WF14. Basic test to create report of X-bar & s control chart", {
   plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "x-bar-s-report2")
+  jaspTools::expect_equal_plots(testPlot, "x-bar-s-reportW1")
 })
 
 
@@ -1138,4 +1214,53 @@ test_that("WF26. X-bar & s control chart with unequal subgroups and fixed sizes"
   plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart28")
+})
+
+## Options tests ####
+
+### Report of x-bar & r chart with stages and some deselected meta data ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
+options$stagesWideFormat <- "Stage"
+options$chartType <- "xBarAndR"
+options$report <- TRUE
+options$reportMetaData <- TRUE
+options$reportTitle <- FALSE
+options$reportChartNameText <- "Chart name test"
+options$reportSubtitleText <- "Sub title test"
+options$reportMeasurementNameText <- "Measurement name test"
+options$reportFootnote <- FALSE
+options$reportLocationText <- "Place test"
+options$reportDate <- FALSE
+options$reportSubtitleText <- "Your report sub-title"
+options$reportPerformedByText <- "Operator name"
+options$reportChartNameText <- "Name of chart"
+options$reportPrintDateText <- "02.02.2002"
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("WF27. Options test of creating a report with stages and less meta data", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-reportW2")
+})
+
+### Report of x-bar & r chart with no meta data ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
+options$chartType <- "xBarAndR"
+options$report <- TRUE
+options$reportMetaData <- FALSE
+options$reportTitle <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv",
+                       options)
+
+test_that("WF27. Options test of creating a report with stages and less meta data", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-reportW3")
 })

@@ -86,40 +86,6 @@
               xAxisTitle = xAxisTitle))
 }
 
-
-#### TESTING CODE
-# bunchOfText <- c("Date: 12.02.2000", "Misc: A comment", "Name: John Doe", "Reported by: Also by John Doe", "Title: The Report")
-# nText <- length(bunchOfText)
-# sapply(bunchOfText, strsplit, "(?<=:)", perl = TRUE)
-#
-# annotation <- data.frame(x = rep(0, nText), y = (5:1)[1:nText], label = bunchOfText)
-
-# ggplot2::ggplot() + ggplot2::theme_void() +
-#   ggplot2::annotate("rect", xmin = -.05, xmax = 1.05, ymin = 1 - .5, ymax = 5 + .5, fill = 'gray') +
-#   ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 5, hjust = 0) +
-#   ggplot2::scale_x_continuous(limits = c(-.05, 1.05)) +
-#   ggplot2::scale_y_continuous(limits = c(1 - .5,  5 + .5))
-#
-#
-# text <- c("Date: 12.02.2000", "Misc: A comment", "Name: John Doe", "Reported by: Also by John Doe", "Title: The Report")
-#
-# plots <- list()
-# plots[[1]] <- ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "1", size = 10)
-# plots[[2]] <- ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "2", size = 10)
-# plots[[3]] <- ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "3", size = 10)
-# plots[[4]] <- ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "4", size = 10)
-# plots[[5]] <- ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "5", size = 10)
-# plots[[6]] <- list(ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "6", size = 10),
-#                    ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate(geom = "text", x = 0, y = 0, label = "7", size = 10))
-#
-#
-# tables <- list(list(data.frame(x1 = 1:3, x2 = 1:3), data.frame(x1 = 1:3, x2 = 1:3)), data.frame(x1 = 1:3, x2 = 1:3))
-#
-#
-#
-# .qcReport(text, plots, tables)
-######
-
 .qcReport <- function(text = NULL, # a string or vector of strings,
                       plots, # a list of ggplots. If the plots should stay on top of each other, use a nested list.
                       tables = NULL, # a list of dataframes. If tables should be in the same plot, use a nested list.
