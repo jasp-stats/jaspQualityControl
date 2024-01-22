@@ -1037,21 +1037,207 @@ Upgrades
 		ChangeRename {from: "logTransform";									to: "logTransformedCovariate"}
 	}
 
-	// Upgrade
-	// {
-	// 	functionName:		"msaGaugeRR"
-	// 	fromVersion:		"0.18.3"
-	// 	toVersion:			"0.19.0"
+	// Upgrades after changing the variable forms and the report functionality
+
+	// Type 2 gauge r&R
+	Upgrade
+	{
+		functionName:		"msaGaugeRR"
+		fromVersion:		"0.18.3"
+		toVersion:			"0.19.0"
 		
-	// 	// main analysis
-	// 	ChangeRename 
-	// 	{
-	// 		from: 		"operator"
-	// 		to: 		"operatorLongFormat"
-	// 		condition:	function(options) 
-	// 		{
-	// 			 return options["dataFormat"] == "longFormat"
-	// 		}
-	// 	}
-	// }
+		ChangeRename 
+		{
+			from: 		"operator"
+			to: 		"operatorLongFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "longFormat"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"operator"
+			to: 		"operatorWideFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+
+		ChangeRename 
+		{
+			from: 		"part"
+			to: 		"partLongFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "longFormat"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"part"
+			to: 		"partWideFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+
+		ChangeRename { from: "reportTitle";						to: "reportTitleText"}
+		ChangeRename { from: "reportGaugeName";					to: "reportGaugeNameText"}
+		ChangeRename { from: "reportDate";						to: "reportDateText"}
+		ChangeRename { from: "reportReportedBy";				to: "reportPerformedByText"}
+	}
+
+	// Gauge r&R (non-replicable measurements)
+	Upgrade
+	{
+		functionName:		"msaGaugeRRnonrep"
+		fromVersion:		"0.18.3"
+		toVersion:			"0.19.0"
+		
+		ChangeRename 
+		{
+			from: 		"operator"
+			to: 		"operatorLongFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "longFormat"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"operator"
+			to: 		"operatorWideFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+
+		ChangeRename 
+		{
+			from: 		"part"
+			to: 		"partLongFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "longFormat"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"part"
+			to: 		"partWideFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+
+		ChangeRename { from: "reportTitle";						to: "reportTitleText"}
+		ChangeRename { from: "reportGaugeName";					to: "reportGaugeNameText"}
+		ChangeRename { from: "reportDate";						to: "reportDateText"}
+		ChangeRename { from: "reportReportedBy";				to: "reportPerformedByText"}
+	}
+
+	// Attributes Agreement Analysis
+	Upgrade
+	{
+		functionName:		"msaAttribute"
+		fromVersion:		"0.18.3"
+		toVersion:			"0.19.0"
+		
+		ChangeRename 
+		{
+			from: 		"operator"
+			to: 		"operatorLongFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "longFormat"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"operator"
+			to: 		"operatorWideFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+
+		ChangeRename 
+		{
+			from: 		"part"
+			to: 		"partLongFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "longFormat"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"part"
+			to: 		"partWideFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+
+			ChangeRename 
+		{
+			from: 		"standard"
+			to: 		"standardLongFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "longFormat"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"standard"
+			to: 		"standardWideFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+	}
+
+	// Test Retest
+	Upgrade
+	{
+		functionName:		"msaTestRetest"
+		fromVersion:		"0.18.3"
+		toVersion:			"0.19.0"
+
+		ChangeRename 
+		{
+			from: 		"part"
+			to: 		"partLongFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "longFormat"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"part"
+			to: 		"partWideFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+	}
 }
