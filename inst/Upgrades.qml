@@ -1240,4 +1240,82 @@ Upgrades
 			}
 		}
 	}
+
+	// Variables Charts Subgroups
+	Upgrade
+	{
+		functionName:		"variablesChartsSubgroups"
+		fromVersion:		"0.18.3"
+		toVersion:			"0.19.0"
+
+		ChangeRename 
+		{
+			from: 		"stages"
+			to: 		"stagesLongFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "longFormat"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"stages"
+			to: 		"stagesWideFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+
+		ChangeRename { from: "reportTitle";						to: "reportTitleText"}
+		ChangeRename { from: "reportMeasurementName";			to: "reportMeasurementNameText"}
+		ChangeRename { from: "reportDate";						to: "reportDateText"}
+		ChangeRename { from: "reportReportedBy";				to: "reportPerformedByText"}
+		ChangeRename { from: "reportSubtitle";					to: "reportSubtitleText"}
+		ChangeRename { from: "reportChartName";					to: "reportChartNameText"}
+	}
+	
+	// Process Capability Study
+	Upgrade
+	{
+		functionName:		"processCapabilityStudies"
+		fromVersion:		"0.18.3"
+		toVersion:			"0.19.0"
+
+		ChangeRename 
+		{
+			from: 		"stages"
+			to: 		"stagesLongFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "longFormat"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"stages"
+			to: 		"stagesWideFormat"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+
+		ChangeRename 
+		{
+			from: 		"subgroup"
+			to: 		"axisLabels"
+			condition:	function(options) 
+			{
+				 return options["dataFormat"] == "wideFormat"
+			}
+		}
+
+		ChangeRename { from: "reportTitle";						to: "reportTitleText"}
+		ChangeRename { from: "reportProcessName";				to: "reportProcessText"}
+		ChangeRename { from: "reportDate";						to: "reportDateText"}
+		ChangeRename { from: "reportReportedBy";				to: "reportPerformedByText"}
+	}
 }
