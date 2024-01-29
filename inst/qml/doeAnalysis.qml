@@ -109,7 +109,7 @@ Form
 		CheckBox
 		{
 			name:                               "codeFactors"
-			label:                              qsTr("Automatically code/standardize factors")
+			label:                              qsTr("Display results in coded units")
 		}
 	}
 
@@ -159,7 +159,7 @@ Form
 
 		VariablesForm
 		{
-			enabled: !highestOrder.checked & designType.currentValue == "factorialDesign"
+			enabled: (!highestOrder.checked && designType.currentValue == "factorialDesign") || (!rsmPredefinedModel.checked && designType.currentValue == "responseSurfaceDesign")
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
 			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["fixedFactors", "continuousFactors"]}
 			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction}
