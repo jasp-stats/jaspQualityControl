@@ -26,13 +26,13 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   .doeAnalysisCheckErrors(dataset, options, ready)
 
-  p <- try({
+  #p <- try({
      .doeAnalysisMakeState(jaspResults, dataset, options, ready)
-  })
+ # })
 
-  if (isTryError(p)) {
-    jaspResults$setError(gettextf("The analysis crashed with the following error message: %1$s", .extractErrorMessage(p)))
-  }
+  # if (isTryError(p)) {
+  #   jaspResults$setError(gettextf("The analysis crashed with the following error message: %1$s", .extractErrorMessage(p)))
+  # }
 
   .doeAnalysisSummaryTable(jaspResults, options, ready)
   .doeAnalysisAnovaTable(jaspResults, options, ready)
@@ -97,6 +97,39 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   return(deps)
 }
 
+# dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/4_3_AnalyzeDesign/ResponseSurfaceDesignAnalysis.csv")
+# dataset <- dataset[4:7]
+# options <- list()
+# options[["continuousFactors"]] <- c("Inlet_feeding", "Time", "Oil_temperature")
+#
+# options[["dependent"]] <- "Vdk"
+# options[["fixedFactors"]] <- NULL
+#
+# options$modelTerms <- list(list(components = "Inlet_feeding"), list(components = "Time"),
+#                            list(components = "Oil_temperature"), list(components = c("Inlet_feeding",
+#                                                                                     "Time")), list(components = c("Time", "Oil_temperature"
+#                                                                                     )), list(components = c("Inlet_feeding", "Oil_temperature")),
+#                            list(components = c("Inlet_feeding", "Time", "Oil_temperature"
+#                            )))
+#
+# options[["continuousFactors"]] <- c("Inlet_feeding")
+# options$modelTerms <- list(list(components = "Inlet_feeding"))
+#
+# dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/4_3_AnalyzeDesign/FactorialDesignAnalysis.csv")
+# options <- list()
+# dataset <- dataset[5:8]
+# dataset[1] <- as.factor(dataset[[1]])
+# dataset[2] <- as.factor(dataset[[2]])
+# dataset[3] <- as.factor(dataset[[3]])
+# options[["continuousFactors"]] <- NULL
+# options[["dependent"]] <- "Yield"
+# options[["fixedFactors"]] <- c("Exposure_time", "Develop_time", "Mask_dimension")
+# options$modelTerms <- list(list(components = "Exposure_time"),
+#                            list(components = "Develop_time"),
+#                            list(components = "Mask_dimension"),
+#                            list(components = c("Mask_dimension", "Exposure_time")))
+
+
 .doeAnalysisMakeState <- function(jaspResults, dataset, options, ready) {
   if (!ready || jaspResults$getError()) {
     return()
@@ -133,8 +166,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["anova"]] <- list()
 
 
-  if ((!options[["highestOrder"]] && !options[["rsmPredefinedModel"]]) ||
-      (options[["highestOrder"]] && options[["order"]] == 1 && options[["designType"]] == "factorialDesign")) {
+  if ((options[["designType"]] == "factorialDesign" && !options[["highestOrder"]]) ||
+      (options[["designType"]] == "factorialDesign" && options[["highestOrder"]] && options[["order"]] == 1) ||
+      (options[["designType"]] == "responseSurfaceDesign" && !options[["rsmPredefinedModel"]])) {
     reorderModelTerms <- .reorderModelTerms(options)
     modelTerms <- reorderModelTerms$modelTerms
     modelDef <- .modelFormula(modelTerms, options)
@@ -257,29 +291,59 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   coefs <- as.data.frame(regressionSummary[["coefficients"]])
   valid_coefs <- which(!is.na(coefs[["Estimate"]]))
   termNames <- jaspBase::gsubInteractionSymbol(rownames(coefs)[valid_coefs])
-  result[["regression"]][["coefficients"]][["terms"]] <- termNames
-  result[["regression"]][["coefficients"]][["effects"]] <- effects(regressionFit, set.sign = TRUE)[valid_coefs]
-  result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
-  result[["regression"]][["coefficients"]][["effects"]][1] <- NA
 
-  # Aliasing
+  #squaredTermNames <- termNames
+  # appendedTermNames <- termName
+  # termNames1 <- c("(Intercept)", "Exposure_time1", "Develop_time1", "Mask_dimension1", "Exposure_time1 ✻ Mask_dimension1")
+  # allPredictors1 <- c("Exposure_time", "Develop_time", "Mask_dimension")
+  # termNames2 <- c("(Intercept)", "Inlet_feeding", "Time", "Oil_temperature", "Inlet_feeding✻Time", "Inlet_feeding✻Oil_temperature",
+  #                "Time✻Oil_temperature","Inlet_feeding^2","Time^2", "Oil_temperature^2" )
+  # allPredictors2 <- c("Inlet_feeding", "Time", "Oil_temperature")
+  # termNames <- termNames1
+  # allPredictors <- allPredictors1
+  # regexExpression <- paste0("(", paste(allPredictors, collapse = "|"), ")((\\^2)?)([^✻]+)(✻?)")
+
+  #remove possible appended factor levels
   if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
       (options[["highestOrder"]] && options[["designType"]] == "factorialDesign")) {
     allPredictors <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]))
   } else {
     allPredictors <- unique(unlist(options[["modelTerms"]]))
   }
-  termNamesAliased <- termNames
-  # remove possible appended factor levels
-  regexExpression <- paste0("(", paste(allPredictors, collapse = "|"), ")((\\^2)?)([^^✻]+)(✻?)")
-  for (term_i in seq_along(termNamesAliased)) {
-    termNamesAliased[term_i] <- gsub(regexExpression, "\\1\\2", termNamesAliased[term_i], perl=TRUE)
-    termNamesAliased[term_i] <- gsub("\\s", "", termNamesAliased[term_i])
+  regexExpression <- paste0("(", paste(allPredictors, collapse = "|"), ")((\\^2)?)([^✻]+)(✻?)")
+  for (term_i in seq_along(termNames)) {
+    replacements <- if (grepl("^2", termNames[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
+    termNames[term_i] <- gsub(regexExpression, replacements, termNames[term_i], perl=TRUE)
+    termNames[term_i] <- gsub("\\s", "", termNames[term_i])
   }
+  termNames
+  result[["regression"]][["coefficients"]][["terms"]] <- termNames
+  result[["regression"]][["coefficients"]][["effects"]] <- effects(regressionFit, set.sign = TRUE)[valid_coefs]
+  result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
+  result[["regression"]][["coefficients"]][["effects"]][1] <- NA
+
+  # if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
+  #     (options[["highestOrder"]] && options[["designType"]] == "factorialDesign")) {
+  #   allPredictors <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]))
+  # } else {
+  #   allPredictors <- unique(unlist(options[["modelTerms"]]))
+  # }
+
+  # Aliasing
+  termNamesAliased <- termNames
+  # # remove possible appended factor levels
+  # regexExpression <- paste0("(", paste(allPredictors, collapse = "|"), ")((\\^2)?)([^^✻]+)(✻?)")
+  # for (term_i in seq_along(termNamesAliased)) {
+  #   termNamesAliased[term_i] <- gsub(regexExpression, "\\1\\2", termNamesAliased[term_i], perl=TRUE)
+  #   termNamesAliased[term_i] <- gsub("\\s", "", termNamesAliased[term_i])
+  # }
+
   allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
   for (pred_i in seq_along(allPredictors)) {
     termNamesAliased <- gsub(allPredictors[pred_i], allPredictorsAliases[pred_i], termNamesAliased)
   }
+  termNamesAliased <- gsub("✻", "", termNamesAliased)
+
   # append number if duplicated
   for(term_j in seq_along(termNamesAliased)){
     n_occurences <- sum(termNamesAliased == termNamesAliased[term_j])
@@ -308,11 +372,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     if (coefs[x] > 0) "+" else "-"
   })
   filledFormula <- sprintf("%s = %.5g %s %s %.5g %s", options[["dependent"]], coefs[1], coefNames[1], plusOrMin[2], abs(coefs[2]), coefNames[2])
-  for (i in 3:length(coefs)) {
-    filledFormula <- sprintf("%s %s %.5g %s", filledFormula, plusOrMin[i], abs(coefs[i]), coefNames[i])
+  if (length(coefs) > 2) {
+    for (i in 3:length(coefs)) {
+      filledFormula <- sprintf("%s %s %.5g %s", filledFormula, plusOrMin[i], abs(coefs[i]), coefNames[i])
+    }
   }
   result[["regression"]][["filledFormula"]] <- jaspBase::gsubInteractionSymbol(filledFormula)
-
   jaspResults[["doeResult"]] <- createJaspState(result)
   jaspResults[["doeResult"]]$dependOn(options = .doeAnalysisBaseDependencies())
 }
@@ -705,7 +770,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 .modelFormula <- function(modelTerms, options) {
   dependent.normal <- options$dependent
-  dependent.base64 <- .v(options$dependent)
+  dependent.base64 <- options$dependent
 
   terms.base64 <- c()
   terms.normal <- c()
