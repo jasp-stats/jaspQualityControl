@@ -2,6 +2,7 @@ import QtQuick
 import JASP
 import JASP.Controls
 import JASP.Widgets
+import QtQuick.Layouts
 
 
 Form
@@ -36,7 +37,7 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									factors
+			id:									fixedFactors
 			name:                               "fixedFactors"
 			allowedColumns:                     ["ordinal", "nominal", "nominalText"]
 			label:                              qsTr("Categorical Factors")
@@ -110,6 +111,90 @@ Form
 		{
 			name:                               "codeFactors"
 			label:                              qsTr("Display results in coded units")
+
+			RadioButtonGroup
+			{
+				name: 					"codeFactorsMethod"
+				id: 					codeFactorsMethod
+				title:					""
+
+				RadioButton
+				{
+					name: 				"automatic"
+					label: 				qsTr("Automatically detect low/high")
+					checked: 			true
+				}
+
+				RadioButton
+				{
+					name: 				"manual"
+					label: 				qsTr("Manually specify low/high")
+				}
+
+
+				VariablesList
+				{
+					id					: codeFactorsManualTable
+					name				: "codeFactorsManualTable"
+					label				: qsTr("Predictor")
+					visible				: codeFactorsMethod.value == "manual"
+					optionKey			: "predictors"
+					source				: ["continuousFactors", "fixedFactors"]
+					listViewType		: JASP.AssignedVariables
+					draggable			: false
+					preferredHeight		: jaspTheme.smallDefaultVariablesFormHeight
+					rowComponentTitle	: qsTr("Low        High   ")
+
+					rowComponent: RowLayout
+					{
+						Row
+						{
+							spacing:				customPriorLayout.space
+							Layout.preferredWidth:	customPriorLayout.prefWidth
+							TextField
+							{
+								name:			"lowValue"
+								fieldWidth:		40
+								defaultValue:	-1
+							}
+						}
+						Row
+						{
+							spacing:				customPriorLayout.space
+							Layout.preferredWidth:	customPriorLayout.prefWidth
+							TextField
+							{
+								name:			"highValue"
+								fieldWidth:		40
+								defaultValue:	1
+							}
+						}
+					}
+				}
+
+				// TableView
+				// {
+				// 	id: codeFactorsManualTable
+				// 	name				: "codeFactorsManualTable"
+				// 	visible: codeFactorsMethod.value == "manual"
+				// 	Layout.fillWidth	: true
+				// 	implicitHeight		: 140 * preferencesModel.uiScale // about 3 rows
+
+				// 	modelType			: JASP.Simple
+
+				// 	isFirstColEditable	: true
+
+				// 	initialRowCount		: 1
+				// 	initialColumnCount	: 2
+				// 	rowCount			: (continuousFactors.count + fixedFactors.count)
+				// 	cornerText			: qsTr("Predictor")
+				// 	itemType			: JASP.String
+					
+				// 	function getColHeaderText(headerText, colIndex)					{ return ["Low", "High"][colIndex]; }
+				// 	function getRowHeaderText(headerText, rowIndex)				{ return continuousFactors.currentValue[rowIndex]; }
+				// 	function getDefaultValue(columnIndex, rowIndex)				{ return [-1, 1][columnIndex]; }
+				// }
+			}
 		}
 	}
 

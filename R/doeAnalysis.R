@@ -33,6 +33,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   # if (isTryError(p)) {
   #   jaspResults$setError(gettextf("The analysis crashed with the following error message: %1$s", .extractErrorMessage(p)))
   # }
+#
+  if (options[["codeFactors"]] && options[["codeFactorsMethod"]] == "manual") {
+    print("JonasBookmark")
+    print("whole table:")
+    print(options[["codeFactorsManualTable"]])
+    if (decodeColNames(unlist(options[["codeFactorsManualTable"]][[1]]$predictors)) == "Time")
+      print("Successsss")
+  }
 
   .doeAnalysisSummaryTable(jaspResults, options, ready)
   .doeAnalysisAnovaTable(jaspResults, options, ready)
@@ -128,7 +136,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 #                            list(components = "Develop_time"),
 #                            list(components = "Mask_dimension"),
 #                            list(components = c("Mask_dimension", "Exposure_time")))
-
+#
 
 .doeAnalysisMakeState <- function(jaspResults, dataset, options, ready) {
   if (!ready || jaspResults$getError()) {
@@ -151,8 +159,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
         levels <- sort(unique(varData)) # get levels before transforming to char to preserve possible order
         varData <- as.character(varData) # transform to char, otherwise you cannot add coded values to this variable as "factor level does not exist"
         nLevels <- length(unique(varData))
-        steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces, always including 0
-        codes <- seq(-1, 1, steps)
+        if (options[["codeFactorsMethod"]] == "automatic") {
+          steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces, always including 0
+          codes <- seq(-1, 1, steps)
+        } else if (options[["codeFactorsMethod"]] == "manual") {
+          next()
+          # lowLevel <- -3
+          # highLevel <-
+        }
         for (j in seq_along(varData)) {
           codeIndex <- which(varData[j] == levels)
           varData[j] <- codes[codeIndex]
@@ -292,17 +306,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   valid_coefs <- which(!is.na(coefs[["Estimate"]]))
   termNames <- jaspBase::gsubInteractionSymbol(rownames(coefs)[valid_coefs])
 
-  #squaredTermNames <- termNames
-  # appendedTermNames <- termName
-  # termNames1 <- c("(Intercept)", "Exposure_time1", "Develop_time1", "Mask_dimension1", "Exposure_time1 ✻ Mask_dimension1")
-  # allPredictors1 <- c("Exposure_time", "Develop_time", "Mask_dimension")
-  # termNames2 <- c("(Intercept)", "Inlet_feeding", "Time", "Oil_temperature", "Inlet_feeding✻Time", "Inlet_feeding✻Oil_temperature",
-  #                "Time✻Oil_temperature","Inlet_feeding^2","Time^2", "Oil_temperature^2" )
-  # allPredictors2 <- c("Inlet_feeding", "Time", "Oil_temperature")
-  # termNames <- termNames1
-  # allPredictors <- allPredictors1
-  # regexExpression <- paste0("(", paste(allPredictors, collapse = "|"), ")((\\^2)?)([^✻]+)(✻?)")
-
   #remove possible appended factor levels
   if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
       (options[["highestOrder"]] && options[["designType"]] == "factorialDesign")) {
@@ -321,6 +324,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["regression"]][["coefficients"]][["effects"]] <- effects(regressionFit, set.sign = TRUE)[valid_coefs]
   result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
   result[["regression"]][["coefficients"]][["effects"]][1] <- NA
+  result[["regression"]][["coefficients"]][["vif"]] <- c(NA, car::vif(regressionFit)) # Add NA in front for intercept
 
   # if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
   #     (options[["highestOrder"]] && options[["designType"]] == "factorialDesign")) {
@@ -453,7 +457,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result <- jaspResults[["doeResult"]]$object[["regression"]][["coefficients"]]
   rows <- data.frame(
     terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
-    se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = NA
+    se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = result[["vif"]]
   )
   if (options[["tableAlias"]])
     rows["alias"] <- result[["termsAliased"]]
