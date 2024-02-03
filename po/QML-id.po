@@ -1,73 +1,81 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2024-01-31 03:54+0000\n"
+"Last-Translator: Rania Rahida <raniarahida@gmail.com>\n"
+"Language-Team: Indonesian <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/id/>\n"
+"Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.4-dev\n"
 "X-Language: id\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
-msgstr ""
+msgstr "Kontrol kualitas"
 
 msgctxt "Description|"
 msgid ""
 "Investigate if a manufactured product adheres to a defined set of quality "
 "criteria"
 msgstr ""
+"Selidiki apakah produk yang diproduksi mematuhi serangkaian kriteria "
+"kualitas yang ditetapkan"
 
 msgctxt "Description|"
 msgid "Measurement Systems Analysis"
-msgstr ""
+msgstr "Analisis Sistem Pengukuran"
 
 msgctxt "Description|"
 msgid "Type 1 Instrument Capability"
-msgstr ""
+msgstr "Kemampuan Instrumen Tipe 1"
 
 msgctxt "Description|"
 msgid "Linearity Study"
-msgstr ""
+msgstr "Studi Linearitas"
 
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
-msgstr ""
+msgstr "Tipe 2 dan 3 Gauge r&R (peralatan manual / otomatis)"
 
 msgctxt "Description|"
 msgid "Gauge r&R (non-replicable measurements)"
-msgstr ""
+msgstr "Pengukur r&R (pengukuran yang tidak dapat direplikasi)"
 
 msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
-msgstr ""
+msgstr "Analisis Perjanjian Atribut"
 
 msgctxt "Description|"
 msgid "Test-retest (Range method)"
-msgstr ""
+msgstr "Uji-tes ulang (Metode rentang)"
 
 msgctxt "Description|"
 msgid "Control Charts"
-msgstr ""
+msgstr "Bagan Kontrol"
 
 msgctxt "Description|"
 msgid "Variables Charts for Subgroups"
-msgstr ""
+msgstr "Bagan Variabel untuk Subkelompok"
 
 msgctxt "Description|"
 msgid "Variables Charts for Individuals"
-msgstr ""
+msgstr "Bagan Variabel untuk Individu"
 
 msgctxt "Description|"
 msgid "Time Weighted Charts"
-msgstr ""
+msgstr "Grafik Berbobot Waktu"
 
 msgctxt "Description|"
 msgid "Capability Study"
-msgstr ""
+msgstr "Studi Kemampuan"
 
 msgctxt "Description|"
 msgid "Process Capability Study"
-msgstr ""
+msgstr "Studi Kemampuan Proses"
 
 msgctxt "Description|"
 msgid "DOE"
@@ -75,83 +83,83 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Probability of Detection"
-msgstr ""
+msgstr "Probabilitas Deteksi"
 
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
-msgstr ""
+msgstr "Cacat"
 
 msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
-msgstr ""
+msgstr "Bagan untuk Atribut"
 
 msgctxt "attributesCharts|"
 msgid "Defectives"
-msgstr ""
+msgstr "Cacat"
 
 msgctxt "attributesCharts|"
 msgid "np chart"
-msgstr ""
+msgstr "bagan np"
 
 msgctxt "attributesCharts|"
 msgid "p chart"
-msgstr ""
+msgstr "bagan p"
 
 msgctxt "attributesCharts|"
 msgid "Defects"
-msgstr ""
+msgstr "Cacat"
 
 msgctxt "attributesCharts|"
 msgid "c chart"
-msgstr ""
+msgstr "bagan c"
 
 msgctxt "attributesCharts|"
 msgid "u chart"
-msgstr ""
+msgstr "bagan u"
 
 msgctxt "attributesCharts|"
 msgid "X-mR chart"
-msgstr ""
+msgstr "Bagan X-mR"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Available variables"
-msgstr ""
+msgstr "Variabel yang tersedia"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Response variable"
-msgstr ""
+msgstr "Variabel respons"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Faktor yang ditetapkan"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Run order"
-msgstr ""
+msgstr "Jalankan pesanan"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Alpha level:"
-msgstr ""
+msgstr "Tingkat alfa:"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Pareto plot of standardized effects"
-msgstr ""
+msgstr "Plot pareto dari efek standar"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals plots"
-msgstr ""
+msgstr "Plot residu"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Normal probability plot of residuals"
-msgstr ""
+msgstr "Plot probabilitas residu normal"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Histogram of residuals"
-msgstr ""
+msgstr "Histogram residu"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr ""
+msgstr "Residu vs nilai yang dipasang"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs run order"
@@ -159,39 +167,39 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Jumlah faktor"
 
 msgctxt "doeFactorial|"
 msgid "Factor"
-msgstr ""
+msgstr "Faktor"
 
 msgctxt "doeFactorial|"
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (default generator)"
-msgstr ""
+msgstr "Faktorial 2 tingkat (generator default)"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
-msgstr ""
+msgstr "Faktorial 2 tingkat (tentukan generator)"
 
 msgctxt "doeFactorial|"
 msgid "2-level split-plot (hard-to-change factors)"
-msgstr ""
+msgstr "Plot terpisah 2 tingkat (faktor yang sulit diubah)"
 
 msgctxt "doeFactorial|"
 msgid "Number of hard-to-change factors"
-msgstr ""
+msgstr "Jumlah faktor yang sulit diubah"
 
 msgctxt "doeFactorial|"
 msgid "Resolution"
-msgstr ""
+msgstr "Resolusi"
 
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
-msgstr ""
+msgstr "Jenis Desain Penyaringan"
 
 msgctxt "doeScreening|"
 msgid "Plackett-Burman"
@@ -199,23 +207,23 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Definitive screening"
-msgstr ""
+msgstr "Penyaringan definitif"
 
 msgctxt "doeScreening|"
 msgid "Number of 3-level factors"
-msgstr ""
+msgstr "Jumlah faktor 3 tingkat"
 
 msgctxt "doeScreening|"
 msgid "Number of runs"
-msgstr ""
+msgstr "Jumlah eksekusi"
 
 msgctxt "doeScreening|"
 msgid "Coded"
-msgstr ""
+msgstr "Kode"
 
 msgctxt "doeScreening|"
 msgid "Uncoded"
-msgstr ""
+msgstr "Tanpa kode"
 
 msgctxt "doeScreening|"
 msgid "Run Order"
@@ -227,80 +235,79 @@ msgstr "Standar"
 
 msgctxt "doeScreening|"
 msgid "Random"
-msgstr ""
+msgstr "Acak"
 
 msgctxt "doeScreening|"
 msgid "Factor"
-msgstr ""
+msgstr "Faktor"
 
 msgctxt "doeScreening|"
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgctxt "doeScreening|"
 msgid "Level 1"
-msgstr ""
+msgstr "Tingkat 1"
 
 msgctxt "doeScreening|"
 msgid "Level 2"
-msgstr ""
+msgstr "Tingkat 2"
 
 msgctxt "doeScreening|"
 msgid "Level 3"
-msgstr ""
+msgstr "Tingkat 3"
 
 msgctxt "doeScreening|"
 msgid "Factor "
-msgstr ""
+msgstr "Faktor "
 
 msgctxt "doeScreening|"
 msgid " Level 1"
-msgstr ""
+msgstr " Tingkat 1"
 
 msgctxt "doeScreening|"
 msgid " Level 2"
-msgstr ""
+msgstr " Tingkat 2"
 
 msgctxt "doeScreening|"
 msgid " Level 3"
-msgstr ""
+msgstr " Tingkat 3"
 
 msgctxt "doeScreening|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Opsi Tambahan"
 
 msgctxt "doeScreening|"
 msgid "Number of replicates for corner points"
-msgstr ""
+msgstr "Jumlah replikasi untuk titik sudut"
 
 msgctxt "msaAttribute|"
 msgid "Data format"
-msgstr ""
+msgstr "Format data"
 
 msgctxt "msaAttribute|"
 msgid "Single column"
-msgstr ""
+msgstr "Kolom tunggal"
 
 msgctxt "msaAttribute|"
 msgid "Across rows"
-msgstr ""
+msgstr "Di seluruh baris"
 
-#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Standard"
 msgstr "Standar"
 
 msgctxt "msaAttribute|"
 msgid "Tables"
-msgstr ""
+msgstr "Tabel"
 
 msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
-msgstr ""
+msgstr "Kappa Cohen (interrater kappa)"
 
 msgctxt "msaAttribute|"
 msgid "Fleiss' kappa (multirater kappa)"
-msgstr ""
+msgstr "Kappa Fleiss (kappa multirater)"
 
 msgctxt "msaAttribute|"
 msgid "Kendall's tau"
@@ -308,160 +315,159 @@ msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Parts"
-msgstr ""
+msgstr "Bagian"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pengukuran"
 
-#, fuzzy
 msgctxt "msaGaugeLinearity|"
 msgid "Standard"
 msgstr "Standar"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "Opsi Analisis"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Process variation"
-msgstr ""
+msgstr "Variasi proses"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity table"
-msgstr ""
+msgstr "Tabel linearitas"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Bias table"
-msgstr ""
+msgstr "Tabel bias"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Plots"
-msgstr ""
+msgstr "Plot"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity and bias graph"
-msgstr ""
+msgstr "Grafik linieritas dan bias"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Percent process variation graph"
-msgstr ""
+msgstr "Grafik variasi proses persen"
 
 msgctxt "msaGaugeRR|"
 msgid "Data format"
-msgstr ""
+msgstr "Format data"
 
 msgctxt "msaGaugeRR|"
 msgid "Single column"
-msgstr ""
+msgstr "Kolom tunggal"
 
 msgctxt "msaGaugeRR|"
 msgid "Across rows"
-msgstr ""
+msgstr "Melintasi baris"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Options"
-msgstr ""
+msgstr "Opsi Metode ANOVA"
 
 msgctxt "msaGaugeRR|"
 msgid "Process variation based on"
-msgstr ""
+msgstr "Variasi proses berdasarkan"
 
 msgctxt "msaGaugeRR|"
 msgid "Study variation"
-msgstr ""
+msgstr "Variasi studi"
 
 msgctxt "msaGaugeRR|"
 msgid "Historical standard deviation"
-msgstr ""
+msgstr "Deviasi standar historis"
 
 msgctxt "msaGaugeRR|"
 msgid "Historical standard deviation:"
-msgstr ""
+msgstr "Deviasi standar historis:"
 
 msgctxt "msaGaugeRR|"
 msgid "r&R table ANOVA method"
-msgstr ""
+msgstr "metode ANOVA tabel r&R"
 
 msgctxt "msaGaugeRR|"
 msgid "Alpha interaction removal"
-msgstr ""
+msgstr "Penghapusan interaksi alfa"
 
 msgctxt "msaGaugeRR|"
 msgid "Study Var. multiplier type"
-msgstr ""
+msgstr "Studi Var. jenis pengganda"
 
 msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
-msgstr ""
+msgstr "Std. Penyimpangan"
 
 msgctxt "msaGaugeRR|"
 msgid "Percent"
-msgstr ""
+msgstr "Persen"
 
 msgctxt "msaGaugeRR|"
 msgid "Study variation multiplier"
-msgstr ""
+msgstr "Pengganda variasi studi"
 
 msgctxt "msaGaugeRR|"
 msgid "Components of variation"
-msgstr ""
+msgstr "Komponen variasi"
 
 msgctxt "msaGaugeRR|"
 msgid "Plots"
-msgstr ""
+msgstr "Plot"
 
 msgctxt "msaGaugeRR|"
 msgid "R charts by operator"
-msgstr ""
+msgstr "Bagan R menurut operator"
 
 msgctxt "msaGaugeRR|"
 msgid "Scatter plots operators"
-msgstr ""
+msgstr "Operator plot sebar"
 
 msgctxt "msaGaugeRR|"
 msgid "Fit line"
-msgstr ""
+msgstr "Garis pas"
 
 msgctxt "msaGaugeRR|"
 msgid "Show origin line"
-msgstr ""
+msgstr "Tampilkan garis asal"
 
 msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "Tampilkan semua pengukuran"
 
 msgctxt "msaGaugeRR|"
 msgid "ANOVA Method Report"
-msgstr ""
+msgstr "Laporan Metode ANOVA"
 
 msgctxt "msaGaugeRR|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "msaGaugeRR|"
 msgid "Gauge name"
-msgstr ""
+msgstr "Nama pengukur"
 
 msgctxt "msaGaugeRR|"
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgctxt "msaGaugeRR|"
 msgid "Date"
-msgstr ""
+msgstr "Tanggal"
 
 msgctxt "msaGaugeRR|"
 msgid "Reported by"
-msgstr ""
+msgstr "Dilaporkan oleh"
 
 msgctxt "msaGaugeRR|"
 msgid "Miscellaneous"
@@ -469,115 +475,115 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
-msgstr ""
+msgstr "Format data"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Single column"
-msgstr ""
+msgstr "Kolom tunggal"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Across rows"
-msgstr ""
+msgstr "Di seluruh baris"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Operators"
-msgstr ""
+msgstr "Operator"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Parts"
-msgstr ""
+msgstr "Bagian"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R Options"
-msgstr ""
+msgstr "Opsi R&R pengukur"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "Opsi Analisis"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation reference"
-msgstr ""
+msgstr "Std. Referensi penyimpangan"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study Std. Deviation"
-msgstr ""
+msgstr "Studi Std. Deviasi"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Historical process Std. Deviation"
-msgstr ""
+msgstr "Proses sejarah Std. Penyimpangan"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation value"
-msgstr ""
+msgstr "Std. Nilai deviasi"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance"
-msgstr ""
+msgstr "Toleransi"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study Var. multiplier type"
-msgstr ""
+msgstr "Studi Var. tipe pengganda"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. Deviation"
-msgstr ""
+msgstr "Std. Penyimpangan"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Percent"
-msgstr ""
+msgstr "Persen"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study Var. multiplier value"
-msgstr ""
+msgstr "Studi Var. nilai pengganda"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Graph variation components"
-msgstr ""
+msgstr "Komponen variasi grafik"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Plots"
-msgstr ""
+msgstr "Plot"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "R charts by operator"
-msgstr ""
+msgstr "Bagan R menurut operator"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "Tampilkan semua pengukuran"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R Report"
-msgstr ""
+msgstr "Laporan R&R Pengukur"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurement"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge name"
-msgstr ""
+msgstr "Nama pengukur"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
-msgstr ""
+msgstr "Tanggal"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Reported by"
-msgstr ""
+msgstr "Dilaporkan oleh"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Miscellaneous"
@@ -585,83 +591,83 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Data format"
-msgstr ""
+msgstr "Format data"
 
 msgctxt "msaTestRetest|"
 msgid "Single column"
-msgstr ""
+msgstr "Kolom tunggal"
 
 msgctxt "msaTestRetest|"
 msgid "Across rows"
-msgstr ""
+msgstr "Di seluruh baris"
 
 msgctxt "msaTestRetest|"
 msgid "Operator / Repetition"
-msgstr ""
+msgstr "Operator / Pengulangan"
 
 msgctxt "msaTestRetest|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "msaTestRetest|"
 msgid "Range Method Options"
-msgstr ""
+msgstr "Opsi Metode Rentang"
 
 msgctxt "msaTestRetest|"
 msgid "Analysis Options"
-msgstr ""
+msgstr "Opsi Analisis"
 
 msgctxt "msaTestRetest|"
 msgid "Process Std. Deviation"
-msgstr ""
+msgstr "Proses Std. Deviasi"
 
 msgctxt "msaTestRetest|"
 msgid "Tolerance"
-msgstr ""
+msgstr "Toleransi"
 
 msgctxt "msaTestRetest|"
 msgid "r&R table"
-msgstr ""
+msgstr "Tabel R&R"
 
 msgctxt "msaTestRetest|"
 msgid "Plots"
-msgstr ""
+msgstr "Plot"
 
 msgctxt "msaTestRetest|"
 msgid "Run chart of parts"
-msgstr ""
+msgstr "Jalankan bagan bagian"
 
 msgctxt "msaTestRetest|"
 msgid "Range chart"
-msgstr ""
+msgstr "Grafik rentang"
 
 msgctxt "msaType1Gauge|"
 msgid "Reference value"
-msgstr ""
+msgstr "Nilai referensi"
 
 msgctxt "msaType1Gauge|"
 msgid "Tolerance range"
-msgstr ""
+msgstr "Rentang toleransi"
 
 msgctxt "msaType1Gauge|"
 msgid "Percent of tolerance for Cg"
-msgstr ""
+msgstr "Persentase toleransi untuk Cg"
 
 msgctxt "msaType1Gauge|"
 msgid "Study var. (number of std. deviations)"
-msgstr ""
+msgstr "Studi var. (jumlah std. penyimpangan)"
 
 msgctxt "msaType1Gauge|"
 msgid "6"
-msgstr ""
+msgstr "6"
 
 msgctxt "msaType1Gauge|"
 msgid "4"
-msgstr ""
+msgstr "4"
 
 msgctxt "msaType1Gauge|"
 msgid "Plots"
-msgstr ""
+msgstr "Plot"
 
 msgctxt "msaType1Gauge|"
 msgid "Run chart"
@@ -669,27 +675,27 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Display individual measurements"
-msgstr ""
+msgstr "Menampilkan pengukuran individual"
 
 msgctxt "msaType1Gauge|"
 msgid "Display tolerance limits"
-msgstr ""
+msgstr "Menampilkan batas toleransi"
 
 msgctxt "msaType1Gauge|"
 msgid "Bias and instrument capability table"
-msgstr ""
+msgstr "Bias dan tabel kemampuan instrumen"
 
 msgctxt "msaType1Gauge|"
 msgid "One sample T-test"
-msgstr ""
+msgstr "Satu sampel uji-T"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for bias"
-msgstr ""
+msgstr "Interval kepercayaan untuk bias"
 
 msgctxt "msaType1Gauge|"
 msgid "Histogram"
-msgstr ""
+msgstr "Histogram"
 
 msgctxt "msaType1Gauge|"
 msgid "Bin width type"
@@ -721,59 +727,59 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Display mean"
-msgstr ""
+msgstr "Rata-rata tampilan"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for mean"
-msgstr ""
+msgstr "Interval kepercayaan untuk rata-rata"
 
 msgctxt "msaType1Gauge|"
 msgid "Display reference value"
-msgstr ""
+msgstr "Menampilkan nilai referensi"
 
 msgctxt "probabilityOfDetection|"
 msgid "Outcomes"
-msgstr ""
+msgstr "Hasil"
 
 msgctxt "probabilityOfDetection|"
 msgid "Covariates"
-msgstr ""
+msgstr "Kovariat"
 
 msgctxt "probabilityOfDetection|"
 msgid "Tables"
-msgstr ""
+msgstr "Tabel"
 
 msgctxt "probabilityOfDetection|"
 msgid "Model fit table"
-msgstr ""
+msgstr "Tabel kesesuaian model"
 
 msgctxt "probabilityOfDetection|"
 msgid "Detection plot"
-msgstr ""
+msgstr "Plot deteksi"
 
 msgctxt "probabilityOfDetection|"
 msgid "Show data"
-msgstr ""
+msgstr "Tampilkan data"
 
 msgctxt "probabilityOfDetection|"
 msgid "Rugs"
-msgstr ""
+msgstr "Karpet"
 
 msgctxt "probabilityOfDetection|"
 msgid "Points"
-msgstr ""
+msgstr "Poin"
 
 msgctxt "probabilityOfDetection|"
 msgid "Add jitter"
-msgstr ""
+msgstr "Tambahkan jitter"
 
 msgctxt "probabilityOfDetection|"
 msgid "Show density"
-msgstr ""
+msgstr "Tampilkan kepadatan"
 
 msgctxt "probabilityOfDetection|"
 msgid "Confidence interval"
-msgstr ""
+msgstr "Interval kepercayaan"
 
 msgctxt "probabilityOfDetection|"
 msgid "Ticks x-axis"
@@ -781,19 +787,20 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data"
-msgstr ""
+msgstr "berdasarkan data"
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data and model"
-msgstr ""
+msgstr "Berdasarkan data dan model"
 
 msgctxt "probabilityOfDetection|"
 msgid "Logarithmic x-axis"
-msgstr ""
+msgstr "Sumbu x logaritmik"
 
+#, fuzzy
 msgctxt "probabilityOfDetection|"
 msgid "Asymptotes"
-msgstr ""
+msgstr "Asymptotes"
 
 msgctxt "probabilityOfDetection|"
 msgid "Horizontal asymptotes"
@@ -821,11 +828,11 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "Fitting options"
-msgstr ""
+msgstr "Opsi pemasangan"
 
 msgctxt "probabilityOfDetection|"
 msgid "Link function"
-msgstr ""
+msgstr "Fungsi link"
 
 msgctxt "probabilityOfDetection|"
 msgid "Logit"
@@ -841,11 +848,11 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Data format"
-msgstr ""
+msgstr "Format data"
 
 msgctxt "processCapabilityStudies|"
 msgid "Single column"
-msgstr ""
+msgstr "Kolom tunggal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Across rows"
@@ -853,31 +860,31 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "processCapabilityStudies|"
 msgid "Specifiy subgroup size manually:"
-msgstr ""
+msgstr "Tentukan ukuran subgrup secara manual:"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Capability Options"
-msgstr ""
+msgstr "Opsi Kemampuan Proses"
 
 msgctxt "processCapabilityStudies|"
 msgid "Type of data distribution"
-msgstr ""
+msgstr "Jenis distribusi data"
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal distribution"
-msgstr ""
+msgstr "Distribusi normal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal distribution"
-msgstr ""
+msgstr "Distribusi tidak normal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Specify a distribution"
-msgstr ""
+msgstr "Tentukan distribusi"
 
 msgctxt "processCapabilityStudies|"
 msgid "Weibull"
@@ -901,7 +908,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Process capability plot"
-msgstr ""
+msgstr "Plot kemampuan proses"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
@@ -909,51 +916,51 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Process capability tables"
-msgstr ""
+msgstr "Tabel kemampuan proses"
 
 msgctxt "processCapabilityStudies|"
 msgid "Confidence intervals"
-msgstr ""
+msgstr "Interval kepercayaan"
 
 msgctxt "processCapabilityStudies|"
 msgid "Lower specification limit"
-msgstr ""
+msgstr "Batas spesifikasi yang lebih rendah"
 
 msgctxt "processCapabilityStudies|"
 msgid "Target value"
-msgstr ""
+msgstr "Nilai target"
 
 msgctxt "processCapabilityStudies|"
 msgid "Upper specification limit"
-msgstr ""
+msgstr "Batas spesifikasi atas"
 
 msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
-msgstr ""
+msgstr "Stabilitas proses"
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & R chart"
-msgstr ""
+msgstr "Bagan batang-X & Bagan R"
 
 msgctxt "processCapabilityStudies|"
 msgid "X-mR chart"
-msgstr ""
+msgstr "Bagan X-mR"
 
 msgctxt "processCapabilityStudies|"
 msgid "Distribution of the process"
-msgstr ""
+msgstr "Distribusi proses"
 
 msgctxt "processCapabilityStudies|"
 msgid "Histogram"
-msgstr ""
+msgstr "Histogram"
 
 msgctxt "processCapabilityStudies|"
 msgid "Fit distribution"
-msgstr ""
+msgstr "Distribusi yang pas"
 
 msgctxt "processCapabilityStudies|"
 msgid "Probability table and plot"
-msgstr ""
+msgstr "Tabel probabilitas dan plot"
 
 msgctxt "processCapabilityStudies|"
 msgid "Median Rank (Benard)"
@@ -977,23 +984,23 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Display grid lines"
-msgstr ""
+msgstr "Tampilkan garis kisi"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Capability Report"
-msgstr ""
+msgstr "Laporan Kemampuan Proses"
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurement"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "processCapabilityStudies|"
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgctxt "processCapabilityStudies|"
 msgid "Date"
-msgstr ""
+msgstr "Tanggal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Miscellaneous"
@@ -1001,27 +1008,27 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Show Report"
-msgstr ""
+msgstr "Tampilkan Laporan"
 
 msgctxt "timeWeightedCharts|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "timeWeightedCharts|"
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "Bagan jumlah kumulatif"
 
 msgctxt "timeWeightedCharts|"
 msgid "Number of standard deviations"
-msgstr ""
+msgstr "Jumlah standar deviasi"
 
 msgctxt "timeWeightedCharts|"
 msgid "Shift size"
-msgstr ""
+msgstr "Ukuran shift"
 
 msgctxt "timeWeightedCharts|"
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "Grafik rata-rata bergerak tertimbang secara eksponensial"
 
 msgctxt "timeWeightedCharts|"
 msgid "Lambda"
@@ -1045,23 +1052,23 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Autocorrelation"
-msgstr ""
+msgstr "Autokorelasi"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Number of lags"
-msgstr ""
+msgstr "Jumlah kelambatan"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Confidence interval size"
-msgstr ""
+msgstr "Ukuran interval kepercayaan"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Data format"
-msgstr ""
+msgstr "Format data"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Single column"
-msgstr ""
+msgstr "Kolom tunggal"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Across rows"
@@ -1069,7 +1076,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurements"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroups"
@@ -1077,7 +1084,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Control Charts"
-msgstr ""
+msgstr "Bagan Kontrol"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & R"
@@ -1089,11 +1096,11 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Warning limits"
-msgstr ""
+msgstr "Batas peringatan"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Known parameters"
-msgstr ""
+msgstr "Parameter yang diketahui"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Mean"
@@ -1101,31 +1108,31 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Standard deviation"
-msgstr ""
+msgstr "Standar deviasi"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
-msgstr ""
+msgstr "Bagan Variabel untuk Laporan Subkelompok"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date"
-msgstr ""
+msgstr "Tanggal"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Reported by"
-msgstr ""
+msgstr "Dilaporkan oleh"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Misc"
@@ -1137,27 +1144,27 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
-msgstr ""
+msgstr "Tampilkan Laporan"
 
 msgctxt "Description|"
 msgid "Control Charts for Attributes"
-msgstr ""
+msgstr "Bagan Kontrol untuk Atribut"
 
 msgctxt "attributesCharts|"
 msgid "Control Charts for Attributes Report"
-msgstr ""
+msgstr "Bagan Kontrol untuk Laporan Atribut"
 
 msgctxt "attributesCharts|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "attributesCharts|"
 msgid "Measurement"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "attributesCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgctxt "attributesCharts|"
 msgid "Operator"
@@ -1181,7 +1188,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Measurement system"
-msgstr ""
+msgstr "Sistem pengukuran"
 
 msgctxt "attributesCharts|"
 msgid "Subgroups size"
@@ -1189,27 +1196,27 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Size"
-msgstr ""
+msgstr "Ukuran"
 
 msgctxt "attributesCharts|"
 msgid "Time"
-msgstr ""
+msgstr "Waktu"
 
 msgctxt "attributesCharts|"
 msgid "Frequency"
-msgstr ""
+msgstr "Frekuensi"
 
 msgctxt "attributesCharts|"
 msgid "Show Report"
-msgstr ""
+msgstr "Tampilkan Laporan"
 
 msgctxt "doeFull|"
 msgid "Design Space"
-msgstr ""
+msgstr "Ruang Desain"
 
 msgctxt "doeFull|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Jumlah faktor"
 
 msgctxt "doeFull|"
 msgid "Run Order"
@@ -1217,40 +1224,39 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Random"
-msgstr ""
+msgstr "Acak"
 
-#, fuzzy
 msgctxt "doeFull|"
 msgid "Standard"
 msgstr "Standar"
 
 msgctxt "doeFull|"
 msgid "Factor"
-msgstr ""
+msgstr "Faktor"
 
 msgctxt "doeFull|"
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgctxt "doeFull|"
 msgid "Levels"
-msgstr ""
+msgstr "Tingkat"
 
 msgctxt "doeFull|"
 msgid "Factor "
-msgstr ""
+msgstr "Faktor "
 
 msgctxt "doeFull|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Opsi Tambahan"
 
 msgctxt "doeFull|"
 msgid "Number of random runs to repeat"
-msgstr ""
+msgstr "Jumlah putaran acak yang harus diulang"
 
 msgctxt "doeFull|"
 msgid "Save as:"
-msgstr ""
+msgstr "Simpan sebagai:"
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: On</b>"
@@ -1262,15 +1268,15 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Available factors"
-msgstr ""
+msgstr "Faktor yang tersedia"
 
 msgctxt "doeModifyDesign|"
 msgid "Response variable"
-msgstr ""
+msgstr "Variabel respons"
 
 msgctxt "doeModifyDesign|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Faktor yang ditetapkan"
 
 msgctxt "doeModifyDesign|"
 msgid "Run order"
@@ -1278,15 +1284,15 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Unit Display"
-msgstr ""
+msgstr "Tampilan Unit"
 
 msgctxt "doeModifyDesign|"
 msgid "Coded"
-msgstr ""
+msgstr "Kode"
 
 msgctxt "doeModifyDesign|"
 msgid "Uncoded"
-msgstr ""
+msgstr "Tidak dikodekan"
 
 msgctxt "doeModifyDesign|"
 msgid "Run Order"
@@ -1294,20 +1300,19 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Random"
-msgstr ""
+msgstr "Acak"
 
-#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Standard"
 msgstr "Standar"
 
 msgctxt "doeModifyDesign|"
 msgid "Desired Two-level Factorial Design Options"
-msgstr ""
+msgstr "Opsi Desain Faktorial Dua tingkat yang Diinginkan"
 
 msgctxt "doeModifyDesign|"
 msgid "Design Options"
-msgstr ""
+msgstr "Opsi Desain"
 
 msgctxt "doeModifyDesign|"
 msgid "Number of runs"
@@ -1315,35 +1320,35 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
-msgstr ""
+msgstr "Resolusi"
 
 msgctxt "doeModifyDesign|"
 msgid "Full"
-msgstr ""
+msgstr "Penuh"
 
 msgctxt "doeModifyDesign|"
 msgid "III"
-msgstr ""
+msgstr "III"
 
 msgctxt "doeModifyDesign|"
 msgid "IV"
-msgstr ""
+msgstr "IV"
 
 msgctxt "doeModifyDesign|"
 msgid "V"
-msgstr ""
+msgstr "V"
 
 msgctxt "doeModifyDesign|"
 msgid "VI"
-msgstr ""
+msgstr "VI"
 
 msgctxt "doeModifyDesign|"
 msgid "VII"
-msgstr ""
+msgstr "VII"
 
 msgctxt "doeModifyDesign|"
 msgid "VIII"
-msgstr ""
+msgstr "VIII"
 
 msgctxt "doeModifyDesign|"
 msgid "Fraction"
@@ -1351,51 +1356,51 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "1/2"
-msgstr ""
+msgstr "1/2"
 
 msgctxt "doeModifyDesign|"
 msgid "1/4"
-msgstr ""
+msgstr "1/4"
 
 msgctxt "doeModifyDesign|"
 msgid "1/8"
-msgstr ""
+msgstr "1/8"
 
 msgctxt "doeModifyDesign|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Opsi Tambahan"
 
 msgctxt "doeModifyDesign|"
 msgid "Number of center points"
-msgstr ""
+msgstr "Jumlah titik pusat"
 
 msgctxt "doeModifyDesign|"
 msgid "Number of random runs to repeat"
-msgstr ""
+msgstr "Jumlah putaran acak yang harus diulang"
 
 msgctxt "doeModifyDesign|"
 msgid "Show desired design"
-msgstr ""
+msgstr "Tampilkan desain yang diinginkan"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
-msgstr ""
+msgstr "Faktor"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgctxt "doeScreening|"
 msgid "Design Space"
-msgstr ""
+msgstr "Ruang Desain"
 
 msgctxt "doeScreening|"
 msgid "Number of centre points"
-msgstr ""
+msgstr "Jumlah titik pusat"
 
 msgctxt "doeScreening|"
 msgid "Save as:"
-msgstr ""
+msgstr "Simpan sebagai:"
 
 msgctxt "doeScreening|"
 msgid "<b>Sync Design: On</b>"
@@ -1407,59 +1412,59 @@ msgstr ""
 
 msgctxt "msaGaugeLinearity|"
 msgid "Optional"
-msgstr ""
+msgstr "Opsional"
 
 msgctxt "msaGaugeRR|"
 msgid "Type of model for F-statistic"
-msgstr ""
+msgstr "Jenis model untuk F-statistik"
 
 msgctxt "msaGaugeRR|"
 msgid "Random effects"
-msgstr ""
+msgstr "Efek acak"
 
 msgctxt "msaGaugeRR|"
 msgid "Fixed effects"
-msgstr ""
+msgstr "Efek tetap"
 
 msgctxt "msaType1Gauge|"
 msgid "Analysis options"
-msgstr ""
+msgstr "Opsi analisis"
 
 msgctxt "timeWeightedCharts|"
 msgid "Center"
-msgstr ""
+msgstr "Pusat"
 
 msgctxt "timeWeightedCharts|"
 msgid "Within-group standard deviation"
-msgstr ""
+msgstr "Deviasi standar dalam kelompok"
 
 msgctxt "timeWeightedCharts|"
 msgid "Sigmas for computing control limits"
-msgstr ""
+msgstr "Sigma untuk menghitung batas kontrol"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Individuals Report"
-msgstr ""
+msgstr "Bagan Variabel untuk Laporan Individu"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Measurement"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Date"
-msgstr ""
+msgstr "Tanggal"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Reported by"
-msgstr ""
+msgstr "Dilaporkan oleh"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Misc"
