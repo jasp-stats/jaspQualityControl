@@ -138,6 +138,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 #                            list(components = c("Mask_dimension", "Exposure_time")))
 #
 
+.scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
+
 .doeAnalysisMakeState <- function(jaspResults, dataset, options, ready) {
   if (!ready || jaspResults$getError()) {
     return()
@@ -153,19 +155,40 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (options[["codeFactors"]]) {
     allVars <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]), options[["blocks"]])
     allVars <- allVars[allVars != ""]
+    if (options[["codeFactorsMethod"]] == "manual")
+      manualCodingTable <- do.call(rbind.data.frame, options[["codeFactorsManualTable"]])
     for (i in seq_along(allVars)) {
         var <- allVars[i]
         varData <- dataset[[var]]
         levels <- sort(unique(varData)) # get levels before transforming to char to preserve possible order
         varData <- as.character(varData) # transform to char, otherwise you cannot add coded values to this variable as "factor level does not exist"
-        nLevels <- length(unique(varData))
         if (options[["codeFactorsMethod"]] == "automatic") {
-          steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces, always including 0
-          codes <- seq(-1, 1, steps)
+          if (var %in% unlist(options[["fixedFactors"]])) {
+            nLevels <- length(levels)
+            steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces
+            codes <- seq(-1, 1, steps)
+          } else if (var %in% options[["continuousFactors"]]) {
+            codes <- .scaleDOEvariable(levels)
+          }
         } else if (options[["codeFactorsMethod"]] == "manual") {
           next()
-          # lowLevel <- -3
-          # highLevel <-
+          # options[["codeFactorsManualTable"]] <- list(list("highValue" = "3", "lowValue" = "-3", "predictors" = jaspBase::encodeColNames("x")),
+          #                                           list("highValue" = "C", "lowValue" = "B", "predictors" = jaspBase::encodeColNames("y")))
+          indexCurrentVar <- which(decodeColNames(manualCodingTable[["predictors"]]) == var)
+          lowLevel <- manualCodingTable[indexCurrentVar,][["lowValue"]]
+          highLevel <- manualCodingTable[indexCurrentVar,][["highValue"]]
+          lowPos <- which(levels == lowLevel)
+          highPos <- which(levels == highLevel)
+          if (var %in% unlist(options[["fixedFactors"]])) {
+            levels <- c(lowLevel, levels[-c(lowPos, highPos)], highLevel)
+            nLevels <- length(levels)
+            steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces
+            codes <- seq(-1, 1, steps)
+          } else if (var %in% options[["continuousFactors"]]) {
+            codes <- .scaleDOEvariable(levels[lowPos:highPos])
+            outerCodes <- 2*(levels[-c(lowPos:highPos)]-lowLevel)/(highLevel- lowLevel)-1 # if any values are above the specified high value or below the specified low value
+            codes <- sort(c(codes, outerCodes))
+          }
         }
         for (j in seq_along(varData)) {
           codeIndex <- which(varData[j] == levels)
@@ -326,22 +349,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["regression"]][["coefficients"]][["effects"]][1] <- NA
   result[["regression"]][["coefficients"]][["vif"]] <- c(NA, car::vif(regressionFit)) # Add NA in front for intercept
 
-  # if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
-  #     (options[["highestOrder"]] && options[["designType"]] == "factorialDesign")) {
-  #   allPredictors <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]))
-  # } else {
-  #   allPredictors <- unique(unlist(options[["modelTerms"]]))
-  # }
-
-  # Aliasing
   termNamesAliased <- termNames
-  # # remove possible appended factor levels
-  # regexExpression <- paste0("(", paste(allPredictors, collapse = "|"), ")((\\^2)?)([^^✻]+)(✻?)")
-  # for (term_i in seq_along(termNamesAliased)) {
-  #   termNamesAliased[term_i] <- gsub(regexExpression, "\\1\\2", termNamesAliased[term_i], perl=TRUE)
-  #   termNamesAliased[term_i] <- gsub("\\s", "", termNamesAliased[term_i])
-  # }
-
   allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
   for (pred_i in seq_along(allPredictors)) {
     termNamesAliased <- gsub(allPredictors[pred_i], allPredictorsAliases[pred_i], termNamesAliased)
@@ -547,7 +555,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  plot$plotObject <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
+  plot$plotObject <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL, binWidthType = options[["histogramBinWidthType"]],
+                                                     numberOfBins = options[["histogramManualNumberOfBins"]])
 }
 
 .doeAnalysisPlotFittedVsResiduals <- function(jaspResults, options, ready) {

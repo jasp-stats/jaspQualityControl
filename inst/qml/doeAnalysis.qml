@@ -171,29 +171,6 @@ Form
 						}
 					}
 				}
-
-				// TableView
-				// {
-				// 	id: codeFactorsManualTable
-				// 	name				: "codeFactorsManualTable"
-				// 	visible: codeFactorsMethod.value == "manual"
-				// 	Layout.fillWidth	: true
-				// 	implicitHeight		: 140 * preferencesModel.uiScale // about 3 rows
-
-				// 	modelType			: JASP.Simple
-
-				// 	isFirstColEditable	: true
-
-				// 	initialRowCount		: 1
-				// 	initialColumnCount	: 2
-				// 	rowCount			: (continuousFactors.count + fixedFactors.count)
-				// 	cornerText			: qsTr("Predictor")
-				// 	itemType			: JASP.String
-					
-				// 	function getColHeaderText(headerText, colIndex)					{ return ["Low", "High"][colIndex]; }
-				// 	function getRowHeaderText(headerText, rowIndex)				{ return continuousFactors.currentValue[rowIndex]; }
-				// 	function getDefaultValue(columnIndex, rowIndex)				{ return [-1, 1][columnIndex]; }
-				// }
 			}
 		}
 	}
@@ -385,6 +362,39 @@ Form
 						visible:					contourSurfacePlotType.value == "surfacePlot"
 					}
 				}
+			}
+		}
+	}
+
+		Section
+	{
+		title: qsTr("Advanced options")
+
+		Group
+		{
+			DropDown
+			{
+				name:							"histogramBinWidthType"
+				label:							qsTr("Histogram bin width type")
+				id: 							binWidthType
+				indexDefaultValue:				0
+				values: [
+					{ label: qsTr("Sturges"), value: "sturges"},
+					{ label: qsTr("Scott"), value: "scott"},
+					{ label: qsTr("Doane"), value: "doane"},
+					{ label: qsTr("Freedman-Diaconis"), value: "freedmanDiaconis"},
+					{ label: qsTr("Manual"), value: "manual"}
+				]
+			}
+
+			DoubleField
+			{
+				name:							"histogramManualNumberOfBins"
+				label:							qsTr("Number of bins")
+				defaultValue:					30
+				min:							3
+				max:							10000
+				enabled:						binWidthType.currentValue === "manual"
 			}
 		}
 	}
