@@ -21,51 +21,90 @@ Form
 
 	VariablesForm
 	{
+		id:									variablesFormFactorial
+		visible:							designType.currentValue == "factorialDesign"
 		AvailableVariablesList
 		{
-			name:                               "allVariables"
-			label:                              qsTr("Available factors")
+			name:								"allVariablesFactorial"
+			label:								qsTr("Available variables")
 		}
 
 		AssignedVariablesList
 		{
-			name:                               "dependent"
-			allowedColumns:                     ["scale", "ordinal"]
-			singleVariable:                     true
-			label:                              qsTr("Response")
+			name:								"dependentFactorial"
+			allowedColumns:						["scale", "ordinal"]
+			singleVariable:						true
+			label:								qsTr("Response")
 		}
 
 		AssignedVariablesList
 		{
-			id:									fixedFactors
-			name:                               "fixedFactors"
-			allowedColumns:                     ["ordinal", "nominal", "nominalText"]
-			label:                              qsTr("Categorical Factors")
+			id:									fixedFactorsFactorial
+			name:								"fixedFactorsFactorial"
+			allowedColumns:						["ordinal", "nominal", "nominalText"]
+			label:								qsTr("Discrete predictors")
 			height:								125 * preferencesModel.uiScale
+		}
+
+		AssignedVariablesList
+		{
+			name:								"covariates"
+			id:									covariates
+			label:								qsTr("Covariates")
+			allowedColumns:						["ordinal", "scale"]
+		}
+
+		AssignedVariablesList
+		{
+			name:								"blocksFactorial"
+			singleVariable:						true
+			label:								qsTr("Blocks")
+			allowedColumns:						["ordinal", "scale", "nominal", "nominalText"]
+		}
+	}
+
+	VariablesForm
+	{
+		id:									variablesFormResponseSurface
+		visible:							designType.currentValue == "responseSurfaceDesign"
+		AvailableVariablesList
+		{
+			name:								"allVariablesResponseSurface"
+			label:								qsTr("Available variables")
+		}
+
+		AssignedVariablesList
+		{
+			name:								"dependentResponseSurface"
+			allowedColumns:						["scale", "ordinal"]
+			singleVariable:						true
+			label:								qsTr("Response")
 		}
 
 		AssignedVariablesList
 		{
 			id:									continuousFactors
-			name:                               "continuousFactors"
-			allowedColumns:                     ["scale", "ordinal"]
-			label:                              qsTr("Continuous Factors")
+			name:								"continuousFactors"
+			allowedColumns:						["scale", "ordinal"]
+			label:								qsTr("Continuous predictors")
 			height:								125 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
 		{
-			name:                               "blocks"
-			singleVariable:                     true
-			label:                              qsTr("Blocks")
-			allowedColumns:                     ["ordinal", "scale", "nominal", "nominalText"]
-			visible:							false
+			id:									fixedFactorsResponseSurface
+			name:								"fixedFactorsResponseSurface"
+			allowedColumns:						["ordinal", "nominal", "nominalText"]
+			label:								qsTr("Discrete predictors")
+			height:								125 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
 		{
-			visible:							false
-			name:                               "covariates"
+			name:								"blocksResponseSurface"
+			singleVariable:						true
+			label:								qsTr("Blocks")
+			allowedColumns:						["ordinal", "scale", "nominal", "nominalText"]
 		}
 	}
 
@@ -139,7 +178,7 @@ Form
 					label				: qsTr("Predictor")
 					visible				: codeFactorsMethod.value == "manual"
 					optionKey			: "predictors"
-					source				: ["continuousFactors", "fixedFactors"]
+					source				: designType.currentValue == "factorialDesign" ? ["covariates", "fixedFactorsFactorial"] : ["continuousFactors", "fixedFactorsResponseSurface"]
 					listViewType		: JASP.AssignedVariables
 					draggable			: false
 					preferredHeight		: jaspTheme.smallDefaultVariablesFormHeight
@@ -223,7 +262,7 @@ Form
 		{
 			enabled: (!highestOrder.checked && designType.currentValue == "factorialDesign") || (!rsmPredefinedModel.checked && designType.currentValue == "responseSurfaceDesign")
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: ["fixedFactors", "continuousFactors"]}
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: designType.currentValue == "factorialDesign" ? ["covariates", "fixedFactorsFactorial"] : ["continuousFactors", "fixedFactorsResponseSurface"]}
 			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction}
 		}
 

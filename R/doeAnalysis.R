@@ -17,30 +17,40 @@
 
 #' @export
 doeAnalysis <- function(jaspResults, dataset, options, ...) {
-  dataset <- .doeAnalysisReadData(dataset, options)
 
   if (options[["designType"]] == "factorialDesign") {
-    ready <- sum(length(options[["fixedFactors"]]), length(options[["continuousFactors"]])) >= 2 && options[["dependent"]] != "" && !is.null(unlist(options[["modelTerms"]]))
+    ready <- sum(length(options[["fixedFactorsFactorial"]]), length(options[["covariates"]])) >= 2 && options[["dependentFactorial"]] != "" && !is.null(unlist(options[["modelTerms"]]))
+    discretePredictors <- options[["fixedFactorsFactorial"]]
+    continuousPredictors <- options[["covariates"]]
+    blocks <- options[["blocksFactorial"]]
+    dependent <- options[["dependentFactorial"]]
   } else if (options[["designType"]] == "responseSurfaceDesign") {
-    ready <- length(options[["continuousFactors"]]) >= 1 && options[["dependent"]] != ""
+    ready <- length(options[["continuousFactors"]]) >= 1 && options[["dependentResponseSurface"]] != ""
+    discretePredictors <- options[["fixedFactorsResponseSurface"]]
+    continuousPredictors <- options[["continuousFactors"]]
+    blocks <- options[["blocksResponseSurface"]]
+    dependent <- options[["dependentResponseSurface"]]
   }
+
+  dataset <- .doeAnalysisReadData(dataset, options, continuousPredictors, discretePredictors, blocks, dependent)
+
   .doeAnalysisCheckErrors(dataset, options, ready)
 
   #p <- try({
-     .doeAnalysisMakeState(jaspResults, dataset, options, ready)
+     .doeAnalysisMakeState(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, dependent, ready)
  # })
 
   # if (isTryError(p)) {
   #   jaspResults$setError(gettextf("The analysis crashed with the following error message: %1$s", .extractErrorMessage(p)))
   # }
 #
-  if (options[["codeFactors"]] && options[["codeFactorsMethod"]] == "manual") {
-    print("JonasBookmark")
-    print("whole table:")
-    print(options[["codeFactorsManualTable"]])
-    if (decodeColNames(unlist(options[["codeFactorsManualTable"]][[1]]$predictors)) == "Time")
-      print("Successsss")
-  }
+  # if (options[["codeFactors"]] && options[["codeFactorsMethod"]] == "manual") {
+  #   print("JonasBookmark")
+  #   print("whole table:")
+  #   print(options[["codeFactorsManualTable"]])
+  #   if (decodeColNames(unlist(options[["codeFactorsManualTable"]][[1]]$predictors)) == "Time")
+  #     print("Successsss")
+  # }
 
   .doeAnalysisSummaryTable(jaspResults, options, ready)
   .doeAnalysisAnovaTable(jaspResults, options, ready)
@@ -52,48 +62,31 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisPlotFittedVsResiduals(jaspResults, options, ready)
   .doeAnalysisPlotResidualsVsOrder(jaspResults, dataset, options, ready)
   .doeAnalysisPlotMatrixResidualPlot(jaspResults, dataset, options, ready)
-  .doeAnalysisPlotContourSurface(jaspResults, dataset, options, ready)
+  .doeAnalysisPlotContourSurface(jaspResults, dataset, options, dependent, ready)
 }
 
-.doeAnalysisReadData <- function(dataset, options) {
+.doeAnalysisReadData <- function(dataset, options, continuousPredictors, discretePredictors, blocks, dependent) {
   if (!is.null(dataset)) {
     return(dataset)
   }
   factorVars <- NULL
   numericVars <- NULL
-  if (!identical(options[["dependent"]], "")) {
-    numericVars <- c(numericVars, options[["dependent"]])
+  if (!identical(dependent, "")) {
+    numericVars <- c(numericVars, dependent)
   }
-  if (length(options[["continuousFactors"]]) > 0 && !identical(options[["continuousFactors"]], "")) {
-    numericVars <- c(numericVars, unlist(options[["continuousFactors"]]))
+  if (length(continuousPredictors) > 0 && !identical(continuousPredictors, "")) {
+    numericVars <- c(numericVars, unlist(continuousPredictors))
   }
-  if (length(options[["fixedFactors"]]) > 0 && !identical(options[["fixedFactors"]], "")) {
-    factorVars <- c(factorVars, unlist(options[["fixedFactors"]]))
+  if (length(discretePredictors) > 0 && !identical(discretePredictors, "")) {
+    factorVars <- c(factorVars, unlist(discretePredictors))
   }
-  if (length(options[["blocks"]]) > 0 && !identical(options[["blocks"]], "")) {
-    factorVars <- c(factorVars, options[["blocks"]])
-  }
-  if (length(options[["covariates"]]) > 0 && !identical(options[["covariates"]], "")) {
-    numericVars <- c(numericVars, unlist(options[["covariates"]]))
+  if (length(blocks) > 0 && !identical(blocks, "")) {
+    factorVars <- c(factorVars, blocks)
   }
   dataset <- .readDataSetToEnd(columns.as.numeric = numericVars, columns.as.factor = factorVars)
   dataset <- na.omit(dataset)
   return(dataset)
 }
-
-.doeAnalysisCheckErrors <- function(dataset, options) {
-  if (is.null(dataset)) {
-    return()
-  }
-  .hasErrors(dataset,
-             type = c("infinity", "missingValues", "factorLevels"),
-             all.target = c(options[["dependent"]], options[["fixedFactors"]], options[["blocks"]], options[["continuousFactors"]]),
-             factorLevels.amount  = "< 2",
-             exitAnalysisIfErrors = TRUE
-  )
-}
-
-
 
 .doeAnalysisBaseDependencies <- function() {
   deps <- c(
@@ -140,20 +133,20 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
 
-.doeAnalysisMakeState <- function(jaspResults, dataset, options, ready) {
+.doeAnalysisMakeState <- function(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, dependent, ready) {
   if (!ready || jaspResults$getError()) {
     return()
   }
 
 
   # set the contrasts for all categorical variables, add option to choose later
-  for (fac in unlist(options[["fixedFactors"]])) {
+  for (fac in unlist(discretePredictors)) {
     contrasts(dataset[[fac]]) <- "contr.sum"
   }
 
   # Transform to coded, -1 to 1 coding.
   if (options[["codeFactors"]]) {
-    allVars <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]), options[["blocks"]])
+    allVars <- c(unlist(continuousPredictors), unlist(discretePredictors), blocks)
     allVars <- allVars[allVars != ""]
     if (options[["codeFactorsMethod"]] == "manual")
       manualCodingTable <- do.call(rbind.data.frame, options[["codeFactorsManualTable"]])
@@ -163,11 +156,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
         levels <- sort(unique(varData)) # get levels before transforming to char to preserve possible order
         varData <- as.character(varData) # transform to char, otherwise you cannot add coded values to this variable as "factor level does not exist"
         if (options[["codeFactorsMethod"]] == "automatic") {
-          if (var %in% unlist(options[["fixedFactors"]])) {
+          if (var %in% unlist(discretePredictors)) {
             nLevels <- length(levels)
             steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces
             codes <- seq(-1, 1, steps)
-          } else if (var %in% options[["continuousFactors"]]) {
+          } else if (var %in% unlist(continuousPredictors)) {
             codes <- .scaleDOEvariable(levels)
           }
         } else if (options[["codeFactorsMethod"]] == "manual") {
@@ -179,12 +172,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
           highLevel <- manualCodingTable[indexCurrentVar,][["highValue"]]
           lowPos <- which(levels == lowLevel)
           highPos <- which(levels == highLevel)
-          if (var %in% unlist(options[["fixedFactors"]])) {
+          if (var %in% unlist(discretePredictors)) {
             levels <- c(lowLevel, levels[-c(lowPos, highPos)], highLevel)
             nLevels <- length(levels)
             steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces
             codes <- seq(-1, 1, steps)
-          } else if (var %in% options[["continuousFactors"]]) {
+          } else if (var %in% unlist(continuousPredictors)) {
             codes <- .scaleDOEvariable(levels[lowPos:highPos])
             outerCodes <- 2*(levels[-c(lowPos:highPos)]-lowLevel)/(highLevel- lowLevel)-1 # if any values are above the specified high value or below the specified low value
             codes <- sort(c(codes, outerCodes))
@@ -202,25 +195,24 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["regression"]] <- list()
   result[["anova"]] <- list()
 
-
   if ((options[["designType"]] == "factorialDesign" && !options[["highestOrder"]]) ||
       (options[["designType"]] == "factorialDesign" && options[["highestOrder"]] && options[["order"]] == 1) ||
       (options[["designType"]] == "responseSurfaceDesign" && !options[["rsmPredefinedModel"]])) {
     reorderModelTerms <- .reorderModelTerms(options)
     modelTerms <- reorderModelTerms$modelTerms
-    modelDef <- .modelFormula(modelTerms, options)
+    modelDef <- .modelFormula(modelTerms, options, dependent)
     formulaString <- modelDef$model.def
   } else if (options[["highestOrder"]] && options[["designType"]] == "factorialDesign") {
-    formulaString <- paste0(options[["dependent"]], " ~ (.)^", options[["order"]])
+    formulaString <- paste0(dependent, " ~ (.)^", options[["order"]])
   } else if (options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") {
     modelTerms <- options[["rsmPredefinedTerms"]]
-    if (length(options[["continuousFactors"]]) == 1 && modelTerms == "linearAndInteractions") {
+    if (length(continuousPredictors) == 1 && modelTerms == "linearAndInteractions") {
       modelTerms <- "linear"
-    } else if (length(options[["continuousFactors"]]) == 1 && modelTerms == "fullQuadratic") {
+    } else if (length(continuousPredictors) == 1 && modelTerms == "fullQuadratic") {
       modelTerms <- "linearAndSquared"
     }
-    numPred <- unlist(options[["continuousFactors"]])
-    catPred <- unlist(options[["fixedFactors"]])
+    numPred <- unlist(continuousPredictors)
+    catPred <- unlist(discretePredictors)
     catPred <- catPred[catPred != ""]
     numPredString <- paste0(numPred, collapse = ", ")
     if (!is.null(catPred) && length(catPred) > 0){
@@ -229,14 +221,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       catPredString <- ""
     }
     formulaString <- switch(modelTerms,
-                            "linear" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ")", catPredString),
-                            "linearAndInteractions" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ")", catPredString, " + rsm::TWI(", numPredString, ")"),
-                            "linearAndSquared" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ") ", catPredString, " +  rsm::PQ(", numPredString, ")"),
-                            "fullQuadratic" = paste0(options[["dependent"]], " ~ rsm::FO(", numPredString, ")", catPredString, " + rsm::TWI(", numPredString, ") +  rsm::PQ(", numPredString, ")")
+                            "linear" = paste0(dependent, " ~ rsm::FO(", numPredString, ")", catPredString),
+                            "linearAndInteractions" = paste0(dependent, " ~ rsm::FO(", numPredString, ")", catPredString, " + rsm::TWI(", numPredString, ")"),
+                            "linearAndSquared" = paste0(dependent, " ~ rsm::FO(", numPredString, ") ", catPredString, " +  rsm::PQ(", numPredString, ")"),
+                            "fullQuadratic" = paste0(dependent, " ~ rsm::FO(", numPredString, ")", catPredString, " + rsm::TWI(", numPredString, ") +  rsm::PQ(", numPredString, ")")
     )
   }
-  if (length(options[["blocks"]]) > 0 && !identical(options[["blocks"]], "")) {
-    formulaString <- paste0(formulaString, " + ", options[["blocks"]])
+  if (length(blocks) > 0 && !identical(blocks, "")) {
+    formulaString <- paste0(formulaString, " + ", blocks)
   }
   formula <- as.formula(formulaString)
 
@@ -308,7 +300,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     ssm <- sum(anovaFit[["Sum Sq"]])
     msm <- ssm / nrow(anovaFit)
     names <- c("Model", names(coef(regressionFit))[!is.na(coef(regressionFit))][-1], "Error", "Total")
-    df <- c(sum(anovaFit[["Df"]][seq_along(options[["fixedFactors"]])]), anovaFit[["Df"]], 0, sum(anovaFit[["Df"]]))
+    df <- c(sum(anovaFit[["Df"]][seq_along(discretePredictors)]), anovaFit[["Df"]], 0, sum(anovaFit[["Df"]]))
     adjss <- c(sum(anovaFit[["Sum Sq"]]), anovaFit[["Sum Sq"]], NA, sum(anovaFit[["Sum Sq"]]))
     adjms <- c(sum(anovaFit[["Sum Sq"]]) / nrow(anovaFit), anovaFit[["Mean Sq"]], NA, NA)
     fval <- rep(NA, length(names))
@@ -332,7 +324,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   #remove possible appended factor levels
   if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
       (options[["highestOrder"]] && options[["designType"]] == "factorialDesign")) {
-    allPredictors <- c(unlist(options[["continuousFactors"]]), unlist(options[["fixedFactors"]]))
+    allPredictors <- c(unlist(continuousPredictors), unlist(discretePredictors))
   } else {
     allPredictors <- unique(unlist(options[["modelTerms"]]))
   }
@@ -383,7 +375,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plusOrMin <- sapply(seq_len(length(coefs)), function(x) {
     if (coefs[x] > 0) "+" else "-"
   })
-  filledFormula <- sprintf("%s = %.5g %s %s %.5g %s", options[["dependent"]], coefs[1], coefNames[1], plusOrMin[2], abs(coefs[2]), coefNames[2])
+  filledFormula <- sprintf("%s = %.5g %s %s %.5g %s", dependent, coefs[1], coefNames[1], plusOrMin[2], abs(coefs[2]), coefNames[2])
   if (length(coefs) > 2) {
     for (i in 3:length(coefs)) {
       filledFormula <- sprintf("%s %s %.5g %s", filledFormula, plusOrMin[i], abs(coefs[i]), coefNames[i])
@@ -659,7 +651,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   )
 }
 
-.doeAnalysisPlotContourSurface <- function(jaspResults, dataset, options, ready) {
+.doeAnalysisPlotContourSurface <- function(jaspResults, dataset, options, dependent, ready) {
   if (!is.null(jaspResults[["contourSurfacePlot"]]) || !options[["contourSurfacePlot"]]) {
     return()
   }
@@ -688,18 +680,18 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   for (i in seq_len(nPlots)) {
     variablePair <- variablePairs[i, ]
     variablePairString <- paste(variablePair, collapse = gettext(" and "))
-    plotTitle <- gettextf("%1$s of %2$s vs %3$s", plotTypeString, options[["dependent"]], variablePairString)
+    plotTitle <- gettextf("%1$s of %2$s vs %3$s", plotTypeString, dependent, variablePairString)
     plot <- createJaspPlot(title = plotTitle, width = 500, height = 500)
     if(plotType == "contourPlot") {
-      plot$plotObject <- function(){.doeContourSurfacePlotObject(jaspResults, options, variablePair, type = "contour")}
+      plot$plotObject <- function(){.doeContourSurfacePlotObject(jaspResults, options, dependent, variablePair, type = "contour")}
     } else if (plotType == "surfacePlot") {
-      plot$plotObject <- function(){.doeContourSurfacePlotObject(jaspResults, options, variablePair, type = "surface")}
+      plot$plotObject <- function(){.doeContourSurfacePlotObject(jaspResults, options, dependent, variablePair, type = "surface")}
     }
     jaspResults[["contourSurfacePlot"]][[plotTitle]] <- plot
   }
 }
 
-.doeContourSurfacePlotObject <- function(jaspResults, options, variablePair, type = c("contour", "surface")) {
+.doeContourSurfacePlotObject <- function(jaspResults, options, dependent, variablePair, type = c("contour", "surface")) {
   type <- match.arg(type)
   result <- jaspResults[["doeResult"]]$object[["regression"]]
   regressionFit <- result[["object"]]
@@ -711,7 +703,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   } else if (type == "surface") {
     theta <- options[["surfacePlotHorizontalRotation"]]
     phi <- options[["surfacePlotVerticalRotation"]]
-    po <- rsm::persp.lm(regressionFit, formula, theta = theta, phi = phi, zlab = options[["dependent"]],
+    po <- rsm::persp.lm(regressionFit, formula, theta = theta, phi = phi, zlab = dependent,
                   col = colorSet)
   }
   if (options[["contourSurfacePlotLegend"]]){
@@ -781,9 +773,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   list(modelTerms = modelTerms, interactions = interactions)
 }
 
-.modelFormula <- function(modelTerms, options) {
-  dependent.normal <- options$dependent
-  dependent.base64 <- options$dependent
+.modelFormula <- function(modelTerms, options, dependent) {
+  dependent.normal <- dependent
+  dependent.base64 <- dependent
 
   terms.base64 <- c()
   terms.normal <- c()
