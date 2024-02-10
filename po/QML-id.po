@@ -1,15 +1,9 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-01-31 03:54+0000\n"
-"Last-Translator: Rania Rahida <raniarahida@gmail.com>\n"
-"Language-Team: Indonesian <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/id/>\n"
-"Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.4-dev\n"
 "X-Language: id\n"
 "X-Qt-Contexts: true\n"
 
@@ -1042,9 +1036,10 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "X-mR chart"
-msgstr ""
+msgstr "Bagan X-mR"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Moving range length"
@@ -1278,9 +1273,10 @@ msgctxt "doeModifyDesign|"
 msgid "Assigned factors"
 msgstr "Faktor yang ditetapkan"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Run order"
-msgstr ""
+msgstr "Jalankan pesanan"
 
 msgctxt "doeModifyDesign|"
 msgid "Unit Display"
@@ -1314,9 +1310,10 @@ msgctxt "doeModifyDesign|"
 msgid "Design Options"
 msgstr "Opsi Desain"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Number of runs"
-msgstr ""
+msgstr "Jumlah eksekusi"
 
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
@@ -1518,9 +1515,10 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "High"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Jumlah faktor"
 
 msgctxt "doeScreening|"
 msgid "Design Display"
@@ -1578,9 +1576,10 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements by operator plot"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaType1Gauge|"
 msgid "Measurement"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "processCapabilityStudies|"
 msgid "Percentile"
@@ -1831,9 +1830,10 @@ msgctxt "ShowAndExportDesign|"
 msgid "Sort by standard order"
 msgstr ""
 
+#, fuzzy
 msgctxt "ShowAndExportDesign|"
 msgid "Save as:"
-msgstr ""
+msgstr "Simpan sebagai:"
 
 msgctxt "ShowAndExportDesign|"
 msgid "e.g. design.csv"
@@ -1843,9 +1843,10 @@ msgctxt "ShowAndExportDesign|"
 msgid "Export design"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Available factors"
-msgstr ""
+msgstr "Faktor yang tersedia"
 
 msgctxt "doeAnalysis|"
 msgid "Blocks"
@@ -1940,9 +1941,10 @@ msgctxt "doeAnalysis|"
 msgid "Normal probability plot"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Histogram"
-msgstr ""
+msgstr "Histogram"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals vs. fitted values"
@@ -2004,9 +2006,10 @@ msgctxt "doeAnalysis|"
 msgid "Full quadratic"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Run order"
-msgstr ""
+msgstr "Jalankan pesanan"
 
 msgctxt "doeAnalysis|"
 msgid "Equal to row number"
@@ -2020,9 +2023,10 @@ msgctxt "doeAnalysis|"
 msgid "Automatically code/standardize factors"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Plots"
-msgstr ""
+msgstr "Plot"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals matrix plot"
@@ -2136,17 +2140,19 @@ msgctxt "msaGaugeRR|"
 msgid "Part"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Show Report"
-msgstr ""
+msgstr "Tampilkan Laporan"
 
 msgctxt "msaGaugeRR|"
 msgid "Misc."
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "r&R table ANOVA method"
-msgstr ""
+msgstr "metode ANOVA tabel r&R"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Misc."
@@ -2156,21 +2162,24 @@ msgctxt "msaTestRetest|"
 msgid "Part"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Measurement"
-msgstr ""
+msgstr "Pengukuran"
 
 msgctxt "msaTestRetest|"
 msgid "Scatter plot measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Fit line"
-msgstr ""
+msgstr "Garis pas"
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "Tampilkan semua pengukuran"
 
 msgctxt "msaTestRetest|"
 msgid "Traffic light chart"
@@ -2180,17 +2189,19 @@ msgctxt "processCapabilityStudies|"
 msgid "Subgroup"
 msgstr ""
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Name"
 msgstr ""
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Reported by"
-msgstr ""
+msgstr "Dilaporkan oleh"
 
 msgctxt "processCapabilityStudies|"
 msgid "Misc"
