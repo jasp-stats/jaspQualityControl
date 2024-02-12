@@ -34,7 +34,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   dataset <- .doeAnalysisReadData(dataset, options, continuousPredictors, discretePredictors, blocks, dependent)
 
-  .doeAnalysisCheckErrors(dataset, options, ready)
+  .doeAnalysisCheckErrors(dataset, options, continuousPredictors, discretePredictors, blocks, dependent, ready)
 
   #p <- try({
      .doeAnalysisMakeState(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, dependent, ready)
@@ -90,11 +90,10 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 .doeAnalysisBaseDependencies <- function() {
   deps <- c(
-    "dependent", "fixedFactors", "blocks", "runOrder",
-    "highestOrder", "order", "covariates", "modelTerms",
-    "designType", "continuousFactors", "codeFactors", "rsmPredefinedModel",
-    "rsmPredefinedTerms"
-  )
+    "dependentResponseSurface", "fixedFactorsResponseSurface", "blocksResponseSurface", "runOrder",
+    "highestOrder", "order", "covariates", "modelTerms", "blocksFactorial", "covariates",
+    "designType", "continuousFactors", "codeFactors", "rsmPredefinedModel", "fixedFactorsFactorial",
+    "rsmPredefinedTerms", "dependentFactorial")
   return(deps)
 }
 
@@ -129,7 +128,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 #                            list(components = "Develop_time"),
 #                            list(components = "Mask_dimension"),
 #                            list(components = c("Mask_dimension", "Exposure_time")))
-#
+
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
 
@@ -137,6 +136,23 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!ready || jaspResults$getError()) {
     return()
   }
+
+  result <- list()
+  result[["regression"]] <- list()
+  result[["anova"]] <- list()
+
+  # # remove variables without variance
+  # removedVars <- c()
+  # for (variable in c(continuousPredictors, discretePredictors, blocks)) {
+  #   if (length(unique(dataset[[variable]])) == 1) {
+  #     dataset <- dataset[!colnames(dataset) == variable]
+  #     continuousPredictors <- continuousPredictors[continuousPredictors != variable]
+  #     discretePredictors <- discretePredictors[discretePredictors != variable]
+  #     blocks <- blocks[blocks != variable]
+  #     removedVars <- c(removedVars, variable)
+  #   }
+  # }
+  # result[["removedVariables"]] <- removedVars
 
 
   # set the contrasts for all categorical variables, add option to choose later
@@ -164,10 +180,15 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
             codes <- .scaleDOEvariable(levels)
           }
         } else if (options[["codeFactorsMethod"]] == "manual") {
-          next()
           # options[["codeFactorsManualTable"]] <- list(list("highValue" = "3", "lowValue" = "-3", "predictors" = jaspBase::encodeColNames("x")),
           #                                           list("highValue" = "C", "lowValue" = "B", "predictors" = jaspBase::encodeColNames("y")))
-          indexCurrentVar <- which(decodeColNames(manualCodingTable[["predictors"]]) == var)
+          indexCurrentVar <- which(manualCodingTable[["predictors"]] == var)
+          # if (!any(decodeColNames(manualCodingTable[["predictors"]]) == var))
+          #   print("There was no match")
+          # if (any(manualCodingTable[["predictors"]] == var))
+          #   print("There was a match")
+          # if (any(manualCodingTable[["predictors"]] == jaspBase::encodeColNames(var)))
+          #   print("There was a match2")
           lowLevel <- manualCodingTable[indexCurrentVar,][["lowValue"]]
           highLevel <- manualCodingTable[indexCurrentVar,][["highValue"]]
           lowPos <- which(levels == lowLevel)
@@ -179,7 +200,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
             codes <- seq(-1, 1, steps)
           } else if (var %in% unlist(continuousPredictors)) {
             codes <- .scaleDOEvariable(levels[lowPos:highPos])
-            outerCodes <- 2*(levels[-c(lowPos:highPos)]-lowLevel)/(highLevel- lowLevel)-1 # if any values are above the specified high value or below the specified low value
+            lowLevel <- as.numeric(lowLevel)
+            highLevel <- as.numeric(highLevel)
+            outerCodes <- 2*(levels[-c(lowPos:highPos)]-lowLevel)/(highLevel-lowLevel)-1 # if any values are above the specified high value or below the specified low value
             codes <- sort(c(codes, outerCodes))
           }
         }
@@ -190,10 +213,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
         dataset[[var]] <- as.numeric(varData)
       }
     }
-
-  result <- list()
-  result[["regression"]] <- list()
-  result[["anova"]] <- list()
 
   if ((options[["designType"]] == "factorialDesign" && !options[["highestOrder"]]) ||
       (options[["designType"]] == "factorialDesign" && options[["highestOrder"]] && options[["order"]] == 1) ||
@@ -632,21 +651,21 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
 }
 
-.doeAnalysisCheckErrors <- function(dataset, options, ready) {
+.doeAnalysisCheckErrors <- function(dataset, options, continuousPredictors, discretePredictors, blocks, dependent, ready) {
   if (!ready) {
     return()
   }
 
-  modelTerms <- unlist(options$modelTerms, recursive = FALSE)
-  factorModelTerms <- options$modelTerms[sapply(modelTerms, function(x) !any(x %in% options$covariates))]
-  allComponents <- unique(unlist(lapply(factorModelTerms, `[[`, "components"), use.names = FALSE))
+  factorLevels.target <- c(blocks, discretePredictors)[c(blocks, discretePredictors) != ""]
 
   .hasErrors(
     dataset              = dataset,
     type                 = c("infinity", "factorLevels", "variance"),
-    infinity.target      = c(options$dependent, allComponents),
-    factorLevels.target  = options[["fixedFactors"]],
+    infinity.target      = c(dependent, continuousPredictors, discretePredictors, blocks),
+    factorLevels.target  = factorLevels.target,
     factorLevels.amount  = "< 2",
+    variance.target      = c(continuousPredictors),
+    variance.equalTo     = 0,
     exitAnalysisIfErrors = TRUE
   )
 }
