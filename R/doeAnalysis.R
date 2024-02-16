@@ -36,13 +36,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   .doeAnalysisCheckErrors(dataset, options, continuousPredictors, discretePredictors, blocks, dependent, ready)
 
-  #p <- try({
-     .doeAnalysisMakeState(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, dependent, ready)
- # })
+   p <- try(.doeAnalysisMakeState(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, dependent, ready))
 
-  # if (isTryError(p)) {
-  #   jaspResults$setError(gettextf("The analysis crashed with the following error message: %1$s", .extractErrorMessage(p)))
-  # }
+   if (isTryError(p)) {
+     jaspResults[["errorPlot"]] <- createJaspPlot(title = gettext("Error"))
+     jaspResults[["errorPlot"]]$setError(p[1])
+     jaspResults[["errorPlot"]]$dependOn(.doeAnalysisBaseDependencies())
+     return()
+   }
 #
   # if (options[["codeFactors"]] && options[["codeFactorsMethod"]] == "manual") {
   #   print("JonasBookmark")
@@ -191,6 +192,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
           #   print("There was a match2")
           lowLevel <- manualCodingTable[indexCurrentVar,][["lowValue"]]
           highLevel <- manualCodingTable[indexCurrentVar,][["highValue"]]
+          if (lowLevel == highLevel) {
+            stop(gettextf("The specified low/high levels for %1$s are not distinct.", var), call. = FALSE)
+          }
+          if (!lowLevel %in% levels || !highLevel %in% levels) {
+            invalidLevels <- c(lowLevel, highLevel)[!c(lowLevel, highLevel) %in% levels]
+            stop(gettextf("The specified low/high level(s) %1$s for %2$s do not match the levels in the dataset.",
+                          paste(invalidLevels, collapse = ", "), var), call. = FALSE)
+          }
           lowPos <- which(levels == lowLevel)
           highPos <- which(levels == highLevel)
           if (var %in% unlist(discretePredictors)) {
@@ -325,7 +334,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     fval <- rep(NA, length(names))
     pval <- rep(NA, length(names))
   }
-
   result[["anova"]][["object"]] <- anovaFit
   result[["anova"]][["terms"]] <- jaspBase::gsubInteractionSymbol(names)
   result[["anova"]][["df"]] <- df
