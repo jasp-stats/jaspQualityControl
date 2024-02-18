@@ -43,7 +43,16 @@ Form
 			name:								"fixedFactorsFactorial"
 			allowedColumns:						["ordinal", "nominal", "nominalText"]
 			label:								qsTr("Discrete predictors")
-			height:								125 * preferencesModel.uiScale
+			height:								75 * preferencesModel.uiScale
+		}
+
+		AssignedVariablesList
+		{
+			id:									continuousFactorsFactorial
+			name:								"continuousFactorsFactorial"
+			allowedColumns:						["scale", "ordinal"]
+			label:								qsTr("Continuous predictors")
+			height:								75 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -52,6 +61,7 @@ Form
 			id:									covariates
 			label:								qsTr("Covariates")
 			allowedColumns:						["ordinal", "scale"]
+			height:								75 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -83,8 +93,8 @@ Form
 
 		AssignedVariablesList
 		{
-			id:									continuousFactors
-			name:								"continuousFactors"
+			id:									continuousFactorsResponseSurface
+			name:								"continuousFactorsResponseSurface"
 			allowedColumns:						["scale", "ordinal"]
 			label:								qsTr("Continuous predictors")
 			height:								125 * preferencesModel.uiScale
@@ -178,7 +188,7 @@ Form
 					label				: qsTr("Predictor")
 					visible				: codeFactorsMethod.value == "manual"
 					optionKey			: "predictors"
-					source				: designType.currentValue == "factorialDesign" ? ["covariates", "fixedFactorsFactorial"] : ["continuousFactors", "fixedFactorsResponseSurface"]
+					source				: designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface"]
 					listViewType		: JASP.AssignedVariables
 					draggable			: false
 					preferredHeight		: jaspTheme.smallDefaultVariablesFormHeight
@@ -262,7 +272,7 @@ Form
 		{
 			enabled: (!highestOrder.checked && designType.currentValue == "factorialDesign") || (!rsmPredefinedModel.checked && designType.currentValue == "responseSurfaceDesign")
 			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: designType.currentValue == "factorialDesign" ? ["covariates", "fixedFactorsFactorial"] : ["continuousFactors", "fixedFactorsResponseSurface"]}
+			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface"]}
 			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction}
 		}
 
@@ -349,8 +359,20 @@ Form
 			VariablesForm
 			{
 				preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-				AvailableVariablesList		{ name: "continuousPredictors";	source:"continuousFactors"; title: qsTr("Available continuous predictors")}
-				AssignedVariablesList	{ name: "contourSurfacePlotVariables"; suggestedColumns: ["scale"]; title: qsTr("Plotting variables")}
+				
+				AvailableVariablesList
+				{ 
+					name: "continuousPredictorsPlots"	
+					source: designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial"] : ["continuousFactorsResponseSurface"] 
+					title: qsTr("Available continuous predictors")
+				}
+
+				AssignedVariablesList
+				{ 
+					name: "contourSurfacePlotVariables" 
+					suggestedColumns: ["scale", "ordinal"] 
+					title: qsTr("Plotting variables")
+				}
 			}
 
 			Group
