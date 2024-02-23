@@ -46,20 +46,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
      jaspResults[["errorPlot"]]$dependOn(.doeAnalysisBaseDependencies())
      return()
    }
-#
-  # if (options[["codeFactors"]] && options[["codeFactorsMethod"]] == "manual") {
-  #   print("JonasBookmark")
-  #   print("whole table:")
-  #   print(options[["codeFactorsManualTable"]])
-  #   if (decodeColNames(unlist(options[["codeFactorsManualTable"]][[1]]$predictors)) == "Time")
-  #     print("Successsss")
-  # }
 
-  .doeAnalysisSummaryTable(jaspResults, options, ready)
-  .doeAnalysisAnovaTable(jaspResults, options, ready)
-  .doeAnalysisCoefficientsTable(jaspResults, options, ready)
-  .doeAnalysisEquationTable(jaspResults, options, ready)
-  .doeAnalysisPlotPareto(jaspResults, options, ready)
+   coded <- options[["codeFactors"]]
+
+  .doeAnalysisSummaryTable(jaspResults, options, ready, coded)
+  .doeAnalysisAnovaTable(jaspResults, options, ready, coded)
+  .doeAnalysisCoefficientsTable(jaspResults, options, ready, coded)
+  .doeAnalysisEquationTable(jaspResults, options, ready, coded)
+  .doeAnalysisPlotPareto(jaspResults, options, blocks, covariates, ready)
   .doeAnalysisPlotQQResiduals(jaspResults, options, ready)
   .doeAnalysisPlotHistResiduals(jaspResults, options, ready)
   .doeAnalysisPlotFittedVsResiduals(jaspResults, options, ready)
@@ -151,7 +145,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 #                            list(components = "Mask_dimension"),
 #                            list(components = c("Mask_dimension", "Exposure_time")))
 #
-#
+
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
 
@@ -163,6 +157,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result <- list()
   result[["regression"]] <- list()
   result[["anova"]] <- list()
+  resultCoded <- list()
+  resultCoded[["regression"]] <- list()
+  resultCoded[["anova"]] <- list()
 
   # set the contrasts for all categorical variables, add option to choose later
   for (fac in unlist(discretePredictors)) {
@@ -170,66 +167,57 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
 
   # Transform to coded, -1 to 1 coding.
-  if (options[["codeFactors"]]) {
-    allVars <- c(unlist(continuousPredictors), unlist(discretePredictors), blocks)
-    allVars <- allVars[allVars != ""]
-    if (options[["codeFactorsMethod"]] == "manual")
-      manualCodingTable <- do.call(rbind.data.frame, options[["codeFactorsManualTable"]])
-    for (i in seq_along(allVars)) {
-        var <- allVars[i]
-        varData <- dataset[[var]]
-        levels <- sort(unique(varData)) # get levels before transforming to char to preserve possible order
-        varData <- as.character(varData) # transform to char, otherwise you cannot add coded values to this variable as "factor level does not exist"
-        if (options[["codeFactorsMethod"]] == "automatic") {
-          if (var %in% unlist(discretePredictors)) {
-            nLevels <- length(levels)
-            steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces
-            codes <- seq(-1, 1, steps)
-          } else if (var %in% unlist(continuousPredictors)) {
-            codes <- .scaleDOEvariable(levels)
-          }
-        } else if (options[["codeFactorsMethod"]] == "manual") {
-          # options[["codeFactorsManualTable"]] <- list(list("highValue" = "3", "lowValue" = "-3", "predictors" = jaspBase::encodeColNames("x")),
-          #                                           list("highValue" = "C", "lowValue" = "B", "predictors" = jaspBase::encodeColNames("y")))
-          indexCurrentVar <- which(manualCodingTable[["predictors"]] == var)
-          # if (!any(decodeColNames(manualCodingTable[["predictors"]]) == var))
-          #   print("There was no match")
-          # if (any(manualCodingTable[["predictors"]] == var))
-          #   print("There was a match")
-          # if (any(manualCodingTable[["predictors"]] == jaspBase::encodeColNames(var)))
-          #   print("There was a match2")
-          lowLevel <- manualCodingTable[indexCurrentVar,][["lowValue"]]
-          highLevel <- manualCodingTable[indexCurrentVar,][["highValue"]]
-          if (lowLevel == highLevel) {
-            stop(gettextf("The specified low/high levels for %1$s are not distinct.", var), call. = FALSE)
-          }
-          if (!lowLevel %in% levels || !highLevel %in% levels) {
-            invalidLevels <- c(lowLevel, highLevel)[!c(lowLevel, highLevel) %in% levels]
-            stop(gettextf("The specified low/high level(s) %1$s for %2$s do not match the levels in the dataset.",
-                          paste(invalidLevels, collapse = ", "), var), call. = FALSE)
-          }
-          lowPos <- which(levels == lowLevel)
-          highPos <- which(levels == highLevel)
-          if (var %in% unlist(discretePredictors)) {
-            levels <- c(lowLevel, levels[-c(lowPos, highPos)], highLevel)
-            nLevels <- length(levels)
-            steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces
-            codes <- seq(-1, 1, steps)
-          } else if (var %in% unlist(continuousPredictors)) {
-            codes <- .scaleDOEvariable(levels[lowPos:highPos])
-            lowLevel <- as.numeric(lowLevel)
-            highLevel <- as.numeric(highLevel)
-            outerCodes <- 2*(levels[-c(lowPos:highPos)]-lowLevel)/(highLevel-lowLevel)-1 # if any values are above the specified high value or below the specified low value
-            codes <- sort(c(codes, outerCodes))
-          }
-        }
-        for (j in seq_along(varData)) {
-          codeIndex <- which(varData[j] == levels)
-          varData[j] <- codes[codeIndex]
-        }
-        dataset[[var]] <- as.numeric(varData)
+  allVars <- c(unlist(continuousPredictors), unlist(discretePredictors), blocks)
+  allVars <- allVars[allVars != ""]
+  datasetCoded <- dataset
+  if (options[["codeFactorsMethod"]] == "manual")
+    manualCodingTable <- do.call(rbind.data.frame, options[["codeFactorsManualTable"]])
+  for (i in seq_along(allVars)) {
+    var <- allVars[i]
+    varData <- datasetCoded[[var]]
+    levels <- sort(unique(varData)) # get levels before transforming to char to preserve possible order
+    varData <- as.character(varData) # transform to char, otherwise you cannot add coded values to this variable as "factor level does not exist"
+    if (options[["codeFactorsMethod"]] == "automatic") {
+      if (var %in% unlist(discretePredictors)) {
+        nLevels <- length(levels)
+        steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces
+        codes <- seq(-1, 1, steps)
+      } else if (var %in% unlist(continuousPredictors)) {
+        codes <- .scaleDOEvariable(levels)
+      }
+    } else if (options[["codeFactorsMethod"]] == "manual") {
+      indexCurrentVar <- which(manualCodingTable[["predictors"]] == var)
+      lowLevel <- manualCodingTable[indexCurrentVar,][["lowValue"]]
+      highLevel <- manualCodingTable[indexCurrentVar,][["highValue"]]
+      if (lowLevel == highLevel) {
+        stop(gettextf("The specified low/high levels for %1$s are not distinct.", var), call. = FALSE)
+      }
+      if (!lowLevel %in% levels || !highLevel %in% levels) {
+        invalidLevels <- c(lowLevel, highLevel)[!c(lowLevel, highLevel) %in% levels]
+        stop(gettextf("The specified low/high level(s) %1$s for %2$s do not match the levels in the dataset.",
+                      paste(invalidLevels, collapse = ", "), var), call. = FALSE)
+      }
+      lowPos <- which(levels == lowLevel)
+      highPos <- which(levels == highLevel)
+      if (var %in% unlist(discretePredictors)) {
+        levels <- c(lowLevel, levels[-c(lowPos, highPos)], highLevel)
+        nLevels <- length(levels)
+        steps <- 2/(nLevels - 1) # divide space between -1 and 1 into equal spaces
+        codes <- seq(-1, 1, steps)
+      } else if (var %in% unlist(continuousPredictors)) {
+        codes <- .scaleDOEvariable(levels[lowPos:highPos])
+        lowLevel <- as.numeric(lowLevel)
+        highLevel <- as.numeric(highLevel)
+        outerCodes <- 2*(levels[-c(lowPos:highPos)]-lowLevel)/(highLevel-lowLevel)-1 # if any values are above the specified high value or below the specified low value
+        codes <- sort(c(codes, outerCodes))
       }
     }
+    for (j in seq_along(varData)) {
+      codeIndex <- which(varData[j] == levels)
+      varData[j] <- codes[codeIndex]
+    }
+    datasetCoded[[var]] <- as.numeric(varData)
+  }
 
   if ((options[["designType"]] == "factorialDesign" && !options[["highestOrder"]]) ||
       (options[["designType"]] == "factorialDesign" && options[["highestOrder"]] && options[["order"]] == 1) ||
@@ -273,10 +261,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   if (options[["designType"]] == "factorialDesign") {
     regressionFit <- lm(formula, data = dataset)
+    regressionFitCoded <- lm(formula, data = datasetCoded)
     regressionSummary <- summary(regressionFit)
+    regressionSummaryCoded <- summary(regressionFitCoded)
   } else if (options[["designType"]] == "responseSurfaceDesign") {
     regressionFit <- rsm::rsm(formula, data = dataset, threshold = 0)
+    regressionFitCoded <- rsm::rsm(formula, data = datasetCoded, threshold = 0)
     regressionSummary <- summary(regressionFit, threshold = 0) # threshold to 0 so the canonical does not throw an error
+    regressionSummaryCoded <- summary(regressionFitCoded, threshold = 0) # threshold to 0 so the canonical does not throw an error
   }
 
   result[["regression"]][["formula"]] <- formula
@@ -284,11 +276,21 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["regression"]][["objectSummary"]] <- regressionSummary
   result[["regression"]][["saturated"]] <- regressionSummary$df[2] == 0
 
+  resultCoded[["regression"]][["formula"]] <- formula
+  resultCoded[["regression"]][["object"]] <- regressionFitCoded
+  resultCoded[["regression"]][["objectSummary"]] <- regressionSummaryCoded
+  resultCoded[["regression"]][["saturated"]] <- regressionSummaryCoded$df[2] == 0
+
   if (!result[["regression"]][["saturated"]]) {
     result[["regression"]][["s"]] <- regressionSummary[["sigma"]]
     result[["regression"]][["rsq"]] <- regressionSummary[["r.squared"]]
     result[["regression"]][["adjrsq"]] <- regressionSummary[["adj.r.squared"]]
     result[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFit)
+
+    resultCoded[["regression"]][["s"]] <- regressionSummaryCoded[["sigma"]]
+    resultCoded[["regression"]][["rsq"]] <- regressionSummaryCoded[["r.squared"]]
+    resultCoded[["regression"]][["adjrsq"]] <- regressionSummaryCoded[["adj.r.squared"]]
+    resultCoded[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFitCoded)
 
     if (options[["designType"]] == "factorialDesign") {
       anovaFit <- car::Anova(regressionFit)
@@ -335,6 +337,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     result[["regression"]][["adjrsq"]] <- NA
     result[["regression"]][["predrsq"]] <- NA
 
+    resultCoded[["regression"]][["s"]] <- NA
+    resultCoded[["regression"]][["rsq"]] <- 1
+    resultCoded[["regression"]][["adjrsq"]] <- NA
+    resultCoded[["regression"]][["predrsq"]] <- NA
+
     anovaFit <- summary(aov(regressionFit))[[1]]
     ssm <- sum(anovaFit[["Sum Sq"]])
     msm <- ssm / nrow(anovaFit)
@@ -353,9 +360,19 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["anova"]][["F"]] <- fval
   result[["anova"]][["p"]] <- pval
 
+  resultCoded[["anova"]][["object"]] <- anovaFit
+  resultCoded[["anova"]][["terms"]] <- jaspBase::gsubInteractionSymbol(names)
+  resultCoded[["anova"]][["df"]] <- df
+  resultCoded[["anova"]][["adjss"]] <- adjss
+  resultCoded[["anova"]][["adjms"]] <- adjms
+  resultCoded[["anova"]][["F"]] <- fval
+  resultCoded[["anova"]][["p"]] <- pval
+
   # Regression coefficients
   result[["regression"]][["coefficients"]] <- list()
+  resultCoded[["regression"]][["coefficients"]] <- list()
   coefs <- as.data.frame(regressionSummary[["coefficients"]])
+  coefsCoded <- as.data.frame(regressionSummaryCoded[["coefficients"]])
   valid_coefs <- which(!is.na(coefs[["Estimate"]]))
   termNames <- jaspBase::gsubInteractionSymbol(rownames(coefs)[valid_coefs])
 
@@ -375,18 +392,27 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
 
   result[["regression"]][["coefficients"]][["terms"]] <- termNames
+  resultCoded[["regression"]][["coefficients"]][["terms"]] <- termNames
 
   # calculate effects, but not for blocks, covariates or intercept
-  coefEffects <- effects(regressionFit, set.sign = TRUE)[valid_coefs]
+  coefEffects <- coefsCoded$Estimate * 2
   coefEffects[1] <- NA
   if (length(blocks) > 0 && !identical(blocks, ""))
     coefEffects[names(coefEffects) == blocks] <- NA
   if (length(covariates) > 0 && !identical(covariates, ""))
     coefEffects[names(coefEffects) %in% unlist(covariates)] <- NA
-  result[["regression"]][["coefficients"]][["effects"]] <- coefEffects
+
+  coefEffectsUncoded <- coefEffects
+  coefEffectsUncoded[coefs$Estimate > 0] <- abs(coefEffectsUncoded) # sign of effect should match uncoded coefficient
+  result[["regression"]][["coefficients"]][["effects"]] <- coefEffectsUncoded
   result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
   result[["regression"]][["coefficients"]][["effects"]][1] <- NA
   result[["regression"]][["coefficients"]][["vif"]] <- c(NA, car::vif(regressionFit)) # Add NA in front for intercept
+
+  resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffects
+  resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[!is.na(coef(regressionFit))]
+  resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
+  resultCoded[["regression"]][["coefficients"]][["vif"]] <- c(NA, car::vif(regressionFitCoded)) # Add NA in front for intercept
 
   termNamesAliased <- termNames
   allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
@@ -402,7 +428,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     termNamesAliased[termNamesAliased %in% unlist(covariates)] <- covariateAliases
   }
 
-
   # append number if duplicated
   for(term_j in seq_along(termNamesAliased)){
     n_occurences <- sum(termNamesAliased == termNamesAliased[term_j])
@@ -413,18 +438,26 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   termNamesAliased[1] <- ""  # no alias for intercept
   result[["regression"]][["coefficients"]][["termsAliased"]] <- termNamesAliased
+  resultCoded[["regression"]][["coefficients"]][["termsAliased"]] <- termNamesAliased
 
   if (!result[["regression"]][["saturated"]]) {
     result[["regression"]][["coefficients"]][["se"]] <- coefs[["Std. Error"]][valid_coefs]
     result[["regression"]][["coefficients"]][["t"]] <- coefs[["t value"]][valid_coefs]
     result[["regression"]][["coefficients"]][["p"]] <- coefs[["Pr(>|t|)"]][valid_coefs]
+    resultCoded[["regression"]][["coefficients"]][["se"]] <- coefsCoded[["Std. Error"]][valid_coefs]
+    resultCoded[["regression"]][["coefficients"]][["t"]] <- coefsCoded[["t value"]][valid_coefs]
+    resultCoded[["regression"]][["coefficients"]][["p"]] <- coefsCoded[["Pr(>|t|)"]][valid_coefs]
   } else {
     result[["regression"]][["coefficients"]][["se"]] <- rep(NA, length(valid_coefs))
     result[["regression"]][["coefficients"]][["t"]] <- rep(NA, length(valid_coefs))
     result[["regression"]][["coefficients"]][["p"]] <- rep(NA, length(valid_coefs))
+    resultCoded[["regression"]][["coefficients"]][["se"]] <- rep(NA, length(valid_coefs))
+    resultCoded[["regression"]][["coefficients"]][["t"]] <- rep(NA, length(valid_coefs))
+    resultCoded[["regression"]][["coefficients"]][["p"]] <- rep(NA, length(valid_coefs))
   }
 
   ## Model formula
+  ## uncoded
   coefs <- coef(regressionFit)[!is.na(coef(regressionFit))]
   coefNames <- if (options[["tableAlias"]]) termNamesAliased else termNames
   plusOrMin <- sapply(seq_len(length(coefs)), function(x) {
@@ -436,12 +469,49 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       filledFormula <- sprintf("%s %s %.5g %s", filledFormula, plusOrMin[i], abs(coefs[i]), coefNames[i])
     }
   }
+
+  #coded
+  coefsCoded <- coef(regressionFitCoded)[!is.na(coef(regressionFitCoded))]
+  coefNames <- if (options[["tableAlias"]]) termNamesAliased else termNames
+  plusOrMin <- sapply(seq_len(length(coefsCoded)), function(x) {
+    if (coefsCoded[x] > 0) "+" else "-"
+  })
+  filledFormulaCoded <- sprintf("%s = %.5g %s %s %.5g %s", dependent, coefsCoded[1], coefNames[1], plusOrMin[2], abs(coefsCoded[2]), coefNames[2])
+  if (length(coefs) > 2) {
+    for (i in 3:length(coefs)) {
+      filledFormulaCoded <- sprintf("%s %s %.5g %s", filledFormula, plusOrMin[i], abs(coefsCoded[i]), coefNames[i])
+    }
+  }
+
   result[["regression"]][["filledFormula"]] <- jaspBase::gsubInteractionSymbol(filledFormula)
   jaspResults[["doeResult"]] <- createJaspState(result)
   jaspResults[["doeResult"]]$dependOn(options = .doeAnalysisBaseDependencies())
+
+
+  resultCoded[["regression"]][["filledFormula"]] <- jaspBase::gsubInteractionSymbol(filledFormulaCoded)
+  jaspResults[["doeResultCoded"]] <- createJaspState(resultCoded)
+  jaspResults[["doeResultCoded"]]$dependOn(options = .doeAnalysisBaseDependencies())
 }
 
-.doeAnalysisSummaryTable <- function(jaspResults, options, ready) {
+.doeCoefficientEffects <- function(coefDf, dataset) {
+  effectVector <- c()
+  for (i in seq_len(nrow(coefDf))) {
+    termName <- coefDf$term[i]
+    if (termName == "(Intercept)") {
+      effect <- NA
+    } else {
+      coef <- coefDf$coefs[i]
+      dataCol <- unlist(dataset[colnames(dataset) == termName])
+      factorRange <- min(dataCol)
+    }
+
+
+
+  }
+
+}
+
+.doeAnalysisSummaryTable <- function(jaspResults, options, ready, coded) {
   if (!is.null(jaspResults[["tableSummary"]])) {
     return()
   }
@@ -456,14 +526,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
     return()
   }
-  result <- jaspResults[["doeResult"]]$object[["regression"]]
+  result <- if (coded) jaspResults[["doeResultCoded"]]$object[["regression"]] else jaspResults[["doeResult"]]$object[["regression"]]
   row <- data.frame(
     s = result[["s"]], rsq = result[["rsq"]], adjrsq = result[["adjrsq"]], predrsq = result[["predrsq"]]
   )
   tb$addRows(row)
 }
 
-.doeAnalysisAnovaTable <- function(jaspResults, options, ready) {
+.doeAnalysisAnovaTable <- function(jaspResults, options, ready, coded) {
   if (!is.null(jaspResults[["tableAnova"]])) {
     return()
   }
@@ -480,7 +550,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
     return()
   }
-  result <- jaspResults[["doeResult"]]$object[["anova"]]
+  result <- if (coded) jaspResults[["doeResultCoded"]]$object[["anova"]] else jaspResults[["doeResult"]]$object[["anova"]]
   rows <- data.frame(
     terms = result[["terms"]], adjss = result[["adjss"]], df = result[["df"]],
     adjms = result[["adjms"]], fval = result[["F"]], pval = result[["p"]]
@@ -488,7 +558,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$addRows(rows)
 }
 
-.doeAnalysisCoefficientsTable <- function(jaspResults, options, ready) {
+.doeAnalysisCoefficientsTable <- function(jaspResults, options, ready, coded) {
   if (!is.null(jaspResults[["tableCoefficients"]])) {
     return()
   }
@@ -509,7 +579,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
     return()
   }
-  result <- jaspResults[["doeResult"]]$object[["regression"]][["coefficients"]]
+  result <- if (coded) jaspResults[["doeResultCoded"]]$object[["regression"]][["coefficients"]] else jaspResults[["doeResult"]]$object[["regression"]][["coefficients"]]
   rows <- data.frame(
     terms = result[["terms"]], effects = result[["effects"]], coef = result[["est"]],
     se = result[["se"]], tval = result[["t"]], pval = result[["p"]], vif = result[["vif"]]
@@ -520,7 +590,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tb$addRows(rows)
 }
 
-.doeAnalysisEquationTable <- function(jaspResults, options, ready) {
+.doeAnalysisEquationTable <- function(jaspResults, options, ready, coded) {
   if (!is.null(jaspResults[["tableEquation"]]) || !options[["tableEquation"]]) {
     return()
   }
@@ -533,20 +603,16 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
     return()
   }
-  result <- jaspResults[["doeResult"]]$object[["regression"]]
+  result <- if (coded) jaspResults[["doeResultCoded"]]$object[["regression"]] else jaspResults[["doeResult"]]$object[["regression"]]
   row <- data.frame(formula = result[["filledFormula"]])
   tb$addRows(row)
 }
 
-.doeAnalysisPlotPareto <- function(jaspResults, options, ready) {
+.doeAnalysisPlotPareto <- function(jaspResults, options, blocks, covariates, ready) {
   if (!is.null(jaspResults[["plotPareto"]]) || !options[["plotPareto"]]) {
     return()
   }
-  plot <- createJaspPlot(title = if (options[["codeFactors"]]) {
-    gettext("Pareto Chart of Standardized Effects")
-  } else {
-    gettext("Pareto Chart of Unstandardized Effects")
-  }, width = 600, height = 400)
+  plot <- createJaspPlot(title = gettext("Pareto Chart of Standardized Effects"), width = 600, height = 400)
   plot$dependOn(options = c("plotPareto", "tableAlias", .doeAnalysisBaseDependencies()))
   plot$position <- 6
   jaspResults[["plotPareto"]] <- plot
@@ -554,22 +620,33 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  t <- abs(data.frame(result[["objectSummary"]]$coefficients)$t.value[-1])
+  coefDf <- data.frame(result[["objectSummary"]]$coefficients)
   fac <- if (options[["tableAlias"]]) result[["coefficients"]][["termsAliased"]][-1] else result[["coefficients"]][["terms"]][-1]
+  # Do not include intercept, covariates and blocks in pareto plot
+  coefDf <- coefDf[-1, ] # remove intercept
+  if (length(blocks) > 0 && !identical(blocks, "")) {
+    coefDf <- coefDf[rownames(coefDf) != blocks, ] # remove the block variable
+    fac <- if (options[["tableAlias"]]) fac[!grepl("BLK", fac)] else fac[fac != blocks]
+  }
+  if (length(covariates) > 0 && !identical(covariates, "")) {
+    coefDf <- coefDf[!rownames(coefDf) %in% unlist(covariates), ] # remove the covariate(s)
+    fac <- if (options[["tableAlias"]]) fac[!grepl("COV", fac)] else fac[!fac %in% unlist(covariates)]
+  }
+
+  t <- abs(coefDf$t.value)
   df <- result[["objectSummary"]]$df[2]
   crit <- abs(qt(0.025, df))
   fac_t <- cbind.data.frame(fac, t)
   fac_t <- cbind(fac_t[order(fac_t$t), ], y = seq_len(length(t)))
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, t, crit))
+  critLabelDf <- data.frame(x = 0, y = crit, label = sprintf("t = %.2f", crit))
   p <- ggplot2::ggplot(data = fac_t, mapping = ggplot2::aes(y = t, x = y)) +
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +
+    ggplot2::geom_label(data = critLabelDf, mapping = ggplot2::aes(x = x, y = y, label = label), col = "red", size = 5) +
     ggplot2::scale_x_continuous(name = gettext("Term"), breaks = fac_t$y, labels = fac_t$fac) +
-    ggplot2::scale_y_continuous(name = if (options[["codeFactors"]]) {
-      gettext("Standardized Effect")
-    } else {
-      gettext("Unstandardized Effect")
-    }, breaks = xBreaks, limits = range(xBreaks)) +
+    ggplot2::scale_y_continuous(name =
+      gettext("Standardized Effect"), breaks = xBreaks, limits = range(xBreaks)) +
     ggplot2::coord_flip() +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()

@@ -120,52 +120,38 @@ Form
 
 	Group
 	{
+		columns:				2
 
-		RadioButtonGroup
+
+		Group 
 		{
-			name: 					"runOrderSource"
-			id: 					runOrderSource
-			title:                 	qsTr("Run order")
-
-			RadioButton
+			RadioButtonGroup
 			{
-				name: 				"runOrderSourceRowNumber"
-				id : 				runOrderSourceRowNumber
-				label: 				qsTr("Equal to row number")
-				checked: 			true
+				name: 					"runOrderSource"
+				id: 					runOrderSource
+				title:					qsTr("Run order")
+
+				RadioButton
+				{
+					name: 				"runOrderSourceRowNumber"
+					id : 				runOrderSourceRowNumber
+					label: 				qsTr("Equal to row number")
+					checked: 			true
+				}
+
+				// RadioButton
+				// {
+				// 	name: 				"runOrderSourceVariable"
+				// 	id : 				runOrderSourceVariable
+				// 	label: 				qsTr("Specified as variable")
+				// }
 			}
-
-			// RadioButton
-			// {
-			// 	name: 				"runOrderSourceVariable"
-			// 	id : 				runOrderSourceVariable
-			// 	label: 				qsTr("Specified as variable")
-			// }
-		}
-
-		CheckBox
-		{
-			name:                               "tableAlias"
-			label:                              "Use alias names"
-			checked:							true
-		}
-
-		CheckBox
-		{
-			name:                               "tableEquation"
-			label:                              qsTr("Show regression equation")
-		}
-
-		CheckBox
-		{
-			name:                               "codeFactors"
-			label:                              qsTr("Display results in coded units")
 
 			RadioButtonGroup
 			{
 				name: 					"codeFactorsMethod"
 				id: 					codeFactorsMethod
-				title:					""
+				title:					qsTr("Predictor levels")
 
 				RadioButton
 				{
@@ -220,6 +206,28 @@ Form
 						}
 					}
 				}
+			}
+		}
+
+		Group
+		{
+			CheckBox
+			{
+				name:								"tableAlias"
+				label:								"Use alias names"
+				checked:							true
+			}
+
+			CheckBox
+			{
+				name:								"tableEquation"
+				label:								qsTr("Show regression equation")
+			}
+
+			CheckBox
+			{
+				name:								"codeFactors"
+				label:								qsTr("Display results in coded units")
 			}
 		}
 	}
