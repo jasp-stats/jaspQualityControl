@@ -145,6 +145,25 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 #                            list(components = "Mask_dimension"),
 #                            list(components = c("Mask_dimension", "Exposure_time")))
 #
+#
+# dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/Datasets/DOE_FAC_withBlocks.csv", sep = ",")
+# options <- list()
+# dataset <- dataset[4:8]
+# dataset[1] <- as.factor(dataset[[1]])
+# dataset[2] <- as.factor(dataset[[2]])
+# dataset[3] <- as.factor(dataset[[3]])
+# dataset[4] <- as.factor(dataset[[4]])
+# options[["continuousFactorsResponseSurface"]] <- NULL
+# options[["dependent"]] <- "Response"
+# options[["fixedFactorsFactorial"]] <- c("A", "B", "C")
+# options[["blocks"]] <- c("Blocks")
+# options$modelTerms <- list(list(components = "A"),
+#                            list(components = "B"),
+#                            list(components = "C"),
+#                            list(components = c("A", "B")),
+#                            list(components = c("A", "C")),
+#                            list(components = c("B", "C")))
+
 
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
@@ -345,8 +364,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     anovaFit <- summary(aov(regressionFit))[[1]]
     ssm <- sum(anovaFit[["Sum Sq"]])
     msm <- ssm / nrow(anovaFit)
-    names <- c("Model", names(coef(regressionFit))[!is.na(coef(regressionFit))][-1], "Error", "Total")
-    df <- c(sum(anovaFit[["Df"]][seq_along(discretePredictors)]), anovaFit[["Df"]], 0, sum(anovaFit[["Df"]]))
+    anovaNames <- row.names(anovaFit)
+    names <- c("Model", gsub(" ", "", row.names(anovaFit), fixed = TRUE), "Error", "Total")
+    df <- c(sum(anovaFit[["Df"]]), anovaFit[["Df"]], 0, sum(anovaFit[["Df"]]))
     adjss <- c(sum(anovaFit[["Sum Sq"]]), anovaFit[["Sum Sq"]], NA, sum(anovaFit[["Sum Sq"]]))
     adjms <- c(sum(anovaFit[["Sum Sq"]]) / nrow(anovaFit), anovaFit[["Mean Sq"]], NA, NA)
     fval <- rep(NA, length(names))
@@ -383,8 +403,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   } else {
     allPredictors <- unique(unlist(options[["modelTerms"]]))
   }
+  predictorsForLevelRemoval <- allPredictors
+  if (length(blocks) > 0 && !identical(blocks, ""))
+    predictorsForLevelRemoval <- c(predictorsForLevelRemoval, blocks)
+
   # this regex removes the appended factor levels
-  regexExpression <- paste0("(", paste(allPredictors, collapse = "|"), ")((\\^2)?)([^✻]+)(✻?)")
+  regexExpression <- paste0("(", paste(predictorsForLevelRemoval, collapse = "|"), ")((\\^2)?)([^✻]+)(✻?)")
   for (term_i in seq_along(termNames)) {
     replacements <- if (grepl("^2", termNames[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
     termNames[term_i] <- gsub(regexExpression, replacements, termNames[term_i], perl=TRUE)
@@ -408,11 +432,13 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
   result[["regression"]][["coefficients"]][["effects"]][1] <- NA
   result[["regression"]][["coefficients"]][["vif"]] <- c(NA, car::vif(regressionFit)) # Add NA in front for intercept
+  result[["regression"]][["coefficients"]][["tValues"]] <- data.frame(summary(regressionFit)$coefficients)$t.value
 
   resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffects
   resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[!is.na(coef(regressionFit))]
   resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
   resultCoded[["regression"]][["coefficients"]][["vif"]] <- c(NA, car::vif(regressionFitCoded)) # Add NA in front for intercept
+  resultCoded[["regression"]][["coefficients"]][["tValues"]] <- data.frame(summary(regressionFitCoded)$coefficients)$t.value
 
   termNamesAliased <- termNames
   allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
@@ -620,20 +646,23 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     return()
   }
   result <- jaspResults[["doeResult"]]$object[["regression"]]
-  coefDf <- data.frame(result[["objectSummary"]]$coefficients)
   fac <- if (options[["tableAlias"]]) result[["coefficients"]][["termsAliased"]][-1] else result[["coefficients"]][["terms"]][-1]
+  coefDf <- data.frame(result[["objectSummary"]]$coefficients)
+  tDf <- data.frame("tValue" = coefDf[["t.value"]],
+                       terms = result[["coefficients"]][["terms"]])
+
   # Do not include intercept, covariates and blocks in pareto plot
-  coefDf <- coefDf[-1, ] # remove intercept
+  tDf <- tDf[-1, ] # remove intercept
   if (length(blocks) > 0 && !identical(blocks, "")) {
-    coefDf <- coefDf[rownames(coefDf) != blocks, ] # remove the block variable
+    tDf <- tDf[tDf$terms != blocks, ] # remove the block variable
     fac <- if (options[["tableAlias"]]) fac[!grepl("BLK", fac)] else fac[fac != blocks]
   }
   if (length(covariates) > 0 && !identical(covariates, "")) {
-    coefDf <- coefDf[!rownames(coefDf) %in% unlist(covariates), ] # remove the covariate(s)
+    tDf <- tDf[!tDf$terms %in% unlist(covariates), ] # remove the covariate(s)
     fac <- if (options[["tableAlias"]]) fac[!grepl("COV", fac)] else fac[!fac %in% unlist(covariates)]
   }
 
-  t <- abs(coefDf$t.value)
+  t <- abs(tDf[["tValue"]])
   df <- result[["objectSummary"]]$df[2]
   crit <- abs(qt(0.025, df))
   fac_t <- cbind.data.frame(fac, t)
