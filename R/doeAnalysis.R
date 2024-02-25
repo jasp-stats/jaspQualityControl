@@ -432,13 +432,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
   result[["regression"]][["coefficients"]][["effects"]][1] <- NA
   result[["regression"]][["coefficients"]][["vif"]] <- c(NA, car::vif(regressionFit)) # Add NA in front for intercept
-  result[["regression"]][["coefficients"]][["tValues"]] <- data.frame(summary(regressionFit)$coefficients)$t.value
 
   resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffects
   resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[!is.na(coef(regressionFit))]
   resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
   resultCoded[["regression"]][["coefficients"]][["vif"]] <- c(NA, car::vif(regressionFitCoded)) # Add NA in front for intercept
-  resultCoded[["regression"]][["coefficients"]][["tValues"]] <- data.frame(summary(regressionFitCoded)$coefficients)$t.value
 
   termNamesAliased <- termNames
   allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
