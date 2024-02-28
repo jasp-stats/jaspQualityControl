@@ -162,7 +162,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 #                            list(components = "C"),
 #                            list(components = c("A", "B")),
 #                            list(components = c("A", "C")),
-#                            list(components = c("B", "C")))
+#                            list(components = c("B", "C")),
+#                            list(components = c("A", "B", "C")))
 
 
 
@@ -288,6 +289,28 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     regressionFitCoded <- rsm::rsm(formula, data = datasetCoded, threshold = 0)
     regressionSummary <- summary(regressionFit, threshold = 0) # threshold to 0 so the canonical does not throw an error
     regressionSummaryCoded <- summary(regressionFitCoded, threshold = 0) # threshold to 0 so the canonical does not throw an error
+  }
+
+  aliasedTerms <- attributes(alias(regressionFit)$Complete)$dimnames[[1]]
+
+  if (length(aliasedTerms) > 0) {
+    allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
+    aliasedTerms <- .removeAppendedFactorLevels(predictorNames = allPredictors, terms = aliasedTerms, interactionSymbol = ":")
+    result[["regression"]][["aliasedTerms"]] <- jaspBase::gsubInteractionSymbol(aliasedTerms) # store for footnote
+    resultCoded[["regression"]][["aliasedTerms"]] <- jaspBase::gsubInteractionSymbol(aliasedTerms) # store for footnote
+    formula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(aliasedTerms, collapse="-"), sep="-")) # remove the aliased term(s) from the model
+    # fit the model again
+    if (options[["designType"]] == "factorialDesign") {
+      regressionFit <- lm(formula, data = dataset)
+      regressionFitCoded <- lm(formula, data = datasetCoded)
+      regressionSummary <- summary(regressionFit)
+      regressionSummaryCoded <- summary(regressionFitCoded)
+    } else if (options[["designType"]] == "responseSurfaceDesign") {
+      regressionFit <- rsm::rsm(formula, data = dataset, threshold = 0)
+      regressionFitCoded <- rsm::rsm(formula, data = datasetCoded, threshold = 0)
+      regressionSummary <- summary(regressionFit, threshold = 0) # threshold to 0 so the canonical does not throw an error
+      regressionSummaryCoded <- summary(regressionFitCoded, threshold = 0) # threshold to 0 so the canonical does not throw an error
+    }
   }
 
   result[["regression"]][["formula"]] <- formula
@@ -517,6 +540,16 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   jaspResults[["doeResultCoded"]]$dependOn(options = .doeAnalysisBaseDependencies())
 }
 
+.removeAppendedFactorLevels <- function(predictorNames, terms, interactionSymbol = "✻"){
+  regexExpression <- paste0("(", paste(predictorNames, collapse = "|"), ")((\\^2)?)([^", interactionSymbol, "]+)(", interactionSymbol, "?)")
+  for (term_i in seq_along(terms)) {
+    replacements <- if (grepl("^2", terms[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
+    terms[term_i] <- gsub(regexExpression, replacements, terms[term_i], perl=TRUE)
+    terms[term_i] <- gsub("\\s", "", terms[term_i])
+  }
+  return(terms)
+}
+
 .doeCoefficientEffects <- function(coefDf, dataset) {
   effectVector <- c()
   for (i in seq_len(nrow(coefDf))) {
@@ -555,6 +588,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     s = result[["s"]], rsq = result[["rsq"]], adjrsq = result[["adjrsq"]], predrsq = result[["predrsq"]]
   )
   tb$addRows(row)
+  if (!is.null(result[["aliasedTerms"]])) {
+    tb$addFootnote(gettextf("The following aliased terms were removed: %s.", paste(result[["aliasedTerms"]], collapse = ", ")))
+  }
 }
 
 .doeAnalysisAnovaTable <- function(jaspResults, options, ready, coded) {
