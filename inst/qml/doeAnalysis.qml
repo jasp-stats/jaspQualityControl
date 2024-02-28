@@ -174,7 +174,7 @@ Form
 					label				: qsTr("Predictor")
 					visible				: codeFactorsMethod.value == "manual"
 					optionKey			: "predictors"
-					source				: designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface"]
+					source				: designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial", "blocksFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface", "blocksResponseSurface"]
 					listViewType		: JASP.AssignedVariables
 					draggable			: false
 					preferredHeight		: jaspTheme.smallDefaultVariablesFormHeight
