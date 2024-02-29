@@ -326,12 +326,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (!result[["regression"]][["saturated"]]) {
     result[["regression"]][["s"]] <- regressionSummary[["sigma"]]
     result[["regression"]][["rsq"]] <- regressionSummary[["r.squared"]]
-    result[["regression"]][["adjrsq"]] <- regressionSummary[["adj.r.squared"]]
+    result[["regression"]][["adjrsq"]] <- max(0, regressionSummary[["adj.r.squared"]]) # Sometimes returns a negative value, so need this
     result[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFit)
 
     resultCoded[["regression"]][["s"]] <- regressionSummaryCoded[["sigma"]]
     resultCoded[["regression"]][["rsq"]] <- regressionSummaryCoded[["r.squared"]]
-    resultCoded[["regression"]][["adjrsq"]] <- regressionSummaryCoded[["adj.r.squared"]]
+    resultCoded[["regression"]][["adjrsq"]] <- max(0, regressionSummaryCoded[["adj.r.squared"]]) # Sometimes returns a negative value, so need this
     resultCoded[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFitCoded)
 
     if (options[["designType"]] == "factorialDesign") {
@@ -506,27 +506,29 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   ## Model formula
   ## uncoded
   coefs <- coef(regressionFit)[!is.na(coef(regressionFit))]
+  coefs <- round(coefs, .numDecimals)
   coefNames <- if (options[["tableAlias"]]) termNamesAliased else termNames
   plusOrMin <- sapply(seq_len(length(coefs)), function(x) {
     if (coefs[x] > 0) "+" else "-"
   })
-  filledFormula <- sprintf("%s = %.5g %s %s %.5g %s", dependent, coefs[1], coefNames[1], plusOrMin[2], abs(coefs[2]), coefNames[2])
+  filledFormula <- sprintf("%s = %s %s %s %s %s", dependent, coefs[1], coefNames[1], plusOrMin[2], abs(coefs[2]), coefNames[2])
   if (length(coefs) > 2) {
     for (i in 3:length(coefs)) {
-      filledFormula <- sprintf("%s %s %.5g %s", filledFormula, plusOrMin[i], abs(coefs[i]), coefNames[i])
+      filledFormula <- sprintf("%s %s %s %s", filledFormula, plusOrMin[i], abs(coefs[i]), coefNames[i])
     }
   }
 
   #coded
   coefsCoded <- coef(regressionFitCoded)[!is.na(coef(regressionFitCoded))]
+  coefsCoded <- round(coefsCoded, .numDecimals)
   coefNames <- if (options[["tableAlias"]]) termNamesAliased else termNames
   plusOrMin <- sapply(seq_len(length(coefsCoded)), function(x) {
     if (coefsCoded[x] > 0) "+" else "-"
   })
-  filledFormulaCoded <- sprintf("%s = %.5g %s %s %.5g %s", dependent, coefsCoded[1], coefNames[1], plusOrMin[2], abs(coefsCoded[2]), coefNames[2])
+  filledFormulaCoded <- sprintf("%s = %s %s %s %s %s", dependent, coefsCoded[1], coefNames[1], plusOrMin[2], abs(coefsCoded[2]), coefNames[2])
   if (length(coefs) > 2) {
     for (i in 3:length(coefs)) {
-      filledFormulaCoded <- sprintf("%s %s %.5g %s", filledFormula, plusOrMin[i], abs(coefsCoded[i]), coefNames[i])
+      filledFormulaCoded <- sprintf("%s %s %s %s", filledFormula, plusOrMin[i], abs(coefsCoded[i]), coefNames[i])
     }
   }
 
@@ -930,6 +932,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   tss <- sum(lm.anova$"Sum Sq")
   # Calculate the predictive R^2
   pred.r.squared <- 1 - .PRESS(linear.model) / (tss)
+  pred.r.squared <- max(0, pred.r.squared) # no negative values
 
   return(pred.r.squared)
 }

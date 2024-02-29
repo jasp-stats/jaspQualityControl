@@ -242,11 +242,12 @@ Form
 			name:                                   "highestOrder"
 			label:                              	qsTr("Define by highest order interaction term")
 			visible:								designType.currentValue == "factorialDesign"
+			checked:								true
 
 			IntegerField
 			{
 				name:                               "order"
-				defaultValue:                        1
+				defaultValue:                        2
 				min:                                 1
 				max:                                 factors.count > 0 ? factors.count : 999
 				label:								  qsTr("Highest order interaction term")
@@ -278,10 +279,47 @@ Form
 
 		VariablesForm
 		{
-			enabled: (!highestOrder.checked && designType.currentValue == "factorialDesign") || (!rsmPredefinedModel.checked && designType.currentValue == "responseSurfaceDesign")
-			preferredHeight: jaspTheme.smallDefaultVariablesFormHeight
-			AvailableVariablesList { name: "components"; title: qsTr("Components"); source: designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface"]}
-			AssignedVariablesList {  name: "modelTerms"; id: modelTerms; title: qsTr("Model Terms"); listViewType: JASP.Interaction}
+			enabled: 				(!highestOrder.checked && designType.currentValue == "factorialDesign") || (!rsmPredefinedModel.checked && designType.currentValue == "responseSurfaceDesign")
+			preferredHeight: 		jaspTheme.smallDefaultVariablesFormHeight
+			
+			AvailableVariablesList 
+			{ 
+				name: 					"components" 
+				title: 					qsTr("Components") 
+				source: 				designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface"]
+			}
+			
+			AssignedVariablesList 
+			{  
+				name: 					"modelTerms" 
+				id: 					modelTerms 
+				title: 					designType.currentValue == "factorialDesign" ? qsTr("Model terms") : qsTr("Main and interaction terms") 
+				listViewType: 			JASP.Interaction
+				//rowComponentTitle: 		designType.currentValue == "factorialDesign" ? "" : qsTr("Add squared term")
+				//rowComponent:  			CheckBox { name: "squaredTerm"; checked: false; visible: designType.currentValue == "responseSurfaceDesign"}
+			}
+		}
+
+		VariablesForm
+		{
+			enabled: 				(!rsmPredefinedModel.checked && designType.currentValue == "responseSurfaceDesign")
+			visible: 				designType.currentValue == "responseSurfaceDesign"
+			preferredHeight: 		jaspTheme.smallDefaultVariablesFormHeight * .5
+			
+			AvailableVariablesList 
+			{ 
+				name: 					"squaredComponents" 
+				title: 					qsTr("Continuous predictors") 
+				source: 				"continuousFactorsResponseSurface"
+			}
+			
+			AssignedVariablesList 
+			{  
+				name: 					"squaredTerms" 
+				id: 					squaredTerms 
+				title: 					qsTr("Squared terms") 
+			}
+
 		}
 
 	}
@@ -451,7 +489,7 @@ Form
 					{ label: qsTr("Sturges"), value: "sturges"},
 					{ label: qsTr("Scott"), value: "scott"},
 					{ label: qsTr("Doane"), value: "doane"},
-					{ label: qsTr("Freedman-Diaconis"), value: "freedmanDiaconis"},
+					{ label: qsTr("Freedman-Diaconis"), value: "fd"},
 					{ label: qsTr("Manual"), value: "manual"}
 				]
 			}
