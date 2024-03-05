@@ -114,10 +114,18 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 #                                                                                     )), list(components = c("Inlet_feeding", "Oil_temperature")),
 #                            list(components = c("Inlet_feeding", "Time", "Oil_temperature"
 #                            )))
+# options$squaredTerms <- list(components = c("Oil_temperature"))
+#
+# testModel <- lm(Vdk ~ Inlet_feeding + Time + Oil_temperature + I(Oil_temperature^2), data = dataset)
+# testModel2 <- lm(Vdk ~ Inlet_feeding + Time + Oil_temperature, data = dataset)
+# car::Anova(testModel)
+# car::Anova(testModel2)
+
+#
 #
 # options[["continuousFactorsResponseSurface"]] <- c("Inlet_feeding")
 # options$modelTerms <- list(list(components = "Inlet_feeding"))
-#
+
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/4_3_AnalyzeDesign/FactorialDesignAnalysis.csv")
 # options <- list()
 # dataset <- dataset[5:8]
@@ -246,6 +254,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     modelTerms <- reorderModelTerms$modelTerms
     modelDef <- .modelFormula(modelTerms, options, dependent)
     formulaString <- modelDef$model.def
+    if (options[["designType"]] == "responseSurfaceDesign" && length(unlist(options[["squaredTerms"]])) > 0) {
+      squaredTerms <- options[["squaredTerms"]]
+      squaredTermsString <- paste0(" + I(", squaredTerms, "^2)", collapse = "")
+      formulaString <- paste0(formulaString, squaredTermsString)
+    }
   } else if (options[["highestOrder"]] && options[["designType"]] == "factorialDesign") {
     formulaString <- paste0(dependent, " ~ (.)^", options[["order"]])
   } else if (options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") {
@@ -256,19 +269,21 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       modelTerms <- "linearAndSquared"
     }
     numPred <- unlist(continuousPredictors)
+    numPredStringMainEffects <- paste0(numPred, collapse = " + ")
+    numPredStringSecondOrderInteractionEffects <- paste0("(", numPredStringMainEffects, ")^2")
+    numPredStringSquaredEffects <- paste0(" + I(", numPred, "^2)", collapse = "")
     catPred <- unlist(discretePredictors)
     catPred <- catPred[catPred != ""]
-    numPredString <- paste0(numPred, collapse = ", ")
-    if (!is.null(catPred) && length(catPred) > 0){
+    if (!is.null(catPred) && length(catPred) > 0) {
       catPredString <- paste0(" + ", catPred, collapse = "")
     } else {
       catPredString <- ""
     }
     formulaString <- switch(modelTerms,
-                            "linear" = paste0(dependent, " ~ rsm::FO(", numPredString, ")", catPredString),
-                            "linearAndInteractions" = paste0(dependent, " ~ rsm::FO(", numPredString, ")", catPredString, " + rsm::TWI(", numPredString, ")"),
-                            "linearAndSquared" = paste0(dependent, " ~ rsm::FO(", numPredString, ") ", catPredString, " +  rsm::PQ(", numPredString, ")"),
-                            "fullQuadratic" = paste0(dependent, " ~ rsm::FO(", numPredString, ")", catPredString, " + rsm::TWI(", numPredString, ") +  rsm::PQ(", numPredString, ")")
+                            "linear" = paste0(dependent, " ~ ", numPredStringMainEffects, catPredString),
+                            "linearAndInteractions" = paste0(dependent, " ~ ", numPredStringSecondOrderInteractionEffects, catPredString),
+                            "linearAndSquared" = paste0(dependent, " ~ ", numPredStringMainEffects, numPredStringSquaredEffects, catPredString),
+                            "fullQuadratic" = paste0(dependent, " ~ ", numPredStringSecondOrderInteractionEffects, numPredStringSquaredEffects, catPredString)
     )
   }
   if (length(blocks) > 0 && !identical(blocks, ""))
@@ -279,21 +294,21 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   formula <- as.formula(formulaString)
 
-  if (options[["designType"]] == "factorialDesign") {
+  # if (options[["designType"]] == "factorialDesign") {
     regressionFit <- lm(formula, data = dataset)
     regressionFitCoded <- lm(formula, data = datasetCoded)
     regressionSummary <- summary(regressionFit)
     regressionSummaryCoded <- summary(regressionFitCoded)
-  } else if (options[["designType"]] == "responseSurfaceDesign") {
-    regressionFit <- rsm::rsm(formula, data = dataset, threshold = 0)
-    regressionFitCoded <- rsm::rsm(formula, data = datasetCoded, threshold = 0)
-    regressionSummary <- summary(regressionFit, threshold = 0) # threshold to 0 so the canonical does not throw an error
-    regressionSummaryCoded <- summary(regressionFitCoded, threshold = 0) # threshold to 0 so the canonical does not throw an error
-  }
+  # } else if (options[["designType"]] == "responseSurfaceDesign") {
+  #   regressionFit <- rsm::rsm(formula, data = dataset, threshold = 0)
+  #   regressionFitCoded <- rsm::rsm(formula, data = datasetCoded, threshold = 0)
+  #   regressionSummary <- summary(regressionFit, threshold = 0) # threshold to 0 so the canonical does not throw an error
+  #   regressionSummaryCoded <- summary(regressionFitCoded, threshold = 0) # threshold to 0 so the canonical does not throw an error
+  # }
 
   aliasedTerms <- attributes(alias(regressionFit)$Complete)$dimnames[[1]]
 
-  if (length(aliasedTerms) > 0) {
+  if (!is.null(aliasedTerms)) {
     allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
     aliasedTerms <- .removeAppendedFactorLevels(predictorNames = allPredictors, terms = aliasedTerms, interactionSymbol = ":")
     result[["regression"]][["aliasedTerms"]] <- jaspBase::gsubInteractionSymbol(aliasedTerms) # store for footnote
@@ -334,16 +349,16 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["adjrsq"]] <- max(0, regressionSummaryCoded[["adj.r.squared"]]) # Sometimes returns a negative value, so need this
     resultCoded[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFitCoded)
 
-    if (options[["designType"]] == "factorialDesign") {
+    #if (options[["designType"]] == "factorialDesign") {
       anovaFit <- car::Anova(regressionFit)
-    } else if (options[["designType"]] == "responseSurfaceDesign") {
-      anovaFit <- regressionSummary$lof
-      # store lof and pure error, remove them for now and add back in later to not interfere with other calculations
-      pureError <- anovaFit["Pure error", ]
-      lackOfFit <- anovaFit["Lack of fit", ]
-      rowsToRemove <- c("Pure error", "Lack of fit")
-      anovaFit <- anovaFit[!row.names(anovaFit) %in% rowsToRemove,]
-    }
+    # } else if (options[["designType"]] == "responseSurfaceDesign") {
+    #   anovaFit <- regressionSummary$lof
+    #   # store lof and pure error, remove them for now and add back in later to not interfere with other calculations
+    #   pureError <- anovaFit["Pure error", ]
+    #   lackOfFit <- anovaFit["Lack of fit", ]
+    #   rowsToRemove <- c("Pure error", "Lack of fit")
+    #   anovaFit <- anovaFit[!row.names(anovaFit) %in% rowsToRemove,]
+    # }
     anovaFit[["Mean Sq"]] <- anovaFit[["Sum Sq"]] / anovaFit[["Df"]]
     null.names <- names(regressionFit[["coefficients"]])[is.na(regressionFit[["coefficients"]])]
     names <- c("Model", gsub(" ", "", row.names(anovaFit)[-length(row.names(anovaFit))], fixed = TRUE), null.names, "Error", "Total")
@@ -360,18 +375,18 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     pval <- c(pval, anovaFit[["Pr(>F)"]], rep(NA, length(null.names)), NA)
 
     #add the lof and pure error rows back in
-    if (options[["designType"]] == "responseSurfaceDesign") {
-      #imputate it in all ANOVA table vectors before the total row
-      df <- c(df[1:length(df)-1], lackOfFit$Df, pureError$Df, df[length(df)])
-      names <- c(names[1:length(names)-1], "Lack of fit", "Pure error", names[length(names)])
-      names <- gsub("rsm::FO\\(", "Linear terms\\(", names)
-      names <- gsub("rsm::TWI\\(", "Two-way interaction terms\\(", names)
-      names <- gsub("rsm::PQ\\(", "Squared terms\\(", names)
-      adjss <- c(adjss[1:length(adjss)-1], lackOfFit$`Sum Sq`, pureError$`Sum Sq`, adjss[length(adjss)])
-      adjms <- c(adjms[1:length(adjms)-1], lackOfFit$`Mean Sq`, pureError$`Mean Sq`, adjms[length(adjms)])
-      fval <- c(fval[1:length(fval)-1], lackOfFit$`F value`, NA, fval[length(fval)])
-      pval <- c(pval[1:length(pval)-1], lackOfFit$`F value`, NA, pval[length(pval)])
-    }
+    # if (options[["designType"]] == "responseSurfaceDesign") {
+    #   #imputate it in all ANOVA table vectors before the total row
+    #   df <- c(df[1:length(df)-1], lackOfFit$Df, pureError$Df, df[length(df)])
+    #   names <- c(names[1:length(names)-1], "Lack of fit", "Pure error", names[length(names)])
+    #   names <- gsub("rsm::FO\\(", "Linear terms\\(", names)
+    #   names <- gsub("rsm::TWI\\(", "Two-way interaction terms\\(", names)
+    #   names <- gsub("rsm::PQ\\(", "Squared terms\\(", names)
+    #   adjss <- c(adjss[1:length(adjss)-1], lackOfFit$`Sum Sq`, pureError$`Sum Sq`, adjss[length(adjss)])
+    #   adjms <- c(adjms[1:length(adjms)-1], lackOfFit$`Mean Sq`, pureError$`Mean Sq`, adjms[length(adjms)])
+    #   fval <- c(fval[1:length(fval)-1], lackOfFit$`F value`, NA, fval[length(fval)])
+    #   pval <- c(pval[1:length(pval)-1], lackOfFit$`F value`, NA, pval[length(pval)])
+    # }
 
   } else {
     result[["regression"]][["s"]] <- NA
@@ -551,6 +566,13 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   return(terms)
 }
+
+.gsubIdentityFunction <- function(term) {
+  splitTerm <- unlist(strsplit(term, "")) # split into individual letters
+  cleanTerm <- paste0(splitTerm[-c(1,2, length(splitTerm))], collapse = "") # remove the first two and the last element
+  return(cleanTerm)
+}
+
 
 .doeCoefficientEffects <- function(coefDf, dataset) {
   effectVector <- c()
