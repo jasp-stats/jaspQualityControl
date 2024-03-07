@@ -23,7 +23,7 @@ Form
 {
 	columns:									1
 
-	GroupBox
+	Group
 	{
 		title: 									qsTr("Design Space")
 		name:									"designInfo"
@@ -150,7 +150,7 @@ Form
 		}
 	}
 
-	GroupBox
+	Group
 	{
 		title:									qsTr("Additional Options")
 
@@ -187,7 +187,7 @@ Form
 		label:									qsTr("Display selected design")
 	}
 
-	GroupBox
+	Group
 	{
 		FileSelector
 		{

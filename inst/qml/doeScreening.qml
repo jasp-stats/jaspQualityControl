@@ -36,7 +36,7 @@ Form
 
     }
 
-    GroupBox
+	Group
     {
         title: 									qsTr("Design Space")
         name:									"designInfo"
@@ -308,7 +308,7 @@ Form
         }
     }
 
-    GroupBox
+	Group
     {
         title:                                  qsTr("Additional Options")
         enabled:                                numberOfFactorsForTableScreen2.value == 0 | screeningType.currentIndex == 0
@@ -348,7 +348,7 @@ Form
         label:                                  "Display selected design"
     }
 
-    GroupBox
+	Group
     {
         FileSelector
         {

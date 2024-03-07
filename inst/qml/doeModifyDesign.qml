@@ -107,7 +107,7 @@ Form
 		title: 									qsTr("Desired Two-level Factorial Design Options")
 		columns:								2
 
-		GroupBox
+		Group
 		{
 			title:								qsTr("Design Options")
 
@@ -203,7 +203,7 @@ Form
 			}
 		}
 
-		GroupBox
+		Group
 		{
 			title:								qsTr("Additional Options")
 
