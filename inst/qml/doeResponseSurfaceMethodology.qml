@@ -27,6 +27,8 @@ Form
 	id: form
 	columns: 1
 
+	Common.ShowAndExportDesign {}
+
 	RadioButtonGroup
 	{
 		name		: "designType"
@@ -369,8 +371,6 @@ Form
 		IntegerField	{ name: "replicates";	label: qsTr("Replicates");			defaultValue: 1; min: 1; max: 100	}
 
 	}
-
-	Common.ShowAndExportDesign {}
 
 	// Section
 	// {
