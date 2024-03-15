@@ -84,7 +84,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   tb[["title"]] <- gettext("Value")
   tb[["catFactors"]] <- options[["numberOfCategorical"]]
   designSpec <- .doeFactorialGetSelectedDesign(jaspResults, options)
-  if (length(designSpec) == 0L) { # user did not select a design
+  if (options[["factorialType"]] != "generalFullFactorial" && length(designSpec) == 0L) { # user did not select a design
     tb$addFootnote(gettext("Please select a row in the design table."))
     return()
   }
@@ -118,7 +118,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
 
 .doeFactorialGetSelectedDesign <- function(jaspResults, options) {
   row <- options[["selectedRow"]] + 1L
-  if (row <= 0L) {
+  if (row <= 0L && options[["factorialType"]] != "generalFullFactorial") {
     return(list())
   }
   design <- .doeFactorialDefaultDesigns(jaspResults, options, row)
@@ -127,8 +127,9 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
 
 .doeFactorialDefaultDesigns <- function(jaspResults, options, row) {
   nFactors <- options[["numberOfCategorical"]]
-  twoLevelDesign <- options[["categoricalNoLevels"]] == 2
+  twoLevelDesign <- options[["factorialType"]] != "generalFullFactorial"
   if (!twoLevelDesign) {
+    row <- 1
     designs <- data.frame(
       name = "Full factorial",
       runs = options[["categoricalNoLevels"]]^nFactors,

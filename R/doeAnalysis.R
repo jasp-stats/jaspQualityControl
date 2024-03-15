@@ -306,7 +306,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   #   regressionSummaryCoded <- summary(regressionFitCoded, threshold = 0) # threshold to 0 so the canonical does not throw an error
   # }
 
-  aliasedTerms <- attributes(alias(regressionFit)$Complete)$dimnames[[1]]
+    aliasedTerms <- attributes(alias(regressionFit)$Complete)$dimnames[[1]]
 
   if (!is.null(aliasedTerms)) {
     allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
@@ -315,18 +315,23 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["aliasedTerms"]] <- jaspBase::gsubInteractionSymbol(aliasedTerms) # store for footnote
     formula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(aliasedTerms, collapse="-"), sep="-")) # remove the aliased term(s) from the model
     # fit the model again
-    if (options[["designType"]] == "factorialDesign") {
+    # if (options[["designType"]] == "factorialDesign") {
       regressionFit <- lm(formula, data = dataset)
       regressionFitCoded <- lm(formula, data = datasetCoded)
       regressionSummary <- summary(regressionFit)
       regressionSummaryCoded <- summary(regressionFitCoded)
-    } else if (options[["designType"]] == "responseSurfaceDesign") {
-      regressionFit <- rsm::rsm(formula, data = dataset, threshold = 0)
-      regressionFitCoded <- rsm::rsm(formula, data = datasetCoded, threshold = 0)
-      regressionSummary <- summary(regressionFit, threshold = 0) # threshold to 0 so the canonical does not throw an error
-      regressionSummaryCoded <- summary(regressionFitCoded, threshold = 0) # threshold to 0 so the canonical does not throw an error
-    }
+    # } else if (options[["designType"]] == "responseSurfaceDesign") {
+    #   regressionFit <- rsm::rsm(formula, data = dataset, threshold = 0)
+    #   regressionFitCoded <- rsm::rsm(formula, data = datasetCoded, threshold = 0)
+    #   regressionSummary <- summary(regressionFit, threshold = 0) # threshold to 0 so the canonical does not throw an error
+    #   regressionSummaryCoded <- summary(regressionFitCoded, threshold = 0) # threshold to 0 so the canonical does not throw an error
+    # }
   }
+
+    names(regressionFit$coefficients) <-  unname(sapply(c(names(regressionFit$coefficients)), .gsubIdentityFunction)) # remove potential identity function around squared terms
+    rownames(regressionSummary$coefficients) <- unname(sapply(c(rownames(regressionSummary$coefficients)), .gsubIdentityFunction))
+    names(regressionFitCoded$coefficients) <-  unname(sapply(c(names(regressionFitCoded$coefficients)), .gsubIdentityFunction))
+    rownames(regressionSummaryCoded$coefficients) <- unname(sapply(c(rownames(regressionSummaryCoded$coefficients)), .gsubIdentityFunction))
 
   result[["regression"]][["formula"]] <- formula
   result[["regression"]][["object"]] <- regressionFit
@@ -361,7 +366,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     # }
     anovaFit[["Mean Sq"]] <- anovaFit[["Sum Sq"]] / anovaFit[["Df"]]
     null.names <- names(regressionFit[["coefficients"]])[is.na(regressionFit[["coefficients"]])]
-    names <- c("Model", gsub(" ", "", row.names(anovaFit)[-length(row.names(anovaFit))], fixed = TRUE), null.names, "Error", "Total")
+    modelComponentNames <- gsub(" ", "", row.names(anovaFit)[-length(row.names(anovaFit))], fixed = TRUE)
+    modelComponentNames <- unname(sapply(modelComponentNames, .gsubIdentityFunction)) # remove identity function around squared terms
+    names <- c("Model", sprintf("\u00A0 %s", modelComponentNames), null.names, "Error", "Total")
     anovaNames <- gsub(" ", "", row.names(anovaFit))
     errorIndex <- which(anovaNames == "Residuals")
     ssm <- sum(anovaFit$`Sum Sq`[-errorIndex])
@@ -404,6 +411,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     msm <- ssm / nrow(anovaFit)
     anovaNames <- row.names(anovaFit)
     names <- c("Model", gsub(" ", "", row.names(anovaFit), fixed = TRUE), "Error", "Total")
+    names <- unname(sapply(names, .gsubIdentityFunction)) # remove identity function around squared terms
     df <- c(sum(anovaFit[["Df"]]), anovaFit[["Df"]], 0, sum(anovaFit[["Df"]]))
     adjss <- c(sum(anovaFit[["Sum Sq"]]), anovaFit[["Sum Sq"]], NA, sum(anovaFit[["Sum Sq"]]))
     adjms <- c(sum(anovaFit[["Sum Sq"]]) / nrow(anovaFit), anovaFit[["Mean Sq"]], NA, NA)
@@ -541,9 +549,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     if (coefsCoded[x] > 0) "+" else "-"
   })
   filledFormulaCoded <- sprintf("%s = %s %s %s %s %s", dependent, coefsCoded[1], coefNames[1], plusOrMin[2], abs(coefsCoded[2]), coefNames[2])
-  if (length(coefs) > 2) {
-    for (i in 3:length(coefs)) {
-      filledFormulaCoded <- sprintf("%s %s %s %s", filledFormula, plusOrMin[i], abs(coefsCoded[i]), coefNames[i])
+  if (length(coefsCoded) > 2) {
+    for (i in 3:length(coefsCoded)) {
+      filledFormulaCoded <- sprintf("%s %s %s %s", filledFormulaCoded, plusOrMin[i], abs(coefsCoded[i]), coefNames[i])
     }
   }
 
@@ -569,8 +577,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 .gsubIdentityFunction <- function(term) {
   splitTerm <- unlist(strsplit(term, "")) # split into individual letters
-  cleanTerm <- paste0(splitTerm[-c(1,2, length(splitTerm))], collapse = "") # remove the first two and the last element
-  return(cleanTerm)
+  if (all(splitTerm[c(1,2, length(splitTerm))] == c("I", "(", ")"))) {
+    cleanTerm <- paste0(splitTerm[-c(1,2, length(splitTerm))], collapse = "") # remove the first two and the last element
+    return(cleanTerm)
+  } else {
+    return(term)
+  }
 }
 
 

@@ -25,6 +25,8 @@ Form
 {
 	columns:									1
 
+	Common.ShowAndExportDesign {}
+
 	Group
 	{
 		columns: 2
@@ -36,7 +38,7 @@ Form
 				property int intValue: defaultValue
 				onValueChanged : { intValue = value !== "" ? value : 0 }
 			}
-			IntegerField { id: numberOfLevels;			label: qsTr("Maximum levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 16
+			IntegerField { id: numberOfLevels;			label: qsTr("Maximum levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 20; 	enabled: factorialType.value == "generalFullFactorial"
 				property int intValue: defaultValue
 				onValueChanged : { intValue = value !== "" ? value : 0 }
 			}
@@ -45,7 +47,7 @@ Form
 		RadioButtonGroup
 		{
 			name: 								"factorialType"
-			enabled:							numberOfLevels.value == 2
+			id:									factorialType
 
 			RadioButton
 			{
@@ -89,6 +91,13 @@ Form
 					max:						numberOfCategorical.value-1
 				}
 			}
+
+			RadioButton
+			{
+				id:								generalFullFactorial
+				name:							"generalFullFactorial"
+				label:							qsTr("General full factorial")
+			}
 		}
 	}
 
@@ -114,12 +123,22 @@ Form
 
 		function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }
 		function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex); }
-		function getDefaultValue(columnIndex, rowIndex)				{ return String.fromCharCode(columnIndex === 0 ? 65 + rowIndex : 97 + columnIndex - 1); }
+		function getDefaultValue(columnIndex, rowIndex) {
+														if (columnIndex > 2) {
+															return "";  // Return an empty string for columnIndex > 2
+														} else if (columnIndex === 0) {
+															return String.fromCharCode(65 + rowIndex);  // Uppercase letter for columnIndex 0
+														} else {
+															return String.fromCharCode(97 + columnIndex - 1);  // Lowercase letter otherwise
+														}
+													}
+
 	}
 
 	Group
 	{
 		Label	{ text : qsTr("Design Table")	}
+		visible: factorialType.value != "generalFullFactorial"
 		TableView
 		{
 			property int designDataColumns : 3
@@ -361,6 +380,4 @@ Form
 			}
 		}
 	}
-
-	Common.ShowAndExportDesign {}
 }

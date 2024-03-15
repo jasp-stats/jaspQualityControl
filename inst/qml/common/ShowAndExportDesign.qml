@@ -23,7 +23,7 @@ Group
 {
 
 	columns : 1
-	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: false 
+	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: true 
 		CheckBox{ name: "codedOutput";	label: qsTr("Coded units")}
 		RadioButtonGroup
 		{

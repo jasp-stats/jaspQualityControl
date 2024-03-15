@@ -28,23 +28,16 @@ Form
 		title: 									qsTr("Design Space")
 		name:									"designInfo"
 
-		IntegerField
-		{
-			id:									numberOfFactors
-			name:								"numberOfFactors"
-			label:								qsTr("Number of factors")
-			defaultValue:						3
-			min:								2
-			max:								256
-		}
+		// IntegerField
+		// {
+		// 	id:									numberOfFactors
+		// 	name:								"numberOfFactors"
+		// 	label:								qsTr("Number of factors")
+		// 	defaultValue:						3
+		// 	min:								2
+		// 	max:								256
+		// }
 
-		IntegerField
-		{
-			visible:							false
-			id:									numberOfFactorsForTable
-			name:								"numberOfFactorsForTable"
-			defaultValue:						numberOfFactors.value
-		}
 	}
 
 	RadioButtonGroup
@@ -66,6 +59,28 @@ Form
 			checked:							true
 			SetSeed								{ }
 		}
+	}
+
+	
+	IntegerField 
+	{
+		id:									 numberOfFactors
+		name:								"numberOfFactors"
+		label:								qsTr("Number of factors")
+		defaultValue:						0
+		min:								0
+		max:								256
+		// onValueChanged: 					updateModel(value)
+	}
+
+
+	IntegerField
+	{
+		visible:							true
+		id:									numberOfFactorsForTable
+		name:								"numberOfFactorsForTable"
+		value:								numberOfFactors.value
+		onValueChanged: 					updateModel(value)
 	}
 
 	ColumnLayout
@@ -100,7 +115,7 @@ Form
 		{
 			name:								"factors"
 			addItemManually:					false
-			values:								numberOfFactorsForTable.value
+			values:								numberOfFactors.value
 			rowComponent:						RowLayout
 			{
 				Row
