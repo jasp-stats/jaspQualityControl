@@ -42,11 +42,12 @@ Form
 
 	VariablesForm
 	{
-		id:									variablesForm
+		id:									variablesFormLongFormat
+		visible:							dataFormat.currentValue == "longFormat"
 
 		AvailableVariablesList
 		{
-			name:							"variablesForm"
+			name:							"variablesFormLongFormat"
 		}
 
 		AssignedVariablesList
@@ -56,16 +57,6 @@ Form
 			id:								measurementLongFormat
 			allowedColumns:					["scale"]
 			singleVariable:					true
-			visible:						dataFormat.currentValue == "longFormat"
-		}
-
-		AssignedVariablesList
-		{
-			name:							"measurementsWideFormat"
-			title:							qsTr("Measurements")
-			id:								measurementsWideFormat
-			allowedColumns:					["scale"]
-			visible:						dataFormat.currentValue == "wideFormat"
 		}
 
 		AssignedVariablesList
@@ -75,33 +66,129 @@ Form
 			id:					 			subgroup
 			singleVariable:		 			true
 			allowedColumns:					["nominal", "nominalText", "ordinal"]
+			enabled: 						subgroupSizeType.value == "groupingVariable"
+		}
+
+		AssignedVariablesList
+		{
+			id:									stagesLongFormat
+			name:								"stagesLongFormat"
+			title:								qsTr("Stages")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
 		}
 	}
 
-	CheckBox
+	VariablesForm
 	{
-		name: 						"manualSubgroupSize"
-		label: 						qsTr("Specifiy subgroup size manually:")
-		id: 						manualSubgroupSize
-		checked: 					true
-		childrenOnSameRow:			true
-		visible:					dataFormat.currentValue == "longFormat"
+		id:									variablesFormWideFormat
+		visible:							dataFormat.currentValue == "wideFormat"
 
-		DoubleField
+		AvailableVariablesList
 		{
-			name: 					"manualSubgroupSizeValue"
-			id:						manualSubgroupSizeValue
-			negativeValues:			false
-			min: 					1
-			max: 					dataSetInfo.rowCount
-			defaultValue:			5
-			visible:				dataFormat.currentValue == "longFormat"
+			name:							"variablesFormWideFormat"
+		}
+
+		AssignedVariablesList
+		{
+			name:							"measurementsWideFormat"
+			title:							qsTr("Measurements")
+			id:								measurementsWideFormat
+			allowedColumns:					["scale"]
+		}
+
+		AssignedVariablesList
+		{
+			id:									axisLabels
+			name:								"axisLabels"
+			title:								qsTr("Timestamp (optional)")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
+
+		AssignedVariablesList
+		{
+			id:									stagesWideFormat
+			name:								"stagesWideFormat"
+			title:								qsTr("Stages")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal"]
+		}
+	}
+
+	Group
+	{
+		columns:							2
+
+		RadioButtonGroup
+		{
+			name:								"subgroupSizeType"
+			title: 								qsTr("Specify subgroups")
+			id:									subgroupSizeType
+			visible:							dataFormat.currentValue == "longFormat"							
+
+			RadioButton
+			{
+				value: 							"manual"
+				label: 							qsTr("Subgroup size")
+				checked:		 				true
+				childrenOnSameRow:				true
+				
+				DoubleField
+				{
+					name: 									"manualSubgroupSizeValue"
+					id:										manualSubgroupSizeValue
+					min: 									1
+					max:									dataSetModel.rowCount()
+					negativeValues:							false
+					defaultValue:							5
+					
+				}
+			}
+			
+			RadioButton
+			{
+				value: 							"groupingVariable"
+				label: 							qsTr("Through grouping variable")
+			}
+
+				
+
+		}
+
+		RadioButtonGroup
+		{
+			name:								"subgroupSizeUnequal"
+			title: 								qsTr("Unequal subgroup sizes")
+			id:									subgroupSizeUnequal
+
+			RadioButton
+			{
+				value: 								"actualSizes"
+				label: 								qsTr("Use actual sizes")
+				checked: 							true
+			}
+			
+			RadioButton
+			{
+				value: 								"fixedSubgroupSize"
+				label: 								qsTr("Use fixed subgroup size")
+				childrenOnSameRow:		 			true
+
+				IntegerField 
+				{
+					name: 								"fixedSubgroupSizeValue"
+					fieldWidth: 						30
+					defaultValue: 						5
+					min:								2
+				}
+			}
 		}
 	}
 
 	Section
 	{
-		title: qsTr("Process Capability Options")
+		title: qsTr("Process capability options")
 
 		ColumnLayout
 		{
@@ -138,16 +225,16 @@ Form
 							[
 								{label: qsTr("Weibull"),					value: "weibull"},
 								{label: qsTr("Lognormal"),					value: "lognormal"},
-								{label: qsTr("3-parameter lognormal"),		value: "3ParameterLognormal"},
-								{label: qsTr("3-parameter Weibull"),		value: "3ParameterWeibull"}
+								{label: qsTr("3-parameter Weibull"),		value: "3ParameterWeibull"},
+								{label: qsTr("3-parameter lognormal"),		value: "3ParameterLognormal"}
 							]
-							indexDefaultValue: (nullDistribution.currentValue == "weibull") ? 0 : 1
+							indexDefaultValue: 0
 						}
 
 						DropDown
 						{
 							name:					"nonNormalMethod"
-							label:					qsTr("Non-normal capability statistics:")
+							label:					qsTr("Non-normal capability statistics")
 							indexDefaultValue:		0
 							values:
 								[
@@ -161,7 +248,7 @@ Form
 
 			Group
 			{
-				title: 							qsTr("Capability studies")
+				title: 							qsTr("Capability study")
 
 				CheckBox
 				{
@@ -177,6 +264,13 @@ Form
 						negativeValues:			true
 						defaultValue:			-1
 						decimals:				9
+					}
+
+					CheckBox
+					{
+					name: 						"lowerSpecificationLimitBoundary"
+					label: 						qsTr("Boundary")
+					id:							lowerSpecificationLimitBoundary
 					}
 				}
 
@@ -212,6 +306,13 @@ Form
 						defaultValue:			1
 						decimals:				9
 					}
+
+					CheckBox
+					{
+					name: 						"upperSpecificationLimitBoundary"
+					label: 						qsTr("Boundary")
+					id:							upperSpecificationLimitBoundary
+					}
 				}
 
 				CheckBox
@@ -219,7 +320,7 @@ Form
 					name: 						"processCapabilityPlot"
 					label: 						qsTr("Process capability plot")
 					checked: 					true
-					enabled:					upperSpecificationLimit.checked || target.checked || lowerSpecificationLimit.checked
+					enabled:					upperSpecificationLimit.checked || lowerSpecificationLimit.checked
 
 					DoubleField
 					{
@@ -230,6 +331,20 @@ Form
 						max:						10000;
 						enabled:					csBinWidthType.currentValue === "manual"
 					}
+
+					CheckBox
+					{
+						name: 								"processCapabilityPlotDistributions"
+						label: 								qsTr("Overlay distribution")
+						checked: 							true
+					}
+
+					CheckBox
+					{
+						name: 								"processCapabilityPlotSpecificationLimits"
+						label: 								qsTr("Display specification limits")
+						checked: 							true
+					}
 				}
 
 				CheckBox
@@ -237,7 +352,7 @@ Form
 					name: 							"processCapabilityTable"
 					label: 							qsTr("Process capability tables")
 					checked: 						true
-					enabled:						upperSpecificationLimit.checked | target.checked | lowerSpecificationLimit.checked
+					enabled:						upperSpecificationLimit.checked || lowerSpecificationLimit.checked
 
 					CheckBox
 					{
@@ -260,64 +375,72 @@ Form
 		ColumnLayout
 		{
 
-			RadioButtonGroup
+			Group
 			{
-				title: 					qsTr("Stability of the process")
-				name:					"controlChartType"
+				title:			qsTr("Stability of the process")
 
-				RadioButton
+				CheckBox
 				{
-					name: 				"xBarR"
-					id : 				xbarR
-					label: 				qsTr("X-bar & R chart")
-					enabled:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
-					checked:			dataFormat.currentValue == "wideFormat" | (dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1)
-				}
+					name: 						"controlChart"
+					label: 						""
+					checked: 					true
+					childrenOnSameRow:			true
+					columns:					1
+					
 
-				RadioButton
-				{
-					name: 				"xBarS"
-					id : 				xbarS
-					label: 				qsTr("X-bar & s chart")
-					enabled:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value > 1) | dataFormat.currentValue == "wideFormat"
-				} 
-
-				RadioButton
-				{
-					name: 				"xBarMR"
-					id : 				xbarMR
-					label: 				qsTr("X-bar & mR chart")
-					enabled:			dataFormat.currentValue == "wideFormat"
-					visible:			dataFormat.currentValue == "wideFormat"
+					DropDown
+					{
+						name: 					"controlChartType"
+						id: 					controlChartType
+						label: 					""
+						values: dataFormat.currentValue == "longFormat" ?
+						[
+							{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
+							{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
+							{ label: qsTr("X-mR control chart"),				value: "xmr"}
+						] :
+						[
+							{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
+							{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
+							{ label: qsTr("X-bar & mR control chart"),			value: "xBarMR"}
+						]
+						indexDefaultValue: 
+						(dataFormat.currentValue == "wideFormat" || (dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1)) ? 0 :
+						(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? 2 : 0
+					}
+				
 
 					DoubleField
 					{
-					name:							"xBarMovingRangeLength"
-					label:							qsTr("Moving range length")
-					defaultValue:					2
-					min: 							2
-					max: 							dataSetInfo.rowCount
+						name:							"xBarMovingRangeLength"
+						label:							qsTr("Moving range length")
+						visible:						controlChartType.currentIndex == 2 && dataFormat.currentValue == "wideFormat"
+						defaultValue:					2
+						min: 							2
+						max: 							dataSetInfo.rowCount
 					}
-				}
 
-				RadioButton
-				{
-					name: 				"xmr"
-					id : 				xmr
-					label: 				qsTr("X-mR chart")
-					enabled:			dataFormat.currentValue == "longFormat"
-					visible:			dataFormat.currentValue == "longFormat"
-					checked:			(dataFormat.currentValue == "longFormat" & manualSubgroupSizeValue.value == 1)
-
-					DoubleField
+					Group 
 					{
-					name:							"xmrChartMovingRangeLength"
-					label:							qsTr("Moving range length")
-					defaultValue:					2
-					min: 							2
-					max: 							dataSetInfo.rowCount
+						visible:						controlChartType.currentIndex == 2 && dataFormat.currentValue == "longFormat"
+
+						DoubleField
+						{
+							name:							"xmrChartMovingRangeLength"
+							label:							qsTr("Moving range length")
+							defaultValue:					2
+							min: 							2
+							max: 							dataSetInfo.rowCount
+						}
+
+						CheckBox
+						{
+							name: 							"xmrChartSpecificationLimits"
+							label: 							qsTr("Display specification limits")
+							checked: 						false
+						}
 					}
-				}
+				}			
 			}
 
 			Group
@@ -367,7 +490,7 @@ Form
 
 	Section
 	{
-		title: qsTr("Process Capability Report")
+		title: qsTr("Process capability report")
 		
 		CheckBox
 		{
@@ -383,59 +506,55 @@ Form
 				checked:	true
 				columns: 1
 
-		TextField
-		{
-			name: 					"reportTitle"
-			label:					qsTr("Title")
-			id:						reportTitle
-			placeholderText:		qsTr("Measurement")
-			fieldWidth:				100
-		}
+				TextField
+				{
+					name: 					"reportTitle"
+					label:					qsTr("Title")
+					id:						reportTitle
+					placeholderText:		qsTr("Measurement")
+					fieldWidth:				100
+				}
 
-		TextField
-		{
-			name:					"reportProcessName"
-			label:					qsTr("Process Name")
-			id:						reportProcessName
-			placeholderText:		qsTr("Name")
-			fieldWidth:				100
-		}
+				TextField
+				{
+					name:					"reportProcessName"
+					label:					qsTr("Process Name")
+					id:						reportProcessName
+					placeholderText:		qsTr("Name")
+					fieldWidth:				100
+				}
 
-		TextField
-		{
-			name:					"reportDate"
-			label:					qsTr("Date")
-			id:						reportDate
-			placeholderText:		qsTr("Date")
-			fieldWidth:				100
-		}
+				TextField
+				{
+					name:					"reportDate"
+					label:					qsTr("Date")
+					id:						reportDate
+					placeholderText:		qsTr("Date")
+					fieldWidth:				100
+				}
 
-		TextField
-		{
-			name:					"reportReportedBy"
-			label:					qsTr("Reported by")
-			id:						reportReportedBy
-			placeholderText:		qsTr("Name")
-			fieldWidth:				100
-		}
+				TextField
+				{
+					name:					"reportReportedBy"
+					label:					qsTr("Reported by")
+					id:						reportReportedBy
+					placeholderText:		qsTr("Name")
+					fieldWidth:				100
+				}
 
-		TextField
-		{
-			name:					"reportMiscellaneous"
-			label:					qsTr("Misc")
-			id:						reportMiscellaneous
-			placeholderText:		qsTr("Miscellaneous")
-			fieldWidth:				100
-		}
+				TextField
+				{
+					name:					"reportMiscellaneous"
+					label:					qsTr("Misc")
+					id:						reportMiscellaneous
+					placeholderText:		qsTr("Miscellaneous")
+					fieldWidth:				100
+				}
+			}
 		
-		
-		}
-		
-		
-		
-					Group
+			Group
 			{
-				title:			qsTr("Select Report Components")
+				title:			qsTr("Select report components")
 			
 				CheckBox
 				{
@@ -475,7 +594,7 @@ Form
 
 	Section
 	{
-		title: qsTr("Advanced Options")
+		title: qsTr("Advanced options")
 		
 		Group
 		{
@@ -493,31 +612,18 @@ Form
 				]
 			}
 					
-			CheckBox
-			{
-				name:								"manualTicksXAxis"
-				label: 								qsTr("Number of ticks on x-axis for X-bar & R or X-mR chart:")
-				childrenOnSameRow: true
-
-				DoubleField
+			DropDown
 				{
-					name: 							"manualTicksXAxisValue"
-					defaultValue:					5
+					name: 					"histogramBinBoundaryDirection"
+					id: 					histogramBinBoundaryDirection
+					label: 					qsTr("Histogram bin boundaries")
+					values: 
+					[
+						{ label: qsTr("Left open"),		value: "left"},
+						{ label: qsTr("Right open"),	value: "right"}
+						
+					]
 				}
-			}
-
-			CheckBox
-			{
-				name:								"manualTicksProbabilityPlot"
-				label: 								qsTr("Number of ticks on x-axis for probability plot:")
-				childrenOnSameRow: true
-
-				DoubleField
-				{
-					name: 							"manualTicksProbabilityPlotValue"
-					defaultValue:					5
-				}
-			}
 
 			DropDown
 			{
@@ -534,6 +640,72 @@ Form
 				(nonNormalDistribution.currentValue == "lognormal" || nonNormalDistribution.currentValue == "3ParameterLognormal") ? 1 : 
 				(nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "weibull") ? 2 : 0 
 				: 0
+			}
+
+			Group
+			{
+				title:			""
+				columns:		2
+
+				DropDown
+				{
+					name: 					"controlChartSdEstimationMethodGroupSize"
+					id: 					controlChartSdEstimationMethodGroupSize
+					label: 					qsTr("Method for estimating within subgroup std. dev. for subgroup size")
+					values: 
+					[
+						{ label: qsTr(" > 1"),		value: "largerThanOne"},
+						{ label: qsTr("= 1"),		value: "equalOne"}
+					]
+						indexDefaultValue:
+						(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? 1 : 0
+				}
+
+				DropDown
+				{
+					name: 					"controlChartSdEstimationMethodGroupSizeLargerThanOne"
+					id: 					controlChartSdEstimationMethodGroupSizeLargerThanOne
+					visible:				controlChartSdEstimationMethodGroupSize.currentValue == "largerThanOne"
+					label: 					""
+					values: 
+					[
+						{ label: qsTr("R-bar"),			value: "rBar"},
+						{ label: qsTr("S-bar"),			value: "sBar"}
+					]
+					indexDefaultValue:
+					(controlChartType.currentValue == "xBarR" || controlChartType.currentValue == "xBarMR") ? 0 : 
+					(controlChartType.currentValue == "xBarS") ? 1 : 0
+				}
+
+				DropDown
+				{
+					name: 					"controlChartSdEstimationMethodGroupSizeEqualOne"
+					id: 					controlChartSdEstimationMethodGroupSizeEqualOne
+					visible:				controlChartSdEstimationMethodGroupSize.currentValue == "equalOne"
+					label: 					""
+					values: 
+					[
+						{ label: qsTr("Mean moving range"),			value: "meanMovingRange"}
+					]
+				}
+
+				DoubleField
+				{
+					name:							"controlChartSdEstimationMethodMeanMovingRangeLength"
+					visible:						controlChartSdEstimationMethodGroupSize.currentIndex == 1
+					label:							qsTr("Moving range length")
+					defaultValue:					2
+					min: 							2
+					max: 							dataSetModel.rowCount()
+				}
+
+				CheckBox
+				{
+					name:								"controlChartSdUnbiasingConstant"
+					label: 								qsTr("Use unbiasing constant")
+					visible:							controlChartSdEstimationMethodGroupSize.currentIndex == 1 ? false : true
+					checked:							true
+				}
 			}
 		}
 	}

@@ -1035,9 +1035,5 @@ Upgrades
 		}
 
 		ChangeRename {from: "logTransform";									to: "logTransformedCovariate"}
-
-
-
-
 	}
 }
