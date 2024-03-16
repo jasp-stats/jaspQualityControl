@@ -180,8 +180,7 @@ attributesCharts <- function(jaspResults, dataset, options) {
   }
 
   #Report
-  if (options[["report"]] && is.null(jaspResults[["AReport"]]) && ready) {
-
+  if (options[["report"]]) {
     jaspResults[["PchartPlot"]]     <- NULL
     jaspResults[["NelsonTable"]]    <- NULL
     jaspResults[["NPchartPlot"]]    <- NULL
@@ -192,31 +191,57 @@ attributesCharts <- function(jaspResults, dataset, options) {
     jaspResults[["IPlotA"]]         <- NULL
     jaspResults[["NelsonTableIMR"]] <- NULL
 
-    jaspResults[["AReport"]] <- createJaspContainer(title = gettextf("Report for Attribute Control Charts"))
-    jaspResults[["AReport"]]$dependOn(c("report", "reportTitle", "reportMeasurementName", "reportReportedBy", "reportId", "reportMiscellaneous", "reportAppraiser", "reportMeasusrementSystemName", "reportSubgroupSize", "reportTime", "reportFrequency",
-                                        "defectiveOrDefect", "total", "attributesChart", "attributesChartDefectsChartType", "attributesChartDefectivesChartType", "timeStamp"))
-    Report <- jaspResults[["AReport"]]
-    Report[["Report"]] <- .AReport(ccTitle = options[["reportTitle"]], ccName = options[["reportMeasurementName"]],
-                                 ccOperator = options[["reportReportedBy"]], ccID = options[["reportId"]], ccMisc = options[["reportMiscellaneous"]], ccAppraiser = options[["reportAppraiser"]],
-                                 ccMeasurement = options[["reportMeasusrementSystemName"]], ccSize = options[["reportSubgroupSize"]], ccTime = options[["reportTime"]], ccFrequency = options[["reportFrequency"]])
+    plotHeight <- if (options[["attributesChart"]] == "xmr") 1000 else 500
+    reportPlot <- createJaspPlot(title = gettext("Report for Attribute Control Charts"), width = 1250, height = plotHeight)
+    jaspResults[["report"]] <- reportPlot
+    jaspResults[["report"]]$dependOn(c("defectiveOrDefect", "total", "timeStamp", "attributesChart",
+                                       "attributesChartDefectivesChartType", "attributesChartDefectsChartType",
+                                       "report", "reportMetaData", "reportTitle", "reportMeasurementName", "reportMeasurementNameText",
+                                       "reportPerformedBy", "reportPerformedByText", "reportId", "reportIdText",
+                                       "reportAppraiser", "reportAppraiserText", "reportMeasusrementSystemName",
+                                       "reportMeasusrementSystemNameText", "reportSubgroupSize", "reportSubgroupSizeText",
+                                       "reportTime", "reportTimeText", "reportFrequency", "reportFrequencyText"))
 
-    Report[["Plot"]] <- createJaspPlot(width = 1000, height = 800, position = 2)
+    # Plot meta data
+    if (options[["reportTitle"]] ) {
+      title <- if (options[["reportTitleText"]] == "") gettext("Report for Attribute Control Charts") else options[["reportTitleText"]]
+    } else {
+      title <- ""
+    }
+
+    if (options[["reportMetaData"]]) {
+      text <- c()
+      text <- if (options[["reportMeasurementName"]]) c(text, gettextf("Measurement name: %s", options[["reportMeasurementNameText"]])) else text
+      text <- if (options[["reportPerformedBy"]]) c(text, gettextf("Performed by: %s", options[["reportPerformedByText"]])) else text
+      text <- if (options[["reportId"]]) c(text, gettextf("ID: %s", options[["reportIdText"]])) else text
+      text <- if (options[["reportAppraiser"]]) c(text, gettextf("Appraiser: %s", options[["reportAppraiserText"]])) else text
+      text <- if (options[["reportMeasusrementSystemName"]]) c(text, gettextf("Measurement system: %s", options[["reportMeasusrementSystemNameText"]])) else text
+      text <- if (options[["reportSubgroupSize"]]) c(text, gettextf("Subgroup size: %s", options[["reportSubgroupSizeText"]])) else text
+      text <- if (options[["reportTime"]]) c(text, gettextf("Time: %s", options[["reportTimeText"]])) else text
+      text <- if (options[["reportFrequency"]]) c(text, gettextf("Frequency: %s", options[["reportFrequencyText"]])) else text
+    } else {
+      text <- NULL
+    }
+
     if (options[["attributesChart"]] == "defectives" & options[["attributesChartDefectivesChartType"]] == "pChart")
-      PlotReport <- .Pchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
+      attributeChart <- .Pchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
     else if (options[["attributesChart"]] == "defectives" & options[["attributesChartDefectivesChartType"]] == "npChart")
-      PlotReport <- .NPchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
+      attributeChart <- .NPchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
     else if (options[["attributesChart"]] == "defectives" & options[["attributesChartDefectivesChartType"]] == "laneyPPrimeChart")
-      PlotReport <- .LanyP(dataset = dataset, options = options, timeStamp = timeStamp)$p
+      attributeChart <- .LanyP(dataset = dataset, options = options, timeStamp = timeStamp)$p
     else if (options[["attributesChart"]] == "defects" & options[["attributesChartDefectsChartType"]] == "cChart")
-      PlotReport <- .Cchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
+      attributeChart <- .Cchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
     else if (options[["attributesChart"]] == "defects" & options[["attributesChartDefectsChartType"]] == "uChart")
-      PlotReport <- .Uchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
+      attributeChart <- .Uchart(dataset = dataset, options = options, timeStamp = timeStamp)$p
     else if (options[["attributesChart"]] == "defects" & options[["attributesChartDefectsChartType"]] == "laneyUPrimeChart")
-      PlotReport <- .LanyU(dataset = dataset, options = options, timeStamp = timeStamp)$p
+      attributeChart <- .LanyU(dataset = dataset, options = options, timeStamp = timeStamp)$p
     else if (options[["attributesChart"]] == "xmr")
-      PlotReport <- .Ichart_attributes(dataset = dataset, options = options, timeStamp = timeStamp)$p
+      attributeChart <- .Ichart_attributes(dataset = dataset, options = options, timeStamp = timeStamp)$p
 
-    Report[["Plot"]]$plotObject <- PlotReport
+    plots <- list(attributeChart)
+    reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
+                                  reportTitle = title)
+    reportPlot$plotObject <- reportPlotObject
   }
 }
 
@@ -700,44 +725,6 @@ attributesCharts <- function(jaspResults, dataset, options) {
     },
     exitAnalysisIfErrors = TRUE
   )
-}
-
-.AReport <- function(ccTitle = "", ccName = "", ccOperator = "", ccID = "", ccMisc = "" , ccAppraiser = "", ccMeasurement = "", ccSize = "",
-                     ccTime = "", ccFrequency = ""){
-
-  Report <- createJaspContainer(gettext("Report"))
-
-  if (identical(ccTitle, "")) {
-    title <- gettext("Control Charts for Attributes Report")
-  }else{
-    title <- ccTitle
-  }
-  name <- gettextf("Service name: %s", ccName)
-  operator <- gettextf("Operator: %s", ccOperator)
-  ID <- gettextf("Identification: %s", ccID)
-  Appraiser <- gettextf("Appraiser: %s", ccAppraiser)
-  Measurement <- gettextf("Measurement system: %s", ccMeasurement)
-  Size <- gettextf("Name of Size: %s", ccSize)
-  Time <- gettextf("Time: %s", ccTime)
-  Frequency <- gettextf("Frequency: %s", ccFrequency)
-
-
-  text1 <- c(name, operator)
-  text2 <- c(ID, Appraiser)
-  text3 <- c(Measurement, Time)
-  text4 <- c(Size, Frequency)
-
-  matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1, position = 1)
-  plotMat <- matrix(list(), 2, 2, T)
-  plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- .ggplotWithText(text2)
-  plotMat[[2, 1]] <- .ggplotWithText(text3)
-  plotMat[[2, 2]] <- .ggplotWithText(text4)
-
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(title, ""))
-  matrixPlot$plotObject <- p
-
-  return(matrixPlot)
 }
 
 .NelsonTable <- function(dataset, options, sixsigma, type = "xbar", Phase2 = TRUE, name = "X-bar", xLabels = NULL) {

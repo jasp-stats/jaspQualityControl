@@ -21,13 +21,15 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
   wideFormat <- options[["dataFormat"]] == "wideFormat"
   if (wideFormat){
     measurements <- unlist(options[["measurementsWideFormat"]])
-  }else{
+    parts <- unlist(options[["partWideFormat"]])
+    operators <- unlist(options[["operatorWideFormat"]])
+    standards <- unlist(options[["standardWideFormat"]])
+  } else {
     measurements <- unlist(options[["measurementLongFormat"]])
+    parts <- unlist(options[["partLongFormat"]])
+    operators <- unlist(options[["operatorLongFormat"]])
+    standards <- unlist(options[["standardLongFormat"]])
   }
-
-  parts <- unlist(options[["part"]])
-  operators <- unlist(options[["operator"]])
-  standards <- unlist(options[["standard"]])
 
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
@@ -68,11 +70,11 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
 
   # Error handling
-  
+
   if (identical(standards, "") && !identical(options[["positiveReference"]], "") && options[["cohensKappa"]]) {
     jaspResults[["tableReference"]] <- createJaspContainer(title = gettext("Reference Tables and Plots"))
     jaspResults[["tableReference"]]$position <- 10
-    jaspResults[["tableReference"]]$dependOn(c("positiveReference", "standard"))
+    jaspResults[["tableReference"]]$dependOn(c("positiveReference", "standardLongFormat", "standardWideFormat"))
 
     Container <- jaspResults[["tableReference"]]
 
@@ -268,7 +270,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 .aaaTableGraphs <- function(ready, dataset, measurements, parts, operators, standards, options) {
 
   AAA <- createJaspContainer(gettext("Attributes Agreement Analysis"))
-  AAA$dependOn(c("measurementsWideFormat", "part", "operator", "standard"))
+  AAA$dependOn(c("measurementsWideFormat", "measurementLongFormat", "partWideFormat", "partLongFormat", "operatorWideFormat",
+                 "operatorLongFormat", "standardLongFormat", "standardWideFormat"))
 
   if (standards != "") {
     tableWithin <- createJaspTable(title = gettext("Within Appraisers"))
@@ -424,10 +427,9 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
           jaspGraphs::geom_point() +
           ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10))+
           ggplot2::geom_errorbar(ggplot2::aes(ymin = c(CIWithin$lower),
-                                              ymax = c(CIWithin$upper)))
-
-
-        pw <- jaspGraphs::themeJasp(pw) +
+                                              ymax = c(CIWithin$upper))) +
+          jaspGraphs::geom_rangeframe() +
+          jaspGraphs::themeJaspRaw() +
           ggplot2::ylab("Percent") +
           ggplot2::xlab("Appraiser")
         plotWithin$plotObject <- pw
@@ -443,10 +445,9 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
         jaspGraphs::geom_point() +
         ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10)) +
         ggplot2::geom_errorbar(ggplot2::aes(ymin = c(CIEachVsStandard$lower),
-                                            ymax = c(CIEachVsStandard$upper)))
-
-
-      pvs <- jaspGraphs::themeJasp(pvs) +
+                                            ymax = c(CIEachVsStandard$upper))) +
+        jaspGraphs::geom_rangeframe() +
+        jaspGraphs::themeJaspRaw() +
         ggplot2::ylab("Percent") +
         ggplot2::xlab("Appraiser")
 
@@ -524,7 +525,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
     AAA <- createJaspContainer(gettext("Attributes Agreement Analysis"))
 
-    AAA$dependOn(c("measurementsWideFormat", "part", "operator"))
+    AAA$dependOn(c("measurementsWideFormat", "measurementLongFormat", "partWideFormat", "partLongFormat", "operatorWideFormat",
+                   "operatorLongFormat", "standardLongFormat", "standardWideFormat"))
 
     AAA[["Within"]] <- tableWithin
     AAA[["Between"]] <- tableBetween
@@ -537,8 +539,6 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
         withinDataframe <- data.frame(x = appraiserVector, y = percentWithin)
 
         pw <- ggplot2::ggplot(withinDataframe, ggplot2::aes(x = x, y = y)) + jaspGraphs::geom_point()
-
-        pw <- jaspGraphs::themeJasp(pw) +
           ggplot2::ylab("Percent") +
           ggplot2::xlab("Appraiser") +
           ggplot2::scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 10)) +
@@ -556,7 +556,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     AAA[["Within"]] <- NULL
     AAA[["Between"]] <- tableBetween
 
-    if (options$standard != ""){
+    if (standards != ""){
       AAA[["EachVsStandard"]] <- tableEachVsStandard
       AAA[["AllVsStandard"]] <- tableAllVsStandard
     }
@@ -565,7 +565,7 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
     AAA[["Within"]] <- tableWithin
     AAA[["Between"]] <- tableBetween
 
-    if (options$standard != ""){
+    if (standards != ""){
       AAA[["EachVsStandard"]] <- tableEachVsStandard
       AAA[["AllVsStandard"]] <- tableAllVsStandard
     }
@@ -593,7 +593,8 @@ msaAttribute <- function(jaspResults, dataset, options, ...) {
 
   table <- createJaspTable(title = gettext("Kendall's Tau"))
 
-  table$dependOn(c("kendallsTau", "measurementsWideFormat", "part", "operator", "standard"))
+  table$dependOn(c("kendallsTau", "measurementsWideFormat", "measurementLongFormat", "partWideFormat", "partLongFormat",
+                   "operatorWideFormat", "operatorLongFormat", "standardLongFormat", "standardWideFormat"))
 
   if (!ready & options[["kendallsTau"]])
     return(table)

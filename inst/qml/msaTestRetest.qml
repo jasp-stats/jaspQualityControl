@@ -41,11 +41,29 @@ Form
 
 	VariablesForm
 	{
-		id:										variablesForm
+		id:										variablesFormLongFormat
+		visible:								dataFormat.currentValue == "longFormat"
 
 		AvailableVariablesList
 		{
-			name:								"variablesForm"
+			name:								"variablesFormLongFormat"
+		}
+		
+		AssignedVariablesList
+		{
+			name:								"measurementLongFormat"
+			title:								qsTr("Measurement")
+			id:									measurementLongFormat
+			singleVariable:						true
+			allowedColumns:						["scale"]
+		}
+
+		AssignedVariablesList
+		{
+			name:								"partLongFormat"
+			title:								qsTr("Part")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
 		}
 
 		AssignedVariablesList
@@ -54,27 +72,20 @@ Form
 			title:								qsTr("Operator / Repetition")
 			singleVariable:						true
 			allowedColumns:						["nominal", "nominalText", "ordinal"]
-			visible:							dataFormat.currentValue == "longFormat"
 		}
+	}
 
-		AssignedVariablesList
+	VariablesForm
+	{
+		id:										variablesFormWideFormat
+		visible:								dataFormat.currentValue == "wideFormat"
+
+		AvailableVariablesList
 		{
-			name:								"part"
-			title:								qsTr("Part")
-			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			name:								"variablesFormWideFormat"
 		}
 
-		AssignedVariablesList
-		{
-			name:								"measurementLongFormat"
-			title:								qsTr("Measurement")
-			id:									measurementLongFormat
-			singleVariable:						true
-			visible:							dataFormat.currentValue == "longFormat"
-			allowedColumns:						["scale"]
-		}
-
+		
 		AssignedVariablesList
 		{
 			name:								"measurementsWideFormat"
@@ -83,7 +94,17 @@ Form
 			visible:							dataFormat.currentValue == "wideFormat"
 			allowedColumns:						["scale"]
 		}
+
+		AssignedVariablesList
+		{
+			name:								"partWideFormat"
+			title:								qsTr("Part")
+			singleVariable:						true
+			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+		}
 	}
+		
+
 
 	Section
 	{

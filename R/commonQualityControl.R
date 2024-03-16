@@ -7,6 +7,204 @@
 #############################################################
 ## Common functions for plots ###############################
 #############################################################
+.reshapeSubgroupDataLongToWide <- function(dataset,
+                                           measurements,
+                                           stages = "",
+                                           subgroupVariable = "",
+                                           subgroupSizeType = c("manual", "groupingVariable"),
+                                           manualSubgroupSizeValue = 5,
+                                           subgroupVariableMethod = c("sameLabel", "newLabel")) {
+  subgroupSizeType <- match.arg(subgroupSizeType)
+  # Rearrange data if not already wide format (one group per row)
+  # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
+  if (subgroupSizeType == "manual") {
+    k <- manualSubgroupSizeValue
+    if (stages != "") {
+      # Only take the first stage of each subgroup, to avoid multiple stages being defined
+      stagesPerSubgroup <- dataset[[stages]][seq(1, length(dataset[[stages]]), k)]
+    }
+    # fill up with NA to allow all subgroup sizes
+    if(length(dataset[[measurements]]) %% k != 0) {
+      rest <- length(dataset[[measurements]]) %% k
+      dataset_expanded <- c(dataset[[measurements]], rep(NA, k - rest))
+      dataset <- as.data.frame(matrix(dataset_expanded, ncol = k, byrow = TRUE))
+    } else {
+      dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
+    }
+    measurements <- colnames(dataset)
+    axisLabels <- ""
+    xAxisTitle <- gettext("Sample")
+    if (stages != "") {
+      dataset[[stages]] <- stagesPerSubgroup
+    }
+  } else if (subgroupSizeType == "groupingVariable") {
+    subgroupVariableMethod <- match.arg(subgroupVariableMethod)
+    subgroups <- dataset[[subgroupVariable]]
+    subgroups <- na.omit(subgroups)
+    if (subgroupVariableMethod == "sameLabel") {
+      if (stages != "") {
+        # Only take the first defined stage of each subgroup, to avoid multiple stages being defined
+        stagesPerSubgroup <- dataset[[stages]][match(unique(subgroups), subgroups)]
+      }
+      # add sequence of occurence to allow pivot_wider
+      occurenceVector <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
+      dataset$occurence <- occurenceVector
+      # transform into one group per row
+      dataset <- tidyr::pivot_wider(data = dataset[c(measurements, subgroupVariable, "occurence")],
+                                    values_from = tidyr::all_of(measurements), names_from = occurence)
+    } else if (subgroupVariableMethod == "newLabel") {
+      runLengthVector <- rle(as.character(subgroups))
+      occurenceVector <- c(unlist(sapply(runLengthVector$lengths, seq_len)))
+      idVector <- seq_len(length(runLengthVector$lengths))
+      newSubgroupsPosition <- cumsum(runLengthVector$lengths) - (runLengthVector$lengths - 1)
+      subgroupVector <- subgroups[newSubgroupsPosition]
+      if (stages != "") {
+        # Only take the first defined stage of each subgroup, to avoid multiple stages being defined
+        stagesPerSubgroup <- dataset[[stages]][newSubgroupsPosition]
+      }
+
+      dataset$occurence <- occurenceVector
+      dataset$identifier <- c(unlist(sapply(idVector, function(x) rep(idVector[x], runLengthVector$lengths[x]))))
+      dataset <- tidyr::pivot_wider(data = dataset[c(measurements, "identifier", "occurence")],
+                                    values_from = tidyr::all_of(measurements), names_from = occurence)
+      dataset <- dataset[ ,colnames(dataset) != "identifier"]
+      dataset[[subgroupVariable]] <- subgroupVector
+    }
+    # arrange into dataframe
+    dataset <- as.data.frame(dataset)
+    measurements <- as.character(unique(occurenceVector))
+    axisLabels <- dataset[[subgroupVariable]]
+    xAxisTitle <- subgroupVariable
+    if (stages != ""){
+      dataset[[stages]] <- stagesPerSubgroup
+      axisLabels <- axisLabels[order(dataset[[stages]])]
+    }
+  }
+  return(list(dataset = dataset,
+              measurements = measurements,
+              axisLabels = axisLabels,
+              xAxisTitle = xAxisTitle))
+}
+
+.qcReport <- function(text = NULL, # a string or vector of strings,
+                      plots, # a list of ggplots. If the plots should stay on top of each other, use a nested list.
+                      tables = NULL, # a list of dataframes. If tables should be in the same plot, use a nested list.
+                      textMaxRows = 5,
+                      tableTitles = "", # a list with the same layout as the tables list
+                      reportTitle = "",
+                      tableSize = 6) {
+  lengthAllElements <- length(plots) + length(tables) + (!is.null(text)) + sum(!sapply(plots, ggplot2::is.ggplot)) # length of plots, tables, one for the text and addition tables of nested plots
+  lengthAllElements <- if (lengthAllElements %% 2 != 0) lengthAllElements + 1 else lengthAllElements # always need even number
+  lengthAllElements <- if (any(!sapply(plots, ggplot2::is.ggplot)) && lengthAllElements < 3) 4 else lengthAllElements # edge case if only a nested plot is given
+  plotList <- list()
+  plotList[1:lengthAllElements] <- NA
+  if (!is.null(text))
+    plotList[[2]] <- .ggplotWithText(text = text, maxRows = textMaxRows)
+  for (i in seq_along(plots)) {
+    currentPlot <- plots[[i]]
+    if (ggplot2::is.ggplot(currentPlot)) {
+      plotPos <- min(.indicesOfNAinList(plotList)) # smallest empty index
+      plotList[[plotPos]] <- currentPlot
+    } else { # it should be a list of ggplots
+      plot1pos <- min(.indicesOfNAinList(plotList)) # smallest empty index
+      plotList[[plot1pos]] <- currentPlot[[1]]
+      plotList[[plot1pos + 2]] <- currentPlot[[2]] # plus two, so it's always below plot 1
+    }
+  }
+  for (j in seq_along(tables)) {
+    currentTable <- tables[[j]]
+    currentTitle <- if (!identical(tableTitles, "")) tableTitles[[j]] else ""
+    tablePlot <- .ggplotTable(currentTable, currentTitle, tableSize)
+    tablePos <- min(.indicesOfNAinList(plotList)) # smallest empty index
+    plotList[[tablePos]] <- tablePlot
+  }
+
+  plotList <- matrix(plotList, ncol = 2, byrow = TRUE)
+  topLabel <- if (!identical(reportTitle, "")) c("", reportTitle) else NULL
+  if (!identical(reportTitle, "") && all(is.na(plotList[,2])))
+    topLabel <- c(reportTitle, "")
+
+  # If there are still NA in the list, fill them with empty plots
+  indicesRemainingNA <- .indicesOfNAinList(plotList)
+  if (!is.null(indicesRemainingNA)) {
+    for (k in indicesRemainingNA)
+      plotList[[k]] <- ggplot2::ggplot() + ggplot2::theme_void()
+  }
+
+  plot <- jaspGraphs::ggMatrixPlot(plotList = plotList, topLabels = topLabel)
+  return(plot)
+}
+
+.indicesOfNAinList <- function(list) {
+  nElements <- length(list)
+  indices <- c()
+  for (i in seq_len(nElements)) {
+    currentElement <- list[i]
+    if (is.na(currentElement))
+      indices <- c(indices, i)
+  }
+  return(indices)
+}
+
+.ggplotWithText <- function(text, maxRows = 5) {
+  nText <- length(text)
+  annotation <- data.frame(x = rep(0, nText), y = (maxRows:1)[1:nText], label = text)
+  p <- ggplot2::ggplot() + ggplot2::theme_void() +
+    ggplot2::annotate("rect", xmin = -.05, xmax = 1.05, ymin = 1 - .5, ymax = maxRows + .5, fill = 'lightgray', color = "black", linewidth = .7) +
+    ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 6, hjust = 0) +
+    ggplot2::scale_x_continuous(limits = c(-.05, 1.05)) +
+    ggplot2::scale_y_continuous(limits = c(1 - .5,  maxRows + .5))
+  return(p)
+}
+
+.ggplotTable <- function(tableObject, titles = "", tableSize = 6) {
+  if (!is.data.frame(tableObject)) { # then it should be a list
+    nTables <- length(tableObject)
+    df <- data.frame(matrix(ncol = 3, nrow = 0))
+    colnames(df) <- c("x", "y", "tb")
+    tibble <- tibble::as_tibble(df)
+    titleDf <- data.frame(matrix(ncol = 3, nrow = 0))
+    colnames(titleDf) <- c("x", "y", "label")
+    for (i in seq_along(tableObject)) {
+      yPosTable <- if (i == 1) 1 else as.numeric(tibble[i-1,2]) - .08 - nrow(tableObject[[i - 1]]) * .08
+      if (!identical(titles, "")) {
+        yPosTitle <- yPosTable
+        yPosTable <- yPosTable - .08 # distance between table and title
+        titleDf <- rbind(titleDf, data.frame(x = 0, y = yPosTitle, label = titles[[i]]))
+      }
+      tibble <- rbind(tibble, tibble::tibble("x" = 0, "y" = yPosTable, tb = tableObject[i]))
+    }
+  } else {
+    yPosTitle <- 1
+    if (!identical(titles, "")) {
+      titleDf <- data.frame(x = 0, y = 1 , label = titles)
+      yPosTitle <- yPosTitle - .08
+    }
+    tibble <- tibble::tibble(x = 0, y = yPosTitle, tb = list(tableObject))
+
+  }
+  p <- ggplot2::ggplot() +
+    ggplot2::theme_void() +
+    ggpp::geom_table(data = tibble, ggplot2::aes(x = x, y = y, label = tb),
+                     table.colnames = TRUE, size = tableSize, hjust = 0, vjust = 1) +
+    ggplot2::scale_x_continuous(limits = c(0, 1)) +
+    ggplot2::scale_y_continuous(limits = c(0, 1))
+  if (!identical(titles, ""))
+    p <- p + ggplot2::geom_text(titleDf, mapping = ggplot2::aes(x = x, y = y, label = label), hjust = 0, size = 7, vjust = 1)
+  return(p)
+}
+
+
+ggplotTable <- function(dataframe, displayColNames = FALSE){
+  df <- tibble::tibble(dataframe)
+  p <- ggplot2::ggplot() +
+    ggplot2::theme_void() +
+    ggpp::geom_table(data = data.frame(x = 1, y = 1), ggplot2::aes(x = x, y = y), label = list(df),
+                     table.colnames = displayColNames, size = 7)
+
+  return(p)
+}
+
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   # Adjust Rules to SKF
@@ -193,12 +391,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 .controlChart <- function(dataset,  plotType                  = c("xBar", "R", "I", "MR", "MMR", "s"),
                                     stages                    = "",
                                     xBarSdType                = c("r", "s"),
+                                    nSigmasControlLimits      = 3,
                                     phase2                    = FALSE,
                                     phase2Mu                  = "",
                                     phase2Sd                  = "",
                                     fixedSubgroupSize         = "",
                                     warningLimits             = FALSE,
+                                    specificationLimits       = NA,
                                     xAxisLabels               = "",
+                                    tableLabels               = "",
                                     xAxisTitle                = gettext("Sample"),
                                     movingRangeLength         = 2,
                                     clLabelSize               = 4.5,
@@ -209,21 +410,22 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
   # This function returns all the needed data for the plot and table: data for the points, the limits, the labels and a list of point violations for the table
   controlChartData <- .controlChart_calculations(dataset, plotType = plotType, stages = stages, xBarSdType = xBarSdType,
-                                                 phase2 = phase2, phase2Mu = phase2Mu, phase2Sd = phase2Sd,
-                                                 fixedSubgroupSize = fixedSubgroupSize, warningLimits = warningLimits,
-                                                 movingRangeLength = movingRangeLength, stagesSeparateCalculation = stagesSeparateCalculation,
-                                                 tableLabels = xAxisLabels, unbiasingConstantUsed = unbiasingConstantUsed)
+                                                 nSigmasControlLimits = nSigmasControlLimits, phase2 = phase2,
+                                                 phase2Mu = phase2Mu, phase2Sd = phase2Sd, fixedSubgroupSize = fixedSubgroupSize,
+                                                 warningLimits = warningLimits, movingRangeLength = movingRangeLength,
+                                                 stagesSeparateCalculation = stagesSeparateCalculation, unbiasingConstantUsed = unbiasingConstantUsed)
 
 
   # This function turns the point violation list into a JASP table
-  table <- .controlChart_table(controlChartData$violationTable, plotType = plotType, stages = stages)
+  table <- .controlChart_table(controlChartData$violationTable, plotType = plotType, stages = stages, tableLabels = tableLabels)
 
 
   # This function turns the raw plot data into a ggPlot
   plotObject <- .controlChart_plotting(pointData = controlChartData$pointData, clData = controlChartData$clData,
                                        stageLabels = controlChartData$stageLabels, clLabels = controlChartData$clLabels,
                                        plotType = plotType, stages = stages, phase2 = phase2, warningLimits = warningLimits,
-                                       xAxisLabels = xAxisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize)
+                                       xAxisLabels = xAxisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
+                                       specificationLimits = specificationLimits)
 
 
   return(list(plotObject = plotObject, table = table, controlChartData = controlChartData))
@@ -232,6 +434,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 .controlChart_calculations <- function(dataset, plotType                  = c("xBar", "R", "I", "MR", "MMR", "s"),
                                                 stages                    = "",
                                                 xBarSdType                = c("r", "s"),
+                                                nSigmasControlLimits      = 3,
                                                 phase2                    = FALSE,
                                                 phase2Mu                  = "",
                                                 phase2Sd                  = "",
@@ -239,7 +442,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                 warningLimits             = FALSE,
                                                 movingRangeLength         = 2,
                                                 stagesSeparateCalculation = TRUE,
-                                                tableLabels               = "",
                                                 unbiasingConstantUsed     = TRUE
                                        ) {
   plotType <- match.arg(plotType)
@@ -289,15 +491,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
       d2 <- KnownControlStats.RS(k)$constants[1]
-      sd <- meanMovingRange/d2
+      sigma <- meanMovingRange/d2
       if (plotType == "I") {
         processMean <- mean(dataCurrentStageVector, na.rm = TRUE) # manually calculate mean as package does not remove NAs
-        qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sd, center = processMean)
+        qccObject <- qcc::qcc(dataCurrentStage, type ='xbar.one', plot = FALSE, std.dev = sigma, center = processMean, nsigmas = nSigmasControlLimits)
         plotStatistic <- qccObject$statistics
         limits <- qccObject$limits
       } else if (plotType == "MR" || plotType == "MMR" ) {
-        qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sd, center = meanMovingRange)
-        limits <- unlist(.controlLimits(meanMovingRange, sd, n = k, type = "r"))
+        qccObject <- qcc::qcc(mrMatrix, type = "R", plot = FALSE, std.dev = sigma, center = meanMovingRange, nsigmas = nSigmasControlLimits)
+        limits <- unlist(.controlLimits(meanMovingRange, sigma, n = k, k = nSigmasControlLimits, type = "r"))
         # the qcc package calculates the ranges ignoring the NAs, but for the MR chart we want the range to be NA if there are any NAs in the moving range
         qccObject$statistics[which(!complete.cases(mrMatrix))] <- NA
         plotStatistic <- c(rep(NA, k-1), qccObject$statistics)
@@ -321,12 +523,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       d2 <- sapply(n, function(x) KnownControlStats.RS(x, 0)$constants[1])
       mu <- sigma * d2
-      qccObject <- qcc::qcc(dataCurrentStage, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(dataCurrentStage))
+      qccObject <- qcc::qcc(dataCurrentStage, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(dataCurrentStage), nsigmas = nSigmasControlLimits)
       # the qcc package returns -Inf when all values are NA, which does not look good in ggplot. So we replace it with NA.
       qccObject$statistics[is.infinite(qccObject$statistics)] <- NA
       plotStatistic <- qccObject$statistics
-
-      limits <- .controlLimits(mu, sigma, n = n, type = "r")
+      limits <- .controlLimits(mu, sigma, n = n, type = "r", k = nSigmasControlLimits)
       center <- mu
       UCL <- limits$UCL
       LCL <- limits$LCL
@@ -347,10 +548,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         mu <- mean(unlist(dataset[!names(dataset) %in% stages]), na.rm = TRUE)
         sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
       }
-      qccObject <- qcc::qcc(dataCurrentStage, type ='xbar', plot = FALSE, center = mu, sizes = ncol(dataCurrentStage), std.dev = sigma)
+      qccObject <- qcc::qcc(dataCurrentStage, type ='xbar', plot = FALSE, center = mu, sizes = ncol(dataCurrentStage), std.dev = sigma, nsigmas = nSigmasControlLimits)
       plotStatistic <- qccObject$statistics
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
-      limits <- .controlLimits(mu, sigma, n = n, type = "xbar")
+      limits <- .controlLimits(mu, sigma, n = n, type = "xbar", k = nSigmasControlLimits)
       center <- mu
       UCL <- limits$UCL
       LCL <- limits$LCL
@@ -374,10 +575,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         # use the whole dataset for calculation
         sigma <- .sdXbar(df = dataset[!names(dataset) %in% stages], type = "s", unbiasingConstantUsed = unbiasingConstantUsed)
       }
-      qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage))
+      qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage), nsigmas = nSigmasControlLimits)
       plotStatistic <- qccObject$statistics
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
-      limits <- .controlLimits(sigma = sigma, n = n, type = "s", unbiasingConstantUsed = unbiasingConstantUsed)
+      limits <- .controlLimits(sigma = sigma, n = n, type = "s", unbiasingConstantUsed = unbiasingConstantUsed, k = nSigmasControlLimits)
       if (unbiasingConstantUsed) {
         c4s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[3]))
         center <- sigma * c4s
@@ -448,7 +649,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     lastLCL <- LCL[length(LCL)]
     lastUCL <- UCL[length(UCL)]
     if (i == nStages) { # the last label has more space available and hence can be longer
-      labelXPos <- max(subgroups) * 1.1
+      labelXPos <- max(subgroups) * 1.06
       labelText <- c(
         gettextf("CL = %g",  round(lastCenter, decimals)),
         gettextf("LCL = %g", round(lastLCL, decimals)),
@@ -464,7 +665,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                                      y = c(lastCenter, lastLCL, lastUCL),
                                                      label = labelText))
-    tableLabelsCurrentStage <- if (identical(tableLabels, "")) subgroups else as.character(tableLabels)[subgroups]
+    tableLabelsCurrentStage <- subgroups
     if (plotType == "MR" || plotType == "MMR")
       tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
     tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabelsCurrentStage)
@@ -478,12 +679,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
               "clData"         = clData,
               "clLabels"       = dfLimitLabel,
               "stageLabels"    = dfStageLabels,
-              "violationTable" = tableList
+              "violationTable" = tableList,
+              "sd"             = sigma
               ))
 }
 
-.controlChart_table <- function(tableList, plotType = c("xBar", "R", "I", "MR", "MMR", "s"),
-                                           stages   = "") {
+.controlChart_table <- function(tableList,
+                                plotType = c("xBar", "R", "I", "MR", "MMR", "s"),
+                                stages   = "",
+                                tableLabels = "") {
   plotType <- match.arg(plotType)
   tableTitle <- switch (plotType,
                         "xBar" = "x-bar",
@@ -494,10 +698,26 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                         "s" = "s"
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
+  table$showSpecifiedColumnsOnly <- TRUE
   tableListVectorized <- unlist(tableList, recursive = FALSE)
   tableLongestVector <- max(sapply(tableListVectorized, length))
   if (tableLongestVector > 0) {
+    # combine the tests for different stages in same column
     tableListCombined <- tapply(tableListVectorized, names(tableListVectorized), function(x) unlist(x, FALSE, FALSE))
+    # format
+    for (test in names(tableListCombined)[names(tableListCombined) != "stage"]) {
+      points <- as.numeric(tableListCombined[[test]])
+      if (all(is.na(points)))
+        next()
+      formattedPoints <- c()
+      for (point in points) {
+        formattedPoint <- if (is.na(point)) NA else paste(gettext("Point"), point)
+        if (!identical(tableLabels, ""))
+          formattedPoint <- if (is.na(point)) NA else paste0(formattedPoint, " (", tableLabels[point], ")")
+        formattedPoints <- c(formattedPoints, formattedPoint)
+      }
+      tableListCombined[[test]] <- formattedPoints
+    }
     if (!identical(stages, ""))
       table$addColumnInfo(name = "stage",              title = stages,                                     type = "string")
     if (length(tableListCombined[["test1"]][!is.na(tableListCombined[["test1"]])]) > 0)
@@ -525,10 +745,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       tableData[["test5"]] <- tableListCombined[["test5"]]
       tableData[["test6"]] <- tableListCombined[["test6"]]
     }
-    table$setData(tableData)
-    table$showSpecifiedColumnsOnly <- TRUE
     table$addFootnote(message = gettext("Points where a test failed."))
+  } else {
+    table$addColumnInfo(name = "noViolations", title = gettext("Tests"), type = "string")
+    tableData <- list("noViolations" = gettext("No test violations occurred."))
   }
+  table$setData(tableData)
   return(table)
 }
 
@@ -537,13 +759,14 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                    stages = "",
                                    phase2 = FALSE,
                                    warningLimits = FALSE,
+                                   specificationLimits = NA,
                                    xAxisLabels = "",
                                    xAxisTitle = "",
                                    clLabelSize = 4.5) {
   plotType <- match.arg(plotType)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(pointData$plotStatistic, clData$LCL, clData$UCL, clData$center))
+  yLimits <- range(yBreaks)
   xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(pointData$subgroup))) # we only want integers on the x-axis
-
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis
     xBreaks[1] <- 1
   xLimits <- c(0.5, max(xBreaks) * 1.2 + 0.5) # add some buffer, but at least .5
@@ -563,37 +786,70 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                     "MR"   = "Moving range",
                     "MMR"  = "Moving range of subgroup mean",
                     "s"    = "Sample std. dev.")
-  if (!identical(stages, ""))
-    stageLabels$y <- max(yBreaks)
   lineType <- if (phase2) "solid" else "dashed"
-
   # Create plot
   plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, group = stage)) +
-    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1) +
-    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = lineType) +
-    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = lineType)
-  if (!identical(stages, "")) {
-    plotObject <- plotObject + ggplot2::geom_vline(xintercept = na.omit(stageLabels[["separationLine"]])) +
-      ggplot2::geom_text(data = stageLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
-                                                  size = 6, fontface = "bold", inherit.aes = FALSE)
+    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = center) , col = "green", linewidth = 1, na.rm = TRUE) +
+    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = UCL) , col = "red", linewidth = 1.5, linetype = lineType, na.rm = TRUE) +
+    ggplot2::geom_step(mapping = ggplot2::aes(x = subgroup, y = LCL) , col = "red", linewidth = 1.5, linetype = lineType, na.rm = TRUE)
+  if (!all(is.na(specificationLimits))) {
+    length(specificationLimits) <- 3
+    xPosLabel <- 1 - max(xLimits) * 0.06
+    xLimits[1] <- xPosLabel
+    xRange <- range(clData$subgroup)
+    lslYPos <- specificationLimits[1]
+    targetYPos <- specificationLimits[2]
+    uslYPos <- specificationLimits[3]
+    yLimits <- range(c(yLimits, lslYPos, targetYPos, uslYPos), na.rm = TRUE)
+    if (!is.na(lslYPos)) {
+      lslLineDf <- data.frame(xPos = xRange, yPos = rep(lslYPos, each = 2))
+      lslLabelDf <- data.frame(xPos = xPosLabel, yPos = lslYPos, label = gettextf("LSL = %g", round(lslYPos, .numDecimals)))
+      plotObject <- plotObject + ggplot2::geom_line(data = lslLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
+                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkred", na.rm = TRUE) +
+        ggplot2::geom_label(data = lslLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
+                              inherit.aes = FALSE, size = clLabelSize, hjust = "inward", na.rm = TRUE)
+    }
+    if (!is.na(targetYPos)) {
+      targetLineDf <- data.frame(xPos = xRange, yPos = rep(targetYPos, each = 2))
+      targetLabelDf <- data.frame(xPos = xPosLabel, yPos = targetYPos, label = gettextf("Tar. = %g", round(targetYPos, .numDecimals)))
+      plotObject <- plotObject + ggplot2::geom_line(data = targetLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
+                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkgreen", na.rm = TRUE) +
+        ggplot2::geom_label(data = targetLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
+                            inherit.aes = FALSE, size = clLabelSize, hjust = "inward", na.rm = TRUE)
+    }
+    if (!is.na(uslYPos)) {
+      uslLineDf <- data.frame(xPos = xRange, yPos = rep(uslYPos, each = 2))
+      uslLabelDf <- data.frame(xPos = xPosLabel, yPos = uslYPos, label = gettextf("USL = %g", round(uslYPos, .numDecimals)))
+      plotObject <- plotObject + ggplot2::geom_line(data = uslLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
+                                                    inherit.aes = FALSE, linewidth = 1.5, col = "darkred", na.rm = TRUE) +
+        ggplot2::geom_label(data = uslLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
+                            inherit.aes = FALSE, size = clLabelSize, hjust = "inward", na.rm = TRUE)
+    }
   }
   if (warningLimits) {
     plotObject <- plotObject + ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = UWL1), col = "orange",
-                                                  linewidth = 1, linetype = "dashed") +
+                                                  linewidth = 1, linetype = "dashed", na.rm = TRUE) +
       ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = LWL1), col = "orange",
-                         linewidth = 1, linetype = "dashed") +
+                         linewidth = 1, linetype = "dashed", na.rm = TRUE) +
       ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = UWL2), col = "orange",
-                         linewidth = 1, linetype = "dashed") +
+                         linewidth = 1, linetype = "dashed", na.rm = TRUE) +
       ggplot2::geom_step(data = clData, mapping = ggplot2::aes(x = subgroup, y = LWL2), col = "orange",
-                         linewidth = 1, linetype = "dashed")
+                         linewidth = 1, linetype = "dashed", na.rm = TRUE)
+  }
+  if (!identical(stages, "")) {
+    stageLabels$y <- max(yLimits)
+    plotObject <- plotObject + ggplot2::geom_vline(xintercept = na.omit(stageLabels[["separationLine"]])) +
+      ggplot2::geom_text(data = stageLabels, mapping = ggplot2::aes(x = x, y = y, label = label, na.rm = TRUE),
+                         size = 6, fontface = "bold", inherit.aes = FALSE)
   }
   plotObject <- plotObject + ggplot2::geom_label(data = clLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
-                                                 inherit.aes = FALSE, size = clLabelSize) +
-    ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = range(yBreaks)) +
+                                                 inherit.aes = FALSE, size = clLabelSize, na.rm = TRUE) +
+    ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = yLimits) +
     ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels) +
-    jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue") +
+    jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+                          na.rm = TRUE) +
     jaspGraphs::geom_point(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),
-                           size = 4, fill = pointData$dotColor, inherit.aes = TRUE) +
+                           size = 4, fill = pointData$dotColor, inherit.aes = TRUE, na.rm = TRUE) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 

@@ -71,7 +71,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
     jaspResults[["Ichart"]]$dependOn(c("xmrChart", "variables", "xmrChartMovingRangeLength", "axisLabels", "reportTitle",
                                        "reportMeasurementName", "reportMiscellaneous","reportReportedByBy","reportDate", "report",
-                                       "stage"))
+                                       "stage", "controlLimitsNumberOfSigmas"))
     jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
     if (ready) {
       # Error conditions for stages
@@ -82,11 +82,12 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       }
       columnsToPass <- c(variables, stages)
       columnsToPass <- columnsToPass[columnsToPass != ""]
-      individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
-                                                   xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, movingRangeLength = options[["xmrChartMovingRangeLength"]])
-      mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
-                                           xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
-                                           movingRangeLength = options[["xmrChartMovingRangeLength"]])
+      individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                                       xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle,
+                                       movingRangeLength = options[["xmrChartMovingRangeLength"]])
+      mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
+                               xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle,
+                               movingRangeLength = options[["xmrChartMovingRangeLength"]])
     }
     jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
     if (!identical(stages, "") && nDroppedRows > 0)
@@ -106,28 +107,67 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
   # Report
   if (options[["report"]] && is.null(jaspResults[["report"]])) {
-
     jaspResults[["autocorrelationPlot"]] <- NULL
     jaspResults[["Ichart"]] <- NULL
+    nElements <- sum(options[["reportIMRChart"]] * 2, options[["reportAutocorrelationChart"]], options[["reportMetaData"]])
+    plotHeight <- if ((options[["reportIMRChart"]] && nElements == 2) || nElements == 0) 1000 else ceiling(nElements/2) * 500
+    reportPlot <- createJaspPlot(title = gettext("Variables Chart for Individuals Report"), width = 1250, height = plotHeight)
+    jaspResults[["report"]] <- reportPlot
+    jaspResults[["report"]]$dependOn(c("xmrChart", "variables", "xmrChartMovingRangeLength", "axisLabels",
+                                      "stage", "controlLimitsNumberOfSigmas", "autocorrelationPlotLagsNumber",
+                                      "reportMetaData", "reportTitle", "reportTitleText", "reportIMRChart", "reportAutocorrelationChart",
+                                      "reportChartName", "reportChartNameText", "reportSubtitle", "reportSubtitleText",
+                                      "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
+                                      "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
+                                      "reportDateText", "reportPerformedBy", "reportPerformedByText", "reportPrintDate",
+                                      "reportPrintDateText"))
 
+    if (nElements == 0) {
+      reportPlot$setError(gettext("No report components selected."))
+      return()
+    }
 
-    jaspResults[["report"]] <- createJaspContainer(gettext("Report"))
-    jaspResults[["report"]]$dependOn(c("report", "xmrChart", "variables","ncol", "axisLabels",
-                                         "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedByBy","reportDate",
-                                         "stage", "reportAutocorrelationChart", "reportIMRChart", "reportMetaData"))
-    jaspResults[["report"]]$position <- 9
-    Iplot <- jaspResults[["report"]]
+    if(!ready)
+      return()
 
-    Iplot[["report"]] <- .individualChartReport(dataset, variables, axisLabels, xAxisTitle, stages, options)
-  }
+    # Plot meta data
+    if (options[["reportTitle"]] ) {
+      title <- if (options[["reportTitleText"]] == "") gettext("Variables Chart for Individuals Report") else options[["reportTitleText"]]
+    } else {
+      title <- ""
+    }
 
-  # Error handling
-  if (options[["report"]] && (!options[["xmrChart"]] || length(variables) < 1)){
-    plot <- createJaspPlot(title = gettext("Report"), width = 700, height = 400)
-    jaspResults[["plot"]] <- plot
-    jaspResults[["plot"]]$setError(gettext("Please insert more measurements and check the X-mR chart."))
-    plot$dependOn(c("report", "xmrChart", "measurement"))
-    return()
+    if (options[["reportMetaData"]]) {
+      text <- c()
+      text <- if (options[["reportChartName"]]) c(text, gettextf("Chart name: %s", options[["reportChartNameText"]])) else text
+      text <- if (options[["reportSubtitle"]]) c(text, gettextf("Sub-title: %s", options[["reportSubtitleText"]])) else text
+      text <- if (options[["reportMeasurementName"]]) c(text, gettextf("Measurement name: %s", options[["reportMeasurementNameText"]])) else text
+      text <- if (options[["reportFootnote"]]) c(text, gettextf("Footnote: %s", options[["reportFootnoteText"]])) else text
+      text <- if (options[["reportLocation"]]) c(text, gettextf("Location: %s", options[["reportLocationText"]])) else text
+      text <- if (options[["reportDate"]]) c(text, gettextf("Date: %s", options[["reportDateText"]])) else text
+      text <- if (options[["reportPerformedBy"]]) c(text, gettextf("Performed by: %s", options[["reportPerformedByText"]])) else text
+      text <- if (options[["reportPrintDate"]]) c(text, gettextf("Print date: %s", options[["reportPrintDateText"]])) else text
+    } else {
+      text <- NULL
+    }
+
+    plots <- list()
+    plotIndexCounter <- 1
+    if (options[["reportIMRChart"]]) {
+      plots[[plotIndexCounter]] <- list(individualChart$plotObject, mrChart$plotObject)
+      plotIndexCounter <- plotIndexCounter + 1
+    }
+    if (options[["reportAutocorrelationChart"]]) {
+      if (anyNA(dataset[[variables]])) {
+        reportPlot$setError(gettextf("Autocorrelation plot requires uninterrupted series of values. Missing values detected in %s.", variables))
+        return()
+      } else {
+        plots[[plotIndexCounter]] <- .autocorrelationPlotObject(dataset = dataset, options = options, variable = variables, CI = options$autocorrelationPlotCiLevel, lags = options$autocorrelationPlotLagsNumber)
+      }
+    }
+    reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
+                                  reportTitle = title)
+    reportPlot$plotObject <- reportPlotObject
   }
 }
 
@@ -166,75 +206,4 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw()
 
   return(p)
-}
-
-.individualChartReport <- function(dataset, variables, axisLabels, xAxisTitle, stages, options){
-
-  if (options[["reportTitle"]] == "") {
-    title <- gettextf("Individual charts report")
-  } else {
-    title <- options[["reportTitle"]]
-  }
-  name <- gettextf("Name: %s", options[["reportMeasurementName"]])
-  date <- gettextf("Date of study: %s", options[["reportDate"]])
-  text1 <- c(name, date)
-
-  reportedBy <- gettextf("Performed by: %s", options[["reportReportedBy"]])
-  misc <- gettextf("Misc: %s", options[["reportMiscellaneous"]])
-  text2 <- c(reportedBy, misc)
-
-  plotList <- list()
-  indexCounter <- 0
-  if (options[["reportMetaData"]]) {
-    indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .ggplotWithText(text1)
-    indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .ggplotWithText(text2)
-  }
-  if (options[["reportAutocorrelationChart"]]) {
-    if (anyNA(dataset[[variables]])) {
-      plot <- createJaspPlot(title = title, width = 400, height = 400)
-      plot$setError(gettextf("Autocorrelation plot requires uninterrupted series of values. Missing values detected in %s.", variables))
-      return(plot)
-    } else {
-      indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- .autocorrelationPlotObject(dataset = dataset, options = options, variable = variables, CI = options$autocorrelationPlotCiLevel, lags = options$autocorrelationPlotLagsNumber)
-      # add an empty plot after the autocorrelation chart, so all report elements appear in blocks of 2 and don't get split up
-      indexCounter <- indexCounter + 1
-      plotList[[indexCounter]] <- ggplot2::ggplot() + ggplot2::theme_void()
-    }
-  }
-  if (options[["reportIMRChart"]]) {
-    indexCounter <- indexCounter + 1
-
-    columnsToPass <- c(variables, stages)
-    columnsToPass <- columnsToPass[columnsToPass != ""]
-    plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages,
-                                                          xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
-                                                          clLabelSize = 3.5, movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
-    indexCounter <- indexCounter + 1
-    plotList[[indexCounter]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages,
-                                                          xAxisLabels = axisLabels, xAxisTitle = xAxisTitle,
-                                                          movingRangeLength = options[["xmrChartMovingRangeLength"]], clLabelSize = 3.5)$plotObject
-  }
-
-  if (indexCounter == 0) {
-    plot <- createJaspPlot(title = title, width = 400, height = 400)
-    plot$setError(gettext("No report components selected."))
-    return(plot)
-  }
-
-  if (indexCounter == 2) {
-    matrixNCols <- 1
-    matrixNRows <- 2
-  } else {
-    matrixNCols <- 2
-    matrixNRows <- indexCounter / matrixNCols
-  }
-  matrixPlot <- createJaspPlot(title = title, width = 1200, height = 400 * matrixNRows)
-  plotMat <- matrix(plotList, matrixNRows, matrixNCols, byrow = FALSE)
-  p <- jaspGraphs::ggMatrixPlot(plotMat)
-  matrixPlot$plotObject <- p
-
-  return(matrixPlot)
 }

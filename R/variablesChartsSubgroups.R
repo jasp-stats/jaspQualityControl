@@ -22,16 +22,16 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   # In wide format we have one subgroup per row, else we need a either a grouping variable or later specify subgroup size manually
   if (wideFormat) {
     measurements <- unlist(options[["measurementsWideFormat"]])
+    stages <- options[["stagesWideFormat"]]
     axisLabels <- options[["axisLabels"]]
-    factorVariables <- axisLabels
+    factorVariables <- c(axisLabels, stages)
   } else {
     measurements <- options[["measurementLongFormat"]]
+    stages <- options[["stagesLongFormat"]]
     subgroupVariable <- options[["subgroup"]]
-    factorVariables <- subgroupVariable
+    factorVariables <- c(subgroupVariable, stages)
   }
 
-  stages <- options[["stages"]]
-  factorVariables <- c(factorVariables, stages)
   measurements <- measurements[measurements != ""]
   factorVariables <- factorVariables[factorVariables != ""]
 
@@ -48,7 +48,8 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Control charts"), width = 700, height = 400)
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "stages", "subgroup", "subgroupSizeType"))
+    plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "stagesWideFormat", "stagesLongFormat",
+                    "subgroup", "subgroupSizeType", "measurementsWideFormat", "dataFormat", "groupingVariableMethod"))
     return()
   }
 
@@ -92,53 +93,15 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
   # Rearrange data if not already wide format (one group per row)
   if (!wideFormat && ready) {
-    # if subgroup size is set manual, use that. Else determine subgroup size from largest level in subgroups variable
-    if (options[["subgroupSizeType"]] == "manual") {
-      k <- options[["manualSubgroupSizeValue"]]
-      if (stages != "") {
-        # Only take the first stage of each subgroup, to avoid multiple stages being defined
-        stagesPerSubgroup <- dataset[[stages]][seq(1, length(dataset[[stages]]), k)]
-      }
-      # fill up with NA to allow all subgroup sizes
-      if(length(dataset[[measurements]]) %% k != 0) {
-        rest <- length(dataset[[measurements]]) %% k
-        dataset_expanded <- c(dataset[[measurements]], rep(NA, k - rest))
-        dataset <- as.data.frame(matrix(dataset_expanded, ncol = k, byrow = TRUE))
-      } else {
-        dataset <- as.data.frame(matrix(dataset[[measurements]], ncol = k, byrow = TRUE))
-      }
-      measurements <- colnames(dataset)
-      axisLabels <- as.character(seq_len(nrow(dataset)))
-      xAxisTitle <- gettext("Sample")
-      if (stages != "") {
-        dataset[[stages]] <- stagesPerSubgroup
-        axisLabels <- axisLabels[order(dataset[[stages]])]
-      }
-    } else {
-      subgroups <- dataset[[subgroupVariable]]
-      subgroups <- na.omit(subgroups)
-      # add sequence of occurence to allow pivot_wider
-      if (stages != "") {
-        # Only take the first defined stage of each subgroup, to avoid multiple stages being defined
-        stagesPerSubgroup <- dataset[[stages]][match(unique(subgroups), subgroups)]
-      }
-      occurenceVector <- with(dataset, ave(seq_along(subgroups), subgroups, FUN = seq_along))
-      dataset$occurence <- occurenceVector
-      # transform into one group per row
-      dataset <- tidyr::pivot_wider(data = dataset[c(measurements, subgroupVariable, "occurence")],
-                                    values_from = tidyr::all_of(measurements), names_from = occurence)
-      # arrange into dataframe
-      dataset <- as.data.frame(dataset)
-      measurements <- as.character(unique(occurenceVector))
-      axisLabels <- dataset[[subgroupVariable]]
-      xAxisTitle <- subgroupVariable
-      if (stages != ""){
-        dataset[[stages]] <- stagesPerSubgroup
-        axisLabels <- axisLabels[order(dataset[[stages]])]
-      }
-    }
+    reshapeOutputList <- .reshapeSubgroupDataLongToWide(dataset, measurements, stages = stages, subgroupVariable = subgroupVariable,
+                                                        subgroupSizeType = options[["subgroupSizeType"]],
+                                                        manualSubgroupSizeValue = options[["manualSubgroupSizeValue"]],
+                                                        subgroupVariableMethod = options[["groupingVariableMethod"]])
+    dataset <- reshapeOutputList$dataset
+    measurements <- reshapeOutputList$measurements
+    axisLabels <- reshapeOutputList$axisLabels
+    xAxisTitle <- reshapeOutputList$xAxisTitle
   }  else if (wideFormat && ready) {
-    multipleStagesPerSubgroupDefined <- FALSE # not possible in this format
     if (axisLabels != "") {
       xAxisTitle <- options[["axisLabels"]]
       axisLabels <- dataset[[axisLabels]]
@@ -152,13 +115,14 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
     plot <- createJaspPlot(title = gettext("Control charts"), width = 700, height = 400)
     plot$setError(gettext("All subgroups are of size 1. Variables charts for subgroups cannot be calculated. Use variables charts for individuals."))
     jaspResults[["plot"]] <- plot
-    plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "stages", "subgroup", "subgroupSizeType"))
+    plot$dependOn(c("report", "chartType", "measurementLongFormat", "variables", "subgroup", "stagesWideFormat", "stagesLongFormat",
+                    "subgroupSizeType", "groupingVariableMethod"))
     return()
   }
 
   # Plot note about R/S chart recommendation
   if (length(measurements) > 5 && options[["chartType"]] == "xBarAndR") # if the subgroup size is above 5, R chart is not recommended
-    plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. S-chart is recommended."))
+    plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. An s-chart is recommended."))
 
 
   #X bar & R/s chart
@@ -168,8 +132,9 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       jaspResults[["controlCharts"]]$dependOn(c("chartType", "variables", "warningLimits", "knownParameters", "knownParametersMean", "manualTicks", 'nTicks',
                                                 "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat",
                                                 "report", "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle",
-                                                "reportChartName", "subgroupSizeUnequal", "axisLabels", "stages", "subgroupSizeType",
-                                                "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant"))
+                                                "reportChartName", "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
+                                                "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
+                                                "groupingVariableMethod"))
       secondPlotType <- ifelse(options[["chartType"]] == "xBarAndR", "R", "s")
       jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s control chart", secondPlotType), width = 1200, height = 500)
       if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
@@ -185,13 +150,15 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
       # first chart is always xBar-chart, second is either R- or s-chart
       xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
-                                 phase2 = options[["knownParameters"]], phase2Mu = options[["knownParametersMean"]], phase2Sd = options[["knownParametersSd"]],
+                                 nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], phase2 = options[["knownParameters"]],
+                                 phase2Mu = options[["knownParametersMean"]], phase2Sd = options[["knownParametersSd"]],
                                  fixedSubgroupSize = fixedSubgroupSize, warningLimits = options[["warningLimits"]],
-                                 xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
+                                 xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                  unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
-      secondChart <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType, stages = stages, phase2 = options[["knownParameters"]],
+      secondChart <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,  stages = stages,
+                                   phase2 = options[["knownParameters"]], nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                    phase2Sd = options[["knownParametersSd"]], fixedSubgroupSize = fixedSubgroupSize,
-                                   xAxisLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
+                                   xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                    unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
       jaspResults[["controlCharts"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondChart$plotObject, xBarChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
       if (!identical(plotNotes, ""))
@@ -202,54 +169,48 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
         jaspResults[["controlCharts"]][["secondTable"]] <- secondChart$table
 
       # Report
-      if (options[["report"]] && is.null(jaspResults[["report"]])) {
-
+      if (options[["report"]]) {
         jaspResults[["controlCharts"]] <- NULL
         jaspResults[["NelsonTables"]] <- NULL
+        reportPlot <- createJaspPlot(title = gettext("Variables Chart for Subgroups Report"), width = 1250, height = 1000)
+        jaspResults[["report"]] <- reportPlot
+        jaspResults[["report"]]$dependOn(c("chartType", "variables", "warningLimits", "knownParameters", "knownParametersMean", "manualTicks", 'nTicks',
+                                           "knownParametersSd", "manualSubgroupSizeValue", "dataFormat", "subgroup", "measurementLongFormat",
+                                           "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
+                                           "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
+                                           "groupingVariableMethod", "report", "reportMetaData", "reportTitle", "reportTitleText",
+                                           "reportChartName", "reportChartNameText", "reportSubtitle", "reportSubtitleText",
+                                           "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
+                                           "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
+                                           "reportDateText", "reportPerformedBy", "reportPerformedByText", "reportPrintDate",
+                                           "reportPrintDateText"))
 
-        jaspResults[["report"]] <- createJaspContainer(gettext("Report"))
-        jaspResults[["report"]]$dependOn(c("report", "manualSubgroupSizeValue","chartType", "variables", "measurementLongFormat",
-                                           "manualTicks", 'nTicks',"dataFormat", "subgroup", "reportTitle", "reportMeasurementName",
-                                           "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle", "reportChartName",
-                                           "stages", "xBarAndSUnbiasingConstant"))
-        jaspResults[["report"]]$position <- 9
-        Iplot <- jaspResults[["report"]]
-        Iplot[["report"]] <- .CCReport(p1 = xBarChart$plotObject, p2 = secondChart$plotObject, reportTitle = options$reportTitle,
-                                         reportMeasurementName = options$reportMeasurementName, reportDate = options$reportDate, reportReportedBy = options$reportReportedBy,
-                                         reportMiscellaneous = options$reportMiscellaneous, reportSubtitle = options$reportSubtitle, reportChartName = options$reportChartName,
-                                         options = options)
+        # Plot meta data
+        if (options[["reportTitle"]] ) {
+          title <- if (options[["reportTitleText"]] == "") gettext("Variables Chart for Subgroups Report") else options[["reportTitleText"]]
+        } else {
+          title <- ""
+        }
+
+        if (options[["reportMetaData"]]) {
+          text <- c()
+          text <- if (options[["reportChartName"]]) c(text, gettextf("Chart name: %s", options[["reportChartNameText"]])) else text
+          text <- if (options[["reportSubtitle"]]) c(text, gettextf("Sub-title: %s", options[["reportSubtitleText"]])) else text
+          text <- if (options[["reportMeasurementName"]]) c(text, gettextf("Measurement name: %s", options[["reportMeasurementNameText"]])) else text
+          text <- if (options[["reportFootnote"]]) c(text, gettextf("Footnote: %s", options[["reportFootnoteText"]])) else text
+          text <- if (options[["reportLocation"]]) c(text, gettextf("Location: %s", options[["reportLocationText"]])) else text
+          text <- if (options[["reportDate"]]) c(text, gettextf("Date: %s", options[["reportDateText"]])) else text
+          text <- if (options[["reportPerformedBy"]]) c(text, gettextf("Performed by: %s", options[["reportPerformedByText"]])) else text
+          text <- if (options[["reportPrintDate"]]) c(text, gettextf("Print date: %s", options[["reportPrintDateText"]])) else text
+        } else {
+          text <- NULL
+        }
+
+        plots <- list(list(xBarChart$plotObject, secondChart$plotObject))
+        reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
+                                      reportTitle = title)
+        reportPlot$plotObject <- reportPlotObject
       }
     }
   }
-}
-
-.CCReport <- function(p1 = "", p2 = "", reportTitle = "", reportMeasurementName = "", reportDate = "",
-                      reportReportedBy = "", reportMiscellaneous = "" , reportSubtitle = "", reportChartName = "", options) {
-
-  if (identical(reportTitle, "")) {
-    title <- if (options[["chartType"]] == "xBarAndR") gettext("Report for X-bar & R control chart") else gettext("Report for X-bar & s control chart")
-  } else {
-    title <- reportTitle
-  }
-  name <- gettextf("Name: %s", reportMeasurementName)
-  date <- gettextf("Date: %s", reportDate)
-  subtitle <- gettextf("Sub-title: %s", reportSubtitle)
-  text1 <- c(name, date, subtitle)
-
-  reportedBy <- gettextf("Reported by: %s", reportReportedBy)
-  misc <- gettextf("Misc: %s", reportMiscellaneous)
-  chartName <- gettextf("Name of chart: %s", reportChartName)
-  text2 <- c(reportedBy, misc, chartName)
-
-  matrixPlot <- createJaspPlot(width = 1200, aspectRatio = 1)
-  plotMat <- matrix(list(), 3, 2)
-  plotMat[[1, 1]] <- .ggplotWithText(text1)
-  plotMat[[1, 2]] <- p1
-  plotMat[[2, 1]] <- .ggplotWithText(text2)
-  plotMat[[2, 2]] <- p2
-
-  p <- jaspGraphs::ggMatrixPlot(plotMat, topLabels = c(gettext(title), ""))
-  matrixPlot$plotObject <- p
-
-  return(matrixPlot)
 }
