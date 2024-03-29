@@ -221,12 +221,14 @@ Form
 			CheckBox
 			{
 				name:								"tableEquation"
+				checked:							true
 				label:								qsTr("Show regression equation")
 			}
 
 			CheckBox
 			{
 				name:								"codeFactors"
+				checked:							true
 				label:								qsTr("Display results in coded units")
 			}
 		}
@@ -246,10 +248,10 @@ Form
 
 			IntegerField
 			{
-				name:                               "order"
-				defaultValue:                        2
-				min:                                 1
-				max:                                 factors.count > 0 ? factors.count : 999
+				name:								"order"
+				defaultValue:						2
+				min:								1
+				max:								(fixedFactorsFactorial.count + continuousFactorsFactorial.count) > 0 ? (fixedFactorsFactorial.count + continuousFactorsFactorial.count) : 999
 				label:								  qsTr("Highest order interaction term")
 			}
 		}
@@ -504,5 +506,25 @@ Form
 				enabled:						binWidthType.currentValue === "manual"
 			}
 		}
+
+		DropDown
+		{
+			name:							"sumOfSquaresType"
+			label:							qsTr("Sum of squares type")
+			id: 							sumOfSquaresType
+			indexDefaultValue:				2
+			values: [
+				{ label: qsTr("Type I"), value: "type1"},
+				{ label: qsTr("Type II"), value: "type2"},
+				{ label: qsTr("Type III"), value: "type3"},
+			]
+		}
+
+			CheckBox
+			{
+				name:						"squaredTermsCoded"
+				label:						qsTr("Use coded data to calculate squared terms")
+				visible:					designType.currentValue == "responseSurfaceDesign"
+			}
 	}
 }

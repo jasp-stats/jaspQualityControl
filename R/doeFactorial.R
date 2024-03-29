@@ -17,7 +17,7 @@
 
 #' @export
 doeFactorial <- function(jaspResults, dataset, options, ...) {
-  ready <- options[["selectedRow"]] != -1L
+  ready <- options[["selectedRow"]] != -1L | options[["factorialType"]] == "generalFullFactorial" # If the design type is general full factorial no need to select a design
 
   .doeFactorialDesignSummaryTable(jaspResults, options)
 
@@ -51,7 +51,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     "selectedDesign2",
     "factorialType",
     "factorialTypeSpecifyGenerators",
-    "numberHTCFactors",
+    "factorialDesignTypeSplitPlotNumberHardToChangeFactors",
     "blocks",
     "centerpoints",
     "replications",
@@ -65,12 +65,12 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   if (!is.null(jaspResults[["doeFactorialDesignSummaryTable"]])) {
     return()
   }
-  twoLevelDesign <- options[["categoricalNoLevels"]] == 2
+  twoLevelDesign <- options[["factorialType"]] != "generalFullFactorial"
   tb <- createJaspTable(title = gettext("Design Summary"), position = 1L)
   tb$addColumnInfo(name = "title", title = gettext("Variable"), type = "string")
   tb$addColumnInfo(name = "catFactors", title = gettext("Categorial factors"), type = "integer")
   tb$addColumnInfo(name = "baseRuns", title = gettext("Base runs"), type = "integer")
-  if (options[["categoricalNoLevels"]] == 2) {
+  if (twoLevelDesign) {
     tb$addColumnInfo(name = "baseBlocks", title = gettext("Base blocks"), type = "integer")
     tb$addColumnInfo(name = "centerpoints", title = gettext("Centre points per block"), type = "integer")
   }
@@ -88,21 +88,26 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     tb$addFootnote(gettext("Please select a row in the design table."))
     return()
   }
-  tb[["baseRuns"]] <- designSpec[["runs"]]
-  if (options[["categoricalNoLevels"]] == 2) {
-    tb[["baseBlocks"]] <- designSpec[["blocks"]]
-    tb[["centerpoints"]] <- designSpec[["centerpoints"]]
-  }
   tb[["replications"]] <- designSpec[["replications"]]
   tb[["repetitions"]] <- designSpec[["repetitions"]]
   if (twoLevelDesign) {
-    tb[["totalRuns"]] <- (designSpec[["runs"]] * designSpec[["replications"]]) + (designSpec[["blocks"]] * designSpec[["centerpoints"]] * designSpec[["replications"]]) + designSpec[["repetitions"]]
+    tb[["baseRuns"]] <- designSpec[["runs"]]
+    tb[["baseBlocks"]] <- designSpec[["blocks"]]
+    tb[["centerpoints"]] <- designSpec[["centerpoints"]]
+    runs <- (designSpec[["runs"]] * designSpec[["replications"]]) + (designSpec[["blocks"]] * designSpec[["centerpoints"]] * designSpec[["replications"]]) + designSpec[["repetitions"]]
+    tb[["totalRuns"]] <- runs
     tb[["totalBlocks"]] <- designSpec[["replications"]] * designSpec[["blocks"]]
   } else {
     df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
-    nLevels <- apply(df, 1, function(x) length(which(x[-1] != ".")))
-    tb[["totalRuns"]] <- prod(nLevels) * designSpec[["replications"]] + designSpec[["repetitions"]]
+    nLevels <- apply(df, 1, function(x) length(which(x[-1] != "")))
+    runs <- prod(nLevels) * designSpec[["replications"]] + designSpec[["repetitions"]]
+    tb[["baseRuns"]] <- runs
+    tb[["totalRuns"]] <- runs
     tb[["totalBlocks"]] <- designSpec[["replications"]]
+  }
+  if (runs > 1e+05) {
+    tb$setError(gettext("Cannote create designs with more than 100000 total runs."))
+    return()
   }
   if (!options[["displayDesign"]]) {
     tb$addFootnote(gettext("Click 'Display design' to show the design."))
@@ -218,7 +223,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
 
 .doeFactorialGenerateDesign <- function(jaspResults, options) {
   seed <- .doeGetAndSetSeed(jaspResults, options)
-  twoLevelDesign <- options[["categoricalNoLevels"]] == 2
+  twoLevelDesign <- options[["factorialType"]] != "generalFullFactorial"
   df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
   designSpec <- .doeFactorialGetSelectedDesign(jaspResults, options)
   if (length(designSpec) == 0) {
@@ -260,14 +265,14 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
       design <- FrF2::FrF2(
         nfactors = designSpec[["factors"]],
         nruns = designSpec[["runs"]],
-        hard = options[["numberHTCFactors"]],
+        hard = options[["factorialDesignTypeSplitPlotNumberHardToChangeFactors"]],
         replications = designSpec[["replications"]],
         alias.block.2fis = TRUE,
         seed = seed
       )
     }
   } else {
-    nLevels <- apply(df, 1, function(x) length(which(x[-1] != ".")))
+    nLevels <- apply(df, 1, function(x) length(which(x[-1] != "")))
     design <- DoE.base::fac.design(
       nfactors = designSpec[["factors"]],
       nlevels = nLevels,
@@ -413,7 +418,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   }
   tb$dependOn(options = c("displayDesign", "codedOutput", "runOrder", .doeFactorialBaseDependencies()))
   if (options[["factorialType"]] == "factorialTypeSplit") {
-    tb$addFootnote(gettextf("Hard-to-change factors: %1$s", paste0(df[["name"]][1:options[["numberHTCFactors"]]], collapse = ", ")))
+    tb$addFootnote(gettextf("Hard-to-change factors: %1$s", paste0(df[["name"]][1:options[["factorialDesignTypeSplitPlotNumberHardToChangeFactors"]]], collapse = ", ")))
   }
   jaspResults[["displayDesign"]] <- tb
   if (jaspResults$getError()) {

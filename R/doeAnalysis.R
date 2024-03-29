@@ -38,16 +38,16 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   .doeAnalysisCheckErrors(dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, ready)
 
-   p <- try(.doeAnalysisMakeState(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, ready))
+  p <- try(.doeAnalysisMakeState(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, ready))
 
-   if (isTryError(p)) {
-     jaspResults[["errorPlot"]] <- createJaspPlot(title = gettext("Error"))
-     jaspResults[["errorPlot"]]$setError(p[1])
-     jaspResults[["errorPlot"]]$dependOn(.doeAnalysisBaseDependencies())
-     return()
-   }
+  if (isTryError(p)) {
+    jaspResults[["errorPlot"]] <- createJaspPlot(title = gettext("Error"))
+    jaspResults[["errorPlot"]]$setError(p[1])
+    jaspResults[["errorPlot"]]$dependOn(.doeAnalysisBaseDependencies())
+    return()
+  }
 
-   coded <- options[["codeFactors"]]
+  coded <- options[["codeFactors"]]
 
   .doeAnalysisSummaryTable(jaspResults, options, ready, coded)
   .doeAnalysisAnovaTable(jaspResults, options, ready, coded)
@@ -260,7 +260,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       formulaString <- paste0(formulaString, squaredTermsString)
     }
   } else if (options[["highestOrder"]] && options[["designType"]] == "factorialDesign") {
-    formulaString <- paste0(dependent, " ~ (.)^", options[["order"]])
+    independentVariables <- c(unlist(continuousPredictors), unlist(discretePredictors))
+    independentVariables <- independentVariables[independentVariables != ""]
+    formulaString <- .createHighestOrderInteractionFormula(dependent, independentVariables, interactionOrder = options[["order"]])
   } else if (options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") {
     modelTerms <- options[["rsmPredefinedTerms"]]
     if (length(continuousPredictors) == 1 && modelTerms == "linearAndInteractions") {
@@ -294,19 +296,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   formula <- as.formula(formulaString)
 
-  # if (options[["designType"]] == "factorialDesign") {
-    regressionFit <- lm(formula, data = dataset)
-    regressionFitCoded <- lm(formula, data = datasetCoded)
-    regressionSummary <- summary(regressionFit)
-    regressionSummaryCoded <- summary(regressionFitCoded)
-  # } else if (options[["designType"]] == "responseSurfaceDesign") {
-  #   regressionFit <- rsm::rsm(formula, data = dataset, threshold = 0)
-  #   regressionFitCoded <- rsm::rsm(formula, data = datasetCoded, threshold = 0)
-  #   regressionSummary <- summary(regressionFit, threshold = 0) # threshold to 0 so the canonical does not throw an error
-  #   regressionSummaryCoded <- summary(regressionFitCoded, threshold = 0) # threshold to 0 so the canonical does not throw an error
-  # }
+  regressionFit <- lm(formula, data = dataset)
+  regressionFitCoded <- lm(formula, data = datasetCoded)
+  regressionSummary <- summary(regressionFit)
+  regressionSummaryCoded <- summary(regressionFitCoded)
 
-    aliasedTerms <- attributes(alias(regressionFit)$Complete)$dimnames[[1]]
+  aliasedTerms <- attributes(alias(regressionFit)$Complete)$dimnames[[1]]
 
   if (!is.null(aliasedTerms)) {
     allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
@@ -315,23 +310,16 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["aliasedTerms"]] <- jaspBase::gsubInteractionSymbol(aliasedTerms) # store for footnote
     formula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(aliasedTerms, collapse="-"), sep="-")) # remove the aliased term(s) from the model
     # fit the model again
-    # if (options[["designType"]] == "factorialDesign") {
-      regressionFit <- lm(formula, data = dataset)
-      regressionFitCoded <- lm(formula, data = datasetCoded)
-      regressionSummary <- summary(regressionFit)
-      regressionSummaryCoded <- summary(regressionFitCoded)
-    # } else if (options[["designType"]] == "responseSurfaceDesign") {
-    #   regressionFit <- rsm::rsm(formula, data = dataset, threshold = 0)
-    #   regressionFitCoded <- rsm::rsm(formula, data = datasetCoded, threshold = 0)
-    #   regressionSummary <- summary(regressionFit, threshold = 0) # threshold to 0 so the canonical does not throw an error
-    #   regressionSummaryCoded <- summary(regressionFitCoded, threshold = 0) # threshold to 0 so the canonical does not throw an error
-    # }
+    regressionFit <- lm(formula, data = dataset)
+    regressionFitCoded <- lm(formula, data = datasetCoded)
+    regressionSummary <- summary(regressionFit)
+    regressionSummaryCoded <- summary(regressionFitCoded)
   }
 
-    names(regressionFit$coefficients) <-  unname(sapply(c(names(regressionFit$coefficients)), .gsubIdentityFunction)) # remove potential identity function around squared terms
-    rownames(regressionSummary$coefficients) <- unname(sapply(c(rownames(regressionSummary$coefficients)), .gsubIdentityFunction))
-    names(regressionFitCoded$coefficients) <-  unname(sapply(c(names(regressionFitCoded$coefficients)), .gsubIdentityFunction))
-    rownames(regressionSummaryCoded$coefficients) <- unname(sapply(c(rownames(regressionSummaryCoded$coefficients)), .gsubIdentityFunction))
+  names(regressionFit$coefficients) <-  unname(sapply(c(names(regressionFit$coefficients)), .gsubIdentityFunction)) # remove potential identity function around squared terms
+  rownames(regressionSummary$coefficients) <- unname(sapply(c(rownames(regressionSummary$coefficients)), .gsubIdentityFunction))
+  names(regressionFitCoded$coefficients) <-  unname(sapply(c(names(regressionFitCoded$coefficients)), .gsubIdentityFunction))
+  rownames(regressionSummaryCoded$coefficients) <- unname(sapply(c(rownames(regressionSummaryCoded$coefficients)), .gsubIdentityFunction))
 
   result[["regression"]][["formula"]] <- formula
   result[["regression"]][["object"]] <- regressionFit
@@ -354,47 +342,46 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["adjrsq"]] <- max(0, regressionSummaryCoded[["adj.r.squared"]]) # Sometimes returns a negative value, so need this
     resultCoded[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFitCoded)
 
-    #if (options[["designType"]] == "factorialDesign") {
-      anovaFit <- car::Anova(regressionFit)
-    # } else if (options[["designType"]] == "responseSurfaceDesign") {
-    #   anovaFit <- regressionSummary$lof
-    #   # store lof and pure error, remove them for now and add back in later to not interfere with other calculations
-    #   pureError <- anovaFit["Pure error", ]
-    #   lackOfFit <- anovaFit["Lack of fit", ]
-    #   rowsToRemove <- c("Pure error", "Lack of fit")
-    #   anovaFit <- anovaFit[!row.names(anovaFit) %in% rowsToRemove,]
-    # }
+    ssType <- options[["sumOfSquaresType"]]
+    anovaFitData <- if (options[["squaredTermsCoded"]]) regressionFitCoded else regressionFit
+    if (ssType == "type1") {
+      anovaFit <- anova(anovaFitData)
+    } else if (ssType == "type2") {
+      anovaFit <- car::Anova(anovaFitData, type = 2)
+    } else if (ssType == "type3") {
+      anovaFit <- car::Anova(anovaFitData, type = 3)
+      anovaFit <- anovaFit[-1,] # remove the intercept that is added when using type 3 SS
+    }
+
     anovaFit[["Mean Sq"]] <- anovaFit[["Sum Sq"]] / anovaFit[["Df"]]
-    null.names <- names(regressionFit[["coefficients"]])[is.na(regressionFit[["coefficients"]])]
-    modelComponentNames <- gsub(" ", "", row.names(anovaFit)[-length(row.names(anovaFit))], fixed = TRUE)
-    modelComponentNames <- unname(sapply(modelComponentNames, .gsubIdentityFunction)) # remove identity function around squared terms
-    names <- c("Model", sprintf("\u00A0 %s", modelComponentNames), null.names, "Error", "Total")
-    anovaNames <- gsub(" ", "", row.names(anovaFit))
-    errorIndex <- which(anovaNames == "Residuals")
-    ssm <- sum(anovaFit$`Sum Sq`[-errorIndex])
-    msm <- sum(anovaFit$`Sum Sq`[-errorIndex]) / sum(anovaFit$Df[-errorIndex])
-    fval <- msm / anovaFit$`Mean Sq`[errorIndex]
-    pval <- pf(fval, sum(anovaFit$Df[-errorIndex]), anovaFit$Df[errorIndex], lower.tail = FALSE)
-    df <- c(sum(anovaFit[["Df"]][-errorIndex]), anovaFit[["Df"]][-errorIndex], rep(NA, length(null.names)), anovaFit[["Df"]][errorIndex], sum(anovaFit[["Df"]]))
-    adjss <- c(ssm, anovaFit[["Sum Sq"]][-errorIndex], rep(NA, length(null.names)), anovaFit[["Sum Sq"]][errorIndex], sum(anovaFit[["Sum Sq"]]))
-    adjms <- c(msm, anovaFit[["Mean Sq"]][-errorIndex], rep(NA, length(null.names)), anovaFit[["Mean Sq"]][errorIndex], NA)
-    fval <- c(fval, anovaFit[["F value"]], rep(NA, length(null.names)), NA)
-    pval <- c(pval, anovaFit[["Pr(>F)"]], rep(NA, length(null.names)), NA)
-
-    #add the lof and pure error rows back in
-    # if (options[["designType"]] == "responseSurfaceDesign") {
-    #   #imputate it in all ANOVA table vectors before the total row
-    #   df <- c(df[1:length(df)-1], lackOfFit$Df, pureError$Df, df[length(df)])
-    #   names <- c(names[1:length(names)-1], "Lack of fit", "Pure error", names[length(names)])
-    #   names <- gsub("rsm::FO\\(", "Linear terms\\(", names)
-    #   names <- gsub("rsm::TWI\\(", "Two-way interaction terms\\(", names)
-    #   names <- gsub("rsm::PQ\\(", "Squared terms\\(", names)
-    #   adjss <- c(adjss[1:length(adjss)-1], lackOfFit$`Sum Sq`, pureError$`Sum Sq`, adjss[length(adjss)])
-    #   adjms <- c(adjms[1:length(adjms)-1], lackOfFit$`Mean Sq`, pureError$`Mean Sq`, adjms[length(adjms)])
-    #   fval <- c(fval[1:length(fval)-1], lackOfFit$`F value`, NA, fval[length(fval)])
-    #   pval <- c(pval[1:length(pval)-1], lackOfFit$`F value`, NA, pval[length(pval)])
-    # }
-
+    anovaFit <- anovaFit[c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")] # rearrange, so it has the same order as the aov function
+    anovaFit <- .addModelHeaderTerms(anovaFit)
+    #
+    # null.names <- names(regressionFit[["coefficients"]])[is.na(regressionFit[["coefficients"]])]
+    # modelComponentNames <- gsub(" ", "", row.names(anovaFit)[-length(row.names(anovaFit))], fixed = TRUE)
+    # modelComponentNames <- unname(sapply(modelComponentNames, .gsubIdentityFunction)) # remove identity function around squared terms
+    # # modelComponentNames <- .addModelHeaderTerms(anovaFit)
+    #
+    #
+    # #
+    # # n <- 3
+    # # new_row <- data.frame("Sum sq" = NA, "Df" = NA, "F value" = NA, "Pr(>F)" = NA, "Mean Sq" = NA )
+    # # colnames(new_row) <- colnames(anovaFit)
+    # # rownames(new_row) <- "Linear terms"
+    # #
+    # # anovaFit <- rbind(anovaFit[1:n, ], new_row, anovaFit[(n+1):nrow(anovaFit), ])
+    # names <- c("Model", sprintf("\u00A0 %s", modelComponentNames), null.names, "Error", "Total")
+    # anovaNames <- gsub(" ", "", row.names(anovaFit))
+    # errorIndex <- which(anovaNames == "Residuals")
+    # ssm <- sum(anovaFit$`Sum Sq`[-errorIndex])
+    # msm <- sum(anovaFit$`Sum Sq`[-errorIndex]) / sum(anovaFit$Df[-errorIndex])
+    # fval <- msm / anovaFit$`Mean Sq`[errorIndex]
+    # pval <- pf(fval, sum(anovaFit$Df[-errorIndex]), anovaFit$Df[errorIndex], lower.tail = FALSE)
+    # df <- c(sum(anovaFit[["Df"]][-errorIndex]), anovaFit[["Df"]][-errorIndex], rep(NA, length(null.names)), anovaFit[["Df"]][errorIndex], sum(anovaFit[["Df"]]))
+    # adjss <- c(ssm, anovaFit[["Sum Sq"]][-errorIndex], rep(NA, length(null.names)), anovaFit[["Sum Sq"]][errorIndex], sum(anovaFit[["Sum Sq"]]))
+    # adjms <- c(msm, anovaFit[["Mean Sq"]][-errorIndex], rep(NA, length(null.names)), anovaFit[["Mean Sq"]][errorIndex], NA)
+    # fval <- c(fval, anovaFit[["F value"]], rep(NA, length(null.names)), NA)
+    # pval <- c(pval, anovaFit[["Pr(>F)"]], rep(NA, length(null.names)), NA)
   } else {
     result[["regression"]][["s"]] <- NA
     result[["regression"]][["rsq"]] <- 1
@@ -405,34 +392,64 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     resultCoded[["regression"]][["rsq"]] <- 1
     resultCoded[["regression"]][["adjrsq"]] <- NA
     resultCoded[["regression"]][["predrsq"]] <- NA
+    #
+    # regressionFit <- lm(Response ~ A*B*C, dataset)
+    # anovaFitData <- regressionFit
+    anovaFitData <- if (options[["squaredTermsCoded"]]) regressionFitCoded else regressionFit
+    anovaFit <- summary(aov(anovaFitData))[[1]]
+    errorRow <- data.frame(Df = 0, SS = 0, MS = 0) # add an error row to keep the format consistent
+    colnames(errorRow) <- colnames(anovaFit)
+    rownames(errorRow) <- "Error"
+    anovaFit <- rbind(anovaFit, errorRow)
+    anovaFit$`F value` <- NA # add these empty columns to the saturated design so the anova fit object always has the same format
+    anovaFit$`Pr(>F)` <- NA
+    anovaFit <- .addModelHeaderTerms(anovaFit)
+  #
+  #   ssm <- sum(anovaFit[["Sum Sq"]])
+  #   msm <- ssm / nrow(anovaFit)
+  #   anovaNames <- row.names(anovaFit)
+  #   names <- c("Model", gsub(" ", "", row.names(anovaFit), fixed = TRUE), "Error", "Total")
+  #   names <- unname(sapply(names, .gsubIdentityFunction)) # remove identity function around squared terms
+  #   df <- c(sum(anovaFit[["Df"]]), anovaFit[["Df"]], 0, sum(anovaFit[["Df"]]))
+  #   adjss <- c(sum(anovaFit[["Sum Sq"]]), anovaFit[["Sum Sq"]], NA, sum(anovaFit[["Sum Sq"]]))
+  #   adjms <- c(sum(anovaFit[["Sum Sq"]]) / nrow(anovaFit), anovaFit[["Mean Sq"]], NA, NA)
+  #   fval <- rep(NA, length(names))
+  #   pval <- rep(NA, length(names))
+  #
+    }
 
-    anovaFit <- summary(aov(regressionFit))[[1]]
-    ssm <- sum(anovaFit[["Sum Sq"]])
-    msm <- ssm / nrow(anovaFit)
-    anovaNames <- row.names(anovaFit)
-    names <- c("Model", gsub(" ", "", row.names(anovaFit), fixed = TRUE), "Error", "Total")
-    names <- unname(sapply(names, .gsubIdentityFunction)) # remove identity function around squared terms
-    df <- c(sum(anovaFit[["Df"]]), anovaFit[["Df"]], 0, sum(anovaFit[["Df"]]))
-    adjss <- c(sum(anovaFit[["Sum Sq"]]), anovaFit[["Sum Sq"]], NA, sum(anovaFit[["Sum Sq"]]))
-    adjms <- c(sum(anovaFit[["Sum Sq"]]) / nrow(anovaFit), anovaFit[["Mean Sq"]], NA, NA)
-    fval <- rep(NA, length(names))
-    pval <- rep(NA, length(names))
-  }
   result[["anova"]][["object"]] <- anovaFit
-  result[["anova"]][["terms"]] <- jaspBase::gsubInteractionSymbol(names)
-  result[["anova"]][["df"]] <- df
-  result[["anova"]][["adjss"]] <- adjss
-  result[["anova"]][["adjms"]] <- adjms
-  result[["anova"]][["F"]] <- fval
-  result[["anova"]][["p"]] <- pval
+  result[["anova"]][["terms"]] <- jaspBase::gsubInteractionSymbol(rownames(anovaFit))
+  result[["anova"]][["df"]] <- anovaFit$Df
+  result[["anova"]][["adjss"]] <- anovaFit$`Sum Sq`
+  result[["anova"]][["adjms"]] <- anovaFit$`Mean Sq`
+  result[["anova"]][["F"]] <- anovaFit$`F value`
+  result[["anova"]][["p"]] <- anovaFit$`Pr(>F)`
 
   resultCoded[["anova"]][["object"]] <- anovaFit
-  resultCoded[["anova"]][["terms"]] <- jaspBase::gsubInteractionSymbol(names)
-  resultCoded[["anova"]][["df"]] <- df
-  resultCoded[["anova"]][["adjss"]] <- adjss
-  resultCoded[["anova"]][["adjms"]] <- adjms
-  resultCoded[["anova"]][["F"]] <- fval
-  resultCoded[["anova"]][["p"]] <- pval
+  resultCoded[["anova"]][["terms"]] <- jaspBase::gsubInteractionSymbol(rownames(anovaFit))
+  resultCoded[["anova"]][["df"]] <- anovaFit$Df
+  resultCoded[["anova"]][["adjss"]] <- anovaFit$`Sum Sq`
+  resultCoded[["anova"]][["adjms"]] <-  anovaFit$`Mean Sq`
+  resultCoded[["anova"]][["F"]] <- anovaFit$`F value`
+  resultCoded[["anova"]][["p"]] <- anovaFit$`Pr(>F)`
+  #
+  #
+  # result[["anova"]][["object"]] <- anovaFit
+  # result[["anova"]][["terms"]] <- jaspBase::gsubInteractionSymbol(names)
+  # result[["anova"]][["df"]] <- df
+  # result[["anova"]][["adjss"]] <- adjss
+  # result[["anova"]][["adjms"]] <- adjms
+  # result[["anova"]][["F"]] <- fval
+  # result[["anova"]][["p"]] <- pval
+  #
+  # resultCoded[["anova"]][["object"]] <- anovaFit
+  # resultCoded[["anova"]][["terms"]] <- jaspBase::gsubInteractionSymbol(names)
+  # resultCoded[["anova"]][["df"]] <- df
+  # resultCoded[["anova"]][["adjss"]] <- adjss
+  # resultCoded[["anova"]][["adjms"]] <- adjms
+  # resultCoded[["anova"]][["F"]] <- fval
+  # resultCoded[["anova"]][["p"]] <- pval
 
   # Regression coefficients
   result[["regression"]][["coefficients"]] <- list()
@@ -473,7 +490,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     coefEffects[names(coefEffects) %in% unlist(covariates)] <- NA
 
   coefEffectsUncoded <- coefEffects
-  coefEffectsUncoded[coefs$Estimate > 0] <- abs(coefEffectsUncoded) # sign of effect should match uncoded coefficient
+  coefEffectsUncoded[coefs$Estimate > 0] <- abs(coefEffectsUncoded[coefs$Estimate > 0]) # sign of effect should match uncoded coefficient
   result[["regression"]][["coefficients"]][["effects"]] <- coefEffectsUncoded
   result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
   result[["regression"]][["coefficients"]][["effects"]][1] <- NA
@@ -565,6 +582,68 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   jaspResults[["doeResultCoded"]]$dependOn(options = .doeAnalysisBaseDependencies())
 }
 
+.addModelHeaderTerms <- function(anovaFit) {
+  rownames(anovaFit) <- gsub(" ", "", row.names(anovaFit), fixed = TRUE)
+  rownames(anovaFit) <- unname(sapply(rownames(anovaFit), .gsubIdentityFunction)) # remove identity function around squared terms
+
+  # calculate model row
+  modelSS <- sum(anovaFit$`Sum Sq`[-nrow(anovaFit)])
+  modelDf <- sum(anovaFit$Df[-nrow(anovaFit)])
+  modelMS <- modelSS / modelDf
+  msError <- anovaFit$`Mean Sq`[nrow(anovaFit)]
+  modelFValue <- if (msError != 0) modelMS / msError else NA
+  modelPValue <- if (!is.na(modelFValue)) pf(modelFValue, modelDf, anovaFit$Df[nrow(anovaFit)], lower.tail = FALSE) else NA
+  modelRow <- data.frame(df = modelDf, ss = modelSS, ms = modelMS, f = modelFValue, p = modelPValue)
+  colnames(modelRow) <- colnames(anovaFit)
+  rownames(modelRow) <- "Model"
+
+  # calculate total row
+  totalRow <- data.frame(df = sum(anovaFit$Df), ss = sum(anovaFit$`Sum Sq`), ms = NA, f = NA, p = NA)
+  colnames(totalRow) <- colnames(anovaFit)
+  rownames(totalRow) <- "Total"
+
+  # calculate linear row and get all linear terms
+  linearTermIndices <- which(!grepl("\\^2|:", rownames(anovaFit[-nrow(anovaFit),])))  # all terms without squared symbol or colon or residuals
+  anovaFitLinear <- anovaFit[linearTermIndices,]
+  rownames(anovaFitLinear) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitLinear)) # double indent
+  linearRow <- data.frame(df = sum(anovaFitLinear$Df), ss = sum(anovaFitLinear$`Sum Sq`), ms = NA, f = NA, p = NA)
+  colnames(linearRow) <- colnames(anovaFit)
+  rownames(linearRow) <- sprintf("\u00A0 %s", "Linear terms")
+
+  # calculate squared row and get all squared terms
+  squaredTermIndices <- which(grepl("\\^2$", rownames(anovaFit)))
+  if (length(squaredTermIndices) > 0) {
+    anovaFitSquared <- anovaFit[squaredTermIndices,]
+    rownames(anovaFitSquared) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitSquared)) # double indent
+    squaredRow <- data.frame(df = sum(anovaFitSquared$Df), ss = sum(anovaFitSquared$`Sum Sq`), ms = NA, f = NA, p = NA)
+    colnames(squaredRow) <- colnames(anovaFit)
+    rownames(squaredRow) <- sprintf("\u00A0 %s", "Squared terms")
+  }
+
+  # calculate interaction row and get all interaction terms
+  interactionTermIndices <- which(grepl(":", rownames(anovaFit)))
+  if (length(interactionTermIndices) > 0) {
+    anovaFitInteraction <- anovaFit[interactionTermIndices, ]
+    rownames(anovaFitInteraction) <- sprintf("\u00A0 \u00A0 %s", rownames(anovaFitInteraction)) # double indent
+    interactionRow <- data.frame(df = sum(anovaFitInteraction$Df), ss = sum(anovaFitInteraction$`Sum Sq`), ms = NA, f = NA, p = NA)
+    colnames(interactionRow) <- colnames(anovaFit)
+    rownames(interactionRow) <- sprintf("\u00A0 %s", "Interaction terms")
+  }
+
+  # Model error row
+  errorRow <- anovaFit[nrow(anovaFit),]
+  rownames(errorRow) <- "Error"
+
+  newAnovaFit <- rbind(modelRow, linearRow, anovaFitLinear)
+  if (length(squaredTermIndices > 0))
+    newAnovaFit <- rbind(newAnovaFit, squaredRow, anovaFitSquared)
+  if (length(interactionTermIndices > 0))
+    newAnovaFit <- rbind(newAnovaFit, interactionRow, anovaFitInteraction)
+  newAnovaFit <- rbind(newAnovaFit, errorRow, totalRow)
+
+  return(newAnovaFit)
+}
+
 .removeAppendedFactorLevels <- function(predictorNames, terms, interactionSymbol = "✻"){
   regexExpression <- paste0("(", paste(predictorNames, collapse = "|"), ")((\\^2)?)([^", interactionSymbol, "]+)(", interactionSymbol, "?)")
   for (term_i in seq_along(terms)) {
@@ -597,11 +676,24 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       dataCol <- unlist(dataset[colnames(dataset) == termName])
       factorRange <- min(dataCol)
     }
+  }
+}
 
+.createHighestOrderInteractionFormula <- function(dependentVariable, independentVariables, interactionOrder) {
+  # Create a formula string with main effects
+  formulaStr <- paste(independentVariables, collapse = " + ")
 
-
+  # Add interaction terms up to the specified order
+  if (interactionOrder > 1) {
+    for (i in 2:interactionOrder) {
+      interactions <- combn(independentVariables, i, simplify = FALSE)
+      interaction_terms <- sapply(interactions, function(x) paste(x, collapse = ":"))
+      formulaStr <- paste(formulaStr, "+", paste(interaction_terms, collapse = " + "))
+    }
   }
 
+  # Construct and return the formula
+  return(paste(dependentVariable, "~", formulaStr))
 }
 
 .doeAnalysisSummaryTable <- function(jaspResults, options, ready, coded) {
@@ -719,7 +811,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   fac <- if (options[["tableAlias"]]) result[["coefficients"]][["termsAliased"]][-1] else result[["coefficients"]][["terms"]][-1]
   coefDf <- data.frame(result[["objectSummary"]]$coefficients)
   tDf <- data.frame("tValue" = coefDf[["t.value"]],
-                       terms = result[["coefficients"]][["terms"]])
+                    terms = result[["coefficients"]][["terms"]])
 
   # Do not include intercept, covariates and blocks in pareto plot
   tDf <- tDf[-1, ] # remove intercept
@@ -745,7 +837,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     ggplot2::geom_label(data = critLabelDf, mapping = ggplot2::aes(x = x, y = y, label = label), col = "red", size = 5) +
     ggplot2::scale_x_continuous(name = gettext("Term"), breaks = fac_t$y, labels = fac_t$fac) +
     ggplot2::scale_y_continuous(name =
-      gettext("Standardized Effect"), breaks = xBreaks, limits = range(xBreaks)) +
+                                  gettext("Standardized Effect"), breaks = xBreaks, limits = range(xBreaks)) +
     ggplot2::coord_flip() +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
@@ -893,9 +985,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   containerTitle <- ifelse(plotType == "contourPlot", gettext("Contour plots"), gettext("Surface plots"))
   container <- createJaspContainer(title = containerTitle)
   container$dependOn(options = c("contourSurfacePlot", "contourSurfacePlotType",
-                                                            "contourSurfacePlotVariables", "contourSurfacePlotLegend",
-                                                            "contourSurfacePlotResponseDivision", "surfacePlotVerticalRotation",
-                                                            "surfacePlotHorizontalRotation", .doeAnalysisBaseDependencies()))
+                                 "contourSurfacePlotVariables", "contourSurfacePlotLegend",
+                                 "contourSurfacePlotResponseDivision", "surfacePlotVerticalRotation",
+                                 "surfacePlotHorizontalRotation", .doeAnalysisBaseDependencies()))
   container$position <- 12
   jaspResults[["contourSurfacePlot"]] <- container
 
@@ -937,7 +1029,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     theta <- options[["surfacePlotHorizontalRotation"]]
     phi <- options[["surfacePlotVerticalRotation"]]
     po <- rsm::persp.lm(regressionFit, formula, theta = theta, phi = phi, zlab = dependent,
-                  col = colorSet)
+                        col = colorSet)
   }
   if (options[["contourSurfacePlotLegend"]]){
     partitionRanges <- levels(cut(po[[1]]$z, breaks = nResponsePartitions))
