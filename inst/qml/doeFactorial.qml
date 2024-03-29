@@ -48,6 +48,7 @@ Form
 		{
 			name: 								"factorialType"
 			id:									factorialType
+			onValueChanged : {numberOfLevels.value = value !== "generalFullFactorial" ?  2 : 3}
 
 			RadioButton
 			{
@@ -330,7 +331,7 @@ Form
 
 		IntegerField { name: "selectedRow"; label: qsTr("debug selected row"); defaultValue: selectedDesign2.rowSelected; negativeValues: true; visible: false }
 		IntegerField { name: "selectedCol"; label: qsTr("debug selected col"); defaultValue: selectedDesign2.colSelected; negativeValues: true; visible: false }
-		CheckBox { name: "showAliasStructure"; label: qsTr("Alias structure"); enabled: numberOfLevels.value == 2 & factorialTypeDefault.checked}
+		CheckBox { name: "showAliasStructure"; label: qsTr("Alias structure"); enabled: factorialTypeDefault.checked}
 		SetSeed{}
 
 	}
@@ -344,7 +345,7 @@ Form
 			IntegerField
 			{
 				name:						"blocks"
-				enabled:					!factorialTypeSplit.checked & !factorialTypeSpecify.checked & numberOfLevels.value == 2
+				enabled:					!factorialTypeSplit.checked & !factorialTypeSpecify.checked & !generalFullFactorial.checked
 				label:						qsTr("Blocks")
 				defaultValue:				1
 				min:						1
@@ -353,7 +354,7 @@ Form
 
 			IntegerField
 			{
-				enabled:					!factorialTypeSplit.checked & numberOfLevels.value == 2
+				enabled:					!factorialTypeSplit.checked & !generalFullFactorial.checked
 				name:						"centerpoints"
 				label:						qsTr("Centre points per block")
 				defaultValue:				0
