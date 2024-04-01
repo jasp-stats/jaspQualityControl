@@ -251,7 +251,7 @@ Form
 				name:								"order"
 				defaultValue:						2
 				min:								1
-				max:								(fixedFactorsFactorial.count + continuousFactorsFactorial.count) > 0 ? (fixedFactorsFactorial.count + continuousFactorsFactorial.count) : 999
+				max:								(fixedFactorsFactorial.count + continuousFactorsFactorial.count) > 1 ? (fixedFactorsFactorial.count + continuousFactorsFactorial.count) : 999
 				label:								  qsTr("Highest order interaction term")
 			}
 		}
