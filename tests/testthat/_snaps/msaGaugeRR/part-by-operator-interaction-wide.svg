@@ -18,7 +18,7 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-<rect x='0.00' y='0.00' width='720.00' height='576.00' style='stroke-width: 10.67; stroke: none;' />
+<rect x='-0.000000000000064' y='0.00' width='720.00' height='576.00' style='stroke-width: 10.67; stroke: none;' />
 </g>
 <defs>
   <clipPath id='cpNjQuNTZ8NjMwLjk5fDIwLjcxfDUxMC4xNA=='>
@@ -105,21 +105,21 @@
 <text x='597.67' y='537.32' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='18.91px' lengthAdjust='spacingAndGlyphs'>10</text>
 <text x='347.77' y='567.49' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='31.18px' lengthAdjust='spacingAndGlyphs'>Part</text>
 <text transform='translate(16.68,265.42) rotate(-90)' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='63.33px' lengthAdjust='spacingAndGlyphs'>Average</text>
-<rect x='641.95' y='20.71' width='78.05' height='119.70' style='stroke-width: 0.75; stroke: none;' />
-<rect x='641.95' y='20.71' width='78.05' height='119.70' style='stroke-width: 10.67; stroke: none;' />
+<rect x='641.95' y='20.71' width='78.05' height='116.71' style='stroke-width: 0.75; stroke: none;' />
+<rect x='641.95' y='20.71' width='78.05' height='116.71' style='stroke-width: 10.67; stroke: none;' />
 <text x='680.97' y='39.65' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='67.10px' lengthAdjust='spacingAndGlyphs'>Operator</text>
-<rect x='647.42' y='49.88' width='28.35' height='28.35' style='stroke-width: 10.67; stroke: none;' />
-<line x1='650.26' y1='64.06' x2='672.94' y2='64.06' style='stroke-width: 2.13; stroke: #F8766D; stroke-linecap: butt;' />
-<circle cx='661.60' cy='64.06' r='3.56' style='stroke-width: 0.71; stroke: #F8766D; fill: #BEBEBE;' />
-<rect x='647.42' y='78.23' width='28.35' height='28.35' style='stroke-width: 10.67; stroke: none;' />
-<line x1='650.26' y1='92.40' x2='672.94' y2='92.40' style='stroke-width: 2.13; stroke: #00BA38; stroke-linecap: butt;' />
-<circle cx='661.60' cy='92.40' r='3.56' style='stroke-width: 0.71; stroke: #00BA38; fill: #BEBEBE;' />
-<rect x='647.42' y='106.58' width='28.35' height='28.35' style='stroke-width: 10.67; stroke: none;' />
-<line x1='650.26' y1='120.75' x2='672.94' y2='120.75' style='stroke-width: 2.13; stroke: #619CFF; stroke-linecap: butt;' />
-<circle cx='661.60' cy='120.75' r='3.56' style='stroke-width: 0.71; stroke: #619CFF; fill: #BEBEBE;' />
-<text x='684.24' y='69.91' style='font-size: 17.00px; font-family: sans;' textLength='11.34px' lengthAdjust='spacingAndGlyphs'>A</text>
-<text x='684.24' y='98.25' style='font-size: 17.00px; font-family: sans;' textLength='11.34px' lengthAdjust='spacingAndGlyphs'>B</text>
-<text x='684.24' y='126.60' style='font-size: 17.00px; font-family: sans;' textLength='12.28px' lengthAdjust='spacingAndGlyphs'>C</text>
+<rect x='657.92' y='46.90' width='28.35' height='28.35' style='stroke-width: 10.67; stroke: none;' />
+<line x1='660.75' y1='61.07' x2='683.43' y2='61.07' style='stroke-width: 2.13; stroke: #F8766D; stroke-linecap: butt;' />
+<circle cx='672.09' cy='61.07' r='3.56' style='stroke-width: 0.71; stroke: #F8766D; fill: #BEBEBE;' />
+<rect x='657.92' y='75.24' width='28.35' height='28.35' style='stroke-width: 10.67; stroke: none;' />
+<line x1='660.75' y1='89.42' x2='683.43' y2='89.42' style='stroke-width: 2.13; stroke: #00BA38; stroke-linecap: butt;' />
+<circle cx='672.09' cy='89.42' r='3.56' style='stroke-width: 0.71; stroke: #00BA38; fill: #BEBEBE;' />
+<rect x='657.92' y='103.59' width='28.35' height='28.35' style='stroke-width: 10.67; stroke: none;' />
+<line x1='660.75' y1='117.76' x2='683.43' y2='117.76' style='stroke-width: 2.13; stroke: #619CFF; stroke-linecap: butt;' />
+<circle cx='672.09' cy='117.76' r='3.56' style='stroke-width: 0.71; stroke: #619CFF; fill: #BEBEBE;' />
+<text x='691.75' y='66.92' style='font-size: 17.00px; font-family: sans;' textLength='11.34px' lengthAdjust='spacingAndGlyphs'>A</text>
+<text x='691.75' y='95.26' style='font-size: 17.00px; font-family: sans;' textLength='11.34px' lengthAdjust='spacingAndGlyphs'>B</text>
+<text x='691.75' y='123.61' style='font-size: 17.00px; font-family: sans;' textLength='12.28px' lengthAdjust='spacingAndGlyphs'>C</text>
 <text x='347.77' y='11.70' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='250.39px' lengthAdjust='spacingAndGlyphs'>part-by-operator-interaction-Wide</text>
 </g>
 </svg>
