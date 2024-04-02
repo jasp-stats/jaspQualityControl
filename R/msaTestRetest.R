@@ -162,8 +162,8 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     table$addColumnInfo(name = "PSD", title = gettext("Process Std. Dev."), type = "number")
     table$addColumnInfo(name = "tolerance", title = gettext("Tolerance"), type = "number")
     table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
-    table$addColumnInfo(name = "GRRpercent.PSD", title = gettext("%GRR of Process Std. Dev."), type = "number")
-    table$addColumnInfo(name = "GRRpercent.Tol", title = gettext("%GRR of Tolerance"), type = "number")
+    table$addColumnInfo(name = "GRRpercent.PSD", title = gettextf("%%GRR of Process Std. Dev."), type = "number")
+    table$addColumnInfo(name = "GRRpercent.Tol", title = gettextf("%%GRR of Tolerance"), type = "number")
 
     rows <- list()
     rows[["n"]] = n
