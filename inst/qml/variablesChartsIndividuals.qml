@@ -277,7 +277,7 @@ Form
 			label: 								qsTr("Number of std. dev. for calculation of control limits")
 			fieldWidth: 						30
 			defaultValue: 						3
-			min:								.000001
+			min:								1
 		}
 	}
 }
