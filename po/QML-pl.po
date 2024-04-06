@@ -91,10 +91,6 @@ msgid "Defectives/Defects"
 msgstr ""
 
 msgctxt "attributesCharts|"
-msgid "Time stamp (optional)"
-msgstr ""
-
-msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
 msgstr ""
 
@@ -143,20 +139,8 @@ msgid "Name"
 msgstr "Nazwa"
 
 msgctxt "attributesCharts|"
-msgid "Operator"
-msgstr ""
-
-msgctxt "attributesCharts|"
 msgid "ID"
 msgstr "LP"
-
-msgctxt "attributesCharts|"
-msgid "Misc"
-msgstr ""
-
-msgctxt "attributesCharts|"
-msgid "Miscellaneous"
-msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Appraiser"
@@ -932,14 +916,6 @@ msgid "Date"
 msgstr "Data"
 
 msgctxt "msaGaugeRR|"
-msgid "Reported by"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Miscellaneous"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
 msgid "Select Report Components"
 msgstr ""
 
@@ -1085,10 +1061,6 @@ msgid "Title"
 msgstr "Tytuł"
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Measurement"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge name"
 msgstr ""
 
@@ -1099,14 +1071,6 @@ msgstr "Nazwa"
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
 msgstr "Data"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Reported by"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Miscellaneous"
-msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Select Report Components"
@@ -1411,14 +1375,6 @@ msgid "Measurements"
 msgstr "Pomiary"
 
 msgctxt "processCapabilityStudies|"
-msgid "Specifiy subgroup size manually:"
-msgstr "Ustal liczebność podgrup ręcznie:"
-
-msgctxt "processCapabilityStudies|"
-msgid "Process Capability Options"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Type of data distribution"
 msgstr "Typ rozkładu"
 
@@ -1451,19 +1407,11 @@ msgid "3-parameter Weibull"
 msgstr "3-parametrowy Weibulla"
 
 msgctxt "processCapabilityStudies|"
-msgid "Non-normal capability statistics:"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Percentile"
 msgstr "Percentyle"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-conformance"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Capability studies"
 msgstr ""
 
 msgctxt "processCapabilityStudies|"
@@ -1497,14 +1445,6 @@ msgstr "Przedział ufności"
 msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
 msgstr "Stabilność procesu"
-
-msgctxt "processCapabilityStudies|"
-msgid "X-bar & R chart"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "X-mR chart"
-msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Moving range length"
@@ -1555,14 +1495,6 @@ msgid "Date"
 msgstr "Data"
 
 msgctxt "processCapabilityStudies|"
-msgid "Miscellaneous"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Select Report Components"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Show stability of process charts"
 msgstr ""
 
@@ -1577,10 +1509,6 @@ msgstr ""
 msgctxt "processCapabilityStudies|"
 msgid "Show process capability tables"
 msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Advanced Options"
-msgstr "Opcje zaawansowane"
 
 msgctxt "processCapabilityStudies|"
 msgid "Rank method for probability plot"
@@ -1601,14 +1529,6 @@ msgstr "Kaplan-Meier"
 msgctxt "processCapabilityStudies|"
 msgid "Modified Kaplan-Meier (Hazen)"
 msgstr "Zmodyfikowany Kaplan-Meier (Hazen)"
-
-msgctxt "processCapabilityStudies|"
-msgid "Number of ticks on x-axis for X-bar & R or X-mR chart:"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Number of ticks on x-axis for probability plot:"
-msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Null distribution for probability plot"
@@ -1662,10 +1582,6 @@ msgid "g chart"
 msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
-msgid "Axis labels"
-msgstr "Etykiety osi"
-
-msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
 msgstr ""
 
@@ -1709,18 +1625,6 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Date"
 msgstr "Data"
 
-msgctxt "variablesChartsIndividuals|"
-msgid "Reported by"
-msgstr ""
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Misc"
-msgstr ""
-
-msgctxt "variablesChartsIndividuals|"
-msgid "Miscellaneous"
-msgstr ""
-
 msgctxt "variablesChartsSubgroups|"
 msgid "Data format"
 msgstr "Format danych"
@@ -1741,10 +1645,6 @@ msgstr "Pomiary"
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroups"
 msgstr "Podgrupy"
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Control Charts"
-msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & R"
@@ -1791,28 +1691,8 @@ msgid "Date"
 msgstr "Data"
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Reported by"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Misc"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Miscellaneous"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Sub-title:"
-msgstr "Podtytuł:"
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Sub-title"
 msgstr "Podtytuł"
-
-msgctxt "variablesChartsSubgroups|"
-msgid "Chart name:"
-msgstr "Nazwa wykresu:"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name of the chart"
@@ -2084,10 +1964,6 @@ msgid "Rotating angle (horizontal plane)"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Axis labels"
-msgstr "Etykiety osi"
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Specify subgroups"
 msgstr "Ustal podgrupy"
 
@@ -2151,16 +2027,8 @@ msgctxt "msaGaugeRR|"
 msgid "Show Report"
 msgstr "Pokaż raport"
 
-msgctxt "msaGaugeRR|"
-msgid "Misc."
-msgstr ""
-
 msgctxt "msaGaugeRRnonrep|"
 msgid "r&R table ANOVA method"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Misc."
 msgstr ""
 
 msgctxt "msaTestRetest|"
@@ -2198,15 +2066,7 @@ msgid "Title"
 msgstr "Tytuł"
 
 msgctxt "processCapabilityStudies|"
-msgid "Process Name"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
 msgid "Reported by"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "Misc"
 msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
@@ -2215,14 +2075,6 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroup size"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "X-bar & s chart"
-msgstr ""
-
-msgctxt "processCapabilityStudies|"
-msgid "X-bar & mR chart"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
@@ -2246,6 +2098,377 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Advanced Options"
 msgstr "Opcje zaawansowane"
 
+msgctxt "attributesCharts|"
+msgid "Timestamp (optional)"
+msgstr ""
+
+#, fuzzy
+msgctxt "attributesCharts|"
+msgid "Show report metadata"
+msgstr "Pokaż metadane raportu"
+
+msgctxt "attributesCharts|"
+msgid "Report for Attribute Control Charts"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Performed by"
+msgstr ""
+
+msgctxt "attributesCharts|"
+msgid "Analyst"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Gauge r&R Report"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Part name"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Characteristic"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Gauge number"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Number"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRR|"
+msgid "Tolerance"
+msgstr "Tolerancja"
+
+msgctxt "msaGaugeRR|"
+msgid "Location"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Performed by"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Analyst"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Part name"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Characteristic"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Gauge number"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Number"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Location"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Performed by"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Analyst"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Stages"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Timestamp (optional)"
+msgstr ""
+
+#, fuzzy
+msgctxt "processCapabilityStudies|"
+msgid "Specify subgroups"
+msgstr "Ustal podgrupy"
+
+msgctxt "processCapabilityStudies|"
+msgid "Subgroup size"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Through grouping variable"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Subgroup value change"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Same subgroup value"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Unequal subgroup sizes"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Use actual sizes"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Use fixed subgroup size"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Process capability options"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Non-normal capability statistics"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Capability study"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Boundary"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Overlay distribution"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Display specification limits"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "X-bar & R control chart"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "X-bar & s control chart"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "X-mR control chart"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "X-bar & mR control chart"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Process capability report"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Location"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Line"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Machine"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Variable"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Process"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Conclusion"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Select report components"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Advanced options"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Histogram bin boundaries"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Left open"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Right open"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Method for estimating within subgroup std. dev. for subgroup size"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid " > 1"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "= 1"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "R-bar"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "S-bar"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Mean moving range"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Use unbiasing constant"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Number of std. dev. for calculation of control limits"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Timestamp (optional)"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Variable Charts for Subgroups Report"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Chart name"
+msgstr ""
+
+#, fuzzy
+msgctxt "variablesChartsIndividuals|"
+msgid "Name of the chart"
+msgstr "Nazwa wykresu"
+
+#, fuzzy
+msgctxt "variablesChartsIndividuals|"
+msgid "Sub-title"
+msgstr "Podtytuł"
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Measurement name"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Footnote"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Comment"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Location"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Performed by"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Analyst"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Date printed"
+msgstr ""
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Today"
+msgstr ""
+
+#, fuzzy
+msgctxt "variablesChartsIndividuals|"
+msgid "Advanced Options"
+msgstr "Opcje zaawansowane"
+
+msgctxt "variablesChartsIndividuals|"
+msgid "Number of std. dev. for calculation of control limits"
+msgstr ""
+
 msgctxt "variablesChartsSubgroups|"
-msgid "Use unbiasing constant for X-bar & s chart"
+msgid "Timestamp (optional)"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Subgroup value change"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Same subgroup value"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Control charts"
+msgstr ""
+
+#, fuzzy
+msgctxt "variablesChartsSubgroups|"
+msgid "Show report metadata"
+msgstr "Pokaż metadane raportu"
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Chart name"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Measurement name"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Footnote"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Comment"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Location"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Performed by"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Analyst"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Date printed"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Today"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Use unbiasing constant for X-bar & s contorl chart"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Number of std. dev. for calculation of control limits"
 msgstr ""

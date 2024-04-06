@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2023-11-25 03:40\n"
+"POT-Creation-Date: 2024-04-06 03:40\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -76,6 +76,33 @@ msgstr "单值移动极差控制图"
 msgid "Report for Attribute Control Charts"
 msgstr "属性控制图报告"
 
+#, fuzzy
+msgid "Measurement name: %s"
+msgstr "测量系统: %s"
+
+msgid "Performed by: %s"
+msgstr "执行者 : %s"
+
+#, fuzzy
+msgid "ID: %s"
+msgstr "日期：%s"
+
+msgid "Appraiser: %s"
+msgstr "评估者: %s"
+
+msgid "Measurement system: %s"
+msgstr "测量系统: %s"
+
+#, fuzzy
+msgid "Subgroup size: %s"
+msgstr "子组"
+
+msgid "Time: %s"
+msgstr "时间: %s"
+
+msgid "Frequency: %s"
+msgstr "频度: %s"
+
 msgid "Proportion"
 msgstr "比率"
 
@@ -90,36 +117,6 @@ msgstr "D"
 
 msgid "Moving Range"
 msgstr "移动极差"
-
-msgid "Report"
-msgstr "报告"
-
-msgid "Control Charts for Attributes Report"
-msgstr "属性(Attributes)报告的控制图"
-
-msgid "Service name: %s"
-msgstr "服务名称: %s"
-
-msgid "Operator: %s"
-msgstr "操作者: %s"
-
-msgid "Identification: %s"
-msgstr "标识：%s"
-
-msgid "Appraiser: %s"
-msgstr "评估者: %s"
-
-msgid "Measurement system: %s"
-msgstr "测量系统: %s"
-
-msgid "Name of Size: %s"
-msgstr "子组名称：%s"
-
-msgid "Time: %s"
-msgstr "时间: %s"
-
-msgid "Frequency: %s"
-msgstr "频度: %s"
 
 msgid "Test results for %s chart"
 msgstr "%s 图检验结果"
@@ -148,6 +145,29 @@ msgstr ""
 #, fuzzy
 msgid "Test results for %1$s chart"
 msgstr "%s 图检验结果"
+
+msgid "Point"
+msgstr ""
+
+#, fuzzy
+msgid "Tests"
+msgstr "偏倚的 t 检验"
+
+#, fuzzy
+msgid "No test violations occurred."
+msgstr "数字表示发生违反检验准则的数据点。"
+
+#, fuzzy
+msgid "LSL = %g"
+msgstr "LCL = %g"
+
+#, fuzzy
+msgid "Tar. = %g"
+msgstr "CL = %g"
+
+#, fuzzy
+msgid "USL = %g"
+msgstr "UCL = %g"
 
 msgid "The analysis crashed with the following error message: %1$s"
 msgstr "检测图失效，错误信息如下: %1$s"
@@ -725,6 +745,36 @@ msgid ""
 "operator's part is measured %d times."
 msgstr "选择的测量值是“单列”格式，而每个操作者的零件都被测量%d次。"
 
+msgid "Gauge r&R Report"
+msgstr "量具 r&R 报告"
+
+msgid "No report components selected."
+msgstr ""
+
+#, fuzzy
+msgid "Part name: %s"
+msgstr "过程名称：%s"
+
+msgid "Gauge name: %s"
+msgstr "量具名称 : %s"
+
+msgid "Characteristic: %s"
+msgstr ""
+
+#, fuzzy
+msgid "Gauge number: %s"
+msgstr "量具名称 : %s"
+
+msgid "Tolerance: %s"
+msgstr "公差 : %s"
+
+#, fuzzy
+msgid "Location: %s"
+msgstr "位置 (%1$s)"
+
+msgid "Date: %s"
+msgstr "日期：%s"
+
 msgid "Gauge r&R ANOVA Table"
 msgstr "量具 r&R 方差分析表"
 
@@ -873,29 +923,12 @@ msgstr "重复性"
 msgid "Reprod"
 msgstr "再现性"
 
-msgid "Measurement systems analysis"
-msgstr "测量系统分析"
-
-msgid "Gauge name: %s"
-msgstr "量具名称 : %s"
-
-msgid "Date of study: %s"
-msgstr "研究日期 : %s"
-
-msgid "Performed by: %s"
-msgstr "执行者 : %s"
-
-msgid "Misc: %s"
-msgstr "其它 : %s"
-
-msgid "Tolerance: %s"
-msgstr "公差 : %s"
-
-msgid "No report components selected."
-msgstr ""
-
 msgid "%.2f"
 msgstr "%.2f"
+
+#, fuzzy
+msgid "Gauge r&R (Non-Replicable) Report"
+msgstr "量具 r&R 报告"
 
 msgid "Gauge r&R Tables"
 msgstr "量具 r&R表"
@@ -939,12 +972,6 @@ msgstr "测量值按零件 x 操作者"
 msgid "Operator %s"
 msgstr "操作者 %s"
 
-msgid "Gauge r&R Report"
-msgstr "量具 r&R 报告"
-
-msgid "Reported by: %s"
-msgstr "报告人 : %s"
-
 msgid "Scatterplot Operators vs Parts"
 msgstr "操作者 vs. 零件散点图"
 
@@ -978,10 +1005,12 @@ msgstr "公差"
 msgid "GRR"
 msgstr "GRR"
 
-msgid "%GRR of Process Std. Dev."
+#, fuzzy
+msgid "%%GRR of Process Std. Dev."
 msgstr "%GRR 过程标准差"
 
-msgid "%GRR of Tolerance"
+#, fuzzy
+msgid "%%GRR of Tolerance"
 msgstr "%GRR 公差"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
@@ -1123,14 +1152,19 @@ msgstr "<b><em>警告.</em></b>"
 msgid "Probability of detecting %s"
 msgstr "检测的概率 %s"
 
-msgid "Capability of the process"
-msgstr "过程的能力"
+msgid ""
+"One or more subgroups are assigned to more than one stage, only first stage "
+"is considered.<br>"
+msgstr ""
 
-msgid "Could not equally divide %1$i data points into groups of size %2$i."
-msgstr "无法将 %i 数据点平均分成大小为 %i 的组。"
+msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
+msgstr ""
 
-msgid "Values must be positive to fit a Weibull/Lognormal distribution."
-msgstr "值必须为正以拟合 Weibull/对数正态分布。"
+msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
+msgstr ""
+
+msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
+msgstr ""
 
 msgid ""
 "All zero values have been replaced with a value equal to one-half of the "
@@ -1138,7 +1172,36 @@ msgid ""
 msgstr "所有零值都已替换为等于最小数据点的二分之一的值。"
 
 #, fuzzy
-msgid "X-bar & %s Control Chart"
+msgid "Process Capability Report"
+msgstr "过程能力"
+
+msgid "No specification limits set."
+msgstr "未设定规格限。"
+
+#, fuzzy
+msgid "Line: %s"
+msgstr "时间: %s"
+
+#, fuzzy
+msgid "Machine: %s"
+msgstr "时间: %s"
+
+#, fuzzy
+msgid "Variable: %s"
+msgstr "变量"
+
+#, fuzzy
+msgid "Process: %s"
+msgstr "过程名称：%s"
+
+msgid "Reported by: %s"
+msgstr "报告人 : %s"
+
+msgid "Conclusion: %s"
+msgstr ""
+
+#, fuzzy
+msgid "X-bar & %s control chart"
 msgstr "均值和标准差控制图"
 
 msgid ""
@@ -1146,30 +1209,51 @@ msgid ""
 "instead."
 msgstr ""
 
-msgid "Subgroup size is 1, calculation of control charts not possible."
+msgid ""
+"Subgroup size is 1, calculation of selected control chart not possible. Use "
+"x-mR chart."
+msgstr ""
+
+msgid "X-mR control chart"
+msgstr "单值-移动极差控制图"
+
+#, fuzzy
+msgid "Capability study"
+msgstr "能力研究"
+
+#, fuzzy
+msgid "Process capability study"
+msgstr "过程能力"
+
+msgid ""
+"Lower specification limit must be smaller than upper specification limit."
 msgstr ""
 
 #, fuzzy
-msgid "X-mR Control Chart"
-msgstr "单值-移动极差控制图"
-
-msgid "Capability Studies"
-msgstr "能力研究"
-
-msgid "Error: LSL > USL."
-msgstr "错误 : LSL > USL."
-
-msgid "Error: Target outside of specification limits."
+msgid "Target outside of specification limits."
 msgstr "错误：目标超出规格限。"
 
-msgid "Process Capability"
+msgid ""
+"Dataset contains negative numbers. Not compatible with the selected "
+"distribution."
+msgstr "数据集包含负数。与所选分布不兼容。"
+
+#, fuzzy
+msgid "Process capability"
 msgstr "过程能力"
 
-msgid "Process Capability (Non-normal Capability Analysis)"
+#, fuzzy
+msgid "Process capability (non-normal capability analysis)"
 msgstr "过程能力（非正态能力分析）"
 
 msgid "Process summary"
 msgstr "过程汇总"
+
+msgid "Stage"
+msgstr ""
+
+msgid "LB"
+msgstr ""
 
 msgid "LSL"
 msgstr "LSL"
@@ -1177,20 +1261,52 @@ msgstr "LSL"
 msgid "Target"
 msgstr "目标"
 
+msgid "UB"
+msgstr ""
+
 msgid "USL"
 msgstr "USL"
 
 msgid "Sample size"
 msgstr "样本量"
 
-msgid "Std. deviation (total)"
+#, fuzzy
+msgid "Std. dev. (total)"
 msgstr "标准差（整体）"
 
-msgid "Std. deviation (within)"
+#, fuzzy
+msgid "Std. dev. (within)"
 msgstr "标准差（组内）"
+
+msgid ""
+"Columns titled 'Change' concern changes of the respective stage in "
+"comparison to baseline (BL)."
+msgstr ""
 
 msgid "The within standard deviation could not be calculated."
 msgstr "组内标准差无法计算。"
+
+msgid "Change (%s vs. BL)"
+msgstr ""
+
+msgid "%s (BL)"
+msgstr ""
+
+msgid "Capability of the process"
+msgstr "过程的能力"
+
+#, fuzzy
+msgid "No valid measurements detected."
+msgstr "%s 中无有效测量值。"
+
+#, fuzzy
+msgid ""
+"Need at least 2 measurements to fit distribution. %1$i measurement(s) "
+"detected."
+msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
+
+msgid "At least one of the stages contains no valid measurements."
+msgstr ""
 
 msgid "Density"
 msgstr "密度"
@@ -1198,8 +1314,26 @@ msgstr "密度"
 msgid "Measurement"
 msgstr "测量"
 
-msgid "No specification limits set."
-msgstr "未设定规格限。"
+msgid ""
+"Normal dist.\n"
+"(std. dev. total)"
+msgstr ""
+
+msgid ""
+"Normal dist.\n"
+"(std. dev. within)"
+msgstr ""
+
+msgid "Weibull dist."
+msgstr ""
+
+msgid ""
+"3-parameter\n"
+"lognormal dist."
+msgstr ""
+
+msgid "3-parameter Weibull dist."
+msgstr ""
 
 msgid "Process capability (within)"
 msgstr "过程能力（组内）"
@@ -1221,6 +1355,11 @@ msgstr "Cpk"
 
 msgid "%s CI for Cpk"
 msgstr "Cpk 的 %s 置信区间"
+
+msgid ""
+"Statistics displayed as * were not calculated because the relevant "
+"specification limit is not set or set as boundary."
+msgstr ""
 
 msgid "Process performance (total)"
 msgstr "过程性能（整体）"
@@ -1253,11 +1392,15 @@ msgid "Non-conformance statistics"
 msgstr "不合格品统计"
 
 msgid ""
-"Dataset contains negative numbers. Not compatible with the selected "
-"distribution."
-msgstr "数据集包含负数。与所选分布不兼容。"
+"Rows titled 'Change' concern changes of the respective stage in comparison "
+"to baseline (BL)."
+msgstr ""
 
-msgid "Std. deviation"
+msgid "%s vs. BL"
+msgstr ""
+
+#, fuzzy
+msgid "Std. dev."
 msgstr "标准差"
 
 msgid "Log mean (%1$s)"
@@ -1269,23 +1412,27 @@ msgstr "对数标准差 (%1$s)"
 msgid "Shape (%1$s)"
 msgstr "形状 (%1$s)"
 
-msgid "Scale (<i>k</i>)"
-msgstr "尺度 (<i>k</i>)"
+msgid "Scale (%1$s)"
+msgstr "尺度 (%1$s)"
 
 msgid "Threshold"
 msgstr "阈值"
 
-msgid "Observed"
-msgstr "观测值"
-
-msgid "Expected overall"
-msgstr "期望总体"
-
 msgid "Calculations based on %s distribution."
 msgstr "基于%s 分布的计算。"
 
-msgid "Probability Table and Plot"
+#, fuzzy
+msgid "Probability table and plot"
 msgstr "概率表和概率图"
+
+#, fuzzy
+msgid "Probability plot"
+msgstr "概率表和概率图"
+
+msgid ""
+"Need at least 2 measurements to calculate probability table/plot. %1$i "
+"measurement(s) detected."
+msgstr ""
 
 msgid "Summary of test against the %1$s distribution"
 msgstr "针对 %1$s 分布的检验汇总"
@@ -1296,14 +1443,16 @@ msgstr "N"
 msgid "Mean (%1$s)"
 msgstr "均值 (%1$s)"
 
-msgid "Std. deviation (%1$s)"
+#, fuzzy
+msgid "Std. dev. (%1$s)"
 msgstr "标准差 (%1$s)"
 
 msgid "AD"
 msgstr "AD"
 
+#, fuzzy
 msgid ""
-"The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s "
+"The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s "
 "distribution."
 msgstr "Anderson-Darling 统计量 A<i>D</i> 是根据 %2$s 分布计算的。"
 
@@ -1312,11 +1461,34 @@ msgid ""
 "interval."
 msgstr "下面概率图中的红色虚线表示 95%% 的置信区间。"
 
+#, fuzzy
+msgid "Probability plot against %1$s distribution"
+msgstr "针对 %1$s 分布的检验汇总"
+
+msgid ""
+"Fitting distribution failed. Values might be too extreme. Try a different "
+"distribution."
+msgstr ""
+
 msgid "Histogram"
 msgstr "直方图"
 
-msgid "Process name: %s"
-msgstr "过程名称：%s"
+#, fuzzy
+msgid ""
+"Dataset contains negative numbers. Could not overlay the selected "
+"distribution."
+msgstr "数据集包含负数。与所选分布不兼容。"
+
+msgid "Normal dist."
+msgstr ""
+
+msgid "Lognormal dist."
+msgstr ""
+
+msgid ""
+"Parameter estimation failed. Values might be too extreme. Try a different "
+"distribution."
+msgstr ""
 
 msgid ""
 "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
@@ -1325,26 +1497,39 @@ msgstr ""
 msgid "Variables Charts for Individuals"
 msgstr "单值图"
 
-msgid "X-mR control chart"
-msgstr "单值-移动极差控制图"
-
 msgid ""
 "Moving range length is larger than the number of observations\n"
 "                                                           in one of the "
 "stages."
 msgstr ""
 
-msgid "Please insert more measurements and check the X-mR chart."
-msgstr "请插入更多测量值并检查单值-移动极差控制图。"
+#, fuzzy
+msgid "Variables Chart for Individuals Report"
+msgstr "单值图"
 
 #, fuzzy
-msgid "Autocorrelation plot"
-msgstr "自相关"
+msgid "Chart name: %s"
+msgstr "量具名称 : %s"
+
+msgid "Sub-title: %s"
+msgstr "副标题：%s"
+
+#, fuzzy
+msgid "Footnote: %s"
+msgstr "日期：%s"
+
+#, fuzzy
+msgid "Print date: %s"
+msgstr "日期：%s"
 
 msgid ""
 "Autocorrelation plot requires uninterrupted series of values. Missing values "
 "detected in %s."
 msgstr ""
+
+#, fuzzy
+msgid "Autocorrelation plot"
+msgstr "自相关"
 
 msgid "Autocorrelation"
 msgstr "自相关"
@@ -1353,33 +1538,12 @@ msgid "Lag"
 msgstr "滞后"
 
 #, fuzzy
-msgid "Individual charts report"
-msgstr "单值控制图"
-
-msgid "Name: %s"
-msgstr "名称：%s"
-
-#, fuzzy
 msgid "Control charts"
 msgstr "控制图"
 
 msgid ""
-"One or more subgroups are assigned to more than one stage, only first stage "
-"is considered.<br>"
-msgstr ""
-
-msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
-
-msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
-msgstr ""
-
-msgid ""
 "All subgroups are of size 1. Variables charts for subgroups cannot be "
 "calculated. Use variables charts for individuals."
-msgstr ""
-
-msgid "Subgroup size is >5, results may be biased. S-chart is recommended."
 msgstr ""
 
 #, fuzzy
@@ -1387,21 +1551,82 @@ msgid "X-bar & %1$s control chart"
 msgstr "均值和标准差控制图"
 
 #, fuzzy
-msgid "Report for X-bar & R control chart"
-msgstr "均值和极差控制图"
+msgid "Variables Chart for Subgroups Report"
+msgstr "单值图"
+
+#~ msgid "Report"
+#~ msgstr "报告"
+
+#~ msgid "Control Charts for Attributes Report"
+#~ msgstr "属性(Attributes)报告的控制图"
+
+#~ msgid "Service name: %s"
+#~ msgstr "服务名称: %s"
+
+#~ msgid "Operator: %s"
+#~ msgstr "操作者: %s"
+
+#~ msgid "Identification: %s"
+#~ msgstr "标识：%s"
+
+#~ msgid "Name of Size: %s"
+#~ msgstr "子组名称：%s"
+
+#~ msgid "Measurement systems analysis"
+#~ msgstr "测量系统分析"
+
+#~ msgid "Date of study: %s"
+#~ msgstr "研究日期 : %s"
+
+#~ msgid "Misc: %s"
+#~ msgstr "其它 : %s"
+
+#~ msgid "Could not equally divide %1$i data points into groups of size %2$i."
+#~ msgstr "无法将 %i 数据点平均分成大小为 %i 的组。"
+
+#~ msgid "Values must be positive to fit a Weibull/Lognormal distribution."
+#~ msgstr "值必须为正以拟合 Weibull/对数正态分布。"
 
 #, fuzzy
-msgid "Report for X-bar & s control chart"
-msgstr "均值和标准差控制图"
+#~ msgid "X-bar & %s Control Chart"
+#~ msgstr "均值和标准差控制图"
 
-msgid "Date: %s"
-msgstr "日期：%s"
+#, fuzzy
+#~ msgid "X-mR Control Chart"
+#~ msgstr "单值-移动极差控制图"
 
-msgid "Sub-title: %s"
-msgstr "副标题：%s"
+#~ msgid "Error: LSL > USL."
+#~ msgstr "错误 : LSL > USL."
 
-msgid "Name of chart: %s"
-msgstr "图形名称：%s"
+#~ msgid "Scale (<i>k</i>)"
+#~ msgstr "尺度 (<i>k</i>)"
+
+#~ msgid "Observed"
+#~ msgstr "观测值"
+
+#~ msgid "Expected overall"
+#~ msgstr "期望总体"
+
+#~ msgid "Please insert more measurements and check the X-mR chart."
+#~ msgstr "请插入更多测量值并检查单值-移动极差控制图。"
+
+#, fuzzy
+#~ msgid "Individual charts report"
+#~ msgstr "单值控制图"
+
+#~ msgid "Name: %s"
+#~ msgstr "名称：%s"
+
+#, fuzzy
+#~ msgid "Report for X-bar & R control chart"
+#~ msgstr "均值和极差控制图"
+
+#, fuzzy
+#~ msgid "Report for X-bar & s control chart"
+#~ msgstr "均值和标准差控制图"
+
+#~ msgid "Name of chart: %s"
+#~ msgstr "图形名称：%s"
 
 #~ msgid "Control Chart"
 #~ msgstr "控制图"
@@ -1416,9 +1641,6 @@ msgstr "图形名称：%s"
 #, fuzzy
 #~ msgid "Sample range"
 #~ msgstr "样本量"
-
-#~ msgid "Numbers are data points where test violations occur."
-#~ msgstr "数字表示发生违反检验准则的数据点。"
 
 #, fuzzy
 #~ msgid "Test results for individuals chart"
@@ -1578,12 +1800,6 @@ msgstr "图形名称：%s"
 
 #~ msgid "Residual Plots for %s"
 #~ msgstr "%s 残差图"
-
-#~ msgid "Scale (%1$s)"
-#~ msgstr "尺度 (%1$s)"
-
-#~ msgid "Location (%1$s)"
-#~ msgstr "位置 (%1$s)"
 
 #~ msgid "DF1"
 #~ msgstr "DF1"

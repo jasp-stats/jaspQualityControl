@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.18.3\n"
-"POT-Creation-Date: 2024-01-13 03:39\n"
+"Project-Id-Version: jaspQualityControl 0.19.0\n"
+"POT-Creation-Date: 2024-04-06 03:40\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,6 +73,30 @@ msgstr ""
 msgid "Report for Attribute Control Charts"
 msgstr ""
 
+msgid "Measurement name: %s"
+msgstr ""
+
+msgid "Performed by: %s"
+msgstr ""
+
+msgid "ID: %s"
+msgstr ""
+
+msgid "Appraiser: %s"
+msgstr ""
+
+msgid "Measurement system: %s"
+msgstr ""
+
+msgid "Subgroup size: %s"
+msgstr ""
+
+msgid "Time: %s"
+msgstr ""
+
+msgid "Frequency: %s"
+msgstr ""
+
 msgid "Proportion"
 msgstr ""
 
@@ -86,36 +110,6 @@ msgid "D"
 msgstr ""
 
 msgid "Moving Range"
-msgstr ""
-
-msgid "Report"
-msgstr ""
-
-msgid "Control Charts for Attributes Report"
-msgstr ""
-
-msgid "Service name: %s"
-msgstr ""
-
-msgid "Operator: %s"
-msgstr ""
-
-msgid "Identification: %s"
-msgstr ""
-
-msgid "Appraiser: %s"
-msgstr ""
-
-msgid "Measurement system: %s"
-msgstr ""
-
-msgid "Name of Size: %s"
-msgstr ""
-
-msgid "Time: %s"
-msgstr ""
-
-msgid "Frequency: %s"
 msgstr ""
 
 msgid "Test results for %s chart"
@@ -143,6 +137,24 @@ msgid "Points where a test failed."
 msgstr ""
 
 msgid "Test results for %1$s chart"
+msgstr ""
+
+msgid "Point"
+msgstr ""
+
+msgid "Tests"
+msgstr ""
+
+msgid "No test violations occurred."
+msgstr ""
+
+msgid "LSL = %g"
+msgstr ""
+
+msgid "Tar. = %g"
+msgstr ""
+
+msgid "USL = %g"
 msgstr ""
 
 msgid "The analysis crashed with the following error message: %1$s"
@@ -670,6 +682,33 @@ msgstr ""
 msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
 msgstr ""
 
+msgid "Gauge r&R Report"
+msgstr ""
+
+msgid "No report components selected."
+msgstr ""
+
+msgid "Part name: %s"
+msgstr ""
+
+msgid "Gauge name: %s"
+msgstr ""
+
+msgid "Characteristic: %s"
+msgstr ""
+
+msgid "Gauge number: %s"
+msgstr ""
+
+msgid "Tolerance: %s"
+msgstr ""
+
+msgid "Location: %s"
+msgstr ""
+
+msgid "Date: %s"
+msgstr ""
+
 msgid "Gauge r&R ANOVA Table"
 msgstr ""
 
@@ -811,28 +850,10 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
-msgid "Measurement systems analysis"
-msgstr ""
-
-msgid "Gauge name: %s"
-msgstr ""
-
-msgid "Date of study: %s"
-msgstr ""
-
-msgid "Performed by: %s"
-msgstr ""
-
-msgid "Misc: %s"
-msgstr ""
-
-msgid "Tolerance: %s"
-msgstr ""
-
-msgid "No report components selected."
-msgstr ""
-
 msgid "%.2f"
+msgstr ""
+
+msgid "Gauge r&R (Non-Replicable) Report"
 msgstr ""
 
 msgid "Gauge r&R Tables"
@@ -877,12 +898,6 @@ msgstr ""
 msgid "Operator %s"
 msgstr ""
 
-msgid "Gauge r&R Report"
-msgstr ""
-
-msgid "Reported by: %s"
-msgstr ""
-
 msgid "Scatterplot Operators vs Parts"
 msgstr ""
 
@@ -916,10 +931,10 @@ msgstr ""
 msgid "GRR"
 msgstr ""
 
-msgid "%GRR of Process Std. Dev."
+msgid "%%GRR of Process Std. Dev."
 msgstr ""
 
-msgid "%GRR of Tolerance"
+msgid "%%GRR of Tolerance"
 msgstr ""
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
@@ -1051,46 +1066,85 @@ msgstr ""
 msgid "Probability of detecting %s"
 msgstr ""
 
-msgid "Capability of the process"
+msgid "One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"
 msgstr ""
 
-msgid "Could not equally divide %1$i data points into groups of size %2$i."
+msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
 msgstr ""
 
-msgid "Values must be positive to fit a Weibull/Lognormal distribution."
+msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
+msgstr ""
+
+msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr ""
 
 msgid "All zero values have been replaced with a value equal to one-half of the smallest data point."
 msgstr ""
 
-msgid "X-bar & %s Control Chart"
+msgid "Process Capability Report"
+msgstr ""
+
+msgid "No specification limits set."
+msgstr ""
+
+msgid "Line: %s"
+msgstr ""
+
+msgid "Machine: %s"
+msgstr ""
+
+msgid "Variable: %s"
+msgstr ""
+
+msgid "Process: %s"
+msgstr ""
+
+msgid "Reported by: %s"
+msgstr ""
+
+msgid "Conclusion: %s"
+msgstr ""
+
+msgid "X-bar & %s control chart"
 msgstr ""
 
 msgid "Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."
 msgstr ""
 
-msgid "Subgroup size is 1, calculation of control charts not possible."
+msgid "Subgroup size is 1, calculation of selected control chart not possible. Use x-mR chart."
 msgstr ""
 
-msgid "X-mR Control Chart"
+msgid "X-mR control chart"
 msgstr ""
 
-msgid "Capability Studies"
+msgid "Capability study"
 msgstr ""
 
-msgid "Error: LSL > USL."
+msgid "Process capability study"
 msgstr ""
 
-msgid "Error: Target outside of specification limits."
+msgid "Lower specification limit must be smaller than upper specification limit."
 msgstr ""
 
-msgid "Process Capability"
+msgid "Target outside of specification limits."
 msgstr ""
 
-msgid "Process Capability (Non-normal Capability Analysis)"
+msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
+msgstr ""
+
+msgid "Process capability"
+msgstr ""
+
+msgid "Process capability (non-normal capability analysis)"
 msgstr ""
 
 msgid "Process summary"
+msgstr ""
+
+msgid "Stage"
+msgstr ""
+
+msgid "LB"
 msgstr ""
 
 msgid "LSL"
@@ -1099,19 +1153,43 @@ msgstr ""
 msgid "Target"
 msgstr ""
 
+msgid "UB"
+msgstr ""
+
 msgid "USL"
 msgstr ""
 
 msgid "Sample size"
 msgstr ""
 
-msgid "Std. deviation (total)"
+msgid "Std. dev. (total)"
 msgstr ""
 
-msgid "Std. deviation (within)"
+msgid "Std. dev. (within)"
+msgstr ""
+
+msgid "Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
 msgstr ""
 
 msgid "The within standard deviation could not be calculated."
+msgstr ""
+
+msgid "Change (%s vs. BL)"
+msgstr ""
+
+msgid "%s (BL)"
+msgstr ""
+
+msgid "Capability of the process"
+msgstr ""
+
+msgid "No valid measurements detected."
+msgstr ""
+
+msgid "Need at least 2 measurements to fit distribution. %1$i measurement(s) detected."
+msgstr ""
+
+msgid "At least one of the stages contains no valid measurements."
 msgstr ""
 
 msgid "Density"
@@ -1120,7 +1198,19 @@ msgstr ""
 msgid "Measurement"
 msgstr ""
 
-msgid "No specification limits set."
+msgid "Normal dist.\n(std. dev. total)"
+msgstr ""
+
+msgid "Normal dist.\n(std. dev. within)"
+msgstr ""
+
+msgid "Weibull dist."
+msgstr ""
+
+msgid "3-parameter\nlognormal dist."
+msgstr ""
+
+msgid "3-parameter Weibull dist."
 msgstr ""
 
 msgid "Process capability (within)"
@@ -1142,6 +1232,9 @@ msgid "Cpk"
 msgstr ""
 
 msgid "%s CI for Cpk"
+msgstr ""
+
+msgid "Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."
 msgstr ""
 
 msgid "Process performance (total)"
@@ -1174,10 +1267,13 @@ msgstr ""
 msgid "Non-conformance statistics"
 msgstr ""
 
-msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
+msgid "Rows titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
 msgstr ""
 
-msgid "Std. deviation"
+msgid "%s vs. BL"
+msgstr ""
+
+msgid "Std. dev."
 msgstr ""
 
 msgid "Log mean (%1$s)"
@@ -1189,22 +1285,22 @@ msgstr ""
 msgid "Shape (%1$s)"
 msgstr ""
 
-msgid "Scale (<i>k</i>)"
+msgid "Scale (%1$s)"
 msgstr ""
 
 msgid "Threshold"
 msgstr ""
 
-msgid "Observed"
-msgstr ""
-
-msgid "Expected overall"
-msgstr ""
-
 msgid "Calculations based on %s distribution."
 msgstr ""
 
-msgid "Probability Table and Plot"
+msgid "Probability table and plot"
+msgstr ""
+
+msgid "Probability plot"
+msgstr ""
+
+msgid "Need at least 2 measurements to calculate probability table/plot. %1$i measurement(s) detected."
 msgstr ""
 
 msgid "Summary of test against the %1$s distribution"
@@ -1216,22 +1312,37 @@ msgstr ""
 msgid "Mean (%1$s)"
 msgstr ""
 
-msgid "Std. deviation (%1$s)"
+msgid "Std. dev. (%1$s)"
 msgstr ""
 
 msgid "AD"
 msgstr ""
 
-msgid "The Anderson-Darling statistic A<i>D</i> is calculated against the %2$s distribution."
+msgid "The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution."
 msgstr ""
 
 msgid "Red dotted lines in the probability plot below represent a 95%% confidence interval."
 msgstr ""
 
+msgid "Probability plot against %1$s distribution"
+msgstr ""
+
+msgid "Fitting distribution failed. Values might be too extreme. Try a different distribution."
+msgstr ""
+
 msgid "Histogram"
 msgstr ""
 
-msgid "Process name: %s"
+msgid "Dataset contains negative numbers. Could not overlay the selected distribution."
+msgstr ""
+
+msgid "Normal dist."
+msgstr ""
+
+msgid "Lognormal dist."
+msgstr ""
+
+msgid "Parameter estimation failed. Values might be too extreme. Try a different distribution."
 msgstr ""
 
 msgid "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
@@ -1240,19 +1351,28 @@ msgstr ""
 msgid "Variables Charts for Individuals"
 msgstr ""
 
-msgid "X-mR control chart"
-msgstr ""
-
 msgid "Moving range length is larger than the number of observations\n                                                           in one of the stages."
 msgstr ""
 
-msgid "Please insert more measurements and check the X-mR chart."
+msgid "Variables Chart for Individuals Report"
 msgstr ""
 
-msgid "Autocorrelation plot"
+msgid "Chart name: %s"
+msgstr ""
+
+msgid "Sub-title: %s"
+msgstr ""
+
+msgid "Footnote: %s"
+msgstr ""
+
+msgid "Print date: %s"
 msgstr ""
 
 msgid "Autocorrelation plot requires uninterrupted series of values. Missing values detected in %s."
+msgstr ""
+
+msgid "Autocorrelation plot"
 msgstr ""
 
 msgid "Autocorrelation"
@@ -1261,44 +1381,14 @@ msgstr ""
 msgid "Lag"
 msgstr ""
 
-msgid "Individual charts report"
-msgstr ""
-
-msgid "Name: %s"
-msgstr ""
-
 msgid "Control charts"
-msgstr ""
-
-msgid "One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"
-msgstr ""
-
-msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
-
-msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
 msgstr ""
 
 msgid "All subgroups are of size 1. Variables charts for subgroups cannot be calculated. Use variables charts for individuals."
 msgstr ""
 
-msgid "Subgroup size is >5, results may be biased. S-chart is recommended."
-msgstr ""
-
 msgid "X-bar & %1$s control chart"
 msgstr ""
 
-msgid "Report for X-bar & R control chart"
-msgstr ""
-
-msgid "Report for X-bar & s control chart"
-msgstr ""
-
-msgid "Date: %s"
-msgstr ""
-
-msgid "Sub-title: %s"
-msgstr ""
-
-msgid "Name of chart: %s"
+msgid "Variables Chart for Subgroups Report"
 msgstr ""
