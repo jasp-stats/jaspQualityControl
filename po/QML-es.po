@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2024-04-07 22:49+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.5-dev\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -621,7 +627,7 @@ msgstr "Subgrupos"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Gráficos Variables para el Informe de Subgrupos"
+msgstr "Gráficos de las variables para el Informe de subgrupos"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
@@ -1501,7 +1507,7 @@ msgstr "Mostrar los metadatos del informe"
 
 msgctxt "msaGaugeRR|"
 msgid "Select Report Components"
-msgstr "Escoger los Elementos del Informe"
+msgstr "Escoger los elementos del Informe"
 
 msgctxt "msaGaugeRR|"
 msgid "Show components of variation"
@@ -1541,7 +1547,7 @@ msgstr "Mostrar los metadatos del informe"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Select Report Components"
-msgstr "Escoger los Elementos del Informe"
+msgstr "Escoger los elementos del Informe"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show components of variation"
@@ -1955,7 +1961,7 @@ msgstr "Especificar subgrupos"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Through grouping variable"
-msgstr "A través de la variable de agrupación"
+msgstr "Mediante la variable de agrupación"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report"
@@ -1967,7 +1973,7 @@ msgstr "Mostrar los metadatos del informe"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Select Report Components"
-msgstr "Escoger los Elementos del Informe"
+msgstr "Escoger los elementos del Informe"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Show X-mR chart"
@@ -2063,11 +2069,11 @@ msgstr "Etapas"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Unequal subgroup sizes"
-msgstr "Tamaño desigual de los subgrupos"
+msgstr "Tamaños de subgrupos desiguales"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Use actual sizes"
-msgstr "Utilizar tamaños reales"
+msgstr "Utilizar tamaños vigentes"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Use fixed subgroup size"
@@ -2079,382 +2085,373 @@ msgstr "Opciones avanzadas"
 
 msgctxt "attributesCharts|"
 msgid "Timestamp (optional)"
-msgstr ""
+msgstr "Marca temporal (opcional)"
 
-#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Show report metadata"
 msgstr "Mostrar los metadatos del informe"
 
 msgctxt "attributesCharts|"
 msgid "Report for Attribute Control Charts"
-msgstr ""
+msgstr "Informe de los Gráficos de control de atributos"
 
 msgctxt "attributesCharts|"
 msgid "Performed by"
-msgstr ""
+msgstr "Realizado por"
 
 msgctxt "attributesCharts|"
 msgid "Analyst"
-msgstr ""
+msgstr "Analista"
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Gauge r&R Report"
 msgstr "Informe de calibre r&R"
 
 msgctxt "msaGaugeRR|"
 msgid "Part name"
-msgstr ""
+msgstr "Nombre de la parte"
 
 msgctxt "msaGaugeRR|"
 msgid "Characteristic"
-msgstr ""
+msgstr "Característica"
 
 msgctxt "msaGaugeRR|"
 msgid "Gauge number"
-msgstr ""
+msgstr "Número de calibre"
 
 msgctxt "msaGaugeRR|"
 msgid "Number"
-msgstr ""
+msgstr "Número"
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Tolerance"
 msgstr "Tolerancia"
 
 msgctxt "msaGaugeRR|"
 msgid "Location"
-msgstr ""
+msgstr "Posición"
 
 msgctxt "msaGaugeRR|"
 msgid "Performed by"
-msgstr ""
+msgstr "Realizado por"
 
 msgctxt "msaGaugeRR|"
 msgid "Analyst"
-msgstr ""
+msgstr "Analista"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Part name"
-msgstr ""
+msgstr "Nombre de la parte"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Characteristic"
-msgstr ""
+msgstr "Característica"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge number"
-msgstr ""
+msgstr "Número de calibre"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Number"
-msgstr ""
+msgstr "Número"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Location"
-msgstr ""
+msgstr "Posición"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Performed by"
-msgstr ""
+msgstr "Realizado por"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Analyst"
-msgstr ""
+msgstr "Analista"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Stages"
 msgstr "Etapas"
 
 msgctxt "processCapabilityStudies|"
 msgid "Timestamp (optional)"
-msgstr ""
+msgstr "Marca temporal (opcional)"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Specify subgroups"
 msgstr "Especificar subgrupos"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Subgroup size"
 msgstr "Tamaño del subgrupo"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Through grouping variable"
-msgstr "A través de la variable de agrupación"
+msgstr "Mediante la variable de agrupación"
 
 msgctxt "processCapabilityStudies|"
 msgid "Subgroup value change"
-msgstr ""
+msgstr "Cambio de valor del subgrupo"
 
 msgctxt "processCapabilityStudies|"
 msgid "Same subgroup value"
-msgstr ""
+msgstr "Mismo valor del subgrupo"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Unequal subgroup sizes"
-msgstr "Tamaño desigual de los subgrupos"
+msgstr "Tamaños de subgrupos desiguales"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Use actual sizes"
-msgstr "Utilizar tamaños reales"
+msgstr "Utilizar tamaños vigentes"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Use fixed subgroup size"
 msgstr "Utilizar un tamaño fijo de subgrupo"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process capability options"
-msgstr ""
+msgstr "Opciones de las capacidades del proceso"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal capability statistics"
-msgstr ""
+msgstr "Estadísticos de las capacidades no normales"
 
 msgctxt "processCapabilityStudies|"
 msgid "Capability study"
-msgstr ""
+msgstr "Estudio de Capacidad"
 
 msgctxt "processCapabilityStudies|"
 msgid "Boundary"
-msgstr ""
+msgstr "Límite"
 
 msgctxt "processCapabilityStudies|"
 msgid "Overlay distribution"
-msgstr ""
+msgstr "Distribución superpuesta"
 
 msgctxt "processCapabilityStudies|"
 msgid "Display specification limits"
-msgstr ""
+msgstr "Presentar los límites de las especificaciones"
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & R control chart"
-msgstr ""
+msgstr "Gráfico de control de barras X & R"
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & s control chart"
-msgstr ""
+msgstr "Gráfico de control de barras X & s"
 
 msgctxt "processCapabilityStudies|"
 msgid "X-mR control chart"
-msgstr ""
+msgstr "Gráfico de control X-mR"
 
 msgctxt "processCapabilityStudies|"
 msgid "X-bar & mR control chart"
-msgstr ""
+msgstr "Gráfico de control de barras X & mR"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process capability report"
-msgstr ""
+msgstr "Informe de Capacidad de Proceso"
 
 msgctxt "processCapabilityStudies|"
 msgid "Location"
-msgstr ""
+msgstr "Posición"
 
 msgctxt "processCapabilityStudies|"
 msgid "Line"
-msgstr ""
+msgstr "Línea"
 
 msgctxt "processCapabilityStudies|"
 msgid "Machine"
-msgstr ""
+msgstr "Máquina"
 
 msgctxt "processCapabilityStudies|"
 msgid "Variable"
-msgstr ""
+msgstr "Variable"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process"
-msgstr ""
+msgstr "Proceso"
 
 msgctxt "processCapabilityStudies|"
 msgid "Conclusion"
-msgstr ""
+msgstr "Conclusión"
 
 msgctxt "processCapabilityStudies|"
 msgid "Select report components"
-msgstr ""
+msgstr "Escoger los elementos del Informe"
 
 msgctxt "processCapabilityStudies|"
 msgid "Advanced options"
-msgstr ""
+msgstr "Opciones Avanzadas"
 
 msgctxt "processCapabilityStudies|"
 msgid "Histogram bin boundaries"
-msgstr ""
+msgstr "Límites de las barras del histograma"
 
 msgctxt "processCapabilityStudies|"
 msgid "Left open"
-msgstr ""
+msgstr "Izquierdo abierto"
 
 msgctxt "processCapabilityStudies|"
 msgid "Right open"
-msgstr ""
+msgstr "Derecho abierto"
 
 msgctxt "processCapabilityStudies|"
 msgid "Method for estimating within subgroup std. dev. for subgroup size"
 msgstr ""
+"Método para estimar la desviación típica dentro del grupo para el tamaño de "
+"subgrupo"
 
 msgctxt "processCapabilityStudies|"
 msgid " > 1"
-msgstr ""
+msgstr " > 1"
 
 msgctxt "processCapabilityStudies|"
 msgid "= 1"
-msgstr ""
+msgstr "= 1"
 
 msgctxt "processCapabilityStudies|"
 msgid "R-bar"
-msgstr ""
+msgstr "Barra-R"
 
 msgctxt "processCapabilityStudies|"
 msgid "S-bar"
-msgstr ""
+msgstr "Barra-S"
 
 msgctxt "processCapabilityStudies|"
 msgid "Mean moving range"
-msgstr ""
+msgstr "Rango móvil de media"
 
 msgctxt "processCapabilityStudies|"
 msgid "Use unbiasing constant"
-msgstr ""
+msgstr "Usar constante sin sesgo"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of std. dev. for calculation of control limits"
 msgstr ""
+"Número de desviaciones típicas para calcular los límites de los controles"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Timestamp (optional)"
-msgstr ""
+msgstr "Marca temporal (opcional)"
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Gráficos Variables para el Informe de Subgrupos"
+msgstr "Gráficos de las variables para el Informe de subgrupos"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Chart name"
-msgstr ""
+msgstr "Nombre del gráfico"
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Name of the chart"
 msgstr "Nombre del gráfico"
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Sub-title"
 msgstr "Subtítulo"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Measurement name"
-msgstr ""
+msgstr "Nombre de medida"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Footnote"
-msgstr ""
+msgstr "Nota a pie"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Comment"
-msgstr ""
+msgstr "Comentario"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Location"
-msgstr ""
+msgstr "Posición"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Performed by"
-msgstr ""
+msgstr "Realizado por"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Analyst"
-msgstr ""
+msgstr "Analista"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Date printed"
-msgstr ""
+msgstr "Fecha impresa"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Today"
-msgstr ""
+msgstr "Hoy"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Advanced Options"
-msgstr ""
+msgstr "Opciones Avanzadas"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Number of std. dev. for calculation of control limits"
 msgstr ""
+"Número de desviaciones típicas para calcular los límites de los controles"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Timestamp (optional)"
-msgstr ""
+msgstr "Marca temporal (opcional)"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroup value change"
-msgstr ""
+msgstr "Cambio de valor del subgrupo"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Same subgroup value"
-msgstr ""
+msgstr "Mismo valor del subgrupo"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Control charts"
-msgstr ""
+msgstr "Gráficos de Control"
 
-#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Show report metadata"
 msgstr "Mostrar los metadatos del informe"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Chart name"
-msgstr ""
+msgstr "Nombre del gráfico"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement name"
-msgstr ""
+msgstr "Nombre de medida"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Footnote"
-msgstr ""
+msgstr "Nota a pie"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Comment"
-msgstr ""
+msgstr "Comentario"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Location"
-msgstr ""
+msgstr "Posición"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Performed by"
-msgstr ""
+msgstr "Realizado por"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Analyst"
-msgstr ""
+msgstr "Analista"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date printed"
-msgstr ""
+msgstr "Fecha impresa"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Today"
-msgstr ""
+msgstr "Hoy"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Use unbiasing constant for X-bar & s contorl chart"
-msgstr ""
+msgstr "Usar constante sin sesgo en el gráfico de control de barras X & s"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of std. dev. for calculation of control limits"
 msgstr ""
+"Número de desviaciones típicas para calcular los límites de los controles"
