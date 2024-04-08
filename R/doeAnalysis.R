@@ -111,10 +111,13 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/4_3_AnalyzeDesign/ResponseSurfaceDesignAnalysis.csv")
 # dataset <- dataset[4:7]
 # options <- list()
-# options[["continuousFactorsResponseSurface"]] <- c("Inlet_feeding", "Time", "Oil_temperature")
+# options[["continuousFactorsResponseSurface"]] <- c("Inlet_feeding",  "Oil_temperature")
 #
 # options[["dependent"]] <- "Vdk"
-# options[["fixedFactors"]] <- NULL
+#options[["fixedFactorsResponseSurface"]] <- c("Time", "Inlet_feeding", "Oil_temperature")
+
+#options$modelTerms <- list(list(components = "Inlet_feeding"), list(components = "Time"),
+#                           list(components = "Oil_temperature"))
 #
 # options$modelTerms <- list(list(components = "Inlet_feeding"), list(components = "Time"),
 #                            list(components = "Oil_temperature"), list(components = c("Inlet_feeding",
@@ -409,7 +412,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   coefs <- as.data.frame(regressionSummary[["coefficients"]])
   coefsCoded <- as.data.frame(regressionSummaryCoded[["coefficients"]])
   valid_coefs <- which(!is.na(coefs[["Estimate"]]))
+  valid_coefsCoded <- which(!is.na(coefsCoded[["Estimate"]]))
   termNames <- jaspBase::gsubInteractionSymbol(rownames(coefs)[valid_coefs])
+  termNamesCoded <- jaspBase::gsubInteractionSymbol(rownames(coefsCoded)[valid_coefsCoded])
 
   #remove possible appended factor levels
   if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
@@ -430,35 +435,53 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     termNames[term_i] <- gsub("\\s", "", termNames[term_i])
   }
 
+  # append number if duplicated and save level
+  termLevels <- c()
+  for(term_k in seq_along(termNames)) {
+    n_occurences <- sum(termNames == termNames[term_k])
+    if (n_occurences > 1) {
+      term_indices <- which(termNames == termNames[term_k])
+      termNames[term_indices] <- paste0(termNames[term_k], seq_len(n_occurences))
+    }
+  }
+
+  # Coded terms never have appended factor levels, so just remove whitespace
+  termNamesCoded <- gsub("\\s", "", termNamesCoded)
+
   result[["regression"]][["coefficients"]][["terms"]] <- termNames
-  resultCoded[["regression"]][["coefficients"]][["terms"]] <- termNames
+  resultCoded[["regression"]][["coefficients"]][["terms"]] <- termNamesCoded
 
   # calculate effects, but not for blocks, covariates or intercept
-  coefEffects <- coefsCoded$Estimate * 2
-  coefEffects[1] <- NA
-  if (length(blocks) > 0 && !identical(blocks, ""))
+  coefEffects <- .doeCoefficientEffects(regressionFit)
+  coefEffectsCoded <- .doeCoefficientEffects(regressionFitCoded)
+  if (length(blocks) > 0 && !identical(blocks, "")) {
     coefEffects[names(coefEffects) == blocks] <- NA
-  if (length(covariates) > 0 && !identical(covariates, ""))
+    coefEffectsCoded[names(coefEffectsCoded) == blocks] <- NA
+  }
+  if (length(covariates) > 0 && !identical(covariates, "")) {
     coefEffects[names(coefEffects) %in% unlist(covariates)] <- NA
+    coefEffectsCoded[names(coefEffectsCoded) %in% unlist(covariates)] <- NA
+  }
 
-  coefEffectsUncoded <- coefEffects
-  coefEffectsUncoded[coefs$Estimate > 0] <- abs(coefEffectsUncoded[coefs$Estimate > 0]) # sign of effect should match uncoded coefficient
-  result[["regression"]][["coefficients"]][["effects"]] <- coefEffectsUncoded
+  result[["regression"]][["coefficients"]][["effects"]] <- coefEffects
   result[["regression"]][["coefficients"]][["est"]] <- coef(regressionFit)[!is.na(coef(regressionFit))]
   result[["regression"]][["coefficients"]][["effects"]][1] <- NA
-  result[["regression"]][["coefficients"]][["vif"]] <- if (ncol(regressionFit$model) > 2) c(NA, car::vif(regressionFit)) else c(NA, NA) # Add NA in front for intercept
+  result[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFit, predictorsForLevelRemoval)
 
-  resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffects
-  resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[!is.na(coef(regressionFit))]
+  resultCoded[["regression"]][["coefficients"]][["effects"]] <- coefEffectsCoded
+  resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[!is.na(coef(regressionFitCoded))]
   resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
-  resultCoded[["regression"]][["coefficients"]][["vif"]] <- if (ncol(regressionFit$model) > 2) c(NA, car::vif(regressionFitCoded)) else c(NA, NA)
-
+  resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded, predictorsForLevelRemoval)
   termNamesAliased <- termNames
+  termNamesAliasedCoded <- termNamesCoded
+
   allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
   for (pred_i in seq_along(allPredictors)) {
     termNamesAliased <- gsub(allPredictors[pred_i], allPredictorsAliases[pred_i], termNamesAliased)
+    termNamesAliasedCoded <- gsub(allPredictors[pred_i], allPredictorsAliases[pred_i], termNamesAliasedCoded)
   }
   termNamesAliased <- gsub("✻", "", termNamesAliased)
+  termNamesAliasedCoded <- gsub("✻", "", termNamesAliasedCoded)
   # covariates and blocks should not get an alias in the table (but keep their default names in the equation, so specifying it here)
   if (length(blocks) > 0 && !identical(blocks, ""))
     termNamesAliased[termNamesAliased == blocks] <- "BLK"
@@ -477,22 +500,22 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   termNamesAliased[1] <- ""  # no alias for intercept
   result[["regression"]][["coefficients"]][["termsAliased"]] <- termNamesAliased
-  resultCoded[["regression"]][["coefficients"]][["termsAliased"]] <- termNamesAliased
+  resultCoded[["regression"]][["coefficients"]][["termsAliased"]] <- termNamesAliasedCoded
 
   if (!result[["regression"]][["saturated"]]) {
     result[["regression"]][["coefficients"]][["se"]] <- coefs[["Std. Error"]][valid_coefs]
     result[["regression"]][["coefficients"]][["t"]] <- coefs[["t value"]][valid_coefs]
     result[["regression"]][["coefficients"]][["p"]] <- coefs[["Pr(>|t|)"]][valid_coefs]
-    resultCoded[["regression"]][["coefficients"]][["se"]] <- coefsCoded[["Std. Error"]][valid_coefs]
-    resultCoded[["regression"]][["coefficients"]][["t"]] <- coefsCoded[["t value"]][valid_coefs]
-    resultCoded[["regression"]][["coefficients"]][["p"]] <- coefsCoded[["Pr(>|t|)"]][valid_coefs]
+    resultCoded[["regression"]][["coefficients"]][["se"]] <- coefsCoded[["Std. Error"]][valid_coefsCoded]
+    resultCoded[["regression"]][["coefficients"]][["t"]] <- coefsCoded[["t value"]][valid_coefsCoded]
+    resultCoded[["regression"]][["coefficients"]][["p"]] <- coefsCoded[["Pr(>|t|)"]][valid_coefsCoded]
   } else {
     result[["regression"]][["coefficients"]][["se"]] <- rep(NA, length(valid_coefs))
     result[["regression"]][["coefficients"]][["t"]] <- rep(NA, length(valid_coefs))
     result[["regression"]][["coefficients"]][["p"]] <- rep(NA, length(valid_coefs))
-    resultCoded[["regression"]][["coefficients"]][["se"]] <- rep(NA, length(valid_coefs))
-    resultCoded[["regression"]][["coefficients"]][["t"]] <- rep(NA, length(valid_coefs))
-    resultCoded[["regression"]][["coefficients"]][["p"]] <- rep(NA, length(valid_coefs))
+    resultCoded[["regression"]][["coefficients"]][["se"]] <- rep(NA, length(valid_coefsCoded))
+    resultCoded[["regression"]][["coefficients"]][["t"]] <- rep(NA, length(valid_coefsCoded))
+    resultCoded[["regression"]][["coefficients"]][["p"]] <- rep(NA, length(valid_coefsCoded))
   }
 
   ## Model formula
@@ -513,7 +536,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   #coded
   coefsCoded <- coef(regressionFitCoded)[!is.na(coef(regressionFitCoded))]
   coefsCoded <- round(coefsCoded, .numDecimals)
-  coefNames <- if (options[["tableAlias"]]) termNamesAliased else termNames
+  coefNames <- if (options[["tableAlias"]]) termNamesAliasedCoded else termNames
   plusOrMin <- sapply(seq_len(length(coefsCoded)), function(x) {
     if (coefsCoded[x] > 0) "+" else "-"
   })
@@ -532,6 +555,26 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   resultCoded[["regression"]][["filledFormula"]] <- jaspBase::gsubInteractionSymbol(filledFormulaCoded)
   jaspResults[["doeResultCoded"]] <- createJaspState(resultCoded)
   jaspResults[["doeResultCoded"]]$dependOn(options = .doeAnalysisBaseDependencies())
+}
+
+
+
+.getVIF <- function(regressionFit, predictors) {
+  if (ncol(regressionFit$model) < 3) {
+    VIF <- rep(NA, length(regressionFit$coefficients))
+  } else {
+    VIF <- car::vif(regressionFit)
+    VIF <- if (is.vector(VIF)) VIF else VIF[,1]
+    terms <- names(regressionFit$coefficients)
+    regexExpression <- paste0("(", paste(predictors, collapse = "|"), ")((\\^2)?)([^✻]+)(✻?)")
+    for (term_i in seq_along(terms)) {
+      replacements <- if (grepl("^2", terms[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
+      terms[term_i] <- gsub(regexExpression, replacements, terms[term_i], perl=TRUE)
+      terms[term_i] <- gsub("\\s", "", terms[term_i])
+    }
+    VIF <- VIF[terms]
+  }
+  return(VIF)
 }
 
 .addModelHeaderTerms <- function(anovaFit, covariates = "") {
@@ -640,19 +683,21 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
 }
 
-
-.doeCoefficientEffects <- function(coefDf, dataset) {
+.doeCoefficientEffects <- function(regressionFit) {
   effectVector <- c()
-  for (i in seq_len(nrow(coefDf))) {
-    termName <- coefDf$term[i]
+  for (i in seq_along(regressionFit$coefficients)) {
+    termName <- names(regressionFit$coefficients)[i]
     if (termName == "(Intercept)") {
       effect <- NA
     } else {
-      coef <- coefDf$coefs[i]
-      dataCol <- unlist(dataset[colnames(dataset) == termName])
-      factorRange <- min(dataCol)
+      coef <- regressionFit$coefficients[i]
+      coefLevels <- unique(unlist(regressionFit$model[which(sapply(colnames(regressionFit$model), function(v) grepl(v, termName)))]))
+      factorRange <- if (is.numeric(coefLevels)) max(coefLevels) - min(coefLevels) else length(coefLevels)
+      effect <- coef * factorRange
     }
+    effectVector <- c(effectVector, effect)
   }
+  return(effectVector)
 }
 
 .createHighestOrderInteractionFormula <- function(dependentVariable, independentVariables, interactionOrder) {
