@@ -34,11 +34,11 @@ Form
 		Group
 		{
 
-			IntegerField { id: numberOfCategorical;		label: qsTr("Number of factors");	name: "numberOfCategorical";	min: 2;		defaultValue: 3;	max: 256
+			IntegerField { id: numberOfCategorical;		label: qsTr("Number of discrete predictors");	name: "numberOfCategorical";	min: 2;		defaultValue: 3;	max: 256
 				property int intValue: defaultValue
 				onValueChanged : { intValue = value !== "" ? value : 0 }
 			}
-			IntegerField { id: numberOfLevels;			label: qsTr("Maximum levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 20; 	enabled: factorialType.value == "generalFullFactorial"
+			IntegerField { id: numberOfLevels;			label: qsTr("Maximum discrete levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 20; 	enabled: factorialType.value == "generalFullFactorial"
 				property int intValue: defaultValue
 				onValueChanged : { intValue = value !== "" ? value : 0 }
 			}
@@ -119,7 +119,7 @@ Form
 		rowCount			: numberOfCategorical.intValue
 		columnCount			: 1 + parseInt(numberOfLevels.value)
 		name				: "categoricalVariables"
-		cornerText			: qsTr("Factor")
+		cornerText			: qsTr("Predictor")
 		itemType			: JASP.String
 
 		function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }

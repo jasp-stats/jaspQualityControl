@@ -111,13 +111,19 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 # dataset <- read.csv("C:/Users/Jonee/Google Drive/JASP/SKF Six Sigma/JASP Data Library/4_3_AnalyzeDesign/ResponseSurfaceDesignAnalysis.csv")
 # dataset <- dataset[4:7]
 # options <- list()
-# options[["continuousFactorsResponseSurface"]] <- c("Inlet_feeding",  "Oil_temperature")
+# options[["continuousFactorsResponseSurface"]] <- c("Inlet_feeding")
 #
 # options[["dependent"]] <- "Vdk"
-#options[["fixedFactorsResponseSurface"]] <- c("Time", "Inlet_feeding", "Oil_temperature")
-
-#options$modelTerms <- list(list(components = "Inlet_feeding"), list(components = "Time"),
-#                           list(components = "Oil_temperature"))
+# options[["fixedFactorsResponseSurface"]] <- c("Time", "Oil_temperature")
+#
+# options$modelTerms <- list(list(components = "Inlet_feeding"), list(components = "Time"),
+#                           list(components = "Oil_temperature"),
+#                           list(components = c("Inlet_feeding", "Time")),
+#                           list(components = c("Time", "Oil_temperature")),
+#                           list(components = c("Inlet_feeding", "Oil_temperature")))
+# dataset$Time <- as.factor(dataset$Time)
+# dataset$Oil_temperature <- as.factor(dataset$Oil_temperature)
+# colnames(dataset) <- jaspBase::encodeColNames(colnames(dataset))
 #
 # options$modelTerms <- list(list(components = "Inlet_feeding"), list(components = "Time"),
 #                            list(components = "Oil_temperature"), list(components = c("Inlet_feeding",
@@ -183,7 +189,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 #                            list(components = c("A", "C")),
 #                            list(components = c("B", "C")),
 #                            list(components = c("A", "B", "C")))
-
 
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
@@ -316,9 +321,10 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   if (!is.null(aliasedTerms)) {
     allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
+    allPredictors <- allPredictors[allPredictors != ""]
     aliasedTerms <- .removeAppendedFactorLevels(predictorNames = allPredictors, terms = aliasedTerms, interactionSymbol = ":")
-    result[["regression"]][["aliasedTerms"]] <- jaspBase::gsubInteractionSymbol(aliasedTerms) # store for footnote
-    resultCoded[["regression"]][["aliasedTerms"]] <- jaspBase::gsubInteractionSymbol(aliasedTerms) # store for footnote
+    result[["regression"]][["aliasedTerms"]] <- gsubInteractionSymbol(aliasedTerms) # store for footnote
+    resultCoded[["regression"]][["aliasedTerms"]] <- gsubInteractionSymbol(aliasedTerms) # store for footnote
     formula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(aliasedTerms, collapse="-"), sep="-")) # remove the aliased term(s) from the model
     # fit the model again
     regressionFit <- lm(formula, data = dataset)
@@ -391,7 +397,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     }
 
   result[["anova"]][["object"]] <- anovaFit
-  result[["anova"]][["terms"]] <- jaspBase::gsubInteractionSymbol(rownames(anovaFit))
+  result[["anova"]][["terms"]] <- gsubInteractionSymbol(rownames(anovaFit))
   result[["anova"]][["df"]] <- anovaFit$Df
   result[["anova"]][["adjss"]] <- anovaFit$`Sum Sq`
   result[["anova"]][["adjms"]] <- anovaFit$`Mean Sq`
@@ -399,22 +405,25 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   result[["anova"]][["p"]] <- anovaFit$`Pr(>F)`
 
   resultCoded[["anova"]][["object"]] <- anovaFit
-  resultCoded[["anova"]][["terms"]] <- jaspBase::gsubInteractionSymbol(rownames(anovaFit))
+  resultCoded[["anova"]][["terms"]] <- gsubInteractionSymbol(rownames(anovaFit))
   resultCoded[["anova"]][["df"]] <- anovaFit$Df
   resultCoded[["anova"]][["adjss"]] <- anovaFit$`Sum Sq`
   resultCoded[["anova"]][["adjms"]] <-  anovaFit$`Mean Sq`
   resultCoded[["anova"]][["F"]] <- anovaFit$`F value`
   resultCoded[["anova"]][["p"]] <- anovaFit$`Pr(>F)`
 
-  # Regression coefficients
+  ###############################
+  ### Regression coefficients ###
+  ###############################
+
   result[["regression"]][["coefficients"]] <- list()
   resultCoded[["regression"]][["coefficients"]] <- list()
   coefs <- as.data.frame(regressionSummary[["coefficients"]])
   coefsCoded <- as.data.frame(regressionSummaryCoded[["coefficients"]])
   valid_coefs <- which(!is.na(coefs[["Estimate"]]))
   valid_coefsCoded <- which(!is.na(coefsCoded[["Estimate"]]))
-  termNames <- jaspBase::gsubInteractionSymbol(rownames(coefs)[valid_coefs])
-  termNamesCoded <- jaspBase::gsubInteractionSymbol(rownames(coefsCoded)[valid_coefsCoded])
+  termNames <- gsubInteractionSymbol(rownames(coefs)[valid_coefs])
+  termNamesCoded <- gsubInteractionSymbol(rownames(coefsCoded)[valid_coefsCoded])
 
   #remove possible appended factor levels
   if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
@@ -427,25 +436,30 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   if (length(blocks) > 0 && !identical(blocks, ""))
     predictorsForLevelRemoval <- c(predictorsForLevelRemoval, blocks)
 
+  termNamesRemoved <- termNames
   # this regex removes the appended factor levels
   regexExpression <- paste0("(", paste(predictorsForLevelRemoval, collapse = "|"), ")((\\^2)?)([^✻]+)(✻?)")
-  for (term_i in seq_along(termNames)) {
-    replacements <- if (grepl("^2", termNames[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
-    termNames[term_i] <- gsub(regexExpression, replacements, termNames[term_i], perl=TRUE)
-    termNames[term_i] <- gsub("\\s", "", termNames[term_i])
+  for (term_i in seq_along(termNamesRemoved)) {
+    replacements <- if (grepl("^2", termNamesRemoved[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
+    termNamesRemoved[term_i] <- gsub(regexExpression, replacements, termNamesRemoved[term_i], perl=TRUE)
+    termNamesRemoved[term_i] <- gsub("\\s", "", termNamesRemoved[term_i])
   }
 
-  # append number if duplicated and save level
-  termLevels <- c()
-  for(term_k in seq_along(termNames)) {
-    n_occurences <- sum(termNames == termNames[term_k])
-    if (n_occurences > 1) {
-      term_indices <- which(termNames == termNames[term_k])
-      termNames[term_indices] <- paste0(termNames[term_k], seq_len(n_occurences))
-    }
-  }
+  discretePredictorsIndices <- which(termNamesRemoved %in% discretePredictors)
+  nDiscretePredictorLevels <- sapply(discretePredictors, function(x) sum(termNamesRemoved == x))
+
+  # # append number if duplicated
+  # for(term_k in seq_along(termNames)) {
+  #   n_occurences <- sum(termNames == termNames[term_k])
+  #   if (n_occurences > 1) {
+  #     term_indices <- which(termNames == termNames[term_k])
+  #     termNames[term_indices] <- paste0(termNames[term_k], seq_len(n_occurences))
+  #   }
+  # }
+
 
   # Coded terms never have appended factor levels, so just remove whitespace
+  termNames <- gsub("\\s", "", termNames)
   termNamesCoded <- gsub("\\s", "", termNamesCoded)
 
   result[["regression"]][["coefficients"]][["terms"]] <- termNames
@@ -472,9 +486,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   resultCoded[["regression"]][["coefficients"]][["est"]] <- coef(regressionFitCoded)[!is.na(coef(regressionFitCoded))]
   resultCoded[["regression"]][["coefficients"]][["effects"]][1] <- NA
   resultCoded[["regression"]][["coefficients"]][["vif"]] <- .getVIF(regressionFitCoded, predictorsForLevelRemoval)
+
   termNamesAliased <- termNames
   termNamesAliasedCoded <- termNamesCoded
-
   allPredictorsAliases <- LETTERS[seq_along(allPredictors)]
   for (pred_i in seq_along(allPredictors)) {
     termNamesAliased <- gsub(allPredictors[pred_i], allPredictorsAliases[pred_i], termNamesAliased)
@@ -482,6 +496,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
   termNamesAliased <- gsub("✻", "", termNamesAliased)
   termNamesAliasedCoded <- gsub("✻", "", termNamesAliasedCoded)
+
   # covariates and blocks should not get an alias in the table (but keep their default names in the equation, so specifying it here)
   if (length(blocks) > 0 && !identical(blocks, ""))
     termNamesAliased[termNamesAliased == blocks] <- "BLK"
@@ -501,6 +516,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   termNamesAliased[1] <- ""  # no alias for intercept
   result[["regression"]][["coefficients"]][["termsAliased"]] <- termNamesAliased
   resultCoded[["regression"]][["coefficients"]][["termsAliased"]] <- termNamesAliasedCoded
+
+
+  result[["regression"]][["factorLevels"]] <- list()
+  result[["regression"]][["factorLevels"]][["factorNamesAliased"]] <- termNamesAliased[discretePredictorsIndices]
+  result[["regression"]][["factorLevels"]][["factorNames"]] <- termNames[discretePredictorsIndices]
+  discretePredictorLevels <- unlist(lapply(names(nDiscretePredictorLevels), function(x) get_levels(x, nDiscretePredictorLevels[x], dataset)))
+  result[["regression"]][["factorLevels"]][["levels"]] <- discretePredictorLevels
+
 
   if (!result[["regression"]][["saturated"]]) {
     result[["regression"]][["coefficients"]][["se"]] <- coefs[["Std. Error"]][valid_coefs]
@@ -546,18 +569,20 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       filledFormulaCoded <- sprintf("%s %s %s %s", filledFormulaCoded, plusOrMin[i], abs(coefsCoded[i]), coefNames[i])
     }
   }
-
-  result[["regression"]][["filledFormula"]] <- jaspBase::gsubInteractionSymbol(filledFormula)
+  result[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormula)
   jaspResults[["doeResult"]] <- createJaspState(result)
   jaspResults[["doeResult"]]$dependOn(options = .doeAnalysisBaseDependencies())
 
 
-  resultCoded[["regression"]][["filledFormula"]] <- jaspBase::gsubInteractionSymbol(filledFormulaCoded)
+  resultCoded[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormulaCoded)
   jaspResults[["doeResultCoded"]] <- createJaspState(resultCoded)
   jaspResults[["doeResultCoded"]]$dependOn(options = .doeAnalysisBaseDependencies())
 }
 
-
+get_levels <- function(var, num_levels, dataset) {
+  levels_var <- levels(dataset[[var]])
+  levels_var[2:(num_levels + 1)]
+}
 
 .getVIF <- function(regressionFit, predictors) {
   if (ncol(regressionFit$model) < 3) {
@@ -702,19 +727,19 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 .createHighestOrderInteractionFormula <- function(dependentVariable, independentVariables, interactionOrder) {
   # Create a formula string with main effects
-  formulaStr <- paste(independentVariables, collapse = " + ")
+  formulaStr <- paste(jaspBase::encodeColNames(independentVariables), collapse = " + ")
 
   # Add interaction terms up to the specified order
   if (interactionOrder > 1 & length(independentVariables) > 1) {
     for (i in 2:interactionOrder) {
-      interactions <- combn(independentVariables, i, simplify = FALSE)
+      interactions <- combn(jaspBase::encodeColNames(independentVariables), i, simplify = FALSE)
       interaction_terms <- sapply(interactions, function(x) paste(x, collapse = ":"))
       formulaStr <- paste(formulaStr, "+", paste(interaction_terms, collapse = " + "))
     }
   }
 
   # Construct and return the formula
-  return(paste(dependentVariable, "~", formulaStr))
+  return(paste(jaspBase::encodeColNames(dependentVariable), "~", formulaStr))
 }
 
 .doeAnalysisSummaryTable <- function(jaspResults, options, ready, coded) {
@@ -795,15 +820,31 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   )
   if (options[["tableAlias"]])
     rows["alias"] <- result[["termsAliased"]]
-
   tb$addRows(rows)
+
+  if ((length(options[["fixedFactorsFactorial"]]) > 0 | length(options[["fixedFactorsResponseSurface"]])) && !coded) {
+    tb2 <- createJaspTable(gettext("Discrete Predictor Levels"))
+    tb2$addColumnInfo(name = "factorName", title = gettext("Name"), type = "string")
+    tb2$addColumnInfo(name = "factorLevel", title = gettext("Level"), type = "string")
+    tb2$position <- 4
+    jaspResults[["tableCoefficientsLegend"]] <- tb2
+
+    result2 <- jaspResults[["doeResult"]]$object[["regression"]][["factorLevels"]]
+    factorName <- if (options[["tableAlias"]]) result2[["factorNamesAliased"]] else result2[["factorNames"]]
+    rows2 <- data.frame(
+      factorName = factorName,
+      factorLevel = result2[["levels"]]
+    )
+
+    tb2$addRows(rows2)
+  }
 }
 
 .doeAnalysisEquationTable <- function(jaspResults, options, ready, coded) {
   if (!is.null(jaspResults[["tableEquation"]]) || !options[["tableEquation"]]) {
     return()
   }
-  codedString <- ifelse(options[["codeFactors"]], gettext("coded"), gettext("uncoded"))
+  codedString <- ifelse(options[["codeFactors"]], gettext("Coded"), gettext("Uncoded"))
   tb <- createJaspTable(gettextf("Regression Equation in %s Units", codedString))
   tb$addColumnInfo(name = "formula", title = "", type = "string")
   tb$dependOn(options = .doeAnalysisBaseDependencies())
@@ -1122,14 +1163,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 .modelFormula <- function(modelTerms, options, dependent) {
   dependent.normal <- dependent
-  dependent.base64 <- dependent
+  dependent.base64 <- jaspBase::encodeColNames(dependent)
 
   terms.base64 <- c()
   terms.normal <- c()
 
   for (term in modelTerms) {
     components <- unlist(term$components)
-    term.base64 <- paste(.v(components), collapse = ":", sep = "")
+    term.base64 <- paste(jaspBase::encodeColNames(components), collapse = ":", sep = "")
     term.normal <- paste(components, collapse = " \u273B ", sep = "")
 
     terms.base64 <- c(terms.base64, term.base64)
