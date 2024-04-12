@@ -47,11 +47,11 @@ Form
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
-		IntegerField { id: numberOfCategorical;		label: qsTr("Number of categorical factors");	name: "numberOfCategorical";	min: 0;		defaultValue: 0;	max: 10
+		IntegerField { id: numberOfCategorical;		label: qsTr("Number of discrete predictors");	name: "numberOfCategorical";	min: 0;		defaultValue: 0;	max: 10
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
-		IntegerField { id: numberOfLevels;			label: qsTr("Maximum categorical levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 10
+		IntegerField { id: numberOfLevels;			label: qsTr("Maximum discrete levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 10
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
@@ -72,7 +72,7 @@ Form
 			columnCount			: 3
 
 			name				: "continuousVariables"
-			cornerText			: qsTr("Factor")
+			cornerText			: qsTr("Predictor")
 			columnNames			: [qsTr("Name"), qsTr("Low"), qsTr("High")]
 			isFirstColEditable	: true
 			itemType			: JASP.Double
@@ -103,7 +103,7 @@ Form
 			rowCount			: numberOfCategorical.intValue
 			columnCount			: 1 + parseInt(numberOfLevels.value)
 			name				: "categoricalVariables"
-			cornerText			: qsTr("Factor")
+			cornerText			: qsTr("Predictor")
 			itemType			: JASP.String
 
 			function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }

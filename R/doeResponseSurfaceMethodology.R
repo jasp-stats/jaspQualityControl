@@ -39,8 +39,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
   tb <- createJaspTable(title = gettext("Design Summary"), position = 1L)
   tb$addColumnInfo(name = "title",       title = gettext("Variable"),               type = "string")
-  tb$addColumnInfo(name = "contFactors", title = gettext("Continuous factors"),     type = "integer")
-  tb$addColumnInfo(name = "catFactors",  title = gettext("Categorical factors"),    type = "integer")
+  tb$addColumnInfo(name = "contFactors", title = gettext("Continuous predictors"),     type = "integer")
+  tb$addColumnInfo(name = "catFactors",  title = gettext("Discrete predictors"),    type = "integer")
 
   tb$addColumnInfo(name = "baseRuns",    title = gettext("Base runs"),              type = "integer")
   tb$addColumnInfo(name = "baseBlocks",  title = gettext("Base blocks"),            type = "integer")
@@ -134,11 +134,11 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   tb$addColumnInfo(name = "std.order", title = gettext("Standard order"), type = "integer")
 
   for (i in seq_len(options[["numberOfContinuous"]]))
-    tb$addColumnInfo(name = paste0("x", i), title = options[["continuousVariables"]][[1L]][["values"]][i],     type = "number", overtitle = gettext("Continuous factors"))
+    tb$addColumnInfo(name = paste0("x", i), title = options[["continuousVariables"]][[1L]][["values"]][i],     type = "number", overtitle = gettext("Continuous predictors"))
 
   noCat <- options[["numberOfCategorical"]]
   for (i in seq_len(noCat))
-    tb$addColumnInfo(name = paste0("x_cat", i), title = options[["continuousVariables"]][[1L]][["values"]][i], type = "number", overtitle = gettext("Categorical factors"))
+    tb$addColumnInfo(name = paste0("x_cat", i), title = options[["categoricalVariables"]][[1L]][["values"]][i], type = "number", overtitle = gettext("Discrete predictors"))
 
   # avoid any shenanigans with categorical factors having duplicate names
   if (noCat > 0L)
