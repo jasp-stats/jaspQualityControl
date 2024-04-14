@@ -84,12 +84,13 @@ Form
 
 				IntegerField
 				{
+					id:							factorialDesignTypeSplitPlotNumberHardToChangeFactors
 					name:						"factorialDesignTypeSplitPlotNumberHardToChangeFactors"
 					label:						qsTr("Number of hard-to-change factors")
 					visible:					factorialTypeSplit.checked
 					defaultValue:				1
 					min:						1
-					max:						numberOfCategorical.value-1
+					max:						{numberOfCategorical.value > 3 ? 3 : numberOfCategorical.value - 1}
 				}
 			}
 
@@ -149,77 +150,160 @@ Form
 					return["Full factorial", numberOfLevels.intValue**numberOfCategorical.intValue, "Full"]
 				} else {
 					const val = numberOfCategorical.intValue
-					if (val == 2) {
+					//const htcVal = numberOffactorialDesignTypeSplitPlotNumberHardToChangeFactorsCategorical.intValue
+					if (factorialType.value == "factorialTypeSplit") {
+						if (val == 2) {
 						return	[
 									"Full factorial", 4, "Full"
 								];
-					} else if (val == 3) {
+						} else if (val == 3) {
+							return	[
+										"Full factorial", 8, "Full"
+									];
+						} else if (val == 4) {
+							if (factorialDesignTypeSplitPlotNumberHardToChangeFactors.value == 1) {
+								return	[
+										"1/2 fraction", 8, "IV",
+										"Full factorial", 16, "Full"
+										];
+							} else {
+								return	[
+										"Full factorial", 16, "Full"
+										];
+							} 
+						} else if (val == 5) {
+							if (factorialDesignTypeSplitPlotNumberHardToChangeFactors.value == 1) {
+								return	[
+										"1/4 fraction", 8, "III",
+										"1/2 fraction", 16, "V",
+										"Full factorial", 32, "Full"
+									];
+							} else if (factorialDesignTypeSplitPlotNumberHardToChangeFactors.value == 2) {
+								return	[
+										"1/2 fraction", 16, "V",
+										"Full factorial", 32, "Full"
+									];
+							} else {
+								return	[
+										"Full factorial", 32, "Full"
+									];
+							}
+						} else if (val == 6) {
+							if (factorialDesignTypeSplitPlotNumberHardToChangeFactors.value == 1) {
+								return	[
+										"1/4 fraction", 16, "IV",
+										"1/2 fraction", 32, "VI",
+										"Full factorial", 64, "Full"
+									];
+							} else if (factorialDesignTypeSplitPlotNumberHardToChangeFactors.value == 2) {
+								return	[
+										"1/4 fraction", 16, "IV",
+										"1/2 fraction", 32, "VI",
+										"Full factorial", 64, "Full"
+									];
+							} else {
+								return	[
+										"1/2 fraction", 32, "VI",
+										"Full factorial", 64, "Full"
+									];
+							}
+						} else if (val == 7) {
+							if (factorialDesignTypeSplitPlotNumberHardToChangeFactors.value == 1) {
+								return	[
+										"1/4 fraction", 32, "IV",
+										"1/2 fraction", 64, "VII",
+										"Full factorial", 128, "Full"
+									];
+							} else if (factorialDesignTypeSplitPlotNumberHardToChangeFactors.value == 2) {
+								return	[
+										"1/4 fraction", 32, "IV",
+										"1/2 fraction", 64, "VII",
+										"Full factorial", 128, "Full"
+									];
+							} else {
+								return	[
+										"1/2 fraction", 64, "VII",
+										"Full factorial", 128, "Full"
+									];
+							}
+						} else {
+							return	[
+										"Full factorial", 2**numberOfCategorical.intValue, "Full"
+									];
+						}
+					} else {
+						if (val == 2) {
 						return	[
-									"1/2 fraction", 4, "III",
-									"Full factorial", 8, "Full"
+									"Full factorial", 4, "Full"
 								];
-					} else if (val == 4) {
-						return	[
-									"1/2 fraction", 8, "IV",
-									"Full factorial", 16, "Full"
-								];
-					} else if (val == 5) {
-						return	[
-									"1/4 fraction", 8, "III",
-									"1/2 fraction", 16, "V",
-									"Full factorial", 32, "Full",
-								];
-					} else if (val == 6) {
-						return	[
-									"1/8 fraction", 8, "III",
-									"1/4 fraction", 16, "IV",
-									"1/2 fraction", 32, "VI",
-									"Full factorial", 64, "Full",
-								];
-					} else if (val == 7) {
-						return	[
-									"1/16 fraction", 8, "III",
-									"1/8 fraction", 16, "IV",
-									"1/4 fraction", 32, "IV",
-									"1/2 fraction", 64, "VII",
-									"Full factorial", 128, "Full",
-								];
-					} else if (val == 8) {
-						return	[
-									"1/16 fraction", 16, "IV",
-									"1/8 fraction", 32, "IV",
-									"1/4 fraction", 64, "V",
-									"1/2 fraction", 128, "VIII"
-								];
-					} else if (val == 9) {
-						return	[
-									"1/32 fraction", 16, "III",
-									"1/16 fraction", 32, "IV",
-									"1/8 fraction", 64, "IV",
-									"1/4 fraction", 128, "VI"
-								];
-					} else if (val == 10) {
-						return	[
-									"1/64 fraction", 16, "III",
-									"1/32 fraction", 32, "IV",
-									"1/16 fraction", 64, "IV",
-									"1/8 fraction", 128, "V",
-								];
-					} else if (val == 11) {
-						return	[
-									"1/128 fraction", 16, "III",
-									"1/64 fraction", 32, "IV",
-									"1/32 fraction", 64, "IV",
-									"1/16 fraction", 128, "V",
-								];
-					} else if (val >= 12) {
-						return	[
-									"1/256 fraction", 16, "III",
-									"1/128 fraction", 32, "IV",
-									"1/64 fraction", 64, "IV",
-									"1/32 fraction", 128,  "IV",
-								];
-					}
+						} else if (val == 3) {
+							return	[
+										"1/2 fraction", 4, "III",
+										"Full factorial", 8, "Full"
+									];
+						} else if (val == 4) {
+							return	[
+										"1/2 fraction", 8, "IV",
+										"Full factorial", 16, "Full"
+									];
+						} else if (val == 5) {
+							return	[
+										"1/4 fraction", 8, "III",
+										"1/2 fraction", 16, "V",
+										"Full factorial", 32, "Full",
+									];
+						} else if (val == 6) {
+							return	[
+										"1/8 fraction", 8, "III",
+										"1/4 fraction", 16, "IV",
+										"1/2 fraction", 32, "VI",
+										"Full factorial", 64, "Full",
+									];
+						} else if (val == 7) {
+							return	[
+										"1/16 fraction", 8, "III",
+										"1/8 fraction", 16, "IV",
+										"1/4 fraction", 32, "IV",
+										"1/2 fraction", 64, "VII",
+										"Full factorial", 128, "Full",
+									];
+						} else if (val == 8) {
+							return	[
+										"1/16 fraction", 16, "IV",
+										"1/8 fraction", 32, "IV",
+										"1/4 fraction", 64, "V",
+										"1/2 fraction", 128, "VIII"
+									];
+						} else if (val == 9) {
+							return	[
+										"1/32 fraction", 16, "III",
+										"1/16 fraction", 32, "IV",
+										"1/8 fraction", 64, "IV",
+										"1/4 fraction", 128, "VI"
+									];
+						} else if (val == 10) {
+							return	[
+										"1/64 fraction", 16, "III",
+										"1/32 fraction", 32, "IV",
+										"1/16 fraction", 64, "IV",
+										"1/8 fraction", 128, "V",
+									];
+						} else if (val == 11) {
+							return	[
+										"1/128 fraction", 16, "III",
+										"1/64 fraction", 32, "IV",
+										"1/32 fraction", 64, "IV",
+										"1/16 fraction", 128, "V",
+									];
+						} else if (val >= 12) {
+							return	[
+										"1/256 fraction", 16, "III",
+										"1/128 fraction", 32, "IV",
+										"1/64 fraction", 64, "IV",
+										"1/32 fraction", 128,  "IV",
+									];
+						}
+					}		
 				}
 			}
 

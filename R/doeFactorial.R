@@ -105,7 +105,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     tb[["totalRuns"]] <- runs
     tb[["totalBlocks"]] <- designSpec[["replications"]]
   }
-  if (runs > 1e+05) {
+  if (!is.na(runs) && runs > 1e+05) {
     tb$setError(gettext("Cannote create designs with more than 100000 total runs."))
     return()
   }
@@ -140,6 +140,89 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
       runs = options[["categoricalNoLevels"]]^nFactors,
       resolution = "Full"
     )
+  } else if (options[["factorialType"]] == "factorialTypeSplit") {
+    nHtcFactors <- options[["factorialDesignTypeSplitPlotNumberHardToChangeFactors"]]
+    if (nFactors == 2) {
+      designs <- data.frame(
+        name = "Full factorial",
+        runs = 4,
+        resolution = "Full"
+      )
+    } else if (nFactors == 3) {
+      designs <- data.frame(
+        name = "Full factorial",
+        runs = 8,
+        resolution = "Full"
+      )
+    } else if (nFactors == 4) {
+      if (nHtcFactors == 1) {
+        designs <- data.frame(
+          name = c("1/2 fraction", "Full factorial"),
+          runs = c(8, 16),
+          resolution = c("IV", "Full")
+        )
+      } else {
+        designs <- data.frame(
+          name = "Full factorial",
+          runs = 16,
+          resolution = "Full"
+        )
+      }
+    } else if (nFactors == 5) {
+      if (nHtcFactors == 1) {
+        designs <- data.frame(
+          name = c("1/4 fraction", "1/2 fraction", "Full factorial"),
+          runs = c(8, 16, 32),
+          resolution = c("III", "V", "Full")
+        )
+      } else if (nHtcFactors == 2) {
+        designs <- data.frame(
+          name = c("1/2 fraction", "Full factorial"),
+          runs = c(16, 32),
+          resolution = c("V", "Full")
+        )
+      } else {
+        designs <- data.frame(
+          name = "Full factorial",
+          runs = 32,
+          resolution = "Full"
+        )
+      }
+    } else if (nFactors == 6) {
+      if (nHtcFactors <= 2) {
+        designs <- data.frame(
+          name = c("1/4 fraction", "1/2 fraction", "Full factorial"),
+          runs = c(16, 32, 64),
+          resolution = c("IV", "VI", "Full")
+        )
+      } else {
+        designs <- data.frame(
+          name = c("1/2 fraction", "Full factorial"),
+          runs = c(32, 64),
+          resolution = c("VI", "Full")
+        )
+      }
+    } else if (nFactors == 7) {
+      if (nHtcFactors <= 2) {
+        designs <- data.frame(
+          name = c("1/4 fraction", "1/2 fraction", "Full factorial"),
+          runs = c(32, 64, 128),
+          resolution = c("IV", "VII", "Full")
+        )
+      } else {
+        designs <- data.frame(
+          name = c("1/2 fraction", "Full factorial"),
+          runs = c(64, 128),
+          resolution = c("VII", "Full")
+        )
+      }
+    } else if (nFactors > 7) {
+      designs <- data.frame(
+        name = "Full factorial",
+        runs = 2^nFactors,
+        resolution = "Full"
+      )
+    }
   } else {
     if (nFactors == 2) {
       designs <- data.frame(
