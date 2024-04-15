@@ -1318,4 +1318,77 @@ Upgrades
 		ChangeRename { from: "reportDate";						to: "reportDateText"}
 		ChangeRename { from: "reportReportedBy";				to: "reportPerformedByText"}
 	}
+
+	// DoE Analysis
+	Upgrade
+	{
+		functionName:		"doeAnalysis"
+		fromVersion:		"0.18.3"
+		toVersion:			"0.19.0"
+
+		// Split dependent variable
+		ChangeRename 
+		{
+			from: 		"dependent"
+			to: 		"dependentFactorial"
+			condition:	function(options) 
+			{
+				 return options["designType"] == "factorialDesign"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"dependent"
+			to: 		"dependentResponseSurface"
+			condition:	function(options) 
+			{
+				 return options["designType"] == "responseSurfaceDesign"
+			}
+		}
+
+		// Split discrete factor variable
+		ChangeRename 
+		{
+			from: 		"fixedFactors"
+			to: 		"fixedFactorsFactorial"
+			condition:	function(options) 
+			{
+				 return options["designType"] == "factorialDesign"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"fixedFactors"
+			to: 		"fixedFactorsResponseSurface"
+			condition:	function(options) 
+			{
+				 return options["designType"] == "responseSurfaceDesign"
+			}
+		}
+
+		// Split continuous factor variable
+		ChangeRename 
+		{
+			from: 		"continuousFactors"
+			to: 		"continuousFactorsFactorial"
+			condition:	function(options) 
+			{
+				 return options["designType"] == "factorialDesign"
+			}
+		}
+		
+		ChangeRename 
+		{
+			from: 		"continuousFactors"
+			to: 		"continuousFactorsResponseSurface"
+			condition:	function(options) 
+			{
+				 return options["designType"] == "responseSurfaceDesign"
+			}
+		}
+
+		ChangeRename { from: "continuousPredictors";			to: "continuousPredictorsPlots"}
+	}
 }
