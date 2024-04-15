@@ -372,8 +372,8 @@ Form
 
 			CheckBox
 			{
-				name:                                   "plotPareto"
-				label:                                  qsTr("Pareto Plot of Effects")
+				name:									"plotPareto"
+				label:									qsTr("Pareto plot of effects")
 			}
 		}
 
