@@ -32,10 +32,10 @@ Form
 	RadioButtonGroup
 	{
 		name		: "designType"
-		title		: qsTr("Design Type")
+		title		: qsTr("Design type")
 
-		RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central Composite Design");	checked: true;		id: centralCompositeDesign	}
-		RadioButton { name:	 "boxBehnkenDesign";			label: qsTr("Box-Behnken Design");															}
+		RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central composite design");	checked: true;		id: centralCompositeDesign	}
+		RadioButton { name:	 "boxBehnkenDesign";			label: qsTr("Box-Behnken design");															}
 
 	}
 
@@ -344,7 +344,7 @@ Form
 		RadioButtonGroup
 		{
 			name:								"centerPointType"
-			title:								qsTr("Center Points")
+			title:								qsTr("Center points")
 
 			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
 			RadioButton { name:	 "custom";			label: qsTr("Custom");
