@@ -104,7 +104,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     "dependentResponseSurface", "fixedFactorsResponseSurface", "blocksResponseSurface", "runOrder",
     "highestOrder", "order", "continuousFactorsFactorial", "modelTerms", "blocksFactorial",
     "designType", "continuousFactorsResponseSurface", "codeFactors", "rsmPredefinedModel", "fixedFactorsFactorial",
-    "rsmPredefinedTerms", "dependentFactorial")
+    "rsmPredefinedTerms", "dependentFactorial", "covariates", "codeFactorsMethod", "codeFactorsManualTable",
+    "squaredTerms", "sumOfSquaresType", "squaredTermsCoded")
   return(deps)
 }
 
@@ -364,16 +365,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   discretePredictorsIndices <- which(termNamesRemoved %in% discretePredictors)
   nDiscretePredictorLevels <- sapply(discretePredictors, function(x) sum(termNamesRemoved == x))
-
-  # # append number if duplicated
-  # for(term_k in seq_along(termNames)) {
-  #   n_occurences <- sum(termNames == termNames[term_k])
-  #   if (n_occurences > 1) {
-  #     term_indices <- which(termNames == termNames[term_k])
-  #     termNames[term_indices] <- paste0(termNames[term_k], seq_len(n_occurences))
-  #   }
-  # }
-
 
   # Coded terms never have appended factor levels, so just remove whitespace
   termNames <- gsub("\\s", "", termNames)
@@ -843,7 +834,7 @@ get_levels <- function(var, num_levels, dataset) {
     return()
   }
   plot <- createJaspPlot(title = gettext("Histogram of Residuals"), width = 500, height = 500)
-  plot$dependOn(options = c("plotHist", .doeAnalysisBaseDependencies()))
+  plot$dependOn(options = c("plotHist", "histogramBinWidthType", "histogramManualNumberOfBins", .doeAnalysisBaseDependencies()))
   plot$position <- 8
   jaspResults[["plotHist"]] <- plot
   if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
