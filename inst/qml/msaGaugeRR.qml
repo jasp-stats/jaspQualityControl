@@ -64,7 +64,7 @@ Form
 			title:								qsTr("Operator")
 			id:									operatorLongFormat
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "ordinal"]
 			enabled: 							!type3.checked
 		}
 
@@ -73,7 +73,7 @@ Form
 			name:								"partLongFormat"
 			title:								qsTr("Part")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["nominal", "ordinal", "scale"]
 		}
 	}
 
@@ -102,7 +102,7 @@ Form
 			title:								qsTr("Operator")
 			id:									operatorWideFormat
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "ordinal"]
 			enabled: 							!type3.checked
 		}
 
@@ -111,7 +111,7 @@ Form
 			name:								"partWideFormat"
 			title:								qsTr("Part")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["nominal", "ordinal", "scale"]
 		}
 	}
 

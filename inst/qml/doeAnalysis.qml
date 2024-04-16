@@ -41,7 +41,7 @@ Form
 		{
 			id:									fixedFactorsFactorial
 			name:								"fixedFactorsFactorial"
-			allowedColumns:						["ordinal", "nominal", "nominalText"]
+			allowedColumns:						["ordinal", "nominal"]
 			label:								qsTr("Discrete predictors")
 			height:								75 * preferencesModel.uiScale
 		}
@@ -69,7 +69,7 @@ Form
 			name:								"blocksFactorial"
 			singleVariable:						true
 			label:								qsTr("Blocks")
-			allowedColumns:						["ordinal", "scale", "nominal", "nominalText"]
+			allowedColumns:						["ordinal", "scale", "nominal"]
 		}
 	}
 
@@ -104,7 +104,7 @@ Form
 		{
 			id:									fixedFactorsResponseSurface
 			name:								"fixedFactorsResponseSurface"
-			allowedColumns:						["ordinal", "nominal", "nominalText"]
+			allowedColumns:						["ordinal", "nominal"]
 			label:								qsTr("Discrete predictors")
 			height:								125 * preferencesModel.uiScale
 		}
@@ -114,7 +114,7 @@ Form
 			name:								"blocksResponseSurface"
 			singleVariable:						true
 			label:								qsTr("Blocks")
-			allowedColumns:						["ordinal", "scale", "nominal", "nominalText"]
+			allowedColumns:						["ordinal", "scale", "nominal"]
 		}
 	}
 

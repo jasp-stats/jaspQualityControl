@@ -38,7 +38,7 @@ Form
 			title:								qsTr("Timestamp (optional)")
 			id:									timeStamp
 			singleVariable:						true
-			allowedColumns:						["nominal","nominalText","ordinal"]
+			allowedColumns:						["nominal","ordinal"]
 		}
 	}
 

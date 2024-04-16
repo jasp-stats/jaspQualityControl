@@ -51,7 +51,7 @@ Form
 			title:								qsTr("Results")
 			id:									measurementLongFormat
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
+			allowedColumns:						["nominal", "ordinal","scale"]
 		}
 
 		AssignedVariablesList
@@ -59,7 +59,7 @@ Form
 			name:								"operatorLongFormat"
 			title:								qsTr("Operator")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText"]
+			allowedColumns:						["nominal"]
 		}
 
 		AssignedVariablesList
@@ -67,7 +67,7 @@ Form
 			name:								"partLongFormat"
 			title:								qsTr("Part")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["nominal", "ordinal", "scale"]
 		}
 
 		AssignedVariablesList
@@ -75,7 +75,7 @@ Form
 			name:								"standardLongFormat"
 			title:								qsTr("Standard")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
+			allowedColumns:						["nominal", "ordinal","scale"]
 		}
 	}
 
@@ -94,7 +94,7 @@ Form
 			name:								"measurementsWideFormat"
 			title:								qsTr("Results")
 			id:									measurementsWideFormat
-			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
+			allowedColumns:						["nominal", "ordinal","scale"]
 		}
 
 		AssignedVariablesList
@@ -102,7 +102,7 @@ Form
 			name:								"operatorWideFormat"
 			title:								qsTr("Operator")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText"]
+			allowedColumns:						["nominal"]
 		}
 
 		AssignedVariablesList
@@ -110,7 +110,7 @@ Form
 			name:								"partWideFormat"
 			title:								qsTr("Part")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal", "scale"]
+			allowedColumns:						["nominal", "ordinal", "scale"]
 		}
 
 		AssignedVariablesList
@@ -118,7 +118,7 @@ Form
 			name:								"standardWideFormat"
 			title:								qsTr("Standard")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal","scale"]
+			allowedColumns:						["nominal", "ordinal","scale"]
 		}
 
 	}

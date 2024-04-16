@@ -44,7 +44,7 @@ Form
 			name:								"subgroup"
 			title:								qsTr("Subgroups")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "ordinal"]
 			enabled: 							subgroupSizeType.value == "groupingVariable"
 		}
 
@@ -54,7 +54,7 @@ Form
 			id:									stagesLongFormat
 			title:								qsTr("Stages")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "ordinal"]
 		}
 	}
 
@@ -85,7 +85,7 @@ Form
 			name:								"axisLabels"
 			title:								qsTr("Timestamp (optional)")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "ordinal"]
 		}
 
 		AssignedVariablesList
@@ -94,7 +94,7 @@ Form
 			id:									stagesWideFormat
 			title:								qsTr("Stages")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "ordinal"]
 		}
 	}
 

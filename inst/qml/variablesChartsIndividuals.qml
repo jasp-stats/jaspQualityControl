@@ -29,7 +29,7 @@ Form
 			name:								"axisLabels"
 			title:								qsTr("Timestamp (optional)")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "ordinal"]
 		}
 		
 		AssignedVariablesList
@@ -37,7 +37,7 @@ Form
 			name:								"stage"
 			title:								qsTr("Stage")
 			singleVariable:						true
-			allowedColumns:						["nominal", "nominalText", "ordinal"]
+			allowedColumns:						["nominal", "ordinal"]
 		}
 	}
 
