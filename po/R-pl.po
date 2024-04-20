@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2024-04-06 03:40\n"
+"POT-Creation-Date: 2024-04-20 03:41\n"
 "PO-Revision-Date: 2024-04-10 11:01+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
@@ -167,11 +167,22 @@ msgstr "CL = %g"
 msgid "USL = %g"
 msgstr "UCL = %g"
 
-msgid "The analysis crashed with the following error message: %1$s"
+msgid "Error"
+msgstr ""
+
+msgid "The specified low/high levels for %1$s are not distinct."
+msgstr ""
+
+msgid ""
+"The specified low/high level(s) %1$s for %2$s do not match the levels in the "
+"dataset."
 msgstr ""
 
 msgid "Model Summary"
 msgstr "Podsumowanie modelu"
+
+msgid "The following aliased terms were removed: %s."
+msgstr ""
 
 msgid "ANOVA"
 msgstr "ANOVA"
@@ -200,10 +211,13 @@ msgstr "Współczynnik"
 msgid "Standard Error"
 msgstr "Błąd standardowy"
 
-msgid "coded"
+msgid "Discrete Predictor Levels"
 msgstr ""
 
-msgid "uncoded"
+msgid "Name"
+msgstr ""
+
+msgid "Level"
 msgstr ""
 
 msgid "Regression Equation in %s Units"
@@ -212,14 +226,8 @@ msgstr ""
 msgid "Pareto Chart of Standardized Effects"
 msgstr "Wykres Pareto dla efektów standaryzowanych"
 
-msgid "Pareto Chart of Unstandardized Effects"
-msgstr "Wykres Pareto dla efektów niestandaryzowanych"
-
 msgid "Standardized Effect"
 msgstr "Efekt standaryzowany"
-
-msgid "Unstandardized Effect"
-msgstr "Efekt niestandaryzowany"
 
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
@@ -272,7 +280,7 @@ msgstr "Podsumowanie schematu"
 msgid "Variable"
 msgstr "Zmienna"
 
-msgid "Categorial factors"
+msgid "Discrete predictors"
 msgstr ""
 
 msgid "Base runs"
@@ -302,6 +310,9 @@ msgstr "Wartość"
 msgid "Please select a row in the design table."
 msgstr "Proszę wybrać wiersz w tabeli schematu."
 
+msgid "Cannote create designs with more than 100000 total runs."
+msgstr ""
+
 msgid "Click 'Display design' to show the design."
 msgstr "Kliknij \"Pokaż schemat\", aby wyświetlić schemat."
 
@@ -329,10 +340,7 @@ msgstr ""
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Continuous factors"
-msgstr ""
-
-msgid "Categorical factors"
+msgid "Continuous predictors"
 msgstr ""
 
 msgid "Replicates"
@@ -1506,6 +1514,12 @@ msgstr ""
 
 msgid "Variables Chart for Subgroups Report"
 msgstr ""
+
+#~ msgid "Pareto Chart of Unstandardized Effects"
+#~ msgstr "Wykres Pareto dla efektów niestandaryzowanych"
+
+#~ msgid "Unstandardized Effect"
+#~ msgstr "Efekt niestandaryzowany"
 
 #~ msgid "Scale (<i>k</i>)"
 #~ msgstr "Skala (<i>k</i>)"

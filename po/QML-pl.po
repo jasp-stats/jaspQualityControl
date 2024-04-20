@@ -1,16 +1,10 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-04-09 13:34+0000\n"
-"Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
-"Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/pl/>\n"
-"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 5.5-dev\n"
 "X-Language: pl\n"
 "X-Qt-Contexts: true\n"
 
@@ -225,14 +219,6 @@ msgid "Residuals vs run order"
 msgstr ""
 
 msgctxt "doeFactorial|"
-msgid "Number of factors"
-msgstr "Liczba czynników"
-
-msgctxt "doeFactorial|"
-msgid "Factor"
-msgstr "Czynnik"
-
-msgctxt "doeFactorial|"
 msgid "Name"
 msgstr "Nazwa"
 
@@ -438,32 +424,8 @@ msgid "Show desired design"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Type"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Central Composite Design"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Box-Behnken Design"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of continuous factors"
 msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of categorical factors"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Maximum categorical levels"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Factor"
-msgstr "Czynnik"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
@@ -537,10 +499,6 @@ msgstr ""
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Custom"
 msgstr "Niestandardowy"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Center Points"
-msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Cube block"
@@ -1737,10 +1695,6 @@ msgid "Export design"
 msgstr "Eksportuj projekt"
 
 msgctxt "doeAnalysis|"
-msgid "Available factors"
-msgstr "Dostępne czynniki"
-
-msgctxt "doeAnalysis|"
 msgid "Blocks"
 msgstr "Bloki"
 
@@ -1751,14 +1705,6 @@ msgstr "Model"
 msgctxt "doeAnalysis|"
 msgid "Components"
 msgstr "Składowe"
-
-msgctxt "doeAnalysis|"
-msgid "Model Terms"
-msgstr "Składniki modelu"
-
-msgctxt "doeFactorial|"
-msgid "Maximum levels"
-msgstr ""
 
 #, qt-format
 msgctxt "doeFactorial|"
@@ -1866,14 +1812,6 @@ msgid "Response surface design"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Categorical Factors"
-msgstr "Czynniki kategorialne"
-
-msgctxt "doeAnalysis|"
-msgid "Continuous Factors"
-msgstr "Czynniki ciągłe"
-
-msgctxt "doeAnalysis|"
 msgid "Select predefined model"
 msgstr "Wybierz redefiniowany model"
 
@@ -1910,20 +1848,12 @@ msgid "Show regression equation"
 msgstr "Pokaż równanie regresji"
 
 msgctxt "doeAnalysis|"
-msgid "Automatically code/standardize factors"
-msgstr "Automatycznie koduj/standaryzuj czynniki"
-
-msgctxt "doeAnalysis|"
 msgid "Plots"
 msgstr "Wykresy"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals matrix plot"
 msgstr "Wykres macierzy reszt"
-
-msgctxt "doeAnalysis|"
-msgid "Pareto Plot of Effects"
-msgstr "Wykres Pareto dla efektów"
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plots"
@@ -2477,4 +2407,164 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of std. dev. for calculation of control limits"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Available variables"
+msgstr "Dostępne zmienne"
+
+msgctxt "doeAnalysis|"
+msgid "Discrete predictors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Continuous predictors"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Covariates"
+msgstr "Współzmienne"
+
+msgctxt "doeAnalysis|"
+msgid "Predictor levels"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Automatically detect low/high"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Manually specify low/high"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Predictor"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Low        High   "
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Display results in coded units"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Model terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Main and interaction terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Squared terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Pareto plot of effects"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Advanced options"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Histogram bin width type"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Sturges"
+msgstr "Sturges"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Scott"
+msgstr "Scott"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Doane"
+msgstr "Doane"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Freedman-Diaconis"
+msgstr "Freedman-Diaconis"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Manual"
+msgstr "Ręcznie"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Number of bins"
+msgstr "Liczba słupków"
+
+msgctxt "doeAnalysis|"
+msgid "Sum of squares type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Type I"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Type II"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Type III"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Use coded data to calculate squared terms"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of discrete predictors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Maximum discrete levels"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "General full factorial"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Predictor"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design type"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Central composite design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Box-Behnken design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of discrete predictors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Maximum discrete levels"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Predictor"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Center points"
 msgstr ""

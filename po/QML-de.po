@@ -24,14 +24,6 @@ msgid "Control Charts"
 msgstr "Regelkarten"
 
 msgctxt "doeFactorial|"
-msgid "Number of factors"
-msgstr "Anzahl der Faktoren"
-
-msgctxt "doeFactorial|"
-msgid "Factor"
-msgstr "Faktor"
-
-msgctxt "doeFactorial|"
 msgid "Name"
 msgstr "Name"
 
@@ -1307,10 +1299,6 @@ msgid "Show desired design"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Factor"
-msgstr "Faktor"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
 msgstr "Name"
 
@@ -1591,27 +1579,7 @@ msgid "Display design"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Type"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Central Composite Design"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Box-Behnken Design"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of continuous factors"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of categorical factors"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Maximum categorical levels"
 msgstr ""
 
 #, qt-format
@@ -1676,10 +1644,6 @@ msgid "Custom"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Center Points"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Cube block"
 msgstr ""
 
@@ -1720,10 +1684,6 @@ msgid "Export design"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Available factors"
-msgstr "Verfügbare Faktoren"
-
-msgctxt "doeAnalysis|"
 msgid "Blocks"
 msgstr "Blöcke"
 
@@ -1734,14 +1694,6 @@ msgstr "Modell"
 msgctxt "doeAnalysis|"
 msgid "Components"
 msgstr "Komponenten"
-
-msgctxt "doeAnalysis|"
-msgid "Model Terms"
-msgstr "Modellterme"
-
-msgctxt "doeFactorial|"
-msgid "Maximum levels"
-msgstr ""
 
 #, qt-format
 msgctxt "doeFactorial|"
@@ -1850,14 +1802,6 @@ msgid "Response surface design"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Categorical Factors"
-msgstr "Kategorische Faktoren"
-
-msgctxt "doeAnalysis|"
-msgid "Continuous Factors"
-msgstr "Kontinuierliche Faktoren"
-
-msgctxt "doeAnalysis|"
 msgid "Select predefined model"
 msgstr "Vordefiniertes Modell auswählen"
 
@@ -1895,10 +1839,6 @@ msgctxt "doeAnalysis|"
 msgid "Show regression equation"
 msgstr "Regressionsgleichung anzeigen"
 
-msgctxt "doeAnalysis|"
-msgid "Automatically code/standardize factors"
-msgstr ""
-
 #, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Plots"
@@ -1906,10 +1846,6 @@ msgstr "Diagramme"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals matrix plot"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Pareto Plot of Effects"
 msgstr ""
 
 msgctxt "doeAnalysis|"
@@ -2466,4 +2402,164 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of std. dev. for calculation of control limits"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Available variables"
+msgstr "Verfügbare Variablen"
+
+msgctxt "doeAnalysis|"
+msgid "Discrete predictors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Continuous predictors"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Covariates"
+msgstr "Kovariaten"
+
+msgctxt "doeAnalysis|"
+msgid "Predictor levels"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Automatically detect low/high"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Manually specify low/high"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Predictor"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Low        High   "
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Display results in coded units"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Model terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Main and interaction terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Squared terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Pareto plot of effects"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Advanced options"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Histogram bin width type"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Sturges"
+msgstr "Sturges"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Scott"
+msgstr "Scott"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Doane"
+msgstr "Doane"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Freedman-Diaconis"
+msgstr "Freedman-Diaconis"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Manual"
+msgstr "Manuell"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Number of bins"
+msgstr "Anzahl von Klassen"
+
+msgctxt "doeAnalysis|"
+msgid "Sum of squares type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Type I"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Type II"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Type III"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Use coded data to calculate squared terms"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of discrete predictors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Maximum discrete levels"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "General full factorial"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Predictor"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design type"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Central composite design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Box-Behnken design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of discrete predictors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Maximum discrete levels"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Predictor"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Center points"
 msgstr ""

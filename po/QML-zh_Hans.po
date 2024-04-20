@@ -84,14 +84,6 @@ msgid "X-mR chart"
 msgstr "单值移动极差控制图"
 
 msgctxt "doeFactorial|"
-msgid "Number of factors"
-msgstr "因子数量"
-
-msgctxt "doeFactorial|"
-msgid "Factor"
-msgstr "因子"
-
-msgctxt "doeFactorial|"
 msgid "Name"
 msgstr "名称"
 
@@ -1302,10 +1294,6 @@ msgid "Show desired design"
 msgstr "显示期望设计"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Factor"
-msgstr "因子"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
 msgstr "名称"
 
@@ -1586,28 +1574,8 @@ msgid "Display design"
 msgstr "显示设计"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Design Type"
-msgstr "设计类型"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Central Composite Design"
-msgstr "中心复合设计"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Box-Behnken Design"
-msgstr "Box-Behnken 设计"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of continuous factors"
 msgstr "连续因子数量"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of categorical factors"
-msgstr "类别因子数量"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Maximum categorical levels"
-msgstr "最大类别水平"
 
 #, qt-format
 msgctxt "doeResponseSurfaceMethodology|"
@@ -1671,10 +1639,6 @@ msgid "Custom"
 msgstr "定制"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Center Points"
-msgstr "中心点"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Cube block"
 msgstr "立方块"
 
@@ -1715,10 +1679,6 @@ msgid "Export design"
 msgstr "导出设计"
 
 msgctxt "doeAnalysis|"
-msgid "Available factors"
-msgstr "可用因子"
-
-msgctxt "doeAnalysis|"
 msgid "Blocks"
 msgstr "区组"
 
@@ -1729,14 +1689,6 @@ msgstr "模型"
 msgctxt "doeAnalysis|"
 msgid "Components"
 msgstr "组成部分"
-
-msgctxt "doeAnalysis|"
-msgid "Model Terms"
-msgstr "模型项"
-
-msgctxt "doeFactorial|"
-msgid "Maximum levels"
-msgstr "最大水平数"
 
 #, qt-format
 msgctxt "doeFactorial|"
@@ -1844,14 +1796,6 @@ msgid "Response surface design"
 msgstr "响应曲面设计"
 
 msgctxt "doeAnalysis|"
-msgid "Categorical Factors"
-msgstr "类别因子"
-
-msgctxt "doeAnalysis|"
-msgid "Continuous Factors"
-msgstr "连续因子"
-
-msgctxt "doeAnalysis|"
 msgid "Select predefined model"
 msgstr "选择预定义模型"
 
@@ -1888,20 +1832,12 @@ msgid "Show regression equation"
 msgstr "显示回归公式"
 
 msgctxt "doeAnalysis|"
-msgid "Automatically code/standardize factors"
-msgstr "自动编码/标准化因子"
-
-msgctxt "doeAnalysis|"
 msgid "Plots"
 msgstr "图形"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals matrix plot"
 msgstr "残差矩阵图"
-
-msgctxt "doeAnalysis|"
-msgid "Pareto Plot of Effects"
-msgstr "效应的帕累托图"
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plots"
@@ -2457,4 +2393,164 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Number of std. dev. for calculation of control limits"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Available variables"
+msgstr "可用变量"
+
+msgctxt "doeAnalysis|"
+msgid "Discrete predictors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Continuous predictors"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Covariates"
+msgstr "协变量"
+
+msgctxt "doeAnalysis|"
+msgid "Predictor levels"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Automatically detect low/high"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Manually specify low/high"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Predictor"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Low        High   "
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Display results in coded units"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Model terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Main and interaction terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Squared terms"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Pareto plot of effects"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Advanced options"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Histogram bin width type"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Sturges"
+msgstr "Sturges"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Scott"
+msgstr "Scott"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Doane"
+msgstr "Doane"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Freedman-Diaconis"
+msgstr "Freedman-Diaconis"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Manual"
+msgstr "手动"
+
+msgctxt "doeAnalysis|"
+msgid "Number of bins"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Sum of squares type"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Type I"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Type II"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Type III"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Use coded data to calculate squared terms"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of discrete predictors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Maximum discrete levels"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "General full factorial"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Predictor"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Design type"
+msgstr "设计类型"
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Central composite design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Box-Behnken design"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of discrete predictors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Maximum discrete levels"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Predictor"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Center points"
 msgstr ""

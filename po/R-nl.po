@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-04-06 03:40\n"
+"POT-Creation-Date: 2024-04-20 03:41\n"
 "PO-Revision-Date: 2023-11-18 03:38+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -161,11 +161,22 @@ msgstr ""
 msgid "USL = %g"
 msgstr ""
 
-msgid "The analysis crashed with the following error message: %1$s"
+msgid "Error"
+msgstr ""
+
+msgid "The specified low/high levels for %1$s are not distinct."
+msgstr ""
+
+msgid ""
+"The specified low/high level(s) %1$s for %2$s do not match the levels in the "
+"dataset."
 msgstr ""
 
 msgid "Model Summary"
 msgstr "Model Samenvatting"
+
+msgid "The following aliased terms were removed: %s."
+msgstr ""
 
 msgid "ANOVA"
 msgstr ""
@@ -195,10 +206,13 @@ msgstr ""
 msgid "Standard Error"
 msgstr ""
 
-msgid "coded"
+msgid "Discrete Predictor Levels"
 msgstr ""
 
-msgid "uncoded"
+msgid "Name"
+msgstr ""
+
+msgid "Level"
 msgstr ""
 
 msgid "Regression Equation in %s Units"
@@ -207,13 +221,7 @@ msgstr ""
 msgid "Pareto Chart of Standardized Effects"
 msgstr ""
 
-msgid "Pareto Chart of Unstandardized Effects"
-msgstr ""
-
 msgid "Standardized Effect"
-msgstr ""
-
-msgid "Unstandardized Effect"
 msgstr ""
 
 msgid "Normal Probability Plot of Residuals"
@@ -268,7 +276,7 @@ msgstr "Model Samenvatting"
 msgid "Variable"
 msgstr "Variabele"
 
-msgid "Categorial factors"
+msgid "Discrete predictors"
 msgstr ""
 
 msgid "Base runs"
@@ -298,6 +306,9 @@ msgstr "Waarde"
 msgid "Please select a row in the design table."
 msgstr ""
 
+msgid "Cannote create designs with more than 100000 total runs."
+msgstr ""
+
 msgid "Click 'Display design' to show the design."
 msgstr ""
 
@@ -325,10 +336,7 @@ msgstr ""
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Continuous factors"
-msgstr ""
-
-msgid "Categorical factors"
+msgid "Continuous predictors"
 msgstr ""
 
 msgid "Replicates"

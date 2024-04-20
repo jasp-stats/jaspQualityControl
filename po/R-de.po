@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-04-06 03:40\n"
+"POT-Creation-Date: 2024-04-20 03:41\n"
 "PO-Revision-Date: 2023-12-03 20:02+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -172,11 +172,22 @@ msgstr "CL = %g"
 msgid "USL = %g"
 msgstr "OEG = %g"
 
-msgid "The analysis crashed with the following error message: %1$s"
-msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %1$s"
+msgid "Error"
+msgstr ""
+
+msgid "The specified low/high levels for %1$s are not distinct."
+msgstr ""
+
+msgid ""
+"The specified low/high level(s) %1$s for %2$s do not match the levels in the "
+"dataset."
+msgstr ""
 
 msgid "Model Summary"
 msgstr "Modellzusammenfassung"
+
+msgid "The following aliased terms were removed: %s."
+msgstr ""
 
 msgid "ANOVA"
 msgstr "ANOVA"
@@ -205,11 +216,14 @@ msgstr "Koeffizient"
 msgid "Standard Error"
 msgstr "Standardfehler"
 
-msgid "coded"
-msgstr "kodierten"
+msgid "Discrete Predictor Levels"
+msgstr ""
 
-msgid "uncoded"
-msgstr "unkodierten"
+msgid "Name"
+msgstr "Name"
+
+msgid "Level"
+msgstr ""
 
 msgid "Regression Equation in %s Units"
 msgstr "Regressionsgleichung in %s Einheiten"
@@ -217,14 +231,8 @@ msgstr "Regressionsgleichung in %s Einheiten"
 msgid "Pareto Chart of Standardized Effects"
 msgstr "Pareto-Diagramm Standardisierter Effekte"
 
-msgid "Pareto Chart of Unstandardized Effects"
-msgstr "Pareto-Diagramm Unstandardisierter Effekte"
-
 msgid "Standardized Effect"
 msgstr "Standardisierter Effekt"
-
-msgid "Unstandardized Effect"
-msgstr "Unstandardisierter Effekt"
 
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
@@ -277,8 +285,8 @@ msgstr "Design-Zusammenfassung"
 msgid "Variable"
 msgstr "Variable"
 
-msgid "Categorial factors"
-msgstr "Kategoriale Faktoren"
+msgid "Discrete predictors"
+msgstr ""
 
 msgid "Base runs"
 msgstr ""
@@ -306,6 +314,9 @@ msgstr "Wert"
 
 msgid "Please select a row in the design table."
 msgstr "Bitte eine Zeile in der Design-Tabelle auswählen."
+
+msgid "Cannote create designs with more than 100000 total runs."
+msgstr ""
 
 msgid "Click 'Display design' to show the design."
 msgstr "Klicken Sie auf 'Design anzeigen', um das Design anzuzeigen."
@@ -335,11 +346,9 @@ msgstr "Standard-Reihenfolge"
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Continuous factors"
+#, fuzzy
+msgid "Continuous predictors"
 msgstr "Kontinuierliche Faktoren"
-
-msgid "Categorical factors"
-msgstr "Kategorielle Faktoren"
 
 msgid "Replicates"
 msgstr ""
@@ -1551,6 +1560,27 @@ msgstr "X-quer & s-Kontrollkarte"
 msgid "Variables Chart for Subgroups Report"
 msgstr "Bericht Regelkarten für Attribute"
 
+#~ msgid "The analysis crashed with the following error message: %1$s"
+#~ msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %1$s"
+
+#~ msgid "coded"
+#~ msgstr "kodierten"
+
+#~ msgid "uncoded"
+#~ msgstr "unkodierten"
+
+#~ msgid "Pareto Chart of Unstandardized Effects"
+#~ msgstr "Pareto-Diagramm Unstandardisierter Effekte"
+
+#~ msgid "Unstandardized Effect"
+#~ msgstr "Unstandardisierter Effekt"
+
+#~ msgid "Categorial factors"
+#~ msgstr "Kategoriale Faktoren"
+
+#~ msgid "Categorical factors"
+#~ msgstr "Kategorielle Faktoren"
+
 #~ msgid "Report"
 #~ msgstr "Bericht"
 
@@ -1684,9 +1714,6 @@ msgstr "Bericht Regelkarten für Attribute"
 
 #~ msgid "Factor"
 #~ msgstr "Faktor"
-
-#~ msgid "Name"
-#~ msgstr "Name"
 
 #~ msgid "Design"
 #~ msgstr "Design"

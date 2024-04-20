@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-04-06 03:40\n"
+"POT-Creation-Date: 2024-04-20 03:41\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -169,11 +169,22 @@ msgstr "CL = %g"
 msgid "USL = %g"
 msgstr "UCL = %g"
 
-msgid "The analysis crashed with the following error message: %1$s"
-msgstr "检测图失效，错误信息如下: %1$s"
+msgid "Error"
+msgstr ""
+
+msgid "The specified low/high levels for %1$s are not distinct."
+msgstr ""
+
+msgid ""
+"The specified low/high level(s) %1$s for %2$s do not match the levels in the "
+"dataset."
+msgstr ""
 
 msgid "Model Summary"
 msgstr "模型摘要"
+
+msgid "The following aliased terms were removed: %s."
+msgstr ""
 
 msgid "ANOVA"
 msgstr "方差分析"
@@ -203,10 +214,13 @@ msgstr "系数"
 msgid "Standard Error"
 msgstr "标准误"
 
-msgid "coded"
+msgid "Discrete Predictor Levels"
 msgstr ""
 
-msgid "uncoded"
+msgid "Name"
+msgstr "名称"
+
+msgid "Level"
 msgstr ""
 
 msgid "Regression Equation in %s Units"
@@ -215,15 +229,7 @@ msgstr "以 %s 单位表达的回归方程"
 msgid "Pareto Chart of Standardized Effects"
 msgstr "标准化效果的帕累托图"
 
-#, fuzzy
-msgid "Pareto Chart of Unstandardized Effects"
-msgstr "标准化效果的帕累托图"
-
 msgid "Standardized Effect"
-msgstr "标准化效应"
-
-#, fuzzy
-msgid "Unstandardized Effect"
 msgstr "标准化效应"
 
 msgid "Normal Probability Plot of Residuals"
@@ -280,7 +286,7 @@ msgstr "模型摘要"
 msgid "Variable"
 msgstr "变量"
 
-msgid "Categorial factors"
+msgid "Discrete predictors"
 msgstr ""
 
 msgid "Base runs"
@@ -315,6 +321,9 @@ msgstr ""
 msgid "Please select a row in the design table."
 msgstr ""
 
+msgid "Cannote create designs with more than 100000 total runs."
+msgstr ""
+
 msgid "Click 'Display design' to show the design."
 msgstr ""
 
@@ -343,10 +352,7 @@ msgstr "标准序"
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Continuous factors"
-msgstr ""
-
-msgid "Categorical factors"
+msgid "Continuous predictors"
 msgstr ""
 
 msgid "Replicates"
@@ -1554,6 +1560,17 @@ msgstr "均值和标准差控制图"
 msgid "Variables Chart for Subgroups Report"
 msgstr "单值图"
 
+#~ msgid "The analysis crashed with the following error message: %1$s"
+#~ msgstr "检测图失效，错误信息如下: %1$s"
+
+#, fuzzy
+#~ msgid "Pareto Chart of Unstandardized Effects"
+#~ msgstr "标准化效果的帕累托图"
+
+#, fuzzy
+#~ msgid "Unstandardized Effect"
+#~ msgstr "标准化效应"
+
 #~ msgid "Report"
 #~ msgstr "报告"
 
@@ -1748,9 +1765,6 @@ msgstr "单值图"
 
 #~ msgid "Factor"
 #~ msgstr "因子"
-
-#~ msgid "Name"
-#~ msgstr "名称"
 
 #~ msgid "Design"
 #~ msgstr "设计"
