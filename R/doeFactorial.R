@@ -22,17 +22,17 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   .doeFactorialDesignSummaryTable(jaspResults, options)
 
   if (ready) {
-    error <- try({
-      design <- .doeFactorialGenerateDesign(jaspResults, options)
-    })
+        error <- try({
+          design <- .doeFactorialGenerateDesign(jaspResults, options)
+        })
 
-    if (isTryError(error)) {
-      tb <- createJaspTable()
-      tb$dependOn(options = .doeFactorialBaseDependencies())
-      tb$setError(gettextf("The analysis failed with the following error message: %s", .extractErrorMessage(error)))
-      jaspResults[["errorTable"]] <- tb
-      return()
-    }
+        if (isTryError(error)) {
+          tb <- createJaspTable()
+          tb$dependOn(options = .doeFactorialBaseDependencies())
+          tb$setError(gettextf("The analysis failed with the following error message: %s", .extractErrorMessage(error)))
+          jaspResults[["errorTable"]] <- tb
+          return()
+        }
 
     .doeFactorialAliasTable(jaspResults, options, design)
 
@@ -299,7 +299,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   design[["repetitions"]] <- options[["repetitions"]]
   if (twoLevelDesign) {
     design[["centerpoints"]] <- options[["centerpoints"]]
-    design[["blocks"]] <- options[["blocks"]]
+    design[["blocks"]] <- as.numeric(options[["blocks"]])
   }
   return(design)
 }
@@ -382,9 +382,10 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   if (!twoLevelDesign) {
     dfDesign <- as.data.frame(apply(dfDesign, 2, as.numeric))
   }
-  outDesign <- dfDesign[1:nrow(df)]
+  outDesign <- if (designSpec[["blocks"]] == 1) dfDesign[1:nrow(df)] else dfDesign[2:(nrow(df)+1)]
   colnames(outDesign) <- df[["name"]]
   display <- cbind(ro = runOrder, sro = standardOrder, outDesign)
+
   if (!is.null(dfDesign[["Blocks"]])) {
     display <- cbind(display, Block = as.numeric(dfDesign[["Blocks"]]))
   }

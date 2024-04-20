@@ -426,14 +426,18 @@ Form
 
 		Group
 		{
-			IntegerField
+			DropDown
 			{
-				name:						"blocks"
-				enabled:					!factorialTypeSplit.checked & !factorialTypeSpecify.checked & !generalFullFactorial.checked
-				label:						qsTr("Blocks")
-				defaultValue:				1
-				min:						1
-				max:						2**factorialRuns.currentIndex
+				id: 									blocks
+				name:									"blocks"
+				label:									qsTr("Blocks")
+				indexDefaultValue:						0
+				values: [
+						{ label: qsTr("1"), value: "1"},
+						{ label: qsTr("2"), value: "2"},
+						{ label: qsTr("4"), value: "4"},
+						{ label: qsTr("8"), value: "8"}
+						]
 			}
 
 			IntegerField
