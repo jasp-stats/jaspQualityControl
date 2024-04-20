@@ -1,4 +1,4 @@
-context("DoE Factorial Design")
+context("[Quality Control] DoE Factorial Design")
 
 # Two-level factorial designs ####
 
@@ -430,9 +430,47 @@ test_that("8.2 Four Center Point Design Summary table results match", {
                                  list(1, 8, 3, 4, 0, 1, "Value", 1, 12))
 })
 
-## Corner points ####
-
 ## Blocks ####
+
+### Two blocks (verified with Minitab) ####
+#
+# options <- analysisOptions("doeFactorial")
+# options$actualExporter <- FALSE
+# options$numberOfCategorical <- 3
+# options$categoricalVariables <- list(   # number of lists gives number of levels (n-1), values of each list give number of factors
+#   list(levels = c("Row 0", "Row 1", "Row 2"), name = "data 1", values = c("A", "B", "C")),
+#   list(levels = c("Row 0", "Row 1", "Row 2"), name = "data 2", values = c("a", "a", "a")),
+#   list(levels = c("Row 0","Row 1", "Row 2"), name = "data 3", values = c("b", "b", "b")))
+# options$codedOutput <- TRUE
+# options$displayDesign <- TRUE
+# options$exportDesignFile <- ""
+# options$factorialType <- "factorialTypeDefault"
+# options$runOrder <- "runOrderStandard"
+# options$selectedDesign2 <- list(list(levels = c("Row 0", "Row 1") , name = "data 1", values = c(4, 8) ), # give design list, always two lists, number of values gives number of designs
+#                                 list(levels = c("Row 0", "Row 1"), name = "data 2", values = c(0, 0)))
+# options$selectedRow <- 1 # select design
+# options$blocks <- 2
+# options$setSeed <- TRUE
+# set.seed(1)
+# dataset <- NULL
+# results <- runAnalysis("doeFactorial", dataset, options)
+#
+#
+# test_that("8.1 Four Center Point Factorial Design table results match", {
+#   table <- results[["results"]][["displayDesign"]][["data"]]
+#   jaspTools::expect_equal_tables(table,
+#                                  list(0, 0, 0, 1, 1, 0, 0, 0, 2, 1, 0, 0, 0, 7, 1, 0, 0, 0, 12, 1, -1,
+#                                       -1, -1, 8, 2, 1, -1, -1, 10, 3, -1, 1, -1, 3, 4, 1, 1, -1, 5,
+#                                       5, -1, -1, 1, 6, 6, 1, -1, 1, 11, 7, -1, 1, 1, 9, 8, 1, 1, 1,
+#                                       4, 9))
+# })
+#
+# test_that("8.2 Four Center Point Design Summary table results match", {
+#   table <- results[["results"]][["doeFactorialDesignSummaryTable"]][["data"]]
+#   jaspTools::expect_equal_tables(table,
+#                                  list(1, 8, 3, 4, 0, 1, "Value", 1, 12))
+# })
+
 
 # HTC factor designs ####
 
