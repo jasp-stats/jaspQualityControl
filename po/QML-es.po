@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-04-20 13:45+0000\n"
-"Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
+"PO-Revision-Date: 2024-04-20 14:01+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/es/>\n"
 "Language: es\n"
@@ -2398,157 +2398,148 @@ msgstr "Variables disponibles"
 
 msgctxt "doeAnalysis|"
 msgid "Discrete predictors"
-msgstr ""
+msgstr "Predictores discretos"
 
 msgctxt "doeAnalysis|"
 msgid "Continuous predictors"
-msgstr ""
+msgstr "Predictores continuos"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Covariates"
 msgstr "Covariables"
 
 msgctxt "doeAnalysis|"
 msgid "Predictor levels"
-msgstr ""
+msgstr "Niveles del predictor"
 
 msgctxt "doeAnalysis|"
 msgid "Automatically detect low/high"
-msgstr ""
+msgstr "Detectar automáticamente bajo/alto"
 
 msgctxt "doeAnalysis|"
 msgid "Manually specify low/high"
-msgstr ""
+msgstr "Especificar manualmente bajo/alto"
 
 msgctxt "doeAnalysis|"
 msgid "Predictor"
-msgstr ""
+msgstr "Predictor"
 
 msgctxt "doeAnalysis|"
 msgid "Low        High   "
-msgstr ""
+msgstr "Bajo        Alto   "
 
 msgctxt "doeAnalysis|"
 msgid "Display results in coded units"
-msgstr ""
+msgstr "Presentar los resultados en unidades codificadas"
 
 msgctxt "doeAnalysis|"
 msgid "Model terms"
-msgstr ""
+msgstr "Elementos del modelo"
 
 msgctxt "doeAnalysis|"
 msgid "Main and interaction terms"
-msgstr ""
+msgstr "Elementos principales y de interacción"
 
 msgctxt "doeAnalysis|"
 msgid "Squared terms"
-msgstr ""
+msgstr "Elementos cuadrados"
 
 msgctxt "doeAnalysis|"
 msgid "Pareto plot of effects"
-msgstr ""
+msgstr "Gráfico de Pareto de los efectos"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Advanced options"
 msgstr "Opciones Avanzadas"
 
 msgctxt "doeAnalysis|"
 msgid "Histogram bin width type"
-msgstr ""
+msgstr "Tipo de ancho de las barras del histograma"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Sturges"
 msgstr "Sturges"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Scott"
 msgstr "Scott"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Doane"
 msgstr "Doane"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Freedman-Diaconis"
 msgstr "Freedman-Diaconis"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Manual"
 msgstr "Manual"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Number of bins"
 msgstr "Número de barras"
 
 msgctxt "doeAnalysis|"
 msgid "Sum of squares type"
-msgstr ""
+msgstr "Tipo de suma de cuadrados"
 
 msgctxt "doeAnalysis|"
 msgid "Type I"
-msgstr ""
+msgstr "Tipo I"
 
 msgctxt "doeAnalysis|"
 msgid "Type II"
-msgstr ""
+msgstr "Tipo II"
 
 msgctxt "doeAnalysis|"
 msgid "Type III"
-msgstr ""
+msgstr "Tipo III"
 
 msgctxt "doeAnalysis|"
 msgid "Use coded data to calculate squared terms"
-msgstr ""
+msgstr "Usar datos codificados para calcular los términos cuadrados"
 
 msgctxt "doeFactorial|"
 msgid "Number of discrete predictors"
-msgstr ""
+msgstr "Número de predictores discretos"
 
 msgctxt "doeFactorial|"
 msgid "Maximum discrete levels"
-msgstr ""
+msgstr "Máximo de niveles discretos"
 
 msgctxt "doeFactorial|"
 msgid "General full factorial"
-msgstr ""
+msgstr "Factorial completo general"
 
 msgctxt "doeFactorial|"
 msgid "Predictor"
-msgstr ""
+msgstr "Predictor"
 
-#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design type"
 msgstr "Tipo de diseño"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Central composite design"
-msgstr ""
+msgstr "Diseño compuesto central"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Box-Behnken design"
-msgstr ""
+msgstr "Diseño de Box-Behnken"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of discrete predictors"
-msgstr ""
+msgstr "Número de predictores discretos"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Maximum discrete levels"
-msgstr ""
+msgstr "Máximo de niveles discretos"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Predictor"
-msgstr ""
+msgstr "Predictor"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Center points"
-msgstr ""
+msgstr "Puntos centrales"
