@@ -20,19 +20,18 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   ready <- options[["selectedRow"]] != -1L | options[["factorialType"]] == "generalFullFactorial" # If the design type is general full factorial no need to select a design
 
   .doeFactorialDesignSummaryTable(jaspResults, options)
-
   if (ready) {
-        error <- try({
-          design <- .doeFactorialGenerateDesign(jaspResults, options)
-        })
+    error <- try({
+      design <- .doeFactorialGenerateDesign(jaspResults, options)
+    })
 
-        if (isTryError(error)) {
-          tb <- createJaspTable()
-          tb$dependOn(options = .doeFactorialBaseDependencies())
-          tb$setError(gettextf("The analysis failed with the following error message: %s", .extractErrorMessage(error)))
-          jaspResults[["errorTable"]] <- tb
-          return()
-        }
+    if (isTryError(error)) {
+      tb <- createJaspTable()
+      tb$dependOn(options = .doeFactorialBaseDependencies())
+      tb$setError(gettextf("The analysis failed with the following error message: %s", .extractErrorMessage(error)))
+      jaspResults[["errorTable"]] <- tb
+      return()
+    }
 
     .doeFactorialAliasTable(jaspResults, options, design)
 
@@ -381,7 +380,8 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   if (!twoLevelDesign) {
     dfDesign <- as.data.frame(apply(dfDesign, 2, as.numeric))
   }
-  outDesign <- if (designSpec[["blocks"]] == 1) dfDesign[1:nrow(df)] else dfDesign[2:(nrow(df)+1)]
+
+  outDesign <- if (options[["factorialType"]] == "factorialTypeDefault" && designSpec[["blocks"]] > 1) dfDesign[2:(nrow(df)+1)] else dfDesign[1:nrow(df)]
   colnames(outDesign) <- df[["name"]]
   display <- cbind(ro = runOrder, sro = standardOrder, outDesign)
 
