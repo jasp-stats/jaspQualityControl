@@ -376,7 +376,6 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
     }
   }
   runOrder <- 1:nrow(design)
-  # TODO: Fix for blocks and repetitions
   standardOrder <- as.numeric(DoE.base::run.order(design)[["run.no.in.std.order"]])
   dfDesign <- as.data.frame(design)
   if (!twoLevelDesign) {
