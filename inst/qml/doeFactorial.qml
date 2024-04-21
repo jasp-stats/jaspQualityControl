@@ -430,6 +430,7 @@ Form
 			{
 				id: 									blocks
 				name:									"blocks"
+				enabled:								!factorialTypeSplit.checked & !generalFullFactorial.checked
 				label:									qsTr("Blocks")
 				indexDefaultValue:						0
 				values: [
