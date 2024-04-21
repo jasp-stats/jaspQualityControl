@@ -738,31 +738,202 @@ test_that("14.2 Seven Factor Three HTC FactorialDesign Summary table results mat
 # General full factorial designs ####
 
 ### Three factors three levels  (verified with Minitab) ####
-#
-#
-# options <- analysisOptions("doeFactorial")
-# options$actualExporter <- FALSE
-# options$numberOfCategorical <- 3
-# options$categoricalNoLevels <- 3
-# options$categoricalVariables <- list(   # number of lists gives number of levels (n-1), values of each list give number of factors
-#   list(levels = c("Row 0", "Row 1"), name = "data 1", values = c("A", "B")),
-#   list(levels = c("Row 0", "Row 1"), name = "data 2", values = c("a", "a")),
-#   list(levels = c("Row 0","Row 1"), name = "data 3", values = c("b", "b")))
-# options$codedOutput <- TRUE
-# options$displayDesign <- TRUE
-# options$exportDesignFile <- ""
-# options$factorialType <- "factorialTypeDefault"
-# options$runOrder <- "runOrderStandard"
-# options$selectedDesign2 <- list(list(levels = "Row 0", name = "data 1", values = 4), # give design list, always two lists, number of values gives number of designs
-#                                 list(levels = "Row 0", name = "data 2", values = 0))
-# options$selectedRow <- 0 # select design
-# options$setSeed <- TRUE
-# set.seed(1)
-# dataset <- NULL
-# results <- runAnalysis("doeFactorial", dataset, options)
+
+options <- analysisOptions("doeFactorial")
+options$actualExporter <- FALSE
+options$numberOfCategorical <- 3
+options$categoricalNoLevels <- 3
+options$categoricalVariables <- list(   # number of lists gives number of levels (n-1), values of each list give number of factors
+  list(levels = c("Row 0", "Row 1"), name = "data 1", values = c("A", "B", "C")),
+  list(levels = c("Row 0", "Row 1"), name = "data 2", values = c("a", "a", "a")),
+  list(levels = c("Row 0","Row 1"), name = "data 3", values = c("b", "b", "b")),
+  list(levels = c("Row 0","Row 1"), name = "data 4", values = c("c", "c", "c")))
+options$codedOutput <- TRUE
+options$displayDesign <- TRUE
+options$exportDesignFile <- ""
+options$factorialType <- "generalFullFactorial"
+options$runOrder <- "runOrderStandard"
+options$setSeed <- TRUE
+set.seed(1)
+dataset <- NULL
+results <- runAnalysis("doeFactorial", dataset, options)
+
+test_that("15.1 Three Factor Three Level General Full Factorial Design table results match", {
+  table <- results[["results"]][["displayDesign"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, 1, 1, 24, 1, 2, 1, 1, 10, 2, 3, 1, 1, 12, 3, 1, 2, 1, 11, 4,
+                                      2, 2, 1, 5, 5, 3, 2, 1, 14, 6, 1, 3, 1, 20, 7, 2, 3, 1, 1, 8,
+                                      3, 3, 1, 23, 9, 1, 1, 2, 2, 10, 2, 1, 2, 13, 11, 3, 1, 2, 9,
+                                      12, 1, 2, 2, 21, 13, 2, 2, 2, 8, 14, 3, 2, 2, 3, 15, 1, 3, 2,
+                                      26, 16, 2, 3, 2, 19, 17, 3, 3, 2, 22, 18, 1, 1, 3, 27, 19, 2,
+                                      1, 3, 6, 20, 3, 1, 3, 16, 21, 1, 2, 3, 4, 22, 2, 2, 3, 25, 23,
+                                      3, 2, 3, 7, 24, 1, 3, 3, 15, 25, 2, 3, 3, 18, 26, 3, 3, 3, 17,
+                                      27))
+})
+
+test_that("15.2 Three Factor Three Level General Full Factorial Design Summary table results match", {
+  table <- results[["results"]][["doeFactorialDesignSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(27, 3, 0, 1, "Value", 1, 27))
+})
 
 ### Three factors 2*three and 1*four levels  (verified with Minitab) ####
 
+options <- analysisOptions("doeFactorial")
+options$actualExporter <- FALSE
+options$numberOfCategorical <- 3
+options$categoricalNoLevels <- 4
+options$categoricalVariables <- list(   # number of lists gives number of levels (n-1), values of each list give number of factors
+  list(levels = c("Row 0", "Row 1"), name = "data 1", values = c("A", "B", "C")),
+  list(levels = c("Row 0", "Row 1"), name = "data 2", values = c("a", "a", "a")),
+  list(levels = c("Row 0","Row 1"), name = "data 3", values = c("b", "b", "b")),
+  list(levels = c("Row 0","Row 1"), name = "data 4", values = c("c", "c", "c")),
+  list(levels = c("Row 0","Row 1"), name = "data 5", values = c("d", "", "")))
+options$codedOutput <- TRUE
+options$displayDesign <- TRUE
+options$exportDesignFile <- ""
+options$factorialType <- "generalFullFactorial"
+options$runOrder <- "runOrderStandard"
+options$setSeed <- TRUE
+set.seed(1)
+dataset <- NULL
+results <- runAnalysis("doeFactorial", dataset, options)
 
-### Six factors 4*four and 1*five and 1*six levels  (verified with Minitab) ####
+test_that("16.1 Three Factor Four Level General Full Factorial Design table results match", {
+  table <- results[["results"]][["displayDesign"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, 1, 1, 27, 1, 2, 1, 1, 10, 2, 3, 1, 1, 30, 3, 4, 1, 1, 22, 4,
+                                      1, 2, 1, 12, 5, 2, 2, 1, 11, 6, 3, 2, 1, 5, 7, 4, 2, 1, 31,
+                                      8, 1, 3, 1, 14, 9, 2, 3, 1, 1, 10, 3, 3, 1, 16, 11, 4, 3, 1,
+                                      28, 12, 1, 1, 2, 33, 13, 2, 1, 2, 2, 14, 3, 1, 2, 17, 15, 4,
+                                      1, 2, 25, 16, 1, 2, 2, 13, 17, 2, 2, 2, 9, 18, 3, 2, 2, 18,
+                                      19, 4, 2, 2, 3, 20, 1, 3, 2, 36, 21, 2, 3, 2, 34, 22, 3, 3,
+                                      2, 35, 23, 4, 3, 2, 15, 24, 1, 1, 3, 26, 25, 2, 1, 3, 32, 26,
+                                      3, 1, 3, 24, 27, 4, 1, 3, 6, 28, 1, 2, 3, 7, 29, 2, 2, 3, 4,
+                                      30, 3, 2, 3, 29, 31, 4, 2, 3, 19, 32, 1, 3, 3, 21, 33, 2, 3,
+                                      3, 8, 34, 3, 3, 3, 20, 35, 4, 3, 3, 23, 36))
+})
 
+test_that("16.2 Three Factor Four Level General Full Factorial Design Summary table results match", {
+  table <- results[["results"]][["doeFactorialDesignSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(36, 3, 0, 1, "Value", 1, 36))
+})
+
+### Four factors 1x three, 1*two, 1*five and 1*six levels  (verified with Minitab) ####
+
+options <- analysisOptions("doeFactorial")
+options$actualExporter <- FALSE
+options$numberOfCategorical <- 4
+options$categoricalNoLevels <- 6
+options$categoricalVariables <- list(   # number of lists gives number of levels (n-1), values of each list give number of factors
+  list(levels = c("Row 0", "Row 1"), name = "data 1", values = c("A", "B", "C", "D")),
+  list(levels = c("Row 0", "Row 1"), name = "data 2", values = c("a", "a", "a", "a")),
+  list(levels = c("Row 0","Row 1"), name = "data 3", values = c("b", "b", "b", "b")),
+  list(levels = c("Row 0","Row 1"), name = "data 4", values = c("c", "c", "c", "")),
+  list(levels = c("Row 0","Row 1"), name = "data 5", values = c("d", "d", "d", "")),
+  list(levels = c("Row 0","Row 1"), name = "data 6", values = c("e", "e", "", "")),
+  list(levels = c("Row 0","Row 1"), name = "data 7", values = c("f", "", "", "")))
+options$codedOutput <- TRUE
+options$displayDesign <- TRUE
+options$exportDesignFile <- ""
+options$factorialType <- "generalFullFactorial"
+options$runOrder <- "runOrderStandard"
+options$setSeed <- TRUE
+set.seed(1)
+dataset <- NULL
+results <- runAnalysis("doeFactorial", dataset, options)
+
+test_that("17.1 Four Factor Six Level General Full Factorial Design table results match", {
+  table <- results[["results"]][["displayDesign"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, 1, 1, 1, 228, 1, 2, 1, 1, 1, 116, 2, 3, 1, 1, 1, 27, 3, 4,
+                                      1, 1, 1, 133, 4, 5, 1, 1, 1, 47, 5, 6, 1, 1, 1, 221, 6, 1, 2,
+                                      1, 1, 158, 7, 2, 2, 1, 1, 216, 8, 3, 2, 1, 1, 92, 9, 4, 2, 1,
+                                      1, 149, 10, 5, 2, 1, 1, 186, 11, 6, 2, 1, 1, 182, 12, 1, 3,
+                                      1, 1, 118, 13, 2, 3, 1, 1, 55, 14, 3, 3, 1, 1, 10, 15, 4, 3,
+                                      1, 1, 156, 16, 5, 3, 1, 1, 147, 17, 6, 3, 1, 1, 107, 18, 1,
+                                      4, 1, 1, 56, 19, 2, 4, 1, 1, 192, 20, 3, 4, 1, 1, 124, 21, 4,
+                                      4, 1, 1, 38, 22, 5, 4, 1, 1, 159, 23, 6, 4, 1, 1, 128, 24, 1,
+                                      5, 1, 1, 168, 25, 2, 5, 1, 1, 129, 26, 3, 5, 1, 1, 174, 27,
+                                      4, 5, 1, 1, 24, 28, 5, 5, 1, 1, 106, 29, 6, 5, 1, 1, 233, 30,
+                                      1, 1, 2, 1, 166, 31, 2, 1, 2, 1, 86, 32, 3, 1, 2, 1, 200, 33,
+                                      4, 1, 2, 1, 223, 34, 5, 1, 2, 1, 163, 35, 6, 1, 2, 1, 91, 36,
+                                      1, 2, 2, 1, 198, 37, 2, 2, 2, 1, 89, 38, 3, 2, 2, 1, 34, 39,
+                                      4, 2, 2, 1, 154, 40, 5, 2, 2, 1, 12, 41, 6, 2, 2, 1, 177, 42,
+                                      1, 3, 2, 1, 146, 43, 2, 3, 2, 1, 155, 44, 3, 3, 2, 1, 157, 45,
+                                      4, 3, 2, 1, 54, 46, 5, 3, 2, 1, 22, 47, 6, 3, 2, 1, 5, 48, 1,
+                                      4, 2, 1, 203, 49, 2, 4, 2, 1, 102, 50, 3, 4, 2, 1, 215, 51,
+                                      4, 4, 2, 1, 84, 52, 5, 4, 2, 1, 62, 53, 6, 4, 2, 1, 234, 54,
+                                      1, 5, 2, 1, 114, 55, 2, 5, 2, 1, 74, 56, 3, 5, 2, 1, 211, 57,
+                                      4, 5, 2, 1, 25, 58, 5, 5, 2, 1, 57, 59, 6, 5, 2, 1, 142, 60,
+                                      1, 1, 3, 1, 164, 61, 2, 1, 3, 1, 207, 62, 3, 1, 3, 1, 136, 63,
+                                      4, 1, 3, 1, 1, 64, 5, 1, 3, 1, 237, 65, 6, 1, 3, 1, 97, 66,
+                                      1, 2, 3, 1, 130, 67, 2, 2, 3, 1, 176, 68, 3, 2, 3, 1, 134, 69,
+                                      4, 2, 3, 1, 81, 70, 5, 2, 3, 1, 145, 71, 6, 2, 3, 1, 30, 72,
+                                      1, 3, 3, 1, 220, 73, 2, 3, 3, 1, 60, 74, 3, 3, 3, 1, 226, 75,
+                                      4, 3, 3, 1, 196, 76, 5, 3, 3, 1, 189, 77, 6, 3, 3, 1, 120, 78,
+                                      1, 4, 3, 1, 110, 79, 2, 4, 3, 1, 75, 80, 3, 4, 3, 1, 181, 81,
+                                      4, 4, 3, 1, 28, 82, 5, 4, 3, 1, 40, 83, 6, 4, 3, 1, 26, 84,
+                                      1, 5, 3, 1, 19, 85, 2, 5, 3, 1, 100, 86, 3, 5, 3, 1, 105, 87,
+                                      4, 5, 3, 1, 14, 88, 5, 5, 3, 1, 2, 89, 6, 5, 3, 1, 180, 90,
+                                      1, 1, 4, 1, 51, 91, 2, 1, 4, 1, 101, 92, 3, 1, 4, 1, 48, 93,
+                                      4, 1, 4, 1, 238, 94, 5, 1, 4, 1, 58, 95, 6, 1, 4, 1, 93, 96,
+                                      1, 2, 4, 1, 175, 97, 2, 2, 4, 1, 170, 98, 3, 2, 4, 1, 135, 99,
+                                      4, 2, 4, 1, 173, 100, 5, 2, 4, 1, 139, 101, 6, 2, 4, 1, 31,
+                                      102, 1, 3, 4, 1, 33, 103, 2, 3, 4, 1, 45, 104, 3, 3, 4, 1, 208,
+                                      105, 4, 3, 4, 1, 229, 106, 5, 3, 4, 1, 141, 107, 6, 3, 4, 1,
+                                      222, 108, 1, 4, 4, 1, 44, 109, 2, 4, 4, 1, 87, 110, 3, 4, 4,
+                                      1, 165, 111, 4, 4, 4, 1, 16, 112, 5, 4, 4, 1, 143, 113, 6, 4,
+                                      4, 1, 82, 114, 1, 5, 4, 1, 65, 115, 2, 5, 4, 1, 96, 116, 3,
+                                      5, 4, 1, 219, 117, 4, 5, 4, 1, 240, 118, 5, 5, 4, 1, 85, 119,
+                                      6, 5, 4, 1, 121, 120, 1, 1, 1, 2, 59, 121, 2, 1, 1, 2, 109,
+                                      122, 3, 1, 1, 2, 239, 123, 4, 1, 1, 2, 185, 124, 5, 1, 1, 2,
+                                      232, 125, 6, 1, 1, 2, 32, 126, 1, 2, 1, 2, 111, 127, 2, 2, 1,
+                                      2, 199, 128, 3, 2, 1, 2, 42, 129, 4, 2, 1, 2, 119, 130, 5, 2,
+                                      1, 2, 150, 131, 6, 2, 1, 2, 138, 132, 1, 3, 1, 2, 50, 133, 2,
+                                      3, 1, 2, 160, 134, 3, 3, 1, 2, 153, 135, 4, 3, 1, 2, 104, 136,
+                                      5, 3, 1, 2, 3, 137, 6, 3, 1, 2, 36, 138, 1, 4, 1, 2, 152, 139,
+                                      2, 4, 1, 2, 204, 140, 3, 4, 1, 2, 49, 141, 4, 4, 1, 2, 72, 142,
+                                      5, 4, 1, 2, 23, 143, 6, 4, 1, 2, 214, 144, 1, 5, 1, 2, 99, 145,
+                                      2, 5, 1, 2, 9, 146, 3, 5, 1, 2, 39, 147, 4, 5, 1, 2, 76, 148,
+                                      5, 5, 1, 2, 132, 149, 6, 5, 1, 2, 70, 150, 1, 1, 2, 2, 213,
+                                      151, 2, 1, 2, 2, 103, 152, 3, 1, 2, 2, 115, 153, 4, 1, 2, 2,
+                                      8, 154, 5, 1, 2, 2, 80, 155, 6, 1, 2, 2, 43, 156, 1, 2, 2, 2,
+                                      13, 157, 2, 2, 2, 2, 108, 158, 3, 2, 2, 2, 95, 159, 4, 2, 2,
+                                      2, 148, 160, 5, 2, 2, 2, 17, 161, 6, 2, 2, 2, 206, 162, 1, 3,
+                                      2, 2, 37, 163, 2, 3, 2, 2, 184, 164, 3, 3, 2, 2, 41, 165, 4,
+                                      3, 2, 2, 210, 166, 5, 3, 2, 2, 151, 167, 6, 3, 2, 2, 98, 168,
+                                      1, 4, 2, 2, 77, 169, 2, 4, 2, 2, 123, 170, 3, 4, 2, 2, 35, 171,
+                                      4, 4, 2, 2, 20, 172, 5, 4, 2, 2, 131, 173, 6, 4, 2, 2, 15, 174,
+                                      1, 5, 2, 2, 113, 175, 2, 5, 2, 2, 169, 176, 3, 5, 2, 2, 73,
+                                      177, 4, 5, 2, 2, 161, 178, 5, 5, 2, 2, 126, 179, 6, 5, 2, 2,
+                                      162, 180, 1, 1, 3, 2, 193, 181, 2, 1, 3, 2, 227, 182, 3, 1,
+                                      3, 2, 112, 183, 4, 1, 3, 2, 64, 184, 5, 1, 3, 2, 29, 185, 6,
+                                      1, 3, 2, 195, 186, 1, 2, 3, 2, 66, 187, 2, 2, 3, 2, 205, 188,
+                                      3, 2, 3, 2, 83, 189, 4, 2, 3, 2, 235, 190, 5, 2, 3, 2, 68, 191,
+                                      6, 2, 3, 2, 194, 192, 1, 3, 3, 2, 218, 193, 2, 3, 3, 2, 167,
+                                      194, 3, 3, 3, 2, 231, 195, 4, 3, 3, 2, 172, 196, 5, 3, 3, 2,
+                                      202, 197, 6, 3, 3, 2, 127, 198, 1, 4, 3, 2, 94, 199, 2, 4, 3,
+                                      2, 61, 200, 3, 4, 3, 2, 53, 201, 4, 4, 3, 2, 230, 202, 5, 4,
+                                      3, 2, 90, 203, 6, 4, 3, 2, 52, 204, 1, 5, 3, 2, 179, 205, 2,
+                                      5, 3, 2, 21, 206, 3, 5, 3, 2, 188, 207, 4, 5, 3, 2, 201, 208,
+                                      5, 5, 3, 2, 79, 209, 6, 5, 3, 2, 183, 210, 1, 1, 4, 2, 209,
+                                      211, 2, 1, 4, 2, 6, 212, 3, 1, 4, 2, 63, 213, 4, 1, 4, 2, 212,
+                                      214, 5, 1, 4, 2, 67, 215, 6, 1, 4, 2, 4, 216, 1, 2, 4, 2, 190,
+                                      217, 2, 2, 4, 2, 122, 218, 3, 2, 4, 2, 178, 219, 4, 2, 4, 2,
+                                      191, 220, 5, 2, 4, 2, 225, 221, 6, 2, 4, 2, 7, 222, 1, 3, 4,
+                                      2, 217, 223, 2, 3, 4, 2, 224, 224, 3, 3, 4, 2, 144, 225, 4,
+                                      3, 4, 2, 171, 226, 5, 3, 4, 2, 125, 227, 6, 3, 4, 2, 140, 228,
+                                      1, 4, 4, 2, 187, 229, 2, 4, 4, 2, 197, 230, 3, 4, 4, 2, 69,
+                                      231, 4, 4, 4, 2, 137, 232, 5, 4, 4, 2, 46, 233, 6, 4, 4, 2,
+                                      18, 234, 1, 5, 4, 2, 88, 235, 2, 5, 4, 2, 11, 236, 3, 5, 4,
+                                      2, 71, 237, 4, 5, 4, 2, 236, 238, 5, 5, 4, 2, 117, 239, 6, 5,
+                                      4, 2, 78, 240))
+})
+
+test_that("17.1 Four Factor Six Level General Full Factorial Design Summary table results match", {
+  table <- results[["results"]][["doeFactorialDesignSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(240, 4, 0, 1, "Value", 1, 240))
+})
