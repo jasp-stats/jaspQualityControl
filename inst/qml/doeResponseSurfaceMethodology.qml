@@ -89,6 +89,7 @@ Form
 		TableView
 		{
 			id: categoricalVariables
+			visible: numberOfCategorical.value != 0
 
 			implicitWidth		: form.implicitWidth
 			implicitHeight		: 140 * preferencesModel.uiScale // about 3 rows
@@ -119,7 +120,7 @@ Form
 		Label	{ text : qsTr("Design Table")	}
 		TableView
 		{
-			property int designDataColumns : centralCompositeDesign.checked ? 7 : 3
+			property int designDataColumns : centralCompositeDesign.checked ? 6 : 3
 			property var designData: // it would be better to generate this...
 			{
 				const val = numberOfContinuous.intValue
@@ -129,66 +130,40 @@ Form
 					{
 						case 2:
 							return	[
-								"Full", 13, 1, 5, 0, 0, 1.414,
-								"Full", 14, 2, 6, 3, 3, 1.414
+								"Full", 13, 5, 0, 0, 1.414,
+								"Full", 14, 6, 3, 3, 1.414
 							];
 						case 3:	return	[
-								"Full", 20, 1, 6, 0, 0, 1.682, // fixed manually
-								"Full", 20, 2, 6, 4, 2, 1.633,
-								"Full", 20, 3, 6, 4, 2, 1.633
+								"Full", 20, 6, 0, 0, 1.682, // fixed manually
+								"Full", 20, 6, 4, 2, 1.633
 							];
 						case 4:	return	[
-								"Full", 31, 1, 7, 0, 0, 2,
-								"Full", 30, 2, 6, 4, 2, 2,
-								"Full", 30, 3, 6, 4, 2, 2
+								"Full", 31, 7, 0, 0, 2,
+								"Full", 30, 6, 4, 2, 2
 							];
 						case 5:	return	[
-								"Half", 32, 1, 6, 0, 0, 2,
-								"Half", 33, 2, 7, 6, 1, 2,
-								"Full", 52, 1, 10, 0, 0, 2.378,
-								"Full", 54, 2, 12, 8, 4, 2.366,
-								"Full", 54, 3, 12, 8, 4, 2.366
+								"Full", 52, 10, 0, 0, 2.378,
+								"Full", 54, 12, 8, 4, 2.366
 							];
 						case 6:	return	[
-								"Half", 53, 1, 9, 0, 0, 2.378,
-								"Half", 54, 2, 10, 8, 2, 2.366,
-								"Half", 54, 3, 10, 8, 2, 2.366,
-								"Full", 90, 1, 14, 0, 0, 2.828,
-								"Full", 90, 2, 14, 8, 6, 2.828,
-								"Full", 90, 3, 14, 8, 6, 2.828,
-								"Full", 90, 5, 14, 8, 6, 2.828
+								"Full", 90, 14, 0, 0, 2.828,
+								"Full", 90, 14, 8, 6, 2.828
 							];
 						case 7:	return	[
-								"Half", 88, 1, 10, 0, 0, 2.828,
-								"Half", 90, 2, 12, 8, 4, 2.828,
-								"Half", 90, 3, 12, 8, 4, 2.828,
-								"Half", 90, 5, 12, 8, 4, 2.828,
-								"Full", 152, 1, 10, 0, 0, 3.364,
-								"Full", 160, 2, 18, 8, 10, 3.364,
-								"Full", 160, 3, 18, 8, 10, 3.364,
-								"Full", 160, 5, 18, 8, 10, 3.364
+								"Full", 152, 10, 0, 0, 3.364,
+								"Full", 160, 18, 8, 10, 3.364
 							];
 						case 8:	return	[
-								"Quarter", 90, 1, 10, 0, 0, 2.828,
-								"Quarter", 90, 2, 10, 8, 2, 2.828,
-								"Quarter", 90, 3, 10, 8, 2, 2.828,
-								"Quarter", 90, 5, 10, 8, 2, 2.828,
-								"Half", 154, 1, 10, 0, 0, 3.364,
-								"Half", 160, 2, 16, 8, 8, 3.364,
-								"Half", 160, 3, 16, 8, 8, 3.364,
-								"Half", 160, 5, 16, 8, 8, 3.364
+								"Full", 282, 10, 0, 0, 4,
+								"Full", 288, 16, 8, 8, 4
 							];
 						case 9:	return	[
-								"Quarter", 156, 1, 10, 0, 0, 3.364,
-								"Quarter", 160, 2, 14, 8, 6, 3.364,
-								"Quarter", 160, 3, 14, 8, 6, 3.364,
-								"Quarter", 160, 5, 14, 8, 6, 3.364
+								"Full", 540, 10, 0, 0, 4.76,
+								"Full", 544, 14, 8, 6, 4.76
 							];
 						case 10:	return	[
-								"Eighth", 158, 1, 10, 0, 0, 3.364,
-								"Eighth", 160, 2, 12, 8, 4, 3.364,
-								"Eighth", 160, 3, 12, 8, 4, 3.364,
-								"Eighth", 160, 5, 12, 8, 4, 3.364
+								"Full", 1054, 10, 0, 0, 5.66,
+								"Full", 1056, 12, 8, 4, 5.66
 							];
 					}
 				}
@@ -214,7 +189,7 @@ Form
 			modelType			: JASP.Simple
 			name				: "selectedDesign2"
 
-			columnNames			: centralCompositeDesign.checked ? [qsTr("Runs"), qsTr("Blocks"), qsTr("Total"), qsTr("Cube"), qsTr("Axial"), qsTr("Alpha")] : [qsTr("Blocks"), qsTr("Centre points")]
+			columnNames			: centralCompositeDesign.checked ? [qsTr("Runs"), qsTr("Total"), qsTr("Cube"), qsTr("Axial"), qsTr("Alpha")] : [qsTr("Blocks"), qsTr("Centre points")]
 			cornerText			: centralCompositeDesign.checked ? qsTr("Design") : qsTr("Runs")
 			initialColumnCount	: designDataColumns - 1// -1 because the first "column" is not a column but the row header
 			columnCount			: designDataColumns - 1
