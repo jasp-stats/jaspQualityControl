@@ -127,6 +127,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   for (fac in unlist(discretePredictors)) {
     contrasts(dataset[[fac]]) <- "contr.sum"
   }
+  if (length(blocks) > 0 && !identical(blocks, ""))
+    contrasts(dataset[[blocks]]) <- "contr.sum"
 
   # Transform to coded, -1 to 1 coding.
   allVars <- c(unlist(continuousPredictors), unlist(discretePredictors), blocks)
@@ -406,11 +408,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   termNamesAliasedCoded <- gsub("✻", "", termNamesAliasedCoded)
 
   # covariates and blocks should not get an alias in the table (but keep their default names in the equation, so specifying it here)
-  if (length(blocks) > 0 && !identical(blocks, ""))
+  if (length(blocks) > 0 && !identical(blocks, "")) {
     termNamesAliased[termNamesAliased == blocks] <- "BLK"
+    termNamesAliasedCoded[termNamesAliasedCoded == blocks] <- "BLK"
+  }
   if (length(covariates) > 0 && !identical(covariates, "")) {
     covariateAliases <- paste0("COV", seq(1, length(covariates)))
     termNamesAliased[termNamesAliased %in% unlist(covariates)] <- covariateAliases
+    termNamesAliasedCoded[termNamesAliasedCoded %in% unlist(covariates)] <- covariateAliases
   }
 
   # append number if duplicated
@@ -496,16 +501,20 @@ get_levels <- function(var, num_levels, dataset) {
   if (ncol(regressionFit$model) < 3) {
     VIF <- rep(NA, length(regressionFit$coefficients))
   } else {
-    VIF <- car::vif(regressionFit)
-    VIF <- if (is.vector(VIF)) VIF else VIF[,1]
-    terms <- names(regressionFit$coefficients)
-    regexExpression <- paste0("(", paste(predictors, collapse = "|"), ")((\\^2)?)([^✻]+)(✻?)")
-    for (term_i in seq_along(terms)) {
-      replacements <- if (grepl("^2", terms[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
-      terms[term_i] <- gsub(regexExpression, replacements, terms[term_i], perl=TRUE)
-      terms[term_i] <- gsub("\\s", "", terms[term_i])
+    VIF <- try(car::vif(regressionFit))
+    if (!jaspBase::isTryError(VIF)) {
+      VIF <- if (is.vector(VIF)) VIF else VIF[,1]
+      terms <- names(regressionFit$coefficients)
+      regexExpression <- paste0("(", paste(predictors, collapse = "|"), ")((\\^2)?)([^✻]+)(✻?)")
+      for (term_i in seq_along(terms)) {
+        replacements <- if (grepl("^2", terms[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
+        terms[term_i] <- gsub(regexExpression, replacements, terms[term_i], perl=TRUE)
+        terms[term_i] <- gsub("\\s", "", terms[term_i])
+      }
+      VIF <- VIF[terms]
+    } else {
+      VIF <- rep(NA, length(regressionFit$coefficients))
     }
-    VIF <- VIF[terms]
   }
   return(VIF)
 }
@@ -635,19 +644,19 @@ get_levels <- function(var, num_levels, dataset) {
 
 .createHighestOrderInteractionFormula <- function(dependentVariable, independentVariables, interactionOrder) {
   # Create a formula string with main effects
-  formulaStr <- paste(jaspBase::encodeColNames(independentVariables), collapse = " + ")
+  formulaStr <- paste(independentVariables, collapse = " + ")
 
   # Add interaction terms up to the specified order
   if (interactionOrder > 1 & length(independentVariables) > 1) {
     for (i in 2:interactionOrder) {
-      interactions <- combn(jaspBase::encodeColNames(independentVariables), i, simplify = FALSE)
+      interactions <- combn(independentVariables, i, simplify = FALSE)
       interaction_terms <- sapply(interactions, function(x) paste(x, collapse = ":"))
       formulaStr <- paste(formulaStr, "+", paste(interaction_terms, collapse = " + "))
     }
   }
 
   # Construct and return the formula
-  return(paste(jaspBase::encodeColNames(dependentVariable), "~", formulaStr))
+  return(paste(dependentVariable, "~", formulaStr))
 }
 
 .doeAnalysisSummaryTable <- function(jaspResults, options, ready, coded) {
@@ -1071,14 +1080,14 @@ get_levels <- function(var, num_levels, dataset) {
 
 .modelFormula <- function(modelTerms, options, dependent) {
   dependent.normal <- dependent
-  dependent.base64 <- jaspBase::encodeColNames(dependent)
+  dependent.base64 <- dependent
 
   terms.base64 <- c()
   terms.normal <- c()
 
   for (term in modelTerms) {
     components <- unlist(term$components)
-    term.base64 <- paste(jaspBase::encodeColNames(components), collapse = ":", sep = "")
+    term.base64 <- paste(components, collapse = ":", sep = "")
     term.normal <- paste(components, collapse = " \u273B ", sep = "")
 
     terms.base64 <- c(terms.base64, term.base64)
