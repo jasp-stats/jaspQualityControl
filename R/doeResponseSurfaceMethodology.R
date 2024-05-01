@@ -238,7 +238,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
 .doeRsmGenerateBoxBehnkenDesign <- function(noContinuous, centerPoints, randomize = FALSE) {
 
-  block <- if (noContinuous >= 4) TRUE else FALSE
+  block <- if (noContinuous == 4 | noContinuous == 5) TRUE else FALSE
 
   design <- rsm::bbd(
     k         = noContinuous,
@@ -324,7 +324,8 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
                                     "custom"       = options[["customAlphaValue"]]
     )
   } else { # boxBehnkenDesign
-    designSpec[["centerpoints"]]  <- options[["customCubeBlock"]]
+    if (options[["centerPointType"]] == "custom")
+      designSpec[["centerpoints"]]  <- options[["customCubeBlock"]]
   }
 
   # This would be better, but it does not work because the QML tableview values do not update properly
@@ -401,29 +402,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
                "designType" = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                "rotatable" = c(1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
     )
-
-    #
-    # defaultDesigns <- structure(
-    #   c(2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6,
-    #     6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9,
-    #     9, 9, 10, 10, 10, 10,
-    #     1, 2, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2,
-    #     1, 2, 3, 5, 1, 2, 3, 1, 2, 3, 5, 1, 2, 3, 5, 1, 2, 3, 5, 1, 2,
-    #     3, 5, 1, 2, 3, 5, 1, 2, 3, 5, 5, 3, 6, 4, 4, 7, 4, 4, 10, 8,
-    #     8, 6, 6, 14, 8, 8, 8, 9, 8, 8, 10, 8, 8, 8, 10, 8, 8, 8, 10,
-    #     8, 8, 8, 10, 8, 8, 8, 10, 8, 8, 8, 10, 8, 8, 8, 0, 3, 0, 2, 2,
-    #     0, 2, 2, 0, 4, 4, 0, 1, 0, 6, 6, 6, 0, 2, 2, 0, 10, 10, 10, 0,
-    #     4, 4, 4, 0, 8, 8, 8, 0, 2, 2, 2, 0, 6, 6, 6, 0, 4, 4, 4, 0, 0,
-    #     0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
-    #     0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3,
-    #     1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
-    #     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    #     1, 1), dim = c(44, 6), dimnames = list(NULL, c("k", "blocks", "cube", "axial", "designType", "rotatable")))
-
   } else {# boxBehnkenDesign
 
     defaultDesigns <- structure(
-      c(3, 4, 5, 6, 7, 9, 10, 15, 27, 46, 54, 62, 130, 170, 1, 3, 2, 2, 2, 5, 2, 3, 3, 3, 6, 6, 10, 10),
+      c(3, 4, 5, 6, 7, 9, 10, 15, 33, 46, 54, 62, 130, 170, 1, 3, 2, 1, 1, 1, 1, 3, 3, 3, 6, 6, 10, 10),
       dim = c(7L, 4L), dimnames = list(NULL, c("k", "runs", "blocks", "centerpoints")))
   }
 
