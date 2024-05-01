@@ -2,7 +2,7 @@ context("[Quality Control] DoE Response surface methodology")
 
 # Basic tests ####
 
-## Three continuous predictors (verified with Minitab) ####
+## Three continuous predictors CCD (verified with Minitab) ####
 
 options <- analysisOptions("doeResponseSurfaceMethodology")
 options$actualExporter <- FALSE
@@ -51,7 +51,7 @@ test_that("1.2 Three Cont. Pred. Central Composite Design Summary table results 
                                  list(1.63299316185545, 2, 20, 0, 3, 4, 1, "Value", 20))
 })
 
-## Five continuous predictors (verified with Minitab) ####
+## Five continuous predictors CCD (verified with Minitab) ####
 
 options <- analysisOptions("doeResponseSurfaceMethodology")
 options$actualExporter <- FALSE
@@ -118,7 +118,7 @@ test_that("2.2 Five Cont. Pred. Central Composite Design Summary table results m
 })
 
 
-## Three continuous and two categorical predictors (verified with Minitab) ####
+## Three continuous and two categorical predictors CCD (verified with Minitab) ####
 
 options <- analysisOptions("doeResponseSurfaceMethodology")
 options$actualExporter <- FALSE
@@ -207,7 +207,7 @@ test_that("3.2 Three Cont. Pred. Two. Disc. Pred. Central Composite Design Summa
                                  list(1.63299316185545, 2, 20, 2, 3, 4, 1, "Value", 20))
 })
 
-## Four continuous and one categorical predictor (verified with Minitab) ####
+## Four continuous and one categorical predictor (verified with Minitab) CCD ####
 
 options <- analysisOptions("doeResponseSurfaceMethodology")
 options$actualExporter <- FALSE
@@ -282,7 +282,7 @@ test_that("4.2 Four Cont. Pred. One. Disc. Pred. Central Composite Design Summar
 
 # Face centered vs default alpha ####
 
-## Three continuous predictors (verified with Minitab) ####
+## Three continuous predictors face centered CCD (verified with Minitab) ####
 
 options <- analysisOptions("doeResponseSurfaceMethodology")
 options$actualExporter <- FALSE
@@ -330,7 +330,7 @@ test_that("5.2 Three Cont. Pred. Face Centered Central Composite Design Summary 
                                  list(1, 2, 20, 0, 3, 4, 1, "Value", 20))
 })
 
-## Four continuous predictors (verified with Minitab) ####
+## Four continuous predictors  face centered CCD (verified with Minitab) ####
 
 options <- analysisOptions("doeResponseSurfaceMethodology")
 options$actualExporter <- FALSE
@@ -387,7 +387,7 @@ test_that("6.2 Four Cont. Pred. Face Centered Central Composite Design Summary t
 
 # Box Behnken Designs ####
 
-## Three continuous predictors (verified with Minitab) ####
+## Three continuous predictors BBD (verified with Minitab) ####
 
 options <- analysisOptions("doeResponseSurfaceMethodology")
 options$actualExporter <- FALSE
@@ -434,7 +434,7 @@ test_that("7.2 Three Cont. Pred. Box-Behnken Design table results match Summary 
 })
 
 
-## Four continuous predictors (verified with Minitab) ####
+## Four continuous predictors BBD (verified with Minitab) ####
 
 options <- analysisOptions("doeResponseSurfaceMethodology")
 options$actualExporter <- FALSE
@@ -489,7 +489,7 @@ test_that("8.2 Four Cont. Pred. Box-Behnken Design Summary table results match",
                                  list(3, 33, 0, 3, 4, 1, "Value", 3, 33))
 })
 
-## Five continuous predictors (verified with Minitab) ####
+## Five continuous predictors BBD (verified with Minitab) ####
 
 options <- analysisOptions("doeResponseSurfaceMethodology")
 options$actualExporter <- FALSE
@@ -551,7 +551,7 @@ test_that("9.2 Five Cont. Pred. Box-Behnken Design Summary table results match",
 })
 
 
-## Six continuous predictors one discrete predictor (verified with Minitab) ####
+## Six continuous predictors one discrete predictor BBD (verified with Minitab) ####
 
 options <- analysisOptions("doeResponseSurfaceMethodology")
 options$actualExporter <- FALSE

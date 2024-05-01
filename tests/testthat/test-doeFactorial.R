@@ -85,6 +85,7 @@ test_that("2.1 Five Factor Two Level Design Summary table results match", {
   jaspTools::expect_equal_tables(table,
                                  list(1, 32, 5, 0, 0, 1, "Value", 1, 32))
 })
+
 ### Five factors fractional factorial (verified with Minitab) ####
 
 options <- analysisOptions("doeFactorial")

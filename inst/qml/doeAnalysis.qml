@@ -241,8 +241,8 @@ Form
 		CheckBox
 		{
 			id:										highestOrder
-			name:                                   "highestOrder"
-			label:                              	qsTr("Define by highest order interaction term")
+			name:									"highestOrder"
+			label:									qsTr("Define by highest order interaction term")
 			visible:								designType.currentValue == "factorialDesign"
 			checked:								true
 
