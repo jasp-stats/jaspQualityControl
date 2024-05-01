@@ -172,12 +172,12 @@ Form
 					switch(val)
 					{
 						case 3:		return	[15, 1, 3];
-						case 4:		return	[27, 3, 3];
+						case 4:		return	[33, 3, 3];
 						case 5:		return	[46, 2, 3];
-						case 6:		return	[54, 2, 6];
-						case 7:		return	[62, 2, 6];
-						case 9:		return	[130, "5 or 10", 10];
-						case 10:	return	[170, 2, 10];
+						case 6:		return	[54, 1, 6];
+						case 7:		return	[62, 1, 6];
+						case 9:		return	[130, 1, 10];
+						case 10:	return	[170, 1, 10];
 					}
 				}
 			}
