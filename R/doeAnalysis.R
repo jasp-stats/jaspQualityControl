@@ -208,7 +208,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     }
     numPred <- unlist(continuousPredictors)
     numPredStringMainEffects <- paste0(numPred, collapse = " + ")
-    numPredStringSecondOrderInteractionEffects <- paste0("(", numPredStringMainEffects, ")^2")
     numPredStringSquaredEffects <- paste0(" + I(", numPred, "^2)", collapse = "")
     catPred <- unlist(discretePredictors)
     catPred <- catPred[catPred != ""]
@@ -217,11 +216,16 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     } else {
       catPredString <- ""
     }
+    if (!identical(catPredString, "")) {
+      secondOrderInteractionEffects <- paste0("(", numPredStringMainEffects, " + ", catPredString, ")^2")
+    } else {
+      secondOrderInteractionEffects <- paste0("(", numPredStringMainEffects, ")^2")
+    }
     formulaString <- switch(modelTerms,
                             "linear" = paste0(dependent, " ~ ", numPredStringMainEffects, catPredString),
-                            "linearAndInteractions" = paste0(dependent, " ~ ", numPredStringSecondOrderInteractionEffects, catPredString),
+                            "linearAndInteractions" = paste0(dependent, " ~ ", secondOrderInteractionEffects, catPredString),
                             "linearAndSquared" = paste0(dependent, " ~ ", numPredStringMainEffects, numPredStringSquaredEffects, catPredString),
-                            "fullQuadratic" = paste0(dependent, " ~ ", numPredStringSecondOrderInteractionEffects, numPredStringSquaredEffects, catPredString)
+                            "fullQuadratic" = paste0(dependent, " ~ ", secondOrderInteractionEffects, numPredStringSquaredEffects, catPredString)
     )
   }
   if (length(blocks) > 0 && !identical(blocks, ""))
