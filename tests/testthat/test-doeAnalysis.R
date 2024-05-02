@@ -1826,25 +1826,1081 @@ test_that("18.5 Four factors 1x three, 1*two, 1*five and 1*six levels Model Summ
 
 ## RSM designs ####
 
-### Three continuous predictors (verified with Minitab) CCD ####
+### Three continuous predictors CCD (verified with Minitab) ####
 
-### Five continuous predictors (verified with Minitab) CCD ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1")
+)
+options$squaredTermsCoded <- TRUE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3contCCD.csv", options)
 
-### Three continuous and two categorical predictors (verified with Minitab) CCD ####
+test_that("19.1 Three continuous predictors CCD ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(33.4159369942268, 300.743432948041, 9, 0.603726470392989, 0.769693680161224,
+                                      "Model", "", 136.241022081355, 3, "", "", "<unicode> Linear terms",
+                                      0.647624788809821, 0.647624788809821, 1, 0.0117006513375552,
+                                      0.91600080679181, "<unicode> <unicode> A", 110.228628924466,
+                                      110.228628924466, 1, 1.99150306897945, 0.188530129971547, "<unicode> <unicode> B",
+                                      25.3647683680789, 25.3647683680789, 1, 0.458265829320952, 0.513789823406216,
+                                      "<unicode> <unicode> C", "", 94.2155813129141, 3, "", "", "<unicode> Squared terms",
+                                      23.0209343677798, 23.0209343677798, 1, 0.41591972876324, 0.53349530232022,
+                                      "<unicode> <unicode> A^2", 71.1884410693395, 71.1884410693395,
+                                      1, 1.28616313428521, 0.283211015769789, "<unicode> <unicode> B^2",
+                                      0.00620587579476251, 0.00620587579476251, 1, 0.000112121694804385,
+                                      0.991759824072754, "<unicode> <unicode> C^2", "", 70.2868295537721,
+                                      3, "", "", "<unicode> Interaction terms", 24.8333207140014,
+                                      24.8333207140014, 1, 0.448664152837953, 0.518137155944881, "<unicode> <unicode> A<unicode><unicode><unicode>B",
+                                      0.010619694879324, 0.010619694879324, 1, 0.000191866261516248,
+                                      0.989220847538756, "<unicode> <unicode> A<unicode><unicode><unicode>C",
+                                      45.4428891448914, 45.4428891448914, 1, 0.821017680056228, 0.386194705961586,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>C", 55.3494647542538,
+                                      553.494647542538, 10, "", "", "Error", "", 854.238080490579,
+                                      19, "", "", "Total"))
+})
 
-### Four continuous and one categorical predictor (verified with Minitab) CCD ####
+test_that("19.2 Three continuous predictors CCD Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 101.126534122288, "", 1.35754827517153e-11, 3.02555115875388,
+                                      "(Intercept)", 33.4241692888572, "", "A", -0.220389873736422,
+                                      -0.719793327623154, 0.916000806791808, 2.03744839199981, "A",
+                                      -0.108169549030935, 1, "B", 2.87525989685885, 9.39059882314099,
+                                      0.188530129971547, 2.03744839199981, "B", 1.4112062460815, 1,
+                                      "C", -1.37925750124087, -4.50465499905269, 0.513789823406216,
+                                      2.03744839199981, "C", -0.676953343533327, 1, "A^2", 1.32028414200427,
+                                      4.31204800778595, 0.53349530232022, 2.04721118835923, "A^2",
+                                      0.644918389227071, "", "B^2", -2.32172444992377, -7.58275205345104,
+                                      0.283211015769789, 2.04721118835923, "B^2", -1.13409132537252,
+                                      "", "C^2", -0.0216774140676994, -0.0707984343451061, 0.991759824072725,
+                                      2.04721118835923, "C^2", -0.0105887532224133, "", "AB", -1.761864095,
+                                      -5.75424813427, 0.518137155944881, 2.63033896946415, "A<unicode>B",
+                                      -0.669823971531291, 1, "AC", 0.0364343500000011, 0.118994587100004,
+                                      0.989220847538727, 2.63033896946415, "A<unicode>C", 0.0138515797480746,
+                                      1, "BC", -2.3833508225, -7.784023786285, 0.386194705961586,
+                                      2.63033896946415, "B<unicode>C", -0.906100259384263, 1))
+})
+
+test_that("19.3 Three continuous predictors CCD Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 101.13 (Intercept) - 0.22 A + 2.88 B - 1.38 C + 1.32 A^2 - 2.32 B^2 - 0.02 C^2 - 1.76 AB + 0.04 AC - 2.38 BC"
+                                 ))
+})
+
+test_that("19.4 Three continuous predictors CCD Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.356816916827087, 7.43972208850934))
+})
+
+
+### Five continuous predictors CCD (verified with Minitab) ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C", "D", "E")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1"),
+  list(predictors = "D", lowValue = "-1", highValue = "1"),
+  list(predictors = "E", lowValue = "-1", highValue = "1")
+)
+options$squaredTermsCoded <- TRUE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM5contCCD.csv", options)
+
+test_that("20.1 Five continuous predictors CCD ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(51.3587113078249, 1027.1742261565, 20, 0.419782874778523, 0.977915041906087,
+                                      "Model", "", 341.185797996187, 5, "", "", "<unicode> Linear terms",
+                                      43.5159978609836, 43.5159978609836, 1, 0.355680082614468, 0.554984654836323,
+                                      "<unicode> <unicode> A", 167.725674152279, 167.725674152279,
+                                      1, 1.37091379197208, 0.250040619119986, "<unicode> <unicode> B",
+                                      17.7431526190489, 17.7431526190489, 1, 0.145024503621524, 0.705776826305417,
+                                      "<unicode> <unicode> C", 54.1622602726811, 54.1622602726811,
+                                      1, 0.442697815867989, 0.510447146810385, "<unicode> <unicode> D",
+                                      58.0387130911945, 58.0387130911945, 1, 0.474382187743008, 0.495792171556951,
+                                      "<unicode> <unicode> E", "", 112.410259826369, 5, "", "", "<unicode> Squared terms",
+                                      27.2974186686115, 27.2974186686115, 1, 0.223116752561445, 0.639784215001193,
+                                      "<unicode> <unicode> A^2", 8.80938068797559, 8.80938068797559,
+                                      1, 0.0720038929336097, 0.790111496726485, "<unicode> <unicode> B^2",
+                                      13.8759183253928, 13.8759183253928, 1, 0.113415479798807, 0.738421088882711,
+                                      "<unicode> <unicode> C^2", 19.7879088296081, 19.7879088296081,
+                                      1, 0.161737415967496, 0.690155047932803, "<unicode> <unicode> D^2",
+                                      42.6396333147809, 42.6396333147809, 1, 0.348517075226023, 0.558975217166694,
+                                      "<unicode> <unicode> E^2", "", 573.578168333942, 10, "", "",
+                                      "<unicode> Interaction terms", 1.3469787771719, 1.3469787771719,
+                                      1, 0.0110095952361003, 0.917069213512083, "<unicode> <unicode> A<unicode><unicode><unicode>B",
+                                      6.16225756654512, 6.16225756654512, 1, 0.0503675059310901, 0.823808823720829,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>C", 23.1841269930401,
+                                      23.1841269930401, 1, 0.189496566999841, 0.666169937690087, "<unicode> <unicode> A<unicode><unicode><unicode>D",
+                                      9.31816109574629, 9.31816109574629, 1, 0.0761624338464623, 0.784287905909558,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>E", 57.1418482201193,
+                                      57.1418482201193, 1, 0.467051619972113, 0.499117346598992, "<unicode> <unicode> B<unicode><unicode><unicode>C",
+                                      1.710927412204, 1.710927412204, 1, 0.0139843467513747, 0.906582167574386,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>D", 156.341909645397,
+                                      156.341909645397, 1, 1.27786805019209, 0.266445152501293, "<unicode> <unicode> B<unicode><unicode><unicode>E",
+                                      284.888898875528, 284.888898875528, 1, 2.32855299358409, 0.136548146962589,
+                                      "<unicode> <unicode> C<unicode><unicode><unicode>D", 19.0204310412573,
+                                      19.0204310412573, 1, 0.15546439968421, 0.695903744576438, "<unicode> <unicode> C<unicode><unicode><unicode>E",
+                                      14.4626287069341, 14.4626287069341, 1, 0.11821098506664, 0.733164116033324,
+                                      "<unicode> <unicode> D<unicode><unicode><unicode>E", 122.345894493485,
+                                      4037.414518285, 33, "", "", "Error", "", 5064.58874444149, 53,
+                                      "", "", "Total"))
+})
+
+test_that("20.2 Five continuous predictors CCD Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 95.7137721498586, "", 1.41697458968158e-25, 3.17945282904517,
+                                      "(Intercept)", 30.1038503466657, "", "A", 1.00369820969494,
+                                      4.74949992827645, 0.554984654836324, 1.68295838189235, "A",
+                                      0.596389203972093, 1, "B", 1.97050911987227, 9.32444915523557,
+                                      0.250040619119986, 1.68295838189235, "B", 1.17086027858668,
+                                      1, "C", 0.640905605769826, 3.03276532650282, 0.705776826305417,
+                                      1.68295838189235, "C", 0.380820828765344, 1, "D", -1.11976545692704,
+                                      -5.29873014217874, 0.510447146810384, 1.68295838189235, "D",
+                                      -0.665355405680295, 1, "E", 1.15914445813947, 5.48507157591596,
+                                      0.49579217155695, 1.68295838189235, "E", 0.68875408364888, 1,
+                                      "A^2", 0.676630609752464, 3.20181604534866, 0.639784215001194,
+                                      1.4324700503189, "A^2", 0.472352360596879, "", "B^2", 0.384382440063385,
+                                      1.81889770637994, 0.790111496726482, 1.4324700503189, "B^2",
+                                      0.268335411255413, "", "C^2", 0.482416016068628, 2.28279258803675,
+                                      0.73842108888271, 1.4324700503189, "C^2", 0.336772148193415,
+                                      "", "D^2", -0.57609061563766, -2.72606079319741, 0.690155047932804,
+                                      1.43247005031891, "D^2", -0.402165906023241, "", "E^2", 0.845663489789393,
+                                      4.00167963368341, 0.558975217166694, 1.4324700503189, "E^2",
+                                      0.590353347772351, "", "AB", 0.205165998124996, 0.970845503127479,
+                                      0.917069213512079, 1.95532841306042, "A<unicode>B", 0.104926618339206,
+                                      1, "AC", -0.438828609999998, -2.07653698251999, 0.823808823720831,
+                                      1.95532841306042, "A<unicode>C", -0.224427061494573, 1, "AD",
+                                      -0.851177988750004, -4.02777424276502, 0.666169937690088, 1.95532841306042,
+                                      "A<unicode>D", -0.43531203406274, 1, "AE", -0.539622584999997,
+                                      -2.55349407221998, 0.784287905909556, 1.95532841306042, "A<unicode>E",
+                                      -0.275975422540603, 1, "BC", -1.3362944125, -6.32334515995001,
+                                      0.499117346598993, 1.95532841306042, "B<unicode>C", -0.683411749951749,
+                                      1, "BD", -0.231228202499996, -1.09417185422998, 0.906582167574383,
+                                      1.95532841306042, "B<unicode>D", -0.118255430113699, 1, "BE",
+                                      2.210358495, 10.45941639834, 0.266445152501293, 1.95532841306042,
+                                      "B<unicode>E", 1.13042825963972, 1, "CD", -2.983752350625, -14.1191161231575,
+                                      0.136548146962589, 1.95532841306042, "C<unicode>D", -1.52595969592388,
+                                      1, "CE", -0.770965933124993, -3.64821079554747, 0.695903744576438,
+                                      1.95532841306042, "C<unicode>E", -0.394289740779811, 1, "DE",
+                                      0.672277581874996, 3.18121751743248, 0.733164116033323, 1.95532841306042,
+                                      "D<unicode>E", 0.343818244231805, 1))
+})
+
+test_that("20.3 Five continuous predictors CCD Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 95.71 (Intercept) + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2 + 0.21 AB - 0.44 AC - 0.85 AD - 0.54 AE - 1.34 BC - 0.23 BD + 2.21 BE - 2.98 CD - 0.77 CE + 0.67 DE"
+                                 ))
+})
+
+test_that("20.4 Five continuous predictors CCD Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.202398894110419, 11.0610078425741))
+})
+
+
+### Three continuous and two categorical predictors CCD (verified with Minitab) ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C")
+options$fixedFactorsResponseSurface <- c("D", "E")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1"),
+  list(predictors = "D", lowValue = "1", highValue = "2"),
+  list(predictors = "E", lowValue = "1", highValue = "2")
+)
+options$squaredTermsCoded <- TRUE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3cont2discCCD.csv", options)
+
+test_that("21.1 Three continuous and two categorical predictors CCD ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(72.7397226090048, 1309.31500696209, 18, 0.850063612714722, 0.636675405849037,
+                                      "Model", "", 129.039377068184, 5, "", "", "<unicode> Linear terms",
+                                      1.03353865663394, 1.03353865663394, 1, 0.0120783194219908, 0.912848334563602,
+                                      "<unicode> <unicode> A", 28.7652355681139, 28.7652355681139,
+                                      1, 0.336161304863071, 0.564188827319796, "<unicode> <unicode> B",
+                                      2.50518730405929, 2.50518730405929, 1, 0.0292765561076262, 0.86470835745907,
+                                      "<unicode> <unicode> C", 25.8844577816353, 25.8844577816353,
+                                      1, 0.302495457857227, 0.58433051029605, "<unicode> <unicode> D",
+                                      70.8509577577415, 70.8509577577415, 1, 0.827990800014242, 0.366435695900971,
+                                      "<unicode> <unicode> E", "", 285.525611162234, 3, "", "", "<unicode> Squared terms",
+                                      120.841719383848, 120.841719383848, 1, 1.41220154355353, 0.239297377175185,
+                                      "<unicode> <unicode> A^2", 10.2525983748001, 10.2525983748001,
+                                      1, 0.119815700439813, 0.730425539896361, "<unicode> <unicode> B^2",
+                                      154.431293403586, 154.431293403586, 1, 1.80474187250486, 0.184116818332041,
+                                      "<unicode> <unicode> C^2", "", 894.750018731668, 10, "", "",
+                                      "<unicode> Interaction terms", 164.019124783417, 164.019124783417,
+                                      1, 1.91678885713043, 0.171254881209314, "<unicode> <unicode> A<unicode><unicode><unicode>B",
+                                      2.14773960622188, 2.14773960622188, 1, 0.0250992885778402, 0.874643231973497,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>C", 68.6740245803558,
+                                      68.6740245803558, 1, 0.802550344441512, 0.373853640532771, "<unicode> <unicode> A<unicode><unicode><unicode>D",
+                                      39.903289914766, 39.903289914766, 1, 0.466324775067945, 0.497268202585986,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>E", 81.4255399388621,
+                                      81.4255399388621, 1, 0.951569323679375, 0.333172860185823, "<unicode> <unicode> B<unicode><unicode><unicode>C",
+                                      30.9515833689429, 30.9515833689429, 1, 0.361711783247677, 0.54978573411972,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>D", 2.77314757882505,
+                                      2.77314757882505, 1, 0.0324080401312291, 0.857731743254824,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>E", 415.582646863043,
+                                      415.582646863043, 1, 4.85665429428255, 0.0313242695622218, "<unicode> <unicode> C<unicode><unicode><unicode>D",
+                                      0.000585072983085411, 0.000585072983085411, 1, 6.83738177524744e-06,
+                                      0.997922195618352, "<unicode> <unicode> C<unicode><unicode><unicode>E",
+                                      89.2723370242511, 89.2723370242511, 1, 1.04326993016229, 0.311096028475124,
+                                      "<unicode> <unicode> D<unicode><unicode><unicode>E", 85.5697403359106,
+                                      5219.75416049054, 61, "", "", "Error", "", 6529.06916745263,
+                                      79, "", "", "Total"))
+})
+
+test_that("21.2 Three continuous and two categorical predictors CCD Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 99.3627387297987, "", 1.21502530331299e-52, 1.88095280770782,
+                                      "(Intercept)", 52.8257478457873, "", "A", -0.139207704143692,
+                                      -0.454652361733299, 0.9128483345636, 1.26665988192056, "A",
+                                      -0.109901407734348, 1, "B", 0.734402042543345, 2.39855707094656,
+                                      0.564188827319793, 1.26665988192056, "B", 0.579794191815575,
+                                      1, "C", 0.216730488382614, 0.707841775057619, 0.864708357459063,
+                                      1.26665988192056, "C", 0.171103933641601, 1, "D", 0.568819586750001,
+                                      1.1376391735, 0.58433051029605, 1.03422519510931, "D", 0.549995870763797,
+                                      1, "E", -0.941082872000001, -1.882165744, 0.366435695900971,
+                                      1.03422519510931, "E", -0.909939998029674, 1, "A^2", -1.51246170038837,
+                                      -4.93969991346842, 0.239297377175186, 1.27272930803825, "A^2",
+                                      -1.18836086419636, "", "B^2", -0.440547671887108, -1.4388286963833,
+                                      0.730425539896366, 1.27272930803825, "B^2", -0.34614404579569,
+                                      "", "C^2", 1.70979322697661, 5.58418467930562, 0.184116818332041,
+                                      1.27272930803825, "C^2", 1.34340681571327, "", "AB", 2.263978279375,
+                                      7.39415306043875, 0.171254881209314, 1.63525361503872, "A<unicode>B",
+                                      1.38448143979268, 1, "AC", 0.259069223750001, 0.846120084767504,
+                                      0.874643231973502, 1.63525361503872, "A<unicode>C", 0.158427549933205,
+                                      1, "AD", -1.13473946230355, -3.7060590838834, 0.373853640532771,
+                                      1.26665988192056, "A<unicode>D", -0.895851742444872, 1, "AE",
+                                      0.864976404004672, 2.82501293547926, 0.497268202585988, 1.26665988192056,
+                                      "A<unicode>E", 0.682879766187241, 1, "BC", 1.59516398, 5.20980555867999,
+                                      0.333172860185824, 1.63525361503872, "B<unicode>C", 0.975484148348589,
+                                      1, "BD", 0.761800658983606, 2.48804095224046, 0.549785734119722,
+                                      1.26665988192056, "B<unicode>D", 0.601424794340634, 1, "BE",
+                                      -0.228027066190016, -0.744736398176592, 0.857731743254818, 1.26665988192056,
+                                      "B<unicode>E", -0.1800223323125, 1, "CD", 2.79144201533625,
+                                      9.11684962208819, 0.0313242695622218, 1.26665988192056, "C<unicode>D",
+                                      2.20378181639711, 1, "CE", 0.00331211136367841, 0.0108173557137737,
+                                      0.997922195618131, 1.26665988192056, "C<unicode>E", 0.00261483876686491,
+                                      1, "DE", 1.0563636745, 2.112727349, 0.311096028475123, 1.03422519510931,
+                                      "D<unicode>E", 1.02140585966711, 1))
+})
+
+test_that("21.3 Three continuous and two categorical predictors CCD Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 99.36 (Intercept) - 0.14 A + 0.73 B + 0.22 C + 0.57 D - 0.94 E - 1.51 A^2 - 0.44 B^2 + 1.71 C^2 + 2.26 AB + 0.26 AC - 1.13 AD + 0.86 AE + 1.6 BC + 0.76 BD - 0.23 BE + 2.79 CD - 0 CE + 1.06 DE"
+                                 ))
+})
+
+test_that("21.4 Three continuous and two categorical predictors CCD Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.203191170479226, 9.25039136122957))
+})
+
+### Four continuous and one categorical predictor CCD (verified with Minitab) ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C", "D")
+options$fixedFactorsResponseSurface <- c("E")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1"),
+  list(predictors = "D", lowValue = "-1", highValue = "1"),
+  list(predictors = "E", lowValue = "1", highValue = "2")
+)
+options$squaredTermsCoded <- TRUE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4cont1discCCD.csv", options)
+
+test_that("22.1 Four continuous and one categorical predictor CCD ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(112.80717375643, 2143.33630137217, 19, 1.73488065260125, 0.0706676426284591,
+                                      "Model", "", 806.988962707037, 5, "", "", "<unicode> Linear terms",
+                                      376.767145242181, 376.767145242181, 1, 5.79436581070454, 0.020784004318429,
+                                      "<unicode> <unicode> A", 69.4774594300852, 69.4774594300852,
+                                      1, 1.06850562906043, 0.307492657895273, "<unicode> <unicode> B",
+                                      168.13355100747, 168.13355100747, 1, 2.58575438939563, 0.115694828056362,
+                                      "<unicode> <unicode> C", 57.115010048984, 57.115010048984, 1,
+                                      0.878381423871639, 0.354270007041141, "<unicode> <unicode> D",
+                                      135.495796978318, 135.495796978318, 1, 2.08381283617676, 0.156654702711686,
+                                      "<unicode> <unicode> E", "", 120.612651609061, 4, "", "", "<unicode> Squared terms",
+                                      6.93860397448543, 6.93860397448543, 1, 0.106709967022029, 0.745624547672554,
+                                      "<unicode> <unicode> A^2", 96.8797300099845, 96.8797300099845,
+                                      1, 1.48992979459318, 0.229374281402984, "<unicode> <unicode> B^2",
+                                      15.1202574310955, 15.1202574310955, 1, 0.232537002799104, 0.632277359946838,
+                                      "<unicode> <unicode> C^2", 1.67406019349528, 1.67406019349528,
+                                      1, 0.0257456555666906, 0.873330637626117, "<unicode> <unicode> D^2",
+                                      "", 1215.73468705607, 10, "", "", "<unicode> Interaction terms",
+                                      304.703219754009, 304.703219754009, 1, 4.68608248157982, 0.0364318452393383,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>B", 111.675477411698,
+                                      111.675477411698, 1, 1.71747610262702, 0.197493536979093, "<unicode> <unicode> A<unicode><unicode><unicode>C",
+                                      38.1410888614778, 38.1410888614778, 1, 0.58657827274173, 0.448241439165348,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>D", 229.653138285242,
+                                      229.653138285242, 1, 3.53187455330177, 0.0674989393565679, "<unicode> <unicode> A<unicode><unicode><unicode>E",
+                                      11.5900152530921, 11.5900152530921, 1, 0.178244809761461, 0.675146700686413,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>C", 60.9783696093709,
+                                      60.9783696093709, 1, 0.937796685615801, 0.33866437428897, "<unicode> <unicode> B<unicode><unicode><unicode>D",
+                                      145.83351421438, 145.83351421438, 1, 2.2427983423967, 0.142088256074661,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>E", 0.305054234760973,
+                                      0.305054234760973, 1, 0.00469148080088946, 0.945733347959429,
+                                      "<unicode> <unicode> C<unicode><unicode><unicode>D", 25.2672062937827,
+                                      25.2672062937827, 1, 0.388588649858534, 0.53658076120345, "<unicode> <unicode> C<unicode><unicode><unicode>E",
+                                      287.587603138256, 287.587603138256, 1, 4.42285851155002, 0.0417985945131365,
+                                      "<unicode> <unicode> D<unicode><unicode><unicode>E", 65.023016763308,
+                                      2600.92067053232, 40, "", "", "Error", "", 4744.25697190449,
+                                      59, "", "", "Total"))
+})
+
+test_that("22.2 Four continuous and one categorical predictor CCD Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 97.9076142108333, "", 9.88257161322062e-35, 2.32778537031997,
+                                      "(Intercept)", 42.0604130686565, "", "A", -2.80166299291666,
+                                      -11.2066519716667, 0.020784004318429, 1.16389268515998, "A",
+                                      -2.40714889666272, 1, "B", 1.203098945, 4.81239577999999, 0.307492657895274,
+                                      1.16389268515998, "B", 1.03368545944133, 1, "C", 1.87157215,
+                                      7.48628859999999, 0.115694828056362, 1.16389268515998, "C",
+                                      1.60802810590973, 1, "D", 1.09082356166667, 4.36329424666669,
+                                      0.354270007041142, 1.16389268515998, "D", 0.937220050933417,
+                                      1, "E", 1.50275190333333, 3.00550380666667, 0.156654702711686,
+                                      1.04101726501299, "E", 1.44354176807488, 1, "A^2", -0.355647252604167,
+                                      -1.42258901041667, 0.745624547672552, 1.08872191571025, "A^2",
+                                      -0.326664915505216, "", "B^2", 1.32892315239583, 5.31569260958334,
+                                      0.229374281402984, 1.08872191571025, "B^2", 1.22062680397949,
+                                      "", "C^2", 0.525004469270834, 2.10001787708333, 0.632277359946836,
+                                      1.08872191571025, "C^2", 0.482220906638345, "", "D^2", 0.174690361145833,
+                                      0.698761444583333, 0.873330637626108, 1.08872191571025, "D^2",
+                                      0.16045452803425, "", "AB", -3.085769858125, -12.3430794325,
+                                      0.0364318452393384, 1.42547159699988, "A<unicode>B", -2.16473612285189,
+                                      1, "AC", 1.8681163425, 7.47246536999999, 0.197493536979093,
+                                      1.42547159699988, "A<unicode>C", 1.31052512475993, 1, "AD",
+                                      1.091745861875, 4.3669834475, 0.448241439165348, 1.42547159699988,
+                                      "A<unicode>D", 0.765883981254166, 1, "AE", -2.18733636666667,
+                                      -8.74934546666668, 0.0674989393565679, 1.16389268515998, "A<unicode>E",
+                                      -1.87932821862009, 1, "BC", -0.601820551874999, -2.4072822075,
+                                      0.675146700686413, 1.42547159699988, "B<unicode>C", -0.422190489899359,
+                                      1, "BD", -1.380425315, -5.52170126, 0.33866437428897, 1.42547159699988,
+                                      "B<unicode>D", -0.968399032225768, 1, "BE", -1.74304280291666,
+                                      -6.97217121166666, 0.142088256074661, 1.16389268515998, "B<unicode>E",
+                                      -1.49759752350112, 1, "CD", 0.097636800624997, 0.390547202499988,
+                                      0.945733347959414, 1.42547159699988, "C<unicode>D", 0.0684943851778517,
+                                      1, "CE", 0.72553437625, 2.902137505, 0.536580761203449, 1.16389268515998,
+                                      "C<unicode>E", 0.623368791213144, 1, "DE", -2.44773536125, -9.790941445,
+                                      0.0417985945131366, 1.16389268515998, "D<unicode>E", -2.10305932192842,
+                                      1))
+})
+
+test_that("22.3 Four continuous and one categorical predictor CCD Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 97.91 (Intercept) - 2.8 A + 1.2 B + 1.87 C + 1.09 D + 1.5 E - 0.36 A^2 + 1.33 B^2 + 0.53 C^2 + 0.17 D^2 - 3.09 AB + 1.87 AC + 1.09 AD - 2.19 AE - 0.6 BC - 1.38 BD - 1.74 BE + 0.1 CD + 0.73 CE - 2.45 DE"
+                                 ))
+})
+
+test_that("22.4 Four continuous and one categorical predictor CCD Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.191741034230725, 0, 0.452027819817441, 8.06368506101944))
+})
 
 ### Three continuous predictors BBD (verified with Minitab) ####
 
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1")
+)
+options$squaredTermsCoded <- TRUE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3contBBD.csv", options)
+
+test_that("23.1 Three continuous predictors BBD ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(117.387204366981, 1056.48483930283, 9, 2.10615458167809, 0.213246448597519,
+                                      "Model", "", 278.946705729, 3, "", "", "<unicode> Linear terms",
+                                      161.292756283381, 161.292756283381, 1, 2.89390551099354, 0.14965508320902,
+                                      "<unicode> <unicode> A", 114.132490343792, 114.132490343792,
+                                      1, 2.04775868675108, 0.211839968723496, "<unicode> <unicode> B",
+                                      3.52145910182577, 3.52145910182577, 1, 0.0631818200416107, 0.811539615969981,
+                                      "<unicode> <unicode> C", "", 584.723306443657, 3, "", "", "<unicode> Squared terms",
+                                      407.920784372129, 407.920784372129, 1, 7.31889164240753, 0.0425117691577854,
+                                      "<unicode> <unicode> A^2", 161.545782081756, 161.545782081756,
+                                      1, 2.89844528555759, 0.149397975249734, "<unicode> <unicode> B^2",
+                                      15.256739989772, 15.256739989772, 1, 0.273735566020244, 0.623186909931675,
+                                      "<unicode> <unicode> C^2", "", 192.814827130172, 3, "", "",
+                                      "<unicode> Interaction terms", 138.590143539917, 138.590143539917,
+                                      1, 2.48657651714316, 0.175646568137584, "<unicode> <unicode> A<unicode><unicode><unicode>B",
+                                      1.37244973825602, 1.37244973825602, 1, 0.0246244155820777, 0.8814462450247,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>C", 52.852233851999,
+                                      52.852233851999, 1, 0.948271790606003, 0.374883301192008, "<unicode> <unicode> B<unicode><unicode><unicode>C",
+                                      55.7353222731884, 278.676611365942, 5, "", "", "Error", "",
+                                      1335.16145066877, 14, "", "", "Total"))
+})
+
+test_that("23.2 Three continuous predictors BBD Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 90.170651, "", 4.6230339293677e-06, 4.31027154106669,
+                                      "(Intercept)", 20.9199467228194, "", "A", -4.49016642624999,
+                                      -8.98033285249999, 0.14965508320902, 2.63949148211328, "A",
+                                      -1.70114829188802, 1, "B", 3.7771101775, 7.55422035499999, 0.211839968723496,
+                                      2.63949148211328, "B", 1.4309991917367, 1, "C", 0.663462423749997,
+                                      1.32692484749999, 0.811539615969981, 2.63949148211328, "C",
+                                      0.25135994120307, 1, "A^2", 10.5108774975, 21.021754995, 0.0425117691577854,
+                                      3.88522626312229, "A^2", 2.70534501356251, "", "B^2", 6.61452814999999,
+                                      13.2290563, 0.149397975249734, 3.88522626312229, "B^2", 1.70248209551748,
+                                      "", "C^2", 2.0327404525, 4.065480905, 0.623186909931675, 3.88522626312229,
+                                      "C^2", 0.523197444584971, "", "AB", -5.8862157525, -11.772431505,
+                                      0.175646568137584, 3.73280465177286, "A<unicode>B", -1.57688823863429,
+                                      1, "AC", -0.585758000000002, -1.171516, 0.881446245024701, 3.73280465177286,
+                                      "A<unicode>C", -0.156921686143367, 1, "BC", 3.6349770925, 7.269954185,
+                                      0.374883301192008, 3.73280465177286, "B<unicode>C", 0.973792478203648,
+                                      1))
+})
+
+test_that("23.3 Three continuous predictors BBD Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 90.17 (Intercept) - 4.49 A + 3.78 B + 0.66 C + 10.51 A^2 + 6.61 B^2 + 2.03 C^2 - 5.89 AB - 0.59 AC + 3.63 BC"
+                                 ))
+})
+
+test_that("23.4 Three continuous predictors BBD Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.393245006596696, 0, 0.783301788070249, 7.46560930354572))
+})
+
 ### Four continuous predictors BBD (verified with Minitab) ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C", "D")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1"),
+  list(predictors = "D", lowValue = "-1", highValue = "1")
+)
+options$squaredTermsCoded <- TRUE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4contBBD.csv", options)
+
+test_that("24.1 Four continuous predictors BBD ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(77.9009838048483, 1090.61377326788, 14, 1.16863848196573, 0.397556720497501,
+                                      "Model", "", 386.491064149768, 4, "", "", "<unicode> Linear terms",
+                                      158.15740784502, 158.15740784502, 1, 2.3726123084486, 0.149425279207315,
+                                      "<unicode> <unicode> A", 141.429572917864, 141.429572917864,
+                                      1, 2.12166821684615, 0.170891581643576, "<unicode> <unicode> B",
+                                      0.310224212911066, 0.310224212911066, 1, 0.00465385590191786,
+                                      0.946734703534669, "<unicode> <unicode> C", 86.5938591739732,
+                                      86.5938591739732, 1, 1.29904541881187, 0.276627249732825, "<unicode> <unicode> D",
+                                      "", 231.187284626765, 4, "", "", "<unicode> Squared terms",
+                                      127.346622042302, 127.346622042302, 1, 1.91040158670906, 0.192104702264582,
+                                      "<unicode> <unicode> A^2", 36.6285498239363, 36.6285498239363,
+                                      1, 0.549486422021114, 0.47278544521242, "<unicode> <unicode> B^2",
+                                      58.4510180703602, 58.4510180703602, 1, 0.876858104876022, 0.36752708377893,
+                                      "<unicode> <unicode> C^2", 8.76109469016671, 8.76109469016671,
+                                      1, 0.131430335009931, 0.723258299307619, "<unicode> <unicode> D^2",
+                                      "", 472.935424491344, 6, "", "", "<unicode> Interaction terms",
+                                      19.3381716403284, 19.3381716403284, 1, 0.290103288122267, 0.600003542981556,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>B", 191.360390164568,
+                                      191.360390164568, 1, 2.87070977730543, 0.115976802494062, "<unicode> <unicode> A<unicode><unicode><unicode>C",
+                                      66.8260371052421, 66.8260371052421, 1, 1.00249669187868, 0.336469973222273,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>D", 4.41153859417568,
+                                      4.41153859417568, 1, 0.0661800854626668, 0.80134017944043, "<unicode> <unicode> B<unicode><unicode><unicode>C",
+                                      190.244330544465, 190.244330544465, 1, 2.85396711044145, 0.116939413446734,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>D", 0.754956442564435,
+                                      0.754956442564435, 1, 0.0113255456850063, 0.91700630379072,
+                                      "<unicode> <unicode> C<unicode><unicode><unicode>D", 66.6596086018097,
+                                      799.915303221716, 12, "", "", "Error", "", 1890.52907648959,
+                                      26, "", "", "Total"))
+})
+
+test_that("24.2 Four continuous predictors BBD Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 104.898052433333, "", 3.99668370301669e-11, 4.71379566102908,
+                                      "(Intercept)", 22.2534152892051, "", "A", -3.63039722166666,
+                                      -7.26079444333332, 0.149425279207315, 2.35689783051454, "A",
+                                      -1.54032863650865, 1, "B", -3.43304496666666, -6.86608993333332,
+                                      0.170891581643576, 2.35689783051454, "B", -1.45659473322065,
+                                      1, "C", -0.160785626666668, -0.321571253333336, 0.946734703534665,
+                                      2.35689783051454, "C", -0.0682191754708207, 1, "D", 2.68629018,
+                                      5.37258036, 0.276627249732826, 2.35689783051454, "D", 1.13975673668194,
+                                      1, "A^2", 4.88646003083333, 9.77292006166666, 0.192104702264582,
+                                      3.53534674577181, "A^2", 1.38217277744465, "", "B^2", -2.62065890416667,
+                                      -5.24131780833334, 0.47278544521242, 3.53534674577181, "B^2",
+                                      -0.741273513637925, "", "C^2", -3.31052350666666, -6.62104701333332,
+                                      0.36752708377893, 3.53534674577181, "C^2", -0.936407018809674,
+                                      "", "D^2", -1.28168063666666, -2.56336127333332, 0.723258299307619,
+                                      3.53534674577181, "D^2", -0.362533219181265, "", "AB", 2.19875940249998,
+                                      4.39751880499997, 0.600003542981556, 4.08226679070004, "A<unicode>B",
+                                      0.538612372789808, 1, "AC", -6.9166536375, -13.833307275, 0.115976802494062,
+                                      4.08226679070004, "A<unicode>C", -1.6943169058076, 1, "AD",
+                                      -4.087359695, -8.17471939000001, 0.336469973222274, 4.08226679070004,
+                                      "A<unicode>D", -1.00124756772673, 1, "BC", 1.05018315, 2.10036629999999,
+                                      0.80134017944043, 4.08226679070004, "B<unicode>C", 0.257254903670788,
+                                      1, "BD", 6.8964543525, 13.792908705, 0.116939413446734, 4.08226679070004,
+                                      "B<unicode>D", 1.689368849731, 1, "CD", -0.434441147499996,
+                                      -0.868882294999991, 0.917006303790719, 4.08226679070004, "C<unicode>D",
+                                      -0.106421547089894, 1))
+})
+
+test_that("24.3 Four continuous predictors BBD Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 104.9 (Intercept) - 3.63 A - 3.43 B - 0.16 C + 2.69 D + 4.89 A^2 - 2.62 B^2 - 3.31 C^2 - 1.28 D^2 + 2.2 AB - 6.92 AC - 4.09 AD + 1.05 BC + 6.9 BD - 0.43 CD"
+                                 ))
+})
+
+test_that("24.4 Four continuous predictors BBD Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.132951036731663, 0, 0.599823555414614, 8.16453358140008))
+})
 
 ### Five continuous predictors BBD (verified with Minitab) ####
 
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C", "D", "E")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1"),
+  list(predictors = "D", lowValue = "-1", highValue = "1"),
+  list(predictors = "E", lowValue = "-1", highValue = "1")
+)
+options$squaredTermsCoded <- TRUE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM5contBBD.csv", options)
+
+test_that("25.1 Five continuous predictors BBD ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(68.7454290560407, 1374.90858112081, 20, 1.04584144910548, 0.452095870787799,
+                                      "Model", "", 558.680485897376, 5, "", "", "<unicode> Linear terms",
+                                      129.046322149616, 129.046322149616, 1, 1.96321405527439, 0.173462017177071,
+                                      "<unicode> <unicode> A", 9.53159669575598, 9.53159669575598,
+                                      1, 0.145006570436155, 0.706570367047832, "<unicode> <unicode> B",
+                                      0.333181436287987, 0.333181436287987, 1, 0.00506877273045189,
+                                      0.943808804277179, "<unicode> <unicode> C", 238.325047314577,
+                                      238.325047314577, 1, 3.62569870119544, 0.0684640958200898, "<unicode> <unicode> D",
+                                      181.444338301139, 181.444338301139, 1, 2.76035821299705, 0.109117645393389,
+                                      "<unicode> <unicode> E", "", 248.132517729345, 5, "", "", "<unicode> Squared terms",
+                                      0.0157157943820039, 0.0157157943820039, 1, 0.000239088320431022,
+                                      0.987785956694379, "<unicode> <unicode> A^2", 9.32796249475518,
+                                      9.32796249475518, 1, 0.141908632278136, 0.709569400869392, "<unicode> <unicode> B^2",
+                                      37.7049176873545, 37.7049176873545, 1, 0.573614366715204, 0.455905961439862,
+                                      "<unicode> <unicode> C^2", 176.000016795467, 176.000016795467,
+                                      1, 2.67753238485005, 0.114302304857156, "<unicode> <unicode> D^2",
+                                      25.0839049573867, 25.0839049573867, 1, 0.38160773552627, 0.542330859706051,
+                                      "<unicode> <unicode> E^2", "", 568.095577494093, 10, "", "",
+                                      "<unicode> Interaction terms", 27.2991735142916, 27.2991735142916,
+                                      1, 0.415309171527529, 0.525156562174539, "<unicode> <unicode> A<unicode><unicode><unicode>B",
+                                      0.757667134078247, 0.757667134078247, 1, 0.0115265800842996,
+                                      0.915358836060124, "<unicode> <unicode> A<unicode><unicode><unicode>C",
+                                      104.632102931823, 104.632102931823, 1, 1.59179441681812, 0.218715160783781,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>D", 66.6342362765354,
+                                      66.6342362765354, 1, 1.01372334400123, 0.323658767224049, "<unicode> <unicode> A<unicode><unicode><unicode>E",
+                                      14.9529347898301, 14.9529347898301, 1, 0.227482746179785, 0.637539532807536,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>C", 93.2070462332465,
+                                      93.2070462332465, 1, 1.41798216460262, 0.244919918111232, "<unicode> <unicode> B<unicode><unicode><unicode>D",
+                                      29.4735542921594, 29.4735542921594, 1, 0.448388571494304, 0.509239032472825,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>E", 9.70816249800328,
+                                      9.70816249800328, 1, 0.147692710256946, 0.703999664080917, "<unicode> <unicode> C<unicode><unicode><unicode>D",
+                                      211.413343349594, 211.413343349594, 1, 3.21628420107367, 0.0850160563448271,
+                                      "<unicode> <unicode> C<unicode><unicode><unicode>E", 10.0173564745314,
+                                      10.0173564745314, 1, 0.152396555747579, 0.699562125344016, "<unicode> <unicode> D<unicode><unicode><unicode>E",
+                                      65.7321710808453, 1643.30427702113, 25, "", "", "Error", "",
+                                      3018.21285814195, 45, "", "", "Total"))
+})
+
+test_that("25.2 Five continuous predictors BBD Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 99.5499281533334, "", 3.75552239017416e-21, 3.30988849461844,
+                                      "(Intercept)", 30.0765201955268, "", "A", -2.83996393187502,
+                                      -5.67992786375004, 0.173462017177071, 2.02688447933098, "A",
+                                      -1.4011474066901, 1, "B", 0.771832101874981, 1.54366420374996,
+                                      0.706570367047831, 2.02688447933098, "B", 0.380797282600803,
+                                      1, "C", 0.144304676874998, 0.288609353749995, 0.943808804277181,
+                                      2.02688447933098, "C", 0.071195313964133, 1, "D", -3.8594449675,
+                                      -7.718889935, 0.0684640958200898, 2.02688447933098, "D", -1.90412675554844,
+                                      1, "E", -3.367531906875, -6.73506381375, 0.109117645393389,
+                                      2.02688447933098, "E", -1.66143257852886, 1, "A^2", 0.0424354581250189,
+                                      0.0848709162500377, 0.987785956694349, 2.74441455864091, "A^2",
+                                      0.0154624810568101, "", "B^2", 1.03384188145836, 2.06768376291671,
+                                      0.709569400869393, 2.74441455864091, "B^2", 0.376707621741496,
+                                      "", "C^2", -2.07854640354168, -4.15709280708335, 0.455905961439862,
+                                      2.74441455864091, "C^2", -0.757373333776153, "", "D^2", -4.49073140937501,
+                                      -8.98146281875002, 0.114302304857156, 2.74441455864091, "D^2",
+                                      -1.63631671287989, "", "E^2", 1.69534581812499, 3.39069163624999,
+                                      0.54233085970605, 2.74441455864091, "E^2", 0.617744069600244,
+                                      "", "AB", -2.61243054999993, -5.22486109999985, 0.525156562174539,
+                                      4.05376895866197, "A<unicode>B", -0.644444855303795, 1, "AC",
+                                      0.435220385, 0.87044077, 0.915358836060127, 4.05376895866197,
+                                      "A<unicode>C", 0.107361911701957, 1, "AD", -5.1144917375, -10.228983475,
+                                      0.218715160783781, 4.05376895866197, "A<unicode>D", -1.26166335320406,
+                                      1, "AE", -4.08148981, -8.16297962, 0.323658767224049, 4.05376895866197,
+                                      "A<unicode>E", -1.00683829088947, 1, "BC", -1.93345124, -3.86690248,
+                                      0.637539532807536, 4.05376895866197, "B<unicode>C", -0.476951513447421,
+                                      1, "BD", 4.82718982, 9.65437964, 0.244919918111232, 4.05376895866197,
+                                      "B<unicode>D", 1.1907905628626, 1, "BE", -2.7144775875, -5.42895517500001,
+                                      0.509239032472826, 4.05376895866197, "B<unicode>E", -0.66961822816759,
+                                      1, "CD", 1.5578962175, 3.115792435, 0.703999664080917, 4.05376895866197,
+                                      "C<unicode>D", 0.384308092885052, 1, "CE", -7.270029975, -14.54005995,
+                                      0.0850160563448271, 4.05376895866197, "C<unicode>E", -1.79340017873136,
+                                      1, "DE", -1.582510385, -3.16502077, 0.699562125344017, 4.05376895866197,
+                                      "D<unicode>E", -0.390380014534015, 1))
+})
+
+test_that("25.3 Five continuous predictors BBD Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 99.55 (Intercept) - 2.84 A + 0.77 B + 0.14 C - 3.86 D - 3.37 E + 0.04 A^2 + 1.03 B^2 - 2.08 C^2 - 4.49 D^2 + 1.7 E^2 - 2.61 AB + 0.44 AC - 5.11 AD - 4.08 AE - 1.93 BC + 4.83 BD - 2.71 BE + 1.56 CD - 7.27 CE - 1.58 DE"
+                                 ))
+})
+
+test_that("25.4 Five continuous predictors BBD Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.0423289680020797, 0, 0.467960537778933, 8.10753791732393))
+})
+
 ### Six continuous predictors one discrete predictor BBD (verified with Minitab) ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C", "D", "E", "F")
+options$fixedFactorsResponseSurface <- c("G")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1"),
+  list(predictors = "D", lowValue = "-1", highValue = "1"),
+  list(predictors = "E", lowValue = "-1", highValue = "1"),
+  list(predictors = "F", lowValue = "-1", highValue = "1"),
+  list(predictors = "G", lowValue = "1", highValue = "2")
+)
+options$squaredTermsCoded <- TRUE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM6cont1discreteBBD.csv", options)
+
+test_that("26.1 Six continuous predictors one discrete predictor BBD ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(58.4708923393394, 1988.01033953754, 34, 0.551827558106997, 0.971137841340843,
+                                      "Model", "", 549.423409303307, 7, "", "", "<unicode> Linear terms",
+                                      148.444118039262, 148.444118039262, 1, 1.40096297312432, 0.240402446156652,
+                                      "<unicode> <unicode> A", 0.0915199562987254, 0.0915199562987254,
+                                      1, 0.000863732910202329, 0.976634280417924, "<unicode> <unicode> B",
+                                      14.0213308644215, 14.0213308644215, 1, 0.132328351129307, 0.71708146970929,
+                                      "<unicode> <unicode> C", 110.238294645755, 110.238294645755,
+                                      1, 1.04038995319587, 0.311099310674949, "<unicode> <unicode> D",
+                                      126.514525709377, 126.514525709377, 1, 1.19399925320276, 0.278117305361186,
+                                      "<unicode> <unicode> E", 137.360815129875, 137.360815129875,
+                                      1, 1.29636268851172, 0.258601463002206, "<unicode> <unicode> F",
+                                      12.7528049583179, 12.7528049583179, 1, 0.120356453230125, 0.729646327949738,
+                                      "<unicode> <unicode> G", "", 410.21612922751, 6, "", "", "<unicode> Squared terms",
+                                      0.520376967674565, 0.520376967674565, 1, 0.00491113338411936,
+                                      0.94432202387229, "<unicode> <unicode> A^2", 19.0540329109544,
+                                      19.0540329109544, 1, 0.179825209307916, 0.672770525307467, "<unicode> <unicode> B^2",
+                                      18.2810826961831, 18.2810826961831, 1, 0.172530379137032, 0.679091074708391,
+                                      "<unicode> <unicode> C^2", 217.91444787517, 217.91444787517,
+                                      1, 2.05659932380207, 0.155817900500779, "<unicode> <unicode> D^2",
+                                      70.8052141022808, 70.8052141022808, 1, 0.668234515261823, 0.416327875078363,
+                                      "<unicode> <unicode> E^2", 83.640974675247, 83.640974675247,
+                                      1, 0.789373874181105, 0.377207752036254, "<unicode> <unicode> F^2",
+                                      "", 1028.37080100672, 21, "", "", "<unicode> Interaction terms",
+                                      6.01209365702016, 6.01209365702016, 1, 0.0567400090734014, 0.812392086142887,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>B", 440.051747614463,
+                                      440.051747614463, 1, 4.15305242679573, 0.0451836575337196, "<unicode> <unicode> A<unicode><unicode><unicode>C",
+                                      55.7553964264334, 55.7553964264334, 1, 0.526199670132038, 0.470528062002619,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>D", 29.1987342835018,
+                                      29.1987342835018, 1, 0.27556730528361, 0.601212071044823, "<unicode> <unicode> A<unicode><unicode><unicode>E",
+                                      42.1082465570162, 42.1082465570162, 1, 0.39740270661291, 0.530402193847767,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>F", 0.900677572632048,
+                                      0.900677572632048, 1, 0.0085002757040683, 0.926794116680112,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>G", 28.0203823202928,
+                                      28.0203823202928, 1, 0.264446437097189, 0.608635030985745, "<unicode> <unicode> B<unicode><unicode><unicode>C",
+                                      2.9595292963495, 2.9595292963495, 1, 0.027930988555341, 0.867733261887847,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>D", 1.5524259949816,
+                                      1.5524259949816, 1, 0.0146512463155304, 0.903990061485116, "<unicode> <unicode> B<unicode><unicode><unicode>E",
+                                      10.7700161050561, 10.7700161050561, 1, 0.10164359479131, 0.750776536375731,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>F", 23.2998448052022,
+                                      23.2998448052022, 1, 0.219895677126106, 0.6405168538671, "<unicode> <unicode> B<unicode><unicode><unicode>G",
+                                      43.5127263739269, 43.5127263739269, 1, 0.410657689336253, 0.523642550351348,
+                                      "<unicode> <unicode> C<unicode><unicode><unicode>D", 28.9209380034335,
+                                      28.9209380034335, 1, 0.27294556245144, 0.602944595064481, "<unicode> <unicode> C<unicode><unicode><unicode>E",
+                                      85.5651474239567, 85.5651474239567, 1, 0.807533534600416, 0.371804999348072,
+                                      "<unicode> <unicode> C<unicode><unicode><unicode>F", 13.6344901965695,
+                                      13.6344901965695, 1, 0.128677486013748, 0.720842607120989, "<unicode> <unicode> C<unicode><unicode><unicode>G",
+                                      5.37856088762692, 5.37856088762692, 1, 0.0507609513383817, 0.822373946082957,
+                                      "<unicode> <unicode> D<unicode><unicode><unicode>E", 20.4271598082805,
+                                      20.4271598082805, 1, 0.19278429428861, 0.66190620879747, "<unicode> <unicode> D<unicode><unicode><unicode>F",
+                                      66.2263773865734, 66.2263773865734, 1, 0.625021077212417, 0.431748425997108,
+                                      "<unicode> <unicode> D<unicode><unicode><unicode>G", 70.8830942457607,
+                                      70.8830942457607, 1, 0.668969520452989, 0.416072825057049, "<unicode> <unicode> E<unicode><unicode><unicode>F",
+                                      2.68492531643733, 2.68492531643733, 1, 0.0253393735205992, 0.873963928278907,
+                                      "<unicode> <unicode> E<unicode><unicode><unicode>G", 50.5082867312094,
+                                      50.5082867312094, 1, 0.476679308557414, 0.492119696740909, "<unicode> <unicode> F<unicode><unicode><unicode>G",
+                                      105.958630518417, 7734.98002784443, 73, "", "", "Error", "",
+                                      9722.99036738197, 107, "", "", "Total"))
+})
+
+test_that("26.2 Six continuous predictors one discrete predictor BBD Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 102.887750861667, "", 4.79064641984392e-47, 2.97151238875673,
+                                      "(Intercept)", 34.6247087008493, "", "A", 1.75857493229167,
+                                      3.51714986458334, 0.240402446156652, 1.48575619437837, "A",
+                                      1.18362281708504, 1, "B", 0.0436653839583305, 0.0873307679166609,
+                                      0.976634280417894, 1.48575619437836, "B", 0.0293893332725427,
+                                      1, "C", -0.540472996249999, -1.0809459925, 0.717081469709289,
+                                      1.48575619437837, "C", -0.363769640197348, 1, "D", -1.51546400104167,
+                                      -3.03092800208333, 0.31109931067495, 1.48575619437837, "D",
+                                      -1.01999507508413, 1, "E", 1.62348984770833, 3.24697969541667,
+                                      0.278117305361185, 1.48575619437837, "E", 1.09270272865165,
+                                      1, "F", -1.69165116041667, -3.38330232083333, 0.258601463002206,
+                                      1.48575619437837, "F", -1.13857924120885, 1, "G", -0.343629927962963,
+                                      -0.687259855925927, 0.729646327949739, 0.990504129585577, "G",
+                                      -0.34692427593082, 1, "A^2", 0.159047485347219, 0.318094970694438,
+                                      0.94432202387231, 2.26953007499613, "A^2", 0.0700794790514025,
+                                      "", "B^2", 0.962412443263887, 1.92482488652777, 0.672770525307469,
+                                      2.26953007499613, "B^2", 0.424058025873717, "", "C^2", -0.942689631944446,
+                                      -1.88537926388889, 0.679091074708393, 2.26953007499613, "C^2",
+                                      -0.415367763719128, "", "D^2", -3.25469867090278, -6.50939734180555,
+                                      0.155817900500778, 2.26953007499613, "D^2", -1.43408483842556,
+                                      "", "E^2", -1.85524125923611, -3.71048251847223, 0.416327875078362,
+                                      2.26953007499613, "E^2", -0.817456124364987, "", "F^2", -2.01640291444444,
+                                      -4.03280582888889, 0.377207752036255, 2.26953007499613, "F^2",
+                                      -0.888467148622335, "", "AB", -0.612989276874998, -1.22597855375,
+                                      0.812392086142893, 2.57340521632351, "A<unicode>B", -0.238201614338353,
+                                      1, "AC", -5.244352603125, -10.48870520625, 0.0451836575337195,
+                                      2.57340521632351, "A<unicode>C", -2.03790392972675, 1, "AD",
+                                      -1.319983385625, -2.63996677125, 0.47052806200262, 1.81967227920319,
+                                      "A<unicode>D", -0.725396215962033, 1, "AE", -1.350896329375,
+                                      -2.70179265875, 0.601212071044825, 2.57340521632351, "A<unicode>E",
+                                      -0.524945049775314, 1, "AF", 1.622271681875, 3.24454336375,
+                                      0.530402193847765, 2.57340521632351, "A<unicode>F", 0.630398847249036,
+                                      1, "AG", -0.136982174374999, -0.273964348749998, 0.926794116680109,
+                                      1.48575619437837, "A<unicode>G", -0.0921969397760523, 1, "BC",
+                                      1.323357055, 2.64671411, 0.608635030985748, 2.57340521632351,
+                                      "B<unicode>C", 0.514243558148457, 1, "BD", -0.430082063124995,
+                                      -0.860164126249991, 0.867733261887844, 2.57340521632351, "B<unicode>D",
+                                      -0.167125666955564, 1, "BE", -0.220257377499999, -0.440514754999998,
+                                      0.903990061485114, 1.81967227920319, "B<unicode>E", -0.121042332741612,
+                                      1, "BF", -0.8204425675, -1.640885135, 0.750776536375733, 2.57340521632351,
+                                      "B<unicode>F", -0.318815926188307, 1, "BG", 0.696716178541672,
+                                      1.39343235708334, 0.6405168538671, 1.48575619437837, "B<unicode>G",
+                                      0.468930354238352, 1, "CD", 1.649104423125, 3.29820884625001,
+                                      0.523642550351346, 2.57340521632351, "C<unicode>D", 0.640825787040641,
+                                      1, "CE", -1.34445476875, -2.6889095375, 0.602944595064479, 2.57340521632351,
+                                      "C<unicode>E", -0.522441922563114, 1, "CF", -1.63520972875,
+                                      -3.2704194575, 0.371804999348071, 1.81967227920319, "C<unicode>F",
+                                      -0.898628696737656, 1, "CG", -0.532965176249998, -1.0659303525,
+                                      0.720842607120992, 1.48575619437837, "C<unicode>G", -0.358716442352097,
+                                      1, "DE", 0.579793114375005, 1.15958622875001, 0.82237394608296,
+                                      2.57340521632351, "D<unicode>E", 0.225301911528463, 1, "DF",
+                                      -1.129910389375, -2.25982077875, 0.661906208797466, 2.57340521632351,
+                                      "D<unicode>F", -0.439072083248996, 1, "DG", -1.17461321104166,
+                                      -2.34922642208333, 0.431748425997108, 1.48575619437837, "D<unicode>G",
+                                      -0.790582745329302, 1, "EF", -2.10480245875, -4.20960491750001,
+                                      0.416072825057048, 2.57340521632351, "E<unicode>F", -0.817905569398443,
+                                      1, "EG", 0.236507809791665, 0.473015619583331, 0.8739639282789,
+                                      1.48575619437837, "E<unicode>G", 0.159183458690286, 1, "FG",
+                                      1.02579528833333, 2.05159057666666, 0.492119696740909, 1.48575619437837,
+                                      "F<unicode>G", 0.690419661189782, 1))
+})
+
+test_that("26.3 Six continuous predictors one discrete predictor BBD Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 102.89 (Intercept) + 1.76 A + 0.04 B - 0.54 C - 1.52 D + 1.62 E - 1.69 F - 0.34 G + 0.16 A^2 + 0.96 B^2 - 0.94 C^2 - 3.25 D^2 - 1.86 E^2 - 2.02 F^2 - 0.61 AB - 5.24 AC - 1.32 AD - 1.35 AE + 1.62 AF - 0.14 AG + 1.32 BC - 0.43 BD - 0.22 BE - 0.82 BF + 0.7 BG + 1.65 CD - 1.34 CE - 1.64 CF - 0.53 CG + 0.58 DE - 1.13 DF - 1.17 DG - 2.1 EF + 0.24 EG + 1.03 FG"
+                                 ))
+})
+
+test_that("26.4 Six continuous predictors one discrete predictor BBD Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.200979745789412, 10.293620865294))
+})
 
 # Specific tests ####
 
 ## Plots ####
+
+### Factorial design plots ####
+
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- "Result"
+options$fixedFactorsFactorial <- c("A", "B", "C", "D", "E")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$histogramBinWidthType <- "doane"
+options$plotNorm <- TRUE
+options$plotHist <- TRUE
+options$plotFitted <- TRUE
+options$plotRunOrder <- TRUE
+options$fourInOneResidualPlot <- TRUE
+options$plotPareto <- TRUE
+options$modelTerms <- list(
+  list(components = "A"),
+  list(components = "B"),
+  list(components = "C"),
+  list(components = "D"),
+  list(components = "E"),
+  list(components = c("A", "B")),
+  list(components = c("A", "C")),
+  list(components = c("A", "D")),
+  list(components = c("A", "E")),
+  list(components = c("B", "C")),
+  list(components = c("B", "D")),
+  list(components = c("B", "E")),
+  list(components = c("C", "D")),
+  list(components = c("C", "E")),
+  list(components = c("D", "E"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level5facFull.csv", options)
+
+test_that("27.1 Factorial design plots Matrix residual plot matches", {
+  plotName <- results[["results"]][["fourInOneResidualPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "matrix-residual-plot27")
+})
+
+test_that("27.2 Factorial design plots Residuals versus Fitted Values plot matches", {
+  plotName <- results[["results"]][["plotFitted"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "residuals-versus-fitted-values27")
+})
+
+test_that("27.3 Factorial design plots Histogram of Residuals plot matches", {
+  plotName <- results[["results"]][["plotHist"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogram-of-residuals27")
+})
+
+test_that("27.4 Factorial design plotsNormal Probability Plot of Residuals matches", {
+  plotName <- results[["results"]][["plotNorm"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "normal-probability-plot-of-residuals27")
+})
+
+test_that("27.5 Factorial design plotsPareto Chart of Standardized Effects plot matches", {
+  plotName <- results[["results"]][["plotPareto"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "pareto-chart-of-standardized-effects27")
+})
+
+test_that("27.6 Factorial design plotsResiduals versus Run Order plot matches", {
+  plotName <- results[["results"]][["plotRunOrder"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "residuals-versus-run-order27")
+})
+
+test_that("27.7 Factorial design plotsANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(118.542221893211, 1778.13332839816, 15, 2.63173059967985, 0.0318832484215919,
+                                      "Model", "", 906.296316752094, 5, "", "", "<unicode> Linear terms",
+                                      162.13896103187, 162.13896103187, 1, 3.59961251217536, 0.0759912026029757,
+                                      "<unicode> <unicode> A", 243.097271810399, 243.097271810399,
+                                      1, 5.39695071261994, 0.0336761387549081, "<unicode> <unicode> B",
+                                      0.437571792073413, 0.437571792073413, 1, 0.00971443808260777,
+                                      0.922710410988336, "<unicode> <unicode> C", 64.4409045780405,
+                                      64.4409045780405, 1, 1.43063878625335, 0.249085400175541, "<unicode> <unicode> D",
+                                      436.181607539711, 436.181607539711, 1, 9.68357489210809, 0.00671125493403696,
+                                      "<unicode> <unicode> E", "", 871.837011646071, 10, "", "", "<unicode> Interaction terms",
+                                      67.4016021614681, 67.4016021614681, 1, 1.49636860219795, 0.238942285824101,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>B", 47.6509408633181,
+                                      47.6509408633181, 1, 1.05788838078723, 0.318996088964146, "<unicode> <unicode> A<unicode><unicode><unicode>C",
+                                      18.5769765311749, 18.5769765311749, 1, 0.412423496082852, 0.529836840772662,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>D", 59.1507367552762,
+                                      59.1507367552762, 1, 1.3131928980773, 0.268668089382453, "<unicode> <unicode> A<unicode><unicode><unicode>E",
+                                      134.516684996498, 134.516684996498, 1, 2.98637624990437, 0.103214709350105,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>C", 84.5899429388892,
+                                      84.5899429388892, 1, 1.87796329191461, 0.189487611022757, "<unicode> <unicode> B<unicode><unicode><unicode>D",
+                                      1.79916468907368, 1.79916468907368, 1, 0.0399428717504902, 0.844110325478541,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>E", 51.6884900877184,
+                                      51.6884900877184, 1, 1.14752515047035, 0.299961265674163, "<unicode> <unicode> C<unicode><unicode><unicode>D",
+                                      210.572179125343, 210.572179125343, 1, 4.67486806299832, 0.0461007806065773,
+                                      "<unicode> <unicode> C<unicode><unicode><unicode>E", 195.890293497311,
+                                      195.890293497311, 1, 4.34891864977489, 0.0534069008645126, "<unicode> <unicode> D<unicode><unicode><unicode>E",
+                                      45.0434485610464, 720.695176976742, 16, "", "", "Error", "",
+                                      2498.82850537491, 31, "", "", "Total"))
+})
+
+test_that("27.8 Factorial design plotsCoded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 101.699596592187, "", 9.7648722242665e-23, 1.18642646950104,
+                                      "(Intercept)", 85.71925796207, "", "A", 2.25096480031251, 4.50192960062502,
+                                      0.0759912026029757, 1.18642646950104, "A", 1.89726448134554,
+                                      1, "B", -2.75622744781249, -5.51245489562499, 0.0336761387549081,
+                                      1.18642646950104, "B", -2.32313381289583, 1, "C", 0.116936386562506,
+                                      0.233872773125013, 0.922710410988331, 1.18642646950104, "C",
+                                      0.0985618490218655, 1, "D", 1.41907655468751, 2.83815310937502,
+                                      0.249085400175541, 1.18642646950104, "D", 1.19609313443952,
+                                      1, "E", -3.69197443593749, -7.38394887187498, 0.00671125493403696,
+                                      1.18642646950104, "E", -3.11184429110907, 1, "AB", 1.45130977656249,
+                                      2.90261955312499, 0.2389422858241, 1.18642646950104, "A<unicode>B",
+                                      1.22326146109405, 1, "AC", 1.22028353343749, 2.44056706687498,
+                                      0.318996088964146, 1.18642646950104, "A<unicode>C", 1.02853700992586,
+                                      1, "AD", -0.761925532187506, -1.52385106437501, 0.529836840772662,
+                                      1.18642646950104, "A<unicode>D", -0.6422020679528, 1, "AE",
+                                      -1.35958101031251, -2.71916202062502, 0.268668089382452, 1.18642646950104,
+                                      "A<unicode>E", -1.14594628935099, 1, "BC", -2.05027959218751,
+                                      -4.10055918437501, 0.103214709350105, 1.18642646950104, "B<unicode>C",
+                                      -1.72811349450908, 1, "BD", 1.6258646059375, 3.25172921187499,
+                                      0.189487611022757, 1.18642646950104, "B<unicode>D", 1.37038800779729,
+                                      1, "BE", -0.237115787187507, -0.474231574375015, 0.844110325478542,
+                                      1.18642646950104, "B<unicode>E", -0.199857128345449, 1, "CD",
+                                      1.27093088531249, 2.54186177062499, 0.299961265674163, 1.18642646950104,
+                                      "C<unicode>D", 1.07122600345135, 1, "CE", -2.5652252528125,
+                                      -5.13045050562501, 0.0461007806065773, 1.18642646950104, "C<unicode>E",
+                                      -2.16214432057583, 1, "DE", 2.4741810103125, 4.94836202062499,
+                                      0.0534069008645126, 1.18642646950104, "D<unicode>E", 2.08540611147443,
+                                      1))
+})
+
+test_that("27.9 Factorial design plotsRegression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 101.7 (Intercept) + 2.25 A - 2.76 B + 0.12 C + 1.42 D - 3.69 E + 1.45 AB + 1.22 AC - 0.76 AD - 1.36 AE - 2.05 BC + 1.63 BD - 0.24 BE + 1.27 CD - 2.57 CE + 2.47 DE"
+                                 ))
+})
+
+test_that("27.10 Factorial design plotsModel Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.441199385076272, 0, 0.711586779394205, 6.71144161570719))
+})
+
+### RSM plots ####
+
+#### Contour plot
+#
+# options <- analysisOptions("doeAnalysis")
+# options$designType <- "responseSurfaceDesign"
+# options$dependentResponseSurface <- "Result"
+# options$continuousFactorsResponseSurface <- c("A", "B", "C", "D")
+# options$fixedFactorsResponseSurface <- c("E")
+# options$codeFactors <- TRUE
+# options$codeFactorsMethod <- "manual"
+# options$codeFactorsManualTable <- list(
+#   list(predictors = "A", lowValue = "-1", highValue = "1"),
+#   list(predictors = "B", lowValue = "-1", highValue = "1"),
+#   list(predictors = "C", lowValue = "-1", highValue = "1"),
+#   list(predictors = "D", lowValue = "-1", highValue = "1"),
+#   list(predictors = "E", lowValue = "1", highValue = "2")
+# )
+# options$squaredTermsCoded <- TRUE
+# options$tableEquation <- TRUE
+# options$rsmPredefinedModel <- TRUE
+# options$rsmPredefinedTerms <- "fullQuadratic"
+# options$modelTerms <- NULL
+# options$plotNorm <- TRUE
+# options$plotHist <- TRUE
+# options$plotFitted <- TRUE
+# options$plotRunOrder <- TRUE
+# options$fourInOneResidualPlot <- TRUE
+# options$plotPareto <- TRUE
+# set.seed(123)
+# results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4cont1discCCD.csv", options)
 
 ## Sums of squares types ####
 
