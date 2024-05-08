@@ -1,10 +1,16 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2024-05-08 18:04+0000\n"
+"Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
+"Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/pl/>\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.5.4-rc\n"
 "X-Language: pl\n"
 "X-Qt-Contexts: true\n"
 
@@ -2475,22 +2481,18 @@ msgctxt "doeAnalysis|"
 msgid "Histogram bin width type"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Sturges"
 msgstr "Sturges"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Scott"
 msgstr "Scott"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Doane"
 msgstr "Doane"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Freedman-Diaconis"
 msgstr "Freedman-Diaconis"
