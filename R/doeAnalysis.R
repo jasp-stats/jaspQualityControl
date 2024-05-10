@@ -111,6 +111,23 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
 
+
+#### Testing block variables with levels > 2 ####
+# dataset <- read.csv("tests/testthat/datasets/doeAnalysis/fourBlocksFactorial.csv")
+# dataset <- dataset[4:8]
+# options <- list()
+# continuousPredictors <- NULL
+# discretePredictors <- c("A", "B", "C")
+# blocks <- "Blocks"
+# covariates <- NULL
+# dependent <- "Result"
+# options[["highestOrder"]] <- TRUE
+# options[["order"]] <- 2
+# dataset$Blocks <- as.factor(dataset$Blocks)
+# dataset$A <- as.factor(dataset$A)
+# dataset$B <- as.factor(dataset$B)
+# dataset$C <- as.factor(dataset$C)
+
 .doeAnalysisMakeState <- function(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, ready) {
   if (!ready || jaspResults$getError()) {
     return()
@@ -131,7 +148,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     contrasts(dataset[[blocks]]) <- "contr.sum"
 
   # Transform to coded, -1 to 1 coding.
-  allVars <- c(unlist(continuousPredictors), unlist(discretePredictors), blocks)
+  allVars <- c(unlist(continuousPredictors), unlist(discretePredictors))
   allVars <- allVars[allVars != ""]
   datasetCoded <- dataset
   if (options[["codeFactorsMethod"]] == "manual")
@@ -350,7 +367,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   termNamesCoded <- gsubInteractionSymbol(rownames(coefsCoded)[valid_coefsCoded])
 
   #remove possible appended factor levels
-  if ((options[["rsmPredefinedModel"]] && options[["designType"]] == "responseSurfaceDesign") ||
+  if ((options[["designType"]] == "responseSurfaceDesign" && options[["rsmPredefinedModel"]]) ||
       (options[["highestOrder"]] && options[["designType"]] == "factorialDesign")) {
     allPredictors <- c(unlist(continuousPredictors), unlist(discretePredictors))
   } else {
@@ -359,6 +376,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   predictorsForLevelRemoval <- allPredictors
   if (length(blocks) > 0 && !identical(blocks, ""))
     predictorsForLevelRemoval <- c(predictorsForLevelRemoval, blocks)
+
+  # Sort predictors by length in descending order to prevent matching of substrings
+  predictorsForLevelRemoval <- predictorsForLevelRemoval[order(nchar(predictorsForLevelRemoval), decreasing = TRUE)]
 
   termNamesRemoved <- termNames
   # this regex removes the appended factor levels
@@ -383,8 +403,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   coefEffects <- .doeCoefficientEffects(regressionFit)
   coefEffectsCoded <- .doeCoefficientEffects(regressionFitCoded)
   if (length(blocks) > 0 && !identical(blocks, "")) {
-    coefEffects[names(coefEffects) == blocks] <- NA
-    coefEffectsCoded[names(coefEffectsCoded) == blocks] <- NA
+    blockNameIndices <- which(termNamesRemoved == blocks) # get the indices of the block variables
+    coefEffects[blockNameIndices] <- NA
+    coefEffectsCoded[blockNameIndices] <- NA
   }
   if (length(covariates) > 0 && !identical(covariates, "")) {
     coefEffects[names(coefEffects) %in% unlist(covariates)] <- NA
@@ -411,10 +432,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   termNamesAliased <- gsub("✻", "", termNamesAliased)
   termNamesAliasedCoded <- gsub("✻", "", termNamesAliasedCoded)
 
-  # covariates and blocks should not get an alias in the table (but keep their default names in the equation, so specifying it here)
   if (length(blocks) > 0 && !identical(blocks, "")) {
-    termNamesAliased[termNamesAliased == blocks] <- "BLK"
-    termNamesAliasedCoded[termNamesAliasedCoded == blocks] <- "BLK"
+    blockNameIndices <- which(termNamesRemoved == blocks) # get the indices of the block variables
+    blockNamesAliased <- paste0("BLK", 1:length(blockNameIndices))
+    termNamesAliased[blockNameIndices] <- blockNamesAliased
+    termNamesAliasedCoded[blockNameIndices] <- blockNamesAliased
   }
   if (length(covariates) > 0 && !identical(covariates, "")) {
     covariateAliases <- paste0("COV", seq(1, length(covariates)))
@@ -747,6 +769,7 @@ get_levels <- function(var, num_levels, dataset) {
     tb2 <- createJaspTable(gettext("Discrete Predictor Levels"))
     tb2$addColumnInfo(name = "factorName", title = gettext("Name"), type = "string")
     tb2$addColumnInfo(name = "factorLevel", title = gettext("Level"), type = "string")
+    tb$dependOn(options = c("codeFactors", "codeFactorsManualTable", "codeFactorsMethod", "tableEquation", "tableAlias", .doeAnalysisBaseDependencies()))
     tb2$position <- 4
     jaspResults[["tableCoefficientsLegend"]] <- tb2
 

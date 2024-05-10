@@ -17,6 +17,8 @@
 
 #' @export
 doeFactorial <- function(jaspResults, dataset, options, ...) {
+
+
   ready <- options[["selectedRow"]] != -1L | options[["factorialType"]] == "generalFullFactorial" # If the design type is general full factorial no need to select a design
 
   .doeFactorialDesignSummaryTable(jaspResults, options)
@@ -39,6 +41,10 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
 
     .doeRsmExportDesign(options, design[["display"]])
   }
+}
+
+.getMaximumRow <- function(nFactors){
+  maxRowsDf <- 1
 }
 
 .doeFactorialBaseDependencies <- function() {
