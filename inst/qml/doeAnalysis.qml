@@ -127,28 +127,6 @@ Form
 		{
 			RadioButtonGroup
 			{
-				name: 					"runOrderSource"
-				id: 					runOrderSource
-				title:					qsTr("Run order")
-
-				RadioButton
-				{
-					name: 				"runOrderSourceRowNumber"
-					id : 				runOrderSourceRowNumber
-					label: 				qsTr("Equal to row number")
-					checked: 			true
-				}
-
-				// RadioButton
-				// {
-				// 	name: 				"runOrderSourceVariable"
-				// 	id : 				runOrderSourceVariable
-				// 	label: 				qsTr("Specified as variable")
-				// }
-			}
-
-			RadioButtonGroup
-			{
 				name: 					"codeFactorsMethod"
 				id: 					codeFactorsMethod
 				title:					qsTr("Predictor levels")

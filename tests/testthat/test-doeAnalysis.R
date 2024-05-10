@@ -1,4 +1,4 @@
-context("DoE Analysis")
+context("[Quality Control] DoE Analysis")
 .numDecimals <- 2
 
 # Basic tests
@@ -999,7 +999,7 @@ test_that("10.2 Two blocks Coded Coefficients table results match", {
                                       "", "A", 0.93879812875, 1.8775962575, "", "", "A", "", "NaN",
                                       "B", 0.669080816249997, 1.33816163249999, "", "", "B", "", "NaN",
                                       "C", -2.10368110625, -4.2073622125, "", "", "C", "", "NaN",
-                                      "BLK", -2.67621831875, "", "", "", "Block", "", "NaN", "AB",
+                                      "BLK1", 2.67621831875, "", "", "", "Block1", "", "NaN", "AB",
                                       -0.198051021250002, -0.396102042500004, "", "", "A<unicode>B",
                                       "", "NaN", "BC", 0.302618163749995, 0.605236327499991, "", "",
                                       "B<unicode>C", "", "NaN", "AC", -4.52522017875, -9.0504403575,
@@ -1009,7 +1009,7 @@ test_that("10.2 Two blocks Coded Coefficients table results match", {
 test_that("10.3 Two blocks Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 99.75 (Intercept) + 0.94 A + 0.67 B - 2.1 C - 2.68 BLK - 0.2 AB + 0.3 BC - 4.53 AC"
+                                 list("Result = 99.75 (Intercept) + 0.94 A + 0.67 B - 2.1 C + 2.68 BLK1 - 0.2 AB + 0.3 BC - 4.53 AC"
                                  ))
 })
 
@@ -2719,8 +2719,6 @@ test_that("26.4 Six continuous predictors one discrete predictor BBD Model Summa
 
 ## Plots ####
 
-### Factorial design plots ####
-
 options <- analysisOptions("doeAnalysis")
 options$dependentFactorial <- "Result"
 options$fixedFactorsFactorial <- c("A", "B", "C", "D", "E")
@@ -2870,40 +2868,510 @@ test_that("27.10 Factorial design plotsModel Summary table results match", {
                                  list(0.441199385076272, 0, 0.711586779394205, 6.71144161570719))
 })
 
-### RSM plots ####
-
-#### Contour plot
-#
-# options <- analysisOptions("doeAnalysis")
-# options$designType <- "responseSurfaceDesign"
-# options$dependentResponseSurface <- "Result"
-# options$continuousFactorsResponseSurface <- c("A", "B", "C", "D")
-# options$fixedFactorsResponseSurface <- c("E")
-# options$codeFactors <- TRUE
-# options$codeFactorsMethod <- "manual"
-# options$codeFactorsManualTable <- list(
-#   list(predictors = "A", lowValue = "-1", highValue = "1"),
-#   list(predictors = "B", lowValue = "-1", highValue = "1"),
-#   list(predictors = "C", lowValue = "-1", highValue = "1"),
-#   list(predictors = "D", lowValue = "-1", highValue = "1"),
-#   list(predictors = "E", lowValue = "1", highValue = "2")
-# )
-# options$squaredTermsCoded <- TRUE
-# options$tableEquation <- TRUE
-# options$rsmPredefinedModel <- TRUE
-# options$rsmPredefinedTerms <- "fullQuadratic"
-# options$modelTerms <- NULL
-# options$plotNorm <- TRUE
-# options$plotHist <- TRUE
-# options$plotFitted <- TRUE
-# options$plotRunOrder <- TRUE
-# options$fourInOneResidualPlot <- TRUE
-# options$plotPareto <- TRUE
-# set.seed(123)
-# results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4cont1discCCD.csv", options)
-
 ## Sums of squares types ####
+
+### Type 1 ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C", "D", "E")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1"),
+  list(predictors = "D", lowValue = "-1", highValue = "1"),
+  list(predictors = "E", lowValue = "-1", highValue = "1")
+)
+options$squaredTermsCoded <- TRUE
+options$sumOfSquaresType <- "type1"
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM5contCCD.csv", options)
+
+test_that("28.1 Type 1 SS ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(45.0954304768421, 450.954304768421, 10, 0.420539272623761, 0.92886919055636,
+                                      "Model", "", 341.185797996188, 5, "", "", "<unicode> Linear terms",
+                                      43.5159978609834, 43.5159978609834, 1, 0.405810209470177, 0.527480997882405,
+                                      "<unicode> <unicode> A", 167.72567415228, 167.72567415228, 1,
+                                      1.56413260196178, 0.217823903668735, "<unicode> <unicode> B",
+                                      17.7431526190489, 17.7431526190489, 1, 0.165464492024287, 0.686192201689509,
+                                      "<unicode> <unicode> C", 54.1622602726813, 54.1622602726813,
+                                      1, 0.505092362970769, 0.481108317086755, "<unicode> <unicode> D",
+                                      58.0387130911947, 58.0387130911947, 1, 0.541242381529636, 0.465912547720501,
+                                      "<unicode> <unicode> E", "", 109.768506772233, 5, "", "", "<unicode> Squared terms",
+                                      23.7383463474594, 23.7383463474594, 1, 0.221372915186563, 0.640373727286971,
+                                      "<unicode> <unicode> A^2", 7.39472140267591, 7.39472140267591,
+                                      1, 0.0689597754595923, 0.794111504395272, "<unicode> <unicode> B^2",
+                                      13.2252238626253, 13.2252238626253, 1, 0.123332363493701, 0.727162944861034,
+                                      "<unicode> <unicode> C^2", 22.7705818446913, 22.7705818446913,
+                                      1, 0.212347987920946, 0.647255519334776, "<unicode> <unicode> D^2",
+                                      42.6396333147808, 42.6396333147808, 1, 0.397637636220154, 0.531649118010972,
+                                      "<unicode> <unicode> E^2", 107.232388060906, 4610.99268661894,
+                                      43, "", "", "Error", "", 5061.94699138736, 53, "", "", "Total"
+                                 ))
+})
+
+test_that("28.2 Type 1 SS Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 95.7137721498586, "", 1.04311322261897e-31, 2.97660135246737,
+                                      "(Intercept)", 32.1553882485874, "", "A", 1.00369820969494,
+                                      4.74949992827646, 0.527480997882405, 1.57558437411744, "A",
+                                      0.637032345701674, 1, "B", 1.97050911987227, 9.32444915523557,
+                                      0.217823903668736, 1.57558437411744, "B", 1.25065287028887,
+                                      1, "C", 0.640905605769827, 3.03276532650282, 0.686192201689509,
+                                      1.57558437411744, "C", 0.406773268571432, 1, "D", -1.11976545692704,
+                                      -5.29873014217874, 0.481108317086755, 1.57558437411744, "D",
+                                      -0.710698503565872, 1, "E", 1.15914445813947, 5.48507157591596,
+                                      0.465912547720501, 1.57558437411744, "E", 0.735691770736656,
+                                      1, "A^2", 0.676630609752464, 3.20181604534866, 0.61645603146906,
+                                      1.34107738608242, "A^2", 0.504542554198941, "", "B^2", 0.384382440063385,
+                                      1.81889770637994, 0.775778221507103, 1.34107738608242, "B^2",
+                                      0.286622117450097, "", "C^2", 0.482416016068627, 2.28279258803674,
+                                      0.72081522517578, 1.34107738608242, "C^2", 0.359722728214715,
+                                      "", "D^2", -0.57609061563766, -2.72606079319741, 0.669651253139691,
+                                      1.34107738608242, "D^2", -0.42957298483762, "", "E^2", 0.845663489789393,
+                                      4.00167963368341, 0.531649118010972, 1.34107738608242, "E^2",
+                                      0.630585153821555, ""))
+})
+
+test_that("28.3 Type 1 SS Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 95.71 (Intercept) + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2"
+                                 ))
+})
+
+test_that("28.4 Type 1 SS Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.0890871250796769, 10.3553072412607))
+})
+
+### Type 2 ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C", "D", "E")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "-1", highValue = "1"),
+  list(predictors = "D", lowValue = "-1", highValue = "1"),
+  list(predictors = "E", lowValue = "-1", highValue = "1")
+)
+options$squaredTermsCoded <- TRUE
+options$sumOfSquaresType <- "type2"
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM5contCCD.csv", options)
+
+test_that("29.1 Type 2 SS ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(45.3596057822557, 453.596057822557, 10, 0.423002850188251, 0.92755442663839,
+                                      "Model", "", 341.185797996188, 5, "", "", "<unicode> Linear terms",
+                                      43.5159978609836, 43.5159978609836, 1, 0.405810209470179, 0.527480997882405,
+                                      "<unicode> <unicode> A", 167.72567415228, 167.72567415228, 1,
+                                      1.56413260196178, 0.217823903668735, "<unicode> <unicode> B",
+                                      17.7431526190485, 17.7431526190485, 1, 0.165464492024283, 0.686192201689513,
+                                      "<unicode> <unicode> C", 54.1622602726811, 54.1622602726811,
+                                      1, 0.505092362970767, 0.481108317086755, "<unicode> <unicode> D",
+                                      58.0387130911949, 58.0387130911949, 1, 0.541242381529639, 0.4659125477205,
+                                      "<unicode> <unicode> E", "", 112.410259826369, 5, "", "", "<unicode> Squared terms",
+                                      27.2974186686115, 27.2974186686115, 1, 0.254563188997593, 0.616456031469059,
+                                      "<unicode> <unicode> A^2", 8.80938068797605, 8.80938068797605,
+                                      1, 0.0821522382115795, 0.7757782215071, "<unicode> <unicode> B^2",
+                                      13.8759183253933, 13.8759183253933, 1, 0.129400441194241, 0.720815225175776,
+                                      "<unicode> <unicode> C^2", 19.7879088296077, 19.7879088296077,
+                                      1, 0.1845329493023, 0.669651253139693, "<unicode> <unicode> D^2",
+                                      42.6396333147804, 42.6396333147804, 1, 0.397637636220151, 0.531649118010973,
+                                      "<unicode> <unicode> E^2", 107.232388060906, 4610.99268661894,
+                                      43, "", "", "Error", "", 5064.5887444415, 53, "", "", "Total"
+                                 ))
+})
+
+test_that("29.2 Type 2 SS Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 95.7137721498586, "", 1.04311322261897e-31, 2.97660135246737,
+                                      "(Intercept)", 32.1553882485874, "", "A", 1.00369820969494,
+                                      4.74949992827646, 0.527480997882405, 1.57558437411744, "A",
+                                      0.637032345701674, 1, "B", 1.97050911987227, 9.32444915523557,
+                                      0.217823903668736, 1.57558437411744, "B", 1.25065287028887,
+                                      1, "C", 0.640905605769827, 3.03276532650282, 0.686192201689509,
+                                      1.57558437411744, "C", 0.406773268571432, 1, "D", -1.11976545692704,
+                                      -5.29873014217874, 0.481108317086755, 1.57558437411744, "D",
+                                      -0.710698503565872, 1, "E", 1.15914445813947, 5.48507157591596,
+                                      0.465912547720501, 1.57558437411744, "E", 0.735691770736656,
+                                      1, "A^2", 0.676630609752464, 3.20181604534866, 0.61645603146906,
+                                      1.34107738608242, "A^2", 0.504542554198941, "", "B^2", 0.384382440063385,
+                                      1.81889770637994, 0.775778221507103, 1.34107738608242, "B^2",
+                                      0.286622117450097, "", "C^2", 0.482416016068627, 2.28279258803674,
+                                      0.72081522517578, 1.34107738608242, "C^2", 0.359722728214715,
+                                      "", "D^2", -0.57609061563766, -2.72606079319741, 0.669651253139691,
+                                      1.34107738608242, "D^2", -0.42957298483762, "", "E^2", 0.845663489789393,
+                                      4.00167963368341, 0.531649118010972, 1.34107738608242, "E^2",
+                                      0.630585153821555, ""))
+})
+
+test_that("29.3 Type 2 SS Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 95.71 (Intercept) + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2"
+                                 ))
+})
+
+test_that("29.4 Type 2 SS Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.0890871250796769, 10.3553072412607))
+})
 
 ## Coding squared terms ####
 
-## Alias names ####
+### Coded squared terms ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C", "D")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "0", highValue = "30"),
+  list(predictors = "C", lowValue = "-1", highValue = "1"),
+  list(predictors = "D", lowValue = "-1", highValue = "1")
+)
+options$squaredTermsCoded <- TRUE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4contCCD_uncoded.csv", options)
+
+test_that("30.1 Coded Squared Terms ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(53.6009309381646, 428.807447505317, 8, 0.734815921863529, 0.660416614783697,
+                                      "Model", "", 140.181000812604, 4, "", "", "<unicode> Linear terms",
+                                      63.1077346389266, 63.1077346389266, 1, 0.865144828527668, 0.362872709933773,
+                                      "<unicode> <unicode> A", 37.4976813358419, 37.4976813358419,
+                                      1, 0.514056244850083, 0.481287340427568, "<unicode> <unicode> B",
+                                      34.037306875782, 34.037306875782, 1, 0.466617922336705, 0.502014598205835,
+                                      "<unicode> <unicode> C", 5.53827796205383, 5.53827796205383,
+                                      1, 0.0759243310702544, 0.785591679264418, "<unicode> <unicode> D",
+                                      "", 288.626446692712, 4, "", "", "<unicode> Squared terms",
+                                      65.4319337921556, 65.4319337921556, 1, 0.897007307657829, 0.35435731472199,
+                                      "<unicode> <unicode> A^2", 2.0294343542887, 2.0294343542887,
+                                      1, 0.0278215443240813, 0.869124697680983, "<unicode> <unicode> B^2",
+                                      19.6252348513958, 19.6252348513958, 1, 0.269042622706554, 0.609397684905525,
+                                      "<unicode> <unicode> C^2", 201.539843694872, 201.539843694872,
+                                      1, 2.76291257343506, 0.111328352752227, "<unicode> <unicode> D^2",
+                                      72.9447053926513, 1531.83881324568, 21, "", "", "Error", "",
+                                      1960.64626075099, 29, "", "", "Total"))
+})
+
+test_that("30.2 Coded Squared Terms Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 103.801045518333, "", 1.16794507283658e-18, 3.48675363322034,
+                                      "(Intercept)", 29.7701118109866, "", "A", -1.62156990083333,
+                                      -6.4862796033333, 0.362872709933774, 1.74337681661017, "A",
+                                      -0.930131618926949, 1, "B", -1.24996135499999, -4.99984541999997,
+                                      0.481287340427568, 1.74337681661017, "B", -0.716977157830069,
+                                      1, "C", 1.19089089333333, 4.7635635733333, 0.502014598205835,
+                                      1.74337681661017, "C", 0.68309437293591, 1, "D", -0.480376499999993,
+                                      -1.92150599999997, 0.785591679264418, 1.74337681661017, "D",
+                                      -0.275543700835738, 1, "A^2", 1.54451910083333, 6.17807640333333,
+                                      0.35435731472199, 1.63077968594997, "A^2", 0.947104697305334,
+                                      "", "B^2", 0.272010650833332, 1.08804260333333, 0.869124697680985,
+                                      1.63077968594997, "B^2", 0.166797914627493, "", "C^2", 0.845874313333332,
+                                      3.38349725333333, 0.609397684905526, 1.63077968594997, "C^2",
+                                      0.51869318744953, "", "D^2", -2.71068382541667, -10.8427353016667,
+                                      0.111328352752227, 1.63077968594997, "D^2", -1.66220112303989,
+                                      ""))
+})
+
+test_that("30.3 Coded Squared Terms Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 103.8 (Intercept) - 1.62 A - 1.25 B + 1.19 C - 0.48 D + 1.54 A^2 + 0.27 B^2 + 0.85 C^2 - 2.71 D^2"
+                                 ))
+})
+
+test_that("30.4 Coded Squared Terms Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.237414316588398, 8.54076726018519))
+})
+
+
+### Uncoded squared terms ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B", "C", "D")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "0", highValue = "30"),
+  list(predictors = "C", lowValue = "-1", highValue = "1"),
+  list(predictors = "D", lowValue = "-1", highValue = "1")
+)
+options$squaredTermsCoded <- FALSE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4contCCD_uncoded.csv", options)
+
+test_that("31.1 Uncoded Squared Terms ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(51.0593032861315, 408.474426289052, 8, 0.699972712361868, 0.688104762520746,
+                                      "Model", "", 119.84797959634, 4, "", "", "<unicode> Linear terms",
+                                      63.1077346389266, 63.1077346389266, 1, 0.865144828527668, 0.362872709933773,
+                                      "<unicode> <unicode> A", 17.1646601195773, 17.1646601195773,
+                                      1, 0.235310568836797, 0.632635670262947, "<unicode> <unicode> B",
+                                      34.037306875782, 34.037306875782, 1, 0.466617922336705, 0.502014598205835,
+                                      "<unicode> <unicode> C", 5.53827796205383, 5.53827796205383,
+                                      1, 0.0759243310702544, 0.785591679264418, "<unicode> <unicode> D",
+                                      "", 288.626446692712, 4, "", "", "<unicode> Squared terms",
+                                      65.4319337921556, 65.4319337921556, 1, 0.897007307657829, 0.35435731472199,
+                                      "<unicode> <unicode> A^2", 2.0294343542887, 2.0294343542887,
+                                      1, 0.0278215443240813, 0.869124697680983, "<unicode> <unicode> B^2",
+                                      19.6252348513958, 19.6252348513958, 1, 0.269042622706554, 0.609397684905525,
+                                      "<unicode> <unicode> C^2", 201.539843694872, 201.539843694872,
+                                      1, 2.76291257343506, 0.111328352752227, "<unicode> <unicode> D^2",
+                                      72.9447053926513, 1531.83881324568, 21, "", "", "Error", "",
+                                      1940.31323953473, 29, "", "", "Total"))
+})
+
+test_that("31.2 Uncoded Squared Terms Coded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 103.801045518333, "", 1.16794507283658e-18, 3.48675363322034,
+                                      "(Intercept)", 29.7701118109866, "", "A", -1.62156990083333,
+                                      -6.4862796033333, 0.362872709933774, 1.74337681661017, "A",
+                                      -0.930131618926949, 1, "B", -1.24996135499999, -4.99984541999997,
+                                      0.481287340427568, 1.74337681661017, "B", -0.716977157830069,
+                                      1, "C", 1.19089089333333, 4.7635635733333, 0.502014598205835,
+                                      1.74337681661017, "C", 0.68309437293591, 1, "D", -0.480376499999993,
+                                      -1.92150599999997, 0.785591679264418, 1.74337681661017, "D",
+                                      -0.275543700835738, 1, "A^2", 1.54451910083333, 6.17807640333333,
+                                      0.35435731472199, 1.63077968594997, "A^2", 0.947104697305334,
+                                      "", "B^2", 0.272010650833332, 1.08804260333333, 0.869124697680985,
+                                      1.63077968594997, "B^2", 0.166797914627493, "", "C^2", 0.845874313333332,
+                                      3.38349725333333, 0.609397684905526, 1.63077968594997, "C^2",
+                                      0.51869318744953, "", "D^2", -2.71068382541667, -10.8427353016667,
+                                      0.111328352752227, 1.63077968594997, "D^2", -1.66220112303989,
+                                      ""))
+})
+
+test_that("31.3 Uncoded Squared Terms Regression Equation in Coded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 103.8 (Intercept) - 1.62 A - 1.25 B + 1.19 C - 0.48 D + 1.54 A^2 + 0.27 B^2 + 0.85 C^2 - 2.71 D^2"
+                                 ))
+})
+
+test_that("31.4 Uncoded Squared Terms Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.237414316588398, 8.54076726018519))
+})
+
+## Factorial analysis with nominal levels ####
+
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- "Result"
+options$fixedFactorsFactorial <- c("A", "B", "C")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- FALSE
+options$highestOrder <- FALSE
+options$histogramBinWidthType <- "doane"
+options$modelTerms <- list(
+  list(components = "A"),
+  list(components = "B"),
+  list(components = "C"),
+  list(components = c("A", "B")),
+  list(components = c("A", "C")),
+  list(components = c("B", "C"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level3facFullText.csv", options)
+
+test_that("32.1 Factorial analysis with nominal levels ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(30.3398635060475, 182.039181036285, 6, 0.316556719142333, 0.874163523074942,
+                                      "Model", "", 125.387802560961, 3, "", "", "<unicode> Linear terms",
+                                      53.6986344608876, 53.6986344608876, 1, 0.560274885349228, 0.590939896340302,
+                                      "<unicode> <unicode> A", 68.8129870092555, 68.8129870092555,
+                                      1, 0.717973348749309, 0.552492115731678, "<unicode> <unicode> B",
+                                      2.87618109081815, 2.87618109081815, 1, 0.0300091808121394, 0.890801067082115,
+                                      "<unicode> <unicode> C", "", 56.6513784753237, 3, "", "", "<unicode> Interaction terms",
+                                      1.71696022965141, 1.71696022965141, 1, 0.0179142301377849, 0.915295640945133,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>B", 1.33812631708615,
+                                      1.33812631708615, 1, 0.0139615946739632, 0.925124693647521,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>C", 53.5962919285861,
+                                      53.5962919285861, 1, 0.559207075131571, 0.59123116801622, "<unicode> <unicode> B<unicode><unicode><unicode>C",
+                                      95.8433723607233, 95.8433723607233, 1, "", "", "Error", "",
+                                      277.882553397008, 7, "", "", "Total"))
+})
+
+test_that("32.2 Factorial analysis with nominal levels Uncoded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(106.66044882, "", 0.0206519176719196, 3.46127455499999, "(Intercept)",
+                                      30.815367901377, "", 2.59081633999999, 5.18163267999998, 0.590939896340302,
+                                      3.46127455499999, "A1", 0.748515120321045, 1, 2.93285243, 5.86570486000001,
+                                      0.552492115731678, 3.46127455499999, "B1", 0.847333080169368,
+                                      1, 0.599602065000003, 1.19920413000001, 0.890801067082115, 3.46127455499999,
+                                      "C1", 0.173231581451361, 1, 0.463271010000007, 0.926542020000014,
+                                      0.915295640945133, 3.46127455499999, "A1<unicode>B1", 0.133844051559212,
+                                      1, -0.408981404999994, -0.817962809999989, 0.925124693647521,
+                                      3.46127455499999, "A1<unicode>C1", -0.118159192084083, 1, 2.58834628499999,
+                                      5.17669256999999, 0.59123116801622, 3.46127455499999, "B1<unicode>C1",
+                                      0.747801494470004, 1))
+})
+
+test_that("32.3 Factorial analysis with nominal levels Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Low", "A1", "Low", "B1", "Low", "C1"))
+})
+
+test_that("32.4 Factorial analysis with nominal levels Regression Equation in Uncoded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 106.66 (Intercept) + 2.59 A1 + 2.93 B1 + 0.6 C1 + 0.46 A1<unicode>B1 - 0.41 A1<unicode>C1 + 2.59 B1<unicode>C1"
+                                 ))
+})
+
+test_that("32.5 Factorial analysis with nominal levels Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.655093955381241, 9.78996283755578))
+})
+
+## RSM analysis with nominal levels ####
+
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- "Result"
+options$continuousFactorsResponseSurface <- c("A", "B")
+options$fixedFactorsResponseSurface <- c("C", "D")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "manual"
+options$codeFactorsManualTable <- list(
+  list(predictors = "A", lowValue = "-1", highValue = "1"),
+  list(predictors = "B", lowValue = "-1", highValue = "1"),
+  list(predictors = "C", lowValue = "LevelA", highValue = "LevelB"),
+  list(predictors = "D", lowValue = "WhateverLow", highValue = "WhateverHigh")
+)
+options$squaredTermsCoded <- TRUE
+options$tableEquation <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$modelTerms <- NULL
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM2cont2discreteCCDText.csv", options)
+
+test_that("33.1 RSM analysis with nominal levels ANOVA table results match", {
+  table <- results[["results"]][["tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(78.8155854449644, 945.787025339573, 12, 1.02124001802806, 0.447322259419835,
+                                      "Model", "", 80.7371025092129, 4, "", "", "<unicode> Linear terms",
+                                      2.33193684261232, 2.33193684261232, 1, 0.0302156890638417, 0.862817503307452,
+                                      "<unicode> <unicode> A", 16.6942264995341, 16.6942264995341,
+                                      1, 0.216312701036187, 0.644210743273365, "<unicode> <unicode> B",
+                                      51.643067337493, 51.643067337493, 1, 0.669156572535934, 0.417855858206551,
+                                      "<unicode> <unicode> C", 10.0678718295735, 10.0678718295735,
+                                      1, 0.130452797510682, 0.719731612087039, "<unicode> <unicode> D",
+                                      "", 145.119336540444, 2, "", "", "<unicode> Squared terms",
+                                      2.65209420122892, 2.65209420122892, 1, 0.0343640755135464, 0.853806178423993,
+                                      "<unicode> <unicode> A^2", 142.467242339215, 142.467242339215,
+                                      1, 1.84599591963321, 0.181334819594722, "<unicode> <unicode> B^2",
+                                      "", 719.930586289916, 6, "", "", "<unicode> Interaction terms",
+                                      65.9619029932596, 65.9619029932596, 1, 0.854690536417314, 0.360388060663142,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>B", 186.679984933186,
+                                      186.679984933186, 1, 2.41887527831368, 0.127211174949052, "<unicode> <unicode> A<unicode><unicode><unicode>C",
+                                      34.7327647294642, 34.7327647294642, 1, 0.450044100773071, 0.50590166788665,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>D", 112.72519454446,
+                                      112.72519454446, 1, 1.46061821477157, 0.233436020916554, "<unicode> <unicode> B<unicode><unicode><unicode>C",
+                                      299.346939991402, 299.346939991402, 1, 3.87873886449694, 0.0553656265712981,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>D", 20.4837990981441,
+                                      20.4837990981441, 1, 0.265415466270679, 0.609062330372558, "<unicode> <unicode> C<unicode><unicode><unicode>D",
+                                      77.1763582053433, 3318.58340282976, 43, "", "", "Error", "",
+                                      4264.37042816933, 55, "", "", "Total"))
+})
+
+test_that("33.2 RSM analysis with nominal levels Uncoded Coefficients table results match", {
+  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 102.924261345452, "", 2.83112726863751e-42, 1.79323216341033,
+                                      "(Intercept)", 57.3959487486065, "", "A", 0.269950044176439,
+                                      0.763534027073639, 0.86281750330745, 1.55298460860153, "A",
+                                      0.173826606317451, 1, "B", 0.722284278001449, 2.04292844313806,
+                                      0.644210743273365, 1.55298460860153, "B", 0.465094292629127,
+                                      1, "C1", 0.960311215714292, 1.92062243142858, 0.41785585820655,
+                                      1.17394601820818, "C1", 0.818019909620747, 1, "D1", -0.424008756428565,
+                                      -0.84801751285713, 0.719731612087039, 1.17394601820818, "D1",
+                                      -0.361182498898662, 1, "A^2", 0.29964051657501, 0.847511364530129,
+                                      0.853806178423995, 1.61639762912004, "A^2", 0.185375498687246,
+                                      "", "B^2", -2.19615795661686, -6.21167273308355, 0.181334819594722,
+                                      1.61639762912004, "B^2", -1.35867432434458, "", "AB", -2.030423339375,
+                                      -5.74290444629091, 0.360388060663142, 2.19625189535125, "A<unicode>B",
+                                      -0.92449474656015, 1, "AC1", 2.41531561720225, 8.24640333676234,
+                                      0.127211174949052, 1.55298460860153, "A<unicode>C1", 1.55527337735643,
+                                      1, "AD1", -1.04182479241094, -3.55701233547728, 0.505901667886649,
+                                      1.55298460860153, "A<unicode>D1", -0.670853263220113, 1, "BC1",
+                                      -1.87687568326827, -6.40805441200253, 0.233436020916554, 1.55298460860153,
+                                      "B<unicode>C1", -1.2085603893772, 1, "BD1", 3.05852773033027,
+                                      10.4424668566467, 0.0553656265712982, 1.55298460860153, "B<unicode>D1",
+                                      1.96945141206808, 1, "C1D1", 0.604799245000005, 2.41919698000002,
+                                      0.609062330372557, 1.17394601820818, "C1<unicode>D1", 0.515184885522354,
+                                      1))
+})
+
+test_that("33.3 RSM analysis with nominal levels Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("LevelB", "C1", "WhateverLow", "D1"))
+})
+
+test_that("33.4 RSM analysis with nominal levels Regression Equation in Uncoded Units table results match", {
+  table <- results[["results"]][["tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 102.92  + 0.27 A + 0.72 B + 0.96 C1 - 0.42 D1 + 0.3 A^2 - 2.2 B^2 - 2.03 AB + 2.42 AC1 - 1.04 AD1 - 1.88 BC1 + 3.06 BD1 + 0.6 C1D1"
+                                 ))
+})
+
+test_that("33.5 RSM analysis with nominal levels Model Summary table results match", {
+  table <- results[["results"]][["tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.00551580589595602, 0, 0.222494175518657, 8.785007581405))
+})

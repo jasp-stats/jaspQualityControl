@@ -1,0 +1,9 @@
+﻿StdOrder,RunOrder,CenterPt,Blocks,A,B,C,Result
+2,1,1,1,High,Low,Low,111.7141419
+3,2,1,1,Low,High,Low,106.4035587
+8,3,1,1,High,High,High,118.8876301
+6,4,1,1,High,Low,High,99.99614154
+4,5,1,1,High,High,Low,106.4071471
+1,6,1,1,Low,Low,Low,99.71853932
+7,7,1,1,Low,High,High,106.6748691
+5,8,1,1,Low,Low,High,103.4815628
