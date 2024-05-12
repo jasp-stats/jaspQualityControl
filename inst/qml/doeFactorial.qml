@@ -34,13 +34,13 @@ Form
 		Group
 		{
 
-			IntegerField { id: numberOfCategorical;		label: qsTr("Number of discrete predictors");	name: "numberOfCategorical";	min: 2;		defaultValue: 3;	max: 256
+			IntegerField { id: numberOfCategorical;		label: qsTr("Number of predictors");	name: "numberOfCategorical";	min: 2;		defaultValue: 3;	max: 256
 				property int intValue: defaultValue
-				onValueChanged : { intValue = value !== "" ? value : 0 }
+				onValueChanged : { intValue = value !== "" ? value : 0 ; factorialDesignTypeSplitPlotNumberHardToChangeFactors.value = 1 }
 			}
-			IntegerField { id: numberOfLevels;			label: qsTr("Maximum discrete levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 20; 	enabled: factorialType.value == "generalFullFactorial"
+			IntegerField { id: numberOfLevels;			label: qsTr("Maximum predictor levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 20; 	enabled: factorialType.value == "generalFullFactorial"
 				property int intValue: defaultValue
-				onValueChanged : { intValue = value !== "" ? value : 0 }
+				onValueChanged : { intValue = value !== "" ? value : 0}
 			}
 		}
 
@@ -150,7 +150,6 @@ Form
 					return["Full factorial", numberOfLevels.intValue**numberOfCategorical.intValue, "Full"]
 				} else {
 					const val = numberOfCategorical.intValue
-					//const htcVal = numberOffactorialDesignTypeSplitPlotNumberHardToChangeFactorsCategorical.intValue
 					if (factorialType.value == "factorialTypeSplit") {
 						if (val == 2) {
 						return	[

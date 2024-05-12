@@ -18,11 +18,12 @@
 #' @export
 doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
 
-  ready <- options[["displayDesign"]] && options[["selectedRow"]] != -1L
+  ready <- options[["selectedRow"]] != -1L && !(options[["designType"]] == "boxBehnkenDesign" && options[["selectedRow"]] > 0) # simple way of stopping box behnken design from crashing if select row is still > 0 from previous CCD selection
 
-  .doeRsmDesignSummaryTable(jaspResults, options)
+  if (ready)
+    .doeRsmDesignSummaryTable(jaspResults, options)
 
-  if (ready && !jaspResults$getError()) {
+  if (ready && !jaspResults$getError() && options[["displayDesign"]]) {
 
     design <- .doeRsmGenerateDesign(options, jaspResults)
     .doeRsmGenerateDesignTable(jaspResults, options, design)
@@ -97,7 +98,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   tb$dependOn(options = c(
     "numberOfContinuous", "numberOfCategorical", "selectedRow", "replicates", "selectedDesign2",
     "alphaType", "customAlphaValue", "centerPointType", "customCubeBlock", "customAxialBlock",
-    "designType"
+    "designType", "displayDesign"
   ))
 
   if (length(designSpec) != 0L && !options[["displayDesign"]])
@@ -397,10 +398,10 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
     # Note designType is coded as follows: 0 => Full, 1 => Half, see .doeRsmDesignTypeFromInt
 
     defaultDesigns <- data.frame("k" = c(2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10),
-               "cube" = c(5, 3, 6, 4, 7, 4, 10, 8, 14, 8, 10, 8, 10, 8, 10, 8, 10, 8),
-               "axial" = c(0, 3, 0, 2, 0, 2, 0, 4, 0, 6, 0, 10, 0, 8, 0, 6, 0, 4),
-               "designType" = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-               "rotatable" = c(1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+                                 "cube" = c(5, 3, 6, 4, 7, 4, 10, 8, 14, 8, 10, 8, 10, 8, 10, 8, 10, 8),
+                                 "axial" = c(0, 3, 0, 2, 0, 2, 0, 4, 0, 6, 0, 10, 0, 8, 0, 6, 0, 4),
+                                 "designType" = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                                 "rotatable" = c(1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
     )
   } else {# boxBehnkenDesign
 

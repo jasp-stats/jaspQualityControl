@@ -105,7 +105,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Analyze Design")
+		title:			qsTr("Analyse Design")
 		func:			"doeAnalysis"
 		requiresData:	true
 	}
