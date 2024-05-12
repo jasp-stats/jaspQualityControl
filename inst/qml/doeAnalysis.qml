@@ -353,6 +353,12 @@ Form
 				name:									"plotPareto"
 				label:									qsTr("Pareto plot of effects")
 			}
+
+			CheckBox
+			{
+				name:									"normalEffectsPlot"
+				label:									qsTr("Normal plot of effects")
+			}
 		}
 
 		CheckBox
