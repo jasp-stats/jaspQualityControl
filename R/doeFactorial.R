@@ -18,8 +18,11 @@
 #' @export
 doeFactorial <- function(jaspResults, dataset, options, ...) {
 
+  selectedRow <- options[["selectedRow"]]
+  maximumRow <- .getMaximumRow(options)
 
-  ready <- options[["selectedRow"]] != -1L | options[["factorialType"]] == "generalFullFactorial" # If the design type is general full factorial no need to select a design
+  ready <- (selectedRow != -1L && (selectedRow + 1) <= maximumRow ) | # check if a row is selected, and if that row is possible (workaround for previously selected row that is now impossible getting stuck)
+    options[["factorialType"]] == "generalFullFactorial" # If the design type is general full factorial no need to select a design
 
   .doeFactorialDesignSummaryTable(jaspResults, options)
   if (ready) {
@@ -43,8 +46,27 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   }
 }
 
-.getMaximumRow <- function(nFactors){
-  maxRowsDf <- 1
+.getMaximumRow <- function(options) {
+  maxRowsFactorialDf <- data.frame("nFactors" = 2:12,
+                                   "nDesigns" = c(1, 2, 2, 3, 4, 5, 4, 4, 4, 4, 4))
+  maxRowsSplitPlotDf <- data.frame("nFactors" = c(2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7),
+                                   "nHTC" = c(1, 1, 2, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3),
+                                   "nDesigns" = c(1, 1, 1, 2, 1, 1, 3, 2, 1, 3, 3, 2, 3, 3, 2))
+
+  if (options[["factorialType"]] == "factorialTypeDefault") {
+    nFactors <- options[["numberOfCategorical"]]
+    nFactors <- pmin(12, nFactors)
+    nDesigns <- maxRowsFactorialDf$nDesigns[maxRowsFactorialDf$nFactors == nFactors]
+  } else if (options[["factorialType"]] == "factorialTypeSplit") {
+    nFactors <- options[["numberOfCategorical"]]
+    nFactors <- pmin(7, nFactors)
+    nHTC <- options[["factorialDesignTypeSplitPlotNumberHardToChangeFactors"]]
+    nHTC <- pmin(3, nHTC)
+    nDesigns <- maxRowsSplitPlotDf$nDesigns[maxRowsSplitPlotDf$nFactors == nFactors & maxRowsSplitPlotDf$nHTC == nHTC]
+  } else {
+    nDesigns <- Inf
+  }
+ return(nDesigns)
 }
 
 .doeFactorialBaseDependencies <- function() {
@@ -73,7 +95,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   twoLevelDesign <- options[["factorialType"]] != "generalFullFactorial"
   tb <- createJaspTable(title = gettext("Design Summary"), position = 1L)
   tb$addColumnInfo(name = "title", title = gettext("Variable"), type = "string")
-  tb$addColumnInfo(name = "catFactors", title = gettext("Discrete predictors"), type = "integer")
+  tb$addColumnInfo(name = "catFactors", title = gettext("Predictors"), type = "integer")
   tb$addColumnInfo(name = "baseRuns", title = gettext("Base runs"), type = "integer")
   if (twoLevelDesign) {
     tb$addColumnInfo(name = "baseBlocks", title = gettext("Base blocks"), type = "integer")

@@ -43,7 +43,7 @@ Form
 	{
 
 		// Could probably use a custom IntegerField type...
-		IntegerField { id: numberOfContinuous;		label: qsTr("Number of continuous factors");	name: "numberOfContinuous";		min: centralCompositeDesign.checked ? 2 : 3;	defaultValue: centralCompositeDesign.checked ? 2 : 3;	max: 10
+		IntegerField { id: numberOfContinuous;		label: qsTr("Number of continuous factors");	name: "numberOfContinuous";		min: centralCompositeDesign.checked ? 2 : 3;	defaultValue: centralCompositeDesign.checked ? 2 : 3;	max: centralCompositeDesign.checked ? 10 : 7
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}

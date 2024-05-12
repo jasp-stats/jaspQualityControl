@@ -340,7 +340,7 @@ Form
 			CheckBox
 			{
 				name: 								"fourInOneResidualPlot"
-				label: 								qsTr("Residuals matrix plot")
+				label: 								qsTr("Residuals four-in-one plot")
 			}
 		}
 
