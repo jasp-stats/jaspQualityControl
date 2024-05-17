@@ -302,6 +302,14 @@ Form
 
 		}
 
+		CheckBox
+		{
+			id:										responseOptimizer
+			name:									"responseOptimizer"
+			label:									qsTr("Show optimal response")
+			checked:								true
+		}
+
 	}
 
 		Section

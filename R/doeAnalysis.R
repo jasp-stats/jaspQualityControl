@@ -115,10 +115,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 # dataset <- read.csv("../tests/testthat/datasets/doeAnalysis/2level2facFull.csv")
 # options <- list()
 # discretePredictors <- c("A", "B")
+# continuousPredictors <- ""
 # blocks <- ""
 # covariates <- ""
 # dependent <- "Result"
-#dataset <- dataset[5:7]
+# dataset <- dataset[5:7]
 # dataset$A <- as.factor(dataset$A)
 # dataset$B <- as.factor(dataset$B)
 
@@ -516,6 +517,43 @@ get_levels <- function(var, num_levels, dataset) {
   levels_var <- levels(dataset[[var]])
   levels_var[2:(num_levels + 1)]
 }
+
+# .doeResponseOptimizer <- function(jaspResults, dataset, options, ready, continuousPredictors, discretePredictors, blocks, covariates, dependent) {
+#   # get regression equation and predictors
+#   #result <- jaspResults[["doeResult"]]$object[["regression"]]
+#   result <- result$regression
+#   regressionEquation <- result$object$coefficients
+#
+#   # Define a pattern for first-order terms
+#   first_order_pattern <- paste0("^(", paste(names(result$object$model)[-1], collapse = "|"), ")$")
+#
+#   # Extract first-order coefficients
+#   first_order_coefficients <- regressionEquation[grepl(first_order_pattern, names(regressionEquation))]
+#
+#   # Print the first-order coefficients
+#   print(first_order_coefficients)
+#
+#   predictors <-
+#
+#   # get process SD
+#   Y <- result$object$model[[1]] # vector of the outcome, always first column of the model object
+#   psd <- sd(Y) # process standard deviation
+#
+#   # sample from value space of predictors
+#   nPredictors <- ncol(result$object$model) - 1 # all cols of the model, minus one for the result
+#   nSimulations <- 1000
+#   optimizationDf <- data.frame()
+#   for (sim in seq_len(nSimulations)) {
+#
+#   }
+#
+#   # what to do with blocks and covariates? just assume that block and covariate are at mean? or at zero?
+#
+#   # use regression equation to predict outcomes
+#   # get sampled value space with highest min cpk
+#   # return this optimized value set
+#
+# }
 
 .getVIF <- function(regressionFit, predictors) {
   if (ncol(regressionFit$model) < 3) {
