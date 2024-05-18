@@ -1781,10 +1781,6 @@ msgctxt "doeAnalysis|"
 msgid "Other Plots"
 msgstr "Otros Gráficos"
 
-msgctxt "Description|"
-msgid "Analyze Design"
-msgstr "Analizar el Diseño"
-
 msgctxt "doeAnalysis|"
 msgid "Design type"
 msgstr "Tipo de diseño"
@@ -1822,24 +1818,12 @@ msgid "Full quadratic"
 msgstr "Cuadrática total"
 
 msgctxt "doeAnalysis|"
-msgid "Run order"
-msgstr "Orden de ejecución"
-
-msgctxt "doeAnalysis|"
-msgid "Equal to row number"
-msgstr "Igual al número de filas"
-
-msgctxt "doeAnalysis|"
 msgid "Show regression equation"
 msgstr "Mostrar la ecuación de la regresión"
 
 msgctxt "doeAnalysis|"
 msgid "Plots"
 msgstr "Gráficos"
-
-msgctxt "doeAnalysis|"
-msgid "Residuals matrix plot"
-msgstr "Gráfico de matriz de los errores"
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plots"
@@ -2495,14 +2479,6 @@ msgid "Use coded data to calculate squared terms"
 msgstr "Usar datos codificados para calcular los términos cuadrados"
 
 msgctxt "doeFactorial|"
-msgid "Number of discrete predictors"
-msgstr "Número de predictores discretos"
-
-msgctxt "doeFactorial|"
-msgid "Maximum discrete levels"
-msgstr "Máximo de niveles discretos"
-
-msgctxt "doeFactorial|"
 msgid "General full factorial"
 msgstr "Factorial completo general"
 
@@ -2537,3 +2513,39 @@ msgstr "Predictor"
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Center points"
 msgstr "Puntos centrales"
+
+msgctxt "Description|"
+msgid "Analyse Design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals four-in-one plot"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of predictors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Maximum predictor levels"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "1"
+msgstr "1"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "2"
+msgstr "2"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "4"
+msgstr "4"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "8"
+msgstr "8"

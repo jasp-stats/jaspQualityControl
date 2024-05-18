@@ -1777,10 +1777,6 @@ msgctxt "doeAnalysis|"
 msgid "Other Plots"
 msgstr ""
 
-msgctxt "Description|"
-msgid "Analyze Design"
-msgstr ""
-
 msgctxt "doeAnalysis|"
 msgid "Design type"
 msgstr ""
@@ -1818,23 +1814,11 @@ msgid "Full quadratic"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Run order"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Equal to row number"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Show regression equation"
 msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Plots"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Residuals matrix plot"
 msgstr ""
 
 msgctxt "doeAnalysis|"
@@ -2486,14 +2470,6 @@ msgid "Use coded data to calculate squared terms"
 msgstr ""
 
 msgctxt "doeFactorial|"
-msgid "Number of discrete predictors"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Maximum discrete levels"
-msgstr ""
-
-msgctxt "doeFactorial|"
 msgid "General full factorial"
 msgstr ""
 
@@ -2527,4 +2503,36 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Center points"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Analyse Design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals four-in-one plot"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of predictors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Maximum predictor levels"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "1"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "2"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "4"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "8"
 msgstr ""

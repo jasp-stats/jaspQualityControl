@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2024-04-20 03:41\n"
+"POT-Creation-Date: 2024-05-18 03:39\n"
 "PO-Revision-Date: 2023-07-22 03:07+0000\n"
 "Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
 "br>\n"
@@ -204,7 +204,7 @@ msgstr ""
 msgid "Coefficient"
 msgstr ""
 
-msgid "Standard Error"
+msgid "Standard error"
 msgstr ""
 
 msgid "Discrete Predictor Levels"
@@ -276,7 +276,7 @@ msgstr ""
 msgid "Variable"
 msgstr ""
 
-msgid "Discrete predictors"
+msgid "Predictors"
 msgstr ""
 
 msgid "Base runs"
@@ -339,6 +339,9 @@ msgstr ""
 msgid "Continuous predictors"
 msgstr ""
 
+msgid "Discrete predictors"
+msgstr ""
+
 msgid "Replicates"
 msgstr ""
 
@@ -361,153 +364,6 @@ msgid "Response Surface Design - Box-Behnken design"
 msgstr ""
 
 msgid "Standard order"
-msgstr ""
-
-msgid "Central Composite Design"
-msgstr ""
-
-msgid ""
-"Generator name '%s' is a number, and number generator names are not "
-"supported."
-msgstr ""
-
-msgid "<em>Warning: </em>"
-msgstr ""
-
-msgid "generators"
-msgstr ""
-
-msgid "generatorName"
-msgstr ""
-
-msgid ""
-"The analysis will not run when the 'Specify Model for CCD' field is empty "
-"and the 'Use # of Variables instead of Model' is not ticked."
-msgstr ""
-
-msgid ""
-"The analysis will not run when the 'Specify Blocks for CCD' field is empty "
-"and the Introduce Blocking is ticked."
-msgstr ""
-
-msgid "Central Composite Design with Star Points"
-msgstr ""
-
-msgid "The analysis will not run when the 'Number of Generators' > 0"
-msgstr ""
-
-msgid ""
-"This analysis does not take predictor variables with more than 5 unique "
-"values."
-msgstr ""
-
-msgid "Design Choice"
-msgstr ""
-
-msgid "N Fac Points"
-msgstr ""
-
-msgid "N Centre Points/Block"
-msgstr ""
-
-msgid "N Cube Blocks/Cube Portion"
-msgstr ""
-
-msgid "N Design Star Points/Block"
-msgstr ""
-
-msgid "N Centre Points/Star Block"
-msgstr ""
-
-msgid "N Copies of Each Cube Block"
-msgstr ""
-
-msgid "N Replications of Each Star Point/Block"
-msgstr ""
-
-msgid "N Copies of Each Star Block"
-msgstr ""
-
-msgid "Total Experiment Size"
-msgstr ""
-
-msgid "Rotational Alpha"
-msgstr ""
-
-msgid "Orthogonal Alpha"
-msgstr ""
-
-msgid "Matrix plot for %s"
-msgstr ""
-
-msgid "Index coefficients for %s"
-msgstr ""
-
-msgid "Coded coefficients"
-msgstr ""
-
-msgid "Uncoded coefficients"
-msgstr ""
-
-msgid "t"
-msgstr ""
-
-msgid "<i>p</i>-value"
-msgstr ""
-
-msgid "Regression equation in coded coefficients"
-msgstr ""
-
-msgid "S"
-msgstr ""
-
-msgid "Model R-squared"
-msgstr ""
-
-msgid "Adjusted R-squared"
-msgstr ""
-
-msgid "df1"
-msgstr ""
-
-msgid "df2"
-msgstr ""
-
-msgid "F"
-msgstr ""
-
-msgid "ANOVA for %s"
-msgstr ""
-
-msgid "df"
-msgstr ""
-
-msgid "SS"
-msgstr ""
-
-msgid "MS"
-msgstr ""
-
-msgid "Stationary Points of Response Surface (Coded)"
-msgstr ""
-
-msgid "Eigenvalues"
-msgstr ""
-
-msgid "Eigenvectors"
-msgstr ""
-
-msgid "Desirability"
-msgstr ""
-
-msgid ""
-"At least one predictor and response variable need to be specified before "
-"running the analysis."
-msgstr ""
-
-msgid ""
-"At least one desirability function must be specified before running the "
-"analysis."
 msgstr ""
 
 msgid "Reference Tables and Plots"
@@ -667,6 +523,9 @@ msgstr ""
 msgid "Gauge Linearity"
 msgstr ""
 
+msgid "S"
+msgstr ""
+
 msgid "R%1$s"
 msgstr ""
 
@@ -799,11 +658,20 @@ msgstr "Tabela ANOVA de duas vias com interação"
 msgid "Source"
 msgstr "Fonte"
 
+msgid "df"
+msgstr ""
+
 msgid "Sum of Squares"
 msgstr "Soma dos quadrados"
 
 msgid "Mean Squares"
 msgstr "Quadrados médios"
+
+msgid "F"
+msgstr ""
+
+msgid "<i>p</i>-value"
+msgstr ""
 
 msgid "Variance Components"
 msgstr "Componentes de variância"

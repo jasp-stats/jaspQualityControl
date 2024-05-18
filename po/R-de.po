@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-04-20 03:41\n"
+"POT-Creation-Date: 2024-05-18 03:39\n"
 "PO-Revision-Date: 2023-12-03 20:02+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -213,7 +213,8 @@ msgstr "Effekt"
 msgid "Coefficient"
 msgstr "Koeffizient"
 
-msgid "Standard Error"
+#, fuzzy
+msgid "Standard error"
 msgstr "Standardfehler"
 
 msgid "Discrete Predictor Levels"
@@ -285,8 +286,9 @@ msgstr "Design-Zusammenfassung"
 msgid "Variable"
 msgstr "Variable"
 
-msgid "Discrete predictors"
-msgstr ""
+#, fuzzy
+msgid "Predictors"
+msgstr "Prädiktor"
 
 msgid "Base runs"
 msgstr ""
@@ -350,6 +352,9 @@ msgstr ""
 msgid "Continuous predictors"
 msgstr "Kontinuierliche Faktoren"
 
+msgid "Discrete predictors"
+msgstr ""
+
 msgid "Replicates"
 msgstr ""
 
@@ -373,158 +378,6 @@ msgstr "Wirkungsflächenversuchsplan - Box-Behnken-Versuchsplan"
 
 msgid "Standard order"
 msgstr "Standard-Reihenfolge"
-
-msgid "Central Composite Design"
-msgstr "Zentral zusammengesetzter Versuchsplan"
-
-msgid ""
-"Generator name '%s' is a number, and number generator names are not "
-"supported."
-msgstr ""
-"Generatorname '%s' ist eine Zahl, und numerische Generatornamen sind nicht "
-"unterstützt."
-
-msgid "<em>Warning: </em>"
-msgstr "<em>Warnung: </em>"
-
-msgid "generators"
-msgstr "Generatoren"
-
-msgid "generatorName"
-msgstr "generatorName"
-
-msgid ""
-"The analysis will not run when the 'Specify Model for CCD' field is empty "
-"and the 'Use # of Variables instead of Model' is not ticked."
-msgstr ""
-
-msgid ""
-"The analysis will not run when the 'Specify Blocks for CCD' field is empty "
-"and the Introduce Blocking is ticked."
-msgstr ""
-
-msgid "Central Composite Design with Star Points"
-msgstr ""
-
-msgid "The analysis will not run when the 'Number of Generators' > 0"
-msgstr ""
-"Die Analyse wird nicht durchgeführt, wenn die 'Anzahl der Generatoren' > 0"
-
-msgid ""
-"This analysis does not take predictor variables with more than 5 unique "
-"values."
-msgstr ""
-"Diese Analyse akzeptiert keine Prädiktorvariablen mit mehr als 5 eindeutigen "
-"Werten."
-
-msgid "Design Choice"
-msgstr ""
-
-msgid "N Fac Points"
-msgstr ""
-
-msgid "N Centre Points/Block"
-msgstr ""
-
-msgid "N Cube Blocks/Cube Portion"
-msgstr ""
-
-msgid "N Design Star Points/Block"
-msgstr ""
-
-msgid "N Centre Points/Star Block"
-msgstr ""
-
-msgid "N Copies of Each Cube Block"
-msgstr ""
-
-msgid "N Replications of Each Star Point/Block"
-msgstr ""
-
-msgid "N Copies of Each Star Block"
-msgstr ""
-
-msgid "Total Experiment Size"
-msgstr ""
-
-msgid "Rotational Alpha"
-msgstr ""
-
-msgid "Orthogonal Alpha"
-msgstr ""
-
-msgid "Matrix plot for %s"
-msgstr "Matrix-Diagramm für %s"
-
-msgid "Index coefficients for %s"
-msgstr "Index-Koeffizienten für %s"
-
-msgid "Coded coefficients"
-msgstr "Kodierte Koeffizienten"
-
-msgid "Uncoded coefficients"
-msgstr "Unkodierte Koeffizienten"
-
-msgid "t"
-msgstr "t"
-
-msgid "<i>p</i>-value"
-msgstr "<i>p</i>-Wert"
-
-msgid "Regression equation in coded coefficients"
-msgstr "Regressionsgleichung in kodierten Koeffizienten"
-
-msgid "S"
-msgstr "S"
-
-msgid "Model R-squared"
-msgstr "Modell R-Quadrat"
-
-msgid "Adjusted R-squared"
-msgstr "Bereinigtes R-Quadrat"
-
-msgid "df1"
-msgstr "df1"
-
-msgid "df2"
-msgstr "df2"
-
-msgid "F"
-msgstr "F"
-
-msgid "ANOVA for %s"
-msgstr "ANOVA für %s"
-
-msgid "df"
-msgstr "df"
-
-msgid "SS"
-msgstr ""
-
-msgid "MS"
-msgstr ""
-
-msgid "Stationary Points of Response Surface (Coded)"
-msgstr ""
-
-msgid "Eigenvalues"
-msgstr "Eigenwerte"
-
-msgid "Eigenvectors"
-msgstr "Eigenvektoren"
-
-msgid "Desirability"
-msgstr ""
-
-msgid ""
-"At least one predictor and response variable need to be specified before "
-"running the analysis."
-msgstr ""
-
-msgid ""
-"At least one desirability function must be specified before running the "
-"analysis."
-msgstr ""
 
 msgid "Reference Tables and Plots"
 msgstr ""
@@ -683,6 +536,9 @@ msgstr "<i>p</i>"
 msgid "Gauge Linearity"
 msgstr ""
 
+msgid "S"
+msgstr "S"
+
 msgid "R%1$s"
 msgstr ""
 
@@ -819,11 +675,20 @@ msgstr "Zweifaktorielle ANOVA-Tabelle mit Interaktion"
 msgid "Source"
 msgstr "Quelle"
 
+msgid "df"
+msgstr "df"
+
 msgid "Sum of Squares"
 msgstr "Quadratsumme"
 
 msgid "Mean Squares"
 msgstr ""
+
+msgid "F"
+msgstr "F"
+
+msgid "<i>p</i>-value"
+msgstr "<i>p</i>-Wert"
 
 msgid "Variance Components"
 msgstr "Varianz-Komponenten"
@@ -1559,6 +1424,75 @@ msgstr "X-quer & s-Kontrollkarte"
 #, fuzzy
 msgid "Variables Chart for Subgroups Report"
 msgstr "Bericht Regelkarten für Attribute"
+
+#~ msgid "Central Composite Design"
+#~ msgstr "Zentral zusammengesetzter Versuchsplan"
+
+#~ msgid ""
+#~ "Generator name '%s' is a number, and number generator names are not "
+#~ "supported."
+#~ msgstr ""
+#~ "Generatorname '%s' ist eine Zahl, und numerische Generatornamen sind "
+#~ "nicht unterstützt."
+
+#~ msgid "<em>Warning: </em>"
+#~ msgstr "<em>Warnung: </em>"
+
+#~ msgid "generators"
+#~ msgstr "Generatoren"
+
+#~ msgid "generatorName"
+#~ msgstr "generatorName"
+
+#~ msgid "The analysis will not run when the 'Number of Generators' > 0"
+#~ msgstr ""
+#~ "Die Analyse wird nicht durchgeführt, wenn die 'Anzahl der Generatoren' > 0"
+
+#~ msgid ""
+#~ "This analysis does not take predictor variables with more than 5 unique "
+#~ "values."
+#~ msgstr ""
+#~ "Diese Analyse akzeptiert keine Prädiktorvariablen mit mehr als 5 "
+#~ "eindeutigen Werten."
+
+#~ msgid "Matrix plot for %s"
+#~ msgstr "Matrix-Diagramm für %s"
+
+#~ msgid "Index coefficients for %s"
+#~ msgstr "Index-Koeffizienten für %s"
+
+#~ msgid "Coded coefficients"
+#~ msgstr "Kodierte Koeffizienten"
+
+#~ msgid "Uncoded coefficients"
+#~ msgstr "Unkodierte Koeffizienten"
+
+#~ msgid "t"
+#~ msgstr "t"
+
+#~ msgid "Regression equation in coded coefficients"
+#~ msgstr "Regressionsgleichung in kodierten Koeffizienten"
+
+#~ msgid "Model R-squared"
+#~ msgstr "Modell R-Quadrat"
+
+#~ msgid "Adjusted R-squared"
+#~ msgstr "Bereinigtes R-Quadrat"
+
+#~ msgid "df1"
+#~ msgstr "df1"
+
+#~ msgid "df2"
+#~ msgstr "df2"
+
+#~ msgid "ANOVA for %s"
+#~ msgstr "ANOVA für %s"
+
+#~ msgid "Eigenvalues"
+#~ msgstr "Eigenwerte"
+
+#~ msgid "Eigenvectors"
+#~ msgstr "Eigenvektoren"
 
 #~ msgid "The analysis crashed with the following error message: %1$s"
 #~ msgstr "Die Analyse ist mit folgender Fehlermeldung gescheitert: %1$s"

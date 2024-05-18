@@ -1,16 +1,10 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-05-08 18:04+0000\n"
-"Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
-"Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/pl/>\n"
-"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 5.5.4-rc\n"
 "X-Language: pl\n"
 "X-Qt-Contexts: true\n"
 
@@ -1801,10 +1795,6 @@ msgctxt "doeAnalysis|"
 msgid "Other Plots"
 msgstr "Pozostałe wykresy"
 
-msgctxt "Description|"
-msgid "Analyze Design"
-msgstr ""
-
 msgctxt "doeAnalysis|"
 msgid "Design type"
 msgstr ""
@@ -1842,24 +1832,12 @@ msgid "Full quadratic"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Run order"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Equal to row number"
-msgstr "Równe liczbie wierszy"
-
-msgctxt "doeAnalysis|"
 msgid "Show regression equation"
 msgstr "Pokaż równanie regresji"
 
 msgctxt "doeAnalysis|"
 msgid "Plots"
 msgstr "Wykresy"
-
-msgctxt "doeAnalysis|"
-msgid "Residuals matrix plot"
-msgstr "Wykres macierzy reszt"
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plots"
@@ -2528,14 +2506,6 @@ msgid "Use coded data to calculate squared terms"
 msgstr ""
 
 msgctxt "doeFactorial|"
-msgid "Number of discrete predictors"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Maximum discrete levels"
-msgstr ""
-
-msgctxt "doeFactorial|"
 msgid "General full factorial"
 msgstr ""
 
@@ -2570,3 +2540,39 @@ msgstr ""
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Center points"
 msgstr ""
+
+msgctxt "Description|"
+msgid "Analyse Design"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Residuals four-in-one plot"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of predictors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Maximum predictor levels"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "1"
+msgstr "1"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "2"
+msgstr "2"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "4"
+msgstr "4"
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "8"
+msgstr "8"

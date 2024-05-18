@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2024-04-20 03:41\n"
+"POT-Creation-Date: 2024-05-18 03:39\n"
 "PO-Revision-Date: 2024-05-08 18:04+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
@@ -208,7 +208,8 @@ msgstr "Efekt"
 msgid "Coefficient"
 msgstr "Współczynnik"
 
-msgid "Standard Error"
+#, fuzzy
+msgid "Standard error"
 msgstr "Błąd standardowy"
 
 msgid "Discrete Predictor Levels"
@@ -280,8 +281,9 @@ msgstr "Podsumowanie schematu"
 msgid "Variable"
 msgstr "Zmienna"
 
-msgid "Discrete predictors"
-msgstr ""
+#, fuzzy
+msgid "Predictors"
+msgstr "Predyktor"
 
 msgid "Base runs"
 msgstr ""
@@ -343,6 +345,9 @@ msgstr ""
 msgid "Continuous predictors"
 msgstr ""
 
+msgid "Discrete predictors"
+msgstr ""
+
 msgid "Replicates"
 msgstr ""
 
@@ -365,153 +370,6 @@ msgid "Response Surface Design - Box-Behnken design"
 msgstr ""
 
 msgid "Standard order"
-msgstr ""
-
-msgid "Central Composite Design"
-msgstr ""
-
-msgid ""
-"Generator name '%s' is a number, and number generator names are not "
-"supported."
-msgstr ""
-
-msgid "<em>Warning: </em>"
-msgstr "<em>Ostrzeżenie: </em>"
-
-msgid "generators"
-msgstr ""
-
-msgid "generatorName"
-msgstr "generatorName"
-
-msgid ""
-"The analysis will not run when the 'Specify Model for CCD' field is empty "
-"and the 'Use # of Variables instead of Model' is not ticked."
-msgstr ""
-
-msgid ""
-"The analysis will not run when the 'Specify Blocks for CCD' field is empty "
-"and the Introduce Blocking is ticked."
-msgstr ""
-
-msgid "Central Composite Design with Star Points"
-msgstr ""
-
-msgid "The analysis will not run when the 'Number of Generators' > 0"
-msgstr ""
-
-msgid ""
-"This analysis does not take predictor variables with more than 5 unique "
-"values."
-msgstr ""
-
-msgid "Design Choice"
-msgstr ""
-
-msgid "N Fac Points"
-msgstr ""
-
-msgid "N Centre Points/Block"
-msgstr ""
-
-msgid "N Cube Blocks/Cube Portion"
-msgstr ""
-
-msgid "N Design Star Points/Block"
-msgstr ""
-
-msgid "N Centre Points/Star Block"
-msgstr ""
-
-msgid "N Copies of Each Cube Block"
-msgstr ""
-
-msgid "N Replications of Each Star Point/Block"
-msgstr ""
-
-msgid "N Copies of Each Star Block"
-msgstr ""
-
-msgid "Total Experiment Size"
-msgstr ""
-
-msgid "Rotational Alpha"
-msgstr ""
-
-msgid "Orthogonal Alpha"
-msgstr ""
-
-msgid "Matrix plot for %s"
-msgstr ""
-
-msgid "Index coefficients for %s"
-msgstr ""
-
-msgid "Coded coefficients"
-msgstr ""
-
-msgid "Uncoded coefficients"
-msgstr ""
-
-msgid "t"
-msgstr "t"
-
-msgid "<i>p</i>-value"
-msgstr ""
-
-msgid "Regression equation in coded coefficients"
-msgstr ""
-
-msgid "S"
-msgstr ""
-
-msgid "Model R-squared"
-msgstr ""
-
-msgid "Adjusted R-squared"
-msgstr ""
-
-msgid "df1"
-msgstr "df1"
-
-msgid "df2"
-msgstr "df2"
-
-msgid "F"
-msgstr "F"
-
-msgid "ANOVA for %s"
-msgstr ""
-
-msgid "df"
-msgstr "df"
-
-msgid "SS"
-msgstr ""
-
-msgid "MS"
-msgstr ""
-
-msgid "Stationary Points of Response Surface (Coded)"
-msgstr ""
-
-msgid "Eigenvalues"
-msgstr "Wartości własne"
-
-msgid "Eigenvectors"
-msgstr ""
-
-msgid "Desirability"
-msgstr ""
-
-msgid ""
-"At least one predictor and response variable need to be specified before "
-"running the analysis."
-msgstr ""
-
-msgid ""
-"At least one desirability function must be specified before running the "
-"analysis."
 msgstr ""
 
 msgid "Reference Tables and Plots"
@@ -671,6 +529,9 @@ msgstr ""
 msgid "Gauge Linearity"
 msgstr ""
 
+msgid "S"
+msgstr ""
+
 msgid "R%1$s"
 msgstr ""
 
@@ -799,10 +660,19 @@ msgstr ""
 msgid "Source"
 msgstr ""
 
+msgid "df"
+msgstr "df"
+
 msgid "Sum of Squares"
 msgstr "Suma kwadratów"
 
 msgid "Mean Squares"
+msgstr ""
+
+msgid "F"
+msgstr "F"
+
+msgid "<i>p</i>-value"
 msgstr ""
 
 msgid "Variance Components"
@@ -1512,6 +1382,24 @@ msgstr ""
 
 msgid "Variables Chart for Subgroups Report"
 msgstr ""
+
+#~ msgid "<em>Warning: </em>"
+#~ msgstr "<em>Ostrzeżenie: </em>"
+
+#~ msgid "generatorName"
+#~ msgstr "generatorName"
+
+#~ msgid "t"
+#~ msgstr "t"
+
+#~ msgid "df1"
+#~ msgstr "df1"
+
+#~ msgid "df2"
+#~ msgstr "df2"
+
+#~ msgid "Eigenvalues"
+#~ msgstr "Wartości własne"
 
 #~ msgid "Pareto Chart of Unstandardized Effects"
 #~ msgstr "Wykres Pareto dla efektów niestandaryzowanych"

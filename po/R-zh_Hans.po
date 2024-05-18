@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-04-20 03:41\n"
+"POT-Creation-Date: 2024-05-18 03:39\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -211,7 +211,8 @@ msgstr "有效性"
 msgid "Coefficient"
 msgstr "系数"
 
-msgid "Standard Error"
+#, fuzzy
+msgid "Standard error"
 msgstr "标准误"
 
 msgid "Discrete Predictor Levels"
@@ -286,8 +287,9 @@ msgstr "模型摘要"
 msgid "Variable"
 msgstr "变量"
 
-msgid "Discrete predictors"
-msgstr ""
+#, fuzzy
+msgid "Predictors"
+msgstr "预测变量"
 
 msgid "Base runs"
 msgstr ""
@@ -355,6 +357,9 @@ msgstr ""
 msgid "Continuous predictors"
 msgstr ""
 
+msgid "Discrete predictors"
+msgstr ""
+
 msgid "Replicates"
 msgstr "复制"
 
@@ -381,154 +386,6 @@ msgstr ""
 
 msgid "Standard order"
 msgstr "标准序"
-
-msgid "Central Composite Design"
-msgstr "中心复合设计"
-
-msgid ""
-"Generator name '%s' is a number, and number generator names are not "
-"supported."
-msgstr "生成元名称 '%s' 是一个数字，不支持数字生成元名称。"
-
-msgid "<em>Warning: </em>"
-msgstr "<em>警告: </em>"
-
-msgid "generators"
-msgstr "生成元"
-
-msgid "generatorName"
-msgstr "生成元名称"
-
-msgid ""
-"The analysis will not run when the 'Specify Model for CCD' field is empty "
-"and the 'Use # of Variables instead of Model' is not ticked."
-msgstr ""
-"当 '指定 CCD 模型' 字段为空且未勾选 '使用变量数代替模型' 时，将不会运行分析。"
-
-msgid ""
-"The analysis will not run when the 'Specify Blocks for CCD' field is empty "
-"and the Introduce Blocking is ticked."
-msgstr "当 '指定 CCD 区组' 字段为空且勾选引入区组时，将不会运行分析。"
-
-msgid "Central Composite Design with Star Points"
-msgstr "中心复合设计带星号点"
-
-msgid "The analysis will not run when the 'Number of Generators' > 0"
-msgstr "当 '生成元数' > 0时，将不会运行分析"
-
-msgid ""
-"This analysis does not take predictor variables with more than 5 unique "
-"values."
-msgstr "此分析不采用具有超过5个唯一值的预测变量。"
-
-msgid "Design Choice"
-msgstr "设计选项"
-
-msgid "N Fac Points"
-msgstr "角点数"
-
-msgid "N Centre Points/Block"
-msgstr "中心点/区组数"
-
-msgid "N Cube Blocks/Cube Portion"
-msgstr "立方点区组/立方点部分数"
-
-msgid "N Design Star Points/Block"
-msgstr "设计星号点/区组数"
-
-msgid "N Centre Points/Star Block"
-msgstr "中心点/星号区组数"
-
-msgid "N Copies of Each Cube Block"
-msgstr "每个立方点区组的复制数"
-
-msgid "N Replications of Each Star Point/Block"
-msgstr "每个星号点/区组的复制数"
-
-msgid "N Copies of Each Star Block"
-msgstr "每个星号区组的复制数"
-
-msgid "Total Experiment Size"
-msgstr "总试验次数"
-
-msgid "Rotational Alpha"
-msgstr "旋转 Alpha"
-
-msgid "Orthogonal Alpha"
-msgstr "正交 Alpha"
-
-msgid "Matrix plot for %s"
-msgstr "%s 矩阵图"
-
-msgid "Index coefficients for %s"
-msgstr "%s 索引系数"
-
-msgid "Coded coefficients"
-msgstr "编码系数"
-
-msgid "Uncoded coefficients"
-msgstr "未编码系数"
-
-msgid "t"
-msgstr "t"
-
-msgid "<i>p</i>-value"
-msgstr "<i>p</i>- 值"
-
-msgid "Regression equation in coded coefficients"
-msgstr "已编码形式表示的回归方程"
-
-msgid "S"
-msgstr "S"
-
-msgid "Model R-squared"
-msgstr "模型 R 平方"
-
-msgid "Adjusted R-squared"
-msgstr "调整 R 平方"
-
-msgid "df1"
-msgstr "df1"
-
-msgid "df2"
-msgstr "df2"
-
-msgid "F"
-msgstr "F"
-
-msgid "ANOVA for %s"
-msgstr "%s 方差分析"
-
-msgid "df"
-msgstr "df"
-
-msgid "SS"
-msgstr "SS"
-
-msgid "MS"
-msgstr "MS"
-
-msgid "Stationary Points of Response Surface (Coded)"
-msgstr "响应曲面的固定点（已编码）"
-
-msgid "Eigenvalues"
-msgstr "特征值"
-
-msgid "Eigenvectors"
-msgstr "特征向量"
-
-msgid "Desirability"
-msgstr "合意度"
-
-msgid ""
-"At least one predictor and response variable need to be specified before "
-"running the analysis."
-msgstr "在运行分析之前，至少需要指定一个预测变量和响应变量。"
-
-msgid ""
-"At least one desirability function must be specified before running the "
-"analysis."
-msgstr "在运行分析之前，至少需要指定一个合意度函数。"
 
 msgid "Reference Tables and Plots"
 msgstr "参考值表和图形"
@@ -687,6 +544,9 @@ msgstr "<i>p</i>"
 msgid "Gauge Linearity"
 msgstr "量具线性"
 
+msgid "S"
+msgstr "S"
+
 msgid "R%1$s"
 msgstr "R%1$s"
 
@@ -822,11 +682,20 @@ msgstr "双向方差分析表带交互作用"
 msgid "Source"
 msgstr "变异源"
 
+msgid "df"
+msgstr "df"
+
 msgid "Sum of Squares"
 msgstr "平方和"
 
 msgid "Mean Squares"
 msgstr "均方"
+
+msgid "F"
+msgstr "F"
+
+msgid "<i>p</i>-value"
+msgstr "<i>p</i>- 值"
 
 msgid "Variance Components"
 msgstr "方差分量"
@@ -1559,6 +1428,143 @@ msgstr "均值和标准差控制图"
 #, fuzzy
 msgid "Variables Chart for Subgroups Report"
 msgstr "单值图"
+
+#~ msgid "Central Composite Design"
+#~ msgstr "中心复合设计"
+
+#~ msgid ""
+#~ "Generator name '%s' is a number, and number generator names are not "
+#~ "supported."
+#~ msgstr "生成元名称 '%s' 是一个数字，不支持数字生成元名称。"
+
+#~ msgid "<em>Warning: </em>"
+#~ msgstr "<em>警告: </em>"
+
+#~ msgid "generators"
+#~ msgstr "生成元"
+
+#~ msgid "generatorName"
+#~ msgstr "生成元名称"
+
+#~ msgid ""
+#~ "The analysis will not run when the 'Specify Model for CCD' field is empty "
+#~ "and the 'Use # of Variables instead of Model' is not ticked."
+#~ msgstr ""
+#~ "当 '指定 CCD 模型' 字段为空且未勾选 '使用变量数代替模型' 时，将不会运行分"
+#~ "析。"
+
+#~ msgid ""
+#~ "The analysis will not run when the 'Specify Blocks for CCD' field is "
+#~ "empty and the Introduce Blocking is ticked."
+#~ msgstr "当 '指定 CCD 区组' 字段为空且勾选引入区组时，将不会运行分析。"
+
+#~ msgid "Central Composite Design with Star Points"
+#~ msgstr "中心复合设计带星号点"
+
+#~ msgid "The analysis will not run when the 'Number of Generators' > 0"
+#~ msgstr "当 '生成元数' > 0时，将不会运行分析"
+
+#~ msgid ""
+#~ "This analysis does not take predictor variables with more than 5 unique "
+#~ "values."
+#~ msgstr "此分析不采用具有超过5个唯一值的预测变量。"
+
+#~ msgid "Design Choice"
+#~ msgstr "设计选项"
+
+#~ msgid "N Fac Points"
+#~ msgstr "角点数"
+
+#~ msgid "N Centre Points/Block"
+#~ msgstr "中心点/区组数"
+
+#~ msgid "N Cube Blocks/Cube Portion"
+#~ msgstr "立方点区组/立方点部分数"
+
+#~ msgid "N Design Star Points/Block"
+#~ msgstr "设计星号点/区组数"
+
+#~ msgid "N Centre Points/Star Block"
+#~ msgstr "中心点/星号区组数"
+
+#~ msgid "N Copies of Each Cube Block"
+#~ msgstr "每个立方点区组的复制数"
+
+#~ msgid "N Replications of Each Star Point/Block"
+#~ msgstr "每个星号点/区组的复制数"
+
+#~ msgid "N Copies of Each Star Block"
+#~ msgstr "每个星号区组的复制数"
+
+#~ msgid "Total Experiment Size"
+#~ msgstr "总试验次数"
+
+#~ msgid "Rotational Alpha"
+#~ msgstr "旋转 Alpha"
+
+#~ msgid "Orthogonal Alpha"
+#~ msgstr "正交 Alpha"
+
+#~ msgid "Matrix plot for %s"
+#~ msgstr "%s 矩阵图"
+
+#~ msgid "Index coefficients for %s"
+#~ msgstr "%s 索引系数"
+
+#~ msgid "Coded coefficients"
+#~ msgstr "编码系数"
+
+#~ msgid "Uncoded coefficients"
+#~ msgstr "未编码系数"
+
+#~ msgid "t"
+#~ msgstr "t"
+
+#~ msgid "Regression equation in coded coefficients"
+#~ msgstr "已编码形式表示的回归方程"
+
+#~ msgid "Model R-squared"
+#~ msgstr "模型 R 平方"
+
+#~ msgid "Adjusted R-squared"
+#~ msgstr "调整 R 平方"
+
+#~ msgid "df1"
+#~ msgstr "df1"
+
+#~ msgid "df2"
+#~ msgstr "df2"
+
+#~ msgid "ANOVA for %s"
+#~ msgstr "%s 方差分析"
+
+#~ msgid "SS"
+#~ msgstr "SS"
+
+#~ msgid "MS"
+#~ msgstr "MS"
+
+#~ msgid "Stationary Points of Response Surface (Coded)"
+#~ msgstr "响应曲面的固定点（已编码）"
+
+#~ msgid "Eigenvalues"
+#~ msgstr "特征值"
+
+#~ msgid "Eigenvectors"
+#~ msgstr "特征向量"
+
+#~ msgid "Desirability"
+#~ msgstr "合意度"
+
+#~ msgid ""
+#~ "At least one predictor and response variable need to be specified before "
+#~ "running the analysis."
+#~ msgstr "在运行分析之前，至少需要指定一个预测变量和响应变量。"
+
+#~ msgid ""
+#~ "At least one desirability function must be specified before running the "
+#~ "analysis."
+#~ msgstr "在运行分析之前，至少需要指定一个合意度函数。"
 
 #~ msgid "The analysis crashed with the following error message: %1$s"
 #~ msgstr "检测图失效，错误信息如下: %1$s"
