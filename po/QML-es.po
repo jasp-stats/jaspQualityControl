@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-05-19 20:46+0000\n"
+"PO-Revision-Date: 2024-05-21 15:00+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/es/>\n"
@@ -2522,15 +2522,15 @@ msgstr "Puntos centrales"
 
 msgctxt "Description|"
 msgid "Analyse Design"
-msgstr ""
+msgstr "Deseño de análise"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals four-in-one plot"
-msgstr ""
+msgstr "Gráfico 'cuatro en uno' de errores"
 
 msgctxt "doeFactorial|"
 msgid "Number of predictors"
-msgstr ""
+msgstr "Número de predictores"
 
 msgctxt "doeFactorial|"
 msgid "Maximum predictor levels"
