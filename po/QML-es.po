@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2024-05-21 16:24+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.6-dev\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -521,7 +527,7 @@ msgstr "Puntos"
 
 msgctxt "probabilityOfDetection|"
 msgid "Add jitter"
-msgstr "Añadir inestabilidad"
+msgstr "Añadir oscilación"
 
 msgctxt "probabilityOfDetection|"
 msgid "Show density"
@@ -2516,36 +2522,32 @@ msgstr "Puntos centrales"
 
 msgctxt "Description|"
 msgid "Analyse Design"
-msgstr ""
+msgstr "Deseño de análise"
 
 msgctxt "doeAnalysis|"
 msgid "Residuals four-in-one plot"
-msgstr ""
+msgstr "Gráfico 'cuatro en uno' de errores"
 
 msgctxt "doeFactorial|"
 msgid "Number of predictors"
-msgstr ""
+msgstr "Número de predictores"
 
 msgctxt "doeFactorial|"
 msgid "Maximum predictor levels"
-msgstr ""
+msgstr "Niveles máximos de predictores"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "1"
 msgstr "1"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "2"
 msgstr "2"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "4"
 msgstr "4"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "8"
 msgstr "8"
