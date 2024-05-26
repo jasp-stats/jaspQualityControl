@@ -1,5 +1,55 @@
 Response surface methodology
 ==========================
+
+A response surface design is an experimental framework used to optimize and understand the relationships between several explanatory variables and one or more response variables. By systematically varying the input variables, researchers can explore the effects of these variables on the response, identify optimal conditions, and understand the interactions between variables. Response surface designs are particularly useful in situations where the goal is to optimize a process or product, as they provide a detailed map of the response landscape, enabling precise fine-tuning and improvement.
+
+# Options
+-------
+
+## Display design
+-------
+Check to display the design table in the output.
+
+- Coded units: Whether to display the levels of the predictor in the given units or in coded units.
+- Sort by run/standard order: Whether to sort the runs in the design by run order or standard order.
+
+## Save design
+-------
+Option to save the design as a .csv file. Specify a name and path for the file or use the browse option. Check "Export design" to save the selected design.
+
+## Design settings
+-------
+
+- Design type:
+    - Central composite design: Select to generate a central composite design.
+    - Box-Behnken design: Select to generate a Box-Behnken design.
+
+- Number of continuous predictors:  Set the total number of continuous predictors in the desired design.
+
+- Number of discrete predictors: Set the total number of discrete predictors in the desired design.
+
+- Maximum discrete levels: Set the maximum number of levels for the discrete predictors in the design. Continuous predictors always have two defined levels (low/high). If a discrete predictor has fewer levels than the maximum number of levels in the design, leave the remaining level cells empty or add a space.
+
+- Design table: Select one of the pre-set designs by clicking on it in the table.
+
+- Alpha: Select how the alpha value in the design is determined.
+    - Default: Use the default alpha value displayed in "Design Table".
+    - Face centred: Use a face centred alpha value.
+    - Custom: Enter a custom alpha value.
+
+- Center points: Select how the number of center points in the design is determined.
+    - Default: Use the default number of center points displayed in "Design Table".
+    - Custom: Enter a custom number of center points.
+        - Cube block: Enter the number of cube center points.
+        - Axial block: Enter the number of axial center points.
+
+- Replicates: Select the number of replications of the whole design.
+
+- Repeatability (Seed):  Set a seed to reproduce a certain random order.
+
+
+# Background
+-------
 A response surface experiment extends the screening design to allow estimation of quadratic effects. After resolving confounding, the screening experiment allows coefficient estimates for main effects and interactions. The response surface experiment expands this equation by adding quadratic or even cubic terms. The form of the empirical model with quadratic terms is:
 
 *y = c<sub>0</sub> + c<sub>1</sub>X<sub>1</sub> + c<sub>2</sub>X<sub>2</sub> + ... + c<sub>n</sub>X<sub>n</sub> + c<sub>12</sub>X<sub>1</sub>X<sub>2</sub> + c<sub>13</sub>X<sub>1</sub>X<sub>3</sub> + ... + c<sub>(n-1)(n)</sub>X<sub>n-1</sub>X<sub>n</sub> + c<sub>11</sub>X<sub>1</sub><sup>2</sup> + c<sub>22</sub>X<sub>2</sub><sup>2</sup> + ... + c<sub>nn</sub>X<sub>n</sub><sup>2</sup>*
