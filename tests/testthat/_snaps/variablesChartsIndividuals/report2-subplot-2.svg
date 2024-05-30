@@ -126,15 +126,15 @@
 <polyline points='467.71,530.13 467.71,521.63 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <polyline points='528.06,530.13 528.06,521.63 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <polyline points='540.14,530.13 540.14,521.63 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
-<text x='117.64' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='82.23px' lengthAdjust='spacingAndGlyphs'>Jan Year 2</text>
-<text x='165.92' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='86.94px' lengthAdjust='spacingAndGlyphs'>May Year 2</text>
-<text x='226.28' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='81.27px' lengthAdjust='spacingAndGlyphs'>Oct Year 2</text>
-<text x='286.64' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='84.10px' lengthAdjust='spacingAndGlyphs'>Mar Year 3</text>
-<text x='346.99' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='85.07px' lengthAdjust='spacingAndGlyphs'>Aug Year 3</text>
-<text x='407.35' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='82.23px' lengthAdjust='spacingAndGlyphs'>Jan Year 1</text>
-<text x='467.71' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='82.23px' lengthAdjust='spacingAndGlyphs'>Jun Year 1</text>
-<text x='528.06' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='85.06px' lengthAdjust='spacingAndGlyphs'>Nov Year 1</text>
-<text x='540.14' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='85.06px' lengthAdjust='spacingAndGlyphs'>Dec Year 1</text>
+<text x='117.64' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='82.23px' lengthAdjust='spacingAndGlyphs'>Jan Year 1</text>
+<text x='165.92' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='86.94px' lengthAdjust='spacingAndGlyphs'>May Year 1</text>
+<text x='226.28' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='81.27px' lengthAdjust='spacingAndGlyphs'>Oct Year 1</text>
+<text x='286.64' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='84.10px' lengthAdjust='spacingAndGlyphs'>Mar Year 2</text>
+<text x='346.99' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='85.07px' lengthAdjust='spacingAndGlyphs'>Aug Year 2</text>
+<text x='407.35' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='82.23px' lengthAdjust='spacingAndGlyphs'>Jan Year 3</text>
+<text x='467.71' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='82.23px' lengthAdjust='spacingAndGlyphs'>Jun Year 3</text>
+<text x='528.06' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='85.06px' lengthAdjust='spacingAndGlyphs'>Nov Year 3</text>
+<text x='540.14' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='85.06px' lengthAdjust='spacingAndGlyphs'>Dec Year 3</text>
 <text x='401.31' y='572.82' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='42.53px' lengthAdjust='spacingAndGlyphs'>Month</text>
 <text transform='translate(10.53,271.17) rotate(-90)' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='105.48px' lengthAdjust='spacingAndGlyphs'>Individual value</text>
 <text x='401.31' y='11.70' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='129.47px' lengthAdjust='spacingAndGlyphs'>report2-subplot-2</text>

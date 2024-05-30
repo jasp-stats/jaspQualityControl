@@ -77,7 +77,8 @@
     xAxisTitle <- subgroupVariable
     if (stages != ""){
       dataset[[stages]] <- stagesPerSubgroup
-      axisLabels <- axisLabels[order(dataset[[stages]])]
+      stageDataForOrdering <- factor(dataset[[stages]], levels = unique(dataset[[stages]]))
+      axisLabels <- axisLabels[order(stageDataForOrdering)]
     }
   }
   return(list(dataset = dataset,
