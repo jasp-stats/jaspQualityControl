@@ -61,3 +61,4 @@ Rproj.user
 
 *.Rprofile
 renv/
+_processedLockFile.lock
