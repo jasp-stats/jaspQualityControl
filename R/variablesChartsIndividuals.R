@@ -37,7 +37,8 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     axisLabels <- dataset[[axisLabelVariable]]
     xAxisTitle <- axisLabelVariable
     if (stages != "") {
-      axisLabels <- axisLabels[order(dataset[[stages]])]
+      stageDataForOrdering <- factor(dataset[[stages]], levels = unique(dataset[[stages]]))
+      axisLabels <- axisLabels[order(stageDataForOrdering)]
     }
   } else {
     axisLabels <- ""

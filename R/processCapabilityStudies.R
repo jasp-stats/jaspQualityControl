@@ -886,25 +886,25 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         ciUbCpk <- cpk + (normCIrange * intervalCpk)
       }
     }
-    tableDfCurrentStage <- data.frame(cp = round(cp, 2),
-                                      cpl = round(cpl, 2),
-                                      cpu = round(cpu, 2),
-                                      cpk = round(cpk, 2))
+    tableDfCurrentStage <- data.frame(cp = round(cp, .numDecimals),
+                                      cpl = round(cpl, .numDecimals),
+                                      cpu = round(cpu, .numDecimals),
+                                      cpk = round(cpk, .numDecimals))
     if (options[["processCapabilityTableCi"]]) {
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
-        tableDfCurrentStage[["cplci"]] <- round(ciLbCp, 2)
-        tableDfCurrentStage[["cpuci"]] <- round(ciUbCp, 2)
+        tableDfCurrentStage[["cplci"]] <- round(ciLbCp, .numDecimals)
+        tableDfCurrentStage[["cpuci"]] <- round(ciUbCp, .numDecimals)
       }
       if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
-        tableDfCurrentStage[["cpklci"]] <- round(ciLbCpk, 2)
-        tableDfCurrentStage[["cpkuci"]] <- round(ciUbCpk, 2)
+        tableDfCurrentStage[["cpklci"]] <- round(ciLbCpk, .numDecimals)
+        tableDfCurrentStage[["cpkuci"]] <- round(ciUbCpk, .numDecimals)
       }
     }
     if (i == 1 && nStages > 1)
       baseLineDf <- tableDfCurrentStage
     if (i > 1) {
       changeDf <- tableDfCurrentStage - baseLineDf
-      changeDf <- round(changeDf, 2)
+      changeDf <- round(changeDf, .numDecimals)
       changeDf$stage <- gettextf("Change (%s vs. BL)", stage)
       if (options[["processCapabilityTableCi"]]) {
         if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
@@ -1111,23 +1111,23 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       }
     }
 
-    tableDfCurrentStage <- data.frame(pp = round(pp,2),
-                                      ppl = round(ppl,2),
-                                      ppu = round(ppu,2),
-                                      ppk = round(ppk,2))
+    tableDfCurrentStage <- data.frame(pp = round(pp, .numDecimals),
+                                      ppl = round(ppl, .numDecimals),
+                                      ppu = round(ppu, .numDecimals),
+                                      ppk = round(ppk, .numDecimals))
     if (options[["target"]])
-      tableDfCurrentStage[["cpm"]] <- round(cpm,2)
+      tableDfCurrentStage[["cpm"]] <- round(cpm, .numDecimals)
     if (options[["processCapabilityTableCi"]]) {
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
-        tableDfCurrentStage[["pplci"]] <- round(ciLbPp,2)
-        tableDfCurrentStage[["ppuci"]] <- round(ciUbPp,2)
+        tableDfCurrentStage[["pplci"]] <- round(ciLbPp, .numDecimals)
+        tableDfCurrentStage[["ppuci"]] <- round(ciUbPp, .numDecimals)
       }
       if (!(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])) {
-        tableDfCurrentStage[["ppklci"]] <- round(ciLbPpk,2)
-        tableDfCurrentStage[["ppkuci"]] <- round(ciUbPpk,2)
+        tableDfCurrentStage[["ppklci"]] <- round(ciLbPpk, .numDecimals)
+        tableDfCurrentStage[["ppkuci"]] <- round(ciUbPpk, .numDecimals)
         if (options[["target"]]) {
-          tableDfCurrentStage[["cpmlci"]] <- round(ciLbCpm,2)
-          tableDfCurrentStage[["cpmuci"]] <- round(ciUbCpm,2)
+          tableDfCurrentStage[["cpmlci"]] <- round(ciLbCpm, .numDecimals)
+          tableDfCurrentStage[["cpmuci"]] <- round(ciUbCpm, .numDecimals)
         }
       }
     }
@@ -1136,7 +1136,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       baseLineDf <- tableDfCurrentStage
     if (i > 1) {
       changeDf <- tableDfCurrentStage - baseLineDf
-      changeDf <- round(changeDf, 2)
+      changeDf <- round(changeDf, .numDecimals)
       changeDf$stage <- gettextf("Change (%s vs. BL)", stage)
       if (options[["processCapabilityTableCi"]]) {
         if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
@@ -1577,7 +1577,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl,2)
+      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- plnorm(q = usl,  meanlog = beta, sdlog = theta)
@@ -1591,7 +1591,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       } else {
         ppu <- NA
       }
-      tableDfCurrentStage2[["ppu"]] <- round(ppu,2)
+      tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
     } else if (options[["nonNormalDistribution"]] == "weibull") {
       if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
@@ -1607,7 +1607,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl,2)
+      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- pweibull(q = usl, shape = beta, scale = theta)
@@ -1621,7 +1621,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       } else {
         ppu <- NA
       }
-      tableDfCurrentStage2[["ppu"]] <- round(ppu,2)
+      tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
     } else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
       if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance") {
@@ -1636,7 +1636,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl,2)
+      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance"){
           p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)
@@ -1650,7 +1650,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       } else {
         ppu <- NA
       }
-      tableDfCurrentStage2[["ppu"]] <- round(ppu,2)
+      tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
     } else if (options[["nonNormalDistribution"]] == "3ParameterWeibull") {
       if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]){
         if (options[['nonNormalMethod' ]] == "nonConformance") {
@@ -1665,7 +1665,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       } else {
         ppl <- NA
       }
-      tableDfCurrentStage2[["ppl"]] <- round(ppl,2)
+      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
       if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
           p2 <- FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold)
@@ -1680,7 +1680,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         ppu <- NA
       }
     }
-    tableDfCurrentStage2[["ppu"]] <- round(ppu,2)
+    tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
     if (options[["upperSpecificationLimit"]] && options[["lowerSpecificationLimit"]] &&
         !(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
       if (options[['nonNormalMethod' ]] == "nonConformance") {
@@ -1691,15 +1691,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else {
       pp <- NA
     }
-    tableDfCurrentStage2[["pp"]] <- round(pp,2)
+    tableDfCurrentStage2[["pp"]] <- round(pp, .numDecimals)
     ppk <- if (all(is.na(c(ppl, ppu)))) NA else min(c(ppl, ppu), na.rm = T)
-    tableDfCurrentStage2[["ppk"]] <- round(ppk,2)
+    tableDfCurrentStage2[["ppk"]] <- round(ppk, .numDecimals)
 
     if (i == 1 && nStages > 1)
       baseLineDf2 <- tableDfCurrentStage2
     if (i > 1) {
       changeDf2 <- tableDfCurrentStage2 - baseLineDf2
-      changeDf2 <- round(changeDf2, 2)
+      changeDf2 <- round(changeDf2, .numDecimals)
       changeDf2$stage <- gettextf("Change (%s vs. BL)", stage)
     }
     if (nStages > 1)
