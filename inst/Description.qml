@@ -6,7 +6,7 @@ Description
 	name:				"jaspQualityControl"
 	title:				qsTr("Quality Control")
 	description:		qsTr("Investigate if a manufactured product adheres to a defined set of quality criteria")
-	version			: "0.19.0"
+	version: 			"0.19.0"
 	author:				"JASP Team"
 	maintainer:			"JASP <info@jasp-stats.org>"
 	website:			"https://github.com/jasp-stats/jaspQualityControl"
@@ -18,25 +18,26 @@ Description
 		title:			qsTr("Measurement Systems Analysis")
 		icon:			"qualityControl-measurement.svg"
 	}
+
 	Analysis
 	{
-		title:			qsTr("Type 1 Instrument Capability")
+		title:			qsTr("Type 1 Instrument Capability Study")
 		func:			"msaType1Gauge"
 	}
 	Analysis
 	{
-		title:			qsTr("Linearity Study")
-		func:			"msaGaugeLinearity"
-	}
-	Analysis
-	{
-		title:			qsTr("Type 2 and 3 Gauge r&R (manual/automatic equipment)")
+		title:			qsTr("Type 2 Gauge r&R Study")
 		func:			"msaGaugeRR"
 	}
 	Analysis
 	{
-		title:			qsTr("Gauge r&R (non-replicable measurements)")
+		title:			qsTr("Gauge r&R Study (Non-replicable Measurements)")
 		func:			"msaGaugeRRnonrep"
+	}
+	Analysis
+	{
+		title:			qsTr("Type 4 Linearity Study")
+		func:			"msaGaugeLinearity"
 	}
 	Analysis
 	{
@@ -48,12 +49,18 @@ Description
 		title:			qsTr("Test-retest (Range method)")
 		func:			"msaTestRetest"
 	}
+	Analysis
+	{
+		title:			qsTr("Probability of Detection")
+		func:			"probabilityOfDetection"
+	}
 
 	GroupTitle
 	{
 		title:			qsTr("Control Charts")
 		icon:			"qualityControl-control.svg"
 	}
+
 	Analysis
 	{
 		title:			qsTr("Variables Charts for Subgroups")
@@ -77,7 +84,7 @@ Description
 
 	GroupTitle
 	{
-		title:			qsTr("Capability Study")
+		title:			qsTr("Capability Analysis")
 		icon:			"qualityControl-capability.svg"
 	}
 	Analysis
@@ -88,18 +95,19 @@ Description
 
 	GroupTitle
 	{
-		title:			qsTr("DOE")
+		title:			qsTr("Design of Experiments")
 		icon:			"qualityControl-design.svg"
 	}
+
 	Analysis
 	{
-		title:			qsTr("Factorial Design")
+		title:			qsTr("Create Factorial Worksheet")
 		func:			"doeFactorial"
 		requiresData:	false
 	}
 	Analysis
 	{
-		title:			qsTr("Response Surface Design")
+		title:			qsTr("Create Response Surface Worksheet")
 		func:			"doeResponseSurfaceMethodology"
 		requiresData:	false
 	}
@@ -108,16 +116,5 @@ Description
 		title:			qsTr("Analyse Design")
 		func:			"doeAnalysis"
 		requiresData:	true
-	}
-
-	GroupTitle
-	{
-		title:			qsTr("Probability of Detection")
-		icon:			"qualityControl-probabilityofdetection.svg"
-	}
-	Analysis
-	{
-		title:			qsTr("Probability of Detection")
-		func:			"probabilityOfDetection"
 	}
 }
