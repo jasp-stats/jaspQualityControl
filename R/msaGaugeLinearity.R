@@ -38,7 +38,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   # Linearity and Bias Analysis
 
   if (is.null(jaspResults[["LB"]])) {
-    jaspResults[["LB"]] <- createJaspContainer(gettext("Linearity and Bias"))
+    jaspResults[["LB"]] <- createJaspContainer(gettext("Linearity and bias"))
     jaspResults[["LB"]]$position <- 1
   }
   jaspResults[["LB"]] <- .linearityAndBias(ready = ready, dataset = dataset, options = options, measurements = measurements, parts = parts, standards = standards)
@@ -49,9 +49,9 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
 .linearityAndBias <- function(ready, dataset, options, measurements, parts, standards) {
 
-  tablesAndGraphs <- createJaspContainer(gettext("Linearity and Bias"))
+  tablesAndGraphs <- createJaspContainer(gettext("Linearity and bias"))
 
-  table1 <- createJaspTable(title = gettext("Gauge Bias"))
+  table1 <- createJaspTable(title = gettext("Gauge bias"))
 
   table1$addColumnInfo(name = "part",  title = gettext("Part"), type = "string")
   table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
@@ -60,15 +60,15 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   table1$addColumnInfo(name = "pvalue",            title = gettext("<i>p(t</i>-test of bias against 0)"), type = "pvalue")
 
 
-  table2 <- createJaspTable(title = gettext("Regression Model"))
+  table2 <- createJaspTable(title = gettext("Regression model"))
 
   table2$addColumnInfo(name = "predictor",  title = gettext("Predictor"), type = "string")
   table2$addColumnInfo(name = "coefficient", title = gettext("Coefficient"), type = "number")
   table2$addColumnInfo(name = "Tvalues", title = gettext("<i>t</i>-statistic"), type = "number")
-  table2$addColumnInfo(name = "SEcoefficient", title = gettext("Std. Error coefficients"), type = "number")
+  table2$addColumnInfo(name = "SEcoefficient", title = gettext("Std. error coefficients"), type = "number")
   table2$addColumnInfo(name = "pvalue",            title = gettext("<i>p</i>"), type = "pvalue")
 
-  table3 <- createJaspTable(title = gettext("Gauge Linearity"))
+  table3 <- createJaspTable(title = gettext("Gauge linearity"))
 
   table3$addColumnInfo(name = "S",  title = gettext("S"), type = "number")
   table3$addColumnInfo(name = "rsq",       title = gettextf("R%1$s", "\u00B2"), type = "number")
@@ -79,15 +79,15 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   table2$addFootnote(Note)
   table3$addFootnote(Note)
 
-  plot1 <- createJaspPlot(title = gettext("Bias and Linearity"), width = 500, height = 500)
+  plot1 <- createJaspPlot(title = gettext("Bias and linearity"), width = 500, height = 500)
 
-  plot2 <- createJaspPlot(title = gettext("Percentage Process Variation Graph"), width = 500, height = 500)
+  plot2 <- createJaspPlot(title = gettext("Percentage process variation graph"), width = 500, height = 500)
 
   if (ready) {
 
     # Error conditions
     if (length(dataset[[measurements]]) < 2){
-      table2$setError(gettextf("T-Test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", length(dataset[[measurements]]), measurements))
+      table2$setError(gettextf("t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", length(dataset[[measurements]]), measurements))
       return(table2)
     }
     else if (length(unique(dataset[[standards]])) != length(unique(dataset[[parts]]))) {
@@ -95,23 +95,23 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
       return(table2)
     } else if(any(table(dataset[[parts]]) < 2)) {
       singleMeasurementParts <- paste(names(which(table(dataset[[parts]]) < 2)), collapse = ", ")
-      table2$setError(gettextf("T-Test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
+      table2$setError(gettextf("t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
       return(table2)
     }
     variancePerPart <- tapply(dataset[[measurements]], dataset[[parts]], var)
     if(any(variancePerPart == 0)) {
       noVarParts <- paste(names(which(variancePerPart == 0)), collapse = ", ")
-      table2$setError(gettextf("T-Test not possible. No variance detected in Part(s) %s.", noVarParts))
+      table2$setError(gettextf("t-test not possible. No variance detected in Part(s) %s.", noVarParts))
       return(table2)
     } else if(any(table(dataset[[parts]]) < 2)) {
       singleMeasurementParts <- paste(names(which(table(dataset[[parts]]) < 2)), collapse = ", ")
-      table2$setError(gettextf("T-Test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
+      table2$setError(gettextf("t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
       return(table2)
     }
     variancePerPart <- tapply(dataset[[measurements]], dataset[[parts]], var)
     if(any(variancePerPart == 0)) {
       noVarParts <- paste(names(which(variancePerPart == 0)), collapse = ", ")
-      table2$setError(gettextf("T-Test not possible. No variance detected in Part(s) %s.", noVarParts))
+      table2$setError(gettextf("t-est not possible. No variance detected in part(s) %s.", noVarParts))
       return(table2)
     }
 

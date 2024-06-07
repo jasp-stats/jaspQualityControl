@@ -64,7 +64,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   # Scatter Plot Operators vs Parts
   if (options[["runChartPart"]]) {
     if (is.null(jaspResults[["ScatterOperatorParts"]])) {
-      jaspResults[["ScatterOperatorParts"]] <- createJaspContainer(gettext("Scatterplot Operators vs Parts"))
+      jaspResults[["ScatterOperatorParts"]] <- createJaspContainer(gettext("Scatterplot operators vs parts"))
       jaspResults[["ScatterOperatorParts"]]$position <- 2
     }
     jaspResults[["ScatterOperatorParts"]] <- .ScatterPlotOperatorParts(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
@@ -72,7 +72,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
   # Rchart Range method
   if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
-    jaspResults[["rChart"]] <- createJaspContainer(gettext("Range Method R Chart"))
+    jaspResults[["rChart"]] <- createJaspContainer(gettext("Range method range chart"))
     jaspResults[["rChart"]]$position <- 3
     jaspResults[["rChart"]]$dependOn(c("rChart", "measurements", "measurementsLong", "parts"))
     jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
@@ -86,7 +86,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   # Scatter Plot Operators
   if (options[["scatterPlotMeasurement"]]) {
     if (is.null(jaspResults[["ScatterOperators"]])) {
-      jaspResults[["ScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
+      jaspResults[["ScatterOperators"]] <- createJaspContainer(gettext("Scatterplot operators"))
       jaspResults[["ScatterOperators"]]$position <- 2
     }
     jaspResults[["ScatterOperators"]] <- .ScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
@@ -159,11 +159,11 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     table$addColumnInfo(name = "n", title = gettext("Sample size (n)"), type = "integer")
     table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
     table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
-    table$addColumnInfo(name = "PSD", title = gettext("Process Std. Dev."), type = "number")
+    table$addColumnInfo(name = "PSD", title = gettext("Process std. dev."), type = "number")
     table$addColumnInfo(name = "tolerance", title = gettext("Tolerance"), type = "number")
     table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
-    table$addColumnInfo(name = "GRRpercent.PSD", title = gettextf("%%GRR of Process Std. Dev."), type = "number")
-    table$addColumnInfo(name = "GRRpercent.Tol", title = gettextf("%%GRR of Tolerance"), type = "number")
+    table$addColumnInfo(name = "GRRpercent.PSD", title = gettextf("%%GRR of process std. dev."), type = "number")
+    table$addColumnInfo(name = "GRRpercent.Tol", title = gettextf("%%GRR of tolerance"), type = "number")
 
     rows <- list()
     rows[["n"]] = n

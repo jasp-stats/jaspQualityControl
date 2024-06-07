@@ -69,7 +69,7 @@ Form
 		AssignedVariablesList
 		{
 			name:								"operator"
-			title:								qsTr("Operator / Repetition")
+			title:								qsTr("Operator/Repetition")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
 		}
@@ -105,88 +105,82 @@ Form
 	}
 		
 
-
-	Section
+	Group
 	{
-		title: 									qsTr("Range Method Options")
+		title: 								qsTr("Analysis options")
 
-		Group
+		CheckBox
 		{
-			title: 								qsTr("Analysis Options")
+			name:							"manualProcessSd"
+			label:							qsTr("Process std. dev.")
+			childrenOnSameRow:				true
 
-			CheckBox
+			DoubleField
 			{
-				name:							"manualProcessSd"
-				label:							qsTr("Process Std. Deviation")
-				childrenOnSameRow:				true
-
-				DoubleField
-				{
-					name:						"manualProcessSdValue"
-				}
-			}
-
-			CheckBox
-			{
-				name:							"tolerance"
-				label:							qsTr("Tolerance")
-				childrenOnSameRow: 				true
-
-				DoubleField
-				{
-					name:						"toleranceValue"
-				}
-			}
-
-			CheckBox
-			{
-				name: 							"repeatabilityAndReproducibilityTable"
-				label: 							qsTr("r&R table")
-				checked: 						true
+				name:						"manualProcessSdValue"
 			}
 		}
 
-		Group
+		CheckBox
 		{
-			title: 								qsTr("Plots")
+			name:							"tolerance"
+			label:							qsTr("Tolerance")
+			childrenOnSameRow: 				true
+
+			DoubleField
+			{
+				name:						"toleranceValue"
+			}
+		}
+
+		CheckBox
+		{
+			name: 							"repeatabilityAndReproducibilityTable"
+			label: 							qsTr("r&R table")
+			checked: 						true
+		}
+	}
+
+	Group
+	{
+		title: 								qsTr("Plots")
+
+		CheckBox
+		{
+			name: 							"runChartPart"
+			label:							qsTr("Run chart of parts")
+		}
+
+		CheckBox
+		{
+			name:							"scatterPlotMeasurement"
+			label:							qsTr("Scatter plot measurement")
+			checked:						true
 
 			CheckBox
 			{
-				name: 							"runChartPart"
-				label:							qsTr("Run chart of parts")
+				name:						"scatterPlotMeasurementFitLine"
+				label:						qsTr("Fit line")
+				checked:					true
 			}
 
 			CheckBox
 			{
-				name:							"scatterPlotMeasurement"
-				label:							qsTr("Scatter plot measurement")
-				checked:						true
-
-				CheckBox
-				{
-					name:						"scatterPlotMeasurementFitLine"
-					label:						qsTr("Fit line")
-					checked:					true
-				}
-
-				CheckBox
-				{
-					name:						"scatterPlotMeasurementAllValues"
-					label:						qsTr("Display all measurements")
-				}
+				name:						"scatterPlotMeasurementAllValues"
+				label:						qsTr("Display all measurements")
 			}
+		}
 
-			CheckBox
-			{
-				name: 							"rChart"
-				label: 							qsTr("Range chart")
-			}
+		CheckBox
+		{
+			name: 							"rChart"
+			label: 							qsTr("Range chart")
+		}
 
-			CheckBox
-			{
-				name: 							"trafficLightChart"
-				label: 							qsTr("Traffic light chart")
-			}
+		CheckBox
+		{
+			name: 							"trafficLightChart"
+			label: 							qsTr("Traffic light chart")
 		}
 	}
 }

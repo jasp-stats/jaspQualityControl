@@ -30,7 +30,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   # Bias Run Chart
   if (options[["runChart"]]) {
     if (is.null(jaspResults[["biasRun"]])) {
-      jaspResults[["biasRun"]] <- createJaspContainer(gettext("Run Chart"))
+      jaspResults[["biasRun"]] <- createJaspContainer(gettext("Run chart"))
     }
 
     jaspResults[["biasRun"]] <- .biasRunChart(dataset = dataset, measurements = measurements, options =  options, ready = ready)
@@ -69,7 +69,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
 .biasTable <- function(dataset, measurements, options, ready) {
 
-  biasTables <- createJaspContainer(gettext("Bias and Instrument Capability Table"))
+  biasTables <- createJaspContainer(gettext("Bias and instrument capability table"))
 
   data <- dataset
 
@@ -84,12 +84,12 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
   table1$addColumnInfo(name = "observedMean", title = gettext("Mean"), type = "number")
   table1$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
-  table1$addColumnInfo(name = "sd",            title = gettext("Std. Deviation (<i>s</i>)"), type = "number")
-  table1$addColumnInfo(name = "SV",            title = gettext("Study variation"), type = "number")
+  table1$addColumnInfo(name = "sd",            title = gettext("Std. deviation (<i>s</i>)"), type = "number")
+  table1$addColumnInfo(name = "SV",            title = gettext("Instrument variation"), type = "number")
   table1$addColumnInfo(name = "tolerance",       title = gettext("Tolerance"), type = "number")
   table1$addColumnInfo(name = "biasPercent",     title = gettextf("%% Bias"), type = "number")
 
-  table1$addFootnote(gettextf("The study variation is calculated as %i * <i>s</i>.", studyVarMultiplier))
+  table1$addFootnote(gettextf("The instrument variation is calculated as %i * <i>s</i>.", studyVarMultiplier))
 
   table2 <- createJaspTable(title = gettext("Capability"))
   table2$dependOn(c("referenceValue", "biastable", "toleranceRange"))
@@ -146,15 +146,15 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   data <- dataset
 
-  table <- createJaspTable(title = gettext("T-Test of Observed Bias Against 0"))
+  table <- createJaspTable(title = gettext("t-test of observed bias against 0"))
 
   table$dependOn(c("referenceValue", "tTest", "toleranceRange"))
   ciLevel <- options[["tTestCiLevel"]]
   ciLevelPercent <- ciLevel * 100
   table$addColumnInfo(name = "df",              title = gettext("df"), type = "integer")
   table$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
-  table$addColumnInfo(name = "lci",             title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for Bias", paste(ciLevelPercent, "%")))
-  table$addColumnInfo(name = "uci",             title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for Bias", paste(ciLevelPercent, "%")))
+  table$addColumnInfo(name = "lci",             title = gettext("Lower"), type = "number", overtitle = gettextf("%s CI for bias", paste(ciLevelPercent, "%")))
+  table$addColumnInfo(name = "uci",             title = gettext("Upper"), type = "number", overtitle = gettextf("%s CI for bias", paste(ciLevelPercent, "%")))
   table$addColumnInfo(name = "t",               title = gettext("<i>t</i>"), type = "number")
   table$addColumnInfo(name = "p",               title = gettext("<i>p</i>-value"), type = "pvalue")
 
@@ -186,7 +186,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
     data <- dataset[[measurements]]
 
-    plot <- createJaspPlot(title = gettext("Bias Histogram"), width = 700, height = 400)
+    plot <- createJaspPlot(title = gettext("Bias histogram"), width = 700, height = 400)
     dataForBreaks <- c(data)
     if (options[["histogramBinWidthType"]] == "freedmanDiaconis") {
       binWidthType <- "fd"
@@ -231,7 +231,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   if (ready) {
 
-    plot <- createJaspPlot(title = gettextf("Run Chart of %s", measurements), width = 700, height = 300)
+    plot <- createJaspPlot(title = gettextf("Run chart of %s", measurements), width = 700, height = 300)
 
     dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
