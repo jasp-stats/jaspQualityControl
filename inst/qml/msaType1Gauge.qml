@@ -71,7 +71,7 @@ Form
 			defaultValue: 						20
 			negativeValues: 					false
 			min:								0.001
-			max:								99.999
+			max:								100
 		}
 
 		DropDown
@@ -143,6 +143,19 @@ Form
 		{
 			name: 								"histogram"
 			label: 								qsTr("Histogram")
+
+			DropDown
+			{
+				name: 					"histogramBinBoundaryDirection"
+				id: 					histogramBinBoundaryDirection
+				label: 					qsTr("Histogram bin boundaries")
+				values: 
+				[
+					{ label: qsTr("Left open"),		value: "left"},
+					{ label: qsTr("Right open"),	value: "right"}
+					
+				]
+			}
 
 			DropDown
 			{

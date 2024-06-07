@@ -40,7 +40,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   # Determine Bias Table
   if (options[["biasTable"]]) {
     if (is.null(jaspResults[["biasTable"]])) {
-      jaspResults[["biasTable"]] <- createJaspContainer(gettext("Bias Table"))
+      jaspResults[["biasTable"]] <- createJaspContainer(gettext("Bias table"))
     }
     jaspResults[["biasTable"]] <- .biasTable(dataset = dataset, measurements = measurements, options = options, ready = ready)
     jaspResults[["biasTable"]]$position <- 2
@@ -49,7 +49,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   # Determine Bias t-Test
   if (options[["tTest"]]) {
     if (is.null(jaspResults[["biasTtest"]])) {
-      jaspResults[["biasTtest"]] <- createJaspContainer(gettext("t-Test Bias"))
+      jaspResults[["biasTtest"]] <- createJaspContainer(gettext("t-test bias"))
     }
     jaspResults[["biasTtest"]] <- .biasTtest(dataset = dataset, measurements = measurements, options =  options, ready = ready)
     jaspResults[["biasTtest"]]$position <- 3
@@ -58,7 +58,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   # Determine Bias Histogram
   if (options[["histogram"]]) {
     if (is.null(jaspResults[["biasHistogram"]])) {
-      jaspResults[["biasHistogram"]] <- createJaspContainer(gettext("Histogram Bias"))
+      jaspResults[["biasHistogram"]] <- createJaspContainer(gettext("Histogram bias"))
     }
     jaspResults[["biasHistogram"]] <- .biasHistogram(dataset = dataset, measurements = measurements, options =  options, ready = ready)
     jaspResults[["biasHistogram"]]$position <- 4
@@ -78,15 +78,17 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   studyVarMultiplier <- as.numeric(options[["studyVarianceMultiplier"]])
 
-  table1 <- createJaspTable(title = gettext("Basic Statistics"))
+  table1 <- createJaspTable(title = gettext("Basic statistics"))
   table1$dependOn(c("referenceValue", "biasTable", "toleranceRange"))
 
   table1$addColumnInfo(name = "referenceValue",  title = gettext("Reference value"), type = "number")
   table1$addColumnInfo(name = "observedMean", title = gettext("Mean"), type = "number")
   table1$addColumnInfo(name = "bias",            title = gettext("Bias"), type = "number")
-  table1$addColumnInfo(name = "sd",            title = gettext("Std. deviation (<i>s</i>)"), type = "number")
+  table1$addColumnInfo(name = "sd",            title = gettext("Std. dev. (<i>s</i>)"), type = "number")
   table1$addColumnInfo(name = "SV",            title = gettext("Instrument variation"), type = "number")
   table1$addColumnInfo(name = "tolerance",       title = gettext("Tolerance"), type = "number")
+  table1$addColumnInfo(name = "toleranceLB",       title = gettext("Lower"), overtitle = gettext("Tolerance bounds"), type = "number")
+  table1$addColumnInfo(name = "toleranceUB",       title = gettext("Upper"), overtitle = gettext("Tolerance bounds"), type = "number")
   table1$addColumnInfo(name = "biasPercent",     title = gettextf("%% Bias"), type = "number")
 
   table1$addFootnote(gettextf("The instrument variation is calculated as %i * <i>s</i>.", studyVarMultiplier))
@@ -97,8 +99,8 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   table2$addColumnInfo(name = "Cg",  title = gettext("Cg"), type = "string")
   table2$addColumnInfo(name = "Cgk",  title = gettext("Cgk"), type = "string")
-  table2$addColumnInfo(name = "percentRep",  title = gettextf("%% Var(Repeatability)"), type = "integer")
-  table2$addColumnInfo(name = "percentRepBias",  title = gettextf("%% Var(Repeatability and bias)"), type = "integer")
+  table2$addColumnInfo(name = "percentRep",  title = gettextf("%% Var(repeatability)"), type = "integer")
+  table2$addColumnInfo(name = "percentRepBias",  title = gettextf("%% Var(repeatability and bias)"), type = "integer")
 
   table1$setData(list(      "referenceValue"       = reference,
                             "tolerance"             = tolerance))
@@ -110,6 +112,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
     biasPercent <- abs(bias) / tolerance * 100
     sd <- sd(unlist(data))
     sv <- sd * studyVarMultiplier
+    k <- options[["percentToleranceForCg"]]
 
     table1$setData(list(      "referenceValue"       = reference,
                               "observedMean"          = observedAverage,
@@ -117,9 +120,10 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
                               "sd"                    = sd,
                               "SV"                    =  sv,
                               "tolerance"             = tolerance,
+                              "toleranceLB"           = reference - (k/200)*tolerance,
+                              "toleranceUB"           = reference + (k/200)*tolerance,
                               "biasPercent"           = biasPercent))
 
-    k <- options[["percentToleranceForCg"]]
     cg <- ((k / 100) * tolerance) / sv
     cgk <- (((k / 200) * tolerance) - abs(observedAverage - reference)) / (sv / 2)
     percentRep <-   k/cg
@@ -162,7 +166,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
   if (ready) {
 
     if (nrow(dataset[measurements]) < 2){
-      table$setError(gettextf("T-Test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", nrow(dataset[measurements]), measurements))
+      table$setError(gettextf("t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", nrow(dataset[measurements]), measurements))
       return(table)
     }
 
@@ -190,35 +194,65 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
     dataForBreaks <- c(data)
     if (options[["histogramBinWidthType"]] == "freedmanDiaconis") {
       binWidthType <- "fd"
+    } else if (options[["histogramBinWidthType"]] == "manual") {
+      binWidthType <- options[["histogramManualNumberOfBins"]]
     } else {
       binWidthType <- options[["histogramBinWidthType"]]
     }
-    p <- jaspDescriptives:::.plotMarginal(column = data, variableName = measurements, binWidthType = binWidthType, numberOfBins = options[["histogramManualNumberOfBins"]])
+
+    h <- hist(data, plot = FALSE, breaks = binWidthType)
+    binWidth <- (h$breaks[2] - h$breaks[1])
+    plotData <- data.frame("x" = c(data))
+    p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
+      ggplot2::geom_histogram(fill = "grey", col = "black", linewidth = .7, binwidth = binWidth,
+                              closed = options[["histogramBinBoundaryDirection"]], center = binWidth/2, na.rm = TRUE) +
+      ggplot2::ylab(gettext("Count")) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
 
     if (options[["histogramMeanLine"]]) {
       mean <- mean(data)
+      observedsd <- sd(data, na.rm = TRUE)
+      nSigma <- as.numeric(options[["studyVarianceMultiplier"]])/2
       p <- p + ggplot2::geom_vline(ggplot2::aes(xintercept = mean, color = "Mean"), lwd = 1.5) +
-        ggplot2::scale_color_manual(name = "", values = c("Mean" = "red"))
+        ggplot2::geom_vline(ggplot2::aes(xintercept = mean - nSigma*observedsd, color = "MeanMinusSigma"), lwd = 1.5, linetype = "dotted") +
+        ggplot2::geom_vline(ggplot2::aes(xintercept = mean + nSigma*observedsd, color = "MeanPlusSigma"), lwd = 1.5, linetype = "dotted") +
+        ggplot2::scale_color_manual(name = "", values = c("Mean" = "dodgerblue", "MeanMinusSigma" = "red", "MeanPlusSigma" = "red"),
+                                    labels = c(gettext("Mean"), gettextf("Mean - %is", nSigma), gettextf("Mean + %is", nSigma)))
       dataForBreaks <- c(dataForBreaks, mean)
       if (options[["histogramMeanCi"]]) {
         CI <- t.test(data, mu = 0, conf.level = options[["histogramMeanCiLevel"]])$conf.int
-        p <- p + ggplot2::geom_errorbarh(ggplot2::aes(y = .5, x = mean, xmin = CI[1], xmax = CI[2]), lwd = 1, color = "red")
+        p <- p + ggplot2::geom_errorbarh(ggplot2::aes(y = .5, x = mean, xmin = CI[1], xmax = CI[2]), lwd = 1, color = "dodgerblue")
         dataForBreaks <- c(dataForBreaks, CI)
       }
     }
     if (options[["histogramReferenceValueLine"]]) {
       reference <- options[["referenceValue"]]
+      percentTolerance <- options[["percentToleranceForCg"]]/100
+      percentToleranceOneSided <- percentTolerance/2
       p <- p + ggplot2::geom_vline(ggplot2::aes(xintercept = reference, color = "Reference"), lwd = 1.5) +
-        ggplot2::scale_color_manual(name = "", values = c("Reference" = "blue"))
+        ggplot2::geom_vline(ggplot2::aes(xintercept = reference - options[["toleranceRange"]] * percentToleranceOneSided,
+                                         color = "RefMinusTol"), lwd = 1.5, linetype = "dashed") +
+        ggplot2::geom_vline(ggplot2::aes(xintercept = reference + options[["toleranceRange"]] * percentToleranceOneSided,
+                                         color = "RefPlusTol"), lwd = 1.5, linetype = "dashed") +
+        ggplot2::scale_color_manual(name = "", values = c("Reference" = "darkgreen", "RefMinusTol" = "darkred", "RefPlusTol" = "darkred"),
+                                    labels = c(gettext("Reference"), gettextf("Ref. - %.2f * tol.", percentToleranceOneSided),
+                                               gettextf("Ref. + %.2f * tol.", percentToleranceOneSided)))
       dataForBreaks <- c(dataForBreaks, reference)
     }
     if (options[["histogramReferenceValueLine"]] && options[["histogramMeanLine"]])
-      p <- p + ggplot2::scale_color_manual(name = "", values = c("Mean" = "red", "Reference" = "blue"))
+      p <- p + ggplot2::scale_color_manual(name = "", values = c("Mean" = "dodgerblue", "MeanMinusSigma" = "red", "MeanPlusSigma" = "red",
+                                                                 "Reference" = "darkgreen", "RefMinusTol" = "darkred", "RefPlusTol" = "darkred"),
+                                           labels = c(gettext("Mean"), gettextf("Mean - %is", nSigma), gettextf("Mean + %is", nSigma),
+                                                      gettext("Reference"),
+                                                      gettextf("Ref. - %.2f * tol.", percentToleranceOneSided),
+                                                      gettextf("Ref. + %.2f * tol.", percentToleranceOneSided)))
+
 
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(dataForBreaks)
-    p <- p + ggplot2::theme(legend.position = "right") + ggplot2::scale_x_continuous(breaks = xBreaks)
+    p <- p + ggplot2::theme(legend.position = "right") + ggplot2::scale_x_continuous(breaks = xBreaks, name = measurements)
 
-    plot$dependOn(c("histogram"))
+    plot$dependOn(c("histogram", "histogramBinWidthType", "histogramBinBoundaryDirection"))
 
     plot$plotObject <- p
 
@@ -231,7 +265,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   if (ready) {
 
-    plot <- createJaspPlot(title = gettextf("Run chart of %s", measurements), width = 700, height = 300)
+    plot <- createJaspPlot(title = gettextf("Run chart of %s", measurements), width = 700, height = 400)
 
     dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
 
@@ -248,15 +282,15 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
     datayBreaks <- c(dataset[["Measurement"]], options[["referenceValue"]])
     p <- ggplot2::ggplot()
     if (options[["runChartToleranceLimitLines"]]) {
-      toleranceLines <- c(options[["referenceValue"]] + 0.1 * options[["toleranceRange"]], options[["referenceValue"]] - 0.1 * options[["toleranceRange"]])
+      percentTolerance <- options[["percentToleranceForCg"]]/100
+      percentToleranceOneSided <- percentTolerance/2
+      toleranceLines <- c(options[["referenceValue"]] + percentToleranceOneSided * options[["toleranceRange"]], options[["referenceValue"]] - percentToleranceOneSided * options[["toleranceRange"]])
       datayBreaks <- c(datayBreaks, toleranceLines)
-      p <- p + ggplot2::geom_hline(yintercept = toleranceLines[1], data = dataset,
-                                   mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
-        ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.2 , y = toleranceLines[1], l = "Ref + 0.1 * Tol"),
+      p <- p + ggplot2::geom_hline(yintercept = toleranceLines[1], color = "darkred", linetype = "dashed") +
+        ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.15 , y = toleranceLines[1], l = gettextf("Ref. + %.2f * tol.", percentToleranceOneSided)),
                                   ggplot2::aes(x = x, y = y, label = l), vjust="top",hjust="inward", color = "darkred", size = 5) +
-        ggplot2::geom_hline(yintercept = toleranceLines[2], data = dataset,
-                            mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkred") +
-        ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.2, y = toleranceLines[2], l = "Ref - 0.1 * Tol"),
+        ggplot2::geom_hline(yintercept = toleranceLines[2], color = "darkred", linetype = "dashed") +
+        ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.15, y = toleranceLines[2], l = gettextf("Ref. - %.2f * tol.", percentToleranceOneSided)),
                                   ggplot2::aes(x = x, y = y, label = l), vjust="bottom",hjust="inward", color = "darkred", size = 5)
     }
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(datayBreaks)
@@ -267,11 +301,23 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
     }
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(x = Observation, n = nxBreaks)
     xBreaks[1] <- 1
+    observedMean <- mean(dataset[["Measurement"]], na.rm = TRUE)
+    observedsd <- sd(dataset[["Measurement"]], na.rm = TRUE)
+    nSigma <- as.numeric(options[["studyVarianceMultiplier"]])/2
+
     p <- p + jaspGraphs::geom_line(data = dataset, mapping = ggplot2::aes(x = Observation, y = Measurement, group = 1)) +
-      ggplot2::geom_hline(yintercept = options[["referenceValue"]], data = dataset,
-                          mapping = ggplot2::aes(x = Observation, y = Measurement), color = "darkgreen") +
-      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.1, y = options[["referenceValue"]], l = "Ref"),
+      ggplot2::geom_hline(yintercept = observedMean + nSigma*observedsd, color = "red", linetype = "dotted") +
+      ggplot2::geom_hline(yintercept = observedMean - nSigma*observedsd, color = "red", linetype = "dotted") +
+      ggplot2::geom_hline(yintercept = options[["referenceValue"]], color = "darkgreen") +
+      ggplot2::geom_hline(yintercept = observedMean, color = "dodgerblue") +
+      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.15, y = observedMean + nSigma*observedsd, l = gettextf("Mean + %is", nSigma)),
+                                ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "red", size = 5) +
+      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.15, y = observedMean - nSigma*observedsd, l = gettextf("Mean - %is", nSigma)),
+                                ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "red", size = 5) +
+      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.15, y = options[["referenceValue"]], l = gettext("Ref.")),
                                 ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "darkgreen", size = 5) +
+      ggrepel::geom_label_repel(data = data.frame(x = max(Observation) * 1.05, y = observedMean, l = gettext("Mean")),
+                                ggplot2::aes(x = x, y = y, label = l), hjust="inward", color = "dodgerblue", size = 5) +
       ggplot2::scale_x_continuous(name = "Observation", breaks = xBreaks, limits = c(min(xBreaks), max(xBreaks) * 1.2)) +
       ggplot2::scale_y_continuous(name = measurements, breaks = yBreaks, limits = range(yBreaks)) +
       jaspGraphs::geom_rangeframe() +
