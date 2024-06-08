@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2024-06-09 16:09+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/de/>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.6-dev\n"
 "X-Language: de\n"
 "X-Qt-Contexts: true\n"
 
@@ -2453,22 +2459,18 @@ msgctxt "doeAnalysis|"
 msgid "Histogram bin width type"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Sturges"
 msgstr "Sturges"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Scott"
 msgstr "Scott"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Doane"
 msgstr "Doane"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Freedman-Diaconis"
 msgstr "Freedman-Diaconis"
