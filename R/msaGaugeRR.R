@@ -111,7 +111,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   if (options[["report"]] && ready) {
     nElements <- sum(options[["reportVariationComponents"]], options[["reportMeasurementsByPartPlot"]], options[["reportRChartByOperator"]],
                      options[["reportMeasurementsByOperatorPlot"]], options[["reportAverageChartByOperator"]],
-                     options[["reportPartByOperatorPlot"]], options[["reportTrafficLightCHart"]], options[["reportMetaData"]])
+                     options[["reportPartByOperatorPlot"]], options[["reportTrafficLightChart"]], options[["reportMetaData"]])
     plotHeight <- ceiling(nElements/2) * 500
     reportPlot <- createJaspPlot(title = gettext("Gauge r&R report"), width = 1250, height = plotHeight)
     jaspResults[["report"]] <- reportPlot
@@ -126,7 +126,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                                        "reportLocation", "reportLocationText", "reportPerformedBy", "reportPerformedByText",
                                        "reportDate", "reportDateText", "reportVariationComponents", "reportMeasurementsByPartPlot",
                                        "reportRChartByOperator", "reportMeasurementsByOperatorPlot", "reportAverageChartByOperator",
-                                       "reportPartByOperatorPlot", "reportTrafficLightCHart", "reportMetaData"))
+                                       "reportPartByOperatorPlot", "reportTrafficLightChart", "reportMetaData"))
 
     if (nElements == 0) {
       reportPlot$setError(gettext("No report components selected."))
@@ -192,7 +192,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       plotIndexCounter <- plotIndexCounter + 1
     }
 
-    if (options[["reportTrafficLightCHart"]]) {
+    if (options[["reportTrafficLightChart"]]) {
       valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators,
                                options =  options, ready = TRUE, returnTrafficValues = TRUE, Type3 = Type3)
       trafficPlots <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$tolerance,
@@ -1005,7 +1005,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   return(TRUE)
 }
-.trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE, ToleranceVar = "", options, ready, Xlab.StudySD = "", Xlab.Tol = "", ggPlot = FALSE){
+.trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE, ToleranceVar = "", options, ready, Xlab.StudySD = "", Xlab.Tol = "", ggPlot = FALSE) {
 
   if (!ready)
     return()

@@ -116,31 +116,47 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     plotIndexCounter <- 1
     if (options[["reportVariationComponents"]]) {
       plots[[plotIndexCounter]] <- .gaugeRRNonRep(datasetLong, longMeasurementCols, parts = parts, operators = operators,
-                                                 options =  options, ready = TRUE, plotOnly = TRUE)   #var. comp. plot
+                                                  options =  options, ready = TRUE, plotOnly = TRUE)   #var. comp. plot
       plotIndexCounter <- plotIndexCounter + 1
     }
     if (options[["reportRChartByOperator"]]) {
       plots[[plotIndexCounter]] <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
-                                                plotType = "R", stages = operators,
-                                                xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
-                                                stagesSeparateCalculation = FALSE)$plotObject #R chart by operator
+                                                 plotType = "R", stages = operators,
+                                                 xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                                 stagesSeparateCalculation = FALSE)$plotObject #R chart by operator
       plotIndexCounter <- plotIndexCounter + 1
     }
     if (options[["reportMeasurementsByOperatorPlot"]]) {
       plots[[plotIndexCounter]] <- .gaugeByOperatorGraphPlotObject(datasetWide, wideMeasurementCols, parts, operators, options)   #Measurements by operator plot
       plotIndexCounter <- plotIndexCounter + 1
-      }
+    }
     if (options[["reportAverageChartByOperator"]]) {
       plots[[plotIndexCounter]] <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
-                                                plotType = "xBar", xBarSdType = "r", stages = operators,
-                                                xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
-                                                stagesSeparateCalculation = FALSE)$plotObject #Average chart by operator
+                                                 plotType = "xBar", xBarSdType = "r", stages = operators,
+                                                 xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                                 stagesSeparateCalculation = FALSE)$plotObject #Average chart by operator
       plotIndexCounter <- plotIndexCounter + 1
     }
+
+    if (options[["reportTrafficLightChart"]]) {
+      traffPlotValues <- .gaugeRRNonRep(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE, trafficPlotValuesOnly = TRUE)
+      percentMSVar <- traffPlotValues[1]
+      percentMSTolerance <- traffPlotValues[2]
+      trafficPlots <- .trafficplot(StudyVar = percentMSVar, ToleranceUsed = options[["tolerance"]],
+                                   ToleranceVar = percentMSTolerance, options = options, ready = ready, ggPlot = TRUE)
+      if (options[["tolerance"]]) {
+        plots[[plotIndexCounter]] <- trafficPlots$p1
+        plotIndexCounter <- plotIndexCounter + 1
+        plots[[plotIndexCounter]] <- trafficPlots$p2
+      } else {
+        plots[[plotIndexCounter]] <- trafficPlots
+      }
+    }
+
     reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
                                   reportTitle = title)
     reportPlot$plotObject <- reportPlotObject
- } else {
+  } else {
     # Gauge r&R non replicable
     if (options[["anova"]]) {
       if (is.null(jaspResults[["gaugeRRNonRep"]])) {
@@ -161,9 +177,9 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
       if (ready) {
         rChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
-                                            plotType = "R", stages = operators,
-                                            xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
-                                            stagesSeparateCalculation = FALSE)
+                                plotType = "R", stages = operators,
+                                xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                stagesSeparateCalculation = FALSE)
         jaspResults[["rChart"]][["plot"]]$plotObject <- rChart$plotObject
         jaspResults[["rChart"]][["table"]] <- rChart$table
       }
@@ -171,19 +187,19 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
     # Xbar chart by operator
     if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
-        jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar chart by operator"))
-        jaspResults[["xBarChart"]]$position <- 3
-        jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat", "measurementsWideFormat", "report"))
-        jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
-        if (ready) {
-          xBarChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
-                                                 plotType = "xBar", xBarSdType = "r", stages = operators,
-                                                 xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
-                                                 stagesSeparateCalculation = FALSE)
-          jaspResults[["xBarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
-          jaspResults[["xBarChart"]][["table"]] <- xBarChart$table
+      jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar chart by operator"))
+      jaspResults[["xBarChart"]]$position <- 3
+      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat", "measurementsWideFormat", "report"))
+      jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
+      if (ready) {
+        xBarChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
+                                   plotType = "xBar", xBarSdType = "r", stages = operators,
+                                   xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
+                                   stagesSeparateCalculation = FALSE)
+        jaspResults[["xBarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
+        jaspResults[["xBarChart"]][["table"]] <- xBarChart$table
 
-        }
+      }
     }
 
     #Measurement by part x operator plot
@@ -206,13 +222,25 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       jaspResults[["NRoperatorGraph"]] <- .gaugeByOperatorGraph(dataset = datasetWide, measurements = wideMeasurementCols, parts = parts, operators = operators, options = options, ready = ready)
       jaspResults[["NRoperatorGraph"]]$dependOn(c("NRoperatorGraph", "report"))
     }
+
+
+    if (options[["trafficLightChart"]]) {
+      if (is.null(jaspResults[["trafficLightChart"]])) {
+        jaspResults[["trafficLightChart"]] <- createJaspContainer(gettext("Gauge r&R tables"))
+        jaspResults[["trafficLightChart"]]$position <- 6
+      }
+      traffPlotValues <- .gaugeRRNonRep(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE, trafficPlotValuesOnly = TRUE)
+      percentMSVar <- traffPlotValues[1]
+      percentMSTolerance <- traffPlotValues[2]
+      jaspResults[["trafficLightChart"]] <- .trafficplot(StudyVar = percentMSVar, ToleranceUsed = options[["tolerance"]],
+                                                         ToleranceVar = percentMSTolerance, options = options,
+                                                         ready = ready)
+      jaspResults[["trafficLightChart"]]$dependOn(c("trafficLightChart", "report"))
+    }
   }
-
-
-  return()
 }
 
-.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE) {
+.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE, trafficPlotValuesOnly = FALSE) {
   gaugeRRNonRepTables <- createJaspContainer(gettext("Gauge r&R study - nested ANOVA"))
   gaugeRRNonRepTables$position <- 1
 
@@ -324,6 +352,14 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       return(p)
     gaugeRRNonRepTables[["Plot"]] <- plot
   }
+
+  # Traffic light chart values
+  if (trafficPlotValuesOnly) {
+    percentMSVar <- round((studyVar[1]/max(studyVar))*100, .numDecimals)
+    percentMSTolerance <- round((studyVar[1]/options[["toleranceValue"]])*100, .numDecimals)
+    return(c(percentMSVar, percentMSTolerance))
+  }
+
   return(gaugeRRNonRepTables)
 }
 

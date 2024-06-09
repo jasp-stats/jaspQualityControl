@@ -216,6 +216,12 @@ Form
 			name: 							"operatorMeasurementPlot"
 			label: 							qsTr("Measurements by operator plot")
 		}
+
+		CheckBox
+		{
+			name: 							"trafficLightChart"
+			label: 							qsTr("Traffic light chart")
+		}
 	}
 
 	Section
@@ -412,6 +418,13 @@ Form
 				{
 					name:		"reportAverageChartByOperator"
 					label:		qsTr("Show average chart by operator")
+					checked:	true
+				}
+
+				CheckBox
+				{
+					name:		"reportTrafficLightChart"
+					label:		qsTr("Show traffic light chart")
 					checked:	true
 				}
 			}

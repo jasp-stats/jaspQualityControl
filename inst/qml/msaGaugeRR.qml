@@ -519,7 +519,7 @@ Form
 				
 				CheckBox
 				{
-					name:		"reportTrafficLightCHart"
+					name:		"reportTrafficLightChart"
 					label:		qsTr("Show traffic light chart")
 					checked:	true
 				}
