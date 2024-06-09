@@ -445,7 +445,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         varCompTotalVar <- varCompList$totalVar
         varCompVector <- c(varCompTotalGauge, varCompRepeat, varCompPart, varCompTotalVar)
         sources <- gettext(c("Total gauge r&R", "Repeatability", "Part-to-part", "Total variation"))
-      }else{
+      }else {
         varCompList <- .gaugeCrossedVarComps(data, operators, parts, measurements, msPart, msOperator, msRepWithInteraction, msInteraction)
         varCompRepeat <- varCompList$repeatability
         varCompOperator <- varCompList$operator
@@ -454,11 +454,13 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         varCompTotalGauge <- varCompList$totalGauge
         varCompTotalVar <- varCompList$totalVar
         varCompInteraction <- varCompList$interaction
-        varCompVector <- c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator, varCompPart, varCompInteraction, varCompTotalVar)
-        sources <- gettext(c("Total gauge r&R", "Repeatability", "Reproducibility", operators, "Part-to-part", paste(parts," * ", operators), "Total variation"))
+        varCompVector <- c("varCompTotalGauge" = varCompTotalGauge, "varCompRepeat" = varCompRepeat, "varCompReprod" = varCompReprod,
+                           "varCompOperator" = varCompOperator, "varCompInteraction" = varCompInteraction, "varCompPart" = varCompPart,
+                           "varCompTotalVar" = varCompTotalVar)
+        sources <- gettext(c("Total gauge r&R", "Repeatability", "Reproducibility", operators, paste(parts," * ", operators), "Part-to-part",  "Total variation"))
       }
 
-      if (options[["processVariationReference"]] == "historicalSd"){
+      if (options[["processVariationReference"]] == "historicalSd") {
         if (Type3)
           varCompVector <- list(varCompTotalGauge = varCompTotalGauge, varCompRepeat = varCompRepeat, varCompPart = varCompPart, varCompTotalVar = varCompTotalVar)
         histSD <- options[["historicalSdValue"]]
@@ -479,18 +481,17 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       histSD <- options[["historicalSdValue"]]
 
-      if(!singleOperator){
+      if(!singleOperator) {
         if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
           SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator)),
-                  sqrt(histSD^2 - varCompTotalGauge),
-                  sqrt(varCompInteraction), histSD)
+                  sqrt(varCompInteraction), sqrt(histSD^2 - varCompTotalGauge), histSD)
 
-        }else{
+        }else {
           SD <- sqrt(varCompVector)
         }
         sdParts <- SD[5]
         sdGauge <- SD[1]
-      }else{
+      }else {
         if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
           SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat)), sqrt(histSD^2 - varCompTotalGauge), histSD)
         }else{
