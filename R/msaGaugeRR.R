@@ -205,8 +205,24 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         plots[[plotIndexCounter]] <- trafficPlots
       }
     }
-    reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
-                                  reportTitle = title)
+
+    # Gauge evaluation table
+    tables <- list()
+    tableTitles <- list()
+    if (options[["reportGaugeTable"]]) {
+      gaugeEvalOutput <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators,
+                                     options =  options, ready = TRUE, returnTrafficValues = FALSE, Type3 = Type3,
+                                     gaugeEvaluationDfOnly = TRUE)
+      gaugeEvalDf <- gaugeEvalOutput[["gaugeEvalDf"]]
+      nCategories <- gaugeEvalOutput[["nCategories"]]
+      nCategoriesDf <- data.frame("x1" = gettext("Number of distinct categories"), "x2" = nCategories)
+      names(nCategoriesDf) <- NULL
+      tables[[1]] <- list(gaugeEvalDf, nCategoriesDf)
+      tableTitles[[1]] <- list("Gauge evaluation", "")
+    }
+
+    reportPlotObject <- .qcReport(text = text, plots = plots, tables = tables, textMaxRows = 8,
+                                  tableTitles = tableTitles, reportTitle = title, tableSize = 6)
     reportPlot$plotObject <- reportPlotObject
   } else {
     # Gauge r&R ANOVA Table
@@ -308,7 +324,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready, returnPlotOnly = FALSE, returnTrafficValues = FALSE, Type3 = FALSE) {
+.gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready, returnPlotOnly = FALSE, returnTrafficValues = FALSE,
+                        gaugeEvaluationDfOnly = FALSE, Type3 = FALSE) {
   anovaTables <- createJaspContainer(gettext("Gauge r&R study - crossed ANOVA"))
   anovaTables$dependOn(c("anova", "gaugeRRmethod", "report"))
   anovaTables$position <- 1
@@ -528,7 +545,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       anovaTables[['RRtable2']] <- RRtable2
 
-    }else{
+    } else {
 
       anovaTable2 <- createJaspTable(title = gettext("Two-way ANOVA table without interaction"))
       anovaTable2$addColumnInfo(title = gettext("Source"),        name = "source",   type = "string" )
@@ -633,6 +650,13 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       percentToleranceValues <- NA
     }
 
+    if (gaugeEvaluationDfOnly) {
+      gaugeEvalDf <- as.data.frame(RRtable2DataList)
+      gaugeEvalDf[,-1] <- round(gaugeEvalDf[,-1], .numDecimals) # Round everything while including the source column
+      names(gaugeEvalDf) <- if (ncol(gaugeEvalDf) == 5) c("Source", "Std. dev.", "Study variation", "%Study variation", "%Tolerance") else c("Source", "Std. dev.", "Study variation", "%Study variation")
+      return(list("gaugeEvalDf" = gaugeEvalDf, "nCategories" = nCategories))
+    }
+
     p <- .gaugeVarCompGraph(percentContributionValues, studyVariationValues, percentToleranceValues, Type3)
 
     if (returnPlotOnly)
@@ -646,7 +670,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       plot$plotObject <- p
       anovaTables[['VarCompGraph']] <- plot
     }
-  }else {
+  } else {
 
     plot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
     plot$dependOn(c("gaugeVarCompGraph", "report"))

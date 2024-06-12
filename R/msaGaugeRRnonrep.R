@@ -139,7 +139,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     }
 
     if (options[["reportTrafficLightChart"]]) {
-      traffPlotValues <- .gaugeRRNonRep(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE, trafficPlotValuesOnly = TRUE)
+      traffPlotValues <- .gaugeRRNonRep(datasetLong, longMeasurementCols, parts, operators, options, ready, plotOnly = FALSE, trafficPlotValuesOnly = TRUE)
       percentMSVar <- traffPlotValues[1]
       percentMSTolerance <- traffPlotValues[2]
       trafficPlots <- .trafficplot(StudyVar = percentMSVar, ToleranceUsed = options[["tolerance"]],
@@ -153,8 +153,22 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       }
     }
 
-    reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
-                                  reportTitle = title)
+    # Gauge evaluation table
+    tables <- list()
+    tableTitles <- list()
+    if (options[["reportGaugeTable"]]) {
+      gaugeEvalOutput <- .gaugeRRNonRep(datasetLong, longMeasurementCols, parts, operators, options, ready, plotOnly = FALSE,
+                                        trafficPlotValuesOnly = FALSE, gaugeEvaluationDfOnly = TRUE)
+      gaugeEvalDf <- gaugeEvalOutput[["gaugeEvalDf"]]
+      nCategories <- gaugeEvalOutput[["nCategories"]]
+      nCategoriesDf <- data.frame("x1" = gettext("Number of distinct categories"), "x2" = nCategories)
+      names(nCategoriesDf) <- NULL
+      tables[[1]] <- list(gaugeEvalDf, nCategoriesDf)
+      tableTitles[[1]] <- list("Gauge evaluation", "")
+    }
+
+    reportPlotObject <- .qcReport(text = text, plots = plots, tables = tables, textMaxRows = 8,
+                                  tableTitles = tableTitles, reportTitle = title, tableSize = 6)
     reportPlot$plotObject <- reportPlotObject
   } else {
     # Gauge r&R non replicable
@@ -229,7 +243,8 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
         jaspResults[["trafficLightChart"]] <- createJaspContainer(gettext("Gauge r&R tables"))
         jaspResults[["trafficLightChart"]]$position <- 6
       }
-      traffPlotValues <- .gaugeRRNonRep(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE, trafficPlotValuesOnly = TRUE)
+      traffPlotValues <- .gaugeRRNonRep(datasetLong, longMeasurementCols, parts, operators, options, ready, plotOnly = FALSE,
+                                        trafficPlotValuesOnly = TRUE)
       percentMSVar <- traffPlotValues[1]
       percentMSTolerance <- traffPlotValues[2]
       jaspResults[["trafficLightChart"]] <- .trafficplot(StudyVar = percentMSVar, ToleranceUsed = options[["tolerance"]],
@@ -240,7 +255,8 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
 }
 
-.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE, trafficPlotValuesOnly = FALSE) {
+.gaugeRRNonRep <- function(dataset, measurements, parts, operators, options, ready, plotOnly = FALSE, trafficPlotValuesOnly = FALSE,
+                           gaugeEvaluationDfOnly = FALSE) {
   gaugeRRNonRepTables <- createJaspContainer(gettext("Gauge r&R study - nested ANOVA"))
   gaugeRRNonRepTables$position <- 1
 
@@ -324,12 +340,20 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       gaugeRRNonRepTable3DataList <- append(gaugeRRNonRepTable3DataList, list("percentTolerance" = percentTolerance))
     }
     gaugeRRNonRepTable3$setData(gaugeRRNonRepTable3DataList)
+    nCategories <- .gaugeNumberDistinctCategories(stdDevs[4], stdDevs[1])
+
+    if (gaugeEvaluationDfOnly) {
+      gaugeEvalDf <- as.data.frame(gaugeRRNonRepTable3DataList)
+      gaugeEvalDf[,-1] <- round(gaugeEvalDf[,-1], .numDecimals) # Round everything while including the source column
+      names(gaugeEvalDf) <- if (ncol(gaugeEvalDf) == 5) c("Source", "Std. dev.", "Study variation", "%Study variation", "%Tolerance") else c("Source", "Std. dev.", "Study variation", "%Study variation")
+      return(list("gaugeEvalDf" = gaugeEvalDf, "nCategories" = nCategories))
+    }
+
     if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
       gaugeRRNonRepTable3$addFootnote(gettextf("Study variation is calculated as std. dev. * %i", as.integer(studyVarMultiplier)))
     } else {
       gaugeRRNonRepTable3$addFootnote(gettextf("Study variation is calculated as std. dev. * %.2f", studyVarMultiplier))
     }
-    nCategories <- .gaugeNumberDistinctCategories(stdDevs[4], stdDevs[1])
     gaugeRRNonRepTable3$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
   }
   gaugeRRNonRepTables[["Table1"]] <- gaugeRRNonRepTable1

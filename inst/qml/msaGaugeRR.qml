@@ -474,6 +474,13 @@ Form
 			Group
 			{
 				title:			qsTr("Select Report Components")
+
+				CheckBox
+				{
+					name:		"reportGaugeTable"
+					label:		qsTr("Show gauge evaluation table")
+					checked:	true
+				}
 			
 				CheckBox
 				{

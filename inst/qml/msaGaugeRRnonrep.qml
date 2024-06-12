@@ -395,6 +395,13 @@ Form
 			
 				CheckBox
 				{
+					name:		"reportGaugeTable"
+					label:		qsTr("Show gauge evaluation table")
+					checked:	true
+				}
+				
+				CheckBox
+				{
 					name:		"reportVariationComponents"
 					label:		qsTr("Show components of variation")
 					checked:	true
