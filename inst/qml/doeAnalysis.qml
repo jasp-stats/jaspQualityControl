@@ -396,7 +396,7 @@ Form
 				AssignedVariablesList
 				{ 
 					name: "contourSurfacePlotVariables" 
-					suggestedColumns: ["scale", "ordinal"] 
+					allowedColumns: ["scale"] 
 					title: qsTr("Plotting variables")
 				}
 			}
