@@ -213,12 +213,14 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       gaugeEvalOutput <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators,
                                      options =  options, ready = TRUE, returnTrafficValues = FALSE, Type3 = Type3,
                                      gaugeEvaluationDfOnly = TRUE)
-      gaugeEvalDf <- gaugeEvalOutput[["gaugeEvalDf"]]
-      nCategories <- gaugeEvalOutput[["nCategories"]]
-      nCategoriesDf <- data.frame("x1" = gettext("Number of distinct categories"), "x2" = nCategories)
-      names(nCategoriesDf) <- NULL
-      tables[[1]] <- list(gaugeEvalDf, nCategoriesDf)
-      tableTitles[[1]] <- list("Gauge evaluation", "")
+      if (!all(is.na(gaugeEvalOutput))) {
+        gaugeEvalDf <- gaugeEvalOutput[["gaugeEvalDf"]]
+        nCategories <- gaugeEvalOutput[["nCategories"]]
+        nCategoriesDf <- data.frame("x1" = gettext("Number of distinct categories"), "x2" = nCategories)
+        names(nCategoriesDf) <- NULL
+        tables[[1]] <- list(gaugeEvalDf, nCategoriesDf)
+        tableTitles[[1]] <- list("Gauge evaluation", "")
+      }
     }
 
     reportPlotObject <- .qcReport(text = text, plots = plots, tables = tables, textMaxRows = 8,
@@ -682,6 +684,14 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
     if (length(measurements) >= 1 && !identical(operators, "") && !identical(parts, "") && ready) {
+      if (returnTrafficValues)
+        return(list(study = NA, tol = NA))
+      if (returnPlotOnly)
+        return (ggplot2::ggplot() +
+                  ggplot2::theme_void() +
+                  ggplot2::annotate("text", x = 0.5, y = 0.5, label = gettextf("Number of observations is < 2 in %1$s after grouping on %2$s.", parts, operators))) # return an empty plot if not possible to calculate anything
+      if (gaugeEvaluationDfOnly)
+       return(list("gaugeEvalDf" = NA, "nCategories" = NA))
       RRtable1$setError(gettextf("Number of observations is < 2 in %1$s after grouping on %2$s", parts, operators))
       RRtable2$setError(gettextf("Number of observations is < 2 in %1$s after grouping on %2$s", parts, operators))
     }
@@ -1041,6 +1051,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     Yes = c(rep('A',3), rep("B",3)),
     fill = rep(c("G","R","Y"),2)
   )
+
+  if (StudyVar == "" | ToleranceVar == "" | is.na(StudyVar) | is.na(ToleranceVar)) {
+    plotObject <-  ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate("text", x = 0.5, y = 0.5, label = gettext("Error: Gauge study failed. Could not create traffic light chart."))
+    Plot$plotObject <- plotObject
+    return(if (ggPlot) plotObject else Plot)
+  }
 
   if (StudyVar >= 100) {StudyVar = 100}
   if (ToleranceVar >= 100) {ToleranceVar = 100}
