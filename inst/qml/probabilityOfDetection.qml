@@ -28,7 +28,7 @@ Form
 	VariablesForm
 	{
 		AvailableVariablesList	{ name: "allVariablesList"																				}
-		AssignedVariablesList	{ name: "outcome";			title: qsTr("Outcomes");	allowedColumns: ["ordinal", "nominal"]		}
+		AssignedVariablesList	{ name: "outcome";			title: qsTr("Outcomes");	allowedColumns: ["nominal"]		}
 		AssignedVariablesList	{ name: "covariate";		title: qsTr("Covariates");	singleVariable: true							}
 	}
 
