@@ -354,7 +354,7 @@ Form
 	// 	VariablesForm
 	// 	{
 	// 		AvailableVariablesList	{ name: "rsmDesirability";		label: qsTr("Response variable list");	source: "rsmResponseVariables" }
-	// 		AssignedVariablesList	{ name: "rsmMin";				title: qsTr("Minimum [Min/Max]");		suggestedColumns: ["scale", "ordinal", "nominal"]
+	// 		AssignedVariablesList	{ name: "rsmMin";				title: qsTr("Minimum [Min/Max]");		allowedColumns: ["scale", "ordinal", "nominal"]
 	// 			rowComponent: Row
 	// 			{
 	// 				DoubleField {name: "Point_Min";		negativeValues: true}
@@ -364,7 +364,7 @@ Form
 
 	// 		AssignedVariablesList
 	// 		{
-	// 			name: "rsmMax";		title: qsTr("Maximum [Min/Max]");	suggestedColumns:	["scale", "ordinal", "nominal"]
+	// 			name: "rsmMax";		title: qsTr("Maximum [Min/Max]");	allowedColumns:	["scale", "ordinal", "nominal"]
 	// 			rowComponent: Row
 	// 			{
 	// 				DoubleField {name: "Point_Min_1";	negativeValues: true}
@@ -374,7 +374,7 @@ Form
 
 	// 		AssignedVariablesList
 	// 		{
-	// 			name: "rsmTar";		title: qsTr("Target [Min/Target/Max]");	suggestedColumns: ["scale", "ordinal", "nominal"]
+	// 			name: "rsmTar";		title: qsTr("Target [Min/Target/Max]");	allowedColumns: ["scale", "ordinal", "nominal"]
 	// 			rowComponent: Row
 	// 			{
 	// 				DoubleField {name: "Point_Min_2";	negativeValues: true					}
