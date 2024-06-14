@@ -468,11 +468,14 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 }
 
 .gaugeNestedANOVA <- function(dataset, operators, parts, measurements) {
+  anovaFormula <- as.formula(paste0(measurements, " ~ ", operators, "/", parts))
+  anovaOutput <- summary(aov(anovaFormula, data = dataset))
+  anovaOutputDf <- as.data.frame(anovaOutput[[1]])
 
-  ss <- .ssGaugeNested(dataset, operators, parts, measurements)
-  df <- .dfGaugeNested(dataset, operators, parts, measurements)
-  ms <- .msGaugeNested(ss, df)
-  f <- .fGaugeNested(ms)
+  ss <- c(anovaOutputDf$`Sum Sq`, sum(anovaOutputDf$`Sum Sq`))
+  df <- c(anovaOutputDf$Df, sum(anovaOutputDf$Df))
+  ms <- c(anovaOutputDf$`Mean Sq`)
+  f <- c(ms[1]/ms[2], anovaOutputDf$`F value`[2])
   p <- .pGaugeNested(f, df)
   sources <- c(operators, paste(parts, "(", operators, ")", sep = ""), "Repeatability", "Total")
 
@@ -487,7 +490,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
 .gaugeNestedVarComponents <- function(dataset, operators, parts, measurements, ms) {
   nOperators <- length(unique(dataset[[operators]]))
-  nReplicates <- as.vector(table(dataset[parts])[1])
+  nReplicates <- with(dataset, table(dataset[[operators]], dataset[[parts]]))[1] # assuming constant repetitions across parts and operators
   nParts  <- as.vector(table(dataset[operators])[1] / nReplicates)
   msOperator <- ms[1]
   msOperatorPart <- ms[2]
