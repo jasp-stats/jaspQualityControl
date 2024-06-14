@@ -63,7 +63,7 @@ Form
 			name:								"partLongFormat"
 			title:								qsTr("Part")
 			singleVariable:						true
-			allowedColumns:						["nominal", "ordinal", "scale"]
+			allowedColumns:						["nominal"]
 		}
 
 		AssignedVariablesList
@@ -71,7 +71,7 @@ Form
 			name:								"operator"
 			title:								qsTr("Operator / Repetition")
 			singleVariable:						true
-			allowedColumns:						["nominal", "ordinal"]
+			allowedColumns:						["nominal"]
 		}
 	}
 

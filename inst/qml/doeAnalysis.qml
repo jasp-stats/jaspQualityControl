@@ -32,7 +32,7 @@ Form
 		AssignedVariablesList
 		{
 			name:								"dependentFactorial"
-			allowedColumns:						["scale", "ordinal"]
+			allowedColumns:						["scale"]
 			singleVariable:						true
 			label:								qsTr("Response")
 		}
@@ -41,7 +41,7 @@ Form
 		{
 			id:									fixedFactorsFactorial
 			name:								"fixedFactorsFactorial"
-			allowedColumns:						["ordinal", "nominal"]
+			allowedColumns:						["nominal"]
 			label:								qsTr("Discrete predictors")
 			height:								75 * preferencesModel.uiScale
 		}
@@ -50,7 +50,7 @@ Form
 		{
 			id:									continuousFactorsFactorial
 			name:								"continuousFactorsFactorial"
-			allowedColumns:						["scale", "ordinal"]
+			allowedColumns:						["scale"]
 			label:								qsTr("Continuous predictors")
 			height:								75 * preferencesModel.uiScale
 		}
@@ -60,7 +60,7 @@ Form
 			name:								"covariates"
 			id:									covariates
 			label:								qsTr("Covariates")
-			allowedColumns:						["ordinal", "scale"]
+			allowedColumns:						["scale"]
 			height:								75 * preferencesModel.uiScale
 		}
 
@@ -69,7 +69,7 @@ Form
 			name:								"blocksFactorial"
 			singleVariable:						true
 			label:								qsTr("Blocks")
-			allowedColumns:						["ordinal", "scale", "nominal"]
+			allowedColumns:						["nominal"]
 		}
 	}
 
@@ -86,7 +86,7 @@ Form
 		AssignedVariablesList
 		{
 			name:								"dependentResponseSurface"
-			allowedColumns:						["scale", "ordinal"]
+			allowedColumns:						["scale"]
 			singleVariable:						true
 			label:								qsTr("Response")
 		}
@@ -95,7 +95,7 @@ Form
 		{
 			id:									continuousFactorsResponseSurface
 			name:								"continuousFactorsResponseSurface"
-			allowedColumns:						["scale", "ordinal"]
+			allowedColumns:						["scale"]
 			label:								qsTr("Continuous predictors")
 			height:								125 * preferencesModel.uiScale
 		}
@@ -104,7 +104,7 @@ Form
 		{
 			id:									fixedFactorsResponseSurface
 			name:								"fixedFactorsResponseSurface"
-			allowedColumns:						["ordinal", "nominal"]
+			allowedColumns:						["nominal"]
 			label:								qsTr("Discrete predictors")
 			height:								125 * preferencesModel.uiScale
 		}
@@ -114,7 +114,7 @@ Form
 			name:								"blocksResponseSurface"
 			singleVariable:						true
 			label:								qsTr("Blocks")
-			allowedColumns:						["ordinal", "scale", "nominal"]
+			allowedColumns:						["nominal"]
 		}
 	}
 

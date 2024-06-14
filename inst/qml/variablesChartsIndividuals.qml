@@ -21,7 +21,7 @@ Form
 			name:								"measurement"
 			title:								qsTr("Measurement")
 			singleVariable:						true
-			allowedColumns:						["scale", "ordinal"]
+			allowedColumns:						["scale"]
 		}
 
 		AssignedVariablesList
@@ -29,7 +29,7 @@ Form
 			name:								"axisLabels"
 			title:								qsTr("Timestamp (optional)")
 			singleVariable:						true
-			allowedColumns:						["nominal", "ordinal"]
+			allowedColumns:						["nominal"]
 		}
 		
 		AssignedVariablesList
@@ -37,7 +37,7 @@ Form
 			name:								"stage"
 			title:								qsTr("Stage")
 			singleVariable:						true
-			allowedColumns:						["nominal", "ordinal"]
+			allowedColumns:						["nominal"]
 		}
 	}
 
