@@ -222,7 +222,7 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
       dataForBreaks <- c(dataForBreaks, mean)
       if (options[["histogramMeanCi"]]) {
         CI <- t.test(data, mu = 0, conf.level = options[["histogramMeanCiLevel"]])$conf.int
-        p <- p + ggplot2::geom_errorbarh(ggplot2::aes(y = .5, x = mean, xmin = CI[1], xmax = CI[2]), lwd = 1, color = "dodgerblue")
+        p <- p + ggplot2::geom_errorbarh(ggplot2::aes(y = .5, xmin = CI[1], xmax = CI[2]), lwd = 1, color = "dodgerblue")
         dataForBreaks <- c(dataForBreaks, CI)
       }
     }

@@ -118,6 +118,7 @@ Form
 			DoubleField
 			{
 				name:						"manualProcessSdValue"
+				defaultValue:				1
 			}
 		}
 
@@ -130,6 +131,7 @@ Form
 			DoubleField
 			{
 				name:						"toleranceValue"
+				defaultValue:				1
 			}
 		}
 
