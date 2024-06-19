@@ -57,7 +57,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   # Checking for infinity and missingValues
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              infinity.target = measurements,
-             missingValues.target = measurements,
+             missingValues.target = c(measurements, parts, operators),
              exitAnalysisIfErrors = TRUE)
 
   #Converting long to wide data

@@ -43,7 +43,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }
 
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             all.target = measurements,
+             all.target = c(measurements, parts, operators),
              exitAnalysisIfErrors = TRUE)
 
   if (ready && !wideFormat){

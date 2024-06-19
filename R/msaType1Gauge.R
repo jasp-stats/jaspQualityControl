@@ -188,9 +188,15 @@ msaType1Gauge <- function(jaspResults, dataset, options, ...) {
 
   if (ready) {
 
+    plot <- createJaspPlot(title = gettext("Bias histogram"), width = 700, height = 400)
+
+    if (nrow(dataset[measurements]) < 2) {
+      plot$setError(gettextf("Histogram requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", nrow(dataset[measurements]), measurements))
+      return(plot)
+    }
+
     data <- dataset[[measurements]]
 
-    plot <- createJaspPlot(title = gettext("Bias histogram"), width = 700, height = 400)
     dataForBreaks <- c(data)
     if (options[["histogramBinWidthType"]] == "freedmanDiaconis") {
       binWidthType <- "fd"
