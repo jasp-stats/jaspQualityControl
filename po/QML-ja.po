@@ -1,8 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2024-07-02 17:09+0000\n"
+"Last-Translator: Daiki Hojo <dhojo.bayes@gmail.com>\n"
+"Language-Team: Japanese <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/ja/>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.7-dev\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
@@ -315,7 +322,7 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for bias"
-msgstr ""
+msgstr "バイアスの信頼区間"
 
 msgctxt "msaType1Gauge|"
 msgid "Bin width type"
@@ -351,7 +358,7 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for mean"
-msgstr ""
+msgstr "平均値の信頼区間"
 
 msgctxt "msaType1Gauge|"
 msgid "Display reference value"
