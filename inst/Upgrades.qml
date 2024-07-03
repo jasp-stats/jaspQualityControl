@@ -1391,4 +1391,47 @@ Upgrades
 
 		ChangeRename { from: "continuousPredictors";			to: "continuousPredictorsPlots"}
 	}
+
+	// Variables Charts Individuals
+	Upgrade
+	{
+		functionName:		"variablesChartsIndividuals"
+		fromVersion:		"0.18.3"
+		toVersion:			"0.19.0"
+
+		// report
+		ChangeRename {from: "reportDate";									to: "reportDateText"}
+		ChangeRename {from: "reportMeasurementName";						to: "reportMeasurementNameText"}
+		ChangeRename {from: "reportTitle";									to: "reportTitleText"}
+	}
+
+	Upgrade
+	{
+		functionName:		"variablesChartsIndividuals"
+		fromVersion:		"0.18.3"
+		toVersion:			"0.19.0"
+
+		// report
+		ChangeRename {from: "reportDate";									to: "reportDateText"}
+		ChangeRename {from: "reportMeasurementName";						to: "reportMeasurementNameText"}
+		ChangeRename {from: "reportTitle";									to: "reportTitleText"}
+	}
+
+	// Control Charts Attributes
+	Upgrade
+	{
+		functionName:		"attributesCharts"
+		fromVersion:		"0.18.3"
+		toVersion:			"0.19.0"
+
+		// report
+		ChangeRename {from: "reportTitle";										to: "reportTitleText"}
+		ChangeRename {from: "reportMeasurementName";							to: "reportMeasurementNameText"}
+		ChangeRename {from: "reportId";											to: "reportIdText"}
+		ChangeRename {from: "reportAppraiser";									to: "reportAppraiserText"}
+		ChangeRename {from: "reportMeasusrementSystemName";						to: "reportMeasusrementSystemNameText"}
+		ChangeRename {from: "reportSubgroupSize";								to: "reportSubgroupSizeText"}
+		ChangeRename {from: "reportTime";										to: "reportTimeText"}
+		ChangeRename {from: "reportFrequency";									to: "reportFrequencyText"}
+	}
 }
