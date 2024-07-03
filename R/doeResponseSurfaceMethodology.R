@@ -378,6 +378,9 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   if (!dir.exists(dirname(outpath)))
     return()
 
+  if (is.null(design))
+    return()
+
   out_design <- design
   colnames(out_design)[1:2] <- c("RunOrder", "StandardOrder")
   out_design[["Response"]] <- ""
