@@ -337,7 +337,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
   designSpec <- .doeFactorialGetSelectedDesign(jaspResults, options)
   if (length(designSpec) == 0) {
-    return()
+    stop("No generator provided.")
   }
   if (length(unique(df[["name"]])) != options[["numberOfCategorical"]]) {
     stop("Duplicate factor names are not allowed.")
