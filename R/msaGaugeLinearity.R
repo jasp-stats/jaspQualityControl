@@ -133,7 +133,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
       Bias <-  ObservedMean - Ref
       pvalue <- t.test(ReferenceData[[measurements]] - Ref, mu = 0)$p.value
       df <- rbind(df, list(Part = Part,Ref = rep(Ref,length(Part)), ObservedMean =  rep(ObservedMean,length(Part)), Bias =  rep(Bias,length(Part)), pvalue =  rep(pvalue,length(Part))))
-      biases <- c(biases, ReferenceData[[measurements]] - ReferenceData[[standards]][1])
+      biases <- c(biases, ReferenceData[[measurements]] - Ref)
       references <- c(references, ReferenceData[[standards]])
     }
 
@@ -204,7 +204,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
                           "percentLin" = percentLin))
     }
 
-    df3 <- data.frame(Source = c("Linearity", "Bias"), Percent = c(percentLin, (abs(averageBias) / options[["manualProcessVariationValue"]]) * 100))
+    df3 <- data.frame(Source = factor(x = c("Linearity", "Bias"), levels = c("Linearity", "Bias")), Percent = c(percentLin, (abs(averageBias) / options[["manualProcessVariationValue"]]) * 100))
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, df3$Percent))
     yLimits <- range(yBreaks)
 
