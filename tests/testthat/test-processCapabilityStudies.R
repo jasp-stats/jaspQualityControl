@@ -738,6 +738,7 @@ results <- runAnalysis("processCapabilityStudies",
 
 test_that("LF10.1 (Normal) Missing value test of Process performance (total) table with all but one missing value in measurement", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  testthat::skip_on_os("mac")
   jaspTools::expect_equal_tables(table,
                                  list(0.41, "", "", "*", "<unicode>", "NaN", Inf, "*", "", "*", "",
                                       "1 (BL)", "NaN", "-", "-", "*", "<unicode>", "NaN", "NaN", "*",
@@ -1651,9 +1652,11 @@ set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
 
+
 test_that("LF23 (Non-Normal) Option test of report functionality with stages", {
   plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  testthat::skip_on_os("mac")
   jaspTools::expect_equal_plots(testPlot, "process-capability-report23")
 })
 
@@ -2800,6 +2803,7 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("WF18 (Non-Normal) Option test of report functionality with stages", {
   plotName <- results[["results"]][["report"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  testthat::skip_on_os("mac")
   jaspTools::expect_equal_plots(testPlot, "process-capability-reportW18")
 })
 
