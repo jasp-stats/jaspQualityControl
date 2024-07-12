@@ -1405,18 +1405,6 @@ Upgrades
 		ChangeRename {from: "reportTitle";									to: "reportTitleText"}
 	}
 
-	Upgrade
-	{
-		functionName:		"variablesChartsIndividuals"
-		fromVersion:		"0.18.3"
-		toVersion:			"0.19.0"
-
-		// report
-		ChangeRename {from: "reportDate";									to: "reportDateText"}
-		ChangeRename {from: "reportMeasurementName";						to: "reportMeasurementNameText"}
-		ChangeRename {from: "reportTitle";									to: "reportTitleText"}
-	}
-
 	// Control Charts Attributes
 	Upgrade
 	{
