@@ -3,7 +3,7 @@ context("[Quality Control] Gauge r&R")
 
 # Long format ####
 
-## Default settings
+## Default settings ####
 options <- analysisOptions("msaGaugeRR")
 options$operatorLongFormat <- "Operators"
 options$partLongFormat <- "Parts"

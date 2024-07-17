@@ -308,14 +308,18 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
                                      "F.value" = f,
                                      "p.value" = p))
 
+    histSD <- options[["historicalSdValue"]]
     varCompTable <- .gaugeNestedVarComponents(dataset, operators, parts, measurements, ms)
+    if (options[["processVariationReference"]] == "historicalSd") {
+      varCompTable$varPart <-  histSD^2 - varCompTable$varGaugeTotal
+      varCompTable$varTotal <- histSD^2
+      }
     varSources <- gettext(c("Total gauge r&R", "Repeatability", "Reproducibility", "Part-To-part", "Total variation"))
     varComps <- c(varCompTable$varGaugeTotal, varCompTable$varRepeat, varCompTable$varReprod, varCompTable$varPart, varCompTable$varTotal)
     percentVarComps <- (varComps / varCompTable$varTotal) * 100
     gaugeRRNonRepTable2$setData(list("sources" = varSources,
                                      "Var" = varComps,
                                      "percentVar" = percentVarComps))
-    histSD <- options[["historicalSdValue"]]
     if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTable$varGaugeTotal)) {
       stdDevs <- c(sqrt(c(varCompTable$varGaugeTotal, varCompTable$varRepeat, varCompTable$varReprod)),
                    sqrt(histSD^2 - varCompTable$varGaugeTotal), histSD)
