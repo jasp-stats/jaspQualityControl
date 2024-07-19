@@ -154,7 +154,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
     linearity <- abs(coefficientSlope) * options[["manualProcessVariationValue"]]
     percentLin <- (linearity / options[["manualProcessVariationValue"]]) * 100
     plusOrMin <- if (coefficientSlope > 0) "+" else "-"
-    regressionEquation <- gettextf("Bias = %.2f %s %.2f * Reference value", coefficientConstant, plusOrMin, abs(coefficientSlope))
+    regressionEquation <- gettextf("Bias = %1$.2f %2$s %3$.2f * Reference value", coefficientConstant, plusOrMin, abs(coefficientSlope))
 
     p1 <- ggplot2::ggplot(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias)) +
       ggplot2::geom_hline(yintercept = 0, lty = 2, color = "grey") +
