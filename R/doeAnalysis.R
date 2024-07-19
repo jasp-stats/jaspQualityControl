@@ -112,29 +112,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
 
-# dataset <- read.csv("../tests/testthat/datasets/doeAnalysis/2level2facFull.csv")
-# options <- list()
-# discretePredictors <- c("A", "B")
-# continuousPredictors <- ""
-# blocks <- ""
-# covariates <- ""
-# dependent <- "Result"
-# dataset <- dataset[5:7]
-# dataset$A <- as.factor(dataset$A)
-# dataset$B <- as.factor(dataset$B)
-
-
-
-# dataset <- read.csv("C:/Users/Jonee/Desktop/Temporary Files/318 DOE full step 2.csv")
-# dataset <- dataset[c(4,5,6)]
-# options <- list()
-# discretePredictors <- ""
-# continuousPredictors <- c("C", "F")
-# blocks <- ""
-# covariates <- ""
-# dependent <- "Response"
-
-
 .doeAnalysisMakeState <- function(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, ready) {
   if (!ready || jaspResults$getError()) {
     return()
