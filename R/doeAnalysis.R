@@ -123,6 +123,18 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 # dataset$A <- as.factor(dataset$A)
 # dataset$B <- as.factor(dataset$B)
 
+
+
+# dataset <- read.csv("C:/Users/Jonee/Desktop/Temporary Files/318 DOE full step 2.csv")
+# dataset <- dataset[c(4,5,6)]
+# options <- list()
+# discretePredictors <- ""
+# continuousPredictors <- c("C", "F")
+# blocks <- ""
+# covariates <- ""
+# dependent <- "Response"
+
+
 .doeAnalysisMakeState <- function(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, ready) {
   if (!ready || jaspResults$getError()) {
     return()
@@ -259,8 +271,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
     allPredictors <- allPredictors[allPredictors != ""]
     aliasedTerms <- .removeAppendedFactorLevels(predictorNames = allPredictors, terms = aliasedTerms, interactionSymbol = ":")
-    result[["regression"]][["aliasedTerms"]] <- gsubInteractionSymbol(aliasedTerms) # store for footnote
-    resultCoded[["regression"]][["aliasedTerms"]] <- gsubInteractionSymbol(aliasedTerms) # store for footnote
+
+    # store for footnote
+    aliasedTermsFootnote <- aliasedTerms
+    aliasedTermsFootnote <- unname(sapply(aliasedTermsFootnote, .gsubIdentityFunction))
+    aliasedTermsFootnote <- gsubInteractionSymbol(aliasedTermsFootnote)
+    result[["regression"]][["aliasedTerms"]] <- aliasedTermsFootnote
+    resultCoded[["regression"]][["aliasedTerms"]] <- aliasedTermsFootnote
+
     formula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(aliasedTerms, collapse="-"), sep="-")) # remove the aliased term(s) from the model
     # fit the model again
     regressionFit <- lm(formula, data = dataset)
@@ -666,6 +684,8 @@ get_levels <- function(var, num_levels, dataset) {
 .removeAppendedFactorLevels <- function(predictorNames, terms, interactionSymbol = "✻"){
   regexExpression <- paste0("(", paste(predictorNames, collapse = "|"), ")((\\^2)?)([^", interactionSymbol, "]+)(", interactionSymbol, "?)")
   for (term_i in seq_along(terms)) {
+    if (grepl("I\\(", terms[term_i])) # if wrapped in identify function, don't do anything, as it will be a squared term and have no appended factor level
+      next()
     replacements <- if (grepl("^2", terms[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
     terms[term_i] <- gsub(regexExpression, replacements, terms[term_i], perl=TRUE)
     terms[term_i] <- gsub("\\s", "", terms[term_i])
