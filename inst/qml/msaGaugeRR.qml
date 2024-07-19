@@ -129,7 +129,7 @@ Form
 
 	Group
 	{
-		title: 									qsTr("Analysis ptions")
+		title: 									qsTr("Analysis options")
 		columns: 								2
 
 		Group
