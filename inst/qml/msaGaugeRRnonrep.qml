@@ -139,7 +139,8 @@ Form
 			{
 				name: 						"toleranceValue"
 				defaultValue:				1
-				min:						0.000000001
+				min:						0
+				inclusive:					JASP.MaxOnly
 				decimals:					9
 			}
 		}
