@@ -82,6 +82,12 @@ Description
 		func:			"timeWeightedCharts"
 	}
 
+	Analysis
+	{
+		title:			qsTr("Rare Event Charts")
+		func:			"rareEventCharts"
+	}
+
 	GroupTitle
 	{
 		title:			qsTr("Capability Analysis")

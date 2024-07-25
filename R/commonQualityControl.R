@@ -393,7 +393,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(LCL = LCLvector, UCL = UCLvector))
 }
 
-.controlChart <- function(dataset,  plotType                  = c("xBar", "R", "I", "MR", "MMR", "s"),
+.controlChart <- function(dataset,  plotType                  = c("xBar", "R", "I", "MR", "MMR", "s", "cusum"),
                                     stages                    = "",
                                     xBarSdType                = c("r", "s"),
                                     nSigmasControlLimits      = 3,
@@ -409,7 +409,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                     movingRangeLength         = 2,
                                     clLabelSize               = 4.5,
                                     stagesSeparateCalculation = TRUE,
-                                    unbiasingConstantUsed     = TRUE
+                                    unbiasingConstantUsed     = TRUE,
+                                    cusumShiftSize            = 0.5,
+                                    cusumTarget               = 0
                           ) {
   plotType <- match.arg(plotType)
 
@@ -418,7 +420,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                  nSigmasControlLimits = nSigmasControlLimits, phase2 = phase2,
                                                  phase2Mu = phase2Mu, phase2Sd = phase2Sd, fixedSubgroupSize = fixedSubgroupSize,
                                                  warningLimits = warningLimits, movingRangeLength = movingRangeLength,
-                                                 stagesSeparateCalculation = stagesSeparateCalculation, unbiasingConstantUsed = unbiasingConstantUsed)
+                                                 stagesSeparateCalculation = stagesSeparateCalculation, unbiasingConstantUsed = unbiasingConstantUsed,
+                                                 cusumShiftSize = cusumShiftSize, cusumTarget = cusumTarget)
 
 
   # This function turns the point violation list into a JASP table
@@ -436,7 +439,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(plotObject = plotObject, table = table, controlChartData = controlChartData))
 }
 
-.controlChart_calculations <- function(dataset, plotType                  = c("xBar", "R", "I", "MR", "MMR", "s"),
+.controlChart_calculations <- function(dataset, plotType                  = c("xBar", "R", "I", "MR", "MMR", "s", "cusum"),
                                                 stages                    = "",
                                                 xBarSdType                = c("r", "s"),
                                                 nSigmasControlLimits      = 3,
@@ -447,7 +450,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                 warningLimits             = FALSE,
                                                 movingRangeLength         = 2,
                                                 stagesSeparateCalculation = TRUE,
-                                                unbiasingConstantUsed     = TRUE
+                                                unbiasingConstantUsed     = TRUE,
+                                                cusumShiftSize            = 0.5,
+                                                cusumTarget               = 0
                                        ) {
   plotType <- match.arg(plotType)
   if (identical(stages, "")) {
@@ -593,15 +598,38 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       UCL <- limits$UCL
       LCL <- limits$LCL
+    ###
+    ### Calculations for cusum chart
+    ###
+    } else if (plotType == "cusum") {
+      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+      # sigma for subgroup size = 1
+      if (all(n == 1)) {
+
+      # sigma for subgroup size > 1
+      } else {
+        sigma <- .sdXbar(dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      }
+      plotStatisticUpper <- .cusumPoints(dataCurrentStage, sigma, n, cusumTarget, cusumShiftSize, cuType = "upper")
+      plotStatisticLower <- .cusumPoints(dataCurrentStage, sigma, n, cusumTarget, cusumShiftSize, cuType = "lower")
+      plotStatistic <- c(plotStatisticUpper, plotStatisticLower)
+      UCL <- nSigmasControlLimits*sigma/sqrt(n)
+      LCL <- -UCL
+      center <- 0 # not to be confused with the target, even if target != 0, the center line of the plot should be at 0
     }
     if (i != 1) {
+      # TODO: adjust for cusum chart
         subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(plotStatistic))
       dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + length(subgroups)/2,
                                                        y = NA,  # the y value will be filled in later
                                                        label = stage,
                                                        separationLine = max(plotData$subgroup) + .5))
     } else {
-      subgroups <- seq_along(plotStatistic)
+      if (plotType == "cusum") {
+        subgroups <- rep(seq_along(plotStatisticUpper), 2)
+      } else {
+        subgroups <- seq_along(plotStatistic)
+      }
       dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(subgroups)/2 + 0.5,
                                                        y = NA, # the y value will be filled in later
                                                        label = stage,
@@ -611,8 +639,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     if (length(na.omit(plotStatistic)) > 1) {
       if (plotType == "MR" || plotType == "MMR") {
         dotColor <- ifelse(c(rep(NA, k-1), NelsonLaws(qccObject)$red_points), 'red', 'blue')
+      } else if (plotType == "cusum") {
+        dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue")
+        dotColor[is.na(dotColor)] <- "blue"
       } else {
-        dotColor <- ifelse(NelsonLaws(qccObject, allsix = plotType == "I")$red_points, 'red', 'blue')
+        dotColor <- ifelse(NelsonLaws(qccObject, allsix = (plotType == "I"))$red_points, 'red', 'blue')
       }
     } else {
       dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue")
@@ -620,7 +651,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     }
     # if more than half of the dots are violations, do not show red dots.
     nOutOfLimits <- sum(dotColor[!is.na(dotColor)] == "red")
-    if (nOutOfLimits > length(qccObject$statistics)/2)
+    if (nOutOfLimits > length(plotStatistic)/2)
       dotColor <- "blue"
 
     stagePlotData <- data.frame("plotStatistic" = plotStatistic,
@@ -674,11 +705,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     tableLabelsCurrentStage <- subgroups
     if (plotType == "MR" || plotType == "MMR")
       tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
-    tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabelsCurrentStage)
-    tableListLengths <- sapply(tableList[[i]], length)
-    if (any(tableListLengths > 0)) {
-      tableList[[i]][["stage"]] <- as.character(stage)
-      tableList[[i]] <- lapply(tableList[[i]], "length<-", max(lengths(tableList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
+    if (plotType == "cusum") {
+      tableList[[i]] <- c() # pass empty vector for now, until Nelson Laws are updated and can handle other input than QCC objects
+    } else {
+      tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabelsCurrentStage)
+      tableListLengths <- sapply(tableList[[i]], length)
+      if (any(tableListLengths > 0)) {
+        tableList[[i]][["stage"]] <- as.character(stage)
+        tableList[[i]] <- lapply(tableList[[i]], "length<-", max(lengths(tableList[[i]]))) # this fills up all elements of the list with NAs so all elements are the same size
+      }
     }
   }
   return(list("pointData"      = plotData,
@@ -691,7 +726,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart_table <- function(tableList,
-                                plotType = c("xBar", "R", "I", "MR", "MMR", "s"),
+                                plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum"),
                                 stages   = "",
                                 tableLabels = "") {
   plotType <- match.arg(plotType)
@@ -701,12 +736,13 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                         "I" = "individuals",
                         "MR" = "moving range",
                         "MMR" = "moving range",
-                        "s" = "s"
+                        "s" = "s",
+                        "cusum" = "cumulative sum"
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
   table$showSpecifiedColumnsOnly <- TRUE
   tableListVectorized <- unlist(tableList, recursive = FALSE)
-  tableLongestVector <- max(sapply(tableListVectorized, length))
+  tableLongestVector <- if (is.null(tableListVectorized)) 0 else max(sapply(tableListVectorized, length))
   if (tableLongestVector > 0) {
     # combine the tests for different stages in same column
     tableListCombined <- tapply(tableListVectorized, names(tableListVectorized), function(x) unlist(x, FALSE, FALSE))
@@ -761,7 +797,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart_plotting <- function(pointData, clData, stageLabels, clLabels,
-                                   plotType = c("xBar", "R", "I", "MR", "MMR", "s"),
+                                   plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum"),
                                    stages = "",
                                    phase2 = FALSE,
                                    warningLimits = FALSE,
@@ -788,12 +824,13 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   }
 
   yTitle <- switch (plotType,
-                    "xBar" = "Sample average",
-                    "R"    = "Sample range",
-                    "I"    = "Individual value",
-                    "MR"   = "Moving range",
-                    "MMR"  = "Moving range of subgroup mean",
-                    "s"    = "Sample std. dev.")
+                    "xBar"  = "Sample average",
+                    "R"     = "Sample range",
+                    "I"     = "Individual value",
+                    "MR"    = "Moving range",
+                    "MMR"   = "Moving range of subgroup mean",
+                    "s"     = "Sample std. dev.",
+                    "cusum" = "Cumulative sum")
   lineType <- if (phase2) "solid" else "dashed"
   # Create plot
   plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, group = stage)) +
@@ -853,8 +890,37 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   plotObject <- plotObject + ggplot2::geom_label(data = clLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
                                                  inherit.aes = FALSE, size = clLabelSize, na.rm = TRUE) +
     ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = yLimits) +
+    ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels)
+  if (plotType != "cusum") {
+    plotObject <- plotObject +
+      jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+                                                     na.rm = TRUE)
+  } else {
+    # since the upper and lower part of the cusum chart are in the same df, we split the first and second half
+    maxSubgroup <- max(pointData$subgroup)
+    firstHalf <- seq(1, maxSubgroup)
+    secondHalf <- firstHalf + maxSubgroup
+    pointDataFirstHalf <- pointData[firstHalf,]
+    pointDataSecondHalf <- pointData[secondHalf,]
+    plotObject <- plotObject +
+      jaspGraphs::geom_line(pointDataFirstHalf, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+                            na.rm = TRUE) +
+      jaspGraphs::geom_line(pointDataSecondHalf, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+                            na.rm = TRUE)
+  }
+  plotObject <- plotObject  +
+    jaspGraphs::geom_point(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),
+                           size = 4, fill = pointData$dotColor, inherit.aes = TRUE, na.rm = TRUE) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+
+  plotObject + ggplot2::geom_label(data = clLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
+                                   inherit.aes = FALSE, size = clLabelSize, na.rm = TRUE) +
+    ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = yLimits) +
     ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels) +
-    jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+    jaspGraphs::geom_line(pointData[1:25,], mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+                          na.rm = TRUE) +
+    jaspGraphs::geom_line(pointData[26:50,], mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
                           na.rm = TRUE) +
     jaspGraphs::geom_point(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),
                            size = 4, fill = pointData$dotColor, inherit.aes = TRUE, na.rm = TRUE) +
@@ -888,4 +954,30 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   violationsList[["test3"]] <- Test$Rules$R3
 
   return(violationsList)
+}
+
+.cusumPoints <- function(data, sigma, n, target, shiftSize, cuType = c("lower", "upper")) {
+  cuType <- match.arg(cuType)
+
+  # Initialize vector and first point
+  cuSumPoints <- c()
+  if (cuType == "lower") {
+    initialPoint <- rowMeans(data[1,], na.rm = T) - (target - shiftSize*(sigma/sqrt(n[1])))
+    cuSumPoints[1] <-  min(0, initialPoint)
+  } else {
+    initialPoint <- rowMeans(data[1,], na.rm = T) - (target + shiftSize*(sigma/sqrt(n[1])))
+    cuSumPoints[1] <-  max(0, initialPoint)
+  }
+
+  # Loop over remaining data
+  for (i in seq(2, nrow(data))) {
+    if (cuType == "lower") {
+      cuSumPoint <- cuSumPoints[i-1] + rowMeans(data[i,], na.rm = T) - (target - shiftSize*(sigma/sqrt(n[i])))
+      cuSumPoints[i] <-  min(0, cuSumPoint)
+    } else {
+      cuSumPoint <- cuSumPoints[i-1] + rowMeans(data[i,], na.rm = T) - (target + shiftSize*(sigma/sqrt(n[i])))
+      cuSumPoints[i] <-  max(0, cuSumPoint)
+    }
+  }
+  return(cuSumPoints)
 }
