@@ -54,6 +54,16 @@
       "Version": "5.1-3",
       "Source": "Repository"
     },
+    "MASS": {
+      "Package": "MASS",
+      "Version": "7.3-61",
+      "Source": "Repository"
+    },
+    "Matrix": {
+      "Package": "Matrix",
+      "Version": "1.7-0",
+      "Source": "Repository"
+    },
     "MatrixModels": {
       "Package": "MatrixModels",
       "Version": "0.5-3",
@@ -71,7 +81,7 @@
     },
     "Rcpp": {
       "Package": "Rcpp",
-      "Version": "1.0.12",
+      "Version": "1.0.13",
       "Source": "Repository"
     },
     "RcppArmadillo": {
@@ -96,7 +106,7 @@
     },
     "SparseM": {
       "Package": "SparseM",
-      "Version": "1.84",
+      "Version": "1.84-2",
       "Source": "Repository"
     },
     "TH.data": {
@@ -127,6 +137,11 @@
     "base64enc": {
       "Package": "base64enc",
       "Version": "0.1-3",
+      "Source": "Repository"
+    },
+    "boot": {
+      "Package": "boot",
+      "Version": "1.3-30",
       "Source": "Repository"
     },
     "broom": {
@@ -169,9 +184,19 @@
       "Version": "3.6.3",
       "Source": "Repository"
     },
+    "cluster": {
+      "Package": "cluster",
+      "Version": "2.1.6",
+      "Source": "Repository"
+    },
     "coda": {
       "Package": "coda",
       "Version": "0.19-4.1",
+      "Source": "Repository"
+    },
+    "codetools": {
+      "Package": "codetools",
+      "Version": "0.2-20",
       "Source": "Repository"
     },
     "coin": {
@@ -226,7 +251,7 @@
     },
     "crul": {
       "Package": "crul",
-      "Version": "1.4.2",
+      "Version": "1.5.0",
       "Source": "Repository"
     },
     "curl": {
@@ -355,6 +380,11 @@
       "Version": "8.23.0",
       "Source": "Repository"
     },
+    "foreign": {
+      "Package": "foreign",
+      "Version": "0.8-87",
+      "Source": "Repository"
+    },
     "fracdiff": {
       "Package": "fracdiff",
       "Version": "1.5-3",
@@ -467,7 +497,7 @@
     },
     "htmlTable": {
       "Package": "htmlTable",
-      "Version": "2.4.2",
+      "Version": "2.4.3",
       "Source": "Repository"
     },
     "htmltools": {
@@ -530,7 +560,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
       "RemoteRef": "HEAD",
-      "RemoteSha": "f6ba4aa4c933febecf2ff3a8c81e9af3341a451a"
+      "RemoteSha": "201ae11dd7074a7cab1bacf047d168a018ed58d4"
     },
     "jaspGraphs": {
       "Package": "jaspGraphs",
@@ -552,7 +582,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
       "RemoteRef": "HEAD",
-      "RemoteSha": "e04f30b6db24df245bb46bcb7f7a115c98cc8e02"
+      "RemoteSha": "27877d4b0d96cbb25279f4b52c4209b536b830c8"
     },
     "jpeg": {
       "Package": "jpeg",
@@ -582,6 +612,11 @@
     "later": {
       "Package": "later",
       "Version": "1.3.2",
+      "Source": "Repository"
+    },
+    "lattice": {
+      "Package": "lattice",
+      "Version": "0.22-6",
       "Source": "Repository"
     },
     "lavaan": {
@@ -649,6 +684,11 @@
       "Version": "2.0.1",
       "Source": "Repository"
     },
+    "mgcv": {
+      "Package": "mgcv",
+      "Version": "1.9-1",
+      "Source": "Repository"
+    },
     "microbenchmark": {
       "Package": "microbenchmark",
       "Version": "1.4.10",
@@ -691,7 +731,7 @@
     },
     "multcomp": {
       "Package": "multcomp",
-      "Version": "1.4-25",
+      "Version": "1.4-26",
       "Source": "Repository"
     },
     "munsell": {
@@ -704,9 +744,19 @@
       "Version": "1.2-5",
       "Source": "Repository"
     },
+    "nlme": {
+      "Package": "nlme",
+      "Version": "3.1-165",
+      "Source": "Repository"
+    },
     "nloptr": {
       "Package": "nloptr",
       "Version": "2.1.1",
+      "Source": "Repository"
+    },
+    "nnet": {
+      "Package": "nnet",
+      "Version": "7.3-19",
       "Source": "Repository"
     },
     "nortest": {
@@ -741,7 +791,7 @@
     },
     "party": {
       "Package": "party",
-      "Version": "1.3-15",
+      "Version": "1.3-16",
       "Source": "Repository"
     },
     "patchwork": {
@@ -889,6 +939,11 @@
       "Version": "2.27",
       "Source": "Repository"
     },
+    "rpart": {
+      "Package": "rpart",
+      "Version": "4.1.23",
+      "Source": "Repository"
+    },
     "rsm": {
       "Package": "rsm",
       "Version": "2.10.5",
@@ -959,6 +1014,11 @@
       "Version": "1.5-3",
       "Source": "Repository"
     },
+    "survival": {
+      "Package": "survival",
+      "Version": "3.7-0",
+      "Source": "Repository"
+    },
     "svglite": {
       "Package": "svglite",
       "Version": "2.1.3",
@@ -1006,7 +1066,7 @@
     },
     "tinytex": {
       "Package": "tinytex",
-      "Version": "0.51",
+      "Version": "0.52",
       "Source": "Repository"
     },
     "triebeard": {
@@ -1076,7 +1136,7 @@
     },
     "xfun": {
       "Package": "xfun",
-      "Version": "0.45",
+      "Version": "0.46",
       "Source": "Repository"
     },
     "xml2": {
@@ -1096,7 +1156,7 @@
     },
     "yaml": {
       "Package": "yaml",
-      "Version": "2.3.9",
+      "Version": "2.3.10",
       "Source": "Repository"
     },
     "zip": {
