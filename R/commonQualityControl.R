@@ -603,9 +603,17 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     ###
     } else if (plotType == "cusum") {
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
-      # sigma for subgroup size = 1
+      # sigma for subgroup size = 1 is calculated as the average moving range sd
       if (all(n == 1)) {
-
+        k <- movingRangeLength
+        dataCurrentStageVector <- unlist(dataCurrentStage)
+        mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
+        for (j in seq(1, k-1)) {
+          mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[seq(k-j, length(dataCurrentStageVector)-j)]))
+        }
+        meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
+        d2 <- KnownControlStats.RS(k)$constants[1]
+        sigma <- meanMovingRange/d2
       # sigma for subgroup size > 1
       } else {
         sigma <- .sdXbar(dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
@@ -618,8 +626,12 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       center <- 0 # not to be confused with the target, even if target != 0, the center line of the plot should be at 0
     }
     if (i != 1) {
-      # TODO: adjust for cusum chart
+      if (plotType == "cusum") {
+        subgroups <- rep(seq_along(plotStatisticUpper), 2) + max(plotData$subgroup)
+      } else {
         subgroups <- seq(max(plotData$subgroup) + 1, max(plotData$subgroup) + length(plotStatistic))
+      }
+
       dfStageLabels <- rbind(dfStageLabels, data.frame(x = max(plotData$subgroup) + length(subgroups)/2,
                                                        y = NA,  # the y value will be filled in later
                                                        label = stage,
@@ -884,7 +896,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   if (!identical(stages, "")) {
     stageLabels$y <- max(yLimits)
     plotObject <- plotObject + ggplot2::geom_vline(xintercept = na.omit(stageLabels[["separationLine"]])) +
-      ggplot2::geom_text(data = stageLabels, mapping = ggplot2::aes(x = x, y = y, label = label, na.rm = TRUE),
+      ggplot2::geom_text(data = stageLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
                          size = 6, fontface = "bold", inherit.aes = FALSE)
   }
   plotObject <- plotObject + ggplot2::geom_label(data = clLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
@@ -894,34 +906,28 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   if (plotType != "cusum") {
     plotObject <- plotObject +
       jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
-                                                     na.rm = TRUE)
-  } else {
-    # since the upper and lower part of the cusum chart are in the same df, we split the first and second half
-    maxSubgroup <- max(pointData$subgroup)
-    firstHalf <- seq(1, maxSubgroup)
-    secondHalf <- firstHalf + maxSubgroup
-    pointDataFirstHalf <- pointData[firstHalf,]
-    pointDataSecondHalf <- pointData[secondHalf,]
-    plotObject <- plotObject +
-      jaspGraphs::geom_line(pointDataFirstHalf, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
-                            na.rm = TRUE) +
-      jaspGraphs::geom_line(pointDataSecondHalf, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
                             na.rm = TRUE)
+  } else {
+    # since the upper and lower part of the cusum chart are in the same df, we split the first and second half; if there are stages, do this for each stage
+    # loop over stages
+    for (stage_i in unique(pointData[["stage"]])) {
+      pointDataSubset <- subset.data.frame(pointData, pointData$stage == stage_i)
+      if (length(pointDataSubset$subgroup) %% 2 != 0)
+        stop("Data provided to cusum plot function is not symmetric, i.e. unequal amount of points above and below 0.")
+      nSubgroupsStage <- length(pointDataSubset$subgroup)/2 # the data should always be symmetrical, hence we can divide by two
+      firstHalf <- seq(1, nSubgroupsStage)
+      secondHalf <- firstHalf + nSubgroupsStage
+      pointDataFirstHalf <- pointDataSubset[firstHalf,]
+      pointDataSecondHalf <- pointDataSubset[secondHalf,]
+      plotObject <- plotObject +
+        jaspGraphs::geom_line(pointDataFirstHalf, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+                              na.rm = TRUE) +
+        jaspGraphs::geom_line(pointDataSecondHalf, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+                              na.rm = TRUE)
+    }
+
   }
   plotObject <- plotObject  +
-    jaspGraphs::geom_point(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),
-                           size = 4, fill = pointData$dotColor, inherit.aes = TRUE, na.rm = TRUE) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  plotObject + ggplot2::geom_label(data = clLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
-                                   inherit.aes = FALSE, size = clLabelSize, na.rm = TRUE) +
-    ggplot2::scale_y_continuous(name = yTitle, breaks = yBreaks, limits = yLimits) +
-    ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels) +
-    jaspGraphs::geom_line(pointData[1:25,], mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
-                          na.rm = TRUE) +
-    jaspGraphs::geom_line(pointData[26:50,], mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
-                          na.rm = TRUE) +
     jaspGraphs::geom_point(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage),
                            size = 4, fill = pointData$dotColor, inherit.aes = TRUE, na.rm = TRUE) +
     jaspGraphs::geom_rangeframe() +
@@ -961,21 +967,23 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
   # Initialize vector and first point
   cuSumPoints <- c()
+  rowMeanInitial <- if (length(data[1,]) == 1) data[1,] else rowMeans(data[1,], na.rm = T)
   if (cuType == "lower") {
-    initialPoint <- rowMeans(data[1,], na.rm = T) - (target - shiftSize*(sigma/sqrt(n[1])))
+    initialPoint <- rowMeanInitial - (target - shiftSize*(sigma/sqrt(n[1])))
     cuSumPoints[1] <-  min(0, initialPoint)
   } else {
-    initialPoint <- rowMeans(data[1,], na.rm = T) - (target + shiftSize*(sigma/sqrt(n[1])))
+    initialPoint <- rowMeanInitial - (target + shiftSize*(sigma/sqrt(n[1])))
     cuSumPoints[1] <-  max(0, initialPoint)
   }
 
   # Loop over remaining data
   for (i in seq(2, nrow(data))) {
+    rowMean_i <- if (length(data[i,]) == 1) data[i,] else rowMeans(data[i,], na.rm = T)
     if (cuType == "lower") {
-      cuSumPoint <- cuSumPoints[i-1] + rowMeans(data[i,], na.rm = T) - (target - shiftSize*(sigma/sqrt(n[i])))
+      cuSumPoint <- cuSumPoints[i-1] + rowMean_i - (target - shiftSize*(sigma/sqrt(n[i])))
       cuSumPoints[i] <-  min(0, cuSumPoint)
     } else {
-      cuSumPoint <- cuSumPoints[i-1] + rowMeans(data[i,], na.rm = T) - (target + shiftSize*(sigma/sqrt(n[i])))
+      cuSumPoint <- cuSumPoints[i-1] + rowMean_i - (target + shiftSize*(sigma/sqrt(n[i])))
       cuSumPoints[i] <-  max(0, cuSumPoint)
     }
   }

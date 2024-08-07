@@ -42,10 +42,10 @@ Form
 		{
 			id:									subgroup
 			name:								"subgroup"
-			title:								qsTr("Subgroups")
+			title:								subgroupSizeType.value == "individual" ? qsTr("Timestamp (optional)") : qsTr("Subgroups")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
-			enabled: 							subgroupSizeType.value == "groupingVariable"
+			enabled: 							subgroupSizeType.value == "groupingVariable" | subgroupSizeType.value == "individual"
 		}
 
 		AssignedVariablesList
@@ -107,19 +107,25 @@ Form
 			name:								"subgroupSizeType"
 			title: 								qsTr("Specify subgroups")
 			id:									subgroupSizeType
-			visible:							dataFormat.currentValue == "longFormat"							
+			visible:							dataFormat.currentValue == "longFormat"
+
+			RadioButton
+			{
+				value: 							"individual"
+				label: 							qsTr("No subgroups (n = 1)")
+				checked:		 				true
+			}
 
 			RadioButton
 			{
 				value: 							"manual"
 				label: 							qsTr("Subgroup size")
-				checked:		 				true
 				childrenOnSameRow:				true
 				
-				DoubleField
+				IntegerField
 				{
 					name: 									"manualSubgroupSizeValue"
-					min: 									1
+					min: 									2
 					defaultValue:							5
 				}
 			}
@@ -142,6 +148,7 @@ Form
 					indexDefaultValue: 0
 				}
 			}
+
 		}
 	}
 
@@ -197,11 +204,15 @@ Form
 					visible:								cumulativeSumChartSdSource.currentValue == "data"
 					label:									qsTr("Std. dev. estimation method")
 					id: 									cumulativeSumChartSdMethod
-					indexDefaultValue:						0
-					values: [
-						{ label: qsTr("R-bar"), value: "r"},
-						{ label: qsTr("S-bar"), value: "s"}
+					values: subgroupSizeType.value == "individual" ?
+					[
+						{ label: qsTr("X-mR"), value: "averageMovingRange"}
+					] :
+					[
+						{ label: qsTr("S-bar"), value: "s"},
+						{ label: qsTr("R-bar"), value: "r"}
 					]
+					indexDefaultValue: subgroupSizeType.value == "individual" ? 0 : 1
 				}
 
 				DoubleField
@@ -212,6 +223,15 @@ Form
 					defaultValue:					3
 					fieldWidth: 					50
 				}
+
+				IntegerField
+				{
+					name: 									"averageMovingRangeLength"
+					label:									qsTr("Moving range length")
+					visible:								cumulativeSumChartSdMethod.currentValue == "averageMovingRange"
+					min: 									2
+					defaultValue:							2
+				}
 			}
 		}
 
@@ -219,6 +239,14 @@ Form
 		{
 			name: 								"exponentiallyWeightedMovingAverageChart"
 			label: 								qsTr("Exponentially weighted moving average chart")
+
+			
+			DoubleField
+			{
+				name:							"exponentiallyWeightedMovingAverageChartSigmaControlLimits"
+				label:							qsTr("Number of sigmas for control limits")
+				defaultValue:					3
+			}
 
 			DoubleField
 			{
@@ -255,13 +283,19 @@ Form
 					defaultValue:					3
 					fieldWidth: 					50
 				}
-			}
 
-			DoubleField
-			{
-				name:							"exponentiallyWeightedMovingAverageChartSigmaControlLimits"
-				label:							qsTr("Number of sigmas for control limits")
-				defaultValue:					3
+				DropDown
+				{
+					name:									"exponentiallyWeightedMovingAverageChartSdMethod"
+					visible:								exponentiallyWeightedMovingAverageChartSdSource.currentValue == "data"
+					label:									qsTr("Std. dev. estimation method")
+					id: 									exponentiallyWeightedMovingAverageChartSdMethod
+					indexDefaultValue:						0
+					values: [
+						{ label: qsTr("R-bar"), value: "r"},
+						{ label: qsTr("S-bar"), value: "s"}
+					]
+				}
 			}
 		}
 	}

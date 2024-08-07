@@ -10,8 +10,17 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   } else {
     measurements <- options[["measurementLongFormat"]]
     stages <- options[["stagesLongFormat"]]
-    subgroupVariable <- options[["subgroup"]]
-    factorVariables <- c(subgroupVariable, stages)
+    # Workaround to create subgroups of size 1 in long format while still using axis labels, but not creating a whole separate variable form
+    if (options[["subgroupSizeType"]] == "individual") {
+      axisLabels <- options[["subgroup"]]
+      options[["subgroupSizeType"]] <- "manual"
+      options[["manualSubgroupSizeValue"]] <- 1
+      subgroupVariable <- ""
+    } else {
+      subgroupVariable <- options[["subgroup"]]
+      axisLabels <- ""
+    }
+    factorVariables <- c(axisLabels, subgroupVariable, stages)
   }
 
   measurements <- measurements[measurements != ""]
@@ -42,26 +51,29 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
              infinity.target = c(measurements, options$subgroup),
              exitAnalysisIfErrors = TRUE)
 
-  plotNotes <- ""
-  if (!identical(stages, "")) {
-    if ((!wideFormat && options[["subgroupSizeType"]] == "manual" &&
-         any(lapply(split(dataset[[stages]], ceiling(seq_along(dataset[[stages]])/options[["manualSubgroupSizeValue"]])), FUN = function(x)length(unique(x))) > 1)) ||
-        (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" &&
-         any(table(dplyr::count_(dataset, vars = c(stages, subgroupVariable))[subgroupVariable]) > 1))) {
-      plotNotes <- paste0(plotNotes, gettext("One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"))
+  # warning handling
+  if (ready) {
+    plotNotes <- ""
+    if (!identical(stages, "")) {
+      if ((!wideFormat && options[["subgroupSizeType"]] == "manual" &&
+           any(lapply(split(dataset[[stages]], ceiling(seq_along(dataset[[stages]])/options[["manualSubgroupSizeValue"]])), FUN = function(x)length(unique(x))) > 1)) ||
+          (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" &&
+           any(table(dplyr::count_(dataset, vars = c(stages, subgroupVariable))[subgroupVariable]) > 1))) {
+        plotNotes <- paste0(plotNotes, gettext("One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"))
+      }
+      if (anyNA(dataset[[stages]])) {
+        nDroppedStageRows <- sum(is.na(dataset[[stages]]))
+        dataset <- dataset[!is.na(dataset[[stages]]),]
+        removalType <- if (wideFormat) "subgroup(s)" else "observation(s)"
+        plotNotes <- paste0(plotNotes, gettextf("Removed %1$i %2$s that were not assigned to any stage.<br>", nDroppedStageRows, removalType))
+      }
     }
-    if (anyNA(dataset[[stages]])) {
-      nDroppedStageRows <- sum(is.na(dataset[[stages]]))
-      dataset <- dataset[!is.na(dataset[[stages]]),]
-      removalType <- if (wideFormat) "subgroup(s)" else "observation(s)"
-      plotNotes <- paste0(plotNotes, gettextf("Removed %1$i %2$s that were not assigned to any stage.<br>", nDroppedStageRows, removalType))
-    }
-  }
 
-  if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" && anyNA(dataset[[subgroupVariable]])) {
-    nDroppedSubgroupRows <- sum(is.na(dataset[[subgroupVariable]]))
-    dataset <- dataset[!is.na(dataset[[subgroupVariable]]),]
-    plotNotes <- paste0(plotNotes, gettextf("Removed %i observation(s) that were not assigned to any subgroups.<br>", nDroppedSubgroupRows))
+    if (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" && anyNA(dataset[[subgroupVariable]])) {
+      nDroppedSubgroupRows <- sum(is.na(dataset[[subgroupVariable]]))
+      dataset <- dataset[!is.na(dataset[[subgroupVariable]]),]
+      plotNotes <- paste0(plotNotes, gettextf("Removed %i observation(s) that were not assigned to any subgroups.<br>", nDroppedSubgroupRows))
+    }
   }
 
   # Rearrange data if not already wide format (one group per row)
@@ -70,9 +82,9 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
                                                         subgroupSizeType = options[["subgroupSizeType"]],
                                                         manualSubgroupSizeValue = options[["manualSubgroupSizeValue"]],
                                                         subgroupVariableMethod = options[["groupingVariableMethod"]])
+    axisLabels <- if (axisLabels == "") reshapeOutputList$axisLabels else dataset[[axisLabels]]
     dataset <- reshapeOutputList$dataset
     measurements <- reshapeOutputList$measurements
-    axisLabels <- reshapeOutputList$axisLabels
     xAxisTitle <- reshapeOutputList$xAxisTitle
   }  else if (wideFormat && ready) {
     if (axisLabels != "") {
@@ -109,7 +121,8 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   columnsToPass <- columnsToPass[columnsToPass != ""]
   plotObject <- .controlChart(dataset[columnsToPass], plotType = "cusum", stages = stages, xBarSdType = options[["cumulativeSumChartSdMethod"]],
                               nSigmasControlLimits = options[["cumulativeSumChartNumberSd"]], xAxisLabels = axisLabels,
-                              cusumShiftSize = options[["cumulativeSumChartShiftSize"]], cusumTarget = options[["cumulativeSumChartTarget"]])$plotObject
+                              cusumShiftSize = options[["cumulativeSumChartShiftSize"]], cusumTarget = options[["cumulativeSumChartTarget"]],
+                              movingRangeLength = options[["averageMovingRangeLength"]])$plotObject
 
   plot$plotObject <- plotObject
   #
