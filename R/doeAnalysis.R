@@ -772,7 +772,7 @@ get_levels <- function(var, num_levels, dataset) {
     return()
   }
   codedString <- ifelse(options[["codeFactors"]], gettext("Coded"), gettext("Uncoded"))
-  tb <- createJaspTable(gettextf("Regression Equation in %s Units", codedString))
+  tb <- createJaspTable(gettextf("Regression equation in %s Units", codedString))
   tb$addColumnInfo(name = "formula", title = "", type = "string")
   tb$dependOn(options = .doeAnalysisBaseDependencies())
   tb$position <- 4

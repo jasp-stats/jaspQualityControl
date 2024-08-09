@@ -50,7 +50,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
              exitAnalysisIfErrors = TRUE)
 
   if (!wideFormat && ready) {
-    dataset <- as.data.frame(tidyr::pivot_wider(dataset, values_from = measurements, names_from = operators))
+    dataset <- as.data.frame(tidyr::pivot_wider(dataset, values_from = dplyr::all_of(measurements), names_from = dplyr::all_of(operators)))
     measurements <- names(dataset[-1])
   }
 
@@ -64,7 +64,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   # Scatter Plot Operators vs Parts
   if (options[["runChartPart"]]) {
     if (is.null(jaspResults[["ScatterOperatorParts"]])) {
-      jaspResults[["ScatterOperatorParts"]] <- createJaspContainer(gettext("Scatterplot Operators vs Parts"))
+      jaspResults[["ScatterOperatorParts"]] <- createJaspContainer(gettext("Scatterplot operators vs parts"))
       jaspResults[["ScatterOperatorParts"]]$position <- 2
     }
     jaspResults[["ScatterOperatorParts"]] <- .ScatterPlotOperatorParts(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
@@ -72,7 +72,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
   # Rchart Range method
   if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
-    jaspResults[["rChart"]] <- createJaspContainer(gettext("Range Method R Chart"))
+    jaspResults[["rChart"]] <- createJaspContainer(gettext("Range method range chart"))
     jaspResults[["rChart"]]$position <- 3
     jaspResults[["rChart"]]$dependOn(c("rChart", "measurements", "measurementsLong", "parts"))
     jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by part"), width = 800, height = 400)
@@ -86,7 +86,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   # Scatter Plot Operators
   if (options[["scatterPlotMeasurement"]]) {
     if (is.null(jaspResults[["ScatterOperators"]])) {
-      jaspResults[["ScatterOperators"]] <- createJaspContainer(gettext("Scatterplot Operators"))
+      jaspResults[["ScatterOperators"]] <- createJaspContainer(gettext("Scatterplot operators"))
       jaspResults[["ScatterOperators"]]$position <- 2
     }
     jaspResults[["ScatterOperators"]] <- .ScatterPlotOperators(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
@@ -116,16 +116,13 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   plot$dependOn(c("runChartPart"))
 
   if (ready) {
-    partIndex <- 1:length(dataset[[measurements[1]]])
-    dataset <- cbind(dataset, Parts = factor(partIndex, partIndex))
 
-    allMeasurements <- as.vector(unlist(dataset[measurements]))
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(allMeasurements)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(unlist(dataset[measurements]))
     yLimits <- range(yBreaks)
 
     p <- ggplot2::ggplot() +
-      jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[1], group = 1), fill = "red",  size = 4) +
-      jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = "Parts", y = measurements[2], group = 2),fill = "green", shape = 22, size = 4) +
+      jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = .data[[parts]], y = .data[[measurements[1]]], group = 1), fill = "red",  size = 4) +
+      jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = .data[[parts]], y = .data[[measurements[2]]], group = 2),fill = "green", shape = 22, size = 4) +
       ggplot2::scale_y_continuous(name = "Measurements", limits = yLimits, breaks = yBreaks) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw() +
@@ -159,11 +156,11 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     table$addColumnInfo(name = "n", title = gettext("Sample size (n)"), type = "integer")
     table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
     table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
-    table$addColumnInfo(name = "PSD", title = gettext("Process Std. Dev."), type = "number")
+    table$addColumnInfo(name = "PSD", title = gettext("Process std. dev."), type = "number")
     table$addColumnInfo(name = "tolerance", title = gettext("Tolerance"), type = "number")
     table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
-    table$addColumnInfo(name = "GRRpercent.PSD", title = gettextf("%%GRR of Process Std. Dev."), type = "number")
-    table$addColumnInfo(name = "GRRpercent.Tol", title = gettextf("%%GRR of Tolerance"), type = "number")
+    table$addColumnInfo(name = "GRRpercent.PSD", title = gettextf("%%GRR of process std. dev."), type = "number")
+    table$addColumnInfo(name = "GRRpercent.Tol", title = gettextf("%%GRR of tolerance"), type = "number")
 
     rows <- list()
     rows[["n"]] = n
@@ -194,21 +191,21 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
   if (ready) {
 
-    p <- ggplot2::ggplot(data = dataset, ggplot2::aes_string(x = measurements[1], y = measurements[2])) +
-      jaspGraphs::geom_point() + ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
+    p <- ggplot2::ggplot() +
+      jaspGraphs::geom_point(data = dataset, ggplot2::aes(x = .data[[measurements[1]]], y = .data[[measurements[2]]])) +
+      ggplot2::scale_x_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
       ggplot2::scale_y_continuous(limits = c(min(dataset[measurements])*0.9,max(dataset[measurements])*1.1)) +
       ggplot2::geom_abline(col = "gray", linetype = "dashed") +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
 
     if (options[["scatterPlotMeasurementFitLine"]])
-      p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
+      p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE, data = dataset, ggplot2::aes(x = .data[[measurements[1]]], y = .data[[measurements[2]]]))
 
     if (options[["scatterPlotMeasurementAllValues"]])
-      p <- p + ggplot2::geom_jitter(size = 2)
+      p <- p + ggplot2::geom_jitter(size = 2, data = dataset, ggplot2::aes(x = .data[[measurements[1]]], y = .data[[measurements[2]]]))
 
     plot$plotObject <- p
-
   }
 
   return(plot)

@@ -105,127 +105,129 @@ Form
 		}
 	}
 
-	Section
+	Group
 	{
-		title: 									qsTr("Gauge r&R Options")
+		title: 								qsTr("Analysis options")
 
-		Group
+		DropDown
 		{
-			title: 								qsTr("Analysis Options")
+			name: 							"processVariationReference"
+			label: 							qsTr("Std. dev. reference")
+			id: 							variationReference
+			indexDefaultValue: 				0
+			values: [
+				{ label: qsTr("Study std. dev."), value: "studySd"},
+				{ label: qsTr("Historical process std. dev."), value: "historicalSd"}
+			]
+		}
+
+		DoubleField
+		{
+			name:							"historicalSdValue"
+			label:							qsTr("Std. dev. value")
+			defaultValue:					3
+			enabled:						variationReference.currentValue == "historicalSd"
+		}
+
+		CheckBox
+		{
+			name:							"tolerance"
+			label:							qsTr("Tolerance width")
+			childrenOnSameRow:				true
+
+			DoubleField
+			{
+				name: 						"toleranceValue"
+				defaultValue:				1
+				min:						0
+				inclusive:					JASP.MaxOnly
+				decimals:					9
+			}
+		}
+
+		CheckBox
+		{
+			name: 							"anova"
+			label: 							qsTr("r&R ANOVA table")
+			checked:						true
 
 			DropDown
 			{
-				name: 							"processVariationReference"
-				label: 							qsTr("Std. Deviation reference")
-				id: 							variationReference
-				indexDefaultValue: 				0
-				values: [
-					{ label: qsTr("Study Std. Deviation"), value: "studySd"},
-					{ label: qsTr("Historical process Std. Deviation"), value: "historicalSd"}
+				name:						"studyVarianceMultiplierType"
+				label:						qsTr("Study var. multiplier type")
+				id: 						studyVarMultiplierType
+				indexDefaultValue:			0
+				values: 
+				[
+					{ label: qsTr("Std. dev."), value: "sd"},
+					{ label: qsTr("Percent"), value: "percent"}
 				]
 			}
 
 			DoubleField
 			{
-				name:							"historicalSdValue"
-				label:							qsTr("Std. Deviation value")
-				defaultValue:					3
-				enabled:						variationReference.currentValue == "historicalSd"
+				name: 						"studyVarianceMultiplierValue"
+				label: 						qsTr("Study var. multiplier value")
+				fieldWidth: 				60
+				defaultValue:				6
+				min:						0.001
+				max:						99.999
+				decimals:					3
 			}
+		}
+	}
+
+	Group
+	{
+		title:								qsTr("Plots")
+
+		CheckBox
+		{
+			name:						"varianceComponentsGraph"
+			label:						qsTr("Graph variation components")
+			checked:					true
+		}
+
+		CheckBox
+		{
+			name: 							"rChart"
+			label: 							qsTr("Range charts by operator")
+		}
+
+		CheckBox
+		{
+			name: 							"xBarChart"
+			label: 							qsTr("Average charts by operator")
+		}
+
+		CheckBox
+		{
+			name: 							"partMeasurementPlot"
+			label: 							qsTr("Measurements by part plot")
 
 			CheckBox
 			{
-				name:							"tolerance"
-				label:							qsTr("Tolerance")
-				childrenOnSameRow:				true
-
-				DoubleField
-				{
-					name: 						"toleranceValue"
-					defaultValue:				1
-					min:						0.000000001
-					decimals:					9
-				}
-			}
-
-			CheckBox
-			{
-				name: 							"anova"
-				label: 							qsTr("r&R table ANOVA method")
-				checked:						true
-
-				DropDown
-				{
-					name:						"studyVarianceMultiplierType"
-					label:						qsTr("Study Var. multiplier type")
-					id: 						studyVarMultiplierType
-					indexDefaultValue:			0
-					values: 
-					[
-						{ label: qsTr("Std. Deviation"), value: "sd"},
-						{ label: qsTr("Percent"), value: "percent"}
-					]
-				}
-
-				DoubleField
-				{
-					name: 						"studyVarianceMultiplierValue"
-					label: 						qsTr("Study Var. multiplier value")
-					fieldWidth: 				60
-					defaultValue:				6
-					min:						0.001
-					max:						99.999
-					decimals:					3
-				}
+				name: 						"partMeasurementPlotAllValues"
+				label: 						qsTr("Display all measurements")
 			}
 		}
 
-		Group
+		CheckBox
 		{
-			title:								qsTr("Plots")
+			name: 							"operatorMeasurementPlot"
+			label: 							qsTr("Measurements by operator plot")
+		}
 
-			CheckBox
-			{
-				name:						"varianceComponentsGraph"
-				label:						qsTr("Graph variation components")
-				checked:					true
-			}
-
-			CheckBox
-			{
-				name: 							"rChart"
-				label: 							qsTr("R charts by operator")
-			}
-
-			CheckBox
-			{
-				name: 							"xBarChart"
-				label: 							qsTr("Average charts by operator")
-			}
-
-			CheckBox
-			{
-				name: 							"partMeasurementPlot"
-				label: 							qsTr("Measurements by part plot")
-
-				CheckBox
-				{
-					name: 						"partMeasurementPlotAllValues"
-					label: 						qsTr("Display all measurements")
-				}
-			}
-
-			CheckBox
-			{
-				name: 							"operatorMeasurementPlot"
-				label: 							qsTr("Measurements by operator plot")
-			}
+		CheckBox
+		{
+			name: 							"trafficLightChart"
+			label: 							qsTr("Traffic light chart")
 		}
 	}
 
 	Section
 	{
-		title: 									qsTr("Gauge r&R Report")
+		title: 									qsTr("Report options")
 		
 		CheckBox
 		{
@@ -253,7 +255,7 @@ Form
 						name: 								"reportTitleText"
 						label: 								qsTr("Title")
 						id:									reportTitleText
-						placeholderText:					qsTr("Gauge r&R Report")
+						placeholderText:					qsTr("Gauge r&R report")
 						fieldWidth:							100
 					}
 				}
@@ -394,6 +396,13 @@ Form
 			
 				CheckBox
 				{
+					name:		"reportGaugeTable"
+					label:		qsTr("Show gauge evaluation table")
+					checked:	true
+				}
+				
+				CheckBox
+				{
 					name:		"reportVariationComponents"
 					label:		qsTr("Show components of variation")
 					checked:	true
@@ -402,7 +411,7 @@ Form
 				CheckBox
 				{
 					name:		"reportRChartByOperator"
-					label:		qsTr("Show R chart by operator")
+					label:		qsTr("Show range chart by operator")
 					checked:	true
 				}
 				
@@ -417,6 +426,13 @@ Form
 				{
 					name:		"reportAverageChartByOperator"
 					label:		qsTr("Show average chart by operator")
+					checked:	true
+				}
+
+				CheckBox
+				{
+					name:		"reportTrafficLightChart"
+					label:		qsTr("Show traffic light chart")
 					checked:	true
 				}
 			}

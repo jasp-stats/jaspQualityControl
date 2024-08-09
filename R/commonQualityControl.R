@@ -275,6 +275,10 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
    if (length(rowRemovalIndex) > 0)
     df <- df[-rowRemovalIndex, ]
 
+  # return sdWithin = 0 if no groups have more than 1 obs
+  if (length(df) == 0)
+    return(0)
+
   if (type == "r") {
     rowRanges <- .rowRanges(df, na.rm = TRUE)$ranges
     n <- .rowRanges(df)$n
@@ -527,7 +531,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       qccObject <- qcc::qcc(dataCurrentStage, type ='R', plot = FALSE, center = mu, std.dev = sigma, sizes = ncol(dataCurrentStage), nsigmas = nSigmasControlLimits)
       # the qcc package returns -Inf when all values are NA, which does not look good in ggplot. So we replace it with NA.
       qccObject$statistics[is.infinite(qccObject$statistics)] <- NA
-      plotStatistic <- qccObject$statistics
+      # the qcc package just returns the values instead of the ranges when there is only one column
+      plotStatistic <- if (ncol(dataCurrentStage) == 1) rep(0, nrow(dataCurrentStage)) else qccObject$statistics
       limits <- .controlLimits(mu, sigma, n = n, type = "r", k = nSigmasControlLimits)
       center <- mu
       UCL <- limits$UCL
@@ -765,7 +770,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                    xAxisTitle = "",
                                    clLabelSize = 4.5) {
   plotType <- match.arg(plotType)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(pointData$plotStatistic, clData$LCL, clData$UCL, clData$center))
+  yBreakDeterminants <- c(pointData$plotStatistic, clData$LCL, clData$UCL, clData$center)
+  # if all statistics are 0, pretty will select c(-1, 0). But c(0, 1) is better
+  yBreaks <- if (identical(unique(na.omit(yBreakDeterminants)), 0)) c(0, 1) else jaspGraphs::getPrettyAxisBreaks(yBreakDeterminants)
   yLimits <- range(yBreaks)
   xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(pointData$subgroup))) # we only want integers on the x-axis
   if (xBreaks[1] == 0)  # never start counting at 0 on x axis
