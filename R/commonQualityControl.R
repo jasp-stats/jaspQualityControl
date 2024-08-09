@@ -225,10 +225,10 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
       warnings[i,] <- warningsRaw
     }
   } else {
-      lcl <- ifelse(is.nan(data$limits[1,1]) || is.na(data$limits[1,1]), NA, data$limits[1,1])
-      ucl <- ifelse(is.nan(data$limits[1,2])  || is.na(data$limits[1,2]), NA, data$limits[1,2])
-      warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = lcl, ucl = ucl, cl = data$center[1], parRules = pars,
-                        whichRules = c(1:3,5,7:8))
+    lcl <- ifelse(is.nan(data$limits[1,1]) || is.na(data$limits[1,1]), NA, data$limits[1,1])
+    ucl <- ifelse(is.nan(data$limits[1,2])  || is.na(data$limits[1,2]), NA, data$limits[1,2])
+    warnings <- Rspc::EvaluateRules(x = data$statistics, type = chart, lcl = lcl, ucl = ucl, cl = data$center[1], parRules = pars,
+                                    whichRules = c(1:3,5,7:8))
   }
 
   if (allsix) {
@@ -272,7 +272,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   # exclude groups with single observation from calculation
   rowRemovalIndex <- which(apply(df, 1, function(x) sum(!is.na(x)) < 2)) # get index of rows with less than 2 obs.
-   if (length(rowRemovalIndex) > 0)
+  if (length(rowRemovalIndex) > 0)
     df <- df[-rowRemovalIndex, ]
 
   # return sdWithin = 0 if no groups have more than 1 obs
@@ -326,9 +326,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   Data.d2 <- data.frame(
     n = 0:50,
     d2 = c(NA, NA, 1.128, 1.693 ,2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532,
-            3.588 ,3.640 ,3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931, 3.964, 3.997, 4.027, 4.057, 4.086, 4.113,
-            4.139 ,4.165 ,4.189, 4.213, 4.236, 4.259, 4.280, 4.301, 4.322, 4.341, 4.361, 4.379, 4.398, 4.415, 4.433,
-            4.450 ,4.466, 4.482, 4.498))
+           3.588 ,3.640 ,3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931, 3.964, 3.997, 4.027, 4.057, 4.086, 4.113,
+           4.139 ,4.165 ,4.189, 4.213, 4.236, 4.259, 4.280, 4.301, 4.322, 4.341, 4.361, 4.379, 4.398, 4.415, 4.433,
+           4.450 ,4.466, 4.482, 4.498))
 
   if (N > 25 && N <= 50){
     d3 <- 0.80818 - 0.0051871 * N + 0.00005098 * N^2 - 0.00000019 * N^3
@@ -393,26 +393,27 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(LCL = LCLvector, UCL = UCLvector))
 }
 
-.controlChart <- function(dataset,  plotType                  = c("xBar", "R", "I", "MR", "MMR", "s", "cusum"),
-                                    stages                    = "",
-                                    xBarSdType                = c("r", "s"),
-                                    nSigmasControlLimits      = 3,
-                                    phase2                    = FALSE,
-                                    phase2Mu                  = "",
-                                    phase2Sd                  = "",
-                                    fixedSubgroupSize         = "",
-                                    warningLimits             = FALSE,
-                                    specificationLimits       = NA,
-                                    xAxisLabels               = "",
-                                    tableLabels               = "",
-                                    xAxisTitle                = gettext("Sample"),
-                                    movingRangeLength         = 2,
-                                    clLabelSize               = 4.5,
-                                    stagesSeparateCalculation = TRUE,
-                                    unbiasingConstantUsed     = TRUE,
-                                    cusumShiftSize            = 0.5,
-                                    cusumTarget               = 0
-                          ) {
+.controlChart <- function(dataset,  plotType        = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma"),
+                          stages                    = "",
+                          xBarSdType                = c("r", "s"),
+                          nSigmasControlLimits      = 3,
+                          phase2                    = FALSE,
+                          phase2Mu                  = "",
+                          phase2Sd                  = "",
+                          fixedSubgroupSize         = "",
+                          warningLimits             = FALSE,
+                          specificationLimits       = NA,
+                          xAxisLabels               = "",
+                          tableLabels               = "",
+                          xAxisTitle                = gettext("Sample"),
+                          movingRangeLength         = 2,
+                          clLabelSize               = 4.5,
+                          stagesSeparateCalculation = TRUE,
+                          unbiasingConstantUsed     = TRUE,
+                          cusumShiftSize            = 0.5,
+                          cusumTarget               = 0,
+                          ewmaLambda                = 0.3
+) {
   plotType <- match.arg(plotType)
 
   # This function returns all the needed data for the plot and table: data for the points, the limits, the labels and a list of point violations for the table
@@ -421,7 +422,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                  phase2Mu = phase2Mu, phase2Sd = phase2Sd, fixedSubgroupSize = fixedSubgroupSize,
                                                  warningLimits = warningLimits, movingRangeLength = movingRangeLength,
                                                  stagesSeparateCalculation = stagesSeparateCalculation, unbiasingConstantUsed = unbiasingConstantUsed,
-                                                 cusumShiftSize = cusumShiftSize, cusumTarget = cusumTarget)
+                                                 cusumShiftSize = cusumShiftSize, cusumTarget = cusumTarget, ewmaLambda = ewmaLambda)
 
 
   # This function turns the point violation list into a JASP table
@@ -439,21 +440,22 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(plotObject = plotObject, table = table, controlChartData = controlChartData))
 }
 
-.controlChart_calculations <- function(dataset, plotType                  = c("xBar", "R", "I", "MR", "MMR", "s", "cusum"),
-                                                stages                    = "",
-                                                xBarSdType                = c("r", "s"),
-                                                nSigmasControlLimits      = 3,
-                                                phase2                    = FALSE,
-                                                phase2Mu                  = "",
-                                                phase2Sd                  = "",
-                                                fixedSubgroupSize         = "",
-                                                warningLimits             = FALSE,
-                                                movingRangeLength         = 2,
-                                                stagesSeparateCalculation = TRUE,
-                                                unbiasingConstantUsed     = TRUE,
-                                                cusumShiftSize            = 0.5,
-                                                cusumTarget               = 0
-                                       ) {
+.controlChart_calculations <- function(dataset, plotType         = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma"),
+                                       stages                    = "",
+                                       xBarSdType                = c("r", "s"),
+                                       nSigmasControlLimits      = 3,
+                                       phase2                    = FALSE,
+                                       phase2Mu                  = "",
+                                       phase2Sd                  = "",
+                                       fixedSubgroupSize         = "",
+                                       warningLimits             = FALSE,
+                                       movingRangeLength         = 2,
+                                       stagesSeparateCalculation = TRUE,
+                                       unbiasingConstantUsed     = TRUE,
+                                       cusumShiftSize            = 0.5,
+                                       cusumTarget               = 0,
+                                       ewmaLambda                = 0.3
+) {
   plotType <- match.arg(plotType)
   if (identical(stages, "")) {
     nStages <- 1
@@ -517,9 +519,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       LCL <- limits[1]
       UCL <- limits[2]
       center <- qccObject$center
-    ###
-    ### Calculations for R chart
-    ###
+      ###
+      ### Calculations for R chart
+      ###
     } else if (plotType == "R") {
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       # manually calculate mean and sd as the package gives wrong results with NAs
@@ -542,9 +544,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       center <- mu
       UCL <- limits$UCL
       LCL <- limits$LCL
-    ###
-    ### Calculations for X-bar chart
-    ###
+      ###
+      ### Calculations for X-bar chart
+      ###
     } else if (plotType == "xBar") {
       xBarSdType <- match.arg(xBarSdType)
       if (phase2) {
@@ -574,9 +576,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       LWL1 <- WL1$LCL
       UWL2 <- WL2$UCL
       LWL2 <- WL2$LCL
-    ###
-    ### Calculations for S chart
-    ###
+      ###
+      ### Calculations for S chart
+      ###
     } else if (plotType == "s") {
       if(phase2) {
         sigma <- phase2Sd
@@ -598,13 +600,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       UCL <- limits$UCL
       LCL <- limits$LCL
-    ###
-    ### Calculations for cusum chart
-    ###
+      ###
+      ### Calculations for cusum chart
+      ###
     } else if (plotType == "cusum") {
       n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
       # sigma for subgroup size = 1 is calculated as the average moving range sd
-      if (all(n == 1)) {
+      if (phase2) {
+        sigma <- as.numeric(phase2Sd)
+      } else if (all(n == 1)) {
         k <- movingRangeLength
         dataCurrentStageVector <- unlist(dataCurrentStage)
         mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
@@ -614,7 +618,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
         d2 <- KnownControlStats.RS(k)$constants[1]
         sigma <- meanMovingRange/d2
-      # sigma for subgroup size > 1
+        # sigma for subgroup size > 1
       } else {
         sigma <- .sdXbar(dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
       }
@@ -624,6 +628,32 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       UCL <- nSigmasControlLimits*sigma/sqrt(n)
       LCL <- -UCL
       center <- 0 # not to be confused with the target, even if target != 0, the center line of the plot should be at 0
+      ###
+      ### Calculations for ewma chart
+      ###
+    } else if (plotType == "ewma") {
+      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+      if (phase2) {
+        sigma <- as.numeric(phase2Sd)
+      } else if (all(n == 1)) {
+        k <- movingRangeLength
+        dataCurrentStageVector <- unlist(dataCurrentStage)
+        mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
+        for (j in seq(1, k-1)) {
+          mrMatrix <- cbind(mrMatrix, matrix(dataCurrentStageVector[seq(k-j, length(dataCurrentStageVector)-j)]))
+        }
+        meanMovingRange <- mean(.rowRanges(mrMatrix)$ranges, na.rm = TRUE)
+        d2 <- KnownControlStats.RS(k)$constants[1]
+        sigma <- meanMovingRange/d2
+        # sigma for subgroup size > 1
+      } else {
+        sigma <- .sdXbar(dataCurrentStage, type = xBarSdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      }
+      plotStatistic <- .ewmaPlotStatistic(data = dataCurrentStage, lambda = ewmaLambda)
+      center <- mean(unlist(dataCurrentStage), na.rm = TRUE)
+      individualPointSigmas <- .ewmaPointSigmas(n = n, sigma = sigma, lambda = ewmaLambda)
+      UCL <- center + individualPointSigmas * nSigmasControlLimits
+      LCL <- center - individualPointSigmas * nSigmasControlLimits
     }
     if (i != 1) {
       if (plotType == "cusum") {
@@ -651,7 +681,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     if (length(na.omit(plotStatistic)) > 1) {
       if (plotType == "MR" || plotType == "MMR") {
         dotColor <- ifelse(c(rep(NA, k-1), NelsonLaws(qccObject)$red_points), 'red', 'blue')
-      } else if (plotType == "cusum") {
+      } else if (plotType == "cusum" || plotType == "ewma") {
         dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue")
         dotColor[is.na(dotColor)] <- "blue"
       } else {
@@ -717,7 +747,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     tableLabelsCurrentStage <- subgroups
     if (plotType == "MR" || plotType == "MMR")
       tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
-    if (plotType == "cusum") {
+    if (plotType == "cusum" || plotType == "ewma") {
       tableList[[i]] <- c() # pass empty vector for now, until Nelson Laws are updated and can handle other input than QCC objects
     } else {
       tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabelsCurrentStage)
@@ -734,11 +764,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
               "stageLabels"    = dfStageLabels,
               "violationTable" = tableList,
               "sd"             = sigma
-              ))
+  ))
 }
 
 .controlChart_table <- function(tableList,
-                                plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum"),
+                                plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma"),
                                 stages   = "",
                                 tableLabels = "") {
   plotType <- match.arg(plotType)
@@ -749,7 +779,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                         "MR" = "moving range",
                         "MMR" = "moving range",
                         "s" = "s",
-                        "cusum" = "cumulative sum"
+                        "cusum" = "cumulative sum",
+                        "ewma"  = "Exponentially weighted moving average"
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
   table$showSpecifiedColumnsOnly <- TRUE
@@ -809,7 +840,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart_plotting <- function(pointData, clData, stageLabels, clLabels,
-                                   plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum"),
+                                   plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma"),
                                    stages = "",
                                    phase2 = FALSE,
                                    warningLimits = FALSE,
@@ -842,7 +873,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                     "MR"    = "Moving range",
                     "MMR"   = "Moving range of subgroup mean",
                     "s"     = "Sample std. dev.",
-                    "cusum" = "Cumulative sum")
+                    "cusum" = "Cumulative sum",
+                    "ewma"  = "Exponentially weighted moving average")
   lineType <- if (phase2) "solid" else "dashed"
   # Create plot
   plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, group = stage)) +
@@ -864,7 +896,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       plotObject <- plotObject + ggplot2::geom_line(data = lslLineDf, mapping = ggplot2::aes(x = xPos, y = yPos),
                                                     inherit.aes = FALSE, linewidth = 1.5, col = "darkred", na.rm = TRUE) +
         ggplot2::geom_label(data = lslLabelDf, mapping = ggplot2::aes(x = xPos, y = yPos, label = label),
-                              inherit.aes = FALSE, size = clLabelSize, hjust = "inward", na.rm = TRUE)
+                            inherit.aes = FALSE, size = clLabelSize, hjust = "inward", na.rm = TRUE)
     }
     if (!is.na(targetYPos)) {
       targetLineDf <- data.frame(xPos = xRange, yPos = rep(targetYPos, each = 2))
@@ -978,7 +1010,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
   # Loop over remaining data
   for (i in seq(2, nrow(data))) {
-    rowMean_i <- if (length(data[i,]) == 1) data[i,] else rowMeans(data[i,], na.rm = T)
+    rowMean_i <- if (length(data[i,]) == 1) data[i,] else rowMeans(data[i,], na.rm = TRUE)
     if (cuType == "lower") {
       cuSumPoint <- cuSumPoints[i-1] + rowMean_i - (target - shiftSize*(sigma/sqrt(n[i])))
       cuSumPoints[i] <-  min(0, cuSumPoint)
@@ -988,4 +1020,30 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     }
   }
   return(cuSumPoints)
+}
+
+.ewmaPlotStatistic <- function(data, lambda) {
+  ewmaPoints <- c()
+  initialPoint <- mean(unlist(data), na.rm = TRUE)
+  rowMeanVector <- if (ncol(data) == 1) unlist(data) else rowMeans(data, na.rm = TRUE)
+  for (i in seq(1, nrow(data))) {
+    previousPoint <- if (i == 1) initialPoint else ewmaPoints[i - 1]
+    ewmaPoint <- lambda * rowMeanVector[i] + (1 - lambda) * previousPoint
+    ewmaPoints[i] <- ewmaPoint
+  }
+return(ewmaPoints)
+}
+
+.ewmaPointSigmas <- function(n = n, sigma = sigma, lambda = ewmaLambda) {
+  ewmaPointSigmas <- c()
+  initialPoint <- (lambda * sigma) / n[1]
+  ewmaPointSigmas[1] <- initialPoint
+  for (i in seq(2, length(n))) {
+    nVector <- n[seq(i-1, 1)]
+    exponentVector <- 2*seq(1, i-1)
+    exponentiallyWeightedVector <- ((1 - lambda)^(exponentVector)) / nVector
+    ewmaPointSigma <- sigma * lambda * sqrt(sum(1/n[i], exponentiallyWeightedVector))
+    ewmaPointSigmas[i] <- ewmaPointSigma
+  }
+  return(ewmaPointSigmas)
 }

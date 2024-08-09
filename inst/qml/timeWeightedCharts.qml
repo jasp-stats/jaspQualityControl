@@ -166,7 +166,7 @@ Form
 			DoubleField
 			{
 				name:							"cumulativeSumChartNumberSd"
-				label:							qsTr("Number of std. dev. for limits")
+				label:							qsTr("Number of std. dev. for control limits")
 				defaultValue:					4
 			}
 
@@ -226,9 +226,9 @@ Form
 
 				IntegerField
 				{
-					name: 									"averageMovingRangeLength"
+					name: 									"cumulativeSumChartAverageMovingRangeLength"
 					label:									qsTr("Moving range length")
-					visible:								cumulativeSumChartSdMethod.currentValue == "averageMovingRange"
+					visible:								exponentiallyWeightedMovingAverageChartSdSource.currentValue == "data" & cumulativeSumChartSdMethod.currentValue == "averageMovingRange"
 					min: 									2
 					defaultValue:							2
 				}
@@ -244,7 +244,7 @@ Form
 			DoubleField
 			{
 				name:							"exponentiallyWeightedMovingAverageChartSigmaControlLimits"
-				label:							qsTr("Number of sigmas for control limits")
+				label:							qsTr("Number of std. dev. for control limits")
 				defaultValue:					3
 			}
 
@@ -253,12 +253,6 @@ Form
 				name:							"exponentiallyWeightedMovingAverageChartLambda"
 				label:							qsTr("Lambda (smoothing parameter)")
 				defaultValue:					0.3
-			}
-
-			DoubleField
-			{
-				name:							"exponentiallyWeightedMovingAverageChartCenter"
-				label:							qsTr("Target of the mean")
 			}
 
 			Group 
@@ -274,6 +268,23 @@ Form
 						{ label: qsTr("Historical"), value: "historical"}
 					]
 				}
+				
+				DropDown
+				{
+					name:									"exponentiallyWeightedMovingAverageChartSdMethod"
+					visible:								exponentiallyWeightedMovingAverageChartSdSource.currentValue == "data"
+					label:									qsTr("Std. dev. estimation method")
+					id: 									exponentiallyWeightedMovingAverageChartSdMethod
+					values: subgroupSizeType.value == "individual" ?
+					[
+						{ label: qsTr("X-mR"), value: "averageMovingRange"}
+					] :
+					[
+						{ label: qsTr("S-bar"), value: "s"},
+						{ label: qsTr("R-bar"), value: "r"}
+					]
+					indexDefaultValue: subgroupSizeType.value == "individual" ? 0 : 1
+				}
 
 				DoubleField
 				{
@@ -283,19 +294,17 @@ Form
 					defaultValue:					3
 					fieldWidth: 					50
 				}
-
-				DropDown
+				
+				IntegerField
 				{
-					name:									"exponentiallyWeightedMovingAverageChartSdMethod"
-					visible:								exponentiallyWeightedMovingAverageChartSdSource.currentValue == "data"
-					label:									qsTr("Std. dev. estimation method")
-					id: 									exponentiallyWeightedMovingAverageChartSdMethod
-					indexDefaultValue:						0
-					values: [
-						{ label: qsTr("R-bar"), value: "r"},
-						{ label: qsTr("S-bar"), value: "s"}
-					]
+					name: 							"exponentiallyWeightedMovingAverageChartMovingRangeLength"
+					label:							qsTr("Moving range length")
+					visible:						exponentiallyWeightedMovingAverageChartSdSource.currentValue == "data" & exponentiallyWeightedMovingAverageChartSdMethod.currentValue == "averageMovingRange"
+					min: 							2
+					defaultValue:					2
 				}
+
+
 			}
 		}
 	}
