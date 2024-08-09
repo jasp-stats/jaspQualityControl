@@ -456,7 +456,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     if (singleOperator || interactionSignificant){
 
       #r & R varcomps
-      if(singleOperator){
+      if (singleOperator) {
         varCompList <- .gaugeCrossedVarCompsSingleOP(data, operators, parts, measurements, msPart, msRepWithInteraction)
         varCompRepeat <- varCompList$repeatability
         varCompPart <- varCompList$part
@@ -464,7 +464,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         varCompTotalVar <- varCompList$totalVar
         varCompVector <- c(varCompTotalGauge, varCompRepeat, varCompPart, varCompTotalVar)
         sources <- gettext(c("Total gauge r&R", "Repeatability", "Part-to-part", "Total variation"))
-      }else {
+      } else {
         varCompList <- .gaugeCrossedVarComps(data, operators, parts, measurements, msPart, msOperator, msRepWithInteraction, msInteraction)
         varCompRepeat <- varCompList$repeatability
         varCompOperator <- varCompList$operator
@@ -989,11 +989,14 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     interaction <- (msInteraction - msRep) / nReplicates
     part <- (msPart - msInteraction) / (nOperators * nReplicates)
     reprod <- operator + interaction
-  }else{
+  } else {
     operator <- (msOperator - msRep) / (nParts * nReplicates)
     part <- (msPart - msRep) / (nOperators * nReplicates)
     reprod <- operator
   }
+  operator <- max(0, operator)
+  part <- max(0, part)
+  reprod <- max(0, reprod)
   totalGauge <- repeatability + reprod
   totalVar <- totalGauge + part
   varcompList <- list(repeatability = repeatability,
