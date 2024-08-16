@@ -38,12 +38,100 @@ rareEventCharts <- function(jaspResults, dataset, options) {
              exitAnalysisIfErrors = TRUE)
 
 
-  # If variable is data/time transform into same format
+  #
+  #  ### TESTING #####
+  #  # date and time
+  #  timepoints <- c("01.04.2024, 9:11", "04.04.2024, 11:11", "09.04.2024, 3:11", "15.04.2024, 18:11", "30.04.2024, 1:11")
+  #  dataset <- list()
+  #  dataset[["variable"]] <- timepoints
+  #  options <- list()
+  #  options[["dataType"]] <- "dataTypeDates"
+  #  options[["dataTypeDatesStructure"]] <- "dateTime"
+  #  options[["dataTypeDatesFormatDate"]] <- "dmy"
+  #  options[["dataTypeDatesFormatTime"]] <- "HM"
+  #  # time and date
+  #  timepoints <- c("9:11 01.04.2024", "11:11 04.04.2024", "3:11 09.04.2024", " 18:11: 15.04.2024", " 1:11 30.04.2024")
+  #  dataset <- list()
+  #  dataset[["variable"]] <- timepoints
+  #  options <- list()
+  #  options[["dataType"]] <- "dataTypeDates"
+  #  options[["dataTypeDatesStructure"]] <- "timeDate"
+  #  options[["dataTypeDatesFormatDate"]] <- "dmy"
+  #  options[["dataTypeDatesFormatTime"]] <- "HM"
+  #  # date only
+  #  timepoints <- c("01.04.2024", "04.04.2024", "09.04.2024", "15.04.2024", " 30.04.2024")
+  #  dataset <- list()
+  #  dataset[["variable"]] <- timepoints
+  #  options <- list()
+  #  options[["dataType"]] <- "dataTypeDates"
+  #  options[["dataTypeDatesStructure"]] <- "dateOnly"
+  #  options[["dataTypeDatesFormatDate"]] <- "dmy"
+  #  options[["dataTypeDatesFormatTime"]] <- "HM"
+  #  # time only
+  #  timepoints <- c("1:32", "3:24", "5:17", "9:22", "12:21")
+  #  dataset <- list()
+  #  dataset[["variable"]] <- timepoints
+  #  options <- list()
+  #  options[["dataType"]] <- "dataTypeDates"
+  #  options[["dataTypeDatesStructure"]] <- "timeOnly"
+  #  options[["dataTypeDatesFormatDate"]] <- "dmy"
+  #  options[["dataTypeDatesFormatTime"]] <- "HM"
+  # ###########################
+  if (ready) {
+    # If variable is date/time transform into day, hour and minute intervals
+    if (options[["dataType"]] == "dataTypeDates") {
+      timepoints <- dataset[[variable]]
+      timeStructure <- options[["dataTypeDatesStructure"]]
+      timeFormat <- switch(timeStructure,
+                           "dateTime" = paste(options[["dataTypeDatesFormatDate"]], options[["dataTypeDatesFormatTime"]]),
+                           "timeDate" = paste(options[["dataTypeDatesFormatTime"]], options[["dataTypeDatesFormatDate"]]),
+                           "dateOnly" = options[["dataTypeDatesFormatDate"]],
+                           "timeOnly" = options[["dataTypeDatesFormatTime"]])
+      print("debug2")
+      print(timepoints)
+      print(timeFormat)
+      timepoints <- lubridate::parse_date_time(timepoints, orders = timeFormat) # returns all data in DMY HMS format
+      print("debug1")
+      print(timepoints)
+      print(seq(1, length(timepoints) - 1))
+      timepointsLag1 <- c(NA, timepoints[seq(1, length(timepoints) - 1)]) # because of the NA, everything is converted to seconds
+      intervalsMinutes <- as.numeric(timepoints - timepointsLag1)/60
+      intervalsHours <- intervalsMinutes/60
+      intervalsDays <- intervalsHours/24
+    } else if (options[["dataType"]] ==  "dataTypeInterval" && options[["dataTypeIntervalType"]] == "dataTypeIntervalTypeTime") {
+      timepoints <- dataset[[variable]]
+      timeFormat <- options[["dataTypeIntervalTimeFormat"]]
+      timepoints <- lubridate::parse_date_time(timepoints, orders = timeFormat) # returns all data in HMS format
+      intervalsMinutes <- as.numeric(timepoints - lubridate::as_datetime("0000-01-01 UTC")) # transform to minutes
+      intervalsHours <- intervalsMinutes/60
+    }
 
-
-  # Transform variable to intervals between events
-
-
+    # Get the interval type, depending on the input type and, if applicable, the calculated intervals
+    if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalTypeOpportunities"]]) {
+      intervals <- dataset[[variable]]
+      intervalType <- "opportunities"
+    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalTypeHours"]]) {
+      intervals <- dataset[[variable]]
+      intervalType <- "hours"
+    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalTypeDays"]]) {
+      intervals <- dataset[[variable]]
+      intervalType <- "days"
+    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalTypeTime"]]) {
+      intervals <- if(all(intervalsHours < 1, na.rm = TRUE) ) intervalsMinutes else intervalsHours
+      intervalType <- if(all(intervalsHours < 1, na.rm = TRUE)) "minutes" else "hours"
+    } else if (options[["dataType"]] == "dataTypeDates") {
+      if (all(intervalsDays < 1, na.rm = TRUE) && all(intervalsHours < 1, na.rm = TRUE)) {
+        intervals <- intervalsMinutes
+        intervalType <- "minutes"
+      } else if (all(intervalsDays < 1, na.rm = TRUE)) {
+        intervals <- intervalsHours
+        intervalType <- "hours"
+      } else {
+        intervals <- intervalsDays
+        intervalType <- "days"
+      }
+    }
+  }
 
   # G chart
   if (options[["gChart"]] && is.null(jaspResults[["gChart"]])) {
@@ -57,36 +145,50 @@ rareEventCharts <- function(jaspResults, dataset, options) {
 }
 
 
-.gChart <- function(intervals, stages, intervalType, options, ready) {
+.gChart <- function(intervals,
+                    stages = NULL,
+                    intervalType = c("days", "hours", "minutes", "opportunities"),
+                    options, ready) {
   plot <-  createJaspPlot(title = gettext("G chart"), width = 1200, height = 500)
   plot$dependOn(c(""))
 
   if (!ready)
     return(plot)
 
-  plotObject <- .rareEventPlottingFunction()
+  plotObject <- .rareEventPlottingFunction(intervals = intervals,
+                                           stages = stages,
+                                           intervalType = intervalType,
+                                           chartType = "g")
   plot$plotObject <- plotObject
 
   return(plot)
-
 }
 
-.tChart <- function(intervals, stages, intervalType, options, ready) {
+.tChart <- function(intervals,
+                    stages = NULL,
+                    intervalType = c("days", "hours", "minutes", "opportunities"),
+                    options, ready) {
   plot <-  createJaspPlot(title = gettext("T chart"), width = 1200, height = 500)
   plot$dependOn(c(""))
 
-   if (!ready)
+  if (!ready)
     return(plot)
 
-  plotObject <- .rareEventPlottingFunction()
+  plotObject <- .rareEventPlottingFunction(intervals = intervals,
+                                           stages = stages,
+                                           intervalType = intervalType,
+                                           chartType = "t",
+                                           tChartDistribution = options[["tChartDistribution"]])
   plot$plotObject <- plotObject
 
   return(plot)
 }
 
 .rareEventPlottingFunction <- function(intervals,
+                                       stages = NULL,
                                        intervalType = c("days", "hours", "minutes", "opportunities"),
                                        chartType = c("g", "t"),
                                        tChartDistribution = c("weibull", "exponential")) {
 
 }
+

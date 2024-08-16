@@ -46,12 +46,53 @@ Form
 			label: 							qsTr("Date/time")
 			checked:		 				true
 
-			TextField
+			DropDown
 			{
-				name:						"dataTypeDatesFormat"
-				label: 						qsTr("Format")
-				defaultValue:				"dd/mm/yy hh:mm"
-				fieldWidth:					100
+				name: 					"dataTypeDatesStructure"
+				id: 					dataTypeDatesStructure
+				label: 					qsTr("Structure")
+				values: 
+				[
+					{ label: qsTr("Date + Time"),						value: "dateTime"},
+					{ label: qsTr("Time + Date"),						value: "timeDate"},
+					{ label: qsTr("Date only"),							value: "dateOnly"},
+					{ label: qsTr("Time only"),							value: "timeOnly"}				
+				]
+				indexDefaultValue: 0
+			}
+
+			DropDown
+			{
+				name: 					"dataTypeDatesFormatDate"
+				id: 					dataTypeDatesFormatDate
+				label: 					qsTr("Date format")
+				visible:				dataTypeDatesStructure.value != "timeOnly"
+				values: 
+				[
+					{ label: qsTr("DMY"),							value: "dmy"},
+					{ label: qsTr("MDY"),							value: "mdy"},
+					{ label: qsTr("YMD"),							value: "ymd"},
+					{ label: qsTr("DM"),							value: "dm"},
+					{ label: qsTr("MD"),							value: "md"}
+				]
+				indexDefaultValue: 0
+			}
+
+			DropDown
+			{
+				name: 					"dataTypeDatesFormatTime"
+				id: 					dataTypeDatesFormatTime
+				label: 					qsTr("Time format")
+				visible:				dataTypeDatesStructure.value != "dateOnly"
+				values: 
+				[
+					{ label: qsTr("H"),								value: "H"},
+					{ label: qsTr("HM"),							value: "HM"},
+					{ label: qsTr("HMS"),							value: "HMS"},
+					{ label: qsTr("Ip"),							value: "Ip"},
+					{ label: qsTr("IMp"),							value: "IMp"}				
+				]
+				indexDefaultValue: 1
 			}
 		}
 
@@ -76,13 +117,21 @@ Form
 				indexDefaultValue: 0
 			}
 
-			TextField
+			DropDown
 			{
-				name:						"dataTypeIntervalTimeFormat"
-				label:						qsTr("Format")
-				defaultValue:				"hh:mm"
-				visible:					dataTypeIntervalType.value == "dataTypeIntervalTypeTime"
-				fieldWidth:					50
+				name: 					"dataTypeIntervalTimeFormat"
+				id: 					dataTypeIntervalTimeFormat
+				label: 					qsTr("Time format")
+				visible:				dataTypeIntervalType.value == "dataTypeIntervalTypeTime"
+				values: 
+				[
+					{ label: qsTr("H"),								value: "H"},
+					{ label: qsTr("HM"),							value: "HM"},
+					{ label: qsTr("HMS"),							value: "HMS"},
+					{ label: qsTr("Ip"),							value: "Ip"},
+					{ label: qsTr("IMp"),							value: "IMp"}				
+				]
+				indexDefaultValue: 1
 			}
 		}
 
