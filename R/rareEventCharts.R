@@ -77,6 +77,18 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   #  options[["dataTypeDatesFormatDate"]] <- "dmy"
   #  options[["dataTypeDatesFormatTime"]] <- "HM"
   # ###########################
+
+#
+#   # reproduce example
+#   dataset <- read.csv("c:/Users/Jonee/Desktop/Temporary Files/specialControlCharts/gchart.csv")
+#    options <- list()
+#    variable <- "Date.of.infection"
+#    options[["dataType"]] <- "dataTypeDates"
+#    options[["dataTypeDatesStructure"]] <- "dateOnly"
+#    options[["dataTypeDatesFormatDate"]] <- "md"
+#
+
+
   if (ready) {
     # If variable is date/time transform into day, hour and minute intervals
     if (options[["dataType"]] == "dataTypeDates") {
@@ -87,13 +99,6 @@ rareEventCharts <- function(jaspResults, dataset, options) {
                            "timeDate" = paste(options[["dataTypeDatesFormatTime"]], options[["dataTypeDatesFormatDate"]]),
                            "dateOnly" = options[["dataTypeDatesFormatDate"]],
                            "timeOnly" = options[["dataTypeDatesFormatTime"]])
-      print("debug2")
-      print(timepoints)
-      print(timeFormat)
-      timepoints <- lubridate::parse_date_time(timepoints, orders = timeFormat) # returns all data in DMY HMS format
-      print("debug1")
-      print(timepoints)
-      print(seq(1, length(timepoints) - 1))
       timepointsLag1 <- c(NA, timepoints[seq(1, length(timepoints) - 1)]) # because of the NA, everything is converted to seconds
       intervalsMinutes <- as.numeric(timepoints - timepointsLag1)/60
       intervalsHours <- intervalsMinutes/60
@@ -133,19 +138,28 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     }
   }
 
+  if (!identical(stages, "")) {
+    dataset <- data.frame(x1 = intervals, x2 = dataset[[stages]])
+    colnames(dataset) <- c(variable, stages)
+  } else {
+    dataset <- data.frame(x1 = intervals)
+    colnames(dataset) <- variable
+  }
+
   # G chart
   if (options[["gChart"]] && is.null(jaspResults[["gChart"]])) {
-    jaspResults[["gChart"]] <- .gChart(intervals, stages, intervalType, options, ready)
+    jaspResults[["gChart"]] <- .gChart(dataset, variable, stages, intervalType, options, ready)
   }
 
   # T chart
   if (options[["tChart"]] && is.null(jaspResults[["tChart"]])) {
-    jaspResults[["tChart"]] <- .tChart(intervals, stages, intervalType, options, ready)
+    jaspResults[["tChart"]] <- .tChart(dataset, variable, stages, intervalType, options, ready)
   }
 }
 
 
-.gChart <- function(intervals,
+.gChart <- function(dataset,
+                    variable,
                     stages = NULL,
                     intervalType = c("days", "hours", "minutes", "opportunities"),
                     options, ready) {
@@ -155,16 +169,16 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   if (!ready)
     return(plot)
 
-  plotObject <- .rareEventPlottingFunction(intervals = intervals,
-                                           stages = stages,
-                                           intervalType = intervalType,
-                                           chartType = "g")
+  columnsToPass <- c(variable, stages)
+  columnsToPass <- columnsToPass[columnsToPass != ""]
+  plotObject <- .controlChart(dataset[columnsToPass], plotType = "g", stages = stages, gAndtUnit = intervalType)$plotObject
   plot$plotObject <- plotObject
 
   return(plot)
 }
 
-.tChart <- function(intervals,
+.tChart <- function(dataset,
+                    variable,
                     stages = NULL,
                     intervalType = c("days", "hours", "minutes", "opportunities"),
                     options, ready) {
@@ -173,22 +187,23 @@ rareEventCharts <- function(jaspResults, dataset, options) {
 
   if (!ready)
     return(plot)
-
-  plotObject <- .rareEventPlottingFunction(intervals = intervals,
-                                           stages = stages,
-                                           intervalType = intervalType,
-                                           chartType = "t",
-                                           tChartDistribution = options[["tChartDistribution"]])
+#
+#   plotObject <- .rareEventPlottingFunction(intervals = intervals,
+#                                            stages = stages,
+#                                            intervalType = intervalType,
+#                                            chartType = "t",
+#                                            tChartDistribution = options[["tChartDistribution"]])
   plot$plotObject <- plotObject
 
   return(plot)
 }
 
-.rareEventPlottingFunction <- function(intervals,
-                                       stages = NULL,
-                                       intervalType = c("days", "hours", "minutes", "opportunities"),
-                                       chartType = c("g", "t"),
-                                       tChartDistribution = c("weibull", "exponential")) {
-
-}
+# .rareEventPlottingFunction <- function(intervals,
+#                                        stages = NULL,
+#                                        intervalType = c("days", "hours", "minutes", "opportunities"),
+#                                        chartType = c("g", "t"),
+#                                        tChartDistribution = c("weibull", "exponential")) {
+#
+#
+# }
 

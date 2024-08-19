@@ -393,7 +393,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(LCL = LCLvector, UCL = UCLvector))
 }
 
-.controlChart <- function(dataset,  plotType        = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma"),
+.controlChart <- function(dataset,  plotType        = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
                           stages                    = "",
                           xBarSdType                = c("r", "s"),
                           nSigmasControlLimits      = 3,
@@ -412,7 +412,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                           unbiasingConstantUsed     = TRUE,
                           cusumShiftSize            = 0.5,
                           cusumTarget               = 0,
-                          ewmaLambda                = 0.3
+                          ewmaLambda                = 0.3,
+                          gAndtUnit                 = c("days", "hours", "minutes", "opportunities"),
+                          tChartDistribution        = c("weibull", "exponential")
 ) {
   plotType <- match.arg(plotType)
 
@@ -422,7 +424,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                  phase2Mu = phase2Mu, phase2Sd = phase2Sd, fixedSubgroupSize = fixedSubgroupSize,
                                                  warningLimits = warningLimits, movingRangeLength = movingRangeLength,
                                                  stagesSeparateCalculation = stagesSeparateCalculation, unbiasingConstantUsed = unbiasingConstantUsed,
-                                                 cusumShiftSize = cusumShiftSize, cusumTarget = cusumTarget, ewmaLambda = ewmaLambda)
+                                                 cusumShiftSize = cusumShiftSize, cusumTarget = cusumTarget, ewmaLambda = ewmaLambda,
+                                                 tChartDistribution = tChartDistribution)
 
 
   # This function turns the point violation list into a JASP table
@@ -434,13 +437,13 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                        stageLabels = controlChartData$stageLabels, clLabels = controlChartData$clLabels,
                                        plotType = plotType, stages = stages, phase2 = phase2, warningLimits = warningLimits,
                                        xAxisLabels = xAxisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
-                                       specificationLimits = specificationLimits)
+                                       specificationLimits = specificationLimits, gAndtUnit = gAndtUnit)
 
 
   return(list(plotObject = plotObject, table = table, controlChartData = controlChartData))
 }
 
-.controlChart_calculations <- function(dataset, plotType         = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma"),
+.controlChart_calculations <- function(dataset, plotType         = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
                                        stages                    = "",
                                        xBarSdType                = c("r", "s"),
                                        nSigmasControlLimits      = 3,
@@ -454,7 +457,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                        unbiasingConstantUsed     = TRUE,
                                        cusumShiftSize            = 0.5,
                                        cusumTarget               = 0,
-                                       ewmaLambda                = 0.3
+                                       ewmaLambda                = 0.3,
+                                       tChartDistribution        = c("weibull", "exponential")
 ) {
   plotType <- match.arg(plotType)
   if (identical(stages, "")) {
@@ -580,7 +584,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       ### Calculations for S chart
       ###
     } else if (plotType == "s") {
-      if(phase2) {
+      if (phase2) {
         sigma <- phase2Sd
       } else if (stagesSeparateCalculation) {
         sigma <- .sdXbar(df = dataCurrentStage, type = "s", unbiasingConstantUsed = unbiasingConstantUsed)
@@ -654,6 +658,23 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       individualPointSigmas <- .ewmaPointSigmas(n = n, sigma = sigma, lambda = ewmaLambda)
       UCL <- center + individualPointSigmas * nSigmasControlLimits
       LCL <- center - individualPointSigmas * nSigmasControlLimits
+    ###
+    ### Calculations for g chart
+    ###
+    } else if (plotType == "g") {
+      plotStatistic <- unname(unlist(dataCurrentStage))
+      gChartStatistics <- .gChartStatistics(intervals = plotStatistic)
+      center <- gChartStatistics$CL
+      UCL <- gChartStatistics$UCL
+      LCL <- gChartStatistics$LCL
+      p <- gChartStatistics$p
+    ###
+    ### Calculations for t chart
+    ###
+    } else if (plotType == "t") {
+
+
+
     }
     if (i != 1) {
       if (plotType == "cusum") {
@@ -681,7 +702,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     if (length(na.omit(plotStatistic)) > 1) {
       if (plotType == "MR" || plotType == "MMR") {
         dotColor <- ifelse(c(rep(NA, k-1), NelsonLaws(qccObject)$red_points), 'red', 'blue')
-      } else if (plotType == "cusum" || plotType == "ewma") {
+      } else if (plotType == "cusum" || plotType == "ewma" || plotType == "g" || plotType == "t") {
         dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue")
         dotColor[is.na(dotColor)] <- "blue"
       } else {
@@ -747,7 +768,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     tableLabelsCurrentStage <- subgroups
     if (plotType == "MR" || plotType == "MMR")
       tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
-    if (plotType == "cusum" || plotType == "ewma") {
+    if (plotType == "cusum" || plotType == "ewma" || plotType == "g" || plotType == "t") {
       tableList[[i]] <- c() # pass empty vector for now, until Nelson Laws are updated and can handle other input than QCC objects
     } else {
       tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabelsCurrentStage)
@@ -768,7 +789,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart_table <- function(tableList,
-                                plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma"),
+                                plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
                                 stages   = "",
                                 tableLabels = "") {
   plotType <- match.arg(plotType)
@@ -780,7 +801,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                         "MMR" = "moving range",
                         "s" = "s",
                         "cusum" = "cumulative sum",
-                        "ewma"  = "Exponentially weighted moving average"
+                        "ewma"  = "exponentially weighted moving average",
+                        "g"     = "g",
+                        "t"     = "t"
   )
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
   table$showSpecifiedColumnsOnly <- TRUE
@@ -840,14 +863,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart_plotting <- function(pointData, clData, stageLabels, clLabels,
-                                   plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma"),
-                                   stages = "",
-                                   phase2 = FALSE,
-                                   warningLimits = FALSE,
+                                   plotType            = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+                                   stages              = "",
+                                   phase2              = FALSE,
+                                   warningLimits       = FALSE,
                                    specificationLimits = NA,
-                                   xAxisLabels = "",
-                                   xAxisTitle = "",
-                                   clLabelSize = 4.5) {
+                                   xAxisLabels         = "",
+                                   xAxisTitle          = "",
+                                   clLabelSize         = 4.5,
+                                   gAndtUnit           = c("days", "hours", "minutes", "opportunities")) {
   plotType <- match.arg(plotType)
   yBreakDeterminants <- c(pointData$plotStatistic, clData$LCL, clData$UCL, clData$center)
   # if all statistics are 0, pretty will select c(-1, 0). But c(0, 1) is better
@@ -866,15 +890,20 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     xLabels <- xBreaks
   }
 
-  yTitle <- switch (plotType,
-                    "xBar"  = "Sample average",
-                    "R"     = "Sample range",
-                    "I"     = "Individual value",
-                    "MR"    = "Moving range",
-                    "MMR"   = "Moving range of subgroup mean",
-                    "s"     = "Sample std. dev.",
-                    "cusum" = "Cumulative sum",
-                    "ewma"  = "Exponentially weighted moving average")
+  if (plotType == "g" || plotType == "t") {
+    unitString <- paste0(toupper(substr(gAndtUnit, 1, 1)), substr(gAndtUnit, 2, nchar(gAndtUnit)))
+    yTitle <- gettextf("%1$s between events", unitString)
+  } else {
+    yTitle <- switch (plotType,
+                      "xBar"  = "Sample average",
+                      "R"     = "Sample range",
+                      "I"     = "Individual value",
+                      "MR"    = "Moving range",
+                      "MMR"   = "Moving range of subgroup mean",
+                      "s"     = "Sample std. dev.",
+                      "cusum" = "Cumulative sum",
+                      "ewma"  = "Exponentially weighted moving average")
+  }
   lineType <- if (phase2) "solid" else "dashed"
   # Create plot
   plotObject <- ggplot2::ggplot(clData, ggplot2::aes(x = subgroup, group = stage)) +
@@ -945,7 +974,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     for (stage_i in unique(pointData[["stage"]])) {
       pointDataSubset <- subset.data.frame(pointData, pointData$stage == stage_i)
       if (length(pointDataSubset$subgroup) %% 2 != 0)
-        stop("Data provided to cusum plot function is not symmetric, i.e. unequal amount of points above and below 0.")
+        stop("Data provided to cusum plot function is not symmetric, i.e., unequal amount of points above and below 0.")
       nSubgroupsStage <- length(pointDataSubset$subgroup)/2 # the data should always be symmetrical, hence we can divide by two
       firstHalf <- seq(1, nSubgroupsStage)
       secondHalf <- firstHalf + nSubgroupsStage
@@ -1046,4 +1075,44 @@ return(ewmaPoints)
     ewmaPointSigmas[i] <- ewmaPointSigma
   }
   return(ewmaPointSigmas)
+}
+
+.gChartStatistics <- function(intervals) {
+  intervalsMean <- mean(intervals, na.rm = TRUE)
+  n <- sum(!is.na(intervals))
+  p <- ((n - 1) / n) / (intervalsMean + 1)
+
+  # calculate CL
+  p2a <- pgeom(qgeom(0.5, prob = p) - 1, prob = p, lower.tail = T)      # p2a is the CDF at G2a
+  p2b <- pgeom(qgeom(0.5, prob = p), prob = p, lower.tail = T)  # p2b is the CDF at G2b
+  # Find G2a and G2b
+  G2a <- qgeom(p2a, prob = p) + 1  # Add 1 to get trials count
+  G2b <- G2a + 1                   # Since G2b = G2a + 1
+  # Perform linear interpolation to find G2
+  G2 <- G2a + (0.5 - p2a) / (p2b - p2a)
+  # Calculate CL = G2 - 1
+  CL <- G2 - 1
+
+  # calculate LCL
+  p1a <- pgeom(qgeom(0.99865, prob = p, lower.tail = F) - 1, prob = p, lower.tail = T)
+  p1b <- pgeom(qgeom(0.99865, prob = p, lower.tail = F), prob = p, lower.tail = T)
+  # Find G2a and G2b
+  G1a <- qgeom(p1a, prob = p) + 1
+  G1b <- G1a + 1
+  # Perform linear interpolation to find G1
+  G1 <- G1a + (0.00135  - p1a) / (p1b - p1a)
+  LCL <- G1 - 1
+  LCL <- max(0, LCL)
+
+  # calculate UCL
+  p3a <- pgeom(qgeom(0.00135, prob = p, lower.tail = F) - 1, prob = p, lower.tail = T)      # p2a is the CDF at G2a
+  p3b <- pgeom(qgeom(0.00135, prob = p, lower.tail = F), prob = p, lower.tail = T)  # p2b is the CDF at G2b
+  # Find G2a and G2b
+  G3a <- qgeom(p3a, prob = p) + 1  # Add 1 to get trials count
+  G3b <- G3a + 1                   # Since G2b = G2a + 1
+  # Perform linear interpolation to find G2
+  G3 <- G3a + (0.99865  - p3a) / (p3b - p3a)
+  UCL <- G3 - 1
+
+  return(list(p = p, CL = CL, UCL = UCL, LCL = LCL))
 }
