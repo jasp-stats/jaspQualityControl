@@ -75,7 +75,7 @@ Form
 					{ label: qsTr("DM"),							value: "dm"},
 					{ label: qsTr("MD"),							value: "md"}
 				]
-				indexDefaultValue: 0
+				indexDefaultValue: 3
 			}
 
 			DropDown
@@ -152,8 +152,8 @@ Form
 				label:					qsTr("Proportion")
 				values: 
 				[
-					{ label: qsTr("Estimated from data"),			value: "gChartProportionSourceData"},
-					{ label: qsTr("Historical"),					value: "gChartProportionSourceHistorical"}
+					{ label: qsTr("Estimated from data"),			value: "data"},
+					{ label: qsTr("Historical"),					value: "historical"}
 				]
 				indexDefaultValue: 0
 			}
@@ -165,7 +165,7 @@ Form
 				label:									qsTr("Proportion value")
 				min: 									0
 				max:									1
-				visible:								gChartProportionSource.value == "gChartProportionSourceHistorical"
+				visible:								gChartProportionSource.value == "historical"
 				defaultValue:							0.5
 			}
 		}
@@ -196,8 +196,8 @@ Form
 				label:					qsTr("Distribution parameters")
 				values: 
 				[
-					{ label: qsTr("Estimated from data"),			value: "tChartDistributionParameterSourceData"},
-					{ label: qsTr("Historical"),					value: "tChartDistributionParameterSourceHistorical"}
+					{ label: qsTr("Estimated from data"),			value: "data"},
+					{ label: qsTr("Historical"),					value: "historical"}
 				]
 				indexDefaultValue: 0
 			}
@@ -209,7 +209,7 @@ Form
 				label:									qsTr("Shape")
 				min: 									0
 				inclusive:								JASP.None
-				visible:								tChartDistributionParameterSource.value == "tChartDistributionParameterSourceHistorical" & tChartDistribution.value == "tChartDistributionWeibull"
+				visible:								tChartDistributionParameterSource.value == "historical" & tChartDistribution.value == "weibull"
 				defaultValue:							2
 			}
 
@@ -221,7 +221,7 @@ Form
 				label:									qsTr("Scale")
 				min: 									0
 				inclusive:								JASP.None
-				visible:								tChartDistributionParameterSource.value == "tChartDistributionParameterSourceHistorical"
+				visible:								tChartDistributionParameterSource.value == "historical"
 				defaultValue:							2
 			}
 		}

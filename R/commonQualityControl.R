@@ -414,7 +414,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                           cusumTarget               = 0,
                           ewmaLambda                = 0.3,
                           gAndtUnit                 = c("days", "hours", "minutes", "opportunities"),
-                          tChartDistribution        = c("weibull", "exponential")
+                          phase2gChartProportion    = 0.5,
+                          tChartDistribution        = c("weibull", "exponential"),
+                          phase2tChartDistributionShape   = 1,
+                          phase2tChartDistributionScale   = 3
 ) {
   plotType <- match.arg(plotType)
 
@@ -425,7 +428,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                  warningLimits = warningLimits, movingRangeLength = movingRangeLength,
                                                  stagesSeparateCalculation = stagesSeparateCalculation, unbiasingConstantUsed = unbiasingConstantUsed,
                                                  cusumShiftSize = cusumShiftSize, cusumTarget = cusumTarget, ewmaLambda = ewmaLambda,
-                                                 tChartDistribution = tChartDistribution)
+                                                 tChartDistribution = tChartDistribution, phase2tChartDistributionShape = phase2tChartDistributionShape,
+                                                 phase2tChartDistributionScale = phase2tChartDistributionScale,
+                                                 phase2gChartProportion = phase2gChartProportion)
 
 
   # This function turns the point violation list into a JASP table
@@ -443,22 +448,25 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(plotObject = plotObject, table = table, controlChartData = controlChartData))
 }
 
-.controlChart_calculations <- function(dataset, plotType         = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
-                                       stages                    = "",
-                                       xBarSdType                = c("r", "s"),
-                                       nSigmasControlLimits      = 3,
-                                       phase2                    = FALSE,
-                                       phase2Mu                  = "",
-                                       phase2Sd                  = "",
-                                       fixedSubgroupSize         = "",
-                                       warningLimits             = FALSE,
-                                       movingRangeLength         = 2,
-                                       stagesSeparateCalculation = TRUE,
-                                       unbiasingConstantUsed     = TRUE,
-                                       cusumShiftSize            = 0.5,
-                                       cusumTarget               = 0,
-                                       ewmaLambda                = 0.3,
-                                       tChartDistribution        = c("weibull", "exponential")
+.controlChart_calculations <- function(dataset, plotType               = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+                                       stages                          = "",
+                                       xBarSdType                      = c("r", "s"),
+                                       nSigmasControlLimits            = 3,
+                                       phase2                          = FALSE,
+                                       phase2Mu                        = "",
+                                       phase2Sd                        = "",
+                                       fixedSubgroupSize               = "",
+                                       warningLimits                   = FALSE,
+                                       movingRangeLength               = 2,
+                                       stagesSeparateCalculation       = TRUE,
+                                       unbiasingConstantUsed           = TRUE,
+                                       cusumShiftSize                  = 0.5,
+                                       cusumTarget                     = 0,
+                                       ewmaLambda                      = 0.3,
+                                       phase2gChartProportion          = 0.5,
+                                       tChartDistribution              = c("weibull", "exponential"),
+                                       phase2tChartDistributionShape   = 1,
+                                       phase2tChartDistributionScale   = 3
 ) {
   plotType <- match.arg(plotType)
   if (identical(stages, "")) {
@@ -658,31 +666,34 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       individualPointSigmas <- .ewmaPointSigmas(n = n, sigma = sigma, lambda = ewmaLambda)
       UCL <- center + individualPointSigmas * nSigmasControlLimits
       LCL <- center - individualPointSigmas * nSigmasControlLimits
-    ###
-    ### Calculations for g chart
-    ###
+      ###
+      ### Calculations for g chart
+      ###
     } else if (plotType == "g") {
       plotStatistic <- unname(unlist(dataCurrentStage))
-      gChartStatistics <- .gChartStatistics(intervals = plotStatistic)
+      gChartStatistics <- .gChartStatistics(intervals = plotStatistic, phase2Proportion = if(phase2) phase2gChartProportion else "")
       center <- gChartStatistics$CL
       UCL <- gChartStatistics$UCL
       LCL <- gChartStatistics$LCL
       p <- gChartStatistics$p
-    ###
-    ### Calculations for t chart
-    ###
+      ###
+      ### Calculations for t chart
+      ###
     } else if (plotType == "t") {
       plotStatistic <- unname(unlist(dataCurrentStage))
-      if (tChartDistribution == "weibull") {
-        weibullPars <- fitdistrplus::fitdist(plotStatistic[!is.na(plotStatistic)], "weibull", method = "mle",
-                                             control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
-        shape <- unname(weibullPars[[1]][1])
-        scale <- unname(weibullPars[[1]][2])
-      } else if (tChartDistribution == "exponential") {
-        exponentialPars <- fitdistrplus::fitdist(plotStatistic[!is.na(plotStatistic)], "weibull", method = "mle", fix.arg = list("shape" = 1),
-                                             control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
-        shape <- 1
-        scale <- unname(exponentialPars[[1]][1])
+
+      if (any(plotStatistic == 0)) {
+        zeroCorrectionIndices <- which(plotStatistic == 0, arr.ind = TRUE)
+        plotStatistic[zeroCorrectionIndices] <- min(plotStatistic[plotStatistic > 0], na.rm = TRUE)/2
+      }
+
+      if (!phase2) {
+        distributionPars <- .distributionParameters(plotStatistic[!is.na(plotStatistic)], distribution = tChartDistribution)
+        shape <- distributionPars$beta
+        scale <- distributionPars$theta
+      } else {
+        shape <- if (tChartDistribution == "exponential") 1 else phase2tChartDistributionShape
+        scale <- phase2tChartDistributionScale
       }
       center <- qweibull(p = .5, shape = shape, scale = scale)
       UCL <- qweibull(p = pnorm(3), shape = shape, scale = scale)
@@ -1072,7 +1083,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     ewmaPoint <- lambda * rowMeanVector[i] + (1 - lambda) * previousPoint
     ewmaPoints[i] <- ewmaPoint
   }
-return(ewmaPoints)
+  return(ewmaPoints)
 }
 
 .ewmaPointSigmas <- function(n = n, sigma = sigma, lambda = ewmaLambda) {
@@ -1089,10 +1100,10 @@ return(ewmaPoints)
   return(ewmaPointSigmas)
 }
 
-.gChartStatistics <- function(intervals) {
+.gChartStatistics <- function(intervals, phase2Proportion = "") {
   intervalsMean <- mean(intervals, na.rm = TRUE)
   n <- sum(!is.na(intervals))
-  p <- ((n - 1) / n) / (intervalsMean + 1)
+  p <- if (identical(phase2Proportion, "")) ((n - 1) / n) / (intervalsMean + 1) else phase2Proportion
 
   # calculate CL
   p2a <- pgeom(qgeom(0.5, prob = p) - 1, prob = p, lower.tail = T)      # p2a is the CDF at G2a
@@ -1129,7 +1140,7 @@ return(ewmaPoints)
   return(list(p = p, CL = CL, UCL = UCL, LCL = LCL))
 }
 
-.distributionParameters <- function(data, distribution = c("lognormal", "weibull", "3ParameterLognormal", "3ParameterWeibull")){
+.distributionParameters <- function(data, distribution = c("lognormal", "weibull", "3ParameterLognormal", "3ParameterWeibull", "exponential")){
   if (distribution == "lognormal") {
     fit_Lnorm <- try(EnvStats::elnorm(data))
     if (jaspBase::isTryError(fit_Lnorm))
@@ -1158,6 +1169,13 @@ return(ewmaPoints)
     beta <- temp$estimate[1]
     theta <- temp$estimate[2]
     threshold <- temp$estimate[3]
+  } else if (distribution == "exponential") {
+    fit_Weibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle", fix.arg = list("shape" = 1),
+                                             control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps)))
+    if (jaspBase::isTryError(fit_Weibull))
+      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+    beta <- 1
+    theta <- fit_Weibull$estimate[[1]]
   }
   list <- list(beta = beta,
                theta = theta)

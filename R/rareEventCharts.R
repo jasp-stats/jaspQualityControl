@@ -78,15 +78,15 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   #  options[["dataTypeDatesFormatTime"]] <- "HM"
   # ###########################
 
-  #
-  #   # reproduce example g chart
-  #   dataset <- read.csv("c:/Users/Jonee/Desktop/Temporary Files/specialControlCharts/gchart.csv")
-  #    options <- list()
-  #    variable <- "Date.of.infection"
-  #    options[["dataType"]] <- "dataTypeDates"
-  #    options[["dataTypeDatesStructure"]] <- "dateOnly"
-  #    options[["dataTypeDatesFormatDate"]] <- "md"
-  #
+#
+#     # reproduce example g chart
+#     dataset <- read.csv("c:/Users/Jonee/Desktop/Temporary Files/specialControlCharts/gchart.csv")
+#      options <- list()
+#      variable <- "Date.of.infection"
+#      options[["dataType"]] <- "dataTypeDates"
+#      options[["dataTypeDatesStructure"]] <- "dateOnly"
+#      options[["dataTypeDatesFormatDate"]] <- "md"
+
 
 
     # # reproduce example t chart
@@ -193,7 +193,9 @@ rareEventCharts <- function(jaspResults, dataset, options) {
 
   columnsToPass <- c(variable, stages)
   columnsToPass <- columnsToPass[columnsToPass != ""]
-  plotObject <- .controlChart(dataset[columnsToPass], plotType = "g", stages = stages, gAndtUnit = intervalType)$plotObject
+  phase2 <- options[["gChartProportionSource"]] == "historical"
+  plotObject <- .controlChart(dataset[columnsToPass], plotType = "g", stages = stages, gAndtUnit = intervalType,
+                              phase2 = phase2, phase2gChartProportion = options[["gChartHistoricalProportion"]])$plotObject
   plot$plotObject <- plotObject
 
   return(plot)
@@ -212,8 +214,12 @@ rareEventCharts <- function(jaspResults, dataset, options) {
 
   columnsToPass <- c(variable, stages)
   columnsToPass <- columnsToPass[columnsToPass != ""]
+  phase2 <- options[["tChartDistributionParameterSource"]] == "historical"
   plotObject <- .controlChart(dataset[columnsToPass], plotType = "t", stages = stages, gAndtUnit = intervalType,
-                              tChartDistribution = options[["tChartDistribution"]])$plotObject
+                              tChartDistribution = options[["tChartDistribution"]],
+                              phase2tChartDistributionShape = options[["tChartHistoricalParametersWeibullShape"]],
+                              phase2tChartDistributionScale = options[["tChartHistoricalParametersScale"]],
+                              phase2 = phase2)$plotObject
   plot$plotObject <- plotObject
 
   return(plot)
