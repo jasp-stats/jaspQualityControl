@@ -20,7 +20,7 @@ Form
 			name:								"variable"
 			title:								qsTr("Variable")
 			id:									variable
-			allowedColumns:						["nominal"]
+			allowedColumns:						dataType.value == "dataTypeInterval" & dataTypeIntervalType.value != "time" ? ["scale"] : ["nominal"]
 			singleVariable:						true
 		}
 
@@ -109,10 +109,10 @@ Form
 				label: 					qsTr("Interval type")
 				values: 
 				[
-					{ label: qsTr("Opportunities"),								value: "dataTypeIntervalTypeOpportunities"},
-					{ label: qsTr("Time"),										value: "dataTypeIntervalTypeTime"},
-					{ label: qsTr("Hours (decimal)"),							value: "dataTypeIntervalTypeHours"},
-					{ label: qsTr("Days (decimal)"),							value: "dataTypeIntervalTypeDays"}				
+					{ label: qsTr("Opportunities"),								value: "opportunities"},
+					{ label: qsTr("Time"),										value: "time"},
+					{ label: qsTr("Hours (decimal)"),							value: "hours"},
+					{ label: qsTr("Days (decimal)"),							value: "days"}				
 				]
 				indexDefaultValue: 0
 			}
@@ -183,8 +183,8 @@ Form
 				label:					qsTr("Based on")
 				values: 
 				[
-					{ label: qsTr("Weibull distribution"),			value: "tChartDistributionWeibull"},
-					{ label: qsTr("Exponential distribution"),		value: "tChartDistributionExponential"}
+					{ label: qsTr("Weibull distribution"),			value: "weibull"},
+					{ label: qsTr("Exponential distribution"),		value: "exponential"}
 				]
 				indexDefaultValue: 0
 			}

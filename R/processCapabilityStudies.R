@@ -2379,40 +2379,5 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(plotList)
 }
 
-.distributionParameters <- function(data, distribution = c("lognormal", "weibull", "3ParameterLognormal", "3ParameterWeibull")){
-  if (distribution == "lognormal") {
-    fit_Lnorm <- try(EnvStats::elnorm(data))
-    if (jaspBase::isTryError(fit_Lnorm))
-      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- fit_Lnorm$parameters[1]
-    theta <- fit_Lnorm$parameters[2]
-  } else if (distribution == "weibull") {
-    fit_Weibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                             control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps)))
-    if (jaspBase::isTryError(fit_Weibull))
-      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- fit_Weibull$estimate[[1]]
-    theta <- fit_Weibull$estimate[[2]]
-  } else if(distribution == "3ParameterLognormal") {
-    temp <- try(EnvStats::elnorm3(data))
-    if (jaspBase::isTryError(temp))
-      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- temp$parameters[[1]]
-    theta <- temp$parameters[[2]]
-    threshold <- temp$parameters[[3]]
-  } else if(distribution == "3ParameterWeibull") {
-    temp <- try(MASS::fitdistr(data, function(x, shape, scale, thres)
-      dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0)))
-    if (jaspBase::isTryError(temp))
-      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- temp$estimate[1]
-    theta <- temp$estimate[2]
-    threshold <- temp$estimate[3]
-  }
-  list <- list(beta = beta,
-               theta = theta)
-  if(distribution == '3ParameterWeibull' | distribution == "3ParameterLognormal")
-    list['threshold'] <- threshold
-  return(list)
-}
+
 

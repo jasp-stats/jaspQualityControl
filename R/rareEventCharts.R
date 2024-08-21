@@ -78,15 +78,27 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   #  options[["dataTypeDatesFormatTime"]] <- "HM"
   # ###########################
 
-#
-#   # reproduce example
-#   dataset <- read.csv("c:/Users/Jonee/Desktop/Temporary Files/specialControlCharts/gchart.csv")
-#    options <- list()
-#    variable <- "Date.of.infection"
-#    options[["dataType"]] <- "dataTypeDates"
-#    options[["dataTypeDatesStructure"]] <- "dateOnly"
-#    options[["dataTypeDatesFormatDate"]] <- "md"
-#
+  #
+  #   # reproduce example g chart
+  #   dataset <- read.csv("c:/Users/Jonee/Desktop/Temporary Files/specialControlCharts/gchart.csv")
+  #    options <- list()
+  #    variable <- "Date.of.infection"
+  #    options[["dataType"]] <- "dataTypeDates"
+  #    options[["dataTypeDatesStructure"]] <- "dateOnly"
+  #    options[["dataTypeDatesFormatDate"]] <- "md"
+  #
+
+
+    # # reproduce example t chart
+    # dataset <- read.csv("c:/Users/Jonee/Desktop/Temporary Files/specialControlCharts/tchart.csv")
+    #  options <- list()
+    #  variable <- "Date.and.time.of.needlestick"
+    #  options[["dataType"]] <- "dataTypeDates"
+    #  options[["dataTypeDatesStructure"]] <- "dateTime"
+    #  options[["dataTypeDatesFormatDate"]] <- "md"
+    #  options[["dataTypeDatesFormatTime"]] <- "HM"
+
+
 
 
   if (ready) {
@@ -99,6 +111,7 @@ rareEventCharts <- function(jaspResults, dataset, options) {
                            "timeDate" = paste(options[["dataTypeDatesFormatTime"]], options[["dataTypeDatesFormatDate"]]),
                            "dateOnly" = options[["dataTypeDatesFormatDate"]],
                            "timeOnly" = options[["dataTypeDatesFormatTime"]])
+      timepoints <- lubridate::parse_date_time(timepoints, orders = timeFormat) # returns all data in HMS format
       timepointsLag1 <- c(NA, timepoints[seq(1, length(timepoints) - 1)]) # because of the NA, everything is converted to seconds
       intervalsMinutes <- as.numeric(timepoints - timepointsLag1)/60
       intervalsHours <- intervalsMinutes/60
@@ -111,17 +124,25 @@ rareEventCharts <- function(jaspResults, dataset, options) {
       intervalsHours <- intervalsMinutes/60
     }
 
+    # if intervals are all NA, throw error
+    if (all(is.na(timepoints))) {
+      errorPlot <-  createJaspPlot(title = gettext("Rare event charts"), width = 1200, height = 500)
+      errorPlot$setError(gettext("Date/time conversion returned no valid values. Did you select the correct date/time format?"))
+      jaspResults[["errorPlot"]] <- errorPlot
+      return()
+    }
+
     # Get the interval type, depending on the input type and, if applicable, the calculated intervals
-    if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalTypeOpportunities"]]) {
+    if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "opportunities") {
       intervals <- dataset[[variable]]
       intervalType <- "opportunities"
-    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalTypeHours"]]) {
+    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "hours") {
       intervals <- dataset[[variable]]
       intervalType <- "hours"
-    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalTypeDays"]]) {
+    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "days") {
       intervals <- dataset[[variable]]
       intervalType <- "days"
-    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalTypeTime"]]) {
+    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "time") {
       intervals <- if(all(intervalsHours < 1, na.rm = TRUE) ) intervalsMinutes else intervalsHours
       intervalType <- if(all(intervalsHours < 1, na.rm = TRUE)) "minutes" else "hours"
     } else if (options[["dataType"]] == "dataTypeDates") {
@@ -136,14 +157,15 @@ rareEventCharts <- function(jaspResults, dataset, options) {
         intervalType <- "days"
       }
     }
-  }
 
-  if (!identical(stages, "")) {
-    dataset <- data.frame(x1 = intervals, x2 = dataset[[stages]])
-    colnames(dataset) <- c(variable, stages)
-  } else {
-    dataset <- data.frame(x1 = intervals)
-    colnames(dataset) <- variable
+    if (length(stages) == 1) {
+      dataset <- data.frame(x1 = intervals, x2 = dataset[[stages]])
+      colnames(dataset) <- c(variable, stages)
+    } else {
+      dataset <- data.frame(x1 = intervals)
+      colnames(dataset) <- variable
+      stages <- ""
+    }
   }
 
   # G chart
@@ -187,23 +209,12 @@ rareEventCharts <- function(jaspResults, dataset, options) {
 
   if (!ready)
     return(plot)
-#
-#   plotObject <- .rareEventPlottingFunction(intervals = intervals,
-#                                            stages = stages,
-#                                            intervalType = intervalType,
-#                                            chartType = "t",
-#                                            tChartDistribution = options[["tChartDistribution"]])
+
+  columnsToPass <- c(variable, stages)
+  columnsToPass <- columnsToPass[columnsToPass != ""]
+  plotObject <- .controlChart(dataset[columnsToPass], plotType = "t", stages = stages, gAndtUnit = intervalType,
+                              tChartDistribution = options[["tChartDistribution"]])$plotObject
   plot$plotObject <- plotObject
 
   return(plot)
 }
-
-# .rareEventPlottingFunction <- function(intervals,
-#                                        stages = NULL,
-#                                        intervalType = c("days", "hours", "minutes", "opportunities"),
-#                                        chartType = c("g", "t"),
-#                                        tChartDistribution = c("weibull", "exponential")) {
-#
-#
-# }
-
