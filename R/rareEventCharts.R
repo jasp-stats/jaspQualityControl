@@ -132,12 +132,14 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     }
   }
 
-  if (!identical(stages, "")) {
-    dataset <- data.frame(x1 = intervals, x2 = dataset[[stages]])
-    colnames(dataset) <- c(variable, stages)
-  } else {
-    dataset <- data.frame(x1 = intervals)
-    colnames(dataset) <- variable
+    if (length(stages) == 1) {
+      dataset <- data.frame(x1 = intervals, x2 = dataset[[stages]])
+      colnames(dataset) <- c(variable, stages)
+    } else {
+      dataset <- data.frame(x1 = intervals)
+      colnames(dataset) <- variable
+      stages <- ""
+    }
   }
 
   # G chart
