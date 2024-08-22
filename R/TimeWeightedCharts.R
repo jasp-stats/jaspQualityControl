@@ -96,12 +96,12 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   }
 
   #Cusum chart
-  if (options[["cumulativeSumChart"]] && is.null(jaspResults[["CusumChart"]])) {
+  if (options[["cumulativeSumChart"]]) {
     cusumChart <- .Cusumchart(dataset = dataset, measurements = measurements, stages = stages,
                               axisLabels = axisLabels, options = options, ready = ready)
   }
   #EWMA chart
-  if (options[["exponentiallyWeightedMovingAverageChart"]] && is.null(jaspResults[["EWMAPlot"]])) {
+  if (options[["exponentiallyWeightedMovingAverageChart"]]) {
     ewmaPlot <- .EWMA(dataset = dataset, measurements = measurements, stages = stages,
                       axisLabels = axisLabels, options = options, ready = ready)
   }
@@ -111,7 +111,19 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   if (options[["report"]]) {
     reportPlot <- createJaspPlot(title = gettext("Time weighted charts report"), width = 1250, height = 1000)
     jaspResults[["report"]] <- reportPlot
-    jaspResults[["report"]]$dependOn(c(""))
+    jaspResults[["report"]]$dependOn(c("dataFormat", "measurementLongFormat", "subgroup", "stagesLongFormat", "measurementsWideFormat",
+                                       "axisLabels", "stagesWideFormat", "subgroupSizeType", "manualSubgroupSizeValue",
+                                       "groupingVariableMethod", "cumulativeSumChart", "cumulativeSumChartNumberSd",
+                                       "cumulativeSumChartShiftSize", "cumulativeSumChartTarget", "cumulativeSumChartSdSource",
+                                       "cumulativeSumChartSdMethod", "cumulativeSumChartSdValue", "cumulativeSumChartAverageMovingRangeLength",
+                                       "exponentiallyWeightedMovingAverageChart", "exponentiallyWeightedMovingAverageChartSigmaControlLimits",
+                                       "exponentiallyWeightedMovingAverageChartLambda", "exponentiallyWeightedMovingAverageChartSdSource",
+                                       "exponentiallyWeightedMovingAverageChartSdMethod", "exponentiallyWeightedMovingAverageChartSdValue",
+                                       "exponentiallyWeightedMovingAverageChartMovingRangeLength", "report", "reportMetaData",
+                                       "reportTitle", "reportTitleText", "reportChartName", "reportChartNameText", "reportSubtitle",
+                                       "reportSubtitleText", "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
+                                       "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate", "reportDateText",
+                                       "reportPerformedBy", "reportPerformedByText", "reportPrintDate", "reportPrintDateText"))
 
     # Plot meta data
     if (options[["reportTitle"]] ) {
@@ -157,7 +169,12 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
 .Cusumchart <- function(dataset, measurements, stages, axisLabels, options, ready) {
 
   plot <- createJaspPlot(title = gettext("Cumulative sum chart"), width = 1200, height = 500)
-  plot$dependOn(c("cumulativeSumChart", "measurements"))
+  plot$dependOn(c("dataFormat", "measurementLongFormat", "subgroup", "stagesLongFormat", "measurementsWideFormat",
+                  "axisLabels", "stagesWideFormat", "subgroupSizeType", "manualSubgroupSizeValue",
+                  "groupingVariableMethod", "cumulativeSumChart", "cumulativeSumChartNumberSd",
+                  "cumulativeSumChartShiftSize", "cumulativeSumChartTarget", "cumulativeSumChartSdSource",
+                  "cumulativeSumChartSdMethod", "cumulativeSumChartSdValue", "cumulativeSumChartAverageMovingRangeLength",
+                  "report"))
 
   if (!ready)
     return(plot)
@@ -179,7 +196,13 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
 .EWMA <- function(dataset, measurements, stages, axisLabels, options, ready) {
 
   plot <-  createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 1200, height = 500)
-  plot$dependOn(c(""))
+  plot$dependOn(c("dataFormat", "measurementLongFormat", "subgroup", "stagesLongFormat", "measurementsWideFormat",
+                  "axisLabels", "stagesWideFormat", "subgroupSizeType", "manualSubgroupSizeValue",
+                  "groupingVariableMethod", "exponentiallyWeightedMovingAverageChart",
+                  "exponentiallyWeightedMovingAverageChartSigmaControlLimits", "exponentiallyWeightedMovingAverageChartLambda",
+                  "exponentiallyWeightedMovingAverageChartSdSource", "exponentiallyWeightedMovingAverageChartSdMethod",
+                  "exponentiallyWeightedMovingAverageChartSdValue", "exponentiallyWeightedMovingAverageChartMovingRangeLength",
+                  "report"))
 
   if (!ready)
     return(plot)

@@ -127,6 +127,8 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     # if intervals are all NA, throw error
     if (all(is.na(timepoints))) {
       errorPlot <-  createJaspPlot(title = gettext("Rare event charts"), width = 1200, height = 500)
+      errorPlot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
+                           "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat"))
       errorPlot$setError(gettext("Date/time conversion returned no valid values. Did you select the correct date/time format?"))
       jaspResults[["errorPlot"]] <- errorPlot
       return()
@@ -169,12 +171,12 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   }
 
   # G chart
-  if (options[["gChart"]] && is.null(jaspResults[["gChart"]])) {
+  if (options[["gChart"]]) {
     gChart <- .gChart(dataset, variable, stages, intervalType, options, ready)
   }
 
   # T chart
-  if (options[["tChart"]] && is.null(jaspResults[["tChart"]])) {
+  if (options[["tChart"]]) {
     tChart <- .tChart(dataset, variable, stages, intervalType, options, ready)
   }
 
@@ -183,7 +185,15 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   if (options[["report"]]) {
     reportPlot <- createJaspPlot(title = gettext("Rare event charts report"), width = 1250, height = 1000)
     jaspResults[["report"]] <- reportPlot
-    jaspResults[["report"]]$dependOn(c(""))
+    jaspResults[["report"]]$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
+                                       "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat",
+                                       "gChart", "gChartProportionSource", "gChartHistoricalProportion", "tChart",
+                                       "tChartDistribution", "tChartDistributionParameterSource", "tChartHistoricalParametersWeibullShape",
+                                       "tChartHistoricalParametersScale", "report", "reportMetaData",
+                                       "reportTitle", "reportTitleText", "reportChartName", "reportChartNameText", "reportSubtitle",
+                                       "reportSubtitleText", "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
+                                       "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate", "reportDateText",
+                                       "reportPerformedBy", "reportPerformedByText", "reportPrintDate", "reportPrintDateText"))
 
     # Plot meta data
     if (options[["reportTitle"]] ) {
@@ -234,7 +244,9 @@ rareEventCharts <- function(jaspResults, dataset, options) {
                     intervalType = c("days", "hours", "minutes", "opportunities"),
                     options, ready) {
   plot <-  createJaspPlot(title = gettext("G chart"), width = 1200, height = 500)
-  plot$dependOn(c(""))
+  plot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
+                  "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat",
+                  "gChart", "gChartProportionSource", "gChartHistoricalProportion", "report"))
 
   if (!ready)
     return(plot)
@@ -255,7 +267,10 @@ rareEventCharts <- function(jaspResults, dataset, options) {
                     intervalType = c("days", "hours", "minutes", "opportunities"),
                     options, ready) {
   plot <-  createJaspPlot(title = gettext("T chart"), width = 1200, height = 500)
-  plot$dependOn(c(""))
+  plot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
+                  "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat", "tChart",
+                  "tChartDistribution", "tChartDistributionParameterSource", "tChartHistoricalParametersWeibullShape",
+                  "tChartHistoricalParametersScale", "report"))
 
   if (!ready)
     return(plot)
