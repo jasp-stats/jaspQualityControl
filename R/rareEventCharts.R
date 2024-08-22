@@ -170,13 +170,61 @@ rareEventCharts <- function(jaspResults, dataset, options) {
 
   # G chart
   if (options[["gChart"]] && is.null(jaspResults[["gChart"]])) {
-    jaspResults[["gChart"]] <- .gChart(dataset, variable, stages, intervalType, options, ready)
+    gChart <- .gChart(dataset, variable, stages, intervalType, options, ready)
   }
 
   # T chart
   if (options[["tChart"]] && is.null(jaspResults[["tChart"]])) {
-    jaspResults[["tChart"]] <- .tChart(dataset, variable, stages, intervalType, options, ready)
+    tChart <- .tChart(dataset, variable, stages, intervalType, options, ready)
   }
+
+
+  # Report
+  if (options[["report"]]) {
+    reportPlot <- createJaspPlot(title = gettext("Rare event charts report"), width = 1250, height = 1000)
+    jaspResults[["report"]] <- reportPlot
+    jaspResults[["report"]]$dependOn(c(""))
+
+    # Plot meta data
+    if (options[["reportTitle"]] ) {
+      title <- if (options[["reportTitleText"]] == "") gettext("Rare event charts report") else options[["reportTitleText"]]
+    } else {
+      title <- ""
+    }
+
+    if (options[["reportMetaData"]]) {
+      text <- c()
+      text <- if (options[["reportChartName"]]) c(text, gettextf("Chart name: %s", options[["reportChartNameText"]])) else text
+      text <- if (options[["reportSubtitle"]]) c(text, gettextf("Sub-title: %s", options[["reportSubtitleText"]])) else text
+      text <- if (options[["reportMeasurementName"]]) c(text, gettextf("Measurement name: %s", options[["reportMeasurementNameText"]])) else text
+      text <- if (options[["reportFootnote"]]) c(text, gettextf("Footnote: %s", options[["reportFootnoteText"]])) else text
+      text <- if (options[["reportLocation"]]) c(text, gettextf("Location: %s", options[["reportLocationText"]])) else text
+      text <- if (options[["reportDate"]]) c(text, gettextf("Date: %s", options[["reportDateText"]])) else text
+      text <- if (options[["reportPerformedBy"]]) c(text, gettextf("Performed by: %s", options[["reportPerformedByText"]])) else text
+      text <- if (options[["reportPrintDate"]]) c(text, gettextf("Print date: %s", options[["reportPrintDateText"]])) else text
+    } else {
+      text <- NULL
+    }
+
+    plots <- list()
+    if (options[["gChart"]])
+      plots[["gChart"]] <- gChart$plotObject
+    if (options[["tChart"]])
+      plots[["tChart"]] <- tChart$plotObject
+    reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
+                                  reportTitle = title)
+    reportPlot$plotObject <- reportPlotObject
+
+    ###
+    ### If not report mode
+    ###
+  } else {
+    if (options[["gChart"]])
+      jaspResults[["gChart"]] <- gChart
+    if (options[["tChart"]])
+      jaspResults[["tChart"]] <- tChart
+  }
+
 }
 
 

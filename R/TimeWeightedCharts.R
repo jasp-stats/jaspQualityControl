@@ -96,14 +96,61 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   }
 
   #Cusum chart
-  if (options[["cumulativeSumChart"]] && is.null(jaspResults[["CusumPlot"]])) {
-    jaspResults[["CusumPlot"]] <- .Cusumchart(dataset = dataset, measurements = measurements, stages = stages,
-                                              axisLabels = axisLabels, options = options, ready = ready)
+  if (options[["cumulativeSumChart"]] && is.null(jaspResults[["CusumChart"]])) {
+    cusumChart <- .Cusumchart(dataset = dataset, measurements = measurements, stages = stages,
+                              axisLabels = axisLabels, options = options, ready = ready)
   }
   #EWMA chart
   if (options[["exponentiallyWeightedMovingAverageChart"]] && is.null(jaspResults[["EWMAPlot"]])) {
-    jaspResults[["EWMAPlot"]] <- .EWMA(dataset = dataset, measurements = measurements, stages = stages,
-                                       axisLabels = axisLabels, options = options, ready = ready)
+    ewmaPlot <- .EWMA(dataset = dataset, measurements = measurements, stages = stages,
+                      axisLabels = axisLabels, options = options, ready = ready)
+  }
+
+
+  # Report
+  if (options[["report"]]) {
+    reportPlot <- createJaspPlot(title = gettext("Time weighted charts report"), width = 1250, height = 1000)
+    jaspResults[["report"]] <- reportPlot
+    jaspResults[["report"]]$dependOn(c(""))
+
+    # Plot meta data
+    if (options[["reportTitle"]] ) {
+      title <- if (options[["reportTitleText"]] == "") gettext("Time weighted charts report") else options[["reportTitleText"]]
+    } else {
+      title <- ""
+    }
+
+    if (options[["reportMetaData"]]) {
+      text <- c()
+      text <- if (options[["reportChartName"]]) c(text, gettextf("Chart name: %s", options[["reportChartNameText"]])) else text
+      text <- if (options[["reportSubtitle"]]) c(text, gettextf("Sub-title: %s", options[["reportSubtitleText"]])) else text
+      text <- if (options[["reportMeasurementName"]]) c(text, gettextf("Measurement name: %s", options[["reportMeasurementNameText"]])) else text
+      text <- if (options[["reportFootnote"]]) c(text, gettextf("Footnote: %s", options[["reportFootnoteText"]])) else text
+      text <- if (options[["reportLocation"]]) c(text, gettextf("Location: %s", options[["reportLocationText"]])) else text
+      text <- if (options[["reportDate"]]) c(text, gettextf("Date: %s", options[["reportDateText"]])) else text
+      text <- if (options[["reportPerformedBy"]]) c(text, gettextf("Performed by: %s", options[["reportPerformedByText"]])) else text
+      text <- if (options[["reportPrintDate"]]) c(text, gettextf("Print date: %s", options[["reportPrintDateText"]])) else text
+    } else {
+      text <- NULL
+    }
+
+    plots <- list()
+    if (options[["cumulativeSumChart"]])
+      plots[["cusum"]] <- cusumChart$plotObject
+    if (options[["exponentiallyWeightedMovingAverageChart"]])
+      plots[["ewma"]] <- ewmaPlot$plotObject
+    reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
+                                  reportTitle = title)
+    reportPlot$plotObject <- reportPlotObject
+
+    ###
+    ### If not report mode
+    ###
+  } else {
+    if (options[["cumulativeSumChart"]])
+      jaspResults[["CusumChart"]] <- cusumChart
+    if (options[["exponentiallyWeightedMovingAverageChart"]])
+      jaspResults[["EWMAPlot"]] <- ewmaPlot
   }
 }
 

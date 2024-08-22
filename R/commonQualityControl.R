@@ -682,7 +682,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     } else if (plotType == "t") {
       plotStatistic <- unname(unlist(dataCurrentStage))
 
-      if (any(plotStatistic == 0)) {
+      if (any(plotStatistic[!is.na(plotStatistic)] == 0)) {
         zeroCorrectionIndices <- which(plotStatistic == 0, arr.ind = TRUE)
         plotStatistic[zeroCorrectionIndices] <- min(plotStatistic[plotStatistic > 0], na.rm = TRUE)/2
       }
