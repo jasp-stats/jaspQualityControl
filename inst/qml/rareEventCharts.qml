@@ -122,7 +122,7 @@ Form
 				name: 					"dataTypeIntervalTimeFormat"
 				id: 					dataTypeIntervalTimeFormat
 				label: 					qsTr("Time format")
-				visible:				dataTypeIntervalType.value == "dataTypeIntervalTypeTime"
+				visible:				dataTypeIntervalType.value == "time"
 				values: 
 				[
 					{ label: qsTr("H"),								value: "H"},
