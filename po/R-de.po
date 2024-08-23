@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2024-05-18 03:39\n"
-"PO-Revision-Date: 2024-06-09 16:09+0000\n"
+"PO-Revision-Date: 2024-08-24 03:38+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.6-dev\n"
+"X-Generator: Weblate 5.7.1-dev\n"
 
 msgid "Cumulative sum chart"
 msgstr "Kumulative-Summe-Karte"
@@ -80,14 +80,13 @@ msgstr "Bericht für Attribut-Regelkarten"
 
 #, fuzzy
 msgid "Measurement name: %s"
-msgstr "Messsystem: %s"
+msgstr "Messungs-Name: %s"
 
 msgid "Performed by: %s"
 msgstr ""
 
-#, fuzzy
 msgid "ID: %s"
-msgstr "Datum: %s"
+msgstr "ID: %s"
 
 msgid "Appraiser: %s"
 msgstr "Prüfer: %s"
@@ -95,15 +94,15 @@ msgstr "Prüfer: %s"
 msgid "Measurement system: %s"
 msgstr "Messsystem: %s"
 
-#, fuzzy
 msgid "Subgroup size: %s"
-msgstr "Untergruppen"
+msgstr "Untergruppengröße: %s"
 
 msgid "Time: %s"
 msgstr "Zeit: %s"
 
+#, fuzzy
 msgid "Frequency: %s"
-msgstr ""
+msgstr "Häufigkeit: %s"
 
 msgid "Proportion"
 msgstr "Anteil"
@@ -143,22 +142,20 @@ msgid "Test 6: Bimodal distribution"
 msgstr ""
 
 msgid "Points where a test failed."
-msgstr ""
+msgstr "Punkte, an denen ein Test fehlschlug."
 
 #, fuzzy
 msgid "Test results for %1$s chart"
-msgstr "Testergebnisse für %s-Karte"
+msgstr "Testergebnisse für %1$s-Karte"
 
 msgid "Point"
-msgstr ""
+msgstr "Punkt"
 
-#, fuzzy
 msgid "Tests"
-msgstr "t-Test Verzerrung"
+msgstr "Tests"
 
-#, fuzzy
 msgid "No test violations occurred."
-msgstr "Zahlen sind Datenpunkte, an denen Testverstöße auftreten."
+msgstr "Keine Testverstöße aufgetreten."
 
 #, fuzzy
 msgid "LSL = %g"
@@ -172,8 +169,9 @@ msgstr "CL = %g"
 msgid "USL = %g"
 msgstr "OEG = %g"
 
+#, fuzzy
 msgid "Error"
-msgstr ""
+msgstr "Fehler"
 
 msgid "The specified low/high levels for %1$s are not distinct."
 msgstr ""
