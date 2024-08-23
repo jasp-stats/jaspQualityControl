@@ -47,7 +47,7 @@ Form
 		DoubleField
 		{
 			name: 								"referenceValue"
-			label: 								qsTr("Reference value")
+			label: 								qsTr("Reference/master value")
 			defaultValue: 						0
 			negativeValues: 					true
 			decimals: 							9
@@ -71,13 +71,13 @@ Form
 			defaultValue: 						20
 			negativeValues: 					false
 			min:								0.001
-			max:								99.999
+			max:								100
 		}
 
 		DropDown
 		{
 			name: 								"studyVarianceMultiplier"
-			label: 								qsTr("Study var. (number of std. deviations)")
+			label: 								qsTr("Number of std. dev. for instrument variation")
 			id: 								studyVarMultiplier
 			indexDefaultValue: 					0
 			values: 
@@ -86,6 +86,12 @@ Form
 				{ label: qsTr("4"), value: 4}
 			]
 		}
+	}
+	
+	Group
+	{
+		title: 									qsTr("Bias study options")
+
 
 		CheckBox
 		{
@@ -97,7 +103,7 @@ Form
 		CheckBox
 		{
 			name: 								"tTest"
-			label: 								qsTr("One sample T-test")
+			label: 								qsTr("One sample t-test")
 			checked:							true
 
 			CIField
@@ -128,7 +134,7 @@ Form
 			CheckBox
 			{
 				name: 							"runChartToleranceLimitLines"
-				label: 							qsTr("Display tolerance limits")
+				label: 							qsTr("Display boundaries of the reference interval")
 				checked: 						true
 			}
 		}
@@ -137,6 +143,19 @@ Form
 		{
 			name: 								"histogram"
 			label: 								qsTr("Histogram")
+
+			DropDown
+			{
+				name: 					"histogramBinBoundaryDirection"
+				id: 					histogramBinBoundaryDirection
+				label: 					qsTr("Histogram bin boundaries")
+				values: 
+				[
+					{ label: qsTr("Left open"),		value: "left"},
+					{ label: qsTr("Right open"),	value: "right"}
+					
+				]
+			}
 
 			DropDown
 			{

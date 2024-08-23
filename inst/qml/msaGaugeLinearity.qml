@@ -106,9 +106,9 @@ Form
 			DoubleField
 			{
 				name: 							"manualProcessVariationValue"
-				defaultValue:					6
+				defaultValue:					1
 				negativeValues:				false
-				decimals: 						5
+				decimals: 						7
 				fieldWidth: 					50
 			}
 		}

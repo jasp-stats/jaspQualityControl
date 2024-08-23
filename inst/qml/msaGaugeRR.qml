@@ -129,7 +129,7 @@ Form
 
 	Group
 	{
-		title: 									qsTr("ANOVA Method Options")
+		title: 									qsTr("Analysis options")
 		columns: 								2
 
 		Group
@@ -177,7 +177,7 @@ Form
 			CheckBox
 			{
 				name: 							"anova"
-				label: 							qsTr("r&R table ANOVA method")
+				label: 							qsTr("r&R ANOVA table")
 				checked: 						true
 
 				DropDown
@@ -206,7 +206,7 @@ Form
 				DropDown
 				{
 					name: 						"studyVarianceMultiplierType"
-					label: 						qsTr("Study Var. multiplier type")
+					label: 						qsTr("Study var. multiplier type")
 					id: 						studyVarianceMultiplierType
 					indexDefaultValue: 			0
 					values: 
@@ -219,7 +219,7 @@ Form
 				DoubleField
 				{
 					name: 						"studyVarianceMultiplierValue"
-					label: 						qsTr("Study variation multiplier")
+					label: 						qsTr("Study var. multiplier value")
 					fieldWidth: 				60
 					defaultValue: 				6
 					min:						0.001
@@ -243,14 +243,14 @@ Form
 			CheckBox
 			{
 				name: 							"rChart"
-				label: 							qsTr("R charts by operator")
+				label: 							qsTr("Range charts by operator")
 				enabled:						!type3.checked
 			}
 
 			CheckBox
 			{
 				name:							"xBarChart"
-				label:							qsTr("Average charts by operator")
+				label:							qsTr("Average chart bys operator")
 				enabled:						!type3.checked
 			}
 
@@ -309,7 +309,7 @@ Form
 
 	Section
 	{
-		title:	qsTr("ANOVA Method Report")
+		title:	qsTr("Report options")
 		
 		CheckBox
 		{
@@ -474,6 +474,13 @@ Form
 			Group
 			{
 				title:			qsTr("Select Report Components")
+
+				CheckBox
+				{
+					name:		"reportGaugeTable"
+					label:		qsTr("Show gauge evaluation table")
+					checked:	true
+				}
 			
 				CheckBox
 				{
@@ -492,7 +499,7 @@ Form
 				CheckBox
 				{
 					name:		"reportRChartByOperator"
-					label:		qsTr("Show R chart by operator")
+					label:		qsTr("Show range charts by operator")
 					checked:	true
 				}
 				
@@ -506,7 +513,7 @@ Form
 				CheckBox
 				{
 					name:		"reportAverageChartByOperator"
-					label:		qsTr("Show average chart by operator")
+					label:		qsTr("Show average charts by operator")
 					checked:	true
 				}
 				
@@ -519,7 +526,7 @@ Form
 				
 				CheckBox
 				{
-					name:		"reportTrafficLightCHart"
+					name:		"reportTrafficLightChart"
 					label:		qsTr("Show traffic light chart")
 					checked:	true
 				}
