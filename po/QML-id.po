@@ -24,22 +24,6 @@ msgid "Measurement Systems Analysis"
 msgstr "Analisis Sistem Pengukuran"
 
 msgctxt "Description|"
-msgid "Type 1 Instrument Capability"
-msgstr "Kemampuan Instrumen Tipe 1"
-
-msgctxt "Description|"
-msgid "Linearity Study"
-msgstr "Studi Linearitas"
-
-msgctxt "Description|"
-msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
-msgstr "Tipe 2 dan 3 Gauge r&R (peralatan manual / otomatis)"
-
-msgctxt "Description|"
-msgid "Gauge r&R (non-replicable measurements)"
-msgstr "Pengukur r&R (pengukuran yang tidak dapat direplikasi)"
-
-msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
 msgstr "Analisis Perjanjian Atribut"
 
@@ -64,16 +48,8 @@ msgid "Time Weighted Charts"
 msgstr "Grafik Berbobot Waktu"
 
 msgctxt "Description|"
-msgid "Capability Study"
-msgstr "Studi Kemampuan"
-
-msgctxt "Description|"
 msgid "Process Capability Study"
 msgstr "Studi Kemampuan Proses"
-
-msgctxt "Description|"
-msgid "DOE"
-msgstr ""
 
 msgctxt "Description|"
 msgid "Probability of Detection"
@@ -356,10 +332,6 @@ msgid "Measurements"
 msgstr "Pengukuran"
 
 msgctxt "msaGaugeRR|"
-msgid "ANOVA Method Options"
-msgstr "Opsi Metode ANOVA"
-
-msgctxt "msaGaugeRR|"
 msgid "Process variation based on"
 msgstr "Variasi proses berdasarkan"
 
@@ -376,16 +348,8 @@ msgid "Historical standard deviation:"
 msgstr "Deviasi standar historis:"
 
 msgctxt "msaGaugeRR|"
-msgid "r&R table ANOVA method"
-msgstr "metode ANOVA tabel r&R"
-
-msgctxt "msaGaugeRR|"
 msgid "Alpha interaction removal"
 msgstr "Penghapusan interaksi alfa"
-
-msgctxt "msaGaugeRR|"
-msgid "Study Var. multiplier type"
-msgstr "Studi Var. jenis pengganda"
 
 msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
@@ -396,20 +360,12 @@ msgid "Percent"
 msgstr "Persen"
 
 msgctxt "msaGaugeRR|"
-msgid "Study variation multiplier"
-msgstr "Pengganda variasi studi"
-
-msgctxt "msaGaugeRR|"
 msgid "Components of variation"
 msgstr "Komponen variasi"
 
 msgctxt "msaGaugeRR|"
 msgid "Plots"
 msgstr "Plot"
-
-msgctxt "msaGaugeRR|"
-msgid "R charts by operator"
-msgstr "Bagan R menurut operator"
 
 msgctxt "msaGaugeRR|"
 msgid "Scatter plots operators"
@@ -426,10 +382,6 @@ msgstr "Tampilkan garis asal"
 msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
 msgstr "Tampilkan semua pengukuran"
-
-msgctxt "msaGaugeRR|"
-msgid "ANOVA Method Report"
-msgstr "Laporan Metode ANOVA"
 
 msgctxt "msaGaugeRR|"
 msgid "Title"
@@ -476,48 +428,12 @@ msgid "Measurements"
 msgstr "Pengukuran"
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Gauge r&R Options"
-msgstr "Opsi R&R pengukur"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Analysis Options"
-msgstr "Opsi Analisis"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Std. Deviation reference"
-msgstr "Std. Referensi penyimpangan"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Study Std. Deviation"
-msgstr "Studi Std. Deviasi"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Historical process Std. Deviation"
-msgstr "Proses sejarah Std. Penyimpangan"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Std. Deviation value"
-msgstr "Std. Nilai deviasi"
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance"
 msgstr "Toleransi"
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Study Var. multiplier type"
-msgstr "Studi Var. tipe pengganda"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Std. Deviation"
-msgstr "Std. Penyimpangan"
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Percent"
 msgstr "Persen"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Study Var. multiplier value"
-msgstr "Studi Var. nilai pengganda"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Graph variation components"
@@ -528,16 +444,8 @@ msgid "Plots"
 msgstr "Plot"
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "R charts by operator"
-msgstr "Bagan R menurut operator"
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
 msgstr "Tampilkan semua pengukuran"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Gauge r&R Report"
-msgstr "Laporan R&R Pengukur"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Title"
@@ -568,24 +476,8 @@ msgid "Across rows"
 msgstr "Di seluruh baris"
 
 msgctxt "msaTestRetest|"
-msgid "Operator / Repetition"
-msgstr "Operator / Pengulangan"
-
-msgctxt "msaTestRetest|"
 msgid "Measurements"
 msgstr "Pengukuran"
-
-msgctxt "msaTestRetest|"
-msgid "Range Method Options"
-msgstr "Opsi Metode Rentang"
-
-msgctxt "msaTestRetest|"
-msgid "Analysis Options"
-msgstr "Opsi Analisis"
-
-msgctxt "msaTestRetest|"
-msgid "Process Std. Deviation"
-msgstr "Proses Std. Deviasi"
 
 msgctxt "msaTestRetest|"
 msgid "Tolerance"
@@ -608,20 +500,12 @@ msgid "Range chart"
 msgstr "Grafik rentang"
 
 msgctxt "msaType1Gauge|"
-msgid "Reference value"
-msgstr "Nilai referensi"
-
-msgctxt "msaType1Gauge|"
 msgid "Tolerance range"
 msgstr "Rentang toleransi"
 
 msgctxt "msaType1Gauge|"
 msgid "Percent of tolerance for Cg"
 msgstr "Persentase toleransi untuk Cg"
-
-msgctxt "msaType1Gauge|"
-msgid "Study var. (number of std. deviations)"
-msgstr "Studi var. (jumlah std. penyimpangan)"
 
 msgctxt "msaType1Gauge|"
 msgid "6"
@@ -644,16 +528,8 @@ msgid "Display individual measurements"
 msgstr "Menampilkan pengukuran individual"
 
 msgctxt "msaType1Gauge|"
-msgid "Display tolerance limits"
-msgstr "Menampilkan batas toleransi"
-
-msgctxt "msaType1Gauge|"
 msgid "Bias and instrument capability table"
 msgstr "Bias dan tabel kemampuan instrumen"
-
-msgctxt "msaType1Gauge|"
-msgid "One sample T-test"
-msgstr "Satu sampel uji-T"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for bias"
@@ -1391,10 +1267,6 @@ msgctxt "msaAttribute|"
 msgid "Positive reference:"
 msgstr ""
 
-msgctxt "Description|"
-msgid "Response Surface Design"
-msgstr ""
-
 msgctxt "doeFactorial|"
 msgid "Blocks"
 msgstr ""
@@ -1420,24 +1292,12 @@ msgctxt "msaAttribute|"
 msgid "Results"
 msgstr ""
 
-msgctxt "msaAttribute|"
-msgid "Kappa Study"
-msgstr ""
-
-msgctxt "msaAttribute|"
-msgid "Tau Study"
-msgstr ""
-
 msgctxt "msaGaugeRR|"
 msgid "Type 3 study (automatic equipment)"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Tolerance width"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Average charts by operator"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
@@ -1506,15 +1366,7 @@ msgid "Show measurements by part"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
-msgid "Show R chart by operator"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
 msgid "Show measurements by operator"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Show average chart by operator"
 msgstr ""
 
 msgctxt "msaGaugeRR|"
@@ -1539,10 +1391,6 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show components of variation"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Show R chart by operator"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
@@ -1656,10 +1504,6 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
-msgstr ""
-
-msgctxt "Description|"
-msgid "Factorial Design"
 msgstr ""
 
 msgctxt "ShowAndExportDesign|"
@@ -1938,11 +1782,6 @@ msgstr ""
 msgctxt "msaGaugeRR|"
 msgid "Show Report"
 msgstr "Tampilkan Laporan"
-
-#, fuzzy
-msgctxt "msaGaugeRRnonrep|"
-msgid "r&R table ANOVA method"
-msgstr "metode ANOVA tabel r&R"
 
 msgctxt "msaTestRetest|"
 msgid "Part"
@@ -2565,3 +2404,198 @@ msgstr "4"
 msgctxt "doeFactorial|"
 msgid "8"
 msgstr "8"
+
+msgctxt "Description|"
+msgid "Type 1 Instrument Capability Study"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Type 2 Gauge r&R Study"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Gauge r&R Study (Non-replicable Measurements)"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Type 4 Linearity Study"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Capability Analysis"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Design of Experiments"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Create Factorial Worksheet"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Create Response Surface Worksheet"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Kappa study"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Tau study"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRR|"
+msgid "Analysis options"
+msgstr "Opsi analisis"
+
+msgctxt "msaGaugeRR|"
+msgid "r&R ANOVA table"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Study var. multiplier type"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Study var. multiplier value"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Range charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Average chart bys operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Report options"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show gauge evaluation table"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show range charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show average charts by operator"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRRnonrep|"
+msgid "Analysis options"
+msgstr "Opsi analisis"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Std. dev. reference"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Study std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Historical process std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Std. dev. value"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Tolerance width"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "r&R ANOVA table"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Study var. multiplier type"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Study var. multiplier value"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Range charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Traffic light chart"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Report options"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Gauge r&R report"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show gauge evaluation table"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show range chart by operator"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show traffic light chart"
+msgstr ""
+
+msgctxt "msaTestRetest|"
+msgid "Operator/Repetition"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaTestRetest|"
+msgid "Analysis options"
+msgstr "Opsi analisis"
+
+msgctxt "msaTestRetest|"
+msgid "Process std. dev."
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Reference/master value"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Number of std. dev. for instrument variation"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Bias study options"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "One sample t-test"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Display boundaries of the reference interval"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Histogram bin boundaries"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Left open"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Right open"
+msgstr ""

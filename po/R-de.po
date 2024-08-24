@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-05-18 03:39\n"
+"POT-Creation-Date: 2024-08-24 03:40\n"
 "PO-Revision-Date: 2024-08-24 03:38+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -224,7 +224,8 @@ msgstr "Name"
 msgid "Level"
 msgstr ""
 
-msgid "Regression Equation in %s Units"
+#, fuzzy
+msgid "Regression equation in %s Units"
 msgstr "Regressionsgleichung in %s Einheiten"
 
 msgid "Pareto Chart of Standardized Effects"
@@ -377,50 +378,62 @@ msgstr "Wirkungsflächenversuchsplan - Box-Behnken-Versuchsplan"
 msgid "Standard order"
 msgstr "Standard-Reihenfolge"
 
-msgid "Reference Tables and Plots"
-msgstr ""
+#, fuzzy
+msgid "Reference tables and plots"
+msgstr "Referenzwert"
 
 msgid "Please insert a reference value before specifying a positive reference."
 msgstr ""
 
-msgid "Attributes Agreement Analysis"
+#, fuzzy
+msgid "Attributes agreement analysis"
 msgstr "Attribut-Übereinstimmungsanalyse"
 
-msgid "Cohen's Kappa"
+#, fuzzy
+msgid "Cohen's kappa"
 msgstr "Cohens Kappa"
 
-msgid "Kendall's Tau"
+#, fuzzy
+msgid "Kendall's tau"
 msgstr "Kendalls Tau"
 
-msgid "Cohen's Kappa for Appraiser vs Standard"
+#, fuzzy
+msgid "Cohen's kappa for appraiser vs standard"
 msgstr "Cohens Kappa für Prüfer vs Standard"
 
 msgid "Appraiser"
 msgstr "Prüfer"
 
-msgid "Cohen's Kappa correlations summary"
-msgstr ""
+#, fuzzy
+msgid "Cohen's kappa correlations summary"
+msgstr "Cohens Kappa für Prüfer vs Standard"
 
 msgid ""
-"Please inseret a vaild Positive reference as used in the 'Results' variables."
+"Please inseret a vaild positive reference as used in the results variables."
 msgstr ""
 
-msgid "Fleiss' Kappa"
+#, fuzzy
+msgid "Fleiss' kappa"
 msgstr "Fleiss' Kappa"
 
-msgid "Within Appraisers"
+#, fuzzy
+msgid "Within appraisers"
 msgstr "Innerhalb der Prüfer"
 
-msgid "Appraiser vs Standard"
+#, fuzzy
+msgid "Appraiser vs standard"
 msgstr "Prüfer vs Standard"
 
-msgid "Between Appraisers"
+#, fuzzy
+msgid "Between appraisers"
 msgstr "Zwischen Prüfern"
 
-msgid "Each Appraiser vs Standard"
+#, fuzzy
+msgid "Each appraiser vs standard"
 msgstr "Jeder Prüfer vs Standard"
 
-msgid "All Appraisers vs Standard"
+#, fuzzy
+msgid "All appraisers vs standard"
 msgstr "Alle Prüfer vs Standard"
 
 msgid "Inspected"
@@ -441,13 +454,13 @@ msgstr "Konfidenzintervall von 95%%"
 msgid "Upper"
 msgstr "Obergrenze"
 
-msgid "Invalid Reference and/or Results were inserted."
+msgid "Invalid reference and/or results were inserted."
 msgstr ""
 
 msgid "Invalid values (NA) found in appraiser %s."
 msgstr "Ungültige Werte (NA) bei Prüfer %s gefunden."
 
-msgid "More than 1 Measurement per Operator required."
+msgid "More than 1 measurement per operator required."
 msgstr ""
 
 msgid "Study effectiveness summary"
@@ -463,42 +476,48 @@ msgid "False alarm rate"
 msgstr ""
 
 msgid ""
-"Acceptable: x >= 90%% (Effectiveness), x =< 2%% (Miss rate), x =< 5%% (False "
+"Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false "
 "alarm rate)"
 msgstr ""
 
 msgid ""
-"Marginally acceptable: x >= 80%% (Effectiveness), x =< 5%% (Miss rate), x =< "
-"10%% (False alarm rate)"
+"Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< "
+"10%% (false alarm rate)"
 msgstr ""
 
 msgid ""
-"Unacceptable: x < 80%% (Effectiveness), x > 5%% (Miss rate), x > 10%% (False "
+"Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false "
 "alarm rate)"
 msgstr ""
 
-msgid "Kendall's Tau is only available for numeric measurements."
+msgid "More than one measurement per operator required."
+msgstr ""
+
+#, fuzzy
+msgid "Kendall's tau is only available for numeric measurements."
 msgstr "Kendalls Tau ist nur für numerische Messungen verfügbar."
 
-msgid "Kendall's Tau is only available for non-binary measurements."
+#, fuzzy
+msgid "Kendall's tau is only available for non-binary measurements."
 msgstr "Kendalls Tau ist nur für nicht-binäre Messungen verfügbar."
 
 msgid "Operator"
 msgstr ""
 
-msgid "%g (Unacceptable)"
+msgid "%g (unacceptable)"
 msgstr ""
 
-msgid "%g (Marginally acceptable)"
+msgid "%g (marginally acceptable)"
 msgstr ""
 
-msgid "%g (Acceptable)"
+msgid "%g (acceptable)"
 msgstr ""
 
-msgid "Linearity and Bias"
+#, fuzzy
+msgid "Linearity and bias"
 msgstr "Linearität und Verzerrung"
 
-msgid "Gauge Bias"
+msgid "Gauge bias"
 msgstr ""
 
 msgid "Part"
@@ -507,35 +526,39 @@ msgstr "Teil"
 msgid "Reference value"
 msgstr "Referenzwert"
 
-msgid "Mean per reference value"
-msgstr "Mittelwert pro Referenzwert"
+#, fuzzy
+msgid "Observed mean"
+msgstr "Beobachtet"
 
-msgid "Bias per reference value"
-msgstr "Verzerrung pro Referenzwert"
+#, fuzzy
+msgid "Mean bias"
+msgstr "Mittelwert"
 
-msgid "<i>p(t</i>-test of bias against 0)"
-msgstr "<i>p(t</i>-Test der Verzerrung gegen 0)"
+msgid "<i>p</i>-value"
+msgstr "<i>p</i>-Wert"
 
-msgid "Regression Model"
+#, fuzzy
+msgid "Regression model"
 msgstr "Regressionsmodell"
 
 msgid "Predictor"
 msgstr "Prädiktor"
 
-msgid "<i>t</i>-statistic"
-msgstr "<i>t</i>-Statistik"
+#, fuzzy
+msgid "Std. error"
+msgstr "Standardfehler"
 
-msgid "Std. Error coefficients"
-msgstr "Std.-Fehler Koeffizienten"
+#, fuzzy
+msgid "<i>t</i>-value"
+msgstr "<i>p</i>-Wert"
 
-msgid "<i>p</i>"
-msgstr "<i>p</i>"
+#, fuzzy
+msgid "Regression equation"
+msgstr "Regressionsgleichung in %s Einheiten"
 
-msgid "Gauge Linearity"
-msgstr ""
-
-msgid "S"
-msgstr "S"
+#, fuzzy
+msgid "Gauge linearity"
+msgstr "Linearität"
 
 msgid "R%1$s"
 msgstr ""
@@ -548,14 +571,16 @@ msgid ""
 "specified otherwise."
 msgstr ""
 
-msgid "Bias and Linearity"
+#, fuzzy
+msgid "Bias and linearity"
 msgstr "Verzerrung und Linearität"
 
-msgid "Percentage Process Variation Graph"
+msgid "Percentage process variation graph"
 msgstr ""
 
+#, fuzzy
 msgid ""
-"T-Test requires more than 1 measurement. %1$i valid measurement(s) detected "
+"t-test requires more than 1 measurement. %1$i valid measurement(s) detected "
 "in %2$s."
 msgstr ""
 "T-Test erfordert mehr als 1 Messung. %1$i gültige Messung(en) in %2$s "
@@ -568,27 +593,35 @@ msgstr ""
 "Jedes einzelne Teil muss einen entsprechenden Referenzwert haben. %1$i "
 "Referenzwerte wurden für %2$s einzelne Teile gefunden."
 
+#, fuzzy
 msgid ""
-"T-Test requires more than 1 measurement per part. Less than 2 valid "
+"t-test requires more than 1 measurement per part. Less than 2 valid "
 "measurement(s) detected in Part(s) %s."
 msgstr ""
 "T-Test erfordert mehr als 1 Messung pro Teil. Weniger als 2 gültige "
 "Messungen in Teilen erkannt %s."
 
-msgid "T-Test not possible. No variance detected in Part(s) %s."
+msgid "t-test not possible. No variance detected in Part(s) %s."
+msgstr ""
+
+msgid "t-est not possible. No variance detected in part(s) %s."
+msgstr ""
+
+msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
 msgstr ""
 
 msgid "Reference"
 msgstr "Referenz"
 
-msgid "Percent bias per reference value"
-msgstr "Prozentuale Verzerrung pro Referenzwert"
+#, fuzzy
+msgid "Percent bias"
+msgstr "Prozent"
 
 msgid "Linearity"
 msgstr "Linearität"
 
-msgid "Average"
-msgstr "Durchschnitt"
+msgid "Total"
+msgstr ""
 
 msgid "Gauge r&R"
 msgstr ""
@@ -603,7 +636,7 @@ msgid ""
 "operator's part is measured %d times."
 msgstr ""
 
-msgid "Gauge r&R Report"
+msgid "Gauge r&R report"
 msgstr ""
 
 msgid "No report components selected."
@@ -632,42 +665,52 @@ msgstr "Lage (%1$s)"
 msgid "Date: %s"
 msgstr "Datum: %s"
 
-msgid "Gauge r&R ANOVA Table"
-msgstr ""
+#, fuzzy
+msgid "Number of distinct categories"
+msgstr "Anzahl verschiedener Kategorien = %i"
+
+#, fuzzy
+msgid "Gauge r&R ANOVA table"
+msgstr "ANOVA-Tabelle"
 
 #, fuzzy
 msgid "Range chart by operator"
 msgstr "Messungen nach Operator"
 
-msgid "Xbar Chart by Operator"
-msgstr ""
+#, fuzzy
+msgid "Xbar chart by operator"
+msgstr "Messungen nach Operator"
 
 #, fuzzy
 msgid "Average chart by operator"
 msgstr "Messungen nach Operator"
 
-msgid "Scatterplot Operators"
+msgid "Scatterplot operators"
 msgstr ""
 
-msgid "Measurement by Part Graph"
-msgstr ""
+#, fuzzy
+msgid "Measurement by part graph"
+msgstr "Messungen nach Operator"
 
-msgid "Measurements by Operator Graph"
-msgstr ""
+#, fuzzy
+msgid "Measurements by operator graph"
+msgstr "Messungen nach Operator"
 
-msgid "Part by Operator Interaction Graph"
+msgid "Part by operator interaction graph"
 msgstr ""
 
 msgid "Traffic light chart"
 msgstr "Ampel-Karte"
 
-msgid "ANOVA Table"
-msgstr "ANOVA-Tabelle"
+msgid "Gauge r&R study - crossed ANOVA"
+msgstr ""
 
-msgid "One-way ANOVA Table"
+#, fuzzy
+msgid "One-way ANOVA table"
 msgstr "Einfache ANOVA-Tabelle"
 
-msgid "Two-way ANOVA Table with Interaction"
+#, fuzzy
+msgid "Two-way ANOVA table with interaction"
 msgstr "Zweifaktorielle ANOVA-Tabelle mit Interaktion"
 
 msgid "Source"
@@ -676,19 +719,19 @@ msgstr "Quelle"
 msgid "df"
 msgstr "df"
 
-msgid "Sum of Squares"
+#, fuzzy
+msgid "Sum of squares"
 msgstr "Quadratsumme"
 
-msgid "Mean Squares"
-msgstr ""
+#, fuzzy
+msgid "Mean squares"
+msgstr "Mittlere Quadratsumme"
 
 msgid "F"
 msgstr "F"
 
-msgid "<i>p</i>-value"
-msgstr "<i>p</i>-Wert"
-
-msgid "Variance Components"
+#, fuzzy
+msgid "Variance components"
 msgstr "Varianz-Komponenten"
 
 msgid "Variance"
@@ -697,32 +740,34 @@ msgstr "Varianz"
 msgid "%% Contribution"
 msgstr ""
 
-msgid "Gauge Evaluation"
+msgid "Gauge evaluation"
 msgstr ""
 
-msgid "Std. Deviation"
-msgstr "Std.-Abweichung"
+msgid "Std. dev."
+msgstr "Std.-Abw."
 
-msgid "Study Variation"
+msgid "Study variation"
+msgstr ""
+
+#, fuzzy
+msgid "%% Study variation"
 msgstr "Streuung von Studienergebnissen"
-
-msgid "%% Study Variation"
-msgstr ""
 
 msgid "%% Tolerance"
 msgstr "%% Toleranz"
 
-msgid "Total Gauge r&R"
+msgid "Total gauge r&R"
 msgstr ""
 
 msgid "Repeatability"
 msgstr "Wiederholbarkeit"
 
-msgid "Part-to-Part"
+msgid "Part-to-part"
 msgstr ""
 
-msgid "Total Variation"
-msgstr ""
+#, fuzzy
+msgid "Total variation"
+msgstr "Streuung von Studienergebnissen"
 
 msgid "Reproducibility"
 msgstr "Reproduzierbarkeit"
@@ -733,55 +778,67 @@ msgstr ""
 msgid "Number of distinct categories = %i"
 msgstr "Anzahl verschiedener Kategorien = %i"
 
-msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i"
+msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
+msgstr ""
+
+msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr ""
 
 msgid ""
-"Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
+"Historical standard deviation is used to calculate some values for std. "
+"dev., study variation, and %%study variation."
 msgstr ""
 
 msgid ""
-"Historical standard deviation is used to calculate some values for Std. "
-"Deviation, Study Variation, and %%Study Variation."
+"Values for %%process variation are not displayed because they are identical "
+"to values for %%study variation."
 msgstr ""
 
-msgid ""
-"Values for %%Process Variation are not displayed because they are identical "
-"to values for %%Study Variation."
-msgstr ""
-
-msgid "Two-way ANOVA Table without Interaction"
+#, fuzzy
+msgid "Two-way ANOVA table without interaction"
 msgstr "Zweifaktorielle ANOVA-Tabelle ohne Interaktion"
 
-msgid "Components of Variation"
+msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
+msgstr ""
+
+msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
+msgstr ""
+
+msgid "Components of variation"
+msgstr ""
+
+msgid "Number of observations is < 2 in %1$s after grouping on %2$s."
 msgstr ""
 
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
 msgstr ""
 
-msgid "Measurements by Part"
-msgstr ""
-
-msgid "Measurements by Operator"
+#, fuzzy
+msgid "Measurements by part"
 msgstr "Messungen nach Operator"
 
-msgid "Part by Operator Interaction"
+#, fuzzy
+msgid "Measurements by operator"
+msgstr "Messungen nach Operator"
+
+msgid "Part by operator interaction"
 msgstr ""
 
 msgid "Operators measured different number of parts."
 msgstr ""
 
-msgid "Scatterplot of Operator vs Operator"
+msgid "Scatterplot of operator vs operator"
 msgstr ""
 
 msgid "Cannot plot scatterplot for less than 2 operators."
 msgstr ""
 
-msgid "Scatterplot of Operator  %1$s vs Operator %2$s"
+msgid "Scatterplot of operator  %1$s vs operator %2$s"
 msgstr ""
 
-msgid "Matrix Plot for Operators"
-msgstr ""
+#, fuzzy
+msgid "Matrix plot for operators"
+msgstr "Matrix-Diagramm für %s"
 
 msgid "Repeat"
 msgstr ""
@@ -789,25 +846,32 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
+msgid "%% Study Variation"
+msgstr ""
+
+msgid "Error: Gauge study failed. Could not create traffic light chart."
+msgstr ""
+
 msgid "%.2f"
 msgstr ""
 
-msgid "Gauge r&R (Non-Replicable) Report"
+msgid "Gauge r&R (non-replicable) report"
 msgstr ""
 
-msgid "Gauge r&R Tables"
-msgstr ""
-
-msgid "Range Chart by Operator"
+msgid "Gauge r&R tables"
 msgstr ""
 
 msgid "Measurement by part x operator plot"
 msgstr ""
 
-msgid "Gauge r&R (Nested)"
+msgid "Gauge r&R study - nested ANOVA"
 msgstr ""
 
-msgid "Mean Square"
+msgid "Gauge r&R (nested)"
+msgstr ""
+
+#, fuzzy
+msgid "Mean square"
 msgstr "Mittlere Quadratsumme"
 
 msgid "p"
@@ -819,16 +883,13 @@ msgstr ""
 msgid "No degrees of freedom for %s."
 msgstr ""
 
-msgid "Total Gauge r & R"
+msgid "Part-To-part"
 msgstr ""
 
-msgid "Part-To-Part"
+msgid "Study variation is calculated as std. dev. * %i"
 msgstr ""
 
-msgid "Study Variation is calculated as Std. Deviation * %i"
-msgstr ""
-
-msgid "Study Variation is calculated as Std. Deviation * %.2f"
+msgid "Study variation is calculated as std. dev. * %.2f"
 msgstr ""
 
 msgid "Measurements by part x operator"
@@ -837,11 +898,12 @@ msgstr ""
 msgid "Operator %s"
 msgstr ""
 
-msgid "Scatterplot Operators vs Parts"
+msgid "Scatterplot operators vs parts"
 msgstr ""
 
-msgid "Range Method R Chart"
-msgstr ""
+#, fuzzy
+msgid "Range method range chart"
+msgstr "Testergebnisse für %s-Karte"
 
 msgid "Range chart by part"
 msgstr ""
@@ -861,8 +923,9 @@ msgstr ""
 msgid "d2"
 msgstr ""
 
-msgid "Process Std. Dev."
-msgstr ""
+#, fuzzy
+msgid "Process std. dev."
+msgstr "Std.-Abw."
 
 msgid "Tolerance"
 msgstr "Toleranz"
@@ -870,32 +933,37 @@ msgstr "Toleranz"
 msgid "GRR"
 msgstr ""
 
-msgid "%%GRR of Process Std. Dev."
+msgid "%%GRR of process std. dev."
 msgstr ""
 
 #, fuzzy
-msgid "%%GRR of Tolerance"
+msgid "%%GRR of tolerance"
 msgstr "%% Toleranz"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
 msgstr "Streudiagramm der 1. Messung vs. 2. Messung"
 
-msgid "Run Chart"
-msgstr ""
+#, fuzzy
+msgid "Run chart"
+msgstr "G-Karte"
 
-msgid "Bias Table"
+#, fuzzy
+msgid "Bias table"
 msgstr "Verzerrungstabelle"
 
-msgid "t-Test Bias"
+#, fuzzy
+msgid "t-test bias"
 msgstr "t-Test Verzerrung"
 
-msgid "Histogram Bias"
+#, fuzzy
+msgid "Histogram bias"
 msgstr "Histogramm Verzerrung"
 
-msgid "Bias and Instrument Capability Table"
+msgid "Bias and instrument capability table"
 msgstr ""
 
-msgid "Basic Statistics"
+#, fuzzy
+msgid "Basic statistics"
 msgstr "Grundlegende Statistiken"
 
 msgid "Mean"
@@ -904,16 +972,22 @@ msgstr "Mittelwert"
 msgid "Bias"
 msgstr "Verzerrung"
 
-msgid "Std. Deviation (<i>s</i>)"
+#, fuzzy
+msgid "Std. dev. (<i>s</i>)"
 msgstr "Std.-Abweichung (<i>s</i>)"
 
-msgid "Study variation"
-msgstr ""
+#, fuzzy
+msgid "Instrument variation"
+msgstr "Streuung von Studienergebnissen"
+
+#, fuzzy
+msgid "Tolerance bounds"
+msgstr "Toleranz: %s"
 
 msgid "%% Bias"
 msgstr "%% Verzerrung"
 
-msgid "The study variation is calculated as %i * <i>s</i>."
+msgid "The instrument variation is calculated as %i * <i>s</i>."
 msgstr ""
 
 msgid "Capability"
@@ -925,29 +999,63 @@ msgstr ""
 msgid "Cgk"
 msgstr ""
 
-msgid "%% Var(Repeatability)"
-msgstr ""
-
-msgid "%% Var(Repeatability and bias)"
+#, fuzzy
+msgid "%% Var(repeatability)"
 msgstr "%% Var(Wiederholbarkeit und Verzerrung)"
 
-msgid "T-Test of Observed Bias Against 0"
+#, fuzzy
+msgid "%% Var(repeatability and bias)"
+msgstr "%% Var(Wiederholbarkeit und Verzerrung)"
+
+#, fuzzy
+msgid "t-test of observed bias against 0"
 msgstr "T-Test der beobachteten Verzerrung gegen 0"
 
-msgid "%s CI for Bias"
+#, fuzzy
+msgid "%s CI for bias"
 msgstr "%s KI der Verzerrung"
 
 msgid "<i>t</i>"
 msgstr "<i>t</i>"
 
-msgid "Bias Histogram"
+#, fuzzy
+msgid "Bias histogram"
 msgstr "Verzerrungs-Histogramm"
 
-msgid "Run Chart of %s"
+#, fuzzy
+msgid ""
+"Histogram requires more than 1 measurement. %1$i valid measurement(s) "
+"detected in %2$s."
+msgstr ""
+"T-Test erfordert mehr als 1 Messung. %1$i gültige Messung(en) in %2$s "
+"erkannt."
+
+#, fuzzy
+msgid "Count"
+msgstr "Häufigkeiten"
+
+#, fuzzy
+msgid "Mean - %is"
+msgstr "Mittelwert (%1$s)"
+
+#, fuzzy
+msgid "Mean + %is"
+msgstr "Mittelwert (%1$s)"
+
+msgid "Ref. - %.2f * tol."
+msgstr ""
+
+msgid "Ref. + %.2f * tol."
+msgstr ""
+
+msgid "Run chart of %s"
 msgstr ""
 
 msgid "No valid measurements in %s."
 msgstr "Keine gültigen Messungen in %s."
+
+msgid "Ref."
+msgstr ""
 
 msgid "Parameter Estimates"
 msgstr "Parameter-Schätzungen"
@@ -1261,8 +1369,8 @@ msgstr ""
 msgid "%s vs. BL"
 msgstr ""
 
-msgid "Std. dev."
-msgstr "Std.-Abw."
+msgid "Average"
+msgstr "Durchschnitt"
 
 msgid "Log mean (%1$s)"
 msgstr "Log-Mittelwert (%1$s)"
@@ -1422,6 +1530,33 @@ msgstr "X-quer & s-Kontrollkarte"
 msgid "Variables Chart for Subgroups Report"
 msgstr "Bericht Regelkarten für Attribute"
 
+#~ msgid "Mean per reference value"
+#~ msgstr "Mittelwert pro Referenzwert"
+
+#~ msgid "Bias per reference value"
+#~ msgstr "Verzerrung pro Referenzwert"
+
+#~ msgid "<i>p(t</i>-test of bias against 0)"
+#~ msgstr "<i>p(t</i>-Test der Verzerrung gegen 0)"
+
+#~ msgid "<i>t</i>-statistic"
+#~ msgstr "<i>t</i>-Statistik"
+
+#~ msgid "Std. Error coefficients"
+#~ msgstr "Std.-Fehler Koeffizienten"
+
+#~ msgid "<i>p</i>"
+#~ msgstr "<i>p</i>"
+
+#~ msgid "S"
+#~ msgstr "S"
+
+#~ msgid "Percent bias per reference value"
+#~ msgstr "Prozentuale Verzerrung pro Referenzwert"
+
+#~ msgid "Std. Deviation"
+#~ msgstr "Std.-Abweichung"
+
 #~ msgid "Central Composite Design"
 #~ msgstr "Zentral zusammengesetzter Versuchsplan"
 
@@ -1451,9 +1586,6 @@ msgstr "Bericht Regelkarten für Attribute"
 #~ msgstr ""
 #~ "Diese Analyse akzeptiert keine Prädiktorvariablen mit mehr als 5 "
 #~ "eindeutigen Werten."
-
-#~ msgid "Matrix plot for %s"
-#~ msgstr "Matrix-Diagramm für %s"
 
 #~ msgid "Index coefficients for %s"
 #~ msgstr "Index-Koeffizienten für %s"
@@ -1537,9 +1669,6 @@ msgstr "Bericht Regelkarten für Attribute"
 #~ msgid "Scale (<i>k</i>)"
 #~ msgstr "Skalenparameter (<i>k</i>)"
 
-#~ msgid "Observed"
-#~ msgstr "Beobachtet"
-
 #, fuzzy
 #~ msgid "Report for X-bar & R control chart"
 #~ msgstr "X-quer & R-Kontrollkarte"
@@ -1557,19 +1686,11 @@ msgstr "Bericht Regelkarten für Attribute"
 #~ msgid "Sample range"
 #~ msgstr "Stichproben-Wertebereich"
 
-#, fuzzy
-#~ msgid "Test results for range chart"
-#~ msgstr "Testergebnisse für %s-Karte"
-
 #~ msgid "%s"
 #~ msgstr "%s"
 
 #~ msgid "Observation"
 #~ msgstr "Beobachtung"
-
-#, fuzzy
-#~ msgid "% Study Variation"
-#~ msgstr "Streuung von Studienergebnissen"
 
 #~ msgid "Residuals vs. Fitted Value"
 #~ msgstr "Residuen vs. Angepasster Wert"

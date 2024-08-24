@@ -16,10 +16,6 @@ msgid "Measurement Systems Analysis"
 msgstr "测量系统分析"
 
 msgctxt "Description|"
-msgid "Linearity Study"
-msgstr "线性研究"
-
-msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
 msgstr "属性一致性分析"
 
@@ -36,16 +32,8 @@ msgid "Time Weighted Charts"
 msgstr "时间加权控制图"
 
 msgctxt "Description|"
-msgid "Capability Study"
-msgstr "能力研究"
-
-msgctxt "Description|"
 msgid "Process Capability Study"
 msgstr "过程能力研究"
-
-msgctxt "Description|"
-msgid "DOE"
-msgstr "DOE"
 
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
@@ -156,18 +144,6 @@ msgid "Measurements"
 msgstr "测量值"
 
 msgctxt "msaGaugeRR|"
-msgid "ANOVA Method Options"
-msgstr "方差分析法选项"
-
-msgctxt "msaGaugeRR|"
-msgid "r&R table ANOVA method"
-msgstr "方差分析法 r&R 表"
-
-msgctxt "msaGaugeRR|"
-msgid "Study Var. multiplier type"
-msgstr "研究变异乘数类型"
-
-msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
 msgstr "标准差"
 
@@ -178,10 +154,6 @@ msgstr "百分比"
 msgctxt "msaGaugeRR|"
 msgid "Plots"
 msgstr "绘图"
-
-msgctxt "msaGaugeRR|"
-msgid "R charts by operator"
-msgstr "极差图 (按操作者)"
 
 msgctxt "msaGaugeRR|"
 msgid "Scatter plots operators"
@@ -198,10 +170,6 @@ msgstr "显示初始线"
 msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
 msgstr "显示所有测量值"
-
-msgctxt "msaGaugeRR|"
-msgid "ANOVA Method Report"
-msgstr "方差分析法报告"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement"
@@ -228,30 +196,6 @@ msgid "Measurements"
 msgstr "测量值"
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Analysis Options"
-msgstr "分析选项"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Std. Deviation reference"
-msgstr "标准差参考值"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Study Std. Deviation"
-msgstr "研究标准差"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Historical process Std. Deviation"
-msgstr "历史过程标准差"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Study Var. multiplier type"
-msgstr "研究变异乘数类型"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Std. Deviation"
-msgstr "标准差"
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Percent"
 msgstr "百分比"
 
@@ -262,10 +206,6 @@ msgstr "变异分量图"
 msgctxt "msaGaugeRRnonrep|"
 msgid "Plots"
 msgstr "绘图"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "R charts by operator"
-msgstr "极差图 (按操作者）"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
@@ -290,14 +230,6 @@ msgstr "运行图"
 msgctxt "msaType1Gauge|"
 msgid "Display individual measurements"
 msgstr "显示单个测量值"
-
-msgctxt "msaType1Gauge|"
-msgid "Display tolerance limits"
-msgstr "显示公差限值"
-
-msgctxt "msaType1Gauge|"
-msgid "One sample T-test"
-msgstr "单样本 T 检验"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for bias"
@@ -632,10 +564,6 @@ msgid "Show Report"
 msgstr "显示报告"
 
 msgctxt "Description|"
-msgid "Gauge r&R (non-replicable measurements)"
-msgstr "量具 r&R（不可复制测量）"
-
-msgctxt "Description|"
 msgid "Test-retest (Range method)"
 msgstr "测试-重测（极差法）"
 
@@ -812,14 +740,6 @@ msgid "Across rows"
 msgstr "跨数行"
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Gauge r&R Options"
-msgstr "量具 r&R 选项"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Gauge r&R Report"
-msgstr "量具 r&R 报告"
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
 msgstr "名称"
 
@@ -840,20 +760,8 @@ msgid "Across rows"
 msgstr "跨数行"
 
 msgctxt "msaTestRetest|"
-msgid "Operator / Repetition"
-msgstr "操作者 / 重复"
-
-msgctxt "msaTestRetest|"
 msgid "Measurements"
 msgstr "测量值"
-
-msgctxt "msaTestRetest|"
-msgid "Range Method Options"
-msgstr "极差法选项"
-
-msgctxt "msaTestRetest|"
-msgid "Analysis Options"
-msgstr "分析选项"
 
 msgctxt "msaTestRetest|"
 msgid "r&R table"
@@ -905,14 +813,6 @@ msgid ""
 "criteria"
 msgstr "调查制造的产品是否符合规定的质量标准"
 
-msgctxt "Description|"
-msgid "Type 1 Instrument Capability"
-msgstr "类型 1 量具能力"
-
-msgctxt "Description|"
-msgid "Type 2 and 3 Gauge r&R (manual/automatic equipment)"
-msgstr "类型 2 和 3 量具 r&R (手动/自动测量设备）"
-
 msgctxt "msaAttribute|"
 msgid "Data format"
 msgstr "数据格式"
@@ -942,10 +842,6 @@ msgid "Alpha interaction removal"
 msgstr "删除交互用 Alpha"
 
 msgctxt "msaGaugeRR|"
-msgid "Study variation multiplier"
-msgstr "研究变异乘数"
-
-msgctxt "msaGaugeRR|"
 msgid "Components of variation"
 msgstr "方差分量"
 
@@ -958,16 +854,8 @@ msgid "Gauge name"
 msgstr "量具名称"
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Std. Deviation value"
-msgstr "标准差值"
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance"
 msgstr "公差"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Study Var. multiplier value"
-msgstr "研究变异乘数值"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Title"
@@ -976,10 +864,6 @@ msgstr "标题"
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge name"
 msgstr "量具名称"
-
-msgctxt "msaTestRetest|"
-msgid "Process Std. Deviation"
-msgstr "过程标准差"
 
 msgctxt "msaTestRetest|"
 msgid "Tolerance"
@@ -994,20 +878,12 @@ msgid "Range chart"
 msgstr "极差图"
 
 msgctxt "msaType1Gauge|"
-msgid "Reference value"
-msgstr "参考值"
-
-msgctxt "msaType1Gauge|"
 msgid "Tolerance range"
 msgstr "容差范围"
 
 msgctxt "msaType1Gauge|"
 msgid "Percent of tolerance for Cg"
 msgstr "计算 Cg 的公差百分比"
-
-msgctxt "msaType1Gauge|"
-msgid "Study var. (number of std. deviations)"
-msgstr "研究变异（标准差的倍数）"
 
 msgctxt "msaType1Gauge|"
 msgid "Bias and instrument capability table"
@@ -1381,10 +1257,6 @@ msgctxt "doeFactorial|"
 msgid "Design generator"
 msgstr "设计生成元"
 
-msgctxt "Description|"
-msgid "Response Surface Design"
-msgstr "响应面设计"
-
 msgctxt "doeFactorial|"
 msgid "Blocks"
 msgstr "区组"
@@ -1410,16 +1282,8 @@ msgid "Results"
 msgstr "结果"
 
 msgctxt "msaAttribute|"
-msgid "Kappa Study"
-msgstr "Kappa 研究"
-
-msgctxt "msaAttribute|"
 msgid "Positive reference:"
 msgstr "正参考值："
-
-msgctxt "msaAttribute|"
-msgid "Tau Study"
-msgstr "Tau 研究"
 
 msgctxt "msaGaugeRR|"
 msgid "Type 3 study (automatic equipment)"
@@ -1428,10 +1292,6 @@ msgstr "类型 3 研究（自动设备）"
 msgctxt "msaGaugeRR|"
 msgid "Tolerance width"
 msgstr "容差宽度"
-
-msgctxt "msaGaugeRR|"
-msgid "Average charts by operator"
-msgstr "按操作者均值图"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements by part plot"
@@ -1498,16 +1358,8 @@ msgid "Show measurements by part"
 msgstr "显示按零件的测量值"
 
 msgctxt "msaGaugeRR|"
-msgid "Show R chart by operator"
-msgstr "显示按操作者的极差图"
-
-msgctxt "msaGaugeRR|"
 msgid "Show measurements by operator"
 msgstr "显示按操作者的测量值"
-
-msgctxt "msaGaugeRR|"
-msgid "Show average chart by operator"
-msgstr "显示按操作者的平均值"
 
 msgctxt "msaGaugeRR|"
 msgid "Show part × operator interaction"
@@ -1532,10 +1384,6 @@ msgstr "显示报告组成部分"
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show components of variation"
 msgstr "显示变差分量"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Show R chart by operator"
-msgstr "显示按操作者的极差图"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show measurements by operator"
@@ -1649,10 +1497,6 @@ msgstr "轴向块"
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
 msgstr "复制"
-
-msgctxt "Description|"
-msgid "Factorial Design"
-msgstr "析因设计"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Coded units"
@@ -1926,10 +1770,6 @@ msgstr "零件"
 msgctxt "msaGaugeRR|"
 msgid "Show Report"
 msgstr "显示报告"
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "r&R table ANOVA method"
-msgstr "方差分析法 r&R 表"
 
 msgctxt "msaTestRetest|"
 msgid "Part"
@@ -2566,3 +2406,201 @@ msgstr "4"
 msgctxt "doeFactorial|"
 msgid "8"
 msgstr "8"
+
+msgctxt "Description|"
+msgid "Type 1 Instrument Capability Study"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Type 2 Gauge r&R Study"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Gauge r&R Study (Non-replicable Measurements)"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Type 4 Linearity Study"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Capability Analysis"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Design of Experiments"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Create Factorial Worksheet"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Create Response Surface Worksheet"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Kappa study"
+msgstr ""
+
+msgctxt "msaAttribute|"
+msgid "Tau study"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRR|"
+msgid "Analysis options"
+msgstr "分析选项"
+
+msgctxt "msaGaugeRR|"
+msgid "r&R ANOVA table"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Study var. multiplier type"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Study var. multiplier value"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Range charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Average chart bys operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Report options"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show gauge evaluation table"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show range charts by operator"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Show average charts by operator"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRRnonrep|"
+msgid "Analysis options"
+msgstr "分析选项"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Std. dev. reference"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Study std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Historical process std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Std. dev. value"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRRnonrep|"
+msgid "Tolerance width"
+msgstr "容差宽度"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "r&R ANOVA table"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Study var. multiplier type"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Study var. multiplier value"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Range charts by operator"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRRnonrep|"
+msgid "Traffic light chart"
+msgstr "红绿灯图"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Report options"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Gauge r&R report"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show gauge evaluation table"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show range chart by operator"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaGaugeRRnonrep|"
+msgid "Show traffic light chart"
+msgstr "显示红绿灯图"
+
+msgctxt "msaTestRetest|"
+msgid "Operator/Repetition"
+msgstr ""
+
+#, fuzzy
+msgctxt "msaTestRetest|"
+msgid "Analysis options"
+msgstr "分析选项"
+
+msgctxt "msaTestRetest|"
+msgid "Process std. dev."
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Reference/master value"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Number of std. dev. for instrument variation"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Bias study options"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "One sample t-test"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Display boundaries of the reference interval"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Histogram bin boundaries"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Left open"
+msgstr ""
+
+msgctxt "msaType1Gauge|"
+msgid "Right open"
+msgstr ""

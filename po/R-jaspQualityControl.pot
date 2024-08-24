@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.0\n"
-"POT-Creation-Date: 2024-06-29 03:39\n"
+"POT-Creation-Date: 2024-08-24 03:40\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -208,7 +208,7 @@ msgstr ""
 msgid "Level"
 msgstr ""
 
-msgid "Regression Equation in %s Units"
+msgid "Regression equation in %s Units"
 msgstr ""
 
 msgid "Pareto Chart of Standardized Effects"
@@ -358,49 +358,49 @@ msgstr ""
 msgid "Standard order"
 msgstr ""
 
-msgid "Reference Tables and Plots"
+msgid "Reference tables and plots"
 msgstr ""
 
 msgid "Please insert a reference value before specifying a positive reference."
 msgstr ""
 
-msgid "Attributes Agreement Analysis"
+msgid "Attributes agreement analysis"
 msgstr ""
 
-msgid "Cohen's Kappa"
+msgid "Cohen's kappa"
 msgstr ""
 
-msgid "Kendall's Tau"
+msgid "Kendall's tau"
 msgstr ""
 
-msgid "Cohen's Kappa for Appraiser vs Standard"
+msgid "Cohen's kappa for appraiser vs standard"
 msgstr ""
 
 msgid "Appraiser"
 msgstr ""
 
-msgid "Cohen's Kappa correlations summary"
+msgid "Cohen's kappa correlations summary"
 msgstr ""
 
-msgid "Please inseret a vaild Positive reference as used in the 'Results' variables."
+msgid "Please inseret a vaild positive reference as used in the results variables."
 msgstr ""
 
-msgid "Fleiss' Kappa"
+msgid "Fleiss' kappa"
 msgstr ""
 
-msgid "Within Appraisers"
+msgid "Within appraisers"
 msgstr ""
 
-msgid "Appraiser vs Standard"
+msgid "Appraiser vs standard"
 msgstr ""
 
-msgid "Between Appraisers"
+msgid "Between appraisers"
 msgstr ""
 
-msgid "Each Appraiser vs Standard"
+msgid "Each appraiser vs standard"
 msgstr ""
 
-msgid "All Appraisers vs Standard"
+msgid "All appraisers vs standard"
 msgstr ""
 
 msgid "Inspected"
@@ -421,13 +421,13 @@ msgstr ""
 msgid "Upper"
 msgstr ""
 
-msgid "Invalid Reference and/or Results were inserted."
+msgid "Invalid reference and/or results were inserted."
 msgstr ""
 
 msgid "Invalid values (NA) found in appraiser %s."
 msgstr ""
 
-msgid "More than 1 Measurement per Operator required."
+msgid "More than 1 measurement per operator required."
 msgstr ""
 
 msgid "Study effectiveness summary"
@@ -442,37 +442,40 @@ msgstr ""
 msgid "False alarm rate"
 msgstr ""
 
-msgid "Acceptable: x >= 90%% (Effectiveness), x =< 2%% (Miss rate), x =< 5%% (False alarm rate)"
+msgid "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false alarm rate)"
 msgstr ""
 
-msgid "Marginally acceptable: x >= 80%% (Effectiveness), x =< 5%% (Miss rate), x =< 10%% (False alarm rate)"
+msgid "Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< 10%% (false alarm rate)"
 msgstr ""
 
-msgid "Unacceptable: x < 80%% (Effectiveness), x > 5%% (Miss rate), x > 10%% (False alarm rate)"
+msgid "Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false alarm rate)"
 msgstr ""
 
-msgid "Kendall's Tau is only available for numeric measurements."
+msgid "More than one measurement per operator required."
 msgstr ""
 
-msgid "Kendall's Tau is only available for non-binary measurements."
+msgid "Kendall's tau is only available for numeric measurements."
+msgstr ""
+
+msgid "Kendall's tau is only available for non-binary measurements."
 msgstr ""
 
 msgid "Operator"
 msgstr ""
 
-msgid "%g (Unacceptable)"
+msgid "%g (unacceptable)"
 msgstr ""
 
-msgid "%g (Marginally acceptable)"
+msgid "%g (marginally acceptable)"
 msgstr ""
 
-msgid "%g (Acceptable)"
+msgid "%g (acceptable)"
 msgstr ""
 
-msgid "Linearity and Bias"
+msgid "Linearity and bias"
 msgstr ""
 
-msgid "Gauge Bias"
+msgid "Gauge bias"
 msgstr ""
 
 msgid "Part"
@@ -481,34 +484,31 @@ msgstr ""
 msgid "Reference value"
 msgstr ""
 
-msgid "Mean per reference value"
+msgid "Observed mean"
 msgstr ""
 
-msgid "Bias per reference value"
+msgid "Mean bias"
 msgstr ""
 
-msgid "<i>p(t</i>-test of bias against 0)"
+msgid "<i>p</i>-value"
 msgstr ""
 
-msgid "Regression Model"
+msgid "Regression model"
 msgstr ""
 
 msgid "Predictor"
 msgstr ""
 
-msgid "<i>t</i>-statistic"
+msgid "Std. error"
 msgstr ""
 
-msgid "Std. Error coefficients"
+msgid "<i>t</i>-value"
 msgstr ""
 
-msgid "<i>p</i>"
+msgid "Regression equation"
 msgstr ""
 
-msgid "Gauge Linearity"
-msgstr ""
-
-msgid "S"
+msgid "Gauge linearity"
 msgstr ""
 
 msgid "R%1$s"
@@ -520,34 +520,40 @@ msgstr ""
 msgid "Calculations are based on 6 times the historical standard variation unless specified otherwise."
 msgstr ""
 
-msgid "Bias and Linearity"
+msgid "Bias and linearity"
 msgstr ""
 
-msgid "Percentage Process Variation Graph"
+msgid "Percentage process variation graph"
 msgstr ""
 
-msgid "T-Test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
+msgid "t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
 msgstr ""
 
 msgid "Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts."
 msgstr ""
 
-msgid "T-Test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s."
+msgid "t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s."
 msgstr ""
 
-msgid "T-Test not possible. No variance detected in Part(s) %s."
+msgid "t-test not possible. No variance detected in Part(s) %s."
+msgstr ""
+
+msgid "t-est not possible. No variance detected in part(s) %s."
+msgstr ""
+
+msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
 msgstr ""
 
 msgid "Reference"
 msgstr ""
 
-msgid "Percent bias per reference value"
+msgid "Percent bias"
 msgstr ""
 
 msgid "Linearity"
 msgstr ""
 
-msgid "Average"
+msgid "Total"
 msgstr ""
 
 msgid "Gauge r&R"
@@ -559,7 +565,7 @@ msgstr ""
 msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
 msgstr ""
 
-msgid "Gauge r&R Report"
+msgid "Gauge r&R report"
 msgstr ""
 
 msgid "No report components selected."
@@ -586,40 +592,43 @@ msgstr ""
 msgid "Date: %s"
 msgstr ""
 
-msgid "Gauge r&R ANOVA Table"
+msgid "Number of distinct categories"
+msgstr ""
+
+msgid "Gauge r&R ANOVA table"
 msgstr ""
 
 msgid "Range chart by operator"
 msgstr ""
 
-msgid "Xbar Chart by Operator"
+msgid "Xbar chart by operator"
 msgstr ""
 
 msgid "Average chart by operator"
 msgstr ""
 
-msgid "Scatterplot Operators"
+msgid "Scatterplot operators"
 msgstr ""
 
-msgid "Measurement by Part Graph"
+msgid "Measurement by part graph"
 msgstr ""
 
-msgid "Measurements by Operator Graph"
+msgid "Measurements by operator graph"
 msgstr ""
 
-msgid "Part by Operator Interaction Graph"
+msgid "Part by operator interaction graph"
 msgstr ""
 
 msgid "Traffic light chart"
 msgstr ""
 
-msgid "ANOVA Table"
+msgid "Gauge r&R study - crossed ANOVA"
 msgstr ""
 
-msgid "One-way ANOVA Table"
+msgid "One-way ANOVA table"
 msgstr ""
 
-msgid "Two-way ANOVA Table with Interaction"
+msgid "Two-way ANOVA table with interaction"
 msgstr ""
 
 msgid "Source"
@@ -628,19 +637,16 @@ msgstr ""
 msgid "df"
 msgstr ""
 
-msgid "Sum of Squares"
+msgid "Sum of squares"
 msgstr ""
 
-msgid "Mean Squares"
+msgid "Mean squares"
 msgstr ""
 
 msgid "F"
 msgstr ""
 
-msgid "<i>p</i>-value"
-msgstr ""
-
-msgid "Variance Components"
+msgid "Variance components"
 msgstr ""
 
 msgid "Variance"
@@ -649,31 +655,31 @@ msgstr ""
 msgid "%% Contribution"
 msgstr ""
 
-msgid "Gauge Evaluation"
+msgid "Gauge evaluation"
 msgstr ""
 
-msgid "Std. Deviation"
+msgid "Std. dev."
 msgstr ""
 
-msgid "Study Variation"
+msgid "Study variation"
 msgstr ""
 
-msgid "%% Study Variation"
+msgid "%% Study variation"
 msgstr ""
 
 msgid "%% Tolerance"
 msgstr ""
 
-msgid "Total Gauge r&R"
+msgid "Total gauge r&R"
 msgstr ""
 
 msgid "Repeatability"
 msgstr ""
 
-msgid "Part-to-Part"
+msgid "Part-to-part"
 msgstr ""
 
-msgid "Total Variation"
+msgid "Total variation"
 msgstr ""
 
 msgid "Reproducibility"
@@ -685,49 +691,58 @@ msgstr ""
 msgid "Number of distinct categories = %i"
 msgstr ""
 
-msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i"
+msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
 msgstr ""
 
-msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
+msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr ""
 
-msgid "Historical standard deviation is used to calculate some values for Std. Deviation, Study Variation, and %%Study Variation."
+msgid "Historical standard deviation is used to calculate some values for std. dev., study variation, and %%study variation."
 msgstr ""
 
-msgid "Values for %%Process Variation are not displayed because they are identical to values for %%Study Variation."
+msgid "Values for %%process variation are not displayed because they are identical to values for %%study variation."
 msgstr ""
 
-msgid "Two-way ANOVA Table without Interaction"
+msgid "Two-way ANOVA table without interaction"
 msgstr ""
 
-msgid "Components of Variation"
+msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
+msgstr ""
+
+msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
+msgstr ""
+
+msgid "Components of variation"
+msgstr ""
+
+msgid "Number of observations is < 2 in %1$s after grouping on %2$s."
 msgstr ""
 
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
 msgstr ""
 
-msgid "Measurements by Part"
+msgid "Measurements by part"
 msgstr ""
 
-msgid "Measurements by Operator"
+msgid "Measurements by operator"
 msgstr ""
 
-msgid "Part by Operator Interaction"
+msgid "Part by operator interaction"
 msgstr ""
 
 msgid "Operators measured different number of parts."
 msgstr ""
 
-msgid "Scatterplot of Operator vs Operator"
+msgid "Scatterplot of operator vs operator"
 msgstr ""
 
 msgid "Cannot plot scatterplot for less than 2 operators."
 msgstr ""
 
-msgid "Scatterplot of Operator  %1$s vs Operator %2$s"
+msgid "Scatterplot of operator  %1$s vs operator %2$s"
 msgstr ""
 
-msgid "Matrix Plot for Operators"
+msgid "Matrix plot for operators"
 msgstr ""
 
 msgid "Repeat"
@@ -736,25 +751,31 @@ msgstr ""
 msgid "Reprod"
 msgstr ""
 
+msgid "%% Study Variation"
+msgstr ""
+
+msgid "Error: Gauge study failed. Could not create traffic light chart."
+msgstr ""
+
 msgid "%.2f"
 msgstr ""
 
-msgid "Gauge r&R (Non-Replicable) Report"
+msgid "Gauge r&R (non-replicable) report"
 msgstr ""
 
-msgid "Gauge r&R Tables"
-msgstr ""
-
-msgid "Range Chart by Operator"
+msgid "Gauge r&R tables"
 msgstr ""
 
 msgid "Measurement by part x operator plot"
 msgstr ""
 
-msgid "Gauge r&R (Nested)"
+msgid "Gauge r&R study - nested ANOVA"
 msgstr ""
 
-msgid "Mean Square"
+msgid "Gauge r&R (nested)"
+msgstr ""
+
+msgid "Mean square"
 msgstr ""
 
 msgid "p"
@@ -766,16 +787,13 @@ msgstr ""
 msgid "No degrees of freedom for %s."
 msgstr ""
 
-msgid "Total Gauge r & R"
+msgid "Part-To-part"
 msgstr ""
 
-msgid "Part-To-Part"
+msgid "Study variation is calculated as std. dev. * %i"
 msgstr ""
 
-msgid "Study Variation is calculated as Std. Deviation * %i"
-msgstr ""
-
-msgid "Study Variation is calculated as Std. Deviation * %.2f"
+msgid "Study variation is calculated as std. dev. * %.2f"
 msgstr ""
 
 msgid "Measurements by part x operator"
@@ -784,10 +802,10 @@ msgstr ""
 msgid "Operator %s"
 msgstr ""
 
-msgid "Scatterplot Operators vs Parts"
+msgid "Scatterplot operators vs parts"
 msgstr ""
 
-msgid "Range Method R Chart"
+msgid "Range method range chart"
 msgstr ""
 
 msgid "Range chart by part"
@@ -808,7 +826,7 @@ msgstr ""
 msgid "d2"
 msgstr ""
 
-msgid "Process Std. Dev."
+msgid "Process std. dev."
 msgstr ""
 
 msgid "Tolerance"
@@ -817,31 +835,31 @@ msgstr ""
 msgid "GRR"
 msgstr ""
 
-msgid "%%GRR of Process Std. Dev."
+msgid "%%GRR of process std. dev."
 msgstr ""
 
-msgid "%%GRR of Tolerance"
+msgid "%%GRR of tolerance"
 msgstr ""
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
 msgstr ""
 
-msgid "Run Chart"
+msgid "Run chart"
 msgstr ""
 
-msgid "Bias Table"
+msgid "Bias table"
 msgstr ""
 
-msgid "t-Test Bias"
+msgid "t-test bias"
 msgstr ""
 
-msgid "Histogram Bias"
+msgid "Histogram bias"
 msgstr ""
 
-msgid "Bias and Instrument Capability Table"
+msgid "Bias and instrument capability table"
 msgstr ""
 
-msgid "Basic Statistics"
+msgid "Basic statistics"
 msgstr ""
 
 msgid "Mean"
@@ -850,16 +868,19 @@ msgstr ""
 msgid "Bias"
 msgstr ""
 
-msgid "Std. Deviation (<i>s</i>)"
+msgid "Std. dev. (<i>s</i>)"
 msgstr ""
 
-msgid "Study variation"
+msgid "Instrument variation"
+msgstr ""
+
+msgid "Tolerance bounds"
 msgstr ""
 
 msgid "%% Bias"
 msgstr ""
 
-msgid "The study variation is calculated as %i * <i>s</i>."
+msgid "The instrument variation is calculated as %i * <i>s</i>."
 msgstr ""
 
 msgid "Capability"
@@ -871,28 +892,49 @@ msgstr ""
 msgid "Cgk"
 msgstr ""
 
-msgid "%% Var(Repeatability)"
+msgid "%% Var(repeatability)"
 msgstr ""
 
-msgid "%% Var(Repeatability and bias)"
+msgid "%% Var(repeatability and bias)"
 msgstr ""
 
-msgid "T-Test of Observed Bias Against 0"
+msgid "t-test of observed bias against 0"
 msgstr ""
 
-msgid "%s CI for Bias"
+msgid "%s CI for bias"
 msgstr ""
 
 msgid "<i>t</i>"
 msgstr ""
 
-msgid "Bias Histogram"
+msgid "Bias histogram"
 msgstr ""
 
-msgid "Run Chart of %s"
+msgid "Histogram requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
+msgstr ""
+
+msgid "Count"
+msgstr ""
+
+msgid "Mean - %is"
+msgstr ""
+
+msgid "Mean + %is"
+msgstr ""
+
+msgid "Ref. - %.2f * tol."
+msgstr ""
+
+msgid "Ref. + %.2f * tol."
+msgstr ""
+
+msgid "Run chart of %s"
 msgstr ""
 
 msgid "No valid measurements in %s."
+msgstr ""
+
+msgid "Ref."
 msgstr ""
 
 msgid "Parameter Estimates"
@@ -1159,7 +1201,7 @@ msgstr ""
 msgid "%s vs. BL"
 msgstr ""
 
-msgid "Std. dev."
+msgid "Average"
 msgstr ""
 
 msgid "Log mean (%1$s)"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-05-18 03:39\n"
+"POT-Creation-Date: 2024-08-24 03:40\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -224,7 +224,8 @@ msgstr "名称"
 msgid "Level"
 msgstr ""
 
-msgid "Regression Equation in %s Units"
+#, fuzzy
+msgid "Regression equation in %s Units"
 msgstr "以 %s 单位表达的回归方程"
 
 msgid "Pareto Chart of Standardized Effects"
@@ -387,50 +388,63 @@ msgstr ""
 msgid "Standard order"
 msgstr "标准序"
 
-msgid "Reference Tables and Plots"
+#, fuzzy
+msgid "Reference tables and plots"
 msgstr "参考值表和图形"
 
 msgid "Please insert a reference value before specifying a positive reference."
 msgstr "在指定正参考值之前先插入参考值。"
 
-msgid "Attributes Agreement Analysis"
+#, fuzzy
+msgid "Attributes agreement analysis"
 msgstr "属性一致性分析"
 
-msgid "Cohen's Kappa"
+#, fuzzy
+msgid "Cohen's kappa"
 msgstr "Cohen's Kappa"
 
-msgid "Kendall's Tau"
+#, fuzzy
+msgid "Kendall's tau"
 msgstr "Kendall's Tau"
 
-msgid "Cohen's Kappa for Appraiser vs Standard"
+#, fuzzy
+msgid "Cohen's kappa for appraiser vs standard"
 msgstr "评估者 vs. 标准的Cohen's Kappa值"
 
 msgid "Appraiser"
 msgstr "评估者"
 
-msgid "Cohen's Kappa correlations summary"
+#, fuzzy
+msgid "Cohen's kappa correlations summary"
 msgstr "Cohen's Kappa 相关汇总"
 
+#, fuzzy
 msgid ""
-"Please inseret a vaild Positive reference as used in the 'Results' variables."
+"Please inseret a vaild positive reference as used in the results variables."
 msgstr "如同在 '结果' 变量中的应用，请插入有效的正参考值。"
 
-msgid "Fleiss' Kappa"
+#, fuzzy
+msgid "Fleiss' kappa"
 msgstr "Fleiss' Kappa"
 
-msgid "Within Appraisers"
+#, fuzzy
+msgid "Within appraisers"
 msgstr "评估者内部"
 
-msgid "Appraiser vs Standard"
+#, fuzzy
+msgid "Appraiser vs standard"
 msgstr "评估者 vs. 标准"
 
-msgid "Between Appraisers"
+#, fuzzy
+msgid "Between appraisers"
 msgstr "评估者之间"
 
-msgid "Each Appraiser vs Standard"
+#, fuzzy
+msgid "Each appraiser vs standard"
 msgstr "每个评估者 vs. 标准"
 
-msgid "All Appraisers vs Standard"
+#, fuzzy
+msgid "All appraisers vs standard"
 msgstr "所有评估者 vs. 标准"
 
 msgid "Inspected"
@@ -451,13 +465,15 @@ msgstr "95%% 置信区间"
 msgid "Upper"
 msgstr "上界"
 
-msgid "Invalid Reference and/or Results were inserted."
+#, fuzzy
+msgid "Invalid reference and/or results were inserted."
 msgstr "插入无效参考值和/或结果。"
 
 msgid "Invalid values (NA) found in appraiser %s."
 msgstr "评估者%s中发现无效值。"
 
-msgid "More than 1 Measurement per Operator required."
+#, fuzzy
+msgid "More than 1 measurement per operator required."
 msgstr "每个操作者需要多于1次测量。"
 
 msgid "Study effectiveness summary"
@@ -472,43 +488,57 @@ msgstr "漏报率"
 msgid "False alarm rate"
 msgstr "误报率"
 
+#, fuzzy
 msgid ""
-"Acceptable: x >= 90%% (Effectiveness), x =< 2%% (Miss rate), x =< 5%% (False "
+"Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false "
 "alarm rate)"
 msgstr "可接受 : x >= 90%% (有效性), x =< 2%% (漏报率), x =< 5%% (误报率)"
 
+#, fuzzy
 msgid ""
-"Marginally acceptable: x >= 80%% (Effectiveness), x =< 5%% (Miss rate), x =< "
-"10%% (False alarm rate)"
+"Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< "
+"10%% (false alarm rate)"
 msgstr "勉强可接受 : x >= 80%% (有效性), x =< 5%% (漏报率), x =< 10%% (误报率)"
 
+#, fuzzy
 msgid ""
-"Unacceptable: x < 80%% (Effectiveness), x > 5%% (Miss rate), x > 10%% (False "
+"Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false "
 "alarm rate)"
 msgstr "不可接受 : x < 80%% (有效性), x > 5%% (漏报率), x > 10%% (误报率)"
 
-msgid "Kendall's Tau is only available for numeric measurements."
+#, fuzzy
+msgid "More than one measurement per operator required."
+msgstr "每个操作者需要多于1次测量。"
+
+#, fuzzy
+msgid "Kendall's tau is only available for numeric measurements."
 msgstr "Kendall's Tau仅用于数字测量。"
 
-msgid "Kendall's Tau is only available for non-binary measurements."
+#, fuzzy
+msgid "Kendall's tau is only available for non-binary measurements."
 msgstr "Kendall's Tau 仅用于非二元测量。"
 
 msgid "Operator"
 msgstr "操作者"
 
-msgid "%g (Unacceptable)"
+#, fuzzy
+msgid "%g (unacceptable)"
 msgstr "%g (不可接受)"
 
-msgid "%g (Marginally acceptable)"
+#, fuzzy
+msgid "%g (marginally acceptable)"
 msgstr "%g (勉强可接受)"
 
-msgid "%g (Acceptable)"
-msgstr "%g (可接受)"
+#, fuzzy
+msgid "%g (acceptable)"
+msgstr "%g (不可接受)"
 
-msgid "Linearity and Bias"
+#, fuzzy
+msgid "Linearity and bias"
 msgstr "线性和偏倚"
 
-msgid "Gauge Bias"
+#, fuzzy
+msgid "Gauge bias"
 msgstr "量具偏倚"
 
 msgid "Part"
@@ -517,35 +547,39 @@ msgstr "零件"
 msgid "Reference value"
 msgstr "参考值"
 
-msgid "Mean per reference value"
-msgstr "每个参考值的平均值"
+#, fuzzy
+msgid "Observed mean"
+msgstr "观测值"
 
-msgid "Bias per reference value"
-msgstr "每个参考值的偏倚"
+#, fuzzy
+msgid "Mean bias"
+msgstr "均方"
 
-msgid "<i>p(t</i>-test of bias against 0)"
-msgstr "<i>p(t</i>- 检验偏倚值与 0)"
+msgid "<i>p</i>-value"
+msgstr "<i>p</i>- 值"
 
-msgid "Regression Model"
+#, fuzzy
+msgid "Regression model"
 msgstr "回归模型"
 
 msgid "Predictor"
 msgstr "预测变量"
 
-msgid "<i>t</i>-statistic"
-msgstr "<i>t</i>- 统计量"
+#, fuzzy
+msgid "Std. error"
+msgstr "标准误"
 
-msgid "Std. Error coefficients"
-msgstr "系数标准误"
+#, fuzzy
+msgid "<i>t</i>-value"
+msgstr "<i>p</i>- 值"
 
-msgid "<i>p</i>"
-msgstr "<i>p</i>"
+#, fuzzy
+msgid "Regression equation"
+msgstr "以 %s 单位表达的回归方程"
 
-msgid "Gauge Linearity"
+#, fuzzy
+msgid "Gauge linearity"
 msgstr "量具线性"
-
-msgid "S"
-msgstr "S"
 
 msgid "R%1$s"
 msgstr "R%1$s"
@@ -558,15 +592,17 @@ msgid ""
 "specified otherwise."
 msgstr "除非另有规定，否则计算基于历史标准差的6倍。"
 
-msgid "Bias and Linearity"
+#, fuzzy
+msgid "Bias and linearity"
 msgstr "偏倚和线性"
 
-msgid "Percentage Process Variation Graph"
+#, fuzzy
+msgid "Percentage process variation graph"
 msgstr "过程变异百分比图"
 
 #, fuzzy
 msgid ""
-"T-Test requires more than 1 measurement. %1$i valid measurement(s) detected "
+"t-test requires more than 1 measurement. %1$i valid measurement(s) detected "
 "in %2$s."
 msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
 
@@ -579,24 +615,32 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"T-Test requires more than 1 measurement per part. Less than 2 valid "
+"t-test requires more than 1 measurement per part. Less than 2 valid "
 "measurement(s) detected in Part(s) %s."
 msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
 
-msgid "T-Test not possible. No variance detected in Part(s) %s."
+msgid "t-test not possible. No variance detected in Part(s) %s."
+msgstr ""
+
+msgid "t-est not possible. No variance detected in part(s) %s."
+msgstr ""
+
+msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
 msgstr ""
 
 msgid "Reference"
 msgstr "参考值"
 
-msgid "Percent bias per reference value"
-msgstr "每个参考值的偏倚百分比"
+#, fuzzy
+msgid "Percent bias"
+msgstr "百分比"
 
 msgid "Linearity"
 msgstr "线性"
 
-msgid "Average"
-msgstr "平均值"
+#, fuzzy
+msgid "Total"
+msgstr "总变异"
 
 msgid "Gauge r&R"
 msgstr "量具 r&R"
@@ -611,7 +655,8 @@ msgid ""
 "operator's part is measured %d times."
 msgstr "选择的测量值是“单列”格式，而每个操作者的零件都被测量%d次。"
 
-msgid "Gauge r&R Report"
+#, fuzzy
+msgid "Gauge r&R report"
 msgstr "量具 r&R 报告"
 
 msgid "No report components selected."
@@ -641,42 +686,54 @@ msgstr "位置 (%1$s)"
 msgid "Date: %s"
 msgstr "日期：%s"
 
-msgid "Gauge r&R ANOVA Table"
+#, fuzzy
+msgid "Number of distinct categories"
+msgstr "可区分类别数 = %i"
+
+#, fuzzy
+msgid "Gauge r&R ANOVA table"
 msgstr "量具 r&R 方差分析表"
 
 #, fuzzy
 msgid "Range chart by operator"
 msgstr "极差图（按操作者）"
 
-msgid "Xbar Chart by Operator"
+#, fuzzy
+msgid "Xbar chart by operator"
 msgstr "均值图（按操作者）"
 
 #, fuzzy
 msgid "Average chart by operator"
 msgstr "极差图（按操作者）"
 
-msgid "Scatterplot Operators"
+#, fuzzy
+msgid "Scatterplot operators"
 msgstr "操作者散点图"
 
-msgid "Measurement by Part Graph"
+#, fuzzy
+msgid "Measurement by part graph"
 msgstr "按零件测量值图"
 
-msgid "Measurements by Operator Graph"
+#, fuzzy
+msgid "Measurements by operator graph"
 msgstr "按操作者测量值图"
 
-msgid "Part by Operator Interaction Graph"
+#, fuzzy
+msgid "Part by operator interaction graph"
 msgstr "零件和操作者交互作用图"
 
 msgid "Traffic light chart"
 msgstr "红绿灯图"
 
-msgid "ANOVA Table"
-msgstr "方差分析表"
+msgid "Gauge r&R study - crossed ANOVA"
+msgstr ""
 
-msgid "One-way ANOVA Table"
+#, fuzzy
+msgid "One-way ANOVA table"
 msgstr "单向方差分析表"
 
-msgid "Two-way ANOVA Table with Interaction"
+#, fuzzy
+msgid "Two-way ANOVA table with interaction"
 msgstr "双向方差分析表带交互作用"
 
 msgid "Source"
@@ -685,19 +742,19 @@ msgstr "变异源"
 msgid "df"
 msgstr "df"
 
-msgid "Sum of Squares"
+#, fuzzy
+msgid "Sum of squares"
 msgstr "平方和"
 
-msgid "Mean Squares"
+#, fuzzy
+msgid "Mean squares"
 msgstr "均方"
 
 msgid "F"
 msgstr "F"
 
-msgid "<i>p</i>-value"
-msgstr "<i>p</i>- 值"
-
-msgid "Variance Components"
+#, fuzzy
+msgid "Variance components"
 msgstr "方差分量"
 
 msgid "Variance"
@@ -706,31 +763,37 @@ msgstr "方差"
 msgid "%% Contribution"
 msgstr "%% 贡献"
 
-msgid "Gauge Evaluation"
+#, fuzzy
+msgid "Gauge evaluation"
 msgstr "量具评估"
 
-msgid "Std. Deviation"
+#, fuzzy
+msgid "Std. dev."
 msgstr "标准差"
 
-msgid "Study Variation"
+msgid "Study variation"
 msgstr "研究变异"
 
-msgid "%% Study Variation"
+#, fuzzy
+msgid "%% Study variation"
 msgstr "%% 研究变异"
 
 msgid "%% Tolerance"
 msgstr "%% 公差"
 
-msgid "Total Gauge r&R"
+#, fuzzy
+msgid "Total gauge r&R"
 msgstr "总量具 r&R"
 
 msgid "Repeatability"
 msgstr "重复性"
 
-msgid "Part-to-Part"
+#, fuzzy
+msgid "Part-to-part"
 msgstr "部件间"
 
-msgid "Total Variation"
+#, fuzzy
+msgid "Total variation"
 msgstr "总变异"
 
 msgid "Reproducibility"
@@ -742,54 +805,77 @@ msgstr "*"
 msgid "Number of distinct categories = %i"
 msgstr "可区分类别数 = %i"
 
-msgid "Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %i"
+#, fuzzy
+msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
 msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %i"
 
-msgid ""
-"Study Variation is calculated as Std. Deviation <spam>&#215;</spam> %.2f"
+#, fuzzy
+msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %.2f"
 
+#, fuzzy
 msgid ""
-"Historical standard deviation is used to calculate some values for Std. "
-"Deviation, Study Variation, and %%Study Variation."
+"Historical standard deviation is used to calculate some values for std. "
+"dev., study variation, and %%study variation."
 msgstr "历史标准差用于计算一些值：标准差、研究变异和 %% 研究变异。"
 
+#, fuzzy
 msgid ""
-"Values for %%Process Variation are not displayed because they are identical "
-"to values for %%Study Variation."
+"Values for %%process variation are not displayed because they are identical "
+"to values for %%study variation."
 msgstr "未显示 %%过程偏差的值，因为它们与 %%研究偏差的值相同。"
 
-msgid "Two-way ANOVA Table without Interaction"
+#, fuzzy
+msgid "Two-way ANOVA table without interaction"
 msgstr "双向方差分析表不带交互作用"
 
-msgid "Components of Variation"
+#, fuzzy
+msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
+msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %i"
+
+#, fuzzy
+msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
+msgstr "研究变异计算作为标准偏差 <spam>&#215;</spam> %.2f"
+
+#, fuzzy
+msgid "Components of variation"
 msgstr "方差分量"
+
+#, fuzzy
+msgid "Number of observations is < 2 in %1$s after grouping on %2$s."
+msgstr "在 %2$s中分组后，%1$s 中观测值数量 < 2"
 
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
 msgstr "在 %2$s中分组后，%1$s 中观测值数量 < 2"
 
-msgid "Measurements by Part"
+#, fuzzy
+msgid "Measurements by part"
 msgstr "测量值按零件"
 
-msgid "Measurements by Operator"
+#, fuzzy
+msgid "Measurements by operator"
 msgstr "测量值按操作者"
 
-msgid "Part by Operator Interaction"
+#, fuzzy
+msgid "Part by operator interaction"
 msgstr "零件与操作者交互作用"
 
 msgid "Operators measured different number of parts."
 msgstr "操作者测量不同数量零件。"
 
-msgid "Scatterplot of Operator vs Operator"
+#, fuzzy
+msgid "Scatterplot of operator vs operator"
 msgstr "操作者 vs. 操作者散点图"
 
 msgid "Cannot plot scatterplot for less than 2 operators."
 msgstr "少于 2 位操作者不能绘制散点图。"
 
-msgid "Scatterplot of Operator  %1$s vs Operator %2$s"
+#, fuzzy
+msgid "Scatterplot of operator  %1$s vs operator %2$s"
 msgstr "操作者  %1$s vs 操作者 %2$s 散点图"
 
-msgid "Matrix Plot for Operators"
+#, fuzzy
+msgid "Matrix plot for operators"
 msgstr "操作者矩阵图"
 
 msgid "Repeat"
@@ -798,26 +884,36 @@ msgstr "重复性"
 msgid "Reprod"
 msgstr "再现性"
 
+msgid "%% Study Variation"
+msgstr "%% 研究变异"
+
+msgid "Error: Gauge study failed. Could not create traffic light chart."
+msgstr ""
+
 msgid "%.2f"
 msgstr "%.2f"
 
 #, fuzzy
-msgid "Gauge r&R (Non-Replicable) Report"
+msgid "Gauge r&R (non-replicable) report"
 msgstr "量具 r&R 报告"
 
-msgid "Gauge r&R Tables"
+#, fuzzy
+msgid "Gauge r&R tables"
 msgstr "量具 r&R表"
-
-msgid "Range Chart by Operator"
-msgstr "极差图（按操作者）"
 
 msgid "Measurement by part x operator plot"
 msgstr "测量值图（按零件x操作者）"
 
-msgid "Gauge r&R (Nested)"
+#, fuzzy
+msgid "Gauge r&R study - nested ANOVA"
 msgstr "量具 r&R（嵌套）"
 
-msgid "Mean Square"
+#, fuzzy
+msgid "Gauge r&R (nested)"
+msgstr "量具 r&R（嵌套）"
+
+#, fuzzy
+msgid "Mean square"
 msgstr "均方"
 
 msgid "p"
@@ -829,16 +925,16 @@ msgstr "方差"
 msgid "No degrees of freedom for %s."
 msgstr ""
 
-msgid "Total Gauge r & R"
-msgstr "总量具 r&R"
-
-msgid "Part-To-Part"
+#, fuzzy
+msgid "Part-To-part"
 msgstr "部件间"
 
-msgid "Study Variation is calculated as Std. Deviation * %i"
+#, fuzzy
+msgid "Study variation is calculated as std. dev. * %i"
 msgstr "研究变异的计算为标准差* %i"
 
-msgid "Study Variation is calculated as Std. Deviation * %.2f"
+#, fuzzy
+msgid "Study variation is calculated as std. dev. * %.2f"
 msgstr "研究变异的计算为标准差* %.2f"
 
 msgid "Measurements by part x operator"
@@ -847,10 +943,12 @@ msgstr "测量值按零件 x 操作者"
 msgid "Operator %s"
 msgstr "操作者 %s"
 
-msgid "Scatterplot Operators vs Parts"
+#, fuzzy
+msgid "Scatterplot operators vs parts"
 msgstr "操作者 vs. 零件散点图"
 
-msgid "Range Method R Chart"
+#, fuzzy
+msgid "Range method range chart"
 msgstr "极差法极差图"
 
 msgid "Range chart by part"
@@ -871,7 +969,8 @@ msgstr "R 均值"
 msgid "d2"
 msgstr "d2"
 
-msgid "Process Std. Dev."
+#, fuzzy
+msgid "Process std. dev."
 msgstr "过程标准差"
 
 msgid "Tolerance"
@@ -881,32 +980,38 @@ msgid "GRR"
 msgstr "GRR"
 
 #, fuzzy
-msgid "%%GRR of Process Std. Dev."
+msgid "%%GRR of process std. dev."
 msgstr "%GRR 过程标准差"
 
 #, fuzzy
-msgid "%%GRR of Tolerance"
+msgid "%%GRR of tolerance"
 msgstr "%GRR 公差"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
 msgstr "第1次测量 vs. 第2次测量散点图"
 
-msgid "Run Chart"
+#, fuzzy
+msgid "Run chart"
 msgstr "运行图"
 
-msgid "Bias Table"
+#, fuzzy
+msgid "Bias table"
 msgstr "偏倚表"
 
-msgid "t-Test Bias"
+#, fuzzy
+msgid "t-test bias"
 msgstr "偏倚的 t 检验"
 
-msgid "Histogram Bias"
+#, fuzzy
+msgid "Histogram bias"
 msgstr "偏倚直方图"
 
-msgid "Bias and Instrument Capability Table"
+#, fuzzy
+msgid "Bias and instrument capability table"
 msgstr "偏倚和量具能力表"
 
-msgid "Basic Statistics"
+#, fuzzy
+msgid "Basic statistics"
 msgstr "基本统计"
 
 msgid "Mean"
@@ -915,16 +1020,23 @@ msgstr "均值"
 msgid "Bias"
 msgstr "偏倚"
 
-msgid "Std. Deviation (<i>s</i>)"
+#, fuzzy
+msgid "Std. dev. (<i>s</i>)"
 msgstr "标准差(<i>s</i>)"
 
-msgid "Study variation"
+#, fuzzy
+msgid "Instrument variation"
 msgstr "研究变异"
+
+#, fuzzy
+msgid "Tolerance bounds"
+msgstr "公差 : %s"
 
 msgid "%% Bias"
 msgstr "%% 偏倚"
 
-msgid "The study variation is calculated as %i * <i>s</i>."
+#, fuzzy
+msgid "The instrument variation is calculated as %i * <i>s</i>."
 msgstr "研究变异的计算为%i * <i>s</i>."
 
 msgid "Capability"
@@ -936,29 +1048,62 @@ msgstr "Cg"
 msgid "Cgk"
 msgstr "Cgk"
 
-msgid "%% Var(Repeatability)"
+#, fuzzy
+msgid "%% Var(repeatability)"
 msgstr "%% 变异（重复性）"
 
-msgid "%% Var(Repeatability and bias)"
+#, fuzzy
+msgid "%% Var(repeatability and bias)"
 msgstr "%% 变异（重复性和偏倚）"
 
-msgid "T-Test of Observed Bias Against 0"
+#, fuzzy
+msgid "t-test of observed bias against 0"
 msgstr "观测的偏倚与0的 t 检验"
 
-msgid "%s CI for Bias"
+#, fuzzy
+msgid "%s CI for bias"
 msgstr "偏倚的 %s 置信区间"
 
 msgid "<i>t</i>"
 msgstr "<i>t</i>"
 
-msgid "Bias Histogram"
+#, fuzzy
+msgid "Bias histogram"
 msgstr "偏倚直方图"
 
-msgid "Run Chart of %s"
+#, fuzzy
+msgid ""
+"Histogram requires more than 1 measurement. %1$i valid measurement(s) "
+"detected in %2$s."
+msgstr "T 检验需要一次以上的测量。在 %2$s 中检测到 %1$i 有效测量值。"
+
+#, fuzzy
+msgid "Count"
+msgstr "计数"
+
+#, fuzzy
+msgid "Mean - %is"
+msgstr "均值 (%1$s)"
+
+#, fuzzy
+msgid "Mean + %is"
+msgstr "均值 (%1$s)"
+
+msgid "Ref. - %.2f * tol."
+msgstr ""
+
+msgid "Ref. + %.2f * tol."
+msgstr ""
+
+#, fuzzy
+msgid "Run chart of %s"
 msgstr "%s 运行图"
 
 msgid "No valid measurements in %s."
 msgstr "%s 中无有效测量值。"
+
+msgid "Ref."
+msgstr ""
 
 msgid "Parameter Estimates"
 msgstr "参数估计"
@@ -1274,9 +1419,8 @@ msgstr ""
 msgid "%s vs. BL"
 msgstr ""
 
-#, fuzzy
-msgid "Std. dev."
-msgstr "标准差"
+msgid "Average"
+msgstr "平均值"
 
 msgid "Log mean (%1$s)"
 msgstr "Log 均值 (%1$s)"
@@ -1428,6 +1572,48 @@ msgstr "均值和标准差控制图"
 #, fuzzy
 msgid "Variables Chart for Subgroups Report"
 msgstr "单值图"
+
+#~ msgid "%g (Acceptable)"
+#~ msgstr "%g (可接受)"
+
+#~ msgid "Mean per reference value"
+#~ msgstr "每个参考值的平均值"
+
+#~ msgid "Bias per reference value"
+#~ msgstr "每个参考值的偏倚"
+
+#~ msgid "<i>p(t</i>-test of bias against 0)"
+#~ msgstr "<i>p(t</i>- 检验偏倚值与 0)"
+
+#~ msgid "<i>t</i>-statistic"
+#~ msgstr "<i>t</i>- 统计量"
+
+#~ msgid "Std. Error coefficients"
+#~ msgstr "系数标准误"
+
+#~ msgid "<i>p</i>"
+#~ msgstr "<i>p</i>"
+
+#~ msgid "S"
+#~ msgstr "S"
+
+#~ msgid "Percent bias per reference value"
+#~ msgstr "每个参考值的偏倚百分比"
+
+#~ msgid "ANOVA Table"
+#~ msgstr "方差分析表"
+
+#~ msgid "Std. Deviation"
+#~ msgstr "标准差"
+
+#~ msgid "Study Variation"
+#~ msgstr "研究变异"
+
+#~ msgid "Range Chart by Operator"
+#~ msgstr "极差图（按操作者）"
+
+#~ msgid "Total Gauge r & R"
+#~ msgstr "总量具 r&R"
 
 #~ msgid "Central Composite Design"
 #~ msgstr "中心复合设计"
@@ -1623,9 +1809,6 @@ msgstr "单值图"
 
 #~ msgid "Scale (<i>k</i>)"
 #~ msgstr "尺度 (<i>k</i>)"
-
-#~ msgid "Observed"
-#~ msgstr "观测值"
 
 #~ msgid "Expected overall"
 #~ msgstr "期望总体"
