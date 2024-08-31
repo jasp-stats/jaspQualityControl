@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2024-08-24 21:56+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Galician <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/gl/>\n"
+"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.7.1-dev\n"
 "X-Language: gl\n"
 "X-Qt-Contexts: true\n"
 
@@ -2384,201 +2390,192 @@ msgstr "8"
 
 msgctxt "Description|"
 msgid "Type 1 Instrument Capability Study"
-msgstr ""
+msgstr "Tipo 1 Estudo de Capacidade do Instrumento"
 
 msgctxt "Description|"
 msgid "Type 2 Gauge r&R Study"
-msgstr ""
+msgstr "Tipo 2 Estudo de calibre r&R"
 
 msgctxt "Description|"
 msgid "Gauge r&R Study (Non-replicable Measurements)"
-msgstr ""
+msgstr "Estudo de calibre r&R (medidas non replicables)"
 
 msgctxt "Description|"
 msgid "Type 4 Linearity Study"
-msgstr ""
+msgstr "Tipo 4 Estudo de Linearidade"
 
 msgctxt "Description|"
 msgid "Capability Analysis"
-msgstr ""
+msgstr "Análise de Capacidade"
 
 msgctxt "Description|"
 msgid "Design of Experiments"
-msgstr ""
+msgstr "Deseño de Experimentos"
 
 msgctxt "Description|"
 msgid "Create Factorial Worksheet"
-msgstr ""
+msgstr "Crear Folla de Cálculo Factorial"
 
 msgctxt "Description|"
 msgid "Create Response Surface Worksheet"
-msgstr ""
+msgstr "Crear Folla de Cálculo de Superficie de Resposta"
 
 msgctxt "msaAttribute|"
 msgid "Kappa study"
-msgstr ""
+msgstr "Estudo de Kappa"
 
 msgctxt "msaAttribute|"
 msgid "Tau study"
-msgstr ""
+msgstr "Estudo de Tau"
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Analysis options"
 msgstr "Opcións de análise"
 
 msgctxt "msaGaugeRR|"
 msgid "r&R ANOVA table"
-msgstr ""
+msgstr "Táboa ANOVA de r&R"
 
 msgctxt "msaGaugeRR|"
 msgid "Study var. multiplier type"
-msgstr ""
+msgstr "Tipo de multiplicador de var. do estudo"
 
 msgctxt "msaGaugeRR|"
 msgid "Study var. multiplier value"
-msgstr ""
+msgstr "Valor do multiplicador de var. do estudo"
 
 msgctxt "msaGaugeRR|"
 msgid "Range charts by operator"
-msgstr ""
+msgstr "Gráficas de rango por operador"
 
 msgctxt "msaGaugeRR|"
 msgid "Average chart bys operator"
-msgstr ""
+msgstr "Gráficas medias por operador"
 
 msgctxt "msaGaugeRR|"
 msgid "Report options"
-msgstr ""
+msgstr "Opcións do informe"
 
 msgctxt "msaGaugeRR|"
 msgid "Show gauge evaluation table"
-msgstr ""
+msgstr "Amosar táboa de avaliación do calibre"
 
 msgctxt "msaGaugeRR|"
 msgid "Show range charts by operator"
-msgstr ""
+msgstr "Amosar gráficas de rango por operador"
 
 msgctxt "msaGaugeRR|"
 msgid "Show average charts by operator"
-msgstr ""
+msgstr "Amosar gráficas medias por operador"
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Analysis options"
 msgstr "Opcións de análise"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. dev. reference"
-msgstr ""
+msgstr "Referencia do Desv. Padrón"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study std. dev."
-msgstr ""
+msgstr "Desv. Padr. do estudo"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Historical process std. dev."
-msgstr ""
+msgstr "Desv. Padr. do proceso histórico"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. dev. value"
-msgstr ""
+msgstr "Valor do Desv. Padrón"
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Tolerance width"
 msgstr "Ancho de tolerancia"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "r&R ANOVA table"
-msgstr ""
+msgstr "Táboa ANOVA de r&R"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study var. multiplier type"
-msgstr ""
+msgstr "Tipo de multiplicador de var. do estudo"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Std. dev."
-msgstr ""
+msgstr "Desv. padr."
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Study var. multiplier value"
-msgstr ""
+msgstr "Valor do multiplicador de var. do estudo"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Range charts by operator"
-msgstr ""
+msgstr "Gráficas de rango por operador"
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Traffic light chart"
 msgstr "Gráfica de semáforo"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Report options"
-msgstr ""
+msgstr "Opcións do informe"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge r&R report"
-msgstr ""
+msgstr "Informe de calibre r&R"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show gauge evaluation table"
-msgstr ""
+msgstr "Amosar táboa de avaliación do calibre"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show range chart by operator"
-msgstr ""
+msgstr "Amosar gráfica de rango por operador"
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Show traffic light chart"
 msgstr "Amosar a gráfica de semáforo"
 
 msgctxt "msaTestRetest|"
 msgid "Operator/Repetition"
-msgstr ""
+msgstr "Operador/Repetición"
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Analysis options"
 msgstr "Opcións de análise"
 
 msgctxt "msaTestRetest|"
 msgid "Process std. dev."
-msgstr ""
+msgstr "Desv. Padr. do proceso"
 
 msgctxt "msaType1Gauge|"
 msgid "Reference/master value"
-msgstr ""
+msgstr "Referencia/valor principal"
 
 msgctxt "msaType1Gauge|"
 msgid "Number of std. dev. for instrument variation"
-msgstr ""
+msgstr "Número de desv. padr. para a variación do instrumento"
 
 msgctxt "msaType1Gauge|"
 msgid "Bias study options"
-msgstr ""
+msgstr "Opcións do estudo de nesgo"
 
 msgctxt "msaType1Gauge|"
 msgid "One sample t-test"
-msgstr ""
+msgstr "Proba T para unha mostra"
 
 msgctxt "msaType1Gauge|"
 msgid "Display boundaries of the reference interval"
-msgstr ""
+msgstr "Presentar os límites do intervalo de referencia"
 
-#, fuzzy
 msgctxt "msaType1Gauge|"
 msgid "Histogram bin boundaries"
 msgstr "Límites das barras do histograma"
 
-#, fuzzy
 msgctxt "msaType1Gauge|"
 msgid "Left open"
 msgstr "Esquerdo aberto"
 
-#, fuzzy
 msgctxt "msaType1Gauge|"
 msgid "Right open"
 msgstr "Dereito aberto"
