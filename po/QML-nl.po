@@ -11,6 +11,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.6-dev\n"
 "X-Qt-Contexts: true\n"
+"X-Language: nl\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
