@@ -882,7 +882,7 @@ get_levels <- function(var, num_levels, dataset) {
 
   # statistical significance
   tDf$significant <- ifelse(tDf$pValue < 0.05, "S", "N")
-  tDf$labelYPos <- pnorm(qnorm(tDf$percentile) + 0.2)
+  tDf$labelYPos <- stats::pnorm(stats::qnorm(tDf$percentile) + 0.2) # offset the label by a small amount (0.2) so it is displayed above the point
   yLabels <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
   yBreaks <- yLabels/100
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(tDf$tValue, -3, 3))
