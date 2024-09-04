@@ -124,12 +124,32 @@ Form
 		itemType			: JASP.String
 
 		function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }
-		function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex); }
+		function getRowHeaderText(headerText, rowIndex)				{
+																		// skipping letter I, as the R package does this for internal naming convention. Also continuing with lowercase afterwards and skipping letter i. 
+																		if (rowIndex < 8) {
+																			return String.fromCharCode(65 + rowIndex);
+																		} else if (rowIndex > 7 & rowIndex < 25) {
+																			return String.fromCharCode(65 + rowIndex + 1);
+																		}  else if (rowIndex > 24 & rowIndex < 33) {
+																			return String.fromCharCode(65 + rowIndex + 7);
+																		}  else if (rowIndex > 32) {
+																			return String.fromCharCode(65 + rowIndex + 8);
+																		} 
+														  			}
 		function getDefaultValue(columnIndex, rowIndex) {
 														if (columnIndex > 2) {
 															return "";  // Return an empty string for columnIndex > 2
-														} else if (columnIndex === 0) {
-															return String.fromCharCode(65 + rowIndex);  // Uppercase letter for columnIndex 0
+														} else if (columnIndex === 0) { // Starting with uppercase letter for columnIndex 0 (Predictor Names)
+																// skipping letter I, as the R package does this for internal naming convention. Also continuing with lowercase afterwards and skipping letter i. 
+																		if (rowIndex < 8) {
+																			return String.fromCharCode(65 + rowIndex);
+																		} else if (rowIndex > 7 & rowIndex < 25) {
+																			return String.fromCharCode(65 + rowIndex + 1);
+																		}  else if (rowIndex > 24 & rowIndex < 33) {
+																			return String.fromCharCode(65 + rowIndex + 7);
+																		}  else if (rowIndex > 32) {
+																			return String.fromCharCode(65 + rowIndex + 8);
+																		} 
 														} else {
 															return String.fromCharCode(97 + columnIndex - 1);  // Lowercase letter otherwise
 														}

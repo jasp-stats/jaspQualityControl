@@ -59,6 +59,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisCoefficientsTable(jaspResults, options, ready, coded)
   .doeAnalysisEquationTable(jaspResults, options, ready, coded)
   .doeAnalysisPlotPareto(jaspResults, options, blocks, covariates, ready)
+  .doeAnalysisPlotEffectNormalDistribution(jaspResults, options, blocks, covariates, ready)
   .doeAnalysisPlotQQResiduals(jaspResults, options, ready)
   .doeAnalysisPlotHistResiduals(jaspResults, options, ready)
   .doeAnalysisPlotFittedVsResiduals(jaspResults, options, ready)
@@ -247,8 +248,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
     allPredictors <- allPredictors[allPredictors != ""]
     aliasedTerms <- .removeAppendedFactorLevels(predictorNames = allPredictors, terms = aliasedTerms, interactionSymbol = ":")
-    result[["regression"]][["aliasedTerms"]] <- gsubInteractionSymbol(aliasedTerms) # store for footnote
-    resultCoded[["regression"]][["aliasedTerms"]] <- gsubInteractionSymbol(aliasedTerms) # store for footnote
+
+    # store for footnote
+    aliasedTermsFootnote <- aliasedTerms
+    aliasedTermsFootnote <- unname(sapply(aliasedTermsFootnote, .gsubIdentityFunction))
+    aliasedTermsFootnote <- gsubInteractionSymbol(aliasedTermsFootnote)
+    result[["regression"]][["aliasedTerms"]] <- aliasedTermsFootnote
+    resultCoded[["regression"]][["aliasedTerms"]] <- aliasedTermsFootnote
+
     formula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(aliasedTerms, collapse="-"), sep="-")) # remove the aliased term(s) from the model
     # fit the model again
     regressionFit <- lm(formula, data = dataset)
@@ -617,6 +624,8 @@ get_levels <- function(var, num_levels, dataset) {
 .removeAppendedFactorLevels <- function(predictorNames, terms, interactionSymbol = "✻"){
   regexExpression <- paste0("(", paste(predictorNames, collapse = "|"), ")((\\^2)?)([^", interactionSymbol, "]+)(", interactionSymbol, "?)")
   for (term_i in seq_along(terms)) {
+    if (grepl("I\\(", terms[term_i])) # if wrapped in identify function, don't do anything, as it will be a squared term and have no appended factor level
+      next()
     replacements <- if (grepl("^2", terms[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
     terms[term_i] <- gsub(regexExpression, replacements, terms[term_i], perl=TRUE)
     terms[term_i] <- gsub("\\s", "", terms[term_i])
@@ -830,6 +839,67 @@ get_levels <- function(var, num_levels, dataset) {
     ggplot2::coord_flip() +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
+  plot$plotObject <- p
+}
+
+.doeAnalysisPlotEffectNormalDistribution <- function(jaspResults, options, blocks, covariates, ready) {
+  if (!is.null(jaspResults[["normalEffectsPlot"]]) || !options[["normalEffectsPlot"]]) {
+    return()
+  }
+  plot <- createJaspPlot(title = gettext("Normal Plot of Standardized Effects"), width = 600, height = 600)
+  plot$dependOn(options = c("normalEffectsPlot", "tableAlias", .doeAnalysisBaseDependencies()))
+  plot$position <- 11
+  jaspResults[["normalEffectsPlot"]] <- plot
+  if (!ready || is.null(jaspResults[["doeResult"]]) || jaspResults$getError()) {
+    return()
+  }
+  result <- if (options[["codeFactors"]]) jaspResults[["doeResultCoded"]]$object[["regression"]] else jaspResults[["doeResult"]]$object[["regression"]]
+  fac <- if (options[["tableAlias"]]) result[["coefficients"]][["termsAliased"]][-1] else result[["coefficients"]][["terms"]][-1]
+  coefDf <- data.frame(result[["objectSummary"]]$coefficients)
+  tDf <- data.frame("tValue" = coefDf[["t.value"]],
+                    "terms" = result[["coefficients"]][["terms"]],
+                    "pValue" = result[["coefficients"]][["p"]])
+
+  # Do not include intercept, covariates and blocks in normal effects plot
+  tDf <- tDf[-1, ] # remove intercept
+  if (length(blocks) > 0 && !identical(blocks, "")) {
+    tDf <- tDf[!grepl(blocks, tDf$terms),]
+    fac <- if (options[["tableAlias"]]) fac[!grepl("BLK", fac)] else fac[!grepl(blocks, fac)]
+  }
+  if (length(covariates) > 0 && !identical(covariates, "")) {
+    tDf <- tDf[!tDf$terms %in% unlist(covariates), ] # remove the covariate(s)
+    fac <- if (options[["tableAlias"]]) fac[!grepl("COV", fac)] else fac[!fac %in% unlist(covariates)]
+  }
+
+  tDf$fac <- fac
+
+  # median rank order function
+  x <- tDf$tValue[order(tDf$tValue)]
+  n <- length(x)
+  i <- rank(x)
+  p <- (i - 0.3) / (n + 0.4)
+  tDf$percentile <- p[order(tDf$tValue)]
+
+  # statistical significance
+  tDf$significant <- ifelse(tDf$pValue < 0.05, "S", "N")
+  tDf$labelYPos <- stats::pnorm(stats::qnorm(tDf$percentile) + 0.2) # offset the label by a small amount (0.2) so it is displayed above the point
+  yLabels <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
+  yBreaks <- yLabels/100
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(tDf$tValue, -3, 3))
+  xLimits <- range(c(tDf$tValue, xBreaks))
+
+  # Create the ggplot with probit transformation
+  p <- ggplot2::ggplot(data = tDf, mapping = ggplot2::aes(x = tValue, y = percentile)) +
+    ggplot2::stat_function(fun = pnorm, linewidth = 1) +  # Reference line using the pnorm function
+    jaspGraphs::geom_point(mapping = ggplot2::aes(fill = significant), size = 4) +
+    ggplot2::scale_y_continuous(trans = 'probit', labels = yLabels, breaks = yBreaks, name = "Percent", limits = c(0.0001, 0.9999)) +
+    ggplot2::scale_x_continuous(name = "Standardized Effect", breaks = xBreaks, limits = xLimits) +
+    ggplot2::scale_fill_manual(values = c("S" = "darkred", "N" = "grey"), name = NULL, labels = c(gettext("Significant"), gettext("Not Significant")), breaks = c("S", "N")) +
+    ggplot2::geom_label(mapping = ggplot2::aes(label = fac, y = labelYPos), size = 4) +
+    jaspGraphs::themeJaspRaw() +
+    jaspGraphs::geom_rangeframe() +
+    ggplot2::theme(legend.position = "right")
+
   plot$plotObject <- p
 }
 

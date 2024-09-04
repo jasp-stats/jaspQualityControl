@@ -205,6 +205,15 @@ Form
 
 			CheckBox
 			{
+				id:									responseOptimizer
+				name:								"responseOptimizer"
+				label:								qsTr("Show optimal response")
+				checked:							true
+			}
+
+
+			CheckBox
+			{
 				name:								"codeFactors"
 				checked:							true
 				label:								qsTr("Display results in coded units")
@@ -301,7 +310,6 @@ Form
 			}
 
 		}
-
 	}
 
 		Section
@@ -352,6 +360,12 @@ Form
 			{
 				name:									"plotPareto"
 				label:									qsTr("Pareto plot of effects")
+			}
+
+			CheckBox
+			{
+				name:									"normalEffectsPlot"
+				label:									qsTr("Normal plot of effects")
 			}
 		}
 
