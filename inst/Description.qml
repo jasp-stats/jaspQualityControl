@@ -26,7 +26,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Type 2 Gauge r&R Study")
+		title:			qsTr("Type 2 and 3 Gauge r&R Study")
 		func:			"msaGaugeRR"
 	}
 	Analysis
