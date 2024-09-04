@@ -134,7 +134,7 @@ options$categoricalVariables <- list(
   list(
     levels = c("Row 0", "Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6", "Row 7", "Row 8"),
     name = "data 1",
-    values = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+    values = c("A", "B", "C", "D", "E", "F", "G", "H", "J")
   ),
   list(
     levels = c("Row 0", "Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6", "Row 7", "Row 8"),
@@ -264,7 +264,7 @@ options$categoricalVariables <- list(
   list(
     levels = c("Row 0", "Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6", "Row 7", "Row 8"),
     name = "data 1",
-    values = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+    values = c("A", "B", "C", "D", "E", "F", "G", "H", "J")
   ),
   list(
     levels = c("Row 0", "Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6", "Row 7", "Row 8"),

@@ -96,7 +96,7 @@ options$fleissKappa <- TRUE
 options$cohensKappa <- TRUE
 options$positiveReference <- ""
 options$kendallsTau <- TRUE
-results <- runAnalysis("msaAttribute", "datasets/msaAttributeAgreement/msaAttributeTau_long.csv", options, makeTests = T)
+results <- runAnalysis("msaAttribute", "datasets/msaAttributeAgreement/msaAttributeTau_long.csv", options)
 
 test_that("LF2.1 Kendall Tau - All appraisers vs standard table results match", {
   table <- results[["results"]][["AAAtableGraphs"]][["collection"]][["AAAtableGraphs_AllVsStandard"]][["data"]]
