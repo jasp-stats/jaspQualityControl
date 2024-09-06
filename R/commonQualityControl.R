@@ -1088,7 +1088,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
 .ewmaPointSigmas <- function(n = n, sigma = sigma, lambda = ewmaLambda) {
   ewmaPointSigmas <- c()
-  initialPoint <- (lambda * sigma) / n[1]
+  initialPoint <- (lambda * sigma) / sqrt(n[1])
   ewmaPointSigmas[1] <- initialPoint
   for (i in seq(2, length(n))) {
     nVector <- n[seq(i-1, 1)]
