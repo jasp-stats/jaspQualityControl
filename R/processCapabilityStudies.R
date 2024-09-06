@@ -655,6 +655,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], min(plotData[["x"]]) - 1 * sdo, max(plotData[["x"]]) + 1 * sdo), min.n = 4)
     xLimits <- range(xBreaks)
+    if (options[["lowerSpecificationLimit"]] && options[["processCapabilityPlotSpecificationLimits"]])
+      xLimits <- range(xLimits, options[["lowerSpecificationLimitValue"]])
+    if (options[["upperSpecificationLimit"]] && options[["processCapabilityPlotSpecificationLimits"]])
+      xLimits <- range(xLimits, options[["upperSpecificationLimitValue"]])
+    if (options[["target"]] && options[["processCapabilityPlotSpecificationLimits"]])
+      xLimits <- range(xLimits, options[["target"]])
+
     nBins <- options[["processCapabilityPlotBinNumber"]]
     h <- hist(allData, plot = FALSE, breaks = nBins)
     binWidth <- (h$breaks[2] - h$breaks[1])
