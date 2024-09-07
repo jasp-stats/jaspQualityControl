@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-08-24 03:40\n"
+"POT-Creation-Date: 2024-09-07 03:40\n"
 "PO-Revision-Date: 2024-08-24 03:38+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -233,6 +233,15 @@ msgstr "Pareto-Diagramm Standardisierter Effekte"
 
 msgid "Standardized Effect"
 msgstr "Standardisierter Effekt"
+
+msgid "Normal Plot of Standardized Effects"
+msgstr "Normal-Diagramm Standardisierter Effekte"
+
+msgid "Significant"
+msgstr ""
+
+msgid "Not Significant"
+msgstr ""
 
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
@@ -1817,9 +1826,6 @@ msgstr "Bericht Regelkarten für Attribute"
 
 #~ msgid "% Var(Repeatability and bias)"
 #~ msgstr "% Var(Wiederholbarkeit und Verzerrung)"
-
-#~ msgid "Normal Plot of Standardized Effects"
-#~ msgstr "Normal-Diagramm Standardisierter Effekte"
 
 #~ msgid "Residual Plots for %s"
 #~ msgstr "Residuen-Diagramme für %s"

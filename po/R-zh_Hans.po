@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-08-24 03:40\n"
+"POT-Creation-Date: 2024-09-07 03:40\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -233,6 +233,15 @@ msgstr "标准化效果的帕累托图"
 
 msgid "Standardized Effect"
 msgstr "标准化效应"
+
+msgid "Normal Plot of Standardized Effects"
+msgstr "标准化效应正态图"
+
+msgid "Significant"
+msgstr ""
+
+msgid "Not Significant"
+msgstr ""
 
 msgid "Normal Probability Plot of Residuals"
 msgstr "残差的正态概率图"
@@ -1997,9 +2006,6 @@ msgstr "单值图"
 
 #~ msgid "% Tolerance"
 #~ msgstr "% 公差"
-
-#~ msgid "Normal Plot of Standardized Effects"
-#~ msgstr "标准化效应正态图"
 
 #~ msgid "Residual Plots for %s"
 #~ msgstr "%s 残差图"

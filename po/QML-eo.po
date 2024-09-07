@@ -3,8 +3,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Qt-Contexts: true\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Language: eo\n"
+"X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
@@ -1420,10 +1421,6 @@ msgctxt "ShowAndExportDesign|"
 msgid "Display design"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of continuous factors"
-msgstr ""
-
 #, qt-format
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Level %1"
@@ -2568,4 +2565,16 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Right open"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show optimal response"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Normal plot of effects"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of continuous predictors"
 msgstr ""

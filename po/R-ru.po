@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2024-08-24 03:40\n"
+"POT-Creation-Date: 2024-09-07 03:40\n"
 "PO-Revision-Date: 2023-06-24 03:41+0000\n"
 "Last-Translator: Borisov Igor Borisovich <borisov_i@pimunn.net>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
@@ -221,6 +221,15 @@ msgid "Pareto Chart of Standardized Effects"
 msgstr ""
 
 msgid "Standardized Effect"
+msgstr ""
+
+msgid "Normal Plot of Standardized Effects"
+msgstr ""
+
+msgid "Significant"
+msgstr ""
+
+msgid "Not Significant"
 msgstr ""
 
 msgid "Normal Probability Plot of Residuals"

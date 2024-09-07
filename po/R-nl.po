@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-08-24 03:40\n"
+"POT-Creation-Date: 2024-09-07 03:40\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -224,6 +224,16 @@ msgstr "Pareto Figuur van Gestandaardiseerde Effecten"
 
 msgid "Standardized Effect"
 msgstr "Gestandaardiseerd Effect"
+
+#, fuzzy
+msgid "Normal Plot of Standardized Effects"
+msgstr "Pareto Figuur van Gestandaardiseerde Effecten"
+
+msgid "Significant"
+msgstr ""
+
+msgid "Not Significant"
+msgstr ""
 
 msgid "Normal Probability Plot of Residuals"
 msgstr "Normale Kansfiguur van Residuen"

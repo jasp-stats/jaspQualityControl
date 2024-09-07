@@ -1423,10 +1423,6 @@ msgctxt "ShowAndExportDesign|"
 msgid "Display design"
 msgstr "Presentar el diseño"
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of continuous factors"
-msgstr "Número de factores continuos"
-
 #, qt-format
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Level %1"
@@ -2577,3 +2573,15 @@ msgstr "Izquierdo abierto"
 msgctxt "msaType1Gauge|"
 msgid "Right open"
 msgstr "Derecho abierto"
+
+msgctxt "doeAnalysis|"
+msgid "Show optimal response"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Normal plot of effects"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of continuous predictors"
+msgstr ""

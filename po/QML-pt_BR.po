@@ -619,10 +619,6 @@ msgid "Show desired design"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of continuous factors"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
 msgstr ""
 
@@ -2569,4 +2565,16 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Right open"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show optimal response"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Normal plot of effects"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of continuous predictors"
 msgstr ""

@@ -1434,10 +1434,6 @@ msgctxt "doeFull|"
 msgid "Display selected design"
 msgstr ""
 
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of continuous factors"
-msgstr ""
-
 #, qt-format
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Level %1"
@@ -2570,4 +2566,16 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Right open"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show optimal response"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Normal plot of effects"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of continuous predictors"
 msgstr ""
