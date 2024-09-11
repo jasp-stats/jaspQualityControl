@@ -260,24 +260,122 @@ test_that("LF7.2 Test of Exponentially weighted moving average chart report", {
 
 # Wide Format ####
 
-## Without Stages ####
-# options <- analysisOptions("timeWeightedCharts")
-# options$measurementsWideFormat <- c("X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10")
-# options$cumulativeSumChart <- TRUE
-# options$cumulativeSumChartSdSource <- "data"
-# options$cumulativeSumChartSdMethod <- "s"
-# options$exponentiallyWeightedMovingAverageChart <- TRUE
-# options$exponentiallyWeightedMovingAverageChartSdSource <- "data"
-# options$exponentiallyWeightedMovingAverageChartSdMethod <- "s"
-# results <- runAnalysis("timeWeightedCharts", "datasets/timeWeightedCharts/cumsumChartWide.csv", options, makeTests = T)
+## Without Stages (verified with Minitab) ####
+options <- analysisOptions("timeWeightedCharts")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+options$cumulativeSumChart <- TRUE
+options$cumulativeSumChartSdSource <- "data"
+options$cumulativeSumChartSdMethod <- "s"
+options$exponentiallyWeightedMovingAverageChart <- TRUE
+options$exponentiallyWeightedMovingAverageChartSdSource <- "data"
+options$exponentiallyWeightedMovingAverageChartSdMethod <- "s"
+results <- runAnalysis("timeWeightedCharts", "datasets/timeWeightedCharts/cumsumChartWide.csv", options)
 
-## With Stages ####
+test_that("WF1.1 Basic test of Cumulative sum chart", {
+  plotName <- results[["results"]][["CusumChart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "cumulative-sum-chart_WF1")
+})
 
+test_that("WF1.2 Basic test of Exponentially weighted moving average chart", {
+  plotName <- results[["results"]][["EWMAPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "exponentially-weighted-moving-average-chart_WF1")
+})
 
-## Plotting Options ####
+## With Stages (verified with Minitab) ####
+options <- analysisOptions("timeWeightedCharts")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+options$stagesWideFormat <- "Stage"
+options$cumulativeSumChart <- TRUE
+options$cumulativeSumChartSdSource <- "data"
+options$cumulativeSumChartSdMethod <- "s"
+options$exponentiallyWeightedMovingAverageChart <- TRUE
+options$exponentiallyWeightedMovingAverageChartSdSource <- "data"
+options$exponentiallyWeightedMovingAverageChartSdMethod <- "s"
+results <- runAnalysis("timeWeightedCharts", "datasets/timeWeightedCharts/cumsumChartWide.csv", options)
+
+test_that("WF2.1 Basic test of Cumulative sum chart with stages", {
+  plotName <- results[["results"]][["CusumChart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "cumulative-sum-chart_WF2")
+})
+
+test_that("WF2.2 Basic test of Exponentially weighted moving average chart with stages", {
+  plotName <- results[["results"]][["EWMAPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "exponentially-weighted-moving-average-chart_WF2")
+})
+
+## Plotting Options (verified with Minitab) ####
 
 ### Historical values ####
+options <- analysisOptions("timeWeightedCharts")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+options$cumulativeSumChart <- TRUE
+options$cumulativeSumChartSdSource <- "historical"
+options$cumulativeSumChartSdValue <- 3
+options$exponentiallyWeightedMovingAverageChart <- TRUE
+options$exponentiallyWeightedMovingAverageChartSdSource <- "historical"
+options$exponentiallyWeightedMovingAverageChartSdValue <- 3
+results <- runAnalysis("timeWeightedCharts", "datasets/timeWeightedCharts/cumsumChartWide.csv", options)
 
-### Alternative SD Estimation ####
+test_that("WF3.1 Test of Cumulative sum chart with historical std. dev.", {
+  plotName <- results[["results"]][["CusumChart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "cumulative-sum-chart_WF3")
+})
 
-## Report ####
+test_that("WF3.2 Test of Exponentially weighted moving average chart with historical std. dev.", {
+  plotName <- results[["results"]][["EWMAPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "exponentially-weighted-moving-average-chart_WF3")
+})
+
+### Alternative SD Estimation (verified with Minitab) ####
+options <- analysisOptions("timeWeightedCharts")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+options$cumulativeSumChart <- TRUE
+options$cumulativeSumChartSdSource <- "data"
+options$cumulativeSumChartSdMethod <- "r"
+options$exponentiallyWeightedMovingAverageChart <- TRUE
+options$exponentiallyWeightedMovingAverageChartSdSource <- "data"
+options$exponentiallyWeightedMovingAverageChartSdMethod <- "r"
+results <- runAnalysis("timeWeightedCharts", "datasets/timeWeightedCharts/cumsumChartWide.csv", options)
+
+test_that("WF4.1 Test of Cumulative sum chart with r-bar std. dev.", {
+  plotName <- results[["results"]][["CusumChart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "cumulative-sum-chart_WF4")
+})
+
+test_that("WF4.2 Test of Exponentially weighted moving average chart with historical std. dev.", {
+  plotName <- results[["results"]][["EWMAPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "exponentially-weighted-moving-average-chart_WF4")
+})
+
+## Report (verified with Minitab) ####
+options <- analysisOptions("timeWeightedCharts")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+options$cumulativeSumChart <- TRUE
+options$cumulativeSumChartSdSource <- "data"
+options$cumulativeSumChartSdMethod <- "s"
+options$exponentiallyWeightedMovingAverageChart <- TRUE
+options$exponentiallyWeightedMovingAverageChartSdSource <- "data"
+options$exponentiallyWeightedMovingAverageChartSdMethod <- "s"
+options$report <- TRUE
+options$reportMeasurementName <- TRUE
+options$reportMeasurementNameText <- "Test Name"
+results <- runAnalysis("timeWeightedCharts", "datasets/timeWeightedCharts/cumsumChartWide.csv", options)
+
+test_that("WF5 Test of Time weighted charts report", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "time-weighted-charts-report_WF5")
+})

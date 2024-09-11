@@ -204,7 +204,7 @@ Form
 					visible:								cumulativeSumChartSdSource.currentValue == "data"
 					label:									qsTr("Std. dev. estimation method")
 					id: 									cumulativeSumChartSdMethod
-					values: subgroupSizeType.value == "individual" ?
+					values: (subgroupSizeType.value == "individual" & dataFormat.currentValue == "longFormat") ?
 					[
 						{ label: qsTr("X-mR"), value: "averageMovingRange"}
 					] :
