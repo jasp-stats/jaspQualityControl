@@ -22,13 +22,19 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   stages <- unlist(options[["stage"]])
   variable <- variable[variable != ""]
   stages <- stages[stages != ""]
-  factorVariables <- c(variable, stages)
+
+  if (options[["dataType"]] == "dataTypeDates" | options[["dataType"]] ==  "dataTypeInterval" && options[["dataTypeIntervalType"]] == "dataTypeIntervalTypeTime") {
+    numericVariables <- NULL
+    factorVariables <- c(variable, stages)
+  } else {
+    numericVariables <- variable
+    factorVariables <- stages
+  }
+
   ready <- length(variable) == 1
 
-
-
   if (is.null(dataset)) {
-    dataset <- .readDataSetToEnd(columns.as.factor = factorVariables)
+    dataset <- .readDataSetToEnd(columns.as.factor = factorVariables, columns.as.numeric = numericVariables)
   }
 
 
@@ -58,15 +64,15 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   #  options[["dataTypeDatesStructure"]] <- "timeDate"
   #  options[["dataTypeDatesFormatDate"]] <- "dmy"
   #  options[["dataTypeDatesFormatTime"]] <- "HM"
-  #  # date only
-  #  timepoints <- c("01.04.2024", "04.04.2024", "09.04.2024", "15.04.2024", " 30.04.2024")
-  #  dataset <- list()
-  #  dataset[["variable"]] <- timepoints
-  #  options <- list()
-  #  options[["dataType"]] <- "dataTypeDates"
-  #  options[["dataTypeDatesStructure"]] <- "dateOnly"
-  #  options[["dataTypeDatesFormatDate"]] <- "dmy"
-  #  options[["dataTypeDatesFormatTime"]] <- "HM"
+   # # date only
+   # timepoints <- c("01.04.2024", "04.04.2024", "09.04.2024", "15.04.2024", " 30.04.2024")
+   # dataset <- list()
+   # dataset[["variable"]] <- timepoints
+   # options <- list()
+   # options[["dataType"]] <- "dataTypeDates"
+   # options[["dataTypeDatesStructure"]] <- "dateOnly"
+   # options[["dataTypeDatesFormatDate"]] <- "dmy"
+   # options[["dataTypeDatesFormatTime"]] <- "HM"
   #  # time only
   #  timepoints <- c("1:32", "3:24", "5:17", "9:22", "12:21")
   #  dataset <- list()
@@ -99,8 +105,6 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     #  options[["dataTypeDatesFormatTime"]] <- "HM"
 
 
-
-
   if (ready) {
     # If variable is date/time transform into day, hour and minute intervals
     if (options[["dataType"]] == "dataTypeDates") {
@@ -113,6 +117,10 @@ rareEventCharts <- function(jaspResults, dataset, options) {
                            "timeOnly" = options[["dataTypeDatesFormatTime"]])
       timepoints <- lubridate::parse_date_time(timepoints, orders = timeFormat) # returns all data in HMS format
       timepointsLag1 <- c(NA, timepoints[seq(1, length(timepoints) - 1)]) # because of the NA, everything is converted to seconds
+      if (length(stages) == 1) { # remove the first value of each stage, as it is a new beginning
+        stageSwitchPositions <- which(diff(as.numeric(dataset[[stages]])) != 0) + 1
+        timepointsLag1[stageSwitchPositions] <- NA
+      }
       intervalsMinutes <- as.numeric(timepoints - timepointsLag1)/60
       intervalsHours <- intervalsMinutes/60
       intervalsDays <- intervalsHours/24
@@ -125,7 +133,8 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     }
 
     # if intervals are all NA, throw error
-    if (all(is.na(timepoints))) {
+    if ((options[["dataType"]] == "dataTypeDates" | options[["dataType"]] ==  "dataTypeInterval" && options[["dataTypeIntervalType"]] == "dataTypeIntervalTypeTime") &&
+        all(is.na(timepoints))) {
       errorPlot <-  createJaspPlot(title = gettext("Rare event charts"), width = 1200, height = 500)
       errorPlot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
                            "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat"))
@@ -136,13 +145,13 @@ rareEventCharts <- function(jaspResults, dataset, options) {
 
     # Get the interval type, depending on the input type and, if applicable, the calculated intervals
     if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "opportunities") {
-      intervals <- dataset[[variable]]
+      intervals <- as.numeric(dataset[[variable]])
       intervalType <- "opportunities"
     } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "hours") {
-      intervals <- dataset[[variable]]
+      intervals <- as.numeric(dataset[[variable]])
       intervalType <- "hours"
     } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "days") {
-      intervals <- dataset[[variable]]
+      intervals <- as.numeric(dataset[[variable]])
       intervalType <- "days"
     } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "time") {
       intervals <- if(all(intervalsHours < 1, na.rm = TRUE) ) intervalsMinutes else intervalsHours
