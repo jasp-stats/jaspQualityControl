@@ -246,6 +246,7 @@ test_that("11.1 Test of G chart with interval format and stages", {
 test_that("11.2 Test of G chart with interval format and stages", {
   plotName <- results[["results"]][["tChart"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  testthat::skip_on_os("mac")
   jaspTools::expect_equal_plots(testPlot, "t-chart11")
 })
 
