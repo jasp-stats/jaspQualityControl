@@ -108,7 +108,7 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     }
 
     # if intervals contains any negative values, throw error
-    if (any(intervals < 0)) {
+    if (any(intervals < 0, na.rm = TRUE)) {
       errorPlot <-  createJaspPlot(title = gettext("Rare event charts"), width = 1200, height = 500)
       errorPlot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
                            "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat"))
