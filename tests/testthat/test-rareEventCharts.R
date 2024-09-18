@@ -101,7 +101,7 @@ options$dataTypeDatesStructure <- "dateOnly"
 options$dataTypeDatesFormatDate <- "mdy"
 options$gChart <- TRUE
 options$tChart <- TRUE
-results <- runAnalysis("rareEventCharts", "datasets/rareEventCharts/rareEventCharts.csv")
+results <- runAnalysis("rareEventCharts", "datasets/rareEventCharts/rareEventCharts.csv", options)
 
 test_that("5.1 Test of G chart with MDY date format", {
   plotName <- results[["results"]][["gChart"]][["data"]]
@@ -204,7 +204,7 @@ test_that("9.2 Test of T chart with opportunities format", {
 
 # Stages ####
 
-## Date format ####
+## Date format (verified with Minitab) ####
 options <- analysisOptions("rareEventCharts")
 options$variable <- "DM"
 options$stage <- "stages"
@@ -227,10 +227,87 @@ test_that("10.2 Test of T chart with DM format and stages", {
   jaspTools::expect_equal_plots(testPlot, "t-chart10")
 })
 
-## Interval format ####
+## Interval format (verified with Minitab) ####
+options <- analysisOptions("rareEventCharts")
+options$variable <- "opportunities"
+options$stage <- "stages"
+options$dataType <- "dataTypeInterval"
+options$dataTypeIntervalType <- "opportunities"
+options$gChart <- TRUE
+options$tChart <- TRUE
+results <- runAnalysis("rareEventCharts", "datasets/rareEventCharts/rareEventCharts.csv", options)
 
-# Historical options ####
+test_that("11.1 Test of G chart with interval format and stages", {
+  plotName <- results[["results"]][["gChart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "g-chart11")
+})
 
-# Distribution options ####
+test_that("11.2 Test of G chart with interval format and stages", {
+  plotName <- results[["results"]][["tChart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "t-chart11")
+})
 
-# Report ####
+# Historical options (verified with Minitab) ####
+options <- analysisOptions("rareEventCharts")
+options$variable <- "DM"
+options$dataType <- "dataTypeDates"
+options$dataTypeDatesStructure <- "dateOnly"
+options$dataTypeDatesFormatDate <- "dm"
+options$gChart <- TRUE
+options$tChart <- TRUE
+options$gChartProportionSource <- "historical"
+options$gChartHistoricalProportion <- 0.5
+options$tChartDistributionParameterSource <- "historical"
+options$tChartHistoricalParametersScale <- 2
+options$tChartHistoricalParametersWeibullShape <- 2
+results <- runAnalysis("rareEventCharts", "datasets/rareEventCharts/rareEventCharts.csv", options)
+
+test_that("12.1 Test of G chart with DM date format and historical parameters", {
+  plotName <- results[["results"]][["gChart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "g-chart12")
+})
+
+test_that("12.2 Test of T chart with DM date format and historical parameters", {
+  plotName <- results[["results"]][["tChart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "t-chart12")
+})
+
+# Distribution options (verified with Minitab) ####
+options <- analysisOptions("rareEventCharts")
+options$variable <- "DM"
+options$dataType <- "dataTypeDates"
+options$dataTypeDatesStructure <- "dateOnly"
+options$dataTypeDatesFormatDate <- "dm"
+options$gChart <- FALSE
+options$tChart <- TRUE
+options$tChartDistribution <- "exponential"
+results <- runAnalysis("rareEventCharts", "datasets/rareEventCharts/rareEventCharts.csv", options)
+
+test_that("13 Test of T chart with DM date format and exponential distribution", {
+  plotName <- results[["results"]][["tChart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "t-chart13")
+})
+
+# Report (verified with Minitab) ####
+options <- analysisOptions("rareEventCharts")
+options$variable <- "DM"
+options$dataType <- "dataTypeDates"
+options$dataTypeDatesStructure <- "dateOnly"
+options$dataTypeDatesFormatDate <- "dm"
+options$gChart <- TRUE
+options$tChart <- TRUE
+options$report <- TRUE
+options$reportMeasurementName <- TRUE
+options$reportMeasurementNameText <- "Test Name"
+results <- runAnalysis("rareEventCharts", "datasets/rareEventCharts/rareEventCharts.csv", options)
+
+test_that("14 Test of g and t chart report", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "rare-event-charts-report1")
+})
