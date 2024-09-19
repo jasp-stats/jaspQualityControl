@@ -522,7 +522,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspBase",
-      "RemoteSha": "f12f1ffb8b2310c249fbe674596f5a08b3aac606"
+      "RemoteSha": "24d4ae8eb2efcaae974b6c900ebf1c64020bb90e"
     },
     "jaspDescriptives": {
       "Package": "jaspDescriptives",
@@ -532,7 +532,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
-      "RemoteSha": "60cbfeb3c90c1f8bb84e5bc966572248c31ad69c"
+      "RemoteSha": "86c666a0687898efd0878d06c09ff56d9d8340f2"
     },
     "jaspGraphs": {
       "Package": "jaspGraphs",
@@ -552,7 +552,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
-      "RemoteSha": "75bbf17fcf8c2453ee15a4ae52d86888191613d3"
+      "RemoteSha": "c3c2f40db75637bc3dd82d69fce0684a08c9d2a2"
     },
     "jpeg": {
       "Package": "jpeg",
@@ -861,7 +861,7 @@
     },
     "ragg": {
       "Package": "ragg",
-      "Version": "1.3.2",
+      "Version": "1.3.3",
       "Source": "Repository"
     },
     "rappdirs": {
