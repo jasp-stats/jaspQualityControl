@@ -267,6 +267,136 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(list(red_points = red_points, Rules = Rules))
 }
 
+ruleList <- list()
+ruleList$rule1 <- list()
+
+ruleList$rule1[["k"]] <- 3
+ruleList$rule1[["enabled"]] <- TRUE
+
+
+
+.nelsonLaws <- function(plotStatistics, sigma, center, UCL, LCL, ruleList) {
+
+  # Rule 1: Outside of control limits
+  if (ruleList[["rule1"]][["enabled"]] == TRUE) {
+    r1 <- which(plotStatistics < LCL | plotStatistics > UCL)
+  }
+
+  # Rule 2: k points in a row, on the same side of center line
+  if (ruleList[["rule2"]][["enabled"]] == TRUE) {
+    k2 <- ruleList[["rule2"]][["k"]]
+    sideVector <- ifelse(plotStatistics > center, 1, ifelse(plotStatistics < center, -1, 0))
+    rleSides <- rle(sideVector)
+    r2 <- c()
+    # Track the current start index for runs
+    currentIndex <- 1
+    # Iterate over the lengths and values of rle
+    for (i in seq_along(rleSides$lengths)) {
+      runLength <- rleSides$lengths[i]
+      runValue <- rleSides$values[i]
+      # Check if the run is on the same side and the length is >= k
+      if (runLength >= k2 && runValue != 0) {
+        # Add indices of this run to the offending indices vector
+        r2 <- c(r2, currentIndex:(currentIndex + runLength - 1))
+      }
+      # Update the current index
+      currentIndex <- currentIndex + runLength
+    }
+  }
+
+  # Rule 3: k points in a row, all increasing or decreasing
+  if (ruleList[["rule3"]][["enabled"]] == TRUE) {
+    k3 <- ruleList[["rule3"]][["k"]]
+    r3 <- c()
+
+    # Loop through the points to find consecutive increases or decreases
+    currentIndex <- 1
+    consecutiveIncreaseCount <- 0
+    consecutiveDecreaseCount <- 0
+
+    # Iterate over the points, considering each point and the next for comparison
+    for (i in 1:(length(plotStatistics) - 1)) {
+      if (plotStatistics[i + 1] > plotStatistics[i]) {
+        # Increment the consecutive increase count and reset decrease count
+        consecutiveIncreaseCount <- consecutiveIncreaseCount + 1
+        consecutiveDecreaseCount <- 0
+      } else if (plotStatistics[i + 1] < plotStatistics[i]) {
+        # Increment the consecutive decrease count and reset increase count
+        consecutiveDecreaseCount <- consecutiveDecreaseCount + 1
+        consecutiveIncreaseCount <- 0
+      } else {
+        # Reset counts if neither increasing nor decreasing
+        consecutiveIncreaseCount <- 0
+        consecutiveDecreaseCount <- 0
+      }
+
+      # Check if the count reaches k and record the offending sequence
+      if (consecutiveIncreaseCount >= k3) {
+        startIdx <- currentIndex - consecutiveIncreaseCount
+        r3 <- c(r3, startIdx + 1:(consecutiveIncreaseCount + 1))
+        consecutiveIncreaseCount <- 0  # Reset to find next potential sequence
+      }
+      if (consecutiveDecreaseCount >= k3) {
+        startIdx <- currentIndex - consecutiveDecreaseCount
+        r3 <- c(r3, startIdx + 1:(consecutiveDecreaseCount + 1))
+        consecutiveDecreaseCount <- 0  # Reset to find next potential sequence
+      }
+
+      # Update currentIndex for the next iteration
+      currentIndex <- currentIndex + 1
+    }
+  }
+
+  # Rule 4: k points in a row, alternating increase and decrease
+  # if (ruleList[["rule4"]][["enabled"]] == TRUE) {
+  #   k4 <- ruleList[["rule4"]][["k"]]
+  #   r4 <- c()
+  #
+  #   # Function to determine if two numbers alternate in increase/decrease pattern
+  #   patternAlternates <- function(x, y) {
+  #     return((x < 0 && y > 0) || (x > 0 && y < 0))
+  #   }
+  #
+  #   # Calculate differences between consecutive points
+  #   differences <- diff(plotStatistics)
+  #
+  #   # Track the start index of the current alternating pattern
+  #   startIdx <- NULL
+  #   sequenceCount <- 0
+  #
+  #   for (i in 1:(length(differences) - 1)) {
+  #     if (patternAlternates(differences[i], differences[i + 1])) {
+  #       # If starting a new potential pattern
+  #       if (is.null(startIdx)) {
+  #         startIdx <- i
+  #       }
+  #       sequenceCount <- sequenceCount + 1
+  #
+  #       # If a valid sequence is found, capture indices
+  #       if (sequenceCount >= (k4 - 1)) {
+  #         r4 <- c(r4, seq(startIdx, startIdx + sequenceCount + 1))
+  #         startIdx <- NULL  # Reset to find new sequences
+  #         sequenceCount <- 0
+  #       }
+  #     } else {
+  #       startIdx <- startIdx  # Reset if pattern breaks
+  #       sequenceCount <- 0
+  #     }
+  #   }
+  # }
+
+
+  # Rule 5: k out of k+1 points > 2 std. dev. from center line (same side)
+
+  # Rule 6: k out of k+1 points > 1 std. dev. from center line (same side)
+
+  # Rule 7: k points in a row within 1 std. dev from center line (either side)
+
+  # Rule 8: k points in a row > 1 std. dev. from center line (either side)
+
+  # Rule 9: Benneyan test, k successive points equal to 0
+}
+
 .sdXbar <- function(df, type = c("s", "r"), unbiasingConstantUsed = TRUE) {
   type <- match.arg(type)
 
