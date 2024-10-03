@@ -318,6 +318,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
 KnownControlStats.RS <- function(N, sigma = 3) {
 
+  # d2 and d3 are unbiasing constants as reported in D. J. Wheeler and D. S. Chambers. (1992). Understanding Statistical Process Control, Second Edition, SPC Press, Inc.
+
   Data.d3 <- data.frame(
     n = 0:25,
     d3 = c(NA, NA, 0.8525 ,0.8884, 0.8798, 0.8641, 0.8480, 0.8332, 0.8198, 0.8078, 0.7971, 0.7873, 0.7785, 0.7704, 0.7630,
@@ -535,7 +537,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       ### Calculations for R chart
       ###
     } else if (plotType == "R") {
-      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else rowSums(!is.na(dataCurrentStage)) # returns the number of non NA values per row
       # manually calculate mean and sd as the package gives wrong results with NAs
       if(phase2) {
         sigma <- phase2Sd
@@ -575,7 +577,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='xbar', plot = FALSE, center = mu, sizes = ncol(dataCurrentStage), std.dev = sigma, nsigmas = nSigmasControlLimits)
       plotStatistic <- qccObject$statistics
-      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else rowSums(!is.na(dataCurrentStage)) # returns the number of non NA values per row
       limits <- .controlLimits(mu, sigma, n = n, type = "xbar", k = nSigmasControlLimits)
       center <- mu
       UCL <- limits$UCL
@@ -602,7 +604,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       qccObject <- qcc::qcc(dataCurrentStage, type ='S', plot = FALSE, center = sigma, sizes = ncol(dataCurrentStage), nsigmas = nSigmasControlLimits)
       plotStatistic <- qccObject$statistics
-      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else rowSums(!is.na(dataCurrentStage)) # returns the number of non NA values per row
       limits <- .controlLimits(sigma = sigma, n = n, type = "s", unbiasingConstantUsed = unbiasingConstantUsed, k = nSigmasControlLimits)
       if (unbiasingConstantUsed) {
         c4s <- sapply(n, function(x) return(KnownControlStats.RS(x, 0)$constants[3]))
@@ -616,7 +618,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       ### Calculations for cusum chart
       ###
     } else if (plotType == "cusum") {
-      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else rowSums(!is.na(dataCurrentStage)) # returns the number of non NA values per row
       # sigma for subgroup size = 1 is calculated as the average moving range sd
       if (phase2) {
         sigma <- as.numeric(phase2Sd)
@@ -644,7 +646,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       ### Calculations for ewma chart
       ###
     } else if (plotType == "ewma") {
-      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else apply(dataCurrentStage, 1, function(x) return(sum(!is.na(x)))) # returns the number of non NA values per row
+      n <- if (!identical(fixedSubgroupSize, "")) fixedSubgroupSize else rowSums(!is.na(dataCurrentStage)) # returns the number of non NA values per row
       if (phase2) {
         sigma <- as.numeric(phase2Sd)
       } else if (all(n == 1)) {
@@ -917,14 +919,14 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     yTitle <- gettextf("%1$s between events", unitString)
   } else {
     yTitle <- switch (plotType,
-                      "xBar"  = "Sample average",
-                      "R"     = "Sample range",
-                      "I"     = "Individual value",
-                      "MR"    = "Moving range",
-                      "MMR"   = "Moving range of subgroup mean",
-                      "s"     = "Sample std. dev.",
-                      "cusum" = "Cumulative sum",
-                      "ewma"  = "Exponentially weighted moving average")
+                      "xBar"  = gettext("Sample average"),
+                      "R"     = gettext("Sample range"),
+                      "I"     = gettext("Individual value"),
+                      "MR"    = gettext("Moving range"),
+                      "MMR"   = gettext("Moving range of subgroup mean"),
+                      "s"     = gettext("Sample std. dev."),
+                      "cusum" = gettext("Cumulative sum"),
+                      "ewma"  = gettext("Exponentially weighted moving average"))
   }
   lineType <- if (phase2) "solid" else "dashed"
   # Create plot

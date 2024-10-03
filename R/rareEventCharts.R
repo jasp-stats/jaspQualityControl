@@ -23,7 +23,7 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   variable <- variable[variable != ""]
   stages <- stages[stages != ""]
 
-  if (options[["dataType"]] == "dataTypeDates" | options[["dataType"]] ==  "dataTypeInterval" && options[["dataTypeIntervalType"]] == "dataTypeIntervalTypeTime") {
+  if (options[["dataType"]] == "dataTypeDates" || options[["dataType"]] ==  "dataTypeInterval" && options[["dataTypeIntervalType"]] == "dataTypeIntervalTypeTime") {
     numericVariables <- NULL
     factorVariables <- c(variable, stages)
   } else {
@@ -71,7 +71,7 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     }
 
     # if intervals are all NA, throw error
-    if ((options[["dataType"]] == "dataTypeDates" | options[["dataType"]] ==  "dataTypeInterval" && options[["dataTypeIntervalType"]] == "time") &&
+    if ((options[["dataType"]] == "dataTypeDates" || options[["dataType"]] ==  "dataTypeInterval" && options[["dataTypeIntervalType"]] == "time") &&
         all(is.na(timepoints))) {
       errorPlot <-  createJaspPlot(title = gettext("Rare event charts"), width = 1200, height = 500)
       errorPlot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
@@ -82,18 +82,20 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     }
 
     # Get the interval type, depending on the input type and, if applicable, the calculated intervals
-    if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "opportunities") {
-      intervals <- as.numeric(dataset[[variable]])
-      intervalType <- "opportunities"
-    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "hours") {
-      intervals <- as.numeric(dataset[[variable]])
-      intervalType <- "hours"
-    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "days") {
-      intervals <- as.numeric(dataset[[variable]])
-      intervalType <- "days"
-    } else if (options[["dataType"]] == "dataTypeInterval" && options[["dataTypeIntervalType"]] == "time") {
-      intervals <- if (all(intervalsHours < 1, na.rm = TRUE)) intervalsMinutes else intervalsHours
-      intervalType <- if (all(intervalsHours < 1, na.rm = TRUE)) "minutes" else "hours"
+    if (options[["dataType"]] == "dataTypeInterval") {
+      if (options[["dataTypeIntervalType"]] == "opportunities") {
+        intervals <- as.numeric(dataset[[variable]])
+        intervalType <- "opportunities"
+      } else if (options[["dataTypeIntervalType"]] == "hours") {
+        intervals <- as.numeric(dataset[[variable]])
+        intervalType <- "hours"
+      } else if (options[["dataTypeIntervalType"]] == "days") {
+        intervals <- as.numeric(dataset[[variable]])
+        intervalType <- "days"
+      } else if (options[["dataTypeIntervalType"]] == "time") {
+        intervals <- if (all(intervalsHours < 1, na.rm = TRUE)) intervalsMinutes else intervalsHours
+        intervalType <- if (all(intervalsHours < 1, na.rm = TRUE)) "minutes" else "hours"
+      }
     } else if (options[["dataType"]] == "dataTypeDates") {
       if (all(intervalsDays < 1, na.rm = TRUE) && all(intervalsHours < 1, na.rm = TRUE)) {
         intervals <- intervalsMinutes
