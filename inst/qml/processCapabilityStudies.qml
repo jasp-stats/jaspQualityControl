@@ -21,7 +21,6 @@ Form
 {
 	columns:								2
 
-
 	DropDown
 	{
 		name: "dataFormat"

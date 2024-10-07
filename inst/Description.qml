@@ -26,7 +26,7 @@ Description
 	}
 	Analysis
 	{
-		title:			qsTr("Type 2 Gauge r&R Study")
+		title:			qsTr("Type 2 and 3 Gauge r&R Study")
 		func:			"msaGaugeRR"
 	}
 	Analysis
@@ -80,6 +80,12 @@ Description
 	{
 		title:			qsTr("Time Weighted Charts")
 		func:			"timeWeightedCharts"
+	}
+
+	Analysis
+	{
+		title:			qsTr("Rare Event Charts")
+		func:			"rareEventCharts"
 	}
 
 	GroupTitle
