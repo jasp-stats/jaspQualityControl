@@ -132,16 +132,6 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     }
   }
 
-    if (length(stages) == 1) {
-      dataset <- data.frame(x1 = intervals, x2 = dataset[[stages]])
-      colnames(dataset) <- c(variable, stages)
-    } else {
-      dataset <- data.frame(x1 = intervals)
-      colnames(dataset) <- variable
-      stages <- ""
-    }
-  }
-
   # G chart
   if (options[["gChart"]]) {
     gChart <- .gChart(dataset, variable, stages, intervalType, options, ready)
@@ -206,7 +196,6 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     if (options[["tChart"]])
       jaspResults[["tChart"]] <- tChart
   }
-
 }
 
 
