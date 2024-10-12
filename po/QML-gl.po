@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-10-12 11:57+0000\n"
+"PO-Revision-Date: 2024-10-12 14:59+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Galician <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/gl/>\n"
@@ -2744,207 +2744,174 @@ msgctxt "rareEventCharts|"
 msgid "Variable Charts for Subgroups Report"
 msgstr "Informe de gráficas de variables por subgrupos"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Chart name"
 msgstr "Nome da gráfica"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Name of the chart"
 msgstr "Nome da gráfica"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Sub-title"
 msgstr "Subtítulo"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Measurement name"
 msgstr "Nome da medida"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Name"
 msgstr "Nome"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Footnote"
 msgstr "Nota ao pé"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Comment"
 msgstr "Comentario"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Location"
 msgstr "Posición"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Date"
 msgstr "Data"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Performed by"
 msgstr "Realizado por"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Analyst"
 msgstr "Analista"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Date printed"
 msgstr "Data impresa"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Today"
 msgstr "Hoxe"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Data format"
 msgstr "Formato de datos"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Single column"
 msgstr "Columna única"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Across rows"
 msgstr "A través de filas"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Measurement"
 msgstr "Medida"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Timestamp (optional)"
 msgstr "Marca temporal (opcional)"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Subgroups"
 msgstr "Subgrupos"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Stages"
 msgstr "Etapas"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Specify subgroups"
 msgstr "Especificar subgrupos"
 
 msgctxt "timeWeightedCharts|"
 msgid "No subgroups (n = 1)"
-msgstr ""
+msgstr "Sen subgrupos (n = 1)"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Subgroup size"
 msgstr "Tamaño do subgrupo"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Through grouping variable"
 msgstr "Mediante a variable de agrupamento"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Subgroup value change"
 msgstr "Cambio de valor do subgrupo"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Same subgroup value"
 msgstr "Mesmo valor do subgrupo"
 
 msgctxt "timeWeightedCharts|"
 msgid "Number of std. dev. for control limits"
-msgstr ""
+msgstr "Nº de desv. padr. para límites de control"
 
 msgctxt "timeWeightedCharts|"
 msgid "Target"
-msgstr ""
+msgstr "Obxectivo"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Std. dev."
 msgstr "Desv. padr."
 
 msgctxt "timeWeightedCharts|"
 msgid "Estimated from data"
-msgstr ""
+msgstr "Estimado a partir dos datos"
 
 msgctxt "timeWeightedCharts|"
 msgid "Historical"
-msgstr ""
+msgstr "Histórico"
 
 msgctxt "timeWeightedCharts|"
 msgid "Std. dev. estimation method"
-msgstr ""
+msgstr "Método de estimación do desv. padr."
 
 msgctxt "timeWeightedCharts|"
 msgid "X-mR"
-msgstr ""
+msgstr "X-mR"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "S-bar"
 msgstr "Barra-S"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "R-bar"
 msgstr "Barra-R"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Std. dev. value"
 msgstr "Valor do Desv. Padrón"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Moving range length"
 msgstr "Longo do rango de movemento"
 
 msgctxt "timeWeightedCharts|"
 msgid "Lambda (smoothing parameter)"
-msgstr ""
+msgstr "Lambda (parámetro de suavizado)"
 
 msgctxt "timeWeightedCharts|"
 msgid "In-control std. dev."
-msgstr ""
+msgstr "Desv. padr. do Control-In"
 
 msgctxt "timeWeightedCharts|"
 msgid "Time Weighted Charts Report"
-msgstr ""
+msgstr "Informe de gráficas ponderadas no tempo"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Show Report"
 msgstr "Amosar informe"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Show report metadata"
 msgstr "Amosar os metadatos do informe"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Title"
 msgstr "Título"
@@ -2953,67 +2920,54 @@ msgctxt "timeWeightedCharts|"
 msgid "Variable Charts for Subgroups Report"
 msgstr "Informe de gráficas de variables por subgrupos"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Chart name"
 msgstr "Nome da gráfica"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Name of the chart"
 msgstr "Nome da gráfica"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Sub-title"
 msgstr "Subtítulo"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Measurement name"
 msgstr "Nome da medida"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Name"
 msgstr "Nome"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Footnote"
 msgstr "Nota ao pé"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Comment"
 msgstr "Comentario"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Location"
 msgstr "Posición"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Date"
 msgstr "Data"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Performed by"
 msgstr "Realizado por"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Analyst"
 msgstr "Analista"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Date printed"
 msgstr "Data impresa"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Today"
 msgstr "Hoxe"
