@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-09-07 03:40\n"
+"POT-Creation-Date: 2024-10-12 03:41\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -13,38 +13,58 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.18-dev\n"
 
+msgid ""
+"One or more subgroups are assigned to more than one stage, only first stage "
+"is considered.<br>"
+msgstr ""
+
+msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
+msgstr ""
+
+msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
+msgstr ""
+
+msgid "Sample"
+msgstr "样本"
+
+#, fuzzy
+msgid "Time weighted charts report"
+msgstr "单值控制图"
+
+#, fuzzy
+msgid "Chart name: %s"
+msgstr "量具名称 : %s"
+
+msgid "Sub-title: %s"
+msgstr "副标题：%s"
+
+#, fuzzy
+msgid "Measurement name: %s"
+msgstr "测量系统: %s"
+
+#, fuzzy
+msgid "Footnote: %s"
+msgstr "日期：%s"
+
+#, fuzzy
+msgid "Location: %s"
+msgstr "位置 (%1$s)"
+
+msgid "Date: %s"
+msgstr "日期：%s"
+
+msgid "Performed by: %s"
+msgstr "执行者 : %s"
+
+#, fuzzy
+msgid "Print date: %s"
+msgstr "日期：%s"
+
 msgid "Cumulative sum chart"
 msgstr "累积和控制图"
 
 msgid "Exponentially weighted moving average chart"
 msgstr "指数加权移动平均控制图"
-
-msgid "G chart"
-msgstr "G 控制图"
-
-msgid "CL = %g"
-msgstr "CL = %g"
-
-msgid "UCL = %g"
-msgstr "UCL = %g"
-
-msgid "LCL = %g"
-msgstr "LCL = %g"
-
-msgid "Cumulative sum"
-msgstr "累积和"
-
-msgid "Subgroups"
-msgstr "子组"
-
-msgid "EWMA"
-msgstr "指数加权移动平均"
-
-msgid "Subgroup"
-msgstr "子组"
-
-msgid "Counts"
-msgstr "计数"
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
 msgstr "不合格品/缺陷的数量大于样本量。"
@@ -77,13 +97,6 @@ msgid "Report for Attribute Control Charts"
 msgstr "属性控制图报告"
 
 #, fuzzy
-msgid "Measurement name: %s"
-msgstr "测量系统: %s"
-
-msgid "Performed by: %s"
-msgstr "执行者 : %s"
-
-#, fuzzy
 msgid "ID: %s"
 msgstr "日期：%s"
 
@@ -103,11 +116,17 @@ msgstr "时间: %s"
 msgid "Frequency: %s"
 msgstr "频度: %s"
 
+msgid "CL = %g"
+msgstr "CL = %g"
+
 msgid "Proportion"
 msgstr "比率"
 
-msgid "Sample"
-msgstr "样本"
+msgid "UCL = %g"
+msgstr "UCL = %g"
+
+msgid "LCL = %g"
+msgstr "LCL = %g"
 
 msgid "Number of defectives"
 msgstr "缺陷品数"
@@ -157,6 +176,39 @@ msgstr "偏倚的 t 检验"
 msgid "No test violations occurred."
 msgstr "数字表示发生违反检验准则的数据点。"
 
+msgid "%1$s between events"
+msgstr ""
+
+#, fuzzy
+msgid "Sample average"
+msgstr "样本量"
+
+#, fuzzy
+msgid "Sample range"
+msgstr "样本量"
+
+#, fuzzy
+msgid "Individual value"
+msgstr "单值控制图"
+
+#, fuzzy
+msgid "Moving range"
+msgstr "移动极差"
+
+msgid "Moving range of subgroup mean"
+msgstr ""
+
+#, fuzzy
+msgid "Sample std. dev."
+msgstr "标准差"
+
+msgid "Cumulative sum"
+msgstr "累积和"
+
+#, fuzzy
+msgid "Exponentially weighted moving average"
+msgstr "指数加权移动平均控制图"
+
 #, fuzzy
 msgid "LSL = %g"
 msgstr "LCL = %g"
@@ -168,6 +220,11 @@ msgstr "CL = %g"
 #, fuzzy
 msgid "USL = %g"
 msgstr "UCL = %g"
+
+msgid ""
+"Parameter estimation failed. Values might be too extreme. Try a different "
+"distribution."
+msgstr ""
 
 msgid "Error"
 msgstr ""
@@ -689,13 +746,6 @@ msgid "Tolerance: %s"
 msgstr "公差 : %s"
 
 #, fuzzy
-msgid "Location: %s"
-msgstr "位置 (%1$s)"
-
-msgid "Date: %s"
-msgstr "日期：%s"
-
-#, fuzzy
 msgid "Number of distinct categories"
 msgstr "可区分类别数 = %i"
 
@@ -1181,17 +1231,6 @@ msgstr "<b><em>警告.</em></b>"
 msgid "Probability of detecting %s"
 msgstr "检测的概率 %s"
 
-msgid ""
-"One or more subgroups are assigned to more than one stage, only first stage "
-"is considered.<br>"
-msgstr ""
-
-msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
-
-msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
-msgstr ""
-
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr ""
 
@@ -1507,16 +1546,37 @@ msgid ""
 "distribution."
 msgstr "数据集包含负数。与所选分布不兼容。"
 
+msgid "Counts"
+msgstr "计数"
+
 msgid "Normal dist."
 msgstr ""
 
 msgid "Lognormal dist."
 msgstr ""
 
+#, fuzzy
+msgid "Rare event charts"
+msgstr "运行图"
+
 msgid ""
-"Parameter estimation failed. Values might be too extreme. Try a different "
-"distribution."
+"Date/time conversion returned no valid values. Did you select the correct "
+"date/time format?"
 msgstr ""
+
+msgid ""
+"Negative values for time/intervals detected, calculation is not possible."
+msgstr ""
+
+#, fuzzy
+msgid "Rare event charts report"
+msgstr "单值控制图"
+
+msgid "G chart"
+msgstr "G 控制图"
+
+msgid "T chart"
+msgstr "T 控制图"
 
 msgid ""
 "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
@@ -1534,21 +1594,6 @@ msgstr ""
 #, fuzzy
 msgid "Variables Chart for Individuals Report"
 msgstr "单值图"
-
-#, fuzzy
-msgid "Chart name: %s"
-msgstr "量具名称 : %s"
-
-msgid "Sub-title: %s"
-msgstr "副标题：%s"
-
-#, fuzzy
-msgid "Footnote: %s"
-msgstr "日期：%s"
-
-#, fuzzy
-msgid "Print date: %s"
-msgstr "日期：%s"
 
 msgid ""
 "Autocorrelation plot requires uninterrupted series of values. Missing values "
@@ -1581,6 +1626,15 @@ msgstr "均值和标准差控制图"
 #, fuzzy
 msgid "Variables Chart for Subgroups Report"
 msgstr "单值图"
+
+#~ msgid "Subgroups"
+#~ msgstr "子组"
+
+#~ msgid "EWMA"
+#~ msgstr "指数加权移动平均"
+
+#~ msgid "Subgroup"
+#~ msgstr "子组"
 
 #~ msgid "%g (Acceptable)"
 #~ msgstr "%g (可接受)"
@@ -1825,10 +1879,6 @@ msgstr "单值图"
 #~ msgid "Please insert more measurements and check the X-mR chart."
 #~ msgstr "请插入更多测量值并检查单值-移动极差控制图。"
 
-#, fuzzy
-#~ msgid "Individual charts report"
-#~ msgstr "单值控制图"
-
 #~ msgid "Name: %s"
 #~ msgstr "名称：%s"
 
@@ -1850,14 +1900,6 @@ msgstr "单值图"
 #~ msgstr "显示X-bar & R控制图需要子组容量必须 >1"
 
 #, fuzzy
-#~ msgid "Sample average"
-#~ msgstr "样本量"
-
-#, fuzzy
-#~ msgid "Sample range"
-#~ msgstr "样本量"
-
-#, fuzzy
 #~ msgid "Test results for individuals chart"
 #~ msgstr "%s 图检验结果"
 
@@ -1873,9 +1915,6 @@ msgstr "单值图"
 
 #~ msgid "%s Chart by Operator"
 #~ msgstr "%s 图按操作者"
-
-#~ msgid "Individuals Charts"
-#~ msgstr "单值控制图"
 
 #~ msgid "Out-of-control Signals"
 #~ msgstr "失控信号"
@@ -1927,9 +1966,6 @@ msgstr "单值图"
 
 #~ msgid "%s for Range"
 #~ msgstr "极差图 %s"
-
-#~ msgid "T chart"
-#~ msgstr "T 控制图"
 
 #~ msgid "Could not equally divide data points into groups of size %i."
 #~ msgstr "无法将数据点平均划分为大小为 %i 的组。"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2024-09-07 03:40\n"
+"POT-Creation-Date: 2024-10-12 03:41\n"
 "PO-Revision-Date: 2023-06-24 03:41+0000\n"
 "Last-Translator: Borisov Igor Borisovich <borisov_i@pimunn.net>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
@@ -14,37 +14,51 @@ msgstr ""
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.18.1\n"
 
+msgid ""
+"One or more subgroups are assigned to more than one stage, only first stage "
+"is considered.<br>"
+msgstr ""
+
+msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
+msgstr ""
+
+msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
+msgstr ""
+
+msgid "Sample"
+msgstr ""
+
+msgid "Time weighted charts report"
+msgstr ""
+
+msgid "Chart name: %s"
+msgstr ""
+
+msgid "Sub-title: %s"
+msgstr ""
+
+msgid "Measurement name: %s"
+msgstr ""
+
+msgid "Footnote: %s"
+msgstr ""
+
+msgid "Location: %s"
+msgstr ""
+
+msgid "Date: %s"
+msgstr ""
+
+msgid "Performed by: %s"
+msgstr ""
+
+msgid "Print date: %s"
+msgstr ""
+
 msgid "Cumulative sum chart"
 msgstr ""
 
 msgid "Exponentially weighted moving average chart"
-msgstr ""
-
-msgid "G chart"
-msgstr ""
-
-msgid "CL = %g"
-msgstr ""
-
-msgid "UCL = %g"
-msgstr ""
-
-msgid "LCL = %g"
-msgstr ""
-
-msgid "Cumulative sum"
-msgstr ""
-
-msgid "Subgroups"
-msgstr ""
-
-msgid "EWMA"
-msgstr ""
-
-msgid "Subgroup"
-msgstr ""
-
-msgid "Counts"
 msgstr ""
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
@@ -77,12 +91,6 @@ msgstr ""
 msgid "Report for Attribute Control Charts"
 msgstr ""
 
-msgid "Measurement name: %s"
-msgstr ""
-
-msgid "Performed by: %s"
-msgstr ""
-
 msgid "ID: %s"
 msgstr ""
 
@@ -101,10 +109,16 @@ msgstr ""
 msgid "Frequency: %s"
 msgstr ""
 
+msgid "CL = %g"
+msgstr ""
+
 msgid "Proportion"
 msgstr ""
 
-msgid "Sample"
+msgid "UCL = %g"
+msgstr ""
+
+msgid "LCL = %g"
 msgstr ""
 
 msgid "Number of defectives"
@@ -152,6 +166,34 @@ msgstr ""
 msgid "No test violations occurred."
 msgstr ""
 
+msgid "%1$s between events"
+msgstr ""
+
+msgid "Sample average"
+msgstr ""
+
+msgid "Sample range"
+msgstr ""
+
+msgid "Individual value"
+msgstr ""
+
+msgid "Moving range"
+msgstr ""
+
+msgid "Moving range of subgroup mean"
+msgstr ""
+
+#, fuzzy
+msgid "Sample std. dev."
+msgstr "Стандартное отклонение"
+
+msgid "Cumulative sum"
+msgstr ""
+
+msgid "Exponentially weighted moving average"
+msgstr ""
+
 msgid "LSL = %g"
 msgstr ""
 
@@ -159,6 +201,11 @@ msgid "Tar. = %g"
 msgstr ""
 
 msgid "USL = %g"
+msgstr ""
+
+msgid ""
+"Parameter estimation failed. Values might be too extreme. Try a different "
+"distribution."
 msgstr ""
 
 msgid "Error"
@@ -621,12 +668,6 @@ msgstr ""
 msgid "Tolerance: %s"
 msgstr ""
 
-msgid "Location: %s"
-msgstr ""
-
-msgid "Date: %s"
-msgstr ""
-
 msgid "Number of distinct categories"
 msgstr ""
 
@@ -1046,17 +1087,6 @@ msgstr ""
 msgid "Probability of detecting %s"
 msgstr ""
 
-msgid ""
-"One or more subgroups are assigned to more than one stage, only first stage "
-"is considered.<br>"
-msgstr ""
-
-msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
-
-msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
-msgstr ""
-
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr ""
 
@@ -1352,15 +1382,34 @@ msgid ""
 "distribution."
 msgstr ""
 
+msgid "Counts"
+msgstr ""
+
 msgid "Normal dist."
 msgstr ""
 
 msgid "Lognormal dist."
 msgstr ""
 
+msgid "Rare event charts"
+msgstr ""
+
 msgid ""
-"Parameter estimation failed. Values might be too extreme. Try a different "
-"distribution."
+"Date/time conversion returned no valid values. Did you select the correct "
+"date/time format?"
+msgstr ""
+
+msgid ""
+"Negative values for time/intervals detected, calculation is not possible."
+msgstr ""
+
+msgid "Rare event charts report"
+msgstr ""
+
+msgid "G chart"
+msgstr ""
+
+msgid "T chart"
 msgstr ""
 
 msgid ""
@@ -1377,18 +1426,6 @@ msgid ""
 msgstr ""
 
 msgid "Variables Chart for Individuals Report"
-msgstr ""
-
-msgid "Chart name: %s"
-msgstr ""
-
-msgid "Sub-title: %s"
-msgstr ""
-
-msgid "Footnote: %s"
-msgstr ""
-
-msgid "Print date: %s"
 msgstr ""
 
 msgid ""

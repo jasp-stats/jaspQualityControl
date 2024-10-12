@@ -319,10 +319,6 @@ msgctxt "timeWeightedCharts|"
 msgid "Exponentially weighted moving average chart"
 msgstr "Exponentiell-gewichteter-gleitender-Mittelwert-Karte"
 
-msgctxt "timeWeightedCharts|"
-msgid "g chart"
-msgstr "g-Karte"
-
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & R"
 msgstr "X-quer & R"
@@ -901,16 +897,8 @@ msgid "Display grid lines"
 msgstr ""
 
 msgctxt "timeWeightedCharts|"
-msgid "Number of standard deviations"
-msgstr "Anzahl Standardabweichungen"
-
-msgctxt "timeWeightedCharts|"
 msgid "Shift size"
 msgstr ""
-
-msgctxt "timeWeightedCharts|"
-msgid "Lambda"
-msgstr "Lambda"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Moving range length"
@@ -1217,18 +1205,6 @@ msgstr "Feste Effekte"
 msgctxt "msaType1Gauge|"
 msgid "Analysis options"
 msgstr "Analyseoptionen"
-
-msgctxt "timeWeightedCharts|"
-msgid "Center"
-msgstr ""
-
-msgctxt "timeWeightedCharts|"
-msgid "Within-group standard deviation"
-msgstr "Standardabweichung innerhalb Gruppe"
-
-msgctxt "timeWeightedCharts|"
-msgid "Sigmas for computing control limits"
-msgstr "Sigmas für Berechnung der Eingriffsgrenzen"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Individuals Report"
@@ -2412,10 +2388,6 @@ msgid "Type 1 Instrument Capability Study"
 msgstr ""
 
 msgctxt "Description|"
-msgid "Type 2 Gauge r&R Study"
-msgstr ""
-
-msgctxt "Description|"
 msgid "Gauge r&R Study (Non-replicable Measurements)"
 msgstr ""
 
@@ -2613,3 +2585,432 @@ msgstr ""
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of continuous predictors"
 msgstr "Anzahl kontinuierlicher Prädiktoren"
+
+msgctxt "Description|"
+msgid "Type 2 and 3 Gauge r&R Study"
+msgstr ""
+
+msgctxt "Description|"
+msgid "Rare Event Charts"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Variable"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Stage"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Data type"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Date/time"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Structure"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Date + Time"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Time + Date"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Date only"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Time only"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Date format"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "DMY"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "MDY"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "YMD"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "DM"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "MD"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Time format"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "H"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "HM"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "HMS"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Ip"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "IMp"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Interval between events"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Interval type"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Opportunities"
+msgstr ""
+
+#, fuzzy
+msgctxt "rareEventCharts|"
+msgid "Time"
+msgstr "Zeit"
+
+msgctxt "rareEventCharts|"
+msgid "Hours (decimal)"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Days (decimal)"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "G chart"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Proportion"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Estimated from data"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Historical"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Proportion value"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "T chart"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Based on"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Weibull distribution"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Exponential distribution"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Distribution parameters"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Shape"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Scale"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Rare Event Charts Report"
+msgstr ""
+
+#, fuzzy
+msgctxt "rareEventCharts|"
+msgid "Show Report"
+msgstr "Bericht anzeigen"
+
+msgctxt "rareEventCharts|"
+msgid "Show report metadata"
+msgstr ""
+
+#, fuzzy
+msgctxt "rareEventCharts|"
+msgid "Title"
+msgstr "Titel"
+
+msgctxt "rareEventCharts|"
+msgid "Variable Charts for Subgroups Report"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Chart name"
+msgstr ""
+
+#, fuzzy
+msgctxt "rareEventCharts|"
+msgid "Name of the chart"
+msgstr "Name der Karte"
+
+#, fuzzy
+msgctxt "rareEventCharts|"
+msgid "Sub-title"
+msgstr "Untertitel"
+
+msgctxt "rareEventCharts|"
+msgid "Measurement name"
+msgstr ""
+
+#, fuzzy
+msgctxt "rareEventCharts|"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "rareEventCharts|"
+msgid "Footnote"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Comment"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Location"
+msgstr ""
+
+#, fuzzy
+msgctxt "rareEventCharts|"
+msgid "Date"
+msgstr "Datum"
+
+msgctxt "rareEventCharts|"
+msgid "Performed by"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Analyst"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Date printed"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Today"
+msgstr ""
+
+#, fuzzy
+msgctxt "timeWeightedCharts|"
+msgid "Data format"
+msgstr "Datenformat"
+
+#, fuzzy
+msgctxt "timeWeightedCharts|"
+msgid "Single column"
+msgstr "Einzelne Spalte"
+
+msgctxt "timeWeightedCharts|"
+msgid "Across rows"
+msgstr ""
+
+#, fuzzy
+msgctxt "timeWeightedCharts|"
+msgid "Measurement"
+msgstr "Messung"
+
+msgctxt "timeWeightedCharts|"
+msgid "Timestamp (optional)"
+msgstr ""
+
+#, fuzzy
+msgctxt "timeWeightedCharts|"
+msgid "Subgroups"
+msgstr "Untergruppen"
+
+msgctxt "timeWeightedCharts|"
+msgid "Stages"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Specify subgroups"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "No subgroups (n = 1)"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Subgroup size"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Through grouping variable"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Subgroup value change"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Same subgroup value"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Number of std. dev. for control limits"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Target"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Std. dev."
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Estimated from data"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Historical"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Std. dev. estimation method"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "X-mR"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "S-bar"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "R-bar"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Std. dev. value"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Moving range length"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Lambda (smoothing parameter)"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "In-control std. dev."
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Time Weighted Charts Report"
+msgstr ""
+
+#, fuzzy
+msgctxt "timeWeightedCharts|"
+msgid "Show Report"
+msgstr "Bericht anzeigen"
+
+msgctxt "timeWeightedCharts|"
+msgid "Show report metadata"
+msgstr ""
+
+#, fuzzy
+msgctxt "timeWeightedCharts|"
+msgid "Title"
+msgstr "Titel"
+
+msgctxt "timeWeightedCharts|"
+msgid "Variable Charts for Subgroups Report"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Chart name"
+msgstr ""
+
+#, fuzzy
+msgctxt "timeWeightedCharts|"
+msgid "Name of the chart"
+msgstr "Name der Karte"
+
+#, fuzzy
+msgctxt "timeWeightedCharts|"
+msgid "Sub-title"
+msgstr "Untertitel"
+
+msgctxt "timeWeightedCharts|"
+msgid "Measurement name"
+msgstr ""
+
+#, fuzzy
+msgctxt "timeWeightedCharts|"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "timeWeightedCharts|"
+msgid "Footnote"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Comment"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Location"
+msgstr ""
+
+#, fuzzy
+msgctxt "timeWeightedCharts|"
+msgid "Date"
+msgstr "Datum"
+
+msgctxt "timeWeightedCharts|"
+msgid "Performed by"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Analyst"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Date printed"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Today"
+msgstr ""
