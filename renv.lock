@@ -256,7 +256,7 @@
     },
     "data.table": {
       "Package": "data.table",
-      "Version": "1.16.0",
+      "Version": "1.16.2",
       "Source": "Repository"
     },
     "deSolve": {
@@ -301,7 +301,7 @@
     },
     "evaluate": {
       "Package": "evaluate",
-      "Version": "1.0.0",
+      "Version": "1.0.1",
       "Source": "Repository"
     },
     "fansi": {
@@ -532,7 +532,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
-      "RemoteSha": "c3eb4980f876455238e30c71e240ccdaed0e2f72"
+      "RemoteSha": "f3899963c854bd9fb2647dc39cca08b4eca878a0"
     },
     "jaspGraphs": {
       "Package": "jaspGraphs",
@@ -552,7 +552,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
-      "RemoteSha": "5f1fc0c08770db5e5c01ac83f6ca8325eb376bbc"
+      "RemoteSha": "9455eae79d85ff19edfa76af4cda220077333559"
     },
     "jpeg": {
       "Package": "jpeg",
