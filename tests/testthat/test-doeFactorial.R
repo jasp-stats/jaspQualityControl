@@ -23,8 +23,7 @@ options$selectedDesign2 <- list(list(levels = "Row 0", name = "data 1", values =
 options$selectedRow <- 0 # select design
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 
 test_that("1.1 Two Factor Two Level Factorial Design table results match", {
@@ -59,8 +58,7 @@ options$selectedDesign2 <- list(list(levels = c("Row 0", "Row 1", "Row 2"), name
 options$selectedRow <- 2 # select design
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("2.1 Five Factor Two Level Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -106,8 +104,7 @@ options$selectedDesign2 <- list(list(levels = c("Row 0", "Row 1", "Row 2"), name
 options$selectedRow <- 0 # select design
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("3.1 Five Factor Two Level Frac. Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -158,8 +155,7 @@ options$selectedDesign2 <- list(list(levels = c("Row 0", "Row 1", "Row 2", "Row 
 options$selectedRow <- 3 # select design
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("4.1 Nine Factor Two Level Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -288,8 +284,7 @@ options$selectedDesign2 <- list(list(levels = c("Row 0", "Row 1", "Row 2", "Row 
 options$selectedRow <- 0 # select design
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 
 test_that("5.1 Nine Factor Two Level Frac. Factorial Design table results match", {
@@ -337,8 +332,7 @@ options$selectedRow <- 1 # select design
 options$centerpoints <- 1
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("6.1 One Center Point Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -374,8 +368,7 @@ options$selectedRow <- 1 # select design
 options$centerpoints <- 2
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 
 test_that("7.1 Two Center Point Factorial Design table results match", {
@@ -412,8 +405,7 @@ options$selectedRow <- 1 # select design
 options$centerpoints <- 4
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 
 test_that("8.1 Four Center Point Factorial Design table results match", {
@@ -453,8 +445,7 @@ options$selectedRow <- 1 # select design
 options$blocks <- "2"
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("9.1 Two Blocks Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -490,8 +481,7 @@ options$selectedRow <- 1 # select design
 options$blocks <- "4"
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("10.1 Four Blocks Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -527,8 +517,7 @@ options$selectedRow <- 1 # select design
 options$blocks <- "8"
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("11.1 Eight Blocks Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -570,8 +559,7 @@ options$selectedDesign2 <- list(list(levels = "Row 0", name = "data 1", values =
 options$selectedRow <- 0 # select design
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("12.1 Two Factor One HTC Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -605,8 +593,7 @@ options$selectedDesign2 <- list(list(levels = "Row 0", name = "data 1", values =
 options$selectedRow <- 1 # select design
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("13.1 Five Factor Two HTC Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -653,8 +640,7 @@ options$selectedDesign2 <- list(list(levels = "Row 0", name = "data 1", values =
 options$selectedRow <- 1 # select design
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("14.1 Seven Factor Three HTC Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -756,8 +742,7 @@ options$factorialType <- "generalFullFactorial"
 options$runOrder <- "runOrderStandard"
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("15.1 Three Factor Three Level General Full Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -797,8 +782,7 @@ options$factorialType <- "generalFullFactorial"
 options$runOrder <- "runOrderStandard"
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("16.1 Three Factor Four Level General Full Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]
@@ -842,8 +826,7 @@ options$factorialType <- "generalFullFactorial"
 options$runOrder <- "runOrderStandard"
 options$setSeed <- TRUE
 set.seed(1)
-dataset <- NULL
-results <- runAnalysis("doeFactorial", dataset, options)
+results <- runAnalysis("doeFactorial", "debug.csv", options)
 
 test_that("17.1 Four Factor Six Level General Full Factorial Design table results match", {
   table <- results[["results"]][["displayDesign"]][["data"]]

@@ -30,8 +30,7 @@ options$selectedDesign2 <- list( # give design list, always five lists, number o
   list(levels = c("Row 0", "Row 1"), name = "data 5", values = c(1.682, 1.633)) # alpha
 )
 options$selectedRow <- 1 # select design
-dataset <- NULL
-results <- runAnalysis("doeResponseSurfaceMethodology", dataset, options)
+results <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", options)
 
 test_that("1.1 Three Cont. Pred. Central Composite Design table results match", {
   table <- results[["results"]][["designTable"]][["data"]]
@@ -79,8 +78,7 @@ options$selectedDesign2 <- list( # give design list, always five lists, number o
   list(levels = c("Row 0", "Row 1"), name = "data 5", values = c(2.378, 2.366)) # alpha
 )
 options$selectedRow <- 1 # select design
-dataset <- NULL
-results <- runAnalysis("doeResponseSurfaceMethodology", dataset, options)
+results <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", options)
 
 test_that("2.1 Five Cont. Pred. Central Composite Design table results match", {
   table <- results[["results"]][["designTable"]][["data"]]
@@ -150,8 +148,7 @@ options$selectedDesign2 <- list( # give design list, always five lists, number o
   list(levels = c("Row 0", "Row 1"), name = "data 5", values = c(1.682, 1.633)) # alpha
 )
 options$selectedRow <- 1 # select design
-dataset <- NULL
-results <- runAnalysis("doeResponseSurfaceMethodology", dataset, options)
+results <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", options)
 
 
 test_that("3.1 Three Cont. Pred. Two. Disc. Pred. Central Composite Design table results match", {
@@ -239,8 +236,7 @@ options$selectedDesign2 <- list( # give design list, always five lists, number o
   list(levels = c("Row 0", "Row 1"), name = "data 5", values = c(2, 2)) # alpha
 )
 options$selectedRow <- 1 # select design
-dataset <- NULL
-results <- runAnalysis("doeResponseSurfaceMethodology", dataset, options)
+results <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", options)
 
 
 test_that("4.1 Four Cont. Pred. One. Disc. Pred. Central Composite Design table results match", {
@@ -310,8 +306,7 @@ options$selectedDesign2 <- list( # give design list, always five lists, number o
 )
 options$selectedRow <- 1 # select design
 options$alphaType <- "faceCentered"
-dataset <- NULL
-results <- runAnalysis("doeResponseSurfaceMethodology", dataset, options)
+results <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", options)
 
 test_that("5.1 Three Cont. Pred. Face Centered Central Composite Design table results match", {
   table <- results[["results"]][["designTable"]][["data"]]
@@ -358,8 +353,7 @@ options$selectedDesign2 <- list( # give design list, always five lists, number o
 )
 options$selectedRow <- 1 # select design
 options$alphaType <- "faceCentered"
-dataset <- NULL
-results <- runAnalysis("doeResponseSurfaceMethodology", dataset, options)
+results <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", options)
 
 
 
@@ -414,8 +408,7 @@ options$selectedDesign2 <- list( # give design list, always three lists, number 
   list(levels = c("Row 0"), name = "data 3", values = c(3)) # centre points
 )
 options$selectedRow <- 0 # select design
-dataset <- NULL
-results <- runAnalysis("doeResponseSurfaceMethodology", dataset, options)
+results <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", options)
 
 test_that("7.1 Three Cont. Pred. Box-Behnken Design table results match", {
   table <- results[["results"]][["designTable"]][["data"]]
@@ -461,8 +454,7 @@ options$selectedDesign2 <- list( # give design list, always three lists, number 
   list(levels = c("Row 0"), name = "data 3", values = c(3)) # centre points
 )
 options$selectedRow <- 0 # select design
-dataset <- NULL
-results <- runAnalysis("doeResponseSurfaceMethodology", dataset, options)
+results <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", options)
 
 
 test_that("8.1 Four Cont. Pred. Box-Behnken Design table results match", {
@@ -516,8 +508,7 @@ options$selectedDesign2 <- list( # give design list, always three lists, number 
   list(levels = c("Row 0"), name = "data 3", values = c(3)) # centre points
 )
 options$selectedRow <- 0 # select design
-dataset <- NULL
-results <- runAnalysis("doeResponseSurfaceMethodology", dataset, options)
+results <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", options)
 
 test_that("9.1 Five Cont. Pred. Box-Behnken Design table results match", {
   table <- results[["results"]][["designTable"]][["data"]]
@@ -582,8 +573,7 @@ options$selectedDesign2 <- list( # give design list, always three lists, number 
   list(levels = c("Row 0"), name = "data 3", values = c(6)) # centre points
 )
 options$selectedRow <- 0 # select design
-dataset <- NULL
-results <- runAnalysis("doeResponseSurfaceMethodology", dataset, options)
+results <- runAnalysis("doeResponseSurfaceMethodology", "debug.csv", options)
 
 
 test_that("10.1 Six Cont. Pred. One Disc. Pred. Box-Behnken Design table results match", {
