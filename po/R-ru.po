@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2024-10-12 03:41\n"
+"POT-Creation-Date: 2024-10-19 03:41\n"
 "PO-Revision-Date: 2023-06-24 03:41+0000\n"
 "Last-Translator: Borisov Igor Borisovich <borisov_i@pimunn.net>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
@@ -1243,6 +1243,15 @@ msgid ""
 msgstr ""
 
 msgid "3-parameter Weibull dist."
+msgstr ""
+
+msgid "Target = %g"
+msgstr ""
+
+msgid "LB = %g"
+msgstr ""
+
+msgid "UB = %g"
 msgstr ""
 
 msgid "Process capability (within)"

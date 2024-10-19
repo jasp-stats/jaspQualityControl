@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.19.0\n"
-"POT-Creation-Date: 2024-10-12 03:41\n"
+"Project-Id-Version: jaspQualityControl 0.19.2\n"
+"POT-Creation-Date: 2024-10-19 03:41\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1175,6 +1175,15 @@ msgid "3-parameter\nlognormal dist."
 msgstr ""
 
 msgid "3-parameter Weibull dist."
+msgstr ""
+
+msgid "Target = %g"
+msgstr ""
+
+msgid "LB = %g"
+msgstr ""
+
+msgid "UB = %g"
 msgstr ""
 
 msgid "Process capability (within)"

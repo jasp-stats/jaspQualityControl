@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2024-10-12 03:41\n"
+"POT-Creation-Date: 2024-10-19 03:41\n"
 "PO-Revision-Date: 2024-09-05 15:09+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
@@ -1285,6 +1285,18 @@ msgstr ""
 
 msgid "3-parameter Weibull dist."
 msgstr ""
+
+#, fuzzy
+msgid "Target = %g"
+msgstr "CL = %g"
+
+#, fuzzy
+msgid "LB = %g"
+msgstr "CL = %g"
+
+#, fuzzy
+msgid "UB = %g"
+msgstr "UCL = %g"
 
 msgid "Process capability (within)"
 msgstr ""
