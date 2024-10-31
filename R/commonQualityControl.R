@@ -267,13 +267,15 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(list(red_points = red_points, Rules = Rules))
 }
 
-ruleList <- list()
-ruleList$rule1 <- list()
-
-ruleList$rule1[["k"]] <- 3
-ruleList$rule1[["enabled"]] <- TRUE
 
 
+# Generalized function to check if there are at least k TRUE values within k + 1 elements
+check_previous_k <- function(i, vec, k) {
+  # Define the range: from max(1, i - k) to i
+  range <- vec[max(1, i - k):i]
+  # Check if at least k out of k + 1 (or fewer if near the start) are TRUE
+  return(vec[i] == TRUE && sum(range) >= k)
+}
 
 .nelsonLaws <- function(plotStatistics, sigma, center, UCL, LCL, ruleList) {
 
@@ -348,53 +350,97 @@ ruleList$rule1[["enabled"]] <- TRUE
   }
 
   # Rule 4: k points in a row, alternating increase and decrease
-  # if (ruleList[["rule4"]][["enabled"]] == TRUE) {
-  #   k4 <- ruleList[["rule4"]][["k"]]
-  #   r4 <- c()
-  #
-  #   # Function to determine if two numbers alternate in increase/decrease pattern
-  #   patternAlternates <- function(x, y) {
-  #     return((x < 0 && y > 0) || (x > 0 && y < 0))
-  #   }
-  #
-  #   # Calculate differences between consecutive points
-  #   differences <- diff(plotStatistics)
-  #
-  #   # Track the start index of the current alternating pattern
-  #   startIdx <- NULL
-  #   sequenceCount <- 0
-  #
-  #   for (i in 1:(length(differences) - 1)) {
-  #     if (patternAlternates(differences[i], differences[i + 1])) {
-  #       # If starting a new potential pattern
-  #       if (is.null(startIdx)) {
-  #         startIdx <- i
-  #       }
-  #       sequenceCount <- sequenceCount + 1
-  #
-  #       # If a valid sequence is found, capture indices
-  #       if (sequenceCount >= (k4 - 1)) {
-  #         r4 <- c(r4, seq(startIdx, startIdx + sequenceCount + 1))
-  #         startIdx <- NULL  # Reset to find new sequences
-  #         sequenceCount <- 0
-  #       }
-  #     } else {
-  #       startIdx <- startIdx  # Reset if pattern breaks
-  #       sequenceCount <- 0
-  #     }
-  #   }
-  # }
+  if (ruleList[["rule4"]][["enabled"]] == TRUE) {
+    k4 <- ruleList[["rule4"]][["k"]]
+    r4 <- c()
 
+    # Function to determine if two numbers alternate in increase/decrease pattern
+    patternAlternates <- function(x, y) {
+      return((x < 0 && y > 0) || (x > 0 && y < 0))
+    }
+
+    # Calculate differences between consecutive points
+    differences <- diff(plotStatistics)
+
+
+    for (i in 1:(length(differences)-(k4-1))) {
+      currentSequence <- differences[i:(i+k4-1)]
+      sequenceCount <- 1
+      for (j in 1:(k4-1)) {
+        if (patternAlternates(currentSequence[j], currentSequence[j + 1])) {
+          sequenceCount <- sequenceCount + 1
+        }
+      }
+      if (sequenceCount >= k4) {
+        r4 <- c(r4, k4 + i)
+      }
+    }
+  }
 
   # Rule 5: k out of k+1 points > 2 std. dev. from center line (same side)
+  if (ruleList[["rule5"]][["enabled"]] == TRUE) {
+    k5 <- ruleList[["rule5"]][["k"]]
+    r5 <- c()
+
+    aboveBolVector <- plotStatistics > (center + 2 * sigma)
+    belowBolVector <- plotStatistics < center - 2 * sigma
+    r5above <- which(sapply(seq_along(aboveBolVector), check_previous_k, vec = aboveBolVector, k = k5))
+    r5below <- which(sapply(seq_along(belowBolVector), check_previous_k, vec = belowBolVector, k = k5))
+    r5 <- sort(c(r5, r5above, r5below))
+  }
 
   # Rule 6: k out of k+1 points > 1 std. dev. from center line (same side)
+  if (ruleList[["rule6"]][["enabled"]] == TRUE) {
+    k6 <- ruleList[["rule6"]][["k"]]
+    r6 <- c()
+
+    aboveBolVector <-  plotStatistics > (center + sigma)
+    belowBolVector <- plotStatistics < center - sigma
+    r6above <- which(sapply(seq_along(aboveBolVector), check_previous_k, vec = aboveBolVector, k = k6))
+    r6below <- which(sapply(seq_along(belowBolVector), check_previous_k, vec = belowBolVector, k = k6))
+    r6 <- sort(c(r6, r6above, r6below))
+
+    aboveBolVector <- plotStatistics > (center + sigma)
+    aboveSeqVector <- integer(length(aboveVector))
+  }
 
   # Rule 7: k points in a row within 1 std. dev from center line (either side)
+  if (ruleList[["rule7"]][["enabled"]] == TRUE) {
+    k7 <- ruleList[["rule7"]][["k"]]
+    r7 <- c()
+
+    withinBolVector <- plotStatistics < (center + sigma) & plotStatistics > (center - sigma)
+
+    # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
+    withinSeqVector <- ave(withinBolVector, cumsum(!withinBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
+    r7 <- c(r7, which(withinSeqVector > k7))
+  }
 
   # Rule 8: k points in a row > 1 std. dev. from center line (either side)
+  if (ruleList[["rule8"]][["enabled"]] == TRUE) {
+    k8 <- ruleList[["rule8"]][["k"]]
+    r8 <- c()
+
+    outsideBolVector <- plotStatistics > (center + sigma) | plotStatistics < (center - sigma)
+
+    # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
+    outsideSeqVector <- ave(outsideBolVector, cumsum(!outsideBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
+    r8 <- c(r8, which(outsideSeqVector > k8))
+  }
 
   # Rule 9: Benneyan test, k successive points equal to 0
+  if (ruleList[["rule9"]][["enabled"]] == TRUE) {
+    k9 <- ruleList[["rule9"]][["k"]]
+    r9 <- c()
+
+    zeroBolVector <- plotStatistics == 0
+
+    # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
+    zeroSeqVector <- ave(zeroBolVector, cumsum(!zeroBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
+    r9 <- c(r9, which(zeroSeqVector > k9))
+  }
+
+  # return a list, containing a vector of the OOC point indices and a list that is used for the rule table
 }
 
 .sdXbar <- function(df, type = c("s", "r"), unbiasingConstantUsed = TRUE) {
