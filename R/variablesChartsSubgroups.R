@@ -124,9 +124,11 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (length(measurements) > 5 && options[["chartType"]] == "xBarAndR") # if the subgroup size is above 5, R chart is not recommended
     plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. An s-chart is recommended."))
 
-
   #X bar & R/s chart
   if (ready) {
+    # Create the rule list for the out-of-control signals
+    ruleList <- .getRuleListSubgroupCharts(options)
+
     if (is.null(jaspResults[["controlCharts"]])) {
       jaspResults[["controlCharts"]] <- createJaspContainer(position = 1)
       jaspResults[["controlCharts"]]$dependOn(c("chartType", "variables", "warningLimits", "knownParameters", "knownParametersMean", "manualTicks", 'nTicks',
@@ -149,13 +151,13 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
 
       # first chart is always xBar-chart, second is either R- or s-chart
-      xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
+      xBarChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList, plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
                                  nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], phase2 = options[["knownParameters"]],
                                  phase2Mu = options[["knownParametersMean"]], phase2Sd = options[["knownParametersSd"]],
                                  fixedSubgroupSize = fixedSubgroupSize, warningLimits = options[["warningLimits"]],
                                  xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                  unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
-      secondChart <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,  stages = stages,
+      secondChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList, plotType = secondPlotType,  stages = stages,
                                    phase2 = options[["knownParameters"]], nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                    phase2Sd = options[["knownParametersSd"]], fixedSubgroupSize = fixedSubgroupSize,
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
@@ -213,4 +215,55 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       }
     }
   }
+}
+
+.getRuleListSubgroupCharts <- function(options) {
+  ruleSet <- options[["testSet"]]
+  if (ruleSet == "jaspDefault") {
+   ruleList <- list("rule1" = list("enabled" = TRUE),
+                    "rule2" = list("enabled" = TRUE, "k" = 7),
+                    "rule3" = list("enabled" = TRUE, "k" = 7),
+                    "rule4" = NULL,
+                    "rule5" = NULL,
+                    "rule6" = NULL,
+                    "rule7" = NULL,
+                    "rule8" = NULL,
+                    "rule9" = NULL
+   )
+  } else if (ruleSet == "nelsonLaws") {
+    ruleList <- list("rule1" = list("enabled" = TRUE),
+                     "rule2" = list("enabled" = TRUE, "k" = 9),
+                     "rule3" = list("enabled" = TRUE, "k" = 6),
+                     "rule4" = list("enabled" = TRUE, "k" = 14),
+                     "rule5" = list("enabled" = TRUE, "k" = 2),
+                     "rule6" = list("enabled" = TRUE, "k" = 4),
+                     "rule7" = list("enabled" = TRUE, "k" = 15),
+                     "rule8" = list("enabled" = TRUE, "k" = 8),
+                     "rule9" = NULL
+    )
+
+  } else if (ruleSet == "westernElectric") {
+    ruleList <- list("rule1" = list("enabled" = TRUE),
+                     "rule2" = list("enabled" = TRUE, "k" = 8),
+                     "rule3" = NULL,
+                     "rule4" = NULL,
+                     "rule5" = list("enabled" = TRUE, "k" = 2),
+                     "rule6" = list("enabled" = TRUE, "k" = 4),
+                     "rule7" = NULL,
+                     "rule8" = NULL,
+                     "rule9" = NULL
+    )
+  } else if (ruleSet == "custom") {
+    ruleList <- list("rule1" = list("enabled" = options[["rule1"]]),
+                     "rule2" = list("enabled" = options[["rule2"]], "k" = options[["rule2Value"]]),
+                     "rule3" = list("enabled" = options[["rule3"]], "k" = options[["rule3Value"]]),
+                     "rule4" = list("enabled" = options[["rule4"]], "k" = options[["rule4Value"]]),
+                     "rule5" = list("enabled" = options[["rule5"]], "k" = options[["rule5Value"]]),
+                     "rule6" = list("enabled" = options[["rule6"]], "k" = options[["rule6Value"]]),
+                     "rule7" = list("enabled" = options[["rule7"]], "k" = options[["rule7Value"]]),
+                     "rule8" = list("enabled" = options[["rule8"]], "k" = options[["rule8Value"]]),
+                     "rule9" = NULL
+    )
+  }
+  return(ruleList)
 }
