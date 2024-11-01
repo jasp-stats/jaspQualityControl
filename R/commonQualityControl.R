@@ -277,15 +277,31 @@ check_previous_k <- function(i, vec, k) {
   return(vec[i] == TRUE && sum(range) >= k)
 }
 
-.nelsonLaws <- function(plotStatistics, sigma, center, UCL, LCL, ruleList) {
+.nelsonLaws <- function(plotStatistics,
+                        sigma = NULL,
+                        center = NULL,
+                        UCL = NULL,
+                        LCL = NULL,
+                        ruleList) {
+  if (length(LCL) == 1) {
+    LCL <- rep(LCL, length(plotStatistics))
+  }
+  if (length(UCL) == 1) {
+    UCL <- rep(UCL, length(plotStatistics))
+  }
+
+  redPoints <- c()
+  violationList <- list()
 
   # Rule 1: Outside of control limits
-  if (ruleList[["rule1"]][["enabled"]] == TRUE) {
+  if (!is.null(ruleList[["rule1"]]) && ruleList[["rule1"]][["enabled"]] == TRUE) {
     r1 <- which(plotStatistics < LCL | plotStatistics > UCL)
+    redPoints <- c(redPoints, r1)
+    violationList[["test1"]] <- r1
   }
 
   # Rule 2: k points in a row, on the same side of center line
-  if (ruleList[["rule2"]][["enabled"]] == TRUE) {
+  if (!is.null(ruleList[["rule2"]]) && ruleList[["rule2"]][["enabled"]] == TRUE) {
     k2 <- ruleList[["rule2"]][["k"]]
     sideVector <- ifelse(plotStatistics > center, 1, ifelse(plotStatistics < center, -1, 0))
     rleSides <- rle(sideVector)
@@ -304,10 +320,12 @@ check_previous_k <- function(i, vec, k) {
       # Update the current index
       currentIndex <- currentIndex + runLength
     }
+    redPoints <- c(redPoints, r2)
+    violationList[["test2"]] <- r2
   }
 
   # Rule 3: k points in a row, all increasing or decreasing
-  if (ruleList[["rule3"]][["enabled"]] == TRUE) {
+  if (!is.null(ruleList[["rule3"]]) && ruleList[["rule3"]][["enabled"]] == TRUE) {
     k3 <- ruleList[["rule3"]][["k"]]
     r3 <- c()
 
@@ -347,10 +365,12 @@ check_previous_k <- function(i, vec, k) {
       # Update currentIndex for the next iteration
       currentIndex <- currentIndex + 1
     }
+    redPoints <- c(redPoints, r3)
+    violationList[["test3"]] <- r3
   }
 
   # Rule 4: k points in a row, alternating increase and decrease
-  if (ruleList[["rule4"]][["enabled"]] == TRUE) {
+  if (!is.null(ruleList[["rule4"]]) && ruleList[["rule4"]][["enabled"]] == TRUE) {
     k4 <- ruleList[["rule4"]][["k"]]
     r4 <- c()
 
@@ -375,10 +395,12 @@ check_previous_k <- function(i, vec, k) {
         r4 <- c(r4, k4 + i)
       }
     }
+    redPoints <- c(redPoints, r4)
+    violationList[["test4"]] <- r4
   }
 
   # Rule 5: k out of k+1 points > 2 std. dev. from center line (same side)
-  if (ruleList[["rule5"]][["enabled"]] == TRUE) {
+  if (!is.null(ruleList[["rule5"]]) && ruleList[["rule5"]][["enabled"]] == TRUE) {
     k5 <- ruleList[["rule5"]][["k"]]
     r5 <- c()
 
@@ -387,10 +409,12 @@ check_previous_k <- function(i, vec, k) {
     r5above <- which(sapply(seq_along(aboveBolVector), check_previous_k, vec = aboveBolVector, k = k5))
     r5below <- which(sapply(seq_along(belowBolVector), check_previous_k, vec = belowBolVector, k = k5))
     r5 <- sort(c(r5, r5above, r5below))
+    redPoints <- c(redPoints, r5)
+    violationList[["test5"]] <- r5
   }
 
   # Rule 6: k out of k+1 points > 1 std. dev. from center line (same side)
-  if (ruleList[["rule6"]][["enabled"]] == TRUE) {
+  if (!is.null(ruleList[["rule6"]]) && ruleList[["rule6"]][["enabled"]] == TRUE) {
     k6 <- ruleList[["rule6"]][["k"]]
     r6 <- c()
 
@@ -400,12 +424,12 @@ check_previous_k <- function(i, vec, k) {
     r6below <- which(sapply(seq_along(belowBolVector), check_previous_k, vec = belowBolVector, k = k6))
     r6 <- sort(c(r6, r6above, r6below))
 
-    aboveBolVector <- plotStatistics > (center + sigma)
-    aboveSeqVector <- integer(length(aboveVector))
+    redPoints <- c(redPoints, r6)
+    violationList[["test6"]] <- r6
   }
 
   # Rule 7: k points in a row within 1 std. dev from center line (either side)
-  if (ruleList[["rule7"]][["enabled"]] == TRUE) {
+  if (!is.null(ruleList[["rule7"]]) && ruleList[["rule7"]][["enabled"]] == TRUE) {
     k7 <- ruleList[["rule7"]][["k"]]
     r7 <- c()
 
@@ -414,10 +438,12 @@ check_previous_k <- function(i, vec, k) {
     # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
     withinSeqVector <- ave(withinBolVector, cumsum(!withinBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
     r7 <- c(r7, which(withinSeqVector > k7))
+    redPoints <- c(redPoints, r7)
+    violationList[["test7"]] <- r7
   }
 
   # Rule 8: k points in a row > 1 std. dev. from center line (either side)
-  if (ruleList[["rule8"]][["enabled"]] == TRUE) {
+  if (!is.null(ruleList[["rule8"]]) && ruleList[["rule8"]][["enabled"]] == TRUE) {
     k8 <- ruleList[["rule8"]][["k"]]
     r8 <- c()
 
@@ -426,10 +452,12 @@ check_previous_k <- function(i, vec, k) {
     # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
     outsideSeqVector <- ave(outsideBolVector, cumsum(!outsideBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
     r8 <- c(r8, which(outsideSeqVector > k8))
+    redPoints <- c(redPoints, r8)
+    violationList[["test8"]] <- r8
   }
 
   # Rule 9: Benneyan test, k successive points equal to 0
-  if (ruleList[["rule9"]][["enabled"]] == TRUE) {
+  if (!is.null(ruleList[["rule9"]]) && ruleList[["rule9"]][["enabled"]] == TRUE) {
     k9 <- ruleList[["rule9"]][["k"]]
     r9 <- c()
 
@@ -438,9 +466,10 @@ check_previous_k <- function(i, vec, k) {
     # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
     zeroSeqVector <- ave(zeroBolVector, cumsum(!zeroBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
     r9 <- c(r9, which(zeroSeqVector > k9))
+    redPoints <- c(redPoints, r9)
+    violationList[["test9"]] <- r9
   }
-
-  # return a list, containing a vector of the OOC point indices and a list that is used for the rule table
+  return(list(redPoints = redPoints, violationList = violationList))
 }
 
 .sdXbar <- function(df, type = c("s", "r"), unbiasingConstantUsed = TRUE) {
@@ -572,6 +601,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart <- function(dataset,  plotType        = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+                          ruleList                  = list(),
                           stages                    = "",
                           xBarSdType                = c("r", "s"),
                           nSigmasControlLimits      = 3,
@@ -600,7 +630,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   plotType <- match.arg(plotType)
 
   # This function returns all the needed data for the plot and table: data for the points, the limits, the labels and a list of point violations for the table
-  controlChartData <- .controlChart_calculations(dataset, plotType = plotType, stages = stages, xBarSdType = xBarSdType,
+  controlChartData <- .controlChart_calculations(dataset, ruleList = ruleList, plotType = plotType, stages = stages, xBarSdType = xBarSdType,
                                                  nSigmasControlLimits = nSigmasControlLimits, phase2 = phase2,
                                                  phase2Mu = phase2Mu, phase2Sd = phase2Sd, fixedSubgroupSize = fixedSubgroupSize,
                                                  warningLimits = warningLimits, movingRangeLength = movingRangeLength,
@@ -627,6 +657,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 }
 
 .controlChart_calculations <- function(dataset, plotType               = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
+                                       ruleList                        = list(),
                                        stages                          = "",
                                        xBarSdType                      = c("r", "s"),
                                        nSigmasControlLimits            = 3,
@@ -902,15 +933,19 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
     if (length(na.omit(plotStatistic)) > 1) {
       if (plotType == "MR" || plotType == "MMR") {
-        dotColor <- ifelse(c(rep(NA, k-1), NelsonLaws(qccObject)$red_points), 'red', 'blue')
+        # redPoints <- .nelsonLaws(plotStatistic, sigma, center, UCL, LCL, ruleList) This gives a vector of indices, can probably be used to simplify the code below
+        dotColor <- ifelse(c(rep(NA, k-1),  NelsonLaws(qccObject)$red_points), 'red', 'blue')
       } else if (plotType == "cusum" || plotType == "ewma" || plotType == "g" || plotType == "t") {
-        dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue")
+        dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue") # TODO: add proper tests here, other than test 1
         dotColor[is.na(dotColor)] <- "blue"
       } else {
-        dotColor <- ifelse(NelsonLaws(qccObject, allsix = (plotType == "I"))$red_points, 'red', 'blue')
+        dotColor <- rep("blue", length(plotStatistic))
+        redPoints <- .nelsonLaws(plotStatistic, sigma, center, UCL, LCL, ruleList)$redPoints
+        dotColor[redPoints] <- "red"
+          # ifelse(NelsonLaws(qccObject, allsix = (plotType == "I"))$red_points, 'red', 'blue')
       }
     } else {
-      dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue")
+      dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue") # TODO: try out if the new function can handle single value, if yes remove this whole logic
       dotColor[is.na(dotColor)] <- "blue"
     }
     # if more than half of the dots are violations, do not show red dots.
@@ -970,9 +1005,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     if (plotType == "MR" || plotType == "MMR")
       tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
     if (plotType == "cusum" || plotType == "ewma" || plotType == "g" || plotType == "t") {
-      tableList[[i]] <- c() # pass empty vector for now, until Nelson Laws are updated and can handle other input than QCC objects
+      tableList[[i]] <- c() # TODO: update with new Nelson Function
     } else {
-      tableList[[i]] <- .NelsonTableList(qccObject = qccObject, type = plotType, labels = tableLabelsCurrentStage)
+      tableList[[i]] <- .nelsonLaws(plotStatistic, sigma, center, UCL, LCL, ruleList)$violationList
       tableListLengths <- sapply(tableList[[i]], length)
       if (any(tableListLengths > 0)) {
         tableList[[i]][["stage"]] <- as.character(stage)
@@ -1361,3 +1396,4 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     list['threshold'] <- threshold
   return(list)
 }
+
