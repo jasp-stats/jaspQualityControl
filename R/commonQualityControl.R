@@ -1452,4 +1452,55 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(ruleList)
 }
 
+.getRuleListIndividualCharts <- function(options) {
+  ruleSet <- options[["testSet"]]
+  if (ruleSet == "jaspDefault") {
+    ruleList <- list("rule1" = list("enabled" = TRUE),
+                     "rule2" = list("enabled" = TRUE, "k" = 7),
+                     "rule3" = list("enabled" = TRUE, "k" = 7),
+                     "rule4" = list("enabled" = TRUE, "k" = 14),
+                     "rule5" = list("enabled" = TRUE, "k" = 2),
+                     "rule6" = list("enabled" = TRUE, "k" = 4),
+                     "rule7" = NULL,
+                     "rule8" = NULL,
+                     "rule9" = NULL
+    )
+  } else if (ruleSet == "nelsonLaws") {
+    ruleList <- list("rule1" = list("enabled" = TRUE),
+                     "rule2" = list("enabled" = TRUE, "k" = 9),
+                     "rule3" = list("enabled" = TRUE, "k" = 6),
+                     "rule4" = list("enabled" = TRUE, "k" = 14),
+                     "rule5" = list("enabled" = TRUE, "k" = 2),
+                     "rule6" = list("enabled" = TRUE, "k" = 4),
+                     "rule7" = list("enabled" = TRUE, "k" = 15),
+                     "rule8" = list("enabled" = TRUE, "k" = 8),
+                     "rule9" = NULL
+    )
+
+  } else if (ruleSet == "westernElectric") {
+    ruleList <- list("rule1" = list("enabled" = TRUE),
+                     "rule2" = list("enabled" = TRUE, "k" = 8),
+                     "rule3" = NULL,
+                     "rule4" = NULL,
+                     "rule5" = list("enabled" = TRUE, "k" = 2),
+                     "rule6" = list("enabled" = TRUE, "k" = 4),
+                     "rule7" = NULL,
+                     "rule8" = NULL,
+                     "rule9" = NULL
+    )
+  } else if (ruleSet == "custom") {
+    ruleList <- list("rule1" = list("enabled" = options[["rule1"]]),
+                     "rule2" = list("enabled" = options[["rule2"]], "k" = options[["rule2Value"]]),
+                     "rule3" = list("enabled" = options[["rule3"]], "k" = options[["rule3Value"]]),
+                     "rule4" = list("enabled" = options[["rule4"]], "k" = options[["rule4Value"]]),
+                     "rule5" = list("enabled" = options[["rule5"]], "k" = options[["rule5Value"]]),
+                     "rule6" = list("enabled" = options[["rule6"]], "k" = options[["rule6Value"]]),
+                     "rule7" = list("enabled" = options[["rule7"]], "k" = options[["rule7Value"]]),
+                     "rule8" = list("enabled" = options[["rule8"]], "k" = options[["rule8Value"]]),
+                     "rule9" = NULL
+    )
+  }
+  return(ruleList)
+}
+
 
