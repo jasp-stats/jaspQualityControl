@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2024-10-19 03:41\n"
-"PO-Revision-Date: 2024-08-24 03:38+0000\n"
+"PO-Revision-Date: 2024-11-03 08:00+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7.1-dev\n"
+"X-Generator: Weblate 5.8.2\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -606,9 +606,8 @@ msgstr "Regressionsmodell"
 msgid "Predictor"
 msgstr "Prädiktor"
 
-#, fuzzy
 msgid "Std. error"
-msgstr "Standardfehler"
+msgstr "Std.-Fehler"
 
 #, fuzzy
 msgid "<i>t</i>-value"
@@ -683,7 +682,7 @@ msgid "Linearity"
 msgstr "Linearität"
 
 msgid "Total"
-msgstr ""
+msgstr "Gesamt"
 
 msgid "Gauge r&R"
 msgstr ""
