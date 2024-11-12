@@ -543,7 +543,7 @@
     },
     "curl": {
       "Package": "curl",
-      "Version": "5.2.3",
+      "Version": "6.0.0",
       "Source": "Repository",
       "Requirements": [
         "R"
@@ -1261,7 +1261,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
-      "RemoteSha": "c1d52a3a6121295dd3cef419af657cbb68d43902"
+      "RemoteSha": "2e8820b45f15dc182bdf928b09963f2d2dc93238"
     },
     "jaspGraphs": {
       "Package": "jaspGraphs",
@@ -1304,7 +1304,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
-      "RemoteSha": "5f642c6aaec332bce2e7c35ed3cdc59a9e4e91a2"
+      "RemoteSha": "1024ca4c8e96448ce6da8ae178aabcf89e50f2f8"
     },
     "jpeg": {
       "Package": "jpeg",
@@ -1332,7 +1332,7 @@
     },
     "knitr": {
       "Package": "knitr",
-      "Version": "1.48",
+      "Version": "1.49",
       "Source": "Repository",
       "Requirements": [
         "R",
@@ -1451,7 +1451,7 @@
     },
     "lpSolve": {
       "Package": "lpSolve",
-      "Version": "5.6.21",
+      "Version": "5.6.22",
       "Source": "Repository",
       "Requirements": []
     },
@@ -2185,7 +2185,7 @@
     },
     "sfsmisc": {
       "Package": "sfsmisc",
-      "Version": "1.1-19",
+      "Version": "1.1-20",
       "Source": "Repository",
       "Requirements": [
         "R",
