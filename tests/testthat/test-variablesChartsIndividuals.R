@@ -103,16 +103,16 @@ test_that("4.2 Basic test to create x-mR control chart with stages - I table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Zero", "Point 3", "Point 11", "Point 4", "", "Point 4", "Point 12",
-                                      "", "One", "Point 23", "Point 19", "Point 24", "", "Point 24",
-                                      "Point 20", "", "", "", "Point 21", "", "", "", "Point 22",
-                                      ""))
+                                      "", "One", "Point 11", "Point 7", "Point 12", "", "Point 12",
+                                      "Point 8", "", "", "", "Point 9", "", "", "", "Point 10", ""
+                                 ))
 })
 
 test_that("4.3 Basic test to create x-mR control chart with stages - MR table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Zero", "Point 3", "Point 12", "", "Point 5", "", "One", "Point 23",
-                                      "Point 20", "", "", "Point 21", "", "", "Point 22"))
+                                 list("Zero", "Point 3", "Point 12", "", "Point 5", "", "One", "Point 11",
+                                      "Point 8", "", "", "Point 9", "", "", "Point 10"))
 })
 
 
@@ -164,8 +164,8 @@ test_that("6.1 Test X-mR control chart with stages and large moving range length
 test_that("6.2 Test X-mR control chart with stages and large moving range length - I table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableI"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Zero", "Point 11", "Point 4", "", "Point 12", "", "One", "Point 19",
-                                      "Point 24", "", "Point 20", "", "", "Point 21", "", "", "Point 22",
+                                 list("Zero", "Point 11", "Point 4", "", "Point 12", "", "One", "Point 7",
+                                      "Point 12", "", "Point 8", "", "", "Point 9", "", "", "Point 10",
                                       ""))
 })
 
@@ -279,10 +279,11 @@ test_that("10.2 X-mR control chart with single missing value in measurements - I
 test_that("10.3 X-mR control chart with single missing value in measurements - MR table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 12 (Dec Year 1)", "Point 13 (Jan Year 2)", "Point 14 (Feb Year 2)",
-                                      "Point 15 (Mar Year 2)", "Point 32 (Aug Year 3)", "Point 33 (Sep Year 3)",
-                                      "Point 34 (Oct Year 3)", "Point 35 (Nov Year 3)", "Point 36 (Dec Year 3)"
-                                 ))
+                                 list("Point 3 (Mar Year 1)", "Point 12 (Dec Year 1)", "Point 5 (May Year 1)",
+                                      "Point 13 (Jan Year 2)", "Point 23 (Nov Year 2)", "Point 14 (Feb Year 2)",
+                                      "Point 25 (Jan Year 3)", "Point 15 (Mar Year 2)", "", "Point 32 (Aug Year 3)",
+                                      "", "Point 33 (Sep Year 3)", "", "Point 34 (Oct Year 3)", "",
+                                      "Point 35 (Nov Year 3)", "", "Point 36 (Dec Year 3)"))
 })
 
 ## Missing values in axis label (verified with Minitab) ####
