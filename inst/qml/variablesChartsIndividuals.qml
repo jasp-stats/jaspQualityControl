@@ -346,31 +346,13 @@ Form
 			{
 				name: 								"rule4"
 				label: 								""
-				checked:							testSet.currentValue != "westernElectric"
-				enabled:							testSet.currentValue == "custom"
-				childrenOnSameRow:					true
-
-				IntegerField
-				{
-					name: 								"rule4Value"
-					afterLabel:							qsTr("points in a row, alternating increase and decrease")
-					fieldWidth: 						25
-					defaultValue: 						14
-					min:								2
-				}
-			}
-
-			CheckBox
-			{
-				name: 								"rule5"
-				label: 								""
 				checked:							true
 				enabled:							testSet.currentValue == "custom"
 				childrenOnSameRow:					true
 
 				IntegerField
 				{
-					name: 								"rule5Value"
+					name: 								"rule4Value"
 					afterLabel:							qsTr("out of k+1 points > 2 std. dev. from center line (same side)")
 					fieldWidth: 						25
 					defaultValue: 						2
@@ -380,18 +362,36 @@ Form
 
 			CheckBox
 			{
+				name: 								"rule5"
+				label: 								""
+				checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom" | testSet.currentValue == "jaspDefault"
+				enabled:							testSet.currentValue == "custom"
+				childrenOnSameRow:					true
+
+				IntegerField
+				{
+					name: 								"rule5Value"
+					afterLabel:							qsTr("points in a row < 1 std. dev from center line (either side)")
+					fieldWidth: 						25
+					defaultValue: 						15
+					min:								2
+				}
+			}
+
+			CheckBox
+			{
 				name: 								"rule6"
 				label: 								""
-				checked:							true
+				checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom" | testSet.currentValue == "jaspDefault"
 				enabled:							testSet.currentValue == "custom"
 				childrenOnSameRow:					true
 
 				IntegerField
 				{
 					name: 								"rule6Value"
-					afterLabel:							qsTr("out of k+1 points > 1 std. dev. from center line (same side)")
+					afterLabel:							qsTr("points in a row > 1 std. dev from center line (either side)")
 					fieldWidth: 						25
-					defaultValue: 						4
+					defaultValue: 						8
 					min:								2
 				}
 			}
@@ -400,16 +400,16 @@ Form
 			{
 				name: 								"rule7"
 				label: 								""
-				checked:							testSet.currentValue == "nelsonLaws" | testSet.currentValue == "custom"
+				checked:							testSet.currentValue != "jaspDefault"
 				enabled:							testSet.currentValue == "custom"
 				childrenOnSameRow:					true
 
 				IntegerField
 				{
 					name: 								"rule7Value"
-					afterLabel:							qsTr("points in a row < 1 std. dev from center line (either side)")
+					afterLabel:							qsTr("out of k+1 points > 1 std. dev. from center line (same side)")
 					fieldWidth: 						25
-					defaultValue: 						15
+					defaultValue: 						4
 					min:								2
 				}
 			}
@@ -425,14 +425,12 @@ Form
 				IntegerField
 				{
 					name: 								"rule8Value"
-					afterLabel:							qsTr("points in a row > 1 std. dev from center line (either side)")
+					afterLabel:							qsTr("points in a row, alternating increase and decrease")
 					fieldWidth: 						25
-					defaultValue: 						8
+					defaultValue: 						14
 					min:								2
 				}
 			}
 		}
 	}
-
-	
 }
