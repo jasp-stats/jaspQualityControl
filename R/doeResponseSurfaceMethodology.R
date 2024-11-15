@@ -381,7 +381,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   if (is.null(design))
     return()
 
-  out_design <- design
+  out_design <- as.data.frame(design)
   colnames(out_design)[1:2] <- c("RunOrder", "StandardOrder")
   out_design[["Response"]] <- ""
 
