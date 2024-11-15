@@ -239,11 +239,9 @@ test_that("LF12.2 Basic test of adding known parameters to X-bar & s control cha
 test_that("LF12.3 Basic test of adding known parameters to X-bar & s control chart - s table", {
   table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_secondTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 6", "Point 7", "Point 8", "Point 8", "Point 10", "Point 9",
-                                      "Point 11", "Point 10", "Point 15", "Point 11", "Point 16",
-                                      "Point 12", "", "Point 13", "", "Point 14", "", "Point 15",
-                                      "", "Point 16", "", "Point 17", "", "Point 18", "", "Point 19",
-                                      "", "Point 20"))
+                                 list("Point 7", "Point 8", "Point 9", "Point 10", "Point 11", "Point 12",
+                                      "Point 13", "Point 14", "Point 15", "Point 16", "Point 17",
+                                      "Point 18", "Point 19", "Point 20"))
 })
 
 ### x-bar & r chart with changed manual subgroup size value (verified with Minitab) ####
@@ -921,11 +919,9 @@ test_that("WF12.1 Basic test of adding known parameters to X-bar & s control cha
 test_that("WF12.2 Basic test of adding known parameters to X-bar & s control chart - s table", {
   table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_secondTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 6", "Point 7", "Point 8", "Point 8", "Point 10", "Point 9",
-                                      "Point 11", "Point 10", "Point 15", "Point 11", "Point 16",
-                                      "Point 12", "", "Point 13", "", "Point 14", "", "Point 15",
-                                      "", "Point 16", "", "Point 17", "", "Point 18", "", "Point 19",
-                                      "", "Point 20"))
+                                 list("Point 7", "Point 8", "Point 9", "Point 10", "Point 11", "Point 12",
+                                      "Point 13", "Point 14", "Point 15", "Point 16", "Point 17",
+                                      "Point 18", "Point 19", "Point 20"))
 })
 
 test_that("WF12.3 Basic test of adding known parameters to X-bar & s control chart - X-bar table", {
