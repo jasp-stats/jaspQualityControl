@@ -329,41 +329,43 @@ check_previous_k <- function(i, vec, k) {
     k3 <- ruleList[["rule3"]][["k"]]
     r3 <- c()
 
-    # Loop through the points to find consecutive increases or decreases
-    currentIndex <- 1
-    consecutiveIncreaseCount <- 0
-    consecutiveDecreaseCount <- 0
+    if (length(plotStatistics) > 1) {
+      # Loop through the points to find consecutive increases or decreases
+      currentIndex <- 1
+      consecutiveIncreaseCount <- 0
+      consecutiveDecreaseCount <- 0
 
-    # Iterate over the points, considering each point and the next for comparison
-    for (i in 1:(length(plotStatistics) - 1)) {
-      if (!is.na(plotStatistics[i]) && !is.na(plotStatistics[i + 1]) && plotStatistics[i + 1] > plotStatistics[i]) {
-        # Increment the consecutive increase count and reset decrease count
-        consecutiveIncreaseCount <- consecutiveIncreaseCount + 1
-        consecutiveDecreaseCount <- 0
-      } else if (!is.na(plotStatistics[i]) && !is.na(plotStatistics[i + 1]) && plotStatistics[i + 1] < plotStatistics[i]) {
-        # Increment the consecutive decrease count and reset increase count
-        consecutiveDecreaseCount <- consecutiveDecreaseCount + 1
-        consecutiveIncreaseCount <- 0
-      } else {
-        # Reset counts if neither increasing nor decreasing
-        consecutiveIncreaseCount <- 0
-        consecutiveDecreaseCount <- 0
-      }
+      # Iterate over the points, considering each point and the next for comparison
+      for (i in 1:(length(plotStatistics) - 1)) {
+        if (!is.na(plotStatistics[i]) && !is.na(plotStatistics[i + 1]) && plotStatistics[i + 1] > plotStatistics[i]) {
+          # Increment the consecutive increase count and reset decrease count
+          consecutiveIncreaseCount <- consecutiveIncreaseCount + 1
+          consecutiveDecreaseCount <- 0
+        } else if (!is.na(plotStatistics[i]) && !is.na(plotStatistics[i + 1]) && plotStatistics[i + 1] < plotStatistics[i]) {
+          # Increment the consecutive decrease count and reset increase count
+          consecutiveDecreaseCount <- consecutiveDecreaseCount + 1
+          consecutiveIncreaseCount <- 0
+        } else {
+          # Reset counts if neither increasing nor decreasing
+          consecutiveIncreaseCount <- 0
+          consecutiveDecreaseCount <- 0
+        }
 
-      # Check if the count reaches k and record the offending sequence
-      if (consecutiveIncreaseCount >= k3) {
-        startIdx <- currentIndex - consecutiveIncreaseCount
-        r3 <- c(r3, startIdx + 1:(consecutiveIncreaseCount + 1))
-        consecutiveIncreaseCount <- 0  # Reset to find next potential sequence
-      }
-      if (consecutiveDecreaseCount >= k3) {
-        startIdx <- currentIndex - consecutiveDecreaseCount
-        r3 <- c(r3, startIdx + 1:(consecutiveDecreaseCount + 1))
-        consecutiveDecreaseCount <- 0  # Reset to find next potential sequence
-      }
+        # Check if the count reaches k and record the offending sequence
+        if (consecutiveIncreaseCount >= k3) {
+          startIdx <- currentIndex - consecutiveIncreaseCount
+          r3 <- c(r3, startIdx + 1:(consecutiveIncreaseCount + 1))
+          consecutiveIncreaseCount <- 0  # Reset to find next potential sequence
+        }
+        if (consecutiveDecreaseCount >= k3) {
+          startIdx <- currentIndex - consecutiveDecreaseCount
+          r3 <- c(r3, startIdx + 1:(consecutiveDecreaseCount + 1))
+          consecutiveDecreaseCount <- 0  # Reset to find next potential sequence
+        }
 
-      # Update currentIndex for the next iteration
-      currentIndex <- currentIndex + 1
+        # Update currentIndex for the next iteration
+        currentIndex <- currentIndex + 1
+      }
     }
     redPoints <- c(redPoints, r3)
     violationList[["test3"]] <- if (length(r3) > 0) r3 else numeric()
