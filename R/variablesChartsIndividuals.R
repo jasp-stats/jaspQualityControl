@@ -70,9 +70,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   # ImR chart
   if (options$xmrChart && is.null(jaspResults[["Ichart"]])) {
     jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
-    jaspResults[["Ichart"]]$dependOn(c("xmrChart", "variables", "xmrChartMovingRangeLength", "axisLabels", "reportTitle",
+    jaspResults[["Ichart"]]$dependOn(c("xmrChart", "xmrChartMovingRangeLength", "axisLabels", "reportTitle",
                                        "reportMeasurementName", "reportMiscellaneous","reportReportedByBy","reportDate", "report",
-                                       "stage", "controlLimitsNumberOfSigmas"))
+                                       "stage", "measurement", "controlLimitsNumberOfSigmas"))
     jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
     if (ready) {
       # Error conditions for stages
@@ -114,7 +114,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     plotHeight <- if ((options[["reportIMRChart"]] && nElements == 2) || nElements == 0) 1000 else ceiling(nElements/2) * 500
     reportPlot <- createJaspPlot(title = gettext("Variables Chart for Individuals Report"), width = 1250, height = plotHeight)
     jaspResults[["report"]] <- reportPlot
-    jaspResults[["report"]]$dependOn(c("xmrChart", "variables", "xmrChartMovingRangeLength", "axisLabels",
+    jaspResults[["report"]]$dependOn(c("xmrChart", "xmrChartMovingRangeLength", "axisLabels",
                                       "stage", "controlLimitsNumberOfSigmas", "autocorrelationPlotLagsNumber",
                                       "reportMetaData", "reportTitle", "reportTitleText", "reportIMRChart", "reportAutocorrelationChart",
                                       "reportChartName", "reportChartNameText", "reportSubtitle", "reportSubtitleText",
