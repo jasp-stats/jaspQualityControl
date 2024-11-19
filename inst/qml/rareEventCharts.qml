@@ -174,7 +174,7 @@ Form
 		{
 			name: 								"tChart"
 			label: 								qsTr("T chart")
-			checked:							true
+			checked:							false
 		
 			DropDown
 			{
