@@ -37,6 +37,9 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     dataset <- .readDataSetToEnd(columns.as.factor = factorVariables, columns.as.numeric = numericVariables)
   }
 
+  # remove NA
+  dataset <- na.omit(dataset)
+
 
   # Checking for errors in the dataset
   .hasErrors(dataset, type = c('infinity'),
