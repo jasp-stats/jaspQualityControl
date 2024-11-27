@@ -367,7 +367,8 @@ Form
 					{
 						name: "processCapabilityTableCi";	
 						label: qsTr("Confidence intervals")
-						checked: true
+						checked: capabilityStudyType.value == "normalCapabilityAnalysis"
+						enabled: capabilityStudyType.value == "normalCapabilityAnalysis"
 						childrenOnSameRow: true
 
 						CIField 
