@@ -2279,6 +2279,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if(!options[["histogram"]] || !is.null(jaspResults[["histogram"]]))
     return()
 
+  if (!ready) {
+    plot <- createJaspPlot(title = gettext("Histogram"), width = 600, height = 400)
+    jaspResults[["histogram"]] <- plot
+    return()
+  }
+
   # calculating plot dimensions based on number of stages
   if (identical(stages, "")) {
     nStages <- 1
@@ -2296,8 +2302,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                             "manualSubgroupSizeValue", "groupingVariableMethod"))
   plot$position <- 2
   jaspResults[["histogram"]] <- plot
-  if (!ready)
-    return()
+
   if (sum(!is.na(dataset[measurements])) < 1) {
     plot$setError(gettext("No valid measurements detected."))
     return()
