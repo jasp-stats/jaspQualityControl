@@ -1315,15 +1315,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (nStages > 1) {
       currentTableDf1 <- data.frame("Stage" = c(stageTitle, "", ""),
                                     "Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
-                                    "Observed" = format(round(observed, nDecimals), scientific = FALSE),
-                                    "Expected Overall" = format(round(expOverall, nDecimals), scientific = FALSE),
-                                    "Expected Within" = format(round(expWithin, nDecimals), scientific = FALSE))
+                                    "Observed" = .pcTableFormatNumbers(observed),
+                                    "Expected Overall" = .pcTableFormatNumbers(expOverall),
+                                    "Expected Within" = .pcTableFormatNumbers(expWithin))
 
     } else {
       currentTableDf1 <- data.frame("Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
-                                    "Observed" = format(round(observed, nDecimals), scientific = FALSE),
-                                    "Expected Overall" = format(round(expOverall, nDecimals), scientific = FALSE),
-                                    "Expected Within" = format(round(expWithin, nDecimals), scientific = FALSE))
+                                    "Observed" = .pcTableFormatNumbers(observed),
+                                    "Expected Overall" =  .pcTableFormatNumbers(expOverall),
+                                    "Expected Within" =  .pcTableFormatNumbers(expWithin))
     }
 
     tableDf2 <- rbind(tableDf2, currentTableDf1)
@@ -1341,10 +1341,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
       currentTableDf2 <- data.frame("Stage" = c(gettextf("%s vs. BL", stage),"", "") ,
                                     "Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
-                                    "Observed" = format(round(observedComparison, nDecimals), scientific = FALSE),
-                                    "Expected Overall" = format(round(expOverallComparison, nDecimals), scientific = FALSE),
-                                    "Expected Within" = format(round(expWithinComparison, nDecimals), scientific = FALSE))
+                                    "Observed" = .pcTableFormatNumbers(observedComparison),
+                                    "Expected Overall" = .pcTableFormatNumbers(expOverallComparison),
+                                    "Expected Within" = .pcTableFormatNumbers(expWithinComparison))
       tableDf2 <- rbind(tableDf2, currentTableDf2)
+
 
     }
     tableList2[[observedColName]] <- round(observed, nDecimals)
@@ -1864,13 +1865,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (nStages > 1) {
       currentTableDf1 <- data.frame("Stage" = c(stageTitle, "", ""),
                                     "Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
-                                    "Observed" = format(round(observed, nDecimals), scientific = FALSE),
-                                    "Expected Overall" = format(round(expOverall, nDecimals), scientific = FALSE))
+                                    "Observed" = .pcTableFormatNumbers(observed),
+                                    "Expected Overall" = .pcTableFormatNumbers(expOverall))
 
     } else {
       currentTableDf1 <- data.frame("Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
-                                    "Observed" = format(round(observed, nDecimals), scientific = FALSE),
-                                    "Expected Overall" = format(round(expOverall, nDecimals), scientific = FALSE))
+                                    "Observed" = .pcTableFormatNumbers(observed),
+                                    "Expected Overall" = .pcTableFormatNumbers(expOverall))
     }
 
     tableDf3 <- rbind(tableDf3, currentTableDf1)
@@ -2393,5 +2394,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(plotList)
 }
 
-
-
+.pcTableFormatNumbers <- function(number) {
+  if (all(is.na(number)) || all(is.null(number))) {
+    return(rep(NA, length(number)))
+  }
+  output <- formatC(number, format = "f", digits = .numDecimals)
+  output <- sub("\\.?0+$", "", output)
+  if (any(is.na(number)) || any(is.null(number))) {
+    naNumbers <- which(is.na(number) | is.null(number))
+    output[naNumbers] <- NA
+  }
+  return(output)
+}
