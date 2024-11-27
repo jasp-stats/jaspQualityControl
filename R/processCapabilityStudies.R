@@ -2217,6 +2217,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
     data1 <- data.frame(x = dataCurrentStage, y = y)
     yLimits <- range(yBreaks)
+    label_x <- round(label_x, .numDecimals)
     p <- ggplot2::ggplot() +
       ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
       jaspGraphs::geom_point(data = data1, ggplot2::aes(x = x, y = y), na.rm = TRUE)
