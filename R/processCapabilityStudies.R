@@ -1315,15 +1315,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (nStages > 1) {
       currentTableDf1 <- data.frame("Stage" = c(stageTitle, "", ""),
                                     "Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
-                                    "Observed" = round(observed, nDecimals),
-                                    "Expected Overall" = round(expOverall, nDecimals),
-                                    "Expected Within" = round(expWithin, nDecimals))
+                                    "Observed" = format(round(observed, nDecimals), scientific = FALSE),
+                                    "Expected Overall" = format(round(expOverall, nDecimals), scientific = FALSE),
+                                    "Expected Within" = format(round(expWithin, nDecimals), scientific = FALSE))
 
     } else {
       currentTableDf1 <- data.frame("Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
-                                    "Observed" = round(observed, nDecimals),
-                                    "Expected Overall" = round(expOverall, nDecimals),
-                                    "Expected Within" = round(expWithin, nDecimals))
+                                    "Observed" = format(round(observed, nDecimals), scientific = FALSE),
+                                    "Expected Overall" = format(round(expOverall, nDecimals), scientific = FALSE),
+                                    "Expected Within" = format(round(expWithin, nDecimals), scientific = FALSE))
     }
 
     tableDf2 <- rbind(tableDf2, currentTableDf1)
@@ -1341,9 +1341,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
       currentTableDf2 <- data.frame("Stage" = c(gettextf("%s vs. BL", stage),"", "") ,
                                     "Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
-                                    "Observed" = round(observedComparison, nDecimals),
-                                    "Expected Overall" = round(expOverallComparison, nDecimals),
-                                    "Expected Within" = round(expWithinComparison, nDecimals))
+                                    "Observed" = format(round(observedComparison, nDecimals), scientific = FALSE),
+                                    "Expected Overall" = format(round(expOverallComparison, nDecimals), scientific = FALSE),
+                                    "Expected Within" = format(round(expWithinComparison, nDecimals), scientific = FALSE))
       tableDf2 <- rbind(tableDf2, currentTableDf2)
 
     }
@@ -1864,13 +1864,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (nStages > 1) {
       currentTableDf1 <- data.frame("Stage" = c(stageTitle, "", ""),
                                     "Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
-                                    "Observed" = round(observed, nDecimals),
-                                    "Expected Overall" = round(expOverall, nDecimals))
+                                    "Observed" = format(round(observed, nDecimals), scientific = FALSE),
+                                    "Expected Overall" = format(round(expOverall, nDecimals), scientific = FALSE))
 
     } else {
       currentTableDf1 <- data.frame("Source" = c("ppm < LSL", "ppm > USL", "ppm total"),
-                                    "Observed" = round(observed, nDecimals),
-                                    "Expected Overall" = round(expOverall, nDecimals))
+                                    "Observed" = format(round(observed, nDecimals), scientific = FALSE),
+                                    "Expected Overall" = format(round(expOverall, nDecimals), scientific = FALSE))
     }
 
     tableDf3 <- rbind(tableDf3, currentTableDf1)
