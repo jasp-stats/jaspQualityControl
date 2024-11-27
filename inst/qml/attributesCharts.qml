@@ -272,7 +272,91 @@ Form
 				}
 			}
 		}
-
-
 	}
+
+	// Section
+	// {
+	// 	title: 									qsTr("Advanced Options")
+	// 	columns:								1
+
+	// 	Group
+	// 	{
+	// 		title:		qsTr("Tests for control charts")
+
+	// 		DropDown
+	// 		{
+	// 			name:									"testSet"
+	// 			label:									qsTr("Test set")
+	// 			id: 									testSet
+	// 			indexDefaultValue:						0
+	// 			values: [
+	// 				{ label: qsTr("JASP"), value: "jaspDefault"},
+	// 				{ label: qsTr("Custom selection"), value: "custom"}
+	// 			]
+	// 		}
+
+
+	// 		CheckBox
+	// 		{
+	// 			name: 								"rule1"
+	// 			label: 								qsTr("Points outside of control limits")
+	// 			checked:							true
+	// 			enabled:							testSet.currentValue == "custom"
+	// 		}
+
+	// 		CheckBox
+	// 		{
+	// 			name: 								"rule2"
+	// 			label: 								""
+	// 			checked:							false
+	// 			enabled:							testSet.currentValue == "custom"
+	// 			childrenOnSameRow:					true
+
+	// 			IntegerField
+	// 			{
+	// 				name: 								"rule2Value"
+	// 				afterLabel:							qsTr("points in a row, on the same side of center line")
+	// 				fieldWidth: 						25
+	// 				defaultValue: 						testSet.currentValue == "nelsonLaws" ? 9 : testSet.currentValue == "westernElectric" ? 8 : 7
+	// 				min:								2
+	// 			}
+	// 		}
+
+	// 		CheckBox
+	// 		{
+	// 			name: 								"rule3"
+	// 			label: 								""
+	// 			checked:							false
+	// 			enabled:							testSet.currentValue == "custom"
+	// 			childrenOnSameRow:					true
+
+	// 			IntegerField
+	// 			{
+	// 				name: 								"rule3Value"
+	// 				afterLabel:							qsTr("points in a row, all increasing or decreasing")
+	// 				fieldWidth: 						25
+	// 				defaultValue: 						testSet.currentValue == "nelsonLaws" ? 6 : 7
+	// 				min:								2
+	// 			}
+	// 		}
+
+	// 		CheckBox
+	// 		{
+	// 			name: 								"rule8"
+	// 			label: 								""
+	// 			checked:							false
+	// 			enabled:							testSet.currentValue == "custom"
+	// 			childrenOnSameRow:					true
+
+	// 			IntegerField
+	// 			{
+	// 				name: 								"rule8Value"
+	// 				afterLabel:							qsTr("points in a row, alternating increase and decrease")
+	// 				fieldWidth: 						25
+	// 				defaultValue: 						14
+	// 				min:								2
+	// 			}
+	// 		}
+	// 	}
+	// }
 }

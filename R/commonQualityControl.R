@@ -950,7 +950,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         dotColor <- c(rep(NA, k-1),  rep("blue", length(na.omit(plotStatistic))))
         redPoints <- .nelsonLaws(plotStatistic, sigma, center, UCL, LCL, ruleList)$redPoints
         dotColor[redPoints] <- "red"
-      } else if (plotType == "cusum" || plotType == "ewma" || plotType == "g" || plotType == "t") {
+      } else if (plotType == "g" || plotType == "t") {
         dotColor <- ifelse(plotStatistic > UCL | plotStatistic < LCL, "red", "blue") # TODO: add proper tests here, other than test 1
         dotColor[is.na(dotColor)] <- "blue"
       } else {
@@ -1512,5 +1512,4 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   }
   return(ruleList)
 }
-
 
