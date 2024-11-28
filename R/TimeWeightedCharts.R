@@ -198,7 +198,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
                               nSigmasControlLimits = options[["cumulativeSumChartNumberSd"]], xAxisLabels = axisLabels,
                               cusumShiftSize = options[["cumulativeSumChartShiftSize"]], cusumTarget = options[["cumulativeSumChartTarget"]],
                               movingRangeLength = options[["cumulativeSumChartAverageMovingRangeLength"]], phase2 = phase2,
-                              phase2Sd = options[["cumulativeSumChartSdValue"]], ruleList = ruleList)
+                              phase2Sd = options[["cumulativeSumChartSdValue"]], tableLabels = axisLabels, ruleList = ruleList)
   plotObject <- cusumChart$plotObject
   table <- cusumChart$table
   plot$plotObject <- plotObject
@@ -223,10 +223,11 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   columnsToPass <- columnsToPass[columnsToPass != ""]
   phase2 <- (options[["exponentiallyWeightedMovingAverageChartSdSource"]] == "historical")
   ewmaChart <- .controlChart(dataset[columnsToPass], plotType = "ewma", stages = stages, xBarSdType = options[["exponentiallyWeightedMovingAverageChartSdMethod"]],
-                              nSigmasControlLimits = options[["exponentiallyWeightedMovingAverageChartSigmaControlLimits"]],
-                              xAxisLabels = axisLabels, movingRangeLength = options[["exponentiallyWeightedMovingAverageChartMovingRangeLength"]],
-                              ewmaLambda = options[["exponentiallyWeightedMovingAverageChartLambda"]], phase2 = phase2,
-                              phase2Sd = options[["exponentiallyWeightedMovingAverageChartSdValue"]], ruleList = ruleList)
+                             nSigmasControlLimits = options[["exponentiallyWeightedMovingAverageChartSigmaControlLimits"]],
+                             xAxisLabels = axisLabels, movingRangeLength = options[["exponentiallyWeightedMovingAverageChartMovingRangeLength"]],
+                             ewmaLambda = options[["exponentiallyWeightedMovingAverageChartLambda"]], phase2 = phase2,
+                             phase2Sd = options[["exponentiallyWeightedMovingAverageChartSdValue"]], tableLabels = axisLabels,
+                             ruleList = ruleList)
   plotObject <- ewmaChart$plotObject
   table <- ewmaChart$table
   plot$plotObject <- plotObject

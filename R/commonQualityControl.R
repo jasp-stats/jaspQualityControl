@@ -656,7 +656,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
 
   # This function turns the point violation list into a JASP table
-  table <- .controlChart_table(controlChartData$violationTable, plotType = plotType, stages = stages, tableLabels = tableLabels)
+  table <- .controlChart_table(controlChartData$violationTable, plotType = plotType, stages = stages, tableLabels = tableLabels,
+                               nPoints = length(controlChartData$pointData[["plotStatistic"]]))
 
 
   # This function turns the raw plot data into a ggPlot
@@ -1015,10 +1016,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                                      y = c(lastCenter, lastLCL, lastUCL),
                                                      label = labelText))
-    tableLabelsCurrentStage <- subgroups
-    if (plotType == "MR" || plotType == "MMR")
-      tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
-    if (plotType == "cusum" || plotType == "ewma" || plotType == "g" || plotType == "t") {
+    if (plotType == "g" || plotType == "t") {
       tableList[[i]] <- c() # TODO: update with new Nelson Function
     } else {
       tableList[[i]] <- .nelsonLaws(plotStatistic, sigma, center, UCL, LCL, ruleList)$violationList
@@ -1041,7 +1039,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 .controlChart_table <- function(tableList,
                                 plotType = c("xBar", "R", "I", "MR", "MMR", "s", "cusum", "ewma", "g", "t"),
                                 stages   = "",
-                                tableLabels = "") {
+                                tableLabels = "",
+                                nPoints = NA) {
   plotType <- match.arg(plotType)
   tableTitle <- switch (plotType,
                         "xBar" = "x-bar",
@@ -1069,9 +1068,18 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         next()
       formattedPoints <- c()
       for (point in points) {
-        formattedPoint <- if (is.na(point)) NA else paste(gettext("Point"), point)
+        currentPoint <- point
+        pointLabel <- point
+        if (plotType == "cusum") {
+          splitPoint <- nPoints/2
+          pointLabel <- if (currentPoint <= splitPoint) currentPoint else currentPoint - splitPoint
+        }
+        formattedPoint <- if (is.na(currentPoint)) NA else paste(gettext("Point"), pointLabel)
+        if (plotType == "cusum" && !is.na(formattedPoint)) {
+          formattedPoint <- if (currentPoint <= splitPoint) paste0(formattedPoint, gettext(" - upper")) else paste0(formattedPoint, gettext(" - lower"))
+        }
         if (!identical(tableLabels, ""))
-          formattedPoint <- if (is.na(point)) NA else paste0(formattedPoint, " (", tableLabels[point], ")")
+          formattedPoint <- if (is.na(currentPoint)) NA else paste0(formattedPoint, " (", tableLabels[pointLabel], ")")
         formattedPoints <- c(formattedPoints, formattedPoint)
       }
       tableListCombined[[test]] <- formattedPoints
