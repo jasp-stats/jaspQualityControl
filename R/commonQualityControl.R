@@ -1016,6 +1016,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       dfLimitLabel <- rbind(dfLimitLabel, data.frame(x = labelXPos,
                                                      y = c(lastCenter, lastLCL, lastUCL),
                                                      label = labelText))
+    tableLabelsCurrentStage <- subgroups
+    if (plotType == "MR" || plotType == "MMR")
+      tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
     if (plotType == "g" || plotType == "t") {
       tableList[[i]] <- c() # TODO: update with new Nelson Function
     } else {
@@ -1057,10 +1060,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   table <- createJaspTable(title = gettextf("Test results for %1$s chart", tableTitle))
   table$showSpecifiedColumnsOnly <- TRUE
   tableListVectorized <- unlist(tableList, recursive = FALSE)
-  tableLongestVector <- if (is.null(tableListVectorized)) 0 else max(sapply(tableListVectorized, length))
+  tableVectorLength <- if (is.null(tableListVectorized)) 0 else sapply(tableListVectorized, length)
+  tableLongestVector <- max(tableVectorLength)
   if (tableLongestVector > 0) {
     # combine the tests for different stages in same column
-    tableListCombined <- tapply(tableListVectorized, names(tableListVectorized), function(x) unlist(x, FALSE, FALSE))
+    if (all(tableVectorLength < 2)) {
+      tableListCombined <- tableListVectorized
+    } else {
+      tableListCombined <- tapply(tableListVectorized, names(tableListVectorized), function(x) unlist(x, FALSE, FALSE))
+    }
     # format
     for (test in names(tableListCombined)[names(tableListCombined) != "stage"]) {
       points <- as.numeric(tableListCombined[[test]])
@@ -1084,31 +1092,31 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       tableListCombined[[test]] <- formattedPoints
     }
+    tableData <- list("stage" = tableListCombined[["stage"]])
     if (!identical(stages, ""))
       table$addColumnInfo(name = "stage",              title = stages,                                     type = "string")
-    if (length(tableListCombined[["test1"]][!is.na(tableListCombined[["test1"]])]) > 0)
+    if (!is.null(tableListCombined[["test1"]]) && length(tableListCombined[["test1"]][!is.na(tableListCombined[["test1"]])]) > 0) {
       table$addColumnInfo(name = "test1",              title = gettextf("Test 1: Beyond limit"),           type = "string")
-    if (length(tableListCombined[["test2"]][!is.na(tableListCombined[["test2"]])]) > 0)
+      tableData[["test1"]] <- tableListCombined[["test1"]]
+      }
+    if (!is.null(tableListCombined[["test2"]]) && length(tableListCombined[["test2"]][!is.na(tableListCombined[["test2"]])]) > 0) {
       table$addColumnInfo(name = "test2",              title = gettextf("Test 2: Shift"),                  type = "string")
-    if (length(tableListCombined[["test3"]][!is.na(tableListCombined[["test3"]])]) > 0)
-      table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend"),                  type = "string")
-    if (plotType == "I") {
-      if (length(tableListCombined[["test4"]][!is.na(tableListCombined[["test4"]])]) > 0)
-        table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation"),   type = "string")
-      if (length(tableListCombined[["test5"]][!is.na(tableListCombined[["test5"]])]) > 0)
-        table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation"),     type = "string")
-      if (length(tableListCombined[["test6"]][!is.na(tableListCombined[["test6"]])]) > 0)
-        table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution"),   type = "string")
+      tableData[["test2"]] <- tableListCombined[["test2"]]
     }
-    tableData <- list(
-      "stage" = tableListCombined[["stage"]],
-      "test1" = tableListCombined[["test1"]],
-      "test2" = tableListCombined[["test2"]],
-      "test3" = tableListCombined[["test3"]]
-    )
-    if (plotType == "I") {
+    if (!is.null(tableListCombined[["test3"]]) && length(tableListCombined[["test3"]][!is.na(tableListCombined[["test3"]])]) > 0) {
+      table$addColumnInfo(name = "test3",              title = gettextf("Test 3: Trend"),                  type = "string")
+      tableData[["test3"]] <- tableListCombined[["test3"]]
+    }
+    if (!is.null(tableListCombined[["test4"]]) && length(tableListCombined[["test4"]][!is.na(tableListCombined[["test4"]])]) > 0) {
+      table$addColumnInfo(name = "test4",              title = gettextf("Test 4: Increasing variation"),   type = "string")
       tableData[["test4"]] <- tableListCombined[["test4"]]
+    }
+    if (!is.null(tableListCombined[["test5"]]) && length(tableListCombined[["test5"]][!is.na(tableListCombined[["test5"]])]) > 0) {
+      table$addColumnInfo(name = "test5",              title = gettextf("Test 5: Reducing variation"),     type = "string")
       tableData[["test5"]] <- tableListCombined[["test5"]]
+    }
+    if (!is.null(tableListCombined[["test6"]]) && length(tableListCombined[["test6"]][!is.na(tableListCombined[["test6"]])]) > 0) {
+      table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution"),   type = "string")
       tableData[["test6"]] <- tableListCombined[["test6"]]
     }
     table$addFootnote(message = gettext("Points where a test failed."))
