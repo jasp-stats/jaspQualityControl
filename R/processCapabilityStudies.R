@@ -2395,14 +2395,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .pcTableFormatNumbers <- function(number) {
-  if (all(is.na(number)) || all(is.null(number))) {
+
+  if (is.null(number))
+    return(number)
+
+  if (all(is.na(number)))
     return(rep(NA, length(number)))
-  }
+  
   output <- formatC(number, format = "f", digits = .numDecimals)
   output <- sub("\\.?0+$", "", output)
-  if (any(is.na(number)) || any(is.null(number))) {
-    naNumbers <- which(is.na(number) | is.null(number))
-    output[naNumbers] <- NA
-  }
+  if (anyNA(number))
+    output[is.na(number)] <- NA
+
   return(output)
 }
