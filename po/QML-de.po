@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2024-12-06 13:38+0000\n"
+"Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/de/>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.9-dev\n"
 "X-Language: de\n"
 "X-Qt-Contexts: true\n"
 
@@ -794,23 +800,27 @@ msgctxt "processCapabilityStudies|"
 msgid "3-parameter lognormal"
 msgstr ""
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
-msgstr ""
+msgstr "Stabilität des Prozesses"
 
 msgctxt "processCapabilityStudies|"
 msgid "Distribution of the process"
-msgstr ""
+msgstr "Verteilung des Prozesses"
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Fit distribution"
-msgstr ""
+msgstr "Angepasste Verteilung"
 
 msgctxt "Description|"
 msgid ""
 "Investigate if a manufactured product adheres to a defined set of quality "
 "criteria"
 msgstr ""
+"Prüfen Sie, ob ein hergestelltes Produkt einer definierten Menge von "
+"Qualitätskriterien entspricht"
 
 msgctxt "msaAttribute|"
 msgid "Data format"
@@ -894,7 +904,7 @@ msgstr "3-Parameter Weibull"
 
 msgctxt "processCapabilityStudies|"
 msgid "Display grid lines"
-msgstr ""
+msgstr "Gitterlinien anzeigen"
 
 msgctxt "timeWeightedCharts|"
 msgid "Shift size"
@@ -980,9 +990,10 @@ msgctxt "attributesCharts|"
 msgid "Time"
 msgstr "Zeit"
 
+#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Frequency"
-msgstr ""
+msgstr "Häufigkeit"
 
 msgctxt "attributesCharts|"
 msgid "Show Report"
@@ -1000,7 +1011,6 @@ msgctxt "doeFull|"
 msgid "Run Order"
 msgstr "Ablaufreihenfolge"
 
-#, fuzzy
 msgctxt "doeFull|"
 msgid "Random"
 msgstr "Zufällig"
@@ -1019,7 +1029,7 @@ msgstr "Name"
 
 msgctxt "doeFull|"
 msgid "Levels"
-msgstr ""
+msgstr "Stufen"
 
 msgctxt "doeFull|"
 msgid "Factor "
