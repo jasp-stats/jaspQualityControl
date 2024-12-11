@@ -199,9 +199,8 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
                               cusumShiftSize = options[["cumulativeSumChartShiftSize"]], cusumTarget = options[["cumulativeSumChartTarget"]],
                               movingRangeLength = options[["cumulativeSumChartAverageMovingRangeLength"]], phase2 = phase2,
                               phase2Sd = options[["cumulativeSumChartSdValue"]], tableLabels = axisLabels, ruleList = ruleList)
-  plotObject <- cusumChart$plotObject
   table <- cusumChart$table
-  plot$plotObject <- plotObject
+  plot$plotObject <- cusumChart$plotObject
   return(list("plot" = plot, "table" = table))
 }
 
