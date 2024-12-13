@@ -122,6 +122,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
+  # Get rule List
+  if (ready && options[["controlChartType"]] == "xmr") {
+    ruleList <- .getRuleListIndividualCharts(options)
+  } else if (ready) {
+    ruleList <- .getRuleListSubgroupCharts(options)
+  }
+
   # Report
   if (options[["report"]]) {
     nElements <- sum(options[["reportProcessStability"]]*2, options[["reportProcessCapabilityPlot"]], options[["reportProbabilityPlot"]],
@@ -160,7 +167,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if(!ready)
       return()
 
-
     # Plot meta data
     if (options[["reportTitle"]] ) {
       title <- if (options[["reportTitleText"]] == "") gettext("Process Capability Report") else options[["reportTitleText"]]
@@ -191,11 +197,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       if (options[["controlChartType"]] == "xmr") {
         controlCharts[[1]] <- .controlChart(dataset = dataset[measurements], plotType = "I",
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                            xAxisLabels = seq_along(unlist(dataset[measurements])))$plotObject
+                                            xAxisLabels = seq_along(unlist(dataset[measurements])), ruleList = ruleList)$plotObject
         controlCharts[[2]] <- .controlChart(dataset = dataset[measurements], plotType = "MR",
                                             xAxisLabels = seq_along(unlist(dataset[measurements])),
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                            movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
+                                            movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList)$plotObject
       } else {
         secondPlotType <- switch(options[["controlChartType"]],
                                  "xBarR" = "R",
@@ -212,11 +218,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         controlCharts[[1]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                             xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
-                                            unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
+                                            unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList)$plotObject
         controlCharts[[2]] <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                             tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
-                                            fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
+                                            fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList)$plotObject
       }
       plots[[plotIndexCounter]] <- controlCharts
       plotIndexCounter <- plotIndexCounter + 1
@@ -324,11 +330,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                    nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
-                                   unbiasingConstantUsed = unbiasingConstantUsed)
+                                   unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList)
         secondPlot <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
                                     nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                     tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
-                                    fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)
+                                    fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList)
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
         if (!identical(plotNotes, ""))
@@ -360,10 +366,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I",
                                          nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                          xAxisLabels = seq_along(unlist(dataset[measurements])),
-                                         specificationLimits = specificationLimitsControlChart)
+                                         specificationLimits = specificationLimitsControlChart, ruleList = ruleList)
         mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR",
                                  nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
-                                 xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]])
+                                 xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList)
         jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
                                                                               layout = matrix(2:1, 2), removeXYlabels= "x")
         if (!identical(plotNotes, ""))
