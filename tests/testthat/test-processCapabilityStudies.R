@@ -1286,12 +1286,10 @@ test_that("LF17.10 (Normal) Option test of Test results for individuals chart ta
 test_that("LF17.11 (Normal) Option test of Test results for moving range chart table with x-mR calculation method", {
   table <- results[["results"]][["xmr"]][["collection"]][["xmr_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 23", "Point 52",
-                                      "Point 53", "Point 54",
-                                      "Point 55", "Point 74",
-                                      "Point 75", "Point 76",
-                                      "Point 77", "Point 78",
-                                      "Point 79"))
+                                 list("Point 23", "Point 9", "Point 52", "Point 85", "Point 53", "",
+                                      "Point 54", "", "Point 55", "", "Point 74", "", "Point 75",
+                                      "", "Point 76", "", "Point 77", "", "Point 78", "", "Point 79",
+                                      ""))
 })
 
 #### Boundaries (verified with Minitab) ####
