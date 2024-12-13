@@ -1526,4 +1526,3 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   }
   return(ruleList)
 }
-
