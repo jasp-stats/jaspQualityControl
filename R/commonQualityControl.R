@@ -1054,11 +1054,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   tableListVectorized <- unlist(tableList, recursive = FALSE)
   tableVectorLength <- if (is.null(tableListVectorized)) 0 else sapply(tableListVectorized, length)
   tableLongestVector <- max(tableVectorLength)
-  # print("DEBUG1")
-  # print(tableList)
-  # print(tableListVectorized)
-  # print("DEBUG3")
-  # print(identical(stages, ""))
   if (tableLongestVector > 0) {
     # combine the tests for different stages in same column
     if (identical(stages, "") && all(tableVectorLength < 2)) {
@@ -1089,8 +1084,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       tableListCombined[[test]] <- formattedPoints
     }
-    # print("DEBUG2")
-    # print(tableListCombined)
     tableData <- list("stage" = tableListCombined[["stage"]])
     if (!identical(stages, ""))
       table$addColumnInfo(name = "stage",              title = stages,                                     type = "string")
@@ -1117,6 +1110,18 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     if (!is.null(tableListCombined[["test6"]]) && length(tableListCombined[["test6"]][!is.na(tableListCombined[["test6"]])]) > 0) {
       table$addColumnInfo(name = "test6",              title = gettextf("Test 6: Bimodal distribution"),   type = "string")
       tableData[["test6"]] <- tableListCombined[["test6"]]
+    }
+    if (!is.null(tableListCombined[["test7"]]) && length(tableListCombined[["test7"]][!is.na(tableListCombined[["test7"]])]) > 0) {
+      table$addColumnInfo(name = "test7",              title = gettextf("Test 7: Slightly increasing variation"),   type = "string")
+      tableData[["test7"]] <- tableListCombined[["test7"]]
+    }
+    if (!is.null(tableListCombined[["test8"]]) && length(tableListCombined[["test8"]][!is.na(tableListCombined[["test8"]])]) > 0) {
+      table$addColumnInfo(name = "test8",              title = gettextf("Test 8: Oscillation"),   type = "string")
+      tableData[["test8"]] <- tableListCombined[["test8"]]
+    }
+    if (!is.null(tableListCombined[["test9"]]) && length(tableListCombined[["test9"]][!is.na(tableListCombined[["test9"]])]) > 0) {
+      table$addColumnInfo(name = "test9",              title = gettextf("Test 9: Benneyan test"),   type = "string")
+      tableData[["test9"]] <- tableListCombined[["test9"]]
     }
     table$addFootnote(message = gettext("Points where a test failed."))
   } else {
