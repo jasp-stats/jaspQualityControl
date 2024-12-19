@@ -160,7 +160,8 @@ rareEventCharts <- function(jaspResults, dataset, options) {
                                        "reportTitle", "reportTitleText", "reportChartName", "reportChartNameText", "reportSubtitle",
                                        "reportSubtitleText", "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
                                        "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate", "reportDateText",
-                                       "reportPerformedBy", "reportPerformedByText", "reportPrintDate", "reportPrintDateText"))
+                                       "reportPerformedBy", "reportPerformedByText", "reportPrintDate", "reportPrintDateText",
+                                       .getDependenciesControlChartRules()))
 
     # Plot meta data
     if (options[["reportTitle"]] ) {
@@ -220,7 +221,8 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   plot <-  createJaspPlot(title = gettext("G chart"), width = 1200, height = 500)
   plot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
                   "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat",
-                  "gChart", "gChartProportionSource", "gChartHistoricalProportion", "report"))
+                  "gChart", "gChartProportionSource", "gChartHistoricalProportion", "report",
+                  .getDependenciesControlChartRules()))
 
   if (!ready)
     return(plot)
@@ -247,7 +249,7 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   plot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
                   "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat", "tChart",
                   "tChartDistribution", "tChartDistributionParameterSource", "tChartHistoricalParametersWeibullShape",
-                  "tChartHistoricalParametersScale", "report"))
+                  "tChartHistoricalParametersScale", "report", .getDependenciesControlChartRules()))
 
   if (!ready)
     return(plot)

@@ -77,7 +77,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
     jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
     jaspResults[["Ichart"]]$dependOn(c("xmrChart", "xmrChartMovingRangeLength", "axisLabels", "reportTitle",
                                        "reportMeasurementName", "reportMiscellaneous","reportReportedByBy","reportDate", "report",
-                                       "stage", "measurement", "controlLimitsNumberOfSigmas"))
+                                       "stage", "controlLimitsNumberOfSigmas", .getDependenciesControlChartRules()))
     jaspResults[["Ichart"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
     if (ready) {
       # Error conditions for stages
@@ -126,7 +126,7 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
                                       "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
                                       "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
                                       "reportDateText", "reportPerformedBy", "reportPerformedByText", "reportPrintDate",
-                                      "reportPrintDateText"))
+                                      "reportPrintDateText", .getDependenciesControlChartRules()))
 
     if (nElements == 0) {
       reportPlot$setError(gettext("No report components selected."))
