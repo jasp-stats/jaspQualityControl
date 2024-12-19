@@ -1532,3 +1532,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   }
   return(ruleList)
 }
+
+.getDependenciesControlChartRules <- function() {
+  dependencies <- c("testSet", "rule1", "rule2", "rule2Value", "rule3", "rule3Value",
+                    "rule4", "rule4Value", "rule5", "rule5Value", "rule6", "rule6Value",
+                    "rule7", "rule7Value", "rule8", "rule8Value", "rule9", "rule9Value")
+  return(dependencies)
+}
+

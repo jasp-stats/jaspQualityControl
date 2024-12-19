@@ -128,7 +128,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
                                        "reportTitle", "reportTitleText", "reportChartName", "reportChartNameText", "reportSubtitle",
                                        "reportSubtitleText", "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
                                        "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate", "reportDateText",
-                                       "reportPerformedBy", "reportPerformedByText", "reportPrintDate", "reportPrintDateText"))
+                                       "reportPerformedBy", "reportPerformedByText", "reportPrintDate", "reportPrintDateText", .getDependenciesControlChartRules()))
 
     # Plot meta data
     if (options[["reportTitle"]] ) {
@@ -185,7 +185,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
                   "groupingVariableMethod", "cumulativeSumChart", "cumulativeSumChartNumberSd",
                   "cumulativeSumChartShiftSize", "cumulativeSumChartTarget", "cumulativeSumChartSdSource",
                   "cumulativeSumChartSdMethod", "cumulativeSumChartSdValue", "cumulativeSumChartAverageMovingRangeLength",
-                  "report"))
+                  "report", .getDependenciesControlChartRules()))
 
   if (!ready)
     return(plot)
@@ -213,7 +213,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
                   "exponentiallyWeightedMovingAverageChartSigmaControlLimits", "exponentiallyWeightedMovingAverageChartLambda",
                   "exponentiallyWeightedMovingAverageChartSdSource", "exponentiallyWeightedMovingAverageChartSdMethod",
                   "exponentiallyWeightedMovingAverageChartSdValue", "exponentiallyWeightedMovingAverageChartMovingRangeLength",
-                  "report"))
+                  "report", .getDependenciesControlChartRules()))
 
   if (!ready)
     return(plot)

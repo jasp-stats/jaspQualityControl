@@ -151,7 +151,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                        "subgroup", "reportTitle", "reportTitleText", "reportLocation", "reportLocationText",
                                        "reportLine", "reportLineText", "reportMachine", "reportMachineText", "reportVariable",
                                        "reportVariableText", "reportProcess", "reportProcessText", "reportDate", "reportDateText",
-                                       "reportReportedBy", "reportReportedByText", "reportConclusion", "reportConclusionText"))
+                                       "reportReportedBy", "reportReportedByText", "reportConclusion", "reportConclusionText", .getDependenciesControlChartRules()))
 
     if((!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]) && options[["reportProcessCapabilityTables"]]) {
       reportPlot$setError(gettext("No specification limits set."))
@@ -308,7 +308,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["xBar"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
                                        "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
                                        "subgroupSizeUnequal", "controlChartSdUnbiasingConstant", "controlChart",
-                                       "controlLimitsNumberOfSigmas", "groupingVariableMethod"))
+                                       "controlLimitsNumberOfSigmas", "groupingVariableMethod", .getDependenciesControlChartRules()))
       jaspResults[["xBar"]]$position <- 1
 
 
@@ -346,7 +346,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR control chart"))
       jaspResults[["xmr"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
                                       "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                      "subgroupSizeUnequal", "controlChart", "controlLimitsNumberOfSigmas", "groupingVariableMethod"))
+                                      "subgroupSizeUnequal", "controlChart", "controlLimitsNumberOfSigmas", "groupingVariableMethod", .getDependenciesControlChartRules()))
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)

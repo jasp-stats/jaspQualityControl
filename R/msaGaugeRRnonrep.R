@@ -85,7 +85,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
                                        "reportLocation", "reportLocationText", "reportPerformedBy", "reportPerformedByText",
                                        "reportDate", "reportDateText", "reportVariationComponents", "reportMeasurementsByPartPlot",
                                        "reportRChartByOperator", "reportMeasurementsByOperatorPlot", "reportAverageChartByOperator",
-                                       "reportPartByOperatorPlot", "reportTrafficLightCHart", "reportMetaData"))
+                                       "reportPartByOperatorPlot", "reportTrafficLightCHart", "reportMetaData", .getDependenciesControlChartRules()))
 
     if (nElements == 0) {
       reportPlot$setError(gettext("No report components selected."))
@@ -190,7 +190,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
       jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
       jaspResults[["rChart"]]$position <- 2
-      jaspResults[["rChart"]]$dependOn(c("rChart", "measurementLongFormat", "measurementsWideFormat", "report"))
+      jaspResults[["rChart"]]$dependOn(c("rChart", "measurementLongFormat", "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
       jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
 
       if (ready) {
@@ -207,7 +207,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
       jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar chart by operator"))
       jaspResults[["xBarChart"]]$position <- 3
-      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat", "measurementsWideFormat", "report"))
+      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat", "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
       jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
       if (ready) {
         xBarChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)], ruleList = ruleList,
