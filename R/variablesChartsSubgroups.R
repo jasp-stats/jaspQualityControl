@@ -136,7 +136,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                                                 "report", "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle",
                                                 "reportChartName", "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
                                                 "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
-                                                "groupingVariableMethod"))
+                                                "groupingVariableMethod", .getDependenciesControlChartRules()))
       secondPlotType <- ifelse(options[["chartType"]] == "xBarAndR", "R", "s")
       jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s control chart", secondPlotType), width = 1200, height = 500)
       if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
@@ -185,7 +185,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                                            "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
                                            "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
                                            "reportDateText", "reportPerformedBy", "reportPerformedByText", "reportPrintDate",
-                                           "reportPrintDateText"))
+                                           "reportPrintDateText", .getDependenciesControlChartRules()))
 
         # Plot meta data
         if (options[["reportTitle"]] ) {
