@@ -270,12 +270,30 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
 
 # Generalized function to check if there are at least k TRUE values within k + 1 elements
-check_previous_k <- function(i, vec, k) {
+.checkPreviousK <- function(i, vec, k) {
   # Define the range: from max(1, i - k) to i
   range <- vec[max(1, i - k):i]
   # Check if at least k out of k + 1 (or fewer if near the start) are TRUE
   return(vec[i] == TRUE && sum(range) >= k)
 }
+
+.countConsecutiveTrues <- function(boolVec) {
+  count <- 0
+  result <- numeric(length(boolVec))
+
+  for (i in seq_along(boolVec)) {
+    if (!is.na(boolVec[i]) && boolVec[i]) {
+      count <- count + 1
+      result[i] <- count
+    } else {
+      count <- 0
+      result[i] <- count
+    }
+  }
+
+  return(result)
+}
+
 
 .nelsonLaws <- function(plotStatistics,
                         sigma = NULL,
@@ -331,7 +349,6 @@ check_previous_k <- function(i, vec, k) {
 
     if (length(plotStatistics) > 1) {
       # Loop through the points to find consecutive increases or decreases
-      currentIndex <- 1
       consecutiveIncreaseCount <- 0
       consecutiveDecreaseCount <- 0
 
@@ -352,19 +369,9 @@ check_previous_k <- function(i, vec, k) {
         }
 
         # Check if the count reaches k and record the offending sequence
-        if (consecutiveIncreaseCount >= k3) {
-          startIdx <- currentIndex - consecutiveIncreaseCount
-          r3 <- c(r3, startIdx + 1:(consecutiveIncreaseCount + 1))
-          consecutiveIncreaseCount <- 0  # Reset to find next potential sequence
+        if (consecutiveIncreaseCount >= k3 | consecutiveDecreaseCount >= k3) {
+          r3 <- c(r3, i + 1)
         }
-        if (consecutiveDecreaseCount >= k3) {
-          startIdx <- currentIndex - consecutiveDecreaseCount
-          r3 <- c(r3, startIdx + 1:(consecutiveDecreaseCount + 1))
-          consecutiveDecreaseCount <- 0  # Reset to find next potential sequence
-        }
-
-        # Update currentIndex for the next iteration
-        currentIndex <- currentIndex + 1
       }
     }
     redPoints <- c(redPoints, r3)
@@ -380,8 +387,8 @@ check_previous_k <- function(i, vec, k) {
 
     aboveBolVector <- plotStatistics > (center + 2 * sigma)
     belowBolVector <- plotStatistics < center - 2 * sigma
-    r4above <- which(sapply(seq_along(aboveBolVector), check_previous_k, vec = aboveBolVector, k = k4))
-    r4below <- which(sapply(seq_along(belowBolVector), check_previous_k, vec = belowBolVector, k = k4))
+    r4above <- which(sapply(seq_along(aboveBolVector), .checkPreviousK, vec = aboveBolVector, k = k4))
+    r4below <- which(sapply(seq_along(belowBolVector), .checkPreviousK, vec = belowBolVector, k = k4))
     r4 <- sort(c(r4, r4above, r4below))
     redPoints <- c(redPoints, r4)
     violationList[["test4"]] <- if (length(r4) > 0) r4 else numeric()
@@ -409,10 +416,9 @@ check_previous_k <- function(i, vec, k) {
     r6 <- c()
 
     outsideBolVector <- plotStatistics > (center + sigma) | plotStatistics < (center - sigma)
+    outsideSeqVector <- .countConsecutiveTrues(outsideBolVector)
 
-    # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
-    outsideSeqVector <- ave(outsideBolVector, cumsum(!outsideBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
-    r6 <- c(r6, which(outsideSeqVector > k6))
+    r6 <- c(r6, which(outsideSeqVector >= k6))
     redPoints <- c(redPoints, r6)
     violationList[["test6"]] <- if (length(r6) > 0) r6 else numeric()
   }
@@ -424,8 +430,8 @@ check_previous_k <- function(i, vec, k) {
 
     aboveBolVector <-  plotStatistics > (center + sigma)
     belowBolVector <- plotStatistics < center - sigma
-    r7above <- which(sapply(seq_along(aboveBolVector), check_previous_k, vec = aboveBolVector, k = k7))
-    r7below <- which(sapply(seq_along(belowBolVector), check_previous_k, vec = belowBolVector, k = k7))
+    r7above <- which(sapply(seq_along(aboveBolVector), .checkPreviousK, vec = aboveBolVector, k = k7))
+    r7below <- which(sapply(seq_along(belowBolVector), .checkPreviousK, vec = belowBolVector, k = k7))
     r7 <- sort(c(r7, r7above, r7below))
 
     redPoints <- c(redPoints, r7)
