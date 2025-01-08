@@ -1260,3 +1260,107 @@ test_that("WF27. Options test of creating a report with stages and less meta dat
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-r-reportW3")
 })
+
+
+# Out of control rules (verified with Minitab) ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "wideFormat"
+options$measurementsWideFormat <- list("V1", "V2", "V3")
+options$chartType <- "xBarAndR"
+options$testSet <- "custom"
+options$rule1 <- TRUE
+options$rule2 <- TRUE
+options$rule3 <- TRUE
+options$rule4 <- TRUE
+options$rule5 <- TRUE
+options$rule6 <- TRUE
+options$rule7 <- TRUE
+options$rule8 <- TRUE
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/controlChartRules/violatingAllSubgroupRules.csv",
+                       options)
+
+test_that("WF28.1 Test of all rules for xbar & r chart", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chartW28")
+})
+
+test_that("WF28.2 Test of all rules for xbar & r chart - r table", {
+  table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_secondTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Point 7", "Point 2", "Point 25", "Point 8", "Point 4", "Point 8",
+                                      "Point 3", "Point 26", "Point 9", "Point 5", "Point 9", "Point 4",
+                                      "Point 27", "Point 10", "Point 6", "Point 10", "Point 5", "Point 28",
+                                      "Point 48", "Point 7", "Point 11", "Point 6", "Point 29", "Point 49",
+                                      "Point 8", "Point 12", "Point 7", "Point 30", "Point 50", "Point 9",
+                                      "Point 13", "Point 8", "Point 31", "Point 51", "Point 10", "Point 14",
+                                      "Point 9", "Point 32", "Point 52", "Point 44", "Point 15", "Point 10",
+                                      "Point 33", "Point 53", "Point 45", "Point 16", "", "Point 34",
+                                      "Point 54", "Point 46", "Point 17", "", "Point 35", "Point 55",
+                                      "Point 47", "Point 18", "", "Point 36", "", "Point 48", "Point 19",
+                                      "", "Point 37", "", "Point 49", "Point 20", "", "Point 38",
+                                      "", "Point 50", "Point 21", "", "Point 39", "", "Point 51",
+                                      "Point 22", "", "Point 40", "", "Point 52", "Point 23", "",
+                                      "", "", "Point 53", "Point 24", "", "", "", "Point 54", "Point 25",
+                                      "", "", "", "Point 55", "Point 26", "", "", "", "", "Point 27",
+                                      "", "", "", "", "Point 28", "", "", "", "", "Point 29", "",
+                                      "", "", "", "Point 30", "", "", "", "", "Point 31", "", "",
+                                      "", "", "Point 32", "", "", "", "", "Point 33", "", "", "",
+                                      "", "Point 34", "", "", "", "", "Point 35", "", "", "", "",
+                                      "Point 36", "", "", "", "", "Point 37", "", "", "", "", "Point 38",
+                                      "", "", "", "", "Point 39", "", "", "", "", "Point 40", "",
+                                      "", "", "", "Point 47", "", "", "", "", "Point 48", "", "",
+                                      "", "", "Point 49", "", "", "", "", "Point 50", "", "", "",
+                                      "", "Point 51", "", "", "", "", "Point 52", "", "", "", "",
+                                      "Point 53", "", "", "", "", "Point 54", "", "", "", "", "Point 55",
+                                      "", "", "", ""))
+})
+
+test_that("WF28.3 Test of all rules for xbar & r chart - xbar table", {
+  table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_xBarTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Point 1", "Point 7", "Point 24", "Point 2", "Point 55", "Point 8",
+                                      "Point 4", "Point 37", "Point 2", "Point 8", "", "Point 3",
+                                      "", "Point 9", "Point 5", "Point 38", "Point 3", "Point 9",
+                                      "", "Point 4", "", "Point 10", "Point 6", "Point 39", "Point 4",
+                                      "Point 10", "", "Point 5", "", "Point 11", "Point 7", "Point 40",
+                                      "Point 5", "Point 17", "", "Point 6", "", "Point 12", "Point 8",
+                                      "", "Point 6", "Point 18", "", "Point 7", "", "Point 13", "Point 9",
+                                      "", "Point 7", "Point 19", "", "Point 8", "", "Point 14", "Point 10",
+                                      "", "Point 8", "Point 20", "", "Point 9", "", "Point 15", "Point 14",
+                                      "", "Point 9", "Point 21", "", "Point 10", "", "Point 16", "Point 15",
+                                      "", "Point 10", "Point 22", "", "Point 12", "", "Point 17",
+                                      "Point 16", "", "Point 11", "Point 23", "", "Point 13", "",
+                                      "Point 18", "Point 17", "", "Point 12", "Point 24", "", "Point 14",
+                                      "", "Point 19", "Point 18", "", "Point 13", "Point 25", "",
+                                      "Point 15", "", "Point 20", "Point 19", "", "Point 14", "Point 26",
+                                      "", "Point 16", "", "Point 21", "Point 20", "", "Point 15",
+                                      "Point 27", "", "Point 17", "", "Point 22", "Point 21", "",
+                                      "Point 16", "Point 28", "", "Point 18", "", "Point 23", "Point 22",
+                                      "", "Point 17", "Point 29", "", "Point 19", "", "Point 24",
+                                      "Point 23", "", "Point 18", "Point 30", "", "Point 20", "",
+                                      "Point 25", "Point 24", "", "Point 19", "Point 31", "", "Point 26",
+                                      "", "Point 26", "Point 25", "", "Point 20", "Point 32", "",
+                                      "Point 27", "", "Point 27", "Point 26", "", "Point 21", "Point 33",
+                                      "", "Point 28", "", "Point 28", "Point 27", "", "Point 22",
+                                      "Point 34", "", "Point 29", "", "Point 29", "Point 28", "",
+                                      "Point 23", "Point 35", "", "Point 30", "", "Point 30", "Point 29",
+                                      "", "Point 24", "Point 36", "", "Point 31", "", "Point 31",
+                                      "Point 30", "", "Point 25", "Point 37", "", "Point 32", "",
+                                      "Point 32", "Point 31", "", "Point 26", "Point 38", "", "Point 33",
+                                      "", "Point 33", "Point 32", "", "Point 27", "Point 39", "",
+                                      "Point 34", "", "Point 34", "Point 33", "", "Point 28", "Point 40",
+                                      "", "Point 35", "", "Point 35", "Point 34", "", "Point 29",
+                                      "Point 47", "", "Point 36", "", "Point 36", "Point 35", "",
+                                      "Point 30", "Point 48", "", "Point 37", "", "Point 37", "Point 36",
+                                      "", "Point 31", "Point 49", "", "Point 38", "", "Point 38",
+                                      "Point 37", "", "Point 32", "Point 50", "", "Point 39", "",
+                                      "Point 39", "Point 38", "", "Point 33", "Point 51", "", "Point 40",
+                                      "", "Point 40", "Point 39", "", "Point 34", "Point 52", "",
+                                      "", "", "", "Point 40", "", "Point 35", "Point 53", "", "",
+                                      "", "", "", "", "Point 36", "Point 54", "", "", "", "", "",
+                                      "", "Point 37", "Point 55", "", "", "", "", "", "", "Point 38",
+                                      "", "", "", "", "", "", "", "Point 39", "", "", "", "", "",
+                                      "", "", "Point 40", "", "", "", "", "", "", ""))
+})
