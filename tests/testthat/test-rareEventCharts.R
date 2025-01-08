@@ -471,3 +471,38 @@ test_that("14 Test of g and t chart report", {
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "rare-event-charts-report1")
 })
+
+# Out of control rules (verified with Minitab)
+options <- analysisOptions("rareEventCharts")
+options$variable <- "Opportunities"
+options$dataType <- "dataTypeInterval"
+options$dataTypeIntervalType <- "opportunities"
+options$gChart <- TRUE
+options$tChart <- FALSE
+options$testSet <- "custom"
+options$rule1 <- TRUE
+options$rule2 <- TRUE
+options$rule3 <- TRUE
+options$rule8 <- TRUE
+options$rule9 <- TRUE
+results <- runAnalysis("rareEventCharts", "datasets/controlChartRules/violatingAllRareEventRules.csv", options)
+
+test_that("15.1 Test of all rules for G chart", {
+  plotName <- results[["results"]][["gChart"]][["collection"]][["gChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "g-chart15")
+})
+
+test_that("15.2 Test of all rules for G chart table", {
+  table <- results[["results"]][["gChart"]][["collection"]][["gChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Point 2", "Point 9", "Point 11", "Point 26", "Point 4", "Point 3",
+                                      "Point 18", "Point 12", "Point 27", "Point 5", "Point 4", "Point 19",
+                                      "Point 13", "Point 28", "", "Point 5", "Point 20", "", "Point 29",
+                                      "", "Point 32", "Point 21", "", "Point 30", "", "", "Point 22",
+                                      "", "Point 31", "", "", "Point 23", "", "", "", "", "Point 24",
+                                      "", "", "", "", "Point 25", "", "", "", "", "Point 26", "",
+                                      "", "", "", "Point 27", "", "", "", "", "Point 28", "", "",
+                                      "", "", "Point 29", "", "", "", "", "Point 30", "", "", "",
+                                      "", "Point 31", "", "", "", "", "Point 32", "", "", ""))
+})
