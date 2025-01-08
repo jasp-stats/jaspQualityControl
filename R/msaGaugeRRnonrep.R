@@ -494,8 +494,11 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 
 .gaugeNestedVarComponents <- function(dataset, operators, parts, measurements, ms) {
   nOperators <- length(unique(dataset[[operators]]))
-  nReplicates <- with(dataset, table(dataset[[operators]], dataset[[parts]]))[1] # assuming constant repetitions across parts and operators
-  nParts  <- as.vector(table(dataset[operators])[1] / nReplicates)
+  replicatesTable <- table(dataset[[parts]])
+  if (!all(replicatesTable == replicatesTable[1]))
+    stop("Unbalanced design. Some parts have more repeated measurements than others.")
+  nReplicates <- unname(replicatesTable)[1] # assuming constant repetitions across parts
+  nParts  <- length(unique(dataset[[parts]]))
   msOperator <- ms[1]
   msOperatorPart <- ms[2]
   msRepeat <- ms[3]
