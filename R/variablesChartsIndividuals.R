@@ -69,9 +69,10 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
   }
 
   # Create the rule list for the out-of-control signals
-  if (ready)
-    ruleList <- .getRuleListIndividualCharts(options)
-
+  if (ready) {
+    ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
+    ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
+  }
   # ImR chart
   if (options$xmrChart && is.null(jaspResults[["Ichart"]])) {
     jaspResults[["Ichart"]] <- createJaspContainer(position = 1)
@@ -89,10 +90,10 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
       columnsToPass <- c(variables, stages)
       columnsToPass <- columnsToPass[columnsToPass != ""]
       individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                       xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, ruleList = ruleList,
+                                       xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, ruleList = ruleList1,
                                        movingRangeLength = options[["xmrChartMovingRangeLength"]])
       mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR", stages = stages, nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                               xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, ruleList = ruleList,
+                               xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, ruleList = ruleList2,
                                movingRangeLength = options[["xmrChartMovingRangeLength"]])
     }
     jaspResults[["Ichart"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject), layout = matrix(2:1, 2), removeXYlabels= "x")
