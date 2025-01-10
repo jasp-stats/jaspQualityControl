@@ -1437,7 +1437,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list)
 }
 
-.getRuleListSubgroupCharts <- function(options) {
+.getRuleListSubgroupCharts <- function(options, type = c("xBar", "R", "s")) {
   ruleSet <- options[["testSet"]]
   if (ruleSet == "jaspDefault") {
     ruleList <- list("rule1" = list("enabled" = TRUE),
@@ -1485,10 +1485,18 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                      "rule9" = NULL
     )
   }
+
+  if (type != "xBar") { # never apply rules other than 1,2,3 or 8 to s or R chart
+    ruleList[["rule4"]] <- NULL
+    ruleList[["rule5"]] <- NULL
+    ruleList[["rule6"]] <- NULL
+    ruleList[["rule7"]] <- NULL
+    ruleList[["rule9"]] <- NULL
+  }
   return(ruleList)
 }
 
-.getRuleListIndividualCharts <- function(options) {
+.getRuleListIndividualCharts <- function(options, type = c("I", "MR")) {
   ruleSet <- options[["testSet"]]
   if (ruleSet == "jaspDefault") {
     ruleList <- list("rule1" = list("enabled" = TRUE),
@@ -1535,6 +1543,14 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                      "rule8" = list("enabled" = options[["rule8"]], "k" = options[["rule8Value"]]),
                      "rule9" = NULL
     )
+  }
+
+  if (type == "MR") { # never apply rules other than 1,2,3 or 8 to MR chart
+    ruleList[["rule4"]] <- NULL
+    ruleList[["rule5"]] <- NULL
+    ruleList[["rule6"]] <- NULL
+    ruleList[["rule7"]] <- NULL
+    ruleList[["rule9"]] <- NULL
   }
   return(ruleList)
 }

@@ -122,12 +122,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-  # Get rule List
-  if (ready && options[["controlChartType"]] == "xmr") {
-    ruleList <- .getRuleListIndividualCharts(options)
-  } else if (ready) {
-    ruleList <- .getRuleListSubgroupCharts(options)
-  }
+
 
   # Report
   if (options[["report"]]) {
@@ -195,13 +190,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       controlCharts <- list()
       # X-bar and second chart OR ImR Chart
       if (options[["controlChartType"]] == "xmr") {
+        ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
+        ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
         controlCharts[[1]] <- .controlChart(dataset = dataset[measurements], plotType = "I",
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                            xAxisLabels = seq_along(unlist(dataset[measurements])), ruleList = ruleList)$plotObject
+                                            xAxisLabels = seq_along(unlist(dataset[measurements])), ruleList = ruleList1)$plotObject
         controlCharts[[2]] <- .controlChart(dataset = dataset[measurements], plotType = "MR",
                                             xAxisLabels = seq_along(unlist(dataset[measurements])),
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                            movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList)$plotObject
+                                            movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)$plotObject
       } else {
         secondPlotType <- switch(options[["controlChartType"]],
                                  "xBarR" = "R",
@@ -215,14 +212,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         columnsToPass <- columnsToPass[columnsToPass != ""]
         fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
         unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+        # Create the rule list for the out-of-control signals
+        ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
+        ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
         controlCharts[[1]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                             xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
-                                            unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList)$plotObject
+                                            unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList1)$plotObject
         controlCharts[[2]] <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                             tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
-                                            fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList)$plotObject
+                                            fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)$plotObject
       }
       plots[[plotIndexCounter]] <- controlCharts
       plotIndexCounter <- plotIndexCounter + 1
@@ -327,14 +327,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         columnsToPass <- columnsToPass[columnsToPass != ""]
         fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
         unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+        # Create the rule list for the out-of-control signals
+        ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
+        ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
         xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                    nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
-                                   unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList)
+                                   unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList1)
         secondPlot <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
                                     nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                     tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
-                                    fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList)
+                                    fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
         if (!identical(plotNotes, ""))
@@ -363,13 +366,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         } else {
           specificationLimitsControlChart <- NA
         }
+        ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
+        ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
         individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I",
                                          nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                          xAxisLabels = seq_along(unlist(dataset[measurements])),
-                                         specificationLimits = specificationLimitsControlChart, ruleList = ruleList)
+                                         specificationLimits = specificationLimitsControlChart, ruleList = ruleList1)
         mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR",
                                  nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
-                                 xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList)
+                                 xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)
         jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
                                                                               layout = matrix(2:1, 2), removeXYlabels= "x")
         if (!identical(plotNotes, ""))
@@ -2407,7 +2412,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (all(is.na(number)))
     return(rep(NA, length(number)))
-  
+
   output <- formatC(number, format = "f", digits = .numDecimals)
   output <- sub("\\.?0+$", "", output)
   if (anyNA(number))

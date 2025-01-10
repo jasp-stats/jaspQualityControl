@@ -38,12 +38,10 @@ test_that("1.3 Basic test to create x-mR control chart - MR table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Point 3 (Mar Year 1)", "Point 12 (Dec Year 1)", "Point 5 (May Year 1)",
-                                      "Point 5 (May Year 1)", "Point 13 (Jan Year 2)", "Point 25 (Jan Year 3)",
-                                      "Point 23 (Nov Year 2)", "Point 14 (Feb Year 2)", "", "Point 25 (Jan Year 3)",
-                                      "Point 15 (Mar Year 2)", "", "", "Point 32 (Aug Year 3)", "",
-                                      "", "Point 33 (Sep Year 3)", "", "", "Point 34 (Oct Year 3)",
-                                      "", "", "Point 35 (Nov Year 3)", "", "", "Point 36 (Dec Year 3)",
-                                      ""))
+                                      "Point 13 (Jan Year 2)", "Point 23 (Nov Year 2)", "Point 14 (Feb Year 2)",
+                                      "Point 25 (Jan Year 3)", "Point 15 (Mar Year 2)", "", "Point 32 (Aug Year 3)",
+                                      "", "Point 33 (Sep Year 3)", "", "Point 34 (Oct Year 3)", "",
+                                      "Point 35 (Nov Year 3)", "", "Point 36 (Dec Year 3)"))
 })
 
 ## Autocorrelation plot (verified with Minitab) ####
@@ -81,15 +79,11 @@ test_that("3.2 Basic test to create x-mR control chart with changed MR length - 
 test_that("3.3 Basic test to create x-mR control chart with changed MR length - MR table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 4", "Point 14", "Point 6", "Point 11", "Point 5", "Point 15",
-                                      "Point 7", "Point 12", "Point 6", "Point 16", "Point 24", "Point 13",
-                                      "Point 7", "Point 17", "Point 25", "Point 14", "Point 23", "Point 18",
-                                      "Point 26", "Point 15", "Point 24", "Point 19", "Point 27",
-                                      "Point 16", "Point 25", "Point 20", "", "Point 28", "Point 26",
-                                      "Point 21", "", "Point 29", "Point 27", "Point 22", "", "Point 30",
-                                      "", "Point 34", "", "Point 31", "", "Point 35", "", "Point 32",
-                                      "", "Point 36", "", "Point 33", "", "", "", "Point 34", "",
-                                      "", "", "Point 35", "", "", "", "Point 36"))
+                                 list("Point 4", "Point 14", "Point 5", "Point 15", "Point 6", "Point 16",
+                                      "Point 7", "Point 17", "Point 23", "Point 18", "Point 24", "Point 19",
+                                      "Point 25", "Point 20", "Point 26", "Point 21", "Point 27",
+                                      "Point 22", "", "Point 34", "", "Point 35", "", "Point 36"
+                                 ))
 })
 
 ## X-mR chart with stages (verified with Minitab) ####
@@ -117,10 +111,8 @@ test_that("4.2 Basic test to create x-mR control chart with stages - I table", {
 test_that("4.3 Basic test to create x-mR control chart with stages - MR table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Zero", "Point 3", "Point 12", "Point 5", "Point 9", "", "Point 5",
-                                      "", "", "Point 10", "", "", "", "", "Point 11", "", "", "",
-                                      "", "Point 12", "One", "Point 11", "Point 8", "", "", "", "",
-                                      "Point 9", "", "", "", "", "Point 10", "", ""))
+                                 list("Zero", "Point 3", "Point 12", "", "Point 5", "", "One", "Point 11",
+                                      "Point 8", "", "", "Point 9", "", "", "Point 10"))
 })
 
 
@@ -288,12 +280,10 @@ test_that("10.3 X-mR control chart with single missing value in measurements - M
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Point 3 (Mar Year 1)", "Point 12 (Dec Year 1)", "Point 5 (May Year 1)",
-                                      "Point 5 (May Year 1)", "Point 13 (Jan Year 2)", "Point 25 (Jan Year 3)",
-                                      "Point 23 (Nov Year 2)", "Point 14 (Feb Year 2)", "", "Point 25 (Jan Year 3)",
-                                      "Point 15 (Mar Year 2)", "", "", "Point 32 (Aug Year 3)", "",
-                                      "", "Point 33 (Sep Year 3)", "", "", "Point 34 (Oct Year 3)",
-                                      "", "", "Point 35 (Nov Year 3)", "", "", "Point 36 (Dec Year 3)",
-                                      ""))
+                                      "Point 13 (Jan Year 2)", "Point 23 (Nov Year 2)", "Point 14 (Feb Year 2)",
+                                      "Point 25 (Jan Year 3)", "Point 15 (Mar Year 2)", "", "Point 32 (Aug Year 3)",
+                                      "", "Point 33 (Sep Year 3)", "", "Point 34 (Oct Year 3)", "",
+                                      "Point 35 (Nov Year 3)", "", "Point 36 (Dec Year 3)"))
 })
 
 ## Missing values in axis label (verified with Minitab) ####
@@ -329,11 +319,10 @@ test_that("11.3 X-mR control chart with missing values in axis labels - MR table
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Point 3 (Mar Year 1)", "Point 12 (Dec Year 1)", "Point 5 (May Year 1)",
-                                      "Point 5 (May Year 1)", "Point 13 ()", "Point 25 (Jan Year 3)",
-                                      "Point 23 (Nov Year 2)", "Point 14 (Feb Year 2)", "", "Point 25 (Jan Year 3)",
-                                      "Point 15 (Mar Year 2)", "", "", "Point 32 ()", "", "", "Point 33 (Sep Year 3)",
-                                      "", "", "Point 34 (Oct Year 3)", "", "", "Point 35 (Nov Year 3)",
-                                      "", "", "Point 36 (Dec Year 3)", ""))
+                                      "Point 13 ()", "Point 23 (Nov Year 2)", "Point 14 (Feb Year 2)",
+                                      "Point 25 (Jan Year 3)", "Point 15 (Mar Year 2)", "", "Point 32 ()",
+                                      "", "Point 33 (Sep Year 3)", "", "Point 34 (Oct Year 3)", "",
+                                      "Point 35 (Nov Year 3)", "", "Point 36 (Dec Year 3)"))
 })
 
 # Out of control rules (verified with Minitab) ####
@@ -381,24 +370,11 @@ test_that("12.2 Test of all rules for x-mr chart - I Table", {
 test_that("12.3 Test of all rules for x-mr chart - MR Table", {
   table <- results[["results"]][["Ichart"]][["collection"]][["Ichart_tableMR"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 37", "Point 8", "Point 9", "Point 6", "Point 45", "Point 9",
-                                      "Point 10", "Point 7", "", "Point 10", "Point 11", "Point 8",
-                                      "", "Point 11", "Point 12", "Point 9", "", "Point 12", "Point 13",
-                                      "Point 10", "", "Point 13", "Point 14", "Point 11", "", "Point 14",
-                                      "Point 15", "Point 12", "", "Point 15", "Point 24", "Point 13",
-                                      "", "Point 16", "Point 25", "Point 14", "", "Point 23", "Point 26",
-                                      "Point 15", "", "Point 24", "Point 27", "Point 20", "", "Point 25",
-                                      "Point 28", "Point 21", "", "Point 26", "Point 29", "Point 22",
-                                      "", "Point 27", "Point 30", "Point 23", "", "Point 28", "Point 31",
-                                      "Point 24", "", "Point 29", "Point 32", "Point 25", "", "Point 30",
-                                      "Point 33", "Point 26", "", "Point 31", "Point 34", "Point 27",
-                                      "", "Point 32", "Point 35", "Point 28", "", "Point 33", "Point 36",
-                                      "Point 29", "", "Point 34", "Point 37", "Point 30", "", "Point 35",
-                                      "Point 38", "Point 31", "", "Point 36", "Point 39", "Point 32",
-                                      "", "Point 44", "Point 40", "Point 33", "", "", "Point 41",
-                                      "Point 34", "", "", "Point 42", "Point 35", "", "", "Point 43",
-                                      "Point 36", "", "", "Point 44", "Point 38", "", "", "Point 45",
-                                      "Point 39", "", "", "", "Point 40", "", "", "", "Point 41",
-                                      "", "", "", "Point 42", "", "", "", "Point 43", "", "", "",
-                                      "Point 44"))
+                                 list("Point 37", "Point 8", "Point 45", "Point 9", "", "Point 10",
+                                      "", "Point 11", "", "Point 12", "", "Point 13", "", "Point 14",
+                                      "", "Point 15", "", "Point 16", "", "Point 23", "", "Point 24",
+                                      "", "Point 25", "", "Point 26", "", "Point 27", "", "Point 28",
+                                      "", "Point 29", "", "Point 30", "", "Point 31", "", "Point 32",
+                                      "", "Point 33", "", "Point 34", "", "Point 35", "", "Point 36",
+                                      "", "Point 44"))
 })

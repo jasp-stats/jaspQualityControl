@@ -126,8 +126,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
 
   #X bar & R/s chart
   if (ready) {
-    # Create the rule list for the out-of-control signals
-    ruleList <- .getRuleListSubgroupCharts(options)
+
 
     if (is.null(jaspResults[["controlCharts"]])) {
       jaspResults[["controlCharts"]] <- createJaspContainer(position = 1)
@@ -150,14 +149,18 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       clLabelSize <- if (options[["report"]]) 3.5 else 4.5
       fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
 
+      # Create the rule list for the out-of-control signals
+      ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
+      ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
+
       # first chart is always xBar-chart, second is either R- or s-chart
-      xBarChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList, plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
+      xBarChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList1, plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
                                  nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], phase2 = options[["knownParameters"]],
                                  phase2Mu = options[["knownParametersMean"]], phase2Sd = options[["knownParametersSd"]],
                                  fixedSubgroupSize = fixedSubgroupSize, warningLimits = options[["warningLimits"]],
                                  xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                  unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
-      secondChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList, plotType = secondPlotType,  stages = stages,
+      secondChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList2, plotType = secondPlotType,  stages = stages,
                                    phase2 = options[["knownParameters"]], nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                    phase2Sd = options[["knownParametersSd"]], fixedSubgroupSize = fixedSubgroupSize,
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,

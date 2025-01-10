@@ -1289,32 +1289,15 @@ test_that("WF28.1 Test of all rules for xbar & r chart", {
 test_that("WF28.2 Test of all rules for xbar & r chart - r table", {
   table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_secondTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Point 7", "Point 2", "Point 25", "Point 8", "Point 4", "Point 8",
-                                      "Point 3", "Point 26", "Point 9", "Point 5", "Point 9", "Point 4",
-                                      "Point 27", "Point 10", "Point 6", "Point 10", "Point 5", "Point 28",
-                                      "Point 48", "Point 7", "Point 11", "Point 6", "Point 29", "Point 49",
-                                      "Point 8", "Point 12", "Point 7", "Point 30", "Point 50", "Point 9",
-                                      "Point 13", "Point 8", "Point 31", "Point 51", "Point 10", "Point 14",
-                                      "Point 9", "Point 32", "Point 52", "Point 44", "Point 15", "Point 10",
-                                      "Point 33", "Point 53", "Point 45", "Point 16", "", "Point 34",
-                                      "Point 54", "Point 46", "Point 17", "", "Point 35", "Point 55",
-                                      "Point 47", "Point 18", "", "Point 36", "", "Point 48", "Point 19",
-                                      "", "Point 37", "", "Point 49", "Point 20", "", "Point 38",
-                                      "", "Point 50", "Point 21", "", "Point 39", "", "Point 51",
-                                      "Point 22", "", "Point 40", "", "Point 52", "Point 23", "",
-                                      "", "", "Point 53", "Point 24", "", "", "", "Point 54", "Point 25",
-                                      "", "", "", "Point 55", "Point 26", "", "", "", "", "Point 27",
-                                      "", "", "", "", "Point 28", "", "", "", "", "Point 29", "",
-                                      "", "", "", "Point 30", "", "", "", "", "Point 31", "", "",
-                                      "", "", "Point 32", "", "", "", "", "Point 33", "", "", "",
-                                      "", "Point 34", "", "", "", "", "Point 35", "", "", "", "",
-                                      "Point 36", "", "", "", "", "Point 37", "", "", "", "", "Point 38",
-                                      "", "", "", "", "Point 39", "", "", "", "", "Point 40", "",
-                                      "", "", "", "Point 47", "", "", "", "", "Point 48", "", "",
-                                      "", "", "Point 49", "", "", "", "", "Point 50", "", "", "",
-                                      "", "Point 51", "", "", "", "", "Point 52", "", "", "", "",
-                                      "Point 53", "", "", "", "", "Point 54", "", "", "", "", "Point 55",
-                                      "", "", "", ""))
+                                 list("Point 7", "Point 8", "Point 9", "Point 10", "Point 11", "Point 12",
+                                      "Point 13", "Point 14", "Point 15", "Point 16", "Point 17",
+                                      "Point 18", "Point 19", "Point 20", "Point 21", "Point 22",
+                                      "Point 23", "Point 24", "Point 25", "Point 26", "Point 27",
+                                      "Point 28", "Point 29", "Point 30", "Point 31", "Point 32",
+                                      "Point 33", "Point 34", "Point 35", "Point 36", "Point 37",
+                                      "Point 38", "Point 39", "Point 40", "Point 47", "Point 48",
+                                      "Point 49", "Point 50", "Point 51", "Point 52", "Point 53",
+                                      "Point 54", "Point 55"))
 })
 
 test_that("WF28.3 Test of all rules for xbar & r chart - xbar table", {
