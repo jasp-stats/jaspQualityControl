@@ -206,6 +206,8 @@ ggplotTable <- function(dataframe, displayColNames = FALSE){
   return(p)
 }
 
+# deprecated function for calculating out-of-control rules
+# TODO: Can be deleted once it is removed in the attributes charts, the final place where it is used.
 NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 
   # Adjust Rules to SKF
@@ -294,6 +296,10 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   return(result)
 }
 
+# Function to determine if two numbers alternate in increase/decrease pattern
+.patternAlternates <- function(x, y) {
+  return((x < 0 && y > 0) || (x > 0 && y < 0))
+}
 
 .nelsonLaws <- function(plotStatistics,
                         sigma = NULL,
@@ -443,11 +449,6 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     k8 <- ruleList[["rule8"]][["k"]]
     r8 <- c()
 
-    # Function to determine if two numbers alternate in increase/decrease pattern
-    patternAlternates <- function(x, y) {
-      return((x < 0 && y > 0) || (x > 0 && y < 0))
-    }
-
     # Calculate differences between consecutive points
     differences <- diff(plotStatistics)
 
@@ -457,7 +458,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
         currentSequence <- differences[i:(i+k8-1)]
         sequenceCount <- 1
         for (j in 1:(k8-1)) {
-          if (!is.na(currentSequence[j]) && !is.na(currentSequence[j + 1]) && patternAlternates(currentSequence[j], currentSequence[j + 1])) {
+          if (!is.na(currentSequence[j]) && !is.na(currentSequence[j + 1]) && .patternAlternates(currentSequence[j], currentSequence[j + 1])) {
             sequenceCount <- sequenceCount + 1
           }
         }
@@ -1271,32 +1272,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     jaspGraphs::themeJaspRaw()
 
   return(plotObject)
-}
-
-.NelsonTableList <- function(qccObject, type = "xBar", phase2 = TRUE, labels = NULL) {
-  violationsList <- list("test1" = NULL, "test2" = NULL, "test3" = NULL)
-
-  if (length(na.omit(qccObject$statistics)) <= 1) # no need for table with only 1 group
-    return(violationsList)
-
-  if (!phase2 || type == "I") {
-    Test <- NelsonLaws(data = qccObject, allsix = TRUE, xLabels = labels)
-    violationsList[["test4"]] <- Test$Rules$R4
-    violationsList[["test5"]] <- Test$Rules$R5
-    violationsList[["test6"]] <- Test$Rules$R6
-  } else if (type == "np" || type == "c" || type == "u" || type == "Laney p'" || type == "Laney u'") {
-    Test <- NelsonLaws(data = qccObject, xLabels = labels, chart = "c")
-  } else if (type == "P") {
-    Test <- NelsonLaws(data = qccObject, xLabels = labels, chart = "p")
-  } else {
-    Test <- NelsonLaws(data = qccObject, xLabels = labels)
-  }
-
-  violationsList[["test1"]] <- Test$Rules$R1
-  violationsList[["test2"]] <- Test$Rules$R2
-  violationsList[["test3"]] <- Test$Rules$R3
-
-  return(violationsList)
 }
 
 .cusumPoints <- function(data, sigma, n, target, shiftSize, cuType = c("lower", "upper")) {
