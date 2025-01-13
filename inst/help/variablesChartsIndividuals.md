@@ -41,14 +41,45 @@ The assumptions associated with the Autocorrelation chart are:
 
 ### Out-of-control Signals 
 -------
+
+#### JASP Default Tests
 _Statistical process control handbook page 23:_
 
 - Test 1: One point beyond the control limits (sporadic issue).
 - Test 2: Seven consecutive points above or below the central line (mean shift).
 - Test 3:  A run up or down of seven consecutive points (trend).
 - Test 4: Two out of three consecutive points beyond the warning (two sigma) limits (increasing variation).
-- Test 5:Hugging the central line, this is indicated when 15 consecutive points are within the one sigma limits (reducing variation).
+- Test 5: Hugging the central line, this is indicated when 15 consecutive points are within the one sigma limits (reducing variation).
 - Test 6: Eight consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
+
+#### Nelson Laws
+- Test 1: One point beyond the control limits (sporadic issue).
+- Test 2: Nine consecutive points above or below the central line (mean shift).
+- Test 3:  A run up or down of six consecutive points (trend).
+- Test 4: Two out of three consecutive points beyond the warning (two sigma) limits (increasing variation).
+- Test 5: Hugging the central line, this is indicated when 15 consecutive points are within the one sigma limits (reducing variation).
+- Test 6: Eight consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
+- Test 7: Four out of five consecutive points beyond the warning (one sigma) limits (slightly increasing variation).
+- Test 8: Fourteen points in a row are alternating increase and decrease (oscillation).
+
+#### Western Electric Rules
+- Test 1: One point beyond the control limits (sporadic issue).
+- Test 2: Eight consecutive points above or below the central line (mean shift).
+- Test 4: Two out of three consecutive points beyond the warning (two sigma) limits (increasing variation).
+- Test 7: Four out of five consecutive points beyond the warning (one sigma) limits (slightly increasing variation).
+
+#### Custom Test Selection
+Select manually which tests you want to apply and modify them as desired:
+
+- Test 1: N points beyond the control limits (sporadic issue).
+- Test 2: N consecutive points above or below the central line (mean shift).
+- Test 3:  A run up or down of N consecutive points (trend).
+- Test 4: N out of N+1 consecutive points beyond the warning (two sigma) limits (increasing variation).
+- Test 5: Hugging the central line, this is indicated when N consecutive points are within the one sigma limits (reducing variation).
+- Test 6: N consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
+- Test 7: N out of N+1 consecutive points beyond the warning (one sigma) limits (slightly increasing variation).
+- Test 8: N points in a row are alternating increase and decrease (oscillation).
+
 
 ## References 
 -------
