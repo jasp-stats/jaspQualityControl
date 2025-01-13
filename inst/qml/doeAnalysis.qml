@@ -1,8 +1,7 @@
 import QtQuick
-import JASP
-import JASP.Controls
-import JASP.Widgets
 import QtQuick.Layouts
+import JASP.Controls
+import JASP
 
 
 Form
