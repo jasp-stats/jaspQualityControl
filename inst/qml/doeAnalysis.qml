@@ -32,8 +32,8 @@ Form
 		{
 			name:								"dependentFactorial"
 			allowedColumns:						["scale"]
-			singleVariable:						true
-			label:								qsTr("Response")
+			label:								qsTr("Responses")
+			height:								50 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -60,7 +60,7 @@ Form
 			id:									covariates
 			label:								qsTr("Covariates")
 			allowedColumns:						["scale"]
-			height:								75 * preferencesModel.uiScale
+			height:								50 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -86,8 +86,8 @@ Form
 		{
 			name:								"dependentResponseSurface"
 			allowedColumns:						["scale"]
-			singleVariable:						true
-			label:								qsTr("Response")
+			label:								qsTr("Responses")
+			height:								50 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -96,7 +96,7 @@ Form
 			name:								"continuousFactorsResponseSurface"
 			allowedColumns:						["scale"]
 			label:								qsTr("Continuous predictors")
-			height:								125 * preferencesModel.uiScale
+			height:								100 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -105,7 +105,7 @@ Form
 			name:								"fixedFactorsResponseSurface"
 			allowedColumns:						["nominal"]
 			label:								qsTr("Discrete predictors")
-			height:								125 * preferencesModel.uiScale
+			height:								100 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -466,7 +466,87 @@ Form
 		}
 	}
 
-		Section
+	Section
+	{
+		title: qsTr("Response optimizer")
+
+		VariablesForm
+		{
+			id:									variablesFormResponseOptimizer
+			preferredHeight: 					jaspTheme.smallDefaultVariablesFormHeight
+
+			AvailableVariablesList
+			{
+				name:								"allResponseVariables"
+				label:								qsTr("Available responses")
+				source:								designType.currentValue == "factorialDesign" ? "dependentFactorial" : "dependentResponseSurface"
+				width:								100
+			}
+
+			AssignedVariablesList
+			{
+				name:								"responsesResponseOptimizer"
+				id:									responsesResponseOptimizer
+				allowedColumns:						["scale"]
+				label:								qsTr("Included responses")
+				width:								450
+				rowComponentTitle: 					"Goal          Lower   Target   Upper   Weight   Importance"
+				rowComponent: Row 
+				{
+					DropDown
+					{
+						name:							"responseOptimizerGoal"
+						id: 							responseOptimizerGoal
+						indexDefaultValue:				0
+						values: [
+							{ label: qsTr("Maximize"), value: "maximize"},
+							{ label: qsTr("Minimize"), value: "minimize"},
+							{ label: qsTr("Target"), value: "target"}
+						]
+					}
+					DoubleField
+					{
+						name:							"responseOptimizerLowerBound"
+						defaultValue:					1
+						fieldWidth:						40
+						enabled:						responseOptimizerGoal.currentValue != "minimize"
+					}
+					DoubleField
+					{
+						name:							"responseOptimizerTarget"
+						defaultValue:					0.5
+						fieldWidth:						45
+					}
+					DoubleField
+					{
+						name:							"responseOptimizerUpperBound"
+						defaultValue:					0
+						fieldWidth:						40
+						enabled:						responseOptimizerGoal.currentValue != "maximize"
+					}
+					DoubleField
+					{
+						name:							"responseOptimizerWeight"
+						defaultValue:					1
+						min:							0.1
+						max:							10
+						fieldWidth:						50
+					}
+					DoubleField
+					{
+						name:							"responseOptimizerImportance"
+						defaultValue:					1
+						min:							0.1
+						max:							10
+						fieldWidth:						55
+						enabled:						responsesResponseOptimizer.count > 1
+					}
+				}
+			}
+		}
+	}
+
+	Section
 	{
 		title: qsTr("Advanced options")
 
