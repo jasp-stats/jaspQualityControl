@@ -507,7 +507,7 @@ Form
 					DoubleField
 					{
 						name:							"responseOptimizerLowerBound"
-						defaultValue:					1
+						defaultValue:					0
 						fieldWidth:						40
 						enabled:						responseOptimizerGoal.currentValue != "minimize"
 					}
@@ -520,7 +520,7 @@ Form
 					DoubleField
 					{
 						name:							"responseOptimizerUpperBound"
-						defaultValue:					0
+						defaultValue:					1
 						fieldWidth:						40
 						enabled:						responseOptimizerGoal.currentValue != "maximize"
 					}
@@ -544,6 +544,75 @@ Form
 				}
 			}
 		}
+		
+		Group
+		{
+			columns:					1
+			
+			CheckBox
+			{
+				name:						"optimizationSolutionTable"
+				label:						qsTr("Show optimal solution")
+				checked:					true
+			}
+
+			CheckBox
+			{
+				name:						"optimizationPlot"
+				label:						qsTr("Show optimization plot")
+				checked:					true
+
+				CheckBox
+				{
+					name:						"optimizationPlotCustomParameters"
+					id:							optimizationPlotCustomParameters
+					label:						qsTr("Customize input parameters")
+					checked:					false
+				}
+
+				VariablesList
+				{
+					id: 				optimptimizationPlotCustomParameters
+					name:				"optimptimizationPlotCustomParameters"
+					label:				qsTr("Predictor")
+					visible:			optimizationPlotCustomParameters.checked
+					source: 			designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface"]
+					listViewType:		JASP.AssignedVariables
+					draggable:			false
+					preferredHeight:	jaspTheme.smallDefaultVariablesFormHeight
+					rowComponentTitle:	qsTr("Value")
+					rowComponent: 		TextField { name: "value"; fieldWidth: 40; defaultValue: "0"}
+				}
+			}
+		}
+
+			// VariablesForm
+			// {
+			// 	id:									variablesFormptimizationPlotCustomParametersContinuous
+			// 	preferredHeight: 					jaspTheme.smallDefaultVariablesFormHeight
+
+			// 	AvailableVariablesList
+			// 	{
+			// 		name:								"continuousPredictorVariables"
+			// 		label:								qsTr("Continuous predictors")
+			// 		source:								designType.currentValue == "factorialDesign" ? "continuousFactorsFactorial" : "continuousFactorsResponseSurface"
+			// 		width:								100
+			// 	}
+			// }
+
+			// VariablesForm
+			// {
+			// 	id:									variablesFormptimizationPlotCustomParametersDiscrete
+			// 	preferredHeight: 					jaspTheme.smallDefaultVariablesFormHeight
+
+			// 	AvailableVariablesList
+			// 	{
+			// 		name:								"discretePredictorVariables"
+			// 		label:								qsTr("Discrete predictors")
+			// 		source:								designType.currentValue == "factorialDesign" ? "fixedFactorsFactorial" : "fixedFactorsResponseSurface"
+			// 		width:								100
+			// 	}
+			// }
 	}
 
 	Section

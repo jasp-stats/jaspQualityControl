@@ -20,7 +20,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   if (options[["designType"]] == "factorialDesign") {
     ready <- sum(length(options[["fixedFactorsFactorial"]]), length(options[["continuousFactorsFactorial"]])) >= 1 &&
-      options[["dependentFactorial"]] != "" &&
+      length(options[["dependentFactorial"]]) >= 1 &&
       !is.null(unlist(options[["modelTerms"]]))
     discretePredictors <- options[["fixedFactorsFactorial"]]
     continuousPredictors <- options[["continuousFactorsFactorial"]]
@@ -28,7 +28,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     blocks <- options[["blocksFactorial"]]
     dependent <- options[["dependentFactorial"]]
   } else if (options[["designType"]] == "responseSurfaceDesign") {
-    ready <- length(options[["continuousFactorsResponseSurface"]]) >= 1 && options[["dependentResponseSurface"]] != ""
+    ready <- length(options[["continuousFactorsResponseSurface"]]) >= 1 && length(options[["dependentResponseSurface"]]) >= 1
     discretePredictors <- options[["fixedFactorsResponseSurface"]]
     continuousPredictors <- options[["continuousFactorsResponseSurface"]]
     covariates <- NULL
@@ -533,6 +533,11 @@ get_levels <- function(var, num_levels, dataset) {
     }
   }
   return(VIF)
+}
+
+.calculateOptimalResponse <- function() {
+  # need the fitted model object(s)
+
 }
 
 .addModelHeaderTerms <- function(anovaFit, covariates = "") {
