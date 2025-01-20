@@ -535,8 +535,50 @@ get_levels <- function(var, num_levels, dataset) {
   return(VIF)
 }
 
-.calculateOptimalResponse <- function() {
-  # need the fitted model object(s)
+.calculateOptimalResponse <- function(continuousPredictors, discretePredictors) {
+  # need the fitted model object(s) or some other way to get the formula with coefficients
+  # need the min. and max. levels of the predictors
+  # need the goal of the optimization process
+  coefficients <- result$regression$coefficients$est
+
+  # This function should take values as input and use the lm to predict
+  ?predict
+
+  # I have some predictor levels
+  InjPress <- dataset$InjPress[1]
+  InjTemp <- dataset$InjTemp[1]
+  CoolTemp <- dataset$CoolTemp[1]
+  Material1 <- as.numeric(dataset$Material)[1]-1
+
+
+  predictionFrame <- data.frame("PredictorName" = names(coefficients),
+                                "Coeff" = unname(coefficients))
+ attr(resultCoded$regression$object$terms, "factors") # This matrix can probably be used to do everything. Just multiple it with the input vector and sum up the whole matrix
+  objective_function <- function(x, predNames) {
+    nPred <- length(x)
+    predNames <- predictionFrame$PredictorName[2:(1+nPred)]
+    values <- x
+    result <- predictionFrame$Coeff[1] # Intercept
+    for(term_i in (length(values)+2):nrow(predictionFrame)) {
+      input_string <- predictionFrame$PredictorName[term_i]
+      # Split the input string by ":"
+      split_strings <- strsplit(input_string, ":")[[1]]
+
+      # Find indices of matches
+      indices <- which(predNames %in% split_strings)
+      values <- c(values, prod(values[indices]))
+    }
+    values <- c(1, values)
+    y <- sum(predictionFrame$Coeff * values)
+    return(y)
+  }
+  # result <- optim(
+  #   par = c(1, 1),               # Initial guesses for x1 and x2
+  #   fn = objective_function,     # Objective function
+  #   method = "L-BFGS-B",         # Optimization method
+  #   lower = c(0, 0),             # Lower bounds for x1 and x2
+  #   upper = c(10, 10)            # Upper bounds for x1 and x2
+  # )
 
 }
 
