@@ -1483,7 +1483,7 @@ test_that("16.2 Three factors three levels Uncoded Coefficients table results ma
 test_that("16.3 Three factors three levels Discrete Predictor Levels table results match", {
   table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(2, "A1", 3, "A2", 2, "B1", 3, "B2", 2, "C1", 3, "C2"))
+                                 list(1, "A1", 2, "A2", 1, "B1", 2, "B2", 1, "C1", 2, "C2"))
 })
 
 test_that("16.4 Three factors three levels Regression Equation in Uncoded Units table results match", {
@@ -1592,7 +1592,7 @@ test_that("17.2 Three factors 2*three and 1*four levels Uncoded Coefficients tab
 test_that("17.3 Three factors 2*three and 1*four levels Discrete Predictor Levels table results match", {
   table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(2, "A1", 3, "A2", 4, "A3", 2, "B1", 3, "B2", 2, "C1", 3, "C2"
+                                 list(1, "A1", 2, "A2", 3, "A3", 1, "B1", 2, "B2", 1, "C1", 2, "C2"
                                  ))
 })
 
@@ -1807,8 +1807,8 @@ test_that("18.2 Four factors 1x three, 1*two, 1*five and 1*six levels Uncoded Co
 test_that("18.3 Four factors 1x three, 1*two, 1*five and 1*six levels Discrete Predictor Levels table results match", {
   table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(2, "A1", 3, "A2", 4, "A3", 5, "A4", 6, "A5", 2, "B1", 3, "B2",
-                                      4, "B3", 5, "B4", 2, "C1", 3, "C2", 4, "C3", 2, "D1"))
+                                 list(1, "A1", 2, "A2", 3, "A3", 4, "A4", 5, "A5", 1, "B1", 2, "B2",
+                                      3, "B3", 4, "B4", 1, "C1", 2, "C2", 3, "C3", 1, "D1"))
 })
 
 test_that("18.4 Four factors 1x three, 1*two, 1*five and 1*six levels Regression Equation in Uncoded Units table results match", {
@@ -3261,7 +3261,7 @@ test_that("32.2 Factorial analysis with nominal levels Uncoded Coefficients tabl
 test_that("32.3 Factorial analysis with nominal levels Discrete Predictor Levels table results match", {
   table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Low", "A1", "Low", "B1", "Low", "C1"))
+                                 list("High", "A1", "High", "B1", "High", "C1"))
 })
 
 test_that("32.4 Factorial analysis with nominal levels Regression Equation in Uncoded Units table results match", {
@@ -3360,7 +3360,7 @@ test_that("33.2 RSM analysis with nominal levels Uncoded Coefficients table resu
 test_that("33.3 RSM analysis with nominal levels Discrete Predictor Levels table results match", {
   table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("LevelB", "C1", "WhateverLow", "D1"))
+                                 list("LevelA", "C1", "WhateverHigh", "D1"))
 })
 
 test_that("33.4 RSM analysis with nominal levels Regression Equation in Uncoded Units table results match", {
