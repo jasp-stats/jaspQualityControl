@@ -510,7 +510,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 get_levels <- function(var, num_levels, dataset) {
   levels_var <- levels(dataset[[var]])
-  levels_var[2:(num_levels + 1)]
+  levels_var[1:(num_levels)]
 }
 
 .getVIF <- function(regressionFit, predictors) {
@@ -535,51 +535,83 @@ get_levels <- function(var, num_levels, dataset) {
   return(VIF)
 }
 
-.calculateOptimalResponse <- function(continuousPredictors, discretePredictors) {
-  # need the fitted model object(s) or some other way to get the formula with coefficients
-  # need the min. and max. levels of the predictors
-  # need the goal of the optimization process
+.calculateOptimalResponse <- function(dataset, continuousPredictors, discretePredictors) {
+  # extract required objects
   coefficients <- result$regression$coefficients$est
 
-  # This function should take values as input and use the lm to predict
-  ?predict
+  # need initial guesses and limits for cont. variables
+  continuousPredictorsData <- dataset[continuousPredictors]
+  continuousPredictorsInital <- continuousPredictorsData[1,]
+  continuousPredictorsMin <- sapply(continuousPredictorsData, min)
+  continuousPredictorsMax <- sapply(continuousPredictorsData, max)
 
-  # I have some predictor levels
-  InjPress <- dataset$InjPress[1]
-  InjTemp <- dataset$InjTemp[1]
-  CoolTemp <- dataset$CoolTemp[1]
-  Material1 <- as.numeric(dataset$Material)[1]-1
-
-
-  predictionFrame <- data.frame("PredictorName" = names(coefficients),
-                                "Coeff" = unname(coefficients))
- attr(resultCoded$regression$object$terms, "factors") # This matrix can probably be used to do everything. Just multiple it with the input vector and sum up the whole matrix
-  objective_function <- function(x, predNames) {
-    nPred <- length(x)
-    predNames <- predictionFrame$PredictorName[2:(1+nPred)]
-    values <- x
-    result <- predictionFrame$Coeff[1] # Intercept
-    for(term_i in (length(values)+2):nrow(predictionFrame)) {
-      input_string <- predictionFrame$PredictorName[term_i]
-      # Split the input string by ":"
-      split_strings <- strsplit(input_string, ":")[[1]]
-
-      # Find indices of matches
-      indices <- which(predNames %in% split_strings)
-      values <- c(values, prod(values[indices]))
-    }
-    values <- c(1, values)
-    y <- sum(predictionFrame$Coeff * values)
-    return(y)
+  discretePredictorLevelList <- list()
+  for (i in seq_along(discretePredictors)) {
+    predictor_i <- discretePredictors[i]
+    discretePredictorLevelList[[predictor_i]] <- levels(dataset[[predictor_i]])
   }
-  # result <- optim(
-  #   par = c(1, 1),               # Initial guesses for x1 and x2
-  #   fn = objective_function,     # Objective function
-  #   method = "L-BFGS-B",         # Optimization method
-  #   lower = c(0, 0),             # Lower bounds for x1 and x2
-  #   upper = c(10, 10)            # Upper bounds for x1 and x2
-  # )
 
+  discreteCoefNames <- unname(unlist(Map(function(v) paste0(v, seq_len(nlevels(dataset[[v]]) - 1)), discretePredictors)))
+
+  gridSearchDf <- expand.grid(discretePredictorLevelList)
+  optimalResultDf <- gridSearchDf
+  optimalResultDf[["outcomeValue"]] <- rep(NA, nrow(optimalResultDf))
+  optimalResultDf[continuousPredictors] <- rep(NA, nrow(optimalResultDf))
+
+  # Loop over all possible discrete value (combinations)
+  for (i in seq_len(nrow(gridSearchDf))) {
+    currentDiscreteLevels <- gridSearchDf[i,]
+    currrentOptimResult <- optim(
+      par = continuousPredictorsInital,   # Initial guesses
+      fn = .equationPredictionFunction,     # Objective function
+      method = "L-BFGS-B",         # Optimization method
+      lower = continuousPredictorsMin,  # Lower bounds
+      upper = continuousPredictorsMax,  # Upper bounds
+      continuousPredictors = continuousPredictors,
+      currentDiscreteLevels = currentDiscreteLevels,
+      coefficients = coefficients
+    )
+
+    optimalResultDf[i, "outcomeValue"] <- currrentOptimResult$value * -1  # after optimization the sign can be switched again
+    optimalResultDf[i, continuousPredictors] <- currrentOptimResult$par
+  }
+
+
+  optimalParameters <- optimalResultDf[which.max(optimalResultDf$outcomeValue), names(optimalResultDf) != "outcomeValue"]
+  return(optimalParameters)
+}
+
+.equationPredictionFunction <- function(x, continuousPredictors, currentDiscreteLevels, coefficients) {
+  coefficientVector <- names(coefficients)[-1]
+  predictorValues <- c(1)  # for the intercept
+
+  for (coef_i in coefficientVector) {
+    coefSplit <- strsplit(coef_i, ":")[[1]]
+    coefResult <- c()
+    for (coef_j in coefSplit) {
+      coef_j_clean <- .removeAppendedFactorLevels(discretePredictors, coef_j, ":")
+      coef_j_level <- sub(coef_j_clean, "", coef_j)
+      if (coef_j_clean %in% continuousPredictors) {
+        coefResult <- c(coefResult, x[[coef_j]])
+      } else if (coef_j_clean %in% discretePredictors) {
+        current_j_level <- if (length(currentDiscreteLevels)  > 1) currentDiscreteLevels[[coef_j_clean]] else currentDiscreteLevels
+        max_j_level <- length(levels(current_j_level))
+        coef_j_level <- as.numeric(coef_j_level)
+        if (as.numeric(current_j_level) == coef_j_level) {
+          coefResult <- c(coefResult, 1)
+        } else if (as.numeric(current_j_level) == max_j_level) {
+          coefResult <- c(coefResult, -1) # in the LM function with sum contrasts the last predictor does not have a coefficient, but it is the inverse of the sum of all other predictors, so set all others to -1
+        } else {
+          coefResult <- c(coefResult, 0)
+        }
+      }
+    }
+    coefResult <- prod(coefResult)
+    predictorValues <- c(predictorValues, coefResult)
+  }
+
+  outcome <- sum(coefficients * predictorValues)
+  return(-outcome)
 }
 
 .addModelHeaderTerms <- function(anovaFit, covariates = "") {
