@@ -204,15 +204,6 @@ Form
 
 			CheckBox
 			{
-				id:									responseOptimizer
-				name:								"responseOptimizer"
-				label:								qsTr("Show optimal response")
-				checked:							true
-			}
-
-
-			CheckBox
-			{
 				name:								"codeFactors"
 				checked:							true
 				label:								qsTr("Display results in coded units")
