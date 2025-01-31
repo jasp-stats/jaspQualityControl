@@ -25,7 +25,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level2facFull.csv", options)
 
 test_that("1.1 Two factors full factorial ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(53.6626325023352, 160.987897507006, 3, "", "", "Model", "", 148.691283261526,
                                       2, "", "", "<unicode> Linear terms", 62.0097134571341, 62.0097134571341,
@@ -38,7 +38,7 @@ test_that("1.1 Two factors full factorial ANOVA table results match", {
 })
 
 test_that("1.2 Two factors full factorial Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 99.3133959225, "", "", "", "(Intercept)", "", "",
                                       "A", 3.93731232750001, 7.87462465500001, "", "", "A", "", "NaN",
@@ -48,13 +48,13 @@ test_that("1.2 Two factors full factorial Coded Coefficients table results match
 })
 
 test_that("1.3 Two factors full factorial Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 99.31 (Intercept) + 3.94 A + 4.66 B - 1.75 AB"))
 })
 
 test_that("1.4 Two factors full factorial Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", "", 1, ""))
 })
@@ -92,7 +92,7 @@ results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level5facFull.csv",
 
 
 test_that("2.1 Five factors full factorial ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(118.542221893211, 1778.13332839816, 15, 2.63173059967985, 0.0318832484215919,
                                       "Model", "", 906.296316752094, 5, "", "", "<unicode> Linear terms",
@@ -124,7 +124,7 @@ test_that("2.1 Five factors full factorial ANOVA table results match", {
 })
 
 test_that("2.2 Five factors full factorial Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 101.699596592187, "", 9.7648722242665e-23, 1.18642646950104,
                                       "(Intercept)", 85.71925796207, "", "A", 2.25096480031251, 4.50192960062502,
@@ -157,14 +157,14 @@ test_that("2.2 Five factors full factorial Coded Coefficients table results matc
 })
 
 test_that("2.3 Five factors full factorial Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 101.7 (Intercept) + 2.25 A - 2.76 B + 0.12 C + 1.42 D - 3.69 E + 1.45 AB + 1.22 AC - 0.76 AD - 1.36 AE - 2.05 BC + 1.63 BD - 0.24 BE + 1.27 CD - 2.57 CE + 2.47 DE"
                                  ))
 })
 
 test_that("2.4 Five factors full factorial Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.441199385076272, 0, 0.711586779394205, 6.71144161570719))
 })
@@ -202,7 +202,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level5facFullCovariate.csv", options)
 
 test_that("3.1 Five factors full factorial with covariates ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(108.781300354899, 1740.50080567839, 16, 2.29851364266209, 0.0573982083927571,
                                       "Model", "", 10.7931450559473, 1, "", "", "<unicode> Covariates",
@@ -237,7 +237,7 @@ test_that("3.1 Five factors full factorial with covariates ANOVA table results m
 })
 
 test_that("3.2 Five factors full factorial with covariates Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 109.731825415679, "", 9.90816291567143e-06, 16.8635074468689,
                                       "(Intercept)", 6.50705825946392, "", "A", 2.13840267682821,
@@ -275,14 +275,14 @@ test_that("3.2 Five factors full factorial with covariates Coded Coefficients ta
 })
 
 test_that("3.3 Five factors full factorial with covariates Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 109.73 (Intercept) + 2.14 A - 2.98 B - 0.02 C + 1.7 D - 3.63 E - 0.17 COV1 + 1.71 AB + 1.24 AC - 0.71 AD - 1.51 AE - 1.91 BC + 1.62 BD - 0.36 BE + 1.09 CD - 2.52 CE + 2.51 DE"
                                  ))
 })
 
 test_that("3.4 Five factors full factorial with covariates Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.41287252694057, 0, 0.715906061422857, 6.87944780691394))
 })
@@ -319,7 +319,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level5facPart.csv", options)
 
 test_that("4.1 Five factors fractional factorial ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(80.1546981866672, 561.08288730667, 7, "", "", "Model", "", 424.686497752278,
                                       5, "", "", "<unicode> Linear terms", 50.7650166276942, 50.7650166276942,
@@ -336,7 +336,7 @@ test_that("4.1 Five factors fractional factorial ANOVA table results match", {
 })
 
 test_that("4.2 Five factors fractional factorial Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 102.53699416875, "", "", "", "(Intercept)", "",
                                       "", "A", -2.51905281375, -5.03810562749999, "", "", "A", "",
@@ -350,14 +350,14 @@ test_that("4.2 Five factors fractional factorial Coded Coefficients table result
 })
 
 test_that("4.3 Five factors fractional factorial Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 102.54 (Intercept) - 2.52 A - 1.81 B - 3.03 C + 2.69 D + 5.2 E + 3.11 BC + 2.71 BE"
                                  ))
 })
 
 test_that("4.4 Five factors fractional factorial Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", "", 1, ""))
 })
@@ -424,7 +424,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level9facFull.csv", options)
 
 test_that("5.1 Nine factors highest factorial ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(75.5535356760645, 3399.9091054229, 45, 0.602413101972684, 0.967387168558948,
                                       "Model", "", 1045.45142898722, 9, "", "", "<unicode> Linear terms",
@@ -504,7 +504,7 @@ test_that("5.1 Nine factors highest factorial ANOVA table results match", {
 })
 
 test_that("5.2 Nine factors highest factorial Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 101.837859991875, "", 1.83191023845293e-88, 0.989863264542786,
                                       "(Intercept)", 102.880734784024, "", "A", 0.490698508593758,
@@ -589,14 +589,14 @@ test_that("5.2 Nine factors highest factorial Coded Coefficients table results m
 })
 
 test_that("5.3 Nine factors highest factorial Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 101.84 (Intercept) + 0.49 A + 0.2 B - 0.66 C - 1.66 D - 0.28 E + 0.89 F - 0.36 G + 0.67 H + 1.8 I - 0.27 AB + 0.84 AC - 0.16 AD + 0.86 AE + 0.14 AF - 0.41 AG + 0.31 AH + 0.31 AI - 0.29 BC - 0.49 BD + 0.3 BE - 1.71 BF + 1.79 BG + 0.14 BH - 0.76 BI - 0.59 CD - 0.94 CE + 0.55 CF + 0.35 CG + 0.95 CH - 0.32 CI - 0.16 DE + 0.64 DF - 0.29 DG - 0.63 DH - 0.03 DI - 0.69 EF + 0.72 EG + 0.5 EH - 0.24 EI + 1.04 FG - 0.47 FH + 1.03 FI - 1.38 GH - 0.49 GI - 0.02 HI"
                                  ))
 })
 
 test_that("5.4 Nine factors highest factorial Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.248455137133958, 11.1990244288905))
 })
@@ -663,7 +663,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level9facPart.csv", options)
 
 test_that("6.1 Nine factors smallest fractional ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(90.1796309137531, 1352.6944637063, 15, "", "", "Model", "", 1169.65318986718,
                                       9, "", "", "<unicode> Linear terms", 0.969245325104176, 0.969245325104176,
@@ -688,7 +688,7 @@ test_that("6.1 Nine factors smallest fractional ANOVA table results match", {
 })
 
 test_that("6.2 Nine factors smallest fractional Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 99.366952810625, "", "", "", "(Intercept)", "",
                                       "", "A", -0.246125644375004, -0.492251288750007, "", "", "A",
@@ -710,14 +710,14 @@ test_that("6.2 Nine factors smallest fractional Coded Coefficients table results
 })
 
 test_that("6.3 Nine factors smallest fractional Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 99.37 (Intercept) - 0.25 A - 3.25 B - 4.22 C + 2.28 D + 0.6 E - 0.02 F - 3.61 G - 4.46 H - 2.49 I - 0.47 AB + 0.5 AC - 0.88 AD + 0.56 AE - 3.06 AG + 0.71 AH"
                                  ))
 })
 
 test_that("6.4 Nine factors smallest fractional Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", "", 1, ""))
 })
@@ -746,7 +746,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/oneCenterPointFactorial.csv", options)
 
 test_that("7.1 One center point ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(122.7259174713, 859.081422299102, 7, 1.11103241899578, 0.625640913233291,
                                       "Model", "", 329.303756397979, 3, "", "", "<unicode> Linear terms",
@@ -767,7 +767,7 @@ test_that("7.1 One center point ANOVA table results match", {
 })
 
 test_that("7.2 One center point Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 100.148696226667, "", 0.022260826815119, 3.50334996671428,
                                       "(Intercept)", 28.5865520653634, "", "A", 1.60073444250001,
@@ -786,14 +786,14 @@ test_that("7.2 One center point Coded Coefficients table results match", {
 })
 
 test_that("7.3 One center point Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 100.15 (Intercept) + 1.6 A + 4.38 B + 4.4 C + 0.52 AB + 8.05 BC + 0.65 AC + 0.87 ABC"
                                  ))
 })
 
 test_that("7.4 One center point Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.0885503973984001, 0, 0.8860687996748, 10.5100499001428))
 })
@@ -823,7 +823,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/twoCenterPointFactorial.csv", options)
 
 test_that("8.1 Two center points ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(131.789445221657, 922.5261165516, 7, 0.609062731722388, 0.739795250787739,
                                       "Model", "", 245.174809387768, 3, "", "", "<unicode> Linear terms",
@@ -844,7 +844,7 @@ test_that("8.1 Two center points ANOVA table results match", {
 })
 
 test_that("8.2 Two center points Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 102.596932367, "", 0.00204933629173055, 4.65167433325255,
                                       "(Intercept)", 22.0559147130281, "", "A", 0.837464828750004,
@@ -863,14 +863,14 @@ test_that("8.2 Two center points Coded Coefficients table results match", {
 })
 
 test_that("8.3 Two center points Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 102.6 (Intercept) + 0.84 A - 2.9 B - 4.64 C + 0.83 AB + 8.53 BC - 3.16 AC - 1.12 ABC"
                                  ))
 })
 
 test_that("8.4 Two center points Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.680686606666776, 14.7098858264232))
 })
@@ -899,7 +899,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/fourCenterPointFactorial.csv", options)
 
 test_that("9.1 Four center points ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(290.51551762095, 2033.60862334665, 7, 3.57535197416145, 0.117806649515407,
                                       "Model", "", 730.813669799013, 3, "", "", "<unicode> Linear terms",
@@ -919,7 +919,7 @@ test_that("9.1 Four center points ANOVA table results match", {
 })
 
 test_that("9.2 Four center points Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 103.146956850833, "", 2.42004650296181e-06, 2.60216387420987,
                                       "(Intercept)", 39.6389166236324, "", "A", 6.57190309125001,
@@ -938,14 +938,14 @@ test_that("9.2 Four center points Coded Coefficients table results match", {
 })
 
 test_that("9.3 Four center points Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 103.15 (Intercept) + 6.57 A - 4.24 B + 5.5 C - 1.69 AB + 10.28 BC + 3.16 AC + 6.66 ABC"
                                  ))
 })
 
 test_that("9.4 Four center points Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.621048532915556, 0.206890168987148, 0.862199466514747, 9.01416007950353
                                  ))
@@ -976,7 +976,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/twoBlocksFactorial.csv", options)
 
 test_that("10.1 Two blocks ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(38.3143421461033, 268.200395022723, 7, "", "", "Model", 57.2971559169046,
                                       57.2971559169046, 1, "", "", "<unicode> Block", "", 46.035882096092,
@@ -993,7 +993,7 @@ test_that("10.1 Two blocks ANOVA table results match", {
 })
 
 test_that("10.2 Two blocks Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 99.75068923625, "", "", "", "(Intercept)", "",
                                       "", "A", 0.93879812875, 1.8775962575, "", "", "A", "", "NaN",
@@ -1007,14 +1007,14 @@ test_that("10.2 Two blocks Coded Coefficients table results match", {
 })
 
 test_that("10.3 Two blocks Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 99.75 (Intercept) + 0.94 A + 0.67 B - 2.1 C + 2.68 BLK1 - 0.2 AB + 0.3 BC - 4.53 AC"
                                  ))
 })
 
 test_that("10.4 Two blocks Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", "", 1, ""))
 })
@@ -1091,7 +1091,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2fac1htc.csv", options)
 
 test_that("13.1 Two factor one HTC ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(107.302682689122, 321.908048067365, 3, "", "", "Model", "", 276.632034149505,
                                       2, "", "", "<unicode> Linear terms", 2.95020693918108, 2.95020693918108,
@@ -1104,7 +1104,7 @@ test_that("13.1 Two factor one HTC ANOVA table results match", {
 })
 
 test_that("13.2 Two factor one HTC Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 101.7083684475, "", "", "", "(Intercept)", "",
                                       "", "A", -0.858808322500003, -1.71761664500001, "", "", "AHTC",
@@ -1114,13 +1114,13 @@ test_that("13.2 Two factor one HTC Coded Coefficients table results match", {
 })
 
 test_that("13.3 Two factor one HTC Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 101.71 (Intercept) - 0.86 A + 8.27 B + 3.36 AB"))
 })
 
 test_that("13.4 Two factor one HTC Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", "", 1, ""))
 })
@@ -1158,7 +1158,7 @@ results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/5fac2htc.csv", optio
 
 
 test_that("14.1 Five factor two HTC ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(174.318753634873, 2614.78130452309, 15, 2.61163525622296, 0.0329124356311262,
                                       "Model", "", 400.259395435181, 5, "", "", "<unicode> Linear terms",
@@ -1191,7 +1191,7 @@ test_that("14.1 Five factor two HTC ANOVA table results match", {
 })
 
 test_that("14.2 Five factor two HTC Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 100.472419629687, "", 2.73357601650784e-21, 1.44424477651029,
                                       "(Intercept)", 69.5674453969345, "", "A", -2.0959428696875,
@@ -1224,14 +1224,14 @@ test_that("14.2 Five factor two HTC Coded Coefficients table results match", {
 })
 
 test_that("14.3 Five factor two HTC Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 100.47 (Intercept) - 2.1 A - 1.37 B - 0.54 C - 2.11 D - 1.22 E - 2.66 AB + 3.54 AC + 1.22 AD - 6.14 AE + 1.13 BC - 2.25 BD - 0.48 BE + 1.57 CD + 0.54 CE - 1.07 DE"
                                  ))
 })
 
 test_that("14.4 Five factor two HTC Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.43814653881291, 0, 0.710011116806663, 8.1698822013094))
 })
@@ -1281,7 +1281,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/7fac3htc.csv", options)
 
 test_that("15.1 Seven factor three HTC ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(119.557000580297, 3347.59601624831, 28, 1.37785805113187, 0.126907369221792,
                                       "Model", "", 1133.66575048578, 7, "", "", "<unicode> Linear terms",
@@ -1333,7 +1333,7 @@ test_that("15.1 Seven factor three HTC ANOVA table results match", {
 })
 
 test_that("15.2 Seven factor three HTC Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 98.6847437647656, "", 5.65573938672141e-109, 0.823342021847729,
                                       "(Intercept)", 119.85874781819, "", "A", 0.581136164765628,
@@ -1389,14 +1389,14 @@ test_that("15.2 Seven factor three HTC Coded Coefficients table results match", 
 })
 
 test_that("15.3 Seven factor three HTC Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 98.68 (Intercept) + 0.58 A + 2.25 B + 0.33 C + 1.11 D + 0.78 E - 0.88 F - 0.87 G + 0.69 AB - 0.39 AC + 0.65 AD - 1.36 AE + 0.77 AF - 0.75 AG - 1.06 BC - 1.13 BD + 0.96 BE + 0.78 BF + 0.73 BG + 0.71 CD + 0.71 CE + 1 CF + 0.54 CG - 0.55 DE + 1.05 DF + 0.4 DG + 0.47 EF - 1.7 EG - 1.34 FG"
                                  ))
 })
 
 test_that("15.4 Seven factor three HTC Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.076900882947905, 0, 0.280418798518446, 9.31505163014995))
 })
@@ -1425,7 +1425,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/3level3facFull.csv", options)
 
 test_that("16.1 Three factors three levels ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(103.872530627319, 2700.68579631029, 26, "", "", "Model", "", 350.578267591584,
                                       6, "", "", "<unicode> Linear terms", 132.136684132621, 264.273368265242,
@@ -1442,7 +1442,7 @@ test_that("16.1 Three factors three levels ANOVA table results match", {
 })
 
 test_that("16.2 Three factors three levels Uncoded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", 99.4256253577778, "", "", "", "(Intercept)", "", "", "A1",
                                       -2.08298983111111, -6.24896949333332, "", "", "A1", "", "NaN",
@@ -1481,20 +1481,20 @@ test_that("16.2 Three factors three levels Uncoded Coefficients table results ma
 })
 
 test_that("16.3 Three factors three levels Discrete Predictor Levels table results match", {
-  table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1, "A1", 2, "A2", 1, "B1", 2, "B2", 1, "C1", 2, "C2"))
 })
 
 test_that("16.4 Three factors three levels Regression Equation in Uncoded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 99.43  - 2.08 A1 - 2.34 A2 + 0.9 B1 - 0.66 B2 - 1.63 C1 + 2.28 C2 + 5.99 A1B1 - 3.03 A2B1 - 3.19 A1B2 + 2.03 A2B2 - 3.48 B1C1 - 1.86 B2C1 - 2.47 B1C2 + 2.7 B2C2 - 4.79 A1C1 - 2.59 A2C1 + 6.32 A1C2 - 3.36 A2C2 - 2.44 A1B1C1 + 4.2 A2B1C1 - 3.81 A1B2C1 - 2.03 A2B2C1 - 3.62 A1B1C2 + 7.78 A2B1C2 + 13.36 A1B2C2 - 7.91 A2B2C2"
                                  ))
 })
 
 test_that("16.5 Three factors three levelsModel Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", "", 1, ""))
 })
@@ -1523,7 +1523,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/4level3facFull.csv", options)
 
 test_that("17.1 Three factors 2*three and 1*four levels ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(131.504590854318, 4602.66067990112, 35, "", "", "Model", "", 277.059734986186,
                                       7, "", "", "<unicode> Linear terms", 61.7886687517631, 185.366006255289,
@@ -1540,7 +1540,7 @@ test_that("17.1 Three factors 2*three and 1*four levels ANOVA table results matc
 })
 
 test_that("17.2 Three factors 2*three and 1*four levels Uncoded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", 102.659950219167, "", "", "", "(Intercept)", "", "", "A1",
                                       0.608225378611117, 2.43290151444447, "", "", "A1", "", "NaN",
@@ -1590,21 +1590,21 @@ test_that("17.2 Three factors 2*three and 1*four levels Uncoded Coefficients tab
 })
 
 test_that("17.3 Three factors 2*three and 1*four levels Discrete Predictor Levels table results match", {
-  table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1, "A1", 2, "A2", 3, "A3", 1, "B1", 2, "B2", 1, "C1", 2, "C2"
                                  ))
 })
 
 test_that("17.4 Three factors 2*three and 1*four levels Regression Equation in Uncoded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 102.66  + 0.61 A1 - 2.11 A2 + 3.46 A3 + 1.05 B1 + 0.3 B2 - 1.74 C1 + 1.05 C2 - 2.44 A1B1 - 3.18 A2B1 + 0.81 A3B1 + 0.02 A1B2 + 4.01 A2B2 - 2.66 A3B2 + 1.23 B1C1 + 0.81 B2C1 - 5.47 B1C2 + 5.01 B2C2 - 0.26 A1C1 - 3.92 A2C1 + 2.96 A3C1 + 7.55 A1C2 - 2.35 A2C2 - 5.74 A3C2 + 12.71 A1B1C1 - 13.88 A2B1C1 - 2.95 A3B1C1 - 17.56 A1B2C1 + 6.88 A2B2C1 + 14.56 A3B2C1 - 20.54 A1B1C2 + 8.93 A2B1C2 + 11.59 A3B1C2 + 13.1 A1B2C2 - 8.36 A2B2C2 - 6.31 A3B2C2"
                                  ))
 })
 
 test_that("17.5 Three factors 2*three and 1*four levels Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", "", 1, ""))
 })
@@ -1636,7 +1636,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/6level4facFull.csv", options)
 
 test_that("18.1 Four factors 1x three, 1*two, 1*five and 1*six levels ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(95.0212460548813, 6841.52971595146, 72, 1.09008572906614, 0.322574585190677,
                                       "Model", "", 1218.43208672634, 13, "", "", "<unicode> Linear terms",
@@ -1662,7 +1662,7 @@ test_that("18.1 Four factors 1x three, 1*two, 1*five and 1*six levels ANOVA tabl
 })
 
 test_that("18.2 Four factors 1x three, 1*two, 1*five and 1*six levels Uncoded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", 100.622776305583, "", 9.85349697235174e-188, 0.602662838439455,
                                       "(Intercept)", 166.963631881033, "", "A1", 1.83923588891664,
@@ -1805,21 +1805,21 @@ test_that("18.2 Four factors 1x three, 1*two, 1*five and 1*six levels Uncoded Co
 })
 
 test_that("18.3 Four factors 1x three, 1*two, 1*five and 1*six levels Discrete Predictor Levels table results match", {
-  table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1, "A1", 2, "A2", 3, "A3", 4, "A4", 5, "A5", 1, "B1", 2, "B2",
                                       3, "B3", 4, "B4", 1, "C1", 2, "C2", 3, "C3", 1, "D1"))
 })
 
 test_that("18.4 Four factors 1x three, 1*two, 1*five and 1*six levels Regression Equation in Uncoded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 100.62  + 1.84 A1 - 0.84 A2 - 3.86 A3 + 0.06 A4 + 1.81 A5 + 0.05 B1 + 0.38 B2 - 0.58 B3 - 0.43 B4 - 1.17 C1 - 0.62 C2 + 0.58 C3 - 0.33 D1 + 2.16 A1B1 + 2.48 A2B1 - 0.62 A3B1 - 0.09 A4B1 + 1.74 A5B1 + 0.29 A1B2 - 5.96 A2B2 + 3.3 A3B2 + 1.48 A4B2 - 1.88 A5B2 + 0.75 A1B3 + 5.57 A2B3 - 2.98 A3B3 - 2.99 A4B3 - 0.33 A5B3 + 1.24 A1B4 + 1.78 A2B4 - 4.62 A3B4 + 1.23 A4B4 - 0.94 A5B4 - 1 A1C1 - 0.82 A2C1 - 1.14 A3C1 + 1.15 A4C1 + 1.39 A5C1 + 3.49 A1C2 + 0.57 A2C2 - 1.82 A3C2 - 4.03 A4C2 + 1.54 A5C2 - 2.36 A1C3 - 0.35 A2C3 + 1.87 A3C3 + 0.39 A4C3 + 0.53 A5C3 - 0.46 A1D1 - 3.8 A2D1 + 0.62 A3D1 + 1.34 A4D1 + 0.92 A5D1 + 0.61 B1C1 - 0.96 B2C1 + 0.23 B3C1 + 0.96 B4C1 + 0.26 B1C2 - 2.57 B2C2 + 5.11 B3C2 - 3.14 B4C2 - 1.66 B1C3 - 0.78 B2C3 + 0.27 B3C3 + 2.82 B4C3 + 2.19 B1D1 + 1.76 B2D1 - 1.57 B3D1 - 1.28 B4D1 + 1.23 C1D1 + 0.37 C2D1 - 0.61 C3D1"
                                  ))
 })
 
 test_that("18.5 Four factors 1x three, 1*two, 1*five and 1*six levels Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.0264217427274993, 0, 0.319717284667332, 9.3364125466164))
 })
@@ -1848,7 +1848,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3contCCD.csv", options)
 
 test_that("19.1 Three continuous predictors CCD ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(33.4159369942268, 300.743432948041, 9, 0.603726470392989, 0.769693680161224,
                                       "Model", "", 136.241022081355, 3, "", "", "<unicode> Linear terms",
@@ -1873,7 +1873,7 @@ test_that("19.1 Three continuous predictors CCD ANOVA table results match", {
 })
 
 test_that("19.2 Three continuous predictors CCD Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 101.126534122288, "", 1.35754827517153e-11, 3.02555115875388,
                                       "(Intercept)", 33.4241692888572, "", "A", -0.220389873736422,
@@ -1895,14 +1895,14 @@ test_that("19.2 Three continuous predictors CCD Coded Coefficients table results
 })
 
 test_that("19.3 Three continuous predictors CCD Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 101.13 (Intercept) - 0.22 A + 2.88 B - 1.38 C + 1.32 A^2 - 2.32 B^2 - 0.02 C^2 - 1.76 AB + 0.04 AC - 2.38 BC"
                                  ))
 })
 
 test_that("19.4 Three continuous predictors CCD Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.356816916827087, 7.43972208850934))
 })
@@ -1932,7 +1932,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM5contCCD.csv", options)
 
 test_that("20.1 Five continuous predictors CCD ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(51.3587113078249, 1027.1742261565, 20, 0.419782874778523, 0.977915041906087,
                                       "Model", "", 341.185797996187, 5, "", "", "<unicode> Linear terms",
@@ -1973,7 +1973,7 @@ test_that("20.1 Five continuous predictors CCD ANOVA table results match", {
 })
 
 test_that("20.2 Five continuous predictors CCD Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 95.7137721498586, "", 1.41697458968158e-25, 3.17945282904517,
                                       "(Intercept)", 30.1038503466657, "", "A", 1.00369820969494,
@@ -2014,14 +2014,14 @@ test_that("20.2 Five continuous predictors CCD Coded Coefficients table results 
 })
 
 test_that("20.3 Five continuous predictors CCD Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 95.71 (Intercept) + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2 + 0.21 AB - 0.44 AC - 0.85 AD - 0.54 AE - 1.34 BC - 0.23 BD + 2.21 BE - 2.98 CD - 0.77 CE + 0.67 DE"
                                  ))
 })
 
 test_that("20.4 Five continuous predictors CCD Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.202398894110419, 11.0610078425741))
 })
@@ -2052,7 +2052,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3cont2discCCD.csv", options)
 
 test_that("21.1 Three continuous and two categorical predictors CCD ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(72.7397226090048, 1309.31500696209, 18, 0.850063612714722, 0.636675405849037,
                                       "Model", "", 129.039377068184, 5, "", "", "<unicode> Linear terms",
@@ -2091,7 +2091,7 @@ test_that("21.1 Three continuous and two categorical predictors CCD ANOVA table 
 })
 
 test_that("21.2 Three continuous and two categorical predictors CCD Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 99.3627387297987, "", 1.21502530331299e-52, 1.88095280770782,
                                       "(Intercept)", 52.8257478457873, "", "A", -0.139207704143692,
@@ -2128,14 +2128,14 @@ test_that("21.2 Three continuous and two categorical predictors CCD Coded Coeffi
 })
 
 test_that("21.3 Three continuous and two categorical predictors CCD Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 99.36 (Intercept) - 0.14 A + 0.73 B + 0.22 C + 0.57 D - 0.94 E - 1.51 A^2 - 0.44 B^2 + 1.71 C^2 + 2.26 AB + 0.26 AC - 1.13 AD + 0.86 AE + 1.6 BC + 0.76 BD - 0.23 BE + 2.79 CD - 0 CE + 1.06 DE"
                                  ))
 })
 
 test_that("21.4 Three continuous and two categorical predictors CCD Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.203191170479226, 9.25039136122957))
 })
@@ -2165,7 +2165,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4cont1discCCD.csv", options)
 
 test_that("22.1 Four continuous and one categorical predictor CCD ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(112.80717375643, 2143.33630137217, 19, 1.73488065260125, 0.0706676426284591,
                                       "Model", "", 806.988962707037, 5, "", "", "<unicode> Linear terms",
@@ -2205,7 +2205,7 @@ test_that("22.1 Four continuous and one categorical predictor CCD ANOVA table re
 })
 
 test_that("22.2 Four continuous and one categorical predictor CCD Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 97.9076142108333, "", 9.88257161322062e-35, 2.32778537031997,
                                       "(Intercept)", 42.0604130686565, "", "A", -2.80166299291666,
@@ -2244,14 +2244,14 @@ test_that("22.2 Four continuous and one categorical predictor CCD Coded Coeffici
 })
 
 test_that("22.3 Four continuous and one categorical predictor CCD Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 97.91 (Intercept) - 2.8 A + 1.2 B + 1.87 C + 1.09 D + 1.5 E - 0.36 A^2 + 1.33 B^2 + 0.53 C^2 + 0.17 D^2 - 3.09 AB + 1.87 AC + 1.09 AD - 2.19 AE - 0.6 BC - 1.38 BD - 1.74 BE + 0.1 CD + 0.73 CE - 2.45 DE"
                                  ))
 })
 
 test_that("22.4 Four continuous and one categorical predictor CCD Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.191741034230725, 0, 0.452027819817441, 8.06368506101944))
 })
@@ -2278,7 +2278,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3contBBD.csv", options)
 
 test_that("23.1 Three continuous predictors BBD ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(117.387204366981, 1056.48483930283, 9, 2.10615458167809, 0.213246448597519,
                                       "Model", "", 278.946705729, 3, "", "", "<unicode> Linear terms",
@@ -2302,7 +2302,7 @@ test_that("23.1 Three continuous predictors BBD ANOVA table results match", {
 })
 
 test_that("23.2 Three continuous predictors BBD Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 90.170651, "", 4.6230339293677e-06, 4.31027154106669,
                                       "(Intercept)", 20.9199467228194, "", "A", -4.49016642624999,
@@ -2323,14 +2323,14 @@ test_that("23.2 Three continuous predictors BBD Coded Coefficients table results
 })
 
 test_that("23.3 Three continuous predictors BBD Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 90.17 (Intercept) - 4.49 A + 3.78 B + 0.66 C + 10.51 A^2 + 6.61 B^2 + 2.03 C^2 - 5.89 AB - 0.59 AC + 3.63 BC"
                                  ))
 })
 
 test_that("23.4 Three continuous predictors BBD Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.393245006596696, 0, 0.783301788070249, 7.46560930354572))
 })
@@ -2358,7 +2358,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4contBBD.csv", options)
 
 test_that("24.1 Four continuous predictors BBD ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(77.9009838048483, 1090.61377326788, 14, 1.16863848196573, 0.397556720497501,
                                       "Model", "", 386.491064149768, 4, "", "", "<unicode> Linear terms",
@@ -2391,7 +2391,7 @@ test_that("24.1 Four continuous predictors BBD ANOVA table results match", {
 })
 
 test_that("24.2 Four continuous predictors BBD Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 104.898052433333, "", 3.99668370301669e-11, 4.71379566102908,
                                       "(Intercept)", 22.2534152892051, "", "A", -3.63039722166666,
@@ -2421,14 +2421,14 @@ test_that("24.2 Four continuous predictors BBD Coded Coefficients table results 
 })
 
 test_that("24.3 Four continuous predictors BBD Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 104.9 (Intercept) - 3.63 A - 3.43 B - 0.16 C + 2.69 D + 4.89 A^2 - 2.62 B^2 - 3.31 C^2 - 1.28 D^2 + 2.2 AB - 6.92 AC - 4.09 AD + 1.05 BC + 6.9 BD - 0.43 CD"
                                  ))
 })
 
 test_that("24.4 Four continuous predictors BBD Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.132951036731663, 0, 0.599823555414614, 8.16453358140008))
 })
@@ -2457,7 +2457,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM5contBBD.csv", options)
 
 test_that("25.1 Five continuous predictors BBD ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(68.7454290560407, 1374.90858112081, 20, 1.04584144910548, 0.452095870787799,
                                       "Model", "", 558.680485897376, 5, "", "", "<unicode> Linear terms",
@@ -2498,7 +2498,7 @@ test_that("25.1 Five continuous predictors BBD ANOVA table results match", {
 })
 
 test_that("25.2 Five continuous predictors BBD Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 99.5499281533334, "", 3.75552239017416e-21, 3.30988849461844,
                                       "(Intercept)", 30.0765201955268, "", "A", -2.83996393187502,
@@ -2537,14 +2537,14 @@ test_that("25.2 Five continuous predictors BBD Coded Coefficients table results 
 })
 
 test_that("25.3 Five continuous predictors BBD Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 99.55 (Intercept) - 2.84 A + 0.77 B + 0.14 C - 3.86 D - 3.37 E + 0.04 A^2 + 1.03 B^2 - 2.08 C^2 - 4.49 D^2 + 1.7 E^2 - 2.61 AB + 0.44 AC - 5.11 AD - 4.08 AE - 1.93 BC + 4.83 BD - 2.71 BE + 1.56 CD - 7.27 CE - 1.58 DE"
                                  ))
 })
 
 test_that("25.4 Five continuous predictors BBD Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.0423289680020797, 0, 0.467960537778933, 8.10753791732393))
 })
@@ -2576,7 +2576,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM6cont1discreteBBD.csv", options)
 
 test_that("26.1 Six continuous predictors one discrete predictor BBD ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(58.4708923393394, 1988.01033953754, 34, 0.551827558106997, 0.971137841340843,
                                       "Model", "", 549.423409303307, 7, "", "", "<unicode> Linear terms",
@@ -2638,7 +2638,7 @@ test_that("26.1 Six continuous predictors one discrete predictor BBD ANOVA table
 })
 
 test_that("26.2 Six continuous predictors one discrete predictor BBD Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 102.887750861667, "", 4.79064641984392e-47, 2.97151238875673,
                                       "(Intercept)", 34.6247087008493, "", "A", 1.75857493229167,
@@ -2703,14 +2703,14 @@ test_that("26.2 Six continuous predictors one discrete predictor BBD Coded Coeff
 })
 
 test_that("26.3 Six continuous predictors one discrete predictor BBD Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 102.89 (Intercept) + 1.76 A + 0.04 B - 0.54 C - 1.52 D + 1.62 E - 1.69 F - 0.34 G + 0.16 A^2 + 0.96 B^2 - 0.94 C^2 - 3.25 D^2 - 1.86 E^2 - 2.02 F^2 - 0.61 AB - 5.24 AC - 1.32 AD - 1.35 AE + 1.62 AF - 0.14 AG + 1.32 BC - 0.43 BD - 0.22 BE - 0.82 BF + 0.7 BG + 1.65 CD - 1.34 CE - 1.64 CF - 0.53 CG + 0.58 DE - 1.13 DF - 1.17 DG - 2.1 EF + 0.24 EG + 1.03 FG"
                                  ))
 })
 
 test_that("26.4 Six continuous predictors one discrete predictor BBD Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.200979745789412, 10.293620865294))
 })
@@ -2755,43 +2755,43 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level5facFull.csv", options)
 
 test_that("27.1 Factorial design plots Matrix residual plot matches", {
-  plotName <- results[["results"]][["fourInOneResidualPlot"]][["data"]]
+  plotName <- results[["results"]][["Result"]][["collection"]][["Result_fourInOneResidualPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "matrix-residual-plot27")
 })
 
 test_that("27.2 Factorial design plots Residuals versus Fitted Values plot matches", {
-  plotName <- results[["results"]][["plotFitted"]][["data"]]
+  plotName <- results[["results"]][["Result"]][["collection"]][["Result_plotFitted"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "residuals-versus-fitted-values27")
 })
 
 test_that("27.3 Factorial design plots Histogram of Residuals plot matches", {
-  plotName <- results[["results"]][["plotHist"]][["data"]]
+  plotName <- results[["results"]][["Result"]][["collection"]][["Result_plotHist"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "histogram-of-residuals27")
 })
 
 test_that("27.4 Factorial design plotsNormal Probability Plot of Residuals matches", {
-  plotName <- results[["results"]][["plotNorm"]][["data"]]
+  plotName <- results[["results"]][["Result"]][["collection"]][["Result_plotNorm"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "normal-probability-plot-of-residuals27")
 })
 
 test_that("27.5 Factorial design plotsPareto Chart of Standardized Effects plot matches", {
-  plotName <- results[["results"]][["plotPareto"]][["data"]]
+  plotName <- results[["results"]][["Result"]][["collection"]][["Result_plotPareto"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "pareto-chart-of-standardized-effects27")
 })
 
 test_that("27.6 Factorial design plotsResiduals versus Run Order plot matches", {
-  plotName <- results[["results"]][["plotRunOrder"]][["data"]]
+  plotName <- results[["results"]][["Result"]][["collection"]][["Result_plotRunOrder"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "residuals-versus-run-order27")
 })
 
 test_that("27.7 Factorial design plotsANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(118.542221893211, 1778.13332839816, 15, 2.63173059967985, 0.0318832484215919,
                                       "Model", "", 906.296316752094, 5, "", "", "<unicode> Linear terms",
@@ -2823,7 +2823,7 @@ test_that("27.7 Factorial design plotsANOVA table results match", {
 })
 
 test_that("27.8 Factorial design plotsCoded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 101.699596592187, "", 9.7648722242665e-23, 1.18642646950104,
                                       "(Intercept)", 85.71925796207, "", "A", 2.25096480031251, 4.50192960062502,
@@ -2856,14 +2856,14 @@ test_that("27.8 Factorial design plotsCoded Coefficients table results match", {
 })
 
 test_that("27.9 Factorial design plotsRegression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 101.7 (Intercept) + 2.25 A - 2.76 B + 0.12 C + 1.42 D - 3.69 E + 1.45 AB + 1.22 AC - 0.76 AD - 1.36 AE - 2.05 BC + 1.63 BD - 0.24 BE + 1.27 CD - 2.57 CE + 2.47 DE"
                                  ))
 })
 
 test_that("27.10 Factorial design plotsModel Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.441199385076272, 0, 0.711586779394205, 6.71144161570719))
 })
@@ -2895,7 +2895,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM5contCCD.csv", options)
 
 test_that("28.1 Type 1 SS ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(45.0954304768421, 450.954304768421, 10, 0.420539272623761, 0.92886919055636,
                                       "Model", "", 341.185797996188, 5, "", "", "<unicode> Linear terms",
@@ -2920,7 +2920,7 @@ test_that("28.1 Type 1 SS ANOVA table results match", {
 })
 
 test_that("28.2 Type 1 SS Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 95.7137721498586, "", 1.04311322261897e-31, 2.97660135246737,
                                       "(Intercept)", 32.1553882485874, "", "A", 1.00369820969494,
@@ -2944,14 +2944,14 @@ test_that("28.2 Type 1 SS Coded Coefficients table results match", {
 })
 
 test_that("28.3 Type 1 SS Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 95.71 (Intercept) + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2"
                                  ))
 })
 
 test_that("28.4 Type 1 SS Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.0890871250796769, 10.3553072412607))
 })
@@ -2981,7 +2981,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM5contCCD.csv", options)
 
 test_that("29.1 Type 2 SS ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(45.3596057822557, 453.596057822557, 10, 0.423002850188251, 0.92755442663839,
                                       "Model", "", 341.185797996188, 5, "", "", "<unicode> Linear terms",
@@ -3006,7 +3006,7 @@ test_that("29.1 Type 2 SS ANOVA table results match", {
 })
 
 test_that("29.2 Type 2 SS Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 95.7137721498586, "", 1.04311322261897e-31, 2.97660135246737,
                                       "(Intercept)", 32.1553882485874, "", "A", 1.00369820969494,
@@ -3030,14 +3030,14 @@ test_that("29.2 Type 2 SS Coded Coefficients table results match", {
 })
 
 test_that("29.3 Type 2 SS Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 95.71 (Intercept) + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2"
                                  ))
 })
 
 test_that("29.4 Type 2 SS Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.0890871250796769, 10.3553072412607))
 })
@@ -3067,7 +3067,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4contCCD_uncoded.csv", options)
 
 test_that("30.1 Coded Squared Terms ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(53.6009309381646, 428.807447505317, 8, 0.734815921863529, 0.660416614783697,
                                       "Model", "", 140.181000812604, 4, "", "", "<unicode> Linear terms",
@@ -3089,7 +3089,7 @@ test_that("30.1 Coded Squared Terms ANOVA table results match", {
 })
 
 test_that("30.2 Coded Squared Terms Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 103.801045518333, "", 1.16794507283658e-18, 3.48675363322034,
                                       "(Intercept)", 29.7701118109866, "", "A", -1.62156990083333,
@@ -3110,14 +3110,14 @@ test_that("30.2 Coded Squared Terms Coded Coefficients table results match", {
 })
 
 test_that("30.3 Coded Squared Terms Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 103.8 (Intercept) - 1.62 A - 1.25 B + 1.19 C - 0.48 D + 1.54 A^2 + 0.27 B^2 + 0.85 C^2 - 2.71 D^2"
                                  ))
 })
 
 test_that("30.4 Coded Squared Terms Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.237414316588398, 8.54076726018519))
 })
@@ -3146,7 +3146,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4contCCD_uncoded.csv", options)
 
 test_that("31.1 Uncoded Squared Terms ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(51.0593032861315, 408.474426289052, 8, 0.699972712361868, 0.688104762520746,
                                       "Model", "", 119.84797959634, 4, "", "", "<unicode> Linear terms",
@@ -3168,7 +3168,7 @@ test_that("31.1 Uncoded Squared Terms ANOVA table results match", {
 })
 
 test_that("31.2 Uncoded Squared Terms Coded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 103.801045518333, "", 1.16794507283658e-18, 3.48675363322034,
                                       "(Intercept)", 29.7701118109866, "", "A", -1.62156990083333,
@@ -3189,14 +3189,14 @@ test_that("31.2 Uncoded Squared Terms Coded Coefficients table results match", {
 })
 
 test_that("31.3 Uncoded Squared Terms Regression Equation in Coded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 103.8 (Intercept) - 1.62 A - 1.25 B + 1.19 C - 0.48 D + 1.54 A^2 + 0.27 B^2 + 0.85 C^2 - 2.71 D^2"
                                  ))
 })
 
 test_that("31.4 Uncoded Squared Terms Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.237414316588398, 8.54076726018519))
 })
@@ -3224,7 +3224,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level3facFullText.csv", options)
 
 test_that("32.1 Factorial analysis with nominal levels ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(30.3398635060475, 182.039181036285, 6, 0.316556719142333, 0.874163523074942,
                                       "Model", "", 125.387802560961, 3, "", "", "<unicode> Linear terms",
@@ -3243,7 +3243,7 @@ test_that("32.1 Factorial analysis with nominal levels ANOVA table results match
 })
 
 test_that("32.2 Factorial analysis with nominal levels Uncoded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(106.66044882, "", 0.0206519176719196, 3.46127455499999, "(Intercept)",
                                       30.815367901377, "", 2.59081633999999, 5.18163267999998, 0.590939896340302,
@@ -3259,20 +3259,20 @@ test_that("32.2 Factorial analysis with nominal levels Uncoded Coefficients tabl
 })
 
 test_that("32.3 Factorial analysis with nominal levels Discrete Predictor Levels table results match", {
-  table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("High", "A1", "High", "B1", "High", "C1"))
 })
 
 test_that("32.4 Factorial analysis with nominal levels Regression Equation in Uncoded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 106.66 (Intercept) + 2.59 A1 + 2.93 B1 + 0.6 C1 + 0.46 A1<unicode>B1 - 0.41 A1<unicode>C1 + 2.59 B1<unicode>C1"
                                  ))
 })
 
 test_that("32.5 Factorial analysis with nominal levels Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.655093955381241, 9.78996283755578))
 })
@@ -3301,7 +3301,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM2cont2discreteCCDText.csv", options)
 
 test_that("33.1 RSM analysis with nominal levels ANOVA table results match", {
-  table <- results[["results"]][["tableAnova"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(78.8155854449644, 945.787025339573, 12, 1.02124001802806, 0.447322259419835,
                                       "Model", "", 80.7371025092129, 4, "", "", "<unicode> Linear terms",
@@ -3330,7 +3330,7 @@ test_that("33.1 RSM analysis with nominal levels ANOVA table results match", {
 })
 
 test_that("33.2 RSM analysis with nominal levels Uncoded Coefficients table results match", {
-  table <- results[["results"]][["tableCoefficients"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", 102.924261345452, "", 2.83112726863751e-42, 1.79323216341033,
                                       "(Intercept)", 57.3959487486065, "", "A", 0.269950044176439,
@@ -3358,20 +3358,20 @@ test_that("33.2 RSM analysis with nominal levels Uncoded Coefficients table resu
 })
 
 test_that("33.3 RSM analysis with nominal levels Discrete Predictor Levels table results match", {
-  table <- results[["results"]][["tableCoefficientsLegend"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("LevelA", "C1", "WhateverHigh", "D1"))
 })
 
 test_that("33.4 RSM analysis with nominal levels Regression Equation in Uncoded Units table results match", {
-  table <- results[["results"]][["tableEquation"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Result = 102.92  + 0.27 A + 0.72 B + 0.96 C1 - 0.42 D1 + 0.3 A^2 - 2.2 B^2 - 2.03 AB + 2.42 AC1 - 1.04 AD1 - 1.88 BC1 + 3.06 BD1 + 0.6 C1D1"
                                  ))
 })
 
 test_that("33.5 RSM analysis with nominal levels Model Summary table results match", {
-  table <- results[["results"]][["tableSummary"]][["data"]]
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.00551580589595602, 0, 0.222494175518657, 8.785007581405))
 })

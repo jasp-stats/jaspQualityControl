@@ -856,7 +856,7 @@ get_levels <- function(var, num_levels, dataset) {
       tb2$addColumnInfo(name = "factorLevel", title = gettext("Level"), type = "string")
       tb$dependOn(options = c("codeFactors", "codeFactorsManualTable", "codeFactorsMethod", "tableEquation", "tableAlias", .doeAnalysisBaseDependencies()))
       tb2$position <- 4
-      jaspResults[["tableCoefficientsLegend"]] <- tb2
+      jaspResults[[dep]][["tableCoefficientsLegend"]] <- tb2
 
       result2 <- jaspResults[[dep]][["doeResult"]]$object[["regression"]][["factorLevels"]]
       factorName <- if (options[["tableAlias"]]) result2[["factorNamesAliased"]] else result2[["factorNames"]]
