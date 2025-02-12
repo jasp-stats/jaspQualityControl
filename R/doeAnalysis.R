@@ -38,6 +38,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   dataset <- .doeAnalysisReadData(dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent)
 
+  print("DEBUG1")
+  roDf <- do.call(rbind, lapply(options[["responsesResponseOptimizer"]], as.data.frame))
+  print(roDf)
+
+
   if (length(blocks) > 0 && !identical(blocks, "")) # data reading function renames the block variable to "block"
     blocks <- "Block"
 
@@ -544,9 +549,21 @@ get_levels <- function(var, num_levels, dataset) {
   return(VIF)
 }
 
-.calculateOptimalResponse <- function(dataset, continuousPredictors, discretePredictors) {
+# load("C:/Users/Jonee/Desktop/Temporary Files/roMultiWorkspace.RData")
+# load("C:/Users/Jonee/Desktop/Temporary Files/roSingleWorkspace.RData")
+
+.calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent) {
   # extract required objects
-  coefficients <- result$regression$coefficients$est
+  coefficients <- lapply(jaspResults, function(resultList) resultList$doeResult$regression$coefficients$est)
+  roOptionsDf <- do.call(rbind, lapply(options[["responsesResponseOptimizer"]], as.data.frame))
+  if (!options[["responseOptimizerManualBounds"]]) {
+    roOptionsDf[["responseOptimizerLowerBound"]] <- ""
+    roOptionsDf[["responseOptimizerUpperBound"]] <- ""
+  }
+  if (!options[["responseOptimizerManualTarget"]]) {
+    roOptionsDf[["responseOptimizerTarget"]] <- ""
+  }
+
 
   # need initial guesses and limits for cont. variables
   continuousPredictorsData <- dataset[continuousPredictors]
@@ -572,55 +589,106 @@ get_levels <- function(var, num_levels, dataset) {
     currentDiscreteLevels <- gridSearchDf[i,]
     currrentOptimResult <- optim(
       par = continuousPredictorsInital,   # Initial guesses
-      fn = .equationPredictionFunction,     # Objective function
+      fn = .predictDesirability,     # Objective function
       method = "L-BFGS-B",         # Optimization method
       lower = continuousPredictorsMin,  # Lower bounds
       upper = continuousPredictorsMax,  # Upper bounds
       continuousPredictors = continuousPredictors,
       currentDiscreteLevels = currentDiscreteLevels,
-      coefficients = coefficients
+      coefficients = coefficients,
+      dependent = dependent,
+      dataset = dataset,
+      roOptionsDf = roOptionsDf
     )
-
     optimalResultDf[i, "outcomeValue"] <- currrentOptimResult$value * -1  # after optimization the sign can be switched again
     optimalResultDf[i, continuousPredictors] <- currrentOptimResult$par
   }
-
 
   optimalParameters <- optimalResultDf[which.max(optimalResultDf$outcomeValue), names(optimalResultDf) != "outcomeValue"]
   return(optimalParameters)
 }
 
-.equationPredictionFunction <- function(x, continuousPredictors, currentDiscreteLevels, coefficients) {
-  coefficientVector <- names(coefficients)[-1]
-  predictorValues <- c(1)  # for the intercept
+.equationPredictionFunction <- function(continuousLevels, continuousPredictors, currentDiscreteLevels, coefficients, dependent) {
+  outcome <- c()
+  for (dep in dependent) {
+    currentCoefSet <- coefficients[[dep]]
 
-  for (coef_i in coefficientVector) {
-    coefSplit <- strsplit(coef_i, ":")[[1]]
-    coefResult <- c()
-    for (coef_j in coefSplit) {
-      coef_j_clean <- .removeAppendedFactorLevels(discretePredictors, coef_j, ":")
-      coef_j_level <- sub(coef_j_clean, "", coef_j)
-      if (coef_j_clean %in% continuousPredictors) {
-        coefResult <- c(coefResult, x[[coef_j]])
-      } else if (coef_j_clean %in% discretePredictors) {
-        current_j_level <- if (length(currentDiscreteLevels)  > 1) currentDiscreteLevels[[coef_j_clean]] else currentDiscreteLevels
-        max_j_level <- length(levels(current_j_level))
-        coef_j_level <- as.numeric(coef_j_level)
-        if (as.numeric(current_j_level) == coef_j_level) {
-          coefResult <- c(coefResult, 1)
-        } else if (as.numeric(current_j_level) == max_j_level) {
-          coefResult <- c(coefResult, -1) # in the LM function with sum contrasts the last predictor does not have a coefficient, but it is the inverse of the sum of all other predictors, so set all others to -1
-        } else {
-          coefResult <- c(coefResult, 0)
+    coefficientVector <- names(currentCoefSet)[-1]
+    predictorValues <- c(1)  # for the intercept
+
+    for (coef_i in coefficientVector) {
+      coefSplit <- strsplit(coef_i, ":")[[1]]
+      coefResult <- c()
+      for (coef_j in coefSplit) {
+        coef_j_clean <- .removeAppendedFactorLevels(discretePredictors, coef_j, ":")
+        coef_j_level <- sub(coef_j_clean, "", coef_j)
+        if (coef_j_clean %in% continuousPredictors) {
+          coefResult <- c(coefResult, continuousLevels[[coef_j]])
+        } else if (coef_j_clean %in% discretePredictors) {
+          current_j_level <- if (length(currentDiscreteLevels)  > 1) currentDiscreteLevels[[coef_j_clean]] else currentDiscreteLevels
+          max_j_level <- length(levels(current_j_level))
+          coef_j_level <- as.numeric(coef_j_level)
+          if (as.numeric(current_j_level) == coef_j_level) {
+            coefResult <- c(coefResult, 1)
+          } else if (as.numeric(current_j_level) == max_j_level) {
+            coefResult <- c(coefResult, -1) # in the LM function with sum contrasts the last predictor does not have a coefficient, but it is the inverse of the sum of all other predictors, so set all others to -1
+          } else {
+            coefResult <- c(coefResult, 0)
+          }
         }
       }
+      coefResult <- prod(coefResult)
+      predictorValues <- c(predictorValues, coefResult)
     }
-    coefResult <- prod(coefResult)
-    predictorValues <- c(predictorValues, coefResult)
+    outcome[dep] <- sum(currentCoefSet * predictorValues)
   }
+  return(outcome)
+}
 
-  outcome <- sum(coefficients * predictorValues)
-  return(-outcome)
+
+.predictDesirability <- function(continuousLevels, continuousPredictors, currentDiscreteLevels, coefficients, dependent,
+                                 dataset, roOptionsDf) {
+  outcome <- .equationPredictionFunction(continuousLevels, continuousPredictors, currentDiscreteLevels, coefficients, dependent)
+  desirabilityOutcome <- .calculateDesirability(dataset, outcome, roOptionsDf)
+  desirabilityOutcome <- desirabilityOutcome * -1  # because optimization minimizes
+  return(desirabilityOutcome)
+}
+
+# All formulas for desirability are here: https://support.minitab.com/en-us/minitab/help-and-how-to/statistical-modeling/using-fitted-models/how-to/response-optimizer/methods-and-formulas/individual-desirabilities/
+.calculateDesirability <- function(dataset, outcome, roOptionsDf) {
+  outcomeNames <- names(outcome)
+  desiVector <- c()
+  goals <- setNames(roOptionsDf$responseOptimizerGoal, roOptionsDf$variable)
+  targets <- setNames(roOptionsDf$responseOptimizerTarget, roOptionsDf$variable)
+  lowerbounds <- setNames(roOptionsDf$responseOptimizerLowerBound, roOptionsDf$variable)
+  upperbounds <- setNames(roOptionsDf$responseOptimizerUpperBound, roOptionsDf$variable)
+  weights <- setNames(roOptionsDf$responseOptimizerWeight, roOptionsDf$variable)
+  importances <- setNames(roOptionsDf$responseOptimizerImportance, roOptionsDf$variable)
+
+  for (outcomeName in outcomeNames) {
+    outcomeValue <- unname(outcome[outcomeName])
+    outcomeGoal <- unname(goals[outcomeName])
+    lb <- if (lowerbounds[outcomeName] == "") min(dataset[[outcomeName]]) else lowerbounds[outcomeName]
+    ub <- if (upperbounds[outcomeName] == "") max(dataset[[outcomeName]]) else upperbounds[outcomeName]
+    weight <- weights[outcomeName]
+    if (outcomeGoal == "minimize") {
+      target <- lb
+      desi <- ((ub - outcomeValue) / (ub - target))^weight
+    } else if (outcomeGoal == "maximize") {
+      target <- ub
+      desi <- ((outcomeValue - lb) / (target - lb))^weight
+    } else if (outcomeGoal == "target") {
+      target <- targets[outcomeName]
+      desi <- if (outcomeValue <= target) ((outcomeValue - lb) / (target - lb))^weight else ((ub - outcomeValue) / (ub - target))^weight
+    }
+    desiVector[outcomeName] <- desi
+  }
+  if (length(outcome) > 1)
+    desiVector <- pmax(0, pmin(1, desiVector)) # if compound desirability is calculated out of multiple desirabilities, these should be bound to 0 and 1, else only bound the compound desirability after optimization
+
+  importances <- importances / sum(importances) # so it sums up to 1
+  compoundDesi <- prod(desiVector^importances)
+  return(compoundDesi)
 }
 
 .addModelHeaderTerms <- function(anovaFit, covariates = "") {

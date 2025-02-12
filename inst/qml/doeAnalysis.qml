@@ -460,6 +460,7 @@ Form
 	Section
 	{
 		title: qsTr("Response optimizer")
+		columns: 2
 
 		VariablesForm
 		{
@@ -500,20 +501,21 @@ Form
 						name:							"responseOptimizerLowerBound"
 						defaultValue:					0
 						fieldWidth:						40
-						enabled:						responseOptimizerGoal.currentValue != "minimize"
+						enabled:						responseOptimizerGoal.currentValue != "minimize" & responseOptimizerManualBounds.checked
 					}
 					DoubleField
 					{
 						name:							"responseOptimizerTarget"
 						defaultValue:					0.5
 						fieldWidth:						45
+						enabled:						responseOptimizerManualTarget.checked
 					}
 					DoubleField
 					{
 						name:							"responseOptimizerUpperBound"
 						defaultValue:					1
 						fieldWidth:						40
-						enabled:						responseOptimizerGoal.currentValue != "maximize"
+						enabled:						responseOptimizerGoal.currentValue != "maximize" & responseOptimizerManualBounds.checked
 					}
 					DoubleField
 					{
@@ -557,7 +559,7 @@ Form
 				{
 					name:						"optimizationPlotCustomParameters"
 					id:							optimizationPlotCustomParameters
-					label:						qsTr("Customize input parameters")
+					label:						qsTr("Set input parameters")
 					checked:					false
 				}
 
@@ -574,6 +576,27 @@ Form
 					rowComponentTitle:	qsTr("Value")
 					rowComponent: 		TextField { name: "value"; fieldWidth: 40; defaultValue: "0"}
 				}
+			}
+		}
+
+		Group
+		{
+			columns:					1
+			
+			CheckBox
+			{
+				name:						"responseOptimizerManualBounds"
+				id:							responseOptimizerManualBounds
+				label:						qsTr("Set bounds manually")
+				checked:					false
+			}
+
+			CheckBox
+			{
+				name:						"responseOptimizerManualTarget"
+				id:							responseOptimizerManualTarget
+				label:						qsTr("Set target manually")
+				checked:					false
 			}
 		}
 
