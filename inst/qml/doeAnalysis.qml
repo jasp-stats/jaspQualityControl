@@ -508,7 +508,7 @@ Form
 						name:							"responseOptimizerTarget"
 						defaultValue:					0.5
 						fieldWidth:						45
-						enabled:						responseOptimizerManualTarget.checked
+						enabled:						responseOptimizerManualTarget.checked | responseOptimizerGoal.currentValue == "target"
 					}
 					DoubleField
 					{
@@ -587,7 +587,7 @@ Form
 			{
 				name:						"responseOptimizerManualBounds"
 				id:							responseOptimizerManualBounds
-				label:						qsTr("Set bounds manually")
+				label:						qsTr("Set all bounds manually")
 				checked:					false
 			}
 
@@ -595,7 +595,7 @@ Form
 			{
 				name:						"responseOptimizerManualTarget"
 				id:							responseOptimizerManualTarget
-				label:						qsTr("Set target manually")
+				label:						qsTr("Set all targets manually")
 				checked:					false
 			}
 		}

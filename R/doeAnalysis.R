@@ -38,10 +38,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   dataset <- .doeAnalysisReadData(dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent)
 
-  print("DEBUG1")
-  roDf <- do.call(rbind, lapply(options[["responsesResponseOptimizer"]], as.data.frame))
-  print(roDf)
-
 
   if (length(blocks) > 0 && !identical(blocks, "")) # data reading function renames the block variable to "block"
     blocks <- "Block"
@@ -76,6 +72,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisPlotResidualsVsOrder(jaspResults, dependent, dataset, options, ready)
   .doeAnalysisPlotMatrixResidualPlot(jaspResults, dependent, dataset, options, ready)
   .doeAnalysisPlotContourSurface(jaspResults, dataset, options, dependent, ready)
+  .doeResponseOptimizerTables(jaspResults, options, dataset, continuousPredictors, discretePredictors, ready)
 }
 
 .doeAnalysisReadData <- function(dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent) {
@@ -549,19 +546,112 @@ get_levels <- function(var, num_levels, dataset) {
   return(VIF)
 }
 
-# load("C:/Users/Jonee/Desktop/Temporary Files/roMultiWorkspace.RData")
-# load("C:/Users/Jonee/Desktop/Temporary Files/roSingleWorkspace.RData")
-
-.calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent) {
-  # extract required objects
-  coefficients <- lapply(jaspResults, function(resultList) resultList$doeResult$regression$coefficients$est)
+.doeResponseOptimizerTables <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, readyModelPresent) {
   roOptionsDf <- do.call(rbind, lapply(options[["responsesResponseOptimizer"]], as.data.frame))
+  readyRO <- length(roOptionsDf$variable) > 0 # variable selected
+
+  if (!options[["optimizationSolutionTable"]] || !readyModelPresent || !readyRO)
+    return()
+
   if (!options[["responseOptimizerManualBounds"]]) {
     roOptionsDf[["responseOptimizerLowerBound"]] <- ""
     roOptionsDf[["responseOptimizerUpperBound"]] <- ""
   }
   if (!options[["responseOptimizerManualTarget"]]) {
-    roOptionsDf[["responseOptimizerTarget"]] <- ""
+    roOptionsDf[["responseOptimizerTarget"]][which(roOptionsDf$responseOptimizerGoal != "target")] <- ""
+  }
+
+  roDependent <- roOptionsDf$variable # this should be the GUI option
+  roOutcome <- .calculateOptimalResponse(jaspResults, options, dataset, continuousPredictors, discretePredictors, roDependent, roOptionsDf)
+  optimParam <- roOutcome$parameters
+  desi <- roOutcome$desirability
+  contLevels <- optimParam[names(optimParam) %in% continuousPredictors]
+  discLevels <- optimParam[names(optimParam) %in% discretePredictors]
+  coefficients <- list()
+  for (dep in roDependent) {
+    coefficients[[dep]] <- jaspResults[[dep]][["doeResult"]][["regression"]][["coefficients"]][["est"]]
+  }
+
+  predValues <- .equationPredictionFunction(continuousLevels = contLevels, continuousPredictors = continuousPredictors,
+                                            currentDiscreteLevels = discLevels, coefficients = coefficients, dependent = roDependent)
+
+  tb1 <- createJaspTable(gettext("Response Optimizer Settings"))
+  tb1$addColumnInfo(name = "response", title = "Response", type = "string")
+  tb1$addColumnInfo(name = "goal", title = "Goal", type = "string")
+  tb1$addColumnInfo(name = "lb", title = "Lower", type = "number")
+  tb1$addColumnInfo(name = "target", title = "Target", type = "number")
+  tb1$addColumnInfo(name = "ub", title = "Upper", type = "number")
+  tb1$addColumnInfo(name = "weight", title = "Weight", type = "number")
+  tb1$addColumnInfo(name = "importance", title = "Importance", type = "number")
+  tb1$dependOn(options = .doeAnalysisBaseDependencies())
+  tb1$position <- 13
+  jaspResults[["tableRoSettings"]] <- tb1
+
+  lbVector <- c()
+  targetVector <- c()
+  ubVector <- c()
+  for (i in seq_len(nrow(roOptionsDf))) {
+    if (roOptionsDf$responseOptimizerGoal[i] == "maximize") {
+      ubVector[i] <- NA
+      lbVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      targetVector[i] <- max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+    } else if (roOptionsDf$responseOptimizerGoal[i] == "minimize") {
+      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      lbVector[i] <- NA
+      targetVector[i] <- min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+    } else if (roOptionsDf$responseOptimizerGoal[i] == "target") {
+      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      lbVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      targetVector[i] <- roOptionsDf$responseOptimizerTarget[i]
+    }
+  }
+
+  rows1 <- data.frame(response = roOptionsDf$variable, goal = roOptionsDf$responseOptimizerGoal,
+                      lb = lbVector, target = targetVector, ub = ubVector, weight = roOptionsDf$responseOptimizerWeight,
+                      importance = roOptionsDf$responseOptimizerImportance)
+  tb1$addRows(rows1)
+
+  # TODO: add footnote if target and bounds are estimated from data
+  tb1$addFootnote(gettextf("Some footnote that states what was estimated from data."))
+
+
+  tb2 <- createJaspTable(gettext("Response Optimizer Solution"))
+  tb2$addColumnInfo(name = "desi", title = "Composite desirability", type = "string")
+  tb2$dependOn(options = .doeAnalysisBaseDependencies())
+  tb2$position <- 14
+  jaspResults[["tableRoSolution"]] <- tb2
+
+
+  # if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
+  #   return()
+  # }
+  #
+
+  # calculate optimal response and save in state
+  # create and fill tables
+}
+
+.doeResponseOptimizerPlots <- function(readyModelPresent) {
+  readyRO <- length() # variable selected
+  # if standard settings:
+  # get calculated optimal response
+  # calculate curves based on that
+
+  # if manual values:
+  # show table for entered values, predicted response and curves for that
+}
+
+
+
+# load("C:/Users/Jonee/Desktop/Temporary Files/roMultiWorkspace.RData")
+# load("C:/Users/Jonee/Desktop/Temporary Files/roSingleWorkspace.RData")
+
+.calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent, roOptionsDf) {
+  # extract required objects
+  # coefficients <- lapply(jaspResults, function(resultList) resultList)
+  coefficients <- list()
+  for (dep in dependent) {
+    coefficients[[dep]] <- jaspResults[[dep]][["doeResult"]][["regression"]][["coefficients"]][["est"]]
   }
 
 
@@ -605,7 +695,8 @@ get_levels <- function(var, num_levels, dataset) {
   }
 
   optimalParameters <- optimalResultDf[which.max(optimalResultDf$outcomeValue), names(optimalResultDf) != "outcomeValue"]
-  return(optimalParameters)
+  maxDesirability <- max(optimalResultDf$outcomeValue)
+  return(list(parameters = optimalParameters, desirability = maxDesirability))
 }
 
 .equationPredictionFunction <- function(continuousLevels, continuousPredictors, currentDiscreteLevels, coefficients, dependent) {
@@ -678,7 +769,7 @@ get_levels <- function(var, num_levels, dataset) {
       target <- ub
       desi <- ((outcomeValue - lb) / (target - lb))^weight
     } else if (outcomeGoal == "target") {
-      target <- targets[outcomeName]
+      target <- as.numeric(targets[outcomeName])
       desi <- if (outcomeValue <= target) ((outcomeValue - lb) / (target - lb))^weight else ((ub - outcomeValue) / (ub - target))^weight
     }
     desiVector[outcomeName] <- desi
