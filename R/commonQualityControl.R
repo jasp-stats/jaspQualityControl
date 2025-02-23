@@ -622,7 +622,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       # sigma for subgroup size = 1 is calculated as the average moving range sd
       if (phase2) {
         sigma <- as.numeric(phase2Sd)
-      } else if (all(n == 1)) {
+      } else if (all(n <= 1)) {
         k <- movingRangeLength
         dataCurrentStageVector <- unlist(dataCurrentStage)
         mrMatrix <- matrix(dataCurrentStageVector[seq((k), length(dataCurrentStageVector))])   # remove first k - 1 elements
@@ -640,6 +640,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       plotStatisticLower <- .cusumPoints(dataCurrentStage, sigma, n, cusumTarget, cusumShiftSize, cuType = "lower")
       plotStatistic <- c(plotStatisticUpper, plotStatisticLower)
       UCL <- nSigmasControlLimits*sigma/sqrt(n)
+      UCL[is.infinite(UCL)] <- 0  # looks better in the plot to display CLs at 0 if calculation fails
       LCL <- -UCL
       center <- 0 # not to be confused with the target, even if target != 0, the center line of the plot should be at 0
       ###
