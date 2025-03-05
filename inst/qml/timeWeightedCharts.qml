@@ -466,6 +466,27 @@ Form
 						fieldWidth:							100
 					}
 				}
+
+
+			}
+		}
+	}
+
+	Section
+	{
+		title: 									qsTr("Advanced Options")
+		columns:								1
+
+		Group
+		{
+			title:		qsTr("Tests for control charts")
+
+			CheckBox
+			{
+				name: 								"rule1"
+				label: 								qsTr("Points outside of control limits")
+				checked:							true
+				enabled:							true
 			}
 		}
 	}
