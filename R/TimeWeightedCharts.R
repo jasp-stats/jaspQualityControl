@@ -95,15 +95,20 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
     }
   }
 
+  # Create the rule list for the out-of-control signals
+  if (ready)
+    ruleList <- .getRuleListTimeWeightedCharts(options)
+
+
   #Cusum chart
   if (options[["cumulativeSumChart"]]) {
     cusumChart <- .Cusumchart(dataset = dataset, measurements = measurements, stages = stages,
-                              axisLabels = axisLabels, options = options, ready = ready)
+                              axisLabels = axisLabels, options = options, ready = ready, ruleList = ruleList)
   }
   #EWMA chart
   if (options[["exponentiallyWeightedMovingAverageChart"]]) {
     ewmaPlot <- .EWMA(dataset = dataset, measurements = measurements, stages = stages,
-                      axisLabels = axisLabels, options = options, ready = ready)
+                      axisLabels = axisLabels, options = options, ready = ready, ruleList = ruleList)
   }
 
 
@@ -123,7 +128,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
                                        "reportTitle", "reportTitleText", "reportChartName", "reportChartNameText", "reportSubtitle",
                                        "reportSubtitleText", "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
                                        "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate", "reportDateText",
-                                       "reportPerformedBy", "reportPerformedByText", "reportPrintDate", "reportPrintDateText"))
+                                       "reportPerformedBy", "reportPerformedByText", "reportPrintDate", "reportPrintDateText", .getDependenciesControlChartRules()))
 
     # Plot meta data
     if (options[["reportTitle"]] ) {
@@ -148,9 +153,9 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
 
     plots <- list()
     if (options[["cumulativeSumChart"]])
-      plots[["cusum"]] <- cusumChart$plotObject
+      plots[["cusum"]] <- cusumChart[["plot"]]$plotObject
     if (options[["exponentiallyWeightedMovingAverageChart"]])
-      plots[["ewma"]] <- ewmaPlot$plotObject
+      plots[["ewma"]] <- ewmaPlot[["plot"]]$plotObject
     reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
                                   reportTitle = title)
     reportPlot$plotObject <- reportPlotObject
@@ -159,14 +164,20 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
     ### If not report mode
     ###
   } else {
-    if (options[["cumulativeSumChart"]])
-      jaspResults[["CusumChart"]] <- cusumChart
-    if (options[["exponentiallyWeightedMovingAverageChart"]])
-      jaspResults[["EWMAPlot"]] <- ewmaPlot
+    if (options[["cumulativeSumChart"]]) {
+      jaspResults[["CusumChart"]] <- createJaspContainer(position = 1)
+      jaspResults[["CusumChart"]][["plot"]] <- cusumChart[["plot"]]
+      jaspResults[["CusumChart"]][["table"]] <- cusumChart[["table"]]
+    }
+    if (options[["exponentiallyWeightedMovingAverageChart"]]) {
+      jaspResults[["EWMAPlot"]] <- createJaspContainer(position = 2)
+      jaspResults[["EWMAPlot"]][["plot"]] <- ewmaPlot[["plot"]]
+      jaspResults[["EWMAPlot"]][["table"]] <- ewmaPlot[["table"]]
+    }
   }
 }
 
-.Cusumchart <- function(dataset, measurements, stages, axisLabels, options, ready) {
+.Cusumchart <- function(dataset, measurements, stages, axisLabels, options, ready, ruleList) {
 
   plot <- createJaspPlot(title = gettext("Cumulative sum chart"), width = 1200, height = 500)
   plot$dependOn(c("dataFormat", "measurementLongFormat", "subgroup", "stagesLongFormat", "measurementsWideFormat",
@@ -174,7 +185,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
                   "groupingVariableMethod", "cumulativeSumChart", "cumulativeSumChartNumberSd",
                   "cumulativeSumChartShiftSize", "cumulativeSumChartTarget", "cumulativeSumChartSdSource",
                   "cumulativeSumChartSdMethod", "cumulativeSumChartSdValue", "cumulativeSumChartAverageMovingRangeLength",
-                  "report"))
+                  "report", .getDependenciesControlChartRules()))
 
   if (!ready)
     return(plot)
@@ -183,17 +194,17 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   columnsToPass <- c(measurements, stages)
   columnsToPass <- columnsToPass[columnsToPass != ""]
   phase2 <- (options[["cumulativeSumChartSdSource"]] == "historical")
-  plotObject <- .controlChart(dataset[columnsToPass], plotType = "cusum", stages = stages, xBarSdType = options[["cumulativeSumChartSdMethod"]],
+  cusumChart <- .controlChart(dataset[columnsToPass], plotType = "cusum", stages = stages, xBarSdType = options[["cumulativeSumChartSdMethod"]],
                               nSigmasControlLimits = options[["cumulativeSumChartNumberSd"]], xAxisLabels = axisLabels,
                               cusumShiftSize = options[["cumulativeSumChartShiftSize"]], cusumTarget = options[["cumulativeSumChartTarget"]],
                               movingRangeLength = options[["cumulativeSumChartAverageMovingRangeLength"]], phase2 = phase2,
-                              phase2Sd = options[["cumulativeSumChartSdValue"]])$plotObject
-
-  plot$plotObject <- plotObject
-  return(plot)
+                              phase2Sd = options[["cumulativeSumChartSdValue"]], tableLabels = axisLabels, ruleList = ruleList)
+  table <- cusumChart$table
+  plot$plotObject <- cusumChart$plotObject
+  return(list("plot" = plot, "table" = table))
 }
 
-.EWMA <- function(dataset, measurements, stages, axisLabels, options, ready) {
+.EWMA <- function(dataset, measurements, stages, axisLabels, options, ready, ruleList) {
 
   plot <-  createJaspPlot(title = gettext("Exponentially weighted moving average chart"), width = 1200, height = 500)
   plot$dependOn(c("dataFormat", "measurementLongFormat", "subgroup", "stagesLongFormat", "measurementsWideFormat",
@@ -202,7 +213,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
                   "exponentiallyWeightedMovingAverageChartSigmaControlLimits", "exponentiallyWeightedMovingAverageChartLambda",
                   "exponentiallyWeightedMovingAverageChartSdSource", "exponentiallyWeightedMovingAverageChartSdMethod",
                   "exponentiallyWeightedMovingAverageChartSdValue", "exponentiallyWeightedMovingAverageChartMovingRangeLength",
-                  "report"))
+                  "report", .getDependenciesControlChartRules()))
 
   if (!ready)
     return(plot)
@@ -210,13 +221,29 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   columnsToPass <- c(measurements, stages)
   columnsToPass <- columnsToPass[columnsToPass != ""]
   phase2 <- (options[["exponentiallyWeightedMovingAverageChartSdSource"]] == "historical")
-  plotObject <- .controlChart(dataset[columnsToPass], plotType = "ewma", stages = stages, xBarSdType = options[["exponentiallyWeightedMovingAverageChartSdMethod"]],
-                              nSigmasControlLimits = options[["exponentiallyWeightedMovingAverageChartSigmaControlLimits"]],
-                              xAxisLabels = axisLabels, movingRangeLength = options[["exponentiallyWeightedMovingAverageChartMovingRangeLength"]],
-                              ewmaLambda = options[["exponentiallyWeightedMovingAverageChartLambda"]], phase2 = phase2,
-                              phase2Sd = options[["exponentiallyWeightedMovingAverageChartSdValue"]])$plotObject
-
+  ewmaChart <- .controlChart(dataset[columnsToPass], plotType = "ewma", stages = stages, xBarSdType = options[["exponentiallyWeightedMovingAverageChartSdMethod"]],
+                             nSigmasControlLimits = options[["exponentiallyWeightedMovingAverageChartSigmaControlLimits"]],
+                             xAxisLabels = axisLabels, movingRangeLength = options[["exponentiallyWeightedMovingAverageChartMovingRangeLength"]],
+                             ewmaLambda = options[["exponentiallyWeightedMovingAverageChartLambda"]], phase2 = phase2,
+                             phase2Sd = options[["exponentiallyWeightedMovingAverageChartSdValue"]], tableLabels = axisLabels,
+                             ruleList = ruleList)
+  plotObject <- ewmaChart$plotObject
+  table <- ewmaChart$table
   plot$plotObject <- plotObject
-  return(plot)
+  return(list("plot" = plot, "table" = table))
+}
+
+.getRuleListTimeWeightedCharts <- function(options) {
+    ruleList <- list("rule1" = list("enabled" = options[["rule1"]]),
+                     "rule2" = NULL,
+                     "rule3" = NULL,
+                     "rule4" = NULL,
+                     "rule5" = NULL,
+                     "rule6" = NULL,
+                     "rule7" = NULL,
+                     "rule8" = NULL,
+                     "rule9" = NULL
+    )
+  return(ruleList)
 }
 
