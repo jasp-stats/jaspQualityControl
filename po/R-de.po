@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2024-10-19 03:41\n"
-"PO-Revision-Date: 2024-12-28 03:39+0000\n"
+"PO-Revision-Date: 2025-03-13 08:25+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10-dev\n"
+"X-Generator: Weblate 5.10.3-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -133,9 +133,8 @@ msgstr "Anzahl fehlerhafter Einheiten"
 msgid "D"
 msgstr "D"
 
-#, fuzzy
 msgid "Moving Range"
-msgstr "Gleitender Wertebereich"
+msgstr "Gleitende Spannweite"
 
 msgid "Test results for %s chart"
 msgstr "Testergebnisse für %s-Karte"
@@ -181,14 +180,13 @@ msgid "Sample average"
 msgstr "Stichprobenmittelwert"
 
 msgid "Sample range"
-msgstr "Stichproben-Wertebereich"
+msgstr "Stichproben-Spannweite"
 
 msgid "Individual value"
 msgstr ""
 
-#, fuzzy
 msgid "Moving range"
-msgstr "Gleitender Wertebereich"
+msgstr "Gleitende Spannweite"
 
 msgid "Moving range of subgroup mean"
 msgstr ""
@@ -1552,6 +1550,8 @@ msgid ""
 "                                                           in one of the "
 "stages."
 msgstr ""
+"Die gleitende Spannweite ist größer als die Anzahl der Beobachtungen\n"
+"in einer der Stufen."
 
 #, fuzzy
 msgid "Variables Chart for Individuals Report"
