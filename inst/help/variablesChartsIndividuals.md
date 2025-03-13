@@ -80,6 +80,8 @@ Select manually which tests you want to apply and modify them as desired:
 - Test 7: N out of N+1 consecutive points beyond the warning (one sigma) limits (slightly increasing variation).
 - Test 8: N points in a row are alternating increase and decrease (oscillation).
 
+Only Test 1, Test 2, Test 3 and Test 8 will be applied to the moving range chart.
+
 
 ## References 
 -------
