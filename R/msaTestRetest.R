@@ -144,7 +144,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   d2 <- .d2Value(n)
   GRR <- Rbar/d2
   GRRpercent.PSD <- GRR/options[["manualProcessSdValue"]] * 100
-  GRRpercent.Tol <- GRR/(options[["toleranceValue"]] / 6)
+  GRRpercent.Tol <- GRR/(options[["toleranceValue"]] / 6) * 100
 
   if (GRRpercent)
     return(c(GRRpercent.PSD, GRRpercent.Tol))
