@@ -73,7 +73,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisPlotMatrixResidualPlot(jaspResults, dependent, dataset, options, ready)
   .doeAnalysisPlotContourSurface(jaspResults, dataset, options, dependent, ready)
   .doeResponseOptimizerTables(jaspResults, options, dataset, continuousPredictors, discretePredictors, ready)
-}
+  .doeResponseOptimizerPlots(jaspResults, options, dataset, continuousPredictors, discretePredictors, ready)
+  }
 
 .doeAnalysisReadData <- function(dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent) {
   if (!is.null(dataset)) {
@@ -561,7 +562,11 @@ get_levels <- function(var, num_levels, dataset) {
     roOptionsDf[["responseOptimizerTarget"]][which(roOptionsDf$responseOptimizerGoal != "target")] <- ""
   }
 
-  jaspResults[["roOptions"]] <- createJaspState(roOptionsDf)
+
+  roOptionsState <- createJaspState()
+  jaspResults[["roOptions"]] <- roOptionsState
+  roOptionsState$object <- roOptionsDf
+
   roDependent <- roOptionsDf$variable
 
   coefficients <- list()
@@ -576,7 +581,9 @@ get_levels <- function(var, num_levels, dataset) {
   discLevels <- unlist(optimParam[names(optimParam) %in% discretePredictors])
   predValues <- .equationPredictionFunction(continuousLevels = contLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
                                             currentDiscreteLevels = discLevels, coefficients = coefficients, dependent = roDependent)
-  jaspResults[["roResult"]] <- createJaspState(roOutcome)
+  roOutcomeState <- createJaspState()
+  jaspResults[["roResult"]] <- roOutcomeState
+  roOutcomeState$object <- roOutcome
 
   # Did all the required calculations and saved to state, if tables should not be displayed return now
   if (!options[["optimizationSolutionTable"]])
@@ -645,29 +652,28 @@ get_levels <- function(var, num_levels, dataset) {
   tb2$addRows(rows2)
 }
 
-.doeResponseOptimizerPlots <- function(jaspResults, readyModelPresent) {
+.doeResponseOptimizerPlots <- function(jaspResults, options, dataset, continuousPredictors,
+                                       discretePredictors, readyModelPresent) {
   if (is.null(jaspResults[["roOptions"]]))
     return()
-
-  roOptionsDf <- jaspResults[["roOptions"]]
+  roOptionsDf <- jaspResults[["roOptions"]]$object
   roDependent <- roOptionsDf$variable
 
-  readyRO <- length(roDependent > 0)
+  readyRO <- length(roDependent) > 0
 
   if (!options[["optimizationPlot"]] || !readyModelPresent || !readyRO)
     return()
-
-  roOutcome <- jaspResults[["roResult"]]
+  roOutcome <- jaspResults[["roResult"]]$object
   coefficients <- list()
   for (dep in roDependent) {
     coefficients[[dep]] <- jaspResults[[dep]][["doeResult"]]$object[["regression"]][["coefficients"]][["est"]]
   }
 
-
-  # if manual settings create a df with the values here
+  # TODO: if manual settings create a df with the values here
   currentSettings <- roOutcome$parameters
+  continuousLevels <- currentSettings[continuousPredictors]
+  currentDiscreteLevels <- currentSettings[discretePredictors]
 
-  # Example with composite desirability depending on InjPress
   nrow <- length(roDependent) + 1
   allPredictors <- c(discretePredictors, continuousPredictors)
   ncol <- length(allPredictors)
@@ -679,6 +685,8 @@ get_levels <- function(var, num_levels, dataset) {
       outcomeType <- if (row == 1) "compDesi" else "pred" # TODO: create an option to also select ind. desi.
       dependentTarget <- if (row == 1) "" else roDependent[row-1]
       currentPred <- allPredictors[col]
+      yAxisLabel <- if (outcomeType == "compDesi") "Comp. desirability" else dependentTarget
+      xAxisLavel <- currentPred
       if (currentPred %in% discretePredictors) {
         plottingWindowDf <- data.frame(x = unique(dataset[[currentPred]]))
         plottingWindowDf$y <- .individualValueROprediction(value = plottingWindowDf$x,
@@ -694,31 +702,44 @@ get_levels <- function(var, num_levels, dataset) {
                                                            dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y)) +
+          ggplot2::scale_y_continuous(name = yAxisLabel) +
+          ggplot2::xlab(xAxisLavel) +
           ggplot2::geom_point(size = 4) +
           jaspGraphs::themeJaspRaw() +
           jaspGraphs::geom_rangeframe()
       } else {
-        plottingWindowDf <- data.frame(x = range(dataset[[currentPred]]))
-        plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x)) +
-          ggplot2::stat_function(fun = .individualValueROprediction, args = list(valueName = currentPred,
-                                                                                 outcomeType = outcomeType,
-                                                                                 continuousLevels = continuousLevels,
-                                                                                 continuousPredictors = continuousPredictors,
-                                                                                 discretePredictors = discretePredictors,
-                                                                                 currentDiscreteLevels = currentDiscreteLevels,
-                                                                                 coefficients = coefficients,
-                                                                                 dependent = roDependent,
-                                                                                 dependentTarget = dependentTarget,
-                                                                                 dataset = dataset,
-                                                                                 roOptionsDf = roOptionsDf),
-                                 color = "blue", linewidth = 1, n = 50) +
+        plottingWindowDf <- data.frame(x = seq(from = min(dataset[[currentPred]]),
+                                               to = max(dataset[[currentPred]]),
+                                                length.out = 50))
+        plottingWindowDf$y <- .individualValueROprediction(value = plottingWindowDf$x,
+                                                           valueName = currentPred,
+                                                           outcomeType = outcomeType,
+                                                           continuousLevels = continuousLevels,
+                                                           continuousPredictors = continuousPredictors,
+                                                           discretePredictors = discretePredictors,
+                                                           currentDiscreteLevels = currentDiscreteLevels,
+                                                           coefficients = coefficients,
+                                                           dependent = roDependent,
+                                                           dependentTarget = dependentTarget,
+                                                           dataset = dataset,
+                                                           roOptionsDf = roOptionsDf)
+        plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y)) +
+          ggplot2::geom_line(color = "blue", linewidth = 1) +
+          ggplot2::scale_y_continuous(name = yAxisLabel) +
+          ggplot2::xlab(xAxisLavel) +
           jaspGraphs::themeJaspRaw() +
           jaspGraphs::geom_rangeframe()
       }
       plotMat[[row, col]] <- plot
     }
   }
-  jaspGraphs::ggMatrixPlot(plotList = plotMat, nr = nrow, nc = ncol)
+
+  jaspPlot <- createJaspPlot(title = gettext("Optimal Response Plot"), width = 300*ncol, height = 300*nrow)
+  jaspPlot$dependOn(options = c(""))
+  jaspPlot$position <- 15
+  plotObject <- jaspGraphs::ggMatrixPlot(plotList = plotMat, nr = nrow, nc = ncol)
+  jaspPlot$plotObject <- plotObject
+  jaspResults[["plotRo"]] <- jaspPlot
 }
 
 
