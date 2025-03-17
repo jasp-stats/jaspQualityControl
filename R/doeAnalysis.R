@@ -686,7 +686,8 @@ get_levels <- function(var, num_levels, dataset) {
       dependentTarget <- if (row == 1) "" else roDependent[row-1]
       currentPred <- allPredictors[col]
       yAxisLabel <- if (outcomeType == "compDesi") "Comp. desirability" else dependentTarget
-      xAxisLavel <- currentPred
+      yLimits <- if (outcomeType == "compDesi") c(0, 1) else c(min(dataset[[dependentTarget]]) - 0.1 * min(dataset[[dependentTarget]]), max(dataset[[dependentTarget]]) + 0.1 * max(dataset[[dependentTarget]]))
+      xAxisLabel <- currentPred
       if (currentPred %in% discretePredictors) {
         plottingWindowDf <- data.frame(x = unique(dataset[[currentPred]]))
         plottingWindowDf$y <- .individualValueROprediction(value = plottingWindowDf$x,
@@ -701,9 +702,11 @@ get_levels <- function(var, num_levels, dataset) {
                                                            dependentTarget = dependentTarget,
                                                            dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
-        plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y)) +
-          ggplot2::scale_y_continuous(name = yAxisLabel) +
-          ggplot2::xlab(xAxisLavel) +
+        plottingWindowDf$color <- ifelse(as.numeric(plottingWindowDf$x) == as.numeric(currentDiscreteLevels), "red", "blue")
+        plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y, color = color)) +
+          ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits) +
+          ggplot2::scale_color_identity() +
+          ggplot2::xlab(xAxisLabel) +
           ggplot2::geom_point(size = 4) +
           jaspGraphs::themeJaspRaw() +
           jaspGraphs::geom_rangeframe()
@@ -723,10 +726,25 @@ get_levels <- function(var, num_levels, dataset) {
                                                            dependentTarget = dependentTarget,
                                                            dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
+        # Coordinates for the indication of the current parameter settings
+        redPointCoordX <- as.numeric(continuousLevels[currentPred])
+        redPointCoordY <- .individualValueROprediction(value = redPointCoordX,
+                                                       valueName = currentPred,
+                                                       outcomeType = outcomeType,
+                                                       continuousLevels = continuousLevels,
+                                                       continuousPredictors = continuousPredictors,
+                                                       discretePredictors = discretePredictors,
+                                                       currentDiscreteLevels = currentDiscreteLevels,
+                                                       coefficients = coefficients,
+                                                       dependent = roDependent,
+                                                       dependentTarget = dependentTarget,
+                                                       dataset = dataset,
+                                                       roOptionsDf = roOptionsDf)
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y)) +
           ggplot2::geom_line(color = "blue", linewidth = 1) +
-          ggplot2::scale_y_continuous(name = yAxisLabel) +
-          ggplot2::xlab(xAxisLavel) +
+          ggplot2::annotate("point", x = redPointCoordX, y = redPointCoordY, color = "red", size = 3) +
+          ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits) +
+          ggplot2::xlab(xAxisLabel) +
           jaspGraphs::themeJaspRaw() +
           jaspGraphs::geom_rangeframe()
       }
