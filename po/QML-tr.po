@@ -1,15 +1,21 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2025-03-20 03:45+0000\n"
+"Last-Translator: Uğur ÇELİK <prof_ugur@hotmail.com>\n"
+"Language-Team: Turkish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/tr/>\n"
+"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.11-dev\n"
 "X-Language: tr\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
-msgstr "Kalite kontrol"
+msgstr "Kalite Kontrol"
 
 msgctxt "Description|"
 msgid "Measurement Systems Analysis"
@@ -17,11 +23,11 @@ msgstr "Ölçüm Sistemleri Analizi"
 
 msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
-msgstr ""
+msgstr "Nitelik Anlaşması Analizi"
 
 msgctxt "Description|"
 msgid "Control Charts"
-msgstr "Kontrol grafiği"
+msgstr "Kontrol Grafiği"
 
 msgctxt "doeFactorial|"
 msgid "Name"
@@ -29,11 +35,11 @@ msgstr "İsim"
 
 msgctxt "doeFactorial|"
 msgid "2-level split-plot (hard-to-change factors)"
-msgstr ""
+msgstr "2 seviyeli bölünmüş grafik (değiştirilmesi zor faktörler)"
 
 msgctxt "doeFactorial|"
 msgid "Number of hard-to-change factors"
-msgstr ""
+msgstr "Değiştirilmesi zor faktörlerin sayısı"
 
 msgctxt "doeFactorial|"
 msgid "Resolution"
@@ -46,11 +52,11 @@ msgstr "Standart"
 
 msgctxt "msaAttribute|"
 msgid "Tables"
-msgstr ""
+msgstr "Tablolar"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Parts"
-msgstr ""
+msgstr "Parçalar"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Standard"
@@ -66,11 +72,11 @@ msgstr "Grafikler"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements"
-msgstr ""
+msgstr "Ölçümler"
 
 msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
-msgstr ""
+msgstr "Std. Sapma"
 
 msgctxt "msaGaugeRR|"
 msgid "Percent"
@@ -90,127 +96,127 @@ msgstr "Histogram"
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurements"
-msgstr ""
+msgstr "Ölçümler"
 
 msgctxt "processCapabilityStudies|"
 msgid "Lower specification limit"
-msgstr ""
+msgstr "Alt özelleştirme sınırı"
 
 msgctxt "processCapabilityStudies|"
 msgid "Target value"
-msgstr ""
+msgstr "Hedef değer"
 
 msgctxt "processCapabilityStudies|"
 msgid "Upper specification limit"
-msgstr ""
+msgstr "Üst özelleştirme sınırı"
 
 msgctxt "processCapabilityStudies|"
 msgid "Specify a distribution"
-msgstr ""
+msgstr "Bir dağıtım belirtin"
 
 msgctxt "processCapabilityStudies|"
 msgid "Weibull"
-msgstr ""
+msgstr "Weibull"
 
 msgctxt "processCapabilityStudies|"
 msgid "Lognormal"
-msgstr ""
+msgstr "Lognormal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Median Rank (Benard)"
-msgstr ""
+msgstr "Ortanca Sıralama (Benard)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Mean Rank (Herd-Johnson)"
-msgstr ""
+msgstr "Ortalama Sıralama (Herd-Johnson)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Kaplan-Meier"
-msgstr ""
+msgstr "Kaplan-Meier"
 
 msgctxt "processCapabilityStudies|"
 msgid "Modified Kaplan-Meier (Hazen)"
-msgstr ""
+msgstr "Değiştirilmiş Kaplan-Meier (Hazen)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal"
-msgstr ""
+msgstr "Normal"
 
 msgctxt "Description|"
 msgid "Variables Charts for Subgroups"
-msgstr ""
+msgstr "Alt Gruplar İçin Değişken Grafikleri"
 
 msgctxt "Description|"
 msgid "Time Weighted Charts"
-msgstr ""
+msgstr "Zaman Ağırlıklı Grafikler"
 
 msgctxt "attributesCharts|"
 msgid "Defectives/Defects"
-msgstr ""
+msgstr "Kusurlular/Kusurlar"
 
 msgctxt "attributesCharts|"
 msgid "Charts for Attributes"
-msgstr ""
+msgstr "Niteliklere İlişkin Grafikler"
 
 msgctxt "attributesCharts|"
 msgid "Defectives"
-msgstr ""
+msgstr "Kusurlular"
 
 msgctxt "attributesCharts|"
 msgid "np chart"
-msgstr ""
+msgstr "np grafiği"
 
 msgctxt "attributesCharts|"
 msgid "p chart"
-msgstr ""
+msgstr "p grafiği"
 
 msgctxt "attributesCharts|"
 msgid "Defects"
-msgstr ""
+msgstr "Kusurlar"
 
 msgctxt "attributesCharts|"
 msgid "c chart"
-msgstr ""
+msgstr "c grafiği"
 
 msgctxt "attributesCharts|"
 msgid "u chart"
-msgstr ""
+msgstr "u grafiği"
 
 msgctxt "msaAttribute|"
 msgid "Kendall's tau"
-msgstr ""
+msgstr "Kendall'ın tau"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity table"
-msgstr ""
+msgstr "Doğrusallık tablosu"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Bias table"
-msgstr ""
+msgstr "Önyargı tablosu"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Linearity and bias graph"
-msgstr ""
+msgstr "Doğrusallık ve önyargı grafiği"
 
 msgctxt "msaGaugeLinearity|"
 msgid "Percent process variation graph"
-msgstr ""
+msgstr "Yüzdelik süreç varyasyon grafiği"
 
 msgctxt "msaGaugeRR|"
 msgid "Scatter plots operators"
-msgstr ""
+msgstr "Dağılım grafiği operatörleri"
 
 msgctxt "msaGaugeRR|"
 msgid "Fit line"
-msgstr ""
+msgstr "Uygun çizgi"
 
 msgctxt "msaGaugeRR|"
 msgid "Show origin line"
-msgstr ""
+msgstr "Başlangıç satırını göster"
 
 msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "Tüm ölçümleri görüntüle"
 
 #, fuzzy
 msgctxt "msaGaugeRRnonrep|"
@@ -219,11 +225,11 @@ msgstr "Operatörler"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Parts"
-msgstr ""
+msgstr "Parçalar"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements"
-msgstr ""
+msgstr "Ölçümler"
 
 #, fuzzy
 msgctxt "msaGaugeRRnonrep|"
@@ -232,7 +238,7 @@ msgstr "Yüzde"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Graph variation components"
-msgstr ""
+msgstr "Grafik varyasyon bileşenleri"
 
 #, fuzzy
 msgctxt "msaGaugeRRnonrep|"
@@ -241,111 +247,111 @@ msgstr "Grafikler"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
-msgstr ""
+msgstr "Grafik çeşitliliği bileşenleri"
 
 msgctxt "msaType1Gauge|"
 msgid "6"
-msgstr ""
+msgstr "6"
 
 msgctxt "msaType1Gauge|"
 msgid "4"
-msgstr ""
+msgstr "4"
 
 msgctxt "msaType1Gauge|"
 msgid "Run chart"
-msgstr ""
+msgstr "Grafiği çalıştır"
 
 msgctxt "msaType1Gauge|"
 msgid "Display individual measurements"
-msgstr ""
+msgstr "Bireysel ölçümleri görüntüleme"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for bias"
-msgstr ""
+msgstr "Önyargı için güven aralığı"
 
 msgctxt "msaType1Gauge|"
 msgid "Bin width type"
-msgstr ""
+msgstr "Kutu genişliği türü"
 
 msgctxt "msaType1Gauge|"
 msgid "Sturges"
-msgstr ""
+msgstr "Sturges"
 
 msgctxt "msaType1Gauge|"
 msgid "Scott"
-msgstr ""
+msgstr "Scott"
 
 msgctxt "msaType1Gauge|"
 msgid "Doane"
-msgstr ""
+msgstr "Doane"
 
 msgctxt "msaType1Gauge|"
 msgid "Freedman-Diaconis"
-msgstr ""
+msgstr "Freedman-Diaconis"
 
 msgctxt "msaType1Gauge|"
 msgid "Manual"
-msgstr ""
+msgstr "Manuel"
 
 msgctxt "msaType1Gauge|"
 msgid "Number of bins"
-msgstr ""
+msgstr "Kutu sayısı"
 
 msgctxt "msaType1Gauge|"
 msgid "Display mean"
-msgstr ""
+msgstr "Ortalamayı göster"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for mean"
-msgstr ""
+msgstr "Ortalama için güven aralığı"
 
 msgctxt "msaType1Gauge|"
 msgid "Display reference value"
-msgstr ""
+msgstr "Referans değerini göster"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
-msgstr ""
+msgstr "Kutu sayısı"
 
 msgctxt "timeWeightedCharts|"
 msgid "Measurements"
-msgstr ""
+msgstr "Ölçümler"
 
 msgctxt "timeWeightedCharts|"
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "Toplam kümülatif grafik"
 
 msgctxt "timeWeightedCharts|"
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "Üstel ağırlıklı hareketli ortalama grafiği"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & R"
-msgstr ""
+msgstr "X-bar ve R"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Warning limits"
-msgstr ""
+msgstr "Uyarı sınırları"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & s"
-msgstr ""
+msgstr "X-bar ve s"
 
 msgctxt "Description|"
 msgid "Process Capability Study"
-msgstr ""
+msgstr "Süreç Yeterlilik Çalışması"
 
 msgctxt "attributesCharts|"
 msgid "X-mR chart"
-msgstr ""
+msgstr "X-mR grafiği"
 
 msgctxt "msaGaugeRR|"
 msgid "Data format"
-msgstr ""
+msgstr "Veri formatı"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement"
-msgstr ""
+msgstr "Ölçüm"
 
 #, fuzzy
 msgctxt "msaGaugeRR|"
@@ -354,23 +360,23 @@ msgstr "İsim"
 
 msgctxt "msaGaugeRR|"
 msgid "Date"
-msgstr ""
+msgstr "Tarih"
 
 msgctxt "processCapabilityStudies|"
 msgid "Data format"
-msgstr ""
+msgstr "Veri formatı"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process capability plot"
-msgstr ""
+msgstr "Süreç yeteneği grafiği"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process capability tables"
-msgstr ""
+msgstr "Süreç yetenek tabloları"
 
 msgctxt "processCapabilityStudies|"
 msgid "Confidence intervals"
-msgstr ""
+msgstr "Güven aralıkları"
 
 #, fuzzy
 msgctxt "processCapabilityStudies|"
@@ -379,15 +385,15 @@ msgstr "Histogram"
 
 msgctxt "processCapabilityStudies|"
 msgid "Probability table and plot"
-msgstr ""
+msgstr "Olasılık tablosu ve grafiği"
 
 msgctxt "processCapabilityStudies|"
 msgid "Process Capability Report"
-msgstr ""
+msgstr "Süreç Yeterliliği Raporu"
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurement"
-msgstr ""
+msgstr "Ölçüm"
 
 #, fuzzy
 msgctxt "processCapabilityStudies|"
@@ -396,71 +402,72 @@ msgstr "İsim"
 
 msgctxt "processCapabilityStudies|"
 msgid "Date"
-msgstr ""
+msgstr "Tarih"
 
 msgctxt "processCapabilityStudies|"
 msgid "Show Report"
-msgstr ""
+msgstr "Raporu Göster"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
-msgstr ""
+msgstr "Bireyler için Değişkenler Tablosu"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "X-mR chart"
-msgstr ""
+msgstr "X-mR çizelgesi"
 
 msgctxt "Description|"
 msgid "Variables Charts for Individuals"
-msgstr ""
+msgstr "Bireyler için Değişken Çizelgeleri"
 
 msgctxt "Description|"
 msgid "Probability of Detection"
-msgstr ""
+msgstr "Tespit Olasılığı"
 
 msgctxt "probabilityOfDetection|"
 msgid "Outcomes"
-msgstr ""
+msgstr "Sonuçlar"
 
 msgctxt "probabilityOfDetection|"
 msgid "Covariates"
-msgstr ""
+msgstr "Ortak değişkenler"
 
 msgctxt "probabilityOfDetection|"
 msgid "Tables"
-msgstr ""
+msgstr "Tablolar"
 
 msgctxt "probabilityOfDetection|"
 msgid "Model fit table"
-msgstr ""
+msgstr "Model uyum tablosu"
 
 msgctxt "probabilityOfDetection|"
 msgid "Detection plot"
-msgstr ""
+msgstr "Tespit grafiği"
 
 msgctxt "probabilityOfDetection|"
 msgid "Show data"
-msgstr ""
+msgstr "Veriyi göster"
 
+#, fuzzy
 msgctxt "probabilityOfDetection|"
 msgid "Rugs"
-msgstr ""
+msgstr "Paylar"
 
 msgctxt "probabilityOfDetection|"
 msgid "Points"
-msgstr ""
+msgstr "Puanlar"
 
 msgctxt "probabilityOfDetection|"
 msgid "Add jitter"
-msgstr ""
+msgstr "Tetikleyici ekle"
 
 msgctxt "probabilityOfDetection|"
 msgid "Show density"
-msgstr ""
+msgstr "Yoğunluğu göster"
 
 msgctxt "probabilityOfDetection|"
 msgid "Confidence interval"
-msgstr ""
+msgstr "Güven aralığı"
 
 msgctxt "probabilityOfDetection|"
 msgid "Ticks x-axis"
@@ -468,87 +475,87 @@ msgstr ""
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data"
-msgstr ""
+msgstr "verilere dayalı"
 
 msgctxt "probabilityOfDetection|"
 msgid "based on data and model"
-msgstr ""
+msgstr "verilere ve modele dayalı"
 
 msgctxt "probabilityOfDetection|"
 msgid "Logarithmic x-axis"
-msgstr ""
+msgstr "Logaritmik x-ekseni"
 
 msgctxt "probabilityOfDetection|"
 msgid "Asymptotes"
-msgstr ""
+msgstr "Asimptotlar"
 
 msgctxt "probabilityOfDetection|"
 msgid "Horizontal asymptotes"
-msgstr ""
+msgstr "Yatay asimptotlar"
 
 msgctxt "probabilityOfDetection|"
 msgid "Label"
-msgstr ""
+msgstr "Etiket"
 
 msgctxt "probabilityOfDetection|"
 msgid "y-coordinate"
-msgstr ""
+msgstr "y-koordinatı(ekseni)"
 
 msgctxt "probabilityOfDetection|"
 msgid "Asymptote "
-msgstr ""
+msgstr "Asimptot "
 
 msgctxt "probabilityOfDetection|"
 msgid "Vertical asymptotes"
-msgstr ""
+msgstr "Dikey asimptotlar"
 
 msgctxt "probabilityOfDetection|"
 msgid "x-coordinate"
-msgstr ""
+msgstr "x-koordinatı(ekseni)"
 
 msgctxt "probabilityOfDetection|"
 msgid "Fitting options"
-msgstr ""
+msgstr "Ayarlama seçenekleri"
 
 msgctxt "probabilityOfDetection|"
 msgid "Link function"
-msgstr ""
+msgstr "Bağlantı işlevi"
 
 msgctxt "probabilityOfDetection|"
 msgid "Logit"
-msgstr ""
+msgstr "Logit"
 
 msgctxt "probabilityOfDetection|"
 msgid "Probit"
-msgstr ""
+msgstr "Probit"
 
 msgctxt "probabilityOfDetection|"
 msgid "Log transform covariate"
-msgstr ""
+msgstr "Log dönüşümü yardımcı değişkeni"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Autocorrelation"
-msgstr ""
+msgstr "Otokorelasyon"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Data format"
-msgstr ""
+msgstr "Veri formatı"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurements"
-msgstr ""
+msgstr "Ölçümler"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroups"
-msgstr ""
+msgstr "Alt gruplar"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
-msgstr ""
+msgstr "Alt Gruplar İçin Değişken Çizelgeleri Raporu"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
-msgstr ""
+msgstr "Ölçüm"
 
 #, fuzzy
 msgctxt "variablesChartsSubgroups|"
@@ -557,99 +564,99 @@ msgstr "İsim"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date"
-msgstr ""
+msgstr "Tarih"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Show Report"
-msgstr ""
+msgstr "Raporu Göster"
 
 msgctxt "Description|"
 msgid "Test-retest (Range method)"
-msgstr ""
+msgstr "Test et -tekrar test et (Aralık yöntemi)"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Available variables"
-msgstr ""
+msgstr "Mevcut değişkenler"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Response variable"
-msgstr ""
+msgstr "Yanıt değişkeni"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Atanan faktörler"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Run order"
-msgstr ""
+msgstr "Emri çalıştır"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Alpha level:"
-msgstr ""
+msgstr "Alfa seviyesi:"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Pareto plot of standardized effects"
-msgstr ""
+msgstr "Standartlaştırılmış etkilerin Pareto grafiği"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals plots"
-msgstr ""
+msgstr "Artanlar grafikleri"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Normal probability plot of residuals"
-msgstr ""
+msgstr "Artıkların normal olasılık grafiği"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Histogram of residuals"
-msgstr ""
+msgstr "Artıkların histogramı"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr ""
+msgstr "Artıklar ve uygun değer"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs run order"
-msgstr ""
+msgstr "Artıklar ve çalışma sırası"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (default generator)"
-msgstr ""
+msgstr "2 seviyeli faktöriyel (varsayılan üreteç)"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
-msgstr ""
+msgstr "2 seviyeli faktöriyel (özelleştirilmiş üreteç)"
 
 msgctxt "doeScreening|"
 msgid "Type of Screening Design"
-msgstr ""
+msgstr "Tarama Tasarımının Türü"
 
 msgctxt "doeScreening|"
 msgid "Plackett-Burman"
-msgstr ""
+msgstr "Plackett-Burman"
 
 msgctxt "doeScreening|"
 msgid "Definitive screening"
-msgstr ""
+msgstr "Kesin tarama"
 
 msgctxt "doeScreening|"
 msgid "Number of 3-level factors"
-msgstr ""
+msgstr "3 seviyeli faktörlerin sayısı"
 
 msgctxt "doeScreening|"
 msgid "Number of runs"
-msgstr ""
+msgstr "Çalıştırma sayısı"
 
 msgctxt "doeScreening|"
 msgid "Coded"
-msgstr ""
+msgstr "Kodlanmış"
 
 msgctxt "doeScreening|"
 msgid "Uncoded"
-msgstr ""
+msgstr "Kodlanmamış"
 
 msgctxt "doeScreening|"
 msgid "Run Order"
-msgstr ""
+msgstr "Emri Çalıştır"
 
 #, fuzzy
 msgctxt "doeScreening|"
@@ -658,12 +665,11 @@ msgstr "Standart"
 
 msgctxt "doeScreening|"
 msgid "Random"
-msgstr ""
+msgstr "Rastsal"
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid "Factor"
-msgstr "faktör"
+msgstr "Faktör"
 
 #, fuzzy
 msgctxt "doeScreening|"
@@ -672,71 +678,71 @@ msgstr "İsim"
 
 msgctxt "doeScreening|"
 msgid "Level 1"
-msgstr ""
+msgstr "Seviye 1"
 
 msgctxt "doeScreening|"
 msgid "Level 2"
-msgstr ""
+msgstr "Seviye 2"
 
 msgctxt "doeScreening|"
 msgid "Level 3"
-msgstr ""
+msgstr "Seviye 3"
 
 msgctxt "doeScreening|"
 msgid "Factor "
-msgstr ""
+msgstr "Faktör "
 
 msgctxt "doeScreening|"
 msgid " Level 1"
-msgstr ""
+msgstr " Seviye 1"
 
 msgctxt "doeScreening|"
 msgid " Level 2"
-msgstr ""
+msgstr " Seviye 2"
 
 msgctxt "doeScreening|"
 msgid " Level 3"
-msgstr ""
+msgstr " Seviye 3"
 
 msgctxt "doeScreening|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Ek Seçenekler"
 
 msgctxt "doeScreening|"
 msgid "Number of replicates for corner points"
-msgstr ""
+msgstr "Köşe noktaları için tekrar sayısı"
 
 msgctxt "msaGaugeRR|"
 msgid "Single column"
-msgstr ""
+msgstr "Tek sütun"
 
 msgctxt "msaGaugeRR|"
 msgid "Across rows"
-msgstr ""
+msgstr "Satırlar arasında"
 
 msgctxt "msaGaugeRR|"
 msgid "Process variation based on"
-msgstr ""
+msgstr "Süreç değişimine dayalı"
 
 msgctxt "msaGaugeRR|"
 msgid "Study variation"
-msgstr ""
+msgstr "Çalışma değişkenliği"
 
 msgctxt "msaGaugeRR|"
 msgid "Historical standard deviation"
-msgstr ""
+msgstr "Tarihsel standart sapma"
 
 msgctxt "msaGaugeRR|"
 msgid "Historical standard deviation:"
-msgstr ""
+msgstr "Tarihsel standart sapma:"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Data format"
-msgstr ""
+msgstr "Veri formatı"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Single column"
-msgstr ""
+msgstr "Tek sütun"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Across rows"
