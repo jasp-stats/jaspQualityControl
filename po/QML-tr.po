@@ -1,15 +1,9 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-03-20 03:45+0000\n"
-"Last-Translator: Uğur ÇELİK <prof_ugur@hotmail.com>\n"
-"Language-Team: Turkish <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/tr/>\n"
-"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.11-dev\n"
 "X-Language: tr\n"
 "X-Qt-Contexts: true\n"
 
@@ -744,34 +738,40 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Single column"
 msgstr "Tek sütun"
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Across rows"
-msgstr ""
+msgstr "Satırlar arasında"
 
 #, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
 msgstr "İsim"
 
+#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
-msgstr ""
+msgstr "Tarih"
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Data format"
-msgstr ""
+msgstr "Veri formatı"
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Single column"
-msgstr ""
+msgstr "Tek sütun"
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Across rows"
-msgstr ""
+msgstr "Satırlar arasında"
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Measurements"
-msgstr ""
+msgstr "Ölçümler"
 
 msgctxt "msaTestRetest|"
 msgid "r&R table"
@@ -782,13 +782,15 @@ msgctxt "msaTestRetest|"
 msgid "Plots"
 msgstr "Grafikler"
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Single column"
-msgstr ""
+msgstr "Tek sütun"
 
+#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Across rows"
-msgstr ""
+msgstr "Satırlar arasında"
 
 msgctxt "processCapabilityStudies|"
 msgid "Type of data distribution"
@@ -824,17 +826,20 @@ msgid ""
 "criteria"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Data format"
-msgstr ""
+msgstr "Veri formatı"
 
+#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Single column"
-msgstr ""
+msgstr "Tek sütun"
 
+#, fuzzy
 msgctxt "msaAttribute|"
 msgid "Across rows"
-msgstr ""
+msgstr "Satırlar arasında"
 
 msgctxt "msaAttribute|"
 msgid "Cohen's kappa (interrater kappa)"
@@ -924,13 +929,15 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Confidence interval size"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Single column"
-msgstr ""
+msgstr "Tek sütun"
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Across rows"
-msgstr ""
+msgstr "Satırlar arasında"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Known parameters"
@@ -960,9 +967,10 @@ msgctxt "attributesCharts|"
 msgid "Title"
 msgstr ""
 
+#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Measurement"
-msgstr ""
+msgstr "Ölçüm"
 
 #, fuzzy
 msgctxt "attributesCharts|"
@@ -997,9 +1005,10 @@ msgctxt "attributesCharts|"
 msgid "Frequency"
 msgstr ""
 
+#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Show Report"
-msgstr ""
+msgstr "Raporu Göster"
 
 msgctxt "doeFull|"
 msgid "Design Space"
@@ -1010,13 +1019,15 @@ msgctxt "doeFull|"
 msgid "Number of factors"
 msgstr "faktör sayısı"
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Run Order"
-msgstr ""
+msgstr "Emri Çalıştır"
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Random"
-msgstr ""
+msgstr "Rastsal"
 
 #, fuzzy
 msgctxt "doeFull|"
@@ -1037,13 +1048,15 @@ msgctxt "doeFull|"
 msgid "Levels"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Factor "
-msgstr ""
+msgstr "Faktör "
 
+#, fuzzy
 msgctxt "doeFull|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Ek Seçenekler"
 
 msgctxt "doeFull|"
 msgid "Number of random runs to repeat"
@@ -1065,37 +1078,44 @@ msgctxt "doeModifyDesign|"
 msgid "Available factors"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Response variable"
-msgstr ""
+msgstr "Yanıt değişkeni"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Atanan faktörler"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Run order"
-msgstr ""
+msgstr "Emri çalıştır"
 
 msgctxt "doeModifyDesign|"
 msgid "Unit Display"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Coded"
-msgstr ""
+msgstr "Kodlanmış"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Uncoded"
-msgstr ""
+msgstr "Kodlanmamış"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Run Order"
-msgstr ""
+msgstr "Emri Çalıştır"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Random"
-msgstr ""
+msgstr "Rastsal"
 
 #, fuzzy
 msgctxt "doeModifyDesign|"
@@ -1110,9 +1130,10 @@ msgctxt "doeModifyDesign|"
 msgid "Design Options"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Number of runs"
-msgstr ""
+msgstr "Çalıştırma sayısı"
 
 #, fuzzy
 msgctxt "doeModifyDesign|"
@@ -1151,21 +1172,25 @@ msgctxt "doeModifyDesign|"
 msgid "Fraction"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "1/2"
-msgstr ""
+msgstr "1/2"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "1/4"
-msgstr ""
+msgstr "1/4"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "1/8"
-msgstr ""
+msgstr "1/8"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Ek Seçenekler"
 
 msgctxt "doeModifyDesign|"
 msgid "Number of center points"
@@ -1232,18 +1257,20 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Title"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Measurement"
-msgstr ""
+msgstr "Ölçüm"
 
 #, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Name"
 msgstr "İsim"
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Date"
-msgstr ""
+msgstr "Tarih"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Sub-title"
@@ -1281,9 +1308,10 @@ msgctxt "msaGaugeRR|"
 msgid "Tolerance width"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaType1Gauge|"
 msgid "Measurement"
-msgstr ""
+msgstr "Ölçüm"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-conformance"
@@ -1310,9 +1338,10 @@ msgctxt "doeScreening|"
 msgid "Number of factors"
 msgstr "faktör sayısı"
 
+#, fuzzy
 msgctxt "msaGaugeLinearity|"
 msgid "Measurements"
-msgstr ""
+msgstr "Ölçümler"
 
 msgctxt "msaGaugeRR|"
 msgid "Measurements by part plot"
@@ -1770,25 +1799,28 @@ msgctxt "msaGaugeRR|"
 msgid "Part"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Show Report"
-msgstr ""
+msgstr "Raporu Göster"
 
 msgctxt "msaTestRetest|"
 msgid "Part"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Measurement"
-msgstr ""
+msgstr "Ölçüm"
 
 msgctxt "msaTestRetest|"
 msgid "Scatter plot measurement"
 msgstr ""
 
+#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Fit line"
-msgstr ""
+msgstr "Uygun çizgi"
 
 msgctxt "msaTestRetest|"
 msgid "Display all measurements"
@@ -2086,9 +2118,10 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Timestamp (optional)"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Subgroups Report"
-msgstr ""
+msgstr "Alt Gruplar İçin Değişken Çizelgeleri Raporu"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Chart name"
@@ -2206,9 +2239,10 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Number of std. dev. for calculation of control limits"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Available variables"
-msgstr ""
+msgstr "Mevcut değişkenler"
 
 msgctxt "doeAnalysis|"
 msgid "Discrete predictors"
@@ -2218,9 +2252,10 @@ msgctxt "doeAnalysis|"
 msgid "Continuous predictors"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Covariates"
-msgstr ""
+msgstr "Ortak değişkenler"
 
 msgctxt "doeAnalysis|"
 msgid "Predictor levels"
@@ -2270,29 +2305,35 @@ msgctxt "doeAnalysis|"
 msgid "Histogram bin width type"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Sturges"
-msgstr ""
+msgstr "Sturges"
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Scott"
-msgstr ""
+msgstr "Scott"
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Doane"
-msgstr ""
+msgstr "Doane"
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Freedman-Diaconis"
-msgstr ""
+msgstr "Freedman-Diaconis"
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Manual"
-msgstr ""
+msgstr "Manuel"
 
+#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Number of bins"
-msgstr ""
+msgstr "Kutu sayısı"
 
 msgctxt "doeAnalysis|"
 msgid "Sum of squares type"
@@ -2366,21 +2407,25 @@ msgctxt "doeFactorial|"
 msgid "Maximum predictor levels"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "1"
-msgstr ""
+msgstr "1"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "2"
-msgstr ""
+msgstr "2"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "4"
-msgstr ""
+msgstr "4"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "8"
-msgstr ""
+msgstr "8"
 
 msgctxt "Description|"
 msgid "Type 1 Instrument Capability Study"
@@ -2750,9 +2795,10 @@ msgctxt "rareEventCharts|"
 msgid "Rare Event Charts Report"
 msgstr ""
 
+#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Show Report"
-msgstr ""
+msgstr "Raporu Göster"
 
 msgctxt "rareEventCharts|"
 msgid "Show report metadata"
@@ -2762,9 +2808,10 @@ msgctxt "rareEventCharts|"
 msgid "Title"
 msgstr ""
 
+#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Variable Charts for Subgroups Report"
-msgstr ""
+msgstr "Alt Gruplar İçin Değişken Çizelgeleri Raporu"
 
 msgctxt "rareEventCharts|"
 msgid "Chart name"
@@ -2799,9 +2846,10 @@ msgctxt "rareEventCharts|"
 msgid "Location"
 msgstr ""
 
+#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Date"
-msgstr ""
+msgstr "Tarih"
 
 msgctxt "rareEventCharts|"
 msgid "Performed by"
@@ -2819,29 +2867,34 @@ msgctxt "rareEventCharts|"
 msgid "Today"
 msgstr ""
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Data format"
-msgstr ""
+msgstr "Veri formatı"
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Single column"
-msgstr ""
+msgstr "Tek sütun"
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Across rows"
-msgstr ""
+msgstr "Satırlar arasında"
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Measurement"
-msgstr ""
+msgstr "Ölçüm"
 
 msgctxt "timeWeightedCharts|"
 msgid "Timestamp (optional)"
 msgstr ""
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Subgroups"
-msgstr ""
+msgstr "Alt gruplar"
 
 msgctxt "timeWeightedCharts|"
 msgid "Stages"
@@ -2927,9 +2980,10 @@ msgctxt "timeWeightedCharts|"
 msgid "Time Weighted Charts Report"
 msgstr ""
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Show Report"
-msgstr ""
+msgstr "Raporu Göster"
 
 msgctxt "timeWeightedCharts|"
 msgid "Show report metadata"
@@ -2939,9 +2993,10 @@ msgctxt "timeWeightedCharts|"
 msgid "Title"
 msgstr ""
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Variable Charts for Subgroups Report"
-msgstr ""
+msgstr "Alt Gruplar İçin Değişken Çizelgeleri Raporu"
 
 msgctxt "timeWeightedCharts|"
 msgid "Chart name"
@@ -2976,9 +3031,10 @@ msgctxt "timeWeightedCharts|"
 msgid "Location"
 msgstr ""
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Date"
-msgstr ""
+msgstr "Tarih"
 
 msgctxt "timeWeightedCharts|"
 msgid "Performed by"
