@@ -559,14 +559,14 @@ Form
 				{
 					name:						"optimizationPlotCustomParameters"
 					id:							optimizationPlotCustomParameters
-					label:						qsTr("Set input parameters")
+					label:						qsTr("Set input parameters manually")
 					checked:					false
 				}
 
 				VariablesList
 				{
-					id: 				optimptimizationPlotCustomParameters
-					name:				"optimptimizationPlotCustomParameters"
+					id: 				optimizationPlotCustomParameterValues
+					name:				"optimizationPlotCustomParameterValues"
 					label:				qsTr("Predictor")
 					visible:			optimizationPlotCustomParameters.checked
 					source: 			designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface"]
@@ -574,7 +574,7 @@ Form
 					draggable:			false
 					preferredHeight:	jaspTheme.smallDefaultVariablesFormHeight
 					rowComponentTitle:	qsTr("Value")
-					rowComponent: 		TextField { name: "value"; fieldWidth: 40; defaultValue: "0"}
+					rowComponent: 		TextField { name: "value"; fieldWidth: 40; defaultValue: ""}
 				}
 			}
 		}
@@ -599,34 +599,6 @@ Form
 				checked:					false
 			}
 		}
-
-			// VariablesForm
-			// {
-			// 	id:									variablesFormptimizationPlotCustomParametersContinuous
-			// 	preferredHeight: 					jaspTheme.smallDefaultVariablesFormHeight
-
-			// 	AvailableVariablesList
-			// 	{
-			// 		name:								"continuousPredictorVariables"
-			// 		label:								qsTr("Continuous predictors")
-			// 		source:								designType.currentValue == "factorialDesign" ? "continuousFactorsFactorial" : "continuousFactorsResponseSurface"
-			// 		width:								100
-			// 	}
-			// }
-
-			// VariablesForm
-			// {
-			// 	id:									variablesFormptimizationPlotCustomParametersDiscrete
-			// 	preferredHeight: 					jaspTheme.smallDefaultVariablesFormHeight
-
-			// 	AvailableVariablesList
-			// 	{
-			// 		name:								"discretePredictorVariables"
-			// 		label:								qsTr("Discrete predictors")
-			// 		source:								designType.currentValue == "factorialDesign" ? "fixedFactorsFactorial" : "fixedFactorsResponseSurface"
-			// 		width:								100
-			// 	}
-			// }
 	}
 
 	Section

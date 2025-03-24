@@ -598,7 +598,7 @@ get_levels <- function(var, num_levels, dataset) {
   tb1$addColumnInfo(name = "weight", title = "Weight", type = "number")
   tb1$addColumnInfo(name = "importance", title = "Importance", type = "number")
   tb1$dependOn(options = .doeAnalysisBaseDependencies())
-  tb1$position <- 13
+  tb1$position <- 1
   jaspResults[["tableRoSettings"]] <- tb1
 
   lbVector <- c()
@@ -640,7 +640,7 @@ get_levels <- function(var, num_levels, dataset) {
   tb2 <- createJaspTable(gettext("Response Optimizer Solution"))
   tb2$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
   tb2$dependOn(options = .doeAnalysisBaseDependencies())
-  tb2$position <- 14
+  tb2$position <- 2
   jaspResults[["tableRoSolution"]] <- tb2
 
   rows2 <- data.frame(desi = desi)
@@ -669,10 +669,61 @@ get_levels <- function(var, num_levels, dataset) {
     coefficients[[dep]] <- jaspResults[[dep]][["doeResult"]]$object[["regression"]][["coefficients"]][["est"]]
   }
 
-  # TODO: if manual settings create a df with the values here
-  currentSettings <- roOutcome$parameters
-  continuousLevels <- currentSettings[continuousPredictors]
-  currentDiscreteLevels <- currentSettings[discretePredictors]
+  jaspResults[["plotRo"]] <- createJaspContainer(title = gettext("Optimization Plot"))
+  jaspResults[["plotRo"]]$position <- 3
+
+  if (options[["optimizationPlotCustomParameters"]]) {
+    currentSettings <- options[["optimizationPlotCustomParameterValues"]]
+    currentSettings <- do.call(cbind, lapply(currentSettings, function(x) setNames(data.frame(x$value, stringsAsFactors = FALSE), x$variable)))
+    # if any of the values is == "" then return empty plot and table with note that asks to set value
+    if (any(unlist(currentSettings) == "")) {
+      jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
+      jaspPlot$setError(gettext("Enter values for all predictors."))
+      jaspPlot$dependOn(options = .doeAnalysisBaseDependencies())
+      jaspResults[["plotRo"]][["plot"]] <- jaspPlot
+
+      tb <- createJaspTable(gettext("Optimization Plot Summary"))
+      tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
+      tb$dependOn(options = .doeAnalysisBaseDependencies())
+      tb$addFootnote(gettext("Enter values for all predictors."))
+      jaspResults[["plotRo"]][["table"]] <- tb
+      return()
+    }
+
+    # transform factors to correct type
+    for (discPred in discretePredictors) {
+      # check if entered factor level is plausible
+      if (!unlist(currentSettings[discPred]) %in% levels(dataset[[discPred]])) {
+        jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
+        jaspPlot$setError(paste0(gettextf("Enter plausible values for all discrete predictors.
+                                   Value %1$s is not a possible for the discrete predictor %2$s. Allowed values: ",
+                                   unlist(currentSettings[discPred]), discPred), paste0(levels(dataset[[discPred]]), collapse = ", "), "."))
+        jaspPlot$dependOn(options = .doeAnalysisBaseDependencies())
+        jaspResults[["plotRo"]][["plot"]] <- jaspPlot
+        return()
+      }
+      currentSettings[discPred] <- factor(currentSettings[discPred], levels = levels(dataset[[discPred]]))
+    }
+
+    # transform continuous predictors to numeric and throw error if not possible
+    for (contPred in continuousPredictors) {
+      # check if entered continuous value is plausible
+      if (is.na(as.numeric(currentSettings[contPred]))) {
+        jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
+        jaspPlot$setError(gettext("Enter plausible values for all continuous predictors. Only numeric values are allowed."))
+        jaspPlot$dependOn(options = .doeAnalysisBaseDependencies())
+        jaspResults[["plotRo"]][["plot"]] <- jaspPlot
+        return()
+      }
+      currentSettings[contPred] <- as.numeric(currentSettings[contPred])
+    }
+    continuousLevels <- currentSettings[continuousPredictors]
+    currentDiscreteLevels <- unlist(currentSettings[discretePredictors])
+  } else {
+    currentSettings <- roOutcome$parameters
+    continuousLevels <- currentSettings[continuousPredictors]
+    currentDiscreteLevels <- unlist(currentSettings[discretePredictors])
+  }
 
   nrow <- length(roDependent) + 1
   allPredictors <- c(discretePredictors, continuousPredictors)
@@ -686,7 +737,6 @@ get_levels <- function(var, num_levels, dataset) {
       dependentTarget <- if (row == 1) "" else roDependent[row-1]
       currentPred <- allPredictors[col]
       yAxisLabel <- if (outcomeType == "compDesi") "Comp. desirability" else dependentTarget
-      yLimits <- if (outcomeType == "compDesi") c(0, 1) else c(min(dataset[[dependentTarget]]) - 0.1 * min(dataset[[dependentTarget]]), max(dataset[[dependentTarget]]) + 0.1 * max(dataset[[dependentTarget]]))
       xAxisLabel <- currentPred
       if (currentPred %in% discretePredictors) {
         plottingWindowDf <- data.frame(x = unique(dataset[[currentPred]]))
@@ -703,6 +753,7 @@ get_levels <- function(var, num_levels, dataset) {
                                                            dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
         plottingWindowDf$color <- ifelse(as.numeric(plottingWindowDf$x) == as.numeric(currentDiscreteLevels), "red", "blue")
+        yLimits <- if (outcomeType == "compDesi") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y, color = color)) +
           ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits) +
           ggplot2::scale_color_identity() +
@@ -711,8 +762,8 @@ get_levels <- function(var, num_levels, dataset) {
           jaspGraphs::themeJaspRaw() +
           jaspGraphs::geom_rangeframe()
       } else {
-        plottingWindowDf <- data.frame(x = seq(from = min(dataset[[currentPred]]),
-                                               to = max(dataset[[currentPred]]),
+        plottingWindowDf <- data.frame(x = seq(from = min(dataset[[currentPred]], as.numeric(continuousLevels[currentPred])),
+                                               to = max(dataset[[currentPred]], as.numeric(continuousLevels[currentPred])),
                                                 length.out = 50))
         plottingWindowDf$y <- .individualValueROprediction(value = plottingWindowDf$x,
                                                            valueName = currentPred,
@@ -726,6 +777,7 @@ get_levels <- function(var, num_levels, dataset) {
                                                            dependentTarget = dependentTarget,
                                                            dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
+        yLimits <- if (outcomeType == "compDesi") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
         # Coordinates for the indication of the current parameter settings
         redPointCoordX <- as.numeric(continuousLevels[currentPred])
         redPointCoordY <- .individualValueROprediction(value = redPointCoordX,
@@ -752,12 +804,34 @@ get_levels <- function(var, num_levels, dataset) {
     }
   }
 
-  jaspPlot <- createJaspPlot(title = gettext("Optimal Response Plot"), width = 300*ncol, height = 300*nrow)
+  jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 300*ncol, height = 300*nrow)
   jaspPlot$dependOn(options = c(""))
-  jaspPlot$position <- 15
   plotObject <- jaspGraphs::ggMatrixPlot(plotList = plotMat, nr = nrow, nc = ncol)
   jaspPlot$plotObject <- plotObject
-  jaspResults[["plotRo"]] <- jaspPlot
+  jaspResults[["plotRo"]][["plot"]] <- jaspPlot
+
+
+
+
+  tb <- createJaspTable(gettext("Optimization Plot Summary"))
+  tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
+  tb$dependOn(options = .doeAnalysisBaseDependencies())
+  jaspResults[["plotRo"]][["table"]] <- tb
+
+
+  desi <- .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, coefficients, roDependent,
+                                           dataset, roOptionsDf) * -1 # because it is returned as negative for optim. but in this case we want the true value
+  desi <- pmax(0, pmin(1, desi))
+  predValues <- .equationPredictionFunction(continuousLevels = continuousLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
+                              currentDiscreteLevels = currentDiscreteLevels, coefficients = coefficients, dependent = roDependent)
+
+  rows <- data.frame(desi = desi)
+  predValuesFit <- setNames(predValues, paste0(names(predValues), " fit"))
+  predValuesFit <- round(predValuesFit, .numDecimals)
+  rows <- cbind(rows, as.data.frame(t(predValuesFit)))
+  currentSettings[continuousPredictors] <- round(currentSettings[continuousPredictors], .numDecimals)
+  rows <- cbind(rows, currentSettings)
+  tb$addRows(rows)
 }
 
 
