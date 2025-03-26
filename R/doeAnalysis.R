@@ -672,6 +672,7 @@ get_levels <- function(var, num_levels, dataset) {
   jaspResults[["plotRo"]] <- createJaspContainer(title = gettext("Optimization Plot"))
   jaspResults[["plotRo"]]$position <- 3
 
+  # Create Df if custom parameters are entered
   if (options[["optimizationPlotCustomParameters"]]) {
     currentSettings <- options[["optimizationPlotCustomParameterValues"]]
     currentSettings <- do.call(cbind, lapply(currentSettings, function(x) setNames(data.frame(x$value, stringsAsFactors = FALSE), x$variable)))
@@ -719,7 +720,7 @@ get_levels <- function(var, num_levels, dataset) {
     }
     continuousLevels <- currentSettings[continuousPredictors]
     currentDiscreteLevels <- unlist(currentSettings[discretePredictors])
-  } else {
+  } else { # if default optimal parameters should be used
     currentSettings <- roOutcome$parameters
     continuousLevels <- currentSettings[continuousPredictors]
     currentDiscreteLevels <- unlist(currentSettings[discretePredictors])
@@ -752,7 +753,7 @@ get_levels <- function(var, num_levels, dataset) {
                                                            dependentTarget = dependentTarget,
                                                            dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
-        plottingWindowDf$color <- ifelse(as.numeric(plottingWindowDf$x) == as.numeric(currentDiscreteLevels), "red", "blue")
+        plottingWindowDf$color <- ifelse(as.character(plottingWindowDf$x) == as.character(currentDiscreteLevels[currentPred]), "red", "blue")
         yLimits <- if (outcomeType == "compDesi") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y, color = color)) +
           ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits) +
