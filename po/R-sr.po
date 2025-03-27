@@ -2,16 +2,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
 "POT-Creation-Date: 2024-10-19 03:41\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2025-03-28 12:20+0000\n"
+"Last-Translator: Marko Bojović <bojovicmarko@outlook.com>\n"
+"Language-Team: Serbian <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-r/sr/>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 5.11-dev\n"
 
 msgid "One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"
 msgstr ""
+"Једна или више подгрупа је додељено више од једне фазе, узима се у обзир "
+"само прва фаза. <br>"
 
 msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
 msgstr ""
@@ -209,7 +215,7 @@ msgid "The specified low/high level(s) %1$s for %2$s do not match the levels in 
 msgstr ""
 
 msgid "Model Summary"
-msgstr ""
+msgstr "Резиме модела"
 
 msgid "The following aliased terms were removed: %s."
 msgstr ""
@@ -248,7 +254,7 @@ msgid "Name"
 msgstr ""
 
 msgid "Level"
-msgstr ""
+msgstr "Ниво"
 
 msgid "Regression equation in %s Units"
 msgstr ""
@@ -464,13 +470,13 @@ msgid "Percent"
 msgstr ""
 
 msgid "Lower"
-msgstr ""
+msgstr "Ниже"
 
 msgid "Confidence interval of 95%%"
 msgstr ""
 
 msgid "Upper"
-msgstr ""
+msgstr "Горњи"
 
 msgid "Invalid reference and/or results were inserted."
 msgstr ""
@@ -695,7 +701,7 @@ msgid "Variance components"
 msgstr ""
 
 msgid "Variance"
-msgstr ""
+msgstr "Варијанца"
 
 msgid "%% Contribution"
 msgstr ""
@@ -824,7 +830,7 @@ msgid "Mean square"
 msgstr ""
 
 msgid "p"
-msgstr ""
+msgstr "p"
 
 msgid "Variation"
 msgstr ""
@@ -908,7 +914,7 @@ msgid "Basic statistics"
 msgstr ""
 
 msgid "Mean"
-msgstr ""
+msgstr "Аритметичка средина"
 
 msgid "Bias"
 msgstr ""
@@ -986,16 +992,16 @@ msgid "Parameter Estimates"
 msgstr ""
 
 msgid "Parameter"
-msgstr ""
+msgstr "Параметар"
 
 msgid "Estimate"
-msgstr ""
+msgstr "Проценити"
 
 msgid "Fitting the model failed with the following error message:\n%s"
 msgstr ""
 
 msgid "Intercept"
-msgstr ""
+msgstr "Пресек"
 
 msgid "The IWLS algorithm did not converge. Interpret the results with caution."
 msgstr ""
@@ -1007,7 +1013,7 @@ msgid "Fit Table"
 msgstr ""
 
 msgid "AIC"
-msgstr ""
+msgstr "AIC"
 
 msgid "Detection Plot"
 msgstr ""
@@ -1031,7 +1037,7 @@ msgid "Vertical asymptotes"
 msgstr ""
 
 msgid "Label"
-msgstr ""
+msgstr "Ознака"
 
 msgid "<b><em>Warning.</em></b>"
 msgstr ""
@@ -1157,7 +1163,7 @@ msgid "At least one of the stages contains no valid measurements."
 msgstr ""
 
 msgid "Density"
-msgstr ""
+msgstr "Густина"
 
 msgid "Measurement"
 msgstr ""
@@ -1310,7 +1316,7 @@ msgid "Dataset contains negative numbers. Could not overlay the selected distrib
 msgstr ""
 
 msgid "Counts"
-msgstr ""
+msgstr "Бројеви"
 
 msgid "Normal dist."
 msgstr ""
@@ -1358,7 +1364,7 @@ msgid "Autocorrelation"
 msgstr ""
 
 msgid "Lag"
-msgstr ""
+msgstr "Кашњење"
 
 msgid "Control charts"
 msgstr ""
