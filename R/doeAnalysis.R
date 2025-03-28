@@ -730,6 +730,7 @@ get_levels <- function(var, num_levels, dataset) {
   allPredictors <- c(discretePredictors, continuousPredictors)
   ncol <- length(allPredictors)
   plotMat <- matrix(list(), nrow = nrow, ncol = ncol)
+  extrapolationNoteBol <- FALSE
 
   for (row in seq_len(nrow)) {
     for (col in seq_len(ncol)) {
@@ -753,10 +754,13 @@ get_levels <- function(var, num_levels, dataset) {
                                                            dependentTarget = dependentTarget,
                                                            dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
+        if (outcomeType == "compDesi")
+          plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
         plottingWindowDf$color <- ifelse(as.character(plottingWindowDf$x) == as.character(currentDiscreteLevels[currentPred]), "red", "blue")
         yLimits <- if (outcomeType == "compDesi") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
+        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y, yLimits))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y, color = color)) +
-          ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits) +
+          ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits, breaks = yBreaks) +
           ggplot2::scale_color_identity() +
           ggplot2::xlab(xAxisLabel) +
           ggplot2::geom_point(size = 4) +
@@ -778,9 +782,15 @@ get_levels <- function(var, num_levels, dataset) {
                                                            dependentTarget = dependentTarget,
                                                            dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
+        if (outcomeType == "compDesi")
+          plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
         yLimits <- if (outcomeType == "compDesi") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
+        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y, yLimits))
+        xBreaks <- jaspGraphs::getPrettyAxisBreaks(plottingWindowDf$x)
         # Coordinates for the indication of the current parameter settings
         redPointCoordX <- as.numeric(continuousLevels[currentPred])
+        if (redPointCoordX < min(dataset[[currentPred]]) | redPointCoordX > max(dataset[[currentPred]]))
+          extrapolationNoteBol <- TRUE
         redPointCoordY <- .individualValueROprediction(value = redPointCoordX,
                                                        valueName = currentPred,
                                                        outcomeType = outcomeType,
@@ -793,11 +803,13 @@ get_levels <- function(var, num_levels, dataset) {
                                                        dependentTarget = dependentTarget,
                                                        dataset = dataset,
                                                        roOptionsDf = roOptionsDf)
+        if (outcomeType == "compDesi")
+          redPointCoordY <- pmax(0, pmin(1, redPointCoordY))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y)) +
           ggplot2::geom_line(color = "blue", linewidth = 1) +
           ggplot2::annotate("point", x = redPointCoordX, y = redPointCoordY, color = "red", size = 3) +
-          ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits) +
-          ggplot2::xlab(xAxisLabel) +
+          ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits, breaks = yBreaks) +
+          ggplot2::scale_x_continuous(name = xAxisLabel, breaks = xBreaks) +
           jaspGraphs::themeJaspRaw() +
           jaspGraphs::geom_rangeframe()
       }
@@ -811,12 +823,12 @@ get_levels <- function(var, num_levels, dataset) {
   jaspPlot$plotObject <- plotObject
   jaspResults[["plotRo"]][["plot"]] <- jaspPlot
 
-
-
-
   tb <- createJaspTable(gettext("Optimization Plot Summary"))
   tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
   tb$dependOn(options = .doeAnalysisBaseDependencies())
+  if (extrapolationNoteBol)
+    tb$addFootnote(gettext("One or more input parameters for continuous predictors are outside of the design space.
+                           Extrapolation beyond the design space might not be valid."))
   jaspResults[["plotRo"]][["table"]] <- tb
 
 
