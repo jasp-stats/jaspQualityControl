@@ -555,6 +555,18 @@ Form
 				label:						qsTr("Show optimization plot")
 				checked:					true
 
+				DropDown
+				{
+					name:							"optimizationPlotPredictionType"
+					label:							qsTr("Predict")
+					id: 							optimizationPlotPredictionType
+					indexDefaultValue:				0
+					values: [
+						{ label: qsTr("Response"), value: "response"},
+						{ label: qsTr("Individual desirability"), value: "individualDesirability"}
+					]
+				}
+
 				CheckBox
 				{
 					name:						"optimizationPlotCustomParameters"

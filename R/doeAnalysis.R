@@ -735,10 +735,13 @@ get_levels <- function(var, num_levels, dataset) {
   for (row in seq_len(nrow)) {
     for (col in seq_len(ncol)) {
       # First row is for comp. desi
-      outcomeType <- if (row == 1) "compDesi" else "pred" # TODO: create an option to also select ind. desi.
+      outcomeType <- if (row == 1) "compDesi" else options[["optimizationPlotPredictionType"]]
       dependentTarget <- if (row == 1) "" else roDependent[row-1]
       currentPred <- allPredictors[col]
-      yAxisLabel <- if (outcomeType == "compDesi") "Comp. desirability" else dependentTarget
+      yAxisLabel <- switch(outcomeType,
+                           "compDesi" = gettext("Comp. desirability"),
+                           "response" = dependentTarget,
+                           "individualDesirability" = paste0(gettext("Ind. desirability ("), dependentTarget, ")"))
       xAxisLabel <- currentPred
       if (currentPred %in% discretePredictors) {
         plottingWindowDf <- data.frame(x = unique(dataset[[currentPred]]))
@@ -754,10 +757,10 @@ get_levels <- function(var, num_levels, dataset) {
                                                            dependentTarget = dependentTarget,
                                                            dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
-        if (outcomeType == "compDesi")
+        if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
         plottingWindowDf$color <- ifelse(as.character(plottingWindowDf$x) == as.character(currentDiscreteLevels[currentPred]), "red", "blue")
-        yLimits <- if (outcomeType == "compDesi") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
+        yLimits <- if (outcomeType == "compDesi" | outcomeType == "individualDesirability") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
         yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y, yLimits))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y, color = color)) +
           ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits, breaks = yBreaks) +
@@ -782,9 +785,9 @@ get_levels <- function(var, num_levels, dataset) {
                                                            dependentTarget = dependentTarget,
                                                            dataset = dataset,
                                                            roOptionsDf = roOptionsDf)
-        if (outcomeType == "compDesi")
+        if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
-        yLimits <- if (outcomeType == "compDesi") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
+        yLimits <- if (outcomeType == "compDesi"| outcomeType == "individualDesirability") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
         yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y, yLimits))
         xBreaks <- jaspGraphs::getPrettyAxisBreaks(plottingWindowDf$x)
         # Coordinates for the indication of the current parameter settings
@@ -803,7 +806,7 @@ get_levels <- function(var, num_levels, dataset) {
                                                        dependentTarget = dependentTarget,
                                                        dataset = dataset,
                                                        roOptionsDf = roOptionsDf)
-        if (outcomeType == "compDesi")
+        if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           redPointCoordY <- pmax(0, pmin(1, redPointCoordY))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y)) +
           ggplot2::geom_line(color = "blue", linewidth = 1) +
@@ -901,7 +904,7 @@ get_levels <- function(var, num_levels, dataset) {
 
 
 .individualValueROprediction <- function(value, valueName,
-                                         outcomeType = c("pred", "indDesi", "compDesi"),
+                                         outcomeType = c("response", "individualDesirability", "compDesi"),
                                          continuousLevels, continuousPredictors,
                                          discretePredictors, currentDiscreteLevels,
                                          coefficients, dependent, dependentTarget = "",
@@ -934,8 +937,8 @@ get_levels <- function(var, num_levels, dataset) {
       indDesi <- .calculateDesirability(dataset, rawPrediction, roOptionsDf)
     }
     returnedValue[i] <- switch(outcomeType,
-                               "pred" = rawPrediction,
-                               "indDesi" = indDesi,
+                               "response" = rawPrediction,
+                               "individualDesirability" = indDesi,
                                "compDesi" = compDesi)
   }
   return(returnedValue)
