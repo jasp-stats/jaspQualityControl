@@ -577,8 +577,11 @@ get_levels <- function(var, num_levels, dataset) {
   optimParam <- roOutcome$parameters
   desi <- roOutcome$desirability
   desi <- pmax(0, pmin(1, desi)) # after optim. desi can be bounded to 0 and 1
-  contLevels <- optimParam[names(optimParam) %in% continuousPredictors]
-  discLevels <- unlist(optimParam[names(optimParam) %in% discretePredictors])
+  if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, ""))
+    contLevels <- if (length(optimParam) > 1) optimParam[names(optimParam) %in% continuousPredictors] else optimParam
+  if (length(discretePredictors) >= 1 && !identical(discretePredictors, ""))
+    discLevels <- if (length(optimParam) > 1) unlist(optimParam[names(optimParam) %in% unlist(discretePredictors)]) else optimParam
+
   predValues <- .equationPredictionFunction(continuousLevels = contLevels, continuousPredictors = continuousPredictors, discretePredictors = discretePredictors,
                                             currentDiscreteLevels = discLevels, coefficients = coefficients, dependent = roDependent)
   roOutcomeState <- createJaspState()
@@ -644,7 +647,8 @@ get_levels <- function(var, num_levels, dataset) {
   jaspResults[["tableRoSolution"]] <- tb2
 
   rows2 <- data.frame(desi = desi)
-  optimParam[continuousPredictors] <- round(optimParam[continuousPredictors], .numDecimals)
+  if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, ""))
+    optimParam[continuousPredictors] <- round(optimParam[continuousPredictors], .numDecimals)
   rows2 <- cbind(rows2, optimParam)
   predValuesFit <- setNames(predValues, paste0(names(predValues), " fit"))
   predValuesFit <- round(predValuesFit, .numDecimals)
@@ -669,6 +673,9 @@ get_levels <- function(var, num_levels, dataset) {
     coefficients[[dep]] <- jaspResults[[dep]][["doeResult"]]$object[["regression"]][["coefficients"]][["est"]]
   }
 
+  discretePredictors <- unlist(discretePredictors)
+  continuousPredictors <- unlist(continuousPredictors)
+
   jaspResults[["plotRo"]] <- createJaspContainer(title = gettext("Optimization Plot"))
   jaspResults[["plotRo"]]$position <- 3
 
@@ -691,43 +698,62 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
 
-    # transform factors to correct type
-    for (discPred in discretePredictors) {
-      # check if entered factor level is plausible
-      if (!unlist(currentSettings[discPred]) %in% levels(dataset[[discPred]])) {
-        jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
-        jaspPlot$setError(paste0(gettextf("Enter plausible values for all discrete predictors.
+    if (length(discretePredictors) >= 1 && !identical(discretePredictors, "")) {
+      # transform factors to correct type
+      for (discPred in discretePredictors) {
+        # check if entered factor level is plausible
+        if (!unlist(currentSettings[discPred]) %in% levels(dataset[[discPred]])) {
+          jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
+          jaspPlot$setError(paste0(gettextf("Enter plausible values for all discrete predictors.
                                    Value %1$s is not a possible for the discrete predictor %2$s. Allowed values: ",
-                                   unlist(currentSettings[discPred]), discPred), paste0(levels(dataset[[discPred]]), collapse = ", "), "."))
-        jaspPlot$dependOn(options = .doeAnalysisBaseDependencies())
-        jaspResults[["plotRo"]][["plot"]] <- jaspPlot
-        return()
+                                            unlist(currentSettings[discPred]), discPred), paste0(levels(dataset[[discPred]]), collapse = ", "), "."))
+          jaspPlot$dependOn(options = .doeAnalysisBaseDependencies())
+          jaspResults[["plotRo"]][["plot"]] <- jaspPlot
+          return()
+        }
+        currentSettings[discPred] <- factor(currentSettings[discPred], levels = levels(dataset[[discPred]]))
       }
-      currentSettings[discPred] <- factor(currentSettings[discPred], levels = levels(dataset[[discPred]]))
+      currentDiscreteLevels <- unlist(currentSettings[discretePredictors])
+    } else {
+      currentDiscreteLevels <- ""
     }
 
-    # transform continuous predictors to numeric and throw error if not possible
-    for (contPred in continuousPredictors) {
-      # check if entered continuous value is plausible
-      if (is.na(as.numeric(currentSettings[contPred]))) {
-        jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
-        jaspPlot$setError(gettext("Enter plausible values for all continuous predictors. Only numeric values are allowed."))
-        jaspPlot$dependOn(options = .doeAnalysisBaseDependencies())
-        jaspResults[["plotRo"]][["plot"]] <- jaspPlot
-        return()
+    if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
+      # transform continuous predictors to numeric and throw error if not possible
+      for (contPred in continuousPredictors) {
+        # check if entered continuous value is plausible
+        if (is.na(as.numeric(currentSettings[contPred]))) {
+          jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
+          jaspPlot$setError(gettext("Enter plausible values for all continuous predictors. Only numeric values are allowed."))
+          jaspPlot$dependOn(options = .doeAnalysisBaseDependencies())
+          jaspResults[["plotRo"]][["plot"]] <- jaspPlot
+          return()
+        }
+        currentSettings[contPred] <- as.numeric(currentSettings[contPred])
       }
-      currentSettings[contPred] <- as.numeric(currentSettings[contPred])
+      continuousLevels <- currentSettings[continuousPredictors]
+    } else {
+      continuousLevels <- ""
     }
-    continuousLevels <- currentSettings[continuousPredictors]
-    currentDiscreteLevels <- unlist(currentSettings[discretePredictors])
   } else { # if default optimal parameters should be used
     currentSettings <- roOutcome$parameters
-    continuousLevels <- currentSettings[continuousPredictors]
-    currentDiscreteLevels <- unlist(currentSettings[discretePredictors])
+    if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
+      continuousLevels <- if (length(currentSettings) > 1) currentSettings[continuousPredictors] else currentSettings
+    } else {
+      continuousLevels <- ""
+    }
+    if (length(discretePredictors) >= 1 && !identical(discretePredictors, "")) {
+      currentDiscreteLevels <- if (length(currentSettings) > 1) unlist(currentSettings[discretePredictors]) else currentSettings
+    } else {
+      currentDiscreteLevels <- ""
+    }
+    # continuousLevels <- if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) currentSettings[continuousPredictors] else ""
+    # currentDiscreteLevels <- if (length(discretePredictors) >= 1 && !identical(discretePredictors, "")) unlist(currentSettings[discretePredictors]) else ""
   }
 
   nrow <- length(roDependent) + 1
   allPredictors <- c(discretePredictors, continuousPredictors)
+  allPredictors <- allPredictors[allPredictors != ""]
   ncol <- length(allPredictors)
   plotMat <- matrix(list(), nrow = nrow, ncol = ncol)
   extrapolationNoteBol <- FALSE
@@ -834,7 +860,8 @@ get_levels <- function(var, num_levels, dataset) {
                            Extrapolation beyond the design space might not be valid."))
   jaspResults[["plotRo"]][["table"]] <- tb
 
-
+  print("DEBUG1")
+  print(currentDiscreteLevels)
   desi <- .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, coefficients, roDependent,
                                            dataset, roOptionsDf) * -1 # because it is returned as negative for optim. but in this case we want the true value
   desi <- pmax(0, pmin(1, desi))
@@ -845,7 +872,8 @@ get_levels <- function(var, num_levels, dataset) {
   predValuesFit <- setNames(predValues, paste0(names(predValues), " fit"))
   predValuesFit <- round(predValuesFit, .numDecimals)
   rows <- cbind(rows, as.data.frame(t(predValuesFit)))
-  currentSettings[continuousPredictors] <- round(currentSettings[continuousPredictors], .numDecimals)
+  if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, ""))
+    currentSettings[continuousPredictors] <- round(currentSettings[continuousPredictors], .numDecimals)
   rows <- cbind(rows, currentSettings)
   tb$addRows(rows)
 }
@@ -856,28 +884,57 @@ get_levels <- function(var, num_levels, dataset) {
 # load("C:/Users/Jonee/Desktop/Temporary Files/roSingleWorkspace.RData")
 
 .calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent, roOptionsDf, coefficients) {
-  # need initial guesses and limits for cont. variables
-  continuousPredictorsData <- dataset[continuousPredictors]
-  continuousPredictorsInital <- continuousPredictorsData[1,]
-  continuousPredictorsMin <- sapply(continuousPredictorsData, min)
-  continuousPredictorsMax <- sapply(continuousPredictorsData, max)
 
-  discretePredictorLevelList <- list()
-  for (i in seq_along(discretePredictors)) {
-    predictor_i <- discretePredictors[i]
-    discretePredictorLevelList[[predictor_i]] <- levels(dataset[[predictor_i]])
+  if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
+    # need initial guesses and limits for cont. variables
+    continuousPredictorsData <- dataset[continuousPredictors]
+    continuousPredictorsInital <- continuousPredictorsData[1,]
+    continuousPredictorsMin <- sapply(continuousPredictorsData, min)
+    continuousPredictorsMax <- sapply(continuousPredictorsData, max)
   }
 
-  discreteCoefNames <- unname(unlist(Map(function(v) paste0(v, seq_len(nlevels(dataset[[v]]) - 1)), discretePredictors)))
+  if (length(discretePredictors) >= 1 && !identical(discretePredictors, "")) {
+    discretePredictorLevelList <- list()
+    for (i in seq_along(discretePredictors)) {
+      predictor_i <- discretePredictors[i]
+      discretePredictorLevelList[[predictor_i]] <- levels(dataset[[predictor_i]])
+    }
 
-  gridSearchDf <- expand.grid(discretePredictorLevelList)
-  optimalResultDf <- gridSearchDf
-  optimalResultDf[["outcomeValue"]] <- rep(NA, nrow(optimalResultDf))
-  optimalResultDf[continuousPredictors] <- rep(NA, nrow(optimalResultDf))
+    discreteCoefNames <- unname(unlist(Map(function(v) paste0(v, seq_len(nlevels(dataset[[v]]) - 1)), discretePredictors)))
 
-  # Loop over all possible discrete value (combinations)
-  for (i in seq_len(nrow(gridSearchDf))) {
-    currentDiscreteLevels <- gridSearchDf[i,]
+    gridSearchDf <- expand.grid(discretePredictorLevelList)
+    optimalResultDf <- gridSearchDf
+    optimalResultDf[["outcomeValue"]] <- rep(NA, nrow(optimalResultDf))
+    if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
+      optimalResultDf[continuousPredictors] <- rep(NA, nrow(optimalResultDf))
+    }
+
+    # Loop over all possible discrete value (combinations)
+    for (i in seq_len(nrow(gridSearchDf))) {
+      currentDiscreteLevels <- gridSearchDf[i,]
+      if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) {
+        currrentOptimResult <- optim(
+          par = continuousPredictorsInital,   # Initial guesses
+          fn = .predictDesirability,     # Objective function
+          method = "L-BFGS-B",         # Optimization method
+          lower = continuousPredictorsMin,  # Lower bounds
+          upper = continuousPredictorsMax,  # Upper bounds
+          continuousPredictors = continuousPredictors,
+          discretePredictors = discretePredictors,
+          currentDiscreteLevels = currentDiscreteLevels,
+          coefficients = coefficients,
+          dependent = dependent,
+          dataset = dataset,
+          roOptionsDf = roOptionsDf
+        )
+        optimalResultDf[i, "outcomeValue"] <- currrentOptimResult$value * -1  # after optimization the sign can be switched again
+        optimalResultDf[i, continuousPredictors] <- currrentOptimResult$par
+      } else {
+        optimalResultDf[i, "outcomeValue"]  <-  .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, coefficients, dependent,
+                                                                     dataset, roOptionsDf) * -1
+      }
+    }
+  } else {
     currrentOptimResult <- optim(
       par = continuousPredictorsInital,   # Initial guesses
       fn = .predictDesirability,     # Objective function
@@ -892,10 +949,9 @@ get_levels <- function(var, num_levels, dataset) {
       dataset = dataset,
       roOptionsDf = roOptionsDf
     )
-    optimalResultDf[i, "outcomeValue"] <- currrentOptimResult$value * -1  # after optimization the sign can be switched again
-    optimalResultDf[i, continuousPredictors] <- currrentOptimResult$par
+    optimalResultDf <- data.frame("outcomeValue" = currrentOptimResult$value * -1)  # after optimization the sign can be switched again
+    optimalResultDf[continuousPredictors] <- currrentOptimResult$par
   }
-
   optimalParameters <- optimalResultDf[which.max(optimalResultDf$outcomeValue), names(optimalResultDf) != "outcomeValue"]
   maxDesirability <- max(optimalResultDf$outcomeValue)
 
@@ -1116,13 +1172,15 @@ get_levels <- function(var, num_levels, dataset) {
 }
 
 .removeAppendedFactorLevels <- function(predictorNames, terms, interactionSymbol = "✻"){
-  regexExpression <- paste0("(", paste(predictorNames, collapse = "|"), ")((\\^2)?)([^", interactionSymbol, "]+)(", interactionSymbol, "?)")
-  for (term_i in seq_along(terms)) {
-    if (grepl("I\\(", terms[term_i])) # if wrapped in identify function, don't do anything, as it will be a squared term and have no appended factor level
-      next()
-    replacements <- if (grepl("^2", terms[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
-    terms[term_i] <- gsub(regexExpression, replacements, terms[term_i], perl=TRUE)
-    terms[term_i] <- gsub("\\s", "", terms[term_i])
+  if (!identical(predictorNames, "")) {
+    regexExpression <- paste0("(", paste(predictorNames, collapse = "|"), ")((\\^2)?)([^", interactionSymbol, "]+)(", interactionSymbol, "?)")
+    for (term_i in seq_along(terms)) {
+      if (grepl("I\\(", terms[term_i])) # if wrapped in identify function, don't do anything, as it will be a squared term and have no appended factor level
+        next()
+      replacements <- if (grepl("^2", terms[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
+      terms[term_i] <- gsub(regexExpression, replacements, terms[term_i], perl=TRUE)
+      terms[term_i] <- gsub("\\s", "", terms[term_i])
+    }
   }
   return(terms)
 }
