@@ -4,7 +4,7 @@
     "Repositories": [
       {
         "Name": "CRAN",
-        "URL": "http://cloud.r-project.org"
+        "URL": "https://cloud.r-project.org"
       }
     ]
   },
@@ -1060,7 +1060,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
-      "RemoteSha": "b0af498acdaefd20b0dde4cca2a13e1ad48188bb"
+      "RemoteSha": "b274b7692867f4e12db72d54f0ec3b4e8045d469"
     },
     "jaspGraphs": {
       "Package": "jaspGraphs",
@@ -1103,7 +1103,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
-      "RemoteSha": "d214f916b5b590d02ff319c181459124a9015121"
+      "RemoteSha": "2a912f9ce452a9c5f138af1e5545b5436bd1cfc0"
     },
     "jpeg": {
       "Package": "jpeg",
@@ -1132,7 +1132,7 @@
     },
     "lattice": {
       "Package": "lattice",
-      "Version": "0.22-6",
+      "Version": "0.22-7",
       "Source": "Repository",
       "Requirements": [
         "R",
@@ -1272,7 +1272,7 @@
     },
     "mgcv": {
       "Package": "mgcv",
-      "Version": "1.9-1",
+      "Version": "1.9-3",
       "Source": "Repository",
       "Requirements": [
         "R",
