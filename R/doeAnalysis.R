@@ -36,6 +36,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     dependent <- options[["dependentResponseSurface"]]
   }
 
+  if (!ready) {
+    jaspResults[["defaultPlot"]] <- createJaspPlot(title = gettext("Design of Experiments - Analysis"))
+    jaspResults[["defaultPlot"]]$dependOn(.doeAnalysisBaseDependencies())
+    return()
+  }
+
   dataset <- .doeAnalysisReadData(dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent)
 
 
@@ -565,6 +571,10 @@ get_levels <- function(var, num_levels, dataset) {
 
   roOptionsState <- createJaspState()
   jaspResults[["roOptions"]] <- roOptionsState
+  jaspResults[["roOptions"]]$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+                                      "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+                                      "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+                                      .doeAnalysisBaseDependencies()))
   roOptionsState$object <- roOptionsDf
 
   roDependent <- roOptionsDf$variable
@@ -586,6 +596,10 @@ get_levels <- function(var, num_levels, dataset) {
                                             currentDiscreteLevels = discLevels, coefficients = coefficients, dependent = roDependent)
   roOutcomeState <- createJaspState()
   jaspResults[["roResult"]] <- roOutcomeState
+  jaspResults[["roResult"]]$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+            "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+            "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+            .doeAnalysisBaseDependencies()))
   roOutcomeState$object <- roOutcome
 
   # Did all the required calculations and saved to state, if tables should not be displayed return now
@@ -600,7 +614,10 @@ get_levels <- function(var, num_levels, dataset) {
   tb1$addColumnInfo(name = "ub", title = "Upper", type = "number")
   tb1$addColumnInfo(name = "weight", title = "Weight", type = "number")
   tb1$addColumnInfo(name = "importance", title = "Importance", type = "number")
-  tb1$dependOn(options = .doeAnalysisBaseDependencies())
+  tb1$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+                           "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+                           "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+                           .doeAnalysisBaseDependencies()))
   tb1$position <- 1
   jaspResults[["tableRoSettings"]] <- tb1
 
@@ -642,7 +659,11 @@ get_levels <- function(var, num_levels, dataset) {
 
   tb2 <- createJaspTable(gettext("Response Optimizer Solution"))
   tb2$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
-  tb2$dependOn(options = .doeAnalysisBaseDependencies())
+  tb2$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+                             "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+                             "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+                             "optimizationSolutionTable", .doeAnalysisBaseDependencies()))
+
   tb2$position <- 2
   jaspResults[["tableRoSolution"]] <- tb2
 
@@ -692,12 +713,20 @@ get_levels <- function(var, num_levels, dataset) {
     if (any(unlist(currentSettings) == "")) {
       jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
       jaspPlot$setError(gettext("Enter values for all predictors."))
-      jaspPlot$dependOn(options = .doeAnalysisBaseDependencies())
+      jaspPlot$dependOn(options = c("responsesResponseOptimizer",
+                        "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+                        "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+                        "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+                        "optimizationPlot", .doeAnalysisBaseDependencies()))
       jaspResults[["plotRo"]][["plot"]] <- jaspPlot
 
       tb <- createJaspTable(gettext("Optimization Plot Summary"))
       tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
-      tb$dependOn(options = .doeAnalysisBaseDependencies())
+      tb$dependOn(options = c("responsesResponseOptimizer",
+                        "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+                        "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+                        "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+                        "optimizationPlot", .doeAnalysisBaseDependencies()))
       tb$addFootnote(gettext("Enter values for all predictors."))
       jaspResults[["plotRo"]][["table"]] <- tb
       return()
@@ -712,7 +741,10 @@ get_levels <- function(var, num_levels, dataset) {
           jaspPlot$setError(paste0(gettextf("Enter plausible values for all discrete predictors.
                                    Value %1$s is not a possible for the discrete predictor %2$s. Allowed values: ",
                                             unlist(currentSettings[discPred]), discPred), paste0(levels(dataset[[discPred]]), collapse = ", "), "."))
-          jaspPlot$dependOn(options = .doeAnalysisBaseDependencies())
+          jaspPlot$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+                      "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+                      "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+                      "optimizationPlot", .doeAnalysisBaseDependencies()))
           jaspResults[["plotRo"]][["plot"]] <- jaspPlot
           return()
         }
@@ -734,7 +766,11 @@ get_levels <- function(var, num_levels, dataset) {
         if (is.na(as.numeric(currentSettings[contPred]))) {
           jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
           jaspPlot$setError(gettext("Enter plausible values for all continuous predictors. Only numeric values are allowed."))
-          jaspPlot$dependOn(options = .doeAnalysisBaseDependencies())
+          jaspPlot$dependOn(options = c("responsesResponseOptimizer",
+                            "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+                            "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+                            "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+                            "optimizationPlot", .doeAnalysisBaseDependencies()))
           jaspResults[["plotRo"]][["plot"]] <- jaspPlot
           return()
         }
@@ -863,14 +899,20 @@ get_levels <- function(var, num_levels, dataset) {
   }
 
   jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 300*ncol, height = 300*nrow)
-  jaspPlot$dependOn(options = c(""))
+  jaspPlot$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+                    "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+                    "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+                    "optimizationPlot", .doeAnalysisBaseDependencies()))
   plotObject <- jaspGraphs::ggMatrixPlot(plotList = plotMat, nr = nrow, nc = ncol)
   jaspPlot$plotObject <- plotObject
   jaspResults[["plotRo"]][["plot"]] <- jaspPlot
 
   tb <- createJaspTable(gettext("Optimization Plot Summary"))
   tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
-  tb$dependOn(options = .doeAnalysisBaseDependencies())
+  tb$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
+                    "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
+                    "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
+                    "optimizationPlot", .doeAnalysisBaseDependencies()))
   if (extrapolationNoteBol)
     tb$addFootnote(gettext("One or more input parameters for continuous predictors are outside of the design space.
                            Extrapolation beyond the design space might not be valid."))
@@ -896,11 +938,6 @@ get_levels <- function(var, num_levels, dataset) {
     colnames(rows)[ncol(rows)] <- allPredictors
   tb$addRows(rows)
 }
-
-
-
-# load("C:/Users/Jonee/Desktop/Temporary Files/roMultiWorkspace.RData")
-# load("C:/Users/Jonee/Desktop/Temporary Files/roSingleWorkspace.RData")
 
 .calculateOptimalResponse <- function(jaspResults, options, dataset, continuousPredictors, discretePredictors, dependent, roOptionsDf, coefficients) {
 
@@ -1018,7 +1055,6 @@ get_levels <- function(var, num_levels, dataset) {
   }
   return(returnedValue)
 }
-
 
 .equationPredictionFunction <- function(continuousLevels, continuousPredictors, discretePredictors,
                                         currentDiscreteLevels, coefficients, dependent) {
