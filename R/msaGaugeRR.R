@@ -462,7 +462,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         varCompPart <- varCompList$part
         varCompTotalGauge <- varCompList$totalGauge
         varCompTotalVar <- varCompList$totalVar
-        varCompVector <- c(varCompTotalGauge, varCompRepeat, varCompPart, varCompTotalVar)
+        varCompVector <- c("varCompTotalGauge" = varCompTotalGauge, "varCompRepeat" = varCompRepeat,
+                           "varCompPart" = varCompPart, "varCompTotalVar" = varCompTotalVar)
         sources <- gettext(c("Total gauge r&R", "Repeatability", "Part-to-part", "Total variation"))
       } else {
         varCompList <- .gaugeCrossedVarComps(data, operators, parts, measurements, msPart, msOperator, msRepWithInteraction, msInteraction)
@@ -481,10 +482,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       if (options[["processVariationReference"]] == "historicalSd") {
         if (Type3)
-          varCompVector <- list(varCompTotalGauge = varCompTotalGauge, varCompRepeat = varCompRepeat, varCompPart = varCompPart, varCompTotalVar = varCompTotalVar)
+          varCompVector <- c("varCompTotalGauge" = varCompTotalGauge, "varCompRepeat" = varCompRepeat, "varCompPart" = varCompPart, "varCompTotalVar" = varCompTotalVar)
         histSD <- options[["historicalSdValue"]]
-        varCompVector$varCompTotalVar <- varCompTotalVar <- histSD^2
-        varCompVector$varCompPart <- varCompVector$varCompTotalVar - varCompTotalGauge
+        varCompVector[["varCompTotalVar"]] <- varCompTotalVar <- histSD^2
+        varCompVector[["varCompPart"]] <- varCompVector$varCompTotalVar - varCompTotalGauge
       }
 
 
@@ -500,25 +501,24 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       histSD <- options[["historicalSdValue"]]
 
-      if(!singleOperator) {
+      if (!singleOperator) {
         if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
           SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator)),
                   sqrt(varCompInteraction), sqrt(histSD^2 - varCompTotalGauge), histSD)
 
-        }else {
+        } else {
           SD <- sqrt(varCompVector)
         }
-        sdParts <- SD[5]
-        sdGauge <- SD[1]
-      }else {
+
+      } else {
         if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
           SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat)), sqrt(histSD^2 - varCompTotalGauge), histSD)
-        }else{
+        } else {
           SD <- sqrt(varCompVector)
         }
-        sdParts <- SD[3]
-        sdGauge <- SD[1]
       }
+      sdParts <- sqrt(varCompVector[["varCompPart"]])
+      sdGauge <- sqrt(varCompVector[["varCompTotalGauge"]])
       SD <- ifelse(SD == "NaN", 0, SD)
       studyVar <- SD * studyVarMultiplier
       RRtable2DataList <- list("source"       = sources,
@@ -528,10 +528,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       if(options[["tolerance"]])
         RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options[["toleranceValue"]] * 100,2))))
       RRtable2$setData(RRtable2DataList)
-
       if (!is.na(sdParts)) {
         nCategories <- .gaugeNumberDistinctCategories(sdParts, sdGauge)
-        RRtable2$addFootnote(gettextf("Number of distinct categories = %i", ifelse(SD[3] == 0, 1, nCategories)))
+        RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
       }
       if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
         RRtable2$addFootnote(gettextf("Study Variation is calculated as std. dev. <spam>&#215;</spam> %i", as.integer(studyVarMultiplier)))
@@ -624,8 +623,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       if(options[["tolerance"]])
         RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options[["toleranceValue"]] * 100,2))))
       RRtable2$setData(RRtable2DataList)
-      nCategories <- .gaugeNumberDistinctCategories(SD[5], SD[1])
-      RRtable2$addFootnote(gettextf("Number of distinct categories = %i", ifelse(SD[3] == 0, 1, nCategories)))
+      nCategories <- .gaugeNumberDistinctCategories(sqrt(varCompPart), sqrt(varCompTotalGauge))
+      RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
       if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
         RRtable2$addFootnote(gettextf("Study variation is calculated as std. dev. <spam>&#215;</spam> %i", as.integer(studyVarMultiplier)))
       }else{
