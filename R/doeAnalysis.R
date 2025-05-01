@@ -647,9 +647,14 @@ get_levels <- function(var, num_levels, dataset) {
   jaspResults[["tableRoSolution"]] <- tb2
 
   rows2 <- data.frame(desi = desi)
-  if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, ""))
+  if (length(continuousPredictors) >= 1 && length(optimParam) > 1 && !identical(continuousPredictors, "")) {
     optimParam[continuousPredictors] <- round(optimParam[continuousPredictors], .numDecimals)
+  } else if (length(continuousPredictors) == 1 && length(optimParam) == 1 && !identical(continuousPredictors, "")) {
+    optimParam <- round(optimParam, .numDecimals)
+  }
   rows2 <- cbind(rows2, optimParam)
+  if (length(optimParam) == 1) # transform it this way to have the correct naming
+    colnames(rows2)[ncol(rows2)] <- c(continuousPredictors, discretePredictors)[c(continuousPredictors, discretePredictors) != ""]
   predValuesFit <- setNames(predValues, paste0(names(predValues), " fit"))
   predValuesFit <- round(predValuesFit, .numDecimals)
   rows2 <- cbind(rows2, as.data.frame(t(predValuesFit)))
@@ -711,9 +716,13 @@ get_levels <- function(var, num_levels, dataset) {
           jaspResults[["plotRo"]][["plot"]] <- jaspPlot
           return()
         }
-        currentSettings[discPred] <- factor(currentSettings[discPred], levels = levels(dataset[[discPred]]))
+        if (length(currentSettings) > 1) {
+          currentSettings[discPred] <- factor(currentSettings[discPred], levels = levels(dataset[[discPred]]))
+        } else {
+          currentSettings <- factor(currentSettings, levels = levels(dataset[[discPred]]))
+        }
       }
-      currentDiscreteLevels <- unlist(currentSettings[discretePredictors])
+      currentDiscreteLevels <- if (length(currentSettings) > 1) unlist(currentSettings[discretePredictors]) else currentSettings
     } else {
       currentDiscreteLevels <- ""
     }
@@ -729,9 +738,13 @@ get_levels <- function(var, num_levels, dataset) {
           jaspResults[["plotRo"]][["plot"]] <- jaspPlot
           return()
         }
-        currentSettings[contPred] <- as.numeric(currentSettings[contPred])
+        if (length(currentSettings) > 1) {
+          currentSettings[contPred] <- as.numeric(currentSettings[contPred])
+        } else {
+          currentSettings <- as.numeric(currentSettings)
+        }
       }
-      continuousLevels <- currentSettings[continuousPredictors]
+      continuousLevels <- if (length(currentSettings) > 1) currentSettings[continuousPredictors] else currentSettings
     } else {
       continuousLevels <- ""
     }
@@ -747,8 +760,6 @@ get_levels <- function(var, num_levels, dataset) {
     } else {
       currentDiscreteLevels <- ""
     }
-    # continuousLevels <- if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, "")) currentSettings[continuousPredictors] else ""
-    # currentDiscreteLevels <- if (length(discretePredictors) >= 1 && !identical(discretePredictors, "")) unlist(currentSettings[discretePredictors]) else ""
   }
 
   nrow <- length(roDependent) + 1
@@ -785,8 +796,12 @@ get_levels <- function(var, num_levels, dataset) {
                                                            roOptionsDf = roOptionsDf)
         if (outcomeType == "compDesi"| outcomeType == "individualDesirability")
           plottingWindowDf$y <- pmax(0, pmin(1, plottingWindowDf$y))
-        plottingWindowDf$color <- ifelse(as.character(plottingWindowDf$x) == as.character(currentDiscreteLevels[currentPred]), "red", "blue")
-        yLimits <- if (outcomeType == "compDesi" | outcomeType == "individualDesirability") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
+        if (length(currentDiscreteLevels) > 1) {
+          plottingWindowDf$color <- ifelse(as.character(plottingWindowDf$x) == as.character(currentDiscreteLevels[currentPred]), "red", "blue")
+        } else {
+          plottingWindowDf$color <- ifelse(as.character(plottingWindowDf$x) == as.character(currentDiscreteLevels), "red", "blue")
+        }
+          yLimits <- if (outcomeType == "compDesi" | outcomeType == "individualDesirability") c(0, 1) else c(min(plottingWindowDf$y) - 0.1 * abs(min(plottingWindowDf$y)), max(plottingWindowDf$y) + 0.1 * abs(max(plottingWindowDf$y)))
         yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y, yLimits))
         plot <- ggplot2::ggplot(plottingWindowDf, ggplot2::aes(x = x, y = y, color = color)) +
           ggplot2::scale_y_continuous(name = yAxisLabel, limits = yLimits, breaks = yBreaks) +
@@ -796,8 +811,9 @@ get_levels <- function(var, num_levels, dataset) {
           jaspGraphs::themeJaspRaw() +
           jaspGraphs::geom_rangeframe()
       } else {
-        plottingWindowDf <- data.frame(x = seq(from = min(dataset[[currentPred]], as.numeric(continuousLevels[currentPred])),
-                                               to = max(dataset[[currentPred]], as.numeric(continuousLevels[currentPred])),
+        currentPredValue <- if (length(allPredictors) > 1) as.numeric(continuousLevels[currentPred]) else continuousLevels
+        plottingWindowDf <- data.frame(x = seq(from = min(dataset[[currentPred]], currentPredValue),
+                                               to = max(dataset[[currentPred]], currentPredValue),
                                                 length.out = 50))
         plottingWindowDf$y <- .individualValueROprediction(value = plottingWindowDf$x,
                                                            valueName = currentPred,
@@ -817,7 +833,7 @@ get_levels <- function(var, num_levels, dataset) {
         yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plottingWindowDf$y, yLimits))
         xBreaks <- jaspGraphs::getPrettyAxisBreaks(plottingWindowDf$x)
         # Coordinates for the indication of the current parameter settings
-        redPointCoordX <- as.numeric(continuousLevels[currentPred])
+        redPointCoordX <- currentPredValue
         if (redPointCoordX < min(dataset[[currentPred]]) | redPointCoordX > max(dataset[[currentPred]]))
           extrapolationNoteBol <- TRUE
         redPointCoordY <- .individualValueROprediction(value = redPointCoordX,
@@ -860,8 +876,6 @@ get_levels <- function(var, num_levels, dataset) {
                            Extrapolation beyond the design space might not be valid."))
   jaspResults[["plotRo"]][["table"]] <- tb
 
-  print("DEBUG1")
-  print(currentDiscreteLevels)
   desi <- .predictDesirability(continuousLevels, continuousPredictors, discretePredictors, currentDiscreteLevels, coefficients, roDependent,
                                            dataset, roOptionsDf) * -1 # because it is returned as negative for optim. but in this case we want the true value
   desi <- pmax(0, pmin(1, desi))
@@ -872,9 +886,14 @@ get_levels <- function(var, num_levels, dataset) {
   predValuesFit <- setNames(predValues, paste0(names(predValues), " fit"))
   predValuesFit <- round(predValuesFit, .numDecimals)
   rows <- cbind(rows, as.data.frame(t(predValuesFit)))
-  if (length(continuousPredictors) >= 1 && !identical(continuousPredictors, ""))
+  if (length(continuousPredictors) >= 1 && length(currentSettings) > 1 && !identical(continuousPredictors, "")) {
     currentSettings[continuousPredictors] <- round(currentSettings[continuousPredictors], .numDecimals)
+  } else if (length(continuousPredictors) == 1 && length(currentSettings) == 1 && !identical(continuousPredictors, "")) {
+    currentSettings <- round(currentSettings, .numDecimals)
+  }
   rows <- cbind(rows, currentSettings)
+  if (length(currentSettings) == 1) # transform it this way to have the correct naming
+    colnames(rows)[ncol(rows)] <- allPredictors
   tb$addRows(rows)
 }
 
@@ -1016,8 +1035,8 @@ get_levels <- function(var, num_levels, dataset) {
       for (coef_j in coefSplit) {
         coef_j_clean <- .removeAppendedFactorLevels(discretePredictors, coef_j, ":")
         coef_j_level <- sub(coef_j_clean, "", coef_j)
-        if (coef_j_clean %in% continuousPredictors) {
-          coefResult <- c(coefResult, continuousLevels[[coef_j]])
+        if (coef_j %in% continuousPredictors) { # cont. predictors don't have an appended factor level so we use coef_j here
+          coefResult <- if (length(continuousLevels) > 1) c(coefResult, continuousLevels[[coef_j]]) else c(coefResult, unlist(continuousLevels))
         } else if (coef_j_clean %in% discretePredictors) {
           current_j_level <- if (length(currentDiscreteLevels)  > 1) currentDiscreteLevels[[coef_j_clean]] else unname(currentDiscreteLevels)
           max_j_level <- length(levels(current_j_level))
