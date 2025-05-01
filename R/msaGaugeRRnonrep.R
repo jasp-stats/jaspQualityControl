@@ -344,7 +344,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       gaugeRRNonRepTable3DataList <- append(gaugeRRNonRepTable3DataList, list("percentTolerance" = percentTolerance))
     }
     gaugeRRNonRepTable3$setData(gaugeRRNonRepTable3DataList)
-    nCategories <- .gaugeNumberDistinctCategories(stdDevs[4], stdDevs[1])
+    nCategories <- .gaugeNumberDistinctCategories(sqrt(varCompTable$varPart), sqrt(varCompTable$varGaugeTotal))
 
     if (gaugeEvaluationDfOnly) {
       gaugeEvalDf <- as.data.frame(gaugeRRNonRepTable3DataList)
