@@ -101,7 +101,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
     valuesVec <- .rAndRtableRange(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, jaspResults, ready = ready, GRRpercent = TRUE)
     TrafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec[1], ToleranceUsed = options[["tolerance"]],
-                                               ToleranceVar = valuesVec[2],options = options, ready = ready,
+                                               ToleranceVar = valuesVec[2], options = options, ready = ready,
                                                Xlab.StudySD = "Percent study variation of GRR", Xlab.Tol = "Percent tolerance of GRR")
 
   }
@@ -143,11 +143,11 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
   Rbar <- sum(abs(dataset[measurements[1]] - dataset[measurements[2]]) / n)
   d2 <- .d2Value(n)
   GRR <- Rbar/d2
-  GRRpercent.PSD <- GRR/options[["manualProcessSdValue"]] * 100
-  GRRpercent.Tol <- GRR/(options[["toleranceValue"]] / 6) * 100
+  GRRpercent.PSD <- GRR/options[["manualProcessSdValue"]]
+  GRRpercent.Tol <- GRR/(options[["toleranceValue"]] / 6)
 
   if (GRRpercent)
-    return(c(GRRpercent.PSD, GRRpercent.Tol))
+    return(c(GRRpercent.PSD * 100, GRRpercent.Tol * 100))
   else {
     table <- createJaspTable(title = gettext("Short gauge study"))
     table$position <- 1
@@ -156,11 +156,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     table$addColumnInfo(name = "n", title = gettext("Sample size (n)"), type = "integer")
     table$addColumnInfo(name = "Rbar", title = gettext("R-bar"), type = "number")
     table$addColumnInfo(name = "d2", title = gettext("d2"), type = "number")
-    table$addColumnInfo(name = "PSD", title = gettext("Process std. dev."), type = "number")
-    table$addColumnInfo(name = "tolerance", title = gettext("Tolerance"), type = "number")
     table$addColumnInfo(name = "GRR", title = gettext("GRR"), type = "number")
-    table$addColumnInfo(name = "GRRpercent.PSD", title = gettextf("%%GRR of process std. dev."), type = "number")
-    table$addColumnInfo(name = "GRRpercent.Tol", title = gettextf("%%GRR of tolerance"), type = "number")
 
     rows <- list()
     rows[["n"]] = n
@@ -169,11 +165,15 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     rows[["GRR"]] = GRR
 
     if (EnableSD) {
+      table$addColumnInfo(name = "PSD", title = gettext("Process std. dev."), type = "number")
+      table$addColumnInfo(name = "GRRpercent.PSD", title = gettextf("%%GRR of process std. dev."), type = "number", format = "pc")
       rows[["PSD"]] = options[["manualProcessSdValue"]]
       rows[["GRRpercent.PSD"]] = GRRpercent.PSD
     }
 
-    if (EnableTol){
+    if (EnableTol) {
+      table$addColumnInfo(name = "tolerance", title = gettext("Tolerance"), type = "number")
+      table$addColumnInfo(name = "GRRpercent.Tol", title = gettextf("%%GRR of tolerance"), type = "number", format = "pc")
       rows[["tolerance"]] = options[["toleranceValue"]]
       rows[["GRRpercent.Tol"]] = GRRpercent.Tol
     }
