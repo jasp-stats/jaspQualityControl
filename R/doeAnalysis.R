@@ -1317,12 +1317,12 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
     tb <- createJaspTable(gettext("ANOVA"))
-    tb$addColumnInfo(name = "terms", title = "Source", type = "string")
-    tb$addColumnInfo(name = "adjss", title = "Sum of squares", type = "number")
-    tb$addColumnInfo(name = "df", title = "df", type = "integer")
-    tb$addColumnInfo(name = "adjms", title = "Mean square", type = "number")
-    tb$addColumnInfo(name = "fval", title = "F", type = "number")
-    tb$addColumnInfo(name = "pval", title = "p", type = "pvalue")
+    tb$addColumnInfo(name = "terms", title = gettext("Source"), type = "string")
+    tb$addColumnInfo(name = "adjss", title = gettext("Sum of squares"), type = "number")
+    tb$addColumnInfo(name = "df",    title = gettext("df"), type = "integer")
+    tb$addColumnInfo(name = "adjms", title = gettext("Mean square"), type = "number")
+    tb$addColumnInfo(name = "fval",  title = "F", type = "number")
+    tb$addColumnInfo(name = "pval",  title = "p", type = "pvalue")
     tb$dependOn(options = .doeAnalysisBaseDependencies())
     tb$position <- 2
     jaspResults[[dep]][["tableAnova"]] <- tb
