@@ -1292,8 +1292,8 @@ get_levels <- function(var, num_levels, dataset) {
     tb <- createJaspTable(gettext("Model Summary"))
     tb$addColumnInfo(name = "s", title = "S", type = "number")
     tb$addColumnInfo(name = "rsq", title = "R\u00B2", type = "number")
-    tb$addColumnInfo(name = "adjrsq", title = "Adjusted R\u00B2", type = "number")
-    tb$addColumnInfo(name = "predrsq", title = "Predictive R\u00B2", type = "number")
+    tb$addColumnInfo(name = "adjrsq", title = gettextf("Adjusted %s", "R\u00B2"), type = "number")
+    tb$addColumnInfo(name = "predrsq", title = gettextf("Predictive %s", "R\u00B2"), type = "number")
     tb$dependOn(options = .doeAnalysisBaseDependencies())
     tb$position <- 1
     jaspResults[[dep]][["tableSummary"]] <- tb
