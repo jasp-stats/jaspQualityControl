@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-10-19 03:41\n"
+"POT-Creation-Date: 2025-05-03 03:47\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -1030,19 +1030,19 @@ msgstr "R-bar"
 msgid "d2"
 msgstr "d2"
 
-#, fuzzy
-msgid "Process std. dev."
-msgstr "Proces Std. Dev."
-
-msgid "Tolerance"
-msgstr "Tolerantie"
-
 msgid "GRR"
 msgstr "GRR"
 
 #, fuzzy
+msgid "Process std. dev."
+msgstr "Proces Std. Dev."
+
+#, fuzzy
 msgid "%%GRR of process std. dev."
 msgstr "%%GRR van Proces Std. Dev."
+
+msgid "Tolerance"
+msgstr "Tolerantie"
 
 #, fuzzy
 msgid "%%GRR of tolerance"

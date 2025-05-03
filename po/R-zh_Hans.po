@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-10-19 03:41\n"
+"POT-Creation-Date: 2025-05-03 03:47\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -1028,19 +1028,19 @@ msgstr "R 均值"
 msgid "d2"
 msgstr "d2"
 
-#, fuzzy
-msgid "Process std. dev."
-msgstr "过程标准差"
-
-msgid "Tolerance"
-msgstr "公差"
-
 msgid "GRR"
 msgstr "GRR"
 
 #, fuzzy
+msgid "Process std. dev."
+msgstr "过程标准差"
+
+#, fuzzy
 msgid "%%GRR of process std. dev."
 msgstr "%GRR 过程标准差"
+
+msgid "Tolerance"
+msgstr "公差"
 
 #, fuzzy
 msgid "%%GRR of tolerance"

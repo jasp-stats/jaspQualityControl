@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2024-10-19 03:41\n"
+"POT-Creation-Date: 2025-05-03 03:47\n"
 "PO-Revision-Date: 2023-07-22 03:07+0000\n"
 "Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
 "br>\n"
@@ -946,18 +946,18 @@ msgstr ""
 msgid "d2"
 msgstr ""
 
+msgid "GRR"
+msgstr ""
+
 #, fuzzy
 msgid "Process std. dev."
 msgstr "Desv.Padrão"
 
-msgid "Tolerance"
-msgstr "Tolerância"
-
-msgid "GRR"
-msgstr ""
-
 msgid "%%GRR of process std. dev."
 msgstr ""
+
+msgid "Tolerance"
+msgstr "Tolerância"
 
 #, fuzzy
 msgid "%%GRR of tolerance"
