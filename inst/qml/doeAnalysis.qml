@@ -32,8 +32,8 @@ Form
 		{
 			name:								"dependentFactorial"
 			allowedColumns:						["scale"]
-			singleVariable:						true
-			label:								qsTr("Response")
+			label:								qsTr("Responses")
+			height:								50 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -60,7 +60,7 @@ Form
 			id:									covariates
 			label:								qsTr("Covariates")
 			allowedColumns:						["scale"]
-			height:								75 * preferencesModel.uiScale
+			height:								50 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -86,8 +86,8 @@ Form
 		{
 			name:								"dependentResponseSurface"
 			allowedColumns:						["scale"]
-			singleVariable:						true
-			label:								qsTr("Response")
+			label:								qsTr("Responses")
+			height:								50 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -96,7 +96,7 @@ Form
 			name:								"continuousFactorsResponseSurface"
 			allowedColumns:						["scale"]
 			label:								qsTr("Continuous predictors")
-			height:								125 * preferencesModel.uiScale
+			height:								100 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -105,7 +105,7 @@ Form
 			name:								"fixedFactorsResponseSurface"
 			allowedColumns:						["nominal"]
 			label:								qsTr("Discrete predictors")
-			height:								125 * preferencesModel.uiScale
+			height:								100 * preferencesModel.uiScale
 		}
 
 		AssignedVariablesList
@@ -201,15 +201,6 @@ Form
 				checked:							true
 				label:								qsTr("Show regression equation")
 			}
-
-			CheckBox
-			{
-				id:									responseOptimizer
-				name:								"responseOptimizer"
-				label:								qsTr("Show optimal response")
-				checked:							true
-			}
-
 
 			CheckBox
 			{
@@ -466,7 +457,163 @@ Form
 		}
 	}
 
-		Section
+	Section
+	{
+		title: qsTr("Response optimizer")
+		columns: 2
+
+		VariablesForm
+		{
+			id:									variablesFormResponseOptimizer
+			preferredHeight: 					jaspTheme.smallDefaultVariablesFormHeight
+
+			AvailableVariablesList
+			{
+				name:								"allResponseVariables"
+				label:								qsTr("Available responses")
+				source:								designType.currentValue == "factorialDesign" ? "dependentFactorial" : "dependentResponseSurface"
+				width:								100
+			}
+
+			AssignedVariablesList
+			{
+				name:								"responsesResponseOptimizer"
+				id:									responsesResponseOptimizer
+				allowedColumns:						["scale"]
+				label:								qsTr("Included responses")
+				width:								450
+				rowComponentTitle: 					"Goal          Lower   Target   Upper   Weight   Importance"
+				rowComponent: Row 
+				{
+					DropDown
+					{
+						name:							"responseOptimizerGoal"
+						id: 							responseOptimizerGoal
+						indexDefaultValue:				0
+						values: [
+							{ label: qsTr("Maximize"), value: "maximize"},
+							{ label: qsTr("Minimize"), value: "minimize"},
+							{ label: qsTr("Target"), value: "target"}
+						]
+					}
+					DoubleField
+					{
+						name:							"responseOptimizerLowerBound"
+						defaultValue:					0
+						fieldWidth:						40
+						enabled:						responseOptimizerGoal.currentValue != "minimize" & responseOptimizerManualBounds.checked
+					}
+					DoubleField
+					{
+						name:							"responseOptimizerTarget"
+						defaultValue:					0.5
+						fieldWidth:						45
+						enabled:						responseOptimizerManualTarget.checked | responseOptimizerGoal.currentValue == "target"
+					}
+					DoubleField
+					{
+						name:							"responseOptimizerUpperBound"
+						defaultValue:					1
+						fieldWidth:						40
+						enabled:						responseOptimizerGoal.currentValue != "maximize" & responseOptimizerManualBounds.checked
+					}
+					DoubleField
+					{
+						name:							"responseOptimizerWeight"
+						defaultValue:					1
+						min:							0.1
+						max:							10
+						fieldWidth:						50
+					}
+					DoubleField
+					{
+						name:							"responseOptimizerImportance"
+						defaultValue:					1
+						min:							0.1
+						max:							10
+						fieldWidth:						55
+						enabled:						responsesResponseOptimizer.count > 1
+					}
+				}
+			}
+		}
+		
+		Group
+		{
+			columns:					1
+			
+			CheckBox
+			{
+				name:						"optimizationSolutionTable"
+				label:						qsTr("Show optimal solution")
+				checked:					true
+			}
+
+			CheckBox
+			{
+				name:						"optimizationPlot"
+				label:						qsTr("Show optimization plot")
+				checked:					true
+
+				DropDown
+				{
+					name:							"optimizationPlotPredictionType"
+					label:							qsTr("Predict")
+					id: 							optimizationPlotPredictionType
+					indexDefaultValue:				0
+					values: [
+						{ label: qsTr("Response"), value: "response"},
+						{ label: qsTr("Individual desirability"), value: "individualDesirability"}
+					]
+				}
+
+				CheckBox
+				{
+					name:						"optimizationPlotCustomParameters"
+					id:							optimizationPlotCustomParameters
+					label:						qsTr("Set input parameters manually")
+					checked:					false
+				}
+
+				VariablesList
+				{
+					id: 				optimizationPlotCustomParameterValues
+					name:				"optimizationPlotCustomParameterValues"
+					label:				qsTr("Predictor")
+					visible:			optimizationPlotCustomParameters.checked
+					source: 			designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface"]
+					listViewType:		JASP.AssignedVariables
+					draggable:			false
+					preferredHeight:	jaspTheme.smallDefaultVariablesFormHeight
+					rowComponentTitle:	qsTr("Value")
+					rowComponent: 		TextField { name: "value"; fieldWidth: 40; defaultValue: ""}
+				}
+			}
+		}
+
+		Group
+		{
+			columns:					1
+			
+			CheckBox
+			{
+				name:						"responseOptimizerManualBounds"
+				id:							responseOptimizerManualBounds
+				label:						qsTr("Set all bounds manually")
+				checked:					false
+			}
+
+			CheckBox
+			{
+				name:						"responseOptimizerManualTarget"
+				id:							responseOptimizerManualTarget
+				label:						qsTr("Set all targets manually")
+				checked:					false
+			}
+		}
+	}
+
+	Section
 	{
 		title: qsTr("Advanced options")
 
