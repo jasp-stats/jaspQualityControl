@@ -8,6 +8,7 @@ set.seed(1)
 
 ### x-bar & r chart with manual subgroup size (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$chartType <- "xBarAndR"
 results <- runAnalysis("variablesChartsSubgroups",
@@ -22,6 +23,7 @@ test_that("LF1. Basic test to create X-bar & R control chart with manual subgrou
 
 ### x-bar & s chart with manual subgroup size (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$chartType <- "xBarAndS"
 options$xBarAndSUnbiasingConstant <- TRUE
@@ -37,6 +39,7 @@ plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCha
 
 ### x-bar & r chart with manual subgroup size and stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "Stage"
 options$chartType <- "xBarAndR"
@@ -53,6 +56,7 @@ test_that("LF3. Basic test to create X-bar & R control chart with manual subgrou
 
 ### x-bar & s chart with manual subgroup size and stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "Stage"
@@ -69,6 +73,7 @@ test_that("LF4. Basic test to create X-bar & s control chart with manual subgrou
 
 ### x-bar & r chart with subgroup variable (verfied with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroup <- "Time"
 options$subgroupSizeType <- "groupingVariable"
@@ -85,6 +90,7 @@ test_that("LF5. Basic test to create X-bar & R control chart with subgroup varia
 
 ### x-bar & s chart with subgroup variable (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
 options$subgroup <- "Time"
@@ -102,6 +108,7 @@ test_that("LF6. Basic test to create X-bar & s control chart with subgroup varia
 
 ### x-bar & r chart with subgroup variable and stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "Stage"
 options$subgroup <- "Time"
@@ -119,6 +126,7 @@ test_that("LF7. Basic test to create X-bar & R control chart with subgroup varia
 
 ### x-bar & s chart with subgroup variable and stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "Stage"
@@ -137,6 +145,7 @@ test_that("LF8. Basic test to create X-bar & R control chart with subgroup varia
 
 ### x-bar & r chart with warning limits (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndR"
 options$measurementLongFormat <- "Diameter"
 options$warningLimits <- TRUE
@@ -153,6 +162,7 @@ test_that("LF9. Basic test of adding warning limits to X-bar & R control chart",
 
 ### x-bar & s chart with warning limits (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
 options$warningLimits <- TRUE
@@ -169,6 +179,7 @@ test_that("LF10. Basic test of adding warning limits to X-bar & s control chart"
 
 ### x-bar & r chart with known parameters (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndR"
 options$measurementLongFormat <- "Diameter"
 options$knownParameters <- TRUE
@@ -207,6 +218,7 @@ test_that("LF11.3 Basic test of adding known parameters to X-bar & r control cha
 
 ### x-bar & s chart with known parameters (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
 options$knownParameters <- TRUE
@@ -246,6 +258,7 @@ test_that("LF12.3 Basic test of adding known parameters to X-bar & s control cha
 
 ### x-bar & r chart with changed manual subgroup size value (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndR"
 options$measurementLongFormat <- "Diameter"
 options$manualSubgroupSizeValue <- 10
@@ -261,6 +274,7 @@ test_that("LF13. Basic test of changing manual subgroup size with X-bar & R cont
 
 ### x-bar & s chart with changed manual subgroup size value (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
 options$manualSubgroupSizeValue <- 10
@@ -276,6 +290,7 @@ test_that("LF14. Basic test of changing manual subgroup size with X-bar & s cont
 
 ### Report function with x-bar & r chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndR"
 options$measurementLongFormat <- "Diameter"
 options$report <- TRUE
@@ -303,6 +318,7 @@ test_that("LF15. Basic test to create report of X-bar & R control chart", {
 
 ### Report function with x-bar & s chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndS"
 options$measurementLongFormat <- "Diameter"
 options$report <- TRUE
@@ -337,6 +353,7 @@ test_that("LF16. Basic test to create report of X-bar & s control chart", {
 
 ##### x-bar & r chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "DiameterMissing1"
 options$chartType <- "xBarAndR"
 results <- runAnalysis("variablesChartsSubgroups",
@@ -351,6 +368,7 @@ test_that("LF17. X-bar & R control chart with single missing value in measuremen
 
 ##### x-bar & s chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "DiameterMissing1"
 options$chartType <- "xBarAndS"
 options$xBarAndSUnbiasingConstant <- TRUE
@@ -368,6 +386,7 @@ test_that("LF18. X-bar & s control chart with single missing value in measuremen
 
 ##### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "DiameterMissing99"
 options$chartType <- "xBarAndR"
 results <- runAnalysis("variablesChartsSubgroups",
@@ -382,6 +401,7 @@ test_that("LF19. X-bar & R control chart with all but one missing value in measu
 
 ##### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "DiameterMissing99"
 options$chartType <- "xBarAndS"
 options$xBarAndSUnbiasingConstant <- TRUE
@@ -399,6 +419,7 @@ test_that("LF20. X-bar & s control chart with all but one missing value in measu
 
 ##### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "DiameterMissingAll"
 options$chartType <- "xBarAndR"
 results <- runAnalysis("variablesChartsSubgroups",
@@ -413,6 +434,7 @@ test_that("LF21. X-bar & R control chart with all missing value in measurement",
 
 ##### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "DiameterMissingAll"
 options$chartType <- "xBarAndS"
 options$xBarAndSUnbiasingConstant <- TRUE
@@ -430,6 +452,7 @@ test_that("LF22. X-bar & s control chart with all missing value in measurement",
 
 #### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroup <- "TimeMissing15"
 options$subgroupSizeType <- "groupingVariable"
@@ -446,6 +469,7 @@ test_that("LF23. X-bar & R control with missing values in subgroup variable", {
 
 #### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroup <- "TimeMissing15"
 options$subgroupSizeType <- "groupingVariable"
@@ -465,6 +489,7 @@ test_that("LF24. X-bar & s control chart  with missing values in subgroup variab
 
 #### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "StageMissing15"
 options$subgroup <- "Time"
@@ -482,6 +507,7 @@ test_that("LF25. X-bar & R control with missing values in stages variable", {
 
 #### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "StageMissing15"
 options$subgroup <- "Time"
@@ -502,6 +528,7 @@ test_that("LF26. X-bar & s control with missing values in stages variable", {
 
 ### x-bar & r chart with actual sizes (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroup <- "TimeUnequalGroups"
 options$subgroupSizeType <- "groupingVariable"
@@ -519,6 +546,7 @@ test_that("LF27. X-bar & R control chart with unequal subgroups and actual size 
 
 ### x-bar & s chart with actual sizes (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroup <- "TimeUnequalGroups"
 options$subgroupSizeType <- "groupingVariable"
@@ -537,6 +565,7 @@ test_that("LF28. X-bar & s control chart with unequal subgroups and actual size 
 
 ### x-bar & r chart with fixed group calculation (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroup <- "TimeUnequalGroups"
 options$subgroupSizeType <- "groupingVariable"
@@ -555,6 +584,7 @@ test_that("LF29. X-bar & R control chart with unequal subgroups and fixed size c
 
 ### x-bar & s chart with fixed group calculation (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroup <- "TimeUnequalGroups"
 options$subgroupSizeType <- "groupingVariable"
@@ -578,6 +608,7 @@ test_that("LF30. X-bar & s control chart with unequal subgroups and fixed size c
 
 #### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "Stage"
 options$chartType <- "xBarAndR"
@@ -594,6 +625,7 @@ test_that("LF31. Edge case of X-bar & R control chart with very large subgroup s
 
 #### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "Stage"
 options$chartType <- "xBarAndS"
@@ -613,6 +645,7 @@ test_that("LF32. Edge case of X-bar & s control chart with very large subgroup s
 
 #### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "StageMultiAssigned"
 options$chartType <- "xBarAndR"
@@ -628,6 +661,7 @@ test_that("LF33. Edge case of X-bar & R control chart with multiple assigned sta
 
 #### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "StageMultiAssigned"
 options$chartType <- "xBarAndS"
@@ -646,6 +680,7 @@ test_that("LF34. Edge case of X-bar & s control chart with multiple assigned sta
 
 ### Report of x-bar & r chart with stages and some deselected meta data ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndR"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "Stage"
@@ -674,6 +709,7 @@ test_that("LF35. Option test of creating a report with stages and less meta data
 
 ### Report of x-bar & r chart with no meta data ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$chartType <- "xBarAndR"
 options$measurementLongFormat <- "Diameter"
 options$stagesLongFormat <- "Stage"
@@ -696,6 +732,7 @@ test_that("LF36. Option test of creating a report with no meta data", {
 
 ### x-bar & r chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndR"
@@ -711,6 +748,7 @@ test_that("WF1. Basic test to create X-bar & R control chart", {
 
 ### x-bar & s chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndS"
@@ -727,6 +765,7 @@ test_that("WF2. Basic test to create X-bar & s control chart", {
 
 ### x-bar & r chart with stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$stagesWideFormat <- "Stage"
@@ -743,6 +782,7 @@ test_that("WF3. Basic test to create X-bar & R control chart with stages", {
 
 ### x-bar & s chart with stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$stagesWideFormat <- "Stage"
@@ -760,6 +800,7 @@ test_that("WF4. Basic test to create X-bar & s control chart with stages", {
 
 ### x-bar & r chart with axis labels (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$axisLabels <- "Time"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
@@ -776,6 +817,7 @@ test_that("WF5. Basic test to create X-bar & R control chart with axis labels", 
 
 ### x-bar & s chart with axis labels (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$axisLabels <- "Time"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
@@ -793,6 +835,7 @@ test_that("WF6. Basic test to create X-bar & s control chart with axis labels", 
 
 ### x-bar & r chart with axis labels and stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -810,6 +853,7 @@ test_that("WF7. Basic test to create X-bar & R control chart with stages and axi
 
 ### x-bar & s chart with axis labels and stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -828,6 +872,7 @@ test_that("WF8. Basic test to create X-bar & s control chart with stages and axi
 
 ### x-bar & r chart with warning limits (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndR"
@@ -844,6 +889,7 @@ test_that("WF9. Basic test to create X-bar & R control chart with warning limits
 
 ### x-bar & s chart with warning limits (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndS"
@@ -861,6 +907,7 @@ test_that("WF10. Basic test to create X-bar & s control chart with warning limit
 
 ### x-bar & r chart with known parameters (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndR"
@@ -899,6 +946,7 @@ test_that("WF11.3 Basic test of adding known parameters to X-bar & R control cha
 
 ### x-bar & s chart with known parameters (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$knownParameters <- TRUE
@@ -938,6 +986,7 @@ test_that("WF12.3 Basic test of adding known parameters to X-bar & s control cha
 
 ### Report function with x-bar & r chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndR"
@@ -966,6 +1015,7 @@ test_that("WF13. Basic test to create report of X-bar & R control chart", {
 
 ### Report function with x-bar & s chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndS"
@@ -1002,6 +1052,7 @@ test_that("WF14. Basic test to create report of X-bar & s control chart", {
 
 ##### x-bar & r chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1Missing1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndR"
@@ -1017,6 +1068,7 @@ test_that("WF15. X-bar & R control chart with single missing value in measuremen
 
 ##### x-bar & s chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1Missing1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndS"
@@ -1026,12 +1078,6 @@ results <- runAnalysis("variablesChartsSubgroups",
                        options)
 
 test_that("WF16. X-bar & s control chart with single missing value in measurement", {
-  options <- analysisOptions("variablesChartsSubgroups")
-  options$dataFormat <- "wideFormat"
-  options$measurementsWideFormat <- list("dm1Missing1", "dm2", "dm3", "dm4", "dm5")
-  options$chartType <- "xBarAndS"
-  set.seed(1)
-  results <- runAnalysis("variablesChartsSubgroups", "datasets/variableChartsSubgroups/variableChartsSubgroupsWideFormatDebug.csv", options)
   plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "x-bar-s-control-chart23")
@@ -1041,6 +1087,7 @@ test_that("WF16. X-bar & s control chart with single missing value in measuremen
 
 ##### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1Missing19", "dm2MissingAll", "dm3MissingAll",
                                        "dm4MissingAll", "dm5MissingAll")
@@ -1057,6 +1104,7 @@ test_that("WF17. X-bar & R control chart with all but one missing value in measu
 
 ##### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1Missing19", "dm2MissingAll", "dm3MissingAll",
                                        "dm4MissingAll", "dm5MissingAll")
@@ -1076,6 +1124,7 @@ test_that("WF18. X-bar & s control chart with all but one missing value in measu
 
 ##### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1MissingAll", "dm2MissingAll", "dm3MissingAll",
                                        "dm4MissingAll", "dm5MissingAll")
@@ -1092,6 +1141,7 @@ test_that("WF19. X-bar & R control chart with all values missing in measurement"
 
 ##### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1MissingAll", "dm2MissingAll", "dm3MissingAll",
                                        "dm4MissingAll", "dm5MissingAll")
@@ -1111,6 +1161,7 @@ test_that("WF20. X-bar & s control chart with all values missing in measurement"
 
 #### x-bar & r chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$stagesWideFormat <- "StageMissing7"
@@ -1127,6 +1178,7 @@ test_that("WF21. X-bar & R control chart with missing values in stages variable"
 
 #### x-bar & s chart ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$stagesWideFormat <- "StageMissing7"
@@ -1146,6 +1198,7 @@ test_that("WF22. X-bar & s control chart with missing values in stages variable"
 
 ### x-bar & r chart with actual sizes (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1Missing7", "dm2", "dm3", "dm4", "dm5")
 options$subgroupSizeUnequal <- "actualSizes"
@@ -1162,6 +1215,7 @@ test_that("WF23. X-bar & R control chart with unequal subgroups and actual sizes
 
 ### x-bar & s chart with actual sizes (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1Missing7", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndS"
@@ -1179,6 +1233,7 @@ test_that("WF24. X-bar & s control chart with unequal subgroups and actual sizes
 
 ### x-bar & r chart with fixed group calculation (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1Missing7", "dm2", "dm3", "dm4", "dm5")
 options$subgroupSizeUnequal <- "fixedSubgroupSize"
@@ -1196,6 +1251,7 @@ test_that("WF25. X-bar & R control chart with unequal subgroups and fixed sizes"
 
 ### x-bar & s chart with fixed group calculation (verified with Minitab) ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1Missing7", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndS"
@@ -1216,6 +1272,7 @@ test_that("WF26. X-bar & s control chart with unequal subgroups and fixed sizes"
 
 ### Report of x-bar & r chart with stages and some deselected meta data ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$stagesWideFormat <- "Stage"
@@ -1245,6 +1302,7 @@ test_that("WF27. Options test of creating a report with stages and less meta dat
 
 ### Report of x-bar & r chart with no meta data ####
 options <- analysisOptions("variablesChartsSubgroups")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("dm1", "dm2", "dm3", "dm4", "dm5")
 options$chartType <- "xBarAndR"
@@ -1270,12 +1328,19 @@ options$chartType <- "xBarAndR"
 options$testSet <- "custom"
 options$rule1 <- TRUE
 options$rule2 <- TRUE
+options$rule2Value <- 7
 options$rule3 <- TRUE
+options$rule3Value <- 7
 options$rule4 <- TRUE
+options$rule4Value <- 2
 options$rule5 <- TRUE
+options$rule5Value <- 15
 options$rule6 <- TRUE
+options$rule6Value <- 8
 options$rule7 <- TRUE
+options$rule7Value <- 4
 options$rule8 <- TRUE
+options$rule8Value <- 14
 results <- runAnalysis("variablesChartsSubgroups",
                        "datasets/controlChartRules/violatingAllSubgroupRules.csv",
                        options)
