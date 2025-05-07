@@ -414,9 +414,9 @@ Form
 			CheckBox
 			{
 				name: 								"rule1"
-				label: 								qsTr("Points outside of control limits")
+				label: 								qsTr("One point outside of control limits - Test 1: Beyond limit")
 				checked:							true
-				enabled:							testSet.currentValue == "custom"
+				visible:							testSet.currentValue == "custom"
 			}
 
 			CheckBox
@@ -424,13 +424,13 @@ Form
 				name: 								"rule2"
 				label: 								""
 				checked:							testSet.currentValue == "custom"
-				enabled:							testSet.currentValue == "custom"
+				visible:							testSet.currentValue == "custom"
 				childrenOnSameRow:					true
 
 				IntegerField
 				{
 					name: 								"rule2Value"
-					afterLabel:							qsTr("points in a row, on the same side of center line")
+					afterLabel:							qsTr("points in a row, on the same side of center line - Test 2: Shift")
 					fieldWidth: 						25
 					defaultValue: 						9
 					min:								2
@@ -442,13 +442,13 @@ Form
 				name: 								"rule3"
 				label: 								""
 				checked:							testSet.currentValue == "custom"
-				enabled:							testSet.currentValue == "custom"
+				visible:							testSet.currentValue == "custom"
 				childrenOnSameRow:					true
 
 				IntegerField
 				{
 					name: 								"rule3Value"
-					afterLabel:							qsTr("points in a row, all increasing or decreasing")
+					afterLabel:							qsTr("points in a row, all increasing or decreasing - Test 3: Trend")
 					fieldWidth: 						25
 					defaultValue: 						6
 					min:								2
@@ -460,13 +460,13 @@ Form
 				name: 								"rule8"
 				label: 								""
 				checked:							testSet.currentValue == "custom"
-				enabled:							testSet.currentValue == "custom"
+				visible:							testSet.currentValue == "custom"
 				childrenOnSameRow:					true
 
 				IntegerField
 				{
 					name: 								"rule8Value"
-					afterLabel:							qsTr("points in a row, alternating increase and decrease")
+					afterLabel:							qsTr("points in a row, alternating increase and decrease - Test 8: Oscillation")
 					fieldWidth: 						25
 					defaultValue: 						14
 					min:								2
@@ -478,13 +478,13 @@ Form
 				name: 								"rule9"
 				label: 								""
 				checked:							testSet.currentValue == "custom"
-				enabled:							testSet.currentValue == "custom"
+				visible:							testSet.currentValue == "custom"
 				childrenOnSameRow:					true
 
 				IntegerField
 				{
 					name: 								"rule9Value"
-					afterLabel:							qsTr("points in a row, equal to 0")
+					afterLabel:							qsTr("points in a row, equal to 0 - Test 9: Benneyan test")
 					fieldWidth: 						25
 					defaultValue: 						3
 					min:								2

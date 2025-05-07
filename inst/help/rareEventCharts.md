@@ -49,16 +49,16 @@ The g and t charts are essential tools in Statistical Quality Control (SQC) when
 
 #### JASP Default Tests
 
-- Test 1: One point beyond the control limits (sporadic issue).
+- Test 1: Beyond limit - One point beyond the control limits (sporadic issue).
 
 #### Custom Test Selection
 Select manually which tests you want to apply and modify them as desired:
 
-- Test 1: N points beyond the control limits (sporadic issue).
-- Test 2: N consecutive points above or below the central line (mean shift).
-- Test 3: A run up or down of N consecutive points (trend).
-- Test 8: N points in a row are alternating increase and decrease (oscillation).
-- Test 9: N points in a row are equal to 0 (Benneyan test).
+- Test 1: Beyond limit - One point beyond the control limits (sporadic issue).
+- Test 2: Shift - N consecutive points above or below the central line (mean shift).
+- Test 3: Trend - A run up or down of N consecutive points (trend).
+- Test 8: Oscillation - N points in a row are alternating increase and decrease (oscillation).
+- Test 9: Benneyan test - N points in a row are equal to 0 (Benneyan test).
 
 
 
