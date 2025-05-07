@@ -55,7 +55,7 @@ _Statistical process control handbook page 23:_
 #### Nelson Laws
 - Test 1: One point beyond the control limits (sporadic issue).
 - Test 2: Nine consecutive points above or below the central line (mean shift).
-- Test 3:  A run up or down of six consecutive points (trend).
+- Test 3: A run up or down of six consecutive points (trend).
 - Test 4: Two out of three consecutive points beyond the warning (two sigma) limits (increasing variation).
 - Test 5: Hugging the central line, this is indicated when 15 consecutive points are within the one sigma limits (reducing variation).
 - Test 6: Eight consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
