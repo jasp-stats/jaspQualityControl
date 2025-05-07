@@ -73,7 +73,7 @@ Select manually which tests you want to apply and modify them as desired:
 
 - Test 1: N points beyond the control limits (sporadic issue).
 - Test 2: N consecutive points above or below the central line (mean shift).
-- Test 3:  A run up or down of N consecutive points (trend).
+- Test 3: A run up or down of N consecutive points (trend).
 - Test 4: N out of N+1 consecutive points beyond the warning (two sigma) limits (increasing variation).
 - Test 5: Hugging the central line, this is indicated when N consecutive points are within the one sigma limits (reducing variation).
 - Test 6: N consecutive points are beyond the one sigma limits, regardless of which side of the central line (bimodal distribution).
