@@ -56,7 +56,7 @@ Select manually which tests you want to apply and modify them as desired:
 
 - Test 1: N points beyond the control limits (sporadic issue).
 - Test 2: N consecutive points above or below the central line (mean shift).
-- Test 3:  A run up or down of N consecutive points (trend).
+- Test 3: A run up or down of N consecutive points (trend).
 - Test 8: N points in a row are alternating increase and decrease (oscillation).
 - Test 9: N points in a row are equal to 0 (Benneyan test).
 
