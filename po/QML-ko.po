@@ -1,14 +1,20 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2025-05-09 05:01+0000\n"
+"Last-Translator: Min-gyu Kang <maniamen@gmail.com>\n"
+"Language-Team: Korean <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.12-dev\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
-msgstr ""
+msgstr "품질관리"
 
 msgctxt "Description|"
 msgid "Measurement Systems Analysis"
@@ -20,7 +26,7 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Control Charts"
-msgstr ""
+msgstr "관리도"
 
 msgctxt "doeFactorial|"
 msgid "Name"
@@ -68,7 +74,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
-msgstr ""
+msgstr "표준편차"
 
 msgctxt "msaGaugeRR|"
 msgid "Percent"
@@ -84,7 +90,7 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Histogram"
-msgstr ""
+msgstr "히스토그램"
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurements"
@@ -92,7 +98,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Lower specification limit"
-msgstr ""
+msgstr "규격하한선(LSL)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Target value"
@@ -100,7 +106,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Upper specification limit"
-msgstr ""
+msgstr "규격상한선(USL)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Specify a distribution"
@@ -156,23 +162,23 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "np chart"
-msgstr ""
+msgstr "불량개수 관리도"
 
 msgctxt "attributesCharts|"
 msgid "p chart"
-msgstr ""
+msgstr "불량률 관리도"
 
 msgctxt "attributesCharts|"
 msgid "Defects"
-msgstr ""
+msgstr "결점"
 
 msgctxt "attributesCharts|"
 msgid "c chart"
-msgstr ""
+msgstr "결점수 관리도"
 
 msgctxt "attributesCharts|"
 msgid "u chart"
-msgstr ""
+msgstr "단위당 결점수 관리도"
 
 msgctxt "msaAttribute|"
 msgid "Kendall's tau"
@@ -368,7 +374,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Histogram"
-msgstr ""
+msgstr "히스토그램"
 
 msgctxt "processCapabilityStudies|"
 msgid "Probability table and plot"
@@ -652,7 +658,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Factor"
-msgstr ""
+msgstr "요인"
 
 msgctxt "doeScreening|"
 msgid "Name"
@@ -776,7 +782,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Normal distribution"
-msgstr ""
+msgstr "정규분포"
 
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal distribution"
@@ -922,7 +928,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Standard deviation"
-msgstr ""
+msgstr "표준편차"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Title"
