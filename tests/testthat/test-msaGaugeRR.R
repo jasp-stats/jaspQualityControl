@@ -5,6 +5,7 @@ context("[Quality Control] Gauge r&R")
 
 ## Default settings ####
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorLongFormat <- "Operators"
 options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
@@ -125,18 +126,18 @@ test_that("LF1.14 Default settings - Test results for x-bar chart table results 
   jaspTools::expect_equal_tables(table,
                                  list("Operator A", "Point 1", "", "Point 2", "", "Point 3", "", "Point 4",
                                       "", "Point 5", "", "Point 6", "", "Point 7", "", "Point 8",
-                                      "", "Point 9", "", "Point 10", "Operator B", "Point 11", "",
-                                      "Point 12", "", "Point 13", "", "Point 14", "", "Point 15",
-                                      "", "Point 16", "", "Point 17", "", "Point 18", "", "Point 19",
-                                      "", "Point 20", "Operator C", "Point 21", "", "Point 22", "",
-                                      "Point 23", "", "Point 24", "", "Point 25", "", "Point 26",
-                                      "", "Point 27", "", "Point 28", "", "Point 29", "", "Point 30"
-                                 ))
+                                      "", "Point 9", "", "Point 10", "Operator B", "Point 1", "",
+                                      "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "",
+                                      "Point 6", "", "Point 7", "", "Point 8", "", "Point 9", "",
+                                      "Point 10", "Operator C", "Point 1", "", "Point 2", "", "Point 3",
+                                      "", "Point 4", "", "Point 5", "", "Point 6", "", "Point 7",
+                                      "", "Point 8", "", "Point 9", "", "Point 10"))
 })
 
 ## Historical std. dev ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorLongFormat <- "Operators"
 options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
@@ -157,7 +158,6 @@ options$processVariationReference <- "historicalSd"
 options$historicalSdValue <- 3
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
-
 
 test_that("LF2.1 Historical std. dev. - Variance components table results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
@@ -258,18 +258,18 @@ test_that("LF2.14 Historical std. dev. - Test results for x-bar chart table resu
   jaspTools::expect_equal_tables(table,
                                  list("Operator A", "Point 1", "", "Point 2", "", "Point 3", "", "Point 4",
                                       "", "Point 5", "", "Point 6", "", "Point 7", "", "Point 8",
-                                      "", "Point 9", "", "Point 10", "Operator B", "Point 11", "",
-                                      "Point 12", "", "Point 13", "", "Point 14", "", "Point 15",
-                                      "", "Point 16", "", "Point 17", "", "Point 18", "", "Point 19",
-                                      "", "Point 20", "Operator C", "Point 21", "", "Point 22", "",
-                                      "Point 23", "", "Point 24", "", "Point 25", "", "Point 26",
-                                      "", "Point 27", "", "Point 28", "", "Point 29", "", "Point 30"
-                                 ))
+                                      "", "Point 9", "", "Point 10", "Operator B", "Point 1", "",
+                                      "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "",
+                                      "Point 6", "", "Point 7", "", "Point 8", "", "Point 9", "",
+                                      "Point 10", "Operator C", "Point 1", "", "Point 2", "", "Point 3",
+                                      "", "Point 4", "", "Point 5", "", "Point 6", "", "Point 7",
+                                      "", "Point 8", "", "Point 9", "", "Point 10"))
 })
 
 ## Fixed effects model ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorLongFormat <- "Operators"
 options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
@@ -311,6 +311,7 @@ test_that("LF3.2 Fixed effect ANOVA - Two-way ANOVA table without interaction re
 
 ## Type 3 study ####
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
 options$tolerance <- TRUE
@@ -416,6 +417,7 @@ test_that("LF4.13 Type 3 study - Test results for x-bar chart table results matc
 ## Report ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorLongFormat <- "Operators"
 options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
@@ -449,6 +451,7 @@ test_that("LF5. Gauge r&R report plot matches", {
 
 ## Default settings ####
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorWideFormat <- "Operator"
 options$partWideFormat <- "Part"
 options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
@@ -468,7 +471,6 @@ options$trafficLightChart <- TRUE
 options$anovaModelType <- "randomEffect"
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
-
 
 test_that("WF1.1 Default Settings - Variance components table results match", {
   table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
@@ -550,7 +552,7 @@ test_that("WF1.10 Default Settings - Range chart by operator plot matches", {
 test_that("WF1.11 Default Settings - Test results for range chart table results match", {
   table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("C", "Point 30"))
+                                 list("C", "Point 10"))
 })
 
 test_that("WF1.12 Default Settings - Traffic plot matches", {
@@ -569,13 +571,14 @@ test_that("WF1.14 Default Settings - Test results for x-bar chart table results 
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("A", "Point 1", "", "Point 5", "", "Point 8", "", "Point 10",
-                                      "B", "Point 11", "", "Point 15", "", "Point 18", "", "Point 20",
-                                      "C", "Point 21", "", "Point 23", "", "Point 25", "", "Point 30"
+                                      "B", "Point 1", "", "Point 5", "", "Point 8", "", "Point 10",
+                                      "C", "Point 1", "", "Point 3", "", "Point 5", "", "Point 10"
                                  ))
 })
 
 ## Historical std. dev ####
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorWideFormat <- "Operator"
 options$partWideFormat <- "Part"
 options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
@@ -677,7 +680,7 @@ test_that("WF2.10 Historical std. dev. - Range chart by operator plot matches", 
 test_that("WF2.11 Historical std. dev. - Test results for range chart table results match", {
   table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("C", "Point 30"))
+                                 list("C", "Point 10"))
 })
 
 test_that("WF2.12 Historical std. dev. - Traffic plot matches", {
@@ -696,14 +699,15 @@ test_that("WF2.14 Historical std. dev. - Test results for x-bar chart table resu
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("A", "Point 1", "", "Point 5", "", "Point 8", "", "Point 10",
-                                      "B", "Point 11", "", "Point 15", "", "Point 18", "", "Point 20",
-                                      "C", "Point 21", "", "Point 23", "", "Point 25", "", "Point 30"
+                                      "B", "Point 1", "", "Point 5", "", "Point 8", "", "Point 10",
+                                      "C", "Point 1", "", "Point 3", "", "Point 5", "", "Point 10"
                                  ))
 })
 
 ## Fixed effects model ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorWideFormat <- "Operator"
 options$partWideFormat <- "Part"
 options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
@@ -747,6 +751,7 @@ test_that("WF3.2 Fixed effct ANOVA - Two-way ANOVA table without interaction res
 ## Type 3 study ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$partWideFormat <- "Part"
 options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
 options$dataFormat <- "wideFormat"
@@ -849,6 +854,7 @@ test_that("WF4.13 Type 3 study - Test results for x-bar chart table results matc
 ## Report ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorWideFormat <- "Operator"
 options$partWideFormat <- "Part"
 options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")

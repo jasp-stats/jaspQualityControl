@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Layouts
 import JASP.Controls
 
+import "./common" as Common
+
 Form
 {
 	columns:									2
@@ -401,7 +403,7 @@ Form
 		CheckBox
 		{
 			name: 								"xBarAndSUnbiasingConstant"
-			label: 								qsTr("Use unbiasing constant for X-bar & s contorl chart")
+			label: 								qsTr("Use unbiasing constant for X-bar & s control chart")
 			checked:							true
 		}
 
@@ -413,5 +415,7 @@ Form
 			defaultValue: 						3
 			min:								1
 		}
+
+		Common.ControlChartTests {}
 	}
 }

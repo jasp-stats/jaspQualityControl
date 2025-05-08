@@ -16,6 +16,8 @@ import QtQuick
 import QtQuick.Layouts
 import JASP.Controls
 
+import "./common" as Common
+
 Form
 {
 	columns:								2
@@ -825,5 +827,7 @@ Form
 				min:								.000001
 			}
 		}
+
+		Common.ControlChartTests {}
 	}
 }

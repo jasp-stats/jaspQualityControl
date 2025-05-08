@@ -388,4 +388,108 @@ Form
 			}
 		}
 	}
+
+	Section
+	{
+		title: 									qsTr("Advanced Options")
+		columns:								1
+
+		Group
+		{
+			title:		qsTr("Tests for control charts")
+
+			DropDown
+			{
+				name:									"testSet"
+				label:									qsTr("Test set")
+				id: 									testSet
+				indexDefaultValue:						0
+				values: [
+					{ label: qsTr("JASP"), value: "jaspDefault"},
+					{ label: qsTr("Custom selection"), value: "custom"}
+				]
+			}
+
+
+			CheckBox
+			{
+				name: 								"rule1"
+				label: 								qsTr("One point outside of control limits - Test 1: Beyond limit")
+				checked:							true
+				visible:							testSet.currentValue == "custom"
+			}
+
+			CheckBox
+			{
+				name: 								"rule2"
+				label: 								""
+				checked:							testSet.currentValue == "custom"
+				visible:							testSet.currentValue == "custom"
+				childrenOnSameRow:					true
+
+				IntegerField
+				{
+					name: 								"rule2Value"
+					afterLabel:							qsTr("points in a row, on the same side of center line - Test 2: Shift")
+					fieldWidth: 						25
+					defaultValue: 						9
+					min:								2
+				}
+			}
+
+			CheckBox
+			{
+				name: 								"rule3"
+				label: 								""
+				checked:							testSet.currentValue == "custom"
+				visible:							testSet.currentValue == "custom"
+				childrenOnSameRow:					true
+
+				IntegerField
+				{
+					name: 								"rule3Value"
+					afterLabel:							qsTr("points in a row, all increasing or decreasing - Test 3: Trend")
+					fieldWidth: 						25
+					defaultValue: 						6
+					min:								2
+				}
+			}
+
+			CheckBox
+			{
+				name: 								"rule8"
+				label: 								""
+				checked:							testSet.currentValue == "custom"
+				visible:							testSet.currentValue == "custom"
+				childrenOnSameRow:					true
+
+				IntegerField
+				{
+					name: 								"rule8Value"
+					afterLabel:							qsTr("points in a row, alternating increase and decrease - Test 8: Oscillation")
+					fieldWidth: 						25
+					defaultValue: 						14
+					min:								2
+				}
+			}
+
+			CheckBox
+			{
+				name: 								"rule9"
+				label: 								""
+				checked:							testSet.currentValue == "custom"
+				visible:							testSet.currentValue == "custom"
+				childrenOnSameRow:					true
+
+				IntegerField
+				{
+					name: 								"rule9Value"
+					afterLabel:							qsTr("points in a row, equal to 0 - Test 9: Benneyan test")
+					fieldWidth: 						25
+					defaultValue: 						3
+					min:								2
+				}
+			}
+		}
+	}
 }
