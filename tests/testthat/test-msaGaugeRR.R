@@ -5,6 +5,7 @@ context("[Quality Control] Gauge r&R")
 
 ## Default settings ####
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorLongFormat <- "Operators"
 options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
@@ -136,6 +137,7 @@ test_that("LF1.14 Default settings - Test results for x-bar chart table results 
 ## Historical std. dev ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorLongFormat <- "Operators"
 options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
@@ -267,6 +269,7 @@ test_that("LF2.14 Historical std. dev. - Test results for x-bar chart table resu
 ## Fixed effects model ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorLongFormat <- "Operators"
 options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
@@ -308,6 +311,7 @@ test_that("LF3.2 Fixed effect ANOVA - Two-way ANOVA table without interaction re
 
 ## Type 3 study ####
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
 options$tolerance <- TRUE
@@ -413,6 +417,7 @@ test_that("LF4.13 Type 3 study - Test results for x-bar chart table results matc
 ## Report ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorLongFormat <- "Operators"
 options$partLongFormat <- "Parts"
 options$measurementLongFormat <- "Dm"
@@ -446,6 +451,7 @@ test_that("LF5. Gauge r&R report plot matches", {
 
 ## Default settings ####
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorWideFormat <- "Operator"
 options$partWideFormat <- "Part"
 options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
@@ -572,6 +578,7 @@ test_that("WF1.14 Default Settings - Test results for x-bar chart table results 
 
 ## Historical std. dev ####
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorWideFormat <- "Operator"
 options$partWideFormat <- "Part"
 options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
@@ -700,6 +707,7 @@ test_that("WF2.14 Historical std. dev. - Test results for x-bar chart table resu
 ## Fixed effects model ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorWideFormat <- "Operator"
 options$partWideFormat <- "Part"
 options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
@@ -743,6 +751,7 @@ test_that("WF3.2 Fixed effct ANOVA - Two-way ANOVA table without interaction res
 ## Type 3 study ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$partWideFormat <- "Part"
 options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
 options$dataFormat <- "wideFormat"
@@ -845,6 +854,7 @@ test_that("WF4.13 Type 3 study - Test results for x-bar chart table results matc
 ## Report ####
 
 options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
 options$operatorWideFormat <- "Operator"
 options$partWideFormat <- "Part"
 options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")

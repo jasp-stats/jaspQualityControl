@@ -6,6 +6,7 @@ set.seed(1)
 
 ## X-mR chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsIndividuals")
+options$testSet <- "jaspDefault"
 options$measurement <- "Yield"
 options$axisLabels <- "Month"
 options$xmrChartMovingRangeLength <- 2
@@ -53,6 +54,7 @@ test_that("2. Basic test to create autocorrelation chart", {
 
 ## X-mR chart with different moving range length (verified with Minitab) ####
 options <- analysisOptions("variablesChartsIndividuals")
+options$testSet <- "jaspDefault"
 options$measurement <- "Yield"
 options$xmrChartMovingRangeLength <- 4
 results <- runAnalysis("variablesChartsIndividuals",
@@ -88,6 +90,7 @@ test_that("3.3 Basic test to create x-mR control chart with changed MR length - 
 
 ## X-mR chart with stages (verified with Minitab) ####
 options <- analysisOptions("variablesChartsIndividuals")
+options$testSet <- "jaspDefault"
 options$measurement <- "Yield"
 options$stage <- "Stage"
 options$xmrChartMovingRangeLength <- 2
@@ -118,6 +121,7 @@ test_that("4.3 Basic test to create x-mR control chart with stages - MR table", 
 
 ## X-mR chart with large moving range length (verified with Minitab) ####
 options <- analysisOptions("variablesChartsIndividuals")
+options$testSet <- "jaspDefault"
 options$measurement <- "Yield"
 options$xmrChartMovingRangeLength <- 36
 results <- runAnalysis("variablesChartsIndividuals", "datasets/variableChartsIndividuals/variableChartsIndividualsDebug.csv", options)
@@ -150,6 +154,7 @@ test_that("5.3 Test X-mR control chart with large moving range length - MR table
 
 ## X-mR chart with stages and large moving range length (verified with Minitab) ####
 options <- analysisOptions("variablesChartsIndividuals")
+options$testSet <- "jaspDefault"
 options$measurement <- "Yield"
 options$stage <- "Stage"
 options$xmrChartMovingRangeLength <- 12
@@ -177,6 +182,7 @@ test_that("6.3 Test X-mR control chart with stages and large moving range length
 
 ## Autocorrelation plot with different number of lags ####
 options <- analysisOptions("variablesChartsIndividuals")
+options$testSet <- "jaspDefault"
 options$xmrChart <- FALSE
 options$measurement <- "Yield"
 options$autocorrelationPlot <- TRUE
@@ -184,12 +190,6 @@ options$autocorrelationPlotLagsNumber <- 4
 results <- runAnalysis("variablesChartsIndividuals", "datasets/variableChartsIndividuals/variableChartsIndividualsDebug.csv", options)
 
 test_that("7. Autocorrelation plot with changed number of lags", {
-  options <- analysisOptions("variablesChartsIndividuals")
-  options$measurement <- "Yield"
-  options$xmrChart <- FALSE
-  options$autocorrelationPlot <- TRUE
-  options$autocorrelationPlotLagsNumber <- 4
-  set.seed(1)
   results <- runAnalysis("variablesChartsIndividuals", "datasets/variableChartsIndividuals/variableChartsIndividualsDebug.csv", options)
   plotName <- results[["results"]][["autocorrelationPlot"]][["collection"]][["autocorrelationPlot_Yield"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
@@ -198,6 +198,7 @@ test_that("7. Autocorrelation plot with changed number of lags", {
 
 ## Report including everything (verified with Minitab) ####
 options <- analysisOptions("variablesChartsIndividuals")
+options$testSet <- "jaspDefault"
 options$measurement <- "Yield"
 options$axisLabels <- "Month"
 options$xmrChartMovingRangeLength <- 2
@@ -223,6 +224,7 @@ test_that("8. Basic test to create a report with all components", {
 
 ## Report including only x-mR chart ####
 options <- analysisOptions("variablesChartsIndividuals")
+options$testSet <- "jaspDefault"
 options$measurement <- "Yield"
 options$axisLabels <- "Month"
 options$stage <- "Stage"
@@ -248,6 +250,7 @@ test_that("9. Basic test to create a report with only an IMR chart", {
 
 #### X-mR chart (verified with Minitab) ####
 options <- analysisOptions("variablesChartsIndividuals")
+options$testSet <- "jaspDefault"
 options$measurement <- "YieldMissing1"
 options$axisLabels <- "Month"
 options$xmrChartMovingRangeLength <- 2
@@ -288,6 +291,7 @@ test_that("10.3 X-mR control chart with single missing value in measurements - M
 
 ## Missing values in axis label (verified with Minitab) ####
 options <- analysisOptions("variablesChartsIndividuals")
+options$testSet <- "jaspDefault"
 options$measurement <- "Yield"
 options$axisLabels <- "MonthMissing5"
 options$xmrChartMovingRangeLength <- 2
@@ -332,12 +336,19 @@ options$xmrChartMovingRangeLength <- 2
 options$testSet <- "custom"
 options$rule1 <- TRUE
 options$rule2 <- TRUE
+options$rule2Value <- 7
 options$rule3 <- TRUE
+options$rule3Value <- 7
 options$rule4 <- TRUE
+options$rule4Value <- 2
 options$rule5 <- TRUE
+options$rule5Value <- 15
 options$rule6 <- TRUE
+options$rule6Value <- 8
 options$rule7 <- TRUE
+options$rule7Value <- 4
 options$rule8 <- TRUE
+options$rule8Value <- 14
 results <- runAnalysis("variablesChartsIndividuals", "datasets/controlChartRules/violatingAllindividualRules.csv", options)
 
 test_that("12.1 Test of all rules for x-mr chart", {
