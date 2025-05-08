@@ -5,6 +5,7 @@ context("[Quality Control] MSA Gauge non-replicabe")
 
 ## Default settings ####
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$partLongFormat <- "Batch"
 options$operatorLongFormat <- "Operator"
 options$measurementLongFormat <- "Result"
@@ -109,6 +110,7 @@ test_that("LF1.12 Default settings - Test results for x-bar chart table results 
 ## Historical std. dev. ####
 
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$partLongFormat <- "Batch"
 options$operatorLongFormat <- "Operator"
 options$measurementLongFormat <- "Result"
@@ -214,6 +216,7 @@ test_that("LF2.12 Historical std. dev. - Test results for x-bar chart table resu
 ## Report ####
 
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$partLongFormat <- "Batch"
 options$operatorLongFormat <- "Operator"
 options$measurementLongFormat <- "Result"
@@ -241,6 +244,7 @@ test_that("LF3 Report - Gauge r&R (non-replicable) report plot matches", {
 
 ## Default settings ####
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$partWideFormat <- "Batch"
 options$operatorWideFormat <- "Operator"
@@ -347,6 +351,7 @@ test_that("WF1.12 Default settings - Test results for x-bar chart table results 
 ## Historical std. dev. ####
 
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$partWideFormat <- "Batch"
 options$operatorWideFormat <- "Operator"
@@ -453,6 +458,7 @@ test_that("WF2.12 Historical std. dev. - Test results for x-bar chart table resu
 ## Report ####
 
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$partWideFormat <- "Batch"
 options$operatorWideFormat <- "Operator"

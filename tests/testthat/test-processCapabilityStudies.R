@@ -11,6 +11,7 @@ context("[Quality Control] Process Capability Study")
 
 ##### Without stages (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "groupingVariable"
 options$subgroup <- "Time"
@@ -85,6 +86,7 @@ test_that("LF1.9 (Normal) Basic tests of X-bar & R control chart with subgroup v
 
 ##### With stages (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "groupingVariable"
 options$subgroup <- "Time"
@@ -173,6 +175,7 @@ test_that("LF2.9 (Normal) Basic tests of Summary of X-bar & R control chart with
 
 ##### Without stages (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -248,6 +251,7 @@ test_that("LF3.9 (Normal) Basic tests of X-bar & R control chart with manual sub
 
 ##### With stages (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -336,6 +340,7 @@ test_that("LF4.9 (Normal) Basic tests of X-bar & R control chart with manual sub
 
 #### Weibull (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -416,6 +421,7 @@ test_that("LF5.8 (Weibull) Basic tests of X-bar & R control chart with manual su
 
 #### Lognormal (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -495,6 +501,7 @@ test_that("LF6.8 (Lognormal) Basic tests of X-bar & R control chart with manual 
 
 #### 3-parameter-Weibull (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -562,6 +569,7 @@ test_that("LF7.6 (3-parameter-Weibull) Basic tests of X-bar & R control chart wi
 
 #### 3-parameter-lognormal (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -631,6 +639,7 @@ test_that("LF8.6 (3-parameter-lognormal) Basic tests of X-bar & R control chart 
 
 #### Single missing value ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "DiameterMissing1"
 options$subgroupSizeType <- "groupingVariable"
 options$subgroup <- "Time"
@@ -718,6 +727,7 @@ test_that("LF9.9 (Normal) Missing value test of X-bar & R control chart with sin
 
 #### All but one missing ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "DiameterMissing99"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -778,6 +788,7 @@ test_that("LF10.5 (Normal) Missing value test of X-bar & R control chart with al
 
 #### All missing ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "DiameterMissingAll"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -837,6 +848,7 @@ test_that("LF11.5 (Normal) Missing value test of X-bar & R control chart with al
 
 ### Missing values in stages ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -935,6 +947,7 @@ test_that("LF12.9 (Normal) Missing value test of X-bar & R control chart with mi
 
 ### Missing values in subgroup variable ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "groupingVariable"
 options$subgroup <- "TimeMissing15"
@@ -1023,6 +1036,7 @@ test_that("LF13.9 (Normal) Missing value test of X-bar & R control chart with mi
 
 ### Set different manual subgroup sizes (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 7
@@ -1097,6 +1111,7 @@ test_that("LF14.9 (Normal) Option test of X-bar & R control chart with changed m
 
 ### Fixed subgroup sizes ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 7
@@ -1125,6 +1140,7 @@ test_that("LF15.1 (Normal) Option test of X-bar & R control chart with fixed sub
 
 #### S-bar (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -1202,6 +1218,7 @@ test_that("LF16.9 (Normal) Option test of X-bar & s control chart with s-bar cal
 
 #### x-mR (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 1
@@ -1293,6 +1310,7 @@ test_that("LF17.11 (Normal) Option test of Test results for moving range chart t
 
 #### Boundaries (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -1371,6 +1389,7 @@ test_that("LF18.9 (Normal) Option test of X-bar & R control chart with boundarie
 
 #### Unbiasing constant for s-bar (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -1451,6 +1470,7 @@ test_that("LF19.9 (Normal) Option test of X-bar & s control chart with s-bar cal
 
 ### Multiple stages assigned ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -1550,6 +1570,7 @@ test_that("LF20.9 (Normal) Edge case test of X-bar & R control chart with multip
 
 ### Basic report test ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -1585,6 +1606,7 @@ test_that("LF21 (Normal) Basic test of report functionality", {
 
 ### (Normal) Stages report test ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$stagesLongFormat <- "Stage"
@@ -1621,6 +1643,7 @@ test_that("LF22 (Normal) Option test of report functionality with stages", {
 
 ### (Non-Normal) Stages report test ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$stagesLongFormat <- "Stage"
@@ -1659,6 +1682,7 @@ test_that("LF23 (Non-Normal) Option test of report functionality with stages", {
 
 ### Basic report test with removed elements ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$measurementLongFormat <- "Diameter"
 options$subgroupSizeType <- "manual"
 options$manualSubgroupSizeValue <- 5
@@ -1692,6 +1716,7 @@ test_that("LF24 (Normal) Basic test of report functionality with removed element
 
 #### Without stages (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -1766,6 +1791,7 @@ test_that("WF1.9 (Normal) Basic tests of X-bar & R control chart without stages"
 
 #### With stages (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -1854,6 +1880,7 @@ test_that("WF2.9 (Normal) Basic tests of X-bar & R control chart with stages", {
 
 #### Weibull (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -1924,6 +1951,7 @@ test_that("WF3.8 (Weibull) Basic tests of X-bar & R control chart", {
 
 #### Lognormal (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -1995,6 +2023,7 @@ test_that("WF4.8 (Lognormal) Basic tests of X-bar & R control chart", {
 
 #### 3-parameter-Weibull (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -2065,6 +2094,7 @@ test_that("WF5.8 (3-parameter-Weibull) Basic tests of X-bar & R control chart", 
 
 #### 3-parameter-lognormal (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -2139,6 +2169,7 @@ test_that("WF6.8 (3-parameter-lognormal) Basic tests of X-bar & R control chart"
 
 #### Single missing value ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1Missing1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -2214,6 +2245,7 @@ test_that("WF7.9 (Normal) Missing value test of X-bar & R control chart with sin
 
 #### All but one missing ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1Missing19", "dm2MissingAll", "dm3MissingAll", "dm4MissingAll", "dm5MissingAll")
 options$axisLabels <- "Time"
@@ -2265,6 +2297,7 @@ test_that("WF8.5 (Normal) Missing value test of X-bar & R control chart with all
 
 #### All missing ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1MissingAll", "dm2MissingAll", "dm3MissingAll", "dm4MissingAll", "dm5MissingAll")
 options$axisLabels <- "Time"
@@ -2315,6 +2348,7 @@ test_that("WF9.5 (Normal) Missing value test of X-bar & R control chart with all
 
 ### Missing values in stages ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -2413,6 +2447,7 @@ test_that("WF10.9 (Normal) Missing value test of X-bar & R control chart with mi
 
 ### Fixed subgroup sizes (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1Missing1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -2441,6 +2476,7 @@ test_that("WF11 (Normal) Options test of X-bar & R control chart with fixed subg
 
 #### S-bar (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -2517,6 +2553,7 @@ test_that("WF12.9 (Normal) Option test of X-bar & s control chart with s-bar cal
 
 #### xbar-mR ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -2542,6 +2579,7 @@ test_that("WF13 (Normal) Option test of X-bar & mR control chart", {
 
 #### Boundaries (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -2620,6 +2658,7 @@ test_that("WF14.9 (Normal) Option test of X-bar & R control chart with boundarie
 
 #### Unbiasing constant for s-bar (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -2697,6 +2736,7 @@ test_that("WF15.9 (Normal) Option test of X-bar & s control chart with s-bar met
 ## Report ####
 ### Basic report test ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
@@ -2733,6 +2773,7 @@ test_that("WF16 (Normal) Basic test of report functionality", {
 
 ### (Normal) Stages report test ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$stagesWideFormat <- "Stage"
@@ -2769,6 +2810,7 @@ test_that("WF17 (Normal) Option test of report functionality with stages", {
 
 ### (Non-Normal) Stages report test ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$stagesWideFormat <- "Stage"
@@ -2806,6 +2848,7 @@ test_that("WF18 (Non-Normal) Option test of report functionality with stages", {
 
 ### Basic report test with removed elements ####
 options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- c("dm1", "dm2", "dm3", "dm4", "dm5")
 options$axisLabels <- "Time"
