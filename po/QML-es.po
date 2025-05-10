@@ -1,15 +1,9 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-05-07 18:14+0000\n"
-"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
-"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/es/>\n"
-"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12-dev\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -2553,10 +2547,6 @@ msgid "Right open"
 msgstr "Derecho abierto"
 
 msgctxt "doeAnalysis|"
-msgid "Show optimal response"
-msgstr "Mostrar la respuesta óptima"
-
-msgctxt "doeAnalysis|"
 msgid "Normal plot of effects"
 msgstr "Gráfico normal de los efectos"
 
@@ -2975,3 +2965,64 @@ msgstr "Fecha impresa"
 msgctxt "timeWeightedCharts|"
 msgid "Today"
 msgstr "Hoy"
+
+msgctxt "doeAnalysis|"
+msgid "Responses"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Response optimizer"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Available responses"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Included responses"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Maximize"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Minimize"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Target"
+msgstr "Objetivo"
+
+msgctxt "doeAnalysis|"
+msgid "Show optimal solution"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show optimization plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Predict"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Individual desirability"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Set input parameters manually"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Value"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Set all bounds manually"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Set all targets manually"
+msgstr ""

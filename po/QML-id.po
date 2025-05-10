@@ -2569,10 +2569,6 @@ msgid "Right open"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Show optimal response"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Normal plot of effects"
 msgstr ""
 
@@ -3004,4 +3000,64 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Today"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Responses"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Response optimizer"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Available responses"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Included responses"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Maximize"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Minimize"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Target"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show optimal solution"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show optimization plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Predict"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Individual desirability"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Set input parameters manually"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Value"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Set all bounds manually"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Set all targets manually"
 msgstr ""

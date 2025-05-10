@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2025-05-03 03:47\n"
+"POT-Creation-Date: 2025-05-10 03:47\n"
 "PO-Revision-Date: 2024-09-05 15:09+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
@@ -220,6 +220,9 @@ msgid ""
 "distribution."
 msgstr ""
 
+msgid "Design of Experiments - Analysis"
+msgstr ""
+
 msgid "Error"
 msgstr "Błąd"
 
@@ -231,14 +234,91 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Response Optimizer Settings"
+msgstr ""
+
+msgid "lower and upper bounds and target are"
+msgstr ""
+
+#, fuzzy
+msgid "lower and upper bounds are"
+msgstr "Tolerancja: %s"
+
+#, fuzzy
+msgid "target is"
+msgstr "Cel"
+
+msgid "The %s estimated from data."
+msgstr ""
+
+msgid "Response Optimizer Solution"
+msgstr ""
+
+msgid "Optimization Plot"
+msgstr ""
+
+msgid "Summary Plot"
+msgstr ""
+
+msgid "Enter values for all predictors."
+msgstr ""
+
+msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all discrete predictors.\n"
+"                                   Value %1$s is not a possible for the "
+"discrete predictor %2$s. Allowed values:"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all continuous predictors. Only numeric values "
+"are allowed."
+msgstr ""
+
+msgid "Comp. desirability"
+msgstr ""
+
+msgid "Ind. desirability ("
+msgstr ""
+
+msgid ""
+"One or more input parameters for continuous predictors are outside of the "
+"design space.\n"
+"                           Extrapolation beyond the design space might not "
+"be valid."
+msgstr ""
+
 msgid "Model Summary"
 msgstr "Podsumowanie modelu"
+
+msgid "Adjusted %s"
+msgstr ""
+
+#, fuzzy
+msgid "Predictive %s"
+msgstr "Predyktor"
 
 msgid "The following aliased terms were removed: %s."
 msgstr ""
 
 msgid "ANOVA"
 msgstr "ANOVA"
+
+msgid "Source"
+msgstr ""
+
+#, fuzzy
+msgid "Sum of squares"
+msgstr "Suma kwadratów"
+
+msgid "df"
+msgstr "df"
+
+#, fuzzy
+msgid "Mean square"
+msgstr "Średni kwadrat"
 
 msgid "Coded"
 msgstr "Zakodowane"
@@ -730,16 +810,6 @@ msgstr ""
 msgid "Two-way ANOVA table with interaction"
 msgstr ""
 
-msgid "Source"
-msgstr ""
-
-msgid "df"
-msgstr "df"
-
-#, fuzzy
-msgid "Sum of squares"
-msgstr "Suma kwadratów"
-
 #, fuzzy
 msgid "Mean squares"
 msgstr "Średnie kwadraty"
@@ -883,10 +953,6 @@ msgstr ""
 
 msgid "Gauge r&R (nested)"
 msgstr ""
-
-#, fuzzy
-msgid "Mean square"
-msgstr "Średni kwadrat"
 
 msgid "p"
 msgstr "p"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-05-03 03:47\n"
+"POT-Creation-Date: 2025-05-10 03:47\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -226,6 +226,9 @@ msgid ""
 "distribution."
 msgstr ""
 
+msgid "Design of Experiments - Analysis"
+msgstr ""
+
 msgid "Error"
 msgstr ""
 
@@ -237,14 +240,95 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Response Optimizer Settings"
+msgstr ""
+
+msgid "lower and upper bounds and target are"
+msgstr ""
+
+#, fuzzy
+msgid "lower and upper bounds are"
+msgstr "公差 : %s"
+
+#, fuzzy
+msgid "target is"
+msgstr "目标"
+
+msgid "The %s estimated from data."
+msgstr ""
+
+msgid "Response Optimizer Solution"
+msgstr ""
+
+#, fuzzy
+msgid "Optimization Plot"
+msgstr "检测图"
+
+msgid "Summary Plot"
+msgstr ""
+
+msgid "Enter values for all predictors."
+msgstr ""
+
+msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all discrete predictors.\n"
+"                                   Value %1$s is not a possible for the "
+"discrete predictor %2$s. Allowed values:"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all continuous predictors. Only numeric values "
+"are allowed."
+msgstr ""
+
+#, fuzzy
+msgid "Comp. desirability"
+msgstr "合意度"
+
+#, fuzzy
+msgid "Ind. desirability ("
+msgstr "合意度"
+
+msgid ""
+"One or more input parameters for continuous predictors are outside of the "
+"design space.\n"
+"                           Extrapolation beyond the design space might not "
+"be valid."
+msgstr ""
+
 msgid "Model Summary"
 msgstr "模型摘要"
+
+#, fuzzy
+msgid "Adjusted %s"
+msgstr "调整 R 平方"
+
+#, fuzzy
+msgid "Predictive %s"
+msgstr "预测变量"
 
 msgid "The following aliased terms were removed: %s."
 msgstr ""
 
 msgid "ANOVA"
 msgstr "方差分析"
+
+msgid "Source"
+msgstr "变异源"
+
+#, fuzzy
+msgid "Sum of squares"
+msgstr "平方和"
+
+msgid "df"
+msgstr "df"
+
+#, fuzzy
+msgid "Mean square"
+msgstr "均方"
 
 msgid "Coded"
 msgstr ""
@@ -795,16 +879,6 @@ msgstr "单向方差分析表"
 msgid "Two-way ANOVA table with interaction"
 msgstr "双向方差分析表带交互作用"
 
-msgid "Source"
-msgstr "变异源"
-
-msgid "df"
-msgstr "df"
-
-#, fuzzy
-msgid "Sum of squares"
-msgstr "平方和"
-
 #, fuzzy
 msgid "Mean squares"
 msgstr "均方"
@@ -970,10 +1044,6 @@ msgstr "量具 r&R（嵌套）"
 #, fuzzy
 msgid "Gauge r&R (nested)"
 msgstr "量具 r&R（嵌套）"
-
-#, fuzzy
-msgid "Mean square"
-msgstr "均方"
 
 msgid "p"
 msgstr "p"
@@ -1787,9 +1857,6 @@ msgstr "单值图"
 #~ msgid "Model R-squared"
 #~ msgstr "模型 R 平方"
 
-#~ msgid "Adjusted R-squared"
-#~ msgstr "调整 R 平方"
-
 #~ msgid "df1"
 #~ msgstr "df1"
 
@@ -1813,9 +1880,6 @@ msgstr "单值图"
 
 #~ msgid "Eigenvectors"
 #~ msgstr "特征向量"
-
-#~ msgid "Desirability"
-#~ msgstr "合意度"
 
 #~ msgid ""
 #~ "At least one predictor and response variable need to be specified before "

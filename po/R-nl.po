@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-05-03 03:47\n"
+"POT-Creation-Date: 2025-05-10 03:47\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -217,6 +217,9 @@ msgstr ""
 "Parameterschatting mislukt. De waarden zijn misschien te extreem. Probeer "
 "een andere verdeling."
 
+msgid "Design of Experiments - Analysis"
+msgstr ""
+
 msgid "Error"
 msgstr "Fout"
 
@@ -230,14 +233,93 @@ msgstr ""
 "De opgegeven laag/hoog niveaus %1$s voor %2$s komen niet overeen met de "
 "niveaus in de dataset."
 
+msgid "Response Optimizer Settings"
+msgstr ""
+
+msgid "lower and upper bounds and target are"
+msgstr ""
+
+#, fuzzy
+msgid "lower and upper bounds are"
+msgstr "Tolerantie: %s"
+
+#, fuzzy
+msgid "target is"
+msgstr "Doel"
+
+msgid "The %s estimated from data."
+msgstr ""
+
+msgid "Response Optimizer Solution"
+msgstr ""
+
+#, fuzzy
+msgid "Optimization Plot"
+msgstr "Detectie Figuur"
+
+msgid "Summary Plot"
+msgstr ""
+
+msgid "Enter values for all predictors."
+msgstr ""
+
+msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all discrete predictors.\n"
+"                                   Value %1$s is not a possible for the "
+"discrete predictor %2$s. Allowed values:"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all continuous predictors. Only numeric values "
+"are allowed."
+msgstr ""
+
+#, fuzzy
+msgid "Comp. desirability"
+msgstr "Geschiktheid"
+
+msgid "Ind. desirability ("
+msgstr ""
+
+msgid ""
+"One or more input parameters for continuous predictors are outside of the "
+"design space.\n"
+"                           Extrapolation beyond the design space might not "
+"be valid."
+msgstr ""
+
 msgid "Model Summary"
 msgstr "Model Samenvatting"
+
+msgid "Adjusted %s"
+msgstr ""
+
+#, fuzzy
+msgid "Predictive %s"
+msgstr "Predictoren"
 
 msgid "The following aliased terms were removed: %s."
 msgstr "De volgende gealiaste termen zijn verwijderd: %s."
 
 msgid "ANOVA"
 msgstr "ANOVA"
+
+msgid "Source"
+msgstr "Bron"
+
+#, fuzzy
+msgid "Sum of squares"
+msgstr "Kwadratensom"
+
+msgid "df"
+msgstr "vg"
+
+#, fuzzy
+msgid "Mean square"
+msgstr "Gemiddelde Kwadraat"
 
 msgid "Coded"
 msgstr "Gecodeerd"
@@ -790,16 +872,6 @@ msgstr "One-way ANOVA Tabel"
 msgid "Two-way ANOVA table with interaction"
 msgstr "Two-way ANOVA Tabel met Interactie"
 
-msgid "Source"
-msgstr "Bron"
-
-msgid "df"
-msgstr "vg"
-
-#, fuzzy
-msgid "Sum of squares"
-msgstr "Kwadratensom"
-
 #, fuzzy
 msgid "Mean squares"
 msgstr "Gemiddelde Kwadraten"
@@ -972,10 +1044,6 @@ msgstr "Gauge r&R (Genest)"
 #, fuzzy
 msgid "Gauge r&R (nested)"
 msgstr "Gauge r&R (Genest)"
-
-#, fuzzy
-msgid "Mean square"
-msgstr "Gemiddelde Kwadraat"
 
 msgid "p"
 msgstr "p"
