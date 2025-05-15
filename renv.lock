@@ -174,15 +174,9 @@
     },
     "RcppArmadillo": {
       "Package": "RcppArmadillo",
-      "Version": "14.4.1-1",
+      "Version": "14.4.2-1",
       "Source": "Repository",
-      "Requirements": [
-        "R",
-        "Rcpp",
-        "stats",
-        "utils",
-        "methods"
-      ]
+      "Repository": "CRAN"
     },
     "RcppEigen": {
       "Package": "RcppEigen",
@@ -1881,13 +1875,9 @@
     },
     "svglite": {
       "Package": "svglite",
-      "Version": "2.1.3",
+      "Version": "2.2.1",
       "Source": "Repository",
-      "Requirements": [
-        "R",
-        "systemfonts",
-        "cpp11"
-      ]
+      "Repository": "CRAN"
     },
     "sys": {
       "Package": "sys",
