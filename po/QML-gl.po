@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2025-05-11 11:01+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Galician <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/gl/>\n"
+"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.12-dev\n"
 "X-Language: gl\n"
 "X-Qt-Contexts: true\n"
 
@@ -2964,61 +2970,60 @@ msgstr "Hoxe"
 
 msgctxt "doeAnalysis|"
 msgid "Responses"
-msgstr ""
+msgstr "Respostas"
 
 msgctxt "doeAnalysis|"
 msgid "Response optimizer"
-msgstr ""
+msgstr "Optimador de respostas"
 
 msgctxt "doeAnalysis|"
 msgid "Available responses"
-msgstr ""
+msgstr "Respostas dispoñibles"
 
 msgctxt "doeAnalysis|"
 msgid "Included responses"
-msgstr ""
+msgstr "Respostas incluídas"
 
 msgctxt "doeAnalysis|"
 msgid "Maximize"
-msgstr ""
+msgstr "Maximizar"
 
 msgctxt "doeAnalysis|"
 msgid "Minimize"
-msgstr ""
+msgstr "Minimizar"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Target"
 msgstr "Obxectivo"
 
 msgctxt "doeAnalysis|"
 msgid "Show optimal solution"
-msgstr ""
+msgstr "Amosar a solución óptima"
 
 msgctxt "doeAnalysis|"
 msgid "Show optimization plot"
-msgstr ""
+msgstr "Amosar a gráfica de optimización"
 
 msgctxt "doeAnalysis|"
 msgid "Predict"
-msgstr ""
+msgstr "Predicir"
 
 msgctxt "doeAnalysis|"
 msgid "Individual desirability"
-msgstr ""
+msgstr "Conveniencia individual"
 
 msgctxt "doeAnalysis|"
 msgid "Set input parameters manually"
-msgstr ""
+msgstr "Establecer manualmente os parámetros de entrada"
 
 msgctxt "doeAnalysis|"
 msgid "Value"
-msgstr ""
+msgstr "Valor"
 
 msgctxt "doeAnalysis|"
 msgid "Set all bounds manually"
-msgstr ""
+msgstr "Establecer manualmente tódolos límites"
 
 msgctxt "doeAnalysis|"
 msgid "Set all targets manually"
-msgstr ""
+msgstr "Establecer manualmente tódolos obxectivos"
