@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-05-10 03:47\n"
+"POT-Creation-Date: 2025-05-17 03:47\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -162,6 +162,26 @@ msgstr "Toetsresultaten voor %1$s figuur"
 
 msgid "Point"
 msgstr "Punt"
+
+#, fuzzy
+msgid "- upper"
+msgstr "Boven"
+
+#, fuzzy
+msgid "- lower"
+msgstr "Onder"
+
+#, fuzzy
+msgid "Test 7: Slightly increasing variation"
+msgstr "Toets 4: Toenemende variatie"
+
+#, fuzzy
+msgid "Test 8: Oscillation"
+msgstr "Toets 5: Gereduceerde variatie"
+
+#, fuzzy
+msgid "Test 9: Benneyan test"
+msgstr "Toets 1: Voorbij limiet"
 
 msgid "Tests"
 msgstr "Toetsen"

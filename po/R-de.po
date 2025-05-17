@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-05-10 03:47\n"
+"POT-Creation-Date: 2025-05-17 03:47\n"
 "PO-Revision-Date: 2025-03-13 08:25+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -166,6 +166,23 @@ msgstr "Testergebnisse für %1$s-Karte"
 
 msgid "Point"
 msgstr "Punkt"
+
+#, fuzzy
+msgid "- upper"
+msgstr "Obergrenze"
+
+#, fuzzy
+msgid "- lower"
+msgstr "Untergrenze"
+
+msgid "Test 7: Slightly increasing variation"
+msgstr ""
+
+msgid "Test 8: Oscillation"
+msgstr ""
+
+msgid "Test 9: Benneyan test"
+msgstr ""
 
 msgid "Tests"
 msgstr "Tests"

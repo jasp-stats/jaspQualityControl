@@ -1,15 +1,9 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-05-11 11:01+0000\n"
-"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
-"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/es/>\n"
-"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12-dev\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -2180,10 +2174,6 @@ msgid "Today"
 msgstr "Hoy"
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Use unbiasing constant for X-bar & s contorl chart"
-msgstr "Usar constante sin sesgo en el gráfico de control de barras X & s"
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Number of std. dev. for calculation of control limits"
 msgstr ""
 "Número de desviaciones típicas para calcular los límites de los controles"
@@ -3031,3 +3021,133 @@ msgstr "Establecer manualmente todos los límites"
 msgctxt "doeAnalysis|"
 msgid "Set all targets manually"
 msgstr "Establecer manualmente todos los objetivos"
+
+msgctxt "ControlChartTests|"
+msgid "Tests for control charts"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "Test set"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "JASP"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "Nelson laws"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "Western Electric rules"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "Custom selection"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "One point outside of control limits - Test 1: Beyond limit"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "points in a row, on the same side of center line - Test 2: Shift"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "points in a row, all increasing or decreasing - Test 3: Trend"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid ""
+"out of k+1 points > 2 std. dev. from center line (same side) - Test 4: "
+"Increasing variation"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid ""
+"points in a row < 1 std. dev from center line (either side) - Test 5: "
+"Reducing variation"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid ""
+"points in a row > 1 std. dev from center line (either side) - Test 6: "
+"Bimodal distribution"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid ""
+"out of k+1 points > 1 std. dev. from center line (same side) - Test 7: "
+"Slightly increasing variation"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid ""
+"points in a row, alternating increase and decrease - Test 8: Oscillation"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Tests for control charts"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Test set"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "JASP"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Custom selection"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "One point outside of control limits - Test 1: Beyond limit"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "points in a row, on the same side of center line - Test 2: Shift"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "points in a row, all increasing or decreasing - Test 3: Trend"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid ""
+"points in a row, alternating increase and decrease - Test 8: Oscillation"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "points in a row, equal to 0 - Test 9: Benneyan test"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Tests for control charts"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Points outside of control limits"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Use unbiasing constant for X-bar & s control chart"
+msgstr ""

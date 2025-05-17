@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-05-10 03:47\n"
+"POT-Creation-Date: 2025-05-17 03:47\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -167,6 +167,26 @@ msgstr "%s 图检验结果"
 
 msgid "Point"
 msgstr ""
+
+#, fuzzy
+msgid "- upper"
+msgstr "上界"
+
+#, fuzzy
+msgid "- lower"
+msgstr "下界"
+
+#, fuzzy
+msgid "Test 7: Slightly increasing variation"
+msgstr "检验 4：变异增加"
+
+#, fuzzy
+msgid "Test 8: Oscillation"
+msgstr "检验 5：变异降低"
+
+#, fuzzy
+msgid "Test 9: Benneyan test"
+msgstr "检验 1：超控制限"
 
 #, fuzzy
 msgid "Tests"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.20.0\n"
-"POT-Creation-Date: 2025-05-10 03:47\n"
+"POT-Creation-Date: 2025-05-17 03:47\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -152,6 +152,21 @@ msgid "Test results for %1$s chart"
 msgstr ""
 
 msgid "Point"
+msgstr ""
+
+msgid "- upper"
+msgstr ""
+
+msgid "- lower"
+msgstr ""
+
+msgid "Test 7: Slightly increasing variation"
+msgstr ""
+
+msgid "Test 8: Oscillation"
+msgstr ""
+
+msgid "Test 9: Benneyan test"
 msgstr ""
 
 msgid "Tests"
