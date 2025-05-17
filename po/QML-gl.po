@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2025-05-18 15:01+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Galician <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/gl/>\n"
+"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.12-dev\n"
 "X-Language: gl\n"
 "X-Qt-Contexts: true\n"
 
@@ -3020,134 +3026,142 @@ msgstr "Establecer manualmente tódolos obxectivos"
 
 msgctxt "ControlChartTests|"
 msgid "Tests for control charts"
-msgstr ""
+msgstr "Probas para gráficas de control"
 
 msgctxt "ControlChartTests|"
 msgid "Test set"
-msgstr ""
+msgstr "Conxunto de probas"
 
 msgctxt "ControlChartTests|"
 msgid "JASP"
-msgstr ""
+msgstr "JASP"
 
 msgctxt "ControlChartTests|"
 msgid "Nelson laws"
-msgstr ""
+msgstr "Leis de Nelson"
 
 msgctxt "ControlChartTests|"
 msgid "Western Electric rules"
-msgstr ""
+msgstr "Regras de Western Electric"
 
 msgctxt "ControlChartTests|"
 msgid "Custom selection"
-msgstr ""
+msgstr "Selección personalizada"
 
 msgctxt "ControlChartTests|"
 msgid "One point outside of control limits - Test 1: Beyond limit"
-msgstr ""
+msgstr "Un punto fóra dos límites de control - Proba 1: Límite máis alá"
 
 msgctxt "ControlChartTests|"
 msgid "points in a row, on the same side of center line - Test 2: Shift"
 msgstr ""
+"Puntos nunha fila, ao mesmo lado da liña do centro - Proba 2: Desprazamento"
 
 msgctxt "ControlChartTests|"
 msgid "points in a row, all increasing or decreasing - Test 3: Trend"
-msgstr ""
+msgstr "Puntos nunha fila, todos aumentando ou diminuíndo - Proba 3: Tendencia"
 
 msgctxt "ControlChartTests|"
 msgid ""
 "out of k+1 points > 2 std. dev. from center line (same side) - Test 4: "
 "Increasing variation"
 msgstr ""
+"Fóra de k+1 puntos > 2 desv. padr. desde a liña do centro (mesmo lado) - "
+"Proba 4: Variación crecente"
 
 msgctxt "ControlChartTests|"
 msgid ""
 "points in a row < 1 std. dev from center line (either side) - Test 5: "
 "Reducing variation"
 msgstr ""
+"Puntos nunha fila < 1 desv. padr. desde a liña do centro (cada lado) - Proba "
+"5: Variación decrecente"
 
 msgctxt "ControlChartTests|"
 msgid ""
 "points in a row > 1 std. dev from center line (either side) - Test 6: "
 "Bimodal distribution"
 msgstr ""
+"Puntos nunha fila > 1 desv. padr. desde a liña do centro (cada lado) - Proba "
+"6: Distribución Binomial"
 
 msgctxt "ControlChartTests|"
 msgid ""
 "out of k+1 points > 1 std. dev. from center line (same side) - Test 7: "
 "Slightly increasing variation"
 msgstr ""
+"Fóra de k+1 puntos > 1 desv. padr. desde a liña do centro (mesmo lado) - "
+"Proba 7: Variación lixeiramente crecente"
 
 msgctxt "ControlChartTests|"
 msgid ""
 "points in a row, alternating increase and decrease - Test 8: Oscillation"
 msgstr ""
+"Puntos nunha fila, alternando aumento e diminución - Proba 8: Oscilación"
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Advanced Options"
 msgstr "Opcións Avanzadas"
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Advanced Options"
 msgstr "Opcións Avanzadas"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Advanced Options"
 msgstr "Opcións Avanzadas"
 
 msgctxt "rareEventCharts|"
 msgid "Tests for control charts"
-msgstr ""
+msgstr "Probas para gráficas de control"
 
 msgctxt "rareEventCharts|"
 msgid "Test set"
-msgstr ""
+msgstr "Conxunto de probas"
 
 msgctxt "rareEventCharts|"
 msgid "JASP"
-msgstr ""
+msgstr "JASP"
 
 msgctxt "rareEventCharts|"
 msgid "Custom selection"
-msgstr ""
+msgstr "Selección personalizada"
 
 msgctxt "rareEventCharts|"
 msgid "One point outside of control limits - Test 1: Beyond limit"
-msgstr ""
+msgstr "Un punto fóra dos límites de control - Proba 1: Límite máis alá"
 
 msgctxt "rareEventCharts|"
 msgid "points in a row, on the same side of center line - Test 2: Shift"
 msgstr ""
+"Puntos nunha fila, ao mesmo lado da liña do centro - Proba 2: Desprazamento"
 
 msgctxt "rareEventCharts|"
 msgid "points in a row, all increasing or decreasing - Test 3: Trend"
-msgstr ""
+msgstr "Puntos nunha fila, todos aumentando ou diminuíndo - Proba 3: Tendencia"
 
 msgctxt "rareEventCharts|"
 msgid ""
 "points in a row, alternating increase and decrease - Test 8: Oscillation"
 msgstr ""
+"Puntos nunha fila, alternando aumento e diminución - Proba 8: Oscilación"
 
 msgctxt "rareEventCharts|"
 msgid "points in a row, equal to 0 - Test 9: Benneyan test"
-msgstr ""
+msgstr "Puntos nunha fila, iguais a 0 - Proba 9: Proba de Benneyan"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Advanced Options"
 msgstr "Opcións Avanzadas"
 
 msgctxt "timeWeightedCharts|"
 msgid "Tests for control charts"
-msgstr ""
+msgstr "Probas para gráficas de control"
 
 msgctxt "timeWeightedCharts|"
 msgid "Points outside of control limits"
-msgstr ""
+msgstr "Puntos fóra dos límites de control"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Use unbiasing constant for X-bar & s control chart"
-msgstr ""
+msgstr "Usar constante de non nesgo para gráfica de barras-X & control"
