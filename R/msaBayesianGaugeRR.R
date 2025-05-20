@@ -114,12 +114,29 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   saveRDS(operators, "/Users/julian/Documents/Jasp files/operators.rds")
   saveRDS(parts, "/Users/julian/Documents/Jasp files/parts.rds")
 
-  # BF table
-  .createBFtable(jaspResults, dataset, options, measurements, parts, operators, ready)
+  # Results from model comparison
+  if(ready & (options[["RRTable"]] | options[["effectsTable"]])){
+    compRes <- .runBFtest(dataset, measurements, parts, operators, options)
+  }
+
+  # Model comparison table
+  if(options[["RRTable"]]){
+    .createBFtable(compRes, jaspResults, dataset, options, measurements, parts, operators, ready)
+  }
+
+  # Effects table
+  if(options[["effectsTable"]]){
+    .createEffectsTable(compRes, jaspResults, measurements, parts, operators, ready)
+  }
 
 }
 
-.createBFtable <- function(jaspResults, dataset, options, measurements, parts, operators, ready) {
+
+
+
+
+
+.createBFtable <- function(compRes, jaspResults, dataset, options, measurements, parts, operators, ready) {
   if(!is.null(jaspResults[["BFtable"]])) {
     return()
   }
@@ -127,43 +144,119 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   BFtable <- createJaspTable(title = gettext("Model Comparison"))
   BFtable$position <- 1
   BFtable$dependOn(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
-                     "measurementLongFormat"))
+                     "measurementLongFormat", "seed", "setSeed", "rscalePrior", "RRTable"))
 
   jaspResults[["BFtable"]] <- BFtable
 
-  BFtable$addColumnInfo(name = "modelName", title = gettext("Model"),           type = "string")
-  BFtable$addColumnInfo(name = "BF",        title = gettext("BF<sub>01</sub>"), type = "number")
-
-  # return empty if no data is specified
-  if(nrow(dataset) == 0) {
-    return()
-  }
+  BFtable$addColumnInfo(name = "modelName",      title = gettext("Models"),          type = "string")
+  BFtable$addColumnInfo(name = "modelPrior",     title = gettext("P(M)"),            type = "number")
+  BFtable$addColumnInfo(name = "modelPosterior", title = gettext("P(M|data)"),       type = "number")
+  BFtable$addColumnInfo(name = "modelBF",        title = gettext("BF<sub>M</sub>"),  type = "number")
+  BFtable$addColumnInfo(name = "comparisonBF",   title = gettext("BF<sub>01</sub>"), type = "number")
 
   # set data
   if(ready) { # this could also be sth like if(ncol(dataset) == 3)
-    BFtable$setData(.getBFinteraction(dataset, measurements, parts, operators))
-    BFtable$addFootnote("The Bayes factor compares the model without the interaction term to the full model.")
+    BFtable$setData(compRes)
+    BFtable$addFootnote("BF<sub>01</sub> compares every model to the null model.")
   }
 
   return()
 }
 
-.getBFinteraction <- function(dataset, measurements, parts, operators) {
-  # create formulae
-  formula_int <- as.formula(paste(measurements, "~", parts, "*", operators))
-  formula     <- as.formula(paste(measurements, "~", parts, "+", operators))
+.runBFtest <- function(dataset, measurements, parts, operators, options) {
+  formula <- as.formula(paste(measurements, "~", parts, "*", operators))
 
-  # fit BayesFactor objects
-  fit_int <- BayesFactor::lmBF(formula_int, whichRandom = c(parts, operators),
-                               data = dataset)
-  fit     <- BayesFactor::lmBF(formula, whichRandom = c(parts, operators),
-                               data = dataset)
+  if(options$setSeed) {
+    set.seed(options$seed)
+  }
+  # run general comparison for all potential models
+  bf_fit <- BayesFactor::generalTestBF(formula, data = dataset,
+                                       # whichRandom = c(operators, parts),
+                                       # rscaleRandom = options$rscalePrior,
+                                       progress = F)
+  bf_df <- as.data.frame(bf_fit)
 
-  # obtain BF
-  bf <- fit / fit_int
-  bf <- as.numeric(BayesFactor::extractBF(bf)["bf"])
-  bf <- round(bf, 2)
+  # add null model
+  bf_df["Null model", ] <- c(1, rep(NA, 3))
 
-  return(data.frame(modelName = "No interaction",
-           BF = bf))
+  # add prior model probabilities
+  bf_df$prior <- rep(1 / nrow(bf_df), nrow(bf_df)) # uniform for now
+
+  # compute P(M | data)
+  bf_df <- within(bf_df, unnormalised <- bf * prior)
+  bf_df <- within(bf_df, posterior <- unnormalised / sum(unnormalised))
+
+  # dropping unnecessary columns
+  bf_df <- bf_df[, !colnames(bf_df) %in% c("error", "time", "code", "unnormalised")]
+  colnames(bf_df) <- c("comparisonBF", "modelPrior", "modelPosterior")
+  bf_df$modelName <- rownames(bf_df)
+
+  # compute BF_M as the ratio of posterior to prior odds
+  bf_df <- within(bf_df, modelBF <- ( modelPosterior / (1-modelPosterior) ) / ( modelPrior / (1-modelPrior) ) )
+
+  bf_df <- bf_df[order(-bf_df$modelBF), ]
+
+  return(bf_df)
+
+}
+
+.createEffectsTable <- function(compRes, jaspResults, measurements, parts, operators, ready) {
+  if(!is.null(jaspResults[["effectsTable"]])) {
+    return()
+  }
+
+  effectsTable <- createJaspTable(title = gettext(paste("Analysis of Effects -", measurements)))
+  effectsTable$position <- 2
+  effectsTable$dependOn(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
+                          "measurementLongFormat", "seed", "setSeed", "rscalePrior", "effectsTable"))
+
+  jaspResults[["effectsTable"]] <- effectsTable
+
+  effectsTable$addColumnInfo(name = "effectName",         title = gettext("Effects"),           type = "string")
+  effectsTable$addColumnInfo(name = "priorInclusion",     title = gettext("P(incl)"),           type = "number")
+  effectsTable$addColumnInfo(name = "priorExclusion",     title = gettext("P(excl)"),           type = "number")
+  effectsTable$addColumnInfo(name = "posteriorInclusion", title = gettext("P(incl|data)"),      type = "number")
+  effectsTable$addColumnInfo(name = "posteriorExclusion", title = gettext("P(excl|data)"),      type = "number")
+  effectsTable$addColumnInfo(name = "inclusionBF",        title = gettext("BF<sub>incl</sub>"), type = "number")
+  effectsTable$addColumnInfo(name = "exclusionBF",        title = gettext("BF<sub>excl</sub>"), type = "number")
+
+  # set data
+  if(ready) {
+    effectsTable$setData(.fillEffectsTable(compRes, parts, operators))
+  }
+
+  return()
+}
+
+.fillEffectsTable <- function(compRes, parts, operators) {
+  effectName <- c(parts, operators, paste0(parts, ":", operators))
+
+  priorIncl <- priorExcl <- posteriorIncl <- posteriorExcl <- inclusionBF <- c()
+
+  # loop over different effects and add P(M) and P(M | data) to obtain
+  # prior and posterior inclusion probabilities
+  for(i in seq_along(effectName)) {
+    effect <- grepl(effectName[i], compRes$modelName)
+
+    priorIncl[i] <- sum(compRes$modelPrior[effect])
+    priorExcl[i] <- 1 - priorIncl[i]
+
+    posteriorIncl[i] <- sum(compRes$modelPosterior[effect])
+    posteriorExcl[i] <- 1 - posteriorIncl[i]
+
+    inclusionBF[i] <- (posteriorIncl[i] / posteriorExcl[i]) / (priorIncl[i] / priorExcl[i])
+  }
+  return(data.frame(effectName = effectName,
+                   priorInclusion = priorIncl,
+                   priorExclusion = priorExcl,
+                   posteriorInclusion = posteriorIncl,
+                   posteriorExclusion = posteriorExcl,
+                   inclusionBF = inclusionBF,
+                   exclusionBF = 1 / inclusionBF)
+
+  )
+}
+
+.runMCMC <- function(jaspResults, measurements, parts, operators, options){
+
 }

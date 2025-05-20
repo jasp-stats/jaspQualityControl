@@ -209,6 +209,13 @@ Form
 				decimals: 					3
 			}
 		}
+
+		CheckBox
+		{
+			name: 							"effectsTable"
+			label: 							qsTr("Effects table")
+			checked: 						false
+		}
 	}
 
 	Section 
