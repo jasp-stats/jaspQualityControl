@@ -115,7 +115,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   saveRDS(parts, "/Users/julian/Documents/Jasp files/parts.rds")
 
   # Results from model comparison
-  if(ready & (options[["RRTable"]] | options[["effectsTable"]])){
+  if(ready){
     compRes <- .runBFtest(dataset, measurements, parts, operators, options)
   }
 
@@ -124,10 +124,23 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     .createBFtable(compRes, jaspResults, dataset, options, measurements, parts, operators, ready)
   }
 
+  # Results from analysis of effects (workaround for accessing the data in jaspResults) ; could be combined with the if statement above
+  if(ready) {
+    effectsRes <- .fillEffectsTable(compRes, parts, operators)
+  }
+
   # Effects table
   if(options[["effectsTable"]]){
-    .createEffectsTable(compRes, jaspResults, measurements, parts, operators, ready)
+    .createEffectsTable(effectsRes, jaspResults, measurements, parts, operators, ready)
   }
+
+  # MCMC
+  if(ready) {
+    samplesMat <- .runMCMC(effectsRes, dataset, measurements, parts, operators, options)
+  }
+
+  # Variance components table
+  .createVarCompTable(effectsRes, samplesMat, jaspResults, parts, operators, ready, options)
 
 }
 
@@ -173,7 +186,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   bf_fit <- BayesFactor::generalTestBF(formula, data = dataset,
                                        # whichRandom = c(operators, parts),
                                        # rscaleRandom = options$rscalePrior,
-                                       progress = F)
+                                       progress = FALSE)
   bf_df <- as.data.frame(bf_fit)
 
   # add null model
@@ -200,7 +213,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 }
 
-.createEffectsTable <- function(compRes, jaspResults, measurements, parts, operators, ready) {
+.createEffectsTable <- function(effectsRes, jaspResults, measurements, parts, operators, ready) {
   if(!is.null(jaspResults[["effectsTable"]])) {
     return()
   }
@@ -222,7 +235,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # set data
   if(ready) {
-    effectsTable$setData(.fillEffectsTable(compRes, parts, operators))
+    #effectsTable$setData(.fillEffectsTable(compRes, parts, operators))
+    effectsTable$setData(effectsRes)
   }
 
   return()
@@ -257,6 +271,178 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   )
 }
 
-.runMCMC <- function(jaspResults, measurements, parts, operators, options){
+.createVarCompTable <- function(effectsRes, samplesMat, jaspResults, parts, operators, ready, options) {
+  if(!is.null(jaspResults[["varCompTable"]])) {
+    return()
+  }
 
+  varCompTable <- createJaspTable(title = gettext("Variance Components"))
+  varCompTable$position <- 3
+  varCompTable$dependOn(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
+                          "measurementLongFormat", "seed", "setSeed", "rscalePrior", "anovaBFForInteractionRemoval",
+                          "mcmcChains", "mcmcBurnin", "mcmcIterations", "historicalSdValue", "processVariationReference"))
+
+  jaspResults[["varCompTable"]] <- varCompTable
+
+  varCompTable$addColumnInfo(name = "sourceName",   title = gettext("Source"),                type = "string")
+  varCompTable$addColumnInfo(name = "postMeans",    title = gettext("Mean"),                  type = "number")
+  varCompTable$addColumnInfo(name = "postSds",      title = gettext("Std. Deviation"),        type = "number")
+  varCompTable$addColumnInfo(name = "postCrIlower", title = gettext("Lower"),                 type = "number", overtitle = gettext("95% Credible Interval"))
+  varCompTable$addColumnInfo(name = "postCrIupper", title = gettext("Upper"),                 type = "number", overtitle = gettext("95% Credible Interval"))
+  varCompTable$addColumnInfo(name = "contribution", title = gettext("% Contribution<br> (Mean)"), type = "number")
+
+
+  # set data
+  if(ready) {
+    varCompTable$setData(.getVarianceComponents(effectsRes, samplesMat, parts, operators, options))
+  } else {
+    return()
+  }
+
+  return()
+}
+
+.runMCMC <- function(effectsRes, dataset, measurements, parts, operators, options){
+  # extract exclBF for interaction
+  excludeInter <- .evalInter(effectsRes, parts, operators, options)
+  if(excludeInter){
+    formula <- as.formula(paste(measurements, "~", parts, "+", operators))
+  } else {
+    formula <- as.formula(paste(measurements, "~", parts, "*", operators))
+  }
+
+  # fit the model with BayesFactor
+  fit <- BayesFactor::lmBF(formula, whichRandom = c(parts, operators),
+                           data = dataset, rscaleRandom = options$rscalePrior)
+
+  nchains <- options$mcmcChains
+  burnin <- options$mcmcBurnin
+  iter <- options$mcmcIterations
+
+  chains <- coda::mcmc.list()
+
+  if(options$setSeed) {
+    set.seed(options$seed)
+  }
+
+  for(i in 1:nchains) {
+    # run chain
+    mcmcChain <- BayesFactor::posterior(fit, iterations = iter)
+
+    # exclude burn-in samples
+    chains[[i]] <- coda::as.mcmc(mcmcChain[-(1:burnin), ])
+  }
+
+
+  # select relevant parameters
+  # names
+  # note this could be written into a helper function
+  sigmaPart <- paste0("g_", parts)
+  sigmaOperator <- paste0("g_", operators)
+  sigmaInter <- paste0("g_", parts, ":", operators)
+
+  if(excludeInter){
+    chains <- chains[, c(sigmaPart, sigmaOperator, "sig2")]
+  } else {
+    chains <- chains[, c(sigmaPart, sigmaOperator, sigmaInter, "sig2")]
+  }
+
+  samplesMat <- as.matrix(chains)
+
+  return(samplesMat)
+}
+
+
+.getVarianceComponents <- function(effectsRes, samplesMat, parts, operators, options) {
+  excludeInter <- .evalInter(effectsRes, parts, operators, options)
+
+  # get components from MCMC samples
+  internalDF <- .getComponentsFromSamples(samplesMat, parts, operators, options, excludeInter)
+
+  # %Contribution to total variance
+  contribution <- matrix(ncol = ncol(internalDF), nrow = nrow(internalDF))
+  for(i in 1:ncol(internalDF)){
+    contribution[, i] <- internalDF[[i]] / internalDF$total * 100
+  }
+
+  # calculate summary stats
+  postMeans <- colMeans(internalDF)
+  postSds <- apply(internalDF, 2, sd)
+  postCrIlower <- apply(internalDF, 2, quantile, probs = 0.025)
+  postCrIupper <- apply(internalDF, 2, quantile, probs = 0.975)
+  contribution <- colMeans(contribution)
+
+  # remove some stats when historicalSd is specified
+  if(options$processVariationReference == "historicalSd"){
+    postSds["part"] <- ""
+    postSds["total"] <- ""
+    postCrIlower["part"] <- ""
+    postCrIlower["total"] <- ""
+    postCrIupper["part"] <- ""
+    postCrIupper["total"] <- ""
+  }
+
+
+  sourceName <- c("Total gauge r&R",
+                  "Repeatability",
+                  "Reproducibility",
+                  "Operator",
+                  "Part-to-part",
+                  "Total variation")
+
+  return(data.frame(sourceName,
+                    postMeans,
+                    postSds,
+                    postCrIlower,
+                    postCrIupper,
+                    contribution)
+         )
+}
+
+.getGaugeEval <- function(samplesMat){
+
+}
+
+.evalInter <- function(effectsRes, parts, operators, options) {
+  ind <- effectsRes$effectName == paste0(parts, ":", operators)
+  excludeInter <- effectsRes[ind, "exclusionBF"] >= options$anovaBFForInteractionRemoval
+
+  return(excludeInter)
+}
+
+.getComponentsFromSamples <- function(samplesMat, parts, operators, options, excludeInter){
+  # note this could be written into a helper function
+  sigmaPart <- paste0("g_", parts)
+  sigmaOperator <- paste0("g_", operators)
+  sigmaInter <- paste0("g_", parts, ":", operators)
+
+  # obtain relevant components
+  if(excludeInter){
+    reprod <- samplesMat[, sigmaOperator]
+  } else {
+    reprod <- samplesMat[, sigmaOperator] + samplesMat[, sigmaInter]
+  }
+  repeatability <- samplesMat[, "sig2"]
+  gauge <- reprod + repeatability
+  operator <- samplesMat[, sigmaOperator]
+  part <- samplesMat[, sigmaPart]
+  total <- gauge + part
+
+  # replace total variation with historical variance and adjust
+  # part variation accordingly
+  if(options$processVariationReference == "historicalSd"){
+    totalOld <- mean(total)
+    total <- rep(options$historicalSdValue^2, length(repeatability))
+    diffTotals <- total - totalOld
+    part <- mean(part) + diffTotals
+  }
+
+  internalDF <- data.frame(gauge,
+                           repeatability,
+                           reprod,
+                           operator,
+                           part,
+                           total
+  )
+  return(internalDF)
 }
