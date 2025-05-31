@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
 "POT-Creation-Date: 2025-05-17 03:47\n"
-"PO-Revision-Date: 2025-05-30 02:03+0000\n"
+"PO-Revision-Date: 2025-06-01 20:01+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pl/>\n"
@@ -170,9 +170,8 @@ msgstr ""
 msgid "- upper"
 msgstr "Górny"
 
-#, fuzzy
 msgid "- lower"
-msgstr "Dolny"
+msgstr "- dolny"
 
 msgid "Test 7: Slightly increasing variation"
 msgstr ""
@@ -357,7 +356,6 @@ msgstr "Efekt"
 msgid "Coefficient"
 msgstr "Współczynnik"
 
-#, fuzzy
 msgid "Standard error"
 msgstr "Błąd standardowy"
 
@@ -365,10 +363,10 @@ msgid "Discrete Predictor Levels"
 msgstr ""
 
 msgid "Name"
-msgstr ""
+msgstr "Nazwa"
 
 msgid "Level"
-msgstr ""
+msgstr "Poziom"
 
 msgid "Regression equation in %s Units"
 msgstr ""
@@ -379,15 +377,14 @@ msgstr "Wykres Pareto dla efektów standaryzowanych"
 msgid "Standardized Effect"
 msgstr "Efekt standaryzowany"
 
-#, fuzzy
 msgid "Normal Plot of Standardized Effects"
-msgstr "Wykres Pareto dla efektów standaryzowanych"
+msgstr "Wykres normalności dla efektów standaryzowanych"
 
 msgid "Significant"
-msgstr ""
+msgstr "Istotny"
 
 msgid "Not Significant"
-msgstr ""
+msgstr "Nieistotny"
 
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
@@ -408,7 +405,7 @@ msgid "Residuals versus Run Order"
 msgstr ""
 
 msgid "Run order"
-msgstr ""
+msgstr "Kolejność"
 
 msgid "Matrix residual plot"
 msgstr ""
