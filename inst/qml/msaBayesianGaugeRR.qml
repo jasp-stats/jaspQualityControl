@@ -349,6 +349,36 @@ Form
 					}
 				}
 			}
+
+			CheckBox
+				{
+					name: "contourPlot"
+					label: qsTr("Contour plot")
+
+					DoubleField
+					{
+						name: "contourLSL"
+						label: qsTr("Lower specification limit")
+						id: contourLSL
+						fieldWidth: 60
+						defaultValue: -1
+						min: -1000000
+						max: contourUSL.value
+						inclusive: JASP.None
+					}
+
+					DoubleField
+					{
+						name: "contourUSL"
+						label: qsTr("Upper specification limit")
+						id: contourUSL
+						fieldWidth: 60
+						defaultValue: 1
+						min: contourLSL.value
+						max: 1000000
+						inclusive: JASP.None
+					}
+				}
 		}
 
 		Group

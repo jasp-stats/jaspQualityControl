@@ -161,6 +161,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
+  # contour plot
+  if(options$contourPlot) {
+    .createContourPlot(jaspResults, parts, operators, measurements, dataset, options)
+  }
+
 }
 
 
@@ -706,10 +711,12 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
     xLower <- 0
     xLims <- c(xLower, xUpper)
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLims)
 
     yUpper <- rmetalog::dmetalog(m = fits[[i]], q = modes[[i]], term = fits[[i]]$optimalTerms)
     yLower <- 0
     yLims <- c(yLower, yUpper)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
 
 
     p <- ggplot2::ggplot()
@@ -745,8 +752,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     # axes
     xLab <- titles[i]
     p <- p +
-      ggplot2::scale_x_continuous(name = bquote(sigma[.(xLab)]^2), breaks = jaspGraphs::getPrettyAxisBreaks(xLims), limits = xLims) +
-      ggplot2::scale_y_continuous(name = "Density", breaks = jaspGraphs::getPrettyAxisBreaks(yLims), limits = yLims)
+      ggplot2::scale_x_continuous(name = bquote(sigma[.(xLab)]^2), breaks = xBreaks,
+                                  limits = xLims, labels = xBreaks) +
+      ggplot2::scale_y_continuous(name = "Density", breaks = yBreaks,
+                                  limits = yLims, labels = yBreaks)
 
     # theme
     p <- p + jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe(sides = "bl")
@@ -807,6 +816,77 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   #   variancePosteriors[[parameters[i]]] <- tempPlot
   #
   # }
+  return()
+}
+
+.createContourPlot <- function(jaspResults, parts, operators, measurements, dataset, options) {
+  if(!is.null(jaspResults[["contourPlot"]])) {
+    return()
+  }
+
+  contourPlot <- createJaspContainer(title = gettext("Contour Plot"))
+  contourPlot$position <- 5
+  contourPlot$dependOn(c(.varCompTableDependencies(),
+                         "studyVarianceMultiplierType", "studyVarianceMultiplierValue",
+                         "contourPlot", "contourUSL", "contourLSL"))
+
+  jaspResults[["contourPlot"]] <- contourPlot
+
+
+  tempPlot <- createJaspPlot(width = 600, height = 600)
+  samplesMat <- jaspResults[["MCMCsamples"]][["object"]]
+  excludeInter <- .evalInter(jaspResults, parts, operators, options)
+  compDf <-.getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter) # note: should the historcial sd influence this if entered by the user?
+
+  # obtain necessary data
+  contourDf <- compDf[, c("total", "part")]
+  mu <- mean(dataset[[measurements]]) # note: do I have to transform the variances to get a sensible result
+
+  # data frame for plotting
+  meanEllipse = TRUE
+  plotDf <- .getEllipses(contourDf, mu, meanEllipse = meanEllipse, options = options) #note: add number of ellipses here; this could also be done with one ellipse based on the post. mean of the variances
+
+  if(meanEllipse) {
+    p <- ggplot2::ggplot(plotDf, ggplot2::aes(x = x, y = y))
+  } else {
+    p <- ggplot2::ggplot(plotDf, ggplot2::aes(x = x, y = y, group = iter))
+  }
+
+  p <- p +
+    ggplot2::geom_vline(xintercept = c(options$contourLSL, options$contourUSL), linetype = "dashed", color = "black", linewidth = 1) +
+    ggplot2::geom_hline(yintercept = c(options$contourLSL, options$contourUSL), linetype = "dashed", color = "black", linewidth = 1) +
+    ggplot2::geom_path(alpha = 0.5, colour = "steelblue", linewidth = 1)
+
+
+  # axes
+  xLower <- min(options$contourLSL, plotDf$x)
+  xUpper <- max(options$contourUSL, plotDf$x)
+  xLims <- c(xLower, xUpper)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLims)
+
+  yLower <- min(options$contourLSL, plotDf$y)
+  yUpper <- max(options$contourUSL, plotDf$y)
+  yLims <- c(yLower, yUpper)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
+
+  p <- p +
+    ggplot2::scale_x_continuous(name = "Measurement", breaks = xBreaks,
+                                limits = xLims, labels = xBreaks) +
+    ggplot2::scale_y_continuous(name = "True Value", breaks = yBreaks,
+                                limits = yLims, labels = yBreaks) +
+    ggplot2::coord_equal()
+
+  # theme
+  p <- p +
+    jaspGraphs::themeJaspRaw() +
+    jaspGraphs::geom_rangeframe(sides = "bl")
+
+  tempPlot$plotObject <- p
+
+  contourPlot[["plot"]] <- tempPlot
+
+  # note: add a table with the posterior means and CrIs for the risks
+
   return()
 }
 
@@ -933,4 +1013,40 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   return(name)
 }
+
+.getEllipses <- function(contourDf, mu, options, numberEllipses = 20, meanEllipse = FALSE) {
+
+  if(options$setSeed) {
+    set.seed(options$seed)
+  }
+  if(meanEllipse) {
+    sigmaP <- mean(contourDf$part)
+    sigmaTotal <- mean(contourDf$total)
+
+    covMat <- matrix(c(sigmaTotal, sigmaP,
+                       sigmaP, sigmaP),
+                     nrow = 2, ncol = 2)
+    res <- as.data.frame(ellipse::ellipse(covMat, centre = c(mu, mu), level = 0.95))
+  } else {
+    ind <- sample(1:nrow(contourDf), numberEllipses)
+    ellipseList <- lapply(ind, function(i) {
+      sigmaP <- contourDf[i, ]$part # part
+      sigmaTotal <- contourDf[i, ]$total # total
+
+      covMat <- matrix(c(sigmaTotal, sigmaP,
+                         sigmaP, sigmaP),
+                       nrow = 2, ncol = 2)
+
+      # ellipse
+      ellipseDf <- as.data.frame(ellipse::ellipse(covMat, centre = c(mu, mu), level = 0.95))
+      ellipseDf$iter <- i
+
+      return(ellipseDf)
+    })
+    res <- do.call(rbind.data.frame, ellipseList)
+  }
+
+  return(res)
+}
+
 

@@ -108,6 +108,12 @@
         "stats"
       ]
     },
+    "HDInterval": {
+      "Package": "HDInterval",
+      "Version": "0.2.4",
+      "Source": "Repository",
+      "Repository": "CRAN"
+    },
     "MASS": {
       "Package": "MASS",
       "Version": "7.3-65",
@@ -555,6 +561,12 @@
         "utils",
         "vctrs"
       ]
+    },
+    "ellipse": {
+      "Package": "ellipse",
+      "Version": "0.5.0",
+      "Source": "Repository",
+      "Repository": "CRAN"
     },
     "elliptic": {
       "Package": "elliptic",
@@ -1733,6 +1745,12 @@
         "R",
         "utils"
       ]
+    },
+    "rmetalog": {
+      "Package": "rmetalog",
+      "Version": "1.0.3",
+      "Source": "Repository",
+      "Repository": "CRAN"
     },
     "rsm": {
       "Package": "rsm",
