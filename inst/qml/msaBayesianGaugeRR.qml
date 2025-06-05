@@ -132,6 +132,51 @@ Form
 		
 		DropDown
 		{
+			name: 							"estimationType"
+			label: 							qsTr("Estimation")
+			id: 							estimationType
+			indexDefaultValue: 				0
+			values: 
+			[
+				{ label: qsTr("Automatic"), value: "automatic" },
+				{ label: qsTr("Manual"), value: "manual" },
+			]
+		}
+
+		DoubleField
+		{
+			name: 					"bfFavorFull"
+			label: 					qsTr("BF in favor of full model")
+			id: 					bfFavorFull
+			defaultValue: 			1
+			min: 					0.001
+			decimals: 				3
+			visible: 				estimationType.currentValue == "automatic"
+		}
+
+		CheckBox
+		{
+			name: 					"fullModel"
+			label: 					qsTr("Full model")
+			id: 					fullModel
+			checked: 				false
+			enabled:    			!mainEffectsOnly.checked
+			visible: 				estimationType.currentValue == "manual"
+		}
+
+		CheckBox
+		{
+			name: 							"mainEffectsOnly"
+			label: 							qsTr("Main effects only")
+			id: 							mainEffectsOnly
+			enabled:						!fullModel.checked
+			checked: 						false
+			visible: 						estimationType.currentValue == "manual"
+		}			
+
+
+		DropDown
+		{
 			name: 							"processVariationReference"
 			label: 							qsTr("Process variation based on")
 			id: 							variationReference
@@ -175,16 +220,6 @@ Form
 			label: 							qsTr("r&R table")
 			checked: 						true
 
-			DoubleField
-			{
-				name: 						"anovaBFForInteractionRemoval"
-				label: 						qsTr("BF interaction removal")
-				fieldWidth: 				60
-				defaultValue: 				10
-				min: 						0
-				decimals: 					3
-			}
-
 			DropDown
 			{
 				name: 						"studyVarianceMultiplierType"
@@ -210,12 +245,12 @@ Form
 			}
 		}
 
-		CheckBox
+		/* CheckBox
 		{
 			name: 							"effectsTable"
 			label: 							qsTr("Effects table")
 			checked: 						false
-		}
+		} */
 	}
 
 	Section 
@@ -229,14 +264,90 @@ Form
 			{
 				name: 						"priorPlot"
 				label: 						qsTr("Prior")
-				checked: 					true
+				checked: 					false
 			}
 
 			CheckBox
 			{
 				name: 						"posteriorPlot"
 				label: 						qsTr("Posterior")
-				checked: 					true
+				checked: 					false
+
+				CheckBox
+				{
+					label:				qsTr("Point estimate")
+					name:				"posteriorPointEstimate"
+					childrenOnSameRow:	true
+
+					DropDown
+					{
+						name:	"posteriorPointEstimateType"
+						label:	""
+						values:	["mean", "median", "mode"]
+					}
+				}
+
+				CheckBox
+				{
+					name:				"posteriorCi"
+					label:				qsTr("CI")
+					id:					posteriorCi
+					childrenOnSameRow:	true
+
+					DropDown
+					{
+						name:		"posteriorCiType"
+						label:		""
+						values:		["central", "HPD", "custom"]
+						id:			posteriorCiType
+					}
+				}
+
+				Group
+				{
+					columns:	2
+
+					CIField
+					{
+						visible:		posteriorCiType.currentText == "central" | posteriorCiType.currentText == "HPD"
+						enabled:		posteriorCi.checked
+						name:			"posteriorCiMass"
+						label:			qsTr("Mass")
+						fieldWidth:		50
+						defaultValue:	95
+						min:			1
+						max:			100
+						inclusive:		JASP.Min
+					}
+
+					DoubleField
+					{
+						visible:		posteriorCiType.currentText == "custom"
+						enabled:		posteriorCi.checked
+						name:			"posteriorCiLower"
+						label:			qsTr("Lower")
+						id:				posteriorCiLower
+						fieldWidth:		50
+						defaultValue:	0.25
+						min:			0
+						max:			plotsPriorMarginalUpper.value
+						inclusive:		JASP.None
+					}
+
+					DoubleField
+					{
+						visible:		posteriorCiType.currentText == "custom"
+						enabled:		posteriorCi.checked
+						name:			"posteriorCiUpper"
+						label:			qsTr("Upper")
+						id:				plotsPriorMarginalUpper
+						fieldWidth:		50
+						defaultValue:	0.75
+						min:			posteriorCiLower.value
+						max:			1
+						inclusive:		JASP.None
+					}
+				}
 			}
 		}
 
