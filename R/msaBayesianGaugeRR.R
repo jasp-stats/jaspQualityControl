@@ -147,6 +147,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # Variance components table
   .createVarCompTable(jaspResults, parts, operators, ready, options)
 
+  # % Contribution to total variation table
+  .createPercContribTable(jaspResults, options, parts, operators, ready)
+
   # Gauge evaluation table
   .createGaugeEvalTable(jaspResults, parts, operators, ready, options)
 
@@ -162,7 +165,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   # contour plot
-  if(options$contourPlot) {
+  if(ready && options$contourPlot) {
     .createContourPlot(jaspResults, parts, operators, measurements, dataset, options)
   }
 
@@ -259,7 +262,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   varCompTable <- createJaspTable(title = gettext("Variance Components"))
-  varCompTable$position <- 3
+  varCompTable$position <- 2
   varCompTable$dependOn(.varCompTableDependencies())
 
   jaspResults[["varCompTable"]] <- varCompTable
@@ -269,7 +272,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   varCompTable$addColumnInfo(name = "postSds",      title = gettext("Std. Deviation"),        type = "number")
   varCompTable$addColumnInfo(name = "postCrIlower", title = gettext("Lower"),                 type = "number", overtitle = gettext("95% Credible Interval"))
   varCompTable$addColumnInfo(name = "postCrIupper", title = gettext("Upper"),                 type = "number", overtitle = gettext("95% Credible Interval"))
-  varCompTable$addColumnInfo(name = "contribution", title = gettext("% Contribution<br> (Mean)"), type = "number")
 
   # set data
   if(ready) {
@@ -288,6 +290,28 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
+.createPercContribTable <- function(jaspResults, options, parts, operators, ready) {
+  if(!is.null(jaspResults[["contribTable"]])) {
+    return()
+  }
+  contribTable <- createJaspTable(title = gettext("% Contribution to Total Variation"))
+  contribTable$position <- 3
+  contribTable$dependOn(.varCompTableDependencies())
+  jaspResults[["contribTable"]] <- contribTable
+
+  contribTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
+  contribTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
+  contribTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
+  contribTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
+
+  if(ready) {
+    contribTable$setData(.getPercContrib(jaspResults, parts, operators, options))
+  } else {
+    return()
+  }
+  return()
+}
+
 
 .createGaugeEvalTable <- function(jaspResults, parts, operators, ready, options) {
   if(!is.null(jaspResults[["gaugeEvalTable"]])) {
@@ -295,7 +319,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   gaugeEvalTable <- createJaspTable(title = gettext("Gauge Evaluation"))
-  gaugeEvalTable$position <- 3
+  gaugeEvalTable$position <- 4
   gaugeEvalTable$dependOn(c(.varCompTableDependencies(),
                           "tolerance", "toleranceValue", "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
 
@@ -388,18 +412,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # get components from MCMC samples
   internalDF <- .getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter)
 
-  # %Contribution to total variance
-  contribution <- matrix(ncol = ncol(internalDF), nrow = nrow(internalDF))
-  for(i in 1:ncol(internalDF)){
-    contribution[, i] <- internalDF[[i]] / internalDF$total * 100
-  }
-
   # calculate summary stats
   postMeans <- colMeans(internalDF)
   postSds <- apply(internalDF, 2, sd)
   postCrIlower <- apply(internalDF, 2, quantile, probs = 0.025)
   postCrIupper <- apply(internalDF, 2, quantile, probs = 0.975)
-  contribution <- colMeans(contribution)
 
   # remove some stats when historicalSd is specified
   if(options$processVariationReference == "historicalSd"){
@@ -418,8 +435,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                     postMeans,
                     postSds,
                     postCrIlower,
-                    postCrIupper,
-                    contribution)
+                    postCrIupper)
          )
 }
 
@@ -687,7 +703,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   variancePosteriors <- createJaspContainer(title = gettext("Posterior Distributions"))
-  variancePosteriors$position <- 4
+  variancePosteriors$position <- 5
   variancePosteriors$dependOn(c(.mcmcDependencies(),
                                 .postPlotDependencies()))
   jaspResults[["variancePosteriors"]] <- variancePosteriors
@@ -825,7 +841,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   contourPlot <- createJaspContainer(title = gettext("Contour Plot"))
-  contourPlot$position <- 5
+  contourPlot$position <- 6
   contourPlot$dependOn(c(.varCompTableDependencies(),
                          "studyVarianceMultiplierType", "studyVarianceMultiplierValue",
                          "contourPlot", "contourUSL", "contourLSL"))
@@ -834,6 +850,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
   tempPlot <- createJaspPlot(width = 600, height = 600)
+  tempPlot$position <- 2
+
   samplesMat <- jaspResults[["MCMCsamples"]][["object"]]
   excludeInter <- .evalInter(jaspResults, parts, operators, options)
   compDf <-.getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter) # note: should the historcial sd influence this if entered by the user?
@@ -870,9 +888,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
 
   p <- p +
-    ggplot2::scale_x_continuous(name = "Measurement", breaks = xBreaks,
+    ggplot2::scale_x_continuous(name = "True Value", breaks = xBreaks,
                                 limits = xLims, labels = xBreaks) +
-    ggplot2::scale_y_continuous(name = "True Value", breaks = yBreaks,
+    ggplot2::scale_y_continuous(name = "Measurement", breaks = yBreaks,
                                 limits = yLims, labels = yBreaks) +
     ggplot2::coord_equal()
 
@@ -885,7 +903,19 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   contourPlot[["plot"]] <- tempPlot
 
-  # note: add a table with the posterior means and CrIs for the risks
+  # table with the posterior means and CrIs for the risks
+  risksTable <- createJaspTable(title = gettext("Producer's (\u03b4) and Consumer's (\u03b2) Risk"))
+  risksTable$position <- 1
+
+  risksTable$addColumnInfo(name = "risks", title = gettext("Risk"),  type = "string")
+  risksTable$addColumnInfo(name = "means", title = gettext("Mean"),  type = "number")
+  risksTable$addColumnInfo(name = "lower", title = gettext("Lower"), type = "number", overtitle = "95% Credible Interval")
+  risksTable$addColumnInfo(name = "upper", title = gettext("Upper"), type = "number", overtitle = "95% Credible Interval")
+
+  risksTable$setData(.getRisks(contourDf, mu, options))
+
+  contourPlot[["table"]] <- risksTable
+
 
   return()
 }
@@ -1049,4 +1079,82 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(res)
 }
 
+.getRisks <- function(contourDf, mu, options) {
 
+  USL <- options$contourUSL
+  LSL <- options$contourLSL
+  producers <- consumers <- c()
+
+  for (i in 1:nrow(contourDf)) {
+    sigmaP <- contourDf[i, ]$part # part
+    sigmaTotal <- contourDf[i, ]$total # total
+
+    covMat <- matrix(c(sigmaTotal, sigmaP,
+                       sigmaP, sigmaP),
+                     nrow = 2, ncol = 2)
+
+    # producer's risk (delta)
+    # probability that y falls outside although x is inside
+    numerator <- mvtnorm::pmvnorm(lower = c(-Inf, LSL), upper = c(LSL, USL), mean = c(mu, mu),
+                                  sigma = covMat) +
+      mvtnorm::pmvnorm(lower = c(USL, LSL), upper = c(Inf, USL), mean = c(mu, mu), sigma = covMat)
+
+    denom <- pnorm(USL, mean = mu, sd = sqrt(sigmaP)) - pnorm(LSL, mean = mu, sd = sqrt(sigmaP))
+
+    producers[i] <- numerator / denom
+
+    # consumers risk
+    # probability that y is inside although x falls outside
+    numerator <- mvtnorm::pmvnorm(lower = c(LSL, -Inf), upper = c(USL, LSL), mean = c(mu, mu),
+                                  sigma = covMat) +
+      mvtnorm::pmvnorm(lower = c(LSL, USL), upper = c(USL, Inf), mean = c(mu, mu), sigma = covMat)
+
+    denom <- 1 - denom
+
+    consumers[i] <- numerator / denom
+  }
+
+  df <- data.frame(delta = producers,
+                   beta = consumers)
+  # means
+  means <- apply(df, 2, mean)
+
+  # CrIs
+  lower <- apply(df, 2, quantile, probs = 0.025)
+  upper <- apply(df, 2, quantile, probs = 0.975)
+
+  # unicodes
+  risks <- c("\u03b4", "\u03b2")
+
+  return(data.frame(risks,
+                    means,
+                    lower,
+                    upper))
+
+}
+
+.getPercContrib <- function(jaspResults, parts, operators, options) {
+  excludeInter <- .evalInter(jaspResults, parts, operators, options)
+
+  # get components from MCMC samples
+  internalDF <- .getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter)
+
+  # %Contribution to total variance
+  contribution <- matrix(ncol = ncol(internalDF), nrow = nrow(internalDF))
+  for(i in 1:ncol(internalDF)){
+    contribution[, i] <- internalDF[[i]] / internalDF$total * 100
+  }
+
+  sourceName <- .sourceNames()
+  means <- colMeans(contribution)
+  lower <- apply(contribution, 2, quantile, probs = 0.025)
+  upper <- apply(contribution, 2, quantile, probs = 0.975)
+
+  return(data.frame(sourceName,
+                    means,
+                    lower,
+                    upper)
+
+  )
+
+}
