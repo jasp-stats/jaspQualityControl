@@ -151,7 +151,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   .createPercContribTable(jaspResults, options, parts, operators, ready)
 
   # Gauge evaluation table
-  .createGaugeEvalTable(jaspResults, parts, operators, ready, options)
+  .createGaugeEval(jaspResults, parts, operators, options, ready)
 
   # posteriors
   if(ready && options$posteriorPlot){
@@ -313,36 +313,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 
-.createGaugeEvalTable <- function(jaspResults, parts, operators, ready, options) {
-  if(!is.null(jaspResults[["gaugeEvalTable"]])) {
-    return()
-  }
 
-  gaugeEvalTable <- createJaspTable(title = gettext("Gauge Evaluation"))
-  gaugeEvalTable$position <- 4
-  gaugeEvalTable$dependOn(c(.varCompTableDependencies(),
-                          "tolerance", "toleranceValue", "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
-
-  jaspResults[["gaugeEvalTable"]] <- gaugeEvalTable
-
-  gaugeEvalTable$addColumnInfo(name = "sourceName",   title = gettext("Source"),                         type = "string")
-  gaugeEvalTable$addColumnInfo(name = "meanSds",      title = gettext("Std. dev."),                      type = "number")
-  gaugeEvalTable$addColumnInfo(name = "meanStudyVar", title = gettext("Study variation"),                type = "number")
-  gaugeEvalTable$addColumnInfo(name = "percentStudy", title = gettext("% Study Variation<br> (Mean)"),   type = "number")
-
-  if(options$tolerance) {
-    gaugeEvalTable$addColumnInfo(name = "percentTol", title = gettext("% Study Tolerance<br> (Mean)"),   type = "number")
-  }
-
-  # set data
-  if(ready) {
-    gaugeEvalTable$setData(.getGaugeEval(jaspResults, operators, parts, options))
-  } else {
-    return()
-  }
-
-  return()
-}
 
 
 .runMCMC <- function(jaspResults, dataset, measurements, parts, operators, options){
@@ -439,67 +410,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
          )
 }
 
-.getGaugeEval <- function(jaspResults, operators, parts, options){
-  excludeInter <- .evalInter(jaspResults, parts, operators, options)
 
-  internalDF <- .getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter)
-
-  # standard deviation
-  sdDF <- sqrt(internalDF)
-
-  # get factor for multiplication
-  if(options$studyVarianceMultiplierType == "sd") {
-    factorSd <- options$studyVarianceMultiplierValue
-  } else {
-    val <- options$studyVarianceMultiplierValue / 100
-    q <- (1 - val) / 2
-    factorSd <- abs(2 * qnorm(q))
-  }
-
-  studyVar <- sdDF * factorSd
-
-  # % Study Variation
-  percStudy <- matrix(ncol = ncol(studyVar), nrow = nrow(studyVar))
-  for(i in 1:ncol(studyVar)){
-    percStudy[, i] <- studyVar[[i]] / studyVar$total * 100
-  }
-
-  # summaries
-  meanSds <- colMeans(sdDF)
-  meanStudyVar <- colMeans(studyVar)
-  percentStudy <- colMeans(percStudy)
-
-  # % Tolerance
-  if(options$tolerance) {
-    percTol <- matrix(ncol = ncol(studyVar), nrow = nrow(studyVar))
-    for(i in 1:ncol(studyVar)){
-      percTol[, i] <- studyVar[[i]] / options$toleranceValue * 100
-    }
-
-    percentTol <- colMeans(percTol)
-
-    gaugeEvalDf <- data.frame(sourceName = .sourceNames(),
-                              meanSds,
-                              meanStudyVar,
-                              percentStudy,
-                              percentTol)
-  } else {
-    gaugeEvalDf <- data.frame(sourceName = .sourceNames(),
-                              meanSds,
-                              meanStudyVar,
-                              percentStudy)
-  }
-
-  # add footnotes
-  # number of distinct categories
-  nDistinct <- .gaugeNumberDistinctCategories(meanSds["part"], meanSds["gauge"])
-  jaspResults[["gaugeEvalTable"]]$addFootnote(gettextf("Number of distinct categories = %d", nDistinct))
-
-  jaspResults[["gaugeEvalTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
-
-
-  return(gaugeEvalDf)
-}
 
 .evalInter <- function(jaspResults, parts, operators, options) {
   if(options$estimationType == "automatic") {
@@ -544,6 +455,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # replace total variation with historical variance and adjust
   # part variation accordingly
+  # note: these calculations might be problematic since the uncertainty in gauge does not affect part anymore
   if(options$processVariationReference == "historicalSd"){
     totalOld <- mean(total)
     total <- rep(options$historicalSdValue^2, length(repeatability))
@@ -1150,11 +1062,192 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   lower <- apply(contribution, 2, quantile, probs = 0.025)
   upper <- apply(contribution, 2, quantile, probs = 0.975)
 
-  return(data.frame(sourceName,
-                    means,
-                    lower,
-                    upper)
+  df <- data.frame(sourceName,
+                   means,
+                   lower,
+                   upper)
 
-  )
+  # remove upper and lower CrI for total variation
+  df[df$sourceName == "Total variation", c("lower", "upper")] <- ""
+
+  # remove upper and lower CrI for part variation if historicalSd is specified
+  if(options$processVariationReference == "historicalSd") {
+    df[df$sourceName == "Part-to-part", c("lower", "upper")] <- ""
+  }
+
+  return(df)
 
 }
+
+
+
+
+
+
+.createGaugeEval <- function(jaspResults, parts, operators, options, ready) {
+  if(!is.null(jaspResults[["gaugeEvaluation"]])) {
+    return()
+  }
+
+  gaugeEvaluation <- createJaspContainer(title = gettext("Gauge Evaluation"))
+  gaugeEvaluation$position <- 4
+  gaugeEvaluation$dependOn(c(.varCompTableDependencies(),
+                             "studyVarianceMultiplierType", "studyVarianceMultiplierValue",
+                             "tolerance", "toleranceValue"))
+  jaspResults[["gaugeEvaluation"]] <- gaugeEvaluation
+
+
+
+  ### Standard deviation table
+  stdTable <- createJaspTable(title = gettext("Standard deviation"))
+  stdTable$position <- 1
+  gaugeEvaluation[["stdTable"]] <- stdTable
+
+  stdTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
+  stdTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
+  stdTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
+  stdTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
+
+  if(ready) {
+    stdTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "sd"))
+  }
+
+
+  ### Study variation table
+  studyVarTable <- createJaspTable(title = gettext("Study variation"))
+  studyVarTable$position <- 2
+  gaugeEvaluation[["studyVarTable"]] <- studyVarTable
+
+  studyVarTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
+  studyVarTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
+  studyVarTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
+  studyVarTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
+
+  if(ready) {
+    studyVarTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "studyVar"))
+  }
+
+  ### Percent study variation table
+  percStudyVarTable <- createJaspTable(title = gettext("% Study variation"))
+  percStudyVarTable$position <- 3
+  gaugeEvaluation[["percStudyVarTable"]] <- percStudyVarTable
+
+  percStudyVarTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
+  percStudyVarTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
+  percStudyVarTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
+  percStudyVarTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
+
+  if(ready) {
+    percStudyVarTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "percStudyVar"))
+  }
+
+
+  ### Percent tolerance table
+  if(options$tolerance) {
+    percTolTable <- createJaspTable(title = gettext("% Tolerance"))
+    percTolTable$position <- 3
+    gaugeEvaluation[["percTolTable"]] <- percTolTable
+
+    percTolTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
+    percTolTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
+    percTolTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
+    percTolTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
+
+    if(ready) {
+      percTolTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "percTol"))
+    }
+  }
+
+  return()
+
+}
+
+.fillTablesGaugeEval <- function(jaspResults, parts, operators, options, whichTable = "sd") {
+
+  excludeInter <- .evalInter(jaspResults, parts, operators, options)
+
+  # get components from MCMC samples
+  internalDF <- .getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter)
+
+  sourceName <- .sourceNames()
+  sdDf <- sqrt(internalDF)
+
+  # get factor for multiplication
+  if(options$studyVarianceMultiplierType == "sd") {
+    factorSd <- options$studyVarianceMultiplierValue
+  } else {
+    val <- options$studyVarianceMultiplierValue / 100
+    q <- (1 - val) / 2
+    factorSd <- abs(2 * qnorm(q))
+  }
+  studyVar <- sdDf * factorSd
+
+  # % Study Variation
+  percStudy <- matrix(ncol = ncol(studyVar), nrow = nrow(studyVar))
+  for(i in 1:ncol(studyVar)){
+    percStudy[, i] <- studyVar[[i]] / studyVar$total * 100
+  }
+
+  # % Tolerance
+  if(options$tolerance) {
+    percTol <- matrix(ncol = ncol(studyVar), nrow = nrow(studyVar))
+    for(i in 1:ncol(studyVar)){
+      percTol[, i] <- studyVar[[i]] / options$toleranceValue * 100
+    }
+  }
+
+  # output dependent on table
+  if(whichTable == "sd") {
+    # summaries
+    means <- colMeans(sdDf)
+    lower <- apply(sdDf, 2, quantile, probs = 0.025)
+    upper <- apply(sdDf, 2, quantile, probs = 0.975)
+  }
+
+  if(whichTable == "studyVar") {
+    # summaries
+    means <- colMeans(studyVar)
+    lower <- apply(studyVar, 2, quantile, probs = 0.025)
+    upper <- apply(studyVar, 2, quantile, probs = 0.975)
+  }
+
+  if(whichTable == "percStudyVar") {
+    # summaries
+    means <- colMeans(percStudy)
+    lower <- apply(percStudy, 2, quantile, probs = 0.025)
+    upper <- apply(percStudy, 2, quantile, probs = 0.975)
+  }
+
+  if(whichTable == "percTol") {
+    # summaries
+    means <- colMeans(percTol)
+    lower <- apply(percTol, 2, quantile, probs = 0.025)
+    upper <- apply(percTol, 2, quantile, probs = 0.975)
+  }
+
+  # add footnote
+  jaspResults[["gaugeEvaluation"]][["stdTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
+
+  df <- data.frame(sourceName,
+                   means,
+                   lower,
+                   upper)
+
+  if(whichTable == "percStudyVar") {
+    # remove upper and lower CrI for total variation
+    df[df$sourceName == "Total variation", c("lower", "upper")] <- ""
+  }
+
+
+  if(options$processVariationReference == "historicalSd") {
+    # remove upper and lower CrI for part variation if historicalSd is specified
+    df[df$sourceName == "Part-to-part", c("lower", "upper")] <- ""
+
+    # remove upper and lower CrI for total variation
+    df[df$sourceName == "Total variation", c("lower", "upper")] <- ""
+  }
+
+  return(df)
+
+}
+
