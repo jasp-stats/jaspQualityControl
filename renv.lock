@@ -458,7 +458,7 @@
     },
     "curl": {
       "Package": "curl",
-      "Version": "6.2.3",
+      "Version": "6.3.0",
       "Source": "Repository",
       "Requirements": [
         "R"
@@ -578,16 +578,6 @@
       "Requirements": [
         "R",
         "stats"
-      ]
-    },
-    "fansi": {
-      "Package": "fansi",
-      "Version": "1.0.6",
-      "Source": "Repository",
-      "Requirements": [
-        "grDevices",
-        "R",
-        "utils"
       ]
     },
     "farver": {
@@ -1060,7 +1050,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
-      "RemoteSha": "3cc4f1791b93da32ac6efc769a6ad6c3ea25c61b"
+      "RemoteSha": "9111e160b48c011e0eab9e4761878ae57139764d"
     },
     "jaspGraphs": {
       "Package": "jaspGraphs",
@@ -1083,7 +1073,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspGraphs",
-      "RemoteSha": "e9e962c1e3c95e09f984b52708d39e49599e394e"
+      "RemoteSha": "c884a4239590cdb08c1f18cbeaad9107395425aa"
     },
     "jaspTTests": {
       "Package": "jaspTTests",
@@ -1103,7 +1093,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
-      "RemoteSha": "6f23fffa770d6fa9cc4bc928957109b0eece972a"
+      "RemoteSha": "8585814d8a7c413ef0692592643712c5bc9b9eff"
     },
     "jpeg": {
       "Package": "jpeg",
@@ -1417,7 +1407,7 @@
     },
     "officer": {
       "Package": "officer",
-      "Version": "0.6.9",
+      "Version": "0.6.10",
       "Source": "Repository",
       "Requirements": [
         "cli",
@@ -1914,10 +1904,10 @@
     },
     "tibble": {
       "Package": "tibble",
-      "Version": "3.2.1",
+      "Version": "3.3.0",
       "Source": "Repository",
       "Requirements": [
-        "fansi",
+        "cli",
         "lifecycle",
         "magrittr",
         "methods",
@@ -2014,7 +2004,7 @@
     },
     "utf8": {
       "Package": "utf8",
-      "Version": "1.2.5",
+      "Version": "1.2.6",
       "Source": "Repository",
       "Requirements": [
         "R"
