@@ -95,7 +95,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   twoLevelDesign <- options[["factorialType"]] != "generalFullFactorial"
   tb <- createJaspTable(title = gettext("Design Summary"), position = 1L)
   tb$addColumnInfo(name = "title", title = gettext("Variable"), type = "string")
-  tb$addColumnInfo(name = "catFactors", title = gettext("Predictors"), type = "integer")
+  tb$addColumnInfo(name = "catFactors", title = gettext("Factors"), type = "integer")
   tb$addColumnInfo(name = "baseRuns", title = gettext("Base runs"), type = "integer")
   if (twoLevelDesign) {
     tb$addColumnInfo(name = "baseBlocks", title = gettext("Base blocks"), type = "integer")

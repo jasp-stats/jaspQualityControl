@@ -33,11 +33,11 @@ Form
 		Group
 		{
 
-			IntegerField { id: numberOfCategorical;		label: qsTr("Number of predictors");	name: "numberOfCategorical";	min: 2;		defaultValue: 3;	max: 256
+			IntegerField { id: numberOfCategorical;		label: qsTr("Number of factors");	name: "numberOfCategorical";	min: 2;		defaultValue: 3;	max: 256
 				property int intValue: defaultValue
 				onValueChanged : { intValue = value !== "" ? value : 0 ; factorialDesignTypeSplitPlotNumberHardToChangeFactors.value = 1 }
 			}
-			IntegerField { id: numberOfLevels;			label: qsTr("Maximum predictor levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 20; 	enabled: factorialType.value == "generalFullFactorial"
+			IntegerField { id: numberOfLevels;			label: qsTr("Maximum factor levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 20; 	enabled: factorialType.value == "generalFullFactorial"
 				property int intValue: defaultValue
 				onValueChanged : { intValue = value !== "" ? value : 0}
 			}
@@ -119,7 +119,7 @@ Form
 		rowCount			: numberOfCategorical.intValue
 		columnCount			: 1 + parseInt(numberOfLevels.value)
 		name				: "categoricalVariables"
-		cornerText			: qsTr("Predictor")
+		cornerText			: qsTr("Factor")
 		itemType			: JASP.String
 
 		function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }
@@ -138,7 +138,7 @@ Form
 		function getDefaultValue(columnIndex, rowIndex) {
 														if (columnIndex > 2) {
 															return "";  // Return an empty string for columnIndex > 2
-														} else if (columnIndex === 0) { // Starting with uppercase letter for columnIndex 0 (Predictor Names)
+														} else if (columnIndex === 0) { // Starting with uppercase letter for columnIndex 0 (Factor Names)
 																// skipping letter I, as the R package does this for internal naming convention. Also continuing with lowercase afterwards and skipping letter i. 
 																		if (rowIndex < 8) {
 																			return String.fromCharCode(65 + rowIndex);

@@ -41,11 +41,11 @@ Form
 	{
 
 		// Could probably use a custom IntegerField type...
-		IntegerField { id: numberOfContinuous;		label: qsTr("Number of continuous predictors");	name: "numberOfContinuous";		min: centralCompositeDesign.checked ? 2 : 3;	defaultValue: centralCompositeDesign.checked ? 2 : 3;	max: centralCompositeDesign.checked ? 10 : 7
+		IntegerField { id: numberOfContinuous;		label: qsTr("Number of continuous factors");	name: "numberOfContinuous";		min: centralCompositeDesign.checked ? 2 : 3;	defaultValue: centralCompositeDesign.checked ? 2 : 3;	max: centralCompositeDesign.checked ? 10 : 7
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
-		IntegerField { id: numberOfCategorical;		label: qsTr("Number of discrete predictors");	name: "numberOfCategorical";	min: 0;		defaultValue: 0;	max: 10
+		IntegerField { id: numberOfCategorical;		label: qsTr("Number of discrete factors");	name: "numberOfCategorical";	min: 0;		defaultValue: 0;	max: 10
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
@@ -70,7 +70,7 @@ Form
 			columnCount			: 3
 
 			name				: "continuousVariables"
-			cornerText			: qsTr("Predictor")
+			cornerText			: qsTr("Factor")
 			columnNames			: [qsTr("Name"), qsTr("Low"), qsTr("High")]
 			isFirstColEditable	: true
 			itemType			: JASP.Double
@@ -102,7 +102,7 @@ Form
 			rowCount			: numberOfCategorical.intValue
 			columnCount			: 1 + parseInt(numberOfLevels.value)
 			name				: "categoricalVariables"
-			cornerText			: qsTr("Predictor")
+			cornerText			: qsTr("Factor")
 			itemType			: JASP.String
 
 			function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }
