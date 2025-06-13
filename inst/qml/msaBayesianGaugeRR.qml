@@ -146,7 +146,7 @@ Form
 		DoubleField
 		{
 			name: 					"bfFavorFull"
-			label: 					qsTr("BF in favor of full model")
+			label: 					qsTr("Cut-off BF in favor of full model")
 			id: 					bfFavorFull
 			defaultValue: 			1
 			min: 					0.001

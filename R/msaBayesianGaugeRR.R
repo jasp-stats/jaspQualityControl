@@ -83,6 +83,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   #   dataset <- dataset[order(dataset[[parts]]),]
   # }
 
+  # note: I would probably have to convert the wide to long data for my analysis
+
   if(ready && !options[["type3"]]){
     crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
     if(!crossed){
@@ -169,6 +171,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     .createContourPlot(jaspResults, parts, operators, measurements, dataset, options)
   }
 
+  if(options$rChart) {
+    .createRChart(jaspResults, dataset, measurements, operators, parts, options, ready)
+  }
+
 }
 
 
@@ -194,7 +200,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # set data
   if(ready) { # this could also be sth like if(ncol(dataset) == 3)
     BFtable$setData(jaspResults[["modelComparison"]][["object"]])
-    BFtable$addFootnote(gettext("BF<sub>10</sub> compares the full model to the other models."))
+    BFtable$addFootnote(gettext("BF<sub>10</sub> compares the full model to the indicated model in each row."))
   }
 
   return()
@@ -247,7 +253,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   colnames(bfDf) <- c("comparisonBF", "error")
   bfDf$modelName <- jaspBase::gsubInteractionSymbol(rownames(bfDf))
 
-  bfDF <- bfDf[order(-bfDf$comparisonBF), ]
+  bfDF <- bfDf[order(bfDf$comparisonBF), ]
 
   jaspResults[["modelComparison"]][["object"]] <- bfDf
 
@@ -1205,6 +1211,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   if(whichTable == "studyVar") {
+    # add footnote
+    jaspResults[["gaugeEvaluation"]][["studyVarTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
+
     # summaries
     means <- colMeans(studyVar)
     lower <- apply(studyVar, 2, quantile, probs = 0.025)
@@ -1224,9 +1233,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     lower <- apply(percTol, 2, quantile, probs = 0.025)
     upper <- apply(percTol, 2, quantile, probs = 0.975)
   }
-
-  # add footnote
-  jaspResults[["gaugeEvaluation"]][["stdTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
 
   df <- data.frame(sourceName,
                    means,
@@ -1251,3 +1257,40 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 }
 
+.createRChart <- function(jaspResults, dataset, measurements, operators, parts, options, ready) {
+  if(!is.null(jaspResults[["rChart"]])) {
+    return()
+  }
+
+  jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
+  jaspResults[["rChart"]]$position <- 7
+  jaspResults[["rChart"]]$dependOn(c("rChart", "measurementLongFormat",
+                                     "measurementsWideFormat", "report"))
+  jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
+  if (ready) {
+    # converting data to wide format for the .controlChart function (note: this can be done more nicely)
+    dataset <- .convertToWide(dataset, measurements, parts, operators)
+    measurements <- c("V1", "V2", "V3")
+    rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R",
+                            stages = operators, xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
+                            stagesSeparateCalculation = FALSE)
+
+    jaspResults[["rChart"]][["plot"]]$plotObject <- rChart$plotObject
+    jaspResults[["rChart"]][["table"]] <- rChart$table
+  }
+
+  return()
+}
+
+.convertToWide <- function(dataset, measurements, parts, operators) {
+  dataset <- dataset[order(dataset[[operators]]),]
+  dataset <- dataset[order(dataset[[parts]]),]
+  nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
+  index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
+  dataset <- cbind(dataset, data.frame(index = index))
+  dataset <- tidyr::spread(dataset, index, measurements)
+  measurements <- unique(index)
+  dataset <- dataset[,c(operators, parts, measurements)]
+
+  return(dataset)
+}
