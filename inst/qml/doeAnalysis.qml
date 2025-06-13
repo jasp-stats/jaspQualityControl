@@ -41,7 +41,7 @@ Form
 			id:									fixedFactorsFactorial
 			name:								"fixedFactorsFactorial"
 			allowedColumns:						["nominal"]
-			label:								qsTr("Discrete predictors")
+			label:								qsTr("Discrete factors")
 			height:								75 * preferencesModel.uiScale
 		}
 
@@ -50,7 +50,7 @@ Form
 			id:									continuousFactorsFactorial
 			name:								"continuousFactorsFactorial"
 			allowedColumns:						["scale"]
-			label:								qsTr("Continuous predictors")
+			label:								qsTr("Continuous factors")
 			height:								75 * preferencesModel.uiScale
 		}
 
@@ -95,7 +95,7 @@ Form
 			id:									continuousFactorsResponseSurface
 			name:								"continuousFactorsResponseSurface"
 			allowedColumns:						["scale"]
-			label:								qsTr("Continuous predictors")
+			label:								qsTr("Continuous factors")
 			height:								100 * preferencesModel.uiScale
 		}
 
@@ -104,7 +104,7 @@ Form
 			id:									fixedFactorsResponseSurface
 			name:								"fixedFactorsResponseSurface"
 			allowedColumns:						["nominal"]
-			label:								qsTr("Discrete predictors")
+			label:								qsTr("Discrete factors")
 			height:								100 * preferencesModel.uiScale
 		}
 
@@ -128,7 +128,7 @@ Form
 			{
 				name: 					"codeFactorsMethod"
 				id: 					codeFactorsMethod
-				title:					qsTr("Predictor levels")
+				title:					qsTr("Factor levels")
 
 				RadioButton
 				{
@@ -148,7 +148,7 @@ Form
 				{
 					id					: codeFactorsManualTable
 					name				: "codeFactorsManualTable"
-					label				: qsTr("Predictor")
+					label				: qsTr("Factor")
 					visible				: codeFactorsMethod.value == "manual"
 					optionKey			: "predictors"
 					source				: designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial", "blocksFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface", "blocksResponseSurface"]
@@ -288,7 +288,7 @@ Form
 			AvailableVariablesList 
 			{ 
 				name: 					"squaredComponents" 
-				title: 					qsTr("Continuous predictors") 
+				title: 					qsTr("Continuous factors") 
 				source: 				"continuousFactorsResponseSurface"
 			}
 			
@@ -394,7 +394,7 @@ Form
 				{ 
 					name: "continuousPredictorsPlots"	
 					source: designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial"] : ["continuousFactorsResponseSurface"] 
-					title: qsTr("Available continuous predictors")
+					title: qsTr("Available continuous factors")
 				}
 
 				AssignedVariablesList
@@ -579,7 +579,7 @@ Form
 				{
 					id: 				optimizationPlotCustomParameterValues
 					name:				"optimizationPlotCustomParameterValues"
-					label:				qsTr("Predictor")
+					label:				qsTr("Factor")
 					visible:			optimizationPlotCustomParameters.checked
 					source: 			designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface"]
 					listViewType:		JASP.AssignedVariables
