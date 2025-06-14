@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.20.0\n"
-"POT-Creation-Date: 2025-05-17 03:47\n"
+"POT-Creation-Date: 2025-06-14 03:51\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -400,7 +400,7 @@ msgstr ""
 msgid "Variable"
 msgstr ""
 
-msgid "Predictors"
+msgid "Factors"
 msgstr ""
 
 msgid "Base runs"
@@ -460,10 +460,10 @@ msgstr ""
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Continuous predictors"
+msgid "Continuous factors"
 msgstr ""
 
-msgid "Discrete predictors"
+msgid "Discrete factors"
 msgstr ""
 
 msgid "Replicates"

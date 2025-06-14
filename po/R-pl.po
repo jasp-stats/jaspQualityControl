@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2025-05-17 03:47\n"
+"POT-Creation-Date: 2025-06-14 03:51\n"
 "PO-Revision-Date: 2025-06-01 20:01+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
@@ -437,9 +437,8 @@ msgstr "Podsumowanie schematu"
 msgid "Variable"
 msgstr "Zmienna"
 
-#, fuzzy
-msgid "Predictors"
-msgstr "Predyktor"
+msgid "Factors"
+msgstr "Czynniki"
 
 msgid "Base runs"
 msgstr ""
@@ -498,10 +497,10 @@ msgstr ""
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Continuous predictors"
+msgid "Continuous factors"
 msgstr ""
 
-msgid "Discrete predictors"
+msgid "Discrete factors"
 msgstr ""
 
 msgid "Replicates"
@@ -1594,6 +1593,10 @@ msgstr ""
 msgid "Variables Chart for Subgroups Report"
 msgstr ""
 
+#, fuzzy
+#~ msgid "Predictors"
+#~ msgstr "Predyktor"
+
 #~ msgid "Subgroups"
 #~ msgstr "Podgrupys"
 
@@ -1641,9 +1644,6 @@ msgstr ""
 
 #~ msgid "Selected Design"
 #~ msgstr "Wybrany schemat"
-
-#~ msgid "Factors"
-#~ msgstr "Czynniki"
 
 #~ msgid "Runs"
 #~ msgstr "Przebiegi"

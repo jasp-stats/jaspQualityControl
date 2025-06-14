@@ -304,14 +304,6 @@ msgid "Response"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Discrete predictors"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Continuous predictors"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Covariates"
 msgstr ""
 
@@ -320,19 +312,11 @@ msgid "Blocks"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Predictor levels"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Automatically detect low/high"
 msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Manually specify low/high"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Predictor"
 msgstr ""
 
 msgctxt "doeAnalysis|"
@@ -456,10 +440,6 @@ msgid "Surface plot"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Available continuous predictors"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Plotting variables"
 msgstr ""
 
@@ -536,14 +516,6 @@ msgid "Use coded data to calculate squared terms"
 msgstr ""
 
 msgctxt "doeFactorial|"
-msgid "Number of predictors"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Maximum predictor levels"
-msgstr ""
-
-msgctxt "doeFactorial|"
 msgid "2-level factorial (default generator)"
 msgstr ""
 
@@ -565,10 +537,6 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "General full factorial"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Predictor"
 msgstr ""
 
 msgctxt "doeFactorial|"
@@ -837,19 +805,7 @@ msgid "Box-Behnken design"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of continuous predictors"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of discrete predictors"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Maximum discrete levels"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Predictor"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
@@ -3141,4 +3097,48 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Use unbiasing constant for X-bar & s control chart"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Discrete factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Continuous factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Factor levels"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Factor"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Available continuous factors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of factors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Maximum factor levels"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of continuous factors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of discrete factors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Factor"
 msgstr ""

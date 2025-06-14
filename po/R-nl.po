@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-05-17 03:47\n"
+"POT-Creation-Date: 2025-06-14 03:51\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -445,8 +445,9 @@ msgstr "Ontwerp Samenvatting"
 msgid "Variable"
 msgstr "Variabele"
 
-msgid "Predictors"
-msgstr "Predictoren"
+#, fuzzy
+msgid "Factors"
+msgstr "Factoriaal Ontwerp"
 
 msgid "Base runs"
 msgstr "Basis series"
@@ -505,10 +506,12 @@ msgstr "Standaard Volgorde"
 msgid "Hard-to-change factors: %1$s"
 msgstr "Moeilijk te veranderen factoren: %1$s"
 
-msgid "Continuous predictors"
+#, fuzzy
+msgid "Continuous factors"
 msgstr "Continue predictoren"
 
-msgid "Discrete predictors"
+#, fuzzy
+msgid "Discrete factors"
 msgstr "Discrete predictoren"
 
 msgid "Replicates"
@@ -1755,6 +1758,9 @@ msgstr "X-bar & %1$s controle figuur"
 
 msgid "Variables Chart for Subgroups Report"
 msgstr "Variabelen Figuur voor Subgroepen Rapport"
+
+#~ msgid "Predictors"
+#~ msgstr "Predictoren"
 
 #~ msgid "Subgroups"
 #~ msgstr "Subgroepen"

@@ -1658,10 +1658,6 @@ msgid "Surface plot"
 msgstr "Gráfica de superficie"
 
 msgctxt "doeAnalysis|"
-msgid "Available continuous predictors"
-msgstr "Preditores continuos dispoñibles"
-
-msgctxt "doeAnalysis|"
 msgid "Plotting variables"
 msgstr "Variables da representación"
 
@@ -2179,20 +2175,8 @@ msgid "Available variables"
 msgstr "Variables dispoñibles"
 
 msgctxt "doeAnalysis|"
-msgid "Discrete predictors"
-msgstr "Preditores discretos"
-
-msgctxt "doeAnalysis|"
-msgid "Continuous predictors"
-msgstr "Preditores continuos"
-
-msgctxt "doeAnalysis|"
 msgid "Covariates"
 msgstr "Covariantes"
-
-msgctxt "doeAnalysis|"
-msgid "Predictor levels"
-msgstr "Niveis do preditor"
 
 msgctxt "doeAnalysis|"
 msgid "Automatically detect low/high"
@@ -2201,10 +2185,6 @@ msgstr "Detectar automaticamente baixo/alto"
 msgctxt "doeAnalysis|"
 msgid "Manually specify low/high"
 msgstr "Especificar manualmente baixo/alto"
-
-msgctxt "doeAnalysis|"
-msgid "Predictor"
-msgstr "Preditor"
 
 msgctxt "doeAnalysis|"
 msgid "Low        High   "
@@ -2286,10 +2266,6 @@ msgctxt "doeFactorial|"
 msgid "General full factorial"
 msgstr "Factorial completo xeral"
 
-msgctxt "doeFactorial|"
-msgid "Predictor"
-msgstr "Preditor"
-
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design type"
 msgstr "Tipo de deseño"
@@ -2303,16 +2279,8 @@ msgid "Box-Behnken design"
 msgstr "Deseño de Box-Behnken"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of discrete predictors"
-msgstr "Número de preditores discretos"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Maximum discrete levels"
 msgstr "Máximo de niveis discretos"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Predictor"
-msgstr "Preditor"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Center points"
@@ -2325,14 +2293,6 @@ msgstr "Deseño de análise"
 msgctxt "doeAnalysis|"
 msgid "Residuals four-in-one plot"
 msgstr "Gráfica 'catro en un' de erros"
-
-msgctxt "doeFactorial|"
-msgid "Number of predictors"
-msgstr "Número de preditores"
-
-msgctxt "doeFactorial|"
-msgid "Maximum predictor levels"
-msgstr "Niveis máximos de preditores"
 
 msgctxt "doeFactorial|"
 msgid "1"
@@ -2541,10 +2501,6 @@ msgstr "Dereito aberto"
 msgctxt "doeAnalysis|"
 msgid "Normal plot of effects"
 msgstr "Gráfica normal dos efectos"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of continuous predictors"
-msgstr "Número de preditores continuos"
 
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R Study"
@@ -3159,3 +3115,51 @@ msgstr "Puntos fóra dos límites de control"
 msgctxt "variablesChartsSubgroups|"
 msgid "Use unbiasing constant for X-bar & s control chart"
 msgstr "Usar constante de non nesgo para gráfica de barras-X & control"
+
+msgctxt "doeAnalysis|"
+msgid "Discrete factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Continuous factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Factor levels"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Factor"
+msgstr "Factor"
+
+msgctxt "doeAnalysis|"
+msgid "Available continuous factors"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Number of factors"
+msgstr "Número de factores"
+
+msgctxt "doeFactorial|"
+msgid "Maximum factor levels"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeFactorial|"
+msgid "Factor"
+msgstr "Factor"
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of continuous factors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of discrete factors"
+msgstr ""
+
+#, fuzzy
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Factor"
+msgstr "Factor"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-05-17 03:47\n"
+"POT-Creation-Date: 2025-06-14 03:51\n"
 "PO-Revision-Date: 2025-03-13 08:25+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -442,9 +442,8 @@ msgstr "Design-Zusammenfassung"
 msgid "Variable"
 msgstr "Variable"
 
-#, fuzzy
-msgid "Predictors"
-msgstr "Prädiktor"
+msgid "Factors"
+msgstr "Faktoren"
 
 msgid "Base runs"
 msgstr ""
@@ -505,11 +504,12 @@ msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
 #, fuzzy
-msgid "Continuous predictors"
+msgid "Continuous factors"
 msgstr "Kontinuierliche Faktoren"
 
-msgid "Discrete predictors"
-msgstr ""
+#, fuzzy
+msgid "Discrete factors"
+msgstr "Faktoren"
 
 msgid "Replicates"
 msgstr ""
@@ -1673,6 +1673,10 @@ msgstr "X-quer & s-Kontrollkarte"
 msgid "Variables Chart for Subgroups Report"
 msgstr "Bericht Regelkarten für Attribute"
 
+#, fuzzy
+#~ msgid "Predictors"
+#~ msgstr "Prädiktor"
+
 #~ msgid "Subgroups"
 #~ msgstr "Untergruppen"
 
@@ -1847,9 +1851,6 @@ msgstr "Bericht Regelkarten für Attribute"
 #~ msgid "Selected Design"
 #~ msgstr "Ausgewähltes Design"
 
-#~ msgid "Factors"
-#~ msgstr "Faktoren"
-
 #~ msgid "Runs"
 #~ msgstr "Abläufe"
 
@@ -1933,9 +1934,6 @@ msgstr "Bericht Regelkarten für Attribute"
 #~ msgstr ""
 #~ "Faktorname '%s' ist eine Zahl, und numerische Faktornamen sind nicht "
 #~ "unterstützt."
-
-#~ msgid "factors"
-#~ msgstr "Faktoren"
 
 #~ msgid "factorName"
 #~ msgstr "Faktorname"

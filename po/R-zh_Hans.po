@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-05-17 03:47\n"
+"POT-Creation-Date: 2025-06-14 03:51\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -458,9 +458,8 @@ msgstr "模型摘要"
 msgid "Variable"
 msgstr "变量"
 
-#, fuzzy
-msgid "Predictors"
-msgstr "预测变量"
+msgid "Factors"
+msgstr "因子"
 
 msgid "Base runs"
 msgstr ""
@@ -525,11 +524,12 @@ msgstr "标准序"
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Continuous predictors"
+msgid "Continuous factors"
 msgstr ""
 
-msgid "Discrete predictors"
-msgstr ""
+#, fuzzy
+msgid "Discrete factors"
+msgstr "因子"
 
 msgid "Replicates"
 msgstr "复制"
@@ -1729,6 +1729,10 @@ msgstr "均值和标准差控制图"
 msgid "Variables Chart for Subgroups Report"
 msgstr "单值图"
 
+#, fuzzy
+#~ msgid "Predictors"
+#~ msgstr "预测变量"
+
 #~ msgid "Subgroups"
 #~ msgstr "子组"
 
@@ -2036,9 +2040,6 @@ msgstr "单值图"
 #~ msgid "Selected Design"
 #~ msgstr "选择的设计"
 
-#~ msgid "Factors"
-#~ msgstr "因子"
-
 #~ msgid "Runs"
 #~ msgstr "运行"
 
@@ -2122,9 +2123,6 @@ msgstr "单值图"
 #~ msgid ""
 #~ "Factor name '%s' is a number, and number factor names are not supported."
 #~ msgstr "因子名称 '%s' 是一个数字，不支持数字因子名称。"
-
-#~ msgid "factors"
-#~ msgstr "因子"
 
 #~ msgid "factorName"
 #~ msgstr "因子名称"
