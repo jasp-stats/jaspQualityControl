@@ -15,39 +15,95 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#'@importFrom jaspBase jaspDeps %setOrRetrieve%
 
 #'@export
 bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
   fit <- .bpcsCapabilityTable(jaspResults, dataset, options)
-  .bpcsCapabilityPlot(jaspResults, fit)
+  .bpcsCapabilityPlot(jaspResults, options, fit)
 
 }
 
 .bpcsIsReady <- function(options) {
-  length(options[["measurementLongFormat"]]) > 0L && options[["measurementLongFormat"]] != ""
+  length(options[["measurementLongFormat"]]) > 0L && options[["measurementLongFormat"]] != "" &&
+    options[["lowerSpecificationLimit"]] &&
+    options[["upperSpecificationLimit"]] &&
+    options[["target"]]
 }
 
+.bpcsDefaultDeps <- function() {
+    c(
+      # data
+      "measurementLongFormat",
+      # specification
+      "target",      "lowerSpecificationLimit",      "upperSpecificationLimit",
+      "targetValue", "lowerSpecificationLimitValue", "upperSpecificationLimitValue",
+      # likelihood
+      "capabilityStudyType"
+      # TODO: prior
+  )
+}
+
+.bpcsTpriorFromOptions <- function(options) {
+
+  switch(options[["capabilityStudyType"]],
+    "normalCapabilityAnalysis" = NULL,
+    "tCapabilityAnalysis"      = BayesTools::prior("exp",  list(1)), # TODO: should be more generic
+
+    stop("Unknown capability study type: ", options[["capabilityStudyType"]])
+  )
+}
+
+# Tables ----
 .bpcsCapabilityTable <- function(jaspResults, dataset, options) {
 
   if (!is.null(options[["bpcsCapabilityTable"]]))
     return()
 
   table <- .bpcsCapabilityTableMeta(jaspResults, options)
-  if (!.bpcsIsReady(options))
+  if (!.bpcsIsReady(options)) {
+
+    if (options[["measurementLongFormat"]] != "")
+      table$addFootnote(gettext("Please specify the Lower Specification Limit, Upper Specification Limit, and Target Value to compute the capability measures."))
+
     return()
+  }
 
-  fit <- qc::bpc(dataset[[1L]], chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1)
+  rawfit <- jaspResults[["bpsState"]] %setOrRetrieve% (
+    qc::bpc(
+      dataset[[1L]], chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
+      target   = options[["targetValue"]],
+      LSL      = options[["lowerSpecificationLimitValue"]],
+      USL      = options[["upperSpecificationLimitValue"]],
+      prior_nu = .bpcsTpriorFromOptions(options)
+   ) |>
+    createJaspState(jaspDeps(.bpcsDefaultDeps()))
+  )
 
-  .bpcsCapabilityTableFill(table, fit, options)
-  return(fit)
+  summaryObject <- jaspResults[["bpsSummaryState"]] %setOrRetrieve% (
+    summary(
+      rawfit, ci.level = options[["credibleIntervalWidth"]]
+    ) |>
+      createJaspState(jaspDeps(
+        options = c(.bpcsDefaultDeps(), "credibleIntervalWidth")
+      ))
+  )
+
+  resultsObject <- list(
+    rawfit           = rawfit,
+    summaryObject    = summaryObject
+  )
+
+  .bpcsCapabilityTableFill(table, resultsObject, options)
+  return(resultsObject)
 
 }
 
 .bpcsCapabilityTableMeta <- function(jaspResults, options) {
 
   table <- createJaspTable(title = gettext("Capability Table"))
-  table$addColumnInfo(name = "metric",  title = gettext("Capability Measure"), type = "string")
+  table$addColumnInfo(name = "metric",  title = gettext("Capability\nMeasure"), type = "string")
   table$addColumnInfo(name = "mean",    title = gettext("Mean"),               type = "number")
   table$addColumnInfo(name = "median",  title = gettext("Median"),             type = "number")
   table$addColumnInfo(name = "sd",      title = gettext("Std"),                type = "number")
@@ -63,16 +119,15 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
 }
 
-.bpcsCapabilityTableFill <- function(table, fit, options) {
+.bpcsCapabilityTableFill <- function(table, resultsObject, options) {
 
-  df <- as.data.frame(qc::summarize_capability_metrics(fit, cri_width = options[["credibleIntervalWidth"]]))
+  df <- as.data.frame(resultsObject[["summaryObject"]][["summary"]])
   table$setData(df)
 
 }
 
-#'@importFrom jaspBase jaspDeps %setOrRetrieve%
-
-.bpcsCapabilityPlot <- function(jaspResults, fit) {
+# Plots ----
+.bpcsCapabilityPlot <- function(jaspResults, options, fit) {
 
   if (!options[["posteriorDistributionPlot"]])
     return()
@@ -80,9 +135,17 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   jaspResults[["posteriorDistributionPlot"]] %setOrRetrieve% (
     createJaspPlot(
       title = gettext("Posterior Distribution"),
-      plot  = qc::plot_density(fit) + jaspGraphs::geom_rangeframe() + jaspGraphs::themeJaspRaw(),
+      plot  = if (.bpcsIsReady(options) && !is.null(fit)) {
+        qc::plot_density(fit$summaryObject) +
+          jaspGraphs::geom_rangeframe() +
+          jaspGraphs::themeJaspRaw()
+      } else {
+        NULL
+      },
+      width  = 320 * 6,
+      height = 320,
       dependencies = jaspDeps(
-        options = c("measurementLongFormat", "posteriorDistributionPlot")
+        options = c(.bpcsDefaultDeps(), "posteriorDistributionPlot")
       )
     )
   )
