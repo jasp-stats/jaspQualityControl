@@ -143,7 +143,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # MCMC
   if(ready) {
     .runMCMC(jaspResults, dataset, measurements, parts, operators, options)
-    .fitMetaLog(jaspResults)
+    .fitDistToSamples(jaspResults, options, samplesMat = jaspResults[["MCMCsamples"]][["object"]])
   }
 
   # Variance components table
@@ -479,36 +479,36 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(internalDF)
 }
 
-.fitMetaLog <- function(jaspResults) {
-  if(is.null(jaspResults[["metaLogFit"]])){
-    metaLogFit <- createJaspState()
-    metaLogFit$dependOn(.mcmcDependencies())
-    jaspResults[["metaLogFit"]] <- metaLogFit
-  } else {
-    return()
-  }
-
-  samplesMat <- jaspResults[["MCMCsamples"]][["object"]]
-
-  # fit metalog to each parameter
-  metaLogList <- apply(samplesMat, 2,
-                       function(x) rmetalog::metalog(x, bounds = 0, boundedness = "sl"))
-
-  # find optimal number of terms for each parameter
-  optimalTerms <- Map(.optimalMetaLog, metaLogList, names(metaLogList),
-                      MoreArgs = list(samplesMat = samplesMat))
-
-  # add optimal terms to list
-  metaLogList <- Map(function(x, optimalTerms){
-    x[["optimalTerms"]] <- optimalTerms
-    x
-  }, metaLogList, optimalTerms)
-
-  metaLogFit[["object"]] <- metaLogList
-
-  return()
-
-}
+# .fitMetaLog <- function(jaspResults) {
+#   if(is.null(jaspResults[["metaLogFit"]])){
+#     metaLogFit <- createJaspState()
+#     metaLogFit$dependOn(.mcmcDependencies())
+#     jaspResults[["metaLogFit"]] <- metaLogFit
+#   } else {
+#     return()
+#   }
+#
+#   samplesMat <- jaspResults[["MCMCsamples"]][["object"]]
+#
+#   # fit metalog to each parameter
+#   metaLogList <- apply(samplesMat, 2,
+#                        function(x) rmetalog::metalog(x, bounds = 0, boundedness = "sl"))
+#
+#   # find optimal number of terms for each parameter
+#   optimalTerms <- Map(.optimalMetaLog, metaLogList, names(metaLogList),
+#                       MoreArgs = list(samplesMat = samplesMat))
+#
+#   # add optimal terms to list
+#   metaLogList <- Map(function(x, optimalTerms){
+#     x[["optimalTerms"]] <- optimalTerms
+#     x
+#   }, metaLogList, optimalTerms)
+#
+#   metaLogFit[["object"]] <- metaLogList
+#
+#   return()
+#
+# }
 
 .createPostSummaryTable <- function(jaspResults, options, parts, operators){
   if(!is.null(jaspResults[["variancePosteriors"]][["postSummary"]])){
@@ -558,200 +558,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.fillPostSummaryTable <- function(jaspResults, options, parts, operators) {
-  if(is.null(jaspResults[["postSummaryStats"]]) && (options$posteriorCi || options$posteriorPointEstimate)){
-    postSummaryStats <- createJaspState()
-    postSummaryStats$dependOn(c(.mcmcDependencies(),
-                                .postPlotDependencies()))
-    jaspResults[["postSummaryStats"]] <- postSummaryStats
-  } else {
-    return()
-  }
-
-  fits <- jaspResults[["metaLogFit"]][["object"]]
-
-  parameter <- .convertOutputNames(names(fits), parts, operators)
-
-  # point estimates
-  if(options$posteriorPointEstimate) {
-
-    pointEstimate <- switch(options$posteriorPointEstimateType,
-                            "mean" = unlist(lapply(fits, .meanMetaLog)),
-                            "median" = unlist(lapply(fits, .medianMetaLog)),
-                            "mode" = unlist(lapply(fits, .modeMetaLog))) # note: the mode still seems to be a bit off
-  }
-
-  # intervals
-  if(options$posteriorCi) {
-
-    intervals <- switch(options$posteriorCiType,
-                        "central" = Map(.centralInterMetaLog, fits, mass = options$posteriorCiMass),
-                        "HPD" = Map(.hdiMetaLog, fits, mass = options$posteriorCiMass),
-                        "custom" = Map(.customInterMetaLog, fits,
-                                       lower = options$posteriorCiLower,
-                                       upper = options$posteriorCiUpper))
-
-    # lower and upper bounds separately
-    lower <- sapply(intervals, function(x) x[1])
-    upper <- sapply(intervals, function(x) x[2])
-  }
-
-  if(options$posteriorPointEstimate && options$posteriorCi == FALSE) {
-    df <- data.frame(parameter,
-                     pointEstimate)
-  } else if(options$posteriorPointEstimate == FALSE && options$posteriorCi) {
-    df <- data.frame(parameter,
-                     ciLower = lower,
-                     ciUpper = upper)
-  } else {
-    df <- data.frame(parameter,
-                     pointEstimate,
-                     ciLower = lower,
-                     ciUpper = upper)
-  }
-  postSummaryStats[["object"]] <- df
-
-  return()
-}
-
-.plotVariancePosteriors <- function(jaspResults, options, parts, operators){
-
-  if(!is.null(jaspResults[["variancePosteriors"]])){
-    return()
-  }
-
-  variancePosteriors <- createJaspContainer(title = gettext("Posterior Distributions"))
-  variancePosteriors$position <- 5
-  variancePosteriors$dependOn(c(.mcmcDependencies(),
-                                .postPlotDependencies()))
-  jaspResults[["variancePosteriors"]] <- variancePosteriors
-
-  fits <- jaspResults[["metaLogFit"]][["object"]]
-  titles <- .convertOutputNames(names(fits), parts, operators, includeSigma = FALSE)
-  postSummary <- jaspResults[["postSummaryStats"]][["object"]]
-  modes <- lapply(fits, .modeMetaLog)
-
-
-  for(i in seq_along(titles)) {
-    tempPlot <- createJaspPlot(title = gettext(titles[i]), width = 600, height = 320)
-
-    # axis limits
-    dfTemp <- fits[[i]]$dataValues
-
-    if(options$posteriorCi) {
-      xUpper <- ceiling(max(dfTemp[dfTemp$probs >= 0.975, ]$x_new[1], postSummary[i, "ciUpper"]))
-    } else {
-      xUpper <- ceiling(dfTemp[dfTemp$probs >= 0.975, ]$x_new[1])
-    }
-    xLower <- 0
-    xLims <- c(xLower, xUpper)
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLims)
-
-    yUpper <- rmetalog::dmetalog(m = fits[[i]], q = modes[[i]], term = fits[[i]]$optimalTerms)
-    yLower <- 0
-    yLims <- c(yLower, yUpper)
-    yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
-
-
-    p <- ggplot2::ggplot()
-
-    # credible interval
-    if(options$posteriorCi) {
-      ciUpper <- postSummary[i, "ciUpper"]
-      ciLower <- postSummary[i, "ciLower"]
-
-      p <- p +
-        ggplot2::stat_function(fun = rmetalog::dmetalog, args = list(m = fits[[i]], term = fits[[i]]$optimalTerms),
-                               geom = "area", xlim = c(ciLower, ciUpper), fill = "grey")
-    }
-
-    p <- p +
-      ggplot2::stat_function(fun = rmetalog::dmetalog, args = list(m = fits[[i]], term = fits[[i]]$optimalTerms),
-                             linewidth = 1)
-
-
-    # point estimate
-    if(options$posteriorPointEstimate) {
-      xPoint <- postSummary[i, "pointEstimate"]
-      yPoint <- rmetalog::dmetalog(m = fits[[i]], q = xPoint, term = fits[[i]]$optimalTerms)
-      pointDf <- data.frame(xPoint, yPoint)
-
-      p <- p + ggplot2::geom_point(data = pointDf, mapping = ggplot2::aes(x = xPoint, y = yPoint),
-                                   shape = 21, size = 4, fill = "grey", stroke = 1)
-    }
-
-
-
-
-    # axes
-    xLab <- titles[i]
-    p <- p +
-      ggplot2::scale_x_continuous(name = bquote(sigma[.(xLab)]^2), breaks = xBreaks,
-                                  limits = xLims, labels = xBreaks) +
-      ggplot2::scale_y_continuous(name = "Density", breaks = yBreaks,
-                                  limits = yLims, labels = yBreaks)
-
-    # theme
-    p <- p + jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe(sides = "bl")
-
-    tempPlot$plotObject <- p
-    variancePosteriors[[titles[i]]] <- tempPlot
-  }
-
-
-
-
-  # df <- samplesMat <- as.data.frame(jaspResults[["MCMCsamples"]][["object"]])
-  # CrIs <- apply(df, 2, quantile, probs = c(0.025, 0.975))
-  # parameters <- colnames(samplesMat)
-  #
-  # # axis labels
-  # cleanLabel <- sub("^g_", "", parameters)
-  # cleanLabel <- sub("sig2", "Error", cleanLabel)
-  # names(cleanLabel) <- parameters
-  #
-  # # Create label with sigma^2
-  # axisLabs <- sapply(cleanLabel, function(x) bquote(sigma^2 ~ .(x)) )
-  #
-  #
-  # for(i in seq_along(parameters)) {
-  #   tempPlot <- createJaspPlot(title = gettext(parameters[i]), width = 600, height = 320)
-  #
-  #   # obtain density from ggplot
-  #   p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[parameters[i]]])) +
-  #     ggplot2::geom_density()
-  #
-  #   density_data <- ggplot2::ggplot_build(p)$data[[1]]
-  #
-  #   fillDensity <- density_data[density_data$x >= CrIs[, parameters[i]][1] & density_data$x <= CrIs[, parameters[i]][2], ]
-  #
-  #   # x and y limits & coordinates for errorbar
-  #   xLow <- floor(min(0, CrIs[, parameters[i]][1] - CrIs[, parameters[i]][1] * 0.1))
-  #   xUpper <- ceiling(max(CrIs[, parameters[i]][2] / 90 * 100, density_data[density_data$y < 0.005, "x"][1]))
-  #   xLims <- c(xLow, xUpper)
-  #
-  #   yLow <- 0
-  #   yUpper <- max(density_data$y) + 0.01
-  #   yLims <- c(yLow, yUpper)
-  #
-  #   yErrorbar <- yUpper / 100 * 95
-  #   heightErrorbar <- yUpper / 100 * 5
-  #
-  #
-  #   tempPlot$plotObject <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[parameters[i]]])) +
-  #     ggplot2::geom_density() +
-  #     ggplot2::geom_density(data = fillDensity, ggplot2::aes(x = x, y = y), fill = "blue", alpha = 0.4) +
-  #     jaspGraphs::scale_y_continuous("Density", limits = yLims, breaks = jaspGraphs::getPrettyAxisBreaks(yLims)) +
-  #     jaspGraphs::scale_x_continuous(axisLabs[[parameters[i]]], limits = xLims, breaks = jaspGraphs::getPrettyAxisBreaks(xLims)) +
-  #     #ggplot2::geom_errorbarh(ggplot2::aes(xmin = CrIs[, parameters[i]][1], xmax = CrIs[, parameters[i]][2], y = 1), height = heightErrorbar) +
-  #     jaspGraphs::themeJaspRaw() +
-  #     jaspGraphs::geom_rangeframe(sides = "bl")
-  #
-  #   variancePosteriors[[parameters[i]]] <- tempPlot
-  #
-  # }
-  return()
-}
 
 .createContourPlot <- function(jaspResults, parts, operators, measurements, dataset, options) {
   if(!is.null(jaspResults[["contourPlot"]])) {
@@ -881,62 +687,35 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .postPlotDependencies <- function() {
   return(c("posteriorCi", "posteriorCiLower", "posteriorCiMass", "posteriorCiType", "posteriorCiUpper",
-           "posteriorPointEstimate", "posteriorPointEstimateType", "posteriorPlot"))
+           "posteriorPointEstimate", "posteriorPointEstimateType", "posteriorPlot",
+           "distType"))
 }
 
-.optimalMetaLog <- function(fit, parameter, samplesMat) {
-  terms <- fit$params$term_limit
+# .optimalMetaLog <- function(fit, parameter, samplesMat) {
+#   terms <- fit$params$term_limit
+#
+#   error <- numeric(length(terms))
+#
+#   for(j in 2:terms){
+#     # quantiles
+#     j <- as.numeric(j)
+#     qmeta <- rmetalog::qmetalog(m = fit, y = c(0.025, 0.975), term = j)
+#     qdata <- quantile(samplesMat[, parameter], probs = c(0.025, 0.975))
+#
+#     errorCrI <- sum(abs(qdata - qmeta))
+#
+#     # mean
+#     meanMeta <- integrate(rmetalog::qmetalog, m = fit, term = j, lower = 0, upper = 1)$value # integrate over quantile function
+#     meanData <- mean(samplesMat[, parameter])
+#
+#     errorMean <- abs(meanData - meanMeta)
+#
+#     error[j] <- sum(errorCrI, errorMean)
+#   }
+#   #print(error)
+#   return(which.min(error[-1]) + 1)
+# }
 
-  error <- numeric(length(terms))
-
-  for(j in 2:terms){
-    # quantiles
-    j <- as.numeric(j)
-    qmeta <- rmetalog::qmetalog(m = fit, y = c(0.025, 0.975), term = j)
-    qdata <- quantile(samplesMat[, parameter], probs = c(0.025, 0.975))
-
-    errorCrI <- sum(abs(qdata - qmeta))
-
-    # mean
-    meanMeta <- integrate(rmetalog::qmetalog, m = fit, term = j, lower = 0, upper = 1)$value # integrate over quantile function
-    meanData <- mean(samplesMat[, parameter])
-
-    errorMean <- abs(meanData - meanMeta)
-
-    error[j] <- sum(errorCrI, errorMean)
-  }
-  #print(error)
-  return(which.min(error[-1]) + 1)
-}
-
-.meanMetaLog <- function(fit) {
-  m <- integrate(rmetalog::qmetalog, m = fit, term = fit$optimalTerms,
-                 lower = 0, upper = 1)$value
-}
-
-.medianMetaLog <- function(fit) {
-  m <- rmetalog::qmetalog(m = fit, y = 0.5, term = fit$optimalTerms)
-}
-
-.modeMetaLog <- function(fit) {
-  m <- optimize(rmetalog::dmetalog, interval = c(0, max(fit$dataValues[1])),
-                m = fit, term = fit$optimalTerms, maximum = TRUE)$maximum
-}
-
-.centralInterMetaLog <- function(fit, mass) {
-  lower <- (1 - mass) / 2
-  upper <- 1 - lower
-  int <- rmetalog::qmetalog(m = fit, y = c(lower, upper), term = fit$optimalTerms)
-}
-
-.hdiMetaLog <- function(fit, mass) {
-  samples <- rmetalog::rmetalog(m = fit, n = 1e5, term = fit$optimalTerms)
-  int <- HDInterval::hdi(samples, credMass = mass)
-}
-
-.customInterMetaLog <- function(fit, lower, upper) {
-  int <- rmetalog::qmetalog(m = fit, y = c(lower, upper), term = fit$optimalTerms)
-}
 
 .convertOutputNames <- function(name, parts, operators, includeSigma = TRUE) {
   sigmaPart <- paste0("g_", parts)
@@ -1102,67 +881,92 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                              "tolerance", "toleranceValue"))
   jaspResults[["gaugeEvaluation"]] <- gaugeEvaluation
 
-
-
-  ### Standard deviation table
-  stdTable <- createJaspTable(title = gettext("Standard deviation"))
+  ### Standard deviation & study variation table
+  stdTable <- createJaspTable(title = gettext("Standard Deviation & Study Variation"))
   stdTable$position <- 1
   gaugeEvaluation[["stdTable"]] <- stdTable
 
-  stdTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
-  stdTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
-  stdTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
-  stdTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
+  stdTable$addColumnInfo(name = "sourceName",    title = gettext("Source"),                  type = "string")
+  stdTable$addColumnInfo(name = "meansStd",      title = gettext("Mean<br>Std"),             type = "number")
+  stdTable$addColumnInfo(name = "lowerStd",      title = gettext("Lower"),                   type = "number", overtitle = "95% Credible Interval<br>Std")
+  stdTable$addColumnInfo(name = "upperStd",      title = gettext("Upper"),                   type = "number", overtitle = "95% Credible Interval<br>Std")
+  stdTable$addColumnInfo(name = "meansStudyVar", title = gettext("Mean<br>Study Variation"), type = "number")
+  stdTable$addColumnInfo(name = "lowerStudyVar", title = gettext("Lower"),                   type = "number", overtitle = "95% Credible Interval<br>Study Variation")
+  stdTable$addColumnInfo(name = "upperStudyVar", title = gettext("Upper"),                   type = "number", overtitle = "95% Credible Interval<br>Study Variation")
 
   if(ready) {
-    stdTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "sd"))
+    stdData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "sd")
+    colnames(stdData) <- c("sourceName", "meansStd", "lowerStd", "upperStd") # note: this could already be part of the function
+    studyVarData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "studyVar")[, -1] # remove source name
+    colnames(studyVarData) <- c("meansStudyVar", "lowerStudyVar", "upperStudyVar")
+    stdTable$setData(cbind(stdData, studyVarData))
   }
 
 
-  ### Study variation table
-  studyVarTable <- createJaspTable(title = gettext("Study variation"))
-  studyVarTable$position <- 2
-  gaugeEvaluation[["studyVarTable"]] <- studyVarTable
+  # ### Study variation table
+  # studyVarTable <- createJaspTable(title = gettext("Study variation"))
+  # studyVarTable$position <- 2
+  # gaugeEvaluation[["studyVarTable"]] <- studyVarTable
+  #
+  # studyVarTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
+  # studyVarTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
+  # studyVarTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
+  # studyVarTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
+  #
+  # if(ready) {
+  #   studyVarTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "studyVar"))
+  # }
 
-  studyVarTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
-  studyVarTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
-  studyVarTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
-  studyVarTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
-
-  if(ready) {
-    studyVarTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "studyVar"))
+  ### Percent study variation & percent tolerance table
+  if(options$tolerance) {
+    title <- "% Study Variation & % Tolerance"
+  } else {
+    title <- "% Study Variation"
   }
-
-  ### Percent study variation table
-  percStudyVarTable <- createJaspTable(title = gettext("% Study variation"))
-  percStudyVarTable$position <- 3
+  percStudyVarTable <- createJaspTable(title = gettext(title))
+  percStudyVarTable$position <- 2
   gaugeEvaluation[["percStudyVarTable"]] <- percStudyVarTable
 
-  percStudyVarTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
-  percStudyVarTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
-  percStudyVarTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
-  percStudyVarTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
+  percStudyVarTable$addColumnInfo(name = "sourceName",          title = gettext("Source"),                    type = "string")
+  percStudyVarTable$addColumnInfo(name = "meansPercStudy",      title = gettext("Mean<br>% Study Variation"), type = "number")
+  percStudyVarTable$addColumnInfo(name = "lowerPercStudy",      title = gettext("Lower"),                     type = "number", overtitle = "95% Credible Interval<br>% Study Variation")
+  percStudyVarTable$addColumnInfo(name = "upperPercStudy",      title = gettext("Upper"),                     type = "number", overtitle = "95% Credible Interval<br>% Study Variation")
+
+  if(options$tolerance) {
+    percStudyVarTable$addColumnInfo(name = "meansPercTol",      title = gettext("Mean<br>% Tolerance"), type = "number")
+    percStudyVarTable$addColumnInfo(name = "lowerPercTol",      title = gettext("Lower"),               type = "number", overtitle = "95% Credible Interval<br>% Tolerance")
+    percStudyVarTable$addColumnInfo(name = "upperPercTol",      title = gettext("Upper"),               type = "number", overtitle = "95% Credible Interval<br>% Tolerance")
+  }
 
   if(ready) {
-    percStudyVarTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "percStudyVar"))
-  }
+    percStudyData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "percStudyVar")
+    colnames(percStudyData) <- c("sourceName", "meansPercStudy", "lowerPercStudy", "upperPercStudy")
 
-
-  ### Percent tolerance table
-  if(options$tolerance) {
-    percTolTable <- createJaspTable(title = gettext("% Tolerance"))
-    percTolTable$position <- 3
-    gaugeEvaluation[["percTolTable"]] <- percTolTable
-
-    percTolTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
-    percTolTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
-    percTolTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
-    percTolTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
-
-    if(ready) {
-      percTolTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "percTol"))
+    if(!options$tolerance) {
+      percStudyVarTable$setData(percStudyData)
+    } else {
+      percTolData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "percTol")[, -1]
+      colnames(percTolData) <- c("meansPercTol", "lowerPercTol", "upperPercTol")
+      percStudyVarTable$setData(cbind(percStudyData, percTolData))
     }
   }
+
+
+  # ### Percent tolerance table
+  # if(options$tolerance) {
+  #   percTolTable <- createJaspTable(title = gettext("% Tolerance"))
+  #   percTolTable$position <- 3
+  #   gaugeEvaluation[["percTolTable"]] <- percTolTable
+  #
+  #   percTolTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
+  #   percTolTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
+  #   percTolTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
+  #   percTolTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
+  #
+  #   if(ready) {
+  #     percTolTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "percTol"))
+  #   }
+  # }
 
   return()
 
@@ -1212,7 +1016,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   if(whichTable == "studyVar") {
     # add footnote
-    jaspResults[["gaugeEvaluation"]][["studyVarTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
+    jaspResults[["gaugeEvaluation"]][["stdTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
 
     # summaries
     means <- colMeans(studyVar)
@@ -1294,3 +1098,376 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   return(dataset)
 }
+
+
+
+###### Distribution fitting
+
+### fit functions
+.fitDistToSamples <- function(jaspResults, options, samplesMat) {
+  if(is.null(jaspResults[["distFit"]])){
+    distFit <- createJaspState() # note: add dependency on user input for dist from qml
+    distFit$dependOn(c(.mcmcDependencies(), "distType"))
+    jaspResults[["distFit"]] <- distFit
+  } else {
+    return()
+  }
+
+  # note: I could also pass a list with distribution names and fitting functions here
+  distType <- options$distType
+
+  if(options$setSeed) {
+    set.seed(options$seed)
+  }
+  fit <- switch(distType,
+                "metalog" = .fitMetaLog(samplesMat, bounds = 0, boundedness = "sl",
+                                        term_lower_bound = 6, term_limit = 6), # 6 terms
+                "gig" = .fitGIG(samplesMat))
+
+  distFit[["object"]] <- fit
+
+  return()
+}
+
+## MetaLog
+.fitMetaLog <- function(samplesMat, ...) {
+  # fit metalog to each parameter
+  metaLogList <- apply(samplesMat, 2,
+                       function(x) rmetalog::metalog(x, ...))
+  return(metaLogList)
+}
+
+## Generalized Inverse Gaussian
+.fitGIG <- function(samplesMat) {
+  gigFitList <- apply(samplesMat, 2,
+                      function(x) GeneralizedHyperbolic::gigFit(x))
+
+  # add random samples
+  gigFitList <- lapply(gigFitList,
+                       function(x) {
+                         x$randData <- GeneralizedHyperbolic::rgig(1e5, param = x$param)
+                         return(x)
+                       })
+  return(gigFitList)
+}
+
+
+### posterior summary
+.fillPostSummaryTable <- function(jaspResults, options, parts, operators) {
+  if(is.null(jaspResults[["postSummaryStats"]]) && (options$posteriorCi || options$posteriorPointEstimate)){
+    postSummaryStats <- createJaspState()
+    postSummaryStats$dependOn(c(.mcmcDependencies(),
+                                .postPlotDependencies()))
+    jaspResults[["postSummaryStats"]] <- postSummaryStats
+  } else {
+    return()
+  }
+
+  fits <- jaspResults[["distFit"]][["object"]]
+
+  parameter <- .convertOutputNames(names(fits), parts, operators) # note: this should only happen when the fits are based on the variance parameters
+
+  # point estimates
+  if(options$posteriorPointEstimate) {
+    # list with functions for different distributions
+    pointEstimateFunctions <- .pointEstimateFunctions()
+
+    # select the right function
+    pointFun <- pointEstimateFunctions[[options$distType]][[options$posteriorPointEstimateType]]
+
+    pointEstimate <- switch(options$posteriorPointEstimateType,
+                            "mean" = unlist(lapply(fits, pointFun)),
+                            "median" = unlist(lapply(fits, pointFun)),
+                            "mode" = unlist(lapply(fits, pointFun))) # note: the mode still seems to be a bit off
+  }
+
+  # intervals
+  if(options$posteriorCi) {
+    # list with functions for different distributions
+    intervalFunctions <- .intervalFunctions()
+
+    # select the right function
+    interFun <- intervalFunctions[[options$distType]][[options$posteriorCiType]]
+
+    if(options$setSeed) {
+      set.seed(options$seed)
+    }
+
+    intervals <- switch(options$posteriorCiType,
+                        "central" = Map(interFun, fits, mass = options$posteriorCiMass),
+                        "HPD" = Map(interFun, fits, mass = options$posteriorCiMass),
+                        "custom" = Map(interFun, fits,
+                                       lower = options$posteriorCiLower,
+                                       upper = options$posteriorCiUpper))
+
+    # lower and upper bounds separately
+    lower <- sapply(intervals, function(x) x[1])
+    upper <- sapply(intervals, function(x) x[2])
+  }
+
+  if(options$posteriorPointEstimate && options$posteriorCi == FALSE) {
+    df <- data.frame(parameter,
+                     pointEstimate)
+  } else if(options$posteriorPointEstimate == FALSE && options$posteriorCi) {
+    df <- data.frame(parameter,
+                     ciLower = lower,
+                     ciUpper = upper)
+  } else {
+    df <- data.frame(parameter,
+                     pointEstimate,
+                     ciLower = lower,
+                     ciUpper = upper)
+  }
+  postSummaryStats[["object"]] <- df
+
+  return()
+}
+
+
+### functions point estimates
+.pointEstimateFunctions <- function() {
+  l <- list(
+    metalog = list(
+      mean = .meanMetaLog,
+      median = .medianMetaLog,
+      mode = .modeMetaLog
+    ),
+    gig = list(
+      mean = .meanGIG,
+      median = .medianGIG,
+      mode = .modeGIG
+    )
+  )
+  return(l)
+}
+
+## MetaLog
+.meanMetaLog <- function(fit) {
+  m <- integrate(rmetalog::qmetalog, m = fit, term = fit$params$term_limit,
+                 lower = 0, upper = 1)$value
+}
+
+.medianMetaLog <- function(fit) {
+  m <- rmetalog::qmetalog(m = fit, y = 0.5, term = fit$params$term_limit)
+}
+
+.modeMetaLog <- function(fit) {
+  m <- optimize(rmetalog::dmetalog, interval = c(0, max(fit$dataValues[1])),
+                m = fit, term = fit$params$term_limit, maximum = TRUE)$maximum
+}
+
+## Generalized Inverse Gaussian
+.meanGIG <- function(fit) {
+  m <- GeneralizedHyperbolic::gigMean(param = fit$param)
+}
+
+.medianGIG <- function(fit) {
+  m <- quantile(fit$randData, probs = 0.5)
+}
+
+.modeGIG <- function(fit) {
+  m <- GeneralizedHyperbolic::gigMode(param = fit$param)
+}
+
+### functions interval estimates
+.intervalFunctions <- function() {
+  l <- list(
+    metalog = list(
+      central = .centralInterMetaLog,
+      HPD = .hdiMetaLog,
+      custom = .customInterMetaLog
+    ),
+    gig = list(
+      central = .centralInterGIG,
+      HPD = .hdiGIG,
+      custom = .customInterGIG
+    )
+  )
+}
+
+## MetaLog
+.centralInterMetaLog <- function(fit, mass) {
+  lower <- (1 - mass) / 2
+  upper <- 1 - lower
+  int <- rmetalog::qmetalog(m = fit, y = c(lower, upper), term = fit$params$term_limit)
+}
+
+.hdiMetaLog <- function(fit, mass) {
+  samples <- rmetalog::rmetalog(m = fit, n = 1e5, term = fit$params$term_limit)
+  int <- HDInterval::hdi(samples, credMass = mass)
+}
+
+.customInterMetaLog <- function(fit, lower, upper) {
+  int <- rmetalog::qmetalog(m = fit, y = c(lower, upper), term = fit$params$term_limit)
+}
+
+## Generalized inverse Gaussian
+.centralInterGIG <- function(fit, mass) {
+  lower <- (1 - mass) / 2
+  upper <- 1 - lower
+  int <- quantile(fit$randData, probs = c(lower, upper))
+}
+
+.hdiGIG <- function(fit, mass) {
+  int <- HDInterval::hdi(fit$randData, credMass = mass)
+}
+
+.customInterGIG <- function(fit, lower, upper) {
+  int <- quantile(fit$randData, probs = c(lower, upper))
+}
+
+
+### posterior plots
+.plotVariancePosteriors <- function(jaspResults, options, parts, operators){
+
+  if(!is.null(jaspResults[["variancePosteriors"]])){
+    return()
+  }
+
+  variancePosteriors <- createJaspContainer(title = gettext("Posterior Distributions"))
+  variancePosteriors$position <- 5
+  variancePosteriors$dependOn(c(.mcmcDependencies(),
+                                .postPlotDependencies()))
+  jaspResults[["variancePosteriors"]] <- variancePosteriors
+
+  fits <- jaspResults[["distFit"]][["object"]]
+  titles <- .convertOutputNames(names(fits), parts, operators, includeSigma = FALSE) # note: this function needs to be modified so it produces the right lables for the percentages as well
+  postSummary <- jaspResults[["postSummaryStats"]][["object"]] # note: this needs to be replaced if I plot dists for the percentages
+
+
+
+  for(i in seq_along(titles)) {
+    tempPlot <- createJaspPlot(title = gettext(titles[i]), width = 600, height = 320)
+
+    # select function for axis limits based on distribution
+    axisFun <- .axisLimFuns()[[options$distType]]
+
+    lims <- axisFun(fits[[i]], postSummary, options, iter = i)
+
+    p <- ggplot2::ggplot()
+
+    # credible interval
+    if(options$posteriorCi) {
+      ciUpper <- postSummary[i, "ciUpper"]
+      ciLower <- postSummary[i, "ciLower"]
+
+      p <- p +
+        if(options$distType == "metalog") {
+          ggplot2::stat_function(fun = rmetalog::dmetalog, args = list(m = fits[[i]], term = fits[[i]]$params$term_limit),
+                                 geom = "area", xlim = c(ciLower, ciUpper), fill = "grey")
+          # note: it might make sense to just pass some approximation of the density to the plotting function in case of the metalog
+          # so it only has to evaluate the density function once
+        } else { # note: this would be nicer with a list of functions again, but the functions take different arguments
+          ggplot2::stat_function(fun = GeneralizedHyperbolic::dgig, args = list(param = fits[[i]]$param),
+                                 geom = "area", xlim = c(ciLower, ciUpper), fill = "grey")
+        }
+    }
+
+    p <- p +
+      if(options$distType == "metalog") {
+        ggplot2::stat_function(fun = rmetalog::dmetalog, args = list(m = fits[[i]], term = fits[[i]]$params$term_limit),
+                               linewidth = 1)
+      } else { # note: see above
+        ggplot2::stat_function(fun = GeneralizedHyperbolic::dgig, args = list(param = fits[[i]]$param),
+                               linewidth = 1)
+      }
+
+
+    # point estimate
+    if(options$posteriorPointEstimate) {
+      xPoint <- postSummary[i, "pointEstimate"]
+      yPoint <- ifelse(options$distType == "metalog",
+                       rmetalog::dmetalog(m = fits[[i]], q = xPoint, term = fits[[i]]$params$term_limit),
+                       GeneralizedHyperbolic::dgig(x = xPoint, param = fits[[i]]$param))
+      pointDf <- data.frame(xPoint, yPoint)
+
+      p <- p + ggplot2::geom_point(data = pointDf, mapping = ggplot2::aes(x = xPoint, y = yPoint),
+                                   shape = 21, size = 4, fill = "grey", stroke = 1)
+    }
+
+    # axes
+    xLab <- titles[i]
+    p <- p +
+      ggplot2::scale_x_continuous(name = bquote(sigma[.(xLab)]^2), breaks = lims$x$breaks,
+                                  limits = lims$x$limits, labels = lims$x$breaks) +
+      ggplot2::scale_y_continuous(name = "Density", breaks = lims$y$breaks,
+                                  limits = lims$y$limits, labels = lims$y$breaks)
+
+    # theme
+    p <- p + jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe(sides = "bl")
+
+    tempPlot$plotObject <- p
+    variancePosteriors[[titles[i]]] <- tempPlot
+  }
+  return()
+}
+
+## axis limits
+.axisLimFuns <- function() {
+  l <- list(
+    metalog = .axisLimsMetaLog,
+    gig = .axisLimsGIG
+  )
+  return(l)
+}
+
+# Metalog
+.axisLimsMetaLog <- function(fit, postSummary, options, iter) {
+
+  dfTemp <- fit$dataValues
+  m <- .modeMetaLog(fit)
+
+  if(options$posteriorCi) {
+    xUpper <- ceiling(max(dfTemp[dfTemp$probs >= 0.975, ]$x_new[1], postSummary[iter, "ciUpper"]))
+  } else {
+    xUpper <- ceiling(dfTemp[dfTemp$probs >= 0.975, ]$x_new[1])
+  }
+  xLower <- 0
+  xLims <- c(xLower, xUpper)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLims)
+
+  yUpper <- rmetalog::dmetalog(m = fit, q = m, term = fit$params$term_limit)
+  yLower <- 0
+  yLims <- c(yLower, yUpper)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
+
+  l <- list(
+    x = list(limits = xLims,
+             breaks = xBreaks),
+    y = list(limits = yLims,
+             breaks = yBreaks)
+  )
+  return(l)
+}
+
+# Generalized inverse Gaussian
+.axisLimsGIG <- function(fit, postSummary, options, iter) {
+
+  quant <- quantile(fit$randData, 0.975) # for upper xLim
+  m <- .modeGIG(fit)
+
+  if(options$posteriorCi) {
+    xUpper <- ceiling(max(quant, postSummary[iter, "ciUpper"]))
+  } else {
+    xUpper <- ceiling(quant)
+  }
+  xLower <- 0
+  xLims <- c(xLower, xUpper)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLims)
+
+  yUpper <- GeneralizedHyperbolic::dgig(x = m, param = fit$param)
+  yLower <- 0
+  yLims <- c(yLower, yUpper)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
+
+  l <- list(
+    x = list(limits = xLims,
+             breaks = xBreaks),
+    y = list(limits = yLims,
+             breaks = yBreaks)
+  )
+  return(l)
+}
+
+
+

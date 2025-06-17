@@ -518,6 +518,23 @@ Form
 				fieldWidth: 60
 			}			
 		}
+
+		Group
+		{
+			title: qsTr("Distribution fit to MCMC samples")
+
+			DropDown
+			{
+				name: "distType"
+				label: qsTr("Distribution")
+				values: 
+				[
+					{ label: qsTr("Generalized inverse Gaussian"), value: "gig" },
+					{ label: qsTr("Metalog"), value: "metalog" }
+				]
+				indexDefaultValue: 0
+			}	
+		}
 	}
 
 	Section

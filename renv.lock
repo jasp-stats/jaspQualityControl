@@ -108,6 +108,12 @@
         "stats"
       ]
     },
+    "GeneralizedHyperbolic": {
+      "Package": "GeneralizedHyperbolic",
+      "Version": "0.8-7",
+      "Source": "Repository",
+      "Repository": "CRAN"
+    },
     "HDInterval": {
       "Package": "HDInterval",
       "Version": "0.2.4",
