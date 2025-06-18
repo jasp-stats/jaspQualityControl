@@ -311,7 +311,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   contribTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
 
   if(ready) {
-    contribTable$setData(.getPercContrib(jaspResults, parts, operators, options))
+    .getPercContrib(jaspResults, parts, operators, options)
+    contribTable$setData(jaspResults[["percContribSamples"]][["object"]])
   } else {
     return()
   }
@@ -364,18 +365,15 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # select relevant parameters
   # names
-  # note this could be written into a helper function
-  sigmaPart <- paste0("g_", parts)
-  sigmaOperator <- paste0("g_", operators)
-  sigmaInter <- paste0("g_", parts, ":", operators)
+  paramNames <- .bfParameterNames(parts, operators, excludeInter)
 
-  if(excludeInter){
-    chains <- chains[, c(sigmaPart, sigmaOperator, "sig2")]
-  } else {
-    chains <- chains[, c(sigmaPart, sigmaOperator, sigmaInter, "sig2")]
-  }
-
+  chains <- chains[, c(paramNames, "sig2")] # including error variance
   samplesMat <- as.matrix(chains)
+
+  # multiply variances with the error variance to reverse standardization
+  for(i in paramNames) {
+    samplesMat[, i] <- samplesMat[, i] * samplesMat[, "sig2"]
+  }
 
   MCMCsamples[["object"]] <- samplesMat
 
@@ -649,15 +647,20 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
 # helper functions
-.bfParameterNames <- function(parts, operators) {
+.bfParameterNames <- function(parts, operators, excludeInter) {
   sigmaPart <- paste0("g_", parts)
   sigmaOperator <- paste0("g_", operators)
   sigmaInter <- paste0("g_", parts, ":", operators)
 
-  return(list(sigmaPart, sigmaOperator, sigmaInter))
+  if(excludeInter) {
+    res <- c(sigmaPart, sigmaOperator)
+  } else {
+    res <- c(sigmaPart, sigmaOperator, sigmaInter)
+  }
+  return(res)
 }
 
-.sourceNames <- function(){
+.sourceNames <- function() {
   return(c("Total gauge r&R",
            "Repeatability",
            "Reproducibility",
@@ -831,6 +834,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .getPercContrib <- function(jaspResults, parts, operators, options) {
+  if(is.null(jaspResults[["percContribSamples"]])) {
+    percContribSamples <- createJaspState()
+    percContribSamples$dependOn(.varCompTableDependencies())
+    jaspResults[["percContribSamples"]] <- percContribSamples
+  } else {
+    return()
+  }
+
   excludeInter <- .evalInter(jaspResults, parts, operators, options)
 
   # get components from MCMC samples
@@ -860,8 +871,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     df[df$sourceName == "Part-to-part", c("lower", "upper")] <- ""
   }
 
-  return(df)
+  percContribSamples[["object"]] <- df
 
+  return()
 }
 
 
@@ -972,6 +984,46 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 }
 
+.getPercStudy <- function(jaspResults, studyVar) {
+  if(is.null(jaspResults[["percStudySamples"]])) {
+    percStudySamples <- createJaspState()
+    percStudySamples$dependOn(c(.varCompTableDependencies(),
+                         "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
+    jaspResults[["percStudySamples"]] <- percStudySamples
+  } else {
+    return()
+  }
+
+  percStudy <- matrix(ncol = ncol(studyVar), nrow = nrow(studyVar))
+  for(i in 1:ncol(studyVar)){
+    percStudy[, i] <- studyVar[[i]] / studyVar$total * 100
+  }
+
+  percStudySamples[["object"]] <- percStudy
+
+  return()
+}
+
+.getPercTol <- function(jaspResults, studyVar, options) {
+  if(is.null(jaspResults[["percTolSamples"]])) {
+    percTolSamples <- createJaspState()
+    percTolSamples$dependOn(c(.varCompTableDependencies(),
+                         "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
+    jaspResults[["percTolSamples"]] <- percTolSamples
+  } else {
+    return()
+  }
+
+  percTol <- matrix(ncol = ncol(studyVar), nrow = nrow(studyVar))
+  for(i in 1:ncol(studyVar)){
+    percTol[, i] <- studyVar[[i]] / options$toleranceValue * 100
+  }
+
+  percTolSamples[["object"]] <- percTol
+
+  return()
+}
+
 .fillTablesGaugeEval <- function(jaspResults, parts, operators, options, whichTable = "sd") {
 
   excludeInter <- .evalInter(jaspResults, parts, operators, options)
@@ -993,17 +1045,13 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   studyVar <- sdDf * factorSd
 
   # % Study Variation
-  percStudy <- matrix(ncol = ncol(studyVar), nrow = nrow(studyVar))
-  for(i in 1:ncol(studyVar)){
-    percStudy[, i] <- studyVar[[i]] / studyVar$total * 100
-  }
+  .getPercStudy(jaspResults, studyVar)
+  percStudy <- jaspResults[["percStudySamples"]][["object"]]
 
   # % Tolerance
   if(options$tolerance) {
-    percTol <- matrix(ncol = ncol(studyVar), nrow = nrow(studyVar))
-    for(i in 1:ncol(studyVar)){
-      percTol[, i] <- studyVar[[i]] / options$toleranceValue * 100
-    }
+    .getPercTol(jaspResults, studyVar, options)
+    percTol <- jaspResults[["percTolSamples"]][["object"]]
   }
 
   # output dependent on table
