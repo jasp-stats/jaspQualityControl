@@ -140,10 +140,21 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   #   .createEffectsTable(effectsRes, jaspResults, measurements, parts, operators, ready)
   # }
 
-  # MCMC
+
   if(ready) {
+    # MCMC
     .runMCMC(jaspResults, dataset, measurements, parts, operators, options)
-    .fitDistToSamples(jaspResults, options, samplesMat = jaspResults[["MCMCsamples"]][["object"]])
+
+    # compute percentages
+    .getStudyVariation(jaspResults, parts, operators, options)
+    .getPercContrib(jaspResults, parts, operators, options)
+    .getPercStudy(jaspResults)
+
+    if(options$tolerance) {
+      .getPercTol(jaspResults, options)
+    }
+
+    .fitDistToSamples(jaspResults, options)
   }
 
   # Variance components table
@@ -171,10 +182,33 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     .createContourPlot(jaspResults, parts, operators, measurements, dataset, options)
   }
 
+  # range chart
   if(options$rChart) {
     .createRChart(jaspResults, dataset, measurements, operators, parts, options, ready)
   }
 
+  # average chart
+  if(options$xBarChart) {
+    .createXbarChart(jaspResults, dataset, measurements, operators, parts, options, ready)
+  }
+
+  # scatter plot
+  if(options$scatterPlot){
+    .createScatterPlotOperators(jaspResults, dataset, measurements, operators, parts, options, ready)
+  }
+
+  # measurement by part plot
+  if(ready && options$partMeasurementPlot) {
+    .createMeasureByPartPlot(jaspResults, dataset, measurements, operators, parts, options)
+  }
+
+  if(ready && options$operatorMeasurementPlot) {
+    .createMeasureByOperatorPlot(jaspResults, dataset, measurements, operators, parts, options, ready, Type3)
+  }
+
+  if(ready && options$partByOperatorMeasurementPlot) {
+    .createPartByOperatorInterPlot(jaspResults, dataset, measurements, operators, parts, options, ready, Type3)
+  }
 }
 
 
@@ -311,8 +345,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   contribTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
 
   if(ready) {
-    .getPercContrib(jaspResults, parts, operators, options)
-    contribTable$setData(jaspResults[["percContribSamples"]][["object"]])
+    contribTable$setData(.percentSampleSummaries(jaspResults[["percContribSamples"]][["object"]], options))
   } else {
     return()
   }
@@ -515,7 +548,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   postSummary <- createJaspTable(title = gettext("Posterior Summary"))
   postSummary$position <- 1
-  postSummary$dependOn(c(.mcmcDependencies(),
+  postSummary$dependOn(c(.varCompTableDependencies(),
                        .postPlotDependencies()))
 
   jaspResults[["variancePosteriors"]][["postSummary"]] <- postSummary
@@ -539,7 +572,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   overtitle <- paste0(mass, "% ", "Credible Interval")
 
 
-  postSummary$addColumnInfo(name = "parameter",     title = gettext("Parameter"), type = "string")
+  postSummary$addColumnInfo(name = "parameter",     title = gettext("Source"), type = "string")
 
   if(options$posteriorPointEstimate) {
     postSummary$addColumnInfo(name = "pointEstimate", title = gettext(pointEst),    type = "number")
@@ -691,7 +724,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 .postPlotDependencies <- function() {
   return(c("posteriorCi", "posteriorCiLower", "posteriorCiMass", "posteriorCiType", "posteriorCiUpper",
            "posteriorPointEstimate", "posteriorPointEstimateType", "posteriorPlot",
-           "distType"))
+           "distType", "posteriorPlotType", "tolerance", "toleranceValue"))
 }
 
 # .optimalMetaLog <- function(fit, parameter, samplesMat) {
@@ -853,10 +886,16 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     contribution[, i] <- internalDF[[i]] / internalDF$total * 100
   }
 
+  percContribSamples[["object"]] <- contribution
+
+  return()
+}
+
+.percentSampleSummaries <- function(samples, options) {
   sourceName <- .sourceNames()
-  means <- colMeans(contribution)
-  lower <- apply(contribution, 2, quantile, probs = 0.025)
-  upper <- apply(contribution, 2, quantile, probs = 0.975)
+  means <- colMeans(samples)
+  lower <- apply(samples, 2, quantile, probs = 0.025)
+  upper <- apply(samples, 2, quantile, probs = 0.975)
 
   df <- data.frame(sourceName,
                    means,
@@ -870,15 +909,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if(options$processVariationReference == "historicalSd") {
     df[df$sourceName == "Part-to-part", c("lower", "upper")] <- ""
   }
-
-  percContribSamples[["object"]] <- df
-
-  return()
+  return(df)
 }
-
-
-
-
 
 
 .createGaugeEval <- function(jaspResults, parts, operators, options, ready) {
@@ -984,7 +1016,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 }
 
-.getPercStudy <- function(jaspResults, studyVar) {
+.getPercStudy <- function(jaspResults, studyVar = jaspResults[["studyVariation"]][["object"]][[1]]) {
   if(is.null(jaspResults[["percStudySamples"]])) {
     percStudySamples <- createJaspState()
     percStudySamples$dependOn(c(.varCompTableDependencies(),
@@ -1004,11 +1036,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.getPercTol <- function(jaspResults, studyVar, options) {
+.getPercTol <- function(jaspResults, options, studyVar = jaspResults[["studyVariation"]][["object"]][[1]]) {
   if(is.null(jaspResults[["percTolSamples"]])) {
     percTolSamples <- createJaspState()
     percTolSamples$dependOn(c(.varCompTableDependencies(),
-                         "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
+                              "studyVarianceMultiplierType", "studyVarianceMultiplierValue", "tolerance", "toleranceValue"))
     jaspResults[["percTolSamples"]] <- percTolSamples
   } else {
     return()
@@ -1024,14 +1056,21 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.fillTablesGaugeEval <- function(jaspResults, parts, operators, options, whichTable = "sd") {
+.getStudyVariation <- function(jaspResults, parts, operators, options) {
+  if(is.null(jaspResults[["studyVariation"]])) {
+    studyVariation <- createJaspState()
+    studyVariation$dependOn(c(.varCompTableDependencies(),
+                              "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
+    jaspResults[["studyVariation"]] <- studyVariation
+  } else {
+    return()
+  }
 
   excludeInter <- .evalInter(jaspResults, parts, operators, options)
 
   # get components from MCMC samples
   internalDF <- .getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter)
 
-  sourceName <- .sourceNames()
   sdDf <- sqrt(internalDF)
 
   # get factor for multiplication
@@ -1044,19 +1083,36 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   studyVar <- sdDf * factorSd
 
+  studyVariation[["object"]] <- list(studyVar, factorSd)
+
+  return()
+}
+
+.fillTablesGaugeEval <- function(jaspResults, parts, operators, options, whichTable = "sd") {
+  excludeInter <- .evalInter(jaspResults, parts, operators, options)
+
+  # get components from MCMC samples
+  internalDF <- .getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter)
+
+  sourceName <- .sourceNames()
+
+  sdDf <- sqrt(internalDF)
+
+  # Study variation
+  studyVar <- jaspResults[["studyVariation"]][["object"]][[1]]
+
   # % Study Variation
-  .getPercStudy(jaspResults, studyVar)
   percStudy <- jaspResults[["percStudySamples"]][["object"]]
 
   # % Tolerance
   if(options$tolerance) {
-    .getPercTol(jaspResults, studyVar, options)
     percTol <- jaspResults[["percTolSamples"]][["object"]]
   }
 
   # output dependent on table
   if(whichTable == "sd") {
     # summaries
+    # note: here i could use the .percentSampleSummaries function
     means <- colMeans(sdDf)
     lower <- apply(sdDf, 2, quantile, probs = 0.025)
     upper <- apply(sdDf, 2, quantile, probs = 0.975)
@@ -1064,6 +1120,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   if(whichTable == "studyVar") {
     # add footnote
+    factorSd <- jaspResults[["studyVariation"]][["object"]][[2]]
     jaspResults[["gaugeEvaluation"]][["stdTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
 
     # summaries
@@ -1118,7 +1175,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["rChart"]]$position <- 7
   jaspResults[["rChart"]]$dependOn(c("rChart", "measurementLongFormat",
                                      "measurementsWideFormat", "report"))
-  jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
+  jaspResults[["rChart"]][["plot"]] <- createJaspPlot(width = 1200, height = 500)
   if (ready) {
     # converting data to wide format for the .controlChart function (note: this can be done more nicely)
     dataset <- .convertToWide(dataset, measurements, parts, operators)
@@ -1152,13 +1209,34 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 ###### Distribution fitting
 
 ### fit functions
-.fitDistToSamples <- function(jaspResults, options, samplesMat) {
+.fitDistToSamples <- function(jaspResults, options) {
   if(is.null(jaspResults[["distFit"]])){
-    distFit <- createJaspState() # note: add dependency on user input for dist from qml
-    distFit$dependOn(c(.mcmcDependencies(), "distType"))
+    distFit <- createJaspState()
+    distFit$dependOn(c(.mcmcDependencies(), "distType", "posteriorPlotType", "processVariationReference",
+                       "tolerance", "toleranceValue"))
     jaspResults[["distFit"]] <- distFit
   } else {
     return()
+  }
+
+  samplesMat <- switch(options$posteriorPlotType,
+                       "var" = jaspResults[["MCMCsamples"]][["object"]],
+                       "percContrib" = jaspResults[["percContribSamples"]][["object"]],
+                       "percStudyVar" = jaspResults[["percStudySamples"]][["object"]],
+                       "percTol" = jaspResults[["percTolSamples"]][["object"]])
+
+  saveRDS(samplesMat, "/Users/julian/Documents/Jasp files/samplesMat.rds")
+
+  if(options$posteriorPlotType != "var") {
+    colnames(samplesMat) <- .sourceNames()
+
+    # filter out columns that only have the same value
+    samplesMat <- samplesMat[, apply(samplesMat, 2, function(col) length(unique(col)) > 1)]
+
+    # remove part-to-part variation if historical sd is specified
+    if(options$processVariationReference == "historicalSd"){
+      samplesMat <- samplesMat[, !colnames(samplesMat) %in% "Part-to-part"]
+    }
   }
 
   # note: I could also pass a list with distribution names and fitting functions here
@@ -1169,7 +1247,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   fit <- switch(distType,
                 "metalog" = .fitMetaLog(samplesMat, bounds = 0, boundedness = "sl",
-                                        term_lower_bound = 6, term_limit = 6), # 6 terms
+                                        term_lower_bound = 5, term_limit = 5), # 5 terms
                 "gig" = .fitGIG(samplesMat))
 
   distFit[["object"]] <- fit
@@ -1204,7 +1282,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 .fillPostSummaryTable <- function(jaspResults, options, parts, operators) {
   if(is.null(jaspResults[["postSummaryStats"]]) && (options$posteriorCi || options$posteriorPointEstimate)){
     postSummaryStats <- createJaspState()
-    postSummaryStats$dependOn(c(.mcmcDependencies(),
+    postSummaryStats$dependOn(c(.varCompTableDependencies(),
                                 .postPlotDependencies()))
     jaspResults[["postSummaryStats"]] <- postSummaryStats
   } else {
@@ -1213,7 +1291,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   fits <- jaspResults[["distFit"]][["object"]]
 
-  parameter <- .convertOutputNames(names(fits), parts, operators) # note: this should only happen when the fits are based on the variance parameters
+  if(options$posteriorPlotType == "var") {
+    parameter <- .convertOutputNames(names(fits), parts, operators) # note: this should only happen when the fits are based on the variance parameters
+  } else {
+    parameter <- names(fits)
+  }
 
   # point estimates
   if(options$posteriorPointEstimate) {
@@ -1374,12 +1456,17 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   variancePosteriors <- createJaspContainer(title = gettext("Posterior Distributions"))
   variancePosteriors$position <- 5
-  variancePosteriors$dependOn(c(.mcmcDependencies(),
+  variancePosteriors$dependOn(c(.varCompTableDependencies(),
                                 .postPlotDependencies()))
   jaspResults[["variancePosteriors"]] <- variancePosteriors
 
   fits <- jaspResults[["distFit"]][["object"]]
-  titles <- .convertOutputNames(names(fits), parts, operators, includeSigma = FALSE) # note: this function needs to be modified so it produces the right lables for the percentages as well
+
+  if(options$posteriorPlotType == "var") {
+    titles <- .convertOutputNames(names(fits), parts, operators, includeSigma = FALSE) # note: this function needs to be modified so it produces the right lables for the percentages as well
+  } else {
+    titles <- names(fits)
+  }
   postSummary <- jaspResults[["postSummaryStats"]][["object"]] # note: this needs to be replaced if I plot dists for the percentages
 
 
@@ -1434,9 +1521,18 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
 
     # axes
-    xLab <- titles[i]
+    xLab <- switch(options$posteriorPlotType,
+                   "var" = titles[i],
+                   "percContrib" = "% Contribution",
+                   "percStudyVar" = "% Study Variation",
+                   "percTol" = "% Tolerance")
+    if(options$posteriorPlotType == "var"){
+      xLab <- bquote(sigma[.(xLab)]^2)
+    }
+
     p <- p +
-      ggplot2::scale_x_continuous(name = bquote(sigma[.(xLab)]^2), breaks = lims$x$breaks,
+      ggplot2::scale_x_continuous(name = xLab,
+                                  breaks = lims$x$breaks,
                                   limits = lims$x$limits, labels = lims$x$breaks) +
       ggplot2::scale_y_continuous(name = "Density", breaks = lims$y$breaks,
                                   limits = lims$y$limits, labels = lims$y$breaks)
@@ -1517,5 +1613,92 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(l)
 }
 
+.createXbarChart <- function(jaspResults, dataset, measurements, operators, parts, options, ready) {
+  if(!is.null(jaspResults[["xBarChart"]])) {
+    return()
+  }
+
+  jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Average chart by operator"))
+  jaspResults[["xBarChart"]]$position <- 8
+  jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat",
+                                        "measurementsWideFormat", "report"))
+  jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(width = 1200, height = 500)
+  if (ready) {
+    # converting data to wide format for the .controlChart function (note: this can be done more nicely)
+    dataset <- .convertToWide(dataset, measurements, parts, operators)
+    measurements <- c("V1", "V2", "V3")
+    xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)],
+                               plotType = "xBar", xBarSdType = "r", stages = operators,
+                               xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
+                               stagesSeparateCalculation = FALSE)
+
+    jaspResults[["xBarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
+    jaspResults[["xBarChart"]][["table"]] <- xBarChart$table
+  }
+
+  return()
+}
 
 
+.createScatterPlotOperators <- function(jaspResults, dataset, measurements, operators, parts, options, ready) {
+  if(!is.null(jaspResults[["gaugeScatterOperators"]]) || !ready) {
+    return()
+  }
+
+  # note: I could convert the data in the main analysis function and then just pass it to the functions
+  dataset <- .convertToWide(dataset, measurements, parts, operators)
+  measurements <- c("V1", "V2", "V3")
+
+  jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(jaspResults = jaspResults, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+  jaspResults[["gaugeScatterOperators"]]$position <- 9
+  jaspResults[["gaugeScatterOperators"]]$dependOn(c("scatterPlot", "scatterPlotFitLine", "scatterPlotOriginLine"))
+
+
+  return()
+}
+
+.createMeasureByPartPlot <- function(jaspResults, dataset, measurements, operators, parts, options) {
+  if (!is.null(jaspResults[["gaugeByPart"]])) {
+    return()
+  }
+  # note: I could convert the data in the main analysis function and then just pass it to the functions
+  datasetWide <- .convertToWide(dataset, measurements, parts, operators)
+  measurementsWide <- c("V1", "V2", "V3")
+
+  jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = datasetWide, measurements = measurementsWide, parts = parts, operators = operators, options = options)
+  jaspResults[["gaugeByPart"]]$position <- 10
+  jaspResults[["gaugeByPart"]]$dependOn("partMeasurementPlotAllValues")
+
+  return()
+}
+
+.createMeasureByOperatorPlot <- function(jaspResults, dataset, measurements, operators, parts, options, ready, Type3) {
+  if(!is.null(jaspResults[["gaugeByOperator"]])) {
+    return()
+  }
+  # note: I could convert the data in the main analysis function and then just pass it to the functions
+  dataset <- .convertToWide(dataset, measurements, parts, operators)
+  measurements <- c("V1", "V2", "V3")
+
+  jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
+  jaspResults[["gaugeByOperator"]]$position <- 11
+  jaspResults[["gaugeByOperator"]]$dependOn("operatorMeasurementPlot") # note: should this also depend on type3?
+
+  return()
+}
+
+.createPartByOperatorInterPlot <- function(jaspResults, dataset, measurements, operators, parts, options, ready, Type3) {
+  if(!is.null(jaspResults[["gaugeByInteraction"]])) {
+    return()
+  }
+  # note: I could convert the data in the main analysis function and then just pass it to the functions
+  dataset <- .convertToWide(dataset, measurements, parts, operators)
+  measurements <- c("V1", "V2", "V3")
+
+  jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
+  jaspResults[["gaugeByInteraction"]]$position <- 12
+  jaspResults[["gaugeByInteraction"]]$dependOn("partByOperatorMeasurementPlot") # note: should this also depend on type3?
+
+  return()
+
+}

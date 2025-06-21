@@ -202,6 +202,7 @@ Form
 		{
 			name: 							"tolerance"
 			label: 							qsTr("Tolerance width")
+			id:								tolerance
 			childrenOnSameRow: 				true
 
 			DoubleField
@@ -273,6 +274,22 @@ Form
 				label: 						qsTr("Posterior")
 				checked: 					false
 
+				DropDown
+				{
+					name:   "posteriorPlotType"
+					label:  ""
+					values: tolerance.checked ? [
+						{ label: qsTr("Variances"),        value: "var" },
+						{ label: qsTr("%Contribution"),    value: "percContrib"},
+						{ label: qsTr("%Study variation"), value: "percStudyVar"},
+						{ label: qsTr("%Tolerance"),       value: "percTol"}
+					] : [
+						{ label: qsTr("Variances"),        value: "var" },
+						{ label: qsTr("%Contribution"),    value: "percContrib"},
+						{ label: qsTr("%Study variation"), value: "percStudyVar"}
+					]
+				}
+
 				CheckBox
 				{
 					label:				qsTr("Point estimate")
@@ -330,7 +347,7 @@ Form
 						fieldWidth:		50
 						defaultValue:	0.25
 						min:			0
-						max:			plotsPriorMarginalUpper.value
+						max:			posteriorCiUpper.value
 						inclusive:		JASP.None
 					}
 
@@ -340,7 +357,7 @@ Form
 						enabled:		posteriorCi.checked
 						name:			"posteriorCiUpper"
 						label:			qsTr("Upper")
-						id:				plotsPriorMarginalUpper
+						id:				posteriorCiUpper
 						fieldWidth:		50
 						defaultValue:	0.75
 						min:			posteriorCiLower.value
