@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2025-06-14 03:51\n"
-"PO-Revision-Date: 2025-03-13 08:25+0000\n"
+"PO-Revision-Date: 2025-06-15 10:02+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10.3-dev\n"
+"X-Generator: Weblate 5.12-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 
 msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
+msgstr "Entfernen von %1$i %2$, die keiner Stufe zugeordnet wurden.<br>"
 
 msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
 msgstr ""
@@ -239,7 +239,6 @@ msgstr ""
 msgid "Design of Experiments - Analysis"
 msgstr ""
 
-#, fuzzy
 msgid "Error"
 msgstr "Fehler"
 
@@ -255,15 +254,13 @@ msgid "Response Optimizer Settings"
 msgstr ""
 
 msgid "lower and upper bounds and target are"
-msgstr ""
+msgstr "untere und obere Grenzen und Ziel sind"
 
-#, fuzzy
 msgid "lower and upper bounds are"
-msgstr "Toleranz: %s"
+msgstr "untere und obere Grenzen sind"
 
-#, fuzzy
 msgid "target is"
-msgstr "Ziel"
+msgstr "Ziel ist"
 
 msgid "The %s estimated from data."
 msgstr ""
@@ -272,13 +269,13 @@ msgid "Response Optimizer Solution"
 msgstr ""
 
 msgid "Optimization Plot"
-msgstr ""
+msgstr "Optimierungsdiagramm"
 
 msgid "Summary Plot"
-msgstr ""
+msgstr "Zusammenfassungsdiagramm"
 
 msgid "Enter values for all predictors."
-msgstr ""
+msgstr "Geben Sie Werte für alle Prädiktoren ein."
 
 msgid "Optimization Plot Summary"
 msgstr ""
@@ -824,7 +821,7 @@ msgstr "ANOVA-Tabelle"
 
 #, fuzzy
 msgid "Range chart by operator"
-msgstr "Messungen nach Operator"
+msgstr "Wertebereichsdiagramm nach Operator"
 
 #, fuzzy
 msgid "Xbar chart by operator"
@@ -832,7 +829,7 @@ msgstr "Messungen nach Operator"
 
 #, fuzzy
 msgid "Average chart by operator"
-msgstr "Messungen nach Operator"
+msgstr "Mittelwertskarte nach Operator"
 
 msgid "Scatterplot operators"
 msgstr ""
@@ -1646,9 +1643,8 @@ msgid ""
 "detected in %s."
 msgstr ""
 
-#, fuzzy
 msgid "Autocorrelation plot"
-msgstr "Autokorrelation"
+msgstr "Autokorrelationsdiagramm"
 
 msgid "Autocorrelation"
 msgstr "Autokorrelation"
@@ -1656,18 +1652,16 @@ msgstr "Autokorrelation"
 msgid "Lag"
 msgstr "Verzögerung"
 
-#, fuzzy
 msgid "Control charts"
-msgstr "Kontrolldiagramm"
+msgstr "Regelkarten"
 
 msgid ""
 "All subgroups are of size 1. Variables charts for subgroups cannot be "
 "calculated. Use variables charts for individuals."
 msgstr ""
 
-#, fuzzy
 msgid "X-bar & %1$s control chart"
-msgstr "X-quer & s-Kontrollkarte"
+msgstr "X-quer & %1$s-Regelkarte"
 
 #, fuzzy
 msgid "Variables Chart for Subgroups Report"
