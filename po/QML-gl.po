@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2025-06-15 08:01+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Galician <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/gl/>\n"
+"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.12-dev\n"
 "X-Language: gl\n"
 "X-Qt-Contexts: true\n"
 
@@ -893,7 +899,7 @@ msgstr "Weibull de 3 parámetros"
 
 msgctxt "processCapabilityStudies|"
 msgid "Display grid lines"
-msgstr "Amosar as liñas da cuadrícula"
+msgstr "Amosar as liñas da grella"
 
 msgctxt "timeWeightedCharts|"
 msgid "Shift size"
@@ -3128,7 +3134,6 @@ msgctxt "doeAnalysis|"
 msgid "Factor levels"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Factor"
 msgstr "Factor"
@@ -3146,7 +3151,6 @@ msgctxt "doeFactorial|"
 msgid "Maximum factor levels"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Factor"
 msgstr "Factor"
@@ -3159,7 +3163,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of discrete factors"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
 msgstr "Factor"

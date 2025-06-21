@@ -1,10 +1,16 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2025-06-19 07:01+0000\n"
+"Last-Translator: Иван Рудаков <riv@polygene.ru>\n"
+"Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/ru/>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.12.1\n"
 "X-Language: ru\n"
 "X-Qt-Contexts: true\n"
 
@@ -108,7 +114,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "attributesCharts|"
 msgid "ID"
@@ -152,11 +158,11 @@ msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Назначенные факторы"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Run order"
-msgstr ""
+msgstr "Порядок выполнения"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Alpha level:"
@@ -180,59 +186,61 @@ msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr ""
+msgstr "Остатки vs подобранные значения"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs run order"
-msgstr ""
+msgstr "Остатки vs порядок выполнения"
 
 msgctxt "doeFactorial|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (default generator)"
-msgstr ""
+msgstr "2-х уровневый факторный (стандартный генератор)"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
-msgstr ""
+msgstr "2-х уровневый факторный (уточнить генератор)"
 
 msgctxt "doeFactorial|"
 msgid "Design generator"
-msgstr ""
+msgstr "Генератор Дизайна"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "2-level split-plot (hard-to-change factors)"
-msgstr ""
+msgstr "2-х уровневый Split-график (трудноизменяемые факторы)"
 
 msgctxt "doeFactorial|"
 msgid "Number of hard-to-change factors"
-msgstr ""
+msgstr "Количество трудноизменяемых факторов"
 
 msgctxt "doeFactorial|"
 msgid "Resolution"
-msgstr ""
+msgstr "Разрешение"
 
 msgctxt "doeFactorial|"
 msgid "Blocks"
-msgstr ""
+msgstr "Блоки"
 
 msgctxt "doeFull|"
 msgid "Design Space"
-msgstr ""
+msgstr "Проектное поле"
 
 msgctxt "doeFull|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Количество факторов"
 
 msgctxt "doeFull|"
 msgid "Run Order"
-msgstr ""
+msgstr "Порядок Выполнения"
 
 msgctxt "doeFull|"
 msgid "Random"
-msgstr ""
+msgstr "Случайный"
 
 msgctxt "doeFull|"
 msgid "Standard"
@@ -240,43 +248,43 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Factor"
-msgstr ""
+msgstr "Фактор"
 
 msgctxt "doeFull|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "doeFull|"
 msgid "Levels"
-msgstr ""
+msgstr "Уровни"
 
 msgctxt "doeFull|"
 msgid "Factor "
-msgstr ""
+msgstr "Фактор "
 
 msgctxt "doeFull|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Дополнительные Параметры"
 
 msgctxt "doeFull|"
 msgid "Number of random runs to repeat"
-msgstr ""
+msgstr "Количество случайных запусков для повторения"
 
 msgctxt "doeFull|"
 msgid "Save as:"
-msgstr ""
+msgstr "Сохранить как:"
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: On</b>"
-msgstr ""
+msgstr "<b>Синхр. Дизайн: Вкл</b>"
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: Off</b>"
-msgstr ""
+msgstr "<b>Синхр. Дизайн: Выкл</b>"
 
 msgctxt "doeModifyDesign|"
 msgid "Available factors"
-msgstr ""
+msgstr "Доступные факторы"
 
 msgctxt "doeModifyDesign|"
 msgid "Response variable"
@@ -284,11 +292,11 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Назначенные факторы"
 
 msgctxt "doeModifyDesign|"
 msgid "Run order"
-msgstr ""
+msgstr "Порядок выполнения"
 
 msgctxt "doeModifyDesign|"
 msgid "Unit Display"
@@ -296,19 +304,19 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Coded"
-msgstr ""
+msgstr "Кодированный"
 
 msgctxt "doeModifyDesign|"
 msgid "Uncoded"
-msgstr ""
+msgstr "Некодированный"
 
 msgctxt "doeModifyDesign|"
 msgid "Run Order"
-msgstr ""
+msgstr "Порядок Выполнения"
 
 msgctxt "doeModifyDesign|"
 msgid "Random"
-msgstr ""
+msgstr "Случайный"
 
 msgctxt "doeModifyDesign|"
 msgid "Standard"
@@ -328,7 +336,7 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
-msgstr ""
+msgstr "Разрешение"
 
 msgctxt "doeModifyDesign|"
 msgid "Full"
@@ -376,7 +384,7 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Дополнительные Параметры"
 
 msgctxt "doeModifyDesign|"
 msgid "Number of center points"
@@ -384,7 +392,7 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Number of random runs to repeat"
-msgstr ""
+msgstr "Количество случайных запусков для повторения"
 
 msgctxt "doeModifyDesign|"
 msgid "Show desired design"
@@ -392,7 +400,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Low"
@@ -416,7 +424,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Design Space"
-msgstr ""
+msgstr "Проектное поле"
 
 msgctxt "doeScreening|"
 msgid "Number of 3-level factors"
@@ -424,7 +432,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Количество факторов"
 
 msgctxt "doeScreening|"
 msgid "Number of runs"
@@ -436,15 +444,15 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Coded"
-msgstr ""
+msgstr "Кодированный"
 
 msgctxt "doeScreening|"
 msgid "Uncoded"
-msgstr ""
+msgstr "Некодированный"
 
 msgctxt "doeScreening|"
 msgid "Run Order"
-msgstr ""
+msgstr "Порядок Выполнения"
 
 msgctxt "doeScreening|"
 msgid "Standard"
@@ -452,15 +460,15 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Random"
-msgstr ""
+msgstr "Случайный"
 
 msgctxt "doeScreening|"
 msgid "Factor"
-msgstr ""
+msgstr "Фактор"
 
 msgctxt "doeScreening|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "doeScreening|"
 msgid "Level 1"
@@ -476,7 +484,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Factor "
-msgstr ""
+msgstr "Фактор "
 
 msgctxt "doeScreening|"
 msgid " Level 1"
@@ -492,7 +500,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Дополнительные Параметры"
 
 msgctxt "doeScreening|"
 msgid "Number of centre points"
@@ -504,15 +512,15 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Save as:"
-msgstr ""
+msgstr "Сохранить как:"
 
 msgctxt "doeScreening|"
 msgid "<b>Sync Design: On</b>"
-msgstr ""
+msgstr "<b>Синхр. Дизайн: Вкл</b>"
 
 msgctxt "doeScreening|"
 msgid "<b>Sync Design: Off</b>"
-msgstr ""
+msgstr "<b>Синхр. Дизайн: Выкл</b>"
 
 msgctxt "msaAttribute|"
 msgid "Data format"
@@ -716,7 +724,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "msaGaugeRR|"
 msgid "Date"
@@ -788,7 +796,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
@@ -1144,7 +1152,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "processCapabilityStudies|"
 msgid "Date"
@@ -1236,7 +1244,7 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Date"
@@ -1300,7 +1308,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date"
@@ -1413,7 +1421,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Blocks"
-msgstr ""
+msgstr "Блоки"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Total"
@@ -1485,7 +1493,7 @@ msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "Save as:"
-msgstr ""
+msgstr "Сохранить как:"
 
 msgctxt "ShowAndExportDesign|"
 msgid "e.g. design.csv"
@@ -1497,7 +1505,7 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Blocks"
-msgstr ""
+msgstr "Блоки"
 
 msgctxt "doeAnalysis|"
 msgid "Model"
@@ -2702,7 +2710,7 @@ msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "rareEventCharts|"
 msgid "Footnote"
@@ -2878,7 +2886,7 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "timeWeightedCharts|"
 msgid "Footnote"
@@ -3116,7 +3124,7 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Factor"
-msgstr ""
+msgstr "Фактор"
 
 msgctxt "doeAnalysis|"
 msgid "Available continuous factors"
@@ -3124,7 +3132,7 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Количество факторов"
 
 msgctxt "doeFactorial|"
 msgid "Maximum factor levels"
@@ -3132,7 +3140,7 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Factor"
-msgstr ""
+msgstr "Фактор"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of continuous factors"
@@ -3144,4 +3152,4 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
-msgstr ""
+msgstr "Фактор"
