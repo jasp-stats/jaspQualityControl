@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 
 msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr "Entfernen von %1$i %2$, die keiner Stufe zugeordnet wurden.<br>"
+msgstr "Entfernen von %1$i %2$s, die keiner Stufe zugeordnet wurden.<br>"
 
 msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
 msgstr ""
