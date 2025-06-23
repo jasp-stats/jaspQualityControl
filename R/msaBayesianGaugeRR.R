@@ -83,7 +83,12 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   #   dataset <- dataset[order(dataset[[parts]]),]
   # }
 
-  # note: I would probably have to convert the wide to long data for my analysis
+  # Converting wide to long format
+  if(wideFormat && ready) {
+    dataset <- .convertToLong(dataset, measurements)
+    measurements <- "Measurements" # name assigned to the column inside the function
+  }
+
 
   if(ready && !options[["type3"]]){
     crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
@@ -165,6 +170,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # Gauge evaluation table
   .createGaugeEval(jaspResults, parts, operators, options, ready)
+
+  # prior
+  if(ready && options$priorPlot) {
+    .plotPrior(jaspResults, options)
+  }
 
   # posteriors
   if(ready && options$posteriorPlot){
@@ -1701,4 +1711,43 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   return()
 
+}
+
+.plotPrior <- function(jaspResults, options) {
+  if(!is.null(jaspResults[["priorPlot"]])) {
+    return()
+  }
+  priorPlot <- createJaspContainer(title = gettext("Prior Distribution"))
+  priorPlot$position <- 5
+  priorPlot$dependOn("rscalePrior")
+  jaspResults[["priorPlot"]] <- priorPlot
+
+  gPrior <- createJaspPlot(title = gettext("g-prior"), width = 600, height = 320)
+
+  # axis limit
+  xUpper <- extraDistr::qinvchisq(0.75, nu = 1, tau = options$rscalePrior^2)
+  xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, xUpper))
+
+  p <- ggplot2::ggplot() +
+    ggplot2::stat_function(fun = extraDistr::dinvchisq,
+                           args = list(nu = 1, tau = options$rscalePrior^2),
+                           linewidth = 1)
+
+  # axes
+  p <- p + ggplot2::scale_y_continuous("Density") +
+    ggplot2::scale_x_continuous("g", breaks = xBreaks, limits = c(0, xUpper))
+
+  # JASP theme
+  p <- p + jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
+  gPrior$plotObject <- p
+
+  priorPlot[["plot"]] <- gPrior
+
+  return()
+}
+
+.convertToLong <- function(dataset, measurements) {
+  dataset <- tidyr::pivot_longer(dataset, cols = tidyr::all_of(measurements),
+                                 values_to = "Measurements", names_to = NULL)
+  return(dataset)
 }
