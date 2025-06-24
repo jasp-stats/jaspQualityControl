@@ -883,7 +883,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(p)
 }
 
-.gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE) {
+.gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE, errorbarDf = NULL) {
   sources <- gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-part'))
   if (!all(is.na(percentToleranceValues))) {
     references <- gettextf(c('%% Contribution', '%% Study variation', '%% Tolerance'))
@@ -904,7 +904,26 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_bar(data = plotframe, mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
-                      position="dodge", stat = "identity") +
+                      position="dodge", stat = "identity")
+
+  # add errorbars
+  if(!is.null(errorbarDf)) {
+    errorbarDf$source <- plotframe$source
+    errorbarDf$reference <- plotframe$reference
+    errorbarDf$lower <- as.numeric(errorbarDf$lower)
+    errorbarDf$upper <- as.numeric(errorbarDf$upper)
+
+    p <- p + ggplot2::geom_errorbar(data = errorbarDf,
+                                    ggplot2::aes(x = plotframe$source,
+                                                 ymax = upper, ymin = lower,
+                                                 fill = plotframe$reference),
+                                    position = ggplot2::position_dodge(0.9),
+                                    size = 0.5, width = 0.5)
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, plotframe$value,
+                                                 errorbarDf$lower,
+                                                 errorbarDf$upper))
+  }
+  p <- p +
     jaspGraphs::themeJaspRaw() +
     jaspGraphs::geom_rangeframe() +
     ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
@@ -1042,7 +1061,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   return(TRUE)
 }
-.trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE, ToleranceVar = "", options, ready, Xlab.StudySD = "", Xlab.Tol = "", ggPlot = FALSE) {
+.trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE, ToleranceVar = "", options, ready, Xlab.StudySD = "", Xlab.Tol = "", ggPlot = FALSE, StudyVarCi = NULL, TolCi = NULL) {
 
   if (!ready)
     return()
@@ -1081,6 +1100,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   if (Xlab.StudySD != "")
     p1 <- p1 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.StudySD))
 
+  if(!is.null(StudyVarCi)) {
+    p1 <- p1 + ggplot2::geom_errorbarh(data = StudyVarCi, ggplot2::aes(xmin = lower, xmax = upper, y = 1),
+                                       inherit.aes = FALSE, linewidth = 0.5, height = 0.5)
+  }
 
   if (ToleranceUsed){
     p2 <- ggplot2::ggplot(mat[c(4:6),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
@@ -1098,6 +1121,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     if (Xlab.Tol != "")
       p2 <- p2 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.Tol))
+
+    if(!is.null(TolCi)) {
+      TolCi$upper <- ifelse(TolCi$upper > 100, 100, TolCi$upper)
+      p2 <- p2 + ggplot2::geom_errorbarh(data = TolCi, ggplot2::aes(xmin = lower, xmax = upper, y = 1),
+                                         inherit.aes = FALSE, linewidth = 0.5, height = 0.5)
+    }
 
     p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p2, p1), layout = matrix(2:1, 2))
     Plot$plotObject <- p3

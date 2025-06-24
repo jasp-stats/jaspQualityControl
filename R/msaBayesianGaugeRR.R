@@ -155,6 +155,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     .getPercContrib(jaspResults, parts, operators, options)
     .getPercStudy(jaspResults)
 
+    ##### delete
+    percContrib <- .percentSampleSummaries(jaspResults[["percContribSamples"]][["object"]], options)
+    saveRDS(percContrib, "/Users/julian/Documents/Jasp files/percContrib.rds")
+    #####
     if(options$tolerance) {
       .getPercTol(jaspResults, options)
     }
@@ -185,6 +189,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     if(options$posteriorCi || options$posteriorPointEstimate) {
       .createPostSummaryTable(jaspResults, options, parts, operators)
     }
+  }
+
+  if(ready && options$varianceComponentsGraph) {
+    .createVarCompPlot(jaspResults, options)
   }
 
   # contour plot
@@ -218,6 +226,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   if(ready && options$partByOperatorMeasurementPlot) {
     .createPartByOperatorInterPlot(jaspResults, dataset, measurements, operators, parts, options, ready, Type3)
+  }
+
+  if(ready && options$trafficLightChart) {
+    .createTrafficLightPlot(jaspResults, options)
   }
 }
 
@@ -913,7 +925,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                    upper)
 
   # remove upper and lower CrI for total variation
-  df[df$sourceName == "Total variation", c("lower", "upper")] <- ""
+  df[df$sourceName == "Total variation", c("lower", "upper")] <- "" # note: this coerces the whole columns to be of type chr
 
   # remove upper and lower CrI for part variation if historicalSd is specified
   if(options$processVariationReference == "historicalSd") {
@@ -1302,7 +1314,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   fits <- jaspResults[["distFit"]][["object"]]
 
   if(options$posteriorPlotType == "var") {
-    parameter <- .convertOutputNames(names(fits), parts, operators) # note: this should only happen when the fits are based on the variance parameters
+    parameter <- .convertOutputNames(names(fits), parts, operators)
   } else {
     parameter <- names(fits)
   }
@@ -1750,4 +1762,97 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   dataset <- tidyr::pivot_longer(dataset, cols = tidyr::all_of(measurements),
                                  values_to = "Measurements", names_to = NULL)
   return(dataset)
+}
+
+.createVarCompPlot <- function(jaspResults, options) {
+  if(!is.null(jaspResults[["varCompPlot"]])) {
+    return()
+  }
+  varCompPlot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
+  varCompPlot$position <- 6
+  varCompPlot$dependOn(c(.varCompTableDependencies(), "varianceComponentsGraph",
+                         "tolerance", "toleranceValue",
+                         "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
+  jaspResults[["varCompPlot"]] <- varCompPlot
+
+  # obtain summaries
+  percContrib <- .percentSampleSummaries(jaspResults[["percContribSamples"]][["object"]], options)
+  percStudyVar <- .percentSampleSummaries(jaspResults[["percStudySamples"]][["object"]], options)
+
+  # remove unnecessary rows
+  percContrib <- percContrib[!percContrib$sourceName %in% c("Operator", "Total variation"), ]
+  percStudyVar <- percStudyVar[!percStudyVar$sourceName %in% c("Operator", "Total variation"), ]
+
+  # values for credible intervals
+  errorbarDf <- rbind(percContrib[, c("lower", "upper")], percStudyVar[, c("lower", "upper")])
+
+  if(options$tolerance) {
+    percTol <- .percentSampleSummaries(jaspResults[["percTolSamples"]][["object"]], options)
+
+    # remove unnecessary rows
+    percTol <- percTol[!percTol$sourceName %in% c("Operator", "Total variation"), ]
+
+    errorbarDf <- rbind(errorbarDf, percTol[, c("lower", "upper")])
+
+    p <- .gaugeVarCompGraph(percContrib$means, percStudyVar$means, percTol$means,
+                            errorbarDf = errorbarDf)
+  } else {
+    p <- .gaugeVarCompGraph(percContrib$means, percStudyVar$means, rep(NA, 4),
+                            errorbarDf = errorbarDf)
+  }
+
+  varCompPlot$plotObject <- p
+
+  return()
+}
+
+.createTrafficLightPlot <- function(jaspResults, options) {
+  if(!is.null(jaspResults[["trafficPlot"]])) {
+    return()
+  }
+
+  trafficPlot <- createJaspContainer(title = gettext("Traffic light chart"))
+  trafficPlot$position <- 12
+  trafficPlot$dependOn(c(.varCompTableDependencies(), "trafficLightChart",
+                         "tolerance", "toleranceValue",
+                         "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
+  jaspResults[["trafficPlot"]] <- trafficPlot
+
+  # % Study var
+  trafficPlotStudy <- createJaspPlot(width = 1000)
+  trafficPlotStudy$position <- 1
+  percStudyVar <- .percentSampleSummaries(jaspResults[["percStudySamples"]][["object"]], options)
+  percStudyVar <- percStudyVar[percStudyVar$sourceName == "Total gauge r&R", ]
+  percStudyVarMean <- percStudyVar$means
+  percStudyVarCrI <- data.frame(lower = as.numeric(percStudyVar["lower"]),
+                                upper = as.numeric(percStudyVar["upper"]))
+
+  if(!options$tolerance) {
+     p <- .trafficplot(StudyVar = percStudyVarMean, ToleranceUsed = FALSE,
+                       ToleranceVar = 0,
+                       options = options, ready = TRUE, ggPlot = TRUE, StudyVarCi = percStudyVarCrI)
+     trafficPlotStudy$plotObject <- p
+  } else {
+  # % Tolerance
+    trafficPlotTol <- createJaspPlot(width = 1000)
+    trafficPlotTol$position <- 2
+    percTol <- .percentSampleSummaries(jaspResults[["percTolSamples"]][["object"]], options)
+    percTol <- percTol[percTol$sourceName == "Total gauge r&R", ]
+    percTolMean <- percTol$means
+    percTolCrI <- data.frame(lower = as.numeric(percTol["lower"]),
+                             upper = as.numeric(percTol["upper"]))
+
+    plots <- .trafficplot(StudyVar = percStudyVarMean, ToleranceUsed = TRUE,
+                          ToleranceVar = percTolMean,
+                          options = options, ready = TRUE, ggPlot = TRUE,
+                          StudyVarCi = percStudyVarCrI,
+                          TolCi = percTolCrI)
+
+    trafficPlotStudy$plotObject <- plots[[2]]
+    trafficPlotTol$plotObject <- plots[[1]]
+    trafficPlot[["trafficPlotTol"]] <- trafficPlotTol
+  }
+
+  trafficPlot[["trafficPlotStudy"]] <- trafficPlotStudy
+  return()
 }
