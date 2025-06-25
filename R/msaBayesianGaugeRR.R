@@ -163,7 +163,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
       .getPercTol(jaspResults, options)
     }
 
-    .fitDistToSamples(jaspResults, options)
+    distFit <- try(.fitDistToSamples(jaspResults, options), silent = TRUE)
   }
 
   # Variance components table
@@ -186,9 +186,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     .plotVariancePosteriors(jaspResults, options, parts, operators)
 
     # summary table
-    if(options$posteriorCi || options$posteriorPointEstimate) {
+    #if(options$posteriorCi || options$posteriorPointEstimate) {
       .createPostSummaryTable(jaspResults, options, parts, operators)
-    }
+      if(inherits(distFit, "try-error")) {
+        jaspResults[["variancePosteriors"]][["postSummary"]]$setError(gettext(
+          "The currently selected distribution could not be fit to the samples. Please select another distribution under <i>Advanced options</i>."))
+        return()
+      }
+    #}
   }
 
   if(ready && options$varianceComponentsGraph) {

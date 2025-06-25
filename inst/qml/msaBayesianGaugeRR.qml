@@ -296,6 +296,7 @@ Form
 					label:				qsTr("Point estimate")
 					name:				"posteriorPointEstimate"
 					childrenOnSameRow:	true
+					checked:			true
 
 					DropDown
 					{
@@ -311,6 +312,7 @@ Form
 					label:				qsTr("CI")
 					id:					posteriorCi
 					childrenOnSameRow:	true
+					checked:			true
 
 					DropDown
 					{
