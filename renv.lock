@@ -1282,7 +1282,7 @@
     },
     "jaspDescriptives": {
       "Package": "jaspDescriptives",
-      "Version": "0.20.0",
+      "Version": "0.95.0",
       "Source": "GitHub",
       "Requirements": [
         "ggplot2",
@@ -1305,7 +1305,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
-      "RemoteSha": "f76d58ffb634dc5a91e1b993396d80b37e4b168f"
+      "RemoteSha": "0e54c8e9261b41a94037cc2affaf6a8a980890f3"
     },
     "jaspGraphs": {
       "Package": "jaspGraphs",
@@ -1332,7 +1332,7 @@
     },
     "jaspTTests": {
       "Package": "jaspTTests",
-      "Version": "0.20.0",
+      "Version": "0.95.0",
       "Source": "GitHub",
       "Requirements": [
         "BayesFactor",
@@ -1348,7 +1348,7 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
-      "RemoteSha": "20f0d01bc746315bca1338db9b5dea289bd58548"
+      "RemoteSha": "91356e2d9445269064239ef8e517d5ad5649ed67"
     },
     "jpeg": {
       "Package": "jpeg",
