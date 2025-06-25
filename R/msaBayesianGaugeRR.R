@@ -272,31 +272,43 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     return()
   }
 
-
-  formula <- as.formula(paste(measurements, "~", parts, "*", operators))
-
-
   if(options$setSeed) {
     set.seed(options$seed)
   }
 
-  # run general comparison for all potential models
-  bfFit <- BayesFactor::generalTestBF(formula, data = dataset,
-                                       whichRandom = c(operators, parts),
-                                       rscaleRandom = options$rscalePrior,
-                                       progress = FALSE)
-  bfDf <- as.data.frame(bfFit)
+  if(options$type3){
+    formula <- as.formula(paste(measurements, "~", parts))
+    bfFit <- BayesFactor::generalTestBF(formula, data = dataset,
+                                        whichRandom = c(operators, parts),
+                                        rscaleRandom = options$rscalePrior,
+                                        progress = FALSE)
+    bfDf <- as.data.frame(bfFit)
+    full <- parts
+    bfFullNull <- bfDf$bf
 
-  # extract full model and model with only main effects
-  main <- paste(parts, "+", operators)
-  full <- paste0(parts, " + ", operators, " + ", parts, ":", operators)
-  bfDf <- bfDf[c(main, full), ]
+  } else {
+    formula <- as.formula(paste(measurements, "~", parts, "*", operators))
+
+    # run general comparison for all potential models
+    bfFit <- BayesFactor::generalTestBF(formula, data = dataset,
+                                         whichRandom = c(operators, parts),
+                                         rscaleRandom = options$rscalePrior,
+                                         progress = FALSE)
+    bfDf <- as.data.frame(bfFit)
+
+    # extract full model and model with only main effects
+    main <- paste(parts, "+", operators)
+    full <- paste0(parts, " + ", operators, " + ", parts, ":", operators)
+    bfDf <- bfDf[c(main, full), ]
+
+    bfFullNull <- bfDf[full, ]$bf
+  }
+
 
   # dropping unnecessary columns
   bfDf <- bfDf[, !colnames(bfDf) %in% c("time", "code")]
 
   # obtain BF comparing full model to other models
-  bfFullNull <- bfDf[full, ]$bf
   bfDf$bf <- bfFullNull / bfDf$bf
 
   # add null model
@@ -307,9 +319,12 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # add model names & change colnames
   colnames(bfDf) <- c("comparisonBF", "error")
-  bfDf$modelName <- jaspBase::gsubInteractionSymbol(rownames(bfDf))
+  bfDf$modelName <- rownames(bfDf)
+  if(!options$type3) {
+    bfDf$modelName <- jaspBase::gsubInteractionSymbol(bfDf$modelName)
+  }
 
-  bfDF <- bfDf[order(bfDf$comparisonBF), ]
+  bfDf <- bfDf[order(-bfDf$comparisonBF), ]
 
   jaspResults[["modelComparison"]][["object"]] <- bfDf
 
@@ -339,7 +354,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if(ready) {
     varCompTable$setData(.getVarianceComponents(jaspResults, parts, operators, options))
 
-    if(.evalInter(jaspResults, parts, operators, options)) {
+    if(!options$type3 && .evalInter(jaspResults, parts, operators, options)) {
       varCompTable$addFootnote("The components are based on the model only including the main effects.")
     } else {
       varCompTable$addFootnote("The components are based on the full model.")
@@ -387,17 +402,22 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     return()
   }
 
-  # obtain BF in favor of full over main effects model
-  excludeInter <- .evalInter(jaspResults, parts, operators, options)
-  if(excludeInter){
-    formula <- as.formula(paste(measurements, "~", parts, "+", operators))
+  if(!options$type3){
+    # obtain BF in favor of full over main effects model
+    excludeInter <- .evalInter(jaspResults, parts, operators, options)
+    if(excludeInter){
+      formula <- as.formula(paste(measurements, "~", parts, "+", operators))
+    } else {
+      formula <- as.formula(paste(measurements, "~", parts, "*", operators))
+    }
+    # fit the model with BayesFactor
+    fit <- BayesFactor::lmBF(formula, whichRandom = c(parts, operators),
+                             data = dataset, rscaleRandom = options$rscalePrior)
   } else {
-    formula <- as.formula(paste(measurements, "~", parts, "*", operators))
+    formula <- as.formula(paste(measurements, "~", parts))
+    fit <- BayesFactor::lmBF(formula, whichRandom = parts,
+                             data = dataset, rscaleRandom = options$rscalePrior)
   }
-
-  # fit the model with BayesFactor
-  fit <- BayesFactor::lmBF(formula, whichRandom = c(parts, operators),
-                           data = dataset, rscaleRandom = options$rscalePrior)
 
   nchains <- options$mcmcChains
   burnin <- options$mcmcBurnin
@@ -420,7 +440,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # select relevant parameters
   # names
-  paramNames <- .bfParameterNames(parts, operators, excludeInter)
+  paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
 
   chains <- chains[, c(paramNames, "sig2")] # including error variance
   samplesMat <- as.matrix(chains)
@@ -459,7 +479,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
 
-  sourceName <- .sourceNames()
+  sourceName <- .sourceNames(options)
 
   return(data.frame(sourceName,
                     postMeans,
@@ -500,16 +520,20 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   samplesMat <- jaspResults[["MCMCsamples"]][["object"]]
 
-  # obtain relevant components
-  if(excludeInter){
-    reprod <- samplesMat[, sigmaOperator]
-  } else {
-    reprod <- samplesMat[, sigmaOperator] + samplesMat[, sigmaInter]
-  }
   repeatability <- samplesMat[, "sig2"]
-  gauge <- reprod + repeatability
-  operator <- samplesMat[, sigmaOperator]
   part <- samplesMat[, sigmaPart]
+  if(!options$type3) {
+    # obtain relevant components
+    if(excludeInter){
+      reprod <- samplesMat[, sigmaOperator]
+    } else {
+      reprod <- samplesMat[, sigmaOperator] + samplesMat[, sigmaInter]
+    }
+    gauge <- reprod + repeatability
+    operator <- samplesMat[, sigmaOperator]
+  } else {
+    gauge <- repeatability
+  }
   total <- gauge + part
 
   # replace total variation with historical variance and adjust
@@ -522,13 +546,20 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     part <- mean(part) + diffTotals
   }
 
-  internalDF <- data.frame(gauge,
-                           repeatability,
-                           reprod,
-                           operator,
-                           part,
-                           total
-  )
+  if(!options$type3) {
+    internalDF <- data.frame(gauge,
+                             repeatability,
+                             reprod,
+                             operator,
+                             part,
+                             total
+    )
+  } else {
+    internalDF <- data.frame(gauge,
+                             repeatability,
+                             part,
+                             total)
+  }
   return(internalDF)
 }
 
@@ -702,26 +733,39 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
 # helper functions
-.bfParameterNames <- function(parts, operators, excludeInter) {
+.bfParameterNames <- function(parts, operators, excludeInter, options) {
   sigmaPart <- paste0("g_", parts)
   sigmaOperator <- paste0("g_", operators)
   sigmaInter <- paste0("g_", parts, ":", operators)
 
-  if(excludeInter) {
-    res <- c(sigmaPart, sigmaOperator)
+  if(!options$type3) {
+    if(excludeInter) {
+      res <- c(sigmaPart, sigmaOperator)
+    } else {
+      res <- c(sigmaPart, sigmaOperator, sigmaInter)
+    }
   } else {
-    res <- c(sigmaPart, sigmaOperator, sigmaInter)
+    res <- sigmaPart
   }
   return(res)
 }
 
-.sourceNames <- function() {
-  return(c("Total gauge r&R",
-           "Repeatability",
-           "Reproducibility",
-           "Operator",
-           "Part-to-part",
-           "Total variation"))
+.sourceNames <- function(options) {
+  if(options$type3) {
+    res <- c("Total gauge r&R",
+             "Repeatability",
+             "Part-to-part",
+             "Total variation")
+  } else {
+    res <- c("Total gauge r&R",
+             "Repeatability",
+             "Reproducibility",
+             "Operator",
+             "Part-to-part",
+             "Total variation")
+  }
+
+  return(res)
 }
 
 .bfTableDependencies <- function() {
@@ -914,7 +958,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .percentSampleSummaries <- function(samples, options) {
-  sourceName <- .sourceNames()
+  sourceName <- .sourceNames(options)
   means <- colMeans(samples)
   lower <- apply(samples, 2, quantile, probs = 0.025)
   upper <- apply(samples, 2, quantile, probs = 0.975)
@@ -1116,7 +1160,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # get components from MCMC samples
   internalDF <- .getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter)
 
-  sourceName <- .sourceNames()
+  sourceName <- .sourceNames(options)
 
   sdDf <- sqrt(internalDF)
 
@@ -1250,7 +1294,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   saveRDS(samplesMat, "/Users/julian/Documents/Jasp files/samplesMat.rds")
 
   if(options$posteriorPlotType != "var") {
-    colnames(samplesMat) <- .sourceNames()
+    colnames(samplesMat) <- .sourceNames(options)
 
     # filter out columns that only have the same value
     samplesMat <- samplesMat[, apply(samplesMat, 2, function(col) length(unique(col)) > 1)]
@@ -1477,7 +1521,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   variancePosteriors <- createJaspContainer(title = gettext("Posterior Distributions"))
-  variancePosteriors$position <- 5
+  variancePosteriors$position <- 6
   variancePosteriors$dependOn(c(.varCompTableDependencies(),
                                 .postPlotDependencies()))
   jaspResults[["variancePosteriors"]] <- variancePosteriors
@@ -1786,6 +1830,12 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # values for credible intervals
   errorbarDf <- rbind(percContrib[, c("lower", "upper")], percStudyVar[, c("lower", "upper")])
 
+  # adding NAs for the reproducibility row because the plotting function expects the row to be present
+  if(options$type3) {
+    percContrib <- rbind(percContrib[1:2, ], NA, percContrib[3, ])
+    percStudyVar <- rbind(percStudyVar[1:2, ], NA, percStudyVar[3, ])
+  }
+
   if(options$tolerance) {
     percTol <- .percentSampleSummaries(jaspResults[["percTolSamples"]][["object"]], options)
 
@@ -1794,11 +1844,15 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     errorbarDf <- rbind(errorbarDf, percTol[, c("lower", "upper")])
 
+    if(options$type3) {
+      percTol <- rbind(percTol[1:2, ], NA, percTol[3, ])
+    }
+
     p <- .gaugeVarCompGraph(percContrib$means, percStudyVar$means, percTol$means,
-                            errorbarDf = errorbarDf)
+                            errorbarDf = errorbarDf, Type3 = options$type3)
   } else {
-    p <- .gaugeVarCompGraph(percContrib$means, percStudyVar$means, rep(NA, 4),
-                            errorbarDf = errorbarDf)
+    p <- .gaugeVarCompGraph(percContrib$means, percStudyVar$means, NA,
+                            errorbarDf = errorbarDf, Type3 = options$type3)
   }
 
   varCompPlot$plotObject <- p
@@ -1828,10 +1882,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                                 upper = as.numeric(percStudyVar["upper"]))
 
   if(!options$tolerance) {
-     p <- .trafficplot(StudyVar = percStudyVarMean, ToleranceUsed = FALSE,
-                       ToleranceVar = 0,
-                       options = options, ready = TRUE, ggPlot = TRUE, StudyVarCi = percStudyVarCrI)
-     trafficPlotStudy$plotObject <- p
+    p <- .trafficplot(StudyVar = percStudyVarMean, ToleranceUsed = FALSE,
+                      ToleranceVar = 0,
+                      options = options, ready = TRUE, StudyVarCi = percStudyVarCrI)
   } else {
   # % Tolerance
     trafficPlotTol <- createJaspPlot(width = 1000)
@@ -1842,17 +1895,13 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     percTolCrI <- data.frame(lower = as.numeric(percTol["lower"]),
                              upper = as.numeric(percTol["upper"]))
 
-    plots <- .trafficplot(StudyVar = percStudyVarMean, ToleranceUsed = TRUE,
-                          ToleranceVar = percTolMean,
-                          options = options, ready = TRUE, ggPlot = TRUE,
-                          StudyVarCi = percStudyVarCrI,
-                          TolCi = percTolCrI)
-
-    trafficPlotStudy$plotObject <- plots[[2]]
-    trafficPlotTol$plotObject <- plots[[1]]
-    trafficPlot[["trafficPlotTol"]] <- trafficPlotTol
+    p <- .trafficplot(StudyVar = percStudyVarMean, ToleranceUsed = TRUE,
+                      ToleranceVar = percTolMean,
+                      options = options, ready = TRUE,
+                      StudyVarCi = percStudyVarCrI,
+                      TolCi = percTolCrI)
   }
+  trafficPlot[["trafficPlot"]] <- p
 
-  trafficPlot[["trafficPlotStudy"]] <- trafficPlotStudy
   return()
 }

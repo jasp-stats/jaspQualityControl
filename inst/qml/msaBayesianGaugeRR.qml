@@ -136,6 +136,7 @@ Form
 			label: 							qsTr("Estimation")
 			id: 							estimationType
 			indexDefaultValue: 				0
+			visible: 						!type3.checked
 			values: 
 			[
 				{ label: qsTr("Automatic"), value: "automatic" },
@@ -151,7 +152,7 @@ Form
 			defaultValue: 			1
 			min: 					0.001
 			decimals: 				3
-			visible: 				estimationType.currentValue == "automatic"
+			visible: 				!type3.checked && estimationType.currentValue == "automatic"
 		}
 
 		CheckBox
