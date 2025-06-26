@@ -180,6 +180,13 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     .plotPrior(jaspResults, options)
   }
 
+  # MCMC diagnostics
+  if(ready) {
+    if(options$diagnosticsTable || options$diagnosticsPlots) {
+      .mcmcDiagnostics(jaspResults, parts, operators, options)
+    }
+  }
+
   # posteriors
   if(ready && options$posteriorPlot){
     .fillPostSummaryTable(jaspResults, options, parts, operators)
@@ -448,14 +455,23 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
 
   chains <- chains[, c(paramNames, "sig2")] # including error variance
-  samplesMat <- as.matrix(chains)
 
-  # multiply variances with the error variance to reverse standardization
-  for(i in paramNames) {
-    samplesMat[, i] <- samplesMat[, i] * samplesMat[, "sig2"]
-  }
+  # samplesMat <- as.matrix(chains)
 
-  MCMCsamples[["object"]] <- samplesMat
+  # # multiply variances with the error variance to reverse standardization
+  # for(i in paramNames) {
+  #   samplesMat[, i] <- samplesMat[, i] * samplesMat[, "sig2"]
+  # }
+
+  chains <- lapply(chains, function(x) {
+    for (i in paramNames) {
+      x[, i] <- x[, i] * x[, "sig2"]
+    }
+    return(x)
+  })
+
+  saveRDS(chains, "/Users/julian/Documents/Jasp files/chains.rds")
+  MCMCsamples[["object"]] <- coda::mcmc.list(chains)
 
   return()
 }
@@ -523,7 +539,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   sigmaOperator <- paste0("g_", operators)
   sigmaInter <- paste0("g_", parts, ":", operators)
 
-  samplesMat <- jaspResults[["MCMCsamples"]][["object"]]
+  samplesMat <- as.matrix(jaspResults[["MCMCsamples"]][["object"]])
 
   repeatability <- samplesMat[, "sig2"]
   part <- samplesMat[, sigmaPart]
@@ -665,7 +681,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   tempPlot <- createJaspPlot(width = 600, height = 600)
   tempPlot$position <- 2
 
-  samplesMat <- jaspResults[["MCMCsamples"]][["object"]]
+  samplesMat <- as.matrix(jaspResults[["MCMCsamples"]][["object"]])
   excludeInter <- .evalInter(jaspResults, parts, operators, options)
   compDf <-.getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter) # note: should the historcial sd influence this if entered by the user?
 
@@ -1291,12 +1307,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   samplesMat <- switch(options$posteriorPlotType,
-                       "var" = jaspResults[["MCMCsamples"]][["object"]],
+                       "var" = as.matrix(jaspResults[["MCMCsamples"]][["object"]]),
                        "percContrib" = jaspResults[["percContribSamples"]][["object"]],
                        "percStudyVar" = jaspResults[["percStudySamples"]][["object"]],
                        "percTol" = jaspResults[["percTolSamples"]][["object"]])
-
-  saveRDS(samplesMat, "/Users/julian/Documents/Jasp files/samplesMat.rds")
 
   if(options$posteriorPlotType != "var") {
     colnames(samplesMat) <- .sourceNames(options)
@@ -1909,4 +1923,67 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   trafficPlot[["trafficPlot"]] <- p
 
   return()
+}
+
+
+### MCMC diagnostics
+
+## main function
+.mcmcDiagnostics <- function(jaspResults, parts, operators, options) {
+  if(!is.null(jaspResults[["mcmcDiagnostics"]])) {
+    return()
+  }
+  mcmcDiagnostics <- createJaspContainer(title = gettext("MCMC diagnostics"))
+  mcmcDiagnostics$position <- 5
+  mcmcDiagnostics$dependOn(c(.mcmcDependencies(),
+                           "diagnosticsPlots", "diagnosticsPlotType",
+                           "diagnosticsTable"))
+  jaspResults[["mcmcDiagnostics"]] <- mcmcDiagnostics
+
+  # general input needed for the sub-functions
+  chains <- jaspResults[["MCMCsamples"]][["object"]]
+  excludeInter <- .evalInter(jaspResults, parts, operators, options)
+
+  paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
+  paramNames <- c(paramNames, "sig2")
+
+
+  if(options$diagnosticsTable) {
+    diagnosticsTable <- createJaspTable()
+    diagnosticsTable$position <- 1
+    mcmcDiagnostics[["table"]] <- diagnosticsTable
+
+    diagnosticsTable$addColumnInfo(name = "parameter",         title = gettext("Parameter"),   type = "string")
+    diagnosticsTable$addColumnInfo(name = "essBulk",           title = gettext("ESS (Bulk)"),  type = "number")
+    diagnosticsTable$addColumnInfo(name = "essTail",           title = gettext("ESS (Tail)"),  type = "number")
+    diagnosticsTable$addColumnInfo(name = "rhat",              title = gettext("Rhat"),        type = "number")
+    diagnosticsTable$addColumnInfo(name = "mcseMean",          title = gettext("MCSE (Mean)"), type = "number")
+    diagnosticsTable$addColumnInfo(name = "mcseQuantileLower", title = gettext("0.025"),       type = "number", overtitle = gettext("MCSE (Quantiles)"))
+    diagnosticsTable$addColumnInfo(name = "mcseQuantileUpper", title = gettext("0.975"),       type = "number", overtitle = gettext("MCSE (Quantiles)"))
+
+    diagnosticsTable$setData(.fillDiagnosticsTable(chains = posterior::as_draws_array(chains),
+                                                   paramNames = .convertOutputNames(paramNames, parts, operators, includeSigma = TRUE)))
+  }
+  return()
+}
+
+# function MCMC diagnostics table
+.fillDiagnosticsTable <- function(chains, paramNames) {
+  # note: posterior::ess_bulk(posteriorChains[,, "sig2"]) # this gives a different result compared to using apply??
+  essBulk <- apply(chains, 3, posterior::ess_bulk)
+  essTail <- apply(chains, 3, posterior::ess_tail)
+  rhat <- apply(chains, 3, posterior::rhat)
+  mcseMean <- apply(chains, 3, posterior::mcse_mean)
+  mcseQuantileLower <- apply(chains, 3, posterior::mcse_quantile, probs = c(0.025, 0.975))[1, ] # 0.025
+  mcseQuantileUpper <- apply(chains, 3, posterior::mcse_quantile, probs = c(0.025, 0.975))[2, ] # 0.975
+
+  return(data.frame(parameter = paramNames,
+                    essBulk,
+                    essTail,
+                    rhat,
+                    mcseMean,
+                    mcseQuantileLower,
+                    mcseQuantileUpper
+  ))
+
 }

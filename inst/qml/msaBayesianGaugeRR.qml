@@ -476,6 +476,40 @@ Form
 			}
 		}
 	}
+	
+	Section
+	{
+		title: 		qsTr("MCMC diagnostics")
+		columns: 	1
+
+		CheckBox
+		{
+			label: 	  	qsTr("Diagnostics table")
+			name: 	  	"diagnosticsTable"
+			checked:	true
+		}
+
+		CheckBox
+		{
+			label: 	  			qsTr("Plots")
+			name: 	  			"diagnosticsPlots"
+			checked:			false
+			childrenOnSameRow: 	true
+
+			DropDown
+			{
+				name: "diagnosticsPlotType"
+				values:
+				[
+					{ label: qsTr("Traceplot"), 		value: "trace" },
+					{ label: qsTr("Autocorrelation"), 	value: "autocor" },
+					{ label: qsTr("Density"),			value: "density"}
+				]
+				indexDefaultValue: 0
+			}
+		}
+		
+	}
 
 	Section
 	{
