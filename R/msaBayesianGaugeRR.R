@@ -42,7 +42,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # note this should also be in a function (I could also just make the dropdown include full model, main effects only and automatic)
   if(options$estimationType == "manual"){
-    if(options$fullModel || options$mainEffectsOnly) {
+    if(options$modelType == "fullModel" || options$modelType == "mainEffectsOnly") {
       ready <- ready
     } else {
       ready <- FALSE
@@ -163,7 +163,19 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
       .getPercTol(jaspResults, options)
     }
 
-    distFit <- try(.fitDistToSamples(jaspResults, options), silent = TRUE)
+    #distFit <- try(.fitDistToSamples(jaspResults, options), silent = TRUE)
+
+    errorOccurred <- FALSE
+
+    distFit <- tryCatch(
+      {
+        .fitDistToSamples(jaspResults, options)
+      },
+      error = function(e) {
+        errorOccurred <<- TRUE
+        return(e$message)  # or just return(NULL)
+      }
+    )
   }
 
   # Variance components table
@@ -195,11 +207,17 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     # summary table
     #if(options$posteriorCi || options$posteriorPointEstimate) {
       .createPostSummaryTable(jaspResults, options, parts, operators)
-      if(inherits(distFit, "try-error")) {
-        jaspResults[["variancePosteriors"]][["postSummary"]]$setError(gettext(
-          "The currently selected distribution could not be fit to the samples. Please select another distribution under <i>Advanced options</i>."))
+      # if(inherits(distFit, "try-error")) {
+      #   jaspResults[["variancePosteriors"]][["postSummary"]]$setError(gettext(
+      #     "The currently selected distribution could not be fit to the samples. Please select another distribution under <i>Advanced options</i>."))
+      #   return()
+      # }
+
+      if(errorOccurred) {
+        jaspResults[["variancePosteriors"]][["postSummary"]]$setError(distFit)
         return()
       }
+
     #}
   }
 
@@ -365,6 +383,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # set data
   if(ready) {
     varCompTable$setData(.getVarianceComponents(jaspResults, parts, operators, options))
+    varCompTable$addFootnote(gettext("Credible intervals are estimated based on the MCMC samples."))
 
     if(!options$type3 && .evalInter(jaspResults, parts, operators, options)) {
       varCompTable$addFootnote("The components are based on the model only including the main effects.")
@@ -395,6 +414,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   if(ready) {
     contribTable$setData(.percentSampleSummaries(jaspResults[["percContribSamples"]][["object"]], options))
+    contribTable$addFootnote(gettext("Credible intervals are estimated based on the MCMC samples."))
   } else {
     return()
   }
@@ -521,11 +541,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   if(options$estimationType == "manual"){
-    if(options$fullModel){
+    if(options$modelType == "fullModel"){
       excludeInter <- FALSE
     }
 
-    if(options$mainEffectsOnly){
+    if(options$modelType == "mainEffectsOnly"){
       excludeInter <- TRUE
     }
   }
@@ -540,6 +560,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   sigmaInter <- paste0("g_", parts, ":", operators)
 
   samplesMat <- as.matrix(jaspResults[["MCMCsamples"]][["object"]])
+  saveRDS(samplesMat, "/Users/julian/Documents/Jasp files/samplesMat.rds")
 
   repeatability <- samplesMat[, "sig2"]
   part <- samplesMat[, sigmaPart]
@@ -659,6 +680,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
   postSummary$setData(jaspResults[["postSummaryStats"]][["object"]])
+  postSummary$addFootnote(gettext("Credible intervals are estimated based on the distribution fit to the MCMC samples."))
 
   return()
 }
@@ -798,14 +820,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
            "measurementLongFormat", "seed", "setSeed", "rscalePrior", "bfFavorFull",
            "mcmcChains", "mcmcBurnin", "mcmcIterations", "historicalSdValue", "processVariationReference",
-           "estimationType", "fullModel", "mainEffectsOnly"))
+           "estimationType", "modelType"))
 }
 
 .mcmcDependencies <- function() {
   return(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
            "measurementLongFormat", "seed", "setSeed", "rscalePrior", "bfFavorFull",
            "mcmcChains", "mcmcBurnin", "mcmcIterations",
-           "estimationType", "fullModel", "mainEffectsOnly"))
+           "estimationType", "modelType"))
 }
 
 .postPlotDependencies <- function() {
@@ -1031,6 +1053,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     studyVarData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "studyVar")[, -1] # remove source name
     colnames(studyVarData) <- c("meansStudyVar", "lowerStudyVar", "upperStudyVar")
     stdTable$setData(cbind(stdData, studyVarData))
+
+    stdTable$addFootnote(gettext("Credible intervals are estimated based on the MCMC samples."))
   }
 
 
@@ -1080,6 +1104,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
       colnames(percTolData) <- c("meansPercTol", "lowerPercTol", "upperPercTol")
       percStudyVarTable$setData(cbind(percStudyData, percTolData))
     }
+    percStudyVarTable$addFootnote(gettext("Credible intervals are estimated based on the MCMC samples."))
   }
 
 
@@ -1331,8 +1356,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     set.seed(options$seed)
   }
   fit <- switch(distType,
-                "metalog" = .fitMetaLog(samplesMat, bounds = 0, boundedness = "sl",
-                                        term_lower_bound = 5, term_limit = 5), # 5 terms
+                "metalog" =
+                  if(options$posteriorPlotType == "var" || options$posteriorPlotType == "percTol") {
+                    .fitMetaLog(samplesMat, bounds = 0, boundedness = "sl",
+                                term_lower_bound = 5, term_limit = 5) # 5 terms
+                  } else {
+                    .fitMetaLog(samplesMat, bounds = c(0, 100), boundedness = "b",
+                                term_lower_bound = 5, term_limit = 5) # 5 terms
+                  },
                 "gig" = .fitGIG(samplesMat))
 
   distFit[["object"]] <- fit
@@ -1548,13 +1579,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   fits <- jaspResults[["distFit"]][["object"]]
 
   if(options$posteriorPlotType == "var") {
-    titles <- .convertOutputNames(names(fits), parts, operators, includeSigma = FALSE) # note: this function needs to be modified so it produces the right lables for the percentages as well
+    titles <- .convertOutputNames(names(fits), parts, operators, includeSigma = FALSE)
   } else {
     titles <- names(fits)
   }
-  postSummary <- jaspResults[["postSummaryStats"]][["object"]] # note: this needs to be replaced if I plot dists for the percentages
-
-
+  postSummary <- jaspResults[["postSummaryStats"]][["object"]]
 
   for(i in seq_along(titles)) {
     tempPlot <- createJaspPlot(title = gettext(titles[i]), width = 600, height = 320)
@@ -1647,18 +1676,25 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   m <- .modeMetaLog(fit)
 
   if(options$posteriorCi) {
-    xUpper <- ceiling(max(dfTemp[dfTemp$probs >= 0.975, ]$x_new[1], postSummary[iter, "ciUpper"]))
+    xUpper <- max(dfTemp[dfTemp$probs >= 0.99, ]$x_new[1], postSummary[iter, "ciUpper"])
   } else {
-    xUpper <- ceiling(dfTemp[dfTemp$probs >= 0.975, ]$x_new[1])
+    xUpper <- dfTemp[dfTemp$probs >= 0.99, ]$x_new[1]
   }
+
+  if(options$posteriorPlotType != "var" && options$posteriorPlotType != "percTol") {
+    xUpper <- 100
+  }
+
   xLower <- 0
   xLims <- c(xLower, xUpper)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLims)
+  xLims <- c(xBreaks[1], xBreaks[length(xBreaks)])
 
   yUpper <- rmetalog::dmetalog(m = fit, q = m, term = fit$params$term_limit)
   yLower <- 0
   yLims <- c(yLower, yUpper)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
+  yLims <- c(yBreaks[1], yBreaks[length(yBreaks)])
 
   l <- list(
     x = list(limits = xLims,
@@ -1672,22 +1708,29 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 # Generalized inverse Gaussian
 .axisLimsGIG <- function(fit, postSummary, options, iter) {
 
-  quant <- quantile(fit$randData, 0.975) # for upper xLim
+  quant <- quantile(fit$randData, 0.99) # for upper xLim
   m <- .modeGIG(fit)
 
   if(options$posteriorCi) {
-    xUpper <- ceiling(max(quant, postSummary[iter, "ciUpper"]))
+    xUpper <- max(quant, postSummary[iter, "ciUpper"])
   } else {
-    xUpper <- ceiling(quant)
+    xUpper <- quant
   }
+
+  if(options$posteriorPlotType != "var" && options$posteriorPlotType != "percTol") {
+    xUpper <- 100
+  }
+
   xLower <- 0
   xLims <- c(xLower, xUpper)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLims)
+  xLims <- c(xBreaks[1], xBreaks[length(xBreaks)])
 
   yUpper <- GeneralizedHyperbolic::dgig(x = m, param = fit$param)
   yLower <- 0
   yLims <- c(yLower, yUpper)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
+  yLims <- c(yBreaks[1], yBreaks[length(yBreaks)])
 
   l <- list(
     x = list(limits = xLims,
@@ -1964,6 +2007,18 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     diagnosticsTable$setData(.fillDiagnosticsTable(chains = posterior::as_draws_array(chains),
                                                    paramNames = .convertOutputNames(paramNames, parts, operators, includeSigma = TRUE)))
   }
+
+  if(options$diagnosticsPlots) {
+    switch(options$diagnosticsPlotType,
+           "trace" = .tracePlot(jaspResults, chains = posterior::as_draws_array(chains), paramNames,
+                                xLabs = .convertOutputNames(paramNames, parts, operators, includeSigma = FALSE)),
+           "autocor" = .autocorPlot(jaspResults, chains = posterior::as_draws_array(chains), paramNames,
+                                    titles = .convertOutputNames(paramNames, parts, operators, includeSigma = FALSE)),
+           "density" = .densityDiagnosticsPlot(jaspResults, chains = posterior::as_draws_array(chains), paramNames,
+                                               xLabs = .convertOutputNames(paramNames, parts, operators, includeSigma = FALSE)))
+
+  }
+
   return()
 }
 
@@ -1985,5 +2040,89 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                     mcseQuantileLower,
                     mcseQuantileUpper
   ))
+}
 
+.tracePlot <- function(jaspResults, chains, paramNames, xLabs) {
+  colors <- rep_len(rstan:::rstanvis_aes_ops("chain_colors"), dim(chains)[2])
+
+  for(i in seq_along(paramNames)) {
+    tempPlot <- createJaspPlot(width = 600, height = 320)
+
+    p <- bayesplot::mcmc_trace(chains, pars = paramNames[i]) +
+      ggplot2::scale_color_manual(values = colors) +
+      jaspGraphs::themeJaspRaw() +
+      jaspGraphs::geom_rangeframe() +
+      ggplot2::ylab(bquote(sigma[.(xLabs[i])]^2))
+
+    tempPlot$plotObject <- p
+    jaspResults[["mcmcDiagnostics"]][[paramNames[i]]] <- tempPlot
+  }
+  return()
+}
+
+.autocorPlot <- function(jaspResults, chains, paramNames, titles) {
+
+  for(i in seq_along(paramNames)) {
+    tempPlot <- createJaspPlot(width = 500, height = 500)
+
+    p <- bayesplot::mcmc_acf(chains, pars = paramNames[i]) +
+      jaspGraphs::themeJaspRaw() +
+      jaspGraphs::geom_rangeframe() +
+      ggplot2::theme(strip.text = ggplot2::element_blank(),
+                     title = ggplot2::element_text(size = 15)) +
+      ggplot2::labs(title = bquote(sigma[.(titles[i])]^2))
+
+    tempPlot$plotObject <- p
+    jaspResults[["mcmcDiagnostics"]][[paramNames[i]]] <- tempPlot
+  }
+  return()
+}
+
+.densityDiagnosticsPlot <- function(jaspResults, chains, paramNames, xLabs) {
+  colors <- rep_len(rstan:::rstanvis_aes_ops("chain_colors"), dim(chains)[2])
+
+  for(i in seq_along(paramNames)) {
+    tempPlot <- createJaspPlot(width = 600, height = 320)
+
+    # density for axis limits
+    d <- apply(chains[, , paramNames[i]], 2, function(x) {
+      df <- data.frame(x = density(x)$x,
+                       y = density(x)$y)
+      return(df)
+    })
+    d <- do.call(rbind.data.frame, d)
+    xLims <- c(0, d$x[d$y < 1e-3 & d$x > 3][1]) # note: there should be a better way to handle the part with x > 3
+
+    manualScaleX <- FALSE
+    if(!any(is.na(xLims))) {
+      manualScaleX <- TRUE
+      axisBreaksX <- jaspGraphs::getPrettyAxisBreaks(xLims)
+      xLims <- c(axisBreaksX[1], axisBreaksX[length(axisBreaksX)]) # note: this ensures that the axis does not stop abruptly
+    }
+
+    # note: the y lims do not work well for the operator plot
+    # yLims <- c(0, max(d$y))
+    # axisBreaksY <- jaspGraphs::getPrettyAxisBreaks(yLims)
+    # yLims <- c(axisBreaksY[1], axisBreaksY[length(axisBreaksY)]) # note: this ensures that the axis does not stop abruptly
+
+    p <- bayesplot::mcmc_dens_overlay(chains, pars = paramNames[i]) +
+      ggplot2::scale_color_manual(values = colors) +
+      ggplot2::xlab(bquote(sigma[.(xLabs[i])]^2)) +
+      ggplot2::xlim(xLims)
+
+    if(manualScaleX) {
+      p <- p + ggplot2::scale_x_continuous(limits = xLims,
+                                           breaks = axisBreaksX)
+    }
+
+    p <- p + jaspGraphs::themeJaspRaw() +
+      jaspGraphs::geom_rangeframe() +
+      # ggplot2::scale_y_continuous("Density", limits = yLims, breaks = axisBreaksY) +
+      ggplot2::scale_y_continuous("Density") +
+      ggplot2::theme(axis.ticks.y = ggplot2::element_line())
+
+    tempPlot$plotObject <- p
+    jaspResults[["mcmcDiagnostics"]][[paramNames[i]]] <- tempPlot
+  }
+  return()
 }

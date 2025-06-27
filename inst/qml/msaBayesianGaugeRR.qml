@@ -154,26 +154,31 @@ Form
 			decimals: 				3
 			visible: 				!type3.checked && estimationType.currentValue == "automatic"
 		}
-
-		CheckBox
+		
+		RadioButtonGroup
 		{
-			name: 					"fullModel"
-			label: 					qsTr("Full model")
-			id: 					fullModel
-			checked: 				false
-			enabled:    			!mainEffectsOnly.checked
-			visible: 				estimationType.currentValue == "manual"
+			name: 					"modelType"
+			visible: 				!type3.checked
+
+			RadioButton
+			{
+				name: 					"fullModel"
+				label: 					qsTr("Full model")
+				id: 					fullModel
+				checked: 				true
+				visible: 				estimationType.currentValue == "manual"
+			}
+
+			RadioButton
+			{
+				name: 							"mainEffectsOnly"
+				label: 							qsTr("Main effects only")
+				id: 							mainEffectsOnly
+				checked: 						false
+				visible: 						estimationType.currentValue == "manual"
+			}	
 		}
-
-		CheckBox
-		{
-			name: 							"mainEffectsOnly"
-			label: 							qsTr("Main effects only")
-			id: 							mainEffectsOnly
-			enabled:						!fullModel.checked
-			checked: 						false
-			visible: 						estimationType.currentValue == "manual"
-		}			
+				
 
 
 		DropDown
@@ -279,6 +284,7 @@ Form
 				{
 					name:   "posteriorPlotType"
 					label:  ""
+					id:     posteriorPlotType
 					values: tolerance.checked ? [
 						{ label: qsTr("Variances"),        value: "var" },
 						{ label: qsTr("%Contribution"),    value: "percContrib"},
@@ -581,9 +587,10 @@ Form
 			{
 				name: "distType"
 				label: qsTr("Distribution")
-				values: 
-				[
+				values: posteriorPlotType.currentValue == "var" ? [
 					{ label: qsTr("Generalized inverse Gaussian"), value: "gig" },
+					{ label: qsTr("Metalog"), value: "metalog" }
+				] : [	
 					{ label: qsTr("Metalog"), value: "metalog" }
 				]
 				indexDefaultValue: 0
