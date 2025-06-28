@@ -455,7 +455,13 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   burnin <- options$mcmcBurnin
   iter <- options$mcmcIterations
 
-  chains <- coda::mcmc.list()
+
+  # get relevant parameters
+  paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
+  paramNames <- c(paramNames, "sig2")
+
+  # initiate array
+  mcmcArray <- array(dim = c(iter - burnin, nchains, length(paramNames)))
 
   if(options$setSeed) {
     set.seed(options$seed)
@@ -465,34 +471,63 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     # run chain
     mcmcChain <- BayesFactor::posterior(fit, iterations = iter)
 
-    # exclude burn-in samples
-    chains[[i]] <- coda::as.mcmc(mcmcChain[-(1:burnin), ])
+    # select subset
+    mcmcChain <- as.matrix(mcmcChain)
+    mcmcChain <- mcmcChain[, paramNames]
+
+    # discard burnin
+    mcmcChain <- mcmcChain[-(1:burnin), ]
+
+    # revert standardization
+    for(j in paramNames[paramNames != "sig2"]) {
+      mcmcChain[, j] <- mcmcChain[, j] * mcmcChain[, "sig2"]
+    }
+
+    mcmcArray[, i, ] <- mcmcChain
   }
 
+  dimnames(mcmcArray) <- list(NULL, NULL, paramNames)
+  MCMCsamples[["object"]] <- mcmcArray
 
-  # select relevant parameters
-  # names
-  paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
-
-  chains <- chains[, c(paramNames, "sig2")] # including error variance
-
-  # samplesMat <- as.matrix(chains)
-
-  # # multiply variances with the error variance to reverse standardization
-  # for(i in paramNames) {
-  #   samplesMat[, i] <- samplesMat[, i] * samplesMat[, "sig2"]
+  ##### old code
+  # chains <- coda::mcmc.list()
+  #
+  # if(options$setSeed) {
+  #   set.seed(options$seed)
   # }
-
-  chains <- lapply(chains, function(x) {
-    for (i in paramNames) {
-      x[, i] <- x[, i] * x[, "sig2"]
-    }
-    return(x)
-  })
-
-  saveRDS(chains, "/Users/julian/Documents/Jasp files/chains.rds")
-  MCMCsamples[["object"]] <- coda::mcmc.list(chains)
-
+  #
+  # for(i in 1:nchains) {
+  #   # run chain
+  #   mcmcChain <- BayesFactor::posterior(fit, iterations = iter)
+  #
+  #   # exclude burn-in samples
+  #   chains[[i]] <- coda::as.mcmc(mcmcChain[-(1:burnin), ])
+  # }
+  #
+  #
+  # # select relevant parameters
+  # # names
+  # paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
+  #
+  # chains <- chains[, c(paramNames, "sig2")] # including error variance
+  #
+  # # samplesMat <- as.matrix(chains)
+  #
+  # # # multiply variances with the error variance to reverse standardization
+  # # for(i in paramNames) {
+  # #   samplesMat[, i] <- samplesMat[, i] * samplesMat[, "sig2"]
+  # # }
+  #
+  # chains <- lapply(chains, function(x) {
+  #   for (i in paramNames) {
+  #     x[, i] <- x[, i] * x[, "sig2"]
+  #   }
+  #   return(x)
+  # })
+  #
+  # saveRDS(chains, "/Users/julian/Documents/Jasp files/chains.rds")
+  # MCMCsamples[["object"]] <- coda::mcmc.list(chains)
+  #####
   return()
 }
 
@@ -559,7 +594,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   sigmaOperator <- paste0("g_", operators)
   sigmaInter <- paste0("g_", parts, ":", operators)
 
-  samplesMat <- as.matrix(jaspResults[["MCMCsamples"]][["object"]])
+  samplesMat <- .arrayToMat(jaspResults[["MCMCsamples"]][["object"]])
+  samplesMat <- as.matrix(samplesMat)
   saveRDS(samplesMat, "/Users/julian/Documents/Jasp files/samplesMat.rds")
 
   repeatability <- samplesMat[, "sig2"]
@@ -703,7 +739,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   tempPlot <- createJaspPlot(width = 600, height = 600)
   tempPlot$position <- 2
 
-  samplesMat <- as.matrix(jaspResults[["MCMCsamples"]][["object"]])
+  samplesMat <- .arrayToMat(jaspResults[["MCMCsamples"]][["object"]])
   excludeInter <- .evalInter(jaspResults, parts, operators, options)
   compDf <-.getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter) # note: should the historcial sd influence this if entered by the user?
 
@@ -1332,7 +1368,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   samplesMat <- switch(options$posteriorPlotType,
-                       "var" = as.matrix(jaspResults[["MCMCsamples"]][["object"]]),
+                       "var" = .arrayToMat(jaspResults[["MCMCsamples"]][["object"]]),
                        "percContrib" = jaspResults[["percContribSamples"]][["object"]],
                        "percStudyVar" = jaspResults[["percStudySamples"]][["object"]],
                        "percTol" = jaspResults[["percTolSamples"]][["object"]])
@@ -2042,6 +2078,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   ))
 }
 
+# plotting functions for diagnostics
 .tracePlot <- function(jaspResults, chains, paramNames, xLabs) {
   colors <- rep_len(rstan:::rstanvis_aes_ops("chain_colors"), dim(chains)[2])
 
@@ -2125,4 +2162,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     jaspResults[["mcmcDiagnostics"]][[paramNames[i]]] <- tempPlot
   }
   return()
+}
+
+
+.arrayToMat <- function(array) {
+  mat <- matrix(array, nrow = prod(dim(array)[1:2]), ncol = dim(array)[3])
+  colnames(mat) <- dimnames(array)[[3]]
+  return(mat)
 }
