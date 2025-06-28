@@ -2048,7 +2048,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     switch(options$diagnosticsPlotType,
            "trace" = .tracePlot(jaspResults, chains = posterior::as_draws_array(chains), paramNames,
                                 xLabs = .convertOutputNames(paramNames, parts, operators, includeSigma = FALSE)),
-           "autocor" = .autocorPlot(jaspResults, chains = posterior::as_draws_array(chains), paramNames,
+           "autocor" = .autocorPlot(jaspResults, chains = chains, paramNames,
                                     titles = .convertOutputNames(paramNames, parts, operators, includeSigma = FALSE)),
            "density" = .densityDiagnosticsPlot(jaspResults, chains = posterior::as_draws_array(chains), paramNames,
                                                xLabs = .convertOutputNames(paramNames, parts, operators, includeSigma = FALSE)))
@@ -2085,11 +2085,18 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   for(i in seq_along(paramNames)) {
     tempPlot <- createJaspPlot(width = 600, height = 320)
 
+    # obtain y lims
+    dat <- chains[, , paramNames[i]]
+    yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(min(dat), max(dat)))
+    yLims <- c(yBreaks[1], yBreaks[length(yBreaks)])
+
     p <- bayesplot::mcmc_trace(chains, pars = paramNames[i]) +
       ggplot2::scale_color_manual(values = colors) +
       jaspGraphs::themeJaspRaw() +
       jaspGraphs::geom_rangeframe() +
-      ggplot2::ylab(bquote(sigma[.(xLabs[i])]^2))
+      ggplot2::scale_y_continuous(bquote(sigma[.(xLabs[i])]^2),
+                                  breaks = yBreaks,
+                                  limits = yLims)
 
     tempPlot$plotObject <- p
     jaspResults[["mcmcDiagnostics"]][[paramNames[i]]] <- tempPlot
@@ -2098,15 +2105,25 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .autocorPlot <- function(jaspResults, chains, paramNames, titles) {
+  colors <- rep_len(rstan:::rstanvis_aes_ops("chain_colors"), dim(chains)[2])
 
   for(i in seq_along(paramNames)) {
-    tempPlot <- createJaspPlot(width = 500, height = 500)
+    tempPlot <- createJaspPlot(width = 500, height = 320)
 
-    p <- bayesplot::mcmc_acf(chains, pars = paramNames[i]) +
+    # obtain data for plotting
+    dat <- chains[, , paramNames[i]]
+    l <- apply(dat, 2, acf, lag.max = 20, plot = FALSE)
+    l <- lapply(l, function(x) list(acf = x$acf, lag = x$lag))
+    df <- do.call(rbind.data.frame, l)
+    df$chain <- factor(rep(1:dim(dat)[2], each = length(l[[1]]$lag)))
+
+    p <- ggplot2::ggplot(df, ggplot2::aes(x = lag, y = acf, color = chain)) +
+      ggplot2::geom_line() +
+      ggplot2::geom_hline(yintercept = 0, alpha = 0.5) +
+      ggplot2::scale_color_manual(values = colors) +
       jaspGraphs::themeJaspRaw() +
       jaspGraphs::geom_rangeframe() +
-      ggplot2::theme(strip.text = ggplot2::element_blank(),
-                     title = ggplot2::element_text(size = 15)) +
+      ggplot2::labs(x = "Lag", y = "Autocorrelation") +
       ggplot2::labs(title = bquote(sigma[.(titles[i])]^2))
 
     tempPlot$plotObject <- p
