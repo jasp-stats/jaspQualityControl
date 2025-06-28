@@ -299,6 +299,12 @@ Form
 
 				CheckBox
 				{
+					label:				qsTr("Display histogram")
+					name:				"posteriorHistogram"
+				}
+
+				CheckBox
+				{
 					label:				qsTr("Point estimate")
 					name:				"posteriorPointEstimate"
 					childrenOnSameRow:	true
@@ -318,7 +324,7 @@ Form
 					label:				qsTr("CI")
 					id:					posteriorCi
 					childrenOnSameRow:	true
-					checked:			true
+					checked:			false
 
 					DropDown
 					{

@@ -712,11 +712,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if(options$posteriorCi) {
     postSummary$addColumnInfo(name = "ciLower",       title = gettext("Lower"),     type = "number", overtitle = gettext(overtitle))
     postSummary$addColumnInfo(name = "ciUpper",       title = gettext("Upper"),     type = "number", overtitle = gettext(overtitle))
+    postSummary$addFootnote(gettext("Credible intervals are estimated based on the distribution fit to the MCMC samples."))
   }
 
 
   postSummary$setData(jaspResults[["postSummaryStats"]][["object"]])
-  postSummary$addFootnote(gettext("Credible intervals are estimated based on the distribution fit to the MCMC samples."))
 
   return()
 }
@@ -869,7 +869,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 .postPlotDependencies <- function() {
   return(c("posteriorCi", "posteriorCiLower", "posteriorCiMass", "posteriorCiType", "posteriorCiUpper",
            "posteriorPointEstimate", "posteriorPointEstimateType", "posteriorPlot",
-           "distType", "posteriorPlotType", "tolerance", "toleranceValue"))
+           "distType", "posteriorPlotType", "tolerance", "toleranceValue", "posteriorHistogram"))
 }
 
 # .optimalMetaLog <- function(fit, parameter, samplesMat) {
@@ -1613,6 +1613,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["variancePosteriors"]] <- variancePosteriors
 
   fits <- jaspResults[["distFit"]][["object"]]
+  samplesMat <- switch(options$posteriorPlotType,
+                       "var" = .arrayToMat(jaspResults[["MCMCsamples"]][["object"]]),
+                       "percContrib" = jaspResults[["percContribSamples"]][["object"]],
+                       "percStudyVar" = jaspResults[["percStudySamples"]][["object"]],
+                       "percTol" = jaspResults[["percTolSamples"]][["object"]])
 
   if(options$posteriorPlotType == "var") {
     titles <- .convertOutputNames(names(fits), parts, operators, includeSigma = FALSE)
@@ -1624,12 +1629,22 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   for(i in seq_along(titles)) {
     tempPlot <- createJaspPlot(title = gettext(titles[i]), width = 600, height = 320)
 
+    p <- ggplot2::ggplot()
+
+    # add histogram outlines
+    if(options$posteriorHistogram) {
+      p <- p + ggplot2::geom_step(data = data.frame(x = samplesMat[, i]),
+                                  ggplot2::aes(x = x, y = ggplot2::after_stat(density)),
+                                  stat = "bin", direction = "mid", linewidth = 1)
+      pBuild <- ggplot2::ggplot_build(p)
+      maxHistDens <- max(pBuild$data[[1]][, "density"])
+    }
+
     # select function for axis limits based on distribution
     axisFun <- .axisLimFuns()[[options$distType]]
 
-    lims <- axisFun(fits[[i]], postSummary, options, iter = i)
-
-    p <- ggplot2::ggplot()
+    lims <- axisFun(fits[[i]], postSummary, options, iter = i,
+                    histDens = ifelse(options$posteriorHistogram, maxHistDens, 0))
 
     # credible interval
     if(options$posteriorCi) {
@@ -1706,7 +1721,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 # Metalog
-.axisLimsMetaLog <- function(fit, postSummary, options, iter) {
+.axisLimsMetaLog <- function(fit, postSummary, options, iter, histDens = 0) {
 
   dfTemp <- fit$dataValues
   m <- .modeMetaLog(fit)
@@ -1726,7 +1741,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLims)
   xLims <- c(xBreaks[1], xBreaks[length(xBreaks)])
 
-  yUpper <- rmetalog::dmetalog(m = fit, q = m, term = fit$params$term_limit)
+  yUpper <- max(rmetalog::dmetalog(m = fit, q = m, term = fit$params$term_limit),
+                histDens)
   yLower <- 0
   yLims <- c(yLower, yUpper)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
@@ -1742,7 +1758,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 # Generalized inverse Gaussian
-.axisLimsGIG <- function(fit, postSummary, options, iter) {
+.axisLimsGIG <- function(fit, postSummary, options, iter, histDens = 0) {
 
   quant <- quantile(fit$randData, 0.99) # for upper xLim
   m <- .modeGIG(fit)
@@ -1762,7 +1778,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLims)
   xLims <- c(xBreaks[1], xBreaks[length(xBreaks)])
 
-  yUpper <- GeneralizedHyperbolic::dgig(x = m, param = fit$param)
+  yUpper <- max(GeneralizedHyperbolic::dgig(x = m, param = fit$param),
+                histDens)
   yLower <- 0
   yLims <- c(yLower, yUpper)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
