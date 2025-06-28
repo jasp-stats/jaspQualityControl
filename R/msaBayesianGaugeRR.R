@@ -136,7 +136,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   # Model comparison table
-  if(options[["RRTable"]]){
+  if(options[["RRTable"]] && !options$report){ # I should probably add && !report here
     .createBFtable(jaspResults, dataset, options, measurements, parts, operators, ready)
   }
 
@@ -178,34 +178,39 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     )
   }
 
-  # Variance components table
-  .createVarCompTable(jaspResults, parts, operators, ready, options)
+  # insert report here
+  if(options$report) {
+    .createGaugeReport(jaspResults, dataset, measurements, parts, operators, options, ready)
+  } else {
 
-  # % Contribution to total variation table
-  .createPercContribTable(jaspResults, options, parts, operators, ready)
+    # Variance components table
+    .createVarCompTable(jaspResults, parts, operators, ready, options)
 
-  # Gauge evaluation table
-  .createGaugeEval(jaspResults, parts, operators, options, ready)
+    # % Contribution to total variation table
+    .createPercContribTable(jaspResults, options, parts, operators, ready)
 
-  # prior
-  if(ready && options$priorPlot) {
-    .plotPrior(jaspResults, options)
-  }
+    # Gauge evaluation table
+    .createGaugeEval(jaspResults, parts, operators, options, ready)
 
-  # MCMC diagnostics
-  if(ready) {
-    if(options$diagnosticsTable || options$diagnosticsPlots) {
-      .mcmcDiagnostics(jaspResults, parts, operators, options)
+    # prior
+    if(ready && options$priorPlot) {
+      .plotPrior(jaspResults, options)
     }
-  }
 
-  # posteriors
-  if(ready && options$posteriorPlot){
-    .fillPostSummaryTable(jaspResults, options, parts, operators)
-    .plotVariancePosteriors(jaspResults, options, parts, operators)
+    # MCMC diagnostics
+    if(ready) {
+      if(options$diagnosticsTable || options$diagnosticsPlots) {
+        .mcmcDiagnostics(jaspResults, parts, operators, options)
+      }
+    }
 
-    # summary table
-    #if(options$posteriorCi || options$posteriorPointEstimate) {
+    # posteriors
+    if(ready && options$posteriorPlot){
+      .fillPostSummaryTable(jaspResults, options, parts, operators)
+      .plotVariancePosteriors(jaspResults, options, parts, operators)
+
+      # summary table
+      #if(options$posteriorCi || options$posteriorPointEstimate) {
       .createPostSummaryTable(jaspResults, options, parts, operators)
       # if(inherits(distFit, "try-error")) {
       #   jaspResults[["variancePosteriors"]][["postSummary"]]$setError(gettext(
@@ -218,48 +223,49 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
         return()
       }
 
-    #}
-  }
+      #}
+    }
 
-  if(ready && options$varianceComponentsGraph) {
-    .createVarCompPlot(jaspResults, options)
-  }
+    if(ready && options$varianceComponentsGraph) {
+      .createVarCompPlot(jaspResults, options)
+    }
 
-  # contour plot
-  if(ready && options$contourPlot) {
-    .createContourPlot(jaspResults, parts, operators, measurements, dataset, options)
-  }
+    # contour plot
+    if(ready && options$contourPlot) {
+      .createContourPlot(jaspResults, parts, operators, measurements, dataset, options)
+    }
 
-  # range chart
-  if(options$rChart) {
-    .createRChart(jaspResults, dataset, measurements, operators, parts, options, ready)
-  }
+    # range chart
+    if(options$rChart) {
+      .createRChart(jaspResults, dataset, measurements, operators, parts, options, ready)
+    }
 
-  # average chart
-  if(options$xBarChart) {
-    .createXbarChart(jaspResults, dataset, measurements, operators, parts, options, ready)
-  }
+    # average chart
+    if(options$xBarChart) {
+      .createXbarChart(jaspResults, dataset, measurements, operators, parts, options, ready)
+    }
 
-  # scatter plot
-  if(options$scatterPlot){
-    .createScatterPlotOperators(jaspResults, dataset, measurements, operators, parts, options, ready)
-  }
+    # scatter plot
+    if(options$scatterPlot){
+      .createScatterPlotOperators(jaspResults, dataset, measurements, operators, parts, options, ready)
+    }
 
-  # measurement by part plot
-  if(ready && options$partMeasurementPlot) {
-    .createMeasureByPartPlot(jaspResults, dataset, measurements, operators, parts, options)
-  }
+    # measurement by part plot
+    if(ready && options$partMeasurementPlot) {
+      .createMeasureByPartPlot(jaspResults, dataset, measurements, operators, parts, options)
+    }
 
-  if(ready && options$operatorMeasurementPlot) {
-    .createMeasureByOperatorPlot(jaspResults, dataset, measurements, operators, parts, options, ready, Type3)
-  }
+    if(ready && options$operatorMeasurementPlot) {
+      .createMeasureByOperatorPlot(jaspResults, dataset, measurements, operators, parts, options, ready, Type3)
+    }
 
-  if(ready && options$partByOperatorMeasurementPlot) {
-    .createPartByOperatorInterPlot(jaspResults, dataset, measurements, operators, parts, options, ready, Type3)
-  }
+    if(ready && options$partByOperatorMeasurementPlot) {
+      .createPartByOperatorInterPlot(jaspResults, dataset, measurements, operators, parts, options, ready, Type3)
+    }
 
-  if(ready && options$trafficLightChart) {
-    .createTrafficLightPlot(jaspResults, options)
+    if(ready && options$trafficLightChart) {
+      .createTrafficLightPlot(jaspResults, options)
+    }
   }
 }
 
@@ -1923,17 +1929,18 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(dataset)
 }
 
-.createVarCompPlot <- function(jaspResults, options) {
-  if(!is.null(jaspResults[["varCompPlot"]])) {
-    return()
+.createVarCompPlot <- function(jaspResults, options, plotOnly = FALSE) {
+  if(!plotOnly) {
+    if(!is.null(jaspResults[["varCompPlot"]])) {
+      return()
+    }
+    varCompPlot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
+    varCompPlot$position <- 6
+    varCompPlot$dependOn(c(.varCompTableDependencies(), "varianceComponentsGraph",
+                           "tolerance", "toleranceValue",
+                           "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
+    jaspResults[["varCompPlot"]] <- varCompPlot
   }
-  varCompPlot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
-  varCompPlot$position <- 6
-  varCompPlot$dependOn(c(.varCompTableDependencies(), "varianceComponentsGraph",
-                         "tolerance", "toleranceValue",
-                         "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
-  jaspResults[["varCompPlot"]] <- varCompPlot
-
   # obtain summaries
   percContrib <- .percentSampleSummaries(jaspResults[["percContribSamples"]][["object"]], options)
   percStudyVar <- .percentSampleSummaries(jaspResults[["percStudySamples"]][["object"]], options)
@@ -1970,26 +1977,31 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                             errorbarDf = errorbarDf, Type3 = options$type3)
   }
 
-  varCompPlot$plotObject <- p
+  if(plotOnly) {
+    return(p)
+  } else {
+    varCompPlot$plotObject <- p
+  }
 
   return()
 }
 
-.createTrafficLightPlot <- function(jaspResults, options) {
-  if(!is.null(jaspResults[["trafficPlot"]])) {
-    return()
+.createTrafficLightPlot <- function(jaspResults, options, plotOnly = FALSE) {
+  if(!plotOnly) {
+    if(!is.null(jaspResults[["trafficPlot"]])) {
+      return()
+    }
+
+    trafficPlot <- createJaspContainer(title = gettext("Traffic light chart"))
+    trafficPlot$position <- 12
+    trafficPlot$dependOn(c(.varCompTableDependencies(), "trafficLightChart",
+                           "tolerance", "toleranceValue",
+                           "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
+    jaspResults[["trafficPlot"]] <- trafficPlot
   }
-
-  trafficPlot <- createJaspContainer(title = gettext("Traffic light chart"))
-  trafficPlot$position <- 12
-  trafficPlot$dependOn(c(.varCompTableDependencies(), "trafficLightChart",
-                         "tolerance", "toleranceValue",
-                         "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
-  jaspResults[["trafficPlot"]] <- trafficPlot
-
   # % Study var
-  trafficPlotStudy <- createJaspPlot(width = 1000)
-  trafficPlotStudy$position <- 1
+  # trafficPlotStudy <- createJaspPlot(width = 1000)
+  # trafficPlotStudy$position <- 1
   percStudyVar <- .percentSampleSummaries(jaspResults[["percStudySamples"]][["object"]], options)
   percStudyVar <- percStudyVar[percStudyVar$sourceName == "Total gauge r&R", ]
   percStudyVarMean <- percStudyVar$means
@@ -2014,10 +2026,15 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                       ToleranceVar = percTolMean,
                       options = options, ready = TRUE,
                       StudyVarCi = percStudyVarCrI,
-                      TolCi = percTolCrI)
+                      TolCi = percTolCrI,
+                      ggPlot = plotOnly)
   }
-  trafficPlot[["trafficPlot"]] <- p
 
+  if(plotOnly) {
+    return(p)
+  } else {
+    trafficPlot[["trafficPlot"]] <- p
+  }
   return()
 }
 
@@ -2203,4 +2220,136 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   mat <- matrix(array, nrow = prod(dim(array)[1:2]), ncol = dim(array)[3])
   colnames(mat) <- dimnames(array)[[3]]
   return(mat)
+}
+
+
+### Report
+
+.reportDependencies <- function() {
+  return(c("report", "reportMetaData", "reportTitle",
+           "reportTitleText", "reportPartName", "reportPartNameText", "reportGaugeName",
+           "reportGaugeNameText", "reportCharacteristic", "reportCharacteristicText",
+           "reportGaugeNumber", "reportGaugeNumberText", "reportTolerance", "reportToleranceText",
+           "reportLocation", "reportLocationText", "reportPerformedBy", "reportPerformedByText",
+           "reportDate", "reportDateText", "reportVariationComponents", "reportMeasurementsByPartPlot",
+           "reportRChartByOperator", "reportMeasurementsByOperatorPlot", "reportAverageChartByOperator",
+           "reportPartByOperatorPlot", "reportTrafficLightChart", "reportMetaData"))
+}
+
+.getReportTitle <- function(options) {
+  if (options[["reportTitle"]] ) {
+    title <- if (options[["reportTitleText"]] == "") gettext("Gauge r&R report") else options[["reportTitleText"]]
+  } else {
+    title <- ""
+  }
+  return(title)
+}
+
+.getReportMetaData <- function(options) {
+  if (options[["reportMetaData"]]) {
+    text <- c()
+    text <- if (options[["reportPartName"]]) c(text, gettextf("Part name: %s", options[["reportPartNameText"]])) else text
+    text <- if (options[["reportGaugeName"]]) c(text, gettextf("Gauge name: %s", options[["reportGaugeNameText"]])) else text
+    text <- if (options[["reportCharacteristic"]]) c(text, gettextf("Characteristic: %s", options[["reportCharacteristicText"]])) else text
+    text <- if (options[["reportGaugeNumber"]]) c(text, gettextf("Gauge number: %s", options[["reportGaugeNumberText"]])) else text
+    text <- if (options[["reportTolerance"]]) c(text, gettextf("Tolerance: %s", options[["reportToleranceText"]])) else text
+    text <- if (options[["reportLocation"]]) c(text, gettextf("Location: %s", options[["reportLocationText"]])) else text
+    text <- if (options[["reportPerformedBy"]]) c(text, gettextf("Performed by: %s", options[["reportPerformedByText"]])) else text
+    text <- if (options[["reportDate"]]) c(text, gettextf("Date: %s", options[["reportDateText"]])) else text
+  } else {
+    text <- NULL
+  }
+
+  return(text)
+}
+
+.getReportPlots <- function(jaspResults, dataset, measurements, parts, operators, options) {
+  # note: I could convert the data in the main analysis function and then just pass it to the functions
+  dataset <- .convertToWide(dataset, measurements, parts, operators)
+  measurements <- c("V1", "V2", "V3")
+
+
+  plots <- list()
+  plotIndexCounter <- 1
+  if (options[["reportVariationComponents"]]) {
+    plots[[plotIndexCounter]] <- .createVarCompPlot(jaspResults, options, plotOnly = TRUE)
+    plotIndexCounter <- plotIndexCounter + 1
+  }
+  if (options[["reportMeasurementsByPartPlot"]]) {
+    plots[[plotIndexCounter]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE) #measurement by part plot
+    plotIndexCounter <- plotIndexCounter + 1
+  }
+  if (options[["reportRChartByOperator"]]) {
+    plots[[plotIndexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)],
+                                               plotType = "R", stages = operators,
+                                               xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
+                                               stagesSeparateCalculation = FALSE)$plotObject
+    plotIndexCounter <- plotIndexCounter + 1
+  }
+  if (options[["reportMeasurementsByOperatorPlot"]]) {
+    plots[[plotIndexCounter]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options, Type3 = options$type3)   #Measurements by operator plot
+    plotIndexCounter <- plotIndexCounter + 1
+  }
+  if (options[["reportAverageChartByOperator"]]) {
+    plots[[plotIndexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)],
+                                               plotType = "xBar", xBarSdType = "r", stages = operators,
+                                               xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
+                                               stagesSeparateCalculation = FALSE)$plotObject
+    plotIndexCounter <- plotIndexCounter + 1
+  }
+  if (options[["reportPartByOperatorPlot"]]) {
+    plots[[plotIndexCounter]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options,
+                                                                      Type3 = options$type3, ggPlot = TRUE) # Part x Operator interaction plot
+    plotIndexCounter <- plotIndexCounter + 1
+  }
+
+  if (options[["reportTrafficLightChart"]]) {
+    trafficPlots <- .createTrafficLightPlot(jaspResults, options, plotOnly = TRUE)
+    if (options[["tolerance"]]) {
+      plots[[plotIndexCounter]] <- trafficPlots$p1
+      plotIndexCounter <- plotIndexCounter + 1
+      plots[[plotIndexCounter]] <- trafficPlots$p2
+    } else {
+      plots[[plotIndexCounter]] <- trafficPlots$plotObject
+    }
+  }
+
+  return(plots)
+}
+
+.createGaugeReport <- function(jaspResults, dataset, measurements, parts, operators, options, ready) {
+  nElements <- sum(options[["reportVariationComponents"]], options[["reportMeasurementsByPartPlot"]], options[["reportRChartByOperator"]],
+                   options[["reportMeasurementsByOperatorPlot"]], options[["reportAverageChartByOperator"]],
+                   options[["reportPartByOperatorPlot"]], options[["reportTrafficLightChart"]], options[["reportMetaData"]])
+  plotHeight <- ceiling(nElements/2) * 500
+  reportPlot <- createJaspPlot(title = gettext("Gauge r&R report"), width = 1250, height = plotHeight)
+  jaspResults[["report"]] <- reportPlot
+  jaspResults[["report"]]$dependOn(c("type3", "tolerance", "toleranceValue",  "studyVarianceMultiplierType",
+                                     "studyVarianceMultiplierValue", "scatterPlotFitLine", "scatterPlotOriginLine",
+                                     "partMeasurementPlotAllValues", .varCompTableDependencies(), .reportDependencies()))
+
+  if (nElements == 0) {
+    reportPlot$setError(gettext("No report components selected."))
+    return()
+  }
+
+  if(!ready) {
+    return()
+  }
+
+  # title
+  title <- .getReportTitle(options)
+
+  # meta data
+  text <- .getReportMetaData(options)
+
+  # plots
+  plots <- .getReportPlots(jaspResults, dataset, measurements, parts, operators, options)
+
+  reportPlotObject <- .qcReport(text = text, plots = plots, tables = NULL, textMaxRows = 8,
+                                tableTitles = "", reportTitle = title, tableSize = 6)
+  reportPlot$plotObject <- reportPlotObject
+
+  return()
+
 }
