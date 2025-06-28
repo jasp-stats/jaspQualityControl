@@ -290,7 +290,7 @@ msgid ""
 msgstr ""
 
 msgid "Model Summary"
-msgstr ""
+msgstr "மாதிரி சுருக்கம்"
 
 msgid "Adjusted %s"
 msgstr ""
@@ -332,7 +332,7 @@ msgid "Term"
 msgstr ""
 
 msgid "Effect"
-msgstr ""
+msgstr "விளைவு"
 
 msgid "Coefficient"
 msgstr ""
@@ -443,7 +443,7 @@ msgid "Total blocks"
 msgstr ""
 
 msgid "Value"
-msgstr ""
+msgstr "மதிப்பு"
 
 msgid "Please select a row in the design table."
 msgstr ""
@@ -1098,10 +1098,10 @@ msgid "Parameter Estimates"
 msgstr ""
 
 msgid "Parameter"
-msgstr ""
+msgstr "கூறளவு"
 
 msgid "Estimate"
-msgstr "மதிப்பீடு"
+msgstr "மதிப்பிடு"
 
 msgid ""
 "Fitting the model failed with the following error message:\n"
@@ -1251,7 +1251,7 @@ msgid "USL"
 msgstr ""
 
 msgid "Sample size"
-msgstr ""
+msgstr "மாதிரி அளவு"
 
 msgid "Std. dev. (total)"
 msgstr ""
@@ -1515,10 +1515,10 @@ msgid "Autocorrelation plot"
 msgstr ""
 
 msgid "Autocorrelation"
-msgstr ""
+msgstr "தன்னொட்டுறவு"
 
 msgid "Lag"
-msgstr ""
+msgstr "பின்னடைவு"
 
 msgid "Control charts"
 msgstr ""
