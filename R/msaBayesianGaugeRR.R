@@ -855,27 +855,27 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .bfTableDependencies <- function() {
   return(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
-           "measurementLongFormat", "seed", "setSeed", "rscalePrior", "RRTable", "bfFavorFull"))
+           "measurementLongFormat", "seed", "setSeed", "rscalePrior", "RRTable", "bfFavorFull", "report"))
 }
 
 .varCompTableDependencies <- function() {
   return(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
            "measurementLongFormat", "seed", "setSeed", "rscalePrior", "bfFavorFull",
            "mcmcChains", "mcmcBurnin", "mcmcIterations", "historicalSdValue", "processVariationReference",
-           "estimationType", "modelType"))
+           "estimationType", "modelType", "report"))
 }
 
 .mcmcDependencies <- function() {
   return(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
            "measurementLongFormat", "seed", "setSeed", "rscalePrior", "bfFavorFull",
            "mcmcChains", "mcmcBurnin", "mcmcIterations",
-           "estimationType", "modelType"))
+           "estimationType", "modelType", "report"))
 }
 
 .postPlotDependencies <- function() {
   return(c("posteriorCi", "posteriorCiLower", "posteriorCiMass", "posteriorCiType", "posteriorCiUpper",
            "posteriorPointEstimate", "posteriorPointEstimateType", "posteriorPlot",
-           "distType", "posteriorPlotType", "tolerance", "toleranceValue", "posteriorHistogram"))
+           "distType", "posteriorPlotType", "tolerance", "toleranceValue", "posteriorHistogram", "report"))
 }
 
 # .optimalMetaLog <- function(fit, parameter, samplesMat) {
@@ -1242,7 +1242,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.fillTablesGaugeEval <- function(jaspResults, parts, operators, options, whichTable = "sd") {
+.fillTablesGaugeEval <- function(jaspResults, parts, operators, options, whichTable = "sd", gaugeReport = FALSE) {
   excludeInter <- .evalInter(jaspResults, parts, operators, options)
 
   # get components from MCMC samples
@@ -1273,9 +1273,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   if(whichTable == "studyVar") {
-    # add footnote
-    factorSd <- jaspResults[["studyVariation"]][["object"]][[2]]
-    jaspResults[["gaugeEvaluation"]][["stdTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
+    if(!gaugeReport) {
+      # add footnote
+      factorSd <- jaspResults[["studyVariation"]][["object"]][[2]]
+      jaspResults[["gaugeEvaluation"]][["stdTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
+    }
 
     # summaries
     means <- colMeans(studyVar)
@@ -1896,7 +1898,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   priorPlot <- createJaspContainer(title = gettext("Prior Distribution"))
   priorPlot$position <- 5
-  priorPlot$dependOn("rscalePrior")
+  priorPlot$dependOn(c("rscalePrior", "report"))
   jaspResults[["priorPlot"]] <- priorPlot
 
   gPrior <- createJaspPlot(title = gettext("g-prior"), width = 600, height = 320)
@@ -2317,6 +2319,46 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(plots)
 }
 
+.getReportTable <- function(jaspResults, parts, operators, options) {
+  dfs <- list()
+  tables <- c("sd", "studyVar", "percStudyVar")
+  colNames <- c("Source", "Std. dev.", "Study variation", "%Study variation")
+  if(options$tolerance) {
+    tables <- c(tables, "percTol")
+    colNames <- c(colNames, "%Tolerance")
+  }
+
+  for(i in seq_along(tables)) {
+    dfs[[i]] <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = tables[i],
+                                     gaugeReport = TRUE)
+  }
+  saveRDS(dfs, "/Users/julian/Documents/Jasp files/dfs.rds")
+
+  out <- lapply(dfs, .extractCiAndPaste)
+  out <- lapply(out, function(x) sub(" \\(NA, NA\\)", "", x)) # remove empty CrIs
+  out <- do.call(cbind.data.frame, out)
+  out <- cbind.data.frame(dfs[[1]]$sourceName, out)
+  colnames(out) <- colNames
+
+  # split data frame as it would otherwise be cut off in the report
+  if(options$tolerance) {
+    tolOut <- out[, c("Source", "%Tolerance")]
+    out <- out[, colnames(out) != "%Tolerance"]
+    return(list(out, tolOut))
+  }
+
+  return(list(out))
+}
+
+.extractCiAndPaste <- function(df) {
+  means <- as.numeric(df$means)
+  lower <- as.numeric(df$lower)
+  upper <- as.numeric(df$upper)
+  res <- paste0(round(means, 2), " (", round(lower, 2), ", ", round(upper, 2), ")")
+
+  return(res)
+}
+
 .createGaugeReport <- function(jaspResults, dataset, measurements, parts, operators, options, ready) {
   nElements <- sum(options[["reportVariationComponents"]], options[["reportMeasurementsByPartPlot"]], options[["reportRChartByOperator"]],
                    options[["reportMeasurementsByOperatorPlot"]], options[["reportAverageChartByOperator"]],
@@ -2346,8 +2388,16 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # plots
   plots <- .getReportPlots(jaspResults, dataset, measurements, parts, operators, options)
 
-  reportPlotObject <- .qcReport(text = text, plots = plots, tables = NULL, textMaxRows = 8,
-                                tableTitles = "", reportTitle = title, tableSize = 6)
+  # table
+  tables <- .getReportTable(jaspResults, parts, operators, options)
+  if(options$tolerance) {
+    tableTitles <- list("Gauge evaluation", "")
+  } else {
+    tableTitles <- list("Gauge evaluation")
+  }
+
+  reportPlotObject <- .qcReport(text = text, plots = plots, tables = tables, textMaxRows = 8,
+                                tableTitles = tableTitles, reportTitle = title, tableSize = 6)
   reportPlot$plotObject <- reportPlotObject
 
   return()
