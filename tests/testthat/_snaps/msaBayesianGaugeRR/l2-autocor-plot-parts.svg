@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' data-engine-version='2.0' width='720.00pt' height='576.00pt' viewBox='0 0 720.00 576.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA='>
+    <rect x='0.00' y='0.00' width='720.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<rect x='0.00' y='0.00' width='720.00' height='576.00' style='stroke-width: 10.67; stroke: none;' />
+</g>
+<defs>
+  <clipPath id='cpNzguNzR8NzIwLjAwfDMxLjI0fDUxMC4xNA=='>
+    <rect x='78.74' y='31.24' width='641.26' height='478.90' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNzguNzR8NzIwLjAwfDMxLjI0fDUxMC4xNA==)'>
+<rect x='78.74' y='31.24' width='641.26' height='478.90' style='stroke-width: 10.67; stroke: none;' />
+<polyline points='107.89,53.00 137.04,434.47 166.18,465.42 195.33,478.63 224.48,477.65 253.63,485.47 282.78,477.58 311.92,484.03 341.07,484.42 370.22,480.38 399.37,478.00 428.52,482.03 457.67,475.87 486.81,479.52 515.96,482.35 545.11,481.80 574.26,478.54 603.41,466.04 632.56,486.50 661.70,481.13 690.85,484.20 ' style='stroke-width: 1.07; stroke: #E66101; stroke-linecap: butt;' />
+<polyline points='107.89,53.00 137.04,433.31 166.18,476.11 195.33,482.85 224.48,476.59 253.63,484.37 282.78,476.92 311.92,486.86 341.07,488.37 370.22,471.69 399.37,483.10 428.52,483.45 457.67,480.63 486.81,482.63 515.96,477.08 545.11,474.78 574.26,483.57 603.41,481.54 632.56,476.56 661.70,478.67 690.85,474.44 ' style='stroke-width: 1.07; stroke: #998EC3; stroke-linecap: butt;' />
+<line x1='78.74' y1='479.59' x2='720.00' y2='479.59' style='stroke-width: 1.07; stroke: #000000; stroke-opacity: 0.50; stroke-linecap: butt;' />
+<line x1='107.57' y1='510.14' x2='691.17' y2='510.14' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<line x1='78.74' y1='479.91' x2='78.74' y2='52.68' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<rect x='78.74' y='31.24' width='641.26' height='478.90' style='stroke-width: 0.00; stroke: none;' />
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<polyline points='78.74,510.14 78.74,31.24 ' style='stroke-width: 0.00; stroke: none; stroke-linecap: butt;' />
+<text x='63.26' y='485.44' text-anchor='end' style='font-size: 17.00px; font-family: sans;' textLength='33.09px' lengthAdjust='spacingAndGlyphs'>0.00</text>
+<text x='63.26' y='378.79' text-anchor='end' style='font-size: 17.00px; font-family: sans;' textLength='33.09px' lengthAdjust='spacingAndGlyphs'>0.25</text>
+<text x='63.26' y='272.15' text-anchor='end' style='font-size: 17.00px; font-family: sans;' textLength='33.09px' lengthAdjust='spacingAndGlyphs'>0.50</text>
+<text x='63.26' y='165.50' text-anchor='end' style='font-size: 17.00px; font-family: sans;' textLength='33.09px' lengthAdjust='spacingAndGlyphs'>0.75</text>
+<text x='63.26' y='58.85' text-anchor='end' style='font-size: 17.00px; font-family: sans;' textLength='33.09px' lengthAdjust='spacingAndGlyphs'>1.00</text>
+<polyline points='70.24,479.59 78.74,479.59 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='70.24,372.95 78.74,372.95 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='70.24,266.30 78.74,266.30 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='70.24,159.65 78.74,159.65 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='70.24,53.00 78.74,53.00 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='78.74,510.14 720.00,510.14 ' style='stroke-width: 0.00; stroke: none; stroke-linecap: butt;' />
+<polyline points='107.89,518.64 107.89,510.14 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='253.63,518.64 253.63,510.14 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='399.37,518.64 399.37,510.14 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='545.11,518.64 545.11,510.14 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='690.85,518.64 690.85,510.14 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<text x='107.89' y='537.32' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='9.46px' lengthAdjust='spacingAndGlyphs'>0</text>
+<text x='253.63' y='537.32' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='9.46px' lengthAdjust='spacingAndGlyphs'>5</text>
+<text x='399.37' y='537.32' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='18.91px' lengthAdjust='spacingAndGlyphs'>10</text>
+<text x='545.11' y='537.32' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='18.91px' lengthAdjust='spacingAndGlyphs'>15</text>
+<text x='690.85' y='537.32' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='18.91px' lengthAdjust='spacingAndGlyphs'>20</text>
+<text x='399.37' y='567.49' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='28.37px' lengthAdjust='spacingAndGlyphs'>Lag</text>
+<text transform='translate(16.68,270.69) rotate(-90)' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='114.35px' lengthAdjust='spacingAndGlyphs'>Autocorrelation</text>
+<text x='383.94' y='16.85' style='font-size: 17.00px; font-family: sans;' textLength='9.03px' lengthAdjust='spacingAndGlyphs'>σ</text>
+<text x='392.97' y='22.11' style='font-size: 11.90px; font-family: sans;' textLength='21.83px' lengthAdjust='spacingAndGlyphs'>Part</text>
+<text x='392.97' y='8.31' style='font-size: 11.90px; font-family: sans;' textLength='6.62px' lengthAdjust='spacingAndGlyphs'>2</text>
+</g>
+</svg>
