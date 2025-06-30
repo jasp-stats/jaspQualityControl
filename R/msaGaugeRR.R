@@ -1101,6 +1101,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     p1 <- p1 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.StudySD))
 
   if(!is.null(StudyVarCi)) {
+    StudyVarCi$upper <- ifelse(StudyVarCi$upper > 100, 100, StudyVarCi$upper)
     p1 <- p1 + ggplot2::geom_errorbarh(data = StudyVarCi, ggplot2::aes(xmin = lower, xmax = upper, y = 1),
                                        inherit.aes = FALSE, linewidth = 0.5, height = 0.5)
   }

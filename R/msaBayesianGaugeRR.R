@@ -40,7 +40,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     ready <- (!identical(measurements, "") && !identical(parts, ""))
   }
 
-  # note this should also be in a function (I could also just make the dropdown include full model, main effects only and automatic)
   if(options$estimationType == "manual"){
     if(options$modelType == "fullModel" || options$modelType == "mainEffectsOnly") {
       ready <- ready
@@ -49,19 +48,20 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
-
   numeric.vars <- measurements
   numeric.vars <- numeric.vars[numeric.vars != ""]
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
   if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
+    dataset <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
     if (options$type3){
       dataset$operators <- rep(1, nrow(dataset))
       operators <- "operators"
     }
   }
+
+  saveRDS(dataset, "/Users/julian/Documents/Jasp files/dataset.rds")
 
   # Checking for infinity and missingValues
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
@@ -69,26 +69,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
              missingValues.target = c(measurements, parts, operators),
              exitAnalysisIfErrors = TRUE)
 
-  #Converting long to wide data
-  # if (!wideFormat && ready) {
-  #   dataset <- dataset[order(dataset[[operators]]),]
-  #   dataset <- dataset[order(dataset[[parts]]),]
-  #   nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
-  #   index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
-  #   dataset <- cbind(dataset, data.frame(index = index))
-  #   dataset <- tidyr::spread(dataset, index, measurements)
-  #   measurements <- unique(index)
-  #   dataset <- dataset[,c(operators, parts, measurements)]
-  # } else if (ready) {
-  #   dataset <- dataset[order(dataset[[parts]]),]
-  # }
-
   # Converting wide to long format
   if(wideFormat && ready) {
     dataset <- .convertToLong(dataset, measurements)
     measurements <- "Measurements" # name assigned to the column inside the function
   }
-
 
   if(ready && !options[["type3"]]){
     crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
@@ -125,7 +110,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
   saveRDS(options, "/Users/julian/Documents/Jasp files/options.rds")
-  saveRDS(dataset, "/Users/julian/Documents/Jasp files/dataset.rds")
   saveRDS(measurements, "/Users/julian/Documents/Jasp files/measurements.rds")
   saveRDS(operators, "/Users/julian/Documents/Jasp files/operators.rds")
   saveRDS(parts, "/Users/julian/Documents/Jasp files/parts.rds")
@@ -140,12 +124,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     .createBFtable(jaspResults, dataset, options, measurements, parts, operators, ready)
   }
 
-  # # Effects table
-  # if(options[["effectsTable"]]){
-  #   .createEffectsTable(effectsRes, jaspResults, measurements, parts, operators, ready)
-  # }
-
-
   if(ready) {
     # MCMC
     .runMCMC(jaspResults, dataset, measurements, parts, operators, options)
@@ -155,31 +133,24 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     .getPercContrib(jaspResults, parts, operators, options)
     .getPercStudy(jaspResults)
 
-    ##### delete
-    percContrib <- .percentSampleSummaries(jaspResults[["percContribSamples"]][["object"]], options)
-    saveRDS(percContrib, "/Users/julian/Documents/Jasp files/percContrib.rds")
-    #####
     if(options$tolerance) {
       .getPercTol(jaspResults, options)
     }
 
-    #distFit <- try(.fitDistToSamples(jaspResults, options), silent = TRUE)
-
     errorOccurred <- FALSE
-
     distFit <- tryCatch(
       {
         .fitDistToSamples(jaspResults, options)
       },
       error = function(e) {
         errorOccurred <<- TRUE
-        return(e$message)  # or just return(NULL)
+        return(e$message)
       }
     )
   }
 
   # insert report here
-  if(options$report) {
+  if(ready && options$report) {
     .createGaugeReport(jaspResults, dataset, measurements, parts, operators, options, ready)
   } else {
 
@@ -210,20 +181,12 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
       .plotVariancePosteriors(jaspResults, options, parts, operators)
 
       # summary table
-      #if(options$posteriorCi || options$posteriorPointEstimate) {
       .createPostSummaryTable(jaspResults, options, parts, operators)
-      # if(inherits(distFit, "try-error")) {
-      #   jaspResults[["variancePosteriors"]][["postSummary"]]$setError(gettext(
-      #     "The currently selected distribution could not be fit to the samples. Please select another distribution under <i>Advanced options</i>."))
-      #   return()
-      # }
 
       if(errorOccurred) {
         jaspResults[["variancePosteriors"]][["postSummary"]]$setError(distFit)
         return()
       }
-
-      #}
     }
 
     if(ready && options$varianceComponentsGraph) {
@@ -290,7 +253,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   BFtable$addColumnInfo(name = "error",          title = gettext("error %"),         type = "number")
 
   # set data
-  if(ready) { # this could also be sth like if(ncol(dataset) == 3)
+  if(ready) {
     BFtable$setData(jaspResults[["modelComparison"]][["object"]])
     BFtable$addFootnote(gettext("BF<sub>10</sub> compares the full model to the indicated model in each row."))
   }
@@ -340,7 +303,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     bfFullNull <- bfDf[full, ]$bf
   }
 
-
   # dropping unnecessary columns
   bfDf <- bfDf[, !colnames(bfDf) %in% c("time", "code")]
 
@@ -365,9 +327,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["modelComparison"]][["object"]] <- bfDf
 
   return()
-
 }
-
 
 .createVarCompTable <- function(jaspResults, parts, operators, ready, options) {
   if(!is.null(jaspResults[["varCompTable"]])) {
@@ -427,10 +387,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-
-
-
-
 .runMCMC <- function(jaspResults, dataset, measurements, parts, operators, options){
   if(is.null(jaspResults[["MCMCsamples"]])){
     MCMCsamples <- createJaspState()
@@ -460,7 +416,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   nchains <- options$mcmcChains
   burnin <- options$mcmcBurnin
   iter <- options$mcmcIterations
-
 
   # get relevant parameters
   paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
@@ -495,45 +450,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   dimnames(mcmcArray) <- list(NULL, NULL, paramNames)
   MCMCsamples[["object"]] <- mcmcArray
 
-  ##### old code
-  # chains <- coda::mcmc.list()
-  #
-  # if(options$setSeed) {
-  #   set.seed(options$seed)
-  # }
-  #
-  # for(i in 1:nchains) {
-  #   # run chain
-  #   mcmcChain <- BayesFactor::posterior(fit, iterations = iter)
-  #
-  #   # exclude burn-in samples
-  #   chains[[i]] <- coda::as.mcmc(mcmcChain[-(1:burnin), ])
-  # }
-  #
-  #
-  # # select relevant parameters
-  # # names
-  # paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
-  #
-  # chains <- chains[, c(paramNames, "sig2")] # including error variance
-  #
-  # # samplesMat <- as.matrix(chains)
-  #
-  # # # multiply variances with the error variance to reverse standardization
-  # # for(i in paramNames) {
-  # #   samplesMat[, i] <- samplesMat[, i] * samplesMat[, "sig2"]
-  # # }
-  #
-  # chains <- lapply(chains, function(x) {
-  #   for (i in paramNames) {
-  #     x[, i] <- x[, i] * x[, "sig2"]
-  #   }
-  #   return(x)
-  # })
-  #
-  # saveRDS(chains, "/Users/julian/Documents/Jasp files/chains.rds")
-  # MCMCsamples[["object"]] <- coda::mcmc.list(chains)
-  #####
   return()
 }
 
@@ -559,8 +475,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     postCrIupper["part"] <- ""
     postCrIupper["total"] <- ""
   }
-
-
   sourceName <- .sourceNames(options)
 
   return(data.frame(sourceName,
@@ -622,7 +536,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # replace total variation with historical variance and adjust
   # part variation accordingly
-  # note: these calculations might be problematic since the uncertainty in gauge does not affect part anymore
   if(options$processVariationReference == "historicalSd"){
     totalOld <- mean(total)
     total <- rep(options$historicalSdValue^2, length(repeatability))
@@ -647,36 +560,25 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(internalDF)
 }
 
-# .fitMetaLog <- function(jaspResults) {
-#   if(is.null(jaspResults[["metaLogFit"]])){
-#     metaLogFit <- createJaspState()
-#     metaLogFit$dependOn(.mcmcDependencies())
-#     jaspResults[["metaLogFit"]] <- metaLogFit
-#   } else {
-#     return()
-#   }
-#
-#   samplesMat <- jaspResults[["MCMCsamples"]][["object"]]
-#
-#   # fit metalog to each parameter
-#   metaLogList <- apply(samplesMat, 2,
-#                        function(x) rmetalog::metalog(x, bounds = 0, boundedness = "sl"))
-#
-#   # find optimal number of terms for each parameter
-#   optimalTerms <- Map(.optimalMetaLog, metaLogList, names(metaLogList),
-#                       MoreArgs = list(samplesMat = samplesMat))
-#
-#   # add optimal terms to list
-#   metaLogList <- Map(function(x, optimalTerms){
-#     x[["optimalTerms"]] <- optimalTerms
-#     x
-#   }, metaLogList, optimalTerms)
-#
-#   metaLogFit[["object"]] <- metaLogList
-#
-#   return()
-#
-# }
+.getDistinctCategories <- function(jaspResults, parts, operators, options) {
+  excludeInter <- .evalInter(jaspResults, parts, operators, options)
+  internalDf <- .getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter)
+
+  # subset with relevant variables
+  internalDf <- internalDf[, colnames(internalDf) %in% c("gauge", "part")]
+  sdDf <- sqrt(internalDf)
+
+  # number distinct categories
+  nCat <- (sdDf$part / sdDf$gauge) * 1.41
+  mean <- mean(nCat)
+  lower <- quantile(nCat, probs = 0.025)
+  upper <- quantile(nCat, probs = 0.975)
+
+  # for footnote and report
+  res <- paste0(round(mean, 2), " (", round(lower, 2), ", ", round(upper, 2), ")")
+
+  return(res)
+}
 
 .createPostSummaryTable <- function(jaspResults, options, parts, operators){
   if(!is.null(jaspResults[["variancePosteriors"]][["postSummary"]])){
@@ -721,7 +623,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     postSummary$addFootnote(gettext("Credible intervals are estimated based on the distribution fit to the MCMC samples."))
   }
 
-
   postSummary$setData(jaspResults[["postSummaryStats"]][["object"]])
 
   return()
@@ -741,7 +642,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   jaspResults[["contourPlot"]] <- contourPlot
 
-
   tempPlot <- createJaspPlot(width = 600, height = 600)
   tempPlot$position <- 2
 
@@ -751,7 +651,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # obtain necessary data
   contourDf <- compDf[, c("total", "part")]
-  mu <- mean(dataset[[measurements]]) # note: do I have to transform the variances to get a sensible result
+  mu <- mean(dataset[[measurements]])
 
   # data frame for plotting
   meanEllipse = TRUE
@@ -768,17 +668,18 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     ggplot2::geom_hline(yintercept = c(options$contourLSL, options$contourUSL), linetype = "dashed", color = "black", linewidth = 1) +
     ggplot2::geom_path(alpha = 0.5, colour = "steelblue", linewidth = 1)
 
-
   # axes
   xLower <- min(options$contourLSL, plotDf$x)
   xUpper <- max(options$contourUSL, plotDf$x)
   xLims <- c(xLower, xUpper)
   xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLims)
+  xLims <- c(xBreaks[1], xBreaks[length(xBreaks)])
 
   yLower <- min(options$contourLSL, plotDf$y)
   yUpper <- max(options$contourUSL, plotDf$y)
   yLims <- c(yLower, yUpper)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(yLims)
+  yLims <- c(yBreaks[1], yBreaks[length(yBreaks)])
 
   p <- p +
     ggplot2::scale_x_continuous(name = "True Value", breaks = xBreaks,
@@ -809,15 +710,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   contourPlot[["table"]] <- risksTable
 
-
   return()
 }
 
-
-
-
-
-# helper functions
+#### helper functions
 .bfParameterNames <- function(parts, operators, excludeInter, options) {
   sigmaPart <- paste0("g_", parts)
   sigmaOperator <- paste0("g_", operators)
@@ -855,54 +751,29 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 .bfTableDependencies <- function() {
   return(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
-           "measurementLongFormat", "seed", "setSeed", "rscalePrior", "RRTable", "bfFavorFull", "report"))
+           "measurementLongFormat", "seed", "setSeed", "rscalePrior", "RRTable", "bfFavorFull", "report", "type3"))
 }
 
 .varCompTableDependencies <- function() {
   return(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
            "measurementLongFormat", "seed", "setSeed", "rscalePrior", "bfFavorFull",
            "mcmcChains", "mcmcBurnin", "mcmcIterations", "historicalSdValue", "processVariationReference",
-           "estimationType", "modelType", "report"))
+           "estimationType", "modelType", "report", "type3"))
 }
 
 .mcmcDependencies <- function() {
   return(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
            "measurementLongFormat", "seed", "setSeed", "rscalePrior", "bfFavorFull",
            "mcmcChains", "mcmcBurnin", "mcmcIterations",
-           "estimationType", "modelType", "report"))
+           "estimationType", "modelType", "report", "type3"))
 }
 
 .postPlotDependencies <- function() {
   return(c("posteriorCi", "posteriorCiLower", "posteriorCiMass", "posteriorCiType", "posteriorCiUpper",
            "posteriorPointEstimate", "posteriorPointEstimateType", "posteriorPlot",
-           "distType", "posteriorPlotType", "tolerance", "toleranceValue", "posteriorHistogram", "report"))
+           "distType", "posteriorPlotType", "tolerance", "toleranceValue", "posteriorHistogram", "report", "type3",
+           "processVariationReference", "historicalSdValue")) # note: the processVariationReference could be added to the function with an if-statement
 }
-
-# .optimalMetaLog <- function(fit, parameter, samplesMat) {
-#   terms <- fit$params$term_limit
-#
-#   error <- numeric(length(terms))
-#
-#   for(j in 2:terms){
-#     # quantiles
-#     j <- as.numeric(j)
-#     qmeta <- rmetalog::qmetalog(m = fit, y = c(0.025, 0.975), term = j)
-#     qdata <- quantile(samplesMat[, parameter], probs = c(0.025, 0.975))
-#
-#     errorCrI <- sum(abs(qdata - qmeta))
-#
-#     # mean
-#     meanMeta <- integrate(rmetalog::qmetalog, m = fit, term = j, lower = 0, upper = 1)$value # integrate over quantile function
-#     meanData <- mean(samplesMat[, parameter])
-#
-#     errorMean <- abs(meanData - meanMeta)
-#
-#     error[j] <- sum(errorCrI, errorMean)
-#   }
-#   #print(error)
-#   return(which.min(error[-1]) + 1)
-# }
-
 
 .convertOutputNames <- function(name, parts, operators, includeSigma = TRUE) {
   sigmaPart <- paste0("g_", parts)
@@ -1063,7 +934,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(df)
 }
 
-
 .createGaugeEval <- function(jaspResults, parts, operators, options, ready) {
   if(!is.null(jaspResults[["gaugeEvaluation"]])) {
     return()
@@ -1097,22 +967,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     stdTable$setData(cbind(stdData, studyVarData))
 
     stdTable$addFootnote(gettext("Credible intervals are estimated based on the MCMC samples."))
+
+    # number of distinct categories
+    nDistinct <- .getDistinctCategories(jaspResults, parts, operators, options)
+    stdTable$addFootnote(gettext(paste("Number of distinct categories:", nDistinct)))
   }
-
-
-  # ### Study variation table
-  # studyVarTable <- createJaspTable(title = gettext("Study variation"))
-  # studyVarTable$position <- 2
-  # gaugeEvaluation[["studyVarTable"]] <- studyVarTable
-  #
-  # studyVarTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
-  # studyVarTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
-  # studyVarTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
-  # studyVarTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
-  #
-  # if(ready) {
-  #   studyVarTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "studyVar"))
-  # }
 
   ### Percent study variation & percent tolerance table
   if(options$tolerance) {
@@ -1149,25 +1008,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     percStudyVarTable$addFootnote(gettext("Credible intervals are estimated based on the MCMC samples."))
   }
 
-
-  # ### Percent tolerance table
-  # if(options$tolerance) {
-  #   percTolTable <- createJaspTable(title = gettext("% Tolerance"))
-  #   percTolTable$position <- 3
-  #   gaugeEvaluation[["percTolTable"]] <- percTolTable
-  #
-  #   percTolTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
-  #   percTolTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
-  #   percTolTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
-  #   percTolTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
-  #
-  #   if(ready) {
-  #     percTolTable$setData(.fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "percTol"))
-  #   }
-  # }
-
   return()
-
 }
 
 .getPercStudy <- function(jaspResults, studyVar = jaspResults[["studyVariation"]][["object"]][[1]]) {
@@ -1360,15 +1201,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(dataset)
 }
 
-
-
 ###### Distribution fitting
 
 ### fit functions
 .fitDistToSamples <- function(jaspResults, options) {
   if(is.null(jaspResults[["distFit"]])){
     distFit <- createJaspState()
-    distFit$dependOn(c(.mcmcDependencies(), "distType", "posteriorPlotType", "processVariationReference",
+    distFit$dependOn(c(.mcmcDependencies(), "distType", "posteriorPlotType",
+                       "processVariationReference", "historicalSdValue",
                        "tolerance", "toleranceValue"))
     jaspResults[["distFit"]] <- distFit
   } else {
@@ -1401,7 +1241,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
   fit <- switch(distType,
                 "metalog" =
-                  if(options$posteriorPlotType == "var" || options$posteriorPlotType == "percTol") {
+                  if(options$posteriorPlotType == "var" || options$posteriorPlotType == "percTol" ||
+                     options$processVariationReference == "historicalSd") {
                     .fitMetaLog(samplesMat, bounds = 0, boundedness = "sl",
                                 term_lower_bound = 5, term_limit = 5) # 5 terms
                   } else {
@@ -1468,7 +1309,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     pointEstimate <- switch(options$posteriorPointEstimateType,
                             "mean" = unlist(lapply(fits, pointFun)),
                             "median" = unlist(lapply(fits, pointFun)),
-                            "mode" = unlist(lapply(fits, pointFun))) # note: the mode still seems to be a bit off
+                            "mode" = unlist(lapply(fits, pointFun)))
   }
 
   # intervals
@@ -1680,7 +1521,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                                linewidth = 1)
       }
 
-
     # point estimate
     if(options$posteriorPointEstimate) {
       xPoint <- postSummary[i, "pointEstimate"]
@@ -1740,7 +1580,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     xUpper <- dfTemp[dfTemp$probs >= 0.99, ]$x_new[1]
   }
 
-  if(options$posteriorPlotType != "var" && options$posteriorPlotType != "percTol") {
+  if(options$posteriorPlotType != "var" && options$posteriorPlotType != "percTol" &&
+     options$processVariationReference != "historicalSd") {
     xUpper <- 100
   }
 
@@ -2002,8 +1843,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     jaspResults[["trafficPlot"]] <- trafficPlot
   }
   # % Study var
-  # trafficPlotStudy <- createJaspPlot(width = 1000)
-  # trafficPlotStudy$position <- 1
   percStudyVar <- .percentSampleSummaries(jaspResults[["percStudySamples"]][["object"]], options)
   percStudyVar <- percStudyVar[percStudyVar$sourceName == "Total gauge r&R", ]
   percStudyVarMean <- percStudyVar$means
@@ -2062,7 +1901,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
   paramNames <- c(paramNames, "sig2")
 
-
   if(options$diagnosticsTable) {
     diagnosticsTable <- createJaspTable()
     diagnosticsTable$position <- 1
@@ -2088,7 +1926,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                                     titles = .convertOutputNames(paramNames, parts, operators, includeSigma = FALSE)),
            "density" = .densityDiagnosticsPlot(jaspResults, chains = posterior::as_draws_array(chains), paramNames,
                                                xLabs = .convertOutputNames(paramNames, parts, operators, includeSigma = FALSE)))
-
   }
 
   return()
@@ -2187,13 +2024,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     if(!any(is.na(xLims))) {
       manualScaleX <- TRUE
       axisBreaksX <- jaspGraphs::getPrettyAxisBreaks(xLims)
-      xLims <- c(axisBreaksX[1], axisBreaksX[length(axisBreaksX)]) # note: this ensures that the axis does not stop abruptly
+      xLims <- c(axisBreaksX[1], axisBreaksX[length(axisBreaksX)])
     }
-
-    # note: the y lims do not work well for the operator plot
-    # yLims <- c(0, max(d$y))
-    # axisBreaksY <- jaspGraphs::getPrettyAxisBreaks(yLims)
-    # yLims <- c(axisBreaksY[1], axisBreaksY[length(axisBreaksY)]) # note: this ensures that the axis does not stop abruptly
 
     p <- bayesplot::mcmc_dens_overlay(chains, pars = paramNames[i]) +
       ggplot2::scale_color_manual(values = colors) +
@@ -2207,7 +2039,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     p <- p + jaspGraphs::themeJaspRaw() +
       jaspGraphs::geom_rangeframe() +
-      # ggplot2::scale_y_continuous("Density", limits = yLims, breaks = axisBreaksY) +
       ggplot2::scale_y_continuous("Density") +
       ggplot2::theme(axis.ticks.y = ggplot2::element_line())
 
@@ -2226,7 +2057,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
 ### Report
-
 .reportDependencies <- function() {
   return(c("report", "reportMetaData", "reportTitle",
            "reportTitleText", "reportPartName", "reportPartNameText", "reportGaugeName",
@@ -2332,7 +2162,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     dfs[[i]] <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = tables[i],
                                      gaugeReport = TRUE)
   }
-  saveRDS(dfs, "/Users/julian/Documents/Jasp files/dfs.rds")
 
   out <- lapply(dfs, .extractCiAndPaste)
   out <- lapply(out, function(x) sub(" \\(NA, NA\\)", "", x)) # remove empty CrIs
@@ -2340,14 +2169,19 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   out <- cbind.data.frame(dfs[[1]]$sourceName, out)
   colnames(out) <- colNames
 
+  # number of distinct categories
+  nDistinctDf <- data.frame("Number of distinct categories",
+                            .getDistinctCategories(jaspResults, parts, operators, options))
+  colnames(nDistinctDf) <- NULL
+
   # split data frame as it would otherwise be cut off in the report
   if(options$tolerance) {
     tolOut <- out[, c("Source", "%Tolerance")]
     out <- out[, colnames(out) != "%Tolerance"]
-    return(list(out, tolOut))
+    return(list(list(out, nDistinctDf), tolOut))
   }
 
-  return(list(out))
+  return(list(list(out, nDistinctDf)))
 }
 
 .extractCiAndPaste <- function(df) {
@@ -2391,9 +2225,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # table
   tables <- .getReportTable(jaspResults, parts, operators, options)
   if(options$tolerance) {
-    tableTitles <- list("Gauge evaluation", "")
+    tableTitles <- list(list("Gauge evaluation", ""), "")
   } else {
-    tableTitles <- list("Gauge evaluation")
+    tableTitles <- list(list("Gauge evaluation", ""))
   }
 
   reportPlotObject <- .qcReport(text = text, plots = plots, tables = tables, textMaxRows = 8,
@@ -2401,5 +2235,4 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   reportPlot$plotObject <- reportPlotObject
 
   return()
-
 }
