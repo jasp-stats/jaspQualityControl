@@ -20,6 +20,23 @@ import JASP.Controls
 
 Form
 {
+	function sortIntervalValues() {
+
+		console.log("sorting")
+		var values = [
+			interval1.displayValue,
+			interval2.displayValue,
+			interval3.displayValue,
+			interval4.displayValue,
+			interval5.displayValue
+		]
+		values.sort(function(a, b) { return a - b })
+		interval1.value = values[0]
+		interval2.value = values[1]
+		interval3.value = values[2]
+		interval4.value = values[3]
+		interval5.value = values[4]
+	}
 	columns:	 2
 
 	DropDown
@@ -408,8 +425,51 @@ Form
 				CheckBox
 				{
 					name: 						"posteriorDistributionPlot"
-					label: 						qsTr("posterior distribution")
+					label: 						qsTr("Posterior distribution")
 				}
+			}
+
+			Group
+			{
+
+				title: 							qsTr("Tables")
+
+				// CheckBox
+				// {
+				// 	name: 						"intervalTable"
+				// 	label: 						qsTr("Interval")
+				// 	childrenOnSameRow:	true
+
+				// 	Label		{ text: "-Inf" }
+				// 	DoubleField	{ name: "interval1"; fieldWidth: 30; defaultValue: 0.00 }
+				// 	DoubleField	{ name: "interval2"; fieldWidth: 30; defaultValue: 0.25 }
+				// 	DoubleField	{ name: "interval3"; fieldWidth: 30; defaultValue: 0.50 }
+				// 	DoubleField	{ name: "interval4"; fieldWidth: 30; defaultValue: 0.75 }
+				// 	DoubleField	{ name: "interval5"; fieldWidth: 30; defaultValue: 1.00 }
+				// 	Label		{ text: "-Inf" }
+				// }
+				CheckBox
+				{
+					name: "intervalTable"; label: qsTr("Interval"); childrenOnSameRow: true
+
+					info: qsTr("Show the posterior probabilities of the interval specifed with the input on the right. Note that the input is automatically sorted")
+
+					Row
+					{
+
+						spacing: jaspTheme.rowSpacing
+						DoubleField { id: interval0; name: "interval0"; fieldWidth: 30; negativeValues: true; defaultValue: -Infinity; editable: false					  }
+						DoubleField { id: interval1; name: "interval1"; fieldWidth: 30; negativeValues: true; defaultValue: 0.00; onEditingFinished: sortIntervalValues() }
+						DoubleField { id: interval2; name: "interval2"; fieldWidth: 30; negativeValues: true; defaultValue: 0.25; onEditingFinished: sortIntervalValues() }
+						DoubleField { id: interval3; name: "interval3"; fieldWidth: 30; negativeValues: true; defaultValue: 0.50; onEditingFinished: sortIntervalValues() }
+						DoubleField { id: interval4; name: "interval4"; fieldWidth: 30; negativeValues: true; defaultValue: 0.75; onEditingFinished: sortIntervalValues() }
+						DoubleField { id: interval5; name: "interval5"; fieldWidth: 30; negativeValues: true; defaultValue: 1.00; onEditingFinished: sortIntervalValues() }
+						DoubleField { id: interval6; name: "interval6"; fieldWidth: 30; negativeValues: true; defaultValue:  Infinity; editable: false					  }
+					}
+
+
+				}
+
 			}
 
 		}
