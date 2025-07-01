@@ -426,6 +426,119 @@ Form
 				{
 					name: 						"posteriorDistributionPlot"
 					label: 						qsTr("Posterior distribution")
+
+					CheckBox
+					{
+						label:				qsTr("Point estimate")
+						name:				"posteriorDistributionPlotIndividualPointEstimate"
+						childrenOnSameRow:	true
+
+						DropDown
+						{
+							name:	"posteriorDistributionPlotIndividualPointEstimateType"
+							label:	""
+							values:	[
+								{label: qsTr("Mean"),					value: "mean"},
+								{label: qsTr("Median"),					value: "median"},
+								{label: qsTr("Mode"),					value: "mode"}
+							]
+						}
+					}
+
+					CheckBox
+					{
+						name:				"posteriorDistributionPlotIndividualCi"
+						label:				qsTr("CI")
+						id:					plotsPosteriorIndividualCI
+						childrenOnSameRow:	true
+
+						DropDown
+						{
+							name:		"posteriorDistributionPlotIndividualCiType"
+							label:		""
+							id:			plotsPosteriorIndividualType
+							values:		[
+								{label: qsTr("Central"),				value: "central"},
+								{label: qsTr("HPD"),					value: "HPD"},
+								{label: qsTr("Custom"),					value: "custom"},
+								{label: qsTr("Support"),				value: "support"}
+							]
+						}
+					}
+
+					Group
+					{
+						columns: 2
+
+						CIField
+						{
+							visible:		plotsPosteriorIndividualType.currentText == "central" | plotsPosteriorIndividualType.currentText == "HPD"
+							enabled:		plotsPosteriorIndividualCI.checked
+							name:			"posteriorDistributionPlotIndividualCiMass"
+							label:			qsTr("Mass")
+							fieldWidth:		50
+							defaultValue: 	95
+							min:			1
+							max:			100
+							inclusive:		JASP.MinMax
+						}
+
+						DoubleField
+						{
+							visible:		plotsPosteriorIndividualType.currentText == "custom"
+							enabled:		plotsPosteriorIndividualCI.checked
+							name:			"posteriorDistributionPlotIndividualCiLower"
+							label:			qsTr("Lower")
+							id:				plotsPosteriorLower
+							fieldWidth:		50
+							defaultValue:	analysisType === "binomial" ? 0.25 : -1
+							min:			analysisType === "binomial" ? 0    : -9999999999
+							max:			plotsPosteriorUpper.value
+							inclusive:		JASP.MinMax
+						}
+
+						DoubleField
+						{
+							visible:		plotsPosteriorIndividualType.currentText == "custom"
+							enabled:		plotsPosteriorIndividualCI.checked
+							name:			"posteriorDistributionPlotIndividualCiUpper"
+							label:			qsTr("Upper")
+							id:				plotsPosteriorUpper
+							fieldWidth:		50
+							defaultValue:	analysisType === "binomial" ? 0.75 : 1
+							min:			plotsPosteriorLower.value
+							max:			analysisType === "binomial" ? 1    : 9999999999
+							inclusive:		JASP.MinMax
+						}
+
+						FormulaField
+						{
+							visible:		plotsPosteriorIndividualType.currentText == "support"
+							enabled:		plotsPosteriorIndividualCI.checked
+							name:			"posteriorDistributionPlotIndividualCiBf"
+							label:			qsTr("BF")
+							fieldWidth:		50
+							defaultValue:	"1"
+							min:			0
+							inclusive:		JASP.None
+						}
+					}
+
+					CheckBox
+					{
+						name:		"posteriorDistributionPlotPriorDistribution"
+						label:		qsTr("Prior distribution")
+						checked:	false
+					}
+
+					// CheckBox
+					// {
+					// 	name:		"posteriorDistributionPlotObservedProportion"
+					// 	label:		qsTr("Observed proportion")
+					// 	id:			plotsPosteriorIndividualProportion
+					// 	checked:	false
+					// }
+
 				}
 			}
 
