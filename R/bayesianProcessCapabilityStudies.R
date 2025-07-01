@@ -188,8 +188,16 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     createJaspPlot(
       title = gettext("Posterior Distribution"),
       plot  = if (.bpcsIsReady(options) && !is.null(fit)) {
-        qc::plot_density(fit$summaryObject,
-                         what = c("Cp", "CpU", "CpL", "Cpk", "Cpm")) +
+        qc::plot_density(
+          fit$summaryObject,
+          what = c("Cp", "CpU", "CpL", "Cpk", "Cpm"),
+          point_estimate  = options[["posteriorDistributionPlotIndividualPointEstimateType"]],
+          ci              = options[["posteriorDistributionPlotIndividualCiType"]],
+          ci_level        = options[["posteriorDistributionPlotIndividualCiMass"]],
+          ci_custom_left  = options[["posteriorDistributionPlotIndividualCiLower"]],
+          ci_custom_right = options[["posteriorDistributionPlotIndividualCiUpper"]],
+          bf_support      = options[["posteriorDistributionPlotIndividualCiBf"]]
+        ) +
           jaspGraphs::geom_rangeframe() +
           jaspGraphs::themeJaspRaw()
       } else {
@@ -198,8 +206,26 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
       width  = 320 * 6,
       height = 320,
       dependencies = jaspDeps(
-        options = c(.bpcsDefaultDeps(), "posteriorDistributionPlot")
+        options = c(.bpcsDefaultDeps(), .bpcsPosteriorPlotDeps(options))
       )
+    )
+  )
+}
+
+.bpcsPosteriorPlotDeps <- function(options) {
+  c(
+    "posteriorDistributionPlot",
+    "posteriorDistributionPlotIndividualPointEstimate",
+    "posteriorDistributionPlotIndividualPointEstimateType",
+    "posteriorDistributionPlotPriorDistribution",
+    "posteriorDistributionPlotIndividualCi",
+    "posteriorDistributionPlotIndividualCiType",
+    # these match which options are conditionally enabled in the qml file.
+    switch(options[["posteriorDistributionPlotIndividualCiType"]],
+      "central" = "posteriorDistributionPlotIndividualCiMass",
+      "HPD"     = "posteriorDistributionPlotIndividualCiMass",
+      "custom"  = c("posteriorDistributionPlotIndividualCiLower", "posteriorDistributionPlotIndividualCiUpper"),
+      "support" = "posteriorDistributionPlotIndividualCiBf"
     )
   )
 }
