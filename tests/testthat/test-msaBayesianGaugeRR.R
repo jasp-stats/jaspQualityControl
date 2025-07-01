@@ -717,6 +717,7 @@ test_that("L Gauge r&R report plot matches", {
   options$operatorLongFormat <- "Operators"
   options$partLongFormat <- "Parts"
   options$tolerance <- TRUE
+  options$posteriorPlotType <- "var"
   options$report <- TRUE
   options$reportRChartByOperator <- TRUE
   options$reportMeasurementsByOperatorPlot <- TRUE
@@ -1443,6 +1444,7 @@ test_that("W Gauge r&R report plot matches", {
   options$operatorWideFormat <- "Operator"
   options$partWideFormat <- "Part"
   options$tolerance <- TRUE
+  options$posteriorPlotType <- "var"
   options$report <- TRUE
   options$reportRChartByOperator <- TRUE
   options$reportMeasurementsByOperatorPlot <- TRUE

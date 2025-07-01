@@ -120,7 +120,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   # Model comparison table
-  if(options[["RRTable"]] && !options$report){ # I should probably add && !report here
+  if(options[["RRTable"]] && !options$report){
     .createBFtable(jaspResults, dataset, options, measurements, parts, operators, ready)
   }
 
@@ -137,16 +137,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
       .getPercTol(jaspResults, options)
     }
 
-    errorOccurred <- FALSE
-    distFit <- tryCatch(
-      {
-        .fitDistToSamples(jaspResults, options)
-      },
-      error = function(e) {
-        errorOccurred <<- TRUE
-        return(e$message)
-      }
-    )
+    # fit distribution to samples
+    .fitDistToSamples(jaspResults, options)
   }
 
   # insert report here
@@ -154,14 +146,16 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     .createGaugeReport(jaspResults, dataset, measurements, parts, operators, options, ready)
   } else {
 
-    # Variance components table
-    .createVarCompTable(jaspResults, parts, operators, ready, options)
+    if(options$RRTable) {
+      # Variance components table
+      .createVarCompTable(jaspResults, parts, operators, ready, options)
 
-    # % Contribution to total variation table
-    .createPercContribTable(jaspResults, options, parts, operators, ready)
+      # % Contribution to total variation table
+      .createPercContribTable(jaspResults, options, parts, operators, ready)
 
-    # Gauge evaluation table
-    .createGaugeEval(jaspResults, parts, operators, options, ready)
+      # Gauge evaluation table
+      .createGaugeEval(jaspResults, parts, operators, options, ready)
+    }
 
     # prior
     if(ready && options$priorPlot) {
@@ -182,11 +176,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       # summary table
       .createPostSummaryTable(jaspResults, options, parts, operators)
-
-      if(errorOccurred) {
-        jaspResults[["variancePosteriors"]][["postSummary"]]$setError(distFit)
-        return()
-      }
     }
 
     if(ready && options$varianceComponentsGraph) {
@@ -758,7 +747,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
            "measurementLongFormat", "seed", "setSeed", "rscalePrior", "bfFavorFull",
            "mcmcChains", "mcmcBurnin", "mcmcIterations", "historicalSdValue", "processVariationReference",
-           "estimationType", "modelType", "report", "type3"))
+           "estimationType", "modelType", "report", "type3", "RRTable"))
 }
 
 .mcmcDependencies <- function() {
