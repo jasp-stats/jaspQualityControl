@@ -1,5 +1,5 @@
 context("[Quality Control] Bayesian Gauge r&R")
-
+.numDecimals <- 2
 ## tests long-format
 ### automatic model selection & posterior on variances (generalized inverse Gaussian)
 options <- analysisOptions("msaBayesianGaugeRR")
