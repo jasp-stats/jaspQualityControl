@@ -849,6 +849,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableColNames <- c(tableColNames, "cpklci", "cpkuci")
     sourceVector <- c(sourceVector, paste0(ciLevelPercent, "% CI Cpk"))
   }
+  table$addColumnInfo(name="zbench", title=gettext("Z bench"), type="number")
   table$showSpecifiedColumnsOnly <- TRUE
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
     table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
@@ -887,6 +888,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else {
       cpk <- cpu
     }
+    zbench <- 3*cpk
+
 
     if (options[["processCapabilityTableCi"]]) {
       ciAlpha <- 1 - ciLevel
@@ -908,7 +911,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableDfCurrentStage <- data.frame(cp = round(cp, .numDecimals),
                                       cpl = round(cpl, .numDecimals),
                                       cpu = round(cpu, .numDecimals),
-                                      cpk = round(cpk, .numDecimals))
+                                      cpk = round(cpk, .numDecimals),
+                                      zbench = round(zbench, .numDecimals))
     if (options[["processCapabilityTableCi"]]) {
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
         tableDfCurrentStage[["cplci"]] <- round(ciLbCp, .numDecimals)
