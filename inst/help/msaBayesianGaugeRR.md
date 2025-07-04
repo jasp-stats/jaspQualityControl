@@ -106,6 +106,7 @@ The method used in the analysis.
 - jaspBase
 - ggplot2
 - tidyr
+- dplyr
 - BayesFactor
 - ellipse
 - mvtnorm
