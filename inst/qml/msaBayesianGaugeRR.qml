@@ -361,7 +361,7 @@ Form
 						id:				posteriorCiLower
 						fieldWidth:		50
 						defaultValue:	0.25
-						min:			0
+						min:			0.000001
 						max:			posteriorCiUpper.value
 						inclusive:		JASP.None
 					}
@@ -376,7 +376,7 @@ Form
 						fieldWidth:		50
 						defaultValue:	0.75
 						min:			posteriorCiLower.value
-						max:			1
+						max:			0.999999
 						inclusive:		JASP.None
 					}
 				}

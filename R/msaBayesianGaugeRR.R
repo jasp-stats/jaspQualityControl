@@ -67,10 +67,23 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
              missingValues.target = c(measurements, parts, operators),
              exitAnalysisIfErrors = TRUE)
 
+  dataWide <- data.frame()
   # Converting wide to long format
   if(wideFormat && ready) {
+    dataWide <- dataset # wide data for plotting functions
     dataset <- .convertToLong(dataset, measurements)
     measurements <- "Measurements" # name assigned to the column inside the function
+  }
+
+  if(!wideFormat && ready) {
+    dataWide <- .convertToWide(dataset, measurements, parts, operators)
+  }
+  measurementsWide <- colnames(dataWide)[!colnames(dataWide) %in% c(parts, operators)] # names of measurement columns
+
+  # check for equal amount of replicates
+  if(any(is.na(dataWide))) {
+    errorMsg <- "Number of replicates differ per operator/part. Make sure that each operator measures each part equally often."
+    .quitAnalysis(gettext(errorMsg))
   }
 
   if(ready && !options[["type3"]]){
@@ -108,7 +121,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # Results from model comparison
   if(ready){
-    .runBFtest(jaspResults, dataset, measurements, parts, operators, options)
+    bfTest <- .runBFtest(jaspResults, dataset, measurements, parts, operators, options)
   }
 
   # Model comparison table
@@ -135,7 +148,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # insert report here
   if(ready && options$report) {
-    .createGaugeReport(jaspResults, dataset, measurements, parts, operators, options, ready)
+    .createGaugeReport(jaspResults, dataset = dataWide, measurements = measurementsWide, parts, operators, options, ready)
   } else {
 
     if(options$RRTable) {
@@ -181,30 +194,30 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     # range chart
     if(options$rChart) {
-      .createRChart(jaspResults, dataset, measurements, operators, parts, options, ready)
+      .createRChart(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready)
     }
 
     # average chart
     if(options$xBarChart) {
-      .createXbarChart(jaspResults, dataset, measurements, operators, parts, options, ready)
+      .createXbarChart(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready)
     }
 
     # scatter plot
     if(options$scatterPlot){
-      .createScatterPlotOperators(jaspResults, dataset, measurements, operators, parts, options, ready)
+      .createScatterPlotOperators(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready)
     }
 
     # measurement by part plot
     if(ready && options$partMeasurementPlot) {
-      .createMeasureByPartPlot(jaspResults, dataset, measurements, operators, parts, options)
+      .createMeasureByPartPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options)
     }
 
     if(ready && options$operatorMeasurementPlot) {
-      .createMeasureByOperatorPlot(jaspResults, dataset, measurements, operators, parts, options, ready, Type3)
+      .createMeasureByOperatorPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready, Type3)
     }
 
     if(ready && options$partByOperatorMeasurementPlot) {
-      .createPartByOperatorInterPlot(jaspResults, dataset, measurements, operators, parts, options, ready, Type3)
+      .createPartByOperatorInterPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready, Type3)
     }
 
     if(ready && options$trafficLightChart) {
@@ -230,10 +243,23 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   BFtable$addColumnInfo(name = "comparisonBF",   title = gettext("BF<sub>10</sub>"), type = "number")
   BFtable$addColumnInfo(name = "error",          title = gettext("error %"),         type = "number")
 
-  # set data
+  # check for errors & set data
   if(ready) {
-    BFtable$setData(jaspResults[["modelComparison"]][["object"]])
-    BFtable$addFootnote(gettext("BF<sub>10</sub> compares the full model to the indicated model in each row."))
+    if(isTryError(jaspResults[["modelComparison"]][["object"]])) {
+      errorMsg <- jaspResults[["modelComparison"]][["object"]]
+
+      if(options$estimationType == "automatic") {
+        errorMsg <- paste(errorMsg, "Select manual estimation to try running the rest of the analysis.")
+        .quitAnalysis(gettext(paste("Model comparison Bayes factors could not be computed:",
+                                    .rmNewLine(errorMsg))))
+      }
+
+      BFtable$setError(gettext(paste("Model comparison Bayes factors could not be computed:",
+                                     .rmNewLine(errorMsg))))
+    } else {
+      BFtable$setData(jaspResults[["modelComparison"]][["object"]])
+      BFtable$addFootnote(gettext("BF<sub>10</sub> compares the full model to the indicated model in each row."))
+    }
   }
 
   return()
@@ -258,13 +284,25 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # set data
   if(ready) {
-    varCompTable$setData(.getVarianceComponents(jaspResults, parts, operators, options))
+    fillDat <- .getVarianceComponents(jaspResults, parts, operators, options)
+
+    if(.hasExtremeValues(fillDat)$large) {
+      varCompTable$addFootnote(gettext("Estimates are very large potentially making results unreliable. Consider transfroming the data."),
+                               symbol = gettext("<b>Warning:</b>"))
+    }
+
+    if(.hasExtremeValues(fillDat)$small) {
+      varCompTable$addFootnote(gettext("Estimates are very small potentially making results unreliable. Consider transfroming the data."),
+                               symbol = gettext("<b>Warning:</b>"))
+    }
+
+    varCompTable$setData(fillDat)
     varCompTable$addFootnote(gettext("Credible intervals are estimated based on the MCMC samples."))
 
     if(!options$type3 && .evalInter(jaspResults, parts, operators, options)) {
-      varCompTable$addFootnote("The components are based on the model only including the main effects.")
+      varCompTable$addFootnote(gettext("The components are based on the model only including the main effects."))
     } else {
-      varCompTable$addFootnote("The components are based on the full model.")
+      varCompTable$addFootnote(gettext("The components are based on the full model."))
     }
 
   } else {
@@ -298,7 +336,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .createPostSummaryTable <- function(jaspResults, options, parts, operators){
-  if(!is.null(jaspResults[["variancePosteriors"]][["postSummary"]])){
+  if(!is.null(jaspResults[["variancePosteriors"]][["postSummary"]]) ||
+     isTryError(jaspResults[["distFit"]][["object"]])){
     return()
   }
 
@@ -426,7 +465,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if(is.null(jaspResults[["modelComparison"]])) {
     modelComparison <- createJaspState()
     modelComparison$dependOn(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
-                             "measurementLongFormat", "seed", "setSeed", "rscalePrior"))
+                               "measurementLongFormat", "seed", "setSeed", "rscalePrior"))
     jaspResults[["modelComparison"]] <- modelComparison
   } else {
     return()
@@ -438,10 +477,16 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   if(options$type3){
     formula <- as.formula(paste(measurements, "~", parts))
-    bfFit <- BayesFactor::generalTestBF(formula, data = dataset,
-                                        whichRandom = c(operators, parts),
-                                        rscaleRandom = options$rscalePrior,
-                                        progress = FALSE)
+    bfFit <- try(BayesFactor::generalTestBF(formula, data = dataset,
+                                            whichRandom = c(operators, parts),
+                                            rscaleRandom = options$rscalePrior,
+                                            progress = FALSE))
+
+    if(isTryError(bfFit)) {
+      jaspResults[["modelComparison"]][["object"]] <- bfFit
+      return()
+    }
+
     bfDf <- as.data.frame(bfFit)
     full <- parts
     bfFullNull <- bfDf$bf
@@ -450,10 +495,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     formula <- as.formula(paste(measurements, "~", parts, "*", operators))
 
     # run general comparison for all potential models
-    bfFit <- BayesFactor::generalTestBF(formula, data = dataset,
-                                         whichRandom = c(operators, parts),
-                                         rscaleRandom = options$rscalePrior,
-                                         progress = FALSE)
+    bfFit <- try(BayesFactor::generalTestBF(formula, data = dataset,
+                                            whichRandom = c(operators, parts),
+                                            rscaleRandom = options$rscalePrior,
+                                            progress = FALSE))
+    if(isTryError(bfFit)) {
+      jaspResults[["modelComparison"]][["object"]] <- bfFit
+      return()
+    }
     bfDf <- as.data.frame(bfFit)
 
     # extract full model and model with only main effects
@@ -509,7 +558,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   samplesMat <- .arrayToMat(jaspResults[["MCMCsamples"]][["object"]])
   excludeInter <- .evalInter(jaspResults, parts, operators, options)
-  compDf <-.getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter) # note: should the historcial sd influence this if entered by the user?
+  compDf <-.getComponentsFromSamples(jaspResults, parts, operators, options, excludeInter)
 
   # obtain necessary data
   contourDf <- compDf[, c("total", "part")]
@@ -517,7 +566,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # data frame for plotting
   meanEllipse = TRUE
-  plotDf <- .getEllipses(contourDf, mu, meanEllipse = meanEllipse, options = options) #note: add number of ellipses here; this could also be done with one ellipse based on the post. mean of the variances
+  plotDf <- .getEllipses(contourDf, mu, meanEllipse = meanEllipse, options = options)
+
+  if(isTryError(plotDf)) {
+    errorMsg <- paste("Failed to calculate contour:", .rmNewLine(plotDf))
+    tempPlot$setError(gettext(errorMsg))
+    contourPlot[["plot"]] <- tempPlot
+    return()
+  }
 
   if(meanEllipse) {
     p <- ggplot2::ggplot(plotDf, ggplot2::aes(x = x, y = y))
@@ -568,8 +624,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   risksTable$addColumnInfo(name = "lower", title = gettext("Lower"), type = "number", overtitle = "95% Credible Interval")
   risksTable$addColumnInfo(name = "upper", title = gettext("Upper"), type = "number", overtitle = "95% Credible Interval")
 
-  risksTable$setData(.getRisks(contourDf, mu, options))
+  fillDat <- .getRisks(contourDf, mu, options)
 
+  if(isTryError(fillDat)) {
+    errorMsg <- paste("Risks could not be computed:", fillDat, "Try adjusting the specification limits.")
+    risksTable$setError(gettext(errorMsg))
+  } else {
+    risksTable$setData(fillDat)
+  }
   contourPlot[["table"]] <- risksTable
 
   return()
@@ -622,6 +684,16 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["variancePosteriors"]] <- variancePosteriors
 
   fits <- jaspResults[["distFit"]][["object"]]
+
+  if(isTryError(fits)) {
+    errorMsg <- paste("The", .getDistNames(options$distType),
+                      "distribution could not be fit to the samples. Try selecting another distribution.")
+    tempPlot <- createJaspPlot()
+    tempPlot$setError(gettext(errorMsg))
+    jaspResults[["variancePosteriors"]][["errorPlot"]] <- tempPlot
+    return()
+  }
+
   samplesMat <- switch(options$posteriorPlotType,
                        "var" = .arrayToMat(jaspResults[["MCMCsamples"]][["object"]]),
                        "percContrib" = jaspResults[["percContribSamples"]][["object"]],
@@ -730,9 +802,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                                      "measurementsWideFormat", "report"))
   jaspResults[["rChart"]][["plot"]] <- createJaspPlot(width = 1200, height = 500)
   if (ready) {
-    # converting data to wide format for the .controlChart function (note: this can be done more nicely)
-    dataset <- .convertToWide(dataset, measurements, parts, operators)
-    measurements <- c("V1", "V2", "V3")
     rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R",
                             stages = operators, xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                             stagesSeparateCalculation = FALSE)
@@ -755,9 +824,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                                         "measurementsWideFormat", "report"))
   jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(width = 1200, height = 500)
   if (ready) {
-    # converting data to wide format for the .controlChart function (note: this can be done more nicely)
-    dataset <- .convertToWide(dataset, measurements, parts, operators)
-    measurements <- c("V1", "V2", "V3")
     xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)],
                                plotType = "xBar", xBarSdType = "r", stages = operators,
                                xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
@@ -776,14 +842,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     return()
   }
 
-  # note: I could convert the data in the main analysis function and then just pass it to the functions
-  dataset <- .convertToWide(dataset, measurements, parts, operators)
-  measurements <- c("V1", "V2", "V3")
-
   jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(jaspResults = jaspResults, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
   jaspResults[["gaugeScatterOperators"]]$position <- 9
   jaspResults[["gaugeScatterOperators"]]$dependOn(c("scatterPlot", "scatterPlotFitLine", "scatterPlotOriginLine"))
-
 
   return()
 }
@@ -792,11 +853,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if (!is.null(jaspResults[["gaugeByPart"]])) {
     return()
   }
-  # note: I could convert the data in the main analysis function and then just pass it to the functions
-  datasetWide <- .convertToWide(dataset, measurements, parts, operators)
-  measurementsWide <- c("V1", "V2", "V3")
 
-  jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = datasetWide, measurements = measurementsWide, parts = parts, operators = operators, options = options)
+  jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options = options)
   jaspResults[["gaugeByPart"]]$position <- 10
   jaspResults[["gaugeByPart"]]$dependOn("partMeasurementPlotAllValues")
 
@@ -807,13 +865,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if(!is.null(jaspResults[["gaugeByOperator"]])) {
     return()
   }
-  # note: I could convert the data in the main analysis function and then just pass it to the functions
-  dataset <- .convertToWide(dataset, measurements, parts, operators)
-  measurements <- c("V1", "V2", "V3")
 
   jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
   jaspResults[["gaugeByOperator"]]$position <- 11
-  jaspResults[["gaugeByOperator"]]$dependOn("operatorMeasurementPlot") # note: should this also depend on type3?
+  jaspResults[["gaugeByOperator"]]$dependOn("operatorMeasurementPlot")
 
   return()
 }
@@ -822,13 +877,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if(!is.null(jaspResults[["gaugeByInteraction"]])) {
     return()
   }
-  # note: I could convert the data in the main analysis function and then just pass it to the functions
-  dataset <- .convertToWide(dataset, measurements, parts, operators)
-  measurements <- c("V1", "V2", "V3")
 
   jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
   jaspResults[["gaugeByInteraction"]]$position <- 12
-  jaspResults[["gaugeByInteraction"]]$dependOn("partByOperatorMeasurementPlot") # note: should this also depend on type3?
+  jaspResults[["gaugeByInteraction"]]$dependOn("partByOperatorMeasurementPlot")
 
   return()
 }
@@ -959,12 +1011,16 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
       formula <- as.formula(paste(measurements, "~", parts, "*", operators))
     }
     # fit the model with BayesFactor
-    fit <- BayesFactor::lmBF(formula, whichRandom = c(parts, operators),
-                             data = dataset, rscaleRandom = options$rscalePrior)
+    fit <- try(BayesFactor::lmBF(formula, whichRandom = c(parts, operators),
+                                 data = dataset, rscaleRandom = options$rscalePrior))
   } else {
     formula <- as.formula(paste(measurements, "~", parts))
-    fit <- BayesFactor::lmBF(formula, whichRandom = parts,
-                             data = dataset, rscaleRandom = options$rscalePrior)
+    fit <- try(BayesFactor::lmBF(formula, whichRandom = parts,
+                                 data = dataset, rscaleRandom = options$rscalePrior))
+  }
+
+  if(isTryError(fit)) {
+    .quitAnalysis(gettext(paste("The BayesFactor model could not be fit:", .rmNewLine(fit))))
   }
 
   nchains <- options$mcmcChains
@@ -1035,7 +1091,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                     postSds,
                     postCrIlower,
                     postCrIupper)
-         )
+  )
 }
 
 .getComponentsFromSamples <- function(jaspResults, parts, operators, options, excludeInter){
@@ -1121,8 +1177,12 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     covMat <- matrix(c(sigmaTotal, sigmaP,
                        sigmaP, sigmaP),
                      nrow = 2, ncol = 2)
-    res <- as.data.frame(ellipse::ellipse(covMat, centre = c(mu, mu), level = 0.95))
-  } else {
+    res <- as.data.frame(try(ellipse::ellipse(covMat, centre = c(mu, mu), level = 0.95)))
+
+    if(isTryError(res)) {
+      return(res)
+    }
+  } else { # note: this part is currently not used
     ind <- sample(1:nrow(contourDf), numberEllipses)
     ellipseList <- lapply(ind, function(i) {
       sigmaP <- contourDf[i, ]$part # part
@@ -1133,7 +1193,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                        nrow = 2, ncol = 2)
 
       # ellipse
-      ellipseDf <- as.data.frame(ellipse::ellipse(covMat, centre = c(mu, mu), level = 0.95))
+      ellipseDf <- as.data.frame(try(ellipse::ellipse(covMat, centre = c(mu, mu), level = 0.95)))
       ellipseDf$iter <- i
 
       return(ellipseDf)
@@ -1160,23 +1220,45 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     # producer's risk (delta)
     # probability that y falls outside although x is inside
-    numerator <- mvtnorm::pmvnorm(lower = c(-Inf, LSL), upper = c(LSL, USL), mean = c(mu, mu),
-                                  sigma = covMat) +
-      mvtnorm::pmvnorm(lower = c(USL, LSL), upper = c(Inf, USL), mean = c(mu, mu), sigma = covMat)
+    numerator <- try(mvtnorm::pmvnorm(lower = c(-Inf, LSL), upper = c(LSL, USL), mean = c(mu, mu),
+                                      sigma = covMat) +
+                       mvtnorm::pmvnorm(lower = c(USL, LSL), upper = c(Inf, USL), mean = c(mu, mu), sigma = covMat))
+
+    # the error likely occurs somewhere else
+    if(isTryError(numerator) || is.nan(numerator)) {
+      class(numerator) <- "try-error"
+      return(numerator)
+    }
 
     denom <- pnorm(USL, mean = mu, sd = sqrt(sigmaP)) - pnorm(LSL, mean = mu, sd = sqrt(sigmaP))
+
+    if(isTryError(denom) || is.nan(denom)) {
+      class(denom) <- "try-error"
+      return(denom)
+    }
 
     producers[i] <- numerator / denom
 
     # consumers risk
     # probability that y is inside although x falls outside
-    numerator <- mvtnorm::pmvnorm(lower = c(LSL, -Inf), upper = c(USL, LSL), mean = c(mu, mu),
-                                  sigma = covMat) +
-      mvtnorm::pmvnorm(lower = c(LSL, USL), upper = c(USL, Inf), mean = c(mu, mu), sigma = covMat)
+    numerator <- try(mvtnorm::pmvnorm(lower = c(LSL, -Inf), upper = c(USL, LSL), mean = c(mu, mu),
+                                      sigma = covMat) +
+                       mvtnorm::pmvnorm(lower = c(LSL, USL), upper = c(USL, Inf), mean = c(mu, mu), sigma = covMat))
+
+    if(isTryError(numerator) || is.nan(numerator)) {
+      class(numerator) <- "try-error"
+      return(numerator)
+    }
 
     denom <- 1 - denom
 
     consumers[i] <- numerator / denom
+  }
+  # this is the issue here
+  if(any(is.na(consumers)) || any(is.na(producers))) {
+    consumers <- "NA's introduced during calculation."
+    class(consumers) <- "try-error"
+    return(consumers)
   }
 
   df <- data.frame(delta = producers,
@@ -1296,6 +1378,33 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 #### helper functions
+.hasExtremeValues <- function(df) {
+  nums <- unlist(df, use.names = FALSE)
+  nums <- suppressWarnings(as.numeric(nums))
+  nums <- nums[!is.na(nums)]
+
+  res <- list(large = FALSE, small = FALSE)
+  if(sum(nums > 1e50) != 0) {
+    res$large <- TRUE
+  }
+
+  if(sum(nums < 1e-50) != 0) {
+    res$small <- TRUE
+  }
+
+  return(res)
+}
+
+.rmNewLine <- function(msg) {
+  gsub("\\n ", "", msg)
+}
+
+.getDistNames <- function(distType) {
+  switch(distType,
+         "gig" = "generalized inverse Gaussian",
+         "metalog" = "Metalog")
+}
+
 .bfParameterNames <- function(parts, operators, excludeInter, options) {
   sigmaPart <- paste0("g_", parts)
   sigmaOperator <- paste0("g_", operators)
@@ -1375,7 +1484,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(c("posteriorCi", "posteriorCiLower", "posteriorCiMass", "posteriorCiType", "posteriorCiUpper",
            "posteriorPointEstimate", "posteriorPointEstimateType", "posteriorPlot",
            "distType", "posteriorPlotType", "tolerance", "toleranceValue", "posteriorHistogram", "report", "type3",
-           "processVariationReference", "historicalSdValue")) # note: the processVariationReference could be added to the function with an if-statement
+           "processVariationReference", "historicalSdValue"))
 }
 
 .convertOutputNames <- function(name, parts, operators, includeSigma = TRUE) {
@@ -1447,7 +1556,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # output dependent on table
   if(whichTable == "sd") {
     # summaries
-    # note: here i could use the .percentSampleSummaries function
+    # note: here I could use the .percentSampleSummaries function
     means <- colMeans(sdDf)
     lower <- apply(sdDf, 2, quantile, probs = 0.025)
     upper <- apply(sdDf, 2, quantile, probs = 0.975)
@@ -1504,16 +1613,19 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .convertToWide <- function(dataset, measurements, parts, operators) {
-  dataset <- dataset[order(dataset[[operators]]),]
-  dataset <- dataset[order(dataset[[parts]]),]
-  nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
-  index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
-  dataset <- cbind(dataset, data.frame(index = index))
-  dataset <- tidyr::spread(dataset, index, measurements)
-  measurements <- unique(index)
-  dataset <- dataset[,c(operators, parts, measurements)]
+  dataset <- dplyr::ungroup(
+    dplyr::mutate(
+      dplyr::group_by(dataset, dplyr::across(dplyr::all_of(c(parts, operators)))),
+      trial = dplyr::row_number()
+    )
+  )
 
-  return(dataset)
+  dataWide <- tidyr::pivot_wider(dataset, id_cols = c(parts, operators), values_from = measurements,
+                                 names_from = trial, names_prefix = "V")
+  dataWide <- as.data.frame(dataWide)
+  dataWide <- dataWide[order(dataWide[, parts]), ]
+
+  return(dataWide)
 }
 
 .convertToLong <- function(dataset, measurements) {
@@ -1560,17 +1672,19 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if(options$setSeed) {
     set.seed(options$seed)
   }
-  fit <- switch(distType,
-                "metalog" =
-                  if(options$posteriorPlotType == "var" || options$posteriorPlotType == "percTol" ||
-                     options$processVariationReference == "historicalSd") {
-                    .fitMetaLog(samplesMat, bounds = 0, boundedness = "sl",
-                                term_lower_bound = 5, term_limit = 5) # 5 terms
-                  } else {
-                    .fitMetaLog(samplesMat, bounds = c(0, 100), boundedness = "b",
-                                term_lower_bound = 5, term_limit = 5) # 5 terms
-                  },
-                "gig" = .fitGIG(samplesMat))
+  fit <- try(
+    switch(distType,
+           "metalog" =
+             if(options$posteriorPlotType == "var" || options$posteriorPlotType == "percTol" ||
+                options$processVariationReference == "historicalSd") {
+               .fitMetaLog(samplesMat, bounds = 0, boundedness = "sl",
+                           term_lower_bound = 5, term_limit = 5) # 5 terms
+             } else {
+               .fitMetaLog(samplesMat, bounds = c(0, 100), boundedness = "b",
+                           term_lower_bound = 5, term_limit = 5) # 5 terms
+             },
+           "gig" = .fitGIG(samplesMat))
+  )
 
   distFit[["object"]] <- fit
 
@@ -1612,6 +1726,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   fits <- jaspResults[["distFit"]][["object"]]
+
+  if(isTryError(fits)) {
+    jaspResults[["postSummaryStats"]][["object"]] <- fits
+    return()
+  }
 
   if(options$posteriorPlotType == "var") {
     parameter <- .convertOutputNames(names(fits), parts, operators)
@@ -1861,8 +1980,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   mcmcDiagnostics <- createJaspContainer(title = gettext("MCMC diagnostics"))
   mcmcDiagnostics$position <- 5
   mcmcDiagnostics$dependOn(c(.mcmcDependencies(),
-                           "diagnosticsPlots", "diagnosticsPlotType",
-                           "diagnosticsTable"))
+                             "diagnosticsPlots", "diagnosticsPlotType",
+                             "diagnosticsTable"))
   jaspResults[["mcmcDiagnostics"]] <- mcmcDiagnostics
 
   # general input needed for the sub-functions
@@ -1885,8 +2004,25 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     diagnosticsTable$addColumnInfo(name = "mcseQuantileLower", title = gettext("0.025"),       type = "number", overtitle = gettext("MCSE (Quantiles)"))
     diagnosticsTable$addColumnInfo(name = "mcseQuantileUpper", title = gettext("0.975"),       type = "number", overtitle = gettext("MCSE (Quantiles)"))
 
-    diagnosticsTable$setData(.fillDiagnosticsTable(chains = posterior::as_draws_array(chains),
-                                                   paramNames = .convertOutputNames(paramNames, parts, operators, includeSigma = TRUE)))
+    fillDat <- .fillDiagnosticsTable(chains = posterior::as_draws_array(chains),
+                                     paramNames = .convertOutputNames(paramNames, parts, operators, includeSigma = TRUE))
+
+    if(.hasExtremeValues(fillDat)$large) {
+      diagnosticsTable$addFootnote(gettext("Estimates are very large potentially making results unreliable. Consider transfroming the data."),
+                                   symbol = gettext("<b>Warning:</b>"))
+    }
+
+    if(.hasExtremeValues(fillDat)$small) {
+      diagnosticsTable$addFootnote(gettext("Estimates are very small potentially making results unreliable. Consider transfroming the data."),
+                                   symbol = gettext("<b>Warning:</b>"))
+    }
+
+    if(any(is.na(fillDat))) {
+      diagnosticsTable$addFootnote(gettext("Some diagnostics could not be calculated. Results might be unreliable."),
+                                   symbol = gettext("<b>Warning:</b>"))
+    }
+
+    diagnosticsTable$setData(fillDat)
   }
 
   if(options$diagnosticsPlots) {
@@ -2067,10 +2203,6 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .getReportPlots <- function(jaspResults, dataset, measurements, parts, operators, options) {
-  # note: I could convert the data in the main analysis function and then just pass it to the functions
-  dataset <- .convertToWide(dataset, measurements, parts, operators)
-  measurements <- c("V1", "V2", "V3")
-
 
   plots <- list()
   plotIndexCounter <- 1
