@@ -849,7 +849,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableColNames <- c(tableColNames, "cpklci", "cpkuci")
     sourceVector <- c(sourceVector, paste0(ciLevelPercent, "% CI Cpk"))
   }
-  table$addColumnInfo(name="zbench", title=gettext("Z bench"), type="number")
+
+  if (options[["processCapabilityTableZbench"]]) {
+    table$addColumnInfo(name="zbench", title=gettext("Z bench (ST)"), type="number")
+  }
+
   table$showSpecifiedColumnsOnly <- TRUE
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
     table$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
@@ -1041,6 +1045,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableColNames <- c(tableColNames, "ppklci", "ppkuci")
     sourceVector1 <- c(sourceVector1,  paste0(ciLevelPercent, "% CI Ppk"))
   }
+  if (options[["processCapabilityTableZbench"]]) {
+    table$addColumnInfo(name="zbench", title=gettext("Z bench (LT)"), type="number")
+  }
   if (options[["target"]]) {
     table$addColumnInfo(name = "cpm", type = "integer", title = gettext("Cpm"))
     sourceVector1 <- c(sourceVector1, 'Cpm')
@@ -1093,6 +1100,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else {
       ppk <- ppu
     }
+    zbench <- 3*ppk
     cp <- (usl - lsl) / (tolMultiplier * sdw)
 
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]] && options[["target"]]) {
@@ -1137,7 +1145,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableDfCurrentStage <- data.frame(pp = round(pp, .numDecimals),
                                       ppl = round(ppl, .numDecimals),
                                       ppu = round(ppu, .numDecimals),
-                                      ppk = round(ppk, .numDecimals))
+                                      ppk = round(ppk, .numDecimals),
+                                      zbench = round(zbench, .numDecimals))
     if (options[["target"]])
       tableDfCurrentStage[["cpm"]] <- round(cpm, .numDecimals)
     if (options[["processCapabilityTableCi"]]) {
