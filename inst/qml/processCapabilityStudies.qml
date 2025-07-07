@@ -378,7 +378,14 @@ Form
 							defaultValue: 90}
 						}
 
+					CheckBox
+					{
+						name: "processCapabilityTableZbench"
+						label: qsTr("Z bench")
 					}
+
+				}
+
 				}
 			}
 		}
