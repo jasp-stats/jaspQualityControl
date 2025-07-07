@@ -24,6 +24,7 @@ options$upperSpecificationLimit <- TRUE
 options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 6
 options$upperSpecificationLimitValue <- 12
+options$processCapabilityTableZbench <- TRUE # not tested against Minitab
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
@@ -37,8 +38,7 @@ test_that("LF1.1 (Normal) Basic tests of process capability plot with subgroup v
 test_that("LF1.2 (Normal) Basic tests of Process performance (total) table with subgroup variable and no stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
   jaspTools::expect_equal_tables(table,
-		list(0.93, 0.83, 1.04, 1.08, 0.88, 0.77, 1, 1.27, 0.95, 0.88, 1.2
-			))
+                                 list(0.93, 0.83, 1.04, 1.08, 0.88, 0.77, 1, 1.27, 0.95, 0.88, 1.2, 2.65))
 })
 
 test_that("LF1.3 (Normal) Basic tests of Non-conformance statistics table with subgroup variable and no stages", {
@@ -51,7 +51,7 @@ test_that("LF1.3 (Normal) Basic tests of Non-conformance statistics table with s
 test_that("LF1.4 (Normal) Basic tests of Process capability (within) table with subgroup variable and no stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.13, 0.93, 0.8, 1.06, 1.34, 0.99, 0.93, 1.28))
+                                 list(1.13, 0.93, 0.8, 1.06, 1.34, 0.99, 0.93, 1.28, 2.79))
 })
 
 test_that("LF1.5 (Normal) Basic tests of Process summary table with subgroup variable and no stages", {
