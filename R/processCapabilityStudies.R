@@ -1454,6 +1454,22 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
   colnames(tableDf) <- tableColNames
 
+
+
+  ## estimate parameters
+  distParameters <- list()
+  for (i in seq_len(nStages)) {
+    stage <- unique(dataset[[stages]])[i]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
+    distParameters[[i]] <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
+    if (jaspBase::isTryError(distParameters[[i]])) {
+      table$setError(distParameters[[i]][1])
+      container[["summaryTableNonNormal"]] <- table
+      return()
+    }
+  }
+
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
@@ -1464,14 +1480,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
     mean <- mean(allData, na.rm = TRUE)
-
-    distParameters <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
-    if (jaspBase::isTryError(distParameters)) {
-      table$setError(distParameters[1])
-      return()
-    }
-    beta <- distParameters$beta
-    theta <- distParameters$theta
+    beta <- distParameters[[i]]$beta
+    theta <- distParameters[[i]]$theta
 
     tableDfCurrentStage <- data.frame("n" = n,
                                       "mean" = mean,
@@ -1483,7 +1493,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                       "theta" = theta)
 
     if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull") {
-      threshold <- distParameters$threshold
+      threshold <- distParameters[[i]]$threshold
       tableDfCurrentStage[['threshold']] <- threshold
     }
     if (i == 1 && nStages > 1)
@@ -1573,15 +1583,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
-    distParameters <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
-    if (jaspBase::isTryError(distParameters)) {
-      table2$setError(distParameters[1])
-      return()
-    }
-    beta <- distParameters$beta
-    theta <- distParameters$theta
+    beta <- distParameters[[i]]$beta
+    theta <- distParameters[[i]]$theta
     if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
-      threshold <- distParameters$threshold
+      threshold <- distParameters[[i]]$threshold
 
     if (options[["nonNormalDistribution"]] == "lognormal") {
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
@@ -1790,16 +1795,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
     allDataVector <- as.vector(allData)
-
-    distParameters <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
-    if (jaspBase::isTryError(distParameters)) {
-      table3$setError(distParameters[1])
-      return()
-    }
-    beta <- distParameters$beta
-    theta <- distParameters$theta
+    beta <- distParameters[[i]]$beta
+    theta <- distParameters[[i]]$theta
     if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
-      threshold <- distParameters$threshold
+      threshold <- distParameters[[i]]$threshold
 
     #observed
     if (options[["lowerSpecificationLimit"]]){
@@ -2035,7 +2034,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       sdx    <- fit$parameters[2]
       test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
     } else if (options[["nullDistribution"]] == "weibull") {
-      fit    <- fitdistrplus::fitdist(values, 'weibull')
+      fit    <- fitdistrplus::fitdist(values, 'weibull',
+                                      control = list(
+                                        maxit = 10000,
+                                        abstol = .Machine$double.eps^0.75,
+                                        reltol = .Machine$double.eps^0.75,
+                                        ndeps = rep(1e-8, 2)))
       meanx  <- fit$estimate[1]
       sdx    <- fit$estimate[2]
       test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
@@ -2294,6 +2298,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Histogram"), width = 600, height = 400)
+    plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
+                              "report", "measurementLongFormat", "manualSubgroupSizeValue", "subgroup", 'nullDistribution',
+                              "stagesLongFormat", "stagesWideFormat", "histogramBinBoundaryDirection", "subgroupSizeType",
+                              "manualSubgroupSizeValue", "groupingVariableMethod"))
     jaspResults[["histogram"]] <- plot
     return()
   }
