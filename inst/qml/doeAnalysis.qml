@@ -274,6 +274,7 @@ Form
 				id: 					modelTerms 
 				title: 					designType.currentValue == "factorialDesign" ? qsTr("Model terms") : qsTr("Main and interaction terms") 
 				listViewType: 			JASP.Interaction
+				addInteractionsByDefault: false
 				//rowComponentTitle: 		designType.currentValue == "factorialDesign" ? "" : qsTr("Add squared term")
 				//rowComponent:  			CheckBox { name: "squaredTerm"; checked: false; visible: designType.currentValue == "responseSurfaceDesign"}
 			}
