@@ -396,6 +396,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       termNamesRemoved[term_i] <- gsub("\\s", "", termNamesRemoved[term_i])
     }
 
+    termNamesRemovedCoded <- termNamesCoded
+    # same regex as above, removes the appended factor levels
+    for (term_i in seq_along(termNamesRemovedCoded)) {
+      replacements <- if (grepl("^2", termNamesRemovedCoded[term_i], fixed = TRUE)) "\\1\\4" else "\\1\\5"
+      termNamesRemovedCoded[term_i] <- gsub(regexExpression, replacements, termNamesRemovedCoded[term_i], perl=TRUE)
+      termNamesRemovedCoded[term_i] <- gsub("\\s", "", termNamesRemovedCoded[term_i])
+    }
+
     discretePredictorsIndices <- which(termNamesRemoved %in% discretePredictors)
     nDiscretePredictorLevels <- sapply(discretePredictors, function(x) sum(termNamesRemoved == x))
 
@@ -411,8 +419,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     coefEffectsCoded <- .doeCoefficientEffects(regressionFitCoded)
     if (length(blocks) > 0 && !identical(blocks, "")) {
       blockNameIndices <- which(termNamesRemoved == blocks) # get the indices of the block variables
+      blockNameIndicesCoded <- which(termNamesRemovedCoded == blocks)
       coefEffects[blockNameIndices] <- NA
-      coefEffectsCoded[blockNameIndices] <- NA
+      coefEffectsCoded[blockNameIndicesCoded] <- NA
     }
     if (length(covariates) > 0 && !identical(covariates, "")) {
       coefEffects[names(coefEffects) %in% unlist(covariates)] <- NA
@@ -438,13 +447,14 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     }
     termNamesAliased <- gsub("✻", "", termNamesAliased)
     termNamesAliasedCoded <- gsub("✻", "", termNamesAliasedCoded)
-
     if (length(blocks) > 0 && !identical(blocks, "")) {
       blockNameIndices <- which(termNamesRemoved == blocks) # get the indices of the block variables
+      blockNameIndicesCoded <- which(termNamesRemovedCoded == blocks) # get the indices of the block variables in the coded terms
       blockNamesAliased <- paste0("BLK", 1:length(blockNameIndices))
       termNamesAliased[blockNameIndices] <- blockNamesAliased
-      termNamesAliasedCoded[blockNameIndices] <- blockNamesAliased
+      termNamesAliasedCoded[blockNameIndicesCoded] <- blockNamesAliased
     }
+
     if (length(covariates) > 0 && !identical(covariates, "")) {
       covariateAliases <- paste0("COV", seq(1, length(covariates)))
       termNamesAliased[termNamesAliased %in% unlist(covariates)] <- covariateAliases
