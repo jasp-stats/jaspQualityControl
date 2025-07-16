@@ -198,6 +198,7 @@ options$modelTerms <- list(
   list(components = c("C", "E")),
   list(components = c("D", "E"))
 )
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/2level5facFullCovariate.csv", options)
 
@@ -1844,6 +1845,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
 options$modelTerms <- NULL
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3contCCD.csv", options)
 
@@ -1929,6 +1931,7 @@ options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
 options$modelTerms <- NULL
 set.seed(123)
+options$sumOfSquaresType <- "type3"
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM5contCCD.csv", options)
 
 test_that("20.1 Five continuous predictors CCD ANOVA table results match", {
@@ -2048,6 +2051,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
 options$modelTerms <- NULL
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3cont2discCCD.csv", options)
 
@@ -2161,6 +2165,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
 options$modelTerms <- NULL
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4cont1discCCD.csv", options)
 
@@ -2274,6 +2279,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
 options$modelTerms <- NULL
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM3contBBD.csv", options)
 
@@ -2354,6 +2360,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
 options$modelTerms <- NULL
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4contBBD.csv", options)
 
@@ -2453,6 +2460,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
 options$modelTerms <- NULL
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM5contBBD.csv", options)
 
@@ -2572,6 +2580,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
 options$modelTerms <- NULL
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM6cont1discreteBBD.csv", options)
 
@@ -3063,6 +3072,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "linearAndSquared"
 options$modelTerms <- NULL
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4contCCD_uncoded.csv", options)
 
@@ -3142,6 +3152,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "linearAndSquared"
 options$modelTerms <- NULL
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM4contCCD_uncoded.csv", options)
 
@@ -3297,6 +3308,7 @@ options$tableEquation <- TRUE
 options$rsmPredefinedModel <- TRUE
 options$rsmPredefinedTerms <- "fullQuadratic"
 options$modelTerms <- NULL
+options$sumOfSquaresType <- "type3"
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/RSM2cont2discreteCCDText.csv", options)
 

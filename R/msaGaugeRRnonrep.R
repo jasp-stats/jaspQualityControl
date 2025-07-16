@@ -46,6 +46,17 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
              all.target = c(measurements, parts, operators),
              exitAnalysisIfErrors = TRUE)
 
+  # check for balanced design
+  if (ready) {
+    replicatesTable <- table(dataset[[parts]])
+    if (!all(replicatesTable == replicatesTable[1])) {
+      plot <- createJaspPlot(title = gettext("Gauge r&R - nested"), width = 700, height = 400)
+      jaspResults[["gaugeRRNonRep"]] <- plot
+      plot$setError(gettext("Unbalanced design. Some parts have more repeated measurements than others."))
+      return()
+    }
+  }
+
   if (ready && !wideFormat){
     dataset <- dataset[order(dataset[[operators]]),]
     dataset <- dataset[order(dataset[[parts]]),]
@@ -501,8 +512,6 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 .gaugeNestedVarComponents <- function(dataset, operators, parts, measurements, ms) {
   nOperators <- length(unique(dataset[[operators]]))
   replicatesTable <- table(dataset[[parts]])
-  if (!all(replicatesTable == replicatesTable[1]))
-    stop("Unbalanced design. Some parts have more repeated measurements than others.")
   nReplicates <- unname(replicatesTable)[1] # assuming constant repetitions across parts
   nParts  <- length(unique(dataset[[parts]]))
   msOperator <- ms[1]

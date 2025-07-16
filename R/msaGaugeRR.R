@@ -60,7 +60,30 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
              missingValues.target = c(measurements, parts, operators),
              exitAnalysisIfErrors = TRUE)
 
-  #Converting long to wide data
+  # Checking for crossed design
+  if (ready && !options[["type3"]]) {
+    crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
+    if(!crossed){
+      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+      jaspResults[["gaugeANOVA"]] <- plot
+      plot$setError(gettext("Design is not balanced: not every operator measured every part the same number of times."))
+      return()
+    }
+  }
+
+  # Checking for balanced design
+  if (ready && options[["type3"]]) {
+    checkTab <- table(dataset[[parts]])
+    if (!all(checkTab == checkTab[1])) {
+      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+      jaspResults[["gaugeANOVA"]] <- plot
+      plot$setError(gettext("Design is not balanced: not every part was measured the same number of times."))
+      return()
+    }
+  }
+
+
+  # Converting long to wide data
   if (!wideFormat && ready) {
     dataset <- dataset[order(dataset[[operators]]),]
     dataset <- dataset[order(dataset[[parts]]),]
@@ -74,15 +97,6 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     dataset <- dataset[order(dataset[[parts]]),]
   }
 
-  if(ready && !options[["type3"]]){
-   crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
-    if(!crossed){
-     plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-      jaspResults[["plot"]] <- plot
-      plot$setError(gettext("Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."))
-      return()
-    }
-  }
 
   # Checking type 3
   Type3 <- c(length(unique(dataset[[operators]])) == 1 || options$type3)
