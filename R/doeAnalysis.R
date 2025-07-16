@@ -1345,6 +1345,16 @@ get_levels <- function(var, num_levels, dataset) {
       adjms = result[["adjms"]], fval = result[["F"]], pval = result[["p"]]
     )
     tb$addRows(rows)
+
+    if (options[["sumOfSquaresType"]] == "type3" && length(options[["continuousFactorsFactorial"]]) >= 1) {
+      ssFootnote <- gettext("Type III sums of squares are selected and continuous factors are specified. Results might be misleading. Make sure factors should really be treated as continuous. ")
+    } else {
+      ssFootnote <- switch (options[["sumOfSquaresType"]],
+                              "type1" = gettext("Type I sums of squares."),
+                              "type2" = gettext("Type II sums of squares."),
+                              "type3" = gettext("Type III sums of squares."))
+    }
+    tb$addFootnote(ssFootnote)
   }
 }
 
