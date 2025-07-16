@@ -127,8 +127,9 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   } else {
     df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
     nLevels <- apply(df, 1, function(x) length(which(x[-1] != "")))
-    runs <- prod(nLevels) * designSpec[["replications"]] + designSpec[["repetitions"]]
-    tb[["baseRuns"]] <- runs
+    baseRuns <- prod(nLevels)
+    runs <- baseRuns * designSpec[["replications"]] + designSpec[["repetitions"]]
+    tb[["baseRuns"]] <- baseRuns
     tb[["totalRuns"]] <- runs
     tb[["totalBlocks"]] <- designSpec[["replications"]]
   }

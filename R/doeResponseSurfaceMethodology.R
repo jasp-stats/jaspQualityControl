@@ -79,10 +79,20 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   if (length(designSpec) == 0L) { # user did not select a design
     tb$addFootnote(gettext("Please select a row in the design table."))
   } else {
-
-    tb[["baseRuns"]]    <- designSpec[["runs"]]
-    tb[["replicates"]]  <- designSpec[["replicates"]]
-    tb[["totalRuns"]]   <- designSpec[["runs"]]   * designSpec[["replicates"]]
+    baseRuns <- designSpec[["runs"]]
+    replicates <- designSpec[["replicates"]]
+    nFac <- options[["numberOfCategorical"]]
+    if (nFac > 0) {
+      df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
+      nLevels <- apply(df, 1, function(x) length(which(!x[-1] %in% c("", " "))))
+      facMultiplier <- prod(nLevels)
+    } else {
+      facMultiplier <- 1
+    }
+    totalRuns <- baseRuns * replicates * facMultiplier
+    tb[["baseRuns"]]    <- baseRuns
+    tb[["replicates"]]  <- replicates
+    tb[["totalRuns"]]   <- totalRuns
 
     if (options[["designType"]] == "centralCompositeDesign") {
       tb[["cube"]]         <- designSpec[["cube"]]
@@ -98,7 +108,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   tb$dependOn(options = c(
     "numberOfContinuous", "numberOfCategorical", "selectedRow", "replicates", "selectedDesign2",
     "alphaType", "customAlphaValue", "centerPointType", "customCubeBlock", "customAxialBlock",
-    "designType", "displayDesign"
+    "designType", "displayDesign", "categoricalNoLevels", "categoricalVariables"
   ))
 
   if (length(designSpec) != 0L && !options[["displayDesign"]])
@@ -121,6 +131,7 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   df <- do.call(cbind.data.frame, lapply(tableView, `[[`, "values"))
   if (ncol(df) == 0L) return(df)
   df <- df[, !apply(df, 2, function(col) all(col == ""))]
+  df <- df[, !apply(df, 2, function(col) all(col == " "))]
   colnames(df) <- c("name", paste0("level", seq_len(ncol(df) - 1L)))
   return(df)
 }
@@ -288,7 +299,6 @@ doeResponseSurfaceMethodology <- function(jaspResults, dataset, options, ...) {
   }
 
   return(designCombined)
-
 }
 
 .doeGetSelectedDesign <- function(options) {
