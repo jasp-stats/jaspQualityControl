@@ -407,9 +407,9 @@ test_that("LF5.6 (Weibull) Basic tests of probability plot against Weibull distr
 test_that("LF5.7 (Weibull) Basic tests of summary of test against the Weibull distribution table with manual subgroups and stages", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.32, 4.04074076167675, 40, 0.52, 7.82187513782923, "1 (BL)",
+                                 list(0.32, 4.04047308108133, 40, 0.52, 7.82187513782923, "1 (BL)",
                                       0.79, 4.18683491505342, 60, 0.04, 7.76289753922706, 2, "-",
-                                      0.146094153376669, 20, "-", -0.0589775986021728, "Change (2 vs. BL)"
+                                      0.146155877253571, 20, "-", -0.0584838360613809, "Change (2 vs. BL)"
                                  ))
 })
 
@@ -1940,7 +1940,7 @@ test_that("WF3.6 (Weibull) Basic tests of Probability plot against Weibull distr
 test_that("WF3.7 (Weibull) Basic tests of Summary of test against the Weibull distribution table", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.6, 4.13213439552013, 100, 0.12, 7.78757547787008))
+                                 list(0.6, 4.13213439552013, 100, 0.12, 7.78727631111372))
 })
 
 test_that("WF3.8 (Weibull) Basic tests of X-bar & R control chart", {
@@ -2083,7 +2083,7 @@ test_that("WF5.6 (3-parameter-Weibull) Basic tests of Probability plot against W
 test_that("WF5.7 (3-parameter-Weibull) Basic tests of Summary of test against the Weibull distribution table", {
   table <- results[["results"]][["probabilityContainer"]][["collection"]][["probabilityContainer_probabilityTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.6, 4.13213439552013, 100, 0.12, 7.78757547787008))
+                                 list(0.6, 4.13213439552013, 100, 0.12, 7.78727631111372))
 })
 
 test_that("WF5.8 (3-parameter-Weibull) Basic tests of X-bar & R control chart", {

@@ -953,7 +953,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
     if (length(na.omit(plotStatistic)) > 1) {
       if (plotType == "MR" || plotType == "MMR") {
-        dotColor <- c(rep(NA, k-1),  rep("blue", length(na.omit(plotStatistic))))
+        dotColor <- c(rep("blue", length(plotStatistic)))
+        dotColor[seq(1, k-1)] <- NA
+        print(length(dotColor))
         redPoints <- .nelsonLaws(plotStatistic, sigma, center, UCL, LCL, ruleList)$redPoints
         dotColor[redPoints] <- "red"
       } else {
@@ -1377,7 +1379,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     theta <- fit_Lnorm$parameters[2]
   } else if (distribution == "weibull") {
     fit_Weibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                             control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps)))
+                                             control = list(
+                                               maxit = 10000,
+                                               abstol = .Machine$double.eps^0.75,
+                                               reltol = .Machine$double.eps^0.75,
+                                               ndeps = rep(1e-8, 2))))
     if (jaspBase::isTryError(fit_Weibull))
       stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
     beta <- fit_Weibull$estimate[[1]]
