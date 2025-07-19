@@ -1,10 +1,16 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2025-07-16 23:02+0000\n"
+"Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
+"Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/pl/>\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.13-dev\n"
 "X-Language: pl\n"
 "X-Qt-Contexts: true\n"
 
@@ -1820,7 +1826,6 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Use fixed subgroup size"
 msgstr ""
 
-#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Advanced Options"
 msgstr "Opcje zaawansowane"
@@ -2026,7 +2031,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Advanced options"
-msgstr ""
+msgstr "Opcje zaawansowane"
 
 msgctxt "processCapabilityStudies|"
 msgid "Histogram bin boundaries"
@@ -2126,7 +2131,6 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Today"
 msgstr ""
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Advanced Options"
 msgstr "Opcje zaawansowane"
@@ -2240,7 +2244,7 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Advanced options"
-msgstr ""
+msgstr "Opcje zaawansowane"
 
 msgctxt "doeAnalysis|"
 msgid "Histogram bin width type"
@@ -3095,17 +3099,14 @@ msgid ""
 "points in a row, alternating increase and decrease - Test 8: Oscillation"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Advanced Options"
 msgstr "Opcje zaawansowane"
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Advanced Options"
 msgstr "Opcje zaawansowane"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Advanced Options"
 msgstr "Opcje zaawansowane"
@@ -3147,7 +3148,6 @@ msgctxt "rareEventCharts|"
 msgid "points in a row, equal to 0 - Test 9: Benneyan test"
 msgstr ""
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Advanced Options"
 msgstr "Opcje zaawansowane"
