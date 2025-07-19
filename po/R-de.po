@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-06-14 03:51\n"
+"POT-Creation-Date: 2025-07-19 03:55\n"
 "PO-Revision-Date: 2025-06-15 10:02+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -334,6 +334,24 @@ msgstr "df"
 #, fuzzy
 msgid "Mean square"
 msgstr "Mittlere Quadratsumme"
+
+msgid ""
+"Type III sums of squares are selected and continuous factors are specified. "
+"Results might be misleading. Make sure factors should really be treated as "
+"continuous."
+msgstr ""
+
+#, fuzzy
+msgid "Type I sums of squares."
+msgstr "Quadratsumme"
+
+#, fuzzy
+msgid "Type II sums of squares."
+msgstr "Quadratsumme"
+
+#, fuzzy
+msgid "Type III sums of squares."
+msgstr "Quadratsumme"
 
 msgid "Coded"
 msgstr "Kodierte"
@@ -780,8 +798,12 @@ msgid "Gauge r&R"
 msgstr ""
 
 msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+"Design is not balanced: not every operator measured every part the same "
+"number of times."
+msgstr ""
+
+msgid ""
+"Design is not balanced: not every part was measured the same number of times."
 msgstr ""
 
 msgid ""
@@ -989,6 +1011,14 @@ msgid "Error: Gauge study failed. Could not create traffic light chart."
 msgstr ""
 
 msgid "%.2f"
+msgstr ""
+
+#, fuzzy
+msgid "Gauge r&R - nested"
+msgstr "ANOVA-Tabelle"
+
+msgid ""
+"Unbalanced design. Some parts have more repeated measurements than others."
 msgstr ""
 
 msgid "Gauge r&R (non-replicable) report"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.0\n"
-"POT-Creation-Date: 2025-06-21 03:52\n"
+"POT-Creation-Date: 2025-07-19 03:55\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -296,6 +296,18 @@ msgid "df"
 msgstr ""
 
 msgid "Mean square"
+msgstr ""
+
+msgid "Type III sums of squares are selected and continuous factors are specified. Results might be misleading. Make sure factors should really be treated as continuous."
+msgstr ""
+
+msgid "Type I sums of squares."
+msgstr ""
+
+msgid "Type II sums of squares."
+msgstr ""
+
+msgid "Type III sums of squares."
 msgstr ""
 
 msgid "Coded"
@@ -691,7 +703,10 @@ msgstr ""
 msgid "Gauge r&R"
 msgstr ""
 
-msgid "Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."
+msgid "Design is not balanced: not every operator measured every part the same number of times."
+msgstr ""
+
+msgid "Design is not balanced: not every part was measured the same number of times."
 msgstr ""
 
 msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
@@ -875,6 +890,12 @@ msgid "Error: Gauge study failed. Could not create traffic light chart."
 msgstr ""
 
 msgid "%.2f"
+msgstr ""
+
+msgid "Gauge r&R - nested"
+msgstr ""
+
+msgid "Unbalanced design. Some parts have more repeated measurements than others."
 msgstr ""
 
 msgid "Gauge r&R (non-replicable) report"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-06-14 03:51\n"
+"POT-Creation-Date: 2025-07-19 03:55\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -340,6 +340,24 @@ msgstr "vg"
 #, fuzzy
 msgid "Mean square"
 msgstr "Gemiddelde Kwadraat"
+
+msgid ""
+"Type III sums of squares are selected and continuous factors are specified. "
+"Results might be misleading. Make sure factors should really be treated as "
+"continuous."
+msgstr ""
+
+#, fuzzy
+msgid "Type I sums of squares."
+msgstr "Kwadratensom"
+
+#, fuzzy
+msgid "Type II sums of squares."
+msgstr "Kwadratensom"
+
+#, fuzzy
+msgid "Type III sums of squares."
+msgstr "Kwadratensom"
 
 msgid "Coded"
 msgstr "Gecodeerd"
@@ -811,9 +829,17 @@ msgstr "Totaal aantal series"
 msgid "Gauge r&R"
 msgstr "Gauge r&R"
 
+#, fuzzy
 msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+"Design is not balanced: not every operator measured every part the same "
+"number of times."
+msgstr ""
+"Ontwerp is niet in balans: niet elke operator heeft elk onderdeel gemeten. "
+"Gebruik niet-repliceerbare gauge r&R."
+
+#, fuzzy
+msgid ""
+"Design is not balanced: not every part was measured the same number of times."
 msgstr ""
 "Ontwerp is niet in balans: niet elke operator heeft elk onderdeel gemeten. "
 "Gebruik niet-repliceerbare gauge r&R."
@@ -1048,6 +1074,14 @@ msgstr ""
 
 msgid "%.2f"
 msgstr "%.2f"
+
+#, fuzzy
+msgid "Gauge r&R - nested"
+msgstr "Gauge r&R (Genest)"
+
+msgid ""
+"Unbalanced design. Some parts have more repeated measurements than others."
+msgstr ""
 
 #, fuzzy
 msgid "Gauge r&R (non-replicable) report"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2025-06-14 03:51\n"
+"POT-Creation-Date: 2025-07-19 03:55\n"
 "PO-Revision-Date: 2023-07-22 03:07+0000\n"
 "Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
 "br>\n"
@@ -324,6 +324,24 @@ msgstr ""
 #, fuzzy
 msgid "Mean square"
 msgstr "Quadrado médio"
+
+msgid ""
+"Type III sums of squares are selected and continuous factors are specified. "
+"Results might be misleading. Make sure factors should really be treated as "
+"continuous."
+msgstr ""
+
+#, fuzzy
+msgid "Type I sums of squares."
+msgstr "Soma dos quadrados"
+
+#, fuzzy
+msgid "Type II sums of squares."
+msgstr "Soma dos quadrados"
+
+#, fuzzy
+msgid "Type III sums of squares."
+msgstr "Soma dos quadrados"
 
 msgid "Coded"
 msgstr ""
@@ -746,9 +764,17 @@ msgstr ""
 msgid "Gauge r&R"
 msgstr ""
 
+#, fuzzy
 msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+"Design is not balanced: not every operator measured every part the same "
+"number of times."
+msgstr ""
+"O design não é equilibrado: nem todo operador meensura todas as partes. Use "
+"R&R do medidor não replicável (R&R Aninhado)."
+
+#, fuzzy
+msgid ""
+"Design is not balanced: not every part was measured the same number of times."
 msgstr ""
 "O design não é equilibrado: nem todo operador meensura todas as partes. Use "
 "R&R do medidor não replicável (R&R Aninhado)."
@@ -961,6 +987,14 @@ msgid "Error: Gauge study failed. Could not create traffic light chart."
 msgstr ""
 
 msgid "%.2f"
+msgstr ""
+
+#, fuzzy
+msgid "Gauge r&R - nested"
+msgstr "Tabela ANOVA"
+
+msgid ""
+"Unbalanced design. Some parts have more repeated measurements than others."
 msgstr ""
 
 msgid "Gauge r&R (non-replicable) report"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-06-14 03:51\n"
+"POT-Creation-Date: 2025-07-19 03:55\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -349,6 +349,24 @@ msgstr "df"
 #, fuzzy
 msgid "Mean square"
 msgstr "均方"
+
+msgid ""
+"Type III sums of squares are selected and continuous factors are specified. "
+"Results might be misleading. Make sure factors should really be treated as "
+"continuous."
+msgstr ""
+
+#, fuzzy
+msgid "Type I sums of squares."
+msgstr "平方和"
+
+#, fuzzy
+msgid "Type II sums of squares."
+msgstr "平方和"
+
+#, fuzzy
+msgid "Type III sums of squares."
+msgstr "平方和"
 
 msgid "Coded"
 msgstr ""
@@ -815,9 +833,15 @@ msgstr "总变异"
 msgid "Gauge r&R"
 msgstr "量具 r&R"
 
+#, fuzzy
 msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+"Design is not balanced: not every operator measured every part the same "
+"number of times."
+msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不可重复量具 r&R。"
+
+#, fuzzy
+msgid ""
+"Design is not balanced: not every part was measured the same number of times."
 msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不可重复量具 r&R。"
 
 msgid ""
@@ -1045,6 +1069,14 @@ msgstr ""
 
 msgid "%.2f"
 msgstr "%.2f"
+
+#, fuzzy
+msgid "Gauge r&R - nested"
+msgstr "量具 r&R（嵌套）"
+
+msgid ""
+"Unbalanced design. Some parts have more repeated measurements than others."
+msgstr ""
 
 #, fuzzy
 msgid "Gauge r&R (non-replicable) report"
