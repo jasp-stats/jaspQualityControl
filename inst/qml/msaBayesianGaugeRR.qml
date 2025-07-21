@@ -335,7 +335,7 @@ Form
 
 					CIField
 					{
-						visible:		posteriorCiType.currentText == "central" | posteriorCiType.currentText == "HPD"
+						visible:		posteriorCiType.currentText === "central" || posteriorCiType.currentText === "HPD"
 						enabled:		posteriorCi.checked
 						name:			"posteriorCiMass"
 						label:			qsTr("Mass")
