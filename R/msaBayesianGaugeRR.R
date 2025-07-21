@@ -566,7 +566,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   mu <- mean(dataset[[measurements]])
 
   # data frame for plotting
-  meanEllipse = TRUE
+  meanEllipse <- TRUE
   plotDf <- .getEllipses(contourDf, mu, meanEllipse = meanEllipse, options = options)
 
   if(isTryError(plotDf)) {
