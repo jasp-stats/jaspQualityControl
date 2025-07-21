@@ -421,7 +421,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     # number of distinct categories
     nDistinct <- .getDistinctCategories(jaspResults, parts, operators, options)
-    stdTable$addFootnote(gettext(paste("Number of distinct categories:", nDistinct)))
+    stdTable$addFootnote(gettextf("Number of distinct categories: %s", nDistinct))
   }
 
   ### Percent study variation & percent tolerance table
