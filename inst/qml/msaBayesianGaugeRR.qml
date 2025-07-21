@@ -79,7 +79,7 @@ Form
 	VariablesForm
 	{
 		id:										variablesFormWideFormat
-		visible:								dataFormat.currentValue == "wideFormat"
+		visible:								dataFormat.currentValue === "wideFormat"
 
 		AvailableVariablesList
 		{
