@@ -426,11 +426,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   ### Percent study variation & percent tolerance table
   if(options$tolerance) {
-    title <- "% Study Variation & % Tolerance"
+    title <- gettext("% Study Variation & % Tolerance")
   } else {
-    title <- "% Study Variation"
+    title <- gettext("% Study Variation")
   }
-  percStudyVarTable <- createJaspTable(title = gettext(title))
+  percStudyVarTable <- createJaspTable(title = title)
   percStudyVarTable$position <- 2
   gaugeEvaluation[["percStudyVarTable"]] <- percStudyVarTable
 
