@@ -555,29 +555,27 @@ Form
 		{
 			title: qsTr("MCMC options")
 
-			DoubleField
+			IntegerField
 			{
 				name: "mcmcChains"
 				label: qsTr("Chains")
-				defaultValue: 2
+				defaultValue: 4
 				min: 1
 				max: 10
-				decimals: 0
 			}
 
-			DoubleField
+			IntegerField
 			{
 				name: "mcmcIterations"
 				label: qsTr("Iterations per chain")
 				id: mcmcIterations
 				defaultValue: 10000
-				min: 1
+				min: Math.max(mcmcBurnin.value * 2, 100)
 				max: 100000
-				decimals: 0
 				fieldWidth: 60
 			}
 
-			DoubleField
+			IntegerField
 			{
 				name: "mcmcBurnin"
 				label: qsTr("Burn-in per chain")
