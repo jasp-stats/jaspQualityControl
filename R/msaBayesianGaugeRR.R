@@ -81,7 +81,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   measurementsWide <- colnames(dataWide)[!colnames(dataWide) %in% c(parts, operators)] # names of measurement columns
 
   # check for equal amount of replicates
-  if(any(is.na(dataWide))) {
+  if(anyNA(dataWide)) {
     errorMsg <- "Number of replicates differ per operator/part. Make sure that each operator measures each part equally often."
     .quitAnalysis(gettext(errorMsg))
   }
