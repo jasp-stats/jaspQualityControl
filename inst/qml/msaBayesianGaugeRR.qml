@@ -201,7 +201,7 @@ Form
 			defaultValue:					3
 			min: 							0.000000001
 			decimals: 						9
-			enabled:						variationReference.currentValue == "historicalSd"
+			enabled:						variationReference.currentValue === "historicalSd"
 		}
 
 		CheckBox
