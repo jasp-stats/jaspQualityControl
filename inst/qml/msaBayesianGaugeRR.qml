@@ -166,7 +166,7 @@ Form
 				label: 					qsTr("Full model")
 				id: 					fullModel
 				checked: 				true
-				visible: 				estimationType.currentValue == "manual"
+				visible: 				estimationType.currentValue === "manual"
 			}
 
 			RadioButton
