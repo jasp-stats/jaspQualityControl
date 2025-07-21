@@ -152,7 +152,7 @@ Form
 			defaultValue: 			1
 			min: 					0.001
 			decimals: 				3
-			visible: 				!type3.checked && estimationType.currentValue == "automatic"
+			visible: 				!type3.checked && estimationType.currentValue === "automatic"
 		}
 		
 		RadioButtonGroup
