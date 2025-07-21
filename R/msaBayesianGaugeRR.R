@@ -48,13 +48,13 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
   }
 
-  numeric.vars <- measurements
-  numeric.vars <- numeric.vars[numeric.vars != ""]
-  factor.vars <- c(parts, operators)
-  factor.vars <- factor.vars[factor.vars != ""]
+  numericVars <- measurements
+  numericVars <- numericVars[numericVars != ""]
+  factorVars <- c(parts, operators)
+  factorVars <- factorVars[factorVars != ""]
 
   if (is.null(dataset)) {
-    dataset <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
+    dataset <- .readDataSetToEnd(columns.as.numeric  = numericVars, columns.as.factor = factorVars)
     if (options$type3){
       dataset$operators <- rep(1, nrow(dataset))
       operators <- "operators"
