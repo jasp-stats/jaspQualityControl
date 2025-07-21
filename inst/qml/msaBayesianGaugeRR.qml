@@ -580,9 +580,9 @@ Form
 				name: "mcmcBurnin"
 				label: qsTr("Burn-in per chain")
 				defaultValue: 2000
+				id: mcmcBurnin
 				min: 1
 				max: mcmcIterations.value / 2
-				decimals: 0
 				fieldWidth: 60
 			}			
 		}
