@@ -323,8 +323,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   contribTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
   contribTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
-  contribTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = "95% Credible Interval")
-  contribTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = "95% Credible Interval")
+  overTitle <- gettext("95% Credible Interval")
+  contribTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = overTitle)
+  contribTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = overTitle)
 
   if(ready) {
     contribTable$setData(.percentSampleSummaries(jaspResults[["percContribSamples"]][["object"]], options))
