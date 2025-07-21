@@ -82,7 +82,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # check for equal amount of replicates
   if(anyNA(dataWide)) {
-    errorMsg <- "Number of replicates differ per operator/part. Make sure that each operator measures each part equally often."
+    errorMsg <- gettext("Number of replicates differ per operator/part. Make sure that each operator measures each part equally often.")
     .quitAnalysis(gettext(errorMsg))
   }
 
