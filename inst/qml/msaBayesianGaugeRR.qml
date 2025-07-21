@@ -175,7 +175,7 @@ Form
 				label: 							qsTr("Main effects only")
 				id: 							mainEffectsOnly
 				checked: 						false
-				visible: 						estimationType.currentValue == "manual"
+				visible: 						estimationType.currentValue === "manual"
 			}	
 		}
 				
