@@ -308,7 +308,12 @@ Form
 					{
 						name:	"posteriorPointEstimateType"
 						label:	""
-						values:	["mean", "median", "mode"]
+						values:	
+						[
+							{ label: qsTr("mean"),   value: "mean" }, 
+							{ label: qsTr("median"), value: "median" },
+							{ label: qsTr("mode"),   value: "mode" }
+						]
 					}
 				}
 
@@ -324,7 +329,12 @@ Form
 					{
 						name:		"posteriorCiType"
 						label:		""
-						values:		["central", "HPD", "custom"]
+						values:		
+						[
+							{ label: qsTr("central"), value: "central" }, 
+							{ label: qsTr("HPD"),     value: "HPD" },
+							{ label: qsTr("custom"),  value: "custom" }
+						]
 						id:			posteriorCiType
 					}
 				}
