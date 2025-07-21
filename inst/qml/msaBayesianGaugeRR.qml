@@ -587,7 +587,7 @@ Form
 			{
 				name: "distType"
 				label: qsTr("Distribution")
-				values: posteriorPlotType.currentValue == "var" ? [
+				values: posteriorPlotType.currentValue === "var" ? [
 					{ label: qsTr("Generalized inverse Gaussian"), value: "gig" },
 					{ label: qsTr("Metalog"), value: "metalog" }
 				] : [	
