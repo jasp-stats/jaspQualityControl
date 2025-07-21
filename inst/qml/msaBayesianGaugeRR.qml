@@ -362,7 +362,7 @@ Form
 
 					DoubleField
 					{
-						visible:		posteriorCiType.currentText == "custom"
+						visible:		posteriorCiType.currentText === "custom"
 						enabled:		posteriorCi.checked
 						name:			"posteriorCiUpper"
 						label:			qsTr("Upper")
