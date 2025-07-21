@@ -41,7 +41,7 @@ Form
 	VariablesForm
 	{
 		id:										variablesFormLongFormat
-		visible:								dataFormat.currentValue == "longFormat"
+		visible:								dataFormat.currentValue === "longFormat"
 
 		AvailableVariablesList
 		{
