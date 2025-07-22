@@ -26,6 +26,7 @@ options$operatorMeasurementPlot <- TRUE
 options$partByOperatorMeasurementPlot <- TRUE
 options$trafficLightChart <- TRUE
 options$distType <- "gig"
+options$mcmcChains <- 2
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
 
@@ -256,6 +257,7 @@ options$trafficLightChart <- TRUE
 options$diagnosticsPlotType <- "autocor"
 options$distType <- "metalog"
 options$modelType <- "fullModel"
+options$mcmcChains <- 2
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
 
@@ -429,6 +431,7 @@ options$posteriorCi <- TRUE
 options$trafficLightChart <- TRUE
 options$diagnosticsPlotType <- "density"
 options$distType <- "metalog"
+options$mcmcChains <- 2
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
 
@@ -569,6 +572,7 @@ options$posteriorCi <- TRUE
 options$trafficLightChart <- TRUE
 options$diagnosticsPlotType <- "density"
 options$distType <- "metalog"
+options$mcmcChains <- 2
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
 
@@ -723,6 +727,7 @@ test_that("L Gauge r&R report plot matches", {
   options$reportMeasurementsByOperatorPlot <- TRUE
   options$reportAverageChartByOperator <- TRUE
   options$reportPartByOperatorPlot <- TRUE
+  options$mcmcChains <- 2
   set.seed(1)
   results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
   plotName <- results[["results"]][["report"]][["data"]]
@@ -760,6 +765,7 @@ options$operatorMeasurementPlot <- TRUE
 options$partByOperatorMeasurementPlot <- TRUE
 options$trafficLightChart <- TRUE
 options$distType <- "gig"
+options$mcmcChains <- 2
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
 
@@ -984,6 +990,7 @@ options$trafficLightChart <- TRUE
 options$diagnosticsPlotType <- "autocor"
 options$distType <- "metalog"
 options$modelType <- "fullModel"
+options$mcmcChains <- 2
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
 
@@ -1157,6 +1164,7 @@ options$posteriorCi <- TRUE
 options$trafficLightChart <- TRUE
 options$diagnosticsPlotType <- "density"
 options$distType <- "metalog"
+options$mcmcChains <- 2
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
 
@@ -1297,6 +1305,7 @@ options$posteriorCi <- TRUE
 options$trafficLightChart <- TRUE
 options$diagnosticsPlotType <- "density"
 options$distType <- "metalog"
+options$mcmcChains <- 2
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
 
@@ -1450,6 +1459,7 @@ test_that("W Gauge r&R report plot matches", {
   options$reportMeasurementsByOperatorPlot <- TRUE
   options$reportAverageChartByOperator <- TRUE
   options$reportPartByOperatorPlot <- TRUE
+  options$mcmcChains <- 2
   set.seed(1)
   results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
   plotName <- results[["results"]][["report"]][["data"]]

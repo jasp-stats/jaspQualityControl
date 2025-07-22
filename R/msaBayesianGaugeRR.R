@@ -17,107 +17,28 @@
 
 #' @export
 msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
-  # Reading the data in the correct format
-  wideFormat <- options[["dataFormat"]] == "wideFormat"
-  if (wideFormat) {
-    measurements <- unlist(options[["measurementsWideFormat"]])
-    parts <- unlist(options[["partWideFormat"]])
-    operators <- unlist(options[["operatorWideFormat"]])
-  } else {
-    measurements <- unlist(options[["measurementLongFormat"]])
-    parts <- unlist(options[["partLongFormat"]])
-    operators <- unlist(options[["operatorLongFormat"]])
-  }
+  # Compute additional options
+  options <- .msabComputeDerivedOptions(options)
 
-  #ready statement
-  if (wideFormat && !options[["type3"]]) {
-    ready <- (length(measurements) > 1 && !identical(operators, "") && !identical(parts, ""))
-  } else if (wideFormat && options[["type3"]]) {
-    ready <- (length(measurements) > 1 && !identical(parts, ""))
-  } else if (!wideFormat && !options[["type3"]]) {
-    ready <- (measurements != "" && !identical(operators, "") && !identical(parts, ""))
-  }  else if (!wideFormat && options[["type3"]]) {
-    ready <- (!identical(measurements, "") && !identical(parts, ""))
-  }
+  # Check if ready
+  ready <- .msabIsReady(options)
 
-  if(options$estimationType == "manual"){
-    if(options$modelType == "fullModel" || options$modelType == "mainEffectsOnly") {
-      ready <- ready
-    } else {
-      ready <- FALSE
-    }
-  }
+  # dataset in wide & long format
+  datasets <- .msabReadDataset(dataset, options, ready)
+  dataset <- datasets[["dataLong"]]
+  dataWide <- datasets[["dataWide"]]
 
-  numericVars <- measurements
-  numericVars <- numericVars[numericVars != ""]
-  factorVars <- c(parts, operators)
-  factorVars <- factorVars[factorVars != ""]
+  # adjust variable names in options
+  options <- .msabAdjustVarNames(options, dataWide, ready)
 
-  if (is.null(dataset)) {
-    dataset <- .readDataSetToEnd(columns.as.numeric  = numericVars, columns.as.factor = factorVars)
-    if (options$type3){
-      dataset$operators <- rep(1, nrow(dataset))
-      operators <- "operators"
-    }
-  }
+  # Error checks
+  .msabCheckErrors(jaspResults, options, ready, dataset, dataWide)
 
-  # Checking for infinity and missingValues
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             infinity.target = measurements,
-             missingValues.target = c(measurements, parts, operators),
-             exitAnalysisIfErrors = TRUE)
-
-  dataWide <- data.frame()
-  # Converting wide to long format
-  if(wideFormat && ready) {
-    dataWide <- dataset # wide data for plotting functions
-    dataset <- .convertToLong(dataset, measurements)
-    measurements <- "Measurements" # name assigned to the column inside the function
-  }
-
-  if(!wideFormat && ready) {
-    dataWide <- .convertToWide(dataset, measurements, parts, operators)
-  }
-  measurementsWide <- colnames(dataWide)[!colnames(dataWide) %in% c(parts, operators)] # names of measurement columns
-
-  # check for equal amount of replicates
-  if(anyNA(dataWide)) {
-    errorMsg <- gettext("Number of replicates differ per operator/part. Make sure that each operator measures each part equally often.")
-    .quitAnalysis(errorMsg)
-  }
-
-  if(ready && !options[["type3"]]){
-    crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
-    if(!crossed){
-      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-      jaspResults[["plot"]] <- plot
-      plot$setError(gettext("Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."))
-      return()
-    }
-  }
-
-  # Checking type 3
-  Type3 <- c(length(unique(dataset[[operators]])) == 1 || options$type3)
-
-  # Errors #
-  # Checking whether type3 is used correctly
-  .hasErrors(dataset,
-             target = measurements,
-             custom = function() {
-               if (Type3 && !options$type3)
-                 return("This dataset seems to have only a single unique operator. Please use the Type 3 study by checking the box below.")},
-             exitAnalysisIfErrors = TRUE)
-  # Checking whether the format wide is used correctly
-  if (ready)
-    .hasErrors(dataset,
-               target = measurements,
-               custom = function() {
-                 dataToBeChecked <- dataset[dataset[[operators]] == dataset[[operators]][1],]
-                 partsLevels <- length(levels(dataToBeChecked[[parts]]))
-                 partsLength <- length(dataToBeChecked[[parts]])
-                 if (wideFormat &&  partsLevels != partsLength && !Type3)
-                   return(gettextf("The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times.", partsLength/partsLevels))},
-               exitAnalysisIfErrors = FALSE)
+  # note: this can be done better
+  measurements <- options[["measurements"]]
+  parts <- options[["parts"]]
+  operators <- options[["operators"]]
+  measurementsWide <- options[["measurementsWide"]]
 
   # Results from model comparison
   if(ready){
@@ -213,11 +134,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
 
     if(ready && options$operatorMeasurementPlot) {
-      .createMeasureByOperatorPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready, Type3)
+      .createMeasureByOperatorPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready, Type3 = options$type3)
     }
 
     if(ready && options$partByOperatorMeasurementPlot) {
-      .createPartByOperatorInterPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready, Type3)
+      .createPartByOperatorInterPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready, Type3 = options$type3)
     }
 
     if(ready && options$trafficLightChart) {
@@ -249,13 +170,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
       errorMsg <- jaspResults[["modelComparison"]][["object"]]
 
       if(options$estimationType == "automatic") {
-        errorMsg <- paste(errorMsg, "Select manual estimation to try running the rest of the analysis.")
-        .quitAnalysis(gettext(paste("Model comparison Bayes factors could not be computed:",
-                                    .rmNewLine(errorMsg))))
+        errorMsg <- gettextf("Model comparison Bayes factors could not be computed: %s<br>Select manual estimation to try running the rest of the analysis.",
+                             .rmNewLine(errorMsg))
+        .quitAnalysis(errorMsg)
       }
+      errorMsg <- gettextf("Model comparison Bayes factors could not be computed: %s",
+                           .rmNewLine(errorMsg))
+      BFtable$setError(errorMsg)
 
-      BFtable$setError(gettext(paste("Model comparison Bayes factors could not be computed:",
-                                     .rmNewLine(errorMsg))))
     } else {
       BFtable$setData(jaspResults[["modelComparison"]][["object"]])
       BFtable$addFootnote(gettext("BF<sub>10</sub> compares the full model to the indicated model in each row."))
@@ -365,8 +287,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     mass <- round((options$posteriorCiUpper - options$posteriorCiLower) * 100)
   }
 
-  overtitle <- paste0(mass, "% ", "Credible Interval")
-
+  overtitle <- gettextf("%s%% Credible Interval", mass)
 
   postSummary$addColumnInfo(name = "parameter",     title = gettext("Source"), type = "string")
 
@@ -1397,7 +1318,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .rmNewLine <- function(msg) {
-  gsub("\\n ", "", msg)
+  msg <- gsub("\\n ", "", msg)
+  msg <- gsub("\\n", "", msg)
+
+  return(msg)
 }
 
 .getDistNames <- function(distType) {
@@ -2339,4 +2263,140 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   reportPlot$plotObject <- reportPlotObject
 
   return()
+}
+
+### Data reading & error checks
+.msabComputeDerivedOptions <- function(options) {
+  wideFormat <- options[["dataFormat"]] == "wideFormat"
+  if (wideFormat) {
+    options$measurements <- unlist(options[["measurementsWideFormat"]])
+    options$parts <- unlist(options[["partWideFormat"]])
+    options$operators <- unlist(options[["operatorWideFormat"]])
+  } else {
+    options$measurements <- unlist(options[["measurementLongFormat"]])
+    options$parts <- unlist(options[["partLongFormat"]])
+    options$operators <- unlist(options[["operatorLongFormat"]])
+  }
+
+  if(options$type3) {
+    options$operators <- "operators"
+  }
+
+  options$wideFormat <- wideFormat
+
+  return(options)
+}
+
+.msabIsReady <- function(options) {
+  wideFormat <- options$wideFormat
+  if (wideFormat && !options[["type3"]]) {
+    ready <- (length(options$measurements) > 1 && !identical(options$operators, "") && !identical(options$parts, ""))
+  } else if (wideFormat && options[["type3"]]) {
+    ready <- (length(options$measurements) > 1 && !identical(options$parts, ""))
+  } else if (!wideFormat && !options[["type3"]]) {
+    ready <- (options$measurements != "" && !identical(options$operators, "") && !identical(options$parts, ""))
+  }  else if (!wideFormat && options[["type3"]]) {
+    ready <- (!identical(options$measurements, "") && !identical(options$parts, ""))
+  }
+
+  if(options$estimationType == "manual"){
+    if(options$modelType == "fullModel" || options$modelType == "mainEffectsOnly") {
+      ready <- ready
+    } else {
+      ready <- FALSE
+    }
+  }
+
+  return(ready)
+}
+
+.msabReadDataset <- function(dataset, options, ready) {
+  wideFormat <- options$wideFormat
+  numericVars <- options$measurements
+  numericVars <- numericVars[numericVars != ""]
+  factorVars <- c(options$parts, options$operators)
+  factorVars <- factorVars[factorVars != "" & factorVars != "operators"]
+
+  if (is.null(dataset)) {
+    dataset <- .readDataSetToEnd(columns.as.numeric = numericVars, columns.as.factor = factorVars)
+    if (options$type3){
+      dataset$operators <- rep(1, nrow(dataset))
+    }
+  }
+
+  datasets <- list()
+  # Converting wide to long format
+  if(wideFormat && ready) {
+    datasets[["dataWide"]] <- dataset # wide data for plotting functions
+    datasets[["dataLong"]] <- .convertToLong(dataset, options$measurements)
+  }
+
+  if(!wideFormat && ready) {
+    datasets[["dataLong"]] <- dataset
+    datasets[["dataWide"]] <- .convertToWide(dataset, options$measurements, options$parts, options$operators)
+  }
+
+  return(datasets)
+}
+
+.msabAdjustVarNames <- function(options, dataWide, ready) {
+  if(options$wideFormat && ready) {
+    options$measurements <- "Measurements" # name assigned to the column inside the conversion function
+  }
+
+  if(!is.null(dataWide)) {
+    # names of measurement columns in wide format
+    options$measurementsWide <- colnames(dataWide)[!colnames(dataWide) %in% c(options$parts, options$operators)]
+  }
+
+  return(options)
+}
+
+.msabCheckErrors <- function(jaspResults, options, ready, dataset, dataWide) {
+  measurements <- options[["measurements"]]
+  parts <- options[["parts"]]
+  operators <- options[["operators"]]
+
+  # check for equal amount of replicates
+  if(anyNA(dataWide)) {
+    errorMsg <- gettext("Number of replicates differ per operator/part. Make sure that each operator measures each part equally often.")
+    .quitAnalysis(errorMsg)
+  }
+
+  # Checking for infinity and missingValues
+  .hasErrors(dataset, type = c('infinity', 'missingValues'),
+             infinity.target = measurements,
+             missingValues.target = c(measurements, parts, operators),
+             exitAnalysisIfErrors = TRUE)
+
+  if(ready && !options[["type3"]]){
+    crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
+    if(!crossed){
+      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+      jaspResults[["plot"]] <- plot
+      plot$setError(gettext("Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."))
+      return()
+    }
+  }
+
+  # Checking whether type3 is used correctly
+  Type3 <- c(length(unique(dataset[[operators]])) == 1 || options$type3)
+  .hasErrors(dataset,
+             target = measurements,
+             custom = function() {
+               if (Type3 && !options$type3)
+                 return("This dataset seems to have only a single unique operator. Please use the Type 3 study by checking the box below.")},
+             exitAnalysisIfErrors = TRUE)
+
+  # Checking whether the format wide is used correctly
+  if (ready)
+    .hasErrors(dataWide,
+               target = measurements,
+               custom = function() {
+                 dataToBeChecked <- dataWide[dataWide[[operators]] == dataWide[[operators]][1],]
+                 partsLevels <- length(levels(dataToBeChecked[[parts]]))
+                 partsLength <- length(dataToBeChecked[[parts]])
+                 if (options$wideFormat && partsLevels != partsLength && !Type3)
+                   return(gettextf("The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times.", partsLength/partsLevels))},
+               exitAnalysisIfErrors = FALSE)
 }
