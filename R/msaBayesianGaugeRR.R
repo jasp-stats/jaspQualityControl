@@ -83,7 +83,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   # check for equal amount of replicates
   if(anyNA(dataWide)) {
     errorMsg <- gettext("Number of replicates differ per operator/part. Make sure that each operator measures each part equally often.")
-    .quitAnalysis(gettext(errorMsg))
+    .quitAnalysis(errorMsg)
   }
 
   if(ready && !options[["type3"]]){
@@ -404,11 +404,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   stdTable$addColumnInfo(name = "sourceName",    title = gettext("Source"),                  type = "string")
   stdTable$addColumnInfo(name = "meansStd",      title = gettext("Mean<br>Std"),             type = "number")
-  stdTable$addColumnInfo(name = "lowerStd",      title = gettext("Lower"),                   type = "number", overtitle = "95% Credible Interval<br>Std")
-  stdTable$addColumnInfo(name = "upperStd",      title = gettext("Upper"),                   type = "number", overtitle = "95% Credible Interval<br>Std")
+  stdTable$addColumnInfo(name = "lowerStd",      title = gettext("Lower"),                   type = "number", overtitle = gettext("95% Credible Interval<br>Std"))
+  stdTable$addColumnInfo(name = "upperStd",      title = gettext("Upper"),                   type = "number", overtitle = gettext("95% Credible Interval<br>Std"))
   stdTable$addColumnInfo(name = "meansStudyVar", title = gettext("Mean<br>Study Variation"), type = "number")
-  stdTable$addColumnInfo(name = "lowerStudyVar", title = gettext("Lower"),                   type = "number", overtitle = "95% Credible Interval<br>Study Variation")
-  stdTable$addColumnInfo(name = "upperStudyVar", title = gettext("Upper"),                   type = "number", overtitle = "95% Credible Interval<br>Study Variation")
+  stdTable$addColumnInfo(name = "lowerStudyVar", title = gettext("Lower"),                   type = "number", overtitle = gettext("95% Credible Interval<br>Study Variation"))
+  stdTable$addColumnInfo(name = "upperStudyVar", title = gettext("Upper"),                   type = "number", overtitle = gettext("95% Credible Interval<br>Study Variation"))
 
   if(ready) {
     stdData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "sd")
@@ -436,13 +436,13 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   percStudyVarTable$addColumnInfo(name = "sourceName",          title = gettext("Source"),                    type = "string")
   percStudyVarTable$addColumnInfo(name = "meansPercStudy",      title = gettext("Mean<br>% Study Variation"), type = "number")
-  percStudyVarTable$addColumnInfo(name = "lowerPercStudy",      title = gettext("Lower"),                     type = "number", overtitle = "95% Credible Interval<br>% Study Variation")
-  percStudyVarTable$addColumnInfo(name = "upperPercStudy",      title = gettext("Upper"),                     type = "number", overtitle = "95% Credible Interval<br>% Study Variation")
+  percStudyVarTable$addColumnInfo(name = "lowerPercStudy",      title = gettext("Lower"),                     type = "number", overtitle = gettext("95% Credible Interval<br>% Study Variation"))
+  percStudyVarTable$addColumnInfo(name = "upperPercStudy",      title = gettext("Upper"),                     type = "number", overtitle = gettext("95% Credible Interval<br>% Study Variation"))
 
   if(options$tolerance) {
     percStudyVarTable$addColumnInfo(name = "meansPercTol",      title = gettext("Mean<br>% Tolerance"), type = "number")
-    percStudyVarTable$addColumnInfo(name = "lowerPercTol",      title = gettext("Lower"),               type = "number", overtitle = "95% Credible Interval<br>% Tolerance")
-    percStudyVarTable$addColumnInfo(name = "upperPercTol",      title = gettext("Upper"),               type = "number", overtitle = "95% Credible Interval<br>% Tolerance")
+    percStudyVarTable$addColumnInfo(name = "lowerPercTol",      title = gettext("Lower"),               type = "number", overtitle = gettext("95% Credible Interval<br>% Tolerance"))
+    percStudyVarTable$addColumnInfo(name = "upperPercTol",      title = gettext("Upper"),               type = "number", overtitle = gettext("95% Credible Interval<br>% Tolerance"))
   }
 
   if(ready) {
@@ -570,8 +570,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   plotDf <- .getEllipses(contourDf, mu, meanEllipse = meanEllipse, options = options)
 
   if(isTryError(plotDf)) {
-    errorMsg <- paste("Failed to calculate contour:", .rmNewLine(plotDf))
-    tempPlot$setError(gettext(errorMsg))
+    errorMsg <- gettextf("Failed to calculate contour: %s", .rmNewLine(plotDf))
+    tempPlot$setError(errorMsg)
     contourPlot[["plot"]] <- tempPlot
     return()
   }
@@ -622,14 +622,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   risksTable$addColumnInfo(name = "risks", title = gettext("Risk"),  type = "string")
   risksTable$addColumnInfo(name = "means", title = gettext("Mean"),  type = "number")
-  risksTable$addColumnInfo(name = "lower", title = gettext("Lower"), type = "number", overtitle = "95% Credible Interval")
-  risksTable$addColumnInfo(name = "upper", title = gettext("Upper"), type = "number", overtitle = "95% Credible Interval")
+  risksTable$addColumnInfo(name = "lower", title = gettext("Lower"), type = "number", overtitle = gettext("95% Credible Interval"))
+  risksTable$addColumnInfo(name = "upper", title = gettext("Upper"), type = "number", overtitle = gettext("95% Credible Interval"))
 
   fillDat <- .getRisks(contourDf, mu, options)
 
   if(isTryError(fillDat)) {
-    errorMsg <- paste("Risks could not be computed:", fillDat, "Try adjusting the specification limits.")
-    risksTable$setError(gettext(errorMsg))
+    errorMsg <- gettextf("Risks could not be computed: %s<br>Try adjusting the specification limits.", fillDat)
+    risksTable$setError(errorMsg)
   } else {
     risksTable$setData(fillDat)
   }
@@ -687,10 +687,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   fits <- jaspResults[["distFit"]][["object"]]
 
   if(isTryError(fits)) {
-    errorMsg <- paste("The", .getDistNames(options$distType),
-                      "distribution could not be fit to the samples. Try selecting another distribution.")
+    errorMsg <- gettextf("The %s distribution could not be fit to the samples.
+                         Try selecting another distribution.", .getDistNames(options$distType))
     tempPlot <- createJaspPlot()
-    tempPlot$setError(gettext(errorMsg))
+    tempPlot$setError(errorMsg)
     jaspResults[["variancePosteriors"]][["errorPlot"]] <- tempPlot
     return()
   }
@@ -1021,7 +1021,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   if(isTryError(fit)) {
-    .quitAnalysis(gettext(paste("The BayesFactor model could not be fit:", .rmNewLine(fit))))
+    .quitAnalysis(gettextf("The BayesFactor model could not be fit: %s", .rmNewLine(fit)))
   }
 
   nchains <- options$mcmcChains
