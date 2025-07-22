@@ -68,7 +68,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   # insert report here
-  if(ready && options$report) {
+  if(options$report) {
     .createGaugeReport(jaspResults, dataset = dataWide, measurements = measurementsWide, parts, operators, options, ready)
   } else {
 
@@ -84,24 +84,24 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
 
     # prior
-    if(ready && options$priorPlot) {
-      .plotPrior(jaspResults, options)
+    if(options$priorPlot) {
+      .plotPrior(jaspResults, options, ready)
     }
 
     # MCMC diagnostics
-    if(ready) {
-      if(options$diagnosticsTable || options$diagnosticsPlots) {
-        .mcmcDiagnostics(jaspResults, parts, operators, options)
-      }
+    if(options$diagnosticsTable || options$diagnosticsPlots) {
+      .mcmcDiagnostics(jaspResults, parts, operators, options, ready)
     }
 
     # posteriors
-    if(ready && options$posteriorPlot){
-      .fillPostSummaryTable(jaspResults, options, parts, operators)
-      .plotVariancePosteriors(jaspResults, options, parts, operators)
+    if(options$posteriorPlot){
+      if(ready) {
+        .fillPostSummaryTable(jaspResults, options, parts, operators)
+      }
+      .plotVariancePosteriors(jaspResults, options, parts, operators, ready)
 
       # summary table
-      .createPostSummaryTable(jaspResults, options, parts, operators)
+      .createPostSummaryTable(jaspResults, options, parts, operators, ready)
     }
 
     if(ready && options$varianceComponentsGraph) {
@@ -258,7 +258,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.createPostSummaryTable <- function(jaspResults, options, parts, operators){
+.createPostSummaryTable <- function(jaspResults, options, parts, operators, ready){
   if(!is.null(jaspResults[["variancePosteriors"]][["postSummary"]]) ||
      isTryError(jaspResults[["distFit"]][["object"]])){
     return()
@@ -272,6 +272,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["variancePosteriors"]][["postSummary"]] <- postSummary
 
   # title for point estimate
+  # note: probably best to change that for translation
   pointEst <- switch (options$posteriorPointEstimateType,
                       "mean" = "Mean",
                       "mode" = "Mode",
@@ -299,6 +300,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     postSummary$addColumnInfo(name = "ciLower",       title = gettext("Lower"),     type = "number", overtitle = gettext(overtitle))
     postSummary$addColumnInfo(name = "ciUpper",       title = gettext("Upper"),     type = "number", overtitle = gettext(overtitle))
     postSummary$addFootnote(gettext("Credible intervals are estimated based on the distribution fit to the MCMC samples."))
+  }
+
+  if(!ready) {
+    return()
   }
 
   postSummary$setData(jaspResults[["postSummaryStats"]][["object"]])
@@ -559,7 +564,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.plotPrior <- function(jaspResults, options) {
+.plotPrior <- function(jaspResults, options, ready) {
   if(!is.null(jaspResults[["priorPlot"]])) {
     return()
   }
@@ -569,6 +574,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["priorPlot"]] <- priorPlot
 
   gPrior <- createJaspPlot(title = gettext("g-prior"), width = 600, height = 320)
+
+  if(!ready) {
+    priorPlot[["plot"]] <- gPrior
+    return()
+  }
 
   # axis limit
   xUpper <- extraDistr::qinvchisq(0.75, nu = 1, tau = options$rscalePrior^2)
@@ -593,7 +603,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 ### posterior plots
-.plotVariancePosteriors <- function(jaspResults, options, parts, operators){
+.plotVariancePosteriors <- function(jaspResults, options, parts, operators, ready){
 
   if(!is.null(jaspResults[["variancePosteriors"]])){
     return()
@@ -604,6 +614,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   variancePosteriors$dependOn(c(.varCompTableDependencies(),
                                 .postPlotDependencies()))
   jaspResults[["variancePosteriors"]] <- variancePosteriors
+
+  if(!ready) {
+    jaspResults[["variancePosteriors"]][["plot"]] <- createJaspPlot(width = 600, height = 320)
+    return()
+  }
 
   fits <- jaspResults[["distFit"]][["object"]]
 
@@ -1898,7 +1913,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 ### MCMC diagnostics
 
 ## main function
-.mcmcDiagnostics <- function(jaspResults, parts, operators, options) {
+.mcmcDiagnostics <- function(jaspResults, parts, operators, options, ready) {
   if(!is.null(jaspResults[["mcmcDiagnostics"]])) {
     return()
   }
@@ -1909,12 +1924,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                              "diagnosticsTable"))
   jaspResults[["mcmcDiagnostics"]] <- mcmcDiagnostics
 
-  # general input needed for the sub-functions
-  chains <- jaspResults[["MCMCsamples"]][["object"]]
-  excludeInter <- .evalInter(jaspResults, parts, operators, options)
-
-  paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
-  paramNames <- c(paramNames, "sig2")
+  # initialize plot if data is not ready
+  if(options$diagnosticsPlots && !ready) {
+    jaspResults[["mcmcDiagnostics"]][["plot"]] <- createJaspPlot(width = 600, height = 320)
+  }
 
   if(options$diagnosticsTable) {
     diagnosticsTable <- createJaspTable()
@@ -1928,6 +1941,17 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     diagnosticsTable$addColumnInfo(name = "mcseMean",          title = gettext("MCSE (Mean)"), type = "number")
     diagnosticsTable$addColumnInfo(name = "mcseQuantileLower", title = gettext("0.025"),       type = "number", overtitle = gettext("MCSE (Quantiles)"))
     diagnosticsTable$addColumnInfo(name = "mcseQuantileUpper", title = gettext("0.975"),       type = "number", overtitle = gettext("MCSE (Quantiles)"))
+
+    if(!ready) {
+      return()
+    }
+
+    # general input needed for the sub-functions
+    chains <- jaspResults[["MCMCsamples"]][["object"]]
+    excludeInter <- .evalInter(jaspResults, parts, operators, options)
+
+    paramNames <- .bfParameterNames(parts, operators, excludeInter, options)
+    paramNames <- c(paramNames, "sig2")
 
     fillDat <- .fillDiagnosticsTable(chains = posterior::as_draws_array(chains),
                                      paramNames = .convertOutputNames(paramNames, parts, operators, includeSigma = TRUE))
