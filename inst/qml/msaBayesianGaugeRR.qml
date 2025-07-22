@@ -15,6 +15,7 @@
 import QtQuick
 import QtQuick.Layouts
 import JASP.Controls
+import JASP
 
 Form
 {
@@ -150,7 +151,8 @@ Form
 			label: 					qsTr("Cut-off BF in favor of full model")
 			id: 					bfFavorFull
 			defaultValue: 			1
-			min: 					0.001
+			min: 					0
+			inclusive: 			    JASP.None
 			decimals: 				3
 			visible: 				!type3.checked && estimationType.currentValue === "automatic"
 		}
@@ -199,7 +201,8 @@ Form
 			name:							"historicalSdValue"
 			label:							qsTr("Historical standard deviation:")
 			defaultValue:					3
-			min: 							0.000000001
+			min: 							0
+			inclusive: 					    JASP.None
 			decimals: 						9
 			enabled:						variationReference.currentValue === "historicalSd"
 		}
@@ -216,7 +219,8 @@ Form
 				name: 						"toleranceValue"
 				id:							toleranceValue
 				defaultValue: 				10
-				min: 						0.000000001
+				min: 						0
+				inclusive: 					JASP.None
 				decimals: 					9
 			}
 		}
@@ -246,8 +250,9 @@ Form
 				label: 						qsTr("Study var. multiplier value")
 				fieldWidth: 				60
 				defaultValue: 				6
-				min:						0.001
-				max:						99.999
+				min:						0
+				max:						100
+				inclusive: 					JASP.None
 				decimals: 					3
 			}
 		}
@@ -353,7 +358,7 @@ Form
 						defaultValue:	95
 						min:			1
 						max:			100
-						inclusive:		JASP.Min
+						inclusive:		JASP.MinOnly
 					}
 
 					DoubleField
@@ -365,7 +370,7 @@ Form
 						id:				posteriorCiLower
 						fieldWidth:		50
 						defaultValue:	0.25
-						min:			0.000001
+						min:			0
 						max:			posteriorCiUpper.value
 						inclusive:		JASP.None
 					}
@@ -380,7 +385,7 @@ Form
 						fieldWidth:		50
 						defaultValue:	0.75
 						min:			posteriorCiLower.value
-						max:			0.999999
+						max:			1
 						inclusive:		JASP.None
 					}
 				}
@@ -397,8 +402,8 @@ Form
 						label: qsTr("Lower specification limit")
 						id: contourLSL
 						fieldWidth: 60
+						negativeValues: true
 						defaultValue: -1
-						min: -1000000
 						max: contourUSL.value
 						inclusive: JASP.None
 					}
@@ -410,8 +415,8 @@ Form
 						id: contourUSL
 						fieldWidth: 60
 						defaultValue: 1
+						negativeValues: true
 						min: contourLSL.value
-						max: 1000000
 						inclusive: JASP.None
 					}
 				}
@@ -540,8 +545,9 @@ Form
 				name: "rscalePrior"
 				label: qsTr("r scale prior")
 				defaultValue: 1
-				min: 0.001
+				min: 0
 				max: 10
+				inclusive: JASP.MaxOnly
 				decimals: 3
 			}
 		}
