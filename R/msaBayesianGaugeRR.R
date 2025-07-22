@@ -601,9 +601,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   yLims <- c(yBreaks[1], yBreaks[length(yBreaks)])
 
   p <- p +
-    ggplot2::scale_x_continuous(name = "True Value", breaks = xBreaks,
+    ggplot2::scale_x_continuous(name = gettext("True Value"), breaks = xBreaks,
                                 limits = xLims, labels = xBreaks) +
-    ggplot2::scale_y_continuous(name = "Measurement", breaks = yBreaks,
+    ggplot2::scale_y_continuous(name = gettext("Measurement"), breaks = yBreaks,
                                 limits = yLims, labels = yBreaks) +
     ggplot2::coord_equal()
 
