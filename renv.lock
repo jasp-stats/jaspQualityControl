@@ -334,6 +334,7 @@
       "Version": "1.13.0",
       "Source": "Repository",
       "Repository": "CRAN"
+    },
     "beeswarm": {
       "Package": "beeswarm",
       "Version": "0.4.0",
