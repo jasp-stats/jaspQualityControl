@@ -156,7 +156,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   BFtable$addColumnInfo(name = "modelName",      title = gettext("Models"),          type = "string")
   BFtable$addColumnInfo(name = "comparisonBF",   title = gettext("BF<sub>10</sub>"), type = "number")
-  BFtable$addColumnInfo(name = "error",          title = gettext("error %"),         type = "number")
+  BFtable$addColumnInfo(name = "error",          title = gettextf("error %%"),         type = "number")
 
   # check for errors & set data
   if(ready) {
@@ -195,8 +195,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   varCompTable$addColumnInfo(name = "sourceName",   title = gettext("Source"),                type = "string")
   varCompTable$addColumnInfo(name = "postMeans",    title = gettext("Mean"),                  type = "number")
   varCompTable$addColumnInfo(name = "postSds",      title = gettext("Std. Deviation"),        type = "number")
-  varCompTable$addColumnInfo(name = "postCrIlower", title = gettext("Lower"),                 type = "number", overtitle = gettext("95% Credible Interval"))
-  varCompTable$addColumnInfo(name = "postCrIupper", title = gettext("Upper"),                 type = "number", overtitle = gettext("95% Credible Interval"))
+  varCompTable$addColumnInfo(name = "postCrIlower", title = gettext("Lower"),                 type = "number", overtitle = gettextf("95%% Credible Interval"))
+  varCompTable$addColumnInfo(name = "postCrIupper", title = gettext("Upper"),                 type = "number", overtitle = gettextf("95%% Credible Interval"))
 
   # set data
   if(ready) {
@@ -232,14 +232,14 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if(!is.null(jaspResults[["contribTable"]])) {
     return()
   }
-  contribTable <- createJaspTable(title = gettext("% Contribution to Total Variation"))
+  contribTable <- createJaspTable(title = gettextf("%% Contribution to Total Variation"))
   contribTable$position <- 3
   contribTable$dependOn(.varCompTableDependencies())
   jaspResults[["contribTable"]] <- contribTable
 
   contribTable$addColumnInfo(name = "sourceName", title = gettext("Source"),  type = "string")
   contribTable$addColumnInfo(name = "means",      title = gettext("Mean"),    type = "number")
-  overTitle <- gettext("95% Credible Interval")
+  overTitle <- gettextf("95%% Credible Interval")
   contribTable$addColumnInfo(name = "lower",      title = gettext("Lower"),   type = "number", overtitle = overTitle)
   contribTable$addColumnInfo(name = "upper",      title = gettext("Upper"),   type = "number", overtitle = overTitle)
 
@@ -323,11 +323,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   stdTable$addColumnInfo(name = "sourceName",    title = gettext("Source"),                  type = "string")
   stdTable$addColumnInfo(name = "meansStd",      title = gettext("Mean<br>Std"),             type = "number")
-  stdTable$addColumnInfo(name = "lowerStd",      title = gettext("Lower"),                   type = "number", overtitle = gettext("95% Credible Interval<br>Std"))
-  stdTable$addColumnInfo(name = "upperStd",      title = gettext("Upper"),                   type = "number", overtitle = gettext("95% Credible Interval<br>Std"))
+  stdTable$addColumnInfo(name = "lowerStd",      title = gettext("Lower"),                   type = "number", overtitle = gettextf("95%% Credible Interval<br>Std"))
+  stdTable$addColumnInfo(name = "upperStd",      title = gettext("Upper"),                   type = "number", overtitle = gettextf("95%% Credible Interval<br>Std"))
   stdTable$addColumnInfo(name = "meansStudyVar", title = gettext("Mean<br>Study Variation"), type = "number")
-  stdTable$addColumnInfo(name = "lowerStudyVar", title = gettext("Lower"),                   type = "number", overtitle = gettext("95% Credible Interval<br>Study Variation"))
-  stdTable$addColumnInfo(name = "upperStudyVar", title = gettext("Upper"),                   type = "number", overtitle = gettext("95% Credible Interval<br>Study Variation"))
+  stdTable$addColumnInfo(name = "lowerStudyVar", title = gettext("Lower"),                   type = "number", overtitle = gettextf("95%% Credible Interval<br>Study Variation"))
+  stdTable$addColumnInfo(name = "upperStudyVar", title = gettext("Upper"),                   type = "number", overtitle = gettextf("95%% Credible Interval<br>Study Variation"))
 
   if(ready) {
     stdData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "sd")
@@ -344,23 +344,23 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   ### Percent study variation & percent tolerance table
   if(options$tolerance) {
-    title <- gettext("% Study Variation & % Tolerance")
+    title <- gettextf("%% Study Variation & %% Tolerance")
   } else {
-    title <- gettext("% Study Variation")
+    title <- gettextf("%% Study Variation")
   }
   percStudyVarTable <- createJaspTable(title = title)
   percStudyVarTable$position <- 2
   gaugeEvaluation[["percStudyVarTable"]] <- percStudyVarTable
 
-  percStudyVarTable$addColumnInfo(name = "sourceName",          title = gettext("Source"),                    type = "string")
-  percStudyVarTable$addColumnInfo(name = "meansPercStudy",      title = gettext("Mean<br>% Study Variation"), type = "number")
-  percStudyVarTable$addColumnInfo(name = "lowerPercStudy",      title = gettext("Lower"),                     type = "number", overtitle = gettext("95% Credible Interval<br>% Study Variation"))
-  percStudyVarTable$addColumnInfo(name = "upperPercStudy",      title = gettext("Upper"),                     type = "number", overtitle = gettext("95% Credible Interval<br>% Study Variation"))
+  percStudyVarTable$addColumnInfo(name = "sourceName",          title = gettext("Source"),                      type = "string")
+  percStudyVarTable$addColumnInfo(name = "meansPercStudy",      title = gettextf("Mean<br>%% Study Variation"), type = "number")
+  percStudyVarTable$addColumnInfo(name = "lowerPercStudy",      title = gettext("Lower"),                       type = "number", overtitle = gettextf("95%% Credible Interval<br>%% Study Variation"))
+  percStudyVarTable$addColumnInfo(name = "upperPercStudy",      title = gettext("Upper"),                       type = "number", overtitle = gettextf("95%% Credible Interval<br>%% Study Variation"))
 
   if(options$tolerance) {
-    percStudyVarTable$addColumnInfo(name = "meansPercTol",      title = gettext("Mean<br>% Tolerance"), type = "number")
-    percStudyVarTable$addColumnInfo(name = "lowerPercTol",      title = gettext("Lower"),               type = "number", overtitle = gettext("95% Credible Interval<br>% Tolerance"))
-    percStudyVarTable$addColumnInfo(name = "upperPercTol",      title = gettext("Upper"),               type = "number", overtitle = gettext("95% Credible Interval<br>% Tolerance"))
+    percStudyVarTable$addColumnInfo(name = "meansPercTol",      title = gettextf("Mean<br>%% Tolerance"), type = "number")
+    percStudyVarTable$addColumnInfo(name = "lowerPercTol",      title = gettext("Lower"),                 type = "number", overtitle = gettextf("95%% Credible Interval<br>%% Tolerance"))
+    percStudyVarTable$addColumnInfo(name = "upperPercTol",      title = gettext("Upper"),                 type = "number", overtitle = gettextf("95%% Credible Interval<br>%% Tolerance"))
   }
 
   if(ready) {
@@ -479,8 +479,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   risksTable$addColumnInfo(name = "risks", title = gettext("Risk"),  type = "string")
   risksTable$addColumnInfo(name = "means", title = gettext("Mean"),  type = "number")
-  risksTable$addColumnInfo(name = "lower", title = gettext("Lower"), type = "number", overtitle = gettext("95% Credible Interval"))
-  risksTable$addColumnInfo(name = "upper", title = gettext("Upper"), type = "number", overtitle = gettext("95% Credible Interval"))
+  risksTable$addColumnInfo(name = "lower", title = gettext("Lower"), type = "number", overtitle = gettextf("95%% Credible Interval"))
+  risksTable$addColumnInfo(name = "upper", title = gettext("Upper"), type = "number", overtitle = gettextf("95%% Credible Interval"))
 
   if(!ready) {
     contourPlot[["plot"]] <- tempPlot
@@ -734,7 +734,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["rChart"]][["plot"]] <- createJaspPlot(width = 1200, height = 500)
 
   if (ready) {
-    rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R",
+    ruleList <- .getRuleListSubgroupCharts(options, type = "R")
+    rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R", ruleList = ruleList,
                             stages = operators, xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                             stagesSeparateCalculation = FALSE)
 
@@ -759,8 +760,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(width = 1200, height = 500)
 
   if (ready) {
+    ruleList <- .getRuleListSubgroupCharts(options, type = "xBar")
     xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)],
-                               plotType = "xBar", xBarSdType = "r", stages = operators,
+                               plotType = "xBar", ruleList = ruleList, xBarSdType = "r", stages = operators,
                                xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                stagesSeparateCalculation = FALSE)
 
@@ -2216,8 +2218,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     plotIndexCounter <- plotIndexCounter + 1
   }
   if (options[["reportRChartByOperator"]]) {
+    ruleList1 <- .getRuleListSubgroupCharts(options, "R")
     plots[[plotIndexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)],
-                                               plotType = "R", stages = operators,
+                                               plotType = "R", ruleList = ruleList1, stages = operators,
                                                xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                                stagesSeparateCalculation = FALSE)$plotObject
     plotIndexCounter <- plotIndexCounter + 1
@@ -2227,8 +2230,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     plotIndexCounter <- plotIndexCounter + 1
   }
   if (options[["reportAverageChartByOperator"]]) {
+    ruleList2 <- .getRuleListSubgroupCharts(options, "xBar")
     plots[[plotIndexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)],
-                                               plotType = "xBar", xBarSdType = "r", stages = operators,
+                                               plotType = "xBar", ruleList = ruleList2, xBarSdType = "r", stages = operators,
                                                xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                                stagesSeparateCalculation = FALSE)$plotObject
     plotIndexCounter <- plotIndexCounter + 1
@@ -2359,6 +2363,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   options$wideFormat <- wideFormat
+
+  # rule set for xBar and R charts
+  options$testSet <- "jaspDefault"
 
   return(options)
 }

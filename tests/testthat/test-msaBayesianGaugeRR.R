@@ -232,13 +232,12 @@ test_that("L1 Test results for x-bar chart table results match", {
   jaspTools::expect_equal_tables(table,
                                  list("Operator A", "Point 1", "", "Point 2", "", "Point 3", "", "Point 4",
                                       "", "Point 5", "", "Point 6", "", "Point 7", "", "Point 8",
-                                      "", "Point 9", "", "Point 10", "Operator B", "Point 11", "",
-                                      "Point 12", "", "Point 13", "", "Point 14", "", "Point 15",
-                                      "", "Point 16", "", "Point 17", "", "Point 18", "", "Point 19",
-                                      "", "Point 20", "Operator C", "Point 21", "", "Point 22", "",
-                                      "Point 23", "", "Point 24", "", "Point 25", "", "Point 26",
-                                      "", "Point 27", "", "Point 28", "", "Point 29", "", "Point 30"
-                                 ))
+                                      "", "Point 9", "", "Point 10", "Operator B", "Point 1", "",
+                                      "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "",
+                                      "Point 6", "", "Point 7", "", "Point 8", "", "Point 9", "",
+                                      "Point 10", "Operator C", "Point 1", "", "Point 2", "", "Point 3",
+                                      "", "Point 4", "", "Point 5", "", "Point 6", "", "Point 7",
+                                      "", "Point 8", "", "Point 9", "", "Point 10"))
 })
 
 
@@ -904,7 +903,7 @@ test_that("W1 rChart wide matches", {
 test_that("W1 Test results for range chart table results match", {
   table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("C", "Point 30"))
+                                 list("C", "Point 10"))
 })
 
 test_that("W1 Traffic light chart wide matches", {
@@ -969,8 +968,8 @@ test_that("W1 Test results for x-bar chart table results match", {
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("A", "Point 1", "", "Point 5", "", "Point 8", "", "Point 10",
-                                      "B", "Point 11", "", "Point 15", "", "Point 18", "", "Point 20",
-                                      "C", "Point 21", "", "Point 23", "", "Point 25", "", "Point 30"
+                                      "B", "Point 1", "", "Point 5", "", "Point 8", "", "Point 10",
+                                      "C", "Point 1", "", "Point 3", "", "Point 5", "", "Point 10"
                                  ))
 })
 
