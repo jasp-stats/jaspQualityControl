@@ -122,6 +122,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
+
+
   # Report
   if (options[["report"]]) {
     nElements <- sum(options[["reportProcessStability"]]*2, options[["reportProcessCapabilityPlot"]], options[["reportProbabilityPlot"]],
@@ -144,7 +146,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                        "subgroup", "reportTitle", "reportTitleText", "reportLocation", "reportLocationText",
                                        "reportLine", "reportLineText", "reportMachine", "reportMachineText", "reportVariable",
                                        "reportVariableText", "reportProcess", "reportProcessText", "reportDate", "reportDateText",
-                                       "reportReportedBy", "reportReportedByText", "reportConclusion", "reportConclusionText"))
+                                       "reportReportedBy", "reportReportedByText", "reportConclusion", "reportConclusionText", .getDependenciesControlChartRules()))
 
     if((!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]) && options[["reportProcessCapabilityTables"]]) {
       reportPlot$setError(gettext("No specification limits set."))
@@ -159,7 +161,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     if(!ready)
       return()
-
 
     # Plot meta data
     if (options[["reportTitle"]] ) {
@@ -189,13 +190,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       controlCharts <- list()
       # X-bar and second chart OR ImR Chart
       if (options[["controlChartType"]] == "xmr") {
+        ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
+        ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
         controlCharts[[1]] <- .controlChart(dataset = dataset[measurements], plotType = "I",
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                            xAxisLabels = seq_along(unlist(dataset[measurements])))$plotObject
+                                            xAxisLabels = seq_along(unlist(dataset[measurements])), ruleList = ruleList1)$plotObject
         controlCharts[[2]] <- .controlChart(dataset = dataset[measurements], plotType = "MR",
                                             xAxisLabels = seq_along(unlist(dataset[measurements])),
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
-                                            movingRangeLength = options[["xmrChartMovingRangeLength"]])$plotObject
+                                            movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)$plotObject
       } else {
         secondPlotType <- switch(options[["controlChartType"]],
                                  "xBarR" = "R",
@@ -209,14 +212,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         columnsToPass <- columnsToPass[columnsToPass != ""]
         fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
         unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+        # Create the rule list for the out-of-control signals
+        ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
+        ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
         controlCharts[[1]] <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                             xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
-                                            unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
+                                            unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList1)$plotObject
         controlCharts[[2]] <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
                                             nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                             tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
-                                            fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)$plotObject
+                                            fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)$plotObject
       }
       plots[[plotIndexCounter]] <- controlCharts
       plotIndexCounter <- plotIndexCounter + 1
@@ -302,7 +308,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["xBar"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
                                        "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
                                        "subgroupSizeUnequal", "controlChartSdUnbiasingConstant", "controlChart",
-                                       "controlLimitsNumberOfSigmas", "groupingVariableMethod"))
+                                       "controlLimitsNumberOfSigmas", "groupingVariableMethod", .getDependenciesControlChartRules()))
       jaspResults[["xBar"]]$position <- 1
 
 
@@ -321,14 +327,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         columnsToPass <- columnsToPass[columnsToPass != ""]
         fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
         unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+        # Create the rule list for the out-of-control signals
+        ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
+        ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
         xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", xBarSdType = sdType,
                                    nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, fixedSubgroupSize = fixedSubgroupSize,
-                                   unbiasingConstantUsed = unbiasingConstantUsed)
+                                   unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList1)
         secondPlot <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,
                                     nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], xAxisLabels = axisLabels,
                                     tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
-                                    fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed)
+                                    fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
                                                                                layout = matrix(2:1, 2), removeXYlabels= "x")
         if (!identical(plotNotes, ""))
@@ -340,7 +349,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR control chart"))
       jaspResults[["xmr"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
                                       "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                      "subgroupSizeUnequal", "controlChart", "controlLimitsNumberOfSigmas", "groupingVariableMethod"))
+                                      "subgroupSizeUnequal", "controlChart", "controlLimitsNumberOfSigmas", "groupingVariableMethod", .getDependenciesControlChartRules()))
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
@@ -357,13 +366,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         } else {
           specificationLimitsControlChart <- NA
         }
+        ruleList1 <- .getRuleListIndividualCharts(options, type = "I")
+        ruleList2 <- .getRuleListIndividualCharts(options, type = "MR")
         individualChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "I",
                                          nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                          xAxisLabels = seq_along(unlist(dataset[measurements])),
-                                         specificationLimits = specificationLimitsControlChart)
+                                         specificationLimits = specificationLimitsControlChart, ruleList = ruleList1)
         mrChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "MR",
                                  nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
-                                 xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]])
+                                 xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)
         jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
                                                                               layout = matrix(2:1, 2), removeXYlabels= "x")
         if (!identical(plotNotes, ""))
@@ -1443,6 +1454,22 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
   colnames(tableDf) <- tableColNames
 
+
+
+  ## estimate parameters
+  distParameters <- list()
+  for (i in seq_len(nStages)) {
+    stage <- unique(dataset[[stages]])[i]
+    dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
+    allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
+    distParameters[[i]] <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
+    if (jaspBase::isTryError(distParameters[[i]])) {
+      table$setError(distParameters[[i]][1])
+      container[["summaryTableNonNormal"]] <- table
+      return()
+    }
+  }
+
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
@@ -1453,14 +1480,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
     mean <- mean(allData, na.rm = TRUE)
-
-    distParameters <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
-    if (jaspBase::isTryError(distParameters)) {
-      table$setError(distParameters[1])
-      return()
-    }
-    beta <- distParameters$beta
-    theta <- distParameters$theta
+    beta <- distParameters[[i]]$beta
+    theta <- distParameters[[i]]$theta
 
     tableDfCurrentStage <- data.frame("n" = n,
                                       "mean" = mean,
@@ -1472,7 +1493,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                       "theta" = theta)
 
     if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull") {
-      threshold <- distParameters$threshold
+      threshold <- distParameters[[i]]$threshold
       tableDfCurrentStage[['threshold']] <- threshold
     }
     if (i == 1 && nStages > 1)
@@ -1562,15 +1583,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
-    distParameters <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
-    if (jaspBase::isTryError(distParameters)) {
-      table2$setError(distParameters[1])
-      return()
-    }
-    beta <- distParameters$beta
-    theta <- distParameters$theta
+    beta <- distParameters[[i]]$beta
+    theta <- distParameters[[i]]$theta
     if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
-      threshold <- distParameters$threshold
+      threshold <- distParameters[[i]]$threshold
 
     if (options[["nonNormalDistribution"]] == "lognormal") {
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
@@ -1779,16 +1795,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
     allDataVector <- as.vector(allData)
-
-    distParameters <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
-    if (jaspBase::isTryError(distParameters)) {
-      table3$setError(distParameters[1])
-      return()
-    }
-    beta <- distParameters$beta
-    theta <- distParameters$theta
+    beta <- distParameters[[i]]$beta
+    theta <- distParameters[[i]]$theta
     if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
-      threshold <- distParameters$threshold
+      threshold <- distParameters[[i]]$threshold
 
     #observed
     if (options[["lowerSpecificationLimit"]]){
@@ -2024,7 +2034,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       sdx    <- fit$parameters[2]
       test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
     } else if (options[["nullDistribution"]] == "weibull") {
-      fit    <- fitdistrplus::fitdist(values, 'weibull')
+      fit    <- fitdistrplus::fitdist(values, 'weibull',
+                                      control = list(
+                                        maxit = 10000,
+                                        abstol = .Machine$double.eps^0.75,
+                                        reltol = .Machine$double.eps^0.75,
+                                        ndeps = rep(1e-8, 2)))
       meanx  <- fit$estimate[1]
       sdx    <- fit$estimate[2]
       test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
@@ -2283,6 +2298,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Histogram"), width = 600, height = 400)
+    plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
+                              "report", "measurementLongFormat", "manualSubgroupSizeValue", "subgroup", 'nullDistribution',
+                              "stagesLongFormat", "stagesWideFormat", "histogramBinBoundaryDirection", "subgroupSizeType",
+                              "manualSubgroupSizeValue", "groupingVariableMethod"))
     jaspResults[["histogram"]] <- plot
     return()
   }
@@ -2401,7 +2420,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (all(is.na(number)))
     return(rep(NA, length(number)))
-  
+
   output <- formatC(number, format = "f", digits = .numDecimals)
   output <- sub("\\.?0+$", "", output)
   if (anyNA(number))

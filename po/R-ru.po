@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2024-10-19 03:41\n"
-"PO-Revision-Date: 2025-04-02 18:58+0000\n"
+"POT-Creation-Date: 2025-07-19 03:55\n"
+"PO-Revision-Date: 2025-06-19 08:01+0000\n"
 "Last-Translator: Иван Рудаков <riv@polygene.ru>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/ru/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 5.11-dev\n"
+"X-Generator: Weblate 5.12.1\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -160,6 +160,23 @@ msgstr ""
 msgid "Point"
 msgstr ""
 
+#, fuzzy
+msgid "- upper"
+msgstr "Верхний"
+
+#, fuzzy
+msgid "- lower"
+msgstr "Нижний"
+
+msgid "Test 7: Slightly increasing variation"
+msgstr ""
+
+msgid "Test 8: Oscillation"
+msgstr ""
+
+msgid "Test 9: Benneyan test"
+msgstr ""
+
 msgid "Tests"
 msgstr ""
 
@@ -208,6 +225,9 @@ msgid ""
 "distribution."
 msgstr ""
 
+msgid "Design of Experiments - Analysis"
+msgstr ""
+
 msgid "Error"
 msgstr ""
 
@@ -219,8 +239,68 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Response Optimizer Settings"
+msgstr ""
+
+msgid "lower and upper bounds and target are"
+msgstr ""
+
+msgid "lower and upper bounds are"
+msgstr ""
+
+msgid "target is"
+msgstr ""
+
+msgid "The %s estimated from data."
+msgstr ""
+
+msgid "Response Optimizer Solution"
+msgstr ""
+
+msgid "Optimization Plot"
+msgstr ""
+
+msgid "Summary Plot"
+msgstr ""
+
+msgid "Enter values for all predictors."
+msgstr ""
+
+msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all discrete predictors.\n"
+"                                   Value %1$s is not a possible for the "
+"discrete predictor %2$s. Allowed values:"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all continuous predictors. Only numeric values "
+"are allowed."
+msgstr ""
+
+msgid "Comp. desirability"
+msgstr ""
+
+msgid "Ind. desirability ("
+msgstr ""
+
+msgid ""
+"One or more input parameters for continuous predictors are outside of the "
+"design space.\n"
+"                           Extrapolation beyond the design space might not "
+"be valid."
+msgstr ""
+
 msgid "Model Summary"
 msgstr "Сводка по Модели"
+
+msgid "Adjusted %s"
+msgstr ""
+
+msgid "Predictive %s"
+msgstr ""
 
 msgid "The following aliased terms were removed: %s."
 msgstr ""
@@ -228,11 +308,38 @@ msgstr ""
 msgid "ANOVA"
 msgstr ""
 
-msgid "Coded"
+msgid "Source"
 msgstr ""
 
-msgid "Uncoded"
+msgid "Sum of squares"
 msgstr ""
+
+msgid "df"
+msgstr "df"
+
+msgid "Mean square"
+msgstr ""
+
+msgid ""
+"Type III sums of squares are selected and continuous factors are specified. "
+"Results might be misleading. Make sure factors should really be treated as "
+"continuous."
+msgstr ""
+
+msgid "Type I sums of squares."
+msgstr ""
+
+msgid "Type II sums of squares."
+msgstr ""
+
+msgid "Type III sums of squares."
+msgstr ""
+
+msgid "Coded"
+msgstr "Кодированный"
+
+msgid "Uncoded"
+msgstr "Некодированный"
 
 msgid "%s Coefficients"
 msgstr ""
@@ -256,7 +363,7 @@ msgid "Discrete Predictor Levels"
 msgstr ""
 
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgid "Level"
 msgstr ""
@@ -298,7 +405,7 @@ msgid "Residuals versus Run Order"
 msgstr ""
 
 msgid "Run order"
-msgstr ""
+msgstr "Порядок выполнения"
 
 msgid "Matrix residual plot"
 msgstr ""
@@ -330,7 +437,7 @@ msgstr ""
 msgid "Variable"
 msgstr ""
 
-msgid "Predictors"
+msgid "Factors"
 msgstr ""
 
 msgid "Base runs"
@@ -382,7 +489,7 @@ msgid "Factorial Design"
 msgstr ""
 
 msgid "Run Order"
-msgstr ""
+msgstr "Порядок Выполнения"
 
 msgid "Standard Order"
 msgstr ""
@@ -390,10 +497,10 @@ msgstr ""
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Continuous predictors"
+msgid "Continuous factors"
 msgstr ""
 
-msgid "Discrete predictors"
+msgid "Discrete factors"
 msgstr ""
 
 msgid "Replicates"
@@ -638,8 +745,12 @@ msgid "Gauge r&R"
 msgstr ""
 
 msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+"Design is not balanced: not every operator measured every part the same "
+"number of times."
+msgstr ""
+
+msgid ""
+"Design is not balanced: not every part was measured the same number of times."
 msgstr ""
 
 msgid ""
@@ -705,15 +816,6 @@ msgid "One-way ANOVA table"
 msgstr ""
 
 msgid "Two-way ANOVA table with interaction"
-msgstr ""
-
-msgid "Source"
-msgstr ""
-
-msgid "df"
-msgstr "df"
-
-msgid "Sum of squares"
 msgstr ""
 
 msgid "Mean squares"
@@ -843,6 +945,13 @@ msgstr ""
 msgid "%.2f"
 msgstr ""
 
+msgid "Gauge r&R - nested"
+msgstr ""
+
+msgid ""
+"Unbalanced design. Some parts have more repeated measurements than others."
+msgstr ""
+
 msgid "Gauge r&R (non-replicable) report"
 msgstr ""
 
@@ -856,9 +965,6 @@ msgid "Gauge r&R study - nested ANOVA"
 msgstr ""
 
 msgid "Gauge r&R (nested)"
-msgstr ""
-
-msgid "Mean square"
 msgstr ""
 
 msgid "p"
@@ -909,17 +1015,17 @@ msgstr ""
 msgid "d2"
 msgstr ""
 
+msgid "GRR"
+msgstr ""
+
 #, fuzzy
 msgid "Process std. dev."
 msgstr "Стандартное отклонение"
 
-msgid "Tolerance"
-msgstr ""
-
-msgid "GRR"
-msgstr ""
-
 msgid "%%GRR of process std. dev."
+msgstr ""
+
+msgid "Tolerance"
 msgstr ""
 
 msgid "%%GRR of tolerance"

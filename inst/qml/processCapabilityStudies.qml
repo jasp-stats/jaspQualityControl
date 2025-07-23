@@ -16,6 +16,8 @@ import QtQuick
 import QtQuick.Layouts
 import JASP.Controls
 
+import "./common" as Common
+
 Form
 {
 	columns:								2
@@ -402,11 +404,16 @@ Form
 						name: 					"controlChartType"
 						id: 					controlChartType
 						label: 					""
-						values: dataFormat.currentValue == "longFormat" ?
+						values: dataFormat.currentValue == "longFormat" && subgroupSizeType.value == "manual" &&manualSubgroupSizeValue.value == 1 ?
 						[
 							{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
 							{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
 							{ label: qsTr("X-mR control chart"),				value: "xmr"}
+						] : dataFormat.currentValue == "longFormat" ?
+						[
+							{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
+							{ label: qsTr("X-bar & s control chart"),			value: "xBarS"},
+							{ label: qsTr("X-bar & mR control chart"),			value: "xBarMR"}
 						] :
 						[
 							{ label: qsTr("X-bar & R control chart"),			value: "xBarR"},
@@ -415,7 +422,7 @@ Form
 						]
 						indexDefaultValue: 
 						(dataFormat.currentValue == "wideFormat" || (dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value > 1)) ? 1 :
-						(dataFormat.currentValue == "longFormat" && manualSubgroupSizeValue.value == 1) ? 2 : 1
+						(dataFormat.currentValue == "longFormat" && subgroupSizeType.value == "manual" &&  manualSubgroupSizeValue.value == 1) ? 2 : 1
 					}
 				
 
@@ -825,5 +832,7 @@ Form
 				min:								.000001
 			}
 		}
+
+		Common.ControlChartTests {}
 	}
 }

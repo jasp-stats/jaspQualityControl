@@ -201,7 +201,7 @@ test_that("3.1 Three Cont. Pred. Two. Disc. Pred. Central Composite Design table
 test_that("3.2 Three Cont. Pred. Two. Disc. Pred. Central Composite Design Summary table results match", {
   table <- results[["results"]][["doeRsmDesignSummaryTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.63299316185545, 2, 20, 2, 3, 4, 1, "Value", 20))
+                                 list(1.63299316185545, 2, 20, 2, 3, 4, 1, "Value", 80))
 })
 
 ## Four continuous and one categorical predictor (verified with Minitab) CCD ####
@@ -273,7 +273,7 @@ test_that("4.1 Four Cont. Pred. One. Disc. Pred. Central Composite Design table 
 test_that("4.2 Four Cont. Pred. One. Disc. Pred. Central Composite Design Summary table results match", {
   table <- results[["results"]][["doeRsmDesignSummaryTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(2, 2, 30, 1, 4, 4, 1, "Value", 30))
+                                 list(2, 2, 30, 1, 4, 4, 1, "Value", 60))
 })
 
 # Face centered vs default alpha ####
@@ -641,5 +641,5 @@ test_that("10.1 Six Cont. Pred. One Disc. Pred. Box-Behnken Design table results
 test_that("10.2 Six Cont. Pred. One Disc. Pred. Box-Behnken Design Summary table results match", {
   table <- results[["results"]][["doeRsmDesignSummaryTable"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1, 54, 1, 6, 6, 1, "Value", 1, 54))
+                                 list(1, 54, 1, 6, 6, 1, "Value", 1, 108))
 })

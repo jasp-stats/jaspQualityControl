@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-10-19 03:41\n"
+"POT-Creation-Date: 2025-07-19 03:55\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -169,6 +169,26 @@ msgid "Point"
 msgstr ""
 
 #, fuzzy
+msgid "- upper"
+msgstr "上界"
+
+#, fuzzy
+msgid "- lower"
+msgstr "下界"
+
+#, fuzzy
+msgid "Test 7: Slightly increasing variation"
+msgstr "检验 4：变异增加"
+
+#, fuzzy
+msgid "Test 8: Oscillation"
+msgstr "检验 5：变异降低"
+
+#, fuzzy
+msgid "Test 9: Benneyan test"
+msgstr "检验 1：超控制限"
+
+#, fuzzy
 msgid "Tests"
 msgstr "偏倚的 t 检验"
 
@@ -226,6 +246,9 @@ msgid ""
 "distribution."
 msgstr ""
 
+msgid "Design of Experiments - Analysis"
+msgstr ""
+
 msgid "Error"
 msgstr ""
 
@@ -237,14 +260,113 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Response Optimizer Settings"
+msgstr ""
+
+msgid "lower and upper bounds and target are"
+msgstr ""
+
+#, fuzzy
+msgid "lower and upper bounds are"
+msgstr "公差 : %s"
+
+#, fuzzy
+msgid "target is"
+msgstr "目标"
+
+msgid "The %s estimated from data."
+msgstr ""
+
+msgid "Response Optimizer Solution"
+msgstr ""
+
+#, fuzzy
+msgid "Optimization Plot"
+msgstr "检测图"
+
+msgid "Summary Plot"
+msgstr ""
+
+msgid "Enter values for all predictors."
+msgstr ""
+
+msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all discrete predictors.\n"
+"                                   Value %1$s is not a possible for the "
+"discrete predictor %2$s. Allowed values:"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all continuous predictors. Only numeric values "
+"are allowed."
+msgstr ""
+
+#, fuzzy
+msgid "Comp. desirability"
+msgstr "合意度"
+
+#, fuzzy
+msgid "Ind. desirability ("
+msgstr "合意度"
+
+msgid ""
+"One or more input parameters for continuous predictors are outside of the "
+"design space.\n"
+"                           Extrapolation beyond the design space might not "
+"be valid."
+msgstr ""
+
 msgid "Model Summary"
 msgstr "模型摘要"
+
+#, fuzzy
+msgid "Adjusted %s"
+msgstr "调整 R 平方"
+
+#, fuzzy
+msgid "Predictive %s"
+msgstr "预测变量"
 
 msgid "The following aliased terms were removed: %s."
 msgstr ""
 
 msgid "ANOVA"
 msgstr "方差分析"
+
+msgid "Source"
+msgstr "变异源"
+
+#, fuzzy
+msgid "Sum of squares"
+msgstr "平方和"
+
+msgid "df"
+msgstr "df"
+
+#, fuzzy
+msgid "Mean square"
+msgstr "均方"
+
+msgid ""
+"Type III sums of squares are selected and continuous factors are specified. "
+"Results might be misleading. Make sure factors should really be treated as "
+"continuous."
+msgstr ""
+
+#, fuzzy
+msgid "Type I sums of squares."
+msgstr "平方和"
+
+#, fuzzy
+msgid "Type II sums of squares."
+msgstr "平方和"
+
+#, fuzzy
+msgid "Type III sums of squares."
+msgstr "平方和"
 
 msgid "Coded"
 msgstr ""
@@ -354,9 +476,8 @@ msgstr "模型摘要"
 msgid "Variable"
 msgstr "变量"
 
-#, fuzzy
-msgid "Predictors"
-msgstr "预测变量"
+msgid "Factors"
+msgstr "因子"
 
 msgid "Base runs"
 msgstr ""
@@ -421,11 +542,12 @@ msgstr "标准序"
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Continuous predictors"
+msgid "Continuous factors"
 msgstr ""
 
-msgid "Discrete predictors"
-msgstr ""
+#, fuzzy
+msgid "Discrete factors"
+msgstr "因子"
 
 msgid "Replicates"
 msgstr "复制"
@@ -711,9 +833,15 @@ msgstr "总变异"
 msgid "Gauge r&R"
 msgstr "量具 r&R"
 
+#, fuzzy
 msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+"Design is not balanced: not every operator measured every part the same "
+"number of times."
+msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不可重复量具 r&R。"
+
+#, fuzzy
+msgid ""
+"Design is not balanced: not every part was measured the same number of times."
 msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不可重复量具 r&R。"
 
 msgid ""
@@ -794,16 +922,6 @@ msgstr "单向方差分析表"
 #, fuzzy
 msgid "Two-way ANOVA table with interaction"
 msgstr "双向方差分析表带交互作用"
-
-msgid "Source"
-msgstr "变异源"
-
-msgid "df"
-msgstr "df"
-
-#, fuzzy
-msgid "Sum of squares"
-msgstr "平方和"
 
 #, fuzzy
 msgid "Mean squares"
@@ -953,6 +1071,14 @@ msgid "%.2f"
 msgstr "%.2f"
 
 #, fuzzy
+msgid "Gauge r&R - nested"
+msgstr "量具 r&R（嵌套）"
+
+msgid ""
+"Unbalanced design. Some parts have more repeated measurements than others."
+msgstr ""
+
+#, fuzzy
 msgid "Gauge r&R (non-replicable) report"
 msgstr "量具 r&R 报告"
 
@@ -970,10 +1096,6 @@ msgstr "量具 r&R（嵌套）"
 #, fuzzy
 msgid "Gauge r&R (nested)"
 msgstr "量具 r&R（嵌套）"
-
-#, fuzzy
-msgid "Mean square"
-msgstr "均方"
 
 msgid "p"
 msgstr "p"
@@ -1028,19 +1150,19 @@ msgstr "R 均值"
 msgid "d2"
 msgstr "d2"
 
-#, fuzzy
-msgid "Process std. dev."
-msgstr "过程标准差"
-
-msgid "Tolerance"
-msgstr "公差"
-
 msgid "GRR"
 msgstr "GRR"
 
 #, fuzzy
+msgid "Process std. dev."
+msgstr "过程标准差"
+
+#, fuzzy
 msgid "%%GRR of process std. dev."
 msgstr "%GRR 过程标准差"
+
+msgid "Tolerance"
+msgstr "公差"
 
 #, fuzzy
 msgid "%%GRR of tolerance"
@@ -1639,6 +1761,10 @@ msgstr "均值和标准差控制图"
 msgid "Variables Chart for Subgroups Report"
 msgstr "单值图"
 
+#, fuzzy
+#~ msgid "Predictors"
+#~ msgstr "预测变量"
+
 #~ msgid "Subgroups"
 #~ msgstr "子组"
 
@@ -1787,9 +1913,6 @@ msgstr "单值图"
 #~ msgid "Model R-squared"
 #~ msgstr "模型 R 平方"
 
-#~ msgid "Adjusted R-squared"
-#~ msgstr "调整 R 平方"
-
 #~ msgid "df1"
 #~ msgstr "df1"
 
@@ -1813,9 +1936,6 @@ msgstr "单值图"
 
 #~ msgid "Eigenvectors"
 #~ msgstr "特征向量"
-
-#~ msgid "Desirability"
-#~ msgstr "合意度"
 
 #~ msgid ""
 #~ "At least one predictor and response variable need to be specified before "
@@ -1952,9 +2072,6 @@ msgstr "单值图"
 #~ msgid "Selected Design"
 #~ msgstr "选择的设计"
 
-#~ msgid "Factors"
-#~ msgstr "因子"
-
 #~ msgid "Runs"
 #~ msgstr "运行"
 
@@ -2038,9 +2155,6 @@ msgstr "单值图"
 #~ msgid ""
 #~ "Factor name '%s' is a number, and number factor names are not supported."
 #~ msgstr "因子名称 '%s' 是一个数字，不支持数字因子名称。"
-
-#~ msgid "factors"
-#~ msgstr "因子"
 
 #~ msgid "factorName"
 #~ msgstr "因子名称"

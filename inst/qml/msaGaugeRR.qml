@@ -16,6 +16,8 @@ import QtQuick
 import QtQuick.Layouts
 import JASP.Controls
 
+import "./common" as Common
+
 Form
 {
 	columns:									1
@@ -531,5 +533,13 @@ Form
 				}
 			}
 		}
+	}
+
+	Section
+	{
+		title: 									qsTr("Advanced Options")
+		columns:								1
+
+		Common.ControlChartTests {}
 	}
 }

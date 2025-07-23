@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-10-19 03:41\n"
+"POT-Creation-Date: 2025-07-19 03:55\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -163,6 +163,26 @@ msgstr "Toetsresultaten voor %1$s figuur"
 msgid "Point"
 msgstr "Punt"
 
+#, fuzzy
+msgid "- upper"
+msgstr "Boven"
+
+#, fuzzy
+msgid "- lower"
+msgstr "Onder"
+
+#, fuzzy
+msgid "Test 7: Slightly increasing variation"
+msgstr "Toets 4: Toenemende variatie"
+
+#, fuzzy
+msgid "Test 8: Oscillation"
+msgstr "Toets 5: Gereduceerde variatie"
+
+#, fuzzy
+msgid "Test 9: Benneyan test"
+msgstr "Toets 1: Voorbij limiet"
+
 msgid "Tests"
 msgstr "Toetsen"
 
@@ -217,6 +237,9 @@ msgstr ""
 "Parameterschatting mislukt. De waarden zijn misschien te extreem. Probeer "
 "een andere verdeling."
 
+msgid "Design of Experiments - Analysis"
+msgstr ""
+
 msgid "Error"
 msgstr "Fout"
 
@@ -230,14 +253,111 @@ msgstr ""
 "De opgegeven laag/hoog niveaus %1$s voor %2$s komen niet overeen met de "
 "niveaus in de dataset."
 
+msgid "Response Optimizer Settings"
+msgstr ""
+
+msgid "lower and upper bounds and target are"
+msgstr ""
+
+#, fuzzy
+msgid "lower and upper bounds are"
+msgstr "Tolerantie: %s"
+
+#, fuzzy
+msgid "target is"
+msgstr "Doel"
+
+msgid "The %s estimated from data."
+msgstr ""
+
+msgid "Response Optimizer Solution"
+msgstr ""
+
+#, fuzzy
+msgid "Optimization Plot"
+msgstr "Detectie Figuur"
+
+msgid "Summary Plot"
+msgstr ""
+
+msgid "Enter values for all predictors."
+msgstr ""
+
+msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all discrete predictors.\n"
+"                                   Value %1$s is not a possible for the "
+"discrete predictor %2$s. Allowed values:"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all continuous predictors. Only numeric values "
+"are allowed."
+msgstr ""
+
+#, fuzzy
+msgid "Comp. desirability"
+msgstr "Geschiktheid"
+
+msgid "Ind. desirability ("
+msgstr ""
+
+msgid ""
+"One or more input parameters for continuous predictors are outside of the "
+"design space.\n"
+"                           Extrapolation beyond the design space might not "
+"be valid."
+msgstr ""
+
 msgid "Model Summary"
 msgstr "Model Samenvatting"
+
+msgid "Adjusted %s"
+msgstr ""
+
+#, fuzzy
+msgid "Predictive %s"
+msgstr "Predictoren"
 
 msgid "The following aliased terms were removed: %s."
 msgstr "De volgende gealiaste termen zijn verwijderd: %s."
 
 msgid "ANOVA"
 msgstr "ANOVA"
+
+msgid "Source"
+msgstr "Bron"
+
+#, fuzzy
+msgid "Sum of squares"
+msgstr "Kwadratensom"
+
+msgid "df"
+msgstr "vg"
+
+#, fuzzy
+msgid "Mean square"
+msgstr "Gemiddelde Kwadraat"
+
+msgid ""
+"Type III sums of squares are selected and continuous factors are specified. "
+"Results might be misleading. Make sure factors should really be treated as "
+"continuous."
+msgstr ""
+
+#, fuzzy
+msgid "Type I sums of squares."
+msgstr "Kwadratensom"
+
+#, fuzzy
+msgid "Type II sums of squares."
+msgstr "Kwadratensom"
+
+#, fuzzy
+msgid "Type III sums of squares."
+msgstr "Kwadratensom"
 
 msgid "Coded"
 msgstr "Gecodeerd"
@@ -343,8 +463,9 @@ msgstr "Ontwerp Samenvatting"
 msgid "Variable"
 msgstr "Variabele"
 
-msgid "Predictors"
-msgstr "Predictoren"
+#, fuzzy
+msgid "Factors"
+msgstr "Factoriaal Ontwerp"
 
 msgid "Base runs"
 msgstr "Basis series"
@@ -403,10 +524,12 @@ msgstr "Standaard Volgorde"
 msgid "Hard-to-change factors: %1$s"
 msgstr "Moeilijk te veranderen factoren: %1$s"
 
-msgid "Continuous predictors"
+#, fuzzy
+msgid "Continuous factors"
 msgstr "Continue predictoren"
 
-msgid "Discrete predictors"
+#, fuzzy
+msgid "Discrete factors"
 msgstr "Discrete predictoren"
 
 msgid "Replicates"
@@ -706,9 +829,17 @@ msgstr "Totaal aantal series"
 msgid "Gauge r&R"
 msgstr "Gauge r&R"
 
+#, fuzzy
 msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+"Design is not balanced: not every operator measured every part the same "
+"number of times."
+msgstr ""
+"Ontwerp is niet in balans: niet elke operator heeft elk onderdeel gemeten. "
+"Gebruik niet-repliceerbare gauge r&R."
+
+#, fuzzy
+msgid ""
+"Design is not balanced: not every part was measured the same number of times."
 msgstr ""
 "Ontwerp is niet in balans: niet elke operator heeft elk onderdeel gemeten. "
 "Gebruik niet-repliceerbare gauge r&R."
@@ -789,16 +920,6 @@ msgstr "One-way ANOVA Tabel"
 #, fuzzy
 msgid "Two-way ANOVA table with interaction"
 msgstr "Two-way ANOVA Tabel met Interactie"
-
-msgid "Source"
-msgstr "Bron"
-
-msgid "df"
-msgstr "vg"
-
-#, fuzzy
-msgid "Sum of squares"
-msgstr "Kwadratensom"
 
 #, fuzzy
 msgid "Mean squares"
@@ -955,6 +1076,14 @@ msgid "%.2f"
 msgstr "%.2f"
 
 #, fuzzy
+msgid "Gauge r&R - nested"
+msgstr "Gauge r&R (Genest)"
+
+msgid ""
+"Unbalanced design. Some parts have more repeated measurements than others."
+msgstr ""
+
+#, fuzzy
 msgid "Gauge r&R (non-replicable) report"
 msgstr "Gauge r&R (Niet-Repliceerbaar) Rapport"
 
@@ -972,10 +1101,6 @@ msgstr "Gauge r&R (Genest)"
 #, fuzzy
 msgid "Gauge r&R (nested)"
 msgstr "Gauge r&R (Genest)"
-
-#, fuzzy
-msgid "Mean square"
-msgstr "Gemiddelde Kwadraat"
 
 msgid "p"
 msgstr "p"
@@ -1030,19 +1155,19 @@ msgstr "R-bar"
 msgid "d2"
 msgstr "d2"
 
-#, fuzzy
-msgid "Process std. dev."
-msgstr "Proces Std. Dev."
-
-msgid "Tolerance"
-msgstr "Tolerantie"
-
 msgid "GRR"
 msgstr "GRR"
 
 #, fuzzy
+msgid "Process std. dev."
+msgstr "Proces Std. Dev."
+
+#, fuzzy
 msgid "%%GRR of process std. dev."
 msgstr "%%GRR van Proces Std. Dev."
+
+msgid "Tolerance"
+msgstr "Tolerantie"
 
 #, fuzzy
 msgid "%%GRR of tolerance"
@@ -1667,6 +1792,9 @@ msgstr "X-bar & %1$s controle figuur"
 
 msgid "Variables Chart for Subgroups Report"
 msgstr "Variabelen Figuur voor Subgroepen Rapport"
+
+#~ msgid "Predictors"
+#~ msgstr "Predictoren"
 
 #~ msgid "Subgroups"
 #~ msgstr "Subgroepen"

@@ -73,11 +73,11 @@ msgstr "Medidas"
 
 msgctxt "msaGaugeRR|"
 msgid "Std. Deviation"
-msgstr "Desviación Típica"
+msgstr "Desviación típica"
 
 msgctxt "msaGaugeRR|"
 msgid "Percent"
-msgstr "Por ciento"
+msgstr "Porcentaje"
 
 msgctxt "msaGaugeRR|"
 msgid "Plots"
@@ -229,7 +229,7 @@ msgstr "Medidas"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Percent"
-msgstr "Por ciento"
+msgstr "Porcentaje"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Graph variation components"
@@ -1438,7 +1438,7 @@ msgstr "Centrar puntos"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design"
-msgstr "Diseño"
+msgstr "Diseñar"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "debug selected row"
@@ -1523,7 +1523,7 @@ msgstr "Ejecuciones"
 
 msgctxt "doeFactorial|"
 msgid "Design"
-msgstr "Diseño"
+msgstr "Diseñar"
 
 msgctxt "doeFactorial|"
 msgid "debug selected row"
@@ -1656,10 +1656,6 @@ msgstr "Gráfico de contorno"
 msgctxt "doeAnalysis|"
 msgid "Surface plot"
 msgstr "Gráfico de superficie"
-
-msgctxt "doeAnalysis|"
-msgid "Available continuous predictors"
-msgstr "Predictores continuos disponibles"
 
 msgctxt "doeAnalysis|"
 msgid "Plotting variables"
@@ -2174,10 +2170,6 @@ msgid "Today"
 msgstr "Hoy"
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Use unbiasing constant for X-bar & s contorl chart"
-msgstr "Usar constante sin sesgo en el gráfico de control de barras X & s"
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Number of std. dev. for calculation of control limits"
 msgstr ""
 "Número de desviaciones típicas para calcular los límites de los controles"
@@ -2187,20 +2179,8 @@ msgid "Available variables"
 msgstr "Variables disponibles"
 
 msgctxt "doeAnalysis|"
-msgid "Discrete predictors"
-msgstr "Predictores discretos"
-
-msgctxt "doeAnalysis|"
-msgid "Continuous predictors"
-msgstr "Predictores continuos"
-
-msgctxt "doeAnalysis|"
 msgid "Covariates"
 msgstr "Covariables"
-
-msgctxt "doeAnalysis|"
-msgid "Predictor levels"
-msgstr "Niveles del predictor"
 
 msgctxt "doeAnalysis|"
 msgid "Automatically detect low/high"
@@ -2209,10 +2189,6 @@ msgstr "Detectar automáticamente bajo/alto"
 msgctxt "doeAnalysis|"
 msgid "Manually specify low/high"
 msgstr "Especificar manualmente bajo/alto"
-
-msgctxt "doeAnalysis|"
-msgid "Predictor"
-msgstr "Predictor"
 
 msgctxt "doeAnalysis|"
 msgid "Low        High   "
@@ -2294,10 +2270,6 @@ msgctxt "doeFactorial|"
 msgid "General full factorial"
 msgstr "Factorial completo general"
 
-msgctxt "doeFactorial|"
-msgid "Predictor"
-msgstr "Predictor"
-
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design type"
 msgstr "Tipo de diseño"
@@ -2311,16 +2283,8 @@ msgid "Box-Behnken design"
 msgstr "Diseño de Box-Behnken"
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of discrete predictors"
-msgstr "Número de predictores discretos"
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Maximum discrete levels"
 msgstr "Máximo de niveles discretos"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Predictor"
-msgstr "Predictor"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Center points"
@@ -2333,14 +2297,6 @@ msgstr "Deseño de análise"
 msgctxt "doeAnalysis|"
 msgid "Residuals four-in-one plot"
 msgstr "Gráfico 'cuatro en uno' de errores"
-
-msgctxt "doeFactorial|"
-msgid "Number of predictors"
-msgstr "Número de predictores"
-
-msgctxt "doeFactorial|"
-msgid "Maximum predictor levels"
-msgstr "Niveles máximos de predictores"
 
 msgctxt "doeFactorial|"
 msgid "1"
@@ -2547,16 +2503,8 @@ msgid "Right open"
 msgstr "Derecho abierto"
 
 msgctxt "doeAnalysis|"
-msgid "Show optimal response"
-msgstr "Mostrar la respuesta óptima"
-
-msgctxt "doeAnalysis|"
 msgid "Normal plot of effects"
 msgstr "Gráfico normal de los efectos"
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of continuous predictors"
-msgstr "Número de predictores continuos"
 
 msgctxt "Description|"
 msgid "Type 2 and 3 Gauge r&R Study"
@@ -2969,3 +2917,253 @@ msgstr "Fecha impresa"
 msgctxt "timeWeightedCharts|"
 msgid "Today"
 msgstr "Hoy"
+
+msgctxt "doeAnalysis|"
+msgid "Responses"
+msgstr "Respuestas"
+
+msgctxt "doeAnalysis|"
+msgid "Response optimizer"
+msgstr "Optimizador de respuestas"
+
+msgctxt "doeAnalysis|"
+msgid "Available responses"
+msgstr "Respuestas disponibles"
+
+msgctxt "doeAnalysis|"
+msgid "Included responses"
+msgstr "Respuestas incluídas"
+
+msgctxt "doeAnalysis|"
+msgid "Maximize"
+msgstr "Maximizar"
+
+msgctxt "doeAnalysis|"
+msgid "Minimize"
+msgstr "Minimizar"
+
+msgctxt "doeAnalysis|"
+msgid "Target"
+msgstr "Objetivo"
+
+msgctxt "doeAnalysis|"
+msgid "Show optimal solution"
+msgstr "Mostrar la solución óptima"
+
+msgctxt "doeAnalysis|"
+msgid "Show optimization plot"
+msgstr "Mostrar el gráfico de optimización"
+
+msgctxt "doeAnalysis|"
+msgid "Predict"
+msgstr "Predecir"
+
+msgctxt "doeAnalysis|"
+msgid "Individual desirability"
+msgstr "Conveniencia individual"
+
+msgctxt "doeAnalysis|"
+msgid "Set input parameters manually"
+msgstr "Establecer manualmente los parámetros de entrada"
+
+msgctxt "doeAnalysis|"
+msgid "Value"
+msgstr "Valor"
+
+msgctxt "doeAnalysis|"
+msgid "Set all bounds manually"
+msgstr "Establecer manualmente todos los límites"
+
+msgctxt "doeAnalysis|"
+msgid "Set all targets manually"
+msgstr "Establecer manualmente todos los objetivos"
+
+msgctxt "ControlChartTests|"
+msgid "Tests for control charts"
+msgstr "Pruebas para gráficos de control"
+
+msgctxt "ControlChartTests|"
+msgid "Test set"
+msgstr "Conjunto de pruebas"
+
+msgctxt "ControlChartTests|"
+msgid "JASP"
+msgstr "JASP"
+
+msgctxt "ControlChartTests|"
+msgid "Nelson laws"
+msgstr "Leyes de Nelson"
+
+msgctxt "ControlChartTests|"
+msgid "Western Electric rules"
+msgstr "Reglas de Western Electric"
+
+msgctxt "ControlChartTests|"
+msgid "Custom selection"
+msgstr "Selección personalizada"
+
+msgctxt "ControlChartTests|"
+msgid "One point outside of control limits - Test 1: Beyond limit"
+msgstr "Un punto fuera de los límites de control - Prueba 1: Límite más allá"
+
+msgctxt "ControlChartTests|"
+msgid "points in a row, on the same side of center line - Test 2: Shift"
+msgstr ""
+"Puntos en una fila, al mismo lado de la línea del centro - Prueba 2: "
+"Desplazamiento"
+
+msgctxt "ControlChartTests|"
+msgid "points in a row, all increasing or decreasing - Test 3: Trend"
+msgstr ""
+"Puntos en una fila, todos aumentando o disminuyendo - Prueba 3: Tendencia"
+
+msgctxt "ControlChartTests|"
+msgid ""
+"out of k+1 points > 2 std. dev. from center line (same side) - Test 4: "
+"Increasing variation"
+msgstr ""
+"Fuera de k+1 puntos > 2 desv. típ. desde la línea del centro (mismo lado) - "
+"Prueba 4: Variación creciente"
+
+msgctxt "ControlChartTests|"
+msgid ""
+"points in a row < 1 std. dev from center line (either side) - Test 5: "
+"Reducing variation"
+msgstr ""
+"Puntos en una fila < 1 desv. típ. desde la línea del centro (cada lado) - "
+"Prueba 5: Variación decreciente"
+
+msgctxt "ControlChartTests|"
+msgid ""
+"points in a row > 1 std. dev from center line (either side) - Test 6: "
+"Bimodal distribution"
+msgstr ""
+"Puntos en una fila > 1 desv. típ. desde la línea del centro (cada lado) - "
+"Prueba 6: Distribución Binomial"
+
+msgctxt "ControlChartTests|"
+msgid ""
+"out of k+1 points > 1 std. dev. from center line (same side) - Test 7: "
+"Slightly increasing variation"
+msgstr ""
+"Fuera de k+1 puntos > 1 desv. típ. desde la línea del centro (mismo lado) - "
+"Prueba 7: Variación ligeramente creciente"
+
+msgctxt "ControlChartTests|"
+msgid ""
+"points in a row, alternating increase and decrease - Test 8: Oscillation"
+msgstr ""
+"Puntos en una fila, alternando aumento y disminución - Prueba 8: Oscilación"
+
+msgctxt "msaGaugeRR|"
+msgid "Advanced Options"
+msgstr "Opciones Avanzadas"
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Advanced Options"
+msgstr "Opciones Avanzadas"
+
+msgctxt "rareEventCharts|"
+msgid "Advanced Options"
+msgstr "Opciones Avanzadas"
+
+msgctxt "rareEventCharts|"
+msgid "Tests for control charts"
+msgstr "Pruebas para gráficos de control"
+
+msgctxt "rareEventCharts|"
+msgid "Test set"
+msgstr "Conjunto de pruebas"
+
+msgctxt "rareEventCharts|"
+msgid "JASP"
+msgstr "JASP"
+
+msgctxt "rareEventCharts|"
+msgid "Custom selection"
+msgstr "Selección personalizada"
+
+msgctxt "rareEventCharts|"
+msgid "One point outside of control limits - Test 1: Beyond limit"
+msgstr "Un punto fuera de los límites de control - Prueba 1: Límite más allá"
+
+msgctxt "rareEventCharts|"
+msgid "points in a row, on the same side of center line - Test 2: Shift"
+msgstr ""
+"Puntos en una fila, al mismo lado de la línea del centro - Prueba 2: "
+"Desplazamiento"
+
+msgctxt "rareEventCharts|"
+msgid "points in a row, all increasing or decreasing - Test 3: Trend"
+msgstr ""
+"Puntos en una fila, todos aumentando o disminuyendo - Prueba 3: Tendencia"
+
+msgctxt "rareEventCharts|"
+msgid ""
+"points in a row, alternating increase and decrease - Test 8: Oscillation"
+msgstr ""
+"Puntos en una fila, alternando aumento y disminución - Prueba 8: Oscilación"
+
+msgctxt "rareEventCharts|"
+msgid "points in a row, equal to 0 - Test 9: Benneyan test"
+msgstr "Puntos en una fila, iguales a 0 - Prueba 9: Proba de Benneyan"
+
+msgctxt "timeWeightedCharts|"
+msgid "Advanced Options"
+msgstr "Opciones Avanzadas"
+
+msgctxt "timeWeightedCharts|"
+msgid "Tests for control charts"
+msgstr "Pruebas para gráficos de control"
+
+msgctxt "timeWeightedCharts|"
+msgid "Points outside of control limits"
+msgstr "Puntos fuera de los límites de control"
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Use unbiasing constant for X-bar & s control chart"
+msgstr "Usar constante de insesgadez para gráfico de barras-X & control"
+
+msgctxt "doeAnalysis|"
+msgid "Discrete factors"
+msgstr "Factores discretos"
+
+msgctxt "doeAnalysis|"
+msgid "Continuous factors"
+msgstr "Factores continuos"
+
+msgctxt "doeAnalysis|"
+msgid "Factor levels"
+msgstr "Niveles de factores"
+
+msgctxt "doeAnalysis|"
+msgid "Factor"
+msgstr "Factor"
+
+msgctxt "doeAnalysis|"
+msgid "Available continuous factors"
+msgstr "Factores continuos disponibles"
+
+msgctxt "doeFactorial|"
+msgid "Number of factors"
+msgstr "Número de factores"
+
+msgctxt "doeFactorial|"
+msgid "Maximum factor levels"
+msgstr "Niveles máximos de factores"
+
+msgctxt "doeFactorial|"
+msgid "Factor"
+msgstr "Factor"
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of continuous factors"
+msgstr "Número de factores continuos"
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of discrete factors"
+msgstr "Número de factores discretos"
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Factor"
+msgstr "Factor"

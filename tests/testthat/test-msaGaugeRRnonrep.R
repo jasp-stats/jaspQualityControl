@@ -5,6 +5,7 @@ context("[Quality Control] MSA Gauge non-replicabe")
 
 ## Default settings ####
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$partLongFormat <- "Batch"
 options$operatorLongFormat <- "Operator"
 options$measurementLongFormat <- "Result"
@@ -101,14 +102,15 @@ test_that("LF1.12 Default settings - Test results for x-bar chart table results 
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "B",
-                                      "Point 6", "", "Point 7", "", "Point 8", "", "Point 10", "C",
-                                      "Point 11", "", "Point 12", "", "Point 13", "", "Point 15"
+                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5", "C",
+                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5"
                                  ))
 })
 
 ## Historical std. dev. ####
 
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$partLongFormat <- "Batch"
 options$operatorLongFormat <- "Operator"
 options$measurementLongFormat <- "Result"
@@ -206,14 +208,15 @@ test_that("LF2.12 Historical std. dev. - Test results for x-bar chart table resu
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "B",
-                                      "Point 6", "", "Point 7", "", "Point 8", "", "Point 10", "C",
-                                      "Point 11", "", "Point 12", "", "Point 13", "", "Point 15"
+                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5", "C",
+                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5"
                                  ))
 })
 
 ## Report ####
 
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$partLongFormat <- "Batch"
 options$operatorLongFormat <- "Operator"
 options$measurementLongFormat <- "Result"
@@ -241,6 +244,7 @@ test_that("LF3 Report - Gauge r&R (non-replicable) report plot matches", {
 
 ## Default settings ####
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$partWideFormat <- "Batch"
 options$operatorWideFormat <- "Operator"
@@ -339,14 +343,15 @@ test_that("WF1.12 Default settings - Test results for x-bar chart table results 
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "B",
-                                      "Point 6", "", "Point 7", "", "Point 8", "", "Point 10", "C",
-                                      "Point 11", "", "Point 12", "", "Point 13", "", "Point 15"
+                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5", "C",
+                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5"
                                  ))
 })
 
 ## Historical std. dev. ####
 
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$partWideFormat <- "Batch"
 options$operatorWideFormat <- "Operator"
@@ -445,14 +450,15 @@ test_that("WF2.12 Historical std. dev. - Test results for x-bar chart table resu
   table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("A", "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "B",
-                                      "Point 6", "", "Point 7", "", "Point 8", "", "Point 10", "C",
-                                      "Point 11", "", "Point 12", "", "Point 13", "", "Point 15"
+                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5", "C",
+                                      "Point 1", "", "Point 2", "", "Point 3", "", "Point 5"
                                  ))
 })
 
 ## Report ####
 
 options <- analysisOptions("msaGaugeRRnonrep")
+options$testSet <- "jaspDefault"
 options$dataFormat <- "wideFormat"
 options$partWideFormat <- "Batch"
 options$operatorWideFormat <- "Operator"

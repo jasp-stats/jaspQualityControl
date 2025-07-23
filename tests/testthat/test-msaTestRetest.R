@@ -38,7 +38,7 @@ test_that("LF1.2 Default Settings - Scatterplot of 1st measurement vs 2nd measur
 test_that("LF1.3 Default Settings - Short gauge study table results match", {
   table <- results[["results"]][["rAndR2"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.0434914974122558, 2.17457487061279, 0.52189796894707, 2, 0.0499999999999999,
+                                 list(0.0434914974122558, 0.0217457487061279, 0.52189796894707, 2, 0.0499999999999999,
                                       1.14965, 15, 0.5))
 })
 
@@ -97,7 +97,7 @@ test_that("WF1.2 Default Settings - Scatterplot of 1st measurement vs 2nd measur
 test_that("WF1.3 Default Settings - Short gauge study table results match", {
   table <- results[["results"]][["rAndR2"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.0434914974122558, 2.17457487061279, 0.52189796894707, 2, 0.0499999999999999,
+                                 list(0.0434914974122558, 0.0217457487061279, 0.52189796894707, 2, 0.0499999999999999,
                                       1.14965, 15, 0.5))
 })
 

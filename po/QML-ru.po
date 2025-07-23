@@ -10,7 +10,7 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Quality Control"
-msgstr ""
+msgstr "Контроль качества"
 
 msgctxt "Description|"
 msgid ""
@@ -108,7 +108,7 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "attributesCharts|"
 msgid "ID"
@@ -152,11 +152,11 @@ msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Назначенные факторы"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Run order"
-msgstr ""
+msgstr "Порядок выполнения"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Alpha level:"
@@ -180,59 +180,61 @@ msgstr ""
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs fitted value"
-msgstr ""
+msgstr "Остатки vs подобранные значения"
 
 msgctxt "definitiveScreeningAnalysis|"
 msgid "Residuals vs run order"
-msgstr ""
+msgstr "Остатки vs порядок выполнения"
 
 msgctxt "doeFactorial|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "doeFactorial|"
 msgid "2-level factorial (default generator)"
-msgstr ""
+msgstr "2-х уровневый факторный (стандартный генератор)"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "2-level factorial (specify generator)"
-msgstr ""
+msgstr "2-х уровневый факторный (уточнить генератор)"
 
 msgctxt "doeFactorial|"
 msgid "Design generator"
-msgstr ""
+msgstr "Генератор Дизайна"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "2-level split-plot (hard-to-change factors)"
-msgstr ""
+msgstr "2-х уровневый Split-график (трудноизменяемые факторы)"
 
 msgctxt "doeFactorial|"
 msgid "Number of hard-to-change factors"
-msgstr ""
+msgstr "Количество трудноизменяемых факторов"
 
 msgctxt "doeFactorial|"
 msgid "Resolution"
-msgstr ""
+msgstr "Разрешение"
 
 msgctxt "doeFactorial|"
 msgid "Blocks"
-msgstr ""
+msgstr "Блоки"
 
 msgctxt "doeFull|"
 msgid "Design Space"
-msgstr ""
+msgstr "Проектное поле"
 
 msgctxt "doeFull|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Количество факторов"
 
 msgctxt "doeFull|"
 msgid "Run Order"
-msgstr ""
+msgstr "Порядок Выполнения"
 
 msgctxt "doeFull|"
 msgid "Random"
-msgstr ""
+msgstr "Случайный"
 
 msgctxt "doeFull|"
 msgid "Standard"
@@ -240,43 +242,43 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Factor"
-msgstr ""
+msgstr "Фактор"
 
 msgctxt "doeFull|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "doeFull|"
 msgid "Levels"
-msgstr ""
+msgstr "Уровни"
 
 msgctxt "doeFull|"
 msgid "Factor "
-msgstr ""
+msgstr "Фактор "
 
 msgctxt "doeFull|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Дополнительные Параметры"
 
 msgctxt "doeFull|"
 msgid "Number of random runs to repeat"
-msgstr ""
+msgstr "Количество случайных запусков для повторения"
 
 msgctxt "doeFull|"
 msgid "Save as:"
-msgstr ""
+msgstr "Сохранить как:"
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: On</b>"
-msgstr ""
+msgstr "<b>Синхр. Дизайн: Вкл</b>"
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: Off</b>"
-msgstr ""
+msgstr "<b>Синхр. Дизайн: Выкл</b>"
 
 msgctxt "doeModifyDesign|"
 msgid "Available factors"
-msgstr ""
+msgstr "Доступные факторы"
 
 msgctxt "doeModifyDesign|"
 msgid "Response variable"
@@ -284,11 +286,11 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Assigned factors"
-msgstr ""
+msgstr "Назначенные факторы"
 
 msgctxt "doeModifyDesign|"
 msgid "Run order"
-msgstr ""
+msgstr "Порядок выполнения"
 
 msgctxt "doeModifyDesign|"
 msgid "Unit Display"
@@ -296,19 +298,19 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Coded"
-msgstr ""
+msgstr "Кодированный"
 
 msgctxt "doeModifyDesign|"
 msgid "Uncoded"
-msgstr ""
+msgstr "Некодированный"
 
 msgctxt "doeModifyDesign|"
 msgid "Run Order"
-msgstr ""
+msgstr "Порядок Выполнения"
 
 msgctxt "doeModifyDesign|"
 msgid "Random"
-msgstr ""
+msgstr "Случайный"
 
 msgctxt "doeModifyDesign|"
 msgid "Standard"
@@ -328,7 +330,7 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
-msgstr ""
+msgstr "Разрешение"
 
 msgctxt "doeModifyDesign|"
 msgid "Full"
@@ -376,7 +378,7 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Дополнительные Параметры"
 
 msgctxt "doeModifyDesign|"
 msgid "Number of center points"
@@ -384,7 +386,7 @@ msgstr ""
 
 msgctxt "doeModifyDesign|"
 msgid "Number of random runs to repeat"
-msgstr ""
+msgstr "Количество случайных запусков для повторения"
 
 msgctxt "doeModifyDesign|"
 msgid "Show desired design"
@@ -392,7 +394,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Low"
@@ -416,7 +418,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Design Space"
-msgstr ""
+msgstr "Проектное поле"
 
 msgctxt "doeScreening|"
 msgid "Number of 3-level factors"
@@ -424,7 +426,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Number of factors"
-msgstr ""
+msgstr "Количество факторов"
 
 msgctxt "doeScreening|"
 msgid "Number of runs"
@@ -436,15 +438,15 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Coded"
-msgstr ""
+msgstr "Кодированный"
 
 msgctxt "doeScreening|"
 msgid "Uncoded"
-msgstr ""
+msgstr "Некодированный"
 
 msgctxt "doeScreening|"
 msgid "Run Order"
-msgstr ""
+msgstr "Порядок Выполнения"
 
 msgctxt "doeScreening|"
 msgid "Standard"
@@ -452,15 +454,15 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Random"
-msgstr ""
+msgstr "Случайный"
 
 msgctxt "doeScreening|"
 msgid "Factor"
-msgstr ""
+msgstr "Фактор"
 
 msgctxt "doeScreening|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "doeScreening|"
 msgid "Level 1"
@@ -476,7 +478,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Factor "
-msgstr ""
+msgstr "Фактор "
 
 msgctxt "doeScreening|"
 msgid " Level 1"
@@ -492,7 +494,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Дополнительные Параметры"
 
 msgctxt "doeScreening|"
 msgid "Number of centre points"
@@ -504,15 +506,15 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Save as:"
-msgstr ""
+msgstr "Сохранить как:"
 
 msgctxt "doeScreening|"
 msgid "<b>Sync Design: On</b>"
-msgstr ""
+msgstr "<b>Синхр. Дизайн: Вкл</b>"
 
 msgctxt "doeScreening|"
 msgid "<b>Sync Design: Off</b>"
-msgstr ""
+msgstr "<b>Синхр. Дизайн: Выкл</b>"
 
 msgctxt "msaAttribute|"
 msgid "Data format"
@@ -716,7 +718,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "msaGaugeRR|"
 msgid "Date"
@@ -788,7 +790,7 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
@@ -1144,7 +1146,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "processCapabilityStudies|"
 msgid "Date"
@@ -1236,7 +1238,7 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Date"
@@ -1300,7 +1302,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date"
@@ -1413,7 +1415,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Blocks"
-msgstr ""
+msgstr "Блоки"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Total"
@@ -1485,7 +1487,7 @@ msgstr ""
 
 msgctxt "ShowAndExportDesign|"
 msgid "Save as:"
-msgstr ""
+msgstr "Сохранить как:"
 
 msgctxt "ShowAndExportDesign|"
 msgid "e.g. design.csv"
@@ -1497,7 +1499,7 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Blocks"
-msgstr ""
+msgstr "Блоки"
 
 msgctxt "doeAnalysis|"
 msgid "Model"
@@ -1654,10 +1656,6 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Surface plot"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Available continuous predictors"
 msgstr ""
 
 msgctxt "doeAnalysis|"
@@ -2169,10 +2167,6 @@ msgid "Today"
 msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
-msgid "Use unbiasing constant for X-bar & s contorl chart"
-msgstr ""
-
-msgctxt "variablesChartsSubgroups|"
 msgid "Number of std. dev. for calculation of control limits"
 msgstr ""
 
@@ -2181,19 +2175,7 @@ msgid "Available variables"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Discrete predictors"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Continuous predictors"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Covariates"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Predictor levels"
 msgstr ""
 
 msgctxt "doeAnalysis|"
@@ -2202,10 +2184,6 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Manually specify low/high"
-msgstr ""
-
-msgctxt "doeAnalysis|"
-msgid "Predictor"
 msgstr ""
 
 msgctxt "doeAnalysis|"
@@ -2288,10 +2266,6 @@ msgctxt "doeFactorial|"
 msgid "General full factorial"
 msgstr ""
 
-msgctxt "doeFactorial|"
-msgid "Predictor"
-msgstr ""
-
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design type"
 msgstr ""
@@ -2305,15 +2279,7 @@ msgid "Box-Behnken design"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of discrete predictors"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
 msgid "Maximum discrete levels"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Predictor"
 msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
@@ -2326,14 +2292,6 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Residuals four-in-one plot"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Number of predictors"
-msgstr ""
-
-msgctxt "doeFactorial|"
-msgid "Maximum predictor levels"
 msgstr ""
 
 msgctxt "doeFactorial|"
@@ -2541,15 +2499,7 @@ msgid "Right open"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Show optimal response"
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Normal plot of effects"
-msgstr ""
-
-msgctxt "doeResponseSurfaceMethodology|"
-msgid "Number of continuous predictors"
 msgstr ""
 
 msgctxt "Description|"
@@ -2754,7 +2704,7 @@ msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "rareEventCharts|"
 msgid "Footnote"
@@ -2930,7 +2880,7 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgctxt "timeWeightedCharts|"
 msgid "Footnote"
@@ -2963,3 +2913,237 @@ msgstr ""
 msgctxt "timeWeightedCharts|"
 msgid "Today"
 msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Responses"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Response optimizer"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Available responses"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Included responses"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Maximize"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Minimize"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Target"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show optimal solution"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Show optimization plot"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Predict"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Individual desirability"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Set input parameters manually"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Value"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Set all bounds manually"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Set all targets manually"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "Tests for control charts"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "Test set"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "JASP"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "Nelson laws"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "Western Electric rules"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "Custom selection"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "One point outside of control limits - Test 1: Beyond limit"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "points in a row, on the same side of center line - Test 2: Shift"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid "points in a row, all increasing or decreasing - Test 3: Trend"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid ""
+"out of k+1 points > 2 std. dev. from center line (same side) - Test 4: "
+"Increasing variation"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid ""
+"points in a row < 1 std. dev from center line (either side) - Test 5: "
+"Reducing variation"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid ""
+"points in a row > 1 std. dev from center line (either side) - Test 6: "
+"Bimodal distribution"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid ""
+"out of k+1 points > 1 std. dev. from center line (same side) - Test 7: "
+"Slightly increasing variation"
+msgstr ""
+
+msgctxt "ControlChartTests|"
+msgid ""
+"points in a row, alternating increase and decrease - Test 8: Oscillation"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Tests for control charts"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Test set"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "JASP"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "Custom selection"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "One point outside of control limits - Test 1: Beyond limit"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "points in a row, on the same side of center line - Test 2: Shift"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "points in a row, all increasing or decreasing - Test 3: Trend"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid ""
+"points in a row, alternating increase and decrease - Test 8: Oscillation"
+msgstr ""
+
+msgctxt "rareEventCharts|"
+msgid "points in a row, equal to 0 - Test 9: Benneyan test"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Advanced Options"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Tests for control charts"
+msgstr ""
+
+msgctxt "timeWeightedCharts|"
+msgid "Points outside of control limits"
+msgstr ""
+
+msgctxt "variablesChartsSubgroups|"
+msgid "Use unbiasing constant for X-bar & s control chart"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Discrete factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Continuous factors"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Factor levels"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Factor"
+msgstr "Фактор"
+
+msgctxt "doeAnalysis|"
+msgid "Available continuous factors"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Number of factors"
+msgstr "Количество факторов"
+
+msgctxt "doeFactorial|"
+msgid "Maximum factor levels"
+msgstr ""
+
+msgctxt "doeFactorial|"
+msgid "Factor"
+msgstr "Фактор"
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of continuous factors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Number of discrete factors"
+msgstr ""
+
+msgctxt "doeResponseSurfaceMethodology|"
+msgid "Factor"
+msgstr "Фактор"

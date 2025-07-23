@@ -60,7 +60,30 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
              missingValues.target = c(measurements, parts, operators),
              exitAnalysisIfErrors = TRUE)
 
-  #Converting long to wide data
+  # Checking for crossed design
+  if (ready && !options[["type3"]]) {
+    crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
+    if(!crossed){
+      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+      jaspResults[["gaugeANOVA"]] <- plot
+      plot$setError(gettext("Design is not balanced: not every operator measured every part the same number of times."))
+      return()
+    }
+  }
+
+  # Checking for balanced design
+  if (ready && options[["type3"]]) {
+    checkTab <- table(dataset[[parts]])
+    if (!all(checkTab == checkTab[1])) {
+      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+      jaspResults[["gaugeANOVA"]] <- plot
+      plot$setError(gettext("Design is not balanced: not every part was measured the same number of times."))
+      return()
+    }
+  }
+
+
+  # Converting long to wide data
   if (!wideFormat && ready) {
     dataset <- dataset[order(dataset[[operators]]),]
     dataset <- dataset[order(dataset[[parts]]),]
@@ -74,18 +97,15 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     dataset <- dataset[order(dataset[[parts]]),]
   }
 
-  if(ready && !options[["type3"]]){
-   crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
-    if(!crossed){
-     plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-      jaspResults[["plot"]] <- plot
-      plot$setError(gettext("Design is not balanced: not every operator measured every part. Use non-replicable gauge r&R."))
-      return()
-    }
-  }
 
   # Checking type 3
   Type3 <- c(length(unique(dataset[[operators]])) == 1 || options$type3)
+
+  # Get Rule List
+  if (ready) {
+    ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
+    ruleList2 <- .getRuleListSubgroupCharts(options, type = "R")
+  }
 
   # Errors #
   # Checking whether type3 is used correctly
@@ -126,7 +146,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
                                        "reportLocation", "reportLocationText", "reportPerformedBy", "reportPerformedByText",
                                        "reportDate", "reportDateText", "reportVariationComponents", "reportMeasurementsByPartPlot",
                                        "reportRChartByOperator", "reportMeasurementsByOperatorPlot", "reportAverageChartByOperator",
-                                       "reportPartByOperatorPlot", "reportTrafficLightChart", "reportMetaData"))
+                                       "reportPartByOperatorPlot", "reportTrafficLightChart", "reportMetaData", .getDependenciesControlChartRules()))
 
     if (nElements == 0) {
       reportPlot$setError(gettext("No report components selected."))
@@ -169,7 +189,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       plotIndexCounter <- plotIndexCounter + 1
     }
     if (options[["reportRChartByOperator"]]) {
-      plots[[plotIndexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)],
+      plots[[plotIndexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)], ruleList = ruleList2,
                                                 plotType = "R", stages = operators,
                                                 xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                                 stagesSeparateCalculation = FALSE)$plotObject
@@ -180,7 +200,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       plotIndexCounter <- plotIndexCounter + 1
       }
     if (options[["reportAverageChartByOperator"]]) {
-      plots[[plotIndexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)],
+      plots[[plotIndexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)], ruleList = ruleList1,
                                                 plotType = "xBar", xBarSdType = "r", stages = operators,
                                                 xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                                 stagesSeparateCalculation = FALSE)$plotObject
@@ -242,10 +262,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
       jaspResults[["rChart"]]$position <- 3
       jaspResults[["rChart"]]$dependOn(c("rChart", "gaugeRRmethod", "anovaGaugeReport", "measurementLongFormat",
-                                         "measurementsWideFormat", "report"))
+                                         "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
       jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
       if (ready) {
-        rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R",
+        rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R", ruleList = ruleList2,
                                             stages = operators, xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                             stagesSeparateCalculation = FALSE)
 
@@ -259,10 +279,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar chart by operator"))
       jaspResults[["xBarChart"]]$position <- 4
       jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "gaugeRRmethod", "anovaGaugeReport", "measurementLongFormat",
-                                            "measurementsWideFormat", "report"))
+                                            "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
       jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
       if (ready) {
-        xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)],
+        xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)], ruleList = ruleList1,
                                                plotType = "xBar", xBarSdType = "r", stages = operators,
                                                xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
                                                stagesSeparateCalculation = FALSE)
@@ -462,7 +482,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         varCompPart <- varCompList$part
         varCompTotalGauge <- varCompList$totalGauge
         varCompTotalVar <- varCompList$totalVar
-        varCompVector <- c(varCompTotalGauge, varCompRepeat, varCompPart, varCompTotalVar)
+        varCompVector <- c("varCompTotalGauge" = varCompTotalGauge, "varCompRepeat" = varCompRepeat,
+                           "varCompPart" = varCompPart, "varCompTotalVar" = varCompTotalVar)
         sources <- gettext(c("Total gauge r&R", "Repeatability", "Part-to-part", "Total variation"))
       } else {
         varCompList <- .gaugeCrossedVarComps(data, operators, parts, measurements, msPart, msOperator, msRepWithInteraction, msInteraction)
@@ -481,10 +502,10 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       if (options[["processVariationReference"]] == "historicalSd") {
         if (Type3)
-          varCompVector <- list(varCompTotalGauge = varCompTotalGauge, varCompRepeat = varCompRepeat, varCompPart = varCompPart, varCompTotalVar = varCompTotalVar)
+          varCompVector <- c("varCompTotalGauge" = varCompTotalGauge, "varCompRepeat" = varCompRepeat, "varCompPart" = varCompPart, "varCompTotalVar" = varCompTotalVar)
         histSD <- options[["historicalSdValue"]]
-        varCompVector$varCompTotalVar <- varCompTotalVar <- histSD^2
-        varCompVector$varCompPart <- varCompVector$varCompTotalVar - varCompTotalGauge
+        varCompVector[["varCompTotalVar"]] <- varCompTotalVar <- histSD^2
+        varCompVector[["varCompPart"]] <- varCompVector$varCompTotalVar - varCompTotalGauge
       }
 
 
@@ -500,25 +521,24 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
       histSD <- options[["historicalSdValue"]]
 
-      if(!singleOperator) {
+      if (!singleOperator) {
         if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
           SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator)),
                   sqrt(varCompInteraction), sqrt(histSD^2 - varCompTotalGauge), histSD)
 
-        }else {
+        } else {
           SD <- sqrt(varCompVector)
         }
-        sdParts <- SD[5]
-        sdGauge <- SD[1]
-      }else {
+
+      } else {
         if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
           SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat)), sqrt(histSD^2 - varCompTotalGauge), histSD)
-        }else{
+        } else {
           SD <- sqrt(varCompVector)
         }
-        sdParts <- SD[3]
-        sdGauge <- SD[1]
       }
+      sdParts <- sqrt(varCompVector[["varCompPart"]])
+      sdGauge <- sqrt(varCompVector[["varCompTotalGauge"]])
       SD <- ifelse(SD == "NaN", 0, SD)
       studyVar <- SD * studyVarMultiplier
       RRtable2DataList <- list("source"       = sources,
@@ -528,10 +548,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       if(options[["tolerance"]])
         RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options[["toleranceValue"]] * 100,2))))
       RRtable2$setData(RRtable2DataList)
-
       if (!is.na(sdParts)) {
         nCategories <- .gaugeNumberDistinctCategories(sdParts, sdGauge)
-        RRtable2$addFootnote(gettextf("Number of distinct categories = %i", ifelse(SD[3] == 0, 1, nCategories)))
+        RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
       }
       if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
         RRtable2$addFootnote(gettextf("Study Variation is calculated as std. dev. <spam>&#215;</spam> %i", as.integer(studyVarMultiplier)))
@@ -624,8 +643,8 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       if(options[["tolerance"]])
         RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options[["toleranceValue"]] * 100,2))))
       RRtable2$setData(RRtable2DataList)
-      nCategories <- .gaugeNumberDistinctCategories(SD[5], SD[1])
-      RRtable2$addFootnote(gettextf("Number of distinct categories = %i", ifelse(SD[3] == 0, 1, nCategories)))
+      nCategories <- .gaugeNumberDistinctCategories(sqrt(varCompPart), sqrt(varCompTotalGauge))
+      RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
       if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
         RRtable2$addFootnote(gettextf("Study variation is calculated as std. dev. <spam>&#215;</spam> %i", as.integer(studyVarMultiplier)))
       }else{

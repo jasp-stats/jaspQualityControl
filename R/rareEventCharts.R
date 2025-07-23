@@ -132,14 +132,19 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     }
   }
 
+  # Create the rule list for the out-of-control signals
+  if (ready)
+    ruleList <- .getRuleListRareEventCharts(options)
+
+
   # G chart
   if (options[["gChart"]]) {
-    gChart <- .gChart(dataset, variable, stages, intervalType, options, ready)
+    gChart <- .gChart(dataset, variable, stages, intervalType, ruleList, options, ready)
   }
 
   # T chart
   if (options[["tChart"]]) {
-    tChart <- .tChart(dataset, variable, stages, intervalType, options, ready)
+    tChart <- .tChart(dataset, variable, stages, intervalType, ruleList, options, ready)
   }
 
 
@@ -155,7 +160,8 @@ rareEventCharts <- function(jaspResults, dataset, options) {
                                        "reportTitle", "reportTitleText", "reportChartName", "reportChartNameText", "reportSubtitle",
                                        "reportSubtitleText", "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
                                        "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate", "reportDateText",
-                                       "reportPerformedBy", "reportPerformedByText", "reportPrintDate", "reportPrintDateText"))
+                                       "reportPerformedBy", "reportPerformedByText", "reportPrintDate", "reportPrintDateText",
+                                       .getDependenciesControlChartRules()))
 
     # Plot meta data
     if (options[["reportTitle"]] ) {
@@ -180,9 +186,9 @@ rareEventCharts <- function(jaspResults, dataset, options) {
 
     plots <- list()
     if (options[["gChart"]])
-      plots[["gChart"]] <- gChart$plotObject
+      plots[["gChart"]] <- gChart[["plot"]]$plotObject
     if (options[["tChart"]])
-      plots[["tChart"]] <- tChart$plotObject
+      plots[["tChart"]] <- tChart[["plot"]]$plotObject
     reportPlotObject <- .qcReport(text = text, plots = plots, textMaxRows = 8,
                                   reportTitle = title)
     reportPlot$plotObject <- reportPlotObject
@@ -191,12 +197,17 @@ rareEventCharts <- function(jaspResults, dataset, options) {
     ### If not report mode
     ###
   } else {
-    if (options[["gChart"]])
-      jaspResults[["gChart"]] <- gChart
-    if (options[["tChart"]])
-      jaspResults[["tChart"]] <- tChart
+    if (options[["gChart"]]) {
+      jaspResults[["gChart"]] <- createJaspContainer(position = 1)
+      jaspResults[["gChart"]][["plot"]] <- gChart[["plot"]]
+      jaspResults[["gChart"]][["table"]] <- gChart[["table"]]
+    }
+    if (options[["tChart"]]) {
+      jaspResults[["tChart"]] <- createJaspContainer(position = 2)
+      jaspResults[["tChart"]][["plot"]] <- tChart[["plot"]]
+      jaspResults[["tChart"]][["table"]] <- tChart[["table"]]
+    }
   }
-
 }
 
 
@@ -204,11 +215,14 @@ rareEventCharts <- function(jaspResults, dataset, options) {
                     variable,
                     stages = NULL,
                     intervalType = c("days", "hours", "minutes", "opportunities"),
-                    options, ready) {
+                    ruleList,
+                    options,
+                    ready) {
   plot <-  createJaspPlot(title = gettext("G chart"), width = 1200, height = 500)
   plot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
                   "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat",
-                  "gChart", "gChartProportionSource", "gChartHistoricalProportion", "report"))
+                  "gChart", "gChartProportionSource", "gChartHistoricalProportion", "report",
+                  .getDependenciesControlChartRules()))
 
   if (!ready)
     return(plot)
@@ -216,23 +230,26 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   columnsToPass <- c(variable, stages)
   columnsToPass <- columnsToPass[columnsToPass != ""]
   phase2 <- options[["gChartProportionSource"]] == "historical"
-  plotObject <- .controlChart(dataset[columnsToPass], plotType = "g", stages = stages, gAndtUnit = intervalType,
-                              phase2 = phase2, phase2gChartProportion = options[["gChartHistoricalProportion"]])$plotObject
-  plot$plotObject <- plotObject
-
-  return(plot)
+  gChart <- .controlChart(dataset[columnsToPass], ruleList = ruleList, plotType = "g", stages = stages,
+                          gAndtUnit = intervalType, phase2 = phase2,
+                          phase2gChartProportion = options[["gChartHistoricalProportion"]])
+  plot$plotObject <- gChart$plotObject
+  table <- gChart$table
+  return(list("plot" = plot, "table" = table))
 }
 
 .tChart <- function(dataset,
                     variable,
                     stages = NULL,
                     intervalType = c("days", "hours", "minutes", "opportunities"),
-                    options, ready) {
+                    ruleList,
+                    options,
+                    ready) {
   plot <-  createJaspPlot(title = gettext("T chart"), width = 1200, height = 500)
   plot$dependOn(c("variable", "stage", "dataType", "dataTypeDatesStructure", "dataTypeDatesFormatDate",
                   "dataTypeDatesFormatTime", "dataTypeIntervalType", "dataTypeIntervalTimeFormat", "tChart",
                   "tChartDistribution", "tChartDistributionParameterSource", "tChartHistoricalParametersWeibullShape",
-                  "tChartHistoricalParametersScale", "report"))
+                  "tChartHistoricalParametersScale", "report", .getDependenciesControlChartRules()))
 
   if (!ready)
     return(plot)
@@ -240,12 +257,41 @@ rareEventCharts <- function(jaspResults, dataset, options) {
   columnsToPass <- c(variable, stages)
   columnsToPass <- columnsToPass[columnsToPass != ""]
   phase2 <- options[["tChartDistributionParameterSource"]] == "historical"
-  plotObject <- .controlChart(dataset[columnsToPass], plotType = "t", stages = stages, gAndtUnit = intervalType,
-                              tChartDistribution = options[["tChartDistribution"]],
-                              phase2tChartDistributionShape = options[["tChartHistoricalParametersWeibullShape"]],
-                              phase2tChartDistributionScale = options[["tChartHistoricalParametersScale"]],
-                              phase2 = phase2)$plotObject
-  plot$plotObject <- plotObject
+  tChart <- .controlChart(dataset[columnsToPass], ruleList = ruleList, plotType = "t",
+                          stages = stages, gAndtUnit = intervalType,
+                          tChartDistribution = options[["tChartDistribution"]],
+                          phase2tChartDistributionShape = options[["tChartHistoricalParametersWeibullShape"]],
+                          phase2tChartDistributionScale = options[["tChartHistoricalParametersScale"]],
+                          phase2 = phase2)
+  plot$plotObject <- tChart$plotObject
+  table <- tChart$table
+  return(list("plot" = plot, "table" = table))
+}
 
-  return(plot)
+.getRuleListRareEventCharts <- function(options) {
+  ruleSet <- options[["testSet"]]
+  if (ruleSet == "jaspDefault") {
+    ruleList <- list("rule1" = list("enabled" = TRUE),
+                     "rule2" = NULL,
+                     "rule3" = NULL,
+                     "rule4" = NULL,
+                     "rule5" = NULL,
+                     "rule6" = NULL,
+                     "rule7" = NULL,
+                     "rule8" = NULL,
+                     "rule9" = NULL
+    )
+  } else if (ruleSet == "custom") {
+    ruleList <- list("rule1" = list("enabled" = options[["rule1"]]),
+                     "rule2" = list("enabled" = options[["rule2"]], "k" = options[["rule2Value"]]),
+                     "rule3" = list("enabled" = options[["rule3"]], "k" = options[["rule3Value"]]),
+                     "rule4" = NULL,
+                     "rule5" = NULL,
+                     "rule6" = NULL,
+                     "rule7" = NULL,
+                     "rule8" = list("enabled" = options[["rule8"]], "k" = options[["rule8Value"]]),
+                     "rule9" = list("enabled" = options[["rule9"]], "k" = options[["rule9Value"]])
+    )
+  }
+  return(ruleList)
 }

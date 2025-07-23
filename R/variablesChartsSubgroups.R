@@ -124,9 +124,10 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   if (length(measurements) > 5 && options[["chartType"]] == "xBarAndR") # if the subgroup size is above 5, R chart is not recommended
     plotNotes <- paste0(plotNotes, gettext("Subgroup size is >5, results may be biased. An s-chart is recommended."))
 
-
   #X bar & R/s chart
   if (ready) {
+
+
     if (is.null(jaspResults[["controlCharts"]])) {
       jaspResults[["controlCharts"]] <- createJaspContainer(position = 1)
       jaspResults[["controlCharts"]]$dependOn(c("chartType", "variables", "warningLimits", "knownParameters", "knownParametersMean", "manualTicks", 'nTicks',
@@ -134,7 +135,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                                                 "report", "reportTitle", "reportMeasurementName", "reportMiscellaneous","reportReportedBy","reportDate", "reportSubtitle",
                                                 "reportChartName", "subgroupSizeUnequal", "axisLabels", "stagesWideFormat", "stagesLongFormat",
                                                 "subgroupSizeType", "fixedSubgroupSizeValue", "xBarAndSUnbiasingConstant", "controlLimitsNumberOfSigmas",
-                                                "groupingVariableMethod"))
+                                                "groupingVariableMethod", .getDependenciesControlChartRules()))
       secondPlotType <- ifelse(options[["chartType"]] == "xBarAndR", "R", "s")
       jaspResults[["controlCharts"]][["plot"]] <- createJaspPlot(title =  gettextf("X-bar & %1$s control chart", secondPlotType), width = 1200, height = 500)
       if (length(measurements) > 50 && secondPlotType == "R") { # if the subgroup size is above 50, the R package cannot calculate R charts.
@@ -148,14 +149,18 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
       clLabelSize <- if (options[["report"]]) 3.5 else 4.5
       fixedSubgroupSize <- if (options[["subgroupSizeUnequal"]] == "fixedSubgroupSize") options[["fixedSubgroupSizeValue"]] else ""
 
+      # Create the rule list for the out-of-control signals
+      ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
+      ruleList2 <- .getRuleListSubgroupCharts(options, type = secondPlotType)
+
       # first chart is always xBar-chart, second is either R- or s-chart
-      xBarChart <- .controlChart(dataset = dataset[columnsToPass], plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
+      xBarChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList1, plotType = "xBar", stages = stages, xBarSdType = xBarSdType,
                                  nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], phase2 = options[["knownParameters"]],
                                  phase2Mu = options[["knownParametersMean"]], phase2Sd = options[["knownParametersSd"]],
                                  fixedSubgroupSize = fixedSubgroupSize, warningLimits = options[["warningLimits"]],
                                  xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
                                  unbiasingConstantUsed = options[["xBarAndSUnbiasingConstant"]])
-      secondChart <- .controlChart(dataset = dataset[columnsToPass], plotType = secondPlotType,  stages = stages,
+      secondChart <- .controlChart(dataset = dataset[columnsToPass], ruleList = ruleList2, plotType = secondPlotType,  stages = stages,
                                    phase2 = options[["knownParameters"]], nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]],
                                    phase2Sd = options[["knownParametersSd"]], fixedSubgroupSize = fixedSubgroupSize,
                                    xAxisLabels = axisLabels, tableLabels = axisLabels, xAxisTitle = xAxisTitle, clLabelSize = clLabelSize,
@@ -183,7 +188,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
                                            "reportMeasurementName", "reportMeasurementNameText", "reportFootnote",
                                            "reportFootnoteText", "reportLocation", "reportLocationText", "reportDate",
                                            "reportDateText", "reportPerformedBy", "reportPerformedByText", "reportPrintDate",
-                                           "reportPrintDateText"))
+                                           "reportPrintDateText", .getDependenciesControlChartRules()))
 
         # Plot meta data
         if (options[["reportTitle"]] ) {

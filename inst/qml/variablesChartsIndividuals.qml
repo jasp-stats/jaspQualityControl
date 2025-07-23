@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Layouts
 import JASP.Controls
 
+import "./common" as Common
+
 Form
 {
 	columns:									1
@@ -278,5 +280,7 @@ Form
 			defaultValue: 						3
 			min:								1
 		}
+
+		Common.ControlChartTests {}
 	}
 }

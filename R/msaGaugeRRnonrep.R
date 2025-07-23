@@ -46,6 +46,17 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
              all.target = c(measurements, parts, operators),
              exitAnalysisIfErrors = TRUE)
 
+  # check for balanced design
+  if (ready) {
+    replicatesTable <- table(dataset[[parts]])
+    if (!all(replicatesTable == replicatesTable[1])) {
+      plot <- createJaspPlot(title = gettext("Gauge r&R - nested"), width = 700, height = 400)
+      jaspResults[["gaugeRRNonRep"]] <- plot
+      plot$setError(gettext("Unbalanced design. Some parts have more repeated measurements than others."))
+      return()
+    }
+  }
+
   if (ready && !wideFormat){
     dataset <- dataset[order(dataset[[operators]]),]
     dataset <- dataset[order(dataset[[parts]]),]
@@ -62,6 +73,12 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     datasetLong <- .reshapeToLong(dataset, measurements, parts, operators)
     wideMeasurementCols <- measurements
     longMeasurementCols <- "Measurement"
+  }
+
+  # Get Rule List
+  if (ready) {
+    ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
+    ruleList2 <- .getRuleListSubgroupCharts(options, type = "R")
   }
 
   # Report
@@ -81,7 +98,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
                                        "reportLocation", "reportLocationText", "reportPerformedBy", "reportPerformedByText",
                                        "reportDate", "reportDateText", "reportVariationComponents", "reportMeasurementsByPartPlot",
                                        "reportRChartByOperator", "reportMeasurementsByOperatorPlot", "reportAverageChartByOperator",
-                                       "reportPartByOperatorPlot", "reportTrafficLightCHart", "reportMetaData"))
+                                       "reportPartByOperatorPlot", "reportTrafficLightCHart", "reportMetaData", .getDependenciesControlChartRules()))
 
     if (nElements == 0) {
       reportPlot$setError(gettext("No report components selected."))
@@ -120,7 +137,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       plotIndexCounter <- plotIndexCounter + 1
     }
     if (options[["reportRChartByOperator"]]) {
-      plots[[plotIndexCounter]] <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
+      plots[[plotIndexCounter]] <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)], ruleList = ruleList2,
                                                  plotType = "R", stages = operators,
                                                  xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
                                                  stagesSeparateCalculation = FALSE)$plotObject #R chart by operator
@@ -131,7 +148,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       plotIndexCounter <- plotIndexCounter + 1
     }
     if (options[["reportAverageChartByOperator"]]) {
-      plots[[plotIndexCounter]] <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
+      plots[[plotIndexCounter]] <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)], ruleList = ruleList1,
                                                  plotType = "xBar", xBarSdType = "r", stages = operators,
                                                  xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
                                                  stagesSeparateCalculation = FALSE)$plotObject #Average chart by operator
@@ -186,11 +203,11 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
       jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
       jaspResults[["rChart"]]$position <- 2
-      jaspResults[["rChart"]]$dependOn(c("rChart", "measurementLongFormat", "measurementsWideFormat", "report"))
+      jaspResults[["rChart"]]$dependOn(c("rChart", "measurementLongFormat", "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
       jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
 
       if (ready) {
-        rChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
+        rChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)], ruleList = ruleList2,
                                 plotType = "R", stages = operators,
                                 xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
                                 stagesSeparateCalculation = FALSE)
@@ -203,10 +220,10 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
     if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
       jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar chart by operator"))
       jaspResults[["xBarChart"]]$position <- 3
-      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat", "measurementsWideFormat", "report"))
+      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat", "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
       jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
       if (ready) {
-        xBarChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)],
+        xBarChart <- .controlChart(dataset = datasetWide[c(wideMeasurementCols, operators)], ruleList = ruleList1,
                                    plotType = "xBar", xBarSdType = "r", stages = operators,
                                    xAxisLabels = datasetWide[[parts]][order(datasetWide[[operators]])],
                                    stagesSeparateCalculation = FALSE)
@@ -344,7 +361,7 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
       gaugeRRNonRepTable3DataList <- append(gaugeRRNonRepTable3DataList, list("percentTolerance" = percentTolerance))
     }
     gaugeRRNonRepTable3$setData(gaugeRRNonRepTable3DataList)
-    nCategories <- .gaugeNumberDistinctCategories(stdDevs[4], stdDevs[1])
+    nCategories <- .gaugeNumberDistinctCategories(sqrt(varCompTable$varPart), sqrt(varCompTable$varGaugeTotal))
 
     if (gaugeEvaluationDfOnly) {
       gaugeEvalDf <- as.data.frame(gaugeRRNonRepTable3DataList)
@@ -495,8 +512,6 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
 .gaugeNestedVarComponents <- function(dataset, operators, parts, measurements, ms) {
   nOperators <- length(unique(dataset[[operators]]))
   replicatesTable <- table(dataset[[parts]])
-  if (!all(replicatesTable == replicatesTable[1]))
-    stop("Unbalanced design. Some parts have more repeated measurements than others.")
   nReplicates <- unname(replicatesTable)[1] # assuming constant repetitions across parts
   nParts  <- length(unique(dataset[[parts]]))
   msOperator <- ms[1]

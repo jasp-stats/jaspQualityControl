@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2024-10-19 03:41\n"
-"PO-Revision-Date: 2025-03-13 08:25+0000\n"
+"POT-Creation-Date: 2025-07-19 03:55\n"
+"PO-Revision-Date: 2025-06-15 10:02+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10.3-dev\n"
+"X-Generator: Weblate 5.12-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 
 msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
+msgstr "Entfernen von %1$i %2$s, die keiner Stufe zugeordnet wurden.<br>"
 
 msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
 msgstr ""
@@ -167,6 +167,23 @@ msgstr "Testergebnisse für %1$s-Karte"
 msgid "Point"
 msgstr "Punkt"
 
+#, fuzzy
+msgid "- upper"
+msgstr "Obergrenze"
+
+#, fuzzy
+msgid "- lower"
+msgstr "Untergrenze"
+
+msgid "Test 7: Slightly increasing variation"
+msgstr ""
+
+msgid "Test 8: Oscillation"
+msgstr ""
+
+msgid "Test 9: Benneyan test"
+msgstr ""
+
 msgid "Tests"
 msgstr "Tests"
 
@@ -219,7 +236,9 @@ msgid ""
 "distribution."
 msgstr ""
 
-#, fuzzy
+msgid "Design of Experiments - Analysis"
+msgstr ""
+
 msgid "Error"
 msgstr "Fehler"
 
@@ -231,14 +250,108 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Response Optimizer Settings"
+msgstr ""
+
+msgid "lower and upper bounds and target are"
+msgstr "untere und obere Grenzen und Ziel sind"
+
+msgid "lower and upper bounds are"
+msgstr "untere und obere Grenzen sind"
+
+msgid "target is"
+msgstr "Ziel ist"
+
+msgid "The %s estimated from data."
+msgstr ""
+
+msgid "Response Optimizer Solution"
+msgstr ""
+
+msgid "Optimization Plot"
+msgstr "Optimierungsdiagramm"
+
+msgid "Summary Plot"
+msgstr "Zusammenfassungsdiagramm"
+
+msgid "Enter values for all predictors."
+msgstr "Geben Sie Werte für alle Prädiktoren ein."
+
+msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all discrete predictors.\n"
+"                                   Value %1$s is not a possible for the "
+"discrete predictor %2$s. Allowed values:"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all continuous predictors. Only numeric values "
+"are allowed."
+msgstr ""
+
+msgid "Comp. desirability"
+msgstr ""
+
+msgid "Ind. desirability ("
+msgstr ""
+
+msgid ""
+"One or more input parameters for continuous predictors are outside of the "
+"design space.\n"
+"                           Extrapolation beyond the design space might not "
+"be valid."
+msgstr ""
+
 msgid "Model Summary"
 msgstr "Modellzusammenfassung"
+
+#, fuzzy
+msgid "Adjusted %s"
+msgstr "Bereinigtes R-Quadrat"
+
+#, fuzzy
+msgid "Predictive %s"
+msgstr "Prädiktor"
 
 msgid "The following aliased terms were removed: %s."
 msgstr ""
 
 msgid "ANOVA"
 msgstr "ANOVA"
+
+msgid "Source"
+msgstr "Quelle"
+
+#, fuzzy
+msgid "Sum of squares"
+msgstr "Quadratsumme"
+
+msgid "df"
+msgstr "df"
+
+#, fuzzy
+msgid "Mean square"
+msgstr "Mittlere Quadratsumme"
+
+msgid ""
+"Type III sums of squares are selected and continuous factors are specified. "
+"Results might be misleading. Make sure factors should really be treated as "
+"continuous."
+msgstr ""
+
+#, fuzzy
+msgid "Type I sums of squares."
+msgstr "Quadratsumme"
+
+#, fuzzy
+msgid "Type II sums of squares."
+msgstr "Quadratsumme"
+
+#, fuzzy
+msgid "Type III sums of squares."
+msgstr "Quadratsumme"
 
 msgid "Coded"
 msgstr "Kodierte"
@@ -344,9 +457,8 @@ msgstr "Design-Zusammenfassung"
 msgid "Variable"
 msgstr "Variable"
 
-#, fuzzy
-msgid "Predictors"
-msgstr "Prädiktor"
+msgid "Factors"
+msgstr "Faktoren"
 
 msgid "Base runs"
 msgstr ""
@@ -407,11 +519,12 @@ msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
 #, fuzzy
-msgid "Continuous predictors"
+msgid "Continuous factors"
 msgstr "Kontinuierliche Faktoren"
 
-msgid "Discrete predictors"
-msgstr ""
+#, fuzzy
+msgid "Discrete factors"
+msgstr "Faktoren"
 
 msgid "Replicates"
 msgstr ""
@@ -685,8 +798,12 @@ msgid "Gauge r&R"
 msgstr ""
 
 msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+"Design is not balanced: not every operator measured every part the same "
+"number of times."
+msgstr ""
+
+msgid ""
+"Design is not balanced: not every part was measured the same number of times."
 msgstr ""
 
 msgid ""
@@ -726,7 +843,7 @@ msgstr "ANOVA-Tabelle"
 
 #, fuzzy
 msgid "Range chart by operator"
-msgstr "Messungen nach Operator"
+msgstr "Wertebereichsdiagramm nach Operator"
 
 #, fuzzy
 msgid "Xbar chart by operator"
@@ -734,7 +851,7 @@ msgstr "Messungen nach Operator"
 
 #, fuzzy
 msgid "Average chart by operator"
-msgstr "Messungen nach Operator"
+msgstr "Mittelwertskarte nach Operator"
 
 msgid "Scatterplot operators"
 msgstr ""
@@ -763,16 +880,6 @@ msgstr "Einfache ANOVA-Tabelle"
 #, fuzzy
 msgid "Two-way ANOVA table with interaction"
 msgstr "Zweifaktorielle ANOVA-Tabelle mit Interaktion"
-
-msgid "Source"
-msgstr "Quelle"
-
-msgid "df"
-msgstr "df"
-
-#, fuzzy
-msgid "Sum of squares"
-msgstr "Quadratsumme"
 
 #, fuzzy
 msgid "Mean squares"
@@ -906,6 +1013,14 @@ msgstr ""
 msgid "%.2f"
 msgstr ""
 
+#, fuzzy
+msgid "Gauge r&R - nested"
+msgstr "ANOVA-Tabelle"
+
+msgid ""
+"Unbalanced design. Some parts have more repeated measurements than others."
+msgstr ""
+
 msgid "Gauge r&R (non-replicable) report"
 msgstr ""
 
@@ -920,10 +1035,6 @@ msgstr ""
 
 msgid "Gauge r&R (nested)"
 msgstr ""
-
-#, fuzzy
-msgid "Mean square"
-msgstr "Mittlere Quadratsumme"
 
 msgid "p"
 msgstr "p"
@@ -974,18 +1085,18 @@ msgstr ""
 msgid "d2"
 msgstr ""
 
+msgid "GRR"
+msgstr ""
+
 #, fuzzy
 msgid "Process std. dev."
 msgstr "Std.-Abw."
 
-msgid "Tolerance"
-msgstr "Toleranz"
-
-msgid "GRR"
-msgstr ""
-
 msgid "%%GRR of process std. dev."
 msgstr ""
+
+msgid "Tolerance"
+msgstr "Toleranz"
 
 #, fuzzy
 msgid "%%GRR of tolerance"
@@ -1562,9 +1673,8 @@ msgid ""
 "detected in %s."
 msgstr ""
 
-#, fuzzy
 msgid "Autocorrelation plot"
-msgstr "Autokorrelation"
+msgstr "Autokorrelationsdiagramm"
 
 msgid "Autocorrelation"
 msgstr "Autokorrelation"
@@ -1572,22 +1682,24 @@ msgstr "Autokorrelation"
 msgid "Lag"
 msgstr "Verzögerung"
 
-#, fuzzy
 msgid "Control charts"
-msgstr "Kontrolldiagramm"
+msgstr "Regelkarten"
 
 msgid ""
 "All subgroups are of size 1. Variables charts for subgroups cannot be "
 "calculated. Use variables charts for individuals."
 msgstr ""
 
-#, fuzzy
 msgid "X-bar & %1$s control chart"
-msgstr "X-quer & s-Kontrollkarte"
+msgstr "X-quer & %1$s-Regelkarte"
 
 #, fuzzy
 msgid "Variables Chart for Subgroups Report"
 msgstr "Bericht Regelkarten für Attribute"
+
+#, fuzzy
+#~ msgid "Predictors"
+#~ msgstr "Prädiktor"
 
 #~ msgid "Subgroups"
 #~ msgstr "Untergruppen"
@@ -1669,9 +1781,6 @@ msgstr "Bericht Regelkarten für Attribute"
 
 #~ msgid "Model R-squared"
 #~ msgstr "Modell R-Quadrat"
-
-#~ msgid "Adjusted R-squared"
-#~ msgstr "Bereinigtes R-Quadrat"
 
 #~ msgid "df1"
 #~ msgstr "df1"
@@ -1766,9 +1875,6 @@ msgstr "Bericht Regelkarten für Attribute"
 #~ msgid "Selected Design"
 #~ msgstr "Ausgewähltes Design"
 
-#~ msgid "Factors"
-#~ msgstr "Faktoren"
-
 #~ msgid "Runs"
 #~ msgstr "Abläufe"
 
@@ -1852,9 +1958,6 @@ msgstr "Bericht Regelkarten für Attribute"
 #~ msgstr ""
 #~ "Faktorname '%s' ist eine Zahl, und numerische Faktornamen sind nicht "
 #~ "unterstützt."
-
-#~ msgid "factors"
-#~ msgstr "Faktoren"
 
 #~ msgid "factorName"
 #~ msgstr "Faktorname"

@@ -95,7 +95,7 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   twoLevelDesign <- options[["factorialType"]] != "generalFullFactorial"
   tb <- createJaspTable(title = gettext("Design Summary"), position = 1L)
   tb$addColumnInfo(name = "title", title = gettext("Variable"), type = "string")
-  tb$addColumnInfo(name = "catFactors", title = gettext("Predictors"), type = "integer")
+  tb$addColumnInfo(name = "catFactors", title = gettext("Factors"), type = "integer")
   tb$addColumnInfo(name = "baseRuns", title = gettext("Base runs"), type = "integer")
   if (twoLevelDesign) {
     tb$addColumnInfo(name = "baseBlocks", title = gettext("Base blocks"), type = "integer")
@@ -127,8 +127,9 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
   } else {
     df <- .doeRsmCategorical2df(options[["categoricalVariables"]])
     nLevels <- apply(df, 1, function(x) length(which(x[-1] != "")))
-    runs <- prod(nLevels) * designSpec[["replications"]] + designSpec[["repetitions"]]
-    tb[["baseRuns"]] <- runs
+    baseRuns <- prod(nLevels)
+    runs <- baseRuns * designSpec[["replications"]] + designSpec[["repetitions"]]
+    tb[["baseRuns"]] <- baseRuns
     tb[["totalRuns"]] <- runs
     tb[["totalBlocks"]] <- designSpec[["replications"]]
   }

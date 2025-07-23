@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2024-10-19 03:41\n"
-"PO-Revision-Date: 2024-09-05 15:09+0000\n"
+"POT-Creation-Date: 2025-07-19 03:55\n"
+"PO-Revision-Date: 2025-07-09 22:01+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pl/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 5.8-dev\n"
+"X-Generator: Weblate 5.13-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -56,9 +56,8 @@ msgstr "Dane: %s"
 msgid "Performed by: %s"
 msgstr ""
 
-#, fuzzy
 msgid "Print date: %s"
-msgstr "Dane: %s"
+msgstr "Wydrukuj dane: %s"
 
 msgid "Cumulative sum chart"
 msgstr ""
@@ -167,6 +166,22 @@ msgstr ""
 msgid "Point"
 msgstr ""
 
+#, fuzzy
+msgid "- upper"
+msgstr "Górny"
+
+msgid "- lower"
+msgstr "- dolny"
+
+msgid "Test 7: Slightly increasing variation"
+msgstr ""
+
+msgid "Test 8: Oscillation"
+msgstr ""
+
+msgid "Test 9: Benneyan test"
+msgstr ""
+
 msgid "Tests"
 msgstr ""
 
@@ -220,6 +235,9 @@ msgid ""
 "distribution."
 msgstr ""
 
+msgid "Design of Experiments - Analysis"
+msgstr ""
+
 msgid "Error"
 msgstr "Błąd"
 
@@ -231,14 +249,109 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Response Optimizer Settings"
+msgstr ""
+
+msgid "lower and upper bounds and target are"
+msgstr ""
+
+#, fuzzy
+msgid "lower and upper bounds are"
+msgstr "Tolerancja: %s"
+
+#, fuzzy
+msgid "target is"
+msgstr "Cel"
+
+msgid "The %s estimated from data."
+msgstr ""
+
+msgid "Response Optimizer Solution"
+msgstr ""
+
+msgid "Optimization Plot"
+msgstr ""
+
+msgid "Summary Plot"
+msgstr ""
+
+msgid "Enter values for all predictors."
+msgstr ""
+
+msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all discrete predictors.\n"
+"                                   Value %1$s is not a possible for the "
+"discrete predictor %2$s. Allowed values:"
+msgstr ""
+
+msgid ""
+"Enter plausible values for all continuous predictors. Only numeric values "
+"are allowed."
+msgstr ""
+
+msgid "Comp. desirability"
+msgstr ""
+
+msgid "Ind. desirability ("
+msgstr ""
+
+msgid ""
+"One or more input parameters for continuous predictors are outside of the "
+"design space.\n"
+"                           Extrapolation beyond the design space might not "
+"be valid."
+msgstr ""
+
 msgid "Model Summary"
 msgstr "Podsumowanie modelu"
+
+msgid "Adjusted %s"
+msgstr ""
+
+#, fuzzy
+msgid "Predictive %s"
+msgstr "Predyktor"
 
 msgid "The following aliased terms were removed: %s."
 msgstr ""
 
 msgid "ANOVA"
 msgstr "ANOVA"
+
+msgid "Source"
+msgstr ""
+
+#, fuzzy
+msgid "Sum of squares"
+msgstr "Suma kwadratów"
+
+msgid "df"
+msgstr "df"
+
+#, fuzzy
+msgid "Mean square"
+msgstr "Średni kwadrat"
+
+msgid ""
+"Type III sums of squares are selected and continuous factors are specified. "
+"Results might be misleading. Make sure factors should really be treated as "
+"continuous."
+msgstr ""
+
+#, fuzzy
+msgid "Type I sums of squares."
+msgstr "Suma kwadratów"
+
+#, fuzzy
+msgid "Type II sums of squares."
+msgstr "Suma kwadratów"
+
+#, fuzzy
+msgid "Type III sums of squares."
+msgstr "Suma kwadratów"
 
 msgid "Coded"
 msgstr "Zakodowane"
@@ -261,7 +374,6 @@ msgstr "Efekt"
 msgid "Coefficient"
 msgstr "Współczynnik"
 
-#, fuzzy
 msgid "Standard error"
 msgstr "Błąd standardowy"
 
@@ -269,10 +381,10 @@ msgid "Discrete Predictor Levels"
 msgstr ""
 
 msgid "Name"
-msgstr ""
+msgstr "Nazwa"
 
 msgid "Level"
-msgstr ""
+msgstr "Poziom"
 
 msgid "Regression equation in %s Units"
 msgstr ""
@@ -283,15 +395,14 @@ msgstr "Wykres Pareto dla efektów standaryzowanych"
 msgid "Standardized Effect"
 msgstr "Efekt standaryzowany"
 
-#, fuzzy
 msgid "Normal Plot of Standardized Effects"
-msgstr "Wykres Pareto dla efektów standaryzowanych"
+msgstr "Wykres normalności dla efektów standaryzowanych"
 
 msgid "Significant"
-msgstr ""
+msgstr "Istotny"
 
 msgid "Not Significant"
-msgstr ""
+msgstr "Nieistotny"
 
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
@@ -312,7 +423,7 @@ msgid "Residuals versus Run Order"
 msgstr ""
 
 msgid "Run order"
-msgstr ""
+msgstr "Kolejność"
 
 msgid "Matrix residual plot"
 msgstr ""
@@ -344,9 +455,8 @@ msgstr "Podsumowanie schematu"
 msgid "Variable"
 msgstr "Zmienna"
 
-#, fuzzy
-msgid "Predictors"
-msgstr "Predyktor"
+msgid "Factors"
+msgstr "Czynniki"
 
 msgid "Base runs"
 msgstr ""
@@ -405,10 +515,10 @@ msgstr ""
 msgid "Hard-to-change factors: %1$s"
 msgstr ""
 
-msgid "Continuous predictors"
+msgid "Continuous factors"
 msgstr ""
 
-msgid "Discrete predictors"
+msgid "Discrete factors"
 msgstr ""
 
 msgid "Replicates"
@@ -659,8 +769,12 @@ msgid "Gauge r&R"
 msgstr ""
 
 msgid ""
-"Design is not balanced: not every operator measured every part. Use non-"
-"replicable gauge r&R."
+"Design is not balanced: not every operator measured every part the same "
+"number of times."
+msgstr ""
+
+msgid ""
+"Design is not balanced: not every part was measured the same number of times."
 msgstr ""
 
 msgid ""
@@ -729,16 +843,6 @@ msgstr ""
 
 msgid "Two-way ANOVA table with interaction"
 msgstr ""
-
-msgid "Source"
-msgstr ""
-
-msgid "df"
-msgstr "df"
-
-#, fuzzy
-msgid "Sum of squares"
-msgstr "Suma kwadratów"
 
 #, fuzzy
 msgid "Mean squares"
@@ -869,6 +973,13 @@ msgstr ""
 msgid "%.2f"
 msgstr ""
 
+msgid "Gauge r&R - nested"
+msgstr ""
+
+msgid ""
+"Unbalanced design. Some parts have more repeated measurements than others."
+msgstr ""
+
 msgid "Gauge r&R (non-replicable) report"
 msgstr ""
 
@@ -883,10 +994,6 @@ msgstr ""
 
 msgid "Gauge r&R (nested)"
 msgstr ""
-
-#, fuzzy
-msgid "Mean square"
-msgstr "Średni kwadrat"
 
 msgid "p"
 msgstr "p"
@@ -936,18 +1043,18 @@ msgstr ""
 msgid "d2"
 msgstr ""
 
+msgid "GRR"
+msgstr ""
+
 #, fuzzy
 msgid "Process std. dev."
 msgstr "Podsumowanie procesu"
 
-msgid "Tolerance"
-msgstr "Toleracja"
-
-msgid "GRR"
-msgstr ""
-
 msgid "%%GRR of process std. dev."
 msgstr ""
+
+msgid "Tolerance"
+msgstr "Toleracja"
 
 #, fuzzy
 msgid "%%GRR of tolerance"
@@ -981,7 +1088,7 @@ msgid "Mean"
 msgstr "Średnia"
 
 msgid "Bias"
-msgstr ""
+msgstr "Stronniczość"
 
 #, fuzzy
 msgid "Std. dev. (<i>s</i>)"
@@ -1515,6 +1622,10 @@ msgstr ""
 msgid "Variables Chart for Subgroups Report"
 msgstr ""
 
+#, fuzzy
+#~ msgid "Predictors"
+#~ msgstr "Predyktor"
+
 #~ msgid "Subgroups"
 #~ msgstr "Podgrupys"
 
@@ -1562,9 +1673,6 @@ msgstr ""
 
 #~ msgid "Selected Design"
 #~ msgstr "Wybrany schemat"
-
-#~ msgid "Factors"
-#~ msgstr "Czynniki"
 
 #~ msgid "Runs"
 #~ msgstr "Przebiegi"
