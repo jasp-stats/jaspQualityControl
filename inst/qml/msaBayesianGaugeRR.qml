@@ -120,11 +120,6 @@ Form
 		name:								"type3"
 		id:									type3
 		label:								qsTr("Type 3 study (automatic equipment)")
-		onCheckedChanged:
-		{
-			operatorLongFormat.itemDoubleClicked(0)
-			operatorWideFormat.itemDoubleClicked(0)
-		}
 	}
 
 	Group

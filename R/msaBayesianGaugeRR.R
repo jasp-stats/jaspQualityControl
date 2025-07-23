@@ -266,11 +266,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["variancePosteriors"]][["postSummary"]] <- postSummary
 
   # title for point estimate
-  # note: probably best to change that for translation
   pointEst <- switch (options$posteriorPointEstimateType,
-                      "mean" = "Mean",
-                      "mode" = "Mode",
-                      "median" = "Median"
+                      "mean" = gettext("Mean"),
+                      "mode" = gettext("Mode"),
+                      "median" = gettext("Median")
   )
 
   # overtitle for CrI
@@ -287,7 +286,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   postSummary$addColumnInfo(name = "parameter",     title = gettext("Source"), type = "string")
 
   if(options$posteriorPointEstimate) {
-    postSummary$addColumnInfo(name = "pointEstimate", title = gettext(pointEst),    type = "number")
+    postSummary$addColumnInfo(name = "pointEstimate", title = pointEst,    type = "number")
   }
 
   if(options$posteriorCi) {
@@ -332,9 +331,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   if(ready) {
     stdData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "sd")
-    colnames(stdData) <- c("sourceName", "meansStd", "lowerStd", "upperStd") # note: this could already be part of the function
+
     studyVarData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "studyVar")[, -1] # remove source name
-    colnames(studyVarData) <- c("meansStudyVar", "lowerStudyVar", "upperStudyVar")
     stdTable$setData(cbind(stdData, studyVarData))
 
     stdTable$addFootnote(gettext("Credible intervals are estimated based on the MCMC samples."))
@@ -367,13 +365,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   if(ready) {
     percStudyData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "percStudyVar")
-    colnames(percStudyData) <- c("sourceName", "meansPercStudy", "lowerPercStudy", "upperPercStudy")
 
     if(!options$tolerance) {
       percStudyVarTable$setData(percStudyData)
     } else {
       percTolData <- .fillTablesGaugeEval(jaspResults, parts, operators, options, whichTable = "percTol")[, -1]
-      colnames(percTolData) <- c("meansPercTol", "lowerPercTol", "upperPercTol")
       percStudyVarTable$setData(cbind(percStudyData, percTolData))
     }
     percStudyVarTable$addFootnote(gettext("Credible intervals are estimated based on the MCMC samples."))
@@ -386,7 +382,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if(is.null(jaspResults[["modelComparison"]]) && ready) {
     modelComparison <- createJaspState()
     modelComparison$dependOn(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
-                               "measurementLongFormat", "seed", "setSeed", "rscalePrior"))
+                               "measurementLongFormat", "seed", "setSeed", "rscalePrior", "type3"))
     jaspResults[["modelComparison"]] <- modelComparison
   } else {
     return()
@@ -399,7 +395,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   if(options$type3){
     formula <- as.formula(paste(measurements, "~", parts))
     bfFit <- try(BayesFactor::generalTestBF(formula, data = dataset,
-                                            whichRandom = c(operators, parts),
+                                            whichRandom = parts,
                                             rscaleRandom = options$rscalePrior,
                                             progress = FALSE))
 
@@ -1599,8 +1595,13 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     df[df$sourceName == "Total variation", c("lower", "upper")] <- ""
   }
 
-  return(df)
+  colnames(df) <- switch(whichTable,
+                         "sd" = c("sourceName", "meansStd", "lowerStd", "upperStd"),
+                         "studyVar" = c("sourceName", "meansStudyVar", "lowerStudyVar", "upperStudyVar"),
+                         "percStudyVar" = c("sourceName", "meansPercStudy", "lowerPercStudy", "upperPercStudy"),
+                         "percTol" = c("sourceName", "meansPercTol", "lowerPercTol", "upperPercTol"))
 
+  return(df)
 }
 
 .convertToWide <- function(dataset, measurements, parts, operators) {
