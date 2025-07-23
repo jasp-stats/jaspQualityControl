@@ -85,7 +85,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     # prior
     if(options$priorPlot) {
-      .plotPrior(jaspResults, options, ready)
+      .plotPrior(jaspResults, options)
     }
 
     # MCMC diagnostics
@@ -104,13 +104,13 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
       .createPostSummaryTable(jaspResults, options, parts, operators, ready)
     }
 
-    if(ready && options$varianceComponentsGraph) {
-      .createVarCompPlot(jaspResults, options)
+    if(options$varianceComponentsGraph) {
+      .createVarCompPlot(jaspResults, options, ready)
     }
 
     # contour plot
-    if(ready && options$contourPlot) {
-      .createContourPlot(jaspResults, parts, operators, measurements, dataset, options)
+    if(options$contourPlot) {
+      .createContourPlot(jaspResults, parts, operators, measurements, dataset, options, ready)
     }
 
     # range chart
@@ -129,20 +129,20 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
 
     # measurement by part plot
-    if(ready && options$partMeasurementPlot) {
-      .createMeasureByPartPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options)
+    if(options$partMeasurementPlot) {
+      .createMeasureByPartPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready)
     }
 
-    if(ready && options$operatorMeasurementPlot) {
+    if(options$operatorMeasurementPlot) {
       .createMeasureByOperatorPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready, Type3 = options$type3)
     }
 
-    if(ready && options$partByOperatorMeasurementPlot) {
+    if(options$partByOperatorMeasurementPlot) {
       .createPartByOperatorInterPlot(jaspResults, dataset = dataWide, measurements = measurementsWide, operators, parts, options, ready, Type3 = options$type3)
     }
 
-    if(ready && options$trafficLightChart) {
-      .createTrafficLightPlot(jaspResults, options)
+    if(options$trafficLightChart) {
+      .createTrafficLightPlot(jaspResults, options, ready)
     }
   }
 }
@@ -467,7 +467,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 #### Plots
-.createContourPlot <- function(jaspResults, parts, operators, measurements, dataset, options) {
+.createContourPlot <- function(jaspResults, parts, operators, measurements, dataset, options, ready) {
   if(!is.null(jaspResults[["contourPlot"]])) {
     return()
   }
@@ -482,6 +482,21 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   tempPlot <- createJaspPlot(width = 600, height = 600)
   tempPlot$position <- 2
+
+  # table with the posterior means and CrIs for the risks
+  risksTable <- createJaspTable(title = gettext("Producer's (\u03b4) and Consumer's (\u03b2) Risk"))
+  risksTable$position <- 1
+
+  risksTable$addColumnInfo(name = "risks", title = gettext("Risk"),  type = "string")
+  risksTable$addColumnInfo(name = "means", title = gettext("Mean"),  type = "number")
+  risksTable$addColumnInfo(name = "lower", title = gettext("Lower"), type = "number", overtitle = gettext("95% Credible Interval"))
+  risksTable$addColumnInfo(name = "upper", title = gettext("Upper"), type = "number", overtitle = gettext("95% Credible Interval"))
+
+  if(!ready) {
+    contourPlot[["plot"]] <- tempPlot
+    contourPlot[["table"]] <- risksTable
+    return()
+  }
 
   samplesMat <- .arrayToMat(jaspResults[["MCMCsamples"]][["object"]])
   excludeInter <- .evalInter(jaspResults, parts, operators, options)
@@ -542,15 +557,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   contourPlot[["plot"]] <- tempPlot
 
-  # table with the posterior means and CrIs for the risks
-  risksTable <- createJaspTable(title = gettext("Producer's (\u03b4) and Consumer's (\u03b2) Risk"))
-  risksTable$position <- 1
-
-  risksTable$addColumnInfo(name = "risks", title = gettext("Risk"),  type = "string")
-  risksTable$addColumnInfo(name = "means", title = gettext("Mean"),  type = "number")
-  risksTable$addColumnInfo(name = "lower", title = gettext("Lower"), type = "number", overtitle = gettext("95% Credible Interval"))
-  risksTable$addColumnInfo(name = "upper", title = gettext("Upper"), type = "number", overtitle = gettext("95% Credible Interval"))
-
+  # fill risk table
   fillDat <- .getRisks(contourDf, mu, options)
 
   if(isTryError(fillDat)) {
@@ -564,21 +571,16 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.plotPrior <- function(jaspResults, options, ready) {
+.plotPrior <- function(jaspResults, options) {
   if(!is.null(jaspResults[["priorPlot"]])) {
     return()
   }
   priorPlot <- createJaspContainer(title = gettext("Prior Distribution"))
   priorPlot$position <- 5
-  priorPlot$dependOn(c("rscalePrior", "report"))
+  priorPlot$dependOn(c("rscalePrior", "report", "priorPlot"))
   jaspResults[["priorPlot"]] <- priorPlot
 
   gPrior <- createJaspPlot(title = gettext("g-prior"), width = 600, height = 320)
-
-  if(!ready) {
-    priorPlot[["plot"]] <- gPrior
-    return()
-  }
 
   # axis limit
   xUpper <- extraDistr::qinvchisq(0.75, nu = 1, tau = options$rscalePrior^2)
@@ -736,8 +738,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
   jaspResults[["rChart"]]$position <- 7
   jaspResults[["rChart"]]$dependOn(c("rChart", "measurementLongFormat",
-                                     "measurementsWideFormat", "report"))
+                                     "measurementsWideFormat", "report",
+                                     "operatorWideFormat", "operatorLongFormat",
+                                     "partWideFormat", "partLongFormat"))
   jaspResults[["rChart"]][["plot"]] <- createJaspPlot(width = 1200, height = 500)
+
   if (ready) {
     rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R",
                             stages = operators, xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
@@ -758,8 +763,11 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Average chart by operator"))
   jaspResults[["xBarChart"]]$position <- 8
   jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "measurementLongFormat",
-                                        "measurementsWideFormat", "report"))
+                                        "measurementsWideFormat", "report",
+                                        "operatorWideFormat", "operatorLongFormat",
+                                        "partWideFormat", "partLongFormat"))
   jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(width = 1200, height = 500)
+
   if (ready) {
     xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)],
                                plotType = "xBar", xBarSdType = "r", stages = operators,
@@ -775,25 +783,46 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
 .createScatterPlotOperators <- function(jaspResults, dataset, measurements, operators, parts, options, ready) {
-  if(!is.null(jaspResults[["gaugeScatterOperators"]]) || !ready) {
+  if(!is.null(jaspResults[["gaugeScatterOperators"]])) {
     return()
   }
 
-  jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(jaspResults = jaspResults, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
+  jaspResults[["gaugeScatterOperators"]] <- createJaspPlot(title = gettext("Matrix plot for operators"),
+                                                           width = 700, height = 700)
   jaspResults[["gaugeScatterOperators"]]$position <- 9
-  jaspResults[["gaugeScatterOperators"]]$dependOn(c("scatterPlot", "scatterPlotFitLine", "scatterPlotOriginLine"))
+  jaspResults[["gaugeScatterOperators"]]$dependOn(c("scatterPlot", "scatterPlotFitLine", "scatterPlotOriginLine",
+                                                    "operatorWideFormat", "operatorLongFormat",
+                                                    "partWideFormat", "partLongFormat",
+                                                    "measurementsWideFormat", "measurementLongFormat", "report"))
+
+  if(!ready) {
+    return()
+  }
+
+  jaspResults[["gaugeScatterOperators"]]$plotObject <- .gaugeScatterPlotOperators(jaspResults, dataset, measurements,
+                                                                                  parts, operators, options, ready)$plotObject
 
   return()
 }
 
-.createMeasureByPartPlot <- function(jaspResults, dataset, measurements, operators, parts, options) {
+.createMeasureByPartPlot <- function(jaspResults, dataset, measurements, operators, parts, options, ready) {
   if (!is.null(jaspResults[["gaugeByPart"]])) {
     return()
   }
 
-  jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options = options)
+  jaspResults[["gaugeByPart"]] <- createJaspPlot(title = gettext("Measurements by part"),
+                                                 width = 700, height = 300)
   jaspResults[["gaugeByPart"]]$position <- 10
-  jaspResults[["gaugeByPart"]]$dependOn("partMeasurementPlotAllValues")
+  jaspResults[["gaugeByPart"]]$dependOn(c("partMeasurementPlot", "partMeasurementPlotAllValues", "operatorWideFormat",
+                                          "operatorLongFormat", "partWideFormat", "partLongFormat",
+                                          "measurementsWideFormat", "measurementLongFormat", "report"))
+
+  if(!ready) {
+    return()
+  }
+
+  jaspResults[["gaugeByPart"]]$plotObject <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators,
+                                                                         displayAll = options$partMeasurementPlotAllValues)
 
   return()
 }
@@ -803,9 +832,18 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     return()
   }
 
-  jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
+  jaspResults[["gaugeByOperator"]] <- createJaspPlot(title = gettext("Measurements by operator"),
+                                                     width = 600, height = 600)
   jaspResults[["gaugeByOperator"]]$position <- 11
-  jaspResults[["gaugeByOperator"]]$dependOn("operatorMeasurementPlot")
+  jaspResults[["gaugeByOperator"]]$dependOn(c("operatorMeasurementPlot", "operatorWideFormat", "operatorLongFormat",
+                                            "partWideFormat", "partLongFormat", "measurementsWideFormat",
+                                            "measurementLongFormat", "report"))
+
+  if(!ready) {
+    return()
+  }
+
+  jaspResults[["gaugeByOperator"]]$plotObject <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options, Type3)
 
   return()
 }
@@ -815,14 +853,23 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     return()
   }
 
-  jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
+  jaspResults[["gaugeByInteraction"]] <- createJaspPlot(title = gettext("Part by operator interaction"),
+                                                        width = 700, height = 400)
   jaspResults[["gaugeByInteraction"]]$position <- 12
-  jaspResults[["gaugeByInteraction"]]$dependOn("partByOperatorMeasurementPlot")
+  jaspResults[["gaugeByInteraction"]]$dependOn(c("partByOperatorMeasurementPlot", "operatorWideFormat", "operatorLongFormat",
+                                               "partWideFormat", "partLongFormat", "measurementsWideFormat",
+                                               "measurementLongFormat", "report"))
+
+  if(!ready) {
+    return()
+  }
+
+  jaspResults[["gaugeByInteraction"]]$plotObject <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3, ggPlot = TRUE)
 
   return()
 }
 
-.createVarCompPlot <- function(jaspResults, options, plotOnly = FALSE) {
+.createVarCompPlot <- function(jaspResults, options, ready, plotOnly = FALSE) {
   if(!plotOnly) {
     if(!is.null(jaspResults[["varCompPlot"]])) {
       return()
@@ -833,6 +880,10 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                            "tolerance", "toleranceValue",
                            "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
     jaspResults[["varCompPlot"]] <- varCompPlot
+
+    if(!ready) {
+      return()
+    }
   }
   # obtain summaries
   percContrib <- .percentSampleSummaries(jaspResults[["percContribSamples"]][["object"]], options)
@@ -879,7 +930,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.createTrafficLightPlot <- function(jaspResults, options, plotOnly = FALSE) {
+.createTrafficLightPlot <- function(jaspResults, options, ready, plotOnly = FALSE) {
   if(!plotOnly) {
     if(!is.null(jaspResults[["trafficPlot"]])) {
       return()
@@ -891,7 +942,13 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                            "tolerance", "toleranceValue",
                            "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
     jaspResults[["trafficPlot"]] <- trafficPlot
+
+    if(!ready) {
+      jaspResults[["trafficPlot"]][["plot"]] <- createJaspPlot(width = 1000)
+      return()
+    }
   }
+
   # % Study var
   percStudyVar <- .percentSampleSummaries(jaspResults[["percStudySamples"]][["object"]], options)
   percStudyVar <- percStudyVar[percStudyVar$sourceName == "Total gauge r&R", ]
