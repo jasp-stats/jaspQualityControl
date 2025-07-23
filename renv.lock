@@ -109,6 +109,12 @@
         "utils"
       ]
     },
+    "GeneralizedHyperbolic": {
+      "Package": "GeneralizedHyperbolic",
+      "Version": "0.8-7",
+      "Source": "Repository",
+      "Repository": "CRAN"
+    },
     "GPArotation": {
       "Package": "GPArotation",
       "Version": "2025.3-1",
@@ -117,12 +123,6 @@
         "R",
         "stats"
       ]
-    },
-    "GeneralizedHyperbolic": {
-      "Package": "GeneralizedHyperbolic",
-      "Version": "0.8-7",
-      "Source": "Repository",
-      "Repository": "CRAN"
     },
     "HDInterval": {
       "Package": "HDInterval",
@@ -601,12 +601,9 @@
     },
     "data.table": {
       "Package": "data.table",
-      "Version": "1.17.4",
+      "Version": "1.17.8",
       "Source": "Repository",
-      "Requirements": [
-        "methods",
-        "R"
-      ]
+      "Repository": "CRAN"
     },
     "deSolve": {
       "Package": "deSolve",
@@ -2046,12 +2043,6 @@
         "utils"
       ]
     },
-    "rmetalog": {
-      "Package": "rmetalog",
-      "Version": "1.0.3",
-      "Source": "Repository",
-      "Repository": "CRAN"
-    },
     "rmarkdown": {
       "Package": "rmarkdown",
       "Version": "2.29",
@@ -2072,6 +2063,12 @@
         "xfun",
         "yaml"
       ]
+    },
+    "rmetalog": {
+      "Package": "rmetalog",
+      "Version": "1.0.3",
+      "Source": "Repository",
+      "Repository": "CRAN"
     },
     "rpart": {
       "Package": "rpart",
