@@ -41,31 +41,27 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   measurementsWide <- options[["measurementsWide"]]
 
   # Results from model comparison
-  if(ready){
-    bfTest <- .runBFtest(jaspResults, dataset, measurements, parts, operators, options)
-  }
+  bfTest <- .runBFtest(jaspResults, dataset, measurements, parts, operators, options, ready)
 
   # Model comparison table
   if(options[["RRTable"]] && !options$report){
     .createBFtable(jaspResults, dataset, options, measurements, parts, operators, ready)
   }
 
-  if(ready) {
-    # MCMC
-    .runMCMC(jaspResults, dataset, measurements, parts, operators, options)
+  # MCMC
+  .runMCMC(jaspResults, dataset, measurements, parts, operators, options, ready)
 
-    # compute percentages
-    .getStudyVariation(jaspResults, parts, operators, options)
-    .getPercContrib(jaspResults, parts, operators, options)
-    .getPercStudy(jaspResults)
+  # compute percentages
+  .getStudyVariation(jaspResults, parts, operators, options, ready)
+  .getPercContrib(jaspResults, parts, operators, options, ready)
+  .getPercStudy(jaspResults, ready)
 
-    if(options$tolerance) {
-      .getPercTol(jaspResults, options)
-    }
-
-    # fit distribution to samples
-    .fitDistToSamples(jaspResults, options)
+  if(options$tolerance) {
+    .getPercTol(jaspResults, options, ready)
   }
+
+  # fit distribution to samples
+  .fitDistToSamples(jaspResults, options, ready)
 
   # insert report here
   if(options$report) {
@@ -95,9 +91,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     # posteriors
     if(options$posteriorPlot){
-      if(ready) {
-        .fillPostSummaryTable(jaspResults, options, parts, operators)
-      }
+      .fillPostSummaryTable(jaspResults, options, parts, operators, ready)
       .plotVariancePosteriors(jaspResults, options, parts, operators, ready)
 
       # summary table
@@ -388,8 +382,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.runBFtest <- function(jaspResults, dataset, measurements, parts, operators, options) {
-  if(is.null(jaspResults[["modelComparison"]])) {
+.runBFtest <- function(jaspResults, dataset, measurements, parts, operators, options, ready) {
+  if(is.null(jaspResults[["modelComparison"]]) && ready) {
     modelComparison <- createJaspState()
     modelComparison$dependOn(c("operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
                                "measurementLongFormat", "seed", "setSeed", "rscalePrior"))
@@ -987,8 +981,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 #### Models & statistical computations
-.runMCMC <- function(jaspResults, dataset, measurements, parts, operators, options){
-  if(is.null(jaspResults[["MCMCsamples"]])){
+.runMCMC <- function(jaspResults, dataset, measurements, parts, operators, options, ready){
+  if(is.null(jaspResults[["MCMCsamples"]]) && ready){
     MCMCsamples <- createJaspState()
     MCMCsamples$dependOn(.mcmcDependencies())
     jaspResults[["MCMCsamples"]] <- MCMCsamples
@@ -1274,8 +1268,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 }
 
-.getPercContrib <- function(jaspResults, parts, operators, options) {
-  if(is.null(jaspResults[["percContribSamples"]])) {
+.getPercContrib <- function(jaspResults, parts, operators, options, ready) {
+  if(is.null(jaspResults[["percContribSamples"]]) && ready) {
     percContribSamples <- createJaspState()
     percContribSamples$dependOn(.varCompTableDependencies())
     jaspResults[["percContribSamples"]] <- percContribSamples
@@ -1299,8 +1293,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.getPercStudy <- function(jaspResults, studyVar = jaspResults[["studyVariation"]][["object"]][[1]]) {
-  if(is.null(jaspResults[["percStudySamples"]])) {
+.getPercStudy <- function(jaspResults, ready, studyVar = jaspResults[["studyVariation"]][["object"]][[1]]) {
+  if(is.null(jaspResults[["percStudySamples"]]) && ready) {
     percStudySamples <- createJaspState()
     percStudySamples$dependOn(c(.varCompTableDependencies(),
                                 "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
@@ -1319,8 +1313,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.getPercTol <- function(jaspResults, options, studyVar = jaspResults[["studyVariation"]][["object"]][[1]]) {
-  if(is.null(jaspResults[["percTolSamples"]])) {
+.getPercTol <- function(jaspResults, options, ready, studyVar = jaspResults[["studyVariation"]][["object"]][[1]]) {
+  if(is.null(jaspResults[["percTolSamples"]]) && ready) {
     percTolSamples <- createJaspState()
     percTolSamples$dependOn(c(.varCompTableDependencies(),
                               "studyVarianceMultiplierType", "studyVarianceMultiplierValue", "tolerance", "toleranceValue"))
@@ -1339,8 +1333,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.getStudyVariation <- function(jaspResults, parts, operators, options) {
-  if(is.null(jaspResults[["studyVariation"]])) {
+.getStudyVariation <- function(jaspResults, parts, operators, options, ready) {
+  if(is.null(jaspResults[["studyVariation"]]) && ready) {
     studyVariation <- createJaspState()
     studyVariation$dependOn(c(.varCompTableDependencies(),
                               "studyVarianceMultiplierType", "studyVarianceMultiplierValue"))
@@ -1634,8 +1628,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 #### Distribution fitting
 
 ### fit functions
-.fitDistToSamples <- function(jaspResults, options) {
-  if(is.null(jaspResults[["distFit"]])){
+.fitDistToSamples <- function(jaspResults, options, ready) {
+  if(is.null(jaspResults[["distFit"]]) && ready){
     distFit <- createJaspState()
     distFit$dependOn(c(.mcmcDependencies(), "distType", "posteriorPlotType",
                        "processVariationReference", "historicalSdValue",
@@ -1712,8 +1706,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
 
 #### posterior summary
-.fillPostSummaryTable <- function(jaspResults, options, parts, operators) {
-  if(is.null(jaspResults[["postSummaryStats"]]) && (options$posteriorCi || options$posteriorPointEstimate)){
+.fillPostSummaryTable <- function(jaspResults, options, parts, operators, ready) {
+  if(is.null(jaspResults[["postSummaryStats"]]) && (options$posteriorCi || options$posteriorPointEstimate) && ready){
     postSummaryStats <- createJaspState()
     postSummaryStats$dependOn(c(.varCompTableDependencies(),
                                 .postPlotDependencies()))
