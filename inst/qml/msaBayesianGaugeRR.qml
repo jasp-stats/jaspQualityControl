@@ -120,6 +120,14 @@ Form
 		name:								"type3"
 		id:									type3
 		label:								qsTr("Type 3 study (automatic equipment)")
+		onCheckedChanged:
+		{
+			rChart.checked = false
+			xBarChart.checked = false
+			scatterPlot.checked = false
+			operatorMeasurementPlot.checked = false
+			partByOperatorMeasurementPlot.checked = false
+		}							
 	}
 
 	Group
@@ -429,6 +437,7 @@ Form
 			CheckBox
 			{
 				name: 							"rChart"
+				id:								rChart
 				label: 							qsTr("Range charts by operator")
 				enabled:						!type3.checked
 			}
@@ -436,6 +445,7 @@ Form
 			CheckBox
 			{
 				name:							"xBarChart"
+				id:								xBarChart
 				label:							qsTr("Average chart by operator")
 				enabled:						!type3.checked
 			}
@@ -444,6 +454,7 @@ Form
 			{
 				name: 							"scatterPlot"
 				label:							qsTr("Scatter plots operators")
+				id:								scatterPlot
 				enabled:						!type3.checked
 
 				CheckBox
@@ -474,6 +485,7 @@ Form
 			CheckBox
 			{
 				name:							"operatorMeasurementPlot"
+				id:								operatorMeasurementPlot
 				label:							qsTr("Measurements by operator plot")
 				enabled:						!type3.checked
 			}
@@ -481,6 +493,7 @@ Form
 			CheckBox
 			{
 				name: 							"partByOperatorMeasurementPlot"
+				id:								partByOperatorMeasurementPlot
 				label: 							qsTr("Part × operator interaction plot")
 				enabled:						!type3.checked
 			}
