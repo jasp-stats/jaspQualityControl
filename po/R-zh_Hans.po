@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-07-19 03:55\n"
+"POT-Creation-Date: 2025-07-26 03:57\n"
 "PO-Revision-Date: 2023-06-07 02:16+0000\n"
 "Last-Translator: Shun Wang <shuonwang@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -1558,6 +1558,9 @@ msgstr "Cpk"
 msgid "%s CI for Cpk"
 msgstr "Cpk 的 %s 置信区间"
 
+msgid "Z bench (ST)"
+msgstr ""
+
 msgid ""
 "Statistics displayed as * were not calculated because the relevant "
 "specification limit is not set or set as boundary."
@@ -1583,6 +1586,9 @@ msgstr "Ppk"
 
 msgid "%s CI for Ppk"
 msgstr "Ppk 的 %s 置信区间"
+
+msgid "Z bench (LT)"
+msgstr ""
 
 msgid "Cpm"
 msgstr "Cpm"

@@ -3205,3 +3205,7 @@ msgstr ""
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
 msgstr "Czynnik"
+
+msgctxt "processCapabilityStudies|"
+msgid "Z bench"
+msgstr ""

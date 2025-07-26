@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2025-07-19 03:55\n"
+"POT-Creation-Date: 2025-07-26 03:57\n"
 "PO-Revision-Date: 2025-07-09 22:01+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
@@ -1426,6 +1426,9 @@ msgstr "Cpk"
 msgid "%s CI for Cpk"
 msgstr "%s PU dla Cpk"
 
+msgid "Z bench (ST)"
+msgstr ""
+
 msgid ""
 "Statistics displayed as * were not calculated because the relevant "
 "specification limit is not set or set as boundary."
@@ -1451,6 +1454,9 @@ msgstr "Ppk"
 
 msgid "%s CI for Ppk"
 msgstr "%s PU dla Ppk"
+
+msgid "Z bench (LT)"
+msgstr ""
 
 msgid "Cpm"
 msgstr "Cpm"

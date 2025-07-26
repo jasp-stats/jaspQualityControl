@@ -3191,3 +3191,7 @@ msgstr ""
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
 msgstr "Faktor"
+
+msgctxt "processCapabilityStudies|"
+msgid "Z bench"
+msgstr ""

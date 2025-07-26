@@ -3167,3 +3167,7 @@ msgstr "Número de factores discretos"
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
 msgstr "Factor"
+
+msgctxt "processCapabilityStudies|"
+msgid "Z bench"
+msgstr ""
