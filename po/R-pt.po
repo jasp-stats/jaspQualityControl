@@ -2,9 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
 "POT-Creation-Date: 2025-07-26 03:57\n"
-"PO-Revision-Date: 2023-07-22 03:07+0000\n"
-"Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
-"br>\n"
+"PO-Revision-Date: 2025-08-04 17:02+0000\n"
+"Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pt/>\n"
 "Language: pt\n"
@@ -12,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.0-dev\n"
+"X-Generator: Weblate 5.13-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -203,9 +202,8 @@ msgstr ""
 msgid "Moving range of subgroup mean"
 msgstr ""
 
-#, fuzzy
 msgid "Sample std. dev."
-msgstr "Desv.Padrão"
+msgstr "Desv. pad. amostral"
 
 msgid "Cumulative sum"
 msgstr ""
@@ -319,7 +317,7 @@ msgid "Sum of squares"
 msgstr "Soma dos quadrados"
 
 msgid "df"
-msgstr ""
+msgstr "gl"
 
 #, fuzzy
 msgid "Mean square"
@@ -331,17 +329,14 @@ msgid ""
 "continuous."
 msgstr ""
 
-#, fuzzy
 msgid "Type I sums of squares."
-msgstr "Soma dos quadrados"
+msgstr "Soma dos quadrados tipo I."
 
-#, fuzzy
 msgid "Type II sums of squares."
-msgstr "Soma dos quadrados"
+msgstr "Soma dos quadrados tipo II."
 
-#, fuzzy
 msgid "Type III sums of squares."
-msgstr "Soma dos quadrados"
+msgstr "Soma dos quadrados tipo III."
 
 msgid "Coded"
 msgstr ""
@@ -876,9 +871,8 @@ msgstr "%% Contribuição"
 msgid "Gauge evaluation"
 msgstr "Avaliação de medidores"
 
-#, fuzzy
 msgid "Std. dev."
-msgstr "Desv.Padrão"
+msgstr "Desv. Pad."
 
 msgid "Study variation"
 msgstr "Estudo de variação"
@@ -905,7 +899,7 @@ msgid "Total variation"
 msgstr "Variação Total"
 
 msgid "Reproducibility"
-msgstr "Reproducibilidade"
+msgstr "Reprodutibilidade"
 
 msgid "*"
 msgstr ""
@@ -1013,7 +1007,7 @@ msgid "Gauge r&R (nested)"
 msgstr ""
 
 msgid "p"
-msgstr ""
+msgstr "p"
 
 msgid "Variation"
 msgstr "Variação"
@@ -1064,9 +1058,8 @@ msgstr ""
 msgid "GRR"
 msgstr ""
 
-#, fuzzy
 msgid "Process std. dev."
-msgstr "Desv.Padrão"
+msgstr "Desv. Pad. do processo"
 
 msgid "%%GRR of process std. dev."
 msgstr ""
@@ -1520,7 +1513,7 @@ msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
 msgid "N"
-msgstr ""
+msgstr "N"
 
 msgid "Mean (%1$s)"
 msgstr ""
