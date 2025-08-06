@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
 "POT-Creation-Date: 2025-07-26 03:57\n"
-"PO-Revision-Date: 2025-08-05 19:04+0000\n"
+"PO-Revision-Date: 2025-08-06 07:43+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pt/>\n"
@@ -46,28 +46,28 @@ msgid "Footnote: %s"
 msgstr "Nota de rodapé: %s"
 
 msgid "Location: %s"
-msgstr ""
+msgstr "Localização: %s"
 
 msgid "Date: %s"
-msgstr ""
+msgstr "Data: %s"
 
 msgid "Performed by: %s"
-msgstr ""
+msgstr "Realizado por: %s"
 
 msgid "Print date: %s"
-msgstr ""
+msgstr "Data de impressão: %s"
 
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "Gráficos de somas cumulativas"
 
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "Gráfico de média móvel ponderada exponencialmente"
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr ""
+msgstr "O número de defeituosos/defeitos é maior do que o tamanho de amostra."
 
 msgid "Attributes Control Charts"
-msgstr ""
+msgstr "Gráficos de Controle de Atributos"
 
 msgid "p Chart"
 msgstr "Carta P"
@@ -244,9 +244,8 @@ msgstr ""
 msgid "lower and upper bounds and target are"
 msgstr ""
 
-#, fuzzy
 msgid "lower and upper bounds are"
-msgstr "Tolerância: %s"
+msgstr "os limites inferior e superior são"
 
 msgid "target is"
 msgstr ""
@@ -311,14 +310,12 @@ msgstr ""
 msgid "Source"
 msgstr "Fonte"
 
-#, fuzzy
 msgid "Sum of squares"
 msgstr "Soma dos quadrados"
 
 msgid "df"
 msgstr "gl"
 
-#, fuzzy
 msgid "Mean square"
 msgstr "Quadrado médio"
 
@@ -1139,7 +1136,7 @@ msgid "Parameter"
 msgstr ""
 
 msgid "Estimate"
-msgstr ""
+msgstr "Estimativa"
 
 msgid ""
 "Fitting the model failed with the following error message:\n"
