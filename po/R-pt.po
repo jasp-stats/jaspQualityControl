@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
 "POT-Creation-Date: 2025-07-26 03:57\n"
-"PO-Revision-Date: 2025-08-07 22:02+0000\n"
+"PO-Revision-Date: 2025-08-09 01:01+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pt/>\n"
@@ -115,7 +115,7 @@ msgid "CL = %g"
 msgstr ""
 
 msgid "Proportion"
-msgstr ""
+msgstr "Proporção"
 
 msgid "UCL = %g"
 msgstr ""
@@ -350,7 +350,7 @@ msgid "Term"
 msgstr ""
 
 msgid "Effect"
-msgstr ""
+msgstr "Efeito"
 
 msgid "Coefficient"
 msgstr ""
@@ -365,7 +365,7 @@ msgid "Name"
 msgstr ""
 
 msgid "Level"
-msgstr ""
+msgstr "Nível"
 
 msgid "Regression equation in %s Units"
 msgstr ""
@@ -434,7 +434,7 @@ msgid "Design Summary"
 msgstr ""
 
 msgid "Variable"
-msgstr ""
+msgstr "Variável"
 
 msgid "Factors"
 msgstr ""
@@ -461,7 +461,7 @@ msgid "Total blocks"
 msgstr ""
 
 msgid "Value"
-msgstr ""
+msgstr "Valor"
 
 msgid "Please select a row in the design table."
 msgstr ""
@@ -675,7 +675,7 @@ msgid "Predictor"
 msgstr ""
 
 msgid "Std. error"
-msgstr "Erro Padr."
+msgstr "Erro pad."
 
 msgid "<i>t</i>-value"
 msgstr ""
@@ -737,7 +737,7 @@ msgid "Linearity"
 msgstr ""
 
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 msgid "Gauge r&R"
 msgstr ""
@@ -1158,7 +1158,7 @@ msgid "Fit Table"
 msgstr ""
 
 msgid "AIC"
-msgstr ""
+msgstr "AIC"
 
 msgid "Detection Plot"
 msgstr ""
@@ -1184,7 +1184,7 @@ msgid "Vertical asymptotes"
 msgstr ""
 
 msgid "Label"
-msgstr ""
+msgstr "Rótulo"
 
 msgid "<b><em>Warning.</em></b>"
 msgstr ""
@@ -1286,7 +1286,7 @@ msgid "USL"
 msgstr ""
 
 msgid "Sample size"
-msgstr ""
+msgstr "Tamanho de amostra"
 
 msgid "Std. dev. (total)"
 msgstr "Desv. pad. (total)"
@@ -1323,7 +1323,7 @@ msgid "At least one of the stages contains no valid measurements."
 msgstr ""
 
 msgid "Density"
-msgstr ""
+msgstr "Densidade"
 
 msgid "Measurement"
 msgstr ""
