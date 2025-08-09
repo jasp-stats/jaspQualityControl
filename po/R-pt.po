@@ -2,9 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
 "POT-Creation-Date: 2025-07-26 03:57\n"
-"PO-Revision-Date: 2023-07-22 03:07+0000\n"
-"Last-Translator: Antonio de Carvalho Evangelista Junior <jrace01@yahoo.com."
-"br>\n"
+"PO-Revision-Date: 2025-08-09 03:53+0000\n"
+"Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pt/>\n"
 "Language: pt\n"
@@ -12,61 +11,63 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.0-dev\n"
+"X-Generator: Weblate 5.13-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
 "is considered.<br>"
 msgstr ""
+"Um ou mais subgrupos foram atribuídos a mais de um estágio, apenas o "
+"primeiro estágio foi considerado.<br>"
 
 msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
+msgstr "Removido %1$i %2$s, que não estava atribuído a nenhum estágio.<br>"
 
 msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
 msgstr ""
+"%i observações removidas que não foram atribuídas a nenhum subgrupo.<br>"
 
 msgid "Sample"
-msgstr ""
+msgstr "Amostra"
 
 msgid "Time weighted charts report"
-msgstr ""
+msgstr "Relatório de gráficos ponderados pelo tempo"
 
 msgid "Chart name: %s"
-msgstr ""
+msgstr "Nome do gráfico: %s"
 
 msgid "Sub-title: %s"
-msgstr ""
+msgstr "Subtítulo: %s"
 
-#, fuzzy
 msgid "Measurement name: %s"
-msgstr "Análise do sistema de medição"
+msgstr "Nome da medição: %s"
 
 msgid "Footnote: %s"
-msgstr ""
+msgstr "Nota de rodapé: %s"
 
 msgid "Location: %s"
-msgstr ""
+msgstr "Localização: %s"
 
 msgid "Date: %s"
-msgstr ""
+msgstr "Data: %s"
 
 msgid "Performed by: %s"
-msgstr ""
+msgstr "Realizado por: %s"
 
 msgid "Print date: %s"
-msgstr ""
+msgstr "Data de impressão: %s"
 
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "Gráficos de somas cumulativas"
 
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "Gráfico de média móvel ponderada exponencialmente"
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr ""
+msgstr "O número de defeituosos/defeitos é maior do que o tamanho de amostra."
 
 msgid "Attributes Control Charts"
-msgstr ""
+msgstr "Gráficos de Controle de Atributos"
 
 msgid "p Chart"
 msgstr "Carta P"
@@ -101,9 +102,8 @@ msgstr "Avaliador: %s"
 msgid "Measurement system: %s"
 msgstr ""
 
-#, fuzzy
 msgid "Subgroup size: %s"
-msgstr "Subgrupos"
+msgstr "Tamanho dos subgrupos: %s"
 
 msgid "Time: %s"
 msgstr ""
@@ -115,7 +115,7 @@ msgid "CL = %g"
 msgstr ""
 
 msgid "Proportion"
-msgstr ""
+msgstr "Proporção"
 
 msgid "UCL = %g"
 msgstr ""
@@ -162,13 +162,11 @@ msgstr ""
 msgid "Point"
 msgstr ""
 
-#, fuzzy
 msgid "- upper"
-msgstr "Superior"
+msgstr "- superior"
 
-#, fuzzy
 msgid "- lower"
-msgstr "Inferior"
+msgstr "- inferior"
 
 msgid "Test 7: Slightly increasing variation"
 msgstr ""
@@ -203,9 +201,8 @@ msgstr ""
 msgid "Moving range of subgroup mean"
 msgstr ""
 
-#, fuzzy
 msgid "Sample std. dev."
-msgstr "Desv.Padrão"
+msgstr "Desv. pad. amostral"
 
 msgid "Cumulative sum"
 msgstr ""
@@ -247,9 +244,8 @@ msgstr ""
 msgid "lower and upper bounds and target are"
 msgstr ""
 
-#, fuzzy
 msgid "lower and upper bounds are"
-msgstr "Tolerância: %s"
+msgstr "os limites inferior e superior são"
 
 msgid "target is"
 msgstr ""
@@ -297,7 +293,7 @@ msgid ""
 msgstr ""
 
 msgid "Model Summary"
-msgstr ""
+msgstr "Resumo do Modelo"
 
 msgid "Adjusted %s"
 msgstr ""
@@ -314,14 +310,12 @@ msgstr ""
 msgid "Source"
 msgstr "Fonte"
 
-#, fuzzy
 msgid "Sum of squares"
 msgstr "Soma dos quadrados"
 
 msgid "df"
-msgstr ""
+msgstr "gl"
 
-#, fuzzy
 msgid "Mean square"
 msgstr "Quadrado médio"
 
@@ -331,17 +325,14 @@ msgid ""
 "continuous."
 msgstr ""
 
-#, fuzzy
 msgid "Type I sums of squares."
-msgstr "Soma dos quadrados"
+msgstr "Soma dos quadrados tipo I."
 
-#, fuzzy
 msgid "Type II sums of squares."
-msgstr "Soma dos quadrados"
+msgstr "Soma dos quadrados tipo II."
 
-#, fuzzy
 msgid "Type III sums of squares."
-msgstr "Soma dos quadrados"
+msgstr "Soma dos quadrados tipo III."
 
 msgid "Coded"
 msgstr ""
@@ -359,13 +350,13 @@ msgid "Term"
 msgstr ""
 
 msgid "Effect"
-msgstr ""
+msgstr "Efeito"
 
 msgid "Coefficient"
 msgstr ""
 
 msgid "Standard error"
-msgstr ""
+msgstr "Erro padrão"
 
 msgid "Discrete Predictor Levels"
 msgstr ""
@@ -374,7 +365,7 @@ msgid "Name"
 msgstr ""
 
 msgid "Level"
-msgstr ""
+msgstr "Nível"
 
 msgid "Regression equation in %s Units"
 msgstr ""
@@ -389,7 +380,7 @@ msgid "Normal Plot of Standardized Effects"
 msgstr ""
 
 msgid "Significant"
-msgstr ""
+msgstr "Significante"
 
 msgid "Not Significant"
 msgstr ""
@@ -407,7 +398,7 @@ msgid "Fitted values"
 msgstr ""
 
 msgid "Residuals"
-msgstr ""
+msgstr "Resíduos"
 
 msgid "Residuals versus Run Order"
 msgstr ""
@@ -443,7 +434,7 @@ msgid "Design Summary"
 msgstr ""
 
 msgid "Variable"
-msgstr ""
+msgstr "Variável"
 
 msgid "Factors"
 msgstr ""
@@ -470,7 +461,7 @@ msgid "Total blocks"
 msgstr ""
 
 msgid "Value"
-msgstr ""
+msgstr "Valor"
 
 msgid "Please select a row in the design table."
 msgstr ""
@@ -541,9 +532,8 @@ msgstr ""
 msgid "Please insert a reference value before specifying a positive reference."
 msgstr ""
 
-#, fuzzy
 msgid "Attributes agreement analysis"
-msgstr "Análise de Concordância por Atributos (Kappa/Tao)"
+msgstr "Análise de concordância por atributos"
 
 msgid "Cohen's kappa"
 msgstr ""
@@ -551,9 +541,8 @@ msgstr ""
 msgid "Kendall's tau"
 msgstr ""
 
-#, fuzzy
 msgid "Cohen's kappa for appraiser vs standard"
-msgstr "Cada Avaliador vs Padrão"
+msgstr "Kappa de Cohen por avaliador vs padrão"
 
 msgid "Appraiser"
 msgstr "Avaliador"
@@ -568,25 +557,20 @@ msgstr ""
 msgid "Fleiss' kappa"
 msgstr ""
 
-#, fuzzy
 msgid "Within appraisers"
 msgstr "Entre Avaliadores"
 
-#, fuzzy
 msgid "Appraiser vs standard"
-msgstr "Avaliador vs Padrão"
+msgstr "Avaliador vs padrão"
 
-#, fuzzy
 msgid "Between appraisers"
-msgstr "Entre Avaliadores"
+msgstr "Entre avaliadores"
 
-#, fuzzy
 msgid "Each appraiser vs standard"
-msgstr "Cada Avaliador vs Padrão"
+msgstr "Cada avaliador vs padrão"
 
-#, fuzzy
 msgid "All appraisers vs standard"
-msgstr "Todos os Avaliadores vs Padrão"
+msgstr "Todos os avaliadores vs padrão"
 
 msgid "Inspected"
 msgstr "Inspecionado"
@@ -595,7 +579,7 @@ msgid "Matched"
 msgstr "Coincide"
 
 msgid "Percent"
-msgstr "Percentual"
+msgstr "Porcento"
 
 msgid "Lower"
 msgstr "Inferior"
@@ -612,7 +596,6 @@ msgstr ""
 msgid "Invalid values (NA) found in appraiser %s."
 msgstr "Valores inválidos (NA) encontrados entre avaliadores %s."
 
-#, fuzzy
 msgid "More than 1 measurement per operator required."
 msgstr "Necessário mais de 1 medição por operador."
 
@@ -643,7 +626,6 @@ msgid ""
 "alarm rate)"
 msgstr ""
 
-#, fuzzy
 msgid "More than one measurement per operator required."
 msgstr "Necessário mais de 1 medição por operador."
 
@@ -680,9 +662,8 @@ msgstr ""
 msgid "Observed mean"
 msgstr ""
 
-#, fuzzy
 msgid "Mean bias"
-msgstr "Quadrados médios"
+msgstr "Viés médio"
 
 msgid "<i>p</i>-value"
 msgstr ""
@@ -693,9 +674,8 @@ msgstr ""
 msgid "Predictor"
 msgstr ""
 
-#, fuzzy
 msgid "Std. error"
-msgstr "Desv.Padrão"
+msgstr "Erro pad."
 
 msgid "<i>t</i>-value"
 msgstr ""
@@ -720,7 +700,6 @@ msgstr ""
 msgid "Bias and linearity"
 msgstr ""
 
-#, fuzzy
 msgid "Percentage process variation graph"
 msgstr "Gráfico de variação do processo percentual"
 
@@ -751,33 +730,30 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
-#, fuzzy
 msgid "Percent bias"
-msgstr "Percentual"
+msgstr "Viés percentual"
 
 msgid "Linearity"
 msgstr ""
 
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 msgid "Gauge r&R"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Design is not balanced: not every operator measured every part the same "
 "number of times."
 msgstr ""
-"O design não é equilibrado: nem todo operador meensura todas as partes. Use "
-"R&R do medidor não replicável (R&R Aninhado)."
+"O desenho não é equilibrado: nem todos os operadores mensuraram cada parte o "
+"mesmo número de vezes."
 
-#, fuzzy
 msgid ""
 "Design is not balanced: not every part was measured the same number of times."
 msgstr ""
-"O design não é equilibrado: nem todo operador meensura todas as partes. Use "
-"R&R do medidor não replicável (R&R Aninhado)."
+"O desenho não é equilibrado: nem todas as partes foram mensuradas o mesmo "
+"número de vezes."
 
 msgid ""
 "The measurements selected seem to be in a 'Single Column' format as every "
@@ -807,36 +783,29 @@ msgstr ""
 msgid "Tolerance: %s"
 msgstr "Tolerância: %s"
 
-#, fuzzy
 msgid "Number of distinct categories"
-msgstr "Número de categorias distintas = %i"
+msgstr "Número de categorias distintas"
 
-#, fuzzy
 msgid "Gauge r&R ANOVA table"
-msgstr "Tabela ANOVA"
+msgstr "Tabela ANOVA do Gauge r&R"
 
-#, fuzzy
 msgid "Range chart by operator"
-msgstr "Medições por operador"
+msgstr "Gráfico de alcance por operador"
 
-#, fuzzy
 msgid "Xbar chart by operator"
-msgstr "Medições por operador"
+msgstr "Gráfico Xbar por operador"
 
-#, fuzzy
 msgid "Average chart by operator"
-msgstr "Medições por operador"
+msgstr "Gráfico de médias por operador"
 
 msgid "Scatterplot operators"
 msgstr ""
 
-#, fuzzy
 msgid "Measurement by part graph"
-msgstr "Medições por operador"
+msgstr "Gráfico de medições por parte"
 
-#, fuzzy
 msgid "Measurements by operator graph"
-msgstr "Medições por operador"
+msgstr "Gráfico de medições por operador"
 
 msgid "Part by operator interaction graph"
 msgstr ""
@@ -847,22 +816,18 @@ msgstr ""
 msgid "Gauge r&R study - crossed ANOVA"
 msgstr ""
 
-#, fuzzy
 msgid "One-way ANOVA table"
-msgstr "Tabela ANOVA"
+msgstr "Tabela ANOVA simples"
 
-#, fuzzy
 msgid "Two-way ANOVA table with interaction"
-msgstr "Tabela ANOVA de duas vias com interação"
+msgstr "Tabela ANOVA bifatorial com interação"
 
-#, fuzzy
 msgid "Mean squares"
 msgstr "Quadrados médios"
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
-#, fuzzy
 msgid "Variance components"
 msgstr "Componentes de variância"
 
@@ -872,18 +837,15 @@ msgstr "Variância"
 msgid "%% Contribution"
 msgstr "%% Contribuição"
 
-#, fuzzy
 msgid "Gauge evaluation"
 msgstr "Avaliação de medidores"
 
-#, fuzzy
 msgid "Std. dev."
-msgstr "Desv.Padrão"
+msgstr "Desv. Pad."
 
 msgid "Study variation"
 msgstr "Estudo de variação"
 
-#, fuzzy
 msgid "%% Study variation"
 msgstr "%% Estudo de variação"
 
@@ -896,16 +858,14 @@ msgstr ""
 msgid "Repeatability"
 msgstr "Repetibilidade"
 
-#, fuzzy
 msgid "Part-to-part"
-msgstr "Peça a Peça"
+msgstr "Parte a parte"
 
-#, fuzzy
 msgid "Total variation"
-msgstr "Variação Total"
+msgstr "Variação total"
 
 msgid "Reproducibility"
-msgstr "Reproducibilidade"
+msgstr "Reprodutibilidade"
 
 msgid "*"
 msgstr ""
@@ -929,9 +889,8 @@ msgid ""
 "to values for %%study variation."
 msgstr ""
 
-#, fuzzy
 msgid "Two-way ANOVA table without interaction"
-msgstr "Tabela ANOVA de duas vias sem interação"
+msgstr "Tabela ANOVA bifatorial sem interação"
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
 msgstr ""
@@ -948,11 +907,9 @@ msgstr ""
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
 msgstr ""
 
-#, fuzzy
 msgid "Measurements by part"
-msgstr "Medições por operador"
+msgstr "Medições por parte"
 
-#, fuzzy
 msgid "Measurements by operator"
 msgstr "Medições por operador"
 
@@ -989,9 +946,8 @@ msgstr ""
 msgid "%.2f"
 msgstr ""
 
-#, fuzzy
 msgid "Gauge r&R - nested"
-msgstr "Tabela ANOVA"
+msgstr "Gauge r&R - aninhado"
 
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
@@ -1013,7 +969,7 @@ msgid "Gauge r&R (nested)"
 msgstr ""
 
 msgid "p"
-msgstr ""
+msgstr "p"
 
 msgid "Variation"
 msgstr "Variação"
@@ -1021,9 +977,8 @@ msgstr "Variação"
 msgid "No degrees of freedom for %s."
 msgstr ""
 
-#, fuzzy
 msgid "Part-To-part"
-msgstr "Peça a Peça"
+msgstr "Parte a parte"
 
 msgid "Study variation is calculated as std. dev. * %i"
 msgstr ""
@@ -1064,9 +1019,8 @@ msgstr ""
 msgid "GRR"
 msgstr ""
 
-#, fuzzy
 msgid "Process std. dev."
-msgstr "Desv.Padrão"
+msgstr "Desv. Pad. do processo"
 
 msgid "%%GRR of process std. dev."
 msgstr ""
@@ -1074,14 +1028,12 @@ msgstr ""
 msgid "Tolerance"
 msgstr "Tolerância"
 
-#, fuzzy
 msgid "%%GRR of tolerance"
-msgstr "%GRR da Tolerância"
+msgstr "%GRR da tolerância"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
 msgstr ""
 
-#, fuzzy
 msgid "Run chart"
 msgstr "Carta U"
 
@@ -1106,17 +1058,14 @@ msgstr "Média"
 msgid "Bias"
 msgstr ""
 
-#, fuzzy
 msgid "Std. dev. (<i>s</i>)"
-msgstr "Desv.Padrão (<i>s</i>)"
+msgstr "Desv. Pad. (<i>s</i>)"
 
-#, fuzzy
 msgid "Instrument variation"
-msgstr "Estudo de variação"
+msgstr "Variação do instrumento"
 
-#, fuzzy
 msgid "Tolerance bounds"
-msgstr "Tolerância: %s"
+msgstr "Limites de tolerância"
 
 msgid "%% Bias"
 msgstr ""
@@ -1133,13 +1082,11 @@ msgstr ""
 msgid "Cgk"
 msgstr ""
 
-#, fuzzy
 msgid "%% Var(repeatability)"
-msgstr "%% Var(Repetibilidade)"
+msgstr "%% Var(repetibilidade)"
 
-#, fuzzy
 msgid "%% Var(repeatability and bias)"
-msgstr "%% var (Repetibilidade e Viés)"
+msgstr "%% Var(repetibilidade e viés)"
 
 msgid "t-test of observed bias against 0"
 msgstr ""
@@ -1159,7 +1106,7 @@ msgid ""
 msgstr ""
 
 msgid "Count"
-msgstr ""
+msgstr "Contagem"
 
 msgid "Mean - %is"
 msgstr ""
@@ -1189,7 +1136,7 @@ msgid "Parameter"
 msgstr ""
 
 msgid "Estimate"
-msgstr ""
+msgstr "Estimativa"
 
 msgid ""
 "Fitting the model failed with the following error message:\n"
@@ -1211,7 +1158,7 @@ msgid "Fit Table"
 msgstr ""
 
 msgid "AIC"
-msgstr ""
+msgstr "AIC"
 
 msgid "Detection Plot"
 msgstr ""
@@ -1237,7 +1184,7 @@ msgid "Vertical asymptotes"
 msgstr ""
 
 msgid "Label"
-msgstr ""
+msgstr "Rótulo"
 
 msgid "<b><em>Warning.</em></b>"
 msgstr ""
@@ -1265,9 +1212,8 @@ msgstr ""
 msgid "Machine: %s"
 msgstr ""
 
-#, fuzzy
 msgid "Variable: %s"
-msgstr "Variância"
+msgstr "Variável: %s"
 
 msgid "Process: %s"
 msgstr ""
@@ -1340,15 +1286,13 @@ msgid "USL"
 msgstr ""
 
 msgid "Sample size"
-msgstr ""
+msgstr "Tamanho de amostra"
 
-#, fuzzy
 msgid "Std. dev. (total)"
-msgstr "Desv.padrão (total)"
+msgstr "Desv. pad. (total)"
 
-#, fuzzy
 msgid "Std. dev. (within)"
-msgstr "Desv.Padrão"
+msgstr "Desv. pad. (dentro)"
 
 msgid ""
 "Columns titled 'Change' concern changes of the respective stage in "
@@ -1379,7 +1323,7 @@ msgid "At least one of the stages contains no valid measurements."
 msgstr ""
 
 msgid "Density"
-msgstr ""
+msgstr "Densidade"
 
 msgid "Measurement"
 msgstr ""
@@ -1520,14 +1464,13 @@ msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
 msgid "N"
-msgstr ""
+msgstr "N"
 
 msgid "Mean (%1$s)"
 msgstr ""
 
-#, fuzzy
 msgid "Std. dev. (%1$s)"
-msgstr "Desv.Padrão (%1$s)"
+msgstr "Desv. Pad. (%1$s)"
 
 msgid "AD"
 msgstr ""
@@ -1551,7 +1494,7 @@ msgid ""
 msgstr ""
 
 msgid "Histogram"
-msgstr ""
+msgstr "Histograma"
 
 msgid ""
 "Dataset contains negative numbers. Could not overlay the selected "
@@ -1567,9 +1510,8 @@ msgstr ""
 msgid "Lognormal dist."
 msgstr ""
 
-#, fuzzy
 msgid "Rare event charts"
-msgstr "Carta U"
+msgstr "Carta de eventos raros"
 
 msgid ""
 "Date/time conversion returned no valid values. Did you select the correct "
@@ -1586,9 +1528,8 @@ msgstr ""
 msgid "G chart"
 msgstr ""
 
-#, fuzzy
 msgid "T chart"
-msgstr "Carta U"
+msgstr "Carta T"
 
 msgid ""
 "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
@@ -1615,7 +1556,7 @@ msgid "Autocorrelation plot"
 msgstr ""
 
 msgid "Autocorrelation"
-msgstr ""
+msgstr "Autocorrelação"
 
 msgid "Lag"
 msgstr ""
