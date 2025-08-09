@@ -1,15 +1,9 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-08-09 03:53+0000\n"
-"Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
-"Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/pt/>\n"
-"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.13-dev\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Language: pt\n"
 "X-Qt-Contexts: true\n"
 
@@ -245,13 +239,15 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
 msgstr "Mostra todas as medições"
 
+#, fuzzy
 msgctxt "msaType1Gauge|"
 msgid "6"
-msgstr ""
+msgstr "6"
 
+#, fuzzy
 msgctxt "msaType1Gauge|"
 msgid "4"
-msgstr ""
+msgstr "4"
 
 msgctxt "msaType1Gauge|"
 msgid "Run chart"
@@ -425,9 +421,10 @@ msgctxt "probabilityOfDetection|"
 msgid "Covariates"
 msgstr ""
 
+#, fuzzy
 msgctxt "probabilityOfDetection|"
 msgid "Tables"
-msgstr ""
+msgstr "Tabelas"
 
 msgctxt "probabilityOfDetection|"
 msgid "Model fit table"
@@ -653,9 +650,10 @@ msgctxt "doeScreening|"
 msgid "Standard"
 msgstr "Padrão"
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Random"
-msgstr ""
+msgstr "Aleatório"
 
 msgctxt "doeScreening|"
 msgid "Factor"
@@ -693,9 +691,10 @@ msgctxt "doeScreening|"
 msgid " Level 3"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeScreening|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Opções adicionais"
 
 msgctxt "doeScreening|"
 msgid "Number of replicates for corner points"
@@ -1135,17 +1134,20 @@ msgctxt "doeModifyDesign|"
 msgid "1/2"
 msgstr "1/2"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "1/4"
-msgstr ""
+msgstr "1/4"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "1/8"
-msgstr ""
+msgstr "1/8"
 
+#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Additional Options"
-msgstr ""
+msgstr "Opções adicionais"
 
 msgctxt "doeModifyDesign|"
 msgid "Number of center points"
@@ -1697,9 +1699,10 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Show report"
 msgstr "Mostrar relatório"
 
+#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "Mostrar metadados no relatório"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Select Report Components"
@@ -1813,9 +1816,10 @@ msgctxt "attributesCharts|"
 msgid "Timestamp (optional)"
 msgstr ""
 
+#, fuzzy
 msgctxt "attributesCharts|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "Mostrar metadados no relatório"
 
 msgctxt "attributesCharts|"
 msgid "Report for Attribute Control Charts"
@@ -2129,9 +2133,10 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Control charts"
 msgstr ""
 
+#, fuzzy
 msgctxt "variablesChartsSubgroups|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "Mostrar metadados no relatório"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Chart name"
@@ -2297,21 +2302,25 @@ msgctxt "doeAnalysis|"
 msgid "Residuals four-in-one plot"
 msgstr ""
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "1"
-msgstr ""
+msgstr "1"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "2"
-msgstr ""
+msgstr "2"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "4"
-msgstr ""
+msgstr "4"
 
+#, fuzzy
 msgctxt "doeFactorial|"
 msgid "8"
-msgstr ""
+msgstr "8"
 
 msgctxt "Description|"
 msgid "Type 1 Instrument Capability Study"
@@ -2609,9 +2618,10 @@ msgctxt "rareEventCharts|"
 msgid "Opportunities"
 msgstr ""
 
+#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Time"
-msgstr ""
+msgstr "Tempo"
 
 msgctxt "rareEventCharts|"
 msgid "Hours (decimal)"
@@ -2677,9 +2687,10 @@ msgctxt "rareEventCharts|"
 msgid "Show Report"
 msgstr "Mostrar Relatório"
 
+#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "Mostrar metadados no relatório"
 
 msgctxt "rareEventCharts|"
 msgid "Title"
@@ -2853,9 +2864,10 @@ msgctxt "timeWeightedCharts|"
 msgid "Show Report"
 msgstr "Mostrar Relatório"
 
+#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Show report metadata"
-msgstr ""
+msgstr "Mostrar metadados no relatório"
 
 msgctxt "timeWeightedCharts|"
 msgid "Title"
