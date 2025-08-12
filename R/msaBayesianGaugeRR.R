@@ -92,10 +92,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     # posteriors
     if(options$posteriorPlot){
       .fillPostSummaryTable(jaspResults, options, parts, operators, ready)
-      .plotVariancePosteriors(jaspResults, options, parts, operators, ready)
 
-      # summary table
-      .createPostSummaryTable(jaspResults, options, parts, operators, ready)
+      # summary table & plots
+      .createPostSummaries(jaspResults, options, parts, operators, ready)
     }
 
     if(options$varianceComponentsGraph) {
@@ -252,18 +251,38 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return()
 }
 
-.createPostSummaryTable <- function(jaspResults, options, parts, operators, ready){
-  if(!is.null(jaspResults[["variancePosteriors"]][["postSummary"]]) ||
-     isTryError(jaspResults[["distFit"]][["object"]])){
+.createPostSummaries <- function(jaspResults, options, parts, operators, ready){
+  if(!is.null(jaspResults[["posteriorSummaries"]])){
     return()
   }
 
+  posteriorSummaries <- createJaspContainer(title = gettext("Posterior Distributions"))
+  posteriorSummaries$position <- 6
+  posteriorSummaries$dependOn(c(.varCompTableDependencies(),
+                                .postPlotDependencies()))
+  jaspResults[["posteriorSummaries"]] <- posteriorSummaries
+
+  if(isTryError(jaspResults[["distFit"]][["object"]])) {
+    errorMsg <- gettextf("The %s distribution could not be fit to the samples.
+                         Try selecting another distribution.", .getDistNames(options$distType))
+    tempPlot <- createJaspPlot()
+    tempPlot$setError(errorMsg)
+    posteriorSummaries[["errorPlot"]] <- tempPlot
+    return()
+  }
+
+  if(!ready) {
+    # create empty plot for posterior distributions
+    posteriorSummaries[["plot"]] <- createJaspPlot(width = 600, height = 320)
+  }
+
+  # table
   postSummary <- createJaspTable(title = gettext("Posterior Summary"))
   postSummary$position <- 1
   postSummary$dependOn(c(.varCompTableDependencies(),
                          .postPlotDependencies()))
 
-  jaspResults[["variancePosteriors"]][["postSummary"]] <- postSummary
+  posteriorSummaries[["postSummary"]] <- postSummary
 
   # title for point estimate
   pointEst <- switch (options$posteriorPointEstimateType,
@@ -290,16 +309,56 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   }
 
   if(options$posteriorCi) {
-    postSummary$addColumnInfo(name = "ciLower",       title = gettext("Lower"),     type = "number", overtitle = gettext(overtitle))
-    postSummary$addColumnInfo(name = "ciUpper",       title = gettext("Upper"),     type = "number", overtitle = gettext(overtitle))
-    postSummary$addFootnote(gettext("Credible intervals are estimated based on the distribution fit to the MCMC samples."))
+    if(options$posteriorCiType != "custom" || (options$posteriorCiType == "custom" && options$customCiType != "customCiCutOff")) {
+      postSummary$addColumnInfo(name = "ciLower",       title = gettext("Lower"),     type = "number", overtitle = gettext(overtitle))
+      postSummary$addColumnInfo(name = "ciUpper",       title = gettext("Upper"),     type = "number", overtitle = gettext(overtitle))
+      postSummary$addFootnote(gettext("Credible intervals are estimated based on the distribution fit to the MCMC samples."))
+    } else {
+      cutOff <- options$posteriorCiCutOff
+      if(cutOff == as.integer(cutOff)) {
+        postSummary$addColumnInfo(name = "belowCutOff", title = gettextf("p(x < %d | data)", cutOff), type = "number")
+      } else {
+        postSummary$addColumnInfo(name = "belowCutOff", title = gettextf("p(x < %.2f | data)", cutOff), type = "number")
+      }
+    }
   }
 
   if(!ready) {
     return()
   }
 
-  postSummary$setData(jaspResults[["postSummaryStats"]][["object"]])
+  dat <- jaspResults[["postSummaryStats"]][["object"]]
+  errors <- .checkProbabilityEstimates(dat$belowCutOff)
+  dat$belowCutOff <- errors[["estimates"]] # cleaned estimates
+
+  if(options$customCiType == "customCiCutOff") {
+    # check for too large cut-off
+    if(errors[["large"]]) {
+      if(cutOff == as.integer(cutOff)) {
+        postSummary$addFootnote(gettextf("p(x < %d | data) could not be calculated for some sources. The cut-off is probably too large or too small.",
+                                         cutOff), symbol = gettext("<b>Warning:</b>"))
+      } else {
+        postSummary$addFootnote(gettextf("p(x < %.2f | data) could not be calculated for some sources. The cut-off is probably too large or too small.",
+                                         cutOff), symbol = gettext("<b>Warning:</b>"))
+      }
+    }
+
+    # check for negative estimates
+    if(errors[["negative"]]) {
+      if(cutOff == as.integer(cutOff)) {
+        postSummary$addFootnote(gettextf("Some estimates of p(x < %d | data) were negative and, therefore, removed. Try a different cut-off or distribution.",
+                                         cutOff), symbol = gettext("<b>Warning:</b>"))
+      } else {
+        postSummary$addFootnote(gettextf("Some estimates of p(x < %.2f | data) were negative and, therefore, removed. Try a different cut-off or distribution.",
+                                         cutOff), symbol = gettext("<b>Warning:</b>"))
+      }
+    }
+  }
+
+  postSummary$setData(dat)
+
+  # plots
+  .plotVariancePosteriors(jaspResults, options, parts, operators)
 
   return()
 }
@@ -595,33 +654,9 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 ### posterior plots
-.plotVariancePosteriors <- function(jaspResults, options, parts, operators, ready){
-
-  if(!is.null(jaspResults[["variancePosteriors"]])){
-    return()
-  }
-
-  variancePosteriors <- createJaspContainer(title = gettext("Posterior Distributions"))
-  variancePosteriors$position <- 6
-  variancePosteriors$dependOn(c(.varCompTableDependencies(),
-                                .postPlotDependencies()))
-  jaspResults[["variancePosteriors"]] <- variancePosteriors
-
-  if(!ready) {
-    jaspResults[["variancePosteriors"]][["plot"]] <- createJaspPlot(width = 600, height = 320)
-    return()
-  }
-
+.plotVariancePosteriors <- function(jaspResults, options, parts, operators){
+  dat <- jaspResults[["posteriorSummaries"]][["postSummary"]]
   fits <- jaspResults[["distFit"]][["object"]]
-
-  if(isTryError(fits)) {
-    errorMsg <- gettextf("The %s distribution could not be fit to the samples.
-                         Try selecting another distribution.", .getDistNames(options$distType))
-    tempPlot <- createJaspPlot()
-    tempPlot$setError(errorMsg)
-    jaspResults[["variancePosteriors"]][["errorPlot"]] <- tempPlot
-    return()
-  }
 
   samplesMat <- switch(options$posteriorPlotType,
                        "var" = .arrayToMat(jaspResults[["MCMCsamples"]][["object"]]),
@@ -650,27 +685,40 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
       maxHistDens <- max(pBuild$data[[1]][, "density"])
     }
 
-    # select function for axis limits based on distribution
-    axisFun <- .axisLimFuns()[[options$distType]]
-
-    lims <- axisFun(fits[[i]], postSummary, options, iter = i,
-                    histDens = ifelse(options$posteriorHistogram, maxHistDens, 0))
-
     # credible interval
     if(options$posteriorCi) {
-      ciUpper <- postSummary[i, "ciUpper"]
-      ciLower <- postSummary[i, "ciLower"]
+      if(options$posteriorCiType != "custom" || (options$posteriorCiType == "custom" && options$customCiType != "customCiCutOff")) {
+        ciUpper <- postSummary[i, "ciUpper"]
+        ciLower <- postSummary[i, "ciLower"]
 
-      p <- p +
-        if(options$distType == "metalog") {
-          ggplot2::stat_function(fun = rmetalog::dmetalog, args = list(m = fits[[i]], term = fits[[i]]$params$term_limit),
-                                 geom = "area", xlim = c(ciLower, ciUpper), fill = "grey")
-          # note: it might make sense to just pass some approximation of the density to the plotting function in case of the metalog
-          # so it only has to evaluate the density function once
-        } else { # note: this would be nicer with a list of functions again, but the functions take different arguments
-          ggplot2::stat_function(fun = GeneralizedHyperbolic::dgig, args = list(param = fits[[i]]$param),
-                                 geom = "area", xlim = c(ciLower, ciUpper), fill = "grey")
+        p <- p +
+          if(options$distType == "metalog") {
+            ggplot2::stat_function(fun = rmetalog::dmetalog, args = list(m = fits[[i]], term = fits[[i]]$params$term_limit),
+                                   geom = "area", xlim = c(ciLower, ciUpper), fill = "grey")
+            # note: it might make sense to just pass some approximation of the density to the plotting function in case of the metalog
+            # so it only has to evaluate the density function once
+          } else { # note: this would be nicer with a list of functions again, but the functions take different arguments
+            ggplot2::stat_function(fun = GeneralizedHyperbolic::dgig, args = list(param = fits[[i]]$param),
+                                   geom = "area", xlim = c(ciLower, ciUpper), fill = "grey")
+          }
+      } else {
+
+        # do not plot if p(x < cut-off | data) was not computed correctly
+        est <- .checkProbabilityEstimates(jaspResults[["postSummaryStats"]][["object"]]$belowCutOff)[["estimates"]]
+
+        if(!i %in% which(is.na(est))) {
+          p <- p +
+            if(options$distType == "metalog") {
+              ggplot2::stat_function(fun = rmetalog::dmetalog, args = list(m = fits[[i]], term = fits[[i]]$params$term_limit),
+                                     geom = "area", xlim = c(0, options$posteriorCiCutOff), fill = "grey")
+              # note: it might make sense to just pass some approximation of the density to the plotting function in case of the metalog
+              # so it only has to evaluate the density function once
+            } else { # note: this would be nicer with a list of functions again, but the functions take different arguments
+              ggplot2::stat_function(fun = GeneralizedHyperbolic::dgig, args = list(param = fits[[i]]$param),
+                                     geom = "area", xlim = c(0, options$posteriorCiCutOff), fill = "grey")
+            }
         }
+      }
     }
 
     p <- p +
@@ -695,6 +743,12 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     }
 
     # axes
+    # select function for axis limits based on distribution
+    axisFun <- .axisLimFuns()[[options$distType]]
+
+    lims <- axisFun(fits[[i]], postSummary, options, iter = i,
+                    histDens = ifelse(options$posteriorHistogram, maxHistDens, 0))
+
     xLab <- switch(options$posteriorPlotType,
                    "var" = titles[i],
                    "percContrib" = "% Contribution",
@@ -715,7 +769,7 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     p <- p + jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe(sides = "bl")
 
     tempPlot$plotObject <- p
-    variancePosteriors[[titles[i]]] <- tempPlot
+    jaspResults[["posteriorSummaries"]][[titles[i]]] <- tempPlot
   }
   return()
 }
@@ -1364,6 +1418,24 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 #### helper functions
+.checkProbabilityEstimates <- function(estimates) {
+  l <- list()
+  # check for too large cut-off
+  l[["large"]] <- ifelse(anyNA(estimates), TRUE, FALSE)
+
+  # check for negative estimates
+  if(any(estimates[!is.na(estimates)] < 0)) {
+    estimates[!is.na(estimates) & estimates < 0] <- NA
+    l[["negative"]] <- TRUE
+  } else {
+    l[["negative"]] <- FALSE
+  }
+
+  l[["estimates"]] <- estimates
+
+  return(l)
+}
+
 .hasExtremeValues <- function(df) {
   nums <- unlist(df, use.names = FALSE)
   nums <- suppressWarnings(as.numeric(nums))
@@ -1473,7 +1545,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(c("posteriorCi", "posteriorCiLower", "posteriorCiMass", "posteriorCiType", "posteriorCiUpper",
            "posteriorPointEstimate", "posteriorPointEstimateType", "posteriorPlot",
            "distType", "posteriorPlotType", "tolerance", "toleranceValue", "posteriorHistogram", "report", "type3",
-           "processVariationReference", "historicalSdValue"))
+           "processVariationReference", "historicalSdValue", "customCiType",
+           "posteriorCiCutOff"))
 }
 
 .convertOutputNames <- function(name, parts, operators, includeSigma = TRUE) {
@@ -1555,7 +1628,12 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
     if(!gaugeReport) {
       # add footnote
       factorSd <- jaspResults[["studyVariation"]][["object"]][[2]]
-      jaspResults[["gaugeEvaluation"]][["stdTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
+
+      if(factorSd == as.integer(factorSd)) {
+        jaspResults[["gaugeEvaluation"]][["stdTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %d", factorSd))
+      } else {
+        jaspResults[["gaugeEvaluation"]][["stdTable"]]$addFootnote(gettextf("Study variation is calculated as std. dev. <span>&#215;</span> %.2f", factorSd))
+      }
     }
 
     # summaries
@@ -1763,25 +1841,41 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
                         "HPD" = Map(interFun, fits, mass = options$posteriorCiMass),
                         "custom" = Map(interFun, fits,
                                        lower = options$posteriorCiLower,
-                                       upper = options$posteriorCiUpper))
+                                       upper = options$posteriorCiUpper,
+                                       cutoff = options$posteriorCiCutOff,
+                                       options = rep(list(options), length(fits)))
+                        )
 
-    # lower and upper bounds separately
-    lower <- sapply(intervals, function(x) x[1])
-    upper <- sapply(intervals, function(x) x[2])
+    if(options$posteriorCiType != "custom" || (options$posteriorCiType == "custom" && options$customCiType != "customCiCutOff")) {
+      # lower and upper bounds separately
+      lower <- sapply(intervals, function(x) x[1])
+      upper <- sapply(intervals, function(x) x[2])
+    }
   }
 
   if(options$posteriorPointEstimate && options$posteriorCi == FALSE) {
     df <- data.frame(parameter,
                      pointEstimate)
   } else if(options$posteriorPointEstimate == FALSE && options$posteriorCi) {
-    df <- data.frame(parameter,
-                     ciLower = lower,
-                     ciUpper = upper)
+    if(options$posteriorCiType != "custom" || (options$posteriorCiType == "custom" && options$customCiType != "customCiCutOff")) {
+      df <- data.frame(parameter,
+                       ciLower = lower,
+                       ciUpper = upper)
+    } else {
+      df <- data.frame(parameter,
+                       belowCutOff = unlist(intervals))
+    }
   } else {
-    df <- data.frame(parameter,
-                     pointEstimate,
-                     ciLower = lower,
-                     ciUpper = upper)
+    if(options$posteriorCiType != "custom" || (options$posteriorCiType == "custom" && options$customCiType != "customCiCutOff")) {
+      df <- data.frame(parameter,
+                       pointEstimate,
+                       ciLower = lower,
+                       ciUpper = upper)
+    } else {
+      df <- data.frame(parameter,
+                       pointEstimate,
+                       belowCutOff = unlist(intervals))
+    }
   }
   postSummaryStats[["object"]] <- df
 
@@ -1861,8 +1955,19 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   int <- HDInterval::hdi(samples, credMass = mass)
 }
 
-.customInterMetaLog <- function(fit, lower, upper) {
-  int <- rmetalog::qmetalog(m = fit, y = c(lower, upper), term = fit$params$term_limit)
+.customInterMetaLog <- function(fit, lower, upper, cutoff, options) {
+  if(options$customCiType == "customCiQuantiles") {
+    int <- rmetalog::qmetalog(m = fit, y = c(lower, upper), term = fit$params$term_limit)
+    return(int)
+  } else {
+    res <- try(rmetalog::pmetalog(m = fit, q = cutoff, term = fit$params$term_limit),
+               silent = TRUE)
+
+    if(isTryError(res))
+      return(NA)
+
+    return(res)
+  }
 }
 
 ## Generalized inverse Gaussian
@@ -1876,8 +1981,25 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   int <- HDInterval::hdi(fit$randData, credMass = mass)
 }
 
-.customInterGIG <- function(fit, lower, upper) {
-  int <- quantile(fit$randData, probs = c(lower, upper))
+.customInterGIG <- function(fit, lower, upper, cutoff, options) {
+  if(options$customCiType == "customCiQuantiles") {
+    int <- quantile(fit$randData, probs = c(lower, upper))
+    return(int)
+  } else {
+    res <- tryCatch(
+      {
+        GeneralizedHyperbolic::pgig(q = cutoff, param = fit$param)
+      },
+      warning = function(w) {
+        return(NA)
+      },
+      error = function(e) {
+        return(NA)
+      }
+    )
+
+    return(res)
+  }
 }
 
 ## axis limits

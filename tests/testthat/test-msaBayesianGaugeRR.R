@@ -27,6 +27,7 @@ options$partByOperatorMeasurementPlot <- TRUE
 options$trafficLightChart <- TRUE
 options$distType <- "gig"
 options$mcmcChains <- 2
+options$customCiType <- "customCiQuantiles"
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
 
@@ -195,25 +196,25 @@ test_that("L1 Variance Components table results match", {
 })
 
 test_that("L1 Error plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Error"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Error"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L1 error")
 })
 
 test_that("L1 Operator plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Operator"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Operator"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L1 operator")
 })
 
 test_that("L1 Part plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Part"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Part"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L1 part")
 })
 
 test_that("L1 Posterior Summary table results match", {
-  table <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_postSummary"]][["data"]]
+  table <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_postSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(4.78249678043341, 29.8522838983694, "<unicode><sup>2</sup><sub>Part</sub>",
                                       12.2063561157816, 0.019717972167065, 0.963666980675533, "<unicode><sup>2</sup><sub>Operator</sub>",
@@ -257,6 +258,7 @@ options$diagnosticsPlotType <- "autocor"
 options$distType <- "metalog"
 options$modelType <- "fullModel"
 options$mcmcChains <- 2
+options$customCiType <- "customCiQuantiles"
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
 
@@ -377,37 +379,37 @@ test_that("L2 Variance Components table results match", {
 })
 
 test_that("L2 Operator plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Operator"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Operator"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L2 operator")
 })
 
 test_that("L2 Part-to-part plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Part-to-part"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Part-to-part"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L2 part-to-part")
 })
 
 test_that("L2 Repeatability plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Repeatability"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Repeatability"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L2 repeatability")
 })
 
 test_that("L2 Reproducibility plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Reproducibility"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Reproducibility"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L2 reproducibility")
 })
 
 test_that("L2 Total gauge r&R plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Total gauge r&R"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Total gauge r&R"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L2 total-gauge-r-r")
 })
 
 test_that("L2 Posterior Summary table results match", {
-  table <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_postSummary"]][["data"]]
+  table <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_postSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(8.40483271767977, 33.0057533152063, "Total gauge r&amp;R", 16.4140241975042,
                                       6.04889943061452, 15.7471976500399, "Repeatability", 10.5766752981399,
@@ -431,6 +433,7 @@ options$trafficLightChart <- TRUE
 options$diagnosticsPlotType <- "density"
 options$distType <- "metalog"
 options$mcmcChains <- 2
+options$customCiType <- "customCiQuantiles"
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
 
@@ -522,31 +525,31 @@ test_that("L3 Variance Components table results match", {
 })
 
 test_that("L3 Part-to-part plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Part-to-part"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Part-to-part"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L3 part-to-part")
 })
 
 test_that("L3 Repeatability plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Repeatability"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Repeatability"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L3 repeatability")
 })
 
 test_that("L3 Total gauge r&R plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Total gauge r&R"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Total gauge r&R"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L3 total-gauge-r-r")
 })
 
 test_that("L3 Total variation plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Total variation"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Total variation"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L3 total-variation")
 })
 
 test_that("L3 Posterior Summary table results match", {
-  table <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_postSummary"]][["data"]]
+  table <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_postSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(20.4255240578281, 27.7936833384094, "Total gauge r&amp;R", 23.7462166121699,
                                       20.4255240578281, 27.7936833384094, "Repeatability", 23.7462166121699,
@@ -572,6 +575,7 @@ options$trafficLightChart <- TRUE
 options$diagnosticsPlotType <- "density"
 options$distType <- "metalog"
 options$mcmcChains <- 2
+options$customCiType <- "customCiQuantiles"
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
 
@@ -679,31 +683,31 @@ test_that("L4 Variance Components table results match", {
 })
 
 test_that("L4 Operator plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Operator"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Operator"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L4 operator")
 })
 
 test_that("L4 Repeatability plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Repeatability"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Repeatability"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L4 repeatability")
 })
 
 test_that("L4 Reproducibility plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Reproducibility"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Reproducibility"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L4 reproducibility")
 })
 
 test_that("L4 Total gauge r&R plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Total gauge r&R"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Total gauge r&R"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "L4 total-gauge-r-r")
 })
 
 test_that("L4 Posterior Summary table results match", {
-  table <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_postSummary"]][["data"]]
+  table <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_postSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(6.08426523238411, 49.8077618247364, "Total gauge r&amp;R", 15.0301360534277,
                                       4.50423780799053, 8.31507421356034, "Repeatability", 6.1266418829029,
@@ -727,6 +731,7 @@ test_that("L Gauge r&R report plot matches", {
   options$reportAverageChartByOperator <- TRUE
   options$reportPartByOperatorPlot <- TRUE
   options$mcmcChains <- 2
+  options$customCiType <- "customCiQuantiles"
   set.seed(1)
   results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
   plotName <- results[["results"]][["report"]][["data"]]
@@ -765,6 +770,7 @@ options$partByOperatorMeasurementPlot <- TRUE
 options$trafficLightChart <- TRUE
 options$distType <- "gig"
 options$mcmcChains <- 2
+options$customCiType <- "customCiQuantiles"
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
 
@@ -932,25 +938,25 @@ test_that("W1 Variance Components table results match", {
 })
 
 test_that("W1 Error plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Error"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Error"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W1 error")
 })
 
 test_that("W1 Operator plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Operator"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Operator"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W1 operator")
 })
 
 test_that("W1 Part plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Part"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Part"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W1 part")
 })
 
 test_that("W1 Posterior Summary table results match", {
-  table <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_postSummary"]][["data"]]
+  table <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_postSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1.27284283054443, 8.51804137015566, "<unicode><sup>2</sup><sub>Part</sub>",
                                       3.3737108373, 0.098113661553187, 4.61971702790384, "<unicode><sup>2</sup><sub>Operator</sub>",
@@ -990,6 +996,7 @@ options$diagnosticsPlotType <- "autocor"
 options$distType <- "metalog"
 options$modelType <- "fullModel"
 options$mcmcChains <- 2
+options$customCiType <- "customCiQuantiles"
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
 
@@ -1109,37 +1116,37 @@ test_that("W2 Variance Components table results match", {
 })
 
 test_that("W2 Operator plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Operator"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Operator"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W2 operator")
 })
 
 test_that("W2 Part-to-part plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Part-to-part"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Part-to-part"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W2 part-to-part")
 })
 
 test_that("W2 Repeatability plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Repeatability"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Repeatability"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W2 repeatability")
 })
 
 test_that("W2 Reproducibility plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Reproducibility"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Reproducibility"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W2 reproducibility")
 })
 
 test_that("W2 Total gauge r&R plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Total gauge r&R"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Total gauge r&R"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W2 total-gauge-r-r")
 })
 
 test_that("W2 Posterior Summary table results match", {
-  table <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_postSummary"]][["data"]]
+  table <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_postSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(36.6908448164942, 84.640380749268, "Total gauge r&amp;R", 59.0499639096235,
                                       25.5255275390376, 56.9200489576364, "Repeatability", 42.03575729992,
@@ -1164,6 +1171,7 @@ options$trafficLightChart <- TRUE
 options$diagnosticsPlotType <- "density"
 options$distType <- "metalog"
 options$mcmcChains <- 2
+options$customCiType <- "customCiQuantiles"
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
 
@@ -1255,31 +1263,31 @@ test_that("W3 Variance Components table results match", {
 })
 
 test_that("W3 Part-to-part plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Part-to-part"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Part-to-part"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W3 part-to-part")
 })
 
 test_that("W3 Repeatability plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Repeatability"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Repeatability"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W3 repeatability")
 })
 
 test_that("W3 Total gauge r&R plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Total gauge r&R"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Total gauge r&R"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W3 total-gauge-r-r")
 })
 
 test_that("W3 Total variation plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Total variation"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Total variation"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W3 total-variation")
 })
 
 test_that("W3 Posterior Summary table results match", {
-  table <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_postSummary"]][["data"]]
+  table <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_postSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(48.1714882535499, 65.4777848056588, "Total gauge r&amp;R", 55.9859173475586,
                                       48.1714882535499, 65.4777848056588, "Repeatability", 55.9859173475586,
@@ -1305,6 +1313,7 @@ options$trafficLightChart <- TRUE
 options$diagnosticsPlotType <- "density"
 options$distType <- "metalog"
 options$mcmcChains <- 2
+options$customCiType <- "customCiQuantiles"
 set.seed(1)
 results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
 
@@ -1411,31 +1420,31 @@ test_that("W4 Variance Components table results match", {
 })
 
 test_that("W4 Operator plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Operator"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Operator"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W4 operator")
 })
 
 test_that("W4 Repeatability plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Repeatability"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Repeatability"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W4 repeatability")
 })
 
 test_that("W4 Reproducibility plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Reproducibility"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Reproducibility"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W4 reproducibility")
 })
 
 test_that("W4 Total gauge r&R plot matches", {
-  plotName <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_Total gauge r&R"]][["data"]]
+  plotName <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_Total gauge r&R"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "W4 total-gauge-r-r")
 })
 
 test_that("W4 Posterior Summary table results match", {
-  table <- results[["results"]][["variancePosteriors"]][["collection"]][["variancePosteriors_postSummary"]][["data"]]
+  table <- results[["results"]][["posteriorSummaries"]][["collection"]][["posteriorSummaries_postSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(36.2684396989805, 246.249732595721, "Total gauge r&amp;R", 79.4194770714244,
                                       28.0791556215122, 51.6892435406356, "Repeatability", 38.1493514877285,
@@ -1459,6 +1468,7 @@ test_that("W Gauge r&R report plot matches", {
   options$reportAverageChartByOperator <- TRUE
   options$reportPartByOperatorPlot <- TRUE
   options$mcmcChains <- 2
+  options$customCiType <- "customCiQuantiles"
   set.seed(1)
   results <- runAnalysis("msaBayesianGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
   plotName <- results[["results"]][["report"]][["data"]]

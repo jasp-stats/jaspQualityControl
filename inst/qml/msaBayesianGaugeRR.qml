@@ -364,33 +364,74 @@ Form
 						inclusive:		JASP.MinOnly
 					}
 
-					DoubleField
+					RadioButtonGroup
 					{
-						visible:		posteriorCiType.currentText == "custom"
-						enabled:		posteriorCi.checked
-						name:			"posteriorCiLower"
-						label:			qsTr("Lower")
-						id:				posteriorCiLower
-						fieldWidth:		50
-						defaultValue:	0.25
-						min:			0
-						max:			posteriorCiUpper.value
-						inclusive:		JASP.None
-					}
+						name:		 	   "customCiType"
+						visible: 	 	   posteriorCiType.currentText === "custom"
+						enabled: 		   posteriorCi.checked
+						
+						RadioButton
+						{
+							name: 				"customCiQuantiles"
+							visible: 			posteriorCiType.currentText === "custom"
+							label: 				qsTr("Quantiles")
+							enabled: 			posteriorCi.checked
+							checked: 			true
 
-					DoubleField
-					{
-						visible:		posteriorCiType.currentText === "custom"
-						enabled:		posteriorCi.checked
-						name:			"posteriorCiUpper"
-						label:			qsTr("Upper")
-						id:				posteriorCiUpper
-						fieldWidth:		50
-						defaultValue:	0.75
-						min:			posteriorCiLower.value
-						max:			1
-						inclusive:		JASP.None
-					}
+							Group 
+							{
+								columns: 2
+								DoubleField
+								{
+									visible:		posteriorCiType.currentText === "custom"
+									enabled:		posteriorCi.checked
+									name:			"posteriorCiLower"
+									label:			qsTr("Lower")
+									id:				posteriorCiLower
+									fieldWidth:		50
+									defaultValue:	0.25
+									min:			0
+									max:			posteriorCiUpper.value
+									inclusive:		JASP.None
+								}
+
+								DoubleField
+								{
+									visible:		posteriorCiType.currentText === "custom"
+									enabled:		posteriorCi.checked
+									name:			"posteriorCiUpper"
+									label:			qsTr("Upper")
+									id:				posteriorCiUpper
+									fieldWidth:		50
+									defaultValue:	0.75
+									min:			posteriorCiLower.value
+									max:			1
+									inclusive:		JASP.None
+								}
+							}
+							
+						}
+
+						RadioButton
+						{
+							name: 				"customCiCutOff"
+							visible: 			posteriorCiType.currentText === "custom"
+							label:				qsTr("Cut-off")
+							enabled: 			posteriorCi.checked
+
+							DoubleField
+							{
+								name: 				"posteriorCiCutOff"
+								visible: 			posteriorCiType.currentText === "custom"
+								enabled: 			posteriorCi.checked
+								fieldWidth: 		50
+								defaultValue: 		10
+								decimals: 			3
+								min: 				0
+								inclusive: 			JASP.None
+							}
+						}
+					}	
 				}
 			}
 
