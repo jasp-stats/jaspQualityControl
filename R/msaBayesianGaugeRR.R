@@ -2243,23 +2243,34 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
   for(i in seq_along(paramNames)) {
     tempPlot <- createJaspPlot(width = 600, height = 320)
 
-    # density for axis limits
-    d <- apply(chains[, , paramNames[i]], 2, function(x) {
-      df <- data.frame(x = density(x)$x,
-                       y = density(x)$y)
-      return(df)
-    })
-    d <- do.call(rbind.data.frame, d)
-    xLims <- c(0, d$x[d$y < 1e-3 & d$x > 3][1]) # note: there should be a better way to handle the part with x > 3
+    # initilize plot
+    p <- bayesplot::mcmc_dens_overlay(chains, pars = paramNames[i])
+
+    d <- density(chains[, , paramNames[i]], n = 64000)
+
+    # x-lims
+    m <- quantile(chains[, , paramNames[i]], 0.5)
+    xUpper <- d$x[d$y < 1e-3 & d$x > m][1]
+    xLower <- quantile(chains[, , paramNames[i]], 0.001)
+    xLower <- ifelse(xLower < 1, 0, xLower)
+    xLims <- c(xLower, xUpper)
 
     manualScaleX <- FALSE
-    if(!any(is.na(xLims))) {
+    if(!anyNA(xLims)) {
       manualScaleX <- TRUE
       axisBreaksX <- jaspGraphs::getPrettyAxisBreaks(xLims)
       xLims <- c(axisBreaksX[1], axisBreaksX[length(axisBreaksX)])
     }
 
-    p <- bayesplot::mcmc_dens_overlay(chains, pars = paramNames[i]) +
+    # y-lims
+    yValues <- d$y
+    padding <- 0.05 * diff(range(yValues))
+    yLims <- c(0, max(yValues) + padding)
+    axisBreaksY <- jaspGraphs::getPrettyAxisBreaks(yLims)
+    yLims <- c(axisBreaksY[1], axisBreaksY[length(axisBreaksY)])
+
+    # aesthetics
+    p <- p +
       ggplot2::scale_color_manual(values = colors) +
       ggplot2::xlab(bquote(sigma[.(xLabs[i])]^2)) +
       ggplot2::xlim(xLims)
@@ -2271,7 +2282,8 @@ msaBayesianGaugeRR <- function(jaspResults, dataset, options, ...) {
 
     p <- p + jaspGraphs::themeJaspRaw() +
       jaspGraphs::geom_rangeframe() +
-      ggplot2::scale_y_continuous("Density") +
+      ggplot2::scale_y_continuous("Density", limits = yLims,
+                                  breaks = axisBreaksY) +
       ggplot2::theme(axis.ticks.y = ggplot2::element_line())
 
     tempPlot$plotObject <- p
