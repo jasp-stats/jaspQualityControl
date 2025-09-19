@@ -30,6 +30,21 @@ The size of the subgroups is relevant for the calculation of the process varianc
 - Calculate with actual size: the control limits are calculated per subgroup and the actual subgroup sizes are used for the calculation.
 
 ### Options 
+
+#### Data transformation
+- Transform data before any analysis.
+  - **None**: The data is analysed as-is
+  - **Exponential**: The data is transformed using the equation $y = (x+\text{shift})^\lambda$ if $\lambda \neq 0$, otherwise $y = \ln(x + \text{shift})$. Convenient values: $\lambda = 0$ - use the natural log of the data, $\lambda = 0.5$ - use the square root of your data.
+  - **Box-Cox**: The data is transformed using the equation $y = \frac{(x+\text{shift})^\lambda - 1}{\lambda}$ if $\lambda = 0$, otherwise $y = \ln(x + \text{shift})$.
+  - **Box-Cox (Log. Lik)**: The data is transformed using the Box-Cox transformation, but with the $\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution.
+  - **Box-Cox (Minitab)**: The data is transformed using a procedure emulating the "Box-Cox (optimal $\lambda$)" transform in Minitab: The $\lambda$ is automatically estimated by minimizing the within-subgroup unbiased pooled standard deviation of a power transformed variable. Note that the final transformation uses the equation described in the **Exponential** option (removing the -1 shift and scale $\lambda$).
+  - **Yeo-Johnson**: The data is transformed using the Yeo-Johnson transform as described in Yeo & Johnson (2000). It can be used for unbounded data.
+  - **Yeo-Johnson (Log. Lik)**: The data is transformed using the Yeo-Johnson transform, but with the $\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution.
+  - **Johnson**: The data is transformed using the Johnson transform. It can be used for unbounded data. The transform is fully automatic, as described in Chou, Polanski, & Mason (1998).
+
+- **Shift** numerical value of the shift parameter used for transforms that accept bounded data. This option is disabled for unbounded transforms (Yeo-Johnson, Johnson), and Box-Cox (Minitab) transform.
+- **Lambda** numerical value of the $\lambda$ parameter of the transforms. This option is disabled for transforms which automatically estimate their parameter(s).
+
 #### Type of data distribution
 - Type of data distribution: indicate whether the data approximates a normal distribution or another distribution (the most commonly used distributions are: Weibull, Lognormal, 3-parameter Weibull, and 3-parameter lognorma)
     - Specify a distribution: the non-normal distribution to be used. 
@@ -112,6 +127,8 @@ The size of the subgroups is relevant for the calculation of the process varianc
 1.	Automotive Industry Action Group, *Statistical Process Control - Reference Manual* (July 2005, 2nd Edition)
 2.	SKF Quality Techniques, Klerx, R., Dodson, B., and Dumont, D., QT 1 - *Process capability studies*. (PUB GQ/P9 10347/1 EN - December 2021)
 3.	SKF Quality Techniques, Dodson, B., Lynch, D., Weidenbacher, M., and Klerx, R. (), *QT 2 - Statistical process control*, (PUB GQS/P9 18343 EN - April 2019)
+4.  Yeo, I. K., & Johnson, R. A. (2000). A new family of power transformations to improve normality or symmetry. Biometrika, 87(4), 954-959.
+5.  Chou, Y. M., Polansky, A. M., & Mason, R. L. (1998). Transforming non-normal data to normality in statistical process control. Journal of Quality Technology, 30(2), 133-141.
 
 
 ## R Packages

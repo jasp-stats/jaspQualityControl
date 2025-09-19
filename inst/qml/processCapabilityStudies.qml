@@ -204,6 +204,44 @@ Form
 		{
 			Group
 			{
+				title: qsTr("Data transformation")
+				DropDown
+				{
+					name:		"dataTransformation"
+					id:			dataTransformation
+					title:		qsTr("Type of transformation")
+					values:
+					[
+						{label: qsTr("None"),					value: "none"},
+						{label: qsTr("Exponential"),			value: "exponential"},
+						{label: qsTr("Box-Cox"),				value: "boxCox"},
+						{label: qsTr("Box-Cox (Log Lik.)"),		value: "boxCoxAuto"},
+						{label: qsTr("Box-Cox (Minitab)"),		value: "boxCoxMinitab"},
+						{label: qsTr("Yeo-Johnson"),			value: "yeoJohnson"},
+						{label: qsTr("Yeo-Johnson (Log Lik.)"),	value: "yeoJohnsonAuto"},
+						{label: qsTr("Johnson"),				value: "johnson"},
+					]
+				}
+
+				DoubleField
+				{
+					label: qsTr("Shift")
+					name: "dataTransformationShift"
+					negativeValues:	true
+					defaultValue: 0
+					enabled: ["exponential", "boxCox", "boxCoxAuto"].includes(dataTransformation.value)
+				}
+				DoubleField
+				{
+					label: qsTr("Lambda")
+					name: "dataTransformationLambda"
+					negativeValues:	true
+					defaultValue: 0
+					enabled: ["exponential", "boxCox", "yeoJohnson"].includes(dataTransformation.value)
+				}
+			}
+			Group
+			{
 				title:					qsTr("Type of data distribution")
 
 
