@@ -1076,7 +1076,7 @@ msgid "Tolerance"
 msgstr "Tolerância"
 
 msgid "%%GRR of tolerance"
-msgstr "%GRR da tolerância"
+msgstr "%%GRR da tolerância"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
 msgstr "Gráfico de dispersão da 1ª medição vs 2ª medição"
@@ -1570,7 +1570,7 @@ msgid ""
 "interval."
 msgstr ""
 "As linhas pontilhadas vermelhas no gráfico de probabilidade abaixo "
-"representam um intervalo de confiança de 95%."
+"representam um intervalo de confiança de 95%%."
 
 msgid "Probability plot against %1$s distribution"
 msgstr "Gráfico de probabilidade em relação à distribuição %1$s"
