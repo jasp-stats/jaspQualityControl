@@ -472,7 +472,7 @@ Form
 
 						CIField
 						{
-							visible:		plotsPosteriorIndividualType.currentText == "central" | plotsPosteriorIndividualType.currentText == "HPD"
+							visible:		plotsPosteriorIndividualType.currentValue === "central" || plotsPosteriorIndividualType.currentValue === "HPD"
 							enabled:		plotsPosteriorIndividualCI.checked
 							name:			"posteriorDistributionPlotIndividualCiMass"
 							label:			qsTr("Mass")
@@ -485,35 +485,33 @@ Form
 
 						DoubleField
 						{
-							visible:		plotsPosteriorIndividualType.currentText == "custom"
+							visible:		plotsPosteriorIndividualType.currentValue === "custom"
 							enabled:		plotsPosteriorIndividualCI.checked
 							name:			"posteriorDistributionPlotIndividualCiLower"
 							label:			qsTr("Lower")
 							id:				plotsPosteriorLower
 							fieldWidth:		50
-							defaultValue:	analysisType === "binomial" ? 0.25 : -1
-							min:			analysisType === "binomial" ? 0    : -9999999999
-							max:			plotsPosteriorUpper.value
+							defaultValue:	0
+							negativeValues: true
 							inclusive:		JASP.MinMax
 						}
 
 						DoubleField
 						{
-							visible:		plotsPosteriorIndividualType.currentText == "custom"
+							visible:		plotsPosteriorIndividualType.currentValue === "custom"
 							enabled:		plotsPosteriorIndividualCI.checked
 							name:			"posteriorDistributionPlotIndividualCiUpper"
 							label:			qsTr("Upper")
 							id:				plotsPosteriorUpper
 							fieldWidth:		50
-							defaultValue:	analysisType === "binomial" ? 0.75 : 1
-							min:			plotsPosteriorLower.value
-							max:			analysisType === "binomial" ? 1    : 9999999999
+							defaultValue:	1
+							negativeValues: true
 							inclusive:		JASP.MinMax
 						}
 
 						FormulaField
 						{
-							visible:		plotsPosteriorIndividualType.currentText == "support"
+							visible:		plotsPosteriorIndividualType.currentValue === "support"
 							enabled:		plotsPosteriorIndividualCI.checked
 							name:			"posteriorDistributionPlotIndividualCiBf"
 							label:			qsTr("BF")
@@ -547,37 +545,24 @@ Form
 
 				title: 							qsTr("Tables")
 
-				// CheckBox
-				// {
-				// 	name: 						"intervalTable"
-				// 	label: 						qsTr("Interval")
-				// 	childrenOnSameRow:	true
-
-				// 	Label		{ text: "-Inf" }
-				// 	DoubleField	{ name: "interval1"; fieldWidth: 30; defaultValue: 0.00 }
-				// 	DoubleField	{ name: "interval2"; fieldWidth: 30; defaultValue: 0.25 }
-				// 	DoubleField	{ name: "interval3"; fieldWidth: 30; defaultValue: 0.50 }
-				// 	DoubleField	{ name: "interval4"; fieldWidth: 30; defaultValue: 0.75 }
-				// 	DoubleField	{ name: "interval5"; fieldWidth: 30; defaultValue: 1.00 }
-				// 	Label		{ text: "-Inf" }
-				// }
 				CheckBox
 				{
 					name: "intervalTable"; label: qsTr("Interval"); childrenOnSameRow: true
 
-					info: qsTr("Show the posterior probabilities of the interval specifed with the input on the right. Note that the input is automatically sorted")
+					info: qsTr("Show the posterior probabilities of the interval specifed with the input on the right. Note that the input is automatically sorted and that the first and last fields are always negative and positive infinity.")
 
 					Row
 					{
-
+						id: intervalRow
 						spacing: jaspTheme.rowSpacing
-						DoubleField { id: interval0; name: "interval0"; fieldWidth: 30; negativeValues: true; defaultValue: -Infinity; editable: false					  }
-						DoubleField { id: interval1; name: "interval1"; fieldWidth: 30; negativeValues: true; defaultValue: 0.00; onEditingFinished: sortIntervalValues() }
-						DoubleField { id: interval2; name: "interval2"; fieldWidth: 30; negativeValues: true; defaultValue: 0.25; onEditingFinished: sortIntervalValues() }
-						DoubleField { id: interval3; name: "interval3"; fieldWidth: 30; negativeValues: true; defaultValue: 0.50; onEditingFinished: sortIntervalValues() }
-						DoubleField { id: interval4; name: "interval4"; fieldWidth: 30; negativeValues: true; defaultValue: 0.75; onEditingFinished: sortIntervalValues() }
-						DoubleField { id: interval5; name: "interval5"; fieldWidth: 30; negativeValues: true; defaultValue: 1.00; onEditingFinished: sortIntervalValues() }
-						DoubleField { id: interval6; name: "interval6"; fieldWidth: 30; negativeValues: true; defaultValue:  Infinity; editable: false					  }
+						property int fw: 50
+						DoubleField { id: interval0; name: "interval0"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: -Infinity;	editable: false							}
+						DoubleField { id: interval1; name: "interval1"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 0.00;		onEditingFinished: sortIntervalValues()	}
+						DoubleField { id: interval2; name: "interval2"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 0.25;		onEditingFinished: sortIntervalValues()	}
+						DoubleField { id: interval3; name: "interval3"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 0.50;		onEditingFinished: sortIntervalValues()	}
+						DoubleField { id: interval4; name: "interval4"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 0.75;		onEditingFinished: sortIntervalValues()	}
+						DoubleField { id: interval5; name: "interval5"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 1.00;		onEditingFinished: sortIntervalValues()	}
+						DoubleField { id: interval6; name: "interval6"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue:  Infinity;	editable: false							}
 					}
 
 
