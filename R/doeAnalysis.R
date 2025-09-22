@@ -70,6 +70,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisAnovaTable(jaspResults, dependent, options, ready, coded)
   .doeAnalysisCoefficientsTable(jaspResults, dependent, options, ready, coded)
   .doeAnalysisEquationTable(jaspResults, dependent, options, ready, coded)
+  .doeAnalysisStepwiseTable(jaspResults, dependent, options, ready, coded)
   .doeAnalysisPlotPareto(jaspResults, dependent, options, blocks, covariates, ready)
   .doeAnalysisPlotEffectNormalDistribution(jaspResults, dependent, options, blocks, covariates, ready)
   .doeAnalysisPlotQQResiduals(jaspResults, dependent, options, ready)
@@ -120,7 +121,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     "highestOrder", "order", "continuousFactorsFactorial", "modelTerms", "blocksFactorial",
     "designType", "continuousFactorsResponseSurface", "codeFactors", "rsmPredefinedModel", "fixedFactorsFactorial",
     "rsmPredefinedTerms", "dependentFactorial", "covariates", "codeFactorsMethod", "codeFactorsManualTable",
-    "squaredTerms", "sumOfSquaresType", "squaredTermsCoded")
+    "squaredTerms", "sumOfSquaresType", "squaredTermsCoded", "stepwiseMethod")
   return(deps)
 }
 
@@ -252,7 +253,44 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       covariateString <- paste0(" + ", unlist(covariates), collapse = "")
       formulaString <- paste0(formulaString, covariateString)
     }
+
     formula <- as.formula(formulaString)
+
+    if (options[["stepwiseMethod"]] != "enter") {
+
+      stepwiseData <- if (options[["codeFactors"]]) datasetCoded else dataset
+      fullModel <- lm(formula, data = stepwiseData)
+
+      if (options[["stepwiseMethod"]] == "forward") {
+        initialFormula <- as.formula(paste(dep, "~ 1"))
+      } else {
+        initialFormula <- formula
+      }
+
+      stepwiseModel <- step(lm(initialFormula, data = stepwiseData),
+                            direction = options[["stepwiseMethod"]],
+                            trace = 0,
+                            scope = formula,
+                            keep = function(model, aic)
+                              list(model = model,
+                                   aic = aic,
+                                   coefficients = coef(model)))
+
+      excludedVars <- setdiff(names(fullModel$coefficients), names(stepwiseModel$coefficients))
+      formula <- as.formula(stepwiseModel)
+
+      # Make data frame from stepwise results, with step number, AIC of that model, and formula
+      stepwiseResult <- data.frame(
+        stepNr = 1:ncol(stepwiseModel$keep),
+        AIC = unlist(stepwiseModel$keep[2, ]),
+        formula = sapply(stepwiseModel$keep[3, ], function(x)
+          # apply some gsub magic to turn I(A^2) into A^2
+          paste(gsub("I\\((.*)\\^2\\)", "\\1^2", names(x)[-1]), collapse  = " + "))
+      )
+
+      result[["stepwiseResult"]] <- list(excludedVars = gsub("I\\((.*)\\^2\\)", "\\1^2", excludedVars),
+                                         stepwiseResult = stepwiseResult)
+    }
 
     regressionFit <- lm(formula, data = dataset)
     regressionFitCoded <- lm(formula, data = datasetCoded)
@@ -497,40 +535,26 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       resultCoded[["regression"]][["coefficients"]][["p"]] <- rep(NA, length(valid_coefsCoded))
     }
 
-    ## Model formula
-    ## uncoded
-    coefs <- coef(regressionFit)[!is.na(coef(regressionFit))]
-    coefs <- round(coefs, .numDecimals)
+    ## Model formula for predictors
+    coefs <-  if (options[["codeFactors"]]) coefsCoded else coefs
     coefNames <- if (options[["tableAlias"]]) termNamesAliased else termNames
-    plusOrMin <- sapply(seq_len(length(coefs)), function(x) {
-      if (coefs[x] > 0) "+" else "-"
-    })
-    filledFormula <- sprintf("%s = %s %s %s %s %s", currentDependent, coefs[1], coefNames[1], plusOrMin[2], abs(coefs[2]), coefNames[2])
-    if (length(coefs) > 2) {
-      for (i in 3:length(coefs)) {
-        filledFormula <- sprintf("%s %s %s %s", filledFormula, plusOrMin[i], abs(coefs[i]), coefNames[i])
-      }
-    }
 
-    #coded
-    coefsCoded <- coef(regressionFitCoded)[!is.na(coef(regressionFitCoded))]
-    coefsCoded <- round(coefsCoded, .numDecimals)
-    coefNames <- if (options[["tableAlias"]]) termNamesAliasedCoded else termNames
-    plusOrMin <- sapply(seq_len(length(coefsCoded)), function(x) {
-      if (coefsCoded[x] > 0) "+" else "-"
-    })
-    filledFormulaCoded <- sprintf("%s = %s %s %s %s %s", currentDependent, coefsCoded[1], coefNames[1], plusOrMin[2], abs(coefsCoded[2]), coefNames[2])
-    if (length(coefsCoded) > 2) {
-      for (i in 3:length(coefsCoded)) {
-        filledFormulaCoded <- sprintf("%s %s %s %s", filledFormulaCoded, plusOrMin[i], abs(coefsCoded[i]), coefNames[i])
-      }
-    }
+    coefFormula <- paste(ifelse(sign(coefs[-1,1])==1, " +", " -"),
+                         round(abs(coefs[-1,1]), .numDecimals),
+                         coefNames[-1],
+                         collapse = "", sep = " ")
+
+    # Now add dependent name and intercept
+    filledFormula <- paste0(dep, " = ",
+                            round(coefs[1, 1], .numDecimals),
+                            coefFormula)
+
     result[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormula)
     jaspResults[[currentDependent]][["doeResult"]] <- createJaspState(result)
     jaspResults[[currentDependent]][["doeResult"]]$dependOn(options = .doeAnalysisBaseDependencies())
 
 
-    resultCoded[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormulaCoded)
+    resultCoded[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormula)
     jaspResults[[currentDependent]][["doeResultCoded"]] <- createJaspState(resultCoded)
     jaspResults[[currentDependent]][["doeResultCoded"]]$dependOn(options = .doeAnalysisBaseDependencies())
   }
@@ -1157,9 +1181,9 @@ get_levels <- function(var, num_levels, dataset) {
   # calculate model row
   modelSS <- sum(anovaFit$`Sum Sq`[-nrow(anovaFit)])
   modelDf <- sum(anovaFit$Df[-nrow(anovaFit)])
-  modelMS <- modelSS / modelDf
+  modelMS <- if (modelDf != 0) modelSS / modelDf else NA
   msError <- anovaFit$`Mean Sq`[nrow(anovaFit)]
-  modelFValue <- if (msError != 0) modelMS / msError else NA
+  modelFValue <- if (msError != 0 && modelDf != 0) modelMS / msError else NA
   modelPValue <- if (!is.na(modelFValue)) pf(modelFValue, modelDf, anovaFit$Df[nrow(anovaFit)], lower.tail = FALSE) else NA
   modelRow <- data.frame(df = modelDf, ss = modelSS, ms = modelMS, f = modelFValue, p = modelPValue)
   colnames(modelRow) <- colnames(anovaFit)
@@ -1326,6 +1350,7 @@ get_levels <- function(var, num_levels, dataset) {
     if (!is.null(jaspResults[["tableAnova"]])) {
       return()
     }
+
     tb <- createJaspTable(gettext("ANOVA"))
     tb$addColumnInfo(name = "terms", title = gettext("Source"), type = "string")
     tb$addColumnInfo(name = "adjss", title = gettext("Sum of squares"), type = "number")
@@ -1396,15 +1421,16 @@ get_levels <- function(var, num_levels, dataset) {
       tb$dependOn(options = c("codeFactors", "codeFactorsManualTable", "codeFactorsMethod", "tableEquation", "tableAlias", .doeAnalysisBaseDependencies()))
       tb2$position <- 4
       jaspResults[[dep]][["tableCoefficientsLegend"]] <- tb2
-
       result2 <- jaspResults[[dep]][["doeResult"]]$object[["regression"]][["factorLevels"]]
       factorName <- if (options[["tableAlias"]]) result2[["factorNamesAliased"]] else result2[["factorNames"]]
-      rows2 <- data.frame(
-        factorName = factorName,
-        factorLevel = result2[["levels"]]
-      )
+      if (length(factorName) > 0) {
+        rows2 <- data.frame(
+          factorName = factorName,
+          factorLevel = result2[["levels"]]
+        )
 
-      tb2$addRows(rows2)
+        tb2$addRows(rows2)
+      }
     }
   }
 }
@@ -1428,6 +1454,44 @@ get_levels <- function(var, num_levels, dataset) {
     tb$addRows(row)
   }
 }
+
+.doeAnalysisStepwiseTable <- function(jaspResults, dependent, options, ready, coded) {
+  for (dep in dependent) {
+    if (options[["stepwiseMethod"]] == "enter" || !is.null(jaspResults[[dep]][["result"]])) {
+      return()
+    }
+
+    tb <- createJaspTable(gettext("Stepwise results"))
+
+    tb$addColumnInfo(name = "stepNr",  title = gettext("Step"), type = "string", combine = TRUE)
+    tb$addColumnInfo(name = "AIC",     title = "AIC", type = "number")
+    tb$addColumnInfo(name = "formula", title =  gettext("Formula"), type = "string")
+
+    tb$dependOn(options = .doeAnalysisBaseDependencies())
+    tb$position <- 4
+
+    jaspResults[[dep]][["stepwiseTable"]] <- tb
+
+    if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
+      return()
+    }
+
+    result <- jaspResults[[dep]][["doeResult"]]$object[["stepwiseResult"]]
+
+    tb$setData(result[["stepwiseResult"]])
+
+    excludedVars <- result[["excludedVars"]]
+    if (length(excludedVars) > 0) {
+      message <- sprintf(ngettext(length(excludedVars),
+                                  "The following covariate was considered but not included: %s.",
+                                  "The following covariates were considered but not included: %s."),
+                         paste(excludedVars, collapse=", "))
+      tb$addFootnote(message)
+    }
+
+  }
+}
+
 
 .doeAnalysisPlotPareto <- function(jaspResults, dependent, options, blocks, covariates, ready) {
   for (dep in dependent) {
