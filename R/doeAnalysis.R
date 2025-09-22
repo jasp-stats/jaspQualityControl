@@ -535,9 +535,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       resultCoded[["regression"]][["coefficients"]][["p"]] <- rep(NA, length(valid_coefsCoded))
     }
 
-    ## Model formula for predictors
-    coefs <-  if (options[["codeFactors"]]) coefsCoded else coefs
-    coefNames <- if (options[["tableAlias"]]) termNamesAliased else termNames
+    ## Model formula for predictors, based on coding/aliasing
+    if (options[["tableAlias"]]) {
+      coefNames <- if (options[["codeFactors"]]) termNamesAliasedCoded else termNamesAliased
+    } else {
+      coefNames <- if (options[["codeFactors"]]) termNamesCoded else termNames
+    }
 
     coefFormula <- paste(ifelse(sign(coefs[-1,1])==1, " +", " -"),
                          round(abs(coefs[-1,1]), .numDecimals),
