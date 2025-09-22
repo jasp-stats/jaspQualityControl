@@ -27,7 +27,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .bpcsIsReady <- function(options) {
-  length(options[["measurementLongFormat"]]) > 0L && options[["measurementLongFormat"]] != "" &&
+  length(options[["measurementLongFormat"]]) > 0L &&
+    options[["measurementLongFormat"]] != "" &&
     options[["lowerSpecificationLimit"]] &&
     options[["upperSpecificationLimit"]] &&
     options[["target"]]
@@ -141,7 +142,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     # qc does c(-Inf, interval_probability, Inf)
     interval_probability <- unlist(options[paste0("interval", 1:5)], use.names = FALSE)
     interval_summary <- summary(fit[["rawfit"]], interval_probability = interval_probability)[["interval_summary"]]
-    colnames(interval_summary) <- paste0("interval", 1:6)
+    colnames(interval_summary) <- c("metric", paste0("interval", 1:6))
     table$setData(interval_summary)
 
   }, error = function(e) {
@@ -191,8 +192,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
         qc::plot_density(
           fit$summaryObject,
           what = c("Cp", "CpU", "CpL", "Cpk", "Cpm"),
-          point_estimate  = options[["posteriorDistributionPlotIndividualPointEstimateType"]],
-          ci              = options[["posteriorDistributionPlotIndividualCiType"]],
+          point_estimate  = with(options, if (posteriorDistributionPlotIndividualPointEstimate) posteriorDistributionPlotIndividualPointEstimateType else "none"),
+          ci              = with(options, if (posteriorDistributionPlotIndividualCi)            posteriorDistributionPlotIndividualCiType            else "none"),
           ci_level        = options[["posteriorDistributionPlotIndividualCiMass"]],
           ci_custom_left  = options[["posteriorDistributionPlotIndividualCiLower"]],
           ci_custom_right = options[["posteriorDistributionPlotIndividualCiUpper"]],
