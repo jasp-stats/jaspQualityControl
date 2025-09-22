@@ -10,28 +10,39 @@ Description: Investigate if a manufactured product adheres to a defined set of q
 License: GPL (>= 2)
 Encoding: UTF-8
 Imports:
+  BayesFactor,
+  bayesplot,
   car,
   cowplot,
   daewr,
   desirability,
   DoE.base,
+  dplyr,
+  ellipse,
   EnvStats,
+  extraDistr,
   FAdist,
   fitdistrplus,
   FrF2,
+  GeneralizedHyperbolic,
   ggplot2,
   ggrepel,
   goftest,
   ggpp,
+  HDInterval,
   irr,
   jaspBase,
   jaspDescriptives,
   jaspGraphs,
   lubridate,
   mle.tools,
+  mvtnorm,
+  posterior,
   psych,
   qcc,
+  rmetalog,
   rsm,
+  rstan,
   Rspc,
   tidyr,
   tibble,
@@ -43,4 +54,4 @@ Remotes:
   jasp-stats/jaspDescriptives,
   jasp-stats/jaspGraphs
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.2
+RoxygenNote: 7.3.2
