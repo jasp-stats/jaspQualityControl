@@ -87,6 +87,38 @@
               xAxisTitle = xAxisTitle))
 }
 
+.transformData <- function(dataset, measurements, options) {
+  if (options[["dataTransformation"]] == "none") return(dataset)
+  # transforms need data in a long format...
+  dataset <- tidyr::pivot_longer(dataset, tidyr::all_of(measurements))
+
+  x <- dataset[["value"]]
+  group <- dataset[["name"]]
+  lambda <- 1 #options[["dataTransformationLambda"]]
+  shift <- 1 #options[["dataTransformationShift"]]
+
+  dataset[["value"]] <- switch(
+    options[["dataTransformation"]],
+    exponential = x^lambda,
+    boxCox = jaspBase::BoxCox(x, lambda=lambda, shift=shift),
+    boxCoxAuto = jaspBase::BoxCoxAuto(x, shift=shift),
+    boxCoxMinitab = jaspBase::BoxCoxMinitab(x, group=group),
+    yeoJohnson = jaspBase::YeoJohnson(x, lambda=lambda),
+    yeoJohnsonAuto = jaspBase::YeoJohnsonAuto(x),
+    johnson = jaspBase::Johnson(x)
+  )
+
+  # some auto-transformations return meta-info about the applied transform
+  attr <- attributes(dataset[["value"]])
+
+  dataset <- tidyr::pivot_wider(dataset, values_from="value", names_from="name")
+  dataset <- as.data.frame(dataset)
+
+  attributes(dataset) <- attr
+
+  return(dataset)
+}
+
 .qcReport <- function(text = NULL, # a string or vector of strings,
                       plots, # a list of ggplots. If the plots should stay on top of each other, use a nested list.
                       tables = NULL, # a list of dataframes. If tables should be in the same plot, use a nested list.

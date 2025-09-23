@@ -97,11 +97,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
+
   # Error Handling
   if (ready) {
     .hasErrors(dataset, type = c('infinity'),
                all.target = measurements, exitAnalysisIfErrors = TRUE)
   }
+
+  # Transform data as needed
+  if (ready) dataset <- .transformData(dataset, measurements, options)
 
   # Plot note about R/S chart recommendation
   if (length(measurements) > 5 && options[["controlChartType"]] == "xBarR") # if the subgroup size is above 5, R chart is not recommended
