@@ -36,11 +36,11 @@ The size of the subgroups is relevant for the calculation of the process varianc
   - **None**: The data is analysed as-is
   - **Exponential**: The data is transformed using the equation $y = (x+\text{shift})^\lambda$ if $\lambda \neq 0$, otherwise $y = \ln(x + \text{shift})$. Convenient values: $\lambda = 0$ - use the natural log of the data, $\lambda = 0.5$ - use the square root of your data.
   - **Box-Cox**: The data is transformed using the equation $y = \frac{(x+\text{shift})^\lambda - 1}{\lambda}$ if $\lambda = 0$, otherwise $y = \ln(x + \text{shift})$.
-  - **Box-Cox (Log. Lik)**: The data is transformed using the Box-Cox transformation, but with the $\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution.
+  - **Box-Cox (Log. Lik)**: Only for total (overall) process capability. The data is transformed using the Box-Cox transformation, but with the $\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution.
   - **Box-Cox (Minitab)**: The data is transformed using a procedure emulating the "Box-Cox (optimal $\lambda$)" transform in Minitab: The $\lambda$ is automatically estimated by minimizing the within-subgroup unbiased pooled standard deviation of a power transformed variable. Note that the final transformation uses the equation described in the **Exponential** option (removing the -1 shift and scale $\lambda$).
   - **Yeo-Johnson**: The data is transformed using the Yeo-Johnson transform as described in Yeo & Johnson (2000). It can be used for unbounded data.
-  - **Yeo-Johnson (Log. Lik)**: The data is transformed using the Yeo-Johnson transform, but with the $\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution.
-  - **Johnson**: The data is transformed using the Johnson transform. It can be used for unbounded data. The transform is fully automatic, as described in Chou, Polanski, & Mason (1998).
+  - **Yeo-Johnson (Log. Lik)**: Only for total (overall) process capability. The data is transformed using the Yeo-Johnson transform, but with the $\lambda$ parameter automatically estimated using the profile likelihood of a normal distribution.
+  - **Johnson**: Only for total (overall) process capability. The data is transformed using the Johnson transform. It can be used for unbounded data. The transform is fully automatic, as described in Chou, Polanski, & Mason (1998).
 
 - **Shift** numerical value of the shift parameter used for transforms that accept bounded data. This option is disabled for unbounded transforms (Yeo-Johnson, Johnson), and Box-Cox (Minitab) transform.
 - **Lambda** numerical value of the $\lambda$ parameter of the transforms. This option is disabled for transforms which automatically estimate their parameter(s).

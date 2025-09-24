@@ -88,14 +88,18 @@
 }
 
 .transformData <- function(dataset, measurements, options) {
-  if (options[["dataTransformation"]] == "none") return(dataset)
+  if (options[["dataTransformation"]] == "none") return(list(dataset=dataset, parameters=NULL))
   # transforms need data in a long format...
+
+  # we need to append a unique id for each row in a wide format
+  # so that we can do pivot_longer -> pivot_wider
+  dataset[["id"]] <- seq_len(nrow(dataset))
   dataset <- tidyr::pivot_longer(dataset, tidyr::all_of(measurements))
 
   x <- dataset[["value"]]
   group <- dataset[["name"]]
-  lambda <- 1 #options[["dataTransformationLambda"]]
-  shift <- 1 #options[["dataTransformationShift"]]
+  lambda <- options[["dataTransformationLambda"]]
+  shift <- options[["dataTransformationShift"]]
 
   dataset[["value"]] <- switch(
     options[["dataTransformation"]],
@@ -110,13 +114,14 @@
 
   # some auto-transformations return meta-info about the applied transform
   attr <- attributes(dataset[["value"]])
+  attributes(dataset[["value"]]) <- NULL
 
-  dataset <- tidyr::pivot_wider(dataset, values_from="value", names_from="name")
+  # reshape back to wider format and remove the id col
+  dataset <- tidyr::pivot_wider(dataset, values_from="value", names_from="name", id_cols="id")
+  dataset[["id"]] <- NULL
   dataset <- as.data.frame(dataset)
 
-  attributes(dataset) <- attr
-
-  return(dataset)
+  return(list(dataset=dataset, parameters=attr))
 }
 
 .qcReport <- function(text = NULL, # a string or vector of strings,

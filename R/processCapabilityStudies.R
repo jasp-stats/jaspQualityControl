@@ -105,7 +105,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   # Transform data as needed
-  if (ready) dataset <- .transformData(dataset, measurements, options)
+  if (ready) {
+    transformOutput <- .transformData(dataset, measurements, options)
+    dataset <- transformOutput[["dataset"]]
+    transformParameters <- transformOutput[["parameters"]]
+  }
 
   # Plot note about R/S chart recommendation
   if (length(measurements) > 5 && options[["controlChartType"]] == "xBarR") # if the subgroup size is above 5, R chart is not recommended
@@ -122,6 +126,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                                      title = "Zero values found in non-normal capability study:",
                                                      position = 1)
       jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "capabilityStudyType",
+                                              "dataTransformation", "dataTransformationLambda", "dataTransformationShift",
                                               "nullDistribution"))
     }
   }
@@ -137,6 +142,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     jaspResults[["report"]] <- reportPlot
     jaspResults[["report"]]$dependOn(c("report", "measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
                                        "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
+                                       "dataTransformation", "dataTransformationLambda", "dataTransformationShift",
                                        "controlLimitsNumberOfSigmas", "groupingVariableMethod", "reportProcessStability",
                                        "reportProcessCapabilityPlot", "reportProbabilityPlot", "reportProcessCapabilityTables",
                                        "upperSpecificationLimit", "lowerSpecificationLimit", "subgroupSizeUnequal", "fixedSubgroupSizeValue",
@@ -310,6 +316,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       # first chart is always xBar-chart, second is either R-, mR-, or s-chart
       jaspResults[["xBar"]] <- createJaspContainer(gettextf("X-bar & %s control chart", secondPlotTitle))
       jaspResults[["xBar"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
+                                       "dataTransformation", "dataTransformationLambda", "dataTransformationShift",
                                        "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
                                        "subgroupSizeUnequal", "controlChartSdUnbiasingConstant", "controlChart",
                                        "controlLimitsNumberOfSigmas", "groupingVariableMethod", .getDependenciesControlChartRules()))
@@ -352,6 +359,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else if (options[["controlChartType"]] == "xmr" && options[["controlChart"]]) {
       jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR control chart"))
       jaspResults[["xmr"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
+                                      "dataTransformation", "dataTransformationLambda", "dataTransformationShift",
                                       "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
                                       "subgroupSizeUnequal", "controlChart", "controlLimitsNumberOfSigmas", "groupingVariableMethod", .getDependenciesControlChartRules()))
       jaspResults[["xmr"]]$position <- 1
@@ -2316,6 +2324,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Histogram"), width = 600, height = 400)
     plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
+                              "dataTransformation", "dataTransformationLambda", "dataTransformationShift",
                               "report", "measurementLongFormat", "manualSubgroupSizeValue", "subgroup", 'nullDistribution',
                               "stagesLongFormat", "stagesWideFormat", "histogramBinBoundaryDirection", "subgroupSizeType",
                               "manualSubgroupSizeValue", "groupingVariableMethod"))
