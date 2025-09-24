@@ -27,6 +27,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     covariates <- options[["covariates"]]
     blocks <- options[["blocksFactorial"]]
     dependent <- options[["dependentFactorial"]]
+    stepwiseMethod <- options[["stepwiseMethodFactorial"]]
   } else if (options[["designType"]] == "responseSurfaceDesign") {
     ready <- length(options[["continuousFactorsResponseSurface"]]) >= 1 && length(options[["dependentResponseSurface"]]) >= 1
     discretePredictors <- options[["fixedFactorsResponseSurface"]]
@@ -34,6 +35,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     covariates <- NULL
     blocks <- options[["blocksResponseSurface"]]
     dependent <- options[["dependentResponseSurface"]]
+    stepwiseMethod <- options[["stepwiseMethodResponseSurface"]]
   }
 
   if (!ready) {
@@ -55,7 +57,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     jaspResults[[dep]] <- createJaspContainer(title = dep)
   }
 
-  p <- try(.doeAnalysisMakeState(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, ready))
+  p <- try(.doeAnalysisMakeState(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, stepwiseMethod, ready))
 
   if (isTryError(p)) {
     jaspResults[["errorPlot"]] <- createJaspPlot(title = gettext("Error"))
@@ -70,7 +72,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisAnovaTable(jaspResults, dependent, options, ready, coded)
   .doeAnalysisCoefficientsTable(jaspResults, dependent, options, ready, coded)
   .doeAnalysisEquationTable(jaspResults, dependent, options, ready, coded)
-  .doeAnalysisStepwiseTable(jaspResults, dependent, options, ready, coded)
+  .doeAnalysisStepwiseTable(jaspResults, dependent, options, ready, coded, stepwiseMethod)
   .doeAnalysisPlotPareto(jaspResults, dependent, options, blocks, covariates, ready)
   .doeAnalysisPlotEffectNormalDistribution(jaspResults, dependent, options, blocks, covariates, ready)
   .doeAnalysisPlotQQResiduals(jaspResults, dependent, options, ready)
@@ -121,13 +123,13 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     "highestOrder", "order", "continuousFactorsFactorial", "modelTerms", "blocksFactorial",
     "designType", "continuousFactorsResponseSurface", "codeFactors", "rsmPredefinedModel", "fixedFactorsFactorial",
     "rsmPredefinedTerms", "dependentFactorial", "covariates", "codeFactorsMethod", "codeFactorsManualTable",
-    "squaredTerms", "sumOfSquaresType", "squaredTermsCoded", "stepwiseMethod")
+    "squaredTerms", "sumOfSquaresType", "squaredTermsCoded", "stepwiseMethodResponseSurface", "stepwiseMethodFactorial")
   return(deps)
 }
 
 .scaleDOEvariable <- function(x){2*(x-min(x))/(max(x)-min(x))-1}
 
-.doeAnalysisMakeState <- function(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, ready) {
+.doeAnalysisMakeState <- function(jaspResults, dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent, stepwiseMethod, ready) {
   if (!ready || jaspResults$getError()) {
     return()
   }
@@ -256,19 +258,19 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
     formula <- as.formula(formulaString)
 
-    if (options[["stepwiseMethod"]] != "enter") {
+    if (stepwiseMethod != "enter") {
 
       stepwiseData <- if (options[["codeFactors"]]) datasetCoded else dataset
       fullModel <- lm(formula, data = stepwiseData)
 
-      if (options[["stepwiseMethod"]] == "forward") {
+      if (stepwiseMethod == "forward") {
         initialFormula <- as.formula(paste(dep, "~ 1"))
       } else {
         initialFormula <- formula
       }
 
       stepwiseModel <- step(lm(initialFormula, data = stepwiseData),
-                            direction = options[["stepwiseMethod"]],
+                            direction = stepwiseMethod,
                             trace = 0,
                             scope = formula,
                             keep = function(model, aic)
@@ -542,7 +544,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       coefNames <- if (options[["codeFactors"]]) termNamesCoded else termNames
     }
 
-    coefFormula <- paste(ifelse(sign(coefs[-1,1])==1, " +", " -"),
+    coefFormula <- paste(ifelse(sign(coefs[-1,1])==1, " +", " \u2013"),
                          round(abs(coefs[-1,1]), .numDecimals),
                          coefNames[-1],
                          collapse = "", sep = " ")
@@ -1458,9 +1460,9 @@ get_levels <- function(var, num_levels, dataset) {
   }
 }
 
-.doeAnalysisStepwiseTable <- function(jaspResults, dependent, options, ready, coded) {
+.doeAnalysisStepwiseTable <- function(jaspResults, dependent, options, ready, coded, stepwiseMethod) {
   for (dep in dependent) {
-    if (options[["stepwiseMethod"]] == "enter" || !is.null(jaspResults[[dep]][["result"]])) {
+    if (stepwiseMethod == "enter" || !is.null(jaspResults[[dep]][["doeResult"]])) {
       return()
     }
 
