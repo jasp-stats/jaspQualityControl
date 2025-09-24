@@ -204,12 +204,12 @@ Form
 		{
 			Group
 			{
-				title: qsTr("Data transformation")
+				title: qsTr("Transform data")
 				DropDown
 				{
 					name:		"dataTransformation"
 					id:			dataTransformation
-					title:		qsTr("Type of transformation")
+					label:		qsTr("Type")
 					values:
 					[
 						{label: qsTr("None"),					value: "none"},
