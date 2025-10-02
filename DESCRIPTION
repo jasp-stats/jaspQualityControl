@@ -18,16 +18,19 @@ Imports:
   EnvStats,
   FAdist,
   fitdistrplus,
+  flexsurv,
   FrF2,
   ggplot2,
   ggrepel,
   goftest,
   ggpp,
+  ggh4x,
   irr,
   jaspBase,
   jaspDescriptives,
   jaspGraphs,
   lubridate,
+  mle.tools,
   psych,
   qc,
   qcc,
@@ -37,11 +40,10 @@ Imports:
   tibble,
   vipor,
   weibullness,
-  utils,
-  flexsurv
+  utils
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
   jasp-stats/jaspGraphs
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

@@ -538,6 +538,37 @@ Form
 					// }
 
 				}
+
+				CheckBox
+				{
+					name:		"sequentialAnalysisPlot"
+					label:		qsTr("Sequential Analysis")
+
+					DropDown
+					{
+						label:		qsTr("Type")
+						name:		"sequentialAnalysisPlotPointEstimateType"
+						values:		["mean", "median"]//, "mode"]
+					}
+
+					CheckBox
+					{
+						name:				"sequentialAnalysisPlotCi"
+						label:				qsTr("CI")
+						childrenOnSameRow:	true
+
+						CIField
+						{
+							name:				"sequentialAnalysisPlotCiMass"
+							label:				qsTr("Mass")
+							fieldWidth:			50
+							defaultValue:		95
+							min:				1
+							max:				100
+							inclusive:			JASP.MaxOnly
+						}
+					}
+				}
 			}
 
 			Group
