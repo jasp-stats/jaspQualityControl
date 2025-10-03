@@ -48,6 +48,10 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   )
 }
 
+.bpcsProcessCriteriaDeps <- function() {
+  c(paste0("interval", 1:4), paste0("intervalLabel", 1:5))
+}
+
 .bpcsTpriorFromOptions <- function(options) {
 
   switch(options[["capabilityStudyType"]],
@@ -115,7 +119,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "lower", title = gettext("Lower"), type = "number", overtitle = overtitle)
   table$addColumnInfo(name = "upper", title = gettext("Upper"), type = "number", overtitle = overtitle)
 
-  table$dependOn(c("measurementLongFormat", "credibleIntervalWidth"))
+  table$dependOn(.bpcsDefaultDeps())
 
   jaspResults[["bpcsCapabilityTable"]] <- table
   return(table)
@@ -141,9 +145,9 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   tryCatch({
 
     # qc does c(-Inf, interval_probability, Inf)
-    interval_probability <- unlist(options[paste0("interval", 1:5)], use.names = FALSE)
+    interval_probability <- unlist(options[paste0("interval", 1:4)], use.names = FALSE)
     interval_summary <- summary(fit[["rawfit"]], interval_probability = interval_probability)[["interval_summary"]]
-    colnames(interval_summary) <- c("metric", paste0("interval", 1:6))
+    colnames(interval_summary) <- c("metric", paste0("interval", 1:5))
     table$setData(interval_summary)
 
   }, error = function(e) {
@@ -157,24 +161,24 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .bpcsIntervalTableMeta <- function(jaspResults, options) {
 
-  table <- createJaspTable(title = gettext("Interval Table"))
+  table <- createJaspTable(title = gettext("Interval Table"), position = 3)
 
-  table$addColumnInfo(name = "metric",  title = gettext("Capability\nMeasure"), type = "string",
-                      position = 3)
+  table$addColumnInfo(name = "metric", title = gettext("Capability\nMeasure"), type = "string")
 
-  intervalBounds <- c(-Inf, unlist(options[paste0("interval", 1:5)], use.names = FALSE), Inf)
+  intervalBounds <- c(-Inf, unlist(options[paste0("interval",      1:4)], use.names = FALSE), Inf)
+  intervalNames  <-         unlist(options[paste0("intervalLabel", 1:5)], use.names = FALSE)
   n <- length(intervalBounds)
+
+  # custom format helper. we don't use e.g., %.3f directly because that adds trailing zeros (2.000 instead of 2)
+  fmt <- \(x) formatC(x, digits = 3, format = "f", drop0trailing = TRUE)
   for (i in 1:(n - 1)) {
     j <- i + 1
     lhs <- if (i == 1)     "(" else "["
     rhs <- if (i == n - 1) ")" else "]"
-    title <- sprintf("%s%.3f ,  %.3f%s", lhs, intervalBounds[i], intervalBounds[j], rhs)
+    title <- sprintf("%s %s%s, %s%s", intervalNames[i], lhs, fmt(intervalBounds[i]), fmt(intervalBounds[j]), rhs)
     table$addColumnInfo(name = paste0("interval", i), title = title, type = "number")
   }
-  table$dependOn(c(
-    "measurementLongFormat", "intervalTable", "credibleIntervalWidth",
-    paste0("interval", 1:5), "targetValue", "lowerSpecificationLimitValue", "upperSpecificationLimitValue"
-  ))
+  table$dependOn(c("intervalTable", .bpcsDefaultDeps(), .bpcsProcessCriteriaDeps()))
 
   jaspResults[["bpcsIntervalTable"]] <- table
   return(table)
@@ -193,7 +197,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
       plot  = if (.bpcsIsReady(options) && !is.null(fit)) {
         qc::plot_density(
           fit$summaryObject,
-          what = c("Cp", "CpU", "CpL", "Cpk", "Cpm"),
+          what = c("Cp", "CpU", "CpL", "Cpk", "Cpc", "Cpm"),
           point_estimate  = with(options, if (posteriorDistributionPlotIndividualPointEstimate) posteriorDistributionPlotIndividualPointEstimateType else "none"),
           ci              = with(options, if (posteriorDistributionPlotIndividualCi)            posteriorDistributionPlotIndividualCiType            else "none"),
           ci_level        = options[["posteriorDistributionPlotIndividualCiMass"]],
@@ -247,7 +251,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
                           "sequentialAnalysisPlot",
                           "sequentialAnalysisPlotPointEstimateType",
                           "sequentialAnalysisPlotCi",
-                          "sequentialAnalysisPlotCiMass"
+                          "sequentialAnalysisPlotCiMass",
+                          "sequentialAnalysisPlotAdditionalInfo"
                         )))
   jaspResults[["sequentialAnalysisPlot"]] <- plt
 
@@ -308,7 +313,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
   attr(estimates, "nseq") <- nseq
 
-  # we could use this one, but only if the CI width didn't change...
+  # we could use this one, but only if the CI width is exactly equal to the one requested here.
+  # that would be nice to add at some point so the values in the table are identical to those in the plot
   # sum_n <- summary(fit)$summary
   # estimates[, , n] <- as.matrix(sum_n[keys])
 
@@ -320,6 +326,11 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   # this is somewhat ugly, but we convert the 3d array to a tibble for plotting
   # we don't create the tibble immediately in the previous function, because
   # it takes up more space in the state (which means larger jasp files)
+
+  categoryNames <- c(gettext("Incapable"), gettext("Capable"), gettext("Satisfactory"), gettext("Excellent"), gettext("Super"))
+  gridLines <- c(1, 4/3, 3/2, 2)
+  # the extrema are missing here, these should be determined based on any leftover space.
+  defaultCategoryPositions <- (gridLines[-1] + gridLines[-length(gridLines)]) / 2
 
   nseq <- attr(estimates, "nseq")
 
@@ -334,25 +345,69 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # get y scales per facet
   y_breaks_per_scale <- tapply(tb, tb$metric, \(x) {
-    breaks <- jaspGraphs::getPrettyAxisBreaks(range(x$lower, x$upper, na.rm = TRUE))
-    ggplot2::scale_y_continuous(breaks = breaks, limits = range(breaks))
+    observedRange <- range(x$lower, x$upper, na.rm = TRUE)
+    dist <- observedRange[2L] - observedRange[1L]
+
+    observedRange[1L] <- min(observedRange[1L], gridLines[1L] - 0.1 * dist)
+    observedRange[2L] <- max(observedRange[2L], gridLines[length(gridLines)] + 0.1 * dist)
+
+    leftBreaks <- jaspGraphs::getPrettyAxisBreaks(observedRange)
+    leftLimits <- range(leftBreaks)
+
+    rightAxis <- ggplot2::waiver()
+    if (options[["sequentialAnalysisPlotAdditionalInfo"]]) {
+      rightBreaksShown <- c(
+        (leftLimits[1L] + gridLines[1L]) / 2,
+        defaultCategoryPositions,
+        (leftLimits[2L] + gridLines[length(gridLines)]) / 2
+      )
+      rightBreaks <- numeric(2L*length(rightBreaksShown) + 1L)
+      rightBreaks[1L]                                 <- leftLimits[1L]
+      rightBreaks[seq(2, length(rightBreaks), 2)]     <- rightBreaksShown
+      rightBreaks[seq(3, length(rightBreaks) - 2, 2)] <- gridLines
+      rightBreaks[length(rightBreaks)]                <- leftLimits[2L]
+
+      rightLabels <- character(length(rightBreaks))
+      rightLabels[seq(2, length(rightLabels), 2)]   <- categoryNames
+      rightAxis <- ggplot2::sec_axis(identity, breaks = rightBreaks, labels = rightLabels)
+    }
+
+    ggplot2::scale_y_continuous(breaks = leftBreaks, limits = range(leftBreaks),
+                                minor_breaks = gridLines,
+                                sec.axis = rightAxis)
   }, simplify = FALSE)
 
   ribbon <- NULL
   if (options[["sequentialAnalysisPlotCi"]])
     ribbon <- ggplot2::geom_ribbon(ggplot2::aes(ymin = lower, ymax = upper), alpha = 0.3)
 
+  extraTheme <- gridLinesLayer <- NULL
+  sides <- "bl"
+  if (options[["sequentialAnalysisPlotAdditionalInfo"]]) {
+    extraTheme <- ggplot2::theme(axis.ticks.y.right = ggplot2::element_line(colour = rep(c("black", NA), length.out = 11)))
+    sides      <- "blr"
+    # I tried using minor.breaks for this, but these are not drawn properly with facet_grid and facetted_pos_scales
+    gridLinesLayer <- ggplot2::geom_hline(
+      data = data.frame(yintercept = gridLines),
+      ggplot2::aes(yintercept = yintercept),
+      # show.legend = FALSE,
+      linewidth = .5, color = "lightgray", linetype = "dashed"
+    )
+
+  }
+
   ggplot2::ggplot(tb, ggplot2::aes(x = n, y = mean)) +
+    gridLinesLayer +
     ribbon +
-    ggplot2::geom_line() +
+    ggplot2::geom_line(linewidth = 1) +
     ggplot2::facet_wrap(~ metric, scales = "free_y") +
     ggh4x::facetted_pos_scales(y = y_breaks_per_scale) +
     ggplot2::labs(
       x = gettext("Number of observations"),
       y = gettext("Estimate with 95% credible interval")
     ) +
-    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::geom_rangeframe(sides = sides) +
     jaspGraphs::themeJaspRaw() +
-    ggplot2::theme(panel.grid.major.y = ggplot2::element_line(linewidth = .5, color = "lightgray", linetype = "dashed"))
+    extraTheme
 
 }
