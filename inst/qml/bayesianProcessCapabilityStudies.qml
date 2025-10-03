@@ -22,20 +22,39 @@ Form
 {
 	function sortIntervalValues() {
 
-		console.log("sorting")
 		var values = [
 			interval1.displayValue,
 			interval2.displayValue,
 			interval3.displayValue,
-			interval4.displayValue,
-			interval5.displayValue
+			interval4.displayValue
 		]
 		values.sort(function(a, b) { return a - b })
 		interval1.value = values[0]
 		interval2.value = values[1]
 		interval3.value = values[2]
 		interval4.value = values[3]
-		interval5.value = values[4]
+		interval1b.value = values[0]
+		interval2b.value = values[1]
+		interval3b.value = values[2]
+		interval4b.value = values[3]
+	}
+	function sortIntervalValuesb() {
+
+		var values = [
+			interval1b.displayValue,
+			interval2b.displayValue,
+			interval3b.displayValue,
+			interval4b.displayValue
+		]
+		values.sort(function(a, b) { return a - b })
+		interval1.value = values[0]
+		interval2.value = values[1]
+		interval3.value = values[2]
+		interval4.value = values[3]
+		interval1b.value = values[0]
+		interval2b.value = values[1]
+		interval3b.value = values[2]
+		interval4b.value = values[3]
 	}
 	columns:	 2
 
@@ -420,6 +439,64 @@ Form
 			Group
 			{
 
+				title: qsTr("Process Criteria")
+				GridLayout
+				{
+					// title: qsTr("Process Criteria")
+					columns: 5
+					columnSpacing: 2
+					rowSpacing: jaspTheme.rowGridSpacing / 3
+					id: intervalRow
+					property int dbWidth: 50
+					property int txtWidth: 100
+
+					// Row 0: Headers
+					Label {text: qsTr("Left bound")}
+					Item{}
+					Label {text: qsTr("Classification")}
+					Item{}
+					Label {text: qsTr("Right bound")}
+
+					// Row 1: Incapable
+					Item{}
+					Item{}
+					TextField { name: "intervalLabel1"; defaultValue: qsTr("Incapable"); fieldWidth: intervalRow.txtWidth}
+					Label { text: "<"; }
+					DoubleField { name: "interval1"; id: interval1; fieldWidth: intervalRow.dbWidth; defaultValue: 1.00; onEditingFinished: sortIntervalValues() }
+
+					// Row 2: Capable
+					DoubleField { name: "interval1b";id: interval1b; fieldWidth: intervalRow.dbWidth; editable: true; value: interval1.value; onEditingFinished: {sortIntervalValuesb()}  }
+					Label { text: "<"; }
+					TextField { name: "intervalLabel2"; defaultValue: qsTr("Capable"); fieldWidth: intervalRow.txtWidth}
+					Label { text: "≤"; }
+					DoubleField { name: "interval2"; id: interval2; fieldWidth: intervalRow.dbWidth; defaultValue: 1.33; onEditingFinished: sortIntervalValues() }
+
+					// Row 3: Satisfactory
+					DoubleField { name: "interval2b"; id: interval2b; fieldWidth: intervalRow.dbWidth; editable: true; value: interval2.value; onEditingFinished: {sortIntervalValuesb()}  }
+					Label { text: "<"; }
+					TextField { name: "intervalLabel3"; defaultValue: qsTr("Satisfactory"); fieldWidth: intervalRow.txtWidth}
+					Label { text: "≤"; }
+					DoubleField { name: "interval3"; id: interval3; fieldWidth: intervalRow.dbWidth; defaultValue: 1.50; onEditingFinished: sortIntervalValues() }
+
+					// Row 4: Excellent
+					DoubleField { name: "interval3b"; id: interval3b; fieldWidth: intervalRow.dbWidth; editable: true; value: interval3.value; onEditingFinished: {sortIntervalValuesb()}  }
+					Label { text: "<"; }
+					TextField { name: "intervalLabel4"; defaultValue: qsTr("Excellent"); fieldWidth: intervalRow.txtWidth}
+					Label { text: "≤"; }
+					DoubleField { name: "interval4"; id: interval4; fieldWidth: intervalRow.dbWidth; defaultValue: 2.00; onEditingFinished: sortIntervalValues() }
+
+					// Row 5: Super
+					DoubleField { name: "interval4b"; id: interval4b; fieldWidth: intervalRow.dbWidth; editable: true; value: interval4.value; onEditingFinished: {sortIntervalValuesb()}  }
+					Label { text: ">"; }
+					TextField { name: "intervalLabel5"; defaultValue: qsTr("Super"); fieldWidth: intervalRow.txtWidth}
+					Item{}
+					Item{}
+				}
+			}
+
+			Group
+			{
+
 				title: 							qsTr("Plots")
 
 				CheckBox
@@ -542,7 +619,7 @@ Form
 				CheckBox
 				{
 					name:		"sequentialAnalysisPlot"
-					label:		qsTr("Sequential Analysis")
+					label:		qsTr("Sequential analysis")
 
 					DropDown
 					{
@@ -568,6 +645,14 @@ Form
 							inclusive:			JASP.MaxOnly
 						}
 					}
+
+					CheckBox
+					{
+						name:		"sequentialAnalysisPlotAdditionalInfo"
+						label:		qsTr("Show process criteria")
+						checked:	true
+						info:		qsTr("Add a secondary right axis with condition bounds for the process")
+					}
 				}
 			}
 
@@ -578,23 +663,38 @@ Form
 
 				CheckBox
 				{
-					name: "intervalTable"; label: qsTr("Interval"); childrenOnSameRow: true
+					name: "intervalTable"; label: qsTr("Interval"); childrenOnSameRow: false
 
 					info: qsTr("Show the posterior probabilities of the interval specifed with the input on the right. Note that the input is automatically sorted and that the first and last fields are always negative and positive infinity.")
 
-					Row
-					{
-						id: intervalRow
-						spacing: jaspTheme.rowSpacing
-						property int fw: 50
-						DoubleField { id: interval0; name: "interval0"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: -Infinity;	editable: false							}
-						DoubleField { id: interval1; name: "interval1"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 0.00;		onEditingFinished: sortIntervalValues()	}
-						DoubleField { id: interval2; name: "interval2"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 0.25;		onEditingFinished: sortIntervalValues()	}
-						DoubleField { id: interval3; name: "interval3"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 0.50;		onEditingFinished: sortIntervalValues()	}
-						DoubleField { id: interval4; name: "interval4"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 0.75;		onEditingFinished: sortIntervalValues()	}
-						DoubleField { id: interval5; name: "interval5"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 1.00;		onEditingFinished: sortIntervalValues()	}
-						DoubleField { id: interval6; name: "interval6"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue:  Infinity;	editable: false							}
-					}
+					// ColumnLayout
+					// {
+					// 	// A poor man's table
+					// 	Row
+					// 	{
+					// 		id: labelRow
+					// 		spacing: jaspTheme.rowSpacing
+					// 		property int fw: 60 // there are 6 elements of width 50 below, so this one is 6 * 50 / 5 = 60
+					// 		Label { width: labelRow.fw; text: qsTr("Incapable") }
+					// 		Label { width: labelRow.fw; text: qsTr("Capable") }
+					// 		Label { width: labelRow.fw; text: qsTr("Satisfactory") }
+					// 		Label { width: labelRow.fw; text: qsTr("Excellent") }
+					// 		Label { width: labelRow.fw; text: qsTr("Super") }
+					// 	}
+					// 	Row
+					// 	{
+					// 		id: intervalRow
+					// 		spacing: jaspTheme.rowSpacing
+					// 		property int fw: 50
+					// 		DoubleField { id: interval0; name: "interval0"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: -Infinity;	editable: false							}
+					// 		DoubleField { id: interval1; name: "interval1"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 1.00;		onEditingFinished: sortIntervalValues()	}
+					// 		DoubleField { id: interval2; name: "interval2"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 1.33;		onEditingFinished: sortIntervalValues()	}
+					// 		DoubleField { id: interval3; name: "interval3"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 1.50;		onEditingFinished: sortIntervalValues()	}
+					// 		DoubleField { id: interval5; name: "interval5"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue: 2.00;		onEditingFinished: sortIntervalValues()	}
+					// 		DoubleField { id: interval6; name: "interval6"; fieldWidth: intervalRow.fw; negativeValues: true; defaultValue:  Infinity;	editable: false							}
+					// 	}
+					// }
+
 
 
 				}
