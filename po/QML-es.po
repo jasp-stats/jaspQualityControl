@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2025-10-04 22:15+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.14-dev\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -213,7 +219,7 @@ msgstr "Mostrar la línea del origen"
 
 msgctxt "msaGaugeRR|"
 msgid "Display all measurements"
-msgstr "Mostrar todas las medidas"
+msgstr "Presentar todas las medidas"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Operators"
@@ -241,7 +247,7 @@ msgstr "Gráficos"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Display all measurements"
-msgstr "Mostrar todas las medidas"
+msgstr "Presentar todas las medidas"
 
 msgctxt "msaType1Gauge|"
 msgid "6"
@@ -257,7 +263,7 @@ msgstr "Ejecutar gráfico"
 
 msgctxt "msaType1Gauge|"
 msgid "Display individual measurements"
-msgstr "Mostrar las medidas individuales"
+msgstr "Presentar las medidas individuales"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for bias"
@@ -293,7 +299,7 @@ msgstr "Número de barras"
 
 msgctxt "msaType1Gauge|"
 msgid "Display mean"
-msgstr "Mostrar la media"
+msgstr "Presentar la media"
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for mean"
@@ -301,7 +307,7 @@ msgstr "Intervalo de confianza para la media"
 
 msgctxt "msaType1Gauge|"
 msgid "Display reference value"
-msgstr "Mostrar el valor de referencia"
+msgstr "Presentar el valor de referencia"
 
 msgctxt "processCapabilityStudies|"
 msgid "Number of bins"
@@ -893,7 +899,7 @@ msgstr "Weibull de 3 parámetros"
 
 msgctxt "processCapabilityStudies|"
 msgid "Display grid lines"
-msgstr "Mostrar líneas de cuadrícula"
+msgstr "Presentar líneas de cuadrícula"
 
 msgctxt "timeWeightedCharts|"
 msgid "Shift size"
@@ -1061,7 +1067,7 @@ msgstr "Orden de ejecución"
 
 msgctxt "doeModifyDesign|"
 msgid "Unit Display"
-msgstr "Visualización de Unidades"
+msgstr "Presentación de unidades"
 
 msgctxt "doeModifyDesign|"
 msgid "Coded"
@@ -1759,7 +1765,7 @@ msgstr "Línea de ajuste"
 
 msgctxt "msaTestRetest|"
 msgid "Display all measurements"
-msgstr "Mostrar todas las medidas"
+msgstr "Presentar todas las medidas"
 
 msgctxt "msaTestRetest|"
 msgid "Traffic light chart"
