@@ -1,0 +1,1470 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: jaspQualityControl 0.95.0\n"
+"POT-Creation-Date: 2025-07-26 03:57\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"
+msgstr ""
+
+msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
+msgstr ""
+
+msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
+msgstr ""
+
+msgid "Sample"
+msgstr ""
+
+msgid "Time weighted charts report"
+msgstr ""
+
+msgid "Chart name: %s"
+msgstr ""
+
+msgid "Sub-title: %s"
+msgstr ""
+
+msgid "Measurement name: %s"
+msgstr ""
+
+msgid "Footnote: %s"
+msgstr ""
+
+msgid "Location: %s"
+msgstr ""
+
+msgid "Date: %s"
+msgstr ""
+
+msgid "Performed by: %s"
+msgstr ""
+
+msgid "Print date: %s"
+msgstr ""
+
+msgid "Cumulative sum chart"
+msgstr ""
+
+msgid "Exponentially weighted moving average chart"
+msgstr ""
+
+msgid "The number of Defectives/Defects is larger than the sample  size."
+msgstr ""
+
+msgid "Attributes Control Charts"
+msgstr ""
+
+msgid "p Chart"
+msgstr ""
+
+msgid "np Chart"
+msgstr ""
+
+msgid "Laney p' Chart"
+msgstr ""
+
+msgid "c Chart"
+msgstr ""
+
+msgid "u Chart"
+msgstr ""
+
+msgid "Laney u' Chart"
+msgstr ""
+
+msgid "Individuals and Moving Range Chart"
+msgstr ""
+
+msgid "Report for Attribute Control Charts"
+msgstr ""
+
+msgid "ID: %s"
+msgstr ""
+
+msgid "Appraiser: %s"
+msgstr ""
+
+msgid "Measurement system: %s"
+msgstr ""
+
+msgid "Subgroup size: %s"
+msgstr ""
+
+msgid "Time: %s"
+msgstr ""
+
+msgid "Frequency: %s"
+msgstr ""
+
+msgid "CL = %g"
+msgstr ""
+
+msgid "Proportion"
+msgstr ""
+
+msgid "UCL = %g"
+msgstr ""
+
+msgid "LCL = %g"
+msgstr ""
+
+msgid "Number of defectives"
+msgstr ""
+
+msgid "D"
+msgstr ""
+
+msgid "Moving Range"
+msgstr ""
+
+msgid "Test results for %s chart"
+msgstr ""
+
+msgid "Test 1: Beyond limit"
+msgstr ""
+
+msgid "Test 2: Shift"
+msgstr ""
+
+msgid "Test 3: Trend"
+msgstr ""
+
+msgid "Test 4: Increasing variation"
+msgstr ""
+
+msgid "Test 5: Reducing variation"
+msgstr ""
+
+msgid "Test 6: Bimodal distribution"
+msgstr ""
+
+msgid "Points where a test failed."
+msgstr ""
+
+msgid "Test results for %1$s chart"
+msgstr ""
+
+msgid "Point"
+msgstr ""
+
+msgid "- upper"
+msgstr ""
+
+msgid "- lower"
+msgstr ""
+
+msgid "Test 7: Slightly increasing variation"
+msgstr ""
+
+msgid "Test 8: Oscillation"
+msgstr ""
+
+msgid "Test 9: Benneyan test"
+msgstr ""
+
+msgid "Tests"
+msgstr ""
+
+msgid "No test violations occurred."
+msgstr ""
+
+msgid "%1$s between events"
+msgstr ""
+
+msgid "Sample average"
+msgstr ""
+
+msgid "Sample range"
+msgstr ""
+
+msgid "Individual value"
+msgstr ""
+
+msgid "Moving range"
+msgstr ""
+
+msgid "Moving range of subgroup mean"
+msgstr ""
+
+msgid "Sample std. dev."
+msgstr ""
+
+msgid "Cumulative sum"
+msgstr ""
+
+msgid "Exponentially weighted moving average"
+msgstr ""
+
+msgid "LSL = %g"
+msgstr ""
+
+msgid "Tar. = %g"
+msgstr ""
+
+msgid "USL = %g"
+msgstr ""
+
+msgid "Parameter estimation failed. Values might be too extreme. Try a different distribution."
+msgstr ""
+
+msgid "Design of Experiments - Analysis"
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid "The specified low/high levels for %1$s are not distinct."
+msgstr ""
+
+msgid "The specified low/high level(s) %1$s for %2$s do not match the levels in the dataset."
+msgstr ""
+
+msgid "Response Optimizer Settings"
+msgstr ""
+
+msgid "lower and upper bounds and target are"
+msgstr ""
+
+msgid "lower and upper bounds are"
+msgstr ""
+
+msgid "target is"
+msgstr ""
+
+msgid "The %s estimated from data."
+msgstr ""
+
+msgid "Response Optimizer Solution"
+msgstr ""
+
+msgid "Optimization Plot"
+msgstr ""
+
+msgid "Summary Plot"
+msgstr ""
+
+msgid "Enter values for all predictors."
+msgstr ""
+
+msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid "Enter plausible values for all discrete predictors.\n                                   Value %1$s is not a possible for the discrete predictor %2$s. Allowed values:"
+msgstr ""
+
+msgid "Enter plausible values for all continuous predictors. Only numeric values are allowed."
+msgstr ""
+
+msgid "Comp. desirability"
+msgstr ""
+
+msgid "Ind. desirability ("
+msgstr ""
+
+msgid "One or more input parameters for continuous predictors are outside of the design space.\n                           Extrapolation beyond the design space might not be valid."
+msgstr ""
+
+msgid "Model Summary"
+msgstr ""
+
+msgid "Adjusted %s"
+msgstr ""
+
+msgid "Predictive %s"
+msgstr ""
+
+msgid "The following aliased terms were removed: %s."
+msgstr ""
+
+msgid "ANOVA"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "Sum of squares"
+msgstr ""
+
+msgid "df"
+msgstr ""
+
+msgid "Mean square"
+msgstr ""
+
+msgid "Type III sums of squares are selected and continuous factors are specified. Results might be misleading. Make sure factors should really be treated as continuous."
+msgstr ""
+
+msgid "Type I sums of squares."
+msgstr ""
+
+msgid "Type II sums of squares."
+msgstr ""
+
+msgid "Type III sums of squares."
+msgstr ""
+
+msgid "Coded"
+msgstr ""
+
+msgid "Uncoded"
+msgstr ""
+
+msgid "%s Coefficients"
+msgstr ""
+
+msgid "Alias"
+msgstr ""
+
+msgid "Term"
+msgstr ""
+
+msgid "Effect"
+msgstr ""
+
+msgid "Coefficient"
+msgstr ""
+
+msgid "Standard error"
+msgstr ""
+
+msgid "Discrete Predictor Levels"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Level"
+msgstr ""
+
+msgid "Regression equation in %s Units"
+msgstr ""
+
+msgid "Pareto Chart of Standardized Effects"
+msgstr ""
+
+msgid "Standardized Effect"
+msgstr ""
+
+msgid "Normal Plot of Standardized Effects"
+msgstr ""
+
+msgid "Significant"
+msgstr ""
+
+msgid "Not Significant"
+msgstr ""
+
+msgid "Normal Probability Plot of Residuals"
+msgstr ""
+
+msgid "Histogram of Residuals"
+msgstr ""
+
+msgid "Residuals versus Fitted Values"
+msgstr ""
+
+msgid "Fitted values"
+msgstr ""
+
+msgid "Residuals"
+msgstr ""
+
+msgid "Residuals versus Run Order"
+msgstr ""
+
+msgid "Run order"
+msgstr ""
+
+msgid "Matrix residual plot"
+msgstr ""
+
+msgid "Contour plot"
+msgstr ""
+
+msgid "Surface plot"
+msgstr ""
+
+msgid "Contour plots"
+msgstr ""
+
+msgid "Surface plots"
+msgstr ""
+
+msgid "and"
+msgstr ""
+
+msgid "%1$s of %2$s vs %3$s"
+msgstr ""
+
+msgid "The analysis failed with the following error message: %s"
+msgstr ""
+
+msgid "Design Summary"
+msgstr ""
+
+msgid "Variable"
+msgstr ""
+
+msgid "Factors"
+msgstr ""
+
+msgid "Base runs"
+msgstr ""
+
+msgid "Base blocks"
+msgstr ""
+
+msgid "Centre points per block"
+msgstr ""
+
+msgid "Replications"
+msgstr ""
+
+msgid "Repetitions"
+msgstr ""
+
+msgid "Total runs"
+msgstr ""
+
+msgid "Total blocks"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Please select a row in the design table."
+msgstr ""
+
+msgid "Cannote create designs with more than 100000 total runs."
+msgstr ""
+
+msgid "Click 'Display design' to show the design."
+msgstr ""
+
+msgid "The design is not exported until 'Export design' is checked."
+msgstr ""
+
+msgid "The design is exported as '%1$s'."
+msgstr ""
+
+msgid "No aliasing among main effects and 2-factor interactions."
+msgstr ""
+
+msgid "Alias Structure"
+msgstr ""
+
+msgid "Factorial Design"
+msgstr ""
+
+msgid "Run Order"
+msgstr ""
+
+msgid "Standard Order"
+msgstr ""
+
+msgid "Hard-to-change factors: %1$s"
+msgstr ""
+
+msgid "Continuous factors"
+msgstr ""
+
+msgid "Discrete factors"
+msgstr ""
+
+msgid "Replicates"
+msgstr ""
+
+msgid "Centre points in cube"
+msgstr ""
+
+msgid "Centre points in axial"
+msgstr ""
+
+msgid "Centre points"
+msgstr ""
+
+msgid "Box-BehnkenDesign are not supported for 8 variables."
+msgstr ""
+
+msgid "Response Surface Design - Central Composite Design"
+msgstr ""
+
+msgid "Response Surface Design - Box-Behnken design"
+msgstr ""
+
+msgid "Standard order"
+msgstr ""
+
+msgid "Reference tables and plots"
+msgstr ""
+
+msgid "Please insert a reference value before specifying a positive reference."
+msgstr ""
+
+msgid "Attributes agreement analysis"
+msgstr ""
+
+msgid "Cohen's kappa"
+msgstr ""
+
+msgid "Kendall's tau"
+msgstr ""
+
+msgid "Cohen's kappa for appraiser vs standard"
+msgstr ""
+
+msgid "Appraiser"
+msgstr ""
+
+msgid "Cohen's kappa correlations summary"
+msgstr ""
+
+msgid "Please inseret a vaild positive reference as used in the results variables."
+msgstr ""
+
+msgid "Fleiss' kappa"
+msgstr ""
+
+msgid "Within appraisers"
+msgstr ""
+
+msgid "Appraiser vs standard"
+msgstr ""
+
+msgid "Between appraisers"
+msgstr ""
+
+msgid "Each appraiser vs standard"
+msgstr ""
+
+msgid "All appraisers vs standard"
+msgstr ""
+
+msgid "Inspected"
+msgstr ""
+
+msgid "Matched"
+msgstr ""
+
+msgid "Percent"
+msgstr ""
+
+msgid "Lower"
+msgstr ""
+
+msgid "Confidence interval of 95%%"
+msgstr ""
+
+msgid "Upper"
+msgstr ""
+
+msgid "Invalid reference and/or results were inserted."
+msgstr ""
+
+msgid "Invalid values (NA) found in appraiser %s."
+msgstr ""
+
+msgid "More than 1 measurement per operator required."
+msgstr ""
+
+msgid "Study effectiveness summary"
+msgstr ""
+
+msgid "Effectiveness"
+msgstr ""
+
+msgid "Miss rate"
+msgstr ""
+
+msgid "False alarm rate"
+msgstr ""
+
+msgid "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false alarm rate)"
+msgstr ""
+
+msgid "Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< 10%% (false alarm rate)"
+msgstr ""
+
+msgid "Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false alarm rate)"
+msgstr ""
+
+msgid "More than one measurement per operator required."
+msgstr ""
+
+msgid "Kendall's tau is only available for numeric measurements."
+msgstr ""
+
+msgid "Kendall's tau is only available for non-binary measurements."
+msgstr ""
+
+msgid "Operator"
+msgstr ""
+
+msgid "%g (unacceptable)"
+msgstr ""
+
+msgid "%g (marginally acceptable)"
+msgstr ""
+
+msgid "%g (acceptable)"
+msgstr ""
+
+msgid "Linearity and bias"
+msgstr ""
+
+msgid "Gauge bias"
+msgstr ""
+
+msgid "Part"
+msgstr ""
+
+msgid "Reference value"
+msgstr ""
+
+msgid "Observed mean"
+msgstr ""
+
+msgid "Mean bias"
+msgstr ""
+
+msgid "<i>p</i>-value"
+msgstr ""
+
+msgid "Regression model"
+msgstr ""
+
+msgid "Predictor"
+msgstr ""
+
+msgid "Std. error"
+msgstr ""
+
+msgid "<i>t</i>-value"
+msgstr ""
+
+msgid "Regression equation"
+msgstr ""
+
+msgid "Gauge linearity"
+msgstr ""
+
+msgid "R%1$s"
+msgstr ""
+
+msgid "%% Linearity"
+msgstr ""
+
+msgid "Calculations are based on 6 times the historical standard variation unless specified otherwise."
+msgstr ""
+
+msgid "Bias and linearity"
+msgstr ""
+
+msgid "Percentage process variation graph"
+msgstr ""
+
+msgid "t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
+msgstr ""
+
+msgid "Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts."
+msgstr ""
+
+msgid "t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s."
+msgstr ""
+
+msgid "t-test not possible. No variance detected in Part(s) %s."
+msgstr ""
+
+msgid "t-est not possible. No variance detected in part(s) %s."
+msgstr ""
+
+msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
+msgstr ""
+
+msgid "Reference"
+msgstr ""
+
+msgid "Percent bias"
+msgstr ""
+
+msgid "Linearity"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Gauge r&R"
+msgstr ""
+
+msgid "Design is not balanced: not every operator measured every part the same number of times."
+msgstr ""
+
+msgid "Design is not balanced: not every part was measured the same number of times."
+msgstr ""
+
+msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
+msgstr ""
+
+msgid "Gauge r&R report"
+msgstr ""
+
+msgid "No report components selected."
+msgstr ""
+
+msgid "Part name: %s"
+msgstr ""
+
+msgid "Gauge name: %s"
+msgstr ""
+
+msgid "Characteristic: %s"
+msgstr ""
+
+msgid "Gauge number: %s"
+msgstr ""
+
+msgid "Tolerance: %s"
+msgstr ""
+
+msgid "Number of distinct categories"
+msgstr ""
+
+msgid "Gauge r&R ANOVA table"
+msgstr ""
+
+msgid "Range chart by operator"
+msgstr ""
+
+msgid "Xbar chart by operator"
+msgstr ""
+
+msgid "Average chart by operator"
+msgstr ""
+
+msgid "Scatterplot operators"
+msgstr ""
+
+msgid "Measurement by part graph"
+msgstr ""
+
+msgid "Measurements by operator graph"
+msgstr ""
+
+msgid "Part by operator interaction graph"
+msgstr ""
+
+msgid "Traffic light chart"
+msgstr ""
+
+msgid "Gauge r&R study - crossed ANOVA"
+msgstr ""
+
+msgid "One-way ANOVA table"
+msgstr ""
+
+msgid "Two-way ANOVA table with interaction"
+msgstr ""
+
+msgid "Mean squares"
+msgstr ""
+
+msgid "F"
+msgstr ""
+
+msgid "Variance components"
+msgstr ""
+
+msgid "Variance"
+msgstr ""
+
+msgid "%% Contribution"
+msgstr ""
+
+msgid "Gauge evaluation"
+msgstr ""
+
+msgid "Std. dev."
+msgstr ""
+
+msgid "Study variation"
+msgstr ""
+
+msgid "%% Study variation"
+msgstr ""
+
+msgid "%% Tolerance"
+msgstr ""
+
+msgid "Total gauge r&R"
+msgstr ""
+
+msgid "Repeatability"
+msgstr ""
+
+msgid "Part-to-part"
+msgstr ""
+
+msgid "Total variation"
+msgstr ""
+
+msgid "Reproducibility"
+msgstr ""
+
+msgid "*"
+msgstr ""
+
+msgid "Number of distinct categories = %i"
+msgstr ""
+
+msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
+msgstr ""
+
+msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
+msgstr ""
+
+msgid "Historical standard deviation is used to calculate some values for std. dev., study variation, and %%study variation."
+msgstr ""
+
+msgid "Values for %%process variation are not displayed because they are identical to values for %%study variation."
+msgstr ""
+
+msgid "Two-way ANOVA table without interaction"
+msgstr ""
+
+msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
+msgstr ""
+
+msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
+msgstr ""
+
+msgid "Components of variation"
+msgstr ""
+
+msgid "Number of observations is < 2 in %1$s after grouping on %2$s."
+msgstr ""
+
+msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
+msgstr ""
+
+msgid "Measurements by part"
+msgstr ""
+
+msgid "Measurements by operator"
+msgstr ""
+
+msgid "Part by operator interaction"
+msgstr ""
+
+msgid "Operators measured different number of parts."
+msgstr ""
+
+msgid "Scatterplot of operator vs operator"
+msgstr ""
+
+msgid "Cannot plot scatterplot for less than 2 operators."
+msgstr ""
+
+msgid "Scatterplot of operator  %1$s vs operator %2$s"
+msgstr ""
+
+msgid "Matrix plot for operators"
+msgstr ""
+
+msgid "Repeat"
+msgstr ""
+
+msgid "Reprod"
+msgstr ""
+
+msgid "%% Study Variation"
+msgstr ""
+
+msgid "Error: Gauge study failed. Could not create traffic light chart."
+msgstr ""
+
+msgid "%.2f"
+msgstr ""
+
+msgid "Gauge r&R - nested"
+msgstr ""
+
+msgid "Unbalanced design. Some parts have more repeated measurements than others."
+msgstr ""
+
+msgid "Gauge r&R (non-replicable) report"
+msgstr ""
+
+msgid "Gauge r&R tables"
+msgstr ""
+
+msgid "Measurement by part x operator plot"
+msgstr ""
+
+msgid "Gauge r&R study - nested ANOVA"
+msgstr ""
+
+msgid "Gauge r&R (nested)"
+msgstr ""
+
+msgid "p"
+msgstr ""
+
+msgid "Variation"
+msgstr ""
+
+msgid "No degrees of freedom for %s."
+msgstr ""
+
+msgid "Part-To-part"
+msgstr ""
+
+msgid "Study variation is calculated as std. dev. * %i"
+msgstr ""
+
+msgid "Study variation is calculated as std. dev. * %.2f"
+msgstr ""
+
+msgid "Measurements by part x operator"
+msgstr ""
+
+msgid "Operator %s"
+msgstr ""
+
+msgid "Scatterplot operators vs parts"
+msgstr ""
+
+msgid "Range method range chart"
+msgstr ""
+
+msgid "Range chart by part"
+msgstr ""
+
+msgid "Run chart of parts"
+msgstr ""
+
+msgid "Short gauge study"
+msgstr ""
+
+msgid "Sample size (n)"
+msgstr ""
+
+msgid "R-bar"
+msgstr ""
+
+msgid "d2"
+msgstr ""
+
+msgid "GRR"
+msgstr ""
+
+msgid "Process std. dev."
+msgstr ""
+
+msgid "%%GRR of process std. dev."
+msgstr ""
+
+msgid "Tolerance"
+msgstr ""
+
+msgid "%%GRR of tolerance"
+msgstr ""
+
+msgid "Scatterplot of 1st measurement vs 2nd measurement"
+msgstr ""
+
+msgid "Run chart"
+msgstr ""
+
+msgid "Bias table"
+msgstr ""
+
+msgid "t-test bias"
+msgstr ""
+
+msgid "Histogram bias"
+msgstr ""
+
+msgid "Bias and instrument capability table"
+msgstr ""
+
+msgid "Basic statistics"
+msgstr ""
+
+msgid "Mean"
+msgstr ""
+
+msgid "Bias"
+msgstr ""
+
+msgid "Std. dev. (<i>s</i>)"
+msgstr ""
+
+msgid "Instrument variation"
+msgstr ""
+
+msgid "Tolerance bounds"
+msgstr ""
+
+msgid "%% Bias"
+msgstr ""
+
+msgid "The instrument variation is calculated as %i * <i>s</i>."
+msgstr ""
+
+msgid "Capability"
+msgstr ""
+
+msgid "Cg"
+msgstr ""
+
+msgid "Cgk"
+msgstr ""
+
+msgid "%% Var(repeatability)"
+msgstr ""
+
+msgid "%% Var(repeatability and bias)"
+msgstr ""
+
+msgid "t-test of observed bias against 0"
+msgstr ""
+
+msgid "%s CI for bias"
+msgstr ""
+
+msgid "<i>t</i>"
+msgstr ""
+
+msgid "Bias histogram"
+msgstr ""
+
+msgid "Histogram requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
+msgstr ""
+
+msgid "Count"
+msgstr ""
+
+msgid "Mean - %is"
+msgstr ""
+
+msgid "Mean + %is"
+msgstr ""
+
+msgid "Ref. - %.2f * tol."
+msgstr ""
+
+msgid "Ref. + %.2f * tol."
+msgstr ""
+
+msgid "Run chart of %s"
+msgstr ""
+
+msgid "No valid measurements in %s."
+msgstr ""
+
+msgid "Ref."
+msgstr ""
+
+msgid "Parameter Estimates"
+msgstr ""
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Estimate"
+msgstr ""
+
+msgid "Fitting the model failed with the following error message:\n%s"
+msgstr ""
+
+msgid "Intercept"
+msgstr ""
+
+msgid "The IWLS algorithm did not converge. Interpret the results with caution."
+msgstr ""
+
+msgid "There is only observed category (%s). The results are likely meaningless."
+msgstr ""
+
+msgid "Fit Table"
+msgstr ""
+
+msgid "AIC"
+msgstr ""
+
+msgid "Detection Plot"
+msgstr ""
+
+msgid "log(%s)"
+msgstr ""
+
+msgid "The detection plot failed with the following error message:\n%s"
+msgstr ""
+
+msgid "Asymptotes"
+msgstr ""
+
+msgid "covariate"
+msgstr ""
+
+msgid "Horizontal asymptotes"
+msgstr ""
+
+msgid "Vertical asymptotes"
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "<b><em>Warning.</em></b>"
+msgstr ""
+
+msgid "Probability of detecting %s"
+msgstr ""
+
+msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
+msgstr ""
+
+msgid "All zero values have been replaced with a value equal to one-half of the smallest data point."
+msgstr ""
+
+msgid "Process Capability Report"
+msgstr ""
+
+msgid "No specification limits set."
+msgstr ""
+
+msgid "Line: %s"
+msgstr ""
+
+msgid "Machine: %s"
+msgstr ""
+
+msgid "Variable: %s"
+msgstr ""
+
+msgid "Process: %s"
+msgstr ""
+
+msgid "Reported by: %s"
+msgstr ""
+
+msgid "Conclusion: %s"
+msgstr ""
+
+msgid "X-bar & %s control chart"
+msgstr ""
+
+msgid "Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."
+msgstr ""
+
+msgid "Subgroup size is 1, calculation of selected control chart not possible. Use x-mR chart."
+msgstr ""
+
+msgid "X-mR control chart"
+msgstr ""
+
+msgid "Capability study"
+msgstr ""
+
+msgid "Process capability study"
+msgstr ""
+
+msgid "Lower specification limit must be smaller than upper specification limit."
+msgstr ""
+
+msgid "Target outside of specification limits."
+msgstr ""
+
+msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
+msgstr ""
+
+msgid "Process capability"
+msgstr ""
+
+msgid "Process capability (non-normal capability analysis)"
+msgstr ""
+
+msgid "Process summary"
+msgstr ""
+
+msgid "Stage"
+msgstr ""
+
+msgid "LB"
+msgstr ""
+
+msgid "LSL"
+msgstr ""
+
+msgid "Target"
+msgstr ""
+
+msgid "UB"
+msgstr ""
+
+msgid "USL"
+msgstr ""
+
+msgid "Sample size"
+msgstr ""
+
+msgid "Std. dev. (total)"
+msgstr ""
+
+msgid "Std. dev. (within)"
+msgstr ""
+
+msgid "Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
+msgstr ""
+
+msgid "The within standard deviation could not be calculated."
+msgstr ""
+
+msgid "Change (%s vs. BL)"
+msgstr ""
+
+msgid "%s (BL)"
+msgstr ""
+
+msgid "Capability of the process"
+msgstr ""
+
+msgid "No valid measurements detected."
+msgstr ""
+
+msgid "Need at least 2 measurements to fit distribution. %1$i measurement(s) detected."
+msgstr ""
+
+msgid "At least one of the stages contains no valid measurements."
+msgstr ""
+
+msgid "Density"
+msgstr ""
+
+msgid "Measurement"
+msgstr ""
+
+msgid "Normal dist.\n(std. dev. total)"
+msgstr ""
+
+msgid "Normal dist.\n(std. dev. within)"
+msgstr ""
+
+msgid "Weibull dist."
+msgstr ""
+
+msgid "3-parameter\nlognormal dist."
+msgstr ""
+
+msgid "3-parameter Weibull dist."
+msgstr ""
+
+msgid "Target = %g"
+msgstr ""
+
+msgid "LB = %g"
+msgstr ""
+
+msgid "UB = %g"
+msgstr ""
+
+msgid "Process capability (within)"
+msgstr ""
+
+msgid "Cp"
+msgstr ""
+
+msgid "%s CI for Cp"
+msgstr ""
+
+msgid "CpL"
+msgstr ""
+
+msgid "CpU"
+msgstr ""
+
+msgid "Cpk"
+msgstr ""
+
+msgid "%s CI for Cpk"
+msgstr ""
+
+msgid "Z bench (ST)"
+msgstr ""
+
+msgid "Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."
+msgstr ""
+
+msgid "Process performance (total)"
+msgstr ""
+
+msgid "Pp"
+msgstr ""
+
+msgid "%s CI for Pp"
+msgstr ""
+
+msgid "PpL"
+msgstr ""
+
+msgid "PpU"
+msgstr ""
+
+msgid "Ppk"
+msgstr ""
+
+msgid "%s CI for Ppk"
+msgstr ""
+
+msgid "Z bench (LT)"
+msgstr ""
+
+msgid "Cpm"
+msgstr ""
+
+msgid "%s CI for Cpm"
+msgstr ""
+
+msgid "Non-conformance statistics"
+msgstr ""
+
+msgid "Rows titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
+msgstr ""
+
+msgid "%s vs. BL"
+msgstr ""
+
+msgid "Average"
+msgstr ""
+
+msgid "Log mean (%1$s)"
+msgstr ""
+
+msgid "Log std.dev (%1$s)"
+msgstr ""
+
+msgid "Shape (%1$s)"
+msgstr ""
+
+msgid "Scale (%1$s)"
+msgstr ""
+
+msgid "Threshold"
+msgstr ""
+
+msgid "Calculations based on %s distribution."
+msgstr ""
+
+msgid "Probability table and plot"
+msgstr ""
+
+msgid "Probability plot"
+msgstr ""
+
+msgid "Need at least 2 measurements to calculate probability table/plot. %1$i measurement(s) detected."
+msgstr ""
+
+msgid "Summary of test against the %1$s distribution"
+msgstr ""
+
+msgid "N"
+msgstr ""
+
+msgid "Mean (%1$s)"
+msgstr ""
+
+msgid "Std. dev. (%1$s)"
+msgstr ""
+
+msgid "AD"
+msgstr ""
+
+msgid "The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution."
+msgstr ""
+
+msgid "Red dotted lines in the probability plot below represent a 95%% confidence interval."
+msgstr ""
+
+msgid "Probability plot against %1$s distribution"
+msgstr ""
+
+msgid "Fitting distribution failed. Values might be too extreme. Try a different distribution."
+msgstr ""
+
+msgid "Histogram"
+msgstr ""
+
+msgid "Dataset contains negative numbers. Could not overlay the selected distribution."
+msgstr ""
+
+msgid "Counts"
+msgstr ""
+
+msgid "Normal dist."
+msgstr ""
+
+msgid "Lognormal dist."
+msgstr ""
+
+msgid "Rare event charts"
+msgstr ""
+
+msgid "Date/time conversion returned no valid values. Did you select the correct date/time format?"
+msgstr ""
+
+msgid "Negative values for time/intervals detected, calculation is not possible."
+msgstr ""
+
+msgid "Rare event charts report"
+msgstr ""
+
+msgid "G chart"
+msgstr ""
+
+msgid "T chart"
+msgstr ""
+
+msgid "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
+msgstr ""
+
+msgid "Variables Charts for Individuals"
+msgstr ""
+
+msgid "Moving range length is larger than the number of observations\n                                                           in one of the stages."
+msgstr ""
+
+msgid "Variables Chart for Individuals Report"
+msgstr ""
+
+msgid "Autocorrelation plot requires uninterrupted series of values. Missing values detected in %s."
+msgstr ""
+
+msgid "Autocorrelation plot"
+msgstr ""
+
+msgid "Autocorrelation"
+msgstr ""
+
+msgid "Lag"
+msgstr ""
+
+msgid "Control charts"
+msgstr ""
+
+msgid "All subgroups are of size 1. Variables charts for subgroups cannot be calculated. Use variables charts for individuals."
+msgstr ""
+
+msgid "X-bar & %1$s control chart"
+msgstr ""
+
+msgid "Variables Chart for Subgroups Report"
+msgstr ""
