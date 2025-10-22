@@ -3,16 +3,11 @@ import JASP.Module
 
 Description
 {
-	name:				"jaspQualityControl"
 	title:				qsTr("Quality Control")
 	description:		qsTr("Investigate if a manufactured product adheres to a defined set of quality criteria")
-	version			: "0.95.0"
-	author:				"JASP Team"
-	maintainer:			"JASP <info@jasp-stats.org>"
-	website:			"https://github.com/jasp-stats/jaspQualityControl"
-	license:			"GPL (>= 2)"
 	icon:				"qualityControl-module.svg"
-
+	hasWrappers: 		false
+	
 	GroupTitle
 	{
 		title:			qsTr("Measurement Systems Analysis")
