@@ -499,8 +499,7 @@ Form
 				{
 					id:						responseHeader
 					anchors.right:			parent.right
-					anchors.verticalCenter: responsesResponseOptimizer.itemTitle.verticalCenter
-					spacing: 6
+					spacing: 				6
 
 					Text { text: qsTr("Goal");			Layout.preferredWidth: responsesResponseOptimizer.rowWidth; wrapMode: Text.WordWrap; elide: Text.ElideNone; }
 					Text { text: qsTr("Lower");			Layout.preferredWidth: responsesResponseOptimizer.rowWidth; wrapMode: Text.WordWrap; elide: Text.ElideNone; }
