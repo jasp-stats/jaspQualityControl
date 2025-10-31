@@ -155,7 +155,16 @@ Form
 					listViewType		: JASP.AssignedVariables
 					draggable			: false
 					preferredHeight		: jaspTheme.smallDefaultVariablesFormHeight
-					rowComponentTitle	: qsTr("Low        High   ")
+
+					RowLayout
+					{
+						id: rowTitle
+						anchors.right: 	parent.right
+						spacing: 2
+
+						Text { text: qsTr("Low"); 	horizontalAlignment: Text.AlignHCenter;		Layout.preferredWidth: 50; wrapMode: Text.WordWrap; elide: Text.ElideNone; }
+						Text { text: qsTr("High"); 	horizontalAlignment: Text.AlignHCenter;		Layout.preferredWidth: 50; wrapMode: Text.WordWrap; elide: Text.ElideNone; }
+					}
 
 					rowComponent: RowLayout
 					{
@@ -482,10 +491,27 @@ Form
 				id:									responsesResponseOptimizer
 				allowedColumns:						["scale"]
 				label:								qsTr("Included responses")
-				width:								450
-				rowComponentTitle: 					"Goal          Lower   Target   Upper   Weight   Importance"
-				rowComponent: Row 
+				width:								450 * preferencesModel.uiScale
+
+				property int rowWidth: 		Math.round(width / 12)
+
+				RowLayout 
 				{
+					id:						responseHeader
+					anchors.right:			parent.right
+					spacing: 				6
+
+					Text { text: qsTr("Goal");			Layout.preferredWidth: responsesResponseOptimizer.rowWidth; wrapMode: Text.WordWrap; elide: Text.ElideNone; }
+					Text { text: qsTr("Lower");			Layout.preferredWidth: responsesResponseOptimizer.rowWidth; wrapMode: Text.WordWrap; elide: Text.ElideNone; }
+					Text { text: qsTr("Target");		Layout.preferredWidth: responsesResponseOptimizer.rowWidth; wrapMode: Text.WordWrap; elide: Text.ElideNone; }
+					Text { text: qsTr("Upper");			Layout.preferredWidth: responsesResponseOptimizer.rowWidth; wrapMode: Text.WordWrap; elide: Text.ElideNone; }
+					Text { text: qsTr("Weight");		Layout.preferredWidth: responsesResponseOptimizer.rowWidth; wrapMode: Text.WordWrap; elide: Text.ElideNone; }
+					Text { text: qsTr("Importance");	Layout.preferredWidth: 2 * responsesResponseOptimizer.rowWidth; wrapMode: Text.WordWrap; elide: Text.ElideNone; }
+				}
+
+				rowComponent: Row
+				{
+					spacing: 6
 					DropDown
 					{
 						name:							"responseOptimizerGoal"
@@ -501,21 +527,21 @@ Form
 					{
 						name:							"responseOptimizerLowerBound"
 						defaultValue:					0
-						fieldWidth:						40
+						fieldWidth:						1.2 * responsesResponseOptimizer.rowWidth
 						enabled:						responseOptimizerGoal.currentValue != "minimize" & responseOptimizerManualBounds.checked
 					}
 					DoubleField
 					{
 						name:							"responseOptimizerTarget"
 						defaultValue:					0.5
-						fieldWidth:						45
+						fieldWidth:						responsesResponseOptimizer.rowWidth
 						enabled:						responseOptimizerManualTarget.checked | responseOptimizerGoal.currentValue == "target"
 					}
 					DoubleField
 					{
 						name:							"responseOptimizerUpperBound"
 						defaultValue:					1
-						fieldWidth:						40
+						fieldWidth:						responsesResponseOptimizer.rowWidth
 						enabled:						responseOptimizerGoal.currentValue != "maximize" & responseOptimizerManualBounds.checked
 					}
 					DoubleField
@@ -524,7 +550,7 @@ Form
 						defaultValue:					1
 						min:							0.1
 						max:							10
-						fieldWidth:						50
+						fieldWidth:						responsesResponseOptimizer.rowWidth
 					}
 					DoubleField
 					{
@@ -532,7 +558,7 @@ Form
 						defaultValue:					1
 						min:							0.1
 						max:							10
-						fieldWidth:						55
+						fieldWidth:					    1.7 * responsesResponseOptimizer.rowWidth
 						enabled:						responsesResponseOptimizer.count > 1
 					}
 				}
