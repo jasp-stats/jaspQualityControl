@@ -2187,10 +2187,6 @@ msgid "Manually specify low/high"
 msgstr "Especificar manualmente baixo/alto"
 
 msgctxt "doeAnalysis|"
-msgid "Low        High   "
-msgstr "Baixo        Alto   "
-
-msgctxt "doeAnalysis|"
 msgid "Display results in coded units"
 msgstr "Exibir resultados em unidades codificadas"
 
@@ -3165,3 +3161,33 @@ msgstr "Fator"
 msgctxt "processCapabilityStudies|"
 msgid "Z bench"
 msgstr "Banco Z"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "Low"
+msgstr "Baixo"
+
+#, fuzzy
+msgctxt "doeAnalysis|"
+msgid "High"
+msgstr "Alto"
+
+msgctxt "doeAnalysis|"
+msgid "Goal"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Lower"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Upper"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Weight"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Importance"
+msgstr ""
