@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2025-07-26 03:57\n"
-"PO-Revision-Date: 2025-06-15 10:02+0000\n"
+"PO-Revision-Date: 2025-11-03 09:51+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12-dev\n"
+"X-Generator: Weblate 5.14.1-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -341,17 +341,14 @@ msgid ""
 "continuous."
 msgstr ""
 
-#, fuzzy
 msgid "Type I sums of squares."
-msgstr "Quadratsumme"
+msgstr "Quadratsummen Typ I."
 
-#, fuzzy
 msgid "Type II sums of squares."
-msgstr "Quadratsumme"
+msgstr "Quadratsummen Typp II."
 
-#, fuzzy
 msgid "Type III sums of squares."
-msgstr "Quadratsumme"
+msgstr "Quadratsummen Typ III."
 
 msgid "Coded"
 msgstr "Kodierte"
