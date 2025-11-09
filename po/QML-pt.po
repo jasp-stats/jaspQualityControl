@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2025-11-09 15:06+0000\n"
+"Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
+"Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/pt/>\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.15-dev\n"
 "X-Language: pt\n"
 "X-Qt-Contexts: true\n"
 
@@ -3162,32 +3168,30 @@ msgctxt "processCapabilityStudies|"
 msgid "Z bench"
 msgstr "Banco Z"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Low"
 msgstr "Baixo"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "High"
 msgstr "Alto"
 
 msgctxt "doeAnalysis|"
 msgid "Goal"
-msgstr ""
+msgstr "Objetivo"
 
 msgctxt "doeAnalysis|"
 msgid "Lower"
-msgstr ""
+msgstr "Inferior"
 
 msgctxt "doeAnalysis|"
 msgid "Upper"
-msgstr ""
+msgstr "Superior"
 
 msgctxt "doeAnalysis|"
 msgid "Weight"
-msgstr ""
+msgstr "Peso"
 
 msgctxt "doeAnalysis|"
 msgid "Importance"
-msgstr ""
+msgstr "Importância"
