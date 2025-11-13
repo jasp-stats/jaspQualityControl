@@ -24,6 +24,13 @@ Description
 		title:			qsTr("Type 2 and 3 Gauge r&R Study")
 		func:			"msaGaugeRR"
 	}
+
+	Analysis
+	{
+		title:			qsTr("Type 2 and 3 Bayesian Gauge r&R Study")
+		func:			"msaBayesianGaugeRR"
+	}
+
 	Analysis
 	{
 		title:			qsTr("Gauge r&R Study (Non-replicable Measurements)")
