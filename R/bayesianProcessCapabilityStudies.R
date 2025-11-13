@@ -110,10 +110,10 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 .bpcsCapabilityTableMeta <- function(jaspResults, options) {
 
   table <- createJaspTable(title = gettext("Capability Table"), position = 0)
-  table$addColumnInfo(name = "metric",  title = gettext("Capability\nMeasure"), type = "string")
-  table$addColumnInfo(name = "mean",    title = gettext("Mean"),               type = "number")
-  table$addColumnInfo(name = "median",  title = gettext("Median"),             type = "number")
-  table$addColumnInfo(name = "sd",      title = gettext("Std"),                type = "number")
+  table$addColumnInfo(name = "metric",  title = gettext("Measure"), type = "string")
+  table$addColumnInfo(name = "mean",    title = gettext("Mean"),    type = "number")
+  table$addColumnInfo(name = "median",  title = gettext("Median"),  type = "number")
+  table$addColumnInfo(name = "sd",      title = gettext("Std"),     type = "number")
 
   overtitle <- gettextf("%s%% Credible Interval", 100 * options[["credibleIntervalWidth"]])
   table$addColumnInfo(name = "lower", title = gettext("Lower"), type = "number", overtitle = overtitle)
@@ -210,8 +210,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
       } else {
         NULL
       },
-      width  = 320 * 6,
-      height = 320,
+      width  = 400 * 3,
+      height = 400 * 2,
       position = 1,
       dependencies = jaspDeps(
         options = c(.bpcsDefaultDeps(), .bpcsPosteriorPlotDeps(options))
@@ -244,7 +244,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   w <- 400
-  plt <- createJaspPlot(title = gettext("Sequential Analysis"), width = 2*w, height = w,
+  plt <- createJaspPlot(title = gettext("Sequential Analysis"), width = 3*w, height = 2*w,
                         position = 2,
                         dependencies = jaspDeps(c(
                           .bpcsDefaultDeps(),
@@ -384,7 +384,11 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   extraTheme <- gridLinesLayer <- NULL
   sides <- "bl"
   if (options[["sequentialAnalysisPlotAdditionalInfo"]]) {
-    extraTheme <- ggplot2::theme(axis.ticks.y.right = ggplot2::element_line(colour = rep(c("black", NA), length.out = 11)))
+    # there are 11 ticks, the outermost we hide (NA) because one of their bounds is infinite
+    # the inner ticks alternate between black and NA, so there is a tick at the grid lines
+    # but no tick at the criteria text (which is secretly an axis tick label).
+    rightTickColors <- c(NA, rep(c(NA, "black"), length.out = 9), NA)
+    extraTheme <- ggplot2::theme(axis.ticks.y.right = ggplot2::element_line(colour =rightTickColors))
     sides      <- "blr"
     # I tried using minor.breaks for this, but these are not drawn properly with facet_grid and facetted_pos_scales
     gridLinesLayer <- ggplot2::geom_hline(
