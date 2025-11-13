@@ -436,368 +436,6 @@ Form
 			hasPrior: false
 		}
 
-		// CheckBox
-		// {
-		// 	name: 						"posteriorDistributionPlot"
-		// 	label: 						qsTr("Posterior distribution")
-
-		// 	// Group so the options are shown in a 2-column layout
-		// 	Group
-		// 	{
-
-		// 		columns: 					2
-		// 		columnSpacing: 				10 * jaspTheme.columnGroupSpacing
-
-		// 		// Group so point estimate and CI options are shown in a single column
-		// 		Group
-		// 		{
-		// 			CheckBox
-		// 			{
-		// 				label:				qsTr("Point estimate")
-		// 				name:				"posteriorDistributionPlotIndividualPointEstimate"
-		// 				childrenOnSameRow:	true
-
-		// 				DropDown
-		// 				{
-		// 					name:	"posteriorDistributionPlotIndividualPointEstimateType"
-		// 					label:	""
-		// 					values:	[
-		// 						{label: qsTr("mean"),					value: "mean"},
-		// 						{label: qsTr("median"),					value: "median"},
-		// 						{label: qsTr("mode"),					value: "mode"}
-		// 					]
-		// 				}
-		// 			}
-
-		// 			// Group so CI checkbox and options are shown in a single column (with subgroup so CI options are indented)
-		// 			Group
-		// 			{
-		// 				columns: 1
-		// 				CheckBox
-		// 				{
-		// 					name:				"posteriorDistributionPlotIndividualCi"
-		// 					label:				qsTr("CI")
-		// 					id:					posteriorPlotIndividualCI
-		// 					childrenOnSameRow:	true
-
-		// 					DropDown
-		// 					{
-		// 						name:		"posteriorDistributionPlotIndividualCiType"
-		// 						label:		""
-		// 						id:			posteriorPlotIndividualType
-		// 						values:		[
-		// 							{label: qsTr("central"),				value: "central"},
-		// 							{label: qsTr("HPD"),					value: "HPD"},
-		// 							{label: qsTr("custom"),					value: "custom"}//,
-		// 							// {label: qsTr("support"),				value: "support"}
-		// 						]
-		// 					}
-		// 				}
-
-		// 				Group
-		// 				{
-		// 					columns: 2
-		// 					indent: true
-		// 					enabled:		posteriorPlotIndividualCI.checked
-
-		// 					CIField
-		// 					{
-		// 						visible:		posteriorPlotIndividualType.currentValue === "central" || posteriorPlotIndividualType.currentValue === "HPD"
-		// 						name:			"posteriorDistributionPlotIndividualCiMass"
-		// 						label:			qsTr("Mass")
-		// 						fieldWidth:		50
-		// 						defaultValue: 	95
-		// 						min:			1
-		// 						max:			100
-		// 						inclusive:		JASP.MinMax
-		// 					}
-
-		// 					DoubleField
-		// 					{
-		// 						visible:		posteriorPlotIndividualType.currentValue === "custom"
-		// 						name:			"posteriorDistributionPlotIndividualCiLower"
-		// 						label:			qsTr("Lower")
-		// 						id:				plotsPosteriorLower
-		// 						fieldWidth:		50
-		// 						defaultValue:	0
-		// 						negativeValues: true
-		// 						inclusive:		JASP.MinMax
-		// 					}
-
-		// 					DoubleField
-		// 					{
-		// 						visible:		posteriorPlotIndividualType.currentValue === "custom"
-		// 						name:			"posteriorDistributionPlotIndividualCiUpper"
-		// 						label:			qsTr("Upper")
-		// 						id:				plotsPosteriorUpper
-		// 						fieldWidth:		50
-		// 						defaultValue:	1
-		// 						negativeValues: true
-		// 						inclusive:		JASP.MinMax
-		// 					}
-
-		// 					FormulaField
-		// 					{
-		// 						visible:		posteriorPlotIndividualType.currentValue === "support"
-		// 						name:			"posteriorDistributionPlotIndividualCiBf"
-		// 						label:			qsTr("BF")
-		// 						fieldWidth:		50
-		// 						defaultValue:	"1"
-		// 						min:			0
-		// 						inclusive:		JASP.None
-		// 					}
-		// 				}
-		// 			}
-		// 		}
-
-		// 		// Common.PlotLayout {} // <- would be better but does not work...
-		// 		RadioButtonGroup
-		// 		{
-		// 			name:		"posteriorDistributionPlotPanelLayout"
-		// 			title:		qsTr("Layout")
-		// 			id:			posteriorDistributionPlotPanelLayout
-
-		// 			RadioButton { value: "multiplePanels"; 	label: qsTr("One plot per metric"); 	checked: true	}
-		// 			RadioButton { value: "singlePanel";		label: qsTr("All metrics in one plot") 					}
-
-		// 		}
-
-		// 		RadioButtonGroup
-		// 		{
-		// 			name:		"posteriorDistributionPlotAxes"
-		// 			title:		qsTr("Axes")
-		// 			id:			posteriorDistributionPlotAxes
-
-		// 			RadioButton { value: "identical"; 	label: qsTr("Automatic"); 					checked: true	}
-		// 			RadioButton { value: "automatic";	label: qsTr("Identical across panels"); 	enabled: posteriorDistributionPlotPanelLayout.value === "multiplePanels"	}
-		// 			RadioButton { value: "custom";		label: qsTr("Custom axes");	}
-		// 		}
-
-		// 		Group
-		// 		{
-
-		// 		title: qsTr("Custom axes")
-		// 		enabled: posteriorDistributionPlotAxes.value === "custom"
-		// 		visible: posteriorDistributionPlotAxes.value === "custom"
-
-		// 			GridLayout
-		// 			{
-		// 				columns: 5
-		// 				columnSpacing: 2
-		// 				rowSpacing: jaspTheme.rowGridSpacing / 3
-		// 				id: customAxesLayout
-		// 				property int dbWidth: 50
-		// 				property int txtWidth: 100
-
-		// 				// Row 0: Headers
-		// 				Label {text: qsTr("Axis")}
-		// 				Item{}
-		// 				Label {text: qsTr("Min")}
-		// 				Item{}
-		// 				Label {text: qsTr("Max")}
-
-		// 				// Row 1: x axis
-		// 				Label { text: qsTr("x axis"); }
-		// 				Item{}
-		// 				DoubleField { name: "custom_x_min"; id: custom_x_min; fieldWidth: customAxesLayout.dbWidth; defaultValue: 0.00; negativeValues: true; max: custom_x_max.value}
-		// 				Item{}
-		// 				DoubleField { name: "custom_x_max"; id: custom_x_max; fieldWidth: customAxesLayout.dbWidth; defaultValue: 1.00; negativeValues: true; min: custom_x_min.value}
-
-		// 				// Row 2: y axis
-		// 				Label { text: qsTr("y axis"); }
-		// 				Item{}
-		// 				DoubleField { name: "custom_y_min"; id: custom_y_min; fieldWidth: customAxesLayout.dbWidth; defaultValue: 0.00; negativeValues: false; max: custom_y_max.value}
-		// 				Item{}
-		// 				DoubleField { name: "custom_y_max"; id: custom_y_max; fieldWidth: customAxesLayout.dbWidth; defaultValue: 1.00; negativeValues: false; min: custom_y_min.value}
-		// 			}
-		// 		}
-
-		// 		CheckBox
-		// 		{
-		// 			name:		"posteriorDistributionPlotPriorDistribution"
-		// 			label:		qsTr("Show prior distribution")
-		// 			checked:	false
-		// 		}
-		// 	}
-		// }
-
-		// CheckBox
-		// {
-		// 	name: 						"priorDistributionPlot"
-		// 	label: 						qsTr("Prior distribution")
-
-		// 	// Group so the options are shown in a 2-column layout
-		// 	Group
-		// 	{
-
-		// 		columns: 					2
-		// 		columnSpacing: 				10 * jaspTheme.columnGroupSpacing
-
-		// 		// Group so point estimate and CI options are shown in a single column
-		// 		Group
-		// 		{
-		// 			CheckBox
-		// 			{
-		// 				label:				qsTr("Point estimate")
-		// 				name:				"priorDistributionPlotIndividualPointEstimate"
-		// 				childrenOnSameRow:	true
-
-		// 				DropDown
-		// 				{
-		// 					name:	"priorDistributionPlotIndividualPointEstimateType"
-		// 					label:	""
-		// 					values:	[
-		// 						{label: qsTr("mean"),					value: "mean"},
-		// 						{label: qsTr("median"),					value: "median"},
-		// 						{label: qsTr("mode"),					value: "mode"}
-		// 					]
-		// 				}
-		// 			}
-
-		// 			// Group so CI checkbox and options are shown in a single column (with subgroup so CI options are indented)
-		// 			Group
-		// 			{
-		// 				columns: 1
-		// 				CheckBox
-		// 				{
-		// 					name:				"priorDistributionPlotIndividualCi"
-		// 					label:				qsTr("CI")
-		// 					id:					priorPlotIndividualCI
-		// 					childrenOnSameRow:	true
-
-		// 					DropDown
-		// 					{
-		// 						name:		"priorDistributionPlotIndividualCiType"
-		// 						label:		""
-		// 						id:			priorPlotIndividualType
-		// 						values:		[
-		// 							{label: qsTr("central"),				value: "central"},
-		// 							{label: qsTr("HPD"),					value: "HPD"},
-		// 							{label: qsTr("custom"),					value: "custom"}//,
-		// 							// {label: qsTr("support"),				value: "support"}
-		// 						]
-		// 					}
-		// 				}
-
-		// 				Group
-		// 				{
-		// 					columns: 2
-		// 					indent: true
-		// 					enabled:		priorPlotIndividualCI.checked
-
-		// 					CIField
-		// 					{
-		// 						visible:		priorPlotIndividualType.currentValue === "central" || priorPlotIndividualType.currentValue === "HPD"
-		// 						name:			"priorDistributionPlotIndividualCiMass"
-		// 						label:			qsTr("Mass")
-		// 						fieldWidth:		50
-		// 						defaultValue: 	95
-		// 						min:			1
-		// 						max:			100
-		// 						inclusive:		JASP.MinMax
-		// 					}
-
-		// 					DoubleField
-		// 					{
-		// 						visible:		priorPlotIndividualType.currentValue === "custom"
-		// 						name:			"priorDistributionPlotIndividualCiLower"
-		// 						label:			qsTr("Lower")
-		// 						id:				plotspriorLower
-		// 						fieldWidth:		50
-		// 						defaultValue:	0
-		// 						negativeValues: true
-		// 						inclusive:		JASP.MinMax
-		// 					}
-
-		// 					DoubleField
-		// 					{
-		// 						visible:		priorPlotIndividualType.currentValue === "custom"
-		// 						name:			"priorDistributionPlotIndividualCiUpper"
-		// 						label:			qsTr("Upper")
-		// 						id:				plotspriorUpper
-		// 						fieldWidth:		50
-		// 						defaultValue:	1
-		// 						negativeValues: true
-		// 						inclusive:		JASP.MinMax
-		// 					}
-
-		// 					FormulaField
-		// 					{
-		// 						visible:		priorPlotIndividualType.currentValue === "support"
-		// 						name:			"priorDistributionPlotIndividualCiBf"
-		// 						label:			qsTr("BF")
-		// 						fieldWidth:		50
-		// 						defaultValue:	"1"
-		// 						min:			0
-		// 						inclusive:		JASP.None
-		// 					}
-		// 				}
-		// 			}
-		// 		}
-
-		// 		RadioButtonGroup
-		// 		{
-		// 			name:		"priorDistributionPlotPanelLayout"
-		// 			title:		qsTr("Layout")
-		// 			id:			priorDistributionPlotPanelLayout
-
-		// 			RadioButton { value: "multiplePanels"; 	label: qsTr("One plot per metric"); 	checked: true	}
-		// 			RadioButton { value: "singlePanel";		label: qsTr("All metrics in one plot") 					}
-
-		// 		}
-
-		// 		RadioButtonGroup
-		// 		{
-		// 			name:		"priorDistributionPlotAxes"
-		// 			title:		qsTr("Axes")
-		// 			id:			priorDistributionPlotAxes
-
-		// 			RadioButton { value: "identical"; 	label: qsTr("Automatic"); 					checked: true	}
-		// 			RadioButton { value: "automatic";	label: qsTr("Identical across panels"); 	enabled: priorDistributionPlotPanelLayout.value === "multiplePanels"	}
-		// 			RadioButton { value: "custom";		label: qsTr("Custom axes");	}
-		// 		}
-
-		// 		Group
-		// 		{
-
-		// 		title: qsTr("Custom axes")
-		// 		enabled: priorDistributionPlotAxes.value === "custom"
-		// 		visible: priorDistributionPlotAxes.value === "custom"
-
-		// 			GridLayout
-		// 			{
-		// 				columns: 5
-		// 				columnSpacing: 2
-		// 				rowSpacing: jaspTheme.rowGridSpacing / 3
-		// 				id: priorCustomAxesLayout
-		// 				property int dbWidth: 50
-		// 				property int txtWidth: 100
-
-		// 				// Row 0: Headers
-		// 				Label {text: qsTr("Axis")}
-		// 				Item{}
-		// 				Label {text: qsTr("Min")}
-		// 				Item{}
-		// 				Label {text: qsTr("Max")}
-
-		// 				// Row 1: x axis
-		// 				Label { text: qsTr("x axis"); }
-		// 				Item{}
-		// 				DoubleField { name: "prior_custom_x_min"; id: prior_custom_x_min; fieldWidth: priorCustomAxesLayout.dbWidth; defaultValue: 0.00; negativeValues: true; max: prior_custom_x_max.value}
-		// 				Item{}
-		// 				DoubleField { name: "prior_custom_x_max"; id: prior_custom_x_max; fieldWidth: priorCustomAxesLayout.dbWidth; defaultValue: 1.00; negativeValues: true; min: prior_custom_x_min.value}
-
-		// 				// Row 2: y axis
-		// 				Label { text: qsTr("y axis"); }
-		// 				Item{}
-		// 				DoubleField { name: "prior_custom_y_min"; id: prior_custom_y_min; fieldWidth: priorCustomAxesLayout.dbWidth; defaultValue: 0.00; negativeValues: false; max: prior_custom_y_max.value}
-		// 				Item{}
-		// 				DoubleField { name: "prior_custom_y_max"; id: prior_custom_y_max; fieldWidth: priorCustomAxesLayout.dbWidth; defaultValue: 1.00; negativeValues: false; min: prior_custom_y_min.value}
-		// 			}
-		// 		}
-		// 	}
-		// }
-
 	}
 
 	Section
@@ -820,93 +458,6 @@ Form
 			hasCi: false
 			hasType: true
 		}
-
-		// CheckBox
-		// {
-		// 	name:		"sequentialAnalysisPointEstimatePlot"
-		// 	label:		qsTr("Point estimate plot")
-		// 	id:			sequentialAnalysisPointEstimatePlot
-
-		// 	Group
-		// 	{
-		// 		columns: 					2
-		// 		columnSpacing: 				10 * jaspTheme.columnGroupSpacing
-
-		// 		DropDown
-		// 		{
-		// 			label:		qsTr("Type")
-		// 			name:		"sequentialAnalysisPlotPointEstimateType"
-		// 			values:		[
-		// 				{label: qsTr("mean"),					value: "mean"},
-		// 				{label: qsTr("median"),					value: "median"}
-		// 				// mode?
-		// 			]
-		// 		}
-
-		// 		CheckBox
-		// 		{
-		// 			name:				"sequentialAnalysisPlotPointEstimateCi"
-		// 			label:				qsTr("CI")
-		// 			childrenOnSameRow:	true
-
-		// 			CIField
-		// 			{
-		// 				name:				"sequentialAnalysisPlotPointEstimateCiMass"
-		// 				label:				qsTr("Mass")
-		// 				fieldWidth:			50
-		// 				defaultValue:		95
-		// 				min:				1
-		// 				max:				100
-		// 				inclusive:			JASP.MaxOnly
-		// 			}
-		// 		}
-
-		// 	}
-		// }
-
-		// CheckBox
-		// {
-		// 	name:		"sequentialAnalysisIntervalEstimatePlot"
-		// 	label:		qsTr("Interval estimate plot")
-		// 	id:			sequentialAnalysisIntervalEstimatePlot
-
-		// 	DropDown
-		// 	{
-		// 		label:		qsTr("Type")
-		// 		name:		"sequentialAnalysisPlotPointEstimateType"
-		// 		values:		[
-		// 			{label: qsTr("mean"),					value: "mean"},
-		// 			{label: qsTr("median"),					value: "median"}
-		// 			// mode?
-		// 		]
-		// 	}
-
-		// 	CheckBox
-		// 	{
-		// 		name:				"sequentialAnalysisPlotCi"
-		// 		label:				qsTr("CI")
-		// 		childrenOnSameRow:	true
-
-		// 		CIField
-		// 		{
-		// 			name:				"sequentialAnalysisPlotCiMass"
-		// 			label:				qsTr("Mass")
-		// 			fieldWidth:			50
-		// 			defaultValue:		95
-		// 			min:				1
-		// 			max:				100
-		// 			inclusive:			JASP.MaxOnly
-		// 		}
-		// 	}
-
-		// 	CheckBox
-		// 	{
-		// 		name:		"sequentialAnalysisPlotAdditionalInfo"
-		// 		label:		qsTr("Show process criteria")
-		// 		checked:	true
-		// 		info:		qsTr("Add a secondary right axis with condition bounds for the process")
-		// 	}
-		// }
 
 		Group
 		{
@@ -931,8 +482,53 @@ Form
 
 	Section
 	{
-		title: qsTr("Prior distribution")
+
+		title: qsTr("Prior and Posterior Predictive Plots")
+
+		Common.PlotLayout
+		{
+			baseName: "posteriorPredictiveDistributionPlot"
+			baseLabel: qsTr("Posterior predictive distribution")
+			hasPrior: false
+		}
+
+		Common.PlotLayout
+		{
+			baseName: "priorPredictiveDistributionPlot"
+			baseLabel: qsTr("Prior predictive distribution")
+			hasPrior: false
+		}
+
 	}
+
+Section
+{
+	title: qsTr("Prior distributions")
+
+	Common.Priors
+	{
+		baseName: "populationMeanPrior"
+		baseLabel: qsTr("Population mean")
+		fullRealLLine: true
+	}
+
+	Common.Priors
+	{
+		baseName: "populationSigmaPrior"
+		baseLabel: qsTr("Population standard deviation")
+		fullRealLLine: false
+	}
+
+	Common.Priors
+	{
+		baseName: "populationDfPrior"
+		baseLabel: qsTr("Population degrees of freedom")
+		fullRealLLine: false
+		enabled: capabilityStudyType.value === "tCapabilityAnalysis"
+		hasJeffreys: false
+	}
+
+}
 
 	Section
 	{
