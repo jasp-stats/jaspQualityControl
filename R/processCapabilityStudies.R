@@ -614,6 +614,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
 
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
+
     tableDfCurrentStage <- data.frame(lsl = round(options[["lowerSpecificationLimitValue"]], .numDecimals),
                                       target = round(options[["targetValue"]], .numDecimals),
                                       usl    = round(options[["upperSpecificationLimitValue"]], .numDecimals),
@@ -1730,7 +1732,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     usl <- round(options[["upperSpecificationLimitValue"]], .numDecimals)
     target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
-    processMean <- mean(allData, na.rm = TRUE)
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
     beta <- distParameters[[i]]$beta
     theta <- distParameters[[i]]$theta
 
