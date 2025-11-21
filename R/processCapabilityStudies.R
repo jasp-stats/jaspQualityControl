@@ -106,9 +106,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   # Transform data as needed
   if (ready) {
-    transformOutput <- .transformData(dataset, measurements, options)
-    dataset <- transformOutput[["dataset"]]
-    transformParameters <- transformOutput[["parameters"]]
+    results <- .qcDataTransformations(jaspResults, dataset, measurements, options)
+    dataset <- results[["dataset"]]
+    options <- results[["options"]]
   }
 
   # Plot note about R/S chart recommendation
@@ -481,6 +481,64 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 ## Output ####
+
+.qcDataTransformations <- function(jaspResults, dataset, measurements, options) {
+  # this function transforms `dataset`, lower and upper specification limits, and target (in the options list)
+  # transformed `dataset` and `options` are returned in a list
+  # as a side product, this function generates output that shows to the user how was the data transformed
+
+  # if no transform, don't show anything and return unchanged inputs
+  if (options[["dataTransformation"]] == "none") return(list(dataset=dataset, options=options))
+
+  # create the main output (fill later)
+  transformsContainer <- jaspResults[["transformsContainer"]] %setOrRetrieve%
+    createJaspContainer(
+      title = gettext("Data transformation"),
+      dependencies = c("dataFormat",
+                       "measurementLongFormat", "subgroup","stagesLongFormat",
+                       "measurementsWideFormat", "stagesWideFormat",
+                       "subgroupSizeType", "groupingVariable", "groupingVariableMethod",
+                       "subgroupSizeUnequal", "fixedSubgroupSizeValue",
+                       "dataTransformation", "dataTransformationShift", "dataTransformationLambda",
+                       "dataTransformationMethod",
+                       "dataTransformationLambdaLower", "dataTransformationLambdaUpper",
+                       "dataTransformationContinuityAdjustment"),
+      position=0
+    )
+
+  # return state if available
+  state <- transformsContainer[["state"]] %setOrRetrieve% createJaspState()
+  if (!isRecomputed(transformsContainer)) return(state$object)
+
+  # transform data and return parameters of the transform
+  result <- try(.qcTransformData(dataset = dataset, measurements = measurements, options = options))
+
+  if(isTryError(result)) {
+    message <- gettextf("Data could not be transformed: %1$s", .extractErrorMessage(result))
+    .quitAnalysis(message)
+  }
+
+  # retrieve data and parameters
+  dataset <- result[["dataset"]]
+  parameters <- result[["parameters"]]
+
+
+  # transform lower and upper spec limits, target
+  options <- try(.qcTransformOptions(options = options, parameters = parameters), silent=TRUE)
+
+  if(isTryError(options)) {
+    message <- gettextf("Data could not be transformed: %1$s", .extractErrorMessage(options))
+    .quitAnalysis(message)
+  }
+
+  .qcFillTransformOutput(transformsContainer, options=options, parameters=parameters)
+
+  output <- list(dataset=dataset, options=options)
+
+  state$object <- output
+
+  return(output)
+}
 
 .qcProcessSummaryTable <- function(options, dataset, ready, container, measurements, stages, returnDataframe = FALSE) {
   if (identical(stages, "")) {
@@ -2453,4 +2511,206 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     output[is.na(number)] <- NA
 
   return(output)
+}
+
+
+# helper functions for transforms ----
+
+.qcTransformData <- function(dataset, measurements, options) {
+  # we need to append a unique id for each row in a wide format
+  # so that we can do pivot_longer -> pivot_wider
+
+  # save any possible columns that might be next to grouping and measurements
+  extra <- dplyr::select(dataset, -tidyr::all_of(measurements))
+
+  # then add a column which IDs the measurements
+  dataset[["id"]] <- seq_len(nrow(dataset))
+
+  # and finally convert to long
+  dataset <- tidyr::pivot_longer(dataset, tidyr::all_of(measurements))
+
+  x <- dataset[["value"]]
+  group <- dataset[["name"]]
+  lambda <- options[["dataTransformationLambda"]]
+  shift <- options[["dataTransformationShift"]]
+  method <- options[["dataTransformationMethod"]]
+
+  dataset[["value"]] <- switch(
+    options[["dataTransformation"]],
+    boxCox = jaspBase::BoxCox(x, lambda=lambda, shift=shift),
+    boxCoxAuto = jaspBase::BoxCoxAuto(x, shift=shift, method = method),
+    yeoJohnson = jaspBase::YeoJohnson(x, lambda=lambda),
+    yeoJohnsonAuto = jaspBase::YeoJohnsonAuto(x),
+    johnson = jaspBase::Johnson(x)
+  )
+
+  # some auto-transformations return meta-info about the applied transform
+  attr <- attributes(dataset[["value"]])
+  attributes(dataset[["value"]]) <- NULL
+
+  # reshape back to wider format and remove the id col
+  dataset <- tidyr::pivot_wider(dataset, values_from="value", names_from="name", id_cols="id")
+  dataset[["id"]] <- NULL
+  dataset <- as.data.frame(dataset)
+  # return extra columns
+  dataset <- cbind(dataset, extra)
+
+  return(list(dataset=dataset, parameters=attr))
+}
+
+
+.qcTransformOptions <- function(options, parameters) {
+  # returns modified options list with
+  # lower and upper specification limits + target value transformed
+  limits <- list()
+
+  if(options[["lowerSpecificationLimit"]]) limits <- c(limits, options["lowerSpecificationLimitValue"])
+  if(options[["upperSpecificationLimit"]]) limits <- c(limits, options["upperSpecificationLimitValue"])
+  if(options[["target"]]) limits <- c(limits, options["targetValue"])
+
+  limits <- unlist(limits)
+
+
+  if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto")) {
+    shift <- options[["dataTransformationShift"]]
+    lambda <- if(options[["dataTransformation"]] == "boxCox") options[["dataTransformationLambda"]] else parameters[["lambda"]]
+    if (any(limits + shift <= 0))
+      stop(gettextf("Some specification limits or target value are outside of the support of the Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f).", -shift))
+
+    limits <- BoxCox(limits, lambda=lambda, shift=shift, continuityAdjustment = options[["dataTransformationContinuityAdjustment"]])
+  } else if(options[["dataTransformation"]] %in% c("yeoJohnson", "yeoJohnsonAuto")) {
+    lambda <- if(options[["dataTransformation"]] == "boxCox") options[["dataTransformationLambda"]] else parameters[["lambda"]]
+    limits <- YeoJohnson(limits, lambda=lambda)
+  } else if (options[["dataTransformation"]] == "johnson") {
+    args <- parameters[["params"]]
+    args[["x"]] <- limits
+
+    # check for errors (invalid bounds)
+    # there might be some corrections for these cases but I could not find proper references except for documentation of other software.
+    # so for now we will just throw an error...
+    if (parameters[["type"]] == "sb") { # bounded between epsilon and epsilon+lambda
+      min <- args[["epsilon"]]
+      max <- args[["epsilon"]] + args[["lambda"]]
+
+      if (any(limits <= min) || any(limits >= max))
+        stop(gettextf("Some specification limits or target value are outside of the support of the Johnson (SB) transform. The bounds of the transform were identified to between %1$f and %2$f.", min, max))
+    } else if(parameters[["type"]] == "sl") { # bounded from below by epsilon
+      min <- args[["epsilon"]]
+
+      if (any(limits <= min))
+        stop(gettextf("Some specification limits or target value are outside of the support of the Johnson (SL) transform. The lower bound of the transform was identified as %1$f.", min))
+    }
+
+    #TODO: export these functions from jaspBase
+    limits <- switch(
+      parameters[["type"]],
+      sb = with(data=args, gamma + eta * log((x - epsilon) / (lambda + epsilon - x))),
+      sl = with(data=args, gamma + eta * log(x - epsilon)),
+      su = with(data=args, gamma + eta * asinh((x - epsilon) / lambda))
+    )
+  }
+
+  # overwrite the old specs with transformed specs
+  options <- modifyList(options, as.list(limits))
+  return(options)
+}
+
+.qcFillTransformOutput <- function(container, options, parameters) {
+  container[["formula"]] <- .qcTransformFormula(options, parameters)
+  container[["table"]] <- .qcTransformTable(options, parameters)
+}
+
+.qcTransformFormula <- function(options, parameters) {
+  if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto")) {
+    name <- "Box-Cox"
+    shift <- options[["dataTransformationShift"]]
+    lambda <- if(options[["dataTransformation"]] == "boxCox") options[["dataTransformationLambda"]] else parameters[["lambda"]]
+
+    if (shift == 0) {
+      if (lambda == 0) {
+        formula <- r"(\ln(x))"
+      } else if (!options[["dataTransformationContinuityAdjustment"]]) {
+        formula <- r"(x^\lambda)"
+      } else {
+        formula <- r"(\frac{x^\lambda - 1}{\lambda})"
+      }
+    } else {
+      if (lambda == 0) {
+        formula <- r"(\ln(x + \text{shift}))"
+      } else if (!options[["dataTransformationContinuityAdjustment"]]) {
+        formula <- r"((x+\text{shift})^\lambda)"
+      } else {
+        formula <- r"(\frac{(x+\text{shift})^\lambda - 1}{\lambda})"
+      }
+    }
+
+  } else if (options[["dataTransformation"]] %in% c("yeoJohnson", "yeoJohnsonAuto")) {
+    name <- "Yeo-Johnson"
+
+    formula <-
+      r"(
+      y_i^{(\lambda)} =
+      \begin{cases}
+        ((x+1)^\lambda-1)/\lambda                      &  \text{if }\lambda \neq 0, x \geq 0 \\
+        \ln(x + 1)                                     &  \text{if }\lambda =    0, x \geq 0 \\
+        -((-x + 1)^{(2-\lambda)} - 1) / (2 - \lambda)  &  \text{if }\lambda \neq 2, x <    0 \\
+        -\ln(-x + 1)                                   &  \text{if }\lambda =    2, x <    0
+      \end{cases}
+      )"
+
+  } else if (options[["dataTransformation"]] == "johnson") {
+    formula <- switch(
+      parameters[["type"]],
+      "sb" = r"(\gamma + \eta \ln \frac{x-\epsilon}{\lambda + \epsilon - x})",
+      "sl" = r"(\gamma + \eta \ln (x-\epsilon))",
+      "su" = r"(\gamma + \eta \sinh^{-1} \frac{x-\epsilon}{\lambda})"
+    )
+    name <- switch(
+      parameters[["type"]],
+      "sb" = "Johnson (SB)",
+      "sl" = "Johnson (SL)",
+      "su" = "Johnson (SU)"
+    )
+  }
+
+  formula <- mathExpression(formula, inline=FALSE)
+
+  intro <- gettextf("The measrements, specification limits and target value were transformed using the %s transformation, with the following formula,", name)
+
+  html <- createJaspHtml(title="", text = paste(intro, formula, sep="</br>"))
+
+  return(html)
+}
+
+
+.qcTransformTable <- function(options, parameters) {
+  table <- createJaspTable(title = gettext("Parameters of the transform"))
+  table$addColumnInfo(name = "par",   title = gettext("Parameter"), type = "string")
+  table$addColumnInfo(name = "value", title = gettext("Value"),     type = "number"  )
+
+  if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto") && options[["dataTransformationShift"]]!=0)
+    table$addRows(list(par="shift", value=options[["dataTransformationShift"]]))
+
+
+  if (options[["dataTransformation"]] %in% c("boxCox", "yeoJohnson")) {
+    table$addRows(list(par=mathExpression("\\lambda"), value=options[["dataTransformationLambda"]]))
+
+  } else if (options[["dataTransformation"]] %in% c("boxCoxAuto", "yeoJohnson")) {
+    table$addRows(list(par=mathExpression("\\lambda"), value=parameters[["lambda"]]), rowNames = "lambda")
+    table$addFootnote(gettext("Estimated from data"), rowNames = "lambda", colNames = "value")
+
+  } else if (options[["dataTransformation"]] == "johnson") {
+    if (parameters[["type"]] %in% c("sb", "su")) {
+      pars <- mathExpression(c("\\eta", "\\gamma", "\\lambda", "\\epsilon"))
+      vals <- c(parameters[["params"]][c("eta", "gamma", "lambda", "epsilon")])
+    } else if (parameters[["type"]] == "sl") {
+      pars <- mathExpression(c("\\eta", "\\gamma", "\\epsilon"))
+      vals <- c(parameters[["params"]][c("eta", "gamma", "epsilon")])
+    }
+
+    table$setData(list(par=pars, value=vals))
+
+    table$addFootnote(gettext("All values estimated from data"), colNames = "value")
+  }
+  return(table)
 }
