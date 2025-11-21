@@ -260,20 +260,36 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["reportProcessCapabilityTables"]]) {
       if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") {
         processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
-        potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
         overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, stages, returnOverallCapDataframe = TRUE)
         performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, stages, returnPerformanceDataframe = TRUE)
-        if (identical(stages, "")) {
-          tables[[1]] <- list(potentialWithinDF, overallCapDF, performanceDF, processSummaryDF)
-          tableTitles <- list(list("Process capability (within)", "Process performance (total)", "Non-conformance statistics", "Process summary"))
-          tableSize <- 6
-        } else {
-          tables[[1]] <- list(potentialWithinDF, overallCapDF)
-          tables[[2]] <- processSummaryDF
-          tables[[3]] <- performanceDF
-          tableTitles <- list(list("Process capability (within)", "Process performance (total)"), "Process summary", "Non-conformance statistics")
-          tableSize <- 5
+
+        if (.qcWithinProcessValid(options)) {
+          potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
+          if (identical(stages, "")) {
+            tables[[1]] <- list(potentialWithinDF, overallCapDF, performanceDF, processSummaryDF)
+            tableTitles <- list(list("Process capability (within)", "Process performance (total)", "Non-conformance statistics", "Process summary"))
+            tableSize <- 6
+          } else {
+            tables[[1]] <- list(potentialWithinDF, overallCapDF)
+            tables[[2]] <- processSummaryDF
+            tables[[3]] <- performanceDF
+            tableTitles <- list(list("Process capability (within)", "Process performance (total)"), "Process summary", "Non-conformance statistics")
+            tableSize <- 5
+          }
+        } else { # leave out within tables
+          if (identical(stages, "")) {
+            tables[[1]] <- list(overallCapDF, performanceDF, processSummaryDF)
+            tableTitles <- list(list("Process performance (total)", "Non-conformance statistics", "Process summary"))
+            tableSize <- 6
+          } else {
+            tables[[1]] <- list(overallCapDF)
+            tables[[2]] <- processSummaryDF
+            tables[[3]] <- performanceDF
+            tableTitles <- list(list("Process performance (total)"), "Process summary", "Non-conformance statistics")
+            tableSize <- 5
+          }
         }
+
       } else {
         processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE)
         overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnCapabilityDF = TRUE)
@@ -620,9 +636,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (returnDataframe) {
     lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
     uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
-    sourceVector <- c(lslTitle, "Target", uslTitle, "N", "Mean", "SD (total)", "SD (within)")
+    sourceVector <- c(lslTitle, "Target", uslTitle, "N", "Mean", "SD (total)")
     if (nStages > 1)
       sourceVector <- c("Stage", sourceVector)
+    if (.qcWithinProcessValid(options)) {
+      sourceVector <- c(sourceVector, "SD (within)")
+    }
     tableNRows <- if (nStages > 1) nStages * 2 - 1 else 1
     formattedTableDf <- data.frame(matrix(nrow = tableNRows, ncol = 0))
     if (nStages > 1) {
@@ -650,7 +669,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     formattedTableDf[["n"]] <- tableList[["n"]]
     formattedTableDf[["mean"]] <- round(tableList[["mean"]], nDecimals)
     formattedTableDf[["sd"]] <- round(tableList[["sd"]], nDecimals)
-    formattedTableDf[["sdw"]] <- round(tableList[["sdw"]], nDecimals)
+    if (.qcWithinProcessValid(options)) formattedTableDf[["sdw"]] <- round(tableList[["sdw"]], nDecimals)
     colnames(formattedTableDf) <- sourceVector
     return(formattedTableDf)
   }
@@ -1456,6 +1475,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableDf2$`Expected Overall`[is.na(tableDf2$`Expected Overall`)] <- "*" # This looks better in the table and makes clearer that there is not an error
     tableDf2$`Expected Within`[is.na(tableDf2$`Expected Within`)] <- "*"
     tableDf2$Observed[is.na(tableDf2$Observed)] <- "*"
+
+    if (!.qcWithinProcessValid(options)) tableDf2$`Expected Within` <- "*"
     return(tableDf2)
   }
 
