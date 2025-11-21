@@ -213,12 +213,10 @@ Form
 					values:
 					[
 						{label: qsTr("None"),					value: "none"},
-						{label: qsTr("Exponential"),			value: "exponential"},
 						{label: qsTr("Box-Cox"),				value: "boxCox"},
-						{label: qsTr("Box-Cox (Log Lik.)"),		value: "boxCoxAuto"},
-						{label: qsTr("Box-Cox (Minitab)"),		value: "boxCoxMinitab"},
+						{label: qsTr("Box-Cox (auto)"),			value: "boxCoxAuto"},
 						{label: qsTr("Yeo-Johnson"),			value: "yeoJohnson"},
-						{label: qsTr("Yeo-Johnson (Log Lik.)"),	value: "yeoJohnsonAuto"},
+						{label: qsTr("Yeo-Johnson (auto)"),		value: "yeoJohnsonAuto"},
 						{label: qsTr("Johnson"),				value: "johnson"},
 					]
 				}
@@ -229,7 +227,7 @@ Form
 					name: "dataTransformationShift"
 					negativeValues:	true
 					defaultValue: 0
-					enabled: ["exponential", "boxCox", "boxCoxAuto"].includes(dataTransformation.value)
+					enabled: ["boxCox", "boxCoxAuto"].includes(dataTransformation.value)
 				}
 				DoubleField
 				{
@@ -237,7 +235,27 @@ Form
 					name: "dataTransformationLambda"
 					negativeValues:	true
 					defaultValue: 0
-					enabled: ["exponential", "boxCox", "yeoJohnson"].includes(dataTransformation.value)
+					enabled: ["boxCox", "yeoJohnson"].includes(dataTransformation.value)
+				}
+				DropDown
+				{
+					name:		"dataTransformationMethod"
+					id:			dataTransformation
+					label:		qsTr("Type")
+					values:
+					[
+						{label: qsTr("Log. Lik"),					value: "loglik"},
+						{label: qsTr("Sd"),							value: "sd"},
+						{label: qsTr("Average moving range)"),		value: "movingRange"},
+					]
+					enabled: ["boxCoxAuto"].includes(dataTransformation.value)
+				}
+				CheckBox
+				{
+					label: qsTr("Continuity Adjustment")
+					name: "dataTransformationContinuityAdjustment"
+					checked: false
+					enabled: ["boxCox", "boxCoxAuto"].includes(dataTransformation.value)
 				}
 			}
 			Group

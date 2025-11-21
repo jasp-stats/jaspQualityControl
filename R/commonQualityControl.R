@@ -87,43 +87,6 @@
               xAxisTitle = xAxisTitle))
 }
 
-.transformData <- function(dataset, measurements, options) {
-  if (options[["dataTransformation"]] == "none") return(list(dataset=dataset, parameters=NULL))
-  # transforms need data in a long format...
-
-  # we need to append a unique id for each row in a wide format
-  # so that we can do pivot_longer -> pivot_wider
-  dataset[["id"]] <- seq_len(nrow(dataset))
-  dataset <- tidyr::pivot_longer(dataset, tidyr::all_of(measurements))
-
-  x <- dataset[["value"]]
-  group <- dataset[["name"]]
-  lambda <- options[["dataTransformationLambda"]]
-  shift <- options[["dataTransformationShift"]]
-
-  dataset[["value"]] <- switch(
-    options[["dataTransformation"]],
-    exponential = x^lambda,
-    boxCox = jaspBase::BoxCox(x, lambda=lambda, shift=shift),
-    boxCoxAuto = jaspBase::BoxCoxAuto(x, shift=shift),
-    boxCoxMinitab = jaspBase::BoxCoxMinitab(x, group=group),
-    yeoJohnson = jaspBase::YeoJohnson(x, lambda=lambda),
-    yeoJohnsonAuto = jaspBase::YeoJohnsonAuto(x),
-    johnson = jaspBase::Johnson(x)
-  )
-
-  # some auto-transformations return meta-info about the applied transform
-  attr <- attributes(dataset[["value"]])
-  attributes(dataset[["value"]]) <- NULL
-
-  # reshape back to wider format and remove the id col
-  dataset <- tidyr::pivot_wider(dataset, values_from="value", names_from="name", id_cols="id")
-  dataset[["id"]] <- NULL
-  dataset <- as.data.frame(dataset)
-
-  return(list(dataset=dataset, parameters=attr))
-}
-
 .qcReport <- function(text = NULL, # a string or vector of strings,
                       plots, # a list of ggplots. If the plots should stay on top of each other, use a nested list.
                       tables = NULL, # a list of dataframes. If tables should be in the same plot, use a nested list.
