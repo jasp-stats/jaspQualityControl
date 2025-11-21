@@ -108,7 +108,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (ready) {
     results <- .qcDataTransformations(jaspResults, dataset, measurements, options)
     dataset <- results[["dataset"]]
-    options <- results[["options"]]
+    # change specifications (limits + target value)
+    transformedSpecs <- results[["transformedSpecs"]]
+    options <- modifyList(options, transformedSpecs)
   }
 
   # Plot note about R/S chart recommendation
@@ -487,10 +489,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   # as a side product, this function generates output that shows to the user how was the data transformed
 
   # if no transform, don't show anything and return unchanged inputs
-  if (options[["dataTransformation"]] == "none") return(list(dataset=dataset, options=options))
+  if (options[["dataTransformation"]] == "none") return(list(dataset=dataset, transformedSpecs=list()))
 
   # create the main output (fill later)
-  transformsContainer <- jaspResults[["transformsContainer"]] %setOrRetrieve%
+  dataTransformationContainer <- jaspResults[["dataTransformationContainer"]] %setOrRetrieve%
     createJaspContainer(
       title = gettext("Data transformation"),
       dependencies = .qcDataOptionNames(),
@@ -498,8 +500,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     )
 
   # return state if available
-  state <- transformsContainer[["state"]] %setOrRetrieve% createJaspState()
-  if (!isRecomputed(transformsContainer)) return(state$object)
+  if(!is.null(jaspResults[["dataTransformationState"]])) return(jaspResults[["dataTransformationState"]]$object)
 
   # transform data and return parameters of the transform
   result <- try(.qcTransformData(dataset = dataset, measurements = measurements, options = options))
@@ -515,18 +516,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 
   # transform lower and upper spec limits, target
-  options <- try(.qcTransformOptions(options = options, parameters = parameters), silent=TRUE)
+  transformedSpecs <- try(.qcTransformSpecs(options = options, parameters = parameters), silent=TRUE)
 
-  if(isTryError(options)) {
-    message <- gettextf("Specification limits could not be transformed: %1$s", .extractErrorMessage(options))
+  if(isTryError(transformedSpecs)) {
+    message <- gettextf("Specification limits could not be transformed: %1$s", .extractErrorMessage(transformedSpecs))
     .quitAnalysis(message)
   }
 
-  .qcFillTransformOutput(transformsContainer, options=options, parameters=parameters)
+  .qcFillTransformOutput(dataTransformationContainer, options=options, parameters=parameters)
 
-  output <- list(dataset=dataset, options=options)
+  output <- list(dataset=dataset, transformedSpecs=transformedSpecs)
 
-  state$object <- output
+  jaspResults[["dataTransformationState"]] <- createJaspState(object = output, dependencies = .qcDataOptionNames())
 
   return(output)
 }
@@ -2561,32 +2562,31 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 
-.qcTransformOptions <- function(options, parameters) {
-  # returns modified options list with
-  # lower and upper specification limits + target value transformed
-  limits <- list()
+.qcTransformSpecs <- function(options, parameters) {
+  # lower and upper specification specs + target value transformed
+  specs <- list()
 
-  if(options[["lowerSpecificationLimit"]]) limits <- c(limits, options["lowerSpecificationLimitValue"])
-  if(options[["upperSpecificationLimit"]]) limits <- c(limits, options["upperSpecificationLimitValue"])
-  if(options[["target"]]) limits <- c(limits, options["targetValue"])
+  if(options[["lowerSpecificationLimit"]]) specs <- c(specs, options["lowerSpecificationLimitValue"])
+  if(options[["upperSpecificationLimit"]]) specs <- c(specs, options["upperSpecificationLimitValue"])
+  if(options[["target"]]) specs <- c(specs, options["targetValue"])
 
-  limits <- unlist(limits)
+  specs <- unlist(specs)
 
-  if (length(limits) == 0L) return(options)
+  if (length(specs) == 0L) return(list())
 
   if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto")) {
     shift <- options[["dataTransformationShift"]]
     lambda <- if(options[["dataTransformation"]] == "boxCox") options[["dataTransformationLambda"]] else parameters[["lambda"]]
-    if (any(limits + shift <= 0))
+    if (any(specs + shift <= 0))
       stop(gettextf("Some specification limits or target value are outside of the support of the Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f).", -shift))
 
-    limits <- BoxCox(limits, lambda=lambda, shift=shift, continuityAdjustment=options[["dataTransformationContinuityAdjustment"]])
+    specs <- BoxCox(specs, lambda=lambda, shift=shift, continuityAdjustment=options[["dataTransformationContinuityAdjustment"]])
   } else if(options[["dataTransformation"]] %in% c("yeoJohnson", "yeoJohnsonAuto")) {
     lambda <- if(options[["dataTransformation"]] == "yeoJohnson") options[["dataTransformationLambda"]] else parameters[["lambda"]]
-    limits <- YeoJohnson(limits, lambda=lambda)
+    specs <- YeoJohnson(specs, lambda=lambda)
   } else if (options[["dataTransformation"]] == "johnson") {
     args <- parameters[["params"]]
-    args[["x"]] <- limits
+    args[["x"]] <- specs
 
     # check for errors (invalid bounds)
     # there might be some corrections for these cases but I could not find proper references except for documentation of other software.
@@ -2595,17 +2595,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       min <- args[["epsilon"]]
       max <- args[["epsilon"]] + args[["lambda"]]
 
-      if (any(limits <= min) || any(limits >= max))
+      if (any(specs <= min) || any(specs >= max))
         stop(gettextf("Some specification limits or target value are outside of the support of the Johnson (SB) transform. The bounds of the transform were identified to between %1$f and %2$f.", min, max))
     } else if(parameters[["type"]] == "sl") { # bounded from below by epsilon
       min <- args[["epsilon"]]
 
-      if (any(limits <= min))
+      if (any(specs <= min))
         stop(gettextf("Some specification limits or target value are outside of the support of the Johnson (SL) transform. The lower bound of the transform was identified as %1$f.", min))
     }
 
     #TODO: export these functions from jaspBase
-    limits <- switch(
+    specs <- switch(
       parameters[["type"]],
       sb = with(data=args, gamma + eta * log((x - epsilon) / (lambda + epsilon - x))),
       sl = with(data=args, gamma + eta * log(x - epsilon)),
@@ -2613,9 +2613,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     )
   }
 
-  # overwrite the old specs with transformed specs
-  options <- modifyList(options, as.list(limits))
-  return(options)
+  return(as.list(specs))
 }
 
 .qcFillTransformOutput <- function(container, options, parameters) {
