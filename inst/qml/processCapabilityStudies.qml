@@ -240,13 +240,12 @@ Form
 				DropDown
 				{
 					name:		"dataTransformationMethod"
-					id:			dataTransformation
 					label:		qsTr("Type")
 					values:
 					[
 						{label: qsTr("Log. Lik"),					value: "loglik"},
-						{label: qsTr("Sd"),							value: "sd"},
-						{label: qsTr("Average moving range)"),		value: "movingRange"},
+						{label: qsTr("SD"),							value: "sd"},
+						{label: qsTr("Average moving range"),		value: "movingRange"},
 					]
 					enabled: ["boxCoxAuto"].includes(dataTransformation.value)
 				}

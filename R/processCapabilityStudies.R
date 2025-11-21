@@ -461,7 +461,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["processCapabilityPlot"]])
       .qcProcessCapabilityPlot(options, dataset, ready, normalContainer, measurements, stages, "normal")
     if (options[["processCapabilityTable"]]) {
-      .qcProcessCapabilityTableWithin(options, dataset, ready, normalContainer, measurements, stages)
+      if (.qcWithinProcessValid(options))
+        .qcProcessCapabilityTableWithin(options, dataset, ready, normalContainer, measurements, stages)
+
       .qcProcessCapabilityTableOverall(options, dataset, ready, normalContainer, measurements, stages)
     }
   }
@@ -491,7 +493,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   transformsContainer <- jaspResults[["transformsContainer"]] %setOrRetrieve%
     createJaspContainer(
       title = gettext("Data transformation"),
-      dependencies = .getDataDependencies(),
+      dependencies = .qcDataOptionNames(),
       position=0
     )
 
@@ -516,7 +518,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   options <- try(.qcTransformOptions(options = options, parameters = parameters), silent=TRUE)
 
   if(isTryError(options)) {
-    message <- gettextf("Data could not be transformed: %1$s", .extractErrorMessage(options))
+    message <- gettextf("Specification limits could not be transformed: %1$s", .extractErrorMessage(options))
     .quitAnalysis(message)
   }
 
@@ -556,7 +558,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. dev. (total)"))
-  table$addColumnInfo(name = "sdw", type = "number", title = gettext("Std. dev. (within)"))
+  if (.qcWithinProcessValid(options))
+    table$addColumnInfo(name = "sdw", type = "number", title = gettext("Std. dev. (within)"))
   table$showSpecifiedColumnsOnly <- TRUE
 
   if (!ready)
@@ -750,13 +753,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["processCapabilityPlotDistributions"]]) {
       if (distribution == "normal") {
         p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)),
-                                        mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist")) +
-          ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw),
-                                 mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
-        legendColors <- c(legendColors, "dodgerblue", "red")
-        legendLty <- c(legendLty, "solid", "solid")
-        legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
-                          gettext("Normal dist.\n(std. dev. within)"))
+                                        mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist"))
+        legendColors <- c(legendColors, "dodgerblue")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"))
+
+        if (.qcWithinProcessValid(options)) {
+          p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw),
+                                          mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
+          legendColors <- c(legendColors, "red")
+          legendLty <- c(legendLty, "solid")
+          legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. within)"))
+        }
 
       } else if (distribution == "weibull") {
         distParameters <- .distributionParameters(data = allData, distribution = distribution)
@@ -1315,7 +1323,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     expWithinColName <- paste0("expWithin", stage)
     table2$addColumnInfo(name = observedColName, type = "integer", title = "Observed", overtitle = colOvertitle)
     table2$addColumnInfo(name = expOverallColName, type = "integer", title = "Expected total", overtitle = colOvertitle)
-    table2$addColumnInfo(name = expWithinColName, type = "integer", title = "Expected within", overtitle = colOvertitle)
+    if (.qcWithinProcessValid(options))
+      table2$addColumnInfo(name = expWithinColName, type = "integer", title = "Expected within", overtitle = colOvertitle)
 
     # Table columns for comparison
     if (i > 1) {
@@ -2526,11 +2535,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   lambda <- options[["dataTransformationLambda"]]
   shift <- options[["dataTransformationShift"]]
   method <- options[["dataTransformationMethod"]]
+  ca <- options[["dataTransformationContinuityAdjustment"]]
 
   dataset[["value"]] <- switch(
     options[["dataTransformation"]],
-    boxCox = jaspBase::BoxCox(x, lambda=lambda, shift=shift),
-    boxCoxAuto = jaspBase::BoxCoxAuto(x, shift=shift, method = method),
+    boxCox = jaspBase::BoxCox(x, lambda=lambda, shift=shift, continuityAdjustment=ca),
+    boxCoxAuto = jaspBase::BoxCoxAuto(x, predictor=as.factor(group), shift=shift, method=method, continuityAdjustment=ca),
     yeoJohnson = jaspBase::YeoJohnson(x, lambda=lambda),
     yeoJohnsonAuto = jaspBase::YeoJohnsonAuto(x),
     johnson = jaspBase::Johnson(x)
@@ -2562,6 +2572,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   limits <- unlist(limits)
 
+  if (length(limits) == 0L) return(options)
 
   if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto")) {
     shift <- options[["dataTransformationShift"]]
@@ -2569,9 +2580,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (any(limits + shift <= 0))
       stop(gettextf("Some specification limits or target value are outside of the support of the Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f).", -shift))
 
-    limits <- BoxCox(limits, lambda=lambda, shift=shift, continuityAdjustment = options[["dataTransformationContinuityAdjustment"]])
+    limits <- BoxCox(limits, lambda=lambda, shift=shift, continuityAdjustment=options[["dataTransformationContinuityAdjustment"]])
   } else if(options[["dataTransformation"]] %in% c("yeoJohnson", "yeoJohnsonAuto")) {
-    lambda <- if(options[["dataTransformation"]] == "boxCox") options[["dataTransformationLambda"]] else parameters[["lambda"]]
+    lambda <- if(options[["dataTransformation"]] == "yeoJohnson") options[["dataTransformationLambda"]] else parameters[["lambda"]]
     limits <- YeoJohnson(limits, lambda=lambda)
   } else if (options[["dataTransformation"]] == "johnson") {
     args <- parameters[["params"]]
@@ -2620,19 +2631,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     if (shift == 0) {
       if (lambda == 0) {
-        formula <- r"(\ln(x))"
+        formula <- r"(y = \ln(x))"
       } else if (!options[["dataTransformationContinuityAdjustment"]]) {
-        formula <- r"(x^\lambda)"
+        formula <- r"(y = x^\lambda)"
       } else {
-        formula <- r"(\frac{x^\lambda - 1}{\lambda})"
+        formula <- r"(y = \frac{x^\lambda - 1}{\lambda})"
       }
     } else {
       if (lambda == 0) {
-        formula <- r"(\ln(x + \text{shift}))"
+        formula <- r"(y = \ln(x + \text{shift}))"
       } else if (!options[["dataTransformationContinuityAdjustment"]]) {
-        formula <- r"((x+\text{shift})^\lambda)"
+        formula <- r"(y = (x+\text{shift})^\lambda)"
       } else {
-        formula <- r"(\frac{(x+\text{shift})^\lambda - 1}{\lambda})"
+        formula <- r"(y = \frac{(x+\text{shift})^\lambda - 1}{\lambda})"
       }
     }
 
@@ -2641,7 +2652,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     formula <-
       r"(
-      y_i^{(\lambda)} =
+      y =
       \begin{cases}
         ((x+1)^\lambda-1)/\lambda                      &  \text{if }\lambda \neq 0, x \geq 0 \\
         \ln(x + 1)                                     &  \text{if }\lambda =    0, x \geq 0 \\
@@ -2653,9 +2664,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   } else if (options[["dataTransformation"]] == "johnson") {
     formula <- switch(
       parameters[["type"]],
-      "sb" = r"(\gamma + \eta \ln \frac{x-\epsilon}{\lambda + \epsilon - x})",
-      "sl" = r"(\gamma + \eta \ln (x-\epsilon))",
-      "su" = r"(\gamma + \eta \sinh^{-1} \frac{x-\epsilon}{\lambda})"
+      "sb" = r"(y = \gamma + \eta \ln \frac{x-\epsilon}{\lambda + \epsilon - x})",
+      "sl" = r"(y = \gamma + \eta \ln (x-\epsilon))",
+      "su" = r"(y = \gamma + \eta \sinh^{-1} \frac{x-\epsilon}{\lambda})"
     )
     name <- switch(
       parameters[["type"]],
@@ -2687,7 +2698,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (options[["dataTransformation"]] %in% c("boxCox", "yeoJohnson")) {
     table$addRows(list(par=mathExpression("\\lambda"), value=options[["dataTransformationLambda"]]))
 
-  } else if (options[["dataTransformation"]] %in% c("boxCoxAuto", "yeoJohnson")) {
+  } else if (options[["dataTransformation"]] %in% c("boxCoxAuto", "yeoJohnsonAuto")) {
     table$addRows(list(par=mathExpression("\\lambda"), value=parameters[["lambda"]]), rowNames = "lambda")
     table$addFootnote(gettext("Estimated from data"), rowNames = "lambda", colNames = "value")
 
@@ -2735,3 +2746,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(dependencies)
 }
 
+.qcWithinProcessValid <- function(options) {
+  # within process results make sense only for selected transforms:
+  # - none,
+  # - those that have only fixed parameters (Box-Cox and Yeo-Johnson with manually fixed params)
+  # - Box-Cox auto (normalizes within groups, not across groups)
+  return(options[["dataTransformation"]] %in% c("none", "boxCox", "boxCoxAuto", "yeoJohnson"))
+}
