@@ -126,7 +126,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                                      title = "Zero values found in non-normal capability study:",
                                                      position = 1)
       jaspResults[["zeroWarning"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "capabilityStudyType",
-                                              "dataTransformation", "dataTransformationLambda", "dataTransformationShift",
                                               "nullDistribution"))
     }
   }
@@ -140,23 +139,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotHeight <- ceiling(nElements/2) * 500
     reportPlot <- createJaspPlot(title = gettext("Process Capability Report"), width = 1250, height = plotHeight)
     jaspResults[["report"]] <- reportPlot
-    jaspResults[["report"]]$dependOn(c("report", "measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
-                                       "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                       "dataTransformation", "dataTransformationLambda", "dataTransformationShift",
-                                       "controlLimitsNumberOfSigmas", "groupingVariableMethod", "reportProcessStability",
-                                       "reportProcessCapabilityPlot", "reportProbabilityPlot", "reportProcessCapabilityTables",
-                                       "upperSpecificationLimit", "lowerSpecificationLimit", "subgroupSizeUnequal", "fixedSubgroupSizeValue",
-                                       "capabilityStudyType", "nonNormalDistribution", "nonNormalMethod", "lowerSpecificationLimitValue",
-                                       "lowerSpecificationLimitBoundary", "target", "targetValue", "reportMetaData",
-                                       "upperSpecificationLimitValue", "upperSpecificationLimitBoundary", "processCapabilityPlotBinNumber",
-                                       "processCapabilityPlotDistributions", "processCapabilityPlotSpecificationLimits", "xBarMovingRangeLength",
-                                       "xmrChartMovingRangeLength", "xmrChartSpecificationLimits","probabilityPlotRankMethod",
-                                       "histogramBinBoundaryDirection", "nullDistribution", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
-                                       "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdUnbiasingConstant",
-                                       "subgroup", "reportTitle", "reportTitleText", "reportLocation", "reportLocationText",
-                                       "reportLine", "reportLineText", "reportMachine", "reportMachineText", "reportVariable",
-                                       "reportVariableText", "reportProcess", "reportProcessText", "reportDate", "reportDateText",
-                                       "reportReportedBy", "reportReportedByText", "reportConclusion", "reportConclusionText", .getDependenciesControlChartRules()))
+    jaspResults[["report"]]$dependOn(c(
+      "subgroups", "controlChartType", "controlLimitsNumberOfSigmas",
+      "capabilityStudyType", "nonNormalDistribution", "nonNormalMethod",
+      "lowerSpecificationLimitBoundary", "upperSpecificationLimitBoundary",
+      "processCapabilityPlotBinNumber", "processCapabilityPlotDistributions",
+      "processCapabilityPlotSpecificationLimits", "xBarMovingRangeLength",
+      "xmrChartMovingRangeLength", "xmrChartSpecificationLimits", "probabilityPlotRankMethod",
+      "histogramBinBoundaryDirection", "nullDistribution", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
+      "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdUnbiasingConstant",
+      .qcDataOptionNames(), .qcReportOptionNames(), .getDependenciesControlChartRules()
+    ))
 
     if((!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]) && options[["reportProcessCapabilityTables"]]) {
       reportPlot$setError(gettext("No specification limits set."))
@@ -315,11 +308,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                 "xBarMR" = "mR")
       # first chart is always xBar-chart, second is either R-, mR-, or s-chart
       jaspResults[["xBar"]] <- createJaspContainer(gettextf("X-bar & %s control chart", secondPlotTitle))
-      jaspResults[["xBar"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
-                                       "dataTransformation", "dataTransformationLambda", "dataTransformationShift",
-                                       "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                       "subgroupSizeUnequal", "controlChartSdUnbiasingConstant", "controlChart",
-                                       "controlLimitsNumberOfSigmas", "groupingVariableMethod", .getDependenciesControlChartRules()))
+      jaspResults[["xBar"]]$dependOn(c(
+        "subgroups", "controlChartType", "report", "controlChartSdUnbiasingConstant",
+        "controlChart", "controlLimitsNumberOfSigmas",
+        .qcDataOptionNames(), .getDependenciesControlChartRules()
+      ))
       jaspResults[["xBar"]]$position <- 1
 
 
@@ -358,10 +351,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       }
     } else if (options[["controlChartType"]] == "xmr" && options[["controlChart"]]) {
       jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR control chart"))
-      jaspResults[["xmr"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
-                                      "dataTransformation", "dataTransformationLambda", "dataTransformationShift",
-                                      "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                      "subgroupSizeUnequal", "controlChart", "controlLimitsNumberOfSigmas", "groupingVariableMethod", .getDependenciesControlChartRules()))
+      jaspResults[["xmr"]]$dependOn(c(
+        "subgroups", "controlChartType", "report", "controlChart",
+        "controlLimitsNumberOfSigmas",
+        .qcDataOptionNames(), .getDependenciesControlChartRules()
+      ))
+
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
@@ -414,13 +409,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements, stages) {
   container <- createJaspContainer(gettext("Capability study"))
-  container$dependOn(options = c("CapabilityStudyType", "measurementsWideFormat", "subgroup", "lowerSpecificationLimitValue",
-                                 "upperSpecificationLimitValue", "targetValue", "measurementLongFormat", "manualSubgroupSizeValue",
-                                 "dataFormat", "processCapabilityPlot", "processCapabilityTable", "manualSubgroupSize", "report",
-                                 "stagesLongFormat", "stagesWideFormat","controlChartSdUnbiasingConstant", "lowerSpecificationLimitBoundary",
-                                 "upperSpecificationLimitBoundary", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
-                                 "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdEstimationMethodMeanMovingRangeLength",
-                                 "groupingVariableMethod"))
+  container$dependOn(c(
+    "capabilityStudyType", "processCapabilityPlot", "processCapabilityTable",
+    "manualSubgroupSize", "report", "controlChartSdUnbiasingConstant",
+    "lowerSpecificationLimitBoundary", "upperSpecificationLimitBoundary",
+    "controlChartSdEstimationMethodGroupSizeLargerThanOne", "controlChartSdEstimationMethodGroupSizeEqualOne",
+    "controlChartSdEstimationMethodMeanMovingRangeLength",
+    .qcDataOptionNames()
+  ))
+
   container$position <- 4
   jaspResults[["capabilityAnalysis"]] <- container
 
@@ -494,15 +491,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   transformsContainer <- jaspResults[["transformsContainer"]] %setOrRetrieve%
     createJaspContainer(
       title = gettext("Data transformation"),
-      dependencies = c("dataFormat",
-                       "measurementLongFormat", "subgroup","stagesLongFormat",
-                       "measurementsWideFormat", "stagesWideFormat",
-                       "subgroupSizeType", "groupingVariable", "groupingVariableMethod",
-                       "subgroupSizeUnequal", "fixedSubgroupSizeValue",
-                       "dataTransformation", "dataTransformationShift", "dataTransformationLambda",
-                       "dataTransformationMethod",
-                       "dataTransformationLambdaLower", "dataTransformationLambdaUpper",
-                       "dataTransformationContinuityAdjustment"),
+      dependencies = .getDataDependencies(),
       position=0
     )
 
@@ -2020,9 +2009,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
     return()
   container <- createJaspContainer(gettext("Probability table and plot"))
-  container$dependOn(options = c("measurementsWideFormat", "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution",
-                                 "probabilityPlotGridLines", "measurementLongFormat","subgroup", "report", "stagesLongFormat",
-                                 "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue", "groupingVariableMethod"))
+  container$dependOn(c(
+    "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution",
+    "probabilityPlotGridLines", "report",
+    .qcDataOptionNames()
+  ))
   container$position <- 3
   jaspResults[["probabilityContainer"]] <- container
 
@@ -2381,11 +2372,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Histogram"), width = 600, height = 400)
-    plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
-                              "dataTransformation", "dataTransformationLambda", "dataTransformationShift",
-                              "report", "measurementLongFormat", "manualSubgroupSizeValue", "subgroup", 'nullDistribution',
-                              "stagesLongFormat", "stagesWideFormat", "histogramBinBoundaryDirection", "subgroupSizeType",
-                              "manualSubgroupSizeValue", "groupingVariableMethod"))
+    plot$dependOn(c(
+      "histogram", "histogramDensityLine", "histogramBinNumber",
+      "report", "nullDistribution", "histogramBinBoundaryDirection",
+      .qcDataOptionNames()
+    ))
     jaspResults[["histogram"]] <- plot
     return()
   }
@@ -2401,10 +2392,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotWidth <- nCol * 600
   plotHeight <- nRow * 400
   plot <- createJaspPlot(title = gettext("Histogram"), width = plotWidth, height = plotHeight)
-  plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
-                            "report", "measurementLongFormat", "manualSubgroupSizeValue", "subgroup", 'nullDistribution',
-                            "stagesLongFormat", "stagesWideFormat", "histogramBinBoundaryDirection", "subgroupSizeType",
-                            "manualSubgroupSizeValue", "groupingVariableMethod"))
+  plot$dependOn(c(
+    "histogram", "histogramDensityLine", "histogramBinNumber",
+    "report", "nullDistribution", "histogramBinBoundaryDirection",
+    .qcDataOptionNames()
+  ))
   plot$position <- 2
   jaspResults[["histogram"]] <- plot
 
@@ -2714,3 +2706,32 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   return(table)
 }
+
+.qcDataOptionNames <- function() {
+  dependencies <- c("dataFormat",
+                    "measurementLongFormat", "subgroup","stagesLongFormat",
+                    "measurementsWideFormat", "stagesWideFormat",
+                    "subgroupSizeType", "groupingVariable", "groupingVariableMethod",
+                    "subgroupSizeUnequal", "fixedSubgroupSizeValue", "manualSubgroupSizeValue",
+                    "dataTransformation", "dataTransformationShift", "dataTransformationLambda",
+                    "dataTransformationMethod",
+                    "dataTransformationLambdaLower", "dataTransformationLambdaUpper",
+                    "dataTransformationContinuityAdjustment",
+                    "lowerSpecificationLimit", "lowerSpecificationLimitValue",
+                    "target", "targetValue",
+                    "upperSpecificationLimit", "upperSpecificationLimitValue")
+  return(dependencies)
+}
+
+.qcReportOptionNames <- function() {
+  dependencies <- c("report", "reportMetaData", "reportTitle", "reportTitleText",
+                    "reportLocation", "reportLocationText", "reportLine", "reportLineText",
+                    "reportMachine", "reportMachineText", "reportVariable", "reportVariableText",
+                    "reportProcess", "reportProcessText", "reportDate", "reportDateText",
+                    "reportReportedBy", "reportReportedByText", "reportConclusion",
+                    "reportConclusionText", "reportProcessStability", "reportProcessCapabilityPlot",
+                    "reportProbabilityPlot", "reportProcessCapabilityTables")
+
+  return(dependencies)
+}
+
