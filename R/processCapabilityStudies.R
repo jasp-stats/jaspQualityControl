@@ -2697,7 +2697,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   formula <- mathExpression(formula, inline=FALSE)
 
-  intro <- gettextf("The measrements, specification limits and target value were transformed using the %s transformation, with the following formula,", name)
+  intro <- gettextf("The measurements, specification limits and target value were transformed using the %s transformation, with the following formula,", name)
 
   html <- createJaspHtml(title="", text = paste(intro, formula, sep="</br>"))
 
