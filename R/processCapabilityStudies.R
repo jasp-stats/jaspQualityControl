@@ -768,6 +768,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     legendLty <- c()
     legendLabels <- c()
 
+  # logic that checks if all parameters necessary for the non-normal distributions are given as historical, if yes, skip the dist. est. function, else replace only the given parameters
+  if (distribution != "normal")
+    allParametersHistorical <- switch(
+      options[["nonNormalDistribution"]],
+      "weibull" = options[["historicalShape"]] && options[["historicalScale"]],
+      "lognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]],
+      "3ParameterWeibull" = options[["historicalShape"]] && options[["historicalScale"]] && options[["historicalThreshold"]],
+      "3ParameterLognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]] && options[["historicalThreshold"]],
+      FALSE  # default
+    )
+
     # Overlay distribution
     if (options[["processCapabilityPlotDistributions"]]) {
       if (distribution == "normal") {
@@ -783,9 +794,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                           gettext("Normal dist.\n(std. dev. within)"))
         }
       } else if (distribution == "weibull") {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
-        if (jaspBase::isTryError(distParameters))
-          stop(distParameters[1], call. = FALSE)
+        if (allParametersHistorical) {
+          # If all are historical, assign parameters as given in options
+          distParameters <- list(beta  = options[["historicalShapeValue"]],
+                                 theta = options[["historicalScaleValue"]])
+        } else {
+          distParameters <- .distributionParameters(data = allData, distribution = distribution)
+          if (jaspBase::isTryError(distParameters))
+            stop(distParameters[1], call. = FALSE)
+          if (options[["historicalShape"]])
+            distParameters$beta <- options[["historicalShapeValue"]]
+          if (options[["historicalScale"]])
+            distParameters$beta <- options[["historicalScaleValue"]]
+        }
         shape <- distParameters$beta
         scale <- distParameters$theta
         p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
@@ -794,9 +815,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, gettext("Weibull dist."))
       } else if (distribution == "lognormal") {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
-        if (jaspBase::isTryError(distParameters))
-          stop(distParameters[1], call. = FALSE)
+        if (allParametersHistorical) {
+          # If all are historical, assign parameters as given in options
+          distParameters <- list(beta  = options[["historicalLogMeanValue"]],
+                                 theta = options[["historicalLogStdDevValue"]])
+        } else {
+          distParameters <- .distributionParameters(data = allData, distribution = distribution)
+          if (jaspBase::isTryError(distParameters))
+            stop(distParameters[1], call. = FALSE)
+          if (options[["historicalLogMean"]])
+            distParameters$beta <- options[["historicalLogMeanValue"]]
+          if (options[["historicalLogStdDev"]])
+            distParameters$theta <- options[["historicalLogStdDevValue"]]
+        }
         shape <- distParameters$beta
         scale <- distParameters$theta
         p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale),
@@ -805,10 +836,23 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, "Lognormal dist.")
       } else if (distribution == "3ParameterLognormal") {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
-        if (jaspBase::isTryError(distParameters))
-          stop(distParameters[1], call. = FALSE)
-        shape <- distParameters$theta
+        if (allParametersHistorical) {
+          # If all are historical, assign parameters as given in options
+          distParameters <- list(beta  = options[["historicalLogMeanValue"]],
+                                 theta = options[["historicalLogStdDevValue"]],
+                                 threshold = options[["historicalThresholdValue"]])
+        } else {
+          distParameters <- .distributionParameters(data = allData, distribution = distribution)
+          if (jaspBase::isTryError(distParameters))
+            stop(distParameters[1], call. = FALSE)
+          if (options[["historicalLogMean"]])
+            distParameters$beta <- options[["historicalLogMeanValue"]]
+          if (options[["historicalLogStdDev"]])
+            distParameters$theta <- options[["historicalLogStdDevValue"]]
+          if (options[["historicalThreshold"]])
+            distParameters$threshold <- options[["historicalThresholdValue"]]
+        }
+        shape <- distParameters$theta # The distribution function uses theta for shape and beta for scale, which is reverse to convention
         scale <- distParameters$beta
         threshold <- distParameters$threshold
         p <- p + ggplot2::stat_function(fun = FAdist::dlnorm3 , args = list(shape = shape, scale = scale, thres = threshold),
@@ -817,9 +861,22 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, gettext("3-parameter\nlognormal dist."))
       } else if (distribution == "3ParameterWeibull") {
+        if (allParametersHistorical) {
+          # If all are historical, assign parameters as given in options
+          distParameters <- list(beta  = options[["historicalShapeValue"]],
+                                 theta = options[["historicalScaleValue"]],
+                                 threshold = options[["historicalThresholdValue"]])
+        } else {
         distParameters <- .distributionParameters(data = allData, distribution = distribution)
         if (jaspBase::isTryError(distParameters))
           stop(distParameters[1], call. = FALSE)
+        if (options[["historicalShape"]])
+          distParameters$beta <- options[["historicalShapeValue"]]
+        if (options[["historicalScale"]])
+          distParameters$beta <- options[["historicalScaleValue"]]
+        if (options[["historicalThreshold"]])
+          distParameters$threshold <- options[["historicalThresholdValue"]]
+        }
         shape <- distParameters$beta
         scale <- distParameters$theta
         threshold <- distParameters$threshold
@@ -1606,26 +1663,27 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         table$setError(distParameters[[i]][1])
         container[["summaryTableNonNormal"]] <- table
         return()
+      }
 
-        ## If applicable, replace parameters with historical values
-        # Weibull and 3-parameter Weibull
-        if (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull") {
-          if (options[["historicalShape"]])
-            distParameters[[i]][["beta"]] <- options[["historicalShapeValue"]]
-          if (options[["historicalScale"]])
-            distParameters[[i]][["theta"]] <- options[["historicalScaleValue"]]
-          if (options[["nonNormalDistribution"]] == "3ParameterWeibull" && options[["historicalThreshold"]])
-            distParameters[[i]][["threshold"]] <- options[["historicalThresholdValue"]]
-
-          # Lognormal and 3-parameter Lognormal
-        } else if (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal") {
-          if (options[["historicalLogMean"]])
-            distParameters[[i]][["beta"]] <- options[["historicalLogMeanValue"]]
-          if (options[["historicalLogStdDev"]])
-            distParameters[[i]][["theta"]] <- options[["historicalLogStdDevValue"]]
-          if (options[["nonNormalDistribution"]] == "3ParameterLognormal" && options[["historicalThreshold"]])
-            distParameters[[i]][["threshold"]] <- options[["historicalThresholdValue"]]
+      ## If applicable, replace parameters with historical values
+      # Weibull and 3-parameter Weibull
+      if (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull") {
+        if (options[["historicalShape"]]) {
+          distParameters[[i]][["beta"]] <- options[["historicalShapeValue"]]
         }
+        if (options[["historicalScale"]])
+          distParameters[[i]][["theta"]] <- options[["historicalScaleValue"]]
+        if (options[["nonNormalDistribution"]] == "3ParameterWeibull" && options[["historicalThreshold"]])
+          distParameters[[i]][["threshold"]] <- options[["historicalThresholdValue"]]
+
+        # Lognormal and 3-parameter Lognormal
+      } else if (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal") {
+        if (options[["historicalLogMean"]])
+          distParameters[[i]][["beta"]] <- options[["historicalLogMeanValue"]]
+        if (options[["historicalLogStdDev"]])
+          distParameters[[i]][["theta"]] <- options[["historicalLogStdDevValue"]]
+        if (options[["nonNormalDistribution"]] == "3ParameterLognormal" && options[["historicalThreshold"]])
+          distParameters[[i]][["threshold"]] <- options[["historicalThresholdValue"]]
       }
     }
   }
@@ -1639,7 +1697,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     usl <- round(options[["upperSpecificationLimitValue"]], .numDecimals)
     target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
-    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
+    processMean <- mean(allData, na.rm = TRUE)
     beta <- distParameters[[i]]$beta
     theta <- distParameters[[i]]$theta
 
@@ -1810,12 +1868,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
       if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance") {
-          p1 <- FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE)
+          p1 <- FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE) # in this function, shape is theta and scale is beta, which is reverse to convention
           zLSL <- qnorm(p1)
           ppl <- -zLSL/3
         } else {
-          x135 <- FAdist::qlnorm3(p = 0.00135, shape = theta, scale = beta, thres = threshold)
-          x05 <- FAdist::qlnorm3(p = 0.5, shape = theta, scale = beta, thres = threshold)
+          x135 <- FAdist::qlnorm3(p = 0.00135, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
+          x05 <- FAdist::qlnorm3(p = 0.5, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
           ppl <- (x05 - lsl) / (x05 - x135)
         }
       } else {
@@ -1824,7 +1882,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance"){
-          p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)
+          p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
@@ -2002,12 +2060,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
       distname <- "3-parameter-lognormal"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
-        eoLSL <- 1e6 * FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE)
+        eoLSL <- 1e6 * FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE) # in this function, shape is theta and scale is beta, which is reverse to convention
       } else {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold))
+        eoUSL <- 1e6 * (1 - FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)) # in this function, shape is theta and scale is beta, which is reverse to convention
       } else {
         eoUSL <- NA
       }
