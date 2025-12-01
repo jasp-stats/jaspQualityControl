@@ -1732,7 +1732,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     usl <- round(options[["upperSpecificationLimitValue"]], .numDecimals)
     target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
-    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
+    processMean <- mean(allData, na.rm = TRUE)
     beta <- distParameters[[i]]$beta
     theta <- distParameters[[i]]$theta
 
