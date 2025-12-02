@@ -557,6 +557,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettext("Process summary"))
+  footnotes <- c()
   table$position <- 1
   if (nStages > 1) {
     table$addColumnInfo(name = "stage", title = gettext("Stage"), type = "string")
@@ -585,25 +586,31 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   tableColNames <- c("lsl", "target", "usl", "mean", "n", "sd", "sdw")
   if (nStages > 1) {
     tableColNames <- c("stage", tableColNames)
-    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+    footnotes <- paste0(footnotes, gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL). "))
   }
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
   colnames(tableDf) <- tableColNames
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
-    if (length(measurements) < 2) {
-      k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
-    } else {
-      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
-      unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
-    }
-    allData <- na.omit(unlist(dataCurrentStage[, measurements]))
 
-    if (is.na(sdw))
-      table$addFootnote(gettext("The within standard deviation could not be calculated."))
+    ## ----- Std. dev. calculation ----------
+    if (options[["historicalStdDev"]]) {
+      sdw <- options[["historicalStdDevValue"]]
+    } else {
+      if (length(measurements) < 2) {
+        k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+        sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      } else {
+        sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+        unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+        sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      }
+      if (is.na(sdw))
+        footnotes <- paste0(footnotes, gettext("The within std. dev. could not be calculated. "))
+    }
+
+    allData <- na.omit(unlist(dataCurrentStage[, measurements]))
 
     processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
 
@@ -632,6 +639,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   tableList <- as.list(tableDf)
   table$setData(tableList)
+
+  # Add remaining footnotes
+  if (options[["historicalStdDev"]])
+    footnotes <- paste0(footnotes, gettext("The within std. dev. is based on a historical value. "))
+  if (options[["historicalMean"]])
+    footnotes <- paste0(footnotes, gettext("The mean is based on a historical value. "))
+  if (!is.null(footnotes))
+    table$addFootnote(footnotes)
 
   nDecimals <- .numDecimals
 
@@ -1556,10 +1571,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettextf("Process summary"))
+  footnotes <- c()
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
     table$transpose <- TRUE
-    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+    footnotes <- paste0(footnotes, gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL). "))
   }
 
   if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
@@ -1629,7 +1645,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       "3ParameterLognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]] && options[["historicalThreshold"]],
       FALSE  # default
     )
-
 
     if (allParametersHistorical) {
       if (allParametersHistorical) { # If all are historical, assign parameters as given in options
@@ -2135,7 +2150,25 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return(tableDf3)
   }
 
-  table$addFootnote(gettextf("Calculations based on %s distribution.", distname))
+  # Add remaining footnotes
+  footnotes <- paste0(footnotes, gettextf("Calculations based on %s distribution.", distname))
+  if (options[["historicalShape"]] && (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull"))
+    footnotes <- paste0(footnotes, gettextf("The shape (%1$s) is based on a historical value. ", "\u03B2"))
+  if (options[["historicalScale"]] && (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull"))
+    footnotes <- paste0(footnotes, gettextf("The scale (%1$s) is based on a historical value. ", "\u03B8"))
+  if (options[["historicalLogMean"]] && (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
+    footnotes <- paste0(footnotes, gettextf("The log mean (%1$s) is based on a historical value. ", "\u03BC"))
+  if (options[["historicalLogStdDev"]] && (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
+    footnotes <- paste0(footnotes, gettextf("The log std. dev. (%1$s) is based on a historical value. ", "\u03C3"))
+  if (options[["historicalThreshold"]] && (options[["nonNormalDistribution"]] == "3ParameterWeibull" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
+    footnotes <- paste0(footnotes, gettext("The threshold is based on a historical value. "))
+
+  if (!is.null(footnotes))
+    table$addFootnote(footnotes)
+
+
+
+
   container[["summaryTableNonNormal"]] <- table
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
     table2$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
