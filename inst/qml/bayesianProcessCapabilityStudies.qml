@@ -501,34 +501,45 @@ Form
 
 	}
 
-Section
-{
-	title: qsTr("Prior distributions")
-
-	Common.Priors
+	Section
 	{
-		baseName: "populationMeanPrior"
-		baseLabel: qsTr("Population mean")
-		fullRealLLine: true
+		title: qsTr("Prior distributions")
+
+		Common.Priors
+		{
+			baseName: "populationMeanPrior"
+			baseLabel: qsTr("Population mean")
+			fullRealLLine: true
+		}
+
+		Common.Priors
+		{
+			baseName: "populationSigmaPrior"
+			baseLabel: qsTr("Population standard deviation")
+			fullRealLLine: false
+		}
+
+		Common.Priors
+		{
+			baseName: "populationDfPrior"
+			baseLabel: qsTr("Population degrees of freedom")
+			fullRealLLine: false
+			enabled: capabilityStudyType.value === "tCapabilityAnalysis"
+			hasJeffreys: false
+		}
+
 	}
 
-	Common.Priors
+		Section
 	{
-		baseName: "populationSigmaPrior"
-		baseLabel: qsTr("Population standard deviation")
-		fullRealLLine: false
-	}
+		title: qsTr("New Prior distributions")
 
-	Common.Priors
-	{
-		baseName: "populationDfPrior"
-		baseLabel: qsTr("Population degrees of freedom")
-		fullRealLLine: false
-		enabled: capabilityStudyType.value === "tCapabilityAnalysis"
-		hasJeffreys: false
-	}
+		Common.PriorsNew
+		{
+			priorType: capabilityStudyType.value === "normalCapabilityAnalysis" ? "normalModel" : "tModel"
+		}
 
-}
+	}
 
 	Section
 	{

@@ -29,6 +29,7 @@ Group
 	property 	bool	fullRealLLine: true
 	property 	bool	hasJeffreys: true
 
+// TODO: should be dropdown, see RBMAP
 	RadioButtonGroup
 	{
 		id: 	priorChoice
