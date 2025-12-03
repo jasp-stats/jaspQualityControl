@@ -768,11 +768,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["target"]] && options[["processCapabilityPlotSpecificationLimits"]])
       xLimits <- range(xLimits, options[["targetValue"]])
 
+    # Addition to consider that if distributions are set historically, they may fall outside the usual limits
     if (distribution == "normal" && options[["historicalMean"]])
-      xLimits <- range(xLimits, options[["historicalMeanValue"]] - 2 * sdo, options[["historicalMeanValue"]] + 2 * sdo)
-    # if (distribution == "weibull" || distribution == "3ParameterWeibull" && options[["historicalShape"]])
-    #   xLimits <- range(xLimits, options[["historicalShapeValue"]])
-
+      xLimits <- range(xLimits, options[["historicalMeanValue"]] - 1.5 * sdo, options[["historicalMeanValue"]] + 1.5 * sdo)
+    if (distribution == "weibull" || distribution == "3ParameterWeibull" && options[["historicalShape"]]) {
+      weibullCenterEstimate <- sdo * (options[["historicalShapeValue"]] + 1)
+      xLimits <- range(xLimits, weibullCenterEstimate - 1.5 * sdo, weibullCenterEstimate + 1.5 * sdo)
+    }
+    if (distribution == "lognormal" || distribution == "3ParameterLognormal" && options[["historicalLogMean"]])
+      xLimits <- range(xLimits, exp(options[["historicalLogMeanValue"]]) - 1.5 * sdo,
+                       exp(options[["historicalLogMeanValue"]]) + 1.5 * sdo)
 
     # Get xBreaks based on the data, with an axis that also spans the limits
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(allData))
