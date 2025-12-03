@@ -760,14 +760,29 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotData <- data.frame(x = allData)
     sdo <- sd(allData, na.rm = TRUE)
 
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], min(plotData[["x"]]) - 1 * sdo, max(plotData[["x"]]) + 1 * sdo), min.n = 4)
-    xLimits <- range(xBreaks)
+    xLimits <- c(min(allData) - sdo, max(allData) + sdo)
     if (options[["lowerSpecificationLimit"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["lowerSpecificationLimitValue"]])
+      xLimits <- range(xLimits, options[["lowerSpecificationLimitValue"]] - 0.5*sdo)
     if (options[["upperSpecificationLimit"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["upperSpecificationLimitValue"]])
+      xLimits <- range(xLimits, options[["upperSpecificationLimitValue"]] + 0.5*sdo)
     if (options[["target"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["target"]])
+      xLimits <- range(xLimits, options[["targetValue"]])
+
+    if (distribution == "normal" && options[["historicalMean"]])
+      xLimits <- range(xLimits, options[["historicalMeanValue"]] - 2 * sdo, options[["historicalMeanValue"]] + 2 * sdo)
+    # if (distribution == "weibull" || distribution == "3ParameterWeibull" && options[["historicalShape"]])
+    #   xLimits <- range(xLimits, options[["historicalShapeValue"]])
+
+
+    # Get xBreaks based on the data, with an axis that also spans the limits
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(allData))
+    xStep <- diff(xBreaks)[1]
+    loExt <- min(xBreaks) - pmax(0, ceiling((min(xBreaks) - min(xLimits)) / xStep) * xStep)
+    hiExt <- max(xBreaks) + pmax(0, ceiling((max(xLimits) - max(xBreaks)) / xStep) * xStep)
+    xBreaks <- seq(loExt, hiExt, by = xStep)
+    # Get limits to always include all breaks
+    xLimits <- range(xLimits, xBreaks)
+
 
     nBins <- options[["processCapabilityPlotBinNumber"]]
     h <- hist(allData, plot = FALSE, breaks = nBins)
