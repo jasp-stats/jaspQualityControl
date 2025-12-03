@@ -17,10 +17,10 @@
 //
 import QtQuick
 import QtQuick.Layouts
+import JASP
 import JASP.Controls
 
-// Item
-// {
+
 Group
 {
 	id: root
@@ -31,9 +31,11 @@ Group
 	property	bool	hasCi: 			true
 	property	bool	hasType: 		false
 
+	readonly property alias checked:	mainCheckBox.checked
+
 	CheckBox
 	{
-
+		id:							mainCheckBox
 		name: 						baseName
 		label: 						baseLabel
 
@@ -247,8 +249,8 @@ Group
 
 			CheckBox
 			{
-				enabled:    hasPrior
-				visible:    hasPrior
+				enabled:	hasPrior
+				visible:	hasPrior
 				name:		baseName + "PriorDistribution"
 				label:		qsTr("Show prior distribution")
 				checked:	false
@@ -256,4 +258,3 @@ Group
 		}
 	}
 }
-// }

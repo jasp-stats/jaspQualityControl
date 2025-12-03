@@ -25,11 +25,14 @@ ColumnLayout
 	spacing: 						0
 	property string priorType:	"normalModel"
 
+ 	Component.onCompleted: {
+		console.log("Component completed, priorType: " + priorType);
+		console.log("Current component values: " + JSON.stringify(currentComponentValues));
+	}
 
-	onPriorTypeChanged:
-	{
+	onPriorTypeChanged: {
+		// this is not shown?
 		console.log("Prior type changed to: " + priorType);
-		// componentType.
 	}
 
 	// TODO: these should not be fixed, no?
@@ -45,6 +48,7 @@ ColumnLayout
 				return [ meanValues, sigmaValues, dfValues ];
 		}
 	}
+
 
 	// TODO: this could also be a gridLayout, no?
 	property double width1: 70 * preferencesModel.uiScale;
@@ -67,30 +71,7 @@ ColumnLayout
 
 		addItemManually:		false
 
-		// headerLabels:			[qsTr("Parameter"), qsTr("Distribution"), qsTr("Parameters"), qsTr("Truncation")]
-		defaultValues: {
-			currentComponentValues
-			// switch (priorType) {
-			// 	case "normalModel":
-			// 			return [ meanValues, sigmaValues ];
-			// 	case "tModel":
-			// 		return [ meanValues, sigmaValues, dfValues ];
-			// }
-			// switch (priorType) {
-			// 	case "normalModel":
-			// 			return [
-			// 				{ "name": "mean",  "type": "normal",   "mu":    "0", "sigma": "1" },
-			// 				{ "name": "sigma", "type": "invgamma", "alpha": "1", "beta": "0.15", "truncationLower": 0 }
-			// 			 ];
-			// 	case "tModel":
-			// 		return [
-			// 			{ "name": "mean",  "type": "normal",   "mu":    "0", "sigma": "1" },
-			// 			{ "name": "sigma", "type": "invgamma", "alpha": "1", "beta": "0.15", "truncationLower": 0 },
-			// 			{ "name": "t",     "type": "invgamma", "alpha": "1", "beta": "0.15", "truncationLower": 0, "hasJeffreys": false }
-			// 		];
-			// }
-		}
-
+		defaultValues:			currentComponentValues
 
 		rowComponent: 			RowLayout
 		{
@@ -101,7 +82,7 @@ ColumnLayout
 
 				Label
 				{
-					text: rowValue + "|" + "|" + rowValue.type;
+					text: rowValue// + "|" + "|" + rowValue.type;
 				}
 			}
 
@@ -145,7 +126,7 @@ ColumnLayout
 
 				FormulaField
 				{
-					label:				"μ " + rowIndex
+					label:				"μ"
 					name:				"mu"
 					visible:			typeItem.currentValue === "normal"		||
 										typeItem.currentValue === "lognormal"	||
@@ -292,21 +273,13 @@ ColumnLayout
 					visible:			typeItem.currentValue !== "spike" && typeItem.currentValue !== "uniform"
 					value:
 					{
-						if(componentType === "priorsHeterogeneity" || componentType === "priorsHeterogeneityNull" || componentType === "priorsBiasPet" || componentType === "priorsBiasPetNull" || componentType === "priorsBiasPeese" || componentType === "priorsBiasPeeseNull")
-							0
-						else if (typeItem.currentValue === "gammaK0" || typeItem.currentValue === "gammaAB" || typeItem.currentValue === "invgamma" || typeItem.currentValue === "lognormal" || typeItem.currentValue === "beta")
-							0
-						else
-							"-Inf"
+						console.log("rowValue:" + rowValue)
+						"-Inf"
 					}
 					min:
 					{
-						if(componentType === "priorsHeterogeneity" || componentType === "priorsHeterogeneityNull" || componentType === "priorsBiasPet" || componentType === "priorsBiasPetNull" || componentType === "priorsBiasPeese" || componentType === "priorsBiasPeeseNull")
-							0
-						else if (typeItem.currentValue === "gammaK0" || typeItem.currentValue === "gammaAB" || typeItem.currentValue === "invgamma" || typeItem.currentValue === "lognormal" || typeItem.currentValue === "beta")
-							0
-						else
-							"-Inf"
+						console.log("rowValue:" + rowValue)
+						"-Inf"
 					}
 					max: 				truncationUpper.value
 					inclusive: 			JASP.MinOnly

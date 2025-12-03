@@ -184,9 +184,9 @@ Group
 				name: 			baseName + "truncationLowerBoundValue"
 				label: 			qsTr("Lower bound:")
 				fieldWidth: 	50
-				defaultValue: 	fullRealLLine ? -Inf : 0
+				defaultValue: 	fullRealLLine ? -Infinity : 0
 				max: 			upperTT.value
-				min: 			fullRealLLine ? -Inf : 0
+				min: 			fullRealLLine ? -Infinity : 0
 			}
 		}
 
@@ -201,8 +201,8 @@ Group
 				name: 			baseName + "truncationUpperBoundValue"
 				label: 			qsTr("Upper bound:")
 				fieldWidth: 	50
-				defaultValue: 	Inf
-				min: 			Math.max(fullRealLLine ? -Inf : 0, lowerTT.value)
+				defaultValue: 	Infinity
+				min: 			Math.max(fullRealLLine ? -Infinity : 0, lowerTT.value)
 
 			}
 		}

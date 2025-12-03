@@ -444,6 +444,7 @@ Form
 
 		Common.PlotLayout
 		{
+			id: sequentialAnalysisPointEstimatePlot
 			baseName: "sequentialAnalysisPointEstimatePlot"
 			baseLabel: qsTr("Point estimate plot")
 			hasPrior: false
@@ -451,6 +452,7 @@ Form
 
 		Common.PlotLayout
 		{
+			id: sequentialAnalysisIntervalEstimatePlot
 			baseName: "sequentialAnalysisPointIntervalPlot"
 			baseLabel: qsTr("Interval estimate plot")
 			hasPrior: false
@@ -463,6 +465,8 @@ Form
 		{
 			CheckBox
 			{
+				enabled:	sequentialAnalysisPointEstimatePlot.checked || sequentialAnalysisIntervalEstimatePlot.checked
+				id:			sequentialAnalysisAdditionalInfo
 				name:		"sequentialAnalysisPlotAdditionalInfo"
 				label:		qsTr("Show process criteria")
 				checked:	true
@@ -471,6 +475,7 @@ Form
 
 			CheckBox
 			{
+				// TODO:
 				enabled:	sequentialAnalysisPointEstimatePlot.checked || sequentialAnalysisIntervalEstimatePlot.checked
 				name:		"sequentialAnalysisUpdatingTable"
 				label:		qsTr("Posterior updating table")
@@ -501,41 +506,27 @@ Form
 
 	}
 
+
 	Section
 	{
 		title: qsTr("Prior distributions")
 
-		Common.Priors
+		DropDown
 		{
-			baseName: "populationMeanPrior"
-			baseLabel: qsTr("Population mean")
-			fullRealLLine: true
+			name: "priorSettings"
+			label: qsTr("Prior distributions")
+			id: priorSettings
+			values:
+			[
+				{label: qsTr("Uninformative"),				value: "uninformative"},
+				{label: qsTr("Weakly informative"),			value: "weaklyInformative"},
+				{label: qsTr("Custom informative"),			value: "customInformative"},
+			]
 		}
-
-		Common.Priors
-		{
-			baseName: "populationSigmaPrior"
-			baseLabel: qsTr("Population standard deviation")
-			fullRealLLine: false
-		}
-
-		Common.Priors
-		{
-			baseName: "populationDfPrior"
-			baseLabel: qsTr("Population degrees of freedom")
-			fullRealLLine: false
-			enabled: capabilityStudyType.value === "tCapabilityAnalysis"
-			hasJeffreys: false
-		}
-
-	}
-
-		Section
-	{
-		title: qsTr("New Prior distributions")
 
 		Common.PriorsNew
 		{
+			visible: priorSettings.currentValue === "customInformative"
 			priorType: capabilityStudyType.value === "normalCapabilityAnalysis" ? "normalModel" : "tModel"
 		}
 
@@ -544,5 +535,36 @@ Form
 	Section
 	{
 		title: qsTr("Advanced options")
+
+		IntegerField
+		{
+			name: "noIterations"
+			label: qsTr("No. MCMC iterations")
+			defaultValue: 5000
+			min: 100
+			max: 100000000
+			info: qsTr("Number of MCMC iterations used for estimating the posterior distribution.")
+		}
+		IntegerField
+		{
+			name: "noWarmup"
+			label: qsTr("No. MCMC warmup samples")
+			defaultValue: 1000
+			min: 0
+			max: 100000000
+			info: qsTr("Number of initial MCMC samples to discard.")
+		}
+		IntegerField
+		{
+			name: "noChains"
+			label: qsTr("No. MCMC chains")
+			defaultValue: 1
+			min: 1
+			max: 128
+			info: qsTr("Number of MCMC chains to run.")
+		}
+		IntegerField
+
+
 	}
 }
