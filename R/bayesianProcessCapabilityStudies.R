@@ -43,10 +43,29 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
       "target",      "lowerSpecificationLimit",      "upperSpecificationLimit",
       "targetValue", "lowerSpecificationLimitValue", "upperSpecificationLimitValue",
       # likelihood
-      "capabilityStudyType"
+      "capabilityStudyType",
       # TODO: prior
+      # MCMC settings
+      "noIterations", "noWarmup", "noChains"
   )
 }
+
+.bpcsPlotLayoutDeps <- function(base, hasPrior = TRUE, hasEstimate = TRUE, hasCi = TRUE, hasType = FALSE, hasAxes = TRUE) {
+  c(
+    base,
+    if (hasEstimate) .bpcsPlotLayoutEstimateDeps(base),
+    if (hasCi)       .bpcsPlotLayoutCiDeps(base),
+    if (hasType)     .bpcsPlotLayoutTypeDeps(base),
+    if (hasAxes)     .bpcsPlotLayoutAxesDeps(base),
+    if (hasPrior)    .bpcsPlotLayoutPriorDeps(base)
+  )
+}
+
+.bpcsPlotLayoutEstimateDeps <- function(base) { paste0(base, c("IndividualPointEstimate", "IndividualPointEstimateType")) }
+.bpcsPlotLayoutCiDeps       <- function(base) { paste0(base, c("IndividualCi", "IndividualCiType", "IndividualCiMass", "IndividualCiLower", "IndividualCiUpper", "IndividualCiBf")) }
+.bpcsPlotLayoutTypeDeps     <- function(base) { paste0(base, c("TypeLower", "TypeUpper")) }
+.bpcsPlotLayoutAxesDeps     <- function(base) { paste0(base, c("PanelLayout", "Axes", "custom_x_min", "custom_x_max", "custom_y_min", "custom_y_max")) }
+.bpcsPlotLayoutPriorDeps    <- function(base) { paste0(base, "PriorDistribution") }
 
 .bpcsProcessCriteriaDeps <- function() {
   c(paste0("interval", 1:4), paste0("intervalLabel", 1:5))
@@ -240,29 +259,26 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .bpcsSequentialPlot <- function(jaspResults, dataset, options, fit) {
 
-  if (!options[["sequentialAnalysisPlot"]] || !is.null(jaspResults[["sequentialAnalysisPlot"]]))
+  base <- "sequentialAnalysisPointEstimatePlot"
+  if (!options[[base]] || !is.null(jaspResults[[base]]))
     return()
 
   w <- 400
-  plt <- createJaspPlot(title = gettext("Sequential Analysis"), width = 3*w, height = 2*w,
+  plt <- createJaspPlot(title = gettext("Sequential Analysis Point Estimate"), width = 3*w, height = 2*w,
                         position = 2,
                         dependencies = jaspDeps(c(
                           .bpcsDefaultDeps(),
-                          "sequentialAnalysisPlot",
-                          "sequentialAnalysisPlotPointEstimateType",
-                          "sequentialAnalysisPlotCi",
-                          "sequentialAnalysisPlotCiMass",
-                          "sequentialAnalysisPlotAdditionalInfo"
+                          .bpcsPlotLayoutDeps(base)
                         )))
-  jaspResults[["sequentialAnalysisPlot"]] <- plt
+  jaspResults[[base]] <- plt
 
   if (!.bpcsIsReady(options) || jaspResults$getError()) return()
 
   tryCatch({
-
-    sequentialPlotData <- jaspResults[["sequentialAnalysisPlotData"]] %setOrRetrieve% (
+    baseData <- paste0(base, "Data")
+    sequentialPlotData <- jaspResults[[baseData]] %setOrRetrieve% (
       .bpcsComputeSequentialAnalysis(dataset, options, fit) |>
-        createJaspState(dependencies = jaspDeps(options = c(.bpcsDefaultDeps(), "sequentialAnalysisPlot", "sequentialAnalysisPlotCiMass")))
+        createJaspState(dependencies = jaspDeps(options = c(.bpcsDefaultDeps(), .bpcsPlotLayoutDeps(base, hasAxes = FALSE))))
     )
 
     jaspResults[["sequentialAnalysisPlot"]]$plotObject <- .bpcsMakeSequentialPlot(sequentialPlotData, options)
