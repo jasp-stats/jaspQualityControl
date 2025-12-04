@@ -511,25 +511,66 @@ Form
 	{
 		title: qsTr("Prior distributions")
 
+		// TODO: this dropdown should just show the same GUI as the custom one
+		// but disable e.g., the DropDown itself and instead show the prior
+		// also disable all truncation for non-custom ones
+		// NOTE: the above is done, but default values cannot be set yet.
+
 		DropDown
 		{
+			id: priorSettings
 			name: "priorSettings"
 			label: qsTr("Prior distributions")
-			id: priorSettings
 			values:
 			[
-				{label: qsTr("Uninformative"),				value: "uninformative"},
-				{label: qsTr("Weakly informative"),			value: "weaklyInformative"},
+				{label: qsTr("Default"),					value: "default"},
+				{label: qsTr("Weakly informed conjugate"),	value: "conjugate"},
+				{label: qsTr("Informed conjugate"),			value: "weaklyInformativeConjugate"},
+				{label: qsTr("Informed uniform"),			value: "weaklyInformativeUniform"},
 				{label: qsTr("Custom informative"),			value: "customInformative"},
 			]
 		}
 
 		Common.PriorsNew
 		{
-			visible: priorSettings.currentValue === "customInformative"
-			priorType: capabilityStudyType.value === "normalCapabilityAnalysis" ? "normalModel" : "tModel"
-		}
 
+			// visible: priorSettings.currentValue === "customInformative"
+			priorType: capabilityStudyType.value === "normalCapabilityAnalysis" ? "normalModel" : "tModel"
+
+			hasTruncation: priorSettings.currentValue === "customInformative"
+			hasParameters: priorSettings.currentValue !== "default"
+
+			dropDownValuesMap: {
+				switch (priorSettings.currentValue) {
+					case "default":
+						return {
+							"mean": 	[{ label: qsTr("Jeffreys"),				value: "jeffreys"}],
+							"sigma": 	[{ label: qsTr("Jeffreys"),				value: "jeffreys"}],
+							"df": 		[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }]
+						}
+					case "conjugate":
+						return {
+							"mean": 	[{ label: qsTr("Normal(μ,σ)"),			value: "normal"}],
+							"sigma": 	[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }],
+							"df": 		[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }]
+						};
+					case "weaklyInformativeConjugate":
+						return {
+							"mean": 	[{ label: qsTr("Normal(μ,σ)"),			value: "normal"}],
+							"sigma": 	[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }],
+							"df": 		[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }]
+						}
+					case "weaklyInformativeUniform":
+						return {
+							"mean": 	[{ label: qsTr("Uniform(a,b)"),			value: "uniform"}],
+							"sigma": 	[{ label: qsTr("Uniform(a,b)"),			value: "uniform"}],
+							"df": 		[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }]
+						}
+					case "customInformative":
+						return undefined;
+				}
+			}
+		}
 	}
 
 	Section
@@ -563,8 +604,6 @@ Form
 			max: 128
 			info: qsTr("Number of MCMC chains to run.")
 		}
-		IntegerField
-
 
 	}
 }

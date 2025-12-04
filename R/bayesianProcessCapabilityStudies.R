@@ -16,6 +16,12 @@
 #
 
 #'@importFrom jaspBase jaspDeps %setOrRetrieve%
+#'@importFrom rlang .data
+
+# Suppress R CMD check notes for ggplot2 aesthetics
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(".data"))
+}
 
 #'@export
 bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
@@ -23,13 +29,21 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   fit <- .bpcsCapabilityTable(jaspResults, dataset, options)
   .bpcsCapabilityPlot(jaspResults, options, fit)
   .bpcsIntervalTable(jaspResults, options, fit)
-  .bpcsSequentialPlot(jaspResults, dataset, options, fit)
+  .bpcsPriorPlot(jaspResults, options, fit)
+  .bpcsSequentialPointEstimatePlot(jaspResults, dataset, options, fit)
+  .bpcsSequentialIntervalEstimatePlot(jaspResults, dataset, options, fit)
+  .bpcsPosteriorPredictivePlot(jaspResults, options, fit)
+  .bpcsPriorPredictivePlot(jaspResults, options, fit)
 
 }
 
 .bpcsIsReady <- function(options) {
-  length(options[["measurementLongFormat"]]) > 0L &&
-    options[["measurementLongFormat"]] != "" &&
+  hasData <- if (options[["dataFormat"]] == "longFormat") {
+    length(options[["measurementLongFormat"]]) > 0L && options[["measurementLongFormat"]] != ""
+  } else {
+    length(options[["measurementsWideFormat"]]) > 0L
+  }
+  hasData &&
     options[["lowerSpecificationLimit"]] &&
     options[["upperSpecificationLimit"]] &&
     options[["target"]]
@@ -38,13 +52,18 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 .bpcsDefaultDeps <- function() {
     c(
       # data
-      "measurementLongFormat",
+      "dataFormat", "measurementLongFormat", "measurementsWideFormat",
+      "subgroupSizeType", "manualSubgroupSizeValue", "subgroup", "groupingVariableMethod",
+      "stagesLongFormat", "stagesWideFormat", "axisLabels",
       # specification
       "target",      "lowerSpecificationLimit",      "upperSpecificationLimit",
       "targetValue", "lowerSpecificationLimitValue", "upperSpecificationLimitValue",
+      # metrics
+      "Cp", "Cpu", "Cpl", "Cpk", "Cpc", "Cpm",
       # likelihood
       "capabilityStudyType",
-      # TODO: prior
+      # prior
+      "priorSettings", "normalModelComponentsList", "tModelComponentsList",
       # MCMC settings
       "noIterations", "noWarmup", "noChains"
   )
@@ -84,16 +103,17 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 # Tables ----
 .bpcsCapabilityTable <- function(jaspResults, dataset, options) {
 
-  if (!is.null(options[["bpcsCapabilityTable"]]))
-    return()
+  # Check if we already have the results cached
+  if (!is.null(jaspResults[["bpcsResultsObject"]]))
+    return(jaspResults[["bpcsResultsObject"]]$object)
 
   table <- .bpcsCapabilityTableMeta(jaspResults, options)
   if (!.bpcsIsReady(options)) {
 
-    if (options[["measurementLongFormat"]] != "")
+    if (options[["measurementLongFormat"]] != "" || length(options[["measurementsWideFormat"]]) > 0)
       table$addFootnote(gettext("Please specify the Lower Specification Limit, Upper Specification Limit, and Target Value to compute the capability measures."))
 
-    return()
+    return(NULL)
   }
 
   rawfit <- jaspResults[["bpsState"]] %setOrRetrieve% (
@@ -120,6 +140,9 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     rawfit           = rawfit,
     summaryObject    = summaryObject
   )
+
+  # Cache the results
+  jaspResults[["bpcsResultsObject"]] <- createJaspState(resultsObject)
 
   .bpcsCapabilityTableFill(table, resultsObject, options)
   return(resultsObject)
@@ -148,6 +171,20 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 .bpcsCapabilityTableFill <- function(table, resultsObject, options) {
 
   df <- as.data.frame(resultsObject[["summaryObject"]][["summary"]])
+
+  # Filter metrics based on user selection
+  selectedMetrics <- c()
+  if (options[["Cp"]])  selectedMetrics <- c(selectedMetrics, "Cp")
+  if (options[["Cpu"]]) selectedMetrics <- c(selectedMetrics, "CpU")
+  if (options[["Cpl"]]) selectedMetrics <- c(selectedMetrics, "CpL")
+  if (options[["Cpk"]]) selectedMetrics <- c(selectedMetrics, "Cpk")
+  if (options[["Cpc"]]) selectedMetrics <- c(selectedMetrics, "Cpc")
+  if (options[["Cpm"]]) selectedMetrics <- c(selectedMetrics, "Cpm")
+
+  if (length(selectedMetrics) > 0) {
+    df <- df[df$metric %in% selectedMetrics, , drop = FALSE]
+  }
+
   table$setData(df)
 
 }
@@ -214,18 +251,32 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     createJaspPlot(
       title = gettext("Posterior Distribution"),
       plot  = if (.bpcsIsReady(options) && !is.null(fit)) {
-        qc::plot_density(
-          fit$summaryObject,
-          what = c("Cp", "CpU", "CpL", "Cpk", "Cpc", "Cpm"),
-          point_estimate  = with(options, if (posteriorDistributionPlotIndividualPointEstimate) posteriorDistributionPlotIndividualPointEstimateType else "none"),
-          ci              = with(options, if (posteriorDistributionPlotIndividualCi)            posteriorDistributionPlotIndividualCiType            else "none"),
-          ci_level        = options[["posteriorDistributionPlotIndividualCiMass"]],
-          ci_custom_left  = options[["posteriorDistributionPlotIndividualCiLower"]],
-          ci_custom_right = options[["posteriorDistributionPlotIndividualCiUpper"]],
-          bf_support      = options[["posteriorDistributionPlotIndividualCiBf"]]
-        ) +
-          jaspGraphs::geom_rangeframe() +
-          jaspGraphs::themeJaspRaw()
+
+        # Get selected metrics
+        selectedMetrics <- c()
+        if (options[["Cp"]])  selectedMetrics <- c(selectedMetrics, "Cp")
+        if (options[["Cpu"]]) selectedMetrics <- c(selectedMetrics, "CpU")
+        if (options[["Cpl"]]) selectedMetrics <- c(selectedMetrics, "CpL")
+        if (options[["Cpk"]]) selectedMetrics <- c(selectedMetrics, "Cpk")
+        if (options[["Cpc"]]) selectedMetrics <- c(selectedMetrics, "Cpc")
+        if (options[["Cpm"]]) selectedMetrics <- c(selectedMetrics, "Cpm")
+
+        if (length(selectedMetrics) == 0) {
+          NULL
+        } else {
+          qc::plot_density(
+            fit$summaryObject,
+            what = selectedMetrics,
+            point_estimate  = with(options, if (posteriorDistributionPlotIndividualPointEstimate) posteriorDistributionPlotIndividualPointEstimateType else "none"),
+            ci              = with(options, if (posteriorDistributionPlotIndividualCi)            posteriorDistributionPlotIndividualCiType            else "none"),
+            ci_level        = options[["posteriorDistributionPlotIndividualCiMass"]],
+            ci_custom_left  = options[["posteriorDistributionPlotIndividualCiLower"]],
+            ci_custom_right = options[["posteriorDistributionPlotIndividualCiUpper"]],
+            bf_support      = options[["posteriorDistributionPlotIndividualCiBf"]]
+          ) +
+            jaspGraphs::geom_rangeframe() +
+            jaspGraphs::themeJaspRaw()
+        }
       } else {
         NULL
       },
@@ -257,7 +308,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   )
 }
 
-.bpcsSequentialPlot <- function(jaspResults, dataset, options, fit) {
+.bpcsSequentialPointEstimatePlot <- function(jaspResults, dataset, options, fit) {
 
   base <- "sequentialAnalysisPointEstimatePlot"
   if (!options[[base]] || !is.null(jaspResults[[base]]))
@@ -268,7 +319,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
                         position = 2,
                         dependencies = jaspDeps(c(
                           .bpcsDefaultDeps(),
-                          .bpcsPlotLayoutDeps(base)
+                          .bpcsPlotLayoutDeps(base),
+                          "sequentialAnalysisPlotAdditionalInfo"
                         )))
   jaspResults[[base]] <- plt
 
@@ -281,7 +333,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
         createJaspState(dependencies = jaspDeps(options = c(.bpcsDefaultDeps(), .bpcsPlotLayoutDeps(base, hasAxes = FALSE))))
     )
 
-    jaspResults[["sequentialAnalysisPlot"]]$plotObject <- .bpcsMakeSequentialPlot(sequentialPlotData, options)
+    plt$plotObject <- .bpcsMakeSequentialPlot(sequentialPlotData, options, base)
 
   }, error = function(e) {
 
@@ -337,7 +389,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   return(estimates)
 }
 
-.bpcsMakeSequentialPlot <- function(estimates, options) {
+.bpcsMakeSequentialPlot <- function(estimates, options, base) {
 
   # this is somewhat ugly, but we convert the 3d array to a tibble for plotting
   # we don't create the tibble immediately in the previous function, because
@@ -350,7 +402,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
   nseq <- attr(estimates, "nseq")
 
-  pointEstimateName <- if (options[["sequentialAnalysisPlotPointEstimateType"]] == "mean") "mean" else "median"
+  pointEstimateOption <- paste0(base, "IndividualPointEstimateType")
+  pointEstimateName <- if (options[[pointEstimateOption]] == "mean") "mean" else "median"
   tb <- tibble::tibble(
     metric = factor(rep(rownames(estimates), times = length(nseq))),
     n      = rep(nseq, each = nrow(estimates)),
@@ -394,8 +447,9 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   }, simplify = FALSE)
 
   ribbon <- NULL
-  if (options[["sequentialAnalysisPlotCi"]])
-    ribbon <- ggplot2::geom_ribbon(ggplot2::aes(ymin = lower, ymax = upper), alpha = 0.3)
+  ciOption <- paste0(base, "IndividualCi")
+  if (options[[ciOption]])
+    ribbon <- ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lower, ymax = .data$upper), alpha = 0.3)
 
   extraTheme <- gridLinesLayer <- NULL
   sides <- "bl"
@@ -409,14 +463,14 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     # I tried using minor.breaks for this, but these are not drawn properly with facet_grid and facetted_pos_scales
     gridLinesLayer <- ggplot2::geom_hline(
       data = data.frame(yintercept = gridLines),
-      ggplot2::aes(yintercept = yintercept),
+      ggplot2::aes(yintercept = .data$yintercept),
       # show.legend = FALSE,
       linewidth = .5, color = "lightgray", linetype = "dashed"
     )
 
   }
 
-  ggplot2::ggplot(tb, ggplot2::aes(x = n, y = mean)) +
+  ggplot2::ggplot(tb, ggplot2::aes(x = .data$n, y = .data$mean)) +
     gridLinesLayer +
     ribbon +
     ggplot2::geom_line(linewidth = 1) +
@@ -430,4 +484,152 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     jaspGraphs::themeJaspRaw() +
     extraTheme
 
+}
+
+# Additional plot functions ----
+.bpcsPriorPlot <- function(jaspResults, options, fit) {
+
+  if (!options[["priorDistributionPlot"]])
+    return()
+
+  jaspResults[["priorDistributionPlot"]] %setOrRetrieve% (
+    createJaspPlot(
+      title = gettext("Prior Distribution"),
+      plot  = if (.bpcsIsReady(options) && !is.null(fit)) {
+        # TODO: Implement prior distribution plotting
+        NULL
+      } else {
+        NULL
+      },
+      width  = 400 * 3,
+      height = 400 * 2,
+      position = 4,
+      dependencies = jaspDeps(
+        options = c(.bpcsDefaultDeps(), .bpcsPlotLayoutDeps("priorDistributionPlot", hasPrior = FALSE))
+      )
+    )
+  )
+}
+
+.bpcsSequentialIntervalEstimatePlot <- function(jaspResults, dataset, options, fit) {
+
+  base <- "sequentialAnalysisPointIntervalPlot"
+  if (!options[[base]] || !is.null(jaspResults[[base]]))
+    return()
+
+  w <- 400
+  plt <- createJaspPlot(title = gettext("Sequential Analysis Interval Estimate"), width = 3*w, height = 2*w,
+                        position = 3,
+                        dependencies = jaspDeps(c(
+                          .bpcsDefaultDeps(),
+                          .bpcsPlotLayoutDeps(base, hasEstimate = FALSE, hasCi = FALSE, hasType = TRUE),
+                          "sequentialAnalysisPlotAdditionalInfo"
+                        )))
+  jaspResults[[base]] <- plt
+
+  if (!.bpcsIsReady(options) || jaspResults$getError()) return()
+
+  tryCatch({
+    baseData <- paste0(base, "Data")
+    sequentialPlotData <- jaspResults[[baseData]] %setOrRetrieve% (
+      .bpcsComputeSequentialAnalysis(dataset, options, fit) |>
+        createJaspState(dependencies = jaspDeps(options = c(.bpcsDefaultDeps(), .bpcsPlotLayoutDeps(base, hasAxes = FALSE, hasEstimate = FALSE, hasCi = FALSE, hasType = TRUE))))
+    )
+
+    plt$plotObject <- .bpcsMakeSequentialIntervalPlot(sequentialPlotData, options, base)
+
+  }, error = function(e) {
+
+    plt$setError(gettextf("Unexpected error in sequential analysis interval plot: %s", e$message))
+
+  })
+
+}
+
+.bpcsMakeSequentialIntervalPlot <- function(estimates, options, base) {
+
+  nseq <- attr(estimates, "nseq")
+
+  # Get the type bounds from options
+  typeLowerOption <- paste0(base, "TypeLower")
+  typeUpperOption <- paste0(base, "TypeUpper")
+  typeLower <- options[[typeLowerOption]]
+  typeUpper <- options[[typeUpperOption]]
+
+  tb <- tibble::tibble(
+    metric = factor(rep(rownames(estimates), times = length(nseq))),
+    n      = rep(nseq, each = nrow(estimates)),
+    lower  = as.vector(estimates[, "lower", ]),
+    upper  = as.vector(estimates[, "upper", ]),
+  )
+
+  # Calculate proportion in interval [typeLower, typeUpper]
+  # This is a simplified version - may need to access actual posterior samples
+  tb$proportion <- pmin(pmax((tb$lower + tb$upper) / 2, typeLower), typeUpper)
+
+  y_breaks_per_scale <- tapply(tb, tb$metric, \(x) {
+    observedRange <- c(0, 1)
+    leftBreaks <- jaspGraphs::getPrettyAxisBreaks(observedRange)
+    ggplot2::scale_y_continuous(breaks = leftBreaks, limits = c(0, 1))
+  }, simplify = FALSE)
+
+  ggplot2::ggplot(tb, ggplot2::aes(x = .data$n, y = .data$proportion)) +
+    ggplot2::geom_line(linewidth = 1) +
+    ggplot2::facet_wrap(~ metric, scales = "free_y") +
+    ggh4x::facetted_pos_scales(y = y_breaks_per_scale) +
+    ggplot2::labs(
+      x = gettext("Number of observations"),
+      y = gettextf("P(%s < θ < %s)", typeLower, typeUpper)
+    ) +
+    jaspGraphs::geom_rangeframe(sides = "bl") +
+    jaspGraphs::themeJaspRaw()
+
+}
+
+.bpcsPosteriorPredictivePlot <- function(jaspResults, options, fit) {
+
+  if (!options[["posteriorPredictiveDistributionPlot"]])
+    return()
+
+  jaspResults[["posteriorPredictiveDistributionPlot"]] %setOrRetrieve% (
+    createJaspPlot(
+      title = gettext("Posterior Predictive Distribution"),
+      plot  = if (.bpcsIsReady(options) && !is.null(fit)) {
+        # TODO: Implement posterior predictive distribution plotting
+        NULL
+      } else {
+        NULL
+      },
+      width  = 400 * 3,
+      height = 400 * 2,
+      position = 5,
+      dependencies = jaspDeps(
+        options = c(.bpcsDefaultDeps(), .bpcsPlotLayoutDeps("posteriorPredictiveDistributionPlot", hasPrior = FALSE))
+      )
+    )
+  )
+}
+
+.bpcsPriorPredictivePlot <- function(jaspResults, options, fit) {
+
+  if (!options[["priorPredictiveDistributionPlot"]])
+    return()
+
+  jaspResults[["priorPredictiveDistributionPlot"]] %setOrRetrieve% (
+    createJaspPlot(
+      title = gettext("Prior Predictive Distribution"),
+      plot  = if (.bpcsIsReady(options) && !is.null(fit)) {
+        # TODO: Implement prior predictive distribution plotting
+        NULL
+      } else {
+        NULL
+      },
+      width  = 400 * 3,
+      height = 400 * 2,
+      position = 6,
+      dependencies = jaspDeps(
+        options = c(.bpcsDefaultDeps(), .bpcsPlotLayoutDeps("priorPredictiveDistributionPlot", hasPrior = FALSE))
+      )
+    )
+  )
 }

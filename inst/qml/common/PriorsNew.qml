@@ -23,7 +23,9 @@ import JASP
 ColumnLayout
 {
 	spacing: 						0
-	property string priorType:	"normalModel"
+	property string priorType:		"normalModel"
+	property bool hasTruncation:	false
+	property bool hasParameters:	true
 
  	Component.onCompleted: {
 		console.log("Component completed, priorType: " + priorType);
@@ -36,17 +38,82 @@ ColumnLayout
 	}
 
 	// TODO: these should not be fixed, no?
-	property var meanValues: 	{ "name": "mean",  "type": "normal",   "mu":    "0", "sigma": "1" }
-	property var sigmaValues: 	{ "name": "sigma", "type": "invgamma", "alpha": "1", "beta": "0.15", "truncationLower": 0 }
-	property var dfValues: 	  	{ "name": "t",     "type": "invgamma", "alpha": "1", "beta": "0.15", "truncationLower": 0, "hasJeffreys": false }
+	// property var meanValues: 	{ "name": "mean",  "type": "normal",   "mu":    "0", "sigma": "1" }
+	// property var sigmaValues: 	{ "name": "sigma", "type": "invgamma", "alpha": "1", "beta": "0.15", "truncationLower": 0 }
+	// property var dfValues: 	  	{ "name": "t",     "type": "invgamma", "alpha": "1", "beta": "0.15", "truncationLower": 0, "hasJeffreys": false }
+
+	property var nameMap: {
+		"mean": 	"Mean",
+		"sigma":	"Sigma",
+		"df": 		"df"
+	}
+	property var defaultDistributionMap: {
+		"mean": 	"normal",
+		"sigma": 	"invgamma",
+		"df": 	 	"invgamma"
+	}
+	property var truncationLowerMap: {
+		"mean": 	-Infinity,
+		"sigma": 	0,
+		"df": 	 	0
+	}
+	property var allPriors : [
+		{ label: qsTr("Normal(μ,σ)"),			value: "normal"},
+		{ label: qsTr("Student-t(μ,σ,v)"),		value: "t"},
+		{ label: qsTr("Cauchy(x₀,θ)"),			value: "cauchy"},
+		{ label: qsTr("Jeffreys"),				value: "jeffreys"},
+		{ label: qsTr("Gamma(α,β)"),			value: "gammaAB"},
+		{ label: qsTr("Gamma(k,θ)"),			value: "gammaK0"},
+		{ label: qsTr("Inverse-Gamma(α,β)"),	value: "invgamma"},
+		{ label: qsTr("Log-Normal(μ,σ)"),		value: "lognormal"},
+		{ label: qsTr("Beta(α,β)"),				value: "beta"},
+		{ label: qsTr("Uniform(a,b)"),			value: "uniform"}
+	]
+	property var priorTruncationMap: {
+		"normal" : 		[-Infinity, Infinity],
+		"t"      : 		[-Infinity, Infinity],
+		"cauchy" : 		[-Infinity, Infinity],
+		"jeffreys": 	[-Infinity, Infinity],
+		"gammaAB": 		[0, 		Infinity],
+		"gammaK0": 		[0, 		Infinity],
+		"invgamma": 	[0, 		Infinity],
+		"lognormal": 	[0, 		Infinity],
+		"beta": 		[0, 		1		],
+		"uniform": 		[-Infinity, Infinity]
+	}
+	property var defaultDropDownValuesMap: {
+		"mean": 	allPriors,
+		"sigma": 	allPriors,
+		"df": 		allPriors.filter(p => p.value !== "jeffreys")
+	}
+	property var dropDownValuesMap: undefined
+	property var activeDropDownValuesMap: dropDownValuesMap !== undefined ? dropDownValuesMap : defaultDropDownValuesMap
+	property var hasJeffreysMap: {
+		"mean": 	true,
+		"sigma": 	true,
+		"df": 		false
+	}
+
+	onDropDownValuesMapChanged: console.log("dropDownValuesMap changed: " + dropDownValuesMap)
+	// property var defaultParametersMap: {
+	// 	"mean": { "mu": "0", "sigma": "1" },
+	// 	"sigma": { "alpha": "1",  "beta": "0.15", "truncationLower": 0 },
+	// 	"t": { "alpha": "1",  "beta": "0.15", "truncationLower": 0, "hasJeffreys": false }
+	// }
 
 	property var currentComponentValues: {
 		switch (priorType) {
 			case "normalModel":
-					return [ meanValues, sigmaValues ];
+					return [ "mean", "sigma" ];
 			case "tModel":
-				return [ meanValues, sigmaValues, dfValues ];
+				return [ "mean", "sigma", "df" ];
 		}
+		// switch (priorType) {
+		// 	case "normalModel":
+		// 			return [ meanValues, sigmaValues ];
+		// 	case "tModel":
+		// 		return [ meanValues, sigmaValues, dfValues ];
+		// }
 	}
 
 
@@ -60,9 +127,10 @@ ColumnLayout
 	{
 		Label { text: qsTr("Parameter"); 	Layout.preferredWidth: width1; Layout.leftMargin: 5 * preferencesModel.uiScale}
 		Label { text: qsTr("Distribution"); Layout.preferredWidth: width2; Layout.leftMargin: 5 * preferencesModel.uiScale}
-		Label { text: qsTr("Parameters");	Layout.preferredWidth: width3 }
-		Label { text: qsTr("Truncation"); 	Layout.preferredWidth: width4 }
+		Label { text: qsTr("Parameters");	Layout.preferredWidth: width3 ; visible: hasParameters }
+		Label { text: qsTr("Truncation"); 	Layout.preferredWidth: width4 ; visible: hasTruncation }
 	}
+
 
 	ComponentsList
 	{
@@ -71,7 +139,8 @@ ColumnLayout
 
 		addItemManually:		false
 
-		defaultValues:			currentComponentValues
+		// defaultValues:			currentComponentValues
+		values:					currentComponentValues
 
 		rowComponent: 			RowLayout
 		{
@@ -79,11 +148,7 @@ ColumnLayout
 			{
 				spacing:				4 * preferencesModel.uiScale
 				Layout.preferredWidth:	width1
-
-				Label
-				{
-					text: rowValue// + "|" + "|" + rowValue.type;
-				}
+				Label 	{ text: nameMap[rowValue] }
 			}
 
 			Row
@@ -93,29 +158,18 @@ ColumnLayout
 
 				DropDown
 				{
-					id: typeItem
-					name: "type"
-					useExternalBorder: true
-					values:
-					[
-						{ label: qsTr("Normal(μ,σ)"),			value: "normal"},
-						{ label: qsTr("Student-t(μ,σ,v)"),		value: "t"},
-						{ label: qsTr("Cauchy(x₀,θ)"),			value: "cauchy"},
-						{ label: qsTr("Jeffreys"),				value: "jeffreys"},
-						{ label: qsTr("Gamma(α,β)"),			value: "gammaAB"},
-						{ label: qsTr("Gamma(k,θ)"),			value: "gammaK0"},
-						{ label: qsTr("Inverse-Gamma(α,β)"),	value: "invgamma"},
-						{ label: qsTr("Log-Normal(μ,σ)"),		value: "lognormal"},
-						{ label: qsTr("Beta(α,β)"),				value: "beta"},
-						{ label: qsTr("Uniform(a,b)"),			value: "uniform"}//,
-						//{ label: qsTr("Spike(x₀)"),				value: "spike"},
-						// { label: qsTr("None"),					value: "none"}
-					]
+					visible:			activeDropDownValuesMap[rowValue].length > 1
+					id: 				typeItem
+					name: 				"type"
+					useExternalBorder: 	true
+					value: 				defaultDistributionMap[rowValue]
+					values:				activeDropDownValuesMap[rowValue]
+				}
 
-					onValueChanged: {
-						console.log("Selected prior type: " + typeItem.currentValue);
-						console.log("rowValue equals: " + rowValue[1]);
-					}
+				Label
+				{
+					visible: activeDropDownValuesMap[rowValue].length === 1
+					text: 	 activeDropDownValuesMap[rowValue][0].label
 				}
 			}
 
@@ -123,6 +177,7 @@ ColumnLayout
 			{
 				spacing:				4 * preferencesModel.uiScale
 				Layout.preferredWidth:	width3
+				visible:				hasParameters
 
 				FormulaField
 				{
@@ -136,10 +191,7 @@ ColumnLayout
 					fieldWidth: 		40 * preferencesModel.uiScale
 					useExternalBorder:	false
 					showBorder: 		true
-					onValueChanged : {
-						console.log("Selected prior type: " + typeItem.currentValue);
-						console.log("rowValue equals: " + rowValue[1]);
-					}
+
 				}
 				FormulaField
 				{
@@ -270,17 +322,9 @@ ColumnLayout
 					id:					truncationLower
 					label: 				qsTr("lower")
 					name: 				"truncationLower"
-					visible:			typeItem.currentValue !== "spike" && typeItem.currentValue !== "uniform"
-					value:
-					{
-						console.log("rowValue:" + rowValue)
-						"-Inf"
-					}
-					min:
-					{
-						console.log("rowValue:" + rowValue)
-						"-Inf"
-					}
+					visible:			hasTruncation && typeItem.currentValue !== "spike" && typeItem.currentValue !== "uniform" && typeItem.currentValue !== "jeffreys"
+					value:				Math.max(priorTruncationMap[typeItem.currentValue][0], truncationLowerMap[rowValue])
+					min:				Math.max(priorTruncationMap[typeItem.currentValue][0], truncationLowerMap[rowValue])
 					max: 				truncationUpper.value
 					inclusive: 			JASP.MinOnly
 					fieldWidth:			40 * preferencesModel.uiScale
@@ -292,21 +336,9 @@ ColumnLayout
 					id:					truncationUpper
 					label: 				qsTr("upper")
 					name: 				"truncationUpper"
-					visible:			typeItem.currentValue !== "spike" && typeItem.currentValue !== "uniform"
-					value:
-					{
-						if (typeItem.currentValue === "beta")
-							1
-						else
-							"Inf"
-					}
-					max:
-					{
-						if (typeItem.currentValue === "beta")
-							1
-						else
-							"Inf"
-					}
+					visible:			hasTruncation && typeItem.currentValue !== "spike" && typeItem.currentValue !== "uniform" && typeItem.currentValue !== "jeffreys"
+					value:				priorTruncationMap[typeItem.currentValue][1]
+					max:				priorTruncationMap[typeItem.currentValue][1]
 					min: 				truncationLower ? truncationLower.value : 0
 					inclusive: 			JASP.MaxOnly
 					fieldWidth:			40 * preferencesModel.uiScale
@@ -316,4 +348,5 @@ ColumnLayout
 			}
 		}
 	}
+
 }
