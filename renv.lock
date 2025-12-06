@@ -109,6 +109,12 @@
         "utils"
       ]
     },
+    "GeneralizedHyperbolic": {
+      "Package": "GeneralizedHyperbolic",
+      "Version": "0.8-7",
+      "Source": "Repository",
+      "Repository": "CRAN"
+    },
     "GPArotation": {
       "Package": "GPArotation",
       "Version": "2025.3-1",
@@ -117,6 +123,12 @@
         "R",
         "stats"
       ]
+    },
+    "HDInterval": {
+      "Package": "HDInterval",
+      "Version": "0.2.4",
+      "Source": "Repository",
+      "Repository": "CRAN"
     },
     "Hmisc": {
       "Package": "Hmisc",
@@ -316,6 +328,12 @@
       "Requirements": [
         "R"
       ]
+    },
+    "bayesplot": {
+      "Package": "bayesplot",
+      "Version": "1.13.0",
+      "Source": "Repository",
+      "Repository": "CRAN"
     },
     "beeswarm": {
       "Package": "beeswarm",
@@ -583,12 +601,9 @@
     },
     "data.table": {
       "Package": "data.table",
-      "Version": "1.17.4",
+      "Version": "1.17.8",
       "Source": "Repository",
-      "Requirements": [
-        "methods",
-        "R"
-      ]
+      "Repository": "CRAN"
     },
     "deSolve": {
       "Package": "deSolve",
@@ -674,6 +689,12 @@
         "utils",
         "vctrs"
       ]
+    },
+    "ellipse": {
+      "Package": "ellipse",
+      "Version": "0.5.0",
+      "Source": "Repository",
+      "Repository": "CRAN"
     },
     "elliptic": {
       "Package": "elliptic",
@@ -1870,6 +1891,12 @@
         "stats"
       ]
     },
+    "posterior": {
+      "Package": "posterior",
+      "Version": "1.6.1",
+      "Source": "Repository",
+      "Repository": "CRAN"
+    },
     "processx": {
       "Package": "processx",
       "Version": "3.8.6",
@@ -2037,6 +2064,12 @@
         "yaml"
       ]
     },
+    "rmetalog": {
+      "Package": "rmetalog",
+      "Version": "1.0.3",
+      "Source": "Repository",
+      "Repository": "CRAN"
+    },
     "rpart": {
       "Package": "rpart",
       "Version": "4.1.24",
@@ -2055,6 +2088,12 @@
       "Requirements": [
         "estimability"
       ]
+    },
+    "rstan": {
+      "Package": "rstan",
+      "Version": "2.32.7",
+      "Source": "Repository",
+      "Repository": "CRAN"
     },
     "rstatix": {
       "Package": "rstatix",
