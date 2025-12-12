@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
 "POT-Creation-Date: 2025-11-15 03:47\n"
-"PO-Revision-Date: 2025-11-26 10:51+0000\n"
+"PO-Revision-Date: 2025-12-12 19:00+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/es/>\n"
@@ -19,70 +19,70 @@ msgstr ""
 "primera etapa.<br>"
 
 msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
+msgstr "Eliminados %1$i %2$s que no se asignaron a ninguna etapa.<br>"
 
 msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
-msgstr ""
+msgstr "Eliminadas %i observaciones que no se asignaron a ningún subgrupo.<br>"
 
 msgid "Sample"
-msgstr ""
+msgstr "Muestra"
 
 msgid "Time weighted charts report"
-msgstr ""
+msgstr "Informe de gráficos ponderados en el tiempo"
 
 msgid "Chart name: %s"
-msgstr ""
+msgstr "Nombre de gráfico: %s"
 
 msgid "Sub-title: %s"
-msgstr ""
+msgstr "Subtítulo: %s"
 
 msgid "Measurement name: %s"
-msgstr ""
+msgstr "Nombre de medida: %s"
 
 msgid "Footnote: %s"
-msgstr ""
+msgstr "Nota a pie: %s"
 
 msgid "Location: %s"
-msgstr ""
+msgstr "Posición: %s"
 
 msgid "Date: %s"
-msgstr ""
+msgstr "Fecha: %s"
 
 msgid "Performed by: %s"
-msgstr ""
+msgstr "Realizado por: %s"
 
 msgid "Print date: %s"
-msgstr ""
+msgstr "Fecha de impresión: %s"
 
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "Diagrama de suma acumulada"
 
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "Diagrama de media móvil ponderada exponencialmente"
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr ""
+msgstr "El número de Defectuosos/Defectos es mayor que el tamaño muestral."
 
 msgid "Attributes Control Charts"
-msgstr ""
+msgstr "Diagramas de control de atributos"
 
 msgid "p Chart"
-msgstr ""
+msgstr "Gráfico P"
 
 msgid "np Chart"
-msgstr ""
+msgstr "Gráfico NP"
 
 msgid "Laney p' Chart"
-msgstr ""
+msgstr "Gráfico P de Laney"
 
 msgid "c Chart"
-msgstr ""
+msgstr "Gráfico C"
 
 msgid "u Chart"
-msgstr ""
+msgstr "Gráfico U"
 
 msgid "Laney u' Chart"
-msgstr ""
+msgstr "Gráfico U de Laney"
 
 msgid "Individuals and Moving Range Chart"
 msgstr ""
@@ -112,7 +112,7 @@ msgid "CL = %g"
 msgstr ""
 
 msgid "Proportion"
-msgstr ""
+msgstr "Proporción"
 
 msgid "UCL = %g"
 msgstr ""
@@ -562,13 +562,13 @@ msgid "Percent"
 msgstr ""
 
 msgid "Lower"
-msgstr ""
+msgstr "Inferior"
 
 msgid "Confidence interval of 95%%"
 msgstr ""
 
 msgid "Upper"
-msgstr ""
+msgstr "Superior"
 
 msgid "Invalid reference and/or results were inserted."
 msgstr ""
@@ -1084,7 +1084,7 @@ msgid "Parameter"
 msgstr ""
 
 msgid "Estimate"
-msgstr ""
+msgstr "Estimar"
 
 msgid "Fitting the model failed with the following error message:\n%s"
 msgstr ""
