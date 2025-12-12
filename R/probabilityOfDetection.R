@@ -42,9 +42,6 @@ probabilityOfDetection <- function(jaspResults, dataset, options) {
   if (!ready)
     return(NULL)
 
-  if (!is.null(dataset))
-    return(dataset)
-
   dataset <- .readDataSetToEnd(
     columns.as.numeric  = options[["covariate"]],
     columns.as.factor   = unlist(options[["outcome"]]),
