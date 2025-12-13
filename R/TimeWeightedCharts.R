@@ -36,7 +36,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
   }
 
   # Data reading
-  if (is.null(dataset) && ready) {
+  if (ready) {
     if (length(factorVariables) >= 1) {
       dataset <- .readDataSetToEnd(columns.as.numeric = measurements, columns.as.factor = factorVariables)
     } else {

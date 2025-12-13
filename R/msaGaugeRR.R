@@ -46,13 +46,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   factor.vars <- c(parts, operators)
   factor.vars <- factor.vars[factor.vars != ""]
 
-  if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
-    if (options$type3){
-      dataset$operators <- rep(1, nrow(dataset))
-      operators <- "operators"
-    }
+  dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
+  if (options$type3){
+    dataset$operators <- rep(1, nrow(dataset))
+    operators <- "operators"
   }
+
 
   # Checking for infinity and missingValues
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
@@ -806,9 +805,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   df <- data.frame(Part = dataset[[parts]], Operator = dataset[[operators]], Means = means)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(means)
   yLimits <- range(c(yBreaks, means))
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = Part, y = Means, col = Operator, group = Operator)) +
-    jaspGraphs::geom_line() +
-    jaspGraphs::geom_point() +
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = Part, y = Means)) +
+    ggplot2::geom_line(ggplot2::aes(group = Operator, col = Operator), linewidth = 1) +
+    ggplot2::geom_point(ggplot2::aes(fill = Operator), shape = 21, size = 4) +
     ggplot2::scale_y_continuous(name = "Average", breaks = yBreaks, limits = yLimits) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()

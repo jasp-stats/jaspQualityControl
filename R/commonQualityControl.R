@@ -151,7 +151,7 @@
   nText <- length(text)
   annotation <- data.frame(x = rep(0, nText), y = (maxRows:1)[1:nText], label = text)
   p <- ggplot2::ggplot() + ggplot2::theme_void() +
-    ggplot2::annotate("rect", xmin = -.05, xmax = 1.05, ymin = 1 - .5, ymax = maxRows + .5, fill = 'lightgray', color = "black", linewidth = .7) +
+    ggplot2::annotate("rect", xmin = -.05, xmax = 1.05, ymin = 1 - .5, ymax = maxRows + .5, fill = 'lightgray', col = "black", linewidth = .7) +
     ggplot2::geom_text(data=annotation, ggplot2::aes(x = x, y = y, label = label), size = 6, hjust = 0) +
     ggplot2::scale_x_continuous(limits = c(-.05, 1.05)) +
     ggplot2::scale_y_continuous(limits = c(1 - .5,  maxRows + .5))
@@ -1245,7 +1245,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels)
   if (plotType != "cusum") {
     plotObject <- plotObject +
-      jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+      jaspGraphs::geom_line(pointData, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), col = "blue",
                             na.rm = TRUE)
   } else {
     # since the upper and lower part of the cusum chart are in the same df, we split the first and second half; if there are stages, do this for each stage
@@ -1260,9 +1260,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       pointDataFirstHalf <- pointDataSubset[firstHalf,]
       pointDataSecondHalf <- pointDataSubset[secondHalf,]
       plotObject <- plotObject +
-        jaspGraphs::geom_line(pointDataFirstHalf, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+        jaspGraphs::geom_line(pointDataFirstHalf, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), col = "blue",
                               na.rm = TRUE) +
-        jaspGraphs::geom_line(pointDataSecondHalf, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), color = "blue",
+        jaspGraphs::geom_line(pointDataSecondHalf, mapping = ggplot2::aes(x = subgroup, y = plotStatistic, group = stage), col = "blue",
                               na.rm = TRUE)
     }
 
