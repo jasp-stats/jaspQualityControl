@@ -40,8 +40,10 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
     ready <- (!identical(measurements, "") && !identical(operators, "") && !identical(parts, ""))
   }
 
-  dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
-                                       exclude.na.listwise = c(numeric.vars, factor.vars))
+  if (is.null(dataset)) {
+    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
+                                         exclude.na.listwise = c(numeric.vars, factor.vars))
+  }
 
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = c(measurements, options[["operator"]], options[["part"]]),

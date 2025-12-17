@@ -38,8 +38,9 @@ msaGaugeRRnonrep <- function(jaspResults, dataset, options, ...) {
   }else{
     ready <- (length(measurements) > 1 && !identical(operators, "") && !identical(parts, ""))
   }
-
-  dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
+  if (is.null(dataset)) {
+    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
+  }
 
   .hasErrors(dataset, type = c('infinity', 'missingValues'),
              all.target = c(measurements, parts, operators),

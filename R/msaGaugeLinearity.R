@@ -30,8 +30,10 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   factor.vars <- parts
   factor.vars <- factor.vars[factor.vars != ""]
 
-  dataset <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
-                               exclude.na.listwise = c(numeric.vars, factor.vars))
+  if (is.null(dataset)) {
+    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars,
+                                         exclude.na.listwise = c(numeric.vars, factor.vars))
+  }
 
   # Linearity and Bias Analysis
 
@@ -112,7 +114,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
     variancePerPart <- tapply(dataset[[measurements]], dataset[[parts]], var)
     if(any(variancePerPart == 0)) {
       noVarParts <- paste(names(which(variancePerPart == 0)), collapse = ", ")
-      table2$setError(gettextf("t-test not possible. No variance detected in part(s) %s.", noVarParts))
+      table2$setError(gettextf("t-est not possible. No variance detected in part(s) %s.", noVarParts))
       return(table2)
     }
 
@@ -202,16 +204,13 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
                           "percentLin" = percentLin))
     }
 
-    percentBias <- abs(averageBias) / options[["manualProcessVariationValue"]] * 100
-    df3 <- data.frame("Source" = c("Linearity", "Bias"),
-                      "Percent" = c(percentLin, percentBias))
+    df3 <- data.frame(Source = factor(x = c("Linearity", "Bias"), levels = c("Linearity", "Bias")), Percent = c(percentLin, (abs(averageBias) / options[["manualProcessVariationValue"]]) * 100))
     yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, df3$Percent))
     yLimits <- range(yBreaks)
 
     p2 <- ggplot2::ggplot() +
       ggplot2::geom_col(data = df3, mapping = ggplot2::aes(x = Source, y = Percent), fill = "gray", col = "black", linewidth = 1) +
       ggplot2::scale_y_continuous(breaks = yBreaks, limits = yLimits) +
-      ggplot2::scale_x_discrete(limits = c("Linearity", "Bias")) +
       ggplot2::xlab(ggplot2::element_blank()) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()

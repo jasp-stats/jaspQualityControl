@@ -83,6 +83,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   }
 
 .doeAnalysisReadData <- function(dataset, options, continuousPredictors, discretePredictors, blocks, covariates, dependent) {
+  if (!is.null(dataset)) {
+    return(dataset)
+  }
   factorVars <- NULL
   numericVars <- NULL
   if (!identical(dependent, "")) {
@@ -140,7 +143,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
     # set the contrasts for all categorical variables, add option to choose later
     for (fac in unlist(discretePredictors)) {
-      print(dataset[[fac]])
       contrasts(dataset[[fac]]) <- "contr.sum"
     }
     if (length(blocks) > 0 && !identical(blocks, ""))

@@ -29,7 +29,9 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
   ready <- length(numeric_variables) == 1
 
-  dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = factorVariables)
+  if (is.null(dataset)) {
+    dataset <- .readDataSetToEnd(columns.as.numeric = numeric_variables, columns.as.factor = factorVariables)
+  }
 
   if (axisLabelVariable != ""){
     axisLabels <- dataset[[axisLabelVariable]]

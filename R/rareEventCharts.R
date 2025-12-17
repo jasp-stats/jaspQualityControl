@@ -33,8 +33,9 @@ rareEventCharts <- function(jaspResults, dataset, options) {
 
   ready <- length(variable) == 1
 
-  dataset <- .readDataSetToEnd(columns.as.factor = factorVariables, columns.as.numeric = numericVariables)
-
+  if (is.null(dataset)) {
+    dataset <- .readDataSetToEnd(columns.as.factor = factorVariables, columns.as.numeric = numericVariables)
+  }
 
   # remove NA
   dataset <- na.omit(dataset)

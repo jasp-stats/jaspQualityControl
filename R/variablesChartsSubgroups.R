@@ -54,7 +54,7 @@ variablesChartsSubgroups <- function(jaspResults, dataset, options) {
   }
 
   # Data reading
-  if (ready) {
+  if (is.null(dataset) && ready) {
     if (length(factorVariables) >= 1) {
       dataset <- .readDataSetToEnd(columns.as.numeric = measurements, columns.as.factor = factorVariables)
     } else {
