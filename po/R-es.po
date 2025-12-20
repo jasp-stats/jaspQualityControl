@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
 "POT-Creation-Date: 2025-11-15 03:47\n"
-"PO-Revision-Date: 2025-12-12 19:00+0000\n"
+"PO-Revision-Date: 2025-12-14 11:30+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/es/>\n"
@@ -85,181 +85,185 @@ msgid "Laney u' Chart"
 msgstr "Gráfico U de Laney"
 
 msgid "Individuals and Moving Range Chart"
-msgstr ""
+msgstr "Diagrama de individuos y rango móvil"
 
 msgid "Report for Attribute Control Charts"
-msgstr ""
+msgstr "Informe de diagramas de control de atributos"
 
 msgid "ID: %s"
-msgstr ""
+msgstr "ID: %s"
 
 msgid "Appraiser: %s"
-msgstr ""
+msgstr "Evaluador: %s"
 
 msgid "Measurement system: %s"
-msgstr ""
+msgstr "Sistema de medición: %s"
 
 msgid "Subgroup size: %s"
-msgstr ""
+msgstr "Tamaño de subgrupos: %s"
 
 msgid "Time: %s"
-msgstr ""
+msgstr "Tiempo: %s"
 
 msgid "Frequency: %s"
-msgstr ""
+msgstr "Frecuencia: %s"
 
 msgid "CL = %g"
-msgstr ""
+msgstr "NC = %g"
 
 msgid "Proportion"
 msgstr "Proporción"
 
 msgid "UCL = %g"
-msgstr ""
+msgstr "NCS = %g"
 
 msgid "LCL = %g"
-msgstr ""
+msgstr "NCI = %g"
 
 msgid "Number of defectives"
-msgstr ""
+msgstr "Número de defectuosos"
 
 msgid "D"
-msgstr ""
+msgstr "D"
 
 msgid "Moving Range"
-msgstr ""
+msgstr "Rango móvil"
 
 msgid "Test results for %s chart"
-msgstr ""
+msgstr "Resultados de contrastes para gráfico %s"
 
 msgid "Test 1: Beyond limit"
-msgstr ""
+msgstr "Contraste 1: Más allá del límite"
 
 msgid "Test 2: Shift"
-msgstr ""
+msgstr "Contraste 2: Desplazamiento"
 
 msgid "Test 3: Trend"
-msgstr ""
+msgstr "Contraste 3: Tendencia"
 
 msgid "Test 4: Increasing variation"
-msgstr ""
+msgstr "Contraste 4: Variación creciente"
 
 msgid "Test 5: Reducing variation"
-msgstr ""
+msgstr "Contraste 5: Variación decreciente"
 
 msgid "Test 6: Bimodal distribution"
-msgstr ""
+msgstr "Contraste 6: Distribución bimodal"
 
 msgid "Points where a test failed."
-msgstr ""
+msgstr "Puntos en los que falló el contraste."
 
 msgid "Test results for %1$s chart"
-msgstr ""
+msgstr "Resultados del test para gráfico %1$s"
 
 msgid "Point"
-msgstr ""
+msgstr "Punto"
 
 msgid "- upper"
-msgstr ""
+msgstr "- superior"
 
 msgid "- lower"
-msgstr ""
+msgstr "- inferior"
 
 msgid "Test 7: Slightly increasing variation"
-msgstr ""
+msgstr "Contraste 7: Variación ligeramente creciente"
 
 msgid "Test 8: Oscillation"
-msgstr ""
+msgstr "Contraste 8: Oscilación"
 
 msgid "Test 9: Benneyan test"
-msgstr ""
+msgstr "Contraste 9: Contraste de Benneyan"
 
 msgid "Tests"
-msgstr ""
+msgstr "Contrastes"
 
 msgid "No test violations occurred."
-msgstr ""
+msgstr "No hubo incumplimientos de contrastes."
 
 msgid "%1$s between events"
-msgstr ""
+msgstr "%1$s entre sucesos"
 
 msgid "Sample average"
-msgstr ""
+msgstr "Promedio muestral"
 
 msgid "Sample range"
-msgstr ""
+msgstr "Rango muestral"
 
 msgid "Individual value"
-msgstr ""
+msgstr "Valor individual"
 
 msgid "Moving range"
-msgstr ""
+msgstr "Rango móvil"
 
 msgid "Moving range of subgroup mean"
-msgstr ""
+msgstr "Rango móvil de la media de subgrupo"
 
 msgid "Sample std. dev."
-msgstr ""
+msgstr "Desv. típ. muestral"
 
 msgid "Cumulative sum"
-msgstr ""
+msgstr "Suma acumulada"
 
 msgid "Exponentially weighted moving average"
-msgstr ""
+msgstr "Media móvil ponderada exponencialmente"
 
 msgid "LSL = %g"
-msgstr ""
+msgstr "NEI = %g"
 
 msgid "Tar. = %g"
-msgstr ""
+msgstr "Obj. = %g"
 
 msgid "USL = %g"
-msgstr ""
+msgstr "NES = %g"
 
 msgid "Parameter estimation failed. Values might be too extreme. Try a different distribution."
 msgstr ""
+"Falló la estimación de parámetros. Los valores podrían ser demasiado "
+"extremos. Intente otra distribución."
 
 msgid "Design of Experiments - Analysis"
-msgstr ""
+msgstr "Diseño de experimentos - Análisis"
 
 msgid "Error"
-msgstr ""
+msgstr "Fallo"
 
 msgid "The specified low/high levels for %1$s are not distinct."
-msgstr ""
+msgstr "Los niveles bajo/alto especificados para %1$s no son distintos."
 
 msgid "The specified low/high level(s) %1$s for %2$s do not match the levels in the dataset."
 msgstr ""
+"Los niveles %1$s bajo/alto especificados para %2$s no coinciden con los "
+"niveles del conjunto de datos."
 
 msgid "Response Optimizer Settings"
-msgstr ""
+msgstr "Configuración del Optimizador de respuestas"
 
 msgid "lower and upper bounds and target are"
-msgstr ""
+msgstr "Los límites inferior y superior, y el objetivo son"
 
 msgid "lower and upper bounds are"
-msgstr ""
+msgstr "Los límites inferior y superior son"
 
 msgid "target is"
-msgstr ""
+msgstr "El objetivo es"
 
 msgid "The %s estimated from data."
-msgstr ""
+msgstr "El %s estimado de los datos."
 
 msgid "Response Optimizer Solution"
-msgstr ""
+msgstr "Solución del Optimizador de respuestas"
 
 msgid "Optimization Plot"
-msgstr ""
+msgstr "Gráfico de optimización"
 
 msgid "Summary Plot"
-msgstr ""
+msgstr "Gráfico de resumen"
 
 msgid "Enter values for all predictors."
-msgstr ""
+msgstr "Introducir valores para todos los predictores."
 
 msgid "Optimization Plot Summary"
-msgstr ""
+msgstr "Resumen de gráfico de optimización"
 
 msgid "Enter plausible values for all discrete predictors.\n                                   Value %1$s is not a possible for the discrete predictor %2$s. Allowed values:"
 msgstr ""
@@ -277,28 +281,28 @@ msgid "One or more input parameters for continuous predictors are outside of the
 msgstr ""
 
 msgid "Model Summary"
-msgstr ""
+msgstr "Resumen del Modelo"
 
 msgid "Adjusted %s"
-msgstr ""
+msgstr "%s ajustado"
 
 msgid "Predictive %s"
-msgstr ""
+msgstr "%s predictivo"
 
 msgid "The following aliased terms were removed: %s."
-msgstr ""
+msgstr "Los siguientes elementos con alias se eliminaron: %s."
 
 msgid "ANOVA"
-msgstr ""
+msgstr "ANOVA"
 
 msgid "Source"
-msgstr ""
+msgstr "Fuente"
 
 msgid "Sum of squares"
-msgstr ""
+msgstr "Suma de cuadrados"
 
 msgid "df"
-msgstr ""
+msgstr "gl"
 
 msgid "Mean square"
 msgstr ""
@@ -331,13 +335,13 @@ msgid "Term"
 msgstr ""
 
 msgid "Effect"
-msgstr ""
+msgstr "Efecto"
 
 msgid "Coefficient"
 msgstr ""
 
 msgid "Standard error"
-msgstr ""
+msgstr "Error típico"
 
 msgid "Discrete Predictor Levels"
 msgstr ""
@@ -649,7 +653,7 @@ msgid "Predictor"
 msgstr ""
 
 msgid "Std. error"
-msgstr ""
+msgstr "Error típico"
 
 msgid "<i>t</i>-value"
 msgstr ""
@@ -703,7 +707,7 @@ msgid "Linearity"
 msgstr ""
 
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 msgid "Gauge r&R"
 msgstr ""
@@ -919,7 +923,7 @@ msgid "Gauge r&R (nested)"
 msgstr ""
 
 msgid "p"
-msgstr ""
+msgstr "p"
 
 msgid "Variation"
 msgstr ""
@@ -1102,7 +1106,7 @@ msgid "Fit Table"
 msgstr ""
 
 msgid "AIC"
-msgstr ""
+msgstr "AIC"
 
 msgid "Detection Plot"
 msgstr ""
@@ -1126,7 +1130,7 @@ msgid "Vertical asymptotes"
 msgstr ""
 
 msgid "Label"
-msgstr ""
+msgstr "Etiqueta"
 
 msgid "<b><em>Warning.</em></b>"
 msgstr ""
