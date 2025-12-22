@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2025-12-23 10:37+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -17,7 +23,7 @@ msgstr "Análisis de Sistemas de Medida"
 
 msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
-msgstr "Análisis de Concordancia de Atributos"
+msgstr "Análisis de Concordancia de atributos"
 
 msgctxt "Description|"
 msgid "Control Charts"
@@ -861,7 +867,7 @@ msgstr "Título"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge name"
-msgstr "Nombre del calibrador"
+msgstr "Nombre de calibre"
 
 msgctxt "msaTestRetest|"
 msgid "Tolerance"
@@ -961,7 +967,7 @@ msgstr "ID"
 
 msgctxt "attributesCharts|"
 msgid "Appraiser"
-msgstr "Tasador"
+msgstr "Evaluador"
 
 msgctxt "attributesCharts|"
 msgid "Measurement system"
@@ -1434,7 +1440,7 @@ msgstr "Alfa"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Centre points"
-msgstr "Centrar puntos"
+msgstr "Puntos centrales"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Design"
@@ -1470,7 +1476,7 @@ msgstr "Bloque axial"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Replicates"
-msgstr "Repeticiones"
+msgstr "Réplicas"
 
 msgctxt "ShowAndExportDesign|"
 msgid "Coded units"
@@ -2284,7 +2290,7 @@ msgstr "Máximo de niveles discretos"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Center points"
-msgstr "Puntos centrales"
+msgstr "Centrar puntos"
 
 msgctxt "Description|"
 msgid "Analyse Design"
