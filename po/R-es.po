@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
 "POT-Creation-Date: 2025-11-15 03:47\n"
-"PO-Revision-Date: 2025-12-21 09:00+0000\n"
+"PO-Revision-Date: 2025-12-23 10:37+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/es/>\n"
@@ -267,18 +267,27 @@ msgstr "Resumen de gráfico de optimización"
 
 msgid "Enter plausible values for all discrete predictors.\n                                   Value %1$s is not a possible for the discrete predictor %2$s. Allowed values:"
 msgstr ""
+"Introduzca valores plausibles para todos los predictores discretos.\n"
+"                                   El valor %1$s no es posible para el "
+"predictor discreto %2$s. Valores permitidos:"
 
 msgid "Enter plausible values for all continuous predictors. Only numeric values are allowed."
 msgstr ""
+"Introduzca valores plausibles para todos los predictores continuos. Solo se "
+"permiten valores numéricos."
 
 msgid "Comp. desirability"
-msgstr ""
+msgstr "Comp. atractivo"
 
 msgid "Ind. desirability ("
-msgstr ""
+msgstr "Ind. atractivo ("
 
 msgid "One or more input parameters for continuous predictors are outside of the design space.\n                           Extrapolation beyond the design space might not be valid."
 msgstr ""
+"Uno o más parámetros de entrada para los predictores continuos está fuera "
+"del espacio de diseño.\n"
+"                           La extrapolación más allá del espacio de diseño "
+"podría no ser válida."
 
 msgid "Model Summary"
 msgstr "Resumen del Modelo"
@@ -305,889 +314,947 @@ msgid "df"
 msgstr "gl"
 
 msgid "Mean square"
-msgstr ""
+msgstr "Cuadrado Medio"
 
 msgid "Type III sums of squares are selected and continuous factors are specified. Results might be misleading. Make sure factors should really be treated as continuous."
 msgstr ""
+"Se seleccionaron las sumas de cuadrados de tipo III y se especificaron "
+"factores continuos. Los resultados podrían ser engañosos. Asegúrese de que "
+"los factores deben tratarse realmente como continuos."
 
 msgid "Type I sums of squares."
-msgstr ""
+msgstr "Sumas de cuadrados de tipo I."
 
 msgid "Type II sums of squares."
-msgstr ""
+msgstr "Sumas de cuadrados de tipo II."
 
 msgid "Type III sums of squares."
-msgstr ""
+msgstr "Sumas de cuadrados de tipo III."
 
 msgid "Coded"
-msgstr ""
+msgstr "Codificado"
 
 msgid "Uncoded"
-msgstr ""
+msgstr "No codificado"
 
 msgid "%s Coefficients"
-msgstr ""
+msgstr "Coeficientes %s"
 
 msgid "Alias"
-msgstr ""
+msgstr "Alias"
 
 msgid "Term"
-msgstr ""
+msgstr "Elemento"
 
 msgid "Effect"
 msgstr "Efecto"
 
 msgid "Coefficient"
-msgstr ""
+msgstr "Coeficiente"
 
 msgid "Standard error"
 msgstr "Error típico"
 
 msgid "Discrete Predictor Levels"
-msgstr ""
+msgstr "Niveles de predictores discretos"
 
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 msgid "Level"
-msgstr ""
+msgstr "Nivel"
 
 msgid "Regression equation in %s Units"
-msgstr ""
+msgstr "Ecuación de regresión en unidades %s"
 
 msgid "Pareto Chart of Standardized Effects"
-msgstr ""
+msgstr "Gráfico de Pareto de efectos tipificados"
 
 msgid "Standardized Effect"
-msgstr ""
+msgstr "Efecto tipificado"
 
 msgid "Normal Plot of Standardized Effects"
-msgstr ""
+msgstr "Gráfico Normal de efectos tipificados"
 
 msgid "Significant"
-msgstr ""
+msgstr "Significativo"
 
 msgid "Not Significant"
-msgstr ""
+msgstr "No significativo"
 
 msgid "Normal Probability Plot of Residuals"
-msgstr ""
+msgstr "Gráfico de probabilidad Normal de errores"
 
 msgid "Histogram of Residuals"
-msgstr ""
+msgstr "Histograma de errores"
 
 msgid "Residuals versus Fitted Values"
-msgstr ""
+msgstr "Errores frente a Valores ajustados"
 
 msgid "Fitted values"
-msgstr ""
+msgstr "Valores ajustados"
 
 msgid "Residuals"
-msgstr ""
+msgstr "Errores"
 
 msgid "Residuals versus Run Order"
-msgstr ""
+msgstr "Errores frente a Orden de ejecución"
 
 msgid "Run order"
-msgstr ""
+msgstr "Orden de ejecución"
 
 msgid "Matrix residual plot"
-msgstr ""
+msgstr "Gráfico matricial de errores"
 
 msgid "Contour plot"
-msgstr ""
+msgstr "Gráfico de contorno"
 
 msgid "Surface plot"
-msgstr ""
+msgstr "Gráfico de superficie"
 
 msgid "Contour plots"
-msgstr ""
+msgstr "Gráficos de contorno"
 
 msgid "Surface plots"
-msgstr ""
+msgstr "Gráficos de superficie"
 
 msgid "and"
-msgstr ""
+msgstr "y"
 
 msgid "%1$s of %2$s vs %3$s"
-msgstr ""
+msgstr "%1$s de %2$s vs %3$s"
 
 msgid "The analysis failed with the following error message: %s"
-msgstr ""
+msgstr "El análisis falló con el siguiente mensaje de fallo: %s"
 
 msgid "Design Summary"
-msgstr ""
+msgstr "Resumen del diseño"
 
 msgid "Variable"
-msgstr ""
+msgstr "Variable"
 
 msgid "Factors"
-msgstr ""
+msgstr "Factores"
 
 msgid "Base runs"
-msgstr ""
+msgstr "Ejecuciones de base"
 
 msgid "Base blocks"
-msgstr ""
+msgstr "Bloques de base"
 
 msgid "Centre points per block"
-msgstr ""
+msgstr "Puntos centrales por bloque"
 
 msgid "Replications"
-msgstr ""
+msgstr "Réplicas"
 
 msgid "Repetitions"
-msgstr ""
+msgstr "Repeticiones"
 
 msgid "Total runs"
-msgstr ""
+msgstr "Ejecuciones totales"
 
 msgid "Total blocks"
-msgstr ""
+msgstr "Bloques totales"
 
 msgid "Value"
-msgstr ""
+msgstr "Valor"
 
 msgid "Please select a row in the design table."
-msgstr ""
+msgstr "Por favor, seleccione una fila en la tabla de diseño."
 
 msgid "Cannote create designs with more than 100000 total runs."
-msgstr ""
+msgstr "No se pueden crear diseños con más de 100000 ejecuciones totales."
 
 msgid "Click 'Display design' to show the design."
-msgstr ""
+msgstr "Haga clic en 'Mostrar diseño' para mostrar el diseño."
 
 msgid "The design is not exported until 'Export design' is checked."
-msgstr ""
+msgstr "El diseño no se exporta hasta que se marque 'Exportar diseño'."
 
 msgid "The design is exported as '%1$s'."
-msgstr ""
+msgstr "El diseño se exporta como '%1$s'."
 
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr ""
+"Sin solapamiento entre efectos principales e interacciones de 2 factores."
 
 msgid "Alias Structure"
-msgstr ""
+msgstr "Estructura de alias"
 
 msgid "Factorial Design"
-msgstr ""
+msgstr "Diseño factorial"
 
 msgid "Run Order"
-msgstr ""
+msgstr "Orden de Ejecución"
 
 msgid "Standard Order"
-msgstr ""
+msgstr "Orden típico"
 
 msgid "Hard-to-change factors: %1$s"
-msgstr ""
+msgstr "Factores difíciles-de-cambiar: %1$s"
 
 msgid "Continuous factors"
-msgstr ""
+msgstr "Factores continuos"
 
 msgid "Discrete factors"
-msgstr ""
+msgstr "Factores discretos"
 
 msgid "Replicates"
-msgstr ""
+msgstr "Réplicas"
 
 msgid "Centre points in cube"
-msgstr ""
+msgstr "Puntos centrales en el cubo"
 
 msgid "Centre points in axial"
-msgstr ""
+msgstr "Puntos centrales axiales"
 
 msgid "Centre points"
-msgstr ""
+msgstr "Puntos centrales"
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
-msgstr ""
+msgstr "El diseño de Box-Behnken no se admite para 8 variables."
 
 msgid "Response Surface Design - Central Composite Design"
-msgstr ""
+msgstr "Diseño de superficie de respuesta - Diseño de composición central"
 
 msgid "Response Surface Design - Box-Behnken design"
-msgstr ""
+msgstr "Diseño de superficie de respuesta - Diseño de Box-Behnken"
 
 msgid "Standard order"
-msgstr ""
+msgstr "Orden típico"
 
 msgid "Reference tables and plots"
-msgstr ""
+msgstr "Tablas de referencias y gráficos"
 
 msgid "Please insert a reference value before specifying a positive reference."
 msgstr ""
+"Por favor, introduzca un valor de referencia antes de especificar una "
+"referencia positiva."
 
 msgid "Attributes agreement analysis"
-msgstr ""
+msgstr "Análisis de Concordancia de atributos"
 
 msgid "Cohen's kappa"
-msgstr ""
+msgstr "Kappa de Cohen"
 
 msgid "Kendall's tau"
-msgstr ""
+msgstr "Tau de Kendall"
 
 msgid "Cohen's kappa for appraiser vs standard"
-msgstr ""
+msgstr "Kappa de Cohen para evaluador vs típico"
 
 msgid "Appraiser"
-msgstr ""
+msgstr "Evaluador"
 
 msgid "Cohen's kappa correlations summary"
-msgstr ""
+msgstr "Resumen de correlaciones de Kappas de Cohen"
 
 msgid "Please inseret a vaild positive reference as used in the results variables."
 msgstr ""
+"Por favor, introduzca una referencia positiva válida como se utiliza en las "
+"variables de resultados."
 
 msgid "Fleiss' kappa"
-msgstr ""
+msgstr "Kappa de Fleiss"
 
 msgid "Within appraisers"
-msgstr ""
+msgstr "Evaluadores dentro"
 
 msgid "Appraiser vs standard"
-msgstr ""
+msgstr "Evaluador vs típico"
 
 msgid "Between appraisers"
-msgstr ""
+msgstr "Evaluadores entre"
 
 msgid "Each appraiser vs standard"
-msgstr ""
+msgstr "Cada evaluador vs típico"
 
 msgid "All appraisers vs standard"
-msgstr ""
+msgstr "Todos los evaluadores vs típico"
 
 msgid "Inspected"
-msgstr ""
+msgstr "Inspeccionado"
 
 msgid "Matched"
-msgstr ""
+msgstr "Emparejado"
 
 msgid "Percent"
-msgstr ""
+msgstr "Porcentaje"
 
 msgid "Lower"
 msgstr "Inferior"
 
 msgid "Confidence interval of 95%%"
-msgstr ""
+msgstr "Intervalo con 95%% de confianza"
 
 msgid "Upper"
 msgstr "Superior"
 
 msgid "Invalid reference and/or results were inserted."
-msgstr ""
+msgstr "Se insertaron referencias y/o resultados inválidos."
 
 msgid "Invalid values (NA) found in appraiser %s."
-msgstr ""
+msgstr "Se encontraron valores inválidos (NA) en el evaluador %s."
 
 msgid "More than 1 measurement per operator required."
-msgstr ""
+msgstr "Se requiere más de 1 medida por operador."
 
 msgid "Study effectiveness summary"
-msgstr ""
+msgstr "Resumen de la eficacia del estudio"
 
 msgid "Effectiveness"
-msgstr ""
+msgstr "Eficacia"
 
 msgid "Miss rate"
-msgstr ""
+msgstr "Tasa de fallo"
 
 msgid "False alarm rate"
-msgstr ""
+msgstr "Tasa de falsa alarma"
 
 msgid "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false alarm rate)"
 msgstr ""
+"Aceptable: x >= 90%% (eficacia), x =< 2%% (tasa de fallo), x =< 5%% (tasa de "
+"falsa alarma)"
 
 msgid "Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< 10%% (false alarm rate)"
 msgstr ""
+"Ligeramente aceptable: x >= 80%% (eficacia), x =5 2%% (tasa de fallo), x =< "
+"10%% (tasa de falsa alarma)"
 
 msgid "Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false alarm rate)"
 msgstr ""
+"Inaceptable: x < 80%% (eficacia), x > 5%% (tasa de fallo), x > 10%% (tasa de "
+"falsa alarma)"
 
 msgid "More than one measurement per operator required."
-msgstr ""
+msgstr "Se requiere más de una medida por operador."
 
 msgid "Kendall's tau is only available for numeric measurements."
-msgstr ""
+msgstr "Tau de Kendall está solo disponible para medidas numéricas."
 
 msgid "Kendall's tau is only available for non-binary measurements."
-msgstr ""
+msgstr "Tau de Kendall está solo disponible para medidas no binarias."
 
 msgid "Operator"
-msgstr ""
+msgstr "Operador"
 
 msgid "%g (unacceptable)"
-msgstr ""
+msgstr "%g (inaceptable)"
 
 msgid "%g (marginally acceptable)"
-msgstr ""
+msgstr "%g (ligeramente aceptable)"
 
 msgid "%g (acceptable)"
-msgstr ""
+msgstr "%g (aceptable)"
 
 msgid "Linearity and bias"
-msgstr ""
+msgstr "Linealidad y Sesgo"
 
 msgid "Gauge bias"
-msgstr ""
+msgstr "Sesgo de calibre"
 
 msgid "Part"
-msgstr ""
+msgstr "Parte"
 
 msgid "Reference value"
-msgstr ""
+msgstr "Valor de referencia"
 
 msgid "Observed mean"
-msgstr ""
+msgstr "Media observada"
 
 msgid "Mean bias"
-msgstr ""
+msgstr "Sesgo de media"
 
 msgid "<i>p</i>-value"
-msgstr ""
+msgstr "Valor <i>p</i>"
 
 msgid "Regression model"
-msgstr ""
+msgstr "Modelo de regresión"
 
 msgid "Predictor"
-msgstr ""
+msgstr "Predictor"
 
 msgid "Std. error"
 msgstr "Error típico"
 
 msgid "<i>t</i>-value"
-msgstr ""
+msgstr "Valor <i>t</i>"
 
 msgid "Regression equation"
-msgstr ""
+msgstr "Ecuación de regresión"
 
 msgid "Gauge linearity"
-msgstr ""
+msgstr "Linealidad de calibre"
 
 msgid "R%1$s"
 msgstr "R%1$s"
 
 msgid "%% Linearity"
-msgstr ""
+msgstr "Linealidad %%"
 
 msgid "Calculations are based on 6 times the historical standard variation unless specified otherwise."
 msgstr ""
+"Los cálculos se basan en 6 por la variación típica histórica, excepto que se "
+"indique otra cosa."
 
 msgid "Bias and linearity"
-msgstr ""
+msgstr "Sesgo y linealidad"
 
 msgid "Percentage process variation graph"
-msgstr ""
+msgstr "Gráfico de variación porcentual del proceso"
 
 msgid "t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
 msgstr ""
+"El contraste T requiere más de 1 medida. Se detectaron %1$i medidas válidas "
+"en %2$s."
 
 msgid "Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts."
 msgstr ""
+"Cada parte única debe tener un valor de referencia correspondiente. Se "
+"encontraron %1$i valores de referencia para %2$s partes únicas."
 
 msgid "t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s."
 msgstr ""
+"El contraste T requiere más de 1 medida por parte. Se detectaron menos de 2 "
+"medidas válidas en %s partes."
 
 msgid "t-test not possible. No variance detected in Part(s) %s."
-msgstr ""
+msgstr "El contraste T no es posible. No se detectó varianza en %s partes."
 
 msgid "t-est not possible. No variance detected in part(s) %s."
-msgstr ""
+msgstr "El contraste T no es posible. No se detectó varianza en %s partes."
 
 msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
-msgstr ""
+msgstr "Sesgo = %1$.2f %2$s %3$.2f * Valor de referencia"
 
 msgid "Reference"
-msgstr ""
+msgstr "Referencia"
 
 msgid "Percent bias"
-msgstr ""
+msgstr "Sesgo porcentual"
 
 msgid "Linearity"
-msgstr ""
+msgstr "Linealidad"
 
 msgid "Total"
 msgstr "Total"
 
 msgid "Gauge r&R"
-msgstr ""
+msgstr "r&R de calibre"
 
 msgid "Design is not balanced: not every operator measured every part the same number of times."
 msgstr ""
+"El diseño no está equilibrado: cada operador no mide cada parte el mismo "
+"número de veces."
 
 msgid "Design is not balanced: not every part was measured the same number of times."
 msgstr ""
+"El diseño no está equilibrado: cada parte no se mide el mismo número de "
+"veces."
 
 msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
 msgstr ""
+"Las medidas seleccionadas parecen estar en un formato de 'Columna única' ya "
+"que cada parte de operador se mide %d veces."
 
 msgid "Gauge r&R report"
-msgstr ""
+msgstr "Informe de calibre r&R"
 
 msgid "No report components selected."
-msgstr ""
+msgstr "No se seleccionaron componentes del informe."
 
 msgid "Part name: %s"
-msgstr ""
+msgstr "Nombre de parte: %s"
 
 msgid "Gauge name: %s"
-msgstr ""
+msgstr "Nombre de calibre: %s"
 
 msgid "Characteristic: %s"
-msgstr ""
+msgstr "Característica: %s"
 
 msgid "Gauge number: %s"
-msgstr ""
+msgstr "Número de calibre: %s"
 
 msgid "Tolerance: %s"
-msgstr ""
+msgstr "Tolerancia: %s"
 
 msgid "Number of distinct categories"
-msgstr ""
+msgstr "Número de categorías diferentes"
 
 msgid "Gauge r&R ANOVA table"
-msgstr ""
+msgstr "Tabla ANOVA de r&R de calibre"
 
 msgid "Range chart by operator"
-msgstr ""
+msgstr "Gráfico de rango por operador"
 
 msgid "Xbar chart by operator"
-msgstr ""
+msgstr "Gráfico de barras por operador"
 
 msgid "Average chart by operator"
-msgstr ""
+msgstr "Gráfico promedio por operador"
 
 msgid "Scatterplot operators"
-msgstr ""
+msgstr "Operadores de gráfico de dispersión"
 
 msgid "Measurement by part graph"
-msgstr ""
+msgstr "Medida por gráfico de parte"
 
 msgid "Measurements by operator graph"
-msgstr ""
+msgstr "Medidas por gráfico de operador"
 
 msgid "Part by operator interaction graph"
-msgstr ""
+msgstr "Parte por gráfico de interacción de operador"
 
 msgid "Traffic light chart"
-msgstr ""
+msgstr "Gráfico de semáforo"
 
 msgid "Gauge r&R study - crossed ANOVA"
-msgstr ""
+msgstr "Estudio de r&R de calibre - ANOVA cruzado"
 
 msgid "One-way ANOVA table"
-msgstr ""
+msgstr "Tabla ANOVA de un factor"
 
 msgid "Two-way ANOVA table with interaction"
-msgstr ""
+msgstr "Tabla ANOVA de dos factores con interacción"
 
 msgid "Mean squares"
-msgstr ""
+msgstr "Cuadrados medios"
 
 msgid "F"
 msgstr "F"
 
 msgid "Variance components"
-msgstr ""
+msgstr "Componentes de varianza"
 
 msgid "Variance"
 msgstr "Varianza"
 
 msgid "%% Contribution"
-msgstr ""
+msgstr "Contribución de %%"
 
 msgid "Gauge evaluation"
-msgstr ""
+msgstr "Evaluación de calibre"
 
 msgid "Std. dev."
-msgstr ""
+msgstr "Desv. típ."
 
 msgid "Study variation"
-msgstr ""
+msgstr "Variación de estudios"
 
 msgid "%% Study variation"
-msgstr ""
+msgstr "Variación de estudios %%"
 
 msgid "%% Tolerance"
-msgstr ""
+msgstr "Tolerancia de %%"
 
 msgid "Total gauge r&R"
-msgstr ""
+msgstr "Total r&R de calibre"
 
 msgid "Repeatability"
-msgstr ""
+msgstr "Repetibilidad"
 
 msgid "Part-to-part"
-msgstr ""
+msgstr "Parte a parte"
 
 msgid "Total variation"
-msgstr ""
+msgstr "Variación total"
 
 msgid "Reproducibility"
-msgstr ""
+msgstr "Reproducibilidad"
 
 msgid "*"
-msgstr ""
+msgstr "*"
 
 msgid "Number of distinct categories = %i"
-msgstr ""
+msgstr "Número de categorías diferentes = %i"
 
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
 msgstr ""
+"La Variación de estudios se calcula como Desv. típ. <spam>&#215;</spam> %i"
 
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr ""
+"La Variación de estudios se calcula como Desv. típ. <spam>&#215;</spam> %.2f"
 
 msgid "Historical standard deviation is used to calculate some values for std. dev., study variation, and %%study variation."
 msgstr ""
+"La desviación típica histórica se utiliza para calcular algunos valores para "
+"Desv. típ., variación de estudios y variación de estudios de %%."
 
 msgid "Values for %%process variation are not displayed because they are identical to values for %%study variation."
 msgstr ""
+"Los valores para la variación de procesos de %% no se presentan porque son "
+"idénticos a los valores de variación de estudios de %%."
 
 msgid "Two-way ANOVA table without interaction"
-msgstr ""
+msgstr "Tabla ANOVA de dos factores sin interacción"
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
 msgstr ""
+"La Variación de estudios se calcula como Desv. típ. <spam>&#215;</spam> %i"
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr ""
+"La Variación de estudios se calcula como Desv. típ. <spam>&#215;</spam> %.2f"
 
 msgid "Components of variation"
-msgstr ""
+msgstr "Componentes de variación"
 
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s."
-msgstr ""
+msgstr "El número de observaciones es <2 en %1$s después de agrupar en %2$s."
 
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
-msgstr ""
+msgstr "El número de observaciones es <2 en %1$s después de agrupar en %2$s"
 
 msgid "Measurements by part"
-msgstr ""
+msgstr "Medidas por parte"
 
 msgid "Measurements by operator"
-msgstr ""
+msgstr "Medidas por operador"
 
 msgid "Part by operator interaction"
-msgstr ""
+msgstr "Parte por interacción de operador"
 
 msgid "Operators measured different number of parts."
-msgstr ""
+msgstr "Los operadores midieron distinto número de partes."
 
 msgid "Scatterplot of operator vs operator"
-msgstr ""
+msgstr "Gráfico de dispersión de operador vs operador"
 
 msgid "Cannot plot scatterplot for less than 2 operators."
 msgstr ""
+"No puede representarse el gráfico de dispersión para menos de 2 operadores."
 
 msgid "Scatterplot of operator  %1$s vs operator %2$s"
-msgstr ""
+msgstr "Gráfico de dispersión del operador %1$s vs operador %2$s"
 
 msgid "Matrix plot for operators"
-msgstr ""
+msgstr "Gráfico matricial para operadores"
 
 msgid "Repeat"
-msgstr ""
+msgstr "Repetir"
 
 msgid "Reprod"
-msgstr ""
+msgstr "Reprod"
 
 msgid "%% Study Variation"
-msgstr ""
+msgstr "Variación de estudios %%"
 
 msgid "Error: Gauge study failed. Could not create traffic light chart."
 msgstr ""
+"Fallo: el estudio de calibre falló. No se pudo crear el gráfico de semáforo."
 
 msgid "%.2f"
-msgstr ""
+msgstr "%.2f"
 
 msgid "Gauge r&R - nested"
-msgstr ""
+msgstr "r&R de calibre - anidado"
 
 msgid "Unbalanced design. Some parts have more repeated measurements than others."
 msgstr ""
+"Diseño desequilibrado. Algunas partes tienen más medidas repetidas que otras."
 
 msgid "Gauge r&R (non-replicable) report"
-msgstr ""
+msgstr "Informe de r&R de calibre (no replicable)"
 
 msgid "Gauge r&R tables"
-msgstr ""
+msgstr "Tablas de r&R de calibre"
 
 msgid "Measurement by part x operator plot"
-msgstr ""
+msgstr "Medida por parte x gráfico de operador"
 
 msgid "Gauge r&R study - nested ANOVA"
-msgstr ""
+msgstr "Estudio de r&R de calibre - ANOVA anidado"
 
 msgid "Gauge r&R (nested)"
-msgstr ""
+msgstr "r&R de calibre (anidado)"
 
 msgid "p"
 msgstr "p"
 
 msgid "Variation"
-msgstr ""
+msgstr "Variación"
 
 msgid "No degrees of freedom for %s."
-msgstr ""
+msgstr "Sin grados de libertad para %s."
 
 msgid "Part-To-part"
-msgstr ""
+msgstr "Parte a parte"
 
 msgid "Study variation is calculated as std. dev. * %i"
-msgstr ""
+msgstr "La variación de estudios se calcula como Desv. típ.* %i"
 
 msgid "Study variation is calculated as std. dev. * %.2f"
-msgstr ""
+msgstr "La variación de estudios se calcula como Desv. típ.* %.2f"
 
 msgid "Measurements by part x operator"
-msgstr ""
+msgstr "Medidas por parte x operador"
 
 msgid "Operator %s"
-msgstr ""
+msgstr "Operador %s"
 
 msgid "Scatterplot operators vs parts"
-msgstr ""
+msgstr "Gráfico de dispersión de operadores vs partes"
 
 msgid "Range method range chart"
-msgstr ""
+msgstr "Gráfico de amplitud por método de rangos"
 
 msgid "Range chart by part"
-msgstr ""
+msgstr "Gráfico de rangos por parte"
 
 msgid "Run chart of parts"
-msgstr ""
+msgstr "Ejecutar gráfico de partes"
 
 msgid "Short gauge study"
-msgstr ""
+msgstr "Estudio breve de calibre"
 
 msgid "Sample size (n)"
-msgstr ""
+msgstr "Tamaño muestral (n)"
 
 msgid "R-bar"
-msgstr ""
+msgstr "Barra-R"
 
 msgid "d2"
-msgstr ""
+msgstr "d2"
 
 msgid "GRR"
-msgstr ""
+msgstr "GRR"
 
 msgid "Process std. dev."
-msgstr ""
+msgstr "Desv. Típ. del proceso"
 
 msgid "%%GRR of process std. dev."
-msgstr ""
+msgstr "%%GRR de Desv. típ. del proceso"
 
 msgid "Tolerance"
-msgstr ""
+msgstr "Tolerancia"
 
 msgid "%%GRR of tolerance"
-msgstr ""
+msgstr "%%GRR de tolerancia"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
-msgstr ""
+msgstr "Gráfico de dispersión de Medida 1 vs Medida 2"
 
 msgid "Run chart"
-msgstr ""
+msgstr "Ejecutar gráfico"
 
 msgid "Bias table"
-msgstr ""
+msgstr "Tabla de sesgos"
 
 msgid "t-test bias"
-msgstr ""
+msgstr "Sesgo del contraste T"
 
 msgid "Histogram bias"
-msgstr ""
+msgstr "Sesgo de histograma"
 
 msgid "Bias and instrument capability table"
-msgstr ""
+msgstr "Tabla de sesgos y capacidad del instrumento"
 
 msgid "Basic statistics"
-msgstr ""
+msgstr "Estadísticos básicos"
 
 msgid "Mean"
 msgstr "Media"
 
 msgid "Bias"
-msgstr ""
+msgstr "Sesgo"
 
 msgid "Std. dev. (<i>s</i>)"
-msgstr ""
+msgstr "Desv. típ. (<i>s</i>)"
 
 msgid "Instrument variation"
-msgstr ""
+msgstr "Variación de instrumentos"
 
 msgid "Tolerance bounds"
-msgstr ""
+msgstr "Límites de tolerancia"
 
 msgid "%% Bias"
-msgstr ""
+msgstr "Sesgo %%"
 
 msgid "The instrument variation is calculated as %i * <i>s</i>."
-msgstr ""
+msgstr "La variación de instrumentos se calcula como %i * <i>s</i>."
 
 msgid "Capability"
-msgstr ""
+msgstr "Capacidad"
 
 msgid "Cg"
-msgstr ""
+msgstr "Cg"
 
 msgid "Cgk"
-msgstr ""
+msgstr "Cgk"
 
 msgid "%% Var(repeatability)"
-msgstr ""
+msgstr "Var %% (repetibilidad)"
 
 msgid "%% Var(repeatability and bias)"
-msgstr ""
+msgstr "Var %% (repetibilidad y sesgo)"
 
 msgid "t-test of observed bias against 0"
-msgstr ""
+msgstr "Contraste T de sesgo observado frente a 0"
 
 msgid "%s CI for bias"
-msgstr ""
+msgstr "IC %s para sesgo"
 
 msgid "<i>t</i>"
-msgstr ""
+msgstr "<i>t</i>"
 
 msgid "Bias histogram"
-msgstr ""
+msgstr "Histograma de sesgos"
 
 msgid "Histogram requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
 msgstr ""
+"El histograma requiere más de 1 medida. Se detectaron %1$i medidas válidas "
+"en %2$s."
 
 msgid "Count"
-msgstr ""
+msgstr "Recuento"
 
 msgid "Mean - %is"
-msgstr ""
+msgstr "Media - %is"
 
 msgid "Mean + %is"
-msgstr ""
+msgstr "Media + %is"
 
 msgid "Ref. - %.2f * tol."
-msgstr ""
+msgstr "Ref. - %.2f * tol."
 
 msgid "Ref. + %.2f * tol."
-msgstr ""
+msgstr "Ref. + %.2f * tol."
 
 msgid "Run chart of %s"
-msgstr ""
+msgstr "Ejecutar gráfico de %s"
 
 msgid "No valid measurements in %s."
-msgstr ""
+msgstr "Sin medidas válidas en %s."
 
 msgid "Ref."
-msgstr ""
+msgstr "Ref."
 
 msgid "Parameter Estimates"
-msgstr ""
+msgstr "Estimaciones de parámetros"
 
 msgid "Parameter"
-msgstr ""
+msgstr "Parámetro"
 
 msgid "Estimate"
 msgstr "Estimar"
 
 msgid "Fitting the model failed with the following error message:\n%s"
 msgstr ""
+"Falló el ajuste del modelo con el siguiente mensaje de fallo:\n"
+"%s"
 
 msgid "Intercept"
-msgstr ""
+msgstr "Constante"
 
 msgid "The IWLS algorithm did not converge. Interpret the results with caution."
 msgstr ""
+"El algoritmo IWLS no convergió. Interprete los resultados con precaución."
 
 msgid "There is only observed category (%s). The results are likely meaningless."
 msgstr ""
+"Solo hay la categoría observada (%s). Los resultados probablemente no tienen "
+"sentido."
 
 msgid "Fit Table"
-msgstr ""
+msgstr "Tabla de ajuste"
 
 msgid "AIC"
 msgstr "AIC"
 
 msgid "Detection Plot"
-msgstr ""
+msgstr "Gráfico de detección"
 
 msgid "log(%s)"
-msgstr ""
+msgstr "log(%s)"
 
 msgid "The detection plot failed with the following error message:\n%s"
 msgstr ""
+"Falló el gráfico de detección con el siguiente mensaje de fallo:\n"
+"%s"
 
 msgid "Asymptotes"
-msgstr ""
+msgstr "Asíntotas"
 
 msgid "covariate"
-msgstr ""
+msgstr "Covariable"
 
 msgid "Horizontal asymptotes"
-msgstr ""
+msgstr "Asíntotas horizontales"
 
 msgid "Vertical asymptotes"
-msgstr ""
+msgstr "Asíntotas verticales"
 
 msgid "Label"
 msgstr "Etiqueta"
 
 msgid "<b><em>Warning.</em></b>"
-msgstr ""
+msgstr "<b><em>Advertencia.</em></b>"
 
 msgid "Probability of detecting %s"
-msgstr ""
+msgstr "Probabilidad de detección %s"
 
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr ""
+"El tamaño del subgrupo es >5; los resultados pueden estar sesgados. Se "
+"recomienda un gráfico S."
 
 msgid "All zero values have been replaced with a value equal to one-half of the smallest data point."
 msgstr ""
+"Todos los valores cero se han reemplazado por un valor igual a la mitad del "
+"punto de datos más pequeño."
 
 msgid "Process Capability Report"
-msgstr ""
+msgstr "Informe de Capacidad de Proceso"
 
 msgid "No specification limits set."
-msgstr ""
+msgstr "No se establecieron límites de especificación."
 
 msgid "Line: %s"
-msgstr ""
+msgstr "Línea: %s"
 
 msgid "Machine: %s"
-msgstr ""
+msgstr "Máquina: %s"
 
 msgid "Variable: %s"
-msgstr ""
+msgstr "Variable: %s"
 
 msgid "Process: %s"
-msgstr ""
+msgstr "Proceso: %s"
 
 msgid "Reported by: %s"
-msgstr ""
+msgstr "Informado por: %s"
 
 msgid "Conclusion: %s"
-msgstr ""
+msgstr "Conclusión: %s"
 
 msgid "X-bar & %s control chart"
-msgstr ""
+msgstr "Gráfico de barra-X & control %s"
 
 msgid "Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."
 msgstr ""
+"El tamaño de subgrupo es >50; el cálculo del gráfico R no es posible. "
+"Utilice mejor el gráfico S."
 
 msgid "Subgroup size is 1, calculation of selected control chart not possible. Use x-mR chart."
 msgstr ""
+"El tamaño de subgrupo es 1; el cálculo del gráfico de control elegido no es "
+"posible. Utilice el gráfico X-mR."
 
 msgid "X-mR control chart"
-msgstr ""
+msgstr "Gráfico de control X-mR"
 
 msgid "Capability study"
-msgstr ""
+msgstr "Estudio de Capacidad"
 
 msgid "Process capability study"
-msgstr ""
+msgstr "Estudio de Capacidad de Proceso"
 
 msgid "Lower specification limit must be smaller than upper specification limit."
 msgstr ""
+"El límite inferior de especificación debe ser menor que el límite superior "
+"de especificación."
 
 msgid "Target outside of specification limits."
 msgstr ""
