@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
 "POT-Creation-Date: 2025-11-15 03:47\n"
-"PO-Revision-Date: 2025-12-23 10:37+0000\n"
+"PO-Revision-Date: 2025-12-24 14:46+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/es/>\n"
@@ -1257,289 +1257,328 @@ msgstr ""
 "de especificación."
 
 msgid "Target outside of specification limits."
-msgstr ""
+msgstr "Objetivo fuera de los límites de especificación."
 
 msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
 msgstr ""
+"El conjunto de datos contiene números negativos. Incompatible con la "
+"distribución seleccionada."
 
 msgid "Process capability"
-msgstr ""
+msgstr "Capacidad de proceso"
 
 msgid "Process capability (non-normal capability analysis)"
-msgstr ""
+msgstr "Capacidad de proceso (análisis no normal de capacidad)"
 
 msgid "Process summary"
-msgstr ""
+msgstr "Resumen de proceso"
 
 msgid "Stage"
-msgstr ""
+msgstr "Etapa"
 
 msgid "LB"
-msgstr ""
+msgstr "LI"
 
 msgid "LSL"
-msgstr ""
+msgstr "LSI"
 
 msgid "Target"
-msgstr ""
+msgstr "Objetivo"
 
 msgid "UB"
-msgstr ""
+msgstr "LS"
 
 msgid "USL"
-msgstr ""
+msgstr "LSS"
 
 msgid "Sample size"
-msgstr ""
+msgstr "Tamaño de la muestra"
 
 msgid "Std. dev. (total)"
-msgstr ""
+msgstr "Desv. típ. (total)"
 
 msgid "Std. dev. (within)"
-msgstr ""
+msgstr "Desv. típ. (dentro)"
 
 msgid "Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
 msgstr ""
+"La columnas tituladas 'Cambio' se refieren a cambios de la etapa respectiva "
+"en comparación con la línea base (LB)."
 
 msgid "The within standard deviation could not be calculated."
-msgstr ""
+msgstr "No se puede calcular la desviación típica dentro."
 
 msgid "Change (%s vs. BL)"
-msgstr ""
+msgstr "Cambio (%s vs. LB)"
 
 msgid "%s (BL)"
-msgstr ""
+msgstr "%s (LB)"
 
 msgid "Capability of the process"
-msgstr ""
+msgstr "Capacidad del proceso"
 
 msgid "No valid measurements detected."
-msgstr ""
+msgstr "No se detectaron medidas válidas."
 
 msgid "Need at least 2 measurements to fit distribution. %1$i measurement(s) detected."
 msgstr ""
+"Se necesitan al menos 2 medidas para ajustar la distribución. Se detectaron "
+"%1$i medidas."
 
 msgid "At least one of the stages contains no valid measurements."
-msgstr ""
+msgstr "Al menos una de las etapas contiene medidas no válidas."
 
 msgid "Density"
-msgstr ""
+msgstr "Densidad"
 
 msgid "Measurement"
-msgstr ""
+msgstr "Medida"
 
 msgid "Normal dist.\n(std. dev. total)"
 msgstr ""
+"Dist. Normal\n"
+"(desv. típ. total)"
 
 msgid "Normal dist.\n(std. dev. within)"
 msgstr ""
+"Dist. Normal\n"
+"(desv. típ. dentro)"
 
 msgid "Weibull dist."
-msgstr ""
+msgstr "Dist. Weibull"
 
 msgid "3-parameter\nlognormal dist."
 msgstr ""
+"Dist. Lognormal\n"
+"de 3 parámetros"
 
 msgid "3-parameter Weibull dist."
-msgstr ""
+msgstr "Dist. Weibull de 3 parámetros"
 
 msgid "Target = %g"
-msgstr ""
+msgstr "Objetivo = %g"
 
 msgid "LB = %g"
-msgstr ""
+msgstr "LI = %g"
 
 msgid "UB = %g"
-msgstr ""
+msgstr "LS = %g"
 
 msgid "Process capability (within)"
-msgstr ""
+msgstr "Capacidad de proceso (dentro)"
 
 msgid "Cp"
-msgstr ""
+msgstr "Cp"
 
 msgid "%s CI for Cp"
-msgstr ""
+msgstr "IC %s para Cp"
 
 msgid "CpL"
-msgstr ""
+msgstr "CpI"
 
 msgid "CpU"
-msgstr ""
+msgstr "CpS"
 
 msgid "Cpk"
-msgstr ""
+msgstr "Cpk"
 
 msgid "%s CI for Cpk"
-msgstr ""
+msgstr "IC %s para Cpk"
 
 msgid "Z bench (ST)"
-msgstr ""
+msgstr "Banco de pruebas de Z (ST)"
 
 msgid "Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."
 msgstr ""
+"Los estadísticos presentados como * no se calcularon porque el límite "
+"pertinente de especificación no se estableció o no se hizo como límite."
 
 msgid "Process performance (total)"
-msgstr ""
+msgstr "Rendimiento del proceso (total)"
 
 msgid "Pp"
-msgstr ""
+msgstr "Pp"
 
 msgid "%s CI for Pp"
-msgstr ""
+msgstr "IC %s para Pp"
 
 msgid "PpL"
-msgstr ""
+msgstr "PpL"
 
 msgid "PpU"
-msgstr ""
+msgstr "PpU"
 
 msgid "Ppk"
-msgstr ""
+msgstr "Ppk"
 
 msgid "%s CI for Ppk"
-msgstr ""
+msgstr "IC %s para Ppk"
 
 msgid "Z bench (LT)"
-msgstr ""
+msgstr "Banco de pruebas de Z (LT)"
 
 msgid "Cpm"
-msgstr ""
+msgstr "Cpm"
 
 msgid "%s CI for Cpm"
-msgstr ""
+msgstr "IC %s para Cpm"
 
 msgid "Non-conformance statistics"
-msgstr ""
+msgstr "Estadísticos de no conformidad"
 
 msgid "Rows titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
 msgstr ""
+"Las filas tituladas 'Cambio' se refieren a cambios de la etapa respectiva en "
+"comparación con la línea base (LB)."
 
 msgid "%s vs. BL"
-msgstr ""
+msgstr "%s vs. LB"
 
 msgid "Average"
 msgstr "Promedio"
 
 msgid "Log mean (%1$s)"
-msgstr ""
+msgstr "Log media (%1$s)"
 
 msgid "Log std.dev (%1$s)"
-msgstr ""
+msgstr "Log desv. típ. (%1$s)"
 
 msgid "Shape (%1$s)"
-msgstr ""
+msgstr "Forma (%1$s)"
 
 msgid "Scale (%1$s)"
-msgstr ""
+msgstr "Escala (%1$s)"
 
 msgid "Threshold"
-msgstr ""
+msgstr "Umbral"
 
 msgid "Calculations based on %s distribution."
-msgstr ""
+msgstr "Cálculos basados en la distribución %s."
 
 msgid "Probability table and plot"
-msgstr ""
+msgstr "Tabla y gráfico de probabilidades"
 
 msgid "Probability plot"
-msgstr ""
+msgstr "Gráfico de probabilidad"
 
 msgid "Need at least 2 measurements to calculate probability table/plot. %1$i measurement(s) detected."
 msgstr ""
+"Se necesitan al menos 2 medidas para calcular tabla/gráfico de probabilidad. "
+"Se detectaron %1$i medidas."
 
 msgid "Summary of test against the %1$s distribution"
-msgstr ""
+msgstr "Resumen de contraste frente a distribución %1$s"
 
 msgid "N"
-msgstr ""
+msgstr "N"
 
 msgid "Mean (%1$s)"
-msgstr ""
+msgstr "Media (%1$s)"
 
 msgid "Std. dev. (%1$s)"
-msgstr ""
+msgstr "Desv. típ. (%1$s)"
 
 msgid "AD"
-msgstr ""
+msgstr "AD"
 
 msgid "The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution."
 msgstr ""
+"El estadístico de Anderson-Darling A<i>D</i> se calcula contra la "
+"distribución %1$s."
 
 msgid "Red dotted lines in the probability plot below represent a 95%% confidence interval."
 msgstr ""
+"Las líneas de puntos rojos en el gráfico de probabilidad de abajo "
+"representan un intervalo con 95%% de confianza."
 
 msgid "Probability plot against %1$s distribution"
-msgstr ""
+msgstr "Gráfico de probabilidad frente a la distribución %1$s"
 
 msgid "Fitting distribution failed. Values might be too extreme. Try a different distribution."
 msgstr ""
+"Falló el ajuste de distribución. Los valores podrían ser demasiado extremos. "
+"Intente una distribución distinta."
 
 msgid "Histogram"
-msgstr ""
+msgstr "Histograma"
 
 msgid "Dataset contains negative numbers. Could not overlay the selected distribution."
 msgstr ""
+"El conjunto de datos contiene números negativos. Podría no cubrir la "
+"distribución seleccionada."
 
 msgid "Counts"
-msgstr ""
+msgstr "Recuentos"
 
 msgid "Normal dist."
-msgstr ""
+msgstr "Dist. Normal"
 
 msgid "Lognormal dist."
-msgstr ""
+msgstr "Dist. Lognormal"
 
 msgid "Rare event charts"
-msgstr ""
+msgstr "Gráfico de eventos raros"
 
 msgid "Date/time conversion returned no valid values. Did you select the correct date/time format?"
 msgstr ""
+"La conversión de fecha/tiempo devolvió valores incorrectos. ¿Se ha "
+"seleccionado el formato correcto de fecha/tiempo?"
 
 msgid "Negative values for time/intervals detected, calculation is not possible."
 msgstr ""
+"Se detectaron valores negativos para tiempo/intervalos; el cálculo no es "
+"posible."
 
 msgid "Rare event charts report"
-msgstr ""
+msgstr "Informe de gráficos de eventos raros"
 
 msgid "G chart"
-msgstr ""
+msgstr "Gráfico G"
 
 msgid "T chart"
-msgstr ""
+msgstr "Gráfico T"
 
 msgid "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
 msgstr ""
+"<i>Nota.</i> Se eliminaron %i observaciones que no fueron asignadas a "
+"ninguna Etapa."
 
 msgid "Variables Charts for Individuals"
-msgstr ""
+msgstr "Gráficos de Variables para Individuos"
 
 msgid "Moving range length is larger than the number of observations\n                                                           in one of the stages."
 msgstr ""
+"La longitud del rango móvil es mayor que el número de observaciones\n"
+"                                                           en una de las "
+"etapas."
 
 msgid "Variables Chart for Individuals Report"
-msgstr ""
+msgstr "Gráfico de variables para informe de individuos"
 
 msgid "Autocorrelation plot requires uninterrupted series of values. Missing values detected in %s."
 msgstr ""
+"El gráfico de Autocorrelación requiere series ininterrumpidas de valores. Se "
+"detectaron valores ausentes en %s."
 
 msgid "Autocorrelation plot"
-msgstr ""
+msgstr "Gráfico de autocorrelaciones"
 
 msgid "Autocorrelation"
-msgstr ""
+msgstr "Autocorrelación"
 
 msgid "Lag"
-msgstr ""
+msgstr "Retardo"
 
 msgid "Control charts"
-msgstr ""
+msgstr "Gráficos de Control"
 
 msgid "All subgroups are of size 1. Variables charts for subgroups cannot be calculated. Use variables charts for individuals."
 msgstr ""
+"Todos los subgrupos son de tamaño 1. No se pueden calcular los gráficos de "
+"variables para subgrupos. Utilice gráficos de variables para individuos."
 
 msgid "X-bar & %1$s control chart"
-msgstr ""
+msgstr "Gráfico de barra-X & control %1$s"
 
 msgid "Variables Chart for Subgroups Report"
-msgstr ""
+msgstr "Gráfico de variables para informe de subgrupos"
