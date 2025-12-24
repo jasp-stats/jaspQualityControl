@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-12-23 10:37+0000\n"
+"PO-Revision-Date: 2025-12-24 14:46+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/es/>\n"
@@ -547,7 +547,7 @@ msgstr "Subgrupos"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Informe de gráficos de variables por subgrupos"
+msgstr "Gráficos de variables para informe de subgrupos"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
@@ -2064,7 +2064,7 @@ msgstr "Marca temporal (opcional)"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Informe de gráficos de variables por subgrupos"
+msgstr "Gráficos de variables para informe de subgrupos"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Chart name"
@@ -2690,7 +2690,7 @@ msgstr "Título"
 
 msgctxt "rareEventCharts|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Informe de gráficos de variables por subgrupos"
+msgstr "Gráficos de variables para informe de subgrupos"
 
 msgctxt "rareEventCharts|"
 msgid "Chart name"
@@ -2866,7 +2866,7 @@ msgstr "Título"
 
 msgctxt "timeWeightedCharts|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Informe de gráficos de variables por subgrupos"
+msgstr "Gráficos de variables para informe de subgrupos"
 
 msgctxt "timeWeightedCharts|"
 msgid "Chart name"
@@ -3184,7 +3184,7 @@ msgstr "Alto"
 
 msgctxt "doeAnalysis|"
 msgid "Goal"
-msgstr "Objetivo"
+msgstr "Finalidad"
 
 msgctxt "doeAnalysis|"
 msgid "Lower"
