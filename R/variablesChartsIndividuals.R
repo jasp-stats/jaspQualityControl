@@ -204,8 +204,8 @@ variablesChartsIndividuals <- function(jaspResults, dataset, options) {
 
   p <- ggplot2::ggplot(data = df1, ggplot2::aes(x = lag, y = acf)) +
     ggplot2::geom_col(fill = "#4373B6", width = 0.2) +
-    jaspGraphs::geom_line(ggplot2::aes(x = lag, y = qnorm((1+CI)/2)*acfstd), color = "red") +
-    jaspGraphs::geom_line(ggplot2::aes(x = lag, y = -qnorm((1+CI)/2)*acfstd), color = "red") +
+    jaspGraphs::geom_line(ggplot2::aes(x = lag, y = qnorm((1+CI)/2)*acfstd), col = "red") +
+    jaspGraphs::geom_line(ggplot2::aes(x = lag, y = -qnorm((1+CI)/2)*acfstd), col = "red") +
     ggplot2::geom_hline(yintercept = 0, color = 'green') +
     ggplot2::scale_y_continuous(name = gettext("Autocorrelation"), limits = c(-1,1), breaks = seq(-1,1,0.2)) +
     ggplot2::scale_x_continuous(name = gettext('Lag'), breaks = seq(1,max(df1$lag),2)) +
