@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
 "POT-Creation-Date: 2025-07-26 03:57\n"
-"PO-Revision-Date: 2025-09-15 08:01+0000\n"
+"PO-Revision-Date: 2026-01-01 18:01+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/ta/>\n"
@@ -11,276 +11,287 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.14-dev\n"
+"X-Generator: Weblate 5.15.1\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
 "is considered.<br>"
 msgstr ""
+"ஒன்று அல்லது அதற்கு மேற்பட்ட துணைக்குழுக்கள் ஒன்றுக்கு மேற்பட்ட நிலைகளுக்கு "
+"ஒதுக்கப்பட்டுள்ளன, முதல் நிலை மட்டுமே கருதப்படுகிறது.<br>"
 
 msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
-msgstr ""
+msgstr "எந்த நிலையிலும் ஒதுக்கப்படாத %1$i %2$s அகற்றப்பட்டது.<br>"
 
 msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
 msgstr ""
+"எந்த துணைக்குழுவிற்கும் ஒதுக்கப்படாத %i கண்காணிப்பு(கள்) அகற்றப்பட்டது.<br>"
 
 msgid "Sample"
 msgstr "மாதிரி"
 
 msgid "Time weighted charts report"
-msgstr ""
+msgstr "நேர எடையுள்ள விளக்கப்பட அறிக்கை"
 
 msgid "Chart name: %s"
-msgstr ""
+msgstr "விளக்கப்படத்தின் பெயர்: %s"
 
 msgid "Sub-title: %s"
-msgstr ""
+msgstr "துணை தலைப்பு: %s"
 
 msgid "Measurement name: %s"
-msgstr ""
+msgstr "அளவீட்டு பெயர்: %s"
 
 msgid "Footnote: %s"
-msgstr ""
+msgstr "அடிக்குறிப்பு: %s"
 
 msgid "Location: %s"
-msgstr ""
+msgstr "இடம்: %s"
 
 msgid "Date: %s"
-msgstr ""
+msgstr "தேதி: %s"
 
 msgid "Performed by: %s"
-msgstr ""
+msgstr "நிகழ்த்தியது: %s"
 
 msgid "Print date: %s"
-msgstr ""
+msgstr "அச்சிடும் தேதி: %s"
 
 msgid "Cumulative sum chart"
-msgstr ""
+msgstr "ஒட்டுமொத்த தொகை விளக்கப்படம்"
 
 msgid "Exponentially weighted moving average chart"
-msgstr ""
+msgstr "அதிவேக எடையுள்ள நகரும் சராசரி விளக்கப்படம்"
 
 msgid "The number of Defectives/Defects is larger than the sample  size."
-msgstr ""
+msgstr "குறைபாடுகள்/குறைபாடுகளின் எண்ணிக்கை மாதிரி அளவை விட அதிகமாக உள்ளது."
 
 msgid "Attributes Control Charts"
-msgstr ""
+msgstr "பண்புக்கூறுகள் கட்டுப்பாட்டு விளக்கப்படங்கள்"
 
 msgid "p Chart"
-msgstr ""
+msgstr "ப விளக்கப்படம்"
 
 msgid "np Chart"
-msgstr ""
+msgstr "np விளக்கப்படம்"
 
 msgid "Laney p' Chart"
-msgstr ""
+msgstr "லேனி ப' விளக்கப்படம்"
 
 msgid "c Chart"
-msgstr ""
+msgstr "c விளக்கப்படம்"
 
 msgid "u Chart"
-msgstr ""
+msgstr "உ விளக்கப்படம்"
 
 msgid "Laney u' Chart"
-msgstr ""
+msgstr "லேனி யு' விளக்கப்படம்"
 
 msgid "Individuals and Moving Range Chart"
-msgstr ""
+msgstr "தனிநபர்கள் மற்றும் நகரும் வரம்பு விளக்கப்படம்"
 
 msgid "Report for Attribute Control Charts"
-msgstr ""
+msgstr "பண்புக் கட்டுப்பாட்டு விளக்கப்படங்களுக்கான அறிக்கை"
 
 msgid "ID: %s"
-msgstr ""
+msgstr "ஐடி: %s"
 
 msgid "Appraiser: %s"
-msgstr ""
+msgstr "மதிப்பீட்டாளர்: %s"
 
 msgid "Measurement system: %s"
-msgstr ""
+msgstr "அளவீட்டு முறை: %s"
 
 msgid "Subgroup size: %s"
-msgstr ""
+msgstr "துணைக்குழு அளவு: %s"
 
 msgid "Time: %s"
-msgstr ""
+msgstr "நேரம்: %s"
 
 msgid "Frequency: %s"
-msgstr ""
+msgstr "அதிர்வெண்: %s"
 
 msgid "CL = %g"
-msgstr ""
+msgstr "CL = %g"
 
 msgid "Proportion"
-msgstr ""
+msgstr "விகிதம்"
 
 msgid "UCL = %g"
-msgstr ""
+msgstr "UCL = %g"
 
 msgid "LCL = %g"
-msgstr ""
+msgstr "LCL = %g"
 
 msgid "Number of defectives"
-msgstr ""
+msgstr "குறைபாடுகளின் எண்ணிக்கை"
 
 msgid "D"
-msgstr ""
+msgstr "டி"
 
 msgid "Moving Range"
-msgstr ""
+msgstr "நகரும் வரம்பு"
 
 msgid "Test results for %s chart"
-msgstr ""
+msgstr "%s விளக்கப்படத்திற்கான சோதனை முடிவுகள்"
 
 msgid "Test 1: Beyond limit"
-msgstr ""
+msgstr "சோதனை 1: வரம்புக்கு அப்பால்"
 
 msgid "Test 2: Shift"
-msgstr ""
+msgstr "சோதனை 2: சிப்ட்"
 
 msgid "Test 3: Trend"
-msgstr ""
+msgstr "சோதனை 3: போக்கு"
 
 msgid "Test 4: Increasing variation"
-msgstr ""
+msgstr "சோதனை 4: அதிகரிக்கும் மாறுபாடு"
 
 msgid "Test 5: Reducing variation"
-msgstr ""
+msgstr "சோதனை 5: மாறுபாட்டைக் குறைத்தல்"
 
 msgid "Test 6: Bimodal distribution"
-msgstr ""
+msgstr "சோதனை 6: இருமுனை வழங்கல்"
 
 msgid "Points where a test failed."
-msgstr ""
+msgstr "ஒரு சோதனை தோல்வியடைந்த புள்ளிகள்."
 
 msgid "Test results for %1$s chart"
-msgstr ""
+msgstr "%1$s விளக்கப்படத்திற்கான சோதனை முடிவுகள்"
 
 msgid "Point"
-msgstr ""
+msgstr "புள்ளியம்"
 
 msgid "- upper"
-msgstr ""
+msgstr "- மேல்"
 
 msgid "- lower"
-msgstr ""
+msgstr "- குறைந்த"
 
 msgid "Test 7: Slightly increasing variation"
-msgstr ""
+msgstr "சோதனை 7: சற்று அதிகரிக்கும் மாறுபாடு"
 
 msgid "Test 8: Oscillation"
-msgstr ""
+msgstr "சோதனை 8: அலைவு"
 
 msgid "Test 9: Benneyan test"
-msgstr ""
+msgstr "டெச்ட் 9: பென்னியன் சோதனை"
 
 msgid "Tests"
-msgstr ""
+msgstr "தேர்வுகள்"
 
 msgid "No test violations occurred."
-msgstr ""
+msgstr "சோதனை மீறல்கள் எதுவும் நடக்கவில்லை."
 
 msgid "%1$s between events"
-msgstr ""
+msgstr "நிகழ்வுகளுக்கு இடையே %1$s"
 
 msgid "Sample average"
-msgstr ""
+msgstr "மாதிரி சராசரி"
 
 msgid "Sample range"
-msgstr ""
+msgstr "மாதிரி வரம்பு"
 
 msgid "Individual value"
-msgstr ""
+msgstr "தனிப்பட்ட மதிப்பு"
 
 msgid "Moving range"
-msgstr ""
+msgstr "நகரும் வரம்பு"
 
 msgid "Moving range of subgroup mean"
-msgstr ""
+msgstr "துணைக்குழுவின் நகரும் வரம்பு சராசரி"
 
 msgid "Sample std. dev."
-msgstr ""
+msgstr "மாதிரி வகுப்பு. dev."
 
 msgid "Cumulative sum"
-msgstr ""
+msgstr "ஒட்டுமொத்த தொகை"
 
 msgid "Exponentially weighted moving average"
-msgstr ""
+msgstr "அதிவேக எடையுள்ள நகரும் சராசரி"
 
 msgid "LSL = %g"
-msgstr ""
+msgstr "LSL = %g"
 
 msgid "Tar. = %g"
-msgstr ""
+msgstr "தார். = %g"
 
 msgid "USL = %g"
-msgstr ""
+msgstr "USL = %g"
 
 msgid ""
 "Parameter estimation failed. Values might be too extreme. Try a different "
 "distribution."
 msgstr ""
+"அளவுரு மதிப்பீடு தோல்வியடைந்தது. மதிப்புகள் மிக அதிகமாக இருக்கலாம். வேறு விநியோகத்தை "
+"முயற்சிக்கவும்."
 
 msgid "Design of Experiments - Analysis"
-msgstr ""
+msgstr "சோதனைகளின் வடிவமைப்பு - பகுப்பாய்வு"
 
 msgid "Error"
-msgstr ""
+msgstr "பிழை"
 
 msgid "The specified low/high levels for %1$s are not distinct."
-msgstr ""
+msgstr "%1$s க்கான குறிப்பிடப்பட்ட குறைந்த/உயர் நிலைகள் வேறுபட்டவை அல்ல."
 
 msgid ""
 "The specified low/high level(s) %1$s for %2$s do not match the levels in the "
 "dataset."
 msgstr ""
+"%2$sக்கான குறிப்பிடப்பட்ட குறைந்த/உயர் நிலை(கள்) %1$s தரவுத்தொகுப்பில் உள்ள நிலைகளுடன் "
+"பொருந்தவில்லை."
 
 msgid "Response Optimizer Settings"
-msgstr ""
+msgstr "ரெச்பான்ச் ஆப்டிமைசர் அமைப்புகள்"
 
 msgid "lower and upper bounds and target are"
-msgstr ""
+msgstr "கீழ் மற்றும் மேல் எல்லைகள் மற்றும் இலக்கு"
 
 msgid "lower and upper bounds are"
-msgstr ""
+msgstr "கீழ் மற்றும் மேல் எல்லைகள்"
 
 msgid "target is"
-msgstr ""
+msgstr "இலக்கு ஆகும்"
 
 msgid "The %s estimated from data."
-msgstr ""
+msgstr "தரவுகளிலிருந்து %s மதிப்பிடப்பட்டது."
 
 msgid "Response Optimizer Solution"
-msgstr ""
+msgstr "ரெச்பான்ச் ஆப்டிமைசர் தீர்வு"
 
 msgid "Optimization Plot"
-msgstr ""
+msgstr "உகப்பாக்கம் சூழ்ச்சி"
 
 msgid "Summary Plot"
-msgstr ""
+msgstr "சுருக்கமான சூழ்ச்சி"
 
 msgid "Enter values for all predictors."
-msgstr ""
+msgstr "அனைத்து கணிப்பாளர்களுக்கும் மதிப்புகளை உள்ளிடவும்."
 
 msgid "Optimization Plot Summary"
-msgstr ""
+msgstr "உகப்பாக்கம் சூழ்ச்சி சுருக்கம்"
 
 msgid ""
 "Enter plausible values for all discrete predictors.\n"
 "                                   Value %1$s is not a possible for the "
 "discrete predictor %2$s. Allowed values:"
 msgstr ""
+"அனைத்து தனித்துவமான முன்கணிப்பாளர்களுக்கும் நம்பத்தகுந்த மதிப்புகளை உள்ளிடவும். \n"
+"%1$s மதிப்பு என்பது தனித்த கணிப்பான் %2$sக்கு சாத்தியமில்லை. அனுமதிக்கப்பட்ட மதிப்புகள்:"
 
 msgid ""
 "Enter plausible values for all continuous predictors. Only numeric values "
 "are allowed."
 msgstr ""
+"அனைத்து தொடர்ச்சியான முன்கணிப்பாளர்களுக்கும் நம்பத்தகுந்த மதிப்புகளை உள்ளிடவும். எண் மதிப்புகள் "
+"மட்டுமே அனுமதிக்கப்படும்."
 
 msgid "Comp. desirability"
-msgstr ""
+msgstr "Comp. விரும்பத்தக்க தன்மை"
 
 msgid "Ind. desirability ("
-msgstr ""
+msgstr "இந்திய விருப்பம் ("
 
 msgid ""
 "One or more input parameters for continuous predictors are outside of the "
@@ -288,840 +299,880 @@ msgid ""
 "                           Extrapolation beyond the design space might not "
 "be valid."
 msgstr ""
+"தொடர்ச்சியான முன்கணிப்பாளர்களுக்கான ஒன்று அல்லது அதற்கு மேற்பட்ட உள்ளீட்டு அளவுருக்கள் "
+"வடிவமைப்பு இடத்திற்கு வெளியே உள்ளன. \n"
+"டிசைன் ச்பேசுக்கு அப்பாற்பட்ட எக்ச்ட்ராபோலேசன் செல்லுபடியாகாது."
 
 msgid "Model Summary"
 msgstr "மாதிரி சுருக்கம்"
 
 msgid "Adjusted %s"
-msgstr ""
+msgstr "%s சரிசெய்யப்பட்டது"
 
 msgid "Predictive %s"
-msgstr ""
+msgstr "கணிப்பு %s"
 
 msgid "The following aliased terms were removed: %s."
-msgstr ""
+msgstr "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
 
 msgid "ANOVA"
-msgstr ""
+msgstr "அனோவா"
 
 msgid "Source"
-msgstr ""
+msgstr "மூலம்"
 
 msgid "Sum of squares"
-msgstr ""
+msgstr "சதுரங்களின் கூட்டுத்தொகை"
 
 msgid "df"
-msgstr "டி.எஃப்"
+msgstr "டிஎஃப்"
 
 msgid "Mean square"
-msgstr ""
+msgstr "நாற்கை"
 
 msgid ""
 "Type III sums of squares are selected and continuous factors are specified. "
 "Results might be misleading. Make sure factors should really be treated as "
 "continuous."
 msgstr ""
+"சதுரங்களின் வகை III தொகைகள் தேர்ந்தெடுக்கப்பட்டு தொடர்ச்சியான காரணிகள் குறிப்பிடப்படுகின்றன. "
+"முடிவுகள் தவறாக இருக்கலாம். காரணிகள் உண்மையில் தொடர்ச்சியாகக் கருதப்பட வேண்டும் என்பதை "
+"உறுதிப்படுத்தவும்."
 
 msgid "Type I sums of squares."
-msgstr ""
+msgstr "வகை I சதுரங்களின் கூட்டுத்தொகைகள்."
 
 msgid "Type II sums of squares."
-msgstr ""
+msgstr "சதுரங்களின் வகை II தொகைகள்."
 
 msgid "Type III sums of squares."
-msgstr ""
+msgstr "சதுரங்களின் வகை III தொகைகள்."
 
 msgid "Coded"
-msgstr ""
+msgstr "குறியிடப்பட்டது"
 
 msgid "Uncoded"
-msgstr ""
+msgstr "குறியிடப்படாதது"
 
 msgid "%s Coefficients"
-msgstr ""
+msgstr "%s குணகங்கள்"
 
 msgid "Alias"
-msgstr ""
+msgstr "மாற்றுப்பெயர்"
 
 msgid "Term"
-msgstr ""
+msgstr "கால"
 
 msgid "Effect"
 msgstr "விளைவு"
 
 msgid "Coefficient"
-msgstr ""
+msgstr "கெழு"
 
 msgid "Standard error"
-msgstr ""
+msgstr "நிலையான பிழை"
 
 msgid "Discrete Predictor Levels"
-msgstr ""
+msgstr "தனித்த கணிப்பு நிலைகள்"
 
 msgid "Name"
-msgstr ""
+msgstr "பெயர்"
 
 msgid "Level"
 msgstr "நிலை"
 
 msgid "Regression equation in %s Units"
-msgstr ""
+msgstr "%s அலகுகளில் பின்னடைவு சமன்பாடு"
 
 msgid "Pareto Chart of Standardized Effects"
-msgstr ""
+msgstr "தரப்படுத்தப்பட்ட விளைவுகளின் பரேட்டோ விளக்கப்படம்"
 
 msgid "Standardized Effect"
-msgstr ""
+msgstr "தரப்படுத்தப்பட்ட விளைவு"
 
 msgid "Normal Plot of Standardized Effects"
-msgstr ""
+msgstr "தரப்படுத்தப்பட்ட விளைவுகளின் இயல்பான சூழ்ச்சி"
 
 msgid "Significant"
-msgstr ""
+msgstr "குறிப்பிடத்தக்கது"
 
 msgid "Not Significant"
-msgstr ""
+msgstr "குறிப்பிடத்தக்கது அல்ல"
 
 msgid "Normal Probability Plot of Residuals"
-msgstr ""
+msgstr "எச்சங்களின் இயல்பான நிகழ்தகவுத் திட்டம்"
 
 msgid "Histogram of Residuals"
-msgstr ""
+msgstr "எச்சங்களின் வரலாற்று வரைபடம்"
 
 msgid "Residuals versus Fitted Values"
-msgstr ""
+msgstr "எச்சங்கள் மற்றும் பொருத்தப்பட்ட மதிப்புகள்"
 
 msgid "Fitted values"
-msgstr ""
+msgstr "பொருத்தப்பட்ட மதிப்புகள்"
 
 msgid "Residuals"
-msgstr ""
+msgstr "எச்சங்கள்"
 
 msgid "Residuals versus Run Order"
-msgstr ""
+msgstr "ரன் ஆர்டருக்கு எதிராக எச்சங்கள்"
 
 msgid "Run order"
-msgstr ""
+msgstr "ஆர்டரை இயக்கவும்"
 
 msgid "Matrix residual plot"
-msgstr ""
+msgstr "மேட்ரிக்ச் எஞ்சிய சூழ்ச்சி"
 
 msgid "Contour plot"
-msgstr ""
+msgstr "விளிம்பு சூழ்ச்சி"
 
 msgid "Surface plot"
-msgstr ""
+msgstr "மேற்பரப்பு சூழ்ச்சி"
 
 msgid "Contour plots"
-msgstr ""
+msgstr "விளிம்பு அடுக்குகள்"
 
 msgid "Surface plots"
-msgstr ""
+msgstr "மேற்பரப்பு அடுக்குகள்"
 
 msgid "and"
-msgstr ""
+msgstr "மற்றும்"
 
 msgid "%1$s of %2$s vs %3$s"
-msgstr ""
+msgstr "%2$s இல் %1$s மற்றும் %3$s"
 
 msgid "The analysis failed with the following error message: %s"
-msgstr ""
+msgstr "பின்வரும் பிழை செய்தியுடன் பகுப்பாய்வு தோல்வியடைந்தது: %s"
 
 msgid "Design Summary"
-msgstr ""
+msgstr "வடிவமைப்பு சுருக்கம்"
 
 msgid "Variable"
 msgstr "மாறி"
 
 msgid "Factors"
-msgstr ""
+msgstr "காரணிகள்"
 
 msgid "Base runs"
-msgstr ""
+msgstr "அடிப்படை ரன்கள்"
 
 msgid "Base blocks"
-msgstr ""
+msgstr "அடிப்படை தொகுதிகள்"
 
 msgid "Centre points per block"
-msgstr ""
+msgstr "ஒவ்வொரு தொகுதிக்கும் மையப் புள்ளிகள்"
 
 msgid "Replications"
-msgstr ""
+msgstr "பிரதிபலிப்பு"
 
 msgid "Repetitions"
-msgstr ""
+msgstr "மறுநிகழ்வு"
 
 msgid "Total runs"
-msgstr ""
+msgstr "மொத்த ரன்கள்"
 
 msgid "Total blocks"
-msgstr ""
+msgstr "மொத்த தொகுதிகள்"
 
 msgid "Value"
 msgstr "மதிப்பு"
 
 msgid "Please select a row in the design table."
-msgstr ""
+msgstr "வடிவமைப்பு அட்டவணையில் ஒரு வரிசையைத் தேர்ந்தெடுக்கவும்."
 
 msgid "Cannote create designs with more than 100000 total runs."
-msgstr ""
+msgstr "மொத்தம் 100000 ரன்களுக்கு மேல் வடிவமைப்புகளை உருவாக்க முடியாது."
 
 msgid "Click 'Display design' to show the design."
-msgstr ""
+msgstr "வடிவமைப்பைக் காட்ட 'டிச்ப்ளே டிசைன்' என்பதைக் சொடுக்கு செய்யவும்."
 
 msgid "The design is not exported until 'Export design' is checked."
 msgstr ""
+"'ஏற்றுமதி வடிவமைப்பு' சரிபார்க்கப்படும் வரை வடிவமைப்பு ஏற்றுமதி செய்யப்படாது."
 
 msgid "The design is exported as '%1$s'."
-msgstr ""
+msgstr "வடிவமைப்பு '%1$s' ஆக ஏற்றுமதி செய்யப்பட்டது."
 
 msgid "No aliasing among main effects and 2-factor interactions."
 msgstr ""
+"முக்கிய விளைவுகள் மற்றும் 2-காரணி இடைவினைகளுக்கு இடையே மாற்றுப்பெயர் இல்லை."
 
 msgid "Alias Structure"
-msgstr ""
+msgstr "மாற்று அமைப்பு"
 
 msgid "Factorial Design"
-msgstr ""
+msgstr "காரணி வடிவமைப்பு"
 
 msgid "Run Order"
-msgstr ""
+msgstr "ஆர்டரை இயக்கவும்"
 
 msgid "Standard Order"
-msgstr ""
+msgstr "நிலையான ஒழுங்கு"
 
 msgid "Hard-to-change factors: %1$s"
-msgstr ""
+msgstr "மாற்றுவதற்கு கடினமான காரணிகள்: %1$s"
 
 msgid "Continuous factors"
-msgstr ""
+msgstr "தொடர்ச்சியான காரணிகள்"
 
 msgid "Discrete factors"
-msgstr ""
+msgstr "தனித்துவமான காரணிகள்"
 
 msgid "Replicates"
-msgstr ""
+msgstr "பிரதிகள்"
 
 msgid "Centre points in cube"
-msgstr ""
+msgstr "கனசதுரத்தில் மையப் புள்ளிகள்"
 
 msgid "Centre points in axial"
-msgstr ""
+msgstr "மையப் புள்ளிகள் அச்சில்"
 
 msgid "Centre points"
-msgstr ""
+msgstr "மைய புள்ளிகள்"
 
 msgid "Box-BehnkenDesign are not supported for 8 variables."
-msgstr ""
+msgstr "Box-Behnken வடிவமைப்பு 8 மாறிகளுக்கு ஆதரிக்கப்படவில்லை."
 
 msgid "Response Surface Design - Central Composite Design"
-msgstr ""
+msgstr "பதில் மேற்பரப்பு வடிவமைப்பு - நடு கூட்டு வடிவமைப்பு"
 
 msgid "Response Surface Design - Box-Behnken design"
-msgstr ""
+msgstr "பதில் மேற்பரப்பு வடிவமைப்பு - பெட்டி-பென்கென் வடிவமைப்பு"
 
 msgid "Standard order"
-msgstr ""
+msgstr "நிலையான ஒழுங்கு"
 
 msgid "Reference tables and plots"
-msgstr ""
+msgstr "குறிப்பு அட்டவணைகள் மற்றும் அடுக்குகள்"
 
 msgid "Please insert a reference value before specifying a positive reference."
-msgstr ""
+msgstr "நேர்மறையான குறிப்பைக் குறிப்பிடும் முன் குறிப்பு மதிப்பைச் செருகவும்."
 
 msgid "Attributes agreement analysis"
-msgstr ""
+msgstr "பண்புக்கூறு ஒப்பந்த பகுப்பாய்வு"
 
 msgid "Cohen's kappa"
-msgstr ""
+msgstr "கோஅனின் கப்பா"
 
 msgid "Kendall's tau"
-msgstr ""
+msgstr "கெண்டலின் டவு"
 
 msgid "Cohen's kappa for appraiser vs standard"
-msgstr ""
+msgstr "மதிப்பீட்டாளர் vs ச்டாண்டர்டுக்கான கோஅனின் கப்பா"
 
 msgid "Appraiser"
-msgstr ""
+msgstr "மதிப்பீட்டாளர்"
 
 msgid "Cohen's kappa correlations summary"
-msgstr ""
+msgstr "கோஅனின் கப்பா தொடர்புகளின் சுருக்கம்"
 
 msgid ""
 "Please inseret a vaild positive reference as used in the results variables."
 msgstr ""
+"முடிவுகள் மாறிகளில் பயன்படுத்தப்படும் மதிப்பு நேர்மறை குறிப்பைச் செருகவும்."
 
 msgid "Fleiss' kappa"
-msgstr ""
+msgstr "ஃப்ளீசின் கப்பா"
 
 msgid "Within appraisers"
-msgstr ""
+msgstr "மதிப்பீட்டாளர்களுக்குள்"
 
 msgid "Appraiser vs standard"
-msgstr ""
+msgstr "மதிப்பீட்டாளர் vs தரநிலை"
 
 msgid "Between appraisers"
-msgstr ""
+msgstr "மதிப்பீட்டாளர்களுக்கு இடையில்"
 
 msgid "Each appraiser vs standard"
-msgstr ""
+msgstr "ஒவ்வொரு மதிப்பீட்டாளர் vs தரநிலை"
 
 msgid "All appraisers vs standard"
-msgstr ""
+msgstr "அனைத்து மதிப்பீட்டாளர்கள் vs தரநிலை"
 
 msgid "Inspected"
-msgstr ""
+msgstr "ஆய்வு செய்யப்பட்டது"
 
 msgid "Matched"
-msgstr ""
+msgstr "பொருந்தியது"
 
 msgid "Percent"
-msgstr ""
+msgstr "விழுக்காடு"
 
 msgid "Lower"
 msgstr "கீழ்"
 
 msgid "Confidence interval of 95%%"
-msgstr ""
+msgstr "நம்பிக்கை இடைவெளி 95%%"
 
 msgid "Upper"
 msgstr "மேல்"
 
 msgid "Invalid reference and/or results were inserted."
-msgstr ""
+msgstr "தவறான குறிப்பு மற்றும்/அல்லது முடிவுகள் செருகப்பட்டன."
 
 msgid "Invalid values (NA) found in appraiser %s."
-msgstr ""
+msgstr "மதிப்பீட்டாளர் %s இல் தவறான மதிப்புகள் (NA) காணப்படுகின்றன."
 
 msgid "More than 1 measurement per operator required."
-msgstr ""
+msgstr "ஒரு ஆபரேட்டருக்கு 1க்கும் மேற்பட்ட அளவீடுகள் தேவை."
 
 msgid "Study effectiveness summary"
-msgstr ""
+msgstr "ஆய்வு செயல்திறன் சுருக்கம்"
 
 msgid "Effectiveness"
-msgstr ""
+msgstr "செயல்திறன்"
 
 msgid "Miss rate"
-msgstr ""
+msgstr "மிச் ரேட்"
 
 msgid "False alarm rate"
-msgstr ""
+msgstr "தவறான அலாரம் வீதம்"
 
 msgid ""
 "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false "
 "alarm rate)"
 msgstr ""
+"ஏற்கத்தக்கது: ஃச் >= 90%% (செயல்திறன்), ஃச் =< 2%% (தவறுதல் விகிதம்), ஃச் =< 5%% (தவறான "
+"அலாரம் வீதம்)"
 
 msgid ""
 "Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< "
 "10%% (false alarm rate)"
 msgstr ""
+"ஓரளவு ஏற்றுக்கொள்ளத்தக்கது: ஃச் >= 80%% (செயல்திறன்), ஃச் =< 5%% (மிச் ரேட்), ஃச் =< "
+"10%% (தவறான முன்னறிவிப்பு விகிதம்)"
 
 msgid ""
 "Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false "
 "alarm rate)"
 msgstr ""
+"ஏற்றுக்கொள்ள முடியாதது: ஃச் <80%% (செயல்திறன்), ஃச் > 5%% (மிச் ரேட்), ஃச் > 10%% (தவறான "
+"அலாரம் வீதம்)"
 
 msgid "More than one measurement per operator required."
-msgstr ""
+msgstr "ஒரு ஆபரேட்டருக்கு ஒன்றுக்கும் மேற்பட்ட அளவீடுகள் தேவை."
 
 msgid "Kendall's tau is only available for numeric measurements."
-msgstr ""
+msgstr "கெண்டலின் டவு எண் அளவீடுகளுக்கு மட்டுமே கிடைக்கும்."
 
 msgid "Kendall's tau is only available for non-binary measurements."
-msgstr ""
+msgstr "கெண்டலின் டவு பைனரி அல்லாத அளவீடுகளுக்கு மட்டுமே கிடைக்கும்."
 
 msgid "Operator"
-msgstr ""
+msgstr "ஆபரேட்டர்"
 
 msgid "%g (unacceptable)"
-msgstr ""
+msgstr "%g (ஏற்றுக்கொள்ள முடியாதது)"
 
 msgid "%g (marginally acceptable)"
-msgstr ""
+msgstr "%g (சிறிதளவு ஏற்றுக்கொள்ளக்கூடியது)"
 
 msgid "%g (acceptable)"
-msgstr ""
+msgstr "%g (ஏற்றுக்கொள்ளக்கூடியது)"
 
 msgid "Linearity and bias"
-msgstr ""
+msgstr "நேரியல் மற்றும் சார்பு"
 
 msgid "Gauge bias"
-msgstr ""
+msgstr "அளவீட்டு சார்பு"
 
 msgid "Part"
-msgstr ""
+msgstr "பகுதி"
 
 msgid "Reference value"
-msgstr ""
+msgstr "குறிப்பு மதிப்பு"
 
 msgid "Observed mean"
-msgstr ""
+msgstr "கவனிக்கப்பட்ட சராசரி"
 
 msgid "Mean bias"
-msgstr ""
+msgstr "சராசரி சார்பு"
 
 msgid "<i>p</i>-value"
-msgstr ""
+msgstr "<i>p</i>-மதிப்பு"
 
 msgid "Regression model"
-msgstr ""
+msgstr "பின்னடைவு மாதிரி"
 
 msgid "Predictor"
-msgstr ""
+msgstr "கணிப்பவர்"
 
 msgid "Std. error"
-msgstr ""
+msgstr "படிப்பு பிழை"
 
 msgid "<i>t</i>-value"
-msgstr ""
+msgstr "<i>t</i>-மதிப்பு"
 
 msgid "Regression equation"
-msgstr ""
+msgstr "பின்னடைவு சமன்பாடு"
 
 msgid "Gauge linearity"
-msgstr ""
+msgstr "அளவீட்டு நேரியல்"
 
 msgid "R%1$s"
 msgstr "ஆர்%1$s"
 
 msgid "%% Linearity"
-msgstr ""
+msgstr "%% நேரியல்"
 
 msgid ""
 "Calculations are based on 6 times the historical standard variation unless "
 "specified otherwise."
 msgstr ""
+"வேறுவிதமாகக் குறிப்பிடப்படாவிட்டால் கணக்கீடுகள் வரலாற்று நிலையான மாறுபாட்டின் 6 மடங்கு "
+"அடிப்படையிலானது."
 
 msgid "Bias and linearity"
-msgstr ""
+msgstr "சார்பு மற்றும் நேரியல்"
 
 msgid "Percentage process variation graph"
-msgstr ""
+msgstr "சதவீத செயல்முறை மாறுபாடு வரைபடம்"
 
 msgid ""
 "t-test requires more than 1 measurement. %1$i valid measurement(s) detected "
 "in %2$s."
 msgstr ""
+"t-சோதனைக்கு 1 க்கும் மேற்பட்ட அளவீடுகள் தேவை. %1$i சரியான அளவீடு(கள்) %2$s இல் "
+"கண்டறியப்பட்டது."
 
 msgid ""
 "Every unique part must have one corresponding reference value. %1$i "
 "reference values were found for %2$s unique parts."
 msgstr ""
+"ஒவ்வொரு தனிப்பட்ட பகுதியும் ஒரு தொடர்புடைய குறிப்பு மதிப்பைக் கொண்டிருக்க வேண்டும். %2$s "
+"தனிப்பட்ட பகுதிகளுக்கு %1$i குறிப்பு மதிப்புகள் கண்டறியப்பட்டன."
 
 msgid ""
 "t-test requires more than 1 measurement per part. Less than 2 valid "
 "measurement(s) detected in Part(s) %s."
 msgstr ""
+"t-சோதனைக்கு ஒரு பகுதிக்கு 1 அளவீடுகளுக்கு மேல் தேவை. பகுதி(கள்) %s இல் 2 "
+"செல்லுபடியாகும் அளவீடுகள்(கள்) கண்டறியப்பட்டது."
 
 msgid "t-test not possible. No variance detected in Part(s) %s."
 msgstr ""
+"டி-சோதனை சாத்தியமில்லை. பகுதி(கள்) %s இல் எந்த மாறுபாடும் கண்டறியப்படவில்லை."
 
 msgid "t-est not possible. No variance detected in part(s) %s."
 msgstr ""
+"டி-சோதனை சாத்தியமில்லை. பாகங்களில் மாறுபாடுகள் எதுவும் கண்டறியப்படவில்லை."
 
 msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
-msgstr ""
+msgstr "சார்பு = %1$.2f %2$s %3$.2f * குறிப்பு மதிப்பு"
 
 msgid "Reference"
-msgstr ""
+msgstr "குறிப்பு"
 
 msgid "Percent bias"
-msgstr ""
+msgstr "விழுக்காடு சார்பு"
 
 msgid "Linearity"
-msgstr ""
+msgstr "நேர்கோட்டுத்தன்மை"
 
 msgid "Total"
 msgstr "மொத்தம்"
 
 msgid "Gauge r&R"
-msgstr ""
+msgstr "கேச் ஆர்&ஆர்"
 
 msgid ""
 "Design is not balanced: not every operator measured every part the same "
 "number of times."
 msgstr ""
+"வடிவமைப்பு சமநிலையில் இல்லை: ஒவ்வொரு ஆபரேட்டரும் ஒவ்வொரு பகுதியையும் ஒரே எண்ணிக்கையில் "
+"அளவிடவில்லை."
 
 msgid ""
 "Design is not balanced: not every part was measured the same number of times."
 msgstr ""
+"வடிவமைப்பு சமநிலையில் இல்லை: ஒவ்வொரு பகுதியும் ஒரே எண்ணிக்கையில் அளவிடப்படவில்லை."
 
 msgid ""
 "The measurements selected seem to be in a 'Single Column' format as every "
 "operator's part is measured %d times."
 msgstr ""
+"ஒவ்வொரு ஆபரேட்டரின் பகுதியும் %d முறை அளவிடப்படுவதால், தேர்ந்தெடுக்கப்பட்ட அளவீடுகள் 'ஒற்றை "
+"நெடுவரிசை' வடிவத்தில் இருப்பது போல் தெரிகிறது."
 
 msgid "Gauge r&R report"
-msgstr ""
+msgstr "கேச் ஆர்&ஆர் அறிக்கை"
 
 msgid "No report components selected."
-msgstr ""
+msgstr "அறிக்கை கூறுகள் எதுவும் தேர்ந்தெடுக்கப்படவில்லை."
 
 msgid "Part name: %s"
-msgstr ""
+msgstr "பகுதி பெயர்: %s"
 
 msgid "Gauge name: %s"
-msgstr ""
+msgstr "அளவு பெயர்: %s"
 
 msgid "Characteristic: %s"
-msgstr ""
+msgstr "சிறப்பியல்பு: %s"
 
 msgid "Gauge number: %s"
-msgstr ""
+msgstr "அளவு எண்: %s"
 
 msgid "Tolerance: %s"
-msgstr ""
+msgstr "சகிப்புத்தன்மை: %s"
 
 msgid "Number of distinct categories"
-msgstr ""
+msgstr "வேறுபட்ட வகைகளின் எண்ணிக்கை"
 
 msgid "Gauge r&R ANOVA table"
-msgstr ""
+msgstr "கேச் r&R ANOVA அட்டவணை"
 
 msgid "Range chart by operator"
-msgstr ""
+msgstr "ஆபரேட்டர் மூலம் வரம்பு விளக்கப்படம்"
 
 msgid "Xbar chart by operator"
-msgstr ""
+msgstr "ஆபரேட்டர் மூலம் Xbar விளக்கப்படம்"
 
 msgid "Average chart by operator"
-msgstr ""
+msgstr "ஆபரேட்டரின் சராசரி விளக்கப்படம்"
 
 msgid "Scatterplot operators"
-msgstr ""
+msgstr "Scatterplot ஆபரேட்டர்கள்"
 
 msgid "Measurement by part graph"
-msgstr ""
+msgstr "பகுதி வரைபடத்தின் மூலம் அளவீடு"
 
 msgid "Measurements by operator graph"
-msgstr ""
+msgstr "ஆபரேட்டர் வரைபடத்தின் மூலம் அளவீடுகள்"
 
 msgid "Part by operator interaction graph"
-msgstr ""
+msgstr "ஆபரேட்டர் தொடர்பு வரைபடம்"
 
 msgid "Traffic light chart"
-msgstr ""
+msgstr "போக்குவரத்து விளக்கு விளக்கப்படம்"
 
 msgid "Gauge r&R study - crossed ANOVA"
-msgstr ""
+msgstr "கேச் ஆர்&ஆர் ஆய்வு - ANOVA ஐ கடந்தது"
 
 msgid "One-way ANOVA table"
-msgstr ""
+msgstr "ஒரு வழி ANOVA அட்டவணை"
 
 msgid "Two-way ANOVA table with interaction"
-msgstr ""
+msgstr "தொடர்பு கொண்ட இருவழி ANOVA அட்டவணை"
 
 msgid "Mean squares"
-msgstr ""
+msgstr "சதுரங்கள் என்று பொருள்"
 
 msgid "F"
-msgstr ""
+msgstr "எஃப்"
 
 msgid "Variance components"
-msgstr ""
+msgstr "மாறுபாடு கூறுகள்"
 
 msgid "Variance"
 msgstr "மாறுபாட்டெண்"
 
 msgid "%% Contribution"
-msgstr ""
+msgstr "%% பங்களிப்பு"
 
 msgid "Gauge evaluation"
-msgstr ""
+msgstr "அளவீட்டு மதிப்பீடு"
 
 msgid "Std. dev."
-msgstr ""
+msgstr "படிப்பு dev."
 
 msgid "Study variation"
-msgstr ""
+msgstr "படிப்பு மாறுபாடு"
 
 msgid "%% Study variation"
-msgstr ""
+msgstr "%% ஆய்வு மாறுபாடு"
 
 msgid "%% Tolerance"
-msgstr ""
+msgstr "%% சகிப்புத்தன்மை"
 
 msgid "Total gauge r&R"
-msgstr ""
+msgstr "மொத்த கேச் ஆர்&ஆர்"
 
 msgid "Repeatability"
-msgstr ""
+msgstr "மீண்டும் நிகழும் தன்மை"
 
 msgid "Part-to-part"
-msgstr ""
+msgstr "பகுதிக்கு பகுதி"
 
 msgid "Total variation"
-msgstr ""
+msgstr "மொத்த மாறுபாடு"
 
 msgid "Reproducibility"
-msgstr ""
+msgstr "மறுஉருவாக்கம்"
 
 msgid "*"
-msgstr ""
+msgstr "*"
 
 msgid "Number of distinct categories = %i"
-msgstr ""
+msgstr "தனித்துவமான வகைகளின் எண்ணிக்கை = %i"
 
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr ""
+msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <spam>&#215;</spam> %i"
 
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr ""
+"படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <spam>&#215;</spam> %.2f"
 
 msgid ""
 "Historical standard deviation is used to calculate some values for std. "
 "dev., study variation, and %%study variation."
 msgstr ""
+"stdக்கான சில மதிப்புகளைக் கணக்கிட வரலாற்று நிலையான விலகல் பயன்படுத்தப்படுகிறது. dev., "
+"ஆய்வு மாறுபாடு மற்றும் %% ஆய்வு மாறுபாடு."
 
 msgid ""
 "Values for %%process variation are not displayed because they are identical "
 "to values for %%study variation."
 msgstr ""
+"%%செயல்முறை மாறுபாட்டிற்கான மதிப்புகள் காட்டப்படாது, ஏனெனில் அவை %%ஆய்வு மாறுபாட்டிற்கான "
+"மதிப்புகளுக்கு ஒத்ததாக உள்ளன."
 
 msgid "Two-way ANOVA table without interaction"
-msgstr ""
+msgstr "தொடர்பு இல்லாமல் இருவழி ANOVA அட்டவணை"
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr ""
+msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <spam>&#215;</spam> %i"
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr ""
+"படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. <spam>&#215;</spam> %.2f"
 
 msgid "Components of variation"
-msgstr ""
+msgstr "மாறுபாட்டின் கூறுகள்"
 
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s."
-msgstr ""
+msgstr "%2$s இல் குழுவாக்கிய பிறகு %1$s இல் <2 அவதானிப்புகளின் எண்ணிக்கை."
 
 msgid "Number of observations is < 2 in %1$s after grouping on %2$s"
-msgstr ""
+msgstr "%2$s இல் குழுவாக்கிய பிறகு %1$s இல் <2 அவதானிப்புகளின் எண்ணிக்கை"
 
 msgid "Measurements by part"
-msgstr ""
+msgstr "பகுதி வாரியாக அளவீடுகள்"
 
 msgid "Measurements by operator"
-msgstr ""
+msgstr "ஆபரேட்டர் மூலம் அளவீடுகள்"
 
 msgid "Part by operator interaction"
-msgstr ""
+msgstr "ஆபரேட்டர் தொடர்பு மூலம் பகுதி"
 
 msgid "Operators measured different number of parts."
-msgstr ""
+msgstr "ஆபரேட்டர்கள் வெவ்வேறு எண்ணிக்கையிலான பகுதிகளை அளந்தனர்."
 
 msgid "Scatterplot of operator vs operator"
-msgstr ""
+msgstr "ஆபரேட்டர் vs ஆபரேட்டரின் சிதறல்"
 
 msgid "Cannot plot scatterplot for less than 2 operators."
-msgstr ""
+msgstr "2க்கும் குறைவான ஆபரேட்டர்களுக்கு ச்கேட்டர்ப்ளாட்டைத் திட்டமிட முடியாது."
 
 msgid "Scatterplot of operator  %1$s vs operator %2$s"
-msgstr ""
+msgstr "ஆபரேட்டர் %1$s vs ஆபரேட்டர் %2$s இன் சிதறல்"
 
 msgid "Matrix plot for operators"
-msgstr ""
+msgstr "ஆபரேட்டர்களுக்கான மேட்ரிக்ச் ப்ளாட்"
 
 msgid "Repeat"
-msgstr ""
+msgstr "மீண்டும் செய்யவும்"
 
 msgid "Reprod"
-msgstr ""
+msgstr "மறுபிரதி"
 
 msgid "%% Study Variation"
-msgstr ""
+msgstr "%% படிப்பு மாறுபாடு"
 
 msgid "Error: Gauge study failed. Could not create traffic light chart."
 msgstr ""
+"பிழை: கேச் ஆய்வு தோல்வியடைந்தது. போக்குவரத்து விளக்கு விளக்கப்படத்தை உருவாக்க முடியவில்லை."
 
 msgid "%.2f"
-msgstr ""
+msgstr "%.AF"
 
 msgid "Gauge r&R - nested"
-msgstr ""
+msgstr "கேச் ஆர்&ஆர் - உள்ளமை"
 
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
 msgstr ""
+"சமநிலையற்ற வடிவமைப்பு. சில பகுதிகளில் மற்றவற்றை விட மறுநிகழ்வு அளவீடுகள் உள்ளன."
 
 msgid "Gauge r&R (non-replicable) report"
-msgstr ""
+msgstr "கேச் ஆர்&ஆர் (பிரதி செய்ய முடியாத) அறிக்கை"
 
 msgid "Gauge r&R tables"
-msgstr ""
+msgstr "கேச் ஆர்&ஆர் அட்டவணைகள்"
 
 msgid "Measurement by part x operator plot"
-msgstr ""
+msgstr "பகுதி ஃச் ஆபரேட்டர் சூழ்ச்சி மூலம் அளவீடு"
 
 msgid "Gauge r&R study - nested ANOVA"
-msgstr ""
+msgstr "கேச் ஆர்&ஆர் ஆய்வு - உள்ளமைக்கப்பட்ட ANOVA"
 
 msgid "Gauge r&R (nested)"
-msgstr ""
+msgstr "கேச் ஆர்&ஆர் (உள்ளமை)"
 
 msgid "p"
 msgstr "ப"
 
 msgid "Variation"
-msgstr ""
+msgstr "மாறுபாடு"
 
 msgid "No degrees of freedom for %s."
-msgstr ""
+msgstr "%s க்கு டிகிரி விடுதலை இல்லை."
 
 msgid "Part-To-part"
-msgstr ""
+msgstr "பகுதிக்கு பகுதி"
 
 msgid "Study variation is calculated as std. dev. * %i"
-msgstr ""
+msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. * %i"
 
 msgid "Study variation is calculated as std. dev. * %.2f"
-msgstr ""
+msgstr "படிப்பு மாறுபாடு std என கணக்கிடப்படுகிறது. dev. * %.2f"
 
 msgid "Measurements by part x operator"
-msgstr ""
+msgstr "பகுதி ஃச் ஆபரேட்டரின் அளவீடுகள்"
 
 msgid "Operator %s"
-msgstr ""
+msgstr "ஆபரேட்டர் %s"
 
 msgid "Scatterplot operators vs parts"
-msgstr ""
+msgstr "Scatterplot operators vs பாகங்கள்"
 
 msgid "Range method range chart"
-msgstr ""
+msgstr "வரம்பு முறை வரம்பு விளக்கப்படம்"
 
 msgid "Range chart by part"
-msgstr ""
+msgstr "பகுதி வாரியாக வரம்பு விளக்கப்படம்"
 
 msgid "Run chart of parts"
-msgstr ""
+msgstr "பகுதிகளின் விளக்கப்படத்தை இயக்கவும்"
 
 msgid "Short gauge study"
-msgstr ""
+msgstr "சார்ட் கேச் படிப்பு"
 
 msgid "Sample size (n)"
-msgstr ""
+msgstr "மாதிரி அளவு (n)"
 
 msgid "R-bar"
-msgstr ""
+msgstr "ஆர்-பார்"
 
 msgid "d2"
-msgstr ""
+msgstr "தட்டுங்கள்"
 
 msgid "GRR"
-msgstr ""
+msgstr "சி.ஆர்.ஆர்"
 
 msgid "Process std. dev."
-msgstr ""
+msgstr "செயல்முறை std. dev."
 
 msgid "%%GRR of process std. dev."
-msgstr ""
+msgstr "%%GRR செயல்முறை std. dev."
 
 msgid "Tolerance"
-msgstr ""
+msgstr "பொறுமை"
 
 msgid "%%GRR of tolerance"
-msgstr ""
+msgstr "சகிப்புத்தன்மையின் %%GRR"
 
 msgid "Scatterplot of 1st measurement vs 2nd measurement"
-msgstr ""
+msgstr "1வது அளவீடு மற்றும் 2வது அளவீடு ஆகியவற்றின் சிதறல்"
 
 msgid "Run chart"
-msgstr ""
+msgstr "விளக்கப்படத்தை இயக்கவும்"
 
 msgid "Bias table"
-msgstr ""
+msgstr "சார்பு அட்டவணை"
 
 msgid "t-test bias"
-msgstr ""
+msgstr "டி-டெச்ட் சார்பு"
 
 msgid "Histogram bias"
-msgstr ""
+msgstr "இச்டோகிராம் சார்பு"
 
 msgid "Bias and instrument capability table"
-msgstr ""
+msgstr "சார்பு மற்றும் கருவி திறன் அட்டவணை"
 
 msgid "Basic statistics"
-msgstr ""
+msgstr "அடிப்படை புள்ளிவிவரங்கள்"
 
 msgid "Mean"
 msgstr "இடை, சராசரி"
 
 msgid "Bias"
-msgstr ""
+msgstr "சார்பு"
 
 msgid "Std. dev. (<i>s</i>)"
-msgstr ""
+msgstr "படிப்பு dev. (<i>கள்</i>)"
 
 msgid "Instrument variation"
-msgstr ""
+msgstr "கருவி மாறுபாடு"
 
 msgid "Tolerance bounds"
-msgstr ""
+msgstr "சகிப்புத்தன்மை வரம்புகள்"
 
 msgid "%% Bias"
-msgstr ""
+msgstr "%% சார்பு"
 
 msgid "The instrument variation is calculated as %i * <i>s</i>."
-msgstr ""
+msgstr "கருவி மாறுபாடு %i * <i>s</i> என கணக்கிடப்படுகிறது."
 
 msgid "Capability"
-msgstr ""
+msgstr "திறன்"
 
 msgid "Cg"
-msgstr ""
+msgstr "Cg"
 
 msgid "Cgk"
-msgstr ""
+msgstr "Tsk"
 
 msgid "%% Var(repeatability)"
-msgstr ""
+msgstr "%% Var(மீண்டும் நிகழக்கூடியது)"
 
 msgid "%% Var(repeatability and bias)"
-msgstr ""
+msgstr "%% Var(மீண்டும் திரும்பும் தன்மை மற்றும் சார்பு)"
 
 msgid "t-test of observed bias against 0"
-msgstr ""
+msgstr "0 க்கு எதிராக கவனிக்கப்பட்ட சார்பின் t-சோதனை"
 
 msgid "%s CI for bias"
-msgstr ""
+msgstr "சார்புக்கான %s தொஒ"
 
 msgid "<i>t</i>"
-msgstr ""
+msgstr "<i>t</i>"
 
 msgid "Bias histogram"
-msgstr ""
+msgstr "பயாச் இச்டோகிராம்"
 
 msgid ""
 "Histogram requires more than 1 measurement. %1$i valid measurement(s) "
 "detected in %2$s."
 msgstr ""
+"இச்டோகிராமிற்கு 1க்கும் மேற்பட்ட அளவீடுகள் தேவை. %1$i சரியான அளவீடு(கள்) %2$s இல் "
+"கண்டறியப்பட்டது."
 
 msgid "Count"
-msgstr ""
+msgstr "எண்ணுங்கள்"
 
 msgid "Mean - %is"
-msgstr ""
+msgstr "சராசரி - % ஆகும்"
 
 msgid "Mean + %is"
-msgstr ""
+msgstr "சராசரி + % ஆகும்"
 
 msgid "Ref. - %.2f * tol."
-msgstr ""
+msgstr "Ref. - %.2f * டோல்."
 
 msgid "Ref. + %.2f * tol."
-msgstr ""
+msgstr "Ref. + %.2f * டோல்."
 
 msgid "Run chart of %s"
-msgstr ""
+msgstr "%s இன் விளக்கப்படத்தை இயக்கவும்"
 
 msgid "No valid measurements in %s."
-msgstr ""
+msgstr "%s இல் சரியான அளவீடுகள் இல்லை."
 
 msgid "Ref."
-msgstr ""
+msgstr "Ref."
 
 msgid "Parameter Estimates"
-msgstr ""
+msgstr "அளவுரு மதிப்பீடுகள்"
 
 msgid "Parameter"
 msgstr "கூறளவு"
@@ -1133,356 +1184,389 @@ msgid ""
 "Fitting the model failed with the following error message:\n"
 "%s"
 msgstr ""
+"பின்வரும் பிழைச் செய்தியுடன் மாதிரியைப் பொருத்துவது தோல்வியடைந்தது: \n"
+"%s"
 
 msgid "Intercept"
 msgstr "இடைமறிப்பு"
 
 msgid ""
 "The IWLS algorithm did not converge. Interpret the results with caution."
-msgstr ""
+msgstr "IWLS அல்காரிதம் ஒன்றுபடவில்லை. முடிவுகளை எச்சரிக்கையுடன் விளக்கவும்."
 
 msgid ""
 "There is only observed category (%s). The results are likely meaningless."
 msgstr ""
+"கவனிக்கப்பட்ட வகை மட்டுமே உள்ளது (%s). முடிவுகள் அர்த்தமற்றதாக இருக்கலாம்."
 
 msgid "Fit Table"
-msgstr ""
+msgstr "ஃபிட் டேபிள்"
 
 msgid "AIC"
 msgstr "எஐசி"
 
 msgid "Detection Plot"
-msgstr ""
+msgstr "கண்டறிதல் சூழ்ச்சி"
 
 msgid "log(%s)"
-msgstr ""
+msgstr "பதிவு (%s)"
 
 msgid ""
 "The detection plot failed with the following error message:\n"
 "%s"
 msgstr ""
+"பின்வரும் பிழைச் செய்தியுடன் கண்டறிதல் சூழ்ச்சி தோல்வியடைந்தது: \n"
+"%s"
 
 msgid "Asymptotes"
-msgstr ""
+msgstr "அறிகுறிகள்"
 
 msgid "covariate"
-msgstr ""
+msgstr "covariate"
 
 msgid "Horizontal asymptotes"
-msgstr ""
+msgstr "கிடைமட்ட அறிகுறிகள்"
 
 msgid "Vertical asymptotes"
-msgstr ""
+msgstr "செங்குத்து அறிகுறிகள்"
 
 msgid "Label"
-msgstr ""
+msgstr "சிட்டை"
 
 msgid "<b><em>Warning.</em></b>"
-msgstr ""
+msgstr "<b><em>எச்சரிக்கை.</em></b>"
 
 msgid "Probability of detecting %s"
-msgstr ""
+msgstr "%s ஐக் கண்டறியும் நிகழ்தகவு"
 
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr ""
+"துணைக்குழு அளவு > 5, முடிவுகள் பக்கச்சார்பானதாக இருக்கலாம். s-சார்ட் பரிந்துரைக்கப்படுகிறது."
 
 msgid ""
 "All zero values have been replaced with a value equal to one-half of the "
 "smallest data point."
 msgstr ""
+"அனைத்து சுழிய மதிப்புகளும் சிறிய தரவு புள்ளியின் பாதிக்கு சமமான மதிப்புடன் மாற்றப்பட்டுள்ளன."
 
 msgid "Process Capability Report"
-msgstr ""
+msgstr "செயல்முறை திறன் அறிக்கை"
 
 msgid "No specification limits set."
-msgstr ""
+msgstr "விவரக்குறிப்பு வரம்புகள் எதுவும் அமைக்கப்படவில்லை."
 
 msgid "Line: %s"
-msgstr ""
+msgstr "வரி: %s"
 
 msgid "Machine: %s"
-msgstr ""
+msgstr "இயந்திரம்: %s"
 
 msgid "Variable: %s"
-msgstr ""
+msgstr "மாறி: %s"
 
 msgid "Process: %s"
-msgstr ""
+msgstr "செயல்முறை: %s"
 
 msgid "Reported by: %s"
-msgstr ""
+msgstr "புகாரளித்தவர்: %s"
 
 msgid "Conclusion: %s"
-msgstr ""
+msgstr "முடிவு: %s"
 
 msgid "X-bar & %s control chart"
-msgstr ""
+msgstr "X-bar & %s கட்டுப்பாட்டு விளக்கப்படம்"
 
 msgid ""
 "Subgroup size is >50, R chart calculation is not possible. Use S-chart "
 "instead."
 msgstr ""
+"துணைக்குழு அளவு >50, R விளக்கப்படத்தைக் கணக்கிடுவது சாத்தியமில்லை. அதற்குப் பதிலாக S-"
+"சார்ட்டைப் பயன்படுத்தவும்."
 
 msgid ""
 "Subgroup size is 1, calculation of selected control chart not possible. Use "
 "x-mR chart."
 msgstr ""
+"துணைக்குழு அளவு 1, தேர்ந்தெடுக்கப்பட்ட கட்டுப்பாட்டு விளக்கப்படத்தை கணக்கிடுவது "
+"சாத்தியமில்லை. x-mR விளக்கப்படத்தைப் பயன்படுத்தவும்."
 
 msgid "X-mR control chart"
-msgstr ""
+msgstr "X-mR கட்டுப்பாட்டு விளக்கப்படம்"
 
 msgid "Capability study"
-msgstr ""
+msgstr "திறன் ஆய்வு"
 
 msgid "Process capability study"
-msgstr ""
+msgstr "செயல்முறை திறன் ஆய்வு"
 
 msgid ""
 "Lower specification limit must be smaller than upper specification limit."
 msgstr ""
+"குறைந்த விவரக்குறிப்பு வரம்பு மேல் விவரக்குறிப்பு வரம்பை விட சிறியதாக இருக்க வேண்டும்."
 
 msgid "Target outside of specification limits."
-msgstr ""
+msgstr "குறிப்பீடு வரம்புகளுக்கு வெளியே இலக்கு."
 
 msgid ""
 "Dataset contains negative numbers. Not compatible with the selected "
 "distribution."
 msgstr ""
+"தரவுத்தொகுப்பில் எதிர்மறை எண்கள் உள்ளன. தேர்ந்தெடுக்கப்பட்ட விநியோகத்துடன் இணங்கவில்லை."
 
 msgid "Process capability"
-msgstr ""
+msgstr "செயல்முறை திறன்"
 
 msgid "Process capability (non-normal capability analysis)"
-msgstr ""
+msgstr "செயல்முறை திறன் (இயல்பற்ற திறன் பகுப்பாய்வு)"
 
 msgid "Process summary"
-msgstr ""
+msgstr "செயல்முறை சுருக்கம்"
 
 msgid "Stage"
-msgstr ""
+msgstr "மேடை"
 
 msgid "LB"
-msgstr ""
+msgstr "எல்.பி"
 
 msgid "LSL"
-msgstr ""
+msgstr "LSL"
 
 msgid "Target"
-msgstr ""
+msgstr "இலக்கு"
 
 msgid "UB"
-msgstr ""
+msgstr "UB"
 
 msgid "USL"
-msgstr ""
+msgstr "USL"
 
 msgid "Sample size"
 msgstr "மாதிரி அளவு"
 
 msgid "Std. dev. (total)"
-msgstr ""
+msgstr "படிப்பு dev. (மொத்தம்)"
 
 msgid "Std. dev. (within)"
-msgstr ""
+msgstr "படிப்பு dev. (உள்ளே)"
 
 msgid ""
 "Columns titled 'Change' concern changes of the respective stage in "
 "comparison to baseline (BL)."
 msgstr ""
+"'மாற்றம்' என்ற தலைப்பில் உள்ள நெடுவரிசைகள், பேச்லைன் (BL) உடன் ஒப்பிடுகையில், அந்தந்த "
+"கட்டத்தில் ஏற்படும் மாற்றங்களைப் பற்றியது."
 
 msgid "The within standard deviation could not be calculated."
-msgstr ""
+msgstr "நிலையான விலகலைக் கணக்கிட முடியவில்லை."
 
 msgid "Change (%s vs. BL)"
-msgstr ""
+msgstr "மாற்றம் (%s எதிராக BL)"
 
 msgid "%s (BL)"
-msgstr ""
+msgstr "%s (BL)"
 
 msgid "Capability of the process"
-msgstr ""
+msgstr "செயல்முறையின் திறன்"
 
 msgid "No valid measurements detected."
-msgstr ""
+msgstr "சரியான அளவீடுகள் எதுவும் கண்டறியப்படவில்லை."
 
 msgid ""
 "Need at least 2 measurements to fit distribution. %1$i measurement(s) "
 "detected."
 msgstr ""
+"விநியோகத்தைப் பொருத்த குறைந்தபட்சம் 2 அளவீடுகள் தேவை. %1$i அளவீடு(கள்) கண்டறியப்பட்டது."
 
 msgid "At least one of the stages contains no valid measurements."
-msgstr ""
+msgstr "குறைந்தபட்சம் ஒரு நிலைகளில் சரியான அளவீடுகள் இல்லை."
 
 msgid "Density"
 msgstr "அடர்த்தி"
 
 msgid "Measurement"
-msgstr ""
+msgstr "அளவீடு"
 
 msgid ""
 "Normal dist.\n"
 "(std. dev. total)"
 msgstr ""
+"சாதாரண மாவட்டம். \n"
+"(படி. தேவ். மொத்தம்)"
 
 msgid ""
 "Normal dist.\n"
 "(std. dev. within)"
 msgstr ""
+"சாதாரண மாவட்டம். \n"
+"(படிப்பு தேவ். உள்ளே)"
 
 msgid "Weibull dist."
-msgstr ""
+msgstr "வெய்புல் மாவட்டம்."
 
 msgid ""
 "3-parameter\n"
 "lognormal dist."
 msgstr ""
+"3-அளவுரு \n"
+"lognormal dist."
 
 msgid "3-parameter Weibull dist."
-msgstr ""
+msgstr "3-அளவுரு வெய்புல் மாவட்டம்."
 
 msgid "Target = %g"
-msgstr ""
+msgstr "இலக்கு = %g"
 
 msgid "LB = %g"
-msgstr ""
+msgstr "LB = %g"
 
 msgid "UB = %g"
-msgstr ""
+msgstr "UB = %g"
 
 msgid "Process capability (within)"
-msgstr ""
+msgstr "செயல்முறை திறன் (உள்ளே)"
 
 msgid "Cp"
-msgstr ""
+msgstr "Cp"
 
 msgid "%s CI for Cp"
-msgstr ""
+msgstr "Cpக்கான %s தொஒ"
 
 msgid "CpL"
-msgstr ""
+msgstr "சிபிஎல்"
 
 msgid "CpU"
-msgstr ""
+msgstr "சிபியு"
 
 msgid "Cpk"
-msgstr ""
+msgstr "சிபிகே"
 
 msgid "%s CI for Cpk"
-msgstr ""
+msgstr "Cpkக்கான %s தொஒ"
 
 msgid "Z bench (ST)"
-msgstr ""
+msgstr "சட் பெஞ்ச் (ST)"
 
 msgid ""
 "Statistics displayed as * were not calculated because the relevant "
 "specification limit is not set or set as boundary."
 msgstr ""
+"தொடர்புடைய விவரக்குறிப்பு வரம்பு அமைக்கப்படவில்லை அல்லது எல்லையாக அமைக்கப்படாததால் * எனக் "
+"காட்டப்படும் புள்ளிவிவரங்கள் கணக்கிடப்படவில்லை."
 
 msgid "Process performance (total)"
-msgstr ""
+msgstr "செயல்முறை செயல்திறன் (மொத்தம்)"
 
 msgid "Pp"
-msgstr ""
+msgstr "Pp"
 
 msgid "%s CI for Pp"
-msgstr ""
+msgstr "Ppக்கான %s தொஒ"
 
 msgid "PpL"
-msgstr ""
+msgstr "பிபிஎல்"
 
 msgid "PpU"
-msgstr ""
+msgstr "PpU"
 
 msgid "Ppk"
-msgstr ""
+msgstr "Ppk"
 
 msgid "%s CI for Ppk"
-msgstr ""
+msgstr "Ppk க்கான %s தொஒ"
 
 msgid "Z bench (LT)"
-msgstr ""
+msgstr "சட் பெஞ்ச் (LT)"
 
 msgid "Cpm"
-msgstr ""
+msgstr "Cpm"
 
 msgid "%s CI for Cpm"
-msgstr ""
+msgstr "Cpm க்கான %s தொஒ"
 
 msgid "Non-conformance statistics"
-msgstr ""
+msgstr "இணக்கமற்ற புள்ளிவிவரங்கள்"
 
 msgid ""
 "Rows titled 'Change' concern changes of the respective stage in comparison "
 "to baseline (BL)."
 msgstr ""
+"'மாற்றம்' என்ற தலைப்பில் உள்ள வரிசைகள், பேச்லைன் (BL) உடன் ஒப்பிடுகையில், அந்தந்த கட்டத்தில் "
+"ஏற்படும் மாற்றங்களைப் பற்றியது."
 
 msgid "%s vs. BL"
-msgstr ""
+msgstr "%s எதிராக BL"
 
 msgid "Average"
 msgstr "சராசரி"
 
 msgid "Log mean (%1$s)"
-msgstr ""
+msgstr "பதிவு சராசரி (%1$s)"
 
 msgid "Log std.dev (%1$s)"
-msgstr ""
+msgstr "பதிவு std.dev (%1$s)"
 
 msgid "Shape (%1$s)"
-msgstr ""
+msgstr "வடிவம் (%1$s)"
 
 msgid "Scale (%1$s)"
-msgstr ""
+msgstr "அளவு (%1$s)"
 
 msgid "Threshold"
-msgstr ""
+msgstr "வாசல்"
 
 msgid "Calculations based on %s distribution."
-msgstr ""
+msgstr "%s விநியோகத்தின் அடிப்படையில் கணக்கீடுகள்."
 
 msgid "Probability table and plot"
-msgstr ""
+msgstr "நிகழ்தகவு அட்டவணை மற்றும் சூழ்ச்சி"
 
 msgid "Probability plot"
-msgstr ""
+msgstr "நிகழ்தகவு சூழ்ச்சி"
 
 msgid ""
 "Need at least 2 measurements to calculate probability table/plot. %1$i "
 "measurement(s) detected."
 msgstr ""
+"நிகழ்தகவு அட்டவணை/பிளொட்டைக் கணக்கிட குறைந்தபட்சம் 2 அளவீடுகள் தேவை. %1$i அளவீடு(கள்) "
+"கண்டறியப்பட்டது."
 
 msgid "Summary of test against the %1$s distribution"
-msgstr ""
+msgstr "%1$s விநியோகத்திற்கு எதிரான சோதனையின் சுருக்கம்"
 
 msgid "N"
-msgstr ""
+msgstr "என்"
 
 msgid "Mean (%1$s)"
-msgstr ""
+msgstr "சராசரி (%1$s)"
 
 msgid "Std. dev. (%1$s)"
-msgstr ""
+msgstr "படிப்பு dev. (%1$s)"
 
 msgid "AD"
-msgstr ""
+msgstr "கி.பி"
 
 msgid ""
 "The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s "
 "distribution."
 msgstr ""
+"ஆண்டர்சன்-டார்லிங் புள்ளிவிவரம் A<i>D</i> %1$s விநியோகத்திற்கு எதிராக கணக்கிடப்படுகிறது."
 
 msgid ""
 "Red dotted lines in the probability plot below represent a 95%% confidence "
 "interval."
 msgstr ""
+"கீழே உள்ள நிகழ்தகவு திட்டத்தில் சிவப்பு புள்ளியிடப்பட்ட கோடுகள் 95% நம்பிக்கை இடைவெளியைக் "
+"குறிக்கின்றன."
 
 msgid "Probability plot against %1$s distribution"
-msgstr ""
+msgstr "%1$s விநியோகத்திற்கு எதிரான நிகழ்தகவு திட்டம்"
 
 msgid ""
 "Fitting distribution failed. Values might be too extreme. Try a different "
 "distribution."
 msgstr ""
+"பொருத்துதல் வழங்கல் தோல்வியடைந்தது. மதிப்புகள் மிக அதிகமாக இருக்கலாம். வேறு விநியோகத்தை "
+"முயற்சிக்கவும்."
 
 msgid "Histogram"
 msgstr "செவ்வகப்படம்"
@@ -1491,60 +1575,69 @@ msgid ""
 "Dataset contains negative numbers. Could not overlay the selected "
 "distribution."
 msgstr ""
+"தரவுத்தொகுப்பில் எதிர்மறை எண்கள் உள்ளன. தேர்ந்தெடுக்கப்பட்ட விநியோகத்தை மேலெழுத "
+"முடியவில்லை."
 
 msgid "Counts"
-msgstr ""
+msgstr "எண்ணுகிறது"
 
 msgid "Normal dist."
-msgstr ""
+msgstr "சாதாரண மாவட்டம்."
 
 msgid "Lognormal dist."
-msgstr ""
+msgstr "லாக்நார்மல் டிச்ட்."
 
 msgid "Rare event charts"
-msgstr ""
+msgstr "அரிய நிகழ்வு விளக்கப்படங்கள்"
 
 msgid ""
 "Date/time conversion returned no valid values. Did you select the correct "
 "date/time format?"
 msgstr ""
+"தேதி/நேர மாற்றம் சரியான மதிப்புகள் இல்லை. சரியான தேதி/நேர வடிவமைப்பைத் தேர்ந்தெடுத்தீர்களா?"
 
 msgid ""
 "Negative values for time/intervals detected, calculation is not possible."
 msgstr ""
+"நேரம்/இடைவெளிகளுக்கான எதிர்மறை மதிப்புகள் கண்டறியப்பட்டன, கணக்கீடு சாத்தியமில்லை."
 
 msgid "Rare event charts report"
-msgstr ""
+msgstr "அரிய நிகழ்வு விளக்கப்பட அறிக்கை"
 
 msgid "G chart"
-msgstr ""
+msgstr "ஐயா விளக்கப்படம்"
 
 msgid "T chart"
-msgstr ""
+msgstr "டி விளக்கப்படம்"
 
 msgid ""
 "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
 msgstr ""
+"<i>குறிப்பு.</i> எந்த நிலையிலும் ஒதுக்கப்படாத %i கண்காணிப்பு(கள்) அகற்றப்பட்டது."
 
 msgid "Variables Charts for Individuals"
-msgstr ""
+msgstr "தனிநபர்களுக்கான மாறிகள் விளக்கப்படங்கள்"
 
 msgid ""
 "Moving range length is larger than the number of observations\n"
 "                                                           in one of the "
 "stages."
 msgstr ""
+"நகரும் வரம்பு நீளம் அவதானிப்புகளின் எண்ணிக்கையை விட பெரியது \n"
+"நிலைகளில் ஒன்றில்."
 
 msgid "Variables Chart for Individuals Report"
-msgstr ""
+msgstr "தனிநபர்கள் அறிக்கைக்கான மாறிகள் விளக்கப்படம்"
 
 msgid ""
 "Autocorrelation plot requires uninterrupted series of values. Missing values "
 "detected in %s."
 msgstr ""
+"தன்னியக்கத் தொடர்பிற்கு தடையற்ற தொடர் மதிப்புகள் தேவை. விடுபட்ட மதிப்புகள் %s இல் "
+"கண்டறியப்பட்டது."
 
 msgid "Autocorrelation plot"
-msgstr ""
+msgstr "தன்னியக்க தொடர்பு சூழ்ச்சி"
 
 msgid "Autocorrelation"
 msgstr "தன்னொட்டுறவு"
@@ -1553,15 +1646,17 @@ msgid "Lag"
 msgstr "பின்னடைவு"
 
 msgid "Control charts"
-msgstr ""
+msgstr "கட்டுப்பாட்டு விளக்கப்படங்கள்"
 
 msgid ""
 "All subgroups are of size 1. Variables charts for subgroups cannot be "
 "calculated. Use variables charts for individuals."
 msgstr ""
+"அனைத்து துணைக்குழுக்களும் அளவு 1. துணைக்குழுக்களுக்கான மாறிகள் விளக்கப்படங்களைக் கணக்கிட "
+"முடியாது. தனிநபர்களுக்கான மாறிகள் விளக்கப்படங்களைப் பயன்படுத்தவும்."
 
 msgid "X-bar & %1$s control chart"
-msgstr ""
+msgstr "ஃச் பார் & %1$s கட்டுப்பாட்டு விளக்கப்படம்"
 
 msgid "Variables Chart for Subgroups Report"
-msgstr ""
+msgstr "துணைக்குழு அறிக்கைக்கான மாறிகள் விளக்கப்படம்"
