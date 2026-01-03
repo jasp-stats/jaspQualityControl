@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-12-05 22:00+0000\n"
+"PO-Revision-Date: 2025-12-31 22:01+0000\n"
 "Last-Translator: Marko Bojović <bojovicmarko@outlook.com>\n"
 "Language-Team: Serbian <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-qml/sr/>\n"
@@ -8,9 +8,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.15-dev\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
@@ -177,31 +177,31 @@ msgstr ""
 
 msgctxt "attributesCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "attributesCharts|"
 msgid "Performed by"
-msgstr ""
+msgstr "Изводи по"
 
 msgctxt "attributesCharts|"
 msgid "Analyst"
-msgstr ""
+msgstr "Аналитичар"
 
 msgctxt "attributesCharts|"
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 msgctxt "attributesCharts|"
 msgid "Appraiser"
-msgstr ""
+msgstr "Проценитељ"
 
 msgctxt "attributesCharts|"
 msgid "Measurement system"
-msgstr ""
+msgstr "Систем мерења"
 
 msgctxt "attributesCharts|"
 msgid "Measurement"
-msgstr ""
+msgstr "Мерење"
 
 msgctxt "attributesCharts|"
 msgid "Subgroups size"
@@ -545,7 +545,7 @@ msgstr ""
 
 msgctxt "doeFactorial|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 #, qt-format
 msgctxt "doeFactorial|"
@@ -638,7 +638,7 @@ msgstr ""
 
 msgctxt "doeFull|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "doeFull|"
 msgid "Levels"
@@ -814,7 +814,7 @@ msgstr ""
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Low"
@@ -959,7 +959,7 @@ msgstr ""
 
 msgctxt "doeScreening|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "doeScreening|"
 msgid "Level 1"
@@ -1127,7 +1127,7 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Measurement"
-msgstr ""
+msgstr "Мерење"
 
 msgctxt "msaGaugeRR|"
 msgid "Operator"
@@ -1279,15 +1279,15 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "msaGaugeRR|"
 msgid "Gauge name"
-msgstr ""
+msgstr "Назив мерача"
 
 msgctxt "msaGaugeRR|"
 msgid "Characteristic"
-msgstr ""
+msgstr "Карактеристика"
 
 msgctxt "msaGaugeRR|"
 msgid "Gauge number"
@@ -1307,11 +1307,11 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Performed by"
-msgstr ""
+msgstr "Изводи по"
 
 msgctxt "msaGaugeRR|"
 msgid "Analyst"
-msgstr ""
+msgstr "Аналитичар"
 
 msgctxt "msaGaugeRR|"
 msgid "Date"
@@ -1479,15 +1479,15 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge name"
-msgstr ""
+msgstr "Назив мерача"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Characteristic"
-msgstr ""
+msgstr "Карактеристика"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Gauge number"
@@ -1507,11 +1507,11 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Performed by"
-msgstr ""
+msgstr "Изводи по"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Analyst"
-msgstr ""
+msgstr "Аналитичар"
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Date"
@@ -1559,7 +1559,7 @@ msgstr ""
 
 msgctxt "msaTestRetest|"
 msgid "Measurement"
-msgstr ""
+msgstr "Мерење"
 
 msgctxt "msaTestRetest|"
 msgid "Part"
@@ -1619,7 +1619,7 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Measurement"
-msgstr ""
+msgstr "Мерење"
 
 msgctxt "msaType1Gauge|"
 msgid "Analysis options"
@@ -1859,7 +1859,7 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Measurement"
-msgstr ""
+msgstr "Мерење"
 
 msgctxt "processCapabilityStudies|"
 msgid "Subgroup"
@@ -2087,7 +2087,7 @@ msgstr "Процес"
 
 msgctxt "processCapabilityStudies|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "processCapabilityStudies|"
 msgid "Date"
@@ -2391,15 +2391,15 @@ msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "rareEventCharts|"
 msgid "Footnote"
-msgstr ""
+msgstr "Фуснота"
 
 msgctxt "rareEventCharts|"
 msgid "Comment"
-msgstr ""
+msgstr "Коментар"
 
 msgctxt "rareEventCharts|"
 msgid "Location"
@@ -2411,19 +2411,19 @@ msgstr ""
 
 msgctxt "rareEventCharts|"
 msgid "Performed by"
-msgstr ""
+msgstr "Изводи по"
 
 msgctxt "rareEventCharts|"
 msgid "Analyst"
-msgstr ""
+msgstr "Аналитичар"
 
 msgctxt "rareEventCharts|"
 msgid "Date printed"
-msgstr ""
+msgstr "Датум штампања"
 
 msgctxt "rareEventCharts|"
 msgid "Today"
-msgstr ""
+msgstr "Данас"
 
 msgctxt "timeWeightedCharts|"
 msgid "Data format"
@@ -2439,7 +2439,7 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Measurement"
-msgstr ""
+msgstr "Мерење"
 
 msgctxt "timeWeightedCharts|"
 msgid "Timestamp (optional)"
@@ -2583,15 +2583,15 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "timeWeightedCharts|"
 msgid "Footnote"
-msgstr ""
+msgstr "Фуснота"
 
 msgctxt "timeWeightedCharts|"
 msgid "Comment"
-msgstr ""
+msgstr "Коментар"
 
 msgctxt "timeWeightedCharts|"
 msgid "Location"
@@ -2603,23 +2603,23 @@ msgstr ""
 
 msgctxt "timeWeightedCharts|"
 msgid "Performed by"
-msgstr ""
+msgstr "Изводи по"
 
 msgctxt "timeWeightedCharts|"
 msgid "Analyst"
-msgstr ""
+msgstr "Аналитичар"
 
 msgctxt "timeWeightedCharts|"
 msgid "Date printed"
-msgstr ""
+msgstr "Датум штампања"
 
 msgctxt "timeWeightedCharts|"
 msgid "Today"
-msgstr ""
+msgstr "Данас"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Measurement"
-msgstr ""
+msgstr "Мерење"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Timestamp (optional)"
@@ -2691,15 +2691,15 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Footnote"
-msgstr ""
+msgstr "Фуснота"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Comment"
-msgstr ""
+msgstr "Коментар"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Location"
@@ -2711,19 +2711,19 @@ msgstr ""
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Performed by"
-msgstr ""
+msgstr "Изводи по"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Analyst"
-msgstr ""
+msgstr "Аналитичар"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Date printed"
-msgstr ""
+msgstr "Датум штампања"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Today"
-msgstr ""
+msgstr "Данас"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Select Report Components"
@@ -2759,7 +2759,7 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Measurement"
-msgstr ""
+msgstr "Мерење"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Subgroups"
@@ -2871,15 +2871,15 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Name"
-msgstr ""
+msgstr "Име"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Footnote"
-msgstr ""
+msgstr "Фуснота"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Comment"
-msgstr ""
+msgstr "Коментар"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Location"
@@ -2891,19 +2891,19 @@ msgstr ""
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Performed by"
-msgstr ""
+msgstr "Изводи по"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Analyst"
-msgstr ""
+msgstr "Аналитичар"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Date printed"
-msgstr ""
+msgstr "Датум штампања"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Today"
-msgstr ""
+msgstr "Данас"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Advanced Options"
