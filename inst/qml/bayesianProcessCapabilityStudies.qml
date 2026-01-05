@@ -58,28 +58,9 @@ Form
 	}
 	columns:	 2
 
-	DropDown
-	{
-		name: "dataFormat"
-		label: qsTr("Data format")
-		id: dataFormat
-		indexDefaultValue: 0
-		values:
-		[
-			{label: qsTr("Single column"),			value: "longFormat"},
-			{label: qsTr("Across rows"),			value: "wideFormat"},
-		]
-		// onValueChanged:
-		// {
-		// 	measurementLongFormat.itemDoubleClicked(0)
-		// 	measurementsWideFormat.itemDoubleClicked(0)
-		// }
-	}
-
 	VariablesForm
 	{
-		id:								variablesFormLongFormat
-		visible:							dataFormat.currentValue === "longFormat"
+		id:									variablesFormLongFormat
 
 		AvailableVariablesList
 		{
@@ -95,148 +76,12 @@ Form
 			singleVariable:					true
 		}
 
-		AssignedVariablesList
-		{
-			name:							"subgroup"
-			title:						 	qsTr("Subgroup")
-			id:					 			subgroup
-			singleVariable:		 			true
-			allowedColumns:					["nominal"]
-			enabled: 						subgroupSizeType.value === "groupingVariable"
-		}
-
-		AssignedVariablesList
-		{
-			id:									stagesLongFormat
-			name:								"stagesLongFormat"
-			title:								qsTr("Stages")
-			singleVariable:						true
-			allowedColumns:						["nominal"]
-		}
 	}
 
-	VariablesForm
-	{
-		id:								variablesFormWideFormat
-		visible:							dataFormat.currentValue === "wideFormat"
 
-		AvailableVariablesList
-		{
-			name:						"variablesFormWideFormat"
-		}
-
-		AssignedVariablesList
-		{
-			name:							"measurementsWideFormat"
-			title:							qsTr("Measurements")
-			id:								measurementsWideFormat
-			allowedColumns:					["scale"]
-		}
-
-		AssignedVariablesList
-		{
-			id:									axisLabels
-			name:								"axisLabels"
-			title:								qsTr("Timestamp (optional)")
-			singleVariable:						true
-			allowedColumns:						["nominal"]
-		}
-
-		AssignedVariablesList
-		{
-			id:									stagesWideFormat
-			name:								"stagesWideFormat"
-			title:								qsTr("Stages")
-			singleVariable:						true
-			allowedColumns:						["nominal"]
-		}
-	}
-
-	Group
-	{
-		columns:							2
-
-		RadioButtonGroup
-		{
-			name:					"subgroupSizeType"
-			title:					qsTr("Specify subgroups")
-			id:						subgroupSizeType
-			visible:					dataFormat.currentValue === "longFormat"
-
-			RadioButton
-			{
-				value: 				"manual"
-				label: 				qsTr("Subgroup size")
-				checked:		 		true
-				childrenOnSameRow:	true
-
-				DoubleField
-				{
-					name: 									"manualSubgroupSizeValue"
-					id:										manualSubgroupSizeValue
-					min: 									1
-					max:									dataSetModel.rowCount()
-					negativeValues:							false
-					defaultValue:							5
-
-				}
-			}
-
-			RadioButton
-			{
-				value: 							"groupingVariable"
-				label: 							qsTr("Through grouping variable")
-
-				DropDown
-				{
-					name: 				"groupingVariableMethod"
-					id: 					groupingVariable
-					label: 				"Grouping method"
-					values:
-					[
-						{ label: qsTr("Subgroup value change"),			value: "newLabel"},
-						{ label: qsTr("Same subgroup value"),			value: "sameLabel"}
-					]
-					indexDefaultValue: 0
-				}
-			}
-		}
-
-		/*
-		RadioButtonGroup
-		{
-			name:								"subgroupSizeUnequal"
-			title: 								qsTr("Unequal subgroup sizes")
-			id:									subgroupSizeUnequal
-
-			RadioButton
-			{
-				value: 								"actualSizes"
-				label: 								qsTr("Use actual sizes")
-				checked: 							true
-			}
-
-			RadioButton
-			{
-				value: 								"fixedSubgroupSize"
-				label: 								qsTr("Use fixed subgroup size")
-				childrenOnSameRow:		 			true
-
-				IntegerField
-				{
-					name: 								"fixedSubgroupSizeValue"
-					fieldWidth: 						30
-					defaultValue: 						5
-					min:								2
-				}
-			}
-		}
-		*/
-	}
-
-	Section
-	{
-		title: qsTr("Process capability options")
+	// Section
+	// {
+	// 	title: qsTr("Process capability options")
 
 		Group
 		{
@@ -269,6 +114,7 @@ Form
 
 		Group
 		{
+			columns: 2
 			title: qsTr("Metrics")
 			info: qsTr("Select the process capability metrics to report.")
 			CheckBox { name: "Cp";   label: qsTr("Cp");  checked: true }
@@ -281,7 +127,7 @@ Form
 
 		Group
 		{
-			title: 							qsTr("Capability study")
+			title: 							qsTr("Capability Study")
 
 			CheckBox
 			{
@@ -396,8 +242,7 @@ Form
 			}
 		}
 
-
-	}
+	// }
 
 	// Section
 	// {
@@ -495,6 +340,8 @@ Form
 			baseName: "posteriorPredictiveDistributionPlot"
 			baseLabel: qsTr("Posterior predictive distribution")
 			hasPrior: false
+			hasAxes: false
+			hasPanels: false
 		}
 
 		Common.PlotLayout
@@ -502,6 +349,8 @@ Form
 			baseName: "priorPredictiveDistributionPlot"
 			baseLabel: qsTr("Prior predictive distribution")
 			hasPrior: false
+			hasAxes: false
+			hasPanels: false
 		}
 
 	}
@@ -577,33 +426,37 @@ Form
 	{
 		title: qsTr("Advanced options")
 
-		IntegerField
+		Group
 		{
-			name: "noIterations"
-			label: qsTr("No. MCMC iterations")
-			defaultValue: 5000
-			min: 100
-			max: 100000000
-			info: qsTr("Number of MCMC iterations used for estimating the posterior distribution.")
+			title: qsTr("MCMC Settings")
+			info: qsTr("Adjust the Markov Chain Monte Carlo (MCMC) settings for estimating the posterior distribution.")
+			IntegerField
+			{
+				name: "noIterations"
+				label: qsTr("No. iterations")
+				defaultValue: 5000
+				min: 100
+				max: 100000000
+				info: qsTr("Number of MCMC iterations used for estimating the posterior distribution.")
+			}
+			IntegerField
+			{
+				name: "noWarmup"
+				label: qsTr("No. warmup samples")
+				defaultValue: 1000
+				min: 0
+				max: 100000000
+				info: qsTr("Number of initial MCMC samples to discard.")
+			}
+			IntegerField
+			{
+				name: "noChains"
+				label: qsTr("No. chains")
+				defaultValue: 1
+				min: 1
+				max: 128
+				info: qsTr("Number of MCMC chains to run.")
+			}
 		}
-		IntegerField
-		{
-			name: "noWarmup"
-			label: qsTr("No. MCMC warmup samples")
-			defaultValue: 1000
-			min: 0
-			max: 100000000
-			info: qsTr("Number of initial MCMC samples to discard.")
-		}
-		IntegerField
-		{
-			name: "noChains"
-			label: qsTr("No. MCMC chains")
-			defaultValue: 1
-			min: 1
-			max: 128
-			info: qsTr("Number of MCMC chains to run.")
-		}
-
 	}
 }

@@ -30,6 +30,8 @@ Group
 	property	bool	hasEstimate: 	true
 	property	bool	hasCi: 			true
 	property	bool	hasType: 		false
+	property	bool	hasAxes: 		true
+	property	bool	hasPanels: 		true
 
 	readonly property alias checked:	mainCheckBox.checked
 
@@ -188,6 +190,8 @@ Group
 
 			RadioButtonGroup
 			{
+				enabled:	hasPanels
+				visible:	hasPanels
 				name:		baseName + "PanelLayout"
 				title:		qsTr("Layout")
 				id:			posteriorDistributionPlotPanelLayout
@@ -199,12 +203,14 @@ Group
 
 			RadioButtonGroup
 			{
+				enabled:	hasAxes
+				visible:	hasAxes
 				name:		baseName + "Axes"
 				title:		qsTr("Axes")
 				id:			posteriorDistributionPlotAxes
 
-				RadioButton { value: "identical"; 	label: qsTr("Automatic"); 					checked: true	}
-				RadioButton { value: "automatic";	label: qsTr("Identical across panels"); 	enabled: posteriorDistributionPlotPanelLayout.value === "multiplePanels"	}
+				RadioButton { value: "free"; 		label: qsTr("Automatic"); 					checked: true	}
+				RadioButton { value: "fixed";		label: qsTr("Identical across panels"); 	enabled: posteriorDistributionPlotPanelLayout.value === "multiplePanels"	}
 				RadioButton { value: "custom";		label: qsTr("Custom axes");	}
 			}
 
@@ -212,8 +218,8 @@ Group
 			{
 
 			title: qsTr("Custom axes")
-			enabled: posteriorDistributionPlotAxes.value === "custom"
-			visible: posteriorDistributionPlotAxes.value === "custom"
+			enabled: hasAxes && posteriorDistributionPlotAxes.value === "custom"
+			visible: hasAxes && posteriorDistributionPlotAxes.value === "custom"
 
 				GridLayout
 				{
