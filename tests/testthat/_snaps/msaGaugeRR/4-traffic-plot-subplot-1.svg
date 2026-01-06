@@ -21,33 +21,33 @@
 <rect x='0.00' y='0.00' width='720.00' height='576.00' style='stroke-width: 10.67; stroke: none;' />
 </g>
 <defs>
-  <clipPath id='cpOC41MHw3MjAuMDB8MTguOTJ8NTI1LjAz'>
-    <rect x='8.50' y='18.92' width='711.50' height='506.11' />
+  <clipPath id='cpMC4wMHw3MjAuMDB8MTguOTJ8NTI1LjAz'>
+    <rect x='0.00' y='18.92' width='720.00' height='506.11' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpOC41MHw3MjAuMDB8MTguOTJ8NTI1LjAz)'>
-<rect x='8.50' y='18.92' width='711.50' height='506.11' style='stroke-width: 10.67; stroke: none;' />
-<rect x='234.89' y='82.18' width='452.77' height='379.58' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #B81D13;' />
-<rect x='105.53' y='82.18' width='129.36' height='379.58' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #EFB700;' />
-<rect x='40.84' y='82.18' width='64.68' height='379.58' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #008450;' />
-<line x1='116.85' y1='525.03' x2='116.85' y2='18.92' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<line x1='40.53' y1='525.03' x2='687.98' y2='525.03' style='stroke-width: 0.64; stroke-linecap: butt;' />
-<line x1='8.50' y1='272.29' x2='8.50' y2='271.65' style='stroke-width: 0.64; stroke-linecap: butt;' />
-<text x='149.19' y='57.55' text-anchor='middle' style='font-size: 14.23px; font-family: sans;' textLength='48.25px' lengthAdjust='spacingAndGlyphs'>11.75%</text>
-<rect x='8.50' y='18.92' width='711.50' height='506.11' style='stroke-width: 0.00; stroke: none;' />
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MTguOTJ8NTI1LjAz)'>
+<rect x='0.00' y='18.92' width='720.00' height='506.11' style='stroke-width: 10.67; stroke: none;' />
+<rect x='229.09' y='82.18' width='458.18' height='379.58' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #B81D13;' />
+<rect x='98.18' y='82.18' width='130.91' height='379.58' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #EFB700;' />
+<rect x='32.73' y='82.18' width='65.45' height='379.58' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #008450;' />
+<line x1='109.64' y1='525.03' x2='109.64' y2='18.92' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<line x1='32.41' y1='525.03' x2='687.59' y2='525.03' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<line x1='0.00' y1='272.29' x2='0.00' y2='271.65' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<text x='142.36' y='57.55' text-anchor='middle' style='font-size: 14.23px; font-family: sans;' textLength='48.25px' lengthAdjust='spacingAndGlyphs'>11.75%</text>
+<rect x='0.00' y='18.92' width='720.00' height='506.11' style='stroke-width: 0.00; stroke: none;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-<polyline points='8.50,525.03 8.50,18.92 ' style='stroke-width: 0.00; stroke: none; stroke-linecap: butt;' />
-<polyline points='8.50,525.03 720.00,525.03 ' style='stroke-width: 0.00; stroke: none; stroke-linecap: butt;' />
-<polyline points='40.84,533.53 40.84,525.03 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
-<polyline points='105.53,533.53 105.53,525.03 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
-<polyline points='234.89,533.53 234.89,525.03 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
-<polyline points='687.66,533.53 687.66,525.03 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
-<text x='40.84' y='550.83' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='21.68px' lengthAdjust='spacingAndGlyphs'>0%</text>
-<text x='105.53' y='550.83' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='30.02px' lengthAdjust='spacingAndGlyphs'>10%</text>
-<text x='234.89' y='550.83' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='30.02px' lengthAdjust='spacingAndGlyphs'>30%</text>
-<text x='687.66' y='550.83' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='38.37px' lengthAdjust='spacingAndGlyphs'>100%</text>
-<text x='364.25' y='573.20' text-anchor='middle' style='font-size: 13.50px; font-family: sans;' textLength='377.49px' lengthAdjust='spacingAndGlyphs'>Percent measurement system variation of the process variation</text>
-<text x='364.25' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='149.25px' lengthAdjust='spacingAndGlyphs'>4_traffic-plot-subplot-1</text>
+<polyline points='0.00,525.03 0.00,18.92 ' style='stroke-width: 0.00; stroke: none; stroke-linecap: butt;' />
+<polyline points='0.00,525.03 720.00,525.03 ' style='stroke-width: 0.00; stroke: none; stroke-linecap: butt;' />
+<polyline points='32.73,533.53 32.73,525.03 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='98.18,533.53 98.18,525.03 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='229.09,533.53 229.09,525.03 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<polyline points='687.27,533.53 687.27,525.03 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
+<text x='32.73' y='550.83' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='21.68px' lengthAdjust='spacingAndGlyphs'>0%</text>
+<text x='98.18' y='550.83' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='30.02px' lengthAdjust='spacingAndGlyphs'>10%</text>
+<text x='229.09' y='550.83' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='30.02px' lengthAdjust='spacingAndGlyphs'>30%</text>
+<text x='687.27' y='550.83' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='38.37px' lengthAdjust='spacingAndGlyphs'>100%</text>
+<text x='360.00' y='573.20' text-anchor='middle' style='font-size: 13.50px; font-family: sans;' textLength='377.49px' lengthAdjust='spacingAndGlyphs'>Percent measurement system variation of the process variation</text>
+<text x='360.00' y='10.32' text-anchor='middle' style='font-size: 15.00px; font-family: sans;' textLength='149.25px' lengthAdjust='spacingAndGlyphs'>4_traffic-plot-subplot-1</text>
 </g>
 </svg>

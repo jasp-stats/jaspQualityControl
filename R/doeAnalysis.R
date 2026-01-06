@@ -190,7 +190,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
           codes <- .scaleDOEvariable(levels[lowPos:highPos])
           lowLevel <- as.numeric(lowLevel)
           highLevel <- as.numeric(highLevel)
-          outerCodes <- 2*(levels[-c(lowPos:highPos)]-lowLevel)/(highLevel-lowLevel)-1 # if any values are above the specified high value or below the specified low value
+          outerCodes <- 2 * (levels[-c(lowPos:highPos)]-lowLevel)/(highLevel-lowLevel)-1 # if any values are above the specified high value or below the specified low value
           codes <- sort(c(codes, outerCodes))
         }
       }
