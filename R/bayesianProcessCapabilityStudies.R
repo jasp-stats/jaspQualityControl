@@ -306,12 +306,14 @@ getCustomAxisLimits <- function(options, base) {
   if (!.bpcsIsReady(options) || is.null(fit))
     return()
 
+  selectedMetrics <- .bpcsGetSelectedMetrics(options)
   tryCatch({
 
     # qc does c(-Inf, interval_probability, Inf)
     interval_probability <- unlist(options[paste0("interval", 1:4)], use.names = FALSE)
     interval_summary <- summary(fit[["rawfit"]], interval_probability = interval_probability)[["interval_summary"]]
     colnames(interval_summary) <- c("metric", paste0("interval", 1:5))
+    interval_summary <- subset(interval_summary, metric %in% selectedMetrics)
     table$setData(interval_summary)
 
   }, error = function(e) {
