@@ -324,9 +324,13 @@ Form
 							values:
 							[
 								{label: qsTr("Weibull"),					value: "weibull"},
-								{label: qsTr("Lognormal"),					value: "lognormal"},
+								{label: qsTr("Log-normal"),					value: "lognormal"},
+								{label: qsTr("Gamma"),						value: "gamma"},
+								{label: qsTr("Exponential"),				value: "exponential"},
+								{label: qsTr("Logistic"),					value: "logistic"},
+								{label: qsTr("Log-logistic"),				value: "loglogistic"},
 								{label: qsTr("3-parameter Weibull"),		value: "3ParameterWeibull"},
-								{label: qsTr("3-parameter lognormal"),		value: "3ParameterLognormal"}
+								{label: qsTr("3-parameter log-normal"),		value: "3ParameterLognormal"}
 							]
 							indexDefaultValue: 0
 						}
