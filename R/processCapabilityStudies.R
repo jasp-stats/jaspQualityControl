@@ -2595,6 +2595,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (length(specs) == 0L) return(list())
 
+  specNames <- names(specs)
+
   if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto")) {
     shift <- options[["dataTransformationShift"]]
     lambda <- if(options[["dataTransformation"]] == "boxCox") options[["dataTransformationLambda"]] else parameters[["lambda"]]
@@ -2633,6 +2635,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       su = with(data=args, gamma + eta * asinh((x - epsilon) / lambda))
     )
   }
+
+  names(specs) <- specNames
 
   return(as.list(specs))
 }
