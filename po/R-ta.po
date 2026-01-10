@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
 "POT-Creation-Date: 2025-07-26 03:57\n"
-"PO-Revision-Date: 2026-01-01 18:01+0000\n"
+"PO-Revision-Date: 2026-01-07 17:01+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/ta/>\n"
@@ -118,10 +118,10 @@ msgid "Proportion"
 msgstr "விகிதம்"
 
 msgid "UCL = %g"
-msgstr "UCL = %g"
+msgstr "உமஅ = %g"
 
 msgid "LCL = %g"
-msgstr "LCL = %g"
+msgstr "கீமஅ = %g"
 
 msgid "Number of defectives"
 msgstr "குறைபாடுகளின் எண்ணிக்கை"
@@ -211,13 +211,13 @@ msgid "Exponentially weighted moving average"
 msgstr "அதிவேக எடையுள்ள நகரும் சராசரி"
 
 msgid "LSL = %g"
-msgstr "LSL = %g"
+msgstr "கீகஅ = %g"
 
 msgid "Tar. = %g"
 msgstr "தார். = %g"
 
 msgid "USL = %g"
-msgstr "USL = %g"
+msgstr "உகஅ = %g"
 
 msgid ""
 "Parameter estimation failed. Values might be too extreme. Try a different "
@@ -773,7 +773,7 @@ msgid "Total"
 msgstr "மொத்தம்"
 
 msgid "Gauge r&R"
-msgstr "கேச் ஆர்&ஆர்"
+msgstr "அளவீடு ஆர்&ஆர்"
 
 msgid ""
 "Design is not balanced: not every operator measured every part the same "
@@ -795,7 +795,7 @@ msgstr ""
 "நெடுவரிசை' வடிவத்தில் இருப்பது போல் தெரிகிறது."
 
 msgid "Gauge r&R report"
-msgstr "கேச் ஆர்&ஆர் அறிக்கை"
+msgstr "அளவீடு ஆர்&ஆர் அறிக்கை"
 
 msgid "No report components selected."
 msgstr "அறிக்கை கூறுகள் எதுவும் தேர்ந்தெடுக்கப்படவில்லை."
@@ -846,7 +846,7 @@ msgid "Traffic light chart"
 msgstr "போக்குவரத்து விளக்கு விளக்கப்படம்"
 
 msgid "Gauge r&R study - crossed ANOVA"
-msgstr "கேச் ஆர்&ஆர் ஆய்வு - ANOVA ஐ கடந்தது"
+msgstr "அளவீடு ஆர்&ஆர் ஆய்வு - அனோவாவை கடந்தது"
 
 msgid "One-way ANOVA table"
 msgstr "ஒரு வழி ANOVA அட்டவணை"
@@ -885,7 +885,7 @@ msgid "%% Tolerance"
 msgstr "%% சகிப்புத்தன்மை"
 
 msgid "Total gauge r&R"
-msgstr "மொத்த கேச் ஆர்&ஆர்"
+msgstr "மொத்த அளவீடு ஆர்&ஆர்"
 
 msgid "Repeatability"
 msgstr "மீண்டும் நிகழும் தன்மை"
@@ -986,7 +986,7 @@ msgid "%.2f"
 msgstr "%.AF"
 
 msgid "Gauge r&R - nested"
-msgstr "கேச் ஆர்&ஆர் - உள்ளமை"
+msgstr "அளவீடு ஆர்&ஆர் - உள்ளமை"
 
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
@@ -994,19 +994,19 @@ msgstr ""
 "சமநிலையற்ற வடிவமைப்பு. சில பகுதிகளில் மற்றவற்றை விட மறுநிகழ்வு அளவீடுகள் உள்ளன."
 
 msgid "Gauge r&R (non-replicable) report"
-msgstr "கேச் ஆர்&ஆர் (பிரதி செய்ய முடியாத) அறிக்கை"
+msgstr "அளவீடு ஆர்&ஆர் (பிரதி செய்ய முடியாத) அறிக்கை"
 
 msgid "Gauge r&R tables"
-msgstr "கேச் ஆர்&ஆர் அட்டவணைகள்"
+msgstr "அளவீடு ஆர்&ஆர் அட்டவணைகள்"
 
 msgid "Measurement by part x operator plot"
 msgstr "பகுதி ஃச் ஆபரேட்டர் சூழ்ச்சி மூலம் அளவீடு"
 
 msgid "Gauge r&R study - nested ANOVA"
-msgstr "கேச் ஆர்&ஆர் ஆய்வு - உள்ளமைக்கப்பட்ட ANOVA"
+msgstr "அளவீடு ஆர்&ஆர் ஆய்வு - உள்ளமைக்கப்பட்ட அனோவா"
 
 msgid "Gauge r&R (nested)"
-msgstr "கேச் ஆர்&ஆர் (உள்ளமை)"
+msgstr "அளவீடு ஆர்&ஆர் (உள்ளமை)"
 
 msgid "p"
 msgstr "ப"
@@ -1169,7 +1169,7 @@ msgid "No valid measurements in %s."
 msgstr "%s இல் சரியான அளவீடுகள் இல்லை."
 
 msgid "Ref."
-msgstr "Ref."
+msgstr "குறி."
 
 msgid "Parameter Estimates"
 msgstr "அளவுரு மதிப்பீடுகள்"
@@ -1222,7 +1222,7 @@ msgid "Asymptotes"
 msgstr "அறிகுறிகள்"
 
 msgid "covariate"
-msgstr "covariate"
+msgstr "கோவேரியேட்"
 
 msgid "Horizontal asymptotes"
 msgstr "கிடைமட்ட அறிகுறிகள்"
@@ -1466,10 +1466,10 @@ msgid "PpL"
 msgstr "பிபிஎல்"
 
 msgid "PpU"
-msgstr "PpU"
+msgstr "பிபியு"
 
 msgid "Ppk"
-msgstr "Ppk"
+msgstr "பிபிகே"
 
 msgid "%s CI for Ppk"
 msgstr "Ppk க்கான %s தொஒ"
@@ -1478,7 +1478,7 @@ msgid "Z bench (LT)"
 msgstr "சட் பெஞ்ச் (LT)"
 
 msgid "Cpm"
-msgstr "Cpm"
+msgstr "சிபிஎம்"
 
 msgid "%s CI for Cpm"
 msgstr "Cpm க்கான %s தொஒ"
