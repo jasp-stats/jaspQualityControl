@@ -265,6 +265,12 @@ Form
 			label: qsTr("Credible interval")
 			info: qsTr("Width of the credible interval used for the posterior distribution in the Capability table.")
 		}
+		CheckBox
+		{
+			name: "intervalPlot"
+			label: qsTr("Interval plot")
+			info: qsTr("Show the posterior probabilities of the intervals using pie charts.")
+		}
 	}
 
 	Section
