@@ -2,7 +2,7 @@ context("[Quality Control] MSA - Gauge Linearity")
 .numDecimals <- 2
 set.seed(1)
 
-# Basic test ####
+# Basic test  (verified with other software) ####
 
 options <- analysisOptions("msaGaugeLinearity")
 options$part <- "Part"
@@ -10,6 +10,7 @@ options$measurement <- "Measurement"
 options$standard <- "Reference"
 options$manualProcessVariation <- TRUE
 options$manualProcessVariationValue <- 1
+options$percentProcessVariationPlot <- TRUE
 set.seed(1)
 results <- runAnalysis("msaGaugeLinearity", "datasets/msaLinearityStudy/msaLinearity.csv", options)
 
@@ -34,8 +35,8 @@ test_that("1.3 Basic test - Gauge bias table results match", {
                                       6.025, 3, 2.50000000000004, 0.667130710762814, 6, -0.291666666666667,
                                       7.70833333333333, 4, 29.1666666666667, 6.41948050554358e-07,
                                       8, -0.616666666666667, 9.38333333333333, 5, 61.6666666666667,
-                                      1.55444480038029e-08, 10, -0.0533333333333334, "Total", 5.33333333333334,
-                                      0.356307101472113))
+                                      1.55444480038029e-08, 10, -0.0533333333333334, "Total", 5.33333333333333,
+                                      0.0899196050780288))
 })
 
 test_that("1.4 Basic test - Regression model table results match", {
@@ -59,7 +60,7 @@ test_that("1.6 Basic test - Regression equation table results match", {
                                  list("Bias = 0.74 - 0.13 * Reference value"))
 })
 
-# Missing values test ####
+# Missing values test (verified with other software) ####
 
 options <- analysisOptions("msaGaugeLinearity")
 options$part <- "PartMissing5"
@@ -67,6 +68,7 @@ options$measurement <- "MeasurementMissing5"
 options$standard <- "ReferenceMissing5"
 options$manualProcessVariation <- TRUE
 options$manualProcessVariationValue <- 1
+options$percentProcessVariationPlot <- TRUE
 set.seed(1)
 results <- runAnalysis("msaGaugeLinearity", "datasets/msaLinearityStudy/msaLinearity.csv", options)
 
@@ -90,8 +92,8 @@ test_that("2.3 Missing values test - Gauge bias table results match", {
                                       22.5, 0.267640820562279, 4, -0.0222222222222221, 5.97777777777778,
                                       3, 2.22222222222221, 0.71883629907514, 6, -0.281818181818182,
                                       7.71818181818182, 4, 28.1818181818182, 2.48662323102535e-06,
-                                      8, -0.6, 9.4, 5, 60, 4.65540714815082e-07, 10, -0.0408080808080808,
-                                      "Total", 4.08080808080808, 0.230205182734234))
+                                      8, -0.6, 9.4, 5, 60, 4.65540714815082e-07, 10, -0.0804347826086957,
+                                      "Total", 8.04347826086957, 0.0323607877580329))
 })
 
 test_that("2.4 Missing values test - Regression model table results match", {
