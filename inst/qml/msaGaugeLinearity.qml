@@ -83,24 +83,18 @@ Form
 			label:								qsTr("Linearity and bias graph")
 			checked:							true
 		}
-
-		CheckBox
-		{
-			name: 								"percentProcessVariationPlot"
-			label: 								qsTr("Percent process variation graph")
-			checked: 							true
-		}
 	}
 
 	Group
 	{
-	title: qsTr("Optional")
+		title: qsTr("Optional")
 
-	CheckBox
+		CheckBox
 		{
 			name: 								"manualProcessVariation"
 			label: 								qsTr("Process variation")
 			childrenOnSameRow: 					true
+			id:									manualProcessVariation
 
 			DoubleField
 			{
@@ -108,8 +102,16 @@ Form
 				defaultValue:					1
 				negativeValues:				false
 				decimals: 						7
-				fieldWidth: 					50
+				fieldWidth: 					30
 			}
+		}
+
+		CheckBox
+		{
+			name: 								"percentProcessVariationPlot"
+			label: 								qsTr("Percent process variation graph")
+			checked: 							false
+			enabled:							manualProcessVariation.checked
 		}
 	}
 }

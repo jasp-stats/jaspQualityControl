@@ -20,7 +20,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
   measurements <- unlist(options[["measurement"]])
   parts <- unlist(options[["part"]])
-  standards <- unlist(options$standard)
+  standards <- unlist(options[["standard"]])
 
   ready <- (!identical(measurements, "") && !identical(parts, "") && !identical(standards, ""))
 
@@ -82,27 +82,45 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   plotBias <- createJaspPlot(title = gettext("Bias and linearity"), width = 500, height = 500)
   plotProcessVar <- createJaspPlot(title = gettext("Percentage process variation graph"), width = 500, height = 500)
 
-  if (ready) {
-    # Error conditions
-    if (length(dataset[[measurements]]) < 2) {
-      tableRegression$setError(gettextf("t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", length(dataset[[measurements]]), measurements))
-      return(tableRegression)
-    }
-    if (length(unique(dataset[[standards]])) != length(unique(dataset[[parts]]))) {
-      tableRegression$setError(gettextf("Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts.", length(unique(dataset[[standards]])), length(unique(dataset[[parts]]))))
-      return(tableRegression)
-    }
-    if (any(table(dataset[[parts]]) < 2)) {
-      singleMeasurementParts <- paste(names(which(table(dataset[[parts]]) < 2)), collapse = ", ")
-      tableRegression$setError(gettextf("t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
-      return(tableRegression)
-    }
-    variancePerPart <- tapply(dataset[[measurements]], dataset[[parts]], var)
-    if (any(variancePerPart == 0)) {
-      noVarParts <- paste(names(which(variancePerPart == 0)), collapse = ", ")
-      tableRegression$setError(gettextf("t-test not possible. No variance detected in Part(s) %s.", noVarParts))
-      return(tableRegression)
-    }
+
+  if (options[["biasTable"]])
+    tablesAndGraphs[["tableGaugeBias"]] <- tableGaugeBias
+
+
+  if (options[["linearityTable"]]) {
+    tablesAndGraphs[["tableRegression"]] <- tableRegression
+    tablesAndGraphs[["tableEquation"]] <- tableEquation
+    tablesAndGraphs[["tableGaugeLinearity"]] <- tableGaugeLinearity
+  }
+
+  if (options[["linearityAndBiasPlot"]])
+    tablesAndGraphs[["plotBias"]] <- plotBias
+
+  if (options[["percentProcessVariationPlot"]])
+    tablesAndGraphs[["plotProcessVar"]] <- plotProcessVar
+
+  if (!ready)
+    return(tablesAndGraphs)
+
+  # Error conditions
+  if (length(dataset[[measurements]]) < 2) {
+    tableRegression$setError(gettextf("t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s.", length(dataset[[measurements]]), measurements))
+    return(tableRegression)
+  }
+  if (length(unique(dataset[[standards]])) != length(unique(dataset[[parts]]))) {
+    tableRegression$setError(gettextf("Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts.", length(unique(dataset[[standards]])), length(unique(dataset[[parts]]))))
+    return(tableRegression)
+  }
+  if (any(table(dataset[[parts]]) < 2)) {
+    singleMeasurementParts <- paste(names(which(table(dataset[[parts]]) < 2)), collapse = ", ")
+    tableRegression$setError(gettextf("t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s.", singleMeasurementParts))
+    return(tableRegression)
+  }
+  variancePerPart <- tapply(dataset[[measurements]], dataset[[parts]], var)
+  if (any(variancePerPart == 0)) {
+    noVarParts <- paste(names(which(variancePerPart == 0)), collapse = ", ")
+    tableRegression$setError(gettextf("t-test not possible. No variance detected in Part(s) %s.", noVarParts))
+    return(tableRegression)
   }
 
   partsVec <- c()
@@ -130,30 +148,16 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
                        "Bias" = biasesVec,
                        "pvalue" = pValuesVec)
 
-  # df <- data.frame()
-  # biases <- vector()
-  # Part <- vector()
-  # references <- vector()
-  #
-  # for (i in referenceValues) {
-  #   ReferenceValue <- i
-  #   ReferenceData <- subset.data.frame(dataset, dataset[[standards]] == i)
-  #   Ref <- ReferenceData[[standards]][1]
-  #   Part <- unique(ReferenceData[[parts]])
-  #   ObservedMean <- mean(ReferenceData[[measurements]])
-  #   Bias <-  ObservedMean - Ref
-  #   pvalue <- t.test(ReferenceData[[measurements]] - Ref, mu = 0)$p.value
-  #   df <- rbind(df, list(Part = Part,Ref = rep(Ref,length(Part)), ObservedMean =  rep(ObservedMean,length(Part)), Bias =  rep(Bias,length(Part)), pvalue =  rep(pvalue,length(Part))))
-  #   biases <- c(biases, ReferenceData[[measurements]] - Ref)
-  #   references <- c(references, ReferenceData[[standards]])
-  # }
-
   rawBiases <- dataset[[measurements]] - dataset[[standards]]
   meanBias <- mean(rawBiases)
-  totalBiasPValue <- t.test(rawBiases, mu = 0)$p.value
 
-  biasPlotDf <- data.frame(Bias = rawBiases, Ref = dataset[[standards]])
-  regressionFit <- summary(lm(Bias ~ Ref, biasPlotDf))
+  biasPlotDf <- data.frame("Bias" = rawBiases, "Ref" = dataset[[standards]])
+  biasPlotMeanDf <- data.frame("meanBias" = biasesVec, "Ref" = refsVec)
+  regressionFitRaw <- lm(Bias ~ Ref, biasPlotDf)
+  regressionFit <- summary(regressionFitRaw)
+
+  totalBiasPValueModel <- car::linearHypothesis(regressionFitRaw, c("(Intercept)" = 1, "reference" = mean(biasPlotDf[["Ref"]])))
+  totalBiasPValue <- totalBiasPValueModel[["Pr(>F)"]][2]
   regressionFitConstant <- regressionFit$coefficients[1]
   regressionFitSlope <- regressionFit$coefficients[2]
   coefficients <- c(regressionFitConstant, regressionFitSlope)
@@ -165,42 +169,15 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
   plusOrMin <- if (regressionFitSlope > 0) "+" else "-"
   regressionEquation <- gettextf("Bias = %1$.2f %2$s %3$.2f * Reference value", regressionFitConstant, plusOrMin, abs(regressionFitSlope))
 
-  plotBiasPlotObject <- ggplot2::ggplot(data = biasPlotDf, mapping = ggplot2::aes(x = Ref, y = Bias)) +
+  plotBiasPlotObject <- ggplot2::ggplot() +
     ggplot2::geom_hline(yintercept = 0, lty = 2, color = "grey") +
     ggplot2::geom_smooth(data = biasPlotDf, mapping = ggplot2::aes(x = Ref, y = Bias), method = "lm", color = "red") +
     ggplot2::scale_x_continuous(name = gettext("Reference")) +
-    jaspGraphs::geom_point(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "blue", size = 4, shape = "X") +
-    jaspGraphs::geom_point(data = df, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "red",size = 4) +
-    ggplot2::scale_y_continuous(limits = c(min(df2$Bias), max(df2$Bias) * 2)) +
+    ggplot2::geom_point(data = biasPlotDf, mapping = ggplot2::aes(x = Ref, y = Bias), size = 4, shape = "X") +
+    ggplot2::geom_point(data = biasPlotMeanDf, mapping = ggplot2::aes(x = Ref, y = meanBias), fill = "red", shape = 21, col = "black", size = 4) +
+    ggplot2::scale_y_continuous(limits = c(min(biasPlotDf$Bias, na.rm = TRUE), max(biasPlotDf$Bias, na.rm = TRUE) * 2)) +
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
-  #
-  #
-  #
-  # df2 <- data.frame(Bias = biases, Ref = references)
-  # lm <- summary(lm(Bias ~ Ref, df2))
-  # coefficientConstant <- lm$coefficients[1]
-  # coefficientSlope <- lm$coefficients[2]
-  # coefficients <- c(coefficientConstant, coefficientSlope)
-  # SEcoefficients <- lm$coefficients[c(3,4)]
-  # Tvalues <- lm$coefficients[c(5,6)]
-  # pvalues <- lm$coefficients[c(7,8)]
-  # S <- lm$sigma
-  # rsq <- lm$r.squared
-  # linearity <- abs(coefficientSlope) * options[["manualProcessVariationValue"]]
-  # percentLin <- (linearity / options[["manualProcessVariationValue"]]) * 100
-  # plusOrMin <- if (coefficientSlope > 0) "+" else "-"
-  # regressionEquation <- gettextf("Bias = %1$.2f %2$s %3$.2f * Reference value", coefficientConstant, plusOrMin, abs(coefficientSlope))
-  #
-  # p1 <- ggplot2::ggplot(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias)) +
-  #   ggplot2::geom_hline(yintercept = 0, lty = 2, color = "grey") +
-  #   ggplot2::geom_smooth(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias), method = "lm", color = "red") +
-  #   ggplot2::scale_x_continuous(name = gettext("Reference")) +
-  #   jaspGraphs::geom_point(data = df2, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "blue", size = 4, shape = "X") +
-  #   jaspGraphs::geom_point(data = df, mapping = ggplot2::aes(x = Ref, y = Bias), fill = "red",size = 4) +
-  #   ggplot2::scale_y_continuous(limits = c(min(df2$Bias), max(df2$Bias) * 2)) +
-  #   jaspGraphs::geom_rangeframe() +
-  #   jaspGraphs::themeJaspRaw()
 
   plotBias$plotObject <- plotBiasPlotObject
 
@@ -216,7 +193,7 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
   gaugeBiasDataList <- list("part" = c(biasDf[["Part"]], gettext("Total")),
                             "referenceValue" = biasDf[["Ref"]],
-                            "observedMean" = biasDf[["PbservedMean"]],
+                            "observedMean" = biasDf[["ObservedMean"]],
                             "bias" = c(biasDf[["Bias"]], meanBias),
                             "pvalue" = c(biasDf[["pvalue"]], totalBiasPValue))
   gaugeLinearityDataList <- list("S" = regressionFitSigma,
@@ -252,47 +229,6 @@ msaGaugeLinearity <- function(jaspResults, dataset, options, ...) {
 
   tableGaugeBias$setData(gaugeBiasDataList)
   tableGaugeLinearity$setData(gaugeLinearityDataList)
-  #
-  # if (options[["manualProcessVariation"]]) {
-  #   tableGaugeBias$setData(list("part" = c(df$Part,gettext("Total")),
-  #                       "referenceValue" = df$Ref,
-  #                       "observedMean" = df$ObservedMean,
-  #                       "bias" = c(df$Bias, averageBias),
-  #                       "percentBias" = (abs(c(df$Bias, averageBias)) / options[["manualProcessVariationValue"]]) * 100,
-  #                       "pvalue" = c(df$pvalue, averagePvalue)))
-  #
-  #   tableGaugeLinearity$setData(list("S" = regressionFitSigma,
-  #                       "linearity" = linearity,
-  #                       "rsq" = regressionFitRsq,
-  #                       "percentLin" = percentLin))
-  # } else {
-  #   tableGaugeBias$setData(list("part" = c(df$Part,gettext("Total")),
-  #                       "referenceValue" = df$Ref,
-  #                       "observedMean" = df$ObservedMean,
-  #                       "bias" = c(df$Bias, averageBias),
-  #                       "pvalue" = c(df$pvalue, averagePvalue)))
-  #
-  #   tableGaugeLinearity$setData(list("S" = S,
-  #                       "rsq" = rsq,
-  #                       "percentLin" = percentLin))
-  # }
-
-
-  if (options[["biasTable"]])
-    tablesAndGraphs[["tableGaugeBias"]] <- tableGaugeBias
-
-
-  if (options[["linearityTable"]]) {
-    tablesAndGraphs[["tableRegression"]] <- tableRegression
-    tablesAndGraphs[["tableEquation"]] <- tableEquation
-    tablesAndGraphs[["tableGaugeLinearity"]] <- tableGaugeLinearity
-  }
-
-  if (options[["linearityAndBiasPlot"]])
-    tablesAndGraphs[["plotBias"]] <- plotBias
-
-  if (options[["percentProcessVariationPlot"]])
-    tablesAndGraphs[["plotProcessVar"]] <- plotProcessVar
 
   return(tablesAndGraphs)
 }
