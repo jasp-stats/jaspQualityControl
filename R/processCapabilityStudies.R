@@ -479,6 +479,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettext("Process summary"))
+  footnotes <- c()
   table$position <- 1
   if (nStages > 1) {
     table$addColumnInfo(name = "stage", title = gettext("Stage"), type = "string")
@@ -506,30 +507,38 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   tableColNames <- c("lsl", "target", "usl", "mean", "n", "sd", "sdw")
   if (nStages > 1) {
     tableColNames <- c("stage", tableColNames)
-    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+    footnotes <- paste0(footnotes, gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL). "))
   }
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
   colnames(tableDf) <- tableColNames
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
-    if (length(measurements) < 2) {
-      k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+
+    ## ----- Std. dev. calculation ----------
+    if (options[["historicalStdDev"]]) {
+      sdw <- options[["historicalStdDevValue"]]
     } else {
-      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
-      unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      if (length(measurements) < 2) {
+        k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+        sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      } else {
+        sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+        unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+        sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      }
+      if (is.na(sdw))
+        footnotes <- paste0(footnotes, gettext("The within std. dev. could not be calculated. "))
     }
+
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
 
-    if (is.na(sdw))
-      table$addFootnote(gettext("The within standard deviation could not be calculated."))
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
 
     tableDfCurrentStage <- data.frame(lsl = round(options[["lowerSpecificationLimitValue"]], .numDecimals),
                                       target = round(options[["targetValue"]], .numDecimals),
                                       usl    = round(options[["upperSpecificationLimitValue"]], .numDecimals),
-                                      mean   = mean(allData, na.rm = TRUE),
+                                      mean   = processMean,
                                       n      = length(allData),
                                       sd     = sd(allData, na.rm = TRUE),
                                       sdw    = sdw)
@@ -551,6 +560,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   tableList <- as.list(tableDf)
   table$setData(tableList)
+
+  # Add remaining footnotes
+  if (options[["historicalStdDev"]])
+    footnotes <- paste0(footnotes, gettext("The within std. dev. is based on a historical value. "))
+  if (options[["historicalMean"]])
+    footnotes <- paste0(footnotes, gettext("The mean is based on a historical value. "))
+  if (!is.null(footnotes))
+    table$addFootnote(footnotes)
 
   nDecimals <- .numDecimals
 
@@ -578,9 +595,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       target <- '*'
     if (!options[["upperSpecificationLimit"]])
       usl <- '*'
-    mean <- mean(allData, na.rm = TRUE)
-    n <- as.integer(length(allData))
-    sd <- sd(allData, na.rm = TRUE)
     formattedTableDf[["lsl"]] <- tableList[["lsl"]]
     formattedTableDf[["target"]] <- tableList[["target"]]
     formattedTableDf[["usl"]] <- tableList[["usl"]]
@@ -654,24 +668,42 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
       sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
     plotData <- data.frame(x = allData)
     sdo <- sd(allData, na.rm = TRUE)
 
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], min(plotData[["x"]]) - 1 * sdo, max(plotData[["x"]]) + 1 * sdo), min.n = 4)
-    xLimits <- range(xBreaks)
+    xLimits <- c(min(allData) - sdo, max(allData) + sdo)
     if (options[["lowerSpecificationLimit"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["lowerSpecificationLimitValue"]])
+      xLimits <- range(xLimits, options[["lowerSpecificationLimitValue"]] - 0.5*sdo)
     if (options[["upperSpecificationLimit"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["upperSpecificationLimitValue"]])
+      xLimits <- range(xLimits, options[["upperSpecificationLimitValue"]] + 0.5*sdo)
     if (options[["target"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["target"]])
+      xLimits <- range(xLimits, options[["targetValue"]])
+
+    # Addition to consider that if distributions are set historically, they may fall outside the usual limits
+    if (distribution == "normal" && options[["historicalMean"]])
+      xLimits <- range(xLimits, options[["historicalMeanValue"]] - 1.5 * sdo, options[["historicalMeanValue"]] + 1.5 * sdo)
+    if (distribution == "weibull" || distribution == "3ParameterWeibull" && options[["historicalScale"]])
+      xLimits <- range(xLimits, options[["historicalScaleValue"]] - 1.5 * sdo, options[["historicalScaleValue"]] + 1.5 * sdo)
+    if (distribution == "lognormal" || distribution == "3ParameterLognormal" && options[["historicalLogMean"]])
+      xLimits <- range(xLimits, exp(options[["historicalLogMeanValue"]]) - 1.5 * sdo,
+                       exp(options[["historicalLogMeanValue"]]) + 1.5 * sdo)
+
+    # Get xBreaks based on the data, with an axis that also spans the limits
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(allData))
+    xStep <- diff(xBreaks)[1]
+    loExt <- min(xBreaks) - pmax(0, ceiling((min(xBreaks) - min(xLimits)) / xStep) * xStep)
+    hiExt <- max(xBreaks) + pmax(0, ceiling((max(xLimits) - max(xBreaks)) / xStep) * xStep)
+    xBreaks <- seq(loExt, hiExt, by = xStep)
+    # Get limits to always include all breaks
+    xLimits <- range(xLimits, xBreaks)
+
 
     nBins <- options[["processCapabilityPlotBinNumber"]]
     h <- hist(allData, plot = FALSE, breaks = nBins)
@@ -687,12 +719,24 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     legendLty <- c()
     legendLabels <- c()
 
+  # logic that checks if all parameters necessary for the non-normal distributions are given as historical, if yes, skip the dist. est. function, else replace only the given parameters
+  if (distribution != "normal")
+    allParametersHistorical <- switch(
+      options[["nonNormalDistribution"]],
+      "weibull" = options[["historicalShape"]] && options[["historicalScale"]],
+      "lognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]],
+      "3ParameterWeibull" = options[["historicalShape"]] && options[["historicalScale"]] && options[["historicalThreshold"]],
+      "3ParameterLognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]] && options[["historicalThreshold"]],
+      FALSE  # default
+    )
+
     # Overlay distribution
     if (options[["processCapabilityPlotDistributions"]]) {
       if (distribution == "normal") {
-        p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)),
+        processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
+        p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sd(allData)),
                                         mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist")) +
-          ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw),
+          ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sdw),
                                  mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
         legendColors <- c(legendColors, "dodgerblue", "red")
         legendLty <- c(legendLty, "solid", "solid")
@@ -700,9 +744,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                           gettext("Normal dist.\n(std. dev. within)"))
 
       } else if (distribution == "weibull") {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
-        if (jaspBase::isTryError(distParameters))
-          stop(distParameters[1], call. = FALSE)
+        if (allParametersHistorical) {
+          # If all are historical, assign parameters as given in options
+          distParameters <- list(beta  = options[["historicalShapeValue"]],
+                                 theta = options[["historicalScaleValue"]])
+        } else {
+          distParameters <- .distributionParameters(data = allData, distribution = distribution)
+          if (jaspBase::isTryError(distParameters))
+            stop(distParameters[1], call. = FALSE)
+          if (options[["historicalShape"]])
+            distParameters$beta <- options[["historicalShapeValue"]]
+          if (options[["historicalScale"]])
+            distParameters$beta <- options[["historicalScaleValue"]]
+        }
         shape <- distParameters$beta
         scale <- distParameters$theta
         p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
@@ -711,9 +765,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, gettext("Weibull dist."))
       } else if (distribution == "lognormal") {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
-        if (jaspBase::isTryError(distParameters))
-          stop(distParameters[1], call. = FALSE)
+        if (allParametersHistorical) {
+          # If all are historical, assign parameters as given in options
+          distParameters <- list(beta  = options[["historicalLogMeanValue"]],
+                                 theta = options[["historicalLogStdDevValue"]])
+        } else {
+          distParameters <- .distributionParameters(data = allData, distribution = distribution)
+          if (jaspBase::isTryError(distParameters))
+            stop(distParameters[1], call. = FALSE)
+          if (options[["historicalLogMean"]])
+            distParameters$beta <- options[["historicalLogMeanValue"]]
+          if (options[["historicalLogStdDev"]])
+            distParameters$theta <- options[["historicalLogStdDevValue"]]
+        }
         shape <- distParameters$beta
         scale <- distParameters$theta
         p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale),
@@ -722,10 +786,23 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, "Lognormal dist.")
       } else if (distribution == "3ParameterLognormal") {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
-        if (jaspBase::isTryError(distParameters))
-          stop(distParameters[1], call. = FALSE)
-        shape <- distParameters$theta
+        if (allParametersHistorical) {
+          # If all are historical, assign parameters as given in options
+          distParameters <- list(beta  = options[["historicalLogMeanValue"]],
+                                 theta = options[["historicalLogStdDevValue"]],
+                                 threshold = options[["historicalThresholdValue"]])
+        } else {
+          distParameters <- .distributionParameters(data = allData, distribution = distribution)
+          if (jaspBase::isTryError(distParameters))
+            stop(distParameters[1], call. = FALSE)
+          if (options[["historicalLogMean"]])
+            distParameters$beta <- options[["historicalLogMeanValue"]]
+          if (options[["historicalLogStdDev"]])
+            distParameters$theta <- options[["historicalLogStdDevValue"]]
+          if (options[["historicalThreshold"]])
+            distParameters$threshold <- options[["historicalThresholdValue"]]
+        }
+        shape <- distParameters$theta # The distribution function uses theta for shape and beta for scale, which is reverse to convention
         scale <- distParameters$beta
         threshold <- distParameters$threshold
         p <- p + ggplot2::stat_function(fun = FAdist::dlnorm3 , args = list(shape = shape, scale = scale, thres = threshold),
@@ -734,9 +811,22 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, gettext("3-parameter\nlognormal dist."))
       } else if (distribution == "3ParameterWeibull") {
+        if (allParametersHistorical) {
+          # If all are historical, assign parameters as given in options
+          distParameters <- list(beta  = options[["historicalShapeValue"]],
+                                 theta = options[["historicalScaleValue"]],
+                                 threshold = options[["historicalThresholdValue"]])
+        } else {
         distParameters <- .distributionParameters(data = allData, distribution = distribution)
         if (jaspBase::isTryError(distParameters))
           stop(distParameters[1], call. = FALSE)
+        if (options[["historicalShape"]])
+          distParameters$beta <- options[["historicalShapeValue"]]
+        if (options[["historicalScale"]])
+          distParameters$beta <- options[["historicalScaleValue"]]
+        if (options[["historicalThreshold"]])
+          distParameters$threshold <- options[["historicalThresholdValue"]]
+        }
         shape <- distParameters$beta
         scale <- distParameters$theta
         threshold <- distParameters$threshold
@@ -868,11 +958,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
       sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
 
@@ -881,10 +971,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     lsl <- options[["lowerSpecificationLimitValue"]]
     n <- length(allData)
     k <- length(measurements)
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
     tolMultiplier <- 6
     cp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdw)
-    cpl <-if (options[["lowerSpecificationLimitBoundary"]]) NA else (mean(allData) - lsl) / ((tolMultiplier/2) * sdw)
-    cpu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - mean(allData)) / ((tolMultiplier/2) * sdw)
+    cpl <-if (options[["lowerSpecificationLimitBoundary"]]) NA else (processMean - lsl) / ((tolMultiplier/2) * sdw)
+    cpu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - processMean) / ((tolMultiplier/2) * sdw)
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
       cpk <-if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(cpu, cpl, na.rm = TRUE)
     } else if (options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]) {
@@ -1074,15 +1165,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
       sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
     sdo <- sd(allData)
-    meanOverall <- mean(allData)
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
     usl <- options[["upperSpecificationLimitValue"]]
     lsl <- options[["lowerSpecificationLimitValue"]]
     m <- (options[["upperSpecificationLimitValue"]] + options[["lowerSpecificationLimitValue"]])/2
@@ -1090,8 +1181,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     t <- options[["targetValue"]]
     tolMultiplier <- 6
     pp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdo)
-    ppl <- if (options[["lowerSpecificationLimitBoundary"]]) NA else (meanOverall - lsl) / ((tolMultiplier/2) * sdo)
-    ppu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - mean(allData)) / ((tolMultiplier/2) * sdo)
+    ppl <- if (options[["lowerSpecificationLimitBoundary"]]) NA else (processMean - lsl) / ((tolMultiplier/2) * sdo)
+    ppu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - processMean) / ((tolMultiplier/2) * sdo)
 
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
       ppk <- if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(ppu, ppl, na.rm = TRUE)
@@ -1135,7 +1226,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       if (options[["target"]] &&
           !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])){
         #CI for Cpm
-        a <- (meanOverall - t) / sdo
+        a <- (processMean - t) / sdo
         dfCpm <- (n * ((1 + (a^2))^2)) / (1 + (2 * (a^2)))
         ciLbCpm <- cpm * sqrt( qchisq(p = ciAlpha/2, df = dfCpm) /dfCpm)
         ciUbCpm <- cpm * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfCpm) / dfCpm)
@@ -1269,7 +1360,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       table2$addColumnInfo(name = expWithinComparisonColName, type = "integer", title = "Expected within", overtitle = colOvertitle2)
     }
 
-    #Calculate performance
+    # Calculate performance
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
@@ -1278,17 +1369,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
     rowNames <- c(sprintf("ppm < %s", lslTitle), sprintf("ppm > %s", uslTitle), "ppm total")
     sdo <- sd(allData)
-    meanOverall <- mean(allData)
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
       sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
 
-    #observed
+    # observed
     if (options[["lowerSpecificationLimit"]]) {
       oLSL <- (1e6*length(allDataVector[allDataVector < lsl])) / n
     } else {
@@ -1304,12 +1395,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     # expected total
     if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
-      eoLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdo))
+      eoLSL <- 1e6 * (1 - pnorm((processMean - lsl)/sdo))
     } else {
       eoLSL <- NA
     }
     if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-      eoUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdo))
+      eoUSL <- 1e6 * (1 - pnorm((usl - processMean)/sdo))
     } else {
       eoUSL <- NA
     }
@@ -1318,12 +1409,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     # expected within
     if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
-      ewLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdw))
+      ewLSL <- 1e6 * (1 - pnorm((processMean - lsl)/sdw))
     } else {
       ewLSL <- NA
     }
     if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-      ewUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdw))
+      ewUSL <- 1e6 * (1 - pnorm((usl - processMean)/sdw))
     } else {
       ewUSL <- NA
     }
@@ -1412,10 +1503,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettextf("Process summary"))
+  footnotes <- c()
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
     table$transpose <- TRUE
-    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+    footnotes <- paste0(footnotes, gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL). "))
   }
 
   if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
@@ -1441,7 +1533,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (options[["upperSpecificationLimit"]])
     table$addColumnInfo(name = "usl", type = "integer", title = uslTitle)
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
-  table$addColumnInfo(name = "mean", type = "number", title = gettext("Average"))
+  table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. dev."))
   if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "lognormal") {
     table$addColumnInfo(name = "beta", type = "number", title = gettextf("Log mean (%1$s)", "\u03BC"))
@@ -1475,11 +1567,71 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
-    distParameters[[i]] <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
-    if (jaspBase::isTryError(distParameters[[i]])) {
-      table$setError(distParameters[[i]][1])
-      container[["summaryTableNonNormal"]] <- table
-      return()
+
+    # logic that checks if all parameters necessary for the distribution are given as historical, if yes, skip the dist. est. function, else replace only the given parameters
+    allParametersHistorical <- switch(
+      options[["nonNormalDistribution"]],
+      "weibull" = options[["historicalShape"]] && options[["historicalScale"]],
+      "lognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]],
+      "3ParameterWeibull" = options[["historicalShape"]] && options[["historicalScale"]] && options[["historicalThreshold"]],
+      "3ParameterLognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]] && options[["historicalThreshold"]],
+      FALSE  # default
+    )
+
+    if (allParametersHistorical) {
+      if (allParametersHistorical) { # If all are historical, assign parameters as given in options
+        tempDistParamList <- switch(
+          options[["nonNormalDistribution"]],
+          "weibull" = list(
+            beta  = options[["historicalShapeValue"]],
+            theta = options[["historicalScaleValue"]]
+          ),
+          "lognormal" = list(
+            beta = options[["historicalLogMeanValue"]],
+            theta   = options[["historicalLogStdDevValue"]]
+          ),
+          "3ParameterWeibull" = list(
+            beta      = options[["historicalShapeValue"]],
+            theta     = options[["historicalScaleValue"]],
+            threshold = options[["historicalThresholdValue"]]
+          ),
+          "3ParameterLognormal" = list(
+            beta   = options[["historicalLogMeanValue"]],
+            theta     = options[["historicalLogStdDevValue"]],
+            threshold = options[["historicalThresholdValue"]]
+          ),
+          NULL
+        )
+        distParameters[[i]] <- tempDistParamList
+      }
+    } else { # If not all are historical, first estimate all parameters, then potentially replace some with the historical estimates
+      distParameters[[i]] <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
+      if (jaspBase::isTryError(distParameters[[i]])) {
+        table$setError(distParameters[[i]][1])
+        container[["summaryTableNonNormal"]] <- table
+        return()
+      }
+
+      ## If applicable, replace parameters with historical values
+      # Weibull and 3-parameter Weibull
+      if (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull") {
+        if (options[["historicalShape"]]) {
+          distParameters[[i]][["beta"]] <- options[["historicalShapeValue"]]
+        }
+        if (options[["historicalScale"]])
+          distParameters[[i]][["theta"]] <- options[["historicalScaleValue"]]
+        if (options[["nonNormalDistribution"]] == "3ParameterWeibull" && options[["historicalThreshold"]])
+          distParameters[[i]][["threshold"]] <- options[["historicalThresholdValue"]]
+
+        # Lognormal and 3-parameter Lognormal
+      } else if (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal") {
+        if (options[["historicalLogMean"]])
+          distParameters[[i]][["beta"]] <- options[["historicalLogMeanValue"]]
+        if (options[["historicalLogStdDev"]])
+          distParameters[[i]][["theta"]] <- options[["historicalLogStdDevValue"]]
+        if (options[["nonNormalDistribution"]] == "3ParameterLognormal" && options[["historicalThreshold"]])
+          distParameters[[i]][["threshold"]] <- options[["historicalThresholdValue"]]
+      }
     }
   }
 
@@ -1492,12 +1644,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     usl <- round(options[["upperSpecificationLimitValue"]], .numDecimals)
     target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
-    mean <- mean(allData, na.rm = TRUE)
+    processMean <- mean(allData, na.rm = TRUE)
     beta <- distParameters[[i]]$beta
     theta <- distParameters[[i]]$theta
 
     tableDfCurrentStage <- data.frame("n" = n,
-                                      "mean" = mean,
+                                      "mean" = processMean,
                                       "sd" = sd,
                                       "lsl" = lsl,
                                       "usl" = usl,
@@ -1663,12 +1815,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
       if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance") {
-          p1 <- FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE)
+          p1 <- FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE) # in this function, shape is theta and scale is beta, which is reverse to convention
           zLSL <- qnorm(p1)
           ppl <- -zLSL/3
         } else {
-          x135 <- FAdist::qlnorm3(p = 0.00135, shape = theta, scale = beta, thres = threshold)
-          x05 <- FAdist::qlnorm3(p = 0.5, shape = theta, scale = beta, thres = threshold)
+          x135 <- FAdist::qlnorm3(p = 0.00135, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
+          x05 <- FAdist::qlnorm3(p = 0.5, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
           ppl <- (x05 - lsl) / (x05 - x135)
         }
       } else {
@@ -1677,7 +1829,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance"){
-          p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)
+          p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
@@ -1855,12 +2007,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
       distname <- "3-parameter-lognormal"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
-        eoLSL <- 1e6 * FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE)
+        eoLSL <- 1e6 * FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE) # in this function, shape is theta and scale is beta, which is reverse to convention
       } else {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold))
+        eoUSL <- 1e6 * (1 - FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)) # in this function, shape is theta and scale is beta, which is reverse to convention
       } else {
         eoUSL <- NA
       }
@@ -1930,7 +2082,25 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return(tableDf3)
   }
 
-  table$addFootnote(gettextf("Calculations based on %s distribution.", distname))
+  # Add remaining footnotes
+  footnotes <- paste0(footnotes, gettextf("Calculations based on %s distribution.", distname))
+  if (options[["historicalShape"]] && (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull"))
+    footnotes <- paste0(footnotes, gettextf("The shape (%1$s) is based on a historical value. ", "\u03B2"))
+  if (options[["historicalScale"]] && (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull"))
+    footnotes <- paste0(footnotes, gettextf("The scale (%1$s) is based on a historical value. ", "\u03B8"))
+  if (options[["historicalLogMean"]] && (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
+    footnotes <- paste0(footnotes, gettextf("The log mean (%1$s) is based on a historical value. ", "\u03BC"))
+  if (options[["historicalLogStdDev"]] && (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
+    footnotes <- paste0(footnotes, gettextf("The log std. dev. (%1$s) is based on a historical value. ", "\u03C3"))
+  if (options[["historicalThreshold"]] && (options[["nonNormalDistribution"]] == "3ParameterWeibull" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
+    footnotes <- paste0(footnotes, gettext("The threshold is based on a historical value. "))
+
+  if (!is.null(footnotes))
+    table$addFootnote(footnotes)
+
+
+
+
   container[["summaryTableNonNormal"]] <- table
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
     table2$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
