@@ -97,10 +97,20 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
+
   # Error Handling
   if (ready) {
     .hasErrors(dataset, type = c('infinity'),
                all.target = measurements, exitAnalysisIfErrors = TRUE)
+  }
+
+  # Transform data as needed
+  if (ready) {
+    results <- .qcDataTransformations(jaspResults, dataset, measurements, options)
+    dataset <- results[["dataset"]]
+    # change specifications (limits + target value)
+    transformedSpecs <- results[["transformedSpecs"]]
+    options <- modifyList(options, transformedSpecs)
   }
 
   # Plot note about R/S chart recommendation
@@ -131,22 +141,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     plotHeight <- ceiling(nElements/2) * 500
     reportPlot <- createJaspPlot(title = gettext("Process Capability Report"), width = 1250, height = plotHeight)
     jaspResults[["report"]] <- reportPlot
-    jaspResults[["report"]]$dependOn(c("report", "measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
-                                       "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                       "controlLimitsNumberOfSigmas", "groupingVariableMethod", "reportProcessStability",
-                                       "reportProcessCapabilityPlot", "reportProbabilityPlot", "reportProcessCapabilityTables",
-                                       "upperSpecificationLimit", "lowerSpecificationLimit", "subgroupSizeUnequal", "fixedSubgroupSizeValue",
-                                       "capabilityStudyType", "nonNormalDistribution", "nonNormalMethod", "lowerSpecificationLimitValue",
-                                       "lowerSpecificationLimitBoundary", "target", "targetValue", "reportMetaData",
-                                       "upperSpecificationLimitValue", "upperSpecificationLimitBoundary", "processCapabilityPlotBinNumber",
-                                       "processCapabilityPlotDistributions", "processCapabilityPlotSpecificationLimits", "xBarMovingRangeLength",
-                                       "xmrChartMovingRangeLength", "xmrChartSpecificationLimits","probabilityPlotRankMethod",
-                                       "histogramBinBoundaryDirection", "nullDistribution", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
-                                       "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdUnbiasingConstant",
-                                       "subgroup", "reportTitle", "reportTitleText", "reportLocation", "reportLocationText",
-                                       "reportLine", "reportLineText", "reportMachine", "reportMachineText", "reportVariable",
-                                       "reportVariableText", "reportProcess", "reportProcessText", "reportDate", "reportDateText",
-                                       "reportReportedBy", "reportReportedByText", "reportConclusion", "reportConclusionText", .getDependenciesControlChartRules()))
+    jaspResults[["report"]]$dependOn(c(
+      "subgroups", "controlChartType", "controlLimitsNumberOfSigmas",
+      "capabilityStudyType", "nonNormalDistribution", "nonNormalMethod",
+      "lowerSpecificationLimitBoundary", "upperSpecificationLimitBoundary",
+      "processCapabilityPlotBinNumber", "processCapabilityPlotDistributions",
+      "processCapabilityPlotSpecificationLimits", "xBarMovingRangeLength",
+      "xmrChartMovingRangeLength", "xmrChartSpecificationLimits", "probabilityPlotRankMethod",
+      "histogramBinBoundaryDirection", "nullDistribution", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
+      "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdUnbiasingConstant",
+      .qcDataOptionNames(), .qcReportOptionNames(), .getDependenciesControlChartRules()
+    ))
 
     if((!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]) && options[["reportProcessCapabilityTables"]]) {
       reportPlot$setError(gettext("No specification limits set."))
@@ -255,20 +260,36 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["reportProcessCapabilityTables"]]) {
       if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") {
         processSummaryDF <- .qcProcessSummaryTable(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
-        potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
         overallCapDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, stages, returnOverallCapDataframe = TRUE)
         performanceDF <- .qcProcessCapabilityTableOverall(options, dataset, ready, container, measurements, stages, returnPerformanceDataframe = TRUE)
-        if (identical(stages, "")) {
-          tables[[1]] <- list(potentialWithinDF, overallCapDF, performanceDF, processSummaryDF)
-          tableTitles <- list(list("Process capability (within)", "Process performance (total)", "Non-conformance statistics", "Process summary"))
-          tableSize <- 6
-        } else {
-          tables[[1]] <- list(potentialWithinDF, overallCapDF)
-          tables[[2]] <- processSummaryDF
-          tables[[3]] <- performanceDF
-          tableTitles <- list(list("Process capability (within)", "Process performance (total)"), "Process summary", "Non-conformance statistics")
-          tableSize <- 5
+
+        if (.qcWithinProcessValid(options)) {
+          potentialWithinDF <- .qcProcessCapabilityTableWithin(options, dataset, ready, container, measurements, stages, returnDataframe = TRUE)
+          if (identical(stages, "")) {
+            tables[[1]] <- list(potentialWithinDF, overallCapDF, performanceDF, processSummaryDF)
+            tableTitles <- list(list("Process capability (within)", "Process performance (total)", "Non-conformance statistics", "Process summary"))
+            tableSize <- 6
+          } else {
+            tables[[1]] <- list(potentialWithinDF, overallCapDF)
+            tables[[2]] <- processSummaryDF
+            tables[[3]] <- performanceDF
+            tableTitles <- list(list("Process capability (within)", "Process performance (total)"), "Process summary", "Non-conformance statistics")
+            tableSize <- 5
+          }
+        } else { # leave out within tables
+          if (identical(stages, "")) {
+            tables[[1]] <- list(overallCapDF, performanceDF, processSummaryDF)
+            tableTitles <- list(list("Process performance (total)", "Non-conformance statistics", "Process summary"))
+            tableSize <- 6
+          } else {
+            tables[[1]] <- list(overallCapDF)
+            tables[[2]] <- processSummaryDF
+            tables[[3]] <- performanceDF
+            tableTitles <- list(list("Process performance (total)"), "Process summary", "Non-conformance statistics")
+            tableSize <- 5
+          }
         }
+
       } else {
         processSummaryDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnSummaryDF = TRUE)
         overallCapDF <- .qcProcessCapabilityTableNonNormal(options, dataset, ready, container, measurements, stages, returnCapabilityDF = TRUE)
@@ -305,10 +326,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                 "xBarMR" = "mR")
       # first chart is always xBar-chart, second is either R-, mR-, or s-chart
       jaspResults[["xBar"]] <- createJaspContainer(gettextf("X-bar & %s control chart", secondPlotTitle))
-      jaspResults[["xBar"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
-                                       "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                       "subgroupSizeUnequal", "controlChartSdUnbiasingConstant", "controlChart",
-                                       "controlLimitsNumberOfSigmas", "groupingVariableMethod", .getDependenciesControlChartRules()))
+      jaspResults[["xBar"]]$dependOn(c(
+        "subgroups", "controlChartType", "report", "controlChartSdUnbiasingConstant",
+        "controlChart", "controlLimitsNumberOfSigmas",
+        .qcDataOptionNames(), .getDependenciesControlChartRules()
+      ))
       jaspResults[["xBar"]]$position <- 1
 
 
@@ -347,9 +369,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       }
     } else if (options[["controlChartType"]] == "xmr" && options[["controlChart"]]) {
       jaspResults[["xmr"]] <- createJaspContainer(gettext("X-mR control chart"))
-      jaspResults[["xmr"]]$dependOn(c("measurementLongFormat", "measurementsWideFormat", "subgroups", "controlChartType",
-                                      "report", "stagesLongFormat", "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue",
-                                      "subgroupSizeUnequal", "controlChart", "controlLimitsNumberOfSigmas", "groupingVariableMethod", .getDependenciesControlChartRules()))
+      jaspResults[["xmr"]]$dependOn(c(
+        "subgroups", "controlChartType", "report", "controlChart",
+        "controlLimitsNumberOfSigmas",
+        .qcDataOptionNames(), .getDependenciesControlChartRules()
+      ))
+
       jaspResults[["xmr"]]$position <- 1
       if (ready && is.null(jaspResults[["xmr"]][["plot"]])) {
         jaspResults[["xmr"]][["plot"]] <- createJaspPlot(title =  gettext("X-mR control chart"), width = 1200, height = 500)
@@ -402,13 +427,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .qcCapabilityAnalysis <- function(options, dataset, ready, jaspResults, measurements, stages) {
   container <- createJaspContainer(gettext("Capability study"))
-  container$dependOn(options = c("CapabilityStudyType", "measurementsWideFormat", "subgroup", "lowerSpecificationLimitValue",
-                                 "upperSpecificationLimitValue", "targetValue", "measurementLongFormat", "manualSubgroupSizeValue",
-                                 "dataFormat", "processCapabilityPlot", "processCapabilityTable", "manualSubgroupSize", "report",
-                                 "stagesLongFormat", "stagesWideFormat","controlChartSdUnbiasingConstant", "lowerSpecificationLimitBoundary",
-                                 "upperSpecificationLimitBoundary", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
-                                 "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdEstimationMethodMeanMovingRangeLength",
-                                 "groupingVariableMethod"))
+  container$dependOn(c(
+    "capabilityStudyType", "processCapabilityPlot", "processCapabilityTable",
+    "manualSubgroupSize", "report", "controlChartSdUnbiasingConstant",
+    "lowerSpecificationLimitBoundary", "upperSpecificationLimitBoundary",
+    "controlChartSdEstimationMethodGroupSizeLargerThanOne", "controlChartSdEstimationMethodGroupSizeEqualOne",
+    "controlChartSdEstimationMethodMeanMovingRangeLength",
+    .qcDataOptionNames()
+  ))
+
   container$position <- 4
   jaspResults[["capabilityAnalysis"]] <- container
 
@@ -452,7 +479,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["processCapabilityPlot"]])
       .qcProcessCapabilityPlot(options, dataset, ready, normalContainer, measurements, stages, "normal")
     if (options[["processCapabilityTable"]]) {
-      .qcProcessCapabilityTableWithin(options, dataset, ready, normalContainer, measurements, stages)
+      if (.qcWithinProcessValid(options))
+        .qcProcessCapabilityTableWithin(options, dataset, ready, normalContainer, measurements, stages)
+
       .qcProcessCapabilityTableOverall(options, dataset, ready, normalContainer, measurements, stages)
     }
   }
@@ -469,6 +498,55 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 ## Output ####
+
+.qcDataTransformations <- function(jaspResults, dataset, measurements, options) {
+  # this function transforms `dataset`, lower and upper specification limits, and target (in the options list)
+  # transformed `dataset` and `options` are returned in a list
+  # as a side product, this function generates output that shows to the user how was the data transformed
+
+  # if no transform, don't show anything and return unchanged inputs
+  if (options[["dataTransformation"]] == "none") return(list(dataset=dataset, transformedSpecs=list()))
+
+  # create the main output (fill later)
+  dataTransformationContainer <- jaspResults[["dataTransformationContainer"]] %setOrRetrieve%
+    createJaspContainer(
+      title = gettext("Data transformation"),
+      dependencies = .qcDataOptionNames(),
+      position=0
+    )
+
+  # return state if available
+  if(!is.null(jaspResults[["dataTransformationState"]])) return(jaspResults[["dataTransformationState"]]$object)
+
+  # transform data and return parameters of the transform
+  result <- try(.qcTransformData(dataset = dataset, measurements = measurements, options = options))
+
+  if(isTryError(result)) {
+    message <- gettextf("Data could not be transformed: %1$s", .extractErrorMessage(result))
+    .quitAnalysis(message)
+  }
+
+  # retrieve data and parameters
+  dataset <- result[["dataset"]]
+  parameters <- result[["parameters"]]
+
+
+  # transform lower and upper spec limits, target
+  transformedSpecs <- try(.qcTransformSpecs(options = options, parameters = parameters), silent=TRUE)
+
+  if(isTryError(transformedSpecs)) {
+    message <- gettextf("Specification limits could not be transformed: %1$s", .extractErrorMessage(transformedSpecs))
+    .quitAnalysis(message)
+  }
+
+  .qcFillTransformOutput(dataTransformationContainer, options=options, parameters=parameters)
+
+  output <- list(dataset=dataset, transformedSpecs=transformedSpecs)
+
+  jaspResults[["dataTransformationState"]] <- createJaspState(object = output, dependencies = .qcDataOptionNames())
+
+  return(output)
+}
 
 .qcProcessSummaryTable <- function(options, dataset, ready, container, measurements, stages, returnDataframe = FALSE) {
   if (identical(stages, "")) {
@@ -497,7 +575,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
   table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. dev. (total)"))
-  table$addColumnInfo(name = "sdw", type = "number", title = gettext("Std. dev. (within)"))
+  if (.qcWithinProcessValid(options))
+    table$addColumnInfo(name = "sdw", type = "number", title = gettext("Std. dev. (within)"))
   table$showSpecifiedColumnsOnly <- TRUE
 
   if (!ready)
@@ -557,9 +636,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (returnDataframe) {
     lslTitle <- if (options[["lowerSpecificationLimitBoundary"]]) gettext("LB") else gettext("LSL")
     uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
-    sourceVector <- c(lslTitle, "Target", uslTitle, "N", "Mean", "SD (total)", "SD (within)")
+    sourceVector <- c(lslTitle, "Target", uslTitle, "N", "Mean", "SD (total)")
     if (nStages > 1)
       sourceVector <- c("Stage", sourceVector)
+    if (.qcWithinProcessValid(options)) {
+      sourceVector <- c(sourceVector, "SD (within)")
+    }
     tableNRows <- if (nStages > 1) nStages * 2 - 1 else 1
     formattedTableDf <- data.frame(matrix(nrow = tableNRows, ncol = 0))
     if (nStages > 1) {
@@ -587,7 +669,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     formattedTableDf[["n"]] <- tableList[["n"]]
     formattedTableDf[["mean"]] <- round(tableList[["mean"]], nDecimals)
     formattedTableDf[["sd"]] <- round(tableList[["sd"]], nDecimals)
-    formattedTableDf[["sdw"]] <- round(tableList[["sdw"]], nDecimals)
+    if (.qcWithinProcessValid(options)) formattedTableDf[["sdw"]] <- round(tableList[["sdw"]], nDecimals)
     colnames(formattedTableDf) <- sourceVector
     return(formattedTableDf)
   }
@@ -691,13 +773,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["processCapabilityPlotDistributions"]]) {
       if (distribution == "normal") {
         p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)),
-                                        mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist")) +
-          ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw),
-                                 mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
-        legendColors <- c(legendColors, "dodgerblue", "red")
-        legendLty <- c(legendLty, "solid", "solid")
-        legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
-                          gettext("Normal dist.\n(std. dev. within)"))
+                                        mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist"))
+        legendColors <- c(legendColors, "dodgerblue")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"))
+
+        if (.qcWithinProcessValid(options)) {
+          p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw),
+                                          mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
+          legendColors <- c(legendColors, "red")
+          legendLty <- c(legendLty, "solid")
+          legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. within)"))
+        }
 
       } else if (distribution == "weibull") {
         distParameters <- .distributionParameters(data = allData, distribution = distribution)
@@ -1256,7 +1343,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     expWithinColName <- paste0("expWithin", stage)
     table2$addColumnInfo(name = observedColName, type = "integer", title = "Observed", overtitle = colOvertitle)
     table2$addColumnInfo(name = expOverallColName, type = "integer", title = "Expected total", overtitle = colOvertitle)
-    table2$addColumnInfo(name = expWithinColName, type = "integer", title = "Expected within", overtitle = colOvertitle)
+    if (.qcWithinProcessValid(options))
+      table2$addColumnInfo(name = expWithinColName, type = "integer", title = "Expected within", overtitle = colOvertitle)
 
     # Table columns for comparison
     if (i > 1) {
@@ -1387,6 +1475,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableDf2$`Expected Overall`[is.na(tableDf2$`Expected Overall`)] <- "*" # This looks better in the table and makes clearer that there is not an error
     tableDf2$`Expected Within`[is.na(tableDf2$`Expected Within`)] <- "*"
     tableDf2$Observed[is.na(tableDf2$Observed)] <- "*"
+
+    if (!.qcWithinProcessValid(options)) tableDf2$`Expected Within` <- "*"
     return(tableDf2)
   }
 
@@ -1950,9 +2040,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!options[["probabilityPlot"]] || !is.null(jaspResults[["probabilityContainer"]]))
     return()
   container <- createJaspContainer(gettext("Probability table and plot"))
-  container$dependOn(options = c("measurementsWideFormat", "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution",
-                                 "probabilityPlotGridLines", "measurementLongFormat","subgroup", "report", "stagesLongFormat",
-                                 "stagesWideFormat", "subgroupSizeType","manualSubgroupSizeValue", "groupingVariableMethod"))
+  container$dependOn(c(
+    "probabilityPlot", "probabilityPlotRankMethod", "nullDistribution",
+    "probabilityPlotGridLines", "report",
+    .qcDataOptionNames()
+  ))
   container$position <- 3
   jaspResults[["probabilityContainer"]] <- container
 
@@ -2311,10 +2403,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (!ready) {
     plot <- createJaspPlot(title = gettext("Histogram"), width = 600, height = 400)
-    plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
-                              "report", "measurementLongFormat", "manualSubgroupSizeValue", "subgroup", 'nullDistribution',
-                              "stagesLongFormat", "stagesWideFormat", "histogramBinBoundaryDirection", "subgroupSizeType",
-                              "manualSubgroupSizeValue", "groupingVariableMethod"))
+    plot$dependOn(c(
+      "histogram", "histogramDensityLine", "histogramBinNumber",
+      "report", "nullDistribution", "histogramBinBoundaryDirection",
+      .qcDataOptionNames()
+    ))
     jaspResults[["histogram"]] <- plot
     return()
   }
@@ -2330,10 +2423,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotWidth <- nCol * 600
   plotHeight <- nRow * 400
   plot <- createJaspPlot(title = gettext("Histogram"), width = plotWidth, height = plotHeight)
-  plot$dependOn(options = c("histogram", "histogramDensityLine", "measurementsWideFormat", "histogramBinNumber",
-                            "report", "measurementLongFormat", "manualSubgroupSizeValue", "subgroup", 'nullDistribution',
-                            "stagesLongFormat", "stagesWideFormat", "histogramBinBoundaryDirection", "subgroupSizeType",
-                            "manualSubgroupSizeValue", "groupingVariableMethod"))
+  plot$dependOn(c(
+    "histogram", "histogramDensityLine", "histogramBinNumber",
+    "report", "nullDistribution", "histogramBinBoundaryDirection",
+    .qcDataOptionNames()
+  ))
   plot$position <- 2
   jaspResults[["histogram"]] <- plot
 
@@ -2440,4 +2534,245 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     output[is.na(number)] <- NA
 
   return(output)
+}
+
+
+# helper functions for transforms ----
+
+.qcTransformData <- function(dataset, measurements, options) {
+  # we need to append a unique id for each row in a wide format
+  # so that we can do pivot_longer -> pivot_wider
+
+  # save any possible columns that might be next to grouping and measurements
+  extra <- dplyr::select(dataset, -tidyr::all_of(measurements))
+
+  # then add a column which IDs the measurements
+  dataset[["id"]] <- seq_len(nrow(dataset))
+
+  # and finally convert to long
+  dataset <- tidyr::pivot_longer(dataset, tidyr::all_of(measurements))
+
+  x <- dataset[["value"]]
+  group <- dataset[["name"]]
+  lambda <- options[["dataTransformationLambda"]]
+  shift <- options[["dataTransformationShift"]]
+  method <- options[["dataTransformationMethod"]]
+  ca <- options[["dataTransformationContinuityAdjustment"]]
+
+  dataset[["value"]] <- switch(
+    options[["dataTransformation"]],
+    boxCox = jaspBase::BoxCox(x, lambda=lambda, shift=shift, continuityAdjustment=ca),
+    boxCoxAuto = jaspBase::BoxCoxAuto(x, predictor=as.factor(group), shift=shift, method=method, continuityAdjustment=ca),
+    yeoJohnson = jaspBase::YeoJohnson(x, lambda=lambda),
+    yeoJohnsonAuto = jaspBase::YeoJohnsonAuto(x),
+    johnson = jaspBase::Johnson(x)
+  )
+
+  # some auto-transformations return meta-info about the applied transform
+  attr <- attributes(dataset[["value"]])
+  attributes(dataset[["value"]]) <- NULL
+
+  # reshape back to wider format and remove the id col
+  dataset <- tidyr::pivot_wider(dataset, values_from="value", names_from="name", id_cols="id")
+  dataset[["id"]] <- NULL
+  dataset <- as.data.frame(dataset)
+  # return extra columns
+  dataset <- cbind(dataset, extra)
+
+  return(list(dataset=dataset, parameters=attr))
+}
+
+
+.qcTransformSpecs <- function(options, parameters) {
+  # lower and upper specification specs + target value transformed
+  specs <- list()
+
+  if(options[["lowerSpecificationLimit"]]) specs <- c(specs, options["lowerSpecificationLimitValue"])
+  if(options[["upperSpecificationLimit"]]) specs <- c(specs, options["upperSpecificationLimitValue"])
+  if(options[["target"]]) specs <- c(specs, options["targetValue"])
+
+  specs <- unlist(specs)
+
+  if (length(specs) == 0L) return(list())
+
+  specNames <- names(specs)
+
+  if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto")) {
+    shift <- options[["dataTransformationShift"]]
+    lambda <- if(options[["dataTransformation"]] == "boxCox") options[["dataTransformationLambda"]] else parameters[["lambda"]]
+    if (any(specs + shift <= 0))
+      stop(gettextf("Some specification limits or target value are outside of the support of the Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f).", -shift))
+
+    specs <- BoxCox(specs, lambda=lambda, shift=shift, continuityAdjustment=options[["dataTransformationContinuityAdjustment"]])
+  } else if(options[["dataTransformation"]] %in% c("yeoJohnson", "yeoJohnsonAuto")) {
+    lambda <- if(options[["dataTransformation"]] == "yeoJohnson") options[["dataTransformationLambda"]] else parameters[["lambda"]]
+    specs <- YeoJohnson(specs, lambda=lambda)
+  } else if (options[["dataTransformation"]] == "johnson") {
+    args <- parameters[["params"]]
+    args[["x"]] <- specs
+
+    # check for errors (invalid bounds)
+    # there might be some corrections for these cases but I could not find proper references except for documentation of other software.
+    # so for now we will just throw an error...
+    if (parameters[["type"]] == "sb") { # bounded between epsilon and epsilon+lambda
+      min <- args[["epsilon"]]
+      max <- args[["epsilon"]] + args[["lambda"]]
+
+      if (any(specs <= min) || any(specs >= max))
+        stop(gettextf("Some specification limits or target value are outside of the support of the Johnson (SB) transform. The bounds of the transform were identified to between %1$f and %2$f.", min, max))
+    } else if(parameters[["type"]] == "sl") { # bounded from below by epsilon
+      min <- args[["epsilon"]]
+
+      if (any(specs <= min))
+        stop(gettextf("Some specification limits or target value are outside of the support of the Johnson (SL) transform. The lower bound of the transform was identified as %1$f.", min))
+    }
+
+    #TODO: export these functions from jaspBase
+    specs <- switch(
+      parameters[["type"]],
+      sb = with(data=args, gamma + eta * log((x - epsilon) / (lambda + epsilon - x))),
+      sl = with(data=args, gamma + eta * log(x - epsilon)),
+      su = with(data=args, gamma + eta * asinh((x - epsilon) / lambda))
+    )
+  }
+
+  names(specs) <- specNames
+
+  return(as.list(specs))
+}
+
+.qcFillTransformOutput <- function(container, options, parameters) {
+  container[["formula"]] <- .qcTransformFormula(options, parameters)
+  container[["table"]] <- .qcTransformTable(options, parameters)
+}
+
+.qcTransformFormula <- function(options, parameters) {
+  if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto")) {
+    name <- "Box-Cox"
+    shift <- options[["dataTransformationShift"]]
+    lambda <- if(options[["dataTransformation"]] == "boxCox") options[["dataTransformationLambda"]] else parameters[["lambda"]]
+
+    if (shift == 0) {
+      if (lambda == 0) {
+        formula <- r"(y = \ln(x))"
+      } else if (!options[["dataTransformationContinuityAdjustment"]]) {
+        formula <- r"(y = x^\lambda)"
+      } else {
+        formula <- r"(y = \frac{x^\lambda - 1}{\lambda})"
+      }
+    } else {
+      if (lambda == 0) {
+        formula <- r"(y = \ln(x + \text{shift}))"
+      } else if (!options[["dataTransformationContinuityAdjustment"]]) {
+        formula <- r"(y = (x+\text{shift})^\lambda)"
+      } else {
+        formula <- r"(y = \frac{(x+\text{shift})^\lambda - 1}{\lambda})"
+      }
+    }
+
+  } else if (options[["dataTransformation"]] %in% c("yeoJohnson", "yeoJohnsonAuto")) {
+    name <- "Yeo-Johnson"
+
+    formula <-
+      r"(
+      y =
+      \begin{cases}
+        ((x+1)^\lambda-1)/\lambda                      &  \text{if }\lambda \neq 0, x \geq 0 \\
+        \ln(x + 1)                                     &  \text{if }\lambda =    0, x \geq 0 \\
+        -((-x + 1)^{(2-\lambda)} - 1) / (2 - \lambda)  &  \text{if }\lambda \neq 2, x <    0 \\
+        -\ln(-x + 1)                                   &  \text{if }\lambda =    2, x <    0
+      \end{cases}
+      )"
+
+  } else if (options[["dataTransformation"]] == "johnson") {
+    formula <- switch(
+      parameters[["type"]],
+      "sb" = r"(y = \gamma + \eta \ln \frac{x-\epsilon}{\lambda + \epsilon - x})",
+      "sl" = r"(y = \gamma + \eta \ln (x-\epsilon))",
+      "su" = r"(y = \gamma + \eta \sinh^{-1} \frac{x-\epsilon}{\lambda})"
+    )
+    name <- switch(
+      parameters[["type"]],
+      "sb" = "Johnson (SB)",
+      "sl" = "Johnson (SL)",
+      "su" = "Johnson (SU)"
+    )
+  }
+
+  formula <- mathExpression(formula, inline=FALSE)
+
+  intro <- gettextf("The measurements, specification limits and target value were transformed using the %s transformation, with the following formula,", name)
+
+  html <- createJaspHtml(title="", text = paste(intro, formula, sep="</br>"))
+
+  return(html)
+}
+
+
+.qcTransformTable <- function(options, parameters) {
+  table <- createJaspTable(title = gettext("Parameters of the transform"))
+  table$addColumnInfo(name = "par",   title = gettext("Parameter"), type = "string")
+  table$addColumnInfo(name = "value", title = gettext("Value"),     type = "number"  )
+
+  if (options[["dataTransformation"]] %in% c("boxCox", "boxCoxAuto") && options[["dataTransformationShift"]]!=0)
+    table$addRows(list(par="shift", value=options[["dataTransformationShift"]]))
+
+
+  if (options[["dataTransformation"]] %in% c("boxCox", "yeoJohnson")) {
+    table$addRows(list(par=mathExpression("\\lambda"), value=options[["dataTransformationLambda"]]))
+
+  } else if (options[["dataTransformation"]] %in% c("boxCoxAuto", "yeoJohnsonAuto")) {
+    table$addRows(list(par=mathExpression("\\lambda"), value=parameters[["lambda"]]), rowNames = "lambda")
+    table$addFootnote(gettext("Estimated from data"), rowNames = "lambda", colNames = "value")
+
+  } else if (options[["dataTransformation"]] == "johnson") {
+    if (parameters[["type"]] %in% c("sb", "su")) {
+      pars <- mathExpression(c("\\eta", "\\gamma", "\\lambda", "\\epsilon"))
+      vals <- c(parameters[["params"]][c("eta", "gamma", "lambda", "epsilon")])
+    } else if (parameters[["type"]] == "sl") {
+      pars <- mathExpression(c("\\eta", "\\gamma", "\\epsilon"))
+      vals <- c(parameters[["params"]][c("eta", "gamma", "epsilon")])
+    }
+
+    table$setData(list(par=pars, value=vals))
+
+    table$addFootnote(gettext("All values estimated from data"), colNames = "value")
+  }
+  return(table)
+}
+
+.qcDataOptionNames <- function() {
+  dependencies <- c("dataFormat",
+                    "measurementLongFormat", "subgroup","stagesLongFormat",
+                    "measurementsWideFormat", "stagesWideFormat",
+                    "subgroupSizeType", "groupingVariable", "groupingVariableMethod",
+                    "subgroupSizeUnequal", "fixedSubgroupSizeValue", "manualSubgroupSizeValue",
+                    "dataTransformation", "dataTransformationShift", "dataTransformationLambda",
+                    "dataTransformationMethod",
+                    "dataTransformationLambdaLower", "dataTransformationLambdaUpper",
+                    "dataTransformationContinuityAdjustment",
+                    "lowerSpecificationLimit", "lowerSpecificationLimitValue",
+                    "target", "targetValue",
+                    "upperSpecificationLimit", "upperSpecificationLimitValue")
+  return(dependencies)
+}
+
+.qcReportOptionNames <- function() {
+  dependencies <- c("report", "reportMetaData", "reportTitle", "reportTitleText",
+                    "reportLocation", "reportLocationText", "reportLine", "reportLineText",
+                    "reportMachine", "reportMachineText", "reportVariable", "reportVariableText",
+                    "reportProcess", "reportProcessText", "reportDate", "reportDateText",
+                    "reportReportedBy", "reportReportedByText", "reportConclusion",
+                    "reportConclusionText", "reportProcessStability", "reportProcessCapabilityPlot",
+                    "reportProbabilityPlot", "reportProcessCapabilityTables")
+
+  return(dependencies)
+}
+
+.qcWithinProcessValid <- function(options) {
+  # within process results make sense only for selected transforms:
+  # - none,
+  # - those that have only fixed parameters (Box-Cox and Yeo-Johnson with manually fixed params)
+  # - Box-Cox auto (normalizes within groups, not across groups)
+  return(options[["dataTransformation"]] %in% c("none", "boxCox", "boxCoxAuto", "yeoJohnson"))
 }

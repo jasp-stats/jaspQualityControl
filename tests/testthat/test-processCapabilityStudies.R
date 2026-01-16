@@ -2874,3 +2874,81 @@ test_that("WF19 (Normal) Basic test of report functionality with removed element
   jaspTools::expect_equal_plots(testPlot, "process-capability-reportW19")
 })
 
+# Test auto transforms----
+# Note: These are consistency tests, not correctness tests
+
+options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "groupingVariable"
+options$subgroup <- "Time"
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+
+test_that("BoxCox works", {
+  options$dataTransformation <- "boxCox"
+  options$dataTransformationLambda <- 0
+  options$dataTransformationShift <- 2
+
+  set.seed(1)
+  results <- runAnalysis("processCapabilityStudies",
+                         "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table, list(0.69, 2.18504961157134, 100, 0.207821225306874, 0.198250378571927,
+                                             2.08, 2.64))
+})
+
+test_that("BoxCox (Auto) works", {
+  options$dataTransformation <- "boxCoxAuto"
+  options$dataTransformationShift <- 1
+
+  set.seed(1)
+  results <- runAnalysis("processCapabilityStudies",
+                         "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table, list(1, 2.69160828615533, 100, 0.298231720046251, 0.284621111299297,
+                                             2.53, 3.4))
+})
+
+test_that("Yeo-Johnson works", {
+  options$dataTransformation <- "yeoJohnson"
+  options$dataTransformationLambda <- 2
+
+  set.seed(1)
+  results <- runAnalysis("processCapabilityStudies",
+                         "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table, list(0, 33.849, 100, 15.6785781281726, 14.4851676698194, 24, 84))
+})
+
+test_that("Yeo-Johnson (Auto) works", {
+  options$dataTransformation <- "yeoJohnsonAuto"
+
+  set.seed(1)
+  results <- runAnalysis("processCapabilityStudies",
+                         "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table, list(0, 3.5581989329033, 100, 0.628787240665193, 3.22, 5.05))
+})
+
+test_that("Johnson works", {
+  options$dataTransformation <- "johnson"
+  options$lowerSpecificationLimitValue <- 1
+
+  set.seed(1)
+  results <- runAnalysis("processCapabilityStudies",
+                         "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table, list(-6.1, 0.0370948315811945, 100, 0.974770462374867, -0.47, 2.47))
+})

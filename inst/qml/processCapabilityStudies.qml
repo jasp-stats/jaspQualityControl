@@ -204,6 +204,61 @@ Form
 		{
 			Group
 			{
+				title: qsTr("Transform data")
+				DropDown
+				{
+					name:		"dataTransformation"
+					id:			dataTransformation
+					label:		qsTr("Type")
+					values:
+					[
+						{label: qsTr("None"),					value: "none"},
+						{label: qsTr("Box-Cox"),				value: "boxCox"},
+						{label: qsTr("Box-Cox (auto)"),			value: "boxCoxAuto"},
+						{label: qsTr("Yeo-Johnson"),			value: "yeoJohnson"},
+						{label: qsTr("Yeo-Johnson (auto)"),		value: "yeoJohnsonAuto"},
+						{label: qsTr("Johnson"),				value: "johnson"},
+					]
+				}
+
+				DoubleField
+				{
+					label: qsTr("Shift")
+					name: "dataTransformationShift"
+					negativeValues:	true
+					defaultValue: 0
+					enabled: ["boxCox", "boxCoxAuto"].includes(dataTransformation.value)
+				}
+				DoubleField
+				{
+					label: qsTr("Lambda")
+					name: "dataTransformationLambda"
+					negativeValues:	true
+					defaultValue: 0
+					enabled: ["boxCox", "yeoJohnson"].includes(dataTransformation.value)
+				}
+				DropDown
+				{
+					name:		"dataTransformationMethod"
+					label:		qsTr("Type")
+					values:
+					[
+						{label: qsTr("Log. Lik"),					value: "loglik"},
+						{label: qsTr("SD"),							value: "sd"},
+						{label: qsTr("Average moving range"),		value: "movingRange"},
+					]
+					enabled: ["boxCoxAuto"].includes(dataTransformation.value)
+				}
+				CheckBox
+				{
+					label: qsTr("Continuity Adjustment")
+					name: "dataTransformationContinuityAdjustment"
+					checked: false
+					enabled: ["boxCox", "boxCoxAuto"].includes(dataTransformation.value)
+				}
+			}
+			Group
+			{
 				title:					qsTr("Type of data distribution")
 
 
