@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2025-07-26 03:57\n"
+"POT-Creation-Date: 2026-01-17 03:56\n"
 "PO-Revision-Date: 2025-12-31 12:01+0000\n"
 "Last-Translator: Marko Bojović <bojovicmarko@outlook.com>\n"
 "Language-Team: Serbian <https://hosted.weblate.org/projects/jasp/"
@@ -670,6 +670,9 @@ msgstr ""
 msgid "<i>p</i>-value"
 msgstr ""
 
+msgid "Percent bias"
+msgstr ""
+
 msgid "Regression model"
 msgstr ""
 
@@ -691,12 +694,10 @@ msgstr ""
 msgid "R%1$s"
 msgstr ""
 
-msgid "%% Linearity"
+msgid "Linearity"
 msgstr ""
 
-msgid ""
-"Calculations are based on 6 times the historical standard variation unless "
-"specified otherwise."
+msgid "%% Linearity"
 msgstr ""
 
 msgid "Bias and linearity"
@@ -723,19 +724,10 @@ msgstr ""
 msgid "t-test not possible. No variance detected in Part(s) %s."
 msgstr ""
 
-msgid "t-est not possible. No variance detected in part(s) %s."
-msgstr ""
-
 msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
 msgstr ""
 
 msgid "Reference"
-msgstr ""
-
-msgid "Percent bias"
-msgstr ""
-
-msgid "Linearity"
 msgstr ""
 
 msgid "Total"

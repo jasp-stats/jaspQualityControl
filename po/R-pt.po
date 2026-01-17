@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2025-07-26 03:57\n"
+"POT-Creation-Date: 2026-01-17 03:56\n"
 "PO-Revision-Date: 2025-08-24 15:02+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -696,6 +696,9 @@ msgstr "Viés médio"
 msgid "<i>p</i>-value"
 msgstr "valor-<i>p</i>"
 
+msgid "Percent bias"
+msgstr "Viés percentual"
+
 msgid "Regression model"
 msgstr "Modelo de regressão"
 
@@ -717,15 +720,11 @@ msgstr "Linearidade do medidor"
 msgid "R%1$s"
 msgstr "R%1$s"
 
+msgid "Linearity"
+msgstr "Linearidade"
+
 msgid "%% Linearity"
 msgstr "%% Linearidade"
-
-msgid ""
-"Calculations are based on 6 times the historical standard variation unless "
-"specified otherwise."
-msgstr ""
-"Os cálculos são baseados em 6 vezes a variação histórica padrão, a menos que "
-"especificado de outra forma."
 
 msgid "Bias and linearity"
 msgstr "Viés e linearidade"
@@ -757,20 +756,11 @@ msgstr ""
 msgid "t-test not possible. No variance detected in Part(s) %s."
 msgstr "Teste t impossível. Nenhuma variância detectada na(s) peça(s) %s."
 
-msgid "t-est not possible. No variance detected in part(s) %s."
-msgstr "Teste t impossível. Nenhuma variante detectada na(s) parte(s) %s."
-
 msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
 msgstr "Viés = %1$.2f %2$s %3$.2f * Valor de referência"
 
 msgid "Reference"
 msgstr "Referência"
-
-msgid "Percent bias"
-msgstr "Viés percentual"
-
-msgid "Linearity"
-msgstr "Linearidade"
 
 msgid "Total"
 msgstr "Total"
@@ -910,7 +900,8 @@ msgid "Number of distinct categories = %i"
 msgstr "Número de categorias distintas = %i"
 
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr "A Variação do Estudo é calculada como desv. pad. <spam>&#215;</spam> %i"
+msgstr ""
+"A Variação do Estudo é calculada como desv. pad. <spam>&#215;</spam> %i"
 
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr ""
@@ -934,7 +925,8 @@ msgid "Two-way ANOVA table without interaction"
 msgstr "Tabela ANOVA bifatorial sem interação"
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %i"
-msgstr "A variação do estudo é calculada como desv. pad. <spam>&#215;</spam> %i"
+msgstr ""
+"A variação do estudo é calculada como desv. pad. <spam>&#215;</spam> %i"
 
 msgid "Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr ""
@@ -1676,6 +1668,16 @@ msgstr "Gráfico de controle X-bar e %1$s"
 
 msgid "Variables Chart for Subgroups Report"
 msgstr "Gráfico de Variáveis para Relatório de Subgrupos"
+
+#~ msgid ""
+#~ "Calculations are based on 6 times the historical standard variation "
+#~ "unless specified otherwise."
+#~ msgstr ""
+#~ "Os cálculos são baseados em 6 vezes a variação histórica padrão, a menos "
+#~ "que especificado de outra forma."
+
+#~ msgid "t-est not possible. No variance detected in part(s) %s."
+#~ msgstr "Teste t impossível. Nenhuma variante detectada na(s) parte(s) %s."
 
 #~ msgid "Subgroups"
 #~ msgstr "Subgrupos"

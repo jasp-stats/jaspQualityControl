@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2025-07-26 03:57\n"
+"POT-Creation-Date: 2026-01-17 03:56\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -735,6 +735,10 @@ msgid "<i>p</i>-value"
 msgstr "<i>p</i>-waarde"
 
 #, fuzzy
+msgid "Percent bias"
+msgstr "Percentage"
+
+#, fuzzy
 msgid "Regression model"
 msgstr "Regressiemodel"
 
@@ -760,15 +764,11 @@ msgstr "Gauge Lineariteit"
 msgid "R%1$s"
 msgstr "R%1$s"
 
+msgid "Linearity"
+msgstr "Lineariteit"
+
 msgid "%% Linearity"
 msgstr "%% Lineariteit"
-
-msgid ""
-"Calculations are based on 6 times the historical standard variation unless "
-"specified otherwise."
-msgstr ""
-"Berekeningen zijn gebaseerd op 6 keer de historische standaardvariatie, "
-"tenzij anders aangegeven."
 
 #, fuzzy
 msgid "Bias and linearity"
@@ -805,22 +805,11 @@ msgstr ""
 msgid "t-test not possible. No variance detected in Part(s) %s."
 msgstr "T-Toets niet mogelijk. Geen variantie gedetecteerd in onderdelen %s."
 
-#, fuzzy
-msgid "t-est not possible. No variance detected in part(s) %s."
-msgstr "T-Toets niet mogelijk. Geen variantie gedetecteerd in onderdelen %s."
-
 msgid "Bias = %1$.2f %2$s %3$.2f * Reference value"
 msgstr ""
 
 msgid "Reference"
 msgstr "Referentie"
-
-#, fuzzy
-msgid "Percent bias"
-msgstr "Percentage"
-
-msgid "Linearity"
-msgstr "Lineariteit"
 
 #, fuzzy
 msgid "Total"
@@ -1798,6 +1787,18 @@ msgstr "X-bar & %1$s controle figuur"
 
 msgid "Variables Chart for Subgroups Report"
 msgstr "Variabelen Figuur voor Subgroepen Rapport"
+
+#~ msgid ""
+#~ "Calculations are based on 6 times the historical standard variation "
+#~ "unless specified otherwise."
+#~ msgstr ""
+#~ "Berekeningen zijn gebaseerd op 6 keer de historische standaardvariatie, "
+#~ "tenzij anders aangegeven."
+
+#, fuzzy
+#~ msgid "t-est not possible. No variance detected in part(s) %s."
+#~ msgstr ""
+#~ "T-Toets niet mogelijk. Geen variantie gedetecteerd in onderdelen %s."
 
 #~ msgid "Predictors"
 #~ msgstr "Predictoren"
