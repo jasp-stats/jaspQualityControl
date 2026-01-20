@@ -1370,7 +1370,15 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   return(list(p = p, CL = CL, UCL = UCL, LCL = LCL))
 }
 
-.distributionParameters <- function(data, distribution = c("lognormal", "weibull", "3ParameterLognormal", "3ParameterWeibull", "exponential")){
+.distributionParameters <- function(data,
+                                    distribution = c("lognormal",
+                                                     "weibull",
+                                                     "3ParameterLognormal",
+                                                     "3ParameterWeibull",
+                                                     "gamma",
+                                                     "exponential",
+                                                     "logistic",
+                                                     "loglogistic")){
   if (distribution == "lognormal") {
     fit_Lnorm <- try(EnvStats::elnorm(data))
     if (jaspBase::isTryError(fit_Lnorm))
@@ -1403,13 +1411,40 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     beta <- temp$estimate[1] # shape
     theta <- temp$estimate[2] # scale
     threshold <- temp$estimate[3] # threshold
+  } else if (distribution == "gamma") {
+    gammaFit <- fitdistrplus::fitdist(data, "gamma", method = "mle",
+                          control = list(
+                            maxit = 10000,
+                            abstol = .Machine$double.eps^0.75,
+                            reltol = .Machine$double.eps^0.75,
+                            ndeps = rep(1e-8, 2)))
+    beta <- gammaFit$estimate[1] # shape
+    theta <- gammaFit$estimate[2] # rate
   } else if (distribution == "exponential") {
-    fit_Weibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle", fix.arg = list("shape" = 1),
-                                             control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps)))
-    if (jaspBase::isTryError(fit_Weibull))
-      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- 1
-    theta <- fit_Weibull$estimate[[1]]
+    expFit <- fitdistrplus::fitdist(data, "exp", method = "mle")
+    beta <- NA # not relevant for this distribution
+    theta <- 1/expFit$estimate[1] # scale
+  } else if (distribution == "logistic") {
+    logFit <- fitdistrplus::fitdist(data, "logis", method = "mle",
+                          control = list(
+                            maxit = 10000,
+                            abstol = .Machine$double.eps^0.75,
+                            reltol = .Machine$double.eps^0.75,
+                            ndeps = rep(1e-8, 2)))
+
+    beta <- logFit$estimate[1] # location
+    theta <- logFit$estimate[2] # scale
+  } else if (distribution == "loglogistic") {
+    dllogisTemp <- flexsurv::dllogis # because it is not possible to directly call flexsurv:: in the fitdist function
+    pllogisTemp <- flexsurv::pllogis
+    loglogFit <- fitdistrplus::fitdist(data, dllogisTemp, method = "mle",
+                                       control = list(
+                                         maxit = 10000,
+                                         abstol = .Machine$double.eps^0.75,
+                                         reltol = .Machine$double.eps^0.75,
+                                         ndeps = rep(1e-8, 2)), start = list(shape = 1, scale = 1))
+    beta <- log(loglogFit$estimate[2]) # Location
+    theta <- 1/loglogFit$estimate[1]  # Scale
   }
   list <- list(beta = beta,
                theta = theta)
