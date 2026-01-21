@@ -1380,11 +1380,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                      "logistic",
                                                      "loglogistic")){
   if (distribution == "lognormal") {
-    fit_Lnorm <- try(EnvStats::elnorm(data))
+    fit_Lnorm <- try(fitdistrplus::fitdist(data, "lnorm", method = "mle"))
     if (jaspBase::isTryError(fit_Lnorm))
       stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- fit_Lnorm$parameters[1] # shape / logmean
-    theta <- fit_Lnorm$parameters[2] # scale / log std. dev.
+    beta <- fit_Lnorm$estimate[1] # shape / logmean
+    theta <- fit_Lnorm$estimate[2] # scale / log std. dev.
   } else if (distribution == "weibull") {
     fit_Weibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
                                              control = list(
@@ -1397,52 +1397,68 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     beta <- fit_Weibull$estimate[[1]] # shape
     theta <- fit_Weibull$estimate[[2]] # scale
   } else if(distribution == "3ParameterLognormal") {
-    temp <- try(EnvStats::elnorm3(data))
-    if (jaspBase::isTryError(temp))
+    dlnorm3Temp <- EnvStats::dlnorm3
+    plnorm3Temp <- EnvStats::plnorm3
+    lnorm3Fit <- try(fitdistrplus::fitdist(data, dlnorm3Temp, method = "mle",
+                                           control = list(
+                                             maxit = 10000,
+                                             abstol = .Machine$double.eps^0.75,
+                                             reltol = .Machine$double.eps^0.75),
+                                           start = list(meanlog = 0, sdlog = 1, threshold = 0)))
+    if (jaspBase::isTryError(lnorm3Fit))
       stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- temp$parameters[[1]] # shape / logmean
-    theta <- temp$parameters[[2]] # scale / log std. dev.
-    threshold <- temp$parameters[[3]] # threshold
+    beta <- lnorm3Fit$estimate[[1]] # shape / logmean
+    theta <- lnorm3Fit$estimate[[2]] # scale / log std. dev.
+    threshold <- lnorm3Fit$estimate[[3]] # threshold
   } else if(distribution == "3ParameterWeibull") {
-    temp <- try(MASS::fitdistr(data, function(x, shape, scale, thres)
-      dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0)))
-    if (jaspBase::isTryError(temp))
+    dweibull3Temp <- FAdist::dweibull3
+    pweibull3Temp <- FAdist::pweibull3
+    weilbull3Fit <- fitdistrplus::fitdist(data, dweibull3Temp, method = "mle",
+                                       start = list(shape = 0.1, scale = 1, thres = 0))
+    if (jaspBase::isTryError(lnorm3Fit))
       stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- temp$estimate[1] # shape
-    theta <- temp$estimate[2] # scale
-    threshold <- temp$estimate[3] # threshold
+    beta <- weilbull3Fit$estimate[1] # shape
+    theta <- weilbull3Fit$estimate[2] # scale
+    threshold <- weilbull3Fit$estimate[3] # threshold
   } else if (distribution == "gamma") {
-    gammaFit <- fitdistrplus::fitdist(data, "gamma", method = "mle",
+    gammaFit <- try(fitdistrplus::fitdist(data, "gamma", method = "mle",
                           control = list(
                             maxit = 10000,
                             abstol = .Machine$double.eps^0.75,
                             reltol = .Machine$double.eps^0.75,
-                            ndeps = rep(1e-8, 2)))
+                            ndeps = rep(1e-8, 2))))
+    if (jaspBase::isTryError(gammaFit))
+      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
     beta <- gammaFit$estimate[1] # shape
     theta <- gammaFit$estimate[2] # rate
   } else if (distribution == "exponential") {
-    expFit <- fitdistrplus::fitdist(data, "exp", method = "mle")
+    expFit <- try(fitdistrplus::fitdist(data, "exp", method = "mle"))
+    if (jaspBase::isTryError(expFit))
+      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
     beta <- NA # not relevant for this distribution
     theta <- 1/expFit$estimate[1] # scale
   } else if (distribution == "logistic") {
-    logFit <- fitdistrplus::fitdist(data, "logis", method = "mle",
+    logFit <- try(fitdistrplus::fitdist(data, "logis", method = "mle",
                           control = list(
                             maxit = 10000,
                             abstol = .Machine$double.eps^0.75,
                             reltol = .Machine$double.eps^0.75,
-                            ndeps = rep(1e-8, 2)))
-
+                            ndeps = rep(1e-8, 2))))
+    if (jaspBase::isTryError(logFit))
+      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
     beta <- logFit$estimate[1] # location
     theta <- logFit$estimate[2] # scale
   } else if (distribution == "loglogistic") {
     dllogisTemp <- flexsurv::dllogis # because it is not possible to directly call flexsurv:: in the fitdist function
     pllogisTemp <- flexsurv::pllogis
-    loglogFit <- fitdistrplus::fitdist(data, dllogisTemp, method = "mle",
+    loglogFit <- try(fitdistrplus::fitdist(data, dllogisTemp, method = "mle",
                                        control = list(
                                          maxit = 10000,
                                          abstol = .Machine$double.eps^0.75,
                                          reltol = .Machine$double.eps^0.75,
-                                         ndeps = rep(1e-8, 2)), start = list(shape = 1, scale = 1))
+                                         ndeps = rep(1e-8, 2)), start = list(shape = 1, scale = 1)))
+    if (jaspBase::isTryError(loglogFit))
+      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
     beta <- log(loglogFit$estimate[2]) # Location
     theta <- 1/loglogFit$estimate[1]  # Scale
   }

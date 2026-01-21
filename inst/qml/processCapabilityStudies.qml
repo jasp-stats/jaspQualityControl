@@ -341,7 +341,7 @@ Form
 							label: 						qsTr("Historical shape")
 							id:							historicalShape
 							childrenOnSameRow:			true
-							visible:					nonNormalDistribution.currentValue == "weibull" || nonNormalDistribution.currentValue == "3ParameterWeibull"
+							visible:					nonNormalDistribution.currentValue == "weibull" || nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "gamma"
 
 							DoubleField
 							{
@@ -355,11 +355,29 @@ Form
 
 						CheckBox
 						{
+							name: 						"historicalLocation"
+							label: 						qsTr("Historical location")
+							id:							historicalLocation
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "logistic" || nonNormalDistribution.currentValue == "loglogistic"
+
+							DoubleField
+							{
+								name: 					"historicalLocationValue"
+								id:						historicalLocationValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
 							name: 						"historicalScale"
 							label: 						qsTr("Historical scale")
 							id:							historicalScale
 							childrenOnSameRow:			true
-							visible:					nonNormalDistribution.currentValue == "weibull" || nonNormalDistribution.currentValue == "3ParameterWeibull"
+							visible:					nonNormalDistribution.currentValue == "weibull" || nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "gamma" ||  nonNormalDistribution.currentValue == "exponential" || nonNormalDistribution.currentValue == "logistic" || nonNormalDistribution.currentValue == "loglogistic"
 
 							DoubleField
 							{
