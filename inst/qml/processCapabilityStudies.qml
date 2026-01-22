@@ -273,6 +273,41 @@ Form
 						id : 				normalCapabilityAnalysis
 						label: 				qsTr("Normal distribution")
 						checked: 			true
+
+
+						CheckBox
+						{
+							name: 						"historicalMean"
+							label: 						qsTr("Historical mean")
+							id:							historicalMean
+							childrenOnSameRow:			true
+
+							DoubleField
+							{
+								name: 					"historicalMeanValue"
+								id:						historicalMeanValue
+								negativeValues:			true
+								defaultValue:			0
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalStdDev"
+							label: 						qsTr("Historical std. dev.")
+							id:							historicalStdDev
+							childrenOnSameRow:			true
+
+							DoubleField
+							{
+								name: 					"historicalStdDevValue"
+								id:						historicalStdDevValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
 					}
 
 					RadioButton
@@ -294,6 +329,96 @@ Form
 								{label: qsTr("3-parameter lognormal"),		value: "3ParameterLognormal"}
 							]
 							indexDefaultValue: 0
+						}
+
+						CheckBox
+						{
+							name: 						"historicalShape"
+							label: 						qsTr("Historical shape")
+							id:							historicalShape
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "weibull" || nonNormalDistribution.currentValue == "3ParameterWeibull"
+
+							DoubleField
+							{
+								name: 					"historicalShapeValue"
+								id:						historicalShapeValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalScale"
+							label: 						qsTr("Historical scale")
+							id:							historicalScale
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "weibull" || nonNormalDistribution.currentValue == "3ParameterWeibull"
+
+							DoubleField
+							{
+								name: 					"historicalScaleValue"
+								id:						historicalScaleValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalLogMean"
+							label: 						qsTr("Historical log mean")
+							id:							historicalLogMean
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "lognormal" || nonNormalDistribution.currentValue == "3ParameterLognormal"
+
+							DoubleField
+							{
+								name: 					"historicalLogMeanValue"
+								id:						historicalLogMeanValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalLogStdDev"
+							label: 						qsTr("Historical log std. dev.")
+							id:							historicalLogStdDev
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "lognormal" || nonNormalDistribution.currentValue == "3ParameterLognormal"
+
+							DoubleField
+							{
+								name: 					"historicalLogStdDevValue"
+								id:						historicalLogStdDevValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalThreshold"
+							label: 						qsTr("Historical threshold")
+							id:							historicalThreshold
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "3ParameterLognormal" || nonNormalDistribution.currentValue == "3ParameterWeibull"
+
+							DoubleField
+							{
+								name: 					"historicalThresholdValue"
+								id:						historicalThresholdValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
 						}
 
 						DropDown
