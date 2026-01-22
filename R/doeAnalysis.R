@@ -1555,7 +1555,7 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
     result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
-    plot$plotObject <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
+    plot$plotObject <- jaspGraphs::plotQQnorm(resid(result[["object"]]), abline = TRUE) + ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = 0.1)) + ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = 0.1))
   }
 }
 
@@ -1659,7 +1659,9 @@ get_levels <- function(var, num_levels, dataset) {
     plotMat[[1, 1]] <- .doeAnalysisPlotResidualsVsOrderPlotObject(result, dataset, options)
     plotMat[[2, 1]] <- .doeAnalysisPlotFittedVsResidualsPlotObject(result, options)
     plotMat[[1, 2]] <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
-    plotMat[[2, 2]] <- jaspGraphs::plotQQnorm(resid(result[["object"]]))
+    plotMat[[2, 2]] <- jaspGraphs::plotQQnorm(resid(result[["object"]]), abline = TRUE) +
+      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = 0.1), name = gettext("Theoretical quantiles")) +
+      ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = 0.1), name = gettext("Observed quantiles"))
     plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
   }
 }
