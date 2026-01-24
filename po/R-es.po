@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
 "POT-Creation-Date: 2026-01-24 03:57\n"
-"PO-Revision-Date: 2025-12-24 14:46+0000\n"
+"PO-Revision-Date: 2026-01-25 08:29+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/es/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 5.16-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -424,13 +424,11 @@ msgstr "Orden de ejecución"
 msgid "Matrix residual plot"
 msgstr "Gráfico matricial de errores"
 
-#, fuzzy
 msgid "Theoretical quantiles"
-msgstr "Asíntotas verticales"
+msgstr "Cuantiles teóricos"
 
-#, fuzzy
 msgid "Observed quantiles"
-msgstr "Media observada"
+msgstr "Cuantiles observados"
 
 msgid "Contour plot"
 msgstr "Gráfico de contorno"
@@ -1632,13 +1630,11 @@ msgstr ""
 msgid "Parameters of the transform"
 msgstr ""
 
-#, fuzzy
 msgid "Estimated from data"
-msgstr "El %s estimado de los datos."
+msgstr "Estimado a partir de los datos"
 
-#, fuzzy
 msgid "All values estimated from data"
-msgstr "El %s estimado de los datos."
+msgstr "Todos los valores estimados a partir de los datos"
 
 msgid "Rare event charts"
 msgstr "Gráfico de eventos raros"
