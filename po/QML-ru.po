@@ -3175,3 +3175,59 @@ msgstr ""
 msgctxt "doeAnalysis|"
 msgid "Importance"
 msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Transform data"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Type"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "None"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Box-Cox"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Box-Cox (auto)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Yeo-Johnson"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Yeo-Johnson (auto)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Johnson"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Shift"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Lambda"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Log. Lik"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "SD"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Average moving range"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Continuity Adjustment"
+msgstr ""

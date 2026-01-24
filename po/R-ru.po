@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-01-17 03:56\n"
+"POT-Creation-Date: 2026-01-24 03:57\n"
 "PO-Revision-Date: 2025-06-19 08:01+0000\n"
 "Last-Translator: Иван Рудаков <riv@polygene.ru>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
@@ -408,6 +408,12 @@ msgid "Run order"
 msgstr "Порядок выполнения"
 
 msgid "Matrix residual plot"
+msgstr ""
+
+msgid "Theoretical quantiles"
+msgstr ""
+
+msgid "Observed quantiles"
 msgstr ""
 
 msgid "Contour plot"
@@ -1257,6 +1263,15 @@ msgstr ""
 msgid "Process capability (non-normal capability analysis)"
 msgstr ""
 
+msgid "Data transformation"
+msgstr ""
+
+msgid "Data could not be transformed: %1$s"
+msgstr ""
+
+msgid "Specification limits could not be transformed: %1$s"
+msgstr ""
+
 msgid "Process summary"
 msgstr ""
 
@@ -1502,6 +1517,37 @@ msgid "Normal dist."
 msgstr ""
 
 msgid "Lognormal dist."
+msgstr ""
+
+msgid ""
+"Some specification limits or target value are outside of the support of the "
+"Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."
+msgstr ""
+
+msgid ""
+"Some specification limits or target value are outside of the support of the "
+"Johnson (SB) transform. The bounds of the transform were identified to "
+"between %1$f and %2$f."
+msgstr ""
+
+msgid ""
+"Some specification limits or target value are outside of the support of the "
+"Johnson (SL) transform. The lower bound of the transform was identified as "
+"%1$f."
+msgstr ""
+
+msgid ""
+"The measurements, specification limits and target value were transformed "
+"using the %s transformation, with the following formula,"
+msgstr ""
+
+msgid "Parameters of the transform"
+msgstr ""
+
+msgid "Estimated from data"
+msgstr ""
+
+msgid "All values estimated from data"
 msgstr ""
 
 msgid "Rare event charts"

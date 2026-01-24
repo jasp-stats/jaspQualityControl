@@ -1,12 +1,8 @@
 msgid ""
 msgstr ""
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
-"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
@@ -2186,10 +2182,6 @@ msgid "Manually specify low/high"
 msgstr ""
 
 msgctxt "doeAnalysis|"
-msgid "Low        High   "
-msgstr ""
-
-msgctxt "doeAnalysis|"
 msgid "Display results in coded units"
 msgstr ""
 
@@ -3149,4 +3141,88 @@ msgstr ""
 
 msgctxt "processCapabilityStudies|"
 msgid "Z bench"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Low"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "High"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Goal"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Lower"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Upper"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Weight"
+msgstr ""
+
+msgctxt "doeAnalysis|"
+msgid "Importance"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Transform data"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Type"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "None"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Box-Cox"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Box-Cox (auto)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Yeo-Johnson"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Yeo-Johnson (auto)"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Johnson"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Shift"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Lambda"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Log. Lik"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "SD"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Average moving range"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Continuity Adjustment"
 msgstr ""
