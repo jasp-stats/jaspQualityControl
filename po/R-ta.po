@@ -974,7 +974,7 @@ msgstr ""
 "முடியவில்லை."
 
 msgid "%.2f"
-msgstr "%.AF"
+msgstr "%.2f"
 
 msgid "Gauge r&R - nested"
 msgstr "அளவீடு ஆர்&ஆர் - உள்ளமை"
@@ -1141,10 +1141,10 @@ msgid "Count"
 msgstr "எண்ணுங்கள்"
 
 msgid "Mean - %is"
-msgstr "சராசரி - % ஆகும்"
+msgstr "சராசரி - %is"
 
 msgid "Mean + %is"
-msgstr "சராசரி + % ஆகும்"
+msgstr "சராசரி + %is"
 
 msgid "Ref. - %.2f * tol."
 msgstr "Ref. - %.2f * டோல்."
@@ -1555,7 +1555,7 @@ msgid ""
 "Red dotted lines in the probability plot below represent a 95%% confidence "
 "interval."
 msgstr ""
-"கீழே உள்ள நிகழ்தகவு திட்டத்தில் சிவப்பு புள்ளியிடப்பட்ட கோடுகள் 95% நம்பிக்கை இடைவெளியைக் "
+"கீழே உள்ள நிகழ்தகவு திட்டத்தில் சிவப்பு புள்ளியிடப்பட்ட கோடுகள் 95%% நம்பிக்கை இடைவெளியைக் "
 "குறிக்கின்றன."
 
 msgid "Probability plot against %1$s distribution"
