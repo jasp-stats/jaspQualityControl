@@ -1693,7 +1693,9 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
     result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
-    plot$plotObject <- jaspGraphs::plotQQnorm(resid(result[["object"]]), abline = TRUE) + ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = 0.1)) + ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = 0.1))
+    plot$plotObject <- jaspGraphs::plotQQnorm(resid(result[["object"]]), abline = TRUE) +
+      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = 0.1), name = gettext("Theoretical quantiles")) +
+      ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = 0.1), name = gettext("Observed quantiles"))
   }
 }
 
