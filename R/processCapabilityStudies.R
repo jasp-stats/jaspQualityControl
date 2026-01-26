@@ -516,12 +516,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     )
 
   # return state if available
-  if(!is.null(jaspResults[["dataTransformationState"]])) return(jaspResults[["dataTransformationState"]]$object)
+  if (!is.null(jaspResults[["dataTransformationState"]])) return(jaspResults[["dataTransformationState"]]$object)
 
   # transform data and return parameters of the transform
   result <- try(.qcTransformData(dataset = dataset, measurements = measurements, options = options))
 
-  if(isTryError(result)) {
+  if (isTryError(result)) {
     message <- gettextf("Data could not be transformed: %1$s", .extractErrorMessage(result))
     .quitAnalysis(message)
   }
