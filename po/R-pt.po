@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
 "POT-Creation-Date: 2026-01-24 03:57\n"
-"PO-Revision-Date: 2025-08-24 15:02+0000\n"
+"PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/pt/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.13\n"
+"X-Generator: Weblate 5.16-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -73,7 +73,7 @@ msgid "p Chart"
 msgstr "Carta P"
 
 msgid "np Chart"
-msgstr "Carta NP"
+msgstr "Gráfico NP"
 
 msgid "Laney p' Chart"
 msgstr "Gráfico p de Laney"
@@ -425,13 +425,11 @@ msgstr "Ordem de execução"
 msgid "Matrix residual plot"
 msgstr "Gráfico de matriz residual"
 
-#, fuzzy
 msgid "Theoretical quantiles"
-msgstr "Assíntotas verticais"
+msgstr "Quantis teóricos"
 
-#, fuzzy
 msgid "Observed quantiles"
-msgstr "Média observada"
+msgstr "Quantis observados"
 
 msgid "Contour plot"
 msgstr "Gráfico de contorno"
@@ -1332,13 +1330,13 @@ msgid "Process capability (non-normal capability analysis)"
 msgstr "Capacidade do processo (análise de capacidade não normal)"
 
 msgid "Data transformation"
-msgstr ""
+msgstr "Transformação de dados"
 
 msgid "Data could not be transformed: %1$s"
-msgstr ""
+msgstr "Os dados não puderam ser transformados: %1$s"
 
 msgid "Specification limits could not be transformed: %1$s"
-msgstr ""
+msgstr "Os limites especificados não puderam ser transformados: %1$s"
 
 msgid "Process summary"
 msgstr "Resumo do processo"
@@ -1614,34 +1612,43 @@ msgid ""
 "Some specification limits or target value are outside of the support of the "
 "Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."
 msgstr ""
+"Alguns limites de especificação ou valor-alvo estão fora do alcance da "
+"transformação de Box-Cox. O limite inferior da transformação de Box-Cox é -"
+"shift (%1$f)."
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
 "Johnson (SB) transform. The bounds of the transform were identified to "
 "between %1$f and %2$f."
 msgstr ""
+"Alguns limites de especificação ou valores-alvo estão fora do alcance da "
+"transformação de Johnson (SB). Os limites da transformação foram "
+"identificados entre %1$f e %2$f."
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
 "Johnson (SL) transform. The lower bound of the transform was identified as "
 "%1$f."
 msgstr ""
+"Alguns limites de especificação ou valores-alvo estão fora do alcance da "
+"transformação de Johnson (SL). O limite inferior da transformação foi "
+"identificado como %1Sf."
 
 msgid ""
 "The measurements, specification limits and target value were transformed "
 "using the %s transformation, with the following formula,"
 msgstr ""
+"As medições, limites de especificação e valores-alvo foram transformados "
+"usando a transformação %s, com a seguinte fórmula,"
 
 msgid "Parameters of the transform"
-msgstr ""
+msgstr "Parâmetros da transformação"
 
-#, fuzzy
 msgid "Estimated from data"
-msgstr "As %s estimadas a partir dos dados."
+msgstr "Estimado a partir dos dados"
 
-#, fuzzy
 msgid "All values estimated from data"
-msgstr "As %s estimadas a partir dos dados."
+msgstr "Todos os valores foram estimados a partir dos dados"
 
 msgid "Rare event charts"
 msgstr "Carta de eventos raros"
