@@ -98,6 +98,12 @@ Description
 		title:			qsTr("Process Capability Study")
 		func:			"processCapabilityStudies"
 	}
+	Analysis
+	{
+		title:			qsTr("Bayesian Process Capability Study")
+		func:			"bayesianProcessCapabilityStudies"
+		preloadData:	true
+	}
 
 	GroupTitle
 	{
@@ -122,12 +128,5 @@ Description
 		title:			qsTr("Analyse Design")
 		func:			"doeAnalysis"
 		requiresData:	true
-	}
-
-	Analysis
-	{
-		title:			qsTr("Bayesian Process Capability Study")
-		func:			"bayesianProcessCapabilityStudies"
-		preloadData:		true
 	}
 }

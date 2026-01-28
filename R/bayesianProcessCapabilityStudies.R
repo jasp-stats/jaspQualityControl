@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-#'@importFrom jaspBase jaspDeps %setOrRetrieve% .extractErrorMessage
+#'@importFrom jaspBase jaspDeps %setOrRetrieve%
 #'@importFrom rlang .data
 
 
@@ -67,7 +67,9 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
       # prior
       "priorSettings", "normalModelComponentsList", "tModelComponentsList",
       # MCMC settings
-      "noIterations", "noWarmup", "noChains"
+      "noIterations", "noWarmup", "noChains",
+      # estimation method
+      "estimationMethod"
   )
 }
 
@@ -98,7 +100,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 .bpcsPlotLayoutPriorDeps    <- function(base) { paste0(base, "PriorDistribution") }
 
 .bpcsProcessCriteriaDeps <- function() {
-  c(paste0("interval", 1:4), paste0("intervalLabel", 1:5))
+  c(paste0("interval", 1:4, "b"), paste0("interval", 1:4), paste0("intervalLabel", 1:5))
 }
 
 .bpcsPriorComponentByName <- function(options, name) {
@@ -209,19 +211,31 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   if (prior && !.bpcsCanSampleFromPriors(options))
     return(NULL)
 
+  method <- options[["estimationMethod"]]
+  if (is.null(method))
+    method <- "mcmc"
+  if (identical(method, "integration") && options[["capabilityStudyType"]] == "tCapabilityAnalysis")
+    stop("Integration method is available only for the normal distribution.")
+
   if (!is.null(jaspResults[[paste0(base, "ResultsObject")]]))
     return(jaspResults[[paste0(base, "ResultsObject")]]$object)
 
   rawfit <- jaspResults[[paste0(base, "State")]] %setOrRetrieve% (
     qc::bpc(
-      dataset[[1L]], chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
+      dataset[[1L]],
+      iter = options[["noIterations"]],
+      warmup = options[["noWarmup"]],
+      chains = options[["noChains"]],
+      silent = TRUE,
+      seed = 1, # TODO: use setSeed QML component
       target        = options[["targetValue"]],
       LSL           = options[["lowerSpecificationLimitValue"]],
       USL           = options[["upperSpecificationLimitValue"]],
       prior_mu      = .bpcsMuPriorFromOptions(options),
       prior_sigma   = .bpcsSigmaPriorFromOptions(options),
       prior_nu      = .bpcsTPriorFromOptions(options),
-      sample_priors = prior
+      sample_priors = prior,
+      method        = method
     ) |>
       createJaspState(jaspDeps(.bpcsStateDeps()))
   )
@@ -319,7 +333,7 @@ getCustomAxisLimits <- function(options, base) {
 
   }, error = function(e) {
 
-    table$setError(gettextf("Unexpected error in interval table: %s", .extractErrorMessage(e)))
+    table$setError(gettextf("Unexpected error in interval table: %s", extractErrorMessage(e)))
 
   })
 
@@ -422,8 +436,8 @@ getCustomAxisLimits <- function(options, base) {
     jaspPlt$width  <- 400
     jaspPlt$height <- 400
     jaspPlt$setError(
-      if (isPost) gettextf("Unexpected error in posterior distribution plot: %s", .extractErrorMessage(e))
-      else gettextf("Unexpected error in prior distribution plot: %s", .extractErrorMessage(e))
+      if (isPost) gettextf("Unexpected error in posterior distribution plot: %s", extractErrorMessage(e))
+      else gettextf("Unexpected error in prior distribution plot: %s", extractErrorMessage(e))
     )
   })
 
@@ -439,7 +453,7 @@ getCustomAxisLimits <- function(options, base) {
     width  = 400 * 3,
     height = 400 * 2,
     position = position,
-    dependencies = jaspDeps(options = c(.bpcsDefaultDeps(), "intervalPlot"))
+    dependencies = jaspDeps(options = c(.bpcsDefaultDeps(), .bpcsProcessCriteriaDeps(), "intervalPlot", "colorScheme"))
   )
   jaspResults[["bpcsIntervalPlot"]] <- jaspPlt
 
@@ -457,32 +471,36 @@ getCustomAxisLimits <- function(options, base) {
       interval_summary <- summary(fit[["rawfit"]], interval_probability = interval_probability)[["interval_summary"]]
       interval_summary <- interval_summary[interval_summary$metric %in% selectedMetrics, , drop = FALSE]
       intervalLabels <- unlist(options[paste0("intervalLabel", 1:5)], use.names = FALSE)
-      colnames(interval_summary)[-1] <- paste0(colnames(interval_summary)[-1], intervalLabels)
-      jaspPlt$plotObject <- .bpcsMakeIntervalPlot(intervalSummary)
+      colnames(interval_summary)[-1] <- paste(intervalLabels, colnames(interval_summary)[-1])
+      jaspPlt$plotObject <- .bpcsMakeIntervalPlot(interval_summary, options)
 
     }
   }, error = function(e) {
     jaspPlt$width  <- 400
     jaspPlt$height <- 400
-    jaspPlt$setError(gettextf("Unexpected error in interval plot: %s", .extractErrorMessage(e)))
+    jaspPlt$setError(gettextf("Unexpected error in interval plot: %s", extractErrorMessage(e)))
   })
 
   return()
 }
 
-.bpcsMakeIntervalPlot <- function(intervalSummary) {
+.bpcsMakeIntervalPlot <- function(intervalSummary, options) {
   groups <- colnames(intervalSummary)[-1]
-  legendColorsFun <- jaspGraphs::JASPcolors(jaspGraphs::getGraphOption("palette"), asFunction = TRUE)
+  colorScheme <- options[["colorScheme"]]
+  if (is.null(colorScheme))
+    colorScheme <- "grey"
+
+  paletteName <- if (identical(colorScheme, "grey")) "gray" else jaspGraphs::getGraphOption("palette")
+  legendColorsFun <- jaspGraphs::JASPcolors(paletteName, asFunction = TRUE)
   legendColors <- legendColorsFun(length(groups))
   plts <- lapply(seq_len(nrow(intervalSummary)), function(i) {
     jaspGraphs::plotPieChart(
       unlist(intervalSummary[i, -1]), groups, legendName = NULL, legendColors = legendColors
-    )
+    ) + ggplot2::ggtitle(intervalSummary$metric[i])
   })
   return(patchwork::wrap_plots(plts) + patchwork::plot_layout(nrow = 2, guides = "collect")
   )
 }
-
 
 .bpcsSequentialPointEstimatePlot <- function(jaspResults, dataset, options, fit, position) {
 
@@ -497,7 +515,8 @@ getCustomAxisLimits <- function(options, base) {
                         dependencies = jaspDeps(c(
                           .bpcsDefaultDeps(),
                           .bpcsPlotLayoutDeps(base, hasPrior = FALSE),
-                          "sequentialAnalysisPlotAdditionalInfo"
+                          "sequentialAnalysisPlotAdditionalInfo",
+                          "colorScheme"
                         )))
   jaspResults[[base]] <- plt
 
@@ -511,7 +530,7 @@ getCustomAxisLimits <- function(options, base) {
     tryCatch({
       plt$plotObject <- .bpcsMakeSequentialPlot(sequentialPlotData$data, options, base)
     }, error = function(e) {
-      plt$setError(gettextf("Unexpected error in sequential analysis point estimate plot: %s", .extractErrorMessage(e)))
+      plt$setError(gettextf("Unexpected error in sequential analysis point estimate plot: %s", extractErrorMessage(e)))
     }
     )
   }
@@ -529,7 +548,8 @@ getCustomAxisLimits <- function(options, base) {
                         position = position,
                         dependencies = jaspDeps(c(
                           .bpcsDefaultDeps(),
-                          .bpcsPlotLayoutDeps(base, hasPrior = FALSE)
+                          .bpcsPlotLayoutDeps(base, hasPrior = FALSE),
+                          "colorScheme"
                         )))
   jaspResults[[base]] <- plt
 
@@ -543,7 +563,7 @@ getCustomAxisLimits <- function(options, base) {
     tryCatch({
       plt$plotObject <- .bpcsMakeSequentialPlot(sequentialPlotData$data, options, base, custom = TRUE)
     }, error = function(e) {
-      plt$setError(gettextf("Unexpected error in sequential analysis interval estimate plot: %s", .extractErrorMessage(e)))
+      plt$setError(gettextf("Unexpected error in sequential analysis interval estimate plot: %s", extractErrorMessage(e)))
     }
     )
   }
@@ -570,7 +590,7 @@ getCustomAxisLimits <- function(options, base) {
 
   }, error = function(e) {
 
-    return(list(data = NULL, error = .extractErrorMessage(e)))
+    return(list(data = NULL, error = extractErrorMessage(e)))
 
   })
 
@@ -599,6 +619,13 @@ getCustomAxisLimits <- function(options, base) {
   priorMu    <- .bpcsMuPriorFromOptions(options)
   priorSigma <- .bpcsSigmaPriorFromOptions(options)
   priorNu    <- .bpcsTPriorFromOptions(options)
+
+  method <- options[["estimationMethod"]]
+  if (is.null(method))
+    method <- "mcmc"
+  if (identical(method, "integration") && options[["capabilityStudyType"]] == "tCapabilityAnalysis")
+    stop("Integration method is available only for the normal distribution.")
+
   for (i in seq_along(nseq)) {
 
     x_i <- x[1:nseq[i]]
@@ -609,7 +636,8 @@ getCustomAxisLimits <- function(options, base) {
       USL         = options[["upperSpecificationLimitValue"]],
       prior_mu    = priorMu,
       prior_sigma = priorSigma,
-      prior_nu    = priorNu
+      prior_nu    = priorNu,
+      method      = method
     )
 
     sum_fit_i <- summary(fit_i, interval_probability = customBounds)
@@ -842,6 +870,8 @@ getCustomAxisLimits <- function(options, base) {
 
   ggplot2::ggplot(tb, ggplot2::aes(x = .data$n, y = .data$mean, group = .data$metric,
                                    color = .data$metric, fill = .data$metric)) +
+    ggplot2::scale_color_manual(values = .bpcsPalette(values = unique(tb$metric), options = options, single_panel = single_panel)) +
+    ggplot2::scale_fill_manual(values = .bpcsPalette(values = unique(tb$metric), options = options, single_panel = single_panel)) +
     gridLinesLayer +
     ribbon +
     ggplot2::geom_line(linewidth = 1) +
@@ -856,6 +886,17 @@ getCustomAxisLimits <- function(options, base) {
     jaspGraphs::themeJaspRaw(legend.position = if (single_panel) "right" else "none") +
     extraTheme
 
+}
+
+.bpcsPalette <- function(values, options, single_panel) {
+
+  colorScheme <- options[["colorScheme"]]
+  if (is.null(colorScheme))
+    colorScheme <- "grey"
+
+  paletteName <- if (!single_panel && identical(colorScheme, "grey")) "gray" else jaspGraphs::getGraphOption("palette")
+  palFun <- jaspGraphs::JASPcolors(paletteName, asFunction = TRUE)
+  palFun(length(values))
 }
 
 # Additional plot functions ----
@@ -955,8 +996,40 @@ getCustomAxisLimits <- function(options, base) {
     plot$plotObject <- plt
   }, error = function(e) {
     plot$setError(
-      if (isPrior) gettextf("Unexpected error in prior predictive distribution plot: %s", .extractErrorMessage(e))
-      else gettextf("Unexpected error in posterior predictive distribution plot: %s", .extractErrorMessage(e))
+      if (isPrior) gettextf("Unexpected error in prior predictive distribution plot: %s", extractErrorMessage(e))
+      else gettextf("Unexpected error in posterior predictive distribution plot: %s", extractErrorMessage(e))
     )
   })
+}
+
+
+# TODO: move this to jaspBase
+#'@export
+extractErrorMessage <- function(error) {
+  UseMethod("extractErrorMessage")
+}
+#'@export
+extractErrorMessage.default <- function(error) {
+  stop("Do not know what to do with an object of class `",
+       paste(class(error), collapse = ","),
+       "`; The class of the `error` object should be `try-error` or `character`!",
+       domain = NA)
+}
+#'@export
+# method for simpleError (created by tryCatch)
+extractErrorMessage.simpleError <- function(error) {
+  extractErrorMessage(error$message)
+}
+
+# method for try-error (created by try)
+#'@export
+`extractErrorMessage.try-error` <- function(error) {
+  extractErrorMessage(attr(error, "condition"))
+}
+# method for character strings
+#'@export
+extractErrorMessage.character <- function(error) {
+  split <- strsplit(error, ":")[[1]]
+  last <- split[[length(split)]]
+  return(trimws(last))
 }

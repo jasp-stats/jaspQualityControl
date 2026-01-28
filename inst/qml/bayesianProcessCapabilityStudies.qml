@@ -242,6 +242,18 @@ Form
 			}
 		}
 
+
+		Group
+		{
+			// Capability table settings
+			CIField
+			{
+				name: "credibleIntervalWidth"
+				label: qsTr("Credible interval")
+				info: qsTr("Width of the credible interval used for the posterior distribution in the Capability table.")
+			}
+		}
+
 	// }
 
 	// Section
@@ -249,29 +261,6 @@ Form
 	// 	title: qsTr("Prior distributions")
 
 	// }
-
-	Section
-	{
-		title: qsTr("Tables")
-		CheckBox
-		{
-			name: "intervalTable"
-			label: qsTr("Interval table")
-			info: qsTr("Show the posterior probabilities of the interval specified with the input on the right. Note that the input is automatically sorted and that the first and last fields are always negative and positive infinity.")
-		}
-		CIField
-		{
-			name: "credibleIntervalWidth"
-			label: qsTr("Credible interval")
-			info: qsTr("Width of the credible interval used for the posterior distribution in the Capability table.")
-		}
-		CheckBox
-		{
-			name: "intervalPlot"
-			label: qsTr("Interval plot")
-			info: qsTr("Show the posterior probabilities of the intervals using pie charts.")
-		}
-	}
 
 	Section
 	{
@@ -287,6 +276,23 @@ Form
 			hasPrior: false
 		}
 
+	}
+
+	Section
+	{
+		title: qsTr("Interval Estimates")
+		CheckBox
+		{
+			name: "intervalTable"
+			label: qsTr("Interval table")
+			info: qsTr("Show the posterior probabilities of the interval specified with the input on the right. Note that the input is automatically sorted and that the first and last fields are always negative and positive infinity.")
+		}
+		CheckBox
+		{
+			name: "intervalPlot"
+			label: qsTr("Interval plot")
+			info: qsTr("Show the posterior probabilities of the intervals using pie charts.")
+		}
 	}
 
 	Section
@@ -434,6 +440,41 @@ Form
 
 		Group
 		{
+			title: qsTr("Color Scheme")
+			info: qsTr("Choose the color scheme. Grey is the default; the standard palette is used automatically when plotting all metrics in a single panel.")
+			DropDown
+			{
+				name: "colorScheme"
+				label: qsTr("Color scheme")
+				values:
+				[
+					{label: qsTr("Grey (default)"), value: "grey"},
+					{label: qsTr("Standard palette"), value: "default"}
+				]
+				defaultValue: "grey"
+			}
+		}
+
+		Group
+		{
+			title: qsTr("Estimation Method")
+			info: qsTr("Choose the estimation method. Integration is available for the normal distribution only.")
+			DropDown
+			{
+				id: estimationMethod
+				name: "estimationMethod"
+				label: qsTr("Estimation method")
+				values:
+				[
+					{label: qsTr("MCMC (Stan)"),            value: "mcmc"},
+					{label: qsTr("Integration (normal only)"), value: "integration"}
+				]
+				defaultValue: "mcmc"
+			}
+		}
+
+		Group
+		{
 			title: qsTr("MCMC Settings")
 			info: qsTr("Adjust the Markov Chain Monte Carlo (MCMC) settings for estimating the posterior distribution.")
 			IntegerField
@@ -444,6 +485,7 @@ Form
 				min: 100
 				max: 100000000
 				info: qsTr("Number of MCMC iterations used for estimating the posterior distribution.")
+				enabled: estimationMethod.currentValue === "mcmc"
 			}
 			IntegerField
 			{
@@ -453,6 +495,7 @@ Form
 				min: 0
 				max: 100000000
 				info: qsTr("Number of initial MCMC samples to discard.")
+				enabled: estimationMethod.currentValue === "mcmc"
 			}
 			IntegerField
 			{
@@ -462,6 +505,7 @@ Form
 				min: 1
 				max: 128
 				info: qsTr("Number of MCMC chains to run.")
+				enabled: estimationMethod.currentValue === "mcmc"
 			}
 		}
 	}
