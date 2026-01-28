@@ -61,7 +61,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
   if (isTryError(p)) {
     jaspResults[["errorPlot"]] <- createJaspPlot(title = gettext("Error"))
-    jaspResults[["errorPlot"]]$setError(p[1])
+    stepwisePrefix <- if (stepwiseMethod != "enter") gettext("Stepwise method failed. Please consider a different method or starting model.") else NULL
+    jaspResults[["errorPlot"]]$setError(paste(stepwisePrefix, p[1]))
     jaspResults[["errorPlot"]]$dependOn(.doeAnalysisBaseDependencies())
     return()
   }
