@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2026-01-28 10:47+0000\n"
+"Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
+"Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/pt/>\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.16-dev\n"
 "X-Language: pt\n"
 "X-Qt-Contexts: true\n"
 
@@ -137,7 +143,7 @@ msgstr "Normal"
 
 msgctxt "Description|"
 msgid "Variables Charts for Subgroups"
-msgstr "Variáveis para Subgrupos (XBar-R / XBar-S)"
+msgstr "Gráficos de Variáveis para Subgrupos"
 
 msgctxt "Description|"
 msgid "Time Weighted Charts"
@@ -157,7 +163,7 @@ msgstr "Defeituosos"
 
 msgctxt "attributesCharts|"
 msgid "np chart"
-msgstr "Carta NP"
+msgstr "Gráfico NP"
 
 msgctxt "attributesCharts|"
 msgid "p chart"
@@ -317,7 +323,7 @@ msgstr "Gráfico de média móvel ponderada exponencialmente"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & R"
-msgstr "XBarra-R"
+msgstr "X-barra & R"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "Warning limits"
@@ -325,7 +331,7 @@ msgstr "Limites de alerta"
 
 msgctxt "variablesChartsSubgroups|"
 msgid "X-bar & s"
-msgstr "XBarra-S"
+msgstr "X-barra & S"
 
 msgctxt "Description|"
 msgid "Process Capability Study"
@@ -333,7 +339,7 @@ msgstr "Estudo de Capacidade de Processo"
 
 msgctxt "attributesCharts|"
 msgid "X-mR chart"
-msgstr "Carta I-MR"
+msgstr "Gráfico X-mR"
 
 msgctxt "msaGaugeRR|"
 msgid "Data format"
@@ -397,7 +403,7 @@ msgstr "Mostrar relatório"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
-msgstr "Valores individuais (I-MR)"
+msgstr "Gráfico de Variáveis para Indivíduos"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "X-mR chart"
@@ -405,7 +411,7 @@ msgstr "Gráfico X-mR"
 
 msgctxt "Description|"
 msgid "Variables Charts for Individuals"
-msgstr "Valores individuais (I-MR)"
+msgstr "Gráficos de Variáveis para Indivíduos"
 
 msgctxt "Description|"
 msgid "Probability of Detection"
@@ -3192,56 +3198,56 @@ msgstr "Importância"
 
 msgctxt "processCapabilityStudies|"
 msgid "Transform data"
-msgstr ""
+msgstr "Transformar dados"
 
 msgctxt "processCapabilityStudies|"
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 msgctxt "processCapabilityStudies|"
 msgid "None"
-msgstr ""
+msgstr "Nenhum"
 
 msgctxt "processCapabilityStudies|"
 msgid "Box-Cox"
-msgstr ""
+msgstr "Box-Cox"
 
 msgctxt "processCapabilityStudies|"
 msgid "Box-Cox (auto)"
-msgstr ""
+msgstr "Box-Cox (auto)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Yeo-Johnson"
-msgstr ""
+msgstr "Yeo-Johnson"
 
 msgctxt "processCapabilityStudies|"
 msgid "Yeo-Johnson (auto)"
-msgstr ""
+msgstr "Yeo-Johnson (auto)"
 
 msgctxt "processCapabilityStudies|"
 msgid "Johnson"
-msgstr ""
+msgstr "Johnson"
 
 msgctxt "processCapabilityStudies|"
 msgid "Shift"
-msgstr ""
+msgstr "Deslocamento"
 
 msgctxt "processCapabilityStudies|"
 msgid "Lambda"
-msgstr ""
+msgstr "Lambda"
 
 msgctxt "processCapabilityStudies|"
 msgid "Log. Lik"
-msgstr ""
+msgstr "Log. Verossim"
 
 msgctxt "processCapabilityStudies|"
 msgid "SD"
-msgstr ""
+msgstr "DP"
 
 msgctxt "processCapabilityStudies|"
 msgid "Average moving range"
-msgstr ""
+msgstr "Alcance da média móvel"
 
 msgctxt "processCapabilityStudies|"
 msgid "Continuity Adjustment"
-msgstr ""
+msgstr "Ajuste de Continuidade"
