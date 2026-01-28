@@ -1729,8 +1729,7 @@ get_levels <- function(var, num_levels, dataset) {
   }
 }
 
-.doeContourSurfacePlotObject <- function(result, options, dependent, variablePair,
-                                         type = c("contour", "surface")) {
+.doeContourSurfacePlotObject <- function(result, options, dependent, variablePair, type = c("contour", "surface")) {
   type <- match.arg(type)
   regressionFit <- result[["object"]]
   formula <- as.formula(paste0("~", paste0(variablePair, collapse = " + ")))
