@@ -1406,7 +1406,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                     fix.arg = NULL) {
 
   allParametersFixed <- .allParametersFixed(distribution, fix.arg)
-
+    ####################
+    #### Lognormal #####
+    #####################
   if (distribution == "lognormal") {
     if (allParametersFixed) {
       beta <- fix.arg[["meanlog"]] # shape / logmean
@@ -1432,7 +1434,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       beta  <- lnormPars[["meanlog"]] # shape / logmean
       theta <- lnormPars[["sdlog"]] # scale / log std. dev.
     }
-
+    ####################
+    #### Weibull #####
+    #####################
   } else if (distribution == "weibull") {
     if (allParametersFixed) {
       beta <- fix.arg[["shape"]] # shape
@@ -1449,66 +1453,112 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
 
       weibullPars <- fitWeibull$estimate
-      if (!is.null(fix.arg)) { # we already know that, but to keep it consistent with the other chunks
+      if (!is.null(fix.arg)) {
         weibullPars[names(fix.arg)] <- fix.arg
       }
       beta  <- weibullPars[["shape"]] # shape / logmean
       theta <- weibullPars[["scale"]] # scale / log std. dev.
     }
+
+    ################################
+    #### 3-parameter lognormal #####
+    ################################
   } else if(distribution == "3ParameterLognormal") {
-    dlnorm3Temp <- function(x, meanlog, sdlog, threshold) {
-      EnvStats::dlnorm3(x, meanlog = meanlog, sdlog = sdlog, threshold = threshold)
-    }
-    plnorm3Temp <- function(q, meanlog, sdlog, threshold) {
-      EnvStats::plnorm3(q, meanlog = meanlog, sdlog = sdlog, threshold = threshold)
-    }
-    # Set starting values that match other software packages more closely
-    lnorm3start <- EnvStats::elnorm3(data)$parameters
-    lnorm3startMeanLog <- lnorm3start[[1]]
-    lnorm3startSdLog <- lnorm3start[[2]]
-    lnorm3startThreshold <- lnorm3start[[3]]
+    if (allParametersFixed) {
+      beta <- fix.arg[["meanlog"]] # shape
+      theta <- fix.arg[["sdlog"]] # scale
+      threshold <- fix.arg[["threshold"]] # threshold
+    } else {
+      # Set starting values that match other software packages more closely
+      lnorm3start <- EnvStats::elnorm3(data)$parameters
+      lnorm3startMeanLog <- lnorm3start[[1]]
+      lnorm3startSdLog <- lnorm3start[[2]]
+      lnorm3startThreshold <- lnorm3start[[3]]
+      lnorm3startList <- list(meanlog = lnorm3startMeanLog,
+                              sdlog = lnorm3startSdLog,
+                              threshold = lnorm3startThreshold)
 
-    # Estimate parameters using fitdistrplus, because it can keep values fixed
-    lnorm3Fit <- try(fitdistrplus::fitdist(data, dlnorm3Temp, method = "mle",
-                                           control = list(
-                                             maxit = 10000,
-                                             abstol = .Machine$double.eps^0.75,
-                                             reltol = .Machine$double.eps^0.75),
-                                           start = list(meanlog = lnorm3startMeanLog,
-                                                        sdlog = lnorm3startSdLog,
-                                                        threshold = lnorm3startThreshold),
-                                           fix.arg = fix.arg))
-    if (jaspBase::isTryError(lnorm3Fit))
-      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- lnorm3Fit$estimate[[1]] # shape / logmean
-    theta <- lnorm3Fit$estimate[[2]] # scale / log std. dev.
-    threshold <- lnorm3Fit$estimate[[3]] # threshold
-  } else if(distribution == "3ParameterWeibull") {
-    dweibull3Temp <- function(x, shape, scale, thres) {
-      FAdist::dweibull3(x, shape = shape, scale = scale, thres = thres)
-    }
-    pweibull3Temp <- function(q, shape, scale, thres) {
-      FAdist::pweibull3(q, shape = shape, scale = scale, thres = thres)
-    }
+      dlnorm3Temp <- function(x, meanlog = 0, sdlog = 1, threshold = 0) {
+        EnvStats::dlnorm3(x, meanlog = meanlog, sdlog = sdlog, threshold = threshold)
+      }
+      .GlobalEnv[["dlnorm3Temp"]] <- dlnorm3Temp
+      plnorm3Temp <- function(q, meanlog = 0, sdlog = 1, threshold = 0) {
+        EnvStats::plnorm3(q, meanlog = meanlog, sdlog = sdlog, threshold = threshold)
+      }
+      .GlobalEnv[["plnorm3Temp"]] <- plnorm3Temp
 
-    # Set starting values that match other software packages more closely
-    weibull3start <- MASS::fitdistr(data, function(x, shape, scale, thres)
-      dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0))$estimate
-    weibull3startShape <- weibull3start[[1]]
-    weibull3startScale <- weibull3start[[2]]
-    weibull3startThres <- weibull3start[[3]]
+      # remove any parameters that are fixed
+      if (!is.null(fix.arg)) {
+        lnorm3startList <- lnorm3startList[!names(lnorm3startList) %in% names(fix.arg)]
+      }
 
-    # Estimate parameters using fitdistrplus, because it can keep values fixed
-    weilbull3Fit <- try(fitdistrplus::fitdist(data, dweibull3Temp, method = "mle",
-                                              start = list(shape = weibull3startShape,
-                                                           scale = weibull3startScale,
-                                                           thres = weibull3startThres),
-                                              fix.arg = fix.arg))
-    if (jaspBase::isTryError(weilbull3Fit))
-      stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-    beta <- weilbull3Fit$estimate[1] # shape
-    theta <- weilbull3Fit$estimate[2] # scale
-    threshold <- weilbull3Fit$estimate[3] # threshold
+      # Estimate parameters using fitdistrplus, because it can keep values fixed
+      lnorm3Fit <- try(fitdistrplus::fitdist(data, "lnorm3Temp", method = "mle",
+                                             control = list(
+                                               maxit = 10000,
+                                               abstol = .Machine$double.eps^0.75,
+                                               reltol = .Machine$double.eps^0.75),
+                                             start = lnorm3startList,
+                                             fix.arg = fix.arg))
+      if (jaspBase::isTryError(lnorm3Fit))
+        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+
+
+      lnorm3Pars <- lnorm3Fit$estimate
+      if (!is.null(fix.arg)) {
+        lnorm3Pars[names(fix.arg)] <- fix.arg
+      }
+      beta  <- lnorm3Pars[["meanlog"]] # shape / logmean
+      theta <- lnorm3Pars[["sdlog"]] # scale / log std. dev.
+      threshold <- lnorm3Pars[["threshold"]] # threshold
+
+      beta <- lnorm3Fit$estimate[[1]] # shape / logmean
+      theta <- lnorm3Fit$estimate[[2]] # scale / log std. dev.
+      threshold <- lnorm3Fit$estimate[[3]] # threshold
+    }
+    ################################
+    #### 3-parameter weibull   #####
+    ################################
+  } else if (distribution == "3ParameterWeibull") {
+    if (allParametersFixed) {
+      beta <- fix.arg[["shape"]] # shape
+      theta <- fix.arg[["scale"]] # scale
+      threshold <- fix.arg[["threshold"]] # threshold
+    } else {
+
+      # Wrap distribution functions and make available in environment
+      dweibull3Temp <- function(x, shape, scale, thres) {
+        FAdist::dweibull3(x, shape = shape, scale = scale, thres = thres)
+      }
+      .GlobalEnv[["dweibull3Temp"]] <- dweibull3Temp
+
+      pweibull3Temp <- function(q, shape, scale, thres) {
+        FAdist::pweibull3(q, shape = shape, scale = scale, thres = thres)
+      }
+      .GlobalEnv[["pweibull3Temp"]] <- pweibull3Temp
+
+      # Set starting values that match other software packages more closely
+      weibull3start <- MASS::fitdistr(data, function(x, shape, scale, thres)
+        dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0))$estimate
+      weibull3startShape <- weibull3start[[1]]
+      weibull3startScale <- weibull3start[[2]]
+      weibull3startThres <- weibull3start[[3]]
+
+      # Estimate parameters using fitdistrplus, because it can keep values fixed
+      weilbull3Fit <- try(fitdistrplus::fitdist(data, "weibull3Temp", method = "mle",
+                                                start = list(shape = weibull3startShape,
+                                                             scale = weibull3startScale,
+                                                             thres = weibull3startThres),
+                                                fix.arg = fix.arg))
+      if (jaspBase::isTryError(weilbull3Fit))
+        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+      beta <- weilbull3Fit$estimate[1] # shape
+      theta <- weilbull3Fit$estimate[2] # scale
+      threshold <- weilbull3Fit$estimate[3] # threshold
+    }
+    #################
+    #### Gamma  #####
+    #################
   } else if (distribution == "gamma") {
     gammaFit <- try(fitdistrplus::fitdist(data, "gamma", method = "mle",
                                           control = list(
@@ -1521,6 +1571,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
     beta <- gammaFit$estimate[1] # shape
     theta <- gammaFit$estimate[2] # rate
+
+    #######################
+    #### Exponential  #####
+    #######################
   } else if (distribution == "exponential") {
     expFit <- try(fitdistrplus::fitdist(data, "exp", method = "mle",
                                         fix.arg = fix.arg))
@@ -1528,6 +1582,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
     beta <- NA # not relevant for this distribution
     theta <- 1/expFit$estimate[1] # scale
+
+    #######################
+    ####   Logistic   #####
+    #######################
   } else if (distribution == "logistic") {
     logFit <- try(fitdistrplus::fitdist(data, "logis", method = "mle",
                                         control = list(
@@ -1540,6 +1598,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
     beta <- logFit$estimate[1] # location
     theta <- logFit$estimate[2] # scale
+
+    #######################
+    ####  Loglogistic #####
+    #######################
   } else if (distribution == "loglogistic") {
     dllogisTemp <- flexsurv::dllogis # because it is not possible to directly call flexsurv:: in the fitdist function
     pllogisTemp <- flexsurv::pllogis
@@ -1559,7 +1621,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   }
   list <- list(beta = beta,
                theta = theta)
-  if(distribution == "3ParameterWeibull" | distribution == "3ParameterLognormal")
+  if (distribution == "3ParameterWeibull" | distribution == "3ParameterLognormal")
     list["threshold"] <- threshold
   return(list)
 }
