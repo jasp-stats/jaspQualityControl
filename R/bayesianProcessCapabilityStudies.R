@@ -425,7 +425,8 @@ getCustomAxisLimits <- function(options, base) {
         single_panel       = singlePanel,
         axes               = options[[paste0(base, "Axes")]],
         axes_custom        = getCustomAxisLimits(options, base),
-        priorSummaryObject = priorSummaryObject
+        priorSummaryObject = priorSummaryObject,
+        textsize           = .35 * jaspGraphs::getGraphOption("fontsize") # same as in priorposterior plot
       ) +
         jaspGraphs::geom_rangeframe() +
         jaspGraphs::themeJaspRaw()
