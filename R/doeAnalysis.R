@@ -1462,7 +1462,8 @@ get_levels <- function(var, num_levels, dataset) {
 
 .doeAnalysisStepwiseTable <- function(jaspResults, dependent, options, ready, coded, stepwiseMethod) {
   for (dep in dependent) {
-    if (stepwiseMethod == "enter" || !is.null(jaspResults[[dep]][["doeResult"]])) {
+
+    if (stepwiseMethod == "enter" || !is.null(jaspResults[[dep]][["stepwiseTable"]])) {
       return()
     }
 

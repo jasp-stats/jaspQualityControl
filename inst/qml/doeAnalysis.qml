@@ -144,7 +144,7 @@ Form
 	Group
 	{
 		columns:				2
-
+    	Layout.topMargin: 16
 
 		Group 
 		{
