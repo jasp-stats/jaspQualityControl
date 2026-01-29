@@ -49,6 +49,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
 - Type of data distribution: indicate whether the data approximates a normal distribution or another distribution (the most commonly used distributions are: Weibull, Lognormal, 3-parameter Weibull, and 3-parameter lognorma)
     - Specify a distribution: the non-normal distribution to be used. 
     - Non-normal capability statistics: the method used to calculate the capability statistics for non-normally distributed data.
+    - Historical parameters: Select which parameters should use fixed historical values instead of being estimated. Note that if only some parameters are set historically, JASP currently estimates all parameters first and then replaces the selected ones with their historical values; it does not keep them fixed during estimation.
 
 #### Capability studies
 - Specification limits:
