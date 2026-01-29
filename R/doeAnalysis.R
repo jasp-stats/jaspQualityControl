@@ -1735,20 +1735,43 @@ get_levels <- function(var, num_levels, dataset) {
   formula <- as.formula(paste0("~", paste0(variablePair, collapse = " + ")))
   nResponsePartitions <- options[["contourSurfacePlotResponseDivision"]]
   colorSet <- heat.colors(nResponsePartitions)
-  if (type == "contour"){
+
+  # --- Make space on the right for legend ---
+  rightMarginSize <- if (options[["contourSurfacePlotLegend"]]) 10 else 0
+  oldpar <- par(no.readonly = TRUE)
+  par(mar = oldpar$mar + c(0, 0, 0, rightMarginSize), xpd = NA)  # widen right margin
+
+  if (type == "contour") {
     po <- rsm::image.lm(regressionFit, formula, las = 1, col = colorSet)
+
   } else if (type == "surface") {
     theta <- options[["surfacePlotHorizontalRotation"]]
-    phi <- options[["surfacePlotVerticalRotation"]]
-    po <- rsm::persp.lm(regressionFit, formula, theta = theta, phi = phi, zlab = dependent,
-                        col = colorSet)
+    phi   <- options[["surfacePlotVerticalRotation"]]
+
+    po <- rsm::persp.lm(
+      regressionFit, formula,
+      theta = theta, phi = phi,
+      zlab = dependent,
+      col = colorSet
+    )
   }
-  if (options[["contourSurfacePlotLegend"]]){
+
+  if (options[["contourSurfacePlotLegend"]]) {
+
     partitionRanges <- levels(cut(po[[1]]$z, breaks = nResponsePartitions))
     partitionRanges <- gsub(",", " \U2013 ", partitionRanges)
     partitionRanges <- gsub("\\(", "", partitionRanges)
     partitionRanges <- gsub("\\]", "", partitionRanges)
-    legend(x = "topright", legend = partitionRanges, fill = colorSet)
+    # we push legend to the right, dependent on the width of the legend, with some minimum
+    pushDistance <- max(c(strwidth(levels(cut(po[[1]]$z, breaks = nResponsePartitions)), units = "figure"), 0.2))
+
+    legend(
+      x = "topright",
+      inset = c(-pushDistance*2.5, 0), # push legend into the right margin
+      legend = partitionRanges,
+      fill = colorSet,
+      bty = "n"
+    )
   }
 }
 
