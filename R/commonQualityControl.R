@@ -1519,7 +1519,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     if (allParametersFixed) {
       beta <- fix.arg[["shape"]] # shape
       theta <- fix.arg[["scale"]] # scale
-      threshold <- fix.arg[["threshold"]] # threshold
+      threshold <- fix.arg[["thres"]] # threshold
     } else {
       # Set starting values that match other software packages more closely
       weibull3start <- MASS::fitdistr(data, function(x, shape, scale, thres)
@@ -1527,6 +1527,9 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       weibull3startShape <- weibull3start[[1]]
       weibull3startScale <- weibull3start[[2]]
       weibull3startThres <- weibull3start[[3]]
+      weibull3startList <- list(shape = weibull3startShape,
+                                scale = weibull3startScale,
+                                thres = weibull3startThres)
 
       # Wrap distribution functions and make available in environment
       dweibull3Temp <- function(x, shape, scale, thres) {
@@ -1539,11 +1542,14 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       .GlobalEnv[["pweibull3Temp"]] <- pweibull3Temp
 
+      # remove any parameters that are fixed
+      if (!is.null(fix.arg)) {
+        weibull3startList <- weibull3startList[!names(weibull3startList) %in% names(fix.arg)]
+      }
+
       # Estimate parameters using fitdistrplus, because it can keep values fixed
       weilbull3Fit <- try(fitdistrplus::fitdist(data, "weibull3Temp", method = "mle",
-                                                start = list(shape = weibull3startShape,
-                                                             scale = weibull3startScale,
-                                                             thres = weibull3startThres),
+                                                start = weibull3startList,
                                                 fix.arg = fix.arg))
       if (jaspBase::isTryError(weilbull3Fit))
         stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
@@ -1554,8 +1560,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         weibull3Pars[names(fix.arg)] <- fix.arg
       }
 
-      beta  <- weibull3Pars[["shape"]] # shape / logmean
-      theta <- weibull3Pars[["scale"]] # scale / log std. dev.
+      beta  <- weibull3Pars[["shape"]] # shape
+      theta <- weibull3Pars[["scale"]] # scale
       threshold <- weibull3Pars[["thres"]] # threshold
     }
     #################
@@ -1566,7 +1572,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       beta <- fix.arg[["shape"]] # shape
       theta <- 1/fix.arg[["rate"]] # scale
     } else {
-      gammaFit <- try(fitdistrplus::fitdist(data$Diameter, "gamma", method = "mle",
+      gammaFit <- try(fitdistrplus::fitdist(data, "gamma", method = "mle",
                                             control = list(
                                               maxit = 10000,
                                               abstol = .Machine$double.eps^0.75,
@@ -1635,7 +1641,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
   } else if (distribution == "loglogistic") {
     if (allParametersFixed) {
       beta <- log(fix.arg[["scale"]]) # log(scale) -> loglocation
-      theta <- fix.arg[["shape"]] # 1/shape -> Scale
+      theta <- 1/fix.arg[["shape"]] # 1/shape -> Scale
     } else {
 
       # Wrap distribution functions and make available in environment
@@ -1649,14 +1655,21 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
       .GlobalEnv[["pllogisTemp"]] <- pllogisTemp
 
-      loglogFit <- try(fitdistrplus::fitdist(data$Diameter, "llogisTemp", method = "mle",
+      loglogStartList <- list(shape = 1,
+                              scale = 1)
+
+      # remove any parameters that are fixed
+      if (!is.null(fix.arg)) {
+        loglogStartList <- loglogStartList[!names(loglogStartList) %in% names(fix.arg)]
+      }
+
+      loglogFit <- try(fitdistrplus::fitdist(data, "llogisTemp", method = "mle",
                                              control = list(
                                                maxit = 10000,
                                                abstol = .Machine$double.eps^0.75,
                                                reltol = .Machine$double.eps^0.75,
                                                ndeps = rep(1e-8, 2)),
-                                             start = list(shape = 1,
-                                                          scale = 1),
+                                             start = loglogStartList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(loglogFit))
         stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
@@ -1668,7 +1681,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
 
       beta  <- log(logPars[["scale"]]) # log(scale) -> loglocation
-      theta <- 1/logPars[["scale"]] # 1/shape -> Scale
+      theta <- 1/logPars[["shape"]] # 1/shape -> Scale
     }
   }
   list <- list(beta = beta,

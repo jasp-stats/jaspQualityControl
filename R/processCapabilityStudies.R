@@ -738,6 +738,82 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
 }
 
+
+.buildFixArg <- function(distribution, options) {
+
+  fix.arg <- list()
+
+
+  # SHAPE
+  if (distribution %in% c("weibull", "3ParameterWeibull", "gamma")) {
+    if (options[["historicalShape"]]) {
+      fix.arg[["shape"]] <- options[["historicalShapeValue"]]
+    }
+  }
+
+  # LOGLOGISTIC SPECIAL CASE
+  if (distribution == "loglogistic") {
+
+    # GUI scale → shape
+    if (options[["historicalScale"]]) {
+      fix.arg[["shape"]] <- options[["historicalScaleValue"]] # to match the parameters of other software
+    }
+
+    # GUI location → scale
+    if (options[["historicalLocation"]]) {
+      fix.arg[["scale"]] <- options[["historicalLocationValue"]] # to match the parameters of other software
+    }
+  }
+
+  # SCALE / RATE (standard cases)
+  if (distribution %in% c("weibull", "3ParameterWeibull", "logistic")) {
+    if (options[["historicalScale"]]) {
+      fix.arg[["scale"]] <- options[["historicalScaleValue"]]
+    }
+  }
+
+  if (distribution %in% c("gamma", "exponential")) {
+    if (options[["historicalScale"]]) {
+      fix.arg[["rate"]] <- 1 / options[["historicalScaleValue"]] # transformed scale to rate
+    }
+  }
+
+  # LOCATION
+  if (distribution == "logistic") {
+    if (options[["historicalLocation"]]) {
+      fix.arg[["location"]] <- options[["historicalLocationValue"]]
+    }
+  }
+
+  # LOGNORMAL PARAMETERS
+  if (distribution %in% c("lognormal", "3ParameterLognormal")) {
+
+    if (options[["historicalLogMean"]]) {
+      fix.arg[["meanlog"]] <- options[["historicalLogMeanValue"]]
+    }
+
+    if (options[["historicalLogStdDev"]]) {
+      fix.arg[["sdlog"]] <- options[["historicalLogStdDevValue"]]
+    }
+  }
+
+  # THRESHOLD
+  if (distribution == "3ParameterLognormal") {
+    if (options[["historicalThreshold"]]) {
+      fix.arg[["threshold"]] <- options[["historicalThresholdValue"]]
+    }
+  }
+
+  if (distribution == "3ParameterWeibull") {
+    if (options[["historicalThreshold"]]) {
+      fix.arg[["thres"]] <- options[["historicalThresholdValue"]]
+    }
+  }
+
+  fix.arg <- if (length(fix.arg) == 0) NULL else fix.arg
+  return(fix.arg)
+}
+
 .qcProcessCapabilityPlotObject <- function(options, dataset, measurements, stages, distribution = c('normal', "weibull", "lognormal", "3ParameterLognormal", "3ParameterWeibull")) {
   if (identical(stages, "")) {
     nStages <- 1
@@ -803,45 +879,30 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     legendLty <- c()
     legendLabels <- c()
 
-  # logic that checks if all parameters necessary for the non-normal distributions are given as historical, if yes, skip the dist. est. function, else replace only the given parameters
-  if (distribution != "normal")
-    allParametersHistorical <- switch(
-      options[["nonNormalDistribution"]],
-      "weibull" = options[["historicalShape"]] && options[["historicalScale"]],
-      "lognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]],
-      "3ParameterWeibull" = options[["historicalShape"]] && options[["historicalScale"]] && options[["historicalThreshold"]],
-      "3ParameterLognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]] && options[["historicalThreshold"]],
-      FALSE  # default
-    )
+  # for non normal dist, create fix.arg list based on historical values
+    if (distribution != "normal")
+      fix.arg <- .buildFixArg(distribution, options)
 
     # Overlay distribution
     if (options[["processCapabilityPlotDistributions"]]) {
       if (distribution == "normal") {
         processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
         if (.qcWithinProcessValid(options)) {
-        p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sd(allData)),
-                                        mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist")) +
-          ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sdw),
-                                 mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
-        legendColors <- c(legendColors, "dodgerblue", "red")
-        legendLty <- c(legendLty, "solid", "solid")
-        legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
-                          gettext("Normal dist.\n(std. dev. within)"))
+          p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sd(allData)),
+                                          mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist")) +
+            ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sdw),
+                                   mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
+          legendColors <- c(legendColors, "dodgerblue", "red")
+          legendLty <- c(legendLty, "solid", "solid")
+          legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
+                            gettext("Normal dist.\n(std. dev. within)"))
         }
       } else if (distribution == "weibull") {
-        if (allParametersHistorical) {
-          # If all are historical, assign parameters as given in options
-          distParameters <- list(beta  = options[["historicalShapeValue"]],
-                                 theta = options[["historicalScaleValue"]])
-        } else {
-          distParameters <- .distributionParameters(data = allData, distribution = distribution)
-          if (jaspBase::isTryError(distParameters))
-            stop(distParameters[1], call. = FALSE)
-          if (options[["historicalShape"]])
-            distParameters$beta <- options[["historicalShapeValue"]]
-          if (options[["historicalScale"]])
-            distParameters$beta <- options[["historicalScaleValue"]]
-        }
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
         shape <- distParameters$beta
         scale <- distParameters$theta
         p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
@@ -850,68 +911,38 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, gettext("Weibull dist."))
       } else if (distribution == "lognormal") {
-        if (allParametersHistorical) {
-          # If all are historical, assign parameters as given in options
-          distParameters <- list(beta  = options[["historicalLogMeanValue"]],
-                                 theta = options[["historicalLogStdDevValue"]])
-        } else {
-          distParameters <- .distributionParameters(data = allData, distribution = distribution)
-          if (jaspBase::isTryError(distParameters))
-            stop(distParameters[1], call. = FALSE)
-          if (options[["historicalLogMean"]])
-            distParameters$beta <- options[["historicalLogMeanValue"]]
-          if (options[["historicalLogStdDev"]])
-            distParameters$theta <- options[["historicalLogStdDevValue"]]
-        }
-        shape <- distParameters$beta
-        scale <- distParameters$theta
-        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale),
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
+        meanlog <- distParameters$beta
+        sdlog <- distParameters$theta
+        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = meanlog, sdlog = sdlog),
                                         mapping = ggplot2::aes(color = "lognormal", linetype = "lognormal"))
         legendColors <- c(legendColors, "red")
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, "Lognormal dist.")
       } else if (distribution == "3ParameterLognormal") {
-        if (allParametersHistorical) {
-          # If all are historical, assign parameters as given in options
-          distParameters <- list(beta  = options[["historicalLogMeanValue"]],
-                                 theta = options[["historicalLogStdDevValue"]],
-                                 threshold = options[["historicalThresholdValue"]])
-        } else {
-          distParameters <- .distributionParameters(data = allData, distribution = distribution)
-          if (jaspBase::isTryError(distParameters))
-            stop(distParameters[1], call. = FALSE)
-          if (options[["historicalLogMean"]])
-            distParameters$beta <- options[["historicalLogMeanValue"]]
-          if (options[["historicalLogStdDev"]])
-            distParameters$theta <- options[["historicalLogStdDevValue"]]
-          if (options[["historicalThreshold"]])
-            distParameters$threshold <- options[["historicalThresholdValue"]]
-        }
-        shape <- distParameters$theta # The distribution function uses theta for shape and beta for scale, which is reverse to convention
-        scale <- distParameters$beta
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
+        meanlog <- distParameters$beta
+        sdlog <- distParameters$theta
         threshold <- distParameters$threshold
-        p <- p + ggplot2::stat_function(fun = FAdist::dlnorm3 , args = list(shape = shape, scale = scale, thres = threshold),
+        p <- p + ggplot2::stat_function(fun = EnvStats::dlnorm3, args = list(meanlog = meanlog, sdlog = sdlog, threshold = threshold),
                                         mapping = ggplot2::aes(color = "lognormal3", linetype = "lognormal3"))
         legendColors <- c(legendColors, "red")
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, gettext("3-parameter\nlognormal dist."))
       } else if (distribution == "3ParameterWeibull") {
-        if (allParametersHistorical) {
-          # If all are historical, assign parameters as given in options
-          distParameters <- list(beta  = options[["historicalShapeValue"]],
-                                 theta = options[["historicalScaleValue"]],
-                                 threshold = options[["historicalThresholdValue"]])
-        } else {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
         if (jaspBase::isTryError(distParameters))
           stop(distParameters[1], call. = FALSE)
-        if (options[["historicalShape"]])
-          distParameters$beta <- options[["historicalShapeValue"]]
-        if (options[["historicalScale"]])
-          distParameters$beta <- options[["historicalScaleValue"]]
-        if (options[["historicalThreshold"]])
-          distParameters$threshold <- options[["historicalThresholdValue"]]
-        }
         shape <- distParameters$beta
         scale <- distParameters$theta
         threshold <- distParameters$threshold
@@ -920,6 +951,59 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         legendColors <- c(legendColors, "red")
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, gettext("3-parameter Weibull dist."))
+      } else if (distribution == "gamma") {
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
+        shape <- distParameters$beta
+        scale <- distParameters$theta
+        p <- p + ggplot2::stat_function(fun = dgamma , args = list(shape = shape, scale = scale),
+                                        mapping = ggplot2::aes(color = "gamma", linetype = "gamma"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Gamma dist."))
+      } else if (distribution == "exponential") {
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
+        scale <- distParameters$theta
+        rate <- 1/scale
+        p <- p + ggplot2::stat_function(fun = dexp , args = list(rate = rate),
+                                        mapping = ggplot2::aes(color = "exp", linetype = "exp"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Exponential dist."))
+      } else if (distribution == "logistic") {
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
+        location <- distParameters$beta
+        scale <- distParameters$theta
+        p <- p + ggplot2::stat_function(fun = dlogis , args = list(location = location, scale = scale),
+                                        mapping = ggplot2::aes(color = "logis", linetype = "logis"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Logistic dist."))
+      } else if (distribution == "loglogistic") {
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
+        loglocation <- distParameters$beta
+        scale <- exp(loglocation)
+        shape <- 1/distParameters$theta
+        p <- p + ggplot2::stat_function(fun = flexsurv::dllogis , args = list(shape = shape, scale = scale),
+                                        mapping = ggplot2::aes(color = "llogis", linetype = "llogis"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Log-logistic dist."))
       }
     }
 
