@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
 "POT-Creation-Date: 2026-01-24 03:57\n"
-"PO-Revision-Date: 2025-11-03 09:51+0000\n"
+"PO-Revision-Date: 2026-02-01 13:36+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/de/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.14.1-dev\n"
+"X-Generator: Weblate 5.16-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -223,9 +223,8 @@ msgstr "Exponentiell-gewichteter-gleitender-Mittelwert-Karte"
 msgid "LSL = %g"
 msgstr "UEG = %g"
 
-#, fuzzy
 msgid "Tar. = %g"
-msgstr "CL = %g"
+msgstr ""
 
 #, fuzzy
 msgid "USL = %g"
@@ -1010,9 +1009,8 @@ msgstr ""
 msgid "%.2f"
 msgstr ""
 
-#, fuzzy
 msgid "Gauge r&R - nested"
-msgstr "ANOVA-Tabelle"
+msgstr ""
 
 msgid ""
 "Unbalanced design. Some parts have more repeated measurements than others."
@@ -1462,9 +1460,8 @@ msgstr ""
 msgid "3-parameter Weibull dist."
 msgstr ""
 
-#, fuzzy
 msgid "Target = %g"
-msgstr "CL = %g"
+msgstr "Ziel = %g"
 
 #, fuzzy
 msgid "LB = %g"
