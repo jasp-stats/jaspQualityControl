@@ -1632,7 +1632,7 @@ msgid ""
 msgstr ""
 "Alguns limites de especificação ou valores-alvo estão fora do alcance da "
 "transformação de Johnson (SL). O limite inferior da transformação foi "
-"identificado como %1Sf."
+"identificado como %1$f."
 
 msgid ""
 "The measurements, specification limits and target value were transformed "
