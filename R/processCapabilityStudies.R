@@ -1732,6 +1732,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   colnames(tableDf) <- tableColNames
 
 
+  fix.arg <- .buildFixArg(options[["nonNormalDistribution"]], options)
 
   ## estimate parameters
   distParameters <- list()
@@ -1740,70 +1741,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
 
-    # logic that checks if all parameters necessary for the distribution are given as historical, if yes, skip the dist. est. function, else replace only the given parameters
-    allParametersHistorical <- switch(
-      options[["nonNormalDistribution"]],
-      "weibull" = options[["historicalShape"]] && options[["historicalScale"]],
-      "lognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]],
-      "3ParameterWeibull" = options[["historicalShape"]] && options[["historicalScale"]] && options[["historicalThreshold"]],
-      "3ParameterLognormal" = options[["historicalLogMean"]] && options[["historicalLogStdDev"]] && options[["historicalThreshold"]],
-      FALSE  # default
-    )
 
-    if (allParametersHistorical) {
-      if (allParametersHistorical) { # If all are historical, assign parameters as given in options
-        tempDistParamList <- switch(
-          options[["nonNormalDistribution"]],
-          "weibull" = list(
-            beta  = options[["historicalShapeValue"]],
-            theta = options[["historicalScaleValue"]]
-          ),
-          "lognormal" = list(
-            beta = options[["historicalLogMeanValue"]],
-            theta   = options[["historicalLogStdDevValue"]]
-          ),
-          "3ParameterWeibull" = list(
-            beta      = options[["historicalShapeValue"]],
-            theta     = options[["historicalScaleValue"]],
-            threshold = options[["historicalThresholdValue"]]
-          ),
-          "3ParameterLognormal" = list(
-            beta   = options[["historicalLogMeanValue"]],
-            theta     = options[["historicalLogStdDevValue"]],
-            threshold = options[["historicalThresholdValue"]]
-          ),
-          NULL
-        )
-        distParameters[[i]] <- tempDistParamList
-      }
-    } else { # If not all are historical, first estimate all parameters, then potentially replace some with the historical estimates
-      distParameters[[i]] <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
-      if (jaspBase::isTryError(distParameters[[i]])) {
-        table$setError(distParameters[[i]][1])
-        container[["summaryTableNonNormal"]] <- table
-        return()
-      }
 
-      ## If applicable, replace parameters with historical values
-      # Weibull and 3-parameter Weibull
-      if (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull") {
-        if (options[["historicalShape"]]) {
-          distParameters[[i]][["beta"]] <- options[["historicalShapeValue"]]
-        }
-        if (options[["historicalScale"]])
-          distParameters[[i]][["theta"]] <- options[["historicalScaleValue"]]
-        if (options[["nonNormalDistribution"]] == "3ParameterWeibull" && options[["historicalThreshold"]])
-          distParameters[[i]][["threshold"]] <- options[["historicalThresholdValue"]]
-
-        # Lognormal and 3-parameter Lognormal
-      } else if (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal") {
-        if (options[["historicalLogMean"]])
-          distParameters[[i]][["beta"]] <- options[["historicalLogMeanValue"]]
-        if (options[["historicalLogStdDev"]])
-          distParameters[[i]][["theta"]] <- options[["historicalLogStdDevValue"]]
-        if (options[["nonNormalDistribution"]] == "3ParameterLognormal" && options[["historicalThreshold"]])
-          distParameters[[i]][["threshold"]] <- options[["historicalThresholdValue"]]
-      }
+    # If not all are historical, first estimate all parameters, then potentially replace some with the historical estimates
+    distParameters[[i]] <- try(.distributionParameters(data = allData,
+                                                       distribution = options[["nonNormalDistribution"]],
+                                                       fix.arg = fix.arg))
+    if (jaspBase::isTryError(distParameters[[i]])) {
+      table$setError(distParameters[[i]][1])
+      container[["summaryTableNonNormal"]] <- table
+      return()
     }
   }
 
