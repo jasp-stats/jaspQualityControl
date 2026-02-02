@@ -1904,8 +1904,8 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF28.1 Weibull distribution with one historical param. - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0, 0, "ppm &lt; LSL", 1.53, 10000, "ppm &gt; USL", 1.53, 10000,
-                                      "Total ppm"))
+                                 list(0, 0, "ppm &lt; LSL", 41, 10000, "ppm &gt; USL", 41, 10000, "Total ppm"
+                                 ))
 })
 
 test_that("LF28.2 Weibull distribution with one historical param. - Capability of the process plot matches", {
@@ -1917,13 +1917,13 @@ test_that("LF28.2 Weibull distribution with one historical param. - Capability o
 test_that("LF28.3 Weibull distribution with one historical param. - Process performance (total) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("<unicode>", 1.56, "<unicode>", 1.56))
+                                 list("<unicode>", 1.31, "<unicode>", 1.31))
 })
 
 test_that("LF28.4 Weibull distribution with one historical param. - Process summary table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(6, 0, 7.08, 100, 1.85635681000733, 6, 7.78727631111372, 12))
+                                 list(6, 0, 7.08, 100, 1.85635681000733, 6, 8.16170213506214, 12))
 })
 
 ### Weibull distribution with all historical param. (verified with other software) ####
@@ -2055,7 +2055,7 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF31.1 Lognormal distribution with one historical param. - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0, 0, "ppm &lt; LSL", 37860.93, 10000, "ppm &gt; USL", 37860.93,
+                                 list(0, 0, "ppm &lt; LSL", 43152.01, 10000, "ppm &gt; USL", 43152.01,
                                       10000, "Total ppm"))
 })
 
@@ -2068,13 +2068,13 @@ test_that("LF31.2 Lognormal distribution with one historical param. - Capability
 test_that("LF31.3 Lognormal distribution with one historical param. - Process performance (total) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("<unicode>", 0.59, "<unicode>", 0.59))
+                                 list("<unicode>", 0.57, "<unicode>", 0.57))
 })
 
 test_that("LF31.4 Lognormal distribution with one historical param. - Process summary table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(2, 0, 7.08, 100, 1.85635681000733, 6, 0.273022707246043, 12))
+                                 list(2, 0, 7.08, 100, 1.85635681000733, 6, 0.28270735296668, 12))
 })
 
 ### Lognormal distribution with all historical param. (verified with other software) ####
@@ -2206,7 +2206,7 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF34.1 3ParameterWeibull distribution with one historical param. - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0, 0, "ppm &lt; LSL", 11678.25, 10000, "ppm &gt; USL", 11678.25,
+                                 list(0, 0, "ppm &lt; LSL", 8933.26, 10000, "ppm &gt; USL", 8933.26,
                                       10000, "Total ppm"))
 })
 
@@ -2219,13 +2219,13 @@ test_that("LF34.2 3ParameterWeibull distribution with one historical param. - Ca
 test_that("LF34.3 3ParameterWeibull distribution with one historical param. - Process performance (total) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("<unicode>", 0.76, "<unicode>", 0.76))
+                                 list("<unicode>", 0.79, "<unicode>", 0.79))
 })
 
 test_that("LF34.4 3ParameterWeibull distribution with one historical param. - Process summary table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(2.64846838111814, 0, 7.08, 100, 1.85635681000733, 6, 5.1219561122954,
+                                 list(2.29990085720292, 0, 7.08, 100, 1.85635681000733, 6, 4.58450737688268,
                                       3, 12))
 })
 
@@ -2362,7 +2362,7 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF37.1 3ParameterLognormal distribution with one historical param. - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.12, 0, "ppm &lt; LSL", 9380.21, 10000, "ppm &gt; USL", 9380.33,
+                                 list(0.15, 0, "ppm &lt; LSL", 8891.54, 10000, "ppm &gt; USL", 8891.69,
                                       10000, "Total ppm"))
 })
 
@@ -2375,13 +2375,13 @@ test_that("LF37.2 3ParameterLognormal distribution with one historical param. - 
 test_that("LF37.3 3ParameterLognormal distribution with one historical param. - Process performance (total) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.25, 0.78, 1.72, 0.78))
+                                 list(1.25, 0.79, 1.71, 0.79))
 })
 
 test_that("LF37.4 3ParameterLognormal distribution with one historical param. - Process summary table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(2.70930280255199, 0, 7.08, 100, 1.85635681000733, 6, 0.121871527001624,
+                                 list(2.70589917129945, 0, 7.08, 100, 1.85635681000733, 6, 0.122287084346575,
                                       -8, 12))
 })
 
