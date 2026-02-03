@@ -1680,8 +1680,8 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         loglogPars[names(fix.arg)] <- fix.arg
       }
 
-      beta  <- log(logPars[["scale"]]) # log(scale) -> loglocation
-      theta <- 1/logPars[["shape"]] # 1/shape -> Scale
+      beta  <- log(loglogPars[["scale"]]) # log(scale) -> loglocation
+      theta <- 1/loglogPars[["shape"]] # 1/shape -> Scale
     }
   }
   list <- list(beta = beta,
