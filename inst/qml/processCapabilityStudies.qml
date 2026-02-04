@@ -957,12 +957,20 @@ Form
 				values: 
 				[
 					{ label: qsTr("Normal"),		value: "normal"		},
-					{ label: qsTr("Lognormal"),		value: "lognormal"	},
-					{ label: qsTr("Weibull"),		value: "weibull"	}
+					{ label: qsTr("Log-normal"),	value: "lognormal"	},
+					{ label: qsTr("Weibull"),		value: "weibull"	},
+					{ label: qsTr("Gamma"),			value: "gamma"		},
+					{ label: qsTr("Exponential"),	value: "exponential"},
+					{ label: qsTr("Logistic"),		value: "logistic"	},
+					{ label: qsTr("Log-logistic"),	value: "loglogistic"}
 				]
 				indexDefaultValue: (capabilityStudyType.value == "nonNormalCapabilityAnalysis") ? 
 				(nonNormalDistribution.currentValue == "lognormal" || nonNormalDistribution.currentValue == "3ParameterLognormal") ? 1 : 
-				(nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "weibull") ? 2 : 0 
+				(nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "weibull") ? 2 :
+				(nonNormalDistribution.currentValue == "gamma") ? 3 :
+				(nonNormalDistribution.currentValue == "exponential") ? 4 :
+				(nonNormalDistribution.currentValue == "logistic") ? 5 :
+				(nonNormalDistribution.currentValue == "loglogistic") ? 6 : 0
 				: 0
 			}
 
