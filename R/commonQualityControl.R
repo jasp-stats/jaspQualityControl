@@ -1667,8 +1667,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                              control = list(
                                                maxit = 10000,
                                                abstol = .Machine$double.eps^0.75,
-                                               reltol = .Machine$double.eps^0.75,
-                                               ndeps = rep(1e-8, 2)),
+                                               reltol = .Machine$double.eps^0.75),
                                              start = loglogStartList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(loglogFit))
