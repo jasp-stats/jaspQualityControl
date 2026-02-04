@@ -132,8 +132,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-
-
   # Report
   if (options[["report"]]) {
     nElements <- sum(options[["reportProcessStability"]]*2, options[["reportProcessCapabilityPlot"]], options[["reportProbabilityPlot"]],
@@ -2424,14 +2422,23 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   footnotes <- paste0(footnotes, gettextf("Calculations based on %s distribution. ", distname))
   if (options[["nonNormalDistribution"]] == "loglogistic")
     footnotes <- paste0(footnotes, gettextf("Location parameter is log-transformed. "))
-  if (options[["historicalShape"]] && (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull"))
+
+  # Shape
+  if (options[["historicalShape"]] && (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull" || options[["nonNormalDistribution"]] == "gamma"))
     footnotes <- paste0(footnotes, gettextf("The shape (%1$s) is based on a historical value. ", "\u03B2"))
-  if (options[["historicalScale"]] && (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull"))
+  # Scale
+  if (options[["historicalScale"]] && (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull"|| options[["nonNormalDistribution"]] == "gamma" || options[["nonNormalDistribution"]] == "exponential" || options[["nonNormalDistribution"]] == "logistic" || options[["nonNormalDistribution"]] == "loglogistic"))
     footnotes <- paste0(footnotes, gettextf("The scale (%1$s) is based on a historical value. ", "\u03B8"))
+  # Location
+  if (options[["historicalLocation"]] && (options[["nonNormalDistribution"]] == "logistic" || options[["nonNormalDistribution"]] == "loglogistic" ))
+    footnotes <- paste0(footnotes, gettext("The location parameter is based on a historical value. "))
+  # Log Mean
   if (options[["historicalLogMean"]] && (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
     footnotes <- paste0(footnotes, gettextf("The log mean (%1$s) is based on a historical value. ", "\u03BC"))
+  # Log Std. Dev.
   if (options[["historicalLogStdDev"]] && (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
     footnotes <- paste0(footnotes, gettextf("The log std. dev. (%1$s) is based on a historical value. ", "\u03C3"))
+  # Threshold
   if (options[["historicalThreshold"]] && (options[["nonNormalDistribution"]] == "3ParameterWeibull" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
     footnotes <- paste0(footnotes, gettext("The threshold is based on a historical value. "))
 
@@ -2475,6 +2482,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   } else if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
   }
+  if (options[["nullDistribution"]] %in% c("gamma", "exponential", "logistic", "loglogistic")) {
+    plot <- createJaspPlot(width = 400, height = 400,
+                           title = gettext("Probability plot"))
+    container[["plot"]] <- plot
+    plot$setError(gettextf("Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module.", options[["nullDistribution"]]))
+    return()
+  }
+
   if (sum(!is.na(dataset[measurements])) < 2) {
     plot <- createJaspPlot(width = 400, height = 400,
                            title = gettext("Probability plot"))
@@ -2917,21 +2932,48 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                         mapping = ggplot2::aes(color = "normalDist"))
         legendLabel <- gettext("Normal dist.")
       } else if (options[['nullDistribution']]  == "weibull") {
-        fit_Weibull <- fitdistrplus::fitdist(dataCurrentStage, "weibull", method = "mle",
-                                             control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
-        shape <- fit_Weibull$estimate[[1]]
-        scale <- fit_Weibull$estimate[[2]]
+        fit_Weibull <- .distributionParameters(dataCurrentStage, distribution = "weibull", fix.arg = NULL)
+        shape <- fit_Weibull[["beta"]]
+        scale <- fit_Weibull[["theta"]]
         p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
                                         mapping = ggplot2::aes(color = "weibullDist"))
         legendLabel <- gettext("Weibull dist.")
       } else if(options[['nullDistribution']]  == "lognormal") {
-        fit_Lnorm    <- EnvStats::elnorm(dataCurrentStage)
-        shape  <- fit_Lnorm$parameters[1]
-        scale    <- fit_Lnorm$parameters[2]
-        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale),
+        fit_Lnorm    <- .distributionParameters(dataCurrentStage, distribution = "lognormal", fix.arg = NULL)
+        meanlog  <- fit_Lnorm[["beta"]]
+        sdlog    <- fit_Lnorm[["theta"]]
+        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = meanlog, sdlog = sdlog),
                                         mapping = ggplot2::aes(color = "lognormallDist"))
-        legendLabel <- gettext("Lognormal dist.")
+        legendLabel <- gettext("Log-normal dist.")
+      } else if(options[['nullDistribution']]  == "gamma") {
+        fitGamma <- .distributionParameters(dataCurrentStage, distribution = "gamma", fix.arg = NULL)
+        shape <- fitGamma[["beta"]]
+        scale <- fitGamma[["theta"]]
+        p <- p + ggplot2::stat_function(fun = dgamma, args = list(shape = shape, scale = scale),
+                                        mapping = ggplot2::aes(color = "gammaDist"))
+        legendLabel <- gettext("Gamma dist.")
+      } else if(options[['nullDistribution']]  == "exponential") {
+        fitExp <- .distributionParameters(dataCurrentStage, distribution = "exponential", fix.arg = NULL)
+        rate <- 1/fitExp[["theta"]]
+        p <- p + ggplot2::stat_function(fun = dexp, args = list(rate = rate),
+                                        mapping = ggplot2::aes(color = "exponentialDist"))
+        legendLabel <- gettext("Exponential dist.")
+      } else if(options[['nullDistribution']]  == "logistic") {
+        fitLogis <- .distributionParameters(dataCurrentStage, distribution = "logistic", fix.arg = NULL)
+        location <- fitLogis[["beta"]]
+        scale <- fitLogis[["theta"]]
+        p <- p + ggplot2::stat_function(fun = dlogis, args = list(location = location, scale = scale),
+                                        mapping = ggplot2::aes(color = "logisticDist"))
+        legendLabel <- gettext("Logistic dist.")
+      } else if(options[['nullDistribution']]  == "loglogistic") {
+        fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "logistic", fix.arg = NULL)
+        shape <- 1/fitLoglogis[["theta"]]
+        scale <- exp(fitLoglogis[["beta"]])
+        p <- p + ggplot2::stat_function(fun = flexsurv::dllogis, args = list(shape = shape, scale = scale),
+                                        mapping = ggplot2::aes(color = "loglogisticDist"))
+        legendLabel <- gettext("Log-logistic dist.")
       }
+
       p <- p + ggplot2::scale_color_manual("", values = "dodgerblue", labels = legendLabel) +
         ggplot2::theme(legend.position = "right")
     }
