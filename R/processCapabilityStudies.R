@@ -754,7 +754,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     # GUI scale → shape
     if (options[["historicalScale"]]) {
-      fix.arg[["shape"]] <- options[["historicalScaleValue"]] # to match the parameters of other software
+      fix.arg[["shape"]] <- 1/options[["historicalScaleValue"]] # to match the parameters of other software
     }
 
     # GUI location → scale
