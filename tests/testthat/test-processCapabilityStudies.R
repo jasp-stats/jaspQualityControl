@@ -2491,6 +2491,391 @@ test_that("LF39.4 3ParameterLognormal distribution with mismatching historical d
                                  list(4, 0, 7.08, 100, 1.85635681000733, 6, 0.12, -8, 12))
 })
 
+## Test Additional Non-normal Distributions ####
+
+### Basic Tests ####
+
+#### Gamma ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "gamma"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+#### Exponential ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "exponential"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+
+#### Logistic ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "logistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+
+#### Log-logistic ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "loglogistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+
+### Historical Parameter Tests
+
+#### Gamma ####
+
+##### Single Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "gamma"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 14
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+
+##### All Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "gamma"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 14
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 5
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+##### Extreme Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "gamma"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 50
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 13
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+#### Exponential ####
+
+##### Single Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "exponential"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 8
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+##### Extreme Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "exponential"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 99
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+#### Logistic ####
+
+##### Single Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "logistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 1
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+
+##### All Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "logistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 1
+options$historicalLocation <- TRUE
+options$historicalLocationValue <- 7
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+##### Extreme Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "logistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 10
+options$historicalLocation <- TRUE
+options$historicalLocationValue <- 70
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+#### Log-logistic ####
+
+##### Single Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "loglogistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalLocation <- TRUE
+options$historicalLocationValue <- exp(2)
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+
+##### All Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "loglogistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalLocation <- TRUE
+options$historicalLocationValue <- exp(2)
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 0.15
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
+
+##### Extreme Historical Parameter ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "loglogistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalLocation <- TRUE
+options$historicalLocationValue <- exp(20)
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 15
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options, makeTests = T)
+
 # Wide / Row format ####
 
 ## (Normal) Basic tests ####
