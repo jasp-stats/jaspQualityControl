@@ -46,10 +46,10 @@ The size of the subgroups is relevant for the calculation of the process varianc
 - **Continuity Adjustment** if enabled, the Box-Cox transform includes the adjustment term $y = \frac{(x+\text{shift})^\lambda-1}{\lambda}$.
 
 #### Type of data distribution
-- Type of data distribution: indicate whether the data approximates a normal distribution or another distribution (the most commonly used distributions are: Weibull, Lognormal, 3-parameter Weibull, and 3-parameter lognorma)
+- Type of data distribution: indicate whether the data approximates a normal distribution or another distribution (the available distributions are: Weibull, Lognormal, Gamma, Exponential, Logistic, Log-logistic, 3-parameter Weibull, and 3-parameter lognormal)
     - Specify a distribution: the non-normal distribution to be used. 
     - Non-normal capability statistics: the method used to calculate the capability statistics for non-normally distributed data.
-    - Historical parameters: Select which parameters should use fixed historical values instead of being estimated. Note that if only some parameters are set historically, JASP currently estimates all parameters first and then replaces the selected ones with their historical values; it does not keep them fixed during estimation.
+    - Historical parameters: Select which parameters should use fixed historical values instead of being estimated. Note that if not all parameters are set historically, JASP keeps the historical parameters fixed while estimating the remaining parameters freely.
 
 #### Capability studies
 - Specification limits:
