@@ -35,6 +35,18 @@ Form
 			label:								qsTr("Responses")
 			height:								50 * preferencesModel.uiScale
 		}
+		
+		DropDown
+		{
+			name: "stepwiseMethodFactorial"
+			label: qsTr("Method")
+			info: qsTr("Specify the order in which the predictors are entered into the model. A block of one or more predictors represents one step in the hierarchy. Note that the present release does not allow for more than one block. The backward and forward method are based on model AIC.")
+			values: [
+				{ label: qsTr("Enter"),	info: qsTr("All predictors are entered into the model simultaneously.")	,value: "enter"},
+				{ label: qsTr("Backward"), info: qsTr("Starting with the full model, predictors are removed sequentially based on AIC."), value: "backward"},
+				{ label: qsTr("Forward"), info: qsTr("Starting with the intercept-only model, predictors are entered sequentially based on AIC.")	, value: "forward"}	
+			]
+		}
 
 		AssignedVariablesList
 		{
@@ -89,6 +101,18 @@ Form
 			label:								qsTr("Responses")
 			height:								50 * preferencesModel.uiScale
 		}
+		
+		DropDown
+		{
+			name: "stepwiseMethodResponseSurface"
+			label: qsTr("Method")
+			info: qsTr("Specify the order in which the predictors are entered into the model. A block of one or more predictors represents one step in the hierarchy. Note that the present release does not allow for more than one block.")
+			values: [
+				{ label: qsTr("Enter"),	info: qsTr("All predictors are entered into the model simultaneously.")	,value: "enter"},
+				{ label: qsTr("Backward"), info: qsTr("Starting with the full model, predictors are removed sequentially based on AIC."), value: "backward"},
+				{ label: qsTr("Forward"), info: qsTr("Starting with the intercept-only model, predictors are entered sequentially based on AIC.")	, value: "forward"}	
+			]
+		}
 
 		AssignedVariablesList
 		{
@@ -120,7 +144,7 @@ Form
 	Group
 	{
 		columns:				2
-
+    	Layout.topMargin: 16
 
 		Group 
 		{
