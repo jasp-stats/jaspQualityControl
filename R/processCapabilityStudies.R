@@ -852,13 +852,21 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (distribution == "lognormal" || distribution == "3ParameterLognormal" && options[["historicalLogMean"]])
       xLimits <- range(xLimits, exp(options[["historicalLogMeanValue"]]) - 1.5 * sdo,
                        exp(options[["historicalLogMeanValue"]]) + 1.5 * sdo)
+    if (distribution == "exponential")
+      xLimits <- range(xLimits, 0)
+    if (distribution == "gamma" && options[["historicalShape"]] && options[["historicalScale"]])
+      xLimits <- range(xLimits, options[["historicalScaleValue"]] * (options[["historicalShapeValue"]] - 1))
+    if ((distribution == "logistic" || distribution == "loglogistic") && options[["historicalLocation"]])
+      xLimits <- range(xLimits, options[["historicalLocationValue"]])
 
     # Get xBreaks based on the data, with an axis that also spans the limits
     xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(allData))
     xStep <- diff(xBreaks)[1]
     loExt <- min(xBreaks) - pmax(0, ceiling((min(xBreaks) - min(xLimits)) / xStep) * xStep)
     hiExt <- max(xBreaks) + pmax(0, ceiling((max(xLimits) - max(xBreaks)) / xStep) * xStep)
-    xBreaks <- seq(loExt, hiExt, by = xStep)
+    nBreaks <- floor((hiExt - loExt) / xStep) + 1
+    if (nBreaks < 100) # if the number of breaks does not exceed 100, draw the full sequence
+      xBreaks <- seq(loExt, hiExt, by = xStep)
     # Get limits to always include all breaks
     xLimits <- range(xLimits, xBreaks)
 
