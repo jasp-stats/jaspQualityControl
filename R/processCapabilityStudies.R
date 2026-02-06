@@ -132,8 +132,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-
-
   # Report
   if (options[["report"]]) {
     nElements <- sum(options[["reportProcessStability"]]*2, options[["reportProcessCapabilityPlot"]], options[["reportProbabilityPlot"]],
@@ -516,12 +514,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     )
 
   # return state if available
-  if(!is.null(jaspResults[["dataTransformationState"]])) return(jaspResults[["dataTransformationState"]]$object)
+  if (!is.null(jaspResults[["dataTransformationState"]])) return(jaspResults[["dataTransformationState"]]$object)
 
   # transform data and return parameters of the transform
   result <- try(.qcTransformData(dataset = dataset, measurements = measurements, options = options))
 
-  if(isTryError(result)) {
+  if (isTryError(result)) {
     message <- gettextf("Data could not be transformed: %1$s", .extractErrorMessage(result))
     .quitAnalysis(message)
   }
@@ -557,6 +555,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettext("Process summary"))
+  footnotes <- c()
   table$position <- 1
   if (nStages > 1) {
     table$addColumnInfo(name = "stage", title = gettext("Stage"), type = "string")
@@ -585,30 +584,40 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   tableColNames <- c("lsl", "target", "usl", "mean", "n", "sd", "sdw")
   if (nStages > 1) {
     tableColNames <- c("stage", tableColNames)
-    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+    footnotes <- paste0(footnotes, gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL). "))
   }
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
   colnames(tableDf) <- tableColNames
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
-    if (length(measurements) < 2) {
-      k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+
+    ## ----- Std. dev. calculation ----------
+    if (options[["historicalStdDev"]]) {
+      sdw <- options[["historicalStdDevValue"]]
     } else {
-      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
-      unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      if (length(measurements) < 2) {
+        k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
+        sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      } else {
+        sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+        unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
+        sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      }
+      if (is.na(sdw))
+        footnotes <- paste0(footnotes, gettext("The within std. dev. could not be calculated. "))
     }
+
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
 
-    if (is.na(sdw))
-      table$addFootnote(gettext("The within standard deviation could not be calculated."))
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
+
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
 
     tableDfCurrentStage <- data.frame(lsl = round(options[["lowerSpecificationLimitValue"]], .numDecimals),
                                       target = round(options[["targetValue"]], .numDecimals),
                                       usl    = round(options[["upperSpecificationLimitValue"]], .numDecimals),
-                                      mean   = mean(allData, na.rm = TRUE),
+                                      mean   = processMean,
                                       n      = length(allData),
                                       sd     = sd(allData, na.rm = TRUE),
                                       sdw    = sdw)
@@ -630,6 +639,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   tableList <- as.list(tableDf)
   table$setData(tableList)
+
+  # Add remaining footnotes
+  if (options[["historicalStdDev"]])
+    footnotes <- paste0(footnotes, gettext("The within std. dev. is based on a historical value. "))
+  if (options[["historicalMean"]])
+    footnotes <- paste0(footnotes, gettext("The mean is based on a historical value. "))
+  if (!is.null(footnotes))
+    table$addFootnote(footnotes)
 
   nDecimals <- .numDecimals
 
@@ -660,9 +677,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       target <- '*'
     if (!options[["upperSpecificationLimit"]])
       usl <- '*'
-    mean <- mean(allData, na.rm = TRUE)
-    n <- as.integer(length(allData))
-    sd <- sd(allData, na.rm = TRUE)
     formattedTableDf[["lsl"]] <- tableList[["lsl"]]
     formattedTableDf[["target"]] <- tableList[["target"]]
     formattedTableDf[["usl"]] <- tableList[["usl"]]
@@ -722,6 +736,82 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plot$plotObject <- jaspGraphs::ggMatrixPlot(plotMat)
 }
 
+
+.buildFixArg <- function(distribution, options) {
+
+  fix.arg <- list()
+
+
+  # SHAPE
+  if (distribution %in% c("weibull", "3ParameterWeibull", "gamma")) {
+    if (options[["historicalShape"]]) {
+      fix.arg[["shape"]] <- options[["historicalShapeValue"]]
+    }
+  }
+
+  # LOGLOGISTIC SPECIAL CASE
+  if (distribution == "loglogistic") {
+
+    # GUI scale → shape
+    if (options[["historicalScale"]]) {
+      fix.arg[["shape"]] <- 1/options[["historicalScaleValue"]] # to match the parameters of other software
+    }
+
+    # GUI location → scale
+    if (options[["historicalLocation"]]) {
+      fix.arg[["scale"]] <- options[["historicalLocationValue"]] # to match the parameters of other software
+    }
+  }
+
+  # SCALE / RATE (standard cases)
+  if (distribution %in% c("weibull", "3ParameterWeibull", "logistic")) {
+    if (options[["historicalScale"]]) {
+      fix.arg[["scale"]] <- options[["historicalScaleValue"]]
+    }
+  }
+
+  if (distribution %in% c("gamma", "exponential")) {
+    if (options[["historicalScale"]]) {
+      fix.arg[["rate"]] <- 1 / options[["historicalScaleValue"]] # transformed scale to rate
+    }
+  }
+
+  # LOCATION
+  if (distribution == "logistic") {
+    if (options[["historicalLocation"]]) {
+      fix.arg[["location"]] <- options[["historicalLocationValue"]]
+    }
+  }
+
+  # LOGNORMAL PARAMETERS
+  if (distribution %in% c("lognormal", "3ParameterLognormal")) {
+
+    if (options[["historicalLogMean"]]) {
+      fix.arg[["meanlog"]] <- options[["historicalLogMeanValue"]]
+    }
+
+    if (options[["historicalLogStdDev"]]) {
+      fix.arg[["sdlog"]] <- options[["historicalLogStdDevValue"]]
+    }
+  }
+
+  # THRESHOLD
+  if (distribution == "3ParameterLognormal") {
+    if (options[["historicalThreshold"]]) {
+      fix.arg[["threshold"]] <- options[["historicalThresholdValue"]]
+    }
+  }
+
+  if (distribution == "3ParameterWeibull") {
+    if (options[["historicalThreshold"]]) {
+      fix.arg[["thres"]] <- options[["historicalThresholdValue"]]
+    }
+  }
+
+  fix.arg <- if (length(fix.arg) == 0) NULL else fix.arg
+  return(fix.arg)
+}
+
 .qcProcessCapabilityPlotObject <- function(options, dataset, measurements, stages, distribution = c('normal', "weibull", "lognormal", "3ParameterLognormal", "3ParameterWeibull")) {
   if (identical(stages, "")) {
     nStages <- 1
@@ -736,24 +826,50 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
       sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
     plotData <- data.frame(x = allData)
     sdo <- sd(allData, na.rm = TRUE)
 
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(plotData[["x"]], min(plotData[["x"]]) - 1 * sdo, max(plotData[["x"]]) + 1 * sdo), min.n = 4)
-    xLimits <- range(xBreaks)
+    xLimits <- c(min(allData) - sdo, max(allData) + sdo)
     if (options[["lowerSpecificationLimit"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["lowerSpecificationLimitValue"]])
+      xLimits <- range(xLimits, options[["lowerSpecificationLimitValue"]] - 0.5*sdo)
     if (options[["upperSpecificationLimit"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["upperSpecificationLimitValue"]])
+      xLimits <- range(xLimits, options[["upperSpecificationLimitValue"]] + 0.5*sdo)
     if (options[["target"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["target"]])
+      xLimits <- range(xLimits, options[["targetValue"]])
+
+    # Addition to consider that if distributions are set historically, they may fall outside the usual limits
+    if (distribution == "normal" && options[["historicalMean"]])
+      xLimits <- range(xLimits, options[["historicalMeanValue"]] - 1.5 * sdo, options[["historicalMeanValue"]] + 1.5 * sdo)
+    if (distribution == "weibull" || distribution == "3ParameterWeibull" && options[["historicalScale"]])
+      xLimits <- range(xLimits, options[["historicalScaleValue"]] - 1.5 * sdo, options[["historicalScaleValue"]] + 1.5 * sdo)
+    if (distribution == "lognormal" || distribution == "3ParameterLognormal" && options[["historicalLogMean"]])
+      xLimits <- range(xLimits, exp(options[["historicalLogMeanValue"]]) - 1.5 * sdo,
+                       exp(options[["historicalLogMeanValue"]]) + 1.5 * sdo)
+    if (distribution == "exponential")
+      xLimits <- range(xLimits, 0)
+    if (distribution == "gamma" && options[["historicalShape"]] && options[["historicalScale"]])
+      xLimits <- range(xLimits, options[["historicalScaleValue"]] * (options[["historicalShapeValue"]] - 1))
+    if ((distribution == "logistic" || distribution == "loglogistic") && options[["historicalLocation"]])
+      xLimits <- range(xLimits, options[["historicalLocationValue"]])
+
+    # Get xBreaks based on the data, with an axis that also spans the limits
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(allData))
+    xStep <- diff(xBreaks)[1]
+    loExt <- min(xBreaks) - pmax(0, ceiling((min(xBreaks) - min(xLimits)) / xStep) * xStep)
+    hiExt <- max(xBreaks) + pmax(0, ceiling((max(xLimits) - max(xBreaks)) / xStep) * xStep)
+    nBreaks <- floor((hiExt - loExt) / xStep) + 1
+    if (nBreaks < 100) # if the number of breaks does not exceed 100, draw the full sequence
+      xBreaks <- seq(loExt, hiExt, by = xStep)
+    # Get limits to always include all breaks
+    xLimits <- range(xLimits, xBreaks)
+
 
     nBins <- options[["processCapabilityPlotBinNumber"]]
     h <- hist(allData, plot = FALSE, breaks = nBins)
@@ -769,25 +885,28 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     legendLty <- c()
     legendLabels <- c()
 
+  # for non normal dist, create fix.arg list based on historical values
+    if (distribution != "normal")
+      fix.arg <- .buildFixArg(distribution, options)
+
     # Overlay distribution
     if (options[["processCapabilityPlotDistributions"]]) {
       if (distribution == "normal") {
-        p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sd(allData)),
-                                        mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist"))
-        legendColors <- c(legendColors, "dodgerblue")
-        legendLty <- c(legendLty, "solid")
-        legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"))
-
+        processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
         if (.qcWithinProcessValid(options)) {
-          p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(allData), sd = sdw),
-                                          mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
-          legendColors <- c(legendColors, "red")
-          legendLty <- c(legendLty, "solid")
-          legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. within)"))
+          p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sd(allData)),
+                                          mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist")) +
+            ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sdw),
+                                   mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
+          legendColors <- c(legendColors, "dodgerblue", "red")
+          legendLty <- c(legendLty, "solid", "solid")
+          legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
+                            gettext("Normal dist.\n(std. dev. within)"))
         }
-
       } else if (distribution == "weibull") {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
         if (jaspBase::isTryError(distParameters))
           stop(distParameters[1], call. = FALSE)
         shape <- distParameters$beta
@@ -798,30 +917,36 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, gettext("Weibull dist."))
       } else if (distribution == "lognormal") {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
         if (jaspBase::isTryError(distParameters))
           stop(distParameters[1], call. = FALSE)
-        shape <- distParameters$beta
-        scale <- distParameters$theta
-        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale),
+        meanlog <- distParameters$beta
+        sdlog <- distParameters$theta
+        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = meanlog, sdlog = sdlog),
                                         mapping = ggplot2::aes(color = "lognormal", linetype = "lognormal"))
         legendColors <- c(legendColors, "red")
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, "Lognormal dist.")
       } else if (distribution == "3ParameterLognormal") {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
         if (jaspBase::isTryError(distParameters))
           stop(distParameters[1], call. = FALSE)
-        shape <- distParameters$theta
-        scale <- distParameters$beta
+        meanlog <- distParameters$beta
+        sdlog <- distParameters$theta
         threshold <- distParameters$threshold
-        p <- p + ggplot2::stat_function(fun = FAdist::dlnorm3 , args = list(shape = shape, scale = scale, thres = threshold),
+        p <- p + ggplot2::stat_function(fun = EnvStats::dlnorm3, args = list(meanlog = meanlog, sdlog = sdlog, threshold = threshold),
                                         mapping = ggplot2::aes(color = "lognormal3", linetype = "lognormal3"))
         legendColors <- c(legendColors, "red")
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, gettext("3-parameter\nlognormal dist."))
       } else if (distribution == "3ParameterWeibull") {
-        distParameters <- .distributionParameters(data = allData, distribution = distribution)
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
         if (jaspBase::isTryError(distParameters))
           stop(distParameters[1], call. = FALSE)
         shape <- distParameters$beta
@@ -832,6 +957,59 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         legendColors <- c(legendColors, "red")
         legendLty <- c(legendLty, "solid")
         legendLabels <- c(legendLabels, gettext("3-parameter Weibull dist."))
+      } else if (distribution == "gamma") {
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
+        shape <- distParameters$beta
+        scale <- distParameters$theta
+        p <- p + ggplot2::stat_function(fun = dgamma , args = list(shape = shape, scale = scale),
+                                        mapping = ggplot2::aes(color = "gamma", linetype = "gamma"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Gamma dist."))
+      } else if (distribution == "exponential") {
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
+        scale <- distParameters$theta
+        rate <- 1/scale
+        p <- p + ggplot2::stat_function(fun = dexp , args = list(rate = rate),
+                                        mapping = ggplot2::aes(color = "exp", linetype = "exp"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Exponential dist."))
+      } else if (distribution == "logistic") {
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
+        location <- distParameters$beta
+        scale <- distParameters$theta
+        p <- p + ggplot2::stat_function(fun = dlogis , args = list(location = location, scale = scale),
+                                        mapping = ggplot2::aes(color = "logis", linetype = "logis"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Logistic dist."))
+      } else if (distribution == "loglogistic") {
+        distParameters <- .distributionParameters(data = allData,
+                                                  distribution = distribution,
+                                                  fix.arg = fix.arg)
+        if (jaspBase::isTryError(distParameters))
+          stop(distParameters[1], call. = FALSE)
+        loglocation <- distParameters$beta
+        scale <- exp(loglocation)
+        shape <- 1/distParameters$theta
+        p <- p + ggplot2::stat_function(fun = flexsurv::dllogis , args = list(shape = shape, scale = scale),
+                                        mapping = ggplot2::aes(color = "llogis", linetype = "llogis"))
+        legendColors <- c(legendColors, "red")
+        legendLty <- c(legendLty, "solid")
+        legendLabels <- c(legendLabels, gettext("Log-logistic dist."))
       }
     }
 
@@ -955,11 +1133,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
       sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
 
@@ -968,10 +1146,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     lsl <- options[["lowerSpecificationLimitValue"]]
     n <- length(allData)
     k <- length(measurements)
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
     tolMultiplier <- 6
     cp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdw)
-    cpl <-if (options[["lowerSpecificationLimitBoundary"]]) NA else (mean(allData) - lsl) / ((tolMultiplier/2) * sdw)
-    cpu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - mean(allData)) / ((tolMultiplier/2) * sdw)
+    cpl <-if (options[["lowerSpecificationLimitBoundary"]]) NA else (processMean - lsl) / ((tolMultiplier/2) * sdw)
+    cpu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - processMean) / ((tolMultiplier/2) * sdw)
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
       cpk <-if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(cpu, cpl, na.rm = TRUE)
     } else if (options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]) {
@@ -1161,15 +1340,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
       sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
     sdo <- sd(allData)
-    meanOverall <- mean(allData)
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
     usl <- options[["upperSpecificationLimitValue"]]
     lsl <- options[["lowerSpecificationLimitValue"]]
     m <- (options[["upperSpecificationLimitValue"]] + options[["lowerSpecificationLimitValue"]])/2
@@ -1177,8 +1356,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     t <- options[["targetValue"]]
     tolMultiplier <- 6
     pp <- if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]]) NA else (usl - lsl) / (tolMultiplier * sdo)
-    ppl <- if (options[["lowerSpecificationLimitBoundary"]]) NA else (meanOverall - lsl) / ((tolMultiplier/2) * sdo)
-    ppu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - mean(allData)) / ((tolMultiplier/2) * sdo)
+    ppl <- if (options[["lowerSpecificationLimitBoundary"]]) NA else (processMean - lsl) / ((tolMultiplier/2) * sdo)
+    ppu <- if (options[["upperSpecificationLimitBoundary"]]) NA else (usl - processMean) / ((tolMultiplier/2) * sdo)
 
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]]) {
       ppk <- if (options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]) NA else min(ppu, ppl, na.rm = TRUE)
@@ -1222,7 +1401,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       if (options[["target"]] &&
           !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]])){
         #CI for Cpm
-        a <- (meanOverall - t) / sdo
+        a <- (processMean - t) / sdo
         dfCpm <- (n * ((1 + (a^2))^2)) / (1 + (2 * (a^2)))
         ciLbCpm <- cpm * sqrt( qchisq(p = ciAlpha/2, df = dfCpm) /dfCpm)
         ciUbCpm <- cpm * sqrt(qchisq(p = 1 - (ciAlpha/2), df = dfCpm) / dfCpm)
@@ -1357,7 +1536,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       table2$addColumnInfo(name = expWithinComparisonColName, type = "integer", title = "Expected within", overtitle = colOvertitle2)
     }
 
-    #Calculate performance
+    # Calculate performance
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- na.omit(unlist(dataCurrentStage[, measurements]))
@@ -1366,17 +1545,17 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     uslTitle <- if (options[["upperSpecificationLimitBoundary"]]) gettext("UB") else gettext("USL")
     rowNames <- c(sprintf("ppm < %s", lslTitle), sprintf("ppm > %s", uslTitle), "ppm total")
     sdo <- sd(allData)
-    meanOverall <- mean(allData)
+    processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
     if (length(measurements) < 2) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
-      sdw <- .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
       sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
-      sdw <- .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
+      sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
 
-    #observed
+    # observed
     if (options[["lowerSpecificationLimit"]]) {
       oLSL <- (1e6*length(allDataVector[allDataVector < lsl])) / n
     } else {
@@ -1392,12 +1571,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     # expected total
     if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
-      eoLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdo))
+      eoLSL <- 1e6 * (1 - pnorm((processMean - lsl)/sdo))
     } else {
       eoLSL <- NA
     }
     if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-      eoUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdo))
+      eoUSL <- 1e6 * (1 - pnorm((usl - processMean)/sdo))
     } else {
       eoUSL <- NA
     }
@@ -1406,12 +1585,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     # expected within
     if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
-      ewLSL <- 1e6 * (1 - pnorm((meanOverall - lsl)/sdw))
+      ewLSL <- 1e6 * (1 - pnorm((processMean - lsl)/sdw))
     } else {
       ewLSL <- NA
     }
     if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-      ewUSL <- 1e6 * (1 - pnorm((usl - meanOverall)/sdw))
+      ewUSL <- 1e6 * (1 - pnorm((usl - processMean)/sdw))
     } else {
       ewUSL <- NA
     }
@@ -1502,10 +1681,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     nStages <- length(unique(dataset[[stages]]))
   }
   table <- createJaspTable(title = gettextf("Process summary"))
+  footnotes <- c()
   if (nStages > 1) {
     table$addColumnInfo(name = "stage",      	title = gettext("Stage"),  		type = "string")
     table$transpose <- TRUE
-    table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
+    footnotes <- paste0(footnotes, gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL). "))
   }
 
   if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
@@ -1531,11 +1711,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (options[["upperSpecificationLimit"]])
     table$addColumnInfo(name = "usl", type = "integer", title = uslTitle)
   table$addColumnInfo(name = "n", type = "integer", title = gettext("Sample size"))
-  table$addColumnInfo(name = "mean", type = "number", title = gettext("Average"))
+  table$addColumnInfo(name = "mean", type = "number", title = gettext("Mean"))
   table$addColumnInfo(name = "sd", type = "number", title = gettext("Std. dev."))
-  if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "lognormal") {
+  if (options[["nonNormalDistribution"]] == "exponential") {
+    table$addColumnInfo(name = "theta", type = "number", title = gettextf("Scale (%1$s)", "\u03B8"))
+  } else if (options[["nonNormalDistribution"]] == "3ParameterLognormal" || options[["nonNormalDistribution"]] == "lognormal") {
     table$addColumnInfo(name = "beta", type = "number", title = gettextf("Log mean (%1$s)", "\u03BC"))
     table$addColumnInfo(name = "theta", type = "number", title = gettextf("Log std.dev (%1$s)", "\u03C3"))
+  } else if (options[["nonNormalDistribution"]] == "logistic" || options[["nonNormalDistribution"]] == "loglogistic") {
+    table$addColumnInfo(name = "beta", type = "number", title = gettext("Location"))
+    table$addColumnInfo(name = "theta", type = "number", title = gettextf("Scale (%1$s)", "\u03B8"))
   } else {
     table$addColumnInfo(name = "beta", type = "number", title = gettextf("Shape (%1$s)", "\u03B2"))
     table$addColumnInfo(name = "theta", type = "number", title = gettextf("Scale (%1$s)", "\u03B8"))
@@ -1558,6 +1743,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   colnames(tableDf) <- tableColNames
 
 
+  fix.arg <- .buildFixArg(options[["nonNormalDistribution"]], options)
 
   ## estimate parameters
   distParameters <- list()
@@ -1565,7 +1751,13 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
-    distParameters[[i]] <- try(.distributionParameters(data = allData, distribution = options[["nonNormalDistribution"]]))
+
+
+
+    # If not all are historical, first estimate all parameters, then potentially replace some with the historical estimates
+    distParameters[[i]] <- try(.distributionParameters(data = allData,
+                                                       distribution = options[["nonNormalDistribution"]],
+                                                       fix.arg = fix.arg))
     if (jaspBase::isTryError(distParameters[[i]])) {
       table$setError(distParameters[[i]][1])
       container[["summaryTableNonNormal"]] <- table
@@ -1582,12 +1774,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     usl <- round(options[["upperSpecificationLimitValue"]], .numDecimals)
     target <- round(options[["targetValue"]], .numDecimals)
     sd <- sd(allData)
-    mean <- mean(allData, na.rm = TRUE)
+    processMean <- mean(allData, na.rm = TRUE)
     beta <- distParameters[[i]]$beta
     theta <- distParameters[[i]]$theta
 
     tableDfCurrentStage <- data.frame("n" = n,
-                                      "mean" = mean,
+                                      "mean" = processMean,
                                       "sd" = sd,
                                       "lsl" = lsl,
                                       "usl" = usl,
@@ -1691,6 +1883,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
       threshold <- distParameters[[i]]$threshold
 
+    # calculation of capability indices
+
+    #####################
+    ####  lognormal #####
+    #####################
     if (options[["nonNormalDistribution"]] == "lognormal") {
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
@@ -1720,6 +1917,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         ppu <- NA
       }
       tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
+      #####################
+      ####  weibull  #####
+      #####################
     } else if (options[["nonNormalDistribution"]] == "weibull") {
       if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]) {
         if (options[['nonNormalMethod' ]] == "nonConformance") {
@@ -1750,15 +1950,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         ppu <- NA
       }
       tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
+      ##################################
+      ####  3-parameter lognormal  #####
+      ##################################
     } else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
       if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance") {
-          p1 <- FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE)
+          p1 <- FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE) # in this function, shape is theta and scale is beta, which is reverse to convention
           zLSL <- qnorm(p1)
           ppl <- -zLSL/3
         } else {
-          x135 <- FAdist::qlnorm3(p = 0.00135, shape = theta, scale = beta, thres = threshold)
-          x05 <- FAdist::qlnorm3(p = 0.5, shape = theta, scale = beta, thres = threshold)
+          x135 <- FAdist::qlnorm3(p = 0.00135, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
+          x05 <- FAdist::qlnorm3(p = 0.5, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
           ppl <- (x05 - lsl) / (x05 - x135)
         }
       } else {
@@ -1767,7 +1970,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         if(options[['nonNormalMethod' ]] == "nonConformance"){
-          p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)
+          p2 <- FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
@@ -1779,6 +1982,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         ppu <- NA
       }
       tableDfCurrentStage2[["ppu"]] <- round(ppu, .numDecimals)
+      ##################################
+      ####  3-parameter weibull    #####
+      ##################################
     } else if (options[["nonNormalDistribution"]] == "3ParameterWeibull") {
       if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]){
         if (options[['nonNormalMethod' ]] == "nonConformance") {
@@ -1802,6 +2008,131 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         } else {
           x99 <- FAdist::qweibull3(p = 0.99865, shape = beta, scale = theta, thres = threshold)
           x05 <- FAdist::qweibull3(p = 0.5, shape = beta, scale = theta, thres = threshold)
+          ppu <- (usl - x05) / (x99 - x05)
+        }
+      } else {
+        ppu <- NA
+      }
+      ####################
+      ####  Gamma    #####
+      ####################
+    }  else if (options[["nonNormalDistribution"]] == "gamma") {
+      if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]){
+        if (options[['nonNormalMethod' ]] == "nonConformance") {
+          p1 <- pgamma(q = lsl, shape = beta, scale = theta, lower.tail = TRUE)
+          zLSL <- qnorm(p1)
+          ppl <- -zLSL/3
+        } else {
+          x135 <- qgamma(p = 0.00135, shape = beta, scale = theta)
+          x05 <- qgamma(p = 0.5, shape = beta, scale = theta)
+          ppl <- (x05 - lsl) / (x05 - x135)
+        }
+      } else {
+        ppl <- NA
+      }
+      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
+        if (options[['nonNormalMethod' ]] == "nonConformance") {
+          p2 <- pgamma(q = usl, shape = beta, scale = theta, lower.tail = TRUE)
+          zUSL <- qnorm(p2)
+          ppu <- zUSL/3
+        } else {
+          x99 <-   qgamma(p = 0.99865, shape = beta, scale = theta)
+          x05 <-   qgamma(p = 0.5, shape = beta, scale = theta)
+          ppu <- (usl - x05) / (x99 - x05)
+        }
+      } else {
+        ppu <- NA
+      }
+      ##########################
+      ####  Exponential    #####
+      ##########################
+    } else if (options[["nonNormalDistribution"]] == "exponential") {
+      if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]){
+        if (options[['nonNormalMethod' ]] == "nonConformance") {
+          p1 <- pexp(q = lsl, rate = 1/theta, lower.tail = TRUE)
+          zLSL <- qnorm(p1)
+          ppl <- -zLSL/3
+        } else {
+
+          x135 <- qexp(p = 0.00135, rate = 1/theta)
+          x05 <-  qexp(p = 0.5, rate = 1/theta)
+          ppl <- (x05 - lsl) / (x05 - x135)
+        }
+      } else {
+        ppl <- NA
+      }
+      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
+        if (options[['nonNormalMethod' ]] == "nonConformance") {
+          p2 <-  pexp(q = usl, rate = 1/theta, lower.tail = TRUE)
+          zUSL <- qnorm(p2)
+          ppu <- zUSL/3
+        } else {
+          x99 <-  qexp(p = 0.99865, rate = 1/theta)
+          x05 <- qexp(p = 0.5, rate = 1/theta)
+          ppu <- (usl - x05) / (x99 - x05)
+        }
+      } else {
+        ppu <- NA
+      }
+      #######################
+      ####  Logistic    #####
+      #######################
+    } else if (options[["nonNormalDistribution"]] == "logistic") {
+      if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]){
+        if (options[['nonNormalMethod' ]] == "nonConformance") {
+          p1 <-   plogis(q = lsl, location = beta, scale = theta, lower.tail = TRUE)
+          zLSL <- qnorm(p1)
+          ppl <- -zLSL/3
+        } else {
+          x135 <-  qlogis(p = 0.00135, location = beta, scale = theta)
+          x05 <-  qlogis(p = 0.5, location = beta, scale = theta)
+          ppl <- (x05 - lsl) / (x05 - x135)
+        }
+      } else {
+        ppl <- NA
+      }
+      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
+        if (options[['nonNormalMethod' ]] == "nonConformance") {
+          p2 <-  plogis(q = usl, location = beta, scale = theta, lower.tail = TRUE)
+          zUSL <- qnorm(p2)
+          ppu <- zUSL/3
+        } else {
+          x99 <- qlogis(p = 0.99865, location = beta, scale = theta)
+          x05 <- qlogis(p = 0.5, location = beta, scale = theta)
+          ppu <- (usl - x05) / (x99 - x05)
+        }
+      } else {
+        ppu <- NA
+      }
+      ###########################
+      ####  Log-Logistic    #####
+      ###########################
+    } else if (options[["nonNormalDistribution"]] == "loglogistic") {
+      if (options[["lowerSpecificationLimit"]]  && !options[["lowerSpecificationLimitBoundary"]]){
+        if (options[['nonNormalMethod' ]] == "nonConformance") {
+          p1 <-  flexsurv::pllogis(q = lsl, shape = 1/theta, scale = exp(beta), lower.tail = TRUE)
+          zLSL <- qnorm(p1)
+          ppl <- -zLSL/3
+        } else {
+          x135 <-  flexsurv::qllogis(p = 0.00135, shape = 1/theta, scale = exp(beta))
+          x05 <-    flexsurv::qllogis(p = 0.5, shape = 1/theta, scale = exp(beta))
+          ppl <- (x05 - lsl) / (x05 - x135)
+        }
+      } else {
+        ppl <- NA
+      }
+      tableDfCurrentStage2[["ppl"]] <- round(ppl, .numDecimals)
+      if (options[["upperSpecificationLimit"]]  && !options[["upperSpecificationLimitBoundary"]]) {
+        if (options[['nonNormalMethod' ]] == "nonConformance") {
+          p2 <- flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = TRUE)
+          zUSL <- qnorm(p2)
+          ppu <- zUSL/3
+        } else {
+          x99 <- flexsurv::qllogis(p = 0.99865, shape = 1/theta, scale = exp(beta))
+          x05 <- flexsurv::qllogis(p = 0.5, shape = 1/theta, scale = exp(beta))
           ppu <- (usl - x05) / (x99 - x05)
         }
       } else {
@@ -1918,8 +2249,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     observed <- c(oLSL, oUSL, oTOT)
 
     # expected total
+
+    #####################
+    ####  lognormal #####
+    #####################
     if (options[["nonNormalDistribution"]] == "lognormal") {
-      distname <- "lognormal"
+      distname <- "log-normal"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
         eoLSL <- 1e6 * plnorm(q = lsl, meanlog = beta, sdlog = theta, lower.tail = TRUE)
       } else {
@@ -1930,6 +2265,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       } else {
         eoUSL <- NA
       }
+    #####################
+    ####  weibull   #####
+    #####################
     } else if (options[["nonNormalDistribution"]] == "weibull") {
       distname <- "Weibull"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
@@ -1942,18 +2280,24 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       } else {
         eoUSL <- NA
       }
+    ###################################
+    ####  3 parameter lognormal   #####
+    ###################################
     } else if (options[["nonNormalDistribution"]] == "3ParameterLognormal") {
       distname <- "3-parameter-lognormal"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
-        eoLSL <- 1e6 * FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE)
+        eoLSL <- 1e6 * FAdist::plnorm3(q = lsl, shape = theta, scale = beta, thres = threshold, lower.tail = TRUE) # in this function, shape is theta and scale is beta, which is reverse to convention
       } else {
         eoLSL <- NA
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
-        eoUSL <- 1e6 * (1 - FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold))
+        eoUSL <- 1e6 * (1 - FAdist::plnorm3(q = usl, shape = theta, scale = beta, thres = threshold)) # in this function, shape is theta and scale is beta, which is reverse to convention
       } else {
         eoUSL <- NA
       }
+    ###################################
+    ####  3 parameter weibull   #####
+    ###################################
     } else if (options[["nonNormalDistribution"]] == "3ParameterWeibull") {
       distname <- "3-parameter-Weibull"
       if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
@@ -1963,6 +2307,68 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       }
       if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
         eoUSL <- 1e6 * (1 - FAdist::pweibull3(q = usl, shape = beta, scale = theta, thres = threshold))
+      } else {
+        eoUSL <- NA
+      }
+    #####################
+    ####  gamma     #####
+    #####################
+    } else if (options[["nonNormalDistribution"]] == "gamma") {
+      distname <- "gamma"
+      if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
+
+        eoLSL <- 1e6 * pgamma(q = lsl, shape = beta, scale = theta, lower.tail = TRUE)
+      } else {
+        eoLSL <- NA
+      }
+      if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
+        eoUSL <- 1e6 * (1 - pgamma(q = usl, shape = beta, scale = theta, lower.tail = TRUE))
+      } else {
+        eoUSL <- NA
+      }
+    ###########################
+    ####  exponential     #####
+    ###########################
+    } else if (options[["nonNormalDistribution"]] == "exponential") {
+      distname <- "exponential"
+      if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
+
+        eoLSL <- 1e6 * pexp(q = lsl, rate = 1/theta, lower.tail = TRUE)
+      } else {
+        eoLSL <- NA
+      }
+      if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
+        eoUSL <- 1e6 * (1 - pexp(q = usl, rate = 1/theta, lower.tail = TRUE))
+      } else {
+        eoUSL <- NA
+      }
+    ########################
+    ####  logistic     #####
+    ########################
+    } else if (options[["nonNormalDistribution"]] == "logistic") {
+      distname <- "logistic"
+      if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
+        eoLSL <- 1e6 * plogis(q = lsl, location = beta, scale = theta, lower.tail = TRUE)
+      } else {
+        eoLSL <- NA
+      }
+      if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
+        eoUSL <- 1e6 * (1 - plogis(q = usl, location = beta, scale = theta, lower.tail = TRUE))
+      } else {
+        eoUSL <- NA
+      }
+    ############################
+    ####  Log-logistic     #####
+    #############################
+    } else if (options[["nonNormalDistribution"]] == "loglogistic") {
+      distname <- "log-logistic"
+      if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) {
+        eoLSL <- 1e6 * flexsurv::pllogis(q = lsl, shape = 1/theta, scale = exp(beta), lower.tail = TRUE)
+      } else {
+        eoLSL <- NA
+      }
+      if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) {
+        eoUSL <- 1e6 * (1 - flexsurv::pllogis(q = usl, shape = 1/theta, scale = exp(beta), lower.tail = TRUE))
       } else {
         eoUSL <- NA
       }
@@ -2020,7 +2426,36 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return(tableDf3)
   }
 
-  table$addFootnote(gettextf("Calculations based on %s distribution.", distname))
+  # Add remaining footnotes
+  footnotes <- paste0(footnotes, gettextf("Calculations based on %s distribution. ", distname))
+  if (options[["nonNormalDistribution"]] == "loglogistic")
+    footnotes <- paste0(footnotes, gettextf("Location parameter is log-transformed. "))
+
+  # Shape
+  if (options[["historicalShape"]] && (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull" || options[["nonNormalDistribution"]] == "gamma"))
+    footnotes <- paste0(footnotes, gettextf("The shape (%1$s) is based on a historical value. ", "\u03B2"))
+  # Scale
+  if (options[["historicalScale"]] && (options[["nonNormalDistribution"]] == "weibull" || options[["nonNormalDistribution"]] == "3ParameterWeibull"|| options[["nonNormalDistribution"]] == "gamma" || options[["nonNormalDistribution"]] == "exponential" || options[["nonNormalDistribution"]] == "logistic" || options[["nonNormalDistribution"]] == "loglogistic"))
+    footnotes <- paste0(footnotes, gettextf("The scale (%1$s) is based on a historical value. ", "\u03B8"))
+  # Location
+  if (options[["historicalLocation"]] && (options[["nonNormalDistribution"]] == "logistic" || options[["nonNormalDistribution"]] == "loglogistic" ))
+    footnotes <- paste0(footnotes, gettext("The location parameter is based on a historical value. "))
+  # Log Mean
+  if (options[["historicalLogMean"]] && (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
+    footnotes <- paste0(footnotes, gettextf("The log mean (%1$s) is based on a historical value. ", "\u03BC"))
+  # Log Std. Dev.
+  if (options[["historicalLogStdDev"]] && (options[["nonNormalDistribution"]] == "lognormal" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
+    footnotes <- paste0(footnotes, gettextf("The log std. dev. (%1$s) is based on a historical value. ", "\u03C3"))
+  # Threshold
+  if (options[["historicalThreshold"]] && (options[["nonNormalDistribution"]] == "3ParameterWeibull" || options[["nonNormalDistribution"]] == "3ParameterLognormal"))
+    footnotes <- paste0(footnotes, gettext("The threshold is based on a historical value. "))
+
+  if (!is.null(footnotes))
+    table$addFootnote(footnotes)
+
+
+
+
   container[["summaryTableNonNormal"]] <- table
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
     table2$addFootnote(gettext("Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."))
@@ -2055,6 +2490,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   } else if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
   }
+  if (options[["nullDistribution"]] %in% c("gamma", "exponential", "logistic", "loglogistic")) {
+    plot <- createJaspPlot(width = 400, height = 400,
+                           title = gettext("Probability plot"))
+    container[["plot"]] <- plot
+    plot$setError(gettextf("Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module.", options[["nullDistribution"]]))
+    return()
+  }
+
   if (sum(!is.na(dataset[measurements])) < 2) {
     plot <- createJaspPlot(width = 400, height = 400,
                            title = gettext("Probability plot"))
@@ -2497,21 +2940,48 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                         mapping = ggplot2::aes(color = "normalDist"))
         legendLabel <- gettext("Normal dist.")
       } else if (options[['nullDistribution']]  == "weibull") {
-        fit_Weibull <- fitdistrplus::fitdist(dataCurrentStage, "weibull", method = "mle",
-                                             control = list(maxit = 500, abstol = .Machine$double.eps, reltol = .Machine$double.eps))
-        shape <- fit_Weibull$estimate[[1]]
-        scale <- fit_Weibull$estimate[[2]]
+        fit_Weibull <- .distributionParameters(dataCurrentStage, distribution = "weibull", fix.arg = NULL)
+        shape <- fit_Weibull[["beta"]]
+        scale <- fit_Weibull[["theta"]]
         p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
                                         mapping = ggplot2::aes(color = "weibullDist"))
         legendLabel <- gettext("Weibull dist.")
       } else if(options[['nullDistribution']]  == "lognormal") {
-        fit_Lnorm    <- EnvStats::elnorm(dataCurrentStage)
-        shape  <- fit_Lnorm$parameters[1]
-        scale    <- fit_Lnorm$parameters[2]
-        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = shape, sdlog = scale),
+        fit_Lnorm    <- .distributionParameters(dataCurrentStage, distribution = "lognormal", fix.arg = NULL)
+        meanlog  <- fit_Lnorm[["beta"]]
+        sdlog    <- fit_Lnorm[["theta"]]
+        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = meanlog, sdlog = sdlog),
                                         mapping = ggplot2::aes(color = "lognormallDist"))
-        legendLabel <- gettext("Lognormal dist.")
+        legendLabel <- gettext("Log-normal dist.")
+      } else if(options[['nullDistribution']]  == "gamma") {
+        fitGamma <- .distributionParameters(dataCurrentStage, distribution = "gamma", fix.arg = NULL)
+        shape <- fitGamma[["beta"]]
+        scale <- fitGamma[["theta"]]
+        p <- p + ggplot2::stat_function(fun = dgamma, args = list(shape = shape, scale = scale),
+                                        mapping = ggplot2::aes(color = "gammaDist"))
+        legendLabel <- gettext("Gamma dist.")
+      } else if(options[['nullDistribution']]  == "exponential") {
+        fitExp <- .distributionParameters(dataCurrentStage, distribution = "exponential", fix.arg = NULL)
+        rate <- 1/fitExp[["theta"]]
+        p <- p + ggplot2::stat_function(fun = dexp, args = list(rate = rate),
+                                        mapping = ggplot2::aes(color = "exponentialDist"))
+        legendLabel <- gettext("Exponential dist.")
+      } else if(options[['nullDistribution']]  == "logistic") {
+        fitLogis <- .distributionParameters(dataCurrentStage, distribution = "logistic", fix.arg = NULL)
+        location <- fitLogis[["beta"]]
+        scale <- fitLogis[["theta"]]
+        p <- p + ggplot2::stat_function(fun = dlogis, args = list(location = location, scale = scale),
+                                        mapping = ggplot2::aes(color = "logisticDist"))
+        legendLabel <- gettext("Logistic dist.")
+      } else if(options[['nullDistribution']]  == "loglogistic") {
+        fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "logistic", fix.arg = NULL)
+        shape <- 1/fitLoglogis[["theta"]]
+        scale <- exp(fitLoglogis[["beta"]])
+        p <- p + ggplot2::stat_function(fun = flexsurv::dllogis, args = list(shape = shape, scale = scale),
+                                        mapping = ggplot2::aes(color = "loglogisticDist"))
+        legendLabel <- gettext("Log-logistic dist.")
       }
+
       p <- p + ggplot2::scale_color_manual("", values = "dodgerblue", labels = legendLabel) +
         ggplot2::theme(legend.position = "right")
     }

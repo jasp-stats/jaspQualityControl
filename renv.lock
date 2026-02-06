@@ -738,7 +738,7 @@
     },
     "fitdistrplus": {
       "Package": "fitdistrplus",
-      "Version": "1.2-4",
+      "Version": "1.2-6",
       "Source": "Repository",
       "Requirements": [
         "grDevices",

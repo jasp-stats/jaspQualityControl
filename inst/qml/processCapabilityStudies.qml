@@ -273,6 +273,41 @@ Form
 						id : 				normalCapabilityAnalysis
 						label: 				qsTr("Normal distribution")
 						checked: 			true
+
+
+						CheckBox
+						{
+							name: 						"historicalMean"
+							label: 						qsTr("Historical mean")
+							id:							historicalMean
+							childrenOnSameRow:			true
+
+							DoubleField
+							{
+								name: 					"historicalMeanValue"
+								id:						historicalMeanValue
+								negativeValues:			true
+								defaultValue:			0
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalStdDev"
+							label: 						qsTr("Historical std. dev.")
+							id:							historicalStdDev
+							childrenOnSameRow:			true
+
+							DoubleField
+							{
+								name: 					"historicalStdDevValue"
+								id:						historicalStdDevValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
 					}
 
 					RadioButton
@@ -289,11 +324,123 @@ Form
 							values:
 							[
 								{label: qsTr("Weibull"),					value: "weibull"},
-								{label: qsTr("Lognormal"),					value: "lognormal"},
+								{label: qsTr("Log-normal"),					value: "lognormal"},
+								{label: qsTr("Gamma"),						value: "gamma"},
+								{label: qsTr("Exponential"),				value: "exponential"},
+								{label: qsTr("Logistic"),					value: "logistic"},
+								{label: qsTr("Log-logistic"),				value: "loglogistic"},
 								{label: qsTr("3-parameter Weibull"),		value: "3ParameterWeibull"},
-								{label: qsTr("3-parameter lognormal"),		value: "3ParameterLognormal"}
+								{label: qsTr("3-parameter log-normal"),		value: "3ParameterLognormal"}
 							]
 							indexDefaultValue: 0
+						}
+
+						CheckBox
+						{
+							name: 						"historicalShape"
+							label: 						qsTr("Historical shape")
+							id:							historicalShape
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "weibull" || nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "gamma"
+
+							DoubleField
+							{
+								name: 					"historicalShapeValue"
+								id:						historicalShapeValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalLocation"
+							label: 						qsTr("Historical location")
+							id:							historicalLocation
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "logistic" || nonNormalDistribution.currentValue == "loglogistic"
+
+							DoubleField
+							{
+								name: 					"historicalLocationValue"
+								id:						historicalLocationValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalScale"
+							label: 						qsTr("Historical scale")
+							id:							historicalScale
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "weibull" || nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "gamma" ||  nonNormalDistribution.currentValue == "exponential" || nonNormalDistribution.currentValue == "logistic" || nonNormalDistribution.currentValue == "loglogistic"
+
+							DoubleField
+							{
+								name: 					"historicalScaleValue"
+								id:						historicalScaleValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalLogMean"
+							label: 						qsTr("Historical log mean")
+							id:							historicalLogMean
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "lognormal" || nonNormalDistribution.currentValue == "3ParameterLognormal"
+
+							DoubleField
+							{
+								name: 					"historicalLogMeanValue"
+								id:						historicalLogMeanValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalLogStdDev"
+							label: 						qsTr("Historical log std. dev.")
+							id:							historicalLogStdDev
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "lognormal" || nonNormalDistribution.currentValue == "3ParameterLognormal"
+
+							DoubleField
+							{
+								name: 					"historicalLogStdDevValue"
+								id:						historicalLogStdDevValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
+						}
+
+						CheckBox
+						{
+							name: 						"historicalThreshold"
+							label: 						qsTr("Historical threshold")
+							id:							historicalThreshold
+							childrenOnSameRow:			true
+							visible:					nonNormalDistribution.currentValue == "3ParameterLognormal" || nonNormalDistribution.currentValue == "3ParameterWeibull"
+
+							DoubleField
+							{
+								name: 					"historicalThresholdValue"
+								id:						historicalThresholdValue
+								negativeValues:			true
+								defaultValue:			1
+								decimals:				9
+							}
 						}
 
 						DropDown
@@ -810,12 +957,20 @@ Form
 				values: 
 				[
 					{ label: qsTr("Normal"),		value: "normal"		},
-					{ label: qsTr("Lognormal"),		value: "lognormal"	},
-					{ label: qsTr("Weibull"),		value: "weibull"	}
+					{ label: qsTr("Log-normal"),	value: "lognormal"	},
+					{ label: qsTr("Weibull"),		value: "weibull"	},
+					{ label: qsTr("Gamma"),			value: "gamma"		},
+					{ label: qsTr("Exponential"),	value: "exponential"},
+					{ label: qsTr("Logistic"),		value: "logistic"	},
+					{ label: qsTr("Log-logistic"),	value: "loglogistic"}
 				]
 				indexDefaultValue: (capabilityStudyType.value == "nonNormalCapabilityAnalysis") ? 
 				(nonNormalDistribution.currentValue == "lognormal" || nonNormalDistribution.currentValue == "3ParameterLognormal") ? 1 : 
-				(nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "weibull") ? 2 : 0 
+				(nonNormalDistribution.currentValue == "3ParameterWeibull" || nonNormalDistribution.currentValue == "weibull") ? 2 :
+				(nonNormalDistribution.currentValue == "gamma") ? 3 :
+				(nonNormalDistribution.currentValue == "exponential") ? 4 :
+				(nonNormalDistribution.currentValue == "logistic") ? 5 :
+				(nonNormalDistribution.currentValue == "loglogistic") ? 6 : 0
 				: 0
 			}
 
