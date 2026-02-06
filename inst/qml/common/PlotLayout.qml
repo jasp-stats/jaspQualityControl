@@ -32,6 +32,8 @@ Group
 	property	bool	hasType: 		false
 	property	bool	hasAxes: 		true
 	property	bool	hasPanels: 		true
+	property	bool	hasRegions:		false
+	property	bool	hasLegend:		false
 
 	readonly property alias checked:	mainCheckBox.checked
 
@@ -74,10 +76,20 @@ Group
 					}
 				}
 
+				CheckBox
+				{
+					id:					regionColoringCheckbox
+					enabled:			hasRegions
+					visible:			hasRegions
+					name:				baseName + "ShowRegions"
+					label:				qsTr("Show capability regions")
+					info:				qsTr("Color the area under the density curve according to capability regions (Incapable, Capable, Satisfactory, Excellent, Super).")
+				}
+
 				// Group so CI checkbox and options are shown in a single column (with subgroup so CI options are indented)
 				Group
 				{
-					enabled:			hasCi
+					enabled:			hasCi && !regionColoringCheckbox.checked
 					visible:			hasCi
 
 					columns: 1
@@ -260,6 +272,15 @@ Group
 				name:		baseName + "PriorDistribution"
 				label:		qsTr("Show prior distribution")
 				checked:	false
+			}
+
+			CheckBox
+			{
+				enabled:	hasLegend
+				visible:	hasLegend
+				name:		baseName + "ShowLegend"
+				label:		qsTr("Show legend")
+				checked:	true
 			}
 		}
 	}

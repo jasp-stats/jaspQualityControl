@@ -268,13 +268,24 @@ Form
 
 		title: qsTr("Prior and Posterior Inference")
 
-		Common.PlotLayout {}
+		CheckBox
+		{
+			name: "priorPosteriorTable"
+			label: qsTr("Prior and posterior probabilities table")
+			info: qsTr("Show the prior and posterior probabilities, along with the Bayes factor, for the intervals. This table is only available when proper priors are specified.")
+		}
+
+		Common.PlotLayout
+		{
+			hasRegions: true
+		}
 
 		Common.PlotLayout
 		{
 			baseName: "priorDistributionPlot"
 			baseLabel: qsTr("Prior distribution")
 			hasPrior: false
+			hasRegions: true
 		}
 
 	}
@@ -306,6 +317,7 @@ Form
 			baseName: "sequentialAnalysisPointEstimatePlot"
 			baseLabel: qsTr("Point estimate plot")
 			hasPrior: false
+			hasLegend: true
 		}
 
 		Common.PlotLayout
@@ -317,6 +329,7 @@ Form
 			hasEstimate: false
 			hasCi: false
 			hasType: true
+			hasLegend: true
 		}
 
 		Group
@@ -339,6 +352,17 @@ Form
 				label:		qsTr("Posterior updating table")
 				checked:	false
 				info:		qsTr("Show the data from the sequential analysis in a table. Will show both the information for the point estimate and interval estimate plots, if both are selected.")
+			}
+
+			IntegerField
+			{
+				enabled:		sequentialAnalysisPointEstimatePlot.checked || sequentialAnalysisIntervalEstimatePlot.checked
+				name:			"sequentialAnalysisMaxFailures"
+				label:			qsTr("Maximum allowed failures")
+				defaultValue:	10
+				min:			1
+				max:			1000
+				info:			qsTr("Maximum number of sub-analyses that may fail before aborting the sequential analysis. Failed points are skipped and lines connect across them.")
 			}
 		}
 	}

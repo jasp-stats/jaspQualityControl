@@ -85,14 +85,16 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   )
 }
 
-.bpcsPlotLayoutDeps <- function(base, hasPrior = TRUE, hasEstimate = TRUE, hasCi = TRUE, hasType = FALSE, hasAxes = TRUE) {
+.bpcsPlotLayoutDeps <- function(base, hasPrior = TRUE, hasEstimate = TRUE, hasCi = TRUE, hasType = FALSE, hasAxes = TRUE, hasRegions = FALSE, hasLegend = FALSE) {
   c(
     base,
     if (hasEstimate) .bpcsPlotLayoutEstimateDeps(base),
     if (hasCi)       .bpcsPlotLayoutCiDeps(base),
     if (hasType)     .bpcsPlotLayoutTypeDeps(base),
     if (hasAxes)     .bpcsPlotLayoutAxesDeps(base),
-    if (hasPrior)    .bpcsPlotLayoutPriorDeps(base)
+    if (hasPrior)    .bpcsPlotLayoutPriorDeps(base),
+    if (hasRegions)  .bpcsPlotLayoutRegionsDeps(base),
+    if (hasLegend)   .bpcsPlotLayoutLegendDeps(base)
   )
 }
 
@@ -101,9 +103,27 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 .bpcsPlotLayoutTypeDeps     <- function(base) { paste0(base, c("TypeLower", "TypeUpper")) }
 .bpcsPlotLayoutAxesDeps     <- function(base) { paste0(base, c("PanelLayout", "Axes", "custom_x_min", "custom_x_max", "custom_y_min", "custom_y_max")) }
 .bpcsPlotLayoutPriorDeps    <- function(base) { paste0(base, "PriorDistribution") }
+.bpcsPlotLayoutRegionsDeps  <- function(base) { paste0(base, "ShowRegions") }
+.bpcsPlotLayoutLegendDeps   <- function(base) { paste0(base, "ShowLegend") }
 
 .bpcsProcessCriteriaDeps <- function() {
   c(paste0("interval", 1:4, "b"), paste0("interval", 1:4), paste0("intervalLabel", 1:5))
+}
+
+.bpcsFormatIntervalBounds <- function(intBounds, intNames) {
+  n <- length(intBounds)
+  fmt <- function(x) {
+    if (is.infinite(x)) {
+      if (x < 0) return("\u2212\u221e") else return("\u221e")
+    }
+    formatC(x, digits = 3, format = "f", drop0trailing = TRUE)
+  }
+
+  vapply(seq_len(n - 1L), function(i) {
+    lhs <- "("
+    rhs <- if (i == n - 1L) ")" else "]"
+    sprintf("%s %s%s, %s%s", intNames[i], lhs, fmt(intBounds[i]), fmt(intBounds[i + 1L]), rhs)
+  }, character(1L))
 }
 
 .bpcsPriorComponentByName <- function(options, name) {
@@ -354,16 +374,10 @@ getCustomAxisLimits <- function(options, base) {
 
   intervalBounds <- c(-Inf, unlist(options[paste0("interval",      1:4)], use.names = FALSE), Inf)
   intervalNames  <-         unlist(options[paste0("intervalLabel", 1:5)], use.names = FALSE)
-  n <- length(intervalBounds)
 
-  # custom format helper. we don't use e.g., %.3f directly because that adds trailing zeros (2.000 instead of 2)
-  fmt <- \(x) formatC(x, digits = 3, format = "f", drop0trailing = TRUE)
-  for (i in 1:(n - 1)) {
-    j <- i + 1
-    lhs <- if (i == 1)     "(" else "["
-    rhs <- if (i == n - 1) ")" else "]"
-    title <- sprintf("%s %s%s, %s%s", intervalNames[i], lhs, fmt(intervalBounds[i]), fmt(intervalBounds[j]), rhs)
-    table$addColumnInfo(name = paste0("interval", i), title = title, type = "number")
+  titles <- .bpcsFormatIntervalBounds(intervalBounds, intervalNames)
+  for (i in seq_along(titles)) {
+    table$addColumnInfo(name = paste0("interval", i), title = titles[i], type = "number")
   }
   table$dependOn(c("intervalTable", .bpcsDefaultDeps(), .bpcsProcessCriteriaDeps()))
 
@@ -373,90 +387,88 @@ getCustomAxisLimits <- function(options, base) {
 
 .bpcsPriorPosteriorTable <- function(jaspResults, options, fit, priorFit, position) {
 
+  if (!options[["priorPosteriorTable"]])
+    return()
+
   table <- createJaspTable(title = gettext("Prior and Posterior Probabilities"), position = position)
-
-  # Add columns dynamically
-  cols <- list(
-    list(name = "metric",    title = gettext("Measure"),   type = "string"),
-    list(name = "region",    title = gettext("Region"),    type = "string"),
-    list(name = "prior",     title = gettext("Prior"),     type = "number"),
-    list(name = "posterior", title = gettext("Posterior"), type = "number"),
-    list(name = "bf",        title = gettext("BF"),        type = "number")
-  )
-
-  for (col in cols) table$addColumnInfo(name = col$name, title = col$title, type = col$type)
-
-  table$dependOn(c(.bpcsDefaultDeps(), .bpcsProcessCriteriaDeps()))
+  table$dependOn(c("priorPosteriorTable", .bpcsDefaultDeps(), .bpcsProcessCriteriaDeps()))
   jaspResults[["bpcsPriorPosteriorTable"]] <- table
 
-  if (!.bpcsIsReady(options) || is.null(fit) || is.null(priorFit))
+  if (!.bpcsIsReady(options) || is.null(fit))
     return()
 
   selectedMetrics <- .bpcsGetSelectedMetrics(options)
   if (length(selectedMetrics) == 0) return()
 
-  # Helper to get prob intervals
+  hasProperPriors <- .bpcsCanSampleFromPriors(options) && !is.null(priorFit)
+
   intervalProbs <- unlist(options[paste0("interval", 1:4)], use.names = FALSE)
-  getProbs <- function(obj) qc::summary(obj[["rawfit"]], interval_probability = intervalProbs)[["interval_summary"]]
-
-  priorSum <- getProbs(priorFit)
-  postSum  <- getProbs(fit)
-
   intNames  <- unlist(options[paste0("intervalLabel", 1:5)], use.names = FALSE)
   intBounds <- c(-Inf, intervalProbs, Inf)
 
-  # Create vectors directly
-  nMetrics <- length(selectedMetrics)
-  nRegions <- length(intNames)
-  nRows    <- nMetrics * nRegions
+  tryCatch({
 
-  metricVec <- rep(selectedMetrics, each = nRegions)
-  regionVec <- rep(intNames, nMetrics)
+    getProbs <- function(obj) summary(obj[["rawfit"]], interval_probability = intervalProbs)[["interval_summary"]]
+    postSum  <- as.data.frame(getProbs(fit))
+    postSum  <- postSum[match(selectedMetrics, postSum$metric), , drop = FALSE]
 
-  # Redefining columns for wide format: Metric | Region 1 (Prior, Post, BF) | Region 2 ...
-  table$setColumnInfo(list()) # Clear previous definition attempt
-  table$addColumnInfo(name = "metric", title = gettext("Measure"), type = "string")
+    priorSum <- NULL
+    if (hasProperPriors) {
+      priorSum <- as.data.frame(getProbs(priorFit))
+      priorSum <- priorSum[match(selectedMetrics, priorSum$metric), , drop = FALSE]
+    }
 
-  fmt <- \(x) formatC(x, digits = 3, format = "f", drop0trailing = TRUE)
+    table$addColumnInfo(name = "metric", title = gettext("Measure"), type = "string")
 
-  for (i in seq_along(intNames)) {
-    boundsStr <- sprintf("(%s, %s)", fmt(intBounds[i]), fmt(intBounds[i+1]))
-    regionTitle <- paste0(intNames[i], "\n", boundsStr)
+    regionTitles <- .bpcsFormatIntervalBounds(intBounds, intNames)
 
-    table$addColumnInfo(name = paste0("prior_", i), title = gettext("Prior"),   type = "number", overtitle = regionTitle)
-    table$addColumnInfo(name = paste0("post_", i),  title = gettext("Posterior"), type = "number", overtitle = regionTitle)
-    table$addColumnInfo(name = paste0("bf_", i),    title = gettext("BF"),        type = "number", overtitle = regionTitle)
-  }
+    for (i in seq_along(intNames)) {
+      regionTitle <- regionTitles[i]
 
-  # Fill data
-  df <- data.frame(metric = selectedMetrics)
+      if (hasProperPriors) {
+        table$addColumnInfo(name = paste0("prior_", i), title = gettext("Prior"),     type = "number", overtitle = regionTitle)
+      }
+      table$addColumnInfo(name = paste0("post_", i),  title = gettext("Posterior"), type = "number", overtitle = regionTitle)
+      if (hasProperPriors) {
+        table$addColumnInfo(name = paste0("bf_", i),    title = gettext("BF"),        type = "number", overtitle = regionTitle)
+      }
+    }
 
-  for (i in seq_along(intNames)) {
-    # Extract prob vectors for all selected metrics at once
-    # priorSum/postSum have metric, int1, int2, ...
+    df <- data.frame(metric = selectedMetrics)
 
-    # Filter for selected metrics to ensure order
-    p_prior <- priorSum[priorSum$metric %in% selectedMetrics, i + 1] # +1 because col 1 is metric
-    p_post  <- postSum[postSum$metric %in% selectedMetrics, i + 1]
+    for (i in seq_along(intNames)) {
+      p_post  <- postSum[[i + 1]]
+      df[[paste0("post_", i)]]  <- p_post
 
-    # Calculate BF
-    # Pr(H)/Pr(~H) -> p / (1-p)
-    odds_prior <- p_prior / (1 - p_prior)
-    odds_post  <- p_post / (1 - p_post)
+      if (hasProperPriors) {
+        p_prior <- priorSum[[i + 1]]
 
-    # Handle p=1 or p=0 edge cases safely
-    odds_prior[p_prior >= 1] <- Inf
-    odds_post[p_post >= 1]   <- Inf
+        odds_prior <- p_prior / (1 - p_prior)
+        odds_post  <- p_post / (1 - p_post)
 
-    bf <- odds_post / odds_prior
-    bf[p_prior == 0] <- NA # Undefined if prior is 0
+        odds_prior[p_prior >= 1] <- Inf
+        odds_post[p_post >= 1]   <- Inf
+        odds_prior[p_prior <= 0] <- 0
+        odds_post[p_post <= 0]   <- 0
 
-    df[[paste0("prior_", i)]] <- p_prior
-    df[[paste0("post_", i)]]  <- p_post
-    df[[paste0("bf_", i)]]    <- bf
-  }
+        bf <- odds_post / odds_prior
+        bf[odds_prior == 0 & odds_post == 0] <- 1
+        bf[odds_prior == 0 & odds_post > 0]  <- Inf
 
-  table$setData(df)
+        df[[paste0("prior_", i)]] <- p_prior
+        df[[paste0("bf_", i)]]    <- bf
+      }
+    }
+
+    table$setData(df)
+
+    if (!hasProperPriors) {
+      table$addFootnote(gettext("Prior probabilities and Bayes factors are not available for improper priors. Specify proper priors in the Prior Settings to enable these columns."))
+    }
+
+  }, error = function(e) {
+    table$setError(gettextf("Unexpected error in prior/posterior table: %s", extractErrorMessage(e)))
+  })
 }
 
 
@@ -481,8 +493,8 @@ getCustomAxisLimits <- function(options, base) {
     dependencies = jaspDeps(
       options = c(
         .bpcsDefaultDeps(),
-        # .bpcsPosteriorPlotDeps(options),
-        .bpcsPlotLayoutDeps(base, hasType = FALSE),
+        .bpcsPlotLayoutDeps(base, hasType = FALSE, hasRegions = TRUE),
+        .bpcsProcessCriteriaDeps(),
         "colorScheme"
       )
     )
@@ -515,11 +527,14 @@ getCustomAxisLimits <- function(options, base) {
         jaspGraphs::JASPcolors(palette = jaspGraphs::getGraphOption("palette"), asFunction = TRUE)(length(selectedMetrics))
       }
 
+      showRegions <- isTRUE(options[[paste0(base, "ShowRegions")]])
+      regionCutoffs <- unlist(options[paste0("interval", 1:4)], use.names = FALSE)
+
       jaspPlt$plotObject <- qc::plot_density(
         summaryObject,
         what = selectedMetrics,
         point_estimate     = if (options[[paste0(base, "IndividualPointEstimate")]]) options[[paste0(base, "IndividualPointEstimateType")]] else "none",
-        ci                 = if (options[[paste0(base, "IndividualCi")]])            options[[paste0(base, "IndividualCiType")]]            else "none",
+        ci                 = if (!showRegions && options[[paste0(base, "IndividualCi")]]) options[[paste0(base, "IndividualCiType")]] else "none",
         ci_level           = options[[paste0(base, "IndividualCiMass")]],
         ci_custom_left     = options[[paste0(base, "IndividualCiLower")]],
         ci_custom_right    = options[[paste0(base, "IndividualCiUpper")]],
@@ -528,9 +543,11 @@ getCustomAxisLimits <- function(options, base) {
         axes               = options[[paste0(base, "Axes")]],
         axes_custom        = getCustomAxisLimits(options, base),
         priorSummaryObject = priorSummaryObject,
-        textsize           = .35 * jaspGraphs::getGraphOption("fontsize"), # same as in priorposterior plot
+        textsize           = .35 * jaspGraphs::getGraphOption("fontsize"),
         colorScheme        = plotColors,
-        stripTextFontsize  = jaspGraphs::getGraphOption("fontsize")
+        stripTextFontsize  = jaspGraphs::getGraphOption("fontsize"),
+        show_regions       = showRegions,
+        region_cutoffs     = regionCutoffs
       ) +
         jaspGraphs::geom_rangeframe() +
         jaspGraphs::themeJaspRaw()
@@ -575,8 +592,9 @@ getCustomAxisLimits <- function(options, base) {
       interval_probability <- unlist(options[paste0("interval", 1:4)], use.names = FALSE)
       interval_summary <- summary(fit[["rawfit"]], interval_probability = interval_probability)[["interval_summary"]]
       interval_summary <- interval_summary[interval_summary$metric %in% selectedMetrics, , drop = FALSE]
-      intervalLabels <- unlist(options[paste0("intervalLabel", 1:5)], use.names = FALSE)
-      colnames(interval_summary)[-1] <- paste(intervalLabels, colnames(interval_summary)[-1])
+      intervalBounds <- c(-Inf, interval_probability, Inf)
+      intervalNames  <- unlist(options[paste0("intervalLabel", 1:5)], use.names = FALSE)
+      colnames(interval_summary)[-1] <- .bpcsFormatIntervalBounds(intervalBounds, intervalNames)
       jaspPlt$plotObject <- .bpcsMakeIntervalPlot(interval_summary, options)
 
     }
@@ -619,7 +637,7 @@ getCustomAxisLimits <- function(options, base) {
                         position = position,
                         dependencies = jaspDeps(c(
                           .bpcsDefaultDeps(),
-                          .bpcsPlotLayoutDeps(base, hasPrior = FALSE),
+                          .bpcsPlotLayoutDeps(base, hasPrior = FALSE, hasLegend = TRUE),
                           "sequentialAnalysisPlotAdditionalInfo",
                           "colorScheme"
                         )))
@@ -634,6 +652,10 @@ getCustomAxisLimits <- function(options, base) {
   } else {
     tryCatch({
       plt$plotObject <- .bpcsMakeSequentialPlot(sequentialPlotData$data, options, base, colorScheme = options[["colorScheme"]])
+      failureCount <- attr(sequentialPlotData$data, "failures")
+      if (!is.null(failureCount) && failureCount > 0L) {
+        plt$setError(gettextf("%d sub-analyses failed.", failureCount))
+      }
     }, error = function(e) {
       plt$setError(gettextf("Unexpected error in sequential analysis point estimate plot: %s", extractErrorMessage(e)))
     }
@@ -653,7 +675,7 @@ getCustomAxisLimits <- function(options, base) {
                         position = position,
                         dependencies = jaspDeps(c(
                           .bpcsDefaultDeps(),
-                          .bpcsPlotLayoutDeps(base, hasPrior = FALSE),
+                          .bpcsPlotLayoutDeps(base, hasPrior = FALSE, hasLegend = TRUE),
                           "colorScheme"
                         )))
   jaspResults[[base]] <- plt
@@ -667,6 +689,10 @@ getCustomAxisLimits <- function(options, base) {
   } else {
     tryCatch({
       plt$plotObject <- .bpcsMakeSequentialPlot(sequentialPlotData$data, options, base, custom = TRUE, colorScheme = options[["colorScheme"]])
+      failureCount <- attr(sequentialPlotData$data, "failures")
+      if (!is.null(failureCount) && failureCount > 0L) {
+        plt$setError(gettextf("%d sub-analyses failed.", failureCount))
+      }
     }, error = function(e) {
       plt$setError(gettextf("Unexpected error in sequential analysis interval estimate plot: %s", extractErrorMessage(e)))
     }
@@ -687,7 +713,8 @@ getCustomAxisLimits <- function(options, base) {
       .bpcsComputeSequentialAnalysis(dataset, options, fit) |>
         createJaspState(dependencies = jaspDeps(
           options = c(.bpcsStateDeps(),
-                      paste0(base2, c("TypeLower", "TypeUpper")))
+                      paste0(base2, c("TypeLower", "TypeUpper")),
+                      "sequentialAnalysisMaxFailures")
           ))
     )
 
@@ -731,39 +758,62 @@ getCustomAxisLimits <- function(options, base) {
   if (identical(method, "integration") && options[["capabilityStudyType"]] == "tCapabilityAnalysis")
     stop("Integration method is available only for the normal distribution.")
 
+  maxFailures <- options[["sequentialAnalysisMaxFailures"]]
+  if (is.null(maxFailures)) maxFailures <- 10L
+  failureCount <- 0L
+  failedIndices <- integer(0L)
+
   for (i in seq_along(nseq)) {
 
-    x_i <- x[1:nseq[i]]
-    fit_i <- qc::bpc(
-      x_i, chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
-      target      = options[["targetValue"]],
-      LSL         = options[["lowerSpecificationLimitValue"]],
-      USL         = options[["upperSpecificationLimitValue"]],
-      prior_mu    = priorMu,
-      prior_sigma = priorSigma,
-      prior_nu    = priorNu,
-      method      = method
-    )
+    result <- tryCatch({
+      x_i <- x[1:nseq[i]]
+      fit_i <- qc::bpc(
+        x_i, chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
+        target      = options[["targetValue"]],
+        LSL         = options[["lowerSpecificationLimitValue"]],
+        USL         = options[["upperSpecificationLimitValue"]],
+        prior_mu    = priorMu,
+        prior_sigma = priorSigma,
+        prior_nu    = priorNu,
+        method      = method
+      )
 
-    sum_fit_i <- summary(fit_i, interval_probability = customBounds)
-    sum_i <- sum_fit_i$summary
-    custom_i <- sum_fit_i$interval_summary[, 3, drop = FALSE]
-    colnames(custom_i) <- "custom"
-    sum_i <- cbind(sum_i, custom_i)
+      sum_fit_i <- summary(fit_i, interval_probability = customBounds)
+      sum_i <- sum_fit_i$summary
+      custom_i <- sum_fit_i$interval_summary[, 3, drop = FALSE]
+      colnames(custom_i) <- "custom"
+      sum_i <- cbind(sum_i, custom_i)
 
-    if (is.null(rownames(estimates)))
-      rownames(estimates) <- sum_i$metric
+      if (is.null(rownames(estimates)))
+        rownames(estimates) <- sum_i$metric
 
-    estimates[, , i] <- as.matrix(sum_i[keys])
+      as.matrix(sum_i[keys])
+    }, error = function(e) {
+      NULL
+    })
+
+    if (is.null(result)) {
+      failureCount <- failureCount + 1L
+      failedIndices <- c(failedIndices, i)
+      if (failureCount > maxFailures) {
+        stop(gettextf("Sequential analysis aborted: more than %d sub-analyses failed. Last failure at n = %d.",
+                      maxFailures, nseq[i]))
+      }
+    } else {
+      estimates[, , i] <- result
+    }
+
     jaspBase::progressbarTick()
   }
 
-  attr(estimates, "nseq") <- nseq
+  # Remove failed indices from nseq and estimates
+  if (length(failedIndices) > 0L) {
+    estimates <- estimates[, , -failedIndices, drop = FALSE]
+    nseq <- nseq[-failedIndices]
+  }
 
-  # we could use this one, but only if the CI width is exactly equal to the one requested here.
-  # that would be nice to add at some point so the values in the table are identical to those in the plot
-  # sum_n <- summary(fit)$summary
-  # estimates[, , n] <- as.matrix(sum_n[keys])
+  attr(estimates, "nseq") <- nseq
+  attr(estimates, "failures") <- failureCount
 
   return(estimates)
 }
@@ -774,6 +824,7 @@ getCustomAxisLimits <- function(options, base) {
   single_panel <- options[[paste0(base, "PanelLayout")]] != "multiplePanels"
   axes         <- options[[paste0(base, "Axes")]]
   axes_custom  <- getCustomAxisLimits(options, base)
+  show_legend  <- isTRUE(options[[paste0(base, "ShowLegend")]])
 
   pointEstimateOption <- paste0(base, "IndividualPointEstimateType")
   pointEstimateName <- if (options[[pointEstimateOption]] == "mean") "mean" else "median"
@@ -927,10 +978,47 @@ getCustomAxisLimits <- function(options, base) {
   scale_x <- scale_facet <- facet <- NULL
   noMetrics <- nrow(estimates)
   if (noMetrics == 1L || single_panel) {
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(tb$n)
-    xLimits <- range(tb$n)
-    scale_x <- ggplot2::scale_x_continuous(breaks = xBreaks, limits = xLimits)
-    scale_facet <- y_breaks_per_scale
+    # Single panel case
+    if (axes == "custom") {
+      # Apply custom x axis limits
+      if (!is.null(axes_custom[["xmin"]]) && !is.null(axes_custom[["xmax"]])) {
+        xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(axes_custom[["xmin"]], axes_custom[["xmax"]]))
+        scale_x <- ggplot2::scale_x_continuous(breaks = xBreaks, limits = sort(c(axes_custom[["xmin"]], axes_custom[["xmax"]])))
+      } else {
+        xBreaks <- jaspGraphs::getPrettyAxisBreaks(tb$n)
+        scale_x <- ggplot2::scale_x_continuous(breaks = xBreaks, limits = range(tb$n))
+      }
+      # Apply custom y axis limits
+      if (!is.null(axes_custom[["ymin"]]) && !is.null(axes_custom[["ymax"]])) {
+        yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(axes_custom[["ymin"]], axes_custom[["ymax"]]))
+        leftLimits <- sort(c(axes_custom[["ymin"]], axes_custom[["ymax"]]))
+        rightAxis <- ggplot2::waiver()
+        if (add_additional_info) {
+          rightBreaksShown <- c(
+            (leftLimits[1L] + gridLines[1L]) / 2,
+            defaultCategoryPositions,
+            (leftLimits[2L] + gridLines[length(gridLines)]) / 2
+          )
+          rightBreaks <- numeric(2L*length(rightBreaksShown) + 1L)
+          rightBreaks[1L]                                 <- leftLimits[1L]
+          rightBreaks[seq(2, length(rightBreaks), 2)]     <- rightBreaksShown
+          rightBreaks[seq(3, length(rightBreaks) - 2, 2)] <- gridLines
+          rightBreaks[length(rightBreaks)]                <- leftLimits[2L]
+
+          rightLabels <- character(length(rightBreaks))
+          rightLabels[seq(2, length(rightLabels), 2)]   <- categoryNames
+          rightAxis <- ggplot2::sec_axis(identity, breaks = rightBreaks, labels = rightLabels)
+        }
+        scale_facet <- ggplot2::scale_y_continuous(breaks = yBreaks, limits = leftLimits,
+                                                   minor_breaks = gridLines, sec.axis = rightAxis)
+      } else {
+        scale_facet <- y_breaks_per_scale
+      }
+    } else {
+      xBreaks <- jaspGraphs::getPrettyAxisBreaks(tb$n)
+      scale_x <- ggplot2::scale_x_continuous(breaks = xBreaks, limits = range(tb$n))
+      scale_facet <- y_breaks_per_scale
+    }
   } else {
     scales <- switch(axes,
                      "automatic" = "free_y",
@@ -942,7 +1030,7 @@ getCustomAxisLimits <- function(options, base) {
     if (axes == "custom") {
       if (!is.null(axes_custom[["xmin"]]) && !is.null(axes_custom[["xmax"]])) {
         xbreaks <- jaspGraphs::getPrettyAxisBreaks(c(axes_custom[["xmin"]], axes_custom[["xmax"]]))
-        scale_x <- ggplot2::scale_x_continuous(limits = sort(c(axes_custom[["xmin"]], axes_custom[["xmax"]])))
+        scale_x <- ggplot2::scale_x_continuous(breaks = xbreaks, limits = sort(c(axes_custom[["xmin"]], axes_custom[["xmax"]])))
       }
       if (!is.null(axes_custom[["ymin"]]) && !is.null(axes_custom[["ymax"]])) {
         ybreaks <- jaspGraphs::getPrettyAxisBreaks(c(axes_custom[["ymin"]], axes_custom[["ymax"]]))
@@ -988,7 +1076,7 @@ getCustomAxisLimits <- function(options, base) {
       fill  = gettext("Metric")
     ) +
     jaspGraphs::geom_rangeframe(sides = sides) +
-    jaspGraphs::themeJaspRaw(legend.position = if (single_panel) "right" else "none") +
+    jaspGraphs::themeJaspRaw(legend.position = if (single_panel && show_legend) "right" else "none") +
     ggplot2::theme(strip.text = ggplot2::element_text(size = jaspGraphs::getGraphOption("fontsize"))) +
     extraTheme
 
