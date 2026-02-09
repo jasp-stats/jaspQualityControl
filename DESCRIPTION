@@ -37,7 +37,8 @@ Imports:
   tibble,
   vipor,
   weibullness,
-  utils
+  utils,
+  flexsurv
 Remotes:
   jasp-stats/jaspBase,
   jasp-stats/jaspDescriptives,
