@@ -336,6 +336,35 @@ getCustomAxisLimits <- function(options, base) {
 
   table$setData(df)
 
+  .bpcsCapabilityTableDivergenceFootnotes(table, resultsObject, selectedMetrics)
+
+}
+
+.bpcsCapabilityTableDivergenceFootnotes <- function(table, resultsObject, selectedMetrics) {
+
+  flags <- qc::get_analytic_flags(resultsObject[["summaryObject"]])
+  if (is.null(flags))
+    return()
+
+  flags <- flags[flags$metric %in% selectedMetrics, , drop = FALSE]
+  if (nrow(flags) == 0L)
+    return()
+
+  meanRows <- flags$metric[flags$mean_divergent]
+  sdRows   <- flags$metric[flags$sd_divergent]
+
+  if (length(meanRows) > 0L)
+    table$addFootnote(
+      gettext("The mean is analytically infinite given the prior specification."),
+      colNames = "mean", rowNames = meanRows
+    )
+
+  if (length(sdRows) > 0L)
+    table$addFootnote(
+      gettext("The standard deviation is analytically infinite given the prior specification."),
+      colNames = "sd", rowNames = sdRows
+    )
+
 }
 
 .bpcsIntervalTable <- function(jaspResults, options, fit, position) {
