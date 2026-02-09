@@ -918,10 +918,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
       if (!phase2) {
         distributionPars <- .distributionParameters(plotStatistic[!is.na(plotStatistic)], distribution = tChartDistribution)
-        shape <- distributionPars$beta
+        shape <- if (tChartDistribution == "exponential") 1 else distributionPars$beta # weibull with shape 1 is exponential
         scale <- distributionPars$theta
       } else {
-        shape <- if (tChartDistribution == "exponential") 1 else phase2tChartDistributionShape
+        shape <- if (tChartDistribution == "exponential") 1 else phase2tChartDistributionShape # weibull with shape 1 is exponential
         scale <- phase2tChartDistributionScale
       }
       center <- qweibull(p = .5, shape = shape, scale = scale)
@@ -1605,7 +1605,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
       # Since there is only one parameter, we also don't need to check if any parameter is fixed
       beta <- NA # not relevant for this distribution
-      theta <- 1/expFit$estimate[1] # scale
+      theta <- 1/unname(expFit$estimate[1]) # scale
     }
     #######################
     ####   Logistic   #####
