@@ -113,12 +113,12 @@ Form
 		DropDown
 		{
 			name: 							"processVariationReference"
-			label: 							qsTr("Std. dev. reference")
+			label: 							qsTr("Std. dev. source")
 			id: 							variationReference
 			indexDefaultValue: 				0
 			values: [
 				{ label: qsTr("Study std. dev."), value: "studySd"},
-				{ label: qsTr("Historical process std. dev."), value: "historicalSd"}
+				{ label: qsTr("Historical std. dev."), value: "historicalSd"}
 			]
 		}
 
