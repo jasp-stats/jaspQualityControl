@@ -62,7 +62,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 
   # Checking for crossed design
   if (ready && !options[["type3"]]) {
-    crossed <- .checkIfCrossed(dataset, operators, parts, measurements)
+    crossed <- .checkIfCrossed(dataset, operators, parts)
     if(!crossed){
       plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
       jaspResults[["gaugeANOVA"]] <- plot
@@ -1050,15 +1050,12 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
   return(varcompList)
 }
 
-.checkIfCrossed <- function(dataset, operators, parts, measurements){
-  partVector <- as.character(unique(dataset[[parts]]))
-  operatorVector <- as.character(unique(dataset[[operators]]))
-  for(part in partVector){
-    partData <- subset.data.frame(dataset, dataset[parts] == part)
-    if(!all(operatorVector %in% partData[[operators]])){
-      return(FALSE)
-    }
-  }
+.checkIfCrossed <- function(dataset, operators, parts){
+  tab <- table(dataset[[operators]], dataset[[parts]])
+  if (any(tab == 0))
+    return(FALSE) # check that all operators measured every part
+  if (!all(tab == tab[1, 1]))
+    return(FALSE) # check that number of measurements is equal across part x operator combinations
   return(TRUE)
 }
 .trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE, ToleranceVar = "", options, ready, Xlab.StudySD = "", Xlab.Tol = "", ggPlot = FALSE) {
