@@ -165,7 +165,6 @@ Form
 				values: [
 					{ label: qsTr("Sturges"), value: "sturges"},
 					{ label: qsTr("Scott"), value: "scott"},
-					{ label: qsTr("Doane"), value: "doane"},
 					{ label: qsTr("Freedman-Diaconis"), value: "freedmanDiaconis"},
 					{ label: qsTr("Manual"), value: "manual"}
 				]
