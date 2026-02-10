@@ -49,6 +49,17 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
              all.target = c(measurements, options[["operator"]], options[["part"]]),
              exitAnalysisIfErrors = TRUE)
 
+  # Checking for crossed design
+  if (ready && !wideFormat) {
+    crossed <- .checkIfCrossed(dataset, operators, parts)
+    if(!crossed){
+      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
+      jaspResults[["gaugeTestRetest"]] <- plot
+      plot$setError(gettext("Design is not balanced: not all parts were measured the same number of times."))
+      return()
+    }
+  }
+
   if (!wideFormat && ready) {
     dataset <- as.data.frame(tidyr::pivot_wider(dataset, values_from = dplyr::all_of(measurements), names_from = dplyr::all_of(operators)))
     measurements <- names(dataset[-1])
@@ -113,7 +124,7 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 
 
   plot <- createJaspPlot(title = gettext("Run chart of parts"), width = 500, height = 320)
-  plot$dependOn(c("runChartPart"))
+  plot$dependOn(c("runChartPart", "measurementsWideFormat", "partWideFormat", "measurementLongFormat", "partLongFormat", "operators"))
 
   if (ready) {
 
@@ -187,7 +198,8 @@ msaTestRetest <- function(jaspResults, dataset, options, ...) {
 .ScatterPlotOperators <- function(dataset, measurements, parts, operators, options, ready) {
 
   plot <- createJaspPlot(title = gettext("Scatterplot of 1st measurement vs 2nd measurement"))
-  plot$dependOn(c("scatterPlotMeasurement", "scatterPlotMeasurementFitLine", "rangeScatterPlotOriginLine", "gaugeRRmethod"))
+  plot$dependOn(c("scatterPlotMeasurement", "scatterPlotMeasurementFitLine", "rangeScatterPlotOriginLine", "gaugeRRmethod",
+                  "measurementsWideFormat", "partWideFormat", "measurementLongFormat", "partLongFormat", "operators"))
 
   if (ready) {
 
