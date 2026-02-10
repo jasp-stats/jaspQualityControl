@@ -504,8 +504,9 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
         if (Type3)
           varCompVector <- c("varCompTotalGauge" = varCompTotalGauge, "varCompRepeat" = varCompRepeat, "varCompPart" = varCompPart, "varCompTotalVar" = varCompTotalVar)
         histSD <- options[["historicalSdValue"]]
-        varCompVector[["varCompTotalVar"]] <- varCompTotalVar <- histSD^2
-        varCompVector[["varCompPart"]] <- varCompVector$varCompTotalVar - varCompTotalGauge
+        varCompTotalVar <- histSD^2
+        varCompVector[["varCompTotalVar"]] <- varCompTotalVar
+        varCompVector[["varCompPart"]] <- varCompVector[["varCompTotalVar"]] - varCompTotalGauge
       }
 
 
