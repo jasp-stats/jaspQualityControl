@@ -50,7 +50,7 @@ test_that("1.2 Two factors full factorial Coded Coefficients table results match
 test_that("1.3 Two factors full factorial Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 99.31 (Intercept) + 3.94 A + 4.66 B - 1.75 AB"))
+                                 list("Result = 99.31 + 3.94 A + 4.66 B - 1.75 AB"))
 })
 
 test_that("1.4 Two factors full factorial Model Summary table results match", {
@@ -159,7 +159,7 @@ test_that("2.2 Five factors full factorial Coded Coefficients table results matc
 test_that("2.3 Five factors full factorial Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 101.7 (Intercept) + 2.25 A - 2.76 B + 0.12 C + 1.42 D - 3.69 E + 1.45 AB + 1.22 AC - 0.76 AD - 1.36 AE - 2.05 BC + 1.63 BD - 0.24 BE + 1.27 CD - 2.57 CE + 2.47 DE"
+                                 list("Result = 101.7 + 2.25 A - 2.76 B + 0.12 C + 1.42 D - 3.69 E + 1.45 AB + 1.22 AC - 0.76 AD - 1.36 AE - 2.05 BC + 1.63 BD - 0.24 BE + 1.27 CD - 2.57 CE + 2.47 DE"
                                  ))
 })
 
@@ -278,7 +278,7 @@ test_that("3.2 Five factors full factorial with covariates Coded Coefficients ta
 test_that("3.3 Five factors full factorial with covariates Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 109.73 (Intercept) + 2.14 A - 2.98 B - 0.02 C + 1.7 D - 3.63 E - 0.17 COV1 + 1.71 AB + 1.24 AC - 0.71 AD - 1.51 AE - 1.91 BC + 1.62 BD - 0.36 BE + 1.09 CD - 2.52 CE + 2.51 DE"
+                                 list("Result = 109.73 + 2.14 A - 2.98 B - 0.02 C + 1.7 D - 3.63 E - 0.17 COV1 + 1.71 AB + 1.24 AC - 0.71 AD - 1.51 AE - 1.91 BC + 1.62 BD - 0.36 BE + 1.09 CD - 2.52 CE + 2.51 DE"
                                  ))
 })
 
@@ -353,7 +353,7 @@ test_that("4.2 Five factors fractional factorial Coded Coefficients table result
 test_that("4.3 Five factors fractional factorial Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 102.54 (Intercept) - 2.52 A - 1.81 B - 3.03 C + 2.69 D + 5.2 E + 3.11 BC + 2.71 BE"
+                                 list("Result = 102.54 - 2.52 A - 1.81 B - 3.03 C + 2.69 D + 5.2 E + 3.11 BC + 2.71 BE"
                                  ))
 })
 
@@ -592,7 +592,7 @@ test_that("5.2 Nine factors highest factorial Coded Coefficients table results m
 test_that("5.3 Nine factors highest factorial Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 101.84 (Intercept) + 0.49 A + 0.2 B - 0.66 C - 1.66 D - 0.28 E + 0.89 F - 0.36 G + 0.67 H + 1.8 I - 0.27 AB + 0.84 AC - 0.16 AD + 0.86 AE + 0.14 AF - 0.41 AG + 0.31 AH + 0.31 AI - 0.29 BC - 0.49 BD + 0.3 BE - 1.71 BF + 1.79 BG + 0.14 BH - 0.76 BI - 0.59 CD - 0.94 CE + 0.55 CF + 0.35 CG + 0.95 CH - 0.32 CI - 0.16 DE + 0.64 DF - 0.29 DG - 0.63 DH - 0.03 DI - 0.69 EF + 0.72 EG + 0.5 EH - 0.24 EI + 1.04 FG - 0.47 FH + 1.03 FI - 1.38 GH - 0.49 GI - 0.02 HI"
+                                 list("Result = 101.84 + 0.49 A + 0.2 B - 0.66 C - 1.66 D - 0.28 E + 0.89 F - 0.36 G + 0.67 H + 1.8 I - 0.27 AB + 0.84 AC - 0.16 AD + 0.86 AE + 0.14 AF - 0.41 AG + 0.31 AH + 0.31 AI - 0.29 BC - 0.49 BD + 0.3 BE - 1.71 BF + 1.79 BG + 0.14 BH - 0.76 BI - 0.59 CD - 0.94 CE + 0.55 CF + 0.35 CG + 0.95 CH - 0.32 CI - 0.16 DE + 0.64 DF - 0.29 DG - 0.63 DH - 0.03 DI - 0.69 EF + 0.72 EG + 0.5 EH - 0.24 EI + 1.04 FG - 0.47 FH + 1.03 FI - 1.38 GH - 0.49 GI - 0.02 HI"
                                  ))
 })
 
@@ -713,7 +713,7 @@ test_that("6.2 Nine factors smallest fractional Coded Coefficients table results
 test_that("6.3 Nine factors smallest fractional Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 99.37 (Intercept) - 0.25 A - 3.25 B - 4.22 C + 2.28 D + 0.6 E - 0.02 F - 3.61 G - 4.46 H - 2.49 I - 0.47 AB + 0.5 AC - 0.88 AD + 0.56 AE - 3.06 AG + 0.71 AH"
+                                 list("Result = 99.37 - 0.25 A - 3.25 B - 4.22 C + 2.28 D + 0.6 E - 0.02 F - 3.61 G - 4.46 H - 2.49 I - 0.47 AB + 0.5 AC - 0.88 AD + 0.56 AE - 3.06 AG + 0.71 AH"
                                  ))
 })
 
@@ -789,7 +789,7 @@ test_that("7.2 One center point Coded Coefficients table results match", {
 test_that("7.3 One center point Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 100.15 (Intercept) + 1.6 A + 4.38 B + 4.4 C + 0.52 AB + 8.05 BC + 0.65 AC + 0.87 ABC"
+                                 list("Result = 100.15 + 1.6 A + 4.38 B + 4.4 C + 0.52 AB + 8.05 BC + 0.65 AC + 0.87 ABC"
                                  ))
 })
 
@@ -866,7 +866,7 @@ test_that("8.2 Two center points Coded Coefficients table results match", {
 test_that("8.3 Two center points Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 102.6 (Intercept) + 0.84 A - 2.9 B - 4.64 C + 0.83 AB + 8.53 BC - 3.16 AC - 1.12 ABC"
+                                 list("Result = 102.6 + 0.84 A - 2.9 B - 4.64 C + 0.83 AB + 8.53 BC - 3.16 AC - 1.12 ABC"
                                  ))
 })
 
@@ -941,7 +941,7 @@ test_that("9.2 Four center points Coded Coefficients table results match", {
 test_that("9.3 Four center points Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 103.15 (Intercept) + 6.57 A - 4.24 B + 5.5 C - 1.69 AB + 10.28 BC + 3.16 AC + 6.66 ABC"
+                                 list("Result = 103.15 + 6.57 A - 4.24 B + 5.5 C - 1.69 AB + 10.28 BC + 3.16 AC + 6.66 ABC"
                                  ))
 })
 
@@ -1010,7 +1010,7 @@ test_that("10.2 Two blocks Coded Coefficients table results match", {
 test_that("10.3 Two blocks Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 99.75 (Intercept) + 0.94 A + 0.67 B - 2.1 C + 2.68 BLK1 - 0.2 AB + 0.3 BC - 4.53 AC"
+                                 list("Result = 99.75 + 0.94 A + 0.67 B - 2.1 C + 2.68 BLK1 - 0.2 AB + 0.3 BC - 4.53 AC"
                                  ))
 })
 
@@ -1117,7 +1117,7 @@ test_that("13.2 Two factor one HTC Coded Coefficients table results match", {
 test_that("13.3 Two factor one HTC Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 101.71 (Intercept) - 0.86 A + 8.27 B + 3.36 AB"))
+                                 list("Result = 101.71 - 0.86 A + 8.27 B + 3.36 AB"))
 })
 
 test_that("13.4 Two factor one HTC Model Summary table results match", {
@@ -1227,7 +1227,7 @@ test_that("14.2 Five factor two HTC Coded Coefficients table results match", {
 test_that("14.3 Five factor two HTC Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 100.47 (Intercept) - 2.1 A - 1.37 B - 0.54 C - 2.11 D - 1.22 E - 2.66 AB + 3.54 AC + 1.22 AD - 6.14 AE + 1.13 BC - 2.25 BD - 0.48 BE + 1.57 CD + 0.54 CE - 1.07 DE"
+                                 list("Result = 100.47 - 2.1 A - 1.37 B - 0.54 C - 2.11 D - 1.22 E - 2.66 AB + 3.54 AC + 1.22 AD - 6.14 AE + 1.13 BC - 2.25 BD - 0.48 BE + 1.57 CD + 0.54 CE - 1.07 DE"
                                  ))
 })
 
@@ -1392,7 +1392,7 @@ test_that("15.2 Seven factor three HTC Coded Coefficients table results match", 
 test_that("15.3 Seven factor three HTC Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 98.68 (Intercept) + 0.58 A + 2.25 B + 0.33 C + 1.11 D + 0.78 E - 0.88 F - 0.87 G + 0.69 AB - 0.39 AC + 0.65 AD - 1.36 AE + 0.77 AF - 0.75 AG - 1.06 BC - 1.13 BD + 0.96 BE + 0.78 BF + 0.73 BG + 0.71 CD + 0.71 CE + 1 CF + 0.54 CG - 0.55 DE + 1.05 DF + 0.4 DG + 0.47 EF - 1.7 EG - 1.34 FG"
+                                 list("Result = 98.68 + 0.58 A + 2.25 B + 0.33 C + 1.11 D + 0.78 E - 0.88 F - 0.87 G + 0.69 AB - 0.39 AC + 0.65 AD - 1.36 AE + 0.77 AF - 0.75 AG - 1.06 BC - 1.13 BD + 0.96 BE + 0.78 BF + 0.73 BG + 0.71 CD + 0.71 CE + 1 CF + 0.54 CG - 0.55 DE + 1.05 DF + 0.4 DG + 0.47 EF - 1.7 EG - 1.34 FG"
                                  ))
 })
 
@@ -1899,7 +1899,7 @@ test_that("19.2 Three continuous predictors CCD Coded Coefficients table results
 test_that("19.3 Three continuous predictors CCD Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 101.13 (Intercept) - 0.22 A + 2.88 B - 1.38 C + 1.32 A^2 - 2.32 B^2 - 0.02 C^2 - 1.76 AB + 0.04 AC - 2.38 BC"
+                                 list("Result = 101.13 - 0.22 A + 2.88 B - 1.38 C + 1.32 A^2 - 2.32 B^2 - 0.02 C^2 - 1.76 AB + 0.04 AC - 2.38 BC"
                                  ))
 })
 
@@ -2019,7 +2019,7 @@ test_that("20.2 Five continuous predictors CCD Coded Coefficients table results 
 test_that("20.3 Five continuous predictors CCD Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 95.71 (Intercept) + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2 + 0.21 AB - 0.44 AC - 0.85 AD - 0.54 AE - 1.34 BC - 0.23 BD + 2.21 BE - 2.98 CD - 0.77 CE + 0.67 DE"
+                                 list("Result = 95.71 + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2 + 0.21 AB - 0.44 AC - 0.85 AD - 0.54 AE - 1.34 BC - 0.23 BD + 2.21 BE - 2.98 CD - 0.77 CE + 0.67 DE"
                                  ))
 })
 
@@ -2134,7 +2134,7 @@ test_that("21.2 Three continuous and two categorical predictors CCD Coded Coeffi
 test_that("21.3 Three continuous and two categorical predictors CCD Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 99.36 (Intercept) - 0.14 A + 0.73 B + 0.22 C + 0.57 D - 0.94 E - 1.51 A^2 - 0.44 B^2 + 1.71 C^2 + 2.26 AB + 0.26 AC - 1.13 AD + 0.86 AE + 1.6 BC + 0.76 BD - 0.23 BE + 2.79 CD - 0 CE + 1.06 DE"
+                                 list("Result = 99.36 - 0.14 A + 0.73 B + 0.22 C + 0.57 D - 0.94 E - 1.51 A^2 - 0.44 B^2 + 1.71 C^2 + 2.26 AB + 0.26 AC - 1.13 AD + 0.86 AE + 1.6 BC + 0.76 BD - 0.23 BE + 2.79 CD - 0 CE + 1.06 DE"
                                  ))
 })
 
@@ -2251,7 +2251,7 @@ test_that("22.2 Four continuous and one categorical predictor CCD Coded Coeffici
 test_that("22.3 Four continuous and one categorical predictor CCD Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 97.91 (Intercept) - 2.8 A + 1.2 B + 1.87 C + 1.09 D + 1.5 E - 0.36 A^2 + 1.33 B^2 + 0.53 C^2 + 0.17 D^2 - 3.09 AB + 1.87 AC + 1.09 AD - 2.19 AE - 0.6 BC - 1.38 BD - 1.74 BE + 0.1 CD + 0.73 CE - 2.45 DE"
+                                 list("Result = 97.91 - 2.8 A + 1.2 B + 1.87 C + 1.09 D + 1.5 E - 0.36 A^2 + 1.33 B^2 + 0.53 C^2 + 0.17 D^2 - 3.09 AB + 1.87 AC + 1.09 AD - 2.19 AE - 0.6 BC - 1.38 BD - 1.74 BE + 0.1 CD + 0.73 CE - 2.45 DE"
                                  ))
 })
 
@@ -2331,7 +2331,7 @@ test_that("23.2 Three continuous predictors BBD Coded Coefficients table results
 test_that("23.3 Three continuous predictors BBD Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 90.17 (Intercept) - 4.49 A + 3.78 B + 0.66 C + 10.51 A^2 + 6.61 B^2 + 2.03 C^2 - 5.89 AB - 0.59 AC + 3.63 BC"
+                                 list("Result = 90.17 - 4.49 A + 3.78 B + 0.66 C + 10.51 A^2 + 6.61 B^2 + 2.03 C^2 - 5.89 AB - 0.59 AC + 3.63 BC"
                                  ))
 })
 
@@ -2430,7 +2430,7 @@ test_that("24.2 Four continuous predictors BBD Coded Coefficients table results 
 test_that("24.3 Four continuous predictors BBD Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 104.9 (Intercept) - 3.63 A - 3.43 B - 0.16 C + 2.69 D + 4.89 A^2 - 2.62 B^2 - 3.31 C^2 - 1.28 D^2 + 2.2 AB - 6.92 AC - 4.09 AD + 1.05 BC + 6.9 BD - 0.43 CD"
+                                 list("Result = 104.9 - 3.63 A - 3.43 B - 0.16 C + 2.69 D + 4.89 A^2 - 2.62 B^2 - 3.31 C^2 - 1.28 D^2 + 2.2 AB - 6.92 AC - 4.09 AD + 1.05 BC + 6.9 BD - 0.43 CD"
                                  ))
 })
 
@@ -2547,7 +2547,7 @@ test_that("25.2 Five continuous predictors BBD Coded Coefficients table results 
 test_that("25.3 Five continuous predictors BBD Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 99.55 (Intercept) - 2.84 A + 0.77 B + 0.14 C - 3.86 D - 3.37 E + 0.04 A^2 + 1.03 B^2 - 2.08 C^2 - 4.49 D^2 + 1.7 E^2 - 2.61 AB + 0.44 AC - 5.11 AD - 4.08 AE - 1.93 BC + 4.83 BD - 2.71 BE + 1.56 CD - 7.27 CE - 1.58 DE"
+                                 list("Result = 99.55 - 2.84 A + 0.77 B + 0.14 C - 3.86 D - 3.37 E + 0.04 A^2 + 1.03 B^2 - 2.08 C^2 - 4.49 D^2 + 1.7 E^2 - 2.61 AB + 0.44 AC - 5.11 AD - 4.08 AE - 1.93 BC + 4.83 BD - 2.71 BE + 1.56 CD - 7.27 CE - 1.58 DE"
                                  ))
 })
 
@@ -2714,7 +2714,7 @@ test_that("26.2 Six continuous predictors one discrete predictor BBD Coded Coeff
 test_that("26.3 Six continuous predictors one discrete predictor BBD Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 102.89 (Intercept) + 1.76 A + 0.04 B - 0.54 C - 1.52 D + 1.62 E - 1.69 F - 0.34 G + 0.16 A^2 + 0.96 B^2 - 0.94 C^2 - 3.25 D^2 - 1.86 E^2 - 2.02 F^2 - 0.61 AB - 5.24 AC - 1.32 AD - 1.35 AE + 1.62 AF - 0.14 AG + 1.32 BC - 0.43 BD - 0.22 BE - 0.82 BF + 0.7 BG + 1.65 CD - 1.34 CE - 1.64 CF - 0.53 CG + 0.58 DE - 1.13 DF - 1.17 DG - 2.1 EF + 0.24 EG + 1.03 FG"
+                                 list("Result = 102.89 + 1.76 A + 0.04 B - 0.54 C - 1.52 D + 1.62 E - 1.69 F - 0.34 G + 0.16 A^2 + 0.96 B^2 - 0.94 C^2 - 3.25 D^2 - 1.86 E^2 - 2.02 F^2 - 0.61 AB - 5.24 AC - 1.32 AD - 1.35 AE + 1.62 AF - 0.14 AG + 1.32 BC - 0.43 BD - 0.22 BE - 0.82 BF + 0.7 BG + 1.65 CD - 1.34 CE - 1.64 CF - 0.53 CG + 0.58 DE - 1.13 DF - 1.17 DG - 2.1 EF + 0.24 EG + 1.03 FG"
                                  ))
 })
 
@@ -2867,7 +2867,7 @@ test_that("27.8 Factorial design plotsCoded Coefficients table results match", {
 test_that("27.9 Factorial design plotsRegression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 101.7 (Intercept) + 2.25 A - 2.76 B + 0.12 C + 1.42 D - 3.69 E + 1.45 AB + 1.22 AC - 0.76 AD - 1.36 AE - 2.05 BC + 1.63 BD - 0.24 BE + 1.27 CD - 2.57 CE + 2.47 DE"
+                                 list("Result = 101.7 + 2.25 A - 2.76 B + 0.12 C + 1.42 D - 3.69 E + 1.45 AB + 1.22 AC - 0.76 AD - 1.36 AE - 2.05 BC + 1.63 BD - 0.24 BE + 1.27 CD - 2.57 CE + 2.47 DE"
                                  ))
 })
 
@@ -2955,7 +2955,7 @@ test_that("28.2 Type 1 SS Coded Coefficients table results match", {
 test_that("28.3 Type 1 SS Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 95.71 (Intercept) + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2"
+                                 list("Result = 95.71 + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2"
                                  ))
 })
 
@@ -3041,7 +3041,7 @@ test_that("29.2 Type 2 SS Coded Coefficients table results match", {
 test_that("29.3 Type 2 SS Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 95.71 (Intercept) + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2"
+                                 list("Result = 95.71 + 1 A + 1.97 B + 0.64 C - 1.12 D + 1.16 E + 0.68 A^2 + 0.38 B^2 + 0.48 C^2 - 0.58 D^2 + 0.85 E^2"
                                  ))
 })
 
@@ -3122,7 +3122,7 @@ test_that("30.2 Coded Squared Terms Coded Coefficients table results match", {
 test_that("30.3 Coded Squared Terms Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 103.8 (Intercept) - 1.62 A - 1.25 B + 1.19 C - 0.48 D + 1.54 A^2 + 0.27 B^2 + 0.85 C^2 - 2.71 D^2"
+                                 list("Result = 103.8 - 1.62 A - 1.25 B + 1.19 C - 0.48 D + 1.54 A^2 + 0.27 B^2 + 0.85 C^2 - 2.71 D^2"
                                  ))
 })
 
@@ -3202,7 +3202,7 @@ test_that("31.2 Uncoded Squared Terms Coded Coefficients table results match", {
 test_that("31.3 Uncoded Squared Terms Regression Equation in Coded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 103.8 (Intercept) - 1.62 A - 1.25 B + 1.19 C - 0.48 D + 1.54 A^2 + 0.27 B^2 + 0.85 C^2 - 2.71 D^2"
+                                 list("Result = 103.8 - 1.62 A - 1.25 B + 1.19 C - 0.48 D + 1.54 A^2 + 0.27 B^2 + 0.85 C^2 - 2.71 D^2"
                                  ))
 })
 
@@ -3278,7 +3278,7 @@ test_that("32.3 Factorial analysis with nominal levels Discrete Predictor Levels
 test_that("32.4 Factorial analysis with nominal levels Regression Equation in Uncoded Units table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Result = 106.66 (Intercept) + 2.59 A1 + 2.93 B1 + 0.6 C1 + 0.46 A1<unicode>B1 - 0.41 A1<unicode>C1 + 2.59 B1<unicode>C1"
+                                 list("Result = 106.66 + 2.59 A1 + 2.93 B1 + 0.6 C1 + 0.46 A1<unicode>B1 - 0.41 A1<unicode>C1 + 2.59 B1<unicode>C1"
                                  ))
 })
 
