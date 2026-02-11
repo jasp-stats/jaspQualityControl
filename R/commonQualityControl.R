@@ -1478,11 +1478,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                               sdlog = lnorm3startSdLog,
                               threshold = lnorm3startThreshold)
 
-      dlnorm3Temp <- function(x, meanlog = 0, sdlog = 1, threshold = 0) {
+      dlnorm3Temp <- function(x, meanlog, sdlog, threshold) {
         EnvStats::dlnorm3(x, meanlog = meanlog, sdlog = sdlog, threshold = threshold)
       }
       .GlobalEnv[["dlnorm3Temp"]] <- dlnorm3Temp
-      plnorm3Temp <- function(q, meanlog = 0, sdlog = 1, threshold = 0) {
+      plnorm3Temp <- function(q, meanlog, sdlog, threshold) {
         EnvStats::plnorm3(q, meanlog = meanlog, sdlog = sdlog, threshold = threshold)
       }
       .GlobalEnv[["plnorm3Temp"]] <- plnorm3Temp
@@ -1598,14 +1598,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       beta <- NA # not relevant for this distribution
       theta <- 1/fix.arg[["rate"]] # scale
     } else {
-      expFit <- try(fitdistrplus::fitdist(data, "exp", method = "mle")) # since there is only one parameter, there is no parameter to keep fixed
-
-      if (jaspBase::isTryError(expFit))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
 
       # Since there is only one parameter, we also don't need to check if any parameter is fixed
+
       beta <- NA # not relevant for this distribution
-      theta <- 1/unname(expFit$estimate[1]) # scale
+      theta <- mean(data, na.rm = TRUE) # scale
     }
     #######################
     ####   Logistic   #####

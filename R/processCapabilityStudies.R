@@ -1883,6 +1883,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["nonNormalDistribution"]] == "3ParameterLognormal" | options[["nonNormalDistribution"]] == "3ParameterWeibull")
       threshold <- distParameters[[i]]$threshold
 
+    if (options[['nonNormalMethod' ]] == "percentile") {
+      lPercentile <- 0.00135 # lower percentile
+      uPercentile <- 0.99865 # upper percentile
+    }
     # calculation of capability indices
 
     #####################
@@ -1895,7 +1899,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zLSL <- qnorm(p1)
           ppl <- -zLSL/3
         } else {
-          x135 <- qlnorm(p = 0.00135, meanlog = beta, sdlog = theta)
+          x135 <- qlnorm(p = lPercentile, meanlog = beta, sdlog = theta)
           x05 <- qlnorm(p = 0.5, meanlog = beta, sdlog = theta)
           ppl <- (x05 - lsl) / (x05 - x135)
         }
@@ -1909,7 +1913,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
-          x99 <- qlnorm(p = 0.99865, meanlog = beta, sdlog = theta)
+          x99 <- qlnorm(p = uPercentile, meanlog = beta, sdlog = theta)
           x05 <- qlnorm(p = 0.5, meanlog = beta, sdlog = theta)
           ppu <- (usl - x05) / (x99 - x05)
         }
@@ -1927,7 +1931,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zLSL <- qnorm(p1)
           ppl <- -zLSL/3
         } else {
-          x135 <- qweibull(p = 0.00135, shape = beta, scale = theta)
+          x135 <- qweibull(p = lPercentile, shape = beta, scale = theta)
           x05 <- qweibull(p = 0.5, shape = beta, scale = theta)
           ppl <- (x05 - lsl) / (x05 - x135)
         }
@@ -1942,7 +1946,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
-          x99 <- qweibull(p = 0.99865, shape = beta, scale = theta)
+          x99 <- qweibull(p = uPercentile, shape = beta, scale = theta)
           x05 <- qweibull(p = 0.5, shape = beta, scale = theta)
           ppu <- (usl - x05) / (x99 - x05)
         }
@@ -1960,7 +1964,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zLSL <- qnorm(p1)
           ppl <- -zLSL/3
         } else {
-          x135 <- FAdist::qlnorm3(p = 0.00135, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
+          x135 <- FAdist::qlnorm3(p = lPercentile, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
           x05 <- FAdist::qlnorm3(p = 0.5, shape = theta, scale = beta, thres = threshold) # in this function, shape is theta and scale is beta, which is reverse to convention
           ppl <- (x05 - lsl) / (x05 - x135)
         }
@@ -1974,7 +1978,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
-          x99 <- FAdist::qlnorm3(p = 0.99865, shape = theta, scale = beta, thres = threshold)
+          x99 <- FAdist::qlnorm3(p = uPercentile, shape = theta, scale = beta, thres = threshold)
           x05 <- FAdist::qlnorm3(p = 0.5, shape = theta, scale = beta, thres = threshold)
           ppu <- (usl - x05) / (x99 - x05)
         }
@@ -1992,7 +1996,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zLSL <- qnorm(p1)
           ppl <- -zLSL/3
         } else {
-          x135 <- FAdist::qweibull3(p = 0.00135, shape = beta, scale = theta, thres = threshold)
+          x135 <- FAdist::qweibull3(p = lPercentile, shape = beta, scale = theta, thres = threshold)
           x05 <- FAdist::qweibull3(p = 0.5, shape = beta, scale = theta, thres = threshold)
           ppl <- (x05 - lsl) / (x05 - x135)
         }
@@ -2006,7 +2010,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
-          x99 <- FAdist::qweibull3(p = 0.99865, shape = beta, scale = theta, thres = threshold)
+          x99 <- FAdist::qweibull3(p = uPercentile, shape = beta, scale = theta, thres = threshold)
           x05 <- FAdist::qweibull3(p = 0.5, shape = beta, scale = theta, thres = threshold)
           ppu <- (usl - x05) / (x99 - x05)
         }
@@ -2023,7 +2027,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zLSL <- qnorm(p1)
           ppl <- -zLSL/3
         } else {
-          x135 <- qgamma(p = 0.00135, shape = beta, scale = theta)
+          x135 <- qgamma(p = lPercentile, shape = beta, scale = theta)
           x05 <- qgamma(p = 0.5, shape = beta, scale = theta)
           ppl <- (x05 - lsl) / (x05 - x135)
         }
@@ -2037,7 +2041,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
-          x99 <-   qgamma(p = 0.99865, shape = beta, scale = theta)
+          x99 <-   qgamma(p = uPercentile, shape = beta, scale = theta)
           x05 <-   qgamma(p = 0.5, shape = beta, scale = theta)
           ppu <- (usl - x05) / (x99 - x05)
         }
@@ -2055,7 +2059,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           ppl <- -zLSL/3
         } else {
 
-          x135 <- qexp(p = 0.00135, rate = 1/theta)
+          x135 <- qexp(p = lPercentile, rate = 1/theta)
           x05 <-  qexp(p = 0.5, rate = 1/theta)
           ppl <- (x05 - lsl) / (x05 - x135)
         }
@@ -2069,7 +2073,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
-          x99 <-  qexp(p = 0.99865, rate = 1/theta)
+          x99 <-  qexp(p = uPercentile, rate = 1/theta)
           x05 <- qexp(p = 0.5, rate = 1/theta)
           ppu <- (usl - x05) / (x99 - x05)
         }
@@ -2086,7 +2090,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zLSL <- qnorm(p1)
           ppl <- -zLSL/3
         } else {
-          x135 <-  qlogis(p = 0.00135, location = beta, scale = theta)
+          x135 <-  qlogis(p = lPercentile, location = beta, scale = theta)
           x05 <-  qlogis(p = 0.5, location = beta, scale = theta)
           ppl <- (x05 - lsl) / (x05 - x135)
         }
@@ -2100,7 +2104,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
-          x99 <- qlogis(p = 0.99865, location = beta, scale = theta)
+          x99 <- qlogis(p = uPercentile, location = beta, scale = theta)
           x05 <- qlogis(p = 0.5, location = beta, scale = theta)
           ppu <- (usl - x05) / (x99 - x05)
         }
@@ -2117,7 +2121,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zLSL <- qnorm(p1)
           ppl <- -zLSL/3
         } else {
-          x135 <-  flexsurv::qllogis(p = 0.00135, shape = 1/theta, scale = exp(beta))
+          x135 <-  flexsurv::qllogis(p = lPercentile, shape = 1/theta, scale = exp(beta))
           x05 <-    flexsurv::qllogis(p = 0.5, shape = 1/theta, scale = exp(beta))
           ppl <- (x05 - lsl) / (x05 - x135)
         }
@@ -2131,7 +2135,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           zUSL <- qnorm(p2)
           ppu <- zUSL/3
         } else {
-          x99 <- flexsurv::qllogis(p = 0.99865, shape = 1/theta, scale = exp(beta))
+          x99 <- flexsurv::qllogis(p = uPercentile, shape = 1/theta, scale = exp(beta))
           x05 <- flexsurv::qllogis(p = 0.5, shape = 1/theta, scale = exp(beta))
           ppu <- (usl - x05) / (x99 - x05)
         }
@@ -2490,7 +2494,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   } else if (!identical(stages, "")) {
     nStages <- length(unique(dataset[[stages]]))
   }
-  if (options[["nullDistribution"]] %in% c("gamma", "exponential", "logistic", "loglogistic")) {
+  if (options[["nullDistribution"]] %in% c("gamma", "exponential", "logistic", "loglogistic", "3ParameterWeibull", "3ParameterLognormal")) {
     plot <- createJaspPlot(width = 400, height = 400,
                            title = gettext("Probability plot"))
     container[["plot"]] <- plot
@@ -2980,6 +2984,22 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         p <- p + ggplot2::stat_function(fun = flexsurv::dllogis, args = list(shape = shape, scale = scale),
                                         mapping = ggplot2::aes(color = "loglogisticDist"))
         legendLabel <- gettext("Log-logistic dist.")
+      } else if (options[['nullDistribution']]  == "3ParameterWeibull") {
+        fit3Weibull <- .distributionParameters(dataCurrentStage, distribution = "3ParameterWeibull", fix.arg = NULL)
+        shape <- fit3Weibull[["beta"]]
+        scale <- fit3Weibull[["theta"]]
+        threshold <- fit3Weibull[["threshold"]]
+        p <- p + ggplot2::stat_function(fun = FAdist::dweibull3, args = list(shape = shape, scale = scale, thres = threshold),
+                                        mapping = ggplot2::aes(color = "3ParamweibullDist"))
+        legendLabel <- gettext("3-parameter Weibull dist.")
+      } else if (options[['nullDistribution']]  == "3ParameterLognormal") {
+        fit3lnorm <- .distributionParameters(dataCurrentStage, distribution = "3ParameterLognormal", fix.arg = NULL)
+        meanlog <- fit3lnorm[["beta"]]
+        sdlog <- fit3lnorm[["theta"]]
+        threshold <- fit3lnorm[["threshold"]]
+        p <- p + ggplot2::stat_function(fun = EnvStats::dlnorm3, args = list( meanlog = meanlog, sdlog = sdlog, threshold = threshold),
+                                        mapping = ggplot2::aes(color = "3ParamLogNormalDist"))
+        legendLabel <- gettext("3-parameter\nlog-normal dist.")
       }
 
       p <- p + ggplot2::scale_color_manual("", values = "dodgerblue", labels = legendLabel) +
