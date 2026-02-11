@@ -162,6 +162,8 @@ Form
 					negativeValues:			true
 					defaultValue:			0
 					decimals:				9
+					min:					lowerSpecificationLimitValue.value
+					max:					upperSpecificationLimitValue.value
 				}
 			}
 
@@ -179,6 +181,7 @@ Form
 					negativeValues:			true
 					defaultValue:			1
 					decimals:				9
+					min:					lowerSpecificationLimitValue.value
 				}
 
 			}
@@ -288,24 +291,15 @@ Form
 			hasRegions: true
 		}
 
-	}
-
-	Section
-	{
-		title: qsTr("Interval Estimates")
-		CheckBox
-		{
-			name: "intervalTable"
-			label: qsTr("Interval table")
-			info: qsTr("Show the posterior probabilities of the interval specified with the input on the right. Note that the input is automatically sorted and that the first and last fields are always negative and positive infinity.")
-		}
 		CheckBox
 		{
 			name: "intervalPlot"
 			label: qsTr("Interval plot")
 			info: qsTr("Show the posterior probabilities of the intervals using pie charts.")
 		}
+
 	}
+
 
 	Section
 	{
@@ -410,10 +404,10 @@ Form
 			values:
 			[
 				{label: qsTr("Default"),					value: "default"},
-				{label: qsTr("Weakly informed conjugate"),	value: "conjugate"},
-				{label: qsTr("Informed conjugate"),			value: "weaklyInformativeConjugate"},
-				{label: qsTr("Informed uniform"),			value: "weaklyInformativeUniform"},
-				{label: qsTr("Custom informative"),			value: "customInformative"},
+				{label: qsTr("Conjugate"),					value: "conjugate"},
+				{label: qsTr("Weakly informative conjugate"),	value: "weaklyInformativeConjugate"},
+				{label: qsTr("Weakly informative uniform"),	value: "weaklyInformativeUniform"},
+				{label: qsTr("Custom"),						value: "customInformative"},
 			]
 		}
 
