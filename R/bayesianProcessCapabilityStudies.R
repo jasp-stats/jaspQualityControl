@@ -471,7 +471,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!options[[base]] || !is.null(jaspResults[[base]]))
     return()
 
-  singlePanel <- options[[paste0(base, "PanelLayout")]] != "multiplePanels"
+  singlePanel <- options[[paste0(base, "PanelLayout")]] != "multiplePanels" || length(.bpcsGetSelectedMetrics(options)) <= 1L
 
   isPost <- base == "posteriorDistributionPlot"
   summaryObject <- if (isPost) fit$summaryObject else priorFit$summaryObject
@@ -1077,18 +1077,13 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 .bpcsPalette <- function(values, colorScheme = NULL, single_panel) {
   nColors <- length(values)
 
-  # Grey scheme: use single grey for all metrics
-  # Non-grey: use jaspGraphs palette
   if (is.null(colorScheme) || identical(colorScheme, "grey")) {
-    if (single_panel) {
-      # Single panel with grey: use jaspGraphs palette for distinguishability
+    if (single_panel && nColors > 1L) {
       jaspGraphs::JASPcolors(palette = jaspGraphs::getGraphOption("palette"), asFunction = TRUE)(nColors)
     } else {
-      # Multiple panels with grey: single grey for all
       rep("grey50", nColors)
     }
   } else {
-    # Non-grey: use jaspGraphs palette
     jaspGraphs::JASPcolors(palette = jaspGraphs::getGraphOption("palette"), asFunction = TRUE)(nColors)
   }
 }
