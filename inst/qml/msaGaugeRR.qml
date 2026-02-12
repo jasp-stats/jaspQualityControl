@@ -139,20 +139,20 @@ Form
 			DropDown
 			{
 				name: 							"processVariationReference"
-				label: 							qsTr("Process variation based on")
+				label: 							qsTr("Std. dev. source")
 				id: 							variationReference
 				indexDefaultValue: 				0
 				values: 
 				[
-					{ label: qsTr("Study variation"), value: "studySd" },
-					{ label: qsTr("Historical standard deviation"), value: "historicalSd" }
+					{ label: qsTr("Study std. dev."), value: "studySd" },
+					{ label: qsTr("Historical std. dev."), value: "historicalSd" }
 				]
 			}
 
 			DoubleField
 			{
 				name:							"historicalSdValue"
-				label:							qsTr("Historical standard deviation:")
+				label:							qsTr("Historical std. dev.:")
 				defaultValue:					3
 				min: 							0.000000001
 				decimals: 						9
