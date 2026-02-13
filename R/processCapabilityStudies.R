@@ -1688,7 +1688,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     footnotes <- paste0(footnotes, gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL). "))
   }
 
-  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
+  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull"
+       || options[["nullDistribution"]] == "3ParameterLognormal"|| options[["nullDistribution"]] == "3ParameterWeibull") &&
       any(na.omit(unlist(dataset[measurements])) < 0)) {
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     container[["summaryTableNonNormal"]] <- table
@@ -2560,7 +2561,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
   if (nStages > 1)
     table$addFootnote(gettext("Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."))
-  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
+  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull"
+       || options[["nullDistribution"]] == "3ParameterLognormal"|| options[["nullDistribution"]] == "3ParameterWeibull") &&
       any(na.omit(unlist(dataset[measurements])) < 0)) {
     table$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     container[["probabilityTable"]] <- table
@@ -2648,7 +2650,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotHeight <- nRow * 600
   plot <- createJaspPlot(width = plotWidth, height = plotHeight,
                          title = gettextf("Probability plot against %1$s distribution", distributionTitle))
-  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull") &&
+  if (((options[["nullDistribution"]] == "lognormal") || options[["nullDistribution"]] == "weibull"
+       || options[["nullDistribution"]] == "3ParameterLognormal"|| options[["nullDistribution"]] == "3ParameterWeibull") &&
       any(na.omit(unlist(dataset[measurements])) < 0)) {
     plot$setError(gettext("Dataset contains negative numbers. Not compatible with the selected distribution."))
     return(plot)
@@ -2887,7 +2890,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                            sum(!is.na(dataset[measurements]))))
     return()
   }
-  if (options[["histogramDensityLine"]] && (options[['nullDistribution']]  == "weibull" || options[['nullDistribution']]  == "lognormal") &&
+  if (options[["histogramDensityLine"]] && (options[['nullDistribution']]  == "weibull" || options[['nullDistribution']]  == "lognormal"
+                                            || options[["nullDistribution"]] == "3ParameterLognormal"|| options[["nullDistribution"]] == "3ParameterWeibull") &&
       (any(na.omit(unlist(dataset[measurements])) < 0))) {
     plot$setError(gettext("Dataset contains negative numbers. Could not overlay the selected distribution."))
     return()
