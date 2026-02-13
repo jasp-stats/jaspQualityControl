@@ -1708,6 +1708,1547 @@ test_that("LF24 (Normal) Basic test of report functionality with removed element
   jaspTools::expect_equal_plots(testPlot, "process-capability-report24")
 })
 
+
+## Test of historical parameter settings  ####
+
+### Normal distribution with one historical param. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalMean <- TRUE
+options$historicalMeanValue <- 6
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF25.1 Normal distribution with one historical param. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL25")
+})
+
+test_that("LF25.2 Normal distribution with one historical param. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.93, 0.83, 1.04, 1.08, 1.08, 0.94, 1.21, 1.08, 0.95, 1.08, 1.2
+                                 ))
+})
+
+test_that("LF25.3 Normal distribution with one historical param. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(614.34, 586.56, 0, "ppm &lt; LSL", 614.34, 586.56, 10000, "ppm &gt; USL",
+                                      1228.68, 1173.12, 10000, "ppm total"))
+})
+
+test_that("LF25.4 Normal distribution with one historical param. - Process capability (within) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.08, 1.08, 0.94, 1.23, 1.08, 0.94, 1.08, 1.22))
+})
+
+test_that("LF25.5 Normal distribution with one historical param. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 6, 100, 1.85635681000733, 1.84880707556386, 6, 12))
+})
+
+### Normal distribution with all historical param. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalMean <- TRUE
+options$historicalMeanValue <- 6
+options$historicalStdDev <- TRUE
+options$historicalStdDevValue <- 3
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF26.1 Normal distribution with all historical param. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL26")
+})
+
+test_that("LF26.2 Normal distribution with all historical param. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.93, 0.83, 1.04, 1.08, 1.08, 0.94, 1.21, 1.08, 0.95, 1.08, 1.2
+                                 ))
+})
+
+test_that("LF26.3 Normal distribution with all historical param. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(614.34, 22750.13, 0, "ppm &lt; LSL", 614.34, 22750.13, 10000,
+                                      "ppm &gt; USL", 1228.68, 45500.26, 10000, "ppm total"))
+})
+
+test_that("LF26.4 Normal distribution with all historical param. - Process capability (within) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.67, 0.67, 0.57, 0.77, 0.67, 0.58, 0.67, 0.75))
+})
+
+test_that("LF26.5 Normal distribution with all historical param. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 6, 100, 1.85635681000733, 3, 6, 12))
+})
+
+### Normal distribution with mismatching historical dist. (verified with other software)  ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "normalCapabilityAnalysis"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalMean <- TRUE
+options$historicalMeanValue <- 40
+options$historicalStdDev <- TRUE
+options$historicalStdDevValue <- 15
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF27.1 Normal distribution with mismatching historical dist. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL27")
+})
+
+test_that("LF27.2 Normal distribution with mismatching historical dist. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.93, 0.93, 0.94, 1.08, -5.03, -5.62, -4.44, 7.18, 0.95, -5.03,
+                                      1.2))
+})
+
+test_that("LF27.3 Normal distribution with mismatching historical dist. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 3830.38, 0, "ppm &lt; LSL", 1e+06, 969025.92, 10000, "ppm &gt; USL",
+                                      1e+06, 972856.3, 10000, "ppm total"))
+})
+
+test_that("LF27.4 Normal distribution with mismatching historical dist. - Process capability (within) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.13, -0.62, -0.72, -0.53, 0.89, 0.12, -0.62, 0.15))
+})
+
+test_that("LF27.5 Normal distribution with mismatching historical dist. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 40, 100, 1.85635681000733, 15, 6, 12))
+})
+
+### Weibull distribution with one historical param. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "weibull"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 6
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF28.1 Weibull distribution with one historical param. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 41, 10000, "ppm &gt; USL", 41, 10000, "Total ppm"
+                                 ))
+})
+
+test_that("LF28.2 Weibull distribution with one historical param. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL28")
+})
+
+test_that("LF28.3 Weibull distribution with one historical param. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", 1.31, "<unicode>", 1.31))
+})
+
+test_that("LF28.4 Weibull distribution with one historical param. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(6, 0, 7.08, 100, 1.85635681000733, 6, 8.16170213506214, 12))
+})
+
+### Weibull distribution with all historical param. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "weibull"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 6
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 10
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF29.1 Weibull distribution with all historical param. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 50489.8, 10000, "ppm &gt; USL", 50489.8,
+                                      10000, "Total ppm"))
+})
+
+test_that("LF29.2 Weibull distribution with all historical param. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL29")
+})
+
+test_that("LF29.3 Weibull distribution with all historical param. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", 0.55, "<unicode>", 0.55))
+})
+
+test_that("LF29.4 Weibull distribution with all historical param. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(6, 0, 7.08, 100, 1.85635681000733, 6, 10, 12))
+})
+
+### Weibull distribution with mismatching historical dist. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "weibull"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 40
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 15
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF30.1 Weibull distribution with mismatching historical dist. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 999867.09, 10000, "ppm &gt; USL", 999867.09,
+                                      10000, "Total ppm"))
+})
+
+test_that("LF30.2 Weibull distribution with mismatching historical dist. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL30")
+})
+
+test_that("LF30.3 Weibull distribution with mismatching historical dist. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", -1.22, "<unicode>", -1.22))
+})
+
+test_that("LF30.4 Weibull distribution with mismatching historical dist. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(40, 0, 7.08, 100, 1.85635681000733, 6, 15, 12))
+})
+
+### Lognormal distribution with one historical param. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "lognormal"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalLogMean <- TRUE
+options$historicalLogMeanValue <- 2
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF31.1 Lognormal distribution with one historical param. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 43152.01, 10000, "ppm &gt; USL", 43152.01,
+                                      10000, "Total ppm"))
+})
+
+test_that("LF31.2 Lognormal distribution with one historical param. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL31")
+})
+
+test_that("LF31.3 Lognormal distribution with one historical param. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", 0.57, "<unicode>", 0.57))
+})
+
+test_that("LF31.4 Lognormal distribution with one historical param. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2, 0, 7.08, 100, 1.85635681000733, 6, 0.28270735296668, 12))
+})
+
+### Lognormal distribution with all historical param. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "lognormal"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalLogMean <- TRUE
+options$historicalLogMeanValue <- 2
+options$historicalLogStdDev <- TRUE
+options$historicalLogStdDevValue <- 0.3
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF32.1 Lognormal distribution with all historical param. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 53008.74, 10000, "ppm &gt; USL", 53008.74,
+                                      10000, "Total ppm"))
+})
+
+test_that("LF32.2 Lognormal distribution with all historical param. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL32")
+})
+
+test_that("LF32.3 Lognormal distribution with all historical param. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", 0.54, "<unicode>", 0.54))
+})
+
+test_that("LF32.4 Lognormal distribution with all historical param. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2, 0, 7.08, 100, 1.85635681000733, 6, 0.3, 12))
+})
+
+### Lognormal distribution with mismatching historical dist. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "lognormal"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalLogMean <- TRUE
+options$historicalLogMeanValue <- 4
+options$historicalLogStdDev <- TRUE
+options$historicalLogStdDevValue <- 0.5
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF33.1 Lognormal distribution with mismatching historical dist. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 998777.99, 10000, "ppm &gt; USL", 998777.99,
+                                      10000, "Total ppm"))
+})
+
+test_that("LF33.2 Lognormal distribution with mismatching historical dist. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL33")
+})
+
+test_that("LF33.3 Lognormal distribution with mismatching historical dist. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", -1.01, "<unicode>", -1.01))
+})
+
+test_that("LF33.4 Lognormal distribution with mismatching historical dist. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(4, 0, 7.08, 100, 1.85635681000733, 6, 0.5, 12))
+})
+
+### 3-Parameter-Weibull distribution with one historical param. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "3ParameterWeibull"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalThreshold <- TRUE
+options$historicalThresholdValue <- 3
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF34.1 3ParameterWeibull distribution with one historical param. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 8933.26, 10000, "ppm &gt; USL", 8933.26,
+                                      10000, "Total ppm"))
+})
+
+test_that("LF34.2 3ParameterWeibull distribution with one historical param. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL34")
+})
+
+test_that("LF34.3 3ParameterWeibull distribution with one historical param. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", 0.79, "<unicode>", 0.79))
+})
+
+test_that("LF34.4 3ParameterWeibull distribution with one historical param. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2.29990085720292, 0, 7.08, 100, 1.85635681000733, 6, 4.58450737688268,
+                                      3, 12))
+})
+
+### 3-Parameter-Weibull distribution with all historical param. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "3ParameterWeibull"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalThreshold <- TRUE
+options$historicalThresholdValue <- 3
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 2.5
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 5
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF35.1 3ParameterWeibull distribution with all historical param. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 12946.68, 10000, "ppm &gt; USL", 12946.68,
+                                      10000, "Total ppm"))
+})
+
+test_that("LF35.2 3ParameterWeibull distribution with all historical param. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL35")
+})
+
+test_that("LF35.3 3ParameterWeibull distribution with all historical param. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", 0.74, "<unicode>", 0.74))
+})
+
+test_that("LF35.4 3ParameterWeibull distribution with all historical param. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2.5, 0, 7.08, 100, 1.85635681000733, 6, 5, 3, 12))
+})
+
+### 3-Parameter-Weibull distribution with mismatching historical dist. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "3ParameterWeibull"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalThreshold <- TRUE
+options$historicalThresholdValue <- 3
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 16
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 15
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF36.1 3ParameterWeibull distribution with mismatching historical dist. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 999717.93, 10000, "ppm &gt; USL", 999717.93,
+                                      10000, "Total ppm"))
+})
+
+test_that("LF36.2 3ParameterWeibull distribution with mismatching historical dist. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL36")
+})
+
+test_that("LF36.3 3ParameterWeibull distribution with mismatching historical dist. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", -1.15, "<unicode>", -1.15))
+})
+
+test_that("LF36.4 3ParameterWeibull distribution with mismatching historical dist. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(16, 0, 7.08, 100, 1.85635681000733, 6, 15, 3, 12))
+})
+
+### 3-Parameter-Lognormal distribution with one historical param. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "3ParameterLognormal"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalThreshold <- TRUE
+options$historicalThresholdValue <- -8
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF37.1 3ParameterLognormal distribution with one historical param. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.15, 0, "ppm &lt; LSL", 8891.54, 10000, "ppm &gt; USL", 8891.69,
+                                      10000, "Total ppm"))
+})
+
+test_that("LF37.2 3ParameterLognormal distribution with one historical param. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL37")
+})
+
+test_that("LF37.3 3ParameterLognormal distribution with one historical param. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.25, 0.79, 1.71, 0.79))
+})
+
+test_that("LF37.4 3ParameterLognormal distribution with one historical param. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2.70589917129945, 0, 7.08, 100, 1.85635681000733, 6, 0.122287084346575,
+                                      -8, 12))
+})
+
+### 3-Parameter-Lognormal distribution with all historical param. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "3ParameterLognormal"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalLogMean <- TRUE
+options$historicalLogMeanValue <-  2.7
+options$historicalLogStdDev <- TRUE
+options$historicalLogStdDevValue <- 0.12
+options$historicalThreshold <- TRUE
+options$historicalThresholdValue <- -8
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF38.1 3ParameterLognormal distribution with all historical param. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.12, 0, "ppm &lt; LSL", 6861.46, 10000, "ppm &gt; USL", 6861.58,
+                                      10000, "Total ppm"))
+})
+
+test_that("LF38.2 3ParameterLognormal distribution with all historical param. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL38")
+})
+
+test_that("LF38.3 3ParameterLognormal distribution with all historical param. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.27, 0.82, 1.72, 0.82))
+})
+
+test_that("LF38.4 3ParameterLognormal distribution with all historical param. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2.7, 0, 7.08, 100, 1.85635681000733, 6, 0.12, -8, 12))
+})
+
+### 3-Parameter-Lognormal distribution with mismatching historical dist. (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "3ParameterLognormal"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalLogMean <- TRUE
+options$historicalLogMeanValue <-  4
+options$historicalLogStdDev <- TRUE
+options$historicalLogStdDevValue <- 0.12
+options$historicalThreshold <- TRUE
+options$historicalThresholdValue <- -8
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF39.1 3ParameterLognormal distribution with mismatching historical dist. - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 1e+06, 10000, "ppm &gt; USL", 1e+06, 10000,
+                                      "Total ppm"))
+})
+
+test_that("LF39.2 3ParameterLognormal distribution with mismatching historical dist. - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL39")
+})
+
+test_that("LF39.3 3ParameterLognormal distribution with mismatching historical dist. - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.27, -2.79, 5.33, -2.79))
+})
+
+test_that("LF39.4 3ParameterLognormal distribution with mismatching historical dist. - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(4, 0, 7.08, 100, 1.85635681000733, 6, 0.12, -8, 12))
+})
+
+## Test Additional Non-normal Distributions ####
+
+### Basic Tests ####
+
+#### Gamma (verified with other software)  ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "gamma"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF40.1 Gamma distribution basic test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(30404.25, 40000, "ppm &lt; LSL", 11716.86, 10000, "ppm &gt; USL",
+                                      42121.11, 50000, "Total ppm"))
+})
+
+test_that("LF40.2 Gamma distribution basic test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL40")
+})
+
+test_that("LF40.3 Gamma distribution basic test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.69, 0.62, 0.62, 0.76))
+})
+
+test_that("LF40.4 Gamma distribution basic test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(14.2311221847139, 4, 7.08, 100, 1.85635681000733, 6, 0.497501377191694,
+                                      12))
+})
+
+#### Exponential (verified with other software)  ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "exponential"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF41.1 Exponential distribution basic test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(431623.8, 40000, "ppm &lt; LSL", 183614.79, 10000, "ppm &gt; USL",
+                                      615238.59, 50000, "Total ppm"))
+})
+
+test_that("LF41.2 Exponential distribution basic test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL41")
+})
+
+test_that("LF41.3 Exponential distribution basic test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.18, 0.06, 0.06, 0.3))
+})
+
+test_that("LF41.4 Exponential distribution basic test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(4, 7.08, 100, 1.85635681000733, 6, 7.07999998481908, 12))
+})
+
+#### Logistic (verified with other software)  ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "logistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF42.1 Logistic distribution basic test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(54498.33, 40000, "ppm &lt; LSL", 9148.66, 10000, "ppm &gt; USL",
+                                      63646.99, 50000, "Total ppm"))
+})
+
+test_that("LF42.2 Logistic distribution basic test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL42")
+})
+
+test_that("LF42.3 Logistic distribution basic test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.66, 0.53, 0.53, 0.79))
+})
+
+test_that("LF42.4 Logistic distribution basic test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(7.02823580987237, 4, 7.08, 100, 1.85635681000733, 6, 1.06121867567882,
+                                      12))
+})
+
+#### Log-logistic (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "loglogistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF43.1 Log-logistic distribution basic test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(28611.73, 40000, "ppm &lt; LSL", 27710.61, 10000, "ppm &gt; USL",
+                                      56322.33, 50000, "Total ppm"))
+})
+
+test_that("LF43.2 Log-logistic distribution basic test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL43")
+})
+
+test_that("LF43.3 Log-logistic distribution basic test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.64, 0.63, 0.63, 0.64))
+})
+
+test_that("LF43.4 Log-logistic distribution basic test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.93304670804655, 4, 7.08, 100, 1.85635681000733, 6, 0.155111026728208,
+                                      12))
+})
+
+### Historical Parameter Tests
+
+#### Gamma ####
+
+##### Single Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "gamma"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 14
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF44.1 Gamma distribution single hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(31578.46, 40000, "ppm &lt; LSL", 12250.04, 10000, "ppm &gt; USL",
+                                      43828.5, 50000, "Total ppm"))
+})
+
+test_that("LF44.2 Gamma distribution single hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL44")
+})
+
+test_that("LF44.3 Gamma distribution single hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.68, 0.62, 0.62, 0.75))
+})
+
+test_that("LF44.4 Gamma distribution single hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(14, 4, 7.08, 100, 1.85635681000733, 6, 0.505714242599307, 12
+                                 ))
+})
+
+##### All Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "gamma"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 14
+options$historicalScale <- TRUE
+options$historicalScaleValue <- .5
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF45.1 Gamma distribution all hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(34180.7, 40000, "ppm &lt; LSL", 10716.11, 10000, "ppm &gt; USL",
+                                      44896.81, 50000, "Total ppm"))
+})
+
+test_that("LF45.2 Gamma distribution all hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL45")
+})
+
+test_that("LF45.3 Gamma distribution all hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.69, 0.61, 0.61, 0.77))
+})
+
+test_that("LF45.4 Gamma distribution all hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(14, 4, 7.08, 100, 1.85635681000733, 6, 0.5, 12))
+})
+
+##### Extreme Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "gamma"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalShape <- TRUE
+options$historicalShapeValue <- 50
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 13
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF46.1 Gamma distribution extreme hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 40000, "ppm &lt; LSL", 1e+06, 10000, "ppm &gt; USL", 1e+06,
+                                      50000, "Total ppm"))
+})
+
+test_that("LF46.2 Gamma distribution extreme hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL46")
+})
+
+test_that("LF46.3 Gamma distribution extreme hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.48, -5.77, 6.73, -5.77))
+})
+
+test_that("LF46.4 Gamma distribution extreme hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(50, 4, 7.08, 100, 1.85635681000733, 6, 13, 12))
+})
+
+#### Exponential ####
+
+##### Single Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "exponential"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 8
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF47.1 Exponential distribution single hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(393469.34, 40000, "ppm &lt; LSL", 223130.16, 10000, "ppm &gt; USL",
+                                      616599.5, 50000, "Total ppm"))
+})
+
+test_that("LF47.2 Exponential distribution single hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL47")
+})
+
+test_that("LF47.3 Exponential distribution single hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.17, 0.09, 0.09, 0.25))
+})
+
+test_that("LF47.4 Exponential distribution single hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(4, 7.08, 100, 1.85635681000733, 6, 8, 12))
+})
+
+##### Extreme Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "exponential"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 99
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF48.1 Exponential distribution extreme hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(39598.68, 40000, "ppm &lt; LSL", 885846.03, 10000, "ppm &gt; USL",
+                                      925444.71, 50000, "Total ppm"))
+})
+
+test_that("LF48.2 Exponential distribution extreme hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL48")
+})
+
+test_that("LF48.3 Exponential distribution extreme hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.09, -0.4, 0.59, -0.4))
+})
+
+test_that("LF48.4 Exponential distribution extreme hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(4, 7.08, 100, 1.85635681000733, 6, 99, 12))
+})
+
+#### Logistic ####
+
+##### Single Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "logistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 1
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF49.1 Logistic distribution single hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(46255.88, 40000, "ppm &lt; LSL", 6869.35, 10000, "ppm &gt; USL",
+                                      53125.23, 50000, "Total ppm"))
+})
+
+test_that("LF49.2 Logistic distribution single hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL49")
+})
+
+test_that("LF49.3 Logistic distribution single hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.69, 0.56, 0.56, 0.82))
+})
+
+test_that("LF49.4 Logistic distribution single hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(7.02620683920319, 4, 7.08, 100, 1.85635681000733, 6, 1, 12))
+})
+
+##### All Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "logistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 1
+options$historicalLocation <- TRUE
+options$historicalLocationValue <- 7
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF50.1 Logistic distribution all hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(47425.87, 40000, "ppm &lt; LSL", 6692.85, 10000, "ppm &gt; USL",
+                                      54118.72, 50000, "Total ppm"))
+})
+
+test_that("LF50.2 Logistic distribution all hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL50")
+})
+
+test_that("LF50.3 Logistic distribution all hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.69, 0.56, 0.56, 0.82))
+})
+
+test_that("LF50.4 Logistic distribution all hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(7, 4, 7.08, 100, 1.85635681000733, 6, 1, 12))
+})
+
+##### Extreme Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "logistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 10
+options$historicalLocation <- TRUE
+options$historicalLocationValue <- 70
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF51.1 Logistic distribution extreme hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1358.52, 40000, "ppm &lt; LSL", 996981.58, 10000, "ppm &gt; USL",
+                                      998340.1, 50000, "Total ppm"))
+})
+
+test_that("LF51.2 Logistic distribution extreme hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL51")
+})
+
+test_that("LF51.3 Logistic distribution extreme hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.04, -0.92, 1, -0.92))
+})
+
+test_that("LF51.4 Logistic distribution extreme hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(70, 4, 7.08, 100, 1.85635681000733, 6, 10, 12))
+})
+
+#### Log-logistic ####
+
+##### Single Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "loglogistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 0.16
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF52.1 Log-logistic distribution single hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(31824.38, 40000, "ppm &lt; LSL", 30734.71, 10000, "ppm &gt; USL",
+                                      62559.08, 50000, "Total ppm"))
+})
+
+test_that("LF52.2 Log-logistic distribution single hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL52")
+})
+
+test_that("LF52.3 Log-logistic distribution single hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.62, 0.62, 0.62, 0.62))
+})
+
+test_that("LF52.4 Log-logistic distribution single hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.93272331323149, 4, 7.08, 100, 1.85635681000733, 6, 0.16, 12
+                                 ))
+})
+
+##### All Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "loglogistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalLocation <- TRUE
+options$historicalLocationValue <- exp(2)
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 0.16
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF53.1 Log-logistic distribution all hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(21130.16, 40000, "ppm &lt; LSL", 46061.16, 10000, "ppm &gt; USL",
+                                      67191.32, 50000, "Total ppm"))
+})
+
+test_that("LF53.2 Log-logistic distribution all hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL53")
+})
+
+test_that("LF53.3 Log-logistic distribution all hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.62, 0.56, 0.68, 0.56))
+})
+
+test_that("LF53.4 Log-logistic distribution all hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2.000005941346, 4, 7.08, 100, 1.85635681000733, 6, 0.16, 12))
+})
+
+##### Extreme Historical Parameter (verified with other software) ####
+options <- analysisOptions("processCapabilityStudies")
+options$measurementLongFormat <- "Diameter"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "loglogistic"
+options$nonNormalMethod <- "nonConformance"
+options$controlChartSdEstimationMethodGroupSizeLargerThanOne <- "sBar"
+options$controlChart <- FALSE
+options$histogram <- FALSE
+options$probabilityPlot <- FALSE
+options$lowerSpecificationLimit <- TRUE
+options$target <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 4
+options$targetValue <- 6
+options$upperSpecificationLimitValue <- 12
+options$historicalLocation <- TRUE
+options$historicalLocationValue <- exp(20)
+options$historicalScale <- TRUE
+options$historicalScaleValue <- 15
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+
+test_that("LF54.1 Log-logistic distribution extreme hist. param. test - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(224276.98, 40000, "ppm &lt; LSL", 762724.12, 10000, "ppm &gt; USL",
+                                      987001.1, 50000, "Total ppm"))
+})
+
+test_that("LF54.2 Log-logistic distribution extreme hist. param. test - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL54")
+})
+
+test_that("LF54.3 Log-logistic distribution extreme hist. param. test - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.01, -0.24, 0.25, -0.24))
+})
+
+test_that("LF54.4 Log-logistic distribution extreme hist. param. test - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(20, 4, 7.08, 100, 1.85635681000733, 6, 15, 12))
+})
+
 # Wide / Row format ####
 
 ## (Normal) Basic tests ####

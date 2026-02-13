@@ -79,8 +79,8 @@
 <text x='216.99' y='534.27' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='15.12px' lengthAdjust='spacingAndGlyphs'>-2</text>
 <text x='396.63' y='534.27' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='9.46px' lengthAdjust='spacingAndGlyphs'>0</text>
 <text x='576.28' y='534.27' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='9.46px' lengthAdjust='spacingAndGlyphs'>2</text>
-<text x='396.63' y='566.78' text-anchor='middle' style='font-size: 20.40px; font-family: sans;' textLength='10.21px' lengthAdjust='spacingAndGlyphs'>x</text>
-<text transform='translate(19.02,263.90) rotate(-90)' text-anchor='middle' style='font-size: 20.40px; font-family: sans;' textLength='10.21px' lengthAdjust='spacingAndGlyphs'>y</text>
+<text x='396.63' y='566.78' text-anchor='middle' style='font-size: 20.40px; font-family: sans;' textLength='188.25px' lengthAdjust='spacingAndGlyphs'>Theoretical quantiles</text>
+<text transform='translate(19.02,263.90) rotate(-90)' text-anchor='middle' style='font-size: 20.40px; font-family: sans;' textLength='175.80px' lengthAdjust='spacingAndGlyphs'>Observed quantiles</text>
 <text x='396.63' y='11.70' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='280.64px' lengthAdjust='spacingAndGlyphs'>normal-probability-plot-of-residuals27</text>
 </g>
 </svg>
