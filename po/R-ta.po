@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-01-24 03:57\n"
+"POT-Creation-Date: 2026-02-14 04:18\n"
 "PO-Revision-Date: 2026-01-07 17:01+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
@@ -231,6 +231,10 @@ msgstr "சோதனைகளின் வடிவமைப்பு - பக�
 msgid "Error"
 msgstr "பிழை"
 
+msgid ""
+"Stepwise method failed. Please consider a different method or starting model."
+msgstr ""
+
 msgid "The specified low/high levels for %1$s are not distinct."
 msgstr "%1$s க்கான குறிப்பிடப்பட்ட குறைந்த/உயர் நிலைகள் வேறுபட்டவை அல்ல."
 
@@ -382,6 +386,15 @@ msgstr "நிலை"
 
 msgid "Regression equation in %s Units"
 msgstr "%s அலகுகளில் பின்னடைவு சமன்பாடு"
+
+msgid "Stepwise results"
+msgstr ""
+
+msgid "Step"
+msgstr ""
+
+msgid "Formula"
+msgstr ""
 
 msgid "Pareto Chart of Standardized Effects"
 msgstr "தரப்படுத்தப்பட்ட விளைவுகளின் பரேட்டோ விளக்கப்படம்"
@@ -1692,6 +1705,12 @@ msgstr "ஃச் பார் & %1$s கட்டுப்பாட்டு �
 
 msgid "Variables Chart for Subgroups Report"
 msgstr "துணைக்குழு அறிக்கைக்கான மாறிகள் விளக்கப்படம்"
+
+#, fuzzy
+msgid "The following covariate was considered but not included: %s."
+msgid_plural "The following covariates were considered but not included: %s."
+msgstr[0] "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
+msgstr[1] "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
 
 #~ msgid ""
 #~ "Calculations are based on 6 times the historical standard variation "

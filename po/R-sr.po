@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-01-24 03:57\n"
+"POT-Creation-Date: 2026-02-14 04:18\n"
 "PO-Revision-Date: 2025-12-31 12:01+0000\n"
 "Last-Translator: Marko Bojović <bojovicmarko@outlook.com>\n"
 "Language-Team: Serbian <https://hosted.weblate.org/projects/jasp/"
@@ -232,6 +232,10 @@ msgstr ""
 msgid "Error"
 msgstr "Грешка"
 
+msgid ""
+"Stepwise method failed. Please consider a different method or starting model."
+msgstr ""
+
 msgid "The specified low/high levels for %1$s are not distinct."
 msgstr ""
 
@@ -370,6 +374,15 @@ msgid "Level"
 msgstr "Ниво"
 
 msgid "Regression equation in %s Units"
+msgstr ""
+
+msgid "Stepwise results"
+msgstr ""
+
+msgid "Step"
+msgstr ""
+
+msgid "Formula"
 msgstr ""
 
 msgid "Pareto Chart of Standardized Effects"
@@ -1608,3 +1621,9 @@ msgstr ""
 
 msgid "Variables Chart for Subgroups Report"
 msgstr ""
+
+msgid "The following covariate was considered but not included: %s."
+msgid_plural "The following covariates were considered but not included: %s."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""

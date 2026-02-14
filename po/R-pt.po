@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-01-24 03:57\n"
+"POT-Creation-Date: 2026-02-14 04:18\n"
 "PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -232,6 +232,10 @@ msgstr "Delineamento de Experimentos - Análise"
 msgid "Error"
 msgstr "Erro"
 
+msgid ""
+"Stepwise method failed. Please consider a different method or starting model."
+msgstr ""
+
 msgid "The specified low/high levels for %1$s are not distinct."
 msgstr "Os níveis baixo/alto especificados para %1$s não são distintos."
 
@@ -385,6 +389,15 @@ msgstr "Nível"
 
 msgid "Regression equation in %s Units"
 msgstr "Equação de regressão em unidades %s"
+
+msgid "Stepwise results"
+msgstr ""
+
+msgid "Step"
+msgstr ""
+
+msgid "Formula"
+msgstr ""
 
 msgid "Pareto Chart of Standardized Effects"
 msgstr "Gráfico de Pareto de Efeitos Padronizados"
@@ -1725,6 +1738,12 @@ msgstr "Gráfico de controle X-bar e %1$s"
 
 msgid "Variables Chart for Subgroups Report"
 msgstr "Gráfico de Variáveis para Relatório de Subgrupos"
+
+#, fuzzy
+msgid "The following covariate was considered but not included: %s."
+msgid_plural "The following covariates were considered but not included: %s."
+msgstr[0] "Os seguintes termos alternativos foram removidos: %s."
+msgstr[1] "Os seguintes termos alternativos foram removidos: %s."
 
 #~ msgid ""
 #~ "Calculations are based on 6 times the historical standard variation "

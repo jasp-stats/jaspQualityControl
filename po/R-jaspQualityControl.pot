@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
-"POT-Creation-Date: 2026-01-24 03:57\n"
+"POT-Creation-Date: 2026-02-14 04:18\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -9,6 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"
 msgstr ""
@@ -220,6 +221,9 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
+msgid "Stepwise method failed. Please consider a different method or starting model."
+msgstr ""
+
 msgid "The specified low/high levels for %1$s are not distinct."
 msgstr ""
 
@@ -344,6 +348,15 @@ msgid "Level"
 msgstr ""
 
 msgid "Regression equation in %s Units"
+msgstr ""
+
+msgid "Stepwise results"
+msgstr ""
+
+msgid "Step"
+msgstr ""
+
+msgid "Formula"
 msgstr ""
 
 msgid "Pareto Chart of Standardized Effects"
@@ -1497,3 +1510,8 @@ msgstr ""
 
 msgid "Variables Chart for Subgroups Report"
 msgstr ""
+
+msgid        "The following covariate was considered but not included: %s."
+msgid_plural "The following covariates were considered but not included: %s."
+msgstr[0]    ""
+msgstr[1]    ""
