@@ -22,3 +22,8 @@ jaspTools::runTestsTravis(module = getwd())
 # jaspTools::testAnalysis("timeWeightedCharts")
 # jaspTools::testAnalysis("variablesChartsIndividuals")
 # jaspTools::testAnalysis("variablesChartsSubgroups")
+
+
+
+# Create unit tests from examples
+# jaspTools::makeTestsFromExamples()
