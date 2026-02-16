@@ -435,6 +435,10 @@ options$partByOperatorMeasurementPlot <- TRUE
 options$trafficLightChart <- TRUE
 options$anovaModelType <- "randomEffect"
 options$report <- TRUE
+options$reportRChartByOperator <- TRUE
+options$reportMeasurementsByOperatorPlot <- TRUE
+options$reportAverageChartByOperator <- TRUE
+options$reportPartByOperatorPlot <- TRUE
 options$reportGaugeNameText <- "Name of the gauge study"
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
@@ -873,6 +877,10 @@ options$partByOperatorMeasurementPlot <- TRUE
 options$trafficLightChart <- TRUE
 options$anovaModelType <- "randomEffect"
 options$report <- TRUE
+options$reportRChartByOperator <- TRUE
+options$reportMeasurementsByOperatorPlot <- TRUE
+options$reportAverageChartByOperator <- TRUE
+options$reportPartByOperatorPlot <- TRUE
 set.seed(1)
 results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
 
