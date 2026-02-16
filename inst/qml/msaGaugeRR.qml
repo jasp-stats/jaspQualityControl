@@ -501,28 +501,32 @@ Form
 				{
 					name:		"reportRChartByOperator"
 					label:		qsTr("Show range charts by operator")
-					checked:	true
+					checked:	!type3.checked
+					enabled:	!type3.checked
 				}
 				
 				CheckBox
 				{
 					name:		"reportMeasurementsByOperatorPlot"
 					label:		qsTr("Show measurements by operator")
-					checked:	true
+					checked:	!type3.checked
+					enabled:	!type3.checked
 				}
 				
 				CheckBox
 				{
 					name:		"reportAverageChartByOperator"
 					label:		qsTr("Show average charts by operator")
-					checked:	true
+					checked:	!type3.checked
+					enabled:	!type3.checked
 				}
 				
 				CheckBox
 				{
 					name:		"reportPartByOperatorPlot"
 					label:		qsTr("Show part × operator interaction")
-					checked:	true
+					checked:	!type3.checked
+					enabled:	!type3.checked
 				}
 				
 				CheckBox
