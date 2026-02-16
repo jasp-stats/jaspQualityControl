@@ -1,1135 +1,891 @@
-#
-# Copyright (C) 2013-2018 University of Amsterdam
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-
-#' @export
-msaGaugeRR <- function(jaspResults, dataset, options, ...) {
-  # Reading the data in the correct format
-  wideFormat <- options[["dataFormat"]] == "wideFormat"
-  if (wideFormat) {
-    measurements <- unlist(options[["measurementsWideFormat"]])
-    parts <- unlist(options[["partWideFormat"]])
-    operators <- unlist(options[["operatorWideFormat"]])
-  } else {
-    measurements <- unlist(options[["measurementLongFormat"]])
-    parts <- unlist(options[["partLongFormat"]])
-    operators <- unlist(options[["operatorLongFormat"]])
-  }
-
-  #ready statement
-  if (wideFormat && !options[["type3"]]) {
-    ready <- (length(measurements) > 1 && !identical(operators, "") && !identical(parts, ""))
-  } else if (wideFormat && options[["type3"]]) {
-    ready <- (length(measurements) > 1 && !identical(parts, ""))
-  } else if (!wideFormat && !options[["type3"]]) {
-    ready <- (measurements != "" && !identical(operators, "") && !identical(parts, ""))
-  }  else if (!wideFormat && options[["type3"]]) {
-    ready <- (!identical(measurements, "") && !identical(parts, ""))
-  }
-
-
-  numeric.vars <- measurements
-  numeric.vars <- numeric.vars[numeric.vars != ""]
-  factor.vars <- c(parts, operators)
-  factor.vars <- factor.vars[factor.vars != ""]
-
-  if (is.null(dataset)) {
-    dataset         <- .readDataSetToEnd(columns.as.numeric  = numeric.vars, columns.as.factor = factor.vars)
-    if (options$type3){
-      dataset$operators <- rep(1, nrow(dataset))
-      operators <- "operators"
-    }
-  }
-
-  # Checking for infinity and missingValues
-  .hasErrors(dataset, type = c('infinity', 'missingValues'),
-             infinity.target = measurements,
-             missingValues.target = c(measurements, parts, operators),
-             exitAnalysisIfErrors = TRUE)
-
-  # Checking for crossed design
-  if (ready && !options[["type3"]]) {
-    crossed <- .checkIfCrossed(dataset, operators, parts)
-    if(!crossed){
-      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-      jaspResults[["gaugeANOVA"]] <- plot
-      plot$setError(gettext("Design is not balanced: not every operator measured every part the same number of times."))
-      return()
-    }
-  }
-
-  # Checking for balanced design
-  if (ready && options[["type3"]]) {
-    checkTab <- table(dataset[[parts]])
-    if (!all(checkTab == checkTab[1])) {
-      plot <- createJaspPlot(title = gettext("Gauge r&R"), width = 700, height = 400)
-      jaspResults[["gaugeANOVA"]] <- plot
-      plot$setError(gettext("Design is not balanced: not every part was measured the same number of times."))
-      return()
-    }
-  }
-
-
-  # Converting long to wide data
-  if (!wideFormat && ready) {
-    dataset <- dataset[order(dataset[[operators]]),]
-    dataset <- dataset[order(dataset[[parts]]),]
-    nrep <- table(dataset[operators])[[1]]/length(unique(dataset[[parts]]))
-    index <- rep(paste("V", 1:nrep, sep = ""), nrow(dataset)/nrep)
-    dataset <- cbind(dataset, data.frame(index = index))
-    dataset <- tidyr::spread(dataset, index, measurements)
-    measurements <- unique(index)
-    dataset <- dataset[,c(operators, parts, measurements)]
-  } else if (ready) {
-    dataset <- dataset[order(dataset[[parts]]),]
-  }
-
-
-  # Checking type 3
-  Type3 <- c(length(unique(dataset[[operators]])) == 1 || options$type3)
-
-  # Get Rule List
-  if (ready) {
-    ruleList1 <- .getRuleListSubgroupCharts(options, type = "xBar")
-    ruleList2 <- .getRuleListSubgroupCharts(options, type = "R")
-  }
-
-  # Errors #
-  # Checking whether type3 is used correctly
-  .hasErrors(dataset,
-             target = measurements,
-             custom = function() {
-               if (Type3 && !options$type3)
-                 return("This dataset seems to have only a single unique operator. Please use the Type 3 study by checking the box below.")},
-             exitAnalysisIfErrors = TRUE)
-  # Checking whether the format wide is used correctly
-  if (ready)
-    .hasErrors(dataset,
-             target = measurements,
-             custom = function() {
-               dataToBeChecked <- dataset[dataset[[operators]] == dataset[[operators]][1],]
-               partsLevels <- length(levels(dataToBeChecked[[parts]]))
-               partsLength <- length(dataToBeChecked[[parts]])
-               if (wideFormat &&  partsLevels != partsLength && !Type3)
-                 return(gettextf("The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times.", partsLength/partsLevels))},
-             exitAnalysisIfErrors = FALSE)
-
-  # Report
-  if (options[["report"]] && ready) {
-    nElements <- sum(options[["reportVariationComponents"]], options[["reportMeasurementsByPartPlot"]], options[["reportRChartByOperator"]],
-                     options[["reportMeasurementsByOperatorPlot"]], options[["reportAverageChartByOperator"]],
-                     options[["reportPartByOperatorPlot"]], options[["reportTrafficLightChart"]], options[["reportMetaData"]])
-    plotHeight <- ceiling(nElements/2) * 500
-    reportPlot <- createJaspPlot(title = gettext("Gauge r&R report"), width = 1250, height = plotHeight)
-    jaspResults[["report"]] <- reportPlot
-    jaspResults[["report"]]$dependOn(c("measurementLongFormat", "operatorLongFormat", "partLongFormat", "measurementsWideFormat",
-                                       "operatorWideFormat", "partWideFormat", "type3", "processVariationReference", "historicalSdValue",
-                                       "tolerance", "toleranceValue", "anovaModelType", "studyVarianceMultiplierType",
-                                       "studyVarianceMultiplierValue", "scatterPlotFitLine", "scatterPlotOriginLine",
-                                       "partMeasurementPlotAllValues", "report", "reportMetaData", "reportTitle",
-                                       "reportTitleText", "reportPartName", "reportPartNameText", "reportGaugeName",
-                                       "reportGaugeNameText", "reportCharacteristic", "reportCharacteristicText",
-                                       "reportGaugeNumber", "reportGaugeNumberText", "reportTolerance", "reportToleranceText",
-                                       "reportLocation", "reportLocationText", "reportPerformedBy", "reportPerformedByText",
-                                       "reportDate", "reportDateText", "reportVariationComponents", "reportMeasurementsByPartPlot",
-                                       "reportRChartByOperator", "reportMeasurementsByOperatorPlot", "reportAverageChartByOperator",
-                                       "reportPartByOperatorPlot", "reportTrafficLightChart", "reportMetaData", .getDependenciesControlChartRules()))
-
-    if (nElements == 0) {
-      reportPlot$setError(gettext("No report components selected."))
-      return()
-    }
-
-    if(!ready)
-      return()
-
-    # Plot meta data
-    if (options[["reportTitle"]] ) {
-      title <- if (options[["reportTitleText"]] == "") gettext("Gauge r&R report") else options[["reportTitleText"]]
-    } else {
-      title <- ""
-    }
-
-    if (options[["reportMetaData"]]) {
-      text <- c()
-      text <- if (options[["reportPartName"]]) c(text, gettextf("Part name: %s", options[["reportPartNameText"]])) else text
-      text <- if (options[["reportGaugeName"]]) c(text, gettextf("Gauge name: %s", options[["reportGaugeNameText"]])) else text
-      text <- if (options[["reportCharacteristic"]]) c(text, gettextf("Characteristic: %s", options[["reportCharacteristicText"]])) else text
-      text <- if (options[["reportGaugeNumber"]]) c(text, gettextf("Gauge number: %s", options[["reportGaugeNumberText"]])) else text
-      text <- if (options[["reportTolerance"]]) c(text, gettextf("Tolerance: %s", options[["reportToleranceText"]])) else text
-      text <- if (options[["reportLocation"]]) c(text, gettextf("Location: %s", options[["reportLocationText"]])) else text
-      text <- if (options[["reportPerformedBy"]]) c(text, gettextf("Performed by: %s", options[["reportPerformedByText"]])) else text
-      text <- if (options[["reportDate"]]) c(text, gettextf("Date: %s", options[["reportDateText"]])) else text
-    } else {
-      text <- NULL
-    }
-
-    plots <- list()
-    plotIndexCounter <- 1
-    if (options[["reportVariationComponents"]]) {
-      plots[[plotIndexCounter]] <- .gaugeANOVA(dataset, measurements, parts, operators, options, ready = TRUE,
-                                              returnPlotOnly = TRUE, Type3 = Type3)   #var. comp. plot
-      plotIndexCounter <- plotIndexCounter + 1
-    }
-    if (options[["reportMeasurementsByPartPlot"]]) {
-      plots[[plotIndexCounter]] <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = FALSE) #measurement by part plot
-      plotIndexCounter <- plotIndexCounter + 1
-    }
-    if (options[["reportRChartByOperator"]]) {
-      plots[[plotIndexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)], ruleList = ruleList2,
-                                                plotType = "R", stages = operators,
-                                                xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
-                                                stagesSeparateCalculation = FALSE)$plotObject
-      plotIndexCounter <- plotIndexCounter + 1
-    }
-    if (options[["reportMeasurementsByOperatorPlot"]]) {
-      plots[[plotIndexCounter]] <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options, Type3 = Type3)   #Measurements by operator plot
-      plotIndexCounter <- plotIndexCounter + 1
-      }
-    if (options[["reportAverageChartByOperator"]]) {
-      plots[[plotIndexCounter]] <- .controlChart(dataset = dataset[c(measurements, operators)], ruleList = ruleList1,
-                                                plotType = "xBar", xBarSdType = "r", stages = operators,
-                                                xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
-                                                stagesSeparateCalculation = FALSE)$plotObject
-      plotIndexCounter <- plotIndexCounter + 1
-    }
-    if (options[["reportPartByOperatorPlot"]]) {
-      plots[[plotIndexCounter]] <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options,
-                                                                       Type3 = Type3, ggPlot = TRUE) # Part x Operator interaction plot
-      plotIndexCounter <- plotIndexCounter + 1
-    }
-
-    if (options[["reportTrafficLightChart"]]) {
-      valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators,
-                               options =  options, ready = TRUE, returnTrafficValues = TRUE, Type3 = Type3)
-      trafficPlots <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options$tolerance,
-                            ToleranceVar = valuesVec$tol, options = options, ready = TRUE, ggPlot = TRUE)
-      if (options[["tolerance"]]) {
-        plots[[plotIndexCounter]] <- trafficPlots$p1
-        plotIndexCounter <- plotIndexCounter + 1
-        plots[[plotIndexCounter]] <- trafficPlots$p2
-      } else {
-        plots[[plotIndexCounter]] <- trafficPlots
-      }
-    }
-
-    # Gauge evaluation table
-    tables <- list()
-    tableTitles <- list()
-    if (options[["reportGaugeTable"]]) {
-      gaugeEvalOutput <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators,
-                                     options =  options, ready = TRUE, returnTrafficValues = FALSE, Type3 = Type3,
-                                     gaugeEvaluationDfOnly = TRUE)
-      if (!all(is.na(gaugeEvalOutput))) {
-        gaugeEvalDf <- gaugeEvalOutput[["gaugeEvalDf"]]
-        nCategories <- gaugeEvalOutput[["nCategories"]]
-        nCategoriesDf <- data.frame("x1" = gettext("Number of distinct categories"), "x2" = nCategories)
-        names(nCategoriesDf) <- NULL
-        tables[[1]] <- list(gaugeEvalDf, nCategoriesDf)
-        tableTitles[[1]] <- list("Gauge evaluation", "")
-      }
-    }
-
-    reportPlotObject <- .qcReport(text = text, plots = plots, tables = tables, textMaxRows = 8,
-                                  tableTitles = tableTitles, reportTitle = title, tableSize = 6)
-    reportPlot$plotObject <- reportPlotObject
-  } else {
-    # Gauge r&R ANOVA Table
-    if (options[["anova"]]) {
-      if (is.null(jaspResults[["gaugeANOVA"]])) {
-        jaspResults[["gaugeANOVA"]] <- createJaspContainer(gettext("Gauge r&R ANOVA table"))
-        jaspResults[["gaugeANOVA"]]$dependOn(c("processVariationReference", "historicalSdValue", "report"))
-        jaspResults[["gaugeANOVA"]]$position <- 1
-      }
-      jaspResults[["gaugeANOVA"]] <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
-    }
-
-    # R chart by operator
-    if (options[["rChart"]] && is.null(jaspResults[["rChart"]])) {
-      jaspResults[["rChart"]] <- createJaspContainer(gettext("Range chart by operator"))
-      jaspResults[["rChart"]]$position <- 3
-      jaspResults[["rChart"]]$dependOn(c("rChart", "gaugeRRmethod", "anovaGaugeReport", "measurementLongFormat",
-                                         "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
-      jaspResults[["rChart"]][["plot"]] <- createJaspPlot(title = gettext("Range chart by operator"), width = 1200, height = 500)
-      if (ready) {
-        rChart <- .controlChart(dataset = dataset[c(measurements, operators)], plotType = "R", ruleList = ruleList2,
-                                            stages = operators, xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
-                                            stagesSeparateCalculation = FALSE)
-
-        jaspResults[["rChart"]][["plot"]]$plotObject <- rChart$plotObject
-        jaspResults[["rChart"]][["table"]] <- rChart$table
-      }
-    }
-
-    # Xbar chart by operator
-    if (options[["xBarChart"]] && is.null(jaspResults[["xBarChart"]])) {
-      jaspResults[["xBarChart"]] <- createJaspContainer(gettext("Xbar chart by operator"))
-      jaspResults[["xBarChart"]]$position <- 4
-      jaspResults[["xBarChart"]]$dependOn(c("xBarChart", "gaugeRRmethod", "anovaGaugeReport", "measurementLongFormat",
-                                            "measurementsWideFormat", "report", .getDependenciesControlChartRules()))
-      jaspResults[["xBarChart"]][["plot"]] <- createJaspPlot(title = gettext("Average chart by operator"), width = 1200, height = 500)
-      if (ready) {
-        xBarChart <- .controlChart(dataset = dataset[c(measurements, operators)], ruleList = ruleList1,
-                                               plotType = "xBar", xBarSdType = "r", stages = operators,
-                                               xAxisLabels = dataset[[parts]][order(dataset[[operators]])],
-                                               stagesSeparateCalculation = FALSE)
-        jaspResults[["xBarChart"]][["plot"]]$plotObject <- xBarChart$plotObject
-        jaspResults[["xBarChart"]][["table"]] <- xBarChart$table
-      }
-    }
-
-    # gauge Scatter Plot Operators
-    if (options[["scatterPlot"]]) {
-      if (is.null(jaspResults[["gaugeScatterOperators"]])) {
-        jaspResults[["gaugeScatterOperators"]] <- createJaspContainer(gettext("Scatterplot operators"))
-        jaspResults[["gaugeScatterOperators"]]$position <- 5
-      }
-      jaspResults[["gaugeScatterOperators"]] <- .gaugeScatterPlotOperators(jaspResults = jaspResults, dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready)
-      jaspResults[["gaugeScatterOperators"]]$dependOn(c("gaugeRRmethod", "report"))
-    }
-
-    # Measurement by Part Graph
-    if (options[["partMeasurementPlot"]] & ready) {
-      if (is.null(jaspResults[["gaugeByPart"]])) {
-        jaspResults[["gaugeByPart"]] <- createJaspContainer(gettext("Measurement by part graph"))
-        jaspResults[["gaugeByPart"]]$dependOn("report")
-        jaspResults[["gaugeByPart"]]$position <- 6
-      }
-      jaspResults[["gaugeByPart"]] <- .gaugeByPartGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options = options)
-    }
-
-    # Measurement by Operator Box Plot
-    if (options[["operatorMeasurementPlot"]]) {
-      if (is.null(jaspResults[["gaugeByOperator"]])) {
-        jaspResults[["gaugeByOperator"]] <- createJaspContainer(gettext("Measurements by operator graph"))
-        jaspResults[["gaugeByOperator"]]$dependOn("report")
-        jaspResults[["gaugeByOperator"]]$position <- 7
-      }
-      jaspResults[["gaugeByOperator"]] <- .gaugeByOperatorGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
-    }
-
-    # Parts by Operator Interaction Plot
-    if (options[["partByOperatorMeasurementPlot"]]) {
-      if (is.null(jaspResults[["gaugeByInteraction"]])) {
-        jaspResults[["gaugeByInteraction"]] <- createJaspContainer(gettext("Part by operator interaction graph"))
-        jaspResults[["gaugeByInteraction"]]$dependOn("report")
-        jaspResults[["gaugeByInteraction"]]$position <- 8
-      }
-      jaspResults[["gaugeByInteraction"]] <- .gaugeByInteractionGraph(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, Type3 = Type3)
-    }
-    # Traffic light plot
-    if(options[["trafficLightChart"]] & is.null(jaspResults[["trafficPlot"]] )) {
-      jaspResults[["trafficPlot"]] <- createJaspContainer(gettext("Traffic light chart"))
-      jaspResults[["trafficPlot"]]$position <- 9
-      jaspResults[["trafficPlot"]]$dependOn(c("trafficLightChart", "toleranceValue", "tolerance", "gaugeRRmethod", "processVariationReference", "historicalSdValue", "report"))
-      trafficContainer <- jaspResults[["trafficPlot"]]
-
-      valuesVec <- .gaugeANOVA(dataset = dataset, measurements = measurements, parts = parts, operators = operators, options =  options, ready = ready, returnTrafficValues = TRUE, Type3 = Type3)
-      trafficContainer[["plot"]] <- .trafficplot(StudyVar = valuesVec$study, ToleranceUsed = options[["tolerance"]],ToleranceVar = valuesVec$tol, options = options, ready = ready)
-
-    }
-  }
-
-  return()
-}
-
-.gaugeANOVA <- function(dataset, measurements, parts, operators, options, ready, returnPlotOnly = FALSE, returnTrafficValues = FALSE,
-                        gaugeEvaluationDfOnly = FALSE, Type3 = FALSE) {
-  anovaTables <- createJaspContainer(gettext("Gauge r&R study - crossed ANOVA"))
-  anovaTables$dependOn(c("anova", "gaugeRRmethod", "report"))
-  anovaTables$position <- 1
-
-  anovaTable1 <- createJaspTable(title = ifelse(Type3, gettext("One-way ANOVA table"), gettext("Two-way ANOVA table with interaction")))
-  anovaTable1$addColumnInfo(title = gettext("Source"),       name = "source",   type = "string" )
-  anovaTable1$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
-  anovaTable1$addColumnInfo(title = gettext("Sum of squares"), name = "Sum Sq",  type = "number")
-  anovaTable1$addColumnInfo(title = gettext("Mean squares"),    name = "Mean Sq", type = "number")
-  anovaTable1$addColumnInfo(title = gettext("F"),              name = "F value", type = "number")
-  anovaTable1$addColumnInfo(title = gettext("<i>p</i>-value"),              name = "Pr(>F)",  type = "pvalue")
-
-  RRtable1 <- createJaspTable(title = gettext("Variance components"))
-  RRtable1$dependOn(c("anova", "operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat", "measurementsWideFormat",
-                      "measurementLongFormat"))
-  RRtable1$addColumnInfo(name = "Source", title = gettext("Source"), type = "string")
-  RRtable1$addColumnInfo(name = "Variation", title = gettext("Variance"), type = "number")
-  RRtable1$addColumnInfo(name = "Percent", title = gettextf("%% Contribution"), type = "integer")
-
-  RRtable2 <- createJaspTable(title = gettext("Gauge evaluation"))
-  RRtable2$dependOn(c("anova", "operatorWideFormat", "operatorLongFormat", "partWideFormat", "partLongFormat",
-                      "measurementsWideFormat", "measurementLongFormat"))
-  RRtable2$addColumnInfo(name = "source", title = gettext("Source"), type = "string")
-  RRtable2$addColumnInfo(name = "SD", title = gettext("Std. dev."), type = "number")
-  RRtable2$addColumnInfo(name = "studyVar", title = gettextf("Study variation"), type = "number")
-  RRtable2$addColumnInfo(name = "percentStudyVar", title = gettextf("%% Study variation"), type = "integer")
-  if(options[["tolerance"]])
-    RRtable2$addColumnInfo(name = "percentTolerance", title = gettextf("%% Tolerance"), type = "integer")
-
-  for (measurement in measurements) {
-    if (length(dataset[[measurement]]) <= 1)
-      ready <- FALSE
-  }
-
-  if (ready && length(measurements) >= 2) {
-    singleOperator <- Type3
-
-    data <- dataset
-
-    data <- tidyr::gather(data, repetition, measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-
-    if (options[["studyVarianceMultiplierType"]] == "sd") {
-      studyVarMultiplier <- options[["studyVarianceMultiplierValue"]]
-    }else{
-      percent <- options[["studyVarianceMultiplierValue"]] / 100
-      q <- (1 - percent)/2
-      studyVarMultiplier <- abs(2*qnorm(q))
-    }
-
-    measurements <- "measurement"
-    ssPart <- .ssPart(data, operators, parts, measurements)
-    ssRepWithInteraction <- .ssRepWithInteraction(data, operators, parts, measurements)
-    ssTotal <- .ssTotal(data, operators, parts, measurements)
-    if(!singleOperator){
-      ssOperator <- .ssOperator(data, operators, parts, measurements)
-      ssInteraction <- ssTotal - sum(ssPart, ssOperator, ssRepWithInteraction)
-    }
-
-    DFlist <- .dfGaugeCrossed(data, operators, parts, measurements)
-    dfPart <- DFlist$dfPart
-    dfRepWithInteraction <- DFlist$dfRepeat
-    dfTotal <- DFlist$dfTotal
-    if(!singleOperator){
-      dfOperators <- DFlist$dfOperator
-      dfInteraction <- DFlist$dfPartXOperator
-    }
-
-    msPart <- ssPart / dfPart
-    msRepWithInteraction <- ssRepWithInteraction / dfRepWithInteraction
-    if(!singleOperator){
-      msOperator <- ssOperator / dfOperators
-      msInteraction <- ssInteraction / dfInteraction
-    }
-
-    if(singleOperator){
-      fPart <- msPart / msRepWithInteraction
-    }else{
-      fPart <- msPart / msInteraction
-      fOperator <- msOperator / msInteraction
-      fInteraction <- msInteraction / msRepWithInteraction
-    }
-
-    if (options[["anovaModelType"]] == "fixedEffect"){
-      fPart <- msPart / msRepWithInteraction
-      fOperator <- msOperator / msRepWithInteraction
-    }
-
-    if(singleOperator){
-      pPart <- pf(fPart, dfPart, dfRepWithInteraction, lower.tail = F)
-    }else{
-      pPart <- pf(fPart, dfPart, dfInteraction, lower.tail = F)
-      pOperator <- pf(fOperator, dfOperators, dfInteraction, lower.tail = F)
-      pInteraction <- pf(fInteraction, dfInteraction, dfRepWithInteraction, lower.tail = F)
-    }
-
-    if(singleOperator){
-      sources <- c(parts, 'Repeatability', 'Total')
-      dfVector <- c(dfPart, dfRepWithInteraction, dfTotal)
-      ssVector <- c(ssPart, ssRepWithInteraction, ssTotal)
-      msVector <- c(msPart, msRepWithInteraction)
-      fVector <- fPart
-      pVector <- pPart
-    }else{
-      sources <- c(parts, operators, paste(parts," * ", operators), "Repeatability", "Total")
-      dfVector <- c(dfPart, dfOperators, dfInteraction, dfRepWithInteraction, dfTotal)
-      ssVector <- c(ssPart, ssOperator, ssInteraction, ssRepWithInteraction, ssTotal)
-      msVector <- c(msPart, msOperator, msInteraction, msRepWithInteraction)
-      fVector <- c(fPart, fOperator, fInteraction)
-      pVector <- c(pPart, pOperator, pInteraction)
-    }
-
-    anovaTable1$setData(list( "source"              = sources,
-                              "Df"                 = dfVector,
-                              "Sum Sq"             = ssVector,
-                              "Mean Sq"            = msVector,
-                              "F value"            = fVector,
-                              "Pr(>F)"             = pVector))
-
-    anovaTables[['anovaTable1']] <- anovaTable1
-
-    if(!singleOperator)
-      interactionSignificant <- pInteraction < options[["anovaAlphaForInteractionRemoval"]]
-    else
-      interactionSignificant <- FALSE
-
-    if (singleOperator || interactionSignificant){
-
-      #r & R varcomps
-      if (singleOperator) {
-        varCompList <- .gaugeCrossedVarCompsSingleOP(data, operators, parts, measurements, msPart, msRepWithInteraction)
-        varCompRepeat <- varCompList$repeatability
-        varCompPart <- varCompList$part
-        varCompTotalGauge <- varCompList$totalGauge
-        varCompTotalVar <- varCompList$totalVar
-        varCompVector <- c("varCompTotalGauge" = varCompTotalGauge, "varCompRepeat" = varCompRepeat,
-                           "varCompPart" = varCompPart, "varCompTotalVar" = varCompTotalVar)
-        sources <- gettext(c("Total gauge r&R", "Repeatability", "Part-to-part", "Total variation"))
-      } else {
-        varCompList <- .gaugeCrossedVarComps(data, operators, parts, measurements, msPart, msOperator, msRepWithInteraction, msInteraction)
-        varCompRepeat <- varCompList$repeatability
-        varCompOperator <- varCompList$operator
-        varCompPart <- varCompList$part
-        varCompReprod <- varCompList$reprod
-        varCompTotalGauge <- varCompList$totalGauge
-        varCompTotalVar <- varCompList$totalVar
-        varCompInteraction <- varCompList$interaction
-        varCompVector <- c("varCompTotalGauge" = varCompTotalGauge, "varCompRepeat" = varCompRepeat, "varCompReprod" = varCompReprod,
-                           "varCompOperator" = varCompOperator, "varCompInteraction" = varCompInteraction, "varCompPart" = varCompPart,
-                           "varCompTotalVar" = varCompTotalVar)
-        sources <- gettext(c("Total gauge r&R", "Repeatability", "Reproducibility", operators, paste(parts," * ", operators), "Part-to-part",  "Total variation"))
-      }
-
-      if (options[["processVariationReference"]] == "historicalSd") {
-        if (Type3)
-          varCompVector <- c("varCompTotalGauge" = varCompTotalGauge, "varCompRepeat" = varCompRepeat, "varCompPart" = varCompPart, "varCompTotalVar" = varCompTotalVar)
-        histSD <- options[["historicalSdValue"]]
-        varCompTotalVar <- histSD^2
-        varCompVector[["varCompTotalVar"]] <- varCompTotalVar
-        varCompVector[["varCompPart"]] <- varCompVector[["varCompTotalVar"]] - varCompTotalGauge
-      }
-
-
-      varCompPercent <- unlist(varCompVector) / varCompTotalVar * 100
-
-      RRtable1$setData(list(      "Source"       = sources,
-                                  "Variation"    = varCompVector,
-                                  "Percent"      = round(varCompPercent,2)))
-
-      anovaTables[['RRtable1']] <- RRtable1
-
-      #Gauge evaluation
-
-      histSD <- options[["historicalSdValue"]]
-
-      if (!singleOperator) {
-        if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
-          SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator)),
-                  sqrt(varCompInteraction), sqrt(histSD^2 - varCompTotalGauge), histSD)
-
-        } else {
-          SD <- sqrt(varCompVector)
-        }
-
-      } else {
-        if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
-          SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat)), sqrt(histSD^2 - varCompTotalGauge), histSD)
-        } else {
-          SD <- sqrt(varCompVector)
-        }
-      }
-      sdParts <- sqrt(varCompVector[["varCompPart"]])
-      sdGauge <- sqrt(varCompVector[["varCompTotalGauge"]])
-      SD <- ifelse(SD == "NaN", 0, SD)
-      studyVar <- SD * studyVarMultiplier
-      RRtable2DataList <- list("source"       = sources,
-                               "SD"           = SD,
-                               "studyVar"    = studyVar,
-                               "percentStudyVar"    = c(round(studyVar/max(studyVar) * 100,2)))
-      if(options[["tolerance"]])
-        RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options[["toleranceValue"]] * 100,2))))
-      RRtable2$setData(RRtable2DataList)
-      if (!is.na(sdParts)) {
-        nCategories <- .gaugeNumberDistinctCategories(sdParts, sdGauge)
-        RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
-      }
-      if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
-        RRtable2$addFootnote(gettextf("Study Variation is calculated as std. dev. <spam>&#215;</spam> %i", as.integer(studyVarMultiplier)))
-      }else{
-        RRtable2$addFootnote(gettextf("Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f", studyVarMultiplier))
-      }
-
-      if(options[["processVariationReference"]] == "historicalSd"){
-        RRtable2$addFootnote(gettextf("Historical standard deviation is used to calculate some values for std. dev., study variation, and %%study variation."))
-        RRtable2$addFootnote(gettextf("Values for %%process variation are not displayed because they are identical to values for %%study variation."))
-      }
-
-
-      anovaTables[['RRtable2']] <- RRtable2
-
-    } else {
-
-      anovaTable2 <- createJaspTable(title = gettext("Two-way ANOVA table without interaction"))
-      anovaTable2$addColumnInfo(title = gettext("Source"),        name = "source",   type = "string" )
-      anovaTable2$addColumnInfo(title = gettext("df"),             name = "Df",      type = "integer")
-      anovaTable2$addColumnInfo(title = gettext("Sum of squares"), name = "Sum Sq",  type = "number")
-      anovaTable2$addColumnInfo(title = gettext("Mean squares"),    name = "Mean Sq", type = "number")
-      anovaTable2$addColumnInfo(title = gettext("F"),              name = "F value", type = "number")
-      anovaTable2$addColumnInfo(title = gettext("<i>p</i>-value"),              name = "Pr(>F)",  type = "pvalue")
-
-      ssRepWithoutInteraction <- ssTotal - ssPart - ssOperator
-      dfRepWithoutInteraction <- dfTotal - dfPart - dfOperators
-      msRepWithoutInteraction <- ssRepWithoutInteraction / dfRepWithoutInteraction
-
-      fPartWithoutInteraction <- msPart / msRepWithoutInteraction
-      fOperatorWithoutInteraction <- msOperator / msRepWithoutInteraction
-
-      pPartWithoutInteraction <- pf(fPartWithoutInteraction, dfPart, dfRepWithoutInteraction, lower.tail = F)
-      pOperatorWithoutInteraction  <- pf(fOperatorWithoutInteraction, dfOperators, dfRepWithoutInteraction, lower.tail = F)
-
-
-      anovaTable2$setData(list( "source"              = c(parts, operators, "Repeatability", "Total"),
-                                "Df"                 = c(dfPart, dfOperators, dfRepWithoutInteraction, dfTotal),
-                                "Sum Sq"             = c(ssPart, ssOperator, ssRepWithoutInteraction, ssTotal),
-                                "Mean Sq"            = c(msPart, msOperator, msRepWithoutInteraction),
-                                "F value"            = c(fPartWithoutInteraction, fOperatorWithoutInteraction),
-                                "Pr(>F)"             = c(pPartWithoutInteraction, pOperatorWithoutInteraction)))
-
-
-      anovaTables[['anovaTable2']] <- anovaTable2
-
-      #r & R varcomps
-
-      varCompList <- .gaugeCrossedVarComps(data, operators, parts, measurements, msPart, msOperator, msRepWithoutInteraction)
-      varCompRepeat <- varCompList$repeatability
-      varCompOperator <- varCompList$operator
-      varCompPart <- varCompList$part
-      varCompReprod <- varCompList$reprod
-      varCompTotalGauge <- varCompList$totalGauge
-      varCompTotalVar <- varCompList$totalVar
-
-      if (options[["processVariationReference"]] == "historicalSd"){
-        histSD <- options[["historicalSdValue"]]
-        varCompTotalVar <- histSD^2
-        varCompPart <- varCompTotalVar - varCompTotalGauge
-      }
-
-      varCompVector <- c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator, varCompPart, varCompTotalVar)
-      varCompPercent <- varCompVector / varCompTotalVar * 100
-
-      RRtable1$setData(list(      "Source"       = gettext(c("Total gauge r&R", "Repeatability", "Reproducibility", operators, "Part-to-part", "Total variation")),
-                                  "Variation"    = varCompVector,
-                                  "Percent"      = round(varCompPercent,2)))
-
-
-      anovaTables[['RRtable1']] <- RRtable1
-
-      #Gauge evaluation
-
-      histSD <- options[["historicalSdValue"]]
-
-      if (options[["processVariationReference"]] == "historicalSd" && histSD >= sqrt(varCompTotalGauge)) {
-        SD <- c(sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompOperator)),
-                sqrt(histSD^2 - varCompTotalGauge), histSD)
-      }else{
-        SD <- sqrt(varCompVector)
-      }
-
-      SD <- ifelse(SD == "NaN", 0, SD)
-      studyVar <- SD * studyVarMultiplier
-      RRtable2DataList <- list("source"       = gettext(c("Total gauge r&R", "Repeatability", "Reproducibility", operators, "Part-to-part", "Total variation")),
-                               "SD"           = SD,
-                               "studyVar"    = studyVar,
-                               "percentStudyVar"    = c(round(studyVar/max(studyVar) * 100,2)))
-      if(options[["tolerance"]])
-        RRtable2DataList <- append(RRtable2DataList, list("percentTolerance" = c(round(studyVar / options[["toleranceValue"]] * 100,2))))
-      RRtable2$setData(RRtable2DataList)
-      nCategories <- .gaugeNumberDistinctCategories(sqrt(varCompPart), sqrt(varCompTotalGauge))
-      RRtable2$addFootnote(gettextf("Number of distinct categories = %i", nCategories))
-      if (as.integer(studyVarMultiplier) == round(studyVarMultiplier, 2)){
-        RRtable2$addFootnote(gettextf("Study variation is calculated as std. dev. <spam>&#215;</spam> %i", as.integer(studyVarMultiplier)))
-      }else{
-        RRtable2$addFootnote(gettextf("Study variation is calculated as std. dev. <spam>&#215;</spam> %.2f", studyVarMultiplier))
-      }
-
-      if(options[["processVariationReference"]] == "historicalSd"){
-        RRtable2$addFootnote(gettextf("Historical standard deviation is used to calculate some values for std. dev., study variation, and %%study variation."))
-        RRtable2$addFootnote(gettextf("Values for %%process variation are not displayed because they are identical to values for %%study variation."))
-      }
-      anovaTables[['RRtable2']] <- RRtable2
-    }
-
-    if(singleOperator)
-      varCompReprod <- 0
-
-    percentContributionValues <- c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompPart)/varCompTotalVar * 100
-    SDs <- sqrt(c(varCompTotalGauge, varCompRepeat, varCompReprod, varCompPart))
-    studyvars <- SDs * studyVarMultiplier
-    studyVariationValues <- studyvars/max(studyVar) * 100
-    if(options[["tolerance"]]){
-      percentToleranceValues <- studyvars / options[["toleranceValue"]] * 100
-    }else{
-      percentToleranceValues <- NA
-    }
-
-    if (gaugeEvaluationDfOnly) {
-      gaugeEvalDf <- as.data.frame(RRtable2DataList)
-      gaugeEvalDf[,-1] <- round(gaugeEvalDf[,-1], .numDecimals) # Round everything while including the source column
-      names(gaugeEvalDf) <- if (ncol(gaugeEvalDf) == 5) c("Source", "Std. dev.", "Study variation", "%Study variation", "%Tolerance") else c("Source", "Std. dev.", "Study variation", "%Study variation")
-      return(list("gaugeEvalDf" = gaugeEvalDf, "nCategories" = nCategories))
-    }
-
-    p <- .gaugeVarCompGraph(percentContributionValues, studyVariationValues, percentToleranceValues, Type3)
-
-    if (returnPlotOnly)
-      return(p)
-    else if (returnTrafficValues)
-      return(list(study = c(round(studyVar/max(studyVar) * 100,2))[1], tol = c(round(studyVar / options[["toleranceValue"]] * 100,2))[1]))
-
-    if (options[["varianceComponentsGraph"]]) {
-      plot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
-      plot$dependOn(c("varianceComponentsGraph", "report"))
-      plot$plotObject <- p
-      anovaTables[['VarCompGraph']] <- plot
-    }
-  } else {
-
-    plot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
-    plot$dependOn(c("gaugeVarCompGraph", "report"))
-
-    anovaTables[['anovaTable1']] <- anovaTable1
-    anovaTables[['RRtable1']] <- RRtable1
-    anovaTables[['RRtable2']] <- RRtable2
-    anovaTables[['plot']] <- plot
-
-
-    if (length(measurements) >= 1 && !identical(operators, "") && !identical(parts, "") && ready) {
-      if (returnTrafficValues)
-        return(list(study = NA, tol = NA))
-      if (returnPlotOnly)
-        return (ggplot2::ggplot() +
-                  ggplot2::theme_void() +
-                  ggplot2::annotate("text", x = 0.5, y = 0.5, label = gettextf("Number of observations is < 2 in %1$s after grouping on %2$s.", parts, operators))) # return an empty plot if not possible to calculate anything
-      if (gaugeEvaluationDfOnly)
-       return(list("gaugeEvalDf" = NA, "nCategories" = NA))
-      RRtable1$setError(gettextf("Number of observations is < 2 in %1$s after grouping on %2$s", parts, operators))
-      RRtable2$setError(gettextf("Number of observations is < 2 in %1$s after grouping on %2$s", parts, operators))
-    }
-  }
-  return(anovaTables)
-}
-
-.gaugeByPartGraph <- function(dataset, measurements, parts, operators, options) {
-  plot <- createJaspPlot(title = gettext("Measurements by part"), width = 700, height = 300)
-  plot$dependOn(c("partMeasurementPlot", "gaugeRRmethod", "report"))
-  p <- .gaugeByPartGraphPlotObject(dataset, measurements, parts, operators, displayAll = options[["partMeasurementPlotAllValues"]])
-  plot$plotObject <- p
-  return(plot)
-}
-
-.gaugeByPartGraphPlotObject <- function(dataset, measurements, parts, operators, displayAll = FALSE) {
-  dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-  means <- aggregate(dataset["Measurement"], dataset[parts], mean)
-  p <- ggplot2::ggplot()
-  if (displayAll){
-    yAxisBreaks <- jaspGraphs::getPrettyAxisBreaks(dataset[["Measurement"]])
-    yAxisLimits <- range(c(dataset[["Measurement"]],yAxisBreaks))
-    p <- p + jaspGraphs::geom_point(data = dataset, ggplot2::aes_string(x = parts, y = "Measurement"), col = "gray")
-  }else{
-    yAxisBreaks <- jaspGraphs::getPrettyAxisBreaks(means[["Measurement"]])
-    yAxisLimits <- range(c(means[["Measurement"]], yAxisBreaks))
-  }
-  p <- p + jaspGraphs::geom_point(data = means, ggplot2::aes_string(x = parts, y = "Measurement")) +
-    ggplot2::scale_y_continuous(limits = yAxisLimits, breaks = yAxisBreaks) +
-    jaspGraphs::themeJaspRaw() + jaspGraphs::geom_rangeframe()
-  return(p)
-}
-
-
-.gaugeByOperatorGraph <- function(dataset, measurements, parts, operators, options, ready, Type3 = FALSE) {
-
-  plot <- createJaspPlot(title = gettext("Measurements by operator"), width = 600, height = 600)
-
-  plot$dependOn(c("operatorMeasurementPlot", "gaugeRRmethod", "report"))
-
-  if (ready) {
-    plot$plotObject <- .gaugeByOperatorGraphPlotObject(dataset, measurements, parts, operators, options, Type3)
-  }
-  return(plot)
-}
-
-.gaugeByOperatorGraphPlotObject <- function(dataset, measurements, parts, operators, options, Type3 = FALSE){
-  dataset <- tidyr::gather(dataset, Repetition, Measurement, measurements[1]:measurements[length(measurements)], factor_key=TRUE)
-  yBreaks <- dataset["Measurement"]
-  yLimits <- range(yBreaks)
-
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_boxplot(data = dataset, ggplot2::aes_string(x = operators, y = "Measurement"))  +
-    ggplot2::scale_y_continuous(limits = yLimits) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  if (Type3)
-    p <- p + ggplot2::theme(axis.ticks.x = ggplot2::element_blank(), axis.text.x = ggplot2::element_blank()) +
-    ggplot2::scale_x_continuous(name = NULL)
-
-  return(p)
-}
-
-.gaugeByInteractionGraph <- function(dataset, measurements, parts, operators, options, ready, Type3 = FALSE) {
-
-  if (ready) {
-    plot <- .gaugeByInteractionGraphPlotFunction(dataset, measurements, parts, operators, options, Type3 = Type3)
-  } else {
-    plot <- createJaspPlot(title = gettext("Part by operator interaction"), width = 700, height = 400)
-    plot$dependOn(c("partByOperatorMeasurementPlot", "gaugeRRmethod", "report"))
-  }
-  return(plot)
-}
-
-.gaugeByInteractionGraphPlotFunction <- function(dataset, measurements, parts, operators, options, Type3 = FALSE, ggPlot = FALSE) {
-
-  plot <- createJaspPlot(title = gettext("Part by operator interaction"), width = 700, height = 400)
-  plot$dependOn(c("partByOperatorMeasurementPlot", "gaugeRRmethod", "report"))
-
-  byOperator <- split.data.frame(dataset, dataset[operators])
-  partNames <- unique(dataset[[parts]])
-
-  for (name in names(byOperator)) {
-    if (nrow(byOperator[[name]][measurements]) != length(partNames)) {
-      plot <- createJaspPlot(title = gettext("Part by operator interaction"), width = 700, height = 400)
-      plot$setError(gettext("Operators measured different number of parts."))
-      return(plot)
-    }
-  }
-
-  means <- rowMeans(dataset[measurements])
-  df <- data.frame(Part = dataset[[parts]], Operator = dataset[[operators]], Means = means)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(means)
-  yLimits <- range(c(yBreaks, means))
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = Part, y = Means)) +
-    ggplot2::geom_line(ggplot2::aes(group = Operator, col = Operator), linewidth = 1) +
-    ggplot2::geom_point(ggplot2::aes(fill = Operator), shape = 21, size = 4) +
-    ggplot2::scale_y_continuous(name = "Average", breaks = yBreaks, limits = yLimits) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-
-  if (!Type3)
-    p <- p + ggplot2::theme(legend.position = 'right')
-
-  plot$plotObject <- p
-
-  if (ggPlot)
-    return(p)
-  else
-    return(plot)
-}
-
-.gaugeScatterPlotOperators <- function(jaspResults, dataset, measurements, parts, operators, options, ready) {
-
-  singleEmptyPlot <- createJaspPlot(title = gettext("Scatterplot of operator vs operator"))
-  singleEmptyPlot$dependOn(c("scatterPlot", "scatterPlotFitLine", "scatterPlotOriginLine", "gaugeRRmethod", "report"))
-
-  if (!ready)
-    return(singleEmptyPlot)
-
-  operatorVector <- as.character(unique(dataset[[operators]]))
-  len <- length(operatorVector)
-
-  if (len < 2) {
-    singleEmptyPlot$setError(gettext("Cannot plot scatterplot for less than 2 operators."))
-    return(singleEmptyPlot)
-  }else{
-    singlePlot <- createJaspPlot(title = gettextf("Scatterplot of operator  %1$s vs operator %2$s", operatorVector[1], operatorVector[2]))
-    singlePlot$dependOn(c("scatterPlot", "scatterPlotFitLine", "scatterPlotOriginLine", "gaugeRRmethod", "report"))
-    operatorSplit <- split.data.frame(dataset, dataset[operators])
-    nparts <- length(unique(subset(dataset, dataset[operators] == operatorVector[1])[[parts]]))
-    for (op in operatorVector) {
-      if (length(unique(subset(dataset, dataset[operators] == op)[[parts]])) != nparts) {
-        singlePlot$setError(gettext("Operators measured different number of parts."))
-        return(singlePlot)
-      }
-    }
-    if (len == 2) {
-      singlePlot$plotObject <- .singleScatterPlot(operator1 = operatorVector[1], operator2 = operatorVector[2],
-                                                  data = operatorSplit, options = options, measurements = measurements)
-      return(singlePlot)
-    }else{
-      matrixPlot <- createJaspPlot(title = gettext("Matrix plot for operators"), width = 700, height = 700)
-      matrixPlot$dependOn(c("scatterPlot", "report"))
-      plotMat <- matrix(list(), len, len)
-      for (row in 1:len) {
-        for (col in 1:len) {
-          if (row >= col) {
-            plotMat[[row, col]] <- ggplot2::ggplot() + ggplot2::theme_void()
-          }else{
-            plotMat[[row, col]] <- .singleScatterPlot(operator1 = operatorVector[row], operator2 = operatorVector[col],
-                                                      data = operatorSplit, options = options, measurements = measurements, axisLabels = FALSE)
-          }
-        }
-      }
-      if (!is.na(as.numeric(operatorVector[1])) | nchar(operatorVector[1]) == 1){
-        labels <- paste(operators, operatorVector)
-      }else{
-        labels <- operatorVector
-      }
-      p <- jaspGraphs::ggMatrixPlot(plotMat, leftLabels = labels, topLabels = labels)
-      matrixPlot$plotObject <- p
-      return(matrixPlot)
-    }
-  }
-}
-
-.singleScatterPlot <- function(operator1, operator2, data, options, measurements, axisLabels = T) {
-  df <- data.frame(Operator1 = rowMeans(data[[operator1]][measurements]), Operator2 = rowMeans(data[[operator2]][measurements]))
-  if (axisLabels) {
-    xlab <- paste("Operator", operator2)
-    ylab <- paste("Operator", operator1)
-  }else{
-    xlab <- ylab <- ggplot2::element_blank()
-  }
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(df$Operator1)
-  xBreaks <- jaspGraphs::getPrettyAxisBreaks(df$Operator2)
-  p <- ggplot2::ggplot(data = df, ggplot2::aes(x = Operator2, y = Operator1)) +
-    jaspGraphs::geom_point() + ggplot2::scale_x_continuous(name = xlab, breaks = xBreaks, limits = range(c(xBreaks, df$Operator2))) +
-    ggplot2::scale_y_continuous(name = ylab, breaks = yBreaks, limits = range(c(yBreaks, df$Operator1))) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
-  if (options[["scatterPlotFitLine"]])
-    p <- p + ggplot2::geom_smooth(method = "lm", se = FALSE)
-  if (options[["scatterPlotOriginLine"]])
-    p <- p + ggplot2::geom_abline(col = "gray", linetype = "dashed")
-
-  return(p)
-}
-
-.gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE) {
-  sources <- gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-part'))
-  if (!all(is.na(percentToleranceValues))) {
-    references <- gettextf(c('%% Contribution', '%% Study variation', '%% Tolerance'))
-    values <- c(percentContributionValues, studyVariationValues, percentToleranceValues)
-  } else {
-    references <- gettextf(c('%% Contribution', '%% Study Variation'))
-    values <- c(percentContributionValues, studyVariationValues)
-  }
-  plotframe <- data.frame(source = rep(sources, length(references)),
-                          reference = rep(references, each = 4),
-                          value = values)
-  plotframe$source <- factor(plotframe$source, levels = sources)
-  yBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, plotframe$value))
-
-
-  if (Type3)
-    plotframe <- subset(plotframe, source != "Reprod")
-
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_bar(data = plotframe, mapping = ggplot2::aes(fill =  reference,  y = value, x = source),
-                      position="dodge", stat = "identity") +
-    jaspGraphs::themeJaspRaw() +
-    jaspGraphs::geom_rangeframe() +
-    ggplot2::theme(legend.position = 'right', legend.title = ggplot2::element_blank()) +
-    ggplot2::xlab(NULL) +
-    ggplot2::scale_y_continuous(name = "Percent", breaks = yBreaks, limits = range(c(yBreaks, plotframe$value)))
-  return(p)
-}
-
-.gaugeNumberDistinctCategories <- function(sdPart, sdGauge) {
-  nCategories <- (sdPart / sdGauge) * 1.41
-  if (nCategories < 1)
-    nCategories <- 1
-  return(as.integer(nCategories))
-}
-
-.ssPart <- function(dataset, operators, parts, measurements){
-  nOperator <- length(unique(dataset[[operators]]))
-  nReplicates <- table(dataset[parts])[1] / nOperator
-  grandMean <- mean(dataset[[measurements]])
-  partVector <- as.character(unique(dataset[[parts]]))
-  SS <- 0
-  for(part in partVector){
-    dataPerPart <- subset(dataset, dataset[parts] == part)
-    meanPerPart <- mean(dataPerPart[[measurements]])
-    SS <- SS + (meanPerPart - grandMean)^2
-  }
-  SS <- nOperator * nReplicates * SS
-  return(as.vector(SS))
-}
-
-
-.ssRepWithInteraction <- function(dataset, operators, parts, measurements){
-  operatorVector <- as.character(unique(dataset[[operators]]))
-  partVector <- as.character(unique(dataset[[parts]]))
-  SS <- 0
-
-  if (length(operatorVector) == 1) {
-    for(part in partVector){
-      partDataPerOP <- subset(dataset, dataset[parts] == part)
-      meanPartPerOP <- mean(partDataPerOP[[measurements]])
-      SS <- SS + sum((partDataPerOP[[measurements]] - meanPartPerOP)^2)
-    }
-  } else {
-    for(op in operatorVector){
-      dataPerOP <- subset(dataset, dataset[operators] == op)
-      for(part in partVector){
-        partDataPerOP <- subset(dataPerOP, dataPerOP[parts] == part)
-        meanPartPerOP <- mean(partDataPerOP[[measurements]])
-        SS <- SS + sum((partDataPerOP[[measurements]] - meanPartPerOP)^2)
-      }
-    }
-  }
-  return(SS)
-}
-
-
-.ssTotal <- function(dataset, operators, parts, measurements){
-  grandMean <- mean(dataset[[measurements]])
-  SS <- sum((dataset[[measurements]] - grandMean)^2)
-  return(SS)
-}
-
-.dfGaugeCrossed <- function(dataset, operators, parts, measurements){
-  nParts <- length(unique(dataset[[parts]]))
-  nOperators <- length(unique(dataset[[operators]]))
-  nReplicates <- as.vector(table(dataset[parts])[1] / nOperators)
-  dfList <- list(dfPart          = nParts - 1,
-                 dfOperator      = nOperators - 1,
-                 dfPartXOperator = (nParts - 1) * (nOperators - 1),
-                 dfRepeat        = nParts * nOperators * (nReplicates - 1),
-                 dfTotal         = (nParts * nOperators * nReplicates) - 1)
-  return(dfList)
-}
-
-.gaugeCrossedVarComps <- function(dataset, operators, parts, measurements, msPart, msOperator, msRep, msInteraction = ""){
-  nParts <- length(unique(dataset[[parts]]))
-  nOperators <- length(unique(dataset[[operators]]))
-  nReplicates <- as.vector(table(dataset[parts])[1] / nOperators)
-  repeatability <- msRep
-  if (msInteraction != ""){
-    operator <- (msOperator - msInteraction) / (nParts * nReplicates)
-    interaction <- (msInteraction - msRep) / nReplicates
-    part <- (msPart - msInteraction) / (nOperators * nReplicates)
-    reprod <- operator + interaction
-  } else {
-    operator <- (msOperator - msRep) / (nParts * nReplicates)
-    part <- (msPart - msRep) / (nOperators * nReplicates)
-    reprod <- operator
-  }
-  operator <- max(0, operator)
-  part <- max(0, part)
-  reprod <- max(0, reprod)
-  totalGauge <- repeatability + reprod
-  totalVar <- totalGauge + part
-  varcompList <- list(repeatability = repeatability,
-                      operator      = operator,
-                      part          = part,
-                      reprod        = reprod,
-                      totalGauge    = totalGauge,
-                      totalVar      = totalVar)
-  if (msInteraction != ""){
-    varcompList[["interaction"]] <- interaction
-  }
-  for (i in 1:length(varcompList)){
-    if (varcompList[[i]] < 0){
-      varcompList[[i]] <- 0
-    }
-  }
-  return(varcompList)
-}
-
-.gaugeCrossedVarCompsSingleOP <- function(dataset, operators, parts, measurements, msPart, msRep){
-  nParts <- length(unique(dataset[[parts]]))
-  nOperators <- length(unique(dataset[[operators]]))
-  nReplicates <- length(dataset[[measurements]]) / nParts
-  repeatability <- msRep
-  totalGauge <- repeatability
-  part <- (msPart - msRep) / (nOperators * nReplicates); if (part < 0) part <- 0 # correct for zero part-part variance.
-  totalVar <- totalGauge + part
-  varcompList <- list(repeatability = repeatability,
-                      part          = part,
-                      totalGauge    = totalGauge,
-                      totalVar      = totalVar)
-  return(varcompList)
-}
-
-.checkIfCrossed <- function(dataset, operators, parts){
-  tab <- table(dataset[[operators]], dataset[[parts]])
-  if (any(tab == 0))
-    return(FALSE) # check that all operators measured every part
-  if (!all(tab == tab[1, 1]))
-    return(FALSE) # check that number of measurements is equal across part x operator combinations
-  return(TRUE)
-}
-.trafficplot <- function(StudyVar = "", ToleranceUsed = FALSE, ToleranceVar = "", options, ready, Xlab.StudySD = "", Xlab.Tol = "", ggPlot = FALSE) {
-
-  if (!ready)
-    return()
-
-  Plot <- createJaspPlot(width = 1000)
-
-  mat <- data.frame(
-    x = rep(c(70,20,10),2),
-    Yes = c(rep('A',3), rep("B",3)),
-    fill = rep(c("G","R","Y"),2)
-  )
-
-  if (StudyVar == "" | ToleranceVar == "" | is.na(StudyVar) | is.na(ToleranceVar)) {
-    plotObject <-  ggplot2::ggplot() + ggplot2::theme_void() + ggplot2::annotate("text", x = 0.5, y = 0.5, label = gettext("Error: Gauge study failed. Could not create traffic light chart."))
-    Plot$plotObject <- plotObject
-    return(if (ggPlot) plotObject else Plot)
-  }
-
-  if (StudyVar >= 100) {StudyVar = 100}
-  if (ToleranceVar >= 100) {ToleranceVar = 100}
-
-  p1 <- ggplot2::ggplot(mat[c(1:3),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
-    ggplot2::geom_bar(stat = "identity") +
-    ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13'))) +
-    ggplot2::geom_vline(xintercept = StudyVar) +
-    jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15)) +
-    ggplot2::scale_y_discrete(name = NULL) +
-    ggplot2::theme(legend.position="none",
-                   axis.text.y = ggplot2::element_blank(),
-                   axis.ticks.y = ggplot2::element_blank(),
-                   axis.title.y = ggplot2::element_blank()) +
-    ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the process variation") +
-    ggplot2::annotate("text", x = StudyVar + 5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", StudyVar), "%"))
-
-  if (Xlab.StudySD != "")
-    p1 <- p1 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.StudySD))
-
-
-  if (ToleranceUsed){
-    p2 <- ggplot2::ggplot(mat[c(4:6),], ggplot2::aes(x = x, y = Yes, fill = fill)) +
-      ggplot2::geom_bar(stat = "identity") +
-      ggplot2::scale_fill_manual(values= rev(c('#008450','#EFB700', '#B81D13')))+
-      ggplot2::geom_vline(xintercept = ToleranceVar) +
-      jaspGraphs::geom_rangeframe() +
-      jaspGraphs::themeJaspRaw(fontsize = jaspGraphs::setGraphOption("fontsize", 15)) +
-      ggplot2::theme(legend.position="none",
-                     axis.text.y = ggplot2::element_blank(),
-                     axis.ticks.y = ggplot2::element_blank(),
-                     axis.title.y = ggplot2::element_blank()) +
-      ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = "Percent measurement system variation of the tolerance") +
-      ggplot2::annotate("text", x = ToleranceVar + 5, y = 1.52, size = 5, label = paste0(gettextf("%.2f", ToleranceVar), "%"))
-
-    if (Xlab.Tol != "")
-      p2 <- p2 + ggplot2::scale_x_continuous(breaks = c(0,10,30,100), labels = c("0%","10%","30%","100%"), name = gettext(Xlab.Tol))
-
-    p3 <- jaspGraphs::ggMatrixPlot(plotList = list(p2, p1), layout = matrix(2:1, 2))
-    Plot$plotObject <- p3
-
-    if (!ggPlot)
-      return(Plot)
-    else
-      return(list(p1 = p2, p2 = p1))
-  } else {
-
-    Plot$plotObject <- p1
-
-    if (!ggPlot)
-      return(Plot)
-    else
-      return(p1)
-  }
-}
+context("[Quality Control] Gauge r&R")
+.numDecimals <- 2
+
+# Long format ####
+
+## Default settings ####
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$operatorLongFormat <- "Operators"
+options$partLongFormat <- "Parts"
+options$measurementLongFormat <- "Dm"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "randomEffect"
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
+
+test_that("LF1.1 Default settings - Variance components table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.43, "Total gauge r&amp;R", 0.157929724596391, 1.22, "Repeatability",
+                                      0.134544159544159, 0.21, "Reproducibility", 0.0233855650522318,
+                                      0.21, "Operators", 0.0233855650522318, 98.57, "Part-to-part",
+                                      10.8561068903661, 100, "Total variation", 11.0140366149625
+                                 ))
+})
+
+test_that("LF1.2 Default settings - Gauge evaluation table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.397403729972922, 11.97, 23.84, "Total gauge r&amp;R", 2.38442237983753,
+                                      0.36680261659939, 11.05, 22.01, "Repeatability", 2.20081569959634,
+                                      0.15292339602635, 4.61, 9.18, "Reproducibility", 0.917540376158099,
+                                      0.15292339602635, 4.61, 9.18, "Operators", 0.917540376158099,
+                                      3.29486067844547, 99.28, 197.69, "Part-to-part", 19.7691640706728,
+                                      3.31874021504584, 100, 199.12, "Total variation", 19.9124412902751
+                                 ))
+})
+
+test_that("LF1.3 Default settings - Components of variation plot matches", {
+  plotName <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_VarCompGraph"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "1_components-of-variation")
+})
+
+test_that("LF1.4 Default settings - Two-way ANOVA table with interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 622.789783889979, 97.8395061728395, 1.41581280737464e-20, 880.555555555556,
+                                      "Parts", 2, 5.32220039292731, 0.836111111111114, 0.0152789978971193,
+                                      1.67222222222223, "Operators", 18, 1.22946859903382, 0.157098765432099,
+                                      0.268355463232599, 2.82777777777778, "Parts  *  Operators",
+                                      60, 0.127777777777778, 7.66666666666667, "Repeatability", 89,
+                                      892.722222222222, "Total"))
+})
+
+test_that("LF1.5 Default settings - Two-way ANOVA table without interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 727.192518087174, 97.8395061728395, 2.19585066080532e-71, 880.555555555556,
+                                      "Parts", 2, 6.21439915299104, 0.836111111111114, 0.00313130866789578,
+                                      1.67222222222223, "Operators", 78, 0.134544159544159, 10.4944444444444,
+                                      "Repeatability", 89, 892.722222222222, "Total"))
+})
+
+test_that("LF1.6 Default settings - Part by operator interaction plot matches", {
+  plotName <- results[["results"]][["gaugeByInteraction"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "1_part-by-operator-interaction")
+})
+
+test_that("LF1.7 Default settings - Measurements by operator plot matches", {
+  plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "1_measurements-by-operator")
+})
+
+test_that("LF1.8 Default settings - Measurements by part plot matches", {
+  plotName <- results[["results"]][["gaugeByPart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "1_measurements-by-part")
+})
+
+test_that("LF1.9 Default settings - Matrix plot for operators matches", {
+  plotName <- results[["results"]][["gaugeScatterOperators"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "1_matrix-plot-for-operators")
+})
+
+test_that("LF1.10 Default settings - Range chart by operator plot matches", {
+  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "1_range-chart-by-operator")
+})
+
+test_that("LF1.11 Default settings - Test results for range chart table results match", {
+  table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("No test violations occurred."))
+})
+
+test_that("LF1.12 Default settings - Traffic plot matches", {
+  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "1_traffic-plot")
+})
+
+test_that("LF1.13 Default settings - Average chart by operator plot matches", {
+  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "1_average-chart-by-operator")
+})
+
+test_that("LF1.14 Default settings - Test results for x-bar chart table results match", {
+  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Operator A", "Point 1", "", "Point 2", "", "Point 3", "", "Point 4",
+                                      "", "Point 5", "", "Point 6", "", "Point 7", "", "Point 8",
+                                      "", "Point 9", "", "Point 10", "Operator B", "Point 1", "",
+                                      "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "",
+                                      "Point 6", "", "Point 7", "", "Point 8", "", "Point 9", "",
+                                      "Point 10", "Operator C", "Point 1", "", "Point 2", "", "Point 3",
+                                      "", "Point 4", "", "Point 5", "", "Point 6", "", "Point 7",
+                                      "", "Point 8", "", "Point 9", "", "Point 10"))
+})
+
+## Historical std. dev ####
+
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$operatorLongFormat <- "Operators"
+options$partLongFormat <- "Parts"
+options$measurementLongFormat <- "Dm"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "randomEffect"
+options$processVariationReference <- "historicalSd"
+options$historicalSdValue <- 3
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
+
+test_that("LF2.1 Historical std. dev. - Variance components table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.75, "Total gauge r&amp;R", 0.157929724596391, 1.49, "Repeatability",
+                                      0.134544159544159, 0.26, "Reproducibility", 0.0233855650522318,
+                                      0.26, "Operators", 0.0233855650522318, 98.25, "Part-to-part",
+                                      8.84207027540361, 100, "Total variation", 9))
+})
+
+test_that("LF2.2 Historical std. dev. - Gauge evaluation table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.397403729972922, 13.25, 23.84, "Total gauge r&amp;R", 2.38442237983753,
+                                      0.36680261659939, 12.23, 22.01, "Repeatability", 2.20081569959634,
+                                      0.15292339602635, 5.1, 9.18, "Reproducibility", 0.917540376158099,
+                                      0.15292339602635, 5.1, 9.18, "Operators", 0.917540376158099,
+                                      2.97356188356718, 99.12, 178.41, "Part-to-part", 17.8413713014031,
+                                      3, 100, 180, "Total variation", 18))
+})
+
+test_that("LF2.3 Historical std. dev. - Components of variation plot matches", {
+  plotName <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_VarCompGraph"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "2_components-of-variation")
+})
+
+test_that("LF2.4 Historical std. dev. - Two-way ANOVA table with interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 622.789783889979, 97.8395061728395, 1.41581280737464e-20, 880.555555555556,
+                                      "Parts", 2, 5.32220039292731, 0.836111111111114, 0.0152789978971193,
+                                      1.67222222222223, "Operators", 18, 1.22946859903382, 0.157098765432099,
+                                      0.268355463232599, 2.82777777777778, "Parts  *  Operators",
+                                      60, 0.127777777777778, 7.66666666666667, "Repeatability", 89,
+                                      892.722222222222, "Total"))
+})
+
+test_that("LF2.5 Historical std. dev. - Two-way ANOVA table without interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 727.192518087174, 97.8395061728395, 2.19585066080532e-71, 880.555555555556,
+                                      "Parts", 2, 6.21439915299104, 0.836111111111114, 0.00313130866789578,
+                                      1.67222222222223, "Operators", 78, 0.134544159544159, 10.4944444444444,
+                                      "Repeatability", 89, 892.722222222222, "Total"))
+})
+
+test_that("LF2.6 Historical std. dev. - Part by operator interaction plot matches", {
+  plotName <- results[["results"]][["gaugeByInteraction"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "2_part-by-operator-interaction")
+})
+
+test_that("LF2.7 Historical std. dev. - Measurements by operator plot matches", {
+  plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "2_measurements-by-operator")
+})
+
+test_that("LF2.8 Historical std. dev. - Measurements by part plot matches", {
+  plotName <- results[["results"]][["gaugeByPart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "2_measurements-by-part")
+})
+
+test_that("LF2.9 Historical std. dev. - Matrix plot for operators matches", {
+  plotName <- results[["results"]][["gaugeScatterOperators"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "2_matrix-plot-for-operators")
+})
+
+test_that("LF2.10 Historical std. dev. - Range chart by operator plot matches", {
+  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "2_range-chart-by-operator")
+})
+
+test_that("LF2.11 Historical std. dev. - Test results for range chart table results match", {
+  table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("No test violations occurred."))
+})
+
+test_that("LF2.12 Historical std. dev. - Traffic plot matches", {
+  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "2_traffic-plot")
+})
+
+test_that("LF2.13 Historical std. dev. - Average chart by operator plot matches", {
+  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "2_average-chart-by-operator")
+})
+
+test_that("LF2.14 Historical std. dev. - Test results for x-bar chart table results match", {
+  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Operator A", "Point 1", "", "Point 2", "", "Point 3", "", "Point 4",
+                                      "", "Point 5", "", "Point 6", "", "Point 7", "", "Point 8",
+                                      "", "Point 9", "", "Point 10", "Operator B", "Point 1", "",
+                                      "Point 2", "", "Point 3", "", "Point 4", "", "Point 5", "",
+                                      "Point 6", "", "Point 7", "", "Point 8", "", "Point 9", "",
+                                      "Point 10", "Operator C", "Point 1", "", "Point 2", "", "Point 3",
+                                      "", "Point 4", "", "Point 5", "", "Point 6", "", "Point 7",
+                                      "", "Point 8", "", "Point 9", "", "Point 10"))
+})
+
+## Fixed effects model ####
+
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$operatorLongFormat <- "Operators"
+options$partLongFormat <- "Parts"
+options$measurementLongFormat <- "Dm"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "fixedEffect"
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
+
+test_that("LF3.1 Fixed effect ANOVA - Two-way ANOVA table with interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 765.700483091787, 97.8395061728395, 2.22178519889191e-21, 880.555555555556,
+                                      "Parts", 2, 6.54347826086958, 0.836111111111114, 0.0073155788200197,
+                                      1.67222222222223, "Operators", 18, 1.22946859903382, 0.157098765432099,
+                                      0.268355463232599, 2.82777777777778, "Parts  *  Operators",
+                                      60, 0.127777777777778, 7.66666666666667, "Repeatability", 89,
+                                      892.722222222222, "Total"))
+})
+
+test_that("LF3.2 Fixed effect ANOVA - Two-way ANOVA table without interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 727.192518087174, 97.8395061728395, 2.19585066080532e-71, 880.555555555556,
+                                      "Parts", 2, 6.21439915299104, 0.836111111111114, 0.00313130866789578,
+                                      1.67222222222223, "Operators", 78, 0.134544159544159, 10.4944444444444,
+                                      "Repeatability", 89, 892.722222222222, "Total"))
+})
+
+## Type 3 study ####
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$partLongFormat <- "Parts"
+options$measurementLongFormat <- "Dm"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "randomEffect"
+options$type3 <- TRUE
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
+
+
+test_that("LF4.1 Type 3 study - Variance components table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.38, "Total gauge r&amp;R", 0.152083333333333, 1.38, "Repeatability",
+                                      0.152083333333333, 98.62, "Part-to-part", 10.8541580932785,
+                                      100, "Total variation", 11.0062414266118))
+})
+
+test_that("LF4.2 Type 3 study - Gauge evaluation table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.389978631893253, 11.75, 23.4, "Total gauge r&amp;R", 2.33987179135952,
+                                      0.389978631893253, 11.75, 23.4, "Repeatability", 2.33987179135952,
+                                      3.29456493232088, 99.31, 197.67, "Part-to-part", 19.7673895939253,
+                                      3.3175655873866, 100, 199.05, "Total variation", 19.9053935243196
+                                 ))
+})
+
+test_that("LF4.3 Type 3 study - Components of variation plot matches", {
+  plotName <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_VarCompGraph"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "4_components-of-variation")
+})
+
+test_that("LF4.4 Type 3 study - One-way ANOVA table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 643.328259766616, 97.8395061728395, 9.59874187907134e-71, 880.555555555556,
+                                      "Parts", 80, 0.152083333333333, 12.1666666666667, "Repeatability",
+                                      89, 892.722222222222, "Total"))
+})
+
+test_that("LF4.5 Type 3 study - Part by operator interaction plot matches", {
+  plotName <- results[["results"]][["gaugeByInteraction"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "4_part-by-operator-interaction")
+})
+
+test_that("LF4.6 Type 3 study - Measurements by operator plot matches", {
+  plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "4_measurements-by-operator")
+})
+
+test_that("LF4.7 Type 3 study - Measurements by part plot matches", {
+  plotName <- results[["results"]][["gaugeByPart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "4_measurements-by-part")
+})
+
+test_that("LF4.9 Type 3 study - Range chart by operator plot matches", {
+  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "4_range-chart-by-operator")
+})
+
+test_that("LF4.10 Type 3 study - Test results for range chart table results match", {
+  table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "Point 10", "Point 8", "", "", "Point 9"))
+})
+
+test_that("LF4.11 Type 3 study - traffic plot matches", {
+  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "4_traffic-plot")
+})
+
+test_that("LF4.12 Type 3 study - Average chart by operator plot matches", {
+  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "4_average-chart-by-operator")
+})
+
+test_that("LF4.13 Type 3 study - Test results for x-bar chart table results match", {
+  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "Point 1", "", "Point 2", "", "Point 3", "", "Point 4", "",
+                                      "Point 5", "", "Point 6", "", "Point 7", "", "Point 8", "",
+                                      "Point 9", "", "Point 10"))
+})
+
+## Report ####
+
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$operatorLongFormat <- "Operators"
+options$partLongFormat <- "Parts"
+options$measurementLongFormat <- "Dm"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "randomEffect"
+options$report <- TRUE
+options$reportRChartByOperator <- TRUE
+options$reportMeasurementsByOperatorPlot <- TRUE
+options$reportAverageChartByOperator <- TRUE
+options$reportPartByOperatorPlot <- TRUE
+options$reportGaugeNameText <- "Name of the gauge study"
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_long.csv", options)
+
+
+
+test_that("LF5. Gauge r&R report plot matches", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "5_gauge-r-r-report")
+})
+
+# Wide format ####
+
+## Default settings ####
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$operatorWideFormat <- "Operator"
+options$partWideFormat <- "Part"
+options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
+options$dataFormat <- "wideFormat"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "randomEffect"
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
+
+test_that("WF1.1 Default Settings - Variance components table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(22.56, "Total gauge r&amp;R", 0.848225424491385, 22.54, "Repeatability",
+                                      0.847522164107094, 0.02, "Reproducibility", 0.000703260384290564,
+                                      0.02, "Operator", 0.000703260384290564, 77.44, "Part-to-part",
+                                      2.91190554000432, 100, "Total variation", 3.7601309644957))
+})
+
+test_that("WF1.2 Default Settings - Gauge evaluation table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.920991544201892, 47.5, 55.26, "Total gauge r&amp;R", 5.52594926521135,
+                                      0.920609669787959, 47.48, 55.24, "Repeatability", 5.52365801872775,
+                                      0.0265190570022873, 1.37, 1.59, "Reproducibility", 0.159114342013724,
+                                      0.0265190570022873, 1.37, 1.59, "Operator", 0.159114342013724,
+                                      1.70643064318604, 88, 102.39, "Part-to-part", 10.2385838591162,
+                                      1.93910571256332, 100, 116.35, "Total variation", 11.6346342753799
+                                 ))
+})
+
+test_that("WF1.3 Default Settings - Components of variation plot matches", {
+  plotName <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_VarCompGraph"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF1_components-of-variation")
+})
+
+test_that("WF1.4 Default Settings - Two-way ANOVA table with interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 49.6115781426449, 27.0546720241459, 7.05242347812414e-11, 243.492048217313,
+                                      "Part", 2, 1.59283423428892, 0.868619975635811, 0.23071349585535,
+                                      1.73723995127162, "Operator", 18, 0.581263589632298, 0.545329800764601,
+                                      0.89932032121579, 9.81593641376281, "Part  *  Operator", 60,
+                                      0.938179873109842, 56.2907923865905, "Repeatability", 89, 311.336016968938,
+                                      "Total"))
+})
+
+test_that("WF1.5 Default Settings - Two-way ANOVA table without interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 31.9220820055477, 27.0546720241459, 1.20668982102463e-22, 243.492048217313,
+                                      "Part", 2, 1.02489352187142, 0.868619975635811, 0.363615551786533,
+                                      1.73723995127162, "Operator", 78, 0.847522164107094, 66.1067288003534,
+                                      "Repeatability", 89, 311.336016968938, "Total"))
+})
+
+test_that("WF1.6 Default Settings - Part by operator interaction plot matches", {
+  plotName <- results[["results"]][["gaugeByInteraction"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF1_part-by-operator-interaction")
+})
+
+test_that("WF1.7 Default Settings - Measurements by operator plot matches", {
+  plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF1_measurements-by-operator")
+})
+
+test_that("WF1.8 Default Settings - Measurements by part plot matches", {
+  plotName <- results[["results"]][["gaugeByPart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF1_measurements-by-part")
+})
+
+test_that("WF1.9 Default Settings - Matrix plot for operators matches", {
+  plotName <- results[["results"]][["gaugeScatterOperators"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF1_matrix-plot-for-operators")
+})
+
+test_that("WF1.10 Default Settings - Range chart by operator plot matches", {
+  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF1_range-chart-by-operator")
+})
+
+test_that("WF1.11 Default Settings - Test results for range chart table results match", {
+  table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("C", "Point 10"))
+})
+
+test_that("WF1.12 Default Settings - Traffic plot matches", {
+  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF1_traffic-plot")
+})
+
+test_that("WF1.13 Default Settings - Average chart by operator plot matches", {
+  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF1_average-chart-by-operator")
+})
+
+test_that("WF1.14 Default Settings - Test results for x-bar chart table results match", {
+  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("A", "Point 1", "", "Point 5", "", "Point 8", "", "Point 10",
+                                      "B", "Point 1", "", "Point 5", "", "Point 8", "", "Point 10",
+                                      "C", "Point 1", "", "Point 3", "", "Point 5", "", "Point 10"
+                                 ))
+})
+
+## Historical std. dev ####
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$operatorWideFormat <- "Operator"
+options$partWideFormat <- "Part"
+options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
+options$dataFormat <- "wideFormat"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "randomEffect"
+options$processVariationReference <- "historicalSd"
+options$historicalSdValue <- 3
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
+
+test_that("WF2.1 Historical std. dev. - Variance components table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9.42, "Total gauge r&amp;R", 0.848225424491385, 9.42, "Repeatability",
+                                      0.847522164107094, 0.01, "Reproducibility", 0.000703260384290564,
+                                      0.01, "Operator", 0.000703260384290564, 90.58, "Part-to-part",
+                                      8.15177457550861, 100, "Total variation", 9))
+})
+
+test_that("WF2.2 Historical std. dev. - Gauge evaluation table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.920991544201892, 30.7, 55.26, "Total gauge r&amp;R", 5.52594926521135,
+                                      0.920609669787959, 30.69, 55.24, "Repeatability", 5.52365801872775,
+                                      0.0265190570022873, 0.88, 1.59, "Reproducibility", 0.159114342013724,
+                                      0.0265190570022873, 0.88, 1.59, "Operator", 0.159114342013724,
+                                      2.85513127115175, 95.17, 171.31, "Part-to-part", 17.1307876269105,
+                                      3, 100, 180, "Total variation", 18))
+})
+
+test_that("WF2.3 Historical std. dev. - Components of variation plot matches", {
+  plotName <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_VarCompGraph"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF2_components-of-variation")
+})
+
+test_that("WF2.4 Historical std. dev. - -way ANOVA table with interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 49.6115781426449, 27.0546720241459, 7.05242347812414e-11, 243.492048217313,
+                                      "Part", 2, 1.59283423428892, 0.868619975635811, 0.23071349585535,
+                                      1.73723995127162, "Operator", 18, 0.581263589632298, 0.545329800764601,
+                                      0.89932032121579, 9.81593641376281, "Part  *  Operator", 60,
+                                      0.938179873109842, 56.2907923865905, "Repeatability", 89, 311.336016968938,
+                                      "Total"))
+})
+
+test_that("WF2.5 Historical std. dev. - Two-way ANOVA table without interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 31.9220820055477, 27.0546720241459, 1.20668982102463e-22, 243.492048217313,
+                                      "Part", 2, 1.02489352187142, 0.868619975635811, 0.363615551786533,
+                                      1.73723995127162, "Operator", 78, 0.847522164107094, 66.1067288003534,
+                                      "Repeatability", 89, 311.336016968938, "Total"))
+})
+
+test_that("WF2.6 Historical std. dev. - Part by operator interaction plot matches", {
+  plotName <- results[["results"]][["gaugeByInteraction"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF2_part-by-operator-interaction")
+})
+
+test_that("WF2.7 Historical std. dev. - Measurements by operator plot matches", {
+  plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF2_measurements-by-operator")
+})
+
+test_that("WF2.8 Historical std. dev. - Measurements by part plot matches", {
+  plotName <- results[["results"]][["gaugeByPart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF2_measurements-by-part")
+})
+
+test_that("WF2.9 Historical std. dev. - Matrix plot for operators matches", {
+  plotName <- results[["results"]][["gaugeScatterOperators"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF2_matrix-plot-for-operators")
+})
+
+test_that("WF2.10 Historical std. dev. - Range chart by operator plot matches", {
+  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF2_range-chart-by-operator")
+})
+
+test_that("WF2.11 Historical std. dev. - Test results for range chart table results match", {
+  table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("C", "Point 10"))
+})
+
+test_that("WF2.12 Historical std. dev. - Traffic plot matches", {
+  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF2_traffic-plot")
+})
+
+test_that("WF2.13 Historical std. dev. - Average chart by operator plot matches", {
+  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF2_average-chart-by-operator")
+})
+
+test_that("WF2.14 Historical std. dev. - Test results for x-bar chart table results match", {
+  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("A", "Point 1", "", "Point 5", "", "Point 8", "", "Point 10",
+                                      "B", "Point 1", "", "Point 5", "", "Point 8", "", "Point 10",
+                                      "C", "Point 1", "", "Point 3", "", "Point 5", "", "Point 10"
+                                 ))
+})
+
+## Fixed effects model ####
+
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$operatorWideFormat <- "Operator"
+options$partWideFormat <- "Part"
+options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
+options$dataFormat <- "wideFormat"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "fixedEffect"
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
+
+test_that("WF3.1 Fixed effct ANOVA - Two-way ANOVA table with interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 28.837403998517, 27.0546720241459, 6.66730220666189e-09, 243.492048217313,
+                                      "Part", 2, 0.925856544711989, 0.868619975635811, 0.41425774549038,
+                                      1.73723995127162, "Operator", 18, 0.581263589632298, 0.545329800764601,
+                                      0.89932032121579, 9.81593641376281, "Part  *  Operator", 60,
+                                      0.938179873109842, 56.2907923865905, "Repeatability", 89, 311.336016968938,
+                                      "Total"))
+})
+
+test_that("WF3.2 Fixed effct ANOVA - Two-way ANOVA table without interaction results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 31.9220820055477, 27.0546720241459, 1.20668982102463e-22, 243.492048217313,
+                                      "Part", 2, 1.02489352187142, 0.868619975635811, 0.363615551786533,
+                                      1.73723995127162, "Operator", 78, 0.847522164107094, 66.1067288003534,
+                                      "Repeatability", 89, 311.336016968938, "Total"))
+})
+
+## Type 3 study ####
+
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$partWideFormat <- "Part"
+options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
+options$dataFormat <- "wideFormat"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "randomEffect"
+options$type3 <- TRUE
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
+
+
+test_that("WF4.1 Type 3 study - Variance components table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(22.56, "Total gauge r&amp;R", 0.848049609395312, 22.56, "Repeatability",
+                                      0.848049609395312, 77.44, "Part-to-part", 2.91184693497229,
+                                      100, "Total variation", 3.7598965443676))
+})
+
+test_that("WF4.2 Type 3 study - Gauge evaluation table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_RRtable2"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.920896090444146, 47.49, 55.25, "Total gauge r&amp;R", 5.52537654266487,
+                                      0.920896090444146, 47.49, 55.25, "Repeatability", 5.52537654266487,
+                                      1.70641347128189, 88, 102.38, "Part-to-part", 10.2384808276913,
+                                      1.9390452661987, 100, 116.34, "Total variation", 11.6342715971922
+                                 ))
+})
+
+test_that("WF4.3 Type 3 study - Components of variation plot matches", {
+  plotName <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_VarCompGraph"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF4_components-of-variation")
+})
+
+test_that("WF4.4 Type 3 study - One-way ANOVA table results match", {
+  table <- results[["results"]][["gaugeANOVA"]][["collection"]][["gaugeANOVA_anovaTable1"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(9, 31.9022280352642, 27.0546720241459, 6.20007551605074e-23, 243.492048217313,
+                                      "Part", 80, 0.848049609395312, 67.843968751625, "Repeatability",
+                                      89, 311.336016968938, "Total"))
+})
+
+test_that("WF4.6 Type 3 study - Measurements by operator plot matches", {
+  plotName <- results[["results"]][["gaugeByOperator"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF4_measurements-by-operator")
+})
+
+test_that("WF4.7 Type 3 study - Measurements by part plot matches", {
+  plotName <- results[["results"]][["gaugeByPart"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF4_measurements-by-part")
+})
+
+test_that("WF4.9 Type 3 study - Range chart by operator plot matches", {
+  plotName <- results[["results"]][["rChart"]][["collection"]][["rChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF4_range-chart-by-operator")
+})
+
+test_that("WF4.10 Type 3 study - Test results for range chart table results match", {
+  table <- results[["results"]][["rChart"]][["collection"]][["rChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "Point 9", "", "Point 10"))
+})
+
+test_that("WF4.11 Type 3 study - Traffic plot matches", {
+  plotName <- results[["results"]][["trafficPlot"]][["collection"]][["trafficPlot_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF4_traffic-plot")
+})
+
+test_that("WF4.12 Type 3 study - Average chart by operator plot matches", {
+  plotName <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "WF4_average-chart-by-operator")
+})
+
+test_that("WF4.13 Type 3 study - Test results for x-bar chart table results match", {
+  table <- results[["results"]][["xBarChart"]][["collection"]][["xBarChart_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "Point 1", "Point 16", "", "Point 2", "Point 17", "", "Point 3",
+                                      "Point 18", "", "Point 9", "", "", "Point 13", "", "", "Point 14",
+                                      "", "", "Point 15", "", "", "Point 22", "", "", "Point 23",
+                                      "", "", "Point 28", "", "", "Point 29", "", "", "Point 30",
+                                      ""))
+})
+
+## Report ####
+
+options <- analysisOptions("msaGaugeRR")
+options$testSet <- "jaspDefault"
+options$operatorWideFormat <- "Operator"
+options$partWideFormat <- "Part"
+options$measurementsWideFormat <- list("Measurement1", "Measurement2", "Measurement3")
+options$dataFormat <- "wideFormat"
+options$tolerance <- TRUE
+options$toleranceValue <- 10
+options$rChart <- TRUE
+options$xBarChart <- TRUE
+options$scatterPlot <- TRUE
+options$scatterPlotFitLine <- TRUE
+options$scatterPlotOriginLine <- TRUE
+options$partMeasurementPlot <- TRUE
+options$partMeasurementPlotAllValues <- TRUE
+options$operatorMeasurementPlot <- TRUE
+options$partByOperatorMeasurementPlot <- TRUE
+options$trafficLightChart <- TRUE
+options$anovaModelType <- "randomEffect"
+options$report <- TRUE
+options$reportRChartByOperator <- TRUE
+options$reportMeasurementsByOperatorPlot <- TRUE
+options$reportAverageChartByOperator <- TRUE
+options$reportPartByOperatorPlot <- TRUE
+set.seed(1)
+results <- runAnalysis("msaGaugeRR", "datasets/msaGaugeRRCrossed/msaGaugeRRCrossed_wide.csv", options)
+
+test_that("WF5 - Gauge r&R report plot matches", {
+  plotName <- results[["results"]][["report"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "gauge-r-r-report")
+})
