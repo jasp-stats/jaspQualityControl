@@ -296,6 +296,18 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     }
 
     regressionFit <- lm(formula, data = dataset)
+
+    # For the ANOVA, if data are not coded, we want to treat all predictors as factors, unlike for the regression fit
+    anovaDataset <- dataset
+    if (length(continuousPredictors) > 0 && !identical(continuousPredictors, "")) {
+      for (contPred in continuousPredictors) {
+        anovaDataset[[contPred]] <- as.factor(anovaDataset[[contPred]])
+        # Set contrasts for the converted factors to match discretePredictors
+        contrasts(anovaDataset[[contPred]]) <- "contr.sum"
+      }
+    }
+    anovaRegressionFit <- lm(formula, data = anovaDataset)
+
     regressionFitCoded <- lm(formula, data = datasetCoded)
     regressionSummary <- summary(regressionFit)
     regressionSummaryCoded <- summary(regressionFitCoded)
@@ -349,7 +361,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       resultCoded[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFitCoded)
 
       ssType <- options[["sumOfSquaresType"]]
-      anovaFitData <- if (options[["squaredTermsCoded"]]) regressionFitCoded else regressionFit
+      anovaFitData <- if (options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") regressionFitCoded else anovaRegressionFit
       if (ssType == "type1") {
         anovaFit <- anova(anovaFitData)
       } else if (ssType == "type2") {
@@ -373,7 +385,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       resultCoded[["regression"]][["adjrsq"]] <- NA
       resultCoded[["regression"]][["predrsq"]] <- NA
 
-      anovaFitData <- if (options[["squaredTermsCoded"]]) regressionFitCoded else regressionFit
+      anovaFitData <- if (options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") regressionFitCoded else anovaRegressionFit
       anovaFit <- summary(aov(anovaFitData))[[1]]
       errorRow <- data.frame(Df = 0, SS = 0, MS = 0) # add an error row to keep the format consistent
       colnames(errorRow) <- colnames(anovaFit)
@@ -1377,14 +1389,10 @@ get_levels <- function(var, num_levels, dataset) {
     )
     tb$addRows(rows)
 
-    if (options[["sumOfSquaresType"]] == "type3" && length(options[["continuousFactorsFactorial"]]) >= 1) {
-      ssFootnote <- gettext("Type III sums of squares are selected and continuous factors are specified. Results might be misleading. Make sure factors should really be treated as continuous. ")
-    } else {
-      ssFootnote <- switch (options[["sumOfSquaresType"]],
-                              "type1" = gettext("Type I sums of squares."),
-                              "type2" = gettext("Type II sums of squares."),
-                              "type3" = gettext("Type III sums of squares."))
-    }
+    ssFootnote <- switch (options[["sumOfSquaresType"]],
+                          "type1" = gettext("Type I sums of squares."),
+                          "type2" = gettext("Type II sums of squares."),
+                          "type3" = gettext("Type III sums of squares."))
     tb$addFootnote(ssFootnote)
   }
 }
