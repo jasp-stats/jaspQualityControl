@@ -362,7 +362,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       resultCoded[["regression"]][["predrsq"]] <- .pred_r_squared(regressionFitCoded)
 
       ssType <- options[["sumOfSquaresType"]]
-      anovaFitData <- if (options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") regressionFitCoded else anovaRegressionFit
+      anovaFitData <- if ((options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") || options[["codeFactors"]]) regressionFitCoded else anovaRegressionFit
 
       if (ssType == "type1") {
         anovaFit <- anova(anovaFitData)
@@ -387,7 +387,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       resultCoded[["regression"]][["adjrsq"]] <- NA
       resultCoded[["regression"]][["predrsq"]] <- NA
 
-      anovaFitData <- if (options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") regressionFitCoded else anovaRegressionFit
+      anovaFitData <- if ((options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") || options[["codeFactors"]]) regressionFitCoded else anovaRegressionFit
       anovaFit <- summary(aov(anovaFitData))[[1]]
       errorRow <- data.frame(Df = 0, SS = 0, MS = 0) # add an error row to keep the format consistent
       colnames(errorRow) <- colnames(anovaFit)
