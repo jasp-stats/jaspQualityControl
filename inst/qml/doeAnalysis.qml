@@ -701,7 +701,7 @@ Form
 			name:							"sumOfSquaresType"
 			label:							qsTr("Sum of squares type")
 			id: 							sumOfSquaresType
-			indexDefaultValue:				(designType.currentValue == "factorialDesign" && continuousFactorsFactorial.count > 0) ? 1 : 2
+			indexDefaultValue:				2
 			values: [
 				{ label: qsTr("Type I"), value: "type1"},
 				{ label: qsTr("Type II"), value: "type2"},
