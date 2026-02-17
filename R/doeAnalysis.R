@@ -297,9 +297,10 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
     regressionFit <- lm(formula, data = dataset)
 
-    # For the ANOVA, if data are not coded, we want to treat all predictors as factors, unlike for the regression fit
+    # For the factorial design ANOVA, if data are not coded and, we want to treat all predictors as factors, unlike for the regression fit
     anovaDataset <- dataset
-    if (length(continuousPredictors) > 0 && !identical(continuousPredictors, "")) {
+    if (options[["designType"]] == "factorialDesign" && !options[["codeFactors"]] &&
+        length(continuousPredictors) > 0 && !identical(continuousPredictors, "")) {
       for (contPred in continuousPredictors) {
         anovaDataset[[contPred]] <- as.factor(anovaDataset[[contPred]])
         # Set contrasts for the converted factors to match discretePredictors
@@ -362,6 +363,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
       ssType <- options[["sumOfSquaresType"]]
       anovaFitData <- if (options[["squaredTermsCoded"]] && options[["designType"]] == "responseSurfaceDesign") regressionFitCoded else anovaRegressionFit
+
       if (ssType == "type1") {
         anovaFit <- anova(anovaFitData)
       } else if (ssType == "type2") {
