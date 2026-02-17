@@ -3139,7 +3139,7 @@ options <- analysisOptions("doeAnalysis")
 options$designType <- "responseSurfaceDesign"
 options$dependentResponseSurface <- "Result"
 options$continuousFactorsResponseSurface <- c("A", "B", "C", "D")
-options$codeFactors <- TRUE
+options$codeFactors <- FALSE
 options$codeFactorsMethod <- "manual"
 options$codeFactorsManualTable <- list(
   list(predictors = "A", lowValue = "-1", highValue = "1"),
@@ -3181,18 +3181,18 @@ test_that("31.1 Uncoded Squared Terms ANOVA table results match", {
 test_that("31.2 Uncoded Squared Terms Coded Coefficients table results match", {
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("(Intercept)", 103.801045518333, "", 1.16794507283658e-18, 3.48675363322034,
-                                      "(Intercept)", 29.7701118109866, "", "A", -1.62156990083333,
+                                 list("", 105.323017524167, "", 6.24968960727384e-19, 3.43184069533953,
+                                      "(Intercept)", 30.6899494685742, "", "A", -1.62156990083333,
                                       -6.4862796033333, 0.362872709933774, 1.74337681661017, "A",
-                                      -0.930131618926949, 1, "B", -1.24996135499999, -4.99984541999997,
-                                      0.481287340427568, 1.74337681661017, "B", -0.716977157830069,
-                                      1, "C", 1.19089089333333, 4.7635635733333, 0.502014598205835,
+                                      -0.930131618926949, 1, "B", -0.119598843777777, -7.17593062666664,
+                                      0.632635670262946, 0.246550713837693, "B", -0.48508820727451,
+                                      4.49999999999999, "C", 1.19089089333333, 4.7635635733333, 0.502014598205835,
                                       1.74337681661017, "C", 0.68309437293591, 1, "D", -0.480376499999993,
                                       -1.92150599999997, 0.785591679264418, 1.74337681661017, "D",
                                       -0.275543700835738, 1, "A^2", 1.54451910083333, 6.17807640333333,
                                       0.35435731472199, 1.63077968594997, "A^2", 0.947104697305334,
-                                      "", "B^2", 0.272010650833332, 1.08804260333333, 0.869124697680985,
-                                      1.63077968594997, "B^2", 0.166797914627493, "", "C^2", 0.845874313333332,
+                                      "", "B^2", 0.00120893622592593, 0.0725361735555556, 0.869124697680984,
+                                      0.00724790971533319, "B^2", 0.166797914627493, "", "C^2", 0.845874313333332,
                                       3.38349725333333, 0.609397684905526, 1.63077968594997, "C^2",
                                       0.51869318744953, "", "D^2", -2.71068382541667, -10.8427353016667,
                                       0.111328352752227, 1.63077968594997, "D^2", -1.66220112303989,
@@ -3386,4 +3386,161 @@ test_that("33.5 RSM analysis with nominal levels Model Summary table results mat
   table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.00551580589595602, 0, 0.222494175518657, 8.785007581405))
+})
+
+## Data Examples to verify output, Sums of squares and p-value match ####
+
+### Data example 1 ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- c("Strength")
+options$fixedFactorsFactorial <- c("Material")
+options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Material"),
+  list(components = "InjTemp"),
+  list(components = "InjPress"),
+  list(components = c("Material", "InjTemp")),
+  list(components = c("Material", "InjPress")),
+  list(components = c("InjPress", "InjTemp"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+
+
+test_that("ANOVA table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(61.4412169760555, 368.647301856333, 6, 6.02163462145317, 0.00885308674084683,
+                                      "Model", "", 367.52491531986, 3, "", "", "<unicode> Linear terms",
+                                      181.151435260225, 181.151435260225, 1, 17.7540063165417, 0.00226090333532432,
+                                      "<unicode> <unicode> Material", 73.7250318293204, 73.7250318293204,
+                                      1, 7.22552752013659, 0.024876494295309, "<unicode> <unicode> InjTemp",
+                                      112.648448230315, 112.648448230315, 1, 11.0402727892092, 0.00890208646409138,
+                                      "<unicode> <unicode> InjPress", "", 1.12238653647272, 3, "",
+                                      "", "<unicode> Interaction terms", 0.778094866011372, 0.778094866011372,
+                                      1, 0.0762583037014878, 0.788670012907783, "<unicode> <unicode> Material<unicode><unicode><unicode>InjTemp",
+                                      0.342200526962543, 0.342200526962543, 1, 0.033537853611204,
+                                      0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
+                                      0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
+                                      0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
+                                      10.2034116711698, 91.8307050405283, 9, "", "", "Error", "",
+                                      460.478006896861, 15, "", "", "Total"))
+})
+
+test_that("Coded Coefficients table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 29.633570586875, "", 3.71582056009637e-11, 0.798569489429763,
+                                      "(Intercept)", 37.1083180350849, "", "A", 3.364812729375, 6.72962545875,
+                                      0.00226090333532432, 0.798569489429763, "Material", 4.21355032206116,
+                                      1, "B", 2.146582048125, 4.29316409625, 0.024876494295309, 0.798569489429763,
+                                      "InjTemp", 2.68803413671341, 1, "C", 2.653399331875, 5.30679866375,
+                                      0.00890208646409137, 0.798569489429763, "InjPress", 3.32269059486573,
+                                      1, "AB", -0.220524214375001, -0.441048428750001, 0.788670012907782,
+                                      0.798569489429764, "Material<unicode>InjTemp", -0.276149060656538,
+                                      1, "AC", -0.146244770625, -0.29248954125, 0.858752480786647,
+                                      0.798569489429763, "Material<unicode>InjPress", -0.183133431167561,
+                                      1, "BC", 0.0114322556249987, 0.0228645112499974, 0.98889026948318,
+                                      0.798569489429763, "InjTemp<unicode>InjPress", 0.0143159183719405,
+                                      1))
+})
+
+test_that("Regression equation in Coded Units table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Strength = -4.38 <unicode> 6.52 A + 0.28 B + 0.07 C + 0.03 AB + 0 AC + 0 BC"
+                                 ))
+})
+
+test_that("Model Summary table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.667625439705684, 0.369719352330779, 0.80057526382341, 3.19427795771905
+                                 ))
+})
+
+
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- c("Strength")
+options$fixedFactorsFactorial <- c("Material")
+options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Material"),
+  list(components = "InjTemp"),
+  list(components = "InjPress"),
+  list(components = c("Material", "InjTemp")),
+  list(components = c("Material", "InjPress")),
+  list(components = c("InjPress", "InjTemp"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+
+test_that("ANOVA table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(61.4412169760555, 368.647301856333, 6, 6.02163462145317, 0.00885308674084683,
+                                      "Model", "", 367.52491531986, 3, "", "", "<unicode> Linear terms",
+                                      181.151435260225, 181.151435260225, 1, 17.7540063165417, 0.00226090333532432,
+                                      "<unicode> <unicode> Material", 73.7250318293204, 73.7250318293204,
+                                      1, 7.22552752013659, 0.024876494295309, "<unicode> <unicode> InjTemp",
+                                      112.648448230315, 112.648448230315, 1, 11.0402727892092, 0.00890208646409138,
+                                      "<unicode> <unicode> InjPress", "", 1.12238653647272, 3, "",
+                                      "", "<unicode> Interaction terms", 0.778094866011372, 0.778094866011372,
+                                      1, 0.0762583037014878, 0.788670012907783, "<unicode> <unicode> Material<unicode><unicode><unicode>InjTemp",
+                                      0.342200526962543, 0.342200526962543, 1, 0.033537853611204,
+                                      0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
+                                      0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
+                                      0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
+                                      10.2034116711698, 91.8307050405283, 9, "", "", "Error", "",
+                                      460.478006896861, 15, "", "", "Total"))
+})
+
+test_that("Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", -4.37814587750002, "", 0.891657355106339, 31.247556885468,
+                                      "(Intercept)", -0.140111621959672, "", "A1", -6.52334568520829,
+                                      -13.0466913704166, 0.537140590257635, 10.1676152659357, "Material1",
+                                      -0.641580696612634, 162.111111111113, "B", 0.2816380375, 4.2245705625,
+                                      0.424553064221281, 0.336706460868775, "InjTemp", 0.836449757374164,
+                                      9.99999999999987, "C", 0.0669973736666668, 5.02480302500001,
+                                      0.805010858794851, 0.263502536196682, "InjPress", 0.25425703537312,
+                                      153.111111111115, "A1B", 0.0294032285833329, 2.91091962974996,
+                                      0.788670012907786, 0.106475931923969, "Material1<unicode>InjTemp",
+                                      0.276149060656533, 162.111111111113, "A1C", 0.00389986055, 0.581079221950001,
+                                      0.858752480786647, 0.0212951863847937, "Material1<unicode>InjPress",
+                                      0.183133431167561, 162.111111111113, "BC", 4.06480199999987e-05,
+                                      0.0030486014999999, 0.988890269483179, 0.00283935818463916,
+                                      "InjTemp<unicode>InjPress", 0.0143159183719417, 9.99999999999987
+                                 ))
+})
+
+test_that("Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Formula1", "A1"))
+})
+
+test_that("Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Strength = -4.38 <unicode> 6.52 A1 + 0.28 B + 0.07 C + 0.03 A1B + 0 A1C + 0 BC"
+                                 ))
+})
+
+test_that("Model Summary table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.667625439705684, 0.369719352330778, 0.80057526382341, 3.19427795771906
+                                 ))
 })
