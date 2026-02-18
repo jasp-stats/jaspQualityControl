@@ -559,6 +559,8 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       coefNames <- if (options[["codeFactors"]]) termNamesCoded else termNames
     }
 
+    # Uncoded Formula
+
     coefFormula <- paste(ifelse(sign(coefs[-1,1])==1, " +", " \u2013"),
                          round(abs(coefs[-1,1]), .numDecimals),
                          coefNames[-1],
@@ -569,12 +571,23 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
                             round(coefs[1, 1], .numDecimals),
                             coefFormula)
 
+    # Coded Formula
+    coefFormulaCoded <- paste(ifelse(sign(coefsCoded[-1,1])==1, " +", " \u2013"),
+                         round(abs(coefsCoded[-1,1]), .numDecimals),
+                         coefNames[-1],
+                         collapse = "", sep = " ")
+
+
+    filledFormulaCoded <- paste0(dep, " = ",
+                            round(coefsCoded[1, 1], .numDecimals),
+                            coefFormulaCoded)
+
     result[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormula)
     jaspResults[[currentDependent]][["doeResult"]] <- createJaspState(result)
     jaspResults[[currentDependent]][["doeResult"]]$dependOn(options = .doeAnalysisBaseDependencies())
 
 
-    resultCoded[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormula)
+    resultCoded[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormulaCoded)
     jaspResults[[currentDependent]][["doeResultCoded"]] <- createJaspState(resultCoded)
     jaspResults[[currentDependent]][["doeResultCoded"]]$dependOn(options = .doeAnalysisBaseDependencies())
   }

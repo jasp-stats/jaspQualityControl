@@ -1,0 +1,17 @@
+﻿RunOrder,StandardOrder,Ball,Angle,Vertical,Block,Distance
+1,7,Tennis,3,2,1,287
+2,8,Plastic,3,2,1,330
+3,2,Plastic,2,1,1,236
+4,1,Tennis,2,1,1,221
+5,4,Plastic,3,1,1,251
+6,3,Tennis,3,1,1,236
+7,6,Plastic,2,2,1,272
+8,5,Tennis,2,2,1,269
+9,4,Plastic,3,1,2,247
+10,6,Plastic,2,2,2,271
+11,3,Tennis,3,1,2,233
+12,7,Tennis,3,2,2,313
+13,8,Plastic,3,2,2,317
+14,5,Tennis,2,2,2,271
+15,1,Tennis,2,1,2,196
+16,2,Plastic,2,1,2,217

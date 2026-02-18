@@ -3391,6 +3391,8 @@ test_that("33.5 RSM analysis with nominal levels Model Summary table results mat
 ## Data Examples to verify output, Sums of squares and p-value match ####
 
 ### Data example 1 ####
+
+#### Coded, factorial design ####
 options <- analysisOptions("doeAnalysis")
 options$dependentFactorial <- c("Strength")
 options$fixedFactorsFactorial <- c("Material")
@@ -3412,7 +3414,7 @@ set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
 
 
-test_that("ANOVA table results match", {
+test_that("34.1 Data example 1 (factorial, coded) - ANOVA table results match", {
   table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(61.4412169760555, 368.647301856333, 6, 6.02163462145317, 0.00885308674084683,
@@ -3432,7 +3434,7 @@ test_that("ANOVA table results match", {
                                       460.478006896861, 15, "", "", "Total"))
 })
 
-test_that("Coded Coefficients table results match", {
+test_that("34.2 Data example 1 (factorial, coded) - Coded Coefficients table results match", {
   table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("(Intercept)", 29.633570586875, "", 3.71582056009637e-11, 0.798569489429763,
@@ -3450,21 +3452,21 @@ test_that("Coded Coefficients table results match", {
                                       1))
 })
 
-test_that("Regression equation in Coded Units table results match", {
+test_that("34.3 Data example 1 (factorial, coded) - Regression equation in Coded Units table results match", {
   table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list("Strength = -4.38 <unicode> 6.52 A + 0.28 B + 0.07 C + 0.03 AB + 0 AC + 0 BC"
+                                 list("Strength = 29.63 + 3.36 A + 2.15 B + 2.65 C <unicode> 0.22 AB <unicode> 0.15 AC + 0.01 BC"
                                  ))
 })
 
-test_that("Model Summary table results match", {
+test_that("34.4 Data example 1 (factorial, coded) - Model Summary table results match", {
   table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.667625439705684, 0.369719352330779, 0.80057526382341, 3.19427795771905
                                  ))
 })
 
-
+#### Uncoded, factorial design ####
 options <- analysisOptions("doeAnalysis")
 options$dependentFactorial <- c("Strength")
 options$fixedFactorsFactorial <- c("Material")
@@ -3485,7 +3487,7 @@ options$modelTerms <- list(
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
 
-test_that("ANOVA table results match", {
+test_that("35.1 Data example 1 (factorial, uncoded) - ANOVA table results match", {
   table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableAnova"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(61.4412169760555, 368.647301856333, 6, 6.02163462145317, 0.00885308674084683,
@@ -3505,7 +3507,7 @@ test_that("ANOVA table results match", {
                                       460.478006896861, 15, "", "", "Total"))
 })
 
-test_that("Uncoded Coefficients table results match", {
+test_that("35.2 Data example 1 (factorial, uncoded) - Uncoded Coefficients table results match", {
   table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficients"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("", -4.37814587750002, "", 0.891657355106339, 31.247556885468,
@@ -3525,22 +3527,344 @@ test_that("Uncoded Coefficients table results match", {
                                  ))
 })
 
-test_that("Discrete Predictor Levels table results match", {
+test_that("35.3 Data example 1 (factorial, uncoded) - Discrete Predictor Levels table results match", {
   table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficientsLegend"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Formula1", "A1"))
 })
 
-test_that("Regression equation in Uncoded Units table results match", {
+test_that("35.4 Data example 1 (factorial, uncoded) - Regression equation in Uncoded Units table results match", {
   table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableEquation"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Strength = -4.38 <unicode> 6.52 A1 + 0.28 B + 0.07 C + 0.03 A1B + 0 A1C + 0 BC"
                                  ))
 })
 
-test_that("Model Summary table results match", {
+test_that("35.5 Data example 1 (factorial, uncoded) - Model Summary table results match", {
   table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableSummary"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.667625439705684, 0.369719352330778, 0.80057526382341, 3.19427795771906
+                                 ))
+})
+
+### Data example 2 ####
+
+#### Coded, factorial design ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- c("Distance")
+options$fixedFactorsFactorial <- c("Ball")
+options$continuousFactorsFactorial <- c("Angle", "Vertical")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Ball"),
+  list(components = "Angle"),
+  list(components = "Vertical"),
+  list(components = c("Ball", "Angle")),
+  list(components = c("Angle", "Vertical")),
+  list(components = c("Ball", "Vertical"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample2.csv", options)
+
+test_that("36.1 Data example 2 (factorial, coded) - ANOVA table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3442.47916666667, 20654.875, 6, 28.3445022585625, 2.35137006826626e-05,
+                                      "Model", "", 20274.6875, 3, "", "", "<unicode> Linear terms",
+                                      826.5625, 826.5625, 1, 6.80570644405055, 0.0283276128893302,
+                                      "<unicode> <unicode> Ball", 4257.5625, 4257.5625, 1, 35.055692149351,
+                                      0.000223251267369552, "<unicode> <unicode> Angle", 15190.5625,
+                                      15190.5625, 1, 125.075247298302, 1.39986713911565e-06, "<unicode> <unicode> Vertical",
+                                      "", 380.1875, 3, "", "", "<unicode> Interaction terms", 85.5624999999998,
+                                      85.5624999999998, 1, 0.704499971410599, 0.423009692024339, "<unicode> <unicode> Ball<unicode><unicode><unicode>Angle",
+                                      280.5625, 280.5625, 1, 2.31008062210533, 0.162858010109754,
+                                      "<unicode> <unicode> Angle<unicode><unicode><unicode>Vertical",
+                                      14.0625, 14.0625, 1, 0.115787066155869, 0.741456839635441, "<unicode> <unicode> Ball<unicode><unicode><unicode>Vertical",
+                                      121.451388888889, 1093.0625, 9, "", "", "Error", "", 21747.9375,
+                                      15, "", "", "Total"))
+})
+
+test_that("36.2 Data example 2 (factorial, coded) - Coded Coefficients table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 260.4375, "", 8.41437497943459e-15, 2.75512464428663,
+                                      "(Intercept)", 94.5283911347079, "", "A", -7.1875, -14.375,
+                                      0.0283276128893302, 2.75512464428663, "Ball", -2.60877489332647,
+                                      1, "B", 16.3125, 32.625, 0.000223251267369552, 2.75512464428663,
+                                      "Angle", 5.92078475789747, 1, "C", 30.8125, 61.625, 1.39986713911565e-06,
+                                      2.75512464428663, "Vertical", 11.1837045426952, 1, "AB", -2.3125,
+                                      -4.62499999999999, 0.42300969202434, 2.75512464428663, "Ball<unicode>Angle",
+                                      -0.839344965678951, 1, "BC", 4.1875, 8.37500000000001, 0.162858010109754,
+                                      2.75512464428664, "Angle<unicode>Vertical", 1.51989493785108,
+                                      1, "AC", 0.937500000000003, 1.87500000000001, 0.74145683963544,
+                                      2.75512464428663, "Ball<unicode>Vertical", 0.340274986086063,
+                                      1))
+})
+
+test_that("36.3 Data example 2 (factorial, coded) - Regression equation in Coded Units table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Distance = 260.44 <unicode> 7.19 A + 16.31 B + 30.81 C <unicode> 2.31 AB + 4.19 BC + 0.94 AC"
+                                 ))
+})
+
+test_that("36.4 Data example 2 (factorial, coded) - Model Summary table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.916232477984023, 0.841151958251185, 0.949739486790414, 11.0204985771465
+                                 ))
+})
+
+#### Uncoded, factorial design ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- c("Distance")
+options$fixedFactorsFactorial <- c("Ball")
+options$continuousFactorsFactorial <- c("Angle", "Vertical")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Ball"),
+  list(components = "Angle"),
+  list(components = "Vertical"),
+  list(components = c("Ball", "Angle")),
+  list(components = c("Angle", "Vertical")),
+  list(components = c("Ball", "Vertical"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample2.csv", options)
+
+test_that("37.1 Data example 2 (factorial, uncoded) - ANOVA table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3442.47916666667, 20654.875, 6, 28.3445022585625, 2.35137006826626e-05,
+                                      "Model", "", 20274.6875, 3, "", "", "<unicode> Linear terms",
+                                      826.5625, 826.5625, 1, 6.80570644405055, 0.0283276128893302,
+                                      "<unicode> <unicode> Ball", 4257.5625, 4257.5625, 1, 35.055692149351,
+                                      0.000223251267369552, "<unicode> <unicode> Angle", 15190.5625,
+                                      15190.5625, 1, 125.075247298302, 1.39986713911565e-06, "<unicode> <unicode> Vertical",
+                                      "", 380.1875, 3, "", "", "<unicode> Interaction terms", 85.5624999999998,
+                                      85.5624999999998, 1, 0.704499971410599, 0.423009692024339, "<unicode> <unicode> Ball<unicode><unicode><unicode>Angle",
+                                      280.5625, 280.5625, 1, 2.31008062210533, 0.162858010109754,
+                                      "<unicode> <unicode> Angle<unicode><unicode><unicode>Vertical",
+                                      14.0625, 14.0625, 1, 0.115787066155869, 0.741456839635441, "<unicode> <unicode> Ball<unicode><unicode><unicode>Vertical",
+                                      121.451388888889, 1093.0625, 9, "", "", "Error", "", 21747.9375,
+                                      15, "", "", "Total"))
+})
+
+test_that("37.2 Data example 2 (factorial, uncoded) - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 149.25, "", 0.00839461192900553, 44.4250500218565, "(Intercept)",
+                                      3.35959103988788, "", "A1", -1.56249999999999, -3.12499999999997,
+                                      0.925731061963655, 16.2995372079837, "Ball1", -0.0958616174227729,
+                                      35.0000000000002, "B", 7.50000000000001, 7.50000000000001, 0.677015204320694,
+                                      17.424938227214, "Angle", 0.430417594725623, 10, "C", 19.75,
+                                      19.75, 0.499879298316654, 28.0968686471959, "Vertical", 0.702925306303524,
+                                      26.0000000000002, "A1B", 4.625, 9.24999999999999, 0.42300969202434,
+                                      5.51024928857327, "Ball1<unicode>Angle", 0.83934496567895, 35.0000000000002,
+                                      "BC", 16.75, 33.5, 0.162858010109755, 11.0204985771466, "Angle<unicode>Vertical",
+                                      1.51989493785107, 10, "A1C", -1.875, -1.875, 0.741456839635441,
+                                      5.51024928857327, "Ball1<unicode>Vertical", -0.340274986086061,
+                                      35.0000000000002))
+})
+
+test_that("37.3 Data example 2 (factorial, uncoded) - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Plastic", "A1"))
+})
+
+test_that("37.4 Data example 2 (factorial, uncoded) - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Distance = 149.25 <unicode> 1.56 A1 + 7.5 B + 19.75 C + 4.62 A1B + 16.75 BC <unicode> 1.87 A1C"
+                                 ))
+})
+
+test_that("37.5 Data example 2 (factorial, uncoded) - Model Summary table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.916232477984023, 0.841151958251185, 0.949739486790414, 11.0204985771465
+                                 ))
+})
+
+
+### Data example 3 ####
+
+#### Coded, factorial design ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- c("Syruploss")
+options$continuousFactorsFactorial <- c("Nozzle", "Speed", "Pressure")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Nozzle"),
+  list(components = "Speed"),
+  list(components = "Pressure"),
+  list(components = c("Nozzle", "Speed")),
+  list(components = c("Nozzle", "Pressure")),
+  list(components = c("Speed", "Pressure"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("38.1 Data example 3 (factorial, coded) - ANOVA table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(821.824074074068, 4930.94444444441, 6, 0.228322398804983, 0.965437895274988,
+                                      "Model", "", 2154.69444444444, 3, "", "", "<unicode> Linear terms",
+                                      348.444444444438, 348.444444444438, 1, 0.0968062069676649, 0.757072343791272,
+                                      "<unicode> <unicode> Nozzle", 1406.25, 1406.25, 1, 0.390689909736777,
+                                      0.534960055678213, "<unicode> <unicode> Speed", 400, 400, 1,
+                                      0.111129574325128, 0.740344432372881, "<unicode> <unicode> Pressure",
+                                      "", 2776.24999999997, 3, "", "", "<unicode> Interaction terms",
+                                      1700.16666666666, 1700.16666666666, 1, 0.472346994871091, 0.495286979874931,
+                                      "<unicode> <unicode> Nozzle<unicode><unicode><unicode>Speed",
+                                      651.041666666657, 651.041666666657, 1, 0.180874958211468, 0.672563404439722,
+                                      "<unicode> <unicode> Nozzle<unicode><unicode><unicode>Pressure",
+                                      425.041666666657, 425.041666666657, 1, 0.118086748717771, 0.732651462637135,
+                                      "<unicode> <unicode> Speed<unicode><unicode><unicode>Pressure",
+                                      3599.40189125296, 169171.888888889, 47, "", "", "Error", "",
+                                      174102.833333333, 53, "", "", "Total"))
+})
+
+test_that("38.2 Data example 3 (factorial, coded) - Coded Coefficients table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 3.05555555555555, "", 0.709895107110403, 8.16428751200976,
+                                      "(Intercept)", 0.374258690799509, "", "A", -3.11111111111111,
+                                      -6.22222222222222, 0.75707234379127, 9.99916925890034, "Nozzle",
+                                      -0.311136958537019, 1, "B", 6.25, 12.5, 0.534960055678213, 9.99916925890034,
+                                      "Speed", 0.625051925632405, 1, "C", 3.33333333333333, 6.66666666666666,
+                                      0.740344432372881, 9.99916925890034, "Pressure", 0.333361027003949,
+                                      1, "AB", 8.41666666666667, 16.8333333333333, 0.495286979874929,
+                                      12.2464312680146, "Nozzle<unicode>Speed", 0.687275050377281,
+                                      1, "AC", -5.20833333333334, -10.4166666666667, 0.67256340443972,
+                                      12.2464312680146, "Nozzle<unicode>Pressure", -0.425293966817625,
+                                      1, "BC", 4.20833333333334, 8.41666666666667, 0.732651462637131,
+                                      12.2464312680146, "Speed<unicode>Pressure", 0.343637525188641,
+                                      1))
+})
+
+test_that("38.3 Data example 3 (factorial, coded) - Regression equation in Coded Units table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Syruploss = 3.06 <unicode> 3.11 A + 6.25 B + 3.33 C + 8.42 AB <unicode> 5.21 AC + 4.21 BC"
+                                 ))
+})
+
+test_that("38.4 Data example 3 (factorial, coded) - Model Summary table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.0283220229679075, 59.9950155534021))
+})
+
+#### Coded, Response Surface design ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("39.1 Data example 3 (response surface, coded) - Coded Coefficients table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 6.44444444444445, "", 0.484927425170916, 9.15600413357823,
+                                      "(Intercept)", 0.703849009942061, "", "A", 6.25, 12.5, 0.218712178465279,
+                                      5.01495000057134, "Speed", 1.246273641669, 1, "B", 3.33333333333334,
+                                      6.66666666666667, 0.509436522509468, 5.01495000057134, "Pressure",
+                                      0.664679275556802, 1, "A^2", 70.5833333333334, 141.166666666667,
+                                      1.42166789351505e-10, 8.68614819840713, "Speed^2", 8.12596466478398,
+                                      "", "B^2", -75.6666666666667, -151.333333333333, 1.89456734041113e-11,
+                                      8.68614819840713, "Pressure^2", -8.7111876217519, "", "C", -3.11111111111111,
+                                      -6.22222222222222, 0.537950398940527, 5.01495000057134, "Nozzle",
+                                      -0.620367323853014, 1))
+})
+
+test_that("39.2 Data example 3 (response surface, coded) - Regression equation in Coded Units table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Syruploss = 6.44 + 6.25 A + 3.33 B + 70.58 A^2 <unicode> 75.67 B^2 <unicode> 3.11 C"
+                                 ))
+})
+
+test_that("39.3 Data example 3 (response surface, coded) - Model Summary table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.724383161749979, 0.684844597925649, 0.750384750264132, 30.089700003428
+                                 ))
+})
+
+
+
+#### Uncoded, Response Surface design ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("40.1 Data example 3 (response surface, uncoded) - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 1818.94444444447, "", 7.17574678375441e-07, 318.114470543182,
+                                      "(Intercept)", 5.71789281178757, "", "A", -42.0375000000004,
+                                      -1681.50000000002, 2.28066307580887e-10, 5.23363674597155, "Speed",
+                                      -8.03217763104358, 433.000000000006, "B", 91.4666666666664,
+                                      914.666666666664, 2.28214646124788e-11, 10.5034716639313, "Pressure",
+                                      8.70823186782719, 109.000000000002, "A^2", 0.176458333333335,
+                                      7.05833333333339, 1.79939446191843e-10, 0.0217816241341456,
+                                      "Speed^2", 8.10124774197681, "", "B^2", -3.02666666666666, -30.2666666666666,
+                                      2.47083118352093e-11, 0.348505986146329, "Pressure^2", -8.68469061359492,
+                                      "", "C1", 5.55555555555592, 16.6666666666677, 0.343732111495362,
+                                      5.80843310243881, "Nozzle1", 0.956463723964262, 1, "C2", -4.88888888888902,
+                                      -14.6666666666671, 0.404224960398928, 5.80843310243881, "Nozzle2",
+                                      -0.841688077088519, 1))
+})
+
+test_that("40.2 Data example 3 (response surface, uncoded) - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "C1", 2, "C2"))
+})
+
+test_that("40.3 Data example 3 (response surface, uncoded) - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Syruploss = 1818.94 <unicode> 42.04 A + 91.47 B + 0.18 A^2 <unicode> 3.03 B^2 + 5.56 C1 <unicode> 4.89 C2"
+                                 ))
+})
+
+test_that("40.4 Data example 3 (response surface, uncoded) - Model Summary table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.722698781107446, 0.675387252392338, 0.754091371925471, 30.1815037373668
                                  ))
 })
