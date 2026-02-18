@@ -14,7 +14,7 @@ jobs:
     # Run if it is a push (merge) OR if the PR is NOT a draft
     if: github.event_name == 'push' || github.event.pull_request.draft == false
 
-    uses: vandenman/jasp-actions/.github/workflows/coverage.yml@coverageTest
+    uses: jasp-stats/jasp-actions/.github/workflows/coverage.yml@master
     with:
       needs_JAGS: false
     secrets:
