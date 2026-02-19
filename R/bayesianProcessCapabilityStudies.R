@@ -396,7 +396,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   table <- createJaspTable(title = gettext("Prior and Posterior Probabilities"), position = position)
-  table$dependOn(c("priorPosteriorTable", .bpcsDefaultDeps(), .bpcsProcessCriteriaDeps()))
+  table$dependOn(c("priorPosteriorTable", "transposePiorPosteriorTable", .bpcsDefaultDeps(), .bpcsProcessCriteriaDeps()))
   jaspResults[["bpcsPriorPosteriorTable"]] <- table
 
   if (!.bpcsIsReady(options) || is.null(fit))
@@ -423,49 +423,81 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
       priorSum <- priorSum[match(selectedMetrics, priorSum$metric), , drop = FALSE]
     }
 
-    table$addColumnInfo(name = "metric", title = gettext("Measure"), type = "string")
+    transposed <- isTRUE(options[["transposePiorPosteriorTable"]])
 
     regionTitles <- .bpcsFormatIntervalBounds(intBounds, intNames)
 
-    for (i in seq_along(intNames)) {
-      regionTitle <- regionTitles[i]
+    # Compute posterior (and optionally prior + BF) probabilities per metric and interval
+    postMatrix  <- as.matrix(postSum[, -1, drop = FALSE])  # rows = metrics, cols = intervals
+    priorMatrix <- bfMatrix <- NULL
+    if (hasProperPriors) {
+      priorMatrix <- as.matrix(priorSum[, -1, drop = FALSE])
 
-      if (hasProperPriors) {
-        table$addColumnInfo(name = paste0("prior_", i), title = gettext("Prior"),     type = "number", overtitle = regionTitle)
-      }
-      table$addColumnInfo(name = paste0("post_", i),  title = gettext("Posterior"), type = "number", overtitle = regionTitle)
-      if (hasProperPriors) {
-        table$addColumnInfo(name = paste0("bf_", i),    title = gettext("BF"),        type = "number", overtitle = regionTitle)
-      }
+      odds_prior <- priorMatrix / (1 - priorMatrix)
+      odds_post  <- postMatrix  / (1 - postMatrix)
+      odds_prior[priorMatrix >= 1] <- Inf
+      odds_post[postMatrix >= 1]   <- Inf
+      odds_prior[priorMatrix <= 0] <- 0
+      odds_post[postMatrix <= 0]   <- 0
+
+      bfMatrix <- odds_post / odds_prior
+      bfMatrix[odds_prior == 0 & odds_post == 0] <- 1
+      bfMatrix[odds_prior == 0 & odds_post > 0]  <- Inf
     }
 
-    df <- data.frame(metric = selectedMetrics)
+    if (transposed) {
+      # Transposed layout: rows = metric x interval, columns = Prior, Posterior, BF
+      table$addColumnInfo(name = "metric",   title = gettext("Measure"),        type = "string")
+      table$addColumnInfo(name = "interval", title = gettext("Classification"), type = "string")
+      if (hasProperPriors)
+        table$addColumnInfo(name = "prior", title = gettext("Prior"),     type = "number")
+      table$addColumnInfo(name = "post",  title = gettext("Posterior"), type = "number")
+      if (hasProperPriors)
+        table$addColumnInfo(name = "bf",   title = gettext("BF"),        type = "number")
 
-    for (i in seq_along(intNames)) {
-      p_post  <- postSum[[i + 1]]
-      df[[paste0("post_", i)]]  <- p_post
-
-      if (hasProperPriors) {
-        p_prior <- priorSum[[i + 1]]
-
-        odds_prior <- p_prior / (1 - p_prior)
-        odds_post  <- p_post / (1 - p_post)
-
-        odds_prior[p_prior >= 1] <- Inf
-        odds_post[p_post >= 1]   <- Inf
-        odds_prior[p_prior <= 0] <- 0
-        odds_post[p_post <= 0]   <- 0
-
-        bf <- odds_post / odds_prior
-        bf[odds_prior == 0 & odds_post == 0] <- 1
-        bf[odds_prior == 0 & odds_post > 0]  <- Inf
-
-        df[[paste0("prior_", i)]] <- p_prior
-        df[[paste0("bf_", i)]]    <- bf
+      rows <- list()
+      for (m in seq_along(selectedMetrics)) {
+        for (i in seq_along(intNames)) {
+          row <- list(
+            metric   = if (i == 1L) selectedMetrics[m] else "",
+            interval = regionTitles[i],
+            post     = postMatrix[m, i]
+          )
+          if (hasProperPriors) {
+            row$prior <- priorMatrix[m, i]
+            row$bf    <- bfMatrix[m, i]
+          }
+          rows[[length(rows) + 1L]] <- row
+        }
       }
-    }
 
-    table$setData(df)
+      df <- do.call(rbind.data.frame, c(rows, stringsAsFactors = FALSE))
+      table$setData(df)
+
+    } else {
+      # Default layout: rows = metrics, columns grouped by interval
+      table$addColumnInfo(name = "metric", title = gettext("Measure"), type = "string")
+
+      for (i in seq_along(intNames)) {
+        regionTitle <- regionTitles[i]
+        if (hasProperPriors)
+          table$addColumnInfo(name = paste0("prior_", i), title = gettext("Prior"),     type = "number", overtitle = regionTitle)
+        table$addColumnInfo(name = paste0("post_", i),  title = gettext("Posterior"), type = "number", overtitle = regionTitle)
+        if (hasProperPriors)
+          table$addColumnInfo(name = paste0("bf_", i),    title = gettext("BF"),        type = "number", overtitle = regionTitle)
+      }
+
+      df <- data.frame(metric = selectedMetrics)
+      for (i in seq_along(intNames)) {
+        df[[paste0("post_", i)]] <- postMatrix[, i]
+        if (hasProperPriors) {
+          df[[paste0("prior_", i)]] <- priorMatrix[, i]
+          df[[paste0("bf_", i)]]    <- bfMatrix[, i]
+        }
+      }
+
+      table$setData(df)
+    }
 
     if (!hasProperPriors) {
       table$addFootnote(gettext("Prior probabilities and Bayes factors are not available for improper priors. Specify proper priors in the Prior Settings to enable these columns."))
