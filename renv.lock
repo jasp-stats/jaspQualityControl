@@ -2106,6 +2106,14 @@
         "stats"
       ]
     },
+    "renv": {
+      "Package": "renv",
+      "Version": "1.1.4",
+      "OS_type": null,
+      "NeedsCompilation": "no",
+      "Repository": "CRAN",
+      "Source": "Repository"
+    },
     "rlang": {
       "Package": "rlang",
       "Version": "1.1.7",
