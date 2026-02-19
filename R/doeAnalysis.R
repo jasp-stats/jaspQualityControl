@@ -314,18 +314,17 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     regressionSummaryCoded <- summary(regressionFitCoded)
 
     aliasedTerms <- attributes(alias(regressionFit)$Complete)$dimnames[[1]]
+    regressionAliasedTermsForNote <- NULL
 
     if (!is.null(aliasedTerms)) {
       allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
       allPredictors <- allPredictors[allPredictors != ""]
       aliasedTerms <- .removeAppendedFactorLevels(predictorNames = allPredictors, terms = aliasedTerms, interactionSymbol = ":")
 
-      # store for footnote
-      aliasedTermsFootnote <- aliasedTerms
-      aliasedTermsFootnote <- unname(sapply(aliasedTermsFootnote, .gsubIdentityFunction))
+      # store for footnote (format the terms)
+      aliasedTermsFootnote <- unique(unname(sapply(aliasedTerms, .gsubIdentityFunction)))
       aliasedTermsFootnote <- gsubInteractionSymbol(aliasedTermsFootnote)
-      result[["regression"]][["aliasedTerms"]] <- aliasedTermsFootnote
-      resultCoded[["regression"]][["aliasedTerms"]] <- aliasedTermsFootnote
+      regressionAliasedTermsForNote <- aliasedTermsFootnote
 
       formula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(aliasedTerms, collapse="-"), sep="-")) # remove the aliased term(s) from the model
       # fit the model again
@@ -333,6 +332,52 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       regressionFitCoded <- lm(formula, data = datasetCoded)
       regressionSummary <- summary(regressionFit)
       regressionSummaryCoded <- summary(regressionFitCoded)
+    }
+
+    # Check for aliasing in anovaDataset (which may have converted factors) and remove those terms
+    anovaRegressionFit <- lm(formula, data = anovaDataset)
+    anovaAliasedTerms <- attributes(alias(anovaRegressionFit)$Complete)$dimnames[[1]]
+    anovaAliasedTermsForNote <- NULL
+
+    if (!is.null(anovaAliasedTerms)) {
+      allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
+      allPredictors <- allPredictors[allPredictors != ""]
+      anovaAliasedTerms <- .removeAppendedFactorLevels(predictorNames = allPredictors, terms = anovaAliasedTerms, interactionSymbol = ":")
+      
+      # store for footnote (format the terms)
+      anovaAliasedTermsFootnote <- unique(unname(sapply(anovaAliasedTerms, .gsubIdentityFunction)))
+      anovaAliasedTermsFootnote <- gsubInteractionSymbol(anovaAliasedTermsFootnote)
+      anovaAliasedTermsForNote <- anovaAliasedTermsFootnote
+      
+      anovaFormula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(anovaAliasedTerms, collapse="-"), sep="-"))
+      anovaRegressionFit <- lm(anovaFormula, data = anovaDataset)
+    }
+
+    # Set footnotes for aliased terms (combine regression and ANOVA if both exist)
+    if (!is.null(regressionAliasedTermsForNote) || !is.null(anovaAliasedTermsForNote)) {
+      footnoteText <- NULL
+      if (!is.null(regressionAliasedTermsForNote)) {
+        regressionTermsText <- if (is.character(regressionAliasedTermsForNote) && length(regressionAliasedTermsForNote) > 1) {
+          paste(regressionAliasedTermsForNote, collapse=", ")
+        } else {
+          regressionAliasedTermsForNote
+        }
+        footnoteText <- paste("Terms removed from Regression:", regressionTermsText)
+      }
+      if (!is.null(anovaAliasedTermsForNote)) {
+        anovaTermsText <- if (is.character(anovaAliasedTermsForNote) && length(anovaAliasedTermsForNote) > 1) {
+          paste(anovaAliasedTermsForNote, collapse=", ")
+        } else {
+          anovaAliasedTermsForNote
+        }
+        if (!is.null(footnoteText)) {
+          footnoteText <- paste(footnoteText, " and from ANOVA:", anovaTermsText)
+        } else {
+          footnoteText <- paste("Terms removed from ANOVA:", anovaTermsText)
+        }
+      }
+      result[["regression"]][["aliasedTerms"]] <- footnoteText
+      resultCoded[["regression"]][["aliasedTerms"]] <- footnoteText
     }
 
     names(regressionFit$coefficients) <-  unname(sapply(c(names(regressionFit$coefficients)), .gsubIdentityFunction)) # remove potential identity function around squared terms

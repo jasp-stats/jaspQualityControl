@@ -3868,3 +3868,51 @@ test_that("40.4 Data example 3 (response surface, uncoded) - Model Summary table
                                  list(0.722698781107446, 0.675387252392338, 0.754091371925471, 30.1815037373668
                                  ))
 })
+
+
+# Uncoded Residual Df = 0 handling ####
+
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- "Result"
+options$continuousFactorsFactorial <- c("A", "B", "C")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$histogramBinWidthType <- "doane"
+options$modelTerms <- list(
+  list(components = "A"),
+  list(components = "B"),
+  list(components = "C"),
+  list(components = c("A", "B")),
+  list(components = c("B", "C")),
+  list(components = c("A", "C")),
+  list(components = c("A", "B", "C"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/oneCenterPointFactorial.csv", options)
+
+
+# Uncoded aliased terms handling ####
+
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- "Result"
+options$continuousFactorsFactorial <- c("A", "B", "C")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$histogramBinWidthType <- "doane"
+options$modelTerms <- list(
+  list(components = "A"),
+  list(components = "B"),
+  list(components = "C"),
+  list(components = c("A", "B")),
+  list(components = c("B", "C")),
+  list(components = c("A", "C")),
+  list(components = c("A", "B", "C"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/twoCenterPointFactorial.csv", options)
