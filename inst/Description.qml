@@ -84,6 +84,13 @@ Description
 		func:			"rareEventCharts"
 	}
 
+	Analysis
+	{
+		title:			qsTr("Multivariate Control Charts")
+		func:			"multivariateControlCharts"
+		preloadData:	true
+	}
+
 	GroupTitle
 	{
 		title:			qsTr("Capability Analysis")
