@@ -3893,6 +3893,48 @@ options$modelTerms <- list(
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/oneCenterPointFactorial.csv", options)
 
+test_that("41.1 Saturated design handling - ANOVA table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(65.4799774733694, 130.959954946739, 2, 0.468504661585242, 0.647048621953174,
+                                      "Model", "", 130.959954946739, 2, "", "", "<unicode> Linear terms",
+                                      65.4799774733694, 130.959954946739, 2, 0.468504661585242, 0.647048621953174,
+                                      "<unicode> <unicode> A", 139.763769375976, 838.582616255855,
+                                      6, "", "", "Error", "", 969.542571202594, 8, "", "", "Total"
+                                 ))
+})
+
+test_that("41.2 Saturated design handling - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 100.148696226667, "", 0.022260826815119, 3.50334996671428,
+                                      "(Intercept)", 28.5865520653634, "", "A", 1.60073444250001,
+                                      3.20146888500001, 0.741048872740814, 3.7158637775, "A", 0.430783941056356,
+                                      1, "B", 4.38436826500001, 8.76873653000001, 0.447579170584851,
+                                      3.7158637775, "B", 1.17990554216435, 1, "C", 4.40203744999999,
+                                      8.80407489999998, 0.446316687483796, 3.7158637775, "C", 1.18466061018029,
+                                      1, "AB", 0.520857400000005, 1.04171480000001, 0.911341828758052,
+                                      3.7158637775, "A<unicode>B", 0.140171284844687, 1, "BC", 8.04858491749999,
+                                      16.097169835, 0.275353167962136, 3.7158637775, "B<unicode>C",
+                                      2.16600645218351, 1, "AC", 0.647686849999992, 1.29537369999998,
+                                      0.890138865476036, 3.7158637775, "A<unicode>C", 0.174303173846634,
+                                      1, "ABC", 0.867005407499994, 1.73401081499999, 0.854071207712093,
+                                      3.7158637775, "A<unicode>B<unicode>C", 0.233325401418054, 1
+                                 ))
+})
+
+test_that("41.3 Saturated design handling - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 100.15 + 1.6 A + 4.38 B + 4.4 C + 0.52 AB + 8.05 BC + 0.65 AC + 0.87 ABC"
+                                 ))
+})
+
+test_that("41.4 Saturated design handling - Model Summary table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.0885503973984001, 0, 0.8860687996748, 10.5100499001428))
+})
 
 # Uncoded aliased terms handling ####
 
@@ -3916,3 +3958,46 @@ options$modelTerms <- list(
 )
 set.seed(123)
 results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/twoCenterPointFactorial.csv", options)
+
+test_that("42.1 Aliased terms handling - ANOVA table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(163.523994574973, 327.047989149946, 2, 1.11323076012615, 0.380382061844366,
+                                      "Model", "", 327.047989149946, 2, "", "", "<unicode> Linear terms",
+                                      163.523994574973, 327.047989149946, 2, 1.11323076012615, 0.380382061844366,
+                                      "<unicode> <unicode> A", 146.891372779209, 1028.23960945446,
+                                      7, "", "", "Error", "", 1355.28759860441, 9, "", "", "Total"
+                                 ))
+})
+
+test_that("42.2 Aliased terms handling - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 102.596932367, "", 0.00204933629173055, 4.65167433325255,
+                                      "(Intercept)", 22.0559147130281, "", "A", 0.837464828750004,
+                                      1.67492965750001, 0.886866808752451, 5.20073000917185, "A",
+                                      0.161028322422636, 1, "B", -2.89632590875, -5.7926518175, 0.633593302894651,
+                                      5.20073000917185, "B", -0.556907569445468, 1, "C", -4.64293011625,
+                                      -9.2858602325, 0.466195805480084, 5.20073000917185, "C", -0.892745846844936,
+                                      1, "AB", 0.833726521249994, 1.66745304249999, 0.887365396018913,
+                                      5.20073000917185, "A<unicode>B", 0.160309518044517, 1, "BC",
+                                      8.52856511625, 17.0571302325, 0.242710003420074, 5.20073000917185,
+                                      "B<unicode>C", 1.63987845960265, 1, "AC", -3.15881784625, -6.3176356925,
+                                      0.605373737327508, 5.20073000917185, "A<unicode>C", -0.607379702595444,
+                                      1, "ABC", -1.12216770375, -2.24433540750001, 0.849172159620473,
+                                      5.20073000917185, "A<unicode>B<unicode>C", -0.215771190154263,
+                                      1))
+})
+
+test_that("42.3 Aliased terms handling - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 102.6 + 0.84 A <unicode> 2.9 B <unicode> 4.64 C + 0.83 AB + 8.53 BC <unicode> 3.16 AC <unicode> 1.12 ABC"
+                                 ))
+})
+
+test_that("42.4 Aliased terms handling - Model Summary table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.680686606666776, 14.7098858264232))
+})
