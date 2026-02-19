@@ -327,6 +327,18 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   return(selectedMetrics)
 }
 
+.bpcsMetricToPlotmath <- function(metrics) {
+  lookup <- c(
+    "Cp"  = "C[p]",
+    "CpU" = "C[pU]",
+    "CpL" = "C[pL]",
+    "Cpk" = "C[pk]",
+    "Cpc" = "C[pc]",
+    "Cpm" = "C[pm]"
+  )
+  unname(lookup[metrics])
+}
+
 .bpcsGetCustomAxisLimits <- function(options, base) {
   keys <- c(paste0(base, "custom_x_", c("min", "max")), paste0(base, "custom_y_", c("min", "max")))
   values <- lapply(keys, function(k) options[[k]])
@@ -384,7 +396,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   table <- createJaspTable(title = gettext("Prior and Posterior Probabilities"), position = position)
-  table$dependOn(c("priorPosteriorTable", .bpcsDefaultDeps(), .bpcsProcessCriteriaDeps()))
+  table$dependOn(c("priorPosteriorTable", "transposePiorPosteriorTable", .bpcsDefaultDeps(), .bpcsProcessCriteriaDeps()))
   jaspResults[["bpcsPriorPosteriorTable"]] <- table
 
   if (!.bpcsIsReady(options) || is.null(fit))
@@ -411,49 +423,81 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
       priorSum <- priorSum[match(selectedMetrics, priorSum$metric), , drop = FALSE]
     }
 
-    table$addColumnInfo(name = "metric", title = gettext("Measure"), type = "string")
+    transposed <- isTRUE(options[["transposePiorPosteriorTable"]])
 
     regionTitles <- .bpcsFormatIntervalBounds(intBounds, intNames)
 
-    for (i in seq_along(intNames)) {
-      regionTitle <- regionTitles[i]
+    # Compute posterior (and optionally prior + BF) probabilities per metric and interval
+    postMatrix  <- as.matrix(postSum[, -1, drop = FALSE])  # rows = metrics, cols = intervals
+    priorMatrix <- bfMatrix <- NULL
+    if (hasProperPriors) {
+      priorMatrix <- as.matrix(priorSum[, -1, drop = FALSE])
 
-      if (hasProperPriors) {
-        table$addColumnInfo(name = paste0("prior_", i), title = gettext("Prior"),     type = "number", overtitle = regionTitle)
-      }
-      table$addColumnInfo(name = paste0("post_", i),  title = gettext("Posterior"), type = "number", overtitle = regionTitle)
-      if (hasProperPriors) {
-        table$addColumnInfo(name = paste0("bf_", i),    title = gettext("BF"),        type = "number", overtitle = regionTitle)
-      }
+      odds_prior <- priorMatrix / (1 - priorMatrix)
+      odds_post  <- postMatrix  / (1 - postMatrix)
+      odds_prior[priorMatrix >= 1] <- Inf
+      odds_post[postMatrix >= 1]   <- Inf
+      odds_prior[priorMatrix <= 0] <- 0
+      odds_post[postMatrix <= 0]   <- 0
+
+      bfMatrix <- odds_post / odds_prior
+      bfMatrix[odds_prior == 0 & odds_post == 0] <- 1
+      bfMatrix[odds_prior == 0 & odds_post > 0]  <- Inf
     }
 
-    df <- data.frame(metric = selectedMetrics)
+    if (transposed) {
+      # Transposed layout: rows = metric x interval, columns = Prior, Posterior, BF
+      table$addColumnInfo(name = "metric",   title = gettext("Measure"),        type = "string")
+      table$addColumnInfo(name = "interval", title = gettext("Classification"), type = "string")
+      if (hasProperPriors)
+        table$addColumnInfo(name = "prior", title = gettext("Prior"),     type = "number")
+      table$addColumnInfo(name = "post",  title = gettext("Posterior"), type = "number")
+      if (hasProperPriors)
+        table$addColumnInfo(name = "bf",   title = gettext("BF"),        type = "number")
 
-    for (i in seq_along(intNames)) {
-      p_post  <- postSum[[i + 1]]
-      df[[paste0("post_", i)]]  <- p_post
-
-      if (hasProperPriors) {
-        p_prior <- priorSum[[i + 1]]
-
-        odds_prior <- p_prior / (1 - p_prior)
-        odds_post  <- p_post / (1 - p_post)
-
-        odds_prior[p_prior >= 1] <- Inf
-        odds_post[p_post >= 1]   <- Inf
-        odds_prior[p_prior <= 0] <- 0
-        odds_post[p_post <= 0]   <- 0
-
-        bf <- odds_post / odds_prior
-        bf[odds_prior == 0 & odds_post == 0] <- 1
-        bf[odds_prior == 0 & odds_post > 0]  <- Inf
-
-        df[[paste0("prior_", i)]] <- p_prior
-        df[[paste0("bf_", i)]]    <- bf
+      rows <- list()
+      for (m in seq_along(selectedMetrics)) {
+        for (i in seq_along(intNames)) {
+          row <- list(
+            metric   = if (i == 1L) selectedMetrics[m] else "",
+            interval = regionTitles[i],
+            post     = postMatrix[m, i]
+          )
+          if (hasProperPriors) {
+            row$prior <- priorMatrix[m, i]
+            row$bf    <- bfMatrix[m, i]
+          }
+          rows[[length(rows) + 1L]] <- row
+        }
       }
-    }
 
-    table$setData(df)
+      df <- do.call(rbind.data.frame, c(rows, stringsAsFactors = FALSE))
+      table$setData(df)
+
+    } else {
+      # Default layout: rows = metrics, columns grouped by interval
+      table$addColumnInfo(name = "metric", title = gettext("Measure"), type = "string")
+
+      for (i in seq_along(intNames)) {
+        regionTitle <- regionTitles[i]
+        if (hasProperPriors)
+          table$addColumnInfo(name = paste0("prior_", i), title = gettext("Prior"),     type = "number", overtitle = regionTitle)
+        table$addColumnInfo(name = paste0("post_", i),  title = gettext("Posterior"), type = "number", overtitle = regionTitle)
+        if (hasProperPriors)
+          table$addColumnInfo(name = paste0("bf_", i),    title = gettext("BF"),        type = "number", overtitle = regionTitle)
+      }
+
+      df <- data.frame(metric = selectedMetrics)
+      for (i in seq_along(intNames)) {
+        df[[paste0("post_", i)]] <- postMatrix[, i]
+        if (hasProperPriors) {
+          df[[paste0("prior_", i)]] <- priorMatrix[, i]
+          df[[paste0("bf_", i)]]    <- bfMatrix[, i]
+        }
+      }
+
+      table$setData(df)
+    }
 
     if (!hasProperPriors) {
       table$addFootnote(gettext("Prior probabilities and Bayes factors are not available for improper priors. Specify proper priors in the Prior Settings to enable these columns."))
@@ -480,7 +524,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
   jaspPlt <- createJaspPlot(
     title = if (isPost) gettext("Posterior Distribution") else gettext("Prior Distribution"),
-    width  = 400 * (if (singlePanel) 1 else 3),
+    width  = 400 * (if (singlePanel) 1.5 else 3),
     height = 400 * (if (singlePanel) 1 else 2),
     position = position,
     dependencies = jaspDeps(
@@ -523,7 +567,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
       showRegions <- isTRUE(options[[paste0(base, "ShowRegions")]])
       regionCutoffs <- unlist(options[paste0("interval", 1:4)], use.names = FALSE)
 
-      jaspPlt$plotObject <- qc::plot_density(
+      plt <- qc::plot_density(
         summaryObject,
         what = selectedMetrics,
         point_estimate     = if (options[[paste0(base, "IndividualPointEstimate")]]) options[[paste0(base, "IndividualPointEstimateType")]] else "none",
@@ -544,6 +588,18 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
       ) +
         jaspGraphs::geom_rangeframe() +
         jaspGraphs::themeJaspRaw()
+
+      if (length(selectedMetrics) == 1L) {
+        plt <- plt + ggplot2::labs(x = parse(text = .bpcsMetricToPlotmath(selectedMetrics)))
+      } else if (!singlePanel) {
+        metricLabeller <- ggplot2::as_labeller(
+          setNames(.bpcsMetricToPlotmath(selectedMetrics), selectedMetrics),
+          default = ggplot2::label_parsed
+        )
+        plt <- plt + ggplot2::facet_wrap(~metric, labeller = metricLabeller)
+      }
+
+      jaspPlt$plotObject <- plt
 
 
     }
@@ -612,7 +668,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   plts <- lapply(seq_len(nrow(intervalSummary)), function(i) {
     jaspGraphs::plotPieChart(
       unlist(intervalSummary[i, -1]), groups, legendName = NULL, legendColors = legendColors
-    ) + ggplot2::ggtitle(intervalSummary$metric[i])
+    ) + ggplot2::ggtitle(parse(text = .bpcsMetricToPlotmath(intervalSummary$metric[i])))
   })
   return(patchwork::wrap_plots(plts) + patchwork::plot_layout(nrow = 2, guides = "collect"))
 }
@@ -625,7 +681,9 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   w <- 400
-  plt <- createJaspPlot(title = gettext("Sequential Analysis Point Estimate"), width = 3*w, height = 2*w,
+  nSelectedMetrics <- length(.bpcsGetSelectedMetrics(options))
+  singleMetric <- nSelectedMetrics <= 1L
+  plt <- createJaspPlot(title = gettext("Sequential Analysis Point Estimate"), width = if (singleMetric) 1.5*w else 3*w, height = if (singleMetric) w else 2*w,
                         position = position,
                         dependencies = jaspDeps(c(
                           .bpcsDefaultDeps(),
@@ -664,7 +722,9 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
 
   w <- 400
-  plt <- createJaspPlot(title = gettext("Sequential Analysis Interval Estimate"), width = 3*w, height = 2*w,
+  nSelectedMetrics <- length(.bpcsGetSelectedMetrics(options))
+  singleMetric <- nSelectedMetrics <= 1L
+  plt <- createJaspPlot(title = gettext("Sequential Analysis Interval Estimate"), width = if (singleMetric) 1.5*w else 3*w, height = if (singleMetric) w else 2*w,
                         position = position,
                         dependencies = jaspDeps(c(
                           .bpcsDefaultDeps(),
@@ -865,6 +925,11 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     upper  = as.vector(estimates[, "upper", ]),
   )
   tb <- tb[tb$metric %in% selectedMetrics, , drop = FALSE]
+  metricExpressions <- parse(text = .bpcsMetricToPlotmath(as.character(unique(tb$metric))))
+  metricLabeller <- ggplot2::as_labeller(
+    setNames(.bpcsMetricToPlotmath(selectedMetrics), selectedMetrics),
+    default = ggplot2::label_parsed
+  )
   if (length(selectedMetrics) == 1L)
     single_panel <- TRUE
 
@@ -1050,19 +1115,19 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     } else if (axes == "automatic" || axes == "free") {
       scale_facet <- ggh4x::facetted_pos_scales(y = y_breaks_per_scale)
     }
-    facet <- ggplot2::facet_wrap(~metric, scales = scales)
+    facet <- ggplot2::facet_wrap(~metric, scales = scales, labeller = metricLabeller)
   }
 
   ggplot2::ggplot(tb, ggplot2::aes(x = .data$n, y = .data$mean, group = .data$metric,
                                    color = .data$metric, fill = .data$metric)) +
-    ggplot2::scale_color_manual(values = .bpcsPalette(values = unique(tb$metric), colorScheme = colorScheme, single_panel = single_panel)) +
-    ggplot2::scale_fill_manual(values = .bpcsPalette(values = unique(tb$metric), colorScheme = colorScheme, single_panel = single_panel)) +
+    ggplot2::scale_color_manual(values = .bpcsPalette(values = unique(tb$metric), colorScheme = colorScheme, single_panel = single_panel), labels = metricExpressions) +
+    ggplot2::scale_fill_manual(values = .bpcsPalette(values = unique(tb$metric), colorScheme = colorScheme, single_panel = single_panel), labels = metricExpressions) +
     gridLinesLayer +
     ribbon +
     ggplot2::geom_line(linewidth = 1) +
     facet + scale_facet + scale_x +
     ggplot2::labs(
-      x     = gettext("Number of observations"),
+      x     = gettext("Observation"),
       y     = y_title,
       color = gettext("Metric"),
       fill  = gettext("Metric")

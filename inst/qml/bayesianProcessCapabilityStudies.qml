@@ -274,8 +274,17 @@ Form
 		CheckBox
 		{
 			name: "priorPosteriorTable"
+			id: priorPosteriorTable
 			label: qsTr("Prior and posterior probabilities table")
 			info: qsTr("Show the prior and posterior probabilities, along with the Bayes factor, for the intervals. This table is only available when proper priors are specified.")
+
+			CheckBox
+			{
+				enabled: priorPosteriorTable.checked
+				name: "transposePiorPosteriorTable"
+				label: qsTr("Transpose table")
+				info: qsTr("Show the prior and posterior probabilities table with intervals in the rows and probabilities and Bayes factors in the columns.")
+			}
 		}
 
 		Common.PlotLayout
