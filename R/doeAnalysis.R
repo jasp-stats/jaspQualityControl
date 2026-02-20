@@ -297,7 +297,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
     regressionFit <- lm(formula, data = dataset)
 
-    # For the factorial design ANOVA, if data are not coded and, we want to treat all predictors as factors, unlike for the regression fit
+    # For the factorial design ANOVA, if data are not coded, we want to treat all predictors as factors, unlike for the regression fit
     anovaDataset <- dataset
     if (options[["designType"]] == "factorialDesign" && !options[["codeFactors"]] &&
         length(continuousPredictors) > 0 && !identical(continuousPredictors, "")) {
