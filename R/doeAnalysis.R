@@ -335,7 +335,6 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     }
 
     # Check for aliasing in anovaDataset (which may have converted factors) and remove those terms
-    anovaRegressionFit <- lm(formula, data = anovaDataset)
     anovaAliasedTerms <- attributes(alias(anovaRegressionFit)$Complete)$dimnames[[1]]
     anovaAliasedTermsForNote <- NULL
 
@@ -343,12 +342,12 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       allPredictors <- unlist(c(continuousPredictors, discretePredictors, blocks, covariates))
       allPredictors <- allPredictors[allPredictors != ""]
       anovaAliasedTerms <- .removeAppendedFactorLevels(predictorNames = allPredictors, terms = anovaAliasedTerms, interactionSymbol = ":")
-      
+
       # store for footnote (format the terms)
       anovaAliasedTermsFootnote <- unique(unname(sapply(anovaAliasedTerms, .gsubIdentityFunction)))
       anovaAliasedTermsFootnote <- gsubInteractionSymbol(anovaAliasedTermsFootnote)
       anovaAliasedTermsForNote <- anovaAliasedTermsFootnote
-      
+
       anovaFormula <- as.formula(paste(paste(deparse(formula), collapse=""), paste(anovaAliasedTerms, collapse="-"), sep="-"))
       anovaRegressionFit <- lm(anovaFormula, data = anovaDataset)
     }
@@ -362,7 +361,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
         } else {
           regressionAliasedTermsForNote
         }
-        footnoteText <- paste("Terms removed from Regression:", regressionTermsText)
+        footnoteText <- paste(gettext("Terms removed from Regression:"), regressionTermsText)
       }
       if (!is.null(anovaAliasedTermsForNote)) {
         anovaTermsText <- if (is.character(anovaAliasedTermsForNote) && length(anovaAliasedTermsForNote) > 1) {
@@ -371,9 +370,9 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
           anovaAliasedTermsForNote
         }
         if (!is.null(footnoteText)) {
-          footnoteText <- paste(footnoteText, " and from ANOVA:", anovaTermsText)
+          footnoteText <- paste(footnoteText, gettext(" and from ANOVA:"), anovaTermsText)
         } else {
-          footnoteText <- paste("Terms removed from ANOVA:", anovaTermsText)
+          footnoteText <- paste(gettext("Terms removed from ANOVA:"), anovaTermsText)
         }
       }
       result[["regression"]][["aliasedTerms"]] <- footnoteText
