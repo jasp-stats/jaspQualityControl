@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-02-14 04:18\n"
+"POT-Creation-Date: 2026-02-21 04:16\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -257,6 +257,15 @@ msgstr ""
 "De opgegeven laag/hoog niveaus %1$s voor %2$s komen niet overeen met de "
 "niveaus in de dataset."
 
+msgid "Terms removed from Regression:"
+msgstr ""
+
+msgid "and from ANOVA:"
+msgstr ""
+
+msgid "Terms removed from ANOVA:"
+msgstr ""
+
 msgid "Response Optimizer Settings"
 msgstr ""
 
@@ -344,12 +353,6 @@ msgstr "vg"
 #, fuzzy
 msgid "Mean square"
 msgstr "Gemiddelde Kwadraat"
-
-msgid ""
-"Type III sums of squares are selected and continuous factors are specified. "
-"Results might be misleading. Make sure factors should really be treated as "
-"continuous."
-msgstr ""
 
 #, fuzzy
 msgid "Type I sums of squares."
@@ -1137,6 +1140,13 @@ msgstr "Metingen per onderdeel x operator"
 
 msgid "Operator %s"
 msgstr "Operator %s"
+
+#, fuzzy
+msgid ""
+"Design is not balanced: not all parts were measured the same number of times."
+msgstr ""
+"Ontwerp is niet in balans: niet elke operator heeft elk onderdeel gemeten. "
+"Gebruik niet-repliceerbare gauge r&R."
 
 #, fuzzy
 msgid "Scatterplot operators vs parts"

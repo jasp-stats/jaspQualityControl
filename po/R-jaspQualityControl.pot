@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
-"POT-Creation-Date: 2026-02-14 04:18\n"
+"POT-Creation-Date: 2026-02-21 04:16\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -230,6 +230,15 @@ msgstr ""
 msgid "The specified low/high level(s) %1$s for %2$s do not match the levels in the dataset."
 msgstr ""
 
+msgid "Terms removed from Regression:"
+msgstr ""
+
+msgid "and from ANOVA:"
+msgstr ""
+
+msgid "Terms removed from ANOVA:"
+msgstr ""
+
 msgid "Response Optimizer Settings"
 msgstr ""
 
@@ -300,9 +309,6 @@ msgid "df"
 msgstr ""
 
 msgid "Mean square"
-msgstr ""
-
-msgid "Type III sums of squares are selected and continuous factors are specified. Results might be misleading. Make sure factors should really be treated as continuous."
 msgstr ""
 
 msgid "Type I sums of squares."
@@ -948,6 +954,9 @@ msgid "Measurements by part x operator"
 msgstr ""
 
 msgid "Operator %s"
+msgstr ""
+
+msgid "Design is not balanced: not all parts were measured the same number of times."
 msgstr ""
 
 msgid "Scatterplot operators vs parts"

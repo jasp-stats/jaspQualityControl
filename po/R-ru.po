@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-02-14 04:18\n"
+"POT-Creation-Date: 2026-02-21 04:16\n"
 "PO-Revision-Date: 2025-06-19 08:01+0000\n"
 "Last-Translator: Иван Рудаков <riv@polygene.ru>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
@@ -243,6 +243,15 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Terms removed from Regression:"
+msgstr ""
+
+msgid "and from ANOVA:"
+msgstr ""
+
+msgid "Terms removed from ANOVA:"
+msgstr ""
+
 msgid "Response Optimizer Settings"
 msgstr ""
 
@@ -322,12 +331,6 @@ msgid "df"
 msgstr "df"
 
 msgid "Mean square"
-msgstr ""
-
-msgid ""
-"Type III sums of squares are selected and continuous factors are specified. "
-"Results might be misleading. Make sure factors should really be treated as "
-"continuous."
 msgstr ""
 
 msgid "Type I sums of squares."
@@ -1000,6 +1003,10 @@ msgid "Measurements by part x operator"
 msgstr ""
 
 msgid "Operator %s"
+msgstr ""
+
+msgid ""
+"Design is not balanced: not all parts were measured the same number of times."
 msgstr ""
 
 msgid "Scatterplot operators vs parts"

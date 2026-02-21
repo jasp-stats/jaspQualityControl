@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-02-14 04:18\n"
+"POT-Creation-Date: 2026-02-21 04:16\n"
 "PO-Revision-Date: 2026-01-07 17:01+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
@@ -245,6 +245,15 @@ msgstr ""
 "%2$sக்கான குறிப்பிடப்பட்ட குறைந்த/உயர் நிலை(கள்) %1$s தரவுத்தொகுப்பில் உள்ள நிலைகளுடன் "
 "பொருந்தவில்லை."
 
+msgid "Terms removed from Regression:"
+msgstr ""
+
+msgid "and from ANOVA:"
+msgstr ""
+
+msgid "Terms removed from ANOVA:"
+msgstr ""
+
 msgid "Response Optimizer Settings"
 msgstr "ரெச்பான்ச் ஆப்டிமைசர் அமைப்புகள்"
 
@@ -332,15 +341,6 @@ msgstr "டிஎஃப்"
 
 msgid "Mean square"
 msgstr "நாற்கை"
-
-msgid ""
-"Type III sums of squares are selected and continuous factors are specified. "
-"Results might be misleading. Make sure factors should really be treated as "
-"continuous."
-msgstr ""
-"சதுரங்களின் வகை III தொகைகள் தேர்ந்தெடுக்கப்பட்டு தொடர்ச்சியான காரணிகள் "
-"குறிப்பிடப்படுகின்றன. முடிவுகள் தவறாக இருக்கலாம். காரணிகள் உண்மையில் தொடர்ச்சியாகக் "
-"கருதப்பட வேண்டும் என்பதை உறுதிப்படுத்தவும்."
 
 msgid "Type I sums of squares."
 msgstr "வகை I சதுரங்களின் கூட்டுத்தொகைகள்."
@@ -1035,6 +1035,12 @@ msgstr "பகுதி ஃச் ஆபரேட்டரின் அளவீ
 msgid "Operator %s"
 msgstr "ஆபரேட்டர் %s"
 
+#, fuzzy
+msgid ""
+"Design is not balanced: not all parts were measured the same number of times."
+msgstr ""
+"வடிவமைப்பு சமநிலையில் இல்லை: ஒவ்வொரு பகுதியும் ஒரே எண்ணிக்கையில் அளவிடப்படவில்லை."
+
 msgid "Scatterplot operators vs parts"
 msgstr "Scatterplot operators vs பாகங்கள்"
 
@@ -1711,6 +1717,15 @@ msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
 msgstr[1] "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
+
+#~ msgid ""
+#~ "Type III sums of squares are selected and continuous factors are "
+#~ "specified. Results might be misleading. Make sure factors should really "
+#~ "be treated as continuous."
+#~ msgstr ""
+#~ "சதுரங்களின் வகை III தொகைகள் தேர்ந்தெடுக்கப்பட்டு தொடர்ச்சியான காரணிகள் "
+#~ "குறிப்பிடப்படுகின்றன. முடிவுகள் தவறாக இருக்கலாம். காரணிகள் உண்மையில் தொடர்ச்சியாகக் "
+#~ "கருதப்பட வேண்டும் என்பதை உறுதிப்படுத்தவும்."
 
 #~ msgid ""
 #~ "Calculations are based on 6 times the historical standard variation "

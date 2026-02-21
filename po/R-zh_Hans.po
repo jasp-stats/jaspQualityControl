@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-02-14 04:18\n"
+"POT-Creation-Date: 2026-02-21 04:16\n"
 "PO-Revision-Date: 2025-11-06 02:51+0000\n"
 "Last-Translator: \"Cheng R. Zhu\" <zcr@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
@@ -265,6 +265,15 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Terms removed from Regression:"
+msgstr ""
+
+msgid "and from ANOVA:"
+msgstr ""
+
+msgid "Terms removed from ANOVA:"
+msgstr ""
+
 msgid "Response Optimizer Settings"
 msgstr ""
 
@@ -354,12 +363,6 @@ msgstr "df"
 #, fuzzy
 msgid "Mean square"
 msgstr "均方"
-
-msgid ""
-"Type III sums of squares are selected and continuous factors are specified. "
-"Results might be misleading. Make sure factors should really be treated as "
-"continuous."
-msgstr ""
 
 #, fuzzy
 msgid "Type I sums of squares."
@@ -1137,6 +1140,11 @@ msgstr "测量值按零件 x 操作者"
 
 msgid "Operator %s"
 msgstr "操作者 %s"
+
+#, fuzzy
+msgid ""
+"Design is not balanced: not all parts were measured the same number of times."
+msgstr "设计不平衡：不是每个操作者都测量每个零件。使用不可重复量具 r&R。"
 
 #, fuzzy
 msgid "Scatterplot operators vs parts"

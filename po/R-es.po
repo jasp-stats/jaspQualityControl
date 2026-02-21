@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
-"POT-Creation-Date: 2026-02-14 04:18\n"
+"POT-Creation-Date: 2026-02-21 04:16\n"
 "PO-Revision-Date: 2026-02-21 04:14+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
@@ -245,6 +245,15 @@ msgstr ""
 "Los niveles %1$s bajo/alto especificados para %2$s no coinciden con los "
 "niveles del conjunto de datos."
 
+msgid "Terms removed from Regression:"
+msgstr ""
+
+msgid "and from ANOVA:"
+msgstr ""
+
+msgid "Terms removed from ANOVA:"
+msgstr ""
+
 msgid "Response Optimizer Settings"
 msgstr "Configuración del Optimizador de respuestas"
 
@@ -334,15 +343,6 @@ msgstr "gl"
 
 msgid "Mean square"
 msgstr "Cuadrado Medio"
-
-msgid ""
-"Type III sums of squares are selected and continuous factors are specified. "
-"Results might be misleading. Make sure factors should really be treated as "
-"continuous."
-msgstr ""
-"Se seleccionaron las sumas de cuadrados de tipo III y se especificaron "
-"factores continuos. Los resultados podrían ser engañosos. Asegúrese de que "
-"los factores deben tratarse realmente como continuos."
 
 msgid "Type I sums of squares."
 msgstr "Sumas de cuadrados de tipo I."
@@ -1046,6 +1046,13 @@ msgstr "Medidas por parte x operador"
 msgid "Operator %s"
 msgstr "Operador %s"
 
+#, fuzzy
+msgid ""
+"Design is not balanced: not all parts were measured the same number of times."
+msgstr ""
+"El diseño no está equilibrado: cada parte no se mide el mismo número de "
+"veces."
+
 msgid "Scatterplot operators vs parts"
 msgstr "Gráfico de dispersión de operadores vs partes"
 
@@ -1741,7 +1748,17 @@ msgstr "Gráfico de variables para informe de subgrupos"
 msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] "Se consideró la siguiente covariante, pero no se incluyó: %s."
-msgstr[1] "Se consideraron las siguientes covariantes, pero no se incluyeron: %s."
+msgstr[1] ""
+"Se consideraron las siguientes covariantes, pero no se incluyeron: %s."
+
+#~ msgid ""
+#~ "Type III sums of squares are selected and continuous factors are "
+#~ "specified. Results might be misleading. Make sure factors should really "
+#~ "be treated as continuous."
+#~ msgstr ""
+#~ "Se seleccionaron las sumas de cuadrados de tipo III y se especificaron "
+#~ "factores continuos. Los resultados podrían ser engañosos. Asegúrese de "
+#~ "que los factores deben tratarse realmente como continuos."
 
 #~ msgid ""
 #~ "Calculations are based on 6 times the historical standard variation "

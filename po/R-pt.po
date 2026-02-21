@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-02-14 04:18\n"
+"POT-Creation-Date: 2026-02-21 04:16\n"
 "PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -246,6 +246,15 @@ msgstr ""
 "Os níveis baixo/alto especificados %1$s para %2$s não correspondem aos "
 "níveis no conjunto de dados."
 
+msgid "Terms removed from Regression:"
+msgstr ""
+
+msgid "and from ANOVA:"
+msgstr ""
+
+msgid "Terms removed from ANOVA:"
+msgstr ""
+
 msgid "Response Optimizer Settings"
 msgstr "Configurações do Otimizador de Resposta"
 
@@ -335,15 +344,6 @@ msgstr "gl"
 
 msgid "Mean square"
 msgstr "Quadrado médio"
-
-msgid ""
-"Type III sums of squares are selected and continuous factors are specified. "
-"Results might be misleading. Make sure factors should really be treated as "
-"continuous."
-msgstr ""
-"Selecionam-se somas de quadrados do Tipo III e especificam-se fatores "
-"contínuos. Os resultados podem ser enganosos. Certifique-se de que os "
-"fatores sejam realmente tratados como contínuos."
 
 msgid "Type I sums of squares."
 msgstr "Soma dos quadrados tipo I."
@@ -1050,6 +1050,13 @@ msgstr "Medições por peça x operador"
 msgid "Operator %s"
 msgstr "Operador %s"
 
+#, fuzzy
+msgid ""
+"Design is not balanced: not all parts were measured the same number of times."
+msgstr ""
+"O desenho não é equilibrado: nem todas as partes foram mensuradas o mesmo "
+"número de vezes."
+
 msgid "Scatterplot operators vs parts"
 msgstr "Gráfico de dispersão operadores vs peças"
 
@@ -1744,6 +1751,15 @@ msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] "Os seguintes termos alternativos foram removidos: %s."
 msgstr[1] "Os seguintes termos alternativos foram removidos: %s."
+
+#~ msgid ""
+#~ "Type III sums of squares are selected and continuous factors are "
+#~ "specified. Results might be misleading. Make sure factors should really "
+#~ "be treated as continuous."
+#~ msgstr ""
+#~ "Selecionam-se somas de quadrados do Tipo III e especificam-se fatores "
+#~ "contínuos. Os resultados podem ser enganosos. Certifique-se de que os "
+#~ "fatores sejam realmente tratados como contínuos."
 
 #~ msgid ""
 #~ "Calculations are based on 6 times the historical standard variation "

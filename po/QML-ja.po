@@ -272,10 +272,6 @@ msgid "Scott"
 msgstr ""
 
 msgctxt "msaType1Gauge|"
-msgid "Doane"
-msgstr ""
-
-msgctxt "msaType1Gauge|"
 msgid "Freedman-Diaconis"
 msgstr ""
 
@@ -701,22 +697,6 @@ msgstr ""
 
 msgctxt "msaGaugeRR|"
 msgid "Across rows"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Process variation based on"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Study variation"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Historical standard deviation"
-msgstr ""
-
-msgctxt "msaGaugeRR|"
-msgid "Historical standard deviation:"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
@@ -2388,15 +2368,7 @@ msgid "Analysis options"
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
-msgid "Std. dev. reference"
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
 msgid "Study std. dev."
-msgstr ""
-
-msgctxt "msaGaugeRRnonrep|"
-msgid "Historical process std. dev."
 msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
@@ -3274,4 +3246,28 @@ msgid ""
 "Specify the order in which the predictors are entered into the model. A "
 "block of one or more predictors represents one step in the hierarchy. Note "
 "that the present release does not allow for more than one block."
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Std. dev. source"
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Study std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Historical std. dev."
+msgstr ""
+
+msgctxt "msaGaugeRR|"
+msgid "Historical std. dev.:"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Std. dev. source"
+msgstr ""
+
+msgctxt "msaGaugeRRnonrep|"
+msgid "Historical std. dev."
 msgstr ""
