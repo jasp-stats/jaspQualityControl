@@ -355,7 +355,9 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
         seed = seed
       )
     } else if (options[["factorialType"]] == "factorialTypeSpecify") {
-      whichHow <- strsplit(gsub(" ", "", strsplit(options[["factorialTypeSpecifyGenerators"]], ",")[[1]], fixed = TRUE), "=")
+      # Normalize different delimiters (semicolon, newline, tab) to comma before parsing
+      generators_normalized <- gsub("[;\n\t]", ",", options[["factorialTypeSpecifyGenerators"]])
+      whichHow <- strsplit(gsub(" ", "", strsplit(generators_normalized, ",")[[1]], fixed = TRUE), "=")
       if (length(whichHow) == 0) {
         return()
       }
