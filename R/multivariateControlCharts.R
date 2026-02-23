@@ -20,40 +20,49 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
 
   variables <- unlist(options[["variables"]])
   variables <- variables[variables != ""]
+  stage     <- unlist(options[["stage"]])
+  stage     <- if (length(stage) == 0 || identical(stage, "")) "" else stage
 
   ready <- length(variables) >= 2
 
   if (is.null(dataset)) {
-    if (ready) {
-      dataset <- .readDataSetToEnd(columns.as.numeric = variables)
-    } else {
-      dataset <- .readDataSetToEnd()
-    }
+    numericCols <- if (ready) variables else NULL
+    factorCols  <- if (stage != "") stage else NULL
+    dataset <- .readDataSetToEnd(columns.as.numeric = numericCols,
+                                 columns.as.factor  = factorCols)
   }
 
   if (ready) {
     .hasErrors(dataset,
-               type = c("infinity", "observations"),
+               type = c("infinity", "observations", "variance"),
                infinity.target  = variables,
                observations.amount = "< 3",
                observations.target = variables,
+               variance.target = variables,
                exitAnalysisIfErrors = TRUE)
   }
 
-  .multivariateComputeModel(jaspResults, dataset, options, variables, ready)
-  .multivariateTsqChart(jaspResults, dataset, options, variables, ready)
-  .multivariateSummaryTable(jaspResults, dataset, options, variables, ready)
-  .multivariateCenterTable(jaspResults, dataset, options, variables, ready)
-  .multivariateCovarianceTable(jaspResults, dataset, options, variables, ready)
-  .multivariateTsqTable(jaspResults, dataset, options, variables, ready)
-  .multivariateExportTsqColumn(jaspResults, dataset, options, variables, ready)
+  # Validate stage column
+  if (ready && stage != "") {
+    stageLevels <- levels(dataset[[stage]])
+    if (length(stageLevels) < 2)
+      .quitAnalysis(gettext("The stage variable must have at least two levels to define training and test phases."))
+  }
+
+  .multivariateComputeModel(jaspResults, dataset, options, variables, stage, ready)
+  .multivariateTsqChart(jaspResults, dataset, options, variables, stage, ready)
+  .multivariateSummaryTable(jaspResults, dataset, options, variables, stage, ready)
+  .multivariateCenterTable(jaspResults, dataset, options, variables, stage, ready)
+  .multivariateCovarianceTable(jaspResults, dataset, options, variables, stage, ready)
+  .multivariateTsqTable(jaspResults, dataset, options, variables, stage, ready)
+  .multivariateExportTsqColumn(jaspResults, dataset, options, variables, stage, ready)
 }
 
 .multivariateDependencies <- function() {
-  c("variables", "confidenceLevel", "confidenceLevelAutomatic")
+  c("variables", "confidenceLevel", "confidenceLevelAutomatic", "stage", "trainingLevel")
 }
 
-.multivariateComputeModel <- function(jaspResults, dataset, options, variables, ready) {
+.multivariateComputeModel <- function(jaspResults, dataset, options, variables, stage, ready) {
   if (!is.null(jaspResults[["modelState"]]))
     return()
 
@@ -64,11 +73,22 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
 
+  hasStage <- stage != ""
+
   dataMatrix <- as.data.frame(dataset[, variables, drop = FALSE])
-  # remove rows with any NA
-  completeRows <- stats::complete.cases(dataMatrix)
-  nDropped <- sum(!completeRows)
+  if (hasStage)
+    stageVector <- dataset[[stage]]
+
+  # remove rows with any NA across variables (and stage if present)
+  if (hasStage) {
+    completeRows <- stats::complete.cases(dataMatrix) & !is.na(stageVector)
+  } else {
+    completeRows <- stats::complete.cases(dataMatrix)
+  }
+  nDropped   <- sum(!completeRows)
   dataMatrix <- dataMatrix[completeRows, , drop = FALSE]
+  if (hasStage)
+    stageVector <- stageVector[completeRows]
 
   p <- length(variables)
   if (options[["confidenceLevelAutomatic"]]) {
@@ -77,23 +97,89 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     confidenceLevel <- options[["confidenceLevel"]]
   }
 
-  mqccResult <- try(qcc::mqcc(dataMatrix, type = "T2.single",
-                               confidence.level = confidenceLevel,
-                               plot = FALSE))
+  if (hasStage) {
+    # Phase I/II split
+    trainingLevel <- options[["trainingLevel"]]
+    if (trainingLevel == "")
+      trainingLevel <- levels(stageVector)[1]
 
-  if (jaspBase::isTryError(mqccResult)) {
-    modelState$object <- list(error = .extractErrorMessage(mqccResult))
-    return()
+    isTraining     <- stageVector == trainingLevel
+    trainingData   <- dataMatrix[isTraining, , drop = FALSE]
+    testData       <- dataMatrix[!isTraining, , drop = FALSE]
+
+    if (nrow(trainingData) < 3) {
+      modelState$object <- list(error = gettext("The training phase must contain at least 3 observations."))
+      return()
+    }
+
+    # Check singularity on training data covariance
+    covMatrix <- stats::cov(trainingData)
+    rcond     <- tryCatch(rcond(covMatrix), error = function(e) 0)
+    if (rcond < .Machine$double.eps) {
+      modelState$object <- list(error = gettext("The covariance matrix of the training phase is computationally singular. This typically occurs when variables are linearly dependent or nearly perfectly correlated. Please remove redundant variables."))
+      return()
+    }
+
+    hasTestData <- nrow(testData) > 0
+    if (hasTestData) {
+      mqccResult <- try(qcc::mqcc(trainingData, type = "T2.single",
+                                   newdata = testData,
+                                   pred.limits = TRUE,
+                                   confidence.level = confidenceLevel,
+                                   plot = FALSE))
+    } else {
+      mqccResult <- try(qcc::mqcc(trainingData, type = "T2.single",
+                                   confidence.level = confidenceLevel,
+                                   plot = FALSE))
+    }
+
+    if (jaspBase::isTryError(mqccResult)) {
+      modelState$object <- list(error = .extractErrorMessage(mqccResult))
+      return()
+    }
+
+    phaseLabels <- as.character(stageVector)
+
+    modelState$object <- list(
+      mqccResult      = mqccResult,
+      nDropped        = nDropped,
+      confidenceLevel = confidenceLevel,
+      hasStage        = TRUE,
+      hasTestData     = hasTestData,
+      trainingLevel   = trainingLevel,
+      phaseLabels     = phaseLabels,
+      nTraining       = nrow(trainingData),
+      nTest           = nrow(testData)
+    )
+
+  } else {
+    # Single-phase (original behavior)
+    covMatrix <- stats::cov(dataMatrix)
+    rcond     <- tryCatch(rcond(covMatrix), error = function(e) 0)
+    if (rcond < .Machine$double.eps) {
+      modelState$object <- list(error = gettext("The covariance matrix of the selected variables is computationally singular. This typically occurs when variables are linearly dependent or nearly perfectly correlated. Please remove redundant variables."))
+      return()
+    }
+
+    mqccResult <- try(qcc::mqcc(dataMatrix, type = "T2.single",
+                                 confidence.level = confidenceLevel,
+                                 plot = FALSE))
+
+    if (jaspBase::isTryError(mqccResult)) {
+      modelState$object <- list(error = .extractErrorMessage(mqccResult))
+      return()
+    }
+
+    modelState$object <- list(
+      mqccResult      = mqccResult,
+      nDropped        = nDropped,
+      confidenceLevel = confidenceLevel,
+      hasStage        = FALSE
+    )
   }
-
-  modelState$object <- list(
-    mqccResult      = mqccResult,
-    nDropped        = nDropped,
-    confidenceLevel = confidenceLevel
-  )
 }
 
-.multivariateTsqChart <- function(jaspResults, dataset, options, variables, ready) {
+.multivariateTsqChart <- function(jaspResults, dataset, options, variables, stage, ready) {
   if (!is.null(jaspResults[["tsqChart"]]))
     return()
 
@@ -114,25 +200,32 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   }
 
   mqccResult <- stateObj$mqccResult
+
+  if (isTRUE(stateObj$hasStage) && isTRUE(stateObj$hasTestData)) {
+    jaspPlot$plotObject <- .multivariateTsqChartPhased(stateObj)
+  } else {
+    jaspPlot$plotObject <- .multivariateTsqChartSingle(stateObj)
+  }
+}
+
+.multivariateTsqChartSingle <- function(stateObj) {
+  mqccResult <- stateObj$mqccResult
   tsqValues  <- as.numeric(mqccResult$statistics)
   ucl        <- as.numeric(mqccResult$limits[, "UCL"])
+  lcl        <- as.numeric(mqccResult$limits[, "LCL"])
   n          <- length(tsqValues)
   sample     <- seq_len(n)
 
-  # Determine which points exceed UCL
   violation  <- tsqValues > ucl
   dotColor   <- ifelse(violation, "red", "blue")
 
   pointData <- data.frame(
-    sample      = sample,
-    tsq         = tsqValues,
-    dotColor    = dotColor,
+    sample   = sample,
+    tsq      = tsqValues,
+    dotColor = dotColor,
     stringsAsFactors = FALSE
   )
 
-  lcl <- as.numeric(mqccResult$limits[, "LCL"])
-
-  # Axis breaks
   yBreakDeterminants <- c(tsqValues, ucl, lcl, 0)
   yBreaks <- jaspGraphs::getPrettyAxisBreaks(yBreakDeterminants)
   yLimits <- range(yBreaks)
@@ -142,7 +235,6 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     xBreaks[1] <- 1
   xLimits <- c(0.5, max(xBreaks) * 1.2 + 0.5)
 
-  # Control limit labels
   labelX <- max(xLimits) * 0.95
   limitLabels <- data.frame(
     x     = c(labelX, labelX),
@@ -164,10 +256,119 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     jaspGraphs::geom_rangeframe() +
     jaspGraphs::themeJaspRaw()
 
-  jaspPlot$plotObject <- plotObject
+  return(plotObject)
 }
 
-.multivariateSummaryTable <- function(jaspResults, dataset, options, variables, ready) {
+.multivariateTsqChartPhased <- function(stateObj) {
+  mqccResult  <- stateObj$mqccResult
+  nTraining   <- stateObj$nTraining
+  nTest       <- stateObj$nTest
+  nTotal      <- nTraining + nTest
+
+  # T\u00B2 values
+  phase1Tsq   <- as.numeric(mqccResult$statistics)
+  phase2Tsq   <- as.numeric(mqccResult$newstats)
+  allTsq      <- c(phase1Tsq, phase2Tsq)
+
+  # Limits
+  phase1Ucl   <- as.numeric(mqccResult$limits[, "UCL"])
+  phase1Lcl   <- as.numeric(mqccResult$limits[, "LCL"])
+  phase2Ucl   <- as.numeric(mqccResult$pred.limits[, "UPL"])
+  phase2Lcl   <- as.numeric(mqccResult$pred.limits[, "LPL"])
+
+  sample <- seq_len(nTotal)
+
+  # Violations per phase
+  violation1 <- phase1Tsq > phase1Ucl
+  violation2 <- phase2Tsq > phase2Ucl
+  dotColor   <- c(ifelse(violation1, "red", "blue"),
+                  ifelse(violation2, "red", "blue"))
+
+  # Phase label for grouping
+  phase <- c(rep("Phase I", nTraining), rep("Phase II", nTest))
+
+  pointData <- data.frame(
+    sample   = sample,
+    tsq      = allTsq,
+    phase    = phase,
+    dotColor = dotColor,
+    stringsAsFactors = FALSE
+  )
+
+  # Control limit segments (per phase)
+  clData <- data.frame(
+    xmin  = c(0.5, nTraining + 0.5),
+    xmax  = c(nTraining + 0.5, nTotal + 0.5),
+    ucl   = c(phase1Ucl, phase2Ucl),
+    lcl   = c(phase1Lcl, phase2Lcl),
+    phase = c("Phase I", "Phase II"),
+    stringsAsFactors = FALSE
+  )
+
+  # Axis
+  yBreakDeterminants <- c(allTsq, phase1Ucl, phase1Lcl, phase2Ucl, phase2Lcl, 0)
+  yBreaks <- jaspGraphs::getPrettyAxisBreaks(yBreakDeterminants)
+  yLimits <- range(yBreaks)
+
+  xBreaks <- unique(as.integer(jaspGraphs::getPrettyAxisBreaks(sample)))
+  if (xBreaks[1] == 0)
+    xBreaks[1] <- 1
+  xLimits <- c(0.5, max(xBreaks) * 1.2 + 0.5)
+
+  # Limit labels at right edge of each phase
+  labelData <- data.frame(
+    x     = c(clData$xmax[1] - 0.5, max(xLimits) * 0.95,
+              clData$xmax[1] - 0.5, max(xLimits) * 0.95),
+    y     = c(phase1Ucl, phase2Ucl, phase1Lcl, phase2Lcl),
+    label = c(gettextf("UCL = %s", round(phase1Ucl, 3)),
+              gettextf("UCL = %s", round(phase2Ucl, 3)),
+              gettextf("LCL = %s", round(phase1Lcl, 3)),
+              gettextf("LCL = %s", round(phase2Lcl, 3))),
+    stringsAsFactors = FALSE
+  )
+
+  # Phase label positions
+  phaseLabelData <- data.frame(
+    x     = c((0.5 + nTraining + 0.5) / 2,
+              (nTraining + 0.5 + nTotal + 0.5) / 2),
+    y     = rep(max(yLimits), 2),
+    label = c(gettextf("Training (%s)", stateObj$trainingLevel),
+              gettext("Test")),
+    stringsAsFactors = FALSE
+  )
+
+  plotObject <- ggplot2::ggplot(pointData, ggplot2::aes(x = sample, y = tsq)) +
+    # Limit lines per phase as segments
+    ggplot2::geom_segment(data = clData,
+                          mapping = ggplot2::aes(x = xmin, xend = xmax, y = ucl, yend = ucl),
+                          col = "red", linewidth = 1.5, linetype = "dashed", inherit.aes = FALSE) +
+    ggplot2::geom_segment(data = clData,
+                          mapping = ggplot2::aes(x = xmin, xend = xmax, y = lcl, yend = lcl),
+                          col = "red", linewidth = 1.5, linetype = "dashed", inherit.aes = FALSE) +
+    # Phase separator
+    ggplot2::geom_vline(xintercept = nTraining + 0.5, linetype = "solid", col = "darkgray", linewidth = 1) +
+    # Data lines per phase (break at separator)
+    jaspGraphs::geom_line(data = pointData[pointData$phase == "Phase I", ],
+                          mapping = ggplot2::aes(x = sample, y = tsq), col = "blue", na.rm = TRUE) +
+    jaspGraphs::geom_line(data = pointData[pointData$phase == "Phase II", ],
+                          mapping = ggplot2::aes(x = sample, y = tsq), col = "blue", na.rm = TRUE) +
+    jaspGraphs::geom_point(mapping = ggplot2::aes(x = sample, y = tsq),
+                           size = 4, fill = dotColor, inherit.aes = TRUE, na.rm = TRUE) +
+    # Limit labels
+    ggplot2::geom_label(data = labelData, mapping = ggplot2::aes(x = x, y = y, label = label),
+                        inherit.aes = FALSE, size = 3.5, na.rm = TRUE) +
+    # Phase labels at top
+    ggplot2::geom_text(data = phaseLabelData, mapping = ggplot2::aes(x = x, y = y, label = label),
+                       inherit.aes = FALSE, size = 4, fontface = "bold", vjust = 1.5) +
+    ggplot2::scale_y_continuous(name = gettext("Hotelling T\u00B2"), breaks = yBreaks, limits = yLimits) +
+    ggplot2::scale_x_continuous(name = gettext("Sample"), breaks = xBreaks, limits = xLimits) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw()
+
+  return(plotObject)
+}
+
+.multivariateSummaryTable <- function(jaspResults, dataset, options, variables, stage, ready) {
   if (!is.null(jaspResults[["summaryTable"]]))
     return()
 
@@ -176,13 +377,6 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   table$info <- gettext("Summary of the Hotelling T\u00B2 control chart, including the number of variables, observations, confidence level, control limits, and the determinant of the covariance matrix.")
   table$dependOn(.multivariateDependencies())
   table$showSpecifiedColumnsOnly <- TRUE
-
-  table$addColumnInfo(name = "numVariables",    title = gettext("Number of Variables"),    type = "integer")
-  table$addColumnInfo(name = "numObservations", title = gettext("Number of Observations"), type = "integer")
-  table$addColumnInfo(name = "confidenceLevel", title = gettext("Confidence Level"),       type = "number")
-  table$addColumnInfo(name = "lcl",             title = gettext("LCL"),                    type = "number")
-  table$addColumnInfo(name = "ucl",             title = gettext("UCL"),                    type = "number")
-  table$addColumnInfo(name = "detS",            title = gettext("|S|"),                    type = "number")
 
   jaspResults[["summaryTable"]] <- table
 
@@ -200,19 +394,63 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   if (stateObj$nDropped > 0)
     table$addFootnote(gettextf("Removed %i observation(s) with missing values.", stateObj$nDropped))
 
-  row <- list(
-    numVariables    = length(variables),
-    numObservations = length(mqccResult$statistics),
-    confidenceLevel = stateObj$confidenceLevel,
-    lcl             = as.numeric(mqccResult$limits[, "LCL"]),
-    ucl             = as.numeric(mqccResult$limits[, "UCL"]),
-    detS            = det(mqccResult$cov)
-  )
+  if (isTRUE(stateObj$hasStage) && isTRUE(stateObj$hasTestData)) {
+    # Two-row table: one per phase
+    table$addColumnInfo(name = "phase",           title = gettext("Phase"),                  type = "string")
+    table$addColumnInfo(name = "numVariables",    title = gettext("Number of Variables"),    type = "integer")
+    table$addColumnInfo(name = "numObservations", title = gettext("Number of Observations"), type = "integer")
+    table$addColumnInfo(name = "confidenceLevel", title = gettext("Confidence Level"),       type = "number")
+    table$addColumnInfo(name = "lcl",             title = gettext("LCL"),                    type = "number")
+    table$addColumnInfo(name = "ucl",             title = gettext("UCL"),                    type = "number")
+    table$addColumnInfo(name = "detS",            title = gettext("|S|"),                    type = "number")
 
-  table$addRows(row)
+    phase1Ucl <- as.numeric(mqccResult$limits[, "UCL"])
+    phase1Lcl <- as.numeric(mqccResult$limits[, "LCL"])
+    phase2Ucl <- as.numeric(mqccResult$pred.limits[, "UPL"])
+    phase2Lcl <- as.numeric(mqccResult$pred.limits[, "LPL"])
+
+    table$addRows(list(
+      phase           = gettextf("Training (%s)", stateObj$trainingLevel),
+      numVariables    = length(variables),
+      numObservations = stateObj$nTraining,
+      confidenceLevel = stateObj$confidenceLevel,
+      lcl             = phase1Lcl,
+      ucl             = phase1Ucl,
+      detS            = det(mqccResult$cov)
+    ))
+
+    table$addRows(list(
+      phase           = gettext("Test"),
+      numVariables    = length(variables),
+      numObservations = stateObj$nTest,
+      confidenceLevel = stateObj$confidenceLevel,
+      lcl             = phase2Lcl,
+      ucl             = phase2Ucl,
+      detS            = det(mqccResult$cov)
+    ))
+
+    table$addFootnote(gettext("Control limits for the training phase use the Beta distribution; test phase limits use the F distribution (prediction limits)."))
+
+  } else {
+    table$addColumnInfo(name = "numVariables",    title = gettext("Number of Variables"),    type = "integer")
+    table$addColumnInfo(name = "numObservations", title = gettext("Number of Observations"), type = "integer")
+    table$addColumnInfo(name = "confidenceLevel", title = gettext("Confidence Level"),       type = "number")
+    table$addColumnInfo(name = "lcl",             title = gettext("LCL"),                    type = "number")
+    table$addColumnInfo(name = "ucl",             title = gettext("UCL"),                    type = "number")
+    table$addColumnInfo(name = "detS",            title = gettext("|S|"),                    type = "number")
+
+    table$addRows(list(
+      numVariables    = length(variables),
+      numObservations = length(mqccResult$statistics),
+      confidenceLevel = stateObj$confidenceLevel,
+      lcl             = as.numeric(mqccResult$limits[, "LCL"]),
+      ucl             = as.numeric(mqccResult$limits[, "UCL"]),
+      detS            = det(mqccResult$cov)
+    ))
+  }
 }
 
-.multivariateCenterTable <- function(jaspResults, dataset, options, variables, ready) {
+.multivariateCenterTable <- function(jaspResults, dataset, options, variables, stage, ready) {
   if (!options[["centerTable"]])
     return()
 
@@ -249,9 +487,12 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   )
 
   table$setData(rows)
+
+  if (isTRUE(stateObj$hasStage))
+    table$addFootnote(gettextf("Centers estimated from training phase (%s) only.", stateObj$trainingLevel))
 }
 
-.multivariateCovarianceTable <- function(jaspResults, dataset, options, variables, ready) {
+.multivariateCovarianceTable <- function(jaspResults, dataset, options, variables, stage, ready) {
   if (!options[["covarianceMatrixTable"]])
     return()
 
@@ -291,9 +532,12 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
       row[[varNames[j]]] <- covMatrix[i, j]
     table$addRows(row)
   }
+
+  if (isTRUE(stateObj$hasStage))
+    table$addFootnote(gettextf("Covariance matrix estimated from training phase (%s) only.", stateObj$trainingLevel))
 }
 
-.multivariateExportTsqColumn <- function(jaspResults, dataset, options, variables, ready) {
+.multivariateExportTsqColumn <- function(jaspResults, dataset, options, variables, stage, ready) {
   if (!ready || !options[["addTsqToData"]] || options[["tsqColumn"]] == "")
     return()
 
@@ -305,14 +549,25 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     return()
 
   mqccResult <- stateObj$mqccResult
-  tsqValues  <- as.numeric(mqccResult$statistics)
+
+  if (isTRUE(stateObj$hasStage) && isTRUE(stateObj$hasTestData)) {
+    # Concatenate Phase I and Phase II T² values in original row order
+    phase1Tsq <- as.numeric(mqccResult$statistics)
+    phase2Tsq <- as.numeric(mqccResult$newstats)
+    phaseLabels <- stateObj$phaseLabels
+    tsqValues <- numeric(length(phaseLabels))
+    tsqValues[phaseLabels == stateObj$trainingLevel] <- phase1Tsq
+    tsqValues[phaseLabels != stateObj$trainingLevel] <- phase2Tsq
+  } else {
+    tsqValues <- as.numeric(mqccResult$statistics)
+  }
 
   jaspResults[["tsqColumn"]] <- createJaspColumn(columnName = options[["tsqColumn"]])
   jaspResults[["tsqColumn"]]$dependOn(c(.multivariateDependencies(), "addTsqToData", "tsqColumn"))
   jaspResults[["tsqColumn"]]$setScale(tsqValues)
 }
 
-.multivariateTsqTable <- function(jaspResults, dataset, options, variables, ready) {
+.multivariateTsqTable <- function(jaspResults, dataset, options, variables, stage, ready) {
   if (!options[["tSquaredValuesTable"]])
     return()
 
@@ -341,21 +596,56 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   }
 
   mqccResult <- stateObj$mqccResult
-  tsqValues  <- as.numeric(mqccResult$statistics)
-  ucl        <- as.numeric(mqccResult$limits[, "UCL"])
-  lcl        <- as.numeric(mqccResult$limits[, "LCL"])
 
-  # print both limits in a single footnote for reference
-  table$addFootnote(gettextf("UCL = %s, LCL = %s", round(ucl, 4), round(lcl, 4)))
+  if (isTRUE(stateObj$hasStage) && isTRUE(stateObj$hasTestData)) {
+    # Add phase column
+    table$addColumnInfo(name = "phase", title = gettext("Phase"), type = "string", overtitle = "")
 
-  rows <- data.frame(
-    sample = seq_along(tsqValues),
-    tsq    = tsqValues,
-    status = ifelse(tsqValues > ucl,
-                    gettext("Out of control"),
-                    gettext("In control")),
-    stringsAsFactors = FALSE
-  )
+    phase1Tsq <- as.numeric(mqccResult$statistics)
+    phase2Tsq <- as.numeric(mqccResult$newstats)
+    allTsq    <- c(phase1Tsq, phase2Tsq)
 
-  table$setData(rows)
+    phase1Ucl <- as.numeric(mqccResult$limits[, "UCL"])
+    phase2Ucl <- as.numeric(mqccResult$pred.limits[, "UPL"])
+
+    nTraining <- stateObj$nTraining
+    nTest     <- stateObj$nTest
+
+    phase <- c(rep(gettextf("Training (%s)", stateObj$trainingLevel), nTraining),
+               rep(gettext("Test"), nTest))
+    ucl   <- c(rep(phase1Ucl, nTraining), rep(phase2Ucl, nTest))
+
+    table$addFootnote(gettextf("Training UCL = %s, Test UCL = %s",
+                               round(phase1Ucl, 4), round(phase2Ucl, 4)))
+
+    rows <- data.frame(
+      sample = seq_along(allTsq),
+      tsq    = allTsq,
+      status = ifelse(allTsq > ucl,
+                      gettext("Out of control"),
+                      gettext("In control")),
+      phase  = phase,
+      stringsAsFactors = FALSE
+    )
+
+    table$setData(rows)
+
+  } else {
+    tsqValues <- as.numeric(mqccResult$statistics)
+    ucl       <- as.numeric(mqccResult$limits[, "UCL"])
+    lcl       <- as.numeric(mqccResult$limits[, "LCL"])
+
+    table$addFootnote(gettextf("UCL = %s, LCL = %s", round(ucl, 4), round(lcl, 4)))
+
+    rows <- data.frame(
+      sample = seq_along(tsqValues),
+      tsq    = tsqValues,
+      status = ifelse(tsqValues > ucl,
+                      gettext("Out of control"),
+                      gettext("In control")),
+      stringsAsFactors = FALSE
+    )
+
+    table$setData(rows)
+  }
 }
