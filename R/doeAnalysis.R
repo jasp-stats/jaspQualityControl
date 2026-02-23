@@ -739,13 +739,13 @@ get_levels <- function(var, num_levels, dataset) {
     if (roOptionsDf$responseOptimizerGoal[i] == "maximize") {
       ubVector[i] <- NA
       lbVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
-      targetVector[i] <- max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      targetVector[i] <- if (options[["responseOptimizerManualTarget"]]) roOptionsDf$responseOptimizerTarget[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
     } else if (roOptionsDf$responseOptimizerGoal[i] == "minimize") {
       ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
       lbVector[i] <- NA
-      targetVector[i] <- min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      targetVector[i] <- if (options[["responseOptimizerManualTarget"]]) roOptionsDf$responseOptimizerTarget[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
     } else if (roOptionsDf$responseOptimizerGoal[i] == "target") {
-      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerUpperBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
       lbVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
       targetVector[i] <- roOptionsDf$responseOptimizerTarget[i]
     }
@@ -822,24 +822,21 @@ get_levels <- function(var, num_levels, dataset) {
     currentSettings <- do.call(cbind, lapply(currentSettings, function(x) setNames(data.frame(x$value, stringsAsFactors = FALSE), x$variable)))
     # if any of the values is == "" then return empty plot and table with note that asks to set value
     if (any(unlist(currentSettings) == "")) {
-      jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
-      jaspPlot$setError(gettext("Enter values for all predictors."))
-      jaspPlot$dependOn(options = c("responsesResponseOptimizer",
+      jaspTable <- createJaspTable(gettext("Response Optimizer Settings"))
+      jaspTable$addColumnInfo(name = "response", title = "Response", type = "string")
+      jaspTable$addColumnInfo(name = "goal", title = "Goal", type = "string")
+      jaspTable$addColumnInfo(name = "lb", title = "Lower", type = "number")
+      jaspTable$addColumnInfo(name = "target", title = "Target", type = "number")
+      jaspTable$addColumnInfo(name = "ub", title = "Upper", type = "number")
+      jaspTable$addColumnInfo(name = "weight", title = "Weight", type = "number")
+      jaspTable$addColumnInfo(name = "importance", title = "Importance", type = "number")
+      jaspTable$addFootnote(gettext("Enter values for all predictors to create an optimization Plot with manual input parameters."))
+      jaspTable$dependOn(options = c("responsesResponseOptimizer",
                         "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
                         "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
                         "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
                         "optimizationPlot", .doeAnalysisBaseDependencies()))
-      jaspResults[["plotRo"]][["plot"]] <- jaspPlot
-
-      tb <- createJaspTable(gettext("Optimization Plot Summary"))
-      tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
-      tb$dependOn(options = c("responsesResponseOptimizer",
-                        "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-                        "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-                        "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-                        "optimizationPlot", .doeAnalysisBaseDependencies()))
-      tb$addFootnote(gettext("Enter values for all predictors."))
-      jaspResults[["plotRo"]][["table"]] <- tb
+      jaspResults[["plotRo"]][["table"]] <- jaspTable
       return()
     }
 
@@ -1018,7 +1015,8 @@ get_levels <- function(var, num_levels, dataset) {
   jaspPlot$plotObject <- plotObject
   jaspResults[["plotRo"]][["plot"]] <- jaspPlot
 
-  tb <- createJaspTable(gettext("Optimization Plot Summary"))
+  tbTitle <- if (options[["optimizationPlotCustomParameters"]]) gettext("Optimization Plot Summary (Manual Predictor Values)") else gettext("Optimization Plot Summary")
+  tb <- createJaspTable(tbTitle)
   tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
   tb$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
                     "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
