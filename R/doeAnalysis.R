@@ -1858,9 +1858,9 @@ get_levels <- function(var, num_levels, dataset) {
       plot <- createJaspPlot(title = plotTitle, width = 500, height = 500)
       result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
       if (plotType == "contourPlot") {
-        plot$plotObject <- function(){.doeContourSurfacePlotObject(result, options, dependent, variablePair, type = "contour")}
+        plot$plotObject <- function(){.doeContourSurfacePlotObject(result, options, dep, variablePair, type = "contour")}
       } else if (plotType == "surfacePlot") {
-        plot$plotObject <- function(){.doeContourSurfacePlotObject(result, options, dependent, variablePair, type = "surface")}
+        plot$plotObject <- function(){.doeContourSurfacePlotObject(result, options, dep, variablePair, type = "surface")}
       }
       jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
     }
