@@ -1170,7 +1170,6 @@ get_levels <- function(var, num_levels, dataset) {
   outcome <- c()
   for (dep in dependent) {
     currentCoefSet <- coefficients[[dep]]
-
     coefficientVector <- names(currentCoefSet)[-1]
     predictorValues <- c(1)  # for the intercept
 
@@ -1180,7 +1179,15 @@ get_levels <- function(var, num_levels, dataset) {
       for (coef_j in coefSplit) {
         coef_j_clean <- .removeAppendedFactorLevels(discretePredictors, coef_j, ":")
         coef_j_level <- sub(coef_j_clean, "", coef_j)
-        if (coef_j %in% continuousPredictors) { # cont. predictors don't have an appended factor level so we use coef_j here
+        # Check if this is a squared term (e.g., "Speed^2")
+        isSquaredTerm <- grepl("\\^2$", coef_j)
+        if (isSquaredTerm) {
+          basePredictor <- sub("\\^2$", "", coef_j)
+          if (basePredictor %in% continuousPredictors) {
+            value <- if (length(continuousLevels) > 1) continuousLevels[[basePredictor]] else unlist(continuousLevels)
+            coefResult <- c(coefResult, value^2)
+          }
+        } else if (coef_j %in% continuousPredictors) { # cont. predictors don't have an appended factor level so we use coef_j here
           coefResult <- if (length(continuousLevels) > 1) c(coefResult, continuousLevels[[coef_j]]) else c(coefResult, unlist(continuousLevels))
         } else if (coef_j_clean %in% discretePredictors) {
           current_j_level <- if (length(currentDiscreteLevels)  > 1) currentDiscreteLevels[[coef_j_clean]] else unname(currentDiscreteLevels)

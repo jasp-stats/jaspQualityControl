@@ -4869,5 +4869,83 @@ options$responsesResponseOptimizer <- list(
   )
 )
 set.seed(123)
-results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options, makeTests = T)
 
+test_that("49.1 Response Optimizer Response Surface With Squares - ANOVA table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(26128.8222222222, 130644.111111111, 5, 28.8591887320919, 2.16656705944768e-13,
+                                      "Model", "", 2154.69444444445, 3, "", "", "<unicode> Linear terms",
+                                      1406.25, 1406.25, 1, 1.55319798991891, 0.218712178465279, "<unicode> <unicode> Speed",
+                                      400, 400, 1, 0.441798539354713, 0.509436522509469, "<unicode> <unicode> Pressure",
+                                      348.444444444445, 348.444444444445, 1, 0.384855616504551, 0.537950398940526,
+                                      "<unicode> <unicode> Nozzle", "", 128489.416666667, 2, "", "",
+                                      "<unicode> Squared terms", 59784.0833333334, 59784.0833333334,
+                                      1, 66.0313017333179, 1.42166789351504e-10, "<unicode> <unicode> Speed^2",
+                                      68705.3333333334, 68705.3333333334, 1, 75.8847897813635, 1.89456734041113e-11,
+                                      "<unicode> <unicode> Pressure^2", 905.390046296296, 43458.7222222222,
+                                      48, "", "", "Error", "", 174102.833333333, 53, "", "", "Total"
+                                 ))
+})
+
+test_that("49.2 Response Optimizer Response Surface With Squares - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 1818.94444444447, "", 7.17574678375441e-07, 318.114470543182,
+                                      "(Intercept)", 5.71789281178757, "", "A", -42.0375000000004,
+                                      -1681.50000000002, 2.28066307580887e-10, 5.23363674597155, "Speed",
+                                      -8.03217763104358, 433.000000000006, "B", 91.4666666666664,
+                                      914.666666666664, 2.28214646124788e-11, 10.5034716639313, "Pressure",
+                                      8.70823186782719, 109.000000000002, "A^2", 0.176458333333335,
+                                      7.05833333333339, 1.79939446191843e-10, 0.0217816241341456,
+                                      "Speed^2", 8.10124774197681, "", "B^2", -3.02666666666666, -30.2666666666666,
+                                      2.47083118352093e-11, 0.348505986146329, "Pressure^2", -8.68469061359492,
+                                      "", "C1", 5.55555555555592, 16.6666666666677, 0.343732111495362,
+                                      5.80843310243881, "Nozzle1", 0.956463723964262, 1, "C2", -4.88888888888902,
+                                      -14.6666666666671, 0.404224960398928, 5.80843310243881, "Nozzle2",
+                                      -0.841688077088519, 1))
+})
+
+test_that("49.3 Response Optimizer Response Surface With Squares - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "C1", 2, "C2"))
+})
+
+test_that("49.4 Response Optimizer Response Surface With Squares - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Syruploss = 1818.94 <unicode> 42.04 A + 91.47 B + 0.18 A^2 <unicode> 3.03 B^2 + 5.56 C1 <unicode> 4.89 C2"
+                                 ))
+})
+
+test_that("49.5 Response Optimizer Response Surface With Squares - Model Summary table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.722698781107446, 0.675387252392338, 0.754091371925471, 30.1815037373668
+                                 ))
+})
+
+test_that("49.6 Response Optimizer Response Surface With Squares - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot49")
+})
+
+test_that("49.7 Response Optimizer Response Surface With Squares - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2, 10, 119.11, -77.58, 1))
+})
+
+test_that("49.8 Response Optimizer Response Surface With Squares - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 135, 1))
+})
+
+test_that("49.9 Response Optimizer Response Surface With Squares - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(2, 10, 119.11, -77.58, 1))
+})
