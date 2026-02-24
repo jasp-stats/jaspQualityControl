@@ -4728,3 +4728,146 @@ test_that("47.14 Response Optimizer Factorial Changing All Options - Response Op
   jaspTools::expect_equal_tables(table,
                                  list(0.6, 75, 100, "Formula2", 32.41, 0.87732801703988))
 })
+
+## Response Surface design, basic example, no squared terms ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndInteractions"
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("48.1 Response Optimizer Response Surface No Squares - ANOVA table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(821.824074074068, 4930.94444444441, 6, 0.228322398804983, 0.965437895274988,
+                                      "Model", "", 2154.69444444444, 3, "", "", "<unicode> Linear terms",
+                                      1406.25, 1406.25, 1, 0.390689909736777, 0.534960055678213, "<unicode> <unicode> Speed",
+                                      400, 400, 1, 0.111129574325128, 0.740344432372881, "<unicode> <unicode> Pressure",
+                                      348.444444444438, 348.444444444438, 1, 0.0968062069676649, 0.757072343791272,
+                                      "<unicode> <unicode> Nozzle", "", 2776.24999999997, 3, "", "",
+                                      "<unicode> Interaction terms", 425.041666666657, 425.041666666657,
+                                      1, 0.118086748717771, 0.732651462637135, "<unicode> <unicode> Speed<unicode><unicode><unicode>Pressure",
+                                      1700.16666666666, 1700.16666666666, 1, 0.472346994871092, 0.49528697987493,
+                                      "<unicode> <unicode> Speed<unicode><unicode><unicode>Nozzle",
+                                      651.041666666657, 651.041666666657, 1, 0.180874958211468, 0.672563404439722,
+                                      "<unicode> <unicode> Pressure<unicode><unicode><unicode>Nozzle",
+                                      3599.40189125296, 169171.888888889, 47, "", "", "Error", "",
+                                      174102.833333333, 53, "", "", "Total"))
+})
+
+test_that("48.2 Response Optimizer Response Surface No Squares - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 31.3055555555554, "", 0.89376424507658, 233.071765248208,
+                                      "(Intercept)", 0.134317237105991, "", "A", -0.318749999999999,
+                                      -12.75, 0.869210643020835, 1.92452676159236, "Speed", -0.16562513255792,
+                                      14.5000000000001, "B", -4.38333333333332, -43.8333333333332,
+                                      0.771382909617207, 14.9927496623625, "Pressure", -0.292363537846373,
+                                      55.0000000000007, "C1", -16.9444444444446, -50.8333333333339,
+                                      0.861565905074579, 96.6016630668738, "Nozzle1", -0.17540530780215,
+                                      4692.25000000006, "C2", 109.861111111111, 329.583333333333,
+                                      0.261585509858412, 96.6016630668739, "Nozzle2", 1.13725900386475,
+                                      4692.25000000006, "AB", 0.0420833333333333, 5.47083333333333,
+                                      0.735523726381216, 0.123798555884037, "Speed<unicode>Pressure",
+                                      0.339933959914306, 14.5000000000001, "AC1", -0.137499999999999,
+                                      -19.1124999999998, 0.848333934300153, 0.714751295649358, "Speed<unicode>Nozzle1",
+                                      -0.192374607555036, 14.5000000000001, "AC2", -0.566666666666667,
+                                      -78.7666666666667, 0.432139014831718, 0.714751295649358, "Speed<unicode>Nozzle2",
+                                      -0.792816564469247, 14.5000000000001, "BC1", 2.6, 49.4000000000001,
+                                      0.368089968279074, 2.85900518259743, "Pressure<unicode>Nozzle1",
+                                      0.909407235714725, 55.0000000000007, "BC2", -3.11666666666667,
+                                      -59.2166666666666, 0.281593315476976, 2.85900518259743, "Pressure<unicode>Nozzle2",
+                                      -1.09012277614521, 55.0000000000007))
+})
+
+test_that("48.3 Response Optimizer Response Surface No Squares - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "C1", 2, "C2"))
+})
+
+test_that("48.4 Response Optimizer Response Surface No Squares - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Syruploss = 31.31 <unicode> 0.32 A <unicode> 4.38 B <unicode> 16.94 C1 + 109.86 C2 + 0.04 AB <unicode> 0.14 AC1 <unicode> 0.57 AC2 + 2.6 BC1 <unicode> 3.12 BC2"
+                                 ))
+})
+
+test_that("48.5 Response Optimizer Response Surface No Squares - Model Summary table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.0704147229718324, 60.6486585618638))
+})
+
+test_that("48.6 Response Optimizer Response Surface No Squares - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot48")
+})
+
+test_that("48.7 Response Optimizer Response Surface No Squares - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3, 10, 100, -19.65, 0.765607810781078))
+})
+
+test_that("48.8 Response Optimizer Response Surface No Squares - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 135, 1))
+})
+
+test_that("48.9 Response Optimizer Response Surface No Squares - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3, 10, 100, -19.65, 0.765607810781078))
+})
+
+
+## Response Surface design, basic example, squared terms ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
