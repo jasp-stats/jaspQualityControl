@@ -22,6 +22,7 @@ jaspTools::runTestsTravis(module = getwd())
 # jaspTools::testAnalysis("timeWeightedCharts")
 # jaspTools::testAnalysis("variablesChartsIndividuals")
 # jaspTools::testAnalysis("variablesChartsSubgroups")
+# jaspTools::testAnalysis("multivariateControlCharts")
 
 
 
