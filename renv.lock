@@ -4161,7 +4161,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
       "RemoteRef": "master",
-      "RemoteSha": "ceabbba40b43bcf959b9c0b0e37a4189e6ea68f8",
+      "RemoteSha": "e471aad22770bc41ecf7c146063d05395677aea3",
       "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs, jasp-stats/jaspTTests, dustinfife/flexplot"
     },
     "jaspGraphs": {

@@ -179,3 +179,30 @@ test_that("5.6 Phased - Training UCL uses Beta, Test UCL uses F prediction limit
   # Test UCL (F prediction) should be larger than training UCL (Beta)
   expect_true(testUCL > trainingUCL)
 })
+
+# Optional timestamp / axis labels ####
+
+options6 <- analysisOptions("multivariateControlCharts")
+options6$testSet <- "jaspDefault"
+options6$variables <- c("Strength", "Diameter")
+options6$axisLabels <- "Timestamp"
+options6$tSquaredValuesTable <- TRUE
+
+dataset6 <- utils::read.csv("datasets/multivariateControlCharts/montgomeryExample1.csv")
+dataset6$Timestamp <- paste0("t", seq_len(nrow(dataset6)))
+
+results6 <- runAnalysis("multivariateControlCharts", dataset6, options6)
+
+test_that("6.1 Optional timestamp - x axis title uses timestamp", {
+  plotName <- results6[["results"]][["tsqChart"]][["data"]]
+  testPlot <- results6[["state"]][["figures"]][[plotName]][["obj"]]
+  xScale <- testPlot$scales$get_scales("x")
+  expect_equal(xScale$name, "Timestamp")
+})
+
+test_that("6.2 Optional timestamp - T² values table includes timestamp column", {
+  table <- results6[["results"]][["tsqValuesTable"]][["data"]]
+  timestamps <- sapply(table, function(x) x$timestamp)
+  expect_equal(timestamps[1], "t1")
+  expect_equal(timestamps[length(timestamps)], "t20")
+})

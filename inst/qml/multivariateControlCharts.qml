@@ -8,7 +8,7 @@ Form
 
 	VariablesForm
 	{
-		preferredHeight:						jaspTheme.smallDefaultVariablesFormHeight
+		preferredHeight:						jaspTheme.defaultVariablesFormHeight
 
 		AvailableVariablesList
 		{
@@ -21,6 +21,15 @@ Form
 			title:								qsTr("Variables")
 			allowedColumns:						["scale"]
 			info:								qsTr("Two or more continuous quality characteristics to monitor jointly using a Hotelling T² chart.")
+		}
+
+		AssignedVariablesList
+		{
+			name:							"axisLabels"
+			title:							qsTr("Timestamp (optional)")
+			singleVariable:					true
+			allowedColumns:					["nominal"]
+			info:							qsTr("Optional column used as x-axis labels (e.g., a timestamp or row identifier).")
 		}
 
 		AssignedVariablesList
