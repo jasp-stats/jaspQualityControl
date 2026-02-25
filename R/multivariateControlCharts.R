@@ -22,12 +22,17 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   variables <- variables[variables != ""]
   stage     <- unlist(options[["stage"]])
   stage     <- if (length(stage) == 0 || identical(stage, "")) "" else stage
+  axisLabels <- unlist(options[["axisLabels"]])
+  axisLabels <- if (length(axisLabels) == 0 || identical(axisLabels, "")) "" else axisLabels
 
   ready <- length(variables) >= 2
 
   if (is.null(dataset)) {
     numericCols <- if (ready) variables else NULL
-    factorCols  <- if (stage != "") stage else NULL
+    factorCols  <- c(stage, axisLabels)
+    factorCols  <- factorCols[factorCols != ""]
+    if (length(factorCols) == 0)
+      factorCols <- NULL
     dataset <- .readDataSetToEnd(columns.as.numeric = numericCols,
                                  columns.as.factor  = factorCols)
   }
@@ -58,8 +63,12 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   .multivariateExportTsqColumn(jaspResults, dataset, options, variables, stage, ready)
 }
 
-.multivariateDependencies <- function() {
+.multivariateComputeDependencies <- function() {
   c("variables", "confidenceLevel", "confidenceLevelAutomatic", "stage", "trainingLevel")
+}
+
+.multivariateOutputDependencies <- function() {
+  c(.multivariateComputeDependencies(), "axisLabels")
 }
 
 .multivariateComputeModel <- function(jaspResults, dataset, options, variables, stage, ready) {
@@ -67,7 +76,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     return()
 
   modelState <- createJaspState()
-  modelState$dependOn(.multivariateDependencies())
+  modelState$dependOn(.multivariateComputeDependencies())
   jaspResults[["modelState"]] <- modelState
 
   if (!ready)
@@ -160,7 +169,6 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
       modelState$object <- list(error = gettext("The covariance matrix of the selected variables is computationally singular. This typically occurs when variables are linearly dependent or nearly perfectly correlated. Please remove redundant variables."))
       return()
     }
-
     mqccResult <- try(qcc::mqcc(dataMatrix, type = "T2.single",
                                  confidence.level = confidenceLevel,
                                  plot = FALSE))
@@ -179,15 +187,75 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   }
 }
 
+.multivariateAxisInfo <- function(dataset, options, variables, stage, stateObj) {
+  axisLabelVariable <- unlist(options[["axisLabels"]])
+  axisLabelVariable <- if (length(axisLabelVariable) == 0 || identical(axisLabelVariable, "")) "" else axisLabelVariable
+
+  if (axisLabelVariable == "")
+    return(list(axisLabels = "", xAxisTitle = gettext("Sample"), axisLabelVariable = ""))
+
+  hasStage <- stage != ""
+
+  dataMatrix <- as.data.frame(dataset[, variables, drop = FALSE])
+  if (hasStage)
+    stageVector <- dataset[[stage]]
+
+  # Must match the model's row filtering (variables + stage only)
+  if (hasStage) {
+    completeRows <- stats::complete.cases(dataMatrix) & !is.na(stageVector)
+  } else {
+    completeRows <- stats::complete.cases(dataMatrix)
+  }
+
+  axisLabelsVector <- dataset[[axisLabelVariable]][completeRows]
+
+  if (hasStage) {
+    stageVector <- stageVector[completeRows]
+    trainingLevel <- stateObj$trainingLevel
+    if (is.null(trainingLevel) || trainingLevel == "")
+      trainingLevel <- levels(stageVector)[1]
+    isTraining <- stageVector == trainingLevel
+    axisLabelsVector <- c(axisLabelsVector[isTraining], axisLabelsVector[!isTraining])
+  }
+
+  list(axisLabels = as.character(axisLabelsVector), xAxisTitle = axisLabelVariable, axisLabelVariable = axisLabelVariable)
+}
+
+.multivariateXAxisTextTheme <- function(axisLabels) {
+  if (length(axisLabels) == 0 || identical(axisLabels, ""))
+    return(ggplot2::theme())
+
+  labelLengths <- nchar(axisLabels)
+  labelLengths <- labelLengths[!is.na(labelLengths)]
+  if (length(labelLengths) == 0)
+    return(ggplot2::theme())
+
+  # Timestamps/IDs can be long; angle + extra bottom margin avoids overlap.
+  if (max(labelLengths) <= 10)
+    return(ggplot2::theme())
+
+  ggplot2::theme(
+    axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, vjust = 1),
+    plot.margin = ggplot2::unit(c(.5, .5, 1.2, .5), "cm")
+  )
+}
+
 .multivariateTsqChart <- function(jaspResults, dataset, options, variables, stage, ready) {
   if (!is.null(jaspResults[["tsqChart"]]))
     return()
 
   chartTitle <- gettext("Hotelling T\u00B2 Control Chart")
-  jaspPlot <- createJaspPlot(title = chartTitle, width = 700, height = 400)
+
+  axisLabelVariable <- unlist(options[["axisLabels"]])
+  axisLabelVariable <- if (length(axisLabelVariable) == 0 || identical(axisLabelVariable, "")) "" else axisLabelVariable
+  hasAxisLabels <- axisLabelVariable != ""
+
+  jaspPlot <- createJaspPlot(title = chartTitle,
+                             width  = if (hasAxisLabels) 1200 else 700,
+                             height = if (hasAxisLabels) 500  else 400)
   jaspPlot$position <- 1
   jaspPlot$info <- gettext("Displays the Hotelling T\u00B2 statistic for each sample with upper and lower control limits. Points exceeding the UCL are flagged as out of control.")
-  jaspPlot$dependOn(.multivariateDependencies())
+  jaspPlot$dependOn(.multivariateOutputDependencies())
   jaspResults[["tsqChart"]] <- jaspPlot
 
   if (!ready)
@@ -202,19 +270,23 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   mqccResult <- stateObj$mqccResult
 
   if (isTRUE(stateObj$hasStage) && isTRUE(stateObj$hasTestData)) {
-    jaspPlot$plotObject <- .multivariateTsqChartPhased(stateObj)
+    jaspPlot$plotObject <- .multivariateTsqChartPhased(dataset, options, variables, stage, stateObj)
   } else {
-    jaspPlot$plotObject <- .multivariateTsqChartSingle(stateObj)
+    jaspPlot$plotObject <- .multivariateTsqChartSingle(dataset, options, variables, stage, stateObj)
   }
 }
 
-.multivariateTsqChartSingle <- function(stateObj) {
+.multivariateTsqChartSingle <- function(dataset, options, variables, stage, stateObj) {
   mqccResult <- stateObj$mqccResult
   tsqValues  <- as.numeric(mqccResult$statistics)
   ucl        <- as.numeric(mqccResult$limits[, "UCL"])
   lcl        <- as.numeric(mqccResult$limits[, "LCL"])
   n          <- length(tsqValues)
   sample     <- seq_len(n)
+
+  axisInfo  <- .multivariateAxisInfo(dataset, options, variables, stage, stateObj)
+  axisLabels <- axisInfo$axisLabels
+  xAxisTitle <- axisInfo$xAxisTitle
 
   violation  <- tsqValues > ucl
   dotColor   <- ifelse(violation, "red", "blue")
@@ -235,6 +307,14 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     xBreaks[1] <- 1
   xLimits <- c(0.5, max(xBreaks) * 1.2 + 0.5)
 
+  if (!identical(axisLabels, "")) {
+    if (max(xBreaks) > length(axisLabels))
+      xBreaks[length(xBreaks)] <- length(axisLabels)
+    xLabels <- axisLabels[xBreaks]
+  } else {
+    xLabels <- xBreaks
+  }
+
   labelX <- max(xLimits) * 0.95
   limitLabels <- data.frame(
     x     = c(labelX, labelX),
@@ -252,14 +332,15 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     ggplot2::geom_label(data = limitLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
                         inherit.aes = FALSE, size = 4.5, na.rm = TRUE) +
     ggplot2::scale_y_continuous(name = gettext("Hotelling T\u00B2"), breaks = yBreaks, limits = yLimits) +
-    ggplot2::scale_x_continuous(name = gettext("Sample"), breaks = xBreaks, limits = xLimits) +
+    ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels) +
     jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
+    jaspGraphs::themeJaspRaw() +
+    .multivariateXAxisTextTheme(xLabels)
 
   return(plotObject)
 }
 
-.multivariateTsqChartPhased <- function(stateObj) {
+.multivariateTsqChartPhased <- function(dataset, options, variables, stage, stateObj) {
   mqccResult  <- stateObj$mqccResult
   nTraining   <- stateObj$nTraining
   nTest       <- stateObj$nTest
@@ -277,6 +358,10 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   phase2Lcl   <- as.numeric(mqccResult$pred.limits[, "LPL"])
 
   sample <- seq_len(nTotal)
+
+  axisInfo  <- .multivariateAxisInfo(dataset, options, variables, stage, stateObj)
+  axisLabels <- axisInfo$axisLabels
+  xAxisTitle <- axisInfo$xAxisTitle
 
   # Violations per phase
   violation1 <- phase1Tsq > phase1Ucl
@@ -314,6 +399,14 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   if (xBreaks[1] == 0)
     xBreaks[1] <- 1
   xLimits <- c(0.5, max(xBreaks) * 1.2 + 0.5)
+
+  if (!identical(axisLabels, "")) {
+    if (max(xBreaks) > length(axisLabels))
+      xBreaks[length(xBreaks)] <- length(axisLabels)
+    xLabels <- axisLabels[xBreaks]
+  } else {
+    xLabels <- xBreaks
+  }
 
   # Limit labels at right edge of each phase
   labelData <- data.frame(
@@ -361,9 +454,10 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     ggplot2::geom_text(data = phaseLabelData, mapping = ggplot2::aes(x = x, y = y, label = label),
                        inherit.aes = FALSE, size = 4, fontface = "bold", vjust = 1.5) +
     ggplot2::scale_y_continuous(name = gettext("Hotelling T\u00B2"), breaks = yBreaks, limits = yLimits) +
-    ggplot2::scale_x_continuous(name = gettext("Sample"), breaks = xBreaks, limits = xLimits) +
+    ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels) +
     jaspGraphs::geom_rangeframe() +
-    jaspGraphs::themeJaspRaw()
+    jaspGraphs::themeJaspRaw() +
+    .multivariateXAxisTextTheme(xLabels)
 
   return(plotObject)
 }
@@ -375,7 +469,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   table <- createJaspTable(title = gettext("Hotelling T\u00B2 Control Chart Summary"))
   table$position <- 2
   table$info <- gettext("Summary of the Hotelling T\u00B2 control chart, including the number of variables, observations, confidence level, control limits, and the determinant of the covariance matrix.")
-  table$dependOn(.multivariateDependencies())
+  table$dependOn(.multivariateComputeDependencies())
   table$showSpecifiedColumnsOnly <- TRUE
 
   jaspResults[["summaryTable"]] <- table
@@ -460,7 +554,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   table <- createJaspTable(title = gettext("Variable Centers"))
   table$position <- 3
   table$info <- gettext("Displays the sample mean of each variable used in the multivariate control chart.")
-  table$dependOn(c(.multivariateDependencies(), "centerTable"))
+  table$dependOn(c(.multivariateComputeDependencies(), "centerTable"))
   table$showSpecifiedColumnsOnly <- TRUE
 
   table$addColumnInfo(name = "variable", title = gettext("Variable"), type = "string")
@@ -502,7 +596,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   table <- createJaspTable(title = gettext("Covariance Matrix"))
   table$position <- 4
   table$info <- gettext("Displays the sample covariance matrix of the selected variables, used to compute the Hotelling T\u00B2 statistic.")
-  table$dependOn(c(.multivariateDependencies(), "covarianceMatrixTable"))
+  table$dependOn(c(.multivariateComputeDependencies(), "covarianceMatrixTable"))
   table$showSpecifiedColumnsOnly <- TRUE
 
   jaspResults[["covarianceTable"]] <- table
@@ -563,7 +657,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   }
 
   jaspResults[["tsqColumn"]] <- createJaspColumn(columnName = options[["tsqColumn"]])
-  jaspResults[["tsqColumn"]]$dependOn(c(.multivariateDependencies(), "addTsqToData", "tsqColumn"))
+  jaspResults[["tsqColumn"]]$dependOn(c(.multivariateComputeDependencies(), "addTsqToData", "tsqColumn"))
   jaspResults[["tsqColumn"]]$setScale(tsqValues)
 }
 
@@ -577,10 +671,17 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   table <- createJaspTable(title = gettext("Hotelling T\u00B2 Values"))
   table$position <- 5
   table$info <- gettext("Lists the Hotelling T\u00B2 statistic for each sample and indicates whether the sample is in or out of control.")
-  table$dependOn(c(.multivariateDependencies(), "tSquaredValuesTable"))
+  table$dependOn(c(.multivariateOutputDependencies(), "tSquaredValuesTable"))
   table$showSpecifiedColumnsOnly <- TRUE
 
   table$addColumnInfo(name = "sample", title = gettext("Sample"), type = "integer")
+
+  axisLabelVariable <- unlist(options[["axisLabels"]])
+  axisLabelVariable <- if (length(axisLabelVariable) == 0 || identical(axisLabelVariable, "")) "" else axisLabelVariable
+  hasAxisLabels <- axisLabelVariable != ""
+  if (hasAxisLabels)
+    table$addColumnInfo(name = "timestamp", title = axisLabelVariable, type = "string")
+
   table$addColumnInfo(name = "tsq",    title = gettext("T\u00B2"),   type = "number")
   table$addColumnInfo(name = "status", title = gettext("Status"), type = "string")
 
@@ -596,6 +697,10 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   }
 
   mqccResult <- stateObj$mqccResult
+
+  axisInfo <- NULL
+  if (hasAxisLabels)
+    axisInfo <- .multivariateAxisInfo(dataset, options, variables, stage, stateObj)
 
   if (isTRUE(stateObj$hasStage) && isTRUE(stateObj$hasTestData)) {
     # Add phase column
@@ -627,6 +732,8 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
       phase  = phase,
       stringsAsFactors = FALSE
     )
+    if (hasAxisLabels)
+      rows$timestamp <- axisInfo$axisLabels
 
     table$setData(rows)
 
@@ -645,6 +752,8 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
                       gettext("In control")),
       stringsAsFactors = FALSE
     )
+    if (hasAxisLabels)
+      rows$timestamp <- axisInfo$axisLabels
 
     table$setData(rows)
   }

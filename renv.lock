@@ -2663,7 +2663,7 @@
     },
     "fitdistrplus": {
       "Package": "fitdistrplus",
-      "Version": "1.2-6",
+      "Version": "1.2-4",
       "Source": "Repository",
       "Title": "Help to Fit of a Parametric Distribution to Non-Censored or Censored Data",
       "Authors@R": "c(person(\"Marie-Laure\", \"Delignette-Muller\", role = \"aut\", email = \"marielaure.delignettemuller@vetagro-sup.fr\", comment = c(ORCID = \"0000-0001-5453-3994\")), person(\"Christophe\", \"Dutang\", role = \"aut\", email = \"christophe.dutang@ensimag.fr\", comment = c(ORCID = \"0000-0001-6732-1501\")), person(\"Regis\", \"Pouillot\", role = \"ctb\"), person(\"Jean-Baptiste\", \"Denis\", role = \"ctb\"), person(\"Aurélie\", \"Siberchicot\", role = c(\"aut\", \"cre\"), email = \"aurelie.siberchicot@univ-lyon1.fr\", comment = c(ORCID = \"0000-0002-7638-8318\")))",
@@ -4334,7 +4334,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
       "RemoteRef": "master",
-      "RemoteSha": "ceabbba40b43bcf959b9c0b0e37a4189e6ea68f8",
+      "RemoteSha": "e4e04ff0dad61a9e873d172b4b7828605578bef5",
       "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs, jasp-stats/jaspTTests, dustinfife/flexplot"
     },
     "jaspGraphs": {
