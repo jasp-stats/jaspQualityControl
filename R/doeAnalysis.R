@@ -741,7 +741,7 @@ get_levels <- function(var, num_levels, dataset) {
       lbVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
       targetVector[i] <- if (options[["responseOptimizerManualTarget"]]) roOptionsDf$responseOptimizerTarget[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
     } else if (roOptionsDf$responseOptimizerGoal[i] == "minimize") {
-      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerUpperBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
       lbVector[i] <- NA
       targetVector[i] <- if (options[["responseOptimizerManualTarget"]]) roOptionsDf$responseOptimizerTarget[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
     } else if (roOptionsDf$responseOptimizerGoal[i] == "target") {
@@ -1233,18 +1233,36 @@ get_levels <- function(var, num_levels, dataset) {
   for (outcomeName in outcomeNames) {
     outcomeValue <- unname(outcome[outcomeName])
     outcomeGoal <- unname(goals[outcomeName])
-    lb <- if (lowerbounds[outcomeName] == "") min(dataset[[outcomeName]]) else lowerbounds[outcomeName]
-    ub <- if (upperbounds[outcomeName] == "") max(dataset[[outcomeName]]) else upperbounds[outcomeName]
-    weight <- weights[outcomeName]
+    lb <- if (lowerbounds[outcomeName] == "") min(dataset[[outcomeName]]) else as.numeric(lowerbounds[outcomeName])
+    ub <- if (upperbounds[outcomeName] == "") max(dataset[[outcomeName]]) else as.numeric(upperbounds[outcomeName])
+    weight <- as.numeric(weights[outcomeName])
     if (outcomeGoal == "minimize") {
-      target <- lb
-      desi <- ((ub - outcomeValue) / (ub - target))^weight
+      target <- if (targets[outcomeName] == "") lb else as.numeric(targets[outcomeName])
+      if (outcomeValue < target) {
+        desi <- 1
+      } else if (outcomeValue > ub) {
+        desi <- 0
+      } else {
+        desi <- ((ub - outcomeValue) / (ub - target))^weight
+      }
     } else if (outcomeGoal == "maximize") {
-      target <- ub
-      desi <- ((outcomeValue - lb) / (target - lb))^weight
+      target <- if (targets[outcomeName] == "") ub else as.numeric(targets[outcomeName])
+      if (outcomeValue < lb) {
+        desi <- 0
+      } else if (outcomeValue > target) {
+        desi <- 1
+      } else {
+        desi <- ((outcomeValue - lb) / (target - lb))^weight
+      }
     } else if (outcomeGoal == "target") {
       target <- as.numeric(targets[outcomeName])
-      desi <- if (outcomeValue <= target) ((outcomeValue - lb) / (target - lb))^weight else ((ub - outcomeValue) / (ub - target))^weight
+      if (outcomeValue < lb || outcomeValue > ub) {
+        desi <- 0
+      } else if (outcomeValue <= target) {
+        desi <- ((outcomeValue - lb) / (target - lb))^weight
+      } else {
+        desi <- ((ub - outcomeValue) / (ub - target))^weight
+      }
     }
     desiVector[outcomeName] <- desi
   }

@@ -27,8 +27,8 @@
 </defs>
 <g clip-path='url(#cpNjIuNzh8NzIwLjAwfDIwLjcxfDUyMS42Mw==)'>
 <rect x='62.78' y='20.71' width='657.22' height='500.92' style='stroke-width: 10.67; stroke: none;' />
-<circle cx='186.01' cy='43.48' r='4.62' style='stroke-width: 0.71; stroke: #0000FF; fill: #0000FF;' />
-<circle cx='391.39' cy='43.48' r='4.62' style='stroke-width: 0.71; stroke: #FF0000; fill: #FF0000;' />
+<circle cx='186.01' cy='43.48' r='4.62' style='stroke-width: 0.71; stroke: #FF0000; fill: #FF0000;' />
+<circle cx='391.39' cy='43.48' r='4.62' style='stroke-width: 0.71; stroke: #0000FF; fill: #0000FF;' />
 <circle cx='596.77' cy='43.48' r='4.62' style='stroke-width: 0.71; stroke: #0000FF; fill: #0000FF;' />
 <line x1='185.69' y1='521.63' x2='597.09' y2='521.63' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <line x1='62.78' y1='499.18' x2='62.78' y2='43.16' style='stroke-width: 0.64; stroke-linecap: butt;' />
