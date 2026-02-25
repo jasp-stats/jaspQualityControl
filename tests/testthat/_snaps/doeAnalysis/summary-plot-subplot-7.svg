@@ -27,8 +27,8 @@
 </defs>
 <g clip-path='url(#cpNjIuNzh8NzIwLjAwfDIwLjcxfDUyMS42Mw==)'>
 <rect x='62.78' y='20.71' width='657.22' height='500.92' style='stroke-width: 10.67; stroke: none;' />
-<polyline points='92.65,43.48 104.85,57.15 117.04,70.52 129.23,83.34 141.43,95.58 153.62,107.25 165.81,118.36 178.01,128.89 190.20,138.86 202.39,148.26 214.59,157.10 226.78,165.36 238.97,173.06 251.17,180.18 263.36,186.74 275.55,192.73 287.75,198.15 299.94,203.01 312.13,207.29 324.33,211.01 336.52,214.16 348.71,216.74 360.91,218.75 373.10,220.19 385.29,221.07 397.49,221.37 409.68,221.11 421.87,220.28 434.07,218.88 446.26,216.92 458.45,214.38 470.65,211.28 482.84,207.61 495.03,203.37 507.23,198.56 519.42,193.18 531.61,187.24 543.81,180.72 556.00,173.64 568.19,165.99 580.39,157.77 592.58,148.99 604.77,139.63 616.97,129.71 629.16,119.21 641.35,108.15 653.55,96.52 665.74,84.33 677.93,71.56 690.13,58.23 ' style='stroke-width: 2.13; stroke: #0000FF; stroke-linecap: butt;' />
-<circle cx='92.65' cy='43.48' r='3.56' style='stroke-width: 0.71; stroke: #FF0000; fill: #FF0000;' />
+<polyline points='92.65,166.30 104.85,179.18 117.04,191.56 129.23,203.43 141.43,214.79 153.62,225.65 165.81,236.00 178.01,245.85 190.20,255.18 202.39,264.01 214.59,272.34 226.78,280.15 238.97,287.46 251.17,294.25 263.36,300.54 275.55,306.31 287.75,311.58 299.94,316.33 312.13,320.57 324.33,324.30 336.52,327.52 348.71,330.23 360.91,332.42 373.10,334.10 385.29,335.27 397.49,335.93 409.68,336.07 421.87,335.71 434.07,334.84 446.26,333.45 458.45,331.56 470.65,329.16 482.84,326.26 495.03,322.85 507.23,318.93 519.42,314.51 531.61,309.59 543.81,304.17 556.00,298.24 568.19,291.81 580.39,284.88 592.58,277.44 604.77,269.51 616.97,261.07 629.16,252.13 641.35,242.69 653.55,232.75 665.74,222.31 677.93,211.36 690.13,199.92 ' style='stroke-width: 2.13; stroke: #0000FF; stroke-linecap: butt;' />
+<circle cx='391.39' cy='335.66' r='3.56' style='stroke-width: 0.71; stroke: #FF0000; fill: #FF0000;' />
 <line x1='92.33' y1='521.63' x2='690.45' y2='521.63' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <line x1='62.78' y1='499.18' x2='62.78' y2='43.16' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <rect x='62.78' y='20.71' width='657.22' height='500.92' style='stroke-width: 0.00; stroke: none;' />
@@ -62,6 +62,6 @@
 <text x='690.13' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='18.91px' lengthAdjust='spacingAndGlyphs'>20</text>
 <text x='391.39' y='572.82' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='61.24px' lengthAdjust='spacingAndGlyphs'>Pressure</text>
 <text transform='translate(10.53,271.17) rotate(-90)' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='121.61px' lengthAdjust='spacingAndGlyphs'>Comp. desirability</text>
-<text x='391.39' y='11.70' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='197.50px' lengthAdjust='spacingAndGlyphs'>summary-plot49-subplot-5</text>
+<text x='391.39' y='11.70' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='178.59px' lengthAdjust='spacingAndGlyphs'>summary-plot-subplot-7</text>
 </g>
 </svg>

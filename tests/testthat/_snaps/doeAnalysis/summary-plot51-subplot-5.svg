@@ -28,7 +28,7 @@
 <g clip-path='url(#cpNjMuNzJ8NzIwLjAwfDIwLjcxfDUyMS42Mw==)'>
 <rect x='63.72' y='20.71' width='656.28' height='500.92' style='stroke-width: 10.67; stroke: none;' />
 <polyline points='93.55,116.01 105.72,145.01 117.90,172.73 130.08,199.20 142.25,224.39 154.43,248.33 166.60,270.99 178.78,292.39 190.96,312.53 203.13,331.40 215.31,349.01 227.48,365.35 239.66,380.42 251.84,394.23 264.01,406.78 276.19,418.06 288.36,428.07 300.54,436.82 312.72,444.31 324.89,450.52 337.07,455.48 349.24,459.17 361.42,461.59 373.60,462.75 385.77,462.64 397.95,461.27 410.12,458.63 422.30,454.73 434.47,449.56 446.65,443.13 458.83,435.43 471.00,426.46 483.18,416.24 495.35,404.74 507.53,391.98 519.71,377.96 531.88,362.67 544.06,346.11 556.23,328.29 568.41,309.21 580.59,288.86 592.76,267.24 604.94,244.36 617.11,220.21 629.29,194.80 641.47,168.13 653.64,140.18 665.82,110.98 677.99,80.50 690.17,48.77 ' style='stroke-width: 2.13; stroke: #0000FF; stroke-linecap: butt;' />
-<circle cx='382.98' cy='462.78' r='3.56' style='stroke-width: 0.71; stroke: #FF0000; fill: #FF0000;' />
+<circle cx='347.73' cy='458.78' r='3.56' style='stroke-width: 0.71; stroke: #FF0000; fill: #FF0000;' />
 <line x1='93.23' y1='521.63' x2='690.49' y2='521.63' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <line x1='63.72' y1='424.77' x2='63.72' y2='101.35' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <rect x='63.72' y='20.71' width='656.28' height='500.92' style='stroke-width: 0.00; stroke: none;' />
@@ -56,6 +56,6 @@
 <text x='690.17' y='548.80' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='28.37px' lengthAdjust='spacingAndGlyphs'>140</text>
 <text x='391.86' y='572.82' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='44.25px' lengthAdjust='spacingAndGlyphs'>Speed</text>
 <text transform='translate(10.53,271.17) rotate(-90)' text-anchor='middle' style='font-size: 15.30px; font-family: sans;' textLength='67.20px' lengthAdjust='spacingAndGlyphs'>Syruploss</text>
-<text x='391.86' y='11.70' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='197.50px' lengthAdjust='spacingAndGlyphs'>summary-plot49-subplot-4</text>
+<text x='391.86' y='11.70' text-anchor='middle' style='font-size: 17.00px; font-family: sans;' textLength='197.50px' lengthAdjust='spacingAndGlyphs'>summary-plot51-subplot-5</text>
 </g>
 </svg>

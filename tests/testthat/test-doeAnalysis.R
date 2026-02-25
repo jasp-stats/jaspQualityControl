@@ -4869,83 +4869,284 @@ options$responsesResponseOptimizer <- list(
   )
 )
 set.seed(123)
-results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options, makeTests = T)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
 
-test_that("49.1 Response Optimizer Response Surface With Squares - ANOVA table results match", {
-  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableAnova"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(26128.8222222222, 130644.111111111, 5, 28.8591887320919, 2.16656705944768e-13,
-                                      "Model", "", 2154.69444444445, 3, "", "", "<unicode> Linear terms",
-                                      1406.25, 1406.25, 1, 1.55319798991891, 0.218712178465279, "<unicode> <unicode> Speed",
-                                      400, 400, 1, 0.441798539354713, 0.509436522509469, "<unicode> <unicode> Pressure",
-                                      348.444444444445, 348.444444444445, 1, 0.384855616504551, 0.537950398940526,
-                                      "<unicode> <unicode> Nozzle", "", 128489.416666667, 2, "", "",
-                                      "<unicode> Squared terms", 59784.0833333334, 59784.0833333334,
-                                      1, 66.0313017333179, 1.42166789351504e-10, "<unicode> <unicode> Speed^2",
-                                      68705.3333333334, 68705.3333333334, 1, 75.8847897813635, 1.89456734041113e-11,
-                                      "<unicode> <unicode> Pressure^2", 905.390046296296, 43458.7222222222,
-                                      48, "", "", "Error", "", 174102.833333333, 53, "", "", "Total"
-                                 ))
-})
-
-test_that("49.2 Response Optimizer Response Surface With Squares - Uncoded Coefficients table results match", {
-  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficients"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list("", 1818.94444444447, "", 7.17574678375441e-07, 318.114470543182,
-                                      "(Intercept)", 5.71789281178757, "", "A", -42.0375000000004,
-                                      -1681.50000000002, 2.28066307580887e-10, 5.23363674597155, "Speed",
-                                      -8.03217763104358, 433.000000000006, "B", 91.4666666666664,
-                                      914.666666666664, 2.28214646124788e-11, 10.5034716639313, "Pressure",
-                                      8.70823186782719, 109.000000000002, "A^2", 0.176458333333335,
-                                      7.05833333333339, 1.79939446191843e-10, 0.0217816241341456,
-                                      "Speed^2", 8.10124774197681, "", "B^2", -3.02666666666666, -30.2666666666666,
-                                      2.47083118352093e-11, 0.348505986146329, "Pressure^2", -8.68469061359492,
-                                      "", "C1", 5.55555555555592, 16.6666666666677, 0.343732111495362,
-                                      5.80843310243881, "Nozzle1", 0.956463723964262, 1, "C2", -4.88888888888902,
-                                      -14.6666666666671, 0.404224960398928, 5.80843310243881, "Nozzle2",
-                                      -0.841688077088519, 1))
-})
-
-test_that("49.3 Response Optimizer Response Surface With Squares - Discrete Predictor Levels table results match", {
-  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficientsLegend"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(1, "C1", 2, "C2"))
-})
-
-test_that("49.4 Response Optimizer Response Surface With Squares - Regression equation in Uncoded Units table results match", {
-  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list("Syruploss = 1818.94 <unicode> 42.04 A + 91.47 B + 0.18 A^2 <unicode> 3.03 B^2 + 5.56 C1 <unicode> 4.89 C2"
-                                 ))
-})
-
-test_that("49.5 Response Optimizer Response Surface With Squares - Model Summary table results match", {
-  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableSummary"]][["data"]]
-  jaspTools::expect_equal_tables(table,
-                                 list(0.722698781107446, 0.675387252392338, 0.754091371925471, 30.1815037373668
-                                 ))
-})
-
-test_that("49.6 Response Optimizer Response Surface With Squares - Summary Plot matches", {
+test_that("49.1 Response Optimizer Response Surface With Squares - Summary Plot matches", {
   plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "summary-plot49")
 })
 
-test_that("49.7 Response Optimizer Response Surface With Squares - Optimization Plot Summary table results match", {
+test_that("49.2 Response Optimizer Response Surface With Squares - Optimization Plot Summary table results match", {
   table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(2, 10, 119.11, -77.58, 1))
+                                 list(1, 10, 119.4, -67.12, 1))
 })
 
-test_that("49.8 Response Optimizer Response Surface With Squares - Response Optimizer Settings table results match", {
+test_that("49.3 Response Optimizer Response Surface With Squares - Response Optimizer Settings table results match", {
   table <- results[["results"]][["tableRoSettings"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("Minimize", 1, "", "Syruploss", -67, 135, 1))
 })
 
-test_that("49.9 Response Optimizer Response Surface With Squares - Response Optimizer Solution table results match", {
+test_that("49.4 Response Optimizer Response Surface With Squares - Response Optimizer Solution table results match", {
   table <- results[["results"]][["tableRoSolution"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(2, 10, 119.11, -77.58, 1))
+                                 list(1, 10, 119.4, -67.12, 1))
+})
+
+
+## Response Surface design, multivariate example, no squared terms ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss", "Cost")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndInteractions"
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  ),
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Cost"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("50.1 Response Optimizer Response Surface Multivariate No Squares - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot50")
+})
+
+test_that("50.2 Response Optimizer Response Surface Multivariate No Squares - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(63.53, 1, 10, 100, -7.01, 0.74608569049605))
+})
+
+test_that("50.3 Response Optimizer Response Surface Multivariate No Squares - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 135, 1, "Minimize", 1, "",
+                                      "Cost", 35, 172, 1))
+})
+
+test_that("50.4 Response Optimizer Response Surface Multivariate No Squares - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(63.53, 1, 10, 100, -7.01, 0.74608569049605))
+})
+
+
+
+## Response Surface design, multivariate example, with squared terms ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss", "Cost")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  ),
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Cost"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("51.1 Response Optimizer Response Surface Multivariate With Squares - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot51")
+})
+
+test_that("51.2 Response Optimizer Response Surface Multivariate With Squares - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(59.51, 1, 10, 117.04, -66.38, 0.904766993032571))
+})
+
+test_that("51.3 Response Optimizer Response Surface Multivariate With Squares - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 135, 1, "Minimize", 1, "",
+                                      "Cost", 35, 172, 1))
+})
+
+test_that("51.4 Response Optimizer Response Surface Multivariate With Squares - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(59.51, 1, 10, 117.04, -66.38, 0.904766993032571))
+})
+
+
+## Response Surface design, manual input parameters ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss", "Cost")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  ),
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Cost"
+  )
+)
+options$optimizationPlotCustomParameters <- TRUE
+options$optimizationPlotCustomParameterValues <- list(
+  list(value = 100, variable = c("Speed")),
+  list(value = 15, variable = c("Pressure")),
+  list(value = "2", variable = c("Nozzle"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("52.1 Response Optimizer Response Surface Manual Input Parameters - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot52")
+})
+
+test_that("52.2 Response Optimizer Response Surface Manual Input Parameters - Optimization Plot Summary (Manual Predictor Values) table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(120.57, 2, 15, 100, 65.89, 0.35836784018221))
+})
+
+test_that("52.3 Response Optimizer Response Surface Manual Input Parameters - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 135, 1, "Minimize", 1, "",
+                                      "Cost", 35, 172, 1))
+})
+
+test_that("52.4 Response Optimizer Response Surface Manual Input Parameters - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(59.51, 1, 10, 117.04, -66.38, 0.904766993032571))
+})
+
+## Response Surface design, changing all options ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss", "Cost")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$responseOptimizerManualBounds <- TRUE
+options$responseOptimizerManualTarget <- TRUE
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = -67,
+    responseOptimizerUpperBound = 50,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  ),
+  list(
+    responseOptimizerGoal = "target",
+    responseOptimizerImportance = 3,
+    responseOptimizerLowerBound = 50,
+    responseOptimizerTarget = 100,
+    responseOptimizerUpperBound = 150,
+    responseOptimizerWeight = 2,
+    variable = "Cost"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("53.1 Response Optimizer Response Surface Change All Options - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot53")
+})
+
+test_that("53.2 Response Optimizer Response Surface Change All Options - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(100, 2, 12.3, 120.83, -22, 0.885700020509264))
+})
+
+test_that("53.3 Response Optimizer Response Surface Change All Options - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 50, 1, "Target", 3, 50, "Cost",
+                                      100, 150, 2))
+})
+
+test_that("53.4 Response Optimizer Response Surface Change All Options - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(100, 2, 12.3, 120.83, -22, 0.885700020509264))
 })
