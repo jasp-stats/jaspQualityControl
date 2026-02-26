@@ -4001,3 +4001,1152 @@ test_that("42.4 Aliased terms handling - Model Summary table results match", {
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, 0.680686606666776, 14.7098858264232))
 })
+
+# Response Optimizer ####
+
+## Factorial design, basic example ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- c("Strength")
+options$fixedFactorsFactorial <- c("Material")
+options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- FALSE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Material"),
+  list(components = "InjTemp"),
+  list(components = "InjPress"),
+  list(components = c("Material", "InjTemp")),
+  list(components = c("Material", "InjPress")),
+  list(components = c("InjPress", "InjTemp"))
+)
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "maximize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Strength"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+
+test_that("43.1 Response Optimizer Factorial Basic Test - ANOVA table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(61.4412169760555, 368.647301856333, 6, 6.02163462145317, 0.00885308674084683,
+                                      "Model", "", 367.52491531986, 3, "", "", "<unicode> Linear terms",
+                                      181.151435260225, 181.151435260225, 1, 17.7540063165417, 0.00226090333532432,
+                                      "<unicode> <unicode> Material", 73.7250318293204, 73.7250318293204,
+                                      1, 7.22552752013659, 0.024876494295309, "<unicode> <unicode> InjTemp",
+                                      112.648448230315, 112.648448230315, 1, 11.0402727892092, 0.00890208646409138,
+                                      "<unicode> <unicode> InjPress", "", 1.12238653647272, 3, "",
+                                      "", "<unicode> Interaction terms", 0.778094866011372, 0.778094866011372,
+                                      1, 0.0762583037014878, 0.788670012907783, "<unicode> <unicode> Material<unicode><unicode><unicode>InjTemp",
+                                      0.342200526962543, 0.342200526962543, 1, 0.033537853611204,
+                                      0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
+                                      0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
+                                      0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
+                                      10.2034116711698, 91.8307050405283, 9, "", "", "Error", "",
+                                      460.478006896861, 15, "", "", "Total"))
+})
+
+test_that("43.2 Response Optimizer Factorial Basic Test - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(-4.37814587750002, "", 0.891657355106339, 31.247556885468, "(Intercept)",
+                                      -0.140111621959672, "", -6.52334568520829, -13.0466913704166,
+                                      0.537140590257635, 10.1676152659357, "Material1", -0.641580696612634,
+                                      162.111111111113, 0.2816380375, 4.2245705625, 0.424553064221281,
+                                      0.336706460868775, "InjTemp", 0.836449757374164, 9.99999999999987,
+                                      0.0669973736666668, 5.02480302500001, 0.805010858794851, 0.263502536196682,
+                                      "InjPress", 0.25425703537312, 153.111111111115, 0.0294032285833329,
+                                      2.91091962974996, 0.788670012907786, 0.106475931923969, "Material1<unicode>InjTemp",
+                                      0.276149060656533, 162.111111111113, 0.00389986055, 0.581079221950001,
+                                      0.858752480786647, 0.0212951863847937, "Material1<unicode>InjPress",
+                                      0.183133431167561, 162.111111111113, 4.06480199999987e-05, 0.0030486014999999,
+                                      0.988890269483179, 0.00283935818463916, "InjTemp<unicode>InjPress",
+                                      0.0143159183719417, 9.99999999999987))
+})
+
+test_that("43.3 Response Optimizer Factorial Basic Test - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Formula1", "Material1"))
+})
+
+test_that("43.4 Response Optimizer Factorial Basic Test - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Strength = -4.38 <unicode> 6.52 Material1 + 0.28 InjTemp + 0.07 InjPress + 0.03 Material1<unicode>InjTemp + 0 Material1<unicode>InjPress + 0 InjTemp<unicode>InjPress"
+                                 ))
+})
+
+test_that("43.5 Response Optimizer Factorial Basic Test - Model Summary table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.667625439705684, 0.369719352330778, 0.80057526382341, 3.19427795771906
+                                 ))
+})
+
+test_that("43.6 Response Optimizer Factorial Basic Test - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot43")
+})
+
+test_that("43.7 Response Optimizer Factorial Basic Test - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(150, 100, "Formula2", 37.44, 0.96102393083596))
+})
+
+test_that("43.8 Response Optimizer Factorial Basic Test - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Maximize", 1, 19.21893629, "Strength", 38.18213907, "", 1))
+})
+
+test_that("43.9 Response Optimizer Factorial Basic Test - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(150, 100, "Formula2", 37.44, 0.96102393083596))
+})
+
+## Factorial design, multiple discrete levels example ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- c("Result")
+options$fixedFactorsFactorial <- c("A", "B")
+options$continuousFactorsFactorial <- c("C")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "automatic"
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "A"),
+  list(components = "B"),
+  list(components = "C"),
+  list(components = c("A", "B")),
+  list(components = c("A", "C")),
+  list(components = c("C", "B"))
+)
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "maximize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Result"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/3level3facFullMixed.csv", options)
+
+test_that("44.1 Response Optimizer Factorial Multiple Discrete Levels - ANOVA table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(86.6253978631148, 1559.25716153607, 18, 0.607136672230057, 0.819658867123103,
+                                      "Model", "", 350.578267591584, 6, "", "", "<unicode> Linear terms",
+                                      132.136684132621, 264.273368265243, 2, 0.926114380571911, 0.434732390131652,
+                                      "<unicode> <unicode> A", 5.81490099225334, 11.6298019845067,
+                                      2, 0.0407552487477488, 0.960262086927722, "<unicode> <unicode> B",
+                                      37.3375486709175, 74.675097341835, 2, 0.261689938614887, 0.776090859390408,
+                                      "<unicode> <unicode> C", "", 1208.67889394448, 12, "", "", "<unicode> Interaction terms",
+                                      61.0648620616051, 244.25944824642, 4, 0.427988996955093, 0.785020469307615,
+                                      "<unicode> <unicode> A<unicode><unicode><unicode>B", 151.309870553013,
+                                      605.239482212051, 4, 1.06049465340734, 0.43514283085895, "<unicode> <unicode> A<unicode><unicode><unicode>C",
+                                      89.7949908715028, 359.179963486011, 4, 0.629351590705551, 0.655255104548213,
+                                      "<unicode> <unicode> B<unicode><unicode><unicode>C", 142.678579346778,
+                                      1141.42863477422, 8, "", "", "Error", "", 2700.68579631029,
+                                      26, "", "", "Total"))
+})
+
+test_that("44.2 Response Optimizer Factorial Multiple Discrete Levels Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 98.4529205788889, "", 1.70153005371998e-10, 5.54634619247801,
+                                      "(Intercept)", 17.7509511960165, "", "A1", -5.34498071555557,
+                                      -16.0349421466667, 0.507554779864767, 7.84371800701877, "A1",
+                                      -0.681434583799767, 48.9999999999998, "A2", -10.8911033855555,
+                                      -32.6733101566666, 0.188313712958564, 7.84371800701877, "A2",
+                                      -1.38851286798045, 48.9999999999998, "B1", -8.53150628555557,
+                                      -25.5945188566667, 0.296488623192891, 7.84371800701877, "B1",
+                                      -1.08768651268714, 49, "B2", -1.68173426999999, -5.04520280999998,
+                                      0.833557569604471, 7.84371800701877, "B2", -0.214405243596867,
+                                      49, "C", 0.00972704778888895, 0.972704778888895, 0.852681849700621,
+                                      0.051349187852931, "C", 0.18942943784716, 1, "A1B1", 5.98538610111112,
+                                      17.9561583033333, 0.176988011704404, 4.19264363153337, "A1<unicode>B1",
+                                      1.42759238016184, 48.9999999999998, "A2B1", -3.02668897888889,
+                                      -9.08006693666667, 0.483136777711496, 4.19264363153336, "A2<unicode>B1",
+                                      -0.721904660850449, 48.9999999999998, "A1B2", -3.18827553444445,
+                                      -9.56482660333334, 0.460559043006801, 4.19264363153336, "A1<unicode>B2",
+                                      -0.760445154571462, 48.9999999999998, "A2B2", 2.02817473888889,
+                                      6.08452421666666, 0.636612697706785, 4.19264363153336, "A2<unicode>B2",
+                                      0.483746036423117, 48.9999999999998, "A1C", 0.0326199088444446,
+                                      4.86036641782225, 0.66068883928948, 0.0726187178784587, "A1<unicode>C",
+                                      0.449194227017892, 48.9999999999998, "A2C", 0.0855210738777776,
+                                      12.7426400077889, 0.2600375948281, 0.0726187178784587, "A2<unicode>C",
+                                      1.17767259428779, 48.9999999999998, "B1C", 0.0942753487444446,
+                                      14.0470269629222, 0.216770301305974, 0.0726187178784587, "B1<unicode>C",
+                                      1.29822381196859, 49, "B2C", 0.0102407817111111, 1.52587647495555,
+                                      0.890014944386283, 0.0726187178784587, "B2<unicode>C", 0.14102124094577,
+                                      49))
+})
+
+test_that("44.3 Response Optimizer Factorial Multiple Discrete Levels Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "A1", 2, "A2", 1, "B1", 2, "B2"))
+})
+
+test_that("44.4 Response Optimizer Factorial Multiple Discrete Levels Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Result = 98.45 <unicode> 5.34 A1 <unicode> 10.89 A2 <unicode> 8.53 B1 <unicode> 1.68 B2 + 0.01 C + 5.99 A1B1 <unicode> 3.03 A2B1 <unicode> 3.19 A1B2 + 2.03 A2B2 + 0.03 A1C + 0.09 A2C + 0.09 B1C + 0.01 B2C"
+                                 ))
+})
+
+test_that("44.5 Response Optimizer Factorial Multiple Discrete Levels Model Summary table results match", {
+  table <- results[["results"]][["Result"]][["collection"]][["Result_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.428851600729195, 10.8928076817688))
+})
+
+test_that("44.6 Response Optimizer Factorial Multiple Discrete Levels Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot44")
+})
+
+test_that("44.7 Response Optimizer Factorial Multiple Discrete Levels Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3, 3, 50, 116.05, 0.943388705160755))
+})
+
+test_that("44.8 Response Optimizer Factorial Multiple Discrete Levels Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Maximize", 1, 80.91818207, "Result", 118.1628046, "", 1))
+})
+
+test_that("44.9 Response Optimizer Factorial Multiple Discrete Levels Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3, 3, 50, 116.05, 0.943388705160755))
+})
+
+## Factorial design, multivariate outcome ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- c("Strength", "Density")
+options$fixedFactorsFactorial <- c("Material")
+options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- FALSE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Material"),
+  list(components = "InjTemp"),
+  list(components = "InjPress"),
+  list(components = c("Material", "InjTemp")),
+  list(components = c("Material", "InjPress")),
+  list(components = c("InjPress", "InjTemp"))
+)
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "maximize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Strength"
+  ),
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Density"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+
+test_that("45.1 Response Optimizer Factorial Multivariate Outcome - ANOVA table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.282635417212939, 1.69581250327763, 6, 29.2340255777468, 2.0653745688331e-05,
+                                      "Model", "", 1.64742746594141, 3, "", "", "<unicode> Linear terms",
+                                      0.669433085778748, 0.669433085778748, 1, 69.2419377062769, 1.61404212637588e-05,
+                                      "<unicode> <unicode> Material", 0.0216428384881839, 0.0216428384881839,
+                                      1, 2.23859875799617, 0.168820796228592, "<unicode> <unicode> InjTemp",
+                                      0.956351541674477, 0.956351541674477, 1, 98.9189738013817, 3.74374736566881e-06,
+                                      "<unicode> <unicode> InjPress", "", 0.0483850373362251, 3, "",
+                                      "", "<unicode> Interaction terms", 0.0438625219544171, 0.0438625219544171,
+                                      1, 4.53686272359078, 0.0620223667487927, "<unicode> <unicode> Material<unicode><unicode><unicode>InjTemp",
+                                      0.0018167435738568, 0.0018167435738568, 1, 0.187912500952855,
+                                      0.674864178734996, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
+                                      0.0027057718079512, 0.0027057718079512, 1, 0.279867976282664,
+                                      0.609585425025631, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
+                                      0.0096680293468746, 0.0870122641218714, 9, "", "", "Error",
+                                      "", 1.78282476739951, 15, "", "", "Total"))
+})
+
+test_that("45.2 Response Optimizer Factorial Multivariate Outcome - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.234794588, "", 0.231291686578764, 0.961861059208525, "(Intercept)",
+                                      1.28375566946858, "", 0.81833402642292, 1.63666805284584, 0.0280555349610261,
+                                      0.312979130661761, "Material1", 2.61466004040793, 162.11111111111,
+                                      -0.010105538445, -0.151583076675, 0.355028857575443, 0.0103644849509566,
+                                      "InjTemp", -0.975015979358171, 9.99999999999987, 0.00224259241000001,
+                                      0.16819443075, 0.788421173410997, 0.00811112463925603, "InjPress",
+                                      0.276483534619399, 153.111111111115, -0.00698112709416669, -0.691131582322503,
+                                      0.0620223667487917, 0.00327753792195615, "Material1<unicode>InjTemp",
+                                      -2.12999124965123, 162.11111111111, 0.000284155166833333, 0.0423391198581666,
+                                      0.674864178734998, 0.00065550758439123, "Material1<unicode>InjPress",
+                                      0.433488755278442, 162.11111111111, 4.62373633999999e-05, 0.00346780225499999,
+                                      0.609585425025632, 8.74010112521639e-05, "InjTemp<unicode>InjPress",
+                                      0.52902549681718, 9.99999999999987))
+})
+
+test_that("45.3 Response Optimizer Factorial Multivariate Outcome - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Formula1", "Material1"))
+})
+
+test_that("45.4 Response Optimizer Factorial Multivariate Outcome - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Density = 1.23 + 0.82 Material1 <unicode> 0.01 InjTemp + 0 InjPress <unicode> 0.01 Material1<unicode>InjTemp + 0 Material1<unicode>InjPress + 0 InjTemp<unicode>InjPress"
+                                 ))
+})
+
+test_that("45.5 Response Optimizer Factorial Multivariate Outcome - Model Summary table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.91865692980323, 0.845749437256495, 0.951194157881938, 0.0983261376586844
+                                 ))
+})
+
+test_that("45.6 Response Optimizer Factorial Multivariate Outcome - ANOVA table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(61.4412169760555, 368.647301856333, 6, 6.02163462145317, 0.00885308674084683,
+                                      "Model", "", 367.52491531986, 3, "", "", "<unicode> Linear terms",
+                                      181.151435260225, 181.151435260225, 1, 17.7540063165417, 0.00226090333532432,
+                                      "<unicode> <unicode> Material", 73.7250318293204, 73.7250318293204,
+                                      1, 7.22552752013659, 0.024876494295309, "<unicode> <unicode> InjTemp",
+                                      112.648448230315, 112.648448230315, 1, 11.0402727892092, 0.00890208646409138,
+                                      "<unicode> <unicode> InjPress", "", 1.12238653647272, 3, "",
+                                      "", "<unicode> Interaction terms", 0.778094866011372, 0.778094866011372,
+                                      1, 0.0762583037014878, 0.788670012907783, "<unicode> <unicode> Material<unicode><unicode><unicode>InjTemp",
+                                      0.342200526962543, 0.342200526962543, 1, 0.033537853611204,
+                                      0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
+                                      0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
+                                      0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
+                                      10.2034116711698, 91.8307050405283, 9, "", "", "Error", "",
+                                      460.478006896861, 15, "", "", "Total"))
+})
+
+test_that("45.7 Response Optimizer Factorial Multivariate Outcome - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(-4.37814587750002, "", 0.891657355106339, 31.247556885468, "(Intercept)",
+                                      -0.140111621959672, "", -6.52334568520829, -13.0466913704166,
+                                      0.537140590257635, 10.1676152659357, "Material1", -0.641580696612634,
+                                      162.111111111113, 0.2816380375, 4.2245705625, 0.424553064221281,
+                                      0.336706460868775, "InjTemp", 0.836449757374164, 9.99999999999987,
+                                      0.0669973736666668, 5.02480302500001, 0.805010858794851, 0.263502536196682,
+                                      "InjPress", 0.25425703537312, 153.111111111115, 0.0294032285833329,
+                                      2.91091962974996, 0.788670012907786, 0.106475931923969, "Material1<unicode>InjTemp",
+                                      0.276149060656533, 162.111111111113, 0.00389986055, 0.581079221950001,
+                                      0.858752480786647, 0.0212951863847937, "Material1<unicode>InjPress",
+                                      0.183133431167561, 162.111111111113, 4.06480199999987e-05, 0.0030486014999999,
+                                      0.988890269483179, 0.00283935818463916, "InjTemp<unicode>InjPress",
+                                      0.0143159183719417, 9.99999999999987))
+})
+
+test_that("45.8 Response Optimizer Factorial Multivariate Outcome - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Formula1", "Material1"))
+})
+
+test_that("45.9 Response Optimizer Factorial Multivariate Outcome - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Strength = -4.38 <unicode> 6.52 Material1 + 0.28 InjTemp + 0.07 InjPress + 0.03 Material1<unicode>InjTemp + 0 Material1<unicode>InjPress + 0 InjTemp<unicode>InjPress"
+                                 ))
+})
+
+test_that("45.10 Response Optimizer Factorial Multivariate Outcome - Model Summary table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.667625439705684, 0.369719352330778, 0.80057526382341, 3.19427795771906
+                                 ))
+})
+
+test_that("45.11 Response Optimizer Factorial Multivariate Outcome - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot45")
+})
+
+test_that("45.12 Response Optimizer Factorial Multivariate Outcome - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.6, 75, 100, "Formula2", 32.41, 0.773694076197508))
+})
+
+test_that("45.13 Response Optimizer Factorial Multivariate Outcome - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Maximize", 1, 19.21893629, "Strength", 38.18213907, "", 1, "Minimize",
+                                      1, "", "Density", 0.4351017656, 1.603144041, 1))
+})
+
+test_that("45.14 Response Optimizer Factorial Multivariate Outcome - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.6, 75, 100, "Formula2", 32.41, 0.773694076197508))
+})
+
+
+## Factorial design, Manual Input Parameters ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- c("Strength")
+options$fixedFactorsFactorial <- c("Material")
+options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- FALSE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Material"),
+  list(components = "InjTemp"),
+  list(components = "InjPress"),
+  list(components = c("Material", "InjTemp")),
+  list(components = c("Material", "InjPress")),
+  list(components = c("InjPress", "InjTemp"))
+)
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "maximize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Strength"
+  )
+)
+options$optimizationPlotCustomParameters <- TRUE
+options$optimizationPlotCustomParameterValues <- list(
+  list(value = 100, variable = c("InjPress")),
+    list(value = 90, variable = c("InjTemp")),
+    list(value = "Formula1", variable = c("Material"))
+  )
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+
+test_that("46.1 Response Optimizer Factorial Manual Input - ANOVA table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(61.4412169760555, 368.647301856333, 6, 6.02163462145317, 0.00885308674084683,
+                                      "Model", "", 367.52491531986, 3, "", "", "<unicode> Linear terms",
+                                      181.151435260225, 181.151435260225, 1, 17.7540063165417, 0.00226090333532432,
+                                      "<unicode> <unicode> Material", 73.7250318293204, 73.7250318293204,
+                                      1, 7.22552752013659, 0.024876494295309, "<unicode> <unicode> InjTemp",
+                                      112.648448230315, 112.648448230315, 1, 11.0402727892092, 0.00890208646409138,
+                                      "<unicode> <unicode> InjPress", "", 1.12238653647272, 3, "",
+                                      "", "<unicode> Interaction terms", 0.778094866011372, 0.778094866011372,
+                                      1, 0.0762583037014878, 0.788670012907783, "<unicode> <unicode> Material<unicode><unicode><unicode>InjTemp",
+                                      0.342200526962543, 0.342200526962543, 1, 0.033537853611204,
+                                      0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
+                                      0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
+                                      0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
+                                      10.2034116711698, 91.8307050405283, 9, "", "", "Error", "",
+                                      460.478006896861, 15, "", "", "Total"))
+})
+
+test_that("46.2 Response Optimizer Factorial Manual Input - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(-4.37814587750002, "", 0.891657355106339, 31.247556885468, "(Intercept)",
+                                      -0.140111621959672, "", -6.52334568520829, -13.0466913704166,
+                                      0.537140590257635, 10.1676152659357, "Material1", -0.641580696612634,
+                                      162.111111111113, 0.2816380375, 4.2245705625, 0.424553064221281,
+                                      0.336706460868775, "InjTemp", 0.836449757374164, 9.99999999999987,
+                                      0.0669973736666668, 5.02480302500001, 0.805010858794851, 0.263502536196682,
+                                      "InjPress", 0.25425703537312, 153.111111111115, 0.0294032285833329,
+                                      2.91091962974996, 0.788670012907786, 0.106475931923969, "Material1<unicode>InjTemp",
+                                      0.276149060656533, 162.111111111113, 0.00389986055, 0.581079221950001,
+                                      0.858752480786647, 0.0212951863847937, "Material1<unicode>InjPress",
+                                      0.183133431167561, 162.111111111113, 4.06480199999987e-05, 0.0030486014999999,
+                                      0.988890269483179, 0.00283935818463916, "InjTemp<unicode>InjPress",
+                                      0.0143159183719417, 9.99999999999987))
+})
+
+test_that("46.3 Response Optimizer Factorial Manual Input - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Formula1", "Material1"))
+})
+
+test_that("46.4 Response Optimizer Factorial Manual Input - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Strength = -4.38 <unicode> 6.52 Material1 + 0.28 InjTemp + 0.07 InjPress + 0.03 Material1<unicode>InjTemp + 0 Material1<unicode>InjPress + 0 InjTemp<unicode>InjPress"
+                                 ))
+})
+
+test_that("46.5 Response Optimizer Factorial Manual Input - Model Summary table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.667625439705684, 0.369719352330778, 0.80057526382341, 3.19427795771906
+                                 ))
+})
+
+test_that("46.6 Response Optimizer Factorial Manual Input - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot46")
+})
+
+test_that("46.7 Response Optimizer Factorial Manual Input - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(100, 90, "Formula1", 24.55, 0.281009582520444))
+})
+
+test_that("46.8 Response Optimizer Factorial Manual Input - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Maximize", 1, 19.21893629, "Strength", 38.18213907, "", 1))
+})
+
+test_that("46.9 Response Optimizer Factorial Manual Input - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(150, 100, "Formula2", 37.44, 0.96102393083596))
+})
+
+## Factorial design, changing all options ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- c("Strength", "Density")
+options$fixedFactorsFactorial <- c("Material")
+options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+options$codeFactors <- FALSE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- FALSE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Material"),
+  list(components = "InjTemp"),
+  list(components = "InjPress"),
+  list(components = c("Material", "InjTemp")),
+  list(components = c("Material", "InjPress")),
+  list(components = c("InjPress", "InjTemp"))
+)
+options$responseOptimizerManualBounds <- TRUE
+options$responseOptimizerManualTarget <- TRUE
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "maximize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 18,
+    responseOptimizerTarget = 37,
+    responseOptimizerUpperBound = 37,
+    responseOptimizerWeight = 1.0,
+    variable = "Strength"
+  ),
+  list(
+    responseOptimizerGoal = "target",
+    responseOptimizerImportance = 3,
+    responseOptimizerLowerBound = 0.4,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.5,
+    responseOptimizerWeight = 0.8,
+    variable = "Density"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+
+test_that("47.1 Response Optimizer Factorial Changing All Options - ANOVA table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.282635417212939, 1.69581250327763, 6, 29.2340255777468, 2.0653745688331e-05,
+                                      "Model", "", 1.64742746594141, 3, "", "", "<unicode> Linear terms",
+                                      0.669433085778748, 0.669433085778748, 1, 69.2419377062769, 1.61404212637588e-05,
+                                      "<unicode> <unicode> Material", 0.0216428384881839, 0.0216428384881839,
+                                      1, 2.23859875799617, 0.168820796228592, "<unicode> <unicode> InjTemp",
+                                      0.956351541674477, 0.956351541674477, 1, 98.9189738013817, 3.74374736566881e-06,
+                                      "<unicode> <unicode> InjPress", "", 0.0483850373362251, 3, "",
+                                      "", "<unicode> Interaction terms", 0.0438625219544171, 0.0438625219544171,
+                                      1, 4.53686272359078, 0.0620223667487927, "<unicode> <unicode> Material<unicode><unicode><unicode>InjTemp",
+                                      0.0018167435738568, 0.0018167435738568, 1, 0.187912500952855,
+                                      0.674864178734996, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
+                                      0.0027057718079512, 0.0027057718079512, 1, 0.279867976282664,
+                                      0.609585425025631, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
+                                      0.0096680293468746, 0.0870122641218714, 9, "", "", "Error",
+                                      "", 1.78282476739951, 15, "", "", "Total"))
+})
+
+test_that("47.2 Response Optimizer Factorial Changing All Options - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.234794588, "", 0.231291686578764, 0.961861059208525, "(Intercept)",
+                                      1.28375566946858, "", 0.81833402642292, 1.63666805284584, 0.0280555349610261,
+                                      0.312979130661761, "Material1", 2.61466004040793, 162.11111111111,
+                                      -0.010105538445, -0.151583076675, 0.355028857575443, 0.0103644849509566,
+                                      "InjTemp", -0.975015979358171, 9.99999999999987, 0.00224259241000001,
+                                      0.16819443075, 0.788421173410997, 0.00811112463925603, "InjPress",
+                                      0.276483534619399, 153.111111111115, -0.00698112709416669, -0.691131582322503,
+                                      0.0620223667487917, 0.00327753792195615, "Material1<unicode>InjTemp",
+                                      -2.12999124965123, 162.11111111111, 0.000284155166833333, 0.0423391198581666,
+                                      0.674864178734998, 0.00065550758439123, "Material1<unicode>InjPress",
+                                      0.433488755278442, 162.11111111111, 4.62373633999999e-05, 0.00346780225499999,
+                                      0.609585425025632, 8.74010112521639e-05, "InjTemp<unicode>InjPress",
+                                      0.52902549681718, 9.99999999999987))
+})
+
+test_that("47.3 Response Optimizer Factorial Changing All Options - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Formula1", "Material1"))
+})
+
+test_that("47.4 Response Optimizer Factorial Changing All Options - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Density = 1.23 + 0.82 Material1 <unicode> 0.01 InjTemp + 0 InjPress <unicode> 0.01 Material1<unicode>InjTemp + 0 Material1<unicode>InjPress + 0 InjTemp<unicode>InjPress"
+                                 ))
+})
+
+test_that("47.5 Response Optimizer Factorial Changing All Options - Model Summary table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.91865692980323, 0.845749437256495, 0.951194157881938, 0.0983261376586844
+                                 ))
+})
+
+test_that("47.6 Response Optimizer Factorial Changing All Options - ANOVA table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(61.4412169760555, 368.647301856333, 6, 6.02163462145317, 0.00885308674084683,
+                                      "Model", "", 367.52491531986, 3, "", "", "<unicode> Linear terms",
+                                      181.151435260225, 181.151435260225, 1, 17.7540063165417, 0.00226090333532432,
+                                      "<unicode> <unicode> Material", 73.7250318293204, 73.7250318293204,
+                                      1, 7.22552752013659, 0.024876494295309, "<unicode> <unicode> InjTemp",
+                                      112.648448230315, 112.648448230315, 1, 11.0402727892092, 0.00890208646409138,
+                                      "<unicode> <unicode> InjPress", "", 1.12238653647272, 3, "",
+                                      "", "<unicode> Interaction terms", 0.778094866011372, 0.778094866011372,
+                                      1, 0.0762583037014878, 0.788670012907783, "<unicode> <unicode> Material<unicode><unicode><unicode>InjTemp",
+                                      0.342200526962543, 0.342200526962543, 1, 0.033537853611204,
+                                      0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
+                                      0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
+                                      0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
+                                      10.2034116711698, 91.8307050405283, 9, "", "", "Error", "",
+                                      460.478006896861, 15, "", "", "Total"))
+})
+
+test_that("47.7 Response Optimizer Factorial Changing All Options - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(-4.37814587750002, "", 0.891657355106339, 31.247556885468, "(Intercept)",
+                                      -0.140111621959672, "", -6.52334568520829, -13.0466913704166,
+                                      0.537140590257635, 10.1676152659357, "Material1", -0.641580696612634,
+                                      162.111111111113, 0.2816380375, 4.2245705625, 0.424553064221281,
+                                      0.336706460868775, "InjTemp", 0.836449757374164, 9.99999999999987,
+                                      0.0669973736666668, 5.02480302500001, 0.805010858794851, 0.263502536196682,
+                                      "InjPress", 0.25425703537312, 153.111111111115, 0.0294032285833329,
+                                      2.91091962974996, 0.788670012907786, 0.106475931923969, "Material1<unicode>InjTemp",
+                                      0.276149060656533, 162.111111111113, 0.00389986055, 0.581079221950001,
+                                      0.858752480786647, 0.0212951863847937, "Material1<unicode>InjPress",
+                                      0.183133431167561, 162.111111111113, 4.06480199999987e-05, 0.0030486014999999,
+                                      0.988890269483179, 0.00283935818463916, "InjTemp<unicode>InjPress",
+                                      0.0143159183719417, 9.99999999999987))
+})
+
+test_that("47.8 Response Optimizer Factorial Changing All Options - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Formula1", "Material1"))
+})
+
+test_that("47.9 Response Optimizer Factorial Changing All Options - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Strength = -4.38 <unicode> 6.52 Material1 + 0.28 InjTemp + 0.07 InjPress + 0.03 Material1<unicode>InjTemp + 0 Material1<unicode>InjPress + 0 InjTemp<unicode>InjPress"
+                                 ))
+})
+
+test_that("47.10 Response Optimizer Factorial Changing All Options - Model Summary table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.667625439705684, 0.369719352330778, 0.80057526382341, 3.19427795771906
+                                 ))
+})
+
+test_that("47.11 Response Optimizer Factorial Changing All Options - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot47")
+})
+
+test_that("47.12 Response Optimizer Factorial Changing All Options - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.6, 75, 100, "Formula2", 32.41, 0.87732801703988))
+})
+
+test_that("47.13 Response Optimizer Factorial Changing All Options - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Maximize", 1, 18, "Strength", 37, "", 1, "Target", 3, 0.4, "Density",
+                                      0.5, 1.5, 0.8))
+})
+
+test_that("47.14 Response Optimizer Factorial Changing All Options - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.6, 75, 100, "Formula2", 32.41, 0.87732801703988))
+})
+
+## Response Surface design, basic example, no squared terms ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndInteractions"
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("48.1 Response Optimizer Response Surface No Squares - ANOVA table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(821.824074074068, 4930.94444444441, 6, 0.228322398804983, 0.965437895274988,
+                                      "Model", "", 2154.69444444444, 3, "", "", "<unicode> Linear terms",
+                                      1406.25, 1406.25, 1, 0.390689909736777, 0.534960055678213, "<unicode> <unicode> Speed",
+                                      400, 400, 1, 0.111129574325128, 0.740344432372881, "<unicode> <unicode> Pressure",
+                                      348.444444444438, 348.444444444438, 1, 0.0968062069676649, 0.757072343791272,
+                                      "<unicode> <unicode> Nozzle", "", 2776.24999999997, 3, "", "",
+                                      "<unicode> Interaction terms", 425.041666666657, 425.041666666657,
+                                      1, 0.118086748717771, 0.732651462637135, "<unicode> <unicode> Speed<unicode><unicode><unicode>Pressure",
+                                      1700.16666666666, 1700.16666666666, 1, 0.472346994871092, 0.49528697987493,
+                                      "<unicode> <unicode> Speed<unicode><unicode><unicode>Nozzle",
+                                      651.041666666657, 651.041666666657, 1, 0.180874958211468, 0.672563404439722,
+                                      "<unicode> <unicode> Pressure<unicode><unicode><unicode>Nozzle",
+                                      3599.40189125296, 169171.888888889, 47, "", "", "Error", "",
+                                      174102.833333333, 53, "", "", "Total"))
+})
+
+test_that("48.2 Response Optimizer Response Surface No Squares - Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 31.3055555555554, "", 0.89376424507658, 233.071765248208,
+                                      "(Intercept)", 0.134317237105991, "", "A", -0.318749999999999,
+                                      -12.75, 0.869210643020835, 1.92452676159236, "Speed", -0.16562513255792,
+                                      14.5000000000001, "B", -4.38333333333332, -43.8333333333332,
+                                      0.771382909617207, 14.9927496623625, "Pressure", -0.292363537846373,
+                                      55.0000000000007, "C1", -16.9444444444446, -50.8333333333339,
+                                      0.861565905074579, 96.6016630668738, "Nozzle1", -0.17540530780215,
+                                      4692.25000000006, "C2", 109.861111111111, 329.583333333333,
+                                      0.261585509858412, 96.6016630668739, "Nozzle2", 1.13725900386475,
+                                      4692.25000000006, "AB", 0.0420833333333333, 5.47083333333333,
+                                      0.735523726381216, 0.123798555884037, "Speed<unicode>Pressure",
+                                      0.339933959914306, 14.5000000000001, "AC1", -0.137499999999999,
+                                      -19.1124999999998, 0.848333934300153, 0.714751295649358, "Speed<unicode>Nozzle1",
+                                      -0.192374607555036, 14.5000000000001, "AC2", -0.566666666666667,
+                                      -78.7666666666667, 0.432139014831718, 0.714751295649358, "Speed<unicode>Nozzle2",
+                                      -0.792816564469247, 14.5000000000001, "BC1", 2.6, 49.4000000000001,
+                                      0.368089968279074, 2.85900518259743, "Pressure<unicode>Nozzle1",
+                                      0.909407235714725, 55.0000000000007, "BC2", -3.11666666666667,
+                                      -59.2166666666666, 0.281593315476976, 2.85900518259743, "Pressure<unicode>Nozzle2",
+                                      -1.09012277614521, 55.0000000000007))
+})
+
+test_that("48.3 Response Optimizer Response Surface No Squares - Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "C1", 2, "C2"))
+})
+
+test_that("48.4 Response Optimizer Response Surface No Squares - Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Syruploss = 31.31 <unicode> 0.32 A <unicode> 4.38 B <unicode> 16.94 C1 + 109.86 C2 + 0.04 AB <unicode> 0.14 AC1 <unicode> 0.57 AC2 + 2.6 BC1 <unicode> 3.12 BC2"
+                                 ))
+})
+
+test_that("48.5 Response Optimizer Response Surface No Squares - Model Summary table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, 0.0704147229718324, 60.6486585618638))
+})
+
+test_that("48.6 Response Optimizer Response Surface No Squares - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot48")
+})
+
+test_that("48.7 Response Optimizer Response Surface No Squares - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3, 10, 100, -19.65, 0.765607810781078))
+})
+
+test_that("48.8 Response Optimizer Response Surface No Squares - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 135, 1))
+})
+
+test_that("48.9 Response Optimizer Response Surface No Squares - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3, 10, 100, -19.65, 0.765607810781078))
+})
+
+
+## Response Surface design, basic example, squared terms ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("49.1 Response Optimizer Response Surface With Squares - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot49")
+})
+
+test_that("49.2 Response Optimizer Response Surface With Squares - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, 10, 119.4, -67.12, 1))
+})
+
+test_that("49.3 Response Optimizer Response Surface With Squares - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 135, 1))
+})
+
+test_that("49.4 Response Optimizer Response Surface With Squares - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, 10, 119.4, -67.12, 1))
+})
+
+
+## Response Surface design, multivariate example, no squared terms ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss", "Cost")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndInteractions"
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  ),
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Cost"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("50.1 Response Optimizer Response Surface Multivariate No Squares - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot50")
+})
+
+test_that("50.2 Response Optimizer Response Surface Multivariate No Squares - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(63.53, 1, 10, 100, -7.01, 0.74608569049605))
+})
+
+test_that("50.3 Response Optimizer Response Surface Multivariate No Squares - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 135, 1, "Minimize", 1, "",
+                                      "Cost", 35, 172, 1))
+})
+
+test_that("50.4 Response Optimizer Response Surface Multivariate No Squares - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(63.53, 1, 10, 100, -7.01, 0.74608569049605))
+})
+
+
+
+## Response Surface design, multivariate example, with squared terms ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss", "Cost")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  ),
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Cost"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("51.1 Response Optimizer Response Surface Multivariate With Squares - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot51")
+})
+
+test_that("51.2 Response Optimizer Response Surface Multivariate With Squares - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(59.51, 1, 10, 117.04, -66.38, 0.904766993032571))
+})
+
+test_that("51.3 Response Optimizer Response Surface Multivariate With Squares - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 135, 1, "Minimize", 1, "",
+                                      "Cost", 35, 172, 1))
+})
+
+test_that("51.4 Response Optimizer Response Surface Multivariate With Squares - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(59.51, 1, 10, 117.04, -66.38, 0.904766993032571))
+})
+
+
+## Response Surface design, manual input parameters ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss", "Cost")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  ),
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = 0.5,
+    responseOptimizerUpperBound = 1.0,
+    responseOptimizerWeight = 1.0,
+    variable = "Cost"
+  )
+)
+options$optimizationPlotCustomParameters <- TRUE
+options$optimizationPlotCustomParameterValues <- list(
+  list(value = 100, variable = c("Speed")),
+  list(value = 15, variable = c("Pressure")),
+  list(value = "2", variable = c("Nozzle"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("52.1 Response Optimizer Response Surface Manual Input Parameters - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot52")
+})
+
+test_that("52.2 Response Optimizer Response Surface Manual Input Parameters - Optimization Plot Summary (Manual Predictor Values) table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(120.57, 2, 15, 100, 65.89, 0.35836784018221))
+})
+
+test_that("52.3 Response Optimizer Response Surface Manual Input Parameters - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 135, 1, "Minimize", 1, "",
+                                      "Cost", 35, 172, 1))
+})
+
+test_that("52.4 Response Optimizer Response Surface Manual Input Parameters - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(59.51, 1, 10, 117.04, -66.38, 0.904766993032571))
+})
+
+## Response Surface design, changing all options ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss", "Cost")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "linearAndSquared"
+options$responseOptimizerManualBounds <- TRUE
+options$responseOptimizerManualTarget <- TRUE
+options$responsesResponseOptimizer <- list(
+  list(
+    responseOptimizerGoal = "minimize",
+    responseOptimizerImportance = 1.0,
+    responseOptimizerLowerBound = 0.0,
+    responseOptimizerTarget = -67,
+    responseOptimizerUpperBound = 50,
+    responseOptimizerWeight = 1.0,
+    variable = "Syruploss"
+  ),
+  list(
+    responseOptimizerGoal = "target",
+    responseOptimizerImportance = 3,
+    responseOptimizerLowerBound = 50,
+    responseOptimizerTarget = 100,
+    responseOptimizerUpperBound = 150,
+    responseOptimizerWeight = 2,
+    variable = "Cost"
+  )
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("53.1 Response Optimizer Response Surface Change All Options - Summary Plot matches", {
+  plotName <- results[["results"]][["plotRo"]][["collection"]][["plotRo_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "summary-plot53")
+})
+
+test_that("53.2 Response Optimizer Response Surface Change All Options - Optimization Plot Summary table results match", {
+  table <- results[["results"]][["plotRo"]][["collection"]][["plotRo_table"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(100, 2, 12.3, 120.83, -22, 0.885700020509264))
+})
+
+test_that("53.3 Response Optimizer Response Surface Change All Options - Response Optimizer Settings table results match", {
+  table <- results[["results"]][["tableRoSettings"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Minimize", 1, "", "Syruploss", -67, 50, 1, "Target", 3, 50, "Cost",
+                                      100, 150, 2))
+})
+
+test_that("53.4 Response Optimizer Response Surface Change All Options - Response Optimizer Solution table results match", {
+  table <- results[["results"]][["tableRoSolution"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(100, 2, 12.3, 120.83, -22, 0.885700020509264))
+})
