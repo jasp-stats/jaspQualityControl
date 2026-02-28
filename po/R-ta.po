@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-02-21 04:16\n"
+"POT-Creation-Date: 2026-02-28 04:08\n"
 "PO-Revision-Date: 2026-01-07 17:01+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
@@ -414,6 +414,14 @@ msgstr "குறிப்பிடத்தக்கது அல்ல"
 msgid "Normal Probability Plot of Residuals"
 msgstr "எச்சங்களின் இயல்பான நிகழ்தகவுத் திட்டம்"
 
+#, fuzzy
+msgid "Theoretical quantiles"
+msgstr "செங்குத்து அறிகுறிகள்"
+
+#, fuzzy
+msgid "Observed quantiles"
+msgstr "கவனிக்கப்பட்ட சராசரி"
+
 msgid "Histogram of Residuals"
 msgstr "எச்சங்களின் வரலாற்று வரைபடம்"
 
@@ -434,14 +442,6 @@ msgstr "ஆர்டரை இயக்கவும்"
 
 msgid "Matrix residual plot"
 msgstr "மேட்ரிக்ச் எஞ்சிய சூழ்ச்சி"
-
-#, fuzzy
-msgid "Theoretical quantiles"
-msgstr "செங்குத்து அறிகுறிகள்"
-
-#, fuzzy
-msgid "Observed quantiles"
-msgstr "கவனிக்கப்பட்ட சராசரி"
 
 msgid "Contour plot"
 msgstr "விளிம்பு சூழ்ச்சி"
@@ -1375,7 +1375,8 @@ msgstr ""
 "'மாற்றம்' என்ற தலைப்பில் உள்ள நெடுவரிசைகள், பேச்லைன் (BL) உடன் ஒப்பிடுகையில், அந்தந்த "
 "கட்டத்தில் ஏற்படும் மாற்றங்களைப் பற்றியது."
 
-msgid "The within standard deviation could not be calculated."
+#, fuzzy
+msgid "The within std. dev. could not be calculated."
 msgstr "நிலையான விலகலைக் கணக்கிட முடியவில்லை."
 
 msgid "Change (%s vs. BL)"
@@ -1383,6 +1384,12 @@ msgstr "மாற்றம் (%s எதிராக BL)"
 
 msgid "%s (BL)"
 msgstr "%s (BL)"
+
+msgid "The within std. dev. is based on a historical value."
+msgstr ""
+
+msgid "The mean is based on a historical value."
+msgstr ""
 
 msgid "Capability of the process"
 msgstr "செயல்முறையின் திறன்"
@@ -1431,6 +1438,22 @@ msgstr ""
 
 msgid "3-parameter Weibull dist."
 msgstr "3-அளவுரு வெய்புல் மாவட்டம்."
+
+#, fuzzy
+msgid "Gamma dist."
+msgstr "சாதாரண மாவட்டம்."
+
+#, fuzzy
+msgid "Exponential dist."
+msgstr "லாக்நார்மல் டிச்ட்."
+
+#, fuzzy
+msgid "Logistic dist."
+msgstr "லாக்நார்மல் டிச்ட்."
+
+#, fuzzy
+msgid "Log-logistic dist."
+msgstr "லாக்நார்மல் டிச்ட்."
 
 msgid "Target = %g"
 msgstr "இலக்கு = %g"
@@ -1515,8 +1538,8 @@ msgstr ""
 msgid "%s vs. BL"
 msgstr "%s எதிராக BL"
 
-msgid "Average"
-msgstr "சராசரி"
+msgid "Scale (%1$s)"
+msgstr "அளவு (%1$s)"
 
 msgid "Log mean (%1$s)"
 msgstr "பதிவு சராசரி (%1$s)"
@@ -1524,11 +1547,12 @@ msgstr "பதிவு சராசரி (%1$s)"
 msgid "Log std.dev (%1$s)"
 msgstr "பதிவு std.dev (%1$s)"
 
+#, fuzzy
+msgid "Location"
+msgstr "இடம்: %s"
+
 msgid "Shape (%1$s)"
 msgstr "வடிவம் (%1$s)"
-
-msgid "Scale (%1$s)"
-msgstr "அளவு (%1$s)"
 
 msgid "Threshold"
 msgstr "வாசல்"
@@ -1536,11 +1560,37 @@ msgstr "வாசல்"
 msgid "Calculations based on %s distribution."
 msgstr "%s விநியோகத்தின் அடிப்படையில் கணக்கீடுகள்."
 
+msgid "Location parameter is log-transformed."
+msgstr ""
+
+msgid "The shape (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The scale (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The location parameter is based on a historical value."
+msgstr ""
+
+msgid "The log mean (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The log std. dev. (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The threshold is based on a historical value."
+msgstr ""
+
 msgid "Probability table and plot"
 msgstr "நிகழ்தகவு அட்டவணை மற்றும் சூழ்ச்சி"
 
 msgid "Probability plot"
 msgstr "நிகழ்தகவு சூழ்ச்சி"
+
+msgid ""
+"Probability plot and table for %s distribution are not implemented in "
+"Quality Control module. Please use the Distributions module."
+msgstr ""
 
 msgid ""
 "Need at least 2 measurements to calculate probability table/plot. %1$i "
@@ -1603,8 +1653,17 @@ msgstr "எண்ணுகிறது"
 msgid "Normal dist."
 msgstr "சாதாரண மாவட்டம்."
 
-msgid "Lognormal dist."
+#, fuzzy
+msgid "Log-normal dist."
 msgstr "லாக்நார்மல் டிச்ட்."
+
+#, fuzzy
+msgid ""
+"3-parameter\n"
+"log-normal dist."
+msgstr ""
+"3-அளவுரு \n"
+"lognormal dist."
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
@@ -1717,6 +1776,9 @@ msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
 msgstr[1] "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
+
+#~ msgid "Average"
+#~ msgstr "சராசரி"
 
 #~ msgid ""
 #~ "Type III sums of squares are selected and continuous factors are "

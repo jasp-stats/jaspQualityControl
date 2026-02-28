@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-02-21 04:16\n"
+"POT-Creation-Date: 2026-02-28 04:08\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -431,6 +431,13 @@ msgstr ""
 msgid "Normal Probability Plot of Residuals"
 msgstr "Normale Kansfiguur van Residuen"
 
+#, fuzzy
+msgid "Theoretical quantiles"
+msgstr "Verticale asymptoten"
+
+msgid "Observed quantiles"
+msgstr ""
+
 msgid "Histogram of Residuals"
 msgstr "Histogram van Residuen"
 
@@ -451,13 +458,6 @@ msgstr "Serie volgorde"
 
 msgid "Matrix residual plot"
 msgstr "Matrix figuur voor residuen"
-
-#, fuzzy
-msgid "Theoretical quantiles"
-msgstr "Verticale asymptoten"
-
-msgid "Observed quantiles"
-msgstr ""
 
 msgid "Contour plot"
 msgstr "Contour figuur"
@@ -1513,7 +1513,8 @@ msgstr ""
 "Kolommen met de titel 'Verandering' hebben betrekking op veranderingen van "
 "de respectieve fase in vergelijking met de uitgangswaarde (BL)."
 
-msgid "The within standard deviation could not be calculated."
+#, fuzzy
+msgid "The within std. dev. could not be calculated."
 msgstr "De interne standaardafwijking kon niet worden berekend."
 
 msgid "Change (%s vs. BL)"
@@ -1521,6 +1522,12 @@ msgstr "Verandering (%s vs. BL)"
 
 msgid "%s (BL)"
 msgstr "%s (BL)"
+
+msgid "The within std. dev. is based on a historical value."
+msgstr ""
+
+msgid "The mean is based on a historical value."
+msgstr ""
 
 msgid "Capability of the process"
 msgstr "Geschiktheid van het proces"
@@ -1570,6 +1577,22 @@ msgstr ""
 
 msgid "3-parameter Weibull dist."
 msgstr "3-parameter Weibull dist."
+
+#, fuzzy
+msgid "Gamma dist."
+msgstr "Normale verd."
+
+#, fuzzy
+msgid "Exponential dist."
+msgstr "Lognormale verd."
+
+#, fuzzy
+msgid "Logistic dist."
+msgstr "Lognormale verd."
+
+#, fuzzy
+msgid "Log-logistic dist."
+msgstr "Lognormale verd."
 
 #, fuzzy
 msgid "Target = %g"
@@ -1657,8 +1680,8 @@ msgstr ""
 msgid "%s vs. BL"
 msgstr "%s vs. BL"
 
-msgid "Average"
-msgstr "Gemiddelde"
+msgid "Scale (%1$s)"
+msgstr "Schaal (%1$s)"
 
 msgid "Log mean (%1$s)"
 msgstr "Log gemiddelde (%1$s)"
@@ -1666,11 +1689,12 @@ msgstr "Log gemiddelde (%1$s)"
 msgid "Log std.dev (%1$s)"
 msgstr "Log std.dev (%1$s)"
 
+#, fuzzy
+msgid "Location"
+msgstr "Locatie: %s"
+
 msgid "Shape (%1$s)"
 msgstr "Vorm (%1$s)"
-
-msgid "Scale (%1$s)"
-msgstr "Schaal (%1$s)"
 
 msgid "Threshold"
 msgstr "Drempel"
@@ -1678,11 +1702,37 @@ msgstr "Drempel"
 msgid "Calculations based on %s distribution."
 msgstr "Berekeningen gebaseerd op %s verdeling."
 
+msgid "Location parameter is log-transformed."
+msgstr ""
+
+msgid "The shape (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The scale (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The location parameter is based on a historical value."
+msgstr ""
+
+msgid "The log mean (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The log std. dev. (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The threshold is based on a historical value."
+msgstr ""
+
 msgid "Probability table and plot"
 msgstr "Kanstabel en figuur"
 
 msgid "Probability plot"
 msgstr "Kansfiguur"
+
+msgid ""
+"Probability plot and table for %s distribution are not implemented in "
+"Quality Control module. Please use the Distributions module."
+msgstr ""
 
 msgid ""
 "Need at least 2 measurements to calculate probability table/plot. %1$i "
@@ -1746,8 +1796,17 @@ msgstr "Aantallen"
 msgid "Normal dist."
 msgstr "Normale verd."
 
-msgid "Lognormal dist."
+#, fuzzy
+msgid "Log-normal dist."
 msgstr "Lognormale verd."
+
+#, fuzzy
+msgid ""
+"3-parameter\n"
+"log-normal dist."
+msgstr ""
+"3-parameter\n"
+"lognormaal dist."
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
@@ -1863,6 +1922,9 @@ msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] "De volgende gealiaste termen zijn verwijderd: %s."
 msgstr[1] "De volgende gealiaste termen zijn verwijderd: %s."
+
+#~ msgid "Average"
+#~ msgstr "Gemiddelde"
 
 #~ msgid ""
 #~ "Calculations are based on 6 times the historical standard variation "

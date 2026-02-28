@@ -112,10 +112,6 @@ msgid "Weibull"
 msgstr "Weibull"
 
 msgctxt "processCapabilityStudies|"
-msgid "Lognormal"
-msgstr "Lognormaal"
-
-msgctxt "processCapabilityStudies|"
 msgid "Median Rank (Benard)"
 msgstr "Mediaanrang (Benard)"
 
@@ -762,10 +758,6 @@ msgstr "Normale verdeling"
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal distribution"
 msgstr "Niet-normale verdeling"
-
-msgctxt "processCapabilityStudies|"
-msgid "3-parameter lognormal"
-msgstr "3-parameter lognormaal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
@@ -3345,4 +3337,60 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Historical std. dev."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical mean"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical std. dev."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Log-normal"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Gamma"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Exponential"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Logistic"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Log-logistic"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "3-parameter log-normal"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical shape"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical location"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical scale"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical log mean"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical log std. dev."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical threshold"
 msgstr ""

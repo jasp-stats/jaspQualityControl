@@ -1,15 +1,9 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-02-22 23:09+0000\n"
-"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
-"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-qml/es/>\n"
-"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.16.1-dev\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -120,10 +114,6 @@ msgstr "Especificar una distribución"
 msgctxt "processCapabilityStudies|"
 msgid "Weibull"
 msgstr "Weibull"
-
-msgctxt "processCapabilityStudies|"
-msgid "Lognormal"
-msgstr "Log-Normal"
 
 msgctxt "processCapabilityStudies|"
 msgid "Median Rank (Benard)"
@@ -772,10 +762,6 @@ msgstr "Distribución Normal"
 msgctxt "processCapabilityStudies|"
 msgid "Non-normal distribution"
 msgstr "Distribución No-Normal"
-
-msgctxt "processCapabilityStudies|"
-msgid "3-parameter lognormal"
-msgstr "Log-Normal de 3 parámetros"
 
 msgctxt "processCapabilityStudies|"
 msgid "Stability of the process"
@@ -3299,4 +3285,60 @@ msgstr ""
 
 msgctxt "msaGaugeRRnonrep|"
 msgid "Historical std. dev."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical mean"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical std. dev."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Log-normal"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Gamma"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Exponential"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Logistic"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Log-logistic"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "3-parameter log-normal"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical shape"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical location"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical scale"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical log mean"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical log std. dev."
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Historical threshold"
 msgstr ""

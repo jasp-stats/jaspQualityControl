@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
-"POT-Creation-Date: 2026-02-21 04:16\n"
+"POT-Creation-Date: 2026-02-28 04:08\n"
 "PO-Revision-Date: 2026-02-23 00:09+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
@@ -418,6 +418,12 @@ msgstr "No significativo"
 msgid "Normal Probability Plot of Residuals"
 msgstr "Gráfico de probabilidad Normal de errores"
 
+msgid "Theoretical quantiles"
+msgstr "Cuantiles teóricos"
+
+msgid "Observed quantiles"
+msgstr "Cuantiles observados"
+
 msgid "Histogram of Residuals"
 msgstr "Histograma de errores"
 
@@ -438,12 +444,6 @@ msgstr "Orden de ejecución"
 
 msgid "Matrix residual plot"
 msgstr "Gráfico matricial de errores"
-
-msgid "Theoretical quantiles"
-msgstr "Cuantiles teóricos"
-
-msgid "Observed quantiles"
-msgstr "Cuantiles observados"
 
 msgid "Contour plot"
 msgstr "Gráfico de contorno"
@@ -1394,7 +1394,8 @@ msgstr ""
 "La columnas tituladas 'Cambio' se refieren a cambios de la etapa respectiva "
 "en comparación con la línea base (LB)."
 
-msgid "The within standard deviation could not be calculated."
+#, fuzzy
+msgid "The within std. dev. could not be calculated."
 msgstr "No se puede calcular la desviación típica dentro."
 
 msgid "Change (%s vs. BL)"
@@ -1402,6 +1403,12 @@ msgstr "Cambio (%s vs. LB)"
 
 msgid "%s (BL)"
 msgstr "%s (LB)"
+
+msgid "The within std. dev. is based on a historical value."
+msgstr ""
+
+msgid "The mean is based on a historical value."
+msgstr ""
 
 msgid "Capability of the process"
 msgstr "Capacidad del proceso"
@@ -1451,6 +1458,22 @@ msgstr ""
 
 msgid "3-parameter Weibull dist."
 msgstr "Dist. Weibull de 3 parámetros"
+
+#, fuzzy
+msgid "Gamma dist."
+msgstr "Dist. Normal"
+
+#, fuzzy
+msgid "Exponential dist."
+msgstr "Dist. Lognormal"
+
+#, fuzzy
+msgid "Logistic dist."
+msgstr "Dist. Lognormal"
+
+#, fuzzy
+msgid "Log-logistic dist."
+msgstr "Dist. Lognormal"
 
 msgid "Target = %g"
 msgstr "Objetivo = %g"
@@ -1535,8 +1558,8 @@ msgstr ""
 msgid "%s vs. BL"
 msgstr "%s vs. LB"
 
-msgid "Average"
-msgstr "Promedio"
+msgid "Scale (%1$s)"
+msgstr "Escala (%1$s)"
 
 msgid "Log mean (%1$s)"
 msgstr "Log media (%1$s)"
@@ -1544,11 +1567,12 @@ msgstr "Log media (%1$s)"
 msgid "Log std.dev (%1$s)"
 msgstr "Log desv. típ. (%1$s)"
 
+#, fuzzy
+msgid "Location"
+msgstr "Posición: %s"
+
 msgid "Shape (%1$s)"
 msgstr "Forma (%1$s)"
-
-msgid "Scale (%1$s)"
-msgstr "Escala (%1$s)"
 
 msgid "Threshold"
 msgstr "Umbral"
@@ -1556,11 +1580,38 @@ msgstr "Umbral"
 msgid "Calculations based on %s distribution."
 msgstr "Cálculos basados en la distribución %s."
 
+#, fuzzy
+msgid "Location parameter is log-transformed."
+msgstr "Parámetros de la transformación"
+
+msgid "The shape (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The scale (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The location parameter is based on a historical value."
+msgstr ""
+
+msgid "The log mean (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The log std. dev. (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The threshold is based on a historical value."
+msgstr ""
+
 msgid "Probability table and plot"
 msgstr "Tabla y gráfico de probabilidades"
 
 msgid "Probability plot"
 msgstr "Gráfico de probabilidad"
+
+msgid ""
+"Probability plot and table for %s distribution are not implemented in "
+"Quality Control module. Please use the Distributions module."
+msgstr ""
 
 msgid ""
 "Need at least 2 measurements to calculate probability table/plot. %1$i "
@@ -1624,8 +1675,17 @@ msgstr "Recuentos"
 msgid "Normal dist."
 msgstr "Dist. Normal"
 
-msgid "Lognormal dist."
+#, fuzzy
+msgid "Log-normal dist."
 msgstr "Dist. Lognormal"
+
+#, fuzzy
+msgid ""
+"3-parameter\n"
+"log-normal dist."
+msgstr ""
+"Dist. Lognormal\n"
+"de 3 parámetros"
 
 msgid ""
 "Some specification limits or target value are outside of the support of the "
@@ -1752,6 +1812,9 @@ msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] "Se consideró la siguiente covariante, pero no se incluyó: %s."
 msgstr[1] ""
 "Se consideraron las siguientes covariantes, pero no se incluyeron: %s."
+
+#~ msgid "Average"
+#~ msgstr "Promedio"
 
 #~ msgid ""
 #~ "Type III sums of squares are selected and continuous factors are "

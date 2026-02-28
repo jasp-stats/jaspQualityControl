@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
-"POT-Creation-Date: 2026-02-21 04:16\n"
+"POT-Creation-Date: 2026-02-28 04:08\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -383,6 +383,12 @@ msgstr ""
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
 
+msgid "Theoretical quantiles"
+msgstr ""
+
+msgid "Observed quantiles"
+msgstr ""
+
 msgid "Histogram of Residuals"
 msgstr ""
 
@@ -402,12 +408,6 @@ msgid "Run order"
 msgstr ""
 
 msgid "Matrix residual plot"
-msgstr ""
-
-msgid "Theoretical quantiles"
-msgstr ""
-
-msgid "Observed quantiles"
 msgstr ""
 
 msgid "Contour plot"
@@ -1256,13 +1256,19 @@ msgstr ""
 msgid "Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
 msgstr ""
 
-msgid "The within standard deviation could not be calculated."
+msgid "The within std. dev. could not be calculated."
 msgstr ""
 
 msgid "Change (%s vs. BL)"
 msgstr ""
 
 msgid "%s (BL)"
+msgstr ""
+
+msgid "The within std. dev. is based on a historical value."
+msgstr ""
+
+msgid "The mean is based on a historical value."
 msgstr ""
 
 msgid "Capability of the process"
@@ -1296,6 +1302,18 @@ msgid "3-parameter\nlognormal dist."
 msgstr ""
 
 msgid "3-parameter Weibull dist."
+msgstr ""
+
+msgid "Gamma dist."
+msgstr ""
+
+msgid "Exponential dist."
+msgstr ""
+
+msgid "Logistic dist."
+msgstr ""
+
+msgid "Log-logistic dist."
 msgstr ""
 
 msgid "Target = %g"
@@ -1373,7 +1391,7 @@ msgstr ""
 msgid "%s vs. BL"
 msgstr ""
 
-msgid "Average"
+msgid "Scale (%1$s)"
 msgstr ""
 
 msgid "Log mean (%1$s)"
@@ -1382,10 +1400,10 @@ msgstr ""
 msgid "Log std.dev (%1$s)"
 msgstr ""
 
-msgid "Shape (%1$s)"
+msgid "Location"
 msgstr ""
 
-msgid "Scale (%1$s)"
+msgid "Shape (%1$s)"
 msgstr ""
 
 msgid "Threshold"
@@ -1394,10 +1412,34 @@ msgstr ""
 msgid "Calculations based on %s distribution."
 msgstr ""
 
+msgid "Location parameter is log-transformed."
+msgstr ""
+
+msgid "The shape (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The scale (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The location parameter is based on a historical value."
+msgstr ""
+
+msgid "The log mean (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The log std. dev. (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The threshold is based on a historical value."
+msgstr ""
+
 msgid "Probability table and plot"
 msgstr ""
 
 msgid "Probability plot"
+msgstr ""
+
+msgid "Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module."
 msgstr ""
 
 msgid "Need at least 2 measurements to calculate probability table/plot. %1$i measurement(s) detected."
@@ -1442,7 +1484,10 @@ msgstr ""
 msgid "Normal dist."
 msgstr ""
 
-msgid "Lognormal dist."
+msgid "Log-normal dist."
+msgstr ""
+
+msgid "3-parameter\nlog-normal dist."
 msgstr ""
 
 msgid "Some specification limits or target value are outside of the support of the Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."

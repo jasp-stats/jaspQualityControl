@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-02-21 04:16\n"
+"POT-Creation-Date: 2026-02-28 04:08\n"
 "PO-Revision-Date: 2026-02-01 13:36+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -421,6 +421,14 @@ msgstr ""
 msgid "Normal Probability Plot of Residuals"
 msgstr ""
 
+#, fuzzy
+msgid "Theoretical quantiles"
+msgstr "Vertikale Asymptoten"
+
+#, fuzzy
+msgid "Observed quantiles"
+msgstr "Beobachtet"
+
 msgid "Histogram of Residuals"
 msgstr "Histogramm der Residuen"
 
@@ -441,14 +449,6 @@ msgstr "Ablaufreihenfolge"
 
 msgid "Matrix residual plot"
 msgstr ""
-
-#, fuzzy
-msgid "Theoretical quantiles"
-msgstr "Vertikale Asymptoten"
-
-#, fuzzy
-msgid "Observed quantiles"
-msgstr "Beobachtet"
 
 msgid "Contour plot"
 msgstr "Konturdiagramm"
@@ -1426,13 +1426,19 @@ msgid ""
 "comparison to baseline (BL)."
 msgstr ""
 
-msgid "The within standard deviation could not be calculated."
+msgid "The within std. dev. could not be calculated."
 msgstr ""
 
 msgid "Change (%s vs. BL)"
 msgstr ""
 
 msgid "%s (BL)"
+msgstr ""
+
+msgid "The within std. dev. is based on a historical value."
+msgstr ""
+
+msgid "The mean is based on a historical value."
 msgstr ""
 
 msgid "Capability of the process"
@@ -1478,6 +1484,18 @@ msgid ""
 msgstr ""
 
 msgid "3-parameter Weibull dist."
+msgstr ""
+
+msgid "Gamma dist."
+msgstr ""
+
+msgid "Exponential dist."
+msgstr ""
+
+msgid "Logistic dist."
+msgstr ""
+
+msgid "Log-logistic dist."
 msgstr ""
 
 msgid "Target = %g"
@@ -1561,8 +1579,9 @@ msgstr ""
 msgid "%s vs. BL"
 msgstr ""
 
-msgid "Average"
-msgstr "Durchschnitt"
+#, fuzzy
+msgid "Scale (%1$s)"
+msgstr "Mittelwert (%1$s)"
 
 msgid "Log mean (%1$s)"
 msgstr "Log-Mittelwert (%1$s)"
@@ -1570,17 +1589,38 @@ msgstr "Log-Mittelwert (%1$s)"
 msgid "Log std.dev (%1$s)"
 msgstr "Log Std.-Abw. (%1$s)"
 
+#, fuzzy
+msgid "Location"
+msgstr "Lage: %s"
+
 msgid "Shape (%1$s)"
 msgstr ""
-
-#, fuzzy
-msgid "Scale (%1$s)"
-msgstr "Mittelwert (%1$s)"
 
 msgid "Threshold"
 msgstr ""
 
 msgid "Calculations based on %s distribution."
+msgstr ""
+
+msgid "Location parameter is log-transformed."
+msgstr ""
+
+msgid "The shape (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The scale (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The location parameter is based on a historical value."
+msgstr ""
+
+msgid "The log mean (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The log std. dev. (%1$s) is based on a historical value."
+msgstr ""
+
+msgid "The threshold is based on a historical value."
 msgstr ""
 
 #, fuzzy
@@ -1590,6 +1630,11 @@ msgstr "Wahrscheinlichkeitstabelle und -diagramm"
 #, fuzzy
 msgid "Probability plot"
 msgstr "Wahrscheinlichkeitstabelle und -diagramm"
+
+msgid ""
+"Probability plot and table for %s distribution are not implemented in "
+"Quality Control module. Please use the Distributions module."
+msgstr ""
 
 msgid ""
 "Need at least 2 measurements to calculate probability table/plot. %1$i "
@@ -1653,7 +1698,12 @@ msgstr "Häufigkeiten"
 msgid "Normal dist."
 msgstr ""
 
-msgid "Lognormal dist."
+msgid "Log-normal dist."
+msgstr ""
+
+msgid ""
+"3-parameter\n"
+"log-normal dist."
 msgstr ""
 
 msgid ""
@@ -1761,6 +1811,9 @@ msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] ""
 msgstr[1] ""
+
+#~ msgid "Average"
+#~ msgstr "Durchschnitt"
 
 #, fuzzy
 #~ msgid "Predictors"
