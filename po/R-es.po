@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
 "POT-Creation-Date: 2026-02-28 04:08\n"
-"PO-Revision-Date: 2026-02-23 00:09+0000\n"
+"PO-Revision-Date: 2026-03-01 23:09+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/es/>\n"
@@ -1048,12 +1048,11 @@ msgstr "Medidas por parte x operador"
 msgid "Operator %s"
 msgstr "Operador %s"
 
-#, fuzzy
 msgid ""
 "Design is not balanced: not all parts were measured the same number of times."
 msgstr ""
-"El diseño no está equilibrado: cada parte no se mide el mismo número de "
-"veces."
+"El diseño no está equilibrado: no todas las partes se miden el mismo número "
+"de veces."
 
 msgid "Scatterplot operators vs parts"
 msgstr "Gráfico de dispersión de operadores vs partes"
@@ -1394,7 +1393,6 @@ msgstr ""
 "La columnas tituladas 'Cambio' se refieren a cambios de la etapa respectiva "
 "en comparación con la línea base (LB)."
 
-#, fuzzy
 msgid "The within std. dev. could not be calculated."
 msgstr "No se puede calcular la desviación típica dentro."
 
@@ -1405,10 +1403,10 @@ msgid "%s (BL)"
 msgstr "%s (LB)"
 
 msgid "The within std. dev. is based on a historical value."
-msgstr ""
+msgstr "La desviación típica dentro se basa en un valor histórico."
 
 msgid "The mean is based on a historical value."
-msgstr ""
+msgstr "La media se basa en un valor histórico."
 
 msgid "Capability of the process"
 msgstr "Capacidad del proceso"
@@ -1459,21 +1457,17 @@ msgstr ""
 msgid "3-parameter Weibull dist."
 msgstr "Dist. Weibull de 3 parámetros"
 
-#, fuzzy
 msgid "Gamma dist."
-msgstr "Dist. Normal"
+msgstr "Dist. Gamma"
 
-#, fuzzy
 msgid "Exponential dist."
-msgstr "Dist. Lognormal"
+msgstr "Dist. Exponencial"
 
-#, fuzzy
 msgid "Logistic dist."
-msgstr "Dist. Lognormal"
+msgstr "Dist. Logística"
 
-#, fuzzy
 msgid "Log-logistic dist."
-msgstr "Dist. Lognormal"
+msgstr "Dist. Log-logística"
 
 msgid "Target = %g"
 msgstr "Objetivo = %g"
@@ -1567,9 +1561,8 @@ msgstr "Log media (%1$s)"
 msgid "Log std.dev (%1$s)"
 msgstr "Log desv. típ. (%1$s)"
 
-#, fuzzy
 msgid "Location"
-msgstr "Posición: %s"
+msgstr "Posición"
 
 msgid "Shape (%1$s)"
 msgstr "Forma (%1$s)"
@@ -1580,27 +1573,26 @@ msgstr "Umbral"
 msgid "Calculations based on %s distribution."
 msgstr "Cálculos basados en la distribución %s."
 
-#, fuzzy
 msgid "Location parameter is log-transformed."
-msgstr "Parámetros de la transformación"
+msgstr "El parámetro de posición está log-transformado."
 
 msgid "The shape (%1$s) is based on a historical value."
-msgstr ""
+msgstr "La forma (%1$s) se basa en un valor histórico."
 
 msgid "The scale (%1$s) is based on a historical value."
-msgstr ""
+msgstr "La escala (%1$s) se basa en un valor histórico."
 
 msgid "The location parameter is based on a historical value."
-msgstr ""
+msgstr "El parámetro de posición se basa en un valor histórico."
 
 msgid "The log mean (%1$s) is based on a historical value."
-msgstr ""
+msgstr "La media log (%1$s) se basa en un valor histórico."
 
 msgid "The log std. dev. (%1$s) is based on a historical value."
-msgstr ""
+msgstr "La desviación típica log (%1$s) se basa en un valor histórico."
 
 msgid "The threshold is based on a historical value."
-msgstr ""
+msgstr "El umbral se basa en un valor histórico."
 
 msgid "Probability table and plot"
 msgstr "Tabla y gráfico de probabilidades"
@@ -1612,6 +1604,9 @@ msgid ""
 "Probability plot and table for %s distribution are not implemented in "
 "Quality Control module. Please use the Distributions module."
 msgstr ""
+"El gráfico de probabilidad y la tabla para la distribución %s no están "
+"implementados en el módulo de Control de Calidad. Por favor, utilice el "
+"módulo de Distribuciones."
 
 msgid ""
 "Need at least 2 measurements to calculate probability table/plot. %1$i "
@@ -1675,16 +1670,14 @@ msgstr "Recuentos"
 msgid "Normal dist."
 msgstr "Dist. Normal"
 
-#, fuzzy
 msgid "Log-normal dist."
-msgstr "Dist. Lognormal"
+msgstr "Dist. LogNormal"
 
-#, fuzzy
 msgid ""
 "3-parameter\n"
 "log-normal dist."
 msgstr ""
-"Dist. Lognormal\n"
+"Dist. LogNormal\n"
 "de 3 parámetros"
 
 msgid ""
