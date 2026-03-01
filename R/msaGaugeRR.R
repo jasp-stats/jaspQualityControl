@@ -687,14 +687,14 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
       return(list(study = c(round(studyVar/max(studyVar) * 100,2))[1], tol = c(round(studyVar / options[["toleranceValue"]] * 100,2))[1]))
 
     if (options[["varianceComponentsGraph"]]) {
-      plot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
+      plot <- createJaspPlot(title = gettext("Components of variation"), width = 950, height = 500)
       plot$dependOn(c("varianceComponentsGraph", "report"))
       plot$plotObject <- p
       anovaTables[['VarCompGraph']] <- plot
     }
   } else {
 
-    plot <- createJaspPlot(title = gettext("Components of variation"), width = 850, height = 500)
+    plot <- createJaspPlot(title = gettext("Components of variation"), width = 950, height = 500)
     plot$dependOn(c("gaugeVarCompGraph", "report"))
 
     anovaTables[['anovaTable1']] <- anovaTable1
@@ -904,7 +904,7 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
 }
 
 .gaugeVarCompGraph <- function(percentContributionValues, studyVariationValues, percentToleranceValues, Type3 = FALSE) {
-  sources <- gettext(c('Gauge r&R', 'Repeat', 'Reprod', 'Part-to-part'))
+  sources <- gettext(c('Total Gauge R&R', 'Repeatability', 'Reproducibility', 'Part-to-Part'))
   if (!all(is.na(percentToleranceValues))) {
     references <- gettextf(c('%% Contribution', '%% Study variation', '%% Tolerance'))
     values <- c(percentContributionValues, studyVariationValues, percentToleranceValues)
