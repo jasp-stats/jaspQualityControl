@@ -4730,6 +4730,7 @@ test_that("47.14 Response Optimizer Factorial Changing All Options - Response Op
 })
 
 ## Response Surface design, basic example, no squared terms ####
+options("jaspRoundToPrecision" = function(x) signif(round(x, digits = 6), digits = 6))
 options <- analysisOptions("doeAnalysis")
 options$designType <- "responseSurfaceDesign"
 options$dependentResponseSurface <- c("Syruploss")
@@ -4842,6 +4843,8 @@ test_that("48.9 Response Optimizer Response Surface No Squares - Response Optimi
   jaspTools::expect_equal_tables(table,
                                  list(3, 10, 100, -19.65, 0.765607810781078))
 })
+
+options("jaspRoundToPrecision" = NULL) # reset default
 
 
 ## Response Surface design, basic example, squared terms ####
@@ -5089,6 +5092,7 @@ test_that("52.4 Response Optimizer Response Surface Manual Input Parameters - Re
 })
 
 ## Response Surface design, changing all options ####
+options("jaspRoundToPrecision" = function(x) signif(round(x, digits = 6), digits = 6))
 options <- analysisOptions("doeAnalysis")
 options$designType <- "responseSurfaceDesign"
 options$dependentResponseSurface <- c("Syruploss", "Cost")
@@ -5150,3 +5154,6 @@ test_that("53.4 Response Optimizer Response Surface Change All Options - Respons
   jaspTools::expect_equal_tables(table,
                                  list(100, 2, 12.3, 120.83, -22, 0.885700020509264))
 })
+
+options("jaspRoundToPrecision" = NULL) # reset default
+
