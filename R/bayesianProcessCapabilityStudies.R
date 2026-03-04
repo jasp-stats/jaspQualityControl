@@ -190,6 +190,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .bpcsMuPriorFromOptions <- function(options) {
   if (options$priorSettings == "default") {
+    return(.bpcsDefaultNIGPrior(options))
+  } else if (options$priorSettings == "jeffreys") {
     return("Jeffreys_mu")
   } else {
     comp <- .bpcsPriorComponentByName(options, "mean")
@@ -199,11 +201,30 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .bpcsSigmaPriorFromOptions <- function(options) {
   if (options$priorSettings == "default") {
+    return(.bpcsDefaultNIGPrior(options))
+  } else if (options$priorSettings == "jeffreys") {
     return("Jeffreys_sigma")
   } else {
     comp <- .bpcsPriorComponentByName(options, "sigma")
     return(.bpcsPriorFromComponent(comp, "sigma"))
   }
+}
+
+.bpcsDefaultNIGPrior <- function(options) {
+  LSL   <- options[["lowerSpecificationLimitValue"]]
+  USL   <- options[["upperSpecificationLimitValue"]]
+  T_val <- (LSL + USL) / 2
+  W     <- USL - LSL
+  k0    <- 2
+  nu    <- 6
+  c0    <- 1.25
+  sigma0 <- W / (6 * c0)
+  qc::create_prior_conjugate(
+    mu0    = T_val,
+    k0     = k0,
+    alpha0 = nu / 2,
+    beta0  = nu * sigma0^2 / 2
+  )
 }
 .bpcsTPriorFromOptions <- function(options) {
 
@@ -249,6 +270,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   method <- options[["estimationMethod"]]
   if (is.null(method))
     method <- "mcmc"
+  if (options[["priorSettings"]] == "default")
+    method <- "integration"
   if (identical(method, "integration") && options[["capabilityStudyType"]] == "tCapabilityAnalysis")
     stop("Integration method is available only for the normal distribution.")
 
@@ -298,7 +321,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .bpcsCanSampleFromPriors <- function(options) {
-  options$priorSettings != "default"
+  # Jeffreys is improper — cannot sample from it
+  options$priorSettings != "jeffreys"
 }
 
 .bpcsCapabilityTableMeta <- function(jaspResults, options, position) {
@@ -751,6 +775,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   method <- options[["estimationMethod"]]
   if (is.null(method))
     method <- "mcmc"
+  if (options[["priorSettings"]] == "default")
+    method <- "integration"
   if (identical(method, "integration") && options[["capabilityStudyType"]] == "tCapabilityAnalysis")
     stop("Integration method is available only for the normal distribution.")
 
