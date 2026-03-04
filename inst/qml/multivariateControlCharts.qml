@@ -127,4 +127,21 @@ Form
 		}
 		
 	}
+
+	Section
+	{
+		title:												qsTr("Advanced Options")
+
+		DropDown
+		{
+			name:											"plotColorScheme"
+			label:											qsTr("Plot color scheme")
+			indexDefaultValue:								0
+			values: [
+				{ label: qsTr("Standard (red/blue)"), value: "standard"},
+				{ label: qsTr("Colorblind-friendly (orange/blue)"), value: "colorblind"}
+			]
+			info:											qsTr("Choose colors for limits and out-of-control points. The colorblind-friendly scheme uses orange instead of red.")
+		}
+	}
 }

@@ -68,7 +68,25 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
 }
 
 .multivariateOutputDependencies <- function() {
-  c(.multivariateComputeDependencies(), "axisLabels")
+  c(.multivariateComputeDependencies(), "axisLabels", "plotColorScheme")
+}
+
+.multivariatePlotColors <- function(options) {
+  colorScheme <- options[["plotColorScheme"]]
+  if (is.null(colorScheme) || colorScheme == "")
+    colorScheme <- "standard"
+
+  if (colorScheme == "colorblind") {
+    return(list(
+      inControl = "#0072B2",     # blue
+      outOfControl = "#E69F00"   # orange
+    ))
+  }
+
+  list(
+    inControl = "blue",
+    outOfControl = "red"
+  )
 }
 
 .multivariateComputeModel <- function(jaspResults, dataset, options, variables, stage, ready) {
@@ -278,6 +296,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
 
 .multivariateTsqChartSingle <- function(dataset, options, variables, stage, stateObj) {
   mqccResult <- stateObj$mqccResult
+  colors     <- .multivariatePlotColors(options)
   tsqValues  <- as.numeric(mqccResult$statistics)
   ucl        <- as.numeric(mqccResult$limits[, "UCL"])
   lcl        <- as.numeric(mqccResult$limits[, "LCL"])
@@ -289,7 +308,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   xAxisTitle <- axisInfo$xAxisTitle
 
   violation  <- tsqValues > ucl
-  dotColor   <- ifelse(violation, "red", "blue")
+  dotColor   <- ifelse(violation, colors$outOfControl, colors$inControl)
 
   pointData <- data.frame(
     sample   = sample,
@@ -324,9 +343,9 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   )
 
   plotObject <- ggplot2::ggplot(pointData, ggplot2::aes(x = sample, y = tsq)) +
-    ggplot2::geom_hline(yintercept = ucl, col = "red", linewidth = 1.5, linetype = "dashed") +
-    ggplot2::geom_hline(yintercept = lcl, col = "red", linewidth = 1.5, linetype = "dashed") +
-    jaspGraphs::geom_line(mapping = ggplot2::aes(x = sample, y = tsq), col = "blue", na.rm = TRUE) +
+    ggplot2::geom_hline(yintercept = ucl, col = colors$outOfControl, linewidth = 1.5, linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = lcl, col = colors$outOfControl, linewidth = 1.5, linetype = "dashed") +
+    jaspGraphs::geom_line(mapping = ggplot2::aes(x = sample, y = tsq), col = colors$inControl, na.rm = TRUE) +
     jaspGraphs::geom_point(mapping = ggplot2::aes(x = sample, y = tsq),
                            size = 4, fill = dotColor, inherit.aes = TRUE, na.rm = TRUE) +
     ggplot2::geom_label(data = limitLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
@@ -342,6 +361,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
 
 .multivariateTsqChartPhased <- function(dataset, options, variables, stage, stateObj) {
   mqccResult  <- stateObj$mqccResult
+  colors      <- .multivariatePlotColors(options)
   nTraining   <- stateObj$nTraining
   nTest       <- stateObj$nTest
   nTotal      <- nTraining + nTest
@@ -366,8 +386,8 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   # Violations per phase
   violation1 <- phase1Tsq > phase1Ucl
   violation2 <- phase2Tsq > phase2Ucl
-  dotColor   <- c(ifelse(violation1, "red", "blue"),
-                  ifelse(violation2, "red", "blue"))
+  dotColor   <- c(ifelse(violation1, colors$outOfControl, colors$inControl),
+                  ifelse(violation2, colors$outOfControl, colors$inControl))
 
   # Phase label for grouping
   phase <- c(rep("Phase I", nTraining), rep("Phase II", nTest))
@@ -434,17 +454,17 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     # Limit lines per phase as segments
     ggplot2::geom_segment(data = clData,
                           mapping = ggplot2::aes(x = xmin, xend = xmax, y = ucl, yend = ucl),
-                          col = "red", linewidth = 1.5, linetype = "dashed", inherit.aes = FALSE) +
+                          col = colors$outOfControl, linewidth = 1.5, linetype = "dashed", inherit.aes = FALSE) +
     ggplot2::geom_segment(data = clData,
                           mapping = ggplot2::aes(x = xmin, xend = xmax, y = lcl, yend = lcl),
-                          col = "red", linewidth = 1.5, linetype = "dashed", inherit.aes = FALSE) +
+                          col = colors$outOfControl, linewidth = 1.5, linetype = "dashed", inherit.aes = FALSE) +
     # Phase separator
     ggplot2::geom_vline(xintercept = nTraining + 0.5, linetype = "solid", col = "darkgray", linewidth = 1) +
     # Data lines per phase (break at separator)
     jaspGraphs::geom_line(data = pointData[pointData$phase == "Phase I", ],
-                          mapping = ggplot2::aes(x = sample, y = tsq), col = "blue", na.rm = TRUE) +
+                          mapping = ggplot2::aes(x = sample, y = tsq), col = colors$inControl, na.rm = TRUE) +
     jaspGraphs::geom_line(data = pointData[pointData$phase == "Phase II", ],
-                          mapping = ggplot2::aes(x = sample, y = tsq), col = "blue", na.rm = TRUE) +
+                          mapping = ggplot2::aes(x = sample, y = tsq), col = colors$inControl, na.rm = TRUE) +
     jaspGraphs::geom_point(mapping = ggplot2::aes(x = sample, y = tsq),
                            size = 4, fill = dotColor, inherit.aes = TRUE, na.rm = TRUE) +
     # Limit labels
