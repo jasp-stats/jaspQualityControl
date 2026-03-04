@@ -4334,7 +4334,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
       "RemoteRef": "master",
-      "RemoteSha": "e4e04ff0dad61a9e873d172b4b7828605578bef5",
+      "RemoteSha": "25e31c981457dacd0744d8d12bfa709814284b17",
       "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs, jasp-stats/jaspTTests, dustinfife/flexplot"
     },
     "jaspGraphs": {
@@ -4403,7 +4403,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
       "RemoteRef": "master",
-      "RemoteSha": "6a8a32c5945fdaef23acba9bc97448ba4a2818bc",
+      "RemoteSha": "a5422e6feaa15374305456fa058d8091a415f46e",
       "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs"
     },
     "jaspTools": {

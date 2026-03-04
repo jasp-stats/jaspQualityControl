@@ -349,7 +349,8 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     xLabels <- xBreaks
   }
 
-  labelX <- max(xLimits) * 0.95
+  lineXEnd <- n + 0.5
+  labelX   <- n * 1.06
   limitLabels <- data.frame(
     x     = c(labelX, labelX),
     y     = c(ucl, lcl),
@@ -358,13 +359,15 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   )
 
   plotObject <- ggplot2::ggplot(pointData, ggplot2::aes(x = sample, y = tsq)) +
-    ggplot2::geom_hline(yintercept = ucl, col = colors$outOfControl, linewidth = 1.5, linetype = "dashed") +
-    ggplot2::geom_hline(yintercept = lcl, col = colors$outOfControl, linewidth = 1.5, linetype = "dashed") +
+    ggplot2::geom_segment(ggplot2::aes(x = 0.5, xend = lineXEnd, y = ucl, yend = ucl),
+                          col = colors$outOfControl, linewidth = 1.5, linetype = "dashed", inherit.aes = FALSE) +
+    ggplot2::geom_segment(ggplot2::aes(x = 0.5, xend = lineXEnd, y = lcl, yend = lcl),
+                          col = colors$outOfControl, linewidth = 1.5, linetype = "dashed", inherit.aes = FALSE) +
     jaspGraphs::geom_line(mapping = ggplot2::aes(x = sample, y = tsq), col = colors$inControl, na.rm = TRUE) +
     jaspGraphs::geom_point(mapping = ggplot2::aes(x = sample, y = tsq),
                            size = 4, fill = dotColor, inherit.aes = TRUE, na.rm = TRUE) +
     ggplot2::geom_label(data = limitLabels, mapping = ggplot2::aes(x = x, y = y, label = label),
-                        inherit.aes = FALSE, size = 4.5, na.rm = TRUE) +
+                        inherit.aes = FALSE, size = 4.5, hjust = 0, na.rm = TRUE) +
     ggplot2::scale_y_continuous(name = gettext("Hotelling T\u00B2"), breaks = yBreaks, limits = yLimits) +
     ggplot2::scale_x_continuous(name = xAxisTitle, breaks = xBreaks, limits = xLimits, labels = xLabels) +
     jaspGraphs::geom_rangeframe() +
@@ -443,10 +446,12 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     xLabels <- xBreaks
   }
 
-  # Limit labels at right edge of each phase
+  # Limit labels at right endpoint of each phase's segment
+  phase1LabelX <- clData$xmax[1] + 0.5
+  phase2LabelX <- clData$xmax[2] + 0.5
   labelData <- data.frame(
-    x     = c(clData$xmax[1] - 0.5, max(xLimits) * 0.95,
-              clData$xmax[1] - 0.5, max(xLimits) * 0.95),
+    x     = c(phase1LabelX, phase2LabelX,
+              phase1LabelX, phase2LabelX),
     y     = c(phase1Ucl, phase2Ucl, phase1Lcl, phase2Lcl),
     label = c(gettextf("UCL = %s", round(phase1Ucl, 3)),
               gettextf("UCL = %s", round(phase2Ucl, 3)),
@@ -484,7 +489,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
                            size = 4, fill = dotColor, inherit.aes = TRUE, na.rm = TRUE) +
     # Limit labels
     ggplot2::geom_label(data = labelData, mapping = ggplot2::aes(x = x, y = y, label = label),
-                        inherit.aes = FALSE, size = 3.5, na.rm = TRUE) +
+                        inherit.aes = FALSE, size = 4.5, hjust = 0, na.rm = TRUE) +
     # Phase labels at top
     ggplot2::geom_text(data = phaseLabelData, mapping = ggplot2::aes(x = x, y = y, label = label),
                        inherit.aes = FALSE, size = 4, fontface = "bold", vjust = 1.5) +
