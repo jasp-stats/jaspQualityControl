@@ -27,6 +27,8 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
 
   ready <- length(variables) >= 2
 
+  .multivariateMinimumVariablesMessage(jaspResults, ready)
+
   if (is.null(dataset)) {
     numericCols <- if (ready) variables else NULL
     factorCols  <- c(stage, axisLabels)
@@ -61,6 +63,19 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
   .multivariateCovarianceTable(jaspResults, dataset, options, variables, stage, ready)
   .multivariateTsqTable(jaspResults, dataset, options, variables, stage, ready)
   .multivariateExportTsqColumn(jaspResults, dataset, options, variables, stage, ready)
+}
+
+.multivariateMinimumVariablesMessage <- function(jaspResults, ready) {
+  if (ready)
+    return()
+
+  jaspResults[["minimumVariablesMessage"]] <- createJaspHtml(
+    title = "",
+    text = gettext("Enter at least two variables to start the analysis."),
+    elementType = "p",
+    position = 0
+  )
+  jaspResults[["minimumVariablesMessage"]]$dependOn(c("variables"))
 }
 
 .multivariateComputeDependencies <- function() {
