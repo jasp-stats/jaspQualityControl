@@ -412,11 +412,12 @@ Form
 			label: qsTr("Prior distributions")
 			values:
 			[
-				{label: qsTr("Default"),					value: "default"},
-				{label: qsTr("Conjugate"),					value: "conjugate"},
+				{label: qsTr("Default (NIG conjugate)"),		value: "default"},
+				{label: qsTr("Jeffreys"),						value: "jeffreys"},
+				{label: qsTr("Conjugate"),						value: "conjugate"},
 				{label: qsTr("Weakly informative conjugate"),	value: "weaklyInformativeConjugate"},
-				{label: qsTr("Weakly informative uniform"),	value: "weaklyInformativeUniform"},
-				{label: qsTr("Custom"),						value: "customInformative"},
+				{label: qsTr("Weakly informative uniform"),		value: "weaklyInformativeUniform"},
+				{label: qsTr("Custom"),							value: "customInformative"},
 			]
 		}
 
@@ -427,11 +428,17 @@ Form
 			priorType: capabilityStudyType.value === "normalCapabilityAnalysis" ? "normalModel" : "tModel"
 
 			hasTruncation: priorSettings.currentValue === "customInformative"
-			hasParameters: priorSettings.currentValue !== "default"
+			hasParameters: priorSettings.currentValue !== "default" && priorSettings.currentValue !== "jeffreys"
 
 			dropDownValuesMap: {
 				switch (priorSettings.currentValue) {
 					case "default":
+						return {
+							"mean": 	[{ label: qsTr("NIG Conjugate"),		value: "nigConjugate"}],
+							"sigma": 	[{ label: qsTr("NIG Conjugate"),		value: "nigConjugate"}],
+							"df": 		[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }]
+						}
+					case "jeffreys":
 						return {
 							"mean": 	[{ label: qsTr("Jeffreys"),				value: "jeffreys"}],
 							"sigma": 	[{ label: qsTr("Jeffreys"),				value: "jeffreys"}],
