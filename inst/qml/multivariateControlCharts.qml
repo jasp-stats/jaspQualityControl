@@ -22,6 +22,25 @@ Form
 			allowedColumns:						["scale"]
 			info:								qsTr("Two or more continuous quality characteristics to monitor jointly using a Hotelling T² chart.")
 		}
+
+		AssignedVariablesList
+		{
+			name:								"stage"
+			id:									stage
+			title:								qsTr("Stage")
+			singleVariable:						true
+			allowedColumns:						["nominal"]
+			info:								qsTr("Optional grouping variable that splits the data into a training phase (Phase I) and a test phase (Phase II). Control limits are estimated from the training phase and applied to the test phase for anomaly detection.")
+		}
+
+		DropDown
+		{
+			name:								"trainingLevel"
+			label:								qsTr("Training phase level")
+			source:								[{name: "stage", use: "levels"}]
+			enabled:							stage.count > 0
+			info:								qsTr("Select which level of the stage variable represents the training (in-control) phase. Control limits and the covariance matrix are estimated from this phase only.")
+		}
 	}
 
 
