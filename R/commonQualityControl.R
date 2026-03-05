@@ -302,10 +302,10 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
 }
 
 .nelsonLaws <- function(plotStatistics,
-                        sigma = NULL,
                         center = NULL,
                         UCL = NULL,
                         LCL = NULL,
+                        nSigmasControlLimits = 3,
                         ruleList) {
   if (length(LCL) == 1) {
     LCL <- rep(LCL, length(plotStatistics))
@@ -313,6 +313,20 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
   if (length(UCL) == 1) {
     UCL <- rep(UCL, length(plotStatistics))
   }
+  if (length(center) == 1) {
+    center <- rep(center, length(plotStatistics))
+  }
+
+  # Derive 1-sigma and 2-sigma zone limits from control limits.
+  # The UCL/LCL are at nSigmasControlLimits standard errors from center,
+  # so each zone width is (UCL - center) / nSigmasControlLimits.
+  # This correctly handles all chart types (xbar, R, S, I, etc.).
+  upperZoneWidth <- (UCL - center) / nSigmasControlLimits
+  lowerZoneWidth <- (center - LCL) / nSigmasControlLimits
+  oneSigmaUpper  <- center + upperZoneWidth
+  oneSigmaLower  <- center - lowerZoneWidth
+  twoSigmaUpper  <- center + 2 * upperZoneWidth
+  twoSigmaLower  <- center - 2 * lowerZoneWidth
 
   redPoints <- c()
   violationList <- list()
@@ -391,8 +405,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     k4 <- ruleList[["rule4"]][["k"]]
     r4 <- c()
 
-    aboveBolVector <- plotStatistics > (center + 2 * sigma)
-    belowBolVector <- plotStatistics < center - 2 * sigma
+    aboveBolVector <- plotStatistics > twoSigmaUpper
+    belowBolVector <- plotStatistics < twoSigmaLower
     r4above <- which(sapply(seq_along(aboveBolVector), .checkPreviousK, vec = aboveBolVector, k = k4))
     r4below <- which(sapply(seq_along(belowBolVector), .checkPreviousK, vec = belowBolVector, k = k4))
     r4 <- sort(c(r4, r4above, r4below))
@@ -407,7 +421,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     k5 <- ruleList[["rule5"]][["k"]]
     r5 <- c()
 
-    withinBolVector <- plotStatistics < (center + sigma) & plotStatistics > (center - sigma)
+    withinBolVector <- plotStatistics < oneSigmaUpper & plotStatistics > oneSigmaLower
 
     # Use ave to create a cumulative counter for TRUE sequences, resetting at each FALSE
     withinSeqVector <- ave(withinBolVector, cumsum(!withinBolVector), FUN = function(x) ifelse(x, seq_along(x), 0))
@@ -421,7 +435,7 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     k6 <- ruleList[["rule6"]][["k"]]
     r6 <- c()
 
-    outsideBolVector <- plotStatistics > (center + sigma) | plotStatistics < (center - sigma)
+    outsideBolVector <- plotStatistics > oneSigmaUpper | plotStatistics < oneSigmaLower
     outsideSeqVector <- .countConsecutiveTrues(outsideBolVector)
 
     r6 <- c(r6, which(outsideSeqVector >= k6))
@@ -434,8 +448,8 @@ NelsonLaws <- function(data, allsix = FALSE, chart = "i", xLabels = NULL) {
     k7 <- ruleList[["rule7"]][["k"]]
     r7 <- c()
 
-    aboveBolVector <-  plotStatistics > (center + sigma)
-    belowBolVector <- plotStatistics < center - sigma
+    aboveBolVector <-  plotStatistics > oneSigmaUpper
+    belowBolVector <- plotStatistics < oneSigmaLower
     r7above <- which(sapply(seq_along(aboveBolVector), .checkPreviousK, vec = aboveBolVector, k = k7))
     r7below <- which(sapply(seq_along(belowBolVector), .checkPreviousK, vec = belowBolVector, k = k7))
     r7 <- sort(c(r7, r7above, r7below))
@@ -956,11 +970,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
         dotColor <- c(rep("blue", length(plotStatistic)))
         dotColor[seq(1, k-1)] <- NA
         print(length(dotColor))
-        redPoints <- .nelsonLaws(plotStatistic, sigma, center, UCL, LCL, ruleList)$redPoints
+        redPoints <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$redPoints
         dotColor[redPoints] <- "red"
       } else {
         dotColor <- rep("blue", length(plotStatistic))
-        redPoints <- .nelsonLaws(plotStatistic, sigma, center, UCL, LCL, ruleList)$redPoints
+        redPoints <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$redPoints
         dotColor[redPoints] <- "red"
       }
     } else {
@@ -1024,7 +1038,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     if (plotType == "MR" || plotType == "MMR")
       tableLabelsCurrentStage <- tableLabelsCurrentStage[-seq(1, k-1)]
 
-    tableList[[i]] <- .nelsonLaws(plotStatistic, sigma, center, UCL, LCL, ruleList)$violationList
+    tableList[[i]] <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$violationList
     tableListLengths <- sapply(tableList[[i]], length)
     if (any(tableListLengths > 0)) {
       tableList[[i]][["stage"]] <- as.character(stage)
