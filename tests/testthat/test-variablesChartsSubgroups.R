@@ -1443,7 +1443,7 @@ options$rule7Value <- 4
 options$rule8 <- TRUE
 options$rule8Value <- 14
 results <- runAnalysis("variablesChartsSubgroups",
-                       "datasets/controlChartRules/controlChartRulesRealDataExample1",
+                       "datasets/controlChartRules/controlChartRulesRealDataExample1.csv",
                        options)
 
 
