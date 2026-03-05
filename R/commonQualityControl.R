@@ -969,7 +969,6 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       if (plotType == "MR" || plotType == "MMR") {
         dotColor <- c(rep("blue", length(plotStatistic)))
         dotColor[seq(1, k-1)] <- NA
-        print(length(dotColor))
         redPoints <- .nelsonLaws(plotStatistic, center, UCL, LCL, nSigmasControlLimits, ruleList)$redPoints
         dotColor[redPoints] <- "red"
       } else {
