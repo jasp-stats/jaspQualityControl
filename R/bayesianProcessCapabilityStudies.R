@@ -131,8 +131,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   vapply(seq_len(n - 1L), function(i) {
-    lhs <- "("
-    rhs <- if (i == n - 1L) ")" else "]"
+    lhs <- if (i == 1) "(" else "["
+    rhs <- ")"
     sprintf("%s %s%s, %s%s", intNames[i], lhs, fmt(intBounds[i]), fmt(intBounds[i + 1L]), rhs)
   }, character(1L))
 }
@@ -345,7 +345,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .bpcsGetSelectedMetrics <- function(options) {
-  allMetrics <- c("Cp", "CpU", "CpL", "Cpk", "Cpc", "Cpm")
+  allMetrics <- c("Cp", "Cpu", "Cpl", "Cpk", "Cpc", "Cpm")
   selectedMetrics <- allMetrics[c(options[["Cp"]],   options[["Cpu"]],  options[["Cpl"]],
                                   options[["Cpk"]],  options[["Cpc"]],  options[["Cpm"]])]
   return(selectedMetrics)
@@ -354,8 +354,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 .bpcsMetricToPlotmath <- function(metrics) {
   lookup <- c(
     "Cp"  = "C[p]",
-    "CpU" = "C[pU]",
-    "CpL" = "C[pL]",
+    "Cpu" = "C[pu]",
+    "Cpl" = "C[pl]",
     "Cpk" = "C[pk]",
     "Cpc" = "C[pc]",
     "Cpm" = "C[pm]"
@@ -820,7 +820,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   customBounds <- c(options$sequentialAnalysisPointIntervalPlotTypeLower,
                     options$sequentialAnalysisPointIntervalPlotTypeUpper)
 
-  allMetrics <- c("Cp", "CpU", "CpL", "Cpk", "Cpc", "Cpm")
+  allMetrics <- c("Cp", "Cpu", "Cpl", "Cpk", "Cpc", "Cpm")
   keys <- c("mean", "median", "lower", "upper", "custom")
   dimnames(estimates) <- list(allMetrics, keys, NULL)
 

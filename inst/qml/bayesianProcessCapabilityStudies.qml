@@ -218,28 +218,28 @@ Form
 
 				// Row 2: Capable
 				DoubleField { name: "interval1b";id: interval1b; fieldWidth: intervalRow.dbWidth; editable: true; value: interval1.value; onEditingFinished: form.sortIntervalValuesb()  }
-				Label { text: "<"; }
-				TextField { name: "intervalLabel2"; defaultValue: qsTr("Capable"); fieldWidth: intervalRow.txtWidth}
 				Label { text: "≤"; }
+				TextField { name: "intervalLabel2"; defaultValue: qsTr("Capable"); fieldWidth: intervalRow.txtWidth}
+				Label { text: "<"; }
 				DoubleField { name: "interval2"; id: interval2; fieldWidth: intervalRow.dbWidth; defaultValue: 1.33; onEditingFinished: form.sortIntervalValues() }
 
 				// Row 3: Satisfactory
 				DoubleField { name: "interval2b"; id: interval2b; fieldWidth: intervalRow.dbWidth; editable: true; value: interval2.value; onEditingFinished: form.sortIntervalValuesb()  }
-				Label { text: "<"; }
-				TextField { name: "intervalLabel3"; defaultValue: qsTr("Satisfactory"); fieldWidth: intervalRow.txtWidth}
 				Label { text: "≤"; }
+				TextField { name: "intervalLabel3"; defaultValue: qsTr("Satisfactory"); fieldWidth: intervalRow.txtWidth}
+				Label { text: "<"; }
 				DoubleField { name: "interval3"; id: interval3; fieldWidth: intervalRow.dbWidth; defaultValue: 1.50; onEditingFinished: form.sortIntervalValues() }
 
 				// Row 4: Excellent
 				DoubleField { name: "interval3b"; id: interval3b; fieldWidth: intervalRow.dbWidth; editable: true; value: interval3.value; onEditingFinished: form.sortIntervalValuesb()  }
-				Label { text: "<"; }
-				TextField { name: "intervalLabel4"; defaultValue: qsTr("Excellent"); fieldWidth: intervalRow.txtWidth}
 				Label { text: "≤"; }
+				TextField { name: "intervalLabel4"; defaultValue: qsTr("Excellent"); fieldWidth: intervalRow.txtWidth}
+				Label { text: "<"; }
 				DoubleField { name: "interval4"; id: interval4; fieldWidth: intervalRow.dbWidth; defaultValue: 2.00; onEditingFinished: form.sortIntervalValues() }
 
 				// Row 5: Super
 				DoubleField { name: "interval4b"; id: interval4b; fieldWidth: intervalRow.dbWidth; editable: true; value: interval4.value; onEditingFinished: form.sortIntervalValuesb()  }
-				Label { text: ">"; }
+				Label { text: "≥"; }
 				TextField { name: "intervalLabel5"; defaultValue: qsTr("Super"); fieldWidth: intervalRow.txtWidth}
 				Item{}
 				Item{}
