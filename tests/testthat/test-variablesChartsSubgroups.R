@@ -1320,7 +1320,9 @@ test_that("WF27. Options test of creating a report with stages and less meta dat
 })
 
 
-# Out of control rules (verified with Minitab) ####
+# Out of control rules (verified with other software) ####
+
+## Synthetic data ####
 options <- analysisOptions("variablesChartsSubgroups")
 options$dataFormat <- "wideFormat"
 options$measurementsWideFormat <- list("V1", "V2", "V3")
@@ -1388,27 +1390,77 @@ test_that("WF28.3 Test of all rules for xbar & r chart - xbar table", {
                                       "Point 16", "Point 28", "", "Point 18", "", "Point 23", "Point 22",
                                       "", "Point 17", "Point 29", "", "Point 19", "", "Point 24",
                                       "Point 23", "", "Point 18", "Point 30", "", "Point 20", "",
-                                      "Point 25", "Point 24", "", "Point 19", "Point 31", "", "Point 26",
+                                      "Point 25", "Point 24", "", "Point 19", "Point 31", "", "Point 21",
                                       "", "Point 26", "Point 25", "", "Point 20", "Point 32", "",
-                                      "Point 27", "", "Point 27", "Point 26", "", "Point 21", "Point 33",
-                                      "", "Point 28", "", "Point 28", "Point 27", "", "Point 22",
-                                      "Point 34", "", "Point 29", "", "Point 29", "Point 28", "",
-                                      "Point 23", "Point 35", "", "Point 30", "", "Point 30", "Point 29",
-                                      "", "Point 24", "Point 36", "", "Point 31", "", "Point 31",
-                                      "Point 30", "", "Point 25", "Point 37", "", "Point 32", "",
-                                      "Point 32", "Point 31", "", "Point 26", "Point 38", "", "Point 33",
+                                      "Point 22", "", "Point 27", "Point 26", "", "Point 21", "Point 33",
+                                      "", "Point 23", "", "Point 28", "Point 27", "", "Point 22",
+                                      "Point 34", "", "Point 24", "", "Point 29", "Point 28", "",
+                                      "Point 23", "Point 35", "", "Point 25", "", "Point 30", "Point 29",
+                                      "", "Point 24", "Point 36", "", "Point 26", "", "Point 31",
+                                      "Point 30", "", "Point 25", "Point 37", "", "Point 27", "",
+                                      "Point 32", "Point 31", "", "Point 26", "Point 38", "", "Point 28",
                                       "", "Point 33", "Point 32", "", "Point 27", "Point 39", "",
-                                      "Point 34", "", "Point 34", "Point 33", "", "Point 28", "Point 40",
-                                      "", "Point 35", "", "Point 35", "Point 34", "", "Point 29",
-                                      "Point 47", "", "Point 36", "", "Point 36", "Point 35", "",
-                                      "Point 30", "Point 48", "", "Point 37", "", "Point 37", "Point 36",
-                                      "", "Point 31", "Point 49", "", "Point 38", "", "Point 38",
-                                      "Point 37", "", "Point 32", "Point 50", "", "Point 39", "",
-                                      "Point 39", "Point 38", "", "Point 33", "Point 51", "", "Point 40",
+                                      "Point 29", "", "Point 34", "Point 33", "", "Point 28", "Point 40",
+                                      "", "Point 30", "", "Point 35", "Point 34", "", "Point 29",
+                                      "Point 47", "", "Point 31", "", "Point 36", "Point 35", "",
+                                      "Point 30", "Point 48", "", "Point 32", "", "Point 37", "Point 36",
+                                      "", "Point 31", "Point 49", "", "Point 33", "", "Point 38",
+                                      "Point 37", "", "Point 32", "Point 50", "", "Point 34", "",
+                                      "Point 39", "Point 38", "", "Point 33", "Point 51", "", "Point 35",
                                       "", "Point 40", "Point 39", "", "Point 34", "Point 52", "",
-                                      "", "", "", "Point 40", "", "Point 35", "Point 53", "", "",
-                                      "", "", "", "", "Point 36", "Point 54", "", "", "", "", "",
-                                      "", "Point 37", "Point 55", "", "", "", "", "", "", "Point 38",
-                                      "", "", "", "", "", "", "", "Point 39", "", "", "", "", "",
-                                      "", "", "Point 40", "", "", "", "", "", "", ""))
+                                      "Point 36", "", "", "Point 40", "", "Point 35", "Point 53",
+                                      "", "Point 37", "", "", "", "", "Point 36", "Point 54", "",
+                                      "Point 38", "", "", "", "", "Point 37", "Point 55", "", "Point 39",
+                                      "", "", "", "", "Point 38", "", "", "Point 40", "", "", "",
+                                      "", "Point 39", "", "", "", "", "", "", "", "Point 40", "",
+                                      "", "", "", "", "", ""))
+})
+
+## Real data example 1 ####
+options <- analysisOptions("variablesChartsSubgroups")
+options$dataFormat <- "longFormat"
+options$measurementLongFormat <- "data"
+options$subgroupSizeType <- "groupingVariable"
+options$subgroup <- "samplingtime_1"
+options$chartType <- "xBarAndR"
+options$knownParameters <- TRUE
+options$knownParametersMean <- 50
+options$knownParametersSd <- 1
+options$testSet <- "custom"
+options$rule1 <- TRUE
+options$rule2 <- TRUE
+options$rule2Value <- 9
+options$rule3 <- TRUE
+options$rule3Value <- 6
+options$rule4 <- TRUE
+options$rule4Value <- 2
+options$rule5 <- TRUE
+options$rule5Value <- 15
+options$rule6 <- TRUE
+options$rule6Value <- 8
+options$rule7 <- TRUE
+options$rule7Value <- 4
+options$rule8 <- TRUE
+options$rule8Value <- 14
+results <- runAnalysis("variablesChartsSubgroups",
+                       "datasets/controlChartRules/controlChartRulesRealDataExample1.csv",
+                       options)
+
+
+test_that("29.1 Test of all rules for xbar & r chart", {
+  plotName <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_plot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "x-bar-r-control-chart29")
+})
+
+test_that("29.2 Test of all rules for xbar & r chart - Test results for range chart table results match", {
+  table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_secondTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("No test violations occurred."))
+})
+
+test_that("29.3 Test of all rules for xbar & r chart - Test results for x-bar chart table results match", {
+  table <- results[["results"]][["controlCharts"]][["collection"]][["controlCharts_xBarTable"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("No test violations occurred."))
 })

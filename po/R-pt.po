@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-02-28 04:08\n"
+"POT-Creation-Date: 2026-03-07 04:12\n"
 "PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -276,14 +276,13 @@ msgstr "Solução Otimizadora de Resposta"
 msgid "Optimization Plot"
 msgstr "Gráfico de Otimização"
 
+msgid ""
+"Enter values for all predictors to create an optimization Plot with manual "
+"input parameters."
+msgstr ""
+
 msgid "Summary Plot"
 msgstr "Gráfico Resumo"
-
-msgid "Enter values for all predictors."
-msgstr "Insira valores para todos os preditores."
-
-msgid "Optimization Plot Summary"
-msgstr "Resumo do Gráfico de Otimização"
 
 msgid ""
 "Enter plausible values for all discrete predictors.\n"
@@ -306,6 +305,13 @@ msgstr "Comp. desejabilidade"
 
 msgid "Ind. desirability ("
 msgstr "Ind. desejabilidade ("
+
+#, fuzzy
+msgid "Optimization Plot Summary (Manual Predictor Values)"
+msgstr "Resumo do Gráfico de Otimização"
+
+msgid "Optimization Plot Summary"
+msgstr "Resumo do Gráfico de Otimização"
 
 msgid ""
 "One or more input parameters for continuous predictors are outside of the "
@@ -1811,6 +1817,9 @@ msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] "Os seguintes termos alternativos foram removidos: %s."
 msgstr[1] "Os seguintes termos alternativos foram removidos: %s."
+
+#~ msgid "Enter values for all predictors."
+#~ msgstr "Insira valores para todos os preditores."
 
 #~ msgid "Average"
 #~ msgstr "Médio"

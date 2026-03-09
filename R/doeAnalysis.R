@@ -739,13 +739,13 @@ get_levels <- function(var, num_levels, dataset) {
     if (roOptionsDf$responseOptimizerGoal[i] == "maximize") {
       ubVector[i] <- NA
       lbVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
-      targetVector[i] <- max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      targetVector[i] <- if (options[["responseOptimizerManualTarget"]]) roOptionsDf$responseOptimizerTarget[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
     } else if (roOptionsDf$responseOptimizerGoal[i] == "minimize") {
-      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerUpperBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
       lbVector[i] <- NA
-      targetVector[i] <- min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      targetVector[i] <- if (options[["responseOptimizerManualTarget"]]) roOptionsDf$responseOptimizerTarget[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
     } else if (roOptionsDf$responseOptimizerGoal[i] == "target") {
-      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
+      ubVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerUpperBound[i] else max(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
       lbVector[i] <- if (options[["responseOptimizerManualBounds"]]) roOptionsDf$responseOptimizerLowerBound[i] else min(dataset[[roOptionsDf$variable[i]]], na.rm = TRUE)
       targetVector[i] <- roOptionsDf$responseOptimizerTarget[i]
     }
@@ -822,24 +822,21 @@ get_levels <- function(var, num_levels, dataset) {
     currentSettings <- do.call(cbind, lapply(currentSettings, function(x) setNames(data.frame(x$value, stringsAsFactors = FALSE), x$variable)))
     # if any of the values is == "" then return empty plot and table with note that asks to set value
     if (any(unlist(currentSettings) == "")) {
-      jaspPlot <- createJaspPlot(title = gettext("Summary Plot"), width = 500, height = 500)
-      jaspPlot$setError(gettext("Enter values for all predictors."))
-      jaspPlot$dependOn(options = c("responsesResponseOptimizer",
+      jaspTable <- createJaspTable(gettext("Response Optimizer Settings"))
+      jaspTable$addColumnInfo(name = "response", title = "Response", type = "string")
+      jaspTable$addColumnInfo(name = "goal", title = "Goal", type = "string")
+      jaspTable$addColumnInfo(name = "lb", title = "Lower", type = "number")
+      jaspTable$addColumnInfo(name = "target", title = "Target", type = "number")
+      jaspTable$addColumnInfo(name = "ub", title = "Upper", type = "number")
+      jaspTable$addColumnInfo(name = "weight", title = "Weight", type = "number")
+      jaspTable$addColumnInfo(name = "importance", title = "Importance", type = "number")
+      jaspTable$addFootnote(gettext("Enter values for all predictors to create an optimization Plot with manual input parameters."))
+      jaspTable$dependOn(options = c("responsesResponseOptimizer",
                         "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
                         "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
                         "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
                         "optimizationPlot", .doeAnalysisBaseDependencies()))
-      jaspResults[["plotRo"]][["plot"]] <- jaspPlot
-
-      tb <- createJaspTable(gettext("Optimization Plot Summary"))
-      tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
-      tb$dependOn(options = c("responsesResponseOptimizer",
-                        "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
-                        "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
-                        "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
-                        "optimizationPlot", .doeAnalysisBaseDependencies()))
-      tb$addFootnote(gettext("Enter values for all predictors."))
-      jaspResults[["plotRo"]][["table"]] <- tb
+      jaspResults[["plotRo"]][["table"]] <- jaspTable
       return()
     }
 
@@ -1018,7 +1015,8 @@ get_levels <- function(var, num_levels, dataset) {
   jaspPlot$plotObject <- plotObject
   jaspResults[["plotRo"]][["plot"]] <- jaspPlot
 
-  tb <- createJaspTable(gettext("Optimization Plot Summary"))
+  tbTitle <- if (options[["optimizationPlotCustomParameters"]]) gettext("Optimization Plot Summary (Manual Predictor Values)") else gettext("Optimization Plot Summary")
+  tb <- createJaspTable(tbTitle)
   tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
   tb$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
                     "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
@@ -1172,7 +1170,6 @@ get_levels <- function(var, num_levels, dataset) {
   outcome <- c()
   for (dep in dependent) {
     currentCoefSet <- coefficients[[dep]]
-
     coefficientVector <- names(currentCoefSet)[-1]
     predictorValues <- c(1)  # for the intercept
 
@@ -1182,7 +1179,15 @@ get_levels <- function(var, num_levels, dataset) {
       for (coef_j in coefSplit) {
         coef_j_clean <- .removeAppendedFactorLevels(discretePredictors, coef_j, ":")
         coef_j_level <- sub(coef_j_clean, "", coef_j)
-        if (coef_j %in% continuousPredictors) { # cont. predictors don't have an appended factor level so we use coef_j here
+        # Check if this is a squared term (e.g., "Speed^2")
+        isSquaredTerm <- grepl("\\^2$", coef_j)
+        if (isSquaredTerm) {
+          basePredictor <- sub("\\^2$", "", coef_j)
+          if (basePredictor %in% continuousPredictors) {
+            value <- if (length(continuousLevels) > 1) continuousLevels[[basePredictor]] else unlist(continuousLevels)
+            coefResult <- c(coefResult, value^2)
+          }
+        } else if (coef_j %in% continuousPredictors) { # cont. predictors don't have an appended factor level so we use coef_j here
           coefResult <- if (length(continuousLevels) > 1) c(coefResult, continuousLevels[[coef_j]]) else c(coefResult, unlist(continuousLevels))
         } else if (coef_j_clean %in% discretePredictors) {
           current_j_level <- if (length(currentDiscreteLevels)  > 1) currentDiscreteLevels[[coef_j_clean]] else unname(currentDiscreteLevels)
@@ -1228,18 +1233,36 @@ get_levels <- function(var, num_levels, dataset) {
   for (outcomeName in outcomeNames) {
     outcomeValue <- unname(outcome[outcomeName])
     outcomeGoal <- unname(goals[outcomeName])
-    lb <- if (lowerbounds[outcomeName] == "") min(dataset[[outcomeName]]) else lowerbounds[outcomeName]
-    ub <- if (upperbounds[outcomeName] == "") max(dataset[[outcomeName]]) else upperbounds[outcomeName]
-    weight <- weights[outcomeName]
+    lb <- if (lowerbounds[outcomeName] == "") min(dataset[[outcomeName]]) else as.numeric(lowerbounds[outcomeName])
+    ub <- if (upperbounds[outcomeName] == "") max(dataset[[outcomeName]]) else as.numeric(upperbounds[outcomeName])
+    weight <- as.numeric(weights[outcomeName])
     if (outcomeGoal == "minimize") {
-      target <- lb
-      desi <- ((ub - outcomeValue) / (ub - target))^weight
+      target <- if (targets[outcomeName] == "") lb else as.numeric(targets[outcomeName])
+      if (outcomeValue < target) {
+        desi <- 1
+      } else if (outcomeValue > ub) {
+        desi <- 0
+      } else {
+        desi <- ((ub - outcomeValue) / (ub - target))^weight
+      }
     } else if (outcomeGoal == "maximize") {
-      target <- ub
-      desi <- ((outcomeValue - lb) / (target - lb))^weight
+      target <- if (targets[outcomeName] == "") ub else as.numeric(targets[outcomeName])
+      if (outcomeValue < lb) {
+        desi <- 0
+      } else if (outcomeValue > target) {
+        desi <- 1
+      } else {
+        desi <- ((outcomeValue - lb) / (target - lb))^weight
+      }
     } else if (outcomeGoal == "target") {
       target <- as.numeric(targets[outcomeName])
-      desi <- if (outcomeValue <= target) ((outcomeValue - lb) / (target - lb))^weight else ((ub - outcomeValue) / (ub - target))^weight
+      if (outcomeValue < lb || outcomeValue > ub) {
+        desi <- 0
+      } else if (outcomeValue <= target) {
+        desi <- ((outcomeValue - lb) / (target - lb))^weight
+      } else {
+        desi <- ((ub - outcomeValue) / (ub - target))^weight
+      }
     }
     desiVector[outcomeName] <- desi
   }

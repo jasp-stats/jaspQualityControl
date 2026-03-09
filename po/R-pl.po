@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.0\n"
-"POT-Creation-Date: 2026-02-28 04:08\n"
+"POT-Creation-Date: 2026-03-07 04:12\n"
 "PO-Revision-Date: 2025-07-09 22:01+0000\n"
 "Last-Translator: Tomasz Misiuro <tomaszmisiuro@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/jasp/"
@@ -285,13 +285,12 @@ msgstr ""
 msgid "Optimization Plot"
 msgstr ""
 
+msgid ""
+"Enter values for all predictors to create an optimization Plot with manual "
+"input parameters."
+msgstr ""
+
 msgid "Summary Plot"
-msgstr ""
-
-msgid "Enter values for all predictors."
-msgstr ""
-
-msgid "Optimization Plot Summary"
 msgstr ""
 
 msgid ""
@@ -309,6 +308,12 @@ msgid "Comp. desirability"
 msgstr ""
 
 msgid "Ind. desirability ("
+msgstr ""
+
+msgid "Optimization Plot Summary (Manual Predictor Values)"
+msgstr ""
+
+msgid "Optimization Plot Summary"
 msgstr ""
 
 msgid ""

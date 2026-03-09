@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-02-28 04:08\n"
+"POT-Creation-Date: 2026-03-07 04:12\n"
 "PO-Revision-Date: 2026-01-07 17:01+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
@@ -275,14 +275,13 @@ msgstr "ரெச்பான்ச் ஆப்டிமைசர் தீர�
 msgid "Optimization Plot"
 msgstr "உகப்பாக்கம் சூழ்ச்சி"
 
+msgid ""
+"Enter values for all predictors to create an optimization Plot with manual "
+"input parameters."
+msgstr ""
+
 msgid "Summary Plot"
 msgstr "சுருக்கமான சூழ்ச்சி"
-
-msgid "Enter values for all predictors."
-msgstr "அனைத்து கணிப்பாளர்களுக்கும் மதிப்புகளை உள்ளிடவும்."
-
-msgid "Optimization Plot Summary"
-msgstr "உகப்பாக்கம் சூழ்ச்சி சுருக்கம்"
 
 msgid ""
 "Enter plausible values for all discrete predictors.\n"
@@ -304,6 +303,13 @@ msgstr "Comp. விரும்பத்தக்க தன்மை"
 
 msgid "Ind. desirability ("
 msgstr "இந்திய விருப்பம் ("
+
+#, fuzzy
+msgid "Optimization Plot Summary (Manual Predictor Values)"
+msgstr "உகப்பாக்கம் சூழ்ச்சி சுருக்கம்"
+
+msgid "Optimization Plot Summary"
+msgstr "உகப்பாக்கம் சூழ்ச்சி சுருக்கம்"
 
 msgid ""
 "One or more input parameters for continuous predictors are outside of the "
@@ -1776,6 +1782,9 @@ msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
 msgstr[1] "பின்வரும் மாற்று சொற்கள் அகற்றப்பட்டன: %s."
+
+#~ msgid "Enter values for all predictors."
+#~ msgstr "அனைத்து கணிப்பாளர்களுக்கும் மதிப்புகளை உள்ளிடவும்."
 
 #~ msgid "Average"
 #~ msgstr "சராசரி"

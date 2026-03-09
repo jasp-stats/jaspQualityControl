@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-02-28 04:08\n"
+"POT-Creation-Date: 2026-03-07 04:12\n"
 "PO-Revision-Date: 2026-02-01 13:36+0000\n"
 "Last-Translator: Johannes Keyser <joke@fsfe.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/jasp/"
@@ -283,14 +283,13 @@ msgstr ""
 msgid "Optimization Plot"
 msgstr "Optimierungsdiagramm"
 
+msgid ""
+"Enter values for all predictors to create an optimization Plot with manual "
+"input parameters."
+msgstr ""
+
 msgid "Summary Plot"
 msgstr "Zusammenfassungsdiagramm"
-
-msgid "Enter values for all predictors."
-msgstr "Geben Sie Werte für alle Prädiktoren ein."
-
-msgid "Optimization Plot Summary"
-msgstr ""
 
 msgid ""
 "Enter plausible values for all discrete predictors.\n"
@@ -307,6 +306,12 @@ msgid "Comp. desirability"
 msgstr ""
 
 msgid "Ind. desirability ("
+msgstr ""
+
+msgid "Optimization Plot Summary (Manual Predictor Values)"
+msgstr ""
+
+msgid "Optimization Plot Summary"
 msgstr ""
 
 msgid ""
@@ -1811,6 +1816,9 @@ msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] ""
 msgstr[1] ""
+
+#~ msgid "Enter values for all predictors."
+#~ msgstr "Geben Sie Werte für alle Prädiktoren ein."
 
 #~ msgid "Average"
 #~ msgstr "Durchschnitt"

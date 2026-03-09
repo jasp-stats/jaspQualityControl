@@ -4361,7 +4361,9 @@
         "plotly",
         "R6",
         "rlang",
-        "scales"
+        "scales",
+        "testthat",
+        "vdiffr"
       ],
       "Suggests": [
         "testthat",
