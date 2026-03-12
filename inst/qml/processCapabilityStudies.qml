@@ -583,7 +583,7 @@ Form
 					CheckBox
 					{
 						name: "processCapabilityTableZ"
-						label: qsTr("Z")
+						label: qsTr("Z (ST) / Z (LT)")
 					}
 
 				}
