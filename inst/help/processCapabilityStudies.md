@@ -97,7 +97,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
     Process capability is determined by the variation that comes from common causes. It generally represents the best (potential) performance of the process. This is demonstrated when the process is being operated in a state of statistical control regardless the specifications [1].
     Capability index Cp compares the process capability to the maximum allowable variation as indicated by the tolerance.
     Cp is not impacted by the process location. This index can be calculated only for bilateral (two-sided) tolerances, it has no meaning for the one-sided situation (unilateral tolerance, with only one specification limit).
-    Capability index Cpk takes the process location as well as the capability into account. Cpk will always be less than or equal to Cp.
+    Capability index Cpk takes the process location as well as the capability into account. Cpk will always be less than or equal to Cp. Z (ST) is equal to 3 * Cpk and corresponds to the distance of the process mean to the nearest bound in standard deviation units.
     *Note*: Capability study reports contain meaningless numbers if processes are not in a state of statistical control.
 
 - Process performance (total): the Pp and its confidence interval's values, PpL, PpU, PpK and its confidence interval's values, Cpm and its confidence interval's values.
@@ -106,7 +106,7 @@ The size of the subgroups is relevant for the calculation of the process varianc
     Performance index Pp compares the process performance to the maximum allowable variation as indicated by the tolerance [1].
     Pp is not impacted by the process location. This index can be calculated only for bilateral (two-sided) tolerances, it has no meaning for the one-sided situation (unilateral tolerance, with only one specification limit).
     Performance index Ppk takes the process location as well as the performance into account.
-    Ppk will always be less than or equal to Pp.
+    Ppk will always be less than or equal to Pp. Z (LT) is equal to 3 * Ppk and corresponds to the distance of the process mean to the nearest bound in standard deviation units.
     The Cpm index indicates how well the process can produce within specifications. Its calculation is similar to Cp, except that the standard deviation is calculated using the target value instead of the mean. The larger the Cpm, the more likely the process will produce output that meets specifications and is close to the target value.
 
 - Non-conformance statistics: the observed of ppm outside the specification limits, the expected ppm outside the specifications limits based on the overall standard deviation and the within standard deviation.
