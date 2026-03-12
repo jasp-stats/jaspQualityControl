@@ -760,7 +760,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
                rep(gettext("Test"), nTest))
     ucl   <- c(rep(phase1Ucl, nTraining), rep(phase2Ucl, nTest))
 
-    table$addFootnote(gettextf("Training UCL = %s, Test UCL = %s",
+    table$addFootnote(gettextf("Training UCL = %1$s, Test UCL = %2$s",
                                round(phase1Ucl, 4), round(phase2Ucl, 4)))
 
     rows <- data.frame(
@@ -782,7 +782,7 @@ multivariateControlCharts <- function(jaspResults, dataset, options) {
     ucl       <- as.numeric(mqccResult$limits[, "UCL"])
     lcl       <- as.numeric(mqccResult$limits[, "LCL"])
 
-    table$addFootnote(gettextf("UCL = %s, LCL = %s", round(ucl, 4), round(lcl, 4)))
+    table$addFootnote(gettextf("UCL = %1$s, LCL = %2$s", round(ucl, 4), round(lcl, 4)))
 
     rows <- data.frame(
       sample = seq_along(tsqValues),
