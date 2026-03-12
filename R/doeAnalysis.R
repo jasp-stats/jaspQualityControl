@@ -604,27 +604,28 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     }
 
     # Uncoded Formula
-
+    fmtCoef <- formatC(abs(coefs[-1, 1]), digits = .numDecimals, format = "g")
     coefFormula <- paste(ifelse(sign(coefs[-1,1])==1, " +", " \u2013"),
-                         round(abs(coefs[-1,1]), .numDecimals),
+                         fmtCoef,
                          coefNames[-1],
                          collapse = "", sep = " ")
 
     # Now add dependent name and intercept
     filledFormula <- paste0(dep, " = ",
-                            round(coefs[1, 1], .numDecimals),
+                            formatC(coefs[1, 1], digits = .numDecimals, format = "g"),
                             coefFormula)
 
     # Coded Formula
+    fmtCoefCoded <- formatC(abs(coefsCoded[-1, 1]), digits = .numDecimals, format = "g")
     coefFormulaCoded <- paste(ifelse(sign(coefsCoded[-1,1])==1, " +", " \u2013"),
-                         round(abs(coefsCoded[-1,1]), .numDecimals),
-                         coefNames[-1],
-                         collapse = "", sep = " ")
+                              fmtCoefCoded,
+                              coefNames[-1],
+                              collapse = "", sep = " ")
 
 
     filledFormulaCoded <- paste0(dep, " = ",
-                            round(coefsCoded[1, 1], .numDecimals),
-                            coefFormulaCoded)
+                                 formatC(coefsCoded[1, 1], digits = .numDecimals, format = "g"),
+                                 coefFormulaCoded)
 
     result[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormula)
     jaspResults[[currentDependent]][["doeResult"]] <- createJaspState(result)
@@ -770,6 +771,14 @@ get_levels <- function(var, num_levels, dataset) {
 
   tb2 <- createJaspTable(gettext("Response Optimizer Solution"))
   tb2$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
+  allPredictors <- c(continuousPredictors, unlist(discretePredictors))
+  allPredictors <- allPredictors[allPredictors != ""]
+  for (pred in allPredictors) {
+    predType <- if (pred %in% continuousPredictors) "number" else "string"
+    tb2$addColumnInfo(name = pred, title = pred, type = predType)
+  }
+  for (dep in roDependent)
+    tb2$addColumnInfo(name = paste0(dep, " fit"), title = paste0(dep, " fit"), type = "number")
   tb2$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
                              "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
                              "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
@@ -779,17 +788,14 @@ get_levels <- function(var, num_levels, dataset) {
   jaspResults[["tableRoSolution"]] <- tb2
 
   rows2 <- data.frame(desi = desi)
-  if (length(continuousPredictors) >= 1 && length(optimParam) > 1 && !identical(continuousPredictors, "")) {
-    optimParam[continuousPredictors] <- round(optimParam[continuousPredictors], .numDecimals)
-  } else if (length(continuousPredictors) == 1 && length(optimParam) == 1 && !identical(continuousPredictors, "")) {
-    optimParam <- round(optimParam, .numDecimals)
+  for (pred in allPredictors) {
+    if (pred %in% continuousPredictors)
+      rows2[[pred]] <- round(as.numeric(optimParam[[pred]]), .numDecimals)
+    else
+      rows2[[pred]] <- as.character(optimParam[[pred]])
   }
-  rows2 <- cbind(rows2, optimParam)
-  if (length(optimParam) == 1) # transform it this way to have the correct naming
-    colnames(rows2)[ncol(rows2)] <- c(continuousPredictors, discretePredictors)[c(continuousPredictors, discretePredictors) != ""]
-  predValuesFit <- setNames(predValues, paste0(names(predValues), " fit"))
-  predValuesFit <- round(predValuesFit, .numDecimals)
-  rows2 <- cbind(rows2, as.data.frame(t(predValuesFit)))
+  for (dep in roDependent)
+    rows2[[paste0(dep, " fit")]] <- round(as.numeric(predValues[[dep]]), .numDecimals)
   tb2$addRows(rows2)
 }
 
@@ -1018,6 +1024,12 @@ get_levels <- function(var, num_levels, dataset) {
   tbTitle <- if (options[["optimizationPlotCustomParameters"]]) gettext("Optimization Plot Summary (Manual Predictor Values)") else gettext("Optimization Plot Summary")
   tb <- createJaspTable(tbTitle)
   tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
+  for (pred in allPredictors) {
+    predType <- if (pred %in% continuousPredictors) "number" else "string"
+    tb$addColumnInfo(name = pred, title = pred, type = predType)
+  }
+  for (dep in roDependent)
+    tb$addColumnInfo(name = paste0(dep, " fit"), title = paste0(dep, " fit"), type = "number")
   tb$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
                     "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
                     "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
@@ -1034,17 +1046,14 @@ get_levels <- function(var, num_levels, dataset) {
                               currentDiscreteLevels = currentDiscreteLevels, coefficients = coefficients, dependent = roDependent)
 
   rows <- data.frame(desi = desi)
-  predValuesFit <- setNames(predValues, paste0(names(predValues), " fit"))
-  predValuesFit <- round(predValuesFit, .numDecimals)
-  rows <- cbind(rows, as.data.frame(t(predValuesFit)))
-  if (length(continuousPredictors) >= 1 && length(currentSettings) > 1 && !identical(continuousPredictors, "")) {
-    currentSettings[continuousPredictors] <- round(currentSettings[continuousPredictors], .numDecimals)
-  } else if (length(continuousPredictors) == 1 && length(currentSettings) == 1 && !identical(continuousPredictors, "")) {
-    currentSettings <- round(currentSettings, .numDecimals)
+  for (pred in allPredictors) {
+    if (pred %in% continuousPredictors)
+      rows[[pred]] <- round(as.numeric(currentSettings[[pred]]), .numDecimals)
+    else
+      rows[[pred]] <- as.character(currentSettings[[pred]])
   }
-  rows <- cbind(rows, currentSettings)
-  if (length(currentSettings) == 1) # transform it this way to have the correct naming
-    colnames(rows)[ncol(rows)] <- allPredictors
+  for (dep in roDependent)
+    rows[[paste0(dep, " fit")]] <- round(as.numeric(predValues[[dep]]), .numDecimals)
   tb$addRows(rows)
 }
 
