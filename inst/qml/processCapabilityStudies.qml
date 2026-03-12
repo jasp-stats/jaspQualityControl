@@ -585,8 +585,8 @@ Form
 
 					CheckBox
 					{
-						name: "processCapabilityTableZbench"
-						label: qsTr("Z bench")
+						name: "processCapabilityTableZ"
+						label: qsTr("Z")
 					}
 
 				}
