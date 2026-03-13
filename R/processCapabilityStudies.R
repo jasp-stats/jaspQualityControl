@@ -152,7 +152,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     ))
 
     if((!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]) && options[["reportProcessCapabilityTables"]]) {
-      reportPlot$setError(gettext("No specification limits set."))
+      reportPlot$setError(gettext("Set at least one specification limit (upper or lower) to start the analysis."))
       return()
     }
 
@@ -460,7 +460,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
   }
 
-  ready <- (length(measurements) > 0 && (options[["lowerSpecificationLimit"]] | options[["upperSpecificationLimit"]]))
+  ready <- (length(measurements) > 0)
 
   if (options[["capabilityStudyType"]] == "nonNormalCapabilityAnalysis" && ready && (any(na.omit(unlist(dataset[measurements])) < 0))) {
     p <- createJaspPlot(title = gettext("Process capability study"), width = 400, height = 400)
@@ -709,7 +709,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container[["capabilityPlot"]] <- plot
 
   if (!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]) {
-    plot$setError(gettext("No specification limits set."))
     return()
   }
   if (!ready)
@@ -1058,8 +1057,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .qcProcessCapabilityTableWithin <- function(options, dataset, ready, container, measurements, stages, returnDataframe = FALSE) {
-  if (!options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]])
+  if (!options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]) {
+    table <- createJaspTable(title = gettext("Process capability (within)"))
+    table$addFootnote(gettext("Set at least one specification limit (upper or lower) to start the analysis."))
+    container[["capabilityTableWithin"]] <- table
     return()
+  }
   if (!ready)
     return()
 
@@ -1258,6 +1261,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                              returnPerformanceDataframe = FALSE) {
   if (!ready)
     return()
+
+  if (!options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]])
+    return()
+
 
   if (identical(stages, "")) {
     nStages <- 1
@@ -1696,7 +1703,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     return()
   }
   if(!options[["upperSpecificationLimit"]] && !options[["lowerSpecificationLimit"]]){
-    table$setError(gettext("No specification limits set."))
+    table$addFootnote(gettext("Set at least one specification limit (upper or lower) to start the analysis."))
     container[["summaryTableNonNormal"]] <- table
     return()
   }
