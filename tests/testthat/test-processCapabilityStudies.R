@@ -24,7 +24,7 @@ options$upperSpecificationLimit <- TRUE
 options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 6
 options$upperSpecificationLimitValue <- 12
-options$processCapabilityTableZ <- TRUE # not tested against Minitab
+options$processCapabilityTableZ <- TRUE # not tested against other Software
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
