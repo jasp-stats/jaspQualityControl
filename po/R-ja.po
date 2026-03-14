@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.0\n"
-"POT-Creation-Date: 2026-03-07 04:12\n"
+"POT-Creation-Date: 2026-03-14 04:20\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -1139,6 +1139,141 @@ msgid "No valid measurements in %s."
 msgstr ""
 
 msgid "Ref."
+msgstr ""
+
+msgid ""
+"The stage variable must have at least two levels to define training and test "
+"phases."
+msgstr ""
+
+msgid "Enter at least two variables to start the analysis."
+msgstr ""
+
+msgid "The training phase must contain at least 3 observations."
+msgstr ""
+
+msgid ""
+"The covariance matrix of the training phase is computationally singular. "
+"This typically occurs when variables are linearly dependent or nearly "
+"perfectly correlated. Please remove redundant variables."
+msgstr ""
+
+msgid ""
+"The covariance matrix of the selected variables is computationally singular. "
+"This typically occurs when variables are linearly dependent or nearly "
+"perfectly correlated. Please remove redundant variables."
+msgstr ""
+
+msgid "Hotelling T² Control Chart"
+msgstr ""
+
+msgid ""
+"Displays the Hotelling T² statistic for each sample with upper and lower "
+"control limits. Points exceeding the UCL are flagged as out of control."
+msgstr ""
+
+msgid "UCL = %s"
+msgstr ""
+
+msgid "LCL = %s"
+msgstr ""
+
+msgid "Hotelling T²"
+msgstr ""
+
+msgid "Training (%s)"
+msgstr ""
+
+msgid "Test"
+msgstr ""
+
+msgid "Hotelling T² Control Chart Summary"
+msgstr ""
+
+msgid ""
+"Summary of the Hotelling T² control chart, including the number of "
+"variables, observations, confidence level, control limits, and the "
+"determinant of the covariance matrix."
+msgstr ""
+
+msgid "Removed %i observation(s) with missing values."
+msgstr ""
+
+msgid "Phase"
+msgstr ""
+
+msgid "Number of Variables"
+msgstr ""
+
+msgid "Number of Observations"
+msgstr ""
+
+msgid "Confidence Level"
+msgstr ""
+
+msgid "LCL"
+msgstr ""
+
+msgid "UCL"
+msgstr ""
+
+msgid "|S|"
+msgstr ""
+
+msgid ""
+"Control limits for the training phase use the Beta distribution; test phase "
+"limits use the F distribution (prediction limits)."
+msgstr ""
+
+msgid "Variable Centers"
+msgstr ""
+
+msgid ""
+"Displays the sample mean of each variable used in the multivariate control "
+"chart."
+msgstr ""
+
+msgid "Center"
+msgstr ""
+
+msgid "Centers estimated from training phase (%s) only."
+msgstr ""
+
+msgid "Covariance Matrix"
+msgstr ""
+
+msgid ""
+"Displays the sample covariance matrix of the selected variables, used to "
+"compute the Hotelling T² statistic."
+msgstr ""
+
+msgid "Covariance matrix estimated from training phase (%s) only."
+msgstr ""
+
+msgid "Hotelling T² Values"
+msgstr ""
+
+msgid ""
+"Lists the Hotelling T² statistic for each sample and indicates whether the "
+"sample is in or out of control."
+msgstr ""
+
+msgid "T²"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Training UCL = %1$s, Test UCL = %2$s"
+msgstr ""
+
+msgid "Out of control"
+msgstr ""
+
+msgid "In control"
+msgstr ""
+
+msgid "UCL = %1$s, LCL = %2$s"
 msgstr ""
 
 msgid "Parameter Estimates"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-03-07 04:12\n"
+"POT-Creation-Date: 2026-03-14 04:20\n"
 "PO-Revision-Date: 2025-11-06 02:51+0000\n"
 "Last-Translator: \"Cheng R. Zhu\" <zcr@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
@@ -1313,6 +1313,152 @@ msgstr "%s 中无有效测量值。"
 msgid "Ref."
 msgstr ""
 
+msgid ""
+"The stage variable must have at least two levels to define training and test "
+"phases."
+msgstr ""
+
+msgid "Enter at least two variables to start the analysis."
+msgstr ""
+
+msgid "The training phase must contain at least 3 observations."
+msgstr ""
+
+msgid ""
+"The covariance matrix of the training phase is computationally singular. "
+"This typically occurs when variables are linearly dependent or nearly "
+"perfectly correlated. Please remove redundant variables."
+msgstr ""
+
+msgid ""
+"The covariance matrix of the selected variables is computationally singular. "
+"This typically occurs when variables are linearly dependent or nearly "
+"perfectly correlated. Please remove redundant variables."
+msgstr ""
+
+#, fuzzy
+msgid "Hotelling T² Control Chart"
+msgstr "控制图"
+
+msgid ""
+"Displays the Hotelling T² statistic for each sample with upper and lower "
+"control limits. Points exceeding the UCL are flagged as out of control."
+msgstr ""
+
+#, fuzzy
+msgid "UCL = %s"
+msgstr "UCL = %g"
+
+#, fuzzy
+msgid "LCL = %s"
+msgstr "LCL = %g"
+
+msgid "Hotelling T²"
+msgstr ""
+
+msgid "Training (%s)"
+msgstr ""
+
+#, fuzzy
+msgid "Test"
+msgstr "偏倚的 t 检验"
+
+msgid "Hotelling T² Control Chart Summary"
+msgstr ""
+
+msgid ""
+"Summary of the Hotelling T² control chart, including the number of "
+"variables, observations, confidence level, control limits, and the "
+"determinant of the covariance matrix."
+msgstr ""
+
+msgid "Removed %i observation(s) with missing values."
+msgstr ""
+
+msgid "Phase"
+msgstr ""
+
+#, fuzzy
+msgid "Number of Variables"
+msgstr "缺陷品数"
+
+#, fuzzy
+msgid "Number of Observations"
+msgstr "观测值"
+
+#, fuzzy
+msgid "Confidence Level"
+msgstr "95%% 置信区间"
+
+#, fuzzy
+msgid "LCL"
+msgstr "LSL"
+
+#, fuzzy
+msgid "UCL"
+msgstr "USL"
+
+msgid "|S|"
+msgstr ""
+
+msgid ""
+"Control limits for the training phase use the Beta distribution; test phase "
+"limits use the F distribution (prediction limits)."
+msgstr ""
+
+#, fuzzy
+msgid "Variable Centers"
+msgstr "变量"
+
+msgid ""
+"Displays the sample mean of each variable used in the multivariate control "
+"chart."
+msgstr ""
+
+msgid "Center"
+msgstr ""
+
+msgid "Centers estimated from training phase (%s) only."
+msgstr ""
+
+msgid "Covariance Matrix"
+msgstr ""
+
+msgid ""
+"Displays the sample covariance matrix of the selected variables, used to "
+"compute the Hotelling T² statistic."
+msgstr ""
+
+msgid "Covariance matrix estimated from training phase (%s) only."
+msgstr ""
+
+msgid "Hotelling T² Values"
+msgstr ""
+
+msgid ""
+"Lists the Hotelling T² statistic for each sample and indicates whether the "
+"sample is in or out of control."
+msgstr ""
+
+msgid "T²"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Training UCL = %1$s, Test UCL = %2$s"
+msgstr ""
+
+#, fuzzy
+msgid "Out of control"
+msgstr "失控信号"
+
+msgid "In control"
+msgstr ""
+
+msgid "UCL = %1$s, LCL = %2$s"
+msgstr ""
+
 msgid "Parameter Estimates"
 msgstr "参数估计"
 
@@ -2161,9 +2307,6 @@ msgstr[0] ""
 #~ msgid "Name of chart: %s"
 #~ msgstr "图形名称：%s"
 
-#~ msgid "Control Chart"
-#~ msgstr "控制图"
-
 #~ msgid "Subgroup size must be > 1 to display X-bar & R Chart."
 #~ msgstr "显示X-bar & R控制图需要子组容量必须 >1"
 
@@ -2178,14 +2321,8 @@ msgstr[0] ""
 #~ msgid "%s"
 #~ msgstr "%s"
 
-#~ msgid "Observation"
-#~ msgstr "观测值"
-
 #~ msgid "%s Chart by Operator"
 #~ msgstr "%s 图按操作者"
-
-#~ msgid "Out-of-control Signals"
-#~ msgstr "失控信号"
 
 #~ msgid "Subgroup st dev"
 #~ msgstr "子组标准差"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-03-07 04:12\n"
+"POT-Creation-Date: 2026-03-14 04:20\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -1315,6 +1315,154 @@ msgid "No valid measurements in %s."
 msgstr "Geen valide metingen in %s."
 
 msgid "Ref."
+msgstr ""
+
+msgid ""
+"The stage variable must have at least two levels to define training and test "
+"phases."
+msgstr ""
+
+msgid "Enter at least two variables to start the analysis."
+msgstr ""
+
+msgid "The training phase must contain at least 3 observations."
+msgstr ""
+
+msgid ""
+"The covariance matrix of the training phase is computationally singular. "
+"This typically occurs when variables are linearly dependent or nearly "
+"perfectly correlated. Please remove redundant variables."
+msgstr ""
+
+msgid ""
+"The covariance matrix of the selected variables is computationally singular. "
+"This typically occurs when variables are linearly dependent or nearly "
+"perfectly correlated. Please remove redundant variables."
+msgstr ""
+
+#, fuzzy
+msgid "Hotelling T² Control Chart"
+msgstr "Attribute Controlefiguren"
+
+msgid ""
+"Displays the Hotelling T² statistic for each sample with upper and lower "
+"control limits. Points exceeding the UCL are flagged as out of control."
+msgstr ""
+
+#, fuzzy
+msgid "UCL = %s"
+msgstr "UCL = %g"
+
+#, fuzzy
+msgid "LCL = %s"
+msgstr "LCL = %g"
+
+msgid "Hotelling T²"
+msgstr ""
+
+msgid "Training (%s)"
+msgstr ""
+
+#, fuzzy
+msgid "Test"
+msgstr "Toetsen"
+
+msgid "Hotelling T² Control Chart Summary"
+msgstr ""
+
+msgid ""
+"Summary of the Hotelling T² control chart, including the number of "
+"variables, observations, confidence level, control limits, and the "
+"determinant of the covariance matrix."
+msgstr ""
+
+#, fuzzy
+msgid "Removed %i observation(s) with missing values."
+msgstr ""
+"%i observatie(s) verwijderd die aan geen enkele subgroep waren toegewezen."
+"<br>"
+
+msgid "Phase"
+msgstr ""
+
+#, fuzzy
+msgid "Number of Variables"
+msgstr "Aantal defecten"
+
+#, fuzzy
+msgid "Number of Observations"
+msgstr "Aantal defecten"
+
+#, fuzzy
+msgid "Confidence Level"
+msgstr "Betrouwbaarheidsinterval van 95%%"
+
+#, fuzzy
+msgid "LCL"
+msgstr "LSL"
+
+#, fuzzy
+msgid "UCL"
+msgstr "USL"
+
+msgid "|S|"
+msgstr ""
+
+msgid ""
+"Control limits for the training phase use the Beta distribution; test phase "
+"limits use the F distribution (prediction limits)."
+msgstr ""
+
+#, fuzzy
+msgid "Variable Centers"
+msgstr "Variabele: %s"
+
+msgid ""
+"Displays the sample mean of each variable used in the multivariate control "
+"chart."
+msgstr ""
+
+msgid "Center"
+msgstr ""
+
+msgid "Centers estimated from training phase (%s) only."
+msgstr ""
+
+msgid "Covariance Matrix"
+msgstr ""
+
+msgid ""
+"Displays the sample covariance matrix of the selected variables, used to "
+"compute the Hotelling T² statistic."
+msgstr ""
+
+msgid "Covariance matrix estimated from training phase (%s) only."
+msgstr ""
+
+msgid "Hotelling T² Values"
+msgstr ""
+
+msgid ""
+"Lists the Hotelling T² statistic for each sample and indicates whether the "
+"sample is in or out of control."
+msgstr ""
+
+msgid "T²"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Training UCL = %1$s, Test UCL = %2$s"
+msgstr ""
+
+msgid "Out of control"
+msgstr ""
+
+msgid "In control"
+msgstr ""
+
+msgid "UCL = %1$s, LCL = %2$s"
 msgstr ""
 
 msgid "Parameter Estimates"
