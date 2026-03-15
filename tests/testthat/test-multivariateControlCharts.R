@@ -206,3 +206,189 @@ test_that("6.2 Optional timestamp - T² values table includes timestamp column",
   expect_equal(timestamps[1], "t1")
   expect_equal(timestamps[length(timestamps)], "t20")
 })
+
+# Client case: simulated 5-variable dataset compared against qcc ####
+
+clientN <- 250
+clientMeans <- c(x1 = 10, x2 = 12, x3 = 15, x4 = 8, x5 = 20)
+clientSds <- c(2, 1.5, 3, 1, 2.5)
+clientCorMatrix <- matrix(
+  c(1, .5, .3, .2, .1,
+    .5, 1, .4, .2, .1,
+    .3, .4, 1, .3, .2,
+    .2, .2, .3, 1, .4,
+    .1, .1, .2, .4, 1),
+  nrow = 5,
+  byrow = TRUE
+)
+clientSigmaMatrix <- diag(clientSds) %*% clientCorMatrix %*% diag(clientSds)
+
+set.seed(123)
+clientDataset <- as.data.frame(MASS::mvrnorm(n = clientN, mu = clientMeans, Sigma = clientSigmaMatrix))
+colnames(clientDataset) <- names(clientMeans)
+
+clientReference <- qcc::mqcc(clientDataset, type = "T2.single", plot = FALSE)
+
+options7 <- analysisOptions("multivariateControlCharts")
+options7$testSet <- "jaspDefault"
+options7$variables <- names(clientMeans)
+options7$confidenceLevelAutomatic <- TRUE
+options7$centerTable <- TRUE
+options7$covarianceMatrixTable <- TRUE
+options7$tSquaredValuesTable <- TRUE
+results7 <- runAnalysis("multivariateControlCharts", clientDataset, options7)
+
+test_that("7.1 Simulated 5-variable case - summary matches qcc", {
+  table <- results7[["results"]][["summaryTable"]][["data"]]
+  row <- table[[1]]
+
+  expect_equal(row$numVariables, length(clientMeans))
+  expect_equal(row$numObservations, clientN)
+  expect_equal(row$confidenceLevel, (1 - 0.0027)^length(clientMeans))
+  expect_equal(row$lcl, as.numeric(clientReference$limits[, "LCL"]))
+  expect_equal(row$ucl, as.numeric(clientReference$limits[, "UCL"]))
+  expect_equal(row$detS, det(clientReference$cov), tolerance = 1e-10)
+})
+
+test_that("7.2 Simulated 5-variable case - centers and covariance match qcc", {
+  centerTable <- results7[["results"]][["centerTable"]][["data"]]
+  centerValues <- sapply(centerTable, function(x) x$center)
+  names(centerValues) <- sapply(centerTable, function(x) x$variable)
+
+  expect_equal(unname(centerValues[names(clientReference$center)]),
+               unname(as.numeric(clientReference$center)),
+               tolerance = 1e-10)
+
+  covarianceTable <- results7[["results"]][["covarianceTable"]][["data"]]
+  covarianceMatrix <- do.call(rbind, lapply(covarianceTable, function(row) unlist(row[names(clientMeans)])))
+  rownames(covarianceMatrix) <- sapply(covarianceTable, function(row) row$variable)
+
+  expect_equal(unname(covarianceMatrix[names(clientMeans), names(clientMeans)]),
+               unname(clientReference$cov),
+               tolerance = 1e-10)
+})
+
+test_that("7.3 Simulated 5-variable case - T² values and statuses match qcc", {
+  table <- results7[["results"]][["tsqValuesTable"]][["data"]]
+  jaspTsq <- sapply(table, function(x) x$tsq)
+  expectedTsq <- as.numeric(clientReference$statistics)
+  expectedUcl <- as.numeric(clientReference$limits[, "UCL"])
+  expectedStatus <- ifelse(expectedTsq > expectedUcl, "Out of control", "In control")
+
+  expect_equal(jaspTsq, expectedTsq, tolerance = 1e-10)
+  expect_equal(sapply(table, function(x) x$status), expectedStatus)
+  expect_equal(sum(expectedStatus == "Out of control"), 4)
+})
+
+# Client case: simulated 5-variable phased dataset compared against qcc ####
+
+set.seed(123)
+client2NPerState <- 100
+client2P <- 5
+client2States <- c("State1", "State2")
+
+client2CorList <- list(
+  State1 = matrix(c(1, .5, .3, .2, .1,
+                    .5, 1, .4, .2, .1,
+                    .3, .4, 1, .3, .2,
+                    .2, .2, .3, 1, .4,
+                    .1, .1, .2, .4, 1), 5, 5),
+  State2 = matrix(0.8, nrow = client2P, ncol = client2P)
+)
+diag(client2CorList$State2) <- 1
+
+client2Params <- list(
+  State1 = list(mu = c(15, 18, 22.5, 12, 30), sd = c(2, 1.5, 3, 1, 2.5)),
+  State2 = list(mu = c(12, 10, 18, 9, 22),    sd = c(1, 2.0, 2, 1.5, 3))
+)
+
+client2DatasetList <- lapply(client2States, function(state) {
+  sigmaMatrix <- diag(client2Params[[state]]$sd) %*% client2CorList[[state]] %*% diag(client2Params[[state]]$sd)
+  data <- MASS::mvrnorm(n = client2NPerState, mu = client2Params[[state]]$mu, Sigma = sigmaMatrix)
+  tempDf <- as.data.frame(data)
+  colnames(tempDf) <- paste0("x", 1:client2P)
+  tempDf$State <- state
+  tempDf
+})
+
+client2Dataset <- do.call(rbind, client2DatasetList)
+client2Phase1Data <- client2Dataset[client2Dataset$State == "State1", 1:client2P]
+client2Phase2Data <- client2Dataset[client2Dataset$State == "State2", 1:client2P]
+client2Reference <- qcc::mqcc(
+  client2Phase1Data,
+  type = "T2.single",
+  newdata = client2Phase2Data,
+  pred.limits = TRUE,
+  confidence.level = (1 - 0.0027)^client2P,
+  plot = FALSE
+)
+
+options8 <- analysisOptions("multivariateControlCharts")
+options8$testSet <- "jaspDefault"
+options8$variables <- paste0("x", 1:client2P)
+options8$stage <- "State"
+options8$trainingLevel <- "State1"
+options8$confidenceLevelAutomatic <- TRUE
+options8$centerTable <- TRUE
+options8$covarianceMatrixTable <- TRUE
+options8$tSquaredValuesTable <- TRUE
+results8 <- runAnalysis("multivariateControlCharts", client2Dataset, options8)
+
+test_that("8.1 Simulated phased 5-variable case - summary matches qcc", {
+  table <- results8[["results"]][["summaryTable"]][["data"]]
+
+  expect_equal(length(table), 2)
+
+  trainingRow <- table[[1]]
+  testRow <- table[[2]]
+
+  expect_equal(trainingRow$phase, "Training (State1)")
+  expect_equal(trainingRow$numVariables, client2P)
+  expect_equal(trainingRow$numObservations, client2NPerState)
+  expect_equal(trainingRow$confidenceLevel, (1 - 0.0027)^client2P)
+  expect_equal(trainingRow$lcl, as.numeric(client2Reference$limits[, "LCL"]))
+  expect_equal(trainingRow$ucl, as.numeric(client2Reference$limits[, "UCL"]))
+  expect_equal(trainingRow$detS, det(client2Reference$cov), tolerance = 1e-10)
+
+  expect_equal(testRow$phase, "Test")
+  expect_equal(testRow$numVariables, client2P)
+  expect_equal(testRow$numObservations, client2NPerState)
+  expect_equal(testRow$confidenceLevel, (1 - 0.0027)^client2P)
+  expect_equal(testRow$lcl, as.numeric(client2Reference$pred.limits[, "LPL"]))
+  expect_equal(testRow$ucl, as.numeric(client2Reference$pred.limits[, "UPL"]))
+  expect_equal(testRow$detS, det(client2Reference$cov), tolerance = 1e-10)
+})
+
+test_that("8.2 Simulated phased 5-variable case - training centers and covariance match qcc", {
+  centerTable <- results8[["results"]][["centerTable"]][["data"]]
+  centerValues <- sapply(centerTable, function(x) x$center)
+  names(centerValues) <- sapply(centerTable, function(x) x$variable)
+
+  expect_equal(unname(centerValues[names(client2Reference$center)]),
+               unname(as.numeric(client2Reference$center)),
+               tolerance = 1e-10)
+
+  covarianceTable <- results8[["results"]][["covarianceTable"]][["data"]]
+  covarianceMatrix <- do.call(rbind, lapply(covarianceTable, function(row) unlist(row[paste0("x", 1:client2P)])))
+  rownames(covarianceMatrix) <- sapply(covarianceTable, function(row) row$variable)
+
+  expect_equal(unname(covarianceMatrix[paste0("x", 1:client2P), paste0("x", 1:client2P)]),
+               unname(client2Reference$cov),
+               tolerance = 1e-10)
+})
+
+test_that("8.3 Simulated phased 5-variable case - T² values, phases, and statuses match qcc", {
+  table <- results8[["results"]][["tsqValuesTable"]][["data"]]
+  expectedTsq <- c(as.numeric(client2Reference$statistics), as.numeric(client2Reference$newstats))
+  expectedUcl <- c(rep(as.numeric(client2Reference$limits[, "UCL"]), client2NPerState),
+                   rep(as.numeric(client2Reference$pred.limits[, "UPL"]), client2NPerState))
+  expectedPhase <- c(rep("Training (State1)", client2NPerState), rep("Test", client2NPerState))
+  expectedStatus <- ifelse(expectedTsq > expectedUcl, "Out of control", "In control")
+
+  expect_equal(length(table), 2 * client2NPerState)
+  expect_equal(sapply(table, function(x) x$phase), expectedPhase)
+  expect_equal(sapply(table, function(x) x$tsq), expectedTsq, tolerance = 1e-10)
+  expect_equal(sapply(table, function(x) x$status), expectedStatus)
+  expect_equal(sum(expectedStatus[1:client2NPerState] == "Out of control"), 1)
+  expect_equal(sum(expectedStatus[(client2NPerState + 1):(2 * client2NPerState)] == "Out of control"), 92)
+})
