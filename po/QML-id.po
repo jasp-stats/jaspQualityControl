@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2026-03-16 21:50+0000\n"
+"Last-Translator: Zahid Rizky Fakhri <zahidrizkyfakhri@gmail.com>\n"
+"Language-Team: Indonesian <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/id/>\n"
+"Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.17-dev\n"
 "X-Language: id\n"
 "X-Qt-Contexts: true\n"
 
@@ -593,7 +599,7 @@ msgstr "Poin"
 
 msgctxt "probabilityOfDetection|"
 msgid "Add jitter"
-msgstr "Tambahkan jitter"
+msgstr "Tambahkan getaran"
 
 msgctxt "probabilityOfDetection|"
 msgid "Show density"
@@ -619,7 +625,6 @@ msgctxt "probabilityOfDetection|"
 msgid "Logarithmic x-axis"
 msgstr "Sumbu x logaritmik"
 
-#, fuzzy
 msgctxt "probabilityOfDetection|"
 msgid "Asymptotes"
 msgstr "Asymptotes"
@@ -1011,7 +1016,7 @@ msgstr "Simpan sebagai:"
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: On</b>"
-msgstr ""
+msgstr "<b>Sinkron Desain: Nyala</b>"
 
 msgctxt "doeFull|"
 msgid "<b>Sync Design: Off</b>"
