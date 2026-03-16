@@ -1483,7 +1483,10 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       threshold <- fix.arg[["threshold"]] # threshold
     } else {
       # Set starting values that match other software packages more closely
-      lnorm3start <- EnvStats::elnorm3(data)$parameters
+      lnorm3start <- try(EnvStats::elnorm3(data))
+      if (jaspBase::isTryError(lnorm3start))
+        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+      lnorm3start <- lnorm3start$parameters
       lnorm3startMeanLog <- lnorm3start[[1]]
       lnorm3startSdLog <- lnorm3start[[2]]
       lnorm3startThreshold <- lnorm3start[[3]]
@@ -1535,8 +1538,11 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       threshold <- fix.arg[["thres"]] # threshold
     } else {
       # Set starting values that match other software packages more closely
-      weibull3start <- MASS::fitdistr(data, function(x, shape, scale, thres)
-        dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0))$estimate
+      weibull3start <- try(MASS::fitdistr(data, function(x, shape, scale, thres)
+        dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0)))
+      if (jaspBase::isTryError(weibull3start))
+        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+      weibull3start <- weibull3start$estimate
       weibull3startShape <- weibull3start[[1]]
       weibull3startScale <- weibull3start[[2]]
       weibull3startThres <- weibull3start[[3]]

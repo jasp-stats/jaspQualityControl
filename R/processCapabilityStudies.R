@@ -2667,7 +2667,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotList <- try(.qcProbabilityPlotObject(options, dataset, measurements, stages))
   if (jaspBase::isTryError(plotList)) {
     plot$setError(plotList[1])
-    return()
+    return(plot)
   }
   # if number of plots is odd, add an empty plot at the end
   if (nStages > 1 && nStages %% 2 != 0)
@@ -2713,46 +2713,68 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     pSeq <- seq(0.001, 0.999, 0.001)
     ticks <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
 
+    # Initialize variance variables (used for confidence band computation)
+    varMu <- varSigma <- covarMuSigma <- NA
+    varmeanlog <- varsdlog <- covarSS <- NA
+    varShape <- varScale <- NA
+    percentileLower <- percentileUpper <- NA
+    hasConfidenceBands <- TRUE
+
     # Computing according to the distribution
     if (options[["nullDistribution"]] == "normal") {
       lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
       matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("mu", "sigma"),
                                                mle = c(mean(dataCurrentStage), sd(dataCurrentStage))))
+      # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
-        stop(gettext("Fitting distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-        return()
+        hasConfidenceBands <- FALSE
+        varMu <- NA
+        varSigma <- NA
+        covarMuSigma <- NA
+      } else {
+        varMu <- matrix$varcov[1, 1]
+        varSigma <- matrix$varcov[2,2]
+        covarMuSigma <- matrix$varcov[1, 2]
       }
-      varMu <- matrix$varcov[1, 1]
-      varSigma <- matrix$varcov[2,2]
-      covarMuSigma <- matrix$varcov[1, 2]
       zp <- qnorm(p = pSeq)
       zalpha <- qnorm(0.975)
       percentileEstimate <- mean(dataCurrentStage) + zp * sd(dataCurrentStage)
-      varPercentile <- varMu + zp^2 * varSigma + 2*zp * covarMuSigma
-      percentileLower <- percentileEstimate - zalpha * sqrt(varPercentile)
-      percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
+      if (hasConfidenceBands) {
+        varPercentile <- varMu + zp^2 * varSigma + 2*zp * covarMuSigma
+        percentileLower <- percentileEstimate - zalpha * sqrt(varPercentile)
+        percentileUpper <- percentileEstimate + zalpha * sqrt(varPercentile)
+      }
       yBreaks <- qnorm(ticks / 100)
       xBreaks <- label_x <- jaspGraphs::getPrettyAxisBreaks(dataCurrentStage)
       xLimits <- range(xBreaks)
     } else if (options[["nullDistribution"]] == "lognormal") {
-      fit    <- EnvStats::elnorm(dataCurrentStage)
+      fit <- try(EnvStats::elnorm(dataCurrentStage))
+      if (jaspBase::isTryError(fit)) {
+        stop(gettext("Fitting lognormal distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+      }
       meanlog <- as.numeric(fit$parameters[1])
       sdlog <- as.numeric(fit$parameters[2])
       lpdf <- quote(log(1/(sqrt(2*pi)*x*sdlog) * exp(-(log(x)- meanlog)^2/(2*sdlog^2))))
       matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("meanlog", "sdlog"), mle = fit$parameters))
+      # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
-        stop(gettext("Fitting distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-        return()
+        hasConfidenceBands <- FALSE
+        varmeanlog <- NA
+        varsdlog <- NA
+        covarSS <- NA
+      } else {
+        varmeanlog <- matrix$varcov[1, 1]
+        varsdlog <- matrix$varcov[2,2]
+        covarSS <- matrix$varcov[1, 2]
       }
-      varmeanlog <- matrix$varcov[1, 1]
-      varsdlog <- matrix$varcov[2,2]
-      covarSS <- matrix$varcov[1, 2]
       zp <- qnorm(p = pSeq)
       zalpha <- qnorm(0.975)
       percentileEstimate <- exp(meanlog + zp*sdlog)
-      varPercentile <- percentileEstimate^2*( varmeanlog+zp^2*varsdlog + 2*zp * covarSS)
-      percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
-      percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
+      if (hasConfidenceBands) {
+        varPercentile <- percentileEstimate^2*( varmeanlog+zp^2*varsdlog + 2*zp * covarSS)
+        percentileLower <- exp( log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
+        percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
+      }
       yBreaks <- qnorm(ticks / 100)
       dataCurrentStage <- log(label_x)
       percentileEstimate <- log(percentileEstimate)
@@ -2764,24 +2786,33 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       label_x <- labelFrame[index,1]
       xLimits <- c(min(xBreaks) * 0.8, max(xBreaks) * 1.2)
     } else if (options[["nullDistribution"]] == "weibull") {
-      fit <- fitdistrplus::fitdist(dataCurrentStage, 'weibull')
-      shape <- as.numeric(fit$estimate[1])
-      scale <- as.numeric(fit$estimate[2])
-      lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
-      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = fit$estimate))
-      if (jaspBase::isTryError(matrix)) {
-        stop(gettext("Fitting distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
-        return()
+      fit_Weibull <- try(.distributionParameters(dataCurrentStage, distribution = "weibull", fix.arg = NULL))
+      if (jaspBase::isTryError(fit_Weibull)) {
+        stop(gettext("Fitting Weibull distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
       }
-      varShape <- matrix$varcov[1,1]
-      varScale <- matrix$varcov[2,2]
-      covarSS <- matrix$varcov[1,2]
+      shape <- fit_Weibull[["beta"]]
+      scale <- fit_Weibull[["theta"]]
+      lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
+      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = fit_Weibull$estimate))
+      # Gracefully handle confidence band computation failure
+      if (jaspBase::isTryError(matrix)) {
+        hasConfidenceBands <- FALSE
+        varShape <- NA
+        varScale <- NA
+        covarSS <- NA
+      } else {
+        varShape <- matrix$varcov[1,1]
+        varScale <- matrix$varcov[2,2]
+        covarSS <- matrix$varcov[1,2]
+      }
       zp <- log(-1*log(1-pSeq))
       zalpha <- log(-1*log(1-0.975))
       percentileEstimate <- scale * (- log(1 - pSeq))^(1/shape)
-      varPercentile <- (percentileEstimate^2 / scale^2) * varScale + (percentileEstimate^2/shape^4)*zp^2*varShape - 2*((zp*percentileEstimate^2) / (scale * shape^2))*covarSS
-      percentileLower <- exp(log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
-      percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
+      if (hasConfidenceBands) {
+        varPercentile <- (percentileEstimate^2 / scale^2) * varScale + (percentileEstimate^2/shape^4)*zp^2*varShape - 2*((zp*percentileEstimate^2) / (scale * shape^2))*covarSS
+        percentileLower <- exp(log(percentileEstimate) - zalpha * (sqrt(varPercentile)/percentileEstimate))
+        percentileUpper <- exp(log(percentileEstimate) + zalpha * (sqrt(varPercentile)/percentileEstimate))
+      }
       yBreaks <- log(-1*log(1-(ticks / 100)))
       dataCurrentStage <- log(label_x)
       percentileEstimate <- log(percentileEstimate)
@@ -2804,8 +2835,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       p <- p + ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "lightgray"))
     if (nStages > 1)
       p <- p + ggplot2::ggtitle(stage) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
-    p <- p + ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed", na.rm = TRUE) +
-      ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed", na.rm = TRUE) +
+    # Add confidence bands only if variance-covariance computation succeeded
+    if (hasConfidenceBands) {
+      p <- p + ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed", na.rm = TRUE) +
+        ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed", na.rm = TRUE)
+    }
+    p <- p +
       ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xBreaks, limits = xLimits, labels = label_x) +
       ggplot2::scale_y_continuous(gettext('Percent'), labels = ticks, breaks = yBreaks, limits = yLimits) +
       jaspGraphs::geom_rangeframe() +
