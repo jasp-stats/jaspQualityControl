@@ -1120,6 +1120,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   if (options[["processCapabilityTableZ"]]) {
     table$addColumnInfo(name="zSt", title=gettext("Z (ST)"), type="number")
+    tableColNames <- c(tableColNames, "zSt")
+    sourceVector <- c(sourceVector, "Z (ST)")
   }
 
   table$showSpecifiedColumnsOnly <- TRUE
@@ -1161,8 +1163,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else {
       cpk <- cpu
     }
-    zSt <- 3*cpk
-
 
     if (options[["processCapabilityTableCi"]]) {
       ciAlpha <- 1 - ciLevel
@@ -1184,8 +1184,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableDfCurrentStage <- data.frame(cp  = round(cp, .numDecimals),
                                       cpl = round(cpl, .numDecimals),
                                       cpu = round(cpu, .numDecimals),
-                                      cpk = round(cpk, .numDecimals),
-                                      zSt = round(zSt, .numDecimals))
+                                      cpk = round(cpk, .numDecimals))
+
+    if (options[["processCapabilityTableZ"]])
+      tableDfCurrentStage[["zSt"]] <- round(3*cpk, .numDecimals)
+
     if (options[["processCapabilityTableCi"]]) {
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
         tableDfCurrentStage[["cplci"]] <- round(ciLbCp, .numDecimals)
@@ -1251,6 +1254,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["processCapabilityTableCi"]] &&
                 !(options[["upperSpecificationLimitBoundary"]] && options[["lowerSpecificationLimitBoundary"]]))
         formattedTableDf[["cpkci"]] <- paste0("[", tableList[["cpklci"]], ", ", tableList[["cpkuci"]], "]")
+    if (options[["processCapabilityTableZ"]])
+      formattedTableDf[["zSt"]] <- tableList[["zSt"]]
     colnames(formattedTableDf) <- sourceVector
     return(formattedTableDf)
   }
@@ -1327,6 +1332,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   if (options[["processCapabilityTableZ"]]) {
     table$addColumnInfo(name="zLt", title=gettext("Z (LT)"), type="number")
+    tableColNames <- c(tableColNames, "zLt")
+    sourceVector1 <- c(sourceVector1, "Z (LT)")
   }
   if (options[["target"]]) {
     table$addColumnInfo(name = "cpm", type = "integer", title = gettext("Cpm"))
@@ -1380,7 +1387,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else {
       ppk <- ppu
     }
-    zLt <- 3*ppk
     cp <- (usl - lsl) / (tolMultiplier * sdw)
 
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]] && options[["target"]]) {
@@ -1425,8 +1431,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableDfCurrentStage <- data.frame(pp  = round(pp, .numDecimals),
                                       ppl = round(ppl, .numDecimals),
                                       ppu = round(ppu, .numDecimals),
-                                      ppk = round(ppk, .numDecimals),
-                                      zLt = round(zLt, .numDecimals))
+                                      ppk = round(ppk, .numDecimals))
+    if (options[["processCapabilityTableZ"]])
+      tableDfCurrentStage[["zLt"]] <- round(3*ppk, .numDecimals)
     if (options[["target"]])
       tableDfCurrentStage[["cpm"]] <- round(cpm, .numDecimals)
     if (options[["processCapabilityTableCi"]]) {
@@ -1503,6 +1510,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["processCapabilityTableCi"]] &&
         !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]))
       formattedTableDf[["ppkci"]] <- paste0("[", tableList[["ppklci"]], ", ",tableList[["ppkuci"]], "]")
+    if (options[["processCapabilityTableZ"]])
+      formattedTableDf[["zLt"]] <- tableList[["zLt"]]
     if (options[["target"]]) {
       formattedTableDf[["cpm"]] <- tableList[["cpm"]]
       if (options[["processCapabilityTableCi"]] &&
