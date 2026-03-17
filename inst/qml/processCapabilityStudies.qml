@@ -349,6 +349,7 @@ Form
 								name: 					"historicalShapeValue"
 								id:						historicalShapeValue
 								negativeValues:			false
+								min:					0.000001
 								defaultValue:			1
 								decimals:				9
 							}
@@ -385,6 +386,7 @@ Form
 								name: 					"historicalScaleValue"
 								id:						historicalScaleValue
 								negativeValues:			false
+								min:					0.000001
 								defaultValue:			1
 								decimals:				9
 							}
@@ -421,6 +423,7 @@ Form
 								name: 					"historicalLogStdDevValue"
 								id:						historicalLogStdDevValue
 								negativeValues:			false
+								min:					0.000001
 								defaultValue:			1
 								decimals:				9
 							}

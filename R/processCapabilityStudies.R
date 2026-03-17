@@ -1262,8 +1262,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!ready)
     return()
 
-  if (!options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]])
+  if (!options[["lowerSpecificationLimit"]] && !options[["upperSpecificationLimit"]]) {
+    table <- createJaspTable(title = gettext("Process performance (total)"))
+    table$addFootnote(gettext("Set at least one specification limit (upper or lower) to start the analysis."))
+    table2 <- createJaspTable(title = gettext("Non-conformance statistics"))
+    table2$addFootnote(gettext("Set at least one specification limit (upper or lower) to start the analysis."))
+    container[["capabilityTableOverall"]] <- table
+    container[["capabilityTablePerformance"]] <- table2
     return()
+  }
 
 
   if (identical(stages, "")) {
