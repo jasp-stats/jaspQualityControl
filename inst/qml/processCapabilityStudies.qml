@@ -304,6 +304,7 @@ Form
 								name: 					"historicalStdDevValue"
 								id:						historicalStdDevValue
 								negativeValues:			false
+								min:					0.000001
 								defaultValue:			1
 								decimals:				9
 							}
