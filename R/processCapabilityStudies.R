@@ -2790,10 +2790,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       if (jaspBase::isTryError(fit_Weibull)) {
         stop(gettext("Fitting Weibull distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
       }
-      shape <- fit_Weibull[["beta"]]
-      scale <- fit_Weibull[["theta"]]
+      shape <- as.numeric(fit_Weibull[["beta"]])
+      scale <- as.numeric(fit_Weibull[["theta"]])
       lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
-      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = fit_Weibull$estimate))
+      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = c("shape" = shape, "scale" = scale)))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
