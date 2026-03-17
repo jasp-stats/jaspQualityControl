@@ -1596,6 +1596,8 @@ options$reportProcessText <- "process name test"
 options$reportDateText <- "today"
 options$reportReportedByText <- "Name test"
 options$reportConclusionText <- "comments test"
+options$processCapabilityTableZ <- TRUE
+
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
@@ -1633,6 +1635,8 @@ options$reportProcessText <- "process name test"
 options$reportDateText <- "today"
 options$reportReportedByText <- "Name test"
 options$reportConclusionText <- "comments test"
+options$processCapabilityTableZ <- TRUE
+
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
