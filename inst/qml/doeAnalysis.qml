@@ -44,7 +44,8 @@ Form
 			values: [
 				{ label: qsTr("Enter"),	info: qsTr("All predictors are entered into the model simultaneously.")	,value: "enter"},
 				{ label: qsTr("Backward"), info: qsTr("Starting with the full model, predictors are removed sequentially based on AIC."), value: "backward"},
-				{ label: qsTr("Forward"), info: qsTr("Starting with the intercept-only model, predictors are entered sequentially based on AIC.")	, value: "forward"}	
+				{ label: qsTr("Forward"), info: qsTr("Starting with the intercept-only model, predictors are entered sequentially based on AIC.")	, value: "forward"},	
+				{ label: qsTr("Stepwise"), info: qsTr("Starting with the intercept-only model, predictors are entered or removed sequentially based on AIC, combining both forward addition and backward elimination at each step.")	, value: "both"}		
 			]
 		}
 
