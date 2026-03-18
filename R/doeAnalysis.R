@@ -264,7 +264,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
       stepwiseData <- if (options[["codeFactors"]]) datasetCoded else dataset
       fullModel <- lm(formula, data = stepwiseData)
 
-      if (stepwiseMethod == "forward") {
+      if (stepwiseMethod != "backward") {
         initialFormula <- as.formula(paste(dep, "~ 1"))
       } else {
         initialFormula <- formula
