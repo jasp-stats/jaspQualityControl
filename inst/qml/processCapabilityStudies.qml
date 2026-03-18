@@ -560,6 +560,13 @@ Form
 						label: 								qsTr("Display specification limits")
 						checked: 							true
 					}
+
+					CheckBox
+					{
+						name: 								"processCapabilityPlotCompressXAxis"
+						label: 								qsTr("Compress x-axis")
+						checked: 							false
+					}
 				}
 
 				CheckBox
