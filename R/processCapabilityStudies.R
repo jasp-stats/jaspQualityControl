@@ -144,7 +144,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       "capabilityStudyType", "nonNormalDistribution", "nonNormalMethod",
       "lowerSpecificationLimitBoundary", "upperSpecificationLimitBoundary",
       "processCapabilityPlotBinNumber", "processCapabilityPlotDistributions",
-      "processCapabilityPlotSpecificationLimits", "processCapabilityPlotCompressXAxis", "xBarMovingRangeLength",
+      "processCapabilityPlotSpecificationLimits", "processCapabilityPlotCompressXAxis", "processCapabilityPlotThinXAxisLabels", "xBarMovingRangeLength",
       "xmrChartMovingRangeLength", "xmrChartSpecificationLimits", "probabilityPlotRankMethod",
       "histogramBinBoundaryDirection", "nullDistribution", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
       "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdUnbiasingConstant",
@@ -712,7 +712,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotWidth <- nCol * 800
   plotHeight <- nRow * 500
   plot <- createJaspPlot(title = gettext("Capability of the process"), width = plotWidth, height = plotHeight)
-  plot$dependOn(c("processCapabilityPlotBinNumber", "histogramBinBoundaryDirection", "processCapabilityPlotCompressXAxis"))
+  plot$dependOn(c("processCapabilityPlotBinNumber", "histogramBinBoundaryDirection", "processCapabilityPlotCompressXAxis", "processCapabilityPlotThinXAxisLabels"))
   plot$position <- 2
   container[["capabilityPlot"]] <- plot
 
@@ -824,7 +824,121 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   sub("([.]?0+)$", "", formatted)
 }
 
-.qcCapabilityPlotAxisConfig <- function(allData, xLimits, occupiedRange = NULL, compress = FALSE) {
+.qcCapabilityAxisLabelDecimals <- function(breaks) {
+  if (length(breaks) < 2)
+    return(.numDecimals)
+
+  step <- min(diff(sort(unique(breaks))))
+  if (!is.finite(step) || step <= 0)
+    return(.numDecimals)
+
+  decimals <- ceiling(pmax(0, -log10(step) - 1e-8))
+  min(decimals, .numDecimals + 2)
+}
+
+.qcFormatCapabilityAxisLabelsFixed <- function(x, decimals) {
+  formatC(round(x, decimals), format = "f", digits = decimals)
+}
+
+.qcThinCapabilityAxisLabels <- function(breaks, labels, limits, panelWidthPx = 560, charWidthPx = 8.5, paddingPx = 16) {
+  if (length(breaks) <= 2 || diff(limits) <= 0)
+    return(labels)
+
+  positions <- (breaks - limits[1]) / diff(limits) * panelWidthPx
+  widths <- pmax(nchar(labels), 1) * charWidthPx + paddingPx
+
+  chooseEvenIndices <- function(nLabels, nBreaks) {
+    if (nLabels >= nBreaks)
+      return(seq_len(nBreaks))
+    if (nLabels <= 1)
+      return(round((nBreaks + 1) / 2))
+
+    stride <- nBreaks / nLabels
+    candidateOffsets <- seq_len(max(1, ceiling(stride)))
+    candidateIndices <- lapply(candidateOffsets, function(offset) {
+      indices <- unique(round(offset + (0:(nLabels - 1)) * stride))
+      indices <- indices[indices >= 1 & indices <= nBreaks]
+      if (length(indices) == nLabels) indices else NULL
+    })
+    candidateIndices <- Filter(Negate(is.null), candidateIndices)
+
+    if (length(candidateIndices) == 0)
+      return(unique(round(seq(1, nBreaks, length.out = nLabels + 2)[-c(1, nLabels + 2)])))
+
+    candidateScores <- lapply(candidateIndices, function(indices) {
+      diffs <- diff(indices)
+      list(
+        spread = max(diffs) - min(diffs),
+        edgeMargin = min(indices[1] - 1, nBreaks - indices[length(indices)]),
+        centerDistance = abs(mean(indices) - (nBreaks + 1) / 2)
+      )
+    })
+
+    orderVector <- order(
+      vapply(candidateScores, `[[`, numeric(1), "spread"),
+      -vapply(candidateScores, `[[`, numeric(1), "edgeMargin"),
+      vapply(candidateScores, `[[`, numeric(1), "centerDistance")
+    )
+    candidateIndices[[orderVector[1]]]
+  }
+
+  labelsFit <- function(indices) {
+    if (length(indices) <= 1)
+      return(TRUE)
+
+    gaps <- diff(positions[indices])
+    minRequired <- (widths[indices[-length(indices)]] + widths[indices[-1]]) / 2
+    all(gaps >= minRequired)
+  }
+
+  maxVisibleLabels <- min(length(labels), max(1, floor(panelWidthPx / max(widths))))
+  selectedIndices <- round((length(labels) + 1) / 2)
+  for (nVisible in seq(maxVisibleLabels, 1, by = -1)) {
+    candidateIndices <- chooseEvenIndices(nVisible, length(labels))
+    if (labelsFit(candidateIndices)) {
+      selectedIndices <- candidateIndices
+      break
+    }
+  }
+
+  output <- rep("", length(labels))
+  output[selectedIndices] <- labels[selectedIndices]
+  output
+}
+
+.qcCapabilityPlotAxisConfig <- function(allData, xLimits, occupiedRange = NULL, compress = FALSE, thinLabels = FALSE) {
+  if (!isTRUE(compress)) {
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(allData))
+    xStep <- diff(xBreaks)[1]
+    loExt <- min(xBreaks) - pmax(0, ceiling((min(xBreaks) - min(xLimits)) / xStep) * xStep)
+    hiExt <- max(xBreaks) + pmax(0, ceiling((max(xLimits) - max(xBreaks)) / xStep) * xStep)
+    nBreaks <- floor((hiExt - loExt) / xStep) + 1
+    if (nBreaks < 100)
+      xBreaks <- seq(loExt, hiExt, by = xStep)
+
+    xLimits <- range(xLimits, xBreaks)
+    xLabels <- if (isTRUE(thinLabels)) {
+      decimals <- .qcCapabilityAxisLabelDecimals(xBreaks)
+      .qcThinCapabilityAxisLabels(
+        xBreaks,
+        .qcFormatCapabilityAxisLabelsFixed(xBreaks, decimals),
+        xLimits
+      )
+    } else {
+      ggplot2::waiver()
+    }
+
+    return(list(
+      transform = function(x) x,
+      xBreaks = xBreaks,
+      xLabels = xLabels,
+      xLimits = xLimits,
+      breakMarkers = c(),
+      curveRange = xLimits,
+      hasBreak = FALSE
+    ))
+  }
+
   if (is.null(occupiedRange))
     occupiedRange <- range(allData, na.rm = TRUE)
 
@@ -968,7 +1082,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       allData = allData,
       xLimits = xLimits,
       occupiedRange = occupiedRange,
-      compress = options[["processCapabilityPlotCompressXAxis"]]
+      compress = options[["processCapabilityPlotCompressXAxis"]],
+      thinLabels = options[["processCapabilityPlotThinXAxisLabels"]]
     )
     xTransform <- axisConfig$transform
 
