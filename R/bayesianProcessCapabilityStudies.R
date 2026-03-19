@@ -36,9 +36,10 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
   .bpcsSequentialPointEstimatePlot(   jaspResults, dataset, options, fit, position = 6)
   .bpcsSequentialIntervalEstimatePlot(jaspResults, dataset, options, fit, position = 7)
+  .bpcsPosteriorUpdatingTable(        jaspResults, dataset, options,      position = 8)
 
-  .bpcsPlotPredictive(jaspResults, options, fit,      position = 8, base = "posteriorPredictiveDistributionPlot")
-  .bpcsPlotPredictive(jaspResults, options, priorFit, position = 9, base = "priorPredictiveDistributionPlot")
+  .bpcsPlotPredictive(jaspResults, options, fit,      position = 9, base = "posteriorPredictiveDistributionPlot")
+  .bpcsPlotPredictive(jaspResults, options, priorFit, position = 10, base = "priorPredictiveDistributionPlot")
 
 }
 
@@ -188,8 +189,10 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   return(do.call(BayesTools::prior, arguments))
 }
 
-.bpcsMuPriorFromOptions <- function(options) {
-  if (options$priorSettings == "default") {
+.bpcsMuPriorFromOptions <- function(options, x = NULL) {
+  if (options$priorSettings == "unitInformation") {
+    return(qc::create_prior_unit_information(x))
+  } else if (options$priorSettings == "default") {
     return(.bpcsDefaultNIGPrior(options))
   } else if (options$priorSettings == "jeffreys") {
     return("Jeffreys_mu")
@@ -199,8 +202,10 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 }
 
-.bpcsSigmaPriorFromOptions <- function(options) {
-  if (options$priorSettings == "default") {
+.bpcsSigmaPriorFromOptions <- function(options, x = NULL) {
+  if (options$priorSettings == "unitInformation") {
+    return(NULL)  # sigma is encoded in the PriorConjugate returned by .bpcsMuPriorFromOptions
+  } else if (options$priorSettings == "default") {
     return(.bpcsDefaultNIGPrior(options))
   } else if (options$priorSettings == "jeffreys") {
     return("Jeffreys_sigma")
@@ -264,13 +269,15 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 .bpcsSamplePosteriorOrPrior <- function(jaspResults, dataset, options, prior = FALSE) {
 
   base <- if (prior) "bpcsPriors" else "bpcs"
+  if (!.bpcsIsReady(options))
+    return(NULL)
   if (prior && !.bpcsCanSampleFromPriors(options))
     return(NULL)
 
   method <- options[["estimationMethod"]]
   if (is.null(method))
     method <- "mcmc"
-  if (options[["priorSettings"]] == "default")
+  if (options[["priorSettings"]] %in% c("default", "unitInformation"))
     method <- "integration"
   if (identical(method, "integration") && options[["capabilityStudyType"]] == "tCapabilityAnalysis")
     stop("Integration method is available only for the normal distribution.")
@@ -278,9 +285,10 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!is.null(jaspResults[[paste0(base, "ResultsObject")]]))
     return(jaspResults[[paste0(base, "ResultsObject")]]$object)
 
+  x <- dataset[[1L]]
   rawfit <- jaspResults[[paste0(base, "State")]] %setOrRetrieve% (
     qc::bpc(
-      dataset[[1L]],
+      x,
       iter = options[["noIterations"]],
       warmup = options[["noWarmup"]],
       chains = options[["noChains"]],
@@ -289,8 +297,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
       target        = options[["targetValue"]],
       LSL           = options[["lowerSpecificationLimitValue"]],
       USL           = options[["upperSpecificationLimitValue"]],
-      prior_mu      = .bpcsMuPriorFromOptions(options),
-      prior_sigma   = .bpcsSigmaPriorFromOptions(options),
+      prior_mu      = .bpcsMuPriorFromOptions(options, x),
+      prior_sigma   = .bpcsSigmaPriorFromOptions(options, x),
       prior_nu      = .bpcsTPriorFromOptions(options),
       sample_priors = prior,
       method        = method
@@ -779,6 +787,70 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 }
 
+.bpcsPosteriorUpdatingTable <- function(jaspResults, dataset, options, position) {
+
+  if (!options[["sequentialAnalysisUpdatingTable"]] || !is.null(jaspResults[["posteriorUpdatingTable"]]))
+    return()
+
+  selectedMetrics <- .bpcsGetSelectedMetrics(options)
+  showInterval    <- isTRUE(options[["sequentialAnalysisPointIntervalPlot"]])
+
+  table <- createJaspTable(title = gettext("Posterior Updating"), position = position)
+  table$dependOn(c(
+    .bpcsDefaultDeps(),
+    .bpcsProcessCriteriaDeps(),
+    "sequentialAnalysisUpdatingTable",
+    "sequentialAnalysisPointEstimatePlot",
+    "sequentialAnalysisPointIntervalPlot",
+    paste0("sequentialAnalysisPointIntervalPlot", c("TypeLower", "TypeUpper")),
+    "sequentialAnalysisMaxFailures"
+  ))
+
+  table$addColumnInfo(name = "n", title = gettext("n"), type = "integer")
+  for (metric in selectedMetrics) {
+    table$addColumnInfo(name = paste0(metric, "_mean"),   title = gettext("Mean"),   type = "number", overtitle = metric)
+    table$addColumnInfo(name = paste0(metric, "_median"), title = gettext("Median"), type = "number", overtitle = metric)
+    table$addColumnInfo(name = paste0(metric, "_lower"),  title = gettext("Lower"),  type = "number", overtitle = metric)
+    table$addColumnInfo(name = paste0(metric, "_upper"),  title = gettext("Upper"),  type = "number", overtitle = metric)
+    if (showInterval)
+      table$addColumnInfo(name = paste0(metric, "_interval"), title = gettext("Interval"), type = "number", overtitle = metric)
+  }
+
+  jaspResults[["posteriorUpdatingTable"]] <- table
+
+  if (!.bpcsIsReady(options) || jaspResults$getError())
+    return()
+
+  seqData <- .bpcsGetSequentialAnalysis(jaspResults, dataset, options, fit = NULL)
+  if (is.null(seqData))
+    return()
+
+  estimates <- seqData$data
+  nseq      <- attr(estimates, "nseq")
+
+  for (i in seq_along(nseq)) {
+    row <- list(n = nseq[i])
+    for (metric in selectedMetrics) {
+      if (!metric %in% dimnames(estimates)[[1]]) next
+      row[[paste0(metric, "_mean")]]   <- estimates[metric, "mean",   i]
+      row[[paste0(metric, "_median")]] <- estimates[metric, "median", i]
+      row[[paste0(metric, "_lower")]]  <- estimates[metric, "lower",  i]
+      row[[paste0(metric, "_upper")]]  <- estimates[metric, "upper",  i]
+      if (showInterval)
+        row[[paste0(metric, "_interval")]] <- estimates[metric, "custom", i]
+    }
+    table$addRows(row)
+  }
+
+  table$addFootnote(gettext("Lower and Upper correspond to the 95% credible interval."))
+  table$addFootnote(gettext("Sequential analysis starts at n\u00a0=\u00a02. For the t-model, n\u00a0=\u00a02 may fail and is then skipped."))
+  if (showInterval) {
+    table$addFootnote(gettextf("Interval: P(%1$.3f \u2264 metric \u2264 %2$.3f).",
+                               options[["sequentialAnalysisPointIntervalPlotTypeLower"]],
+                               options[["sequentialAnalysisPointIntervalPlotTypeUpper"]]))
+  }
+}
+
 .bpcsGetSequentialAnalysis <- function(jaspResults, dataset, options, fit) {
 
   if (!.bpcsIsReady(options) || jaspResults$getError()) return()
@@ -809,8 +881,18 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
 .bpcsComputeSequentialAnalysis <- function(dataset, options, fit) {
 
+  method <- options[["estimationMethod"]]
+  if (is.null(method))
+    method <- "mcmc"
+  if (options[["priorSettings"]] %in% c("default", "unitInformation"))
+    method <- "integration"
+  if (identical(method, "integration") && options[["capabilityStudyType"]] == "tCapabilityAnalysis")
+    stop("Integration method is available only for the normal distribution.")
+
   n <- nrow(dataset)
-  nfrom <- min(n, 3L) # Gaussian could do 2, but let's not push it
+  # Always start at n=2. For the t-model, n=2 may fail (not enough data for the
+  # degrees-of-freedom parameter); such failures are handled gracefully below.
+  nfrom <- min(n, 2L)
   nto   <- n
   nby   <- 1L
   nseq <- seq(nfrom, nto, by = nby)
@@ -828,17 +910,11 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
   jaspBase::startProgressbar(length(nseq), label = gettext("Running sequential analysis"))
 
-  priorMu    <- .bpcsMuPriorFromOptions(options)
-  priorSigma <- .bpcsSigmaPriorFromOptions(options)
   priorNu    <- .bpcsTPriorFromOptions(options)
-
-  method <- options[["estimationMethod"]]
-  if (is.null(method))
-    method <- "mcmc"
-  if (options[["priorSettings"]] == "default")
-    method <- "integration"
-  if (identical(method, "integration") && options[["capabilityStudyType"]] == "tCapabilityAnalysis")
-    stop("Integration method is available only for the normal distribution.")
+  isUIP      <- options[["priorSettings"]] == "unitInformation"
+  # For non-UIP priors, compute once; for UIP, recompute per subset inside the loop
+  priorMu    <- if (!isUIP) .bpcsMuPriorFromOptions(options) else NULL
+  priorSigma <- if (!isUIP) .bpcsSigmaPriorFromOptions(options) else NULL
 
   maxFailures <- options[["sequentialAnalysisMaxFailures"]]
   if (is.null(maxFailures)) maxFailures <- 10L
@@ -854,8 +930,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
         target      = options[["targetValue"]],
         LSL         = options[["lowerSpecificationLimitValue"]],
         USL         = options[["upperSpecificationLimitValue"]],
-        prior_mu    = priorMu,
-        prior_sigma = priorSigma,
+        prior_mu    = if (isUIP) .bpcsMuPriorFromOptions(options, x_i) else priorMu,
+        prior_sigma = if (isUIP) NULL else priorSigma,
         prior_nu    = priorNu,
         method      = method
       )
@@ -921,6 +997,9 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     pointEstimateName <- "custom"
     add_additional_info <- FALSE
     y_limits <- c(0, 1)
+    # Clamp user-supplied custom axes to [0, 1] — interval probabilities cannot exceed this
+    if (!is.null(axes_custom[["ymin"]])) axes_custom[["ymin"]] <- max(axes_custom[["ymin"]], 0)
+    if (!is.null(axes_custom[["ymax"]])) axes_custom[["ymax"]] <- min(axes_custom[["ymax"]], 1)
     y_title <- gettextf("P(%1$.3f \u2264 x \u2264 %2$.3f)",
                        options$sequentialAnalysisPointIntervalPlotTypeLower,
                        options$sequentialAnalysisPointIntervalPlotTypeUpper)
@@ -951,6 +1030,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
     upper  = as.vector(estimates[, "upper", ]),
   )
   tb <- tb[tb$metric %in% selectedMetrics, , drop = FALSE]
+  tb$metric <- droplevels(tb$metric)
   metricExpressions <- parse(text = .bpcsMetricToPlotmath(as.character(unique(tb$metric))))
   metricLabeller <- ggplot2::as_labeller(
     setNames(.bpcsMetricToPlotmath(selectedMetrics), selectedMetrics),
@@ -967,6 +1047,11 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 
     observedRange[1L] <- min(observedRange[1L], gridLines[1L] - 0.1 * dist)
     observedRange[2L] <- max(observedRange[2L], gridLines[length(gridLines)] + 0.1 * dist)
+
+    if (custom) {
+      observedRange[1L] <- max(observedRange[1L], y_limits[1L])
+      observedRange[2L] <- min(observedRange[2L], y_limits[2L])
+    }
 
     leftBreaks <- jaspGraphs::getPrettyAxisBreaks(observedRange)
     leftLimits <- range(leftBreaks)
@@ -1217,9 +1302,7 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   }
 
   tryCatch({
-    raw_samples       <- qc:::extract_samples(fit$rawfit, bootstrap = FALSE)
-    samples           <- qc:::samples_to_mu_and_sigma(raw_samples)
-    predictiveSamples <- qc:::samples_to_posterior_predictives(samples)
+    predictiveSamples <- qc::extract_predictive_samples(fit$rawfit, n_samples = 10000L)
 
     plt <- jaspGraphs::jaspHistogram(
       predictiveSamples,

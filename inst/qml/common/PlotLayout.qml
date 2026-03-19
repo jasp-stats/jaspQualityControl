@@ -34,6 +34,7 @@ Group
 	property	bool	hasPanels: 		true
 	property	bool	hasRegions:		false
 	property	bool	hasLegend:		false
+	property	bool	priorEnabled:	true
 
 	readonly property alias checked:	mainCheckBox.checked
 
@@ -226,6 +227,24 @@ Group
 				RadioButton { value: "custom";		label: qsTr("Custom axes");	}
 			}
 
+			CheckBox
+			{
+				enabled:	hasPrior && root.priorEnabled && !regionColoringCheckbox.checked
+				visible:	hasPrior
+				name:		baseName + "PriorDistribution"
+				label:		qsTr("Show prior distribution")
+				checked:	false
+			}
+
+			CheckBox
+			{
+				enabled:	hasLegend
+				visible:	hasLegend
+				name:		baseName + "ShowLegend"
+				label:		qsTr("Show legend")
+				checked:	true
+			}
+
 			Group
 			{
 
@@ -259,28 +278,10 @@ Group
 					// Row 2: y axis
 					Label { text: qsTr("y axis"); }
 					Item{}
-					DoubleField { name: baseName + "custom_y_min"; id: custom_y_min; fieldWidth: customAxesLayout.dbWidth; defaultValue: 0.00; negativeValues: false; max: custom_y_max.value}
+					DoubleField { name: baseName + "custom_y_min"; id: custom_y_min; fieldWidth: customAxesLayout.dbWidth; defaultValue: 0.00; negativeValues: true; max: custom_y_max.value}
 					Item{}
-					DoubleField { name: baseName + "custom_y_max"; id: custom_y_max; fieldWidth: customAxesLayout.dbWidth; defaultValue: 1.00; negativeValues: false; min: custom_y_min.value}
+					DoubleField { name: baseName + "custom_y_max"; id: custom_y_max; fieldWidth: customAxesLayout.dbWidth; defaultValue: 1.00; negativeValues: true; min: custom_y_min.value}
 				}
-			}
-
-			CheckBox
-			{
-				enabled:	hasPrior
-				visible:	hasPrior
-				name:		baseName + "PriorDistribution"
-				label:		qsTr("Show prior distribution")
-				checked:	false
-			}
-
-			CheckBox
-			{
-				enabled:	hasLegend
-				visible:	hasLegend
-				name:		baseName + "ShowLegend"
-				label:		qsTr("Show legend")
-				checked:	true
 			}
 		}
 	}

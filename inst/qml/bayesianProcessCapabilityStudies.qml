@@ -290,6 +290,7 @@ Form
 		Common.PlotLayout
 		{
 			hasRegions: true
+			priorEnabled: !intervalPlot.checked
 		}
 
 		Common.PlotLayout
@@ -302,6 +303,7 @@ Form
 
 		CheckBox
 		{
+			id: intervalPlot
 			name: "intervalPlot"
 			label: qsTr("Interval plot")
 			info: qsTr("Show the posterior probabilities of the intervals using pie charts.")
@@ -321,6 +323,7 @@ Form
 			baseLabel: qsTr("Point estimate plot")
 			hasPrior: false
 			hasLegend: true
+			info: qsTr("Sequential analysis starting from n\u202f=\u202f2. For the t-model n\u202f=\u202f2 may fail and is then skipped. This is the minimum number of observations needed to estimate both location and scale.")
 		}
 
 		Common.PlotLayout
@@ -333,6 +336,7 @@ Form
 			hasCi: false
 			hasType: true
 			hasLegend: true
+			info: qsTr("Sequential analysis starting from n\u202f=\u202f2. For the t-model n\u202f=\u202f2 may fail and is then skipped. The y-axis is capped at 1 because interval probabilities are bounded above by 1.")
 		}
 
 		Group
@@ -349,12 +353,11 @@ Form
 
 			CheckBox
 			{
-				// TODO:
 				enabled:	sequentialAnalysisPointEstimatePlot.checked || sequentialAnalysisIntervalEstimatePlot.checked
 				name:		"sequentialAnalysisUpdatingTable"
 				label:		qsTr("Posterior updating table")
 				checked:	false
-				info:		qsTr("Show the data from the sequential analysis in a table. Will show both the information for the point estimate and interval estimate plots, if both are selected.")
+				info:		qsTr("Show the data from the sequential analysis in a wide-format table. Each metric is shown with its mean, median, and 95% credible interval. If the interval estimate plot is also selected, the interval probability is included as an additional column. The table starts at n\u202f=\u202f2; for the t-model this may fail and is then skipped.")
 			}
 
 			IntegerField
@@ -410,10 +413,12 @@ Form
 			id: priorSettings
 			name: "priorSettings"
 			label: qsTr("Prior distributions")
+			info: qsTr("Select the prior distribution for the model parameters. 'Unit information' is a data-dependent prior placing one unit of Fisher information on the parameters; it requires no manual specification.")
 			values:
 			[
 				{label: qsTr("Default (NIG conjugate)"),		value: "default"},
 				{label: qsTr("Jeffreys"),						value: "jeffreys"},
+				{label: qsTr("Unit information"),				value: "unitInformation"},
 				{label: qsTr("Conjugate"),						value: "conjugate"},
 				{label: qsTr("Weakly informative conjugate"),	value: "weaklyInformativeConjugate"},
 				{label: qsTr("Weakly informative uniform"),		value: "weaklyInformativeUniform"},
@@ -428,7 +433,9 @@ Form
 			priorType: capabilityStudyType.value === "normalCapabilityAnalysis" ? "normalModel" : "tModel"
 
 			hasTruncation: priorSettings.currentValue === "customInformative"
-			hasParameters: priorSettings.currentValue !== "default" && priorSettings.currentValue !== "jeffreys"
+			hasParameters: priorSettings.currentValue !== "default" &&
+			               priorSettings.currentValue !== "jeffreys" &&
+			               priorSettings.currentValue !== "unitInformation"
 
 			dropDownValuesMap: {
 				switch (priorSettings.currentValue) {
@@ -442,6 +449,12 @@ Form
 						return {
 							"mean": 	[{ label: qsTr("Jeffreys"),				value: "jeffreys"}],
 							"sigma": 	[{ label: qsTr("Jeffreys"),				value: "jeffreys"}],
+							"df": 		[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }]
+						}
+					case "unitInformation":
+						return {
+							"mean": 	[{ label: qsTr("Normal(μ,σ)"),			value: "normal"}],
+							"sigma": 	[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }],
 							"df": 		[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }]
 						}
 					case "conjugate":
