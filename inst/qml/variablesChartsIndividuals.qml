@@ -58,7 +58,7 @@ Form
 				label:							qsTr("Moving range length")
 				defaultValue:					2
 				min: 							2
-				max: 							dataSetInfo.rowCount
+				max: 							(dataSetInfo.rowCount < 2)? 2 : dataSetInfo.rowCount
 			}
 		}
 
