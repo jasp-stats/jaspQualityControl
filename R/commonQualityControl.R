@@ -1417,7 +1417,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                      "logistic",
                                                      "loglogistic"),
                                     fix.arg = NULL) {
-  estimationErrorMessage <- estimationErrorMessage
+  estimationErrorMessage <- gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely.")
   allParametersFixed <- .allParametersFixed(distribution, fix.arg)
     ####################
     #### Lognormal #####
