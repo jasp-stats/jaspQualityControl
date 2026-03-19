@@ -1430,7 +1430,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       # If no arguments are fixed, the "mvue" estimation method that is only implemented in EnvStats matches other software more closely
       fitLnorm <- try(EnvStats::elnorm(data))
       if (jaspBase::isTryError(fitLnorm))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
       beta <- fitLnorm$parameters[[1]] # shape / logmean
       theta <- fitLnorm$parameters[[2]] # scale / log std. dev.
     } else {
@@ -1438,7 +1438,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       fitLnorm <- try(fitdistrplus::fitdist(data, "lnorm", method = "mle", fix.arg = fix.arg))
 
       if (jaspBase::isTryError(fitLnorm))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
 
       lnormPars <- fitLnorm$estimate
       if (!is.null(fix.arg)) { # we already know that, but to keep it consistent with the other chunks
@@ -1463,7 +1463,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                               fix.arg = fix.arg))
 
       if (jaspBase::isTryError(fitWeibull))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
 
       weibullPars <- fitWeibull$estimate
       if (!is.null(fix.arg)) {
@@ -1485,7 +1485,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       # Set starting values that match other software packages more closely
       lnorm3start <- try(EnvStats::elnorm3(data))
       if (jaspBase::isTryError(lnorm3start))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
       lnorm3start <- lnorm3start$parameters
       lnorm3startMeanLog <- lnorm3start[[1]]
       lnorm3startSdLog <- lnorm3start[[2]]
@@ -1517,7 +1517,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                              start = lnorm3startList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(lnorm3Fit))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
 
 
       lnorm3Pars <- lnorm3Fit$estimate
@@ -1541,7 +1541,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       weibull3start <- try(MASS::fitdistr(data, function(x, shape, scale, thres)
         dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0)))
       if (jaspBase::isTryError(weibull3start))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
       weibull3start <- weibull3start$estimate
       weibull3startShape <- weibull3start[[1]]
       weibull3startScale <- weibull3start[[2]]
@@ -1571,7 +1571,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                                 start = weibull3startList,
                                                 fix.arg = fix.arg))
       if (jaspBase::isTryError(weilbull3Fit))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
 
       weibull3Pars <- weilbull3Fit$estimate
 
@@ -1598,7 +1598,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                               reltol = .Machine$double.eps^0.75),
                                             fix.arg = fix.arg))
       if (jaspBase::isTryError(gammaFit))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
 
       gammaPars <- gammaFit$estimate
 
@@ -1640,7 +1640,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                           fix.arg = fix.arg))
 
       if (jaspBase::isTryError(logFit))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
 
       logPars <- logFit$estimate
 
@@ -1687,7 +1687,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                                              start = loglogStartList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(loglogFit))
-        stop(gettext("Parameter estimation failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
 
       loglogPars <- loglogFit$estimate
 

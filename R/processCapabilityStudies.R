@@ -2757,7 +2757,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else if (options[["nullDistribution"]] == "lognormal") {
       fit <- try(EnvStats::elnorm(dataCurrentStage))
       if (jaspBase::isTryError(fit)) {
-        stop(gettext("Fitting lognormal distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("Fitting lognormal distribution failed, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
       }
       meanlog <- as.numeric(fit$parameters[1])
       sdlog <- as.numeric(fit$parameters[2])
@@ -2795,7 +2795,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else if (options[["nullDistribution"]] == "weibull") {
       fit_Weibull <- try(.distributionParameters(dataCurrentStage, distribution = "weibull", fix.arg = NULL))
       if (jaspBase::isTryError(fit_Weibull)) {
-        stop(gettext("Fitting Weibull distribution failed. Values might be too extreme. Try a different distribution."), call. = FALSE)
+        stop(gettext("Fitting Weibull distribution failed, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."), call. = FALSE)
       }
       shape <- as.numeric(fit_Weibull[["beta"]])
       scale <- as.numeric(fit_Weibull[["theta"]])
