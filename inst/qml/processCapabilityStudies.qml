@@ -139,10 +139,9 @@ Form
 					name: 									"manualSubgroupSizeValue"
 					id:										manualSubgroupSizeValue
 					min: 									1
-					max:									dataSetModel.rowCount()
+					max:									dataSetInfo.rowCount
 					negativeValues:							false
-					defaultValue:							5
-					
+					defaultValue:							(dataSetInfo.rowCount < 5)? dataSetInfo.rowCount : 5
 				}
 			}
 			
