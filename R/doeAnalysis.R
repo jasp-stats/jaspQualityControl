@@ -15,6 +15,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+.formatCoefEquation <- function(x, digits = .numDecimals) {
+  vapply(x, function(val) {
+    if (val == 0) return("0")
+    absVal <- abs(val)
+    if (absVal < 1e4) {
+      # avoid e-notation for small-to-moderate numbers
+      mag <- floor(log10(absVal))
+      sigDigits <- max(digits, mag + 1 + digits)
+      trimws(formatC(val, digits = sigDigits, format = "g", drop0trailing = TRUE))
+    } else {
+      trimws(formatC(val, digits = digits, format = "g", drop0trailing = TRUE))
+    }
+  }, character(1))
+}
+
 #' @export
 doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
@@ -604,7 +619,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
     }
 
     # Uncoded Formula
-    fmtCoef <- formatC(abs(coefs[-1, 1]), digits = .numDecimals, format = "g")
+    fmtCoef <- .formatCoefEquation(abs(coefs[-1, 1]), digits = .numDecimals)
     coefFormula <- paste(ifelse(sign(coefs[-1,1])==1, " +", " \u2013"),
                          fmtCoef,
                          coefNames[-1],
@@ -612,11 +627,11 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
     # Now add dependent name and intercept
     filledFormula <- paste0(dep, " = ",
-                            formatC(coefs[1, 1], digits = .numDecimals, format = "g"),
+                            .formatCoefEquation(coefs[1, 1], digits = .numDecimals),
                             coefFormula)
 
     # Coded Formula
-    fmtCoefCoded <- formatC(abs(coefsCoded[-1, 1]), digits = .numDecimals, format = "g")
+    fmtCoefCoded <- .formatCoefEquation(abs(coefsCoded[-1, 1]), digits = .numDecimals)
     coefFormulaCoded <- paste(ifelse(sign(coefsCoded[-1,1])==1, " +", " \u2013"),
                               fmtCoefCoded,
                               coefNames[-1],
@@ -624,7 +639,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
 
 
     filledFormulaCoded <- paste0(dep, " = ",
-                                 formatC(coefsCoded[1, 1], digits = .numDecimals, format = "g"),
+                                 .formatCoefEquation(coefsCoded[1, 1], digits = .numDecimals),
                                  coefFormulaCoded)
 
     result[["regression"]][["filledFormula"]] <- gsubInteractionSymbol(filledFormula)
