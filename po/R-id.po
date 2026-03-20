@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.96.0\n"
 "POT-Creation-Date: 2026-03-14 04:20\n"
-"PO-Revision-Date: 2026-03-20 12:47+0000\n"
+"PO-Revision-Date: 2026-03-21 04:14+0000\n"
 "Last-Translator: Zahid Rizky Fakhri <zahidrizkyfakhri@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/id/>\n"
@@ -290,7 +290,7 @@ msgid "One or more input parameters for continuous predictors are outside of the
 msgstr ""
 
 msgid "Model Summary"
-msgstr ""
+msgstr "Ringkasan Model"
 
 msgid "Adjusted %s"
 msgstr ""
@@ -356,7 +356,7 @@ msgid "Name"
 msgstr ""
 
 msgid "Level"
-msgstr ""
+msgstr "Tingkat"
 
 msgid "Regression equation in %s Units"
 msgstr ""
@@ -587,13 +587,13 @@ msgid "Percent"
 msgstr "Persen"
 
 msgid "Lower"
-msgstr ""
+msgstr "Bawah"
 
 msgid "Confidence interval of 95%%"
 msgstr ""
 
 msgid "Upper"
-msgstr ""
+msgstr "Atas"
 
 msgid "Invalid reference and/or results were inserted."
 msgstr ""
@@ -938,7 +938,7 @@ msgid "Gauge r&R (nested)"
 msgstr ""
 
 msgid "p"
-msgstr ""
+msgstr "p"
 
 msgid "Variation"
 msgstr ""
@@ -1220,13 +1220,13 @@ msgid "Parameter"
 msgstr ""
 
 msgid "Estimate"
-msgstr ""
+msgstr "Estimasi"
 
 msgid "Fitting the model failed with the following error message:\n%s"
 msgstr ""
 
 msgid "Intercept"
-msgstr ""
+msgstr "Intersepsi"
 
 msgid "The IWLS algorithm did not converge. Interpret the results with caution."
 msgstr ""
@@ -1238,7 +1238,7 @@ msgid "Fit Table"
 msgstr ""
 
 msgid "AIC"
-msgstr ""
+msgstr "AIC"
 
 msgid "Detection Plot"
 msgstr ""
@@ -1670,7 +1670,7 @@ msgid "Autocorrelation"
 msgstr ""
 
 msgid "Lag"
-msgstr ""
+msgstr "Penundaan"
 
 msgid "Control charts"
 msgstr ""
