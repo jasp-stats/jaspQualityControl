@@ -777,8 +777,11 @@ get_levels <- function(var, num_levels, dataset) {
     predType <- if (pred %in% continuousPredictors) "number" else "string"
     tb2$addColumnInfo(name = pred, title = pred, type = predType)
   }
-  for (dep in roDependent)
-    tb2$addColumnInfo(name = paste0(dep, " fit"), title = paste0(dep, " fit"), type = "number")
+  for (dep in roDependent) {
+    colName  <- paste0(dep, "_fit")
+    colTitle <- gettextf("%s fit", dep)
+    tb2$addColumnInfo(name = colName, title = colTitle, type = "number")
+  }
   tb2$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
                              "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
                              "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
@@ -794,8 +797,10 @@ get_levels <- function(var, num_levels, dataset) {
     else
       rows2[[pred]] <- as.character(optimParam[[pred]])
   }
-  for (dep in roDependent)
-    rows2[[paste0(dep, " fit")]] <- round(as.numeric(predValues[[dep]]), .numDecimals)
+  for (dep in roDependent) {
+    colName <- paste0(dep, "_fit")
+    rows2[[colName]] <- round(as.numeric(predValues[[dep]]), .numDecimals)
+  }
   tb2$addRows(rows2)
 }
 
