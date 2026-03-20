@@ -942,7 +942,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!is.finite(baseStep))
     baseStep <- occupiedSpan / 4
 
-  focusPadding <- max(baseStep, occupiedSpan * 0.08)
+  focusPadding <- max(baseStep * 1.5, occupiedSpan * 0.12)
   focusRange <- c(max(xLimits[1], occupiedRange[1] - focusPadding), min(xLimits[2], occupiedRange[2] + focusPadding))
   if (focusRange[1] >= focusRange[2])
     focusRange <- occupiedRange
@@ -950,7 +950,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   focusSpan <- max(diff(focusRange), 1e-8)
   leftGap   <- max(0, focusRange[1] - xLimits[1])
   rightGap  <- max(0, xLimits[2] - focusRange[2])
-  compressThreshold <- max(focusSpan * 1.25, baseStep * 6)
+  compressThreshold <- max(focusSpan * 0.6, baseStep * 3)
   compressedGap     <- max(focusSpan * 0.18, baseStep * 1.5)
   compressLeft      <- isTRUE(compress) && leftGap > compressThreshold
   compressRight     <- isTRUE(compress) && rightGap > compressThreshold
@@ -978,12 +978,46 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
   centerBreaks <- unique(pretty(focusRange, n = 5))
   centerBreaks <- centerBreaks[centerBreaks >= focusRange[1] & centerBreaks <= focusRange[2]]
-  breaksOriginal <- sort(unique(c(
-    if (compressLeft) xLimits[1] else pretty(c(xLimits[1], focusRange[1]), n = 2),
-    centerBreaks,
-    if (compressRight) xLimits[2] else pretty(c(focusRange[2], xLimits[2]), n = 2)
-  )))
-  breaksOriginal <- breaksOriginal[breaksOriginal >= xLimits[1] & breaksOriginal <= xLimits[2]]
+
+  if (compressLeft || compressRight) {
+    sideBreaksLeft <- if (compressLeft) xLimits[1] else pretty(c(xLimits[1], focusRange[1]), n = 2)
+    sideBreaksRight <- if (compressRight) xLimits[2] else pretty(c(focusRange[2], xLimits[2]), n = 2)
+    shoulderBreaks <- numeric(0)
+    if (compressLeft)
+      shoulderBreaks <- c(shoulderBreaks, focusRange[1])
+    if (compressRight)
+      shoulderBreaks <- c(shoulderBreaks, focusRange[2])
+    breaksOriginal <- sort(unique(c(sideBreaksLeft, shoulderBreaks, centerBreaks, sideBreaksRight)))
+    breaksOriginal <- breaksOriginal[breaksOriginal >= xLimits[1] & breaksOriginal <= xLimits[2]]
+
+    centerLabelBreaks <- centerBreaks[centerBreaks > focusRange[1] & centerBreaks < focusRange[2]]
+    if (length(centerLabelBreaks) < 2)
+      centerLabelBreaks <- centerBreaks
+
+    if (length(centerLabelBreaks) > 3) {
+      keepIndices <- unique(round(seq(1, length(centerLabelBreaks), length.out = 3)))
+      centerLabelBreaks <- centerLabelBreaks[keepIndices]
+    }
+
+    visibleBreaks <- centerLabelBreaks
+    if (compressLeft)
+      visibleBreaks <- c(xLimits[1], visibleBreaks)
+    if (compressRight)
+      visibleBreaks <- c(visibleBreaks, xLimits[2])
+
+    decimals <- max(3, .qcCapabilityAxisLabelDecimals(visibleBreaks))
+    xLabels <- rep("", length(breaksOriginal))
+    visibleIndices <- which(breaksOriginal %in% visibleBreaks)
+    xLabels[visibleIndices] <- .qcFormatCapabilityAxisLabelsFixed(breaksOriginal[visibleIndices], decimals)
+  } else {
+    breaksOriginal <- sort(unique(c(
+      pretty(c(xLimits[1], focusRange[1]), n = 2),
+      centerBreaks,
+      pretty(c(focusRange[2], xLimits[2]), n = 2)
+    )))
+    breaksOriginal <- breaksOriginal[breaksOriginal >= xLimits[1] & breaksOriginal <= xLimits[2]]
+    xLabels <- .qcFormatCapabilityAxisLabels(breaksOriginal)
+  }
 
   displayLimits <- range(transform_x(xLimits))
   breakMarkers <- c()
@@ -995,7 +1029,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   list(
     transform = transform_x,
     xBreaks = transform_x(breaksOriginal),
-    xLabels = .qcFormatCapabilityAxisLabels(breaksOriginal),
+    xLabels = xLabels,
     xLimits = displayLimits,
     breakMarkers = breakMarkers,
     curveRange = if (compressLeft || compressRight) focusRange else xLimits,
@@ -1269,20 +1303,33 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     }
 
     if (axisConfig$hasBreak) {
-      slashHeight <- yUpper * 0.05
-      slashWidth <- diff(axisConfig$xLimits) * 0.01
-      slashGap <- slashWidth * 0.75
+      slashHeight <- yUpper * 0.04
+      slashDepth <- yUpper * 0.02
+      slashWidth <- diff(axisConfig$xLimits) * 0.012
+      slashGap <- slashWidth * 0.9
+      axisCutDf <- do.call(rbind, lapply(axisConfig$breakMarkers, function(marker) {
+        data.frame(
+          x = marker - (slashGap + slashWidth) * 1.4,
+          xend = marker + (slashGap + slashWidth) * 1.4,
+          y = 0,
+          yend = 0
+        )
+      }))
       breakMarkerDf <- do.call(rbind, lapply(axisConfig$breakMarkers, function(marker) {
         data.frame(
           x = c(marker - slashGap - slashWidth / 2, marker + slashGap - slashWidth / 2),
           xend = c(marker - slashGap + slashWidth / 2, marker + slashGap + slashWidth / 2),
-          y = c(0.01 * yUpper, 0.01 * yUpper),
+          y = c(-slashDepth, -slashDepth),
           yend = c(slashHeight, slashHeight)
         )
       }))
-      p <- p + ggplot2::geom_segment(data = breakMarkerDf,
+      p <- p +
+        ggplot2::geom_segment(data = axisCutDf,
+                              mapping = ggplot2::aes(x = x, xend = xend, y = y, yend = yend),
+                              inherit.aes = FALSE, linewidth = 2.2, color = "white") +
+        ggplot2::geom_segment(data = breakMarkerDf,
                                      mapping = ggplot2::aes(x = x, xend = xend, y = y, yend = yend),
-                                     inherit.aes = FALSE, linewidth = 0.7)
+                                     inherit.aes = FALSE, linewidth = 1.1, color = "black")
     }
 
     if (length(legendColors) > 0) {
@@ -1292,6 +1339,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (nStages > 1)
       p <- p + ggplot2::ggtitle(stage) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
     p <- p + jaspGraphs::geom_rangeframe() +
+      ggplot2::coord_cartesian(clip = "off") +
       jaspGraphs::themeJaspRaw() +
       ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(),
                      legend.position = "right", plot.margin = ggplot2::margin(12, 18, 8, 8))
