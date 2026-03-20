@@ -1028,13 +1028,18 @@ get_levels <- function(var, num_levels, dataset) {
 
   tbTitle <- if (options[["optimizationPlotCustomParameters"]]) gettext("Optimization Plot Summary (Manual Predictor Values)") else gettext("Optimization Plot Summary")
   tb <- createJaspTable(tbTitle)
-  tb$addColumnInfo(name = "desi", title = "Composite desirability", type = "number")
+  tb$addColumnInfo(name = "desi", title = gettext("Composite desirability"), type = "number")
   for (pred in allPredictors) {
     predType <- if (pred %in% continuousPredictors) "number" else "string"
     tb$addColumnInfo(name = pred, title = pred, type = predType)
   }
-  for (dep in roDependent)
-    tb$addColumnInfo(name = paste0(dep, " fit"), title = paste0(dep, " fit"), type = "number")
+
+  for (dep in roDependent) {
+    colName  <- paste0(dep, " fit")
+    colTitle <- gettextf("%s fit", dep)
+    tb$addColumnInfo(name = colName, title = colTitle, type = "number")
+  }
+
   tb$dependOn(options = c("responsesResponseOptimizer", "responseOptimizerGoal", "responseOptimizerLowerBound", "responseOptimizerTarget",
                     "responseOptimizerUpperBound", "responseOptimizerWeight", "responseOptimizerImportance",
                     "optimizationPlotCustomParameters", "responseOptimizerManualBounds", "responseOptimizerManualTarget",
