@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-03-14 04:20\n"
+"POT-Creation-Date: 2026-03-21 04:16\n"
 "PO-Revision-Date: 2024-05-23 20:41+0000\n"
 "Last-Translator: Koen Derks <koen-derks@hotmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/jasp/"
@@ -231,11 +231,11 @@ msgid "USL = %g"
 msgstr "USL = %g"
 
 msgid ""
-"Parameter estimation failed. Values might be too extreme. Try a different "
-"distribution."
+"The parameters could not be estimated for the selected distribution, most "
+"likely because the observed distribution of the data are very far away from "
+"the selected distribution, please try one that describes your data more "
+"closely."
 msgstr ""
-"Parameterschatting mislukt. De waarden zijn misschien te extreem. Probeer "
-"een andere verdeling."
 
 msgid "Design of Experiments - Analysis"
 msgstr ""
@@ -286,6 +286,9 @@ msgstr ""
 msgid "Response Optimizer Solution"
 msgstr ""
 
+msgid "%s fit"
+msgstr ""
+
 #, fuzzy
 msgid "Optimization Plot"
 msgstr "Detectie Figuur"
@@ -321,6 +324,10 @@ msgstr ""
 
 msgid "Optimization Plot Summary"
 msgstr ""
+
+#, fuzzy
+msgid "Composite desirability"
+msgstr "Geschiktheid"
 
 msgid ""
 "One or more input parameters for continuous predictors are outside of the "
@@ -1551,8 +1558,9 @@ msgstr ""
 msgid "Process Capability Report"
 msgstr "Procesgeschiktheid Rapport"
 
-msgid "No specification limits set."
-msgstr "Geen specificatiegrenzen vastgesteld."
+msgid ""
+"Set at least one specification limit (upper or lower) to start the analysis."
+msgstr ""
 
 msgid "Line: %s"
 msgstr "Lijn: %s"
@@ -1793,6 +1801,9 @@ msgstr ""
 msgid "Process performance (total)"
 msgstr "Procesprestatie (totaal)"
 
+msgid "Non-conformance statistics"
+msgstr "Statistieken over non-conformiteit"
+
 msgid "Pp"
 msgstr "Pp"
 
@@ -1819,9 +1830,6 @@ msgstr "Cpm"
 
 msgid "%s CI for Cpm"
 msgstr "%s BI voor Cpm"
-
-msgid "Non-conformance statistics"
-msgstr "Statistieken over non-conformiteit"
 
 msgid ""
 "Rows titled 'Change' concern changes of the respective stage in comparison "
@@ -1927,11 +1935,16 @@ msgid "Probability plot against %1$s distribution"
 msgstr "Kansfiguur tegen %1$s verdeling"
 
 msgid ""
-"Fitting distribution failed. Values might be too extreme. Try a different "
-"distribution."
+"Fitting lognormal distribution failed, most likely because the observed "
+"distribution of the data are very far away from the selected distribution, "
+"please try one that describes your data more closely."
 msgstr ""
-"Passen van verdeling mislukt. De waarden zijn misschien te extreem. Probeer "
-"een andere verdeling."
+
+msgid ""
+"Fitting Weibull distribution failed, most likely because the observed "
+"distribution of the data are very far away from the selected distribution, "
+"please try one that describes your data more closely."
+msgstr ""
 
 msgid "Histogram"
 msgstr "Histogram"
@@ -2075,6 +2088,23 @@ msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] "De volgende gealiaste termen zijn verwijderd: %s."
 msgstr[1] "De volgende gealiaste termen zijn verwijderd: %s."
+
+#~ msgid ""
+#~ "Parameter estimation failed. Values might be too extreme. Try a different "
+#~ "distribution."
+#~ msgstr ""
+#~ "Parameterschatting mislukt. De waarden zijn misschien te extreem. Probeer "
+#~ "een andere verdeling."
+
+#~ msgid "No specification limits set."
+#~ msgstr "Geen specificatiegrenzen vastgesteld."
+
+#~ msgid ""
+#~ "Fitting distribution failed. Values might be too extreme. Try a different "
+#~ "distribution."
+#~ msgstr ""
+#~ "Passen van verdeling mislukt. De waarden zijn misschien te extreem. "
+#~ "Probeer een andere verdeling."
 
 #~ msgid "Average"
 #~ msgstr "Gemiddelde"

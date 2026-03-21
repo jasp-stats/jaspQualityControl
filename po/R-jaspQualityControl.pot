@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.96.0\n"
-"POT-Creation-Date: 2026-03-14 04:20\n"
+"Project-Id-Version: jaspQualityControl 0.96.0.1\n"
+"POT-Creation-Date: 2026-03-21 04:16\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -212,7 +212,7 @@ msgstr ""
 msgid "USL = %g"
 msgstr ""
 
-msgid "Parameter estimation failed. Values might be too extreme. Try a different distribution."
+msgid "The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."
 msgstr ""
 
 msgid "Design of Experiments - Analysis"
@@ -257,6 +257,9 @@ msgstr ""
 msgid "Response Optimizer Solution"
 msgstr ""
 
+msgid "%s fit"
+msgstr ""
+
 msgid "Optimization Plot"
 msgstr ""
 
@@ -282,6 +285,9 @@ msgid "Optimization Plot Summary (Manual Predictor Values)"
 msgstr ""
 
 msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid "Composite desirability"
 msgstr ""
 
 msgid "One or more input parameters for continuous predictors are outside of the design space.\n                           Extrapolation beyond the design space might not be valid."
@@ -1277,7 +1283,7 @@ msgstr ""
 msgid "Process Capability Report"
 msgstr ""
 
-msgid "No specification limits set."
+msgid "Set at least one specification limit (upper or lower) to start the analysis."
 msgstr ""
 
 msgid "Line: %s"
@@ -1472,6 +1478,9 @@ msgstr ""
 msgid "Process performance (total)"
 msgstr ""
 
+msgid "Non-conformance statistics"
+msgstr ""
+
 msgid "Pp"
 msgstr ""
 
@@ -1497,9 +1506,6 @@ msgid "Cpm"
 msgstr ""
 
 msgid "%s CI for Cpm"
-msgstr ""
-
-msgid "Non-conformance statistics"
 msgstr ""
 
 msgid "Rows titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
@@ -1586,7 +1592,10 @@ msgstr ""
 msgid "Probability plot against %1$s distribution"
 msgstr ""
 
-msgid "Fitting distribution failed. Values might be too extreme. Try a different distribution."
+msgid "Fitting lognormal distribution failed, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."
+msgstr ""
+
+msgid "Fitting Weibull distribution failed, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."
 msgstr ""
 
 msgid "Histogram"

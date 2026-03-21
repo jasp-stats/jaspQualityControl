@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-03-14 04:20\n"
+"POT-Creation-Date: 2026-03-21 04:16\n"
 "PO-Revision-Date: 2025-11-06 02:51+0000\n"
 "Last-Translator: \"Cheng R. Zhu\" <zcr@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
@@ -243,8 +243,10 @@ msgid "USL = %g"
 msgstr "UCL = %g"
 
 msgid ""
-"Parameter estimation failed. Values might be too extreme. Try a different "
-"distribution."
+"The parameters could not be estimated for the selected distribution, most "
+"likely because the observed distribution of the data are very far away from "
+"the selected distribution, please try one that describes your data more "
+"closely."
 msgstr ""
 
 msgid "Design of Experiments - Analysis"
@@ -294,6 +296,9 @@ msgstr ""
 msgid "Response Optimizer Solution"
 msgstr ""
 
+msgid "%s fit"
+msgstr ""
+
 #, fuzzy
 msgid "Optimization Plot"
 msgstr "检测图"
@@ -330,6 +335,10 @@ msgstr ""
 
 msgid "Optimization Plot Summary"
 msgstr ""
+
+#, fuzzy
+msgid "Composite desirability"
+msgstr "合意度"
 
 msgid ""
 "One or more input parameters for continuous predictors are outside of the "
@@ -1538,8 +1547,9 @@ msgstr "所有零值都已替换为等于最小数据点的二分之一的值。
 msgid "Process Capability Report"
 msgstr "过程能力"
 
-msgid "No specification limits set."
-msgstr "未设定规格限。"
+msgid ""
+"Set at least one specification limit (upper or lower) to start the analysis."
+msgstr ""
 
 #, fuzzy
 msgid "Line: %s"
@@ -1770,6 +1780,9 @@ msgstr ""
 msgid "Process performance (total)"
 msgstr "过程性能（整体）"
 
+msgid "Non-conformance statistics"
+msgstr "不合格品统计"
+
 msgid "Pp"
 msgstr "Pp"
 
@@ -1796,9 +1809,6 @@ msgstr "Cpm"
 
 msgid "%s CI for Cpm"
 msgstr "Cpm 的 %s 置信区间"
-
-msgid "Non-conformance statistics"
-msgstr "不合格品统计"
 
 msgid ""
 "Rows titled 'Change' concern changes of the respective stage in comparison "
@@ -1901,8 +1911,15 @@ msgid "Probability plot against %1$s distribution"
 msgstr "针对 %1$s 分布的检验汇总"
 
 msgid ""
-"Fitting distribution failed. Values might be too extreme. Try a different "
-"distribution."
+"Fitting lognormal distribution failed, most likely because the observed "
+"distribution of the data are very far away from the selected distribution, "
+"please try one that describes your data more closely."
+msgstr ""
+
+msgid ""
+"Fitting Weibull distribution failed, most likely because the observed "
+"distribution of the data are very far away from the selected distribution, "
+"please try one that describes your data more closely."
 msgstr ""
 
 msgid "Histogram"
@@ -2034,6 +2051,9 @@ msgstr "单值图"
 msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] ""
+
+#~ msgid "No specification limits set."
+#~ msgstr "未设定规格限。"
 
 #~ msgid "Average"
 #~ msgstr "平均值"

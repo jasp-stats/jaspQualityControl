@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
-"POT-Creation-Date: 2026-03-14 04:20\n"
+"POT-Creation-Date: 2026-03-21 04:16\n"
 "PO-Revision-Date: 2026-01-06 14:01+0000\n"
 "Last-Translator: Zev Oster <zevelijah@gmail.com>\n"
 "Language-Team: Tibetan <https://hosted.weblate.org/projects/jasp/"
@@ -217,8 +217,10 @@ msgid "USL = %g"
 msgstr ""
 
 msgid ""
-"Parameter estimation failed. Values might be too extreme. Try a different "
-"distribution."
+"The parameters could not be estimated for the selected distribution, most "
+"likely because the observed distribution of the data are very far away from "
+"the selected distribution, please try one that describes your data more "
+"closely."
 msgstr ""
 
 msgid "Design of Experiments - Analysis"
@@ -266,6 +268,9 @@ msgstr ""
 msgid "Response Optimizer Solution"
 msgstr ""
 
+msgid "%s fit"
+msgstr ""
+
 msgid "Optimization Plot"
 msgstr ""
 
@@ -298,6 +303,9 @@ msgid "Optimization Plot Summary (Manual Predictor Values)"
 msgstr ""
 
 msgid "Optimization Plot Summary"
+msgstr ""
+
+msgid "Composite desirability"
 msgstr ""
 
 msgid ""
@@ -1352,7 +1360,8 @@ msgstr ""
 msgid "Process Capability Report"
 msgstr ""
 
-msgid "No specification limits set."
+msgid ""
+"Set at least one specification limit (upper or lower) to start the analysis."
 msgstr ""
 
 msgid "Line: %s"
@@ -1567,6 +1576,9 @@ msgstr ""
 msgid "Process performance (total)"
 msgstr ""
 
+msgid "Non-conformance statistics"
+msgstr ""
+
 msgid "Pp"
 msgstr ""
 
@@ -1592,9 +1604,6 @@ msgid "Cpm"
 msgstr ""
 
 msgid "%s CI for Cpm"
-msgstr ""
-
-msgid "Non-conformance statistics"
 msgstr ""
 
 msgid ""
@@ -1692,8 +1701,15 @@ msgid "Probability plot against %1$s distribution"
 msgstr ""
 
 msgid ""
-"Fitting distribution failed. Values might be too extreme. Try a different "
-"distribution."
+"Fitting lognormal distribution failed, most likely because the observed "
+"distribution of the data are very far away from the selected distribution, "
+"please try one that describes your data more closely."
+msgstr ""
+
+msgid ""
+"Fitting Weibull distribution failed, most likely because the observed "
+"distribution of the data are very far away from the selected distribution, "
+"please try one that describes your data more closely."
 msgstr ""
 
 msgid "Histogram"

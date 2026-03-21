@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-03-14 04:20\n"
+"POT-Creation-Date: 2026-03-21 04:16\n"
 "PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -220,11 +220,11 @@ msgid "USL = %g"
 msgstr "LES = %g"
 
 msgid ""
-"Parameter estimation failed. Values might be too extreme. Try a different "
-"distribution."
+"The parameters could not be estimated for the selected distribution, most "
+"likely because the observed distribution of the data are very far away from "
+"the selected distribution, please try one that describes your data more "
+"closely."
 msgstr ""
-"Falha na estimativa dos parâmetros. Os valores podem estar muito extremos. "
-"Tente uma distribuição diferente."
 
 msgid "Design of Experiments - Analysis"
 msgstr "Delineamento de Experimentos - Análise"
@@ -273,6 +273,9 @@ msgstr "As %s estimadas a partir dos dados."
 msgid "Response Optimizer Solution"
 msgstr "Solução Otimizadora de Resposta"
 
+msgid "%s fit"
+msgstr ""
+
 msgid "Optimization Plot"
 msgstr "Gráfico de Otimização"
 
@@ -312,6 +315,10 @@ msgstr "Resumo do Gráfico de Otimização"
 
 msgid "Optimization Plot Summary"
 msgstr "Resumo do Gráfico de Otimização"
+
+#, fuzzy
+msgid "Composite desirability"
+msgstr "Comp. desejabilidade"
 
 msgid ""
 "One or more input parameters for continuous predictors are outside of the "
@@ -1433,8 +1440,9 @@ msgstr ""
 msgid "Process Capability Report"
 msgstr "Relatório de Capacidade do Processo"
 
-msgid "No specification limits set."
-msgstr "Não há limites de especificação definidos."
+msgid ""
+"Set at least one specification limit (upper or lower) to start the analysis."
+msgstr ""
 
 msgid "Line: %s"
 msgstr "Linha: %s"
@@ -1672,6 +1680,9 @@ msgstr ""
 msgid "Process performance (total)"
 msgstr "Desempenho do processo (total)"
 
+msgid "Non-conformance statistics"
+msgstr "Estatísticas de não conformidade"
+
 msgid "Pp"
 msgstr "Pp"
 
@@ -1698,9 +1709,6 @@ msgstr "Cpm"
 
 msgid "%s CI for Cpm"
 msgstr "%s IC para Cpm"
-
-msgid "Non-conformance statistics"
-msgstr "Estatísticas de não conformidade"
 
 msgid ""
 "Rows titled 'Change' concern changes of the respective stage in comparison "
@@ -1807,11 +1815,16 @@ msgid "Probability plot against %1$s distribution"
 msgstr "Gráfico de probabilidade em relação à distribuição %1$s"
 
 msgid ""
-"Fitting distribution failed. Values might be too extreme. Try a different "
-"distribution."
+"Fitting lognormal distribution failed, most likely because the observed "
+"distribution of the data are very far away from the selected distribution, "
+"please try one that describes your data more closely."
 msgstr ""
-"Falha ao ajustar a distribuição. Os valores podem estar muito extremos. "
-"Tente uma distribuição diferente."
+
+msgid ""
+"Fitting Weibull distribution failed, most likely because the observed "
+"distribution of the data are very far away from the selected distribution, "
+"please try one that describes your data more closely."
+msgstr ""
 
 msgid "Histogram"
 msgstr "Histograma"
@@ -1964,6 +1977,23 @@ msgid "The following covariate was considered but not included: %s."
 msgid_plural "The following covariates were considered but not included: %s."
 msgstr[0] "Os seguintes termos alternativos foram removidos: %s."
 msgstr[1] "Os seguintes termos alternativos foram removidos: %s."
+
+#~ msgid ""
+#~ "Parameter estimation failed. Values might be too extreme. Try a different "
+#~ "distribution."
+#~ msgstr ""
+#~ "Falha na estimativa dos parâmetros. Os valores podem estar muito "
+#~ "extremos. Tente uma distribuição diferente."
+
+#~ msgid "No specification limits set."
+#~ msgstr "Não há limites de especificação definidos."
+
+#~ msgid ""
+#~ "Fitting distribution failed. Values might be too extreme. Try a different "
+#~ "distribution."
+#~ msgstr ""
+#~ "Falha ao ajustar a distribuição. Os valores podem estar muito extremos. "
+#~ "Tente uma distribuição diferente."
 
 #~ msgid "Enter values for all predictors."
 #~ msgstr "Insira valores para todos os preditores."
