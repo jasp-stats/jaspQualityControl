@@ -2579,7 +2579,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03B8"),        type = "number")
   }
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "integer")
-  table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "integer")
+  table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
   table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution.", distributionTitle))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
   if (nStages > 1)

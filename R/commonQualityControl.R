@@ -1543,12 +1543,18 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       # Set starting values that match other software packages more closely
       weibull3start <- try(MASS::fitdistr(data, function(x, shape, scale, thres)
         dweibull(x-thres, shape, scale), list(shape = 0.1, scale = 1, thres = 0)))
-      if (jaspBase::isTryError(weibull3start))
-        stop(estimationErrorMessage, call. = FALSE)
+
+      # If estimation of starting values fails, try with fixed starting values
+      if (jaspBase::isTryError(weibull3start)) {
+        weibull3startShape <- 0.1
+        weibull3startScale <- 1
+        weibull3startThres <- 0
+      } else {
       weibull3start <- weibull3start$estimate
       weibull3startShape <- weibull3start[[1]]
       weibull3startScale <- weibull3start[[2]]
       weibull3startThres <- weibull3start[[3]]
+      }
       weibull3startList <- list(shape = weibull3startShape,
                                 scale = weibull3startScale,
                                 thres = weibull3startThres)
