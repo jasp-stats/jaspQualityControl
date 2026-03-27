@@ -1118,8 +1118,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     sourceVector <- c(sourceVector, paste0(ciLevelPercent, "% CI Cpk"))
   }
 
-  if (options[["processCapabilityTableZbench"]]) {
-    table$addColumnInfo(name="zbench", title=gettext("Z bench (ST)"), type="number")
+  if (options[["processCapabilityTableZ"]]) {
+    table$addColumnInfo(name="zSt", title=gettext("Z (ST)"), type="number")
+    tableColNames <- c(tableColNames, "zSt")
+    sourceVector <- c(sourceVector, "Z (ST)")
   }
 
   table$showSpecifiedColumnsOnly <- TRUE
@@ -1161,8 +1163,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else {
       cpk <- cpu
     }
-    zbench <- 3*cpk
-
 
     if (options[["processCapabilityTableCi"]]) {
       ciAlpha <- 1 - ciLevel
@@ -1181,11 +1181,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         ciUbCpk <- cpk + (normCIrange * intervalCpk)
       }
     }
-    tableDfCurrentStage <- data.frame(cp = round(cp, .numDecimals),
+    tableDfCurrentStage <- data.frame(cp  = round(cp, .numDecimals),
                                       cpl = round(cpl, .numDecimals),
                                       cpu = round(cpu, .numDecimals),
-                                      cpk = round(cpk, .numDecimals),
-                                      zbench = round(zbench, .numDecimals))
+                                      cpk = round(cpk, .numDecimals))
+
+    if (options[["processCapabilityTableZ"]])
+      tableDfCurrentStage[["zSt"]] <- round(3*cpk, .numDecimals)
+
     if (options[["processCapabilityTableCi"]]) {
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
         tableDfCurrentStage[["cplci"]] <- round(ciLbCp, .numDecimals)
@@ -1251,6 +1254,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["processCapabilityTableCi"]] &&
                 !(options[["upperSpecificationLimitBoundary"]] && options[["lowerSpecificationLimitBoundary"]]))
         formattedTableDf[["cpkci"]] <- paste0("[", tableList[["cpklci"]], ", ", tableList[["cpkuci"]], "]")
+    if (options[["processCapabilityTableZ"]])
+      formattedTableDf[["zSt"]] <- tableList[["zSt"]]
     colnames(formattedTableDf) <- sourceVector
     return(formattedTableDf)
   }
@@ -1325,8 +1330,10 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableColNames <- c(tableColNames, "ppklci", "ppkuci")
     sourceVector1 <- c(sourceVector1,  paste0(ciLevelPercent, "% CI Ppk"))
   }
-  if (options[["processCapabilityTableZbench"]]) {
-    table$addColumnInfo(name="zbench", title=gettext("Z bench (LT)"), type="number")
+  if (options[["processCapabilityTableZ"]]) {
+    table$addColumnInfo(name="zLt", title=gettext("Z (LT)"), type="number")
+    tableColNames <- c(tableColNames, "zLt")
+    sourceVector1 <- c(sourceVector1, "Z (LT)")
   }
   if (options[["target"]]) {
     table$addColumnInfo(name = "cpm", type = "integer", title = gettext("Cpm"))
@@ -1380,7 +1387,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     } else {
       ppk <- ppu
     }
-    zbench <- 3*ppk
     cp <- (usl - lsl) / (tolMultiplier * sdw)
 
     if (options[["lowerSpecificationLimit"]] && options[["upperSpecificationLimit"]] && options[["target"]]) {
@@ -1422,11 +1428,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       }
     }
 
-    tableDfCurrentStage <- data.frame(pp = round(pp, .numDecimals),
+    tableDfCurrentStage <- data.frame(pp  = round(pp, .numDecimals),
                                       ppl = round(ppl, .numDecimals),
                                       ppu = round(ppu, .numDecimals),
-                                      ppk = round(ppk, .numDecimals),
-                                      zbench = round(zbench, .numDecimals))
+                                      ppk = round(ppk, .numDecimals))
+    if (options[["processCapabilityTableZ"]])
+      tableDfCurrentStage[["zLt"]] <- round(3*ppk, .numDecimals)
     if (options[["target"]])
       tableDfCurrentStage[["cpm"]] <- round(cpm, .numDecimals)
     if (options[["processCapabilityTableCi"]]) {
@@ -1503,6 +1510,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["processCapabilityTableCi"]] &&
         !(options[["lowerSpecificationLimitBoundary"]] && options[["upperSpecificationLimitBoundary"]]))
       formattedTableDf[["ppkci"]] <- paste0("[", tableList[["ppklci"]], ", ",tableList[["ppkuci"]], "]")
+    if (options[["processCapabilityTableZ"]])
+      formattedTableDf[["zLt"]] <- tableList[["zLt"]]
     if (options[["target"]]) {
       formattedTableDf[["cpm"]] <- tableList[["cpm"]]
       if (options[["processCapabilityTableCi"]] &&

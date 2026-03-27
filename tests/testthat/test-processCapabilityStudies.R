@@ -24,7 +24,7 @@ options$upperSpecificationLimit <- TRUE
 options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 6
 options$upperSpecificationLimitValue <- 12
-options$processCapabilityTableZbench <- TRUE # not tested against Minitab
+options$processCapabilityTableZ <- TRUE # not tested against other Software
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
@@ -100,6 +100,7 @@ options$upperSpecificationLimit <- TRUE
 options$lowerSpecificationLimitValue <- 0
 options$targetValue <- 6
 options$upperSpecificationLimitValue <- 12
+options$processCapabilityTableZ <- TRUE # Not tested against other software
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
@@ -114,9 +115,9 @@ test_that("LF2.2 (Normal) Basic tests of Process performance (total) table with 
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0.89, 0.73, 1.05, 1, 0.82, 0.65, 1, 1.18, 0.81, 0.82, 1.19, "1 (BL)",
-                                      0.97, "-", "-", 1.13, 0.92, 0.77, 1.08, 1.33, 0.95, 0.92, 1.29,
-                                      2, 0.08, 0.1, 0.06, 0.13, 0.1, "-", "-", 0.15, "-", 0.1, "-",
-                                      "Change (2 vs. BL)"))
+                                      2.46, 0.97, "-", "-", 1.13, 0.92, 0.77, 1.08, 1.33, 0.95, 0.92,
+                                      1.29, 2, 2.77, 0.08, 0.1, 0.06, 0.13, 0.1, "-", "-", 0.15, "-",
+                                      0.1, "-", "Change (2 vs. BL)", 0.31))
 })
 
 test_that("LF2.3 (Normal) Basic tests of Non-conformance statistics table with subgroup variable and stages", {
@@ -131,9 +132,10 @@ test_that("LF2.3 (Normal) Basic tests of Non-conformance statistics table with s
 test_that("LF2.4 (Normal) Basic tests of Process capability (within) table with subgroup variable and stages", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(1.07, 0.88, 0.68, 1.08, 1.26, 0.85, 0.88, 1.29, "1 (BL)", 1.18,
-                                      0.97, 0.79, 1.15, 1.4, 0.99, 0.97, 1.38, 2, 0.11, 0.09, "-",
-                                      "-", 0.14, "-", 0.09, "-", "Change (2 vs. BL)"))
+                                 list(1.07, 0.88, 0.68, 1.08, 1.26, 0.85, 0.88, 1.29, "1 (BL)", 2.63,
+                                      1.18, 0.97, 0.79, 1.15, 1.4, 0.99, 0.97, 1.38, 2, 2.91, 0.11,
+                                      0.09, "-", "-", 0.14, "-", 0.09, "-", "Change (2 vs. BL)", 0.28
+                                 ))
 })
 
 test_that("LF2.5 (Normal) Basic tests of Process summary table with subgroup variable and stages", {
@@ -1594,6 +1596,8 @@ options$reportProcessText <- "process name test"
 options$reportDateText <- "today"
 options$reportReportedByText <- "Name test"
 options$reportConclusionText <- "comments test"
+options$processCapabilityTableZ <- TRUE
+
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
@@ -1631,6 +1635,8 @@ options$reportProcessText <- "process name test"
 options$reportDateText <- "today"
 options$reportReportedByText <- "Name test"
 options$reportConclusionText <- "comments test"
+options$processCapabilityTableZ <- TRUE
+
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)

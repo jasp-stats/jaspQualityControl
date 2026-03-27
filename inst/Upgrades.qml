@@ -1422,4 +1422,14 @@ Upgrades
 		ChangeRename {from: "reportTime";										to: "reportTimeText"}
 		ChangeRename {from: "reportFrequency";									to: "reportFrequencyText"}
 	}
+
+	// Z.bench to Z
+	Upgrade
+	{
+		functionName:	"processCapabilityStudies"
+		fromVersion:	"0.96.0.1"
+		toVersion:		"0.96.0.2"
+
+		ChangeRename {from: "processCapabilityTableZbench";		to: "processCapabilityTableZ"}
+	}
 }
