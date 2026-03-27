@@ -1427,8 +1427,8 @@ Upgrades
 	Upgrade
 	{
 		functionName:	"processCapabilityStudies"
-		fromVersion:	"0.96.0"
-		toVersion:		"0.96.1"
+		fromVersion:	"0.96.0.1"
+		toVersion:		"0.96.0.2"
 
 		ChangeRename {from: "processCapabilityTableZbench";		to: "processCapabilityTableZ"}
 	}
