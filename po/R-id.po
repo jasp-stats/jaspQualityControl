@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.96.0\n"
 "POT-Creation-Date: 2026-03-21 04:16\n"
-"PO-Revision-Date: 2026-03-21 04:14+0000\n"
+"PO-Revision-Date: 2026-03-27 14:09+0000\n"
 "Last-Translator: Zahid Rizky Fakhri <zahidrizkyfakhri@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/id/>\n"
@@ -25,7 +25,7 @@ msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
 msgstr ""
 
 msgid "Sample"
-msgstr ""
+msgstr "Sampel"
 
 msgid "Time weighted charts report"
 msgstr ""
@@ -328,7 +328,7 @@ msgid "The following aliased terms were removed: %s."
 msgstr ""
 
 msgid "ANOVA"
-msgstr ""
+msgstr "ANOVA"
 
 msgid "Source"
 msgstr ""
@@ -337,7 +337,7 @@ msgid "Sum of squares"
 msgstr ""
 
 msgid "df"
-msgstr ""
+msgstr "df"
 
 msgid "Mean square"
 msgstr ""
@@ -367,10 +367,10 @@ msgid "Term"
 msgstr ""
 
 msgid "Effect"
-msgstr ""
+msgstr "Efek"
 
 msgid "Coefficient"
-msgstr ""
+msgstr "Koefisien"
 
 msgid "Standard error"
 msgstr ""
@@ -466,7 +466,7 @@ msgid "Design Summary"
 msgstr ""
 
 msgid "Variable"
-msgstr ""
+msgstr "Variabel"
 
 msgid "Factors"
 msgstr ""
@@ -493,7 +493,7 @@ msgid "Total blocks"
 msgstr ""
 
 msgid "Value"
-msgstr ""
+msgstr "Nilai"
 
 msgid "Please select a row in the design table."
 msgstr ""
@@ -850,7 +850,7 @@ msgid "Variance components"
 msgstr ""
 
 msgid "Variance"
-msgstr ""
+msgstr "Varians"
 
 msgid "%% Contribution"
 msgstr ""
@@ -1290,7 +1290,7 @@ msgid "Parameter Estimates"
 msgstr ""
 
 msgid "Parameter"
-msgstr ""
+msgstr "Parameter"
 
 msgid "Estimate"
 msgstr "Estimasi"
@@ -1344,7 +1344,7 @@ msgid "Label"
 msgstr ""
 
 msgid "<b><em>Warning.</em></b>"
-msgstr ""
+msgstr "<b><em>Peringatan.</em></b>"
 
 msgid "Probability of detecting %s"
 msgstr ""
@@ -1453,7 +1453,7 @@ msgid "USL"
 msgstr ""
 
 msgid "Sample size"
-msgstr ""
+msgstr "Ukuran sampel"
 
 msgid "Std. dev. (total)"
 msgstr ""
@@ -1496,7 +1496,7 @@ msgid "At least one of the stages contains no valid measurements."
 msgstr ""
 
 msgid "Density"
-msgstr ""
+msgstr "Kepadatan"
 
 msgid "Measurement"
 msgstr ""
@@ -1675,7 +1675,7 @@ msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
 msgid "N"
-msgstr ""
+msgstr "N"
 
 msgid "Mean (%1$s)"
 msgstr ""
@@ -1810,7 +1810,7 @@ msgid "Autocorrelation plot"
 msgstr ""
 
 msgid "Autocorrelation"
-msgstr ""
+msgstr "Korelasi Otomatis"
 
 msgid "Lag"
 msgstr "Penundaan"
