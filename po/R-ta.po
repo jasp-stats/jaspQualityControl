@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-03-21 04:16\n"
+"POT-Creation-Date: 2026-03-28 04:25\n"
 "PO-Revision-Date: 2026-03-22 14:09+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
@@ -1644,7 +1644,8 @@ msgstr "சிபிகே"
 msgid "%s CI for Cpk"
 msgstr "Cpkக்கான %s தொஒ"
 
-msgid "Z bench (ST)"
+#, fuzzy
+msgid "Z (ST)"
 msgstr "சட் பெஞ்ச் (ST)"
 
 msgid ""
@@ -1678,7 +1679,8 @@ msgstr "பிபிகே"
 msgid "%s CI for Ppk"
 msgstr "Ppk க்கான %s தொஒ"
 
-msgid "Z bench (LT)"
+#, fuzzy
+msgid "Z (LT)"
 msgstr "சட் பெஞ்ச் (LT)"
 
 msgid "Cpm"

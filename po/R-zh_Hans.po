@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.16\n"
-"POT-Creation-Date: 2026-03-21 04:16\n"
+"POT-Creation-Date: 2026-03-28 04:25\n"
 "PO-Revision-Date: 2025-11-06 02:51+0000\n"
 "Last-Translator: \"Cheng R. Zhu\" <zcr@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
@@ -1769,7 +1769,7 @@ msgstr "Cpk"
 msgid "%s CI for Cpk"
 msgstr "Cpk 的 %s 置信区间"
 
-msgid "Z bench (ST)"
+msgid "Z (ST)"
 msgstr ""
 
 msgid ""
@@ -1801,7 +1801,7 @@ msgstr "Ppk"
 msgid "%s CI for Ppk"
 msgstr "Ppk 的 %s 置信区间"
 
-msgid "Z bench (LT)"
+msgid "Z (LT)"
 msgstr ""
 
 msgid "Cpm"

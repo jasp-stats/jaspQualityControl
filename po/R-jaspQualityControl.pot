@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.96.0.1\n"
-"POT-Creation-Date: 2026-03-21 04:16\n"
+"Project-Id-Version: jaspQualityControl 0.96.0.2\n"
+"POT-Creation-Date: 2026-03-28 04:25\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1469,7 +1469,7 @@ msgstr ""
 msgid "%s CI for Cpk"
 msgstr ""
 
-msgid "Z bench (ST)"
+msgid "Z (ST)"
 msgstr ""
 
 msgid "Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."
@@ -1499,7 +1499,7 @@ msgstr ""
 msgid "%s CI for Ppk"
 msgstr ""
 
-msgid "Z bench (LT)"
+msgid "Z (LT)"
 msgstr ""
 
 msgid "Cpm"

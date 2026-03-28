@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-03-21 04:16\n"
+"POT-Creation-Date: 2026-03-28 04:25\n"
 "PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -1667,7 +1667,8 @@ msgstr "Cpk"
 msgid "%s CI for Cpk"
 msgstr "%s IC para Cpk"
 
-msgid "Z bench (ST)"
+#, fuzzy
+msgid "Z (ST)"
 msgstr "Banco Z (ST)"
 
 msgid ""
@@ -1701,7 +1702,8 @@ msgstr "Ppk"
 msgid "%s CI for Ppk"
 msgstr "%s IC para Ppk"
 
-msgid "Z bench (LT)"
+#, fuzzy
+msgid "Z (LT)"
 msgstr "Banco Z (LT)"
 
 msgid "Cpm"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-03-21 04:16\n"
+"POT-Creation-Date: 2026-03-28 04:25\n"
 "PO-Revision-Date: 2025-06-19 08:01+0000\n"
 "Last-Translator: Иван Рудаков <riv@polygene.ru>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/jasp/"
@@ -1575,7 +1575,7 @@ msgstr ""
 msgid "%s CI for Cpk"
 msgstr ""
 
-msgid "Z bench (ST)"
+msgid "Z (ST)"
 msgstr ""
 
 msgid ""
@@ -1607,7 +1607,7 @@ msgstr ""
 msgid "%s CI for Ppk"
 msgstr ""
 
-msgid "Z bench (LT)"
+msgid "Z (LT)"
 msgstr ""
 
 msgid "Cpm"
