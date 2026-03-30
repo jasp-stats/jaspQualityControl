@@ -111,6 +111,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     # change specifications (limits + target value)
     transformedSpecs <- results[["transformedSpecs"]]
     options <- modifyList(options, transformedSpecs)
+
+    .hasErrors(dataset, type = c('infinity', 'variance'),
+               all.target = measurements, exitAnalysisIfErrors = TRUE)
   }
 
   # Plot note about R/S chart recommendation
