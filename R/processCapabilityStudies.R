@@ -111,9 +111,6 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     # change specifications (limits + target value)
     transformedSpecs <- results[["transformedSpecs"]]
     options <- modifyList(options, transformedSpecs)
-
-    .hasErrors(dataset, type = c('infinity', 'variance'),
-               all.target = measurements, exitAnalysisIfErrors = TRUE)
   }
 
   # Plot note about R/S chart recommendation
@@ -531,6 +528,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   dataset <- result[["dataset"]]
   parameters <- result[["parameters"]]
 
+  errors <- .hasErrors(
+    dataset, type = c('infinity', 'variance'),
+    all.target = measurements)
+
+  if (!isFALSE(errors)) {
+    message <- gettextf("%s <br>This could be caused by unsuitable data transformation (transformation type or extreme parameter used to transform the data).",
+                        errors[["message"]])
+    .quitAnalysis(message)
+  }
 
   # transform lower and upper spec limits, target
   transformedSpecs <- try(.qcTransformSpecs(options = options, parameters = parameters), silent=TRUE)
