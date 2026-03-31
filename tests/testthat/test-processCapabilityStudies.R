@@ -3277,26 +3277,26 @@ results <- runAnalysis("processCapabilityStudies",
                        "datasets/processCapabilityStudy/realDataExample1.csv", options)
 
 
-test_that("LF55.1 Additional 3-paraneter Weibull verification - Non-conformance statistics table results match", {
+test_that("LF55.1 Additional 3-parameter Weibull verification - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(0, 0, "ppm &lt; LSL", 25245.93, 23529.41, "ppm &gt; USL", 25245.93,
                                       23529.41, "Total ppm"))
 })
 
-test_that("LF55.2 Additional 3-paraneter Weibull verification - Capability of the process plot matches", {
+test_that("LF55.2 Additional 3-parameter Weibull verification - Capability of the process plot matches", {
   plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL55")
 })
 
-test_that("LF55.3 Additional 3-paraneter Weibull verification - Process performance (total) table results match", {
+test_that("LF55.3 Additional 3-parameter Weibull verification - Process performance (total) table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list("<unicode>", 0.65, "<unicode>", 0.65))
 })
 
-test_that("LF55.4 Additional 3-paraneter Weibull verification - Process summary table results match", {
+test_that("LF55.4 Additional 3-parameter Weibull verification - Process summary table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(1.3700977922031, 0, 2.05529411764706, 170, 0.789203160763612,
