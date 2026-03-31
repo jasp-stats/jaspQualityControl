@@ -533,8 +533,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     all.target = measurements)
 
   if (!isFALSE(errors)) {
-    message <- gettextf("%s <br>This could be caused by unsuitable data transformation (transformation type or extreme parameter used to transform the data).",
-                        errors[["message"]])
+    message <- gettext("The data after transformations appears to be invalid. This could be caused by unsuitable data transformation (transformation type or extreme parameter used to transform the data).")
     .quitAnalysis(message)
   }
 
