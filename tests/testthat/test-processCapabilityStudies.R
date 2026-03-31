@@ -387,8 +387,8 @@ test_that("LF5.4 (Weibull) Basic tests of process summary table with manual subg
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
                                  list(4.04074076167675, 0, 7.0825, 40, 1.9949792750032, "1 (BL)", 6,
-                                      7.82155648030048, 12, 4.18662734025142, 0, 7.07833333333333,
-                                      60, 1.77526237417885, 2, 6, 7.76307853935701, 12, 0.146094153376669,
+                                      7.82187513782923, 12, 4.18683491505342, 0, 7.07833333333333,
+                                      60, 1.77526237417885, 2, 6, 7.76289753922706, 12, 0.146094153376669,
                                       "-", -0.00416666666666643, 20, -0.21971690082435, "Change (2 vs. BL)",
                                       "-", -0.0589775986021728, "-"))
 })
@@ -3516,7 +3516,7 @@ test_that("WF3.3 (Weibull) Basic tests of Process performance (total) table", {
 test_that("WF3.4 (Weibull) Basic tests of Process summary table", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(4.13179160447975, 0, 7.08, 100, 1.85635681000733, 6, 7.78757547787008,
+                                 list(4.13213439552013, 0, 7.08, 100, 1.85635681000733, 6, 7.78757547787008,
                                       12))
 })
 
