@@ -1456,14 +1456,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["scale"]] # scale
     } else {
       fitWeibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                              control = list(
-                                                maxit = 10000,
-                                                abstol = .Machine$double.eps^0.75,
-                                                reltol = .Machine$double.eps^0.75),
                                               fix.arg = fix.arg))
-
-
-
 
       if (jaspBase::isTryError(fitWeibull))
         stop(estimationErrorMessage, call. = FALSE)
