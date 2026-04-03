@@ -4294,7 +4294,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspBase",
       "RemoteRef": "master",
-      "RemoteSha": "1d5c8604cdc34555bdcd6d76aadfda580346aaf7",
+      "RemoteSha": "cfacdfc83bcbe6b1bb17ded6aab4be221ccbeed9",
       "Remotes": "jasp-stats/jaspGraphs"
     },
     "jaspDescriptives": {
@@ -4334,7 +4334,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspDescriptives",
       "RemoteRef": "master",
-      "RemoteSha": "25e31c981457dacd0744d8d12bfa709814284b17",
+      "RemoteSha": "4c2774453844fd705759394a5cfa4739897dcdf0",
       "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs, jasp-stats/jaspTTests, dustinfife/flexplot"
     },
     "jaspGraphs": {
@@ -4361,9 +4361,7 @@
         "plotly",
         "R6",
         "rlang",
-        "scales",
-        "testthat",
-        "vdiffr"
+        "scales"
       ],
       "Suggests": [
         "testthat",
@@ -4371,11 +4369,11 @@
       ],
       "Roxygen": "list(markdown = TRUE)",
       "RemoteType": "github",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspGraphs",
       "RemoteRef": "master",
-      "RemoteSha": "5c68ba4b81afc55e2092e733fe334819c85e354a",
-      "RemoteHost": "api.github.com"
+      "RemoteSha": "5c68ba4b81afc55e2092e733fe334819c85e354a"
     },
     "jaspTTests": {
       "Package": "jaspTTests",
@@ -4405,7 +4403,7 @@
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
       "RemoteRef": "master",
-      "RemoteSha": "a5422e6feaa15374305456fa058d8091a415f46e",
+      "RemoteSha": "a4c0b6d12e3912c263f86bdd0e95e63fd5c9e95c",
       "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs"
     },
     "jaspTools": {
