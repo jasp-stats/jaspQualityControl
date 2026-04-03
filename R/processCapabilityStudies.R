@@ -528,6 +528,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   dataset <- result[["dataset"]]
   parameters <- result[["parameters"]]
 
+  errors <- .hasErrors(
+    dataset, type = c('infinity', 'variance'),
+    all.target = measurements)
+
+  if (!isFALSE(errors)) {
+    message <- gettext("The data after transformations appears to be invalid. This could be caused by unsuitable data transformation (transformation type or extreme parameter used to transform the data).")
+    .quitAnalysis(message)
+  }
 
   # transform lower and upper spec limits, target
   transformedSpecs <- try(.qcTransformSpecs(options = options, parameters = parameters), silent=TRUE)
