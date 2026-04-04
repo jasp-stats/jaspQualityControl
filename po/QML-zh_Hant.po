@@ -1,25 +1,31 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2026-04-02 05:09+0000\n"
+"Last-Translator: 陳正昌 <chencc99@gmail.com>\n"
+"Language-Team: Chinese (Traditional Han script) <https://hosted.weblate.org/"
+"projects/jasp/jaspprocesscontrol-qml/zh_Hant/>\n"
+"Language: zh_Hant\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.17-dev\n"
 "X-Language: zh_Hant\n"
 "X-Qt-Contexts: true\n"
 
 msgctxt "Description|"
 msgid "Quality Control"
-msgstr ""
+msgstr "品質管制"
 
 msgctxt "Description|"
 msgid ""
 "Investigate if a manufactured product adheres to a defined set of quality "
 "criteria"
-msgstr ""
+msgstr "檢視製造產品是否符合預設之品質標準"
 
 msgctxt "Description|"
 msgid "Measurement Systems Analysis"
-msgstr ""
+msgstr "量測系統分析"
 
 msgctxt "Description|"
 msgid "Attributes Agreement Analysis"
@@ -27,7 +33,7 @@ msgstr ""
 
 msgctxt "Description|"
 msgid "Test-retest (Range method)"
-msgstr ""
+msgstr "再測信度（全距法）"
 
 msgctxt "Description|"
 msgid "Control Charts"
@@ -843,7 +849,7 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for bias"
-msgstr ""
+msgstr "偏差之信賴區間"
 
 msgctxt "msaType1Gauge|"
 msgid "Plots"
@@ -891,7 +897,7 @@ msgstr ""
 
 msgctxt "msaType1Gauge|"
 msgid "Confidence interval for mean"
-msgstr ""
+msgstr "平均數的信賴區間"
 
 msgctxt "msaType1Gauge|"
 msgid "Display reference value"
@@ -2210,7 +2216,7 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Sum of squares type"
-msgstr ""
+msgstr "離差平方和類型"
 
 msgctxt "doeAnalysis|"
 msgid "Type I"
@@ -2880,7 +2886,7 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Response optimizer"
-msgstr ""
+msgstr "回應最佳化器"
 
 msgctxt "doeAnalysis|"
 msgid "Available responses"
@@ -2904,11 +2910,11 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Show optimal solution"
-msgstr ""
+msgstr "顯示最佳解"
 
 msgctxt "doeAnalysis|"
 msgid "Show optimization plot"
-msgstr ""
+msgstr "顯示最佳化圖"
 
 msgctxt "doeAnalysis|"
 msgid "Predict"
@@ -2920,7 +2926,7 @@ msgstr ""
 
 msgctxt "doeAnalysis|"
 msgid "Set input parameters manually"
-msgstr ""
+msgstr "手動設定輸入參數"
 
 msgctxt "doeAnalysis|"
 msgid "Value"
