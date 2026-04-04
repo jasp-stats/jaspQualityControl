@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-03-28 04:25\n"
+"POT-Creation-Date: 2026-04-04 04:24\n"
 "PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -1515,6 +1515,12 @@ msgstr "Transformação de dados"
 
 msgid "Data could not be transformed: %1$s"
 msgstr "Os dados não puderam ser transformados: %1$s"
+
+msgid ""
+"The data after transformations appears to be invalid. This could be caused "
+"by unsuitable data transformation (transformation type or extreme parameter "
+"used to transform the data)."
+msgstr ""
 
 msgid "Specification limits could not be transformed: %1$s"
 msgstr "Os limites especificados não puderam ser transformados: %1$s"
