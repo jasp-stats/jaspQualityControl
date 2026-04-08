@@ -3255,6 +3255,54 @@ test_that("LF54.4 Log-logistic distribution extreme hist. param. test - Process 
                                  list(20, 4, 7.08, 100, 1.85635681000733, 6, 15, 12))
 })
 
+
+## Additional verification test for 3-parameter Weibull ####
+options <- analysisOptions("processCapabilityStudies")
+options$testSet <- "jaspDefault"
+options$measurementLongFormat <- "data"
+options$subgroupSizeType <- "manual"
+options$manualSubgroupSizeValue <- 5
+options$probabilityPlotRankMethod <- "bernard"
+options$capabilityStudyType <- "nonNormalCapabilityAnalysis"
+options$nonNormalDistribution <- "3ParameterWeibull"
+options$nonNormalMethod <- "nonConformance"
+options$nullDistribution <- "weibull"
+options$controlChartType <- "xBarR"
+options$lowerSpecificationLimit <- TRUE
+options$upperSpecificationLimit <- TRUE
+options$lowerSpecificationLimitValue <- 0
+options$upperSpecificationLimitValue <- 4
+set.seed(1)
+results <- runAnalysis("processCapabilityStudies",
+                       "datasets/processCapabilityStudy/realDataExample1.csv", options)
+
+
+test_that("LF55.1 Additional 3-paraneter Weibull verification - Non-conformance statistics table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0, 0, "ppm &lt; LSL", 25245.93, 23529.41, "ppm &gt; USL", 25245.93,
+                                      23529.41, "Total ppm"))
+})
+
+test_that("LF55.2 Additional 3-paraneter Weibull verification - Capability of the process plot matches", {
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-processL55")
+})
+
+test_that("LF55.3 Additional 3-paraneter Weibull verification - Process performance (total) table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_overallCapabilityNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("<unicode>", 0.65, "<unicode>", 0.65))
+})
+
+test_that("LF55.4 Additional 3-paraneter Weibull verification - Process summary table results match", {
+  table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_summaryTableNonNormal"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1.3700977922031, 0, 2.05529411764706, 170, 0.789203160763612,
+                                      1.16155570981569, 0.994201851901342, 4))
+})
+
 # Wide / Row format ####
 
 ## (Normal) Basic tests ####
