@@ -2579,14 +2579,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   }
   table$addColumnInfo(name = "n",      	title = gettext("N"),  		type = "integer")
   if (options[["nullDistribution"]] == "normal") {
-    table$addColumnInfo(name = "mean",  title = gettextf("Mean (%1$s)", "\u03BC"), 				type = "number")
-    table$addColumnInfo(name = "sd",    title = gettextf("Std. dev. (%1$s)", "\u03C3"), 	type = "number")
+    table$addColumnInfo(name = "parameterEstimate1", title = gettextf("Mean (%1$s)", "\u03BC"),        type = "number")
+    table$addColumnInfo(name = "parameterEstimate2", title = gettextf("Std. dev. (%1$s)", "\u03C3"), type = "number")
   } else if (options[["nullDistribution"]] == "lognormal") {
-    table$addColumnInfo(name = "mean",  title = gettextf("Log mean (%1$s)", "\u03BC"),  		type = "number")
-    table$addColumnInfo(name = "sd",    title = gettextf("Log std.dev (%1$s)", "\u03C3"), 	type = "number")
+    table$addColumnInfo(name = "parameterEstimate1", title = gettextf("Log mean (%1$s)", "\u03BC"),    type = "number")
+    table$addColumnInfo(name = "parameterEstimate2", title = gettextf("Log std.dev (%1$s)", "\u03C3"), type = "number")
   } else if (options[["nullDistribution"]] == "weibull") {
-    table$addColumnInfo(name = "mean",  title = gettextf("Shape (%1$s)", "\u03B2"), 			type = "number")
-    table$addColumnInfo(name = "sd",    title = gettextf("Scale (%1$s)", "\u03B8"),        type = "number")
+    table$addColumnInfo(name = "parameterEstimate1", title = gettextf("Shape (%1$s)", "\u03B2"), type = "number")
+    table$addColumnInfo(name = "parameterEstimate2", title = gettextf("Scale (%1$s)", "\u03B8"), type = "number")
   }
   table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "integer")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
@@ -2601,7 +2601,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     container[["probabilityTable"]] <- table
     return()
   }
-  tableColNames <- c("mean", "sd", "n", "ad", "p")
+  tableColNames <- c("parameterEstimate1", "parameterEstimate2", "n", "ad", "p")
   if (nStages > 1)
     tableColNames <- c("stage", tableColNames)
   tableDf <- data.frame(matrix(ncol = length(tableColNames), nrow = 0))
@@ -2609,43 +2609,42 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   for (i in seq_len(nStages)) {
     stage <- unique(dataset[[stages]])[i]
     dataCurrentStage <- dataset[which(dataset[[stages]] == stage), ][!names(dataset) %in% stages]
-    values <- as.vector(na.omit(unlist(dataCurrentStage[measurements]))) # distribution fitting function complains if this is not explicitly a vector
+    stageValues <- as.vector(na.omit(unlist(dataCurrentStage[measurements]))) # distribution fitting function complains if this is not explicitly a vector
 
     if (options[["nullDistribution"]] == "normal") {
-      meanx   <- mean(values)
-      sdx     <- sd(values)
-      test    <- goftest::ad.test(x = values, "norm", mean = meanx, sd = sdx)
+      parameterEstimate1  <- mean(stageValues)
+      parameterEstimate2  <- stats::sd(stageValues)
+      andersonDarlingTest <- goftest::ad.test(x = stageValues, "norm", mean = parameterEstimate1, sd = parameterEstimate2)
     } else if (options[["nullDistribution"]] == "lognormal") {
-      fit    <- EnvStats::elnorm(values)
-      meanx  <- fit$parameters[1]
-      sdx    <- fit$parameters[2]
-      test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
+      fitPars                 <- .distributionParameters(stageValues, distribution = "lognormal")
+      parameterEstimate1      <- fitPars$beta
+      parameterEstimate2      <- fitPars$theta
+      andersonDarlingTest     <- goftest::ad.test(x = stageValues, "plnorm", meanlog = parameterEstimate1, sdlog = parameterEstimate2)
     } else if (options[["nullDistribution"]] == "weibull") {
-      fit    <- fitdistrplus::fitdist(values, 'weibull',
-                                      control = list(
-                                        maxit = 10000,
-                                        abstol = .Machine$double.eps^0.75,
-                                        reltol = .Machine$double.eps^0.75,
-                                        ndeps = rep(1e-8, 2)))
-      meanx  <- fit$estimate[1]
-      sdx    <- fit$estimate[2]
-      test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
+      fitPars                 <- .distributionParameters(stageValues, distribution = "weibull")
+      parameterEstimate1      <- fitPars$beta
+      parameterEstimate2      <- fitPars$theta
+      andersonDarlingTest     <- goftest::ad.test(x = stageValues, "pweibull", shape = parameterEstimate1, scale = parameterEstimate2)
     }
-    n      <- length(values)
-    ad     <- test$statistic
-    adStar <- ad*(1 + (0.75/n) + (2.25/(n^2)))
-    if(ad >= 0.6) {
-      p <- exp(1.2937 - (5.709 * adStar) + 0.0186 * (adStar^2))
-    } else if(adStar < 0.6 && adStar > 0.34) {
-      p <- exp(0.9177 - (4.279 * adStar) - 1.38 * (adStar^2))
-    } else if(adStar < 0.34 && adStar > 0.2) {
-      p <- 1 - exp(-8.318 + (42.796 * adStar) - 59.938 * (adStar^2))
-    } else if(adStar <= 0.2) {
-      p <- 1 - exp(-13.436 + (101.14 * adStar) - 223.73 * (adStar^2))      #Jaentschi & Bolboaca (2018)
+    sampleSize <- length(stageValues)
+    adStatistic <- andersonDarlingTest$statistic
+    adStatisticAdjusted <- adStatistic * (1 + (0.75 / sampleSize) + (2.25 / (sampleSize^2)))
+    if (adStatistic >= 0.6) {
+      pValue <- exp(1.2937 - (5.709 * adStatisticAdjusted) + 0.0186 * (adStatisticAdjusted^2))
+    } else if (adStatisticAdjusted < 0.6 && adStatisticAdjusted > 0.34) {
+      pValue <- exp(0.9177 - (4.279 * adStatisticAdjusted) - 1.38 * (adStatisticAdjusted^2))
+    } else if (adStatisticAdjusted < 0.34 && adStatisticAdjusted > 0.2) {
+      pValue <- 1 - exp(-8.318 + (42.796 * adStatisticAdjusted) - 59.938 * (adStatisticAdjusted^2))
+    } else if (adStatisticAdjusted <= 0.2) {
+      pValue <- 1 - exp(-13.436 + (101.14 * adStatisticAdjusted) - 223.73 * (adStatisticAdjusted^2))      #Jaentschi & Bolboaca (2018)
     } else {
-      p <- test$p.value
+      pValue <- andersonDarlingTest$p.value
     }
-    tableDfCurrentStage <- data.frame(mean = meanx, sd = sdx, n = n, ad = round(ad, .numDecimals), p = round(p, .numDecimals))
+    tableDfCurrentStage <- data.frame(parameterEstimate1 = parameterEstimate1,
+                                      parameterEstimate2 = parameterEstimate2,
+                                      n = sampleSize,
+                                      ad = round(adStatistic, .numDecimals),
+                                      p = round(pValue, .numDecimals))
     if (i == 1 && nStages > 1)
       baseLineDf <- tableDfCurrentStage
     if (i > 1) {
