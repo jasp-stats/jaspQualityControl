@@ -819,6 +819,19 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(fix.arg)
 }
 
+# Two formatters are needed because axis label mode changes based on compression/thinning:
+#
+# .qcFormatCapabilityAxisLabels (below): strips trailing zeros (e.g. 1.50 -> 1.5). Used
+#   on the plain uncompressed axis where every break gets a label -- trailing zeros add
+#   visual clutter without aiding readability.
+#
+# .qcCapabilityAxisLabelDecimals: computes the minimum decimal places needed so that
+#   adjacent tick values remain distinguishable given their step size.
+#
+# .qcFormatCapabilityAxisLabelsFixed: always shows exactly `decimals` places, no stripping.
+#   Used in thin/compressed mode where only a sparse subset of breaks gets labels. Consistent
+#   precision is required so that e.g. 1.500 and 1.505 don't both render as "1.5", and so
+#   all visible labels share the same visual weight.
 .qcFormatCapabilityAxisLabels <- function(x) {
   formatted <- formatC(round(x, .numDecimals), format = "f", digits = .numDecimals)
   sub("([.]?0+)$", "", formatted)
@@ -965,6 +978,21 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   leftDisplay       <- if (compressLeft) min(leftGap, compressedGap) else leftGap
   rightDisplay      <- if (compressRight) min(rightGap, compressedGap) else rightGap
 
+  # Piecewise linear transform that compresses large empty regions on either side of the
+  # data, so the interesting region (data + padding) fills most of the plot width.
+  #
+  # Motivation: spec limits often extend far beyond the actual data range (e.g. limits
+  # 0-200 but measurements all in 95-105). A linear axis wastes most of the space on
+  # empty territory, making the histogram and curves nearly invisible.
+  #
+  # What it does: points inside focusRange are translated (shifted left/right) by however
+  # much space was reclaimed from the gaps. Points inside a compressed gap are scaled toward
+  # the axis edge by the ratio (leftDisplay / leftGap) or (rightDisplay / rightGap), so the
+  # gap shrinks from its original width to a small compressedGap fraction. Break markers
+  # ("||" symbols) drawn at the focusRange boundaries signal the discontinuity to the viewer.
+  #
+  # The same transform is applied to histogram bar positions AND distribution curve x-values
+  # (via axisConfig$transform), so both remain aligned in display coordinates.
   transform_x <- function(x) {
     transformed <- x
 
@@ -1045,6 +1073,18 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   )
 }
 
+# Clips a pre-computed density curve to the visible range and maps its x-coordinates to
+# display space using the axis transform.
+#
+# When compression is active, axisConfig$curveRange == focusRange (the data region only).
+# Curve points outside that range are dropped: in the compressed gaps the transform distorts
+# distances, so the curve shape would be visually misleading there.
+#
+# The density values are NOT a statistical refit. The caller evaluates the fitted
+# distribution's PDF (e.g. dnorm, dweibull) at 500 evenly-spaced points across the full
+# xLimits -- this just produces a smooth curve. This function then filters those points to
+# curveRange and applies the axis transform to their x-coordinates so the curve aligns with
+# the (possibly compressed) histogram.
 .qcCapabilityCurveData <- function(x, density, axisConfig, curveName) {
   visible <- x >= axisConfig$curveRange[1] & x <= axisConfig$curveRange[2]
   data.frame(
