@@ -1012,37 +1012,37 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     transformed
   }
 
-  centerBreaks <- unique(pretty(focusRange, n = 5))
+  centerBreaks <- unique(pretty(occupiedRange, n = 5))
   centerBreaks <- centerBreaks[centerBreaks >= focusRange[1] & centerBreaks <= focusRange[2]]
 
   if (compressLeft || compressRight) {
-    sideBreaksLeft <- if (compressLeft) xLimits[1] else pretty(c(xLimits[1], focusRange[1]), n = 2)
-    sideBreaksRight <- if (compressRight) xLimits[2] else pretty(c(focusRange[2], xLimits[2]), n = 2)
+    # Outside the focus region: only the axis boundary (spec limit) gets a tick+label.
+    # Intermediate breaks in the gap are omitted — the // marker communicates the scale break.
     shoulderBreaks <- numeric(0)
     if (compressLeft)
       shoulderBreaks <- c(shoulderBreaks, focusRange[1])
     if (compressRight)
       shoulderBreaks <- c(shoulderBreaks, focusRange[2])
-    breaksOriginal <- sort(unique(c(sideBreaksLeft, shoulderBreaks, centerBreaks, sideBreaksRight)))
+    breaksOriginal <- sort(unique(c(xLimits[1], shoulderBreaks, centerBreaks, xLimits[2])))
     breaksOriginal <- breaksOriginal[breaksOriginal >= xLimits[1] & breaksOriginal <= xLimits[2]]
 
     centerLabelBreaks <- centerBreaks[centerBreaks > focusRange[1] & centerBreaks < focusRange[2]]
     if (length(centerLabelBreaks) < 2)
       centerLabelBreaks <- centerBreaks
 
-    if (length(centerLabelBreaks) > 3) {
-      keepIndices <- unique(round(seq(1, length(centerLabelBreaks), length.out = 3)))
-      centerLabelBreaks <- centerLabelBreaks[keepIndices]
+    # Thin center labels to however many fit in the focus region display width.
+    if (length(centerLabelBreaks) > 0) {
+      tmpDecimals   <- .qcCapabilityAxisLabelDecimals(centerLabelBreaks)
+      tmpLabels     <- .qcFormatCapabilityAxisLabelsFixed(centerLabelBreaks, tmpDecimals)
+      focusDisplay  <- range(transform_x(focusRange))
+      thinnedLabels <- .qcThinCapabilityAxisLabels(transform_x(centerLabelBreaks), tmpLabels, focusDisplay)
+      centerLabelBreaks <- centerLabelBreaks[thinnedLabels != ""]
     }
 
-    visibleBreaks <- centerLabelBreaks
-    if (compressLeft)
-      visibleBreaks <- c(xLimits[1], visibleBreaks)
-    if (compressRight)
-      visibleBreaks <- c(visibleBreaks, xLimits[2])
-
-    decimals <- max(3, .qcCapabilityAxisLabelDecimals(visibleBreaks))
-    xLabels <- rep("", length(breaksOriginal))
+    # Always label both axis boundaries; label center breaks in the data region.
+    visibleBreaks  <- sort(unique(c(xLimits[1], centerLabelBreaks, xLimits[2])))
+    decimals       <- .qcCapabilityAxisLabelDecimals(visibleBreaks)
+    xLabels        <- rep("", length(breaksOriginal))
     visibleIndices <- which(breaksOriginal %in% visibleBreaks)
     xLabels[visibleIndices] <- .qcFormatCapabilityAxisLabelsFixed(breaksOriginal[visibleIndices], decimals)
   } else {
