@@ -4570,8 +4570,7 @@ test_that("Thin x-axis labels snapshot matches", {
   options$upperSpecificationLimit <- TRUE
   options$lowerSpecificationLimitValue <- 37.95
   options$upperSpecificationLimitValue <- 38.05
-  options$processCapabilityPlotCompressXAxis <- FALSE
-  options$processCapabilityPlotThinXAxisLabels <- TRUE
+  options$processCapabilityPlotXAxisModification <- "thin"
 
   results <- runAnalysis("processCapabilityStudies", dataset, options, makeTests = F)
   plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
@@ -4602,8 +4601,7 @@ test_that("Compress x-axis snapshot matches", {
   options$upperSpecificationLimit <- TRUE
   options$lowerSpecificationLimitValue <- 37.95
   options$upperSpecificationLimitValue <- 38.05
-  options$processCapabilityPlotCompressXAxis <- TRUE
-  options$processCapabilityPlotThinXAxisLabels <- FALSE
+  options$processCapabilityPlotXAxisModification <- "compress"
 
   results <- runAnalysis("processCapabilityStudies", dataset, options, makeTests = F)
   plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]

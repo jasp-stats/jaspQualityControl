@@ -144,7 +144,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       "capabilityStudyType", "nonNormalDistribution", "nonNormalMethod",
       "lowerSpecificationLimitBoundary", "upperSpecificationLimitBoundary",
       "processCapabilityPlotBinNumber", "processCapabilityPlotDistributions",
-      "processCapabilityPlotSpecificationLimits", "processCapabilityPlotCompressXAxis", "processCapabilityPlotThinXAxisLabels", "xBarMovingRangeLength",
+      "processCapabilityPlotSpecificationLimits", "processCapabilityPlotXAxisModification", "xBarMovingRangeLength",
       "xmrChartMovingRangeLength", "xmrChartSpecificationLimits", "probabilityPlotRankMethod",
       "histogramBinBoundaryDirection", "nullDistribution", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
       "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdUnbiasingConstant",
@@ -712,7 +712,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotWidth <- nCol * 800
   plotHeight <- nRow * 500
   plot <- createJaspPlot(title = gettext("Capability of the process"), width = plotWidth, height = plotHeight)
-  plot$dependOn(c("processCapabilityPlotBinNumber", "histogramBinBoundaryDirection", "processCapabilityPlotCompressXAxis", "processCapabilityPlotThinXAxisLabels"))
+  plot$dependOn(c("processCapabilityPlotBinNumber", "histogramBinBoundaryDirection", "processCapabilityPlotXAxisModification"))
   plot$position <- 2
   container[["capabilityPlot"]] <- plot
 
@@ -1156,8 +1156,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       allData = allData,
       xLimits = xLimits,
       occupiedRange = occupiedRange,
-      compress = options[["processCapabilityPlotCompressXAxis"]],
-      thinLabels = options[["processCapabilityPlotThinXAxisLabels"]]
+      compress   = options[["processCapabilityPlotXAxisModification"]] == "compress",
+      thinLabels = options[["processCapabilityPlotXAxisModification"]] == "thin"
     )
     xTransform <- axisConfig$transform
 

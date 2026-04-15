@@ -1319,6 +1319,24 @@ Upgrades
 		ChangeRename { from: "reportReportedBy";				to: "reportPerformedByText"}
 	}
 
+	// Process Capability Study — axis option consolidation
+	Upgrade
+	{
+		functionName:	"processCapabilityStudies"
+		fromVersion:	"0.19.0"
+		toVersion:		"0.19.1"
+
+		ChangeJS
+		{
+			name: "processCapabilityPlotXAxisModification"
+			jsFunction: function(options) {
+				if (options["processCapabilityPlotCompressXAxis"])   return "compress";
+				if (options["processCapabilityPlotThinXAxisLabels"]) return "thin";
+				return "none";
+			}
+		}
+	}
+
 	// DoE Analysis
 	Upgrade
 	{

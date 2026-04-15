@@ -561,20 +561,14 @@ Form
 						checked: 							true
 					}
 
-					CheckBox
+					RadioButtonGroup
 					{
-						name: 								"processCapabilityPlotCompressXAxis"
-						label: 								qsTr("Compress x-axis")
-						id:									processCapabilityPlotCompressXAxis
-						checked: 							false
-					}
+						name:	"processCapabilityPlotXAxisModification"
+						title:	qsTr("Axis modifications")
 
-					CheckBox
-					{
-						name: 								"processCapabilityPlotThinXAxisLabels"
-						label: 								qsTr("Thin x-axis labels")
-						checked: 							false
-						enabled: 							!processCapabilityPlotCompressXAxis.checked
+						RadioButton { value: "none";     label: qsTr("None");              checked: true }
+						RadioButton { value: "thin";     label: qsTr("Thin x-axis labels") }
+						RadioButton { value: "compress"; label: qsTr("Compress x-axis")    }
 					}
 				}
 
