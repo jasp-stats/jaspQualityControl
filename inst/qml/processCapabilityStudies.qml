@@ -560,6 +560,16 @@ Form
 						label: 								qsTr("Display specification limits")
 						checked: 							true
 					}
+
+					RadioButtonGroup
+					{
+						name:	"processCapabilityPlotXAxisModification"
+						title:	qsTr("Axis modifications")
+
+						RadioButton { value: "none";     label: qsTr("None");              checked: true }
+						RadioButton { value: "thin";     label: qsTr("Thin x-axis labels") }
+						RadioButton { value: "compress"; label: qsTr("Compress x-axis")    }
+					}
 				}
 
 				CheckBox

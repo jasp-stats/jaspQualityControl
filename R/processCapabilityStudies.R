@@ -144,7 +144,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       "capabilityStudyType", "nonNormalDistribution", "nonNormalMethod",
       "lowerSpecificationLimitBoundary", "upperSpecificationLimitBoundary",
       "processCapabilityPlotBinNumber", "processCapabilityPlotDistributions",
-      "processCapabilityPlotSpecificationLimits", "xBarMovingRangeLength",
+      "processCapabilityPlotSpecificationLimits", "processCapabilityPlotXAxisModification", "xBarMovingRangeLength",
       "xmrChartMovingRangeLength", "xmrChartSpecificationLimits", "probabilityPlotRankMethod",
       "histogramBinBoundaryDirection", "nullDistribution", "controlChartSdEstimationMethodGroupSizeLargerThanOne",
       "controlChartSdEstimationMethodGroupSizeEqualOne", "controlChartSdUnbiasingConstant",
@@ -712,7 +712,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   plotWidth <- nCol * 800
   plotHeight <- nRow * 500
   plot <- createJaspPlot(title = gettext("Capability of the process"), width = plotWidth, height = plotHeight)
-  plot$dependOn(c("processCapabilityPlotBinNumber", "histogramBinBoundaryDirection"))
+  plot$dependOn(c("processCapabilityPlotBinNumber", "histogramBinBoundaryDirection", "processCapabilityPlotXAxisModification"))
   plot$position <- 2
   container[["capabilityPlot"]] <- plot
 
@@ -819,6 +819,281 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(fix.arg)
 }
 
+# Two formatters are needed because axis label mode changes based on compression/thinning:
+#
+# .qcFormatCapabilityAxisLabels (below): strips trailing zeros (e.g. 1.50 -> 1.5). Used
+#   on the plain uncompressed axis where every break gets a label -- trailing zeros add
+#   visual clutter without aiding readability.
+#
+# .qcCapabilityAxisLabelDecimals: computes the minimum decimal places needed so that
+#   adjacent tick values remain distinguishable given their step size.
+#
+# .qcFormatCapabilityAxisLabelsFixed: always shows exactly `decimals` places, no stripping.
+#   Used in thin/compressed mode where only a sparse subset of breaks gets labels. Consistent
+#   precision is required so that e.g. 1.500 and 1.505 don't both render as "1.5", and so
+#   all visible labels share the same visual weight.
+.qcFormatCapabilityAxisLabels <- function(x) {
+  formatted <- formatC(round(x, .numDecimals), format = "f", digits = .numDecimals)
+  sub("([.]?0+)$", "", formatted)
+}
+
+.qcCapabilityAxisLabelDecimals <- function(breaks) {
+  if (length(breaks) < 2)
+    return(.numDecimals)
+
+  step <- min(diff(sort(unique(breaks))))
+  if (!is.finite(step) || step <= 0)
+    return(.numDecimals)
+
+  decimals <- ceiling(pmax(0, -log10(step) - 1e-8))
+  min(decimals, .numDecimals + 2)
+}
+
+.qcFormatCapabilityAxisLabelsFixed <- function(x, decimals) {
+  formatC(round(x, decimals), format = "f", digits = decimals)
+}
+
+.qcThinCapabilityAxisLabels <- function(breaks, labels, limits, panelWidthPx = 560, charWidthPx = 8.5, paddingPx = 16) {
+  if (length(breaks) <= 2 || diff(limits) <= 0)
+    return(labels)
+
+  positions <- (breaks - limits[1]) / diff(limits) * panelWidthPx
+  widths <- pmax(nchar(labels), 1) * charWidthPx + paddingPx
+
+  chooseEvenIndices <- function(nLabels, nBreaks) {
+    if (nLabels >= nBreaks)
+      return(seq_len(nBreaks))
+    if (nLabels <= 1)
+      return(round((nBreaks + 1) / 2))
+
+    stride <- nBreaks / nLabels
+    candidateOffsets <- seq_len(max(1, ceiling(stride)))
+    candidateIndices <- lapply(candidateOffsets, function(offset) {
+      indices <- unique(round(offset + (0:(nLabels - 1)) * stride))
+      indices <- indices[indices >= 1 & indices <= nBreaks]
+      if (length(indices) == nLabels) indices else NULL
+    })
+    candidateIndices <- Filter(Negate(is.null), candidateIndices)
+
+    if (length(candidateIndices) == 0)
+      return(unique(round(seq(1, nBreaks, length.out = nLabels + 2)[-c(1, nLabels + 2)])))
+
+    candidateScores <- lapply(candidateIndices, function(indices) {
+      diffs <- diff(indices)
+      list(
+        spread = max(diffs) - min(diffs),
+        edgeMargin = min(indices[1] - 1, nBreaks - indices[length(indices)]),
+        centerDistance = abs(mean(indices) - (nBreaks + 1) / 2)
+      )
+    })
+
+    orderVector <- order(
+      vapply(candidateScores, `[[`, numeric(1), "spread"),
+      -vapply(candidateScores, `[[`, numeric(1), "edgeMargin"),
+      vapply(candidateScores, `[[`, numeric(1), "centerDistance")
+    )
+    candidateIndices[[orderVector[1]]]
+  }
+
+  labelsFit <- function(indices) {
+    if (length(indices) <= 1)
+      return(TRUE)
+
+    gaps <- diff(positions[indices])
+    minRequired <- (widths[indices[-length(indices)]] + widths[indices[-1]]) / 2
+    all(gaps >= minRequired)
+  }
+
+  maxVisibleLabels <- min(length(labels), max(1, floor(panelWidthPx / max(widths))))
+  selectedIndices <- round((length(labels) + 1) / 2)
+  for (nVisible in seq(maxVisibleLabels, 1, by = -1)) {
+    candidateIndices <- chooseEvenIndices(nVisible, length(labels))
+    if (labelsFit(candidateIndices)) {
+      selectedIndices <- candidateIndices
+      break
+    }
+  }
+
+  output <- rep("", length(labels))
+  output[selectedIndices] <- labels[selectedIndices]
+  output
+}
+
+.qcCapabilityPlotAxisConfig <- function(allData, xLimits, occupiedRange = NULL, compress = FALSE, thinLabels = FALSE) {
+  if (!isTRUE(compress)) {
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(allData))
+    xStep <- diff(xBreaks)[1]
+    loExt <- min(xBreaks) - pmax(0, ceiling((min(xBreaks) - min(xLimits)) / xStep) * xStep)
+    hiExt <- max(xBreaks) + pmax(0, ceiling((max(xLimits) - max(xBreaks)) / xStep) * xStep)
+    nBreaks <- floor((hiExt - loExt) / xStep) + 1
+    if (nBreaks < 100)
+      xBreaks <- seq(loExt, hiExt, by = xStep)
+
+    xLimits <- range(xLimits, xBreaks)
+    xLabels <- if (isTRUE(thinLabels)) {
+      decimals <- .qcCapabilityAxisLabelDecimals(xBreaks)
+      .qcThinCapabilityAxisLabels(
+        xBreaks,
+        .qcFormatCapabilityAxisLabelsFixed(xBreaks, decimals),
+        xLimits
+      )
+    } else {
+      ggplot2::waiver()
+    }
+
+    return(list(
+      transform = function(x) x,
+      xBreaks = xBreaks,
+      xLabels = xLabels,
+      xLimits = xLimits,
+      breakMarkers = c(),
+      curveRange = xLimits,
+      hasBreak = FALSE
+    ))
+  }
+
+  if (is.null(occupiedRange))
+    occupiedRange <- range(allData, na.rm = TRUE)
+
+  occupiedRange <- range(occupiedRange, na.rm = TRUE)
+  occupiedSpan <- max(diff(occupiedRange), 1e-8)
+  dataBreaks <- unique(pretty(allData, n = 5))
+  baseStep  <- diff(dataBreaks)
+  baseStep  <- if (length(baseStep) > 0) min(baseStep[baseStep > 0], na.rm = TRUE) else NA_real_
+  if (!is.finite(baseStep))
+    baseStep <- occupiedSpan / 4
+
+  focusPadding <- max(baseStep * 1.5, occupiedSpan * 0.12)
+  focusRange <- c(max(xLimits[1], occupiedRange[1] - focusPadding), min(xLimits[2], occupiedRange[2] + focusPadding))
+  if (focusRange[1] >= focusRange[2])
+    focusRange <- occupiedRange
+
+  focusSpan <- max(diff(focusRange), 1e-8)
+  leftGap   <- max(0, focusRange[1] - xLimits[1])
+  rightGap  <- max(0, xLimits[2] - focusRange[2])
+  compressThreshold <- max(focusSpan * 0.6, baseStep * 3)
+  compressedGap     <- max(focusSpan * 0.18, baseStep * 1.5)
+  compressLeft      <- isTRUE(compress) && leftGap > compressThreshold
+  compressRight     <- isTRUE(compress) && rightGap > compressThreshold
+  leftDisplay       <- if (compressLeft) min(leftGap, compressedGap) else leftGap
+  rightDisplay      <- if (compressRight) min(rightGap, compressedGap) else rightGap
+
+  # Piecewise linear transform that compresses large empty regions on either side of the
+  # data, so the interesting region (data + padding) fills most of the plot width.
+  #
+  # Motivation: spec limits often extend far beyond the actual data range (e.g. limits
+  # 0-200 but measurements all in 95-105). A linear axis wastes most of the space on
+  # empty territory, making the histogram and curves nearly invisible.
+  #
+  # What it does: points inside focusRange are translated (shifted left/right) by however
+  # much space was reclaimed from the gaps. Points inside a compressed gap are scaled toward
+  # the axis edge by the ratio (leftDisplay / leftGap) or (rightDisplay / rightGap), so the
+  # gap shrinks from its original width to a small compressedGap fraction. Break markers
+  # ("||" symbols) drawn at the focusRange boundaries signal the discontinuity to the viewer.
+  #
+  # The same transform is applied to histogram bar positions AND distribution curve x-values
+  # (via axisConfig$transform), so both remain aligned in display coordinates.
+  transform_x <- function(x) {
+    transformed <- x
+
+    if (leftGap > 0) {
+      if (compressLeft) {
+        transformed[x <= focusRange[1]] <- xLimits[1] + (x[x <= focusRange[1]] - xLimits[1]) * (leftDisplay / leftGap)
+      }
+      transformed[x > focusRange[1]] <- x[x > focusRange[1]] - leftGap + leftDisplay
+    }
+
+    if (rightGap > 0 && compressRight) {
+      rightIndex <- x >= focusRange[2]
+      transformed[rightIndex] <- focusRange[2] - leftGap + leftDisplay +
+        (x[rightIndex] - focusRange[2]) * (rightDisplay / rightGap)
+    }
+
+    transformed
+  }
+
+  centerBreaks <- unique(pretty(occupiedRange, n = 5))
+  centerBreaks <- centerBreaks[centerBreaks >= focusRange[1] & centerBreaks <= focusRange[2]]
+
+  if (compressLeft || compressRight) {
+    # Outside the focus region: only the axis boundary (spec limit) gets a tick+label.
+    # Intermediate breaks in the gap are omitted — the // marker communicates the scale break.
+    shoulderBreaks <- numeric(0)
+    if (compressLeft)
+      shoulderBreaks <- c(shoulderBreaks, focusRange[1])
+    if (compressRight)
+      shoulderBreaks <- c(shoulderBreaks, focusRange[2])
+    breaksOriginal <- sort(unique(c(xLimits[1], shoulderBreaks, centerBreaks, xLimits[2])))
+    breaksOriginal <- breaksOriginal[breaksOriginal >= xLimits[1] & breaksOriginal <= xLimits[2]]
+
+    centerLabelBreaks <- centerBreaks[centerBreaks > focusRange[1] & centerBreaks < focusRange[2]]
+    if (length(centerLabelBreaks) < 2)
+      centerLabelBreaks <- centerBreaks
+
+    # Thin center labels to however many fit in the focus region display width.
+    if (length(centerLabelBreaks) > 0) {
+      tmpDecimals   <- .qcCapabilityAxisLabelDecimals(centerLabelBreaks)
+      tmpLabels     <- .qcFormatCapabilityAxisLabelsFixed(centerLabelBreaks, tmpDecimals)
+      focusDisplay  <- range(transform_x(focusRange))
+      thinnedLabels <- .qcThinCapabilityAxisLabels(transform_x(centerLabelBreaks), tmpLabels, focusDisplay)
+      centerLabelBreaks <- centerLabelBreaks[thinnedLabels != ""]
+    }
+
+    # Always label both axis boundaries; label center breaks in the data region.
+    visibleBreaks  <- sort(unique(c(xLimits[1], centerLabelBreaks, xLimits[2])))
+    decimals       <- .qcCapabilityAxisLabelDecimals(visibleBreaks)
+    xLabels        <- rep("", length(breaksOriginal))
+    visibleIndices <- which(breaksOriginal %in% visibleBreaks)
+    xLabels[visibleIndices] <- .qcFormatCapabilityAxisLabelsFixed(breaksOriginal[visibleIndices], decimals)
+  } else {
+    breaksOriginal <- sort(unique(c(
+      pretty(c(xLimits[1], focusRange[1]), n = 2),
+      centerBreaks,
+      pretty(c(focusRange[2], xLimits[2]), n = 2)
+    )))
+    breaksOriginal <- breaksOriginal[breaksOriginal >= xLimits[1] & breaksOriginal <= xLimits[2]]
+    xLabels <- .qcFormatCapabilityAxisLabels(breaksOriginal)
+  }
+
+  displayLimits <- range(transform_x(xLimits))
+  breakMarkers <- c()
+  if (compressLeft)
+    breakMarkers <- c(breakMarkers, transform_x(focusRange[1]))
+  if (compressRight)
+    breakMarkers <- c(breakMarkers, transform_x(focusRange[2]))
+
+  list(
+    transform = transform_x,
+    xBreaks = transform_x(breaksOriginal),
+    xLabels = xLabels,
+    xLimits = displayLimits,
+    breakMarkers = breakMarkers,
+    curveRange = if (compressLeft || compressRight) focusRange else xLimits,
+    hasBreak = compressLeft || compressRight
+  )
+}
+
+# Clips a pre-computed density curve to the visible range and maps its x-coordinates to
+# display space using the axis transform.
+#
+# When compression is active, axisConfig$curveRange == focusRange (the data region only).
+# Curve points outside that range are dropped: in the compressed gaps the transform distorts
+# distances, so the curve shape would be visually misleading there.
+#
+# The density values are NOT a statistical refit. The caller evaluates the fitted
+# distribution's PDF (e.g. dnorm, dweibull) at 500 evenly-spaced points across the full
+# xLimits -- this just produces a smooth curve. This function then filters those points to
+# curveRange and applies the axis transform to their x-coordinates so the curve aligns with
+# the (possibly compressed) histogram.
+.qcCapabilityCurveData <- function(x, density, axisConfig, curveName) {
+  visible <- x >= axisConfig$curveRange[1] & x <= axisConfig$curveRange[2]
+  data.frame(
+    x = axisConfig$transform(x[visible]),
+    density = density[visible],
+    curve = curveName
+  )
+}
+
 .qcProcessCapabilityPlotObject <- function(options, dataset, measurements, stages, distribution = c('normal', "weibull", "lognormal", "3ParameterLognormal", "3ParameterWeibull")) {
   if (identical(stages, "")) {
     nStages <- 1
@@ -840,14 +1115,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
     allData <- as.vector(na.omit(unlist(dataCurrentStage[, measurements])))
-    plotData <- data.frame(x = allData)
     sdo <- sd(allData, na.rm = TRUE)
+    if (!is.finite(sdo) || sdo == 0)
+      sdo <- max(diff(range(allData, na.rm = TRUE)) * 0.25, abs(mean(allData, na.rm = TRUE)) * 0.05, 1e-8)
 
     xLimits <- c(min(allData) - sdo, max(allData) + sdo)
     if (options[["lowerSpecificationLimit"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["lowerSpecificationLimitValue"]] - 0.5*sdo)
+      xLimits <- range(xLimits, options[["lowerSpecificationLimitValue"]])
     if (options[["upperSpecificationLimit"]] && options[["processCapabilityPlotSpecificationLimits"]])
-      xLimits <- range(xLimits, options[["upperSpecificationLimitValue"]] + 0.5*sdo)
+      xLimits <- range(xLimits, options[["upperSpecificationLimitValue"]])
     if (options[["target"]] && options[["processCapabilityPlotSpecificationLimits"]])
       xLimits <- range(xLimits, options[["targetValue"]])
 
@@ -866,31 +1142,35 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if ((distribution == "logistic" || distribution == "loglogistic") && options[["historicalLocation"]])
       xLimits <- range(xLimits, options[["historicalLocationValue"]])
 
-    # Get xBreaks based on the data, with an axis that also spans the limits
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(allData))
-    xStep <- diff(xBreaks)[1]
-    loExt <- min(xBreaks) - pmax(0, ceiling((min(xBreaks) - min(xLimits)) / xStep) * xStep)
-    hiExt <- max(xBreaks) + pmax(0, ceiling((max(xLimits) - max(xBreaks)) / xStep) * xStep)
-    nBreaks <- floor((hiExt - loExt) / xStep) + 1
-    if (nBreaks < 100) # if the number of breaks does not exceed 100, draw the full sequence
-      xBreaks <- seq(loExt, hiExt, by = xStep)
-    # Get limits to always include all breaks
-    xLimits <- range(xLimits, xBreaks)
-
-
     nBins <- options[["processCapabilityPlotBinNumber"]]
-    h <- hist(allData, plot = FALSE, breaks = nBins)
-    binWidth <- (h$breaks[2] - h$breaks[1])
+    h <- hist(allData, plot = FALSE, breaks = nBins,
+              right = !identical(options[["histogramBinBoundaryDirection"]], "left"),
+              include.lowest = TRUE)
+    occupiedBins <- which(h$counts > 0)
+    occupiedRange <- if (length(occupiedBins) > 0) {
+      c(h$breaks[min(occupiedBins)], h$breaks[max(occupiedBins) + 1])
+    } else {
+      range(allData, na.rm = TRUE)
+    }
+    axisConfig <- .qcCapabilityPlotAxisConfig(
+      allData = allData,
+      xLimits = xLimits,
+      occupiedRange = occupiedRange,
+      compress   = options[["processCapabilityPlotXAxisModification"]] == "compress",
+      thinLabels = options[["processCapabilityPlotXAxisModification"]] == "thin"
+    )
+    xTransform <- axisConfig$transform
 
-    p <- ggplot2::ggplot(data = plotData, mapping = ggplot2::aes(x = x)) +
-      ggplot2::geom_histogram(ggplot2::aes(y =..density..), closed = options[["histogramBinBoundaryDirection"]],
-                              fill = "grey", col = "black", linewidth = .7, binwidth = binWidth, center = binWidth/2, na.rm = TRUE) +
-      ggplot2::scale_y_continuous(name = gettext("Density")) +
-      ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = xBreaks, limits = xLimits)
-
+    histDf <- data.frame(
+      xmin = xTransform(h$breaks[-length(h$breaks)]),
+      xmax = xTransform(h$breaks[-1]),
+      density = h$density
+    )
+    curveDf <- data.frame()
     legendColors <- c()
     legendLty <- c()
     legendLabels <- c()
+    densityX <- seq(xLimits[1], xLimits[2], length.out = 500)
 
   # for non normal dist, create fix.arg list based on historical values
     if (distribution != "normal")
@@ -901,14 +1181,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       if (distribution == "normal") {
         processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
         if (.qcWithinProcessValid(options)) {
-          p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sd(allData)),
-                                          mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist")) +
-            ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sdw),
-                                   mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
-          legendColors <- c(legendColors, "dodgerblue", "red")
-          legendLty <- c(legendLty, "solid", "solid")
-          legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
-                            gettext("Normal dist.\n(std. dev. within)"))
+          curveDf <- rbind(
+            curveDf,
+            .qcCapabilityCurveData(densityX, dnorm(densityX, mean = processMean, sd = sd(allData)), axisConfig, "sdoDist"),
+            .qcCapabilityCurveData(densityX, dnorm(densityX, mean = processMean, sd = sdw), axisConfig, "sdwDist")
+          )
+          legendColors <- c(legendColors, sdoDist = "dodgerblue", sdwDist = "red")
+          legendLty <- c(legendLty, sdoDist = "solid", sdwDist = "solid")
+          legendLabels <- c(legendLabels, sdoDist = gettext("Normal dist.\n(std. dev. total)"),
+                            sdwDist = gettext("Normal dist.\n(std. dev. within)"))
         }
       } else if (distribution == "weibull") {
         distParameters <- .distributionParameters(data = allData,
@@ -918,11 +1199,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           stop(distParameters[1], call. = FALSE)
         shape <- distParameters$beta
         scale <- distParameters$theta
-        p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
-                                        mapping = ggplot2::aes(color = "weibull", linetype = "weibull"))
-        legendColors <- c(legendColors, "red")
-        legendLty <- c(legendLty, "solid")
-        legendLabels <- c(legendLabels, gettext("Weibull dist."))
+        curveDf <- rbind(curveDf,
+                         .qcCapabilityCurveData(densityX, dweibull(densityX, shape = shape, scale = scale), axisConfig, "weibull"))
+        legendColors <- c(legendColors, weibull = "red")
+        legendLty <- c(legendLty, weibull = "solid")
+        legendLabels <- c(legendLabels, weibull = gettext("Weibull dist."))
       } else if (distribution == "lognormal") {
         distParameters <- .distributionParameters(data = allData,
                                                   distribution = distribution,
@@ -931,11 +1212,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           stop(distParameters[1], call. = FALSE)
         meanlog <- distParameters$beta
         sdlog <- distParameters$theta
-        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = meanlog, sdlog = sdlog),
-                                        mapping = ggplot2::aes(color = "lognormal", linetype = "lognormal"))
-        legendColors <- c(legendColors, "red")
-        legendLty <- c(legendLty, "solid")
-        legendLabels <- c(legendLabels, "Lognormal dist.")
+        curveDf <- rbind(curveDf,
+                         .qcCapabilityCurveData(densityX, dlnorm(densityX, meanlog = meanlog, sdlog = sdlog), axisConfig, "lognormal"))
+        legendColors <- c(legendColors, lognormal = "red")
+        legendLty <- c(legendLty, lognormal = "solid")
+        legendLabels <- c(legendLabels, lognormal = gettext("Lognormal dist."))
       } else if (distribution == "3ParameterLognormal") {
         distParameters <- .distributionParameters(data = allData,
                                                   distribution = distribution,
@@ -945,11 +1226,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         meanlog <- distParameters$beta
         sdlog <- distParameters$theta
         threshold <- distParameters$threshold
-        p <- p + ggplot2::stat_function(fun = EnvStats::dlnorm3, args = list(meanlog = meanlog, sdlog = sdlog, threshold = threshold),
-                                        mapping = ggplot2::aes(color = "lognormal3", linetype = "lognormal3"))
-        legendColors <- c(legendColors, "red")
-        legendLty <- c(legendLty, "solid")
-        legendLabels <- c(legendLabels, gettext("3-parameter\nlognormal dist."))
+        curveDf <- rbind(curveDf,
+                         .qcCapabilityCurveData(densityX, EnvStats::dlnorm3(densityX, meanlog = meanlog, sdlog = sdlog, threshold = threshold), axisConfig, "lognormal3"))
+        legendColors <- c(legendColors, lognormal3 = "red")
+        legendLty <- c(legendLty, lognormal3 = "solid")
+        legendLabels <- c(legendLabels, lognormal3 = gettext("3-parameter\nlognormal dist."))
       } else if (distribution == "3ParameterWeibull") {
         distParameters <- .distributionParameters(data = allData,
                                                   distribution = distribution,
@@ -959,11 +1240,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         shape <- distParameters$beta
         scale <- distParameters$theta
         threshold <- distParameters$threshold
-        p <- p + ggplot2::stat_function(fun = FAdist::dweibull3 , args = list(shape = shape, scale = scale, thres = threshold),
-                                        mapping = ggplot2::aes(color = "weibull3", linetype = "weibull3"))
-        legendColors <- c(legendColors, "red")
-        legendLty <- c(legendLty, "solid")
-        legendLabels <- c(legendLabels, gettext("3-parameter Weibull dist."))
+        curveDf <- rbind(curveDf,
+                         .qcCapabilityCurveData(densityX, FAdist::dweibull3(densityX, shape = shape, scale = scale, thres = threshold), axisConfig, "weibull3"))
+        legendColors <- c(legendColors, weibull3 = "red")
+        legendLty <- c(legendLty, weibull3 = "solid")
+        legendLabels <- c(legendLabels, weibull3 = gettext("3-parameter Weibull dist."))
       } else if (distribution == "gamma") {
         distParameters <- .distributionParameters(data = allData,
                                                   distribution = distribution,
@@ -972,11 +1253,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           stop(distParameters[1], call. = FALSE)
         shape <- distParameters$beta
         scale <- distParameters$theta
-        p <- p + ggplot2::stat_function(fun = dgamma , args = list(shape = shape, scale = scale),
-                                        mapping = ggplot2::aes(color = "gamma", linetype = "gamma"))
-        legendColors <- c(legendColors, "red")
-        legendLty <- c(legendLty, "solid")
-        legendLabels <- c(legendLabels, gettext("Gamma dist."))
+        curveDf <- rbind(curveDf,
+                         .qcCapabilityCurveData(densityX, dgamma(densityX, shape = shape, scale = scale), axisConfig, "gamma"))
+        legendColors <- c(legendColors, gamma = "red")
+        legendLty <- c(legendLty, gamma = "solid")
+        legendLabels <- c(legendLabels, gamma = gettext("Gamma dist."))
       } else if (distribution == "exponential") {
         distParameters <- .distributionParameters(data = allData,
                                                   distribution = distribution,
@@ -985,11 +1266,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           stop(distParameters[1], call. = FALSE)
         scale <- distParameters$theta
         rate <- 1/scale
-        p <- p + ggplot2::stat_function(fun = dexp , args = list(rate = rate),
-                                        mapping = ggplot2::aes(color = "exp", linetype = "exp"))
-        legendColors <- c(legendColors, "red")
-        legendLty <- c(legendLty, "solid")
-        legendLabels <- c(legendLabels, gettext("Exponential dist."))
+        curveDf <- rbind(curveDf,
+                         .qcCapabilityCurveData(densityX, dexp(densityX, rate = rate), axisConfig, "exp"))
+        legendColors <- c(legendColors, exp = "red")
+        legendLty <- c(legendLty, exp = "solid")
+        legendLabels <- c(legendLabels, exp = gettext("Exponential dist."))
       } else if (distribution == "logistic") {
         distParameters <- .distributionParameters(data = allData,
                                                   distribution = distribution,
@@ -998,11 +1279,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           stop(distParameters[1], call. = FALSE)
         location <- distParameters$beta
         scale <- distParameters$theta
-        p <- p + ggplot2::stat_function(fun = dlogis , args = list(location = location, scale = scale),
-                                        mapping = ggplot2::aes(color = "logis", linetype = "logis"))
-        legendColors <- c(legendColors, "red")
-        legendLty <- c(legendLty, "solid")
-        legendLabels <- c(legendLabels, gettext("Logistic dist."))
+        curveDf <- rbind(curveDf,
+                         .qcCapabilityCurveData(densityX, dlogis(densityX, location = location, scale = scale), axisConfig, "logis"))
+        legendColors <- c(legendColors, logis = "red")
+        legendLty <- c(legendLty, logis = "solid")
+        legendLabels <- c(legendLabels, logis = gettext("Logistic dist."))
       } else if (distribution == "loglogistic") {
         distParameters <- .distributionParameters(data = allData,
                                                   distribution = distribution,
@@ -1012,53 +1293,104 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         loglocation <- distParameters$beta
         scale <- exp(loglocation)
         shape <- 1/distParameters$theta
-        p <- p + ggplot2::stat_function(fun = flexsurv::dllogis , args = list(shape = shape, scale = scale),
-                                        mapping = ggplot2::aes(color = "llogis", linetype = "llogis"))
-        legendColors <- c(legendColors, "red")
-        legendLty <- c(legendLty, "solid")
-        legendLabels <- c(legendLabels, gettext("Log-logistic dist."))
+        curveDf <- rbind(curveDf,
+                         .qcCapabilityCurveData(densityX, flexsurv::dllogis(densityX, shape = shape, scale = scale), axisConfig, "llogis"))
+        legendColors <- c(legendColors, llogis = "red")
+        legendLty <- c(legendLty, llogis = "solid")
+        legendLabels <- c(legendLabels, llogis = gettext("Log-logistic dist."))
       }
     }
 
+    yUpper <- max(c(histDf$density, curveDf$density), na.rm = TRUE)
+    if (!is.finite(yUpper) || yUpper <= 0)
+      yUpper <- 1
+
+    p <- ggplot2::ggplot() +
+      ggplot2::geom_rect(data = histDf,
+                         mapping = ggplot2::aes(xmin = xmin, xmax = xmax, ymin = 0, ymax = density),
+                         fill = "grey", col = "black", linewidth = .7, na.rm = TRUE)
+
+    if (nrow(curveDf) > 0) {
+      p <- p + ggplot2::geom_line(data = curveDf,
+                                  mapping = ggplot2::aes(x = x, y = density, color = curve, linetype = curve),
+                                  linewidth = 1, na.rm = TRUE)
+    }
+
+    p <- p +
+      ggplot2::scale_y_continuous(name = gettext("Density"), expand = ggplot2::expansion(mult = c(0, 0.14))) +
+      ggplot2::scale_x_continuous(name = gettext("Measurement"), breaks = axisConfig$xBreaks,
+                                  labels = axisConfig$xLabels, limits = axisConfig$xLimits)
+
     # Display specification limits
     if (options[["processCapabilityPlotSpecificationLimits"]]) {
-      specLimitsDf <- data.frame(matrix(ncol = 5, nrow = 0))
-      colnames(specLimitsDf) <- c("label", "xIntercept", "lty", "yPosLabel", "color")
-      yPosLabel <- max(ggplot2::layer_scales(p)$y$range$range)
+      specLimitsDf <- data.frame(matrix(ncol = 6, nrow = 0))
+      colnames(specLimitsDf) <- c("label", "xIntercept", "lty", "yPosLabel", "color", "hjust")
+      yPosLabel <- yUpper * 1.03
       if (options[["target"]]) {
         specLimitsDf <- rbind(specLimitsDf, data.frame(label = gettextf("Target = %g", round(options[["targetValue"]], .numDecimals)),
-                                                       xIntercept = options[["targetValue"]], lty = "solid", yPosLabel = yPosLabel,
-                                                       color = "darkgreen"))
+                                                       xIntercept = xTransform(options[["targetValue"]]), lty = "solid", yPosLabel = yPosLabel,
+                                                       color = "darkgreen", hjust = 0.5))
       }
       if (options[["lowerSpecificationLimit"]]) {
         lslLty <- if (options[["lowerSpecificationLimitBoundary"]]) "solid" else "dotted"
         lslLabel <- if (options[["lowerSpecificationLimitBoundary"]]) gettextf("LB = %g", round(options[["lowerSpecificationLimitValue"]], .numDecimals)) else gettextf("LSL = %g", round(options[["lowerSpecificationLimitValue"]], .numDecimals))
-        specLimitsDf <- rbind(specLimitsDf, data.frame(label = lslLabel, xIntercept = options[["lowerSpecificationLimitValue"]],
-                                                       lty = lslLty, yPosLabel = yPosLabel, color = "darkred"))
+        specLimitsDf <- rbind(specLimitsDf, data.frame(label = lslLabel, xIntercept = xTransform(options[["lowerSpecificationLimitValue"]]),
+                                                       lty = lslLty, yPosLabel = yPosLabel, color = "darkred", hjust = 0))
       }
       if (options[["upperSpecificationLimit"]]) {
         uslLty <- if (options[["upperSpecificationLimitBoundary"]]) "solid" else "dotted"
         uslLabel <- if (options[["upperSpecificationLimitBoundary"]]) gettextf("UB = %g", round(options[["upperSpecificationLimitValue"]], .numDecimals)) else gettextf("USL = %g", round(options[["upperSpecificationLimitValue"]], .numDecimals))
-        specLimitsDf <- rbind(specLimitsDf, data.frame(label = uslLabel, xIntercept = options[["upperSpecificationLimitValue"]],
-                                                       lty = uslLty, yPosLabel = yPosLabel, color = "darkred"))
+        specLimitsDf <- rbind(specLimitsDf, data.frame(label = uslLabel, xIntercept = xTransform(options[["upperSpecificationLimitValue"]]),
+                                                       lty = uslLty, yPosLabel = yPosLabel, color = "darkred", hjust = 1))
       }
       p <- p + ggplot2::geom_vline(data = specLimitsDf,
                                    mapping = ggplot2::aes(xintercept = xIntercept), color = specLimitsDf$color,
                                    linetype = specLimitsDf$lty, linewidth = 1, na.rm = TRUE) +
-        ggplot2::geom_label(specLimitsDf, mapping = ggplot2::aes(x = xIntercept, y = yPosLabel, label = label), inherit.aes = FALSE,
+        ggplot2::geom_label(specLimitsDf, mapping = ggplot2::aes(x = xIntercept, y = yPosLabel, label = label, hjust = hjust), inherit.aes = FALSE,
                             size = 4.5, na.rm = TRUE)
     }
 
-    # Add a legend if needed
-    if (options[["processCapabilityPlotDistributions"]] || options[["processCapabilityPlotSpecificationLimits"]]) {
-      p <- p + ggplot2::scale_color_manual("", values = legendColors, labels = legendLabels) +
-        ggplot2::scale_linetype_manual("", values = legendLty, labels = legendLabels)
+    if (axisConfig$hasBreak) {
+      slashHeight <- yUpper * 0.04
+      slashDepth <- yUpper * 0.02
+      slashWidth <- diff(axisConfig$xLimits) * 0.012
+      slashGap <- slashWidth * 0.9
+      axisCutDf <- do.call(rbind, lapply(axisConfig$breakMarkers, function(marker) {
+        data.frame(
+          x = marker - (slashGap + slashWidth) * 1.4,
+          xend = marker + (slashGap + slashWidth) * 1.4,
+          y = 0,
+          yend = 0
+        )
+      }))
+      breakMarkerDf <- do.call(rbind, lapply(axisConfig$breakMarkers, function(marker) {
+        data.frame(
+          x = c(marker - slashGap - slashWidth / 2, marker + slashGap - slashWidth / 2),
+          xend = c(marker - slashGap + slashWidth / 2, marker + slashGap + slashWidth / 2),
+          y = c(-slashDepth, -slashDepth),
+          yend = c(slashHeight, slashHeight)
+        )
+      }))
+      p <- p +
+        ggplot2::geom_segment(data = axisCutDf,
+                              mapping = ggplot2::aes(x = x, xend = xend, y = y, yend = yend),
+                              inherit.aes = FALSE, linewidth = 2.2, color = "white") +
+        ggplot2::geom_segment(data = breakMarkerDf,
+                                     mapping = ggplot2::aes(x = x, xend = xend, y = y, yend = yend),
+                                     inherit.aes = FALSE, linewidth = 1.1, color = "black")
+    }
+
+    if (length(legendColors) > 0) {
+      p <- p + ggplot2::scale_color_manual("", values = legendColors, labels = legendLabels, breaks = names(legendLabels)) +
+        ggplot2::scale_linetype_manual("", values = legendLty, labels = legendLabels, breaks = names(legendLabels))
     }
     if (nStages > 1)
       p <- p + ggplot2::ggtitle(stage) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
     p <- p + jaspGraphs::geom_rangeframe() +
+      ggplot2::coord_cartesian(clip = "off") +
       jaspGraphs::themeJaspRaw() +
-      ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(), legend.position = "right")
+      ggplot2::theme(axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank(),
+                     legend.position = "right", plot.margin = ggplot2::margin(12, 18, 8, 8))
     plotList[[i]] <- p
   }
   return(plotList)
