@@ -1769,8 +1769,8 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
     result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
-    plot$plotObject <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL, binWidthType = options[["histogramBinWidthType"]],
-                                                       numberOfBins = options[["histogramManualNumberOfBins"]])
+    plot$plotObject <- jaspGraphs::jaspHistogram(resid(result[["object"]]), "Residuals", binWidthType = options[["histogramBinWidthType"]],
+                                                 numberOfBins = options[["histogramManualNumberOfBins"]])
   }
 }
 
@@ -1845,7 +1845,8 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
     plot <- createJaspPlot(title = gettext("Matrix residual plot"), width = 1000, height = 1000)
-    plot$dependOn(options = c("fourInOneResidualPlot", .doeAnalysisBaseDependencies()))
+    plot$dependOn(options = c("histogramBinWidthType", "histogramManualNumberOfBins",
+                              "fourInOneResidualPlot", .doeAnalysisBaseDependencies()))
     plot$position <- 11
     jaspResults[[dep]][["fourInOneResidualPlot"]] <- plot
     if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
@@ -1855,7 +1856,8 @@ get_levels <- function(var, num_levels, dataset) {
     plotMat <- matrix(list(), 2, 2)
     plotMat[[1, 1]] <- .doeAnalysisPlotResidualsVsOrderPlotObject(result, dataset, options)
     plotMat[[2, 1]] <- .doeAnalysisPlotFittedVsResidualsPlotObject(result, options)
-    plotMat[[1, 2]] <- jaspDescriptives::.plotMarginal(resid(result[["object"]]), NULL)
+    plotMat[[1, 2]] <- jaspGraphs::jaspHistogram(resid(result[["object"]]), "Residuals", binWidthType = options[["histogramBinWidthType"]],
+                                                 numberOfBins = options[["histogramManualNumberOfBins"]])
     plotMat[[2, 2]] <- jaspGraphs::plotQQnorm(resid(result[["object"]]), abline = TRUE) +
       ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = 0.1), name = gettext("Theoretical quantiles")) +
       ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = 0.1), name = gettext("Observed quantiles"))
