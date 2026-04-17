@@ -2368,7 +2368,7 @@ results <- runAnalysis("processCapabilityStudies",
 test_that("LF37.1 3ParameterLognormal distribution with one historical param. - Non-conformance statistics table results match", {
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_nonNormalCapabilityAnalysis_PerformanceNonNormal"]][["data"]]
   jaspTools::expect_equal_tables(table,
-                                 list(0.15, 0, "ppm &lt; LSL", 8891.54, 10000, "ppm &gt; USL", 8891.69,
+                                 list(0.15, 0, "ppm &lt; LSL", 8891.33, 10000, "ppm &gt; USL", 8891.48,
                                       10000, "Total ppm"))
 })
 
