@@ -28,7 +28,6 @@ Imports:
   jaspDescriptives,
   jaspGraphs,
   lubridate,
-  mle.tools,
   psych,
   qcc,
   rsm,

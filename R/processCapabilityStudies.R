@@ -2703,6 +2703,37 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   return(plot)
 }
 
+.qcObservedVarcov <- function(logdensity, X, parms, mle) {
+  mle <- unlist(mle)
+
+  if (!all(parms %in% names(mle))) {
+    if (length(mle) != length(parms))
+      stop(gettext("Could not compute variance-covariance matrix: parameter vector has unexpected length."), call. = FALSE)
+
+    names(mle) <- parms
+  }
+
+  mle <- as.numeric(mle[parms])
+  names(mle) <- parms
+
+  negLogLik <- function(theta) {
+    names(theta) <- parms
+    env <- list2env(c(as.list(theta), list(x = X)), parent = baseenv())
+    ll <- eval(logdensity, envir = env)
+    -sum(ll)
+  }
+
+  hessian <- stats::optimHess(par = mle, fn = negLogLik)
+
+  if (anyNA(hessian) || any(!is.finite(hessian)))
+    stop(gettext("Could not compute variance-covariance matrix: Hessian contains invalid values."), call. = FALSE)
+
+  varcov <- solve(hessian)
+  dimnames(varcov) <- list(parms, parms)
+
+  list(varcov = varcov)
+}
+
 .qcProbabilityPlotObject <- function(options, dataset, measurements, stages) {
   if (identical(stages, "")) {
     nStages <- 1
@@ -2749,8 +2780,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     # Computing according to the distribution
     if (options[["nullDistribution"]] == "normal") {
       lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
-      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("mu", "sigma"),
-                                               mle = c(mean(dataCurrentStage), sd(dataCurrentStage))))
+      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("mu", "sigma"),
+                  mle = c(mean(dataCurrentStage), sd(dataCurrentStage))))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -2781,7 +2812,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       meanlog <- as.numeric(fit$parameters[1])
       sdlog <- as.numeric(fit$parameters[2])
       lpdf <- quote(log(1/(sqrt(2*pi)*x*sdlog) * exp(-(log(x)- meanlog)^2/(2*sdlog^2))))
-      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("meanlog", "sdlog"), mle = fit$parameters))
+      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("meanlog", "sdlog"), mle = fit$parameters))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
@@ -2819,7 +2850,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       shape <- as.numeric(fit_Weibull[["beta"]])
       scale <- as.numeric(fit_Weibull[["theta"]])
       lpdf <- quote(log(shape) - shape * log(scale) + shape * log(x) - (x/scale)^shape)
-      matrix <- try(mle.tools::observed.varcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = c("shape" = shape, "scale" = scale)))
+      matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("shape", "scale"), mle = c("shape" = shape, "scale" = scale)))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
