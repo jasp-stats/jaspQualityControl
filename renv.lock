@@ -2759,11 +2759,11 @@
       "RoxygenNote": "7.3.2",
       "VignetteBuilder": "knitr",
       "RemoteType": "github",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "dustinfife",
       "RemoteRepo": "flexplot",
       "RemoteRef": "master",
-      "RemoteSha": "cae36ba45502ce1794ad35cfeaf0155275db3056",
-      "RemoteHost": "api.github.com"
+      "RemoteSha": "cae36ba45502ce1794ad35cfeaf0155275db3056"
     },
     "flexsurv": {
       "Package": "flexsurv",
@@ -4325,9 +4325,7 @@
         "plotly",
         "R6",
         "rlang",
-        "scales",
-        "testthat",
-        "vdiffr"
+        "scales"
       ],
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
@@ -4353,7 +4351,48 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
-      "RemoteSha": "36ba1f775302ff86dc4be7d3b2aef294d0a41f94"
+      "RemoteRef": "master",
+      "RemoteSha": "a5422e6feaa15374305456fa058d8091a415f46e",
+      "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs"
+    },
+    "jaspTools": {
+      "Package": "jaspTools",
+      "Version": "0.20.1",
+      "Source": "GitHub",
+      "Type": "Package",
+      "Title": "Helps Preview and Debug JASP Analyses",
+      "Authors@R": "c( person(\"Tim\", \"de Jong\", role = \"aut\"), person(\"Don\", \"van den Bergh\", role = c(\"ctb\", \"cre\"), email = \"d.vandenbergh@uva.nl\"), person(\"František\", \"Bartoš\", role = \"ctb\"))",
+      "Maintainer": "Don van den Bergh <d.vandenbergh@uva.nl>",
+      "Description": "This package assists JASP developers when writing R code. It removes the necessity of building JASP every time a change is made. Rather, analyses can be called directly in R and be debugged interactively.",
+      "License": "GNU General Public License",
+      "Encoding": "UTF-8",
+      "LazyData": "true",
+      "Imports": [
+        "archive (>= 1.1.6)",
+        "data.table",
+        "DBI",
+        "httr",
+        "jsonlite",
+        "lifecycle",
+        "pkgload",
+        "remotes",
+        "rjson",
+        "RSQLite",
+        "stringi",
+        "stringr",
+        "testthat (>= 3.0.3)",
+        "vdiffr (>= 1.0.7)"
+      ],
+      "RoxygenNote": "7.3.3",
+      "Roxygen": "list(markdown = TRUE)",
+      "Author": "Tim de Jong [aut], Don van den Bergh [ctb, cre], František Bartoš [ctb]",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "jasp-stats",
+      "RemoteRepo": "jaspTools",
+      "RemoteRef": "master",
+      "RemoteSha": "3928759c1aadd4e000d9ccab75f7e9f4b1d3ba94"
+>>>>>>> 8e4ab35 (Update tseries version)
     },
     "jpeg": {
       "Package": "jpeg",
@@ -5335,8 +5374,7 @@
       "NeedsCompilation": "no",
       "Author": "Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>), Frank Bretz [aut], Peter Westfall [aut], Richard M. Heiberger [ctb], Andre Schuetzenmeister [ctb], Susan Scheibe [ctb]",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "mvtnorm": {
       "Package": "mvtnorm",
@@ -8030,8 +8068,9 @@
     },
     "tseries": {
       "Package": "tseries",
-      "Version": "0.10-59",
+      "Version": "0.10-61",
       "Source": "Repository",
+      "Encoding": "UTF-8",
       "Title": "Time Series Analysis and Computational Finance",
       "Authors@R": "c(person(\"Adrian\", \"Trapletti\", role = \"aut\", email = \"adrian@trapletti.org\"), person(\"Kurt\", \"Hornik\", role = c(\"aut\", \"cre\"), email = \"Kurt.Hornik@R-project.org\", comment = c(ORCID = \"0000-0003-4198-9911\")), person(\"Blake\", \"LeBaron\", role = \"ctb\", comment = \"BDS test code\"))",
       "Description": "Time series analysis and computational finance.",
