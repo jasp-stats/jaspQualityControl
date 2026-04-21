@@ -1769,7 +1769,7 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
     result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
-    plot$plotObject <- jaspGraphs::jaspHistogram(resid(result[["object"]]), "Residuals", binWidthType = options[["histogramBinWidthType"]],
+    plot$plotObject <- jaspGraphs::jaspHistogram(resid(result[["object"]]), gettext("Residuals"), binWidthType = options[["histogramBinWidthType"]],
                                                  numberOfBins = options[["histogramManualNumberOfBins"]])
   }
 }
