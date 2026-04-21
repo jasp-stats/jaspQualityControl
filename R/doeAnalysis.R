@@ -1856,7 +1856,7 @@ get_levels <- function(var, num_levels, dataset) {
     plotMat <- matrix(list(), 2, 2)
     plotMat[[1, 1]] <- .doeAnalysisPlotResidualsVsOrderPlotObject(result, dataset, options)
     plotMat[[2, 1]] <- .doeAnalysisPlotFittedVsResidualsPlotObject(result, options)
-    plotMat[[1, 2]] <- jaspGraphs::jaspHistogram(resid(result[["object"]]), "Residuals", binWidthType = options[["histogramBinWidthType"]],
+    plotMat[[1, 2]] <- jaspGraphs::jaspHistogram(resid(result[["object"]]), gettext("Residuals"), binWidthType = options[["histogramBinWidthType"]],
                                                  numberOfBins = options[["histogramManualNumberOfBins"]])
     plotMat[[2, 2]] <- jaspGraphs::plotQQnorm(resid(result[["object"]]), abline = TRUE) +
       ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = 0.1), name = gettext("Theoretical quantiles")) +
