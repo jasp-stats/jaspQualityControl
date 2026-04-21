@@ -359,7 +359,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                     tableLabels = axisLabels, stages = stages, movingRangeLength = options[["xBarMovingRangeLength"]],
                                     fixedSubgroupSize = fixedSubgroupSize, unbiasingConstantUsed = unbiasingConstantUsed, ruleList = ruleList2)
         jaspResults[["xBar"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(secondPlot$plotObject, xBarChart$plotObject),
-                                                                               layout = matrix(2:1, 2), removeXYlabels= "x")
+                               layout = matrix(2:1, 2), removeXYlabels= "x",
+                               shareX = TRUE, shareY = FALSE)
         if (!identical(plotNotes, ""))
           jaspResults[["xBar"]][["plotNote"]] <- createJaspHtml(paste0("<i>Note.</i> ", plotNotes))
         jaspResults[["xBar"]][["tableXBar"]] <- xBarChart$table
@@ -399,7 +400,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                  nSigmasControlLimits = options[["controlLimitsNumberOfSigmas"]], stages = stages,
                                  xAxisLabels = seq_along(unlist(dataset[measurements])), movingRangeLength = options[["xmrChartMovingRangeLength"]], ruleList = ruleList2)
         jaspResults[["xmr"]][["plot"]]$plotObject <- jaspGraphs::ggMatrixPlot(plotList = list(mrChart$plotObject, individualChart$plotObject),
-                                                                              layout = matrix(2:1, 2), removeXYlabels= "x")
+                              layout = matrix(2:1, 2), removeXYlabels= "x",
+                              shareX = TRUE, shareY = FALSE)
         if (!identical(plotNotes, ""))
           jaspResults[["xmr"]][["plotNote"]] <- createJaspHtml(paste0("<i>Note.</i> ", plotNotes))
         jaspResults[["xmr"]][["tableIndividual"]] <- individualChart$table
