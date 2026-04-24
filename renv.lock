@@ -4391,7 +4391,6 @@
       "RemoteRepo": "jaspTools",
       "RemoteRef": "master",
       "RemoteSha": "3928759c1aadd4e000d9ccab75f7e9f4b1d3ba94"
->>>>>>> 8e4ab35 (Update tseries version)
     },
     "jpeg": {
       "Package": "jpeg",
