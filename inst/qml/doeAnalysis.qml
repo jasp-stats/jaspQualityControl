@@ -380,6 +380,51 @@ Form
 
 		Group
 		{
+			title: 								qsTr("Factorial Plots")
+
+			CheckBox
+			{
+				name: 								"mainEffectsPlot"
+				label: 							qsTr("Main effect plots")
+				checked: 							true
+
+				CheckBox
+				{
+					name: 							"mainEffectsPlotCi"
+					label: 						qsTr("Confidence interval")
+					checked: 					true
+					childrenOnSameRow: 			true
+
+					CIField
+					{
+						name: 						"mainEffectsPlotCiLevel"
+					}
+				}
+			}
+
+			CheckBox
+			{
+				name: 								"interactionPlot"
+				label: 							qsTr("Interaction plots")
+				checked: 							false
+
+				CheckBox
+				{
+					name: 							"interactionPlotCi"
+					label: 						qsTr("Confidence interval")
+					checked: 					true
+					childrenOnSameRow: 			true
+
+					CIField
+					{
+						name: 						"interactionPlotCiLevel"
+					}
+				}
+			}
+		}
+
+		Group
+		{
 			title: qsTr("Other Plots")
 
 			CheckBox
