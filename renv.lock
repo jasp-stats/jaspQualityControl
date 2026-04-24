@@ -2759,11 +2759,11 @@
       "RoxygenNote": "7.3.2",
       "VignetteBuilder": "knitr",
       "RemoteType": "github",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "dustinfife",
       "RemoteRepo": "flexplot",
       "RemoteRef": "master",
-      "RemoteSha": "cae36ba45502ce1794ad35cfeaf0155275db3056",
-      "RemoteHost": "api.github.com"
+      "RemoteSha": "cae36ba45502ce1794ad35cfeaf0155275db3056"
     },
     "flexsurv": {
       "Package": "flexsurv",
@@ -2977,7 +2977,7 @@
     },
     "forecast": {
       "Package": "forecast",
-      "Version": "9.0.0",
+      "Version": "9.0.2",
       "Source": "Repository",
       "Title": "Forecasting Functions for Time Series and Linear Models",
       "Description": "Methods and tools for displaying and analysing univariate time series forecasts including exponential smoothing via state space models and automatic ARIMA modelling.",
@@ -2994,10 +2994,9 @@
         "magrittr",
         "nnet",
         "parallel",
-        "Rcpp (>= 0.11.0)",
+        "Rcpp (>= 0.12.4)",
         "stats",
         "timeDate",
-        "tseries",
         "urca",
         "withr",
         "zoo"
@@ -3014,7 +3013,7 @@
         "uroot"
       ],
       "LinkingTo": [
-        "Rcpp (>= 0.11.0)",
+        "Rcpp (>= 0.12.4)",
         "RcppArmadillo (>= 0.2.35)"
       ],
       "LazyData": "yes",
@@ -3132,11 +3131,11 @@
     },
     "gdtools": {
       "Package": "gdtools",
-      "Version": "0.4.4",
+      "Version": "0.5.0",
       "Source": "Repository",
-      "Title": "Utilities for Graphical Rendering and Fonts Management",
+      "Title": "Font Metrics and Font Management Utilities for R Graphics",
       "Authors@R": "c( person(\"David\", \"Gohel\", , \"david.gohel@ardata.fr\", role = c(\"aut\", \"cre\")), person(\"Hadley\", \"Wickham\", , \"hadley@rstudio.com\", role = \"aut\"), person(\"Lionel\", \"Henry\", , \"lionel@rstudio.com\", role = \"aut\"), person(\"Jeroen\", \"Ooms\", , \"jeroen@berkeley.edu\", role = \"aut\", comment = c(ORCID = \"0000-0002-4035-0289\")), person(\"Yixuan\", \"Qiu\", role = \"ctb\"), person(\"R Core Team\", role = \"cph\", comment = \"Cairo code from X11 device\"), person(\"ArData\", role = \"cph\"), person(\"RStudio\", role = \"cph\") )",
-      "Description": "Tools are provided to compute metrics of formatted strings and to check the availability of a font.  Another set of functions is provided to support the collection of fonts from 'Google Fonts' in a cache. Their use is simple within 'R Markdown' documents and 'shiny' applications but also with graphic productions generated with the 'ggiraph', 'ragg' and 'svglite' packages or with tabular productions from the 'flextable' package.",
+      "Description": "Compute text metrics (width, ascent, descent) using 'Cairo' and 'FreeType', independently of the active graphic device. Font lookup is delegated to 'systemfonts'. Additional utilities let users register 'Google Fonts' or bundled 'Liberation' fonts, check font availability, and assemble 'htmlDependency' objects so that fonts are correctly embedded in 'Shiny' applications, 'R Markdown' documents, and 'htmlwidgets' outputs such as 'ggiraph'.",
       "License": "GPL-3 | file LICENSE",
       "URL": "https://davidgohel.github.io/gdtools/",
       "BugReports": "https://github.com/davidgohel/gdtools/issues",
@@ -4325,9 +4324,7 @@
         "plotly",
         "R6",
         "rlang",
-        "scales",
-        "testthat",
-        "vdiffr"
+        "scales"
       ],
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
@@ -4353,7 +4350,47 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspTTests",
-      "RemoteSha": "36ba1f775302ff86dc4be7d3b2aef294d0a41f94"
+      "RemoteRef": "master",
+      "RemoteSha": "a5422e6feaa15374305456fa058d8091a415f46e",
+      "Remotes": "jasp-stats/jaspBase, jasp-stats/jaspGraphs"
+    },
+    "jaspTools": {
+      "Package": "jaspTools",
+      "Version": "0.20.1",
+      "Source": "GitHub",
+      "Type": "Package",
+      "Title": "Helps Preview and Debug JASP Analyses",
+      "Authors@R": "c( person(\"Tim\", \"de Jong\", role = \"aut\"), person(\"Don\", \"van den Bergh\", role = c(\"ctb\", \"cre\"), email = \"d.vandenbergh@uva.nl\"), person(\"František\", \"Bartoš\", role = \"ctb\"))",
+      "Maintainer": "Don van den Bergh <d.vandenbergh@uva.nl>",
+      "Description": "This package assists JASP developers when writing R code. It removes the necessity of building JASP every time a change is made. Rather, analyses can be called directly in R and be debugged interactively.",
+      "License": "GNU General Public License",
+      "Encoding": "UTF-8",
+      "LazyData": "true",
+      "Imports": [
+        "archive (>= 1.1.6)",
+        "data.table",
+        "DBI",
+        "httr",
+        "jsonlite",
+        "lifecycle",
+        "pkgload",
+        "remotes",
+        "rjson",
+        "RSQLite",
+        "stringi",
+        "stringr",
+        "testthat (>= 3.0.3)",
+        "vdiffr (>= 1.0.7)"
+      ],
+      "RoxygenNote": "7.3.3",
+      "Roxygen": "list(markdown = TRUE)",
+      "Author": "Tim de Jong [aut], Don van den Bergh [ctb, cre], František Bartoš [ctb]",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "jasp-stats",
+      "RemoteRepo": "jaspTools",
+      "RemoteRef": "master",
+      "RemoteSha": "3928759c1aadd4e000d9ccab75f7e9f4b1d3ba94"
     },
     "jpeg": {
       "Package": "jpeg",
@@ -5156,31 +5193,6 @@
       "Repository": "CRAN",
       "Author": "Douglas Bates [aut], Katharine M. Mullen [aut, cre], John C. Nash [aut], Ravi Varadhan [aut]"
     },
-    "mle.tools": {
-      "Package": "mle.tools",
-      "Version": "1.0.0",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Expected/Observed Fisher Information and Bias-Corrected Maximum Likelihood Estimate(s)",
-      "License": "GPL (>= 2)",
-      "Date": "2017-02-21",
-      "Author": "Josmar Mazucheli",
-      "Maintainer": "Josmar Mazucheli <jmazucheli@gmail.com>",
-      "Description": "Calculates the expected/observed Fisher information and the bias-corrected maximum likelihood estimate(s) via Cox-Snell Methodology.",
-      "Depends": [
-        "R (>= 3.0.2)"
-      ],
-      "Imports": [
-        "stats"
-      ],
-      "Suggests": [
-        "fitdistrplus (>= 1.0-6)"
-      ],
-      "RoxygenNote": "5.0.1",
-      "Encoding": "UTF-8",
-      "NeedsCompilation": "no",
-      "Repository": "CRAN"
-    },
     "mnormt": {
       "Package": "mnormt",
       "Version": "2.1.1",
@@ -5360,8 +5372,7 @@
       "NeedsCompilation": "no",
       "Author": "Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>), Frank Bretz [aut], Peter Westfall [aut], Richard M. Heiberger [ctb], Andre Schuetzenmeister [ctb], Susan Scheibe [ctb]",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "mvtnorm": {
       "Package": "mvtnorm",
@@ -6534,7 +6545,7 @@
     },
     "ragg": {
       "Package": "ragg",
-      "Version": "1.5.0",
+      "Version": "1.5.2",
       "Source": "Repository",
       "Type": "Package",
       "Title": "Graphic Devices Based on AGG",
@@ -6563,7 +6574,7 @@
       "Config/testthat/edition": "3",
       "Config/usethis/last-upkeep": "2025-04-25",
       "Encoding": "UTF-8",
-      "RoxygenNote": "7.3.2",
+      "RoxygenNote": "7.3.3",
       "SystemRequirements": "freetype2, libpng, libtiff, libjpeg, libwebp, libwebpmux",
       "NeedsCompilation": "yes",
       "Author": "Thomas Lin Pedersen [cre, aut] (ORCID: <https://orcid.org/0000-0002-5147-4711>), Maxim Shemanarev [aut, cph] (Author of AGG), Tony Juricic [ctb, cph] (Contributor to AGG), Milan Marusinec [ctb, cph] (Contributor to AGG), Spencer Garrett [ctb] (Contributor to AGG), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
@@ -7110,7 +7121,7 @@
     },
     "rvg": {
       "Package": "rvg",
-      "Version": "0.4.0",
+      "Version": "0.4.1",
       "Source": "Repository",
       "Type": "Package",
       "Title": "R Graphics Devices for 'Office' Vector Graphics Output",
@@ -7123,7 +7134,7 @@
         "R (>= 3.0)"
       ],
       "Imports": [
-        "gdtools (>= 0.3.3)",
+        "gdtools (>= 0.5.0)",
         "grDevices",
         "officer (>= 0.6.2)",
         "Rcpp (>= 0.12.12)",
@@ -8055,8 +8066,9 @@
     },
     "tseries": {
       "Package": "tseries",
-      "Version": "0.10-59",
+      "Version": "0.10-61",
       "Source": "Repository",
+      "Encoding": "UTF-8",
       "Title": "Time Series Analysis and Computational Finance",
       "Authors@R": "c(person(\"Adrian\", \"Trapletti\", role = \"aut\", email = \"adrian@trapletti.org\"), person(\"Kurt\", \"Hornik\", role = c(\"aut\", \"cre\"), email = \"Kurt.Hornik@R-project.org\", comment = c(ORCID = \"0000-0003-4198-9911\")), person(\"Blake\", \"LeBaron\", role = \"ctb\", comment = \"BDS test code\"))",
       "Description": "Time series analysis and computational finance.",
