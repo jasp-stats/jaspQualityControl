@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
 "POT-Creation-Date: 2026-04-04 04:24\n"
-"PO-Revision-Date: 2026-04-14 10:09+0000\n"
+"PO-Revision-Date: 2026-04-25 04:26+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/es/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.17-dev\n"
+"X-Generator: Weblate 5.17.1-dev\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -279,7 +279,7 @@ msgid "Response Optimizer Solution"
 msgstr "Solución del Optimizador de respuestas"
 
 msgid "%s fit"
-msgstr "%s ajuste"
+msgstr "Ajuste de %s"
 
 msgid "Optimization Plot"
 msgstr "Gráfico de optimización"
@@ -1214,147 +1214,163 @@ msgid ""
 "The stage variable must have at least two levels to define training and test "
 "phases."
 msgstr ""
+"La variable de etapa debe tener al menos dos niveles para definir las fases "
+"de entrenamiento y de prueba."
 
 msgid "Enter at least two variables to start the analysis."
-msgstr ""
+msgstr "Introducir al menos dos variables para iniciar el anális."
 
 msgid "The training phase must contain at least 3 observations."
-msgstr ""
+msgstr "La fase de entrenamiento debe tener al menos 3 observaciones."
 
 msgid ""
 "The covariance matrix of the training phase is computationally singular. "
 "This typically occurs when variables are linearly dependent or nearly "
 "perfectly correlated. Please remove redundant variables."
 msgstr ""
+"La matriz de varianzas-covarianzas de la fase de entrenamiento es singular "
+"computacionalmente. Esto sucede habitualmente cuando las variables son "
+"linealmente dependientes o están casi perfectamente correlacionadas. Por "
+"favor, elimine las variables redundantes."
 
 msgid ""
 "The covariance matrix of the selected variables is computationally singular. "
 "This typically occurs when variables are linearly dependent or nearly "
 "perfectly correlated. Please remove redundant variables."
 msgstr ""
+"La matriz de varianzas-covarianzas de las variables seleccionadas es "
+"singular computacionalmente. Esto sucede habitualmente cuando las variables "
+"son linealmente dependientes o están casi perfectamente correlacionadas. Por "
+"favor, elimine las variables redundantes."
 
-#, fuzzy
 msgid "Hotelling T² Control Chart"
-msgstr "Diagramas de control de atributos"
+msgstr "Diagrama de control de T² de Hotelling"
 
 msgid ""
 "Displays the Hotelling T² statistic for each sample with upper and lower "
 "control limits. Points exceeding the UCL are flagged as out of control."
 msgstr ""
+"Presenta el estadístico T² de Hotelling para cada muestra con límites "
+"superior (LS) e inferior (LI) de control. Los puntos que exceden el LSC se "
+"marcan como fuera de control."
 
-#, fuzzy
 msgid "UCL = %s"
-msgstr "NCS = %g"
+msgstr "LSC = %s"
 
-#, fuzzy
 msgid "LCL = %s"
-msgstr "NCI = %g"
+msgstr "LCI = %s"
 
 msgid "Hotelling T²"
-msgstr ""
+msgstr "T² de Hotelling"
 
 msgid "Training (%s)"
-msgstr ""
+msgstr "Entrenamiento (%s)"
 
-#, fuzzy
 msgid "Test"
-msgstr "Contrastes"
+msgstr "Contraste"
 
 msgid "Hotelling T² Control Chart Summary"
-msgstr ""
+msgstr "Resumen del diagrama de control de T² de Hotelling"
 
 msgid ""
 "Summary of the Hotelling T² control chart, including the number of "
 "variables, observations, confidence level, control limits, and the "
 "determinant of the covariance matrix."
 msgstr ""
+"Resumen del diagrama de control de T² de Hotelling, que incluye el número de "
+"variables , observaciones, intervalo de confianza, límites de control, y el "
+"determinante de la matriz de varianzas-covarianzas."
 
-#, fuzzy
 msgid "Removed %i observation(s) with missing values."
-msgstr "Eliminadas %i observaciones que no se asignaron a ningún subgrupo.<br>"
+msgstr "Eliminadas %i observaciones con valores ausentes."
 
 msgid "Phase"
-msgstr ""
+msgstr "Fase"
 
-#, fuzzy
 msgid "Number of Variables"
-msgstr "Número de defectuosos"
+msgstr "Número de variables"
 
-#, fuzzy
 msgid "Number of Observations"
-msgstr "Número de defectuosos"
+msgstr "Número de observaciones"
 
-#, fuzzy
 msgid "Confidence Level"
-msgstr "Intervalo con 95%% de confianza"
+msgstr "Nivel de confianza"
 
-#, fuzzy
 msgid "LCL"
-msgstr "LSI"
+msgstr "LCI"
 
-#, fuzzy
 msgid "UCL"
-msgstr "LSS"
+msgstr "LCS"
 
 msgid "|S|"
-msgstr ""
+msgstr "|S|"
 
 msgid ""
 "Control limits for the training phase use the Beta distribution; test phase "
 "limits use the F distribution (prediction limits)."
 msgstr ""
+"Los límites de control para la fase de entrenamiento usan la distribución "
+"Beta; los límites de fase de prueba usan la distribución F (límites de "
+"predicción)."
 
-#, fuzzy
 msgid "Variable Centers"
-msgstr "Variable: %s"
+msgstr "Centros de variables"
 
 msgid ""
 "Displays the sample mean of each variable used in the multivariate control "
 "chart."
 msgstr ""
+"Presenta la media muestral de cada variable utilizada en el diagrama de "
+"control multivariante."
 
 msgid "Center"
-msgstr ""
+msgstr "Centro"
 
 msgid "Centers estimated from training phase (%s) only."
-msgstr ""
+msgstr "Centros estimados únicamente de la fase (%s) de entrenamiento ."
 
 msgid "Covariance Matrix"
-msgstr ""
+msgstr "Matriz de covarianzas"
 
 msgid ""
 "Displays the sample covariance matrix of the selected variables, used to "
 "compute the Hotelling T² statistic."
 msgstr ""
+"Presenta a matriz mostral de covarianzas das variables seleccionadas, "
+"utilizada para calcular o estatístico T² de Hotelling."
 
 msgid "Covariance matrix estimated from training phase (%s) only."
 msgstr ""
+"Matriz de varianzas-covarianzas estimada unicamente de la fase (%s) de "
+"entrenamiento."
 
 msgid "Hotelling T² Values"
-msgstr ""
+msgstr "Valores de T² de Hotelling"
 
 msgid ""
 "Lists the Hotelling T² statistic for each sample and indicates whether the "
 "sample is in or out of control."
 msgstr ""
+"Lista el estadístico T² de Hotelling para cada muestra, e indica si la "
+"muestra está bajo o fuera de control."
 
 msgid "T²"
-msgstr ""
+msgstr "T²"
 
 msgid "Status"
-msgstr ""
+msgstr "Estado"
 
 msgid "Training UCL = %1$s, Test UCL = %2$s"
-msgstr ""
+msgstr "LCS de entrenamiento = %1$s, LCS de prueba = %2$s"
 
 msgid "Out of control"
-msgstr ""
+msgstr "Fuera de control"
 
 msgid "In control"
-msgstr ""
+msgstr "Bajo control"
 
 msgid "UCL = %1$s, LCL = %2$s"
-msgstr ""
+msgstr "LCS = %1$s, LCI = %2$s"
 
 msgid "Parameter Estimates"
 msgstr "Estimaciones de parámetros"
@@ -1444,6 +1460,8 @@ msgstr "Informe de Capacidad de Proceso"
 msgid ""
 "Set at least one specification limit (upper or lower) to start the analysis."
 msgstr ""
+"Establece al menos un límite de especificación (superior o inferior) para "
+"iniciar el análisis."
 
 msgid "Line: %s"
 msgstr "Línea: %s"
@@ -1522,6 +1540,9 @@ msgid ""
 "by unsuitable data transformation (transformation type or extreme parameter "
 "used to transform the data)."
 msgstr ""
+"Después de las transformaciones, los datos parecen incorrectos. Esto puede "
+"estar causado por una transformación inadecuada de los datos (tipo de "
+"transformación o parámetro excesivo utilizados para transformar los datos)."
 
 msgid "Specification limits could not be transformed: %1$s"
 msgstr "Los límites de especificación no pueden transformarse: %1$s"
@@ -1669,9 +1690,8 @@ msgstr "Cpk"
 msgid "%s CI for Cpk"
 msgstr "IC %s para Cpk"
 
-#, fuzzy
 msgid "Z (ST)"
-msgstr "Banco de pruebas de Z (ST)"
+msgstr "Z (ST)"
 
 msgid ""
 "Statistics displayed as * were not calculated because the relevant "
@@ -1704,9 +1724,8 @@ msgstr "Ppk"
 msgid "%s CI for Ppk"
 msgstr "IC %s para Ppk"
 
-#, fuzzy
 msgid "Z (LT)"
-msgstr "Banco de pruebas de Z (LT)"
+msgstr "Z (LT)"
 
 msgid "Cpm"
 msgstr "Cpm"
@@ -1824,12 +1843,20 @@ msgid ""
 "distribution of the data are very far away from the selected distribution, "
 "please try one that describes your data more closely."
 msgstr ""
+"El ajuste de la distribución Log-Normal falló, debido muy probablemente a "
+"que la distribución observada de los datos está bastante alejada de la "
+"distribución seleccionada; por favor, intente otra que describa sus datos "
+"más aproximadamente."
 
 msgid ""
 "Fitting Weibull distribution failed, most likely because the observed "
 "distribution of the data are very far away from the selected distribution, "
 "please try one that describes your data more closely."
 msgstr ""
+"El ajuste de la distribución de Weibull falló, debido muy probablemente a "
+"que la distribución observada de los datos está bastante alejada de la "
+"distribución seleccionada; por favor, intente otra que describa sus datos "
+"más aproximadamente."
 
 msgid "Histogram"
 msgstr "Histograma"
