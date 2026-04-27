@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2026-04-27 18:29+0000\n"
+"Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/es/>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.17.1-dev\n"
 "X-Language: es\n"
 "X-Qt-Contexts: true\n"
 
@@ -3374,7 +3380,6 @@ msgid ""
 "Optional column used as x-axis labels (e.g., a timestamp or row identifier)."
 msgstr ""
 
-#, fuzzy
 msgctxt "multivariateControlCharts|"
 msgid "Stage"
 msgstr "Etapa"
@@ -3388,7 +3393,7 @@ msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Training phase level"
-msgstr ""
+msgstr "Nivel de la fase de entrenamiento"
 
 msgctxt "multivariateControlCharts|"
 msgid ""
@@ -3399,11 +3404,11 @@ msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Control Chart"
-msgstr ""
+msgstr "Gráfico de control"
 
 msgctxt "multivariateControlCharts|"
 msgid "Automatic confidence level: (1 - 0.0027)ᵖ"
-msgstr ""
+msgstr "Nivel de confianza automático: (1 - 0.0027)ᵖ"
 
 msgctxt "multivariateControlCharts|"
 msgid ""
@@ -3424,7 +3429,7 @@ msgstr ""
 
 msgctxt "multivariateControlCharts|"
 msgid "Output"
-msgstr ""
+msgstr "Salida de resultados"
 
 msgctxt "multivariateControlCharts|"
 msgid "Variable centers"
@@ -3432,25 +3437,28 @@ msgstr "Centros de variables"
 
 msgctxt "multivariateControlCharts|"
 msgid "Show the mean of each variable."
-msgstr ""
+msgstr "Mostrar la media de cada variable."
 
 msgctxt "multivariateControlCharts|"
 msgid "Covariance matrix"
-msgstr ""
+msgstr "Matriz de covarianzas"
 
 msgctxt "multivariateControlCharts|"
 msgid "Show the sample covariance matrix of the selected variables."
 msgstr ""
+"Mostrar la matriz muestral de covarianzas de las variables seleccionadas."
 
 msgctxt "multivariateControlCharts|"
 msgid "T² values table"
-msgstr ""
+msgstr "Tabla de valores de T²"
 
 msgctxt "multivariateControlCharts|"
 msgid ""
 "Show a table with the T² statistic for each observation, along with the UCL "
 "and in/out-of-control status."
 msgstr ""
+"Mostrar una tabla con el estadístico T² para cada observacióm, junto con el "
+"LCS y el estado bajo/fuera de control."
 
 msgctxt "multivariateControlCharts|"
 msgid "Add T² values to data"
