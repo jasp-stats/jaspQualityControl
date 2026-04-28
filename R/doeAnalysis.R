@@ -126,8 +126,7 @@ doeAnalysis <- function(jaspResults, dataset, options, ...) {
   .doeAnalysisStepwiseTable(jaspResults, dependent, options, ready, coded, stepwiseMethod)
   .doeAnalysisPlotPareto(jaspResults, dependent, options, blocks, covariates, ready)
   .doeAnalysisPlotEffectNormalDistribution(jaspResults, dependent, options, blocks, covariates, ready)
-  .doeAnalysisPlotMainEffects(jaspResults, dependent, options, ready)
-  .doeAnalysisPlotInteractionEffects(jaspResults, dependent, options, ready)
+  .doeAnalysisPlotFactorialPlots(jaspResults, dependent, options, ready)
   .doeAnalysisPlotQQResiduals(jaspResults, dependent, options, ready)
   .doeAnalysisPlotHistResiduals(jaspResults, dependent, options, ready)
   .doeAnalysisPlotFittedVsResiduals(jaspResults, dependent, options, ready)
@@ -1972,20 +1971,19 @@ get_levels <- function(var, num_levels, dataset) {
   return(level)
 }
 
-.doeAnalysisPlotMainEffects <- function(jaspResults, dependent, options, ready) {
-  if (!options[["mainEffectsPlot"]] || !is.null(jaspResults[["mainEffectsPlot"]])) {
+.doeAnalysisPlotFactorialPlots <- function(jaspResults, dependent, options, ready) {
+  if ((!options[["mainEffectsPlot"]] && !options[["interactionPlot"]]) || !is.null(jaspResults[["factorialPlots"]])) {
     return()
   }
 
-  container <- createJaspContainer(title = gettext("Main Effects Plots"))
-  container$dependOn(options = c("mainEffectsPlot", "mainEffectsPlotCi", "mainEffectsPlotCiLevel", .doeAnalysisBaseDependencies()))
+  container <- createJaspContainer(title = gettext("Factorial Plots"))
+  container$dependOn(options = c("mainEffectsPlot", "mainEffectsPlotCi", "mainEffectsPlotCiLevel",
+                                  "interactionPlot", "interactionPlotCi", "interactionPlotCiLevel",
+                                  .doeAnalysisBaseDependencies()))
   container$position <- 12
-  jaspResults[["mainEffectsPlot"]] <- container
+  jaspResults[["factorialPlots"]] <- container
 
-  includeCi <- isTRUE(options[["mainEffectsPlotCi"]])
-  ciLevel <- .doeAnalysisNormalizeCiLevel(options[["mainEffectsPlotCiLevel"]])
-
-  # Create one child container/plot per dependent outcome.
+  # Create one child container per dependent outcome.
   for (depIdx in seq_along(dependent)) {
     dep <- dependent[[depIdx]]
 
@@ -1994,173 +1992,193 @@ get_levels <- function(var, num_levels, dataset) {
     container[[dep]] <- depContainer
 
     if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
-      return()
+      next
     }
 
-    result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
-    model <- result[["object"]]
-    factors <- .doeAnalysisPlotFactorCandidates(options, model)
-
-    # Build one plot per factor inside the dependent-variable container.
-    plotCount <- 0
-    emmErrors <- character(0)
-    for (factorName in factors) {
-      if (!factorName %in% names(model$model)) {
-        next
-      }
-
-      predictor <- model$model[[factorName]]
-      predictor <- predictor[!is.na(predictor)]
-      if (length(unique(predictor)) < 2) {
-        next
-      }
-
-      emm <- try(.doeAnalysisEmmeansByTerms(model, factorName, ciLevel, includeCi = includeCi))
-      if (isTryError(emm)) {
-        emmErrors <- c(emmErrors, .extractErrorMessage(emm))
-        next
-      }
-
-      if (!factorName %in% names(emm)) {
-        emmErrors <- c(emmErrors, gettextf("Estimated means output did not contain factor '%s'.", factorName))
-        next
-      }
-
-      emm[["x"]] <- as.character(emm[[factorName]])
-      factorPlot <- createJaspPlot(title = gettextf("Main Effect: %s", factorName), width = 500, height = 500)
-      p <- ggplot2::ggplot(emm, ggplot2::aes(x = x, y = emmean, group = 1)) +
-        ggplot2::geom_line(color = "black", linewidth = 0.9) +
-        ggplot2::geom_point(color = "black", fill = "black", shape = 21, size = 3.2, stroke = 0.2) +
-        ggplot2::scale_x_discrete(name = factorName) +
-        ggplot2::scale_y_continuous(name = dep) +
-        jaspGraphs::geom_rangeframe() +
-        jaspGraphs::themeJaspRaw()
-
-      if (includeCi && all(c("lower.CL", "upper.CL") %in% names(emm))) {
-        p <- p + ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.CL, ymax = upper.CL), width = 0.12, linewidth = 0.6)
-      }
-
-      factorPlot$plotObject <- p
-      factorPlotKey <- gsub("[^[:alnum:]_]", "_", paste0("mainEffect_", factorName))
-      depContainer[[factorPlotKey]] <- factorPlot
-      plotCount <- plotCount + 1
+    if (options[["mainEffectsPlot"]]) {
+      .doeAnalysisPlotMainEffectsSubplots(depContainer, dep, options, jaspResults, ready)
     }
 
-    if (plotCount == 0) {
-      errorPlot <- createJaspPlot(title = gettextf("Main Effects Plot: %s", dep), width = 900, height = 500)
-      if (length(emmErrors) > 0) {
-        errorPlot$setError(gettextf("Failed to compute main effects plot: %s", emmErrors[[1]]))
-      } else {
-        errorPlot$setError(gettext("Main effects plot requires at least one factor with two or more levels."))
-      }
-      depContainer[["plot"]] <- errorPlot
+    if (options[["interactionPlot"]]) {
+      .doeAnalysisPlotInteractionEffectsSubplots(depContainer, dep, options, jaspResults, ready)
     }
   }
 }
 
-.doeAnalysisPlotInteractionEffects <- function(jaspResults, dependent, options, ready) {
-  if (!options[["interactionPlot"]] || !is.null(jaspResults[["interactionPlot"]])) {
-    return()
+.doeAnalysisPlotMainEffectsSubplots <- function(depContainer, dep, options, jaspResults, ready) {
+  mainEffectContainer <- createJaspContainer(title = gettext("Main Effects"))
+  mainEffectContainer$position <- 1
+  depContainer[["mainEffect"]] <- mainEffectContainer
+
+  includeCi <- isTRUE(options[["mainEffectsPlotCi"]])
+  ciLevel <- .doeAnalysisNormalizeCiLevel(options[["mainEffectsPlotCiLevel"]])
+
+  result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
+  model <- result[["object"]]
+  factors <- .doeAnalysisPlotFactorCandidates(options, model)
+
+  # Build one plot per factor inside the main effects container.
+  plotCount <- 0
+  emmErrors <- character(0)
+  for (factorName in factors) {
+    if (!factorName %in% names(model$model)) {
+      next
+    }
+
+    predictor <- model$model[[factorName]]
+    predictor <- predictor[!is.na(predictor)]
+    if (length(unique(predictor)) < 2) {
+      next
+    }
+
+    emm <- try(.doeAnalysisEmmeansByTerms(model, factorName, ciLevel, includeCi = includeCi))
+    if (isTryError(emm)) {
+      emmErrors <- c(emmErrors, .extractErrorMessage(emm))
+      next
+    }
+
+    if (!factorName %in% names(emm)) {
+      emmErrors <- c(emmErrors, gettextf("Estimated means output did not contain factor '%s'.", factorName))
+      next
+    }
+
+    # Sort numeric factors by size; character factors remain in original order
+    emm[["x"]] <- as.character(emm[[factorName]])
+    
+    # Try to sort numerically - if all values are numeric, sort numerically
+    uniqueX <- unique(emm[["x"]])
+    numericX <- suppressWarnings(as.numeric(uniqueX))
+    if (!anyNA(numericX)) {
+      # All values are numeric, sort numerically
+      sortedLevels <- as.character(sort(numericX))
+      emm[["x"]] <- factor(emm[["x"]], levels = sortedLevels)
+    }
+
+    factorPlot <- createJaspPlot(title = gettextf("Main Effect: %s", factorName), width = 500, height = 500)
+    p <- ggplot2::ggplot(emm, ggplot2::aes(x = x, y = emmean, group = 1)) +
+      ggplot2::geom_line(color = "black", linewidth = 0.9) +
+      ggplot2::geom_point(color = "black", fill = "black", shape = 21, size = 3.2, stroke = 0.2) +
+      ggplot2::scale_x_discrete(name = factorName, expand = ggplot2::expansion(add = c(0.5, 0.5))) +
+      ggplot2::scale_y_continuous(name = dep, expand = ggplot2::expansion(mult = c(0.1, 0.1))) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw()
+
+    if (includeCi && all(c("lower.CL", "upper.CL") %in% names(emm))) {
+      p <- p + ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.CL, ymax = upper.CL), width = 0.12, linewidth = 0.6)
+    }
+
+    factorPlot$plotObject <- p
+    factorPlotKey <- gsub("[^[:alnum:]_]", "_", paste0("mainEffect_", factorName))
+    mainEffectContainer[[factorPlotKey]] <- factorPlot
+    plotCount <- plotCount + 1
   }
 
-  container <- createJaspContainer(title = gettext("Interaction Plots"))
-  container$dependOn(options = c("interactionPlot", "interactionPlotCi", "interactionPlotCiLevel", .doeAnalysisBaseDependencies()))
-  container$position <- 13
-  jaspResults[["interactionPlot"]] <- container
+  if (plotCount == 0) {
+    errorPlot <- createJaspPlot(title = gettext("Main Effects"), width = 900, height = 500)
+    if (length(emmErrors) > 0) {
+      errorPlot$setError(gettextf("Failed to compute main effects plot: %s", emmErrors[[1]]))
+    } else {
+      errorPlot$setError(gettext("Main effects plot requires at least one factor with two or more levels."))
+    }
+    mainEffectContainer[["plot"]] <- errorPlot
+  }
+}
+
+.doeAnalysisPlotInteractionEffectsSubplots <- function(depContainer, dep, options, jaspResults, ready) {
+  interactionEffectContainer <- createJaspContainer(title = gettext("Interaction Effects"))
+  interactionEffectContainer$position <- 2
+  depContainer[["interactionEffect"]] <- interactionEffectContainer
 
   includeCi <- isTRUE(options[["interactionPlotCi"]])
   ciLevel <- .doeAnalysisNormalizeCiLevel(options[["interactionPlotCiLevel"]])
 
-  # Create one child container/plot per dependent outcome.
-  for (depIdx in seq_along(dependent)) {
-    dep <- dependent[[depIdx]]
+  result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
+  model <- result[["object"]]
+  factors <- .doeAnalysisPlotFactorCandidates(options, model)
+  # Pairwise interactions for all available factors.
+  factorPairs <- if (length(factors) > 1) utils::combn(factors, 2, simplify = FALSE) else list()
 
-    depContainer <- createJaspContainer(title = dep)
-    depContainer$position <- depIdx
-    container[[dep]] <- depContainer
+  if (length(factorPairs) == 0) {
+    errorPlot <- createJaspPlot(title = gettext("Interaction Effects"), width = 1000, height = 600)
+    errorPlot$setError(gettext("Interaction plot requires at least two factors with two or more levels."))
+    interactionEffectContainer[["plot"]] <- errorPlot
+    return()
+  }
 
-    if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
-      return()
-    }
+  # Each pair contributes one separate interaction plot.
+  plotCount <- 0
+  emmErrors <- character(0)
+  for (pair in factorPairs) {
+    factorA <- pair[[1]]
+    factorB <- pair[[2]]
 
-    result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
-    model <- result[["object"]]
-    factors <- .doeAnalysisPlotFactorCandidates(options, model)
-    # Pairwise interactions for all available factors.
-    factorPairs <- if (length(factors) > 1) utils::combn(factors, 2, simplify = FALSE) else list()
-
-    if (length(factorPairs) == 0) {
-      errorPlot <- createJaspPlot(title = gettextf("Interaction Plot: %s", dep), width = 1000, height = 600)
-      errorPlot$setError(gettext("Interaction plot requires at least two factors with two or more levels."))
-      depContainer[["plot"]] <- errorPlot
+    if (!all(c(factorA, factorB) %in% names(model$model))) {
       next
     }
 
-    # Each pair contributes one separate interaction plot.
-    plotCount <- 0
-    emmErrors <- character(0)
-    for (pair in factorPairs) {
-      factorA <- pair[[1]]
-      factorB <- pair[[2]]
-
-      if (!all(c(factorA, factorB) %in% names(model$model))) {
-        next
-      }
-
-      predictorA <- model$model[[factorA]]
-      predictorB <- model$model[[factorB]]
-      predictorA <- predictorA[!is.na(predictorA)]
-      predictorB <- predictorB[!is.na(predictorB)]
-      if (length(unique(predictorA)) < 2 || length(unique(predictorB)) < 2) {
-        next
-      }
-
-      emm <- try(.doeAnalysisEmmeansByTerms(model, c(factorA, factorB), ciLevel, includeCi = includeCi))
-      if (isTryError(emm)) {
-        emmErrors <- c(emmErrors, .extractErrorMessage(emm))
-        next
-      }
-
-      if (!all(c(factorA, factorB) %in% names(emm))) {
-        emmErrors <- c(emmErrors, gettextf("Estimated means output did not contain factors '%1$s' and '%2$s'.", factorA, factorB))
-        next
-      }
-
-      emm[["x"]] <- as.character(emm[[factorA]])
-      emm[["trace"]] <- as.character(emm[[factorB]])
-
-      pairTitle <- gettextf("Interaction: %1$s x %2$s", factorA, factorB)
-      pairPlot <- createJaspPlot(title = pairTitle, width = 600, height = 500)
-      dodge <- ggplot2::position_dodge(width = 0.2)
-      p <- ggplot2::ggplot(emm, ggplot2::aes(x = x, y = emmean, color = trace, group = trace)) +
-        ggplot2::geom_line(linewidth = 0.95) +
-        ggplot2::geom_point(position = dodge, shape = 21, ggplot2::aes(fill = trace), size = 3.2, stroke = 0.2) +
-        ggplot2::scale_x_discrete(name = factorA) +
-        ggplot2::scale_y_continuous(name = dep) +
-        ggplot2::labs(color = factorB, fill = factorB) +
-        jaspGraphs::geom_rangeframe() +
-        jaspGraphs::themeJaspRaw() +
-        ggplot2::theme(legend.position = "right")
-
-      if (includeCi && all(c("lower.CL", "upper.CL") %in% names(emm))) {
-        p <- p + ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.CL, ymax = upper.CL), width = 0.12, linewidth = 0.6, position = dodge)
-      }
-
-      pairPlot$plotObject <- p
-      pairPlotKey <- gsub("[^[:alnum:]_]", "_", paste0("interaction_", factorA, "_x_", factorB))
-      depContainer[[pairPlotKey]] <- pairPlot
-      plotCount <- plotCount + 1
+    predictorA <- model$model[[factorA]]
+    predictorB <- model$model[[factorB]]
+    predictorA <- predictorA[!is.na(predictorA)]
+    predictorB <- predictorB[!is.na(predictorB)]
+    if (length(unique(predictorA)) < 2 || length(unique(predictorB)) < 2) {
+      next
     }
 
-    if (plotCount == 0) {
-      errorPlot <- createJaspPlot(title = gettextf("Interaction Plot: %s", dep), width = 1000, height = 600)
-      if (length(emmErrors) > 0) {
-        errorPlot$setError(gettextf("Failed to compute interaction plot: %s", emmErrors[[1]]))
-      } else {
-        errorPlot$setError(gettext("Interaction plot requires at least two factors with two or more levels."))
-      }
-      depContainer[["plot"]] <- errorPlot
+    emm <- try(.doeAnalysisEmmeansByTerms(model, c(factorA, factorB), ciLevel, includeCi = includeCi))
+    if (isTryError(emm)) {
+      emmErrors <- c(emmErrors, .extractErrorMessage(emm))
+      next
     }
+
+    if (!all(c(factorA, factorB) %in% names(emm))) {
+      emmErrors <- c(emmErrors, gettextf("Estimated means output did not contain factors '%1$s' and '%2$s'.", factorA, factorB))
+      next
+    }
+
+    # Sort numeric factors by size; character factors remain in original order
+    emm[["x"]] <- as.character(emm[[factorA]])
+    
+    # Try to sort numerically - if all values are numeric, sort numerically
+    uniqueX <- unique(emm[["x"]])
+    numericX <- suppressWarnings(as.numeric(uniqueX))
+    if (!anyNA(numericX)) {
+      # All values are numeric, sort numerically
+      sortedLevels <- as.character(sort(numericX))
+      emm[["x"]] <- factor(emm[["x"]], levels = sortedLevels)
+    }
+
+    emm[["trace"]] <- as.character(emm[[factorB]])
+
+    pairTitle <- gettextf("Interaction: %1$s x %2$s", factorA, factorB)
+    pairPlot <- createJaspPlot(title = pairTitle, width = 600, height = 500)
+    p <- ggplot2::ggplot(emm, ggplot2::aes(x = x, y = emmean, color = trace, group = trace)) +
+      ggplot2::geom_line(linewidth = 0.95) +
+      ggplot2::geom_point(shape = 21, ggplot2::aes(fill = trace), size = 3.2, stroke = 0.2) +
+      ggplot2::scale_x_discrete(name = factorA, expand = ggplot2::expansion(add = c(0.5, 0.5))) +
+      ggplot2::scale_y_continuous(name = dep, expand = ggplot2::expansion(mult = c(0.1, 0.1))) +
+      ggplot2::labs(color = factorB, fill = factorB) +
+      jaspGraphs::geom_rangeframe() +
+      jaspGraphs::themeJaspRaw() +
+      ggplot2::theme(legend.position = "right")
+
+    if (includeCi && all(c("lower.CL", "upper.CL") %in% names(emm))) {
+      p <- p + ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.CL, ymax = upper.CL), width = 0.12, linewidth = 0.6)
+    }
+
+    pairPlot$plotObject <- p
+    pairPlotKey <- gsub("[^[:alnum:]_]", "_", paste0("interaction_", factorA, "_x_", factorB))
+    interactionEffectContainer[[pairPlotKey]] <- pairPlot
+    plotCount <- plotCount + 1
+  }
+
+  if (plotCount == 0) {
+    errorPlot <- createJaspPlot(title = gettext("Interaction Effects"), width = 1000, height = 600)
+    if (length(emmErrors) > 0) {
+      errorPlot$setError(gettextf("Failed to compute interaction plot: %s", emmErrors[[1]]))
+    } else {
+      errorPlot$setError(gettext("Interaction plot requires at least two factors with two or more levels."))
+    }
+    interactionEffectContainer[["plot"]] <- errorPlot
   }
 }
 
