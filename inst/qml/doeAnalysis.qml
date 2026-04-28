@@ -481,7 +481,7 @@ Form
 			{
 				name: 								"mainEffectsPlot"
 				label: 							qsTr("Main effect plots")
-				checked: 							true
+				checked: 							false
 
 				CheckBox
 				{
