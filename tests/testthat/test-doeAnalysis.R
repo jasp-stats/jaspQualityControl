@@ -5297,13 +5297,13 @@ test_that("54.5 Data example 1 (factorial plots, two outcomes) - Density Interac
 })
 
 test_that("54.6 Data example 1 (factorial plots, two outcomes) - Density Interaction: Material x InjPress plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_interactionEffect"]][["collection"]][["factorialPlots_Density_interactionEffect_interaction_Material_x_InjPress"]][["data"]]
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_interactionEffect"]][["collection"]][["factorialPlots_Density_interactionEffect_interaction_InjPress_x_Material"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injpress-54-06")
 })
 
 test_that("54.7 Data example 1 (factorial plots, two outcomes) - Density Interaction: Material x InjTemp plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_interactionEffect"]][["collection"]][["factorialPlots_Density_interactionEffect_interaction_Material_x_InjTemp"]][["data"]]
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_interactionEffect"]][["collection"]][["factorialPlots_Density_interactionEffect_interaction_InjTemp_x_Material"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injtemp-54-07")
 })
@@ -5333,13 +5333,13 @@ test_that("54.15 Data example 1 (factorial plots, two outcomes) - Strength Inter
 })
 
 test_that("54.16 Data example 1 (factorial plots, two outcomes) - Strength Interaction: Material x InjPress plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_interactionEffect"]][["collection"]][["factorialPlots_Strength_interactionEffect_interaction_Material_x_InjPress"]][["data"]]
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_interactionEffect"]][["collection"]][["factorialPlots_Strength_interactionEffect_interaction_InjPress_x_Material"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injpress-54-16")
 })
 
 test_that("54.17 Data example 1 (factorial plots, two outcomes) - Strength Interaction: Material x InjTemp plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_interactionEffect"]][["collection"]][["factorialPlots_Strength_interactionEffect_interaction_Material_x_InjTemp"]][["data"]]
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_interactionEffect"]][["collection"]][["factorialPlots_Strength_interactionEffect_interaction_InjTemp_x_Material"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injtemp-54-17")
 })
@@ -5444,15 +5444,15 @@ test_that("55.5 Data example 2 (factorial plots, one outcome) - Interaction: Ang
 })
 
 test_that("55.6 Data example 2 (factorial plots, one outcome) - Interaction: Ball x Angle plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_interactionEffect"]][["collection"]][["factorialPlots_Distance_interactionEffect_interaction_Ball_x_Angle"]][["data"]]
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_interactionEffect"]][["collection"]][["factorialPlots_Distance_interactionEffect_interaction_Angle_x_Ball"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "interaction-ball-x-angle-55-06")
+  jaspTools::expect_equal_plots(testPlot, "interaction-angle-x-ball-55-06")
 })
 
 test_that("55.7 Data example 2 (factorial plots, one outcome) - Interaction: Ball x Vertical plot matches", {
-  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_interactionEffect"]][["collection"]][["factorialPlots_Distance_interactionEffect_interaction_Ball_x_Vertical"]][["data"]]
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_interactionEffect"]][["collection"]][["factorialPlots_Distance_interactionEffect_interaction_Vertical_x_Ball"]][["data"]]
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
-  jaspTools::expect_equal_plots(testPlot, "interaction-ball-x-vertical-55-07")
+  jaspTools::expect_equal_plots(testPlot, "interaction-vertical-x-ball-55-07")
 })
 
 test_that("55.8 Data example 2 (factorial plots, one outcome) - Main Effect: Angle plot matches", {
