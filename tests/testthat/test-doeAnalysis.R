@@ -5472,3 +5472,239 @@ test_that("55.10 Data example 2 (factorial plots, one outcome) - Main Effect: Ve
   testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
   jaspTools::expect_equal_plots(testPlot, "main-effect-vertical-55-10")
 })
+
+#### Data example 3 (response surface, two outcomes, factorial plots) ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss", "Cost")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$mainEffectsPlot <- TRUE
+options$mainEffectsPlotCi <- TRUE
+options$interactionPlot <- TRUE
+options$interactionPlotCi <- TRUE
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("56.1 Data example 3 (response surface, two outcomes) - Cost ANOVA table results match", {
+  table <- results[["results"]][["Cost"]][["collection"]][["Cost_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(4213.26273148148, 33706.1018518519, 8, 8.55776924337149, 5.37520340999456e-07,
+                                      "Model", "", 9118.77777777778, 3, "", "", "<unicode> Linear terms",
+                                      6833.77777777778, 6833.77777777778, 1, 13.8804287816484, 0.000541387947404092,
+                                      "<unicode> <unicode> Speed", 2116, 2116, 1, 4.29791372459861,
+                                      0.0439141309793144, "<unicode> <unicode> Pressure", 169, 169,
+                                      1, 0.343264375924936, 0.560878208408529, "<unicode> <unicode> Nozzle",
+                                      "", 24043.7407407407, 2, "", "", "<unicode> Squared terms",
+                                      4306.7037037037, 4306.7037037037, 1, 8.74756188843468, 0.00492545805087858,
+                                      "<unicode> <unicode> Speed^2", 19737.037037037, 19737.037037037,
+                                      1, 40.0888858054785, 1.00380594014704e-07, "<unicode> <unicode> Pressure^2",
+                                      "", 543.583333333336, 3, "", "", "<unicode> Interaction terms",
+                                      0.166666666667879, 0.166666666667879, 1, 0.000338525025569461,
+                                      0.98540184886942, "<unicode> <unicode> Speed<unicode><unicode><unicode>Pressure",
+                                      198.375, 198.375, 1, 0.402929411681119, 0.528794574263472, "<unicode> <unicode> Speed<unicode><unicode><unicode>Nozzle",
+                                      345.041666666668, 345.041666666668, 1, 0.70083143418008, 0.406928561138628,
+                                      "<unicode> <unicode> Pressure<unicode><unicode><unicode>Nozzle",
+                                      492.331893004115, 22154.9351851852, 45, "", "", "Error", "",
+                                      55861.0370370371, 53, "", "", "Total"))
+})
+
+test_that("56.2 Data example 3 (response surface, two outcomes) - Cost Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Cost"]][["collection"]][["Cost_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 325.648148148162, "", 0.204046185282406, 252.405013309973,
+                                      "(Intercept)", 1.29018098284855, "", "A", -10.690277777778,
+                                      -427.611111111118, 0.0103445869391715, 3.98181749804874, "Speed",
+                                      -2.68477341892657, 446.500000000037, "B", 50.0999999999997,
+                                      500.999999999997, 5.43884056833538e-06, 9.62330859388601, "Pressure",
+                                      5.20610967747931, 163.000000000001, "C1", -45.0462962962947,
+                                      -135.138888888884, 0.217976561749922, 36.0176413208199, "Nozzle1",
+                                      -1.25067313250898, 4692.25000000024, "C2", 28.5092592592587,
+                                      85.527777777776, 0.433078949880629, 36.0176413208199, "Nozzle2",
+                                      0.791535986638275, 4692.25000000024, "A^2", 0.0473611111111117,
+                                      1.89444444444447, 0.00587968269999673, 0.016319289653662, "Speed^2",
+                                      2.90215518666795, "", "B^2", -1.62222222222222, -16.2222222222222,
+                                      1.96212230408646e-07, 0.26110863445859, "Pressure^2", -6.2128248864152,
+                                      "", "AB", 0.000833333333334677, 0.108333333333508, 0.985681300491276,
+                                      0.0461579215130072, "Speed<unicode>Pressure", 0.0180539614007499,
+                                      446.500000000037, "AC1", 0.19027777777777, 26.4486111111101,
+                                      0.479172295252194, 0.266492884107683, "Speed<unicode>Nozzle1",
+                                      0.714006974013173, 446.500000000037, "AC2", -0.0930555555555526,
+                                      -12.9347222222218, 0.728694435426281, 0.266492884107683, "Speed<unicode>Nozzle2",
+                                      -0.349185892400606, 446.500000000037, "BC1", 1.24999999999997,
+                                      23.7499999999994, 0.247548766895022, 1.06597153643073, "Pressure<unicode>Nozzle1",
+                                      1.17263919089756, 163.000000000001, "BC2", -0.983333333333321,
+                                      -18.6833333333331, 0.361549407955619, 1.06597153643073, "Pressure<unicode>Nozzle2",
+                                      -0.922476163506097, 163.000000000001))
+})
+
+test_that("56.3 Data example 3 (response surface, two outcomes) - Cost Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Cost"]][["collection"]][["Cost_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "C1", 2, "C2"))
+})
+
+test_that("56.4 Data example 3 (response surface, two outcomes) - Cost Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Cost"]][["collection"]][["Cost_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Cost = 325.65 <unicode> 10.69 A + 50.1 B <unicode> 45.05 C1 + 28.51 C2 + 0.047 A^2 <unicode> 1.62 B^2 + 0.00083 AB + 0.19 AC1 <unicode> 0.093 AC2 + 1.25 BC1 <unicode> 0.98 BC2"
+                                 ))
+})
+
+test_that("56.5 Data example 3 (response surface, two outcomes) - Cost Model Summary table results match", {
+  table <- results[["results"]][["Cost"]][["collection"]][["Cost_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.514856065416552, 0.376163467067314, 0.615546315990475, 22.6126710588604
+                                 ))
+})
+
+test_that("56.6 Data example 3 (response surface, two outcomes) - Syruploss ANOVA table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(16677.5451388889, 133420.361111111, 8, 18.4474907805641, 7.11868287266709e-12,
+                                      "Model", "", 2154.69444444445, 3, "", "", "<unicode> Linear terms",
+                                      1406.25, 1406.25, 1, 1.55549175218102, 0.218778715472802, "<unicode> <unicode> Speed",
+                                      400, 400, 1, 0.442450987287045, 0.509336803585456, "<unicode> <unicode> Pressure",
+                                      348.444444444445, 348.444444444445, 1, 0.385423971147827, 0.53784658349265,
+                                      "<unicode> <unicode> Nozzle", "", 128489.416666667, 2, "", "",
+                                      "<unicode> Squared terms", 59784.0833333334, 59784.0833333334,
+                                      1, 66.1288167372108, 2.21684744052923e-10, "<unicode> <unicode> Speed^2",
+                                      68705.3333333334, 68705.3333333334, 1, 75.9968564130471, 3.18756375741766e-11,
+                                      "<unicode> <unicode> Pressure^2", "", 2776.25, 3, "", "", "<unicode> Interaction terms",
+                                      425.041666666664, 425.041666666664, 1, 0.470150262636992, 0.496435508498772,
+                                      "<unicode> <unicode> Speed<unicode><unicode><unicode>Pressure",
+                                      1700.16666666667, 1700.16666666667, 1, 1.88060105054798, 0.177065829112353,
+                                      "<unicode> <unicode> Speed<unicode><unicode><unicode>Nozzle",
+                                      651.041666666664, 651.041666666664, 1, 0.720135070454172, 0.400591317242241,
+                                      "<unicode> <unicode> Pressure<unicode><unicode><unicode>Nozzle",
+                                      904.054938271605, 40682.4722222222, 45, "", "", "Error", "",
+                                      174102.833333333, 53, "", "", "Total"))
+})
+
+test_that("56.7 Data example 3 (response surface, two outcomes) - Syruploss Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 1894.69444444448, "", 3.67539211300177e-07, 314.554222132801,
+                                      "(Intercept)", 6.02342715859196, "", "A", -42.6687500000005,
+                                      -1706.75000000002, 8.30873548420183e-11, 4.96225288613952, "Speed",
+                                      -8.59866495703636, 446.50000000001, "B", 86.4166666666658, 864.166666666658,
+                                      7.39436893500888e-09, 11.9928376595922, "Pressure", 7.205689689091,
+                                      163.000000000007, "C1", -16.9444444444391, -50.8333333333173,
+                                      0.707704590783008, 44.8861969901336, "Nozzle1", -0.377497885333517,
+                                      4692.25000000005, "C2", 109.861111111109, 329.583333333327,
+                                      0.0186453946980925, 44.8861969901337, "Nozzle2", 2.44754776474508,
+                                      4692.25000000005, "A^2", 0.176458333333335, 7.05833333333339,
+                                      6.50260075782852e-11, 0.0203375574654827, "Speed^2", 8.67647620088218,
+                                      "", "B^2", -3.02666666666666, -30.2666666666666, 9.31517935208782e-12,
+                                      0.325400919447723, "Pressure^2", -9.30134638772251, "", "AB",
+                                      0.0420833333333381, 5.47083333333395, 0.468482798511116, 0.0575232991864556,
+                                      "Speed<unicode>Pressure", 0.731587616296651, 446.50000000001,
+                                      "AC1", -0.137500000000027, -19.1125000000038, 0.680967457018566,
+                                      0.332110922699755, "Speed<unicode>Nozzle1", -0.414018301121443,
+                                      446.50000000001, "AC2", -0.566666666666656, -78.7666666666651,
+                                      0.0953454884663746, 0.332110922699755, "Speed<unicode>Nozzle2",
+                                      -1.70625724098497, 446.50000000001, "BC1", 2.59999999999989,
+                                      49.3999999999979, 0.0569946813000773, 1.32844369079902, "Pressure<unicode>Nozzle1",
+                                      1.95717742348271, 163.000000000007, "BC2", -3.11666666666663,
+                                      -59.2166666666659, 0.0237654640924297, 1.32844369079902, "Pressure<unicode>Nozzle2",
+                                      -2.34610370635434, 163.000000000007))
+})
+
+test_that("56.8 Data example 3 (response surface, two outcomes) - Syruploss Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "C1", 2, "C2"))
+})
+
+test_that("56.9 Data example 3 (response surface, two outcomes) - Syruploss Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Syruploss = 1894.69 <unicode> 42.67 A + 86.42 B <unicode> 16.94 C1 + 109.86 C2 + 0.18 A^2 <unicode> 3.03 B^2 + 0.042 AB <unicode> 0.14 AC1 <unicode> 0.57 AC2 + 2.6 BC1 <unicode> 3.12 BC2"
+                                 ))
+})
+
+test_that("56.10 Data example 3 (response surface, two outcomes) - Syruploss Model Summary table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.75824868470439, 0.698777409935859, 0.808423485992158, 28.1805462656542
+                                 ))
+})
+
+test_that("56.11 Data example 3 (response surface, two outcomes) - Cost Interaction: Pressure x Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_interactionEffect"]][["collection"]][["factorialPlots_Cost_interactionEffect_interaction_Pressure_x_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-pressure-x-nozzle-56-11")
+})
+
+test_that("56.12 Data example 3 (response surface, two outcomes) - Cost Interaction: Speed x Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_interactionEffect"]][["collection"]][["factorialPlots_Cost_interactionEffect_interaction_Speed_x_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-nozzle-56-12")
+})
+
+test_that("56.13 Data example 3 (response surface, two outcomes) - Cost Interaction: Speed x Pressure plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_interactionEffect"]][["collection"]][["factorialPlots_Cost_interactionEffect_interaction_Speed_x_Pressure"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-pressure-56-13")
+})
+
+test_that("56.14 Data example 3 (response surface, two outcomes) - Cost Main Effect: Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_mainEffect"]][["collection"]][["factorialPlots_Cost_mainEffect_mainEffect_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-nozzle-56-14")
+})
+
+test_that("56.15 Data example 3 (response surface, two outcomes) - Cost Main Effect: Pressure plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_mainEffect"]][["collection"]][["factorialPlots_Cost_mainEffect_mainEffect_Pressure"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-pressure-56-15")
+})
+
+test_that("56.16 Data example 3 (response surface, two outcomes) - Cost Main Effect: Speed plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_mainEffect"]][["collection"]][["factorialPlots_Cost_mainEffect_mainEffect_Speed"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-speed-56-16")
+})
+
+test_that("56.17 Data example 3 (response surface, two outcomes) - Syruploss Interaction: Pressure x Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_interactionEffect"]][["collection"]][["factorialPlots_Syruploss_interactionEffect_interaction_Pressure_x_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-pressure-x-nozzle-56-17")
+})
+
+test_that("56.18 Data example 3 (response surface, two outcomes) - Syruploss Interaction: Speed x Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_interactionEffect"]][["collection"]][["factorialPlots_Syruploss_interactionEffect_interaction_Speed_x_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-nozzle-56-18")
+})
+
+test_that("56.19 Data example 3 (response surface, two outcomes) - Syruploss Interaction: Speed x Pressure plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_interactionEffect"]][["collection"]][["factorialPlots_Syruploss_interactionEffect_interaction_Speed_x_Pressure"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-pressure-56-19")
+})
+
+test_that("56.20 Data example 3 (response surface, two outcomes) - Syruploss Main Effect: Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_mainEffect"]][["collection"]][["factorialPlots_Syruploss_mainEffect_mainEffect_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-nozzle-56-20")
+})
+
+test_that("56.21 Data example 3 (response surface, two outcomes) - Syruploss Main Effect: Pressure plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_mainEffect"]][["collection"]][["factorialPlots_Syruploss_mainEffect_mainEffect_Pressure"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-pressure-56-21")
+})
+
+test_that("56.22 Data example 3 (response surface, two outcomes) - Syruploss Main Effect: Speed plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_mainEffect"]][["collection"]][["factorialPlots_Syruploss_mainEffect_mainEffect_Speed"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-speed-56-22")
+})
