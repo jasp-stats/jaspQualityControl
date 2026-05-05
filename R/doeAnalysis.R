@@ -2258,7 +2258,8 @@ get_levels <- function(var, num_levels, dataset) {
       ggplot2::geom_point(data = emmForPoints, color = "black", fill = "black", shape = 21, size = 3.2, stroke = 0.2) +
       ggplot2::scale_y_continuous(name = dep, expand = ggplot2::expansion(mult = c(0.15, 0.15))) +
       jaspGraphs::geom_rangeframe() +
-      jaspGraphs::themeJaspRaw()
+      jaspGraphs::themeJaspRaw() +
+      ggplot2::theme(plot.margin = ggplot2::margin(10, 10, 10, 10, unit = "pt"))
 
     if (factorType == "continuous") {
       p <- p + ggplot2::scale_x_continuous(name = factorName, breaks = xBreaks, expand = ggplot2::expansion(mult = c(0.15, 0.15)))
@@ -2390,7 +2391,7 @@ get_levels <- function(var, num_levels, dataset) {
       ggplot2::labs(color = factorB, fill = factorB) +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw() +
-      ggplot2::theme(legend.position = "right")
+      ggplot2::theme(legend.position = "right", plot.margin = ggplot2::margin(10, 10, 10, 10, unit = "pt"))
 
     if (xFactorType == "continuous") {
       p <- p + ggplot2::scale_x_continuous(name = factorA, breaks = xBreaks, expand = ggplot2::expansion(mult = c(0.15, 0.15)))
