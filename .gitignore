@@ -64,3 +64,4 @@ renv/
 _processedLockFile.lock
 
 .vscode/
+.positai
