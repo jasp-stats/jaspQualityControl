@@ -1008,14 +1008,18 @@ msaGaugeRR <- function(jaspResults, dataset, options, ...) {
     operator <- (msOperator - msInteraction) / (nParts * nReplicates)
     interaction <- (msInteraction - msRep) / nReplicates
     part <- (msPart - msInteraction) / (nOperators * nReplicates)
-    reprod <- operator + interaction
   } else {
     operator <- (msOperator - msRep) / (nParts * nReplicates)
     part <- (msPart - msRep) / (nOperators * nReplicates)
-    reprod <- operator
   }
   operator <- max(0, operator)
   part <- max(0, part)
+  if (msInteraction != ""){
+    interaction <- max(0, interaction)
+    reprod <- operator + interaction
+  } else {
+    reprod <- operator
+  }
   reprod <- max(0, reprod)
   totalGauge <- repeatability + reprod
   totalVar <- totalGauge + part
