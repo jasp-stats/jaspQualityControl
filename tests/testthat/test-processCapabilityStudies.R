@@ -174,7 +174,7 @@ test_that("LF2.9 (Normal) Basic tests of Summary of X-bar & R control chart with
 })
 
 #### Manual subgroups ####
-
+t
 ##### Without stages (verified with Minitab) ####
 options <- analysisOptions("processCapabilityStudies")
 options$testSet <- "jaspDefault"
