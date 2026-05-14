@@ -3475,10 +3475,14 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       xLimits <- logAxis$limits
     }
     data1 <- data.frame(x = dataCurrentStage, y = y)
+    lineData <- data.frame(zp = zp, percentileEstimate = percentileEstimate)
+    if (hasConfidenceBands) {
+      bandData <- data.frame(zp = zp, percentileLower = percentileLower, percentileUpper = percentileUpper)
+    }
     yLimits <- range(yBreaks)
     label_x <- round(label_x, .numDecimals)
     p <- ggplot2::ggplot() +
-      ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
+      ggplot2::geom_line(data = lineData, ggplot2::aes(y = zp, x = percentileEstimate), na.rm = TRUE) +
       jaspGraphs::geom_point(data = data1, ggplot2::aes(x = x, y = y), na.rm = TRUE)
 
     if (options[["probabilityPlotGridLines"]])
@@ -3487,8 +3491,10 @@ processCapabilityStudiesInternal <- function(jaspResults, dataset, options) {
       p <- p + ggplot2::ggtitle(stage) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
     # Add confidence bands only if variance-covariance computation succeeded
     if (hasConfidenceBands) {
-      p <- p + ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileLower), col = "darkred", linetype = "dashed", na.rm = TRUE) +
-        ggplot2::geom_line(ggplot2::aes(y = zp, x = percentileUpper), col = "darkred", linetype = "dashed", na.rm = TRUE)
+      p <- p + ggplot2::geom_line(data = bandData, ggplot2::aes(y = zp, x = percentileLower), col = "darkred",
+                                  linetype = "dashed", na.rm = TRUE) +
+        ggplot2::geom_line(data = bandData, ggplot2::aes(y = zp, x = percentileUpper), col = "darkred",
+                           linetype = "dashed", na.rm = TRUE)
     }
     p <- p +
       ggplot2::scale_x_continuous(gettext("Measurement"), breaks = xBreaks, limits = xLimits, labels = label_x) +
