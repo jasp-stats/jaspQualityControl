@@ -4846,7 +4846,6 @@ test_that("48.9 Response Optimizer Response Surface No Squares - Response Optimi
 
 options("jaspRoundToPrecision" = NULL) # reset default
 
-
 ## Response Surface design, basic example, squared terms ####
 options <- analysisOptions("doeAnalysis")
 options$designType <- "responseSurfaceDesign"
@@ -5159,3 +5158,553 @@ test_that("53.4 Response Optimizer Response Surface Change All Options - Respons
 
 options("jaspRoundToPrecision" = NULL) # reset default
 
+### Factorial plots ####
+
+#### Data example 1 (factorial plots, two outcomes) ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "factorialDesign"
+options$dependentFactorial <- c("Density", "Strength")
+options$fixedFactorsFactorial <- c("Material")
+options$continuousFactorsFactorial <- c("InjPress", "InjTemp")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Material"),
+  list(components = "InjTemp"),
+  list(components = "InjPress"),
+  list(components = c("Material", "InjTemp")),
+  list(components = c("Material", "InjPress")),
+  list(components = c("InjPress", "InjTemp"))
+)
+options$mainEffectsPlot <- TRUE
+options$mainEffectsPlotCi <- TRUE
+options$interactionPlot <- TRUE
+options$interactionPlotCi <- TRUE
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample1.csv", options)
+
+test_that("54.1 Data example 1 (factorial plots, two outcomes) - Density ANOVA table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.282635417212939, 1.69581250327763, 6, 29.2340255777468, 2.0653745688331e-05,
+                                      "Model", "", 1.64742746594141, 3, "", "", "<unicode> Linear terms",
+                                      0.669433085778748, 0.669433085778748, 1, 69.2419377062769, 1.61404212637588e-05,
+                                      "<unicode> <unicode> Material", 0.0216428384881839, 0.0216428384881839,
+                                      1, 2.23859875799617, 0.168820796228592, "<unicode> <unicode> InjTemp",
+                                      0.956351541674477, 0.956351541674477, 1, 98.9189738013817, 3.74374736566881e-06,
+                                      "<unicode> <unicode> InjPress", "", 0.0483850373362251, 3, "",
+                                      "", "<unicode> Interaction terms", 0.0438625219544171, 0.0438625219544171,
+                                      1, 4.53686272359078, 0.0620223667487927, "<unicode> <unicode> Material<unicode><unicode><unicode>InjTemp",
+                                      0.0018167435738568, 0.0018167435738568, 1, 0.187912500952855,
+                                      0.674864178734996, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
+                                      0.0027057718079512, 0.0027057718079512, 1, 0.279867976282664,
+                                      0.609585425025631, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
+                                      0.0096680293468746, 0.0870122641218714, 9, "", "", "Error",
+                                      "", 1.78282476739951, 15, "", "", "Total"))
+})
+
+test_that("54.2 Data example 1 (factorial plots, two outcomes) - Density Coded Coefficients table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 1.03348149084375, "", 1.21507749788964e-11, 0.0245815344146712,
+                                      "(Intercept)", 42.0430016047709, "", "A", -0.20454722648125,
+                                      -0.4090944529625, 1.61404212637588e-05, 0.0245815344146712,
+                                      "Material", -8.32117405816492, 1, "B", -0.03677876296875, -0.0735575259375,
+                                      0.168820796228592, 0.0245815344146712, "InjTemp", -1.49619475938,
+                                      1, "C", 0.24448306966875, 0.4889661393375, 3.74374736566881e-06,
+                                      0.0245815344146712, "InjPress", 9.94580181792206, 1, "AB", 0.05235845320625,
+                                      0.1047169064125, 0.0620223667487927, 0.0245815344146712, "Material<unicode>InjTemp",
+                                      2.12999124965122, 1, "AC", -0.01065581875625, -0.0213116375125001,
+                                      0.674864178734996, 0.0245815344146712, "Material<unicode>InjPress",
+                                      -0.433488755278444, 1, "BC", 0.01300425845625, 0.0260085169125,
+                                      0.609585425025631, 0.0245815344146712, "InjTemp<unicode>InjPress",
+                                      0.52902549681718, 1))
+})
+
+test_that("54.3 Data example 1 (factorial plots, two outcomes) - Density Regression equation in Coded Units table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Density = 1.03 <unicode> 0.2 A <unicode> 0.037 B + 0.24 C + 0.052 AB <unicode> 0.011 AC + 0.013 BC"
+                                 ))
+})
+
+test_that("54.4 Data example 1 (factorial plots, two outcomes) - Density Model Summary table results match", {
+  table <- results[["results"]][["Density"]][["collection"]][["Density_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.91865692980323, 0.845749437256495, 0.951194157881938, 0.0983261376586846
+                                 ))
+})
+
+test_that("54.11 Data example 1 (factorial plots, two outcomes) - Strength ANOVA table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(61.4412169760555, 368.647301856333, 6, 6.02163462145317, 0.00885308674084683,
+                                      "Model", "", 367.52491531986, 3, "", "", "<unicode> Linear terms",
+                                      181.151435260225, 181.151435260225, 1, 17.7540063165417, 0.00226090333532432,
+                                      "<unicode> <unicode> Material", 73.7250318293204, 73.7250318293204,
+                                      1, 7.22552752013659, 0.024876494295309, "<unicode> <unicode> InjTemp",
+                                      112.648448230315, 112.648448230315, 1, 11.0402727892092, 0.00890208646409138,
+                                      "<unicode> <unicode> InjPress", "", 1.12238653647272, 3, "",
+                                      "", "<unicode> Interaction terms", 0.778094866011372, 0.778094866011372,
+                                      1, 0.0762583037014878, 0.788670012907783, "<unicode> <unicode> Material<unicode><unicode><unicode>InjTemp",
+                                      0.342200526962543, 0.342200526962543, 1, 0.033537853611204,
+                                      0.858752480786647, "<unicode> <unicode> Material<unicode><unicode><unicode>InjPress",
+                                      0.00209114349880224, 0.00209114349880224, 1, 0.00020494551883179,
+                                      0.988890269483188, "<unicode> <unicode> InjTemp<unicode><unicode><unicode>InjPress",
+                                      10.2034116711698, 91.8307050405283, 9, "", "", "Error", "",
+                                      460.478006896861, 15, "", "", "Total"))
+})
+
+test_that("54.12 Data example 1 (factorial plots, two outcomes) - Strength Coded Coefficients table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 29.633570586875, "", 3.71582056009637e-11, 0.798569489429763,
+                                      "(Intercept)", 37.1083180350849, "", "A", 3.364812729375, 6.72962545875,
+                                      0.00226090333532432, 0.798569489429763, "Material", 4.21355032206116,
+                                      1, "B", 2.146582048125, 4.29316409625, 0.024876494295309, 0.798569489429763,
+                                      "InjTemp", 2.68803413671341, 1, "C", 2.653399331875, 5.30679866375,
+                                      0.00890208646409137, 0.798569489429763, "InjPress", 3.32269059486573,
+                                      1, "AB", -0.220524214375001, -0.441048428750001, 0.788670012907782,
+                                      0.798569489429764, "Material<unicode>InjTemp", -0.276149060656538,
+                                      1, "AC", -0.146244770625, -0.29248954125, 0.858752480786647,
+                                      0.798569489429763, "Material<unicode>InjPress", -0.183133431167561,
+                                      1, "BC", 0.0114322556249987, 0.0228645112499974, 0.98889026948318,
+                                      0.798569489429763, "InjTemp<unicode>InjPress", 0.0143159183719405,
+                                      1))
+})
+
+test_that("54.13 Data example 1 (factorial plots, two outcomes) - Strength Regression equation in Coded Units table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Strength = 29.63 + 3.36 A + 2.15 B + 2.65 C <unicode> 0.22 AB <unicode> 0.15 AC + 0.011 BC"
+                                 ))
+})
+
+test_that("54.14 Data example 1 (factorial plots, two outcomes) - Strength Model Summary table results match", {
+  table <- results[["results"]][["Strength"]][["collection"]][["Strength_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.667625439705684, 0.369719352330779, 0.80057526382341, 3.19427795771905
+                                 ))
+})
+
+test_that("54.5 Data example 1 (factorial plots, two outcomes) - Density Interaction: InjPress x InjTemp plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_interactionEffect"]][["collection"]][["factorialPlots_Density_interactionEffect_interaction_InjPress_x_InjTemp"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-injpress-x-injtemp-54-05")
+})
+
+test_that("54.6 Data example 1 (factorial plots, two outcomes) - Density Interaction: Material x InjPress plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_interactionEffect"]][["collection"]][["factorialPlots_Density_interactionEffect_interaction_InjPress_x_Material"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injpress-54-06")
+})
+
+test_that("54.7 Data example 1 (factorial plots, two outcomes) - Density Interaction: Material x InjTemp plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_interactionEffect"]][["collection"]][["factorialPlots_Density_interactionEffect_interaction_InjTemp_x_Material"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injtemp-54-07")
+})
+
+test_that("54.8 Data example 1 (factorial plots, two outcomes) - Density Main Effect: InjPress plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_mainEffect"]][["collection"]][["factorialPlots_Density_mainEffect_mainEffect_InjPress"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-injpress-54-08")
+})
+
+test_that("54.9 Data example 1 (factorial plots, two outcomes) - Density Main Effect: InjTemp plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_mainEffect"]][["collection"]][["factorialPlots_Density_mainEffect_mainEffect_InjTemp"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-injtemp-54-09")
+})
+
+test_that("54.10 Data example 1 (factorial plots, two outcomes) - Density Main Effect: Material plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Density"]][["collection"]][["factorialPlots_Density_mainEffect"]][["collection"]][["factorialPlots_Density_mainEffect_mainEffect_Material"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-material-54-10")
+})
+
+test_that("54.15 Data example 1 (factorial plots, two outcomes) - Strength Interaction: InjPress x InjTemp plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_interactionEffect"]][["collection"]][["factorialPlots_Strength_interactionEffect_interaction_InjPress_x_InjTemp"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-injpress-x-injtemp-54-15")
+})
+
+test_that("54.16 Data example 1 (factorial plots, two outcomes) - Strength Interaction: Material x InjPress plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_interactionEffect"]][["collection"]][["factorialPlots_Strength_interactionEffect_interaction_InjPress_x_Material"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injpress-54-16")
+})
+
+test_that("54.17 Data example 1 (factorial plots, two outcomes) - Strength Interaction: Material x InjTemp plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_interactionEffect"]][["collection"]][["factorialPlots_Strength_interactionEffect_interaction_InjTemp_x_Material"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-material-x-injtemp-54-17")
+})
+
+test_that("54.18 Data example 1 (factorial plots, two outcomes) - Strength Main Effect: InjPress plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_mainEffect"]][["collection"]][["factorialPlots_Strength_mainEffect_mainEffect_InjPress"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-injpress-54-18")
+})
+
+test_that("54.19 Data example 1 (factorial plots, two outcomes) - Strength Main Effect: InjTemp plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_mainEffect"]][["collection"]][["factorialPlots_Strength_mainEffect_mainEffect_InjTemp"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-injtemp-54-19")
+})
+
+test_that("54.20 Data example 1 (factorial plots, two outcomes) - Strength Main Effect: Material plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Strength"]][["collection"]][["factorialPlots_Strength_mainEffect"]][["collection"]][["factorialPlots_Strength_mainEffect_mainEffect_Material"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-material-54-20")
+})
+
+#### Data example 2 (factorial plots, one outcome) ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "factorialDesign"
+options$dependentFactorial <- c("Distance")
+options$fixedFactorsFactorial <- c("Ball")
+options$continuousFactorsFactorial <- c("Angle", "Vertical")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$modelTerms <- list(
+  list(components = "Ball"),
+  list(components = "Angle"),
+  list(components = "Vertical"),
+  list(components = c("Ball", "Angle")),
+  list(components = c("Angle", "Vertical")),
+  list(components = c("Ball", "Vertical"))
+)
+options$mainEffectsPlot <- TRUE
+options$mainEffectsPlotCi <- TRUE
+options$interactionPlot <- TRUE
+options$interactionPlotCi <- TRUE
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample2.csv", options)
+
+test_that("55.1 Data example 2 (factorial plots, one outcome) - ANOVA table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(3442.47916666667, 20654.875, 6, 28.3445022585625, 2.35137006826626e-05,
+                                      "Model", "", 20274.6875, 3, "", "", "<unicode> Linear terms",
+                                      826.5625, 826.5625, 1, 6.80570644405055, 0.0283276128893302,
+                                      "<unicode> <unicode> Ball", 4257.5625, 4257.5625, 1, 35.055692149351,
+                                      0.000223251267369552, "<unicode> <unicode> Angle", 15190.5625,
+                                      15190.5625, 1, 125.075247298302, 1.39986713911565e-06, "<unicode> <unicode> Vertical",
+                                      "", 380.1875, 3, "", "", "<unicode> Interaction terms", 85.5624999999998,
+                                      85.5624999999998, 1, 0.704499971410599, 0.423009692024339, "<unicode> <unicode> Ball<unicode><unicode><unicode>Angle",
+                                      280.5625, 280.5625, 1, 2.31008062210533, 0.162858010109754,
+                                      "<unicode> <unicode> Angle<unicode><unicode><unicode>Vertical",
+                                      14.0625, 14.0625, 1, 0.115787066155869, 0.741456839635441, "<unicode> <unicode> Ball<unicode><unicode><unicode>Vertical",
+                                      121.451388888889, 1093.0625, 9, "", "", "Error", "", 21747.9375,
+                                      15, "", "", "Total"))
+})
+
+test_that("55.2 Data example 2 (factorial plots, one outcome) - Coded Coefficients table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 260.4375, "", 8.41437497943459e-15, 2.75512464428663,
+                                      "(Intercept)", 94.5283911347079, "", "A", -7.1875, -14.375,
+                                      0.0283276128893302, 2.75512464428663, "Ball", -2.60877489332647,
+                                      1, "B", 16.3125, 32.625, 0.000223251267369552, 2.75512464428663,
+                                      "Angle", 5.92078475789747, 1, "C", 30.8125, 61.625, 1.39986713911565e-06,
+                                      2.75512464428663, "Vertical", 11.1837045426952, 1, "AB", -2.3125,
+                                      -4.62499999999999, 0.42300969202434, 2.75512464428663, "Ball<unicode>Angle",
+                                      -0.839344965678951, 1, "BC", 4.1875, 8.37500000000001, 0.162858010109754,
+                                      2.75512464428664, "Angle<unicode>Vertical", 1.51989493785108,
+                                      1, "AC", 0.937500000000003, 1.87500000000001, 0.74145683963544,
+                                      2.75512464428663, "Ball<unicode>Vertical", 0.340274986086063,
+                                      1))
+})
+
+test_that("55.3 Data example 2 (factorial plots, one outcome) - Regression equation in Coded Units table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Distance = 260.44 <unicode> 7.19 A + 16.31 B + 30.81 C <unicode> 2.31 AB + 4.19 BC + 0.94 AC"
+                                 ))
+})
+
+test_that("55.4 Data example 2 (factorial plots, one outcome) - Model Summary table results match", {
+  table <- results[["results"]][["Distance"]][["collection"]][["Distance_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.916232477984023, 0.841151958251185, 0.949739486790414, 11.0204985771465
+                                 ))
+})
+
+test_that("55.5 Data example 2 (factorial plots, one outcome) - Interaction: Angle x Vertical plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_interactionEffect"]][["collection"]][["factorialPlots_Distance_interactionEffect_interaction_Angle_x_Vertical"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-angle-x-vertical-55-05")
+})
+
+test_that("55.6 Data example 2 (factorial plots, one outcome) - Interaction: Ball x Angle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_interactionEffect"]][["collection"]][["factorialPlots_Distance_interactionEffect_interaction_Angle_x_Ball"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-angle-x-ball-55-06")
+})
+
+test_that("55.7 Data example 2 (factorial plots, one outcome) - Interaction: Ball x Vertical plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_interactionEffect"]][["collection"]][["factorialPlots_Distance_interactionEffect_interaction_Vertical_x_Ball"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-vertical-x-ball-55-07")
+})
+
+test_that("55.8 Data example 2 (factorial plots, one outcome) - Main Effect: Angle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_mainEffect"]][["collection"]][["factorialPlots_Distance_mainEffect_mainEffect_Angle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-angle-55-08")
+})
+
+test_that("55.9 Data example 2 (factorial plots, one outcome) - Main Effect: Ball plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_mainEffect"]][["collection"]][["factorialPlots_Distance_mainEffect_mainEffect_Ball"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-ball-55-09")
+})
+
+test_that("55.10 Data example 2 (factorial plots, one outcome) - Main Effect: Vertical plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Distance"]][["collection"]][["factorialPlots_Distance_mainEffect"]][["collection"]][["factorialPlots_Distance_mainEffect_mainEffect_Vertical"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-vertical-55-10")
+})
+
+#### Data example 3 (response surface, two outcomes, factorial plots) ####
+options <- analysisOptions("doeAnalysis")
+options$designType <- "responseSurfaceDesign"
+options$dependentResponseSurface <- c("Syruploss", "Cost")
+options$fixedFactorsResponseSurface <- c("Nozzle")
+options$continuousFactorsResponseSurface <- c("Speed", "Pressure")
+options$codeFactors <- FALSE
+options$squaredTermsCoded <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$rsmPredefinedModel <- TRUE
+options$rsmPredefinedTerms <- "fullQuadratic"
+options$mainEffectsPlot <- TRUE
+options$mainEffectsPlotCi <- TRUE
+options$interactionPlot <- TRUE
+options$interactionPlotCi <- TRUE
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExample3.csv", options)
+
+test_that("56.1 Data example 3 (response surface, two outcomes) - Cost ANOVA table results match", {
+  table <- results[["results"]][["Cost"]][["collection"]][["Cost_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(4213.26273148148, 33706.1018518519, 8, 8.55776924337149, 5.37520340999456e-07,
+                                      "Model", "", 9118.77777777778, 3, "", "", "<unicode> Linear terms",
+                                      6833.77777777778, 6833.77777777778, 1, 13.8804287816484, 0.000541387947404092,
+                                      "<unicode> <unicode> Speed", 2116, 2116, 1, 4.29791372459861,
+                                      0.0439141309793144, "<unicode> <unicode> Pressure", 169, 169,
+                                      1, 0.343264375924936, 0.560878208408529, "<unicode> <unicode> Nozzle",
+                                      "", 24043.7407407407, 2, "", "", "<unicode> Squared terms",
+                                      4306.7037037037, 4306.7037037037, 1, 8.74756188843468, 0.00492545805087858,
+                                      "<unicode> <unicode> Speed^2", 19737.037037037, 19737.037037037,
+                                      1, 40.0888858054785, 1.00380594014704e-07, "<unicode> <unicode> Pressure^2",
+                                      "", 543.583333333336, 3, "", "", "<unicode> Interaction terms",
+                                      0.166666666667879, 0.166666666667879, 1, 0.000338525025569461,
+                                      0.98540184886942, "<unicode> <unicode> Speed<unicode><unicode><unicode>Pressure",
+                                      198.375, 198.375, 1, 0.402929411681119, 0.528794574263472, "<unicode> <unicode> Speed<unicode><unicode><unicode>Nozzle",
+                                      345.041666666668, 345.041666666668, 1, 0.70083143418008, 0.406928561138628,
+                                      "<unicode> <unicode> Pressure<unicode><unicode><unicode>Nozzle",
+                                      492.331893004115, 22154.9351851852, 45, "", "", "Error", "",
+                                      55861.0370370371, 53, "", "", "Total"))
+})
+
+test_that("56.2 Data example 3 (response surface, two outcomes) - Cost Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Cost"]][["collection"]][["Cost_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 325.648148148162, "", 0.204046185282406, 252.405013309973,
+                                      "(Intercept)", 1.29018098284855, "", "A", -10.690277777778,
+                                      -427.611111111118, 0.0103445869391715, 3.98181749804874, "Speed",
+                                      -2.68477341892657, 446.500000000037, "B", 50.0999999999997,
+                                      500.999999999997, 5.43884056833538e-06, 9.62330859388601, "Pressure",
+                                      5.20610967747931, 163.000000000001, "C1", -45.0462962962947,
+                                      -135.138888888884, 0.217976561749922, 36.0176413208199, "Nozzle1",
+                                      -1.25067313250898, 4692.25000000024, "C2", 28.5092592592587,
+                                      85.527777777776, 0.433078949880629, 36.0176413208199, "Nozzle2",
+                                      0.791535986638275, 4692.25000000024, "A^2", 0.0473611111111117,
+                                      1.89444444444447, 0.00587968269999673, 0.016319289653662, "Speed^2",
+                                      2.90215518666795, "", "B^2", -1.62222222222222, -16.2222222222222,
+                                      1.96212230408646e-07, 0.26110863445859, "Pressure^2", -6.2128248864152,
+                                      "", "AB", 0.000833333333334677, 0.108333333333508, 0.985681300491276,
+                                      0.0461579215130072, "Speed<unicode>Pressure", 0.0180539614007499,
+                                      446.500000000037, "AC1", 0.19027777777777, 26.4486111111101,
+                                      0.479172295252194, 0.266492884107683, "Speed<unicode>Nozzle1",
+                                      0.714006974013173, 446.500000000037, "AC2", -0.0930555555555526,
+                                      -12.9347222222218, 0.728694435426281, 0.266492884107683, "Speed<unicode>Nozzle2",
+                                      -0.349185892400606, 446.500000000037, "BC1", 1.24999999999997,
+                                      23.7499999999994, 0.247548766895022, 1.06597153643073, "Pressure<unicode>Nozzle1",
+                                      1.17263919089756, 163.000000000001, "BC2", -0.983333333333321,
+                                      -18.6833333333331, 0.361549407955619, 1.06597153643073, "Pressure<unicode>Nozzle2",
+                                      -0.922476163506097, 163.000000000001))
+})
+
+test_that("56.3 Data example 3 (response surface, two outcomes) - Cost Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Cost"]][["collection"]][["Cost_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "C1", 2, "C2"))
+})
+
+test_that("56.4 Data example 3 (response surface, two outcomes) - Cost Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Cost"]][["collection"]][["Cost_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Cost = 325.65 <unicode> 10.69 A + 50.1 B <unicode> 45.05 C1 + 28.51 C2 + 0.047 A^2 <unicode> 1.62 B^2 + 0.00083 AB + 0.19 AC1 <unicode> 0.093 AC2 + 1.25 BC1 <unicode> 0.98 BC2"
+                                 ))
+})
+
+test_that("56.5 Data example 3 (response surface, two outcomes) - Cost Model Summary table results match", {
+  table <- results[["results"]][["Cost"]][["collection"]][["Cost_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.514856065416552, 0.376163467067314, 0.615546315990475, 22.6126710588604
+                                 ))
+})
+
+test_that("56.6 Data example 3 (response surface, two outcomes) - Syruploss ANOVA table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(16677.5451388889, 133420.361111111, 8, 18.4474907805641, 7.11868287266709e-12,
+                                      "Model", "", 2154.69444444445, 3, "", "", "<unicode> Linear terms",
+                                      1406.25, 1406.25, 1, 1.55549175218102, 0.218778715472802, "<unicode> <unicode> Speed",
+                                      400, 400, 1, 0.442450987287045, 0.509336803585456, "<unicode> <unicode> Pressure",
+                                      348.444444444445, 348.444444444445, 1, 0.385423971147827, 0.53784658349265,
+                                      "<unicode> <unicode> Nozzle", "", 128489.416666667, 2, "", "",
+                                      "<unicode> Squared terms", 59784.0833333334, 59784.0833333334,
+                                      1, 66.1288167372108, 2.21684744052923e-10, "<unicode> <unicode> Speed^2",
+                                      68705.3333333334, 68705.3333333334, 1, 75.9968564130471, 3.18756375741766e-11,
+                                      "<unicode> <unicode> Pressure^2", "", 2776.25, 3, "", "", "<unicode> Interaction terms",
+                                      425.041666666664, 425.041666666664, 1, 0.470150262636992, 0.496435508498772,
+                                      "<unicode> <unicode> Speed<unicode><unicode><unicode>Pressure",
+                                      1700.16666666667, 1700.16666666667, 1, 1.88060105054798, 0.177065829112353,
+                                      "<unicode> <unicode> Speed<unicode><unicode><unicode>Nozzle",
+                                      651.041666666664, 651.041666666664, 1, 0.720135070454172, 0.400591317242241,
+                                      "<unicode> <unicode> Pressure<unicode><unicode><unicode>Nozzle",
+                                      904.054938271605, 40682.4722222222, 45, "", "", "Error", "",
+                                      174102.833333333, 53, "", "", "Total"))
+})
+
+test_that("56.7 Data example 3 (response surface, two outcomes) - Syruploss Uncoded Coefficients table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", 1894.69444444448, "", 3.67539211300177e-07, 314.554222132801,
+                                      "(Intercept)", 6.02342715859196, "", "A", -42.6687500000005,
+                                      -1706.75000000002, 8.30873548420183e-11, 4.96225288613952, "Speed",
+                                      -8.59866495703636, 446.50000000001, "B", 86.4166666666658, 864.166666666658,
+                                      7.39436893500888e-09, 11.9928376595922, "Pressure", 7.205689689091,
+                                      163.000000000007, "C1", -16.9444444444391, -50.8333333333173,
+                                      0.707704590783008, 44.8861969901336, "Nozzle1", -0.377497885333517,
+                                      4692.25000000005, "C2", 109.861111111109, 329.583333333327,
+                                      0.0186453946980925, 44.8861969901337, "Nozzle2", 2.44754776474508,
+                                      4692.25000000005, "A^2", 0.176458333333335, 7.05833333333339,
+                                      6.50260075782852e-11, 0.0203375574654827, "Speed^2", 8.67647620088218,
+                                      "", "B^2", -3.02666666666666, -30.2666666666666, 9.31517935208782e-12,
+                                      0.325400919447723, "Pressure^2", -9.30134638772251, "", "AB",
+                                      0.0420833333333381, 5.47083333333395, 0.468482798511116, 0.0575232991864556,
+                                      "Speed<unicode>Pressure", 0.731587616296651, 446.50000000001,
+                                      "AC1", -0.137500000000027, -19.1125000000038, 0.680967457018566,
+                                      0.332110922699755, "Speed<unicode>Nozzle1", -0.414018301121443,
+                                      446.50000000001, "AC2", -0.566666666666656, -78.7666666666651,
+                                      0.0953454884663746, 0.332110922699755, "Speed<unicode>Nozzle2",
+                                      -1.70625724098497, 446.50000000001, "BC1", 2.59999999999989,
+                                      49.3999999999979, 0.0569946813000773, 1.32844369079902, "Pressure<unicode>Nozzle1",
+                                      1.95717742348271, 163.000000000007, "BC2", -3.11666666666663,
+                                      -59.2166666666659, 0.0237654640924297, 1.32844369079902, "Pressure<unicode>Nozzle2",
+                                      -2.34610370635434, 163.000000000007))
+})
+
+test_that("56.8 Data example 3 (response surface, two outcomes) - Syruploss Discrete Predictor Levels table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableCoefficientsLegend"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(1, "C1", 2, "C2"))
+})
+
+test_that("56.9 Data example 3 (response surface, two outcomes) - Syruploss Regression equation in Uncoded Units table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Syruploss = 1894.69 <unicode> 42.67 A + 86.42 B <unicode> 16.94 C1 + 109.86 C2 + 0.18 A^2 <unicode> 3.03 B^2 + 0.042 AB <unicode> 0.14 AC1 <unicode> 0.57 AC2 + 2.6 BC1 <unicode> 3.12 BC2"
+                                 ))
+})
+
+test_that("56.10 Data example 3 (response surface, two outcomes) - Syruploss Model Summary table results match", {
+  table <- results[["results"]][["Syruploss"]][["collection"]][["Syruploss_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(0.75824868470439, 0.698777409935859, 0.808423485992158, 28.1805462656542
+                                 ))
+})
+
+test_that("56.11 Data example 3 (response surface, two outcomes) - Cost Interaction: Pressure x Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_interactionEffect"]][["collection"]][["factorialPlots_Cost_interactionEffect_interaction_Pressure_x_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-pressure-x-nozzle-56-11")
+})
+
+test_that("56.12 Data example 3 (response surface, two outcomes) - Cost Interaction: Speed x Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_interactionEffect"]][["collection"]][["factorialPlots_Cost_interactionEffect_interaction_Speed_x_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-nozzle-56-12")
+})
+
+test_that("56.13 Data example 3 (response surface, two outcomes) - Cost Interaction: Speed x Pressure plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_interactionEffect"]][["collection"]][["factorialPlots_Cost_interactionEffect_interaction_Speed_x_Pressure"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-pressure-56-13")
+})
+
+test_that("56.14 Data example 3 (response surface, two outcomes) - Cost Main Effect: Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_mainEffect"]][["collection"]][["factorialPlots_Cost_mainEffect_mainEffect_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-nozzle-56-14")
+})
+
+test_that("56.15 Data example 3 (response surface, two outcomes) - Cost Main Effect: Pressure plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_mainEffect"]][["collection"]][["factorialPlots_Cost_mainEffect_mainEffect_Pressure"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-pressure-56-15")
+})
+
+test_that("56.16 Data example 3 (response surface, two outcomes) - Cost Main Effect: Speed plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Cost"]][["collection"]][["factorialPlots_Cost_mainEffect"]][["collection"]][["factorialPlots_Cost_mainEffect_mainEffect_Speed"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-speed-56-16")
+})
+
+test_that("56.17 Data example 3 (response surface, two outcomes) - Syruploss Interaction: Pressure x Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_interactionEffect"]][["collection"]][["factorialPlots_Syruploss_interactionEffect_interaction_Pressure_x_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-pressure-x-nozzle-56-17")
+})
+
+test_that("56.18 Data example 3 (response surface, two outcomes) - Syruploss Interaction: Speed x Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_interactionEffect"]][["collection"]][["factorialPlots_Syruploss_interactionEffect_interaction_Speed_x_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-nozzle-56-18")
+})
+
+test_that("56.19 Data example 3 (response surface, two outcomes) - Syruploss Interaction: Speed x Pressure plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_interactionEffect"]][["collection"]][["factorialPlots_Syruploss_interactionEffect_interaction_Speed_x_Pressure"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "interaction-speed-x-pressure-56-19")
+})
+
+test_that("56.20 Data example 3 (response surface, two outcomes) - Syruploss Main Effect: Nozzle plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_mainEffect"]][["collection"]][["factorialPlots_Syruploss_mainEffect_mainEffect_Nozzle"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-nozzle-56-20")
+})
+
+test_that("56.21 Data example 3 (response surface, two outcomes) - Syruploss Main Effect: Pressure plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_mainEffect"]][["collection"]][["factorialPlots_Syruploss_mainEffect_mainEffect_Pressure"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-pressure-56-21")
+})
+
+test_that("56.22 Data example 3 (response surface, two outcomes) - Syruploss Main Effect: Speed plot matches", {
+  plotName <- results[["results"]][["factorialPlots"]][["collection"]][["factorialPlots_Syruploss"]][["collection"]][["factorialPlots_Syruploss_mainEffect"]][["collection"]][["factorialPlots_Syruploss_mainEffect_mainEffect_Speed"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "main-effect-speed-56-22")
+})
