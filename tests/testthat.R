@@ -25,6 +25,5 @@ jaspTools::runTestsTravis(module = getwd())
 # jaspTools::testAnalysis("multivariateControlCharts")
 
 
-
 # Create unit tests from examples
 # jaspTools::makeTestsFromExamples()
