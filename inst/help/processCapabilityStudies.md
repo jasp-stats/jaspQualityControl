@@ -141,7 +141,6 @@ The size of the subgroups is relevant for the calculation of the process varianc
 - FAdist
 - goftest
 - fitdistrplus
-- mle.tools
 - tidyr
 - tibble
 - EnvStats
