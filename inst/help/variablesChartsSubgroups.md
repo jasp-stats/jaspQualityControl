@@ -93,4 +93,3 @@ Select manually which tests you want to apply and modify them as desired:
 - ggrepel
 - tidyr
 - tibble
-- mle.tools

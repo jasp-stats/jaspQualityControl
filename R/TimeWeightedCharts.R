@@ -58,7 +58,7 @@ timeWeightedCharts <- function(jaspResults, dataset, options) {
       if ((!wideFormat && options[["subgroupSizeType"]] == "manual" &&
            any(lapply(split(dataset[[stages]], ceiling(seq_along(dataset[[stages]])/options[["manualSubgroupSizeValue"]])), FUN = function(x)length(unique(x))) > 1)) ||
           (!wideFormat && options[["subgroupSizeType"]] == "groupingVariable" &&
-           any(table(dplyr::count_(dataset, vars = c(stages, subgroupVariable))[subgroupVariable]) > 1))) {
+           any(table(dplyr::count(dataset, dplyr::across(dplyr::all_of(c(stages, subgroupVariable))))[[subgroupVariable]]) > 1))) {
         plotNotes <- paste0(plotNotes, gettext("One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"))
       }
       if (anyNA(dataset[[stages]])) {
