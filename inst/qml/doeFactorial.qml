@@ -478,6 +478,7 @@ Form
 				max:						8
 			}
 
+			/*
 			IntegerField
 			{
 				name:						"repetitions"
@@ -486,6 +487,7 @@ Form
 				min:						0
 				max:						10
 			}
+			*/
 		}
 	}
 }

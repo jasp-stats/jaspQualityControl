@@ -41,10 +41,11 @@
       # avoid e-notation for small-to-moderate numbers
       mag <- floor(log10(absVal))
       sigDigits <- max(digits, mag + 1 + digits)
-      trimws(formatC(val, digits = sigDigits, format = "g", drop0trailing = TRUE))
+      formatted <- trimws(formatC(val, digits = sigDigits, format = "g", drop0trailing = TRUE))
     } else {
-      trimws(formatC(val, digits = digits, format = "g", drop0trailing = TRUE))
+      formatted <- trimws(formatC(val, digits = digits, format = "g", drop0trailing = TRUE))
     }
+    sub("^-", "\u2013", formatted)
   }, character(1))
 }
 
@@ -1527,7 +1528,7 @@ get_levels <- function(var, num_levels, dataset) {
       return()
     }
 
-    tb <- createJaspTable(gettext("ANOVA"))
+    tb <- createJaspTable(gettext("Analysis of Variance"))
     tb$addColumnInfo(name = "terms", title = gettext("Source"), type = "string")
     tb$addColumnInfo(name = "adjss", title = gettext("Sum of squares"), type = "number")
     tb$addColumnInfo(name = "df",    title = gettext("df"), type = "integer")
@@ -1967,6 +1968,13 @@ get_levels <- function(var, num_levels, dataset) {
       plotTitle <- gettextf("%1$s of %2$s vs %3$s", plotTypeString, dep, variablePairString)
       plot <- createJaspPlot(title = plotTitle, width = 560, height = 460)
       result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
+      termLabels <- attr(stats::terms(result[["object"]]), "term.labels")
+      missingVars <- variablePair[!sapply(variablePair, function(var) any(grepl(var, termLabels, fixed = TRUE)))]
+      if (length(missingVars) > 0) {
+        plot$setError(gettext("Could not plot (some of the) selected variables as they were not included in the final model. They might have been removed during model selection."))
+        jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
+        next
+      }
       if (plotType == "contourPlot") {
         plot$plotObject <- .doeContourPlotObject(result, options, dep, variablePair)
       } else if (plotType == "surfacePlot") {

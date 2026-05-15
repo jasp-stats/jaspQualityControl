@@ -178,7 +178,7 @@ Form
 			CheckBox
 			{
 				name: 							"anova"
-				label: 							qsTr("r&R ANOVA table")
+				label: 							qsTr("r&R Analysis of Variance table")
 				checked: 						true
 
 				DropDown
@@ -251,7 +251,7 @@ Form
 			CheckBox
 			{
 				name:							"xBarChart"
-				label:							qsTr("Average chart bys operator")
+				label:							qsTr("Average chart by operator")
 				enabled:						!type3.checked
 			}
 
