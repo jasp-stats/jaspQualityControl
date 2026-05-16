@@ -27,7 +27,7 @@ options$upperSpecificationLimitValue <- 12
 options$processCapabilityTableZ <- TRUE # not tested against other Software
 set.seed(1)
 results <- runAnalysis("processCapabilityStudies",
-                       "datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv", options)
+                       testthat::test_path("datasets/processCapabilityStudy/processCapabilityAnalysisLongFormatDebug.csv"), options)
 
 test_that("LF1.1 (Normal) Basic tests of process capability plot with subgroup variable and no stages", {
   plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
@@ -4546,4 +4546,66 @@ test_that("Johnson works", {
 
   table <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_processSummaryTable"]][["data"]]
   jaspTools::expect_equal_tables(table, list(-6.1, 0.0370948315811945, 100, 0.974770462374867, -0.47, 2.47))
+})
+
+test_that("Thin x-axis labels snapshot matches", {
+  values <- 38 + qnorm(ppoints(100), sd = 0.004)
+  values[length(values)] <- 38.012
+
+  dataset <- as.data.frame(matrix(values, ncol = 1, byrow = TRUE))
+  names(dataset) <- paste0("dm1")
+
+  options <- analysisOptions("processCapabilityStudies")
+  options$testSet <- "jaspDefault"
+  options$dataFormat <- "wideFormat"
+  options$measurementsWideFormat <- "dm1"
+  options$axisLabels <- ""
+  options$capabilityStudyType <- "normalCapabilityAnalysis"
+  options$controlChartType <- "xBarR"
+  options$controlChart <- FALSE
+  options$histogram <- FALSE
+  options$probabilityPlot <- FALSE
+  options$lowerSpecificationLimit <- TRUE
+  options$target <- FALSE
+  options$upperSpecificationLimit <- TRUE
+  options$lowerSpecificationLimitValue <- 37.95
+  options$upperSpecificationLimitValue <- 38.05
+  options$processCapabilityPlotXAxisModification <- "thin"
+
+  results <- runAnalysis("processCapabilityStudies", dataset, options, makeTests = F)
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-process-thin-x-axis")
+})
+
+test_that("Compress x-axis snapshot matches", {
+  values <- 38 + qnorm(ppoints(100), sd = 0.004)
+  values[length(values)] <- 38.012
+
+  dataset <- as.data.frame(matrix(values, ncol = 1, byrow = TRUE))
+  names(dataset) <- paste0("dm1")
+
+  options <- analysisOptions("processCapabilityStudies")
+  options$testSet <- "jaspDefault"
+  options$dataFormat <- "wideFormat"
+  options$measurementsWideFormat <- "dm1"
+  options$axisLabels <- ""
+  options$capabilityStudyType <- "normalCapabilityAnalysis"
+  options$controlChartType <- "xBarR"
+  options$controlChart <- FALSE
+  options$histogram <- FALSE
+  options$probabilityPlot <- FALSE
+  options$lowerSpecificationLimit <- TRUE
+  options$target <- FALSE
+  options$upperSpecificationLimit <- TRUE
+  options$lowerSpecificationLimitValue <- 37.95
+  options$upperSpecificationLimitValue <- 38.05
+  options$processCapabilityPlotXAxisModification <- "compress"
+
+  results <- runAnalysis("processCapabilityStudies", dataset, options, makeTests = F)
+  plotName <- results[["results"]][["capabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis"]][["collection"]][["capabilityAnalysis_normalCapabilityAnalysis_capabilityPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+
+  jaspTools::expect_equal_plots(testPlot, "capability-of-the-process-compress-x-axis")
 })
