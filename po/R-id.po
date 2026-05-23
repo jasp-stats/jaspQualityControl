@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.96.0\n"
 "POT-Creation-Date: 2026-04-04 04:24\n"
-"PO-Revision-Date: 2026-04-12 22:13+0000\n"
-"Last-Translator: Zahid Rizky Fakhri <zahidrizkyfakhri@gmail.com>\n"
+"PO-Revision-Date: 2026-05-17 06:14+0000\n"
+"Last-Translator: Arif Budiman <arifpedia@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/jasp/"
 "jaspprocesscontrol-r/id/>\n"
 "Language: id\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.17-dev\n"
+"X-Generator: Weblate 2026.6.dev0\n"
 
 msgid ""
 "One or more subgroups are assigned to more than one stage, only first stage "
@@ -379,7 +379,7 @@ msgid "Discrete Predictor Levels"
 msgstr ""
 
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 msgid "Level"
 msgstr "Tingkat"
@@ -394,7 +394,7 @@ msgid "Step"
 msgstr ""
 
 msgid "Formula"
-msgstr ""
+msgstr "Rumus"
 
 msgid "Pareto Chart of Standardized Effects"
 msgstr ""
@@ -406,7 +406,7 @@ msgid "Normal Plot of Standardized Effects"
 msgstr ""
 
 msgid "Significant"
-msgstr ""
+msgstr "Signifikan"
 
 msgid "Not Significant"
 msgstr ""
@@ -614,13 +614,13 @@ msgid "Percent"
 msgstr "Persen"
 
 msgid "Lower"
-msgstr "Bawah"
+msgstr "Batas Bawah"
 
 msgid "Confidence interval of 95%%"
 msgstr ""
 
 msgid "Upper"
-msgstr "Atas"
+msgstr "Batas Atas"
 
 msgid "Invalid reference and/or results were inserted."
 msgstr ""
@@ -1075,7 +1075,7 @@ msgid "Basic statistics"
 msgstr ""
 
 msgid "Mean"
-msgstr "Rerata"
+msgstr "Rata-rata"
 
 msgid "Bias"
 msgstr "Bias"
@@ -1128,7 +1128,7 @@ msgid ""
 msgstr ""
 
 msgid "Count"
-msgstr "Hitung"
+msgstr "Jumlah"
 
 msgid "Mean - %is"
 msgstr ""
@@ -1341,7 +1341,7 @@ msgid "Vertical asymptotes"
 msgstr ""
 
 msgid "Label"
-msgstr ""
+msgstr "Label"
 
 msgid "<b><em>Warning.</em></b>"
 msgstr "<b><em>Peringatan.</em></b>"
@@ -1502,7 +1502,7 @@ msgid "At least one of the stages contains no valid measurements."
 msgstr ""
 
 msgid "Density"
-msgstr "Kepadatan"
+msgstr "Densitas"
 
 msgid "Measurement"
 msgstr ""
@@ -1718,7 +1718,7 @@ msgid ""
 msgstr ""
 
 msgid "Histogram"
-msgstr ""
+msgstr "Histogram"
 
 msgid ""
 "Dataset contains negative numbers. Could not overlay the selected "
@@ -1726,7 +1726,7 @@ msgid ""
 msgstr ""
 
 msgid "Counts"
-msgstr ""
+msgstr "Cacah"
 
 msgid "Normal dist."
 msgstr ""
@@ -1819,7 +1819,7 @@ msgid "Autocorrelation"
 msgstr "Korelasi Otomatis"
 
 msgid "Lag"
-msgstr "Penundaan"
+msgstr "Lag"
 
 msgid "Control charts"
 msgstr ""
