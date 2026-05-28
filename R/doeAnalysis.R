@@ -1629,47 +1629,84 @@ get_levels <- function(var, num_levels, dataset) {
     if (!is.null(jaspResults[[dep]][["plotPareto"]]) || !options[["plotPareto"]]) {
       return()
     }
-    plot <- createJaspPlot(title = gettext("Pareto Chart of Standardized Effects"), width = 600, height = 400)
-    plot$dependOn(options = c("plotPareto", "tableAlias", .doeAnalysisBaseDependencies()))
-    plot$position <- 6
-    jaspResults[[dep]][["plotPareto"]] <- plot
     if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
       return()
     }
     result <- if (options[["codeFactors"]]) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]]
     fac <- if (options[["tableAlias"]]) result[["coefficients"]][["termsAliased"]][-1] else result[["coefficients"]][["terms"]][-1]
-    coefDf <- data.frame(result[["objectSummary"]]$coefficients)
-    tDf <- data.frame("tValue" = coefDf[["t.value"]],
-                      terms = result[["coefficients"]][["terms"]])
+    coefTerms <- result[["coefficients"]][["terms"]]
+    metricValues <- result[["coefficients"]][["effects"]]
+    df <- result[["objectSummary"]]$df[2]
+    pse <- NA_real_
+    if (!is.na(df) && df > 0) {
+      metricValues <- result[["objectSummary"]]$coefficients[, "t value"]
+    } else {
+      effectAbs <- abs(metricValues)
+      effectAbs <- effectAbs[is.finite(effectAbs)]
+      if (length(effectAbs) > 0) {
+        s0 <- 1.5 * stats::median(effectAbs)
+        s1 <- effectAbs[effectAbs < 2.5 * s0]
+        if (length(s1) > 0) {
+          pse <- 1.5 * stats::median(s1)
+        }
+      }
+    }
+    metricDf <- data.frame(metric = metricValues, terms = coefTerms)
 
     # Do not include intercept, covariates and blocks in pareto plot
-    tDf <- tDf[-1, ] # remove intercept
+    metricDf <- metricDf[-1, ] # remove intercept
     if (length(blocks) > 0 && !identical(blocks, "")) {
-      tDf <- tDf[!grepl(blocks, tDf$terms),]
+      metricDf <- metricDf[!grepl(blocks, metricDf$terms),]
       fac <- if (options[["tableAlias"]]) fac[!grepl("BLK", fac)] else fac[!grepl(blocks, fac)]
     }
     if (length(covariates) > 0 && !identical(covariates, "")) {
-      tDf <- tDf[!tDf$terms %in% unlist(covariates), ] # remove the covariate(s)
+      metricDf <- metricDf[!metricDf$terms %in% unlist(covariates), ] # remove the covariate(s)
       fac <- if (options[["tableAlias"]]) fac[!grepl("COV", fac)] else fac[!fac %in% unlist(covariates)]
     }
 
-    t <- abs(tDf[["tValue"]])
-    df <- result[["objectSummary"]]$df[2]
-    crit <- abs(qt(0.025, df))
-    fac_t <- cbind.data.frame(fac, t)
-    fac_t <- cbind(fac_t[order(fac_t$t), ], y = seq_len(length(t)))
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, t, crit))
-    critLabelDf <- data.frame(x = 0, y = crit, label = sprintf("t = %.2f", crit))
-    p <- ggplot2::ggplot(data = fac_t, mapping = ggplot2::aes(y = t, x = y)) +
+    metric <- abs(metricDf[["metric"]])
+    facMetric <- cbind.data.frame(fac, metric)
+    facMetric <- cbind(facMetric[order(facMetric$metric), ], y = seq_len(length(metric)))
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, metric))
+    axisLabel <- if (!is.na(df) && df > 0) gettext("Standardized Effect") else gettext("Effect")
+    plotTitle <- if (!is.na(df) && df > 0) {
+      gettext("Pareto Chart of Standardized Effects")
+    } else {
+      gettext("Pareto Chart of Effects")
+    }
+    plot <- createJaspPlot(title = plotTitle, width = 600, height = 400)
+    plot$dependOn(options = c("plotPareto", "tableAlias", .doeAnalysisBaseDependencies()))
+    plot$position <- 6
+    jaspResults[[dep]][["plotPareto"]] <- plot
+    p <- ggplot2::ggplot(data = facMetric, mapping = ggplot2::aes(y = metric, x = y)) +
       ggplot2::geom_bar(stat = "identity") +
-      ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +
-      ggplot2::geom_label(data = critLabelDf, mapping = ggplot2::aes(x = x, y = y, label = label), col = "red", size = 5) +
-      ggplot2::scale_x_continuous(name = gettext("Term"), breaks = fac_t$y, labels = fac_t$fac) +
-      ggplot2::scale_y_continuous(name =
-                                    gettext("Standardized Effect"), breaks = xBreaks, limits = range(xBreaks)) +
+      ggplot2::scale_x_continuous(name = gettext("Term"), breaks = facMetric$y, labels = facMetric$fac) +
+      ggplot2::scale_y_continuous(name = axisLabel, breaks = xBreaks, limits = range(xBreaks)) +
       ggplot2::coord_flip() +
       jaspGraphs::geom_rangeframe() +
       jaspGraphs::themeJaspRaw()
+
+    df <- result[["objectSummary"]]$df[2]
+    if (!is.na(df) && df > 0) {
+      crit <- abs(qt(0.025, df))
+      xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, metric, crit))
+      critLabelDf <- data.frame(x = 0, y = crit, label = sprintf("t = %.2f", crit))
+      p <- p +
+        ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +
+        ggplot2::geom_label(data = critLabelDf, mapping = ggplot2::aes(x = x, y = y, label = label), col = "red", size = 5) +
+        ggplot2::scale_y_continuous(name = axisLabel, breaks = xBreaks, limits = range(xBreaks))
+    } else if (!is.na(pse) && pse > 0) {
+      effectAbs <- abs(metric)
+      dfLenth <- max(1, floor(length(effectAbs) / 3))
+      crit <- stats::qt(0.975, dfLenth) * pse
+      xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(0, metric, crit))
+      critLabelDf <- data.frame(x = 0, y = crit, label = sprintf("ME = %.2f", crit))
+      p <- p +
+        ggplot2::geom_hline(yintercept = crit, linetype = "dashed", color = "red") +
+        ggplot2::geom_label(data = critLabelDf, mapping = ggplot2::aes(x = x, y = y, label = label), col = "red", size = 5) +
+        ggplot2::scale_y_continuous(name = axisLabel, breaks = xBreaks, limits = range(xBreaks))
+    }
+
     plot$plotObject <- p
   }
 }
@@ -1679,18 +1716,30 @@ get_levels <- function(var, num_levels, dataset) {
     if (!is.null(jaspResults[[dep]][["normalEffectsPlot"]]) || !options[["normalEffectsPlot"]]) {
       return()
     }
-    plot <- createJaspPlot(title = gettext("Normal Plot of Standardized Effects"), width = 600, height = 600)
-    plot$dependOn(options = c("normalEffectsPlot", "tableAlias", .doeAnalysisBaseDependencies()))
-    plot$position <- 11
-    jaspResults[[dep]][["normalEffectsPlot"]] <- plot
     if (!ready || is.null(jaspResults[[dep]][["doeResult"]]) || jaspResults[[dep]]$getError()) {
       return()
     }
     result <- if (options[["codeFactors"]]) jaspResults[[dep]][["doeResultCoded"]]$object[["regression"]] else jaspResults[[dep]][["doeResult"]]$object[["regression"]]
     fac <- if (options[["tableAlias"]]) result[["coefficients"]][["termsAliased"]][-1] else result[["coefficients"]][["terms"]][-1]
-    coefDf <- data.frame(result[["objectSummary"]]$coefficients)
-    tDf <- data.frame("tValue" = coefDf[["t.value"]],
-                      "terms" = result[["coefficients"]][["terms"]],
+    coefTerms <- result[["coefficients"]][["terms"]]
+    metricValues <- result[["coefficients"]][["effects"]]
+    df <- result[["objectSummary"]]$df[2]
+    pse <- NA_real_
+    if (!is.na(df) && df > 0) {
+      metricValues <- result[["objectSummary"]]$coefficients[, "t value"]
+    } else {
+      effectAbs <- abs(metricValues)
+      effectAbs <- effectAbs[is.finite(effectAbs)]
+      if (length(effectAbs) > 0) {
+        s0 <- 1.5 * stats::median(effectAbs)
+        s1 <- effectAbs[effectAbs < 2.5 * s0]
+        if (length(s1) > 0) {
+          pse <- 1.5 * stats::median(s1)
+        }
+      }
+    }
+    tDf <- data.frame("metric" = metricValues,
+                      "terms" = coefTerms,
                       "pValue" = result[["coefficients"]][["p"]])
 
     # Do not include intercept, covariates and blocks in normal effects plot
@@ -1707,26 +1756,61 @@ get_levels <- function(var, num_levels, dataset) {
     tDf$fac <- fac
 
     # median rank order function
-    x <- tDf$tValue[order(tDf$tValue)]
-    n <- length(x)
-    i <- rank(x)
-    p <- (i - 0.3) / (n + 0.4)
-    tDf$percentile <- p[order(tDf$tValue)]
+    orderIdx <- order(tDf$metric)
+    n <- length(orderIdx)
+    p <- (seq_len(n) - 0.3) / (n + 0.4)
+    tDf$percentile <- NA_real_
+    tDf$percentile[orderIdx] <- p
 
     # statistical significance
-    tDf$significant <- ifelse(tDf$pValue < 0.05, "S", "N")
+    if (!is.na(df) && df > 0) {
+      tDf$significant <- ifelse(!is.na(tDf$pValue) & tDf$pValue < 0.05, "S", "N")
+    } else if (!is.na(pse) && pse > 0) {
+      dfLenth <- max(1, floor(nrow(tDf) / 3))
+      crit <- stats::qt(0.975, dfLenth) * pse
+      tDf$significant <- ifelse(abs(tDf$metric) > crit, "S", "N")
+    } else {
+      tDf$significant <- "N"
+    }
     tDf$labelYPos <- stats::pnorm(stats::qnorm(tDf$percentile) + 0.2) # offset the label by a small amount (0.2) so it is displayed above the point
     yLabels <- c(0.1, 1, 5, seq(10, 90, 10), 95, 99, 99.9)
     yBreaks <- yLabels/100
-    xBreaks <- jaspGraphs::getPrettyAxisBreaks(c(tDf$tValue, -3, 3))
-    xLimits <- range(c(tDf$tValue, xBreaks))
+    yLimits <- range(yBreaks)
+    lineSpan <- if (!is.na(df) && df > 0) {
+      stats::qnorm(yLimits)
+    } else if (!is.na(pse) && pse > 0) {
+      stats::qnorm(yLimits, mean = 0, sd = pse)
+    } else {
+      stats::qnorm(yLimits)
+    }
+    xLimits <- range(c(tDf$metric, lineSpan))
+    xBreaks <- jaspGraphs::getPrettyAxisBreaks(xLimits)
+    xLimits <- range(xBreaks)
+    axisLabel <- if (!is.na(df) && df > 0) gettext("Standardized Effect") else gettext("Effect")
+    plotTitle <- if (!is.na(df) && df > 0) {
+      gettext("Normal Plot of Standardized Effects")
+    } else {
+      gettext("Normal Plot of Effects")
+    }
+    plot <- createJaspPlot(title = plotTitle, width = 600, height = 600)
+    plot$dependOn(options = c("normalEffectsPlot", "tableAlias", .doeAnalysisBaseDependencies()))
+    plot$position <- 11
+    jaspResults[[dep]][["normalEffectsPlot"]] <- plot
 
     # Create the ggplot with probit transformation
-    p <- ggplot2::ggplot(data = tDf, mapping = ggplot2::aes(x = tValue, y = percentile)) +
-      ggplot2::stat_function(fun = pnorm, linewidth = 1) +  # Reference line using the pnorm function
+    lineFn <- if (!is.na(df) && df > 0) {
+      function(x) stats::pnorm(x)
+    } else if (!is.na(pse) && pse > 0) {
+      function(x) stats::pnorm(x, mean = 0, sd = pse)
+    } else {
+      function(x) stats::pnorm(x)
+    }
+
+    p <- ggplot2::ggplot(data = tDf, mapping = ggplot2::aes(x = metric, y = percentile)) +
+      ggplot2::stat_function(fun = lineFn, linewidth = 1) +
       jaspGraphs::geom_point(mapping = ggplot2::aes(fill = significant), size = 4) +
-      ggplot2::scale_y_continuous(trans = 'probit', labels = yLabels, breaks = yBreaks, name = "Percent", limits = c(0.0001, 0.9999)) +
-      ggplot2::scale_x_continuous(name = "Standardized Effect", breaks = xBreaks, limits = xLimits) +
+      ggplot2::scale_y_continuous(trans = 'probit', labels = yLabels, breaks = yBreaks, name = "Percent", limits = yLimits) +
+      ggplot2::scale_x_continuous(name = axisLabel, breaks = xBreaks, limits = xLimits) +
       ggplot2::scale_fill_manual(values = c("S" = "darkred", "N" = "grey"), name = NULL, labels = c(gettext("Significant"), gettext("Not Significant")), breaks = c("S", "N")) +
       ggplot2::geom_label(mapping = ggplot2::aes(label = fac, y = labelYPos), size = 4) +
       jaspGraphs::themeJaspRaw() +
