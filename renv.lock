@@ -4436,8 +4436,8 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "jaspTools",
       "RemoteUsername": "jasp-stats",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "17576124ee4f15b710237b6d0da64a3aeb9d473c",
+      "RemoteRef": "4de8982",
+      "RemoteSha": "4de898283e3817fdb072733f642ba5711897a592",
       "NeedsCompilation": "no",
       "Author": "Tim de Jong [aut], Don van den Bergh [ctb, cre], František Bartoš [ctb]",
       "Depends": [
