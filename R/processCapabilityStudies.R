@@ -3113,7 +3113,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     if (options[["nullDistribution"]] == "normal") {
       lpdf <- quote(-log(sigma) - 0.5 / sigma ^ 2 * (x - mu) ^ 2)
       matrix <- try(.qcObservedVarcov(logdensity = lpdf, X = dataCurrentStage, parms = c("mu", "sigma"),
-                  mle = c(mean(dataCurrentStage), sd(dataCurrentStage))))
+                                     mle = c(mean(dataCurrentStage), sd(dataCurrentStage))))
       # Gracefully handle confidence band computation failure
       if (jaspBase::isTryError(matrix)) {
         hasConfidenceBands <- FALSE
