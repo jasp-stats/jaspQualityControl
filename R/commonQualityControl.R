@@ -1456,10 +1456,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["scale"]] # scale
     } else {
       fitWeibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                              control = list(
-                                                maxit = 10000,
-                                                abstol = .Machine$double.eps^0.75,
-                                                reltol = .Machine$double.eps^0.75),
+                                              control = list(maxit = 10000),
                                               fix.arg = fix.arg))
 
 
@@ -1513,10 +1510,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
       # Estimate parameters using fitdistrplus, because it can keep values fixed
       lnorm3Fit <- try(fitdistrplus::fitdist(data, "lnorm3Temp", method = "mle",
-                                             control = list(
-                                               maxit = 10000,
-                                               abstol = .Machine$double.eps^0.75,
-                                               reltol = .Machine$double.eps^0.75),
+                                             control = list(maxit = 10000),
                                              start = lnorm3startList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(lnorm3Fit))
@@ -1601,10 +1595,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- 1/fix.arg[["rate"]] # scale
     } else {
       gammaFit <- try(fitdistrplus::fitdist(data, "gamma", method = "mle",
-                                            control = list(
-                                              maxit = 10000,
-                                              abstol = .Machine$double.eps^0.75,
-                                              reltol = .Machine$double.eps^0.75),
+                                            control = list(maxit = 10000),
                                             fix.arg = fix.arg))
       if (jaspBase::isTryError(gammaFit))
         stop(estimationErrorMessage, call. = FALSE)
@@ -1642,10 +1633,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     } else {
 
       logFit <- try(fitdistrplus::fitdist(data, "logis", method = "mle",
-                                          control = list(
-                                            maxit = 10000,
-                                            abstol = .Machine$double.eps^0.75,
-                                            reltol = .Machine$double.eps^0.75),
+                                          control = list(maxit = 10000),
                                           fix.arg = fix.arg))
 
       if (jaspBase::isTryError(logFit))
@@ -1689,10 +1677,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
 
       loglogFit <- try(fitdistrplus::fitdist(data, "llogisTemp", method = "mle",
-                                             control = list(
-                                               maxit = 10000,
-                                               abstol = .Machine$double.eps^0.75,
-                                               reltol = .Machine$double.eps^0.75),
+                                             control = list(maxit = 10000),
                                              start = loglogStartList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(loglogFit))

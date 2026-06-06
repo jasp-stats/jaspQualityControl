@@ -3136,11 +3136,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       test   <- goftest::ad.test(x = values, "plnorm", meanlog = meanx, sdlog = sdx)
     } else if (options[["nullDistribution"]] == "weibull") {
       fit    <- fitdistrplus::fitdist(values, 'weibull',
-                                      control = list(
-                                        maxit = 10000,
-                                        abstol = .Machine$double.eps^0.75,
-                                        reltol = .Machine$double.eps^0.75,
-                                        ndeps = rep(1e-8, 2)))
+                                      control = list(maxit = 10000))
       meanx  <- fit$estimate[1]
       sdx    <- fit$estimate[2]
       test   <- goftest::ad.test(x = values, "pweibull", shape = meanx, scale = sdx)
