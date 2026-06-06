@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.17.2.1\n"
-"POT-Creation-Date: 2026-04-04 04:24\n"
+"POT-Creation-Date: 2026-06-06 04:55\n"
 "PO-Revision-Date: 2026-01-28 10:47+0000\n"
 "Last-Translator: Wendel Paulo Silvestre <wpsilvestre@ucs.br>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/jasp/"
@@ -1821,6 +1821,16 @@ msgstr ""
 
 msgid "Probability plot against %1$s distribution"
 msgstr "Gráfico de probabilidade em relação à distribuição %1$s"
+
+msgid ""
+"Could not compute variance-covariance matrix: parameter vector has "
+"unexpected length."
+msgstr ""
+
+msgid ""
+"Could not compute variance-covariance matrix: Hessian contains invalid "
+"values."
+msgstr ""
 
 msgid ""
 "Fitting lognormal distribution failed, most likely because the observed "

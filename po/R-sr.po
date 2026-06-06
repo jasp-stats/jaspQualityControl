@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-04-04 04:24\n"
+"POT-Creation-Date: 2026-06-06 04:55\n"
 "PO-Revision-Date: 2025-12-31 12:01+0000\n"
 "Last-Translator: Marko Bojović <bojovicmarko@outlook.com>\n"
 "Language-Team: Serbian <https://hosted.weblate.org/projects/jasp/"
@@ -1710,6 +1710,16 @@ msgid ""
 msgstr ""
 
 msgid "Probability plot against %1$s distribution"
+msgstr ""
+
+msgid ""
+"Could not compute variance-covariance matrix: parameter vector has "
+"unexpected length."
+msgstr ""
+
+msgid ""
+"Could not compute variance-covariance matrix: Hessian contains invalid "
+"values."
 msgstr ""
 
 msgid ""
