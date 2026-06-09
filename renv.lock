@@ -4269,6 +4269,7 @@
         "systemfonts",
         "withr"
       ],
+      "Remotes": "jasp-stats/jaspGraphs",
       "RoxygenNote": "7.3.3",
       "Roxygen": "list(markdown = TRUE)",
       "Encoding": "UTF-8",
@@ -4282,12 +4283,14 @@
       ],
       "Config/testthat/edition": "3",
       "RemoteType": "github",
-      "Remotes": "jasp-stats/jaspGraphs",
-      "RemoteUsername": "jasp-stats",
+      "RemoteHost": "api.github.com",
       "RemoteRepo": "jaspBase",
-      "RemoteRef": "master",
-      "RemoteSha": "244c661b7a4cdcc9aca0aacbf5555881d90c0985",
-      "RemoteHost": "api.github.com"
+      "RemoteUsername": "jasp-stats",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "209d1787d5c9400601df960535b261029a350b12",
+      "Depends": [
+        "R (>= 4.1.0)"
+      ]
     },
     "jaspDescriptives": {
       "Package": "jaspDescriptives",
