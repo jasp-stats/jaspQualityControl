@@ -48,6 +48,10 @@ Thumbs.db
 # JASP analysis
 state
 
+# testthat snapshot failure artifacts (never commit)
+*.new.rds
+*.new.svg
+
 # RStudio files
 .Rproj.user/*
 Rproj.user
@@ -65,3 +69,5 @@ _processedLockFile.lock
 
 .vscode/
 .positai
+
+/tmp
