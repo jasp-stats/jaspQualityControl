@@ -4404,7 +4404,7 @@
       "RemoteRepo": "jaspTTests",
       "RemoteUsername": "jasp-stats",
       "RemoteRef": "HEAD",
-      "RemoteSha": "18a5389f6d3c5b59750a8139d24b49d6e62ea075",
+      "RemoteSha": "6d2a57de1f768455c9fe703afab327967e46f211",
       "NeedsCompilation": "no",
       "Depends": [
         "R (>= 3.5.0)"
