@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2026-06-09 17:58+0000\n"
+"Last-Translator: Zahid Rizky Fakhri <zahidrizkyfakhri@gmail.com>\n"
+"Language-Team: Indonesian <https://hosted.weblate.org/projects/jasp/"
+"jaspprocesscontrol-qml/id/>\n"
+"Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 2026.6\n"
 "X-Language: id\n"
 "X-Qt-Contexts: true\n"
 
@@ -819,7 +825,6 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Variables Chart for Individuals"
 msgstr ""
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "X-mR chart"
 msgstr "Bagan X-mR"
@@ -1028,10 +1033,9 @@ msgctxt "doeModifyDesign|"
 msgid "Assigned factors"
 msgstr "Faktor yang ditetapkan"
 
-#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Run order"
-msgstr "Jalankan pesanan"
+msgstr "Jalankan urutan"
 
 msgctxt "doeModifyDesign|"
 msgid "Unit Display"
@@ -1065,10 +1069,9 @@ msgctxt "doeModifyDesign|"
 msgid "Design Options"
 msgstr "Opsi Desain"
 
-#, fuzzy
 msgctxt "doeModifyDesign|"
 msgid "Number of runs"
-msgstr "Jumlah eksekusi"
+msgstr "Jumlah perjalanan"
 
 msgctxt "doeModifyDesign|"
 msgid "Resolution"
@@ -1150,7 +1153,6 @@ msgctxt "doeScreening|"
 msgid "Save as:"
 msgstr "Simpan sebagai:"
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid "<b>Sync Design: On</b>"
 msgstr "<b>Sinkron Desain: Nyala</b>"
@@ -1227,7 +1229,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "High"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeScreening|"
 msgid "Number of factors"
 msgstr "Jumlah faktor"
@@ -1276,7 +1277,6 @@ msgctxt "msaGaugeRRnonrep|"
 msgid "Measurements by operator plot"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaType1Gauge|"
 msgid "Measurement"
 msgstr "Pengukuran"
@@ -1462,7 +1462,6 @@ msgctxt "ShowAndExportDesign|"
 msgid "Sort by standard order"
 msgstr ""
 
-#, fuzzy
 msgctxt "ShowAndExportDesign|"
 msgid "Save as:"
 msgstr "Simpan sebagai:"
@@ -1560,7 +1559,6 @@ msgctxt "doeAnalysis|"
 msgid "Normal probability plot"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Histogram"
 msgstr "Histogram"
@@ -1617,10 +1615,9 @@ msgctxt "doeAnalysis|"
 msgid "Show regression equation"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Plots"
-msgstr "Plot"
+msgstr "Diagram"
 
 msgctxt "doeAnalysis|"
 msgid "Contour/surface plots"
@@ -1718,7 +1715,6 @@ msgctxt "msaGaugeRR|"
 msgid "Part"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Show Report"
 msgstr "Tampilkan Laporan"
@@ -1727,7 +1723,6 @@ msgctxt "msaTestRetest|"
 msgid "Part"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Measurement"
 msgstr "Pengukuran"
@@ -1736,12 +1731,10 @@ msgctxt "msaTestRetest|"
 msgid "Scatter plot measurement"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Fit line"
-msgstr "Garis pas"
+msgstr "Garis sesuai"
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Display all measurements"
 msgstr "Tampilkan semua pengukuran"
@@ -1754,12 +1747,10 @@ msgctxt "processCapabilityStudies|"
 msgid "Subgroup"
 msgstr ""
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Title"
-msgstr "Titel"
+msgstr "Judul"
 
-#, fuzzy
 msgctxt "processCapabilityStudies|"
 msgid "Reported by"
 msgstr "Dilaporkan oleh"
@@ -1812,10 +1803,9 @@ msgctxt "attributesCharts|"
 msgid "Analyst"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Gauge r&R Report"
-msgstr "Laporan R&R Pengukur"
+msgstr "Laporan r&R Pengukur"
 
 msgctxt "msaGaugeRR|"
 msgid "Part name"
@@ -1833,7 +1823,6 @@ msgctxt "msaGaugeRR|"
 msgid "Number"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Tolerance"
 msgstr "Toleransi"
@@ -2042,10 +2031,9 @@ msgctxt "variablesChartsIndividuals|"
 msgid "Timestamp (optional)"
 msgstr ""
 
-#, fuzzy
 msgctxt "variablesChartsIndividuals|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Bagan Variabel untuk Laporan Subkelompok"
+msgstr "Bagan Variabel untuk Laporan Subgrup"
 
 msgctxt "variablesChartsIndividuals|"
 msgid "Chart name"
@@ -2159,12 +2147,10 @@ msgctxt "variablesChartsSubgroups|"
 msgid "Number of std. dev. for calculation of control limits"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Available variables"
-msgstr "Variabel yang tersedia"
+msgstr "Variabel tersedia"
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Covariates"
 msgstr "Kovariat"
@@ -2281,22 +2267,18 @@ msgctxt "doeAnalysis|"
 msgid "Residuals four-in-one plot"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "1"
 msgstr "1"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "2"
 msgstr "2"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "4"
 msgstr "4"
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "8"
 msgstr "8"
@@ -2337,7 +2319,6 @@ msgctxt "msaAttribute|"
 msgid "Tau study"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaGaugeRR|"
 msgid "Analysis options"
 msgstr "Opsi analisis"
@@ -2378,7 +2359,6 @@ msgctxt "msaGaugeRR|"
 msgid "Show average charts by operator"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaGaugeRRnonrep|"
 msgid "Analysis options"
 msgstr "Opsi analisis"
@@ -2443,7 +2423,6 @@ msgctxt "msaTestRetest|"
 msgid "Operator/Repetition"
 msgstr ""
 
-#, fuzzy
 msgctxt "msaTestRetest|"
 msgid "Analysis options"
 msgstr "Opsi analisis"
@@ -2592,7 +2571,6 @@ msgctxt "rareEventCharts|"
 msgid "Opportunities"
 msgstr ""
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Time"
 msgstr "Waktu"
@@ -2657,7 +2635,6 @@ msgctxt "rareEventCharts|"
 msgid "Rare Event Charts Report"
 msgstr ""
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Show Report"
 msgstr "Tampilkan Laporan"
@@ -2666,15 +2643,13 @@ msgctxt "rareEventCharts|"
 msgid "Show report metadata"
 msgstr ""
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Title"
-msgstr "Titel"
+msgstr "Judul"
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Bagan Variabel untuk Laporan Subkelompok"
+msgstr "Bagan Variabel untuk Laporan Subgrup"
 
 msgctxt "rareEventCharts|"
 msgid "Chart name"
@@ -2692,7 +2667,6 @@ msgctxt "rareEventCharts|"
 msgid "Measurement name"
 msgstr ""
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Name"
 msgstr "Nama"
@@ -2709,7 +2683,6 @@ msgctxt "rareEventCharts|"
 msgid "Location"
 msgstr ""
 
-#, fuzzy
 msgctxt "rareEventCharts|"
 msgid "Date"
 msgstr "Tanggal"
@@ -2730,12 +2703,10 @@ msgctxt "rareEventCharts|"
 msgid "Today"
 msgstr ""
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Data format"
 msgstr "Format data"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Single column"
 msgstr "Kolom tunggal"
@@ -2744,7 +2715,6 @@ msgctxt "timeWeightedCharts|"
 msgid "Across rows"
 msgstr ""
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Measurement"
 msgstr "Pengukuran"
@@ -2841,7 +2811,6 @@ msgctxt "timeWeightedCharts|"
 msgid "Time Weighted Charts Report"
 msgstr ""
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Show Report"
 msgstr "Tampilkan Laporan"
@@ -2850,15 +2819,13 @@ msgctxt "timeWeightedCharts|"
 msgid "Show report metadata"
 msgstr ""
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Title"
-msgstr "Titel"
+msgstr "Judul"
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Variable Charts for Subgroups Report"
-msgstr "Bagan Variabel untuk Laporan Subkelompok"
+msgstr "Bagan Variabel untuk Laporan Subgrup"
 
 msgctxt "timeWeightedCharts|"
 msgid "Chart name"
@@ -2876,7 +2843,6 @@ msgctxt "timeWeightedCharts|"
 msgid "Measurement name"
 msgstr ""
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Name"
 msgstr "Nama"
@@ -2893,7 +2859,6 @@ msgctxt "timeWeightedCharts|"
 msgid "Location"
 msgstr ""
 
-#, fuzzy
 msgctxt "timeWeightedCharts|"
 msgid "Date"
 msgstr "Tanggal"
@@ -3116,7 +3081,6 @@ msgctxt "doeAnalysis|"
 msgid "Factor levels"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeAnalysis|"
 msgid "Factor"
 msgstr "Faktor"
@@ -3125,7 +3089,6 @@ msgctxt "doeAnalysis|"
 msgid "Available continuous factors"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Number of factors"
 msgstr "Jumlah faktor"
@@ -3134,7 +3097,6 @@ msgctxt "doeFactorial|"
 msgid "Maximum factor levels"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeFactorial|"
 msgid "Factor"
 msgstr "Faktor"
@@ -3147,7 +3109,6 @@ msgctxt "doeResponseSurfaceMethodology|"
 msgid "Number of discrete factors"
 msgstr ""
 
-#, fuzzy
 msgctxt "doeResponseSurfaceMethodology|"
 msgid "Factor"
 msgstr "Faktor"
