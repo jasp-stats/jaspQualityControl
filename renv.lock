@@ -337,7 +337,8 @@
       "NeedsCompilation": "no",
       "Author": "Coen Bernaards [aut, cre], Paul Gilbert [aut], Robert Jennrich [aut]",
       "Maintainer": "Coen Bernaards <cab.gparotation@gmail.com>",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Encoding": "UTF-8"
     },
     "Hmisc": {
       "Package": "Hmisc",
@@ -1041,8 +1042,7 @@
       "URL": "https://www.rforge.net/base64enc",
       "BugReports": "https://github.com/s-u/base64enc/issues",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "bbmle": {
       "Package": "bbmle",
@@ -1611,8 +1611,7 @@
       "NeedsCompilation": "no",
       "Author": "John Fox [aut], Sanford Weisberg [aut], Brad Price [aut, cre]",
       "Maintainer": "Brad Price <brad.price@mail.wvu.edu>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "checkmate": {
       "Package": "checkmate",
@@ -2258,8 +2257,7 @@
       "URL": "https://github.com/tpetzoldt/deSolve/",
       "LazyData": "yes",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "desc": {
       "Package": "desc",
@@ -2740,11 +2738,11 @@
       "RoxygenNote": "7.3.2",
       "VignetteBuilder": "knitr",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
       "RemoteUsername": "dustinfife",
       "RemoteRepo": "flexplot",
       "RemoteRef": "master",
-      "RemoteSha": "cae36ba45502ce1794ad35cfeaf0155275db3056"
+      "RemoteSha": "cae36ba45502ce1794ad35cfeaf0155275db3056",
+      "RemoteHost": "api.github.com"
     },
     "flexsurv": {
       "Package": "flexsurv",
@@ -3728,8 +3726,7 @@
       "NeedsCompilation": "yes",
       "URL": "https://forgemia.inra.fr/sylvain.jasson/gmp",
       "Author": "Antoine Lucas [aut, cre] (ORCID: <https://orcid.org/0000-0002-8059-9767>), Immanuel Scholz [aut], Rainer Boehme [ctb], Sylvain Jasson [ctb], Martin Maechler [ctb]",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "goftest": {
       "Package": "goftest",
@@ -4283,11 +4280,11 @@
       "Config/testthat/edition": "3",
       "RemoteType": "github",
       "Remotes": "jasp-stats/jaspGraphs",
+      "RemoteHost": "api.github.com",
       "RemoteUsername": "jasp-stats",
       "RemoteRepo": "jaspBase",
       "RemoteRef": "master",
-      "RemoteSha": "209d1787d5c9400601df960535b261029a350b12",
-      "RemoteHost": "api.github.com"
+      "RemoteSha": "209d1787d5c9400601df960535b261029a350b12"
     },
     "jaspDescriptives": {
       "Package": "jaspDescriptives",
@@ -4410,6 +4407,7 @@
       "Description": "This package assists JASP developers when writing R code. It removes the necessity of building JASP every time a change is made. Rather, analyses can be called directly in R and be debugged interactively.",
       "License": "GNU General Public License",
       "Encoding": "UTF-8",
+      "LazyData": "true",
       "Imports": [
         "archive (>= 1.1.6)",
         "cli",
@@ -4432,17 +4430,13 @@
       ],
       "RoxygenNote": "7.3.3",
       "Roxygen": "list(markdown = TRUE)",
+      "Author": "Tim de Jong [aut], Don van den Bergh [ctb, cre], František Bartoš [ctb]",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "jaspTools",
       "RemoteUsername": "jasp-stats",
-      "RemoteRef": "4de8982",
-      "RemoteSha": "4de898283e3817fdb072733f642ba5711897a592",
-      "NeedsCompilation": "no",
-      "Author": "Tim de Jong [aut], Don van den Bergh [ctb, cre], František Bartoš [ctb]",
-      "Depends": [
-        "R (>= 3.5.0)"
-      ]
+      "RemoteRepo": "jaspTools",
+      "RemoteRef": "master",
+      "RemoteSha": "281f17a2d6761eb5ec247d7ddcd59042f01fa409"
     },
     "jpeg": {
       "Package": "jpeg",
@@ -4704,8 +4698,7 @@
       "NeedsCompilation": "yes",
       "Author": "Hadley Wickham [aut, cre], RStudio [cph]",
       "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "libcoin": {
       "Package": "libcoin",
@@ -4733,8 +4726,7 @@
       "License": "GPL-2",
       "Author": "Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>), Henric Winell [aut] (ORCID: <https://orcid.org/0000-0001-7995-3047>)",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "lifecycle": {
       "Package": "lifecycle",
@@ -5434,8 +5426,7 @@
       "NeedsCompilation": "no",
       "Author": "Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>), Frank Bretz [aut], Peter Westfall [aut], Richard M. Heiberger [ctb], Andre Schuetzenmeister [ctb], Susan Scheibe [ctb], Christian Ritz [ctb], Christian B. Pipper [ctb]",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "mvtnorm": {
       "Package": "mvtnorm",
@@ -5461,8 +5452,7 @@
       "NeedsCompilation": "yes",
       "Author": "Alan Genz [aut], Frank Bretz [aut], Tetsuhisa Miwa [aut], Xuefei Mi [aut], Friedrich Leisch [ctb], Fabian Scheipl [ctb], Bjoern Bornkamp [ctb] (ORCID: <https://orcid.org/0000-0002-6294-8185>), Martin Maechler [ctb] (ORCID: <https://orcid.org/0000-0002-8685-9910>), Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>)",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "nlme": {
       "Package": "nlme",
@@ -5798,8 +5788,7 @@
       "NeedsCompilation": "yes",
       "Author": "Torsten Hothorn [aut, cre] (ORCID: <https://orcid.org/0000-0001-8301-0471>), Kurt Hornik [aut] (ORCID: <https://orcid.org/0000-0003-4198-9911>), Carolin Strobl [aut] (ORCID: <https://orcid.org/0000-0003-0952-3230>), Achim Zeileis [aut] (ORCID: <https://orcid.org/0000-0003-0918-3766>)",
       "Maintainer": "Torsten Hothorn <Torsten.Hothorn@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "patchwork": {
       "Package": "patchwork",
@@ -6174,12 +6163,11 @@
       "Depends": [
         "R (>= 3.5.0)"
       ],
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "URL": "https://plotrix.github.io/plotrix/, https://github.com/plotrix/plotrix",
       "BugReports": "https://github.com/plotrix/plotrix/issues",
       "Author": "Jim Lemon [aut], Ben Bolker [ctb], Sander Oom [ctb], Eduardo Klein [ctb], Barry Rowlingson [ctb], Hadley Wickham [ctb], Anupam Tyagi [ctb], Olivier Eterradossi [ctb], Gabor Grothendieck [ctb], Michael Toews [ctb], John Kane [ctb], Rolf Turner [ctb], Carl Witthoft [ctb], Julian Stander [ctb], Thomas Petzoldt [ctb], Remko Duursma [ctb], Elisa Biancotto [ctb], Ofir Levy [ctb], Christophe Dutang [ctb], Peter Solymos [ctb], Robby Engelmann [ctb], Michael Hecker [ctb], Felix Steinbeck [ctb], Hans Borchers [ctb], Henrik Singmann [ctb], Ted Toal [ctb], Derek Ogle [ctb], Darshan Baral [ctb], Ulrike Groemping [ctb], Bill Venables [ctb], The CRAN Team [ctb], Duncan Murdoch [ctb, cre]",
-      "Maintainer": "Duncan Murdoch <murdoch.duncan@gmail.com>",
-      "Encoding": "UTF-8"
+      "Maintainer": "Duncan Murdoch <murdoch.duncan@gmail.com>"
     },
     "plyr": {
       "Package": "plyr",
@@ -6235,8 +6223,7 @@
       "URL": "https://www.rforge.net/png/",
       "BugReports": "https://github.com/s-u/png/issues/",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "polynom": {
       "Package": "polynom",
@@ -6443,7 +6430,8 @@
       "NeedsCompilation": "no",
       "Author": "William Revelle [aut, cre] (ORCID: <https://orcid.org/0000-0003-4880-9610>)",
       "Maintainer": "William Revelle <revelle@northwestern.edu>",
-      "Repository": "CRAN"
+      "Repository": "RSPM",
+      "Encoding": "UTF-8"
     },
     "purrr": {
       "Package": "purrr",
@@ -6961,10 +6949,9 @@
       "NeedsCompilation": "yes",
       "Author": "Terry Therneau [aut], Beth Atkinson [aut, cre], Brian Ripley [trl] (producer of the initial R port, maintainer 1999-2017)",
       "Maintainer": "Beth Atkinson <atkinson@mayo.edu>",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "URL": "https://github.com/bethatkinson/rpart, https://cran.r-project.org/package=rpart",
-      "BugReports": "https://github.com/bethatkinson/rpart/issues",
-      "Encoding": "UTF-8"
+      "BugReports": "https://github.com/bethatkinson/rpart/issues"
     },
     "rprojroot": {
       "Package": "rprojroot",
@@ -8179,8 +8166,7 @@
       "URL": "https://www.rforge.net/uuid",
       "BugReports": "https://github.com/s-u/uuid/issues",
       "NeedsCompilation": "yes",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
+      "Repository": "CRAN"
     },
     "vcd": {
       "Package": "vcd",
