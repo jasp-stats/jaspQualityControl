@@ -1893,7 +1893,7 @@ get_levels <- function(var, num_levels, dataset) {
     containerTitle <- ifelse(plotType == "contourPlot", gettext("Contour plots"), gettext("Surface plots"))
     container <- createJaspContainer(title = containerTitle)
     container$dependOn(options = c("contourSurfacePlot", "contourSurfacePlotType",
-                                   "contourSurfacePlotVariables", "contourSurfacePlotLegend",
+                                   "contourSurfacePlotVariables",
                                    "contourSurfacePlotResponseDivision", "surfacePlotVerticalRotation",
                                    "surfacePlotHorizontalRotation", .doeAnalysisBaseDependencies()))
     container$position <- 12
@@ -1914,62 +1914,49 @@ get_levels <- function(var, num_levels, dataset) {
       variablePair <- variablePairs[i, ]
       variablePairString <- paste(variablePair, collapse = gettext(" and "))
       plotTitle <- gettextf("%1$s of %2$s vs %3$s", plotTypeString, dep, variablePairString)
-      plot <- createJaspPlot(title = plotTitle, width = 500, height = 500)
+      plot <- createJaspPlot(title = plotTitle, width = 560, height = 460)
       result <- jaspResults[[dep]][["doeResult"]]$object[["regression"]]
       if (plotType == "contourPlot") {
-        plot$plotObject <- function(){.doeContourSurfacePlotObject(result, options, dep, variablePair, type = "contour")}
+        plot$plotObject <- .doeContourPlotObject(result, options, dep, variablePair)
       } else if (plotType == "surfacePlot") {
-        plot$plotObject <- function(){.doeContourSurfacePlotObject(result, options, dep, variablePair, type = "surface")}
+        plot$plotObject <- function(){.doeContourSurfacePlotObject(result, options, dep, variablePair)}
       }
       jaspResults[[dep]][["contourSurfacePlot"]][[plotTitle]] <- plot
     }
   }
 }
 
-.doeContourSurfacePlotObject <- function(result, options, dependent, variablePair, type = c("contour", "surface")) {
-  type <- match.arg(type)
-  regressionFit <- result[["object"]]
-  formula <- as.formula(paste0("~", paste0(variablePair, collapse = " + ")))
+.doeContourPlotObject <- function(result, options, dependent, variablePair) {
+  regressionFit       <- result[["object"]]
+  formula             <- as.formula(paste0("~", paste0(variablePair, collapse = " + ")))
   nResponsePartitions <- options[["contourSurfacePlotResponseDivision"]]
-  colorSet <- heat.colors(nResponsePartitions)
 
-  # --- Make space on the right for legend ---
-  rightMarginSize <- if (options[["contourSurfacePlotLegend"]]) 10 else 0
-  oldpar <- par(no.readonly = TRUE)
-  par(mar = oldpar$mar + c(0, 0, 0, rightMarginSize), xpd = NA)  # widen right margin
+  plotData <- rsm::contour.lm(regressionFit, formula, plot.it = FALSE)[[1]]
 
-  if (type == "contour") {
-    po <- rsm::image.lm(regressionFit, formula, las = 1, col = colorSet)
+  df      <- expand.grid(x = plotData$x, y = plotData$y)
+  df$z    <- as.vector(plotData$z)
+  zBreaks <- seq(min(df$z), max(df$z), length.out = nResponsePartitions + 1)
+  df$zBin <- cut(df$z, breaks = zBreaks, include.lowest = TRUE)
 
-  } else if (type == "surface") {
-    theta <- options[["surfacePlotHorizontalRotation"]]
-    phi   <- options[["surfacePlotVerticalRotation"]]
+  ggplot2::ggplot(df, ggplot2::aes(x = x, y = y)) +
+    ggplot2::geom_raster(ggplot2::aes(fill = zBin)) +
+    ggplot2::scale_fill_viridis_d(name = dependent, direction = -1) +
+    ggplot2::scale_x_continuous(name = plotData$labs[1]) +
+    ggplot2::scale_y_continuous(name = plotData$labs[2]) +
+    jaspGraphs::geom_rangeframe() +
+    jaspGraphs::themeJaspRaw(legend.position = "right")
+}
 
-    po <- rsm::persp.lm(
-      regressionFit, formula,
-      theta = theta, phi = phi,
-      zlab = dependent,
-      col = colorSet
-    )
-  }
+.doeContourSurfacePlotObject <- function(result, options, dependent, variablePair) {
+  regressionFit       <- result[["object"]]
+  formula             <- as.formula(paste0("~", paste0(variablePair, collapse = " + ")))
+  nResponsePartitions <- options[["contourSurfacePlotResponseDivision"]]
+  colorSet            <- heat.colors(nResponsePartitions)
+  theta               <- options[["surfacePlotHorizontalRotation"]]
+  phi                 <- options[["surfacePlotVerticalRotation"]]
 
-  if (options[["contourSurfacePlotLegend"]]) {
-
-    partitionRanges <- levels(cut(po[[1]]$z, breaks = nResponsePartitions))
-    partitionRanges <- gsub(",", " \U2013 ", partitionRanges)
-    partitionRanges <- gsub("\\(", "", partitionRanges)
-    partitionRanges <- gsub("\\]", "", partitionRanges)
-    # we push legend to the right, dependent on the width of the legend, with some minimum
-    pushDistance <- max(c(strwidth(levels(cut(po[[1]]$z, breaks = nResponsePartitions)), units = "figure"), 0.2))
-
-    legend(
-      x = "topright",
-      inset = c(-pushDistance*2.5, 0), # push legend into the right margin
-      legend = partitionRanges,
-      fill = colorSet,
-      bty = "n"
-    )
-  }
+  rsm::persp.lm(regressionFit, formula, theta = theta, phi = phi,
+                zlab = dependent, col = colorSet)
 }
 
 # the two functions below are taken from https://rpubs.com/RatherBit/102428
