@@ -16,6 +16,9 @@
 
 # jaspQualityControl (development version)
 
+## Changed
+* DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode.
+
 ## Fixed
 * Stepwise model selection in the Response Surface design now respects marginality: a squared term is no longer retained without its corresponding main effect.
 
