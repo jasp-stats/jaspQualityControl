@@ -21,11 +21,13 @@ Group
 {
 
 	columns : 1
-	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: true 
-		CheckBox{ name: "codedOutput";	label: qsTr("Coded units")}
+	CheckBox { name: "displayDesign"; label: qsTr("Display design"); checked: true
+		info: qsTr("Display the design table in the output. One of the preset designs must be selected in the design table.")
+		CheckBox{ name: "codedOutput";	label: qsTr("Coded units");	info: qsTr("Display the factor levels in coded units rather than the given units.")}
 		RadioButtonGroup
 		{
 			name:								"runOrder"
+			info:								qsTr("Whether the runs in the design are sorted by run order or by standard order.")
 
 			RadioButton
 			{
@@ -52,6 +54,7 @@ Group
 			placeholderText: qsTr("e.g. design.csv")
 			filter:		"*.csv"
 			save:		true
+			info:		qsTr("Name and path of the .csv file to save the design to.")
 		}
 
 		CheckBox
@@ -61,6 +64,7 @@ Group
 			label:				qsTr("Export design")
 			Layout.leftMargin:  25 * preferencesModel.uiScale
 			enabled: 			exportDesignFile.value != ""
+			info:				qsTr("Save the selected design to the specified .csv file.")
 		}
 	}
 
