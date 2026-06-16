@@ -355,22 +355,91 @@ doeFactorial <- function(jaspResults, dataset, options, ...) {
         seed = seed
       )
     } else if (options[["factorialType"]] == "factorialTypeSpecify") {
-      whichHow <- strsplit(gsub(" ", "", strsplit(options[["factorialTypeSpecifyGenerators"]], ",")[[1]], fixed = TRUE), "=")
-      if (length(whichHow) == 0) {
+      entries <- unlist(strsplit(options[["factorialTypeSpecifyGenerators"]], "[,; \t\n\r]+"))
+      entries <- trimws(entries)
+      entries <- entries[nzchar(entries)]
+      if (length(entries) == 0)
         return()
+
+      nFactors    <- designSpec[["factors"]]
+      k           <- log2(designSpec[["runs"]])
+      p           <- nFactors - k
+      baseLabels  <- LETTERS[seq_len(k)]
+      addedLabels <- LETTERS[seq_len(p) + k]
+
+      if (p == 0)
+        stop(gettext("The selected design is a full factorial; no generators can be specified."))
+
+      splitEntries <- strsplit(entries, "=")
+      hasLHS       <- lengths(splitEntries) == 2L
+
+      if (any(hasLHS) && !all(hasLHS))
+        stop(gettext("All generators must either all include a factor name (e.g., D=ABC) or none should."))
+
+      if (all(hasLHS)) {
+        lhsVec <- toupper(trimws(vapply(splitEntries, `[[`, character(1L), 1L)))
+        rhsVec <- toupper(trimws(vapply(splitEntries, `[[`, character(1L), 2L)))
+
+        invalidLHS <- lhsVec[!lhsVec %in% addedLabels]
+        if (length(invalidLHS) > 0)
+          stop(gettextf(
+            "Only the final %1$s factor(s) can be defined by a generator: %2$s.",
+            p, paste(addedLabels, collapse = ", ")
+          ))
+
+        if (length(entries) != p)
+          stop(gettextf(
+            "Expected %1$s generator(s) for added factor(s) %2$s, but got %3$s.",
+            p, paste(addedLabels, collapse = ", "), length(entries)
+          ))
+
+        if (anyDuplicated(lhsVec)) {
+          dupes <- unique(lhsVec[duplicated(lhsVec)])
+          stop(gettextf("Factor(s) defined more than once in generators: %s.", paste(dupes, collapse = ", ")))
+        }
+
+        for (i in seq_along(rhsVec)) {
+          rhs     <- sub("^[+-]", "", rhsVec[i])
+          unknown <- setdiff(strsplit(rhs, "")[[1]], baseLabels)
+          if (length(unknown) > 0)
+            stop(gettextf(
+              "Generator for %1$s references non-base or unknown factor(s): %2$s. Base factors are: %3$s.",
+              lhsVec[i], paste(unknown, collapse = ", "), paste(baseLabels, collapse = ", ")
+            ))
+        }
+
+        gen <- rhsVec[order(match(lhsVec, addedLabels))]
+
+      } else {
+        rhsVec <- toupper(trimws(vapply(splitEntries, `[[`, character(1L), 1L)))
+
+        if (length(entries) != p)
+          stop(gettextf(
+            "Expected %1$s generator(s) for added factor(s) %2$s, but got %3$s.",
+            p, paste(addedLabels, collapse = ", "), length(entries)
+          ))
+
+        for (i in seq_along(rhsVec)) {
+          rhs     <- sub("^[+-]", "", rhsVec[i])
+          unknown <- setdiff(strsplit(rhs, "")[[1]], baseLabels)
+          if (length(unknown) > 0)
+            stop(gettextf(
+              "Generator %1$s references non-base or unknown factor(s): %2$s. Base factors are: %3$s.",
+              i, paste(unknown, collapse = ", "), paste(baseLabels, collapse = ", ")
+            ))
+        }
+
+        gen <- rhsVec
       }
-      gen <- character(length(whichHow))
-      for (i in seq_along(length(whichHow))) {
-        gen[i] <- whichHow[[i]][length(whichHow[[i]])]
-      }
+
       design <- FrF2::FrF2(
-        nfactors = designSpec[["factors"]],
-        nruns = designSpec[["runs"]],
-        generators = gen,
-        ncenter = designSpec[["centerpoints"]],
-        replications = designSpec[["replications"]],
+        nfactors         = designSpec[["factors"]],
+        nruns            = designSpec[["runs"]],
+        generators       = gen,
+        ncenter          = designSpec[["centerpoints"]],
+        replications     = designSpec[["replications"]],
         alias.block.2fis = TRUE,
-        seed = seed
+        seed             = seed
       )
     } else if (options[["factorialType"]] == "factorialTypeSplit") {
       design <- FrF2::FrF2(
