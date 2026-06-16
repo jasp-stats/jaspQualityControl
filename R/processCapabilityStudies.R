@@ -1097,6 +1097,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   )
 }
 
+.qcDensityCurveData <- function(fun, args, xGrid, curve) {
+  # Evaluate a density function over an x-grid so the curve survives ggplotly translation
+  # (stat_function is re-evaluated over the wrong x-range by plotly and renders flat).
+  y <- try(do.call(fun, c(list(xGrid), args)), silent = TRUE)
+  if (jaspBase::isTryError(y)) return(NULL)
+  data.frame(x = xGrid, y = y, curve = curve)
+}
+
 .qcProcessCapabilityPlotObject <- function(options, dataset, measurements, stages, distribution = c('normal', "weibull", "lognormal", "3ParameterLognormal", "3ParameterWeibull")) {
   if (identical(stages, "")) {
     nStages <- 1
@@ -1156,6 +1164,9 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         xBreaks <- seq(loExt, hiExt, by = xStep)
       xLimits <- range(xLimits, xBreaks)
 
+      # x-grid for distribution curves drawn via geom_line (plotly-compatible, unlike stat_function)
+      xGrid <- seq(xLimits[1], xLimits[2], length.out = 512)
+
       nBins <- options[["processCapabilityPlotBinNumber"]]
       h <- hist(allData, plot = FALSE, breaks = nBins)
       binWidth <- (h$breaks[2] - h$breaks[1])
@@ -1175,13 +1186,12 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         fix.arg <- .buildFixArg(distribution, options)
 
       if (options[["processCapabilityPlotDistributions"]]) {
+        densDf <- NULL
         if (distribution == "normal") {
           processMean <- if (options[["historicalMean"]]) options[["historicalMeanValue"]] else mean(allData, na.rm = TRUE)
           if (.qcWithinProcessValid(options)) {
-            p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sd(allData)),
-                                            mapping = ggplot2::aes(color = "sdoDist", linetype = "sdoDist")) +
-              ggplot2::stat_function(fun = dnorm, args = list(mean = processMean, sd = sdw),
-                                     mapping = ggplot2::aes(color = "sdwDist", linetype = "sdwDist"))
+            densDf <- rbind(.qcDensityCurveData(dnorm, list(mean = processMean, sd = sd(allData)), xGrid, "sdoDist"),
+                            .qcDensityCurveData(dnorm, list(mean = processMean, sd = sdw), xGrid, "sdwDist"))
             legendColors <- c(legendColors, "dodgerblue", "red")
             legendLty <- c(legendLty, "solid", "solid")
             legendLabels <- c(legendLabels, gettext("Normal dist.\n(std. dev. total)"),
@@ -1193,8 +1203,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
             stop(distParameters[1], call. = FALSE)
           shape <- distParameters$beta
           scale <- distParameters$theta
-          p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
-                                          mapping = ggplot2::aes(color = "weibull", linetype = "weibull"))
+          densDf <- .qcDensityCurveData(dweibull, list(shape = shape, scale = scale), xGrid, "weibull")
           legendColors <- c(legendColors, "red")
           legendLty <- c(legendLty, "solid")
           legendLabels <- c(legendLabels, gettext("Weibull dist."))
@@ -1204,8 +1213,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
             stop(distParameters[1], call. = FALSE)
           meanlog <- distParameters$beta
           sdlog <- distParameters$theta
-          p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = meanlog, sdlog = sdlog),
-                                          mapping = ggplot2::aes(color = "lognormal", linetype = "lognormal"))
+          densDf <- .qcDensityCurveData(dlnorm, list(meanlog = meanlog, sdlog = sdlog), xGrid, "lognormal")
           legendColors <- c(legendColors, "red")
           legendLty <- c(legendLty, "solid")
           legendLabels <- c(legendLabels, "Lognormal dist.")
@@ -1216,8 +1224,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           meanlog <- distParameters$beta
           sdlog <- distParameters$theta
           threshold <- distParameters$threshold
-          p <- p + ggplot2::stat_function(fun = EnvStats::dlnorm3, args = list(meanlog = meanlog, sdlog = sdlog, threshold = threshold),
-                                          mapping = ggplot2::aes(color = "lognormal3", linetype = "lognormal3"))
+          densDf <- .qcDensityCurveData(EnvStats::dlnorm3, list(meanlog = meanlog, sdlog = sdlog, threshold = threshold), xGrid, "lognormal3")
           legendColors <- c(legendColors, "red")
           legendLty <- c(legendLty, "solid")
           legendLabels <- c(legendLabels, gettext("3-parameter\nlognormal dist."))
@@ -1228,8 +1235,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           shape <- distParameters$beta
           scale <- distParameters$theta
           threshold <- distParameters$threshold
-          p <- p + ggplot2::stat_function(fun = FAdist::dweibull3, args = list(shape = shape, scale = scale, thres = threshold),
-                                          mapping = ggplot2::aes(color = "weibull3", linetype = "weibull3"))
+          densDf <- .qcDensityCurveData(FAdist::dweibull3, list(shape = shape, scale = scale, thres = threshold), xGrid, "weibull3")
           legendColors <- c(legendColors, "red")
           legendLty <- c(legendLty, "solid")
           legendLabels <- c(legendLabels, gettext("3-parameter Weibull dist."))
@@ -1239,8 +1245,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
             stop(distParameters[1], call. = FALSE)
           shape <- distParameters$beta
           scale <- distParameters$theta
-          p <- p + ggplot2::stat_function(fun = dgamma, args = list(shape = shape, scale = scale),
-                                          mapping = ggplot2::aes(color = "gamma", linetype = "gamma"))
+          densDf <- .qcDensityCurveData(dgamma, list(shape = shape, scale = scale), xGrid, "gamma")
           legendColors <- c(legendColors, "red")
           legendLty <- c(legendLty, "solid")
           legendLabels <- c(legendLabels, gettext("Gamma dist."))
@@ -1250,8 +1255,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
             stop(distParameters[1], call. = FALSE)
           scale <- distParameters$theta
           rate <- 1 / scale
-          p <- p + ggplot2::stat_function(fun = dexp, args = list(rate = rate),
-                                          mapping = ggplot2::aes(color = "exp", linetype = "exp"))
+          densDf <- .qcDensityCurveData(dexp, list(rate = rate), xGrid, "exp")
           legendColors <- c(legendColors, "red")
           legendLty <- c(legendLty, "solid")
           legendLabels <- c(legendLabels, gettext("Exponential dist."))
@@ -1261,8 +1265,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
             stop(distParameters[1], call. = FALSE)
           location <- distParameters$beta
           scale <- distParameters$theta
-          p <- p + ggplot2::stat_function(fun = dlogis, args = list(location = location, scale = scale),
-                                          mapping = ggplot2::aes(color = "logis", linetype = "logis"))
+          densDf <- .qcDensityCurveData(dlogis, list(location = location, scale = scale), xGrid, "logis")
           legendColors <- c(legendColors, "red")
           legendLty <- c(legendLty, "solid")
           legendLabels <- c(legendLabels, gettext("Logistic dist."))
@@ -1273,11 +1276,16 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
           loglocation <- distParameters$beta
           scale <- exp(loglocation)
           shape <- 1 / distParameters$theta
-          p <- p + ggplot2::stat_function(fun = flexsurv::dllogis, args = list(shape = shape, scale = scale),
-                                          mapping = ggplot2::aes(color = "llogis", linetype = "llogis"))
+          densDf <- .qcDensityCurveData(flexsurv::dllogis, list(shape = shape, scale = scale), xGrid, "llogis")
           legendColors <- c(legendColors, "red")
           legendLty <- c(legendLty, "solid")
           legendLabels <- c(legendLabels, gettext("Log-logistic dist."))
+        }
+        if (!is.null(densDf)) {
+          densDf$curve <- factor(densDf$curve, levels = unique(densDf$curve))
+          p <- p + ggplot2::geom_line(data = densDf,
+                                      mapping = ggplot2::aes(x = x, y = y, color = curve, linetype = curve),
+                                      linewidth = 1, na.rm = TRUE)
         }
       }
 
@@ -3584,69 +3592,66 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       p <- p + ggplot2::ggtitle(stage) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
 
     if (options[["histogramDensityLine"]]) {
+      # x-grid for the density curve drawn via geom_line (plotly-compatible, unlike stat_function)
+      xGrid <- seq(xLimits[1], xLimits[2], length.out = 512)
+      densDf <- NULL
       if (options[['nullDistribution']]  == "normal") {
-        p <- p + ggplot2::stat_function(fun = dnorm, args = list(mean = mean(dataCurrentStage), sd = sd(dataCurrentStage)),
-                                        mapping = ggplot2::aes(color = "normalDist"))
+        densDf <- .qcDensityCurveData(dnorm, list(mean = mean(dataCurrentStage), sd = sd(dataCurrentStage)), xGrid, "normalDist")
         legendLabel <- gettext("Normal dist.")
       } else if (options[['nullDistribution']]  == "weibull") {
         fit_Weibull <- .distributionParameters(dataCurrentStage, distribution = "weibull", fix.arg = NULL)
         shape <- fit_Weibull[["beta"]]
         scale <- fit_Weibull[["theta"]]
-        p <- p + ggplot2::stat_function(fun = dweibull, args = list(shape = shape, scale = scale),
-                                        mapping = ggplot2::aes(color = "weibullDist"))
+        densDf <- .qcDensityCurveData(dweibull, list(shape = shape, scale = scale), xGrid, "weibullDist")
         legendLabel <- gettext("Weibull dist.")
       } else if(options[['nullDistribution']]  == "lognormal") {
         fit_Lnorm    <- .distributionParameters(dataCurrentStage, distribution = "lognormal", fix.arg = NULL)
         meanlog  <- fit_Lnorm[["beta"]]
         sdlog    <- fit_Lnorm[["theta"]]
-        p <- p + ggplot2::stat_function(fun = dlnorm, args = list(meanlog = meanlog, sdlog = sdlog),
-                                        mapping = ggplot2::aes(color = "lognormallDist"))
+        densDf <- .qcDensityCurveData(dlnorm, list(meanlog = meanlog, sdlog = sdlog), xGrid, "lognormallDist")
         legendLabel <- gettext("Log-normal dist.")
       } else if(options[['nullDistribution']]  == "gamma") {
         fitGamma <- .distributionParameters(dataCurrentStage, distribution = "gamma", fix.arg = NULL)
         shape <- fitGamma[["beta"]]
         scale <- fitGamma[["theta"]]
-        p <- p + ggplot2::stat_function(fun = dgamma, args = list(shape = shape, scale = scale),
-                                        mapping = ggplot2::aes(color = "gammaDist"))
+        densDf <- .qcDensityCurveData(dgamma, list(shape = shape, scale = scale), xGrid, "gammaDist")
         legendLabel <- gettext("Gamma dist.")
       } else if(options[['nullDistribution']]  == "exponential") {
         fitExp <- .distributionParameters(dataCurrentStage, distribution = "exponential", fix.arg = NULL)
         rate <- 1/fitExp[["theta"]]
-        p <- p + ggplot2::stat_function(fun = dexp, args = list(rate = rate),
-                                        mapping = ggplot2::aes(color = "exponentialDist"))
+        densDf <- .qcDensityCurveData(dexp, list(rate = rate), xGrid, "exponentialDist")
         legendLabel <- gettext("Exponential dist.")
       } else if(options[['nullDistribution']]  == "logistic") {
         fitLogis <- .distributionParameters(dataCurrentStage, distribution = "logistic", fix.arg = NULL)
         location <- fitLogis[["beta"]]
         scale <- fitLogis[["theta"]]
-        p <- p + ggplot2::stat_function(fun = dlogis, args = list(location = location, scale = scale),
-                                        mapping = ggplot2::aes(color = "logisticDist"))
+        densDf <- .qcDensityCurveData(dlogis, list(location = location, scale = scale), xGrid, "logisticDist")
         legendLabel <- gettext("Logistic dist.")
       } else if(options[['nullDistribution']]  == "loglogistic") {
         fitLoglogis <- .distributionParameters(dataCurrentStage, distribution = "logistic", fix.arg = NULL)
         shape <- 1/fitLoglogis[["theta"]]
         scale <- exp(fitLoglogis[["beta"]])
-        p <- p + ggplot2::stat_function(fun = flexsurv::dllogis, args = list(shape = shape, scale = scale),
-                                        mapping = ggplot2::aes(color = "loglogisticDist"))
+        densDf <- .qcDensityCurveData(flexsurv::dllogis, list(shape = shape, scale = scale), xGrid, "loglogisticDist")
         legendLabel <- gettext("Log-logistic dist.")
       } else if (options[['nullDistribution']]  == "3ParameterWeibull") {
         fit3Weibull <- .distributionParameters(dataCurrentStage, distribution = "3ParameterWeibull", fix.arg = NULL)
         shape <- fit3Weibull[["beta"]]
         scale <- fit3Weibull[["theta"]]
         threshold <- fit3Weibull[["threshold"]]
-        p <- p + ggplot2::stat_function(fun = FAdist::dweibull3, args = list(shape = shape, scale = scale, thres = threshold),
-                                        mapping = ggplot2::aes(color = "3ParamweibullDist"))
+        densDf <- .qcDensityCurveData(FAdist::dweibull3, list(shape = shape, scale = scale, thres = threshold), xGrid, "3ParamweibullDist")
         legendLabel <- gettext("3-parameter Weibull dist.")
       } else if (options[['nullDistribution']]  == "3ParameterLognormal") {
         fit3lnorm <- .distributionParameters(dataCurrentStage, distribution = "3ParameterLognormal", fix.arg = NULL)
         meanlog <- fit3lnorm[["beta"]]
         sdlog <- fit3lnorm[["theta"]]
         threshold <- fit3lnorm[["threshold"]]
-        p <- p + ggplot2::stat_function(fun = EnvStats::dlnorm3, args = list( meanlog = meanlog, sdlog = sdlog, threshold = threshold),
-                                        mapping = ggplot2::aes(color = "3ParamLogNormalDist"))
+        densDf <- .qcDensityCurveData(EnvStats::dlnorm3, list(meanlog = meanlog, sdlog = sdlog, threshold = threshold), xGrid, "3ParamLogNormalDist")
         legendLabel <- gettext("3-parameter\nlog-normal dist.")
       }
 
+      if (!is.null(densDf))
+        p <- p + ggplot2::geom_line(data = densDf, mapping = ggplot2::aes(x = x, y = y, color = curve),
+                                    linewidth = 1, na.rm = TRUE)
       p <- p + ggplot2::scale_color_manual("", values = "dodgerblue", labels = legendLabel) +
         ggplot2::theme(legend.position = "right")
     }

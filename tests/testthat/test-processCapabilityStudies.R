@@ -4635,8 +4635,8 @@ test_that("Z.bench (LT/ST) match sigma level from total ppm", {
   perf    <- base[["capabilityAnalysis_normalCapabilityAnalysis_capabilityTablePerformance"]][["data"]]
   overall <- base[["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableOverall"]][["data"]][[1]]
   within  <- base[["capabilityAnalysis_normalCapabilityAnalysis_capabilityTableWithin"]][["data"]][[1]]
-  eoTOT <- perf[[3]][["expOverall1"]] # "ppm total" row, expected total
-  ewTOT <- perf[[3]][["expWithin1"]]  # "ppm total" row, expected within
-  testthat::expect_equal(round(overall[["zBenchLt"]], 2), round(qnorm(1 - eoTOT/1e6), 2))
-  testthat::expect_equal(round(within[["zBenchSt"]], 2),  round(qnorm(1 - ewTOT/1e6), 2))
+  eoTOT <- as.numeric(perf[[3]][["expOverall1"]]) # "ppm total" row, expected total
+  ewTOT <- as.numeric(perf[[3]][["expWithin1"]])  # "ppm total" row, expected within
+  testthat::expect_equal(round(as.numeric(overall[["zBenchLt"]]), 2), round(qnorm(1 - eoTOT/1e6), 2))
+  testthat::expect_equal(round(as.numeric(within[["zBenchSt"]]), 2),  round(qnorm(1 - ewTOT/1e6), 2))
 })
