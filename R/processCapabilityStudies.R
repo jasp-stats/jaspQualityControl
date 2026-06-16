@@ -429,6 +429,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
   container <- createJaspContainer(gettext("Capability study"))
   container$dependOn(c(
     "capabilityStudyType", "processCapabilityPlot", "processCapabilityTable",
+    "processCapabilityTableZ", "processCapabilityTableZBench",
     "manualSubgroupSize", "report", "controlChartSdUnbiasingConstant",
     "lowerSpecificationLimitBoundary", "upperSpecificationLimitBoundary",
     "controlChartSdEstimationMethodGroupSizeLargerThanOne", "controlChartSdEstimationMethodGroupSizeEqualOne",
@@ -1647,6 +1648,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     tableColNames <- c(tableColNames, "zSt")
     sourceVector <- c(sourceVector, "Z (ST)")
   }
+  if (options[["processCapabilityTableZBench"]]) {
+    table$addColumnInfo(name="zBenchSt", title=gettext("Z.bench (ST)"), type="number")
+    tableColNames <- c(tableColNames, "zBenchSt")
+    sourceVector <- c(sourceVector, "Z.bench (ST)")
+  }
 
   table$showSpecifiedColumnsOnly <- TRUE
   if (options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])
@@ -1712,6 +1718,15 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
 
     if (options[["processCapabilityTableZ"]])
       tableDfCurrentStage[["zSt"]] <- round(3*cpk, .numDecimals)
+
+    if (options[["processCapabilityTableZBench"]]) {
+      # upper-tail forms (lower.tail = FALSE) avoid 1 - pnorm() underflow for highly capable processes,
+      # so Z.bench stays finite (qnorm(1 - p) == qnorm(p, lower.tail = FALSE))
+      pLowW  <- if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) pnorm((processMean - lsl)/sdw, lower.tail = FALSE) else NA
+      pHighW <- if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) pnorm((usl - processMean)/sdw, lower.tail = FALSE) else NA
+      pTotW  <- if (all(is.na(c(pLowW, pHighW)))) NA else sum(c(pLowW, pHighW), na.rm = TRUE)
+      tableDfCurrentStage[["zBenchSt"]] <- round(qnorm(pTotW, lower.tail = FALSE), .numDecimals)
+    }
 
     if (options[["processCapabilityTableCi"]]) {
       if (!(options[["lowerSpecificationLimitBoundary"]] || options[["upperSpecificationLimitBoundary"]])) {
@@ -1780,6 +1795,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         formattedTableDf[["cpkci"]] <- paste0("[", tableList[["cpklci"]], ", ", tableList[["cpkuci"]], "]")
     if (options[["processCapabilityTableZ"]])
       formattedTableDf[["zSt"]] <- tableList[["zSt"]]
+    if (options[["processCapabilityTableZBench"]])
+      formattedTableDf[["zBenchSt"]] <- tableList[["zBenchSt"]]
     colnames(formattedTableDf) <- sourceVector
     return(formattedTableDf)
   }
@@ -1858,6 +1875,11 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name="zLt", title=gettext("Z (LT)"), type="number")
     tableColNames <- c(tableColNames, "zLt")
     sourceVector1 <- c(sourceVector1, "Z (LT)")
+  }
+  if (options[["processCapabilityTableZBench"]]) {
+    table$addColumnInfo(name="zBenchLt", title=gettext("Z.bench (LT)"), type="number")
+    tableColNames <- c(tableColNames, "zBenchLt")
+    sourceVector1 <- c(sourceVector1, "Z.bench (LT)")
   }
   if (options[["target"]]) {
     table$addColumnInfo(name = "cpm", type = "integer", title = gettext("Cpm"))
@@ -1958,6 +1980,14 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
                                       ppk = round(ppk, .numDecimals))
     if (options[["processCapabilityTableZ"]])
       tableDfCurrentStage[["zLt"]] <- round(3*ppk, .numDecimals)
+    if (options[["processCapabilityTableZBench"]]) {
+      # upper-tail forms (lower.tail = FALSE) avoid 1 - pnorm() underflow for highly capable processes,
+      # so Z.bench stays finite (qnorm(1 - p) == qnorm(p, lower.tail = FALSE))
+      pLowO  <- if (options[["lowerSpecificationLimit"]] && !options[["lowerSpecificationLimitBoundary"]]) pnorm((processMean - lsl)/sdo, lower.tail = FALSE) else NA
+      pHighO <- if (options[["upperSpecificationLimit"]] && !options[["upperSpecificationLimitBoundary"]]) pnorm((usl - processMean)/sdo, lower.tail = FALSE) else NA
+      pTotO  <- if (all(is.na(c(pLowO, pHighO)))) NA else sum(c(pLowO, pHighO), na.rm = TRUE)
+      tableDfCurrentStage[["zBenchLt"]] <- round(qnorm(pTotO, lower.tail = FALSE), .numDecimals)
+    }
     if (options[["target"]])
       tableDfCurrentStage[["cpm"]] <- round(cpm, .numDecimals)
     if (options[["processCapabilityTableCi"]]) {
@@ -2036,6 +2066,8 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       formattedTableDf[["ppkci"]] <- paste0("[", tableList[["ppklci"]], ", ",tableList[["ppkuci"]], "]")
     if (options[["processCapabilityTableZ"]])
       formattedTableDf[["zLt"]] <- tableList[["zLt"]]
+    if (options[["processCapabilityTableZBench"]])
+      formattedTableDf[["zBenchLt"]] <- tableList[["zBenchLt"]]
     if (options[["target"]]) {
       formattedTableDf[["cpm"]] <- tableList[["cpm"]]
       if (options[["processCapabilityTableCi"]] &&

@@ -599,6 +599,13 @@ Form
 						label: qsTr("Z (ST) / Z (LT)")
 					}
 
+					CheckBox
+					{
+						name: "processCapabilityTableZBench"
+						label: qsTr("Z.bench (ST) / Z.bench (LT)")
+						info:  qsTr("Sigma level based on total defect probability across both specification limits (matches Minitab's Z.bench), as opposed to Z (ST)/Z (LT) which equal 3·Cpk/3·Ppk (distance to the nearest bound).")
+					}
+
 				}
 
 				}
