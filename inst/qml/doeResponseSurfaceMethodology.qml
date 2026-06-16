@@ -25,15 +25,22 @@ Form
 	id: form
 	columns: 1
 
+	info:		qsTr("A response surface design is an experimental framework for optimising and understanding the relationships between several explanatory variables and one or more response variables. By systematically varying the input variables it maps the response landscape, allowing estimation of quadratic effects and identification of optimal conditions. Central composite designs build a second-order (quadratic) model from an embedded factorial design augmented with star (axial) and centre points; Box-Behnken designs place treatment combinations at the midpoints of the edges of the process space and require three levels per factor.")
+
+	infoBottom: "## " + qsTr("References") + "\n"
+		+ "- " + qsTr("Box, G. E. P., & Wilson, K. B. (1951). On the experimental attainment of optimum conditions. Journal of the Royal Statistical Society, 13(1), 1-45.") + "\n"
+		+ "- " + qsTr("Dodson, B., Weidenbacher, M., Lynch, D., & Klerx, R. (2015). QT 9 – Design and analysis of experiments. SKF Quality Techniques.") + "\n"
+
 	Common.ShowAndExportDesign {}
 
 	RadioButtonGroup
 	{
 		name		: "designType"
 		title		: qsTr("Design type")
+		info		: qsTr("Type of response surface design to generate.")
 
-		RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central composite design");	checked: true;		id: centralCompositeDesign	}
-		RadioButton { name:	 "boxBehnkenDesign";			label: qsTr("Box-Behnken design");															}
+		RadioButton { name:	 "centralCompositeDesign";		label: qsTr("Central composite design");	checked: true;		id: centralCompositeDesign;	info: qsTr("Generate a central composite design: an embedded factorial design augmented with star (axial) and centre points to estimate curvature.")	}
+		RadioButton { name:	 "boxBehnkenDesign";			label: qsTr("Box-Behnken design");			info: qsTr("Generate a Box-Behnken design with treatment combinations at the midpoints of the edges of the process space and at the centre; requires three levels per factor.")	}
 
 	}
 
@@ -42,14 +49,17 @@ Form
 
 		// Could probably use a custom IntegerField type...
 		IntegerField { id: numberOfContinuous;		label: qsTr("Number of continuous factors");	name: "numberOfContinuous";		min: centralCompositeDesign.checked ? 2 : 3;	defaultValue: centralCompositeDesign.checked ? 2 : 3;	max: centralCompositeDesign.checked ? 10 : 7
+			info:	qsTr("Total number of continuous factors in the design. Continuous factors always have two defined levels (low/high).")
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
 		IntegerField { id: numberOfCategorical;		label: qsTr("Number of discrete factors");	name: "numberOfCategorical";	min: 0;		defaultValue: 0;	max: 10
+			info:	qsTr("Total number of discrete factors in the design.")
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
 		IntegerField { id: numberOfLevels;			label: qsTr("Maximum discrete levels");		name: "categoricalNoLevels";	min: 2;		defaultValue: 2;	max: 10
+			info:	qsTr("Maximum number of levels per discrete factor. If a factor has fewer levels, leave the remaining level cells empty.")
 			property int intValue: defaultValue
 			onValueChanged : { intValue = value !== "" ? value : 0 }
 		}
@@ -72,6 +82,7 @@ Form
 			name				: "continuousVariables"
 			cornerText			: qsTr("Factor")
 			columnNames			: [qsTr("Name"), qsTr("Low"), qsTr("High")]
+			info				: qsTr("Set the name and the low and high levels of each continuous factor.")
 			isFirstColEditable	: true
 			itemType			: JASP.Double
 			itemTypePerColumn	: [JASP.String] // first column is string, all others are double
@@ -104,6 +115,7 @@ Form
 			name				: "categoricalVariables"
 			cornerText			: qsTr("Factor")
 			itemType			: JASP.String
+			info				: qsTr("Set the names of the discrete factors and the value of each level.")
 
 			function getColHeaderText(headerText, colIndex)				{ return colIndex === 0 ? qsTr("Name") : qsTr("Level %1").arg(colIndex); }
 			function getRowHeaderText(headerText, rowIndex)				{ return String.fromCharCode(65 + rowIndex + numberOfContinuous.intValue); }
@@ -301,10 +313,11 @@ Form
 			visible:			centralCompositeDesign.checked
 			name:				"alphaType"
 			title:				qsTr("Alpha")
+			info:				qsTr("How the alpha value (distance of the axial points from the centre) is determined.")
 
-			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
-			RadioButton { name:	 "faceCentered";	label: qsTr("Face centred");					}
-			RadioButton { name:	 "custom";			label: qsTr("Custom");
+			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true;	info: qsTr("Use the default alpha value shown in the design table.")	}
+			RadioButton { name:	 "faceCentered";	label: qsTr("Face centred");		info: qsTr("Use a face-centred alpha value (axial points at the centre of each face).")			}
+			RadioButton { name:	 "custom";			label: qsTr("Custom");			info: qsTr("Enter a custom alpha value.")
 				childrenOnSameRow: true
 				DoubleField
 				{
@@ -318,9 +331,10 @@ Form
 		{
 			name:								"centerPointType"
 			title:								qsTr("Center points")
+			info:								qsTr("How the number of centre points in the design is determined.")
 
-			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true	}
-			RadioButton { name:	 "custom";			label: qsTr("Custom");
+			RadioButton { name:	 "default";			label: qsTr("Default");			checked: true;	info: qsTr("Use the default number of centre points shown in the design table.")	}
+			RadioButton { name:	 "custom";			label: qsTr("Custom");			info: qsTr("Enter a custom number of centre points.")
 				// TODO: these doublefields should only be enable if the selected element has a nonzero number of cube/ axial points
 				childrenOnSameRow: !centralCompositeDesign.checked
 				DoubleField
@@ -341,7 +355,7 @@ Form
 
 		// show user labels or just -1, 1?
 		SetSeed{}
-		IntegerField	{ name: "replicates";	label: qsTr("Replicates");			defaultValue: 1; min: 1; max: 100	}
+		IntegerField	{ name: "replicates";	label: qsTr("Replicates");			defaultValue: 1; min: 1; max: 100;	info: qsTr("Number of replications of the whole design.")	}
 
 	}
 

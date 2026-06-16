@@ -22,6 +22,8 @@ Form
 {
 	columns:									1
 
+	info:										qsTr("Create a general full factorial worksheet, where every combination of the specified factor levels is included. Define the factors and their levels, then display or export the design to fill in with measured responses.")
+
 	Group
 	{
 		title: 									qsTr("Design Space")
@@ -44,6 +46,7 @@ Form
 		name:									"runOrder"
 		title:									qsTr("Run Order")
 		enabled:								!factorialTypeSplit.checked
+		info:									qsTr("Whether the runs are sorted in standard order or randomised.")
 
 		RadioButton
 		{
@@ -60,8 +63,8 @@ Form
 		}
 	}
 
-	
-	IntegerField 
+
+	IntegerField
 	{
 		id:									 numberOfFactors
 		name:								"numberOfFactors"
@@ -69,6 +72,7 @@ Form
 		defaultValue:						0
 		min:								0
 		max:								256
+		info:								qsTr("Total number of factors in the design.")
 		// onValueChanged: 					updateModel(value)
 	}
 
@@ -176,6 +180,7 @@ Form
 			defaultValue:						1
 			min:								1
 			max:								8
+			info:								qsTr("Number of replications of the whole design.")
 		}
 
 		CheckBox
@@ -183,6 +188,7 @@ Form
 			name:								"fullRepeats"
 			label:								qsTr("Repeats only")
 			visible:							fullCornerReplicates.value > 1
+			info:								qsTr("Treat the replications as repeats (repeated measurements) rather than full replications.")
 		}
 
 		IntegerField
@@ -192,6 +198,7 @@ Form
 			defaultValue:						0
 			min:								0
 			max:								10
+			info:								qsTr("Number of randomly selected runs to repeat.")
 		}
 	}
 
@@ -199,6 +206,7 @@ Form
 	{
 		name:									"displayFullDesign"
 		label:									qsTr("Display selected design")
+		info:									qsTr("Display the generated design in the output.")
 	}
 
 	Group
@@ -209,6 +217,7 @@ Form
 			label:								qsTr("Save as:")
 			filter:								"*.csv"
 			save:								true
+			info:								qsTr("Name and path of the .csv file to save the design to.")
 		}
 
 		Button

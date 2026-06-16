@@ -21,12 +21,27 @@ Form
 {
 	columns:									1
 
+	info:										qsTr("The Test-retest (range method) study approximates an overall picture of the measurement system's variability. It does not separate the variability into its repeatability and reproducibility components.")
+
+	infoBottom: 								"## " + qsTr("Output") + "\n"
+		+ "- " + qsTr("Short gauge study table: sample size, R-bar, historical standard deviation, tolerance, GRR, and GRR as a percentage of the standard deviation and tolerance.") + "\n"
+		+ "- " + qsTr("Traffic light graph: GRR as a percentage of the standard deviation and tolerance.") + "\n"
+		+ "- " + qsTr("Run chart of parts: all measurement values per part.") + "\n"
+		+ "- " + qsTr("Range chart by part: range chart for the measurements using the parts as subgroups.") + "\n"
+		+ "- " + qsTr("Scatter plot of the measurements.") + "\n"
+		+ "\n---\n## " + qsTr("References") + "\n"
+		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "- " + qsTr("Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009). Statistical process control handbook. SKF group.") + "\n"
+		+ "\n---\n## " + qsTr("R Packages") + "\n"
+		+ "- jaspGraphs\n- tidyr\n- ggplot2\n"
+
 	DropDown
 	{
 		name: 									"dataFormat"
 		label: 									qsTr("Data format")
 		id: 									dataFormat
 		indexDefaultValue:						0
+		info:									qsTr("Layout of the measurement data: all observations in one column (\"Single column\") or spread across rows with a subgroup index (\"Across rows\").")
 		values: [
 			{ label: qsTr("Single column"), value: "longFormat"},
 			{ label: qsTr("Across rows"), value: "wideFormat"}
@@ -55,6 +70,7 @@ Form
 			id:									measurementLongFormat
 			singleVariable:						true
 			allowedColumns:						["scale"]
+			info:								qsTr("The observations/data collected from the process.")
 		}
 
 		AssignedVariablesList
@@ -63,6 +79,7 @@ Form
 			title:								qsTr("Part")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The parts of the measurement system.")
 		}
 
 		AssignedVariablesList
@@ -71,6 +88,7 @@ Form
 			title:								qsTr("Operator/Repetition")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The operators of the measurement system (or repetition index).")
 		}
 	}
 
@@ -92,6 +110,7 @@ Form
 			id:									measurementsWideFormat
 			visible:							dataFormat.currentValue == "wideFormat"
 			allowedColumns:						["scale"]
+			info:								qsTr("The measurement columns (repeated observations of each part).")
 		}
 
 		AssignedVariablesList
@@ -100,6 +119,7 @@ Form
 			title:								qsTr("Part")
 			singleVariable:						true
 			allowedColumns:						["nominal", "ordinal", "scale"]
+			info:								qsTr("The parts of the measurement system.")
 		}
 	}
 		
@@ -113,6 +133,7 @@ Form
 			name:							"manualProcessSd"
 			label:							qsTr("Process std. dev.")
 			childrenOnSameRow:				true
+			info:							qsTr("Specify the historical process standard deviation.")
 
 			DoubleField
 			{
@@ -126,6 +147,7 @@ Form
 			name:							"tolerance"
 			label:							qsTr("Tolerance")
 			childrenOnSameRow: 				true
+			info:							qsTr("Include a tolerance (specification) value in the analysis.")
 
 			DoubleField
 			{
@@ -139,6 +161,7 @@ Form
 			name: 							"repeatabilityAndReproducibilityTable"
 			label: 							qsTr("r&R table")
 			checked: 						true
+			info:							qsTr("Output the short gauge study table.")
 		}
 	}
 
@@ -150,6 +173,7 @@ Form
 		{
 			name: 							"runChartPart"
 			label:							qsTr("Run chart of parts")
+			info:							qsTr("Plot the measurement values against the parts.")
 		}
 
 		CheckBox
@@ -157,18 +181,21 @@ Form
 			name:							"scatterPlotMeasurement"
 			label:							qsTr("Scatter plot measurement")
 			checked:						true
+			info:							qsTr("Plot a scatter plot of the measurements.")
 
 			CheckBox
 			{
 				name:						"scatterPlotMeasurementFitLine"
 				label:						qsTr("Fit line")
 				checked:					true
+				info:						qsTr("Fit a regression line to the scatter plot.")
 			}
 
 			CheckBox
 			{
 				name:						"scatterPlotMeasurementAllValues"
 				label:						qsTr("Display all measurements")
+				info:						qsTr("Display all measurement values on the scatter plot.")
 			}
 		}
 
@@ -176,12 +203,14 @@ Form
 		{
 			name: 							"rChart"
 			label: 							qsTr("Range chart")
+			info:							qsTr("Plot the range chart by part.")
 		}
 
 		CheckBox
 		{
 			name: 							"trafficLightChart"
 			label: 							qsTr("Traffic light chart")
+			info:							qsTr("Plot the traffic light graph (GRR as a percentage of the standard deviation and tolerance).")
 		}
 	}
 }

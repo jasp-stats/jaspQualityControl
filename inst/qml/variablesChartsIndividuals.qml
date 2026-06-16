@@ -8,6 +8,22 @@ Form
 {
 	columns:									1
 
+	info:										qsTr("Variable charts for individuals (Shewhart control charts) study how a process changes over time using individual measurements rather than subgroups. The individual moving range (X-mR) chart is the preferred alternative to X-bar & R / X-bar & s charts for low-volume production or when there is no practical rational subgroup. An autocorrelation chart models the pairwise correlation of values at successive lags.")
+
+	infoBottom: 								"## " + qsTr("Assumptions") + "\n"
+		+ "- " + qsTr("X-mR chart: sequential (time-ordered) measurements, independent data points, and approximately normally distributed data.") + "\n"
+		+ "- " + qsTr("Autocorrelation chart: data points are dependent on one another (each related to the next).") + "\n"
+		+ "\n---\n## " + qsTr("Output") + "\n"
+		+ "- " + qsTr("X-mR chart: the process value and moving range (MR) over time.") + "\n"
+		+ "- " + qsTr("Autocorrelation: the autocorrelation across the lags.") + "\n"
+		+ "- " + qsTr("Out-of-control signals are flagged using the tests selected under Advanced Options. Only tests 1, 2, 3 and 8 are applied to the moving range chart.") + "\n"
+		+ "\n---\n## " + qsTr("References") + "\n"
+		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.") + "\n"
+		+ "- " + qsTr("Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual (2nd ed.). AIAG.") + "\n"
+		+ "- " + qsTr("Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009). Statistical process control handbook. SKF group.") + "\n"
+		+ "\n---\n## " + qsTr("R Packages") + "\n"
+		+ "- ggplot2\n- qcc\n- jaspGraphs\n- ggrepel\n- stats\n"
+
 	VariablesForm
 	{
 		preferredHeight: 						jaspTheme.smallDefaultVariablesFormHeight
@@ -23,6 +39,7 @@ Form
 			title:								qsTr("Measurement")
 			singleVariable:						true
 			allowedColumns:						["scale"]
+			info:								qsTr("The observations collected from the process.")
 		}
 
 		AssignedVariablesList
@@ -31,14 +48,16 @@ Form
 			title:								qsTr("Timestamp (optional)")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("Optional labels for each observation, used as x-axis labels.")
 		}
-		
+
 		AssignedVariablesList
 		{
 			name:								"stage"
 			title:								qsTr("Stage")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("A column that splits the analysis into multiple stages.")
 		}
 	}
 
@@ -51,6 +70,7 @@ Form
 			name: 								"xmrChart"
 			label: 								qsTr("X-mR chart")
 			checked: 							true
+			info:								qsTr("Display the individual moving range (X-mR) chart of the process value and moving range over time.")
 
 			DoubleField
 			{
@@ -59,6 +79,7 @@ Form
 				defaultValue:					2
 				min: 							2
 				max: 							(dataSetInfo.rowCount < 2)? 2 : dataSetInfo.rowCount
+				info:							qsTr("Number of consecutive observations spanned by each moving range.")
 			}
 		}
 
@@ -67,6 +88,7 @@ Form
 			name: 								"autocorrelationPlot"
 			label: 								qsTr("Autocorrelation")
 			checked: 							false
+			info:								qsTr("Display the autocorrelation chart of the measurements across lags.")
 
 			DoubleField
 			{
@@ -74,6 +96,7 @@ Form
 				label:						  	qsTr("Number of lags")
 				defaultValue:					25
 				min:			           	 	1
+				info:							qsTr("Number of lags shown on the autocorrelation chart.")
 			}
 
 			DoubleField
@@ -82,6 +105,7 @@ Form
 				label:							qsTr("Confidence interval size")
 				defaultValue:					0.95
 				min:							0.0001
+				info:							qsTr("Size of the confidence interval used to calculate the autocorrelation limits.")
 			}
 		}
 	}
@@ -96,6 +120,7 @@ Form
 			label: qsTr("Show report")
 			id:		variableChartIndividualsReport
 			columns: 1
+			info:	qsTr("Display a formatted report of the control charts combining the selected metadata and charts.")
 
 			CheckBox
 			{
@@ -103,6 +128,7 @@ Form
 				label:								qsTr("Show report metadata")
 				checked:							true
 				columns:							2
+				info:								qsTr("Include a metadata header (title, chart name, measurement, date, etc.) in the report.")
 
 				CheckBox
 				{
@@ -250,7 +276,8 @@ Form
 			Group
 			{
 				title:			qsTr("Select Report Components")
-			
+				info:			qsTr("Choose which charts are included in the report.")
+
 				CheckBox
 				{
 				name: "reportIMRChart"
@@ -279,6 +306,7 @@ Form
 			fieldWidth: 						30
 			defaultValue: 						3
 			min:								1
+			info:								qsTr("Number of standard deviations from the central line used to compute the control limits.")
 		}
 
 		Common.ControlChartTests {}

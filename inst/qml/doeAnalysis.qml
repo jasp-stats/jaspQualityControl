@@ -6,12 +6,21 @@ import JASP
 
 Form
 {
+	info:		qsTr("Analyse a factorial or response surface design to identify influential factors and optimal response conditions. This uncovers which variables significantly impact the outcome and how they interact, supporting systematic process optimisation and quality improvement.")
+
+	infoBottom: "## " + qsTr("References") + "\n"
+		+ "- " + qsTr("Box, G. E. P., & Wilson, K. B. (1951). On the experimental attainment of optimum conditions. Journal of the Royal Statistical Society, 13(1), 1-45.") + "\n"
+		+ "- " + qsTr("Dodson, B., Weidenbacher, M., Lynch, D., & Klerx, R. (2015). QT 9 – Design and analysis of experiments. SKF Quality Techniques.") + "\n"
+		+ "\n---\n## " + qsTr("R Packages") + "\n"
+		+ "- ggplot2\n- jaspGraphs\n- car\n"
+
 	DropDown
 	{
 		id: 									designType
 		name:									"designType"
 		label:									qsTr("Design type")
 		indexDefaultValue:						0
+		info:									qsTr("The type of experimental design to analyse: a factorial design or a response surface design.")
 		values: [
 				{ label: qsTr("Factorial design"), value: "factorialDesign"},
 				{ label: qsTr("Response surface design"), value: "responseSurfaceDesign"}
@@ -34,8 +43,9 @@ Form
 			allowedColumns:						["scale"]
 			label:								qsTr("Responses")
 			height:								50 * preferencesModel.uiScale
+			info:								qsTr("The measured outcome variable(s) of the process under investigation.")
 		}
-		
+
 		DropDown
 		{
 			name: "stepwiseMethodFactorial"
@@ -56,6 +66,7 @@ Form
 			allowedColumns:						["nominal"]
 			label:								qsTr("Discrete factors")
 			height:								75 * preferencesModel.uiScale
+			info:								qsTr("The columns corresponding to the discrete factors in the design.")
 		}
 
 		AssignedVariablesList
@@ -65,6 +76,7 @@ Form
 			allowedColumns:						["scale"]
 			label:								qsTr("Continuous factors")
 			height:								75 * preferencesModel.uiScale
+			info:								qsTr("The columns corresponding to the continuous factors in the design.")
 		}
 
 		AssignedVariablesList
@@ -74,6 +86,7 @@ Form
 			label:								qsTr("Covariates")
 			allowedColumns:						["scale"]
 			height:								50 * preferencesModel.uiScale
+			info:								qsTr("Continuous columns that are not analysed for interaction effects and are excluded from effect plots (unlike continuous factors).")
 		}
 
 		AssignedVariablesList
@@ -82,6 +95,7 @@ Form
 			singleVariable:						true
 			label:								qsTr("Blocks")
 			allowedColumns:						["nominal"]
+			info:								qsTr("The block column. Blocks are not analysed for interaction effects and are excluded from effect plots (unlike discrete factors).")
 		}
 	}
 
@@ -101,8 +115,9 @@ Form
 			allowedColumns:						["scale"]
 			label:								qsTr("Responses")
 			height:								50 * preferencesModel.uiScale
+			info:								qsTr("The measured outcome variable(s) of the process under investigation.")
 		}
-		
+
 		DropDown
 		{
 			name: "stepwiseMethodResponseSurface"
@@ -123,6 +138,7 @@ Form
 			allowedColumns:						["scale"]
 			label:								qsTr("Continuous factors")
 			height:								100 * preferencesModel.uiScale
+			info:								qsTr("The columns corresponding to the continuous factors in the design.")
 		}
 
 		AssignedVariablesList
@@ -132,6 +148,7 @@ Form
 			allowedColumns:						["nominal"]
 			label:								qsTr("Discrete factors")
 			height:								100 * preferencesModel.uiScale
+			info:								qsTr("The columns corresponding to the discrete factors in the design.")
 		}
 
 		AssignedVariablesList
@@ -140,6 +157,7 @@ Form
 			singleVariable:						true
 			label:								qsTr("Blocks")
 			allowedColumns:						["nominal"]
+			info:								qsTr("The block column. Blocks are not analysed for interaction effects and are excluded from effect plots.")
 		}
 	}
 
@@ -155,18 +173,21 @@ Form
 				name: 					"codeFactorsMethod"
 				id: 					codeFactorsMethod
 				title:					qsTr("Factor levels")
+				info:					qsTr("How the low and high levels of the predictors are determined (needed for the ordering of contrasts and to identify alpha points in response surface designs).")
 
 				RadioButton
 				{
 					name: 				"automatic"
 					label: 				qsTr("Automatically detect low/high")
 					checked: 			true
+					info:				qsTr("Detect the low and high levels automatically (minimum/maximum for continuous predictors, alphabetical ordering for discrete predictors). May misidentify alpha values in response surface designs.")
 				}
 
 				RadioButton
 				{
 					name: 				"manual"
 					label: 				qsTr("Manually specify low/high")
+					info:				qsTr("Show all predictors to manually specify their low and high levels.")
 				}
 
 
@@ -228,6 +249,7 @@ Form
 				name:								"tableAlias"
 				label:								"Use alias names"
 				checked:							true
+				info:								qsTr("Assign alias names to predictors. Useful when predictors have long names.")
 			}
 
 			CheckBox
@@ -235,6 +257,7 @@ Form
 				name:								"tableEquation"
 				checked:							true
 				label:								qsTr("Show regression equation")
+				info:								qsTr("Display the regression coefficients as an equation predicting the response.")
 			}
 
 			CheckBox
@@ -242,6 +265,7 @@ Form
 				name:								"codeFactors"
 				checked:							true
 				label:								qsTr("Display results in coded units")
+				info:								qsTr("Display the results in coded units, standardising all predictor levels between -1 and 1.")
 			}
 		}
 	}
@@ -249,6 +273,7 @@ Form
 	Section
 	{
 		title: qsTr("Model")
+		info:	qsTr("Determine which terms are included in the model.")
 
 		CheckBox
 		{
@@ -257,6 +282,7 @@ Form
 			label:									qsTr("Define by highest order interaction term")
 			visible:								designType.currentValue == "factorialDesign"
 			checked:								true
+			info:									qsTr("Define the model by the highest order of interaction terms to include.")
 
 			IntegerField
 			{
@@ -265,6 +291,7 @@ Form
 				min:								1
 				max:								(fixedFactorsFactorial.count + continuousFactorsFactorial.count) > 1 ? (fixedFactorsFactorial.count + continuousFactorsFactorial.count) : 999
 				label:								  qsTr("Highest order interaction term")
+				info:								qsTr("The highest order of interaction term included in the model.")
 			}
 		}
 
@@ -275,6 +302,7 @@ Form
 			label:                              	qsTr("Select predefined model")
 			visible:								designType.currentValue == "responseSurfaceDesign"
 			checked: 								designType.currentValue == "responseSurfaceDesign"
+			info:									qsTr("Use one of the predefined models for analysing response surface designs.")
 
 			DropDown
 					{
@@ -282,6 +310,7 @@ Form
 					name:									"rsmPredefinedTerms"
 					label:									qsTr("Include following terms")
 					indexDefaultValue:						3
+					info:									qsTr("Which terms to include in the predefined model.")
 					values: [
 							{ label: qsTr("Linear"), value: "linear"},
 							{ label: qsTr("Linear and interaction terms"), value: "linearAndInteractions"},
@@ -303,13 +332,14 @@ Form
 				source: 				designType.currentValue == "factorialDesign" ? ["continuousFactorsFactorial", "fixedFactorsFactorial"] : ["continuousFactorsResponseSurface", "fixedFactorsResponseSurface"]
 			}
 			
-			AssignedVariablesList 
-			{  
-				name: 					"modelTerms" 
-				id: 					modelTerms 
-				title: 					designType.currentValue == "factorialDesign" ? qsTr("Model terms") : qsTr("Main and interaction terms") 
+			AssignedVariablesList
+			{
+				name: 					"modelTerms"
+				id: 					modelTerms
+				title: 					designType.currentValue == "factorialDesign" ? qsTr("Model terms") : qsTr("Main and interaction terms")
 				listViewType: 			JASP.Interaction
 				addInteractionsByDefault: false
+				info:					qsTr("Manually specify the main effects and interaction terms included in the model.")
 				//rowComponentTitle: 		designType.currentValue == "factorialDesign" ? "" : qsTr("Add squared term")
 				//rowComponent:  			CheckBox { name: "squaredTerm"; checked: false; visible: designType.currentValue == "responseSurfaceDesign"}
 			}
@@ -328,11 +358,12 @@ Form
 				source: 				"continuousFactorsResponseSurface"
 			}
 			
-			AssignedVariablesList 
-			{  
-				name: 					"squaredTerms" 
-				id: 					squaredTerms 
-				title: 					qsTr("Squared terms") 
+			AssignedVariablesList
+			{
+				name: 					"squaredTerms"
+				id: 					squaredTerms
+				title: 					qsTr("Squared terms")
+				info:					qsTr("Continuous factors to include as squared (quadratic) terms in the model.")
 			}
 
 		}
@@ -351,30 +382,35 @@ Form
 			{
 				name:                               "plotNorm"
 				label:                              qsTr("Normal probability plot")
+				info:								qsTr("Show a normal probability plot of the residuals.")
 			}
 
 			CheckBox
 			{
 				name:                               "plotHist"
 				label:                              qsTr("Histogram")
+				info:								qsTr("Show a histogram of the residuals.")
 			}
 
 			CheckBox
 			{
 				name:                               "plotFitted"
 				label:                              qsTr("Residuals vs. fitted values")
+				info:								qsTr("Show a plot of the residuals against the fitted values.")
 			}
 
 			CheckBox
 			{
 				name:                               "plotRunOrder"
 				label:                              qsTr("Residuals vs. run order")
+				info:								qsTr("Show a plot of the residuals against the run order.")
 			}
 
 			CheckBox
 			{
 				name: 								"fourInOneResidualPlot"
 				label: 								qsTr("Residuals four-in-one plot")
+				info:								qsTr("Show all four residual plots in a 2x2 matrix.")
 			}
 		}
 
@@ -386,25 +422,29 @@ Form
 			{
 				name:									"plotPareto"
 				label:									qsTr("Pareto plot of effects")
+				info:									qsTr("Show a Pareto plot of the standardised effects.")
 			}
 
 			CheckBox
 			{
 				name:									"normalEffectsPlot"
 				label:									qsTr("Normal plot of effects")
+				info:									qsTr("Show a normal probability plot of the standardised effects.")
 			}
 		}
 
 		CheckBox
 		{
-			name:	"contourSurfacePlot"	
+			name:	"contourSurfacePlot"
 			label:	qsTr("Contour/surface plots")
+			info:	qsTr("Show a contour (2D) or surface (3D) plot of the fitted response.")
 
 			RadioButtonGroup
 			{
 				name: 					"contourSurfacePlotType"
 				id: 					contourSurfacePlotType
 				title:                 	qsTr("Plot type")
+				info:					qsTr("Whether to show a 2D contour plot or a 3D surface plot.")
 
 				RadioButton
 				{
@@ -434,10 +474,11 @@ Form
 				}
 
 				AssignedVariablesList
-				{ 
-					name: "contourSurfacePlotVariables" 
-					allowedColumns: ["scale"] 
+				{
+					name: "contourSurfacePlotVariables"
+					allowedColumns: ["scale"]
 					title: qsTr("Plotting variables")
+					info: qsTr("The continuous factors plotted on the axes of the contour/surface plot.")
 				}
 			}
 
@@ -453,6 +494,7 @@ Form
 					value:						5
 					min:						2
 					max:						10
+					info:						qsTr("Number of divisions of the response surface in the contour/surface plot.")
 				}
 
 				Group
@@ -468,6 +510,7 @@ Form
 						max:						360
 						decimals:					0
 						visible:					contourSurfacePlotType.value == "surfacePlot"
+						info:						qsTr("Rotation angle of the surface plot in the vertical plane.")
 					}
 
 					Slider
@@ -480,6 +523,7 @@ Form
 						decimals:					0
 						vertical:					false
 						visible:					contourSurfacePlotType.value == "surfacePlot"
+						info:						qsTr("Rotation angle of the surface plot in the horizontal plane.")
 					}
 				}
 			}
@@ -490,6 +534,7 @@ Form
 	{
 		title: qsTr("Response optimizer")
 		columns: 2
+		info:	qsTr("Find the predictor settings that optimise one or more responses using desirability functions.")
 
 		VariablesForm
 		{
@@ -510,6 +555,7 @@ Form
 				id:									responsesResponseOptimizer
 				allowedColumns:						["scale"]
 				label:								qsTr("Included responses")
+				info:								qsTr("The responses to include in the optimisation, each with a goal, bounds, target, weight, and importance.")
 				width:								450 * preferencesModel.uiScale
 
 				property int rowWidth: 		Math.round(width / 12)
@@ -593,6 +639,7 @@ Form
 				name:						"optimizationSolutionTable"
 				label:						qsTr("Show optimal solution")
 				checked:					true
+				info:						qsTr("Display the predictor levels yielding the optimal response.")
 			}
 
 			CheckBox
@@ -600,6 +647,7 @@ Form
 				name:						"optimizationPlot"
 				label:						qsTr("Show optimization plot")
 				checked:					true
+				info:						qsTr("Display the optimisation plot showing the effect of each factor on the prediction.")
 
 				DropDown
 				{
@@ -607,6 +655,7 @@ Form
 					label:							qsTr("Predict")
 					id: 							optimizationPlotPredictionType
 					indexDefaultValue:				0
+					info:							qsTr("Whether the plot predicts the response or the individual desirability.")
 					values: [
 						{ label: qsTr("Response"), value: "response"},
 						{ label: qsTr("Individual desirability"), value: "individualDesirability"}
@@ -619,6 +668,7 @@ Form
 					id:							optimizationPlotCustomParameters
 					label:						qsTr("Set input parameters manually")
 					checked:					false
+					info:						qsTr("Manually set the input parameter values used in the optimisation plot.")
 				}
 
 				VariablesList
@@ -647,6 +697,7 @@ Form
 				id:							responseOptimizerManualBounds
 				label:						qsTr("Set all bounds manually")
 				checked:					false
+				info:						qsTr("Enable manual specification of the lower and upper bounds for all responses.")
 			}
 
 			CheckBox
@@ -655,6 +706,7 @@ Form
 				id:							responseOptimizerManualTarget
 				label:						qsTr("Set all targets manually")
 				checked:					false
+				info:						qsTr("Enable manual specification of the target value for all responses.")
 			}
 		}
 	}
@@ -671,6 +723,7 @@ Form
 				label:							qsTr("Histogram bin width type")
 				id: 							binWidthType
 				indexDefaultValue:				0
+				info:							qsTr("Method used to determine the histogram bin width.")
 				values: [
 					{ label: qsTr("Sturges"), value: "sturges"},
 					{ label: qsTr("Scott"), value: "scott"},
@@ -688,6 +741,7 @@ Form
 				min:							3
 				max:							10000
 				enabled:						binWidthType.currentValue === "manual"
+				info:							qsTr("Number of bins to use when the bin width type is set to Manual.")
 			}
 		}
 
@@ -697,6 +751,7 @@ Form
 			label:							qsTr("Sum of squares type")
 			id: 							sumOfSquaresType
 			indexDefaultValue:				2
+			info:							qsTr("Method used to calculate the sums of squares in the ANOVA.")
 			values: [
 				{ label: qsTr("Type I"), value: "type1"},
 				{ label: qsTr("Type II"), value: "type2"},
@@ -709,6 +764,7 @@ Form
 				name:						"squaredTermsCoded"
 				label:						qsTr("Use coded data to calculate squared terms")
 				visible:					designType.currentValue == "responseSurfaceDesign"
+				info:						qsTr("Use coded (standardised) data when calculating the squared terms.")
 			}
 	}
 }

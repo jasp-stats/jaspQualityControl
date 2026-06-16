@@ -21,13 +21,29 @@ Form
 {
 	columns:									1
 
+	info:										qsTr("Attribute Agreement Analysis assesses the agreement between the operators' ratings and a known standard's ratings. One aim is to determine the accuracy of the investigated operators.")
+
+	infoBottom: 								"## " + qsTr("Output") + "\n"
+		+ "- " + qsTr("Study effectiveness summary: effectiveness, miss rate, and false alarm rate per operator with an acceptance evaluation.") + "\n"
+		+ "- " + qsTr("Within appraisers: agreement between the inspected items and operators, with a 95%% confidence interval.") + "\n"
+		+ "- " + qsTr("Each appraiser vs standard: agreement between the known standard and inspected items per operator, with a 95%% confidence interval.") + "\n"
+		+ "- " + qsTr("Between appraisers: agreement between the different operators, with a 95%% confidence interval.") + "\n"
+		+ "- " + qsTr("All appraisers vs standard: agreement between all operators and the known standard, with a 95%% confidence interval.") + "\n"
+		+ "- " + qsTr("Plots of the agreement percentages and their confidence intervals (within appraisers and each appraiser vs standard).") + "\n"
+		+ "\n---\n## " + qsTr("References") + "\n"
+		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "- " + qsTr("Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009). Statistical process control handbook. SKF group.") + "\n"
+		+ "\n---\n## " + qsTr("R Packages") + "\n"
+		+ "- jaspGraphs\n- ggplot2\n- tidyr\n- psych\n- irr\n"
+
 	DropDown
 	{
 		name: 									"dataFormat"
 		label: 									qsTr("Data format")
 		id: 									dataFormat
 		indexDefaultValue: 						0
-		values: 
+		info:									qsTr("Layout of the data: all observations in one column (\"Single column\") or spread across rows with a subgroup index (\"Across rows\").")
+		values:
 		[
 			{ label: qsTr("Single column"), value: "longFormat"},
 			{ label: qsTr("Across rows"), value: "wideFormat"},
@@ -51,6 +67,7 @@ Form
 			id:									measurementLongFormat
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The ratings made by the operators.")
 		}
 
 		AssignedVariablesList
@@ -59,6 +76,7 @@ Form
 			title:								qsTr("Operator")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The operators in the measurement system.")
 		}
 
 		AssignedVariablesList
@@ -67,6 +85,7 @@ Form
 			title:								qsTr("Part")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The parts of the measurement system.")
 		}
 
 		AssignedVariablesList
@@ -75,6 +94,7 @@ Form
 			title:								qsTr("Standard")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The ratings by the known standard (optional).")
 		}
 	}
 
@@ -94,6 +114,7 @@ Form
 			title:								qsTr("Results")
 			id:									measurementsWideFormat
 			allowedColumns:						["nominal"]
+			info:								qsTr("The ratings made by the operators (one column per repeated rating).")
 		}
 
 		AssignedVariablesList
@@ -102,6 +123,7 @@ Form
 			title:								qsTr("Operator")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The operators in the measurement system.")
 		}
 
 		AssignedVariablesList
@@ -110,6 +132,7 @@ Form
 			title:								qsTr("Part")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The parts of the measurement system.")
 		}
 
 		AssignedVariablesList
@@ -118,6 +141,7 @@ Form
 			title:								qsTr("Standard")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The ratings by the known standard (optional).")
 		}
 
 	}
@@ -125,6 +149,7 @@ Form
 	Section
 	{
 		title:									qsTr("Kappa study")
+		info:									qsTr("Kappa studies for binary data, quantifying rater agreement.")
 
 		Group
 		{
@@ -136,6 +161,7 @@ Form
 				label: 							qsTr("Positive reference:")
 				id:								positiveReference
 				enabled:						!kendallsTau.checked
+				info:							qsTr("The positive reference category used for the rating classifications (for example \"Yes\", \"fit\", \"Good\").")
 			}
 
 			CheckBox
@@ -145,6 +171,7 @@ Form
 				id:								cohenskappa
 				enabled:						positiveReference.value != ""
 				checked:						!positiveReference.value == ""
+				info:							qsTr("Compute Cohen's kappa (interrater kappa) per operator.")
 			}
 
 			CheckBox
@@ -154,6 +181,7 @@ Form
 				id:								fleisskappa
 				checked:						!positiveReference.value == ""
 				enabled:						!kendallsTau.checked
+				info:							qsTr("Compute Fleiss' kappa (multirater kappa) per operator.")
 
 			}
 		}
@@ -162,12 +190,14 @@ Form
 	Section
 	{
 		title: 									qsTr("Tau study")
+		info:									qsTr("Tau study for ordinal data.")
 
 		CheckBox
 		{
 			name: 								"kendallsTau"
 			label: 								qsTr("Kendall's tau")
 			id:									kendallsTau
+			info:								qsTr("Compute Kendall's tau correlations between the operators and their ratings.")
 		}
 	}
 }

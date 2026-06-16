@@ -20,6 +20,20 @@ Form
 {
 	columns:									1
 
+	info:										qsTr("A Type 4 Linearity Study (Gauge Linearity and Bias) investigates the linearity (accuracy across the expected range of measurements) and bias (agreement between measurements and reference values) of a measurement system.")
+
+	infoBottom: 								"## " + qsTr("Output") + "\n"
+		+ "- " + qsTr("Gauge bias table: per part, the reference values, mean per reference value, bias per reference value, and a t-test of the bias against zero.") + "\n"
+		+ "- " + qsTr("Regression model table: coefficients (intercept and slope), t-statistics, standard errors, and p-values.") + "\n"
+		+ "- " + qsTr("Gauge linearity table: regression sigma (S), absolute coefficient values multiplied by the process variation (linearity), R-squared, and linearity as a percentage of the process variation.") + "\n"
+		+ "- " + qsTr("Bias and linearity plot: linear relationship between bias and reference values.") + "\n"
+		+ "- " + qsTr("Percentage process variation graph: percentage of linearity and bias relative to the process variation.") + "\n"
+		+ "\n---\n## " + qsTr("References") + "\n"
+		+ "- " + qsTr("Duncan, A. J. (1986). Quality control and industrial statistics. Richard D. Irwin, Inc.; Automotive Industry Action Group (2005). Statistical process control (SPC) – Reference manual. AIAG.") + "\n"
+		+ "- " + qsTr("Dodson, B., Lynch, D., Weidenbacher, M., & Klerx, R. (2009). Statistical process control handbook. SKF group.") + "\n"
+		+ "\n---\n## " + qsTr("R Packages") + "\n"
+		+ "- jaspGraphs\n- ggplot2\n- ggpubr\n"
+
 	VariablesForm
 	{
 		id:										variablesForm
@@ -35,6 +49,7 @@ Form
 			title:								qsTr("Parts")
 			singleVariable:						true
 			allowedColumns:						["nominal"]
+			info:								qsTr("The parts of the measurement system.")
 		}
 
 		AssignedVariablesList
@@ -43,6 +58,7 @@ Form
 			title:								qsTr("Measurements")
 			singleVariable:						true
 			allowedColumns:						["scale"]
+			info:								qsTr("The observations/data collected from the process.")
 		}
 
 		AssignedVariablesList
@@ -51,6 +67,7 @@ Form
 			title:								qsTr("Standard")
 			singleVariable:						true
 			allowedColumns:						["scale"]
+			info:								qsTr("The reference (standard) values.")
 		}
 	}
 
@@ -63,6 +80,7 @@ Form
 			name: 								"linearityTable"
 			label: 								qsTr("Linearity table")
 			checked: 							true
+			info:								qsTr("Output the regression model and gauge linearity tables.")
 		}
 
 		CheckBox
@@ -70,6 +88,7 @@ Form
 			name: 								"biasTable"
 			label: 								qsTr("Bias table")
 			checked:							true
+			info:								qsTr("Output the gauge bias table.")
 		}
 	}
 
@@ -82,6 +101,7 @@ Form
 			name:								"linearityAndBiasPlot"
 			label:								qsTr("Linearity and bias graph")
 			checked:							true
+			info:								qsTr("Plot the linear relationship between the bias and the reference values.")
 		}
 	}
 
@@ -95,6 +115,7 @@ Form
 			label: 								qsTr("Process variation")
 			childrenOnSameRow: 					true
 			id:									manualProcessVariation
+			info:								qsTr("Manually specify the process variation (number of standard deviations, by default 6) used to compute the bias.")
 
 			DoubleField
 			{
@@ -112,6 +133,7 @@ Form
 			label: 								qsTr("Percent process variation graph")
 			checked: 							false
 			enabled:							manualProcessVariation.checked
+			info:								qsTr("Plot the percentage of gauge bias and linearity relative to the process variation.")
 		}
 	}
 }
