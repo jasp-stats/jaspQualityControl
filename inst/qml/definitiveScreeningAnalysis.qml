@@ -21,6 +21,8 @@ Form
 {
     columns:                                    1
 
+    info:										qsTr("Analyse a definitive screening design to identify the influential factors. A regression model is fitted to the response and the standardised effects are assessed against the chosen alpha level.")
+
     VariablesForm
     {
         AvailableVariablesList
@@ -34,12 +36,14 @@ Form
             name:                               "DSAresponse"
             singleVariable:                     true
             label:                              qsTr("Response variable")
+            info:                               qsTr("The measured response variable of the design.")
         }
 
         AssignedVariablesList
         {
             name:                               "DSAassignedFactors"
             label:                              qsTr("Assigned factors")
+            info:                               qsTr("The factor columns of the design.")
         }
 
         AssignedVariablesList
@@ -48,6 +52,7 @@ Form
             name:                               "DSArunOrder"
             singleVariable:                     true
             label:                              qsTr("Run order")
+            info:                               qsTr("The column specifying the run order of the design.")
         }
     }
 
@@ -58,6 +63,7 @@ Form
         defaultValue:                           0.05
         min:                                    0.01
         max:                                    0.20
+        info:                                   qsTr("Alpha (significance) level used to assess the effects.")
     }
 
     CheckBox
@@ -65,6 +71,7 @@ Form
         debug:                                  true
         name:                                   "DSparetoPlot"
         label:                                  qsTr("Pareto plot of standardized effects")
+        info:                                   qsTr("Show a Pareto plot of the standardised effects.")
     }
 
     Group
@@ -76,12 +83,14 @@ Form
         {
             name:                               "DSresNorm"
             label:                              qsTr("Normal probability plot of residuals")
+            info:                               qsTr("Show a normal probability plot of the residuals.")
         }
 
         CheckBox
         {
             name:                               "DSresHist"
             label:                              qsTr("Histogram of residuals")
+            info:                               qsTr("Show a histogram of the residuals.")
         }
 
         CheckBox
@@ -89,6 +98,7 @@ Form
             debug:                              true
             name:                               "DSresFitted"
             label:                              qsTr("Residuals vs fitted value")
+            info:                               qsTr("Show a plot of the residuals against the fitted values.")
         }
 
         CheckBox
@@ -96,6 +106,7 @@ Form
             debug:                              true
             name:                               "DSresOrder"
             label:                              qsTr("Residuals vs run order")
+            info:                               qsTr("Show a plot of the residuals against the run order.")
         }
     }
 }
