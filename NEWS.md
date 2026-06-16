@@ -16,7 +16,8 @@
 
 # jaspQualityControl (development version)
 
-
+## Changed
+* DOE Analysis: the contour plot is now drawn with ggplot2 instead of base graphics, so it renders correctly in interactive (plotly) mode.
 
 ---
 
