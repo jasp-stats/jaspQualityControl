@@ -4640,3 +4640,14 @@ test_that("Z.bench (LT/ST) match sigma level from total ppm", {
   testthat::expect_equal(round(as.numeric(overall[["zBenchLt"]]), 2), round(qnorm(1 - eoTOT/1e6), 2))
   testthat::expect_equal(round(as.numeric(within[["zBenchSt"]]), 2),  round(qnorm(1 - ewTOT/1e6), 2))
 })
+
+##### Pooled within standard deviation (.sdXbar) #####
+test_that("Pooled standard deviation matches the textbook pooled-SD formula", {
+  df <- as.data.frame(matrix(c(1, 2, 3,
+                               2, 4, 6), nrow = 2, byrow = TRUE)) # 2 subgroups, s = 1 and 2
+  c4 <- jaspQualityControl:::KnownControlStats.RS(5, 0)$constants[3] # df = sum(n-1)+1 = 5
+  testthat::expect_equal(jaspQualityControl:::.sdXbar(df, type = "pooled", unbiasingConstantUsed = FALSE),
+                         sqrt(2.5))
+  testthat::expect_equal(jaspQualityControl:::.sdXbar(df, type = "pooled", unbiasingConstantUsed = TRUE),
+                         sqrt(2.5) / c4)
+})

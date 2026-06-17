@@ -18,6 +18,7 @@
 
 ## Added
 * Process Capability: optional Z.bench (ST) / Z.bench (LT) columns, reporting the sigma level based on the total expected defect probability across both specification limits (matching Minitab's Z.bench), alongside the existing Z (ST) / Z (LT) = 3·Cpk / 3·Ppk.
+* Process Capability / control charts: added "Pooled" as a within-subgroup standard deviation estimation method (in addition to R-bar and S-bar), matching Minitab's default for capability analysis.
 
 ## Fixed
 * Stepwise model selection in the Response Surface design now respects marginality: a squared term is no longer retained without its corresponding main effect.

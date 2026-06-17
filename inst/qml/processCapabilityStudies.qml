@@ -1030,7 +1030,8 @@ Form
 					values: 
 					[
 						{ label: qsTr("R-bar"),			value: "rBar"},
-						{ label: qsTr("S-bar"),			value: "sBar"}
+						{ label: qsTr("S-bar"),			value: "sBar"},
+						{ label: qsTr("Pooled"),			value: "pooled"}
 					]
 					indexDefaultValue:
 					(controlChartType.currentValue == "xBarR" || controlChartType.currentValue == "xBarMR") ? 0 : 

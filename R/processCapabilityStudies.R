@@ -611,7 +611,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
         k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
         sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
       } else {
-        sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+        sdType <- switch(options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]], rBar = "r", sBar = "s", pooled = "pooled")
         unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
         sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
       }
@@ -1121,7 +1121,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
-      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+      sdType <- switch(options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]], rBar = "r", sBar = "s", pooled = "pooled")
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
@@ -1678,7 +1678,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
-      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+      sdType <- switch(options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]], rBar = "r", sBar = "s", pooled = "pooled")
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
@@ -1917,7 +1917,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
-      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+      sdType <- switch(options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]], rBar = "r", sBar = "s", pooled = "pooled")
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
@@ -2137,7 +2137,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
       k <- options[["controlChartSdEstimationMethodMeanMovingRangeLength"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .controlChart_calculations(dataCurrentStage[measurements], plotType = "MR", movingRangeLength = k)$sd
     } else {
-      sdType <- if (options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]] == "rBar") "r" else "s"
+      sdType <- switch(options[["controlChartSdEstimationMethodGroupSizeLargerThanOne"]], rBar = "r", sBar = "s", pooled = "pooled")
       unbiasingConstantUsed <- options[["controlChartSdUnbiasingConstant"]]
       sdw <- if (options[["historicalStdDev"]]) options[["historicalStdDevValue"]] else .sdXbar(dataCurrentStage[measurements], type = sdType, unbiasingConstantUsed = unbiasingConstantUsed)
     }
