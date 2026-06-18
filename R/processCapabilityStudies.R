@@ -3102,7 +3102,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     table$addColumnInfo(name = "parameterEstimate1", title = gettextf("Shape (%1$s)", "\u03B2"), type = "number")
     table$addColumnInfo(name = "parameterEstimate2", title = gettextf("Scale (%1$s)", "\u03B8"), type = "number")
   }
-  table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "integer")
+  table$addColumnInfo(name = "ad",     	title = gettext("AD"), type = "number")
   table$addColumnInfo(name = "p",		title = gettext("<i>p</i>-value"), type = "pvalue")
   table$addFootnote(gettextf("The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution.", distributionTitle))
   table$addFootnote(gettextf("Red dotted lines in the probability plot below represent a 95%% confidence interval."))
@@ -3143,7 +3143,7 @@ processCapabilityStudies <- function(jaspResults, dataset, options) {
     sampleSize <- length(stageValues)
     adStatistic <- andersonDarlingTest$statistic
     adStatisticAdjusted <- adStatistic * (1 + (0.75 / sampleSize) + (2.25 / (sampleSize^2)))
-    if (adStatistic >= 0.6) {
+    if (adStatisticAdjusted >= 0.6) {
       pValue <- exp(1.2937 - (5.709 * adStatisticAdjusted) + 0.0186 * (adStatisticAdjusted^2))
     } else if (adStatisticAdjusted < 0.6 && adStatisticAdjusted > 0.34) {
       pValue <- exp(0.9177 - (4.279 * adStatisticAdjusted) - 1.38 * (adStatisticAdjusted^2))
