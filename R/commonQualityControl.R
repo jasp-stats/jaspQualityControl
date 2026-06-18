@@ -1456,10 +1456,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- fix.arg[["scale"]] # scale
     } else {
       fitWeibull <- try(fitdistrplus::fitdist(data, "weibull", method = "mle",
-                                              control = list(
-                                                maxit = 10000,
-                                                abstol = .Machine$double.eps^0.75,
-                                                reltol = .Machine$double.eps^0.75),
+                                              control = list(maxit = 10000),
                                               fix.arg = fix.arg))
 
 
@@ -1513,10 +1510,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
 
       # Estimate parameters using fitdistrplus, because it can keep values fixed
       lnorm3Fit <- try(fitdistrplus::fitdist(data, "lnorm3Temp", method = "mle",
-                                             control = list(
-                                               maxit = 10000,
-                                               abstol = .Machine$double.eps^0.75,
-                                               reltol = .Machine$double.eps^0.75),
+                                             control = list(maxit = 10000),
                                              start = lnorm3startList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(lnorm3Fit))
@@ -1601,10 +1595,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       theta <- 1/fix.arg[["rate"]] # scale
     } else {
       gammaFit <- try(fitdistrplus::fitdist(data, "gamma", method = "mle",
-                                            control = list(
-                                              maxit = 10000,
-                                              abstol = .Machine$double.eps^0.75,
-                                              reltol = .Machine$double.eps^0.75),
+                                            control = list(maxit = 10000),
                                             fix.arg = fix.arg))
       if (jaspBase::isTryError(gammaFit))
         stop(estimationErrorMessage, call. = FALSE)
@@ -1642,10 +1633,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
     } else {
 
       logFit <- try(fitdistrplus::fitdist(data, "logis", method = "mle",
-                                          control = list(
-                                            maxit = 10000,
-                                            abstol = .Machine$double.eps^0.75,
-                                            reltol = .Machine$double.eps^0.75),
+                                          control = list(maxit = 10000),
                                           fix.arg = fix.arg))
 
       if (jaspBase::isTryError(logFit))
@@ -1689,10 +1677,7 @@ KnownControlStats.RS <- function(N, sigma = 3) {
       }
 
       loglogFit <- try(fitdistrplus::fitdist(data, "llogisTemp", method = "mle",
-                                             control = list(
-                                               maxit = 10000,
-                                               abstol = .Machine$double.eps^0.75,
-                                               reltol = .Machine$double.eps^0.75),
+                                             control = list(maxit = 10000),
                                              start = loglogStartList,
                                              fix.arg = fix.arg))
       if (jaspBase::isTryError(loglogFit))
@@ -1838,5 +1823,37 @@ KnownControlStats.RS <- function(N, sigma = 3) {
                     "rule4", "rule4Value", "rule5", "rule5Value", "rule6", "rule6Value",
                     "rule7", "rule7Value", "rule8", "rule8Value", "rule9", "rule9Value")
   return(dependencies)
+}
+
+# Inlined from archived CRAN package mle.tools (observed.varcov)
+# Computes observed variance-covariance matrix from log-density expression.
+.qcObservedVarcov <- function(logdensity, X, parms, mle) {
+  p <- length(parms)
+  l <- length(mle)
+  n <- length(X)
+  if (p != l)
+    stop("The arguments 'parms' and 'mle' must have the same size")
+  obs <- matrix(NA_real_, ncol = p, nrow = p)
+  colnames(obs) <- parms
+  rownames(obs) <- parms
+  names(mle) <- parms
+  H <- function(x) {}
+  for (i in 1:p)
+    assign(parms[i], mle[i])
+  first <- sapply(1:p, function(i) D(logdensity, parms[i]))
+  for (i in 1:p) {
+    for (j in i:p) {
+      second <- D(first[[i]], parms[j])
+      if (length(grep("x", second)) == 0)
+        second <- bquote(.(n) * .(second))
+      body(H) <- bquote(.(second))
+      obs[i, j] <- sum(H(x = X), na.rm = TRUE)
+      if (j > i)
+        obs[j, i] <- obs[i, j]
+    }
+  }
+  if (any(eigen(-obs)$values < 0))
+    stop("The final Hessian matrix has at least one negative eigenvalue")
+  else return(list(mle = mle, varcov = solve(-obs)))
 }
 
