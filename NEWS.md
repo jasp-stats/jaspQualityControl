@@ -16,7 +16,8 @@
 
 # jaspQualityControl (development version)
 
-
+## Fixed
+* Stepwise model selection in the Response Surface design now respects marginality: a squared term is no longer retained without its corresponding main effect.
 
 ---
 
