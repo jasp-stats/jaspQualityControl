@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.0\n"
-"POT-Creation-Date: 2026-06-06 04:55\n"
+"POT-Creation-Date: 2026-06-20 05:01\n"
 "PO-Revision-Date: 2026-05-21 07:11+0000\n"
 "Last-Translator: Akira Harada <momoldo@gmail.com>\n"
 "Language-Team: Japanese <https://hosted.weblate.org/projects/jasp/"
@@ -1547,6 +1547,9 @@ msgid "LB = %g"
 msgstr ""
 
 msgid "UB = %g"
+msgstr ""
+
+msgid "Lognormal dist."
 msgstr ""
 
 msgid "Process capability (within)"

@@ -3470,3 +3470,15 @@ msgstr ""
 msgctxt "processCapabilityStudies|"
 msgid "Z (ST) / Z (LT)"
 msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Axis modifications"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Thin x-axis labels"
+msgstr ""
+
+msgctxt "processCapabilityStudies|"
+msgid "Compress x-axis"
+msgstr ""

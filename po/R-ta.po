@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.19.2\n"
-"POT-Creation-Date: 2026-06-06 04:55\n"
+"POT-Creation-Date: 2026-06-20 05:01\n"
 "PO-Revision-Date: 2026-03-22 14:09+0000\n"
 "Last-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/jasp/"
@@ -1628,6 +1628,10 @@ msgstr "LB = %g"
 
 msgid "UB = %g"
 msgstr "UB = %g"
+
+#, fuzzy
+msgid "Lognormal dist."
+msgstr "லாக்நார்மல் டிச்ட்."
 
 msgid "Process capability (within)"
 msgstr "செயல்முறை திறன் (உள்ளே)"

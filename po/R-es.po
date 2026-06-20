@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: jaspQualityControl 0.95.5\n"
-"POT-Creation-Date: 2026-06-06 04:55\n"
+"POT-Creation-Date: 2026-06-20 05:01\n"
 "PO-Revision-Date: 2026-06-07 07:01+0000\n"
 "Last-Translator: ecadrian <ecadrian@hotmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/jasp/"
@@ -1668,6 +1668,10 @@ msgstr "LI = %g"
 
 msgid "UB = %g"
 msgstr "LS = %g"
+
+#, fuzzy
+msgid "Lognormal dist."
+msgstr "Dist. LogNormal"
 
 msgid "Process capability (within)"
 msgstr "Capacidad de proceso (dentro)"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.96.4\n"
-"POT-Creation-Date: 2026-06-06 04:55\n"
+"Project-Id-Version: jaspQualityControl 0.97.1\n"
+"POT-Creation-Date: 2026-06-20 05:01\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1449,6 +1449,9 @@ msgid "LB = %g"
 msgstr ""
 
 msgid "UB = %g"
+msgstr ""
+
+msgid "Lognormal dist."
 msgstr ""
 
 msgid "Process capability (within)"
