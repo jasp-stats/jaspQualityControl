@@ -30,7 +30,6 @@ Imports:
   jaspDescriptives,
   jaspGraphs,
   lubridate,
-  mle.tools,
   psych,
   qc,
   qcc,
