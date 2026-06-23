@@ -5159,3 +5159,103 @@ test_that("53.4 Response Optimizer Response Surface Change All Options - Respons
 
 options("jaspRoundToPrecision" = NULL) # reset default
 
+
+## Factorial Design Saturated ####
+options <- analysisOptions("doeAnalysis")
+options$dependentFactorial <- "Response"
+options$continuousFactorsFactorial <- c("Fac1", "Fac2")
+options$codeFactors <- TRUE
+options$codeFactorsMethod <- "automatic"
+options$tableEquation <- TRUE
+options$tableAlias <- TRUE
+options$highestOrder <- FALSE
+options$histogramBinWidthType <- "doane"
+options$plotNorm <- TRUE
+options$plotHist <- TRUE
+options$plotFitted <- TRUE
+options$plotRunOrder <- TRUE
+options$fourInOneResidualPlot <- TRUE
+options$normalEffectsPlot <- TRUE
+options$plotPareto <- TRUE
+options$modelTerms <- list(
+  list(components = "Fac1"),
+  list(components = "Fac2"),
+  list(components = c("Fac1", "Fac2"))
+)
+set.seed(123)
+results <- runAnalysis("doeAnalysis", "datasets/doeAnalysis/doe_realDataExampleSaturated.csv", options)
+
+test_that("54.1 Factorial Design Saturated - Matrix residual plot matches", {
+  plotName <- results[["results"]][["Response"]][["collection"]][["Response_fourInOneResidualPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "matrix-residual-plot")
+})
+
+test_that("54.2 Factorial Design Saturated - Normal Plot of Effects matches", {
+  plotName <- results[["results"]][["Response"]][["collection"]][["Response_normalEffectsPlot"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "normal-plot-of-effects")
+})
+
+test_that("54.3 Factorial Design Saturated - Residuals versus Fitted Values plot matches", {
+  plotName <- results[["results"]][["Response"]][["collection"]][["Response_plotFitted"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "residuals-versus-fitted-values")
+})
+
+test_that("54.4 Factorial Design Saturated - Histogram of Residuals plot matches", {
+  plotName <- results[["results"]][["Response"]][["collection"]][["Response_plotHist"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "histogram-of-residuals")
+})
+
+test_that("54.5 Factorial Design Saturated - Normal Probability Plot of Residuals matches", {
+  plotName <- results[["results"]][["Response"]][["collection"]][["Response_plotNorm"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "normal-probability-plot-of-residuals")
+})
+
+test_that("54.6 Factorial Design Saturated - Pareto Chart of Effects plot matches", {
+  plotName <- results[["results"]][["Response"]][["collection"]][["Response_plotPareto"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "pareto-chart-of-effects")
+})
+
+test_that("54.7 Factorial Design Saturated - Residuals versus Run Order plot matches", {
+  plotName <- results[["results"]][["Response"]][["collection"]][["Response_plotRunOrder"]][["data"]]
+  testPlot <- results[["state"]][["figures"]][[plotName]][["obj"]]
+  jaspTools::expect_equal_plots(testPlot, "residuals-versus-run-order")
+})
+
+test_that("54.8 Factorial Design Saturated - ANOVA table results match", {
+  table <- results[["results"]][["Response"]][["collection"]][["Response_tableAnova"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list(24.9166666666667, 74.75, 3, "", "", "Model", "", 54.5, 2, "",
+                                      "", "<unicode> Linear terms", 12.25, 12.25, 1, "", "", "<unicode> <unicode> Fac1",
+                                      42.25, 42.25, 1, "", "", "<unicode> <unicode> Fac2", "", 20.25,
+                                      1, "", "", "<unicode> Interaction terms", 20.25, 20.25, 1, "",
+                                      "", "<unicode> <unicode> Fac1<unicode><unicode><unicode>Fac2",
+                                      0, 0, 0, "", "", "Error", "", 74.75, 3, "", "", "Total"))
+})
+
+test_that("54.9 Factorial Design Saturated - Coded Coefficients table results match", {
+  table <- results[["results"]][["Response"]][["collection"]][["Response_tableCoefficients"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("(Intercept)", 8.75, "", "", "", "(Intercept)", "", "", "A", 1.75,
+                                      3.5, "", "", "Fac1", "", "NaN", "B", -3.25, -6.5, "", "", "Fac2",
+                                      "", "NaN", "AB", -2.25, -4.5, "", "", "Fac1<unicode>Fac2", "",
+                                      "NaN"))
+})
+
+test_that("54.10 Factorial Design Saturated - Regression equation in Coded Units table results match", {
+  table <- results[["results"]][["Response"]][["collection"]][["Response_tableEquation"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("Response = 8.75 + 1.75 A <unicode> 3.25 B <unicode> 2.25 AB"
+                                 ))
+})
+
+test_that("54.11 Factorial Design Saturated - Model Summary table results match", {
+  table <- results[["results"]][["Response"]][["collection"]][["Response_tableSummary"]][["data"]]
+  jaspTools::expect_equal_tables(table,
+                                 list("", "", 1, ""))
+})
