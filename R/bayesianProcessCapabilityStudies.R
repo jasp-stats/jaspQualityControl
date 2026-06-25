@@ -668,7 +668,7 @@ getCustomAxisLimits <- function(options, base) {
   } else {
 
     y_title <- if (has_ci) {
-      gettext("Estimate with 95% credible interval")
+      gettextf("Estimate with 95%% credible interval")
     } else {
       gettext("Estimate")
     }
