@@ -323,8 +323,8 @@ ColumnLayout
 					label: 				qsTr("lower")
 					name: 				"truncationLower"
 					visible:			hasTruncation && typeItem.currentValue !== "spike" && typeItem.currentValue !== "uniform" && typeItem.currentValue !== "jeffreys"
-					value:				Math.max(priorTruncationMap[typeItem.currentValue][0], truncationLowerMap[rowValue])
-					min:				Math.max(priorTruncationMap[typeItem.currentValue][0], truncationLowerMap[rowValue])
+					value:				Math.max((priorTruncationMap[typeItem.currentValue] || [-Infinity, Infinity])[0], truncationLowerMap[rowValue])
+					min:				Math.max((priorTruncationMap[typeItem.currentValue] || [-Infinity, Infinity])[0], truncationLowerMap[rowValue])
 					max: 				truncationUpper.value
 					inclusive: 			JASP.MinOnly
 					fieldWidth:			40 * preferencesModel.uiScale
@@ -337,8 +337,8 @@ ColumnLayout
 					label: 				qsTr("upper")
 					name: 				"truncationUpper"
 					visible:			hasTruncation && typeItem.currentValue !== "spike" && typeItem.currentValue !== "uniform" && typeItem.currentValue !== "jeffreys"
-					value:				priorTruncationMap[typeItem.currentValue][1]
-					max:				priorTruncationMap[typeItem.currentValue][1]
+					value:				(priorTruncationMap[typeItem.currentValue] || [-Infinity, Infinity])[1]
+					max:				(priorTruncationMap[typeItem.currentValue] || [-Infinity, Infinity])[1]
 					min: 				truncationLower ? truncationLower.value : 0
 					inclusive: 			JASP.MaxOnly
 					fieldWidth:			40 * preferencesModel.uiScale

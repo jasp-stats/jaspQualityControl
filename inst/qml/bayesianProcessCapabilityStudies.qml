@@ -373,8 +373,8 @@ Form
 			values:
 			[
 				{label: qsTr("Default"),					value: "default"},
-				{label: qsTr("Weakly informed conjugate"),	value: "conjugate"},
-				{label: qsTr("Informed conjugate"),			value: "weaklyInformativeConjugate"},
+				{label: qsTr("Informed conjugate"),			value: "conjugate"},
+				// {label: qsTr("Informed conjugate"),			value: "weaklyInformativeConjugate"},
 				{label: qsTr("Informed uniform"),			value: "weaklyInformativeUniform"},
 				{label: qsTr("Custom informative"),			value: "customInformative"},
 			]
@@ -388,6 +388,7 @@ Form
 
 			hasTruncation: priorSettings.currentValue === "customInformative"
 			hasParameters: priorSettings.currentValue !== "default"
+			visible:       priorSettings.currentValue !== "default"
 
 			dropDownValuesMap: {
 				switch (priorSettings.currentValue) {
@@ -403,12 +404,12 @@ Form
 							"sigma": 	[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }],
 							"df": 		[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }]
 						};
-					case "weaklyInformativeConjugate":
-						return {
-							"mean": 	[{ label: qsTr("Normal(μ,σ)"),			value: "normal"}],
-							"sigma": 	[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }],
-							"df": 		[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }]
-						}
+					// case "weaklyInformativeConjugate":
+					// 	return {
+					// 		"mean": 	[{ label: qsTr("Normal(μ,σ)"),			value: "normal"}],
+					// 		"sigma": 	[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }],
+					// 		"df": 		[{ label: qsTr("Gamma(α,β)"),			value: "gammaAB" }]
+					// 	}
 					case "weaklyInformativeUniform":
 						return {
 							"mean": 	[{ label: qsTr("Uniform(a,b)"),			value: "uniform"}],

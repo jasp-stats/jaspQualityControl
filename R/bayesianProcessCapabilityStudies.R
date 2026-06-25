@@ -33,8 +33,8 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   .bpcsSequentialPointEstimatePlot(   jaspResults, dataset, options, fit, position = 5)
   .bpcsSequentialIntervalEstimatePlot(jaspResults, dataset, options, fit, position = 6)
 
-  .bpcsPlotPredictive(jaspResults, options, fit,      position = 7, base = "posteriorPredictiveDistributionPlot")
-  .bpcsPlotPredictive(jaspResults, options, priorFit, position = 8, base = "priorPredictiveDistributionPlot")
+  .bpcsPlotPredictive(jaspResults, dataset, options, fit,      position = 7, base = "posteriorPredictiveDistributionPlot")
+  .bpcsPlotPredictive(jaspResults, dataset, options, priorFit, position = 8, base = "priorPredictiveDistributionPlot")
 
 }
 
@@ -177,6 +177,26 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   )
 }
 
+.bpcsPriorHelper <- function(options) {
+  if (options$priorSettings == "default") {
+    if (options[["capabilityStudyType"]] == "normalCapabilityAnalysis") {
+      return("DCSI")
+    }
+    return("Jeffreys")
+  }
+
+  mu_prior    <- .bpcsMuPriorFromOptions(options)
+  sigma_prior <- .bpcsSigmaPriorFromOptions(options)
+  nu_prior    <- .bpcsTPriorFromOptions(options)
+
+  args <- list(mu = mu_prior, sigma = sigma_prior)
+  if (!is.null(nu_prior)) {
+    args$nu <- nu_prior
+  }
+
+  do.call(qc::prior_independent, args)
+}
+
 # Tables ----
 .bpcsCapabilityTable <- function(jaspResults, dataset, options, position) {
 
@@ -211,15 +231,15 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
   if (!is.null(jaspResults[[paste0(base, "ResultsObject")]]))
     return(jaspResults[[paste0(base, "ResultsObject")]]$object)
 
+  x <- if (ncol(dataset) > 0L) dataset[[1L]] else NULL
+
   rawfit <- jaspResults[[paste0(base, "State")]] %setOrRetrieve% (
     qc::bpc(
-      dataset[[1L]], chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
+      x, chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
       target        = options[["targetValue"]],
       LSL           = options[["lowerSpecificationLimitValue"]],
       USL           = options[["upperSpecificationLimitValue"]],
-      prior_mu      = .bpcsMuPriorFromOptions(options),
-      prior_sigma   = .bpcsSigmaPriorFromOptions(options),
-      prior_nu      = .bpcsTPriorFromOptions(options),
+      prior         = .bpcsPriorHelper(options),
       sample_priors = prior
     ) |>
       createJaspState(jaspDeps(.bpcsStateDeps()))
@@ -245,7 +265,10 @@ bayesianProcessCapabilityStudies <- function(jaspResults, dataset, options) {
 }
 
 .bpcsCanSampleFromPriors <- function(options) {
-  options$priorSettings != "default"
+  if (options$priorSettings != "default") {
+    return(TRUE)
+  }
+  options[["capabilityStudyType"]] == "normalCapabilityAnalysis"
 }
 
 .bpcsCapabilityTableMeta <- function(jaspResults, options, position) {
@@ -379,7 +402,7 @@ getCustomAxisLimits <- function(options, base) {
   )
   jaspResults[[base]] <- jaspPlt
 
-  if (!.bpcsIsReady(options) || (isPost && is.null(fit)))
+  if (!.bpcsIsReady(options) || (isPost && is.null(fit)) || (!isPost && is.null(priorFit)))
     return()
 
   if (!isPost && !.bpcsCanSampleFromPriors(options)) {
@@ -541,7 +564,10 @@ getCustomAxisLimits <- function(options, base) {
 .bpcsComputeSequentialAnalysis <- function(dataset, options, fit) {
 
   n <- nrow(dataset)
-  nfrom <- min(n, 3L) # Gaussian could do 2, but let's not push it
+  if (!is.finite(n) || n < 3L) {
+    stop("Sequential analysis requires at least 3 observations.", call. = FALSE)
+  }
+  nfrom <- 3L
   nto   <- n
   nby   <- 1L
   nseq <- seq(nfrom, nto, by = nby)
@@ -558,21 +584,27 @@ getCustomAxisLimits <- function(options, base) {
 
   jaspBase::startProgressbar(length(nseq), label = gettext("Running sequential analysis"))
 
-  priorMu    <- .bpcsMuPriorFromOptions(options)
-  priorSigma <- .bpcsSigmaPriorFromOptions(options)
-  priorNu    <- .bpcsTPriorFromOptions(options)
+  prior <- .bpcsPriorHelper(options)
+  n_failed <- 0L
   for (i in seq_along(nseq)) {
 
     x_i <- x[1:nseq[i]]
-    fit_i <- qc::bpc(
-      x_i, chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
-      target      = options[["targetValue"]],
-      LSL         = options[["lowerSpecificationLimitValue"]],
-      USL         = options[["upperSpecificationLimitValue"]],
-      prior_mu    = priorMu,
-      prior_sigma = priorSigma,
-      prior_nu    = priorNu
+    fit_i <- tryCatch(
+      qc::bpc(
+        x_i, chains = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
+        target      = options[["targetValue"]],
+        LSL         = options[["lowerSpecificationLimitValue"]],
+        USL         = options[["upperSpecificationLimitValue"]],
+        prior       = prior
+      ),
+      error = function(e) NULL
     )
+
+    if (is.null(fit_i)) {
+      n_failed <- n_failed + 1L
+      jaspBase::progressbarTick()
+      next
+    }
 
     sum_fit_i <- summary(fit_i, interval_probability = customBounds)
     sum_i <- sum_fit_i$summary
@@ -585,6 +617,16 @@ getCustomAxisLimits <- function(options, base) {
 
     estimates[, , i] <- as.matrix(sum_i[keys])
     jaspBase::progressbarTick()
+  }
+
+  if (n_failed > 0L && n_failed / length(nseq) > 0.1) {
+    stop(
+      sprintf(
+        "%d of %d sequential fits failed (%.0f%%). Cannot render plot.",
+        n_failed, length(nseq), 100 * n_failed / length(nseq)
+      ),
+      call. = FALSE
+    )
   }
 
   attr(estimates, "nseq") <- nseq
@@ -658,6 +700,9 @@ getCustomAxisLimits <- function(options, base) {
   if (single_panel) {
 
     observedRange <- range(tb$lower, tb$upper, na.rm = TRUE)
+    if (!all(is.finite(observedRange))) {
+      observedRange <- c(0, 1)
+    }
     dist <- observedRange[2L] - observedRange[1L]
 
     observedRange[1L] <- min(observedRange[1L], gridLines[1L] - 0.1 * dist)
@@ -693,6 +738,9 @@ getCustomAxisLimits <- function(options, base) {
 
       # x <- tb[tb$metric == tb$metric[1L], , drop = FALSE]
       observedRange <- range(x$lower, x$upper, na.rm = TRUE)
+      if (!all(is.finite(observedRange))) {
+        observedRange <- c(0, 1)
+      }
       dist <- observedRange[2L] - observedRange[1L]
 
       observedRange[1L] <- min(observedRange[1L], gridLines[1L] - 0.1 * dist)
@@ -821,7 +869,7 @@ getCustomAxisLimits <- function(options, base) {
 }
 
 # Additional plot functions ----
-.bpcsPlotPredictive <- function(jaspResults, options, fit, position, base = c("posteriorPredictiveDistributionPlot", "priorPredictiveDistributionPlot")) {
+.bpcsPlotPredictive <- function(jaspResults, dataset, options, fit, position, base = c("posteriorPredictiveDistributionPlot", "priorPredictiveDistributionPlot")) {
 
   base <- match.arg(base)
   isPrior <- base == "priorPredictiveDistributionPlot"
@@ -851,9 +899,38 @@ getCustomAxisLimits <- function(options, base) {
   if (!.bpcsIsReady(options) || is.null(fit) || jaspResults$getError()) return()
 
   tryCatch({
-    raw_samples       <- qc:::extract_samples(fit$rawfit, bootstrap = FALSE)
-    samples           <- qc:::samples_to_mu_and_sigma(raw_samples)
-    predictiveSamples <- qc:::samples_to_posterior_predictives(samples)
+    rawfit <- fit$rawfit
+    if (identical(rawfit$method, "integration")) {
+      if (inherits(rawfit$prior_resolved, "PriorConjugate")) {
+        # based on Murphy, K. P. (2007). Conjugate Bayesian analysis of the Gaussian distribution. def, 1(2σ2), 16.
+        # TODO: since we have access to the distribution we could avoid sampling and plot the density directly
+        prior <- rawfit$prior_resolved
+        state <- rawfit$integration_result$cached_state
+        post  <- qc:::.nig_posterior(prior, state$n, state$x_bar, state$sse)
+        df    <- 2 * post$alpha_n
+        scale <- sqrt(post$beta_n * (1 + 1 / post$k_n) / post$alpha_n)
+        predictiveSamples <- post$mu_n + scale * stats::rt(5000, df)
+      } else {
+        rawfit <- qc::bpc(
+          x            = if (ncol(dataset) > 0L) dataset[[1L]] else NULL,
+          method       = "mcmc",
+          distribution = rawfit$distribution %||% "normal",
+          prior        = rawfit$prior,
+          LSL          = options[["lowerSpecificationLimitValue"]],
+          USL          = options[["upperSpecificationLimitValue"]],
+          target       = options[["targetValue"]],
+          chains       = 1, warmup = 1000, iter = 5000, silent = TRUE, seed = 1,
+          sample_priors = isPrior
+        )
+        raw_samples       <- qc:::extract_samples(rawfit, bootstrap = FALSE)
+        samples           <- qc:::samples_to_mu_and_sigma(raw_samples)
+        predictiveSamples <- qc:::samples_to_posterior_predictives(samples)
+      }
+    } else {
+      raw_samples       <- qc:::extract_samples(rawfit, bootstrap = FALSE)
+      samples           <- qc:::samples_to_mu_and_sigma(raw_samples)
+      predictiveSamples <- qc:::samples_to_posterior_predictives(samples)
+    }
 
     plt <- jaspGraphs::jaspHistogram(
       predictiveSamples,
