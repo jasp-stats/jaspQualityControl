@@ -1,21 +1,17 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: jaspQualityControl 0.96.0\n"
+"Project-Id-Version: jaspQualityControl 0.97.1\n"
 "POT-Creation-Date: 2026-06-20 05:01\n"
-"PO-Revision-Date: 2026-06-23 10:01+0000\n"
-"Last-Translator: Zahid Rizky Fakhri <zahidrizkyfakhri@gmail.com>\n"
-"Language-Team: Indonesian <https://hosted.weblate.org/projects/jasp/"
-"jaspprocesscontrol-r/id/>\n"
-"Language: id\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.7.dev0\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
 
-msgid ""
-"One or more subgroups are assigned to more than one stage, only first stage "
-"is considered.<br>"
+msgid "One or more subgroups are assigned to more than one stage, only first stage is considered.<br>"
 msgstr ""
 
 msgid "Removed %1$i %2$s that were not assigned to any stage.<br>"
@@ -25,7 +21,7 @@ msgid "Removed %i observation(s) that were not assigned to any subgroups.<br>"
 msgstr ""
 
 msgid "Sample"
-msgstr "Sampel"
+msgstr ""
 
 msgid "Time weighted charts report"
 msgstr ""
@@ -112,7 +108,7 @@ msgid "CL = %g"
 msgstr ""
 
 msgid "Proportion"
-msgstr "Proporsi"
+msgstr ""
 
 msgid "UCL = %g"
 msgstr ""
@@ -216,11 +212,7 @@ msgstr ""
 msgid "USL = %g"
 msgstr ""
 
-msgid ""
-"The parameters could not be estimated for the selected distribution, most "
-"likely because the observed distribution of the data are very far away from "
-"the selected distribution, please try one that describes your data more "
-"closely."
+msgid "The parameters could not be estimated for the selected distribution, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."
 msgstr ""
 
 msgid "Design of Experiments - Analysis"
@@ -229,16 +221,13 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-msgid ""
-"Stepwise method failed. Please consider a different method or starting model."
+msgid "Stepwise method failed. Please consider a different method or starting model."
 msgstr ""
 
 msgid "The specified low/high levels for %1$s are not distinct."
 msgstr ""
 
-msgid ""
-"The specified low/high level(s) %1$s for %2$s do not match the levels in the "
-"dataset."
+msgid "The specified low/high level(s) %1$s for %2$s do not match the levels in the dataset."
 msgstr ""
 
 msgid "Terms removed from Regression:"
@@ -274,23 +263,16 @@ msgstr ""
 msgid "Optimization Plot"
 msgstr ""
 
-msgid ""
-"Enter values for all predictors to create an optimization Plot with manual "
-"input parameters."
+msgid "Enter values for all predictors to create an optimization Plot with manual input parameters."
 msgstr ""
 
 msgid "Summary Plot"
 msgstr ""
 
-msgid ""
-"Enter plausible values for all discrete predictors.\n"
-"                                   Value %1$s is not a possible for the "
-"discrete predictor %2$s. Allowed values:"
+msgid "Enter plausible values for all discrete predictors.\n                                   Value %1$s is not a possible for the discrete predictor %2$s. Allowed values:"
 msgstr ""
 
-msgid ""
-"Enter plausible values for all continuous predictors. Only numeric values "
-"are allowed."
+msgid "Enter plausible values for all continuous predictors. Only numeric values are allowed."
 msgstr ""
 
 msgid "Comp. desirability"
@@ -308,15 +290,11 @@ msgstr ""
 msgid "Composite desirability"
 msgstr ""
 
-msgid ""
-"One or more input parameters for continuous predictors are outside of the "
-"design space.\n"
-"                           Extrapolation beyond the design space might not "
-"be valid."
+msgid "One or more input parameters for continuous predictors are outside of the design space.\n                           Extrapolation beyond the design space might not be valid."
 msgstr ""
 
 msgid "Model Summary"
-msgstr "Ringkasan Model"
+msgstr ""
 
 msgid "Adjusted %s"
 msgstr ""
@@ -328,7 +306,7 @@ msgid "The following aliased terms were removed: %s."
 msgstr ""
 
 msgid "ANOVA"
-msgstr "ANOVA"
+msgstr ""
 
 msgid "Source"
 msgstr ""
@@ -337,7 +315,7 @@ msgid "Sum of squares"
 msgstr ""
 
 msgid "df"
-msgstr "df"
+msgstr ""
 
 msgid "Mean square"
 msgstr ""
@@ -367,22 +345,22 @@ msgid "Term"
 msgstr ""
 
 msgid "Effect"
-msgstr "Efek"
+msgstr ""
 
 msgid "Coefficient"
-msgstr "Koefisien"
+msgstr ""
 
 msgid "Standard error"
-msgstr "Galat standar"
+msgstr ""
 
 msgid "Discrete Predictor Levels"
 msgstr ""
 
 msgid "Name"
-msgstr "Nama"
+msgstr ""
 
 msgid "Level"
-msgstr "Tingkat"
+msgstr ""
 
 msgid "Regression equation in %s Units"
 msgstr ""
@@ -394,7 +372,7 @@ msgid "Step"
 msgstr ""
 
 msgid "Formula"
-msgstr "Rumus"
+msgstr ""
 
 msgid "Pareto Chart of Standardized Effects"
 msgstr ""
@@ -406,7 +384,7 @@ msgid "Normal Plot of Standardized Effects"
 msgstr ""
 
 msgid "Significant"
-msgstr "Signifikan"
+msgstr ""
 
 msgid "Not Significant"
 msgstr ""
@@ -430,7 +408,7 @@ msgid "Fitted values"
 msgstr ""
 
 msgid "Residuals"
-msgstr "Residu"
+msgstr ""
 
 msgid "Residuals versus Run Order"
 msgstr ""
@@ -466,7 +444,7 @@ msgid "Design Summary"
 msgstr ""
 
 msgid "Variable"
-msgstr "Variabel"
+msgstr ""
 
 msgid "Factors"
 msgstr ""
@@ -493,7 +471,7 @@ msgid "Total blocks"
 msgstr ""
 
 msgid "Value"
-msgstr "Nilai"
+msgstr ""
 
 msgid "Please select a row in the design table."
 msgstr ""
@@ -582,8 +560,7 @@ msgstr ""
 msgid "Cohen's kappa correlations summary"
 msgstr ""
 
-msgid ""
-"Please inseret a vaild positive reference as used in the results variables."
+msgid "Please inseret a vaild positive reference as used in the results variables."
 msgstr ""
 
 msgid "Fleiss' kappa"
@@ -611,16 +588,16 @@ msgid "Matched"
 msgstr ""
 
 msgid "Percent"
-msgstr "Persen"
+msgstr ""
 
 msgid "Lower"
-msgstr "Batas Bawah"
+msgstr ""
 
 msgid "Confidence interval of 95%%"
 msgstr ""
 
 msgid "Upper"
-msgstr "Batas Atas"
+msgstr ""
 
 msgid "Invalid reference and/or results were inserted."
 msgstr ""
@@ -643,19 +620,13 @@ msgstr ""
 msgid "False alarm rate"
 msgstr ""
 
-msgid ""
-"Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false "
-"alarm rate)"
+msgid "Acceptable: x >= 90%% (effectiveness), x =< 2%% (miss rate), x =< 5%% (false alarm rate)"
 msgstr ""
 
-msgid ""
-"Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< "
-"10%% (false alarm rate)"
+msgid "Marginally acceptable: x >= 80%% (effectiveness), x =< 5%% (miss rate), x =< 10%% (false alarm rate)"
 msgstr ""
 
-msgid ""
-"Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false "
-"alarm rate)"
+msgid "Unacceptable: x < 80%% (effectiveness), x > 5%% (miss rate), x > 10%% (false alarm rate)"
 msgstr ""
 
 msgid "More than one measurement per operator required."
@@ -736,19 +707,13 @@ msgstr ""
 msgid "Percentage process variation graph"
 msgstr ""
 
-msgid ""
-"t-test requires more than 1 measurement. %1$i valid measurement(s) detected "
-"in %2$s."
+msgid "t-test requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
 msgstr ""
 
-msgid ""
-"Every unique part must have one corresponding reference value. %1$i "
-"reference values were found for %2$s unique parts."
+msgid "Every unique part must have one corresponding reference value. %1$i reference values were found for %2$s unique parts."
 msgstr ""
 
-msgid ""
-"t-test requires more than 1 measurement per part. Less than 2 valid "
-"measurement(s) detected in Part(s) %s."
+msgid "t-test requires more than 1 measurement per part. Less than 2 valid measurement(s) detected in Part(s) %s."
 msgstr ""
 
 msgid "t-test not possible. No variance detected in Part(s) %s."
@@ -761,23 +726,18 @@ msgid "Reference"
 msgstr ""
 
 msgid "Total"
-msgstr "Total"
+msgstr ""
 
 msgid "Gauge r&R"
 msgstr ""
 
-msgid ""
-"Design is not balanced: not every operator measured every part the same "
-"number of times."
+msgid "Design is not balanced: not every operator measured every part the same number of times."
 msgstr ""
 
-msgid ""
-"Design is not balanced: not every part was measured the same number of times."
+msgid "Design is not balanced: not every part was measured the same number of times."
 msgstr ""
 
-msgid ""
-"The measurements selected seem to be in a 'Single Column' format as every "
-"operator's part is measured %d times."
+msgid "The measurements selected seem to be in a 'Single Column' format as every operator's part is measured %d times."
 msgstr ""
 
 msgid "Gauge r&R report"
@@ -844,13 +804,13 @@ msgid "Mean squares"
 msgstr ""
 
 msgid "F"
-msgstr "F"
+msgstr ""
 
 msgid "Variance components"
 msgstr ""
 
 msgid "Variance"
-msgstr "Varians"
+msgstr ""
 
 msgid "%% Contribution"
 msgstr ""
@@ -897,14 +857,10 @@ msgstr ""
 msgid "Study Variation is calculated as std. dev. <spam>&#215;</spam> %.2f"
 msgstr ""
 
-msgid ""
-"Historical standard deviation is used to calculate some values for std. "
-"dev., study variation, and %%study variation."
+msgid "Historical standard deviation is used to calculate some values for std. dev., study variation, and %%study variation."
 msgstr ""
 
-msgid ""
-"Values for %%process variation are not displayed because they are identical "
-"to values for %%study variation."
+msgid "Values for %%process variation are not displayed because they are identical to values for %%study variation."
 msgstr ""
 
 msgid "Two-way ANOVA table without interaction"
@@ -967,8 +923,7 @@ msgstr ""
 msgid "Gauge r&R - nested"
 msgstr ""
 
-msgid ""
-"Unbalanced design. Some parts have more repeated measurements than others."
+msgid "Unbalanced design. Some parts have more repeated measurements than others."
 msgstr ""
 
 msgid "Gauge r&R (non-replicable) report"
@@ -987,7 +942,7 @@ msgid "Gauge r&R (nested)"
 msgstr ""
 
 msgid "p"
-msgstr "p"
+msgstr ""
 
 msgid "Variation"
 msgstr ""
@@ -1010,8 +965,7 @@ msgstr ""
 msgid "Operator %s"
 msgstr ""
 
-msgid ""
-"Design is not balanced: not all parts were measured the same number of times."
+msgid "Design is not balanced: not all parts were measured the same number of times."
 msgstr ""
 
 msgid "Scatterplot operators vs parts"
@@ -1075,10 +1029,10 @@ msgid "Basic statistics"
 msgstr ""
 
 msgid "Mean"
-msgstr "Rata-rata"
+msgstr ""
 
 msgid "Bias"
-msgstr "Bias"
+msgstr ""
 
 msgid "Std. dev. (<i>s</i>)"
 msgstr ""
@@ -1122,13 +1076,11 @@ msgstr ""
 msgid "Bias histogram"
 msgstr ""
 
-msgid ""
-"Histogram requires more than 1 measurement. %1$i valid measurement(s) "
-"detected in %2$s."
+msgid "Histogram requires more than 1 measurement. %1$i valid measurement(s) detected in %2$s."
 msgstr ""
 
 msgid "Count"
-msgstr "Jumlah"
+msgstr ""
 
 msgid "Mean - %is"
 msgstr ""
@@ -1151,9 +1103,7 @@ msgstr ""
 msgid "Ref."
 msgstr ""
 
-msgid ""
-"The stage variable must have at least two levels to define training and test "
-"phases."
+msgid "The stage variable must have at least two levels to define training and test phases."
 msgstr ""
 
 msgid "Enter at least two variables to start the analysis."
@@ -1162,24 +1112,16 @@ msgstr ""
 msgid "The training phase must contain at least 3 observations."
 msgstr ""
 
-msgid ""
-"The covariance matrix of the training phase is computationally singular. "
-"This typically occurs when variables are linearly dependent or nearly "
-"perfectly correlated. Please remove redundant variables."
+msgid "The covariance matrix of the training phase is computationally singular. This typically occurs when variables are linearly dependent or nearly perfectly correlated. Please remove redundant variables."
 msgstr ""
 
-msgid ""
-"The covariance matrix of the selected variables is computationally singular. "
-"This typically occurs when variables are linearly dependent or nearly "
-"perfectly correlated. Please remove redundant variables."
+msgid "The covariance matrix of the selected variables is computationally singular. This typically occurs when variables are linearly dependent or nearly perfectly correlated. Please remove redundant variables."
 msgstr ""
 
 msgid "Hotelling T² Control Chart"
 msgstr ""
 
-msgid ""
-"Displays the Hotelling T² statistic for each sample with upper and lower "
-"control limits. Points exceeding the UCL are flagged as out of control."
+msgid "Displays the Hotelling T² statistic for each sample with upper and lower control limits. Points exceeding the UCL are flagged as out of control."
 msgstr ""
 
 msgid "UCL = %s"
@@ -1195,15 +1137,12 @@ msgid "Training (%s)"
 msgstr ""
 
 msgid "Test"
-msgstr "Uji"
+msgstr ""
 
 msgid "Hotelling T² Control Chart Summary"
 msgstr ""
 
-msgid ""
-"Summary of the Hotelling T² control chart, including the number of "
-"variables, observations, confidence level, control limits, and the "
-"determinant of the covariance matrix."
+msgid "Summary of the Hotelling T² control chart, including the number of variables, observations, confidence level, control limits, and the determinant of the covariance matrix."
 msgstr ""
 
 msgid "Removed %i observation(s) with missing values."
@@ -1230,17 +1169,13 @@ msgstr ""
 msgid "|S|"
 msgstr ""
 
-msgid ""
-"Control limits for the training phase use the Beta distribution; test phase "
-"limits use the F distribution (prediction limits)."
+msgid "Control limits for the training phase use the Beta distribution; test phase limits use the F distribution (prediction limits)."
 msgstr ""
 
 msgid "Variable Centers"
 msgstr ""
 
-msgid ""
-"Displays the sample mean of each variable used in the multivariate control "
-"chart."
+msgid "Displays the sample mean of each variable used in the multivariate control chart."
 msgstr ""
 
 msgid "Center"
@@ -1252,9 +1187,7 @@ msgstr ""
 msgid "Covariance Matrix"
 msgstr ""
 
-msgid ""
-"Displays the sample covariance matrix of the selected variables, used to "
-"compute the Hotelling T² statistic."
+msgid "Displays the sample covariance matrix of the selected variables, used to compute the Hotelling T² statistic."
 msgstr ""
 
 msgid "Covariance matrix estimated from training phase (%s) only."
@@ -1263,9 +1196,7 @@ msgstr ""
 msgid "Hotelling T² Values"
 msgstr ""
 
-msgid ""
-"Lists the Hotelling T² statistic for each sample and indicates whether the "
-"sample is in or out of control."
+msgid "Lists the Hotelling T² statistic for each sample and indicates whether the sample is in or out of control."
 msgstr ""
 
 msgid "T²"
@@ -1290,32 +1221,28 @@ msgid "Parameter Estimates"
 msgstr ""
 
 msgid "Parameter"
-msgstr "Parameter"
+msgstr ""
 
 msgid "Estimate"
-msgstr "Estimasi"
+msgstr ""
 
-msgid ""
-"Fitting the model failed with the following error message:\n"
-"%s"
+msgid "Fitting the model failed with the following error message:\n%s"
 msgstr ""
 
 msgid "Intercept"
-msgstr "Intersep"
-
-msgid ""
-"The IWLS algorithm did not converge. Interpret the results with caution."
 msgstr ""
 
-msgid ""
-"There is only observed category (%s). The results are likely meaningless."
+msgid "The IWLS algorithm did not converge. Interpret the results with caution."
+msgstr ""
+
+msgid "There is only observed category (%s). The results are likely meaningless."
 msgstr ""
 
 msgid "Fit Table"
 msgstr ""
 
 msgid "AIC"
-msgstr "AIC"
+msgstr ""
 
 msgid "Detection Plot"
 msgstr ""
@@ -1323,9 +1250,7 @@ msgstr ""
 msgid "log(%s)"
 msgstr ""
 
-msgid ""
-"The detection plot failed with the following error message:\n"
-"%s"
+msgid "The detection plot failed with the following error message:\n%s"
 msgstr ""
 
 msgid "Asymptotes"
@@ -1341,10 +1266,10 @@ msgid "Vertical asymptotes"
 msgstr ""
 
 msgid "Label"
-msgstr "Label"
+msgstr ""
 
 msgid "<b><em>Warning.</em></b>"
-msgstr "<b><em>Peringatan.</em></b>"
+msgstr ""
 
 msgid "Probability of detecting %s"
 msgstr ""
@@ -1352,16 +1277,13 @@ msgstr ""
 msgid "Subgroup size is >5, results may be biased. An s-chart is recommended."
 msgstr ""
 
-msgid ""
-"All zero values have been replaced with a value equal to one-half of the "
-"smallest data point."
+msgid "All zero values have been replaced with a value equal to one-half of the smallest data point."
 msgstr ""
 
 msgid "Process Capability Report"
 msgstr ""
 
-msgid ""
-"Set at least one specification limit (upper or lower) to start the analysis."
+msgid "Set at least one specification limit (upper or lower) to start the analysis."
 msgstr ""
 
 msgid "Line: %s"
@@ -1385,14 +1307,10 @@ msgstr ""
 msgid "X-bar & %s control chart"
 msgstr ""
 
-msgid ""
-"Subgroup size is >50, R chart calculation is not possible. Use S-chart "
-"instead."
+msgid "Subgroup size is >50, R chart calculation is not possible. Use S-chart instead."
 msgstr ""
 
-msgid ""
-"Subgroup size is 1, calculation of selected control chart not possible. Use "
-"x-mR chart."
+msgid "Subgroup size is 1, calculation of selected control chart not possible. Use x-mR chart."
 msgstr ""
 
 msgid "X-mR control chart"
@@ -1404,16 +1322,13 @@ msgstr ""
 msgid "Process capability study"
 msgstr ""
 
-msgid ""
-"Lower specification limit must be smaller than upper specification limit."
+msgid "Lower specification limit must be smaller than upper specification limit."
 msgstr ""
 
 msgid "Target outside of specification limits."
 msgstr ""
 
-msgid ""
-"Dataset contains negative numbers. Not compatible with the selected "
-"distribution."
+msgid "Dataset contains negative numbers. Not compatible with the selected distribution."
 msgstr ""
 
 msgid "Process capability"
@@ -1428,10 +1343,7 @@ msgstr ""
 msgid "Data could not be transformed: %1$s"
 msgstr ""
 
-msgid ""
-"The data after transformations appears to be invalid. This could be caused "
-"by unsuitable data transformation (transformation type or extreme parameter "
-"used to transform the data)."
+msgid "The data after transformations appears to be invalid. This could be caused by unsuitable data transformation (transformation type or extreme parameter used to transform the data)."
 msgstr ""
 
 msgid "Specification limits could not be transformed: %1$s"
@@ -1459,7 +1371,7 @@ msgid "USL"
 msgstr ""
 
 msgid "Sample size"
-msgstr "Ukuran sampel"
+msgstr ""
 
 msgid "Std. dev. (total)"
 msgstr ""
@@ -1467,9 +1379,7 @@ msgstr ""
 msgid "Std. dev. (within)"
 msgstr ""
 
-msgid ""
-"Columns titled 'Change' concern changes of the respective stage in "
-"comparison to baseline (BL)."
+msgid "Columns titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
 msgstr ""
 
 msgid "The within std. dev. could not be calculated."
@@ -1493,36 +1403,28 @@ msgstr ""
 msgid "No valid measurements detected."
 msgstr ""
 
-msgid ""
-"Need at least 2 measurements to fit distribution. %1$i measurement(s) "
-"detected."
+msgid "Need at least 2 measurements to fit distribution. %1$i measurement(s) detected."
 msgstr ""
 
 msgid "At least one of the stages contains no valid measurements."
 msgstr ""
 
 msgid "Density"
-msgstr "Densitas"
+msgstr ""
 
 msgid "Measurement"
 msgstr ""
 
-msgid ""
-"Normal dist.\n"
-"(std. dev. total)"
+msgid "Normal dist.\n(std. dev. total)"
 msgstr ""
 
-msgid ""
-"Normal dist.\n"
-"(std. dev. within)"
+msgid "Normal dist.\n(std. dev. within)"
 msgstr ""
 
 msgid "Weibull dist."
 msgstr ""
 
-msgid ""
-"3-parameter\n"
-"lognormal dist."
+msgid "3-parameter\nlognormal dist."
 msgstr ""
 
 msgid "3-parameter Weibull dist."
@@ -1576,9 +1478,7 @@ msgstr ""
 msgid "Z (ST)"
 msgstr ""
 
-msgid ""
-"Statistics displayed as * were not calculated because the relevant "
-"specification limit is not set or set as boundary."
+msgid "Statistics displayed as * were not calculated because the relevant specification limit is not set or set as boundary."
 msgstr ""
 
 msgid "Process performance (total)"
@@ -1614,9 +1514,7 @@ msgstr ""
 msgid "%s CI for Cpm"
 msgstr ""
 
-msgid ""
-"Rows titled 'Change' concern changes of the respective stage in comparison "
-"to baseline (BL)."
+msgid "Rows titled 'Change' concern changes of the respective stage in comparison to baseline (BL)."
 msgstr ""
 
 msgid "%s vs. BL"
@@ -1670,21 +1568,17 @@ msgstr ""
 msgid "Probability plot"
 msgstr ""
 
-msgid ""
-"Probability plot and table for %s distribution are not implemented in "
-"Quality Control module. Please use the Distributions module."
+msgid "Probability plot and table for %s distribution are not implemented in Quality Control module. Please use the Distributions module."
 msgstr ""
 
-msgid ""
-"Need at least 2 measurements to calculate probability table/plot. %1$i "
-"measurement(s) detected."
+msgid "Need at least 2 measurements to calculate probability table/plot. %1$i measurement(s) detected."
 msgstr ""
 
 msgid "Summary of test against the %1$s distribution"
 msgstr ""
 
 msgid "N"
-msgstr "N"
+msgstr ""
 
 msgid "Mean (%1$s)"
 msgstr ""
@@ -1695,51 +1589,35 @@ msgstr ""
 msgid "AD"
 msgstr ""
 
-msgid ""
-"The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s "
-"distribution."
+msgid "The Anderson-Darling statistic A<i>D</i> is calculated against the %1$s distribution."
 msgstr ""
 
-msgid ""
-"Red dotted lines in the probability plot below represent a 95%% confidence "
-"interval."
+msgid "Red dotted lines in the probability plot below represent a 95%% confidence interval."
 msgstr ""
 
 msgid "Probability plot against %1$s distribution"
 msgstr ""
 
-msgid ""
-"Could not compute variance-covariance matrix: parameter vector has "
-"unexpected length."
+msgid "Could not compute variance-covariance matrix: parameter vector has unexpected length."
 msgstr ""
 
-msgid ""
-"Could not compute variance-covariance matrix: Hessian contains invalid "
-"values."
+msgid "Could not compute variance-covariance matrix: Hessian contains invalid values."
 msgstr ""
 
-msgid ""
-"Fitting lognormal distribution failed, most likely because the observed "
-"distribution of the data are very far away from the selected distribution, "
-"please try one that describes your data more closely."
+msgid "Fitting lognormal distribution failed, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."
 msgstr ""
 
-msgid ""
-"Fitting Weibull distribution failed, most likely because the observed "
-"distribution of the data are very far away from the selected distribution, "
-"please try one that describes your data more closely."
+msgid "Fitting Weibull distribution failed, most likely because the observed distribution of the data are very far away from the selected distribution, please try one that describes your data more closely."
 msgstr ""
 
 msgid "Histogram"
-msgstr "Histogram"
+msgstr ""
 
-msgid ""
-"Dataset contains negative numbers. Could not overlay the selected "
-"distribution."
+msgid "Dataset contains negative numbers. Could not overlay the selected distribution."
 msgstr ""
 
 msgid "Counts"
-msgstr "Cacah"
+msgstr ""
 
 msgid "Normal dist."
 msgstr ""
@@ -1747,31 +1625,19 @@ msgstr ""
 msgid "Log-normal dist."
 msgstr ""
 
-msgid ""
-"3-parameter\n"
-"log-normal dist."
+msgid "3-parameter\nlog-normal dist."
 msgstr ""
 
-msgid ""
-"Some specification limits or target value are outside of the support of the "
-"Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."
+msgid "Some specification limits or target value are outside of the support of the Box-Cox transform. The lower bound of the Box-Cox transform is -shift (%1$f)."
 msgstr ""
 
-msgid ""
-"Some specification limits or target value are outside of the support of the "
-"Johnson (SB) transform. The bounds of the transform were identified to "
-"between %1$f and %2$f."
+msgid "Some specification limits or target value are outside of the support of the Johnson (SB) transform. The bounds of the transform were identified to between %1$f and %2$f."
 msgstr ""
 
-msgid ""
-"Some specification limits or target value are outside of the support of the "
-"Johnson (SL) transform. The lower bound of the transform was identified as "
-"%1$f."
+msgid "Some specification limits or target value are outside of the support of the Johnson (SL) transform. The lower bound of the transform was identified as %1$f."
 msgstr ""
 
-msgid ""
-"The measurements, specification limits and target value were transformed "
-"using the %s transformation, with the following formula,"
+msgid "The measurements, specification limits and target value were transformed using the %s transformation, with the following formula,"
 msgstr ""
 
 msgid "Parameters of the transform"
@@ -1786,13 +1652,10 @@ msgstr ""
 msgid "Rare event charts"
 msgstr ""
 
-msgid ""
-"Date/time conversion returned no valid values. Did you select the correct "
-"date/time format?"
+msgid "Date/time conversion returned no valid values. Did you select the correct date/time format?"
 msgstr ""
 
-msgid ""
-"Negative values for time/intervals detected, calculation is not possible."
+msgid "Negative values for time/intervals detected, calculation is not possible."
 msgstr ""
 
 msgid "Rare event charts report"
@@ -1804,42 +1667,34 @@ msgstr ""
 msgid "T chart"
 msgstr ""
 
-msgid ""
-"<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
+msgid "<i>Note.</i> Removed %i observation(s) that were not assigned to any Stage."
 msgstr ""
 
 msgid "Variables Charts for Individuals"
 msgstr ""
 
-msgid ""
-"Moving range length is larger than the number of observations\n"
-"                                                           in one of the "
-"stages."
+msgid "Moving range length is larger than the number of observations\n                                                           in one of the stages."
 msgstr ""
 
 msgid "Variables Chart for Individuals Report"
 msgstr ""
 
-msgid ""
-"Autocorrelation plot requires uninterrupted series of values. Missing values "
-"detected in %s."
+msgid "Autocorrelation plot requires uninterrupted series of values. Missing values detected in %s."
 msgstr ""
 
 msgid "Autocorrelation plot"
 msgstr ""
 
 msgid "Autocorrelation"
-msgstr "Korelasi Otomatis"
+msgstr ""
 
 msgid "Lag"
-msgstr "Lag"
+msgstr ""
 
 msgid "Control charts"
 msgstr ""
 
-msgid ""
-"All subgroups are of size 1. Variables charts for subgroups cannot be "
-"calculated. Use variables charts for individuals."
+msgid "All subgroups are of size 1. Variables charts for subgroups cannot be calculated. Use variables charts for individuals."
 msgstr ""
 
 msgid "X-bar & %1$s control chart"
